@@ -1,0 +1,18 @@
+.app-layout {
+  min-height: 100vh;
+}
+
+.app-content {
+  margin: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  background: var(--bg-container);
+  border-radius: var(--border-radius-base);
+  min-height: calc(100vh - var(--header-height) - var(--spacing-lg) * 2);
+}
+
+@media (max-width: 768px) {
+  .app-content {
+    margin: var(--spacing-md);
+    padding: var(--spacing-md);
+  }
+}

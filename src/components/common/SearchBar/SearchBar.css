@@ -1,0 +1,9 @@
+.search-bar {
+  max-width: 400px;
+}
+
+@media (max-width: 768px) {
+  .search-bar {
+    max-width: 100%;
+  }
+}

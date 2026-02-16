@@ -1,0 +1,29 @@
+.series-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.series-info__synopsis,
+.series-info__review,
+.series-info__observations {
+  padding: var(--spacing-md);
+  background: var(--bg-base);
+  border-radius: var(--border-radius);
+}
+
+.series-info__section-title {
+  margin: 0 0 var(--spacing-md) 0;
+  color: var(--text-primary);
+  font-size: 1.25em;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.series-info__synopsis-content,
+.series-info__review-content,
+.series-info__observations-content {
+  margin-top: var(--spacing-md);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
