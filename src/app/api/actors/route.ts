@@ -7,6 +7,9 @@ export async function GET() {
     return NextResponse.json(actors);
   } catch (error) {
     console.error('Error fetching actors:', error);
-    return NextResponse.json({ error: 'Failed to fetch actors' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch actors' },
+      { status: 500 }
+    );
   }
 }

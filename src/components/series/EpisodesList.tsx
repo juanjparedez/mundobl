@@ -1,29 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  List,
-  Tag,
-  Modal,
-  Form,
-  Input,
-  InputNumber,
-  Button,
-  message,
-  Checkbox,
-  Collapse,
-} from 'antd';
+import { Tag, Modal, Form, Input, InputNumber, Button, Checkbox } from 'antd';
 import {
   PlusOutlined,
   EditOutlined,
   DeleteOutlined,
   ClockCircleOutlined,
-  CheckCircleOutlined,
   CommentOutlined,
 } from '@ant-design/icons';
 import { CommentsList } from '@/components/common/CommentsList';
 import './EpisodesList.css';
-import { useMessage } from '@/hooks/useMessage';
+import { useMessage, useModal } from '@/hooks/useMessage';
 
 const { TextArea } = Input;
 
@@ -55,6 +43,7 @@ export function EpisodesList({
   initialEpisodes = [],
 }: EpisodesListProps) {
   const message = useMessage();
+  const modal = useModal();
   const [episodes, setEpisodes] = useState<Episode[]>(initialEpisodes);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEpisode, setEditingEpisode] = useState<Episode | null>(null);
@@ -79,7 +68,7 @@ export function EpisodesList({
     form.resetFields();
   };
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: Record<string, unknown>) => {
     try {
       const url = editingEpisode
         ? `/api/episodes/${editingEpisode.id}`
@@ -111,7 +100,7 @@ export function EpisodesList({
       }
 
       handleCloseModal();
-    } catch (error) {
+    } catch {
       message.error('Error al guardar el episodio');
     }
   };
@@ -126,7 +115,7 @@ export function EpisodesList({
 
       setEpisodes(episodes.filter((ep) => ep.id !== episodeId));
       message.success('Episodio eliminado');
-    } catch (error) {
+    } catch {
       message.error('Error al eliminar el episodio');
     }
   };
@@ -168,7 +157,7 @@ export function EpisodesList({
           ? '✓ Episodio marcado como visto'
           : 'Episodio marcado como no visto'
       );
-    } catch (error) {
+    } catch {
       message.error('Error al actualizar el estado');
     }
   };
@@ -197,73 +186,26 @@ export function EpisodesList({
             padding: '16px',
           }}
         >
-          No hay episodios registrados. Haz clic en "Agregar Episodio" para
-          comenzar.
+          No hay episodios registrados. Haz clic en &quot;Agregar Episodio&quot;
+          para comenzar.
         </p>
       ) : (
-        <List
-          dataSource={episodes}
-          renderItem={(episode) => (
-            <div className="episode-item">
-              <List.Item
-                actions={[
-                  <Button
-                    key="comment"
-                    type="link"
-                    size="small"
-                    icon={<CommentOutlined />}
-                    onClick={() =>
-                      setExpandedEpisode(
-                        expandedEpisode === episode.id ? null : episode.id
+        <div className="episodes-list__items">
+          {episodes.map((episode) => (
+            <div key={episode.id} className="episode-item">
+              <div className="episode-item__row">
+                <div className="episode-item__content">
+                  <Checkbox
+                    checked={episode.viewStatus?.[0]?.watched || false}
+                    onChange={() =>
+                      handleToggleWatched(
+                        episode.id,
+                        episode.viewStatus?.[0]?.watched || false
                       )
                     }
-                  >
-                    Comentar ({episode.comments?.length || 0})
-                  </Button>,
-                  <Button
-                    key="edit"
-                    type="link"
-                    size="small"
-                    icon={<EditOutlined />}
-                    onClick={() => handleOpenModal(episode)}
-                  >
-                    Editar
-                  </Button>,
-                  <Button
-                    key="delete"
-                    type="link"
-                    size="small"
-                    danger
-                    icon={<DeleteOutlined />}
-                    onClick={() => {
-                      Modal.confirm({
-                        title: '¿Eliminar episodio?',
-                        content: `¿Estás seguro de eliminar el episodio ${episode.episodeNumber}?`,
-                        okText: 'Sí, eliminar',
-                        cancelText: 'Cancelar',
-                        okButtonProps: { danger: true },
-                        onOk: () => handleDelete(episode.id),
-                      });
-                    }}
-                  >
-                    Eliminar
-                  </Button>,
-                ]}
-              >
-                <List.Item.Meta
-                  avatar={
-                    <Checkbox
-                      checked={episode.viewStatus?.[0]?.watched || false}
-                      onChange={() =>
-                        handleToggleWatched(
-                          episode.id,
-                          episode.viewStatus?.[0]?.watched || false
-                        )
-                      }
-                    />
-                  }
-                  title={
-                    <span
+                  />
+                  <div className="episode-item__meta">
+                    <div
                       style={{
                         textDecoration: episode.viewStatus?.[0]?.watched
                           ? 'line-through'
@@ -273,17 +215,12 @@ export function EpisodesList({
                       <strong>Episodio {episode.episodeNumber}</strong>
                       {episode.title && ` - ${episode.title}`}
                       {episode.viewStatus?.[0]?.watched && (
-                        <Tag
-                          color="success"
-                          style={{ marginLeft: 8 }}
-                        >
+                        <Tag color="success" style={{ marginLeft: 8 }}>
                           ✓ Visto
                         </Tag>
                       )}
-                    </span>
-                  }
-                  description={
-                    <div>
+                    </div>
+                    <div className="episode-item__description">
                       {episode.duration && (
                         <Tag
                           icon={<ClockCircleOutlined />}
@@ -299,9 +236,49 @@ export function EpisodesList({
                         </div>
                       )}
                     </div>
-                  }
-                />
-              </List.Item>
+                  </div>
+                </div>
+                <div className="episode-item__actions">
+                  <Button
+                    type="link"
+                    size="small"
+                    icon={<CommentOutlined />}
+                    onClick={() =>
+                      setExpandedEpisode(
+                        expandedEpisode === episode.id ? null : episode.id
+                      )
+                    }
+                  >
+                    Comentar ({episode.comments?.length || 0})
+                  </Button>
+                  <Button
+                    type="link"
+                    size="small"
+                    icon={<EditOutlined />}
+                    onClick={() => handleOpenModal(episode)}
+                  >
+                    Editar
+                  </Button>
+                  <Button
+                    type="link"
+                    size="small"
+                    danger
+                    icon={<DeleteOutlined />}
+                    onClick={() => {
+                      modal.confirm({
+                        title: '¿Eliminar episodio?',
+                        content: `¿Estás seguro de eliminar el episodio ${episode.episodeNumber}?`,
+                        okText: 'Sí, eliminar',
+                        cancelText: 'Cancelar',
+                        okButtonProps: { danger: true },
+                        onOk: () => handleDelete(episode.id),
+                      });
+                    }}
+                  >
+                    Eliminar
+                  </Button>
+                </div>
+              </div>
 
               {expandedEpisode === episode.id && (
                 <div className="episode-comments-section">
@@ -314,8 +291,8 @@ export function EpisodesList({
                 </div>
               )}
             </div>
-          )}
-        />
+          ))}
+        </div>
       )}
 
       <Modal

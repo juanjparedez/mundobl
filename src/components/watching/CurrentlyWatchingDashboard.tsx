@@ -2,7 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { Card, Empty, Spin, Progress, Tag, Button } from 'antd';
-import { PlayCircleOutlined, ClockCircleOutlined, CloseOutlined, EditOutlined } from '@ant-design/icons';
+import {
+  PlayCircleOutlined,
+  ClockCircleOutlined,
+  CloseOutlined,
+  EditOutlined,
+} from '@ant-design/icons';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useMessage } from '@/hooks/useMessage';
 import './CurrentlyWatchingDashboard.css';
@@ -39,7 +45,9 @@ interface WatchingSeriesData {
 export function CurrentlyWatchingDashboard() {
   const message = useMessage();
   const [loading, setLoading] = useState(true);
-  const [watchingSeries, setWatchingSeries] = useState<WatchingSeriesData[]>([]);
+  const [watchingSeries, setWatchingSeries] = useState<WatchingSeriesData[]>(
+    []
+  );
 
   useEffect(() => {
     loadWatchingSeries();
@@ -105,7 +113,10 @@ export function CurrentlyWatchingDashboard() {
     return d.toLocaleDateString();
   };
 
-  const handleRemoveFromWatching = async (seriesId: number, seriesTitle: string) => {
+  const handleRemoveFromWatching = async (
+    seriesId: number,
+    seriesTitle: string
+  ) => {
     try {
       const response = await fetch(`/api/series/${seriesId}/view-status`, {
         method: 'POST',
@@ -116,7 +127,9 @@ export function CurrentlyWatchingDashboard() {
       if (!response.ok) throw new Error('Error al actualizar');
 
       // Remover de la lista local
-      setWatchingSeries((prev) => prev.filter((item) => item.series.id !== seriesId));
+      setWatchingSeries((prev) =>
+        prev.filter((item) => item.series.id !== seriesId)
+      );
       message.success(`"${seriesTitle}" removida de "Viendo ahora"`);
     } catch (error) {
       message.error('Error al remover de la lista');
@@ -149,8 +162,11 @@ export function CurrentlyWatchingDashboard() {
     <div className="watching-dashboard">
       <div className="watching-grid">
         {watchingSeries.map((item) => {
-          const { totalEpisodes, watchedEpisodes } = calculateProgress(item.series);
-          const progress = totalEpisodes > 0 ? (watchedEpisodes / totalEpisodes) * 100 : 0;
+          const { totalEpisodes, watchedEpisodes } = calculateProgress(
+            item.series
+          );
+          const progress =
+            totalEpisodes > 0 ? (watchedEpisodes / totalEpisodes) * 100 : 0;
           const nextEp = getNextEpisode(item.series);
 
           return (
@@ -161,7 +177,17 @@ export function CurrentlyWatchingDashboard() {
               cover={
                 item.series.imageUrl ? (
                   <div className="watching-card__image">
-                    <img src={item.series.imageUrl} alt={item.series.title} />
+                    <Image
+                      src={item.series.imageUrl}
+                      alt={item.series.title}
+                      width={400}
+                      height={225}
+                      style={{
+                        width: '100%',
+                        height: 'auto',
+                        objectFit: 'cover',
+                      }}
+                    />
                   </div>
                 ) : null
               }
@@ -180,7 +206,9 @@ export function CurrentlyWatchingDashboard() {
               <Card.Meta
                 title={
                   <Link href={`/series/${item.series.id}`}>
-                    <span className="watching-card__title">{item.series.title}</span>
+                    <span className="watching-card__title">
+                      {item.series.title}
+                    </span>
                   </Link>
                 }
                 description={
@@ -206,7 +234,8 @@ export function CurrentlyWatchingDashboard() {
                       <div className="watching-card__next">
                         <PlayCircleOutlined style={{ marginRight: '8px' }} />
                         <span>
-                          Siguiente: T{nextEp.seasonNumber}E{nextEp.episodeNumber}
+                          Siguiente: T{nextEp.seasonNumber}E
+                          {nextEp.episodeNumber}
                           {nextEp.title && ` - ${nextEp.title}`}
                         </span>
                       </div>
@@ -218,13 +247,21 @@ export function CurrentlyWatchingDashboard() {
                     </div>
 
                     <div className="watching-card__actions">
-                      <Link href={`/series/${item.series.id}`} style={{ flex: 1 }}>
+                      <Link
+                        href={`/series/${item.series.id}`}
+                        style={{ flex: 1 }}
+                      >
                         <Button type="primary" block>
-                          {progress === 100 ? 'Ver detalles' : 'Continuar viendo'}
+                          {progress === 100
+                            ? 'Ver detalles'
+                            : 'Continuar viendo'}
                         </Button>
                       </Link>
                       <Link href={`/admin/series/${item.series.id}/editar`}>
-                        <Button icon={<EditOutlined />} title="Editar y agregar comentarios">
+                        <Button
+                          icon={<EditOutlined />}
+                          title="Editar y agregar comentarios"
+                        >
                           Editar
                         </Button>
                       </Link>

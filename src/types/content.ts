@@ -71,6 +71,7 @@ export function shouldShowDuration(type: string): boolean {
  */
 export function getContentTypeConfig(type: string) {
   return (
-    ContentTypeConfig[type as ContentTypeValue] ?? ContentTypeConfig[ContentType.SERIE]
+    ContentTypeConfig[type as ContentTypeValue] ??
+    ContentTypeConfig[ContentType.SERIE]
   );
 }

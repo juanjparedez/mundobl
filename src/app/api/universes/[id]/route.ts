@@ -77,10 +77,15 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     });
 
     return NextResponse.json(universe);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error al actualizar universo:', error);
 
-    if (error.code === 'P2002') {
+    if (
+      error &&
+      typeof error === 'object' &&
+      'code' in error &&
+      error.code === 'P2002'
+    ) {
       return NextResponse.json(
         { error: 'Ya existe un universo con ese nombre' },
         { status: 400 }

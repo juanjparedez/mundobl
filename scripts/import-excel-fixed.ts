@@ -101,7 +101,10 @@ async function main() {
     const year = firstRow['Año'];
     const tempNumber = firstRow['Temp'];
     const chapters = firstRow['Capítulos'];
-    const isNovel = firstRow['Novela'] === true || firstRow['Novela'] === 'TRUE';
+    const basedOn =
+      firstRow['Novela'] === true || firstRow['Novela'] === 'TRUE'
+        ? 'novela'
+        : null;
 
     // Parse rating - convert to int or null
     let rating: number | null = null;
@@ -153,7 +156,7 @@ async function main() {
             title,
             year, // Año de la primera temporada como referencia
             type: contentType,
-            isNovel,
+            basedOn,
             overallRating: rating,
             observations,
             countryId: country?.id,
@@ -186,7 +189,10 @@ async function main() {
 
       // AQUÍ ESTÁ EL FIX: Procesar actores solo UNA VEZ por serie/temporada
       // Agrupar actores únicos de esta serie
-      const uniqueActors = new Map<string, { name: string; character: string }>();
+      const uniqueActors = new Map<
+        string,
+        { name: string; character: string }
+      >();
 
       for (const row of serieRows) {
         const actorName = row['Actores'];

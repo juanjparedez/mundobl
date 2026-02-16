@@ -1,14 +1,76 @@
 .series-form {
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: var(--spacing-lg);
 }
 
-.series-form .ant-card-head-title {
-  font-size: 1.25em;
-  font-weight: 600;
+/* Card principal */
+.series-form > .ant-card {
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
 }
 
+.series-form > .ant-card > .ant-card-head {
+  padding: var(--spacing-md) var(--spacing-lg);
+}
+
+.series-form .ant-card-head-title {
+  font-size: 1.3em;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Inner cards (secciones) */
+.series-form .ant-card-type-inner {
+  border-radius: var(--border-radius-base);
+}
+
+.series-form .ant-card-type-inner > .ant-card-head {
+  min-height: auto;
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 1.05em;
+}
+
+.series-form .ant-card-type-inner > .ant-card-body {
+  padding: var(--spacing-lg);
+}
+
+/* Labels del formulario */
 .series-form .ant-form-item-label > label {
   font-weight: 500;
+  font-size: 13px;
+  letter-spacing: 0.01em;
+}
+
+/* Inputs más grandes y legibles */
+.series-form .ant-input-lg,
+.series-form .ant-select-lg .ant-select-selector,
+.series-form .ant-input-number-lg {
+  border-radius: var(--border-radius-sm) !important;
+}
+
+/* Separación entre secciones del reparto */
+.series-form .ant-space {
+  width: 100%;
+}
+
+/* Botón de eliminar actor/temporada */
+.series-form .anticon-minus-circle {
+  font-size: 18px;
+  color: var(--error-color);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: var(--transition-fast);
+}
+
+.series-form .anticon-minus-circle:hover {
+  opacity: 1;
+}
+
+/* Botones de acción finales */
+.series-form > .ant-card > .ant-card-body > .ant-form > .ant-form-item:last-child {
+  margin-top: var(--spacing-lg);
+  margin-bottom: 0;
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--border-color-secondary);
 }

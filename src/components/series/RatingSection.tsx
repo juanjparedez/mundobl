@@ -25,7 +25,10 @@ const RATING_CATEGORIES = [
   { key: 'ritmo', label: 'Ritmo' },
 ];
 
-export function RatingSection({ seriesId, existingRatings }: RatingSectionProps) {
+export function RatingSection({
+  seriesId,
+  existingRatings,
+}: RatingSectionProps) {
   const message = useMessage();
   const [ratings, setRatings] = useState<Record<string, number>>(() => {
     const initial: Record<string, number> = {};
@@ -79,14 +82,18 @@ export function RatingSection({ seriesId, existingRatings }: RatingSectionProps)
           <div className="rating-average">
             <StarFilled className="rating-average__icon" />
             <div className="rating-average__score">{averageRating}</div>
-            <span style={{ color: 'var(--text-secondary)' }}>Puntuación promedio</span>
+            <span style={{ color: 'var(--text-secondary)' }}>
+              Puntuación promedio
+            </span>
           </div>
         </Card>
       )}
 
       <div className="rating-section__categories">
         <h4 className="rating-section__title">Puntuar por categorías</h4>
-        <span style={{ color: 'var(--text-secondary)' }}>Evalúa cada aspecto de la serie del 1 al 10</span>
+        <span style={{ color: 'var(--text-secondary)' }}>
+          Evalúa cada aspecto de la serie del 1 al 10
+        </span>
 
         <Row gutter={[16, 24]} style={{ marginTop: 24 }}>
           {RATING_CATEGORIES.map((category) => (
@@ -116,7 +123,12 @@ export function RatingSection({ seriesId, existingRatings }: RatingSectionProps)
         </Row>
 
         <div className="rating-section__actions">
-          <Button type="primary" size="large" onClick={handleSave} loading={isSaving}>
+          <Button
+            type="primary"
+            size="large"
+            onClick={handleSave}
+            loading={isSaving}
+          >
             Guardar Puntuaciones
           </Button>
         </div>

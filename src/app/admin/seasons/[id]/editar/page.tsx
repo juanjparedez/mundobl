@@ -52,11 +52,12 @@ export default async function EditSeasonPage({ params }: EditSeasonPageProps) {
     synopsis: season.synopsis,
     observations: season.observations,
     imageUrl: season.imageUrl,
-    actors: season.actors?.map((sa) => ({
-      name: sa.actor.name,
-      character: sa.character || '',
-      isMain: sa.isMain,
-    })) || [],
+    actors:
+      season.actors?.map((sa) => ({
+        name: sa.actor.name,
+        character: sa.character || '',
+        isMain: sa.isMain,
+      })) || [],
   };
 
   return (

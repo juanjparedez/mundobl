@@ -9,15 +9,16 @@ interface PageTitleProps {
 }
 
 export function PageTitle({ title, level = 2, subtitle }: PageTitleProps) {
-  const HeadingTag = `h${level}` as keyof JSX.IntrinsicElements;
+  const HeadingTag = `h${level}` as React.ElementType;
 
   return (
     <div className="page-title">
-      <HeadingTag className="page-title-text">
-        {title}
-      </HeadingTag>
+      <HeadingTag className="page-title-text">{title}</HeadingTag>
       {subtitle && (
-        <span style={{ color: 'var(--text-secondary)' }} className="page-subtitle">
+        <span
+          style={{ color: 'var(--text-secondary)' }}
+          className="page-subtitle"
+        >
           {subtitle}
         </span>
       )}

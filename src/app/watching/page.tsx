@@ -7,7 +7,13 @@ export default function WatchingPage() {
   return (
     <AppLayout>
       <div style={{ padding: '24px' }}>
-        <h1 style={{ fontSize: '24px', marginBottom: '24px', color: 'var(--text-primary)' }}>
+        <h1
+          style={{
+            fontSize: '24px',
+            marginBottom: '24px',
+            color: 'var(--text-primary)',
+          }}
+        >
           📺 Viendo Ahora
         </h1>
         <CurrentlyWatchingDashboard />

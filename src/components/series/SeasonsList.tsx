@@ -1,7 +1,12 @@
 'use client';
 
-import { Collapse, Tag, List, Avatar, Button } from 'antd';
-import { CalendarOutlined, PlayCircleOutlined, UserOutlined, EditOutlined } from '@ant-design/icons';
+import { Collapse, Tag, Row, Col, Avatar, Button } from 'antd';
+import {
+  CalendarOutlined,
+  PlayCircleOutlined,
+  UserOutlined,
+  EditOutlined,
+} from '@ant-design/icons';
 import Link from 'next/link';
 import { EpisodesList } from './EpisodesList';
 import { CommentsList } from '@/components/common/CommentsList';
@@ -56,23 +61,28 @@ interface SeasonsListProps {
       }> | null;
     }>;
   }>;
-  seriesId: number;
 }
 
-export function SeasonsList({ seasons, seriesId }: SeasonsListProps) {
+export function SeasonsList({ seasons }: SeasonsListProps) {
   if (!seasons || seasons.length === 0) {
     return (
       <div className="seasons-empty">
-        <span style={{ color: 'var(--text-secondary)' }}>No hay temporadas registradas</span>
+        <span style={{ color: 'var(--text-secondary)' }}>
+          No hay temporadas registradas
+        </span>
       </div>
     );
   }
 
-  const sortedSeasons = [...seasons].sort((a, b) => a.seasonNumber - b.seasonNumber);
+  const sortedSeasons = [...seasons].sort(
+    (a, b) => a.seasonNumber - b.seasonNumber
+  );
 
-  const getEpisodeWatchProgress = (season: typeof seasons[0]) => {
+  const getEpisodeWatchProgress = (season: (typeof seasons)[0]) => {
     if (!season.episodes || season.episodes.length === 0) return null;
-    const watchedCount = season.episodes.filter((ep) => ep.viewStatus?.[0]?.watched).length;
+    const watchedCount = season.episodes.filter(
+      (ep) => ep.viewStatus?.[0]?.watched
+    ).length;
     const totalCount = season.episodes.length;
     return { watchedCount, totalCount };
   };
@@ -102,11 +112,21 @@ export function SeasonsList({ seasons, seriesId }: SeasonsListProps) {
               <Tag color="success">✓ Vista</Tag>
             )}
             {episodeProgress && episodeProgress.totalCount > 0 && (
-              <Tag color={episodeProgress.watchedCount === episodeProgress.totalCount ? 'success' : 'default'}>
-                📺 {episodeProgress.watchedCount}/{episodeProgress.totalCount} vistos
+              <Tag
+                color={
+                  episodeProgress.watchedCount === episodeProgress.totalCount
+                    ? 'success'
+                    : 'default'
+                }
+              >
+                📺 {episodeProgress.watchedCount}/{episodeProgress.totalCount}{' '}
+                vistos
               </Tag>
             )}
-            <Link href={`/admin/seasons/${season.id}/editar`} onClick={(e) => e.stopPropagation()}>
+            <Link
+              href={`/admin/seasons/${season.id}/editar`}
+              onClick={(e) => e.stopPropagation()}
+            >
               <Button
                 type="link"
                 size="small"
@@ -123,7 +143,9 @@ export function SeasonsList({ seasons, seriesId }: SeasonsListProps) {
         <div className="season-content">
           {season.synopsis && (
             <div className="season-content__synopsis">
-              <h5 className="season-section-title">📖 Sinopsis de esta temporada</h5>
+              <h5 className="season-section-title">
+                📖 Sinopsis de esta temporada
+              </h5>
               <p>{season.synopsis}</p>
             </div>
           )}
@@ -131,13 +153,23 @@ export function SeasonsList({ seasons, seriesId }: SeasonsListProps) {
           {season.observations && (
             <div className="season-content__observations">
               <h5 className="season-section-title">📝 Observaciones</h5>
-              <p style={{ color: 'var(--text-secondary)', margin: 0, lineHeight: 1.6 }}>{season.observations}</p>
+              <p
+                style={{
+                  color: 'var(--text-secondary)',
+                  margin: 0,
+                  lineHeight: 1.6,
+                }}
+              >
+                {season.observations}
+              </p>
             </div>
           )}
 
           {/* Comentarios de la temporada */}
           <div className="season-content__comments">
-            <h5 className="season-section-title">💬 Comentarios de esta temporada</h5>
+            <h5 className="season-section-title">
+              💬 Comentarios de esta temporada
+            </h5>
             <CommentsList
               seasonId={season.id}
               initialComments={season.comments || []}
@@ -148,12 +180,16 @@ export function SeasonsList({ seasons, seriesId }: SeasonsListProps) {
 
           {season.ratings && season.ratings.length > 0 && (
             <div className="season-content__ratings">
-              <h5 className="season-section-title">⭐ Puntuación de esta temporada</h5>
+              <h5 className="season-section-title">
+                ⭐ Puntuación de esta temporada
+              </h5>
               <div className="ratings-grid">
                 {season.ratings.map((rating) => (
                   <div key={rating.category} className="rating-item">
                     <strong>{capitalizeFirst(rating.category)}:</strong>
-                    <Tag color={getRatingColor(rating.score)}>{rating.score}/10</Tag>
+                    <Tag color={getRatingColor(rating.score)}>
+                      {rating.score}/10
+                    </Tag>
                   </div>
                 ))}
               </div>
@@ -162,12 +198,18 @@ export function SeasonsList({ seasons, seriesId }: SeasonsListProps) {
 
           {season.actors && season.actors.length > 0 && (
             <div className="season-content__actors">
-              <h5 className="season-section-title">👥 Reparto de esta temporada ({season.actors.length})</h5>
-              <List
-                dataSource={season.actors}
-                grid={{ gutter: 16, xs: 1, sm: 2, md: 3, lg: 4 }}
-                renderItem={(actorInfo) => (
-                  <List.Item>
+              <h5 className="season-section-title">
+                👥 Reparto de esta temporada ({season.actors.length})
+              </h5>
+              <Row gutter={[16, 16]}>
+                {season.actors.map((actorInfo) => (
+                  <Col
+                    key={`${actorInfo.actor.name}-${actorInfo.character}`}
+                    xs={24}
+                    sm={12}
+                    md={8}
+                    lg={6}
+                  >
                     <div className="actor-card">
                       <Avatar
                         src={actorInfo.actor.imageUrl}
@@ -177,25 +219,29 @@ export function SeasonsList({ seasons, seriesId }: SeasonsListProps) {
                       <div className="actor-card__info">
                         <strong>{actorInfo.actor.name}</strong>
                         {actorInfo.character && (
-                          <span style={{ color: 'var(--text-secondary)' }} className="actor-card__character">
+                          <span
+                            style={{ color: 'var(--text-secondary)' }}
+                            className="actor-card__character"
+                          >
                             → {actorInfo.character}
                           </span>
                         )}
                         {actorInfo.isMain && (
-                          <Tag color="red" size="small">
-                            Protagonista
-                          </Tag>
+                          <Tag color="red">Protagonista</Tag>
                         )}
                       </div>
                     </div>
-                  </List.Item>
-                )}
-              />
+                  </Col>
+                ))}
+              </Row>
             </div>
           )}
 
           {/* Episodios de la temporada */}
-          <EpisodesList seasonId={season.id} initialEpisodes={season.episodes || []} />
+          <EpisodesList
+            seasonId={season.id}
+            initialEpisodes={season.episodes || []}
+          />
         </div>
       ),
     };

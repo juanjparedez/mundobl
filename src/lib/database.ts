@@ -6,15 +6,21 @@
  */
 
 import 'dotenv/config';
+import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
 import { PrismaClient } from '../generated/prisma';
 
 // Singleton pattern para PrismaClient
 // Esto evita crear múltiples instancias del cliente en desarrollo
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
-export const prisma = globalForPrisma.prisma || new PrismaClient({
-  log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
-});
+function createPrismaClient() {
+  const adapter = new PrismaBetterSqlite3({
+    url: process.env.DATABASE_URL || 'file:./data/mundobl.db',
+  });
+  return new PrismaClient({ adapter });
+}
+
+export const prisma = globalForPrisma.prisma || createPrismaClient();
 
 if (process.env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = prisma;
@@ -229,10 +235,7 @@ export async function getActorById(id: number) {
 export async function searchActorsByName(query: string) {
   return await prisma.actor.findMany({
     where: {
-      OR: [
-        { name: { contains: query } },
-        { stageName: { contains: query } },
-      ],
+      OR: [{ name: { contains: query } }, { stageName: { contains: query } }],
     },
     orderBy: {
       name: 'asc',
@@ -288,7 +291,13 @@ export async function getCountryById(id: number) {
  * Obtener estadísticas generales de la base de datos
  */
 export async function getStats() {
-  const [totalSeries, totalSeasons, totalActors, totalCountries, totalEpisodes] = await Promise.all([
+  const [
+    totalSeries,
+    totalSeasons,
+    totalActors,
+    totalCountries,
+    totalEpisodes,
+  ] = await Promise.all([
     prisma.series.count(),
     prisma.season.count(),
     prisma.actor.count(),

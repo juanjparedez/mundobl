@@ -5,10 +5,7 @@ import { prisma } from '@/lib/database';
 export async function GET() {
   try {
     const tags = await prisma.tag.findMany({
-      orderBy: [
-        { category: 'asc' },
-        { name: 'asc' },
-      ],
+      orderBy: [{ category: 'asc' }, { name: 'asc' }],
       include: {
         _count: {
           select: { series: true },
@@ -46,11 +43,16 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(tag);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error al crear tag:', error);
 
     // Error de duplicado (unique constraint)
-    if (error.code === 'P2002') {
+    if (
+      error &&
+      typeof error === 'object' &&
+      'code' in error &&
+      error.code === 'P2002'
+    ) {
       return NextResponse.json(
         { error: 'Ya existe un tag con ese nombre' },
         { status: 400 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Form,
@@ -30,8 +30,21 @@ import { useMessage } from '@/hooks/useMessage';
 
 const { TextArea } = Input;
 
+interface SeasonFormData {
+  id: number;
+  seriesId: number;
+  seriesTitle: string;
+  seasonNumber: number;
+  title?: string | null;
+  episodeCount?: number | null;
+  year?: number | null;
+  synopsis?: string | null;
+  observations?: string | null;
+  imageUrl?: string | null;
+}
+
 interface SeasonFormProps {
-  initialData: any;
+  initialData: SeasonFormData;
 }
 
 export function SeasonForm({ initialData }: SeasonFormProps) {
@@ -42,24 +55,24 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
   const [uploading, setUploading] = useState(false);
   const [actors, setActors] = useState<string[]>([]);
 
+  const loadFormData = useCallback(async () => {
+    try {
+      const actorsRes = await fetch('/api/actors');
+      const actorsData = await actorsRes.json();
+      setActors(actorsData.map((a: { name: string }) => a.name));
+    } catch (error) {
+      console.error('Error loading form data:', error);
+    }
+  }, []);
+
   useEffect(() => {
     loadFormData();
     if (initialData) {
       form.setFieldsValue(initialData);
     }
-  }, [initialData]);
+  }, [initialData, loadFormData, form]);
 
-  const loadFormData = async () => {
-    try {
-      const actorsRes = await fetch('/api/actors');
-      const actorsData = await actorsRes.json();
-      setActors(actorsData.map((a: any) => a.name));
-    } catch (error) {
-      console.error('Error loading form data:', error);
-    }
-  };
-
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: Record<string, unknown>) => {
     setLoading(true);
     try {
       const response = await fetch(`/api/seasons/${initialData.id}`, {
@@ -101,8 +114,10 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
       message.success('Imagen subida exitosamente');
 
       return false;
-    } catch (error: any) {
-      message.error(error.message || 'Error al subir la imagen');
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Error al subir la imagen';
+      message.error(errorMessage);
       return false;
     } finally {
       setUploading(false);
@@ -113,7 +128,13 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
     <div className="season-form">
       <Card
         title={
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <Link href={`/series/${initialData.seriesId}`}>
                 <Button icon={<ArrowLeftOutlined />} type="text">
@@ -138,7 +159,11 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
           }}
         >
           {/* Información Básica */}
-          <Card type="inner" title="📝 Información Básica de la Temporada" style={{ marginBottom: 24 }}>
+          <Card
+            type="inner"
+            title="📝 Información Básica de la Temporada"
+            style={{ marginBottom: 24 }}
+          >
             <Row gutter={16}>
               <Col xs={24} md={6}>
                 <Form.Item
@@ -158,25 +183,44 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
 
               <Col xs={24} md={6}>
                 <Form.Item label="Número de Capítulos" name="episodeCount">
-                  <InputNumber min={1} style={{ width: '100%' }} size="large" placeholder="12" />
+                  <InputNumber
+                    min={1}
+                    style={{ width: '100%' }}
+                    size="large"
+                    placeholder="12"
+                  />
                 </Form.Item>
               </Col>
 
               <Col xs={24} md={6}>
                 <Form.Item label="Año" name="year">
-                  <InputNumber min={1900} max={2100} style={{ width: '100%' }} size="large" />
+                  <InputNumber
+                    min={1900}
+                    max={2100}
+                    style={{ width: '100%' }}
+                    size="large"
+                  />
                 </Form.Item>
               </Col>
 
               <Col xs={24}>
-                <Form.Item label="📖 Sinopsis de esta Temporada" name="synopsis">
-                  <TextArea rows={4} placeholder="Descripción de lo que sucede en esta temporada..." />
+                <Form.Item
+                  label="📖 Sinopsis de esta Temporada"
+                  name="synopsis"
+                >
+                  <TextArea
+                    rows={4}
+                    placeholder="Descripción de lo que sucede en esta temporada..."
+                  />
                 </Form.Item>
               </Col>
 
               <Col xs={24}>
                 <Form.Item label="📝 Observaciones" name="observations">
-                  <TextArea rows={3} placeholder="Notas personales sobre esta temporada..." />
+                  <TextArea
+                    rows={3}
+                    placeholder="Notas personales sobre esta temporada..."
+                  />
                 </Form.Item>
               </Col>
 
@@ -211,9 +255,14 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
           </Card>
 
           {/* Reparto de esta Temporada */}
-          <Card type="inner" title="👥 Reparto de esta Temporada" style={{ marginBottom: 24 }}>
+          <Card
+            type="inner"
+            title="👥 Reparto de esta Temporada"
+            style={{ marginBottom: 24 }}
+          >
             <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>
-              Agrega actores específicos de esta temporada. El reparto principal de la serie se muestra automáticamente.
+              Agrega actores específicos de esta temporada. El reparto principal
+              de la serie se muestra automáticamente.
             </p>
             <Form.List name="actors">
               {(fields, { add, remove }) => (
@@ -231,14 +280,18 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
                       <Form.Item
                         {...restField}
                         name={[name, 'name']}
-                        rules={[{ required: true, message: 'Nombre requerido' }]}
+                        rules={[
+                          { required: true, message: 'Nombre requerido' },
+                        ]}
                         style={{ marginBottom: 0, flex: 1 }}
                       >
                         <AutoComplete
                           options={actors.map((a) => ({ value: a }))}
                           placeholder="Nombre del actor"
                           filterOption={(inputValue, option) =>
-                            option!.value.toLowerCase().includes(inputValue.toLowerCase())
+                            option!.value
+                              .toLowerCase()
+                              .includes(inputValue.toLowerCase())
                           }
                         />
                       </Form.Item>
@@ -262,12 +315,22 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
 
                       <MinusCircleOutlined
                         onClick={() => remove(name)}
-                        style={{ fontSize: '18px', color: '#ff4d4f', cursor: 'pointer', marginTop: '8px' }}
+                        style={{
+                          fontSize: '18px',
+                          color: '#ff4d4f',
+                          cursor: 'pointer',
+                          marginTop: '8px',
+                        }}
                       />
                     </div>
                   ))}
                   <Form.Item>
-                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                    <Button
+                      type="dashed"
+                      onClick={() => add()}
+                      block
+                      icon={<PlusOutlined />}
+                    >
                       Agregar Actor a esta Temporada
                     </Button>
                   </Form.Item>
@@ -279,7 +342,13 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
           {/* Botones de acción */}
           <Form.Item>
             <Space size="large">
-              <Button type="primary" htmlType="submit" icon={<SaveOutlined />} size="large" loading={loading}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                icon={<SaveOutlined />}
+                size="large"
+                loading={loading}
+              >
                 Guardar Cambios
               </Button>
               <Button size="large" onClick={() => router.back()}>

@@ -20,41 +20,48 @@ interface ThemeProviderProps {
   children: React.ReactNode;
 }
 
+interface ThemeState {
+  theme: ThemeMode;
+  mounted: boolean;
+}
+
 export function ThemeProvider({ children }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<ThemeMode>('light');
-  const [mounted, setMounted] = useState(false);
+  const [state, setState] = useState<ThemeState>({
+    theme: 'light',
+    mounted: false,
+  });
 
   useEffect(() => {
-    setMounted(true);
     const savedTheme = localStorage.getItem('theme') as ThemeMode;
     if (savedTheme) {
-      setTheme(savedTheme);
       document.documentElement.setAttribute('data-theme', savedTheme);
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration: read localStorage on mount
+    setState({ theme: savedTheme || 'light', mounted: true });
   }, []);
 
   const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light';
-    setTheme(newTheme);
+    const newTheme = state.theme === 'light' ? 'dark' : 'light';
+    setState((prev) => ({ ...prev, theme: newTheme }));
     localStorage.setItem('theme', newTheme);
     document.documentElement.setAttribute('data-theme', newTheme);
   };
 
   const handleSetTheme = (newTheme: ThemeMode) => {
-    setTheme(newTheme);
+    setState((prev) => ({ ...prev, theme: newTheme }));
     localStorage.setItem('theme', newTheme);
     document.documentElement.setAttribute('data-theme', newTheme);
   };
 
-  if (!mounted) {
+  if (!state.mounted) {
     return null;
   }
 
-  const currentTheme = theme === 'light' ? lightTheme : darkTheme;
+  const currentTheme = state.theme === 'light' ? lightTheme : darkTheme;
 
   return (
     <ThemeContext.Provider
-      value={{ theme, toggleTheme, setTheme: handleSetTheme }}
+      value={{ theme: state.theme, toggleTheme, setTheme: handleSetTheme }}
     >
       <ConfigProvider theme={currentTheme} locale={esES} componentSize="middle">
         {children}

@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@/generated/prisma';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/database';
 
 // GET /api/series - Obtener todas las series
 export async function GET() {
@@ -27,7 +25,10 @@ export async function GET() {
     return NextResponse.json(series);
   } catch (error) {
     console.error('Error fetching series:', error);
-    return NextResponse.json({ error: 'Failed to fetch series' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch series' },
+      { status: 500 }
+    );
   }
 }
 
@@ -142,6 +143,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(serie, { status: 201 });
   } catch (error) {
     console.error('Error creating series:', error);
-    return NextResponse.json({ error: 'Failed to create series' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to create series' },
+      { status: 500 }
+    );
   }
 }

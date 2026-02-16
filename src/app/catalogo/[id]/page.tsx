@@ -7,7 +7,9 @@ interface SerieDetailPageProps {
   params: Promise<{ id: string }>;
 }
 
-export default async function SerieDetailPage({ params }: SerieDetailPageProps) {
+export default async function SerieDetailPage({
+  params,
+}: SerieDetailPageProps) {
   const { id } = await params;
   const serieId = parseInt(id, 10);
 

@@ -1,6 +1,5 @@
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { getAllSeries } from '@/lib/database';
-import { PageTitleClient } from '@/components/common/PageTitle/PageTitleClient';
 import { CatalogoClient } from './CatalogoClient';
 import './catalogo.css';
 
@@ -27,13 +26,7 @@ export default async function CatalogoPage() {
   return (
     <AppLayout>
       <div className="catalogo-page">
-        <div className="catalogo-header">
-          <PageTitleClient level={2}>Catálogo de Series</PageTitleClient>
-        </div>
-
-        <div className="catalogo-content">
-          <CatalogoClient series={seriesData} />
-        </div>
+        <CatalogoClient series={seriesData} />
       </div>
     </AppLayout>
   );

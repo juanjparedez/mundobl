@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { Card, Table, Button, Input, Popconfirm, Space, Tag } from 'antd';
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
@@ -22,11 +22,7 @@ export default function TagsAdminPage() {
   const [newTagName, setNewTagName] = useState('');
   const [adding, setAdding] = useState(false);
 
-  useEffect(() => {
-    loadTags();
-  }, []);
-
-  const loadTags = async () => {
+  const loadTags = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch('/api/tags');
@@ -39,7 +35,11 @@ export default function TagsAdminPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [message]);
+
+  useEffect(() => {
+    loadTags();
+  }, [loadTags]);
 
   const handleAddTag = async () => {
     if (!newTagName.trim()) {
@@ -63,8 +63,10 @@ export default function TagsAdminPage() {
       message.success('Tag creado exitosamente');
       setNewTagName('');
       loadTags();
-    } catch (error: any) {
-      message.error(error.message || 'Error al crear el tag');
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Error al crear el tag';
+      message.error(errorMessage);
     } finally {
       setAdding(false);
     }

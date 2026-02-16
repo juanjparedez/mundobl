@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Input, Button, List, Card, Empty } from 'antd';
+import { Input, Button, Card, Empty } from 'antd';
 import { CommentOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import './CommentsList.css';
 import { useMessage } from '@/hooks/useMessage';
@@ -98,23 +98,22 @@ export function CommentsList({
 
         {comments.length > 0 && (
           <div className="comments-list-compact__items">
-            <h6 style={{ fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}>
+            <h6
+              style={{ fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}
+            >
               💬 Comentarios ({comments.length})
             </h6>
-            <List
-              size="small"
-              dataSource={comments}
-              renderItem={(comment) => (
-                <List.Item>
-                  <div className="comment-compact">
-                    <p className="comment-compact__content">{comment.content}</p>
-                    <span className="comment-compact__date">
-                      <ClockCircleOutlined /> {formatDate(new Date(comment.createdAt))}
-                    </span>
-                  </div>
-                </List.Item>
-              )}
-            />
+            <div>
+              {comments.map((comment) => (
+                <div key={comment.id} className="comment-compact">
+                  <p className="comment-compact__content">{comment.content}</p>
+                  <span className="comment-compact__date">
+                    <ClockCircleOutlined />{' '}
+                    {formatDate(new Date(comment.createdAt))}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>
@@ -123,7 +122,10 @@ export function CommentsList({
 
   return (
     <div className="comments-list">
-      <Card title={<h4 className="comments-list__title">Agregar Comentario</h4>} className="comments-list__form">
+      <Card
+        title={<h4 className="comments-list__title">Agregar Comentario</h4>}
+        className="comments-list__form"
+      >
         <TextArea
           rows={4}
           placeholder={placeholder}
@@ -152,19 +154,22 @@ export function CommentsList({
         {comments.length === 0 ? (
           <Empty description="No hay comentarios aún" />
         ) : (
-          <List
-            dataSource={comments}
-            renderItem={(comment) => (
-              <Card className="comment-card">
+          <div>
+            {comments.map((comment) => (
+              <Card key={comment.id} className="comment-card">
                 <p className="comment-card__content">{comment.content}</p>
                 <div className="comment-card__footer">
-                  <span style={{ color: 'var(--text-secondary)' }} className="comment-card__date">
-                    <ClockCircleOutlined /> {formatDate(new Date(comment.createdAt))}
+                  <span
+                    style={{ color: 'var(--text-secondary)' }}
+                    className="comment-card__date"
+                  >
+                    <ClockCircleOutlined />{' '}
+                    {formatDate(new Date(comment.createdAt))}
                   </span>
                 </div>
               </Card>
-            )}
-          />
+            ))}
+          </div>
         )}
       </div>
     </div>

@@ -9,6 +9,7 @@ interface SeriesInfoProps {
     type: string;
     basedOn?: string | null;
     format: string;
+    synopsis?: string | null;
     soundtrack?: string | null;
     observations?: string | null;
     review?: string | null;
@@ -52,9 +53,13 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
           </Descriptions.Item>
         )}
 
-        <Descriptions.Item label="Año">{series.year || 'N/A'}</Descriptions.Item>
+        <Descriptions.Item label="Año">
+          {series.year || 'N/A'}
+        </Descriptions.Item>
 
-        <Descriptions.Item label="País">{series.country?.name || 'N/A'}</Descriptions.Item>
+        <Descriptions.Item label="País">
+          {series.country?.name || 'N/A'}
+        </Descriptions.Item>
 
         <Descriptions.Item label="Tipo">
           <Tag color="blue">{series.type}</Tag>
@@ -68,9 +73,7 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
 
         {series.basedOn && (
           <Descriptions.Item label="Basado en" span={2}>
-            <Tag color="green">
-              {getBasedOnLabel(series.basedOn)}
-            </Tag>
+            <Tag color="green">{getBasedOnLabel(series.basedOn)}</Tag>
           </Descriptions.Item>
         )}
 
@@ -78,7 +81,9 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
           {series.seasons?.length || 0}
         </Descriptions.Item>
 
-        <Descriptions.Item label="Episodios Totales">{totalEpisodes || 'N/A'}</Descriptions.Item>
+        <Descriptions.Item label="Episodios Totales">
+          {totalEpisodes || 'N/A'}
+        </Descriptions.Item>
 
         {series.soundtrack && (
           <Descriptions.Item label="Banda Sonora" span={2}>
@@ -104,7 +109,9 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
       {series.observations && (
         <div className="series-info__observations">
           <h4 className="series-info__section-title">📝 Observaciones</h4>
-          <div className="series-info__observations-content">{series.observations}</div>
+          <div className="series-info__observations-content">
+            {series.observations}
+          </div>
         </div>
       )}
     </div>

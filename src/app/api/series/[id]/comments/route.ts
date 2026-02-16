@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@/generated/prisma';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/database';
 
 export async function POST(
   request: NextRequest,
@@ -14,7 +12,10 @@ export async function POST(
     const { content } = body;
 
     if (!content || typeof content !== 'string' || content.trim() === '') {
-      return NextResponse.json({ error: 'Comment content is required' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Comment content is required' },
+        { status: 400 }
+      );
     }
 
     const comment = await prisma.comment.create({
@@ -27,6 +28,9 @@ export async function POST(
     return NextResponse.json(comment);
   } catch (error) {
     console.error('Error creating comment:', error);
-    return NextResponse.json({ error: 'Failed to create comment' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to create comment' },
+      { status: 500 }
+    );
   }
 }

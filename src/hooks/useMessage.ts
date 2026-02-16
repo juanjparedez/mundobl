@@ -10,3 +10,11 @@ export function useMessage() {
   const { message } = App.useApp();
   return message;
 }
+
+/**
+ * Hook para usar modal de Ant Design correctamente con contexto de tema
+ */
+export function useModal() {
+  const { modal } = App.useApp();
+  return modal;
+}
