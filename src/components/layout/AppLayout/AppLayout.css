@@ -7,7 +7,7 @@
   padding: var(--spacing-lg);
   background: var(--bg-container);
   border-radius: var(--border-radius-base);
-  min-height: calc(100vh - var(--header-height) - var(--spacing-lg) * 2);
+  min-height: calc(100vh - var(--spacing-lg) * 2);
 }
 
 @media (max-width: 768px) {

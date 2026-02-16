@@ -186,26 +186,25 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
                   name="imageUrl"
                   help="Pega una URL o sube un archivo desde tu computadora"
                 >
-                  <Input
-                    size="large"
-                    placeholder="https://example.com/season-image.jpg"
-                    addonAfter={
-                      <Upload
-                        accept="image/*"
-                        showUploadList={false}
-                        beforeUpload={handleUpload}
+                  <Space.Compact style={{ width: '100%' }}>
+                    <Input
+                      size="large"
+                      placeholder="https://example.com/season-image.jpg"
+                    />
+                    <Upload
+                      accept="image/*"
+                      showUploadList={false}
+                      beforeUpload={handleUpload}
+                    >
+                      <Button
+                        icon={<UploadOutlined />}
+                        loading={uploading}
+                        size="large"
                       >
-                        <Button
-                          icon={<UploadOutlined />}
-                          loading={uploading}
-                          type="link"
-                          style={{ padding: 0, height: 'auto' }}
-                        >
-                          {uploading ? 'Subiendo...' : 'Subir archivo'}
-                        </Button>
-                      </Upload>
-                    }
-                  />
+                        {uploading ? 'Subiendo...' : 'Subir'}
+                      </Button>
+                    </Upload>
+                  </Space.Compact>
                 </Form.Item>
               </Col>
             </Row>

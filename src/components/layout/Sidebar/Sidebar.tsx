@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, Switch } from 'antd';
 import {
   AppstoreOutlined,
   SettingOutlined,
@@ -12,8 +12,11 @@ import {
   PlusOutlined,
   GlobalOutlined,
   PlayCircleOutlined,
+  BulbOutlined,
+  BulbFilled,
 } from '@ant-design/icons';
 import { ROUTES } from '@/constants/navigation';
+import { useTheme } from '@/lib/providers/ThemeProvider';
 import './Sidebar.css';
 
 const { Sider } = Layout;
@@ -22,6 +25,7 @@ export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+  const { theme, toggleTheme } = useTheme();
 
   const menuItems = [
     {
@@ -87,6 +91,23 @@ export function Sidebar() {
         selectedKeys={[selectedKey]}
         items={menuItems}
       />
+      <div className="sidebar-theme-toggle">
+        {collapsed ? (
+          <span
+            className="sidebar-theme-icon"
+            onClick={toggleTheme}
+          >
+            {theme === 'dark' ? <BulbFilled /> : <BulbOutlined />}
+          </span>
+        ) : (
+          <Switch
+            checked={theme === 'dark'}
+            onChange={toggleTheme}
+            checkedChildren="Oscuro"
+            unCheckedChildren="Claro"
+          />
+        )}
+      </div>
     </Sider>
   );
 }

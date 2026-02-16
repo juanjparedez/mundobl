@@ -1,7 +1,6 @@
 'use client';
 
 import { Layout } from 'antd';
-import { Header } from '../Header/Header';
 import { Sidebar } from '../Sidebar/Sidebar';
 import './AppLayout.css';
 
@@ -16,7 +15,6 @@ export function AppLayout({ children }: AppLayoutProps) {
     <Layout className="app-layout">
       <Sidebar />
       <Layout>
-        <Header />
         <Content className="app-content">{children}</Content>
       </Layout>
     </Layout>
