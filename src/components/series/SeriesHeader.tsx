@@ -1,5 +1,11 @@
 import { Tag } from 'antd';
-import { CalendarOutlined, GlobalOutlined, BookOutlined, MobileOutlined } from '@ant-design/icons';
+import {
+  CalendarOutlined,
+  GlobalOutlined,
+  BookOutlined,
+  MobileOutlined,
+} from '@ant-design/icons';
+import Image from 'next/image';
 import './SeriesHeader.css';
 
 interface SeriesHeaderProps {
@@ -35,7 +41,13 @@ export function SeriesHeader({ series }: SeriesHeaderProps) {
     <div className="series-header">
       {series.imageUrl && (
         <div className="series-header__image">
-          <img src={series.imageUrl} alt={series.title} />
+          <Image
+            src={series.imageUrl}
+            alt={series.title}
+            width={300}
+            height={450}
+            style={{ objectFit: 'cover' }}
+          />
         </div>
       )}
 
@@ -84,7 +96,9 @@ export function SeriesHeader({ series }: SeriesHeaderProps) {
             </span>
           )}
 
-          <Tag color={getTypeColor(series.type)}>{getTypeLabel(series.type)}</Tag>
+          <Tag color={getTypeColor(series.type)}>
+            {getTypeLabel(series.type)}
+          </Tag>
 
           {series.overallRating && (
             <Tag color="gold">★ {series.overallRating}/10</Tag>

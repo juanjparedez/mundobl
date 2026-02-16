@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Input, Button, List, Card, Empty } from 'antd';
+import { Input, Button, Card, Empty } from 'antd';
 import { CommentOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import './CommentsSection.css';
 import { useMessage } from '@/hooks/useMessage';
@@ -18,7 +18,10 @@ interface CommentsSectionProps {
   }>;
 }
 
-export function CommentsSection({ seriesId, comments: initialComments }: CommentsSectionProps) {
+export function CommentsSection({
+  seriesId,
+  comments: initialComments,
+}: CommentsSectionProps) {
   const message = useMessage();
   const [comments, setComments] = useState(initialComments);
   const [newComment, setNewComment] = useState('');
@@ -54,7 +57,10 @@ export function CommentsSection({ seriesId, comments: initialComments }: Comment
 
   return (
     <div className="comments-section">
-      <Card title={<h4 className="comments-section__title">Agregar Comentario</h4>} className="comments-section__form">
+      <Card
+        title={<h4 className="comments-section__title">Agregar Comentario</h4>}
+        className="comments-section__form"
+      >
         <TextArea
           rows={4}
           placeholder="Escribe tus impresiones, opiniones o notas sobre esta serie..."
@@ -83,19 +89,22 @@ export function CommentsSection({ seriesId, comments: initialComments }: Comment
         {comments.length === 0 ? (
           <Empty description="No hay comentarios aún" />
         ) : (
-          <List
-            dataSource={comments}
-            renderItem={(comment) => (
-              <Card className="comment-card">
+          <div className="comments-section__items">
+            {comments.map((comment) => (
+              <Card key={comment.id} className="comment-card">
                 <p className="comment-card__content">{comment.content}</p>
                 <div className="comment-card__footer">
-                  <span style={{ color: 'var(--text-secondary)' }} className="comment-card__date">
-                    <ClockCircleOutlined /> {formatDate(new Date(comment.createdAt))}
+                  <span
+                    style={{ color: 'var(--text-secondary)' }}
+                    className="comment-card__date"
+                  >
+                    <ClockCircleOutlined />{' '}
+                    {formatDate(new Date(comment.createdAt))}
                   </span>
                 </div>
               </Card>
-            )}
-          />
+            ))}
+          </div>
         )}
       </div>
     </div>

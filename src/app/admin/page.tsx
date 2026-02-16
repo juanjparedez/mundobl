@@ -35,7 +35,10 @@ export default async function AdminPage() {
     temporadas: serie.seasons.length,
     episodios: serie.seasons.reduce((acc, s) => acc + (s.episodeCount || 0), 0),
     anio: serie.year || 0,
-    estado: serie.type === 'pelicula' || serie.type === 'corto' ? 'finalizada' : 'activa',
+    estado:
+      serie.type === 'pelicula' || serie.type === 'corto'
+        ? 'finalizada'
+        : 'activa',
     rating: serie.overallRating,
   }));
 

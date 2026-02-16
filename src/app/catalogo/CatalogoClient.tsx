@@ -5,18 +5,24 @@ import { useRouter } from 'next/navigation';
 import {
   Row,
   Col,
-  Card,
   Empty,
-  Space,
   Tag,
   Input,
   Select,
-  Slider,
   Button,
   Pagination,
   Tooltip,
 } from 'antd';
-import { SearchOutlined, FilterOutlined, PlusOutlined, StarOutlined, StarFilled } from '@ant-design/icons';
+import {
+  SearchOutlined,
+  FilterOutlined,
+  PlusOutlined,
+  StarOutlined,
+  StarFilled,
+  EyeOutlined,
+  DownOutlined,
+  UpOutlined,
+} from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
 
 const { Option } = Select;
@@ -41,79 +47,71 @@ interface CatalogoClientProps {
   series: SerieData[];
 }
 
-const ITEMS_PER_PAGE = 50;
+const PAGE_SIZE_OPTIONS = [24, 48, 96];
+const DEFAULT_PAGE_SIZE = 48;
 
-// Función para generar gradientes sutiles basados en el tipo de contenido
 const getGradientByType = (tipo: string): string => {
   const gradients: Record<string, string> = {
-    // Serie: Azul suave
-    serie: 'linear-gradient(135deg, rgba(47, 84, 235, 0.7) 0%, rgba(104, 109, 224, 0.8) 100%)',
-
-    // Película: Magenta/Rosa suave
-    pelicula: 'linear-gradient(135deg, rgba(235, 47, 150, 0.7) 0%, rgba(184, 50, 128, 0.8) 100%)',
-
-    // Corto: Cyan suave
-    corto: 'linear-gradient(135deg, rgba(19, 194, 194, 0.7) 0%, rgba(65, 105, 225, 0.8) 100%)',
-
-    // Especial: Naranja suave
-    especial: 'linear-gradient(135deg, rgba(250, 140, 22, 0.7) 0%, rgba(245, 89, 62, 0.8) 100%)',
+    serie:
+      'linear-gradient(135deg, rgba(47, 84, 235, 0.7) 0%, rgba(104, 109, 224, 0.8) 100%)',
+    pelicula:
+      'linear-gradient(135deg, rgba(235, 47, 150, 0.7) 0%, rgba(184, 50, 128, 0.8) 100%)',
+    corto:
+      'linear-gradient(135deg, rgba(19, 194, 194, 0.7) 0%, rgba(65, 105, 225, 0.8) 100%)',
+    especial:
+      'linear-gradient(135deg, rgba(250, 140, 22, 0.7) 0%, rgba(245, 89, 62, 0.8) 100%)',
   };
-
   return gradients[tipo] || gradients['serie'];
-};
-
-// Función para obtener estilos de card por tipo
-const getCardStyles = (tipo: string) => {
-  const styles: Record<string, { border: string; bgGradient: string }> = {
-    serie: {
-      border: '4px solid rgba(47, 84, 235, 0.9)',
-      bgGradient: 'linear-gradient(135deg, rgba(47, 84, 235, 0.15) 0%, rgba(47, 84, 235, 0.03) 70%, transparent 100%)',
-    },
-    pelicula: {
-      border: '4px solid rgba(235, 47, 150, 0.9)',
-      bgGradient: 'linear-gradient(135deg, rgba(235, 47, 150, 0.15) 0%, rgba(235, 47, 150, 0.03) 70%, transparent 100%)',
-    },
-    corto: {
-      border: '4px solid rgba(19, 194, 194, 0.9)',
-      bgGradient: 'linear-gradient(135deg, rgba(19, 194, 194, 0.15) 0%, rgba(19, 194, 194, 0.03) 70%, transparent 100%)',
-    },
-    especial: {
-      border: '4px solid rgba(250, 140, 22, 0.9)',
-      bgGradient: 'linear-gradient(135deg, rgba(250, 140, 22, 0.15) 0%, rgba(250, 140, 22, 0.03) 70%, transparent 100%)',
-    },
-  };
-
-  return styles[tipo] || styles['serie'];
 };
 
 export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
   const router = useRouter();
   const message = useMessage();
 
-  // Estado local de series (para actualizar favoritos sin recargar)
   const [series, setSeries] = useState<SerieData[]>(initialSeries);
 
-  // Estados de filtros
+  // Filtros
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCountry, setSelectedCountry] = useState<string | undefined>();
   const [selectedType, setSelectedType] = useState<string | undefined>();
-  const [selectedViewed, setSelectedViewed] = useState<string>('all');
-  const [selectedFavorite, setSelectedFavorite] = useState<string>('all');
+  const [selectedViewed, setSelectedViewed] = useState<string | undefined>();
+  const [selectedFavorite, setSelectedFavorite] = useState<string | undefined>();
   const [minRating, setMinRating] = useState(0);
-  const [yearRange, setYearRange] = useState<[number, number]>([2000, 2026]);
+  const [yearFrom, setYearFrom] = useState<number | undefined>();
+  const [yearTo, setYearTo] = useState<number | undefined>();
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
+  const [filtersVisible, setFiltersVisible] = useState(true);
 
-  // Obtener países únicos
   const countries = useMemo(() => {
-    const uniqueCountries = Array.from(new Set(series.map((s) => s.pais).filter(Boolean)));
+    const uniqueCountries = Array.from(
+      new Set(series.map((s) => s.pais).filter(Boolean))
+    );
     return uniqueCountries.sort();
   }, [series]);
 
-  // Aplicar filtros
+  const yearBounds = useMemo(() => {
+    const years = series.map((s) => s.anio).filter((y) => y > 0);
+    return {
+      min: Math.min(...years, 1990),
+      max: Math.max(...years, 2026),
+    };
+  }, [series]);
+
+  const hasActiveFilters = !!(
+    searchTerm ||
+    selectedCountry ||
+    selectedType ||
+    selectedViewed ||
+    selectedFavorite ||
+    minRating > 0 ||
+    yearFrom ||
+    yearTo
+  );
+
   const filteredSeries = useMemo(() => {
     let filtered = [...series];
 
-    // Búsqueda por título
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(
@@ -124,50 +122,54 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
       );
     }
 
-    // Filtro por país
     if (selectedCountry) {
       filtered = filtered.filter((s) => s.pais === selectedCountry);
     }
 
-    // Filtro por tipo
     if (selectedType) {
       filtered = filtered.filter((s) => s.tipo === selectedType);
     }
 
-    // Filtro por visto/no visto
     if (selectedViewed === 'watched') {
       filtered = filtered.filter((s) => s.visto === true);
     } else if (selectedViewed === 'unwatched') {
       filtered = filtered.filter((s) => !s.visto);
     }
 
-    // Filtro por favoritos
     if (selectedFavorite === 'favorites') {
       filtered = filtered.filter((s) => s.isFavorite === true);
     }
 
-    // Filtro por rating mínimo
     if (minRating > 0) {
       filtered = filtered.filter((s) => (s.rating ?? 0) >= minRating);
     }
 
-    // Filtro por rango de años
-    filtered = filtered.filter((s) => {
-      const year = s.anio ?? 0;
-      return year >= yearRange[0] && year <= yearRange[1];
-    });
+    if (yearFrom) {
+      filtered = filtered.filter((s) => (s.anio ?? 0) >= yearFrom);
+    }
+
+    if (yearTo) {
+      filtered = filtered.filter((s) => (s.anio ?? 0) <= yearTo);
+    }
 
     return filtered;
-  }, [series, searchTerm, selectedCountry, selectedType, selectedViewed, selectedFavorite, minRating, yearRange]);
+  }, [
+    series,
+    searchTerm,
+    selectedCountry,
+    selectedType,
+    selectedViewed,
+    selectedFavorite,
+    minRating,
+    yearFrom,
+    yearTo,
+  ]);
 
-  // Paginación
   const paginatedSeries = useMemo(() => {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
-    return filteredSeries.slice(startIndex, endIndex);
-  }, [filteredSeries, currentPage]);
+    const startIndex = (currentPage - 1) * pageSize;
+    return filteredSeries.slice(startIndex, startIndex + pageSize);
+  }, [filteredSeries, currentPage, pageSize]);
 
-  // Reset página cuando cambian filtros
   const handleFilterChange = () => {
     setCurrentPage(1);
   };
@@ -176,15 +178,20 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
     setSearchTerm('');
     setSelectedCountry(undefined);
     setSelectedType(undefined);
-    setSelectedViewed('all');
-    setSelectedFavorite('all');
+    setSelectedViewed(undefined);
+    setSelectedFavorite(undefined);
     setMinRating(0);
-    setYearRange([2000, 2026]);
+    setYearFrom(undefined);
+    setYearTo(undefined);
     setCurrentPage(1);
   };
 
-  const toggleFavorite = async (serieId: string, currentFavorite: boolean, e: React.MouseEvent) => {
-    e.stopPropagation(); // Evitar que se abra el detalle de la serie
+  const toggleFavorite = async (
+    serieId: string,
+    currentFavorite: boolean,
+    e: React.MouseEvent
+  ) => {
+    e.stopPropagation();
 
     try {
       const response = await fetch(`/api/series/${serieId}/favorite`, {
@@ -195,7 +202,6 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
 
       if (!response.ok) throw new Error('Error al actualizar favorito');
 
-      // Actualizar el estado local
       setSeries((prevSeries) =>
         prevSeries.map((s) =>
           s.id === serieId ? { ...s, isFavorite: !currentFavorite } : s
@@ -203,7 +209,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
       );
 
       message.success(
-        !currentFavorite ? '⭐ Agregado a favoritos' : 'Removido de favoritos'
+        !currentFavorite ? 'Agregado a favoritos' : 'Removido de favoritos'
       );
     } catch (error) {
       console.error('Error toggling favorite:', error);
@@ -212,6 +218,11 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
   };
 
   const handleCardClick = (id: string) => {
+    router.push(`/series/${id}`);
+  };
+
+  const handleQuickView = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
     router.push(`/series/${id}`);
   };
 
@@ -225,51 +236,55 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
     return colorMap[tipo] || 'default';
   };
 
+  const yearOptions = Array.from(
+    { length: yearBounds.max - yearBounds.min + 1 },
+    (_, i) => yearBounds.min + i
+  );
+
   return (
     <>
-      {/* Header con botón agregar */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '24px',
-        }}
-      >
-        <h2>Catálogo de Series y Películas</h2>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          size="large"
-          onClick={() => router.push('/admin/series/nueva')}
-        >
-          Agregar Nueva
-        </Button>
+      {/* Toolbar: búsqueda + acciones */}
+      <div className="catalogo-toolbar">
+        <div className="catalogo-toolbar-left">
+          <Input
+            placeholder="Buscar por título, país o tipo..."
+            prefix={<SearchOutlined style={{ color: 'var(--text-tertiary)' }} />}
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              handleFilterChange();
+            }}
+            allowClear
+            className="catalogo-search"
+          />
+          <Button
+            icon={filtersVisible ? <UpOutlined /> : <DownOutlined />}
+            onClick={() => setFiltersVisible(!filtersVisible)}
+            className={hasActiveFilters ? 'catalogo-filter-btn-active' : ''}
+          >
+            Filtros{hasActiveFilters ? ` (${filteredSeries.length})` : ''}
+          </Button>
+        </div>
+        <div className="catalogo-toolbar-right">
+          <span className="catalogo-count">
+            {filteredSeries.length === series.length
+              ? `${series.length} títulos`
+              : `${filteredSeries.length} de ${series.length}`}
+          </span>
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => router.push('/admin/series/nueva')}
+          >
+            Nueva
+          </Button>
+        </div>
       </div>
 
-      {/* Panel de Filtros Compacto */}
-      <Card
-        size="small"
-        style={{ marginBottom: '16px' }}
-        styles={{ body: { padding: '12px 16px' } }}
-      >
-        <Space direction="vertical" size="small" style={{ width: '100%' }}>
-          {/* Fila única: Todos los filtros principales */}
+      {/* Panel de filtros colapsable */}
+      {filtersVisible && (
+        <div className="catalogo-filters">
           <Row gutter={[8, 8]} align="middle">
-            <Col xs={24} sm={12} md={8} lg={5}>
-              <Input
-                size="small"
-                placeholder="Buscar..."
-                prefix={<SearchOutlined />}
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  handleFilterChange();
-                }}
-                allowClear
-              />
-            </Col>
-
             <Col xs={12} sm={6} md={4} lg={3}>
               <Select
                 size="small"
@@ -302,10 +317,10 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
                 }}
                 allowClear
               >
-                <Option value="serie">📺 Serie</Option>
-                <Option value="pelicula">🎬 Película</Option>
-                <Option value="corto">🎞️ Corto</Option>
-                <Option value="especial">✨ Especial</Option>
+                <Option value="serie">Serie</Option>
+                <Option value="pelicula">Película</Option>
+                <Option value="corto">Corto</Option>
+                <Option value="especial">Especial</Option>
               </Select>
             </Col>
 
@@ -319,10 +334,10 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
                   setSelectedViewed(value);
                   handleFilterChange();
                 }}
+                allowClear
               >
-                <Option value="all">Todas</Option>
-                <Option value="watched">✓ Vistas</Option>
-                <Option value="unwatched">○ No vistas</Option>
+                <Option value="watched">Vistas</Option>
+                <Option value="unwatched">No vistas</Option>
               </Select>
             </Col>
 
@@ -336,9 +351,9 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
                   setSelectedFavorite(value);
                   handleFilterChange();
                 }}
+                allowClear
               >
-                <Option value="all">Todos</Option>
-                <Option value="favorites">⭐ Favoritos</Option>
+                <Option value="favorites">Favoritos</Option>
               </Select>
             </Col>
 
@@ -356,72 +371,67 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
               >
                 {[5, 6, 7, 8, 9, 10].map((rating) => (
                   <Option key={rating} value={rating}>
-                    ★ {rating}+
+                    {rating}+
                   </Option>
                 ))}
               </Select>
             </Col>
 
-            <Col xs={24} sm={12} md={8} lg={5}>
-              <Space.Compact size="small" style={{ width: '100%' }}>
-                <Select
-                  size="small"
-                  placeholder="Desde"
-                  style={{ width: '50%' }}
-                  value={yearRange[0]}
-                  onChange={(value) => {
-                    setYearRange([value, yearRange[1]]);
-                    handleFilterChange();
-                  }}
-                >
-                  {Array.from({ length: 27 }, (_, i) => 2000 + i).map((year) => (
-                    <Option key={year} value={year}>
-                      {year}
-                    </Option>
-                  ))}
-                </Select>
-                <Select
-                  size="small"
-                  placeholder="Hasta"
-                  style={{ width: '50%' }}
-                  value={yearRange[1]}
-                  onChange={(value) => {
-                    setYearRange([yearRange[0], value]);
-                    handleFilterChange();
-                  }}
-                >
-                  {Array.from({ length: 27 }, (_, i) => 2000 + i).map((year) => (
-                    <Option key={year} value={year}>
-                      {year}
-                    </Option>
-                  ))}
-                </Select>
-              </Space.Compact>
-            </Col>
-
-            <Col xs={12} sm={6} md={4} lg={2}>
-              <Button
+            <Col xs={12} sm={6} md={3} lg={2}>
+              <Select
                 size="small"
-                icon={<FilterOutlined />}
-                onClick={clearFilters}
-                block
+                placeholder="Desde"
+                style={{ width: '100%' }}
+                value={yearFrom}
+                onChange={(value) => {
+                  setYearFrom(value);
+                  handleFilterChange();
+                }}
+                allowClear
               >
-                Limpiar
-              </Button>
+                {yearOptions.map((year) => (
+                  <Option key={year} value={year}>
+                    {year}
+                  </Option>
+                ))}
+              </Select>
             </Col>
-          </Row>
 
-          {/* Contador de resultados */}
-          <div style={{
-            fontSize: '12px',
-            color: 'var(--text-secondary)',
-            textAlign: 'right',
-            marginTop: '4px'
-          }}>
-            {filteredSeries.length} de {series.length} series
-          </div>
-        </Space>
-      </Card>
+            <Col xs={12} sm={6} md={3} lg={2}>
+              <Select
+                size="small"
+                placeholder="Hasta"
+                style={{ width: '100%' }}
+                value={yearTo}
+                onChange={(value) => {
+                  setYearTo(value);
+                  handleFilterChange();
+                }}
+                allowClear
+              >
+                {yearOptions.map((year) => (
+                  <Option key={year} value={year}>
+                    {year}
+                  </Option>
+                ))}
+              </Select>
+            </Col>
+
+            {hasActiveFilters && (
+              <Col xs={12} sm={6} md={3} lg={2}>
+                <Button
+                  size="small"
+                  icon={<FilterOutlined />}
+                  onClick={clearFilters}
+                  block
+                >
+                  Limpiar
+                </Button>
+              </Col>
+            )}
+          </Row>
+        </div>
+      )}
 
       {/* Grid de Series */}
       {paginatedSeries.length > 0 ? (
@@ -429,112 +439,111 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
           <Row gutter={[16, 16]}>
             {paginatedSeries.map((serie) => {
               const gradient = getGradientByType(serie.tipo);
-              const cardStyles = getCardStyles(serie.tipo);
-              const hasSynopsis = serie.synopsis && serie.synopsis.trim().length > 0;
 
               return (
                 <Col xs={24} sm={12} md={8} lg={6} key={serie.id}>
-                  <Tooltip
-                    title={hasSynopsis ? serie.synopsis : 'Sin sinopsis'}
-                    placement="top"
-                    styles={{ root: { maxWidth: '400px' } }}
+                  <div
+                    className={`serie-card serie-card--${serie.tipo}`}
+                    onClick={() => handleCardClick(serie.id)}
                   >
-                    <Card
-                      hoverable
-                      className={`serie-card serie-card--${serie.tipo}`}
-                      onClick={() => handleCardClick(serie.id)}
+                    <div
+                      className="serie-card-cover"
                       style={{
-                        cursor: 'pointer',
-                        borderLeft: cardStyles.border,
-                        backgroundImage: cardStyles.bgGradient,
-                        position: 'relative',
-                        overflow: 'hidden',
+                        background: gradient,
+                        backgroundImage: serie.imageUrl
+                          ? `url(${serie.imageUrl})`
+                          : undefined,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundBlendMode: serie.imageUrl
+                          ? 'overlay'
+                          : 'normal',
                       }}
-                      styles={{ body: { padding: '12px', position: 'relative', zIndex: 1 } }}
-                      cover={
-                        <div
-                          className="serie-card-cover"
-                          style={{
-                            background: gradient,
-                            backgroundImage: serie.imageUrl ? `url(${serie.imageUrl})` : undefined,
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
-                            backgroundBlendMode: serie.imageUrl ? 'overlay' : 'normal',
-                          }}
-                        >
-                          <Button
-                            type="text"
-                            icon={serie.isFavorite ? <StarFilled /> : <StarOutlined />}
-                            onClick={(e) => toggleFavorite(serie.id, serie.isFavorite || false, e)}
-                            style={{
-                              position: 'absolute',
-                              top: '8px',
-                              right: '8px',
-                              zIndex: 3,
-                              color: serie.isFavorite ? '#fadb14' : 'rgba(255, 255, 255, 0.85)',
-                              fontSize: '20px',
-                              background: 'rgba(0, 0, 0, 0.4)',
-                              backdropFilter: 'blur(4px)',
-                            }}
-                            size="small"
-                          />
-                          <div className="serie-title-overlay">{serie.titulo}</div>
-                        </div>
-                      }
                     >
-                      <div className="serie-card-meta">
-                        <div className="serie-card-tags">
-                          <Tag color={getColorByType(serie.tipo)}>{serie.tipo.toUpperCase()}</Tag>
-                          {serie.visto && <Tag color="success">✓ Vista</Tag>}
-                          {serie.rating && <Tag color="gold">★ {serie.rating}</Tag>}
-                        </div>
-                        <div className="serie-card-info">
-                          <span>{serie.pais}</span>
-                          {serie.anio && <span>•</span>}
-                          <span>{serie.anio || 'N/A'}</span>
-                          {serie.temporadas > 0 && (
-                            <>
-                              <span>•</span>
-                              <span>
-                                {serie.temporadas}T
-                                {serie.episodios > 0 && ` ${serie.episodios}E`}
-                              </span>
-                            </>
-                          )}
-                        </div>
+                      <div className="serie-card-actions">
+                        <Tooltip title={serie.isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}>
+                          <button
+                            className={`serie-card-action-btn ${serie.isFavorite ? 'favorite-active' : ''}`}
+                            onClick={(e) =>
+                              toggleFavorite(serie.id, serie.isFavorite || false, e)
+                            }
+                          >
+                            {serie.isFavorite ? <StarFilled /> : <StarOutlined />}
+                          </button>
+                        </Tooltip>
+                        <Tooltip title="Ver detalle">
+                          <button
+                            className="serie-card-action-btn"
+                            onClick={(e) => handleQuickView(serie.id, e)}
+                          >
+                            <EyeOutlined />
+                          </button>
+                        </Tooltip>
                       </div>
-                    </Card>
-                  </Tooltip>
+                      <div className="serie-title-overlay">
+                        {serie.titulo}
+                      </div>
+                    </div>
+                    <div className="serie-card-body">
+                      <div className="serie-card-tags">
+                        <Tag color={getColorByType(serie.tipo)}>
+                          {serie.tipo.toUpperCase()}
+                        </Tag>
+                        {serie.visto && <Tag color="success">Vista</Tag>}
+                        {serie.rating != null && serie.rating > 0 && (
+                          <Tag color="gold">{serie.rating}</Tag>
+                        )}
+                      </div>
+                      <div className="serie-card-info">
+                        <span>{serie.pais}</span>
+                        {serie.anio > 0 && (
+                          <>
+                            <span className="serie-card-dot" />
+                            <span>{serie.anio}</span>
+                          </>
+                        )}
+                        {serie.temporadas > 0 && (
+                          <>
+                            <span className="serie-card-dot" />
+                            <span>
+                              {serie.temporadas}T
+                              {serie.episodios > 0 && ` ${serie.episodios}E`}
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </Col>
               );
             })}
           </Row>
 
           {/* Paginación */}
-          {filteredSeries.length > ITEMS_PER_PAGE && (
-            <div style={{ marginTop: '32px', textAlign: 'center' }}>
-              <Pagination
-                current={currentPage}
-                pageSize={ITEMS_PER_PAGE}
-                total={filteredSeries.length}
-                onChange={setCurrentPage}
-                showSizeChanger={false}
-                showTotal={(total, range) =>
-                  `${range[0]}-${range[1]} de ${total} series`
+          <div className="catalogo-pagination">
+            <Pagination
+              current={currentPage}
+              pageSize={pageSize}
+              total={filteredSeries.length}
+              onChange={(page, size) => {
+                setCurrentPage(page);
+                if (size !== pageSize) {
+                  setPageSize(size);
+                  setCurrentPage(1);
                 }
-              />
-            </div>
-          )}
+              }}
+              showSizeChanger
+              pageSizeOptions={PAGE_SIZE_OPTIONS.map(String)}
+              showTotal={(total, range) =>
+                `${range[0]}-${range[1]} de ${total}`
+              }
+            />
+          </div>
         </>
       ) : (
         <Empty
           description={
-            searchTerm ||
-            selectedCountry ||
-            selectedType ||
-            selectedViewed !== 'all' ||
-            selectedFavorite !== 'all' ||
-            minRating > 0
+            hasActiveFilters
               ? 'No se encontraron series con estos filtros'
               : 'No hay series en el catálogo'
           }

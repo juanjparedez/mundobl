@@ -29,13 +29,19 @@ export async function GET(
     });
 
     if (!season) {
-      return NextResponse.json({ error: 'Temporada no encontrada' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Temporada no encontrada' },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json(season);
   } catch (error) {
     console.error('Error fetching season:', error);
-    return NextResponse.json({ error: 'Error al obtener temporada' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Error al obtener temporada' },
+      { status: 500 }
+    );
   }
 }
 
@@ -55,7 +61,7 @@ export async function PUT(
     const { actors, ...seasonData } = body;
 
     // Actualizar temporada
-    const updatedSeason = await prisma.season.update({
+    await prisma.season.update({
       where: { id: seasonId },
       data: {
         seasonNumber: seasonData.seasonNumber,
@@ -113,7 +119,10 @@ export async function PUT(
     return NextResponse.json(season);
   } catch (error) {
     console.error('Error updating season:', error);
-    return NextResponse.json({ error: 'Error al actualizar temporada' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Error al actualizar temporada' },
+      { status: 500 }
+    );
   }
 }
 
@@ -136,6 +145,9 @@ export async function DELETE(
     return NextResponse.json({ message: 'Temporada eliminada' });
   } catch (error) {
     console.error('Error deleting season:', error);
-    return NextResponse.json({ error: 'Error al eliminar temporada' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Error al eliminar temporada' },
+      { status: 500 }
+    );
   }
 }

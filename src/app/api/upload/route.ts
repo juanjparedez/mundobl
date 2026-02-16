@@ -12,10 +12,19 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate file type
-    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+    const validTypes = [
+      'image/jpeg',
+      'image/jpg',
+      'image/png',
+      'image/webp',
+      'image/gif',
+    ];
     if (!validTypes.includes(file.type)) {
       return NextResponse.json(
-        { error: 'Invalid file type. Only images are allowed (JPEG, PNG, WebP, GIF)' },
+        {
+          error:
+            'Invalid file type. Only images are allowed (JPEG, PNG, WebP, GIF)',
+        },
         { status: 400 }
       );
     }
@@ -39,7 +48,13 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes);
 
     // Save file to public/images/series/
-    const publicPath = join(process.cwd(), 'public', 'images', 'series', filename);
+    const publicPath = join(
+      process.cwd(),
+      'public',
+      'images',
+      'series',
+      filename
+    );
     await writeFile(publicPath, buffer);
 
     // Return public URL
@@ -53,6 +68,9 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error uploading file:', error);
-    return NextResponse.json({ error: 'Error uploading file' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Error uploading file' },
+      { status: 500 }
+    );
   }
 }

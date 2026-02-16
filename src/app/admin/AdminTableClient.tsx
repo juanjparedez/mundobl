@@ -2,7 +2,11 @@
 
 import { useState } from 'react';
 import { Button, Table, Space, Tag, Modal } from 'antd';
-import { EditOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import {
+  EditOutlined,
+  DeleteOutlined,
+  ExclamationCircleOutlined,
+} from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { EditSerieModal } from './EditSerieModal';
 import { useRouter } from 'next/navigation';
@@ -56,8 +60,12 @@ export function AdminTableClient({ data, countries }: AdminTableClientProps) {
 
           message.success('Serie eliminada correctamente');
           router.refresh(); // Recargar la página para actualizar la tabla
-        } catch (error: any) {
-          message.error(error.message || 'Error al eliminar la serie');
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error
+              ? error.message
+              : 'Error al eliminar la serie';
+          message.error(errorMessage);
           console.error(error);
         }
       },

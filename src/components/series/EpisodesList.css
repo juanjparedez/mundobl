@@ -19,8 +19,51 @@
   font-style: italic;
 }
 
+.episodes-list__items {
+  display: flex;
+  flex-direction: column;
+}
+
 .episode-item {
   width: 100%;
+  border-bottom: 1px solid var(--border-color);
+  padding: var(--spacing-sm) 0;
+}
+
+.episode-item:last-child {
+  border-bottom: none;
+}
+
+.episode-item__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+}
+
+.episode-item__content {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  flex: 1;
+  min-width: 0;
+}
+
+.episode-item__meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.episode-item__description {
+  margin-top: var(--spacing-xs);
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.episode-item__actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 4px;
 }
 
 .episode-comments-section {

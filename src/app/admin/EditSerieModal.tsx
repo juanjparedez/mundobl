@@ -1,15 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import {
-  Modal,
-  Form,
-  Input,
-  Select,
-  InputNumber,
-  Switch,
-  Spin,
-} from 'antd';
+import { useState, useEffect, useCallback } from 'react';
+import { Modal, Form, Input, Select, InputNumber, Spin } from 'antd';
 import { useMessage } from '@/hooks/useMessage';
 
 const { TextArea } = Input;
@@ -35,15 +27,7 @@ export function EditSerieModal({
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
 
-  useEffect(() => {
-    if (open && serieId) {
-      fetchSerieData();
-    } else {
-      form.resetFields();
-    }
-  }, [open, serieId]);
-
-  const fetchSerieData = async () => {
+  const fetchSerieData = useCallback(async () => {
     setFetching(true);
     try {
       const response = await fetch(`/api/series/${serieId}`);
@@ -72,9 +56,17 @@ export function EditSerieModal({
     } finally {
       setFetching(false);
     }
-  };
+  }, [serieId, form, message]);
 
-  const handleSubmit = async (values: any) => {
+  useEffect(() => {
+    if (open && serieId) {
+      fetchSerieData();
+    } else {
+      form.resetFields();
+    }
+  }, [open, serieId, fetchSerieData, form]);
+
+  const handleSubmit = async (values: Record<string, unknown>) => {
     if (!serieId) return;
 
     setLoading(true);
@@ -95,8 +87,10 @@ export function EditSerieModal({
       message.success('Serie actualizada correctamente');
       onSuccess();
       onClose();
-    } catch (error: any) {
-      message.error(error.message || 'Error al actualizar la serie');
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Error al actualizar la serie';
+      message.error(errorMessage);
       console.error(error);
     } finally {
       setLoading(false);

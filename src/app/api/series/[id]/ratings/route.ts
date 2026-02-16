@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@/generated/prisma';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/database';
 
 export async function POST(
   request: NextRequest,
@@ -14,7 +12,10 @@ export async function POST(
     const { ratings } = body;
 
     if (!ratings || typeof ratings !== 'object') {
-      return NextResponse.json({ error: 'Invalid ratings data' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Invalid ratings data' },
+        { status: 400 }
+      );
     }
 
     // Eliminar ratings existentes de la serie
@@ -38,6 +39,9 @@ export async function POST(
     return NextResponse.json({ success: true, ratings: savedRatings });
   } catch (error) {
     console.error('Error saving ratings:', error);
-    return NextResponse.json({ error: 'Failed to save ratings' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to save ratings' },
+      { status: 500 }
+    );
   }
 }

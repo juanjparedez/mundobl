@@ -13,9 +13,7 @@ export function Header() {
   return (
     <AntHeader className="app-header">
       <div className="header-content">
-        <h4 className="header-title">
-          MundoBL - Catálogo de Series
-        </h4>
+        <h4 className="header-title">MundoBL - Catálogo de Series</h4>
         <Space>
           <span style={{ color: 'var(--text-secondary)' }}>
             {theme === 'light' ? <BulbOutlined /> : <BulbFilled />}

@@ -1,6 +1,16 @@
 'use client';
 
-import { Descriptions, Tag, Card, Row, Col, Space, Divider, List, Rate } from 'antd';
+import {
+  Descriptions,
+  Tag,
+  Card,
+  Row,
+  Col,
+  Space,
+  Divider,
+  Rate,
+  List,
+} from 'antd';
 import {
   CalendarOutlined,
   GlobalOutlined,
@@ -9,11 +19,64 @@ import {
   UserOutlined,
   ArrowLeftOutlined,
 } from '@ant-design/icons';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { PageTitleClient } from '@/components/common/PageTitle/PageTitleClient';
 
+interface ActorRelation {
+  id: number;
+  actor: {
+    id: number;
+    name: string;
+  };
+  character?: string | null;
+}
+
+interface SeasonData {
+  seasonNumber: number;
+  title?: string | null;
+  episodeCount?: number | null;
+  year?: number | null;
+  observations?: string | null;
+  actors?: ActorRelation[];
+}
+
+interface RatingData {
+  id: number;
+  category: string;
+  score: number;
+}
+
+interface CommentData {
+  id: number;
+  content: string;
+}
+
+interface SerieDetail {
+  title: string;
+  originalTitle?: string | null;
+  type: string;
+  year?: number | null;
+  imageUrl?: string | null;
+  synopsis?: string | null;
+  observations?: string | null;
+  review?: string | null;
+  soundtrack?: string | null;
+  isNovel?: boolean | null;
+  overallRating?: number | null;
+  country?: { name: string } | null;
+  actors?: ActorRelation[];
+  seasons: SeasonData[];
+  ratings?: RatingData[];
+  comments?: CommentData[];
+  universe?: {
+    name: string;
+    description?: string | null;
+  } | null;
+}
+
 interface SerieDetailProps {
-  serie: any; // Usaremos el tipo completo de Prisma
+  serie: SerieDetail;
 }
 
 export function SerieDetailClient({ serie }: SerieDetailProps) {
@@ -31,46 +94,37 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
 
   // Obtener actores únicos de toda la serie (evita duplicados)
   const getAllUniqueActors = () => {
-    const actorsMap = new Map();
+    const actorsMap = new Map<
+      number,
+      { id: number; name: string; characters: string[] }
+    >();
+
+    const addActor = (sa: ActorRelation) => {
+      const key = sa.actor.id;
+      if (!actorsMap.has(key)) {
+        actorsMap.set(key, {
+          id: sa.actor.id,
+          name: sa.actor.name,
+          characters: sa.character ? [sa.character] : [],
+        });
+      } else {
+        const existing = actorsMap.get(key)!;
+        if (sa.character && !existing.characters.includes(sa.character)) {
+          existing.characters.push(sa.character);
+        }
+      }
+    };
 
     // Actores a nivel de serie
     if (serie.actors) {
-      serie.actors.forEach((sa: any) => {
-        const key = sa.actor.id;
-        if (!actorsMap.has(key)) {
-          actorsMap.set(key, {
-            id: sa.actor.id,
-            name: sa.actor.name,
-            characters: [sa.character].filter(Boolean),
-          });
-        } else {
-          const existing = actorsMap.get(key);
-          if (sa.character && !existing.characters.includes(sa.character)) {
-            existing.characters.push(sa.character);
-          }
-        }
-      });
+      serie.actors.forEach(addActor);
     }
 
     // Actores de temporadas
     if (serie.seasons) {
-      serie.seasons.forEach((season: any) => {
+      serie.seasons.forEach((season: SeasonData) => {
         if (season.actors) {
-          season.actors.forEach((sa: any) => {
-            const key = sa.actor.id;
-            if (!actorsMap.has(key)) {
-              actorsMap.set(key, {
-                id: sa.actor.id,
-                name: sa.actor.name,
-                characters: [sa.character].filter(Boolean),
-              });
-            } else {
-              const existing = actorsMap.get(key);
-              if (sa.character && !existing.characters.includes(sa.character)) {
-                existing.characters.push(sa.character);
-              }
-            }
-          });
+          season.actors.forEach(addActor);
         }
       });
     }
@@ -136,9 +190,11 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
           {/* Imagen de portada */}
           {serie.imageUrl && (
             <Card style={{ marginBottom: '24px' }}>
-              <img
+              <Image
                 src={serie.imageUrl}
                 alt={serie.title}
+                width={800}
+                height={400}
                 style={{
                   width: '100%',
                   maxHeight: '400px',
@@ -169,16 +225,15 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
                   </Descriptions.Item>
                   <Descriptions.Item label="Total de episodios">
                     {serie.seasons.reduce(
-                      (acc: number, s: any) => acc + (s.episodeCount || 0),
+                      (acc: number, s: SeasonData) =>
+                        acc + (s.episodeCount || 0),
                       0
                     )}
                   </Descriptions.Item>
                 </>
               )}
               {serie.isNovel && (
-                <Descriptions.Item label="Basado en">
-                  Novela
-                </Descriptions.Item>
+                <Descriptions.Item label="Basado en">Novela</Descriptions.Item>
               )}
             </Descriptions>
           </Card>
@@ -186,57 +241,64 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
           {/* Temporadas */}
           {serie.seasons.length > 0 && (
             <Card title="Temporadas" style={{ marginBottom: '24px' }}>
-              <List
-                dataSource={serie.seasons}
-                renderItem={(season: any) => (
-                  <List.Item>
-                    <List.Item.Meta
-                      title={
-                        <Space>
-                          <span>Temporada {season.seasonNumber}</span>
-                          {season.title && (
-                            <span style={{ color: 'var(--text-secondary)' }}>
-                              - {season.title}
-                            </span>
-                          )}
-                        </Space>
-                      }
-                      description={
-                        <Space direction="vertical" size="small">
-                          {season.episodeCount && (
-                            <div>Episodios: {season.episodeCount}</div>
-                          )}
-                          {season.year && <div>Año: {season.year}</div>}
-                          {season.observations && (
-                            <div
-                              style={{
-                                fontSize: '12px',
-                                color: 'var(--text-secondary)',
-                              }}
-                            >
-                              {season.observations}
-                            </div>
-                          )}
-                          {/* Actores de esta temporada */}
-                          {season.actors && season.actors.length > 0 && (
-                            <div>
-                              <strong>Actores:</strong>
-                              <div style={{ marginTop: '8px' }}>
-                                {season.actors.map((sa: any) => (
-                                  <Tag key={sa.id} style={{ marginBottom: '4px' }}>
-                                    {sa.actor.name}
-                                    {sa.character && ` - ${sa.character}`}
-                                  </Tag>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                        </Space>
-                      }
-                    />
-                  </List.Item>
-                )}
-              />
+              <div>
+                {serie.seasons.map((season: SeasonData) => (
+                  <div
+                    key={season.seasonNumber}
+                    style={{
+                      padding: '12px 0',
+                      borderBottom: '1px solid var(--border-color)',
+                    }}
+                  >
+                    <div>
+                      <Space>
+                        <span>Temporada {season.seasonNumber}</span>
+                        {season.title && (
+                          <span style={{ color: 'var(--text-secondary)' }}>
+                            - {season.title}
+                          </span>
+                        )}
+                      </Space>
+                    </div>
+                    <Space
+                      orientation="vertical"
+                      size="small"
+                      style={{ marginTop: '8px' }}
+                    >
+                      {season.episodeCount && (
+                        <div>Episodios: {season.episodeCount}</div>
+                      )}
+                      {season.year && <div>Año: {season.year}</div>}
+                      {season.observations && (
+                        <div
+                          style={{
+                            fontSize: '12px',
+                            color: 'var(--text-secondary)',
+                          }}
+                        >
+                          {season.observations}
+                        </div>
+                      )}
+                      {season.actors && season.actors.length > 0 && (
+                        <div>
+                          <strong>Actores:</strong>
+                          <div style={{ marginTop: '8px' }}>
+                            {season.actors.map((sa: ActorRelation) => (
+                              <Tag
+                                key={sa.actor.id}
+                                style={{ marginBottom: '4px' }}
+                              >
+                                {sa.actor.name}
+                                {sa.character && ` - ${sa.character}`}
+                              </Tag>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </Space>
+                  </div>
+                ))}
+              </div>
             </Card>
           )}
 
@@ -275,29 +337,42 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
               }
               style={{ marginBottom: '24px' }}
             >
-              <List
-                dataSource={uniqueActors}
-                renderItem={(actor: any) => (
-                  <List.Item>
-                    <List.Item.Meta
-                      title={actor.name}
-                      description={
-                        actor.characters.length > 0
-                          ? actor.characters.join(', ')
-                          : 'Personaje no especificado'
-                      }
-                    />
-                  </List.Item>
-                )}
-              />
+              <div>
+                {uniqueActors.map((actor) => (
+                  <div
+                    key={actor.id}
+                    style={{
+                      padding: '8px 0',
+                      borderBottom: '1px solid var(--border-color)',
+                    }}
+                  >
+                    <div>
+                      <strong>{actor.name}</strong>
+                    </div>
+                    <div
+                      style={{
+                        color: 'var(--text-secondary)',
+                        fontSize: '14px',
+                      }}
+                    >
+                      {actor.characters.length > 0
+                        ? actor.characters.join(', ')
+                        : 'Personaje no especificado'}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </Card>
           )}
 
           {/* Ratings por categoría */}
           {serie.ratings && serie.ratings.length > 0 && (
-            <Card title="Ratings por Categoría" style={{ marginBottom: '24px' }}>
-              <Space direction="vertical" style={{ width: '100%' }}>
-                {serie.ratings.map((rating: any) => (
+            <Card
+              title="Ratings por Categoría"
+              style={{ marginBottom: '24px' }}
+            >
+              <Space orientation="vertical" style={{ width: '100%' }}>
+                {serie.ratings.map((rating: RatingData) => (
                   <div key={rating.id}>
                     <div
                       style={{
@@ -325,7 +400,7 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
             <Card title="Comentarios" style={{ marginBottom: '24px' }}>
               <List
                 dataSource={serie.comments}
-                renderItem={(comment: any) => (
+                renderItem={(comment: CommentData) => (
                   <List.Item>
                     <div>{comment.content}</div>
                   </List.Item>

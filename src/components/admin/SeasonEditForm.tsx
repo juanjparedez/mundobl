@@ -11,7 +11,6 @@ import {
   Row,
   Col,
   Space,
-  AutoComplete,
   Checkbox,
 } from 'antd';
 import {
@@ -49,7 +48,7 @@ export function SeasonEditForm({ initialData }: SeasonEditFormProps) {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: Record<string, unknown>) => {
     setLoading(true);
     try {
       const response = await fetch(`/api/seasons/${initialData.id}`, {
@@ -74,9 +73,16 @@ export function SeasonEditForm({ initialData }: SeasonEditFormProps) {
     <div className="season-edit-form" style={{ padding: '24px' }}>
       <Card
         title={
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
             <span>
-              Editar Temporada {initialData.seasonNumber} - {initialData.seriesTitle}
+              Editar Temporada {initialData.seasonNumber} -{' '}
+              {initialData.seriesTitle}
             </span>
             <Button
               icon={<CloseOutlined />}
@@ -93,10 +99,17 @@ export function SeasonEditForm({ initialData }: SeasonEditFormProps) {
           onFinish={handleSubmit}
           initialValues={initialData}
         >
-          <Card type="inner" title="📝 Información de la Temporada" style={{ marginBottom: 24 }}>
+          <Card
+            type="inner"
+            title="📝 Información de la Temporada"
+            style={{ marginBottom: 24 }}
+          >
             <Row gutter={16}>
               <Col xs={24} md={12}>
-                <Form.Item label="Título de la Temporada (opcional)" name="title">
+                <Form.Item
+                  label="Título de la Temporada (opcional)"
+                  name="title"
+                >
                   <Input placeholder="Ej: The Ambassador" size="large" />
                 </Form.Item>
               </Col>
@@ -126,22 +139,33 @@ export function SeasonEditForm({ initialData }: SeasonEditFormProps) {
 
               <Col xs={24}>
                 <Form.Item label="Sinopsis" name="synopsis">
-                  <TextArea rows={4} placeholder="Sinopsis de esta temporada específica..." />
+                  <TextArea
+                    rows={4}
+                    placeholder="Sinopsis de esta temporada específica..."
+                  />
                 </Form.Item>
               </Col>
 
               <Col xs={24}>
                 <Form.Item label="Observaciones" name="observations">
-                  <TextArea rows={3} placeholder="Notas personales sobre esta temporada..." />
+                  <TextArea
+                    rows={3}
+                    placeholder="Notas personales sobre esta temporada..."
+                  />
                 </Form.Item>
               </Col>
             </Row>
           </Card>
 
           {/* Reparto Específico de la Temporada */}
-          <Card type="inner" title="👥 Reparto de esta Temporada" style={{ marginBottom: 24 }}>
+          <Card
+            type="inner"
+            title="👥 Reparto de esta Temporada"
+            style={{ marginBottom: 24 }}
+          >
             <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>
-              Actores específicos de esta temporada (si difieren de la serie general)
+              Actores específicos de esta temporada (si difieren de la serie
+              general)
             </p>
             <Form.List name="actors">
               {(fields, { add, remove }) => (
@@ -155,7 +179,9 @@ export function SeasonEditForm({ initialData }: SeasonEditFormProps) {
                       <Form.Item
                         {...restField}
                         name={[name, 'name']}
-                        rules={[{ required: true, message: 'Nombre requerido' }]}
+                        rules={[
+                          { required: true, message: 'Nombre requerido' },
+                        ]}
                         style={{ marginBottom: 0, width: 200 }}
                       >
                         <Input placeholder="Nombre del actor" />
@@ -179,7 +205,12 @@ export function SeasonEditForm({ initialData }: SeasonEditFormProps) {
                     </Space>
                   ))}
                   <Form.Item>
-                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                    <Button
+                      type="dashed"
+                      onClick={() => add()}
+                      block
+                      icon={<PlusOutlined />}
+                    >
                       Agregar Actor
                     </Button>
                   </Form.Item>

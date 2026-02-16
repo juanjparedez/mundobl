@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@/generated/prisma';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/database';
 
 export async function POST(
   request: NextRequest,
@@ -21,14 +19,16 @@ export async function POST(
     let viewStatus;
 
     // Preparar datos a actualizar
-    const updateData: any = {};
+    const updateData: Record<string, boolean | Date | null> = {};
     if (typeof watched === 'boolean') {
       updateData.watched = watched;
       updateData.watchedDate = watched ? new Date() : null;
     }
     if (typeof currentlyWatching === 'boolean') {
       updateData.currentlyWatching = currentlyWatching;
-      updateData.lastWatchedAt = currentlyWatching ? new Date() : existing?.lastWatchedAt;
+      updateData.lastWatchedAt = currentlyWatching
+        ? new Date()
+        : (existing?.lastWatchedAt ?? null);
     }
 
     if (existing) {
@@ -50,6 +50,9 @@ export async function POST(
     return NextResponse.json(viewStatus);
   } catch (error) {
     console.error('Error updating view status:', error);
-    return NextResponse.json({ error: 'Failed to update view status' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to update view status' },
+      { status: 500 }
+    );
   }
 }

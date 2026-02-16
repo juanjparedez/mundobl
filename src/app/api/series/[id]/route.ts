@@ -30,7 +30,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     });
 
     if (!serie) {
-      return NextResponse.json({ error: 'Serie no encontrada' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Serie no encontrada' },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json(serie);
@@ -82,12 +85,15 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         originalTitle: body.originalTitle || null,
         year: body.year ? parseInt(body.year, 10) : null,
         type: body.type || 'serie',
-        isNovel: body.isNovel || false,
+        basedOn: body.basedOn || null,
+        format: body.format || 'regular',
         imageUrl: body.imageUrl || null,
         synopsis: body.synopsis || null,
         review: body.review || null,
         soundtrack: body.soundtrack || null,
-        overallRating: body.overallRating ? parseInt(body.overallRating, 10) : null,
+        overallRating: body.overallRating
+          ? parseInt(body.overallRating, 10)
+          : null,
         observations: body.observations || null,
         countryId,
         universeId: body.universeId ? parseInt(body.universeId, 10) : null,
@@ -97,7 +103,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     // Actualizar actores (eliminar y volver a crear)
     if (body.actors) {
       await prisma.seriesActor.deleteMany({
-        where: { seriesId },
+        where: { seriesId: serieId },
       });
 
       for (const actorData of body.actors) {
@@ -111,7 +117,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
         await prisma.seriesActor.create({
           data: {
-            seriesId,
+            seriesId: serieId,
             actorId: actor.id,
             character: actorData.character || '',
           },
@@ -122,13 +128,13 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     // Actualizar temporadas (solo para series)
     if (body.type === 'serie' && body.seasons) {
       await prisma.season.deleteMany({
-        where: { seriesId },
+        where: { seriesId: serieId },
       });
 
       for (const seasonData of body.seasons) {
         await prisma.season.create({
           data: {
-            seriesId,
+            seriesId: serieId,
             seasonNumber: seasonData.seasonNumber,
             episodeCount: seasonData.episodeCount,
             year: seasonData.year || body.year,
@@ -140,7 +146,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     // Actualizar tags (eliminar y volver a crear)
     if (body.tags !== undefined) {
       await prisma.seriesTag.deleteMany({
-        where: { seriesId },
+        where: { seriesId: serieId },
       });
 
       if (body.tags && body.tags.length > 0) {
@@ -155,7 +161,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
           await prisma.seriesTag.create({
             data: {
-              seriesId,
+              seriesId: serieId,
               tagId: tag.id,
             },
           });
@@ -189,7 +195,10 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     });
 
     if (!serie) {
-      return NextResponse.json({ error: 'Serie no encontrada' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Serie no encontrada' },
+        { status: 404 }
+      );
     }
 
     // Eliminar la serie (cascade eliminará relaciones)

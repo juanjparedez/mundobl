@@ -2,7 +2,11 @@
 
 import { useState } from 'react';
 import { Switch, Progress, Tooltip, Button } from 'antd';
-import { EyeOutlined, EyeInvisibleOutlined, PlayCircleOutlined } from '@ant-design/icons';
+import {
+  EyeOutlined,
+  EyeInvisibleOutlined,
+  PlayCircleOutlined,
+} from '@ant-design/icons';
 import './ViewStatusToggle.css';
 import { useMessage } from '@/hooks/useMessage';
 
@@ -22,11 +26,13 @@ export function ViewStatusToggle({
   seriesId,
   initialStatus,
   initialCurrentlyWatching = false,
-  seasons = []
+  seasons = [],
 }: ViewStatusToggleProps) {
   const message = useMessage();
   const [watched, setWatched] = useState(initialStatus);
-  const [currentlyWatching, setCurrentlyWatching] = useState(initialCurrentlyWatching);
+  const [currentlyWatching, setCurrentlyWatching] = useState(
+    initialCurrentlyWatching
+  );
   const [isUpdating, setIsUpdating] = useState(false);
 
   // Calcular progreso de episodios vistos
@@ -37,7 +43,9 @@ export function ViewStatusToggle({
     seasons.forEach((season) => {
       if (season.episodes) {
         totalEpisodes += season.episodes.length;
-        watchedEpisodes += season.episodes.filter((ep) => ep.viewStatus?.[0]?.watched).length;
+        watchedEpisodes += season.episodes.filter(
+          (ep) => ep.viewStatus?.[0]?.watched
+        ).length;
       }
     });
 
@@ -45,7 +53,8 @@ export function ViewStatusToggle({
   };
 
   const { totalEpisodes, watchedEpisodes } = calculateProgress();
-  const progressPercent = totalEpisodes > 0 ? Math.round((watchedEpisodes / totalEpisodes) * 100) : 0;
+  const progressPercent =
+    totalEpisodes > 0 ? Math.round((watchedEpisodes / totalEpisodes) * 100) : 0;
 
   const handleToggle = async (checked: boolean) => {
     setIsUpdating(true);
@@ -81,7 +90,11 @@ export function ViewStatusToggle({
       if (!response.ok) throw new Error('Error al actualizar');
 
       setCurrentlyWatching(newStatus);
-      message.success(newStatus ? '📺 Agregada a "Viendo ahora"' : 'Removida de "Viendo ahora"');
+      message.success(
+        newStatus
+          ? '📺 Agregada a "Viendo ahora"'
+          : 'Removida de "Viendo ahora"'
+      );
     } catch (error) {
       message.error('Error al actualizar el estado');
       console.error(error);
@@ -92,7 +105,14 @@ export function ViewStatusToggle({
 
   return (
     <div className="view-status-toggle">
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '16px',
+          flexWrap: 'wrap',
+        }}
+      >
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <Switch
             checked={watched}
@@ -120,7 +140,9 @@ export function ViewStatusToggle({
 
       {totalEpisodes > 0 && (
         <div style={{ marginTop: '12px' }}>
-          <Tooltip title={`${watchedEpisodes} de ${totalEpisodes} episodios vistos`}>
+          <Tooltip
+            title={`${watchedEpisodes} de ${totalEpisodes} episodios vistos`}
+          >
             <Progress
               percent={progressPercent}
               size="small"

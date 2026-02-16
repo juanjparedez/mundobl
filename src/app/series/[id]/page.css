@@ -1,0 +1,14 @@
+.series-detail-page {
+  padding: var(--spacing-lg);
+}
+
+.series-actions {
+  margin: var(--spacing-lg) 0;
+}
+
+.series-info-tab,
+.seasons-tab,
+.ratings-tab,
+.comments-tab {
+  padding-top: var(--spacing-md);
+}

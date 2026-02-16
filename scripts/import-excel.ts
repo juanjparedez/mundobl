@@ -59,7 +59,7 @@ async function main() {
     const year = firstRow['Año'];
     const tempNumber = firstRow['Temp'];
     const chapters = firstRow['Capítulos'];
-    const isNovel = firstRow['Novela'] === true || firstRow['Novela'] === 'TRUE';
+    const basedOn = firstRow['Novela'] === true || firstRow['Novela'] === 'TRUE' ? 'novela' : null;
     const rating = firstRow['Puntos'];
     const observations = firstRow['Observaciones'];
 
@@ -106,7 +106,7 @@ async function main() {
             title,
             year,
             type: contentType,
-            isNovel,
+            basedOn,
             overallRating: rating,
             observations,
             countryId: country?.id,

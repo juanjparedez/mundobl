@@ -11,6 +11,7 @@ import { ViewStatusToggle } from '@/components/series/ViewStatusToggle';
 import { shouldShowSeasons, getContentTypeConfig } from '@/types/content';
 import { Tabs, FloatButton } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
+import './page.css';
 
 interface SeriesPageProps {
   params: Promise<{
@@ -54,10 +55,10 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
       ? [
           {
             key: 'seasons',
-            label: `${config.seasonLabel} (${serie.seasons?.length || 0})`,
+            label: `${'seasonLabel' in config ? config.seasonLabel : 'Temporadas'} (${serie.seasons?.length || 0})`,
             children: (
               <div className="seasons-tab">
-                <SeasonsList seasons={serie.seasons || []} seriesId={serie.id} />
+                <SeasonsList seasons={serie.seasons || []} />
               </div>
             ),
           },
@@ -68,7 +69,10 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
       label: 'Puntuación',
       children: (
         <div className="ratings-tab">
-          <RatingSection seriesId={serie.id} existingRatings={serie.ratings || []} />
+          <RatingSection
+            seriesId={serie.id}
+            existingRatings={serie.ratings || []}
+          />
         </div>
       ),
     },
@@ -77,7 +81,10 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
       label: 'Comentarios',
       children: (
         <div className="comments-tab">
-          <CommentsSection seriesId={serie.id} comments={serie.comments || []} />
+          <CommentsSection
+            seriesId={serie.id}
+            comments={serie.comments || []}
+          />
         </div>
       ),
     },
@@ -85,14 +92,16 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
 
   return (
     <AppLayout>
-      <div className="series-detail-page" style={{ padding: '24px' }}>
+      <div className="series-detail-page">
         <SeriesHeader series={serie} />
 
-        <div className="series-actions" style={{ margin: '24px 0' }}>
+        <div className="series-actions">
           <ViewStatusToggle
             seriesId={serie.id}
             initialStatus={serie.viewStatus?.[0]?.watched || false}
-            initialCurrentlyWatching={serie.viewStatus?.[0]?.currentlyWatching || false}
+            initialCurrentlyWatching={
+              serie.viewStatus?.[0]?.currentlyWatching || false
+            }
             seasons={serie.seasons}
           />
         </div>

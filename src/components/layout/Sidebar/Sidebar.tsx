@@ -76,37 +76,39 @@ export function Sidebar() {
       onCollapse={setCollapsed}
       className="app-sidebar"
       width={250}
-      trigger={
-        <div className="sidebar-trigger">
-          {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-        </div>
-      }
+      trigger={null}
     >
-      <div className="sidebar-logo">
-        <AppstoreOutlined style={{ fontSize: '24px' }} />
-        {!collapsed && <span className="sidebar-logo-text">MundoBL</span>}
+      <div className="sidebar-header">
+        <div className="sidebar-logo">
+          <AppstoreOutlined style={{ fontSize: '22px' }} />
+          {!collapsed && <span className="sidebar-logo-text">MundoBL</span>}
+        </div>
+        <button
+          className="sidebar-collapse-btn"
+          onClick={() => setCollapsed(!collapsed)}
+          aria-label={collapsed ? 'Expandir menú' : 'Colapsar menú'}
+        >
+          {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+        </button>
       </div>
-      <Menu
-        mode="inline"
-        selectedKeys={[selectedKey]}
-        items={menuItems}
-      />
-      <div className="sidebar-theme-toggle">
-        {collapsed ? (
-          <span
-            className="sidebar-theme-icon"
-            onClick={toggleTheme}
-          >
+
+      <Menu mode="inline" selectedKeys={[selectedKey]} items={menuItems} />
+
+      <div className="sidebar-footer">
+        <div className="sidebar-theme-toggle" onClick={toggleTheme}>
+          <span className="sidebar-theme-icon">
             {theme === 'dark' ? <BulbFilled /> : <BulbOutlined />}
           </span>
-        ) : (
-          <Switch
-            checked={theme === 'dark'}
-            onChange={toggleTheme}
-            checkedChildren="Oscuro"
-            unCheckedChildren="Claro"
-          />
-        )}
+          {!collapsed && (
+            <Switch
+              checked={theme === 'dark'}
+              onChange={toggleTheme}
+              checkedChildren="Oscuro"
+              unCheckedChildren="Claro"
+              size="small"
+            />
+          )}
+        </div>
       </div>
     </Sider>
   );

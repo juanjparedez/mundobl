@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import {
   Card,
@@ -9,7 +9,6 @@ import {
   Input,
   Modal,
   Form,
-  message,
   Popconfirm,
   Space,
   Tag,
@@ -37,11 +36,7 @@ export default function UniversesAdminPage() {
   const [editingUniverse, setEditingUniverse] = useState<Universe | null>(null);
   const [form] = Form.useForm();
 
-  useEffect(() => {
-    loadUniverses();
-  }, []);
-
-  const loadUniverses = async () => {
+  const loadUniverses = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch('/api/universes');
@@ -54,7 +49,11 @@ export default function UniversesAdminPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [message]);
+
+  useEffect(() => {
+    loadUniverses();
+  }, [loadUniverses]);
 
   const handleOpenModal = (universe?: Universe) => {
     if (universe) {
@@ -73,7 +72,7 @@ export default function UniversesAdminPage() {
     form.resetFields();
   };
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: Record<string, unknown>) => {
     try {
       const url = editingUniverse
         ? `/api/universes/${editingUniverse.id}`
@@ -98,8 +97,10 @@ export default function UniversesAdminPage() {
       );
       handleCloseModal();
       loadUniverses();
-    } catch (error: any) {
-      message.error(error.message || 'Error al guardar el universo');
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Error al guardar el universo';
+      message.error(errorMessage);
     }
   };
 
@@ -116,8 +117,12 @@ export default function UniversesAdminPage() {
 
       message.success('Universo eliminado correctamente');
       loadUniverses();
-    } catch (error: any) {
-      message.error(error.message || 'Error al eliminar el universo');
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? error.message
+          : 'Error al eliminar el universo';
+      message.error(errorMessage);
     }
   };
 

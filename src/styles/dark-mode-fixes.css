@@ -1,32 +1,29 @@
-/* Mejoras de contraste para modo oscuro */
+/* ============================================
+   Mejoras de contraste para modo oscuro
+   ============================================ */
 
-[data-theme='dark'] {
-  /* Inputs con mejor contraste */
-  --input-bg: #1f1f1f;
-  --input-border: #434343;
-  --input-text: rgba(255, 255, 255, 0.85);
-  --input-placeholder: rgba(255, 255, 255, 0.45);
-}
-
+/* --- Inputs --- */
 [data-theme='dark'] .ant-input,
 [data-theme='dark'] .ant-input-number,
+[data-theme='dark'] .ant-input-number-input,
 [data-theme='dark'] .ant-select-selector,
 [data-theme='dark'] .ant-picker,
 [data-theme='dark'] .ant-input-textarea textarea {
-  background-color: var(--input-bg) !important;
-  border-color: var(--input-border) !important;
-  color: var(--input-text) !important;
+  background-color: var(--bg-input) !important;
+  border-color: #444444 !important;
+  color: var(--text-primary) !important;
 }
 
 [data-theme='dark'] .ant-input::placeholder,
+[data-theme='dark'] .ant-input-number-input::placeholder,
 [data-theme='dark'] .ant-input-textarea textarea::placeholder {
-  color: var(--input-placeholder) !important;
+  color: rgba(255, 255, 255, 0.38) !important;
 }
 
 [data-theme='dark'] .ant-input:hover,
 [data-theme='dark'] .ant-input-number:hover,
 [data-theme='dark'] .ant-select-selector:hover {
-  border-color: var(--primary-color) !important;
+  border-color: var(--primary-color-hover) !important;
 }
 
 [data-theme='dark'] .ant-input:focus,
@@ -34,25 +31,36 @@
 [data-theme='dark'] .ant-input-number-focused,
 [data-theme='dark'] .ant-select-focused .ant-select-selector {
   border-color: var(--primary-color) !important;
-  box-shadow: 0 0 0 2px rgba(22, 104, 220, 0.2) !important;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15) !important;
 }
 
-/* Select dropdown */
+/* --- Select dropdown --- */
 [data-theme='dark'] .ant-select-dropdown {
-  background-color: var(--bg-elevated) !important;
+  background-color: #2a2a2a !important;
+  border: 1px solid #3a3a3a !important;
 }
 
 [data-theme='dark'] .ant-select-item {
   color: var(--text-primary) !important;
 }
 
-[data-theme='dark'] .ant-select-item-option-selected {
-  background-color: rgba(22, 104, 220, 0.2) !important;
+[data-theme='dark'] .ant-select-item-option-active {
+  background-color: rgba(255, 255, 255, 0.08) !important;
 }
 
-/* Card con mejor contraste */
+[data-theme='dark'] .ant-select-item-option-selected {
+  background-color: rgba(59, 130, 246, 0.2) !important;
+  font-weight: 600;
+}
+
+/* Select selection item (tags mode) */
+[data-theme='dark'] .ant-select-selection-item {
+  color: var(--text-primary) !important;
+}
+
+/* --- Cards --- */
 [data-theme='dark'] .ant-card {
-  background-color: var(--bg-elevated) !important;
+  background-color: var(--bg-container) !important;
   border-color: var(--border-color) !important;
 }
 
@@ -61,20 +69,36 @@
   color: var(--text-primary) !important;
 }
 
-/* Form labels */
+/* Inner cards: un nivel más elevado para crear jerarquía */
+[data-theme='dark'] .ant-card .ant-card {
+  background-color: var(--bg-elevated) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* --- Form labels --- */
 [data-theme='dark'] .ant-form-item-label > label {
   color: var(--text-primary) !important;
 }
 
-/* AutoComplete */
-[data-theme='dark'] .ant-select-auto-complete .ant-input {
-  background-color: var(--input-bg) !important;
-  color: var(--input-text) !important;
+[data-theme='dark'] .ant-form-item-extra,
+[data-theme='dark'] .ant-form-item-explain {
+  color: var(--text-tertiary) !important;
 }
 
-/* Table para admin */
+/* Required asterisk */
+[data-theme='dark'] .ant-form-item-required::before {
+  color: #f87171 !important;
+}
+
+/* --- AutoComplete --- */
+[data-theme='dark'] .ant-select-auto-complete .ant-input {
+  background-color: var(--bg-input) !important;
+  color: var(--text-primary) !important;
+}
+
+/* --- Table --- */
 [data-theme='dark'] .ant-table {
-  background-color: var(--bg-base) !important;
+  background-color: var(--bg-container) !important;
 }
 
 [data-theme='dark'] .ant-table-thead > tr > th {
@@ -84,15 +108,15 @@
 }
 
 [data-theme='dark'] .ant-table-tbody > tr > td {
-  border-bottom-color: var(--border-color) !important;
+  border-bottom-color: var(--border-color-secondary) !important;
   color: var(--text-primary) !important;
 }
 
 [data-theme='dark'] .ant-table-tbody > tr:hover > td {
-  background-color: rgba(255, 255, 255, 0.08) !important;
+  background-color: rgba(255, 255, 255, 0.06) !important;
 }
 
-/* Pagination */
+/* --- Pagination --- */
 [data-theme='dark'] .ant-pagination-item {
   background-color: var(--bg-elevated) !important;
   border-color: var(--border-color) !important;
@@ -111,43 +135,38 @@
   color: #fff !important;
 }
 
-/* Alert con mejor contraste en modo oscuro */
-[data-theme='dark'] .ant-alert {
-  background-color: rgba(22, 104, 220, 0.15) !important;
-  border: 1px solid rgba(22, 104, 220, 0.3) !important;
-}
-
+/* --- Alert --- */
 [data-theme='dark'] .ant-alert-info {
-  background-color: rgba(22, 104, 220, 0.15) !important;
-  border-color: rgba(22, 104, 220, 0.3) !important;
+  background-color: rgba(59, 130, 246, 0.1) !important;
+  border: 1px solid rgba(59, 130, 246, 0.2) !important;
 }
 
 [data-theme='dark'] .ant-alert-info .ant-alert-icon {
-  color: #4096ff !important;
+  color: #60a5fa !important;
 }
 
 [data-theme='dark'] .ant-alert-message,
 [data-theme='dark'] .ant-alert-description {
-  color: rgba(255, 255, 255, 0.85) !important;
+  color: var(--text-primary) !important;
 }
 
-/* Botones con mejor contraste */
+/* --- Buttons --- */
 [data-theme='dark'] .ant-btn-default {
-  background-color: rgba(255, 255, 255, 0.08) !important;
-  border-color: var(--border-color) !important;
-  color: rgba(255, 255, 255, 0.85) !important;
+  background-color: rgba(255, 255, 255, 0.06) !important;
+  border-color: #444444 !important;
+  color: var(--text-primary) !important;
 }
 
 [data-theme='dark'] .ant-btn-default:hover {
-  background-color: rgba(255, 255, 255, 0.12) !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
   border-color: var(--primary-color) !important;
-  color: rgba(255, 255, 255, 0.95) !important;
+  color: #93bbfc !important;
 }
 
 [data-theme='dark'] .ant-btn-dashed {
   background-color: transparent !important;
-  border-color: var(--border-color) !important;
-  color: rgba(255, 255, 255, 0.65) !important;
+  border-color: #444444 !important;
+  color: var(--text-secondary) !important;
 }
 
 [data-theme='dark'] .ant-btn-dashed:hover {
@@ -156,21 +175,21 @@
 }
 
 [data-theme='dark'] .ant-btn-text {
-  color: rgba(255, 255, 255, 0.65) !important;
+  color: var(--text-secondary) !important;
 }
 
 [data-theme='dark'] .ant-btn-text:hover {
   background-color: rgba(255, 255, 255, 0.08) !important;
-  color: rgba(255, 255, 255, 0.85) !important;
+  color: var(--text-primary) !important;
 }
 
-/* Modal con mejor contraste */
+/* --- Modal --- */
 [data-theme='dark'] .ant-modal-content {
-  background-color: var(--bg-elevated) !important;
+  background-color: var(--bg-container) !important;
 }
 
 [data-theme='dark'] .ant-modal-header {
-  background-color: var(--bg-elevated) !important;
+  background-color: var(--bg-container) !important;
   border-bottom-color: var(--border-color) !important;
 }
 
@@ -182,12 +201,12 @@
   border-top-color: var(--border-color) !important;
 }
 
-/* Divider */
+/* --- Divider --- */
 [data-theme='dark'] .ant-divider {
   border-color: var(--border-color) !important;
 }
 
-/* Upload */
+/* --- Upload --- */
 [data-theme='dark'] .ant-upload {
   background-color: rgba(255, 255, 255, 0.04) !important;
   border-color: var(--border-color) !important;
@@ -195,4 +214,17 @@
 
 [data-theme='dark'] .ant-upload:hover {
   border-color: var(--primary-color) !important;
+}
+
+/* --- Tooltip --- */
+[data-theme='dark'] .ant-tooltip-inner {
+  background-color: #333333 !important;
+  color: var(--text-primary) !important;
+}
+
+/* --- Tag --- */
+[data-theme='dark'] .ant-tag {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: #3a3a3a !important;
+  color: var(--text-primary) !important;
 }

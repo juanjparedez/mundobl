@@ -72,10 +72,15 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     });
 
     return NextResponse.json(episode);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error al actualizar episodio:', error);
 
-    if (error.code === 'P2002') {
+    if (
+      error &&
+      typeof error === 'object' &&
+      'code' in error &&
+      error.code === 'P2002'
+    ) {
       return NextResponse.json(
         { error: 'Ya existe un episodio con ese número en esta temporada' },
         { status: 400 }
