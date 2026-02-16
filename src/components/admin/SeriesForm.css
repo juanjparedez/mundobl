@@ -1,0 +1,14 @@
+.series-form {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+}
+
+.series-form .ant-card-head-title {
+  font-size: 1.25em;
+  font-weight: 600;
+}
+
+.series-form .ant-form-item-label > label {
+  font-weight: 500;
+}

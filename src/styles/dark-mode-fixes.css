@@ -1,0 +1,198 @@
+/* Mejoras de contraste para modo oscuro */
+
+[data-theme='dark'] {
+  /* Inputs con mejor contraste */
+  --input-bg: #1f1f1f;
+  --input-border: #434343;
+  --input-text: rgba(255, 255, 255, 0.85);
+  --input-placeholder: rgba(255, 255, 255, 0.45);
+}
+
+[data-theme='dark'] .ant-input,
+[data-theme='dark'] .ant-input-number,
+[data-theme='dark'] .ant-select-selector,
+[data-theme='dark'] .ant-picker,
+[data-theme='dark'] .ant-input-textarea textarea {
+  background-color: var(--input-bg) !important;
+  border-color: var(--input-border) !important;
+  color: var(--input-text) !important;
+}
+
+[data-theme='dark'] .ant-input::placeholder,
+[data-theme='dark'] .ant-input-textarea textarea::placeholder {
+  color: var(--input-placeholder) !important;
+}
+
+[data-theme='dark'] .ant-input:hover,
+[data-theme='dark'] .ant-input-number:hover,
+[data-theme='dark'] .ant-select-selector:hover {
+  border-color: var(--primary-color) !important;
+}
+
+[data-theme='dark'] .ant-input:focus,
+[data-theme='dark'] .ant-input-focused,
+[data-theme='dark'] .ant-input-number-focused,
+[data-theme='dark'] .ant-select-focused .ant-select-selector {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 2px rgba(22, 104, 220, 0.2) !important;
+}
+
+/* Select dropdown */
+[data-theme='dark'] .ant-select-dropdown {
+  background-color: var(--bg-elevated) !important;
+}
+
+[data-theme='dark'] .ant-select-item {
+  color: var(--text-primary) !important;
+}
+
+[data-theme='dark'] .ant-select-item-option-selected {
+  background-color: rgba(22, 104, 220, 0.2) !important;
+}
+
+/* Card con mejor contraste */
+[data-theme='dark'] .ant-card {
+  background-color: var(--bg-elevated) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme='dark'] .ant-card-head {
+  border-bottom-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Form labels */
+[data-theme='dark'] .ant-form-item-label > label {
+  color: var(--text-primary) !important;
+}
+
+/* AutoComplete */
+[data-theme='dark'] .ant-select-auto-complete .ant-input {
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+}
+
+/* Table para admin */
+[data-theme='dark'] .ant-table {
+  background-color: var(--bg-base) !important;
+}
+
+[data-theme='dark'] .ant-table-thead > tr > th {
+  background-color: var(--bg-elevated) !important;
+  color: var(--text-primary) !important;
+  border-bottom-color: var(--border-color) !important;
+}
+
+[data-theme='dark'] .ant-table-tbody > tr > td {
+  border-bottom-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme='dark'] .ant-table-tbody > tr:hover > td {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Pagination */
+[data-theme='dark'] .ant-pagination-item {
+  background-color: var(--bg-elevated) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme='dark'] .ant-pagination-item a {
+  color: var(--text-primary) !important;
+}
+
+[data-theme='dark'] .ant-pagination-item-active {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+[data-theme='dark'] .ant-pagination-item-active a {
+  color: #fff !important;
+}
+
+/* Alert con mejor contraste en modo oscuro */
+[data-theme='dark'] .ant-alert {
+  background-color: rgba(22, 104, 220, 0.15) !important;
+  border: 1px solid rgba(22, 104, 220, 0.3) !important;
+}
+
+[data-theme='dark'] .ant-alert-info {
+  background-color: rgba(22, 104, 220, 0.15) !important;
+  border-color: rgba(22, 104, 220, 0.3) !important;
+}
+
+[data-theme='dark'] .ant-alert-info .ant-alert-icon {
+  color: #4096ff !important;
+}
+
+[data-theme='dark'] .ant-alert-message,
+[data-theme='dark'] .ant-alert-description {
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+/* Botones con mejor contraste */
+[data-theme='dark'] .ant-btn-default {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  border-color: var(--border-color) !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+[data-theme='dark'] .ant-btn-default:hover {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  border-color: var(--primary-color) !important;
+  color: rgba(255, 255, 255, 0.95) !important;
+}
+
+[data-theme='dark'] .ant-btn-dashed {
+  background-color: transparent !important;
+  border-color: var(--border-color) !important;
+  color: rgba(255, 255, 255, 0.65) !important;
+}
+
+[data-theme='dark'] .ant-btn-dashed:hover {
+  border-color: var(--primary-color) !important;
+  color: var(--primary-color) !important;
+}
+
+[data-theme='dark'] .ant-btn-text {
+  color: rgba(255, 255, 255, 0.65) !important;
+}
+
+[data-theme='dark'] .ant-btn-text:hover {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+}
+
+/* Modal con mejor contraste */
+[data-theme='dark'] .ant-modal-content {
+  background-color: var(--bg-elevated) !important;
+}
+
+[data-theme='dark'] .ant-modal-header {
+  background-color: var(--bg-elevated) !important;
+  border-bottom-color: var(--border-color) !important;
+}
+
+[data-theme='dark'] .ant-modal-title {
+  color: var(--text-primary) !important;
+}
+
+[data-theme='dark'] .ant-modal-footer {
+  border-top-color: var(--border-color) !important;
+}
+
+/* Divider */
+[data-theme='dark'] .ant-divider {
+  border-color: var(--border-color) !important;
+}
+
+/* Upload */
+[data-theme='dark'] .ant-upload {
+  background-color: rgba(255, 255, 255, 0.04) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme='dark'] .ant-upload:hover {
+  border-color: var(--primary-color) !important;
+}

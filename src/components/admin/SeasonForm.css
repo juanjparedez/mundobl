@@ -1,0 +1,20 @@
+.season-form {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+}
+
+.season-form .ant-card-head-title {
+  font-size: 1.2em;
+  font-weight: 600;
+}
+
+.season-form .ant-form-item-label > label {
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .season-form {
+    padding: var(--spacing-md);
+  }
+}

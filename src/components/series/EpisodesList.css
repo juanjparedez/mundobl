@@ -1,0 +1,38 @@
+.episodes-list {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--bg-elevated);
+  border-radius: var(--border-radius-sm);
+}
+
+.episodes-list__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.episode-synopsis {
+  margin-top: var(--spacing-xs);
+  color: var(--text-secondary);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.episode-item {
+  width: 100%;
+}
+
+.episode-comments-section {
+  width: 100%;
+  padding: 0 var(--spacing-md) var(--spacing-md) var(--spacing-md);
+  margin-top: var(--spacing-sm);
+}
+
+@media (max-width: 768px) {
+  .episodes-list__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+}

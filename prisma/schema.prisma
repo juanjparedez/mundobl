@@ -1,0 +1,284 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// UNIVERSOS - Para agrupar series relacionadas
+// ============================================
+model Universe {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  series      Series[]
+}
+
+// ============================================
+// SERIES - Series, películas, cortos, etc.
+// ============================================
+model Series {
+  id            Int       @id @default(autoincrement())
+  title         String
+  originalTitle String?
+  year          Int?
+  type          String    // "serie", "pelicula", "corto", "especial"
+  basedOn       String?   // "libro", "novela", "corto", "manga", "anime"
+  format        String    @default("regular") // "regular", "vertical"
+  imageUrl      String?
+  synopsis      String?   // Sinopsis de la serie
+  review        String?   // Reseña personal
+  soundtrack    String?   // Banda sonora
+  overallRating Int?      // Puntuación general (del Excel)
+  observations  String?   // Observaciones
+  isFavorite    Boolean   @default(false) // Marcado como favorito
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relaciones
+  universeId    Int?
+  universe      Universe?         @relation(fields: [universeId], references: [id])
+  countryId     Int?
+  country       Country?          @relation(fields: [countryId], references: [id])
+
+  seasons       Season[]
+  actors        SeriesActor[]
+  directors     SeriesDirector[]
+  ratings       Rating[]
+  comments      Comment[]
+  viewStatus    ViewStatus[]
+  tags          SeriesTag[]
+}
+
+// ============================================
+// TEMPORADAS
+// ============================================
+model Season {
+  id            Int       @id @default(autoincrement())
+  seasonNumber  Int
+  title         String?
+  episodeCount  Int?      // Número de capítulos
+  year          Int?
+  imageUrl      String?
+  synopsis      String?
+  observations  String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relaciones
+  seriesId      Int
+  series        Series    @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+
+  episodes      Episode[]
+  actors        SeasonActor[]
+  ratings       Rating[]
+  comments      Comment[]
+  viewStatus    ViewStatus[]
+
+  @@unique([seriesId, seasonNumber])
+}
+
+// ============================================
+// EPISODIOS (OPCIONAL)
+// ============================================
+model Episode {
+  id            Int       @id @default(autoincrement())
+  episodeNumber Int
+  title         String?
+  duration      Int?      // Duración en minutos
+  airDate       DateTime?
+  synopsis      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relaciones
+  seasonId      Int
+  season        Season    @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  viewStatus    ViewStatus[] @relation("EpisodeViewStatus")
+  comments      Comment[]
+
+  @@unique([seasonId, episodeNumber])
+}
+
+// ============================================
+// ACTORES
+// ============================================
+model Actor {
+  id            Int       @id @default(autoincrement())
+  name          String    @unique
+  stageName     String?   // Nombre artístico
+  birthDate     DateTime?
+  nationality   String?
+  imageUrl      String?
+  biography     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  series        SeriesActor[]
+  seasons       SeasonActor[]
+}
+
+// ============================================
+// DIRECTORES
+// ============================================
+model Director {
+  id            Int       @id @default(autoincrement())
+  name          String    @unique
+  nationality   String?
+  imageUrl      String?
+  biography     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  series        SeriesDirector[]
+}
+
+// ============================================
+// PAÍSES
+// ============================================
+model Country {
+  id            Int       @id @default(autoincrement())
+  name          String    @unique
+  code          String?   @unique // ISO code (ej: "KR", "TH", "JP")
+  flagUrl       String?
+
+  series        Series[]
+}
+
+// ============================================
+// TAGS/ETIQUETAS
+// ============================================
+model Tag {
+  id            Int       @id @default(autoincrement())
+  name          String    @unique // "Enemy to Lovers", "Friends to Lovers", etc.
+  category      String?   // "trope", "genre", "mood", etc.
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  series        SeriesTag[]
+}
+
+// ============================================
+// RELACIONES MUCHOS A MUCHOS
+// ============================================
+
+// Actores por Serie (general)
+model SeriesActor {
+  id            Int       @id @default(autoincrement())
+  character     String?   // Personaje que interpreta
+  isMain        Boolean   @default(false) // ¿Es protagonista?
+
+  seriesId      Int
+  series        Series    @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  actorId       Int
+  actor         Actor     @relation(fields: [actorId], references: [id], onDelete: Cascade)
+
+  @@unique([seriesId, actorId, character])
+}
+
+// Actores por Temporada (específico)
+model SeasonActor {
+  id            Int       @id @default(autoincrement())
+  character     String?   // Personaje que interpreta
+  isMain        Boolean   @default(false)
+
+  seasonId      Int
+  season        Season    @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  actorId       Int
+  actor         Actor     @relation(fields: [actorId], references: [id], onDelete: Cascade)
+
+  @@unique([seasonId, actorId, character])
+}
+
+// Directores por Serie
+model SeriesDirector {
+  id            Int       @id @default(autoincrement())
+
+  seriesId      Int
+  series        Series    @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  directorId    Int
+  director      Director  @relation(fields: [directorId], references: [id], onDelete: Cascade)
+
+  @@unique([seriesId, directorId])
+}
+
+// Tags/Etiquetas por Serie
+model SeriesTag {
+  id            Int       @id @default(autoincrement())
+
+  seriesId      Int
+  series        Series    @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  tagId         Int
+  tag           Tag       @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([seriesId, tagId])
+}
+
+// ============================================
+// RATINGS POR CATEGORÍA
+// ============================================
+model Rating {
+  id            Int       @id @default(autoincrement())
+  category      String    // "trama", "casting", "originalidad", "bso", etc.
+  score         Int       // 1-10
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Puede ser rating de Serie o Temporada
+  seriesId      Int?
+  series        Series?   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  seasonId      Int?
+  season        Season?   @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+
+  @@unique([seriesId, seasonId, category])
+}
+
+// ============================================
+// COMENTARIOS
+// ============================================
+model Comment {
+  id            Int       @id @default(autoincrement())
+  content       String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Puede ser comentario de Serie, Temporada o Episodio
+  seriesId      Int?
+  series        Series?   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  seasonId      Int?
+  season        Season?   @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  episodeId     Int?
+  episode       Episode?  @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+}
+
+// ============================================
+// ESTADO DE VISUALIZACIÓN
+// ============================================
+model ViewStatus {
+  id                Int       @id @default(autoincrement())
+  watched           Boolean   @default(false) // Visto/No visto
+  watchedDate       DateTime?
+  currentlyWatching Boolean   @default(false) // Estoy viendo ahora
+  lastWatchedAt     DateTime? // Última vez que se vio
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Puede ser estado de Serie, Temporada o Episodio
+  seriesId      Int?      @unique
+  series        Series?   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  seasonId      Int?      @unique
+  season        Season?   @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  episodeId     Int?      @unique
+  episode       Episode?  @relation("EpisodeViewStatus", fields: [episodeId], references: [id], onDelete: Cascade)
+}

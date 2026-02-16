@@ -1,0 +1,90 @@
+.app-sidebar {
+  overflow: auto;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--bg-elevated) !important;
+  border-right: 1px solid var(--border-color-secondary);
+}
+
+/* Estilos del menú para que respete el tema */
+.app-sidebar .ant-menu {
+  background: transparent !important;
+  color: var(--text-primary) !important;
+}
+
+.app-sidebar .ant-menu-item,
+.app-sidebar .ant-menu-submenu-title {
+  color: var(--text-primary) !important;
+}
+
+.app-sidebar .ant-menu-item:hover,
+.app-sidebar .ant-menu-submenu-title:hover {
+  background: var(--bg-spotlight) !important;
+  color: var(--primary-color) !important;
+}
+
+.app-sidebar .ant-menu-item-selected {
+  background: var(--primary-color-outline) !important;
+  color: var(--primary-color) !important;
+}
+
+.app-sidebar .ant-menu-submenu-arrow {
+  color: var(--text-secondary) !important;
+}
+
+.sidebar-logo {
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color-secondary);
+  transition: var(--transition-base);
+}
+
+.sidebar-logo-text {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.sidebar-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition-base);
+  color: var(--text-primary) !important;
+}
+
+.sidebar-trigger:hover {
+  background: var(--bg-spotlight);
+}
+
+/* Sobrescribir estilos del trigger de Ant Design */
+.app-sidebar .ant-layout-sider-trigger {
+  background: var(--bg-elevated) !important;
+  color: var(--text-primary) !important;
+  border-top: 1px solid var(--border-color-secondary) !important;
+}
+
+/* Ajuste del contenido cuando el sidebar está visible */
+.app-layout > .ant-layout {
+  margin-left: 250px;
+  transition: var(--transition-base);
+}
+
+.app-layout > .ant-layout-sider-collapsed ~ .ant-layout {
+  margin-left: 80px;
+}
+
+@media (max-width: 768px) {
+  .app-sidebar {
+    position: fixed;
+    z-index: 999;
+  }
+}

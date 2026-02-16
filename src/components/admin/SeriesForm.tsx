@@ -1,0 +1,550 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import {
+  Form,
+  Input,
+  Select,
+  InputNumber,
+  Switch,
+  Button,
+  Card,
+  Row,
+  Col,
+  Space,
+  Divider,
+  Tag,
+  AutoComplete,
+  Upload,
+  Alert,
+} from 'antd';
+import {
+  PlusOutlined,
+  MinusCircleOutlined,
+  SaveOutlined,
+  CloseOutlined,
+  EditOutlined,
+  UploadOutlined,
+  StarOutlined,
+  StarFilled,
+} from '@ant-design/icons';
+import Link from 'next/link';
+import { shouldShowSeasons, getContentTypeConfig } from '@/types/content';
+import './SeriesForm.css';
+import { useMessage } from '@/hooks/useMessage';
+
+const { Option } = Select;
+const { TextArea } = Input;
+
+interface SeriesFormProps {
+  initialData?: any;
+  mode: 'create' | 'edit';
+}
+
+export function SeriesForm({ initialData, mode }: SeriesFormProps) {
+  const message = useMessage();
+  const router = useRouter();
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+  const [selectedType, setSelectedType] = useState('serie');
+
+  // Datos para autocompletado
+  const [countries, setCountries] = useState<string[]>([]);
+  const [actors, setActors] = useState<string[]>([]);
+  const [universes, setUniverses] = useState<any[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(initialData?.isFavorite ?? false);
+
+  useEffect(() => {
+    loadFormData();
+    if (initialData) {
+      form.setFieldsValue(initialData);
+      setSelectedType(initialData.type || 'serie');
+    }
+  }, [initialData]);
+
+  const loadFormData = async () => {
+    try {
+      // Cargar países
+      const countriesRes = await fetch('/api/countries');
+      const countriesData = await countriesRes.json();
+      setCountries(countriesData.map((c: any) => c.name));
+
+      // Cargar actores
+      const actorsRes = await fetch('/api/actors');
+      const actorsData = await actorsRes.json();
+      setActors(actorsData.map((a: any) => a.name));
+
+      // Cargar universos
+      const universesRes = await fetch('/api/universes');
+      const universesData = await universesRes.json();
+      setUniverses(universesData);
+    } catch (error) {
+      console.error('Error loading form data:', error);
+    }
+  };
+
+  const handleSubmit = async (values: any) => {
+    setLoading(true);
+    try {
+      const url = mode === 'create' ? '/api/series' : `/api/series/${initialData?.id}`;
+      const method = mode === 'create' ? 'POST' : 'PUT';
+
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(values),
+      });
+
+      if (!response.ok) throw new Error('Error saving series');
+
+      const savedSerie = await response.json();
+      message.success(
+        mode === 'create' ? 'Serie creada exitosamente' : 'Serie actualizada exitosamente'
+      );
+
+      router.push(`/series/${savedSerie.id}`);
+    } catch (error) {
+      message.error('Error al guardar la serie');
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpload = async (file: File) => {
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Error uploading file');
+      }
+
+      const data = await response.json();
+
+      // Actualizar el campo imageUrl en el formulario
+      form.setFieldsValue({ imageUrl: data.url });
+      message.success('Imagen subida exitosamente');
+
+      return false; // Prevent default upload behavior
+    } catch (error: any) {
+      message.error(error.message || 'Error al subir la imagen');
+      return false;
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleToggleFavorite = async () => {
+    if (mode !== 'edit' || !initialData?.id) return;
+    try {
+      const response = await fetch(`/api/series/${initialData.id}/favorite`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isFavorite: !isFavorite }),
+      });
+      if (!response.ok) throw new Error();
+      setIsFavorite(!isFavorite);
+      message.success(!isFavorite ? '⭐ Agregado a favoritos' : 'Removido de favoritos');
+    } catch {
+      message.error('Error al actualizar favorito');
+    }
+  };
+
+  const config = getContentTypeConfig(selectedType);
+  const showSeasons = shouldShowSeasons(selectedType);
+
+  return (
+    <div className="series-form">
+      <Card
+        title={
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>{mode === 'create' ? 'Nueva Serie/Película' : 'Editar Serie/Película'}</span>
+            <Space>
+              {mode === 'edit' && initialData?.id && (
+                <Button
+                  icon={isFavorite ? <StarFilled /> : <StarOutlined />}
+                  onClick={handleToggleFavorite}
+                  style={isFavorite ? { color: '#faad14', borderColor: '#faad14' } : {}}
+                >
+                  {isFavorite ? 'Favorito' : 'Agregar a Favoritos'}
+                </Button>
+              )}
+              <Button icon={<CloseOutlined />} onClick={() => router.back()}>
+                Cancelar
+              </Button>
+            </Space>
+          </div>
+        }
+      >
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+          initialValues={{
+            type: 'serie',
+            basedOn: null,
+            format: 'regular',
+            actors: [{ name: '', character: '' }],
+            ...(showSeasons ? { seasons: [{ seasonNumber: 1, episodeCount: null }] } : {}),
+          }}
+        >
+          {/* Información Básica */}
+          <Card type="inner" title="📝 Información Básica" style={{ marginBottom: 24 }}>
+            <Row gutter={16}>
+              <Col xs={24} md={12}>
+                <Form.Item
+                  label="Título"
+                  name="title"
+                  rules={[{ required: true, message: 'El título es obligatorio' }]}
+                >
+                  <Input placeholder="Ej: 2 Moons" size="large" />
+                </Form.Item>
+              </Col>
+
+              <Col xs={24} md={12}>
+                <Form.Item label="Título Original" name="originalTitle">
+                  <Input placeholder="Título en idioma original" size="large" />
+                </Form.Item>
+              </Col>
+
+              <Col xs={24} md={8}>
+                <Form.Item
+                  label="Tipo"
+                  name="type"
+                  rules={[{ required: true, message: 'Selecciona un tipo' }]}
+                >
+                  <Select size="large" onChange={(value) => setSelectedType(value)}>
+                    <Option value="serie">📺 Serie</Option>
+                    <Option value="pelicula">🎬 Película</Option>
+                    <Option value="corto">🎞️ Cortometraje</Option>
+                    <Option value="especial">✨ Especial</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+
+              <Col xs={24} md={8}>
+                <Form.Item label="País" name="countryName">
+                  <AutoComplete
+                    options={countries.map((c) => ({ value: c }))}
+                    placeholder="Ej: Tailandia"
+                    size="large"
+                    filterOption={(inputValue, option) =>
+                      option!.value.toLowerCase().includes(inputValue.toLowerCase())
+                    }
+                  />
+                </Form.Item>
+              </Col>
+
+              <Col xs={24} md={8}>
+                <Form.Item label="Año" name="year">
+                  <InputNumber
+                    placeholder="2024"
+                    style={{ width: '100%' }}
+                    size="large"
+                    min={1900}
+                    max={2100}
+                  />
+                </Form.Item>
+              </Col>
+
+              <Col xs={24} md={12}>
+                <Form.Item label="Universo (opcional)" name="universeId">
+                  <Select
+                    placeholder="¿Pertenece a algún universo/franquicia?"
+                    size="large"
+                    allowClear
+                  >
+                    {universes.map((u) => (
+                      <Option key={u.id} value={u.id}>
+                        {u.name}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+
+              <Col xs={24} md={12}>
+                <Form.Item label="Basada en" name="basedOn">
+                  <Select
+                    placeholder="Selecciona si está basado en algo"
+                    size="large"
+                    allowClear
+                  >
+                    <Option value="libro">📖 Libro</Option>
+                    <Option value="novela">📚 Novela</Option>
+                    <Option value="corto">📄 Cuento/Relato Corto</Option>
+                    <Option value="manga">🎌 Manga</Option>
+                    <Option value="anime">🎨 Anime</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+
+              <Col xs={24} md={12}>
+                <Form.Item
+                  label="Formato de Pantalla"
+                  name="format"
+                  rules={[{ required: true, message: 'Selecciona un formato' }]}
+                >
+                  <Select size="large">
+                    <Option value="regular">📱 Regular (Horizontal)</Option>
+                    <Option value="vertical">📲 Vertical (Para móvil)</Option>
+                  </Select>
+                </Form.Item>
+              </Col>
+
+              <Col xs={24}>
+                <Form.Item label="Sinopsis" name="synopsis">
+                  <TextArea rows={4} placeholder="Breve descripción de la serie/película" />
+                </Form.Item>
+              </Col>
+
+              <Col xs={24} md={12}>
+                <Form.Item label="Banda Sonora (BSO)" name="soundtrack">
+                  <Input placeholder="Compositor o información de la BSO" size="large" />
+                </Form.Item>
+              </Col>
+
+              <Col xs={24} md={12}>
+                <Form.Item label="Puntuación General (1-10)" name="overallRating">
+                  <InputNumber
+                    placeholder="8"
+                    style={{ width: '100%' }}
+                    size="large"
+                    min={1}
+                    max={10}
+                  />
+                </Form.Item>
+              </Col>
+
+              <Col xs={24}>
+                <Form.Item label="Observaciones" name="observations">
+                  <TextArea
+                    rows={3}
+                    placeholder="Notas personales, comentarios, etc."
+                  />
+                </Form.Item>
+              </Col>
+
+              <Col xs={24}>
+                <Form.Item
+                  label="Tags / Etiquetas"
+                  name="tags"
+                  help="Escribe y presiona Enter para crear nuevos tags. Ej: Enemy to Lovers, Rico-Pobre, Escuela"
+                >
+                  <Select
+                    mode="tags"
+                    size="large"
+                    placeholder="Agrega tags como Enemy to Lovers, Escuela, etc."
+                    tokenSeparators={[',']}
+                    style={{ width: '100%' }}
+                  />
+                </Form.Item>
+              </Col>
+
+              <Col xs={24}>
+                <Form.Item
+                  label="🖼️ Imagen / Portada"
+                  name="imageUrl"
+                  help="Pega una URL o sube un archivo desde tu computadora"
+                >
+                  <Input
+                    size="large"
+                    placeholder="https://example.com/imagen.jpg"
+                    addonAfter={
+                      <Upload
+                        accept="image/*"
+                        showUploadList={false}
+                        beforeUpload={handleUpload}
+                      >
+                        <Button
+                          icon={<UploadOutlined />}
+                          loading={uploading}
+                          type="link"
+                          style={{ padding: 0, height: 'auto' }}
+                        >
+                          {uploading ? 'Subiendo...' : 'Subir archivo'}
+                        </Button>
+                      </Upload>
+                    }
+                  />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Card>
+
+          {/* Reparto */}
+          <Card type="inner" title="👥 Reparto" style={{ marginBottom: 24 }}>
+            {showSeasons && (
+              <Alert
+                message="Reparto principal de la serie"
+                description="Este es el reparto que aparece en todas las temporadas. Para agregar reparto específico de cada temporada, usa el botón 'Editar' junto a cada temporada abajo."
+                type="info"
+                showIcon
+                style={{ marginBottom: 16 }}
+              />
+            )}
+            <Form.List name="actors">
+              {(fields, { add, remove }) => (
+                <>
+                  {fields.map(({ key, name, ...restField }) => (
+                    <Space
+                      key={key}
+                      style={{ display: 'flex', marginBottom: 8 }}
+                      align="baseline"
+                    >
+                      <Form.Item
+                        {...restField}
+                        name={[name, 'name']}
+                        rules={[{ required: true, message: 'Nombre del actor requerido' }]}
+                        style={{ marginBottom: 0, width: 250 }}
+                      >
+                        <AutoComplete
+                          options={actors.map((a) => ({ value: a }))}
+                          placeholder="Nombre del actor"
+                          filterOption={(inputValue, option) =>
+                            option!.value.toLowerCase().includes(inputValue.toLowerCase())
+                          }
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, 'character']}
+                        style={{ marginBottom: 0, width: 250 }}
+                      >
+                        <Input placeholder="Personaje" />
+                      </Form.Item>
+                      <MinusCircleOutlined onClick={() => remove(name)} />
+                    </Space>
+                  ))}
+                  <Form.Item>
+                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                      Agregar Actor
+                    </Button>
+                  </Form.Item>
+                </>
+              )}
+            </Form.List>
+          </Card>
+
+          {/* Temporadas (solo para series) */}
+          {showSeasons && (
+            <Card type="inner" title={`📺 ${config.seasonLabel}`} style={{ marginBottom: 24 }}>
+              <Alert
+                message="Información básica de temporadas"
+                description={mode === 'edit'
+                  ? "Usa el botón 'Editar' junto a cada temporada para agregar reparto específico, sinopsis, episodios, comentarios y ratings."
+                  : "Primero guarda la serie, luego podrás editar cada temporada en detalle para agregar reparto, sinopsis, episodios, etc."
+                }
+                type="info"
+                showIcon
+                style={{ marginBottom: 16 }}
+              />
+              <Form.List name="seasons">
+                {(fields, { add, remove }) => (
+                  <>
+                    {fields.map(({ key, name, ...restField }) => {
+                      const seasonData = form.getFieldValue(['seasons', name]);
+                      const hasId = seasonData?.id;
+
+                      return (
+                        <div key={key} style={{
+                          display: 'flex',
+                          marginBottom: 12,
+                          padding: '12px',
+                          background: 'var(--bg-elevated)',
+                          borderRadius: 'var(--border-radius-sm)',
+                          alignItems: 'flex-end',
+                          gap: '12px',
+                        }}>
+                          <Form.Item
+                            {...restField}
+                            name={[name, 'id']}
+                            hidden
+                          >
+                            <Input type="hidden" />
+                          </Form.Item>
+
+                          <Form.Item
+                            {...restField}
+                            name={[name, 'seasonNumber']}
+                            label="Temporada"
+                            rules={[{ required: true, message: 'Número requerido' }]}
+                            style={{ marginBottom: 0, flex: '0 0 100px' }}
+                          >
+                            <InputNumber placeholder="1" min={1} />
+                          </Form.Item>
+
+                          <Form.Item
+                            {...restField}
+                            name={[name, 'episodeCount']}
+                            label="Capítulos"
+                            style={{ marginBottom: 0, flex: '0 0 100px' }}
+                          >
+                            <InputNumber placeholder="12" min={1} />
+                          </Form.Item>
+
+                          <Form.Item
+                            {...restField}
+                            name={[name, 'year']}
+                            label="Año"
+                            style={{ marginBottom: 0, flex: '0 0 100px' }}
+                          >
+                            <InputNumber placeholder="2024" min={1900} max={2100} />
+                          </Form.Item>
+
+                          {mode === 'edit' && hasId && (
+                            <Link href={`/admin/seasons/${seasonData.id}/editar`}>
+                              <Button
+                                type="primary"
+                                icon={<EditOutlined />}
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                Editar
+                              </Button>
+                            </Link>
+                          )}
+
+                          <MinusCircleOutlined
+                            onClick={() => remove(name)}
+                            style={{ fontSize: '18px', color: '#ff4d4f', cursor: 'pointer' }}
+                          />
+                        </div>
+                      );
+                    })}
+                    <Form.Item>
+                      <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                        Agregar Temporada
+                      </Button>
+                    </Form.Item>
+                  </>
+                )}
+              </Form.List>
+            </Card>
+          )}
+
+          {/* Botones de acción */}
+          <Form.Item>
+            <Space size="large">
+              <Button type="primary" htmlType="submit" icon={<SaveOutlined />} size="large" loading={loading}>
+                {mode === 'create' ? 'Crear Serie' : 'Guardar Cambios'}
+              </Button>
+              <Button size="large" onClick={() => router.back()}>
+                Cancelar
+              </Button>
+            </Space>
+          </Form.Item>
+        </Form>
+      </Card>
+    </div>
+  );
+}

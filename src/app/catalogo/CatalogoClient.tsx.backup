@@ -1,0 +1,377 @@
+'use client';
+
+import { useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
+import {
+  Row,
+  Col,
+  Card,
+  Empty,
+  Space,
+  Tag,
+  Input,
+  Select,
+  Slider,
+  Button,
+  Pagination,
+} from 'antd';
+import { SearchOutlined, FilterOutlined, PlusOutlined } from '@ant-design/icons';
+
+const { Option } = Select;
+
+interface SerieData {
+  id: string;
+  titulo: string;
+  pais: string;
+  tipo: string;
+  temporadas: number;
+  episodios: number;
+  anio: number;
+  rating: number | null;
+  observaciones: string | null;
+  visto?: boolean;
+}
+
+interface CatalogoClientProps {
+  series: SerieData[];
+}
+
+const ITEMS_PER_PAGE = 50;
+
+export function CatalogoClient({ series }: CatalogoClientProps) {
+  const router = useRouter();
+
+  // Estados de filtros
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState<string | undefined>();
+  const [selectedType, setSelectedType] = useState<string | undefined>();
+  const [selectedViewed, setSelectedViewed] = useState<string>('all');
+  const [minRating, setMinRating] = useState(0);
+  const [yearRange, setYearRange] = useState<[number, number]>([2000, 2026]);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Obtener países únicos
+  const countries = useMemo(() => {
+    const uniqueCountries = Array.from(new Set(series.map((s) => s.pais).filter(Boolean)));
+    return uniqueCountries.sort();
+  }, [series]);
+
+  // Aplicar filtros
+  const filteredSeries = useMemo(() => {
+    let filtered = [...series];
+
+    // Búsqueda por título
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      filtered = filtered.filter(
+        (s) =>
+          s.titulo.toLowerCase().includes(term) ||
+          s.pais.toLowerCase().includes(term) ||
+          s.tipo.toLowerCase().includes(term)
+      );
+    }
+
+    // Filtro por país
+    if (selectedCountry) {
+      filtered = filtered.filter((s) => s.pais === selectedCountry);
+    }
+
+    // Filtro por tipo
+    if (selectedType) {
+      filtered = filtered.filter((s) => s.tipo === selectedType);
+    }
+
+    // Filtro por visto/no visto
+    if (selectedViewed === 'watched') {
+      filtered = filtered.filter((s) => s.visto === true);
+    } else if (selectedViewed === 'unwatched') {
+      filtered = filtered.filter((s) => !s.visto);
+    }
+
+    // Filtro por rating mínimo
+    if (minRating > 0) {
+      filtered = filtered.filter((s) => (s.rating ?? 0) >= minRating);
+    }
+
+    // Filtro por rango de años
+    filtered = filtered.filter((s) => {
+      const year = s.anio ?? 0;
+      return year >= yearRange[0] && year <= yearRange[1];
+    });
+
+    return filtered;
+  }, [series, searchTerm, selectedCountry, selectedType, selectedViewed, minRating, yearRange]);
+
+  // Paginación
+  const paginatedSeries = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    return filteredSeries.slice(startIndex, endIndex);
+  }, [filteredSeries, currentPage]);
+
+  // Reset página cuando cambian filtros
+  const handleFilterChange = () => {
+    setCurrentPage(1);
+  };
+
+  const clearFilters = () => {
+    setSearchTerm('');
+    setSelectedCountry(undefined);
+    setSelectedType(undefined);
+    setSelectedViewed('all');
+    setMinRating(0);
+    setYearRange([2000, 2026]);
+    setCurrentPage(1);
+  };
+
+  const handleCardClick = (id: string) => {
+    router.push(`/series/${id}`);
+  };
+
+  const getColorByType = (tipo: string) => {
+    const colorMap: Record<string, string> = {
+      serie: 'blue',
+      pelicula: 'purple',
+      corto: 'cyan',
+      especial: 'orange',
+    };
+    return colorMap[tipo] || 'default';
+  };
+
+  return (
+    <>
+      {/* Header con botón agregar */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '24px',
+        }}
+      >
+        <h2>Catálogo de Series y Películas</h2>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          size="large"
+          onClick={() => router.push('/admin/series/nueva')}
+        >
+          Agregar Nueva
+        </Button>
+      </div>
+
+      {/* Panel de Filtros */}
+      <Card style={{ marginBottom: '24px' }}>
+        <Space direction="vertical" size="large" style={{ width: '100%' }}>
+          {/* Fila 1: Búsqueda y Selects */}
+          <Row gutter={16}>
+            <Col xs={24} md={12} lg={6}>
+              <Input
+                placeholder="Buscar por título..."
+                prefix={<SearchOutlined />}
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  handleFilterChange();
+                }}
+                allowClear
+              />
+            </Col>
+
+            <Col xs={24} md={12} lg={6}>
+              <Select
+                placeholder="Filtrar por país"
+                style={{ width: '100%' }}
+                value={selectedCountry}
+                onChange={(value) => {
+                  setSelectedCountry(value);
+                  handleFilterChange();
+                }}
+                allowClear
+              >
+                {countries.map((country) => (
+                  <Option key={country} value={country}>
+                    {country}
+                  </Option>
+                ))}
+              </Select>
+            </Col>
+
+            <Col xs={24} md={12} lg={6}>
+              <Select
+                placeholder="Filtrar por tipo"
+                style={{ width: '100%' }}
+                value={selectedType}
+                onChange={(value) => {
+                  setSelectedType(value);
+                  handleFilterChange();
+                }}
+                allowClear
+              >
+                <Option value="serie">Serie</Option>
+                <Option value="pelicula">Película</Option>
+                <Option value="corto">Corto</Option>
+                <Option value="especial">Especial</Option>
+              </Select>
+            </Col>
+
+            <Col xs={24} md={12} lg={6}>
+              <Select
+                placeholder="Estado"
+                style={{ width: '100%' }}
+                value={selectedViewed}
+                onChange={(value) => {
+                  setSelectedViewed(value);
+                  handleFilterChange();
+                }}
+              >
+                <Option value="all">Todas</Option>
+                <Option value="watched">Vistas</Option>
+                <Option value="unwatched">No vistas</Option>
+              </Select>
+            </Col>
+          </Row>
+
+          {/* Fila 2: Sliders */}
+          <Row gutter={16}>
+            <Col xs={24} md={12}>
+              <div>
+                <span style={{ marginBottom: '8px', display: 'block' }}>
+                  Rating mínimo: {minRating}
+                </span>
+                <Slider
+                  min={0}
+                  max={10}
+                  value={minRating}
+                  onChange={(value) => {
+                    setMinRating(value);
+                    handleFilterChange();
+                  }}
+                  marks={{ 0: '0', 5: '5', 10: '10' }}
+                />
+              </div>
+            </Col>
+
+            <Col xs={24} md={12}>
+              <div>
+                <span style={{ marginBottom: '8px', display: 'block' }}>
+                  Año: {yearRange[0]} - {yearRange[1]}
+                </span>
+                <Slider
+                  range
+                  min={2000}
+                  max={2026}
+                  value={yearRange}
+                  onChange={(value) => {
+                    setYearRange(value as [number, number]);
+                    handleFilterChange();
+                  }}
+                  marks={{ 2000: '2000', 2026: '2026' }}
+                />
+              </div>
+            </Col>
+          </Row>
+
+          {/* Acciones de filtros */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Button icon={<FilterOutlined />} onClick={clearFilters}>
+              Limpiar Filtros
+            </Button>
+            <span style={{ color: 'var(--text-secondary)' }}>
+              Mostrando {filteredSeries.length} de {series.length} series
+            </span>
+          </div>
+        </Space>
+      </Card>
+
+      {/* Grid de Series */}
+      {paginatedSeries.length > 0 ? (
+        <>
+          <Row gutter={[16, 16]}>
+            {paginatedSeries.map((serie) => (
+              <Col xs={24} sm={12} md={8} lg={6} xl={4} key={serie.id}>
+                <Card
+                  hoverable
+                  className="serie-card"
+                  onClick={() => handleCardClick(serie.id)}
+                  style={{ cursor: 'pointer' }}
+                  cover={
+                    <div className="serie-card-cover">
+                      <div className="serie-placeholder">{serie.titulo[0]}</div>
+                    </div>
+                  }
+                >
+                  <Card.Meta
+                    title={
+                      <div
+                        style={{
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                        title={serie.titulo}
+                      >
+                        {serie.titulo}
+                      </div>
+                    }
+                    description={
+                      <Space direction="vertical" size="small" style={{ width: '100%' }}>
+                        <div>
+                          <Tag color={getColorByType(serie.tipo)}>{serie.tipo}</Tag>
+                          {serie.visto && <Tag color="green">Vista</Tag>}
+                        </div>
+                        <div>
+                          <Tag>{serie.pais}</Tag>
+                        </div>
+                        {serie.temporadas > 0 && (
+                          <div>
+                            {serie.temporadas} temp.
+                            {serie.episodios > 0 && ` • ${serie.episodios} ep.`}
+                          </div>
+                        )}
+                        <div>Año: {serie.anio || 'N/A'}</div>
+                        {serie.rating && (
+                          <div>
+                            <Tag color="gold">★ {serie.rating}/10</Tag>
+                          </div>
+                        )}
+                      </Space>
+                    }
+                  />
+                </Card>
+              </Col>
+            ))}
+          </Row>
+
+          {/* Paginación */}
+          {filteredSeries.length > ITEMS_PER_PAGE && (
+            <div style={{ marginTop: '32px', textAlign: 'center' }}>
+              <Pagination
+                current={currentPage}
+                pageSize={ITEMS_PER_PAGE}
+                total={filteredSeries.length}
+                onChange={setCurrentPage}
+                showSizeChanger={false}
+                showTotal={(total, range) =>
+                  `${range[0]}-${range[1]} de ${total} series`
+                }
+              />
+            </div>
+          )}
+        </>
+      ) : (
+        <Empty
+          description={
+            searchTerm ||
+            selectedCountry ||
+            selectedType ||
+            selectedViewed !== 'all' ||
+            minRating > 0
+              ? 'No se encontraron series con estos filtros'
+              : 'No hay series en el catálogo'
+          }
+        />
+      )}
+    </>
+  );
+}
