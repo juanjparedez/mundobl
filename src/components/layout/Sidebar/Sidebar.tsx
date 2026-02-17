@@ -151,7 +151,7 @@ export function Sidebar() {
       <div className="sidebar-footer">
         <div className="sidebar-user-section">
           {session?.user ? (
-            <div className="sidebar-user-info" onClick={() => signOut()}>
+            <div className="sidebar-user-info" onClick={() => signOut({ callbackUrl: '/' })}>
               <Avatar
                 src={session.user.image}
                 icon={!session.user.image ? <UserOutlined /> : undefined}

@@ -138,6 +138,7 @@ model Series {
   basedOn       String?   // "libro", "novela", "corto", "manga", "anime"
   format        String    @default("regular") // "regular", "vertical"
   imageUrl      String?
+  imagePosition String    @default("center") // CSS background-position
   synopsis      String?   // Sinopsis de la serie
   review        String?   // Reseña personal
   soundtrack    String?   // Banda sonora

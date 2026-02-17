@@ -15,3 +15,8 @@ Cuando cargo una imagen de portada, esta bueno que al acceder a la serie, se pue
 Agregar una pagina donde se puedan dejar bugs, y una especie de changelog para ir mostrando que se fue arreglando, simple, no muy compleja
 
 En todos los casos, intentar evitar bugs por inyeccion de queries (no recuerdo el termino real) pero por ahi puede ser peligroso para los campos donde se ponen datos manuales
+
+Amend 1 -----
+
+
+Pagina de gestion de usuarios

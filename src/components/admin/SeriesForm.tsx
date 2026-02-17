@@ -53,6 +53,43 @@ interface SeriesFormProps {
   mode: 'create' | 'edit';
 }
 
+const POSITION_OPTIONS = [
+  { value: 'top left', label: '↖' },
+  { value: 'top center', label: '↑' },
+  { value: 'top right', label: '↗' },
+  { value: 'center left', label: '←' },
+  { value: 'center', label: '•' },
+  { value: 'center right', label: '→' },
+  { value: 'bottom left', label: '↙' },
+  { value: 'bottom center', label: '↓' },
+  { value: 'bottom right', label: '↘' },
+];
+
+function ImagePositionSelector({
+  value,
+  onChange,
+}: {
+  value?: string;
+  onChange?: (value: string) => void;
+}) {
+  const current = value || 'center';
+  return (
+    <div className="image-position-grid">
+      {POSITION_OPTIONS.map((opt) => (
+        <button
+          key={opt.value}
+          type="button"
+          className={`image-position-cell ${current === opt.value ? 'image-position-cell--active' : ''}`}
+          onClick={() => onChange?.(opt.value)}
+          title={opt.value}
+        >
+          {opt.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export function SeriesForm({ initialData, mode }: SeriesFormProps) {
   const message = useMessage();
   const router = useRouter();
@@ -69,6 +106,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
   const [languages, setLanguages] = useState<string[]>([]);
   const [genres, setGenres] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
+  const imageUrl = Form.useWatch('imageUrl', form);
   const [isFavorite, setIsFavorite] = useState(
     initialData?.isFavorite ?? false
   );
@@ -508,6 +546,18 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                   </Space.Compact>
                 </Form.Item>
               </Col>
+
+              {imageUrl && (
+                <Col xs={24}>
+                  <Form.Item
+                    label="📍 Posición de imagen en catálogo"
+                    name="imagePosition"
+                    help="Seleccioná qué parte de la imagen se ve en las cards"
+                  >
+                    <ImagePositionSelector />
+                  </Form.Item>
+                </Col>
+              )}
             </Row>
           </Card>
 

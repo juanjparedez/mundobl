@@ -46,6 +46,7 @@ interface SerieData {
   rating: number | null;
   observaciones: string | null;
   imageUrl?: string | null;
+  imagePosition?: string;
   synopsis?: string | null;
   visto?: boolean;
   isFavorite?: boolean;
@@ -359,7 +360,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
               ? `url(${serie.imageUrl})`
               : undefined,
             backgroundSize: 'cover',
-            backgroundPosition: 'center',
+            backgroundPosition: serie.imagePosition || 'center',
             backgroundBlendMode: serie.imageUrl ? 'overlay' : 'normal',
           }}
         >
@@ -435,7 +436,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
               ? `url(${firstSerie.imageUrl})`
               : undefined,
             backgroundSize: 'cover',
-            backgroundPosition: 'center',
+            backgroundPosition: firstSerie.imagePosition || 'center',
             backgroundBlendMode: firstSerie.imageUrl ? 'overlay' : 'normal',
           }}
         >
@@ -492,7 +493,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
             ? `url(${serie.imageUrl})`
             : undefined,
           backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          backgroundPosition: serie.imagePosition || 'center',
         }}
       />
       <div className="serie-list-item-content">
@@ -542,7 +543,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
                 ? `url(${serie.imageUrl})`
                 : undefined,
               backgroundSize: 'cover',
-              backgroundPosition: 'center',
+              backgroundPosition: serie.imagePosition || 'center',
             }}
           />
           <div className="serie-list-item-content">

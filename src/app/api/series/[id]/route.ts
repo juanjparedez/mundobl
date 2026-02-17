@@ -136,6 +136,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         basedOn: body.basedOn || null,
         format: body.format || 'regular',
         imageUrl: body.imageUrl || null,
+        imagePosition: body.imagePosition || 'center',
         synopsis: body.synopsis || null,
         review: body.review || null,
         soundtrack: body.soundtrack || null,

@@ -11,7 +11,7 @@ import {
   LoginOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { useSession, signIn } from 'next-auth/react';
+import { useSession, signIn, signOut } from 'next-auth/react';
 import { useTheme } from '@/lib/providers/ThemeProvider';
 import { ROUTES } from '@/constants/navigation';
 import './BottomNav.css';
@@ -78,8 +78,8 @@ export function BottomNav() {
           {
             key: 'profile',
             icon: <UserOutlined />,
-            label: session.user?.name?.split(' ')[0] || 'Perfil',
-            path: '/api/auth/signout',
+            label: session.user?.name?.split(' ')[0] || 'Salir',
+            onClick: () => signOut({ callbackUrl: '/' }),
           },
         ]),
   ];
