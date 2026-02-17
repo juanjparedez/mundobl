@@ -15,6 +15,7 @@ export async function GET() {
         email: true,
         image: true,
         role: true,
+        banned: true,
         createdAt: true,
       },
       orderBy: { createdAt: 'desc' },

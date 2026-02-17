@@ -16,14 +16,7 @@ export async function PUT(
 
     const { id } = await params;
     const body = await request.json();
-    const { role } = body;
-
-    if (!ALLOWED_ROLES.includes(role)) {
-      return NextResponse.json(
-        { error: 'Rol no válido. Solo se puede asignar VISITOR o MODERATOR.' },
-        { status: 400 }
-      );
-    }
+    const { role, banned } = body;
 
     const user = await prisma.user.findUnique({ where: { id } });
     if (!user) {
@@ -33,22 +26,40 @@ export async function PUT(
       );
     }
 
-    // No permitir cambiar el rol de los admins
+    // No permitir modificar admins
     const adminEmails = (process.env.ADMIN_EMAILS ?? '')
       .split(',')
       .map((e) => e.trim())
       .filter(Boolean);
     if (user.email && adminEmails.includes(user.email)) {
       return NextResponse.json(
-        { error: 'No se puede cambiar el rol del administrador' },
+        { error: 'No se puede modificar al administrador' },
         { status: 403 }
       );
     }
 
+    const updateData: Record<string, unknown> = {};
+
+    if (role !== undefined) {
+      if (!ALLOWED_ROLES.includes(role)) {
+        return NextResponse.json(
+          {
+            error: 'Rol no válido. Solo se puede asignar VISITOR o MODERATOR.',
+          },
+          { status: 400 }
+        );
+      }
+      updateData.role = role;
+    }
+
+    if (banned !== undefined) {
+      updateData.banned = Boolean(banned);
+    }
+
     const updatedUser = await prisma.user.update({
       where: { id },
-      data: { role },
-      select: { id: true, name: true, email: true, role: true },
+      data: updateData,
+      select: { id: true, name: true, email: true, role: true, banned: true },
     });
 
     return NextResponse.json(updatedUser);

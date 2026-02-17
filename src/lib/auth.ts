@@ -50,7 +50,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async session({ session, user }) {
       if (session.user) {
         session.user.id = user.id;
-        session.user.role = (user as unknown as { role: Role }).role;
+        const dbUser = user as unknown as { role: Role; banned: boolean };
+        session.user.role = dbUser.role;
+        session.user.banned = dbUser.banned;
       }
       return session;
     },

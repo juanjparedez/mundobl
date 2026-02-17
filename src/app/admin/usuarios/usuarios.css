@@ -17,3 +17,14 @@
   font-size: var(--font-size-sm);
   color: var(--text-secondary);
 }
+
+.usuarios-section-title {
+  margin: 0 0 var(--spacing-md) 0;
+  font-size: var(--font-size-lg);
+  color: var(--text-primary);
+}
+
+.usuarios-ban-form {
+  display: flex;
+  margin-bottom: var(--spacing-md);
+}
