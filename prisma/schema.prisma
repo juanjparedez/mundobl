@@ -421,11 +421,18 @@ model Comment {
 // ============================================
 // ESTADO DE VISUALIZACIÓN (por usuario)
 // ============================================
+enum WatchStatus {
+  SIN_VER
+  VIENDO
+  VISTA
+  ABANDONADA
+  RETOMAR
+}
+
 model ViewStatus {
-  id                Int       @id @default(autoincrement())
-  watched           Boolean   @default(false) // Visto/No visto
+  id                Int         @id @default(autoincrement())
+  status            WatchStatus @default(SIN_VER)
   watchedDate       DateTime?
-  currentlyWatching Boolean   @default(false) // Estoy viendo ahora
   lastWatchedAt     DateTime? // Última vez que se vio
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
@@ -463,7 +470,16 @@ model FeatureRequest {
   userId String?
   user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
 
-  votes FeatureVote[]
+  votes  FeatureVote[]
+  images FeatureRequestImage[]
+}
+
+model FeatureRequestImage {
+  id               Int            @id @default(autoincrement())
+  url              String
+  createdAt        DateTime       @default(now())
+  featureRequestId Int
+  featureRequest   FeatureRequest @relation(fields: [featureRequestId], references: [id], onDelete: Cascade)
 }
 
 model FeatureVote {

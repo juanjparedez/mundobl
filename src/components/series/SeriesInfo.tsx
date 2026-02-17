@@ -170,61 +170,76 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
             {series.directors.map((d) => d.director.name).join(', ')}
           </Descriptions.Item>
         )}
-
       </Descriptions>
 
-      {series.actors && series.actors.length > 0 && (() => {
-        const pairings = new Map<number, typeof series.actors>();
-        const unpaired: typeof series.actors = [];
+      {series.actors &&
+        series.actors.length > 0 &&
+        (() => {
+          const pairings = new Map<number, typeof series.actors>();
+          const unpaired: typeof series.actors = [];
 
-        for (const sa of series.actors!) {
-          if (sa.pairingGroup) {
-            if (!pairings.has(sa.pairingGroup)) {
-              pairings.set(sa.pairingGroup, []);
+          for (const sa of series.actors!) {
+            if (sa.pairingGroup) {
+              if (!pairings.has(sa.pairingGroup)) {
+                pairings.set(sa.pairingGroup, []);
+              }
+              pairings.get(sa.pairingGroup)!.push(sa);
+            } else {
+              unpaired.push(sa);
             }
-            pairings.get(sa.pairingGroup)!.push(sa);
-          } else {
-            unpaired.push(sa);
           }
-        }
 
-        const renderActor = (sa: (typeof series.actors)[0]) => (
-          <div key={`${sa.actor.id}-${sa.character}`} className="series-info__cast-actor">
-            <Link href={`/actores/${sa.actor.id}`} className="series-info__cast-actor-name">
-              {sa.actor.name}
-            </Link>
-            {sa.character && (
-              <span className="series-info__cast-character">como {sa.character}</span>
-            )}
-            {sa.isMain && <span className="series-info__cast-star" title="Protagonista">⭐</span>}
-          </div>
-        );
+          const renderActor = (sa: (typeof series.actors)[0]) => (
+            <div
+              key={`${sa.actor.id}-${sa.character}`}
+              className="series-info__cast-actor"
+            >
+              <Link
+                href={`/actores/${sa.actor.id}`}
+                className="series-info__cast-actor-name"
+              >
+                {sa.actor.name}
+              </Link>
+              {sa.character && (
+                <span className="series-info__cast-character">
+                  como {sa.character}
+                </span>
+              )}
+              {sa.isMain && (
+                <span className="series-info__cast-star" title="Protagonista">
+                  ⭐
+                </span>
+              )}
+            </div>
+          );
 
-        return (
-          <div className="series-info__cast-section">
-            <h4 className="series-info__section-title">👥 Reparto</h4>
+          return (
+            <div className="series-info__cast-section">
+              <h4 className="series-info__section-title">👥 Reparto</h4>
 
-            {pairings.size > 0 && (
-              <div className="series-info__pairings">
-                {Array.from(pairings.entries()).map(([group, actors]) => (
-                  <div key={group} className="series-info__pairing">
-                    <span className="series-info__pairing-badge">💕 Pareja</span>
-                    <div className="series-info__pairing-actors">
-                      {actors!.map(renderActor)}
+              {pairings.size > 0 && (
+                <div className="series-info__pairings">
+                  {Array.from(pairings.entries()).map(([group, actors]) => (
+                    <div key={group} className="series-info__pairing">
+                      <span className="series-info__pairing-badge">
+                        💕 Pareja
+                      </span>
+                      <div className="series-info__pairing-actors">
+                        {actors!.map(renderActor)}
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
 
-            {unpaired.length > 0 && (
-              <div className="series-info__cast-others">
-                {unpaired.map(renderActor)}
-              </div>
-            )}
-          </div>
-        );
-      })()}
+              {unpaired.length > 0 && (
+                <div className="series-info__cast-others">
+                  {unpaired.map(renderActor)}
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
       {series.synopsis && (
         <div className="series-info__synopsis">

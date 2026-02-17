@@ -44,6 +44,12 @@ export async function getAllSeries() {
           episodeCount: true,
         },
       },
+      viewStatus: {
+        select: {
+          status: true,
+        },
+        take: 1,
+      },
     },
     orderBy: {
       title: 'asc',
@@ -399,11 +405,11 @@ export async function getStats() {
  */
 export async function getViewStats() {
   const totalWatched = await prisma.viewStatus.count({
-    where: { watched: true },
+    where: { status: 'VISTA' },
   });
 
   const totalUnwatched = await prisma.viewStatus.count({
-    where: { watched: false },
+    where: { status: 'SIN_VER' },
   });
 
   return {

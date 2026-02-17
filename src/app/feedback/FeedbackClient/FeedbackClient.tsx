@@ -12,6 +12,7 @@ import {
   Timeline,
   Avatar,
   Empty,
+  Image,
 } from 'antd';
 import {
   PlusOutlined,
@@ -22,6 +23,8 @@ import {
   RocketOutlined,
   CheckCircleOutlined,
   UserOutlined,
+  PictureOutlined,
+  DeleteOutlined,
 } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import { PageTitle } from '@/components/common/PageTitle/PageTitle';
@@ -32,6 +35,11 @@ interface FeatureRequestUser {
   id: string;
   name: string | null;
   image: string | null;
+}
+
+interface FeatureRequestImage {
+  id: number;
+  url: string;
 }
 
 interface FeatureRequest {
@@ -46,9 +54,13 @@ interface FeatureRequest {
   user: FeatureRequestUser | null;
   _count: { votes: number };
   votes: Array<{ userId: string }>;
+  images?: FeatureRequestImage[];
 }
 
-const TYPE_CONFIG: Record<string, { color: string; label: string; icon: React.ReactNode }> = {
+const TYPE_CONFIG: Record<
+  string,
+  { color: string; label: string; icon: React.ReactNode }
+> = {
   bug: { color: 'red', label: 'Bug', icon: <BugOutlined /> },
   feature: { color: 'blue', label: 'Feature', icon: <RocketOutlined /> },
   idea: { color: 'purple', label: 'Idea', icon: <BulbOutlined /> },
@@ -61,13 +73,19 @@ const STATUS_CONFIG: Record<string, { color: string; label: string }> = {
   descartado: { color: 'error', label: 'Descartado' },
 };
 
+interface PendingImage {
+  file: File;
+  preview: string;
+}
+
 export function FeedbackClient() {
   const message = useMessage();
   const { data: session } = useSession();
   const [requests, setRequests] = useState<FeatureRequest[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [_loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [pendingImages, setPendingImages] = useState<PendingImage[]>([]);
   const [form] = Form.useForm();
 
   const isAdmin = session?.user?.role === 'ADMIN';
@@ -91,13 +109,74 @@ export function FeedbackClient() {
     fetchRequests();
   }, [fetchRequests]);
 
-  const handleCreate = async (values: { title: string; description?: string; type: string }) => {
+  // Cleanup previews on unmount
+  useEffect(() => {
+    return () => {
+      pendingImages.forEach((img) => URL.revokeObjectURL(img.preview));
+    };
+  }, [pendingImages]);
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+
+    for (const item of Array.from(items)) {
+      if (item.type.startsWith('image/')) {
+        e.preventDefault();
+        const file = item.getAsFile();
+        if (file) {
+          const preview = URL.createObjectURL(file);
+          setPendingImages((prev) => [...prev, { file, preview }]);
+        }
+      }
+    }
+  };
+
+  const removePendingImage = (index: number) => {
+    setPendingImages((prev) => {
+      URL.revokeObjectURL(prev[index].preview);
+      return prev.filter((_, i) => i !== index);
+    });
+  };
+
+  const uploadImages = async (images: PendingImage[]): Promise<string[]> => {
+    const urls: string[] = [];
+    for (const img of images) {
+      const formData = new FormData();
+      formData.append('file', img.file);
+      formData.append('folder', 'feedback');
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al subir imagen');
+      }
+
+      const result = await response.json();
+      urls.push(result.url);
+    }
+    return urls;
+  };
+
+  const handleCreate = async (values: {
+    title: string;
+    description?: string;
+    type: string;
+  }) => {
     setSubmitting(true);
     try {
+      let imageUrls: string[] = [];
+      if (pendingImages.length > 0) {
+        imageUrls = await uploadImages(pendingImages);
+      }
+
       const response = await fetch('/api/feature-requests', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
+        body: JSON.stringify({ ...values, imageUrls }),
       });
 
       if (!response.ok) throw new Error('Error al crear');
@@ -106,6 +185,8 @@ export function FeedbackClient() {
       setRequests((prev) => [newRequest, ...prev]);
       setModalOpen(false);
       form.resetFields();
+      pendingImages.forEach((img) => URL.revokeObjectURL(img.preview));
+      setPendingImages([]);
       message.success('Solicitud creada');
     } catch (error) {
       message.error('Error al crear la solicitud');
@@ -156,7 +237,9 @@ export function FeedbackClient() {
       if (!response.ok) throw new Error('Error al actualizar');
 
       const updated = await response.json();
-      setRequests((prev) => prev.map((r) => (r.id === requestId ? updated : r)));
+      setRequests((prev) =>
+        prev.map((r) => (r.id === requestId ? updated : r))
+      );
       message.success('Estado actualizado');
     } catch (error) {
       message.error('Error al actualizar');
@@ -183,12 +266,18 @@ export function FeedbackClient() {
   const activeRequests = requests.filter((r) => r.status !== 'completado');
   const completedRequests = requests
     .filter((r) => r.status === 'completado')
-    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
+    .sort(
+      (a, b) =>
+        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+    );
 
   const renderRequestCard = (request: FeatureRequest) => {
     const typeConfig = TYPE_CONFIG[request.type] || TYPE_CONFIG.idea;
-    const statusConfig = STATUS_CONFIG[request.status] || STATUS_CONFIG.pendiente;
-    const hasVoted = userId ? request.votes.some((v) => v.userId === userId) : false;
+    const statusConfig =
+      STATUS_CONFIG[request.status] || STATUS_CONFIG.pendiente;
+    const hasVoted = userId
+      ? request.votes.some((v) => v.userId === userId)
+      : false;
 
     return (
       <div key={request.id} className="feedback-card">
@@ -204,6 +293,23 @@ export function FeedbackClient() {
 
         {request.description && (
           <p className="feedback-card__description">{request.description}</p>
+        )}
+
+        {request.images && request.images.length > 0 && (
+          <div className="feedback-card__images">
+            <Image.PreviewGroup>
+              {request.images.map((img) => (
+                <Image
+                  key={img.id}
+                  src={img.url}
+                  alt="Adjunto"
+                  width={120}
+                  height={80}
+                  style={{ objectFit: 'cover', borderRadius: 6 }}
+                />
+              ))}
+            </Image.PreviewGroup>
+          </div>
         )}
 
         <div className="feedback-card__footer">
@@ -241,10 +347,12 @@ export function FeedbackClient() {
                 size="small"
                 style={{ width: 130 }}
                 onChange={(value) => handleStatusChange(request.id, value)}
-                options={Object.entries(STATUS_CONFIG).map(([value, config]) => ({
-                  value,
-                  label: config.label,
-                }))}
+                options={Object.entries(STATUS_CONFIG).map(
+                  ([value, config]) => ({
+                    value,
+                    label: config.label,
+                  })
+                )}
               />
             )}
 
@@ -345,7 +453,11 @@ export function FeedbackClient() {
       <Modal
         title="Nueva solicitud"
         open={modalOpen}
-        onCancel={() => setModalOpen(false)}
+        onCancel={() => {
+          setModalOpen(false);
+          pendingImages.forEach((img) => URL.revokeObjectURL(img.preview));
+          setPendingImages([]);
+        }}
         footer={null}
       >
         <Form form={form} layout="vertical" onFinish={handleCreate}>
@@ -372,15 +484,39 @@ export function FeedbackClient() {
           </Form.Item>
 
           <Form.Item name="description" label="Descripción">
-            <Input.TextArea rows={3} maxLength={1000} />
+            <Input.TextArea
+              rows={3}
+              maxLength={1000}
+              onPaste={handlePaste}
+              placeholder="Escribí la descripción... Podés pegar imágenes del clipboard (Ctrl+V)"
+            />
           </Form.Item>
 
+          {pendingImages.length > 0 && (
+            <div className="feedback-pending-images">
+              {pendingImages.map((img, index) => (
+                <div key={index} className="feedback-pending-image">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={img.preview} alt={`Preview ${index + 1}`} />
+                  <Button
+                    type="text"
+                    danger
+                    size="small"
+                    icon={<DeleteOutlined />}
+                    className="feedback-pending-image__remove"
+                    onClick={() => removePendingImage(index)}
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="feedback-image-hint">
+            <PictureOutlined /> Pegá imágenes del clipboard en la descripción
+          </div>
+
           <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={submitting}
-            >
+            <Button type="primary" htmlType="submit" loading={submitting}>
               Crear
             </Button>
           </Form.Item>

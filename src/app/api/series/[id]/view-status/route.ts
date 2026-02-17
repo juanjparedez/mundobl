@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 
+const VALID_STATUSES = [
+  'SIN_VER',
+  'VIENDO',
+  'VISTA',
+  'ABANDONADA',
+  'RETOMAR',
+] as const;
+type WatchStatusInput = (typeof VALID_STATUSES)[number];
+
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -13,23 +22,27 @@ export async function POST(
     const resolvedParams = await params;
     const seriesId = parseInt(resolvedParams.id, 10);
     const body = await request.json();
-    const { watched, currentlyWatching } = body;
+    const { status } = body as { status: WatchStatusInput };
+
+    if (!VALID_STATUSES.includes(status)) {
+      return NextResponse.json({ error: 'Estado inválido' }, { status: 400 });
+    }
+
+    const updateData: Record<string, string | Date | null> = { status };
+
+    if (status === 'VISTA') {
+      updateData.watchedDate = new Date();
+    } else if (status === 'SIN_VER') {
+      updateData.watchedDate = null;
+    }
+
+    if (status === 'VIENDO') {
+      updateData.lastWatchedAt = new Date();
+    }
 
     const existing = await prisma.viewStatus.findUnique({
       where: { userId_seriesId: { userId: authResult.userId, seriesId } },
     });
-
-    const updateData: Record<string, boolean | Date | null> = {};
-    if (typeof watched === 'boolean') {
-      updateData.watched = watched;
-      updateData.watchedDate = watched ? new Date() : null;
-    }
-    if (typeof currentlyWatching === 'boolean') {
-      updateData.currentlyWatching = currentlyWatching;
-      updateData.lastWatchedAt = currentlyWatching
-        ? new Date()
-        : (existing?.lastWatchedAt ?? null);
-    }
 
     let viewStatus;
 

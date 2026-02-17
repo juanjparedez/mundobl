@@ -278,10 +278,8 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
 
     // Sort all items alphabetically
     items.sort((a, b) => {
-      const nameA =
-        a.type === 'universe' ? a.universoNombre : a.serie.titulo;
-      const nameB =
-        b.type === 'universe' ? b.universoNombre : b.serie.titulo;
+      const nameA = a.type === 'universe' ? a.universoNombre : a.serie.titulo;
+      const nameB = b.type === 'universe' ? b.universoNombre : b.serie.titulo;
       return nameA.localeCompare(nameB);
     });
 
@@ -478,7 +476,9 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
               </Tag>
             </div>
             <div className="serie-card-info">
-              <span>{isExpanded ? <UpOutlined /> : <DownOutlined />} Ver series</span>
+              <span>
+                {isExpanded ? <UpOutlined /> : <DownOutlined />} Ver series
+              </span>
             </div>
           </div>
         </div>

@@ -40,7 +40,7 @@ interface SeasonsListProps {
       updatedAt: Date;
     }>;
     viewStatus?: Array<{
-      watched: boolean;
+      status: string;
       watchedDate?: Date | null;
     }>;
     episodes?: Array<{
@@ -50,7 +50,7 @@ interface SeasonsListProps {
       duration?: number | null;
       synopsis?: string | null;
       viewStatus?: Array<{
-        watched: boolean;
+        status: string;
         watchedDate?: Date | null;
       }> | null;
       comments?: Array<{
@@ -81,7 +81,7 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
   const getEpisodeWatchProgress = (season: (typeof seasons)[0]) => {
     if (!season.episodes || season.episodes.length === 0) return null;
     const watchedCount = season.episodes.filter(
-      (ep) => ep.viewStatus?.[0]?.watched
+      (ep) => ep.viewStatus?.[0]?.status === 'VISTA'
     ).length;
     const totalCount = season.episodes.length;
     return { watchedCount, totalCount };
@@ -108,7 +108,7 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
                 {season.episodeCount} caps
               </Tag>
             )}
-            {season.viewStatus?.[0]?.watched && (
+            {season.viewStatus?.[0]?.status === 'VISTA' && (
               <Tag color="success">✓ Vista</Tag>
             )}
             {episodeProgress && episodeProgress.totalCount > 0 && (

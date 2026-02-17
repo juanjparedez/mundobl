@@ -508,7 +508,10 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                     maxCount={1}
                     tokenSeparators={[',']}
                     style={{ width: '100%' }}
-                    options={basedOnOptions.map((v) => ({ value: v, label: v }))}
+                    options={basedOnOptions.map((v) => ({
+                      value: v,
+                      label: v,
+                    }))}
                     filterOption={(inputValue, option) =>
                       (option?.label as string)
                         .toLowerCase()
@@ -703,8 +706,15 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                 style={{ marginBottom: 16 }}
               />
             )}
-            <div style={{ fontSize: 12, color: 'var(--text-tertiary)', marginBottom: 12 }}>
-              Para emparejar personajes, asigna el mismo numero en &quot;Pareja&quot; (ej: 1 y 1 = primera pareja)
+            <div
+              style={{
+                fontSize: 12,
+                color: 'var(--text-tertiary)',
+                marginBottom: 12,
+              }}
+            >
+              Para emparejar personajes, asigna el mismo numero en
+              &quot;Pareja&quot; (ej: 1 y 1 = primera pareja)
             </div>
             <Form.List name="actors">
               {(fields, { add, remove }) => (

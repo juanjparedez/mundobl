@@ -6,7 +6,7 @@ export async function GET() {
   try {
     const currentlyWatching = await prisma.viewStatus.findMany({
       where: {
-        currentlyWatching: true,
+        status: 'VIENDO',
         seriesId: { not: null },
       },
       include: {

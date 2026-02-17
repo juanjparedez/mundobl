@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile } from 'fs/promises';
-import { join } from 'path';
 import { requireRole } from '@/lib/auth-helpers';
+import { uploadImage } from '@/lib/supabase';
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,6 +9,7 @@ export async function POST(request: NextRequest) {
 
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
+    const folder = (formData.get('folder') as string) || 'series';
 
     if (!file) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
@@ -46,23 +46,14 @@ export async function POST(request: NextRequest) {
     const timestamp = Date.now();
     const originalName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
     const filename = `${timestamp}_${originalName}`;
+    const path = `${folder}/${filename}`;
 
     // Convert file to buffer
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Save file to public/images/series/
-    const publicPath = join(
-      process.cwd(),
-      'public',
-      'images',
-      'series',
-      filename
-    );
-    await writeFile(publicPath, buffer);
-
-    // Return public URL
-    const imageUrl = `/images/series/${filename}`;
+    // Upload to Supabase Storage
+    const imageUrl = await uploadImage(buffer, path, file.type);
 
     return NextResponse.json({
       url: imageUrl,
