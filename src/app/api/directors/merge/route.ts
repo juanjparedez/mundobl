@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
+import { requireRole } from '@/lib/auth-helpers';
 
 // POST - Fusionar dos directores (mover referencias del source al target, eliminar source)
 export async function POST(request: NextRequest) {
   try {
+    const authResult = await requireRole(['ADMIN']);
+    if (!authResult.authorized) return authResult.response;
+
     const { sourceId, targetId } = await request.json();
 
     if (!sourceId || !targetId) {

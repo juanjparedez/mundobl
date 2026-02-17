@@ -11,6 +11,70 @@ datasource db {
 }
 
 // ============================================
+// AUTENTICACIÓN Y AUTORIZACIÓN
+// ============================================
+enum Role {
+  ADMIN
+  MODERATOR
+  VISITOR
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  role          Role      @default(VISITOR)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts        Account[]
+  sessions        Session[]
+  comments        Comment[]
+  userRatings     UserRating[]
+  viewStatuses    ViewStatus[]
+  featureRequests FeatureRequest[]
+  featureVotes    FeatureVote[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ============================================
 // UNIVERSOS - Para agrupar series relacionadas
 // ============================================
 model Universe {
@@ -97,6 +161,7 @@ model Series {
   actors        SeriesActor[]
   directors     SeriesDirector[]
   ratings       Rating[]
+  userRatings   UserRating[]
   comments      Comment[]
   viewStatus    ViewStatus[]
   tags          SeriesTag[]
@@ -312,6 +377,24 @@ model Rating {
 }
 
 // ============================================
+// RATINGS DE USUARIOS (públicos, separados del oficial)
+// ============================================
+model UserRating {
+  id        Int      @id @default(autoincrement())
+  category  String   // mismas categorías que Rating
+  score     Int      // 1-10
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  seriesId Int
+  series   Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, seriesId, category])
+}
+
+// ============================================
 // COMENTARIOS
 // ============================================
 model Comment {
@@ -319,6 +402,10 @@ model Comment {
   content       String
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+
+  // Usuario que comentó (opcional para preservar comentarios existentes)
+  userId        String?
+  user          User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   // Puede ser comentario de Serie, Temporada o Episodio
   seriesId      Int?
@@ -330,7 +417,7 @@ model Comment {
 }
 
 // ============================================
-// ESTADO DE VISUALIZACIÓN
+// ESTADO DE VISUALIZACIÓN (por usuario)
 // ============================================
 model ViewStatus {
   id                Int       @id @default(autoincrement())
@@ -341,11 +428,50 @@ model ViewStatus {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
+  // Usuario (opcional para preservar datos existentes)
+  userId        String?
+  user          User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   // Puede ser estado de Serie, Temporada o Episodio
-  seriesId      Int?      @unique
+  seriesId      Int?
   series        Series?   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
-  seasonId      Int?      @unique
+  seasonId      Int?
   season        Season?   @relation(fields: [seasonId], references: [id], onDelete: Cascade)
-  episodeId     Int?      @unique
+  episodeId     Int?
   episode       Episode?  @relation("EpisodeViewStatus", fields: [episodeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, seriesId])
+  @@unique([userId, seasonId])
+  @@unique([userId, episodeId])
+}
+
+// ============================================
+// FEATURE REQUESTS / BUGS / IDEAS
+// ============================================
+model FeatureRequest {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  type        String   // "bug", "feature", "idea"
+  status      String   @default("pendiente") // "pendiente", "en_progreso", "completado", "descartado"
+  priority    String   @default("media") // "baja", "media", "alta"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  votes FeatureVote[]
+}
+
+model FeatureVote {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  userId           String
+  user             User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  featureRequestId Int
+  featureRequest   FeatureRequest @relation(fields: [featureRequestId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, featureRequestId])
 }

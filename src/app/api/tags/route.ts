@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
+import { requireRole } from '@/lib/auth-helpers';
 
 // GET - Obtener todos los tags
 export async function GET() {
@@ -26,6 +27,9 @@ export async function GET() {
 // POST - Crear un nuevo tag
 export async function POST(request: NextRequest) {
   try {
+    const authResult = await requireRole(['ADMIN', 'MODERATOR']);
+    if (!authResult.authorized) return authResult.response;
+
     const body = await request.json();
 
     if (!body.name) {

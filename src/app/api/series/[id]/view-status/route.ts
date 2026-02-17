@@ -1,24 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
+import { requireAuth } from '@/lib/auth-helpers';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const authResult = await requireAuth();
+    if (!authResult.authorized) return authResult.response;
+
     const resolvedParams = await params;
     const seriesId = parseInt(resolvedParams.id, 10);
     const body = await request.json();
     const { watched, currentlyWatching } = body;
 
-    // Buscar si ya existe un ViewStatus para esta serie
     const existing = await prisma.viewStatus.findUnique({
-      where: { seriesId },
+      where: { userId_seriesId: { userId: authResult.userId, seriesId } },
     });
 
-    let viewStatus;
-
-    // Preparar datos a actualizar
     const updateData: Record<string, boolean | Date | null> = {};
     if (typeof watched === 'boolean') {
       updateData.watched = watched;
@@ -31,17 +31,18 @@ export async function POST(
         : (existing?.lastWatchedAt ?? null);
     }
 
+    let viewStatus;
+
     if (existing) {
-      // Actualizar existente
       viewStatus = await prisma.viewStatus.update({
-        where: { seriesId },
+        where: { userId_seriesId: { userId: authResult.userId, seriesId } },
         data: updateData,
       });
     } else {
-      // Crear nuevo
       viewStatus = await prisma.viewStatus.create({
         data: {
           seriesId,
+          userId: authResult.userId,
           ...updateData,
         },
       });

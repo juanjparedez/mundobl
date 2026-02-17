@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
+import { requireRole } from '@/lib/auth-helpers';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -8,6 +9,9 @@ interface RouteParams {
 // POST - Crear/Actualizar ratings de una temporada
 export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
+    const authResult = await requireRole(['ADMIN']);
+    if (!authResult.authorized) return authResult.response;
+
     const { id } = await params;
     const seasonId = parseInt(id, 10);
 

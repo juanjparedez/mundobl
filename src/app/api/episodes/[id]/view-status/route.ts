@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
+import { requireAuth } from '@/lib/auth-helpers';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -8,6 +9,9 @@ interface RouteParams {
 // POST/PUT - Marcar episodio como visto/no visto
 export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
+    const authResult = await requireAuth();
+    if (!authResult.authorized) return authResult.response;
+
     const { id } = await params;
     const episodeId = parseInt(id, 10);
 
@@ -30,15 +34,21 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    // Crear o actualizar el estado de visualización
+    // Crear o actualizar el estado de visualización per-user
     const viewStatus = await prisma.viewStatus.upsert({
-      where: { episodeId },
+      where: {
+        userId_episodeId: {
+          userId: authResult.userId,
+          episodeId,
+        },
+      },
       update: {
         watched,
         watchedDate: watched ? new Date() : null,
       },
       create: {
         episodeId,
+        userId: authResult.userId,
         watched,
         watchedDate: watched ? new Date() : null,
       },
@@ -64,7 +74,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
     }
 
-    const viewStatus = await prisma.viewStatus.findUnique({
+    const viewStatus = await prisma.viewStatus.findFirst({
       where: { episodeId },
     });
 

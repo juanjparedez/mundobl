@@ -89,6 +89,55 @@
   border-top: 1px solid var(--border-color-secondary);
 }
 
+/* User section */
+.sidebar-user-section {
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-bottom: 1px solid var(--border-color-secondary);
+}
+
+.sidebar-user-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs) 0;
+  cursor: pointer;
+  border-radius: var(--border-radius-sm);
+  transition: var(--transition-fast);
+}
+
+.sidebar-user-info:hover {
+  opacity: 0.8;
+}
+
+.sidebar-user-details {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar-user-name {
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-logout-icon {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.sidebar-login-btn {
+  color: var(--text-secondary) !important;
+}
+
+.sidebar-login-btn:hover {
+  color: var(--primary-color) !important;
+}
+
 /* Theme toggle en el sidebar */
 .sidebar-theme-toggle {
   display: flex;

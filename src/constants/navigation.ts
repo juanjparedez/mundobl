@@ -7,6 +7,8 @@ export const ROUTES = {
   CATALOGO: '/catalogo',
   WATCHING: '/watching',
   ADMIN: '/admin',
+  ADMIN_USUARIOS: '/admin/usuarios',
+  FEEDBACK: '/feedback',
 } as const;
 
 export const NAV_ITEMS = [

@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
+import { requireRole } from '@/lib/auth-helpers';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const authResult = await requireRole(['ADMIN']);
+    if (!authResult.authorized) return authResult.response;
+
     const { id } = await params;
     const body = await request.json();
     const { isFavorite } = body;

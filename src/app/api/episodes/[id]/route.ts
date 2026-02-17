@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
+import { requireRole } from '@/lib/auth-helpers';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -51,6 +52,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 // PUT - Actualizar un episodio
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
+    const authResult = await requireRole(['ADMIN', 'MODERATOR']);
+    if (!authResult.authorized) return authResult.response;
+
     const { id } = await params;
     const episodeId = parseInt(id, 10);
 
@@ -97,6 +101,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 // DELETE - Eliminar un episodio
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
+    const authResult = await requireRole(['ADMIN']);
+    if (!authResult.authorized) return authResult.response;
+
     const { id } = await params;
     const episodeId = parseInt(id, 10);
 

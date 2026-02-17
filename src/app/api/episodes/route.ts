@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
+import { requireRole } from '@/lib/auth-helpers';
 
 // GET - Obtener episodios de una temporada
 export async function GET(request: NextRequest) {
@@ -32,6 +33,9 @@ export async function GET(request: NextRequest) {
 // POST - Crear un nuevo episodio
 export async function POST(request: NextRequest) {
   try {
+    const authResult = await requireRole(['ADMIN', 'MODERATOR']);
+    if (!authResult.authorized) return authResult.response;
+
     const body = await request.json();
 
     if (!body.seasonId || !body.episodeNumber) {

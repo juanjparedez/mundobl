@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import { App } from 'antd';
 import { ThemeProvider } from '@/lib/providers/ThemeProvider';
+import { SessionProvider } from '@/lib/providers/SessionProvider';
 import '@/styles/globals.css';
 import '@/styles/dark-mode-fixes.css';
 
@@ -18,11 +19,13 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <body>
-        <AntdRegistry>
-          <ThemeProvider>
-            <App>{children}</App>
-          </ThemeProvider>
-        </AntdRegistry>
+        <SessionProvider>
+          <AntdRegistry>
+            <ThemeProvider>
+              <App>{children}</App>
+            </ThemeProvider>
+          </AntdRegistry>
+        </SessionProvider>
       </body>
     </html>
   );

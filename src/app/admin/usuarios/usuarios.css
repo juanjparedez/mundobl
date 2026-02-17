@@ -1,0 +1,19 @@
+.usuarios-page {
+  padding: var(--spacing-lg);
+}
+
+.usuarios-table__user {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.usuarios-table__name {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.usuarios-table__email {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
