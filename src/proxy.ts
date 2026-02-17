@@ -1,9 +1,15 @@
 import { auth } from '@/lib/auth';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { logPageView } from '@/lib/access-log';
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Extraer info para logging
+  const ip =
+    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || null;
+  const userAgent = request.headers.get('user-agent') || null;
 
   if (pathname.startsWith('/admin')) {
     const session = await auth();
@@ -30,11 +36,21 @@ export async function proxy(request: NextRequest) {
         return NextResponse.redirect(new URL('/catalogo', request.url));
       }
     }
+
+    // Log page view (fire-and-forget)
+    logPageView(pathname, ip, userAgent, session.user?.id || null);
+  } else {
+    // Paginas publicas: loguear con session si existe
+    const session = await auth();
+    logPageView(pathname, ip, userAgent, session?.user?.id || null);
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: [
+    // Todas las paginas excepto assets estaticos, API routes e internos de Next
+    '/((?!api|_next/static|_next/image|favicon.ico|images).*)',
+  ],
 };

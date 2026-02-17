@@ -10,6 +10,7 @@ import {
   BankOutlined,
   TranslationOutlined,
   InfoCircleOutlined,
+  FileTextOutlined,
 } from '@ant-design/icons';
 import './admin-nav.css';
 
@@ -61,6 +62,12 @@ const adminLinks = [
     icon: <InfoCircleOutlined />,
     label: 'Info',
     shortLabel: 'Info',
+  },
+  {
+    key: '/admin/logs',
+    icon: <FileTextOutlined />,
+    label: 'Logs',
+    shortLabel: 'Logs',
   },
 ];
 

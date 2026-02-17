@@ -36,6 +36,7 @@ model User {
   viewStatuses    ViewStatus[]
   featureRequests FeatureRequest[]
   featureVotes    FeatureVote[]
+  accessLogs      AccessLog[]
 }
 
 model Account {
@@ -492,4 +493,23 @@ model FeatureVote {
   featureRequest   FeatureRequest @relation(fields: [featureRequestId], references: [id], onDelete: Cascade)
 
   @@unique([userId, featureRequestId])
+}
+
+// ============================================
+// ACCESS LOGS
+// ============================================
+model AccessLog {
+  id        Int      @id @default(autoincrement())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    String   // PAGE_VIEW, LOGIN, LOGOUT, CREATE, UPDATE, DELETE
+  path      String   // URL o recurso
+  method    String?  // GET, POST, PUT, DELETE
+  ip        String?
+  userAgent String?
+  metadata  String?  // JSON string con detalles extra
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([userId])
 }
