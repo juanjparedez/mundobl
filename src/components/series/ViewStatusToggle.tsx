@@ -1,24 +1,23 @@
 'use client';
 
 import { useState } from 'react';
-import { Switch, Progress, Tooltip, Button } from 'antd';
-import {
-  EyeOutlined,
-  EyeInvisibleOutlined,
-  PlayCircleOutlined,
-} from '@ant-design/icons';
+import { Progress, Tooltip, Tag, Select } from 'antd';
 import { useSession } from 'next-auth/react';
+import {
+  WATCH_STATUS,
+  WATCH_STATUS_LABELS,
+  WATCH_STATUS_COLORS,
+} from '@/constants/series';
+import type { WatchStatusValue } from '@/constants/series';
 import './ViewStatusToggle.css';
 import { useMessage } from '@/hooks/useMessage';
 
 interface ViewStatusToggleProps {
   seriesId: number;
-  initialStatus: boolean;
-  initialCurrentlyWatching?: boolean;
+  initialStatus: WatchStatusValue;
   seasons?: Array<{
-    viewStatus?: Array<{ watched: boolean }>;
     episodes?: Array<{
-      viewStatus?: Array<{ watched: boolean }>;
+      viewStatus?: Array<{ status: string }>;
     }>;
   }>;
 }
@@ -26,15 +25,11 @@ interface ViewStatusToggleProps {
 export function ViewStatusToggle({
   seriesId,
   initialStatus,
-  initialCurrentlyWatching = false,
   seasons = [],
 }: ViewStatusToggleProps) {
   const message = useMessage();
   const { data: session } = useSession();
-  const [watched, setWatched] = useState(initialStatus);
-  const [currentlyWatching, setCurrentlyWatching] = useState(
-    initialCurrentlyWatching
-  );
+  const [status, setStatus] = useState<WatchStatusValue>(initialStatus);
   const [isUpdating, setIsUpdating] = useState(false);
 
   // Calcular progreso de episodios vistos
@@ -46,7 +41,7 @@ export function ViewStatusToggle({
       if (season.episodes) {
         totalEpisodes += season.episodes.length;
         watchedEpisodes += season.episodes.filter(
-          (ep) => ep.viewStatus?.[0]?.watched
+          (ep) => ep.viewStatus?.[0]?.status === 'VISTA'
         ).length;
       }
     });
@@ -58,45 +53,19 @@ export function ViewStatusToggle({
   const progressPercent =
     totalEpisodes > 0 ? Math.round((watchedEpisodes / totalEpisodes) * 100) : 0;
 
-  const handleToggle = async (checked: boolean) => {
+  const handleStatusChange = async (newStatus: WatchStatusValue) => {
     setIsUpdating(true);
     try {
       const response = await fetch(`/api/series/${seriesId}/view-status`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ watched: checked }),
+        body: JSON.stringify({ status: newStatus }),
       });
 
       if (!response.ok) throw new Error('Error al actualizar');
 
-      setWatched(checked);
-      message.success(checked ? 'Marcada como vista' : 'Marcada como no vista');
-    } catch (error) {
-      message.error('Error al actualizar el estado');
-      console.error(error);
-    } finally {
-      setIsUpdating(false);
-    }
-  };
-
-  const handleCurrentlyWatchingToggle = async () => {
-    setIsUpdating(true);
-    try {
-      const newStatus = !currentlyWatching;
-      const response = await fetch(`/api/series/${seriesId}/view-status`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ currentlyWatching: newStatus }),
-      });
-
-      if (!response.ok) throw new Error('Error al actualizar');
-
-      setCurrentlyWatching(newStatus);
-      message.success(
-        newStatus
-          ? '📺 Agregada a "Viendo ahora"'
-          : 'Removida de "Viendo ahora"'
-      );
+      setStatus(newStatus);
+      message.success(`Estado: ${WATCH_STATUS_LABELS[newStatus]}`);
     } catch (error) {
       message.error('Error al actualizar el estado');
       console.error(error);
@@ -108,17 +77,9 @@ export function ViewStatusToggle({
   if (!session?.user) {
     return (
       <div className="view-status-toggle">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <span
-            className="view-status-toggle__label"
-            style={{ color: 'var(--text-secondary)' }}
-          >
-            {watched ? 'Vista' : 'No vista'}
-          </span>
-          {currentlyWatching && (
-            <span style={{ color: 'var(--primary-color)' }}>Viendo ahora</span>
-          )}
-        </div>
+        <Tag color={WATCH_STATUS_COLORS[status]}>
+          {WATCH_STATUS_LABELS[status]}
+        </Tag>
         {totalEpisodes > 0 && (
           <div style={{ marginTop: '12px' }}>
             <Progress
@@ -133,6 +94,11 @@ export function ViewStatusToggle({
     );
   }
 
+  const statusOptions = Object.values(WATCH_STATUS).map((value) => ({
+    value,
+    label: WATCH_STATUS_LABELS[value],
+  }));
+
   return (
     <div className="view-status-toggle">
       <div
@@ -143,29 +109,18 @@ export function ViewStatusToggle({
           flexWrap: 'wrap',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <Switch
-            checked={watched}
-            onChange={handleToggle}
-            loading={isUpdating}
-            checkedChildren={<EyeOutlined />}
-            unCheckedChildren={<EyeInvisibleOutlined />}
-            size="default"
-          />
-          <span className="view-status-toggle__label">
-            {watched ? 'Vista' : 'No vista'}
-          </span>
-        </div>
-
-        <Button
-          type={currentlyWatching ? 'primary' : 'default'}
-          icon={<PlayCircleOutlined />}
-          onClick={handleCurrentlyWatchingToggle}
+        <Select
+          value={status}
+          onChange={handleStatusChange}
           loading={isUpdating}
+          disabled={isUpdating}
+          options={statusOptions}
+          style={{ minWidth: 160 }}
           size="middle"
-        >
-          {currentlyWatching ? 'Viendo ahora' : 'Agregar a "Viendo ahora"'}
-        </Button>
+        />
+        <Tag color={WATCH_STATUS_COLORS[status]} style={{ margin: 0 }}>
+          {WATCH_STATUS_LABELS[status]}
+        </Tag>
       </div>
 
       {totalEpisodes > 0 && (

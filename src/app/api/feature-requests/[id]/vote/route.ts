@@ -40,9 +40,6 @@ export async function POST(
     return NextResponse.json({ voted: true });
   } catch (error) {
     console.error('Error toggling vote:', error);
-    return NextResponse.json(
-      { error: 'Error al votar' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Error al votar' }, { status: 500 });
   }
 }

@@ -10,6 +10,7 @@ export async function GET() {
         user: { select: { id: true, name: true, image: true } },
         _count: { select: { votes: true } },
         votes: { select: { userId: true } },
+        images: { select: { id: true, url: true } },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -31,7 +32,12 @@ export async function POST(request: NextRequest) {
     if (!authResult.authorized) return authResult.response;
 
     const body = await request.json();
-    const { title, description, type } = body;
+    const { title, description, type, imageUrls } = body as {
+      title: string;
+      description?: string;
+      type: string;
+      imageUrls?: string[];
+    };
 
     if (!title || !type) {
       return NextResponse.json(
@@ -42,10 +48,7 @@ export async function POST(request: NextRequest) {
 
     const validTypes = ['bug', 'feature', 'idea'];
     if (!validTypes.includes(type)) {
-      return NextResponse.json(
-        { error: 'Tipo no válido' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Tipo no válido' }, { status: 400 });
     }
 
     const featureRequest = await prisma.featureRequest.create({
@@ -54,11 +57,16 @@ export async function POST(request: NextRequest) {
         description: description || null,
         type,
         userId: authResult.userId,
+        images:
+          imageUrls && imageUrls.length > 0
+            ? { create: imageUrls.map((url) => ({ url })) }
+            : undefined,
       },
       include: {
         user: { select: { id: true, name: true, image: true } },
         _count: { select: { votes: true } },
         votes: { select: { userId: true } },
+        images: { select: { id: true, url: true } },
       },
     });
 

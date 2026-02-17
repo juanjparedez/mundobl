@@ -20,7 +20,11 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     }
 
     const body = await request.json();
-    const { watched } = body;
+    const { status } = body as { status: 'VISTA' | 'SIN_VER' };
+
+    if (status !== 'VISTA' && status !== 'SIN_VER') {
+      return NextResponse.json({ error: 'Estado inválido' }, { status: 400 });
+    }
 
     // Verificar que el episodio existe
     const episode = await prisma.episode.findUnique({
@@ -43,14 +47,14 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         },
       },
       update: {
-        watched,
-        watchedDate: watched ? new Date() : null,
+        status,
+        watchedDate: status === 'VISTA' ? new Date() : null,
       },
       create: {
         episodeId,
         userId: authResult.userId,
-        watched,
-        watchedDate: watched ? new Date() : null,
+        status,
+        watchedDate: status === 'VISTA' ? new Date() : null,
       },
     });
 
@@ -78,7 +82,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       where: { episodeId },
     });
 
-    return NextResponse.json(viewStatus || { watched: false });
+    return NextResponse.json(viewStatus || { status: 'SIN_VER' });
   } catch (error) {
     console.error('Error al obtener estado de visualización:', error);
     return NextResponse.json(

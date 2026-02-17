@@ -51,10 +51,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
         <div className="series-actions">
           <ViewStatusToggle
             seriesId={serie.id}
-            initialStatus={serie.viewStatus?.[0]?.watched || false}
-            initialCurrentlyWatching={
-              serie.viewStatus?.[0]?.currentlyWatching || false
-            }
+            initialStatus={serie.viewStatus?.[0]?.status ?? 'SIN_VER'}
             seasons={serie.seasons}
           />
         </div>

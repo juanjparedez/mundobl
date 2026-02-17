@@ -15,7 +15,7 @@ import './CurrentlyWatchingDashboard.css';
 
 interface WatchingSeriesData {
   id: number;
-  currentlyWatching: boolean;
+  status: string;
   lastWatchedAt: Date | null;
   series: {
     id: number;
@@ -35,7 +35,7 @@ interface WatchingSeriesData {
         episodeNumber: number;
         title?: string | null;
         viewStatus?: Array<{
-          watched: boolean;
+          status: string;
         }>;
       }>;
     }>;
@@ -72,7 +72,7 @@ export function CurrentlyWatchingDashboard() {
     series.seasons?.forEach((season) => {
       season.episodes?.forEach((episode) => {
         totalEpisodes++;
-        if (episode.viewStatus?.[0]?.watched) {
+        if (episode.viewStatus?.[0]?.status === 'VISTA') {
           watchedEpisodes++;
         }
       });
@@ -84,7 +84,7 @@ export function CurrentlyWatchingDashboard() {
   const getNextEpisode = (series: WatchingSeriesData['series']) => {
     for (const season of series.seasons || []) {
       for (const episode of season.episodes || []) {
-        if (!episode.viewStatus?.[0]?.watched) {
+        if (episode.viewStatus?.[0]?.status !== 'VISTA') {
           return {
             seasonNumber: season.seasonNumber,
             episodeNumber: episode.episodeNumber,
@@ -121,7 +121,7 @@ export function CurrentlyWatchingDashboard() {
       const response = await fetch(`/api/series/${seriesId}/view-status`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ currentlyWatching: false }),
+        body: JSON.stringify({ status: 'SIN_VER' }),
       });
 
       if (!response.ok) throw new Error('Error al actualizar');

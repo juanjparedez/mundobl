@@ -32,7 +32,7 @@ interface Episode {
   duration?: number | null;
   synopsis?: string | null;
   viewStatus?: Array<{
-    watched: boolean;
+    status: string;
     watchedDate?: Date | null;
   }> | null;
   comments?: Array<{
@@ -133,13 +133,14 @@ export function EpisodesList({
 
   const handleToggleWatched = async (
     episodeId: number,
-    currentWatched: boolean
+    currentlyWatched: boolean
   ) => {
     try {
+      const newStatus = currentlyWatched ? 'SIN_VER' : 'VISTA';
       const response = await fetch(`/api/episodes/${episodeId}/view-status`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ watched: !currentWatched }),
+        body: JSON.stringify({ status: newStatus }),
       });
 
       if (!response.ok) throw new Error();
@@ -154,7 +155,7 @@ export function EpisodesList({
                 ...ep,
                 viewStatus: [
                   {
-                    watched: viewStatus.watched,
+                    status: viewStatus.status,
                     watchedDate: viewStatus.watchedDate,
                   },
                 ],
@@ -164,8 +165,8 @@ export function EpisodesList({
       );
 
       message.success(
-        viewStatus.watched
-          ? '✓ Episodio marcado como visto'
+        viewStatus.status === 'VISTA'
+          ? 'Episodio marcado como visto'
           : 'Episodio marcado como no visto'
       );
     } catch {
@@ -243,25 +244,28 @@ export function EpisodesList({
               <div className="episode-item__row">
                 <div className="episode-item__content">
                   <Checkbox
-                    checked={episode.viewStatus?.[0]?.watched || false}
+                    checked={
+                      episode.viewStatus?.[0]?.status === 'VISTA' || false
+                    }
                     onChange={() =>
                       handleToggleWatched(
                         episode.id,
-                        episode.viewStatus?.[0]?.watched || false
+                        episode.viewStatus?.[0]?.status === 'VISTA' || false
                       )
                     }
                   />
                   <div className="episode-item__meta">
                     <div
                       style={{
-                        textDecoration: episode.viewStatus?.[0]?.watched
-                          ? 'line-through'
-                          : 'none',
+                        textDecoration:
+                          episode.viewStatus?.[0]?.status === 'VISTA'
+                            ? 'line-through'
+                            : 'none',
                       }}
                     >
                       <strong>Episodio {episode.episodeNumber}</strong>
                       {episode.title && ` - ${episode.title}`}
-                      {episode.viewStatus?.[0]?.watched && (
+                      {episode.viewStatus?.[0]?.status === 'VISTA' && (
                         <Tag color="success" style={{ marginLeft: 8 }}>
                           ✓ Visto
                         </Tag>
@@ -362,7 +366,7 @@ export function EpisodesList({
             <Input placeholder="Ej: The Beginning" />
           </Form.Item>
 
-          <Form.Item label="Duración (minutos)" name="duration">
+          <Form.Item label="Minutos" name="duration">
             <InputNumber min={1} style={{ width: '100%' }} placeholder="45" />
           </Form.Item>
 

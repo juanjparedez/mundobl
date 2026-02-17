@@ -38,10 +38,11 @@ export const ContentTypeConfig = {
   },
   [ContentType.ESPECIAL]: {
     label: 'Especial',
-    hasSeasons: false,
-    hasEpisodes: false,
-    hasDuration: true,
-    durationLabel: 'Duración (min)',
+    hasSeasons: true,
+    hasEpisodes: true,
+    hasDuration: false,
+    seasonLabel: 'Temporadas',
+    episodeLabel: 'Episodios',
   },
 } as const;
 
