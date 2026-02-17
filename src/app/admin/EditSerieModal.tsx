@@ -107,6 +107,7 @@ export function EditSerieModal({
       width={800}
       okText="Guardar"
       cancelText="Cancelar"
+      forceRender
     >
       <Spin spinning={fetching} size="large">
         <Form

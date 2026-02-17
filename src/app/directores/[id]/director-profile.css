@@ -1,0 +1,99 @@
+.director-profile {
+  padding: var(--spacing-lg);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.director-profile__header {
+  display: flex;
+  gap: var(--spacing-lg);
+  align-items: flex-start;
+}
+
+.director-profile__avatar {
+  flex-shrink: 0;
+}
+
+.director-profile__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.director-profile__name {
+  margin: 0 0 8px 0;
+  font-size: 1.8em;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.director-profile__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.director-profile__biography {
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--border-color-secondary);
+}
+
+.director-profile__biography h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.1em;
+}
+
+.director-profile__biography p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.director-profile__filmography {
+  margin-top: var(--spacing-lg);
+}
+
+.director-profile__film-card {
+  height: 100%;
+}
+
+.director-profile__film-image {
+  height: 200px;
+  object-fit: cover;
+}
+
+.director-profile__film-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.director-profile__country {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+@media (max-width: 768px) {
+  .director-profile {
+    padding: var(--spacing-xs);
+  }
+
+  .director-profile__header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .director-profile__name {
+    font-size: 1.4em;
+  }
+
+  .director-profile__meta {
+    justify-content: center;
+  }
+
+  .director-profile__film-image {
+    height: 160px;
+  }
+}

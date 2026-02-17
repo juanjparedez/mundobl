@@ -1,0 +1,116 @@
+.actor-profile {
+  padding: var(--spacing-lg);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.actor-profile__header {
+  display: flex;
+  gap: var(--spacing-lg);
+  align-items: flex-start;
+}
+
+.actor-profile__avatar {
+  flex-shrink: 0;
+}
+
+.actor-profile__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.actor-profile__name {
+  margin: 0 0 4px 0;
+  font-size: 1.8em;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.actor-profile__stage-name {
+  margin: 0 0 8px 0;
+  font-size: 1.1em;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.actor-profile__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.actor-profile__biography {
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--border-color-secondary);
+}
+
+.actor-profile__biography h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.1em;
+}
+
+.actor-profile__biography p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.actor-profile__filmography {
+  margin-top: var(--spacing-lg);
+}
+
+.actor-profile__film-card {
+  height: 100%;
+}
+
+.actor-profile__film-image {
+  height: 200px;
+  object-fit: cover;
+}
+
+.actor-profile__film-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.actor-profile__film-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.actor-profile__character {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.actor-profile__country {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+@media (max-width: 768px) {
+  .actor-profile {
+    padding: var(--spacing-xs);
+  }
+
+  .actor-profile__header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .actor-profile__name {
+    font-size: 1.4em;
+  }
+
+  .actor-profile__meta {
+    justify-content: center;
+  }
+
+  .actor-profile__film-image {
+    height: 160px;
+  }
+}

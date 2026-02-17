@@ -2,6 +2,7 @@
 
 import { Layout } from 'antd';
 import { Sidebar } from '../Sidebar/Sidebar';
+import { BottomNav } from '../BottomNav/BottomNav';
 import './AppLayout.css';
 
 const { Content } = Layout;
@@ -17,6 +18,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       <Layout>
         <Content className="app-content">{children}</Content>
       </Layout>
+      <BottomNav />
     </Layout>
   );
 }

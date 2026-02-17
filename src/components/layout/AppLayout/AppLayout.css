@@ -12,7 +12,10 @@
 
 @media (max-width: 768px) {
   .app-content {
-    margin: var(--spacing-md);
-    padding: var(--spacing-md);
+    margin: 0;
+    padding: var(--spacing-xs);
+    padding-bottom: calc(var(--spacing-xs) + var(--bottom-nav-height) + 8px);
+    border-radius: 0;
+    min-height: calc(100vh - var(--bottom-nav-height));
   }
 }

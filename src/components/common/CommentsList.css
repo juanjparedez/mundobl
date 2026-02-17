@@ -101,3 +101,31 @@
   align-items: center;
   gap: 4px;
 }
+
+@media (max-width: 768px) {
+  .comments-list {
+    gap: var(--spacing-sm);
+  }
+
+  .comments-list__actions {
+    margin-top: var(--spacing-sm);
+  }
+
+  .comments-list__items {
+    gap: var(--spacing-sm);
+  }
+
+  .comment-card__content {
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .comments-list-compact {
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xs);
+    margin-top: var(--spacing-xs);
+  }
+
+  .comment-compact {
+    padding: var(--spacing-xs);
+  }
+}

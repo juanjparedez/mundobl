@@ -103,6 +103,13 @@ export async function getSeriesById(id: number) {
           tag: true,
         },
       },
+      productionCompany: true,
+      originalLanguage: true,
+      dubbings: {
+        include: {
+          language: true,
+        },
+      },
     },
   });
 }
@@ -240,6 +247,75 @@ export async function searchActorsByName(query: string) {
     orderBy: {
       name: 'asc',
     },
+  });
+}
+
+/**
+ * Obtener todos los actores con conteo de series/temporadas
+ */
+export async function getAllActorsWithCount() {
+  return await prisma.actor.findMany({
+    include: {
+      _count: { select: { series: true, seasons: true } },
+    },
+    orderBy: { name: 'asc' },
+  });
+}
+
+// ============================================
+// DIRECTORES
+// ============================================
+
+/**
+ * Obtener todos los directores
+ */
+export async function getAllDirectors() {
+  return await prisma.director.findMany({
+    orderBy: { name: 'asc' },
+  });
+}
+
+/**
+ * Obtener todos los directores con conteo de series
+ */
+export async function getAllDirectorsWithCount() {
+  return await prisma.director.findMany({
+    include: {
+      _count: { select: { series: true } },
+    },
+    orderBy: { name: 'asc' },
+  });
+}
+
+/**
+ * Obtener un director por ID con sus series
+ */
+export async function getDirectorById(id: number) {
+  return await prisma.director.findUnique({
+    where: { id },
+    include: {
+      series: {
+        include: {
+          series: {
+            include: {
+              country: true,
+            },
+          },
+        },
+      },
+    },
+  });
+}
+
+/**
+ * Buscar directores por nombre
+ */
+export async function searchDirectorsByName(query: string) {
+  return await prisma.director.findMany({
+    where: {
+      name: { contains: query },
+    },
+    orderBy: { name: 'asc' },
   });
 }
 

@@ -15,6 +15,7 @@ import {
   AutoComplete,
   Upload,
   Alert,
+  Checkbox,
 } from 'antd';
 import {
   PlusOutlined,
@@ -62,7 +63,14 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
   // Datos para autocompletado
   const [countries, setCountries] = useState<string[]>([]);
   const [actors, setActors] = useState<string[]>([]);
+  const [directors, setDirectors] = useState<string[]>([]);
   const [universes, setUniverses] = useState<UniverseOption[]>([]);
+  const [productionCompanies, setProductionCompanies] = useState<
+    { id: number; name: string }[]
+  >([]);
+  const [languages, setLanguages] = useState<{ id: number; name: string }[]>(
+    []
+  );
   const [uploading, setUploading] = useState(false);
   const [isFavorite, setIsFavorite] = useState(
     initialData?.isFavorite ?? false
@@ -80,10 +88,25 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
       const actorsData = await actorsRes.json();
       setActors(actorsData.map((a: { name: string }) => a.name));
 
+      // Cargar directores
+      const directorsRes = await fetch('/api/directors');
+      const directorsData = await directorsRes.json();
+      setDirectors(directorsData.map((d: { name: string }) => d.name));
+
       // Cargar universos
       const universesRes = await fetch('/api/universes');
       const universesData = await universesRes.json();
       setUniverses(universesData);
+
+      // Cargar productoras
+      const prodRes = await fetch('/api/production-companies');
+      const prodData = await prodRes.json();
+      setProductionCompanies(prodData);
+
+      // Cargar idiomas
+      const langRes = await fetch('/api/languages');
+      const langData = await langRes.json();
+      setLanguages(langData);
     } catch (error) {
       console.error('Error loading form data:', error);
     }
@@ -186,19 +209,13 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
     <div className="series-form">
       <Card
         title={
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
+          <div className="series-form__header">
             <span>
               {mode === 'create'
                 ? 'Nueva Serie/Película'
                 : 'Editar Serie/Película'}
             </span>
-            <Space>
+            <Space wrap>
               {mode === 'edit' && initialData?.id && (
                 <Button
                   icon={isFavorite ? <StarFilled /> : <StarOutlined />}
@@ -227,7 +244,8 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
             type: 'serie',
             basedOn: null,
             format: 'regular',
-            actors: [{ name: '', character: '' }],
+            actors: [{ name: '', character: '', isMain: false }],
+            directors: [{ name: '' }],
             ...(showSeasons
               ? { seasons: [{ seasonNumber: 1, episodeCount: null }] }
               : {}),
@@ -348,6 +366,61 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                 </Form.Item>
               </Col>
 
+              <Col xs={24} md={12}>
+                <Form.Item label="Productora" name="productionCompanyId">
+                  <Select
+                    placeholder="Selecciona productora"
+                    size="large"
+                    allowClear
+                    showSearch
+                    filterOption={(input, option) =>
+                      (option?.children as unknown as string)
+                        ?.toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                  >
+                    {productionCompanies.map((pc) => (
+                      <Option key={pc.id} value={pc.id}>
+                        {pc.name}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+
+              <Col xs={24} md={12}>
+                <Form.Item label="Idioma Original" name="originalLanguageId">
+                  <Select
+                    placeholder="Selecciona idioma original"
+                    size="large"
+                    allowClear
+                  >
+                    {languages.map((l) => (
+                      <Option key={l.id} value={l.id}>
+                        {l.name}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+
+              <Col xs={24}>
+                <Form.Item label="Doblajes Disponibles" name="dubbingIds">
+                  <Select
+                    mode="multiple"
+                    placeholder="Selecciona idiomas de doblaje disponibles"
+                    size="large"
+                    allowClear
+                  >
+                    {languages.map((l) => (
+                      <Option key={l.id} value={l.id}>
+                        {l.name}
+                      </Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+
               <Col xs={24}>
                 <Form.Item label="Sinopsis" name="synopsis">
                   <TextArea
@@ -451,11 +524,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
               {(fields, { add, remove }) => (
                 <>
                   {fields.map(({ key, name, ...restField }) => (
-                    <Space
-                      key={key}
-                      style={{ display: 'flex', marginBottom: 8 }}
-                      align="baseline"
-                    >
+                    <div key={key} className="series-form__actor-row">
                       <Form.Item
                         {...restField}
                         name={[name, 'name']}
@@ -465,7 +534,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                             message: 'Nombre del actor requerido',
                           },
                         ]}
-                        style={{ marginBottom: 0, width: 250 }}
+                        style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
                       >
                         <AutoComplete
                           options={actors.map((a) => ({ value: a }))}
@@ -480,12 +549,20 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                       <Form.Item
                         {...restField}
                         name={[name, 'character']}
-                        style={{ marginBottom: 0, width: 250 }}
+                        style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
                       >
                         <Input placeholder="Personaje" />
                       </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, 'isMain']}
+                        valuePropName="checked"
+                        style={{ marginBottom: 0 }}
+                      >
+                        <Checkbox>Protagonista</Checkbox>
+                      </Form.Item>
                       <MinusCircleOutlined onClick={() => remove(name)} />
-                    </Space>
+                    </div>
                   ))}
                   <Form.Item>
                     <Button
@@ -495,6 +572,52 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                       icon={<PlusOutlined />}
                     >
                       Agregar Actor
+                    </Button>
+                  </Form.Item>
+                </>
+              )}
+            </Form.List>
+          </Card>
+
+          {/* Directores */}
+          <Card type="inner" title="🎬 Directores" style={{ marginBottom: 24 }}>
+            <Form.List name="directors">
+              {(fields, { add, remove }) => (
+                <>
+                  {fields.map(({ key, name, ...restField }) => (
+                    <div key={key} className="series-form__actor-row">
+                      <Form.Item
+                        {...restField}
+                        name={[name, 'name']}
+                        rules={[
+                          {
+                            required: true,
+                            message: 'Nombre del director requerido',
+                          },
+                        ]}
+                        style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
+                      >
+                        <AutoComplete
+                          options={directors.map((d) => ({ value: d }))}
+                          placeholder="Nombre del director"
+                          filterOption={(inputValue, option) =>
+                            option!.value
+                              .toLowerCase()
+                              .includes(inputValue.toLowerCase())
+                          }
+                        />
+                      </Form.Item>
+                      <MinusCircleOutlined onClick={() => remove(name)} />
+                    </div>
+                  ))}
+                  <Form.Item>
+                    <Button
+                      type="dashed"
+                      onClick={() => add()}
+                      block
+                      icon={<PlusOutlined />}
+                    >
+                      Agregar Director
                     </Button>
                   </Form.Item>
                 </>
@@ -528,18 +651,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                       const hasId = seasonData?.id;
 
                       return (
-                        <div
-                          key={key}
-                          style={{
-                            display: 'flex',
-                            marginBottom: 12,
-                            padding: '12px',
-                            background: 'var(--bg-elevated)',
-                            borderRadius: 'var(--border-radius-sm)',
-                            alignItems: 'flex-end',
-                            gap: '12px',
-                          }}
-                        >
+                        <div key={key} className="series-form__season-row">
                           <Form.Item {...restField} name={[name, 'id']} hidden>
                             <Input type="hidden" />
                           </Form.Item>
@@ -551,30 +663,39 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                             rules={[
                               { required: true, message: 'Número requerido' },
                             ]}
-                            style={{ marginBottom: 0, flex: '0 0 100px' }}
+                            style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
                           >
-                            <InputNumber placeholder="1" min={1} />
+                            <InputNumber
+                              placeholder="1"
+                              min={1}
+                              style={{ width: '100%' }}
+                            />
                           </Form.Item>
 
                           <Form.Item
                             {...restField}
                             name={[name, 'episodeCount']}
                             label="Capítulos"
-                            style={{ marginBottom: 0, flex: '0 0 100px' }}
+                            style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
                           >
-                            <InputNumber placeholder="12" min={1} />
+                            <InputNumber
+                              placeholder="12"
+                              min={1}
+                              style={{ width: '100%' }}
+                            />
                           </Form.Item>
 
                           <Form.Item
                             {...restField}
                             name={[name, 'year']}
                             label="Año"
-                            style={{ marginBottom: 0, flex: '0 0 100px' }}
+                            style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
                           >
                             <InputNumber
                               placeholder="2024"
                               min={1900}
                               max={2100}
+                              style={{ width: '100%' }}
                             />
                           </Form.Item>
 
@@ -592,14 +713,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                             </Link>
                           )}
 
-                          <MinusCircleOutlined
-                            onClick={() => remove(name)}
-                            style={{
-                              fontSize: '18px',
-                              color: '#ff4d4f',
-                              cursor: 'pointer',
-                            }}
-                          />
+                          <MinusCircleOutlined onClick={() => remove(name)} />
                         </div>
                       );
                     })}

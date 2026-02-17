@@ -15,6 +15,9 @@ import {
 } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { AdminNav } from '../AdminNav';
+import '../admin.css';
 
 const { TextArea } = Input;
 
@@ -30,6 +33,7 @@ interface Universe {
 
 export default function UniversesAdminPage() {
   const message = useMessage();
+  const isMobile = useMediaQuery('(max-width: 768px)');
   const [universes, setUniverses] = useState<Universe[]>([]);
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -138,6 +142,7 @@ export default function UniversesAdminPage() {
       dataIndex: 'description',
       key: 'description',
       render: (description: string | null) => description || '-',
+      responsive: ['md' as const],
     },
     {
       title: 'Series',
@@ -156,7 +161,7 @@ export default function UniversesAdminPage() {
             onClick={() => handleOpenModal(record)}
             size="small"
           >
-            Editar
+            {!isMobile && 'Editar'}
           </Button>
           <Popconfirm
             title="¿Eliminar universo?"
@@ -177,7 +182,7 @@ export default function UniversesAdminPage() {
               size="small"
               disabled={record._count ? record._count.series > 0 : false}
             >
-              Eliminar
+              {!isMobile && 'Eliminar'}
             </Button>
           </Popconfirm>
         </Space>
@@ -187,7 +192,8 @@ export default function UniversesAdminPage() {
 
   return (
     <AppLayout>
-      <div style={{ padding: '24px' }}>
+      <div className="admin-page-wrapper">
+        <AdminNav />
         <Card
           title="🌌 Administración de Universos"
           extra={
@@ -216,6 +222,7 @@ export default function UniversesAdminPage() {
           onOk={() => form.submit()}
           okText="Guardar"
           cancelText="Cancelar"
+          forceRender
         >
           <Form form={form} layout="vertical" onFinish={handleSubmit}>
             <Form.Item

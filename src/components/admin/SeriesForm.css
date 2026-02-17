@@ -54,6 +54,41 @@
   width: 100%;
 }
 
+/* Form header */
+.series-form__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.series-form__header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Actor row - responsive */
+.series-form__actor-row {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+/* Season row - responsive */
+.series-form__season-row {
+  display: flex;
+  margin-bottom: 12px;
+  padding: 12px;
+  background: var(--bg-elevated);
+  border-radius: var(--border-radius-sm);
+  align-items: flex-end;
+  gap: 12px;
+}
+
 /* Botón de eliminar actor/temporada */
 .series-form .anticon-minus-circle {
   font-size: 18px;
@@ -61,6 +96,7 @@
   cursor: pointer;
   opacity: 0.7;
   transition: var(--transition-fast);
+  flex-shrink: 0;
 }
 
 .series-form .anticon-minus-circle:hover {
@@ -73,4 +109,64 @@
   margin-bottom: 0;
   padding-top: var(--spacing-lg);
   border-top: 1px solid var(--border-color-secondary);
+}
+
+/* ==========================================
+   Responsive - Mobile
+   ========================================== */
+@media (max-width: 768px) {
+  .series-form {
+    padding: var(--spacing-xs);
+  }
+
+  .series-form > .ant-card > .ant-card-head {
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+
+  .series-form > .ant-card > .ant-card-body {
+    padding: var(--spacing-xs);
+  }
+
+  .series-form .ant-card-head-title {
+    font-size: 1.05em;
+  }
+
+  .series-form .ant-card-type-inner > .ant-card-head {
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+
+  .series-form .ant-card-type-inner > .ant-card-body {
+    padding: var(--spacing-xs);
+  }
+
+  /* Actor rows stack vertically on mobile */
+  .series-form__actor-row {
+    flex-wrap: wrap;
+  }
+
+  .series-form__actor-row .ant-form-item {
+    flex: 1 1 100% !important;
+  }
+
+  /* Season rows stack on mobile */
+  .series-form__season-row {
+    flex-wrap: wrap;
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .series-form__season-row .ant-form-item {
+    flex: 1 1 calc(33% - 8px) !important;
+    min-width: 80px !important;
+  }
+
+  /* Action buttons full width */
+  .series-form > .ant-card > .ant-card-body > .ant-form > .ant-form-item:last-child .ant-space {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .series-form > .ant-card > .ant-card-body > .ant-form > .ant-form-item:last-child .ant-btn {
+    width: 100%;
+  }
 }

@@ -12,3 +12,56 @@
 .comments-tab {
   padding-top: var(--spacing-md);
 }
+
+@media (max-width: 768px) {
+  .series-detail-page {
+    padding: var(--spacing-xs);
+  }
+
+  .series-actions {
+    margin: var(--spacing-sm) 0;
+  }
+
+  /* Secciones colapsables en mobile */
+  .series-detail-sections .ant-collapse-header {
+    font-size: 15px;
+    font-weight: 500;
+    padding: var(--spacing-xs) var(--spacing-sm) !important;
+  }
+
+  .series-detail-sections .ant-collapse-content-box {
+    padding: 4px !important;
+  }
+
+  .series-detail-sections .series-info-tab,
+  .series-detail-sections .seasons-tab,
+  .series-detail-sections .ratings-tab,
+  .series-detail-sections .comments-tab {
+    padding-top: 0;
+  }
+
+  /* Collapse de temporadas: eliminar padding redundante */
+  .seasons-list .ant-collapse-content-box {
+    padding: 4px !important;
+  }
+
+  .seasons-list .ant-collapse-header {
+    padding: 8px !important;
+  }
+
+  /* Secciones internas de temporada sin padding extra */
+  .season-content__synopsis,
+  .season-content__observations,
+  .season-content__comments,
+  .season-content__ratings,
+  .season-content__actors {
+    padding: 4px !important;
+    border-radius: var(--border-radius-sm);
+  }
+
+  /* FloatButton sobre el BottomNav */
+  .series-detail-page .ant-float-btn {
+    bottom: calc(var(--bottom-nav-height) + 16px) !important;
+    right: 16px !important;
+  }
+}

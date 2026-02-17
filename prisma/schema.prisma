@@ -25,6 +25,44 @@ model Universe {
 }
 
 // ============================================
+// PRODUCTORAS
+// ============================================
+model ProductionCompany {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  country   String?
+  imageUrl  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  series    Series[]
+}
+
+// ============================================
+// IDIOMAS
+// ============================================
+model Language {
+  id                     Int             @id @default(autoincrement())
+  name                   String          @unique
+  code                   String?
+
+  seriesOriginalLanguage Series[]        @relation("OriginalLanguage")
+  dubbings               SeriesDubbing[]
+}
+
+// Doblajes disponibles por serie
+model SeriesDubbing {
+  id         Int      @id @default(autoincrement())
+
+  seriesId   Int
+  series     Series   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  languageId Int
+  language   Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
+
+  @@unique([seriesId, languageId])
+}
+
+// ============================================
 // SERIES - Series, películas, cortos, etc.
 // ============================================
 model Series {
@@ -46,10 +84,14 @@ model Series {
   updatedAt     DateTime  @updatedAt
 
   // Relaciones
-  universeId    Int?
-  universe      Universe?         @relation(fields: [universeId], references: [id])
-  countryId     Int?
-  country       Country?          @relation(fields: [countryId], references: [id])
+  universeId           Int?
+  universe             Universe?          @relation(fields: [universeId], references: [id])
+  countryId            Int?
+  country              Country?           @relation(fields: [countryId], references: [id])
+  productionCompanyId  Int?
+  productionCompany    ProductionCompany? @relation(fields: [productionCompanyId], references: [id])
+  originalLanguageId   Int?
+  originalLanguage     Language?          @relation("OriginalLanguage", fields: [originalLanguageId], references: [id])
 
   seasons       Season[]
   actors        SeriesActor[]
@@ -58,6 +100,7 @@ model Series {
   comments      Comment[]
   viewStatus    ViewStatus[]
   tags          SeriesTag[]
+  dubbings      SeriesDubbing[]
 }
 
 // ============================================

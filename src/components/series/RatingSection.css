@@ -73,3 +73,57 @@
   justify-content: center;
   margin-top: var(--spacing-xl);
 }
+
+/* ==========================================
+   Responsive - Mobile
+   ========================================== */
+@media (max-width: 768px) {
+  .rating-section {
+    gap: var(--spacing-md);
+  }
+
+  .rating-average {
+    padding: var(--spacing-md);
+  }
+
+  .rating-average__icon {
+    font-size: 2em;
+  }
+
+  .rating-average__score {
+    font-size: 2em;
+  }
+
+  .rating-section__categories {
+    padding: var(--spacing-xs);
+  }
+
+  .rating-section__title {
+    font-size: 1.1em;
+  }
+
+  .rating-category .ant-card-body {
+    padding: var(--spacing-sm);
+  }
+
+  .rating-category__header {
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .rating-section__actions {
+    margin-top: var(--spacing-md);
+  }
+
+  .rating-section__actions .ant-btn {
+    width: 100%;
+  }
+
+  .rating-category .ant-slider {
+    margin-left: 4px;
+    margin-right: 4px;
+  }
+
+  .rating-category__header strong {
+    font-size: 0.9em;
+  }
+}

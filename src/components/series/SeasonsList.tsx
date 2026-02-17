@@ -4,7 +4,6 @@ import { Collapse, Tag, Row, Col, Avatar, Button } from 'antd';
 import {
   CalendarOutlined,
   PlayCircleOutlined,
-  UserOutlined,
   EditOutlined,
 } from '@ant-design/icons';
 import Link from 'next/link';
@@ -23,6 +22,7 @@ interface SeasonsListProps {
     observations?: string | null;
     actors?: Array<{
       actor: {
+        id: number;
         name: string;
         imageUrl?: string | null;
       };
@@ -211,13 +211,13 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
                     lg={6}
                   >
                     <div className="actor-card">
-                      <Avatar
-                        src={actorInfo.actor.imageUrl}
-                        icon={<UserOutlined />}
-                        size={64}
-                      />
+                      {actorInfo.actor.imageUrl && (
+                        <Avatar src={actorInfo.actor.imageUrl} size={64} />
+                      )}
                       <div className="actor-card__info">
-                        <strong>{actorInfo.actor.name}</strong>
+                        <Link href={`/actores/${actorInfo.actor.id}`}>
+                          <strong>{actorInfo.actor.name}</strong>
+                        </Link>
                         {actorInfo.character && (
                           <span
                             style={{ color: 'var(--text-secondary)' }}

@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import { Button, Table, Space, Tag, Modal } from 'antd';
+import { useState, useMemo } from 'react';
+import { Button, Table, Space, Tag, Modal, Input } from 'antd';
 import {
   EditOutlined,
   DeleteOutlined,
   ExclamationCircleOutlined,
+  SearchOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { EditSerieModal } from './EditSerieModal';
@@ -29,11 +30,54 @@ interface AdminTableClientProps {
   countries: Array<{ id: number; name: string }>;
 }
 
+const ALPHABET = '#ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+
 export function AdminTableClient({ data, countries }: AdminTableClientProps) {
   const message = useMessage();
   const router = useRouter();
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedSerieId, setSelectedSerieId] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
+
+  const availableLetters = useMemo(() => {
+    const letters = new Set<string>();
+    data.forEach((s) => {
+      const first = s.titulo.charAt(0).toUpperCase();
+      if (/[A-Z]/.test(first)) {
+        letters.add(first);
+      } else {
+        letters.add('#');
+      }
+    });
+    return letters;
+  }, [data]);
+
+  const filteredData = useMemo(() => {
+    let result = data;
+
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      result = result.filter(
+        (s) =>
+          s.titulo.toLowerCase().includes(term) ||
+          s.pais.toLowerCase().includes(term) ||
+          s.tipo.toLowerCase().includes(term)
+      );
+    }
+
+    if (selectedLetter) {
+      if (selectedLetter === '#') {
+        result = result.filter((s) => !/^[A-Za-z]/.test(s.titulo));
+      } else {
+        result = result.filter((s) =>
+          s.titulo.toUpperCase().startsWith(selectedLetter)
+        );
+      }
+    }
+
+    return result;
+  }, [data, searchTerm, selectedLetter]);
 
   const handleEdit = (record: SerieData) => {
     router.push(`/admin/series/${record.key}/editar`);
@@ -59,7 +103,7 @@ export function AdminTableClient({ data, countries }: AdminTableClientProps) {
           }
 
           message.success('Serie eliminada correctamente');
-          router.refresh(); // Recargar la página para actualizar la tabla
+          router.refresh();
         } catch (error) {
           const errorMessage =
             error instanceof Error
@@ -73,7 +117,11 @@ export function AdminTableClient({ data, countries }: AdminTableClientProps) {
   };
 
   const handleEditSuccess = () => {
-    router.refresh(); // Recargar la página para actualizar la tabla
+    router.refresh();
+  };
+
+  const handleLetterClick = (letter: string) => {
+    setSelectedLetter(selectedLetter === letter ? null : letter);
   };
 
   const columns: ColumnsType<SerieData> = [
@@ -171,11 +219,42 @@ export function AdminTableClient({ data, countries }: AdminTableClientProps) {
 
   return (
     <>
+      <div className="admin-search-bar">
+        <Input
+          placeholder="Buscar por título, país o tipo..."
+          prefix={<SearchOutlined style={{ color: 'var(--text-tertiary)' }} />}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          allowClear
+          className="admin-search-input"
+        />
+        <span className="admin-result-count">
+          {filteredData.length} de {data.length} series
+        </span>
+      </div>
+
+      <div className="admin-alpha-index">
+        {ALPHABET.map((letter) => {
+          const hasItems = availableLetters.has(letter);
+          const isSelected = selectedLetter === letter;
+          return (
+            <button
+              key={letter}
+              className={`admin-alpha-btn${isSelected ? ' admin-alpha-btn--active' : ''}${!hasItems ? ' admin-alpha-btn--disabled' : ''}`}
+              onClick={() => hasItems && handleLetterClick(letter)}
+              disabled={!hasItems}
+            >
+              {letter}
+            </button>
+          );
+        })}
+      </div>
+
       <Table
         columns={columns}
-        dataSource={data}
+        dataSource={filteredData}
         pagination={{
-          pageSize: 10,
+          pageSize: 20,
           showSizeChanger: true,
           pageSizeOptions: ['10', '20', '50', '100'],
           showTotal: (total, range) =>
