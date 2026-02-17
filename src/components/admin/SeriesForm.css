@@ -170,3 +170,38 @@
     width: 100%;
   }
 }
+
+/* Image Position Selector */
+.image-position-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 36px);
+  gap: 4px;
+  width: fit-content;
+}
+
+.image-position-cell {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  background: var(--bg-container);
+  color: var(--text-tertiary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: var(--transition-fast);
+  padding: 0;
+}
+
+.image-position-cell:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.image-position-cell--active {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: #fff;
+}

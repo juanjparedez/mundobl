@@ -21,6 +21,7 @@ export default async function CatalogoPage() {
     rating: serie.overallRating,
     observaciones: serie.observations,
     imageUrl: serie.imageUrl,
+    imagePosition: serie.imagePosition,
     synopsis: serie.synopsis,
     isFavorite: serie.isFavorite,
     universoId: serie.universeId,

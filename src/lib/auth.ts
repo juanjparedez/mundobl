@@ -12,6 +12,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
   ],
+  events: {
+    async createUser({ user }) {
+      const adminEmails = (process.env.ADMIN_EMAILS ?? '')
+        .split(',')
+        .map((e) => e.trim())
+        .filter(Boolean);
+
+      if (user.email && adminEmails.includes(user.email)) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { role: 'ADMIN' },
+        });
+      }
+    },
+  },
   callbacks: {
     async signIn({ user }) {
       const adminEmails = (process.env.ADMIN_EMAILS ?? '')

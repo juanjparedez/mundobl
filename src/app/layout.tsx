@@ -9,6 +9,9 @@ import '@/styles/dark-mode-fixes.css';
 export const metadata: Metadata = {
   title: 'MundoBL - Catálogo de Series',
   description: 'Sistema de gestión de catálogo de series',
+  verification: {
+    google: 'Yp0Pjs7gScD3_wH8Za8VkiyA1tlnEIG6gjmKp_WcMyg',
+  },
 };
 
 export default function RootLayout({

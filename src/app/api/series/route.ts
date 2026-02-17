@@ -107,6 +107,8 @@ export async function POST(request: NextRequest) {
         type,
         basedOn,
         format: format || 'regular',
+        imageUrl: body.imageUrl || null,
+        imagePosition: body.imagePosition || 'center',
         synopsis,
         soundtrack,
         overallRating,
