@@ -26,6 +26,7 @@ model User {
   emailVerified DateTime?
   image         String?
   role          Role      @default(VISITOR)
+  banned        Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -512,4 +513,14 @@ model AccessLog {
 
   @@index([createdAt])
   @@index([userId])
+}
+
+// ============================================
+// BANNED IPS
+// ============================================
+model BannedIp {
+  id        Int      @id @default(autoincrement())
+  ip        String   @unique
+  reason    String?
+  createdAt DateTime @default(now())
 }

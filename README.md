@@ -280,6 +280,13 @@ erDiagram
 
 ## Changelog
 
+### v0.5 — Febrero 2026
+- Access logs con registro de visitas y acciones
+- Banner de privacidad para usuarios
+- Sistema de ban de usuarios y bloqueo por IP
+- Gestion de usuarios mejorada (ban/unban, roles, IPs bloqueadas)
+- Panel admin de logs con filtros y limpieza automatica
+
 ### v0.4 — Febrero 2026
 - Estados de visualizacion expandidos (Sin ver, Viendo, Vista, Abandonada, Retomar)
 - Especiales con soporte de temporadas y episodios
