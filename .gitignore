@@ -47,6 +47,13 @@ next-env.d.ts
 
 /src/generated/prisma
 
+# cloudflare
+.open-next/
+.wrangler/
+
+# data
+/data/
+
 .agent
 .agents
 .claude

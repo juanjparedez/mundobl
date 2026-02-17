@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { getAllSeries } from '@/lib/database';
 import { CatalogoClient } from './CatalogoClient';

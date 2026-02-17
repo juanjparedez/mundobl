@@ -14,7 +14,10 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  allowedDevOrigins: ['192.168.1.36'],
+  // allowedDevOrigins solo aplica en dev local
+  ...(process.env.NODE_ENV === 'development' && {
+    allowedDevOrigins: ['192.168.1.36'],
+  }),
 };
 
 export default nextConfig;
