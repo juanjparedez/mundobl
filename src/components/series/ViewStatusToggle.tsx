@@ -7,6 +7,7 @@ import {
   EyeInvisibleOutlined,
   PlayCircleOutlined,
 } from '@ant-design/icons';
+import { useSession } from 'next-auth/react';
 import './ViewStatusToggle.css';
 import { useMessage } from '@/hooks/useMessage';
 
@@ -29,6 +30,7 @@ export function ViewStatusToggle({
   seasons = [],
 }: ViewStatusToggleProps) {
   const message = useMessage();
+  const { data: session } = useSession();
   const [watched, setWatched] = useState(initialStatus);
   const [currentlyWatching, setCurrentlyWatching] = useState(
     initialCurrentlyWatching
@@ -103,6 +105,34 @@ export function ViewStatusToggle({
     }
   };
 
+  if (!session?.user) {
+    return (
+      <div className="view-status-toggle">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <span
+            className="view-status-toggle__label"
+            style={{ color: 'var(--text-secondary)' }}
+          >
+            {watched ? 'Vista' : 'No vista'}
+          </span>
+          {currentlyWatching && (
+            <span style={{ color: 'var(--primary-color)' }}>Viendo ahora</span>
+          )}
+        </div>
+        {totalEpisodes > 0 && (
+          <div style={{ marginTop: '12px' }}>
+            <Progress
+              percent={progressPercent}
+              size="small"
+              status={progressPercent === 100 ? 'success' : 'active'}
+              format={() => `${watchedEpisodes}/${totalEpisodes} episodios`}
+            />
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="view-status-toggle">
       <div
@@ -134,7 +164,7 @@ export function ViewStatusToggle({
           loading={isUpdating}
           size="middle"
         >
-          {currentlyWatching ? '▶️ Viendo ahora' : 'Agregar a "Viendo ahora"'}
+          {currentlyWatching ? 'Viendo ahora' : 'Agregar a "Viendo ahora"'}
         </Button>
       </div>
 

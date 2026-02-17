@@ -5,9 +5,13 @@ import {
   AppstoreOutlined,
   PlayCircleOutlined,
   SettingOutlined,
+  CommentOutlined,
   BulbOutlined,
   BulbFilled,
+  LoginOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
+import { useSession, signIn } from 'next-auth/react';
 import { useTheme } from '@/lib/providers/ThemeProvider';
 import { ROUTES } from '@/constants/navigation';
 import './BottomNav.css';
@@ -16,44 +20,77 @@ interface NavItem {
   key: string;
   icon: React.ReactNode;
   label: string;
-  path: string;
+  path?: string;
+  onClick?: () => void;
 }
-
-const navItems: NavItem[] = [
-  {
-    key: 'catalogo',
-    icon: <AppstoreOutlined />,
-    label: 'Catálogo',
-    path: ROUTES.CATALOGO,
-  },
-  {
-    key: 'watching',
-    icon: <PlayCircleOutlined />,
-    label: 'Viendo',
-    path: ROUTES.WATCHING,
-  },
-  {
-    key: 'admin',
-    icon: <SettingOutlined />,
-    label: 'Admin',
-    path: ROUTES.ADMIN,
-  },
-];
 
 export function BottomNav() {
   const pathname = usePathname();
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
+  const { data: session } = useSession();
+
+  const isAdmin = session?.user?.role === 'ADMIN';
+  const isModerator = session?.user?.role === 'MODERATOR';
+  const canAccessAdmin = isAdmin || isModerator;
 
   const isActive = (path: string) => pathname?.startsWith(path);
+
+  const navItems: NavItem[] = [
+    {
+      key: 'catalogo',
+      icon: <AppstoreOutlined />,
+      label: 'Catálogo',
+      path: ROUTES.CATALOGO,
+    },
+    {
+      key: 'watching',
+      icon: <PlayCircleOutlined />,
+      label: 'Viendo',
+      path: ROUTES.WATCHING,
+    },
+    {
+      key: 'feedback',
+      icon: <CommentOutlined />,
+      label: 'Feedback',
+      path: ROUTES.FEEDBACK,
+    },
+    ...(canAccessAdmin
+      ? [
+          {
+            key: 'admin',
+            icon: <SettingOutlined />,
+            label: 'Admin',
+            path: ROUTES.ADMIN,
+          },
+        ]
+      : []),
+    ...(!session
+      ? [
+          {
+            key: 'login',
+            icon: <LoginOutlined />,
+            label: 'Entrar',
+            onClick: () => signIn('google'),
+          },
+        ]
+      : [
+          {
+            key: 'profile',
+            icon: <UserOutlined />,
+            label: session.user?.name?.split(' ')[0] || 'Perfil',
+            path: '/api/auth/signout',
+          },
+        ]),
+  ];
 
   return (
     <nav className="bottom-nav">
       {navItems.map((item) => (
         <button
           key={item.key}
-          className={`bottom-nav-item ${isActive(item.path) ? 'bottom-nav-item--active' : ''}`}
-          onClick={() => router.push(item.path)}
+          className={`bottom-nav-item ${item.path && isActive(item.path) ? 'bottom-nav-item--active' : ''}`}
+          onClick={item.onClick || (() => item.path && router.push(item.path))}
         >
           <span className="bottom-nav-item-icon">{item.icon}</span>
           <span className="bottom-nav-item-label">{item.label}</span>

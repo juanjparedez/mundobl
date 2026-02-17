@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { writeFile } from 'fs/promises';
 import { join } from 'path';
+import { requireRole } from '@/lib/auth-helpers';
 
 export async function POST(request: NextRequest) {
   try {
+    const authResult = await requireRole(['ADMIN', 'MODERATOR']);
+    if (!authResult.authorized) return authResult.response;
+
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
 

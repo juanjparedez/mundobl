@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
+import { requireRole } from '@/lib/auth-helpers';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -68,9 +69,12 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-// PUT - Actualizar una serie
+// PUT - Actualizar una serie (Admin + Moderator)
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
+    const authResult = await requireRole(['ADMIN', 'MODERATOR']);
+    if (!authResult.authorized) return authResult.response;
+
     const { id } = await params;
     const serieId = parseInt(id, 10);
 
@@ -291,9 +295,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-// DELETE - Eliminar una serie
+// DELETE - Eliminar una serie (Solo Admin)
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
+    const authResult = await requireRole(['ADMIN']);
+    if (!authResult.authorized) return authResult.response;
+
     const { id } = await params;
     const serieId = parseInt(id, 10);
 

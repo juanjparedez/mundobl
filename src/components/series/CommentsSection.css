@@ -57,6 +57,14 @@
   border-top: 1px solid var(--border-color);
 }
 
+.comment-card__author {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: 0.9em;
+  color: var(--text-primary);
+}
+
 .comment-card__date {
   display: flex;
   align-items: center;

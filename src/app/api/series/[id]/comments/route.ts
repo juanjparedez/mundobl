@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
+import { requireAuth } from '@/lib/auth-helpers';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const authResult = await requireAuth();
+    if (!authResult.authorized) return authResult.response;
+
     const resolvedParams = await params;
     const seriesId = parseInt(resolvedParams.id, 10);
     const body = await request.json();
@@ -22,6 +26,10 @@ export async function POST(
       data: {
         seriesId,
         content: content.trim(),
+        userId: authResult.userId,
+      },
+      include: {
+        user: { select: { id: true, name: true, image: true } },
       },
     });
 

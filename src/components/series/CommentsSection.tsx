@@ -1,12 +1,23 @@
 'use client';
 
 import { useState } from 'react';
-import { Input, Button, Card, Empty } from 'antd';
-import { CommentOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import { Input, Button, Card, Empty, Avatar } from 'antd';
+import {
+  CommentOutlined,
+  ClockCircleOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
+import { useSession } from 'next-auth/react';
 import './CommentsSection.css';
 import { useMessage } from '@/hooks/useMessage';
 
 const { TextArea } = Input;
+
+interface CommentUser {
+  id: string;
+  name: string | null;
+  image: string | null;
+}
 
 interface CommentsSectionProps {
   seriesId: number;
@@ -15,6 +26,7 @@ interface CommentsSectionProps {
     content: string;
     createdAt: Date;
     updatedAt: Date;
+    user?: CommentUser | null;
   }>;
 }
 
@@ -23,6 +35,7 @@ export function CommentsSection({
   comments: initialComments,
 }: CommentsSectionProps) {
   const message = useMessage();
+  const { data: session } = useSession();
   const [comments, setComments] = useState(initialComments);
   const [newComment, setNewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -57,29 +70,39 @@ export function CommentsSection({
 
   return (
     <div className="comments-section">
-      <Card
-        title={<h4 className="comments-section__title">Agregar Comentario</h4>}
-        className="comments-section__form"
-      >
-        <TextArea
-          rows={4}
-          placeholder="Escribe tus impresiones, opiniones o notas sobre esta serie..."
-          value={newComment}
-          onChange={(e) => setNewComment(e.target.value)}
-          maxLength={2000}
-          showCount
-        />
-        <div className="comments-section__actions">
-          <Button
-            type="primary"
-            icon={<CommentOutlined />}
-            onClick={handleSubmit}
-            loading={isSubmitting}
-          >
-            Agregar Comentario
-          </Button>
-        </div>
-      </Card>
+      {session?.user ? (
+        <Card
+          title={
+            <h4 className="comments-section__title">Agregar Comentario</h4>
+          }
+          className="comments-section__form"
+        >
+          <TextArea
+            rows={4}
+            placeholder="Escribe tus impresiones, opiniones o notas sobre esta serie..."
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            maxLength={2000}
+            showCount
+          />
+          <div className="comments-section__actions">
+            <Button
+              type="primary"
+              icon={<CommentOutlined />}
+              onClick={handleSubmit}
+              loading={isSubmitting}
+            >
+              Agregar Comentario
+            </Button>
+          </div>
+        </Card>
+      ) : (
+        <Card className="comments-section__login-prompt">
+          <p style={{ color: 'var(--text-secondary)', textAlign: 'center' }}>
+            Inicia sesión para dejar un comentario
+          </p>
+        </Card>
+      )}
 
       <div className="comments-section__list">
         <h4 className="comments-section__title">
@@ -94,6 +117,18 @@ export function CommentsSection({
               <Card key={comment.id} className="comment-card">
                 <p className="comment-card__content">{comment.content}</p>
                 <div className="comment-card__footer">
+                  {comment.user && (
+                    <span className="comment-card__author">
+                      <Avatar
+                        src={comment.user.image}
+                        icon={
+                          !comment.user.image ? <UserOutlined /> : undefined
+                        }
+                        size={20}
+                      />
+                      <span>{comment.user.name}</span>
+                    </span>
+                  )}
                   <span
                     style={{ color: 'var(--text-secondary)' }}
                     className="comment-card__date"

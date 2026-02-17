@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
+import { requireRole } from '@/lib/auth-helpers';
 
 // GET /api/series - Obtener todas las series
 export async function GET() {
@@ -32,9 +33,12 @@ export async function GET() {
   }
 }
 
-// POST /api/series - Crear nueva serie
+// POST /api/series - Crear nueva serie (Admin + Moderator)
 export async function POST(request: NextRequest) {
   try {
+    const authResult = await requireRole(['ADMIN', 'MODERATOR']);
+    if (!authResult.authorized) return authResult.response;
+
     const body = await request.json();
     const {
       title,
