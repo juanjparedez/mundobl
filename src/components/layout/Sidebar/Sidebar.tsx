@@ -21,6 +21,7 @@ import {
   TeamOutlined,
   CommentOutlined,
   InfoCircleOutlined,
+  FileTextOutlined,
 } from '@ant-design/icons';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { ROUTES } from '@/constants/navigation';
@@ -119,6 +120,12 @@ export function Sidebar() {
                       icon: <InfoCircleOutlined />,
                       label: 'Info',
                       onClick: () => router.push('/admin/info'),
+                    },
+                    {
+                      key: '/admin/logs',
+                      icon: <FileTextOutlined />,
+                      label: 'Logs',
+                      onClick: () => router.push('/admin/logs'),
                     },
                   ]
                 : []),

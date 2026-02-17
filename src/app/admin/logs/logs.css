@@ -1,0 +1,42 @@
+.logs-page {
+  padding: var(--spacing-lg);
+}
+
+.logs-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.logs-title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  color: var(--text-primary);
+}
+
+.logs-count {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+}
+
+.logs-filters {
+  margin-bottom: var(--spacing-md);
+}
+
+.logs-table__user {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.logs-table__anonymous {
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .logs-page {
+    padding: var(--spacing-sm);
+  }
+}

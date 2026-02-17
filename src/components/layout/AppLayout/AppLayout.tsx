@@ -3,6 +3,7 @@
 import { Layout } from 'antd';
 import { Sidebar } from '../Sidebar/Sidebar';
 import { BottomNav } from '../BottomNav/BottomNav';
+import { PrivacyBanner } from '../../common/PrivacyBanner/PrivacyBanner';
 import './AppLayout.css';
 
 const { Content } = Layout;
@@ -19,6 +20,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         <Content className="app-content">{children}</Content>
       </Layout>
       <BottomNav />
+      <PrivacyBanner />
     </Layout>
   );
 }
