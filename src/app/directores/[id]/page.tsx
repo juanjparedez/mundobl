@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { notFound } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { getDirectorById } from '@/lib/database';

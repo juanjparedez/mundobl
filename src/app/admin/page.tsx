@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { getAllSeries, getAllCountries } from '@/lib/database';
 import { PageTitleClient } from '@/components/common/PageTitle/PageTitleClient';

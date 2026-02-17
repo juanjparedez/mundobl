@@ -5,8 +5,8 @@
  * a la base de datos usando Prisma.
  */
 
-import 'dotenv/config';
-import { PrismaBetterSqlite3 } from '@prisma/adapter-better-sqlite3';
+import { Pool } from 'pg';
+import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../generated/prisma';
 
 // Singleton pattern para PrismaClient
@@ -14,9 +14,8 @@ import { PrismaClient } from '../generated/prisma';
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 
 function createPrismaClient() {
-  const adapter = new PrismaBetterSqlite3({
-    url: process.env.DATABASE_URL || 'file:./data/mundobl.db',
-  });
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  const adapter = new PrismaPg(pool);
   return new PrismaClient({ adapter });
 }
 
