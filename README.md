@@ -1,94 +1,67 @@
-# MundoBL - Sistema de Gestión de Catálogo de Series
+# MundoBL
 
-Sistema de gestión de catálogo de series desarrollado con Next.js y Ant Design.
+Catálogo personal de series asiáticas (BL/GL y otros géneros). Gestión, calificación y seguimiento de series, películas y cortos.
 
-## 🚀 Tecnologías
+**URL:** [mundobl.win](https://mundobl.win)
 
-- **Next.js 15** - Framework React con App Router
-- **React 19** - Biblioteca de UI
-- **TypeScript** - Tipado estático
-- **Ant Design 5** - Biblioteca de componentes UI
-- **ESLint + Prettier** - Linting y formateo de código
+## Stack
 
-## 📁 Estructura del Proyecto
+- **Next.js 16** (App Router)
+- **React 19** + **TypeScript 5.9**
+- **Ant Design 6**
+- **Prisma 7.4** + **PostgreSQL** (Supabase)
+- **Vercel** (hosting)
 
-```
-mundobl/
-├── src/
-│   ├── app/                    # Páginas de Next.js (App Router)
-│   │   ├── catalogo/          # Vista de catálogo
-│   │   ├── admin/             # Vista de administración
-│   │   └── layout.tsx         # Layout principal
-│   ├── components/            # Componentes React
-│   │   ├── layout/           # Componentes de layout
-│   │   │   ├── AppLayout/    # Layout principal de la app
-│   │   │   ├── Header/       # Encabezado
-│   │   │   └── Sidebar/      # Barra lateral
-│   │   ├── common/           # Componentes comunes reutilizables
-│   │   ├── catalogo/         # Componentes específicos de catálogo
-│   │   └── admin/            # Componentes específicos de admin
-│   ├── lib/                  # Utilidades y configuraciones
-│   │   ├── providers/        # Providers de React (Theme, etc.)
-│   │   └── theme.config.ts   # Configuración de temas
-│   ├── styles/               # Estilos globales y variables CSS
-│   │   ├── globals.css       # Estilos globales
-│   │   └── variables.css     # Variables CSS dinámicas
-│   ├── types/                # Tipos de TypeScript
-│   └── constants/            # Constantes de la aplicación
-├── package.json
-├── tsconfig.json
-├── next.config.ts
-└── README.md
-```
-
-## 🎨 Sistema de Temas
-
-El proyecto utiliza variables CSS dinámicas para facilitar la personalización de temas:
-
-- Variables CSS en `src/styles/variables.css`
-- Tema claro y oscuro configurables
-- Configuración de Ant Design en `src/lib/theme.config.ts`
-- Provider de tema con persistencia en localStorage
-
-## 🛠️ Instalación y Desarrollo
+## Desarrollo
 
 ```bash
-# Instalar dependencias
 npm install
-
-# Ejecutar en modo desarrollo
-npm run dev
-
-# Compilar para producción
-npm run build
-
-# Ejecutar en producción
-npm start
-
-# Linting
-npm run lint
-npm run lint:fix
-
-# Formateo de código
-npm run format
+npm run dev         # http://localhost:3000
+npm run build       # Build producción
+npm run lint:fix    # Lint + fix
+npm run format      # Prettier
 ```
 
-## 📝 Convenciones de Código
+### Variables de entorno
 
-- **Componentes**: Cada componente tiene su propia carpeta con archivo `.tsx` y `.css`
-- **Archivos pequeños**: Separación clara de responsabilidades
-- **CSS separado**: No usar CSS-in-JS, mantener estilos en archivos `.css`
-- **TypeScript**: Tipado estricto, evitar `any`
-- **Principios SOLID**: Componentes reutilizables y de responsabilidad única
+Copiar `.env.example` y completar:
 
-## 🔮 Próximos Pasos
+```
+DATABASE_URL=       # Supabase transaction pooler (puerto 6543)
+DIRECT_URL=         # Supabase session pooler (puerto 5432)
+```
 
-- [ ] Integración con base de datos SQL
-- [ ] Importación de datos desde Excel
-- [ ] Formularios de creación/edición de series
-- [ ] Sistema de autenticación (futuro)
-- [ ] Funcionalidades de búsqueda y filtrado avanzado
+### Migraciones (Prisma)
 
-## 📄 Licencia
+```bash
+npx prisma migrate dev --name descripcion    # Crear migración
+npx prisma generate                          # Regenerar cliente
+npx prisma studio                            # UI para explorar datos
+```
 
-Proyecto privado - MundoBL
+## Estructura
+
+```
+src/
+├── app/              # Páginas y API routes (Next.js App Router)
+│   ├── catalogo/     # Catálogo público con filtros y búsqueda
+│   ├── admin/        # Panel admin (CRUD de todas las entidades)
+│   ├── actores/      # Perfiles de actores
+│   ├── directores/   # Perfiles de directores
+│   ├── watching/     # Dashboard "Viendo ahora"
+│   └── api/          # REST API (series, seasons, episodes, actors, etc.)
+├── components/       # Componentes React (layout, common, series, admin)
+├── lib/              # database.ts (Prisma helpers), theme.config.ts, utils
+├── hooks/            # useMediaQuery, useMessage
+├── types/            # TypeScript types
+├── constants/        # Navegación, constantes de series
+└── styles/           # CSS variables, globals, dark mode
+```
+
+## Documentación
+
+Ver [context.md](context.md) para documentación técnica completa (arquitectura, guía de cambios, schema de DB, etc.).
+
+## Licencia
+
+Proyecto privado
