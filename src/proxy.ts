@@ -1,13 +1,15 @@
 import { auth } from '@/lib/auth';
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-export default auth((req) => {
-  const { pathname } = req.nextUrl;
-  const session = req.auth;
+export async function proxy(request: NextRequest) {
+  const { pathname } = request.nextUrl;
 
   if (pathname.startsWith('/admin')) {
+    const session = await auth();
+
     if (!session) {
-      return NextResponse.redirect(new URL('/api/auth/signin', req.url));
+      return NextResponse.redirect(new URL('/api/auth/signin', request.url));
     }
 
     const role = session.user?.role;
@@ -20,18 +22,18 @@ export default auth((req) => {
 
     if (isEditRoute) {
       if (role !== 'ADMIN' && role !== 'MODERATOR') {
-        return NextResponse.redirect(new URL('/catalogo', req.url));
+        return NextResponse.redirect(new URL('/catalogo', request.url));
       }
     } else {
       // Resto de /admin/* (listados, CRUD entidades, usuarios): solo Admin
       if (role !== 'ADMIN') {
-        return NextResponse.redirect(new URL('/catalogo', req.url));
+        return NextResponse.redirect(new URL('/catalogo', request.url));
       }
     }
   }
 
   return NextResponse.next();
-});
+}
 
 export const config = {
   matcher: ['/admin/:path*'],
