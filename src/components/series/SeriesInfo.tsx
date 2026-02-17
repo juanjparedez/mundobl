@@ -39,6 +39,7 @@ interface SeriesInfoProps {
     actors?: Array<{
       character?: string | null;
       isMain: boolean;
+      pairingGroup?: number | null;
       actor: {
         id: number;
         name: string;
@@ -57,12 +58,13 @@ interface SeriesInfoProps {
 }
 
 function getBasedOnLabel(basedOn: string): string {
+  // Legacy labels for backwards compatibility
   const labels: Record<string, string> = {
-    libro: '📖 Libro',
-    novela: '📚 Novela',
-    corto: '📄 Cuento/Relato',
-    manga: '🎌 Manga',
-    anime: '🎨 Anime',
+    libro: 'Libro',
+    novela: 'Novela',
+    corto: 'Cuento/Relato',
+    manga: 'Manga',
+    anime: 'Anime',
   };
   return labels[basedOn.toLowerCase()] || basedOn;
 }
@@ -169,22 +171,60 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
           </Descriptions.Item>
         )}
 
-        {series.actors && series.actors.length > 0 && (
-          <Descriptions.Item label="Reparto" span={fullSpan}>
-            <div className="series-info__cast-list">
-              {series.actors.map((sa) => (
-                <Tag key={`${sa.actor.id}-${sa.character}`}>
-                  <Link href={`/actores/${sa.actor.id}`}>
-                    {sa.actor.name}
-                  </Link>
-                  {sa.character ? ` (${sa.character})` : ''}
-                  {sa.isMain ? ' ⭐' : ''}
-                </Tag>
-              ))}
-            </div>
-          </Descriptions.Item>
-        )}
       </Descriptions>
+
+      {series.actors && series.actors.length > 0 && (() => {
+        const pairings = new Map<number, typeof series.actors>();
+        const unpaired: typeof series.actors = [];
+
+        for (const sa of series.actors!) {
+          if (sa.pairingGroup) {
+            if (!pairings.has(sa.pairingGroup)) {
+              pairings.set(sa.pairingGroup, []);
+            }
+            pairings.get(sa.pairingGroup)!.push(sa);
+          } else {
+            unpaired.push(sa);
+          }
+        }
+
+        const renderActor = (sa: (typeof series.actors)[0]) => (
+          <div key={`${sa.actor.id}-${sa.character}`} className="series-info__cast-actor">
+            <Link href={`/actores/${sa.actor.id}`} className="series-info__cast-actor-name">
+              {sa.actor.name}
+            </Link>
+            {sa.character && (
+              <span className="series-info__cast-character">como {sa.character}</span>
+            )}
+            {sa.isMain && <span className="series-info__cast-star" title="Protagonista">⭐</span>}
+          </div>
+        );
+
+        return (
+          <div className="series-info__cast-section">
+            <h4 className="series-info__section-title">👥 Reparto</h4>
+
+            {pairings.size > 0 && (
+              <div className="series-info__pairings">
+                {Array.from(pairings.entries()).map(([group, actors]) => (
+                  <div key={group} className="series-info__pairing">
+                    <span className="series-info__pairing-badge">💕 Pareja</span>
+                    <div className="series-info__pairing-actors">
+                      {actors!.map(renderActor)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {unpaired.length > 0 && (
+              <div className="series-info__cast-others">
+                {unpaired.map(renderActor)}
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {series.synopsis && (
         <div className="series-info__synopsis">

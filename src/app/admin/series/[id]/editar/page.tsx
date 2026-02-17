@@ -46,6 +46,7 @@ export default async function EditSeriesPage({ params }: EditPageProps) {
         name: sa.actor.name,
         character: sa.character || '',
         isMain: sa.isMain || false,
+        pairingGroup: sa.pairingGroup ?? null,
       })) || [],
     directors:
       serie.directors?.map((sd) => ({

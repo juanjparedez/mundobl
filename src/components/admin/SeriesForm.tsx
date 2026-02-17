@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Form,
@@ -53,6 +53,31 @@ interface SeriesFormProps {
   mode: 'create' | 'edit';
 }
 
+// Picker dimensions and card aspect ratio
+const PICKER_W = 280;
+const PICKER_H = 210;
+const CARD_ASPECT = 160 / 140; // height/width of catalog card
+
+function parsePosition(pos: string): { x: number; y: number } {
+  const keywords: Record<string, { x: number; y: number }> = {
+    'top left': { x: 0, y: 0 },
+    'top center': { x: 50, y: 0 },
+    'top right': { x: 100, y: 0 },
+    'center left': { x: 0, y: 50 },
+    center: { x: 50, y: 50 },
+    'center right': { x: 100, y: 50 },
+    'bottom left': { x: 0, y: 100 },
+    'bottom center': { x: 50, y: 100 },
+    'bottom right': { x: 100, y: 100 },
+  };
+  if (keywords[pos]) return keywords[pos];
+  const parts = pos.split(/\s+/);
+  return {
+    x: parseInt(parts[0]) || 50,
+    y: parseInt(parts[1]) || 50,
+  };
+}
+
 function ImagePositionSelector({
   value,
   onChange,
@@ -63,56 +88,83 @@ function ImagePositionSelector({
   imageUrl?: string;
 }) {
   const current = value || '50% 50%';
-
-  // Parse current value to get x,y percentages
-  const parsePosition = (pos: string): { x: number; y: number } => {
-    const keywords: Record<string, { x: number; y: number }> = {
-      'top left': { x: 0, y: 0 },
-      'top center': { x: 50, y: 0 },
-      'top right': { x: 100, y: 0 },
-      'center left': { x: 0, y: 50 },
-      center: { x: 50, y: 50 },
-      'center right': { x: 100, y: 50 },
-      'bottom left': { x: 0, y: 100 },
-      'bottom center': { x: 50, y: 100 },
-      'bottom right': { x: 100, y: 100 },
-    };
-    if (keywords[pos]) return keywords[pos];
-    const parts = pos.split(/\s+/);
-    return {
-      x: parseInt(parts[0]) || 50,
-      y: parseInt(parts[1]) || 50,
-    };
-  };
-
   const { x, y } = parsePosition(current);
+  const pickerRef = useRef<HTMLDivElement>(null);
+  const dragging = useRef(false);
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const newX = Math.round(((e.clientX - rect.left) / rect.width) * 100);
-    const newY = Math.round(((e.clientY - rect.top) / rect.height) * 100);
-    onChange?.(`${newX}% ${newY}%`);
-  };
+  // Viewport size: proportional to card aspect within picker
+  const vpW = PICKER_W * 0.35;
+  const vpH = vpW * CARD_ASPECT;
+
+  const clamp = (val: number, min: number, max: number) =>
+    Math.max(min, Math.min(max, val));
+
+  const updatePosition = useCallback(
+    (clientX: number, clientY: number) => {
+      const rect = pickerRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const relX = clientX - rect.left;
+      const relY = clientY - rect.top;
+      const newX = clamp(Math.round((relX / rect.width) * 100), 0, 100);
+      const newY = clamp(Math.round((relY / rect.height) * 100), 0, 100);
+      onChange?.(`${newX}% ${newY}%`);
+    },
+    [onChange]
+  );
+
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      dragging.current = true;
+      updatePosition(e.clientX, e.clientY);
+    },
+    [updatePosition]
+  );
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!dragging.current) return;
+      updatePosition(e.clientX, e.clientY);
+    };
+    const handleMouseUp = () => {
+      dragging.current = false;
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [updatePosition]);
+
+  // Viewport position (clamped so it stays within picker bounds)
+  const vpLeft = clamp((x / 100) * PICKER_W - vpW / 2, 0, PICKER_W - vpW);
+  const vpTop = clamp((y / 100) * PICKER_H - vpH / 2, 0, PICKER_H - vpH);
 
   return (
     <div className="image-position-selector">
       <div className="image-position-picker-row">
         <div
+          ref={pickerRef}
           className="image-position-picker"
-          onClick={handleClick}
-          style={
-            imageUrl
-              ? {
-                  backgroundImage: `url(${imageUrl})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }
-              : undefined
-          }
+          onMouseDown={handleMouseDown}
+          style={{
+            width: PICKER_W,
+            height: PICKER_H,
+            backgroundImage: imageUrl ? `url(${imageUrl})` : undefined,
+            backgroundSize: 'contain',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+          }}
         >
           <div
-            className="image-position-crosshair"
-            style={{ left: `${x}%`, top: `${y}%` }}
+            className="image-position-viewport"
+            style={{
+              left: vpLeft,
+              top: vpTop,
+              width: vpW,
+              height: vpH,
+            }}
           />
         </div>
 
@@ -148,6 +200,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
   const [languages, setLanguages] = useState<string[]>([]);
   const [genres, setGenres] = useState<string[]>([]);
   const [tags, setTags] = useState<string[]>([]);
+  const [basedOnOptions, setBasedOnOptions] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const imageUrl = Form.useWatch('imageUrl', form);
   const [isFavorite, setIsFavorite] = useState(
@@ -195,6 +248,11 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
       const tagsRes = await fetch('/api/tags');
       const tagsData = await tagsRes.json();
       setTags(tagsData.map((t: { name: string }) => t.name));
+
+      // Cargar opciones de "basado en"
+      const basedOnRes = await fetch('/api/series/based-on');
+      const basedOnData = await basedOnRes.json();
+      setBasedOnOptions(basedOnData);
     } catch (error) {
       console.error('Error loading form data:', error);
     }
@@ -203,7 +261,10 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
   useEffect(() => {
     loadFormData();
     if (initialData) {
-      form.setFieldsValue(initialData);
+      form.setFieldsValue({
+        ...initialData,
+        basedOn: initialData.basedOn ? [initialData.basedOn] : [],
+      });
       setSelectedType(initialData.type || 'serie');
     }
   }, [initialData, loadFormData, form]);
@@ -215,10 +276,18 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
         mode === 'create' ? '/api/series' : `/api/series/${initialData?.id}`;
       const method = mode === 'create' ? 'POST' : 'PUT';
 
+      // basedOn comes as array from Select mode="tags", convert to string
+      const submitValues = {
+        ...values,
+        basedOn: Array.isArray(values.basedOn)
+          ? values.basedOn[0] || null
+          : values.basedOn || null,
+      };
+
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
+        body: JSON.stringify(submitValues),
       });
 
       if (!response.ok) throw new Error('Error saving series');
@@ -426,18 +495,26 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
               </Col>
 
               <Col xs={24} md={12}>
-                <Form.Item label="Basada en" name="basedOn">
+                <Form.Item
+                  label="Basada en"
+                  name="basedOn"
+                  help="Escribe para buscar o agregar nuevos (ej: Manga, Manhwa, Novela)"
+                >
                   <Select
-                    placeholder="Selecciona si está basado en algo"
+                    mode="tags"
+                    placeholder="Ej: Libro, Manga, Manhwa..."
                     size="large"
                     allowClear
-                  >
-                    <Option value="libro">📖 Libro</Option>
-                    <Option value="novela">📚 Novela</Option>
-                    <Option value="corto">📄 Cuento/Relato Corto</Option>
-                    <Option value="manga">🎌 Manga</Option>
-                    <Option value="anime">🎨 Anime</Option>
-                  </Select>
+                    maxCount={1}
+                    tokenSeparators={[',']}
+                    style={{ width: '100%' }}
+                    options={basedOnOptions.map((v) => ({ value: v, label: v }))}
+                    filterOption={(inputValue, option) =>
+                      (option?.label as string)
+                        .toLowerCase()
+                        .includes(inputValue.toLowerCase())
+                    }
+                  />
                 </Form.Item>
               </Col>
 
@@ -626,6 +703,9 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                 style={{ marginBottom: 16 }}
               />
             )}
+            <div style={{ fontSize: 12, color: 'var(--text-tertiary)', marginBottom: 12 }}>
+              Para emparejar personajes, asigna el mismo numero en &quot;Pareja&quot; (ej: 1 y 1 = primera pareja)
+            </div>
             <Form.List name="actors">
               {(fields, { add, remove }) => (
                 <>
@@ -660,6 +740,18 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                         style={{ marginBottom: 0 }}
                       >
                         <Checkbox>Protagonista</Checkbox>
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, 'pairingGroup']}
+                        style={{ marginBottom: 0, width: 80 }}
+                      >
+                        <InputNumber
+                          placeholder="Pareja"
+                          min={1}
+                          max={20}
+                          style={{ width: '100%' }}
+                        />
                       </Form.Item>
                       <MinusCircleOutlined onClick={() => remove(name)} />
                     </div>

@@ -172,6 +172,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
             actorId: actor.id,
             character: actorData.character || '',
             isMain: actorData.isMain || false,
+            pairingGroup: actorData.pairingGroup ?? null,
           },
         });
       }

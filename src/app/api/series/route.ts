@@ -137,6 +137,7 @@ export async function POST(request: NextRequest) {
             actorId: actor.id,
             character: actorData.character || '',
             isMain: actorData.isMain || false,
+            pairingGroup: actorData.pairingGroup ?? null,
           },
         });
       }
