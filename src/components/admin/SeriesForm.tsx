@@ -245,7 +245,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
             basedOn: null,
             format: 'regular',
             actors: [{ name: '', character: '', isMain: false }],
-            directors: [{ name: '' }],
+            directors: [],
             ...(showSeasons
               ? { seasons: [{ seasonNumber: 1, episodeCount: null }] }
               : {}),
