@@ -20,6 +20,7 @@ import {
   LogoutOutlined,
   TeamOutlined,
   CommentOutlined,
+  InfoCircleOutlined,
 } from '@ant-design/icons';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { ROUTES } from '@/constants/navigation';
@@ -112,6 +113,12 @@ export function Sidebar() {
                       icon: <TeamOutlined />,
                       label: 'Usuarios',
                       onClick: () => router.push('/admin/usuarios'),
+                    },
+                    {
+                      key: '/admin/info',
+                      icon: <InfoCircleOutlined />,
+                      label: 'Info',
+                      onClick: () => router.push('/admin/info'),
                     },
                   ]
                 : []),

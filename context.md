@@ -1,6 +1,6 @@
 # MundoBL - Contexto del Proyecto
 
-Catálogo personal de series asiáticas (BL/GL y otros géneros). Aplicación full-stack para gestionar, calificar y hacer seguimiento de series, películas y cortos.
+Catálogo personal de series asiáticas (BL/GL y otros géneros). Aplicación full-stack para gestionar, calificar y hacer seguimiento de series, películas, cortos y especiales.
 
 ---
 
@@ -21,14 +21,24 @@ Catálogo personal de series asiáticas (BL/GL y otros géneros). Aplicación fu
 |---|---|
 | **Hosting** | Vercel (deploy automático desde GitHub) |
 | **Base de datos** | Supabase PostgreSQL (sa-east-1, São Paulo) |
+| **Almacenamiento** | Supabase Storage (bucket `images`) |
+| **Auth** | NextAuth.js (Google OAuth) |
 | **Dominio** | mundobl.win (DNS en Cloudflare, CNAME a Vercel) |
 | **SSL** | Automático via Vercel |
 
 ### Variables de Entorno (Vercel + .env local)
 
 ```
-DATABASE_URL       # Transaction pooler (puerto 6543) - para la app
-DIRECT_URL         # Session pooler (puerto 5432) - para migraciones Prisma
+DATABASE_URL                # Transaction pooler (puerto 6543) - para la app
+DIRECT_URL                  # Session pooler (puerto 5432) - para migraciones Prisma
+AUTH_SECRET                 # Secret para NextAuth
+AUTH_GOOGLE_ID              # Google OAuth client ID
+AUTH_GOOGLE_SECRET          # Google OAuth client secret
+NEXT_PUBLIC_SUPABASE_URL    # URL del proyecto Supabase
+SUPABASE_SERVICE_ROLE_KEY   # Service role key de Supabase
+PROJECT_GITHUB_URL          # Link a GitHub (para /admin/info)
+PROJECT_VERCEL_URL          # Link a Vercel (para /admin/info)
+PROJECT_SUPABASE_URL        # Link a Supabase (para /admin/info)
 ```
 
 ---
@@ -96,7 +106,9 @@ src/
 │   │   ├── production-companies/ # CRUD productoras
 │   │   ├── countries/            # Lectura países
 │   │   ├── currently-watching/   # Series en curso
-│   │   └── upload/               # Subida de imágenes
+│   │   ├── feature-requests/     # Feedback + votos
+│   │   ├── upload/               # Subida de imágenes (Supabase Storage)
+│   │   └── admin/info/           # Info del proyecto (env vars, solo admin)
 │   ├── catalogo/                 # Catálogo público
 │   │   ├── page.tsx              # Server component: fetch series
 │   │   ├── CatalogoClient.tsx    # Client component: filtros, búsqueda, paginación
@@ -110,7 +122,10 @@ src/
 │   │   ├── tags/                 # Gestión tags
 │   │   ├── universos/            # Gestión universos
 │   │   ├── idiomas/              # Gestión idiomas
-│   │   └── productoras/          # Gestión productoras
+│   │   ├── productoras/          # Gestión productoras
+│   │   ├── usuarios/             # Gestión usuarios y roles
+│   │   └── info/                 # Info del proyecto (links, equipo)
+│   ├── feedback/                 # Feedback + Changelog
 │   ├── actores/[id]/             # Perfil de actor
 │   ├── directores/[id]/          # Perfil de director
 │   └── watching/                 # Dashboard "Viendo ahora"
@@ -123,6 +138,8 @@ src/
 │   └── watching/                 # CurrentlyWatchingDashboard
 ├── lib/
 │   ├── database.ts               # Helpers de acceso a DB (Prisma)
+│   ├── supabase.ts               # Cliente Supabase Storage (upload/delete)
+│   ├── auth-helpers.ts           # requireAuth, requireRole
 │   ├── theme.config.ts           # Configuración tema Ant Design
 │   ├── utils.ts                  # Utilidades generales
 │   └── providers/ThemeProvider.tsx
@@ -185,7 +202,16 @@ import { getAllSeries, getSeriesById, searchSeriesByTitle } from '@/lib/database
 - `ProductionCompany`, `Language`, `SeriesDubbing`
 - `Rating` - Calificaciones por categoría (trama, casting, BSO, etc.)
 - `Comment` - Comentarios en serie/temporada/episodio
-- `ViewStatus` - Estado visto/no visto/viendo
+- `ViewStatus` - Estado de visualización (`WatchStatus` enum: SIN_VER, VIENDO, VISTA, ABANDONADA, RETOMAR)
+
+**Modelos de feedback:**
+- `FeatureRequest` - Solicitudes de bugs/features/ideas con status y prioridad
+- `FeatureRequestImage` - Imágenes adjuntas a solicitudes
+- `FeatureVote` - Votos de usuarios en solicitudes
+
+**Enums:**
+- `Role` - USER, MODERATOR, ADMIN
+- `WatchStatus` - SIN_VER, VIENDO, VISTA, ABANDONADA, RETOMAR
 
 ### Migraciones
 
@@ -294,17 +320,28 @@ npm run type-check   # Verificar tipos TypeScript
 - Detalle de serie con temporadas, episodios, ratings, comentarios
 - Perfiles de actores y directores
 - Panel admin completo (CRUD de todas las entidades)
-- Sistema de tags/etiquetas
-- Universos (agrupar series relacionadas)
-- Estado de visualización (visto/no visto/viendo)
+- Sistema de tags/etiquetas con autocompletado
+- Universos (agrupar series relacionadas, cards rediseñadas)
+- Estado de visualización expandido (Sin ver, Viendo, Vista, Abandonada, Retomar)
 - Dashboard "Viendo ahora"
 - Tema claro/oscuro
 - Diseño responsive (mobile + desktop)
+- Autenticación con Google OAuth
+- Subida de imágenes a Supabase Storage
+- Focal point para imágenes de portada
+- Parejas de personajes en el reparto
+- Feedback con votos, imágenes (clipboard paste) y changelog
+- Especiales con soporte de temporadas y episodios
+- Gestión de usuarios y roles
+- Página de info del proyecto (links por env vars)
 
-### Pendiente
-- Sistema de carga de imágenes (actualmente URLs manuales)
-- Dashboard con estadísticas avanzadas (top-rated, por país, trending)
-- Búsqueda avanzada (múltiples criterios combinados)
-- Import/export de datos
+### Pendiente (ver ideas.md para detalle)
+- Access logs (registro de visitas y acciones)
+- Landing page pública
+- Campo "dónde ver" con links a plataformas
 - Sistema de recomendaciones
-- Modo offline (PWA)
+- Tracking mejorado en "Viendo ahora"
+- Notificaciones por correo (opt-in)
+- Nombre de app configurable por variable de entorno (platformización)
+- Dashboard con estadísticas avanzadas
+- Búsqueda avanzada (múltiples criterios combinados)

@@ -1,41 +1,104 @@
-La app esta orientada a la necesidad de Flor
-Pero que pasaria si la hago generica?
-Es decir, que pasaria si appName fuera una varialbe de entorno?
-Enconces podria cambiar el nombre de la app por varialbe de entorno no?
-Quedaria una app de gestion de contenido audiovisual, tipo blog, pero personalizable
-(Esto para mas adelante) Podria cambiar el nombre del proyecto y subirlo como parte de un prortfolio de mi user de github?
+# Ideas y Roadmap - MundoBL
 
-El correo de flor como admin es florstratovarius@gmail.com, yo tambien quiero ser admin juanjparedez@gmail.com
+## Ya implementado
 
-Como no deberia ser obligatorio loguearse, pero si seria mejor, deberiamos crear una landing page
-Me gustaria agregar una imagen que me paso flor
+- [x] Nombre de app configurable: `NEXT_PUBLIC_APP_NAME` ya es variable de entorno
+- [x] Focal point para imagenes de portada en catalogo
+- [x] Pagina de feedback (bugs, features, ideas) con changelog
+- [x] Parejas de personajes en el reparto
+- [x] Pagina de gestion de usuarios y roles
+- [x] Estado de series expandido: Sin ver, Viendo, Vista, Abandonada, Retomar
+- [x] Especiales con soporte de temporadas y episodios
+- [x] Fix layout de universos con +3 titulos
+- [x] Subida de imagenes a Supabase Storage
+- [x] Imagenes en feedback via clipboard paste
+- [x] Pagina admin de info del proyecto (links por env vars)
+- [x] Login con Google OAuth
 
-Cuando cargo una imagen de portada, esta bueno que al acceder a la serie, se pueda ver la imagen completa, pero en el catalogo, muchas de las imagenes, al verse recortadas, se ven partes que no quedan bien, sin mucha complicacion, me gustaria poder, simple, sin complicaciones, poder como mover la vista, algo asi como seleccionar segun el tamano de la card, que parte de la imagen se va a ver, por card, por imagen \*(si no soy claro, repreguntar)
+---
 
-Agregar una pagina donde se puedan dejar bugs, y una especie de changelog para ir mostrando que se fue arreglando, simple, no muy compleja
+## Proximas (corto plazo)
 
-En todos los casos, intentar evitar bugs por inyeccion de queries (no recuerdo el termino real) pero por ahi puede ser peligroso para los campos donde se ponen datos manuales
+### Access Logs
+Registrar visitas y acciones de los usuarios sin ser intrusivo.
+- Modelo `AccessLog`: userId (opcional), ip, path, action, userAgent, timestamp
+- Middleware de Next.js para capturar requests automaticamente
+- Pagina admin `/admin/logs` para visualizar: quien visito, que hizo, cuando
+- Respetar privacidad: no guardar datos sensibles, solo lo necesario
+- Considerar: rotacion/limpieza de logs antiguos, anonimizacion de IPs
 
-Amend 1 -----
+### Temporadas unificadas
+Cuando una serie tiene mas de una temporada pero no es un Universo, poder unificarlas.
+- Tarea pendiente de Flor (id 15 en feedback)
 
-Pagina de gestion de usuarios
+### Revision de proteccion contra inyeccion
+Revisar campos de entrada manual para prevenir inyeccion SQL u otros ataques.
+- Tarea pendiente en feedback (id 3)
+- Prisma ya previene SQL injection por parametrizacion, pero revisar inputs raw si existen
 
-Amend 2 -----
+---
 
-Importante - Agregar personajes, agregar personajes en parejas, la vista de reparto deberia tener algo mas de lugar/detalle, teniendo la posibilidad de emparejar los personajes
+## Mediano plazo
 
-Amend 3 -----
+### Landing page
+Como no es obligatorio loguearse, crear una landing page atractiva.
+- Imagen que paso Flor como hero
+- Call to action para explorar el catalogo
+- Breve descripcion del sitio
 
-Agregar campos de, donde ver, si son de una plataforma conocida como youtuve o plataformas oficiales que permitan embeded podriamos soportarlo
-No quiero problemas legales asi que hacer todo lo necesario para eviarlo
-Si no son plataformas oficiales solo mostrar el link o una referencia
+### Donde ver (plataformas)
+Agregar campo de donde ver cada serie.
+- Si es plataforma oficial (YouTube, Viki, iQIYI, etc.) soportar embed
+- Si no es oficial, mostrar solo link o referencia
+- Cuidar aspectos legales: no embeber contenido no oficial
 
-Ahora que tenemos esto: Estado de Series (ViewStatus enum), podria ser interesante que la pagina Viendo Ahora cambie a algo que permita llevar el tracking
-A lo mejor, que ofresca recomendaciones para los proximos titulos, Flor como admin podria gestionarlos y cada user en su pagina de tracking podria decidir si aceptar recomendaciones o no
+### Tracking mejorado en "Viendo Ahora"
+Ahora que tenemos WatchStatus enum, mejorar la pagina Viendo Ahora:
+- Tracking mas detallado del progreso
+- Siguiente episodio a ver
+- Historial de lo visto recientemente
 
-Despues de agregar la pagina de gestion de usuarios, estaria bueno tener una pagina de accessLogs
-Es decir ver quien visito la pagina, agregaar la ip, acciones, etc, sin llegar a ser intrusivo con el usuario ni poner en riesgo nuestra o su seguridad
+### Sistema de recomendaciones
+Flor como admin podria gestionar recomendaciones.
+- Cada usuario decide si acepta recomendaciones o no en su config
+- Basado en generos, tags, o curado manualmente por admin
 
-Agregar un sistema de notificaciones por correo, para que un user pueda registrarse a notificaciones, si es que lo desea, no proactivamente, es decir, que el sitio por default ni envie ni consulte, si el user registrado lo desea, en su pagina de configuracion deberia poder hacerlo voluntariamente sin verse obligado ni presionado
+---
 
-Ya que agregamos notificaciones, podriamos agregaar una notificacion, si el usuario lo tilda, de cuando se soluciona un bug o feature al que se suscribio
+## Largo plazo
+
+### Notificaciones por correo
+Sistema opt-in de notificaciones:
+- El sitio por default NO envia ni consulta
+- El usuario registrado voluntariamente activa en su pagina de configuracion
+- Sin presion ni obligacion
+- Notificacion cuando se resuelve un bug/feature al que se suscribio
+
+### Platformizacion
+Hacer la app generica y reutilizable:
+- appName y branding por variables de entorno
+- Quedaria como una app de gestion de contenido audiovisual personalizable
+- Podria subirse como parte de un portfolio en GitHub
+- Requiere abstraer las referencias a "BL" y hacerlas configurables
+
+### Estadisticas avanzadas
+Dashboard con:
+- Top-rated por pais, genero, año
+- Trending (mas vistos recientemente)
+- Distribucion por pais, tipo, estado
+
+### Busqueda avanzada
+Multiples criterios combinados (pais + genero + tag + año + rating minimo).
+
+### Import/export de datos
+Backup y restauracion de datos.
+
+### Modo offline (PWA)
+Progressive Web App con cache offline.
+
+---
+
+## Notas
+
+- Correo de Flor (admin): florstratovarius@gmail.com
+- Correo de Juan (admin): juanjparedez@gmail.com
