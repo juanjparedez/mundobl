@@ -123,6 +123,9 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
   const [showAlphaIndex, setShowAlphaIndex] = useState(false);
+  const [expandedUniverses, setExpandedUniverses] = useState<Set<number>>(
+    new Set()
+  );
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   const countries = useMemo(() => {
@@ -273,6 +276,15 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
       items.push({ type: 'single', serie });
     });
 
+    // Sort all items alphabetically
+    items.sort((a, b) => {
+      const nameA =
+        a.type === 'universe' ? a.universoNombre : a.serie.titulo;
+      const nameB =
+        b.type === 'universe' ? b.universoNombre : b.serie.titulo;
+      return nameA.localeCompare(nameB);
+    });
+
     return items;
   }, [filteredSeries]);
 
@@ -336,6 +348,19 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
   const handleQuickView = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     router.push(`/series/${id}`);
+  };
+
+  const toggleUniverse = (universoId: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setExpandedUniverses((prev) => {
+      const next = new Set(prev);
+      if (next.has(universoId)) {
+        next.delete(universoId);
+      } else {
+        next.add(universoId);
+      }
+      return next;
+    });
   };
 
   const yearOptions = Array.from(
@@ -425,57 +450,65 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
 
   const renderUniverseCard = (group: UniverseGroup) => {
     const firstSerie = group.series[0];
+    const isExpanded = expandedUniverses.has(group.universoId);
     return (
-      <div className="universe-card">
+      <div className="universe-card-wrapper">
         <div
-          className="universe-card-cover"
-          style={{
-            background:
-              'linear-gradient(135deg, rgba(82, 73, 200, 0.8) 0%, rgba(130, 87, 229, 0.9) 100%)',
-            backgroundImage: firstSerie.imageUrl
-              ? `url(${firstSerie.imageUrl})`
-              : undefined,
-            backgroundSize: 'cover',
-            backgroundPosition: firstSerie.imagePosition || 'center',
-            backgroundBlendMode: firstSerie.imageUrl ? 'overlay' : 'normal',
-          }}
+          className="serie-card serie-card--universe"
+          onClick={(e) => toggleUniverse(group.universoId, e)}
         >
-          <div className="universe-card-badge">
-            <GlobalOutlined /> {group.series.length} títulos
+          <div
+            className="serie-card-cover"
+            style={{
+              background:
+                'linear-gradient(135deg, rgba(82, 73, 200, 0.8) 0%, rgba(130, 87, 229, 0.9) 100%)',
+              backgroundImage: firstSerie.imageUrl
+                ? `url(${firstSerie.imageUrl})`
+                : undefined,
+              backgroundSize: 'cover',
+              backgroundPosition: firstSerie.imagePosition || 'center',
+            }}
+          >
+            <div className="serie-title-overlay">{group.universoNombre}</div>
           </div>
-          <div className="universe-card-title">{group.universoNombre}</div>
+          <div className="serie-card-body">
+            <div className="serie-card-tags">
+              <Tag color="purple" style={{ margin: 0 }}>
+                <GlobalOutlined /> {group.series.length} títulos
+              </Tag>
+            </div>
+            <div className="serie-card-info">
+              <span>{isExpanded ? <UpOutlined /> : <DownOutlined />} Ver series</span>
+            </div>
+          </div>
         </div>
-        <div className="universe-card-body">
-          {group.series.map((serie) => (
-            <div
-              key={serie.id}
-              className="universe-card-entry"
-              onClick={() => handleCardClick(serie.id)}
-            >
-              <div className="universe-card-entry-info">
-                <span className="universe-card-entry-title">
+        {isExpanded && (
+          <div className="universe-expand-panel">
+            {group.series.map((serie) => (
+              <div
+                key={serie.id}
+                className="universe-expand-entry"
+                onClick={() => handleCardClick(serie.id)}
+              >
+                <span className="universe-expand-entry-title">
                   {serie.titulo}
                 </span>
-                <div className="universe-card-entry-meta">
+                <div className="universe-expand-entry-meta">
                   <Tag color={getColorByType(serie.tipo)} style={{ margin: 0 }}>
                     {serie.tipo.toUpperCase()}
                   </Tag>
-                  {serie.anio > 0 && (
-                    <span className="universe-card-entry-year">
-                      {serie.anio}
-                    </span>
-                  )}
+                  {serie.anio > 0 && <span>{serie.anio}</span>}
                   {serie.rating != null && serie.rating > 0 && (
                     <Tag color="gold" style={{ margin: 0 }}>
                       {serie.rating}
                     </Tag>
                   )}
                 </div>
+                <RightOutlined style={{ color: 'var(--text-tertiary)' }} />
               </div>
-              <RightOutlined className="universe-card-entry-arrow" />
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     );
   };
@@ -520,59 +553,67 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
     </div>
   );
 
-  const renderUniverseListItem = (group: UniverseGroup) => (
-    <div className="universe-list-group">
-      <div className="universe-list-header">
-        <GlobalOutlined />
-        <span>{group.universoNombre}</span>
-        <Tag color="purple" style={{ margin: 0 }}>
-          {group.series.length} títulos
-        </Tag>
-      </div>
-      {group.series.map((serie) => (
+  const renderUniverseListItem = (group: UniverseGroup) => {
+    const isExpanded = expandedUniverses.has(group.universoId);
+    return (
+      <div className="universe-list-group">
         <div
-          key={serie.id}
-          className={`serie-list-item serie-list-item--${serie.tipo} serie-list-item--universe`}
-          onClick={() => handleCardClick(serie.id)}
+          className="universe-list-header"
+          onClick={(e) => toggleUniverse(group.universoId, e)}
         >
-          <div
-            className="serie-list-item-cover"
-            style={{
-              background: getGradientByType(serie.tipo),
-              backgroundImage: serie.imageUrl
-                ? `url(${serie.imageUrl})`
-                : undefined,
-              backgroundSize: 'cover',
-              backgroundPosition: serie.imagePosition || 'center',
-            }}
-          />
-          <div className="serie-list-item-content">
-            <span className="serie-list-item-title">{serie.titulo}</span>
-            <div className="serie-list-item-meta">
-              <Tag color={getColorByType(serie.tipo)} style={{ margin: 0 }}>
-                {serie.tipo.toUpperCase()}
-              </Tag>
-              <span>{serie.pais}</span>
-              {serie.anio > 0 && <span>{serie.anio}</span>}
-              {serie.rating != null && serie.rating > 0 && (
-                <Tag color="gold" style={{ margin: 0 }}>
-                  {serie.rating}
-                </Tag>
-              )}
-            </div>
-          </div>
-          <button
-            className={`serie-list-item-fav ${serie.isFavorite ? 'favorite-active' : ''}`}
-            onClick={(e) =>
-              toggleFavorite(serie.id, serie.isFavorite || false, e)
-            }
-          >
-            {serie.isFavorite ? <StarFilled /> : <StarOutlined />}
-          </button>
+          <GlobalOutlined />
+          <span>{group.universoNombre}</span>
+          <Tag color="purple" style={{ margin: 0 }}>
+            {group.series.length} títulos
+          </Tag>
+          {isExpanded ? <UpOutlined /> : <DownOutlined />}
         </div>
-      ))}
-    </div>
-  );
+        {isExpanded &&
+          group.series.map((serie) => (
+            <div
+              key={serie.id}
+              className={`serie-list-item serie-list-item--${serie.tipo} serie-list-item--universe`}
+              onClick={() => handleCardClick(serie.id)}
+            >
+              <div
+                className="serie-list-item-cover"
+                style={{
+                  background: getGradientByType(serie.tipo),
+                  backgroundImage: serie.imageUrl
+                    ? `url(${serie.imageUrl})`
+                    : undefined,
+                  backgroundSize: 'cover',
+                  backgroundPosition: serie.imagePosition || 'center',
+                }}
+              />
+              <div className="serie-list-item-content">
+                <span className="serie-list-item-title">{serie.titulo}</span>
+                <div className="serie-list-item-meta">
+                  <Tag color={getColorByType(serie.tipo)} style={{ margin: 0 }}>
+                    {serie.tipo.toUpperCase()}
+                  </Tag>
+                  <span>{serie.pais}</span>
+                  {serie.anio > 0 && <span>{serie.anio}</span>}
+                  {serie.rating != null && serie.rating > 0 && (
+                    <Tag color="gold" style={{ margin: 0 }}>
+                      {serie.rating}
+                    </Tag>
+                  )}
+                </div>
+              </div>
+              <button
+                className={`serie-list-item-fav ${serie.isFavorite ? 'favorite-active' : ''}`}
+                onClick={(e) =>
+                  toggleFavorite(serie.id, serie.isFavorite || false, e)
+                }
+              >
+                {serie.isFavorite ? <StarFilled /> : <StarOutlined />}
+              </button>
+            </div>
+          ))}
+      </div>
+    );
+  };
 
   const filtersContent = (
     <Row gutter={[8, 8]} align="middle">
@@ -843,10 +884,10 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
                 if (item.type === 'universe') {
                   return (
                     <Col
-                      xs={24}
-                      sm={24}
-                      md={16}
-                      lg={12}
+                      xs={12}
+                      sm={12}
+                      md={8}
+                      lg={6}
                       key={`universe-${item.universoId}`}
                     >
                       {renderUniverseCard(item)}
