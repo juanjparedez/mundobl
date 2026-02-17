@@ -43,6 +43,11 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
             language: true,
           },
         },
+        genres: {
+          include: {
+            genre: true,
+          },
+        },
       },
     });
 
@@ -94,6 +99,28 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       countryId = country.id;
     }
 
+    // Manejar productora (por nombre o por ID)
+    let productionCompanyId = body.productionCompanyId || null;
+    if (body.productionCompanyName && !productionCompanyId) {
+      const company = await prisma.productionCompany.upsert({
+        where: { name: body.productionCompanyName },
+        update: {},
+        create: { name: body.productionCompanyName },
+      });
+      productionCompanyId = company.id;
+    }
+
+    // Manejar idioma original (por nombre o por ID)
+    let originalLanguageId = body.originalLanguageId || null;
+    if (body.originalLanguageName && !originalLanguageId) {
+      const language = await prisma.language.upsert({
+        where: { name: body.originalLanguageName },
+        update: {},
+        create: { name: body.originalLanguageName },
+      });
+      originalLanguageId = language.id;
+    }
+
     // Actualizar la serie
     const updatedSerie = await prisma.series.update({
       where: { id: serieId },
@@ -114,8 +141,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         observations: body.observations || null,
         countryId,
         universeId: body.universeId ? parseInt(body.universeId, 10) : null,
-        productionCompanyId: body.productionCompanyId || null,
-        originalLanguageId: body.originalLanguageId || null,
+        productionCompanyId,
+        originalLanguageId,
       },
     });
 
@@ -222,6 +249,32 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
             data: {
               seriesId: serieId,
               tagId: tag.id,
+            },
+          });
+        }
+      }
+    }
+
+    // Actualizar géneros (eliminar y volver a crear)
+    if (body.genres !== undefined) {
+      await prisma.seriesGenre.deleteMany({
+        where: { seriesId: serieId },
+      });
+
+      if (body.genres && body.genres.length > 0) {
+        for (const genreName of body.genres) {
+          if (!genreName) continue;
+
+          const genre = await prisma.genre.upsert({
+            where: { name: genreName },
+            update: {},
+            create: { name: genreName },
+          });
+
+          await prisma.seriesGenre.create({
+            data: {
+              seriesId: serieId,
+              genreId: genre.id,
             },
           });
         }

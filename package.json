@@ -10,7 +10,10 @@
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "local:db": "bash scripts/local-db.sh",
+    "local:dev": "bash scripts/local-db.sh && npm run dev",
+    "migrate:supabase": "bash scripts/migrate-supabase.sh"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.4.0",

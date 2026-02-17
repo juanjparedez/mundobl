@@ -60,9 +60,9 @@ export default async function EditSeriesPage({ params }: EditPageProps) {
       })) || [],
     imageUrl: serie.imageUrl,
     isFavorite: serie.isFavorite ?? false,
-    productionCompanyId: serie.productionCompanyId,
-    originalLanguageId: serie.originalLanguageId,
-    dubbingIds: serie.dubbings?.map((d) => d.languageId) || [],
+    productionCompanyName: serie.productionCompany?.name || undefined,
+    originalLanguageName: serie.originalLanguage?.name || undefined,
+    genres: serie.genres?.map((sg) => sg.genre.name) || [],
   };
 
   return (

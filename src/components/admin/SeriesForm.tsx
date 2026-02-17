@@ -26,7 +26,7 @@ import {
   UploadOutlined,
   StarOutlined,
   StarFilled,
-} from '@ant-design/icons';
+} from '@ant-design/icons/lib/icons';
 import Link from 'next/link';
 import { shouldShowSeasons, getContentTypeConfig } from '@/types/content';
 import './SeriesForm.css';
@@ -65,12 +65,9 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
   const [actors, setActors] = useState<string[]>([]);
   const [directors, setDirectors] = useState<string[]>([]);
   const [universes, setUniverses] = useState<UniverseOption[]>([]);
-  const [productionCompanies, setProductionCompanies] = useState<
-    { id: number; name: string }[]
-  >([]);
-  const [languages, setLanguages] = useState<{ id: number; name: string }[]>(
-    []
-  );
+  const [productionCompanies, setProductionCompanies] = useState<string[]>([]);
+  const [languages, setLanguages] = useState<string[]>([]);
+  const [genres, setGenres] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const [isFavorite, setIsFavorite] = useState(
     initialData?.isFavorite ?? false
@@ -98,15 +95,20 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
       const universesData = await universesRes.json();
       setUniverses(universesData);
 
-      // Cargar productoras
+      // Cargar productoras (solo nombres para autocomplete)
       const prodRes = await fetch('/api/production-companies');
       const prodData = await prodRes.json();
-      setProductionCompanies(prodData);
+      setProductionCompanies(prodData.map((pc: { name: string }) => pc.name));
 
-      // Cargar idiomas
+      // Cargar idiomas (solo nombres para autocomplete)
       const langRes = await fetch('/api/languages');
       const langData = await langRes.json();
-      setLanguages(langData);
+      setLanguages(langData.map((l: { name: string }) => l.name));
+
+      // Cargar géneros
+      const genresRes = await fetch('/api/genres');
+      const genresData = await genresRes.json();
+      setGenres(genresData.map((g: { name: string }) => g.name));
     } catch (error) {
       console.error('Error loading form data:', error);
     }
@@ -244,7 +246,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
             type: 'serie',
             basedOn: null,
             format: 'regular',
-            actors: [{ name: '', character: '', isMain: false }],
+            actors: [],
             directors: [],
             ...(showSeasons
               ? { seasons: [{ seasonNumber: 1, episodeCount: null }] }
@@ -367,57 +369,57 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
               </Col>
 
               <Col xs={24} md={12}>
-                <Form.Item label="Productora" name="productionCompanyId">
-                  <Select
-                    placeholder="Selecciona productora"
+                <Form.Item
+                  label="Productora"
+                  name="productionCompanyName"
+                  help="Escribe para buscar o crear una nueva productora"
+                >
+                  <AutoComplete
+                    options={productionCompanies.map((pc) => ({ value: pc }))}
+                    placeholder="Ej: GMMTV"
                     size="large"
-                    allowClear
-                    showSearch
-                    filterOption={(input, option) =>
-                      (option?.children as unknown as string)
-                        ?.toLowerCase()
-                        .includes(input.toLowerCase())
+                    filterOption={(inputValue, option) =>
+                      option!.value
+                        .toLowerCase()
+                        .includes(inputValue.toLowerCase())
                     }
-                  >
-                    {productionCompanies.map((pc) => (
-                      <Option key={pc.id} value={pc.id}>
-                        {pc.name}
-                      </Option>
-                    ))}
-                  </Select>
+                  />
                 </Form.Item>
               </Col>
 
               <Col xs={24} md={12}>
-                <Form.Item label="Idioma Original" name="originalLanguageId">
-                  <Select
-                    placeholder="Selecciona idioma original"
+                <Form.Item
+                  label="Idioma Original"
+                  name="originalLanguageName"
+                  help="Escribe para buscar o crear un nuevo idioma"
+                >
+                  <AutoComplete
+                    options={languages.map((l) => ({ value: l }))}
+                    placeholder="Ej: Tailandés"
                     size="large"
-                    allowClear
-                  >
-                    {languages.map((l) => (
-                      <Option key={l.id} value={l.id}>
-                        {l.name}
-                      </Option>
-                    ))}
-                  </Select>
+                    filterOption={(inputValue, option) =>
+                      option!.value
+                        .toLowerCase()
+                        .includes(inputValue.toLowerCase())
+                    }
+                  />
                 </Form.Item>
               </Col>
 
-              <Col xs={24}>
-                <Form.Item label="Doblajes Disponibles" name="dubbingIds">
+              <Col xs={24} md={12}>
+                <Form.Item
+                  label="Género"
+                  name="genres"
+                  help="Escribe y presiona Enter para crear nuevos géneros. Ej: Drama, Romance, Comedia"
+                >
                   <Select
-                    mode="multiple"
-                    placeholder="Selecciona idiomas de doblaje disponibles"
+                    mode="tags"
                     size="large"
-                    allowClear
-                  >
-                    {languages.map((l) => (
-                      <Option key={l.id} value={l.id}>
-                        {l.name}
-                      </Option>
-                    ))}
-                  </Select>
+                    placeholder="Agrega géneros como Drama, Romance, etc."
+                    tokenSeparators={[',']}
+                    style={{ width: '100%' }}
+                    options={genres.map((g) => ({ value: g, label: g }))}
+                  />
                 </Form.Item>
               </Col>
 
@@ -528,12 +530,6 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                       <Form.Item
                         {...restField}
                         name={[name, 'name']}
-                        rules={[
-                          {
-                            required: true,
-                            message: 'Nombre del actor requerido',
-                          },
-                        ]}
                         style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
                       >
                         <AutoComplete
@@ -589,12 +585,6 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                       <Form.Item
                         {...restField}
                         name={[name, 'name']}
-                        rules={[
-                          {
-                            required: true,
-                            message: 'Nombre del director requerido',
-                          },
-                        ]}
                         style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
                       >
                         <AutoComplete

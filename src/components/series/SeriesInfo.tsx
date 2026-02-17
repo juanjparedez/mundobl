@@ -1,6 +1,7 @@
 'use client';
 
 import { Descriptions, Tag } from 'antd';
+import Link from 'next/link';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import './SeriesInfo.css';
 
@@ -32,6 +33,19 @@ interface SeriesInfoProps {
     }>;
     directors?: Array<{
       director: {
+        name: string;
+      };
+    }>;
+    actors?: Array<{
+      character?: string | null;
+      isMain: boolean;
+      actor: {
+        id: number;
+        name: string;
+      };
+    }>;
+    genres?: Array<{
+      genre: {
         name: string;
       };
     }>;
@@ -139,9 +153,35 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
           </Descriptions.Item>
         )}
 
+        {series.genres && series.genres.length > 0 && (
+          <Descriptions.Item label="Género" span={fullSpan}>
+            {series.genres.map((g) => (
+              <Tag key={g.genre.name} color="purple">
+                {g.genre.name}
+              </Tag>
+            ))}
+          </Descriptions.Item>
+        )}
+
         {series.directors && series.directors.length > 0 && (
           <Descriptions.Item label="Director(es)" span={fullSpan}>
             {series.directors.map((d) => d.director.name).join(', ')}
+          </Descriptions.Item>
+        )}
+
+        {series.actors && series.actors.length > 0 && (
+          <Descriptions.Item label="Reparto" span={fullSpan}>
+            <div className="series-info__cast-list">
+              {series.actors.map((sa) => (
+                <Tag key={`${sa.actor.id}-${sa.character}`}>
+                  <Link href={`/actores/${sa.actor.id}`}>
+                    {sa.actor.name}
+                  </Link>
+                  {sa.character ? ` (${sa.character})` : ''}
+                  {sa.isMain ? ' ⭐' : ''}
+                </Tag>
+              ))}
+            </div>
           </Descriptions.Item>
         )}
       </Descriptions>
