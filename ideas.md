@@ -18,5 +18,8 @@ En todos los casos, intentar evitar bugs por inyeccion de queries (no recuerdo e
 
 Amend 1 -----
 
-
 Pagina de gestion de usuarios
+
+Amend 2 -----
+
+Importante - Agregar personajes, agregar personajes en parejas, la vista de reparto deberia tener algo mas de lugar/detalle, teniendo la posibilidad de emparejar los personajes
