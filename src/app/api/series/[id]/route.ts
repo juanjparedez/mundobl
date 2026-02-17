@@ -26,6 +26,23 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
             actor: true,
           },
         },
+        directors: {
+          include: {
+            director: true,
+          },
+        },
+        tags: {
+          include: {
+            tag: true,
+          },
+        },
+        productionCompany: true,
+        originalLanguage: true,
+        dubbings: {
+          include: {
+            language: true,
+          },
+        },
       },
     });
 
@@ -97,6 +114,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         observations: body.observations || null,
         countryId,
         universeId: body.universeId ? parseInt(body.universeId, 10) : null,
+        productionCompanyId: body.productionCompanyId || null,
+        originalLanguageId: body.originalLanguageId || null,
       },
     });
 
@@ -120,8 +139,48 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
             seriesId: serieId,
             actorId: actor.id,
             character: actorData.character || '',
+            isMain: actorData.isMain || false,
           },
         });
+      }
+    }
+
+    // Actualizar directores (eliminar y volver a crear)
+    if (body.directors) {
+      await prisma.seriesDirector.deleteMany({
+        where: { seriesId: serieId },
+      });
+
+      for (const directorData of body.directors) {
+        if (!directorData.name) continue;
+
+        const director = await prisma.director.upsert({
+          where: { name: directorData.name },
+          update: {},
+          create: { name: directorData.name },
+        });
+
+        await prisma.seriesDirector.create({
+          data: {
+            seriesId: serieId,
+            directorId: director.id,
+          },
+        });
+      }
+    }
+
+    // Actualizar doblajes
+    if (body.dubbingIds !== undefined) {
+      await prisma.seriesDubbing.deleteMany({
+        where: { seriesId: serieId },
+      });
+
+      if (body.dubbingIds && body.dubbingIds.length > 0) {
+        for (const languageId of body.dubbingIds) {
+          await prisma.seriesDubbing.create({
+            data: { seriesId: serieId, languageId },
+          });
+        }
       }
     }
 

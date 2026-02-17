@@ -2,6 +2,11 @@
   width: 100%;
 }
 
+.admin-page-wrapper {
+  padding: var(--spacing-lg);
+}
+
+
 .admin-header {
   margin-bottom: var(--spacing-lg);
   display: flex;
@@ -19,7 +24,76 @@
   box-shadow: var(--box-shadow-card);
 }
 
+/* ==========================================
+   Buscador
+   ========================================== */
+.admin-search-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.admin-search-input {
+  max-width: 400px;
+  flex: 1;
+}
+
+.admin-result-count {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+/* ==========================================
+   Índice Alfabético
+   ========================================== */
+.admin-alpha-index {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-xs) 0;
+}
+
+.admin-alpha-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-sm);
+  background: var(--bg-container);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.admin-alpha-btn:hover:not(:disabled) {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background: var(--primary-color-outline);
+}
+
+.admin-alpha-btn--active {
+  background: var(--primary-color) !important;
+  color: #fff !important;
+  border-color: var(--primary-color) !important;
+}
+
+.admin-alpha-btn--disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
 @media (max-width: 768px) {
+  .admin-page-wrapper {
+    padding: var(--spacing-sm);
+  }
+
   .admin-header {
     flex-direction: column;
     align-items: flex-start;
@@ -27,5 +101,24 @@
 
   .admin-content {
     padding: var(--spacing-md);
+  }
+
+  .admin-search-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-search-input {
+    max-width: none;
+  }
+
+  .admin-alpha-index {
+    gap: 3px;
+  }
+
+  .admin-alpha-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
   }
 }

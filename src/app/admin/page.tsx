@@ -1,6 +1,7 @@
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { getAllSeries, getAllCountries } from '@/lib/database';
 import { PageTitleClient } from '@/components/common/PageTitle/PageTitleClient';
+import { AdminNav } from './AdminNav';
 import './admin.css';
 import { AdminTableClient } from './AdminTableClient';
 
@@ -45,6 +46,7 @@ export default async function AdminPage() {
   return (
     <AppLayout>
       <div className="admin-page">
+        <AdminNav />
         <div className="admin-header">
           <PageTitleClient level={2}>Administración de Series</PageTitleClient>
         </div>

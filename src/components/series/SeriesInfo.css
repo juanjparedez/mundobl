@@ -26,4 +26,45 @@
   margin-top: var(--spacing-md);
   line-height: 1.6;
   white-space: pre-wrap;
+  word-break: break-word;
+}
+
+@media (max-width: 768px) {
+  .series-info {
+    gap: var(--spacing-sm);
+  }
+
+  .series-info__synopsis,
+  .series-info__review,
+  .series-info__observations {
+    padding: var(--spacing-xs);
+  }
+
+  .series-info__section-title {
+    font-size: 1.1em;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .series-info__synopsis-content,
+  .series-info__review-content,
+  .series-info__observations-content {
+    margin-top: var(--spacing-sm);
+    font-size: 0.9em;
+  }
+
+  /* Descriptions compactas en mobile */
+  .series-info .ant-descriptions {
+    overflow-x: hidden;
+  }
+
+  .series-info .ant-descriptions-item-label {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    padding: 4px 8px !important;
+  }
+
+  .series-info .ant-descriptions-item-content {
+    font-size: 13px;
+    padding: 4px 8px !important;
+  }
 }

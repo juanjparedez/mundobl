@@ -6,6 +6,15 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+      },
+    ],
+  },
+  allowedDevOrigins: ['192.168.1.36'],
 };
 
 export default nextConfig;

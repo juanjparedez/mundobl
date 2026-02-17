@@ -63,3 +63,45 @@
   gap: var(--spacing-xs);
   font-size: 0.9em;
 }
+
+/* ==========================================
+   Responsive - Mobile
+   ========================================== */
+@media (max-width: 768px) {
+  .comments-section {
+    gap: var(--spacing-sm);
+  }
+
+  .comments-section__form .ant-card-body {
+    padding: var(--spacing-xs);
+  }
+
+  .comments-section__list {
+    padding: var(--spacing-xs);
+  }
+
+  .comments-section__title {
+    font-size: 1.1em;
+  }
+
+  .comment-card .ant-card-body {
+    padding: var(--spacing-sm);
+  }
+
+  .comment-card__content {
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .comment-card__footer {
+    padding-top: var(--spacing-xs);
+  }
+
+  .comments-section__actions {
+    margin-top: var(--spacing-sm);
+  }
+
+  .comments-section__actions .ant-btn {
+    width: 100%;
+  }
+}

@@ -20,6 +20,7 @@ import {
   CloseOutlined,
 } from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
+import './SeriesForm.css';
 
 const { TextArea } = Input;
 
@@ -70,16 +71,10 @@ export function SeasonEditForm({ initialData }: SeasonEditFormProps) {
   };
 
   return (
-    <div className="season-edit-form" style={{ padding: '24px' }}>
+    <div className="season-edit-form series-form">
       <Card
         title={
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
+          <div className="series-form__header">
             <span>
               Editar Temporada {initialData.seasonNumber} -{' '}
               {initialData.seriesTitle}
@@ -171,25 +166,21 @@ export function SeasonEditForm({ initialData }: SeasonEditFormProps) {
               {(fields, { add, remove }) => (
                 <>
                   {fields.map(({ key, name, ...restField }) => (
-                    <Space
-                      key={key}
-                      style={{ display: 'flex', marginBottom: 8 }}
-                      align="baseline"
-                    >
+                    <div key={key} className="series-form__actor-row">
                       <Form.Item
                         {...restField}
                         name={[name, 'name']}
                         rules={[
                           { required: true, message: 'Nombre requerido' },
                         ]}
-                        style={{ marginBottom: 0, width: 200 }}
+                        style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
                       >
                         <Input placeholder="Nombre del actor" />
                       </Form.Item>
                       <Form.Item
                         {...restField}
                         name={[name, 'character']}
-                        style={{ marginBottom: 0, width: 200 }}
+                        style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
                       >
                         <Input placeholder="Personaje" />
                       </Form.Item>
@@ -202,7 +193,7 @@ export function SeasonEditForm({ initialData }: SeasonEditFormProps) {
                         <Checkbox>Protagonista</Checkbox>
                       </Form.Item>
                       <MinusCircleOutlined onClick={() => remove(name)} />
-                    </Space>
+                    </div>
                   ))}
                   <Form.Item>
                     <Button

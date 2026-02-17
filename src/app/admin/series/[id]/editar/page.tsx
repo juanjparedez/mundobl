@@ -45,6 +45,11 @@ export default async function EditSeriesPage({ params }: EditPageProps) {
       serie.actors?.map((sa) => ({
         name: sa.actor.name,
         character: sa.character || '',
+        isMain: sa.isMain || false,
+      })) || [],
+    directors:
+      serie.directors?.map((sd) => ({
+        name: sd.director.name,
       })) || [],
     seasons:
       serie.seasons?.map((s) => ({
@@ -55,6 +60,9 @@ export default async function EditSeriesPage({ params }: EditPageProps) {
       })) || [],
     imageUrl: serie.imageUrl,
     isFavorite: serie.isFavorite ?? false,
+    productionCompanyId: serie.productionCompanyId,
+    originalLanguageId: serie.originalLanguageId,
+    dubbingIds: serie.dubbings?.map((d) => d.languageId) || [],
   };
 
   return (

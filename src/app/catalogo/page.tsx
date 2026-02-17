@@ -21,6 +21,8 @@ export default async function CatalogoPage() {
     imageUrl: serie.imageUrl,
     synopsis: serie.synopsis,
     isFavorite: serie.isFavorite,
+    universoId: serie.universeId,
+    universoNombre: serie.universe?.name || null,
   }));
 
   return (

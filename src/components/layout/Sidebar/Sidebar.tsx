@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Layout, Menu, Switch } from 'antd';
 import {
@@ -14,6 +14,8 @@ import {
   PlayCircleOutlined,
   BulbOutlined,
   BulbFilled,
+  UserOutlined,
+  VideoCameraOutlined,
 } from '@ant-design/icons';
 import { ROUTES } from '@/constants/navigation';
 import { useTheme } from '@/lib/providers/ThemeProvider';
@@ -22,7 +24,17 @@ import './Sidebar.css';
 const { Sider } = Layout;
 
 export function Sidebar() {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('sidebar-collapsed') === 'true';
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    localStorage.setItem('sidebar-collapsed', String(collapsed));
+  }, [collapsed]);
+
   const pathname = usePathname();
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
@@ -62,6 +74,18 @@ export function Sidebar() {
           icon: <GlobalOutlined />,
           label: 'Universos',
           onClick: () => router.push('/admin/universos'),
+        },
+        {
+          key: '/admin/actores',
+          icon: <UserOutlined />,
+          label: 'Actores',
+          onClick: () => router.push('/admin/actores'),
+        },
+        {
+          key: '/admin/directores',
+          icon: <VideoCameraOutlined />,
+          label: 'Directores',
+          onClick: () => router.push('/admin/directores'),
         },
       ],
     },

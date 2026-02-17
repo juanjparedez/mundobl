@@ -50,8 +50,12 @@ export async function POST(request: NextRequest) {
       countryName,
       universeId,
       actors,
+      directors,
       seasons,
       tags,
+      productionCompanyId,
+      originalLanguageId,
+      dubbingIds,
     } = body;
 
     // Crear o encontrar país
@@ -80,6 +84,8 @@ export async function POST(request: NextRequest) {
         observations,
         countryId,
         universeId,
+        productionCompanyId: productionCompanyId || null,
+        originalLanguageId: originalLanguageId || null,
       },
     });
 
@@ -99,7 +105,37 @@ export async function POST(request: NextRequest) {
             seriesId: serie.id,
             actorId: actor.id,
             character: actorData.character || '',
+            isMain: actorData.isMain || false,
           },
+        });
+      }
+    }
+
+    // Crear directores y vincularlos
+    if (directors && directors.length > 0) {
+      for (const directorData of directors) {
+        if (!directorData.name) continue;
+
+        const director = await prisma.director.upsert({
+          where: { name: directorData.name },
+          update: {},
+          create: { name: directorData.name },
+        });
+
+        await prisma.seriesDirector.create({
+          data: {
+            seriesId: serie.id,
+            directorId: director.id,
+          },
+        });
+      }
+    }
+
+    // Crear doblajes
+    if (dubbingIds && dubbingIds.length > 0) {
+      for (const languageId of dubbingIds) {
+        await prisma.seriesDubbing.create({
+          data: { seriesId: serie.id, languageId },
         });
       }
     }

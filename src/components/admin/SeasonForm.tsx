@@ -13,7 +13,6 @@ import {
   Space,
   AutoComplete,
   Checkbox,
-  Divider,
   Upload,
 } from 'antd';
 import {
@@ -125,23 +124,16 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
   };
 
   return (
-    <div className="season-form">
+    <div className="season-form series-form">
       <Card
         title={
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div className="series-form__header">
+            <div className="series-form__header-left">
               <Link href={`/series/${initialData.seriesId}`}>
                 <Button icon={<ArrowLeftOutlined />} type="text">
                   Volver a {initialData.seriesTitle}
                 </Button>
               </Link>
-              <Divider type="vertical" />
               <span>Editar Temporada {initialData.seasonNumber}</span>
             </div>
             <Button icon={<CloseOutlined />} onClick={() => router.back()}>
@@ -268,22 +260,14 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
               {(fields, { add, remove }) => (
                 <>
                   {fields.map(({ key, name, ...restField }) => (
-                    <div
-                      key={key}
-                      style={{
-                        display: 'flex',
-                        gap: '12px',
-                        marginBottom: 8,
-                        alignItems: 'flex-start',
-                      }}
-                    >
+                    <div key={key} className="series-form__actor-row">
                       <Form.Item
                         {...restField}
                         name={[name, 'name']}
                         rules={[
                           { required: true, message: 'Nombre requerido' },
                         ]}
-                        style={{ marginBottom: 0, flex: 1 }}
+                        style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
                       >
                         <AutoComplete
                           options={actors.map((a) => ({ value: a }))}
@@ -299,7 +283,7 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
                       <Form.Item
                         {...restField}
                         name={[name, 'character']}
-                        style={{ marginBottom: 0, flex: 1 }}
+                        style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
                       >
                         <Input placeholder="Personaje" />
                       </Form.Item>
@@ -313,15 +297,7 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
                         <Checkbox>Protagonista</Checkbox>
                       </Form.Item>
 
-                      <MinusCircleOutlined
-                        onClick={() => remove(name)}
-                        style={{
-                          fontSize: '18px',
-                          color: '#ff4d4f',
-                          cursor: 'pointer',
-                          marginTop: '8px',
-                        }}
-                      />
+                      <MinusCircleOutlined onClick={() => remove(name)} />
                     </div>
                   ))}
                   <Form.Item>

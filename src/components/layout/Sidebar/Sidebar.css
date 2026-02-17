@@ -141,7 +141,10 @@
 
 @media (max-width: 768px) {
   .app-sidebar {
-    position: fixed;
-    z-index: 999;
+    display: none !important;
+  }
+
+  .app-layout > .ant-layout {
+    margin-left: 0 !important;
   }
 }

@@ -103,13 +103,70 @@
 }
 
 @media (max-width: 768px) {
+  .seasons-list {
+    margin-top: var(--spacing-sm);
+  }
+
   .season-header {
     flex-direction: column;
     align-items: flex-start;
+    gap: var(--spacing-xs);
+  }
+
+  .season-header__title {
+    font-size: 1em;
+  }
+
+  .season-header__meta {
+    gap: var(--spacing-xs);
+  }
+
+  .season-header__meta .ant-tag {
+    font-size: 11px;
+    line-height: 18px;
+    padding: 0 5px;
+    margin: 0;
+  }
+
+  .season-content {
     gap: var(--spacing-sm);
+  }
+
+  .season-content__synopsis,
+  .season-content__observations,
+  .season-content__comments {
+    padding: var(--spacing-xs);
+  }
+
+  .season-section-title {
+    font-size: 0.95em;
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .season-content__ratings {
+    padding: var(--spacing-xs);
   }
 
   .ratings-grid {
     grid-template-columns: 1fr;
+    gap: var(--spacing-xs);
+  }
+
+  .rating-item {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.9em;
+  }
+
+  .season-content__actors {
+    padding: var(--spacing-xs);
+  }
+
+  .actor-card {
+    gap: var(--spacing-sm);
+    padding: var(--spacing-xs);
+  }
+
+  .actor-card:hover {
+    transform: none;
   }
 }

@@ -1,13 +1,23 @@
 'use client';
 
 import { useState } from 'react';
-import { Tag, Modal, Form, Input, InputNumber, Button, Checkbox } from 'antd';
+import {
+  Tag,
+  Modal,
+  Form,
+  Input,
+  InputNumber,
+  Button,
+  Checkbox,
+  Space,
+} from 'antd';
 import {
   PlusOutlined,
   EditOutlined,
   DeleteOutlined,
   ClockCircleOutlined,
   CommentOutlined,
+  ThunderboltOutlined,
 } from '@ant-design/icons';
 import { CommentsList } from '@/components/common/CommentsList';
 import './EpisodesList.css';
@@ -48,6 +58,7 @@ export function EpisodesList({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEpisode, setEditingEpisode] = useState<Episode | null>(null);
   const [expandedEpisode, setExpandedEpisode] = useState<number | null>(null);
+  const [generating, setGenerating] = useState(false);
   const [form] = Form.useForm();
 
   const handleOpenModal = (episode?: Episode) => {
@@ -162,20 +173,56 @@ export function EpisodesList({
     }
   };
 
+  const handleGenerateEpisodes = async () => {
+    setGenerating(true);
+    try {
+      const response = await fetch('/api/episodes/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ seasonId }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Error al generar');
+      }
+
+      const result = await response.json();
+      setEpisodes(result.episodes);
+      message.success(result.message);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'Error al generar episodios';
+      message.error(errorMessage);
+    } finally {
+      setGenerating(false);
+    }
+  };
+
   return (
     <div className="episodes-list">
       <div className="episodes-list__header">
         <h5 className="season-section-title">
           📺 Episodios ({episodes.length})
         </h5>
-        <Button
-          type="dashed"
-          size="small"
-          icon={<PlusOutlined />}
-          onClick={() => handleOpenModal()}
-        >
-          Agregar Episodio
-        </Button>
+        <Space>
+          <Button
+            size="small"
+            icon={<ThunderboltOutlined />}
+            onClick={handleGenerateEpisodes}
+            loading={generating}
+          >
+            Generar
+          </Button>
+          <Button
+            type="dashed"
+            size="small"
+            icon={<PlusOutlined />}
+            onClick={() => handleOpenModal()}
+          >
+            Agregar
+          </Button>
+        </Space>
       </div>
 
       {episodes.length === 0 ? (
