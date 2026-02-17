@@ -53,39 +53,81 @@ interface SeriesFormProps {
   mode: 'create' | 'edit';
 }
 
-const POSITION_OPTIONS = [
-  { value: 'top left', label: '↖' },
-  { value: 'top center', label: '↑' },
-  { value: 'top right', label: '↗' },
-  { value: 'center left', label: '←' },
-  { value: 'center', label: '•' },
-  { value: 'center right', label: '→' },
-  { value: 'bottom left', label: '↙' },
-  { value: 'bottom center', label: '↓' },
-  { value: 'bottom right', label: '↘' },
-];
-
 function ImagePositionSelector({
   value,
   onChange,
+  imageUrl,
 }: {
   value?: string;
   onChange?: (value: string) => void;
+  imageUrl?: string;
 }) {
-  const current = value || 'center';
+  const current = value || '50% 50%';
+
+  // Parse current value to get x,y percentages
+  const parsePosition = (pos: string): { x: number; y: number } => {
+    const keywords: Record<string, { x: number; y: number }> = {
+      'top left': { x: 0, y: 0 },
+      'top center': { x: 50, y: 0 },
+      'top right': { x: 100, y: 0 },
+      'center left': { x: 0, y: 50 },
+      center: { x: 50, y: 50 },
+      'center right': { x: 100, y: 50 },
+      'bottom left': { x: 0, y: 100 },
+      'bottom center': { x: 50, y: 100 },
+      'bottom right': { x: 100, y: 100 },
+    };
+    if (keywords[pos]) return keywords[pos];
+    const parts = pos.split(/\s+/);
+    return {
+      x: parseInt(parts[0]) || 50,
+      y: parseInt(parts[1]) || 50,
+    };
+  };
+
+  const { x, y } = parsePosition(current);
+
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const newX = Math.round(((e.clientX - rect.left) / rect.width) * 100);
+    const newY = Math.round(((e.clientY - rect.top) / rect.height) * 100);
+    onChange?.(`${newX}% ${newY}%`);
+  };
+
   return (
-    <div className="image-position-grid">
-      {POSITION_OPTIONS.map((opt) => (
-        <button
-          key={opt.value}
-          type="button"
-          className={`image-position-cell ${current === opt.value ? 'image-position-cell--active' : ''}`}
-          onClick={() => onChange?.(opt.value)}
-          title={opt.value}
+    <div className="image-position-selector">
+      <div className="image-position-picker-row">
+        <div
+          className="image-position-picker"
+          onClick={handleClick}
+          style={
+            imageUrl
+              ? {
+                  backgroundImage: `url(${imageUrl})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }
+              : undefined
+          }
         >
-          {opt.label}
-        </button>
-      ))}
+          <div
+            className="image-position-crosshair"
+            style={{ left: `${x}%`, top: `${y}%` }}
+          />
+        </div>
+
+        <div className="image-position-preview-wrapper">
+          <span className="image-position-preview-label">Preview card</span>
+          <div
+            className="image-position-preview-card"
+            style={{
+              backgroundImage: imageUrl ? `url(${imageUrl})` : undefined,
+              backgroundSize: 'cover',
+              backgroundPosition: current,
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 }
@@ -105,6 +147,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
   const [productionCompanies, setProductionCompanies] = useState<string[]>([]);
   const [languages, setLanguages] = useState<string[]>([]);
   const [genres, setGenres] = useState<string[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const imageUrl = Form.useWatch('imageUrl', form);
   const [isFavorite, setIsFavorite] = useState(
@@ -147,6 +190,11 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
       const genresRes = await fetch('/api/genres');
       const genresData = await genresRes.json();
       setGenres(genresData.map((g: { name: string }) => g.name));
+
+      // Cargar tags
+      const tagsRes = await fetch('/api/tags');
+      const tagsData = await tagsRes.json();
+      setTags(tagsData.map((t: { name: string }) => t.name));
     } catch (error) {
       console.error('Error loading form data:', error);
     }
@@ -515,6 +563,12 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                     placeholder="Agrega tags como Enemy to Lovers, Escuela, etc."
                     tokenSeparators={[',']}
                     style={{ width: '100%' }}
+                    options={tags.map((t) => ({ value: t, label: t }))}
+                    filterOption={(inputValue, option) =>
+                      (option?.label as string)
+                        .toLowerCase()
+                        .includes(inputValue.toLowerCase())
+                    }
                   />
                 </Form.Item>
               </Col>
@@ -554,7 +608,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                     name="imagePosition"
                     help="Seleccioná qué parte de la imagen se ve en las cards"
                   >
-                    <ImagePositionSelector />
+                    <ImagePositionSelector imageUrl={imageUrl} />
                   </Form.Item>
                 </Col>
               )}
