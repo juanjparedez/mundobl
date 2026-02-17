@@ -109,6 +109,11 @@ export async function getSeriesById(id: number) {
           language: true,
         },
       },
+      genres: {
+        include: {
+          genre: true,
+        },
+      },
     },
   });
 }

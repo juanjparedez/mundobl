@@ -101,6 +101,7 @@ model Series {
   viewStatus    ViewStatus[]
   tags          SeriesTag[]
   dubbings      SeriesDubbing[]
+  genres        SeriesGenre[]
 }
 
 // ============================================
@@ -196,6 +197,30 @@ model Country {
   flagUrl       String?
 
   series        Series[]
+}
+
+// ============================================
+// GÉNEROS
+// ============================================
+model Genre {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  series    SeriesGenre[]
+}
+
+// Géneros por Serie
+model SeriesGenre {
+  id       Int    @id @default(autoincrement())
+
+  seriesId Int
+  series   Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  genreId  Int
+  genre    Genre  @relation(fields: [genreId], references: [id], onDelete: Cascade)
+
+  @@unique([seriesId, genreId])
 }
 
 // ============================================

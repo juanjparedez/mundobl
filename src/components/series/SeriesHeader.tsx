@@ -105,12 +105,6 @@ export function SeriesHeader({ series }: SeriesHeaderProps) {
           )}
         </div>
 
-        {series.synopsis && (
-          <div className="series-header__synopsis">
-            <p>{series.synopsis}</p>
-          </div>
-        )}
-
         {series.tags && series.tags.length > 0 && (
           <div className="series-header__tags">
             {series.tags.map((st) => (

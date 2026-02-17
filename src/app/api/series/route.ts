@@ -53,20 +53,45 @@ export async function POST(request: NextRequest) {
       directors,
       seasons,
       tags,
+      genres,
+      productionCompanyName,
+      originalLanguageName,
       productionCompanyId,
       originalLanguageId,
       dubbingIds,
     } = body;
 
     // Crear o encontrar país
-    let countryId = null;
+    let resolvedCountryId = null;
     if (countryName) {
       const country = await prisma.country.upsert({
         where: { name: countryName },
         update: {},
         create: { name: countryName },
       });
-      countryId = country.id;
+      resolvedCountryId = country.id;
+    }
+
+    // Crear o encontrar productora
+    let resolvedProductionCompanyId = productionCompanyId || null;
+    if (productionCompanyName && !resolvedProductionCompanyId) {
+      const company = await prisma.productionCompany.upsert({
+        where: { name: productionCompanyName },
+        update: {},
+        create: { name: productionCompanyName },
+      });
+      resolvedProductionCompanyId = company.id;
+    }
+
+    // Crear o encontrar idioma original
+    let resolvedOriginalLanguageId = originalLanguageId || null;
+    if (originalLanguageName && !resolvedOriginalLanguageId) {
+      const language = await prisma.language.upsert({
+        where: { name: originalLanguageName },
+        update: {},
+        create: { name: originalLanguageName },
+      });
+      resolvedOriginalLanguageId = language.id;
     }
 
     // Crear la serie
@@ -82,10 +107,10 @@ export async function POST(request: NextRequest) {
         soundtrack,
         overallRating,
         observations,
-        countryId,
+        countryId: resolvedCountryId,
         universeId,
-        productionCompanyId: productionCompanyId || null,
-        originalLanguageId: originalLanguageId || null,
+        productionCompanyId: resolvedProductionCompanyId,
+        originalLanguageId: resolvedOriginalLanguageId,
       },
     });
 
@@ -159,18 +184,36 @@ export async function POST(request: NextRequest) {
       for (const tagName of tags) {
         if (!tagName) continue;
 
-        // Crear o encontrar el tag
         const tag = await prisma.tag.upsert({
           where: { name: tagName },
           update: {},
           create: { name: tagName, category: 'trope' },
         });
 
-        // Vincular tag a la serie
         await prisma.seriesTag.create({
           data: {
             seriesId: serie.id,
             tagId: tag.id,
+          },
+        });
+      }
+    }
+
+    // Crear géneros y vincularlos
+    if (genres && genres.length > 0) {
+      for (const genreName of genres) {
+        if (!genreName) continue;
+
+        const genre = await prisma.genre.upsert({
+          where: { name: genreName },
+          update: {},
+          create: { name: genreName },
+        });
+
+        await prisma.seriesGenre.create({
+          data: {
+            seriesId: serie.id,
+            genreId: genre.id,
           },
         });
       }
