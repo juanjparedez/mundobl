@@ -22,6 +22,7 @@ import {
   EditOutlined,
   DeleteOutlined,
   PlayCircleOutlined,
+  ImportOutlined,
 } from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -36,6 +37,7 @@ import {
   getAutoThumbnailUrl,
   type Platform,
 } from '@/lib/embed-helpers';
+import { ImportChannelDrawer } from './ImportChannelDrawer/ImportChannelDrawer';
 import '../admin.css';
 import './contenido.css';
 
@@ -89,6 +91,7 @@ export function ContenidoClient() {
     videoId: string | null;
     title: string;
   } | null>(null);
+  const [importDrawerOpen, setImportDrawerOpen] = useState(false);
   const [form] = Form.useForm();
 
   const loadItems = useCallback(async () => {
@@ -276,13 +279,21 @@ export function ContenidoClient() {
         <Card
           title="Administración de Contenido Embebible"
           extra={
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => handleOpenModal()}
-            >
-              {isMobile ? 'Nuevo' : 'Nuevo Contenido'}
-            </Button>
+            <Space>
+              <Button
+                icon={<ImportOutlined />}
+                onClick={() => setImportDrawerOpen(true)}
+              >
+                {isMobile ? 'Importar' : 'Importar Canal'}
+              </Button>
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => handleOpenModal()}
+              >
+                {isMobile ? 'Nuevo' : 'Nuevo Contenido'}
+              </Button>
+            </Space>
           }
         >
           <Table
@@ -425,6 +436,13 @@ export function ContenidoClient() {
             )}
           </Form>
         </Modal>
+
+        <ImportChannelDrawer
+          open={importDrawerOpen}
+          onClose={() => setImportDrawerOpen(false)}
+          onImportComplete={loadItems}
+          seriesOptions={seriesOptions}
+        />
       </div>
     </AppLayout>
   );
