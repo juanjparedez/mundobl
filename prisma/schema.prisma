@@ -170,6 +170,8 @@ model Series {
   tags          SeriesTag[]
   dubbings      SeriesDubbing[]
   genres        SeriesGenre[]
+  watchLinks         WatchLink[]
+  embeddableContent  EmbeddableContent[]
 }
 
 // ============================================
@@ -523,4 +525,57 @@ model BannedIp {
   ip        String   @unique
   reason    String?
   createdAt DateTime @default(now())
+}
+
+// ============================================
+// SITIOS DE INTERES
+// ============================================
+model RecommendedSite {
+  id          Int      @id @default(autoincrement())
+  name        String
+  url         String
+  description String?
+  category    String?  // "noticias", "comunidad", "streaming", "info", "otro"
+  language    String?  // "ES", "EN", "TH", "JP", "KR", "Multi", etc.
+  imageUrl    String?
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ============================================
+// DONDE VER (WATCH LINKS)
+// ============================================
+model WatchLink {
+  id       Int     @id @default(autoincrement())
+  platform String  // "YouTube", "Viki", "iQIYI", "WeTV", "Netflix", etc.
+  url      String
+  official Boolean @default(true)
+
+  seriesId Int
+  series   Series  @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+}
+
+// ============================================
+// CONTENIDO EMBEBIBLE
+// ============================================
+model EmbeddableContent {
+  id           Int      @id @default(autoincrement())
+  title        String
+  description  String?
+  platform     String   // "YouTube", "Bilibili", "Vimeo", "Dailymotion", "TikTok", "Instagram", "Twitter", "Spotify"
+  url          String
+  videoId      String?  // ID extraído automáticamente
+  category     String   @default("other") // "trailer", "ost", "interview", "clip", "behind_scenes", "live", "other"
+  language     String?
+  thumbnailUrl String?
+  channelName  String?
+  channelUrl   String?
+  official     Boolean  @default(true)
+  sortOrder    Int      @default(0)
+  featured     Boolean  @default(false)
+  seriesId     Int?
+  series       Series?  @relation(fields: [seriesId], references: [id], onDelete: SetNull)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }

@@ -29,6 +29,46 @@
   word-break: break-word;
 }
 
+/* Watch Links Section */
+.series-info__watch-links {
+  padding: var(--spacing-md);
+  background: var(--bg-base);
+  border-radius: var(--border-radius);
+}
+
+.series-info__watch-links-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.series-info__watch-link-btn {
+  text-decoration: none;
+}
+
+.series-info__watch-link-btn:hover .ant-tag {
+  opacity: 0.8;
+}
+
+.series-info__youtube-embed {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+  margin-top: var(--spacing-sm);
+  border-radius: var(--border-radius);
+}
+
+.series-info__youtube-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: var(--border-radius);
+}
+
 /* Cast Section */
 .series-info__cast-section {
   padding: var(--spacing-md);

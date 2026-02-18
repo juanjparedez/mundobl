@@ -1,0 +1,108 @@
+.contenido-page {
+  padding: var(--spacing-lg);
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+}
+
+.contenido-page__title {
+  font-size: var(--font-size-xl);
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.contenido-page__subtitle {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  margin: 0 0 var(--spacing-md) 0;
+}
+
+.contenido-page__filters {
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Cards */
+.contenido-card {
+  height: 100%;
+  transition: box-shadow 0.2s;
+}
+
+.contenido-card:hover {
+  box-shadow: var(--box-shadow-base);
+}
+
+.contenido-card--featured {
+  border-color: var(--primary-color);
+}
+
+.contenido-card__thumbnail {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.contenido-card__thumbnail-placeholder {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-spotlight);
+}
+
+.contenido-card__play-icon {
+  font-size: 40px;
+  color: var(--text-tertiary);
+}
+
+.contenido-card__series-link {
+  font-size: var(--font-size-sm);
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.contenido-card__series-link:hover {
+  text-decoration: underline;
+}
+
+/* Modal */
+.contenido-modal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.contenido-modal__credit-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  padding: var(--spacing-xs) 0;
+  border-top: 1px solid var(--border-color-secondary);
+}
+
+.contenido-modal__external-link {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.contenido-modal__external-link:hover {
+  text-decoration: underline;
+}
+
+.contenido-modal__description {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  margin: 0;
+}
+
+.contenido-modal__series-ref {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.contenido-modal__series-ref a {
+  color: var(--primary-color);
+}

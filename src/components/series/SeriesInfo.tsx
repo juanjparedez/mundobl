@@ -54,7 +54,20 @@ interface SeriesInfoProps {
       seasonNumber: number;
       episodeCount?: number | null;
     }>;
+    watchLinks?: Array<{
+      id: number;
+      platform: string;
+      url: string;
+      official: boolean;
+    }>;
   };
+}
+
+function getYouTubeId(url: string): string | null {
+  const match = url.match(
+    /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([a-zA-Z0-9_-]{11})/
+  );
+  return match ? match[1] : null;
 }
 
 function getBasedOnLabel(basedOn: string): string {
@@ -171,6 +184,45 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
           </Descriptions.Item>
         )}
       </Descriptions>
+
+      {series.watchLinks && series.watchLinks.length > 0 && (
+        <div className="series-info__watch-links">
+          <h4 className="series-info__section-title">Donde Ver</h4>
+          <div className="series-info__watch-links-list">
+            {series.watchLinks.map((link) => {
+              const youtubeId =
+                link.platform === 'YouTube' ? getYouTubeId(link.url) : null;
+
+              return (
+                <div key={link.id} className="series-info__watch-link">
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="series-info__watch-link-btn"
+                  >
+                    <Tag color={link.official ? 'green' : 'default'}>
+                      {link.platform}
+                      {!link.official && ' (no oficial)'}
+                    </Tag>
+                  </a>
+                  {youtubeId && (
+                    <div className="series-info__youtube-embed">
+                      <iframe
+                        src={`https://www.youtube-nocookie.com/embed/${youtubeId}`}
+                        title={`${series.title} - YouTube`}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className="series-info__youtube-iframe"
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {series.actors &&
         series.actors.length > 0 &&

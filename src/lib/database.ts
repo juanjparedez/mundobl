@@ -120,6 +120,7 @@ export async function getSeriesById(id: number) {
           genre: true,
         },
       },
+      watchLinks: true,
     },
   });
 }

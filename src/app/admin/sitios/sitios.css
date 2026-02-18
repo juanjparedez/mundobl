@@ -1,0 +1,8 @@
+.sitios-table__link {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.sitios-table__link:hover {
+  text-decoration: underline;
+}

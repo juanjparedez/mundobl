@@ -20,6 +20,7 @@ import {
   LogoutOutlined,
   TeamOutlined,
   CommentOutlined,
+  LinkOutlined,
   InfoCircleOutlined,
   FileTextOutlined,
 } from '@ant-design/icons';
@@ -70,6 +71,18 @@ export function Sidebar() {
       label: 'Feedback',
       onClick: () => router.push(ROUTES.FEEDBACK),
     },
+    {
+      key: '/sitios',
+      icon: <LinkOutlined />,
+      label: 'Sitios de Interés',
+      onClick: () => router.push('/sitios'),
+    },
+    {
+      key: '/contenido',
+      icon: <VideoCameraOutlined />,
+      label: 'Contenido',
+      onClick: () => router.push('/contenido'),
+    },
     ...(canAccessAdmin
       ? [
           {
@@ -114,6 +127,18 @@ export function Sidebar() {
                       icon: <TeamOutlined />,
                       label: 'Usuarios',
                       onClick: () => router.push('/admin/usuarios'),
+                    },
+                    {
+                      key: '/admin/sitios',
+                      icon: <LinkOutlined />,
+                      label: 'Sitios',
+                      onClick: () => router.push('/admin/sitios'),
+                    },
+                    {
+                      key: '/admin/contenido',
+                      icon: <PlayCircleOutlined />,
+                      label: 'Contenido',
+                      onClick: () => router.push('/admin/contenido'),
                     },
                     {
                       key: '/admin/info',

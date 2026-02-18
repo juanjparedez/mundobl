@@ -14,18 +14,31 @@
 - [x] Imagenes en feedback via clipboard paste
 - [x] Pagina admin de info del proyecto (links por env vars)
 - [x] Login con Google OAuth
+- [x] Access logs con registro de visitas y acciones
+- [x] Panel admin de logs con filtros y limpieza automatica
+- [x] Banner de privacidad
+- [x] Sistema de ban de usuarios y bloqueo por IP
+- [x] Gestion de usuarios mejorada (ban/unban, roles)
 
 ---
 
 ## Proximas (corto plazo)
 
-### Access Logs
-Registrar visitas y acciones de los usuarios sin ser intrusivo.
-- Modelo `AccessLog`: userId (opcional), ip, path, action, userAgent, timestamp
-- Middleware de Next.js para capturar requests automaticamente
-- Pagina admin `/admin/logs` para visualizar: quien visito, que hizo, cuando
-- Respetar privacidad: no guardar datos sensibles, solo lo necesario
-- Considerar: rotacion/limpieza de logs antiguos, anonimizacion de IPs
+### Sitios de interes / Links recomendados
+Seccion publica con sitios curados por Flor relevantes al genero BL.
+- Modelo `RecommendedSite`: nombre, URL, descripcion, categoria, imagen/favicon, orden
+- Categorias: fuente de info, comunidad, noticias, streaming, etc.
+- Pagina publica para mostrarlos (cards con links)
+- CRUD admin para gestion
+- Sirve como retribucion a sitios de los que se toma informacion
+
+### Donde ver (plataformas + video embed)
+Agregar plataformas de streaming donde ver cada serie.
+- Modelo `WatchLink`: seriesId, platform (enum/string), url, tipo (oficial/no oficial)
+- Si es YouTube: embeber el player en la pagina de detalle
+- Para otras plataformas (Viki, iQIYI, WeTV, etc.): mostrar link con logo
+- Gestion desde el formulario de edicion de serie
+- Cuidar aspectos legales: solo embeber contenido oficial
 
 ### Temporadas unificadas
 Cuando una serie tiene mas de una temporada pero no es un Universo, poder unificarlas.
@@ -45,12 +58,6 @@ Como no es obligatorio loguearse, crear una landing page atractiva.
 - Imagen que paso Flor como hero
 - Call to action para explorar el catalogo
 - Breve descripcion del sitio
-
-### Donde ver (plataformas)
-Agregar campo de donde ver cada serie.
-- Si es plataforma oficial (YouTube, Viki, iQIYI, etc.) soportar embed
-- Si no es oficial, mostrar solo link o referencia
-- Cuidar aspectos legales: no embeber contenido no oficial
 
 ### Tracking mejorado en "Viendo Ahora"
 Ahora que tenemos WatchStatus enum, mejorar la pagina Viendo Ahora:
