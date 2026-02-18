@@ -33,6 +33,7 @@ import {
   CATEGORY_LABELS,
   detectPlatform,
   extractVideoId,
+  getAutoThumbnailUrl,
   type Platform,
 } from '@/lib/embed-helpers';
 import '../admin.css';
@@ -125,6 +126,13 @@ export function ContenidoClient() {
     const detected = detectPlatform(url);
     if (detected && !form.getFieldValue('platform')) {
       form.setFieldValue('platform', detected);
+    }
+    const platform = detected || form.getFieldValue('platform');
+    if (platform && !form.getFieldValue('thumbnailUrl')) {
+      const autoThumb = getAutoThumbnailUrl(platform as Platform, url);
+      if (autoThumb) {
+        form.setFieldValue('thumbnailUrl', autoThumb);
+      }
     }
   };
 
@@ -348,7 +356,11 @@ export function ContenidoClient() {
               />
             </Form.Item>
 
-            <Form.Item label="URL de miniatura" name="thumbnailUrl">
+            <Form.Item
+              label="URL de miniatura"
+              name="thumbnailUrl"
+              extra="Se genera automáticamente para YouTube al ingresar la URL"
+            >
               <Input placeholder="https://..." />
             </Form.Item>
 

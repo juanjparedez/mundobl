@@ -30,6 +30,9 @@ export const CATEGORY_OPTIONS: { label: string; value: string }[] = [
   { label: 'Clip', value: 'clip' },
   { label: 'Behind the scenes', value: 'behind_scenes' },
   { label: 'En vivo', value: 'live' },
+  { label: 'Serie completa', value: 'serie' },
+  { label: 'Película', value: 'pelicula' },
+  { label: 'Corto', value: 'corto' },
   { label: 'Otro', value: 'other' },
 ];
 
@@ -40,6 +43,9 @@ export const CATEGORY_LABELS: Record<string, string> = {
   clip: 'Clip',
   behind_scenes: 'Behind the scenes',
   live: 'En vivo',
+  serie: 'Serie completa',
+  pelicula: 'Película',
+  corto: 'Corto',
   other: 'Otro',
 };
 
@@ -198,5 +204,23 @@ export function getEmbedInfo(
       };
     default:
       return { type: 'unsupported', url: null, originalUrl: url, platform };
+  }
+}
+
+// ---- Auto-generación de thumbnail ----
+
+export function getAutoThumbnailUrl(
+  platform: Platform,
+  url: string
+): string | null {
+  switch (platform) {
+    case 'YouTube': {
+      const videoId = getYouTubeId(url);
+      return videoId
+        ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+        : null;
+    }
+    default:
+      return null;
   }
 }
