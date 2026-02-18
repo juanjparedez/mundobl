@@ -41,17 +41,27 @@ interface ContenidoPageProps {
 export function ContenidoPage({ items }: ContenidoPageProps) {
   const [platformFilter, setPlatformFilter] = useState<string | null>(null);
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
+  const [channelFilter, setChannelFilter] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] =
     useState<EmbeddableContentItem | null>(null);
+
+  const channelOptions = useMemo(
+    () =>
+      [...new Set(items.map((i) => i.channelName).filter(Boolean))].map(
+        (name) => ({ label: name as string, value: name as string })
+      ),
+    [items]
+  );
 
   const filtered = useMemo(
     () =>
       items.filter((item) => {
         if (platformFilter && item.platform !== platformFilter) return false;
         if (categoryFilter && item.category !== categoryFilter) return false;
+        if (channelFilter && item.channelName !== channelFilter) return false;
         return true;
       }),
-    [items, platformFilter, categoryFilter]
+    [items, platformFilter, categoryFilter, channelFilter]
   );
 
   if (items.length === 0) {
@@ -95,6 +105,23 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
                 setCategoryFilter(val ?? null)
               }
             />
+            {channelOptions.length > 0 && (
+              <Select
+                placeholder="Canal / Fuente"
+                options={channelOptions}
+                allowClear
+                showSearch
+                style={{ width: 200 }}
+                filterOption={(input, option) =>
+                  (option?.label as string)
+                    ?.toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                onChange={(val: string | undefined) =>
+                  setChannelFilter(val ?? null)
+                }
+              />
+            )}
           </Space>
         </div>
 
@@ -153,6 +180,23 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
                             <Tag color="orange">No oficial</Tag>
                           )}
                         </Space>
+                        {item.channelName && (
+                          <span className="contenido-card__channel">
+                            {item.channelUrl ? (
+                              <a
+                                href={item.channelUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                                className="contenido-card__channel-link"
+                              >
+                                {item.channelName}
+                              </a>
+                            ) : (
+                              item.channelName
+                            )}
+                          </span>
+                        )}
                         {item.series && (
                           <Link
                             href={`/series/${item.series.id}`}

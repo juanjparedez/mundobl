@@ -54,6 +54,21 @@
   color: var(--text-tertiary);
 }
 
+.contenido-card__channel {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.contenido-card__channel-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.contenido-card__channel-link:hover {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
 .contenido-card__series-link {
   font-size: var(--font-size-sm);
   color: var(--primary-color);
