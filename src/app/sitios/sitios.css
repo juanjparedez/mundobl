@@ -1,0 +1,58 @@
+.sitios-public {
+  padding: var(--spacing-lg);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.sitios-public__title {
+  font-size: var(--font-size-xl);
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.sitios-public__subtitle {
+  color: var(--text-secondary);
+  margin: 0 0 var(--spacing-lg) 0;
+  font-size: var(--font-size-sm);
+}
+
+.sitios-public__category-title {
+  font-size: var(--font-size-lg);
+  color: var(--text-primary);
+  margin: var(--spacing-lg) 0 var(--spacing-md) 0;
+  text-transform: capitalize;
+}
+
+.sitios-card {
+  height: 100%;
+  transition: box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.sitios-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.sitios-card__description {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+.sitios-card__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sitios-card__link {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  word-break: break-all;
+}
+
+.sitios-empty {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--text-secondary);
+}

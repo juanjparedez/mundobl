@@ -49,6 +49,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
             genre: true,
           },
         },
+        watchLinks: true,
       },
     });
 
@@ -281,6 +282,28 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
             data: {
               seriesId: serieId,
               genreId: genre.id,
+            },
+          });
+        }
+      }
+    }
+
+    // Actualizar watch links (eliminar y volver a crear)
+    if (body.watchLinks !== undefined) {
+      await prisma.watchLink.deleteMany({
+        where: { seriesId: serieId },
+      });
+
+      if (body.watchLinks && body.watchLinks.length > 0) {
+        for (const link of body.watchLinks) {
+          if (!link.platform || !link.url) continue;
+
+          await prisma.watchLink.create({
+            data: {
+              seriesId: serieId,
+              platform: link.platform,
+              url: link.url,
+              official: link.official ?? true,
             },
           });
         }

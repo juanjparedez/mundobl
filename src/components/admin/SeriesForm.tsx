@@ -821,6 +821,66 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
             </Form.List>
           </Card>
 
+          {/* Donde Ver */}
+          <Card type="inner" title="Donde Ver" style={{ marginBottom: 24 }}>
+            <Form.List name="watchLinks">
+              {(fields, { add, remove }) => (
+                <>
+                  {fields.map(({ key, name, ...restField }) => (
+                    <div key={key} className="series-form__actor-row">
+                      <Form.Item
+                        {...restField}
+                        name={[name, 'platform']}
+                        style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
+                      >
+                        <Select
+                          placeholder="Plataforma"
+                          options={[
+                            { value: 'YouTube', label: 'YouTube' },
+                            { value: 'Viki', label: 'Viki' },
+                            { value: 'iQIYI', label: 'iQIYI' },
+                            { value: 'WeTV', label: 'WeTV' },
+                            { value: 'Netflix', label: 'Netflix' },
+                            { value: 'GagaOOLala', label: 'GagaOOLala' },
+                            { value: 'Bilibili', label: 'Bilibili' },
+                            { value: 'Otro', label: 'Otro' },
+                          ]}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, 'url']}
+                        style={{ marginBottom: 0, flex: 2, minWidth: 0 }}
+                      >
+                        <Input placeholder="URL del contenido" />
+                      </Form.Item>
+                      <Form.Item
+                        {...restField}
+                        name={[name, 'official']}
+                        valuePropName="checked"
+                        initialValue={true}
+                        style={{ marginBottom: 0 }}
+                      >
+                        <Checkbox>Oficial</Checkbox>
+                      </Form.Item>
+                      <MinusCircleOutlined onClick={() => remove(name)} />
+                    </div>
+                  ))}
+                  <Form.Item>
+                    <Button
+                      type="dashed"
+                      onClick={() => add({ official: true })}
+                      block
+                      icon={<PlusOutlined />}
+                    >
+                      Agregar Plataforma
+                    </Button>
+                  </Form.Item>
+                </>
+              )}
+            </Form.List>
+          </Card>
+
           {/* Temporadas (solo para series) */}
           {showSeasons && (
             <Card

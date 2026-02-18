@@ -9,6 +9,8 @@ import {
   VideoCameraOutlined,
   BankOutlined,
   TranslationOutlined,
+  LinkOutlined,
+  PlayCircleOutlined,
   InfoCircleOutlined,
   FileTextOutlined,
 } from '@ant-design/icons';
@@ -56,6 +58,18 @@ const adminLinks = [
     icon: <TranslationOutlined />,
     label: 'Idiomas',
     shortLabel: 'Idiom.',
+  },
+  {
+    key: '/admin/sitios',
+    icon: <LinkOutlined />,
+    label: 'Sitios',
+    shortLabel: 'Sitios',
+  },
+  {
+    key: '/admin/contenido',
+    icon: <PlayCircleOutlined />,
+    label: 'Contenido',
+    shortLabel: 'Cont.',
   },
   {
     key: '/admin/info',

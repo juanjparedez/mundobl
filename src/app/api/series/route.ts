@@ -226,6 +226,22 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Crear watch links
+    if (body.watchLinks && body.watchLinks.length > 0) {
+      for (const link of body.watchLinks) {
+        if (!link.platform || !link.url) continue;
+
+        await prisma.watchLink.create({
+          data: {
+            seriesId: serie.id,
+            platform: link.platform,
+            url: link.url,
+            official: link.official ?? true,
+          },
+        });
+      }
+    }
+
     return NextResponse.json(serie, { status: 201 });
   } catch (error) {
     console.error('Error creating series:', error);
