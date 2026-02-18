@@ -16,6 +16,7 @@ import {
   Upload,
   Alert,
   Checkbox,
+  Modal,
 } from 'antd';
 import {
   PlusOutlined,
@@ -196,6 +197,10 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
   const [actors, setActors] = useState<string[]>([]);
   const [directors, setDirectors] = useState<string[]>([]);
   const [universes, setUniverses] = useState<UniverseOption[]>([]);
+  const [newUniverseModalOpen, setNewUniverseModalOpen] = useState(false);
+  const [newUniverseName, setNewUniverseName] = useState('');
+  const [newUniverseDescription, setNewUniverseDescription] = useState('');
+  const [creatingUniverse, setCreatingUniverse] = useState(false);
   const [productionCompanies, setProductionCompanies] = useState<string[]>([]);
   const [languages, setLanguages] = useState<string[]>([]);
   const [genres, setGenres] = useState<string[]>([]);
@@ -268,6 +273,36 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
       setSelectedType(initialData.type || 'serie');
     }
   }, [initialData, loadFormData, form]);
+
+  const handleCreateUniverse = async () => {
+    const name = newUniverseName.trim();
+    if (!name) return;
+    setCreatingUniverse(true);
+    try {
+      const res = await fetch('/api/universes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          description: newUniverseDescription.trim() || null,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al crear universo');
+
+      const created: UniverseOption = { id: data.id, name: data.name };
+      setUniverses((prev) => [...prev, created].sort((a, b) => a.name.localeCompare(b.name)));
+      form.setFieldValue('universeId', created.id);
+      setNewUniverseModalOpen(false);
+      setNewUniverseName('');
+      setNewUniverseDescription('');
+      message.success(`Universo "${created.name}" creado`);
+    } catch (err) {
+      message.error(err instanceof Error ? err.message : 'Error al crear universo');
+    } finally {
+      setCreatingUniverse(false);
+    }
+  };
 
   const handleSubmit = async (values: Record<string, unknown>) => {
     setLoading(true);
@@ -479,18 +514,35 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
               </Col>
 
               <Col xs={24} md={12}>
-                <Form.Item label="Universo (opcional)" name="universeId">
-                  <Select
-                    placeholder="¿Pertenece a algún universo/franquicia?"
-                    size="large"
-                    allowClear
-                  >
-                    {universes.map((u) => (
-                      <Option key={u.id} value={u.id}>
-                        {u.name}
-                      </Option>
-                    ))}
-                  </Select>
+                <Form.Item label="Universo (opcional)">
+                  <Space.Compact style={{ width: '100%' }}>
+                    <Form.Item name="universeId" noStyle>
+                      <Select
+                        placeholder="¿Pertenece a algún universo/franquicia?"
+                        size="large"
+                        allowClear
+                        showSearch
+                        filterOption={(input, option) =>
+                          (option?.children as unknown as string)
+                            ?.toLowerCase()
+                            .includes(input.toLowerCase())
+                        }
+                        style={{ width: '100%' }}
+                      >
+                        {universes.map((u) => (
+                          <Option key={u.id} value={u.id}>
+                            {u.name}
+                          </Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                    <Button
+                      size="large"
+                      icon={<PlusOutlined />}
+                      onClick={() => setNewUniverseModalOpen(true)}
+                      title="Crear nuevo universo"
+                    />
+                  </Space.Compact>
                 </Form.Item>
               </Col>
 
@@ -1008,6 +1060,36 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
           </Form.Item>
         </Form>
       </Card>
+
+      <Modal
+        title="Crear nuevo universo"
+        open={newUniverseModalOpen}
+        onOk={handleCreateUniverse}
+        onCancel={() => {
+          setNewUniverseModalOpen(false);
+          setNewUniverseName('');
+          setNewUniverseDescription('');
+        }}
+        confirmLoading={creatingUniverse}
+        okText="Crear"
+        cancelText="Cancelar"
+        okButtonProps={{ disabled: !newUniverseName.trim() }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 16 }}>
+          <Input
+            placeholder="Nombre del universo"
+            value={newUniverseName}
+            onChange={(e) => setNewUniverseName(e.target.value)}
+            onPressEnter={() => newUniverseName.trim() && handleCreateUniverse()}
+          />
+          <Input.TextArea
+            placeholder="Descripción (opcional)"
+            value={newUniverseDescription}
+            onChange={(e) => setNewUniverseDescription(e.target.value)}
+            rows={3}
+          />
+        </div>
+      </Modal>
     </div>
   );
 }
