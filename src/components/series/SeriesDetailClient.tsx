@@ -5,6 +5,7 @@ import { Tabs, Collapse } from 'antd';
 import {
   InfoCircleOutlined,
   PlayCircleOutlined,
+  PlaySquareOutlined,
   StarOutlined,
   CommentOutlined,
 } from '@ant-design/icons';
@@ -16,6 +17,7 @@ interface SeriesDetailClientProps {
   seasonLabel: string;
   seasonCount: number;
   infoSection: ReactNode;
+  contentSection: ReactNode;
   seasonsSection: ReactNode;
   ratingsSection: ReactNode;
   commentsSection: ReactNode;
@@ -26,6 +28,7 @@ export function SeriesDetailClient({
   seasonLabel,
   seasonCount,
   infoSection,
+  contentSection,
   seasonsSection,
   ratingsSection,
   commentsSection,
@@ -42,6 +45,15 @@ export function SeriesDetailClient({
           </span>
         ),
         children: <div className="series-info-tab">{infoSection}</div>,
+      },
+      {
+        key: 'content',
+        label: (
+          <span>
+            <PlaySquareOutlined /> Contenido
+          </span>
+        ),
+        children: <div className="content-tab">{contentSection}</div>,
       },
       ...(showSeasons
         ? [
@@ -92,6 +104,11 @@ export function SeriesDetailClient({
       key: 'info',
       label: 'Información',
       children: <div className="series-info-tab">{infoSection}</div>,
+    },
+    {
+      key: 'content',
+      label: 'Contenido',
+      children: <div className="content-tab">{contentSection}</div>,
     },
     ...(showSeasons
       ? [

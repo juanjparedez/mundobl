@@ -32,6 +32,7 @@ import Link from 'next/link';
 import { shouldShowSeasons, getContentTypeConfig } from '@/types/content';
 import './SeriesForm.css';
 import { useMessage } from '@/hooks/useMessage';
+import { SeriesContentManager } from './SeriesContentManager/SeriesContentManager';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -291,14 +292,18 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
       if (!res.ok) throw new Error(data.error || 'Error al crear universo');
 
       const created: UniverseOption = { id: data.id, name: data.name };
-      setUniverses((prev) => [...prev, created].sort((a, b) => a.name.localeCompare(b.name)));
+      setUniverses((prev) =>
+        [...prev, created].sort((a, b) => a.name.localeCompare(b.name))
+      );
       form.setFieldValue('universeId', created.id);
       setNewUniverseModalOpen(false);
       setNewUniverseName('');
       setNewUniverseDescription('');
       message.success(`Universo "${created.name}" creado`);
     } catch (err) {
-      message.error(err instanceof Error ? err.message : 'Error al crear universo');
+      message.error(
+        err instanceof Error ? err.message : 'Error al crear universo'
+      );
     } finally {
       setCreatingUniverse(false);
     }
@@ -1041,6 +1046,17 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
             </Card>
           )}
 
+          {/* Contenido Relacionado (solo en edición) */}
+          {mode === 'edit' && initialData?.id && (
+            <Card
+              type="inner"
+              title="📹 Contenido Relacionado"
+              style={{ marginBottom: 24 }}
+            >
+              <SeriesContentManager seriesId={initialData.id as number} />
+            </Card>
+          )}
+
           {/* Botones de acción */}
           <Form.Item>
             <Space size="large">
@@ -1075,12 +1091,21 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
         cancelText="Cancelar"
         okButtonProps={{ disabled: !newUniverseName.trim() }}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 16 }}>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 12,
+            marginTop: 16,
+          }}
+        >
           <Input
             placeholder="Nombre del universo"
             value={newUniverseName}
             onChange={(e) => setNewUniverseName(e.target.value)}
-            onPressEnter={() => newUniverseName.trim() && handleCreateUniverse()}
+            onPressEnter={() =>
+              newUniverseName.trim() && handleCreateUniverse()
+            }
           />
           <Input.TextArea
             placeholder="Descripción (opcional)"

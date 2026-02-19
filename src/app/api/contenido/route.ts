@@ -9,12 +9,15 @@ export async function GET(request: NextRequest) {
     const platform = searchParams.get('platform') || undefined;
     const category = searchParams.get('category') || undefined;
     const featured = searchParams.get('featured');
+    const seriesIdParam = searchParams.get('seriesId');
+    const seriesId = seriesIdParam ? Number(seriesIdParam) : undefined;
 
     const items = await prisma.embeddableContent.findMany({
       where: {
         ...(platform ? { platform } : {}),
         ...(category ? { category } : {}),
         ...(featured === 'true' ? { featured: true } : {}),
+        ...(seriesId ? { seriesId } : {}),
       },
       include: {
         series: { select: { id: true, title: true } },
