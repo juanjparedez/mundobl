@@ -9,6 +9,7 @@ import { RatingSection } from '@/components/series/RatingSection';
 import { CommentsSection } from '@/components/series/CommentsSection';
 import { ViewStatusToggle } from '@/components/series/ViewStatusToggle';
 import { SeriesDetailClient } from '@/components/series/SeriesDetailClient';
+import { SeriesContent } from '@/components/series/SeriesContent/SeriesContent';
 import { shouldShowSeasons, getContentTypeConfig } from '@/types/content';
 import { FloatButton } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
@@ -62,6 +63,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
           seasonLabel={seasonLabel}
           seasonCount={serie.seasons?.length || 0}
           infoSection={<SeriesInfo series={serie} />}
+          contentSection={<SeriesContent seriesId={serie.id} />}
           seasonsSection={<SeasonsList seasons={serie.seasons || []} />}
           ratingsSection={
             <RatingSection

@@ -1,0 +1,9 @@
+.series-content-manager__toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.series-content-manager__preview {
+  margin-top: 16px;
+}
