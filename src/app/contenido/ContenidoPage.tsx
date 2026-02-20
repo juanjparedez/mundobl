@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Image from 'next/image';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { Card, Col, Row, Select, Space, Tag, Modal, Button, Empty } from 'antd';
 import { LinkOutlined, PlayCircleOutlined } from '@ant-design/icons';
@@ -135,10 +136,13 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
                   className={`contenido-card ${item.featured ? 'contenido-card--featured' : ''}`}
                   cover={
                     item.thumbnailUrl ? (
-                      <img
+                      <Image
                         alt={item.title}
                         src={item.thumbnailUrl}
                         className="contenido-card__thumbnail"
+                        width={480}
+                        height={270}
+                        unoptimized
                       />
                     ) : (
                       <div className="contenido-card__thumbnail-placeholder">

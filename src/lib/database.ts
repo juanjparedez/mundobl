@@ -121,6 +121,32 @@ export async function getSeriesById(id: number) {
         },
       },
       watchLinks: true,
+      relatedSeriesFrom: {
+        include: {
+          relatedSeries: {
+            select: {
+              id: true,
+              title: true,
+              imageUrl: true,
+              year: true,
+              type: true,
+            },
+          },
+        },
+      },
+      relatedSeriesTo: {
+        include: {
+          mainSeries: {
+            select: {
+              id: true,
+              title: true,
+              imageUrl: true,
+              year: true,
+              type: true,
+            },
+          },
+        },
+      },
     },
   });
 }

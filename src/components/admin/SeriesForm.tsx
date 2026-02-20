@@ -27,12 +27,16 @@ import {
   UploadOutlined,
   StarOutlined,
   StarFilled,
+  ExclamationCircleOutlined,
 } from '@ant-design/icons/lib/icons';
 import Link from 'next/link';
 import { shouldShowSeasons, getContentTypeConfig } from '@/types/content';
 import './SeriesForm.css';
 import { useMessage } from '@/hooks/useMessage';
-import { SeriesContentManager } from './SeriesContentManager/SeriesContentManager';
+import {
+  SeriesContentManager,
+  type PendingContentItem,
+} from './SeriesContentManager/SeriesContentManager';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -207,6 +211,14 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
   const [genres, setGenres] = useState<string[]>([]);
   const [tags, setTags] = useState<string[]>([]);
   const [basedOnOptions, setBasedOnOptions] = useState<string[]>([]);
+  const [pendingContent, setPendingContent] = useState<PendingContentItem[]>(
+    []
+  );
+  const [relatedSeriesOptions, setRelatedSeriesOptions] = useState<
+    Array<{ id: number; title: string; year: number | null; type: string }>
+  >([]);
+  const [searchingRelated, setSearchingRelated] = useState(false);
+  const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [uploading, setUploading] = useState(false);
   const imageUrl = Form.useWatch('imageUrl', form);
   const [isFavorite, setIsFavorite] = useState(
@@ -272,8 +284,63 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
         basedOn: initialData.basedOn ? [initialData.basedOn] : [],
       });
       setSelectedType(initialData.type || 'serie');
+
+      // Load initial related series options for edit mode
+      if (
+        initialData.relatedSeriesIds &&
+        (initialData.relatedSeriesIds as number[]).length > 0
+      ) {
+        const ids = initialData.relatedSeriesIds as number[];
+        Promise.all(
+          ids.map((id) => fetch(`/api/series/${id}`).then((r) => r.json()))
+        ).then((results) => {
+          setRelatedSeriesOptions(
+            results.map(
+              (s: {
+                id: number;
+                title: string;
+                year: number | null;
+                type: string;
+              }) => ({
+                id: s.id,
+                title: s.title,
+                year: s.year,
+                type: s.type,
+              })
+            )
+          );
+        });
+      }
     }
   }, [initialData, loadFormData, form]);
+
+  const handleSearchRelatedSeries = useCallback(
+    (query: string) => {
+      if (searchTimeout.current) clearTimeout(searchTimeout.current);
+      if (!query.trim()) return;
+
+      searchTimeout.current = setTimeout(async () => {
+        setSearchingRelated(true);
+        try {
+          const excludeId = initialData?.id || '';
+          const res = await fetch(
+            `/api/series/search?q=${encodeURIComponent(query)}&excludeId=${excludeId}`
+          );
+          const data = await res.json();
+          setRelatedSeriesOptions((prev) => {
+            const existingIds = new Set(prev.map((o) => o.id));
+            const newOpts = data.filter(
+              (s: { id: number }) => !existingIds.has(s.id)
+            );
+            return [...prev, ...newOpts];
+          });
+        } finally {
+          setSearchingRelated(false);
+        }
+      }, 300);
+    },
+    [initialData?.id]
+  );
 
   const handleCreateUniverse = async () => {
     const name = newUniverseName.trim();
@@ -333,6 +400,27 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
       if (!response.ok) throw new Error('Error saving series');
 
       const savedSerie = await response.json();
+
+      // Save pending content items after creating the series
+      if (mode === 'create' && pendingContent.length > 0) {
+        const contentPromises = pendingContent.map((item) => {
+          const { _tempId, ...contentData } = item;
+          return fetch('/api/contenido', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...contentData, seriesId: savedSerie.id }),
+          });
+        });
+
+        const results = await Promise.allSettled(contentPromises);
+        const failed = results.filter((r) => r.status === 'rejected').length;
+        if (failed > 0) {
+          message.warning(
+            `Serie creada, pero ${failed} contenido(s) no se pudieron guardar`
+          );
+        }
+      }
+
       message.success(
         mode === 'create'
           ? 'Serie creada exitosamente'
@@ -399,6 +487,38 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
     }
   };
 
+  const hasUnsavedChanges = useCallback(() => {
+    return form.isFieldsTouched();
+  }, [form]);
+
+  // Warn on browser close/reload if there are unsaved changes
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (hasUnsavedChanges()) {
+        e.preventDefault();
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, [hasUnsavedChanges]);
+
+  const handleCancel = useCallback(() => {
+    if (hasUnsavedChanges()) {
+      Modal.confirm({
+        title: 'Hay cambios sin guardar',
+        icon: <ExclamationCircleOutlined />,
+        content:
+          'Si sales ahora, perderás los cambios que no hayas guardado. ¿Deseas continuar?',
+        okText: 'Salir sin guardar',
+        cancelText: 'Seguir editando',
+        okButtonProps: { danger: true },
+        onOk: () => router.back(),
+      });
+    } else {
+      router.back();
+    }
+  }, [hasUnsavedChanges, router]);
+
   const config = getContentTypeConfig(selectedType);
   const showSeasons = shouldShowSeasons(selectedType);
 
@@ -426,7 +546,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                   {isFavorite ? 'Favorito' : 'Agregar a Favoritos'}
                 </Button>
               )}
-              <Button icon={<CloseOutlined />} onClick={() => router.back()}>
+              <Button icon={<CloseOutlined />} onClick={handleCancel}>
                 Cancelar
               </Button>
             </Space>
@@ -1046,16 +1166,51 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
             </Card>
           )}
 
-          {/* Contenido Relacionado (solo en edición) */}
-          {mode === 'edit' && initialData?.id && (
-            <Card
-              type="inner"
-              title="📹 Contenido Relacionado"
-              style={{ marginBottom: 24 }}
+          {/* Series Relacionadas */}
+          <Card
+            type="inner"
+            title="🔗 Series Relacionadas"
+            style={{ marginBottom: 24 }}
+          >
+            <Form.Item
+              name="relatedSeriesIds"
+              help="Busca por título para vincular series que comparten personajes o historia"
             >
+              <Select
+                mode="multiple"
+                placeholder="Busca y selecciona series relacionadas..."
+                loading={searchingRelated}
+                onSearch={handleSearchRelatedSeries}
+                filterOption={false}
+                showSearch
+                size="large"
+                style={{ width: '100%' }}
+                options={relatedSeriesOptions.map((s) => ({
+                  value: s.id,
+                  label: `${s.title}${s.year ? ` (${s.year})` : ''}`,
+                }))}
+                notFoundContent={
+                  searchingRelated ? 'Buscando...' : 'Escribe para buscar'
+                }
+              />
+            </Form.Item>
+          </Card>
+
+          {/* Contenido Relacionado */}
+          <Card
+            type="inner"
+            title="📹 Contenido Relacionado"
+            style={{ marginBottom: 24 }}
+          >
+            {mode === 'edit' && initialData?.id ? (
               <SeriesContentManager seriesId={initialData.id as number} />
-            </Card>
-          )}
+            ) : (
+              <SeriesContentManager
+                pendingItems={pendingContent}
+                onPendingItemsChange={setPendingContent}
+              />
+            )}
+          </Card>
 
           {/* Botones de acción */}
           <Form.Item>
@@ -1069,7 +1224,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
               >
                 {mode === 'create' ? 'Crear Serie' : 'Guardar Cambios'}
               </Button>
-              <Button size="large" onClick={() => router.back()}>
+              <Button size="large" onClick={handleCancel}>
                 Cancelar
               </Button>
             </Space>

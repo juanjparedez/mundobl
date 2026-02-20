@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Image from 'next/image';
 import { Drawer, Input, Button, Table, Select, Space, Tag, Alert } from 'antd';
 import {
   SearchOutlined,
@@ -191,7 +192,14 @@ export function ImportChannelDrawer({
       key: 'thumb',
       width: 130,
       render: (url: string) => (
-        <img src={url} alt="" className="import-channel__video-thumb" />
+        <Image
+          src={url}
+          alt=""
+          className="import-channel__video-thumb"
+          width={120}
+          height={68}
+          unoptimized
+        />
       ),
     },
     {

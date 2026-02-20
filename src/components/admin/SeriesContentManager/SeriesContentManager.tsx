@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Table,
   Button,
@@ -53,17 +53,39 @@ interface ContentItem {
   featured: boolean;
 }
 
-interface SeriesContentManagerProps {
-  seriesId: number;
+export interface PendingContentItem {
+  _tempId: number;
+  title: string;
+  description: string | null;
+  platform: string;
+  url: string;
+  category: string;
+  thumbnailUrl: string | null;
+  channelName: string | null;
+  official: boolean;
+  featured: boolean;
+  sortOrder: number;
 }
 
-export function SeriesContentManager({ seriesId }: SeriesContentManagerProps) {
+interface SeriesContentManagerProps {
+  seriesId?: number;
+  pendingItems?: PendingContentItem[];
+  onPendingItemsChange?: (items: PendingContentItem[]) => void;
+}
+
+export function SeriesContentManager({
+  seriesId,
+  pendingItems,
+  onPendingItemsChange,
+}: SeriesContentManagerProps) {
   const message = useMessage();
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [items, setItems] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<ContentItem | null>(null);
+  const [editingPendingItem, setEditingPendingItem] =
+    useState<PendingContentItem | null>(null);
   const [previewData, setPreviewData] = useState<{
     platform: string;
     url: string;
@@ -71,8 +93,12 @@ export function SeriesContentManager({ seriesId }: SeriesContentManagerProps) {
     title: string;
   } | null>(null);
   const [form] = Form.useForm();
+  const tempIdCounter = useRef(0);
+
+  const isLocalMode = !seriesId;
 
   const loadItems = useCallback(async () => {
+    if (isLocalMode) return;
     setLoading(true);
     try {
       const res = await fetch(`/api/contenido?seriesId=${seriesId}`);
@@ -83,7 +109,7 @@ export function SeriesContentManager({ seriesId }: SeriesContentManagerProps) {
     } finally {
       setLoading(false);
     }
-  }, [seriesId, message]);
+  }, [seriesId, isLocalMode, message]);
 
   useEffect(() => {
     loadItems();
@@ -115,13 +141,20 @@ export function SeriesContentManager({ seriesId }: SeriesContentManagerProps) {
     setPreviewData({ platform, url, videoId, title });
   };
 
-  const handleOpenModal = (item?: ContentItem) => {
+  const handleOpenModal = (item?: ContentItem | PendingContentItem) => {
     setPreviewData(null);
     if (item) {
-      setEditingItem(item);
+      if ('_tempId' in item) {
+        setEditingPendingItem(item);
+        setEditingItem(null);
+      } else {
+        setEditingItem(item);
+        setEditingPendingItem(null);
+      }
       form.setFieldsValue({ ...item });
     } else {
       setEditingItem(null);
+      setEditingPendingItem(null);
       form.resetFields();
     }
     setModalOpen(true);
@@ -130,11 +163,42 @@ export function SeriesContentManager({ seriesId }: SeriesContentManagerProps) {
   const handleCloseModal = () => {
     setModalOpen(false);
     setEditingItem(null);
+    setEditingPendingItem(null);
     setPreviewData(null);
     form.resetFields();
   };
 
   const handleSubmit = async (values: Record<string, unknown>) => {
+    if (isLocalMode) {
+      const pendingItem: PendingContentItem = {
+        _tempId: editingPendingItem?._tempId ?? ++tempIdCounter.current,
+        title: values.title as string,
+        description: (values.description as string) || null,
+        platform: values.platform as string,
+        url: values.url as string,
+        category: (values.category as string) || 'trailer',
+        thumbnailUrl: (values.thumbnailUrl as string) || null,
+        channelName: (values.channelName as string) || null,
+        official: (values.official as boolean) ?? true,
+        featured: (values.featured as boolean) ?? false,
+        sortOrder: (values.sortOrder as number) ?? 0,
+      };
+
+      const current = pendingItems ?? [];
+      const updated = editingPendingItem
+        ? current.map((i) =>
+            i._tempId === editingPendingItem._tempId ? pendingItem : i
+          )
+        : [...current, pendingItem];
+
+      onPendingItemsChange?.(updated);
+      message.success(
+        editingPendingItem ? 'Contenido actualizado' : 'Contenido agregado'
+      );
+      handleCloseModal();
+      return;
+    }
+
     try {
       const url = editingItem
         ? `/api/contenido/${editingItem.id}`
@@ -162,6 +226,13 @@ export function SeriesContentManager({ seriesId }: SeriesContentManagerProps) {
   };
 
   const handleDelete = async (id: number) => {
+    if (isLocalMode) {
+      const updated = (pendingItems ?? []).filter((i) => i._tempId !== id);
+      onPendingItemsChange?.(updated);
+      message.success('Contenido eliminado');
+      return;
+    }
+
     try {
       const res = await fetch(`/api/contenido/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error();
@@ -172,6 +243,11 @@ export function SeriesContentManager({ seriesId }: SeriesContentManagerProps) {
     }
   };
 
+  type TableRow = ContentItem | PendingContentItem;
+
+  const getRowId = (record: TableRow): number =>
+    '_tempId' in record ? record._tempId : record.id;
+
   const columns = [
     {
       title: 'Título',
@@ -181,7 +257,7 @@ export function SeriesContentManager({ seriesId }: SeriesContentManagerProps) {
     {
       title: 'Plataforma',
       key: 'platform',
-      render: (r: ContentItem) => (
+      render: (r: TableRow) => (
         <Tag color={PLATFORM_COLORS[r.platform] ?? 'default'}>{r.platform}</Tag>
       ),
       responsive: ['sm' as const],
@@ -189,7 +265,7 @@ export function SeriesContentManager({ seriesId }: SeriesContentManagerProps) {
     {
       title: 'Categoría',
       key: 'category',
-      render: (r: ContentItem) => (
+      render: (r: TableRow) => (
         <Tag>{CATEGORY_LABELS[r.category] ?? r.category}</Tag>
       ),
       responsive: ['md' as const],
@@ -197,7 +273,7 @@ export function SeriesContentManager({ seriesId }: SeriesContentManagerProps) {
     {
       title: 'Acciones',
       key: 'actions',
-      render: (record: ContentItem) => (
+      render: (record: TableRow) => (
         <Space>
           <Button
             icon={<EditOutlined />}
@@ -208,7 +284,7 @@ export function SeriesContentManager({ seriesId }: SeriesContentManagerProps) {
           </Button>
           <Popconfirm
             title="¿Eliminar este contenido?"
-            onConfirm={() => handleDelete(record.id)}
+            onConfirm={() => handleDelete(getRowId(record))}
             okText="Eliminar"
             cancelText="Cancelar"
             okButtonProps={{ danger: true }}
@@ -234,10 +310,10 @@ export function SeriesContentManager({ seriesId }: SeriesContentManagerProps) {
         </Button>
       </div>
 
-      <Table
-        dataSource={items}
+      <Table<TableRow>
+        dataSource={isLocalMode ? (pendingItems ?? []) : items}
         columns={columns}
-        rowKey="id"
+        rowKey={(record) => String(getRowId(record))}
         loading={loading}
         pagination={false}
         size="small"

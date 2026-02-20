@@ -60,6 +60,24 @@ interface SeriesInfoProps {
       url: string;
       official: boolean;
     }>;
+    relatedSeriesFrom?: Array<{
+      relatedSeries: {
+        id: number;
+        title: string;
+        imageUrl?: string | null;
+        year?: number | null;
+        type: string;
+      };
+    }>;
+    relatedSeriesTo?: Array<{
+      mainSeries: {
+        id: number;
+        title: string;
+        imageUrl?: string | null;
+        year?: number | null;
+        type: string;
+      };
+    }>;
   };
 }
 
@@ -315,6 +333,44 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
           </div>
         </div>
       )}
+
+      {(() => {
+        const relatedSeries = [
+          ...(series.relatedSeriesFrom?.map((r) => r.relatedSeries) ?? []),
+          ...(series.relatedSeriesTo?.map((r) => r.mainSeries) ?? []),
+        ];
+        // Deduplicate by id
+        const seen = new Set<number>();
+        const unique = relatedSeries.filter((s) => {
+          if (seen.has(s.id)) return false;
+          seen.add(s.id);
+          return true;
+        });
+
+        if (unique.length === 0) return null;
+
+        return (
+          <div className="series-info__related">
+            <h4 className="series-info__section-title">
+              🔗 Series Relacionadas
+            </h4>
+            <div className="series-info__related-list">
+              {unique.map((s) => (
+                <Link
+                  key={s.id}
+                  href={`/series/${s.id}`}
+                  className="series-info__related-item"
+                >
+                  <Tag color="cyan">
+                    {s.title}
+                    {s.year ? ` (${s.year})` : ''}
+                  </Tag>
+                </Link>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
