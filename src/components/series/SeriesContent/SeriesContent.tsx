@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import { Tag, Spin, Empty, Card } from 'antd';
 import { PlayCircleOutlined } from '@ant-design/icons';
 import { EmbedPlayer } from '@/components/common/EmbedPlayer/EmbedPlayer';
@@ -137,10 +138,13 @@ export function SeriesContent({ seriesId }: SeriesContentProps) {
                   cover={
                     item.thumbnailUrl ? (
                       <div className="series-content__thumb">
-                        <img
+                        <Image
                           src={item.thumbnailUrl}
                           alt={item.title}
                           className="series-content__thumb-img"
+                          width={480}
+                          height={270}
+                          unoptimized
                         />
                         <div className="series-content__thumb-overlay">
                           <PlayCircleOutlined className="series-content__play-icon" />

@@ -6,7 +6,8 @@
 
 .series-info__synopsis,
 .series-info__review,
-.series-info__observations {
+.series-info__observations,
+.series-info__related {
   padding: var(--spacing-md);
   background: var(--bg-base);
   border-radius: var(--border-radius);
@@ -40,6 +41,16 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
+}
+
+.series-info__related-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+.series-info__related-item {
+  text-decoration: none;
 }
 
 .series-info__watch-link-btn {

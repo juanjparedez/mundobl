@@ -242,6 +242,20 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Crear series relacionadas (bidireccional)
+    if (body.relatedSeriesIds && body.relatedSeriesIds.length > 0) {
+      for (const relatedId of body.relatedSeriesIds) {
+        if (!relatedId || relatedId === serie.id) continue;
+        await prisma.relatedSeries.createMany({
+          data: [
+            { mainSeriesId: serie.id, relatedSeriesId: relatedId },
+            { mainSeriesId: relatedId, relatedSeriesId: serie.id },
+          ],
+          skipDuplicates: true,
+        });
+      }
+    }
+
     return NextResponse.json(serie, { status: 201 });
   } catch (error) {
     console.error('Error creating series:', error);

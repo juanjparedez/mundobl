@@ -50,6 +50,32 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
           },
         },
         watchLinks: true,
+        relatedSeriesFrom: {
+          include: {
+            relatedSeries: {
+              select: {
+                id: true,
+                title: true,
+                imageUrl: true,
+                year: true,
+                type: true,
+              },
+            },
+          },
+        },
+        relatedSeriesTo: {
+          include: {
+            mainSeries: {
+              select: {
+                id: true,
+                title: true,
+                imageUrl: true,
+                year: true,
+                type: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -305,6 +331,29 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
               url: link.url,
               official: link.official ?? true,
             },
+          });
+        }
+      }
+    }
+
+    // Actualizar series relacionadas (bidireccional)
+    if (body.relatedSeriesIds !== undefined) {
+      // Borrar todas las relaciones existentes (ambas direcciones)
+      await prisma.relatedSeries.deleteMany({
+        where: {
+          OR: [{ mainSeriesId: serieId }, { relatedSeriesId: serieId }],
+        },
+      });
+
+      if (body.relatedSeriesIds && body.relatedSeriesIds.length > 0) {
+        for (const relatedId of body.relatedSeriesIds) {
+          if (!relatedId || relatedId === serieId) continue;
+          await prisma.relatedSeries.createMany({
+            data: [
+              { mainSeriesId: serieId, relatedSeriesId: relatedId },
+              { mainSeriesId: relatedId, relatedSeriesId: serieId },
+            ],
+            skipDuplicates: true,
           });
         }
       }

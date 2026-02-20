@@ -172,6 +172,8 @@ model Series {
   genres        SeriesGenre[]
   watchLinks         WatchLink[]
   embeddableContent  EmbeddableContent[]
+  relatedSeriesFrom  RelatedSeries[] @relation("mainSeries")
+  relatedSeriesTo    RelatedSeries[] @relation("relatedSeries")
 }
 
 // ============================================
@@ -361,6 +363,22 @@ model SeriesTag {
   tag           Tag       @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@unique([seriesId, tagId])
+}
+
+// ============================================
+// SERIES RELACIONADAS (self-referential many-to-many)
+// ============================================
+model RelatedSeries {
+  id              Int      @id @default(autoincrement())
+
+  mainSeriesId    Int
+  mainSeries      Series   @relation("mainSeries", fields: [mainSeriesId], references: [id], onDelete: Cascade)
+  relatedSeriesId Int
+  relatedSeries   Series   @relation("relatedSeries", fields: [relatedSeriesId], references: [id], onDelete: Cascade)
+
+  createdAt       DateTime @default(now())
+
+  @@unique([mainSeriesId, relatedSeriesId])
 }
 
 // ============================================

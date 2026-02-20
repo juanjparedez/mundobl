@@ -64,6 +64,10 @@ export default async function EditSeriesPage({ params }: EditPageProps) {
     productionCompanyName: serie.productionCompany?.name || undefined,
     originalLanguageName: serie.originalLanguage?.name || undefined,
     genres: serie.genres?.map((sg) => sg.genre.name) || [],
+    relatedSeriesIds:
+      serie.relatedSeriesFrom?.map(
+        (rs: { relatedSeries: { id: number } }) => rs.relatedSeries.id
+      ) || [],
   };
 
   return (
