@@ -2,7 +2,7 @@
 
 Todas las versiones notables del proyecto se documentan aquí.
 
-## [Próximo deploy] - Pendiente
+## Próximo deploy
 
 - Migración de imágenes externas a Supabase Storage (series, actores, directores, temporadas, universos, productoras, sitios)
 - Cache de imágenes en catálogo con Next.js Image
@@ -12,8 +12,10 @@ Todas las versiones notables del proyecto se documentan aquí.
 - Filtros de IP y usuario en logs de admin
 - Fix notificador de versión (falsos positivos en desarrollo)
 - Versiones visibles en modal de actualización
+- Fix degradado sobre imágenes en tarjetas del catálogo
+- Changelog integrado en página de feedback
 
-## 575649c - 2025-05-XX
+## 575649c
 
 - Fix estilos de modales
 

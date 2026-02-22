@@ -381,7 +381,7 @@ export function CatalogoClient({ series: initialSeries, userRole }: CatalogoClie
         onClick={() => handleCardClick(serie.id)}
       >
         <div className="serie-card-cover">
-          {serie.imageUrl && (
+          {serie.imageUrl ? (
             <Image
               src={serie.imageUrl}
               alt={serie.titulo}
@@ -392,11 +392,13 @@ export function CatalogoClient({ series: initialSeries, userRole }: CatalogoClie
                 objectPosition: serie.imagePosition || 'center',
               }}
             />
+          ) : (
+            <div
+              className="serie-card-gradient-overlay"
+              style={{ background: gradient }}
+            />
           )}
-          <div
-            className="serie-card-gradient-overlay"
-            style={{ background: gradient }}
-          >
+          <div className="serie-card-gradient-overlay">
             <div className="serie-card-actions">
               <Tooltip
                 title={
@@ -471,7 +473,7 @@ export function CatalogoClient({ series: initialSeries, userRole }: CatalogoClie
           onClick={(e) => toggleUniverse(group.universoId, e)}
         >
           <div className="serie-card-cover">
-            {firstSerie.imageUrl && (
+            {firstSerie.imageUrl ? (
               <Image
                 src={firstSerie.imageUrl}
                 alt={group.universoNombre}
@@ -482,14 +484,16 @@ export function CatalogoClient({ series: initialSeries, userRole }: CatalogoClie
                   objectPosition: firstSerie.imagePosition || 'center',
                 }}
               />
+            ) : (
+              <div
+                className="serie-card-gradient-overlay"
+                style={{
+                  background:
+                    'linear-gradient(135deg, rgba(82, 73, 200, 0.8) 0%, rgba(130, 87, 229, 0.9) 100%)',
+                }}
+              />
             )}
-            <div
-              className="serie-card-gradient-overlay"
-              style={{
-                background:
-                  'linear-gradient(135deg, rgba(82, 73, 200, 0.8) 0%, rgba(130, 87, 229, 0.9) 100%)',
-              }}
-            >
+            <div className="serie-card-gradient-overlay">
               <div className="serie-title-overlay">{group.universoNombre}</div>
             </div>
           </div>
