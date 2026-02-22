@@ -32,7 +32,7 @@ import {
 import Link from 'next/link';
 import { shouldShowSeasons, getContentTypeConfig } from '@/types/content';
 import './SeriesForm.css';
-import { useMessage } from '@/hooks/useMessage';
+import { useMessage, useModal } from '@/hooks/useMessage';
 import {
   SeriesContentManager,
   type PendingContentItem,
@@ -193,6 +193,7 @@ function ImagePositionSelector({
 
 export function SeriesForm({ initialData, mode }: SeriesFormProps) {
   const message = useMessage();
+  const modal = useModal();
   const router = useRouter();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -507,7 +508,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
 
   const handleCancel = useCallback(() => {
     if (hasUnsavedChanges()) {
-      Modal.confirm({
+      modal.confirm({
         title: 'Hay cambios sin guardar',
         icon: <ExclamationCircleOutlined />,
         content:
@@ -520,7 +521,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
     } else {
       router.back();
     }
-  }, [hasUnsavedChanges, router]);
+  }, [hasUnsavedChanges, router, modal]);
 
   const config = getContentTypeConfig(selectedType);
   const showSeasons = shouldShowSeasons(selectedType);
