@@ -4,6 +4,7 @@ import { Layout } from 'antd';
 import { Sidebar } from '../Sidebar/Sidebar';
 import { BottomNav } from '../BottomNav/BottomNav';
 import { PrivacyBanner } from '../../common/PrivacyBanner/PrivacyBanner';
+import { StaleVersionNotifier } from '../../common/StaleVersionNotifier/StaleVersionNotifier';
 import './AppLayout.css';
 
 const { Content } = Layout;
@@ -21,6 +22,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       </Layout>
       <BottomNav />
       <PrivacyBanner />
+      <StaleVersionNotifier />
     </Layout>
   );
 }

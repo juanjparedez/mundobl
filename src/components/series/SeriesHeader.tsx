@@ -1,11 +1,11 @@
 import { Tag } from 'antd';
 import {
   CalendarOutlined,
-  GlobalOutlined,
   BookOutlined,
   MobileOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
+import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import './SeriesHeader.css';
 
 interface SeriesHeaderProps {
@@ -80,7 +80,7 @@ export function SeriesHeader({ series }: SeriesHeaderProps) {
 
           {series.country && (
             <span className="series-header__meta-item">
-              <GlobalOutlined /> {series.country.name}
+              <CountryFlag code={series.country.code} /> {series.country.name}
             </span>
           )}
 

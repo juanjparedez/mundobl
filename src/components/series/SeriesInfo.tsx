@@ -3,6 +3,7 @@
 import { Descriptions, Tag } from 'antd';
 import Link from 'next/link';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import './SeriesInfo.css';
 
 interface SeriesInfoProps {
@@ -19,6 +20,7 @@ interface SeriesInfoProps {
     review?: string | null;
     country?: {
       name: string;
+      code?: string | null;
     } | null;
     productionCompany?: {
       name: string;
@@ -133,7 +135,14 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
         </Descriptions.Item>
 
         <Descriptions.Item label="País">
-          {series.country?.name || 'N/A'}
+          {series.country ? (
+            <>
+              <CountryFlag code={series.country.code} size="small" />{' '}
+              {series.country.name}
+            </>
+          ) : (
+            'N/A'
+          )}
         </Descriptions.Item>
 
         <Descriptions.Item label="Tipo">

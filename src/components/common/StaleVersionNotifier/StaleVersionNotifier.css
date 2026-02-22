@@ -1,0 +1,29 @@
+.stale-version-modal__content {
+  text-align: center;
+  padding: var(--spacing-md) 0;
+}
+
+.stale-version-modal__icon {
+  font-size: 48px;
+  color: var(--warning-color);
+  margin-bottom: var(--spacing-md);
+}
+
+.stale-version-modal__title {
+  margin: 0 0 var(--spacing-sm);
+  font-size: 18px;
+  color: var(--text-primary);
+}
+
+.stale-version-modal__description {
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-lg);
+  line-height: 1.6;
+}
+
+.stale-version-modal__warning {
+  margin-top: var(--spacing-sm);
+  margin-bottom: 0;
+  font-size: var(--font-size-sm);
+  color: var(--warning-color);
+}

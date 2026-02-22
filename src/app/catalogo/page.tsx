@@ -14,6 +14,7 @@ export default async function CatalogoPage() {
     id: serie.id.toString(),
     titulo: serie.title,
     pais: serie.country?.name || 'Sin país',
+    paisCode: serie.country?.code || null,
     tipo: serie.type,
     temporadas: serie.seasons.length,
     episodios: serie.seasons.reduce((acc, s) => acc + (s.episodeCount || 0), 0),

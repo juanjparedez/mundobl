@@ -9,7 +9,6 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   TagsOutlined,
-  PlusOutlined,
   GlobalOutlined,
   PlayCircleOutlined,
   BulbOutlined,
@@ -92,8 +91,8 @@ export function Sidebar() {
             children: [
               {
                 key: ROUTES.ADMIN,
-                icon: <PlusOutlined />,
-                label: 'Nueva Serie',
+                icon: <AppstoreOutlined />,
+                label: 'Series',
                 onClick: () => router.push(ROUTES.ADMIN),
               },
               ...(isAdmin

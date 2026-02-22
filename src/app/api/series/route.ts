@@ -261,7 +261,8 @@ export async function POST(request: NextRequest) {
     // Crear contenido audiovisual asociado
     if (contentItems && contentItems.length > 0) {
       for (const item of contentItems) {
-        if (!item.title?.trim() || !item.url?.trim() || !item.platform) continue;
+        if (!item.title?.trim() || !item.url?.trim() || !item.platform)
+          continue;
 
         const videoId = extractVideoId(
           item.platform as Platform,
