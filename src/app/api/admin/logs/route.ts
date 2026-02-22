@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
       limit: parseInt(searchParams.get('limit') || '50'),
       action: searchParams.get('action') || undefined,
       userId: searchParams.get('userId') || undefined,
+      ip: searchParams.get('ip') || undefined,
       from: searchParams.get('from') || undefined,
       to: searchParams.get('to') || undefined,
     };

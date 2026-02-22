@@ -21,19 +21,28 @@ async function fetchBuildId(): Promise<string | null> {
 export function StaleVersionNotifier() {
   const [stale, setStale] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  const [currentBuildId, setCurrentBuildId] = useState<string | null>(null);
+  const [newBuildId, setNewBuildId] = useState<string | null>(null);
   const knownBuildId = useRef<string | null>(null);
 
   useEffect(() => {
+    // Skip version checking in development
+    if (process.env.NODE_ENV === 'development') return;
+
     // Capture initial build ID on mount
     fetchBuildId().then((id) => {
-      if (id) knownBuildId.current = id;
+      if (id) {
+        knownBuildId.current = id;
+        setCurrentBuildId(id);
+      }
     });
 
     const interval = setInterval(async () => {
-      const currentId = await fetchBuildId();
-      if (!currentId || !knownBuildId.current) return;
+      const latestId = await fetchBuildId();
+      if (!latestId || !knownBuildId.current) return;
 
-      if (knownBuildId.current !== currentId) {
+      if (knownBuildId.current !== latestId) {
+        setNewBuildId(latestId);
         setStale(true);
       }
     }, CHECK_INTERVAL_MS);
@@ -67,6 +76,28 @@ export function StaleVersionNotifier() {
           Hay una versión más reciente de la aplicación. Te recomendamos
           recargar la página para evitar errores o inconsistencias.
         </p>
+        {(currentBuildId || newBuildId) && (
+          <div className="stale-version-modal__versions">
+            {currentBuildId && (
+              <span>
+                Versión actual: <code>{currentBuildId}</code>
+              </span>
+            )}
+            {newBuildId && (
+              <span>
+                Nueva versión: <code>{newBuildId}</code>
+              </span>
+            )}
+            <a
+              href="https://github.com/juanjparedez/mundobl/blob/main/CHANGELOG.md"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="stale-version-modal__changelog-link"
+            >
+              Ver changelog
+            </a>
+          </div>
+        )}
         <Space direction="vertical" size="middle" style={{ width: '100%' }}>
           <Button
             type="primary"

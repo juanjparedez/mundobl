@@ -3,6 +3,7 @@ import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { extractVideoId, type Platform } from '@/lib/embed-helpers';
 import { getCountryCode } from '@/lib/country-codes';
+import { downloadAndUploadExternalImage } from '@/lib/supabase';
 
 // GET /api/series - Obtener todas las series
 export async function GET() {
@@ -102,6 +103,22 @@ export async function POST(request: NextRequest) {
       resolvedOriginalLanguageId = language.id;
     }
 
+    // Procesar imagen externa → subir a Supabase si es URL externa
+    let resolvedImageUrl = body.imageUrl || null;
+    if (resolvedImageUrl) {
+      try {
+        resolvedImageUrl = await downloadAndUploadExternalImage(
+          resolvedImageUrl,
+          'series'
+        );
+      } catch (error) {
+        console.warn(
+          `No se pudo migrar imagen a Supabase, manteniendo URL original:`,
+          error
+        );
+      }
+    }
+
     // Crear la serie
     const serie = await prisma.series.create({
       data: {
@@ -111,7 +128,7 @@ export async function POST(request: NextRequest) {
         type,
         basedOn,
         format: format || 'regular',
-        imageUrl: body.imageUrl || null,
+        imageUrl: resolvedImageUrl,
         imagePosition: body.imagePosition || 'center',
         synopsis,
         soundtrack,

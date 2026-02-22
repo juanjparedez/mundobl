@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Table, Select, DatePicker, Button, Avatar, Tag, Space } from 'antd';
+import { Table, Select, Input, DatePicker, Button, Avatar, Tag, Space } from 'antd';
 import {
   UserOutlined,
   DeleteOutlined,
   ReloadOutlined,
+  SearchOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
@@ -53,6 +54,11 @@ const ACTION_OPTIONS = [
   { label: 'Delete', value: 'DELETE' },
 ];
 
+interface UserOption {
+  id: string;
+  name: string | null;
+}
+
 export function LogsClient() {
   const message = useMessage();
   const [logs, setLogs] = useState<AccessLogEntry[]>([]);
@@ -60,16 +66,32 @@ export function LogsClient() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [actionFilter, setActionFilter] = useState('');
+  const [userFilter, setUserFilter] = useState('');
+  const [ipFilter, setIpFilter] = useState('');
   const [dateRange, setDateRange] = useState<[string | null, string | null]>([
     null,
     null,
   ]);
+  const [users, setUsers] = useState<UserOption[]>([]);
+
+  useEffect(() => {
+    fetch('/api/users')
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setUsers(data.map((u: UserOption) => ({ id: u.id, name: u.name })));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const fetchLogs = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({ page: String(page), limit: '50' });
       if (actionFilter) params.set('action', actionFilter);
+      if (userFilter) params.set('userId', userFilter);
+      if (ipFilter) params.set('ip', ipFilter);
       if (dateRange[0]) params.set('from', dateRange[0]);
       if (dateRange[1]) params.set('to', dateRange[1]);
 
@@ -85,7 +107,7 @@ export function LogsClient() {
     } finally {
       setLoading(false);
     }
-  }, [page, actionFilter, dateRange, message]);
+  }, [page, actionFilter, userFilter, ipFilter, dateRange, message]);
 
   useEffect(() => {
     fetchLogs();
@@ -195,6 +217,33 @@ export function LogsClient() {
                 options={ACTION_OPTIONS}
                 style={{ width: 140 }}
                 placeholder="Acción"
+              />
+              <Select
+                value={userFilter || undefined}
+                onChange={(value) => {
+                  setUserFilter(value || '');
+                  setPage(1);
+                }}
+                allowClear
+                showSearch
+                optionFilterProp="label"
+                options={users.map((u) => ({
+                  label: u.name || u.id,
+                  value: u.id,
+                }))}
+                style={{ width: 180 }}
+                placeholder="Usuario"
+              />
+              <Input
+                value={ipFilter}
+                onChange={(e) => {
+                  setIpFilter(e.target.value);
+                  setPage(1);
+                }}
+                prefix={<SearchOutlined />}
+                placeholder="Buscar IP"
+                allowClear
+                style={{ width: 160 }}
               />
               <RangePicker
                 onChange={(_, dateStrings) => {

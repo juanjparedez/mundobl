@@ -1,6 +1,14 @@
 import type { NextConfig } from 'next';
+import { execSync } from 'child_process';
 
 const nextConfig: NextConfig = {
+  generateBuildId: () => {
+    try {
+      return execSync('git rev-parse --short HEAD').toString().trim();
+    } catch {
+      return Date.now().toString(36);
+    }
+  },
   reactStrictMode: true,
   transpilePackages: ['antd', '@ant-design/icons'],
   typescript: {

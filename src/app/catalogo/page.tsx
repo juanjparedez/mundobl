@@ -2,10 +2,14 @@ export const dynamic = 'force-dynamic';
 
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { getAllSeries } from '@/lib/database';
+import { auth } from '@/lib/auth';
 import { CatalogoClient } from './CatalogoClient';
 import './catalogo.css';
 
 export default async function CatalogoPage() {
+  const session = await auth();
+  const userRole = session?.user?.role || null;
+
   // Obtener datos reales desde la base de datos
   const seriesDB = await getAllSeries();
 
@@ -33,7 +37,7 @@ export default async function CatalogoPage() {
   return (
     <AppLayout>
       <div className="catalogo-page">
-        <CatalogoClient series={seriesData} />
+        <CatalogoClient series={seriesData} userRole={userRole} />
       </div>
     </AppLayout>
   );
