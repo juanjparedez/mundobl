@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
+import { extractVideoId, type Platform } from '@/lib/embed-helpers';
 
 // GET /api/series - Obtener todas las series
 export async function GET() {
@@ -63,6 +64,7 @@ export async function POST(request: NextRequest) {
       productionCompanyId,
       originalLanguageId,
       dubbingIds,
+      contentItems,
     } = body;
 
     // Crear o encontrar país
@@ -252,6 +254,35 @@ export async function POST(request: NextRequest) {
             { mainSeriesId: relatedId, relatedSeriesId: serie.id },
           ],
           skipDuplicates: true,
+        });
+      }
+    }
+
+    // Crear contenido audiovisual asociado
+    if (contentItems && contentItems.length > 0) {
+      for (const item of contentItems) {
+        if (!item.title?.trim() || !item.url?.trim() || !item.platform) continue;
+
+        const videoId = extractVideoId(
+          item.platform as Platform,
+          item.url.trim()
+        );
+
+        await prisma.embeddableContent.create({
+          data: {
+            seriesId: serie.id,
+            title: item.title.trim(),
+            description: item.description?.trim() || null,
+            platform: item.platform,
+            url: item.url.trim(),
+            videoId: videoId || null,
+            category: item.category || 'other',
+            thumbnailUrl: item.thumbnailUrl?.trim() || null,
+            channelName: item.channelName?.trim() || null,
+            official: item.official ?? true,
+            sortOrder: item.sortOrder ?? 0,
+            featured: item.featured ?? false,
+          },
         });
       }
     }

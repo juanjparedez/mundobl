@@ -391,35 +391,26 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
           : values.basedOn || null,
       };
 
+      // Include pending content items in the creation request
+      const bodyPayload =
+        mode === 'create' && pendingContent.length > 0
+          ? {
+              ...submitValues,
+              contentItems: pendingContent.map(
+                ({ _tempId, ...contentData }) => contentData
+              ),
+            }
+          : submitValues;
+
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(submitValues),
+        body: JSON.stringify(bodyPayload),
       });
 
       if (!response.ok) throw new Error('Error saving series');
 
       const savedSerie = await response.json();
-
-      // Save pending content items after creating the series
-      if (mode === 'create' && pendingContent.length > 0) {
-        const contentPromises = pendingContent.map((item) => {
-          const { _tempId, ...contentData } = item;
-          return fetch('/api/contenido', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...contentData, seriesId: savedSerie.id }),
-          });
-        });
-
-        const results = await Promise.allSettled(contentPromises);
-        const failed = results.filter((r) => r.status === 'rejected').length;
-        if (failed > 0) {
-          message.warning(
-            `Serie creada, pero ${failed} contenido(s) no se pudieron guardar`
-          );
-        }
-      }
 
       message.success(
         mode === 'create'
