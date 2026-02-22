@@ -32,6 +32,7 @@ import {
 } from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 
 const { Option } = Select;
 
@@ -39,6 +40,7 @@ interface SerieData {
   id: string;
   titulo: string;
   pais: string;
+  paisCode?: string | null;
   tipo: string;
   temporadas: number;
   episodios: number;
@@ -424,7 +426,9 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
             )}
           </div>
           <div className="serie-card-info">
-            <span>{serie.pais}</span>
+            <span>
+              <CountryFlag code={serie.paisCode} size="small" /> {serie.pais}
+            </span>
             {serie.anio > 0 && (
               <>
                 <span className="serie-card-dot" />
@@ -535,7 +539,9 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
           <Tag color={getColorByType(serie.tipo)} style={{ margin: 0 }}>
             {serie.tipo.toUpperCase()}
           </Tag>
-          <span>{serie.pais}</span>
+          <span>
+            <CountryFlag code={serie.paisCode} size="small" /> {serie.pais}
+          </span>
           {serie.anio > 0 && <span>{serie.anio}</span>}
           {serie.rating != null && serie.rating > 0 && (
             <Tag color="gold" style={{ margin: 0 }}>
@@ -592,7 +598,10 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
                   <Tag color={getColorByType(serie.tipo)} style={{ margin: 0 }}>
                     {serie.tipo.toUpperCase()}
                   </Tag>
-                  <span>{serie.pais}</span>
+                  <span>
+                    <CountryFlag code={serie.paisCode} size="small" />{' '}
+                    {serie.pais}
+                  </span>
                   {serie.anio > 0 && <span>{serie.anio}</span>}
                   {serie.rating != null && serie.rating > 0 && (
                     <Tag color="gold" style={{ margin: 0 }}>

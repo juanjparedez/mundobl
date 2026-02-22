@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import {
-  PlusOutlined,
+  AppstoreOutlined,
   TagsOutlined,
   GlobalOutlined,
   UserOutlined,
@@ -19,7 +19,7 @@ import './admin-nav.css';
 const adminLinks = [
   {
     key: '/admin',
-    icon: <PlusOutlined />,
+    icon: <AppstoreOutlined />,
     label: 'Series',
     shortLabel: 'Series',
   },

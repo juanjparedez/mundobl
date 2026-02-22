@@ -197,8 +197,44 @@
   color: var(--text-primary) !important;
 }
 
+[data-theme='dark'] .ant-modal-body {
+  color: var(--text-primary) !important;
+}
+
 [data-theme='dark'] .ant-modal-footer {
   border-top-color: var(--border-color) !important;
+}
+
+/* Confirm modal (Modal.confirm / Popconfirm) */
+[data-theme='dark'] .ant-modal-confirm-title {
+  color: var(--text-primary) !important;
+}
+
+[data-theme='dark'] .ant-modal-confirm-content {
+  color: var(--text-secondary) !important;
+}
+
+/* --- Popconfirm --- */
+[data-theme='dark'] .ant-popconfirm .ant-popover-inner {
+  background-color: var(--bg-container) !important;
+}
+
+[data-theme='dark'] .ant-popconfirm .ant-popover-message-title,
+[data-theme='dark'] .ant-popconfirm .ant-popconfirm-title {
+  color: var(--text-primary) !important;
+}
+
+[data-theme='dark'] .ant-popconfirm .ant-popconfirm-description {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme='dark'] .ant-popover-inner {
+  background-color: var(--bg-container) !important;
+}
+
+[data-theme='dark'] .ant-popover-arrow::before,
+[data-theme='dark'] .ant-popover-arrow::after {
+  background-color: var(--bg-container) !important;
 }
 
 /* --- Divider --- */

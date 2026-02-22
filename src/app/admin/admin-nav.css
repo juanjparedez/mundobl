@@ -73,3 +73,25 @@
     font-size: 13px;
   }
 }
+
+/* Very small screens: icon-only tabs */
+@media (max-width: 480px) {
+  .admin-nav {
+    padding: 2px;
+    gap: 1px;
+  }
+
+  .admin-nav__item {
+    padding: 8px 10px;
+    gap: 0;
+  }
+
+  .admin-nav__label,
+  .admin-nav__label-short {
+    display: none;
+  }
+
+  .admin-nav__icon {
+    font-size: 16px;
+  }
+}

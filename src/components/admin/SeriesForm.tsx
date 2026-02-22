@@ -37,6 +37,7 @@ import {
   SeriesContentManager,
   type PendingContentItem,
 } from './SeriesContentManager/SeriesContentManager';
+import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -198,7 +199,9 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
   const [selectedType, setSelectedType] = useState('serie');
 
   // Datos para autocompletado
-  const [countries, setCountries] = useState<string[]>([]);
+  const [countries, setCountries] = useState<
+    Array<{ name: string; code: string | null }>
+  >([]);
   const [actors, setActors] = useState<string[]>([]);
   const [directors, setDirectors] = useState<string[]>([]);
   const [universes, setUniverses] = useState<UniverseOption[]>([]);
@@ -230,7 +233,12 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
       // Cargar países
       const countriesRes = await fetch('/api/countries');
       const countriesData = await countriesRes.json();
-      setCountries(countriesData.map((c: { name: string }) => c.name));
+      setCountries(
+        countriesData.map((c: { name: string; code: string | null }) => ({
+          name: c.name,
+          code: c.code,
+        }))
+      );
 
       // Cargar actores
       const actorsRes = await fetch('/api/actors');
@@ -604,15 +612,31 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
 
               <Col xs={24} md={8}>
                 <Form.Item label="País" name="countryName">
-                  <AutoComplete
-                    options={countries.map((c) => ({ value: c }))}
-                    placeholder="Ej: Tailandia"
+                  <Select
+                    placeholder="Selecciona un país"
                     size="large"
-                    filterOption={(inputValue, option) =>
-                      option!.value
-                        .toLowerCase()
-                        .includes(inputValue.toLowerCase())
+                    allowClear
+                    showSearch
+                    filterOption={(input, option) =>
+                      (option?.label as string)
+                        ?.toLowerCase()
+                        .includes(input.toLowerCase()) ?? false
                     }
+                    options={countries.map((c) => ({
+                      value: c.name,
+                      label: c.name,
+                    }))}
+                    optionRender={(option) => {
+                      const country = countries.find(
+                        (c) => c.name === option.value
+                      );
+                      return (
+                        <Space>
+                          <CountryFlag code={country?.code} size="small" />
+                          {option.label}
+                        </Space>
+                      );
+                    }}
                   />
                 </Form.Item>
               </Col>
