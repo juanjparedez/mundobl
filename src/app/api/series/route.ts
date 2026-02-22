@@ -279,32 +279,47 @@ export async function POST(request: NextRequest) {
 
     // Crear contenido audiovisual asociado
     if (contentItems && contentItems.length > 0) {
+      console.warn(
+        `Creating ${contentItems.length} content items for series ${serie.id}`
+      );
       for (const item of contentItems) {
-        if (!item.title?.trim() || !item.url?.trim() || !item.platform)
+        if (!item.title?.trim() || !item.url?.trim() || !item.platform) {
+          console.warn('Skipping content item with missing data:', item);
           continue;
+        }
 
         const videoId = extractVideoId(
           item.platform as Platform,
           item.url.trim()
         );
 
-        await prisma.embeddableContent.create({
-          data: {
-            seriesId: serie.id,
-            title: item.title.trim(),
-            description: item.description?.trim() || null,
-            platform: item.platform,
-            url: item.url.trim(),
-            videoId: videoId || null,
-            category: item.category || 'other',
-            thumbnailUrl: item.thumbnailUrl?.trim() || null,
-            channelName: item.channelName?.trim() || null,
-            official: item.official ?? true,
-            sortOrder: item.sortOrder ?? 0,
-            featured: item.featured ?? false,
-          },
-        });
+        try {
+          await prisma.embeddableContent.create({
+            data: {
+              seriesId: serie.id,
+              title: item.title.trim(),
+              description: item.description?.trim() || null,
+              platform: item.platform,
+              url: item.url.trim(),
+              videoId: videoId || null,
+              category: item.category || 'other',
+              thumbnailUrl: item.thumbnailUrl?.trim() || null,
+              channelName: item.channelName?.trim() || null,
+              official: item.official ?? true,
+              sortOrder: item.sortOrder ?? 0,
+              featured: item.featured ?? false,
+            },
+          });
+          console.warn(`Created content: "${item.title}"`);
+        } catch (contentError) {
+          console.error(
+            `Failed to create content "${item.title}":`,
+            contentError
+          );
+        }
       }
+    } else {
+      console.warn('No contentItems in request body. Keys:', Object.keys(body));
     }
 
     return NextResponse.json(serie, { status: 201 });
