@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { getCountryCode } from '@/lib/country-codes';
+import { downloadAndUploadExternalImage } from '@/lib/supabase';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -154,6 +155,22 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       originalLanguageId = language.id;
     }
 
+    // Procesar imagen externa → subir a Supabase si es URL externa
+    let resolvedImageUrl = body.imageUrl || null;
+    if (resolvedImageUrl) {
+      try {
+        resolvedImageUrl = await downloadAndUploadExternalImage(
+          resolvedImageUrl,
+          'series'
+        );
+      } catch (error) {
+        console.warn(
+          `No se pudo migrar imagen a Supabase, manteniendo URL original:`,
+          error
+        );
+      }
+    }
+
     // Actualizar la serie
     const updatedSerie = await prisma.series.update({
       where: { id: serieId },
@@ -164,7 +181,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         type: body.type || 'serie',
         basedOn: body.basedOn || null,
         format: body.format || 'regular',
-        imageUrl: body.imageUrl || null,
+        imageUrl: resolvedImageUrl,
         imagePosition: body.imagePosition || 'center',
         synopsis: body.synopsis || null,
         review: body.review || null,

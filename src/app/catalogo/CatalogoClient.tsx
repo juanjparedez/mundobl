@@ -30,6 +30,7 @@ import {
   GlobalOutlined,
   RightOutlined,
 } from '@ant-design/icons';
+import Image from 'next/image';
 import { useMessage } from '@/hooks/useMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
@@ -72,6 +73,7 @@ type CatalogItem = UniverseGroup | SingleSerie;
 
 interface CatalogoClientProps {
   series: SerieData[];
+  userRole: string | null;
 }
 
 const PAGE_SIZE_OPTIONS = [24, 48, 96];
@@ -102,9 +104,10 @@ const getColorByType = (tipo: string) => {
   return colorMap[tipo] || 'default';
 };
 
-export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
+export function CatalogoClient({ series: initialSeries, userRole }: CatalogoClientProps) {
   const router = useRouter();
   const message = useMessage();
+  const canEdit = userRole === 'ADMIN' || userRole === 'EDITOR';
 
   const [series, setSeries] = useState<SerieData[]>(initialSeries);
 
@@ -377,43 +380,51 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
         className={`serie-card serie-card--${serie.tipo}`}
         onClick={() => handleCardClick(serie.id)}
       >
-        <div
-          className="serie-card-cover"
-          style={{
-            background: gradient,
-            backgroundImage: serie.imageUrl
-              ? `url(${serie.imageUrl})`
-              : undefined,
-            backgroundSize: 'cover',
-            backgroundPosition: serie.imagePosition || 'center',
-            backgroundBlendMode: serie.imageUrl ? 'overlay' : 'normal',
-          }}
-        >
-          <div className="serie-card-actions">
-            <Tooltip
-              title={
-                serie.isFavorite ? 'Quitar de favoritos' : 'Agregar a favoritos'
-              }
-            >
-              <button
-                className={`serie-card-action-btn ${serie.isFavorite ? 'favorite-active' : ''}`}
-                onClick={(e) =>
-                  toggleFavorite(serie.id, serie.isFavorite || false, e)
+        <div className="serie-card-cover">
+          {serie.imageUrl && (
+            <Image
+              src={serie.imageUrl}
+              alt={serie.titulo}
+              fill
+              sizes="(max-width: 768px) 50vw, 33vw"
+              style={{
+                objectFit: 'cover',
+                objectPosition: serie.imagePosition || 'center',
+              }}
+            />
+          )}
+          <div
+            className="serie-card-gradient-overlay"
+            style={{ background: gradient }}
+          >
+            <div className="serie-card-actions">
+              <Tooltip
+                title={
+                  serie.isFavorite
+                    ? 'Quitar de favoritos'
+                    : 'Agregar a favoritos'
                 }
               >
-                {serie.isFavorite ? <StarFilled /> : <StarOutlined />}
-              </button>
-            </Tooltip>
-            <Tooltip title="Ver detalle">
-              <button
-                className="serie-card-action-btn"
-                onClick={(e) => handleQuickView(serie.id, e)}
-              >
-                <EyeOutlined />
-              </button>
-            </Tooltip>
+                <button
+                  className={`serie-card-action-btn ${serie.isFavorite ? 'favorite-active' : ''}`}
+                  onClick={(e) =>
+                    toggleFavorite(serie.id, serie.isFavorite || false, e)
+                  }
+                >
+                  {serie.isFavorite ? <StarFilled /> : <StarOutlined />}
+                </button>
+              </Tooltip>
+              <Tooltip title="Ver detalle">
+                <button
+                  className="serie-card-action-btn"
+                  onClick={(e) => handleQuickView(serie.id, e)}
+                >
+                  <EyeOutlined />
+                </button>
+              </Tooltip>
+            </div>
+            <div className="serie-title-overlay">{serie.titulo}</div>
           </div>
-          <div className="serie-title-overlay">{serie.titulo}</div>
         </div>
         <div className="serie-card-body">
           <div className="serie-card-tags">
@@ -459,19 +470,28 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
           className="serie-card serie-card--universe"
           onClick={(e) => toggleUniverse(group.universoId, e)}
         >
-          <div
-            className="serie-card-cover"
-            style={{
-              background:
-                'linear-gradient(135deg, rgba(82, 73, 200, 0.8) 0%, rgba(130, 87, 229, 0.9) 100%)',
-              backgroundImage: firstSerie.imageUrl
-                ? `url(${firstSerie.imageUrl})`
-                : undefined,
-              backgroundSize: 'cover',
-              backgroundPosition: firstSerie.imagePosition || 'center',
-            }}
-          >
-            <div className="serie-title-overlay">{group.universoNombre}</div>
+          <div className="serie-card-cover">
+            {firstSerie.imageUrl && (
+              <Image
+                src={firstSerie.imageUrl}
+                alt={group.universoNombre}
+                fill
+                sizes="(max-width: 768px) 50vw, 33vw"
+                style={{
+                  objectFit: 'cover',
+                  objectPosition: firstSerie.imagePosition || 'center',
+                }}
+              />
+            )}
+            <div
+              className="serie-card-gradient-overlay"
+              style={{
+                background:
+                  'linear-gradient(135deg, rgba(82, 73, 200, 0.8) 0%, rgba(130, 87, 229, 0.9) 100%)',
+              }}
+            >
+              <div className="serie-title-overlay">{group.universoNombre}</div>
+            </div>
           </div>
           <div className="serie-card-body">
             <div className="serie-card-tags">
@@ -522,17 +542,28 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
       className={`serie-list-item serie-list-item--${serie.tipo}`}
       onClick={() => handleCardClick(serie.id)}
     >
-      <div
-        className="serie-list-item-cover"
-        style={{
-          background: getGradientByType(serie.tipo),
-          backgroundImage: serie.imageUrl
-            ? `url(${serie.imageUrl})`
-            : undefined,
-          backgroundSize: 'cover',
-          backgroundPosition: serie.imagePosition || 'center',
-        }}
-      />
+      <div className="serie-list-item-cover">
+        {serie.imageUrl ? (
+          <Image
+            src={serie.imageUrl}
+            alt={serie.titulo}
+            fill
+            sizes="48px"
+            style={{
+              objectFit: 'cover',
+              objectPosition: serie.imagePosition || 'center',
+            }}
+          />
+        ) : (
+          <div
+            style={{
+              width: '100%',
+              height: '100%',
+              background: getGradientByType(serie.tipo),
+            }}
+          />
+        )}
+      </div>
       <div className="serie-list-item-content">
         <span className="serie-list-item-title">{serie.titulo}</span>
         <div className="serie-list-item-meta">
@@ -581,17 +612,28 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
               className={`serie-list-item serie-list-item--${serie.tipo} serie-list-item--universe`}
               onClick={() => handleCardClick(serie.id)}
             >
-              <div
-                className="serie-list-item-cover"
-                style={{
-                  background: getGradientByType(serie.tipo),
-                  backgroundImage: serie.imageUrl
-                    ? `url(${serie.imageUrl})`
-                    : undefined,
-                  backgroundSize: 'cover',
-                  backgroundPosition: serie.imagePosition || 'center',
-                }}
-              />
+              <div className="serie-list-item-cover">
+                {serie.imageUrl ? (
+                  <Image
+                    src={serie.imageUrl}
+                    alt={serie.titulo}
+                    fill
+                    sizes="48px"
+                    style={{
+                      objectFit: 'cover',
+                      objectPosition: serie.imagePosition || 'center',
+                    }}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      background: getGradientByType(serie.tipo),
+                    }}
+                  />
+                )}
+              </div>
               <div className="serie-list-item-content">
                 <span className="serie-list-item-title">{serie.titulo}</span>
                 <div className="serie-list-item-meta">
@@ -833,13 +875,15 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
               size={isMobile ? 'small' : 'middle'}
             />
           </Space.Compact>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => router.push('/admin/series/nueva')}
-          >
-            Nueva
-          </Button>
+          {canEdit && (
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => router.push('/admin/series/nueva')}
+            >
+              Nueva
+            </Button>
+          )}
         </div>
       </div>
 

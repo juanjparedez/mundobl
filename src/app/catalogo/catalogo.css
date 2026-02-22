@@ -193,11 +193,17 @@
    ========================================== */
 .serie-card-cover {
   height: 160px;
+  position: relative;
+  overflow: hidden;
+}
+
+.serie-card-gradient-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  overflow: hidden;
 }
 
 .serie-card-cover::after {
@@ -408,8 +414,8 @@
   height: 48px;
   border-radius: var(--border-radius-sm);
   flex-shrink: 0;
-  background-size: cover;
-  background-position: center;
+  position: relative;
+  overflow: hidden;
 }
 
 .serie-list-item-content {
