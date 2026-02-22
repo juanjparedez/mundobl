@@ -420,6 +420,8 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
 
       const savedSerie = await response.json();
 
+      submittedSuccessfully.current = true;
+
       message.success(
         mode === 'create'
           ? 'Serie creada exitosamente'
@@ -486,8 +488,10 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
     }
   };
 
+  const submittedSuccessfully = useRef(false);
+
   const hasUnsavedChanges = useCallback(() => {
-    return form.isFieldsTouched();
+    return !submittedSuccessfully.current && form.isFieldsTouched();
   }, [form]);
 
   // Warn on browser close/reload if there are unsaved changes

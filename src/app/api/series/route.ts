@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { extractVideoId, type Platform } from '@/lib/embed-helpers';
+import { getCountryCode } from '@/lib/country-codes';
 
 // GET /api/series - Obtener todas las series
 export async function GET() {
@@ -67,13 +68,14 @@ export async function POST(request: NextRequest) {
       contentItems,
     } = body;
 
-    // Crear o encontrar país
+    // Crear o encontrar país (con código ISO automático)
     let resolvedCountryId = null;
     if (countryName) {
+      const code = getCountryCode(countryName);
       const country = await prisma.country.upsert({
         where: { name: countryName },
-        update: {},
-        create: { name: countryName },
+        update: code ? { code } : {},
+        create: { name: countryName, ...(code ? { code } : {}) },
       });
       resolvedCountryId = country.id;
     }
