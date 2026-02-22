@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Button, Table, Space, Tag, Modal, Input } from 'antd';
+import { Button, Table, Space, Tag, Input } from 'antd';
 import {
   EditOutlined,
   DeleteOutlined,
@@ -11,7 +11,7 @@ import {
 import type { ColumnsType } from 'antd/es/table';
 import { EditSerieModal } from './EditSerieModal';
 import { useRouter } from 'next/navigation';
-import { useMessage } from '@/hooks/useMessage';
+import { useMessage, useModal } from '@/hooks/useMessage';
 
 interface SerieData {
   key: string;
@@ -34,6 +34,7 @@ const ALPHABET = '#ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 export function AdminTableClient({ data, countries }: AdminTableClientProps) {
   const message = useMessage();
+  const modal = useModal();
   const router = useRouter();
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedSerieId, setSelectedSerieId] = useState<string | null>(null);
@@ -84,7 +85,7 @@ export function AdminTableClient({ data, countries }: AdminTableClientProps) {
   };
 
   const handleDelete = (record: SerieData) => {
-    Modal.confirm({
+    modal.confirm({
       title: '¿Estás seguro?',
       icon: <ExclamationCircleOutlined />,
       content: `¿Deseas eliminar la serie "${record.titulo}"? Esta acción no se puede deshacer.`,
