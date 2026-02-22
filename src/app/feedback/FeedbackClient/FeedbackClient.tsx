@@ -73,6 +73,11 @@ const STATUS_CONFIG: Record<string, { color: string; label: string }> = {
   descartado: { color: 'error', label: 'Descartado' },
 };
 
+interface ChangelogEntry {
+  version: string;
+  items: string[];
+}
+
 interface PendingImage {
   file: File;
   preview: string;
@@ -90,6 +95,18 @@ export function FeedbackClient() {
 
   const isAdmin = session?.user?.role === 'ADMIN';
   const userId = session?.user?.id;
+  const [changelog, setChangelog] = useState<ChangelogEntry[]>([]);
+  const [buildId, setBuildId] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch('/api/changelog')
+      .then((res) => res.json())
+      .then((data) => {
+        setChangelog(data.entries || []);
+        setBuildId(data.buildId || null);
+      })
+      .catch(() => {});
+  }, []);
 
   const fetchRequests = useCallback(async () => {
     try {
@@ -404,44 +421,73 @@ export function FeedbackClient() {
     {
       key: 'changelog',
       label: 'Changelog',
-      children:
-        completedRequests.length > 0 ? (
-          <Timeline
-            items={completedRequests.map((r) => ({
-              color: 'green',
-              dot: <CheckCircleOutlined />,
-              children: (
-                <div className="changelog-item">
-                  <div className="changelog-item__title">
-                    <Tag
-                      icon={TYPE_CONFIG[r.type]?.icon}
-                      color={TYPE_CONFIG[r.type]?.color}
-                    >
-                      {TYPE_CONFIG[r.type]?.label}
+      children: (
+        <div className="changelog-tab">
+          {buildId && (
+            <div className="changelog-version-badge">
+              Versión actual: <code>{buildId}</code>
+            </div>
+          )}
+          {changelog.length > 0 ? (
+            <div className="changelog-entries">
+              {changelog.map((entry, i) => (
+                <div key={i} className="changelog-entry">
+                  <div className="changelog-entry__header">
+                    <Tag color={i === 0 ? 'blue' : 'default'}>
+                      {entry.version}
                     </Tag>
-                    {r.title}
                   </div>
-                  {r.description && (
-                    <div className="changelog-item__description">
-                      {r.description}
-                    </div>
-                  )}
-                  <div
-                    style={{
-                      fontSize: 'var(--font-size-sm)',
-                      color: 'var(--text-tertiary)',
-                      marginTop: 4,
-                    }}
-                  >
-                    {new Date(r.updatedAt).toLocaleDateString('es-ES')}
-                  </div>
+                  <ul className="changelog-entry__list">
+                    {entry.items.map((item, j) => (
+                      <li key={j}>{item}</li>
+                    ))}
+                  </ul>
                 </div>
-              ),
-            }))}
-          />
-        ) : (
-          <Empty description="No hay cambios registrados" />
-        ),
+              ))}
+            </div>
+          ) : (
+            <Empty description="No hay cambios registrados" />
+          )}
+          {completedRequests.length > 0 && (
+            <>
+              <h4 className="changelog-section-title">Solicitudes completadas</h4>
+              <Timeline
+                items={completedRequests.map((r) => ({
+                  color: 'green',
+                  dot: <CheckCircleOutlined />,
+                  children: (
+                    <div className="changelog-item">
+                      <div className="changelog-item__title">
+                        <Tag
+                          icon={TYPE_CONFIG[r.type]?.icon}
+                          color={TYPE_CONFIG[r.type]?.color}
+                        >
+                          {TYPE_CONFIG[r.type]?.label}
+                        </Tag>
+                        {r.title}
+                      </div>
+                      {r.description && (
+                        <div className="changelog-item__description">
+                          {r.description}
+                        </div>
+                      )}
+                      <div
+                        style={{
+                          fontSize: 'var(--font-size-sm)',
+                          color: 'var(--text-tertiary)',
+                          marginTop: 4,
+                        }}
+                      >
+                        {new Date(r.updatedAt).toLocaleDateString('es-ES')}
+                      </div>
+                    </div>
+                  ),
+                }))}
+              />
+            </>
+          )}
+        </div>
+      ),
     },
   ];
 
