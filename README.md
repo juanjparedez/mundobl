@@ -141,6 +141,7 @@ src/
 │   │   ├── universes/            # CRUD universos
 │   │   ├── feature-requests/     # Feedback + votos
 │   │   ├── upload/               # Subida de imagenes (Supabase Storage)
+│   │   ├── build-info/           # Build ID para deteccion de version
 │   │   └── admin/info/           # Info del proyecto (env vars)
 │   ├── catalogo/                 # Catalogo publico con filtros
 │   ├── admin/                    # Panel admin (CRUD completo)
@@ -150,7 +151,7 @@ src/
 │   └── directores/               # Perfiles de directores
 ├── components/
 │   ├── layout/                   # AppLayout, Header, Sidebar, BottomNav
-│   ├── common/                   # PageTitle, SearchBar, CommentsList
+│   ├── common/                   # PageTitle, SearchBar, CommentsList, CountryFlag, StaleVersionNotifier
 │   ├── series/                   # SeriesHeader, SeasonsList, EpisodesList, ViewStatusToggle
 │   ├── admin/                    # SeriesForm, SeasonForm
 │   └── watching/                 # CurrentlyWatchingDashboard
@@ -248,23 +249,30 @@ erDiagram
 - Busqueda por titulo con autocompletado
 - Filtros por pais, tipo, genero, tag, formato, estado de visualizacion
 - Paginacion y ordenamiento
-- Cards con imagen, rating, pais y estado
+- Cards con imagen, rating, bandera del pais y estado
+- Contenido audiovisual embebido (trailers, clips, entrevistas)
 
 ### Detalle de serie
 - Info completa: sinopsis, casting, direccion, productora, idiomas
+- Banderas de pais con iconos SVG (flag-icons)
 - Temporadas con episodios expandibles
 - Sistema de ratings por categoria (1-10)
 - Comentarios por serie, temporada y episodio
 - Toggle de estado de visualizacion
 - Favoritos
+- Contenido audiovisual relacionado (trailers, OST, behind the scenes)
+- Series relacionadas
 
 ### Panel admin
 - CRUD completo de todas las entidades
 - Merge de actores, directores y tags duplicados
-- Gestion de universos
+- Gestion de universos con creacion inline
 - Subida de imagenes a Supabase Storage
 - Gestion de usuarios y roles
 - Info del proyecto con links configurables
+- Selector de pais con banderas
+- Contenido audiovisual asociable durante la creacion de series
+- Navegacion responsive con tabs adaptativas (desktop/tablet/mobile)
 
 ### Feedback
 - Solicitudes de tipo Bug, Feature o Idea
@@ -276,9 +284,24 @@ erDiagram
 - Series en progreso con porcentaje de avance
 - Acceso rapido a marcar episodios como vistos
 
+### UX general
+- Tema claro/oscuro con soporte completo (modales, popovers, etc.)
+- Deteccion automatica de version desactualizada con aviso de recarga
+- Banner de privacidad
+- Diseño responsive (desktop, tablet, mobile)
+
 ---
 
 ## Changelog
+
+### v0.6 — Febrero 2026
+- Banderas de pais con iconos SVG (flag-icons) en catalogo, detalle y formulario admin
+- Selector de pais con banderas en el formulario de series (reemplaza autocomplete)
+- Contenido audiovisual asociable durante la creacion de series (fix: antes requeria guardar primero)
+- Deteccion automatica de version desactualizada con modal de recarga
+- Fix contraste de modales de confirmacion y popovers en modo oscuro
+- Navegacion admin responsive: tabs adaptativas (icon+label / icon+short / icon-only)
+- Renaming de menu lateral: "Nueva Serie" → "Series"
 
 ### v0.5 — Febrero 2026
 - Access logs con registro de visitas y acciones

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
+import { getCountryCode } from '@/lib/country-codes';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -122,10 +123,11 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     // Manejar país
     let countryId = body.countryId ? parseInt(body.countryId, 10) : null;
     if (body.countryName && !countryId) {
+      const code = getCountryCode(body.countryName);
       const country = await prisma.country.upsert({
         where: { name: body.countryName },
-        update: {},
-        create: { name: body.countryName },
+        update: code ? { code } : {},
+        create: { name: body.countryName, ...(code ? { code } : {}) },
       });
       countryId = country.id;
     }
