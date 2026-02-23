@@ -1,12 +1,12 @@
 # MundoBL - Contexto del Proyecto
 
-Catálogo personal de series asiáticas (BL/GL y otros géneros). Aplicación full-stack para gestionar, calificar y hacer seguimiento de series, películas, cortos y especiales.
+Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-stack para gestionar, calificar y hacer seguimiento de series, peliculas, cortos y especiales.
 
 ---
 
-## Stack Tecnológico
+## Stack Tecnologico
 
-| Tecnología | Versión | Uso |
+| Tecnologia | Version | Uso |
 |---|---|---|
 | **Next.js** | 16 | Framework (App Router) |
 | **React** | 19 | UI |
@@ -19,12 +19,12 @@ Catálogo personal de series asiáticas (BL/GL y otros géneros). Aplicación fu
 
 | Servicio | Detalle |
 |---|---|
-| **Hosting** | Vercel (deploy automático desde GitHub) |
-| **Base de datos** | Supabase PostgreSQL (sa-east-1, São Paulo) |
+| **Hosting** | Vercel (deploy automatico desde GitHub) |
+| **Base de datos** | Supabase PostgreSQL (sa-east-1, Sao Paulo) |
 | **Almacenamiento** | Supabase Storage (bucket `images`) |
 | **Auth** | NextAuth.js (Google OAuth) |
 | **Dominio** | mundobl.win (DNS en Cloudflare, CNAME a Vercel) |
-| **SSL** | Automático via Vercel |
+| **SSL** | Automatico via Vercel |
 
 ### Variables de Entorno (Vercel + .env local)
 
@@ -49,15 +49,15 @@ PROJECT_SUPABASE_URL        # Link a Supabase (para /admin/info)
 - **Single Responsibility**: Cada componente/archivo hace una sola cosa
 - **Open/Closed**: Componentes extensibles via props
 - **Liskov Substitution**: Componentes intercambiables via interfaces
-- **Interface Segregation**: Props específicas, no interfaces genéricas
-- **Dependency Inversion**: Inyección de dependencias via props
+- **Interface Segregation**: Props especificas, no interfaces genericas
+- **Dependency Inversion**: Inyeccion de dependencias via props
 
-### DRY & Buenas Prácticas
-- No repetir lógica: extraer a helpers en `src/lib/` o hooks en `src/hooks/`
+### DRY & Buenas Practicas
+- No repetir logica: extraer a helpers en `src/lib/` o hooks en `src/hooks/`
 - Componentes reutilizables en `src/components/common/`
 - Tipos compartidos en `src/types/`
 - Constantes en `src/constants/`
-- No usar `any` en TypeScript, usar tipos específicos o `unknown`
+- No usar `any` en TypeScript, usar tipos especificos o `unknown`
 
 ### Estilos
 - **NO usar CSS-in-JS**. Estilos en archivos `.css` separados por componente
@@ -74,7 +74,7 @@ PROJECT_SUPABASE_URL        # Link a Supabase (para /admin/info)
 ### Componentes
 - Funcionales con hooks (no clases)
 - Exportar con nombre (no default export)
-- Props con interfaz TypeScript explícita
+- Props con interfaz TypeScript explicita
 - Cada componente tiene su carpeta: `Component.tsx` + `Component.css`
 - Usar componentes de Ant Design antes de crear personalizados
 - Importar Ant Design individualmente: `import { Button, Input } from 'antd'`
@@ -92,10 +92,10 @@ PROJECT_SUPABASE_URL        # Link a Supabase (para /admin/info)
 ```
 src/
 ├── app/                          # Next.js App Router
-│   ├── layout.tsx                # Layout raíz (Ant Design + ThemeProvider)
+│   ├── layout.tsx                # Layout raiz (Ant Design + ThemeProvider)
 │   ├── page.tsx                  # Home → redirige a /catalogo
 │   ├── api/                      # API REST endpoints
-│   │   ├── series/               # CRUD series + ratings, comments, favorites, view-status
+│   │   ├── series/               # CRUD series + ratings, comments, favorites, view-status, search
 │   │   ├── seasons/              # CRUD temporadas + ratings, comments
 │   │   ├── episodes/             # CRUD episodios + view-status, comments, generate
 │   │   ├── actors/               # CRUD actores + merge duplicados
@@ -104,55 +104,73 @@ src/
 │   │   ├── universes/            # CRUD universos
 │   │   ├── languages/            # CRUD idiomas
 │   │   ├── production-companies/ # CRUD productoras
-│   │   ├── countries/            # Lectura países
-│   │   ├── currently-watching/   # Series en curso
+│   │   ├── countries/            # Lectura paises
+│   │   ├── genres/               # CRUD generos
+│   │   ├── currently-watching/   # Series en curso (filtrado por usuario)
+│   │   ├── contenido/            # CRUD contenido embebible + import de canales
+│   │   ├── sitios/               # CRUD sitios recomendados + sugeridos
 │   │   ├── feature-requests/     # Feedback + votos
-│   │   ├── upload/               # Subida de imágenes (Supabase Storage)
-│   │   └── admin/info/           # Info del proyecto (env vars, solo admin)
-│   ├── catalogo/                 # Catálogo público
+│   │   ├── upload/               # Subida de imagenes (Supabase Storage)
+│   │   ├── users/                # Gestion de usuarios
+│   │   ├── admin/                # Logs, info del proyecto (solo admin)
+│   │   ├── changelog/            # Changelog publico
+│   │   └── build-info/           # Info de build/version
+│   ├── catalogo/                 # Catalogo publico
 │   │   ├── page.tsx              # Server component: fetch series
-│   │   ├── CatalogoClient.tsx    # Client component: filtros, búsqueda, paginación
+│   │   ├── CatalogoClient.tsx    # Client component: filtros, busqueda, paginacion
 │   │   └── [id]/                 # Detalle de serie
-│   ├── admin/                    # Panel de administración
+│   ├── contenido/                # Pagina publica de contenido embebible
+│   ├── sitios/                   # Pagina publica de sitios recomendados
+│   ├── admin/                    # Panel de administracion
 │   │   ├── page.tsx              # Tabla de series
 │   │   ├── series/nueva/         # Crear serie
 │   │   ├── series/[id]/editar/   # Editar serie
-│   │   ├── actores/              # Gestión actores
-│   │   ├── directores/           # Gestión directores
-│   │   ├── tags/                 # Gestión tags
-│   │   ├── universos/            # Gestión universos
-│   │   ├── idiomas/              # Gestión idiomas
-│   │   ├── productoras/          # Gestión productoras
-│   │   ├── usuarios/             # Gestión usuarios y roles
+│   │   ├── actores/              # Gestion actores
+│   │   ├── directores/           # Gestion directores
+│   │   ├── tags/                 # Gestion tags
+│   │   ├── universos/            # Gestion universos
+│   │   ├── idiomas/              # Gestion idiomas
+│   │   ├── productoras/          # Gestion productoras
+│   │   ├── sitios/               # Gestion sitios recomendados
+│   │   ├── contenido/            # Gestion contenido embebible + import canales
+│   │   ├── usuarios/             # Gestion usuarios y roles
+│   │   ├── logs/                 # Access logs con filtros clickeables
 │   │   └── info/                 # Info del proyecto (links, equipo)
 │   ├── feedback/                 # Feedback + Changelog
 │   ├── actores/[id]/             # Perfil de actor
 │   ├── directores/[id]/          # Perfil de director
+│   ├── series/[id]/              # Detalle de serie (publica)
 │   └── watching/                 # Dashboard "Viendo ahora"
 ├── components/
 │   ├── layout/                   # AppLayout, Header, Sidebar, BottomNav
-│   ├── common/                   # PageTitle, SearchBar, CommentsList
+│   ├── common/                   # PageTitle, SearchBar, CommentsList, EmbedPlayer,
+│   │                             # ContentDisclaimer, CountryFlag
 │   ├── series/                   # SeriesHeader, SeriesInfo, SeasonsList, EpisodesList,
 │   │                             # RatingSection, CommentsSection, ViewStatusToggle
-│   ├── admin/                    # SeriesForm, SeasonForm, SeasonEditForm
+│   ├── admin/                    # SeriesForm, SeasonForm, SeasonEditForm, SeriesContentManager
 │   └── watching/                 # CurrentlyWatchingDashboard
 ├── lib/
 │   ├── database.ts               # Helpers de acceso a DB (Prisma)
-│   ├── supabase.ts               # Cliente Supabase Storage (upload/delete)
+│   ├── supabase.ts               # Cliente Supabase Storage (upload/delete/downloadAndUpload)
+│   ├── auth.ts                   # Configuracion NextAuth
 │   ├── auth-helpers.ts           # requireAuth, requireRole
-│   ├── theme.config.ts           # Configuración tema Ant Design
+│   ├── access-log.ts             # Registro y consulta de access logs
+│   ├── embed-helpers.ts          # Helpers para contenido embebible (YouTube, etc.)
+│   ├── channel-fetcher.ts        # Importacion de videos de canales de YouTube
+│   ├── country-codes.ts          # Codigos de pais
+│   ├── theme.config.ts           # Configuracion tema Ant Design
 │   ├── utils.ts                  # Utilidades generales
 │   └── providers/ThemeProvider.tsx
 ├── hooks/                        # useMediaQuery, useMessage
 ├── types/                        # series.types.ts, content.ts, person.types.ts, theme.types.ts
-├── constants/                    # navigation.ts, series.ts
+├── constants/                    # navigation.ts, series.ts, sitios.ts
 ├── styles/                       # globals.css, variables.css, dark-mode-fixes.css
 └── generated/prisma/             # Cliente Prisma generado (no editar)
 ```
 
 ---
 
-## Patrón de Datos (Server → Client)
+## Patron de Datos (Server → Client)
 
 ```
 page.tsx (Server Component)
@@ -172,7 +190,7 @@ import { getAllSeries, getSeriesById, searchSeriesByTitle } from '@/lib/database
 // Series: getAllSeries, getSeriesById, searchSeriesByTitle, getSeriesByCountry, getSeriesByType
 // Actores: getAllActors, getActorById, searchActorsByName, getAllActorsWithCount
 // Directores: getAllDirectors, getDirectorById, searchDirectorsByName, getAllDirectorsWithCount
-// Países: getAllCountries, getCountryById
+// Paises: getAllCountries, getCountryById
 // Universos: getAllUniverses, getUniverseById
 // Stats: getStats, getViewStats
 ```
@@ -184,30 +202,46 @@ import { getAllSeries, getSeriesById, searchSeriesByTitle } from '@/lib/database
 ### Schema: `prisma/schema.prisma`
 
 **Modelos principales:**
-- `Series` - Series/películas/cortos (767 registros importados)
+- `Series` - Series/peliculas/cortos
 - `Season` - Temporadas por serie
 - `Episode` - Episodios por temporada
-- `Actor` - Actores (1,475 registros)
+- `Actor` - Actores
 - `Director` - Directores
-- `Country` - Países (11 registros)
+- `Country` - Paises
 
-**Modelos de relación:**
-- `SeriesActor`, `SeasonActor` - Actores por serie/temporada
+**Modelos de relacion:**
+- `SeriesActor`, `SeasonActor` - Actores por serie/temporada (con pairingGroup)
 - `SeriesDirector` - Directores por serie
 - `SeriesTag` - Tags por serie
+- `SeriesGenre` - Generos por serie
+- `SeriesDubbing` - Idiomas de doblaje
+- `RelatedSeries` - Series relacionadas (bidireccional)
 
 **Modelos de metadata:**
-- `Universe` - Agrupación de series relacionadas
+- `Universe` - Agrupacion de series relacionadas
 - `Tag` - Etiquetas (tropes, genres, moods)
-- `ProductionCompany`, `Language`, `SeriesDubbing`
-- `Rating` - Calificaciones por categoría (trama, casting, BSO, etc.)
-- `Comment` - Comentarios en serie/temporada/episodio
-- `ViewStatus` - Estado de visualización (`WatchStatus` enum: SIN_VER, VIENDO, VISTA, ABANDONADA, RETOMAR)
+- `Genre` - Generos
+- `ProductionCompany`, `Language`
+- `Rating` - Calificaciones por categoria (trama, casting, BSO, etc.)
+- `UserRating` - Calificaciones de usuarios
+- `Comment` - Comentarios en serie/temporada/episodio (con userId)
+- `ViewStatus` - Estado de visualizacion (`WatchStatus` enum, por usuario)
+
+**Modelos de contenido:**
+- `EmbeddableContent` - Contenido embebido (trailers, OSTs, entrevistas)
+- `RecommendedSite` - Sitios recomendados curados por admin
+- `SuggestedSite` - Sitios sugeridos por la comunidad
+- `WatchLink` - Plataformas donde ver cada serie
 
 **Modelos de feedback:**
 - `FeatureRequest` - Solicitudes de bugs/features/ideas con status y prioridad
-- `FeatureRequestImage` - Imágenes adjuntas a solicitudes
+- `FeatureRequestImage` - Imagenes adjuntas a solicitudes
 - `FeatureVote` - Votos de usuarios en solicitudes
+
+**Modelos de sistema:**
+- `User`, `Account`, `Session`, `VerificationToken` - NextAuth
+- `AccessLog` - Registro de visitas y acciones
+- `BannedIp` - IPs bloqueadas
 
 **Enums:**
 - `Role` - USER, MODERATOR, ADMIN
@@ -216,45 +250,32 @@ import { getAllSeries, getSeriesById, searchSeriesByTitle } from '@/lib/database
 ### Migraciones
 
 ```bash
-# Generar cliente Prisma después de cambios al schema
+# Generar cliente Prisma despues de cambios al schema
 npx prisma generate
 
-# Crear migración después de cambios al schema
+# Crear migracion despues de cambios al schema
 npx prisma migrate dev --name descripcion_del_cambio
 
-# Aplicar migraciones en producción (Vercel lo hace automáticamente en build)
+# Aplicar migraciones en produccion (Vercel lo hace automaticamente en build)
 npx prisma migrate deploy
 
 # Ver estado de migraciones
 npx prisma migrate status
 
+# Sincronizar schema sin migraciones (desarrollo)
+npx prisma db push
+
 # Abrir Prisma Studio (UI para explorar datos)
 npx prisma studio
 ```
 
-**Nota:** El build command en Vercel es `prisma generate && next build --webpack`. Prisma genera el cliente automáticamente antes de cada build.
-
-### Agregar un campo nuevo (ejemplo)
-
-1. Editar `prisma/schema.prisma` (agregar campo al modelo)
-2. `npx prisma migrate dev --name add_campo_nuevo`
-3. Actualizar tipos en `src/types/` si aplica
-4. Actualizar helpers en `src/lib/database.ts` si aplica
-5. Actualizar componentes que muestren el campo
-
-### Agregar un modelo nuevo
-
-1. Definir modelo en `prisma/schema.prisma` con relaciones
-2. `npx prisma migrate dev --name add_nombre_modelo`
-3. Crear API route en `src/app/api/nombre-modelo/route.ts`
-4. Agregar helpers en `src/lib/database.ts`
-5. Crear componentes de UI
+**Nota:** El build command en Vercel es `prisma generate && next build --webpack`. Prisma genera el cliente automaticamente antes de cada build.
 
 ---
 
-## Guía de Cambios Comunes
+## Guia de Cambios Comunes
 
-### Agregar una nueva página
+### Agregar una nueva pagina
 
 1. Crear carpeta en `src/app/nombre-pagina/`
 2. `page.tsx` (Server Component) - fetch de datos
@@ -265,7 +286,7 @@ npx prisma studio
 ### Agregar un nuevo componente
 
 1. Crear carpeta en `src/components/categoria/NombreComponente/`
-2. `NombreComponente.tsx` - Lógica
+2. `NombreComponente.tsx` - Logica
 3. `NombreComponente.css` - Estilos
 4. Exportar con nombre: `export function NombreComponente()`
 
@@ -273,12 +294,13 @@ npx prisma studio
 
 1. Crear `src/app/api/recurso/route.ts`
 2. Exportar funciones HTTP: `GET`, `POST`, `PUT`, `DELETE`
-3. Usar helpers de `src/lib/database.ts` o Prisma directo
-4. Retornar `NextResponse.json()`
+3. Proteger con `requireAuth()` o `requireRole(['ADMIN'])`
+4. Usar helpers de `src/lib/database.ts` o Prisma directo
+5. Retornar `NextResponse.json()`
 
-### Modificar filtros del catálogo
+### Modificar filtros del catalogo
 
-- Filtros están en `src/app/catalogo/CatalogoClient.tsx`
+- Filtros estan en `src/app/catalogo/CatalogoClient.tsx`
 - Tipos de filtro en `src/types/series.types.ts`
 
 ### Modificar tema/estilos globales
@@ -293,55 +315,10 @@ npx prisma studio
 
 ```bash
 npm run dev          # Desarrollo (http://localhost:3000)
-npm run build        # Build de producción
-npm run start        # Servir build de producción
-npm run lint         # Verificar código
+npm run build        # Build de produccion
+npm run start        # Servir build de produccion
+npm run lint         # Verificar codigo
 npm run lint:fix     # Corregir problemas de linting
 npm run format       # Formatear con Prettier
 npm run type-check   # Verificar tipos TypeScript
 ```
-
----
-
-## Datos del Proyecto
-
-- **767 series** importadas (originalmente desde Excel)
-- **1,475 actores** registrados
-- **11 países**: Tailandia (35.7%), Corea (19.4%), Japón (12.1%), China, Taiwán, Filipinas, Vietnam, Myanmar, Camboya, Indonesia, Laos
-- **Tipos**: serie, película, corto, especial
-- **Formatos**: regular, vertical
-
----
-
-## Estado Actual y Pendientes
-
-### Implementado
-- Catálogo con búsqueda, filtros y paginación
-- Detalle de serie con temporadas, episodios, ratings, comentarios
-- Perfiles de actores y directores
-- Panel admin completo (CRUD de todas las entidades)
-- Sistema de tags/etiquetas con autocompletado
-- Universos (agrupar series relacionadas, cards rediseñadas)
-- Estado de visualización expandido (Sin ver, Viendo, Vista, Abandonada, Retomar)
-- Dashboard "Viendo ahora"
-- Tema claro/oscuro
-- Diseño responsive (mobile + desktop)
-- Autenticación con Google OAuth
-- Subida de imágenes a Supabase Storage
-- Focal point para imágenes de portada
-- Parejas de personajes en el reparto
-- Feedback con votos, imágenes (clipboard paste) y changelog
-- Especiales con soporte de temporadas y episodios
-- Gestión de usuarios y roles
-- Página de info del proyecto (links por env vars)
-
-### Pendiente (ver ideas.md para detalle)
-- Access logs (registro de visitas y acciones)
-- Landing page pública
-- Campo "dónde ver" con links a plataformas
-- Sistema de recomendaciones
-- Tracking mejorado en "Viendo ahora"
-- Notificaciones por correo (opt-in)
-- Nombre de app configurable por variable de entorno (platformización)
-- Dashboard con estadísticas avanzadas
-- Búsqueda avanzada (múltiples criterios combinados)

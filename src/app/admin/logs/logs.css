@@ -35,6 +35,15 @@
   font-style: italic;
 }
 
+.logs-table__clickable {
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.logs-table__clickable:hover {
+  color: var(--primary-color);
+}
+
 @media (max-width: 768px) {
   .logs-page {
     padding: var(--spacing-sm);

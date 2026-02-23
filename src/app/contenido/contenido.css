@@ -24,6 +24,16 @@
 .contenido-card {
   height: 100%;
   transition: box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+.contenido-card .ant-card-body {
+  flex: 1;
+}
+
+.contenido-card .ant-card-actions {
+  margin-top: auto;
 }
 
 .contenido-card:hover {

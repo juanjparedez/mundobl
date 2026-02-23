@@ -58,6 +58,7 @@ interface LogFilters {
   action?: string;
   userId?: string;
   ip?: string;
+  path?: string;
   from?: string;
   to?: string;
 }
@@ -66,7 +67,7 @@ interface LogFilters {
  * Obtiene logs con filtros y paginacion (para la pagina admin)
  */
 export async function getAccessLogs(filters: LogFilters) {
-  const { page = 1, limit = 50, action, userId, ip, from, to } = filters;
+  const { page = 1, limit = 50, action, userId, ip, path, from, to } = filters;
   const skip = (page - 1) * limit;
 
   const where: Record<string, unknown> = {};
@@ -79,6 +80,9 @@ export async function getAccessLogs(filters: LogFilters) {
   }
   if (ip) {
     where.ip = { contains: ip };
+  }
+  if (path) {
+    where.path = { contains: path };
   }
   if (from || to) {
     where.createdAt = {

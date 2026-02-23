@@ -77,6 +77,7 @@ export function LogsClient() {
   const [actionFilter, setActionFilter] = useState('');
   const [userFilter, setUserFilter] = useState('');
   const [ipFilter, setIpFilter] = useState('');
+  const [pathFilter, setPathFilter] = useState('');
   const [dateRange, setDateRange] = useState<[string | null, string | null]>([
     null,
     null,
@@ -101,6 +102,7 @@ export function LogsClient() {
       if (actionFilter) params.set('action', actionFilter);
       if (userFilter) params.set('userId', userFilter);
       if (ipFilter) params.set('ip', ipFilter);
+      if (pathFilter) params.set('path', pathFilter);
       if (dateRange[0]) params.set('from', dateRange[0]);
       if (dateRange[1]) params.set('to', dateRange[1]);
 
@@ -116,11 +118,40 @@ export function LogsClient() {
     } finally {
       setLoading(false);
     }
-  }, [page, actionFilter, userFilter, ipFilter, dateRange, message]);
+  }, [
+    page,
+    actionFilter,
+    userFilter,
+    ipFilter,
+    pathFilter,
+    dateRange,
+    message,
+  ]);
 
   useEffect(() => {
     fetchLogs();
   }, [fetchLogs]);
+
+  const applyFilter = (
+    type: 'action' | 'user' | 'ip' | 'path',
+    value: string
+  ) => {
+    setPage(1);
+    switch (type) {
+      case 'action':
+        setActionFilter(value);
+        break;
+      case 'user':
+        setUserFilter(value);
+        break;
+      case 'ip':
+        setIpFilter(value);
+        break;
+      case 'path':
+        setPathFilter(value);
+        break;
+    }
+  };
 
   const handleCleanOldLogs = async () => {
     try {
@@ -158,7 +189,11 @@ export function LogsClient() {
       width: 180,
       render: (_, record) =>
         record.user ? (
-          <div className="logs-table__user">
+          <div
+            className="logs-table__user logs-table__clickable"
+            onClick={() => applyFilter('user', record.user!.id)}
+            title="Filtrar por este usuario"
+          >
             <Avatar
               src={record.user.image}
               icon={!record.user.image ? <UserOutlined /> : undefined}
@@ -175,24 +210,47 @@ export function LogsClient() {
       key: 'action',
       width: 120,
       render: (_, record) => (
-        <Tag color={ACTION_COLORS[record.action] || 'default'}>
+        <Tag
+          color={ACTION_COLORS[record.action] || 'default'}
+          className="logs-table__clickable"
+          onClick={() => applyFilter('action', record.action)}
+          title="Filtrar por esta acción"
+        >
           {record.action}
         </Tag>
       ),
     },
     {
       title: 'Ruta',
-      dataIndex: 'path',
       key: 'path',
       ellipsis: true,
+      render: (_, record) => (
+        <span
+          className="logs-table__clickable"
+          onClick={() => applyFilter('path', record.path)}
+          title="Filtrar por esta ruta"
+        >
+          {record.path}
+        </span>
+      ),
     },
     {
       title: 'IP',
-      dataIndex: 'ip',
       key: 'ip',
       width: 130,
       responsive: ['lg' as const],
-      render: (ip: string | null) => ip || '-',
+      render: (_, record) =>
+        record.ip ? (
+          <span
+            className="logs-table__clickable"
+            onClick={() => applyFilter('ip', record.ip!)}
+            title="Filtrar por esta IP"
+          >
+            {record.ip}
+          </span>
+        ) : (
+          '-'
+        ),
     },
     {
       title: 'User Agent',
@@ -253,6 +311,17 @@ export function LogsClient() {
                 placeholder="Buscar IP"
                 allowClear
                 style={{ width: 160 }}
+              />
+              <Input
+                value={pathFilter}
+                onChange={(e) => {
+                  setPathFilter(e.target.value);
+                  setPage(1);
+                }}
+                prefix={<SearchOutlined />}
+                placeholder="Buscar ruta"
+                allowClear
+                style={{ width: 180 }}
               />
               <RangePicker
                 onChange={(_, dateStrings) => {

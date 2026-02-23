@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import Image from 'next/image';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import {
   Card,
@@ -23,6 +24,7 @@ import {
   DeleteOutlined,
   PlayCircleOutlined,
   ImportOutlined,
+  WarningOutlined,
 } from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -92,6 +94,7 @@ export function ContenidoClient() {
     title: string;
   } | null>(null);
   const [importDrawerOpen, setImportDrawerOpen] = useState(false);
+  const [showOnlyDuplicates, setShowOnlyDuplicates] = useState(false);
   const [form] = Form.useForm();
 
   const loadItems = useCallback(async () => {
@@ -208,13 +211,81 @@ export function ContenidoClient() {
     }
   };
 
+  // Detect duplicates by videoId or url
+  const duplicateIds = useMemo(() => {
+    const ids = new Set<number>();
+    const byVideoId = new Map<string, number[]>();
+    const byUrl = new Map<string, number[]>();
+
+    for (const item of items) {
+      if (item.videoId) {
+        const key = `${item.platform}:${item.videoId}`;
+        const group = byVideoId.get(key) || [];
+        group.push(item.id);
+        byVideoId.set(key, group);
+      }
+      const normalizedUrl = item.url.replace(/\/$/, '').toLowerCase();
+      const group = byUrl.get(normalizedUrl) || [];
+      group.push(item.id);
+      byUrl.set(normalizedUrl, group);
+    }
+
+    for (const group of byVideoId.values()) {
+      if (group.length > 1) group.forEach((id) => ids.add(id));
+    }
+    for (const group of byUrl.values()) {
+      if (group.length > 1) group.forEach((id) => ids.add(id));
+    }
+
+    return ids;
+  }, [items]);
+
   const columns = [
+    {
+      title: '',
+      key: 'thumbnail',
+      width: 60,
+      render: (r: EmbeddableContentItem) =>
+        r.thumbnailUrl ? (
+          <Image
+            src={r.thumbnailUrl}
+            alt=""
+            width={48}
+            height={36}
+            style={{
+              objectFit: 'cover',
+              borderRadius: 4,
+            }}
+            unoptimized
+          />
+        ) : (
+          <div
+            style={{
+              width: 48,
+              height: 36,
+              borderRadius: 4,
+              background: 'var(--bg-spotlight)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <PlayCircleOutlined style={{ color: 'var(--text-tertiary)' }} />
+          </div>
+        ),
+    },
     {
       title: 'Título',
       dataIndex: 'title',
       key: 'title',
       sorter: (a: EmbeddableContentItem, b: EmbeddableContentItem) =>
         a.title.localeCompare(b.title),
+      render: (title: string, record: EmbeddableContentItem) => (
+        <Space>
+          <span>{title}</span>
+          {duplicateIds.has(record.id) && <Tag color="orange">Duplicado</Tag>}
+        </Space>
+      ),
     },
     {
       title: 'Plataforma',
@@ -280,6 +351,18 @@ export function ContenidoClient() {
           title="Administración de Contenido Embebible"
           extra={
             <Space>
+              {duplicateIds.size > 0 && (
+                <Button
+                  icon={<WarningOutlined />}
+                  onClick={() => setShowOnlyDuplicates(!showOnlyDuplicates)}
+                  type={showOnlyDuplicates ? 'primary' : 'default'}
+                  danger={showOnlyDuplicates}
+                >
+                  {isMobile
+                    ? `${duplicateIds.size}`
+                    : `Duplicados (${duplicateIds.size})`}
+                </Button>
+              )}
               <Button
                 icon={<ImportOutlined />}
                 onClick={() => setImportDrawerOpen(true)}
@@ -297,7 +380,11 @@ export function ContenidoClient() {
           }
         >
           <Table
-            dataSource={items}
+            dataSource={
+              showOnlyDuplicates
+                ? items.filter((i) => duplicateIds.has(i.id))
+                : items
+            }
             columns={columns}
             rowKey="id"
             loading={loading}
