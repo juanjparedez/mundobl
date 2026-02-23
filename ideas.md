@@ -19,26 +19,20 @@
 - [x] Banner de privacidad
 - [x] Sistema de ban de usuarios y bloqueo por IP
 - [x] Gestion de usuarios mejorada (ban/unban, roles)
+- [x] Sitios de interes / Links recomendados (pagina publica + CRUD admin)
+- [x] Donde ver (WatchLinks con plataformas + embed de YouTube)
+- [x] Contenido embebible (trailers, OSTs, entrevistas desde YouTube)
+- [x] Importacion de canales de YouTube
+- [x] Contenido embebido en pagina de detalle de serie
+- [x] Sistema de chequeo de version (StaleVersionNotifier)
+- [x] Nuevas categorias de sitios (oficiales, productoras, youtube)
+- [x] Sugerencias de sitios por la comunidad (SuggestedSite)
+- [x] Deteccion de contenido duplicado en admin
+- [x] Filtros clickeables en logs de admin
 
 ---
 
 ## Proximas (corto plazo)
-
-### Sitios de interes / Links recomendados
-Seccion publica con sitios curados por Flor relevantes al genero BL.
-- Modelo `RecommendedSite`: nombre, URL, descripcion, categoria, imagen/favicon, orden
-- Categorias: fuente de info, comunidad, noticias, streaming, etc.
-- Pagina publica para mostrarlos (cards con links)
-- CRUD admin para gestion
-- Sirve como retribucion a sitios de los que se toma informacion
-
-### Donde ver (plataformas + video embed)
-Agregar plataformas de streaming donde ver cada serie.
-- Modelo `WatchLink`: seriesId, platform (enum/string), url, tipo (oficial/no oficial)
-- Si es YouTube: embeber el player en la pagina de detalle
-- Para otras plataformas (Viki, iQIYI, WeTV, etc.): mostrar link con logo
-- Gestion desde el formulario de edicion de serie
-- Cuidar aspectos legales: solo embeber contenido oficial
 
 ### Temporadas unificadas
 Cuando una serie tiene mas de una temporada pero no es un Universo, poder unificarlas.
@@ -90,12 +84,12 @@ Hacer la app generica y reutilizable:
 
 ### Estadisticas avanzadas
 Dashboard con:
-- Top-rated por pais, genero, año
+- Top-rated por pais, genero, ano
 - Trending (mas vistos recientemente)
 - Distribucion por pais, tipo, estado
 
 ### Busqueda avanzada
-Multiples criterios combinados (pais + genero + tag + año + rating minimo).
+Multiples criterios combinados (pais + genero + tag + ano + rating minimo).
 
 ### Import/export de datos
 Backup y restauracion de datos.
