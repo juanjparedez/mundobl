@@ -23,36 +23,14 @@ import {
 } from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import {
+  CATEGORY_COLORS,
+  CATEGORY_SELECT_OPTIONS,
+  LANGUAGE_OPTIONS,
+} from '@/constants/sitios';
 import { AdminNav } from '../AdminNav';
 import '../admin.css';
 import './sitios.css';
-
-const CATEGORY_OPTIONS = [
-  { label: 'Noticias', value: 'noticias' },
-  { label: 'Comunidad', value: 'comunidad' },
-  { label: 'Streaming', value: 'streaming' },
-  { label: 'Info', value: 'info' },
-  { label: 'Otro', value: 'otro' },
-];
-
-const CATEGORY_COLORS: Record<string, string> = {
-  noticias: 'blue',
-  comunidad: 'green',
-  streaming: 'purple',
-  info: 'cyan',
-  otro: 'default',
-};
-
-const LANGUAGE_OPTIONS = [
-  { label: 'Español', value: 'ES' },
-  { label: 'Inglés', value: 'EN' },
-  { label: 'Multi', value: 'Multi' },
-  { label: 'Tailandés', value: 'TH' },
-  { label: 'Japonés', value: 'JP' },
-  { label: 'Coreano', value: 'KR' },
-  { label: 'Chino', value: 'ZH' },
-  { label: 'Portugués', value: 'PT' },
-];
 
 interface SiteType {
   id: number;
@@ -303,7 +281,7 @@ export function SitiosClient() {
 
             <Form.Item label="Categoría" name="category">
               <Select
-                options={CATEGORY_OPTIONS}
+                options={CATEGORY_SELECT_OPTIONS}
                 placeholder="Seleccionar categoría"
                 allowClear
               />

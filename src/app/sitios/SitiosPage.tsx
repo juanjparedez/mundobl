@@ -8,31 +8,13 @@ import {
   AppstoreOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
+import {
+  CATEGORY_COLORS,
+  CATEGORY_LABELS,
+  CATEGORY_ORDER,
+  CATEGORY_SELECT_OPTIONS,
+} from '@/constants/sitios';
 import './sitios.css';
-
-const CATEGORY_COLORS: Record<string, string> = {
-  noticias: 'blue',
-  comunidad: 'green',
-  streaming: 'purple',
-  info: 'cyan',
-  otro: 'default',
-};
-
-const CATEGORY_LABELS: Record<string, string> = {
-  noticias: 'Noticias',
-  comunidad: 'Comunidad',
-  streaming: 'Streaming',
-  info: 'Información',
-  otro: 'Otros',
-};
-
-const CATEGORY_FILTER_OPTIONS = [
-  { label: 'Streaming', value: 'streaming' },
-  { label: 'Noticias', value: 'noticias' },
-  { label: 'Información', value: 'info' },
-  { label: 'Comunidad', value: 'comunidad' },
-  { label: 'Otros', value: 'otro' },
-];
 
 interface Site {
   id: number;
@@ -48,8 +30,6 @@ interface Site {
 interface SitiosPageProps {
   sites: Site[];
 }
-
-const CATEGORY_ORDER = ['streaming', 'noticias', 'info', 'comunidad', 'otro'];
 
 export function SitiosPage({ sites }: SitiosPageProps) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -125,6 +105,16 @@ export function SitiosPage({ sites }: SitiosPageProps) {
             </Tag>
           }
         >
+          {site.imageUrl && (
+            <div className="sitios-card__logo">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={site.imageUrl}
+                alt={`Logo de ${site.name}`}
+                className="sitios-card__logo-img"
+              />
+            </div>
+          )}
           {site.description && (
             <p className="sitios-card__description">{site.description}</p>
           )}
@@ -196,7 +186,7 @@ export function SitiosPage({ sites }: SitiosPageProps) {
             />
             <Select
               placeholder="Categoría"
-              options={CATEGORY_FILTER_OPTIONS}
+              options={CATEGORY_SELECT_OPTIONS}
               allowClear
               style={{ width: 160 }}
               onChange={(val: string | undefined) =>

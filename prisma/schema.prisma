@@ -38,6 +38,7 @@ model User {
   featureRequests FeatureRequest[]
   featureVotes    FeatureVote[]
   accessLogs      AccessLog[]
+  suggestedSites  SuggestedSite[]
 }
 
 model Account {
@@ -557,6 +558,24 @@ model RecommendedSite {
   language    String?  // "ES", "EN", "TH", "JP", "KR", "Multi", etc.
   imageUrl    String?
   sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ============================================
+// SITIOS SUGERIDOS POR LA COMUNIDAD
+// ============================================
+model SuggestedSite {
+  id          Int      @id @default(autoincrement())
+  name        String
+  url         String
+  description String?
+  category    String?
+  language    String?
+  status      String   @default("pendiente") // "pendiente", "aprobado", "rechazado"
+  adminNote   String?
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

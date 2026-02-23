@@ -450,7 +450,9 @@ export function FeedbackClient() {
           )}
           {completedRequests.length > 0 && (
             <>
-              <h4 className="changelog-section-title">Solicitudes completadas</h4>
+              <h4 className="changelog-section-title">
+                Solicitudes completadas
+              </h4>
               <Timeline
                 items={completedRequests.map((r) => ({
                   color: 'green',

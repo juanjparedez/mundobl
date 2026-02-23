@@ -60,6 +60,18 @@
   border-top: 3px solid rgba(82, 196, 26, 0.6);
 }
 
+.sitios-card--oficiales {
+  border-top: 3px solid rgba(250, 173, 20, 0.6);
+}
+
+.sitios-card--productoras {
+  border-top: 3px solid rgba(255, 122, 69, 0.6);
+}
+
+.sitios-card--youtube {
+  border-top: 3px solid rgba(255, 77, 79, 0.6);
+}
+
 .sitios-card--otro {
   border-top: 3px solid rgba(140, 140, 140, 0.4);
 }
@@ -91,6 +103,27 @@
   box-shadow:
     0 12px 28px rgba(82, 196, 26, 0.18),
     0 0 0 1px rgba(82, 196, 26, 0.1);
+}
+
+.sitios-card--oficiales:hover {
+  border-top-color: rgba(250, 173, 20, 1);
+  box-shadow:
+    0 12px 28px rgba(250, 173, 20, 0.18),
+    0 0 0 1px rgba(250, 173, 20, 0.1);
+}
+
+.sitios-card--productoras:hover {
+  border-top-color: rgba(255, 122, 69, 1);
+  box-shadow:
+    0 12px 28px rgba(255, 122, 69, 0.18),
+    0 0 0 1px rgba(255, 122, 69, 0.1);
+}
+
+.sitios-card--youtube:hover {
+  border-top-color: rgba(255, 77, 79, 1);
+  box-shadow:
+    0 12px 28px rgba(255, 77, 79, 0.18),
+    0 0 0 1px rgba(255, 77, 79, 0.1);
 }
 
 .sitios-card--otro:hover {
@@ -125,6 +158,24 @@
     0 0 0 1px rgba(82, 196, 26, 0.2);
 }
 
+[data-theme='dark'] .sitios-card--oficiales:hover {
+  box-shadow:
+    0 12px 28px rgba(250, 173, 20, 0.3),
+    0 0 0 1px rgba(250, 173, 20, 0.2);
+}
+
+[data-theme='dark'] .sitios-card--productoras:hover {
+  box-shadow:
+    0 12px 28px rgba(255, 122, 69, 0.3),
+    0 0 0 1px rgba(255, 122, 69, 0.2);
+}
+
+[data-theme='dark'] .sitios-card--youtube:hover {
+  box-shadow:
+    0 12px 28px rgba(255, 77, 79, 0.3),
+    0 0 0 1px rgba(255, 77, 79, 0.2);
+}
+
 [data-theme='dark'] .sitios-card--otro:hover {
   box-shadow:
     0 12px 28px rgba(140, 140, 140, 0.2),
@@ -133,36 +184,134 @@
 
 /* Tinte sutil de gradiente en el body */
 .sitios-card--streaming .ant-card-body {
-  background: linear-gradient(135deg, rgba(114, 46, 209, 0.06) 0%, transparent 60%);
+  background: linear-gradient(
+    135deg,
+    rgba(114, 46, 209, 0.06) 0%,
+    transparent 60%
+  );
 }
 
 .sitios-card--noticias .ant-card-body {
-  background: linear-gradient(135deg, rgba(24, 144, 255, 0.06) 0%, transparent 60%);
+  background: linear-gradient(
+    135deg,
+    rgba(24, 144, 255, 0.06) 0%,
+    transparent 60%
+  );
 }
 
 .sitios-card--info .ant-card-body {
-  background: linear-gradient(135deg, rgba(19, 194, 194, 0.06) 0%, transparent 60%);
+  background: linear-gradient(
+    135deg,
+    rgba(19, 194, 194, 0.06) 0%,
+    transparent 60%
+  );
 }
 
 .sitios-card--comunidad .ant-card-body {
-  background: linear-gradient(135deg, rgba(82, 196, 26, 0.06) 0%, transparent 60%);
+  background: linear-gradient(
+    135deg,
+    rgba(82, 196, 26, 0.06) 0%,
+    transparent 60%
+  );
 }
 
 /* Dark mode: gradiente más visible */
 [data-theme='dark'] .sitios-card--streaming .ant-card-body {
-  background: linear-gradient(135deg, rgba(114, 46, 209, 0.1) 0%, transparent 60%);
+  background: linear-gradient(
+    135deg,
+    rgba(114, 46, 209, 0.1) 0%,
+    transparent 60%
+  );
 }
 
 [data-theme='dark'] .sitios-card--noticias .ant-card-body {
-  background: linear-gradient(135deg, rgba(24, 144, 255, 0.1) 0%, transparent 60%);
+  background: linear-gradient(
+    135deg,
+    rgba(24, 144, 255, 0.1) 0%,
+    transparent 60%
+  );
 }
 
 [data-theme='dark'] .sitios-card--info .ant-card-body {
-  background: linear-gradient(135deg, rgba(19, 194, 194, 0.1) 0%, transparent 60%);
+  background: linear-gradient(
+    135deg,
+    rgba(19, 194, 194, 0.1) 0%,
+    transparent 60%
+  );
 }
 
 [data-theme='dark'] .sitios-card--comunidad .ant-card-body {
-  background: linear-gradient(135deg, rgba(82, 196, 26, 0.1) 0%, transparent 60%);
+  background: linear-gradient(
+    135deg,
+    rgba(82, 196, 26, 0.1) 0%,
+    transparent 60%
+  );
+}
+
+/* Gradientes nuevas categorías */
+.sitios-card--oficiales .ant-card-body {
+  background: linear-gradient(
+    135deg,
+    rgba(250, 173, 20, 0.06) 0%,
+    transparent 60%
+  );
+}
+
+.sitios-card--productoras .ant-card-body {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 122, 69, 0.06) 0%,
+    transparent 60%
+  );
+}
+
+.sitios-card--youtube .ant-card-body {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 77, 79, 0.06) 0%,
+    transparent 60%
+  );
+}
+
+[data-theme='dark'] .sitios-card--oficiales .ant-card-body {
+  background: linear-gradient(
+    135deg,
+    rgba(250, 173, 20, 0.1) 0%,
+    transparent 60%
+  );
+}
+
+[data-theme='dark'] .sitios-card--productoras .ant-card-body {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 122, 69, 0.1) 0%,
+    transparent 60%
+  );
+}
+
+[data-theme='dark'] .sitios-card--youtube .ant-card-body {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 77, 79, 0.1) 0%,
+    transparent 60%
+  );
+}
+
+/* Logo / imagen del sitio */
+.sitios-card__logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  margin-bottom: var(--spacing-sm);
+  overflow: hidden;
+}
+
+.sitios-card__logo-img {
+  max-height: 48px;
+  max-width: 100%;
+  object-fit: contain;
+  border-radius: 4px;
 }
 
 .sitios-card__description {
@@ -228,6 +377,18 @@
   border-left-color: rgba(82, 196, 26, 0.6);
 }
 
+.sitios-list-item--oficiales {
+  border-left-color: rgba(250, 173, 20, 0.6);
+}
+
+.sitios-list-item--productoras {
+  border-left-color: rgba(255, 122, 69, 0.6);
+}
+
+.sitios-list-item--youtube {
+  border-left-color: rgba(255, 77, 79, 0.6);
+}
+
 .sitios-list-item--otro {
   border-left-color: rgba(140, 140, 140, 0.4);
 }
@@ -250,6 +411,21 @@
 .sitios-list-item--comunidad:hover {
   border-left-color: rgba(82, 196, 26, 1);
   box-shadow: -4px 0 12px rgba(82, 196, 26, 0.15);
+}
+
+.sitios-list-item--oficiales:hover {
+  border-left-color: rgba(250, 173, 20, 1);
+  box-shadow: -4px 0 12px rgba(250, 173, 20, 0.15);
+}
+
+.sitios-list-item--productoras:hover {
+  border-left-color: rgba(255, 122, 69, 1);
+  box-shadow: -4px 0 12px rgba(255, 122, 69, 0.15);
+}
+
+.sitios-list-item--youtube:hover {
+  border-left-color: rgba(255, 77, 79, 1);
+  box-shadow: -4px 0 12px rgba(255, 77, 79, 0.15);
 }
 
 .sitios-list-item__content {
