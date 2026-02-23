@@ -1,13 +1,18 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
+import { requireAuth } from '@/lib/auth-helpers';
 
-// GET - Obtener todas las series que estás viendo actualmente
+// GET - Obtener las series que el usuario autenticado está viendo
 export async function GET() {
   try {
+    const authResult = await requireAuth();
+    if (!authResult.authorized) return authResult.response;
+
     const currentlyWatching = await prisma.viewStatus.findMany({
       where: {
         status: 'VIENDO',
         seriesId: { not: null },
+        userId: authResult.userId,
       },
       include: {
         series: {

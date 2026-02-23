@@ -104,7 +104,10 @@ const getColorByType = (tipo: string) => {
   return colorMap[tipo] || 'default';
 };
 
-export function CatalogoClient({ series: initialSeries, userRole }: CatalogoClientProps) {
+export function CatalogoClient({
+  series: initialSeries,
+  userRole,
+}: CatalogoClientProps) {
   const router = useRouter();
   const message = useMessage();
   const canEdit = userRole === 'ADMIN' || userRole === 'EDITOR';

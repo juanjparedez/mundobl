@@ -68,6 +68,14 @@ export default async function EditSeriesPage({ params }: EditPageProps) {
       serie.relatedSeriesFrom?.map(
         (rs: { relatedSeries: { id: number } }) => rs.relatedSeries.id
       ) || [],
+    watchLinks:
+      serie.watchLinks?.map(
+        (wl: { platform: string; url: string; official: boolean }) => ({
+          platform: wl.platform,
+          url: wl.url,
+          official: wl.official,
+        })
+      ) || [],
   };
 
   return (

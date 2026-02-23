@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { Card, Empty, Spin, Progress, Tag, Button } from 'antd';
 import {
   PlayCircleOutlined,
@@ -43,11 +44,16 @@ interface WatchingSeriesData {
 }
 
 export function CurrentlyWatchingDashboard() {
+  const { data: session } = useSession();
   const message = useMessage();
   const [loading, setLoading] = useState(true);
+  const [notAuthenticated, setNotAuthenticated] = useState(false);
   const [watchingSeries, setWatchingSeries] = useState<WatchingSeriesData[]>(
     []
   );
+
+  const isAdminOrMod =
+    session?.user?.role === 'ADMIN' || session?.user?.role === 'MODERATOR';
 
   useEffect(() => {
     loadWatchingSeries();
@@ -56,6 +62,10 @@ export function CurrentlyWatchingDashboard() {
   const loadWatchingSeries = async () => {
     try {
       const response = await fetch('/api/currently-watching');
+      if (response.status === 401) {
+        setNotAuthenticated(true);
+        return;
+      }
       const data = await response.json();
       setWatchingSeries(data);
     } catch (error) {
@@ -142,6 +152,15 @@ export function CurrentlyWatchingDashboard() {
       <div style={{ textAlign: 'center', padding: '48px' }}>
         <Spin size="large" />
       </div>
+    );
+  }
+
+  if (notAuthenticated) {
+    return (
+      <Empty
+        description="Iniciá sesión para ver tu lista de series"
+        image={Empty.PRESENTED_IMAGE_SIMPLE}
+      />
     );
   }
 
@@ -257,14 +276,16 @@ export function CurrentlyWatchingDashboard() {
                             : 'Continuar viendo'}
                         </Button>
                       </Link>
-                      <Link href={`/admin/series/${item.series.id}/editar`}>
-                        <Button
-                          icon={<EditOutlined />}
-                          title="Editar y agregar comentarios"
-                        >
-                          Editar
-                        </Button>
-                      </Link>
+                      {isAdminOrMod && (
+                        <Link href={`/admin/series/${item.series.id}/editar`}>
+                          <Button
+                            icon={<EditOutlined />}
+                            title="Editar y agregar comentarios"
+                          >
+                            Editar
+                          </Button>
+                        </Link>
+                      )}
                     </div>
                   </div>
                 }

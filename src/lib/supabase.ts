@@ -121,8 +121,11 @@ export async function downloadAndUploadExternalImage(
     }
 
     const contentType =
-      response.headers.get('content-type')?.split(';')[0].trim().toLowerCase() ??
-      '';
+      response.headers
+        .get('content-type')
+        ?.split(';')[0]
+        .trim()
+        .toLowerCase() ?? '';
 
     if (!VALID_IMAGE_TYPES.has(contentType)) {
       throw new Error(`Tipo de contenido no soportado: ${contentType}`);
