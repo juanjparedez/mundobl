@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Row,
@@ -52,7 +52,6 @@ interface SerieData {
   imagePosition?: string;
   synopsis?: string | null;
   visto?: boolean;
-  isFavorite?: boolean;
   universoId?: number | null;
   universoNombre?: string | null;
 }
@@ -112,7 +111,20 @@ export function CatalogoClient({
   const message = useMessage();
   const canEdit = userRole === 'ADMIN' || userRole === 'EDITOR';
 
-  const [series, setSeries] = useState<SerieData[]>(initialSeries);
+  const [series] = useState<SerieData[]>(initialSeries);
+  const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    fetch('/api/favorites')
+      .then((res) => (res.ok ? res.json() : []))
+      .then((ids: number[]) => setFavoriteIds(new Set(ids.map(String))))
+      .catch(() => {});
+  }, []);
+
+  const isFavorite = useCallback(
+    (serieId: string) => favoriteIds.has(serieId),
+    [favoriteIds]
+  );
 
   // Filtros
   const [searchTerm, setSearchTerm] = useState('');
@@ -206,7 +218,7 @@ export function CatalogoClient({
     }
 
     if (selectedFavorite === 'favorites') {
-      filtered = filtered.filter((s) => s.isFavorite === true);
+      filtered = filtered.filter((s) => favoriteIds.has(s.id));
     }
 
     if (minRating > 0) {
@@ -239,6 +251,7 @@ export function CatalogoClient({
     selectedType,
     selectedViewed,
     selectedFavorite,
+    favoriteIds,
     selectedLetter,
     minRating,
     yearFrom,
@@ -316,30 +329,29 @@ export function CatalogoClient({
     setCurrentPage(1);
   };
 
-  const toggleFavorite = async (
-    serieId: string,
-    currentFavorite: boolean,
-    e: React.MouseEvent
-  ) => {
+  const toggleFavorite = async (serieId: string, e: React.MouseEvent) => {
     e.stopPropagation();
 
     try {
       const response = await fetch(`/api/series/${serieId}/favorite`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isFavorite: !currentFavorite }),
       });
 
       if (!response.ok) throw new Error('Error al actualizar favorito');
 
-      setSeries((prevSeries) =>
-        prevSeries.map((s) =>
-          s.id === serieId ? { ...s, isFavorite: !currentFavorite } : s
-        )
-      );
+      const data = await response.json();
+      setFavoriteIds((prev) => {
+        const next = new Set(prev);
+        if (data.isFavorite) {
+          next.add(serieId);
+        } else {
+          next.delete(serieId);
+        }
+        return next;
+      });
 
       message.success(
-        !currentFavorite ? 'Agregado a favoritos' : 'Removido de favoritos'
+        data.isFavorite ? 'Agregado a favoritos' : 'Removido de favoritos'
       );
     } catch (error) {
       console.error('Error toggling favorite:', error);
@@ -405,18 +417,16 @@ export function CatalogoClient({
             <div className="serie-card-actions">
               <Tooltip
                 title={
-                  serie.isFavorite
+                  isFavorite(serie.id)
                     ? 'Quitar de favoritos'
                     : 'Agregar a favoritos'
                 }
               >
                 <button
-                  className={`serie-card-action-btn ${serie.isFavorite ? 'favorite-active' : ''}`}
-                  onClick={(e) =>
-                    toggleFavorite(serie.id, serie.isFavorite || false, e)
-                  }
+                  className={`serie-card-action-btn ${isFavorite(serie.id) ? 'favorite-active' : ''}`}
+                  onClick={(e) => toggleFavorite(serie.id, e)}
                 >
-                  {serie.isFavorite ? <StarFilled /> : <StarOutlined />}
+                  {isFavorite(serie.id) ? <StarFilled /> : <StarOutlined />}
                 </button>
               </Tooltip>
               <Tooltip title="Ver detalle">
@@ -589,10 +599,10 @@ export function CatalogoClient({
         </div>
       </div>
       <button
-        className={`serie-list-item-fav ${serie.isFavorite ? 'favorite-active' : ''}`}
-        onClick={(e) => toggleFavorite(serie.id, serie.isFavorite || false, e)}
+        className={`serie-list-item-fav ${isFavorite(serie.id) ? 'favorite-active' : ''}`}
+        onClick={(e) => toggleFavorite(serie.id, e)}
       >
-        {serie.isFavorite ? <StarFilled /> : <StarOutlined />}
+        {isFavorite(serie.id) ? <StarFilled /> : <StarOutlined />}
       </button>
     </div>
   );
@@ -660,12 +670,10 @@ export function CatalogoClient({
                 </div>
               </div>
               <button
-                className={`serie-list-item-fav ${serie.isFavorite ? 'favorite-active' : ''}`}
-                onClick={(e) =>
-                  toggleFavorite(serie.id, serie.isFavorite || false, e)
-                }
+                className={`serie-list-item-fav ${isFavorite(serie.id) ? 'favorite-active' : ''}`}
+                onClick={(e) => toggleFavorite(serie.id, e)}
               >
-                {serie.isFavorite ? <StarFilled /> : <StarOutlined />}
+                {isFavorite(serie.id) ? <StarFilled /> : <StarOutlined />}
               </button>
             </div>
           ))}

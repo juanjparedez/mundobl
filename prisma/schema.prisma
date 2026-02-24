@@ -35,6 +35,7 @@ model User {
   comments        Comment[]
   userRatings     UserRating[]
   viewStatuses    ViewStatus[]
+  favorites       UserFavorite[]
   featureRequests FeatureRequest[]
   featureVotes    FeatureVote[]
   accessLogs      AccessLog[]
@@ -168,6 +169,7 @@ model Series {
   userRatings   UserRating[]
   comments      Comment[]
   viewStatus    ViewStatus[]
+  favorites     UserFavorite[]
   tags          SeriesTag[]
   dubbings      SeriesDubbing[]
   genres        SeriesGenre[]
@@ -425,6 +427,7 @@ model UserRating {
 model Comment {
   id            Int       @id @default(autoincrement())
   content       String
+  isPrivate     Boolean   @default(false) // true = solo visible para el autor
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -439,6 +442,22 @@ model Comment {
   season        Season?   @relation(fields: [seasonId], references: [id], onDelete: Cascade)
   episodeId     Int?
   episode       Episode?  @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+}
+
+// ============================================
+// FAVORITOS POR USUARIO
+// ============================================
+model UserFavorite {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  seriesId Int
+  series   Series   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, seriesId])
 }
 
 // ============================================

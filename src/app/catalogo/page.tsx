@@ -29,7 +29,6 @@ export default async function CatalogoPage() {
     imagePosition: serie.imagePosition,
     synopsis: serie.synopsis,
     visto: serie.viewStatus?.[0]?.status === 'VISTA',
-    isFavorite: serie.isFavorite,
     universoId: serie.universeId,
     universoNombre: serie.universe?.name || null,
   }));

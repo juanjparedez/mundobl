@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
+import { auth } from '@/lib/auth';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await auth();
+    const currentUserId = session?.user?.id;
+
     const resolvedParams = await params;
     const seasonId = parseInt(resolvedParams.id, 10);
 
@@ -15,8 +19,19 @@ export async function GET(
     }
 
     const comments = await prisma.comment.findMany({
-      where: { seasonId },
+      where: {
+        seasonId,
+        OR: [
+          { isPrivate: false },
+          ...(currentUserId
+            ? [{ isPrivate: true, userId: currentUserId }]
+            : []),
+        ],
+      },
       orderBy: { createdAt: 'desc' },
+      include: {
+        user: { select: { id: true, name: true, image: true } },
+      },
     });
 
     return NextResponse.json(comments);
@@ -45,7 +60,7 @@ export async function POST(
     }
 
     const body = await request.json();
-    const { content } = body;
+    const { content, isPrivate } = body;
 
     if (!content || content.trim() === '') {
       return NextResponse.json(
@@ -57,6 +72,7 @@ export async function POST(
     const comment = await prisma.comment.create({
       data: {
         content: content.trim(),
+        isPrivate: isPrivate === true,
         seasonId,
         userId: authResult.userId,
       },
