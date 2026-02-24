@@ -7,7 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'Sistema de gestión de catálogo de series',
     start_url: '/',
     display: 'standalone',
-    background_color: '#ffffff',
+    background_color: '#141414',
     theme_color: '#1677ff',
     orientation: 'portrait-primary',
     icons: [
