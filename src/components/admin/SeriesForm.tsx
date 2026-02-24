@@ -46,7 +46,6 @@ interface SeriesFormInitialData {
   id?: number;
   title?: string;
   type?: string;
-  isFavorite?: boolean;
   [key: string]: unknown;
 }
 
@@ -225,9 +224,16 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
   const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [uploading, setUploading] = useState(false);
   const imageUrl = Form.useWatch('imageUrl', form);
-  const [isFavorite, setIsFavorite] = useState(
-    initialData?.isFavorite ?? false
-  );
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  useEffect(() => {
+    if (mode === 'edit' && initialData?.id) {
+      fetch(`/api/series/${initialData.id}/favorite`)
+        .then((res) => (res.ok ? res.json() : { isFavorite: false }))
+        .then((data) => setIsFavorite(data.isFavorite))
+        .catch(() => {});
+    }
+  }, [mode, initialData?.id]);
 
   const loadFormData = useCallback(async () => {
     try {
@@ -476,13 +482,12 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
     try {
       const response = await fetch(`/api/series/${initialData.id}/favorite`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isFavorite: !isFavorite }),
       });
       if (!response.ok) throw new Error();
-      setIsFavorite(!isFavorite);
+      const data = await response.json();
+      setIsFavorite(data.isFavorite);
       message.success(
-        !isFavorite ? '⭐ Agregado a favoritos' : 'Removido de favoritos'
+        data.isFavorite ? 'Agregado a favoritos' : 'Removido de favoritos'
       );
     } catch {
       message.error('Error al actualizar favorito');

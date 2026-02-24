@@ -16,7 +16,6 @@ async function generate() {
       .resize(size, size, { fit: 'cover' })
       .png({ quality: 90 })
       .toFile(path.join(OUT_DIR, name));
-    console.log(`Generated ${name} (${size}x${size})`);
   }
 }
 

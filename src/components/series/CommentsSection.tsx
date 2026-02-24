@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Input, Button, Card, Empty, Avatar } from 'antd';
+import { Input, Button, Card, Empty, Avatar, Switch, Tag, Tooltip } from 'antd';
 import {
   CommentOutlined,
   ClockCircleOutlined,
   UserOutlined,
+  LockOutlined,
 } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import './CommentsSection.css';
@@ -19,15 +20,19 @@ interface CommentUser {
   image: string | null;
 }
 
+interface CommentData {
+  id: number;
+  content: string;
+  isPrivate?: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  user?: CommentUser | null;
+  userId?: string | null;
+}
+
 interface CommentsSectionProps {
   seriesId: number;
-  comments: Array<{
-    id: number;
-    content: string;
-    createdAt: Date;
-    updatedAt: Date;
-    user?: CommentUser | null;
-  }>;
+  comments: CommentData[];
 }
 
 export function CommentsSection({
@@ -36,9 +41,17 @@ export function CommentsSection({
 }: CommentsSectionProps) {
   const message = useMessage();
   const { data: session } = useSession();
-  const [comments, setComments] = useState(initialComments);
+  const currentUserId = session?.user?.id;
+  const [comments, setComments] = useState<CommentData[]>(initialComments);
   const [newComment, setNewComment] = useState('');
+  const [isPrivate, setIsPrivate] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Filtrar comentarios privados de otros usuarios
+  const visibleComments = comments.filter(
+    (c) =>
+      !c.isPrivate || c.userId === currentUserId || c.user?.id === currentUserId
+  );
 
   const handleSubmit = async () => {
     if (!newComment.trim()) {
@@ -51,7 +64,7 @@ export function CommentsSection({
       const response = await fetch(`/api/series/${seriesId}/comments`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: newComment }),
+        body: JSON.stringify({ content: newComment, isPrivate }),
       });
 
       if (!response.ok) throw new Error('Error al guardar');
@@ -59,7 +72,10 @@ export function CommentsSection({
       const savedComment = await response.json();
       setComments((prev) => [savedComment, ...prev]);
       setNewComment('');
-      message.success('Comentario agregado');
+      setIsPrivate(false);
+      message.success(
+        isPrivate ? 'Nota privada agregada' : 'Comentario agregado'
+      );
     } catch (error) {
       message.error('Error al guardar el comentario');
       console.error(error);
@@ -79,20 +95,35 @@ export function CommentsSection({
         >
           <TextArea
             rows={4}
-            placeholder="Escribe tus impresiones, opiniones o notas sobre esta serie..."
+            placeholder={
+              isPrivate
+                ? 'Escribe una nota privada (solo vos la verás)...'
+                : 'Escribe tus impresiones, opiniones o notas sobre esta serie...'
+            }
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             maxLength={2000}
             showCount
           />
           <div className="comments-section__actions">
+            <Tooltip title="Los comentarios privados solo son visibles para vos">
+              <label className="comments-section__private-toggle">
+                <Switch
+                  size="small"
+                  checked={isPrivate}
+                  onChange={setIsPrivate}
+                />
+                <LockOutlined />
+                <span>Privado</span>
+              </label>
+            </Tooltip>
             <Button
               type="primary"
               icon={<CommentOutlined />}
               onClick={handleSubmit}
               loading={isSubmitting}
             >
-              Agregar Comentario
+              {isPrivate ? 'Guardar Nota Privada' : 'Agregar Comentario'}
             </Button>
           </div>
         </Card>
@@ -106,15 +137,18 @@ export function CommentsSection({
 
       <div className="comments-section__list">
         <h4 className="comments-section__title">
-          Comentarios ({comments.length})
+          Comentarios ({visibleComments.length})
         </h4>
 
-        {comments.length === 0 ? (
+        {visibleComments.length === 0 ? (
           <Empty description="No hay comentarios aún" />
         ) : (
           <div className="comments-section__items">
-            {comments.map((comment) => (
-              <Card key={comment.id} className="comment-card">
+            {visibleComments.map((comment) => (
+              <Card
+                key={comment.id}
+                className={`comment-card${comment.isPrivate ? ' comment-card--private' : ''}`}
+              >
                 <p className="comment-card__content">{comment.content}</p>
                 <div className="comment-card__footer">
                   {comment.user && (
@@ -128,6 +162,11 @@ export function CommentsSection({
                       />
                       <span>{comment.user.name}</span>
                     </span>
+                  )}
+                  {comment.isPrivate && (
+                    <Tag color="default" icon={<LockOutlined />}>
+                      Privado
+                    </Tag>
                   )}
                   <span
                     style={{ color: 'var(--text-secondary)' }}

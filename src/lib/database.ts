@@ -76,14 +76,24 @@ export async function getSeriesById(id: number) {
           episodes: {
             include: {
               viewStatus: true,
-              comments: true,
+              comments: {
+                include: {
+                  user: { select: { id: true, name: true, image: true } },
+                },
+                orderBy: { createdAt: 'desc' },
+              },
             },
             orderBy: {
               episodeNumber: 'asc',
             },
           },
           ratings: true,
-          comments: true,
+          comments: {
+            include: {
+              user: { select: { id: true, name: true, image: true } },
+            },
+            orderBy: { createdAt: 'desc' },
+          },
           viewStatus: true,
         },
         orderBy: {
@@ -101,7 +111,10 @@ export async function getSeriesById(id: number) {
         },
       },
       ratings: true,
-      comments: true,
+      comments: {
+        include: { user: { select: { id: true, name: true, image: true } } },
+        orderBy: { createdAt: 'desc' },
+      },
       viewStatus: true,
       tags: {
         include: {

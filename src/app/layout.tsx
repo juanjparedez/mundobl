@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import { App } from 'antd';
 import { ThemeProvider } from '@/lib/providers/ThemeProvider';
@@ -14,10 +14,9 @@ export const metadata: Metadata = {
   verification: {
     google: 'Yp0Pjs7gScD3_wH8Za8VkiyA1tlnEIG6gjmKp_WcMyg',
   },
-  themeColor: '#1677ff',
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'default',
+    statusBarStyle: 'black-translucent',
     title: 'MundoBL',
   },
   icons: {
@@ -33,6 +32,10 @@ export const metadata: Metadata = {
       },
     ],
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#141414',
 };
 
 export default function RootLayout({

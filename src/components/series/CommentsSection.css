@@ -11,8 +11,23 @@
 
 .comments-section__actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
   margin-top: var(--spacing-md);
+}
+
+.comments-section__private-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 0.9em;
+}
+
+.comment-card--private {
+  border-left: 3px solid var(--warning-color);
+  opacity: 0.9;
 }
 
 .comments-section__list {

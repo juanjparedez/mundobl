@@ -1,18 +1,32 @@
 'use client';
 
 import { useState } from 'react';
-import { Input, Button, Card, Empty } from 'antd';
-import { CommentOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import { Input, Button, Card, Empty, Switch, Tag, Tooltip } from 'antd';
+import {
+  CommentOutlined,
+  ClockCircleOutlined,
+  LockOutlined,
+} from '@ant-design/icons';
+import { useSession } from 'next-auth/react';
 import './CommentsList.css';
 import { useMessage } from '@/hooks/useMessage';
 
 const { TextArea } = Input;
 
+interface CommentUser {
+  id: string;
+  name: string | null;
+  image: string | null;
+}
+
 interface Comment {
   id: number;
   content: string;
+  isPrivate?: boolean;
   createdAt: Date;
   updatedAt: Date;
+  user?: CommentUser | null;
+  userId?: string | null;
 }
 
 interface CommentsListProps {
@@ -20,7 +34,7 @@ interface CommentsListProps {
   seasonId?: number;
   episodeId?: number;
   initialComments?: Comment[];
-  compact?: boolean; // Modo compacto para episodios
+  compact?: boolean;
   placeholder?: string;
 }
 
@@ -33,9 +47,17 @@ export function CommentsList({
   placeholder = 'Escribe tus impresiones, opiniones o notas...',
 }: CommentsListProps) {
   const message = useMessage();
+  const { data: session } = useSession();
+  const currentUserId = session?.user?.id;
   const [comments, setComments] = useState<Comment[]>(initialComments);
   const [newComment, setNewComment] = useState('');
+  const [isPrivate, setIsPrivate] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const visibleComments = comments.filter(
+    (c) =>
+      !c.isPrivate || c.userId === currentUserId || c.user?.id === currentUserId
+  );
 
   const getApiEndpoint = () => {
     if (episodeId) return `/api/episodes/${episodeId}/comments`;
@@ -55,7 +77,7 @@ export function CommentsList({
       const response = await fetch(getApiEndpoint(), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: newComment }),
+        body: JSON.stringify({ content: newComment, isPrivate }),
       });
 
       if (!response.ok) throw new Error('Error al guardar');
@@ -63,7 +85,10 @@ export function CommentsList({
       const savedComment = await response.json();
       setComments((prev) => [savedComment, ...prev]);
       setNewComment('');
-      message.success('Comentario agregado');
+      setIsPrivate(false);
+      message.success(
+        isPrivate ? 'Nota privada agregada' : 'Comentario agregado'
+      );
     } catch (error) {
       message.error('Error al guardar el comentario');
       console.error(error);
@@ -78,36 +103,53 @@ export function CommentsList({
         <div className="comments-list-compact__form">
           <TextArea
             rows={3}
-            placeholder={placeholder}
+            placeholder={
+              isPrivate ? 'Nota privada (solo vos la verás)...' : placeholder
+            }
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             maxLength={1000}
             showCount
           />
-          <Button
-            type="primary"
-            size="small"
-            icon={<CommentOutlined />}
-            onClick={handleSubmit}
-            loading={isSubmitting}
-            style={{ marginTop: '8px' }}
-          >
-            Agregar Comentario
-          </Button>
+          <div className="comments-list-compact__actions">
+            <Tooltip title="Solo vos verás este comentario">
+              <label className="comments-list__private-toggle">
+                <Switch
+                  size="small"
+                  checked={isPrivate}
+                  onChange={setIsPrivate}
+                />
+                <LockOutlined />
+              </label>
+            </Tooltip>
+            <Button
+              type="primary"
+              size="small"
+              icon={<CommentOutlined />}
+              onClick={handleSubmit}
+              loading={isSubmitting}
+            >
+              {isPrivate ? 'Nota Privada' : 'Comentar'}
+            </Button>
+          </div>
         </div>
 
-        {comments.length > 0 && (
+        {visibleComments.length > 0 && (
           <div className="comments-list-compact__items">
             <h6
               style={{ fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}
             >
-              💬 Comentarios ({comments.length})
+              Comentarios ({visibleComments.length})
             </h6>
             <div>
-              {comments.map((comment) => (
-                <div key={comment.id} className="comment-compact">
+              {visibleComments.map((comment) => (
+                <div
+                  key={comment.id}
+                  className={`comment-compact${comment.isPrivate ? ' comment-compact--private' : ''}`}
+                >
                   <p className="comment-compact__content">{comment.content}</p>
                   <span className="comment-compact__date">
+                    {comment.isPrivate && <LockOutlined />}
                     <ClockCircleOutlined />{' '}
                     {formatDate(new Date(comment.createdAt))}
                   </span>
@@ -128,37 +170,58 @@ export function CommentsList({
       >
         <TextArea
           rows={4}
-          placeholder={placeholder}
+          placeholder={
+            isPrivate ? 'Nota privada (solo vos la verás)...' : placeholder
+          }
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
           maxLength={2000}
           showCount
         />
         <div className="comments-list__actions">
+          <Tooltip title="Solo vos verás este comentario">
+            <label className="comments-list__private-toggle">
+              <Switch
+                size="small"
+                checked={isPrivate}
+                onChange={setIsPrivate}
+              />
+              <LockOutlined />
+              <span>Privado</span>
+            </label>
+          </Tooltip>
           <Button
             type="primary"
             icon={<CommentOutlined />}
             onClick={handleSubmit}
             loading={isSubmitting}
           >
-            Agregar Comentario
+            {isPrivate ? 'Guardar Nota Privada' : 'Agregar Comentario'}
           </Button>
         </div>
       </Card>
 
       <div className="comments-list__items">
         <h4 className="comments-list__title">
-          Comentarios ({comments.length})
+          Comentarios ({visibleComments.length})
         </h4>
 
-        {comments.length === 0 ? (
+        {visibleComments.length === 0 ? (
           <Empty description="No hay comentarios aún" />
         ) : (
           <div>
-            {comments.map((comment) => (
-              <Card key={comment.id} className="comment-card">
+            {visibleComments.map((comment) => (
+              <Card
+                key={comment.id}
+                className={`comment-card${comment.isPrivate ? ' comment-card--private' : ''}`}
+              >
                 <p className="comment-card__content">{comment.content}</p>
                 <div className="comment-card__footer">
+                  {comment.isPrivate && (
+                    <Tag color="default" icon={<LockOutlined />}>
+                      Privado
+                    </Tag>
+                  )}
                   <span
                     style={{ color: 'var(--text-secondary)' }}
                     className="comment-card__date"
