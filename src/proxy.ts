@@ -4,13 +4,74 @@ import type { NextRequest } from 'next/server';
 import { logPageView } from '@/lib/access-log';
 import { prisma } from '@/lib/database';
 
+// Patrones de paths que solo buscan scanners de vulnerabilidades
+const SCANNER_PATTERNS = [
+  /\.php/i,
+  /\/wp-/i,
+  /\/wordpress/i,
+  /\/\.env/i,
+  /\/\.git/i,
+  /\/\.aws/i,
+  /\/\.docker/i,
+  /\/cgi-bin/i,
+  /\/phpmyadmin/i,
+  /\/myadmin/i,
+  /\/mysql/i,
+  /\/adminer/i,
+  /\/phpinfo/i,
+  /\/xmlrpc/i,
+  /\/config\.(json|yml|yaml|xml|bak|old)/i,
+  /\/backup/i,
+  /\/debug/i,
+  /\/shell/i,
+  /\/eval/i,
+  /\/exec/i,
+  /\/cmd/i,
+  /\/console/i,
+  /\/actuator/i,
+  /\/api\/v1\/pods/i,
+  /\/solr/i,
+  /\/struts/i,
+  /\/jenkins/i,
+  /\/\.well-known\/security\.txt/i,
+];
+
+// Paths de assets/PWA que no necesitan logging
+const ASSET_PATTERNS = [
+  /^\/icons\//,
+  /^\/manifest\.webmanifest$/,
+  /^\/sw\.js$/,
+  /^\/robots\.txt$/,
+  /^\/sitemap/,
+];
+
+function isScannerPath(pathname: string): boolean {
+  return SCANNER_PATTERNS.some((pattern) => pattern.test(pathname));
+}
+
+function isAssetPath(pathname: string): boolean {
+  return ASSET_PATTERNS.some((pattern) => pattern.test(pathname));
+}
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Extraer info para logging
+  // Bloquear scanners antes de cualquier procesamiento (no loguear, no gastar DB)
+  if (isScannerPath(pathname)) {
+    return new NextResponse(null, { status: 404 });
+  }
+
+  // Extraer IP real del cliente (CF-Connecting-IP con Cloudflare, fallback a x-forwarded-for)
   const ip =
-    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || null;
+    request.headers.get('cf-connecting-ip') ||
+    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    null;
   const userAgent = request.headers.get('user-agent') || null;
+
+  // No loguear assets/PWA
+  if (isAssetPath(pathname)) {
+    return NextResponse.next();
+  }
 
   // Check IP ban
   if (ip) {

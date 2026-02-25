@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-helpers';
-import { getAccessLogs, cleanOldLogs } from '@/lib/access-log';
+import {
+  getAccessLogs,
+  cleanOldLogs,
+  cleanScannerLogs,
+} from '@/lib/access-log';
 
 // GET /api/admin/logs — admin only, retorna logs con filtros
 export async function GET(request: NextRequest) {
@@ -38,8 +42,19 @@ export async function DELETE(request: NextRequest) {
     if (!authResult.authorized) return authResult.response;
 
     const searchParams = request.nextUrl.searchParams;
-    const days = parseInt(searchParams.get('days') || '90');
+    const type = searchParams.get('type');
 
+    // DELETE /api/admin/logs?type=scanners — limpiar logs de scanners
+    if (type === 'scanners') {
+      const deleted = await cleanScannerLogs();
+      return NextResponse.json({
+        deleted,
+        message: `${deleted} logs de scanners eliminados`,
+      });
+    }
+
+    // DELETE /api/admin/logs?days=90 — limpiar logs viejos
+    const days = parseInt(searchParams.get('days') || '90');
     const deleted = await cleanOldLogs(days);
     return NextResponse.json({
       deleted,

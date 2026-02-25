@@ -68,9 +68,12 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-// GET - Obtener estado de visualización de un episodio
+// GET - Obtener estado de visualización de un episodio para el usuario autenticado
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
+    const authResult = await requireAuth();
+    if (!authResult.authorized) return authResult.response;
+
     const { id } = await params;
     const episodeId = parseInt(id, 10);
 
@@ -79,7 +82,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     }
 
     const viewStatus = await prisma.viewStatus.findFirst({
-      where: { episodeId },
+      where: { episodeId, userId: authResult.userId },
     });
 
     return NextResponse.json(viewStatus || { status: 'SIN_VER' });
