@@ -120,3 +120,52 @@ export async function cleanOldLogs(daysToKeep: number = 90): Promise<number> {
 
   return result.count;
 }
+
+// Patrones para identificar logs de scanners ya existentes en la DB
+const SCANNER_PATH_PATTERNS = [
+  '.php',
+  '/wp-',
+  '/wordpress',
+  '/.env',
+  '/.git',
+  '/cgi-bin',
+  '/phpmyadmin',
+  '/xmlrpc',
+  '/adminer',
+  '/phpinfo',
+  '/shell',
+  '/eval',
+  '/exec',
+  '/cmd',
+  '/console',
+  '/actuator',
+  '/jenkins',
+  '/solr',
+  '/struts',
+  '/backup',
+  '/debug',
+  '/myadmin',
+  '/mysql',
+  '/.aws',
+  '/.docker',
+  '/config.json',
+  '/config.yml',
+  '/config.yaml',
+  '/config.xml',
+  '/config.bak',
+];
+
+/**
+ * Elimina logs existentes generados por scanners de vulnerabilidades
+ */
+export async function cleanScannerLogs(): Promise<number> {
+  const result = await prisma.accessLog.deleteMany({
+    where: {
+      OR: SCANNER_PATH_PATTERNS.map((pattern) => ({
+        path: { contains: pattern },
+      })),
+    },
+  });
+
+  return result.count;
+}
