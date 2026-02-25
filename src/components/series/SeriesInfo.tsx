@@ -298,7 +298,9 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
 
               {pairings.size > 0 && (
                 <div className="series-info__pairings">
-                  {Array.from(pairings.entries()).map(([group, actors]) => (
+                  {Array.from(pairings.entries())
+                  .sort(([a], [b]) => a - b)
+                  .map(([group, actors]) => (
                     <div key={group} className="series-info__pairing">
                       <span className="series-info__pairing-badge">
                         💕 Pareja

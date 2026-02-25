@@ -16,6 +16,7 @@ import {
   DeleteOutlined,
   ReloadOutlined,
   SearchOutlined,
+  BugOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
@@ -68,8 +69,82 @@ interface UserOption {
   name: string | null;
 }
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+  return isMobile;
+}
+
+function LogCard({
+  log,
+  onFilter,
+}: {
+  log: AccessLogEntry;
+  onFilter: (type: 'action' | 'user' | 'ip' | 'path', value: string) => void;
+}) {
+  const date = new Date(log.createdAt).toLocaleString('es-AR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+
+  return (
+    <div className="log-card">
+      <div className="log-card__header">
+        <span className="log-card__date">{date}</span>
+        <Tag
+          color={ACTION_COLORS[log.action] || 'default'}
+          className="logs-table__clickable"
+          onClick={() => onFilter('action', log.action)}
+        >
+          {log.action}
+        </Tag>
+      </div>
+      <div className="log-card__user">
+        {log.user ? (
+          <div
+            className="logs-table__user logs-table__clickable"
+            onClick={() => onFilter('user', log.user!.id)}
+          >
+            <Avatar
+              src={log.user.image}
+              icon={!log.user.image ? <UserOutlined /> : undefined}
+              size={20}
+            />
+            <span>{log.user.name}</span>
+          </div>
+        ) : (
+          <span className="logs-table__anonymous">Anónimo</span>
+        )}
+      </div>
+      <div
+        className="log-card__path logs-table__clickable"
+        onClick={() => onFilter('path', log.path)}
+      >
+        {log.path}
+      </div>
+      {log.ip && (
+        <div
+          className="log-card__ip logs-table__clickable"
+          onClick={() => onFilter('ip', log.ip!)}
+        >
+          IP: {log.ip}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function LogsClient() {
   const message = useMessage();
+  const isMobile = useIsMobile();
   const [logs, setLogs] = useState<AccessLogEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
@@ -165,6 +240,22 @@ export function LogsClient() {
       }
     } catch (error) {
       message.error('Error al limpiar logs');
+      console.error(error);
+    }
+  };
+
+  const handleCleanScannerLogs = async () => {
+    try {
+      const response = await fetch('/api/admin/logs?type=scanners', {
+        method: 'DELETE',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        message.success(data.message);
+        fetchLogs();
+      }
+    } catch (error) {
+      message.error('Error al limpiar logs de scanners');
       console.error(error);
     }
   };
@@ -274,7 +365,7 @@ export function LogsClient() {
           </div>
 
           <div className="logs-filters">
-            <Space wrap>
+            <Space wrap size="small">
               <Select
                 value={actionFilter}
                 onChange={(value) => {
@@ -282,7 +373,7 @@ export function LogsClient() {
                   setPage(1);
                 }}
                 options={ACTION_OPTIONS}
-                style={{ width: 140 }}
+                className="logs-filter-select"
                 placeholder="Acción"
               />
               <Select
@@ -298,7 +389,7 @@ export function LogsClient() {
                   label: u.name || u.id,
                   value: u.id,
                 }))}
-                style={{ width: 180 }}
+                className="logs-filter-select"
                 placeholder="Usuario"
               />
               <Input
@@ -310,7 +401,7 @@ export function LogsClient() {
                 prefix={<SearchOutlined />}
                 placeholder="Buscar IP"
                 allowClear
-                style={{ width: 160 }}
+                className="logs-filter-input"
               />
               <Input
                 value={pathFilter}
@@ -321,7 +412,7 @@ export function LogsClient() {
                 prefix={<SearchOutlined />}
                 placeholder="Buscar ruta"
                 allowClear
-                style={{ width: 180 }}
+                className="logs-filter-input"
               />
               <RangePicker
                 onChange={(_, dateStrings) => {
@@ -331,9 +422,18 @@ export function LogsClient() {
                   ]);
                   setPage(1);
                 }}
+                className="logs-filter-datepicker"
               />
+            </Space>
+            <Space wrap size="small" className="logs-actions">
               <Button icon={<ReloadOutlined />} onClick={fetchLogs}>
                 Refrescar
+              </Button>
+              <Button
+                icon={<BugOutlined />}
+                onClick={handleCleanScannerLogs}
+              >
+                Limpiar scanners
               </Button>
               <Button
                 danger
@@ -345,20 +445,52 @@ export function LogsClient() {
             </Space>
           </div>
 
-          <Table
-            columns={columns}
-            dataSource={logs}
-            rowKey="id"
-            loading={loading}
-            pagination={{
-              current: page,
-              total,
-              pageSize: 50,
-              onChange: setPage,
-              showTotal: (t) => `${t} logs`,
-            }}
-            size="small"
-          />
+          {isMobile ? (
+            <div className="logs-cards">
+              {loading && <div className="logs-cards__loading">Cargando...</div>}
+              {!loading && logs.length === 0 && (
+                <div className="logs-cards__empty">Sin resultados</div>
+              )}
+              {!loading &&
+                logs.map((log) => (
+                  <LogCard key={log.id} log={log} onFilter={applyFilter} />
+                ))}
+              {!loading && total > 50 && (
+                <div className="logs-cards__pagination">
+                  <Button
+                    disabled={page <= 1}
+                    onClick={() => setPage((p) => p - 1)}
+                  >
+                    Anterior
+                  </Button>
+                  <span className="logs-cards__page-info">
+                    {page} / {Math.ceil(total / 50)}
+                  </span>
+                  <Button
+                    disabled={page >= Math.ceil(total / 50)}
+                    onClick={() => setPage((p) => p + 1)}
+                  >
+                    Siguiente
+                  </Button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Table
+              columns={columns}
+              dataSource={logs}
+              rowKey="id"
+              loading={loading}
+              pagination={{
+                current: page,
+                total,
+                pageSize: 50,
+                onChange: setPage,
+                showTotal: (t) => `${t} logs`,
+              }}
+              size="small"
+            />
+          )}
         </div>
       </div>
     </AppLayout>
