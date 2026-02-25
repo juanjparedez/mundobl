@@ -4,6 +4,22 @@ Todas las versiones notables del proyecto se documentan aqui.
 
 ## Proximo deploy
 
+### Seguridad
+- Filtro de paths de scanners en middleware (bloqueo sin loguear)
+- Extraccion de IP real del cliente via `CF-Connecting-IP` (Cloudflare)
+- No loguear assets/PWA (icons, manifest, sw.js)
+- Endpoint para limpiar logs de scanners (`DELETE /api/admin/logs?type=scanners`)
+- Fix: endpoint POST `/api/genres` ahora requiere autenticacion (ADMIN/MODERATOR)
+- Fix: endpoint GET `/api/episodes/[id]/view-status` ahora requiere autenticacion y filtra por usuario
+
+### Features
+- Banner de bienvenida para visitantes no logueados en el catalogo
+- Parejas de protagonistas ahora se ordenan por numero de grupo (pareja 1 primero)
+- Banderitas de pais en tarjetas de Universos
+- Vista de logs responsive con cards para mobile
+- Boton "Limpiar scanners" en la pagina de admin logs
+
+### Anteriores
 - Nuevas categorias de sitios: Oficiales, Productoras, YouTube
 - Constantes de sitios centralizadas en `src/constants/sitios.ts`
 - Modelo `SuggestedSite` para sugerencias de la comunidad

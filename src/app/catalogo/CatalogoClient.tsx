@@ -34,6 +34,7 @@ import Image from 'next/image';
 import { useMessage } from '@/hooks/useMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
+import { WelcomeBanner } from '@/components/common/WelcomeBanner/WelcomeBanner';
 
 const { Option } = Select;
 
@@ -512,6 +513,9 @@ export function CatalogoClient({
           </div>
           <div className="serie-card-body">
             <div className="serie-card-tags">
+              {firstSerie.paisCode && (
+                <CountryFlag code={firstSerie.paisCode} size="small" />
+              )}
               <Tag color="purple" style={{ margin: 0 }}>
                 <GlobalOutlined /> {group.series.length} títulos
               </Tag>
@@ -832,6 +836,7 @@ export function CatalogoClient({
 
   return (
     <>
+      <WelcomeBanner isLoggedIn={userRole !== null} />
       {/* Toolbar: búsqueda + acciones */}
       <div className="catalogo-toolbar">
         <div className="catalogo-toolbar-left">
