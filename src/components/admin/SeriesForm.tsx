@@ -327,6 +327,11 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
         });
       }
     }
+    // Mark initial load as complete after a tick so form.isFieldsTouched() settles
+    const timer = setTimeout(() => {
+      initialDataLoaded.current = true;
+    }, 0);
+    return () => clearTimeout(timer);
   }, [initialData, loadFormData, form]);
 
   const handleSearchRelatedSeries = useCallback(
@@ -495,8 +500,10 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
   };
 
   const submittedSuccessfully = useRef(false);
+  const initialDataLoaded = useRef(false);
 
   const hasUnsavedChanges = useCallback(() => {
+    if (!initialDataLoaded.current) return false;
     return !submittedSuccessfully.current && form.isFieldsTouched();
   }, [form]);
 
