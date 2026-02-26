@@ -429,10 +429,7 @@ export function LogsClient() {
               <Button icon={<ReloadOutlined />} onClick={fetchLogs}>
                 Refrescar
               </Button>
-              <Button
-                icon={<BugOutlined />}
-                onClick={handleCleanScannerLogs}
-              >
+              <Button icon={<BugOutlined />} onClick={handleCleanScannerLogs}>
                 Limpiar scanners
               </Button>
               <Button
@@ -447,7 +444,9 @@ export function LogsClient() {
 
           {isMobile ? (
             <div className="logs-cards">
-              {loading && <div className="logs-cards__loading">Cargando...</div>}
+              {loading && (
+                <div className="logs-cards__loading">Cargando...</div>
+              )}
               {!loading && logs.length === 0 && (
                 <div className="logs-cards__empty">Sin resultados</div>
               )}

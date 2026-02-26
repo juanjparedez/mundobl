@@ -299,17 +299,17 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
               {pairings.size > 0 && (
                 <div className="series-info__pairings">
                   {Array.from(pairings.entries())
-                  .sort(([a], [b]) => a - b)
-                  .map(([group, actors]) => (
-                    <div key={group} className="series-info__pairing">
-                      <span className="series-info__pairing-badge">
-                        💕 Pareja
-                      </span>
-                      <div className="series-info__pairing-actors">
-                        {actors!.map(renderActor)}
+                    .sort(([a], [b]) => a - b)
+                    .map(([group, actors]) => (
+                      <div key={group} className="series-info__pairing">
+                        <span className="series-info__pairing-badge">
+                          💕 Pareja
+                        </span>
+                        <div className="series-info__pairing-actors">
+                          {actors!.map(renderActor)}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
                 </div>
               )}
 
