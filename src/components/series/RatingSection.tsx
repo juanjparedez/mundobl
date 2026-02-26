@@ -18,12 +18,13 @@ interface RatingSectionProps {
 const RATING_CATEGORIES = [
   { key: 'trama', label: 'Trama' },
   { key: 'casting', label: 'Casting' },
-  { key: 'originalidad', label: 'Originalidad' },
-  { key: 'bso', label: 'Banda Sonora (BSO)' },
+  { key: 'direccion', label: 'Dirección' },
+  { key: 'guion', label: 'Guión' },
+  { key: 'produccion', label: 'Producción' },
   { key: 'fotografia', label: 'Fotografía' },
-  { key: 'actuacion', label: 'Actuación' },
-  { key: 'quimica', label: 'Química' },
-  { key: 'ritmo', label: 'Ritmo' },
+  { key: 'bso', label: 'Banda Sonora' },
+  { key: 'quimica_principal', label: 'Química de pareja principal' },
+  { key: 'quimica_secundaria', label: 'Química de pareja secundaria' },
 ];
 
 interface UserRatingsData {

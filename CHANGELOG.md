@@ -4,6 +4,18 @@ Todas las versiones notables del proyecto se documentan aqui.
 
 ## Proximo deploy
 
+### Features
+- Mapeo completo de paises del mundo (~200) con codigos ISO para banderas automaticas
+- Script de seed para insertar todos los paises en la DB (`scripts/seed-all-countries.ts`)
+- Rediseno de lista de episodios: layout compacto tipo tabla con seleccion masiva
+- Endpoint de borrado masivo de episodios (`POST /api/episodes/bulk-delete`)
+- Acciones masivas en episodios: marcar como vistos/no vistos, eliminar seleccionados
+- Nuevas categorias de rating: Direccion, Guion, Produccion, Quimica de pareja principal/secundaria
+- Categorias de rating eliminadas: Ritmo, Actuacion, Originalidad
+
+### Fixes
+- Fix: dialogo "Deseas abandonar el sitio" al editar temporadas (beforeunload falso positivo)
+
 ### Seguridad
 - Filtro de paths de scanners en middleware (bloqueo sin loguear)
 - Extraccion de IP real del cliente via `CF-Connecting-IP` (Cloudflare)
