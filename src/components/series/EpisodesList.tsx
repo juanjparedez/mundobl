@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Tag,
   Modal,
@@ -9,6 +9,7 @@ import {
   InputNumber,
   Button,
   Checkbox,
+  Tooltip,
   Space,
 } from 'antd';
 import {
@@ -18,6 +19,9 @@ import {
   ClockCircleOutlined,
   CommentOutlined,
   ThunderboltOutlined,
+  CheckCircleFilled,
+  EyeOutlined,
+  EyeInvisibleOutlined,
 } from '@ant-design/icons';
 import { CommentsList } from '@/components/common/CommentsList';
 import './EpisodesList.css';
@@ -59,7 +63,39 @@ export function EpisodesList({
   const [editingEpisode, setEditingEpisode] = useState<Episode | null>(null);
   const [expandedEpisode, setExpandedEpisode] = useState<number | null>(null);
   const [generating, setGenerating] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [bulkDeleting, setBulkDeleting] = useState(false);
   const [form] = Form.useForm();
+
+  const allSelected = useMemo(
+    () => episodes.length > 0 && selectedIds.size === episodes.length,
+    [episodes.length, selectedIds.size]
+  );
+
+  const someSelected = useMemo(
+    () => selectedIds.size > 0 && selectedIds.size < episodes.length,
+    [episodes.length, selectedIds.size]
+  );
+
+  const handleSelectAll = () => {
+    if (allSelected) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(episodes.map((ep) => ep.id)));
+    }
+  };
+
+  const handleSelectOne = (id: number) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
 
   const handleOpenModal = (episode?: Episode) => {
     if (episode) {
@@ -125,9 +161,37 @@ export function EpisodesList({
       if (!response.ok) throw new Error();
 
       setEpisodes(episodes.filter((ep) => ep.id !== episodeId));
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        next.delete(episodeId);
+        return next;
+      });
       message.success('Episodio eliminado');
     } catch {
       message.error('Error al eliminar el episodio');
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    const ids = Array.from(selectedIds);
+    setBulkDeleting(true);
+    try {
+      const response = await fetch('/api/episodes/bulk-delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids }),
+      });
+
+      if (!response.ok) throw new Error();
+
+      const result = await response.json();
+      setEpisodes(episodes.filter((ep) => !selectedIds.has(ep.id)));
+      setSelectedIds(new Set());
+      message.success(result.message);
+    } catch {
+      message.error('Error al eliminar los episodios');
+    } finally {
+      setBulkDeleting(false);
     }
   };
 
@@ -147,7 +211,6 @@ export function EpisodesList({
 
       const viewStatus = await response.json();
 
-      // Actualizar el estado local
       setEpisodes(
         episodes.map((ep) =>
           ep.id === episodeId
@@ -174,6 +237,50 @@ export function EpisodesList({
     }
   };
 
+  const handleBulkToggleWatched = async (markAsWatched: boolean) => {
+    const ids = Array.from(selectedIds);
+    const newStatus = markAsWatched ? 'VISTA' : 'SIN_VER';
+    let updatedCount = 0;
+
+    try {
+      await Promise.all(
+        ids.map(async (id) => {
+          const response = await fetch(`/api/episodes/${id}/view-status`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: newStatus }),
+          });
+          if (response.ok) {
+            updatedCount++;
+            const viewStatus = await response.json();
+            setEpisodes((prev) =>
+              prev.map((ep) =>
+                ep.id === id
+                  ? {
+                      ...ep,
+                      viewStatus: [
+                        {
+                          status: viewStatus.status,
+                          watchedDate: viewStatus.watchedDate,
+                        },
+                      ],
+                    }
+                  : ep
+              )
+            );
+          }
+        })
+      );
+
+      setSelectedIds(new Set());
+      message.success(
+        `${updatedCount} episodio(s) marcado(s) como ${markAsWatched ? 'vistos' : 'no vistos'}`
+      );
+    } catch {
+      message.error('Error al actualizar los episodios');
+    }
+  };
+
   const handleGenerateEpisodes = async () => {
     setGenerating(true);
     try {
@@ -190,6 +297,7 @@ export function EpisodesList({
 
       const result = await response.json();
       setEpisodes(result.episodes);
+      setSelectedIds(new Set());
       message.success(result.message);
     } catch (error) {
       const errorMessage =
@@ -202,10 +310,9 @@ export function EpisodesList({
 
   return (
     <div className="episodes-list">
+      {/* Header */}
       <div className="episodes-list__header">
-        <h5 className="season-section-title">
-          📺 Episodios ({episodes.length})
-        </h5>
+        <h5 className="season-section-title">Episodios ({episodes.length})</h5>
         <Space>
           <Button
             size="small"
@@ -227,125 +334,216 @@ export function EpisodesList({
       </div>
 
       {episodes.length === 0 ? (
-        <p
-          style={{
-            color: 'var(--text-secondary)',
-            textAlign: 'center',
-            padding: '16px',
-          }}
-        >
-          No hay episodios registrados. Haz clic en &quot;Agregar Episodio&quot;
-          para comenzar.
+        <p className="episodes-list__empty">
+          No hay episodios registrados. Usa &quot;Generar&quot; o
+          &quot;Agregar&quot; para comenzar.
         </p>
       ) : (
-        <div className="episodes-list__items">
-          {episodes.map((episode) => (
-            <div key={episode.id} className="episode-item">
-              <div className="episode-item__row">
-                <div className="episode-item__content">
-                  <Checkbox
-                    checked={
-                      episode.viewStatus?.[0]?.status === 'VISTA' || false
-                    }
-                    onChange={() =>
-                      handleToggleWatched(
-                        episode.id,
-                        episode.viewStatus?.[0]?.status === 'VISTA' || false
-                      )
-                    }
-                  />
-                  <div className="episode-item__meta">
-                    <div
-                      style={{
-                        textDecoration:
-                          episode.viewStatus?.[0]?.status === 'VISTA'
-                            ? 'line-through'
-                            : 'none',
-                      }}
-                    >
-                      <strong>Episodio {episode.episodeNumber}</strong>
-                      {episode.title && ` - ${episode.title}`}
-                      {episode.viewStatus?.[0]?.status === 'VISTA' && (
-                        <Tag color="success" style={{ marginLeft: 8 }}>
-                          ✓ Visto
-                        </Tag>
-                      )}
+        <>
+          {/* Table header with select all and bulk actions */}
+          <div className="episodes-table__toolbar">
+            <div className="episodes-table__toolbar-left">
+              <Checkbox
+                checked={allSelected}
+                indeterminate={someSelected}
+                onChange={handleSelectAll}
+              />
+              {selectedIds.size > 0 ? (
+                <span className="episodes-table__selected-count">
+                  {selectedIds.size} seleccionado
+                  {selectedIds.size > 1 ? 's' : ''}
+                </span>
+              ) : (
+                <span className="episodes-table__col-label">Episodio</span>
+              )}
+            </div>
+            {selectedIds.size > 0 ? (
+              <Space size="small">
+                <Tooltip title="Marcar como vistos">
+                  <Button
+                    size="small"
+                    icon={<EyeOutlined />}
+                    onClick={() => handleBulkToggleWatched(true)}
+                  >
+                    Vistos
+                  </Button>
+                </Tooltip>
+                <Tooltip title="Marcar como no vistos">
+                  <Button
+                    size="small"
+                    icon={<EyeInvisibleOutlined />}
+                    onClick={() => handleBulkToggleWatched(false)}
+                  >
+                    No vistos
+                  </Button>
+                </Tooltip>
+                <Button
+                  size="small"
+                  danger
+                  icon={<DeleteOutlined />}
+                  loading={bulkDeleting}
+                  onClick={() => {
+                    modal.confirm({
+                      title: '¿Eliminar episodios seleccionados?',
+                      content: `Se eliminarán ${selectedIds.size} episodio(s) con sus comentarios y estados de visualización.`,
+                      okText: 'Sí, eliminar',
+                      cancelText: 'Cancelar',
+                      okButtonProps: { danger: true },
+                      onOk: handleBulkDelete,
+                    });
+                  }}
+                >
+                  Eliminar
+                </Button>
+              </Space>
+            ) : (
+              <span className="episodes-table__col-label episodes-table__col-label--actions">
+                Acciones
+              </span>
+            )}
+          </div>
+
+          {/* Episode rows */}
+          <div className="episodes-table__body">
+            {episodes.map((episode) => {
+              const isWatched =
+                episode.viewStatus?.[0]?.status === 'VISTA' || false;
+              const isSelected = selectedIds.has(episode.id);
+              const commentCount = episode.comments?.length || 0;
+
+              return (
+                <div key={episode.id}>
+                  <div
+                    className={`episodes-table__row${isWatched ? ' episodes-table__row--watched' : ''}${isSelected ? ' episodes-table__row--selected' : ''}`}
+                  >
+                    <div className="episodes-table__cell episodes-table__cell--select">
+                      <Checkbox
+                        checked={isSelected}
+                        onChange={() => handleSelectOne(episode.id)}
+                      />
                     </div>
-                    <div className="episode-item__description">
+
+                    <div
+                      className="episodes-table__cell episodes-table__cell--number"
+                      onClick={() => handleToggleWatched(episode.id, isWatched)}
+                    >
+                      <span className="episodes-table__ep-number">
+                        {episode.episodeNumber}
+                      </span>
+                    </div>
+
+                    <div className="episodes-table__cell episodes-table__cell--title">
+                      {episode.title && (
+                        <span className="episodes-table__ep-title">
+                          {episode.title}
+                        </span>
+                      )}
                       {episode.duration && (
                         <Tag
                           icon={<ClockCircleOutlined />}
-                          color="blue"
-                          style={{ marginBottom: 8 }}
+                          className="episodes-table__duration-tag"
                         >
                           {episode.duration} min
                         </Tag>
                       )}
-                      {episode.synopsis && (
-                        <div className="episode-synopsis">
-                          <small>{episode.synopsis}</small>
-                        </div>
+                    </div>
+
+                    <div className="episodes-table__cell episodes-table__cell--status">
+                      {isWatched && (
+                        <Tag
+                          icon={<CheckCircleFilled />}
+                          color="success"
+                          className="episodes-table__watched-tag"
+                        >
+                          Visto
+                        </Tag>
                       )}
                     </div>
-                  </div>
-                </div>
-                <div className="episode-item__actions">
-                  <Button
-                    type="link"
-                    size="small"
-                    icon={<CommentOutlined />}
-                    onClick={() =>
-                      setExpandedEpisode(
-                        expandedEpisode === episode.id ? null : episode.id
-                      )
-                    }
-                  >
-                    Comentar ({episode.comments?.length || 0})
-                  </Button>
-                  <Button
-                    type="link"
-                    size="small"
-                    icon={<EditOutlined />}
-                    onClick={() => handleOpenModal(episode)}
-                  >
-                    Editar
-                  </Button>
-                  <Button
-                    type="link"
-                    size="small"
-                    danger
-                    icon={<DeleteOutlined />}
-                    onClick={() => {
-                      modal.confirm({
-                        title: '¿Eliminar episodio?',
-                        content: `¿Estás seguro de eliminar el episodio ${episode.episodeNumber}?`,
-                        okText: 'Sí, eliminar',
-                        cancelText: 'Cancelar',
-                        okButtonProps: { danger: true },
-                        onOk: () => handleDelete(episode.id),
-                      });
-                    }}
-                  >
-                    Eliminar
-                  </Button>
-                </div>
-              </div>
 
-              {expandedEpisode === episode.id && (
-                <div className="episode-comments-section">
-                  <CommentsList
-                    episodeId={episode.id}
-                    initialComments={episode.comments || []}
-                    compact={true}
-                    placeholder="Escribe tus notas sobre este episodio, escenas interesantes, momentos clave..."
-                  />
+                    <div className="episodes-table__cell episodes-table__cell--actions">
+                      <Tooltip title={`Comentarios (${commentCount})`}>
+                        <Button
+                          type="text"
+                          size="small"
+                          icon={<CommentOutlined />}
+                          className={
+                            expandedEpisode === episode.id
+                              ? 'episodes-table__action-btn--active'
+                              : ''
+                          }
+                          onClick={() =>
+                            setExpandedEpisode(
+                              expandedEpisode === episode.id ? null : episode.id
+                            )
+                          }
+                        >
+                          {commentCount > 0 && (
+                            <span className="episodes-table__comment-count">
+                              {commentCount}
+                            </span>
+                          )}
+                        </Button>
+                      </Tooltip>
+                      <Tooltip title="Editar">
+                        <Button
+                          type="text"
+                          size="small"
+                          icon={<EditOutlined />}
+                          onClick={() => handleOpenModal(episode)}
+                        />
+                      </Tooltip>
+                      <Tooltip title="Eliminar">
+                        <Button
+                          type="text"
+                          size="small"
+                          danger
+                          icon={<DeleteOutlined />}
+                          onClick={() => {
+                            modal.confirm({
+                              title: '¿Eliminar episodio?',
+                              content: `¿Estás seguro de eliminar el episodio ${episode.episodeNumber}?`,
+                              okText: 'Sí, eliminar',
+                              cancelText: 'Cancelar',
+                              okButtonProps: { danger: true },
+                              onOk: () => handleDelete(episode.id),
+                            });
+                          }}
+                        />
+                      </Tooltip>
+                    </div>
+                  </div>
+
+                  {/* Synopsis expandible */}
+                  {episode.synopsis && expandedEpisode !== episode.id && (
+                    <div className="episodes-table__synopsis-preview">
+                      {episode.synopsis}
+                    </div>
+                  )}
+
+                  {/* Comments section */}
+                  {expandedEpisode === episode.id && (
+                    <div className="episodes-table__comments">
+                      {episode.synopsis && (
+                        <p className="episodes-table__synopsis">
+                          {episode.synopsis}
+                        </p>
+                      )}
+                      <CommentsList
+                        episodeId={episode.id}
+                        initialComments={episode.comments || []}
+                        compact={true}
+                        placeholder="Escribe tus notas sobre este episodio, escenas interesantes, momentos clave..."
+                      />
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          ))}
-        </div>
+              );
+            })}
+          </div>
+        </>
       )}
 
+      {/* Modal crear/editar episodio */}
       <Modal
         title={editingEpisode ? 'Editar Episodio' : 'Nuevo Episodio'}
         open={isModalOpen}
@@ -362,7 +560,7 @@ export function EpisodesList({
             <InputNumber min={1} style={{ width: '100%' }} />
           </Form.Item>
 
-          <Form.Item label="Título del Episodio (opcional)" name="title">
+          <Form.Item label="Título (opcional)" name="title">
             <Input placeholder="Ej: The Beginning" />
           </Form.Item>
 
@@ -370,7 +568,7 @@ export function EpisodesList({
             <InputNumber min={1} style={{ width: '100%' }} placeholder="45" />
           </Form.Item>
 
-          <Form.Item label="Sinopsis del Episodio" name="synopsis">
+          <Form.Item label="Sinopsis" name="synopsis">
             <TextArea
               rows={4}
               placeholder="Breve descripción de lo que sucede en este episodio..."

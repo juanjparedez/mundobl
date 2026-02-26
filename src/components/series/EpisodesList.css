@@ -12,66 +12,196 @@
   margin-bottom: var(--spacing-md);
 }
 
-.episode-synopsis {
-  margin-top: var(--spacing-xs);
+.episodes-list__empty {
   color: var(--text-secondary);
-  line-height: 1.5;
-  font-style: italic;
+  text-align: center;
+  padding: var(--spacing-lg) var(--spacing-md);
 }
 
-.episodes-list__items {
+/* Toolbar: select all + bulk actions */
+.episodes-table__toolbar {
   display: flex;
-  flex-direction: column;
-}
-
-.episode-item {
-  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background: var(--bg-spotlight);
+  border-radius: var(--border-radius-sm) var(--border-radius-sm) 0 0;
   border-bottom: 1px solid var(--border-color);
-  padding: var(--spacing-sm) 0;
+  min-height: 40px;
 }
 
-.episode-item:last-child {
+.episodes-table__toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.episodes-table__selected-count {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.episodes-table__col-label {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.episodes-table__col-label--actions {
+  display: none;
+}
+
+/* Table body */
+.episodes-table__body {
+  border: 1px solid var(--border-color);
+  border-top: none;
+  border-radius: 0 0 var(--border-radius-sm) var(--border-radius-sm);
+  overflow: hidden;
+}
+
+/* Episode row */
+.episodes-table__row {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-bottom: 1px solid var(--border-color-secondary);
+  transition: var(--transition-fast);
+  min-height: 44px;
+}
+
+.episodes-table__row:last-child {
   border-bottom: none;
 }
 
-.episode-item__row {
+.episodes-table__row:hover {
+  background: var(--bg-spotlight);
+}
+
+.episodes-table__row--watched {
+  background: rgba(82, 196, 26, 0.04);
+}
+
+.episodes-table__row--watched:hover {
+  background: rgba(82, 196, 26, 0.08);
+}
+
+.episodes-table__row--selected {
+  background: var(--primary-color-outline);
+}
+
+.episodes-table__row--selected:hover {
+  background: var(--primary-color-outline);
+}
+
+/* Cells */
+.episodes-table__cell {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--spacing-md);
-}
-
-.episode-item__content {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--spacing-sm);
-  flex: 1;
-  min-width: 0;
-}
-
-.episode-item__meta {
-  flex: 1;
-  min-width: 0;
-}
-
-.episode-item__description {
-  margin-top: var(--spacing-xs);
-  color: var(--text-secondary);
-  font-size: 14px;
-}
-
-.episode-item__actions {
-  display: flex;
+  align-items: center;
   flex-shrink: 0;
-  gap: 4px;
 }
 
-.episode-comments-section {
-  width: 100%;
-  padding: 0 var(--spacing-md) var(--spacing-md) var(--spacing-md);
-  margin-top: var(--spacing-sm);
+.episodes-table__cell--select {
+  width: 32px;
 }
 
+.episodes-table__cell--number {
+  width: 40px;
+  cursor: pointer;
+  justify-content: center;
+}
+
+.episodes-table__ep-number {
+  font-weight: 600;
+  font-size: var(--font-size-base);
+  color: var(--text-primary);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: var(--transition-fast);
+}
+
+.episodes-table__cell--number:hover .episodes-table__ep-number {
+  background: var(--primary-color);
+  color: #fff;
+}
+
+.episodes-table__cell--title {
+  flex: 1;
+  min-width: 0;
+  gap: var(--spacing-xs);
+  padding: 0 var(--spacing-sm);
+  overflow: hidden;
+}
+
+.episodes-table__ep-title {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.episodes-table__duration-tag {
+  flex-shrink: 0;
+}
+
+.episodes-table__cell--status {
+  width: 80px;
+  justify-content: center;
+}
+
+.episodes-table__watched-tag {
+  margin: 0;
+}
+
+.episodes-table__cell--actions {
+  width: 110px;
+  justify-content: flex-end;
+  gap: 2px;
+}
+
+.episodes-table__action-btn--active {
+  color: var(--primary-color) !important;
+}
+
+.episodes-table__comment-count {
+  font-size: var(--font-size-sm);
+  margin-left: 2px;
+}
+
+/* Synopsis preview (one line, shown when comments are collapsed) */
+.episodes-table__synopsis-preview {
+  padding: 0 var(--spacing-sm) var(--spacing-xs) 72px;
+  color: var(--text-tertiary);
+  font-size: var(--font-size-sm);
+  font-style: italic;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.4;
+}
+
+/* Comments expanded section */
+.episodes-table__comments {
+  padding: var(--spacing-sm) var(--spacing-md) var(--spacing-md) 72px;
+  border-bottom: 1px solid var(--border-color-secondary);
+}
+
+.episodes-table__synopsis {
+  color: var(--text-secondary);
+  font-style: italic;
+  font-size: var(--font-size-sm);
+  margin: 0 0 var(--spacing-sm) 0;
+  line-height: 1.5;
+}
+
+/* Mobile responsive */
 @media (max-width: 768px) {
   .episodes-list {
     padding: var(--spacing-sm);
@@ -83,23 +213,39 @@
     gap: var(--spacing-sm);
   }
 
-  .episode-item__row {
-    flex-direction: column;
-    gap: var(--spacing-xs);
-  }
-
-  .episode-item__actions {
+  .episodes-table__toolbar {
     flex-wrap: wrap;
-    width: 100%;
-    padding-left: 30px;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs);
   }
 
-  .episode-item__actions .ant-btn {
-    font-size: 12px;
-    padding: 0 6px;
+  .episodes-table__row {
+    flex-wrap: wrap;
+    padding: var(--spacing-xs);
+    gap: 4px;
   }
 
-  .episode-comments-section {
-    padding: 0 0 var(--spacing-sm) 0;
+  .episodes-table__cell--title {
+    flex-basis: calc(100% - 72px);
+    order: -1;
+    padding: 0;
+  }
+
+  .episodes-table__cell--status {
+    width: auto;
+  }
+
+  .episodes-table__cell--actions {
+    width: auto;
+    margin-left: auto;
+  }
+
+  .episodes-table__synopsis-preview,
+  .episodes-table__comments {
+    padding-left: var(--spacing-sm);
+  }
+
+  .episodes-table__col-label--actions {
+    display: none;
   }
 }
