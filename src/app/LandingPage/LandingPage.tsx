@@ -25,7 +25,7 @@ export function LandingPage() {
       </div>
 
       <p className="landing__subtitle">
-        Tu catálogo personal de series BL, doramas y más.
+        Tu catálogo personal de series BL y más.
       </p>
 
       <div className="landing__actions">

@@ -45,9 +45,9 @@ export function WelcomeBanner({ isLoggedIn }: WelcomeBannerProps) {
         <div className="welcome-banner__text">
           <strong>Bienvenido/a a MundoBL</strong>
           <p>
-            Este es mi catálogo personal de series BL y doramas que fui viendo,
-            incluyendo las que aún están en emisión. Si viste alguna, me
-            encantaría que dejes tu comentario, reflexión o reseña.
+            Este es mi catálogo personal de series BL que fui viendo, incluyendo
+            las que aún están en emisión. Si viste alguna, me encantaría que
+            dejes tu comentario, reflexión o reseña.
           </p>
         </div>
       </div>
