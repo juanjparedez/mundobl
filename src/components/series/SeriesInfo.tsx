@@ -225,7 +225,7 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
                   <a
                     href={link.url}
                     target="_blank"
-                    rel="noopener noreferrer"
+                    rel="noopener noreferrer nofollow"
                     className="series-info__watch-link-btn"
                   >
                     <Tag color={link.official ? 'green' : 'default'}>

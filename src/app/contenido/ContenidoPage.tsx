@@ -190,7 +190,7 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
                               <a
                                 href={item.channelUrl}
                                 target="_blank"
-                                rel="noopener noreferrer"
+                                rel="noopener noreferrer nofollow"
                                 onClick={(e) => e.stopPropagation()}
                                 className="contenido-card__channel-link"
                               >
@@ -245,7 +245,7 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
                 <a
                   href={selectedItem.url}
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noopener noreferrer nofollow"
                   className="contenido-modal__external-link"
                 >
                   Ver en {selectedItem.platform} <LinkOutlined />
