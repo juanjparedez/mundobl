@@ -16,9 +16,14 @@ interface AppLayoutProps {
 export function AppLayout({ children }: AppLayoutProps) {
   return (
     <Layout className="app-layout">
+      <a href="#main-content" className="skip-to-content">
+        Saltar al contenido principal
+      </a>
       <Sidebar />
       <Layout>
-        <Content className="app-content">{children}</Content>
+        <Content id="main-content" role="main" className="app-content">
+          {children}
+        </Content>
       </Layout>
       <BottomNav />
       <PrivacyBanner />
