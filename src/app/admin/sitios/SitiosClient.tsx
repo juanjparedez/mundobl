@@ -146,7 +146,7 @@ export function SitiosClient() {
         <a
           href={record.url}
           target="_blank"
-          rel="noopener noreferrer"
+          rel="noopener noreferrer nofollow"
           className="sitios-table__link"
         >
           <LinkOutlined /> {record.name}

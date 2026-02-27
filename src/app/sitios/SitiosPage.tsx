@@ -88,7 +88,7 @@ export function SitiosPage({ sites }: SitiosPageProps) {
       <a
         href={site.url}
         target="_blank"
-        rel="noopener noreferrer"
+        rel="noopener noreferrer nofollow"
         style={{ textDecoration: 'none' }}
       >
         <Card
@@ -136,7 +136,7 @@ export function SitiosPage({ sites }: SitiosPageProps) {
         key={site.id}
         href={site.url}
         target="_blank"
-        rel="noopener noreferrer"
+        rel="noopener noreferrer nofollow"
         className={`sitios-list-item sitios-list-item--${cat}`}
       >
         <div className="sitios-list-item__content">
