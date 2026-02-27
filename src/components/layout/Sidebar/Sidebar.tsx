@@ -191,7 +191,15 @@ export function Sidebar() {
           {session?.user ? (
             <div
               className="sidebar-user-info"
+              role="button"
+              tabIndex={0}
+              aria-label="Cerrar sesión"
               onClick={() => signOut({ callbackUrl: '/' })}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  signOut({ callbackUrl: '/' });
+                }
+              }}
             >
               <Avatar
                 src={session.user.image}
@@ -211,6 +219,7 @@ export function Sidebar() {
               icon={<LoginOutlined />}
               onClick={() => signIn('google')}
               className="sidebar-login-btn"
+              aria-label="Iniciar sesión"
               block
             >
               {!collapsed && 'Iniciar sesión'}
@@ -218,7 +227,20 @@ export function Sidebar() {
           )}
         </div>
 
-        <div className="sidebar-theme-toggle" onClick={toggleTheme}>
+        <div
+          className="sidebar-theme-toggle"
+          role="button"
+          tabIndex={0}
+          aria-label={
+            theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'
+          }
+          onClick={toggleTheme}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              toggleTheme();
+            }
+          }}
+        >
           <span className="sidebar-theme-icon">
             {theme === 'dark' ? <BulbFilled /> : <BulbOutlined />}
           </span>
