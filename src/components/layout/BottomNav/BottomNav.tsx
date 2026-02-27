@@ -85,19 +85,29 @@ export function BottomNav() {
   ];
 
   return (
-    <nav className="bottom-nav">
+    <nav className="bottom-nav" aria-label="Navegación principal">
       {navItems.map((item) => (
         <button
           key={item.key}
           className={`bottom-nav-item ${item.path && isActive(item.path) ? 'bottom-nav-item--active' : ''}`}
           onClick={item.onClick || (() => item.path && router.push(item.path))}
+          aria-label={item.label}
+          aria-current={item.path && isActive(item.path) ? 'page' : undefined}
         >
-          <span className="bottom-nav-item-icon">{item.icon}</span>
+          <span className="bottom-nav-item-icon" aria-hidden="true">
+            {item.icon}
+          </span>
           <span className="bottom-nav-item-label">{item.label}</span>
         </button>
       ))}
-      <button className="bottom-nav-item" onClick={toggleTheme}>
-        <span className="bottom-nav-item-icon">
+      <button
+        className="bottom-nav-item"
+        onClick={toggleTheme}
+        aria-label={
+          theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'
+        }
+      >
+        <span className="bottom-nav-item-icon" aria-hidden="true">
           {theme === 'dark' ? <BulbFilled /> : <BulbOutlined />}
         </span>
         <span className="bottom-nav-item-label">Tema</span>

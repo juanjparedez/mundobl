@@ -2,9 +2,10 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'MundoBL - Catálogo de Series',
+    name: 'MundoBL - Catálogo de Series BL, GL y Doramas Asiáticos',
     short_name: 'MundoBL',
-    description: 'Sistema de gestión de catálogo de series',
+    description:
+      'Descubre y explora el catálogo más completo de series BL (Boys Love), GL (Girls Love) y doramas asiáticos. Reseñas, calificaciones, actores y más.',
     start_url: '/',
     display: 'standalone',
     background_color: '#141414',
@@ -22,7 +23,7 @@ export default function manifest(): MetadataRoute.Manifest {
         type: 'image/png',
       },
       {
-        src: '/icons/icon-512x512.png',
+        src: '/icons/icon-maskable-512x512.png',
         sizes: '512x512',
         type: 'image/png',
         purpose: 'maskable',

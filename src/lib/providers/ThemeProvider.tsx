@@ -27,7 +27,7 @@ interface ThemeState {
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
   const [state, setState] = useState<ThemeState>({
-    theme: 'light',
+    theme: 'dark',
     mounted: false,
   });
 
@@ -37,7 +37,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       document.documentElement.setAttribute('data-theme', savedTheme);
     }
     // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration: read localStorage on mount
-    setState({ theme: savedTheme || 'light', mounted: true });
+    setState({ theme: savedTheme || 'dark', mounted: true });
   }, []);
 
   const toggleTheme = () => {

@@ -1,7 +1,23 @@
 export const dynamic = 'force-dynamic';
 
+import type { Metadata } from 'next';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { getAllSeries } from '@/lib/database';
+
+export const metadata: Metadata = {
+  title: 'Catálogo de Series BL y GL',
+  description:
+    'Explora el catálogo completo de series BL (Boys Love), GL (Girls Love), películas y doramas asiáticos. Filtra por país, año, género y calificación.',
+  alternates: {
+    canonical: '/catalogo',
+  },
+  openGraph: {
+    title: 'Catálogo de Series BL y GL',
+    description:
+      'Explora el catálogo completo de series BL, GL y doramas asiáticos.',
+    url: '/catalogo',
+  },
+};
 import { auth } from '@/lib/auth';
 import { CatalogoClient } from './CatalogoClient';
 import './catalogo.css';
