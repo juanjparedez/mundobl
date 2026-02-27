@@ -130,6 +130,13 @@
   font-size: 12px;
 }
 
+.sidebar-user-loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-xs) 0;
+  color: var(--text-secondary);
+}
+
 .sidebar-login-btn {
   color: var(--text-secondary) !important;
 }

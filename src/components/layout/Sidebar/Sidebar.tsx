@@ -15,6 +15,7 @@ import {
   BulbFilled,
   UserOutlined,
   VideoCameraOutlined,
+  LoadingOutlined,
   LoginOutlined,
   LogoutOutlined,
   TeamOutlined,
@@ -45,7 +46,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   const isAdmin = session?.user?.role === 'ADMIN';
   const isModerator = session?.user?.role === 'MODERATOR';
@@ -188,7 +189,11 @@ export function Sidebar() {
 
       <div className="sidebar-footer">
         <div className="sidebar-user-section">
-          {session?.user ? (
+          {status === 'loading' ? (
+            <div className="sidebar-user-loading">
+              <LoadingOutlined />
+            </div>
+          ) : session?.user ? (
             <div
               className="sidebar-user-info"
               role="button"
