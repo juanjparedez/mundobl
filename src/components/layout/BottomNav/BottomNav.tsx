@@ -8,6 +8,7 @@ import {
   CommentOutlined,
   BulbOutlined,
   BulbFilled,
+  LoadingOutlined,
   LoginOutlined,
   UserOutlined,
 } from '@ant-design/icons';
@@ -28,7 +29,7 @@ export function BottomNav() {
   const pathname = usePathname();
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   const isAdmin = session?.user?.role === 'ADMIN';
   const isModerator = session?.user?.role === 'MODERATOR';
@@ -65,23 +66,31 @@ export function BottomNav() {
           },
         ]
       : []),
-    ...(!session
+    ...(status === 'loading'
       ? [
           {
-            key: 'login',
-            icon: <LoginOutlined />,
-            label: 'Entrar',
-            onClick: () => signIn('google'),
+            key: 'loading',
+            icon: <LoadingOutlined />,
+            label: 'Cargando',
           },
         ]
-      : [
-          {
-            key: 'profile',
-            icon: <UserOutlined />,
-            label: session.user?.name?.split(' ')[0] || 'Salir',
-            onClick: () => signOut({ callbackUrl: '/' }),
-          },
-        ]),
+      : !session
+        ? [
+            {
+              key: 'login',
+              icon: <LoginOutlined />,
+              label: 'Entrar',
+              onClick: () => signIn('google'),
+            },
+          ]
+        : [
+            {
+              key: 'profile',
+              icon: <UserOutlined />,
+              label: session.user?.name?.split(' ')[0] || 'Salir',
+              onClick: () => signOut({ callbackUrl: '/' }),
+            },
+          ]),
   ];
 
   return (
