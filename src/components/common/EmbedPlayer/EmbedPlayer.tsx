@@ -41,7 +41,7 @@ export function EmbedPlayer({
     <a
       href={url}
       target="_blank"
-      rel="noopener noreferrer"
+      rel="noopener noreferrer nofollow"
       className="embed-player__link-card"
     >
       <span className="embed-player__link-card-platform">{platform}</span>
