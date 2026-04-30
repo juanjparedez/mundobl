@@ -47,6 +47,7 @@ export default async function CatalogoPage() {
     visto: serie.viewStatus?.[0]?.status === 'VISTA',
     universoId: serie.universeId,
     universoNombre: serie.universe?.name || null,
+    tags: serie.tags.map((st) => ({ id: st.tag.id, name: st.tag.name })),
   }));
 
   return (

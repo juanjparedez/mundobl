@@ -623,6 +623,8 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                     <Option value="pelicula">🎬 Película</Option>
                     <Option value="corto">🎞️ Cortometraje</Option>
                     <Option value="especial">✨ Especial</Option>
+                    <Option value="anime">🎨 Animé</Option>
+                    <Option value="reality">🎤 Reality</Option>
                   </Select>
                 </Form.Item>
               </Col>
