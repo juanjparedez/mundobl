@@ -50,6 +50,16 @@ export async function getAllSeries() {
         },
         take: 1,
       },
+      tags: {
+        select: {
+          tag: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
     },
     orderBy: {
       title: 'asc',

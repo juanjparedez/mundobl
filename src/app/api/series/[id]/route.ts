@@ -263,21 +263,49 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       }
     }
 
-    // Actualizar temporadas (solo para series)
-    if (body.type === 'serie' && body.seasons) {
-      await prisma.season.deleteMany({
-        where: { seriesId: serieId },
-      });
+    if (body.seasons !== undefined) {
+      const incoming: Array<{
+        id?: number;
+        seasonNumber: number;
+        episodeCount?: number | null;
+        year?: number | null;
+      }> = body.seasons || [];
 
-      for (const seasonData of body.seasons) {
-        await prisma.season.create({
-          data: {
-            seriesId: serieId,
-            seasonNumber: seasonData.seasonNumber,
-            episodeCount: seasonData.episodeCount,
-            year: seasonData.year || body.year,
-          },
+      const existing = await prisma.season.findMany({
+        where: { seriesId: serieId },
+        select: { id: true },
+      });
+      const incomingIds = new Set(
+        incoming
+          .map((s) => s.id)
+          .filter((id): id is number => typeof id === 'number')
+      );
+      const toDelete = existing
+        .map((s) => s.id)
+        .filter((id) => !incomingIds.has(id));
+
+      if (toDelete.length > 0) {
+        await prisma.season.deleteMany({
+          where: { id: { in: toDelete } },
         });
+      }
+
+      for (const seasonData of incoming) {
+        const data = {
+          seasonNumber: seasonData.seasonNumber,
+          episodeCount: seasonData.episodeCount ?? null,
+          year: seasonData.year ?? body.year ?? null,
+        };
+        if (seasonData.id) {
+          await prisma.season.update({
+            where: { id: seasonData.id },
+            data,
+          });
+        } else {
+          await prisma.season.create({
+            data: { ...data, seriesId: serieId },
+          });
+        }
       }
     }
 

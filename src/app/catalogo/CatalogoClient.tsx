@@ -38,6 +38,11 @@ import { WelcomeBanner } from '@/components/common/WelcomeBanner/WelcomeBanner';
 
 const { Option } = Select;
 
+interface SerieTag {
+  id: number;
+  name: string;
+}
+
 interface SerieData {
   id: string;
   titulo: string;
@@ -55,6 +60,7 @@ interface SerieData {
   visto?: boolean;
   universoId?: number | null;
   universoNombre?: string | null;
+  tags?: SerieTag[];
 }
 
 interface UniverseGroup {
@@ -90,6 +96,10 @@ const getGradientByType = (tipo: string): string => {
       'linear-gradient(135deg, rgba(19, 194, 194, 0.7) 0%, rgba(65, 105, 225, 0.8) 100%)',
     especial:
       'linear-gradient(135deg, rgba(250, 140, 22, 0.7) 0%, rgba(245, 89, 62, 0.8) 100%)',
+    anime:
+      'linear-gradient(135deg, rgba(214, 51, 132, 0.7) 0%, rgba(255, 77, 109, 0.8) 100%)',
+    reality:
+      'linear-gradient(135deg, rgba(250, 173, 20, 0.7) 0%, rgba(245, 124, 0, 0.8) 100%)',
   };
   return gradients[tipo] || gradients['serie'];
 };
@@ -100,6 +110,8 @@ const getColorByType = (tipo: string) => {
     pelicula: 'magenta',
     corto: 'cyan',
     especial: 'volcano',
+    anime: 'pink',
+    reality: 'gold',
   };
   return colorMap[tipo] || 'default';
 };
@@ -135,6 +147,7 @@ export function CatalogoClient({
   const [selectedFavorite, setSelectedFavorite] = useState<
     string | undefined
   >();
+  const [selectedTags, setSelectedTags] = useState<number[]>([]);
   const [minRating, setMinRating] = useState(0);
   const [yearFrom, setYearFrom] = useState<number | undefined>();
   const [yearTo, setYearTo] = useState<number | undefined>();
@@ -154,6 +167,16 @@ export function CatalogoClient({
       new Set(series.map((s) => s.pais).filter(Boolean))
     );
     return uniqueCountries.sort();
+  }, [series]);
+
+  const availableTags = useMemo(() => {
+    const tagMap = new Map<number, string>();
+    series.forEach((s) => {
+      s.tags?.forEach((t) => tagMap.set(t.id, t.name));
+    });
+    return Array.from(tagMap.entries())
+      .map(([id, name]) => ({ id, name }))
+      .sort((a, b) => a.name.localeCompare(b.name));
   }, [series]);
 
   const yearBounds = useMemo(() => {
@@ -183,6 +206,7 @@ export function CatalogoClient({
     selectedType ||
     selectedViewed ||
     selectedFavorite ||
+    selectedTags.length > 0 ||
     selectedLetter ||
     minRating > 0 ||
     yearFrom ||
@@ -222,6 +246,13 @@ export function CatalogoClient({
       filtered = filtered.filter((s) => favoriteIds.has(s.id));
     }
 
+    if (selectedTags.length > 0) {
+      filtered = filtered.filter((s) => {
+        const ids = new Set(s.tags?.map((t) => t.id) ?? []);
+        return selectedTags.every((tagId) => ids.has(tagId));
+      });
+    }
+
     if (minRating > 0) {
       filtered = filtered.filter((s) => (s.rating ?? 0) >= minRating);
     }
@@ -253,6 +284,7 @@ export function CatalogoClient({
     selectedViewed,
     selectedFavorite,
     favoriteIds,
+    selectedTags,
     selectedLetter,
     minRating,
     yearFrom,
@@ -323,6 +355,7 @@ export function CatalogoClient({
     setSelectedType(undefined);
     setSelectedViewed(undefined);
     setSelectedFavorite(undefined);
+    setSelectedTags([]);
     setSelectedLetter(null);
     setMinRating(0);
     setYearFrom(undefined);
@@ -723,6 +756,8 @@ export function CatalogoClient({
           <Option value="pelicula">Película</Option>
           <Option value="corto">Corto</Option>
           <Option value="especial">Especial</Option>
+          <Option value="anime">Animé</Option>
+          <Option value="reality">Reality</Option>
         </Select>
       </Col>
 
@@ -757,6 +792,32 @@ export function CatalogoClient({
         >
           <Option value="favorites">Favoritos</Option>
         </Select>
+      </Col>
+
+      <Col xs={24} sm={12} md={8} lg={6}>
+        <Select
+          size="small"
+          mode="multiple"
+          placeholder="Tags"
+          style={{ width: '100%' }}
+          value={selectedTags}
+          onChange={(value) => {
+            setSelectedTags(value);
+            handleFilterChange();
+          }}
+          allowClear
+          showSearch
+          maxTagCount="responsive"
+          filterOption={(input, option) =>
+            (option?.label as string)
+              ?.toLowerCase()
+              .includes(input.toLowerCase()) ?? false
+          }
+          options={availableTags.map((t) => ({
+            value: t.id,
+            label: t.name,
+          }))}
+        />
       </Col>
 
       <Col xs={12} sm={6} md={4} lg={3}>
