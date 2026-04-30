@@ -129,6 +129,10 @@ function getTypeColor(type: string): string {
       return 'orange';
     case 'especial':
       return 'green';
+    case 'anime':
+      return 'magenta';
+    case 'reality':
+      return 'gold';
     default:
       return 'default';
   }
@@ -144,6 +148,10 @@ function getTypeLabel(type: string): string {
       return 'Corto';
     case 'especial':
       return 'Especial';
+    case 'anime':
+      return 'Animé';
+    case 'reality':
+      return 'Reality';
     default:
       return type;
   }
