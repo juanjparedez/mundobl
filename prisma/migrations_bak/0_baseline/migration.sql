@@ -1,4 +1,3 @@
-
 -- CreateSchema
 CREATE SCHEMA IF NOT EXISTS "public";
 
@@ -308,7 +307,6 @@ CREATE TABLE "UserRating" (
 CREATE TABLE "Comment" (
     "id" SERIAL NOT NULL,
     "content" TEXT NOT NULL,
-    "isPrivate" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "userId" TEXT,
@@ -317,16 +315,6 @@ CREATE TABLE "Comment" (
     "episodeId" INTEGER,
 
     CONSTRAINT "Comment_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "UserFavorite" (
-    "id" SERIAL NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "userId" TEXT NOT NULL,
-    "seriesId" INTEGER NOT NULL,
-
-    CONSTRAINT "UserFavorite_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -548,9 +536,6 @@ CREATE UNIQUE INDEX "Rating_seriesId_seasonId_category_key" ON "Rating"("seriesI
 CREATE UNIQUE INDEX "UserRating_userId_seriesId_category_key" ON "UserRating"("userId", "seriesId", "category");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "UserFavorite_userId_seriesId_key" ON "UserFavorite"("userId", "seriesId");
-
--- CreateIndex
 CREATE UNIQUE INDEX "ViewStatus_userId_seriesId_key" ON "ViewStatus"("userId", "seriesId");
 
 -- CreateIndex
@@ -660,12 +645,6 @@ ALTER TABLE "Comment" ADD CONSTRAINT "Comment_seasonId_fkey" FOREIGN KEY ("seaso
 
 -- AddForeignKey
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_episodeId_fkey" FOREIGN KEY ("episodeId") REFERENCES "Episode"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "UserFavorite" ADD CONSTRAINT "UserFavorite_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "UserFavorite" ADD CONSTRAINT "UserFavorite_seriesId_fkey" FOREIGN KEY ("seriesId") REFERENCES "Series"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ViewStatus" ADD CONSTRAINT "ViewStatus_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
