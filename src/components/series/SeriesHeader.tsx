@@ -5,6 +5,7 @@ import {
   MobileOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
+import Link from 'next/link';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import './SeriesHeader.css';
 
@@ -29,6 +30,7 @@ interface SeriesHeaderProps {
     } | null;
     tags?: Array<{
       tag: {
+        id: number;
         name: string;
         category?: string | null;
       };
@@ -108,9 +110,11 @@ export function SeriesHeader({ series }: SeriesHeaderProps) {
         {series.tags && series.tags.length > 0 && (
           <div className="series-header__tags">
             {series.tags.map((st) => (
-              <Tag key={st.tag.name} color="blue">
-                {st.tag.name}
-              </Tag>
+              <Link key={st.tag.id} href={`/tags/${st.tag.id}`}>
+                <Tag color="blue" className="series-header__tag-link">
+                  {st.tag.name}
+                </Tag>
+              </Link>
             ))}
           </div>
         )}

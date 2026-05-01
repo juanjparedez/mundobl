@@ -380,6 +380,38 @@ export async function searchDirectorsByName(query: string) {
 }
 
 // ============================================
+// TAGS
+// ============================================
+
+/**
+ * Obtener un tag por ID con todas sus series
+ */
+export async function getTagById(id: number) {
+  return await prisma.tag.findUnique({
+    where: { id },
+    include: {
+      series: {
+        include: {
+          series: {
+            include: {
+              country: true,
+              universe: true,
+              seasons: {
+                select: {
+                  id: true,
+                  seasonNumber: true,
+                  episodeCount: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+}
+
+// ============================================
 // PAÍSES
 // ============================================
 

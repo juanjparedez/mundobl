@@ -60,3 +60,6 @@ next-env.d.ts
 .claude
 .continue
 .cursor
+
+.mcp.json
+skills-lock.json
