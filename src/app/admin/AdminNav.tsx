@@ -13,6 +13,7 @@ import {
   PlayCircleOutlined,
   InfoCircleOutlined,
   FileTextOutlined,
+  MessageOutlined,
 } from '@ant-design/icons';
 import './admin-nav.css';
 
@@ -70,6 +71,12 @@ const adminLinks = [
     icon: <PlayCircleOutlined />,
     label: 'Contenido',
     shortLabel: 'Cont.',
+  },
+  {
+    key: '/admin/comentarios',
+    icon: <MessageOutlined />,
+    label: 'Comentarios',
+    shortLabel: 'Coment.',
   },
   {
     key: '/admin/info',
