@@ -1,15 +1,25 @@
 .view-status-toggle {
   display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-md);
+  flex-direction: column;
+  gap: var(--spacing-sm);
   padding: var(--spacing-md) var(--spacing-lg);
   background: var(--bg-elevated);
   border-radius: var(--border-radius);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.view-status-toggle__label {
-  font-weight: 500;
+.view-status-toggle__select {
+  min-width: 200px;
+}
+
+.view-status-toggle__option {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.view-status-toggle__progress {
+  min-width: 200px;
 }
 
 @media (max-width: 768px) {
@@ -17,7 +27,12 @@
     display: flex;
     width: 100%;
     padding: var(--spacing-sm) var(--spacing-md);
-    flex-direction: column;
     align-items: stretch;
+  }
+
+  .view-status-toggle__select,
+  .view-status-toggle__progress {
+    min-width: 0;
+    width: 100%;
   }
 }

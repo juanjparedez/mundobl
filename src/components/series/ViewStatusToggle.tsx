@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Progress, Tooltip, Tag, Select } from 'antd';
+import { Progress, Tooltip, Tag, Select, Badge } from 'antd';
 import { useSession } from 'next-auth/react';
 import {
   WATCH_STATUS,
@@ -11,6 +11,13 @@ import {
 import type { WatchStatusValue } from '@/constants/series';
 import './ViewStatusToggle.css';
 import { useMessage } from '@/hooks/useMessage';
+
+type AntStatusColor =
+  | 'default'
+  | 'processing'
+  | 'success'
+  | 'error'
+  | 'warning';
 
 interface ViewStatusToggleProps {
   seriesId: number;
@@ -81,7 +88,7 @@ export function ViewStatusToggle({
           {WATCH_STATUS_LABELS[status]}
         </Tag>
         {totalEpisodes > 0 && (
-          <div style={{ marginTop: '12px' }}>
+          <div className="view-status-toggle__progress">
             <Progress
               percent={progressPercent}
               size="small"
@@ -96,35 +103,29 @@ export function ViewStatusToggle({
 
   const statusOptions = Object.values(WATCH_STATUS).map((value) => ({
     value,
-    label: WATCH_STATUS_LABELS[value],
+    label: (
+      <span className="view-status-toggle__option">
+        <Badge status={WATCH_STATUS_COLORS[value] as AntStatusColor} />
+        {WATCH_STATUS_LABELS[value]}
+      </span>
+    ),
   }));
 
   return (
     <div className="view-status-toggle">
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '16px',
-          flexWrap: 'wrap',
-        }}
-      >
-        <Select
-          value={status}
-          onChange={handleStatusChange}
-          loading={isUpdating}
-          disabled={isUpdating}
-          options={statusOptions}
-          style={{ minWidth: 160 }}
-          size="middle"
-        />
-        <Tag color={WATCH_STATUS_COLORS[status]} style={{ margin: 0 }}>
-          {WATCH_STATUS_LABELS[status]}
-        </Tag>
-      </div>
+      <Select
+        value={status}
+        onChange={handleStatusChange}
+        loading={isUpdating}
+        disabled={isUpdating}
+        options={statusOptions}
+        className={`view-status-toggle__select view-status-toggle__select--${status.toLowerCase()}`}
+        size="middle"
+        aria-label="Estado de visualización"
+      />
 
       {totalEpisodes > 0 && (
-        <div style={{ marginTop: '12px' }}>
+        <div className="view-status-toggle__progress">
           <Tooltip
             title={`${watchedEpisodes} de ${totalEpisodes} episodios vistos`}
           >

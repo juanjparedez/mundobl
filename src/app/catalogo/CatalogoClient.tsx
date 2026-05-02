@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Row,
   Col,
@@ -43,12 +43,18 @@ interface SerieTag {
   name: string;
 }
 
+interface NamedRef {
+  id: number;
+  name: string;
+}
+
 interface SerieData {
   id: string;
   titulo: string;
   pais: string;
   paisCode?: string | null;
   tipo: string;
+  formato?: string;
   temporadas: number;
   episodios: number;
   anio: number;
@@ -60,7 +66,12 @@ interface SerieData {
   visto?: boolean;
   universoId?: number | null;
   universoNombre?: string | null;
+  productionCompany?: string | null;
+  originalLanguage?: string | null;
   tags?: SerieTag[];
+  genres?: NamedRef[];
+  directors?: NamedRef[];
+  actors?: NamedRef[];
 }
 
 interface UniverseGroup {
@@ -121,6 +132,7 @@ export function CatalogoClient({
   userRole,
 }: CatalogoClientProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const message = useMessage();
   const canEdit = userRole === 'ADMIN' || userRole === 'EDITOR';
 
@@ -139,18 +151,51 @@ export function CatalogoClient({
     [favoriteIds]
   );
 
-  // Filtros
+  // Filtros (initial values may come from URL query params, so links from
+  // detail views can pre-apply a single filter — see MetadataPrimitives)
+  const initialYear = searchParams.get('year');
+  const initialYearNum = initialYear ? parseInt(initialYear, 10) : undefined;
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCountry, setSelectedCountry] = useState<string | undefined>();
-  const [selectedType, setSelectedType] = useState<string | undefined>();
+  const [selectedCountry, setSelectedCountry] = useState<string | undefined>(
+    searchParams.get('country') ?? undefined
+  );
+  const [selectedType, setSelectedType] = useState<string | undefined>(
+    searchParams.get('type') ?? undefined
+  );
+  const [selectedFormat, setSelectedFormat] = useState<string | undefined>(
+    searchParams.get('format') ?? undefined
+  );
+  const [selectedGenre, setSelectedGenre] = useState<string | undefined>(
+    searchParams.get('genre') ?? undefined
+  );
+  const [selectedLanguage, setSelectedLanguage] = useState<string | undefined>(
+    searchParams.get('language') ?? undefined
+  );
+  const [selectedProductionCompany, setSelectedProductionCompany] = useState<
+    string | undefined
+  >(searchParams.get('productionCompany') ?? undefined);
+  const [selectedDirector, setSelectedDirector] = useState<string | undefined>(
+    searchParams.get('director') ?? undefined
+  );
+  const [selectedActor, setSelectedActor] = useState<string | undefined>(
+    searchParams.get('actor') ?? undefined
+  );
   const [selectedViewed, setSelectedViewed] = useState<string | undefined>();
   const [selectedFavorite, setSelectedFavorite] = useState<
     string | undefined
   >();
-  const [selectedTags, setSelectedTags] = useState<number[]>([]);
+  const initialTagParam = searchParams.get('tag');
+  const initialTagId = initialTagParam ? parseInt(initialTagParam, 10) : null;
+  const [selectedTags, setSelectedTags] = useState<number[]>(
+    initialTagId && !isNaN(initialTagId) ? [initialTagId] : []
+  );
   const [minRating, setMinRating] = useState(0);
-  const [yearFrom, setYearFrom] = useState<number | undefined>();
-  const [yearTo, setYearTo] = useState<number | undefined>();
+  const [yearFrom, setYearFrom] = useState<number | undefined>(
+    initialYearNum && !isNaN(initialYearNum) ? initialYearNum : undefined
+  );
+  const [yearTo, setYearTo] = useState<number | undefined>(
+    initialYearNum && !isNaN(initialYearNum) ? initialYearNum : undefined
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const [filtersVisible, setFiltersVisible] = useState(false);
@@ -204,6 +249,12 @@ export function CatalogoClient({
     searchTerm ||
     selectedCountry ||
     selectedType ||
+    selectedFormat ||
+    selectedGenre ||
+    selectedLanguage ||
+    selectedProductionCompany ||
+    selectedDirector ||
+    selectedActor ||
     selectedViewed ||
     selectedFavorite ||
     selectedTags.length > 0 ||
@@ -234,6 +285,45 @@ export function CatalogoClient({
 
     if (selectedType) {
       filtered = filtered.filter((s) => s.tipo === selectedType);
+    }
+
+    if (selectedFormat) {
+      filtered = filtered.filter((s) => s.formato === selectedFormat);
+    }
+
+    if (selectedGenre) {
+      const term = selectedGenre.toLowerCase();
+      filtered = filtered.filter((s) =>
+        s.genres?.some((g) => g.name.toLowerCase() === term)
+      );
+    }
+
+    if (selectedLanguage) {
+      const term = selectedLanguage.toLowerCase();
+      filtered = filtered.filter(
+        (s) => s.originalLanguage?.toLowerCase() === term
+      );
+    }
+
+    if (selectedProductionCompany) {
+      const term = selectedProductionCompany.toLowerCase();
+      filtered = filtered.filter(
+        (s) => s.productionCompany?.toLowerCase() === term
+      );
+    }
+
+    if (selectedDirector) {
+      const term = selectedDirector.toLowerCase();
+      filtered = filtered.filter((s) =>
+        s.directors?.some((d) => d.name.toLowerCase() === term)
+      );
+    }
+
+    if (selectedActor) {
+      const term = selectedActor.toLowerCase();
+      filtered = filtered.filter((s) =>
+        s.actors?.some((a) => a.name.toLowerCase() === term)
+      );
     }
 
     if (selectedViewed === 'watched') {
@@ -281,6 +371,12 @@ export function CatalogoClient({
     searchTerm,
     selectedCountry,
     selectedType,
+    selectedFormat,
+    selectedGenre,
+    selectedLanguage,
+    selectedProductionCompany,
+    selectedDirector,
+    selectedActor,
     selectedViewed,
     selectedFavorite,
     favoriteIds,
@@ -353,6 +449,12 @@ export function CatalogoClient({
     setSearchTerm('');
     setSelectedCountry(undefined);
     setSelectedType(undefined);
+    setSelectedFormat(undefined);
+    setSelectedGenre(undefined);
+    setSelectedLanguage(undefined);
+    setSelectedProductionCompany(undefined);
+    setSelectedDirector(undefined);
+    setSelectedActor(undefined);
     setSelectedViewed(undefined);
     setSelectedFavorite(undefined);
     setSelectedTags([]);
@@ -361,6 +463,7 @@ export function CatalogoClient({
     setYearFrom(undefined);
     setYearTo(undefined);
     setCurrentPage(1);
+    router.replace('/catalogo');
   };
 
   const toggleFavorite = async (serieId: string, e: React.MouseEvent) => {
@@ -967,6 +1070,141 @@ export function CatalogoClient({
           )}
         </div>
       </div>
+
+      {/* Filtros activos (especialmente útil con deep-links del detalle) */}
+      {(selectedCountry ||
+        selectedType ||
+        selectedFormat ||
+        selectedGenre ||
+        selectedLanguage ||
+        selectedProductionCompany ||
+        selectedDirector ||
+        selectedActor ||
+        (yearFrom && yearTo && yearFrom === yearTo) ||
+        selectedTags.length > 0) && (
+        <div className="catalogo-active-filters">
+          <span className="catalogo-active-filters-label">Filtrando por:</span>
+          {selectedCountry && (
+            <Tag
+              closable
+              onClose={() => {
+                setSelectedCountry(undefined);
+                handleFilterChange();
+              }}
+            >
+              País: {selectedCountry}
+            </Tag>
+          )}
+          {selectedType && (
+            <Tag
+              closable
+              onClose={() => {
+                setSelectedType(undefined);
+                handleFilterChange();
+              }}
+            >
+              Tipo: {selectedType}
+            </Tag>
+          )}
+          {selectedFormat && (
+            <Tag
+              closable
+              onClose={() => {
+                setSelectedFormat(undefined);
+                handleFilterChange();
+              }}
+            >
+              Formato: {selectedFormat}
+            </Tag>
+          )}
+          {selectedGenre && (
+            <Tag
+              closable
+              onClose={() => {
+                setSelectedGenre(undefined);
+                handleFilterChange();
+              }}
+            >
+              Género: {selectedGenre}
+            </Tag>
+          )}
+          {selectedLanguage && (
+            <Tag
+              closable
+              onClose={() => {
+                setSelectedLanguage(undefined);
+                handleFilterChange();
+              }}
+            >
+              Idioma: {selectedLanguage}
+            </Tag>
+          )}
+          {selectedProductionCompany && (
+            <Tag
+              closable
+              onClose={() => {
+                setSelectedProductionCompany(undefined);
+                handleFilterChange();
+              }}
+            >
+              Productora: {selectedProductionCompany}
+            </Tag>
+          )}
+          {selectedDirector && (
+            <Tag
+              closable
+              onClose={() => {
+                setSelectedDirector(undefined);
+                handleFilterChange();
+              }}
+            >
+              Director: {selectedDirector}
+            </Tag>
+          )}
+          {selectedActor && (
+            <Tag
+              closable
+              onClose={() => {
+                setSelectedActor(undefined);
+                handleFilterChange();
+              }}
+            >
+              Actor: {selectedActor}
+            </Tag>
+          )}
+          {yearFrom && yearTo && yearFrom === yearTo && (
+            <Tag
+              closable
+              onClose={() => {
+                setYearFrom(undefined);
+                setYearTo(undefined);
+                handleFilterChange();
+              }}
+            >
+              Año: {yearFrom}
+            </Tag>
+          )}
+          {selectedTags.length > 0 &&
+            selectedTags.map((tagId) => {
+              const tag = availableTags.find((t) => t.id === tagId);
+              if (!tag) return null;
+              return (
+                <Tag
+                  key={tagId}
+                  closable
+                  onClose={() => {
+                    setSelectedTags((prev) =>
+                      prev.filter((id) => id !== tagId)
+                    );
+                    handleFilterChange();
+                  }}
+                >
+                  Tag: {tag.name}
+                </Tag>
+              );
+            })}
+        </div>
+      )}
 
       {/* Panel de filtros colapsable */}
       {isMobile ? (

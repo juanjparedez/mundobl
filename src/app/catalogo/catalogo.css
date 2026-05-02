@@ -2,6 +2,21 @@
   width: 100%;
 }
 
+.catalogo-active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) 0;
+  margin-bottom: var(--spacing-sm);
+}
+
+.catalogo-active-filters-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-right: var(--spacing-xs);
+}
+
 /* ==========================================
    Toolbar: búsqueda + acciones
    ========================================== */
