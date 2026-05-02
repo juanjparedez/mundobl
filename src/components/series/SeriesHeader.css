@@ -82,13 +82,8 @@
   margin-top: var(--spacing-sm);
 }
 
-.series-header__tag-link {
-  cursor: pointer;
-  transition: opacity 0.2s ease;
-}
-
-.series-header__tag-link:hover {
-  opacity: 0.8;
+.series-header__rating-tag {
+  margin: 0;
 }
 
 @media (max-width: 768px) {

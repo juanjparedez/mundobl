@@ -36,6 +36,7 @@ export default async function CatalogoPage() {
     pais: serie.country?.name || 'Sin país',
     paisCode: serie.country?.code || null,
     tipo: serie.type,
+    formato: serie.format,
     temporadas: serie.seasons.length,
     episodios: serie.seasons.reduce((acc, s) => acc + (s.episodeCount || 0), 0),
     anio: serie.year || 0,
@@ -47,7 +48,21 @@ export default async function CatalogoPage() {
     visto: serie.viewStatus?.[0]?.status === 'VISTA',
     universoId: serie.universeId,
     universoNombre: serie.universe?.name || null,
+    productionCompany: serie.productionCompany?.name || null,
+    originalLanguage: serie.originalLanguage?.name || null,
     tags: serie.tags.map((st) => ({ id: st.tag.id, name: st.tag.name })),
+    genres: serie.genres.map((sg) => ({
+      id: sg.genre.id,
+      name: sg.genre.name,
+    })),
+    directors: serie.directors.map((sd) => ({
+      id: sd.director.id,
+      name: sd.director.name,
+    })),
+    actors: serie.actors.map((sa) => ({
+      id: sa.actor.id,
+      name: sa.actor.name,
+    })),
   }));
 
   return (
