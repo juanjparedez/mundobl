@@ -1,7 +1,8 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, MouseEvent } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Tag } from 'antd';
 import './MetadataPrimitives.css';
 
@@ -33,6 +34,11 @@ interface MetadataChipProps {
   icon?: ReactNode;
 }
 
+/**
+ * Chip que navega al catálogo con un filtro pre-aplicado.
+ * Es un Ant Tag con onClick — preserva el wrapping/margen nativo
+ * y no rompe el flow al envolverlo en un Link.
+ */
 export function MetadataChip({
   filter,
   value,
@@ -40,16 +46,32 @@ export function MetadataChip({
   color,
   icon,
 }: MetadataChipProps) {
+  const router = useRouter();
+  const href = buildCatalogHref(filter, value);
+
+  const handleClick = (e: MouseEvent<HTMLSpanElement>) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.button === 1) return;
+    e.preventDefault();
+    router.push(href);
+  };
+
   return (
-    <Link
-      href={buildCatalogHref(filter, value)}
+    <Tag
+      color={color}
+      icon={icon}
       className="metadata-chip"
-      aria-label={`Filtrar catálogo por ${filter}: ${label ?? value}`}
+      onClick={handleClick}
+      role="link"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          router.push(href);
+        }
+      }}
     >
-      <Tag color={color} icon={icon} className="metadata-chip__tag">
-        {label ?? value}
-      </Tag>
-    </Link>
+      {label ?? value}
+    </Tag>
   );
 }
 
@@ -61,11 +83,7 @@ interface MetadataLinkProps {
 
 export function MetadataLink({ filter, value, children }: MetadataLinkProps) {
   return (
-    <Link
-      href={buildCatalogHref(filter, value)}
-      className="metadata-link"
-      aria-label={`Filtrar catálogo por ${filter}: ${children}`}
-    >
+    <Link href={buildCatalogHref(filter, value)} className="metadata-link">
       {children}
     </Link>
   );
@@ -84,7 +102,7 @@ interface MetadataChipListProps {
 
 export function MetadataChipList({ filter, items }: MetadataChipListProps) {
   return (
-    <span className="metadata-chip-list">
+    <>
       {items.map((item) => (
         <MetadataChip
           key={item.key}
@@ -95,7 +113,7 @@ export function MetadataChipList({ filter, items }: MetadataChipListProps) {
           icon={item.icon}
         />
       ))}
-    </span>
+    </>
   );
 }
 
@@ -115,7 +133,7 @@ export function MetadataLinkList({
   separator = ', ',
 }: MetadataLinkListProps) {
   return (
-    <span className="metadata-link-list">
+    <>
       {items.map((item, index) => (
         <span key={item.key}>
           <MetadataLink filter={filter} value={item.value}>
@@ -124,6 +142,6 @@ export function MetadataLinkList({
           {index < items.length - 1 && separator}
         </span>
       ))}
-    </span>
+    </>
   );
 }
