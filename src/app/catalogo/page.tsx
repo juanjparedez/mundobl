@@ -20,6 +20,7 @@ export const metadata: Metadata = {
 };
 import { auth } from '@/lib/auth';
 import { CatalogoClient } from './CatalogoClient';
+import { getCatalogFilterIndex } from '@/lib/database';
 import './catalogo.css';
 
 export default async function CatalogoPage() {
@@ -27,7 +28,46 @@ export default async function CatalogoPage() {
   const userRole = session?.user?.role || null;
 
   // Obtener datos reales desde la base de datos
-  const seriesDB = await getAllSeries();
+  const [seriesDB, filterIndex] = await Promise.all([
+    getAllSeries(),
+    getCatalogFilterIndex(),
+  ]);
+
+  // Index seriesId -> nombres (para filtros extendidos)
+  const genresBySerie = new Map<number, string[]>();
+  filterIndex.genres.forEach((sg) => {
+    const arr = genresBySerie.get(sg.seriesId) ?? [];
+    arr.push(sg.genre.name);
+    genresBySerie.set(sg.seriesId, arr);
+  });
+
+  const directorsBySerie = new Map<number, string[]>();
+  filterIndex.directors.forEach((sd) => {
+    const arr = directorsBySerie.get(sd.seriesId) ?? [];
+    arr.push(sd.director.name);
+    directorsBySerie.set(sd.seriesId, arr);
+  });
+
+  const actorsBySerie = new Map<number, string[]>();
+  filterIndex.actors.forEach((sa) => {
+    const arr = actorsBySerie.get(sa.seriesId) ?? [];
+    arr.push(sa.actor.name);
+    actorsBySerie.set(sa.seriesId, arr);
+  });
+
+  const productionCompanyBySerie = new Map<number, string>();
+  filterIndex.productionCompanies.forEach((s) => {
+    if (s.productionCompany) {
+      productionCompanyBySerie.set(s.id, s.productionCompany.name);
+    }
+  });
+
+  const languageBySerie = new Map<number, string>();
+  filterIndex.languages.forEach((s) => {
+    if (s.originalLanguage) {
+      languageBySerie.set(s.id, s.originalLanguage.name);
+    }
+  });
 
   // Transformar datos para las tarjetas
   const seriesData = seriesDB.map((serie) => ({
@@ -48,21 +88,12 @@ export default async function CatalogoPage() {
     visto: serie.viewStatus?.[0]?.status === 'VISTA',
     universoId: serie.universeId,
     universoNombre: serie.universe?.name || null,
-    productionCompany: serie.productionCompany?.name || null,
-    originalLanguage: serie.originalLanguage?.name || null,
     tags: serie.tags.map((st) => ({ id: st.tag.id, name: st.tag.name })),
-    genres: serie.genres.map((sg) => ({
-      id: sg.genre.id,
-      name: sg.genre.name,
-    })),
-    directors: serie.directors.map((sd) => ({
-      id: sd.director.id,
-      name: sd.director.name,
-    })),
-    actors: serie.actors.map((sa) => ({
-      id: sa.actor.id,
-      name: sa.actor.name,
-    })),
+    genres: genresBySerie.get(serie.id) ?? [],
+    directors: directorsBySerie.get(serie.id) ?? [],
+    actors: actorsBySerie.get(serie.id) ?? [],
+    productionCompany: productionCompanyBySerie.get(serie.id) ?? null,
+    originalLanguage: languageBySerie.get(serie.id) ?? null,
   }));
 
   return (
