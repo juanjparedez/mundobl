@@ -4,6 +4,12 @@ import { Descriptions, Tag } from 'antd';
 import Link from 'next/link';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
+import {
+  MetadataChip,
+  MetadataChipList,
+  MetadataLink,
+  MetadataLinkList,
+} from './MetadataPrimitives/MetadataPrimitives';
 import './SeriesInfo.css';
 
 interface SeriesInfoProps {
@@ -131,28 +137,42 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
         )}
 
         <Descriptions.Item label="Año">
-          {series.year || 'N/A'}
+          {series.year ? (
+            <MetadataChip filter="year" value={series.year} />
+          ) : (
+            'N/A'
+          )}
         </Descriptions.Item>
 
         <Descriptions.Item label="País">
           {series.country ? (
-            <>
-              <CountryFlag code={series.country.code} size="small" />{' '}
-              {series.country.name}
-            </>
+            <MetadataChip
+              filter="country"
+              value={series.country.name}
+              icon={<CountryFlag code={series.country.code} size="small" />}
+              label={series.country.name}
+            />
           ) : (
             'N/A'
           )}
         </Descriptions.Item>
 
         <Descriptions.Item label="Tipo">
-          <Tag color="blue">{series.type}</Tag>
+          <MetadataChip
+            filter="type"
+            value={series.type}
+            color="blue"
+            label={series.type}
+          />
         </Descriptions.Item>
 
         <Descriptions.Item label="Formato">
-          <Tag color={series.format === 'vertical' ? 'orange' : 'blue'}>
-            {series.format === 'vertical' ? '📲 Vertical' : '📱 Regular'}
-          </Tag>
+          <MetadataChip
+            filter="format"
+            value={series.format}
+            color={series.format === 'vertical' ? 'orange' : 'blue'}
+            label={series.format === 'vertical' ? '📲 Vertical' : '📱 Regular'}
+          />
         </Descriptions.Item>
 
         {series.basedOn && (
@@ -177,13 +197,22 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
 
         {series.productionCompany && (
           <Descriptions.Item label="Productora" span={fullSpan}>
-            {series.productionCompany.name}
+            <MetadataLink
+              filter="productionCompany"
+              value={series.productionCompany.name}
+            >
+              {series.productionCompany.name}
+            </MetadataLink>
           </Descriptions.Item>
         )}
 
         {series.originalLanguage && (
           <Descriptions.Item label="Idioma Original" span={fullSpan}>
-            {series.originalLanguage.name}
+            <MetadataChip
+              filter="language"
+              value={series.originalLanguage.name}
+              label={series.originalLanguage.name}
+            />
           </Descriptions.Item>
         )}
 
@@ -197,17 +226,28 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
 
         {series.genres && series.genres.length > 0 && (
           <Descriptions.Item label="Género" span={fullSpan}>
-            {series.genres.map((g) => (
-              <Tag key={g.genre.name} color="purple">
-                {g.genre.name}
-              </Tag>
-            ))}
+            <MetadataChipList
+              filter="genre"
+              items={series.genres.map((g) => ({
+                key: g.genre.name,
+                value: g.genre.name,
+                label: g.genre.name,
+                color: 'purple',
+              }))}
+            />
           </Descriptions.Item>
         )}
 
         {series.directors && series.directors.length > 0 && (
           <Descriptions.Item label="Director(es)" span={fullSpan}>
-            {series.directors.map((d) => d.director.name).join(', ')}
+            <MetadataLinkList
+              filter="director"
+              items={series.directors.map((d) => ({
+                key: d.director.name,
+                value: d.director.name,
+                label: d.director.name,
+              }))}
+            />
           </Descriptions.Item>
         )}
       </Descriptions>
@@ -273,19 +313,20 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
               key={`${sa.actor.id}-${sa.character}`}
               className="series-info__cast-actor"
             >
-              <Link
-                href={`/actores/${sa.actor.id}`}
-                className="series-info__cast-actor-name"
-              >
+              <MetadataLink filter="actor" value={sa.actor.name}>
                 {sa.actor.name}
-              </Link>
+              </MetadataLink>
               {sa.character && (
                 <span className="series-info__cast-character">
                   como {sa.character}
                 </span>
               )}
               {sa.isMain && (
-                <span className="series-info__cast-star" title="Protagonista">
+                <span
+                  className="series-info__cast-star"
+                  title="Protagonista"
+                  aria-label="Protagonista"
+                >
                   ⭐
                 </span>
               )}

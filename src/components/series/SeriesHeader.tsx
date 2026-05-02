@@ -1,12 +1,8 @@
 import { Tag } from 'antd';
-import {
-  CalendarOutlined,
-  BookOutlined,
-  MobileOutlined,
-} from '@ant-design/icons';
+import { BookOutlined } from '@ant-design/icons';
 import Image from 'next/image';
-import Link from 'next/link';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
+import { MetadataChip } from './MetadataPrimitives/MetadataPrimitives';
 import './SeriesHeader.css';
 
 interface SeriesHeaderProps {
@@ -74,16 +70,31 @@ export function SeriesHeader({ series }: SeriesHeaderProps) {
         )}
 
         <div className="series-header__meta">
-          {series.year && (
-            <span className="series-header__meta-item">
-              <CalendarOutlined /> {series.year}
-            </span>
+          {series.country && (
+            <MetadataChip
+              filter="country"
+              value={series.country.name}
+              icon={<CountryFlag code={series.country.code} />}
+              label={series.country.name}
+            />
           )}
 
-          {series.country && (
-            <span className="series-header__meta-item">
-              <CountryFlag code={series.country.code} /> {series.country.name}
-            </span>
+          {series.year && <MetadataChip filter="year" value={series.year} />}
+
+          <MetadataChip
+            filter="type"
+            value={series.type}
+            color={getTypeColor(series.type)}
+            label={getTypeLabel(series.type)}
+          />
+
+          {series.format === 'vertical' && (
+            <MetadataChip
+              filter="format"
+              value="vertical"
+              color="orange"
+              label="📲 Formato Vertical"
+            />
           )}
 
           {series.basedOn && (
@@ -92,29 +103,23 @@ export function SeriesHeader({ series }: SeriesHeaderProps) {
             </span>
           )}
 
-          {series.format === 'vertical' && (
-            <span className="series-header__meta-item">
-              <MobileOutlined /> Formato Vertical
-            </span>
-          )}
-
-          <Tag color={getTypeColor(series.type)}>
-            {getTypeLabel(series.type)}
-          </Tag>
-
           {series.overallRating && (
-            <Tag color="gold">★ {series.overallRating}/10</Tag>
+            <Tag color="gold" className="series-header__rating-tag">
+              ★ {series.overallRating}/10
+            </Tag>
           )}
         </div>
 
         {series.tags && series.tags.length > 0 && (
           <div className="series-header__tags">
             {series.tags.map((st) => (
-              <Link key={st.tag.id} href={`/tags/${st.tag.id}`}>
-                <Tag color="blue" className="series-header__tag-link">
-                  {st.tag.name}
-                </Tag>
-              </Link>
+              <MetadataChip
+                key={st.tag.id}
+                filter="tag"
+                value={st.tag.id}
+                color="blue"
+                label={st.tag.name}
+              />
             ))}
           </div>
         )}

@@ -37,6 +37,8 @@ export async function getAllSeries() {
     include: {
       country: true,
       universe: true,
+      productionCompany: { select: { id: true, name: true } },
+      originalLanguage: { select: { id: true, name: true } },
       seasons: {
         select: {
           id: true,
@@ -58,6 +60,21 @@ export async function getAllSeries() {
               name: true,
             },
           },
+        },
+      },
+      genres: {
+        select: {
+          genre: { select: { id: true, name: true } },
+        },
+      },
+      directors: {
+        select: {
+          director: { select: { id: true, name: true } },
+        },
+      },
+      actors: {
+        select: {
+          actor: { select: { id: true, name: true } },
         },
       },
     },

@@ -1,0 +1,53 @@
+.metadata-chip {
+  display: inline-flex;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.metadata-chip .ant-tag {
+  margin: 0;
+  cursor: pointer;
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+
+.metadata-chip:hover .ant-tag {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+.metadata-chip:focus-visible .ant-tag {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.metadata-chip-list {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  align-items: center;
+}
+
+.metadata-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.metadata-link:hover {
+  color: var(--primary-color-hover, var(--primary-color));
+  text-decoration: underline;
+}
+
+.metadata-link:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.metadata-link-list {
+  display: inline;
+}
