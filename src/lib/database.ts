@@ -37,8 +37,6 @@ export async function getAllSeries() {
     include: {
       country: true,
       universe: true,
-      productionCompany: { select: { id: true, name: true } },
-      originalLanguage: { select: { id: true, name: true } },
       seasons: {
         select: {
           id: true,
@@ -62,26 +60,53 @@ export async function getAllSeries() {
           },
         },
       },
-      genres: {
-        select: {
-          genre: { select: { id: true, name: true } },
-        },
-      },
-      directors: {
-        select: {
-          director: { select: { id: true, name: true } },
-        },
-      },
-      actors: {
-        select: {
-          actor: { select: { id: true, name: true } },
-        },
-      },
     },
     orderBy: {
       title: 'asc',
     },
   });
+}
+
+/**
+ * Carga liviana de los filtros "extendidos" del catálogo (género, director,
+ * actor, productora, idioma). Sólo IDs y nombres, sin includes anidados —
+ * sirve para deep-links del detalle sin inflar getAllSeries.
+ */
+export async function getCatalogFilterIndex() {
+  const [genres, directors, actors, productionCompanies, languages] =
+    await Promise.all([
+      prisma.seriesGenre.findMany({
+        select: { seriesId: true, genre: { select: { name: true } } },
+      }),
+      prisma.seriesDirector.findMany({
+        select: { seriesId: true, director: { select: { name: true } } },
+      }),
+      prisma.seriesActor.findMany({
+        select: { seriesId: true, actor: { select: { name: true } } },
+      }),
+      prisma.series.findMany({
+        where: { productionCompanyId: { not: null } },
+        select: {
+          id: true,
+          productionCompany: { select: { name: true } },
+        },
+      }),
+      prisma.series.findMany({
+        where: { originalLanguageId: { not: null } },
+        select: {
+          id: true,
+          originalLanguage: { select: { name: true } },
+        },
+      }),
+    ]);
+
+  return {
+    genres,
+    directors,
+    actors,
+    productionCompanies,
+    languages,
+  };
 }
 
 /**

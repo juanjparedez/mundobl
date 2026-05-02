@@ -43,11 +43,6 @@ interface SerieTag {
   name: string;
 }
 
-interface NamedRef {
-  id: number;
-  name: string;
-}
-
 interface SerieData {
   id: string;
   titulo: string;
@@ -66,12 +61,12 @@ interface SerieData {
   visto?: boolean;
   universoId?: number | null;
   universoNombre?: string | null;
+  tags?: SerieTag[];
+  genres?: string[];
+  directors?: string[];
+  actors?: string[];
   productionCompany?: string | null;
   originalLanguage?: string | null;
-  tags?: SerieTag[];
-  genres?: NamedRef[];
-  directors?: NamedRef[];
-  actors?: NamedRef[];
 }
 
 interface UniverseGroup {
@@ -294,7 +289,7 @@ export function CatalogoClient({
     if (selectedGenre) {
       const term = selectedGenre.toLowerCase();
       filtered = filtered.filter((s) =>
-        s.genres?.some((g) => g.name.toLowerCase() === term)
+        s.genres?.some((name) => name.toLowerCase() === term)
       );
     }
 
@@ -315,14 +310,14 @@ export function CatalogoClient({
     if (selectedDirector) {
       const term = selectedDirector.toLowerCase();
       filtered = filtered.filter((s) =>
-        s.directors?.some((d) => d.name.toLowerCase() === term)
+        s.directors?.some((name) => name.toLowerCase() === term)
       );
     }
 
     if (selectedActor) {
       const term = selectedActor.toLowerCase();
       filtered = filtered.filter((s) =>
-        s.actors?.some((a) => a.name.toLowerCase() === term)
+        s.actors?.some((name) => name.toLowerCase() === term)
       );
     }
 
@@ -1071,7 +1066,7 @@ export function CatalogoClient({
         </div>
       </div>
 
-      {/* Filtros activos (especialmente útil con deep-links del detalle) */}
+      {/* Filtros activos (deep-links del detalle) */}
       {(selectedCountry ||
         selectedType ||
         selectedFormat ||
