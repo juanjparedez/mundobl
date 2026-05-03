@@ -72,7 +72,9 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
     return (
       <AppLayout>
         <div className="contenido-page">
-          <h1 className="contenido-page__title">{t('contenidoPage.pageTitle')}</h1>
+          <h1 className="contenido-page__title">
+            {t('contenidoPage.pageTitle')}
+          </h1>
           <Empty description={t('contenidoPage.emptyNoContent')} />
         </div>
       </AppLayout>
@@ -82,7 +84,9 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
   return (
     <AppLayout>
       <div className="contenido-page">
-        <h1 className="contenido-page__title">{t('contenidoPage.pageTitle')}</h1>
+        <h1 className="contenido-page__title">
+          {t('contenidoPage.pageTitle')}
+        </h1>
         <p className="contenido-page__subtitle">
           {t('contenidoPage.subtitle')}
         </p>
@@ -184,7 +188,9 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
                           </Tag>
                           {item.language && <Tag>{item.language}</Tag>}
                           {!item.official && (
-                            <Tag color="orange">{t('contenidoPage.unofficialTag')}</Tag>
+                            <Tag color="orange">
+                              {t('contenidoPage.unofficialTag')}
+                            </Tag>
                           )}
                         </Space>
                         {item.channelName && (
@@ -242,7 +248,9 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
 
               <div className="contenido-modal__credit-bar">
                 <span>
-                  {interpolateMessage(t('contenidoPage.modalSource'), { platform: selectedItem.platform })}
+                  {interpolateMessage(t('contenidoPage.modalSource'), {
+                    platform: selectedItem.platform,
+                  })}
                   {selectedItem.channelName && ` · ${selectedItem.channelName}`}
                 </span>
                 <a
@@ -251,7 +259,10 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
                   rel="noopener noreferrer nofollow"
                   className="contenido-modal__external-link"
                 >
-                  {interpolateMessage(t('contenidoPage.modalViewOn'), { platform: selectedItem.platform })} <LinkOutlined />
+                  {interpolateMessage(t('contenidoPage.modalViewOn'), {
+                    platform: selectedItem.platform,
+                  })}{' '}
+                  <LinkOutlined />
                 </a>
               </div>
 

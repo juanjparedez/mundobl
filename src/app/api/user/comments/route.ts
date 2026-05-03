@@ -141,7 +141,11 @@ export async function PATCH(request: NextRequest) {
     }
 
     if (body.action === 'updateContent') {
-      if (typeof body.id !== 'number' || !Number.isInteger(body.id) || body.id <= 0) {
+      if (
+        typeof body.id !== 'number' ||
+        !Number.isInteger(body.id) ||
+        body.id <= 0
+      ) {
         return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
       }
 
@@ -187,10 +191,7 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ success: true, comment: updatedComment });
     }
 
-    return NextResponse.json(
-      { error: 'Acción no soportada' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'Acción no soportada' }, { status: 400 });
   } catch (error) {
     console.error('Error updating user comments:', error);
     return NextResponse.json(

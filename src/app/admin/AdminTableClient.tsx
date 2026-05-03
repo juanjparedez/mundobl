@@ -38,7 +38,7 @@ export function AdminTableClient({ data, countries }: AdminTableClientProps) {
   const message = useMessage();
   const modal = useModal();
   const router = useRouter();
-    const { t } = useLocale();
+  const { t } = useLocale();
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedSerieId, setSelectedSerieId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -91,7 +91,9 @@ export function AdminTableClient({ data, countries }: AdminTableClientProps) {
     modal.confirm({
       title: t('adminTable.deleteConfirmTitle'),
       icon: <ExclamationCircleOutlined />,
-      content: interpolateMessage(t('adminTable.deleteConfirmContent'), { titulo: record.titulo }),
+      content: interpolateMessage(t('adminTable.deleteConfirmContent'), {
+        titulo: record.titulo,
+      }),
       okText: t('adminTable.deleteConfirmOk'),
       okType: 'danger',
       cancelText: t('adminTable.deleteConfirmCancel'),
@@ -233,7 +235,10 @@ export function AdminTableClient({ data, countries }: AdminTableClientProps) {
           className="admin-search-input"
         />
         <span className="admin-result-count">
-          {interpolateMessage(t('adminTable.resultCount'), { filtered: String(filteredData.length), total: String(data.length) })}
+          {interpolateMessage(t('adminTable.resultCount'), {
+            filtered: String(filteredData.length),
+            total: String(data.length),
+          })}
         </span>
       </div>
 
@@ -262,7 +267,11 @@ export function AdminTableClient({ data, countries }: AdminTableClientProps) {
           showSizeChanger: true,
           pageSizeOptions: ['10', '20', '50', '100'],
           showTotal: (total, range) =>
-            interpolateMessage(t('adminTable.paginationTotal'), { from: String(range[0]), to: String(range[1]), total: String(total) }),
+            interpolateMessage(t('adminTable.paginationTotal'), {
+              from: String(range[0]),
+              to: String(range[1]),
+              total: String(total),
+            }),
         }}
         scroll={{ x: 1200 }}
       />

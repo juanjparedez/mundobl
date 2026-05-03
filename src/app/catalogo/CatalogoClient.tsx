@@ -531,7 +531,9 @@ export function CatalogoClient({
       });
 
       message.success(
-        data.isFavorite ? t('catalogo.favoriteAdded') : t('catalogo.favoriteRemoved')
+        data.isFavorite
+          ? t('catalogo.favoriteAdded')
+          : t('catalogo.favoriteRemoved')
       );
     } catch (error) {
       console.error('Error toggling favorite:', error);
@@ -671,12 +673,12 @@ export function CatalogoClient({
             {(serie.runtimeHours ?? 0) > 0 && (
               <>
                 <span className="serie-card-dot" />
-                <span>
-                  {serie.runtimeHours}h
-                </span>
+                <span>{serie.runtimeHours}h</span>
               </>
             )}
-            {serie.visto && <Tag color="success">{t('catalogo.watchedTag')}</Tag>}
+            {serie.visto && (
+              <Tag color="success">{t('catalogo.watchedTag')}</Tag>
+            )}
           </div>
 
           {hasExpandableInfo && (
@@ -763,12 +765,16 @@ export function CatalogoClient({
                 <CountryFlag code={firstSerie.paisCode} size="small" />
               )}
               <Tag color="purple" style={{ margin: 0 }}>
-                <GlobalOutlined /> {interpolateMessage(t('catalogo.universeTitles'), { n: String(group.series.length) })}
+                <GlobalOutlined />{' '}
+                {interpolateMessage(t('catalogo.universeTitles'), {
+                  n: String(group.series.length),
+                })}
               </Tag>
             </div>
             <div className="serie-card-info">
               <span>
-                {isExpanded ? <UpOutlined /> : <DownOutlined />} {t('catalogo.universeExpand')}
+                {isExpanded ? <UpOutlined /> : <DownOutlined />}{' '}
+                {t('catalogo.universeExpand')}
               </span>
             </div>
           </div>
@@ -870,7 +876,9 @@ export function CatalogoClient({
           <GlobalOutlined />
           <span>{group.universoNombre}</span>
           <Tag color="purple" style={{ margin: 0 }}>
-            {interpolateMessage(t('catalogo.universeTitles'), { n: String(group.series.length) })}
+            {interpolateMessage(t('catalogo.universeTitles'), {
+              n: String(group.series.length),
+            })}
           </Tag>
           {isExpanded ? <UpOutlined /> : <DownOutlined />}
         </div>
@@ -1136,7 +1144,8 @@ export function CatalogoClient({
             onClick={() => setFiltersVisible(!filtersVisible)}
             className={hasActiveFilters ? 'catalogo-filter-btn-active' : ''}
           >
-            {t('catalogo.filtersButton')}{hasActiveFilters ? ` (${filteredSeries.length})` : ''}
+            {t('catalogo.filtersButton')}
+            {hasActiveFilters ? ` (${filteredSeries.length})` : ''}
           </Button>
           <Tooltip title={t('catalogo.alphaFilterTooltip')}>
             <Button
@@ -1156,8 +1165,13 @@ export function CatalogoClient({
         <div className="catalogo-toolbar-right">
           <span className="catalogo-count">
             {filteredSeries.length === series.length
-              ? interpolateMessage(t('catalogo.titlesCount'), { n: String(series.length) })
-              : interpolateMessage(t('catalogo.filteredCount'), { from: String(filteredSeries.length), total: String(series.length) })}
+              ? interpolateMessage(t('catalogo.titlesCount'), {
+                  n: String(series.length),
+                })
+              : interpolateMessage(t('catalogo.filteredCount'), {
+                  from: String(filteredSeries.length),
+                  total: String(series.length),
+                })}
           </span>
           <Space.Compact>
             <Button
@@ -1185,7 +1199,11 @@ export function CatalogoClient({
         </div>
       </div>
 
-      <div className="catalogo-quick-filters" role="group" aria-label="Filtros rápidos">
+      <div
+        className="catalogo-quick-filters"
+        role="group"
+        aria-label="Filtros rápidos"
+      >
         <button
           className={`catalogo-quick-chip${selectedQuickFilter === 'popular' ? ' catalogo-quick-chip--active' : ''}`}
           onClick={() => {
@@ -1234,7 +1252,9 @@ export function CatalogoClient({
         (yearFrom && yearTo && yearFrom === yearTo) ||
         selectedTags.length > 0) && (
         <div className="catalogo-active-filters">
-          <span className="catalogo-active-filters-label">{t('catalogo.filteringBy')}</span>
+          <span className="catalogo-active-filters-label">
+            {t('catalogo.filteringBy')}
+          </span>
           {selectedCountry && (
             <Tag
               closable
@@ -1243,7 +1263,9 @@ export function CatalogoClient({
                 handleFilterChange();
               }}
             >
-              {interpolateMessage(t('catalogo.filterCountryLabel'), { value: selectedCountry })}
+              {interpolateMessage(t('catalogo.filterCountryLabel'), {
+                value: selectedCountry,
+              })}
             </Tag>
           )}
           {selectedType && (
@@ -1254,7 +1276,9 @@ export function CatalogoClient({
                 handleFilterChange();
               }}
             >
-              {interpolateMessage(t('catalogo.filterTypeLabel'), { value: selectedType })}
+              {interpolateMessage(t('catalogo.filterTypeLabel'), {
+                value: selectedType,
+              })}
             </Tag>
           )}
           {selectedFormat && (
@@ -1265,7 +1289,9 @@ export function CatalogoClient({
                 handleFilterChange();
               }}
             >
-              {interpolateMessage(t('catalogo.filterFormatLabel'), { value: selectedFormat })}
+              {interpolateMessage(t('catalogo.filterFormatLabel'), {
+                value: selectedFormat,
+              })}
             </Tag>
           )}
           {selectedGenre && (
@@ -1276,7 +1302,9 @@ export function CatalogoClient({
                 handleFilterChange();
               }}
             >
-              {interpolateMessage(t('catalogo.filterGenreLabel'), { value: selectedGenre })}
+              {interpolateMessage(t('catalogo.filterGenreLabel'), {
+                value: selectedGenre,
+              })}
             </Tag>
           )}
           {selectedLanguage && (
@@ -1287,7 +1315,9 @@ export function CatalogoClient({
                 handleFilterChange();
               }}
             >
-              {interpolateMessage(t('catalogo.filterLanguageLabel'), { value: selectedLanguage })}
+              {interpolateMessage(t('catalogo.filterLanguageLabel'), {
+                value: selectedLanguage,
+              })}
             </Tag>
           )}
           {selectedProductionCompany && (
@@ -1298,7 +1328,9 @@ export function CatalogoClient({
                 handleFilterChange();
               }}
             >
-              {interpolateMessage(t('catalogo.filterProductionLabel'), { value: selectedProductionCompany })}
+              {interpolateMessage(t('catalogo.filterProductionLabel'), {
+                value: selectedProductionCompany,
+              })}
             </Tag>
           )}
           {selectedDirector && (
@@ -1309,7 +1341,9 @@ export function CatalogoClient({
                 handleFilterChange();
               }}
             >
-              {interpolateMessage(t('catalogo.filterDirectorLabel'), { value: selectedDirector })}
+              {interpolateMessage(t('catalogo.filterDirectorLabel'), {
+                value: selectedDirector,
+              })}
             </Tag>
           )}
           {selectedActor && (
@@ -1320,7 +1354,9 @@ export function CatalogoClient({
                 handleFilterChange();
               }}
             >
-              {interpolateMessage(t('catalogo.filterActorLabel'), { value: selectedActor })}
+              {interpolateMessage(t('catalogo.filterActorLabel'), {
+                value: selectedActor,
+              })}
             </Tag>
           )}
           {yearFrom && yearTo && yearFrom === yearTo && (
@@ -1332,7 +1368,9 @@ export function CatalogoClient({
                 handleFilterChange();
               }}
             >
-              {interpolateMessage(t('catalogo.filterYearLabel'), { year: String(yearFrom) })}
+              {interpolateMessage(t('catalogo.filterYearLabel'), {
+                year: String(yearFrom),
+              })}
             </Tag>
           )}
           {selectedTags.length > 0 &&
@@ -1350,7 +1388,9 @@ export function CatalogoClient({
                     handleFilterChange();
                   }}
                 >
-                  {interpolateMessage(t('catalogo.filterTagLabel'), { name: tag.name })}
+                  {interpolateMessage(t('catalogo.filterTagLabel'), {
+                    name: tag.name,
+                  })}
                 </Tag>
               );
             })}
@@ -1459,7 +1499,11 @@ export function CatalogoClient({
               showSizeChanger
               pageSizeOptions={PAGE_SIZE_OPTIONS.map(String)}
               showTotal={(total, range) =>
-                interpolateMessage(t('catalogo.paginationTotal'), { from: String(range[0]), to: String(range[1]), total: String(total) })
+                interpolateMessage(t('catalogo.paginationTotal'), {
+                  from: String(range[0]),
+                  to: String(range[1]),
+                  total: String(total),
+                })
               }
               size={isMobile ? 'small' : 'middle'}
             />

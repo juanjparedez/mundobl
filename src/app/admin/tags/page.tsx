@@ -353,7 +353,9 @@ export default function TagsAdminPage() {
           okButtonProps={{ danger: true }}
           cancelText={t('adminTags.cancel')}
         >
-          <p style={{ marginBottom: 12 }}>{t('adminTags.mergeSelectSurvivor')}</p>
+          <p style={{ marginBottom: 12 }}>
+            {t('adminTags.mergeSelectSurvivor')}
+          </p>
           <Radio.Group
             value={mergeTarget}
             onChange={(e) => setMergeTarget(e.target.value)}

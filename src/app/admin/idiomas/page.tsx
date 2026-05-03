@@ -138,7 +138,9 @@ export default function IdiomasAdminPage() {
       loadLanguages();
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : t('adminLanguages.deleteError');
+        error instanceof Error
+          ? error.message
+          : t('adminLanguages.deleteError');
       message.error(errorMessage);
     }
   };

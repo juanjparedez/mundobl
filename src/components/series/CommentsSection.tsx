@@ -93,7 +93,9 @@ export function CommentsSection({
       {session?.user ? (
         <Card
           title={
-            <h4 className="comments-section__title">{t('comments.addTitle')}</h4>
+            <h4 className="comments-section__title">
+              {t('comments.addTitle')}
+            </h4>
           }
           className="comments-section__form"
         >
@@ -127,7 +129,9 @@ export function CommentsSection({
               onClick={handleSubmit}
               loading={isSubmitting}
             >
-              {isPrivate ? t('comments.savePrivateButton') : t('comments.addButton')}
+              {isPrivate
+                ? t('comments.savePrivateButton')
+                : t('comments.addButton')}
             </Button>
           </div>
         </Card>
@@ -141,7 +145,9 @@ export function CommentsSection({
 
       <div className="comments-section__list">
         <h4 className="comments-section__title">
-          {interpolateMessage(t('comments.listTitle'), { n: String(visibleComments.length) })}
+          {interpolateMessage(t('comments.listTitle'), {
+            n: String(visibleComments.length),
+          })}
         </h4>
 
         {visibleComments.length === 0 ? (
@@ -196,9 +202,16 @@ function formatDate(date: Date, t: (key: TranslationKey) => string): string {
 
   if (days === 0) return t('common.today');
   if (days === 1) return t('common.yesterday');
-  if (days < 7) return interpolateMessage(t('common.daysAgo'), { n: String(days) });
-  if (days < 30) return interpolateMessage(t('common.weeksAgo'), { n: String(Math.floor(days / 7)) });
-  if (days < 365) return interpolateMessage(t('common.monthsAgo'), { n: String(Math.floor(days / 30)) });
+  if (days < 7)
+    return interpolateMessage(t('common.daysAgo'), { n: String(days) });
+  if (days < 30)
+    return interpolateMessage(t('common.weeksAgo'), {
+      n: String(Math.floor(days / 7)),
+    });
+  if (days < 365)
+    return interpolateMessage(t('common.monthsAgo'), {
+      n: String(Math.floor(days / 30)),
+    });
 
   return date.toLocaleDateString();
 }

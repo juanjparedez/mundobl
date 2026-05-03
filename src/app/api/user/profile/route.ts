@@ -2,6 +2,30 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 
+interface RawCountRow {
+  name: string;
+  count: bigint;
+}
+
+interface RawCountryRow {
+  name: string;
+  code: string | null;
+  count: bigint;
+}
+
+interface RawYearRow {
+  year: number | null;
+  count: bigint;
+}
+
+interface RawMinutesRow {
+  total_minutes: bigint | null;
+}
+
+interface RawDayRow {
+  day: Date;
+}
+
 // GET /api/user/profile — returns stats + recent activity for authenticated user
 export async function GET() {
   try {
@@ -19,11 +43,23 @@ export async function GET() {
       recentlyCompleted,
       currentlyWatching,
       favorites,
+      hoursResult,
+      weeklyActivity,
+      topGenresRaw,
+      topCountriesRaw,
+      completedByYearRaw,
     ] = await Promise.all([
       // Basic user info
       prisma.user.findUnique({
         where: { id: userId },
-        select: { id: true, name: true, email: true, image: true, role: true, createdAt: true },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          image: true,
+          role: true,
+          createdAt: true,
+        },
       }),
 
       // Count by WatchStatus
@@ -106,21 +142,91 @@ export async function GET() {
           },
         },
       }),
+
+      // Total minutes watched (sum episode durations for watched episodes)
+      prisma.$queryRaw<RawMinutesRow[]>`
+        SELECT COALESCE(SUM(e.duration), 0) as total_minutes
+        FROM "ViewStatus" vs
+        JOIN "Episode" e ON vs."episodeId" = e.id
+        WHERE vs."userId" = ${userId}
+          AND vs.status = 'VISTA'
+          AND e.duration IS NOT NULL
+      `,
+
+      // Distinct days with episode watches in the last 7 days
+      prisma.$queryRaw<RawDayRow[]>`
+        SELECT DISTINCT DATE(vs."updatedAt") as day
+        FROM "ViewStatus" vs
+        WHERE vs."userId" = ${userId}
+          AND vs.status = 'VISTA'
+          AND vs."episodeId" IS NOT NULL
+          AND vs."updatedAt" >= NOW() - INTERVAL '7 days'
+        ORDER BY day
+      `,
+
+      // Top 5 genres from watched series
+      prisma.$queryRaw<RawCountRow[]>`
+        SELECT g.name, COUNT(*) as count
+        FROM "ViewStatus" vs
+        JOIN "Series" s ON vs."seriesId" = s.id
+        JOIN "SeriesGenre" sg ON sg."seriesId" = s.id
+        JOIN "Genre" g ON sg."genreId" = g.id
+        WHERE vs."userId" = ${userId}
+          AND vs.status = 'VISTA'
+          AND vs."seriesId" IS NOT NULL
+        GROUP BY g.name
+        ORDER BY count DESC
+        LIMIT 5
+      `,
+
+      // Top 5 countries from watched series
+      prisma.$queryRaw<RawCountryRow[]>`
+        SELECT c.name, c.code, COUNT(*) as count
+        FROM "ViewStatus" vs
+        JOIN "Series" s ON vs."seriesId" = s.id
+        JOIN "Country" c ON s."countryId" = c.id
+        WHERE vs."userId" = ${userId}
+          AND vs.status = 'VISTA'
+          AND vs."seriesId" IS NOT NULL
+        GROUP BY c.name, c.code
+        ORDER BY count DESC
+        LIMIT 5
+      `,
+
+      // Series completed per year
+      prisma.$queryRaw<RawYearRow[]>`
+        SELECT s.year, COUNT(*) as count
+        FROM "ViewStatus" vs
+        JOIN "Series" s ON vs."seriesId" = s.id
+        WHERE vs."userId" = ${userId}
+          AND vs.status = 'VISTA'
+          AND vs."seriesId" IS NOT NULL
+          AND s.year IS NOT NULL
+        GROUP BY s.year
+        ORDER BY s.year DESC
+        LIMIT 10
+      `,
     ]);
 
     if (!user) {
-      return NextResponse.json({ error: 'Usuario no encontrado' }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Usuario no encontrado' },
+        { status: 404 }
+      );
     }
 
     // Build status map
     const statusMap: Record<string, number> = {};
-    statusCounts.forEach((s) => { statusMap[s.status] = s._count.status; });
+    statusCounts.forEach((s) => {
+      statusMap[s.status] = s._count.status;
+    });
 
     // Compute next episode for VIENDO entries
     const watchingWithNext = currentlyWatching.map((item) => {
       let totalEpisodes = 0;
       let watchedEpisodes = 0;
-      let nextEpisode: { seasonNumber: number; episodeNumber: number } | null = null;
+      let nextEpisode: { seasonNumber: number; episodeNumber: number } | null =
+        null;
 
       for (const season of item.series?.seasons ?? []) {
         for (const ep of season.episodes) {
@@ -128,12 +234,17 @@ export async function GET() {
           if (ep.viewStatus?.[0]?.status === 'VISTA') {
             watchedEpisodes++;
           } else if (!nextEpisode) {
-            nextEpisode = { seasonNumber: season.seasonNumber, episodeNumber: ep.episodeNumber };
+            nextEpisode = {
+              seasonNumber: season.seasonNumber,
+              episodeNumber: ep.episodeNumber,
+            };
           }
         }
       }
 
-      const { seasons: _seasons, ...seriesWithoutSeasons } = item.series ?? { seasons: [] };
+      const { seasons: _seasons, ...seriesWithoutSeasons } = item.series ?? {
+        seasons: [],
+      };
       void _seasons;
 
       return {
@@ -155,6 +266,23 @@ export async function GET() {
         favorites: favoritesCount,
         ratings: ratingsCount,
         comments: commentsCount,
+        hoursWatched:
+          Math.round((Number(hoursResult[0]?.total_minutes ?? 0) / 60) * 10) /
+          10,
+        activeDaysThisWeek: weeklyActivity.length,
+        topGenres: topGenresRaw.map((g) => ({
+          name: g.name,
+          count: Number(g.count),
+        })),
+        topCountries: topCountriesRaw.map((c) => ({
+          name: c.name,
+          code: c.code,
+          count: Number(c.count),
+        })),
+        completedByYear: completedByYearRaw.map((y) => ({
+          year: y.year,
+          count: Number(y.count),
+        })),
       },
       recentlyCompleted: recentlyCompleted.map((r) => ({
         seriesId: r.seriesId,

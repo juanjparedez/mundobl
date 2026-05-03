@@ -3,11 +3,7 @@
 import { useState } from 'react';
 import { Progress, Tooltip, Tag, Select, Badge } from 'antd';
 import { useSession } from 'next-auth/react';
-import {
-  WATCH_STATUS,
-  WATCH_STATUS_LABELS,
-  WATCH_STATUS_COLORS,
-} from '@/constants/series';
+import { WATCH_STATUS, WATCH_STATUS_COLORS } from '@/constants/series';
 import type { WatchStatusValue } from '@/constants/series';
 import './ViewStatusToggle.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -83,7 +79,11 @@ export function ViewStatusToggle({
       if (!response.ok) throw new Error('Error al actualizar');
 
       setStatus(newStatus);
-      message.success(interpolateMessage(t('viewStatus.statusMessage'), { label: watchStatusLabels[newStatus] ?? newStatus }));
+      message.success(
+        interpolateMessage(t('viewStatus.statusMessage'), {
+          label: watchStatusLabels[newStatus] ?? newStatus,
+        })
+      );
     } catch (error) {
       message.error(t('viewStatus.errorUpdate'));
       console.error(error);
@@ -104,10 +104,12 @@ export function ViewStatusToggle({
               percent={progressPercent}
               size="small"
               status={progressPercent === 100 ? 'success' : 'active'}
-              format={() => interpolateMessage(t('viewStatus.episodesUnit'), {
-                watched: String(watchedEpisodes),
-                total: String(totalEpisodes),
-              })}
+              format={() =>
+                interpolateMessage(t('viewStatus.episodesUnit'), {
+                  watched: String(watchedEpisodes),
+                  total: String(totalEpisodes),
+                })
+              }
             />
           </div>
         )}
@@ -150,10 +152,12 @@ export function ViewStatusToggle({
               percent={progressPercent}
               size="small"
               status={progressPercent === 100 ? 'success' : 'active'}
-              format={() => interpolateMessage(t('viewStatus.episodesUnit'), {
-                watched: String(watchedEpisodes),
-                total: String(totalEpisodes),
-              })}
+              format={() =>
+                interpolateMessage(t('viewStatus.episodesUnit'), {
+                  watched: String(watchedEpisodes),
+                  total: String(totalEpisodes),
+                })
+              }
             />
           </Tooltip>
         </div>

@@ -50,7 +50,6 @@ function getTypeColor(type: string): string {
   }
 }
 
-
 export function TagPageClient({ tag }: TagPageClientProps) {
   const series = [...tag.series]
     .map((entry) => entry.series)
@@ -87,13 +86,17 @@ export function TagPageClient({ tag }: TagPageClientProps) {
           <span className="tag-page__count">
             {series.length === 1
               ? t('tagPage.titleCountSingular')
-              : interpolateMessage(t('tagPage.titleCountPlural'), { n: String(series.length) })}
+              : interpolateMessage(t('tagPage.titleCountPlural'), {
+                  n: String(series.length),
+                })}
           </span>
         </div>
       </Card>
 
       <Card
-        title={interpolateMessage(t('tagPage.seriesWithTag'), { n: String(series.length) })}
+        title={interpolateMessage(t('tagPage.seriesWithTag'), {
+          n: String(series.length),
+        })}
         className="tag-page__list"
       >
         {series.length === 0 ? (
