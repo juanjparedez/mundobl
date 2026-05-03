@@ -129,13 +129,19 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
               name,
             })),
           }),
+          ...(serie.genres && serie.genres.length > 0 && {
+            genre: serie.genres.map((g) => g.genre.name),
+          }),
+          ...(serie.tags && serie.tags.length > 0 && {
+            keywords: serie.tags.map((t) => t.tag.name).join(', '),
+          }),
           ...(serie.overallRating && {
             aggregateRating: {
               '@type': 'AggregateRating',
               ratingValue: serie.overallRating,
               bestRating: 10,
               worstRating: 1,
-              ratingCount: 1,
+              ratingCount: Math.max(serie.ratings?.length ?? 1, 1),
             },
           }),
           url: `https://mundobl.win/series/${serie.id}`,

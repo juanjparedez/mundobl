@@ -1,5 +1,6 @@
-const CACHE_NAME = 'mundobl-v2';
+const CACHE_NAME = 'mundobl-v3';
 const PRECACHE_URLS = [
+  '/',
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png',
 ];
@@ -35,7 +36,16 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== self.location.origin) return;
   if (url.pathname.startsWith('/api/')) return;
   if (url.pathname.startsWith('/_next/')) return;
-  if (request.mode === 'navigate') return;
+
+  // Para navegaciones: network-first con fallback al shell cacheado
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request).catch(() =>
+        caches.match('/').then((r) => r ?? Response.error())
+      )
+    );
+    return;
+  }
 
   const isStaticAsset =
     url.pathname.startsWith('/icons/') ||
