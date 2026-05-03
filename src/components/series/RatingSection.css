@@ -7,25 +7,29 @@
 .rating-section__average {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-active) 100%);
   border: none;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.rating-section__average .ant-card-body {
+  padding: var(--spacing-md) var(--spacing-lg);
 }
 
 .rating-average {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-lg);
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) 0;
   color: white;
 }
 
 .rating-average__icon {
-  font-size: 3em;
+  font-size: 2.15em;
   color: var(--warning-color);
 }
 
 .rating-average__score {
-  font-size: 3em;
+  font-size: 2.5em;
   font-weight: bold;
   line-height: 1;
 }
@@ -83,15 +87,19 @@
   }
 
   .rating-average {
-    padding: var(--spacing-md);
+    padding: var(--spacing-xs) 0;
   }
 
   .rating-average__icon {
-    font-size: 2em;
+    font-size: 1.7em;
   }
 
   .rating-average__score {
-    font-size: 2em;
+    font-size: 2.1em;
+  }
+
+  .rating-section__average .ant-card-body {
+    padding: var(--spacing-sm) var(--spacing-md);
   }
 
   .rating-section__categories {
