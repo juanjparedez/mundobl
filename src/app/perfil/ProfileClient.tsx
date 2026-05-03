@@ -44,6 +44,7 @@ import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
+import { ProfileSettings } from './ProfileSettings/ProfileSettings';
 import './profile.css';
 
 const ROLE_COLORS: Record<string, string> = {
@@ -1121,6 +1122,8 @@ export function ProfileClient() {
             </div>
           )}
         </section>
+
+        <ProfileSettings />
       </div>
 
       <Modal
