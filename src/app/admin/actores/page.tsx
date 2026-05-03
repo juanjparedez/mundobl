@@ -24,6 +24,7 @@ import Link from 'next/link';
 import { useMessage } from '@/hooks/useMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import type { ActorAdmin } from '@/types/person.types';
+import { interpolateMessage } from '@/lib/i18n-format';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { AdminPageHero } from '@/components/admin/AdminPageHero/AdminPageHero';
 import { AdminTableToolbar } from '@/components/admin/AdminTableToolbar/AdminTableToolbar';
@@ -33,13 +34,6 @@ import '../admin.css';
 
 const { TextArea } = Input;
 const ALPHABET = '#ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-
-function interpolate(template: string, params: Record<string, string | number>) {
-  return Object.entries(params).reduce(
-    (result, [key, value]) => result.replaceAll(`{${key}}`, String(value)),
-    template
-  );
-}
 
 export default function ActoresAdminPage() {
   const message = useMessage();
@@ -274,9 +268,12 @@ export default function ActoresAdminPage() {
               title={t('adminActors.deleteTitle')}
               description={
                 total > 0
-                  ? interpolate(t('adminActors.deleteBlockedDescription'), {
+                  ? interpolateMessage(
+                      t('adminActors.deleteBlockedDescription'),
+                      {
                       count: total,
-                    })
+                      }
+                    )
                   : t('adminActors.deleteDescription')
               }
               onConfirm={() => handleDelete(record.id)}
@@ -437,7 +434,7 @@ export default function ActoresAdminPage() {
               return (
                 <Radio key={String(id)} value={id}>
                   <strong>{actor.name}</strong>{' '}
-                  ({interpolate(t('adminActors.participationCount'), { count: total })})
+                  ({interpolateMessage(t('adminActors.participationCount'), { count: total })})
                 </Radio>
               );
             })}

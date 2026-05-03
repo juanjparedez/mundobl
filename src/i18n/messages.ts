@@ -192,6 +192,193 @@ type TranslationShape = {
     mergeSuccess: string;
     mergeError: string;
   };
+  adminTags: {
+    title: string;
+    subtitle: string;
+    statsTotal: string;
+    statsFiltered: string;
+    statsSelected: string;
+    searchPlaceholder: string;
+    newPlaceholder: string;
+    create: string;
+    mergeSelected: string;
+    columnTag: string;
+    columnCategory: string;
+    columnSeries: string;
+    columnActions: string;
+    emptyCategory: string;
+    actionEdit: string;
+    actionDelete: string;
+    modalEditTitle: string;
+    modalMergeTitle: string;
+    save: string;
+    cancel: string;
+    fieldName: string;
+    requiredName: string;
+    hintName: string;
+    mergeSelectSurvivor: string;
+    mergeWarning: string;
+    seriesCount: string;
+    deleteTitle: string;
+    deleteDescription: string;
+    createEmptyWarning: string;
+    loadError: string;
+    createSuccess: string;
+    createError: string;
+    updateSuccess: string;
+    updateError: string;
+    deleteSuccess: string;
+    deleteError: string;
+    mergeSuccess: string;
+    mergeError: string;
+  };
+  adminProductionCompanies: {
+    title: string;
+    subtitle: string;
+    statsTotal: string;
+    statsFiltered: string;
+    searchPlaceholder: string;
+    newItem: string;
+    columnName: string;
+    columnCountry: string;
+    columnSeries: string;
+    columnActions: string;
+    emptyValue: string;
+    actionEdit: string;
+    actionDelete: string;
+    modalNewTitle: string;
+    modalEditTitle: string;
+    save: string;
+    cancel: string;
+    fieldName: string;
+    fieldCountry: string;
+    requiredName: string;
+    hintName: string;
+    hintCountry: string;
+    deleteTitle: string;
+    deleteDescription: string;
+    loadError: string;
+    createSuccess: string;
+    updateSuccess: string;
+    saveError: string;
+    deleteSuccess: string;
+    deleteError: string;
+  };
+  adminUniverses: {
+    title: string;
+    subtitle: string;
+    statsTotal: string;
+    statsFiltered: string;
+    searchPlaceholder: string;
+    newItem: string;
+    columnName: string;
+    columnDescription: string;
+    columnSeries: string;
+    columnActions: string;
+    emptyValue: string;
+    seriesCount: string;
+    actionEdit: string;
+    actionDelete: string;
+    modalNewTitle: string;
+    modalEditTitle: string;
+    save: string;
+    cancel: string;
+    fieldName: string;
+    fieldDescription: string;
+    fieldImageUrl: string;
+    requiredName: string;
+    hintName: string;
+    hintDescription: string;
+    hintImageUrl: string;
+    deleteTitle: string;
+    deleteDescription: string;
+    deleteBlockedDescription: string;
+    loadError: string;
+    createSuccess: string;
+    updateSuccess: string;
+    saveError: string;
+    deleteSuccess: string;
+    deleteError: string;
+  };
+  adminLanguages: {
+    title: string;
+    subtitle: string;
+    statsTotal: string;
+    statsFiltered: string;
+    searchPlaceholder: string;
+    newItem: string;
+    columnName: string;
+    columnCode: string;
+    columnSeries: string;
+    columnDubbings: string;
+    columnActions: string;
+    emptyValue: string;
+    actionEdit: string;
+    actionDelete: string;
+    modalNewTitle: string;
+    modalEditTitle: string;
+    save: string;
+    cancel: string;
+    fieldName: string;
+    fieldCode: string;
+    requiredName: string;
+    hintName: string;
+    hintCode: string;
+    deleteTitle: string;
+    deleteDescription: string;
+    loadError: string;
+    createSuccess: string;
+    updateSuccess: string;
+    saveError: string;
+    deleteSuccess: string;
+    deleteError: string;
+  };
+  adminSites: {
+    title: string;
+    subtitle: string;
+    statsTotal: string;
+    statsFiltered: string;
+    searchPlaceholder: string;
+    newItem: string;
+    newItemShort: string;
+    columnName: string;
+    columnCategory: string;
+    columnLanguage: string;
+    columnDescription: string;
+    columnOrder: string;
+    columnActions: string;
+    emptyValue: string;
+    actionEdit: string;
+    actionDelete: string;
+    modalNewTitle: string;
+    modalEditTitle: string;
+    save: string;
+    cancel: string;
+    fieldName: string;
+    fieldUrl: string;
+    fieldDescription: string;
+    fieldCategory: string;
+    fieldLanguage: string;
+    fieldImageUrl: string;
+    fieldOrder: string;
+    requiredName: string;
+    requiredUrl: string;
+    invalidUrl: string;
+    hintName: string;
+    hintUrl: string;
+    hintDescription: string;
+    hintCategory: string;
+    hintLanguage: string;
+    hintImageUrl: string;
+    deleteTitle: string;
+    deleteDescription: string;
+    loadError: string;
+    createSuccess: string;
+    updateSuccess: string;
+    saveError: string;
+    deleteSuccess: string;
+    deleteError: string;
+  };
 };
 
 const es: TranslationShape = {
@@ -391,6 +578,195 @@ const es: TranslationShape = {
     mergeSuccess: 'Directores fusionados exitosamente',
     mergeError: 'Error al fusionar directores',
   },
+  adminTags: {
+    title: 'Administracion de Tags',
+    subtitle: 'Crea, corrige y fusiona tags para mantener un catalogo limpio.',
+    statsTotal: 'Total',
+    statsFiltered: 'Filtrados',
+    statsSelected: 'Seleccionados',
+    searchPlaceholder: 'Buscar tags por nombre o categoria...',
+    newPlaceholder: 'Nombre del nuevo tag (ej: Enemy to Lovers)',
+    create: 'Crear Tag',
+    mergeSelected: 'Fusionar seleccionados',
+    columnTag: 'Tag',
+    columnCategory: 'Categoria',
+    columnSeries: 'Series',
+    columnActions: 'Acciones',
+    emptyCategory: 'Sin categoria',
+    actionEdit: 'Editar',
+    actionDelete: 'Eliminar',
+    modalEditTitle: 'Editar Tag',
+    modalMergeTitle: 'Fusionar Tags',
+    save: 'Guardar',
+    cancel: 'Cancelar',
+    fieldName: 'Nombre',
+    requiredName: 'El nombre es requerido',
+    hintName: 'Nombre del tag',
+    mergeSelectSurvivor: 'Selecciona que tag debe sobrevivir:',
+    mergeWarning:
+      'El tag no seleccionado sera eliminado y todas las series que lo tenian pasaran a usar el tag que sobreviva.',
+    seriesCount: '{count} series',
+    deleteTitle: 'Eliminar tag?',
+    deleteDescription: 'Esto eliminara el tag de {count} series',
+    createEmptyWarning: 'Escribe un nombre para el tag',
+    loadError: 'Error al cargar los tags',
+    createSuccess: 'Tag creado exitosamente',
+    createError: 'Error al crear el tag',
+    updateSuccess: 'Tag actualizado exitosamente',
+    updateError: 'Error al actualizar el tag',
+    deleteSuccess: 'Tag eliminado correctamente',
+    deleteError: 'Error al eliminar el tag',
+    mergeSuccess: 'Tags fusionados exitosamente',
+    mergeError: 'Error al fusionar tags',
+  },
+  adminProductionCompanies: {
+    title: 'Administracion de Productoras',
+    subtitle: 'Gestiona productoras y normaliza su informacion en catalogo.',
+    statsTotal: 'Total',
+    statsFiltered: 'Filtradas',
+    searchPlaceholder: 'Buscar por nombre o pais...',
+    newItem: 'Nueva Productora',
+    columnName: 'Nombre',
+    columnCountry: 'Pais',
+    columnSeries: 'Series',
+    columnActions: 'Acciones',
+    emptyValue: '-',
+    actionEdit: 'Editar',
+    actionDelete: 'Eliminar',
+    modalNewTitle: 'Nueva Productora',
+    modalEditTitle: 'Editar Productora',
+    save: 'Guardar',
+    cancel: 'Cancelar',
+    fieldName: 'Nombre',
+    fieldCountry: 'Pais',
+    requiredName: 'El nombre es requerido',
+    hintName: 'Nombre de la productora',
+    hintCountry: 'Pais de la productora (opcional)',
+    deleteTitle: 'Eliminar productora?',
+    deleteDescription: 'Esto eliminara la productora "{name}"',
+    loadError: 'Error al cargar las productoras',
+    createSuccess: 'Productora creada exitosamente',
+    updateSuccess: 'Productora actualizada exitosamente',
+    saveError: 'Error al guardar la productora',
+    deleteSuccess: 'Productora eliminada correctamente',
+    deleteError: 'Error al eliminar la productora',
+  },
+  adminUniverses: {
+    title: 'Administracion de Universos',
+    subtitle: 'Gestiona universos narrativos y su relacion con las series.',
+    statsTotal: 'Total',
+    statsFiltered: 'Filtrados',
+    searchPlaceholder: 'Buscar por nombre o descripcion...',
+    newItem: 'Nuevo Universo',
+    columnName: 'Nombre',
+    columnDescription: 'Descripcion',
+    columnSeries: 'Series',
+    columnActions: 'Acciones',
+    emptyValue: '-',
+    seriesCount: '{count} series',
+    actionEdit: 'Editar',
+    actionDelete: 'Eliminar',
+    modalNewTitle: 'Nuevo Universo',
+    modalEditTitle: 'Editar Universo',
+    save: 'Guardar',
+    cancel: 'Cancelar',
+    fieldName: 'Nombre',
+    fieldDescription: 'Descripcion',
+    fieldImageUrl: 'URL de Imagen',
+    requiredName: 'El nombre es requerido',
+    hintName: 'Ej: 2 Moons Universe',
+    hintDescription: 'Descripcion del universo (opcional)',
+    hintImageUrl: 'URL de la imagen del universo (opcional)',
+    deleteTitle: 'Eliminar universo?',
+    deleteDescription: 'Estas seguro de eliminar este universo?',
+    deleteBlockedDescription:
+      'Este universo tiene {count} series. Primero desvinculalas.',
+    loadError: 'Error al cargar los universos',
+    createSuccess: 'Universo creado exitosamente',
+    updateSuccess: 'Universo actualizado exitosamente',
+    saveError: 'Error al guardar el universo',
+    deleteSuccess: 'Universo eliminado correctamente',
+    deleteError: 'Error al eliminar el universo',
+  },
+  adminLanguages: {
+    title: 'Administracion de Idiomas',
+    subtitle: 'Gestiona idiomas originales y doblajes disponibles en catalogo.',
+    statsTotal: 'Total',
+    statsFiltered: 'Filtrados',
+    searchPlaceholder: 'Buscar por nombre o codigo...',
+    newItem: 'Nuevo Idioma',
+    columnName: 'Idioma',
+    columnCode: 'Codigo',
+    columnSeries: 'Series',
+    columnDubbings: 'Doblajes',
+    columnActions: 'Acciones',
+    emptyValue: '-',
+    actionEdit: 'Editar',
+    actionDelete: 'Eliminar',
+    modalNewTitle: 'Nuevo Idioma',
+    modalEditTitle: 'Editar Idioma',
+    save: 'Guardar',
+    cancel: 'Cancelar',
+    fieldName: 'Nombre',
+    fieldCode: 'Codigo',
+    requiredName: 'El nombre es requerido',
+    hintName: 'Nombre del idioma (ej: Coreano)',
+    hintCode: 'Codigo ISO (ej: ko, th, ja)',
+    deleteTitle: 'Eliminar idioma?',
+    deleteDescription: 'Esto eliminara el idioma "{name}"',
+    loadError: 'Error al cargar los idiomas',
+    createSuccess: 'Idioma creado exitosamente',
+    updateSuccess: 'Idioma actualizado exitosamente',
+    saveError: 'Error al guardar el idioma',
+    deleteSuccess: 'Idioma eliminado correctamente',
+    deleteError: 'Error al eliminar el idioma',
+  },
+  adminSites: {
+    title: 'Administracion de Sitios',
+    subtitle: 'Gestiona el directorio de sitios de interes recomendados.',
+    statsTotal: 'Total',
+    statsFiltered: 'Filtrados',
+    searchPlaceholder: 'Buscar por nombre, categoria o descripcion...',
+    newItem: 'Nuevo Sitio',
+    newItemShort: 'Nuevo',
+    columnName: 'Nombre',
+    columnCategory: 'Categoria',
+    columnLanguage: 'Idioma',
+    columnDescription: 'Descripcion',
+    columnOrder: 'Orden',
+    columnActions: 'Acciones',
+    emptyValue: '-',
+    actionEdit: 'Editar',
+    actionDelete: 'Eliminar',
+    modalNewTitle: 'Nuevo Sitio',
+    modalEditTitle: 'Editar Sitio',
+    save: 'Guardar',
+    cancel: 'Cancelar',
+    fieldName: 'Nombre',
+    fieldUrl: 'URL',
+    fieldDescription: 'Descripcion',
+    fieldCategory: 'Categoria',
+    fieldLanguage: 'Idioma',
+    fieldImageUrl: 'URL de imagen',
+    fieldOrder: 'Orden',
+    requiredName: 'El nombre es requerido',
+    requiredUrl: 'La URL es requerida',
+    invalidUrl: 'Ingresa una URL valida',
+    hintName: 'Nombre del sitio',
+    hintUrl: 'https://ejemplo.com',
+    hintDescription: 'Breve descripcion del sitio',
+    hintCategory: 'Seleccionar categoria',
+    hintLanguage: 'Idioma del sitio',
+    hintImageUrl: 'https://ejemplo.com/logo.png',
+    deleteTitle: 'Eliminar sitio?',
+    deleteDescription: 'Esto eliminara "{name}"',
+    loadError: 'Error al cargar los sitios',
+    createSuccess: 'Sitio creado exitosamente',
+    updateSuccess: 'Sitio actualizado exitosamente',
+    saveError: 'Error al guardar el sitio',
+    deleteSuccess: 'Sitio eliminado correctamente',
+    deleteError: 'Error al eliminar el sitio',
+  },
 };
 
 const en: TranslationShape = {
@@ -588,6 +964,195 @@ const en: TranslationShape = {
     deleteError: 'Error deleting director',
     mergeSuccess: 'Directors merged successfully',
     mergeError: 'Error merging directors',
+  },
+  adminTags: {
+    title: 'Tags Management',
+    subtitle: 'Create, correct and merge tags to keep a clean catalog.',
+    statsTotal: 'Total',
+    statsFiltered: 'Filtered',
+    statsSelected: 'Selected',
+    searchPlaceholder: 'Search tags by name or category...',
+    newPlaceholder: 'New tag name (e.g. Enemy to Lovers)',
+    create: 'Create Tag',
+    mergeSelected: 'Merge selected',
+    columnTag: 'Tag',
+    columnCategory: 'Category',
+    columnSeries: 'Series',
+    columnActions: 'Actions',
+    emptyCategory: 'No category',
+    actionEdit: 'Edit',
+    actionDelete: 'Delete',
+    modalEditTitle: 'Edit Tag',
+    modalMergeTitle: 'Merge Tags',
+    save: 'Save',
+    cancel: 'Cancel',
+    fieldName: 'Name',
+    requiredName: 'Name is required',
+    hintName: 'Tag name',
+    mergeSelectSurvivor: 'Select which tag should survive:',
+    mergeWarning:
+      'The unselected tag will be deleted and all series that had it will switch to the surviving tag.',
+    seriesCount: '{count} series',
+    deleteTitle: 'Delete tag?',
+    deleteDescription: 'This will remove the tag from {count} series',
+    createEmptyWarning: 'Type a tag name first',
+    loadError: 'Error loading tags',
+    createSuccess: 'Tag created successfully',
+    createError: 'Error creating tag',
+    updateSuccess: 'Tag updated successfully',
+    updateError: 'Error updating tag',
+    deleteSuccess: 'Tag deleted successfully',
+    deleteError: 'Error deleting tag',
+    mergeSuccess: 'Tags merged successfully',
+    mergeError: 'Error merging tags',
+  },
+  adminProductionCompanies: {
+    title: 'Production Companies Management',
+    subtitle: 'Manage production companies and normalize catalog data.',
+    statsTotal: 'Total',
+    statsFiltered: 'Filtered',
+    searchPlaceholder: 'Search by name or country...',
+    newItem: 'New Company',
+    columnName: 'Name',
+    columnCountry: 'Country',
+    columnSeries: 'Series',
+    columnActions: 'Actions',
+    emptyValue: '-',
+    actionEdit: 'Edit',
+    actionDelete: 'Delete',
+    modalNewTitle: 'New Company',
+    modalEditTitle: 'Edit Company',
+    save: 'Save',
+    cancel: 'Cancel',
+    fieldName: 'Name',
+    fieldCountry: 'Country',
+    requiredName: 'Name is required',
+    hintName: 'Company name',
+    hintCountry: 'Company country (optional)',
+    deleteTitle: 'Delete company?',
+    deleteDescription: 'This will delete company "{name}"',
+    loadError: 'Error loading companies',
+    createSuccess: 'Company created successfully',
+    updateSuccess: 'Company updated successfully',
+    saveError: 'Error saving company',
+    deleteSuccess: 'Company deleted successfully',
+    deleteError: 'Error deleting company',
+  },
+  adminUniverses: {
+    title: 'Universes Management',
+    subtitle: 'Manage story universes and their relation to series.',
+    statsTotal: 'Total',
+    statsFiltered: 'Filtered',
+    searchPlaceholder: 'Search by name or description...',
+    newItem: 'New Universe',
+    columnName: 'Name',
+    columnDescription: 'Description',
+    columnSeries: 'Series',
+    columnActions: 'Actions',
+    emptyValue: '-',
+    seriesCount: '{count} series',
+    actionEdit: 'Edit',
+    actionDelete: 'Delete',
+    modalNewTitle: 'New Universe',
+    modalEditTitle: 'Edit Universe',
+    save: 'Save',
+    cancel: 'Cancel',
+    fieldName: 'Name',
+    fieldDescription: 'Description',
+    fieldImageUrl: 'Image URL',
+    requiredName: 'Name is required',
+    hintName: 'Ex: 2 Moons Universe',
+    hintDescription: 'Universe description (optional)',
+    hintImageUrl: 'Universe image URL (optional)',
+    deleteTitle: 'Delete universe?',
+    deleteDescription: 'Are you sure you want to delete this universe?',
+    deleteBlockedDescription:
+      'This universe has {count} series. Unlink first.',
+    loadError: 'Error loading universes',
+    createSuccess: 'Universe created successfully',
+    updateSuccess: 'Universe updated successfully',
+    saveError: 'Error saving universe',
+    deleteSuccess: 'Universe deleted successfully',
+    deleteError: 'Error deleting universe',
+  },
+  adminLanguages: {
+    title: 'Languages Management',
+    subtitle: 'Manage original languages and dubbing options in the catalog.',
+    statsTotal: 'Total',
+    statsFiltered: 'Filtered',
+    searchPlaceholder: 'Search by name or code...',
+    newItem: 'New Language',
+    columnName: 'Language',
+    columnCode: 'Code',
+    columnSeries: 'Series',
+    columnDubbings: 'Dubbings',
+    columnActions: 'Actions',
+    emptyValue: '-',
+    actionEdit: 'Edit',
+    actionDelete: 'Delete',
+    modalNewTitle: 'New Language',
+    modalEditTitle: 'Edit Language',
+    save: 'Save',
+    cancel: 'Cancel',
+    fieldName: 'Name',
+    fieldCode: 'Code',
+    requiredName: 'Name is required',
+    hintName: 'Language name (e.g. Korean)',
+    hintCode: 'ISO code (e.g. ko, th, ja)',
+    deleteTitle: 'Delete language?',
+    deleteDescription: 'This will delete language "{name}"',
+    loadError: 'Error loading languages',
+    createSuccess: 'Language created successfully',
+    updateSuccess: 'Language updated successfully',
+    saveError: 'Error saving language',
+    deleteSuccess: 'Language deleted successfully',
+    deleteError: 'Error deleting language',
+  },
+  adminSites: {
+    title: 'Sites Management',
+    subtitle: 'Manage the directory of recommended sites of interest.',
+    statsTotal: 'Total',
+    statsFiltered: 'Filtered',
+    searchPlaceholder: 'Search by name, category or description...',
+    newItem: 'New Site',
+    newItemShort: 'New',
+    columnName: 'Name',
+    columnCategory: 'Category',
+    columnLanguage: 'Language',
+    columnDescription: 'Description',
+    columnOrder: 'Order',
+    columnActions: 'Actions',
+    emptyValue: '-',
+    actionEdit: 'Edit',
+    actionDelete: 'Delete',
+    modalNewTitle: 'New Site',
+    modalEditTitle: 'Edit Site',
+    save: 'Save',
+    cancel: 'Cancel',
+    fieldName: 'Name',
+    fieldUrl: 'URL',
+    fieldDescription: 'Description',
+    fieldCategory: 'Category',
+    fieldLanguage: 'Language',
+    fieldImageUrl: 'Image URL',
+    fieldOrder: 'Order',
+    requiredName: 'Name is required',
+    requiredUrl: 'URL is required',
+    invalidUrl: 'Enter a valid URL',
+    hintName: 'Site name',
+    hintUrl: 'https://example.com',
+    hintDescription: 'Brief description of the site',
+    hintCategory: 'Select category',
+    hintLanguage: 'Site language',
+    hintImageUrl: 'https://example.com/logo.png',
+    deleteTitle: 'Delete site?',
+    deleteDescription: 'This will delete "{name}"',
+    loadError: 'Error loading sites',
+    createSuccess: 'Site created successfully',
+    updateSuccess: 'Site updated successfully',
+    saveError: 'Error saving site',
+    deleteSuccess: 'Site deleted successfully',
+    deleteError: 'Error deleting site',
   },
 };
 

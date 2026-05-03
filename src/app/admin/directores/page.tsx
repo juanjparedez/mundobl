@@ -24,6 +24,7 @@ import Link from 'next/link';
 import { useMessage } from '@/hooks/useMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import type { DirectorAdmin } from '@/types/person.types';
+import { interpolateMessage } from '@/lib/i18n-format';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { AdminPageHero } from '@/components/admin/AdminPageHero/AdminPageHero';
 import { AdminTableToolbar } from '@/components/admin/AdminTableToolbar/AdminTableToolbar';
@@ -33,13 +34,6 @@ import '../admin.css';
 
 const { TextArea } = Input;
 const ALPHABET = '#ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-
-function interpolate(template: string, params: Record<string, string | number>) {
-  return Object.entries(params).reduce(
-    (result, [key, value]) => result.replaceAll(`{${key}}`, String(value)),
-    template
-  );
-}
 
 export default function DirectoresAdminPage() {
   const message = useMessage();
@@ -260,7 +254,7 @@ export default function DirectoresAdminPage() {
               title={t('adminDirectors.deleteTitle')}
               description={
                 count > 0
-                  ? interpolate(t('adminDirectors.deleteBlockedDescription'), {
+                  ? interpolateMessage(t('adminDirectors.deleteBlockedDescription'), {
                       count,
                     })
                   : t('adminDirectors.deleteDescription')
@@ -429,7 +423,7 @@ export default function DirectoresAdminPage() {
               return (
                 <Radio key={String(id)} value={id}>
                   <strong>{director.name}</strong> (
-                  {interpolate(t('adminDirectors.seriesCount'), { count })})
+                  {interpolateMessage(t('adminDirectors.seriesCount'), { count })})
                 </Radio>
               );
             })}
