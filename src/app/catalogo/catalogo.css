@@ -54,6 +54,10 @@
   white-space: nowrap;
 }
 
+.catalogo-sort-select {
+  min-width: 130px;
+}
+
 .catalogo-filter-btn-active {
   color: var(--primary-color) !important;
   border-color: var(--primary-color) !important;
