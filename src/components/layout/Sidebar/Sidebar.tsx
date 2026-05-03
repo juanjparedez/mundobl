@@ -29,6 +29,7 @@ import { ROUTES } from '@/constants/navigation';
 import { useTheme } from '@/lib/providers/ThemeProvider';
 import { LOCALE_LABELS, SUPPORTED_LOCALES } from '@/i18n/config';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { AccentPicker } from './AccentPicker/AccentPicker';
 import './Sidebar.css';
 
 const { Sider } = Layout;
@@ -259,6 +260,8 @@ export function Sidebar() {
             />
           </div>
         )}
+
+        <AccentPicker />
 
         <div
           className="sidebar-theme-toggle"

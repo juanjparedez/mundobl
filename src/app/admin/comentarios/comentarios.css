@@ -1,6 +1,6 @@
 .comentarios-page {
   padding: var(--spacing-lg);
-  border-radius: 16px;
+  border-radius: var(--border-radius-lg);
   background:
     radial-gradient(
       circle at 10% -20%,
@@ -59,7 +59,7 @@
 
 .comentarios-table {
   border: 1px solid var(--border-color-secondary);
-  border-radius: 14px;
+  border-radius: var(--border-radius-lg);
   overflow: hidden;
   background: var(--bg-elevated);
 }

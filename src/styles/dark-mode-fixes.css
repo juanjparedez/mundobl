@@ -10,7 +10,7 @@
 [data-theme='dark'] .ant-picker,
 [data-theme='dark'] .ant-input-textarea textarea {
   background-color: var(--bg-input) !important;
-  border-color: #444444 !important;
+  border-color: var(--border-color) !important;
   color: var(--text-primary) !important;
 }
 
@@ -31,13 +31,13 @@
 [data-theme='dark'] .ant-input-number-focused,
 [data-theme='dark'] .ant-select-focused .ant-select-selector {
   border-color: var(--primary-color) !important;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15) !important;
+  box-shadow: 0 0 0 2px var(--primary-color-outline) !important;
 }
 
 /* --- Select dropdown --- */
 [data-theme='dark'] .ant-select-dropdown {
-  background-color: #2a2a2a !important;
-  border: 1px solid #3a3a3a !important;
+  background-color: var(--bg-elevated) !important;
+  border: 1px solid var(--border-color) !important;
 }
 
 [data-theme='dark'] .ant-select-item {
@@ -49,7 +49,7 @@
 }
 
 [data-theme='dark'] .ant-select-item-option-selected {
-  background-color: rgba(59, 130, 246, 0.2) !important;
+  background-color: var(--primary-color-outline) !important;
   font-weight: 600;
 }
 
@@ -87,7 +87,7 @@
 
 /* Required asterisk */
 [data-theme='dark'] .ant-form-item-required::before {
-  color: #f87171 !important;
+  color: var(--error-color) !important;
 }
 
 /* --- AutoComplete --- */
@@ -137,12 +137,12 @@
 
 /* --- Alert --- */
 [data-theme='dark'] .ant-alert-info {
-  background-color: rgba(59, 130, 246, 0.1) !important;
-  border: 1px solid rgba(59, 130, 246, 0.2) !important;
+  background-color: color-mix(in srgb, var(--info-color) 10%, transparent) !important;
+  border: 1px solid color-mix(in srgb, var(--info-color) 20%, transparent) !important;
 }
 
 [data-theme='dark'] .ant-alert-info .ant-alert-icon {
-  color: #60a5fa !important;
+  color: var(--info-color) !important;
 }
 
 [data-theme='dark'] .ant-alert-message,
@@ -157,19 +157,19 @@
 
 [data-theme='dark'] .ant-btn-default {
   background-color: rgba(255, 255, 255, 0.06) !important;
-  border-color: #444444 !important;
+  border-color: var(--border-color) !important;
   color: var(--text-primary) !important;
 }
 
 [data-theme='dark'] .ant-btn-default:hover {
   background-color: rgba(255, 255, 255, 0.1) !important;
   border-color: var(--primary-color) !important;
-  color: #93bbfc !important;
+  color: var(--primary-color) !important;
 }
 
 [data-theme='dark'] .ant-btn-dashed {
   background-color: transparent !important;
-  border-color: #444444 !important;
+  border-color: var(--border-color) !important;
   color: var(--text-secondary) !important;
 }
 
@@ -258,13 +258,13 @@
 
 /* --- Tooltip --- */
 [data-theme='dark'] .ant-tooltip-inner {
-  background-color: #333333 !important;
+  background-color: var(--bg-elevated) !important;
   color: var(--text-primary) !important;
 }
 
 /* --- Tag --- */
 [data-theme='dark'] .ant-tag {
   background-color: rgba(255, 255, 255, 0.08) !important;
-  border-color: #3a3a3a !important;
+  border-color: var(--border-color-secondary) !important;
   color: var(--text-primary) !important;
 }
