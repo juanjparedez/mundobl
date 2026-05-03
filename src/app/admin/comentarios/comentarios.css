@@ -1,24 +1,13 @@
 .comentarios-page {
   padding: var(--spacing-lg);
-}
-
-.comentarios-section-title {
-  margin: 0 0 var(--spacing-md) 0;
-  font-size: var(--font-size-lg);
-  color: var(--text-primary);
-}
-
-.comentarios-filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-md);
-  align-items: center;
-  margin-bottom: var(--spacing-md);
-}
-
-.comentarios-search {
-  max-width: 320px;
-  flex: 1;
+  border-radius: 16px;
+  background:
+    radial-gradient(
+      circle at 10% -20%,
+      color-mix(in srgb, var(--primary-color) 16%, transparent),
+      transparent 48%
+    ),
+    var(--bg-base);
 }
 
 .comentarios-user {
@@ -41,6 +30,7 @@
   white-space: pre-wrap;
   word-break: break-word;
   color: var(--text-primary);
+  line-height: 1.55;
 }
 
 .comentarios-target {
@@ -65,6 +55,35 @@
 
 .comentarios-report-tag {
   margin-right: var(--spacing-xs);
+}
+
+.comentarios-table {
+  border: 1px solid var(--border-color-secondary);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--bg-elevated);
+}
+
+.comentarios-table .ant-table {
+  background: transparent;
+}
+
+.comentarios-table .ant-table-thead > tr > th {
+  background: color-mix(in srgb, var(--bg-elevated) 80%, var(--primary-color) 20%);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.comentarios-table .ant-table-tbody > tr {
+  transition: transform 180ms ease, background-color 180ms ease;
+}
+
+.comentarios-table .ant-table-tbody > tr:hover > td {
+  background: color-mix(in srgb, var(--bg-spotlight) 90%, var(--primary-color) 10%) !important;
+}
+
+.comentarios-table .ant-table-tbody > tr:hover {
+  transform: translateY(-1px);
 }
 
 .comentarios-reports {
