@@ -5,6 +5,7 @@ import { Sidebar } from '../Sidebar/Sidebar';
 import { BottomNav } from '../BottomNav/BottomNav';
 import { PrivacyBanner } from '../../common/PrivacyBanner/PrivacyBanner';
 import { StaleVersionNotifier } from '../../common/StaleVersionNotifier/StaleVersionNotifier';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 import './AppLayout.css';
 
 const { Content } = Layout;
@@ -14,10 +15,12 @@ interface AppLayoutProps {
 }
 
 export function AppLayout({ children }: AppLayoutProps) {
+  const { t } = useLocale();
+
   return (
     <Layout className="app-layout">
       <a href="#main-content" className="skip-to-content">
-        Saltar al contenido principal
+        {t('appLayout.skipToContent')}
       </a>
       <Sidebar />
       <Layout>
