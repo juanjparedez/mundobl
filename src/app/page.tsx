@@ -27,7 +27,7 @@ export default function HomePage() {
               urlTemplate:
                 'https://mundobl.win/catalogo?q={search_term_string}',
             },
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
             // @ts-expect-error query-input is valid JSON-LD but not yet typed in schema-dts
             'query-input': 'required name=search_term_string',
           },

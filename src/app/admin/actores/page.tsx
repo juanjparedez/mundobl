@@ -126,7 +126,9 @@ export default function ActoresAdminPage() {
 
   const handleSubmit = async (values: Record<string, unknown>) => {
     try {
-      const url = editingActor ? `/api/actors/${editingActor.id}` : '/api/actors';
+      const url = editingActor
+        ? `/api/actors/${editingActor.id}`
+        : '/api/actors';
       const method = editingActor ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
@@ -223,7 +225,8 @@ export default function ActoresAdminPage() {
       title: t('adminActors.columnStageName'),
       dataIndex: 'stageName',
       key: 'stageName',
-      render: (stageName: string | null) => stageName || t('adminActors.emptyValue'),
+      render: (stageName: string | null) =>
+        stageName || t('adminActors.emptyValue'),
       responsive: ['md' as const],
     },
     {
@@ -271,7 +274,7 @@ export default function ActoresAdminPage() {
                   ? interpolateMessage(
                       t('adminActors.deleteBlockedDescription'),
                       {
-                      count: total,
+                        count: total,
                       }
                     )
                   : t('adminActors.deleteDescription')
@@ -307,8 +310,14 @@ export default function ActoresAdminPage() {
           subtitle={t('adminActors.subtitle')}
           stats={[
             { label: t('adminActors.statsTotal'), value: actors.length },
-            { label: t('adminActors.statsFiltered'), value: filteredActors.length },
-            { label: t('adminActors.statsSelected'), value: selectedRowKeys.length },
+            {
+              label: t('adminActors.statsFiltered'),
+              value: filteredActors.length,
+            },
+            {
+              label: t('adminActors.statsSelected'),
+              value: selectedRowKeys.length,
+            },
           ]}
         />
 
@@ -380,7 +389,9 @@ export default function ActoresAdminPage() {
             <Form.Item
               label={t('adminActors.fieldName')}
               name="name"
-              rules={[{ required: true, message: t('adminActors.requiredName') }]}
+              rules={[
+                { required: true, message: t('adminActors.requiredName') },
+              ]}
             >
               <Input placeholder={t('adminActors.hintName')} />
             </Form.Item>
@@ -393,7 +404,10 @@ export default function ActoresAdminPage() {
               <Input type="date" />
             </Form.Item>
 
-            <Form.Item label={t('adminActors.fieldNationality')} name="nationality">
+            <Form.Item
+              label={t('adminActors.fieldNationality')}
+              name="nationality"
+            >
               <Input placeholder={t('adminActors.hintNationality')} />
             </Form.Item>
 
@@ -419,7 +433,9 @@ export default function ActoresAdminPage() {
           okButtonProps={{ danger: true }}
           cancelText={t('adminActors.cancel')}
         >
-          <p style={{ marginBottom: 12 }}>{t('adminActors.mergeSelectSurvivor')}</p>
+          <p style={{ marginBottom: 12 }}>
+            {t('adminActors.mergeSelectSurvivor')}
+          </p>
           <Radio.Group
             value={mergeTarget}
             onChange={(event) => setMergeTarget(event.target.value)}
@@ -433,8 +449,11 @@ export default function ActoresAdminPage() {
 
               return (
                 <Radio key={String(id)} value={id}>
-                  <strong>{actor.name}</strong>{' '}
-                  ({interpolateMessage(t('adminActors.participationCount'), { count: total })})
+                  <strong>{actor.name}</strong> (
+                  {interpolateMessage(t('adminActors.participationCount'), {
+                    count: total,
+                  })}
+                  )
                 </Radio>
               );
             })}

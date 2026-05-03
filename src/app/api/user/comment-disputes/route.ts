@@ -42,12 +42,10 @@ function parseDisputePayload(input: string | null): DisputePayload | null {
 function resolveTargetLabel(comment: {
   series: { title: string } | null;
   season: { seasonNumber: number; series: { title: string } | null } | null;
-  episode:
-    | {
-        episodeNumber: number;
-        season: { seasonNumber: number; series: { title: string } | null } | null;
-      }
-    | null;
+  episode: {
+    episodeNumber: number;
+    season: { seasonNumber: number; series: { title: string } | null } | null;
+  } | null;
 }) {
   if (comment.episode?.season?.series?.title) {
     return `${comment.episode.season.series.title} · T${comment.episode.season.seasonNumber}E${comment.episode.episodeNumber}`;
@@ -71,7 +69,10 @@ export async function GET(request: NextRequest) {
     if (!authResult.authorized) return authResult.response;
 
     const limit = Math.min(
-      Math.max(parseInt(request.nextUrl.searchParams.get('limit') || '100', 10), 1),
+      Math.max(
+        parseInt(request.nextUrl.searchParams.get('limit') || '100', 10),
+        1
+      ),
       200
     );
 
@@ -137,7 +138,10 @@ export async function POST(request: NextRequest) {
       !Number.isInteger(body.commentId) ||
       body.commentId <= 0
     ) {
-      return NextResponse.json({ error: 'Comentario inválido' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Comentario inválido' },
+        { status: 400 }
+      );
     }
 
     if (typeof body.message !== 'string') {
@@ -234,7 +238,10 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({ success: true, dispute: created }, { status: 201 });
+    return NextResponse.json(
+      { success: true, dispute: created },
+      { status: 201 }
+    );
   } catch (error) {
     console.error('Error creating comment dispute:', error);
     return NextResponse.json(

@@ -189,7 +189,9 @@ export function ContenidoClient() {
         throw new Error(err.error || 'Error al guardar');
       }
       message.success(
-        editingItem ? t('adminContent.updateSuccess') : t('adminContent.createSuccess')
+        editingItem
+          ? t('adminContent.updateSuccess')
+          : t('adminContent.createSuccess')
       );
       handleCloseModal();
       loadItems();
@@ -502,7 +504,10 @@ export function ContenidoClient() {
               label={t('adminContent.fieldDescription')}
               name="description"
             >
-              <Input.TextArea rows={2} placeholder={t('adminContent.fieldDescription')} />
+              <Input.TextArea
+                rows={2}
+                placeholder={t('adminContent.fieldDescription')}
+              />
             </Form.Item>
 
             <Form.Item label={t('adminContent.fieldLanguage')} name="language">
@@ -576,11 +581,7 @@ export function ContenidoClient() {
 
             <Divider />
 
-            <Button
-              icon={<PlayCircleOutlined />}
-              onClick={handlePreview}
-              block
-            >
+            <Button icon={<PlayCircleOutlined />} onClick={handlePreview} block>
               {t('adminContent.previewButton')}
             </Button>
 

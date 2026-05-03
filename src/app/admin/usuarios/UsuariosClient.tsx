@@ -143,7 +143,9 @@ export function UsuariosClient() {
       }
 
       message.success(
-        currentlyBanned ? t('adminUsers.unbanSuccess') : t('adminUsers.banSuccess')
+        currentlyBanned
+          ? t('adminUsers.unbanSuccess')
+          : t('adminUsers.banSuccess')
       );
       setUsers((prev) =>
         prev.map((user) =>
@@ -228,7 +230,9 @@ export function UsuariosClient() {
       width: 200,
       render: (_, record) =>
         record.role === 'ADMIN' ? (
-          <Tag color={ROLE_COLORS[record.role]}>{t('adminUsers.roleAdmin')}</Tag>
+          <Tag color={ROLE_COLORS[record.role]}>
+            {t('adminUsers.roleAdmin')}
+          </Tag>
         ) : (
           <Select
             value={record.role}
@@ -278,9 +282,7 @@ export function UsuariosClient() {
             <Button
               size="small"
               danger={!record.banned}
-              icon={
-                record.banned ? <CheckCircleOutlined /> : <StopOutlined />
-              }
+              icon={record.banned ? <CheckCircleOutlined /> : <StopOutlined />}
             >
               {record.banned
                 ? t('adminUsers.actionUnban')
@@ -353,7 +355,9 @@ export function UsuariosClient() {
           onSearchClear={() => setSearchTerm('')}
         />
 
-        <h2 className="usuarios-section-title">{t('adminUsers.sectionUsers')}</h2>
+        <h2 className="usuarios-section-title">
+          {t('adminUsers.sectionUsers')}
+        </h2>
         <Table
           columns={userColumns}
           dataSource={filteredUsers}

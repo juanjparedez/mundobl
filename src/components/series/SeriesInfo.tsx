@@ -134,7 +134,10 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
         </Descriptions.Item>
 
         {series.originalTitle && series.originalTitle !== series.title && (
-          <Descriptions.Item label={t('seriesInfo.fieldOriginalTitle')} span={fullSpan}>
+          <Descriptions.Item
+            label={t('seriesInfo.fieldOriginalTitle')}
+            span={fullSpan}
+          >
             {series.originalTitle}
           </Descriptions.Item>
         )}
@@ -174,12 +177,19 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
             filter="format"
             value={series.format}
             color={series.format === 'vertical' ? 'orange' : 'blue'}
-            label={series.format === 'vertical' ? `📲 ${t('seriesInfo.formatVertical')}` : `📱 ${t('seriesInfo.formatRegular')}`}
+            label={
+              series.format === 'vertical'
+                ? `📲 ${t('seriesInfo.formatVertical')}`
+                : `📱 ${t('seriesInfo.formatRegular')}`
+            }
           />
         </Descriptions.Item>
 
         {series.basedOn && (
-          <Descriptions.Item label={t('seriesInfo.fieldBasedOn')} span={fullSpan}>
+          <Descriptions.Item
+            label={t('seriesInfo.fieldBasedOn')}
+            span={fullSpan}
+          >
             <Tag color="green">{getBasedOnLabel(series.basedOn)}</Tag>
           </Descriptions.Item>
         )}
@@ -193,13 +203,19 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
         </Descriptions.Item>
 
         {series.soundtrack && (
-          <Descriptions.Item label={t('seriesInfo.fieldSoundtrack')} span={fullSpan}>
+          <Descriptions.Item
+            label={t('seriesInfo.fieldSoundtrack')}
+            span={fullSpan}
+          >
             {series.soundtrack}
           </Descriptions.Item>
         )}
 
         {series.productionCompany && (
-          <Descriptions.Item label={t('seriesInfo.fieldProduction')} span={fullSpan}>
+          <Descriptions.Item
+            label={t('seriesInfo.fieldProduction')}
+            span={fullSpan}
+          >
             <MetadataLink
               filter="productionCompany"
               value={series.productionCompany.name}
@@ -210,7 +226,10 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
         )}
 
         {series.originalLanguage && (
-          <Descriptions.Item label={t('seriesInfo.fieldLanguage')} span={fullSpan}>
+          <Descriptions.Item
+            label={t('seriesInfo.fieldLanguage')}
+            span={fullSpan}
+          >
             <MetadataChip
               filter="language"
               value={series.originalLanguage.name}
@@ -220,7 +239,10 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
         )}
 
         {series.dubbings && series.dubbings.length > 0 && (
-          <Descriptions.Item label={t('seriesInfo.fieldDubbings')} span={fullSpan}>
+          <Descriptions.Item
+            label={t('seriesInfo.fieldDubbings')}
+            span={fullSpan}
+          >
             {series.dubbings.map((d) => (
               <Tag key={d.language.name}>{d.language.name}</Tag>
             ))}
@@ -242,7 +264,10 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
         )}
 
         {series.directors && series.directors.length > 0 && (
-          <Descriptions.Item label={t('seriesInfo.fieldDirectors')} span={fullSpan}>
+          <Descriptions.Item
+            label={t('seriesInfo.fieldDirectors')}
+            span={fullSpan}
+          >
             <MetadataLinkList
               filter="director"
               items={series.directors.map((d) => ({
@@ -257,7 +282,9 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
 
       {series.watchLinks && series.watchLinks.length > 0 && (
         <div className="series-info__watch-links">
-          <h4 className="series-info__section-title">{t('seriesInfo.whereToWatch')}</h4>
+          <h4 className="series-info__section-title">
+            {t('seriesInfo.whereToWatch')}
+          </h4>
           <div className="series-info__watch-links-list">
             {series.watchLinks.map((link) => {
               const youtubeId =
@@ -321,7 +348,9 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
               </MetadataLink>
               {sa.character && (
                 <span className="series-info__cast-character">
-                  {interpolateMessage(t('seriesInfo.asCharacter'), { character: sa.character })}
+                  {interpolateMessage(t('seriesInfo.asCharacter'), {
+                    character: sa.character,
+                  })}
                 </span>
               )}
               {sa.isMain && (
@@ -338,7 +367,9 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
 
           return (
             <div className="series-info__cast-section">
-              <h4 className="series-info__section-title">👥 {t('seriesInfo.castSection')}</h4>
+              <h4 className="series-info__section-title">
+                👥 {t('seriesInfo.castSection')}
+              </h4>
 
               {pairings.size > 0 && (
                 <div className="series-info__pairings">
@@ -368,21 +399,27 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
 
       {series.synopsis && (
         <div className="series-info__synopsis">
-          <h4 className="series-info__section-title">📖 {t('seriesInfo.synopsisSection')}</h4>
+          <h4 className="series-info__section-title">
+            📖 {t('seriesInfo.synopsisSection')}
+          </h4>
           <div className="series-info__synopsis-content">{series.synopsis}</div>
         </div>
       )}
 
       {series.review && (
         <div className="series-info__review">
-          <h4 className="series-info__section-title">⭐ {t('seriesInfo.reviewSection')}</h4>
+          <h4 className="series-info__section-title">
+            ⭐ {t('seriesInfo.reviewSection')}
+          </h4>
           <div className="series-info__review-content">{series.review}</div>
         </div>
       )}
 
       {series.observations && (
         <div className="series-info__observations">
-          <h4 className="series-info__section-title">📝 {t('seriesInfo.observationsSection')}</h4>
+          <h4 className="series-info__section-title">
+            📝 {t('seriesInfo.observationsSection')}
+          </h4>
           <div className="series-info__observations-content">
             {series.observations}
           </div>

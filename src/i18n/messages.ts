@@ -290,6 +290,13 @@ type TranslationShape = {
     disputeSuccess: string;
     disputeError: string;
     disputeForComment: string;
+    sectionStats: string;
+    statsHoursWatched: string;
+    statsActiveDays: string;
+    statsTopGenres: string;
+    statsTopCountries: string;
+    statsCompletedByYear: string;
+    statsNoData: string;
   };
   bottomNav: {
     mainNavigation: string;
@@ -1237,8 +1244,10 @@ const es: TranslationShape = {
   comments: {
     addTitle: 'Agregar Comentario',
     placeholderPrivate: 'Escribe una nota privada (solo vos la verás)...',
-    placeholderPublic: 'Escribe tus impresiones, opiniones o notas sobre esta serie...',
-    placeholderEpisode: 'Escribe tus notas sobre este episodio, escenas interesantes, momentos clave...',
+    placeholderPublic:
+      'Escribe tus impresiones, opiniones o notas sobre esta serie...',
+    placeholderEpisode:
+      'Escribe tus notas sobre este episodio, escenas interesantes, momentos clave...',
     tooltipPrivate: 'Los comentarios privados solo son visibles para vos',
     privateLabel: 'Privado',
     savePrivateButton: 'Guardar Nota Privada',
@@ -1253,7 +1262,8 @@ const es: TranslationShape = {
     successPublic: 'Comentario agregado',
     errorSave: 'Error al guardar el comentario',
     reportModalTitle: 'Reportar comentario',
-    reportModalHint: 'Contanos brevemente por qué (opcional). Un admin lo va a revisar.',
+    reportModalHint:
+      'Contanos brevemente por qué (opcional). Un admin lo va a revisar.',
     reportPlaceholder: 'Spam, contenido fuera de tema, datos personales...',
     reportButton: 'Reportar',
     cancelButton: 'Cancelar',
@@ -1264,7 +1274,8 @@ const es: TranslationShape = {
     headerTitle: 'Episodios ({n})',
     generateButton: 'Generar',
     addButton: 'Agregar',
-    emptyText: 'No hay episodios registrados. Usa "Generar" o "Agregar" para comenzar.',
+    emptyText:
+      'No hay episodios registrados. Usa "Generar" o "Agregar" para comenzar.',
     selectedCount: '{n} seleccionado{s}',
     colEpisode: 'Episodio',
     colActions: 'Acciones',
@@ -1279,7 +1290,8 @@ const es: TranslationShape = {
     deleteConfirmTitle: '¿Eliminar episodio?',
     deleteConfirmContent: '¿Estás seguro de eliminar el episodio {n}?',
     deleteBulkConfirmTitle: '¿Eliminar episodios seleccionados?',
-    deleteBulkConfirmContent: 'Se eliminarán {n} episodio(s) con sus comentarios y estados de visualización.',
+    deleteBulkConfirmContent:
+      'Se eliminarán {n} episodio(s) con sus comentarios y estados de visualización.',
     confirmOk: 'Sí, eliminar',
     confirmCancel: 'Cancelar',
     successUpdated: 'Episodio actualizado',
@@ -1333,7 +1345,8 @@ const es: TranslationShape = {
     officialHint: 'Evalúa cada aspecto de la serie del 1 al 10',
     saveOfficialButton: 'Guardar Puntuación Oficial',
     userTitle: 'Tu Puntuación',
-    userHint: 'Tu puntuación será pública y contribuirá al promedio de usuarios',
+    userHint:
+      'Tu puntuación será pública y contribuirá al promedio de usuarios',
     saveUserButton: 'Guardar Mi Puntuación',
     loginPrompt: 'Inicia sesión para puntuar esta serie',
     userAverageTitle: 'Promedio de Usuarios por Categoría',
@@ -1456,12 +1469,20 @@ const es: TranslationShape = {
     disputesEmpty: 'No has creado disputas',
     disputesLoadError: 'No se pudieron cargar las disputas',
     disputeOpenTitle: 'Nuevo descargo',
-    disputePlaceholder: 'Explica por que consideras que este comentario no incumple reglas',
+    disputePlaceholder:
+      'Explica por que consideras que este comentario no incumple reglas',
     disputeSubmit: 'Enviar descargo',
     disputeCancel: 'Cancelar',
     disputeSuccess: 'Descargo enviado correctamente',
     disputeError: 'No se pudo crear la disputa',
     disputeForComment: 'Comentario #{n}',
+    sectionStats: 'Estadísticas detalladas',
+    statsHoursWatched: 'Horas vistas',
+    statsActiveDays: 'Días activos esta semana',
+    statsTopGenres: 'Géneros más vistos',
+    statsTopCountries: 'Países más vistos',
+    statsCompletedByYear: 'Completadas por año',
+    statsNoData: 'Sin datos aún',
   },
   bottomNav: {
     mainNavigation: 'Navegacion principal',
@@ -1480,7 +1501,8 @@ const es: TranslationShape = {
   },
   adminComments: {
     title: 'Comentarios publicos',
-    subtitle: 'Moderacion y curaduria editorial de comentarios de la comunidad.',
+    subtitle:
+      'Moderacion y curaduria editorial de comentarios de la comunidad.',
     statsTotal: 'Total',
     statsReported: 'Reportados',
     statsPage: 'En pagina',
@@ -1936,7 +1958,8 @@ const es: TranslationShape = {
     actionCleanOld: 'Limpiar logs...',
     cleanModalTitle: 'Limpiar logs antiguos',
     cleanModalDaysLabel: 'Eliminar logs de mas de N dias',
-    cleanModalConfirmText: 'Se eliminaran todos los logs con mas de {days} dias. Esta accion no se puede deshacer.',
+    cleanModalConfirmText:
+      'Se eliminaran todos los logs con mas de {days} dias. Esta accion no se puede deshacer.',
     cleanModalOk: 'Eliminar',
     cleanModalCancel: 'Cancelar',
     anonymous: 'Anonimo',
@@ -1964,7 +1987,8 @@ const es: TranslationShape = {
     addFavoriteButton: 'Agregar a Favoritos',
     cancelButton: 'Cancelar',
     unsavedTitle: 'Hay cambios sin guardar',
-    unsavedContent: 'Si sales ahora, perderas los cambios que no hayas guardado. Deseas continuar?',
+    unsavedContent:
+      'Si sales ahora, perderas los cambios que no hayas guardado. Deseas continuar?',
     unsavedOk: 'Salir sin guardar',
     unsavedCancel: 'Seguir editando',
     sectionBasic: 'Informacion Basica',
@@ -2003,14 +2027,18 @@ const es: TranslationShape = {
     requiredType: 'Selecciona un tipo',
     requiredFormat: 'Selecciona un formato',
     requiredSeasonNumber: 'Numero requerido',
-    helpBasedOn: 'Escribe para buscar o agregar nuevos (ej: Manga, Manhwa, Novela)',
+    helpBasedOn:
+      'Escribe para buscar o agregar nuevos (ej: Manga, Manhwa, Novela)',
     helpProduction: 'Escribe para buscar o crear una nueva productora',
     helpLanguage: 'Escribe para buscar o crear un nuevo idioma',
-    helpGenres: 'Escribe y presiona Enter para crear nuevos generos. Ej: Drama, Romance, Comedia',
-    helpTags: 'Escribe y presiona Enter para crear nuevos tags. Ej: Enemy to Lovers, Rico-Pobre, Escuela',
+    helpGenres:
+      'Escribe y presiona Enter para crear nuevos generos. Ej: Drama, Romance, Comedia',
+    helpTags:
+      'Escribe y presiona Enter para crear nuevos tags. Ej: Enemy to Lovers, Rico-Pobre, Escuela',
     helpImage: 'Pega una URL o sube un archivo desde tu computadora',
     helpImagePosition: 'Selecciona que parte de la imagen se ve en las cards',
-    helpRelated: 'Busca por titulo para vincular series que comparten personajes o historia',
+    helpRelated:
+      'Busca por titulo para vincular series que comparten personajes o historia',
     hintTitle: 'Ej: 2 Moons',
     hintOriginalTitle: 'Titulo en idioma original',
     hintCountry: 'Selecciona un pais',
@@ -2032,8 +2060,10 @@ const es: TranslationShape = {
     hintWatchUrl: 'URL del contenido',
     hintRelatedSeries: 'Busca y selecciona series relacionadas...',
     castAlertTitle: 'Reparto principal de la serie',
-    castAlertDescription: 'Este es el reparto que aparece en todas las temporadas. Para agregar reparto especifico de cada temporada, usa el boton Editar junto a cada temporada abajo.',
-    castPairingHint: 'Para emparejar personajes, asigna el mismo numero en Pareja (ej: 1 y 1 = primera pareja)',
+    castAlertDescription:
+      'Este es el reparto que aparece en todas las temporadas. Para agregar reparto especifico de cada temporada, usa el boton Editar junto a cada temporada abajo.',
+    castPairingHint:
+      'Para emparejar personajes, asigna el mismo numero en Pareja (ej: 1 y 1 = primera pareja)',
     fieldActorName: 'Actor',
     fieldCharacter: 'Personaje',
     fieldIsMain: 'Protagonista',
@@ -2045,8 +2075,10 @@ const es: TranslationShape = {
     fieldOfficial: 'Oficial',
     addPlatformButton: 'Agregar Plataforma',
     seasonAlertTitle: 'Informacion basica de temporadas',
-    seasonAlertEdit: 'Usa el boton Editar junto a cada temporada para agregar reparto especifico, sinopsis, episodios, comentarios y ratings.',
-    seasonAlertCreate: 'Primero guarda la serie, luego podras editar cada temporada en detalle para agregar reparto, sinopsis, episodios, etc.',
+    seasonAlertEdit:
+      'Usa el boton Editar junto a cada temporada para agregar reparto especifico, sinopsis, episodios, comentarios y ratings.',
+    seasonAlertCreate:
+      'Primero guarda la serie, luego podras editar cada temporada en detalle para agregar reparto, sinopsis, episodios, etc.',
     fieldSeasonNumber: 'Temporada',
     fieldEpisodeCount: 'Capitulos',
     editSeasonButton: 'Editar',
@@ -2080,7 +2112,8 @@ const es: TranslationShape = {
     cancelButton: 'Cancelar',
     sectionBasic: 'Informacion Basica de la Temporada',
     sectionCast: 'Reparto de esta Temporada',
-    castDescription: 'Agrega actores especificos de esta temporada. El reparto principal de la serie se muestra automaticamente.',
+    castDescription:
+      'Agrega actores especificos de esta temporada. El reparto principal de la serie se muestra automaticamente.',
     fieldSeasonNumber: 'Numero de Temporada',
     requiredSeasonNumber: 'Requerido',
     fieldTitle: 'Titulo (opcional)',
@@ -2168,7 +2201,8 @@ const es: TranslationShape = {
   },
   welcomeBanner: {
     title: 'Bienvenido/a a MundoBL',
-    description: 'Este es mi catálogo personal de series BL que fui viendo, incluyendo las que aún están en emisión. Si viste alguna, me encantaría que dejes tu comentario, reflexión o reseña.',
+    description:
+      'Este es mi catálogo personal de series BL que fui viendo, incluyendo las que aún están en emisión. Si viste alguna, me encantaría que dejes tu comentario, reflexión o reseña.',
     dismiss: 'Entendido',
   },
   privacyBanner: {
@@ -2227,7 +2261,8 @@ const es: TranslationShape = {
     searchPlaceholder: 'Buscar por título, país o tipo...',
     resultCount: '{n} de {total} series',
     deleteConfirmTitle: '¿Estás seguro?',
-    deleteConfirmContent: '¿Deseas eliminar la serie "{title}"? Esta acción no se puede deshacer.',
+    deleteConfirmContent:
+      '¿Deseas eliminar la serie "{title}"? Esta acción no se puede deshacer.',
     deleteConfirmOk: 'Sí, eliminar',
     deleteConfirmCancel: 'Cancelar',
     deleteSuccess: 'Serie eliminada correctamente',
@@ -2325,7 +2360,8 @@ const es: TranslationShape = {
     formFieldType: 'Tipo',
     formFieldTitle: 'Título',
     formFieldDescription: 'Descripción',
-    formDescriptionPlaceholder: 'Escribí la descripción... Podés pegar imágenes del clipboard (Ctrl+V)',
+    formDescriptionPlaceholder:
+      'Escribí la descripción... Podés pegar imágenes del clipboard (Ctrl+V)',
     formDescriptionHint: 'Pegá imágenes del clipboard en la descripción',
     formRequiredType: 'Seleccioná un tipo',
     formRequiredTitle: 'Ingresá un título',
@@ -2416,8 +2452,10 @@ const en: TranslationShape = {
   comments: {
     addTitle: 'Add Comment',
     placeholderPrivate: 'Write a private note (only you will see it)...',
-    placeholderPublic: 'Write your impressions, opinions or notes about this series...',
-    placeholderEpisode: 'Write your notes about this episode, interesting scenes, key moments...',
+    placeholderPublic:
+      'Write your impressions, opinions or notes about this series...',
+    placeholderEpisode:
+      'Write your notes about this episode, interesting scenes, key moments...',
     tooltipPrivate: 'Private comments are only visible to you',
     privateLabel: 'Private',
     savePrivateButton: 'Save Private Note',
@@ -2458,7 +2496,8 @@ const en: TranslationShape = {
     deleteConfirmTitle: 'Delete episode?',
     deleteConfirmContent: 'Are you sure you want to delete episode {n}?',
     deleteBulkConfirmTitle: 'Delete selected episodes?',
-    deleteBulkConfirmContent: '{n} episode(s) will be deleted with their comments and view statuses.',
+    deleteBulkConfirmContent:
+      '{n} episode(s) will be deleted with their comments and view statuses.',
     confirmOk: 'Yes, delete',
     confirmCancel: 'Cancel',
     successUpdated: 'Episode updated',
@@ -2641,6 +2680,13 @@ const en: TranslationShape = {
     disputeSuccess: 'Appeal submitted successfully',
     disputeError: 'Could not create dispute',
     disputeForComment: 'Comment #{n}',
+    sectionStats: 'Detailed statistics',
+    statsHoursWatched: 'Hours watched',
+    statsActiveDays: 'Active days this week',
+    statsTopGenres: 'Most watched genres',
+    statsTopCountries: 'Most watched countries',
+    statsCompletedByYear: 'Completed per year',
+    statsNoData: 'No data yet',
   },
   bottomNav: {
     mainNavigation: 'Main navigation',
@@ -2689,7 +2735,8 @@ const en: TranslationShape = {
     actionEdit: 'Edit',
     actionDelete: 'Delete',
     dismissReportsTitle: 'Dismiss reports?',
-    dismissReportsDescription: 'Reports will be deleted and counter reset to zero',
+    dismissReportsDescription:
+      'Reports will be deleted and counter reset to zero',
     dismissReportsConfirm: 'Dismiss',
     cancel: 'Cancel',
     deleteTitle: 'Delete comment?',
@@ -2792,8 +2839,7 @@ const en: TranslationShape = {
     hintBiography: 'Brief director biography (optional)',
     deleteTitle: 'Delete director?',
     deleteDescription: 'Are you sure you want to delete this director?',
-    deleteBlockedDescription:
-      'This director has {count} series. Unlink first.',
+    deleteBlockedDescription: 'This director has {count} series. Unlink first.',
     mergeModalTitle: 'Merge Directors',
     mergeSelectSurvivor: 'Select which director should survive:',
     mergeWarning:
@@ -2909,8 +2955,7 @@ const en: TranslationShape = {
     hintImageUrl: 'Universe image URL (optional)',
     deleteTitle: 'Delete universe?',
     deleteDescription: 'Are you sure you want to delete this universe?',
-    deleteBlockedDescription:
-      'This universe has {count} series. Unlink first.',
+    deleteBlockedDescription: 'This universe has {count} series. Unlink first.',
     loadError: 'Error loading universes',
     createSuccess: 'Universe created successfully',
     updateSuccess: 'Universe updated successfully',
@@ -3114,7 +3159,8 @@ const en: TranslationShape = {
     actionCleanOld: 'Clean logs...',
     cleanModalTitle: 'Clean old logs',
     cleanModalDaysLabel: 'Delete logs older than N days',
-    cleanModalConfirmText: 'All logs older than {days} days will be deleted. This action cannot be undone.',
+    cleanModalConfirmText:
+      'All logs older than {days} days will be deleted. This action cannot be undone.',
     cleanModalOk: 'Delete',
     cleanModalCancel: 'Cancel',
     anonymous: 'Anonymous',
@@ -3142,7 +3188,8 @@ const en: TranslationShape = {
     addFavoriteButton: 'Add to Favorites',
     cancelButton: 'Cancel',
     unsavedTitle: 'Unsaved changes',
-    unsavedContent: 'If you leave now, you will lose unsaved changes. Do you want to continue?',
+    unsavedContent:
+      'If you leave now, you will lose unsaved changes. Do you want to continue?',
     unsavedOk: 'Leave without saving',
     unsavedCancel: 'Keep editing',
     sectionBasic: 'Basic Information',
@@ -3184,11 +3231,14 @@ const en: TranslationShape = {
     helpBasedOn: 'Type to search or add new (e.g. Manga, Manhwa, Novel)',
     helpProduction: 'Type to search or create a new production company',
     helpLanguage: 'Type to search or create a new language',
-    helpGenres: 'Type and press Enter to create genres. E.g. Drama, Romance, Comedy',
-    helpTags: 'Type and press Enter to create tags. E.g. Enemy to Lovers, School',
+    helpGenres:
+      'Type and press Enter to create genres. E.g. Drama, Romance, Comedy',
+    helpTags:
+      'Type and press Enter to create tags. E.g. Enemy to Lovers, School',
     helpImage: 'Paste a URL or upload a file from your computer',
     helpImagePosition: 'Select which part of the image is shown in cards',
-    helpRelated: 'Search by title to link series that share characters or story',
+    helpRelated:
+      'Search by title to link series that share characters or story',
     hintTitle: 'E.g. 2 Moons',
     hintOriginalTitle: 'Title in original language',
     hintCountry: 'Select a country',
@@ -3210,8 +3260,10 @@ const en: TranslationShape = {
     hintWatchUrl: 'Content URL',
     hintRelatedSeries: 'Search and select related series...',
     castAlertTitle: 'Main series cast',
-    castAlertDescription: 'This is the cast that appears across all seasons. To add season-specific cast, use the Edit button next to each season below.',
-    castPairingHint: 'To pair characters, assign the same number in Pair (e.g. 1 and 1 = first pair)',
+    castAlertDescription:
+      'This is the cast that appears across all seasons. To add season-specific cast, use the Edit button next to each season below.',
+    castPairingHint:
+      'To pair characters, assign the same number in Pair (e.g. 1 and 1 = first pair)',
     fieldActorName: 'Actor',
     fieldCharacter: 'Character',
     fieldIsMain: 'Main',
@@ -3223,8 +3275,10 @@ const en: TranslationShape = {
     fieldOfficial: 'Official',
     addPlatformButton: 'Add Platform',
     seasonAlertTitle: 'Basic season information',
-    seasonAlertEdit: 'Use the Edit button next to each season to add specific cast, synopsis, episodes, comments and ratings.',
-    seasonAlertCreate: 'Save the series first, then you can edit each season in detail to add cast, synopsis, episodes, etc.',
+    seasonAlertEdit:
+      'Use the Edit button next to each season to add specific cast, synopsis, episodes, comments and ratings.',
+    seasonAlertCreate:
+      'Save the series first, then you can edit each season in detail to add cast, synopsis, episodes, etc.',
     fieldSeasonNumber: 'Season',
     fieldEpisodeCount: 'Episodes',
     editSeasonButton: 'Edit',
@@ -3258,7 +3312,8 @@ const en: TranslationShape = {
     cancelButton: 'Cancel',
     sectionBasic: 'Basic Season Information',
     sectionCast: 'Season Cast',
-    castDescription: 'Add actors specific to this season. The main series cast is shown automatically.',
+    castDescription:
+      'Add actors specific to this season. The main series cast is shown automatically.',
     fieldSeasonNumber: 'Season Number',
     requiredSeasonNumber: 'Required',
     fieldTitle: 'Title (optional)',
@@ -3346,7 +3401,8 @@ const en: TranslationShape = {
   },
   welcomeBanner: {
     title: 'Welcome to MundoBL',
-    description: 'This is my personal catalog of BL series I have watched, including those still airing. If you have watched any, I would love for you to leave a comment, reflection or review.',
+    description:
+      'This is my personal catalog of BL series I have watched, including those still airing. If you have watched any, I would love for you to leave a comment, reflection or review.',
     dismiss: 'Got it',
   },
   privacyBanner: {
@@ -3405,7 +3461,8 @@ const en: TranslationShape = {
     searchPlaceholder: 'Search by title, country or type...',
     resultCount: '{n} of {total} series',
     deleteConfirmTitle: 'Are you sure?',
-    deleteConfirmContent: 'Do you want to delete "{title}"? This action cannot be undone.',
+    deleteConfirmContent:
+      'Do you want to delete "{title}"? This action cannot be undone.',
     deleteConfirmOk: 'Yes, delete',
     deleteConfirmCancel: 'Cancel',
     deleteSuccess: 'Series deleted successfully',
@@ -3503,7 +3560,8 @@ const en: TranslationShape = {
     formFieldType: 'Type',
     formFieldTitle: 'Title',
     formFieldDescription: 'Description',
-    formDescriptionPlaceholder: 'Write your description... You can paste images from clipboard (Ctrl+V)',
+    formDescriptionPlaceholder:
+      'Write your description... You can paste images from clipboard (Ctrl+V)',
     formDescriptionHint: 'Paste images from clipboard in the description',
     formRequiredType: 'Select a type',
     formRequiredTitle: 'Enter a title',
@@ -3587,9 +3645,7 @@ type Join<K extends string, P extends string> = `${K}.${P}`;
 type Leaves<T> = T extends string
   ? never
   : {
-      [K in keyof T & string]: T[K] extends string
-        ? K
-        : Join<K, Leaves<T[K]>>;
+      [K in keyof T & string]: T[K] extends string ? K : Join<K, Leaves<T[K]>>;
     }[keyof T & string];
 
 export type TranslationKey = Leaves<TranslationShape>;

@@ -59,7 +59,6 @@ interface FeatureRequest {
   images?: FeatureRequestImage[];
 }
 
-
 interface ChangelogEntry {
   version: string;
   items: string[];
@@ -73,20 +72,31 @@ interface PendingImage {
 export function FeedbackClient() {
   const message = useMessage();
   const { data: session } = useSession();
-    const { t, locale } = useLocale();
+  const { t, locale } = useLocale();
 
-    const TYPE_CONFIG: Record<string, { color: string; label: string; icon: React.ReactNode }> = {
-      bug: { color: 'red', label: t('feedback.typeBug'), icon: <BugOutlined /> },
-      feature: { color: 'blue', label: t('feedback.typeFeature'), icon: <RocketOutlined /> },
-      idea: { color: 'purple', label: t('feedback.typeIdea'), icon: <BulbOutlined /> },
-    };
+  const TYPE_CONFIG: Record<
+    string,
+    { color: string; label: string; icon: React.ReactNode }
+  > = {
+    bug: { color: 'red', label: t('feedback.typeBug'), icon: <BugOutlined /> },
+    feature: {
+      color: 'blue',
+      label: t('feedback.typeFeature'),
+      icon: <RocketOutlined />,
+    },
+    idea: {
+      color: 'purple',
+      label: t('feedback.typeIdea'),
+      icon: <BulbOutlined />,
+    },
+  };
 
-    const STATUS_CONFIG: Record<string, { color: string; label: string }> = {
-      pendiente: { color: 'default', label: t('feedback.statusPendiente') },
-      en_progreso: { color: 'processing', label: t('feedback.statusEnProgreso') },
-      completado: { color: 'success', label: t('feedback.statusCompletado') },
-      descartado: { color: 'error', label: t('feedback.statusDescartado') },
-    };
+  const STATUS_CONFIG: Record<string, { color: string; label: string }> = {
+    pendiente: { color: 'default', label: t('feedback.statusPendiente') },
+    en_progreso: { color: 'processing', label: t('feedback.statusEnProgreso') },
+    completado: { color: 'success', label: t('feedback.statusCompletado') },
+    descartado: { color: 'error', label: t('feedback.statusDescartado') },
+  };
   const [requests, setRequests] = useState<FeatureRequest[]>([]);
   const [_loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -397,7 +407,9 @@ export function FeedbackClient() {
         <>
           <div className="feedback-page__header">
             <span style={{ color: 'var(--text-secondary)' }}>
-              {interpolateMessage(t('feedback.activeCount'), { n: String(activeRequests.length) })}
+              {interpolateMessage(t('feedback.activeCount'), {
+                n: String(activeRequests.length),
+              })}
             </span>
             {session?.user && (
               <Button
@@ -513,7 +525,9 @@ export function FeedbackClient() {
           <Form.Item
             name="type"
             label={t('feedback.formFieldType')}
-            rules={[{ required: true, message: t('feedback.formRequiredType') }]}
+            rules={[
+              { required: true, message: t('feedback.formRequiredType') },
+            ]}
           >
             <Select
               options={[
@@ -527,12 +541,17 @@ export function FeedbackClient() {
           <Form.Item
             name="title"
             label={t('feedback.formFieldTitle')}
-            rules={[{ required: true, message: t('feedback.formRequiredTitle') }]}
+            rules={[
+              { required: true, message: t('feedback.formRequiredTitle') },
+            ]}
           >
             <Input maxLength={200} />
           </Form.Item>
 
-          <Form.Item name="description" label={t('feedback.formFieldDescription')}>
+          <Form.Item
+            name="description"
+            label={t('feedback.formFieldDescription')}
+          >
             <Input.TextArea
               rows={3}
               maxLength={1000}

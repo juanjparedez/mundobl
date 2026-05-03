@@ -542,7 +542,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
     } else {
       router.back();
     }
-  }, [hasUnsavedChanges, router, modal]);
+  }, [hasUnsavedChanges, router, modal, t]);
 
   const config = getContentTypeConfig(selectedType);
   const showSeasons = shouldShowSeasons(selectedType);

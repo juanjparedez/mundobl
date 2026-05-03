@@ -194,9 +194,12 @@ export default function UniversesAdminPage() {
               title={t('adminUniverses.deleteTitle')}
               description={
                 isDeleteBlocked
-                  ? interpolateMessage(t('adminUniverses.deleteBlockedDescription'), {
-                      count: linkedSeriesCount,
-                    })
+                  ? interpolateMessage(
+                      t('adminUniverses.deleteBlockedDescription'),
+                      {
+                        count: linkedSeriesCount,
+                      }
+                    )
                   : t('adminUniverses.deleteDescription')
               }
               onConfirm={() => handleDelete(record.id)}
@@ -293,10 +296,16 @@ export default function UniversesAdminPage() {
               label={t('adminUniverses.fieldDescription')}
               name="description"
             >
-              <TextArea rows={3} placeholder={t('adminUniverses.hintDescription')} />
+              <TextArea
+                rows={3}
+                placeholder={t('adminUniverses.hintDescription')}
+              />
             </Form.Item>
 
-            <Form.Item label={t('adminUniverses.fieldImageUrl')} name="imageUrl">
+            <Form.Item
+              label={t('adminUniverses.fieldImageUrl')}
+              name="imageUrl"
+            >
               <Input placeholder={t('adminUniverses.hintImageUrl')} />
             </Form.Item>
           </Form>

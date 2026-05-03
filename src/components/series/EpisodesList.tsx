@@ -277,7 +277,12 @@ export function EpisodesList({
 
       setSelectedIds(new Set());
       message.success(
-        interpolateMessage(markAsWatched ? t('episodesList.successBulkWatched') : t('episodesList.successBulkUnwatched'), { n: String(updatedCount) })
+        interpolateMessage(
+          markAsWatched
+            ? t('episodesList.successBulkWatched')
+            : t('episodesList.successBulkUnwatched'),
+          { n: String(updatedCount) }
+        )
       );
     } catch {
       message.error(t('episodesList.errorBulkToggle'));
@@ -304,7 +309,9 @@ export function EpisodesList({
       message.success(result.message);
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : t('episodesList.errorGenerate');
+        error instanceof Error
+          ? error.message
+          : t('episodesList.errorGenerate');
       message.error(errorMessage);
     } finally {
       setGenerating(false);
@@ -315,7 +322,11 @@ export function EpisodesList({
     <div className="episodes-list">
       {/* Header */}
       <div className="episodes-list__header">
-        <h5 className="season-section-title">{interpolateMessage(t('episodesList.headerTitle'), { n: String(episodes.length) })}</h5>
+        <h5 className="season-section-title">
+          {interpolateMessage(t('episodesList.headerTitle'), {
+            n: String(episodes.length),
+          })}
+        </h5>
         <Space>
           <Button
             size="small"
@@ -337,9 +348,7 @@ export function EpisodesList({
       </div>
 
       {episodes.length === 0 ? (
-        <p className="episodes-list__empty">
-          {t('episodesList.emptyText')}
-        </p>
+        <p className="episodes-list__empty">{t('episodesList.emptyText')}</p>
       ) : (
         <>
           {/* Table header with select all and bulk actions */}
@@ -352,10 +361,14 @@ export function EpisodesList({
               />
               {selectedIds.size > 0 ? (
                 <span className="episodes-table__selected-count">
-                  {interpolateMessage(t('episodesList.selectedCount'), { n: String(selectedIds.size) })}
+                  {interpolateMessage(t('episodesList.selectedCount'), {
+                    n: String(selectedIds.size),
+                  })}
                 </span>
               ) : (
-                <span className="episodes-table__col-label">{t('episodesList.colEpisode')}</span>
+                <span className="episodes-table__col-label">
+                  {t('episodesList.colEpisode')}
+                </span>
               )}
             </div>
             {selectedIds.size > 0 ? (
@@ -386,7 +399,10 @@ export function EpisodesList({
                   onClick={() => {
                     modal.confirm({
                       title: t('episodesList.deleteBulkConfirmTitle'),
-                      content: interpolateMessage(t('episodesList.deleteBulkConfirmContent'), { n: String(selectedIds.size) }),
+                      content: interpolateMessage(
+                        t('episodesList.deleteBulkConfirmContent'),
+                        { n: String(selectedIds.size) }
+                      ),
                       okText: t('episodesList.confirmOk'),
                       cancelText: t('episodesList.confirmCancel'),
                       okButtonProps: { danger: true },
@@ -502,7 +518,10 @@ export function EpisodesList({
                           onClick={() => {
                             modal.confirm({
                               title: t('episodesList.deleteConfirmTitle'),
-                              content: interpolateMessage(t('episodesList.deleteConfirmContent'), { n: String(episode.episodeNumber) }),
+                              content: interpolateMessage(
+                                t('episodesList.deleteConfirmContent'),
+                                { n: String(episode.episodeNumber) }
+                              ),
                               okText: t('episodesList.confirmOk'),
                               cancelText: t('episodesList.confirmCancel'),
                               okButtonProps: { danger: true },
@@ -546,7 +565,11 @@ export function EpisodesList({
 
       {/* Modal crear/editar episodio */}
       <Modal
-        title={editingEpisode ? t('episodesList.modalEditTitle') : t('episodesList.modalNewTitle')}
+        title={
+          editingEpisode
+            ? t('episodesList.modalEditTitle')
+            : t('episodesList.modalNewTitle')
+        }
         open={isModalOpen}
         onCancel={handleCloseModal}
         footer={null}
@@ -556,7 +579,12 @@ export function EpisodesList({
           <Form.Item
             label={t('episodesList.fieldEpisodeNumber')}
             name="episodeNumber"
-            rules={[{ required: true, message: t('episodesList.requiredEpisodeNumber') }]}
+            rules={[
+              {
+                required: true,
+                message: t('episodesList.requiredEpisodeNumber'),
+              },
+            ]}
           >
             <InputNumber min={1} style={{ width: '100%' }} />
           </Form.Item>
@@ -570,10 +598,7 @@ export function EpisodesList({
           </Form.Item>
 
           <Form.Item label={t('episodesList.fieldSynopsis')} name="synopsis">
-            <TextArea
-              rows={4}
-              placeholder={t('episodesList.hintSynopsis')}
-            />
+            <TextArea rows={4} placeholder={t('episodesList.hintSynopsis')} />
           </Form.Item>
 
           <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
@@ -581,7 +606,9 @@ export function EpisodesList({
               {t('episodesList.cancelButton')}
             </Button>
             <Button type="primary" htmlType="submit">
-              {editingEpisode ? t('episodesList.saveButton') : t('episodesList.createButton')}
+              {editingEpisode
+                ? t('episodesList.saveButton')
+                : t('episodesList.createButton')}
             </Button>
           </Form.Item>
         </Form>

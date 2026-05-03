@@ -82,7 +82,9 @@ function SummaryCard({
     <div className="stats-summary-card">
       <div className={`stats-summary-card__icon ${iconClass}`}>{icon}</div>
       <div className="stats-summary-card__body">
-        <div className="stats-summary-card__value">{value.toLocaleString()}</div>
+        <div className="stats-summary-card__value">
+          {value.toLocaleString()}
+        </div>
         <div className="stats-summary-card__label">{label}</div>
       </div>
     </div>
@@ -102,8 +104,10 @@ function RankingCard({
 }) {
   const posClass = (i: number) => {
     if (i === 0) return 'stats-ranking-item__pos stats-ranking-item__pos--gold';
-    if (i === 1) return 'stats-ranking-item__pos stats-ranking-item__pos--silver';
-    if (i === 2) return 'stats-ranking-item__pos stats-ranking-item__pos--bronze';
+    if (i === 1)
+      return 'stats-ranking-item__pos stats-ranking-item__pos--silver';
+    if (i === 2)
+      return 'stats-ranking-item__pos stats-ranking-item__pos--bronze';
     return 'stats-ranking-item__pos';
   };
 
@@ -137,15 +141,19 @@ function RatedRankingCard({
 }) {
   const posClass = (i: number) => {
     if (i === 0) return 'stats-ranking-item__pos stats-ranking-item__pos--gold';
-    if (i === 1) return 'stats-ranking-item__pos stats-ranking-item__pos--silver';
-    if (i === 2) return 'stats-ranking-item__pos stats-ranking-item__pos--bronze';
+    if (i === 1)
+      return 'stats-ranking-item__pos stats-ranking-item__pos--silver';
+    if (i === 2)
+      return 'stats-ranking-item__pos stats-ranking-item__pos--bronze';
     return 'stats-ranking-item__pos';
   };
 
   return (
     <div className="stats-ranking-card">
       <div className="stats-ranking-card__header">
-        <span className="stats-ranking-card__header-icon"><StarOutlined /></span>
+        <span className="stats-ranking-card__header-icon">
+          <StarOutlined />
+        </span>
         {title}
       </div>
       <ul className="stats-ranking-list">
@@ -248,25 +256,41 @@ export function StatsClient() {
                   title={t('adminStats.rankingWatching')}
                   icon={<EyeOutlined />}
                   items={data.rankings.watching}
-                  badge={(i) => interpolateMessage(t('adminStats.badgeWatching'), { n: String(i.count) })}
+                  badge={(i) =>
+                    interpolateMessage(t('adminStats.badgeWatching'), {
+                      n: String(i.count),
+                    })
+                  }
                 />
                 <RankingCard
                   title={t('adminStats.rankingCompleted')}
                   icon={<CheckCircleOutlined />}
                   items={data.rankings.completed}
-                  badge={(i) => interpolateMessage(t('adminStats.badgeCompleted'), { n: String(i.count) })}
+                  badge={(i) =>
+                    interpolateMessage(t('adminStats.badgeCompleted'), {
+                      n: String(i.count),
+                    })
+                  }
                 />
                 <RankingCard
                   title={t('adminStats.rankingFavorited')}
                   icon={<HeartOutlined />}
                   items={data.rankings.favorited}
-                  badge={(i) => interpolateMessage(t('adminStats.badgeFavorited'), { n: String(i.count) })}
+                  badge={(i) =>
+                    interpolateMessage(t('adminStats.badgeFavorited'), {
+                      n: String(i.count),
+                    })
+                  }
                 />
                 <RankingCard
                   title={t('adminStats.rankingCommented')}
                   icon={<MessageOutlined />}
                   items={data.rankings.commented}
-                  badge={(i) => interpolateMessage(t('adminStats.badgeCommented'), { n: String(i.count) })}
+                  badge={(i) =>
+                    interpolateMessage(t('adminStats.badgeCommented'), {
+                      n: String(i.count),
+                    })
+                  }
                 />
                 <RatedRankingCard
                   items={data.rankings.rated}

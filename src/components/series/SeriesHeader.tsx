@@ -100,7 +100,8 @@ export function SeriesHeader({ series, actionsSlot }: SeriesHeaderProps) {
           {series.universe && (
             <div className="series-header__universe">
               <span className="series-header__muted">
-                {t('seriesHeader.universe')}: <strong>{series.universe.name}</strong>
+                {t('seriesHeader.universe')}:{' '}
+                <strong>{series.universe.name}</strong>
               </span>
             </div>
           )}
@@ -168,7 +169,8 @@ export function SeriesHeader({ series, actionsSlot }: SeriesHeaderProps) {
               {directors.length > 0 && (
                 <div className="series-header__cast-row">
                   <span className="series-header__cast-label">
-                    <UserOutlined /> {directors.length === 1 ? 'Director' : 'Directores'}
+                    <UserOutlined />{' '}
+                    {directors.length === 1 ? 'Director' : 'Directores'}
                   </span>
                   <span className="series-header__cast-names">
                     {directors.map((d) => d.director.name).join(', ')}
@@ -183,7 +185,9 @@ export function SeriesHeader({ series, actionsSlot }: SeriesHeaderProps) {
                   <span className="series-header__cast-names">
                     {mainActors.map((a, i) => (
                       <span key={a.actor.id}>
-                        {i > 0 && <span className="series-header__cast-sep"> · </span>}
+                        {i > 0 && (
+                          <span className="series-header__cast-sep"> · </span>
+                        )}
                         <Link
                           href={`/actores/${a.actor.id}`}
                           prefetch={false}
@@ -192,7 +196,10 @@ export function SeriesHeader({ series, actionsSlot }: SeriesHeaderProps) {
                           {a.actor.name}
                         </Link>
                         {a.character && (
-                          <span className="series-header__cast-char"> ({a.character})</span>
+                          <span className="series-header__cast-char">
+                            {' '}
+                            ({a.character})
+                          </span>
                         )}
                       </span>
                     ))}
@@ -215,10 +222,11 @@ export function SeriesHeader({ series, actionsSlot }: SeriesHeaderProps) {
               ))}
             </div>
           )}
-
         </div>
 
-        {actionsSlot && <div className="series-header__actions">{actionsSlot}</div>}
+        {actionsSlot && (
+          <div className="series-header__actions">{actionsSlot}</div>
+        )}
       </div>
     </section>
   );
@@ -243,7 +251,10 @@ function getTypeColor(type: string): string {
   }
 }
 
-function getTypeLabel(type: string, t: (key: TranslationKey) => string): string {
+function getTypeLabel(
+  type: string,
+  t: (key: TranslationKey) => string
+): string {
   switch (type.toLowerCase()) {
     case 'serie':
       return t('seriesHeader.typeSerie');

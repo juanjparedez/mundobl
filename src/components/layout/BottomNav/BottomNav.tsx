@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { startTransition, useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   AppstoreOutlined,
@@ -46,7 +46,9 @@ export function BottomNav() {
   const isActive = (path: string) => pathname?.startsWith(path);
 
   useEffect(() => {
-    setIsPreferencesOpen(false);
+    startTransition(() => {
+      setIsPreferencesOpen(false);
+    });
   }, [pathname]);
 
   const navItems: NavItem[] = [
@@ -99,8 +101,7 @@ export function BottomNav() {
             {
               key: 'profile',
               icon: <UserOutlined />,
-              label:
-                session.user?.name?.split(' ')[0] || t('bottomNav.logout'),
+              label: session.user?.name?.split(' ')[0] || t('bottomNav.logout'),
               onClick: () => signOut({ callbackUrl: '/' }),
             },
           ]),
@@ -114,7 +115,9 @@ export function BottomNav() {
         aria-hidden={!isPreferencesOpen}
       >
         <div className="bottom-nav-preferences__field">
-          <span className="bottom-nav-preferences__label">{t('common.language')}</span>
+          <span className="bottom-nav-preferences__label">
+            {t('common.language')}
+          </span>
           <Select
             value={locale}
             onChange={setLocale}
@@ -129,7 +132,9 @@ export function BottomNav() {
         </div>
 
         <div className="bottom-nav-preferences__field">
-          <span className="bottom-nav-preferences__label">{t('bottomNav.accentColor')}</span>
+          <span className="bottom-nav-preferences__label">
+            {t('bottomNav.accentColor')}
+          </span>
           <AccentPicker />
         </div>
 
@@ -142,7 +147,10 @@ export function BottomNav() {
               : t('bottomNav.switchToDark')
           }
         >
-          <span className="bottom-nav-preferences__theme-icon" aria-hidden="true">
+          <span
+            className="bottom-nav-preferences__theme-icon"
+            aria-hidden="true"
+          >
             {theme === 'dark' ? <BulbFilled /> : <BulbOutlined />}
           </span>
           <span>{t('bottomNav.theme')}</span>
@@ -154,7 +162,9 @@ export function BottomNav() {
           <button
             key={item.key}
             className={`bottom-nav-item ${item.path && isActive(item.path) ? 'bottom-nav-item--active' : ''}`}
-            onClick={item.onClick || (() => item.path && router.push(item.path))}
+            onClick={
+              item.onClick || (() => item.path && router.push(item.path))
+            }
             aria-label={item.label}
             aria-current={item.path && isActive(item.path) ? 'page' : undefined}
           >
@@ -174,7 +184,9 @@ export function BottomNav() {
           <span className="bottom-nav-item-icon" aria-hidden="true">
             <GlobalOutlined />
           </span>
-          <span className="bottom-nav-item-label">{t('bottomNav.settings')}</span>
+          <span className="bottom-nav-item-label">
+            {t('bottomNav.settings')}
+          </span>
         </button>
       </nav>
     </>

@@ -137,7 +137,9 @@ function LogCard({
             <span>{log.user.name}</span>
           </div>
         ) : (
-          <span className="logs-table__anonymous">{t('adminLogs.anonymous')}</span>
+          <span className="logs-table__anonymous">
+            {t('adminLogs.anonymous')}
+          </span>
         )}
       </div>
       <div
@@ -241,6 +243,7 @@ export function LogsClient() {
     pathFilter,
     dateRange,
     message,
+    t,
   ]);
 
   useEffect(() => {
@@ -336,7 +339,9 @@ export function LogsClient() {
             <span>{record.user.name}</span>
           </div>
         ) : (
-          <span className="logs-table__anonymous">{t('adminLogs.anonymous')}</span>
+          <span className="logs-table__anonymous">
+            {t('adminLogs.anonymous')}
+          </span>
         ),
     },
     {
@@ -406,8 +411,14 @@ export function LogsClient() {
           title={t('adminLogs.title')}
           subtitle={t('adminLogs.subtitle')}
           stats={[
-            { label: t('adminLogs.statsTotal'), value: statsLoading ? '…' : (stats?.totalLogs ?? 0) },
-            { label: t('adminLogs.statsTotalUsers'), value: statsLoading ? '…' : (stats?.totalUsers ?? 0) },
+            {
+              label: t('adminLogs.statsTotal'),
+              value: statsLoading ? '…' : (stats?.totalLogs ?? 0),
+            },
+            {
+              label: t('adminLogs.statsTotalUsers'),
+              value: statsLoading ? '…' : (stats?.totalUsers ?? 0),
+            },
           ]}
         />
 
@@ -430,12 +441,27 @@ export function LogsClient() {
                   size="small"
                   pagination={false}
                   columns={[
-                    { title: t('adminLogs.columnPath'), dataIndex: 'path', key: 'path', ellipsis: true,
+                    {
+                      title: t('adminLogs.columnPath'),
+                      dataIndex: 'path',
+                      key: 'path',
+                      ellipsis: true,
                       render: (path: string) => (
-                        <span className="logs-table__clickable" onClick={() => applyFilter('path', path)}>{path}</span>
+                        <span
+                          className="logs-table__clickable"
+                          onClick={() => applyFilter('path', path)}
+                        >
+                          {path}
+                        </span>
                       ),
                     },
-                    { title: t('adminLogs.columnCount'), dataIndex: 'count', key: 'count', width: 80, align: 'right' as const },
+                    {
+                      title: t('adminLogs.columnCount'),
+                      dataIndex: 'count',
+                      key: 'count',
+                      width: 80,
+                      align: 'right' as const,
+                    },
                   ]}
                 />
               </Card>
@@ -459,7 +485,10 @@ export function LogsClient() {
                       >
                         {a.action}
                       </Tag>
-                      <Statistic value={a.count} valueStyle={{ fontSize: 14 }} />
+                      <Statistic
+                        value={a.count}
+                        valueStyle={{ fontSize: 14 }}
+                      />
                     </div>
                   ))}
                 </div>
@@ -555,7 +584,9 @@ export function LogsClient() {
             okButtonProps={{ danger: true }}
           >
             <div className="logs-clean-modal">
-              <p className="logs-clean-modal__label">{t('adminLogs.cleanModalDaysLabel')}</p>
+              <p className="logs-clean-modal__label">
+                {t('adminLogs.cleanModalDaysLabel')}
+              </p>
               <InputNumber
                 min={1}
                 max={3650}
@@ -565,7 +596,9 @@ export function LogsClient() {
                 style={{ width: 160 }}
               />
               <p className="logs-clean-modal__warning">
-                {interpolateMessage(t('adminLogs.cleanModalConfirmText'), { days: cleanDays })}
+                {interpolateMessage(t('adminLogs.cleanModalConfirmText'), {
+                  days: cleanDays,
+                })}
               </p>
             </div>
           </Modal>
@@ -573,10 +606,14 @@ export function LogsClient() {
           {isMobile ? (
             <div className="logs-cards">
               {loading && (
-                <div className="logs-cards__loading">{t('adminLogs.loadingText')}</div>
+                <div className="logs-cards__loading">
+                  {t('adminLogs.loadingText')}
+                </div>
               )}
               {!loading && logs.length === 0 && (
-                <div className="logs-cards__empty">{t('adminLogs.emptyText')}</div>
+                <div className="logs-cards__empty">
+                  {t('adminLogs.emptyText')}
+                </div>
               )}
               {!loading &&
                 logs.map((log) => (

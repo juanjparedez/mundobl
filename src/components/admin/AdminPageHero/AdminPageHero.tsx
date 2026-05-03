@@ -13,7 +13,11 @@ interface AdminPageHeroProps {
   stats?: AdminStatItem[];
 }
 
-export function AdminPageHero({ title, subtitle, stats = [] }: AdminPageHeroProps) {
+export function AdminPageHero({
+  title,
+  subtitle,
+  stats = [],
+}: AdminPageHeroProps) {
   return (
     <header className="admin-page-hero">
       <div>

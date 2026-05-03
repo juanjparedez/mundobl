@@ -62,7 +62,8 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   useEffect(() => {
     const savedTheme = (localStorage.getItem('theme') as ThemeMode) || 'dark';
     const savedAccent =
-      (localStorage.getItem('theme-accent') as AccentPresetKey) || DEFAULT_ACCENT;
+      (localStorage.getItem('theme-accent') as AccentPresetKey) ||
+      DEFAULT_ACCENT;
     const validAccent =
       savedAccent in ACCENT_PRESETS ? savedAccent : DEFAULT_ACCENT;
 

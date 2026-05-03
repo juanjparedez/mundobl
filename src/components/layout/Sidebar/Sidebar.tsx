@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { startTransition, useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Layout, Menu, Avatar, Button, Select } from 'antd';
 import {
@@ -55,7 +55,9 @@ export function Sidebar() {
   const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
 
   useEffect(() => {
-    setIsPreferencesOpen(false);
+    startTransition(() => {
+      setIsPreferencesOpen(false);
+    });
   }, [pathname, collapsed]);
 
   const isAdmin = session?.user?.role === 'ADMIN';
@@ -223,7 +225,11 @@ export function Sidebar() {
             </div>
           ) : session?.user ? (
             <div className="sidebar-user-info">
-              <Link href="/perfil" className="sidebar-user-profile-link" aria-label={t('sidebar.profile')}>
+              <Link
+                href="/perfil"
+                className="sidebar-user-profile-link"
+                aria-label={t('sidebar.profile')}
+              >
                 <Avatar
                   src={session.user.image}
                   icon={!session.user.image ? <UserOutlined /> : undefined}
@@ -280,7 +286,9 @@ export function Sidebar() {
         {!collapsed && isPreferencesOpen && (
           <div id="sidebar-preferences" className="sidebar-preferences">
             <div className="sidebar-preferences__field">
-              <span className="sidebar-preferences__label">{t('common.language')}</span>
+              <span className="sidebar-preferences__label">
+                {t('common.language')}
+              </span>
               <Select
                 value={locale}
                 onChange={setLocale}
@@ -295,7 +303,9 @@ export function Sidebar() {
             </div>
 
             <div className="sidebar-preferences__field sidebar-preferences__field--stacked">
-              <span className="sidebar-preferences__label">{t('bottomNav.accentColor')}</span>
+              <span className="sidebar-preferences__label">
+                {t('bottomNav.accentColor')}
+              </span>
               <AccentPicker />
             </div>
 
@@ -308,7 +318,10 @@ export function Sidebar() {
                   : t('sidebar.switchToDark')
               }
             >
-              <span className="sidebar-preferences__theme-icon" aria-hidden="true">
+              <span
+                className="sidebar-preferences__theme-icon"
+                aria-hidden="true"
+              >
                 {theme === 'dark' ? <BulbFilled /> : <BulbOutlined />}
               </span>
               <span>{t('bottomNav.theme')}</span>

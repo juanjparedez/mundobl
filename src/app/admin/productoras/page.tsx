@@ -47,7 +47,8 @@ export default function ProductorasAdminPage() {
     setLoading(true);
     try {
       const response = await fetch('/api/production-companies');
-      if (!response.ok) throw new Error(t('adminProductionCompanies.loadError'));
+      if (!response.ok)
+        throw new Error(t('adminProductionCompanies.loadError'));
       const data = await response.json();
       setCompanies(data);
     } catch (error) {
@@ -131,7 +132,9 @@ export default function ProductorasAdminPage() {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || t('adminProductionCompanies.deleteError'));
+        throw new Error(
+          error.error || t('adminProductionCompanies.deleteError')
+        );
       }
 
       message.success(t('adminProductionCompanies.deleteSuccess'));

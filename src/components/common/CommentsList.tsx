@@ -201,7 +201,9 @@ export function CommentsList({
               onClick={handleSubmit}
               loading={isSubmitting}
             >
-              {isPrivate ? t('comments.privateButtonCompact') : t('comments.commentButton')}
+              {isPrivate
+                ? t('comments.privateButtonCompact')
+                : t('comments.commentButton')}
             </Button>
           </div>
         </div>
@@ -211,7 +213,9 @@ export function CommentsList({
             <h6
               style={{ fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}
             >
-              {interpolateMessage(t('comments.listTitle'), { n: String(visibleComments.length) })}
+              {interpolateMessage(t('comments.listTitle'), {
+                n: String(visibleComments.length),
+              })}
             </h6>
             <div>
               {visibleComments.map((comment) => (
@@ -248,7 +252,9 @@ export function CommentsList({
   return (
     <div className="comments-list">
       <Card
-        title={<h4 className="comments-list__title">{t('comments.addTitle')}</h4>}
+        title={
+          <h4 className="comments-list__title">{t('comments.addTitle')}</h4>
+        }
         className="comments-list__form"
       >
         <TextArea
@@ -279,7 +285,9 @@ export function CommentsList({
             onClick={handleSubmit}
             loading={isSubmitting}
           >
-            {isPrivate ? t('comments.savePrivateButton') : t('comments.addButton')}
+            {isPrivate
+              ? t('comments.savePrivateButton')
+              : t('comments.addButton')}
           </Button>
         </div>
       </Card>
@@ -341,9 +349,16 @@ function formatDate(date: Date, t: (key: TranslationKey) => string): string {
 
   if (days === 0) return t('common.today');
   if (days === 1) return t('common.yesterday');
-  if (days < 7) return interpolateMessage(t('common.daysAgo'), { n: String(days) });
-  if (days < 30) return interpolateMessage(t('common.weeksAgo'), { n: String(Math.floor(days / 7)) });
-  if (days < 365) return interpolateMessage(t('common.monthsAgo'), { n: String(Math.floor(days / 30)) });
+  if (days < 7)
+    return interpolateMessage(t('common.daysAgo'), { n: String(days) });
+  if (days < 30)
+    return interpolateMessage(t('common.weeksAgo'), {
+      n: String(Math.floor(days / 7)),
+    });
+  if (days < 365)
+    return interpolateMessage(t('common.monthsAgo'), {
+      n: String(Math.floor(days / 30)),
+    });
 
   return date.toLocaleDateString();
 }

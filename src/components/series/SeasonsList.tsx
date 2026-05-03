@@ -97,7 +97,11 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
       label: (
         <div className="season-header">
           <span className="season-header__title">
-            <strong>{interpolateMessage(t('seasonsList.seasonLabel'), { n: String(season.seasonNumber) })}</strong>
+            <strong>
+              {interpolateMessage(t('seasonsList.seasonLabel'), {
+                n: String(season.seasonNumber),
+              })}
+            </strong>
             {season.title && ` - ${season.title}`}
           </span>
           <div className="season-header__meta">
@@ -108,7 +112,9 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
             )}
             {season.episodeCount && (
               <Tag icon={<PlayCircleOutlined />} color="green">
-                {interpolateMessage(t('seasonsList.capsTag'), { n: String(season.episodeCount) })}
+                {interpolateMessage(t('seasonsList.capsTag'), {
+                  n: String(season.episodeCount),
+                })}
               </Tag>
             )}
             {season.viewStatus?.[0]?.status === 'VISTA' && (
@@ -156,7 +162,9 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
 
           {season.observations && (
             <div className="season-content__observations">
-              <h5 className="season-section-title">📝 {t('seasonsList.observationsTitle')}</h5>
+              <h5 className="season-section-title">
+                📝 {t('seasonsList.observationsTitle')}
+              </h5>
               <p
                 style={{
                   color: 'var(--text-secondary)',
@@ -203,7 +211,10 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
           {season.actors && season.actors.length > 0 && (
             <div className="season-content__actors">
               <h5 className="season-section-title">
-                👥 {interpolateMessage(t('seasonsList.castTitle'), { n: String(season.actors.length) })}
+                👥{' '}
+                {interpolateMessage(t('seasonsList.castTitle'), {
+                  n: String(season.actors.length),
+                })}
               </h5>
               <Row gutter={[16, 16]}>
                 {season.actors.map((actorInfo) => (
@@ -219,7 +230,10 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
                         <Avatar src={actorInfo.actor.imageUrl} size={64} />
                       )}
                       <div className="actor-card__info">
-                        <Link href={`/actores/${actorInfo.actor.id}`} prefetch={false}>
+                        <Link
+                          href={`/actores/${actorInfo.actor.id}`}
+                          prefetch={false}
+                        >
                           <strong>{actorInfo.actor.name}</strong>
                         </Link>
                         {actorInfo.character && (
@@ -231,7 +245,9 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
                           </span>
                         )}
                         {actorInfo.isMain && (
-                          <Tag color="red">{t('seasonsList.protagonistTag')}</Tag>
+                          <Tag color="red">
+                            {t('seasonsList.protagonistTag')}
+                          </Tag>
                         )}
                       </div>
                     </div>

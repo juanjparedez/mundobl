@@ -2,6 +2,7 @@
 
 import {
   createContext,
+  startTransition,
   useCallback,
   useContext,
   useEffect,
@@ -52,7 +53,9 @@ export function LocaleProvider({ children }: LocaleProviderProps) {
     const storedLocale = localStorage.getItem(LOCALE_STORAGE_KEY);
 
     if (storedLocale && isSupportedLocale(storedLocale)) {
-      setLocaleState(storedLocale);
+      startTransition(() => {
+        setLocaleState(storedLocale);
+      });
       document.documentElement.lang = storedLocale;
       return;
     }
@@ -62,7 +65,9 @@ export function LocaleProvider({ children }: LocaleProviderProps) {
       ? browserLanguage
       : (DEFAULT_LOCALE as SupportedLocale);
 
-    setLocaleState(matchedLocale);
+    startTransition(() => {
+      setLocaleState(matchedLocale);
+    });
     document.documentElement.lang = matchedLocale;
   }, []);
 
@@ -89,7 +94,9 @@ export function LocaleProvider({ children }: LocaleProviderProps) {
   );
 
   return (
-    <LocaleContext.Provider value={contextValue}>{children}</LocaleContext.Provider>
+    <LocaleContext.Provider value={contextValue}>
+      {children}
+    </LocaleContext.Provider>
   );
 }
 

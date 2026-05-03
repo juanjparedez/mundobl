@@ -82,7 +82,9 @@ export default async function CatalogoPage() {
       0
     );
     const runtimeHours =
-      episodiosTotales > 0 ? Number(((episodiosTotales * 45) / 60).toFixed(1)) : 0;
+      episodiosTotales > 0
+        ? Number(((episodiosTotales * 45) / 60).toFixed(1))
+        : 0;
 
     return {
       id: serie.id.toString(),

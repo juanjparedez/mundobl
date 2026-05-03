@@ -119,10 +119,15 @@ export function CurrentlyWatchingDashboard() {
     const diffDays = Math.floor(diffMs / 86400000);
 
     if (diffMins < 1) return t('common.justNow');
-    if (diffMins < 60) return interpolateMessage(t('common.minutesAgo'), { n: String(diffMins) });
-    if (diffHours < 24) return interpolateMessage(t('common.hoursAgo'), { n: String(diffHours) });
+    if (diffMins < 60)
+      return interpolateMessage(t('common.minutesAgo'), {
+        n: String(diffMins),
+      });
+    if (diffHours < 24)
+      return interpolateMessage(t('common.hoursAgo'), { n: String(diffHours) });
     if (diffDays === 1) return t('common.yesterday');
-    if (diffDays < 7) return interpolateMessage(t('common.daysAgo'), { n: String(diffDays) });
+    if (diffDays < 7)
+      return interpolateMessage(t('common.daysAgo'), { n: String(diffDays) });
     return d.toLocaleDateString();
   };
 
@@ -143,7 +148,11 @@ export function CurrentlyWatchingDashboard() {
       setWatchingSeries((prev) =>
         prev.filter((item) => item.series.id !== seriesId)
       );
-      message.success(interpolateMessage(t('watchingDashboard.removedMessage'), { title: seriesTitle }));
+      message.success(
+        interpolateMessage(t('watchingDashboard.removedMessage'), {
+          title: seriesTitle,
+        })
+      );
     } catch (error) {
       message.error(t('watchingDashboard.errorRemove'));
       console.error(error);
@@ -174,7 +183,9 @@ export function CurrentlyWatchingDashboard() {
         image={Empty.PRESENTED_IMAGE_SIMPLE}
       >
         <Link href="/catalogo">
-          <Button type="primary">{t('watchingDashboard.exploreCatalog')}</Button>
+          <Button type="primary">
+            {t('watchingDashboard.exploreCatalog')}
+          </Button>
         </Link>
       </Empty>
     );
@@ -256,8 +267,8 @@ export function CurrentlyWatchingDashboard() {
                       <div className="watching-card__next">
                         <PlayCircleOutlined className="watching-card__icon" />
                         <span>
-                          {t('watchingDashboard.nextLabel')}: T{nextEp.seasonNumber}E
-                          {nextEp.episodeNumber}
+                          {t('watchingDashboard.nextLabel')}: T
+                          {nextEp.seasonNumber}E{nextEp.episodeNumber}
                           {nextEp.title && ` - ${nextEp.title}`}
                         </span>
                       </div>
