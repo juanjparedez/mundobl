@@ -14,6 +14,7 @@ import {
   InfoCircleOutlined,
   FileTextOutlined,
   MessageOutlined,
+  BarChartOutlined,
 } from '@ant-design/icons';
 import './admin-nav.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -37,6 +38,7 @@ export function AdminNav() {
     { key: '/admin/comentarios', icon: <MessageOutlined />, label: t('adminNav.comments'), shortLabel: t('adminNav.commentsShort') },
     { key: '/admin/info', icon: <InfoCircleOutlined />, label: t('adminNav.info'), shortLabel: t('adminNav.infoShort') },
     { key: '/admin/logs', icon: <FileTextOutlined />, label: t('adminNav.logs'), shortLabel: t('adminNav.logsShort') },
+    { key: '/admin/stats', icon: <BarChartOutlined />, label: t('adminNav.stats'), shortLabel: t('adminNav.statsShort') },
   ];
 
   return (
