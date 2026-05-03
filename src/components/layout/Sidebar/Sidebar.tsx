@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { Layout, Menu, Switch, Avatar, Button, Select } from 'antd';
+import { Layout, Menu, Avatar, Button, Select } from 'antd';
 import {
   AppstoreOutlined,
   SettingOutlined,
@@ -51,6 +51,11 @@ export function Sidebar() {
   const { theme, toggleTheme } = useTheme();
   const { locale, setLocale, t } = useLocale();
   const { data: session, status } = useSession();
+  const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
+
+  useEffect(() => {
+    setIsPreferencesOpen(false);
+  }, [pathname, collapsed]);
 
   const isAdmin = session?.user?.role === 'ADMIN';
   const isModerator = session?.user?.role === 'MODERATOR';
@@ -244,54 +249,63 @@ export function Sidebar() {
           )}
         </div>
 
-        {!collapsed && (
-          <div className="sidebar-locale-selector">
-            <span className="sidebar-locale-label">{t('common.language')}</span>
-            <Select
-              value={locale}
-              onChange={setLocale}
-              options={SUPPORTED_LOCALES.map((code) => ({
-                value: code,
-                label: LOCALE_LABELS[code],
-              }))}
-              size="small"
-              className="sidebar-locale-select"
-              aria-label={t('common.language')}
-            />
+        <button
+          className={`sidebar-settings-trigger${isPreferencesOpen ? ' sidebar-settings-trigger--active' : ''}`}
+          onClick={() => {
+            if (collapsed) {
+              setCollapsed(false);
+              return;
+            }
+            setIsPreferencesOpen((prev) => !prev);
+          }}
+          aria-label={t('bottomNav.settings')}
+          aria-expanded={isPreferencesOpen}
+          aria-controls="sidebar-preferences"
+        >
+          <span className="sidebar-settings-trigger__icon" aria-hidden="true">
+            <SettingOutlined />
+          </span>
+          {!collapsed && <span>{t('bottomNav.settings')}</span>}
+        </button>
+
+        {!collapsed && isPreferencesOpen && (
+          <div id="sidebar-preferences" className="sidebar-preferences">
+            <div className="sidebar-preferences__field">
+              <span className="sidebar-preferences__label">{t('common.language')}</span>
+              <Select
+                value={locale}
+                onChange={setLocale}
+                options={SUPPORTED_LOCALES.map((code) => ({
+                  value: code,
+                  label: LOCALE_LABELS[code],
+                }))}
+                size="small"
+                className="sidebar-preferences__select"
+                aria-label={t('common.language')}
+              />
+            </div>
+
+            <div className="sidebar-preferences__field sidebar-preferences__field--stacked">
+              <span className="sidebar-preferences__label">{t('bottomNav.accentColor')}</span>
+              <AccentPicker />
+            </div>
+
+            <button
+              className="sidebar-preferences__theme"
+              onClick={toggleTheme}
+              aria-label={
+                theme === 'dark'
+                  ? t('sidebar.switchToLight')
+                  : t('sidebar.switchToDark')
+              }
+            >
+              <span className="sidebar-preferences__theme-icon" aria-hidden="true">
+                {theme === 'dark' ? <BulbFilled /> : <BulbOutlined />}
+              </span>
+              <span>{t('bottomNav.theme')}</span>
+            </button>
           </div>
         )}
-
-        <AccentPicker />
-
-        <div
-          className="sidebar-theme-toggle"
-          role="button"
-          tabIndex={0}
-          aria-label={
-            theme === 'dark'
-              ? t('sidebar.switchToLight')
-              : t('sidebar.switchToDark')
-          }
-          onClick={toggleTheme}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              toggleTheme();
-            }
-          }}
-        >
-          <span className="sidebar-theme-icon">
-            {theme === 'dark' ? <BulbFilled /> : <BulbOutlined />}
-          </span>
-          {!collapsed && (
-            <Switch
-              checked={theme === 'dark'}
-              onChange={toggleTheme}
-              checkedChildren={t('sidebar.dark')}
-              unCheckedChildren={t('sidebar.light')}
-              size="small"
-            />
-          )}
-        </div>
       </div>
     </Sider>
   );
