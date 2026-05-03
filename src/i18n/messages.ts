@@ -246,16 +246,50 @@ type TranslationShape = {
     sectionRecent: string;
     sectionFavorites: string;
     sectionMyComments: string;
+    sectionDisputes: string;
     commentsSelectAll: string;
     commentsSelectedCount: string;
     commentsDeleteSelected: string;
     commentsDeleteSuccess: string;
     commentsDeleteError: string;
+    commentsLoadError: string;
     commentsEmpty: string;
     commentsExport: string;
     commentsPublic: string;
     commentsPrivate: string;
     commentsTargetUnknown: string;
+    commentsSearchPlaceholder: string;
+    commentsFilterAll: string;
+    commentsFilterPublic: string;
+    commentsFilterPrivate: string;
+    commentsFilterTargetAll: string;
+    commentsFilterReported: string;
+    commentsTargetSeries: string;
+    commentsTargetSeason: string;
+    commentsTargetEpisode: string;
+    commentsSetPublic: string;
+    commentsSetPrivate: string;
+    commentsVisibilityUpdateError: string;
+    commentsVisibilityPublicSuccess: string;
+    commentsVisibilityPrivateSuccess: string;
+    commentsReportCount: string;
+    commentsEdit: string;
+    commentsEditTitle: string;
+    commentsEditPlaceholder: string;
+    commentsEditSave: string;
+    commentsEditCancel: string;
+    commentsEditSuccess: string;
+    commentsEditError: string;
+    commentsOpenDispute: string;
+    disputesEmpty: string;
+    disputesLoadError: string;
+    disputeOpenTitle: string;
+    disputePlaceholder: string;
+    disputeSubmit: string;
+    disputeCancel: string;
+    disputeSuccess: string;
+    disputeError: string;
+    disputeForComment: string;
   };
   bottomNav: {
     mainNavigation: string;
@@ -1376,16 +1410,50 @@ const es: TranslationShape = {
     sectionRecent: 'Completadas recientemente',
     sectionFavorites: 'Mis favoritos',
     sectionMyComments: 'Mis comentarios',
+    sectionDisputes: 'Mis disputas',
     commentsSelectAll: 'Seleccionar todo',
     commentsSelectedCount: '{n} seleccionados',
     commentsDeleteSelected: 'Eliminar seleccionados',
     commentsDeleteSuccess: 'Se eliminaron {n} comentarios',
     commentsDeleteError: 'No se pudieron eliminar los comentarios',
+    commentsLoadError: 'No se pudieron cargar los comentarios',
     commentsEmpty: 'Todavia no tienes comentarios',
     commentsExport: 'Descargar JSON',
     commentsPublic: 'Publico',
     commentsPrivate: 'Privado',
     commentsTargetUnknown: 'Sin referencia',
+    commentsSearchPlaceholder: 'Buscar en mis comentarios...',
+    commentsFilterAll: 'Todo',
+    commentsFilterPublic: 'Publicos',
+    commentsFilterPrivate: 'Privados',
+    commentsFilterTargetAll: 'Todos los tipos',
+    commentsFilterReported: 'Solo reportados',
+    commentsTargetSeries: 'Serie',
+    commentsTargetSeason: 'Temporada',
+    commentsTargetEpisode: 'Episodio',
+    commentsSetPublic: 'Marcar publicos',
+    commentsSetPrivate: 'Marcar privados',
+    commentsVisibilityUpdateError: 'No se pudo actualizar la visibilidad',
+    commentsVisibilityPublicSuccess: 'Comentarios marcados como publicos',
+    commentsVisibilityPrivateSuccess: 'Comentarios marcados como privados',
+    commentsReportCount: '{n} reportes',
+    commentsEdit: 'Editar',
+    commentsEditTitle: 'Editar comentario',
+    commentsEditPlaceholder: 'Actualiza el contenido del comentario',
+    commentsEditSave: 'Guardar',
+    commentsEditCancel: 'Cancelar',
+    commentsEditSuccess: 'Comentario actualizado',
+    commentsEditError: 'No se pudo actualizar el comentario',
+    commentsOpenDispute: 'Abrir disputa',
+    disputesEmpty: 'No has creado disputas',
+    disputesLoadError: 'No se pudieron cargar las disputas',
+    disputeOpenTitle: 'Nuevo descargo',
+    disputePlaceholder: 'Explica por que consideras que este comentario no incumple reglas',
+    disputeSubmit: 'Enviar descargo',
+    disputeCancel: 'Cancelar',
+    disputeSuccess: 'Descargo enviado correctamente',
+    disputeError: 'No se pudo crear la disputa',
+    disputeForComment: 'Comentario #{n}',
   },
   bottomNav: {
     mainNavigation: 'Navegacion principal',
@@ -2513,16 +2581,50 @@ const en: TranslationShape = {
     sectionRecent: 'Recently completed',
     sectionFavorites: 'My favorites',
     sectionMyComments: 'My comments',
+    sectionDisputes: 'My disputes',
     commentsSelectAll: 'Select all',
     commentsSelectedCount: '{n} selected',
     commentsDeleteSelected: 'Delete selected',
     commentsDeleteSuccess: '{n} comments deleted',
     commentsDeleteError: 'Could not delete comments',
+    commentsLoadError: 'Could not load comments',
     commentsEmpty: 'You have no comments yet',
     commentsExport: 'Download JSON',
     commentsPublic: 'Public',
     commentsPrivate: 'Private',
     commentsTargetUnknown: 'No reference',
+    commentsSearchPlaceholder: 'Search in my comments...',
+    commentsFilterAll: 'All',
+    commentsFilterPublic: 'Public',
+    commentsFilterPrivate: 'Private',
+    commentsFilterTargetAll: 'All targets',
+    commentsFilterReported: 'Reported only',
+    commentsTargetSeries: 'Series',
+    commentsTargetSeason: 'Season',
+    commentsTargetEpisode: 'Episode',
+    commentsSetPublic: 'Set public',
+    commentsSetPrivate: 'Set private',
+    commentsVisibilityUpdateError: 'Could not update visibility',
+    commentsVisibilityPublicSuccess: 'Comments set to public',
+    commentsVisibilityPrivateSuccess: 'Comments set to private',
+    commentsReportCount: '{n} reports',
+    commentsEdit: 'Edit',
+    commentsEditTitle: 'Edit comment',
+    commentsEditPlaceholder: 'Update the comment content',
+    commentsEditSave: 'Save',
+    commentsEditCancel: 'Cancel',
+    commentsEditSuccess: 'Comment updated',
+    commentsEditError: 'Could not update comment',
+    commentsOpenDispute: 'Open dispute',
+    disputesEmpty: 'You have no disputes yet',
+    disputesLoadError: 'Could not load disputes',
+    disputeOpenTitle: 'New appeal',
+    disputePlaceholder: 'Explain why this comment should not be penalized',
+    disputeSubmit: 'Submit appeal',
+    disputeCancel: 'Cancel',
+    disputeSuccess: 'Appeal submitted successfully',
+    disputeError: 'Could not create dispute',
+    disputeForComment: 'Comment #{n}',
   },
   bottomNav: {
     mainNavigation: 'Main navigation',
