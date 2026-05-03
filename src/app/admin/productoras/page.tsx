@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import {
-  Card,
   Table,
   Button,
   Input,
@@ -16,6 +15,10 @@ import {
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
+import { AdminPageHero } from '@/components/admin/AdminPageHero/AdminPageHero';
+import { AdminTableToolbar } from '@/components/admin/AdminTableToolbar/AdminTableToolbar';
 import { AdminNav } from '../AdminNav';
 import '../admin.css';
 
@@ -31,8 +34,10 @@ interface ProductionCompanyType {
 export default function ProductorasAdminPage() {
   const message = useMessage();
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const { t } = useLocale();
   const [companies, setCompanies] = useState<ProductionCompanyType[]>([]);
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [editingCompany, setEditingCompany] =
     useState<ProductionCompanyType | null>(null);
@@ -42,20 +47,30 @@ export default function ProductorasAdminPage() {
     setLoading(true);
     try {
       const response = await fetch('/api/production-companies');
-      if (!response.ok) throw new Error('Error al cargar productoras');
+      if (!response.ok) throw new Error(t('adminProductionCompanies.loadError'));
       const data = await response.json();
       setCompanies(data);
     } catch (error) {
-      message.error('Error al cargar las productoras');
+      message.error(t('adminProductionCompanies.loadError'));
       console.error(error);
     } finally {
       setLoading(false);
     }
-  }, [message]);
+  }, [message, t]);
 
   useEffect(() => {
     loadCompanies();
   }, [loadCompanies]);
+
+  const filteredCompanies = useMemo(() => {
+    if (!searchTerm.trim()) return companies;
+    const term = searchTerm.toLowerCase();
+    return companies.filter(
+      (company) =>
+        company.name.toLowerCase().includes(term) ||
+        company.country?.toLowerCase().includes(term)
+    );
+  }, [companies, searchTerm]);
 
   const handleOpenModal = (company?: ProductionCompanyType) => {
     if (company) {
@@ -89,13 +104,13 @@ export default function ProductorasAdminPage() {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Error al guardar');
+        throw new Error(error.error || t('adminProductionCompanies.saveError'));
       }
 
       message.success(
         editingCompany
-          ? 'Productora actualizada exitosamente'
-          : 'Productora creada exitosamente'
+          ? t('adminProductionCompanies.updateSuccess')
+          : t('adminProductionCompanies.createSuccess')
       );
       handleCloseModal();
       loadCompanies();
@@ -103,7 +118,7 @@ export default function ProductorasAdminPage() {
       const errorMessage =
         error instanceof Error
           ? error.message
-          : 'Error al guardar la productora';
+          : t('adminProductionCompanies.saveError');
       message.error(errorMessage);
     }
   };
@@ -116,38 +131,41 @@ export default function ProductorasAdminPage() {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Error al eliminar');
+        throw new Error(error.error || t('adminProductionCompanies.deleteError'));
       }
 
-      message.success('Productora eliminada correctamente');
+      message.success(t('adminProductionCompanies.deleteSuccess'));
       loadCompanies();
     } catch (error) {
       const errorMessage =
         error instanceof Error
           ? error.message
-          : 'Error al eliminar la productora';
+          : t('adminProductionCompanies.deleteError');
       message.error(errorMessage);
     }
   };
 
   const columns = [
     {
-      title: 'Nombre',
+      title: t('adminProductionCompanies.columnName'),
       dataIndex: 'name',
       key: 'name',
       sorter: (a: ProductionCompanyType, b: ProductionCompanyType) =>
         a.name.localeCompare(b.name),
     },
     {
-      title: 'País',
+      title: t('adminProductionCompanies.columnCountry'),
       dataIndex: 'country',
       key: 'country',
-      render: (country: string | null) => country || '-',
+      render: (country: string | null) =>
+        country || t('adminProductionCompanies.emptyValue'),
       responsive: ['md' as const],
     },
     {
-      title: 'Series',
+      title: t('adminProductionCompanies.columnSeries'),
       key: 'count',
+      sorter: (a: ProductionCompanyType, b: ProductionCompanyType) =>
+        (a._count?.series || 0) - (b._count?.series || 0),
       render: (record: ProductionCompanyType) => (
         <Tag color={(record._count?.series || 0) > 0 ? 'blue' : 'default'}>
           {record._count?.series || 0}
@@ -155,7 +173,7 @@ export default function ProductorasAdminPage() {
       ),
     },
     {
-      title: 'Acciones',
+      title: t('adminProductionCompanies.columnActions'),
       key: 'actions',
       render: (record: ProductionCompanyType) => (
         <Space>
@@ -164,18 +182,21 @@ export default function ProductorasAdminPage() {
             onClick={() => handleOpenModal(record)}
             size="small"
           >
-            {!isMobile && 'Editar'}
+            {!isMobile && t('adminProductionCompanies.actionEdit')}
           </Button>
           <Popconfirm
-            title="¿Eliminar productora?"
-            description={`Esto eliminará la productora "${record.name}"`}
+            title={t('adminProductionCompanies.deleteTitle')}
+            description={interpolateMessage(
+              t('adminProductionCompanies.deleteDescription'),
+              { name: record.name }
+            )}
             onConfirm={() => handleDelete(record.id)}
-            okText="Eliminar"
-            cancelText="Cancelar"
+            okText={t('adminProductionCompanies.actionDelete')}
+            cancelText={t('adminProductionCompanies.cancel')}
             okButtonProps={{ danger: true }}
           >
             <Button danger icon={<DeleteOutlined />} size="small">
-              {!isMobile && 'Eliminar'}
+              {!isMobile && t('adminProductionCompanies.actionDelete')}
             </Button>
           </Popconfirm>
         </Space>
@@ -187,47 +208,79 @@ export default function ProductorasAdminPage() {
     <AppLayout>
       <div className="admin-page-wrapper">
         <AdminNav />
-        <Card
-          title="🏢 Administración de Productoras"
-          extra={
+
+        <AdminPageHero
+          title={t('adminProductionCompanies.title')}
+          subtitle={t('adminProductionCompanies.subtitle')}
+          stats={[
+            {
+              label: t('adminProductionCompanies.statsTotal'),
+              value: companies.length,
+            },
+            {
+              label: t('adminProductionCompanies.statsFiltered'),
+              value: filteredCompanies.length,
+            },
+          ]}
+        />
+
+        <AdminTableToolbar
+          filters={
             <Button
               type="primary"
               icon={<PlusOutlined />}
               onClick={() => handleOpenModal()}
             >
-              Nueva Productora
+              {t('adminProductionCompanies.newItem')}
             </Button>
           }
-        >
-          <Table
-            dataSource={companies}
-            columns={columns}
-            rowKey="id"
-            loading={loading}
-            pagination={{ pageSize: 20 }}
-          />
-        </Card>
+          searchPlaceholder={t('adminProductionCompanies.searchPlaceholder')}
+          searchValue={searchTerm}
+          onSearchChange={setSearchTerm}
+          onSearchSubmit={() => undefined}
+          onSearchClear={() => setSearchTerm('')}
+        />
+
+        <Table
+          dataSource={filteredCompanies}
+          columns={columns}
+          rowKey="id"
+          loading={loading}
+          pagination={{ pageSize: 20, showSizeChanger: true }}
+        />
 
         <Modal
-          title={editingCompany ? 'Editar Productora' : 'Nueva Productora'}
+          title={
+            editingCompany
+              ? t('adminProductionCompanies.modalEditTitle')
+              : t('adminProductionCompanies.modalNewTitle')
+          }
           open={modalOpen}
           onCancel={handleCloseModal}
           onOk={() => form.submit()}
-          okText="Guardar"
-          cancelText="Cancelar"
+          okText={t('adminProductionCompanies.save')}
+          cancelText={t('adminProductionCompanies.cancel')}
           forceRender
         >
           <Form form={form} layout="vertical" onFinish={handleSubmit}>
             <Form.Item
-              label="Nombre"
+              label={t('adminProductionCompanies.fieldName')}
               name="name"
-              rules={[{ required: true, message: 'El nombre es requerido' }]}
+              rules={[
+                {
+                  required: true,
+                  message: t('adminProductionCompanies.requiredName'),
+                },
+              ]}
             >
-              <Input placeholder="Nombre de la productora" />
+              <Input placeholder={t('adminProductionCompanies.hintName')} />
             </Form.Item>
 
-            <Form.Item label="País" name="country">
-              <Input placeholder="País de la productora (opcional)" />
+            <Form.Item
+              label={t('adminProductionCompanies.fieldCountry')}
+              name="country"
+            >
+              <Input placeholder={t('adminProductionCompanies.hintCountry')} />
             </Form.Item>
           </Form>
         </Modal>

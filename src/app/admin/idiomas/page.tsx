@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import {
-  Card,
   Table,
   Button,
   Input,
@@ -16,6 +15,10 @@ import {
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
+import { AdminPageHero } from '@/components/admin/AdminPageHero/AdminPageHero';
+import { AdminTableToolbar } from '@/components/admin/AdminTableToolbar/AdminTableToolbar';
 import { AdminNav } from '../AdminNav';
 import '../admin.css';
 
@@ -32,8 +35,10 @@ interface LanguageType {
 export default function IdiomasAdminPage() {
   const message = useMessage();
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const { t } = useLocale();
   const [languages, setLanguages] = useState<LanguageType[]>([]);
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [editingLanguage, setEditingLanguage] = useState<LanguageType | null>(
     null
@@ -44,20 +49,30 @@ export default function IdiomasAdminPage() {
     setLoading(true);
     try {
       const response = await fetch('/api/languages');
-      if (!response.ok) throw new Error('Error al cargar idiomas');
+      if (!response.ok) throw new Error(t('adminLanguages.loadError'));
       const data = await response.json();
       setLanguages(data);
     } catch (error) {
-      message.error('Error al cargar los idiomas');
+      message.error(t('adminLanguages.loadError'));
       console.error(error);
     } finally {
       setLoading(false);
     }
-  }, [message]);
+  }, [message, t]);
 
   useEffect(() => {
     loadLanguages();
   }, [loadLanguages]);
+
+  const filteredLanguages = useMemo(() => {
+    if (!searchTerm.trim()) return languages;
+    const term = searchTerm.toLowerCase();
+    return languages.filter(
+      (lang) =>
+        lang.name.toLowerCase().includes(term) ||
+        lang.code?.toLowerCase().includes(term)
+    );
+  }, [languages, searchTerm]);
 
   const handleOpenModal = (language?: LanguageType) => {
     if (language) {
@@ -91,19 +106,19 @@ export default function IdiomasAdminPage() {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Error al guardar');
+        throw new Error(error.error || t('adminLanguages.saveError'));
       }
 
       message.success(
         editingLanguage
-          ? 'Idioma actualizado exitosamente'
-          : 'Idioma creado exitosamente'
+          ? t('adminLanguages.updateSuccess')
+          : t('adminLanguages.createSuccess')
       );
       handleCloseModal();
       loadLanguages();
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Error al guardar el idioma';
+        error instanceof Error ? error.message : t('adminLanguages.saveError');
       message.error(errorMessage);
     }
   };
@@ -116,36 +131,40 @@ export default function IdiomasAdminPage() {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Error al eliminar');
+        throw new Error(error.error || t('adminLanguages.deleteError'));
       }
 
-      message.success('Idioma eliminado correctamente');
+      message.success(t('adminLanguages.deleteSuccess'));
       loadLanguages();
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Error al eliminar el idioma';
+        error instanceof Error ? error.message : t('adminLanguages.deleteError');
       message.error(errorMessage);
     }
   };
 
   const columns = [
     {
-      title: 'Idioma',
+      title: t('adminLanguages.columnName'),
       dataIndex: 'name',
       key: 'name',
       sorter: (a: LanguageType, b: LanguageType) =>
         a.name.localeCompare(b.name),
     },
     {
-      title: 'Código',
+      title: t('adminLanguages.columnCode'),
       dataIndex: 'code',
       key: 'code',
-      render: (code: string | null) => (code ? <Tag>{code}</Tag> : '-'),
+      render: (code: string | null) =>
+        code ? <Tag>{code}</Tag> : t('adminLanguages.emptyValue'),
       responsive: ['md' as const],
     },
     {
-      title: 'Series',
+      title: t('adminLanguages.columnSeries'),
       key: 'seriesCount',
+      sorter: (a: LanguageType, b: LanguageType) =>
+        (a._count?.seriesOriginalLanguage || 0) -
+        (b._count?.seriesOriginalLanguage || 0),
       render: (record: LanguageType) => (
         <Tag
           color={
@@ -159,8 +178,10 @@ export default function IdiomasAdminPage() {
       ),
     },
     {
-      title: 'Doblajes',
+      title: t('adminLanguages.columnDubbings'),
       key: 'dubbingsCount',
+      sorter: (a: LanguageType, b: LanguageType) =>
+        (a._count?.dubbings || 0) - (b._count?.dubbings || 0),
       render: (record: LanguageType) => (
         <Tag color={(record._count?.dubbings || 0) > 0 ? 'green' : 'default'}>
           {record._count?.dubbings || 0}
@@ -169,7 +190,7 @@ export default function IdiomasAdminPage() {
       responsive: ['md' as const],
     },
     {
-      title: 'Acciones',
+      title: t('adminLanguages.columnActions'),
       key: 'actions',
       render: (record: LanguageType) => (
         <Space>
@@ -178,18 +199,21 @@ export default function IdiomasAdminPage() {
             onClick={() => handleOpenModal(record)}
             size="small"
           >
-            {!isMobile && 'Editar'}
+            {!isMobile && t('adminLanguages.actionEdit')}
           </Button>
           <Popconfirm
-            title="¿Eliminar idioma?"
-            description={`Esto eliminará el idioma "${record.name}"`}
+            title={t('adminLanguages.deleteTitle')}
+            description={interpolateMessage(
+              t('adminLanguages.deleteDescription'),
+              { name: record.name }
+            )}
             onConfirm={() => handleDelete(record.id)}
-            okText="Eliminar"
-            cancelText="Cancelar"
+            okText={t('adminLanguages.actionDelete')}
+            cancelText={t('adminLanguages.cancel')}
             okButtonProps={{ danger: true }}
           >
             <Button danger icon={<DeleteOutlined />} size="small">
-              {!isMobile && 'Eliminar'}
+              {!isMobile && t('adminLanguages.actionDelete')}
             </Button>
           </Popconfirm>
         </Space>
@@ -201,47 +225,70 @@ export default function IdiomasAdminPage() {
     <AppLayout>
       <div className="admin-page-wrapper">
         <AdminNav />
-        <Card
-          title="🌐 Administración de Idiomas"
-          extra={
+
+        <AdminPageHero
+          title={t('adminLanguages.title')}
+          subtitle={t('adminLanguages.subtitle')}
+          stats={[
+            { label: t('adminLanguages.statsTotal'), value: languages.length },
+            {
+              label: t('adminLanguages.statsFiltered'),
+              value: filteredLanguages.length,
+            },
+          ]}
+        />
+
+        <AdminTableToolbar
+          filters={
             <Button
               type="primary"
               icon={<PlusOutlined />}
               onClick={() => handleOpenModal()}
             >
-              Nuevo Idioma
+              {t('adminLanguages.newItem')}
             </Button>
           }
-        >
-          <Table
-            dataSource={languages}
-            columns={columns}
-            rowKey="id"
-            loading={loading}
-            pagination={{ pageSize: 20 }}
-          />
-        </Card>
+          searchPlaceholder={t('adminLanguages.searchPlaceholder')}
+          searchValue={searchTerm}
+          onSearchChange={setSearchTerm}
+          onSearchSubmit={() => undefined}
+          onSearchClear={() => setSearchTerm('')}
+        />
+
+        <Table
+          dataSource={filteredLanguages}
+          columns={columns}
+          rowKey="id"
+          loading={loading}
+          pagination={{ pageSize: 20, showSizeChanger: true }}
+        />
 
         <Modal
-          title={editingLanguage ? 'Editar Idioma' : 'Nuevo Idioma'}
+          title={
+            editingLanguage
+              ? t('adminLanguages.modalEditTitle')
+              : t('adminLanguages.modalNewTitle')
+          }
           open={modalOpen}
           onCancel={handleCloseModal}
           onOk={() => form.submit()}
-          okText="Guardar"
-          cancelText="Cancelar"
+          okText={t('adminLanguages.save')}
+          cancelText={t('adminLanguages.cancel')}
           forceRender
         >
           <Form form={form} layout="vertical" onFinish={handleSubmit}>
             <Form.Item
-              label="Nombre"
+              label={t('adminLanguages.fieldName')}
               name="name"
-              rules={[{ required: true, message: 'El nombre es requerido' }]}
+              rules={[
+                { required: true, message: t('adminLanguages.requiredName') },
+              ]}
             >
-              <Input placeholder="Nombre del idioma (ej: Coreano)" />
+              <Input placeholder={t('adminLanguages.hintName')} />
             </Form.Item>
 
-            <Form.Item label="Código" name="code">
-              <Input placeholder="Código ISO (ej: ko, th, ja)" />
+            <Form.Item label={t('adminLanguages.fieldCode')} name="code">
+              <Input placeholder={t('adminLanguages.hintCode')} />
             </Form.Item>
           </Form>
         </Modal>

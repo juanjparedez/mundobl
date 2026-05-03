@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import {
-  Card,
   Table,
   Button,
   Input,
@@ -23,6 +22,10 @@ import {
 } from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
+import { AdminPageHero } from '@/components/admin/AdminPageHero/AdminPageHero';
+import { AdminTableToolbar } from '@/components/admin/AdminTableToolbar/AdminTableToolbar';
 import { AdminNav } from '../AdminNav';
 import '../admin.css';
 
@@ -38,8 +41,10 @@ interface TagType {
 export default function TagsAdminPage() {
   const message = useMessage();
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const { t } = useLocale();
   const [tags, setTags] = useState<TagType[]>([]);
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const [newTagName, setNewTagName] = useState('');
   const [adding, setAdding] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -53,24 +58,34 @@ export default function TagsAdminPage() {
     setLoading(true);
     try {
       const response = await fetch('/api/tags');
-      if (!response.ok) throw new Error('Error al cargar tags');
+      if (!response.ok) throw new Error(t('adminTags.loadError'));
       const data = await response.json();
       setTags(data);
     } catch (error) {
-      message.error('Error al cargar los tags');
+      message.error(t('adminTags.loadError'));
       console.error(error);
     } finally {
       setLoading(false);
     }
-  }, [message]);
+  }, [message, t]);
 
   useEffect(() => {
     loadTags();
   }, [loadTags]);
 
+  const filteredTags = useMemo(() => {
+    if (!searchTerm.trim()) return tags;
+    const term = searchTerm.toLowerCase();
+    return tags.filter(
+      (tag) =>
+        tag.name.toLowerCase().includes(term) ||
+        tag.category?.toLowerCase().includes(term)
+    );
+  }, [tags, searchTerm]);
+
   const handleAddTag = async () => {
     if (!newTagName.trim()) {
-      message.warning('Escribe un nombre para el tag');
+      message.warning(t('adminTags.createEmptyWarning'));
       return;
     }
 
@@ -84,15 +99,15 @@ export default function TagsAdminPage() {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Error al crear tag');
+        throw new Error(error.error || t('adminTags.createError'));
       }
 
-      message.success('Tag creado exitosamente');
+      message.success(t('adminTags.createSuccess'));
       setNewTagName('');
       loadTags();
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Error al crear el tag';
+        error instanceof Error ? error.message : t('adminTags.createError');
       message.error(errorMessage);
     } finally {
       setAdding(false);
@@ -105,12 +120,12 @@ export default function TagsAdminPage() {
         method: 'DELETE',
       });
 
-      if (!response.ok) throw new Error('Error al eliminar tag');
+      if (!response.ok) throw new Error(t('adminTags.deleteError'));
 
-      message.success('Tag eliminado correctamente');
+      message.success(t('adminTags.deleteSuccess'));
       loadTags();
     } catch (error) {
-      message.error('Error al eliminar el tag');
+      message.error(t('adminTags.deleteError'));
       console.error(error);
     }
   };
@@ -126,17 +141,17 @@ export default function TagsAdminPage() {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Error al actualizar');
+        throw new Error(error.error || t('adminTags.updateError'));
       }
 
-      message.success('Tag actualizado exitosamente');
+      message.success(t('adminTags.updateSuccess'));
       setEditModalOpen(false);
       setEditingTag(null);
       form.resetFields();
       loadTags();
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Error al actualizar el tag';
+        error instanceof Error ? error.message : t('adminTags.updateError');
       message.error(errorMessage);
     }
   };
@@ -152,16 +167,16 @@ export default function TagsAdminPage() {
       });
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Error al fusionar');
+        throw new Error(error.error || t('adminTags.mergeError'));
       }
-      message.success('Tags fusionados exitosamente');
+      message.success(t('adminTags.mergeSuccess'));
       setMergeModalOpen(false);
       setSelectedRowKeys([]);
       setMergeTarget(null);
       loadTags();
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Error al fusionar tags';
+        error instanceof Error ? error.message : t('adminTags.mergeError');
       message.error(errorMessage);
     }
   };
@@ -175,25 +190,29 @@ export default function TagsAdminPage() {
 
   const columns = [
     {
-      title: 'Tag',
+      title: t('adminTags.columnTag'),
       dataIndex: 'name',
       key: 'name',
+      sorter: (a: TagType, b: TagType) => a.name.localeCompare(b.name),
       render: (name: string) => <Tag color="blue">{name}</Tag>,
     },
     {
-      title: 'Categoría',
+      title: t('adminTags.columnCategory'),
       dataIndex: 'category',
       key: 'category',
-      render: (category: string | null) => category || 'Sin categoría',
+      render: (category: string | null) =>
+        category || t('adminTags.emptyCategory'),
       responsive: ['md' as const],
     },
     {
-      title: 'Series',
+      title: t('adminTags.columnSeries'),
       key: 'count',
-      render: (record: TagType) => record._count?.series || 0,
+      sorter: (a: TagType, b: TagType) =>
+        (a._count?.series || 0) - (b._count?.series || 0),
+      render: (record: TagType) => <Tag>{record._count?.series || 0}</Tag>,
     },
     {
-      title: 'Acciones',
+      title: t('adminTags.columnActions'),
       key: 'actions',
       render: (record: TagType) => (
         <Space>
@@ -206,18 +225,20 @@ export default function TagsAdminPage() {
               setEditModalOpen(true);
             }}
           >
-            {!isMobile && 'Editar'}
+            {!isMobile && t('adminTags.actionEdit')}
           </Button>
           <Popconfirm
-            title="¿Eliminar tag?"
-            description={`Esto eliminará el tag de ${record._count?.series || 0} series`}
+            title={t('adminTags.deleteTitle')}
+            description={interpolateMessage(t('adminTags.deleteDescription'), {
+              count: record._count?.series || 0,
+            })}
             onConfirm={() => handleDeleteTag(record.id)}
-            okText="Eliminar"
-            cancelText="Cancelar"
+            okText={t('adminTags.actionDelete')}
+            cancelText={t('adminTags.cancel')}
             okButtonProps={{ danger: true }}
           >
             <Button danger icon={<DeleteOutlined />} size="small">
-              {!isMobile && 'Eliminar'}
+              {!isMobile && t('adminTags.actionDelete')}
             </Button>
           </Popconfirm>
         </Space>
@@ -229,52 +250,75 @@ export default function TagsAdminPage() {
     <AppLayout>
       <div className="admin-page-wrapper">
         <AdminNav />
-        <Card title="🏷️ Administración de Tags">
-          <Space.Compact style={{ width: '100%', marginBottom: 24 }}>
+
+        <AdminPageHero
+          title={t('adminTags.title')}
+          subtitle={t('adminTags.subtitle')}
+          stats={[
+            { label: t('adminTags.statsTotal'), value: tags.length },
+            {
+              label: t('adminTags.statsFiltered'),
+              value: filteredTags.length,
+            },
+            {
+              label: t('adminTags.statsSelected'),
+              value: selectedRowKeys.length,
+            },
+          ]}
+        />
+
+        <AdminTableToolbar
+          filters={
             <Input
-              placeholder="Nombre del nuevo tag (ej: Enemy to Lovers)"
+              placeholder={t('adminTags.newPlaceholder')}
               value={newTagName}
               onChange={(e) => setNewTagName(e.target.value)}
               onPressEnter={handleAddTag}
-              size={isMobile ? 'middle' : 'large'}
+              style={{ minWidth: isMobile ? 220 : 320 }}
             />
+          }
+          searchPlaceholder={t('adminTags.searchPlaceholder')}
+          searchValue={searchTerm}
+          onSearchChange={setSearchTerm}
+          onSearchSubmit={() => undefined}
+          onSearchClear={() => setSearchTerm('')}
+          rightActions={
             <Button
               type="primary"
               icon={<PlusOutlined />}
               onClick={handleAddTag}
               loading={adding}
-              size={isMobile ? 'middle' : 'large'}
             >
-              Crear Tag
+              {t('adminTags.create')}
             </Button>
-          </Space.Compact>
+          }
+        />
 
-          {selectedRowKeys.length === 2 && (
-            <Button
-              type="primary"
-              icon={<MergeCellsOutlined />}
-              onClick={() => {
-                setMergeTarget(selectedRowKeys[0] as number);
-                setMergeModalOpen(true);
-              }}
-              style={{ marginBottom: 12 }}
-            >
-              Fusionar seleccionados
-            </Button>
-          )}
+        {selectedRowKeys.length === 2 && (
+          <Button
+            type="primary"
+            icon={<MergeCellsOutlined />}
+            onClick={() => {
+              setMergeTarget(selectedRowKeys[0] as number);
+              setMergeModalOpen(true);
+            }}
+            style={{ marginBottom: 12 }}
+          >
+            {t('adminTags.mergeSelected')}
+          </Button>
+        )}
 
-          <Table
-            dataSource={tags}
-            columns={columns}
-            rowKey="id"
-            loading={loading}
-            rowSelection={rowSelection}
-            pagination={{ pageSize: 20 }}
-          />
-        </Card>
+        <Table
+          dataSource={filteredTags}
+          columns={columns}
+          rowKey="id"
+          loading={loading}
+          rowSelection={rowSelection}
+          pagination={{ pageSize: 20, showSizeChanger: true }}
+        />
 
         <Modal
-          title="Editar Tag"
+          title={t('adminTags.modalEditTitle')}
           open={editModalOpen}
           onCancel={() => {
             setEditModalOpen(false);
@@ -282,36 +326,34 @@ export default function TagsAdminPage() {
             form.resetFields();
           }}
           onOk={() => form.submit()}
-          okText="Guardar"
-          cancelText="Cancelar"
+          okText={t('adminTags.save')}
+          cancelText={t('adminTags.cancel')}
           forceRender
         >
           <Form form={form} layout="vertical" onFinish={handleEditTag}>
             <Form.Item
-              label="Nombre"
+              label={t('adminTags.fieldName')}
               name="name"
-              rules={[{ required: true, message: 'El nombre es requerido' }]}
+              rules={[{ required: true, message: t('adminTags.requiredName') }]}
             >
-              <Input placeholder="Nombre del tag" />
+              <Input placeholder={t('adminTags.hintName')} />
             </Form.Item>
           </Form>
         </Modal>
 
         <Modal
-          title="Fusionar Tags"
+          title={t('adminTags.modalMergeTitle')}
           open={mergeModalOpen}
           onCancel={() => {
             setMergeModalOpen(false);
             setMergeTarget(null);
           }}
           onOk={handleMerge}
-          okText="Fusionar"
+          okText={t('adminTags.mergeSelected')}
           okButtonProps={{ danger: true }}
-          cancelText="Cancelar"
+          cancelText={t('adminTags.cancel')}
         >
-          <p style={{ marginBottom: 12 }}>
-            Selecciona qué tag debe sobrevivir:
-          </p>
+          <p style={{ marginBottom: 12 }}>{t('adminTags.mergeSelectSurvivor')}</p>
           <Radio.Group
             value={mergeTarget}
             onChange={(e) => setMergeTarget(e.target.value)}
@@ -322,15 +364,18 @@ export default function TagsAdminPage() {
               if (!tag) return null;
               return (
                 <Radio key={String(id)} value={id}>
-                  <Tag color="blue">{tag.name}</Tag> ({tag._count?.series || 0}{' '}
-                  series)
+                  <Tag color="blue">{tag.name}</Tag> (
+                  {interpolateMessage(t('adminTags.seriesCount'), {
+                    count: tag._count?.series || 0,
+                  })}
+                  )
                 </Radio>
               );
             })}
           </Radio.Group>
           <Alert
             type="warning"
-            title="El tag no seleccionado será eliminado y todas las series que lo tenían pasarán a usar el tag que sobreviva."
+            message={t('adminTags.mergeWarning')}
             style={{ marginTop: 16 }}
           />
         </Modal>
