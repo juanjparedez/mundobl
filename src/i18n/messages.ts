@@ -226,10 +226,25 @@ type TranslationShape = {
     expandMenu: string;
     login: string;
     logout: string;
+    profile: string;
     switchToLight: string;
     switchToDark: string;
     dark: string;
     light: string;
+  };
+  profile: {
+    loginRequired: string;
+    memberSince: string;
+    statWatched: string;
+    statWatching: string;
+    statAbandoned: string;
+    statToRewatch: string;
+    statFavorites: string;
+    statRatings: string;
+    statComments: string;
+    sectionWatching: string;
+    sectionRecent: string;
+    sectionFavorites: string;
   };
   bottomNav: {
     mainNavigation: string;
@@ -1334,6 +1349,21 @@ const es: TranslationShape = {
     switchToDark: 'Cambiar a modo oscuro',
     dark: 'Oscuro',
     light: 'Claro',
+    profile: 'Mi Perfil',
+  },
+  profile: {
+    loginRequired: 'Inicia sesion para ver tu perfil',
+    memberSince: 'Miembro desde',
+    statWatched: 'Vistas',
+    statWatching: 'Viendo',
+    statAbandoned: 'Abandonadas',
+    statToRewatch: 'Retomar',
+    statFavorites: 'Favoritos',
+    statRatings: 'Ratings',
+    statComments: 'Comentarios',
+    sectionWatching: 'Viendo ahora',
+    sectionRecent: 'Completadas recientemente',
+    sectionFavorites: 'Mis favoritos',
   },
   bottomNav: {
     mainNavigation: 'Navegacion principal',
@@ -2445,6 +2475,21 @@ const en: TranslationShape = {
     switchToDark: 'Switch to dark mode',
     dark: 'Dark',
     light: 'Light',
+    profile: 'My Profile',
+  },
+  profile: {
+    loginRequired: 'Sign in to view your profile',
+    memberSince: 'Member since',
+    statWatched: 'Watched',
+    statWatching: 'Watching',
+    statAbandoned: 'Abandoned',
+    statToRewatch: 'To rewatch',
+    statFavorites: 'Favorites',
+    statRatings: 'Ratings',
+    statComments: 'Comments',
+    sectionWatching: 'Currently watching',
+    sectionRecent: 'Recently completed',
+    sectionFavorites: 'My favorites',
   },
   bottomNav: {
     mainNavigation: 'Main navigation',

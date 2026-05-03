@@ -24,6 +24,7 @@ import {
   InfoCircleOutlined,
   FileTextOutlined,
 } from '@ant-design/icons';
+import Link from 'next/link';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { ROUTES } from '@/constants/navigation';
 import { useTheme } from '@/lib/providers/ThemeProvider';
@@ -211,28 +212,26 @@ export function Sidebar() {
               <LoadingOutlined />
             </div>
           ) : session?.user ? (
-            <div
-              className="sidebar-user-info"
-              role="button"
-              tabIndex={0}
-              aria-label={t('sidebar.logout')}
-              onClick={() => signOut({ callbackUrl: '/' })}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  signOut({ callbackUrl: '/' });
-                }
-              }}
-            >
-              <Avatar
-                src={session.user.image}
-                icon={!session.user.image ? <UserOutlined /> : undefined}
-                size="small"
-              />
-              {!collapsed && (
-                <div className="sidebar-user-details">
+            <div className="sidebar-user-info">
+              <Link href="/perfil" className="sidebar-user-profile-link" aria-label={t('sidebar.profile')}>
+                <Avatar
+                  src={session.user.image}
+                  icon={!session.user.image ? <UserOutlined /> : undefined}
+                  size="small"
+                />
+                {!collapsed && (
                   <span className="sidebar-user-name">{session.user.name}</span>
-                  <LogoutOutlined className="sidebar-logout-icon" />
-                </div>
+                )}
+              </Link>
+              {!collapsed && (
+                <button
+                  className="sidebar-logout-btn"
+                  onClick={() => signOut({ callbackUrl: '/' })}
+                  aria-label={t('sidebar.logout')}
+                  title={t('sidebar.logout')}
+                >
+                  <LogoutOutlined />
+                </button>
               )}
             </div>
           ) : (
