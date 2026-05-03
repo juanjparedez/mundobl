@@ -1,0 +1,9 @@
+.watching-page {
+  padding: var(--spacing-lg);
+}
+
+.watching-page__title {
+  font-size: 24px;
+  margin-bottom: var(--spacing-lg);
+  color: var(--text-primary);
+}
