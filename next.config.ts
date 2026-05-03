@@ -16,14 +16,15 @@ const nextConfig: NextConfig = {
   },
   images: {
     formats: ['image/avif', 'image/webp'],
-    minimumCacheTTL: 86400,
+    minimumCacheTTL: 2592000,
     deviceSizes: [360, 480, 640, 768, 1024, 1280, 1536],
     imageSizes: [48, 64, 96, 110, 160, 180, 230, 260, 320],
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**',
-      },
+      { protocol: 'https', hostname: '*.supabase.co', pathname: '/storage/**' },
+      { protocol: 'https', hostname: 'i.ytimg.com' },
+      { protocol: 'https', hostname: 'img.youtube.com' },
+      { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
+      { protocol: 'https', hostname: 'avatars.githubusercontent.com' },
     ],
   },
   // allowedDevOrigins solo aplica en dev local

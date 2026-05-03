@@ -6,7 +6,6 @@ import { BookOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { MetadataChip } from './MetadataPrimitives/MetadataPrimitives';
 import './SeriesHeader.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -53,26 +52,24 @@ interface SeriesHeaderProps {
 
 export function SeriesHeader({ series, actionsSlot }: SeriesHeaderProps) {
   const { t } = useLocale();
-  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const mainActors = series.actors?.filter((a) => a.isMain).slice(0, 4) ?? [];
   const directors = series.directors?.slice(0, 2) ?? [];
   const hasQuickCast = mainActors.length > 0 || directors.length > 0;
   const imageUrl = series.imageUrl;
-  const showBackdrop = Boolean(imageUrl) && !isMobile;
 
   return (
     <section className="series-hero">
-      {showBackdrop && imageUrl && (
+      {imageUrl && (
         <div className="series-hero__backdrop" aria-hidden="true">
           <Image
             src={imageUrl}
-            alt={series.title}
+            alt=""
             fill
-            sizes="100vw"
-            quality={40}
+            sizes="(max-width: 768px) 0px, 100vw"
+            quality={35}
             fetchPriority="low"
-            style={{ objectFit: 'cover', objectPosition: 'center 22%' }}
+            className="series-hero__backdrop-img"
           />
         </div>
       )}
@@ -90,7 +87,6 @@ export function SeriesHeader({ series, actionsSlot }: SeriesHeaderProps) {
                 sizes="(max-width: 640px) 110px, (max-width: 900px) 180px, 230px"
                 quality={72}
                 priority
-                style={{ objectFit: 'cover' }}
               />
             </div>
           )}

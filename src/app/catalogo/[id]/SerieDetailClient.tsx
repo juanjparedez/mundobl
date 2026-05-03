@@ -22,6 +22,7 @@ import {
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { PageTitleClient } from '@/components/common/PageTitle/PageTitleClient';
+import './serie-detail.css';
 
 interface ActorRelation {
   id: number;
@@ -195,12 +196,9 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
                 alt={serie.title}
                 width={800}
                 height={400}
-                style={{
-                  width: '100%',
-                  maxHeight: '400px',
-                  objectFit: 'cover',
-                  borderRadius: '8px',
-                }}
+                sizes="(max-width: 768px) 100vw, 800px"
+                quality={70}
+                className="serie-detail__cover-img"
               />
             </Card>
           )}
