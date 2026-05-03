@@ -12,6 +12,8 @@ import type { ColumnsType } from 'antd/es/table';
 import { EditSerieModal } from './EditSerieModal';
 import { useRouter } from 'next/navigation';
 import { useMessage, useModal } from '@/hooks/useMessage';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
 
 interface SerieData {
   key: string;
@@ -36,6 +38,7 @@ export function AdminTableClient({ data, countries }: AdminTableClientProps) {
   const message = useMessage();
   const modal = useModal();
   const router = useRouter();
+    const { t } = useLocale();
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedSerieId, setSelectedSerieId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -86,12 +89,12 @@ export function AdminTableClient({ data, countries }: AdminTableClientProps) {
 
   const handleDelete = (record: SerieData) => {
     modal.confirm({
-      title: '¿Estás seguro?',
+      title: t('adminTable.deleteConfirmTitle'),
       icon: <ExclamationCircleOutlined />,
-      content: `¿Deseas eliminar la serie "${record.titulo}"? Esta acción no se puede deshacer.`,
-      okText: 'Sí, eliminar',
+      content: interpolateMessage(t('adminTable.deleteConfirmContent'), { titulo: record.titulo }),
+      okText: t('adminTable.deleteConfirmOk'),
       okType: 'danger',
-      cancelText: 'Cancelar',
+      cancelText: t('adminTable.deleteConfirmCancel'),
       async onOk() {
         try {
           const response = await fetch(`/api/series/${record.key}`, {
@@ -103,13 +106,13 @@ export function AdminTableClient({ data, countries }: AdminTableClientProps) {
             throw new Error(error.error || 'Error al eliminar la serie');
           }
 
-          message.success('Serie eliminada correctamente');
+          message.success(t('adminTable.deleteSuccess'));
           router.refresh();
         } catch (error) {
           const errorMessage =
             error instanceof Error
               ? error.message
-              : 'Error al eliminar la serie';
+              : t('adminTable.deleteError');
           message.error(errorMessage);
           console.error(error);
         }
@@ -127,14 +130,14 @@ export function AdminTableClient({ data, countries }: AdminTableClientProps) {
 
   const columns: ColumnsType<SerieData> = [
     {
-      title: 'Título',
+      title: t('adminTable.columnTitle'),
       dataIndex: 'titulo',
       key: 'titulo',
       sorter: (a, b) => a.titulo.localeCompare(b.titulo),
       width: 300,
     },
     {
-      title: 'País',
+      title: t('adminTable.columnCountry'),
       dataIndex: 'pais',
       key: 'pais',
       filters: Array.from(new Set(data.map((s) => s.pais)))
@@ -144,7 +147,7 @@ export function AdminTableClient({ data, countries }: AdminTableClientProps) {
       width: 120,
     },
     {
-      title: 'Tipo',
+      title: t('adminTable.columnType'),
       dataIndex: 'tipo',
       key: 'tipo',
       render: (tipo: string) => {
@@ -166,28 +169,28 @@ export function AdminTableClient({ data, countries }: AdminTableClientProps) {
       width: 100,
     },
     {
-      title: 'Temporadas',
+      title: t('adminTable.columnSeasons'),
       dataIndex: 'temporadas',
       key: 'temporadas',
       sorter: (a, b) => a.temporadas - b.temporadas,
       width: 120,
     },
     {
-      title: 'Episodios',
+      title: t('adminTable.columnEpisodes'),
       dataIndex: 'episodios',
       key: 'episodios',
       sorter: (a, b) => a.episodios - b.episodios,
       width: 120,
     },
     {
-      title: 'Año',
+      title: t('adminTable.columnYear'),
       dataIndex: 'anio',
       key: 'anio',
       sorter: (a, b) => a.anio - b.anio,
       width: 100,
     },
     {
-      title: 'Estado',
+      title: t('adminTable.columnStatus'),
       dataIndex: 'estado',
       key: 'estado',
       render: (estado: string) => (
@@ -196,7 +199,7 @@ export function AdminTableClient({ data, countries }: AdminTableClientProps) {
       width: 120,
     },
     {
-      title: 'Acciones',
+      title: t('adminTable.columnActions'),
       key: 'acciones',
       width: 120,
       fixed: 'right',
@@ -222,7 +225,7 @@ export function AdminTableClient({ data, countries }: AdminTableClientProps) {
     <>
       <div className="admin-search-bar">
         <Input
-          placeholder="Buscar por título, país o tipo..."
+          placeholder={t('adminTable.searchPlaceholder')}
           prefix={<SearchOutlined style={{ color: 'var(--text-tertiary)' }} />}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -230,7 +233,7 @@ export function AdminTableClient({ data, countries }: AdminTableClientProps) {
           className="admin-search-input"
         />
         <span className="admin-result-count">
-          {filteredData.length} de {data.length} series
+          {interpolateMessage(t('adminTable.resultCount'), { filtered: String(filteredData.length), total: String(data.length) })}
         </span>
       </div>
 
@@ -259,7 +262,7 @@ export function AdminTableClient({ data, countries }: AdminTableClientProps) {
           showSizeChanger: true,
           pageSizeOptions: ['10', '20', '50', '100'],
           showTotal: (total, range) =>
-            `${range[0]}-${range[1]} de ${total} series`,
+            interpolateMessage(t('adminTable.paginationTotal'), { from: String(range[0]), to: String(range[1]), total: String(total) }),
         }}
         scroll={{ x: 1200 }}
       />

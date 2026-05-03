@@ -14,6 +14,8 @@ import {
   CATEGORY_LABELS,
   PLATFORM_COLORS,
 } from '@/lib/embed-helpers';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
 import './contenido.css';
 
 interface EmbeddableContentItem {
@@ -45,6 +47,7 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
   const [channelFilter, setChannelFilter] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] =
     useState<EmbeddableContentItem | null>(null);
+  const { t } = useLocale();
 
   const channelOptions = useMemo(
     () =>
@@ -69,8 +72,8 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
     return (
       <AppLayout>
         <div className="contenido-page">
-          <h1 className="contenido-page__title">Contenido</h1>
-          <Empty description="Aún no hay contenido disponible" />
+          <h1 className="contenido-page__title">{t('contenidoPage.pageTitle')}</h1>
+          <Empty description={t('contenidoPage.emptyNoContent')} />
         </div>
       </AppLayout>
     );
@@ -79,9 +82,9 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
   return (
     <AppLayout>
       <div className="contenido-page">
-        <h1 className="contenido-page__title">Contenido</h1>
+        <h1 className="contenido-page__title">{t('contenidoPage.pageTitle')}</h1>
         <p className="contenido-page__subtitle">
-          Trailers, OSTs, entrevistas y más desde plataformas oficiales
+          {t('contenidoPage.subtitle')}
         </p>
 
         <ContentDisclaimer />
@@ -89,7 +92,7 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
         <div className="contenido-page__filters">
           <Space wrap>
             <Select
-              placeholder="Plataforma"
+              placeholder={t('contenidoPage.filterPlatform')}
               options={PLATFORM_OPTIONS}
               allowClear
               style={{ width: 160 }}
@@ -98,7 +101,7 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
               }
             />
             <Select
-              placeholder="Categoría"
+              placeholder={t('contenidoPage.filterCategory')}
               options={CATEGORY_OPTIONS}
               allowClear
               style={{ width: 180 }}
@@ -108,7 +111,7 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
             />
             {channelOptions.length > 0 && (
               <Select
-                placeholder="Canal / Fuente"
+                placeholder={t('contenidoPage.filterChannel')}
                 options={channelOptions}
                 allowClear
                 showSearch
@@ -127,7 +130,7 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
         </div>
 
         {filtered.length === 0 ? (
-          <Empty description="No hay contenido con estos filtros" />
+          <Empty description={t('contenidoPage.emptyFiltered')} />
         ) : (
           <Row gutter={[16, 16]}>
             {filtered.map((item) => (
@@ -158,7 +161,7 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
                       onClick={() => setSelectedItem(item)}
                       block
                     >
-                      Ver
+                      {t('contenidoPage.playButton')}
                     </Button>,
                   ]}
                 >
@@ -181,7 +184,7 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
                           </Tag>
                           {item.language && <Tag>{item.language}</Tag>}
                           {!item.official && (
-                            <Tag color="orange">No oficial</Tag>
+                            <Tag color="orange">{t('contenidoPage.unofficialTag')}</Tag>
                           )}
                         </Space>
                         {item.channelName && (
@@ -239,7 +242,7 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
 
               <div className="contenido-modal__credit-bar">
                 <span>
-                  Fuente: {selectedItem.platform}
+                  {interpolateMessage(t('contenidoPage.modalSource'), { platform: selectedItem.platform })}
                   {selectedItem.channelName && ` · ${selectedItem.channelName}`}
                 </span>
                 <a
@@ -248,7 +251,7 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
                   rel="noopener noreferrer nofollow"
                   className="contenido-modal__external-link"
                 >
-                  Ver en {selectedItem.platform} <LinkOutlined />
+                  {interpolateMessage(t('contenidoPage.modalViewOn'), { platform: selectedItem.platform })} <LinkOutlined />
                 </a>
               </div>
 
@@ -260,7 +263,7 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
 
               {selectedItem.series && (
                 <div className="contenido-modal__series-ref">
-                  Serie relacionada:{' '}
+                  {t('contenidoPage.modalRelatedSeries')}{' '}
                   <Link href={`/series/${selectedItem.series.id}`}>
                     {selectedItem.series.title}
                   </Link>

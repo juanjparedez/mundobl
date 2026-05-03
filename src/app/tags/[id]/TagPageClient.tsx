@@ -4,6 +4,8 @@ import { Card, Tag, Row, Col, Empty } from 'antd';
 import Image from 'next/image';
 import Link from 'next/link';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
 import './tag-page.css';
 
 interface TagSeriesEntry {
@@ -48,24 +50,6 @@ function getTypeColor(type: string): string {
   }
 }
 
-function getTypeLabel(type: string): string {
-  switch (type.toLowerCase()) {
-    case 'serie':
-      return 'Serie';
-    case 'pelicula':
-      return 'Película';
-    case 'corto':
-      return 'Corto';
-    case 'especial':
-      return 'Especial';
-    case 'anime':
-      return 'Animé';
-    case 'reality':
-      return 'Reality';
-    default:
-      return type;
-  }
-}
 
 export function TagPageClient({ tag }: TagPageClientProps) {
   const series = [...tag.series]
@@ -76,6 +60,19 @@ export function TagPageClient({ tag }: TagPageClientProps) {
       if (b.year) return 1;
       return a.title.localeCompare(b.title);
     });
+  const { t } = useLocale();
+
+  function getTypeLabel(type: string): string {
+    const map: Record<string, string> = {
+      serie: t('seriesHeader.typeSerie'),
+      pelicula: t('seriesHeader.typePelicula'),
+      corto: t('seriesHeader.typeCorto'),
+      especial: t('seriesHeader.typeEspecial'),
+      anime: t('seriesHeader.typeAnime'),
+      reality: t('seriesHeader.typeReality'),
+    };
+    return map[type.toLowerCase()] ?? type;
+  }
 
   return (
     <div className="tag-page">
@@ -88,17 +85,19 @@ export function TagPageClient({ tag }: TagPageClientProps) {
             <span className="tag-page__category">{tag.category}</span>
           )}
           <span className="tag-page__count">
-            {series.length} título{series.length === 1 ? '' : 's'}
+            {series.length === 1
+              ? t('tagPage.titleCountSingular')
+              : interpolateMessage(t('tagPage.titleCountPlural'), { n: String(series.length) })}
           </span>
         </div>
       </Card>
 
       <Card
-        title={`Series con este tag (${series.length})`}
+        title={interpolateMessage(t('tagPage.seriesWithTag'), { n: String(series.length) })}
         className="tag-page__list"
       >
         {series.length === 0 ? (
-          <Empty description="No hay series con este tag" />
+          <Empty description={t('tagPage.empty')} />
         ) : (
           <Row gutter={[16, 16]}>
             {series.map((entry) => (
