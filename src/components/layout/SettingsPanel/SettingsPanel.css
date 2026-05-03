@@ -1,0 +1,112 @@
+.settings-panel .ant-drawer-body {
+  padding: var(--spacing-md);
+}
+
+.settings-panel__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--border-color-secondary);
+}
+
+.settings-panel__section--reset {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.settings-panel__section-title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary);
+  margin: 0 0 var(--spacing-xs) 0;
+}
+
+.settings-panel__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.settings-panel__field--inline {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+}
+
+.settings-panel__label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.settings-panel__hint {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.settings-panel__select {
+  width: 100%;
+}
+
+.settings-panel__action {
+  width: 100%;
+}
+
+.settings-panel__reset {
+  color: var(--text-tertiary);
+}
+
+.settings-panel__reset:hover {
+  color: var(--primary-color);
+}
+
+/* Acentos: swatches circulares */
+.settings-panel__accents {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+.settings-panel__accent {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.settings-panel__accent:hover {
+  transform: scale(1.1);
+}
+
+.settings-panel__accent--active {
+  border-color: var(--text-primary);
+  transform: scale(1.1);
+}
+
+/* Escala tipográfica: tamaño visual creciente */
+.settings-panel__scale .ant-segmented-item-label {
+  font-weight: 700;
+}
+
+.settings-panel__scale .ant-segmented-item:nth-child(1) .ant-segmented-item-label {
+  font-size: 11px;
+}
+.settings-panel__scale .ant-segmented-item:nth-child(2) .ant-segmented-item-label {
+  font-size: 14px;
+}
+.settings-panel__scale .ant-segmented-item:nth-child(3) .ant-segmented-item-label {
+  font-size: 17px;
+}
+.settings-panel__scale .ant-segmented-item:nth-child(4) .ant-segmented-item-label {
+  font-size: 20px;
+}

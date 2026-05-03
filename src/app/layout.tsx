@@ -97,7 +97,7 @@ export default function RootLayout({
       <body>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){var t=localStorage.getItem('theme');if(t)document.documentElement.setAttribute('data-theme',t)})()`,
+            __html: `(function(){try{var d=document.documentElement;var ls=window.localStorage;function s(k,v,def){var raw=ls.getItem(k);if(raw&&v.indexOf(raw)>-1&&raw!==def){d.setAttribute('data-'+k.replace('theme-',''),raw)}}var t=ls.getItem('theme');if(t==='light'||t==='dark')d.setAttribute('data-theme',t);s('theme-tone',['default','warm','cool','contrast'],'default');s('theme-font',['system','serif','mono','dyslexic'],'system');s('theme-scale',['sm','md','lg','xl'],'md');s('theme-density',['compact','comfortable','spacious'],'comfortable');s('theme-motion',['auto','reduce'],'auto');s('theme-saver',['off','on'],'off')}catch(e){}})()`,
           }}
         />
         <JsonLd<WebSite>

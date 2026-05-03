@@ -313,6 +313,58 @@ type TranslationShape = {
     switchToLight: string;
     switchToDark: string;
   };
+  settings: {
+    title: string;
+    sectionAppearance: string;
+    sectionTypography: string;
+    sectionDensity: string;
+    sectionLanguage: string;
+    sectionAccessibility: string;
+    sectionDataPrivacy: string;
+    sectionSession: string;
+    themeLabel: string;
+    themeLight: string;
+    themeDark: string;
+    accentLabel: string;
+    toneLabel: string;
+    toneDefault: string;
+    toneWarm: string;
+    toneCool: string;
+    toneContrast: string;
+    fontLabel: string;
+    fontSystem: string;
+    fontSerif: string;
+    fontMono: string;
+    fontDyslexic: string;
+    scaleLabel: string;
+    scaleSmall: string;
+    scaleMedium: string;
+    scaleLarge: string;
+    scaleExtraLarge: string;
+    densityLabel: string;
+    densityCompact: string;
+    densityComfortable: string;
+    densitySpacious: string;
+    motionLabel: string;
+    motionAuto: string;
+    motionReduce: string;
+    saverLabel: string;
+    saverDescription: string;
+    saverOff: string;
+    saverOn: string;
+    resetButton: string;
+    resetConfirm: string;
+    clearCachesButton: string;
+    clearCachesDescription: string;
+    clearCachesSuccess: string;
+    closeOtherSessionsButton: string;
+    closeOtherSessionsDescription: string;
+    closeAllSessionsButton: string;
+    closeAllSessionsConfirm: string;
+    deleteAccountButton: string;
+    deleteAccountDescription: string;
+    closeButton: string;
+  };
   adminComments: {
     title: string;
     subtitle: string;
@@ -1498,6 +1550,63 @@ const es: TranslationShape = {
     theme: 'Tema',
     switchToLight: 'Cambiar a modo claro',
     switchToDark: 'Cambiar a modo oscuro',
+  },
+  settings: {
+    title: 'Preferencias',
+    sectionAppearance: 'Apariencia',
+    sectionTypography: 'Tipografia',
+    sectionDensity: 'Densidad',
+    sectionLanguage: 'Idioma',
+    sectionAccessibility: 'Accesibilidad',
+    sectionDataPrivacy: 'Datos y privacidad',
+    sectionSession: 'Sesion',
+    themeLabel: 'Tema',
+    themeLight: 'Claro',
+    themeDark: 'Oscuro',
+    accentLabel: 'Color de acento',
+    toneLabel: 'Tono base',
+    toneDefault: 'Predeterminado',
+    toneWarm: 'Calido',
+    toneCool: 'Frio',
+    toneContrast: 'Alto contraste',
+    fontLabel: 'Fuente',
+    fontSystem: 'Sistema',
+    fontSerif: 'Serif',
+    fontMono: 'Monoespaciada',
+    fontDyslexic: 'Para dislexia',
+    scaleLabel: 'Tamano del texto',
+    scaleSmall: 'Pequeno',
+    scaleMedium: 'Mediano',
+    scaleLarge: 'Grande',
+    scaleExtraLarge: 'Muy grande',
+    densityLabel: 'Densidad',
+    densityCompact: 'Compacta',
+    densityComfortable: 'Comoda',
+    densitySpacious: 'Amplia',
+    motionLabel: 'Animaciones',
+    motionAuto: 'Automatico (sigue al sistema)',
+    motionReduce: 'Reducidas',
+    saverLabel: 'Ahorrar datos',
+    saverDescription:
+      'Oculta fondos decorativos y reduce la calidad de imagen en planes con poco trafico.',
+    saverOff: 'Desactivado',
+    saverOn: 'Activado',
+    resetButton: 'Restaurar valores por defecto',
+    resetConfirm: 'Esto restablecera todas tus preferencias visuales.',
+    clearCachesButton: 'Limpiar cache local',
+    clearCachesDescription:
+      'Borra imagenes y datos guardados por el navegador. No cierra sesion.',
+    clearCachesSuccess: 'Cache local limpiada.',
+    closeOtherSessionsButton: 'Cerrar otras sesiones',
+    closeOtherSessionsDescription:
+      'Cierra cualquier otra sesion abierta en otros dispositivos.',
+    closeAllSessionsButton: 'Cerrar sesion en todos los dispositivos',
+    closeAllSessionsConfirm:
+      '¿Cerrar sesion en todos los dispositivos? Tendras que volver a iniciar sesion.',
+    deleteAccountButton: 'Eliminar mi cuenta',
+    deleteAccountDescription:
+      'Elimina permanentemente tu cuenta y datos personales. Disponible proximamente.',
+    closeButton: 'Cerrar',
   },
   adminComments: {
     title: 'Comentarios publicos',
@@ -2702,6 +2811,63 @@ const en: TranslationShape = {
     theme: 'Theme',
     switchToLight: 'Switch to light mode',
     switchToDark: 'Switch to dark mode',
+  },
+  settings: {
+    title: 'Preferences',
+    sectionAppearance: 'Appearance',
+    sectionTypography: 'Typography',
+    sectionDensity: 'Density',
+    sectionLanguage: 'Language',
+    sectionAccessibility: 'Accessibility',
+    sectionDataPrivacy: 'Data & privacy',
+    sectionSession: 'Session',
+    themeLabel: 'Theme',
+    themeLight: 'Light',
+    themeDark: 'Dark',
+    accentLabel: 'Accent color',
+    toneLabel: 'Base tone',
+    toneDefault: 'Default',
+    toneWarm: 'Warm',
+    toneCool: 'Cool',
+    toneContrast: 'High contrast',
+    fontLabel: 'Font',
+    fontSystem: 'System',
+    fontSerif: 'Serif',
+    fontMono: 'Monospaced',
+    fontDyslexic: 'Dyslexia-friendly',
+    scaleLabel: 'Text size',
+    scaleSmall: 'Small',
+    scaleMedium: 'Medium',
+    scaleLarge: 'Large',
+    scaleExtraLarge: 'Extra large',
+    densityLabel: 'Density',
+    densityCompact: 'Compact',
+    densityComfortable: 'Comfortable',
+    densitySpacious: 'Spacious',
+    motionLabel: 'Animations',
+    motionAuto: 'Auto (follows system)',
+    motionReduce: 'Reduced',
+    saverLabel: 'Save data',
+    saverDescription:
+      'Hides decorative backdrops and lowers image quality on limited connections.',
+    saverOff: 'Off',
+    saverOn: 'On',
+    resetButton: 'Reset to defaults',
+    resetConfirm: 'This will reset all your visual preferences.',
+    clearCachesButton: 'Clear local cache',
+    clearCachesDescription:
+      'Removes browser-stored images and data. Does not log you out.',
+    clearCachesSuccess: 'Local cache cleared.',
+    closeOtherSessionsButton: 'Close other sessions',
+    closeOtherSessionsDescription:
+      'Sign out of any other sessions on other devices.',
+    closeAllSessionsButton: 'Sign out of all devices',
+    closeAllSessionsConfirm:
+      'Sign out everywhere? You will need to sign in again.',
+    deleteAccountButton: 'Delete my account',
+    deleteAccountDescription:
+      'Permanently deletes your account and personal data. Coming soon.',
+    closeButton: 'Close',
   },
   adminComments: {
     title: 'Public comments',

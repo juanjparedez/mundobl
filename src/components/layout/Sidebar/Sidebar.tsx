@@ -2,7 +2,7 @@
 
 import { startTransition, useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { Layout, Menu, Avatar, Button, Select } from 'antd';
+import { Layout, Menu, Avatar, Button } from 'antd';
 import {
   AppstoreOutlined,
   SettingOutlined,
@@ -11,8 +11,6 @@ import {
   TagsOutlined,
   GlobalOutlined,
   PlayCircleOutlined,
-  BulbOutlined,
-  BulbFilled,
   UserOutlined,
   VideoCameraOutlined,
   LoadingOutlined,
@@ -27,10 +25,8 @@ import {
 import Link from 'next/link';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { ROUTES } from '@/constants/navigation';
-import { useTheme } from '@/lib/providers/ThemeProvider';
-import { LOCALE_LABELS, SUPPORTED_LOCALES } from '@/i18n/config';
 import { useLocale } from '@/lib/providers/LocaleProvider';
-import { AccentPicker } from './AccentPicker/AccentPicker';
+import { SettingsPanel } from '../SettingsPanel/SettingsPanel';
 import './Sidebar.css';
 
 const { Sider } = Layout;
@@ -49,16 +45,15 @@ export function Sidebar() {
 
   const pathname = usePathname();
   const router = useRouter();
-  const { theme, toggleTheme } = useTheme();
-  const { locale, setLocale, t } = useLocale();
+  const { t } = useLocale();
   const { data: session, status } = useSession();
-  const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   useEffect(() => {
     startTransition(() => {
-      setIsPreferencesOpen(false);
+      setIsSettingsOpen(false);
     });
-  }, [pathname, collapsed]);
+  }, [pathname]);
 
   const isAdmin = session?.user?.role === 'ADMIN';
   const isModerator = session?.user?.role === 'MODERATOR';
@@ -265,70 +260,21 @@ export function Sidebar() {
         </div>
 
         <button
-          className={`sidebar-settings-trigger${isPreferencesOpen ? ' sidebar-settings-trigger--active' : ''}`}
-          onClick={() => {
-            if (collapsed) {
-              setCollapsed(false);
-              return;
-            }
-            setIsPreferencesOpen((prev) => !prev);
-          }}
+          className="sidebar-settings-trigger"
+          onClick={() => setIsSettingsOpen(true)}
           aria-label={t('bottomNav.settings')}
-          aria-expanded={isPreferencesOpen}
-          aria-controls="sidebar-preferences"
+          aria-haspopup="dialog"
         >
           <span className="sidebar-settings-trigger__icon" aria-hidden="true">
             <SettingOutlined />
           </span>
           {!collapsed && <span>{t('bottomNav.settings')}</span>}
         </button>
-
-        {!collapsed && isPreferencesOpen && (
-          <div id="sidebar-preferences" className="sidebar-preferences">
-            <div className="sidebar-preferences__field">
-              <span className="sidebar-preferences__label">
-                {t('common.language')}
-              </span>
-              <Select
-                value={locale}
-                onChange={setLocale}
-                options={SUPPORTED_LOCALES.map((code) => ({
-                  value: code,
-                  label: LOCALE_LABELS[code],
-                }))}
-                size="small"
-                className="sidebar-preferences__select"
-                aria-label={t('common.language')}
-              />
-            </div>
-
-            <div className="sidebar-preferences__field sidebar-preferences__field--stacked">
-              <span className="sidebar-preferences__label">
-                {t('bottomNav.accentColor')}
-              </span>
-              <AccentPicker />
-            </div>
-
-            <button
-              className="sidebar-preferences__theme"
-              onClick={toggleTheme}
-              aria-label={
-                theme === 'dark'
-                  ? t('sidebar.switchToLight')
-                  : t('sidebar.switchToDark')
-              }
-            >
-              <span
-                className="sidebar-preferences__theme-icon"
-                aria-hidden="true"
-              >
-                {theme === 'dark' ? <BulbFilled /> : <BulbOutlined />}
-              </span>
-              <span>{t('bottomNav.theme')}</span>
-            </button>
-          </div>
-        )}
       </div>
+      <SettingsPanel
+        open={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+      />
     </Sider>
   );
 }
