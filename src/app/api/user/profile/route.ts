@@ -26,6 +26,26 @@ interface RawDayRow {
   day: Date;
 }
 
+interface RawAvgRatingRow {
+  avg_rating: string | null;
+}
+
+interface RawTopRatedRow {
+  series_id: number;
+  title: string;
+  rating: number;
+  image_url: string | null;
+}
+
+interface RawTypeRow {
+  type: string;
+  count: bigint;
+}
+
+interface RawEpisodeCountRow {
+  total: bigint;
+}
+
 // GET /api/user/profile — returns stats + recent activity for authenticated user
 export async function GET(request: NextRequest) {
   try {
@@ -58,6 +78,11 @@ export async function GET(request: NextRequest) {
       topActorsRaw,
       topProductionCompaniesRaw,
       completedByYearRaw,
+      avgRatingRaw,
+      topRatedSeriesRaw,
+      byTypeRaw,
+      totalEpisodesRaw,
+      heatmapRaw,
     ] = await Promise.all([
       // Basic user info
       prisma.user.findUnique({
@@ -241,6 +266,55 @@ export async function GET(request: NextRequest) {
         ORDER BY s.year DESC
         LIMIT 10
       `,
+
+      // Average rating given by user
+      prisma.$queryRaw<RawAvgRatingRow[]>`
+        SELECT AVG(rating)::text as avg_rating
+        FROM "UserRating"
+        WHERE "userId" = ${userId}
+      `,
+
+      // Top-rated series (highest rating given by user)
+      prisma.$queryRaw<RawTopRatedRow[]>`
+        SELECT s.id as series_id, s.title, ur.rating, s."imageUrl" as image_url
+        FROM "UserRating" ur
+        JOIN "Series" s ON s.id = ur."seriesId"
+        WHERE ur."userId" = ${userId}
+        ORDER BY ur.rating DESC, s.title ASC
+        LIMIT 5
+      `,
+
+      // Series count by type (watched)
+      prisma.$queryRaw<RawTypeRow[]>`
+        SELECT s.type, COUNT(*) as count
+        FROM "ViewStatus" vs
+        JOIN "Series" s ON vs."seriesId" = s.id
+        WHERE vs."userId" = ${userId}
+          AND vs.status = 'VISTA'
+          AND vs."seriesId" IS NOT NULL
+        GROUP BY s.type
+        ORDER BY count DESC
+      `,
+
+      // Total episodes watched
+      prisma.$queryRaw<RawEpisodeCountRow[]>`
+        SELECT COUNT(*) as total
+        FROM "ViewStatus"
+        WHERE "userId" = ${userId}
+          AND status = 'VISTA'
+          AND "episodeId" IS NOT NULL
+      `,
+
+      // Daily activity last 84 days (12 weeks) for heatmap
+      prisma.$queryRaw<RawDayRow[]>`
+        SELECT DISTINCT DATE(vs."updatedAt") as day
+        FROM "ViewStatus" vs
+        WHERE vs."userId" = ${userId}
+          AND vs.status = 'VISTA'
+          AND vs."episodeId" IS NOT NULL
+          AND vs."updatedAt" >= NOW() - INTERVAL '84 days'
+        ORDER BY day
+      `,
     ]);
 
     if (!user) {
@@ -255,6 +329,27 @@ export async function GET(request: NextRequest) {
     statusCounts.forEach((s) => {
       statusMap[s.status] = s._count.status;
     });
+
+    // Compute longest streak from heatmap data
+    const heatmapDates = heatmapRaw.map((r) =>
+      new Date(r.day).toISOString().slice(0, 10)
+    );
+    const heatmapSet = new Set(heatmapDates);
+
+    let longestStreak = 0;
+    let currentStreak = 0;
+    let streakCheck = new Date();
+    streakCheck.setHours(0, 0, 0, 0);
+    for (let i = 0; i < 84; i++) {
+      const key = streakCheck.toISOString().slice(0, 10);
+      if (heatmapSet.has(key)) {
+        currentStreak++;
+        longestStreak = Math.max(longestStreak, currentStreak);
+      } else {
+        currentStreak = 0;
+      }
+      streakCheck = new Date(streakCheck.getTime() - 86400000);
+    }
 
     // Compute next episode for VIENDO entries
     const watchingWithNext = currentlyWatching.map((item) => {
@@ -328,6 +423,23 @@ export async function GET(request: NextRequest) {
           year: y.year,
           count: Number(y.count),
         })),
+        avgRating:
+          avgRatingRaw[0]?.avg_rating != null
+            ? Math.round(parseFloat(avgRatingRaw[0].avg_rating) * 10) / 10
+            : null,
+        topRatedSeries: topRatedSeriesRaw.map((r) => ({
+          seriesId: r.series_id,
+          title: r.title,
+          rating: r.rating,
+          imageUrl: r.image_url,
+        })),
+        byType: byTypeRaw.map((r) => ({
+          type: r.type,
+          count: Number(r.count),
+        })),
+        totalEpisodes: Number(totalEpisodesRaw[0]?.total ?? 0),
+        longestStreak,
+        heatmap: heatmapDates,
       },
       recentlyCompleted: recentlyCompleted.map((r) => ({
         seriesId: r.seriesId,

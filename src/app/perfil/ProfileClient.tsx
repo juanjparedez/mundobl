@@ -13,6 +13,7 @@ import {
   Select,
   Spin,
   Tag,
+  Tooltip,
 } from 'antd';
 import {
   UserOutlined,
@@ -37,6 +38,9 @@ import {
   ClockCircleOutlined,
   GlobalOutlined,
   FireOutlined,
+  ThunderboltOutlined,
+  TrophyOutlined,
+  PieChartOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -48,6 +52,11 @@ import { interpolateMessage } from '@/lib/i18n-format';
 import { ProfileSettings } from './ProfileSettings/ProfileSettings';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
 import { SerieCardSkeleton } from '@/components/common/SerieCardSkeleton/SerieCardSkeleton';
+import {
+  StatWidget,
+  StatBar,
+  StatWidgetRestoreBar,
+} from '@/components/common/StatWidget/StatWidget';
 import './profile.css';
 
 const ROLE_COLORS: Record<string, string> = {
@@ -88,6 +97,17 @@ interface ProfileData {
     topActors: Array<{ name: string; count: number }>;
     topProductionCompanies: Array<{ name: string; count: number }>;
     completedByYear: Array<{ year: number | null; count: number }>;
+    avgRating: number | null;
+    topRatedSeries: Array<{
+      seriesId: number;
+      title: string;
+      rating: number;
+      imageUrl: string | null;
+    }>;
+    byType: Array<{ type: string; count: number }>;
+    totalEpisodes: number;
+    longestStreak: number;
+    heatmap: string[];
   };
   recentlyCompleted: Array<{ seriesId: number; series: SeriesMini | null }>;
   currentlyWatching: Array<{
@@ -153,6 +173,22 @@ type StatsMode = 'basic' | 'advanced';
 
 const PROFILE_STATS_MODE_STORAGE_KEY = 'profile-stats-mode';
 const PROFILE_STATS_TOP_N_STORAGE_KEY = 'profile-stats-top-n';
+const PROFILE_HIDDEN_WIDGETS_STORAGE_KEY = 'profile-hidden-widgets';
+
+const ALL_WIDGET_IDS = [
+  'hours',
+  'streak',
+  'episodes',
+  'avg-rating',
+  'genres',
+  'countries',
+  'by-type',
+  'completed-by-year',
+  'top-rated',
+  'actors',
+  'companies',
+] as const;
+type WidgetId = (typeof ALL_WIDGET_IDS)[number];
 
 function SeriesCard({
   series,
@@ -216,6 +252,21 @@ export function ProfileClient() {
   const [loading, setLoading] = useState(true);
   const [statsMode, setStatsMode] = useState<StatsMode>('basic');
   const [statsTopN, setStatsTopN] = useState<number>(25);
+  const [hiddenWidgets, setHiddenWidgets] = useState<WidgetId[]>(() => {
+    if (typeof window === 'undefined') return [];
+    try {
+      const raw = window.localStorage.getItem(
+        PROFILE_HIDDEN_WIDGETS_STORAGE_KEY
+      );
+      if (!raw) return [];
+      const parsed = JSON.parse(raw) as unknown[];
+      return parsed.filter((v): v is WidgetId =>
+        (ALL_WIDGET_IDS as readonly string[]).includes(v as string)
+      );
+    } catch {
+      return [];
+    }
+  });
 
   const [comments, setComments] = useState<UserComment[]>([]);
   const [commentsTotal, setCommentsTotal] = useState(0);
@@ -303,6 +354,24 @@ export function ProfileClient() {
       String(statsTopN)
     );
   }, [statsTopN]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem(
+      PROFILE_HIDDEN_WIDGETS_STORAGE_KEY,
+      JSON.stringify(hiddenWidgets)
+    );
+  }, [hiddenWidgets]);
+
+  const hideWidget = useCallback((id: string) => {
+    setHiddenWidgets((prev) =>
+      prev.includes(id as WidgetId) ? prev : [...prev, id as WidgetId]
+    );
+  }, []);
+
+  const restoreWidget = useCallback((id: string) => {
+    setHiddenWidgets((prev) => prev.filter((w) => w !== id));
+  }, []);
 
   const loadProfile = useCallback(async () => {
     const params = new URLSearchParams({ topN: String(statsTopN) });
@@ -772,204 +841,303 @@ export function ProfileClient() {
               />
             </div>
           </div>
-          <div className="profile-rich-stats">
+
+          {/* Restore hidden widgets */}
+          <StatWidgetRestoreBar
+            hiddenIds={hiddenWidgets}
+            onRestore={restoreWidget}
+            label={t('profile.statsRestoreWidgets')}
+          />
+
+          {/* Widget grid */}
+          <div className="profile-widget-grid">
             {/* Hours watched */}
-            <div className="profile-rich-stat-card">
-              <div className="profile-rich-stat-card__icon">
-                <ClockCircleOutlined />
-              </div>
-              <div className="profile-rich-stat-card__value">
-                {stats.hoursWatched}h
-              </div>
-              <div className="profile-rich-stat-card__label">
-                {t('profile.statsHoursWatched')}
-              </div>
-            </div>
-
-            {/* Weekly activity */}
-            <div className="profile-rich-stat-card">
-              <div className="profile-rich-stat-card__icon">
-                <FireOutlined />
-              </div>
-              <div className="profile-rich-stat-card__value">
-                {stats.activeDaysThisWeek}/7
-              </div>
-              <div className="profile-rich-stat-card__label">
-                {t('profile.statsActiveDays')}
-              </div>
-              <div className="profile-weekly-dots">
-                {Array.from({ length: 7 }).map((_, i) => (
-                  <span
-                    key={i}
-                    className={`profile-weekly-dot${i < stats.activeDaysThisWeek ? ' profile-weekly-dot--active' : ''}`}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Top genres */}
-            <div className="profile-rich-stat-card profile-rich-stat-card--wide">
-              <div className="profile-rich-stat-card__header">
-                <GlobalOutlined />
-                {t('profile.statsTopGenres')}
-              </div>
-              {stats.topGenres.length === 0 ? (
-                <span className="profile-rich-stat-card__empty">
-                  {t('profile.statsNoData')}
-                </span>
-              ) : (
-                <div className="profile-top-list">
-                  {visibleTopGenres.map((g) => (
-                    <div key={g.name} className="profile-top-list__item">
-                      <span className="profile-top-list__name">{g.name}</span>
-                      <Progress
-                        percent={Math.round(
-                          (g.count / visibleTopGenres[0].count) * 100
-                        )}
-                        showInfo={false}
-                        size="small"
-                        className="profile-top-list__bar"
-                      />
-                      <span className="profile-top-list__count">{g.count}</span>
-                    </div>
-                  ))}
+            {!hiddenWidgets.includes('hours') && (
+              <StatWidget
+                id="hours"
+                title={t('profile.statsHoursWatched')}
+                icon={<ClockCircleOutlined />}
+                hiddenIds={hiddenWidgets}
+                onHide={hideWidget}
+                accent="var(--primary-color)"
+              >
+                <div className="profile-widget-kpi">
+                  <span className="profile-widget-kpi__value">
+                    {stats.hoursWatched}h
+                  </span>
+                  <span className="profile-widget-kpi__sub">
+                    {stats.totalEpisodes.toLocaleString()}{' '}
+                    {t('profile.statsEpisodesLabel')}
+                  </span>
                 </div>
-              )}
-            </div>
-
-            {/* Top countries */}
-            <div className="profile-rich-stat-card profile-rich-stat-card--wide">
-              <div className="profile-rich-stat-card__header">
-                <GlobalOutlined />
-                {t('profile.statsTopCountries')}
-              </div>
-              {stats.topCountries.length === 0 ? (
-                <span className="profile-rich-stat-card__empty">
-                  {t('profile.statsNoData')}
-                </span>
-              ) : (
-                <div className="profile-top-list">
-                  {visibleTopCountries.map((c) => (
-                    <div key={c.name} className="profile-top-list__item">
-                      <span className="profile-top-list__name">{c.name}</span>
-                      <Progress
-                        percent={Math.round(
-                          (c.count / visibleTopCountries[0].count) * 100
-                        )}
-                        showInfo={false}
-                        size="small"
-                        className="profile-top-list__bar"
-                      />
-                      <span className="profile-top-list__count">{c.count}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Completed by year */}
-            {stats.completedByYear.length > 0 && (
-              <div className="profile-rich-stat-card profile-rich-stat-card--full">
-                <div className="profile-rich-stat-card__header">
-                  <CalendarOutlined />
-                  {t('profile.statsCompletedByYear')}
-                </div>
-                <div className="profile-year-bars">
-                  {stats.completedByYear.map((y) => {
-                    const max = Math.max(
-                      ...stats.completedByYear.map((r) => r.count)
-                    );
-                    return (
-                      <div key={y.year} className="profile-year-bar">
-                        <div
-                          className="profile-year-bar__fill"
-                          style={{
-                            height: `${Math.round((y.count / max) * 60)}px`,
-                          }}
-                        />
-                        <span className="profile-year-bar__count">
-                          {y.count}
-                        </span>
-                        <span className="profile-year-bar__year">{y.year}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+              </StatWidget>
             )}
 
+            {/* Streak */}
+            {!hiddenWidgets.includes('streak') && (
+              <StatWidget
+                id="streak"
+                title={t('profile.statsStreakTitle')}
+                icon={<FireOutlined />}
+                hiddenIds={hiddenWidgets}
+                onHide={hideWidget}
+                accent="#f59e0b"
+              >
+                <div className="profile-widget-kpi">
+                  <span className="profile-widget-kpi__value">
+                    {stats.longestStreak}
+                  </span>
+                  <span className="profile-widget-kpi__sub">
+                    {t('profile.statsStreakDays')}
+                  </span>
+                </div>
+                <div className="profile-heatmap">
+                  {(() => {
+                    const heatSet = new Set(stats.heatmap);
+                    return Array.from({ length: 84 }).map((_, i) => {
+                      const d = new Date();
+                      d.setDate(d.getDate() - (83 - i));
+                      const key = d.toISOString().slice(0, 10);
+                      return (
+                        <Tooltip key={key} title={key}>
+                          <span
+                            className={`profile-heatmap__cell${heatSet.has(key) ? ' profile-heatmap__cell--active' : ''}`}
+                          />
+                        </Tooltip>
+                      );
+                    });
+                  })()}
+                </div>
+              </StatWidget>
+            )}
+
+            {/* Avg rating */}
+            {!hiddenWidgets.includes('avg-rating') && (
+              <StatWidget
+                id="avg-rating"
+                title={t('profile.statsAvgRating')}
+                icon={<StarOutlined />}
+                hiddenIds={hiddenWidgets}
+                onHide={hideWidget}
+                accent="#faad14"
+              >
+                <div className="profile-widget-kpi">
+                  <span className="profile-widget-kpi__value">
+                    {stats.avgRating != null ? `★ ${stats.avgRating}` : '—'}
+                  </span>
+                  <span className="profile-widget-kpi__sub">
+                    {stats.ratings} {t('profile.statsRatingsGiven')}
+                  </span>
+                </div>
+              </StatWidget>
+            )}
+
+            {/* Genres */}
+            {!hiddenWidgets.includes('genres') && (
+              <StatWidget
+                id="genres"
+                title={t('profile.statsTopGenres')}
+                icon={<AppstoreOutlined />}
+                hiddenIds={hiddenWidgets}
+                onHide={hideWidget}
+              >
+                {visibleTopGenres.length === 0 ? (
+                  <span className="profile-widget-empty">
+                    {t('profile.statsNoData')}
+                  </span>
+                ) : (
+                  visibleTopGenres.map((g) => (
+                    <StatBar
+                      key={g.name}
+                      label={g.name}
+                      count={g.count}
+                      max={visibleTopGenres[0].count}
+                    />
+                  ))
+                )}
+              </StatWidget>
+            )}
+
+            {/* Countries */}
+            {!hiddenWidgets.includes('countries') && (
+              <StatWidget
+                id="countries"
+                title={t('profile.statsTopCountries')}
+                icon={<GlobalOutlined />}
+                hiddenIds={hiddenWidgets}
+                onHide={hideWidget}
+              >
+                {visibleTopCountries.length === 0 ? (
+                  <span className="profile-widget-empty">
+                    {t('profile.statsNoData')}
+                  </span>
+                ) : (
+                  visibleTopCountries.map((c) => (
+                    <StatBar
+                      key={c.name}
+                      label={c.name}
+                      count={c.count}
+                      max={visibleTopCountries[0].count}
+                    />
+                  ))
+                )}
+              </StatWidget>
+            )}
+
+            {/* By type */}
+            {!hiddenWidgets.includes('by-type') && (
+              <StatWidget
+                id="by-type"
+                title={t('profile.statsByType')}
+                icon={<PieChartOutlined />}
+                hiddenIds={hiddenWidgets}
+                onHide={hideWidget}
+                accent="#10b981"
+              >
+                {stats.byType.length === 0 ? (
+                  <span className="profile-widget-empty">
+                    {t('profile.statsNoData')}
+                  </span>
+                ) : (
+                  stats.byType.map((bt) => (
+                    <StatBar
+                      key={bt.type}
+                      label={bt.type}
+                      count={bt.count}
+                      max={stats.byType[0].count}
+                    />
+                  ))
+                )}
+              </StatWidget>
+            )}
+
+            {/* Completed by year */}
+            {!hiddenWidgets.includes('completed-by-year') &&
+              stats.completedByYear.length > 0 && (
+                <StatWidget
+                  id="completed-by-year"
+                  title={t('profile.statsCompletedByYear')}
+                  icon={<CalendarOutlined />}
+                  fullWidth
+                  hiddenIds={hiddenWidgets}
+                  onHide={hideWidget}
+                >
+                  <div className="profile-year-bars">
+                    {(() => {
+                      const max = Math.max(
+                        ...stats.completedByYear.map((r) => r.count)
+                      );
+                      return stats.completedByYear.map((y) => (
+                        <div key={y.year} className="profile-year-bar">
+                          <div
+                            className="profile-year-bar__fill"
+                            style={{
+                              height: `${Math.round((y.count / max) * 60)}px`,
+                            }}
+                          />
+                          <span className="profile-year-bar__count">
+                            {y.count}
+                          </span>
+                          <span className="profile-year-bar__year">
+                            {y.year}
+                          </span>
+                        </div>
+                      ));
+                    })()}
+                  </div>
+                </StatWidget>
+              )}
+
+            {/* Advanced widgets */}
             {statsMode === 'advanced' && (
               <>
-                <div className="profile-rich-stat-card profile-rich-stat-card--wide">
-                  <div className="profile-rich-stat-card__header">
-                    <GlobalOutlined />
-                    {t('profile.statsTopActors')}
-                  </div>
-                  {visibleTopActors.length === 0 ? (
-                    <span className="profile-rich-stat-card__empty">
-                      {t('profile.statsNoData')}
-                    </span>
-                  ) : (
-                    <div className="profile-top-list">
-                      {visibleTopActors.map((a) => (
-                        <div key={a.name} className="profile-top-list__item">
-                          <span className="profile-top-list__name">
-                            {a.name}
-                          </span>
-                          <Progress
-                            percent={Math.round(
-                              (a.count / visibleTopActors[0].count) * 100
-                            )}
-                            showInfo={false}
-                            size="small"
-                            className="profile-top-list__bar"
-                          />
-                          <span className="profile-top-list__count">
-                            {a.count}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                {/* Top rated series */}
+                {!hiddenWidgets.includes('top-rated') && (
+                  <StatWidget
+                    id="top-rated"
+                    title={t('profile.statsTopRated')}
+                    icon={<TrophyOutlined />}
+                    hiddenIds={hiddenWidgets}
+                    onHide={hideWidget}
+                    accent="#faad14"
+                  >
+                    {stats.topRatedSeries.length === 0 ? (
+                      <span className="profile-widget-empty">
+                        {t('profile.statsNoData')}
+                      </span>
+                    ) : (
+                      <div className="profile-top-rated-list">
+                        {stats.topRatedSeries.map((s) => (
+                          <Link
+                            key={s.seriesId}
+                            href={`/series/${s.seriesId}`}
+                            className="profile-top-rated-item"
+                          >
+                            <span className="profile-top-rated-item__stars">
+                              {'★'.repeat(s.rating)}
+                              {'☆'.repeat(5 - s.rating)}
+                            </span>
+                            <span className="profile-top-rated-item__title">
+                              {s.title}
+                            </span>
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </StatWidget>
+                )}
 
-                <div className="profile-rich-stat-card profile-rich-stat-card--wide">
-                  <div className="profile-rich-stat-card__header">
-                    <GlobalOutlined />
-                    {t('profile.statsTopProductionCompanies')}
-                  </div>
-                  {visibleTopProductionCompanies.length === 0 ? (
-                    <span className="profile-rich-stat-card__empty">
-                      {t('profile.statsNoData')}
-                    </span>
-                  ) : (
-                    <div className="profile-top-list">
-                      {visibleTopProductionCompanies.map((company) => (
-                        <div
+                {/* Top actors */}
+                {!hiddenWidgets.includes('actors') && (
+                  <StatWidget
+                    id="actors"
+                    title={t('profile.statsTopActors')}
+                    icon={<UserOutlined />}
+                    hiddenIds={hiddenWidgets}
+                    onHide={hideWidget}
+                  >
+                    {visibleTopActors.length === 0 ? (
+                      <span className="profile-widget-empty">
+                        {t('profile.statsNoData')}
+                      </span>
+                    ) : (
+                      visibleTopActors.map((a) => (
+                        <StatBar
+                          key={a.name}
+                          label={a.name}
+                          count={a.count}
+                          max={visibleTopActors[0].count}
+                        />
+                      ))
+                    )}
+                  </StatWidget>
+                )}
+
+                {/* Top companies */}
+                {!hiddenWidgets.includes('companies') && (
+                  <StatWidget
+                    id="companies"
+                    title={t('profile.statsTopProductionCompanies')}
+                    icon={<ThunderboltOutlined />}
+                    hiddenIds={hiddenWidgets}
+                    onHide={hideWidget}
+                  >
+                    {visibleTopProductionCompanies.length === 0 ? (
+                      <span className="profile-widget-empty">
+                        {t('profile.statsNoData')}
+                      </span>
+                    ) : (
+                      visibleTopProductionCompanies.map((company) => (
+                        <StatBar
                           key={company.name}
-                          className="profile-top-list__item"
-                        >
-                          <span className="profile-top-list__name">
-                            {company.name}
-                          </span>
-                          <Progress
-                            percent={Math.round(
-                              (company.count /
-                                visibleTopProductionCompanies[0].count) *
-                                100
-                            )}
-                            showInfo={false}
-                            size="small"
-                            className="profile-top-list__bar"
-                          />
-                          <span className="profile-top-list__count">
-                            {company.count}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                          label={company.name}
+                          count={company.count}
+                          max={visibleTopProductionCompanies[0].count}
+                        />
+                      ))
+                    )}
+                  </StatWidget>
+                )}
               </>
             )}
           </div>
