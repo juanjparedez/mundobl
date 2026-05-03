@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
+import { notifyUser } from '@/lib/notifications';
 
 // PUT /api/feature-requests/[id] — admin, actualizar status/priority
 export async function PUT(
@@ -43,6 +44,11 @@ export async function PUT(
       updateData.priority = priority;
     }
 
+    const previous = await prisma.featureRequest.findUnique({
+      where: { id: parseInt(id) },
+      select: { status: true, userId: true, title: true },
+    });
+
     const updated = await prisma.featureRequest.update({
       where: { id: parseInt(id) },
       data: updateData,
@@ -52,6 +58,27 @@ export async function PUT(
         votes: { select: { userId: true } },
       },
     });
+
+    // Avisar al autor si su solicitud cambió de status (no si solo cambió priority).
+    if (
+      previous &&
+      previous.userId &&
+      status &&
+      status !== previous.status &&
+      previous.userId !== authResult.userId
+    ) {
+      await notifyUser({
+        userId: previous.userId,
+        type: 'feature_status',
+        title: `Cambio en tu solicitud: "${previous.title}"`,
+        body: `El estado pasó a "${status}".`,
+        linkPath: '/feedback',
+        refType: 'feature_request',
+        refId: parseInt(id),
+      }).catch(() => {
+        /* never block the main op */
+      });
+    }
 
     return NextResponse.json(updated);
   } catch (error) {

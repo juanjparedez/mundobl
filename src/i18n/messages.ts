@@ -318,6 +318,22 @@ type TranslationShape = {
     seasonLabel: string;
     changelogTitle: string;
   };
+  notifications: {
+    title: string;
+    subtitle: string;
+    label: string;
+    openTitle: string;
+    empty: string;
+    new: string;
+    unread: string;
+    allRead: string;
+    markRead: string;
+    markAllRead: string;
+    delete: string;
+    clearAll: string;
+    cleared: string;
+    loginRequired: string;
+  };
   bottomNav: {
     mainNavigation: string;
     catalog: string;
@@ -1583,6 +1599,22 @@ const es: TranslationShape = {
     newSeasonsTitle: 'Nuevas temporadas',
     seasonLabel: 'Temporada',
     changelogTitle: 'Cambios recientes',
+  },
+  notifications: {
+    title: 'Notificaciones',
+    subtitle: 'Tus avisos personales en MundoBL.',
+    label: 'Notificaciones',
+    openTitle: 'Ver notificaciones',
+    empty: 'No tenés notificaciones por ahora.',
+    new: 'Nueva',
+    unread: 'sin leer',
+    allRead: 'Estás al día',
+    markRead: 'Marcar como leída',
+    markAllRead: 'Marcar todas como leídas',
+    delete: 'Eliminar',
+    clearAll: 'Borrar todas',
+    cleared: 'Notificaciones borradas.',
+    loginRequired: 'Iniciá sesión para ver tus notificaciones personales.',
   },
   bottomNav: {
     mainNavigation: 'Navegacion principal',
@@ -2873,6 +2905,22 @@ const en: TranslationShape = {
     newSeasonsTitle: 'New seasons',
     seasonLabel: 'Season',
     changelogTitle: 'Recent changes',
+  },
+  notifications: {
+    title: 'Notifications',
+    subtitle: 'Your personal alerts on MundoBL.',
+    label: 'Notifications',
+    openTitle: 'Open notifications',
+    empty: 'You have no notifications yet.',
+    new: 'New',
+    unread: 'unread',
+    allRead: "You're all caught up",
+    markRead: 'Mark as read',
+    markAllRead: 'Mark all as read',
+    delete: 'Delete',
+    clearAll: 'Clear all',
+    cleared: 'Notifications cleared.',
+    loginRequired: 'Sign in to see your personal notifications.',
   },
   bottomNav: {
     mainNavigation: 'Main navigation',
