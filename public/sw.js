@@ -1,6 +1,6 @@
-const SHELL_CACHE = 'mundobl-shell-v5';
-const IMAGE_CACHE = 'mundobl-img-v5';
-const REMOTE_IMAGE_CACHE = 'mundobl-remote-img-v5';
+const SHELL_CACHE = 'mundobl-shell-v6';
+const IMAGE_CACHE = 'mundobl-img-v6';
+const REMOTE_IMAGE_CACHE = 'mundobl-remote-img-v6';
 const IMAGE_CACHE_MAX_ENTRIES = 250;
 const REMOTE_IMAGE_CACHE_MAX_ENTRIES = 500;
 
@@ -90,6 +90,13 @@ self.addEventListener('fetch', (event) => {
     url.origin === self.location.origin &&
     url.pathname.startsWith('/_next/image')
   ) {
+    // Defensivo: si la query es inválida (ej. q=0 cacheado en una versión
+    // anterior), saltamos cache y dejamos que el server responda en limpio.
+    const q = url.searchParams.get('q');
+    const qNum = q === null ? null : Number(q);
+    if (qNum !== null && (Number.isNaN(qNum) || qNum < 1 || qNum > 100)) {
+      return;
+    }
     event.respondWith(
       cacheFirst(request, IMAGE_CACHE, {
         maxEntries: IMAGE_CACHE_MAX_ENTRIES,
