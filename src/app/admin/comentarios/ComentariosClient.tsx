@@ -8,13 +8,16 @@ import {
   Input,
   Popconfirm,
   Segmented,
+  Space,
   Table,
   Tag,
 } from 'antd';
 import {
   DeleteOutlined,
+  ExportOutlined,
   FlagOutlined,
   SearchOutlined,
+  StopOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
@@ -25,6 +28,13 @@ import '../admin.css';
 import './comentarios.css';
 
 type TargetFilter = 'all' | 'series' | 'season' | 'episode';
+
+interface CommentReportRow {
+  id: number;
+  reason: string | null;
+  createdAt: string;
+  user: { id: string; name: string | null; email: string | null } | null;
+}
 
 interface CommentRow {
   id: number;
@@ -53,6 +63,7 @@ interface CommentRow {
       series: { id: number; title: string } | null;
     } | null;
   } | null;
+  reports: CommentReportRow[];
 }
 
 interface CommentsResponse {
@@ -116,6 +127,39 @@ export function ComentariosClient() {
       console.error(error);
       message.error('Error al eliminar comentario');
     }
+  };
+
+  const handleDismissReports = async (id: number) => {
+    try {
+      const response = await fetch(
+        `/api/admin/comments/${id}/dismiss-reports`,
+        { method: 'POST' }
+      );
+      if (!response.ok) throw new Error('Error al descartar reportes');
+      message.success('Reportes descartados');
+      if (reportedOnly) {
+        setComments((prev) => prev.filter((c) => c.id !== id));
+        setTotal((prev) => Math.max(prev - 1, 0));
+      } else {
+        setComments((prev) =>
+          prev.map((c) =>
+            c.id === id
+              ? { ...c, reportCount: 0, reportedAt: null, reports: [] }
+              : c
+          )
+        );
+      }
+    } catch (error) {
+      console.error(error);
+      message.error('Error al descartar reportes');
+    }
+  };
+
+  const getTargetSeriesId = (record: CommentRow): number | null => {
+    if (record.episode) return record.episode.season?.series?.id ?? null;
+    if (record.season) return record.season.series?.id ?? null;
+    if (record.series) return record.series.id;
+    return null;
   };
 
   const renderTarget = (record: CommentRow) => {
@@ -210,21 +254,50 @@ export function ComentariosClient() {
     {
       title: 'Acciones',
       key: 'actions',
-      width: 110,
-      render: (_, record) => (
-        <Popconfirm
-          title="Eliminar comentario?"
-          description="Esta acción no se puede deshacer"
-          onConfirm={() => handleDelete(record.id)}
-          okText="Eliminar"
-          cancelText="Cancelar"
-          okButtonProps={{ danger: true }}
-        >
-          <Button size="small" danger icon={<DeleteOutlined />}>
-            Eliminar
-          </Button>
-        </Popconfirm>
-      ),
+      width: 260,
+      render: (_, record) => {
+        const seriesId = getTargetSeriesId(record);
+        return (
+          <Space size="small" wrap>
+            {seriesId && (
+              <Button
+                size="small"
+                icon={<ExportOutlined />}
+                href={`/catalogo/${seriesId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Ver
+              </Button>
+            )}
+            {record.reportCount > 0 && (
+              <Popconfirm
+                title="Descartar reportes?"
+                description="Se eliminan los reportes y el contador vuelve a cero"
+                onConfirm={() => handleDismissReports(record.id)}
+                okText="Descartar"
+                cancelText="Cancelar"
+              >
+                <Button size="small" icon={<StopOutlined />}>
+                  Ignorar
+                </Button>
+              </Popconfirm>
+            )}
+            <Popconfirm
+              title="Eliminar comentario?"
+              description="Esta acción no se puede deshacer"
+              onConfirm={() => handleDelete(record.id)}
+              okText="Eliminar"
+              cancelText="Cancelar"
+              okButtonProps={{ danger: true }}
+            >
+              <Button size="small" danger icon={<DeleteOutlined />}>
+                Eliminar
+              </Button>
+            </Popconfirm>
+          </Space>
+        );
+      },
     },
   ];
 
@@ -283,6 +356,38 @@ export function ComentariosClient() {
             rowKey="id"
             loading={loading}
             size="small"
+            expandable={{
+              rowExpandable: (record) => record.reports.length > 0,
+              expandedRowRender: (record) => (
+                <ul className="comentarios-reports">
+                  {record.reports.map((report) => (
+                    <li key={report.id} className="comentarios-reports__item">
+                      <div className="comentarios-reports__head">
+                        <span className="comentarios-reports__user">
+                          {report.user?.name ?? 'Usuario eliminado'}
+                          {report.user?.email && (
+                            <span className="comentarios-reports__email">
+                              {' '}
+                              · {report.user.email}
+                            </span>
+                          )}
+                        </span>
+                        <span className="comentarios-reports__date">
+                          {new Date(report.createdAt).toLocaleString('es-ES')}
+                        </span>
+                      </div>
+                      <div className="comentarios-reports__reason">
+                        {report.reason ?? (
+                          <span className="comentarios-target__empty">
+                            Sin razón
+                          </span>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ),
+            }}
             pagination={{
               current: page,
               pageSize: PAGE_SIZE,
