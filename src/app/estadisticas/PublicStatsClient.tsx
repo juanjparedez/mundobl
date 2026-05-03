@@ -71,7 +71,11 @@ function RankingList({
   return (
     <ol className="public-stats-ranking-list">
       {items.map((item, index) => (
-        <li key={`${item.key}-${index}`} className="public-stats-ranking-item" data-pos={index + 1}>
+        <li
+          key={`${item.key}-${index}`}
+          className="public-stats-ranking-item"
+          data-pos={index + 1}
+        >
           <div className="public-stats-ranking-item__row">
             <span className="public-stats-ranking-item__pos">{index + 1}</span>
             <span className="public-stats-ranking-item__label">

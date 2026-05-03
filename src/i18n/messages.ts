@@ -313,6 +313,14 @@ type TranslationShape = {
     statsTopN25: string;
     statsTopN50: string;
     statsTopNAll: string;
+    statsRestoreWidgets: string;
+    statsEpisodesLabel: string;
+    statsStreakTitle: string;
+    statsStreakDays: string;
+    statsAvgRating: string;
+    statsRatingsGiven: string;
+    statsByType: string;
+    statsTopRated: string;
     sectionSettings: string;
     settingsAppearanceTitle: string;
     settingsAppearanceHint: string;
@@ -1659,6 +1667,14 @@ const es: TranslationShape = {
     statsTopN25: '25',
     statsTopN50: '50',
     statsTopNAll: 'Todos',
+    statsRestoreWidgets: 'Widgets ocultos:',
+    statsEpisodesLabel: 'episodios',
+    statsStreakTitle: 'Racha máxima (12 sem.)',
+    statsStreakDays: 'días consecutivos',
+    statsAvgRating: 'Calificación promedio',
+    statsRatingsGiven: 'calificaciones dadas',
+    statsByType: 'Por tipo de contenido',
+    statsTopRated: 'Series mejor calificadas',
     sectionSettings: 'Configuración',
     settingsAppearanceTitle: 'Apariencia y accesibilidad',
     settingsAppearanceHint:
@@ -3042,6 +3058,14 @@ const en: TranslationShape = {
     statsTopN25: '25',
     statsTopN50: '50',
     statsTopNAll: 'All',
+    statsRestoreWidgets: 'Hidden widgets:',
+    statsEpisodesLabel: 'episodes',
+    statsStreakTitle: 'Longest streak (12 wks)',
+    statsStreakDays: 'consecutive days',
+    statsAvgRating: 'Average rating',
+    statsRatingsGiven: 'ratings given',
+    statsByType: 'By content type',
+    statsTopRated: 'Top rated series',
     sectionSettings: 'Settings',
     settingsAppearanceTitle: 'Appearance & accessibility',
     settingsAppearanceHint:
