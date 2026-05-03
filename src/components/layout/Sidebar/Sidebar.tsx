@@ -21,12 +21,15 @@ import {
   LinkOutlined,
   InfoCircleOutlined,
   FileTextOutlined,
+  NotificationOutlined,
 } from '@ant-design/icons';
+import { Badge } from 'antd';
 import Link from 'next/link';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { ROUTES } from '@/constants/navigation';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { SettingsPanel } from '../SettingsPanel/SettingsPanel';
+import { LAST_SEEN_NOVEDADES_KEY } from '@/app/novedades/storage-keys';
 import './Sidebar.css';
 
 const { Sider } = Layout;
@@ -48,11 +51,33 @@ export function Sidebar() {
   const { t } = useLocale();
   const { data: session, status } = useSession();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [hasNovedades, setHasNovedades] = useState(false);
 
   useEffect(() => {
     startTransition(() => {
       setIsSettingsOpen(false);
     });
+  }, [pathname]);
+
+  useEffect(() => {
+    let aborted = false;
+    fetch('/api/novedades/latest')
+      .then((res) => (res.ok ? res.json() : { timestamp: null }))
+      .then((data: { timestamp: number | null }) => {
+        if (aborted) return;
+        if (!data.timestamp) {
+          setHasNovedades(false);
+          return;
+        }
+        const seen = Number(
+          window.localStorage.getItem(LAST_SEEN_NOVEDADES_KEY) ?? '0'
+        );
+        setHasNovedades(data.timestamp > seen);
+      })
+      .catch(() => {});
+    return () => {
+      aborted = true;
+    };
   }, [pathname]);
 
   const isAdmin = session?.user?.role === 'ADMIN';
@@ -71,6 +96,16 @@ export function Sidebar() {
       icon: <PlayCircleOutlined />,
       label: t('sidebar.watching'),
       onClick: () => router.push(ROUTES.WATCHING),
+    },
+    {
+      key: ROUTES.NOVEDADES,
+      icon: (
+        <Badge dot={hasNovedades} offset={[2, 2]}>
+          <NotificationOutlined />
+        </Badge>
+      ),
+      label: t('sidebar.novedades'),
+      onClick: () => router.push(ROUTES.NOVEDADES),
     },
     ...(session?.user
       ? [

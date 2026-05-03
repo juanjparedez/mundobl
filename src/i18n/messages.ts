@@ -209,6 +209,7 @@ type TranslationShape = {
   sidebar: {
     catalog: string;
     watching: string;
+    novedades: string;
     feedback: string;
     sites: string;
     content: string;
@@ -307,6 +308,15 @@ type TranslationShape = {
     settingsDangerHint: string;
     settingsExportData: string;
     settingsComingSoon: string;
+  };
+  novedades: {
+    title: string;
+    subtitle: string;
+    empty: string;
+    newSeriesTitle: string;
+    newSeasonsTitle: string;
+    seasonLabel: string;
+    changelogTitle: string;
   };
   bottomNav: {
     mainNavigation: string;
@@ -1460,6 +1470,7 @@ const es: TranslationShape = {
   sidebar: {
     catalog: 'Catalogo',
     watching: 'Viendo Ahora',
+    novedades: 'Novedades',
     feedback: 'Feedback',
     sites: 'Sitios de Interes',
     content: 'Contenido',
@@ -1562,6 +1573,16 @@ const es: TranslationShape = {
       'Exportar tus datos o eliminar tu cuenta. Próximamente disponible.',
     settingsExportData: 'Exportar mis datos',
     settingsComingSoon: 'Próximamente',
+  },
+  novedades: {
+    title: 'Novedades',
+    subtitle:
+      'Series recién agregadas, nuevas temporadas y los últimos cambios en MundoBL.',
+    empty: 'Por ahora no hay novedades. Volvé en unos días.',
+    newSeriesTitle: 'Series recién agregadas',
+    newSeasonsTitle: 'Nuevas temporadas',
+    seasonLabel: 'Temporada',
+    changelogTitle: 'Cambios recientes',
   },
   bottomNav: {
     mainNavigation: 'Navegacion principal',
@@ -2741,6 +2762,7 @@ const en: TranslationShape = {
   sidebar: {
     catalog: 'Catalog',
     watching: 'Watching Now',
+    novedades: "What's new",
     feedback: 'Feedback',
     sites: 'Useful Sites',
     content: 'Content',
@@ -2841,6 +2863,16 @@ const en: TranslationShape = {
     settingsDangerHint: 'Export your data or delete your account. Coming soon.',
     settingsExportData: 'Export my data',
     settingsComingSoon: 'Coming soon',
+  },
+  novedades: {
+    title: "What's new",
+    subtitle:
+      'Recently added series, new seasons and the latest changes in MundoBL.',
+    empty: 'Nothing new for now. Check back in a few days.',
+    newSeriesTitle: 'Recently added series',
+    newSeasonsTitle: 'New seasons',
+    seasonLabel: 'Season',
+    changelogTitle: 'Recent changes',
   },
   bottomNav: {
     mainNavigation: 'Main navigation',
