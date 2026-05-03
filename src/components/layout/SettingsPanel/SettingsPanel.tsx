@@ -8,6 +8,7 @@ import { useLocale } from '@/lib/providers/LocaleProvider';
 import { useMessage } from '@/hooks/useMessage';
 import { LOCALE_LABELS, SUPPORTED_LOCALES } from '@/i18n/config';
 import { ACCENT_PRESETS } from '@/lib/theme.config';
+import { resetServiceWorker } from '@/lib/reset-recovery';
 import type {
   AccentPresetKey,
   ToneKey,
@@ -46,6 +47,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
   const { locale, setLocale, t } = useLocale();
   const message = useMessage();
   const [clearing, setClearing] = useState(false);
+  const [resettingSw, setResettingSw] = useState(false);
 
   const handleClearCaches = async () => {
     setClearing(true);
@@ -62,6 +64,11 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
     } finally {
       setClearing(false);
     }
+  };
+
+  const handleResetServiceWorker = async () => {
+    setResettingSw(true);
+    await resetServiceWorker();
   };
 
   const handleSignOutEverywhere = async () => {
@@ -283,6 +290,26 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
           </Button>
           <p className="settings-panel__hint">
             {t('settings.clearCachesDescription')}
+          </p>
+        </div>
+
+        <div className="settings-panel__field">
+          <Popconfirm
+            title={t('settings.resetSwConfirm')}
+            onConfirm={handleResetServiceWorker}
+            okText="OK"
+            cancelText={t('settings.closeButton')}
+          >
+            <Button
+              block
+              loading={resettingSw}
+              className="settings-panel__action"
+            >
+              {t('settings.resetSwButton')}
+            </Button>
+          </Popconfirm>
+          <p className="settings-panel__hint">
+            {t('settings.resetSwDescription')}
           </p>
         </div>
 

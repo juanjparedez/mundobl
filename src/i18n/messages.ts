@@ -357,6 +357,9 @@ type TranslationShape = {
     clearCachesButton: string;
     clearCachesDescription: string;
     clearCachesSuccess: string;
+    resetSwButton: string;
+    resetSwDescription: string;
+    resetSwConfirm: string;
     closeOtherSessionsButton: string;
     closeOtherSessionsDescription: string;
     closeAllSessionsButton: string;
@@ -1597,6 +1600,11 @@ const es: TranslationShape = {
     clearCachesDescription:
       'Borra imagenes y datos guardados por el navegador. No cierra sesion.',
     clearCachesSuccess: 'Cache local limpiada.',
+    resetSwButton: 'Resetear Service Worker',
+    resetSwDescription:
+      'Desinstala el worker, limpia caches y recarga. Util si la app quedo en un estado raro tras un deploy.',
+    resetSwConfirm:
+      'Esto desinstalara el Service Worker y recargara la pagina. ¿Continuar?',
     closeOtherSessionsButton: 'Cerrar otras sesiones',
     closeOtherSessionsDescription:
       'Cierra cualquier otra sesion abierta en otros dispositivos.',
@@ -2858,6 +2866,11 @@ const en: TranslationShape = {
     clearCachesDescription:
       'Removes browser-stored images and data. Does not log you out.',
     clearCachesSuccess: 'Local cache cleared.',
+    resetSwButton: 'Reset service worker',
+    resetSwDescription:
+      'Unregisters the worker, clears caches and reloads. Useful if the app gets stuck after a deploy.',
+    resetSwConfirm:
+      'This will unregister the service worker and reload the page. Continue?',
     closeOtherSessionsButton: 'Close other sessions',
     closeOtherSessionsDescription:
       'Sign out of any other sessions on other devices.',
