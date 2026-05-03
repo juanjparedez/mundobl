@@ -12,6 +12,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { useMessage } from '@/hooks/useMessage';
+import { isSupabaseImageUrl } from '@/lib/image-helpers';
 import './CurrentlyWatchingDashboard.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
@@ -217,6 +218,7 @@ export function CurrentlyWatchingDashboard() {
                       height={225}
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
                       quality={65}
+                      unoptimized={isSupabaseImageUrl(item.series.imageUrl)}
                       className="watching-card__cover"
                     />
                   </div>

@@ -1,6 +1,8 @@
-const SHELL_CACHE = 'mundobl-shell-v4';
-const IMAGE_CACHE = 'mundobl-img-v4';
+const SHELL_CACHE = 'mundobl-shell-v5';
+const IMAGE_CACHE = 'mundobl-img-v5';
+const REMOTE_IMAGE_CACHE = 'mundobl-remote-img-v5';
 const IMAGE_CACHE_MAX_ENTRIES = 250;
+const REMOTE_IMAGE_CACHE_MAX_ENTRIES = 500;
 
 const PRECACHE_URLS = [
   '/',
@@ -16,7 +18,7 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
-  const KEEP = new Set([SHELL_CACHE, IMAGE_CACHE]);
+  const KEEP = new Set([SHELL_CACHE, IMAGE_CACHE, REMOTE_IMAGE_CACHE]);
   event.waitUntil(
     caches
       .keys()
@@ -48,7 +50,9 @@ async function cacheFirst(request, cacheName, opts = {}) {
     if (
       response &&
       response.ok &&
-      (response.type === 'basic' || response.type === 'default')
+      (response.type === 'basic' ||
+        response.type === 'default' ||
+        response.type === 'cors')
     ) {
       cache.put(request, response.clone()).then(() => {
         if (opts.maxEntries) trimCache(cacheName, opts.maxEntries);
@@ -64,7 +68,12 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET') return;
 
-  const url = new URL(request.url);
+  let url;
+  try {
+    url = new URL(request.url);
+  } catch {
+    return;
+  }
 
   // Navegaciones: network-first con fallback al shell
   if (request.mode === 'navigate') {
@@ -76,7 +85,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Imágenes optimizadas por Next.js: cache-first, mismo origen pero bajo /_next/image
+  // Imágenes optimizadas por Next.js: cache-first
   if (
     url.origin === self.location.origin &&
     url.pathname.startsWith('/_next/image')
@@ -89,9 +98,28 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Otros assets de _next (chunks JS/CSS) los maneja el HTTP cache del navegador
-  if (url.pathname.startsWith('/_next/')) return;
-  if (url.pathname.startsWith('/api/')) return;
+  // Imágenes remotas servidas directo desde Supabase Storage (cross-origin)
+  // Las cacheamos cache-first para no agotar la cuota de transformaciones
+  // de Vercel ni el egress del free tier de Supabase.
+  if (
+    url.hostname.endsWith('.supabase.co') &&
+    url.pathname.startsWith('/storage/')
+  ) {
+    event.respondWith(
+      cacheFirst(request, REMOTE_IMAGE_CACHE, {
+        maxEntries: REMOTE_IMAGE_CACHE_MAX_ENTRIES,
+      })
+    );
+    return;
+  }
+
+  // Resto de _next y APIs: que los maneje el HTTP cache del navegador
+  if (
+    url.origin === self.location.origin &&
+    (url.pathname.startsWith('/_next/') || url.pathname.startsWith('/api/'))
+  ) {
+    return;
+  }
 
   // Solo cacheamos same-origin de aquí en adelante
   if (url.origin !== self.location.origin) return;
