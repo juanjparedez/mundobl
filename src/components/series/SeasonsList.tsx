@@ -128,6 +128,7 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
             )}
             <Link
               href={`/admin/seasons/${season.id}/editar`}
+              prefetch={false}
               onClick={(e) => e.stopPropagation()}
             >
               <Button
@@ -218,7 +219,7 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
                         <Avatar src={actorInfo.actor.imageUrl} size={64} />
                       )}
                       <div className="actor-card__info">
-                        <Link href={`/actores/${actorInfo.actor.id}`}>
+                        <Link href={`/actores/${actorInfo.actor.id}`} prefetch={false}>
                           <strong>{actorInfo.actor.name}</strong>
                         </Link>
                         {actorInfo.character && (

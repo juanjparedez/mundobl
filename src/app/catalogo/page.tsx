@@ -1,4 +1,5 @@
 export const dynamic = 'force-dynamic';
+import { unstable_cache } from 'next/cache';
 
 import type { Metadata } from 'next';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
@@ -23,15 +24,20 @@ import { CatalogoClient } from './CatalogoClient';
 import { getCatalogFilterIndex } from '@/lib/database';
 import './catalogo.css';
 
+const getCatalogDataCached = unstable_cache(
+  async () => {
+    return await Promise.all([getAllSeries(), getCatalogFilterIndex()]);
+  },
+  ['catalog-page-data-v1'],
+  { revalidate: 120 }
+);
+
 export default async function CatalogoPage() {
   const session = await auth();
   const userRole = session?.user?.role || null;
 
   // Obtener datos reales desde la base de datos
-  const [seriesDB, filterIndex] = await Promise.all([
-    getAllSeries(),
-    getCatalogFilterIndex(),
-  ]);
+  const [seriesDB, filterIndex] = await getCatalogDataCached();
 
   // Index seriesId -> nombres (para filtros extendidos)
   const genresBySerie = new Map<number, string[]>();

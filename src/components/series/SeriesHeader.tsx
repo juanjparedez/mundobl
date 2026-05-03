@@ -6,6 +6,7 @@ import { BookOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { MetadataChip } from './MetadataPrimitives/MetadataPrimitives';
 import './SeriesHeader.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -52,20 +53,25 @@ interface SeriesHeaderProps {
 
 export function SeriesHeader({ series, actionsSlot }: SeriesHeaderProps) {
   const { t } = useLocale();
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const mainActors = series.actors?.filter((a) => a.isMain).slice(0, 4) ?? [];
   const directors = series.directors?.slice(0, 2) ?? [];
   const hasQuickCast = mainActors.length > 0 || directors.length > 0;
+  const imageUrl = series.imageUrl;
+  const showBackdrop = Boolean(imageUrl) && !isMobile;
 
   return (
     <section className="series-hero">
-      {series.imageUrl && (
+      {showBackdrop && imageUrl && (
         <div className="series-hero__backdrop" aria-hidden="true">
           <Image
-            src={series.imageUrl}
+            src={imageUrl}
             alt={series.title}
             fill
             sizes="100vw"
+            quality={40}
+            fetchPriority="low"
             style={{ objectFit: 'cover', objectPosition: 'center 22%' }}
           />
         </div>
@@ -74,13 +80,16 @@ export function SeriesHeader({ series, actionsSlot }: SeriesHeaderProps) {
 
       <div className="series-header">
         <aside className="series-header__aside">
-          {series.imageUrl && (
+          {imageUrl && (
             <div className="series-header__image">
               <Image
-                src={series.imageUrl}
+                src={imageUrl}
                 alt={series.title}
                 width={260}
                 height={390}
+                sizes="(max-width: 640px) 110px, (max-width: 900px) 180px, 230px"
+                quality={72}
+                priority
                 style={{ objectFit: 'cover' }}
               />
             </div>
@@ -177,6 +186,7 @@ export function SeriesHeader({ series, actionsSlot }: SeriesHeaderProps) {
                         {i > 0 && <span className="series-header__cast-sep"> · </span>}
                         <Link
                           href={`/actores/${a.actor.id}`}
+                          prefetch={false}
                           className="series-header__cast-link"
                         >
                           {a.actor.name}
