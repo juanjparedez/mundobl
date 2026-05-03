@@ -6,6 +6,8 @@ export const ContentType = {
   PELICULA: 'pelicula',
   CORTO: 'corto',
   ESPECIAL: 'especial',
+  ANIME: 'anime',
+  REALITY: 'reality',
 } as const;
 
 export type ContentTypeValue = (typeof ContentType)[keyof typeof ContentType];
@@ -38,6 +40,22 @@ export const ContentTypeConfig = {
   },
   [ContentType.ESPECIAL]: {
     label: 'Especial',
+    hasSeasons: true,
+    hasEpisodes: true,
+    hasDuration: false,
+    seasonLabel: 'Temporadas',
+    episodeLabel: 'Episodios',
+  },
+  [ContentType.ANIME]: {
+    label: 'Animé',
+    hasSeasons: true,
+    hasEpisodes: true,
+    hasDuration: false,
+    seasonLabel: 'Temporadas',
+    episodeLabel: 'Episodios',
+  },
+  [ContentType.REALITY]: {
+    label: 'Reality',
     hasSeasons: true,
     hasEpisodes: true,
     hasDuration: false,
