@@ -4,6 +4,7 @@ import { Avatar, Card, Tag, Row, Col, Empty } from 'antd';
 import { UserOutlined, CalendarOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
+import { isSupabaseImageUrl } from '@/lib/image-helpers';
 import './actor-profile.css';
 
 interface ActorData {
@@ -205,6 +206,8 @@ export function ActorProfileClient({ actor }: ActorProfileClientProps) {
                           src={entry.imageUrl}
                           width={200}
                           height={300}
+                          quality={70}
+                          unoptimized={isSupabaseImageUrl(entry.imageUrl)}
                           className="actor-profile__film-image"
                         />
                       ) : undefined

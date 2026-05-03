@@ -45,6 +45,7 @@ import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { ProfileSettings } from './ProfileSettings/ProfileSettings';
+import { isSupabaseImageUrl } from '@/lib/image-helpers';
 import './profile.css';
 
 const ROLE_COLORS: Record<string, string> = {
@@ -163,6 +164,8 @@ function SeriesCard({
             alt={series.title}
             fill
             sizes="160px"
+            quality={60}
+            unoptimized={isSupabaseImageUrl(series.imageUrl)}
             className="profile-series-card__image"
           />
         ) : (
