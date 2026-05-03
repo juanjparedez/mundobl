@@ -30,6 +30,27 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'avatars.githubusercontent.com' },
     ],
   },
+  // Headers globales: ajustes de Permissions-Policy para que iframes
+  // legítimos (YouTube embed, etc.) no llenen la consola de warnings.
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Permissions-Policy',
+            value: [
+              'compute-pressure=(self "https://www.youtube-nocookie.com" "https://www.youtube.com")',
+              'accelerometer=()',
+              'gyroscope=()',
+              'magnetometer=()',
+              'usb=()',
+            ].join(', '),
+          },
+        ],
+      },
+    ];
+  },
   // allowedDevOrigins solo aplica en dev local
   ...(process.env.NODE_ENV === 'development' && {
     allowedDevOrigins: ['192.168.1.36'],
