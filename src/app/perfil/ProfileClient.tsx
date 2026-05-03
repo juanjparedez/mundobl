@@ -178,7 +178,6 @@ const PROFILE_HIDDEN_WIDGETS_STORAGE_KEY = 'profile-hidden-widgets';
 const ALL_WIDGET_IDS = [
   'hours',
   'streak',
-  'episodes',
   'avg-rating',
   'genres',
   'countries',
@@ -1074,8 +1073,13 @@ export function ProfileClient() {
                             className="profile-top-rated-item"
                           >
                             <span className="profile-top-rated-item__stars">
-                              {'★'.repeat(s.rating)}
-                              {'☆'.repeat(5 - s.rating)}
+                              {(() => {
+                                const filled = Math.round(s.rating / 2);
+                                return '★'.repeat(filled) + '☆'.repeat(5 - filled);
+                              })()}
+                            </span>
+                            <span className="profile-top-rated-item__score">
+                              {s.rating}/10
                             </span>
                             <span className="profile-top-rated-item__title">
                               {s.title}
