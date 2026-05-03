@@ -22,6 +22,9 @@ import type { ColumnsType } from 'antd/es/table';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { AdminNav } from '../AdminNav';
 import { useMessage } from '@/hooks/useMessage';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
+import { AdminPageHero } from '@/components/admin/AdminPageHero/AdminPageHero';
 import '../admin.css';
 import './logs.css';
 
@@ -87,6 +90,7 @@ function LogCard({
   log: AccessLogEntry;
   onFilter: (type: 'action' | 'user' | 'ip' | 'path', value: string) => void;
 }) {
+  const { t } = useLocale();
   const date = new Date(log.createdAt).toLocaleString('es-AR', {
     day: '2-digit',
     month: '2-digit',
@@ -121,7 +125,7 @@ function LogCard({
             <span>{log.user.name}</span>
           </div>
         ) : (
-          <span className="logs-table__anonymous">Anónimo</span>
+          <span className="logs-table__anonymous">{t('adminLogs.anonymous')}</span>
         )}
       </div>
       <div
@@ -144,6 +148,7 @@ function LogCard({
 
 export function LogsClient() {
   const message = useMessage();
+  const { t } = useLocale();
   const isMobile = useIsMobile();
   const [logs, setLogs] = useState<AccessLogEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -189,7 +194,7 @@ export function LogsClient() {
       }
     } catch (error) {
       console.error('Error fetching logs:', error);
-      message.error('Error al cargar logs');
+      message.error(t('adminLogs.loadError'));
     } finally {
       setLoading(false);
     }
@@ -239,7 +244,7 @@ export function LogsClient() {
         fetchLogs();
       }
     } catch (error) {
-      message.error('Error al limpiar logs');
+      message.error(t('adminLogs.cleanError'));
       console.error(error);
     }
   };
@@ -255,14 +260,14 @@ export function LogsClient() {
         fetchLogs();
       }
     } catch (error) {
-      message.error('Error al limpiar logs de scanners');
+      message.error(t('adminLogs.cleanScannersError'));
       console.error(error);
     }
   };
 
   const columns: ColumnsType<AccessLogEntry> = [
     {
-      title: 'Fecha',
+      title: t('adminLogs.columnDate'),
       key: 'createdAt',
       width: 160,
       render: (_, record) =>
@@ -275,7 +280,7 @@ export function LogsClient() {
         }),
     },
     {
-      title: 'Usuario',
+      title: t('adminLogs.columnUser'),
       key: 'user',
       width: 180,
       render: (_, record) =>
@@ -293,11 +298,11 @@ export function LogsClient() {
             <span>{record.user.name}</span>
           </div>
         ) : (
-          <span className="logs-table__anonymous">Anónimo</span>
+          <span className="logs-table__anonymous">{t('adminLogs.anonymous')}</span>
         ),
     },
     {
-      title: 'Acción',
+      title: t('adminLogs.columnAction'),
       key: 'action',
       width: 120,
       render: (_, record) => (
@@ -312,7 +317,7 @@ export function LogsClient() {
       ),
     },
     {
-      title: 'Ruta',
+      title: t('adminLogs.columnPath'),
       key: 'path',
       ellipsis: true,
       render: (_, record) => (
@@ -326,7 +331,7 @@ export function LogsClient() {
       ),
     },
     {
-      title: 'IP',
+      title: t('adminLogs.columnIp'),
       key: 'ip',
       width: 130,
       responsive: ['lg' as const],
@@ -344,7 +349,7 @@ export function LogsClient() {
         ),
     },
     {
-      title: 'User Agent',
+      title: t('adminLogs.columnUserAgent'),
       dataIndex: 'userAgent',
       key: 'userAgent',
       width: 200,
@@ -358,12 +363,14 @@ export function LogsClient() {
     <AppLayout>
       <div className="admin-page-wrapper">
         <AdminNav />
-        <div className="logs-page">
-          <div className="logs-header">
-            <h2 className="logs-title">Access Logs</h2>
-            <span className="logs-count">{total} registros</span>
-          </div>
 
+        <AdminPageHero
+          title={t('adminLogs.title')}
+          subtitle={t('adminLogs.subtitle')}
+          stats={[{ label: t('adminLogs.statsTotal'), value: total }]}
+        />
+
+        <div className="logs-page">
           <div className="logs-filters">
             <Space wrap size="small">
               <Select
@@ -374,7 +381,7 @@ export function LogsClient() {
                 }}
                 options={ACTION_OPTIONS}
                 className="logs-filter-select"
-                placeholder="Acción"
+                placeholder={t('adminLogs.filterActionPlaceholder')}
               />
               <Select
                 value={userFilter || undefined}
@@ -390,7 +397,7 @@ export function LogsClient() {
                   value: u.id,
                 }))}
                 className="logs-filter-select"
-                placeholder="Usuario"
+                placeholder={t('adminLogs.filterUserPlaceholder')}
               />
               <Input
                 value={ipFilter}
@@ -399,7 +406,7 @@ export function LogsClient() {
                   setPage(1);
                 }}
                 prefix={<SearchOutlined />}
-                placeholder="Buscar IP"
+                placeholder={t('adminLogs.filterIpPlaceholder')}
                 allowClear
                 className="logs-filter-input"
               />
@@ -410,7 +417,7 @@ export function LogsClient() {
                   setPage(1);
                 }}
                 prefix={<SearchOutlined />}
-                placeholder="Buscar ruta"
+                placeholder={t('adminLogs.filterPathPlaceholder')}
                 allowClear
                 className="logs-filter-input"
               />
@@ -427,17 +434,17 @@ export function LogsClient() {
             </Space>
             <Space wrap size="small" className="logs-actions">
               <Button icon={<ReloadOutlined />} onClick={fetchLogs}>
-                Refrescar
+                {t('adminLogs.actionRefresh')}
               </Button>
               <Button icon={<BugOutlined />} onClick={handleCleanScannerLogs}>
-                Limpiar scanners
+                {t('adminLogs.actionCleanScanners')}
               </Button>
               <Button
                 danger
                 icon={<DeleteOutlined />}
                 onClick={handleCleanOldLogs}
               >
-                Limpiar +90 días
+                {t('adminLogs.actionCleanOld')}
               </Button>
             </Space>
           </div>
@@ -445,10 +452,10 @@ export function LogsClient() {
           {isMobile ? (
             <div className="logs-cards">
               {loading && (
-                <div className="logs-cards__loading">Cargando...</div>
+                <div className="logs-cards__loading">{t('adminLogs.loadingText')}</div>
               )}
               {!loading && logs.length === 0 && (
-                <div className="logs-cards__empty">Sin resultados</div>
+                <div className="logs-cards__empty">{t('adminLogs.emptyText')}</div>
               )}
               {!loading &&
                 logs.map((log) => (
@@ -460,16 +467,19 @@ export function LogsClient() {
                     disabled={page <= 1}
                     onClick={() => setPage((p) => p - 1)}
                   >
-                    Anterior
+                    {t('adminLogs.paginationPrev')}
                   </Button>
                   <span className="logs-cards__page-info">
-                    {page} / {Math.ceil(total / 50)}
+                    {interpolateMessage(t('adminLogs.pageInfo'), {
+                      page,
+                      total: Math.ceil(total / 50),
+                    })}
                   </span>
                   <Button
                     disabled={page >= Math.ceil(total / 50)}
                     onClick={() => setPage((p) => p + 1)}
                   >
-                    Siguiente
+                    {t('adminLogs.paginationNext')}
                   </Button>
                 </div>
               )}
@@ -485,7 +495,8 @@ export function LogsClient() {
                 total,
                 pageSize: 50,
                 onChange: setPage,
-                showTotal: (t) => `${t} logs`,
+                showTotal: (tot) =>
+                  interpolateMessage(t('adminLogs.showTotal'), { total: tot }),
               }}
               size="small"
             />

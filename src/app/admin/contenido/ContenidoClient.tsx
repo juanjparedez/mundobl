@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import {
-  Card,
   Table,
   Button,
   Input,
@@ -28,6 +27,10 @@ import {
 } from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
+import { AdminPageHero } from '@/components/admin/AdminPageHero/AdminPageHero';
+import { AdminTableToolbar } from '@/components/admin/AdminTableToolbar/AdminTableToolbar';
 import { AdminNav } from '../AdminNav';
 import { EmbedPlayer } from '@/components/common/EmbedPlayer/EmbedPlayer';
 import {
@@ -80,9 +83,11 @@ interface SeriesOption {
 export function ContenidoClient() {
   const message = useMessage();
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const { t } = useLocale();
   const [items, setItems] = useState<EmbeddableContentItem[]>([]);
   const [seriesOptions, setSeriesOptions] = useState<SeriesOption[]>([]);
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<EmbeddableContentItem | null>(
     null
@@ -104,11 +109,11 @@ export function ContenidoClient() {
       if (!res.ok) throw new Error();
       setItems(await res.json());
     } catch {
-      message.error('Error al cargar el contenido');
+      message.error(t('adminContent.loadError'));
     } finally {
       setLoading(false);
     }
-  }, [message]);
+  }, [message, t]);
 
   const loadSeries = useCallback(async () => {
     try {
@@ -120,11 +125,6 @@ export function ContenidoClient() {
       /* non-critical */
     }
   }, []);
-
-  useEffect(() => {
-    loadItems();
-    loadSeries();
-  }, [loadItems, loadSeries]);
 
   const handleUrlBlur = () => {
     const url: string = form.getFieldValue('url') || '';
@@ -147,7 +147,7 @@ export function ContenidoClient() {
     const platform: string = form.getFieldValue('platform');
     const title: string = form.getFieldValue('title') || 'Preview';
     if (!url || !platform) {
-      message.warning('Ingresá una URL y plataforma para previsualizar');
+      message.warning(t('adminContent.previewWarning'));
       return;
     }
     const videoId = extractVideoId(platform as Platform, url);
@@ -189,13 +189,13 @@ export function ContenidoClient() {
         throw new Error(err.error || 'Error al guardar');
       }
       message.success(
-        editingItem ? 'Contenido actualizado' : 'Contenido creado'
+        editingItem ? t('adminContent.updateSuccess') : t('adminContent.createSuccess')
       );
       handleCloseModal();
       loadItems();
     } catch (error) {
       message.error(
-        error instanceof Error ? error.message : 'Error al guardar'
+        error instanceof Error ? error.message : t('adminContent.saveError')
       );
     }
   };
@@ -204,12 +204,17 @@ export function ContenidoClient() {
     try {
       const res = await fetch(`/api/contenido/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error();
-      message.success('Contenido eliminado');
+      message.success(t('adminContent.deleteSuccess'));
       loadItems();
     } catch {
-      message.error('Error al eliminar el contenido');
+      message.error(t('adminContent.deleteError'));
     }
   };
+
+  useEffect(() => {
+    loadItems();
+    loadSeries();
+  }, [loadItems, loadSeries]);
 
   // Detect duplicates by videoId or url
   const duplicateIds = useMemo(() => {
@@ -240,6 +245,20 @@ export function ContenidoClient() {
     return ids;
   }, [items]);
 
+  const filteredItems = useMemo(() => {
+    const base = showOnlyDuplicates
+      ? items.filter((i) => duplicateIds.has(i.id))
+      : items;
+    if (!searchTerm.trim()) return base;
+    const term = searchTerm.toLowerCase();
+    return base.filter(
+      (i) =>
+        i.title.toLowerCase().includes(term) ||
+        i.channelName?.toLowerCase().includes(term) ||
+        i.series?.title.toLowerCase().includes(term)
+    );
+  }, [items, searchTerm, showOnlyDuplicates, duplicateIds]);
+
   const columns = [
     {
       title: '',
@@ -252,10 +271,7 @@ export function ContenidoClient() {
             alt=""
             width={48}
             height={36}
-            style={{
-              objectFit: 'cover',
-              borderRadius: 4,
-            }}
+            style={{ objectFit: 'cover', borderRadius: 4 }}
             unoptimized
           />
         ) : (
@@ -275,7 +291,7 @@ export function ContenidoClient() {
         ),
     },
     {
-      title: 'Título',
+      title: t('adminContent.columnTitle'),
       dataIndex: 'title',
       key: 'title',
       sorter: (a: EmbeddableContentItem, b: EmbeddableContentItem) =>
@@ -283,18 +299,20 @@ export function ContenidoClient() {
       render: (title: string, record: EmbeddableContentItem) => (
         <Space>
           <span>{title}</span>
-          {duplicateIds.has(record.id) && <Tag color="orange">Duplicado</Tag>}
+          {duplicateIds.has(record.id) && (
+            <Tag color="orange">{t('adminContent.tagDuplicate')}</Tag>
+          )}
         </Space>
       ),
     },
     {
-      title: 'Plataforma',
+      title: t('adminContent.columnPlatform'),
       key: 'platform',
       render: (r: EmbeddableContentItem) => <Tag>{r.platform}</Tag>,
       responsive: ['sm' as const],
     },
     {
-      title: 'Categoría',
+      title: t('adminContent.columnCategory'),
       key: 'category',
       render: (r: EmbeddableContentItem) => (
         <Tag>{CATEGORY_LABELS[r.category] || r.category}</Tag>
@@ -302,13 +320,13 @@ export function ContenidoClient() {
       responsive: ['md' as const],
     },
     {
-      title: 'Serie',
+      title: t('adminContent.columnSeries'),
       key: 'series',
       render: (r: EmbeddableContentItem) => r.series?.title || '-',
       responsive: ['lg' as const],
     },
     {
-      title: 'Dest.',
+      title: t('adminContent.columnFeatured'),
       dataIndex: 'featured',
       key: 'featured',
       width: 60,
@@ -316,7 +334,7 @@ export function ContenidoClient() {
       responsive: ['md' as const],
     },
     {
-      title: 'Acciones',
+      title: t('adminContent.columnActions'),
       key: 'actions',
       render: (record: EmbeddableContentItem) => (
         <Space>
@@ -325,17 +343,17 @@ export function ContenidoClient() {
             onClick={() => handleOpenModal(record)}
             size="small"
           >
-            {!isMobile && 'Editar'}
+            {!isMobile && t('adminContent.actionEdit')}
           </Button>
           <Popconfirm
-            title="¿Eliminar este contenido?"
+            title={t('adminContent.deleteTitle')}
             onConfirm={() => handleDelete(record.id)}
-            okText="Eliminar"
-            cancelText="Cancelar"
+            okText={t('adminContent.actionDelete')}
+            cancelText={t('adminContent.cancel')}
             okButtonProps={{ danger: true }}
           >
             <Button danger icon={<DeleteOutlined />} size="small">
-              {!isMobile && 'Eliminar'}
+              {!isMobile && t('adminContent.actionDelete')}
             </Button>
           </Popconfirm>
         </Space>
@@ -347,10 +365,30 @@ export function ContenidoClient() {
     <AppLayout>
       <div className="admin-page-wrapper">
         <AdminNav />
-        <Card
-          title="Administración de Contenido Embebible"
-          extra={
-            <Space>
+
+        <AdminPageHero
+          title={t('adminContent.title')}
+          subtitle={t('adminContent.subtitle')}
+          stats={[
+            { label: t('adminContent.statsTotal'), value: items.length },
+            {
+              label: t('adminContent.statsFiltered'),
+              value: filteredItems.length,
+            },
+            ...(duplicateIds.size > 0
+              ? [
+                  {
+                    label: t('adminContent.statsDuplicates'),
+                    value: duplicateIds.size,
+                  },
+                ]
+              : []),
+          ]}
+        />
+
+        <AdminTableToolbar
+          filters={
+            <Space wrap>
               {duplicateIds.size > 0 && (
                 <Button
                   icon={<WarningOutlined />}
@@ -358,122 +396,149 @@ export function ContenidoClient() {
                   type={showOnlyDuplicates ? 'primary' : 'default'}
                   danger={showOnlyDuplicates}
                 >
-                  {isMobile
-                    ? `${duplicateIds.size}`
-                    : `Duplicados (${duplicateIds.size})`}
+                  {interpolateMessage(t('adminContent.actionShowDuplicates'), {
+                    count: duplicateIds.size,
+                  })}
                 </Button>
               )}
               <Button
                 icon={<ImportOutlined />}
                 onClick={() => setImportDrawerOpen(true)}
               >
-                {isMobile ? 'Importar' : 'Importar Canal'}
+                {isMobile
+                  ? t('adminContent.actionImportShort')
+                  : t('adminContent.actionImport')}
               </Button>
               <Button
                 type="primary"
                 icon={<PlusOutlined />}
                 onClick={() => handleOpenModal()}
               >
-                {isMobile ? 'Nuevo' : 'Nuevo Contenido'}
+                {isMobile
+                  ? t('adminContent.newItemShort')
+                  : t('adminContent.newItem')}
               </Button>
             </Space>
           }
-        >
-          <Table
-            dataSource={
-              showOnlyDuplicates
-                ? items.filter((i) => duplicateIds.has(i.id))
-                : items
-            }
-            columns={columns}
-            rowKey="id"
-            loading={loading}
-            pagination={{ pageSize: 20 }}
-          />
-        </Card>
+          searchPlaceholder={t('adminContent.searchPlaceholder')}
+          searchValue={searchTerm}
+          onSearchChange={setSearchTerm}
+          onSearchSubmit={() => undefined}
+          onSearchClear={() => setSearchTerm('')}
+        />
+
+        <Table
+          dataSource={filteredItems}
+          columns={columns}
+          rowKey="id"
+          loading={loading}
+          pagination={{ pageSize: 20 }}
+        />
 
         <Modal
-          title={editingItem ? 'Editar Contenido' : 'Nuevo Contenido'}
+          title={
+            editingItem
+              ? t('adminContent.modalEditTitle')
+              : t('adminContent.modalNewTitle')
+          }
           open={modalOpen}
           onCancel={handleCloseModal}
           onOk={() => form.submit()}
-          okText="Guardar"
-          cancelText="Cancelar"
+          okText={t('adminContent.save')}
+          cancelText={t('adminContent.cancel')}
           width={680}
           forceRender
         >
           <Form form={form} layout="vertical" onFinish={handleSubmit}>
             <Form.Item
-              label="Título"
+              label={t('adminContent.fieldTitle')}
               name="title"
-              rules={[{ required: true, message: 'El título es requerido' }]}
+              rules={[
+                { required: true, message: t('adminContent.requiredTitle') },
+              ]}
             >
-              <Input placeholder="Título del contenido" />
+              <Input placeholder={t('adminContent.hintTitle')} />
             </Form.Item>
 
             <Form.Item
-              label="URL"
+              label={t('adminContent.fieldUrl')}
               name="url"
               rules={[
-                { required: true, message: 'La URL es requerida' },
-                { type: 'url', message: 'Ingresá una URL válida' },
+                { required: true, message: t('adminContent.requiredUrl') },
+                { type: 'url', message: t('adminContent.invalidUrl') },
               ]}
             >
               <Input
-                placeholder="https://www.youtube.com/watch?v=..."
+                placeholder={t('adminContent.hintUrl')}
                 onBlur={handleUrlBlur}
               />
             </Form.Item>
 
             <Form.Item
-              label="Plataforma"
+              label={t('adminContent.fieldPlatform')}
               name="platform"
               rules={[
-                { required: true, message: 'La plataforma es requerida' },
+                {
+                  required: true,
+                  message: t('adminContent.requiredPlatform'),
+                },
               ]}
             >
               <Select
                 options={PLATFORM_OPTIONS}
-                placeholder="Seleccionar plataforma"
+                placeholder={t('adminContent.fieldPlatform')}
               />
             </Form.Item>
 
-            <Form.Item label="Categoría" name="category" initialValue="other">
+            <Form.Item
+              label={t('adminContent.fieldCategory')}
+              name="category"
+              initialValue="other"
+            >
               <Select options={CATEGORY_OPTIONS} />
             </Form.Item>
 
-            <Form.Item label="Descripción" name="description">
-              <Input.TextArea rows={2} placeholder="Descripción breve" />
+            <Form.Item
+              label={t('adminContent.fieldDescription')}
+              name="description"
+            >
+              <Input.TextArea rows={2} placeholder={t('adminContent.fieldDescription')} />
             </Form.Item>
 
-            <Form.Item label="Idioma" name="language">
+            <Form.Item label={t('adminContent.fieldLanguage')} name="language">
               <Select
                 options={LANGUAGE_OPTIONS}
-                placeholder="Idioma"
+                placeholder={t('adminContent.fieldLanguage')}
                 allowClear
               />
             </Form.Item>
 
             <Form.Item
-              label="URL de miniatura"
+              label={t('adminContent.fieldThumbnailUrl')}
               name="thumbnailUrl"
-              extra="Se genera automáticamente para YouTube al ingresar la URL"
+              extra={t('adminContent.thumbnailHint')}
             >
-              <Input placeholder="https://..." />
+              <Input placeholder={t('adminContent.hintThumbnailUrl')} />
             </Form.Item>
 
-            <Form.Item label="Canal / Creador" name="channelName">
-              <Input placeholder="Nombre del canal" />
+            <Form.Item
+              label={t('adminContent.fieldChannelName')}
+              name="channelName"
+            >
+              <Input placeholder={t('adminContent.hintChannelName')} />
             </Form.Item>
 
-            <Form.Item label="URL del canal" name="channelUrl">
-              <Input placeholder="https://..." />
+            <Form.Item
+              label={t('adminContent.fieldChannelUrl')}
+              name="channelUrl"
+            >
+              <Input placeholder={t('adminContent.hintChannelUrl')} />
             </Form.Item>
 
-            <Form.Item label="Serie relacionada (opcional)" name="seriesId">
+            <Form.Item label={t('adminContent.fieldSeries')} name="seriesId">
               <Select
                 options={seriesOptions}
-                placeholder="Buscar serie..."
+                placeholder={t('adminContent.hintSeries')}
                 allowClear
                 showSearch
                 filterOption={(input, option) =>
@@ -490,25 +555,33 @@ export function ContenidoClient() {
                 valuePropName="checked"
                 initialValue={true}
               >
-                <Checkbox>Oficial</Checkbox>
+                <Checkbox>{t('adminContent.fieldOfficial')}</Checkbox>
               </Form.Item>
               <Form.Item
                 name="featured"
                 valuePropName="checked"
                 initialValue={false}
               >
-                <Checkbox>Destacado</Checkbox>
+                <Checkbox>{t('adminContent.fieldFeatured')}</Checkbox>
               </Form.Item>
             </Space>
 
-            <Form.Item label="Orden" name="sortOrder" initialValue={0}>
+            <Form.Item
+              label={t('adminContent.fieldOrder')}
+              name="sortOrder"
+              initialValue={0}
+            >
               <InputNumber min={0} />
             </Form.Item>
 
             <Divider />
 
-            <Button icon={<PlayCircleOutlined />} onClick={handlePreview} block>
-              Previsualizar embed
+            <Button
+              icon={<PlayCircleOutlined />}
+              onClick={handlePreview}
+              block
+            >
+              {t('adminContent.previewButton')}
             </Button>
 
             {previewData && (

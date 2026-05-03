@@ -421,6 +421,93 @@ type TranslationShape = {
     unbanSuccess: string;
     banError: string;
   };
+  adminContent: {
+    title: string;
+    subtitle: string;
+    statsTotal: string;
+    statsFiltered: string;
+    statsDuplicates: string;
+    searchPlaceholder: string;
+    newItem: string;
+    newItemShort: string;
+    actionImport: string;
+    actionImportShort: string;
+    actionShowDuplicates: string;
+    columnTitle: string;
+    columnPlatform: string;
+    columnCategory: string;
+    columnSeries: string;
+    columnFeatured: string;
+    columnActions: string;
+    tagDuplicate: string;
+    actionEdit: string;
+    actionDelete: string;
+    deleteTitle: string;
+    cancel: string;
+    modalNewTitle: string;
+    modalEditTitle: string;
+    save: string;
+    fieldTitle: string;
+    fieldUrl: string;
+    fieldPlatform: string;
+    fieldCategory: string;
+    fieldDescription: string;
+    fieldLanguage: string;
+    fieldThumbnailUrl: string;
+    thumbnailHint: string;
+    fieldChannelName: string;
+    fieldChannelUrl: string;
+    fieldSeries: string;
+    fieldOfficial: string;
+    fieldFeatured: string;
+    fieldOrder: string;
+    requiredTitle: string;
+    requiredUrl: string;
+    requiredPlatform: string;
+    invalidUrl: string;
+    hintTitle: string;
+    hintUrl: string;
+    hintThumbnailUrl: string;
+    hintChannelName: string;
+    hintChannelUrl: string;
+    hintSeries: string;
+    previewButton: string;
+    previewWarning: string;
+    loadError: string;
+    createSuccess: string;
+    updateSuccess: string;
+    saveError: string;
+    deleteSuccess: string;
+    deleteError: string;
+  };
+  adminLogs: {
+    title: string;
+    subtitle: string;
+    statsTotal: string;
+    filterActionPlaceholder: string;
+    filterUserPlaceholder: string;
+    filterIpPlaceholder: string;
+    filterPathPlaceholder: string;
+    actionRefresh: string;
+    actionCleanScanners: string;
+    actionCleanOld: string;
+    anonymous: string;
+    loadingText: string;
+    emptyText: string;
+    columnDate: string;
+    columnUser: string;
+    columnAction: string;
+    columnPath: string;
+    columnIp: string;
+    columnUserAgent: string;
+    paginationPrev: string;
+    paginationNext: string;
+    pageInfo: string;
+    showTotal: string;
+    loadError: string;
+    cleanError: string;
+    cleanScannersError: string;
+  };
 };
 
 const es: TranslationShape = {
@@ -851,6 +938,93 @@ const es: TranslationShape = {
     unbanSuccess: 'Usuario desbaneado',
     banError: 'Error al banear usuario',
   },
+  adminContent: {
+    title: 'Administracion de Contenido',
+    subtitle: 'Gestion de videos y embeds para series y catalogo.',
+    statsTotal: 'Total',
+    statsFiltered: 'Filtrados',
+    statsDuplicates: 'Duplicados',
+    searchPlaceholder: 'Buscar por titulo, canal o serie...',
+    newItem: 'Nuevo Contenido',
+    newItemShort: 'Nuevo',
+    actionImport: 'Importar Canal',
+    actionImportShort: 'Importar',
+    actionShowDuplicates: 'Duplicados ({count})',
+    columnTitle: 'Titulo',
+    columnPlatform: 'Plataforma',
+    columnCategory: 'Categoria',
+    columnSeries: 'Serie',
+    columnFeatured: 'Dest.',
+    columnActions: 'Acciones',
+    tagDuplicate: 'Duplicado',
+    actionEdit: 'Editar',
+    actionDelete: 'Eliminar',
+    deleteTitle: 'Eliminar este contenido?',
+    cancel: 'Cancelar',
+    modalNewTitle: 'Nuevo Contenido',
+    modalEditTitle: 'Editar Contenido',
+    save: 'Guardar',
+    fieldTitle: 'Titulo',
+    fieldUrl: 'URL',
+    fieldPlatform: 'Plataforma',
+    fieldCategory: 'Categoria',
+    fieldDescription: 'Descripcion',
+    fieldLanguage: 'Idioma',
+    fieldThumbnailUrl: 'URL de miniatura',
+    thumbnailHint: 'Se genera automaticamente para YouTube al ingresar la URL',
+    fieldChannelName: 'Canal / Creador',
+    fieldChannelUrl: 'URL del canal',
+    fieldSeries: 'Serie relacionada (opcional)',
+    fieldOfficial: 'Oficial',
+    fieldFeatured: 'Destacado',
+    fieldOrder: 'Orden',
+    requiredTitle: 'El titulo es requerido',
+    requiredUrl: 'La URL es requerida',
+    requiredPlatform: 'La plataforma es requerida',
+    invalidUrl: 'Ingresa una URL valida',
+    hintTitle: 'Titulo del contenido',
+    hintUrl: 'https://www.youtube.com/watch?v=...',
+    hintThumbnailUrl: 'https://...',
+    hintChannelName: 'Nombre del canal',
+    hintChannelUrl: 'https://...',
+    hintSeries: 'Buscar serie...',
+    previewButton: 'Previsualizar embed',
+    previewWarning: 'Ingresa una URL y plataforma para previsualizar',
+    loadError: 'Error al cargar el contenido',
+    createSuccess: 'Contenido creado',
+    updateSuccess: 'Contenido actualizado',
+    saveError: 'Error al guardar',
+    deleteSuccess: 'Contenido eliminado',
+    deleteError: 'Error al eliminar el contenido',
+  },
+  adminLogs: {
+    title: 'Access Logs',
+    subtitle: 'Registro de accesos y acciones del sistema.',
+    statsTotal: 'Registros',
+    filterActionPlaceholder: 'Accion',
+    filterUserPlaceholder: 'Usuario',
+    filterIpPlaceholder: 'Buscar IP',
+    filterPathPlaceholder: 'Buscar ruta',
+    actionRefresh: 'Refrescar',
+    actionCleanScanners: 'Limpiar scanners',
+    actionCleanOld: 'Limpiar +90 dias',
+    anonymous: 'Anonimo',
+    loadingText: 'Cargando...',
+    emptyText: 'Sin resultados',
+    columnDate: 'Fecha',
+    columnUser: 'Usuario',
+    columnAction: 'Accion',
+    columnPath: 'Ruta',
+    columnIp: 'IP',
+    columnUserAgent: 'User Agent',
+    paginationPrev: 'Anterior',
+    paginationNext: 'Siguiente',
+    pageInfo: '{page} / {total}',
+    showTotal: '{total} logs',
+    loadError: 'Error al cargar logs',
+    cleanError: 'Error al limpiar logs',
+    cleanScannersError: 'Error al limpiar logs de scanners',
+  },
 };
 
 const en: TranslationShape = {
@@ -1279,6 +1453,93 @@ const en: TranslationShape = {
     banSuccess: 'User banned',
     unbanSuccess: 'User unbanned',
     banError: 'Error banning user',
+  },
+  adminContent: {
+    title: 'Content Management',
+    subtitle: 'Manage embeddable videos for series and catalog.',
+    statsTotal: 'Total',
+    statsFiltered: 'Filtered',
+    statsDuplicates: 'Duplicates',
+    searchPlaceholder: 'Search by title, channel or series...',
+    newItem: 'New Content',
+    newItemShort: 'New',
+    actionImport: 'Import Channel',
+    actionImportShort: 'Import',
+    actionShowDuplicates: 'Duplicates ({count})',
+    columnTitle: 'Title',
+    columnPlatform: 'Platform',
+    columnCategory: 'Category',
+    columnSeries: 'Series',
+    columnFeatured: 'Feat.',
+    columnActions: 'Actions',
+    tagDuplicate: 'Duplicate',
+    actionEdit: 'Edit',
+    actionDelete: 'Delete',
+    deleteTitle: 'Delete this content?',
+    cancel: 'Cancel',
+    modalNewTitle: 'New Content',
+    modalEditTitle: 'Edit Content',
+    save: 'Save',
+    fieldTitle: 'Title',
+    fieldUrl: 'URL',
+    fieldPlatform: 'Platform',
+    fieldCategory: 'Category',
+    fieldDescription: 'Description',
+    fieldLanguage: 'Language',
+    fieldThumbnailUrl: 'Thumbnail URL',
+    thumbnailHint: 'Auto-generated for YouTube when URL is entered',
+    fieldChannelName: 'Channel / Creator',
+    fieldChannelUrl: 'Channel URL',
+    fieldSeries: 'Related series (optional)',
+    fieldOfficial: 'Official',
+    fieldFeatured: 'Featured',
+    fieldOrder: 'Order',
+    requiredTitle: 'Title is required',
+    requiredUrl: 'URL is required',
+    requiredPlatform: 'Platform is required',
+    invalidUrl: 'Enter a valid URL',
+    hintTitle: 'Content title',
+    hintUrl: 'https://www.youtube.com/watch?v=...',
+    hintThumbnailUrl: 'https://...',
+    hintChannelName: 'Channel name',
+    hintChannelUrl: 'https://...',
+    hintSeries: 'Search series...',
+    previewButton: 'Preview embed',
+    previewWarning: 'Enter a URL and platform to preview',
+    loadError: 'Error loading content',
+    createSuccess: 'Content created',
+    updateSuccess: 'Content updated',
+    saveError: 'Error saving content',
+    deleteSuccess: 'Content deleted',
+    deleteError: 'Error deleting content',
+  },
+  adminLogs: {
+    title: 'Access Logs',
+    subtitle: 'System access and action log.',
+    statsTotal: 'Records',
+    filterActionPlaceholder: 'Action',
+    filterUserPlaceholder: 'User',
+    filterIpPlaceholder: 'Search IP',
+    filterPathPlaceholder: 'Search path',
+    actionRefresh: 'Refresh',
+    actionCleanScanners: 'Clean scanners',
+    actionCleanOld: 'Clean +90 days',
+    anonymous: 'Anonymous',
+    loadingText: 'Loading...',
+    emptyText: 'No results',
+    columnDate: 'Date',
+    columnUser: 'User',
+    columnAction: 'Action',
+    columnPath: 'Path',
+    columnIp: 'IP',
+    columnUserAgent: 'User Agent',
+    paginationPrev: 'Previous',
+    paginationNext: 'Next',
+    pageInfo: '{page} / {total}',
+    showTotal: '{total} logs',
+    loadError: 'Error loading logs',
+    cleanError: 'Error cleaning logs',
+    cleanScannersError: 'Error cleaning scanner logs',
   },
 };
 
