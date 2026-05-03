@@ -10,6 +10,10 @@ import {
   Avatar,
   Tag,
   Space,
+  Modal,
+  InputNumber,
+  Statistic,
+  Card,
 } from 'antd';
 import {
   UserOutlined,
@@ -17,6 +21,7 @@ import {
   ReloadOutlined,
   SearchOutlined,
   BugOutlined,
+  BarChartOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
@@ -70,6 +75,13 @@ const ACTION_OPTIONS = [
 interface UserOption {
   id: string;
   name: string | null;
+}
+
+interface LogStats {
+  totalLogs: number;
+  totalUsers: number;
+  topEndpoints: { path: string; count: number }[];
+  actionBreakdown: { action: string; count: number }[];
 }
 
 function useIsMobile() {
@@ -163,6 +175,10 @@ export function LogsClient() {
     null,
   ]);
   const [users, setUsers] = useState<UserOption[]>([]);
+  const [stats, setStats] = useState<LogStats | null>(null);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [cleanModalOpen, setCleanModalOpen] = useState(false);
+  const [cleanDays, setCleanDays] = useState<number>(90);
 
   useEffect(() => {
     fetch('/api/users')
@@ -174,6 +190,25 @@ export function LogsClient() {
       })
       .catch(() => {});
   }, []);
+
+  const fetchStats = useCallback(async () => {
+    setStatsLoading(true);
+    try {
+      const res = await fetch('/api/admin/logs/stats');
+      if (res.ok) {
+        const data = await res.json();
+        setStats(data);
+      }
+    } catch {
+      // stats are non-critical
+    } finally {
+      setStatsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchStats();
+  }, [fetchStats]);
 
   const fetchLogs = useCallback(async () => {
     setLoading(true);
@@ -235,13 +270,15 @@ export function LogsClient() {
 
   const handleCleanOldLogs = async () => {
     try {
-      const response = await fetch('/api/admin/logs?days=90', {
+      const response = await fetch(`/api/admin/logs?days=${cleanDays}`, {
         method: 'DELETE',
       });
       if (response.ok) {
         const data = await response.json();
         message.success(data.message);
+        setCleanModalOpen(false);
         fetchLogs();
+        fetchStats();
       }
     } catch (error) {
       message.error(t('adminLogs.cleanError'));
@@ -258,6 +295,7 @@ export function LogsClient() {
         const data = await response.json();
         message.success(data.message);
         fetchLogs();
+        fetchStats();
       }
     } catch (error) {
       message.error(t('adminLogs.cleanScannersError'));
@@ -367,10 +405,68 @@ export function LogsClient() {
         <AdminPageHero
           title={t('adminLogs.title')}
           subtitle={t('adminLogs.subtitle')}
-          stats={[{ label: t('adminLogs.statsTotal'), value: total }]}
+          stats={[
+            { label: t('adminLogs.statsTotal'), value: statsLoading ? '…' : (stats?.totalLogs ?? 0) },
+            { label: t('adminLogs.statsTotalUsers'), value: statsLoading ? '…' : (stats?.totalUsers ?? 0) },
+          ]}
         />
 
         <div className="logs-page">
+          {stats && (
+            <div className="logs-stats">
+              <Card
+                size="small"
+                title={
+                  <span className="logs-stats__card-title">
+                    <BarChartOutlined /> {t('adminLogs.statsTopEndpoints')}
+                  </span>
+                }
+                className="logs-stats__card"
+                loading={statsLoading}
+              >
+                <Table
+                  dataSource={stats.topEndpoints}
+                  rowKey="path"
+                  size="small"
+                  pagination={false}
+                  columns={[
+                    { title: t('adminLogs.columnPath'), dataIndex: 'path', key: 'path', ellipsis: true,
+                      render: (path: string) => (
+                        <span className="logs-table__clickable" onClick={() => applyFilter('path', path)}>{path}</span>
+                      ),
+                    },
+                    { title: t('adminLogs.columnCount'), dataIndex: 'count', key: 'count', width: 80, align: 'right' as const },
+                  ]}
+                />
+              </Card>
+              <Card
+                size="small"
+                title={
+                  <span className="logs-stats__card-title">
+                    <BarChartOutlined /> {t('adminLogs.statsActions')}
+                  </span>
+                }
+                className="logs-stats__card logs-stats__card--narrow"
+                loading={statsLoading}
+              >
+                <div className="logs-stats__actions">
+                  {stats.actionBreakdown.map((a) => (
+                    <div key={a.action} className="logs-stats__action-row">
+                      <Tag
+                        color={ACTION_COLORS[a.action] || 'default'}
+                        className="logs-table__clickable"
+                        onClick={() => applyFilter('action', a.action)}
+                      >
+                        {a.action}
+                      </Tag>
+                      <Statistic value={a.count} valueStyle={{ fontSize: 14 }} />
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            </div>
+          )}
+
           <div className="logs-filters">
             <Space wrap size="small">
               <Select
@@ -442,12 +538,37 @@ export function LogsClient() {
               <Button
                 danger
                 icon={<DeleteOutlined />}
-                onClick={handleCleanOldLogs}
+                onClick={() => setCleanModalOpen(true)}
               >
                 {t('adminLogs.actionCleanOld')}
               </Button>
             </Space>
           </div>
+
+          <Modal
+            title={t('adminLogs.cleanModalTitle')}
+            open={cleanModalOpen}
+            onOk={handleCleanOldLogs}
+            onCancel={() => setCleanModalOpen(false)}
+            okText={t('adminLogs.cleanModalOk')}
+            cancelText={t('adminLogs.cleanModalCancel')}
+            okButtonProps={{ danger: true }}
+          >
+            <div className="logs-clean-modal">
+              <p className="logs-clean-modal__label">{t('adminLogs.cleanModalDaysLabel')}</p>
+              <InputNumber
+                min={1}
+                max={3650}
+                value={cleanDays}
+                onChange={(v) => setCleanDays(v ?? 90)}
+                addonAfter="días"
+                style={{ width: 160 }}
+              />
+              <p className="logs-clean-modal__warning">
+                {interpolateMessage(t('adminLogs.cleanModalConfirmText'), { days: cleanDays })}
+              </p>
+            </div>
+          </Modal>
 
           {isMobile ? (
             <div className="logs-cards">
