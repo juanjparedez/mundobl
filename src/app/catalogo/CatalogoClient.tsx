@@ -577,6 +577,13 @@ export function CatalogoClient({
     const gradient = getGradientByType(serie.tipo);
     const isInfoExpanded = expandedInfoCardId === serie.id;
     const actorHighlights = (serie.actors ?? []).slice(0, 3);
+    const hasSeasonInfo = serie.temporadas > 0;
+    const hasEpisodeInfo = serie.episodios > 0;
+    const hasRuntimeInfo = (serie.runtimeHours ?? 0) > 0;
+    const hasActorInfo = actorHighlights.length > 0;
+    const hasExpandableInfo =
+      hasSeasonInfo || hasEpisodeInfo || hasRuntimeInfo || hasActorInfo;
+
     return (
       <div
         className={`serie-card serie-card--${serie.tipo}`}
@@ -672,39 +679,41 @@ export function CatalogoClient({
             {serie.visto && <Tag color="success">{t('catalogo.watchedTag')}</Tag>}
           </div>
 
-          <button
-            className={`serie-card-more-info-btn${isInfoExpanded ? ' serie-card-more-info-btn--active' : ''}`}
-            onClick={(e) => toggleCardInfo(serie.id, e)}
-          >
-            {isInfoExpanded ? t('catalogo.hideInfo') : t('catalogo.moreInfo')}
-          </button>
+          {hasExpandableInfo && (
+            <button
+              className={`serie-card-more-info-btn${isInfoExpanded ? ' serie-card-more-info-btn--active' : ''}`}
+              onClick={(e) => toggleCardInfo(serie.id, e)}
+            >
+              {isInfoExpanded ? t('catalogo.hideInfo') : t('catalogo.moreInfo')}
+            </button>
+          )}
 
-          {isInfoExpanded && (
+          {hasExpandableInfo && isInfoExpanded && (
             <div className="serie-card-info-panel">
-              <div className="serie-card-info-line">
-                <span>{t('catalogo.infoSeasons')}</span>
-                <strong>{serie.temporadas}</strong>
-              </div>
-              <div className="serie-card-info-line">
-                <span>{t('catalogo.infoEpisodes')}</span>
-                <strong>{serie.episodios}</strong>
-              </div>
-              <div className="serie-card-info-line">
-                <span>{t('catalogo.infoRuntime')}</span>
-                <strong>
-                  {(serie.runtimeHours ?? 0) > 0
-                    ? `${serie.runtimeHours}h`
-                    : t('catalogo.infoUnknown')}
-                </strong>
-              </div>
-              <div className="serie-card-info-line serie-card-info-line--stacked">
-                <span>{t('catalogo.infoActors')}</span>
-                <strong>
-                  {actorHighlights.length > 0
-                    ? actorHighlights.join(', ')
-                    : t('catalogo.infoNoActors')}
-                </strong>
-              </div>
+              {hasSeasonInfo && (
+                <div className="serie-card-info-line">
+                  <span>{t('catalogo.infoSeasons')}</span>
+                  <strong>{serie.temporadas}</strong>
+                </div>
+              )}
+              {hasEpisodeInfo && (
+                <div className="serie-card-info-line">
+                  <span>{t('catalogo.infoEpisodes')}</span>
+                  <strong>{serie.episodios}</strong>
+                </div>
+              )}
+              {hasRuntimeInfo && (
+                <div className="serie-card-info-line">
+                  <span>{t('catalogo.infoRuntime')}</span>
+                  <strong>{serie.runtimeHours}h</strong>
+                </div>
+              )}
+              {hasActorInfo && (
+                <div className="serie-card-info-line serie-card-info-line--stacked">
+                  <span>{t('catalogo.infoActors')}</span>
+                  <strong>{actorHighlights.join(', ')}</strong>
+                </div>
+              )}
             </div>
           )}
         </div>
