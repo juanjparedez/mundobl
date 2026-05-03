@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Input, Button, Card, Empty, Switch, Tag, Tooltip } from 'antd';
+import { Input, Button, Card, Empty, Modal, Switch, Tag, Tooltip } from 'antd';
 import {
   CommentOutlined,
   ClockCircleOutlined,
+  FlagOutlined,
   LockOutlined,
 } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
@@ -53,6 +54,10 @@ export function CommentsList({
   const [newComment, setNewComment] = useState('');
   const [isPrivate, setIsPrivate] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [reportedIds, setReportedIds] = useState<Set<number>>(new Set());
+  const [reportTarget, setReportTarget] = useState<number | null>(null);
+  const [reportReason, setReportReason] = useState('');
+  const [reportSubmitting, setReportSubmitting] = useState(false);
 
   const visibleComments = comments.filter(
     (c) =>
@@ -96,6 +101,68 @@ export function CommentsList({
       setIsSubmitting(false);
     }
   };
+
+  const submitReport = async () => {
+    if (reportTarget == null) return;
+    setReportSubmitting(true);
+    try {
+      const response = await fetch(`/api/comments/${reportTarget}/report`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: reportReason }),
+      });
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || 'No se pudo reportar');
+      }
+      setReportedIds((prev) => new Set(prev).add(reportTarget));
+      message.success('Comentario reportado. Gracias por avisar.');
+      setReportTarget(null);
+      setReportReason('');
+    } catch (error) {
+      message.error(
+        error instanceof Error ? error.message : 'No se pudo reportar'
+      );
+    } finally {
+      setReportSubmitting(false);
+    }
+  };
+
+  const canReport = (comment: Comment) => {
+    if (!currentUserId) return false;
+    if (comment.isPrivate) return false;
+    const authorId = comment.userId ?? comment.user?.id ?? null;
+    if (authorId === currentUserId) return false;
+    return !reportedIds.has(comment.id);
+  };
+
+  const reportModal = (
+    <Modal
+      title="Reportar comentario"
+      open={reportTarget !== null}
+      onOk={submitReport}
+      onCancel={() => {
+        setReportTarget(null);
+        setReportReason('');
+      }}
+      okText="Reportar"
+      cancelText="Cancelar"
+      okButtonProps={{ danger: true, loading: reportSubmitting }}
+      destroyOnHidden
+    >
+      <p style={{ color: 'var(--text-secondary)', marginTop: 0 }}>
+        Contanos brevemente por qué (opcional). Un admin lo va a revisar.
+      </p>
+      <TextArea
+        rows={3}
+        maxLength={500}
+        showCount
+        placeholder="Spam, contenido fuera de tema, datos personales..."
+        value={reportReason}
+        onChange={(e) => setReportReason(e.target.value)}
+      />
+    </Modal>
+  );
 
   if (compact) {
     return (
@@ -152,12 +219,23 @@ export function CommentsList({
                     {comment.isPrivate && <LockOutlined />}
                     <ClockCircleOutlined />{' '}
                     {formatDate(new Date(comment.createdAt))}
+                    {canReport(comment) && (
+                      <Button
+                        type="text"
+                        size="small"
+                        icon={<FlagOutlined />}
+                        onClick={() => setReportTarget(comment.id)}
+                        aria-label="Reportar comentario"
+                        className="comment-compact__report"
+                      />
+                    )}
                   </span>
                 </div>
               ))}
             </div>
           </div>
         )}
+        {reportModal}
       </div>
     );
   }
@@ -229,12 +307,24 @@ export function CommentsList({
                     <ClockCircleOutlined />{' '}
                     {formatDate(new Date(comment.createdAt))}
                   </span>
+                  {canReport(comment) && (
+                    <Button
+                      type="text"
+                      size="small"
+                      icon={<FlagOutlined />}
+                      onClick={() => setReportTarget(comment.id)}
+                      className="comment-card__report"
+                    >
+                      Reportar
+                    </Button>
+                  )}
                 </div>
               </Card>
             ))}
           </div>
         )}
       </div>
+      {reportModal}
     </div>
   );
 }

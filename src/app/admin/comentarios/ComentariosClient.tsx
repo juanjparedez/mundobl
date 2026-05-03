@@ -1,9 +1,19 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { Avatar, Button, Input, Popconfirm, Segmented, Table } from 'antd';
+import {
+  Avatar,
+  Button,
+  Checkbox,
+  Input,
+  Popconfirm,
+  Segmented,
+  Table,
+  Tag,
+} from 'antd';
 import {
   DeleteOutlined,
+  FlagOutlined,
   SearchOutlined,
   UserOutlined,
 } from '@ant-design/icons';
@@ -19,6 +29,8 @@ type TargetFilter = 'all' | 'series' | 'season' | 'episode';
 interface CommentRow {
   id: number;
   content: string;
+  reportCount: number;
+  reportedAt: string | null;
   createdAt: string;
   user: {
     id: string;
@@ -60,6 +72,7 @@ export function ComentariosClient() {
   const [target, setTarget] = useState<TargetFilter>('all');
   const [search, setSearch] = useState('');
   const [searchInput, setSearchInput] = useState('');
+  const [reportedOnly, setReportedOnly] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const fetchComments = useCallback(async () => {
@@ -71,6 +84,7 @@ export function ComentariosClient() {
       });
       if (target !== 'all') params.set('target', target);
       if (search) params.set('q', search);
+      if (reportedOnly) params.set('reported', 'true');
 
       const response = await fetch(`/api/admin/comments?${params.toString()}`);
       if (!response.ok) throw new Error('Error al cargar comentarios');
@@ -83,7 +97,7 @@ export function ComentariosClient() {
     } finally {
       setLoading(false);
     }
-  }, [page, target, search, message]);
+  }, [page, target, search, reportedOnly, message]);
 
   useEffect(() => {
     fetchComments();
@@ -164,10 +178,20 @@ export function ComentariosClient() {
     },
     {
       title: 'Comentario',
-      dataIndex: 'content',
       key: 'content',
-      render: (content: string) => (
-        <div className="comentarios-content">{content}</div>
+      render: (_, record) => (
+        <div className="comentarios-content">
+          {record.reportCount > 0 && (
+            <Tag
+              color="red"
+              icon={<FlagOutlined />}
+              className="comentarios-report-tag"
+            >
+              {record.reportCount} reporte{record.reportCount === 1 ? '' : 's'}
+            </Tag>
+          )}
+          {record.content}
+        </div>
       ),
     },
     {
@@ -242,6 +266,15 @@ export function ComentariosClient() {
               }}
               className="comentarios-search"
             />
+            <Checkbox
+              checked={reportedOnly}
+              onChange={(e) => {
+                setReportedOnly(e.target.checked);
+                setPage(1);
+              }}
+            >
+              Solo reportados
+            </Checkbox>
           </div>
 
           <Table

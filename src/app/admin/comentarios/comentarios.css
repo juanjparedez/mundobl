@@ -62,3 +62,7 @@
   color: var(--text-secondary);
   font-style: italic;
 }
+
+.comentarios-report-tag {
+  margin-right: var(--spacing-xs);
+}

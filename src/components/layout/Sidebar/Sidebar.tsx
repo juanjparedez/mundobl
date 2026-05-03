@@ -141,6 +141,12 @@ export function Sidebar() {
                       onClick: () => router.push('/admin/contenido'),
                     },
                     {
+                      key: '/admin/comentarios',
+                      icon: <CommentOutlined />,
+                      label: 'Comentarios',
+                      onClick: () => router.push('/admin/comentarios'),
+                    },
+                    {
                       key: '/admin/info',
                       icon: <InfoCircleOutlined />,
                       label: 'Info',

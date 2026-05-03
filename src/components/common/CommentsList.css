@@ -73,6 +73,17 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  gap: var(--spacing-sm);
+}
+
+.comment-card__report,
+.comment-compact__report {
+  color: var(--text-tertiary);
+}
+
+.comment-card__report:hover,
+.comment-compact__report:hover {
+  color: var(--error-color, #ff4d4f);
 }
 
 .comment-card__date {
