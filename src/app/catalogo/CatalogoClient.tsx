@@ -138,6 +138,7 @@ const getColorByType = (tipo: string) => {
 };
 
 type QuickFilterValue = 'popular' | 'recent' | 'trend' | null;
+type SortKey = 'az' | 'za' | 'year-desc' | 'year-asc' | 'rating-desc';
 
 export function CatalogoClient({
   series: initialSeries,
@@ -235,11 +236,28 @@ export function CatalogoClient({
     const raw = window.localStorage.getItem('catalog-view-mode');
     return raw === 'list' ? 'list' : 'grid';
   });
+  const [sortBy, setSortBy] = useState<SortKey>(() => {
+    if (typeof window === 'undefined') return 'az';
+    const raw = window.localStorage.getItem('catalog-sort');
+    const valid: SortKey[] = [
+      'az',
+      'za',
+      'year-desc',
+      'year-asc',
+      'rating-desc',
+    ];
+    return valid.includes(raw as SortKey) ? (raw as SortKey) : 'az';
+  });
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
     window.localStorage.setItem('catalog-view-mode', viewMode);
   }, [viewMode]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem('catalog-sort', sortBy);
+  }, [sortBy]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -544,15 +562,39 @@ export function CatalogoClient({
       items.push({ type: 'single', serie });
     });
 
-    // Sort all items alphabetically
+    // Sort items according to user preference
     items.sort((a, b) => {
       const nameA = a.type === 'universe' ? a.universoNombre : a.serie.titulo;
       const nameB = b.type === 'universe' ? b.universoNombre : b.serie.titulo;
-      return nameA.localeCompare(nameB);
+      const yearA =
+        a.type === 'universe' ? (a.series[0]?.anio ?? 0) : (a.serie.anio ?? 0);
+      const yearB =
+        b.type === 'universe' ? (b.series[0]?.anio ?? 0) : (b.serie.anio ?? 0);
+      const ratingA =
+        a.type === 'universe'
+          ? (a.series[0]?.rating ?? 0)
+          : (a.serie.rating ?? 0);
+      const ratingB =
+        b.type === 'universe'
+          ? (b.series[0]?.rating ?? 0)
+          : (b.serie.rating ?? 0);
+
+      switch (sortBy) {
+        case 'za':
+          return nameB.localeCompare(nameA);
+        case 'year-desc':
+          return yearB - yearA || nameA.localeCompare(nameB);
+        case 'year-asc':
+          return yearA - yearB || nameA.localeCompare(nameB);
+        case 'rating-desc':
+          return ratingB - ratingA || nameA.localeCompare(nameB);
+        default: // 'az'
+          return nameA.localeCompare(nameB);
+      }
     });
 
     return items;
-  }, [filteredSeries]);
+  }, [filteredSeries, sortBy]);
 
   const paginatedItems = useMemo(() => {
     const startIndex = (currentPage - 1) * pageSize;
@@ -1356,6 +1398,20 @@ export function CatalogoClient({
                   total: String(series.length),
                 })}
           </span>
+          <Select
+            value={sortBy}
+            onChange={(v) => setSortBy(v as SortKey)}
+            size={isMobile ? 'small' : 'middle'}
+            className="catalogo-sort-select"
+            options={[
+              { value: 'az', label: t('catalogo.sortAZ') },
+              { value: 'za', label: t('catalogo.sortZA') },
+              { value: 'year-desc', label: t('catalogo.sortYearNew') },
+              { value: 'year-asc', label: t('catalogo.sortYearOld') },
+              { value: 'rating-desc', label: t('catalogo.sortRatingDesc') },
+            ]}
+            popupMatchSelectWidth={false}
+          />
           <Space.Compact>
             <Button
               icon={<AppstoreOutlined />}

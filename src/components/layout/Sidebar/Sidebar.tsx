@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Layout, Menu, Avatar, Button } from 'antd';
 import {
   AppstoreOutlined,
+  BarChartOutlined,
   SettingOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
@@ -135,6 +136,12 @@ export function Sidebar() {
       icon: <VideoCameraOutlined />,
       label: t('sidebar.content'),
       onClick: () => router.push('/contenido'),
+    },
+    {
+      key: ROUTES.ESTADISTICAS,
+      icon: <BarChartOutlined />,
+      label: t('sidebar.stats'),
+      onClick: () => router.push(ROUTES.ESTADISTICAS),
     },
     ...(canAccessAdmin
       ? [

@@ -235,6 +235,7 @@ type TranslationShape = {
     switchToDark: string;
     dark: string;
     light: string;
+    stats: string;
   };
   profile: {
     loginRequired: string;
@@ -453,6 +454,9 @@ type TranslationShape = {
     deleteAccountButton: string;
     deleteAccountDescription: string;
     closeButton: string;
+    sectionPreferences: string;
+    defaultCommentPrivateLabel: string;
+    defaultCommentPrivateHint: string;
   };
   adminComments: {
     title: string;
@@ -1137,6 +1141,12 @@ type TranslationShape = {
     infoActors: string;
     infoNoActors: string;
     infoUnknown: string;
+    sortLabel: string;
+    sortAZ: string;
+    sortZA: string;
+    sortYearNew: string;
+    sortYearOld: string;
+    sortRatingDesc: string;
   };
   landing: {
     subtitle: string;
@@ -1570,6 +1580,7 @@ const es: TranslationShape = {
     dark: 'Oscuro',
     light: 'Claro',
     profile: 'Mi Perfil',
+    stats: 'Estad\u00edsticas',
   },
   profile: {
     loginRequired: 'Inicia sesion para ver tu perfil',
@@ -1807,6 +1818,10 @@ const es: TranslationShape = {
     deleteAccountDescription:
       'Elimina permanentemente tu cuenta y datos personales. Disponible proximamente.',
     closeButton: 'Cerrar',
+    sectionPreferences: 'Preferencias',
+    defaultCommentPrivateLabel: 'Notas privadas por defecto',
+    defaultCommentPrivateHint:
+      'Tus nuevos comentarios se marcarán como privados al escribirlos.',
   },
   adminComments: {
     title: 'Comentarios publicos',
@@ -2510,6 +2525,12 @@ const es: TranslationShape = {
     infoActors: 'Actores',
     infoNoActors: 'Sin actores cargados',
     infoUnknown: 'Sin dato',
+    sortLabel: 'Ordenar',
+    sortAZ: 'A-Z',
+    sortZA: 'Z-A',
+    sortYearNew: 'Más nuevo',
+    sortYearOld: 'Más antiguo',
+    sortRatingDesc: 'Mejor valorado',
   },
   landing: {
     subtitle: 'Tu catálogo personal de series BL y más.',
@@ -2943,6 +2964,7 @@ const en: TranslationShape = {
     dark: 'Dark',
     light: 'Light',
     profile: 'My Profile',
+    stats: 'Statistics',
   },
   profile: {
     loginRequired: 'Sign in to view your profile',
@@ -3177,6 +3199,10 @@ const en: TranslationShape = {
     deleteAccountDescription:
       'Permanently deletes your account and personal data. Coming soon.',
     closeButton: 'Close',
+    sectionPreferences: 'Preferences',
+    defaultCommentPrivateLabel: 'Private notes by default',
+    defaultCommentPrivateHint:
+      'Your new comments will be marked as private when you write them.',
   },
   adminComments: {
     title: 'Public comments',
@@ -3876,6 +3902,12 @@ const en: TranslationShape = {
     infoActors: 'Actors',
     infoNoActors: 'No actors loaded',
     infoUnknown: 'Unknown',
+    sortLabel: 'Sort',
+    sortAZ: 'A-Z',
+    sortZA: 'Z-A',
+    sortYearNew: 'Newest first',
+    sortYearOld: 'Oldest first',
+    sortRatingDesc: 'Best rated',
   },
   landing: {
     subtitle: 'Your personal BL series catalog and more.',
