@@ -329,6 +329,19 @@
 
 .serie-card-action-btn.favorite-active {
   color: var(--warning-color);
+  animation: favorite-pop 0.36s var(--ease-pop, cubic-bezier(0.34, 1.56, 0.64, 1));
+}
+
+@keyframes favorite-pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.4);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* ==========================================
@@ -637,6 +650,23 @@
 
 .serie-list-item-fav.favorite-active {
   color: var(--warning-color);
+  animation: favorite-pop 0.36s var(--ease-pop, cubic-bezier(0.34, 1.56, 0.64, 1));
+}
+
+/* Fade-in suave del grid en cada cambio de página/filtros */
+.catalogo-grid-fade {
+  animation: catalogo-grid-fade-in 0.32s ease-out;
+}
+
+@keyframes catalogo-grid-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ==========================================
