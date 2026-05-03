@@ -379,7 +379,8 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || t('seriesForm.universeCreateError'));
+      if (!res.ok)
+        throw new Error(data.error || t('seriesForm.universeCreateError'));
 
       const created: UniverseOption = { id: data.id, name: data.name };
       setUniverses((prev) =>
@@ -389,7 +390,11 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
       setNewUniverseModalOpen(false);
       setNewUniverseName('');
       setNewUniverseDescription('');
-      message.success(interpolateMessage(t('seriesForm.universeCreated'), { name: created.name }));
+      message.success(
+        interpolateMessage(t('seriesForm.universeCreated'), {
+          name: created.name,
+        })
+      );
     } catch (err) {
       message.error(
         err instanceof Error ? err.message : t('seriesForm.universeCreateError')
@@ -495,7 +500,9 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
       const data = await response.json();
       setIsFavorite(data.isFavorite);
       message.success(
-        data.isFavorite ? t('seriesForm.favoriteAdded') : t('seriesForm.favoriteRemoved')
+        data.isFavorite
+          ? t('seriesForm.favoriteAdded')
+          : t('seriesForm.favoriteRemoved')
       );
     } catch {
       message.error(t('seriesForm.favoriteError'));
@@ -561,7 +568,9 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                       : {}
                   }
                 >
-                  {isFavorite ? t('seriesForm.favoriteButton') : t('seriesForm.addFavoriteButton')}
+                  {isFavorite
+                    ? t('seriesForm.favoriteButton')
+                    : t('seriesForm.addFavoriteButton')}
                 </Button>
               )}
               <Button icon={<CloseOutlined />} onClick={handleCancel}>
@@ -606,8 +615,14 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
               </Col>
 
               <Col xs={24} md={12}>
-                <Form.Item label={t('seriesForm.fieldOriginalTitle')} name="originalTitle">
-                  <Input placeholder={t('seriesForm.hintOriginalTitle')} size="large" />
+                <Form.Item
+                  label={t('seriesForm.fieldOriginalTitle')}
+                  name="originalTitle"
+                >
+                  <Input
+                    placeholder={t('seriesForm.hintOriginalTitle')}
+                    size="large"
+                  />
                 </Form.Item>
               </Col>
 
@@ -615,24 +630,41 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                 <Form.Item
                   label={t('seriesForm.fieldType')}
                   name="type"
-                  rules={[{ required: true, message: t('seriesForm.requiredType') }]}
+                  rules={[
+                    { required: true, message: t('seriesForm.requiredType') },
+                  ]}
                 >
                   <Select
                     size="large"
                     onChange={(value) => setSelectedType(value)}
                   >
-                    <Option value="serie">📺 {t('seriesForm.typeOption_serie')}</Option>
-                    <Option value="pelicula">🎬 {t('seriesForm.typeOption_pelicula')}</Option>
-                    <Option value="corto">🎞️ {t('seriesForm.typeOption_corto')}</Option>
-                    <Option value="especial">✨ {t('seriesForm.typeOption_especial')}</Option>
-                    <Option value="anime">🎨 {t('seriesForm.typeOption_anime')}</Option>
-                    <Option value="reality">🎤 {t('seriesForm.typeOption_reality')}</Option>
+                    <Option value="serie">
+                      📺 {t('seriesForm.typeOption_serie')}
+                    </Option>
+                    <Option value="pelicula">
+                      🎬 {t('seriesForm.typeOption_pelicula')}
+                    </Option>
+                    <Option value="corto">
+                      🎞️ {t('seriesForm.typeOption_corto')}
+                    </Option>
+                    <Option value="especial">
+                      ✨ {t('seriesForm.typeOption_especial')}
+                    </Option>
+                    <Option value="anime">
+                      🎨 {t('seriesForm.typeOption_anime')}
+                    </Option>
+                    <Option value="reality">
+                      🎤 {t('seriesForm.typeOption_reality')}
+                    </Option>
                   </Select>
                 </Form.Item>
               </Col>
 
               <Col xs={24} md={8}>
-                <Form.Item label={t('seriesForm.fieldCountry')} name="countryName">
+                <Form.Item
+                  label={t('seriesForm.fieldCountry')}
+                  name="countryName"
+                >
                   <Select
                     placeholder={t('seriesForm.hintCountry')}
                     size="large"
@@ -738,11 +770,17 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                 <Form.Item
                   label={t('seriesForm.fieldFormat')}
                   name="format"
-                  rules={[{ required: true, message: t('seriesForm.requiredFormat') }]}
+                  rules={[
+                    { required: true, message: t('seriesForm.requiredFormat') },
+                  ]}
                 >
                   <Select size="large">
-                    <Option value="regular">📱 {t('seriesForm.formatOption_regular')}</Option>
-                    <Option value="vertical">📲 {t('seriesForm.formatOption_vertical')}</Option>
+                    <Option value="regular">
+                      📱 {t('seriesForm.formatOption_regular')}
+                    </Option>
+                    <Option value="vertical">
+                      📲 {t('seriesForm.formatOption_vertical')}
+                    </Option>
                   </Select>
                 </Form.Item>
               </Col>
@@ -803,7 +841,10 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
               </Col>
 
               <Col xs={24}>
-                <Form.Item label={t('seriesForm.fieldSynopsis')} name="synopsis">
+                <Form.Item
+                  label={t('seriesForm.fieldSynopsis')}
+                  name="synopsis"
+                >
                   <TextArea
                     rows={4}
                     placeholder={t('seriesForm.hintSynopsis')}
@@ -812,7 +853,10 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
               </Col>
 
               <Col xs={24} md={12}>
-                <Form.Item label={t('seriesForm.fieldSoundtrack')} name="soundtrack">
+                <Form.Item
+                  label={t('seriesForm.fieldSoundtrack')}
+                  name="soundtrack"
+                >
                   <Input
                     placeholder={t('seriesForm.hintSoundtrack')}
                     size="large"
@@ -836,7 +880,10 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
               </Col>
 
               <Col xs={24}>
-                <Form.Item label={t('seriesForm.fieldObservations')} name="observations">
+                <Form.Item
+                  label={t('seriesForm.fieldObservations')}
+                  name="observations"
+                >
                   <TextArea
                     rows={3}
                     placeholder={t('seriesForm.hintObservations')}
@@ -887,7 +934,9 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                         loading={uploading}
                         size="large"
                       >
-                        {uploading ? t('seriesForm.uploadingLabel') : t('seriesForm.uploadButton')}
+                        {uploading
+                          ? t('seriesForm.uploadingLabel')
+                          : t('seriesForm.uploadButton')}
                       </Button>
                     </Upload>
                   </Space.Compact>
@@ -909,7 +958,11 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
           </Card>
 
           {/* Reparto */}
-          <Card type="inner" title={`👥 ${t('seriesForm.sectionCast')}`} style={{ marginBottom: 24 }}>
+          <Card
+            type="inner"
+            title={`👥 ${t('seriesForm.sectionCast')}`}
+            style={{ marginBottom: 24 }}
+          >
             {showSeasons && (
               <Alert
                 title={t('seriesForm.castAlertTitle')}
@@ -994,7 +1047,11 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
           </Card>
 
           {/* Directores */}
-          <Card type="inner" title={`🎬 ${t('seriesForm.sectionDirectors')}`} style={{ marginBottom: 24 }}>
+          <Card
+            type="inner"
+            title={`🎬 ${t('seriesForm.sectionDirectors')}`}
+            style={{ marginBottom: 24 }}
+          >
             <Form.List name="directors">
               {(fields, { add, remove }) => (
                 <>
@@ -1034,7 +1091,11 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
           </Card>
 
           {/* Donde Ver */}
-          <Card type="inner" title={t('seriesForm.sectionWatchLinks')} style={{ marginBottom: 24 }}>
+          <Card
+            type="inner"
+            title={t('seriesForm.sectionWatchLinks')}
+            style={{ marginBottom: 24 }}
+          >
             <Form.List name="watchLinks">
               {(fields, { add, remove }) => (
                 <>
@@ -1129,7 +1190,10 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                             name={[name, 'seasonNumber']}
                             label={t('seriesForm.fieldSeasonNumber')}
                             rules={[
-                              { required: true, message: t('seriesForm.requiredSeasonNumber') },
+                              {
+                                required: true,
+                                message: t('seriesForm.requiredSeasonNumber'),
+                              },
                             ]}
                             style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
                           >
@@ -1225,7 +1289,9 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                   label: `${s.title}${s.year ? ` (${s.year})` : ''}`,
                 }))}
                 notFoundContent={
-                  searchingRelated ? t('seriesForm.relatedSearching') : t('seriesForm.relatedEmpty')
+                  searchingRelated
+                    ? t('seriesForm.relatedSearching')
+                    : t('seriesForm.relatedEmpty')
                 }
               />
             </Form.Item>
@@ -1257,7 +1323,9 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                 size="large"
                 loading={loading}
               >
-                {mode === 'create' ? t('seriesForm.createButton') : t('seriesForm.saveButton')}
+                {mode === 'create'
+                  ? t('seriesForm.createButton')
+                  : t('seriesForm.saveButton')}
               </Button>
               <Button size="large" onClick={handleCancel}>
                 {t('seriesForm.cancelButton')}

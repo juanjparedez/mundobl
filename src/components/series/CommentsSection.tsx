@@ -11,6 +11,9 @@ import {
 import { useSession } from 'next-auth/react';
 import './CommentsSection.css';
 import { useMessage } from '@/hooks/useMessage';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
+import type { TranslationKey } from '@/i18n/messages';
 
 const { TextArea } = Input;
 
@@ -40,6 +43,7 @@ export function CommentsSection({
   comments: initialComments,
 }: CommentsSectionProps) {
   const message = useMessage();
+  const { t } = useLocale();
   const { data: session } = useSession();
   const currentUserId = session?.user?.id;
   const [comments, setComments] = useState<CommentData[]>(initialComments);
@@ -55,7 +59,7 @@ export function CommentsSection({
 
   const handleSubmit = async () => {
     if (!newComment.trim()) {
-      message.warning('Escribe un comentario primero');
+      message.warning(t('comments.warningEmpty'));
       return;
     }
 
@@ -74,10 +78,10 @@ export function CommentsSection({
       setNewComment('');
       setIsPrivate(false);
       message.success(
-        isPrivate ? 'Nota privada agregada' : 'Comentario agregado'
+        isPrivate ? t('comments.successPrivate') : t('comments.successPublic')
       );
     } catch (error) {
-      message.error('Error al guardar el comentario');
+      message.error(t('comments.errorSave'));
       console.error(error);
     } finally {
       setIsSubmitting(false);
@@ -89,7 +93,7 @@ export function CommentsSection({
       {session?.user ? (
         <Card
           title={
-            <h4 className="comments-section__title">Agregar Comentario</h4>
+            <h4 className="comments-section__title">{t('comments.addTitle')}</h4>
           }
           className="comments-section__form"
         >
@@ -97,8 +101,8 @@ export function CommentsSection({
             rows={4}
             placeholder={
               isPrivate
-                ? 'Escribe una nota privada (solo vos la verás)...'
-                : 'Escribe tus impresiones, opiniones o notas sobre esta serie...'
+                ? t('comments.placeholderPrivate')
+                : t('comments.placeholderPublic')
             }
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
@@ -106,7 +110,7 @@ export function CommentsSection({
             showCount
           />
           <div className="comments-section__actions">
-            <Tooltip title="Los comentarios privados solo son visibles para vos">
+            <Tooltip title={t('comments.tooltipPrivate')}>
               <label className="comments-section__private-toggle">
                 <Switch
                   size="small"
@@ -114,7 +118,7 @@ export function CommentsSection({
                   onChange={setIsPrivate}
                 />
                 <LockOutlined />
-                <span>Privado</span>
+                <span>{t('comments.privateLabel')}</span>
               </label>
             </Tooltip>
             <Button
@@ -123,25 +127,25 @@ export function CommentsSection({
               onClick={handleSubmit}
               loading={isSubmitting}
             >
-              {isPrivate ? 'Guardar Nota Privada' : 'Agregar Comentario'}
+              {isPrivate ? t('comments.savePrivateButton') : t('comments.addButton')}
             </Button>
           </div>
         </Card>
       ) : (
         <Card className="comments-section__login-prompt">
           <p style={{ color: 'var(--text-secondary)', textAlign: 'center' }}>
-            Inicia sesión para dejar un comentario
+            {t('comments.loginPrompt')}
           </p>
         </Card>
       )}
 
       <div className="comments-section__list">
         <h4 className="comments-section__title">
-          Comentarios ({visibleComments.length})
+          {interpolateMessage(t('comments.listTitle'), { n: String(visibleComments.length) })}
         </h4>
 
         {visibleComments.length === 0 ? (
-          <Empty description="No hay comentarios aún" />
+          <Empty description={t('comments.emptyText')} />
         ) : (
           <div className="comments-section__items">
             {visibleComments.map((comment) => (
@@ -165,7 +169,7 @@ export function CommentsSection({
                   )}
                   {comment.isPrivate && (
                     <Tag color="default" icon={<LockOutlined />}>
-                      Privado
+                      {t('comments.privateLabel')}
                     </Tag>
                   )}
                   <span
@@ -173,7 +177,7 @@ export function CommentsSection({
                     className="comment-card__date"
                   >
                     <ClockCircleOutlined />{' '}
-                    {formatDate(new Date(comment.createdAt))}
+                    {formatDate(new Date(comment.createdAt), t)}
                   </span>
                 </div>
               </Card>
@@ -185,16 +189,16 @@ export function CommentsSection({
   );
 }
 
-function formatDate(date: Date): string {
+function formatDate(date: Date, t: (key: TranslationKey) => string): string {
   const now = new Date();
   const diff = now.getTime() - date.getTime();
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-  if (days === 0) return 'Hoy';
-  if (days === 1) return 'Ayer';
-  if (days < 7) return `Hace ${days} días`;
-  if (days < 30) return `Hace ${Math.floor(days / 7)} semanas`;
-  if (days < 365) return `Hace ${Math.floor(days / 30)} meses`;
+  if (days === 0) return t('common.today');
+  if (days === 1) return t('common.yesterday');
+  if (days < 7) return interpolateMessage(t('common.daysAgo'), { n: String(days) });
+  if (days < 30) return interpolateMessage(t('common.weeksAgo'), { n: String(Math.floor(days / 7)) });
+  if (days < 365) return interpolateMessage(t('common.monthsAgo'), { n: String(Math.floor(days / 30)) });
 
-  return date.toLocaleDateString('es-ES');
+  return date.toLocaleDateString();
 }

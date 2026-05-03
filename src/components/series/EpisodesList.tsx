@@ -26,6 +26,8 @@ import {
 import { CommentsList } from '@/components/common/CommentsList';
 import './EpisodesList.css';
 import { useMessage, useModal } from '@/hooks/useMessage';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
 
 const { TextArea } = Input;
 
@@ -58,6 +60,7 @@ export function EpisodesList({
 }: EpisodesListProps) {
   const message = useMessage();
   const modal = useModal();
+  const { t } = useLocale();
   const [episodes, setEpisodes] = useState<Episode[]>(initialEpisodes);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEpisode, setEditingEpisode] = useState<Episode | null>(null);
@@ -136,19 +139,19 @@ export function EpisodesList({
         setEpisodes(
           episodes.map((ep) => (ep.id === savedEpisode.id ? savedEpisode : ep))
         );
-        message.success('Episodio actualizado');
+        message.success(t('episodesList.successUpdated'));
       } else {
         setEpisodes(
           [...episodes, savedEpisode].sort(
             (a, b) => a.episodeNumber - b.episodeNumber
           )
         );
-        message.success('Episodio creado');
+        message.success(t('episodesList.successCreated'));
       }
 
       handleCloseModal();
     } catch {
-      message.error('Error al guardar el episodio');
+      message.error(t('episodesList.errorSave'));
     }
   };
 
@@ -166,9 +169,9 @@ export function EpisodesList({
         next.delete(episodeId);
         return next;
       });
-      message.success('Episodio eliminado');
+      message.success(t('episodesList.successDeleted'));
     } catch {
-      message.error('Error al eliminar el episodio');
+      message.error(t('episodesList.errorDelete'));
     }
   };
 
@@ -189,7 +192,7 @@ export function EpisodesList({
       setSelectedIds(new Set());
       message.success(result.message);
     } catch {
-      message.error('Error al eliminar los episodios');
+      message.error(t('episodesList.errorBulkDelete'));
     } finally {
       setBulkDeleting(false);
     }
@@ -229,11 +232,11 @@ export function EpisodesList({
 
       message.success(
         viewStatus.status === 'VISTA'
-          ? 'Episodio marcado como visto'
-          : 'Episodio marcado como no visto'
+          ? t('episodesList.markedWatched')
+          : t('episodesList.markedUnwatched')
       );
     } catch {
-      message.error('Error al actualizar el estado');
+      message.error(t('episodesList.errorToggleWatched'));
     }
   };
 
@@ -274,10 +277,10 @@ export function EpisodesList({
 
       setSelectedIds(new Set());
       message.success(
-        `${updatedCount} episodio(s) marcado(s) como ${markAsWatched ? 'vistos' : 'no vistos'}`
+        interpolateMessage(markAsWatched ? t('episodesList.successBulkWatched') : t('episodesList.successBulkUnwatched'), { n: String(updatedCount) })
       );
     } catch {
-      message.error('Error al actualizar los episodios');
+      message.error(t('episodesList.errorBulkToggle'));
     }
   };
 
@@ -301,7 +304,7 @@ export function EpisodesList({
       message.success(result.message);
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Error al generar episodios';
+        error instanceof Error ? error.message : t('episodesList.errorGenerate');
       message.error(errorMessage);
     } finally {
       setGenerating(false);
@@ -312,7 +315,7 @@ export function EpisodesList({
     <div className="episodes-list">
       {/* Header */}
       <div className="episodes-list__header">
-        <h5 className="season-section-title">Episodios ({episodes.length})</h5>
+        <h5 className="season-section-title">{interpolateMessage(t('episodesList.headerTitle'), { n: String(episodes.length) })}</h5>
         <Space>
           <Button
             size="small"
@@ -320,7 +323,7 @@ export function EpisodesList({
             onClick={handleGenerateEpisodes}
             loading={generating}
           >
-            Generar
+            {t('episodesList.generateButton')}
           </Button>
           <Button
             type="dashed"
@@ -328,15 +331,14 @@ export function EpisodesList({
             icon={<PlusOutlined />}
             onClick={() => handleOpenModal()}
           >
-            Agregar
+            {t('episodesList.addButton')}
           </Button>
         </Space>
       </div>
 
       {episodes.length === 0 ? (
         <p className="episodes-list__empty">
-          No hay episodios registrados. Usa &quot;Generar&quot; o
-          &quot;Agregar&quot; para comenzar.
+          {t('episodesList.emptyText')}
         </p>
       ) : (
         <>
@@ -350,31 +352,30 @@ export function EpisodesList({
               />
               {selectedIds.size > 0 ? (
                 <span className="episodes-table__selected-count">
-                  {selectedIds.size} seleccionado
-                  {selectedIds.size > 1 ? 's' : ''}
+                  {interpolateMessage(t('episodesList.selectedCount'), { n: String(selectedIds.size) })}
                 </span>
               ) : (
-                <span className="episodes-table__col-label">Episodio</span>
+                <span className="episodes-table__col-label">{t('episodesList.colEpisode')}</span>
               )}
             </div>
             {selectedIds.size > 0 ? (
               <Space size="small">
-                <Tooltip title="Marcar como vistos">
+                <Tooltip title={t('episodesList.tooltipWatched')}>
                   <Button
                     size="small"
                     icon={<EyeOutlined />}
                     onClick={() => handleBulkToggleWatched(true)}
                   >
-                    Vistos
+                    {t('episodesList.bulkWatched')}
                   </Button>
                 </Tooltip>
-                <Tooltip title="Marcar como no vistos">
+                <Tooltip title={t('episodesList.tooltipUnwatched')}>
                   <Button
                     size="small"
                     icon={<EyeInvisibleOutlined />}
                     onClick={() => handleBulkToggleWatched(false)}
                   >
-                    No vistos
+                    {t('episodesList.bulkUnwatched')}
                   </Button>
                 </Tooltip>
                 <Button
@@ -384,21 +385,21 @@ export function EpisodesList({
                   loading={bulkDeleting}
                   onClick={() => {
                     modal.confirm({
-                      title: '¿Eliminar episodios seleccionados?',
-                      content: `Se eliminarán ${selectedIds.size} episodio(s) con sus comentarios y estados de visualización.`,
-                      okText: 'Sí, eliminar',
-                      cancelText: 'Cancelar',
+                      title: t('episodesList.deleteBulkConfirmTitle'),
+                      content: interpolateMessage(t('episodesList.deleteBulkConfirmContent'), { n: String(selectedIds.size) }),
+                      okText: t('episodesList.confirmOk'),
+                      cancelText: t('episodesList.confirmCancel'),
                       okButtonProps: { danger: true },
                       onOk: handleBulkDelete,
                     });
                   }}
                 >
-                  Eliminar
+                  {t('episodesList.bulkDelete')}
                 </Button>
               </Space>
             ) : (
               <span className="episodes-table__col-label episodes-table__col-label--actions">
-                Acciones
+                {t('episodesList.colActions')}
               </span>
             )}
           </div>
@@ -455,7 +456,7 @@ export function EpisodesList({
                           color="success"
                           className="episodes-table__watched-tag"
                         >
-                          Visto
+                          {t('episodesList.watchedTag')}
                         </Tag>
                       )}
                     </div>
@@ -484,7 +485,7 @@ export function EpisodesList({
                           )}
                         </Button>
                       </Tooltip>
-                      <Tooltip title="Editar">
+                      <Tooltip title={t('episodesList.tooltipEdit')}>
                         <Button
                           type="text"
                           size="small"
@@ -492,7 +493,7 @@ export function EpisodesList({
                           onClick={() => handleOpenModal(episode)}
                         />
                       </Tooltip>
-                      <Tooltip title="Eliminar">
+                      <Tooltip title={t('episodesList.tooltipDelete')}>
                         <Button
                           type="text"
                           size="small"
@@ -500,10 +501,10 @@ export function EpisodesList({
                           icon={<DeleteOutlined />}
                           onClick={() => {
                             modal.confirm({
-                              title: '¿Eliminar episodio?',
-                              content: `¿Estás seguro de eliminar el episodio ${episode.episodeNumber}?`,
-                              okText: 'Sí, eliminar',
-                              cancelText: 'Cancelar',
+                              title: t('episodesList.deleteConfirmTitle'),
+                              content: interpolateMessage(t('episodesList.deleteConfirmContent'), { n: String(episode.episodeNumber) }),
+                              okText: t('episodesList.confirmOk'),
+                              cancelText: t('episodesList.confirmCancel'),
                               okButtonProps: { danger: true },
                               onOk: () => handleDelete(episode.id),
                             });
@@ -545,7 +546,7 @@ export function EpisodesList({
 
       {/* Modal crear/editar episodio */}
       <Modal
-        title={editingEpisode ? 'Editar Episodio' : 'Nuevo Episodio'}
+        title={editingEpisode ? t('episodesList.modalEditTitle') : t('episodesList.modalNewTitle')}
         open={isModalOpen}
         onCancel={handleCloseModal}
         footer={null}
@@ -553,34 +554,34 @@ export function EpisodesList({
       >
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <Form.Item
-            label="Número de Episodio"
+            label={t('episodesList.fieldEpisodeNumber')}
             name="episodeNumber"
-            rules={[{ required: true, message: 'Requerido' }]}
+            rules={[{ required: true, message: t('episodesList.requiredEpisodeNumber') }]}
           >
             <InputNumber min={1} style={{ width: '100%' }} />
           </Form.Item>
 
-          <Form.Item label="Título (opcional)" name="title">
-            <Input placeholder="Ej: The Beginning" />
+          <Form.Item label={t('episodesList.fieldEpisodeTitle')} name="title">
+            <Input placeholder={t('episodesList.hintTitle')} />
           </Form.Item>
 
-          <Form.Item label="Minutos" name="duration">
+          <Form.Item label={t('episodesList.fieldMinutes')} name="duration">
             <InputNumber min={1} style={{ width: '100%' }} placeholder="45" />
           </Form.Item>
 
-          <Form.Item label="Sinopsis" name="synopsis">
+          <Form.Item label={t('episodesList.fieldSynopsis')} name="synopsis">
             <TextArea
               rows={4}
-              placeholder="Breve descripción de lo que sucede en este episodio..."
+              placeholder={t('episodesList.hintSynopsis')}
             />
           </Form.Item>
 
           <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
             <Button onClick={handleCloseModal} style={{ marginRight: 8 }}>
-              Cancelar
+              {t('episodesList.cancelButton')}
             </Button>
             <Button type="primary" htmlType="submit">
-              {editingEpisode ? 'Guardar' : 'Crear'}
+              {editingEpisode ? t('episodesList.saveButton') : t('episodesList.createButton')}
             </Button>
           </Form.Item>
         </Form>

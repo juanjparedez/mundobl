@@ -13,6 +13,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useMessage } from '@/hooks/useMessage';
 import './CurrentlyWatchingDashboard.css';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
 
 interface WatchingSeriesData {
   id: number;
@@ -46,6 +48,7 @@ interface WatchingSeriesData {
 export function CurrentlyWatchingDashboard() {
   const { data: session } = useSession();
   const message = useMessage();
+  const { t } = useLocale();
   const [loading, setLoading] = useState(true);
   const [notAuthenticated, setNotAuthenticated] = useState(false);
   const [watchingSeries, setWatchingSeries] = useState<WatchingSeriesData[]>(
@@ -107,7 +110,7 @@ export function CurrentlyWatchingDashboard() {
   };
 
   const formatLastWatched = (date: Date | null) => {
-    if (!date) return 'Nunca';
+    if (!date) return t('common.neverWatched');
     const d = new Date(date);
     const now = new Date();
     const diffMs = now.getTime() - d.getTime();
@@ -115,11 +118,11 @@ export function CurrentlyWatchingDashboard() {
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return 'Justo ahora';
-    if (diffMins < 60) return `Hace ${diffMins} min`;
-    if (diffHours < 24) return `Hace ${diffHours}h`;
-    if (diffDays === 1) return 'Ayer';
-    if (diffDays < 7) return `Hace ${diffDays} días`;
+    if (diffMins < 1) return t('common.justNow');
+    if (diffMins < 60) return interpolateMessage(t('common.minutesAgo'), { n: String(diffMins) });
+    if (diffHours < 24) return interpolateMessage(t('common.hoursAgo'), { n: String(diffHours) });
+    if (diffDays === 1) return t('common.yesterday');
+    if (diffDays < 7) return interpolateMessage(t('common.daysAgo'), { n: String(diffDays) });
     return d.toLocaleDateString();
   };
 
@@ -140,9 +143,9 @@ export function CurrentlyWatchingDashboard() {
       setWatchingSeries((prev) =>
         prev.filter((item) => item.series.id !== seriesId)
       );
-      message.success(`"${seriesTitle}" removida de "Viendo ahora"`);
+      message.success(interpolateMessage(t('watchingDashboard.removedMessage'), { title: seriesTitle }));
     } catch (error) {
-      message.error('Error al remover de la lista');
+      message.error(t('watchingDashboard.errorRemove'));
       console.error(error);
     }
   };
@@ -158,7 +161,7 @@ export function CurrentlyWatchingDashboard() {
   if (notAuthenticated) {
     return (
       <Empty
-        description="Iniciá sesión para ver tu lista de series"
+        description={t('watchingDashboard.loginPrompt')}
         image={Empty.PRESENTED_IMAGE_SIMPLE}
       />
     );
@@ -167,11 +170,11 @@ export function CurrentlyWatchingDashboard() {
   if (watchingSeries.length === 0) {
     return (
       <Empty
-        description="No estás viendo ninguna serie actualmente"
+        description={t('watchingDashboard.emptyText')}
         image={Empty.PRESENTED_IMAGE_SIMPLE}
       >
         <Link href="/catalogo">
-          <Button type="primary">Explorar Catálogo</Button>
+          <Button type="primary">{t('watchingDashboard.exploreCatalog')}</Button>
         </Link>
       </Empty>
     );
@@ -220,7 +223,7 @@ export function CurrentlyWatchingDashboard() {
                   e.stopPropagation();
                   handleRemoveFromWatching(item.series.id, item.series.title);
                 }}
-                title="Remover de viendo ahora"
+                title={t('watchingDashboard.removeTitle')}
               />
               <Card.Meta
                 title={
@@ -253,7 +256,7 @@ export function CurrentlyWatchingDashboard() {
                       <div className="watching-card__next">
                         <PlayCircleOutlined style={{ marginRight: '8px' }} />
                         <span>
-                          Siguiente: T{nextEp.seasonNumber}E
+                          {t('watchingDashboard.nextLabel')}: T{nextEp.seasonNumber}E
                           {nextEp.episodeNumber}
                           {nextEp.title && ` - ${nextEp.title}`}
                         </span>
@@ -272,17 +275,17 @@ export function CurrentlyWatchingDashboard() {
                       >
                         <Button type="primary" block>
                           {progress === 100
-                            ? 'Ver detalles'
-                            : 'Continuar viendo'}
+                            ? t('watchingDashboard.detailsButton')
+                            : t('watchingDashboard.continueButton')}
                         </Button>
                       </Link>
                       {isAdminOrMod && (
                         <Link href={`/admin/series/${item.series.id}/editar`}>
                           <Button
                             icon={<EditOutlined />}
-                            title="Editar y agregar comentarios"
+                            title={t('watchingDashboard.editButton')}
                           >
-                            Editar
+                            {t('watchingDashboard.editButton')}
                           </Button>
                         </Link>
                       )}

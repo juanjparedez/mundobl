@@ -1,9 +1,14 @@
+'use client';
+
 import { Tag } from 'antd';
 import { BookOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { MetadataChip } from './MetadataPrimitives/MetadataPrimitives';
 import './SeriesHeader.css';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
+import type { TranslationKey } from '@/i18n/messages';
 
 interface SeriesHeaderProps {
   series: {
@@ -35,6 +40,7 @@ interface SeriesHeaderProps {
 }
 
 export function SeriesHeader({ series }: SeriesHeaderProps) {
+  const { t } = useLocale();
   return (
     <div className="series-header">
       {series.imageUrl && (
@@ -53,7 +59,7 @@ export function SeriesHeader({ series }: SeriesHeaderProps) {
         {series.universe && (
           <div className="series-header__universe">
             <span style={{ color: 'var(--text-secondary)' }}>
-              Universo: <strong>{series.universe.name}</strong>
+              {t('seriesHeader.universe')}: <strong>{series.universe.name}</strong>
             </span>
           </div>
         )}
@@ -65,7 +71,7 @@ export function SeriesHeader({ series }: SeriesHeaderProps) {
             className="series-header__original-title"
             style={{ color: 'var(--text-secondary)' }}
           >
-            Título original: {series.originalTitle}
+            {t('seriesHeader.originalTitle')}: {series.originalTitle}
           </span>
         )}
 
@@ -85,7 +91,7 @@ export function SeriesHeader({ series }: SeriesHeaderProps) {
             filter="type"
             value={series.type}
             color={getTypeColor(series.type)}
-            label={getTypeLabel(series.type)}
+            label={getTypeLabel(series.type, t)}
           />
 
           {series.format === 'vertical' && (
@@ -93,13 +99,13 @@ export function SeriesHeader({ series }: SeriesHeaderProps) {
               filter="format"
               value="vertical"
               color="orange"
-              label="📲 Formato Vertical"
+              label={`📲 ${t('seriesHeader.formatVertical')}`}
             />
           )}
 
           {series.basedOn && (
             <span className="series-header__meta-item">
-              <BookOutlined /> Basado en {getBasedOnLabel(series.basedOn)}
+              <BookOutlined /> {interpolateMessage(t('seriesHeader.basedOn'), { label: getBasedOnLabel(series.basedOn) })}
             </span>
           )}
 
@@ -147,22 +153,15 @@ function getTypeColor(type: string): string {
   }
 }
 
-function getTypeLabel(type: string): string {
+function getTypeLabel(type: string, t: (key: TranslationKey) => string): string {
   switch (type.toLowerCase()) {
-    case 'serie':
-      return 'Serie';
-    case 'pelicula':
-      return 'Película';
-    case 'corto':
-      return 'Corto';
-    case 'especial':
-      return 'Especial';
-    case 'anime':
-      return 'Animé';
-    case 'reality':
-      return 'Reality';
-    default:
-      return type;
+    case 'serie': return t('seriesHeader.typeSerie');
+    case 'pelicula': return t('seriesHeader.typePelicula');
+    case 'corto': return t('seriesHeader.typeCorto');
+    case 'especial': return t('seriesHeader.typeEspecial');
+    case 'anime': return t('seriesHeader.typeAnime');
+    case 'reality': return t('seriesHeader.typeReality');
+    default: return type;
   }
 }
 
