@@ -66,20 +66,73 @@ function RankingList({
     return <Empty description={empty} image={Empty.PRESENTED_IMAGE_SIMPLE} />;
   }
 
+  const max = items[0]?.count ?? 1;
+
   return (
     <ol className="public-stats-ranking-list">
       {items.map((item, index) => (
-        <li key={`${item.key}-${index}`} className="public-stats-ranking-item">
-          <span className="public-stats-ranking-item__pos">{index + 1}</span>
-          <span className="public-stats-ranking-item__label">
-            {renderLabel(item)}
-          </span>
-          <span className="public-stats-ranking-item__value">
-            {renderValue(item)}
-          </span>
+        <li key={`${item.key}-${index}`} className="public-stats-ranking-item" data-pos={index + 1}>
+          <div className="public-stats-ranking-item__row">
+            <span className="public-stats-ranking-item__pos">{index + 1}</span>
+            <span className="public-stats-ranking-item__label">
+              {renderLabel(item)}
+            </span>
+            <span className="public-stats-ranking-item__value">
+              {renderValue(item)}
+            </span>
+          </div>
+          <div className="public-stats-ranking-item__bar-track">
+            <div
+              className="public-stats-ranking-item__bar-fill"
+              style={
+                {
+                  '--bar-pct': `${Math.round((item.count / max) * 100)}%`,
+                } as React.CSSProperties
+              }
+            />
+          </div>
         </li>
       ))}
     </ol>
+  );
+}
+
+function TypeBarChart({
+  items,
+  locale,
+  empty,
+}: {
+  items: Array<{ type: string; count: number }>;
+  locale: string;
+  empty: string;
+}) {
+  if (items.length === 0) {
+    return <Empty description={empty} image={Empty.PRESENTED_IMAGE_SIMPLE} />;
+  }
+
+  const max = items[0]?.count ?? 1;
+
+  return (
+    <ul className="public-stats-type-chart">
+      {items.map((item) => (
+        <li key={item.type} className="public-stats-type-chart__item">
+          <span className="public-stats-type-chart__label">{item.type}</span>
+          <div className="public-stats-type-chart__track">
+            <div
+              className="public-stats-type-chart__fill"
+              style={
+                {
+                  '--bar-pct': `${Math.round((item.count / max) * 100)}%`,
+                } as React.CSSProperties
+              }
+            />
+          </div>
+          <span className="public-stats-type-chart__count">
+            {item.count.toLocaleString(locale)}
+          </span>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -179,20 +232,20 @@ export function PublicStatsClient() {
       </header>
 
       <section className="public-stats-summary">
-        <Card className="public-stats-summary__card">
-          <AppstoreOutlined />
+        <Card className="public-stats-summary__card" data-variant="series">
+          <AppstoreOutlined className="public-stats-summary__card-icon" />
           <strong>{data.summary.totalSeries.toLocaleString(locale)}</strong>
           <span>{copy.cardSeries}</span>
         </Card>
-        <Card className="public-stats-summary__card">
-          <CommentOutlined />
+        <Card className="public-stats-summary__card" data-variant="comments">
+          <CommentOutlined className="public-stats-summary__card-icon" />
           <strong>
             {data.summary.totalPublicComments.toLocaleString(locale)}
           </strong>
           <span>{copy.cardPublicComments}</span>
         </Card>
-        <Card className="public-stats-summary__card">
-          <EyeOutlined />
+        <Card className="public-stats-summary__card" data-variant="views">
+          <EyeOutlined className="public-stats-summary__card-icon" />
           <strong>
             {data.summary.totalCompletedViews.toLocaleString(locale)}
           </strong>
@@ -256,13 +309,9 @@ export function PublicStatsClient() {
         </Card>
 
         <Card title={copy.byType} className="public-stats-grid__full">
-          <RankingList
-            items={data.rankings.byType.map((row) => ({
-              key: row.type,
-              count: row.count,
-            }))}
-            renderLabel={(item) => item.key}
-            renderValue={(item) => item.count.toLocaleString(locale)}
+          <TypeBarChart
+            items={data.rankings.byType}
+            locale={locale}
             empty={copy.empty}
           />
         </Card>
