@@ -1,10 +1,10 @@
 /* Variables CSS Dinámicas - Tema Base */
 :root {
   /* Colores Primarios */
-  --primary-color: #1677ff;
-  --primary-color-hover: #4096ff;
-  --primary-color-active: #0958d9;
-  --primary-color-outline: rgba(22, 119, 255, 0.2);
+  --primary-color: #c57bb7;
+  --primary-color-hover: #d591c7;
+  --primary-color-active: #ad5f9f;
+  --primary-color-outline: rgba(197, 123, 183, 0.26);
 
   /* Colores de Estado */
   --success-color: #52c41a;
@@ -29,9 +29,10 @@
   /* Bordes */
   --border-color: #d9d9d9;
   --border-color-secondary: #f0f0f0;
-  --border-radius-base: 8px;
-  --border-radius-sm: 6px;
-  --border-radius-lg: 10px;
+  --border-radius-base: 12px;
+  --border-radius-sm: 10px;
+  --border-radius-lg: 16px;
+  --border-radius: var(--border-radius-base);
 
   /* Sombras */
   --box-shadow-base: 0 2px 8px rgba(0, 0, 0, 0.15);
@@ -69,24 +70,24 @@
 
 /* Tema Oscuro */
 [data-theme='dark'] {
-  --primary-color: #3b82f6;
-  --primary-color-hover: #5a9bff;
-  --primary-color-active: #2563eb;
+  --primary-color: #c98ac0;
+  --primary-color-hover: #dca0d4;
+  --primary-color-active: #b575ac;
 
-  --bg-base: #0f0f0f;
-  --bg-layout: #0f0f0f;
-  --bg-container: #1a1a1a;
-  --bg-elevated: #222222;
-  --bg-spotlight: #2a2a2a;
-  --bg-input: #252525;
+  --bg-base: #17151c;
+  --bg-layout: #121218;
+  --bg-container: #201c29;
+  --bg-elevated: #262131;
+  --bg-spotlight: #2f283d;
+  --bg-input: #2a2437;
 
-  --text-primary: rgba(255, 255, 255, 0.92);
-  --text-secondary: rgba(255, 255, 255, 0.68);
-  --text-tertiary: rgba(255, 255, 255, 0.48);
-  --text-disabled: rgba(255, 255, 255, 0.28);
+  --text-primary: rgba(255, 246, 252, 0.93);
+  --text-secondary: rgba(248, 228, 241, 0.72);
+  --text-tertiary: rgba(238, 210, 233, 0.54);
+  --text-disabled: rgba(238, 210, 233, 0.34);
 
-  --border-color: #3a3a3a;
-  --border-color-secondary: #2a2a2a;
+  --border-color: #3f3550;
+  --border-color-secondary: #32293f;
 
   --box-shadow-base: 0 2px 8px rgba(0, 0, 0, 0.45);
   --box-shadow-card:

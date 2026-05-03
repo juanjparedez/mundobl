@@ -1,16 +1,80 @@
 .series-detail-page {
+  position: relative;
+  isolation: isolate;
   padding: var(--spacing-lg);
+  border-radius: var(--border-radius-lg);
+  background: radial-gradient(circle at center, rgba(201, 138, 192, 0.12) 0%, rgba(20, 15, 28, 0) 70%);
 }
 
 .series-actions {
   margin: var(--spacing-lg) 0;
 }
 
+.series-actions-rating {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid color-mix(in srgb, var(--primary-color) 38%, transparent);
+  background: color-mix(in srgb, var(--bg-spotlight) 74%, transparent);
+  padding: 10px 12px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.series-actions-rating strong {
+  color: var(--text-primary);
+  font-size: 15px;
+}
+
+.series-detail-page .ant-tabs-nav {
+  margin-bottom: var(--spacing-md);
+}
+
+.series-detail-page .ant-tabs-tab {
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.series-detail-page .ant-tabs-tab:hover {
+  color: var(--primary-color);
+  transform: translateY(-1px);
+}
+
+.series-detail-page .ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--primary-color) !important;
+  font-weight: 600;
+}
+
+.series-detail-page .ant-tabs-ink-bar {
+  height: 3px !important;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--primary-color), color-mix(in srgb, var(--primary-color) 70%, #ffd6b3)) !important;
+  transition: transform 0.28s ease, width 0.28s ease;
+}
+
+.series-detail-page .ant-tabs-content-holder {
+  background: color-mix(in srgb, var(--bg-container) 86%, transparent);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-base);
+  padding: var(--spacing-md);
+}
+
 .series-info-tab,
 .seasons-tab,
 .ratings-tab,
 .comments-tab {
-  padding-top: var(--spacing-md);
+  animation: tab-fade-in 0.24s ease;
+}
+
+@keyframes tab-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 768px) {
@@ -20,6 +84,10 @@
 
   .series-actions {
     margin: var(--spacing-sm) 0;
+  }
+
+  .series-detail-page .ant-tabs-content-holder {
+    padding: var(--spacing-xs);
   }
 
   /* Secciones colapsables en mobile */

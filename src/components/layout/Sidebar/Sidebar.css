@@ -5,10 +5,12 @@
   left: 0;
   top: 0;
   bottom: 0;
-  background: var(--bg-elevated) !important;
+  background: color-mix(in srgb, var(--bg-elevated) 86%, transparent) !important;
   border-right: 1px solid var(--border-color-secondary);
   display: flex;
   flex-direction: column;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 /* Estilos del menú para que respete el tema */
@@ -32,6 +34,8 @@
 .app-sidebar .ant-menu-item-selected {
   background: var(--primary-color-outline) !important;
   color: var(--primary-color) !important;
+  font-weight: 600;
+  box-shadow: inset 3px 0 0 var(--primary-color);
 }
 
 .app-sidebar .ant-menu-submenu-arrow {
@@ -47,6 +51,8 @@
   height: var(--header-height);
   border-bottom: 1px solid var(--border-color-secondary);
   flex-shrink: 0;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .sidebar-logo {
@@ -67,8 +73,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border: none;
   background: transparent;
   color: var(--text-secondary);
@@ -175,10 +181,12 @@
   transition: var(--transition-fast);
   border-radius: var(--border-radius-sm);
   margin: var(--spacing-xs);
+  border: 1px solid transparent;
 }
 
 .sidebar-theme-toggle:hover {
   background: var(--bg-spotlight);
+  border-color: var(--border-color-secondary);
 }
 
 .sidebar-theme-icon {
