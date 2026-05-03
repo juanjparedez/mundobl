@@ -70,31 +70,41 @@ export default async function CatalogoPage() {
   });
 
   // Transformar datos para las tarjetas
-  const seriesData = seriesDB.map((serie) => ({
-    id: serie.id.toString(),
-    titulo: serie.title,
-    pais: serie.country?.name || 'Sin país',
-    paisCode: serie.country?.code || null,
-    tipo: serie.type,
-    formato: serie.format,
-    temporadas: serie.seasons.length,
-    episodios: serie.seasons.reduce((acc, s) => acc + (s.episodeCount || 0), 0),
-    anio: serie.year || 0,
-    rating: serie.overallRating,
-    observaciones: serie.observations,
-    imageUrl: serie.imageUrl,
-    imagePosition: serie.imagePosition,
-    synopsis: serie.synopsis,
-    visto: serie.viewStatus?.[0]?.status === 'VISTA',
-    universoId: serie.universeId,
-    universoNombre: serie.universe?.name || null,
-    tags: serie.tags.map((st) => ({ id: st.tag.id, name: st.tag.name })),
-    genres: genresBySerie.get(serie.id) ?? [],
-    directors: directorsBySerie.get(serie.id) ?? [],
-    actors: actorsBySerie.get(serie.id) ?? [],
-    productionCompany: productionCompanyBySerie.get(serie.id) ?? null,
-    originalLanguage: languageBySerie.get(serie.id) ?? null,
-  }));
+  const seriesData = seriesDB.map((serie) => {
+    const episodiosTotales = serie.seasons.reduce(
+      (acc, s) => acc + (s.episodeCount || 0),
+      0
+    );
+    const runtimeHours =
+      episodiosTotales > 0 ? Number(((episodiosTotales * 45) / 60).toFixed(1)) : 0;
+
+    return {
+      id: serie.id.toString(),
+      titulo: serie.title,
+      pais: serie.country?.name || 'Sin país',
+      paisCode: serie.country?.code || null,
+      tipo: serie.type,
+      formato: serie.format,
+      temporadas: serie.seasons.length,
+      episodios: episodiosTotales,
+      runtimeHours,
+      anio: serie.year || 0,
+      rating: serie.overallRating,
+      observaciones: serie.observations,
+      imageUrl: serie.imageUrl,
+      imagePosition: serie.imagePosition,
+      synopsis: serie.synopsis,
+      visto: serie.viewStatus?.[0]?.status === 'VISTA',
+      universoId: serie.universeId,
+      universoNombre: serie.universe?.name || null,
+      tags: serie.tags.map((st) => ({ id: st.tag.id, name: st.tag.name })),
+      genres: genresBySerie.get(serie.id) ?? [],
+      directors: directorsBySerie.get(serie.id) ?? [],
+      actors: actorsBySerie.get(serie.id) ?? [],
+      productionCompany: productionCompanyBySerie.get(serie.id) ?? null,
+      originalLanguage: languageBySerie.get(serie.id) ?? null,
+    };
+  });
 
   return (
     <AppLayout>

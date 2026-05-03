@@ -973,6 +973,14 @@ type TranslationShape = {
     favoriteAdded: string;
     favoriteRemoved: string;
     favoriteError: string;
+    moreInfo: string;
+    hideInfo: string;
+    infoSeasons: string;
+    infoEpisodes: string;
+    infoRuntime: string;
+    infoActors: string;
+    infoNoActors: string;
+    infoUnknown: string;
   };
   landing: {
     subtitle: string;
@@ -2144,6 +2152,14 @@ const es: TranslationShape = {
     favoriteAdded: 'Agregado a favoritos',
     favoriteRemoved: 'Removido de favoritos',
     favoriteError: 'Error al actualizar favorito',
+    moreInfo: '+ info',
+    hideInfo: 'Ocultar info',
+    infoSeasons: 'Temporadas',
+    infoEpisodes: 'Episodios',
+    infoRuntime: 'Horas aprox.',
+    infoActors: 'Actores',
+    infoNoActors: 'Sin actores cargados',
+    infoUnknown: 'Sin dato',
   },
   landing: {
     subtitle: 'Tu catálogo personal de series BL y más.',
@@ -3314,6 +3330,14 @@ const en: TranslationShape = {
     favoriteAdded: 'Added to favorites',
     favoriteRemoved: 'Removed from favorites',
     favoriteError: 'Error updating favorite',
+    moreInfo: '+ info',
+    hideInfo: 'Hide info',
+    infoSeasons: 'Seasons',
+    infoEpisodes: 'Episodes',
+    infoRuntime: 'Approx hours',
+    infoActors: 'Actors',
+    infoNoActors: 'No actors loaded',
+    infoUnknown: 'Unknown',
   },
   landing: {
     subtitle: 'Your personal BL series catalog and more.',
