@@ -299,8 +299,19 @@ type TranslationShape = {
     statsActiveDays: string;
     statsTopGenres: string;
     statsTopCountries: string;
+    statsTopActors: string;
+    statsTopProductionCompanies: string;
     statsCompletedByYear: string;
     statsNoData: string;
+    statsModeLabel: string;
+    statsModeBasic: string;
+    statsModeAdvanced: string;
+    statsTopNLabel: string;
+    statsTopN5: string;
+    statsTopN10: string;
+    statsTopN25: string;
+    statsTopN50: string;
+    statsTopNAll: string;
     sectionSettings: string;
     settingsAppearanceTitle: string;
     settingsAppearanceHint: string;
@@ -453,6 +464,9 @@ type TranslationShape = {
     filterSeries: string;
     filterSeasons: string;
     filterEpisodes: string;
+    filterAuthorAll: string;
+    filterAuthorActive: string;
+    filterAuthorDeleted: string;
     searchPlaceholder: string;
     reportedOnly: string;
     columnUser: string;
@@ -1621,8 +1635,19 @@ const es: TranslationShape = {
     statsActiveDays: 'Días activos esta semana',
     statsTopGenres: 'Géneros más vistos',
     statsTopCountries: 'Países más vistos',
+    statsTopActors: 'Actores más vistos',
+    statsTopProductionCompanies: 'Productoras más vistas',
     statsCompletedByYear: 'Completadas por año',
     statsNoData: 'Sin datos aún',
+    statsModeLabel: 'Vista',
+    statsModeBasic: 'Básica',
+    statsModeAdvanced: 'Avanzada',
+    statsTopNLabel: 'Top N',
+    statsTopN5: '5',
+    statsTopN10: '10',
+    statsTopN25: '25',
+    statsTopN50: '50',
+    statsTopNAll: 'Todos',
     sectionSettings: 'Configuración',
     settingsAppearanceTitle: 'Apariencia y accesibilidad',
     settingsAppearanceHint:
@@ -1794,6 +1819,9 @@ const es: TranslationShape = {
     filterSeries: 'Series',
     filterSeasons: 'Temporadas',
     filterEpisodes: 'Episodios',
+    filterAuthorAll: 'Todos los usuarios',
+    filterAuthorActive: 'Con usuario activo',
+    filterAuthorDeleted: 'Usuario eliminado',
     searchPlaceholder: 'Buscar contenido...',
     reportedOnly: 'Solo reportados',
     columnUser: 'Usuario',
@@ -2979,8 +3007,19 @@ const en: TranslationShape = {
     statsActiveDays: 'Active days this week',
     statsTopGenres: 'Most watched genres',
     statsTopCountries: 'Most watched countries',
+    statsTopActors: 'Most watched actors',
+    statsTopProductionCompanies: 'Most watched production companies',
     statsCompletedByYear: 'Completed per year',
     statsNoData: 'No data yet',
+    statsModeLabel: 'View',
+    statsModeBasic: 'Basic',
+    statsModeAdvanced: 'Advanced',
+    statsTopNLabel: 'Top N',
+    statsTopN5: '5',
+    statsTopN10: '10',
+    statsTopN25: '25',
+    statsTopN50: '50',
+    statsTopNAll: 'All',
     sectionSettings: 'Settings',
     settingsAppearanceTitle: 'Appearance & accessibility',
     settingsAppearanceHint:
@@ -3149,6 +3188,9 @@ const en: TranslationShape = {
     filterSeries: 'Series',
     filterSeasons: 'Seasons',
     filterEpisodes: 'Episodes',
+    filterAuthorAll: 'All users',
+    filterAuthorActive: 'With active user',
+    filterAuthorDeleted: 'Deleted user',
     searchPlaceholder: 'Search content...',
     reportedOnly: 'Reported only',
     columnUser: 'User',

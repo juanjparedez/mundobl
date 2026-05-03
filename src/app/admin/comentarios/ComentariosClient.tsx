@@ -32,6 +32,7 @@ import '../admin.css';
 import './comentarios.css';
 
 type TargetFilter = 'all' | 'series' | 'season' | 'episode';
+type AuthorFilter = 'all' | 'active' | 'deleted';
 
 interface CommentReportRow {
   id: number;
@@ -87,6 +88,7 @@ export function ComentariosClient() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [target, setTarget] = useState<TargetFilter>('all');
+  const [author, setAuthor] = useState<AuthorFilter>('all');
   const [search, setSearch] = useState('');
   const [searchInput, setSearchInput] = useState('');
   const [reportedOnly, setReportedOnly] = useState(false);
@@ -103,6 +105,7 @@ export function ComentariosClient() {
         pageSize: String(PAGE_SIZE),
       });
       if (target !== 'all') params.set('target', target);
+      if (author !== 'all') params.set('author', author);
       if (search) params.set('q', search);
       if (reportedOnly) params.set('reported', 'true');
 
@@ -117,7 +120,7 @@ export function ComentariosClient() {
     } finally {
       setLoading(false);
     }
-  }, [page, target, search, reportedOnly, message, t]);
+  }, [page, target, author, search, reportedOnly, message, t]);
 
   useEffect(() => {
     fetchComments();
@@ -447,15 +450,38 @@ export function ComentariosClient() {
               setPage(1);
             }}
             rightActions={
-              <Checkbox
-                checked={reportedOnly}
-                onChange={(event) => {
-                  setReportedOnly(event.target.checked);
-                  setPage(1);
-                }}
-              >
-                {t('adminComments.reportedOnly')}
-              </Checkbox>
+              <Space wrap>
+                <Segmented<AuthorFilter>
+                  value={author}
+                  onChange={(value) => {
+                    setAuthor(value);
+                    setPage(1);
+                  }}
+                  options={[
+                    {
+                      label: t('adminComments.filterAuthorAll'),
+                      value: 'all',
+                    },
+                    {
+                      label: t('adminComments.filterAuthorActive'),
+                      value: 'active',
+                    },
+                    {
+                      label: t('adminComments.filterAuthorDeleted'),
+                      value: 'deleted',
+                    },
+                  ]}
+                />
+                <Checkbox
+                  checked={reportedOnly}
+                  onChange={(event) => {
+                    setReportedOnly(event.target.checked);
+                    setPage(1);
+                  }}
+                >
+                  {t('adminComments.reportedOnly')}
+                </Checkbox>
+              </Space>
             }
           />
 

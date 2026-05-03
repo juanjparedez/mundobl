@@ -1,0 +1,126 @@
+.public-stats-page {
+  padding: var(--spacing-lg);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.public-stats-hero {
+  margin-bottom: var(--spacing-lg);
+}
+
+.public-stats-hero__title {
+  margin: 0;
+  font-size: clamp(1.4rem, 2.2vw, 2rem);
+  color: var(--text-primary);
+}
+
+.public-stats-hero__subtitle {
+  margin: var(--spacing-xs) 0 0;
+  color: var(--text-secondary);
+  max-width: 70ch;
+}
+
+.public-stats-hero__updated {
+  margin: var(--spacing-sm) 0 0;
+  color: var(--text-tertiary);
+  font-size: var(--font-size-sm);
+}
+
+.public-stats-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.public-stats-summary__card .ant-card-body {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.public-stats-summary__card strong {
+  font-size: 1.2rem;
+  color: var(--text-primary);
+}
+
+.public-stats-summary__card span {
+  color: var(--text-secondary);
+}
+
+.public-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-md);
+}
+
+.public-stats-grid__full {
+  grid-column: 1 / -1;
+}
+
+.public-stats-ranking-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.public-stats-ranking-item {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  gap: var(--spacing-xs);
+  align-items: center;
+}
+
+.public-stats-ranking-item__pos {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-spotlight);
+  color: var(--text-secondary);
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.public-stats-ranking-item__label {
+  min-width: 0;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.public-stats-ranking-item__label a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.public-stats-ranking-item__label a:hover {
+  color: var(--primary-color);
+}
+
+.public-stats-ranking-item__value {
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.public-stats-loading {
+  padding: 80px 0;
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 900px) {
+  .public-stats-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .public-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}

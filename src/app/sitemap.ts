@@ -25,6 +25,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.3,
     },
+    {
+      url: `${baseUrl}/estadisticas`,
+      changeFrequency: 'daily',
+      priority: 0.6,
+    },
   ];
 
   const series = await prisma.series.findMany({
