@@ -5,6 +5,7 @@ import { Sidebar } from '../Sidebar/Sidebar';
 import { BottomNav } from '../BottomNav/BottomNav';
 import { PrivacyBanner } from '../../common/PrivacyBanner/PrivacyBanner';
 import { StaleVersionNotifier } from '../../common/StaleVersionNotifier/StaleVersionNotifier';
+import { LiveRegion } from '../../common/LiveRegion/LiveRegion';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import './AppLayout.css';
 
@@ -18,19 +19,21 @@ export function AppLayout({ children }: AppLayoutProps) {
   const { t } = useLocale();
 
   return (
-    <Layout className="app-layout">
-      <a href="#main-content" className="skip-to-content">
-        {t('appLayout.skipToContent')}
-      </a>
-      <Sidebar />
-      <Layout>
-        <Content id="main-content" role="main" className="app-content">
-          {children}
-        </Content>
+    <LiveRegion>
+      <Layout className="app-layout">
+        <a href="#main-content" className="skip-to-content">
+          {t('appLayout.skipToContent')}
+        </a>
+        <Sidebar />
+        <Layout>
+          <Content id="main-content" role="main" className="app-content">
+            {children}
+          </Content>
+        </Layout>
+        <BottomNav />
+        <PrivacyBanner />
+        <StaleVersionNotifier />
       </Layout>
-      <BottomNav />
-      <PrivacyBanner />
-      <StaleVersionNotifier />
-    </Layout>
+    </LiveRegion>
   );
 }
