@@ -1,0 +1,52 @@
+.admin-alphabet-index {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-xs) 0;
+}
+
+.admin-alphabet-index__btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-sm);
+  background: var(--bg-container);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.admin-alphabet-index__btn:hover:not(:disabled) {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background: var(--primary-color-outline);
+}
+
+.admin-alphabet-index__btn--active {
+  background: var(--primary-color) !important;
+  color: #fff !important;
+  border-color: var(--primary-color) !important;
+}
+
+.admin-alphabet-index__btn--disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .admin-alphabet-index {
+    gap: 3px;
+  }
+
+  .admin-alphabet-index__btn {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+}
