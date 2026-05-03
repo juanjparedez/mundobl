@@ -6,6 +6,7 @@ import { BottomNav } from '../BottomNav/BottomNav';
 import { PrivacyBanner } from '../../common/PrivacyBanner/PrivacyBanner';
 import { StaleVersionNotifier } from '../../common/StaleVersionNotifier/StaleVersionNotifier';
 import { LiveRegion } from '../../common/LiveRegion/LiveRegion';
+import { OfflineIndicator } from '../../common/OfflineIndicator/OfflineIndicator';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import './AppLayout.css';
 
@@ -33,6 +34,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         <BottomNav />
         <PrivacyBanner />
         <StaleVersionNotifier />
+        <OfflineIndicator />
       </Layout>
     </LiveRegion>
   );

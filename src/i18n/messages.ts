@@ -334,6 +334,9 @@ type TranslationShape = {
     cleared: string;
     loginRequired: string;
   };
+  offline: {
+    message: string;
+  };
   bottomNav: {
     mainNavigation: string;
     catalog: string;
@@ -396,6 +399,11 @@ type TranslationShape = {
     resetSwButton: string;
     resetSwDescription: string;
     resetSwConfirm: string;
+    sectionNotifications: string;
+    pushLabel: string;
+    pushDescription: string;
+    pushUnsupported: string;
+    pushDeniedHint: string;
     closeOtherSessionsButton: string;
     closeOtherSessionsDescription: string;
     closeAllSessionsButton: string;
@@ -1616,6 +1624,9 @@ const es: TranslationShape = {
     cleared: 'Notificaciones borradas.',
     loginRequired: 'Iniciá sesión para ver tus notificaciones personales.',
   },
+  offline: {
+    message: 'Estás sin conexión. Algunas funciones pueden no funcionar.',
+  },
   bottomNav: {
     mainNavigation: 'Navegacion principal',
     catalog: 'Catalogo',
@@ -1682,6 +1693,13 @@ const es: TranslationShape = {
       'Desinstala el worker, limpia caches y recarga. Util si la app quedo en un estado raro tras un deploy.',
     resetSwConfirm:
       'Esto desinstalara el Service Worker y recargara la pagina. ¿Continuar?',
+    sectionNotifications: 'Notificaciones',
+    pushLabel: 'Notificaciones del navegador',
+    pushDescription:
+      'Recibí notificaciones del navegador cuando hay novedades. No vamos a pedir permiso a menos que actives esto.',
+    pushUnsupported: 'Tu navegador no soporta notificaciones del navegador.',
+    pushDeniedHint:
+      'Bloqueaste las notificaciones para este sitio. Habilitalas en la configuración del navegador para activarlas.',
     closeOtherSessionsButton: 'Cerrar otras sesiones',
     closeOtherSessionsDescription:
       'Cierra cualquier otra sesion abierta en otros dispositivos.',
@@ -2922,6 +2940,9 @@ const en: TranslationShape = {
     cleared: 'Notifications cleared.',
     loginRequired: 'Sign in to see your personal notifications.',
   },
+  offline: {
+    message: "You're offline. Some features may not work.",
+  },
   bottomNav: {
     mainNavigation: 'Main navigation',
     catalog: 'Catalog',
@@ -2988,6 +3009,13 @@ const en: TranslationShape = {
       'Unregisters the worker, clears caches and reloads. Useful if the app gets stuck after a deploy.',
     resetSwConfirm:
       'This will unregister the service worker and reload the page. Continue?',
+    sectionNotifications: 'Notifications',
+    pushLabel: 'Browser notifications',
+    pushDescription:
+      "Get browser notifications when there's news. We won't ask for permission unless you turn this on.",
+    pushUnsupported: 'Your browser does not support push notifications.',
+    pushDeniedHint:
+      'You blocked notifications for this site. Enable them in your browser settings to turn them on.',
     closeOtherSessionsButton: 'Close other sessions',
     closeOtherSessionsDescription:
       'Sign out of any other sessions on other devices.',
