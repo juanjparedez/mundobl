@@ -245,6 +245,17 @@ type TranslationShape = {
     sectionWatching: string;
     sectionRecent: string;
     sectionFavorites: string;
+    sectionMyComments: string;
+    commentsSelectAll: string;
+    commentsSelectedCount: string;
+    commentsDeleteSelected: string;
+    commentsDeleteSuccess: string;
+    commentsDeleteError: string;
+    commentsEmpty: string;
+    commentsExport: string;
+    commentsPublic: string;
+    commentsPrivate: string;
+    commentsTargetUnknown: string;
   };
   bottomNav: {
     mainNavigation: string;
@@ -1364,6 +1375,17 @@ const es: TranslationShape = {
     sectionWatching: 'Viendo ahora',
     sectionRecent: 'Completadas recientemente',
     sectionFavorites: 'Mis favoritos',
+    sectionMyComments: 'Mis comentarios',
+    commentsSelectAll: 'Seleccionar todo',
+    commentsSelectedCount: '{n} seleccionados',
+    commentsDeleteSelected: 'Eliminar seleccionados',
+    commentsDeleteSuccess: 'Se eliminaron {n} comentarios',
+    commentsDeleteError: 'No se pudieron eliminar los comentarios',
+    commentsEmpty: 'Todavia no tienes comentarios',
+    commentsExport: 'Descargar JSON',
+    commentsPublic: 'Publico',
+    commentsPrivate: 'Privado',
+    commentsTargetUnknown: 'Sin referencia',
   },
   bottomNav: {
     mainNavigation: 'Navegacion principal',
@@ -2490,6 +2512,17 @@ const en: TranslationShape = {
     sectionWatching: 'Currently watching',
     sectionRecent: 'Recently completed',
     sectionFavorites: 'My favorites',
+    sectionMyComments: 'My comments',
+    commentsSelectAll: 'Select all',
+    commentsSelectedCount: '{n} selected',
+    commentsDeleteSelected: 'Delete selected',
+    commentsDeleteSuccess: '{n} comments deleted',
+    commentsDeleteError: 'Could not delete comments',
+    commentsEmpty: 'You have no comments yet',
+    commentsExport: 'Download JSON',
+    commentsPublic: 'Public',
+    commentsPrivate: 'Private',
+    commentsTargetUnknown: 'No reference',
   },
   bottomNav: {
     mainNavigation: 'Main navigation',

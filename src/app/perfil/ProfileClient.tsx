@@ -10,6 +10,9 @@ import {
   HeartOutlined,
   StarOutlined,
   MessageOutlined,
+  CommentOutlined,
+  DownloadOutlined,
+  DeleteOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
   ReloadOutlined,
@@ -19,7 +22,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
+import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
 import './profile.css';
 
 const ROLE_COLORS: Record<string, string> = {
@@ -62,6 +67,21 @@ interface ProfileData {
     nextEpisode: { seasonNumber: number; episodeNumber: number } | null;
   }>;
   favorites: Array<{ seriesId: number; series: SeriesMini | null }>;
+}
+
+interface UserComment {
+  id: number;
+  content: string;
+  isPrivate: boolean;
+  reportCount: number;
+  createdAt: string;
+  series: { id: number; title: string } | null;
+  season: { id: number; seasonNumber: number; series: { id: number; title: string } | null } | null;
+  episode: {
+    id: number;
+    episodeNumber: number;
+    season: { seasonNumber: number; series: { id: number; title: string } | null } | null;
+  } | null;
 }
 
 function SeriesCard({ series, nextEpisode, progress }: {
@@ -110,18 +130,42 @@ function SeriesCard({ series, nextEpisode, progress }: {
 }
 
 export function ProfileClient() {
+  const message = useMessage();
   const { data: session, status } = useSession();
   const { t } = useLocale();
   const [data, setData] = useState<ProfileData | null>(null);
+  const [comments, setComments] = useState<UserComment[]>([]);
+  const [selectedCommentIds, setSelectedCommentIds] = useState<number[]>([]);
+  const [isDeletingComments, setIsDeletingComments] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (status === 'unauthenticated') { setLoading(false); return; }
+    if (status === 'unauthenticated') {
+      setLoading(false);
+      return;
+    }
     if (status !== 'authenticated') return;
-    fetch('/api/user/profile')
-      .then((r) => r.json())
-      .then(setData)
-      .catch(console.error)
+
+    Promise.all([fetch('/api/user/profile'), fetch('/api/user/comments?limit=120')])
+      .then(async ([profileRes, commentsRes]) => {
+        if (!profileRes.ok) {
+          throw new Error('No se pudo cargar el perfil');
+        }
+
+        const profileData = (await profileRes.json()) as ProfileData;
+        setData(profileData);
+
+        if (commentsRes.ok) {
+          const commentsData = (await commentsRes.json()) as { comments: UserComment[] };
+          setComments(commentsData.comments);
+        } else {
+          setComments([]);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        setData(null);
+      })
       .finally(() => setLoading(false));
   }, [status]);
 
@@ -147,6 +191,113 @@ export function ProfileClient() {
   }
 
   const { user, stats } = data;
+  const allCommentsSelected =
+    comments.length > 0 && selectedCommentIds.length === comments.length;
+
+  const resolveCommentTarget = (comment: UserComment) => {
+    if (comment.episode?.season?.series?.title && comment.episode.season.seasonNumber) {
+      return `${comment.episode.season.series.title} · T${comment.episode.season.seasonNumber}E${comment.episode.episodeNumber}`;
+    }
+
+    if (comment.season?.series?.title) {
+      return `${comment.season.series.title} · T${comment.season.seasonNumber}`;
+    }
+
+    if (comment.series?.title) {
+      return comment.series.title;
+    }
+
+    return t('profile.commentsTargetUnknown');
+  };
+
+  const toggleSelectAllComments = () => {
+    if (allCommentsSelected) {
+      setSelectedCommentIds([]);
+      return;
+    }
+    setSelectedCommentIds(comments.map((comment) => comment.id));
+  };
+
+  const toggleCommentSelection = (commentId: number, checked: boolean) => {
+    setSelectedCommentIds((prev) => {
+      if (checked) {
+        return prev.includes(commentId) ? prev : [...prev, commentId];
+      }
+      return prev.filter((id) => id !== commentId);
+    });
+  };
+
+  const handleDeleteSelectedComments = async () => {
+    if (selectedCommentIds.length === 0) return;
+
+    setIsDeletingComments(true);
+    try {
+      const response = await fetch('/api/user/comments', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: selectedCommentIds }),
+      });
+
+      if (!response.ok) {
+        throw new Error(t('profile.commentsDeleteError'));
+      }
+
+      const result = (await response.json()) as { deleted: number };
+      const deletedCount = Math.max(result.deleted ?? 0, 0);
+
+      setComments((prev) =>
+        prev.filter((comment) => !selectedCommentIds.includes(comment.id))
+      );
+      setSelectedCommentIds([]);
+      setData((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          stats: {
+            ...prev.stats,
+            comments: Math.max(prev.stats.comments - deletedCount, 0),
+          },
+        };
+      });
+
+      message.success(
+        interpolateMessage(t('profile.commentsDeleteSuccess'), {
+          n: String(deletedCount),
+        })
+      );
+    } catch (error) {
+      message.error(
+        error instanceof Error ? error.message : t('profile.commentsDeleteError')
+      );
+    } finally {
+      setIsDeletingComments(false);
+    }
+  };
+
+  const handleExportComments = () => {
+    if (comments.length === 0) return;
+
+    const payload = comments.map((comment) => ({
+      id: comment.id,
+      content: comment.content,
+      visibility: comment.isPrivate ? 'private' : 'public',
+      reportCount: comment.reportCount,
+      target: resolveCommentTarget(comment),
+      createdAt: comment.createdAt,
+    }));
+
+    const fileContent = JSON.stringify(payload, null, 2);
+    const blob = new Blob([fileContent], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+
+    link.href = url;
+    link.download = `mundobl-comments-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   const statItems = [
     { icon: <CheckCircleOutlined />, value: stats.watched,   label: t('profile.statWatched') },
@@ -247,6 +398,89 @@ export function ProfileClient() {
             </div>
           </section>
         )}
+
+        <section className="profile-section">
+          <div className="profile-section__header">
+            <CommentOutlined className="profile-section__header-icon" />
+            {t('profile.sectionMyComments')}
+          </div>
+
+          <div className="profile-comments__toolbar">
+            <button
+              type="button"
+              className="profile-comments__toolbar-btn"
+              onClick={toggleSelectAllComments}
+              disabled={comments.length === 0}
+            >
+              {t('profile.commentsSelectAll')}
+            </button>
+
+            <span className="profile-comments__selected-count">
+              {interpolateMessage(t('profile.commentsSelectedCount'), {
+                n: String(selectedCommentIds.length),
+              })}
+            </span>
+
+            <button
+              type="button"
+              className="profile-comments__toolbar-btn"
+              onClick={handleExportComments}
+              disabled={comments.length === 0}
+            >
+              <DownloadOutlined /> {t('profile.commentsExport')}
+            </button>
+
+            <button
+              type="button"
+              className="profile-comments__toolbar-btn profile-comments__toolbar-btn--danger"
+              onClick={handleDeleteSelectedComments}
+              disabled={selectedCommentIds.length === 0 || isDeletingComments}
+            >
+              <DeleteOutlined /> {t('profile.commentsDeleteSelected')}
+            </button>
+          </div>
+
+          {comments.length === 0 ? (
+            <div className="profile-comments__empty">
+              <Empty description={t('profile.commentsEmpty')} image={Empty.PRESENTED_IMAGE_SIMPLE} />
+            </div>
+          ) : (
+            <div className="profile-comments__list">
+              {comments.map((comment) => {
+                const isSelected = selectedCommentIds.includes(comment.id);
+                return (
+                  <div key={comment.id} className="profile-comment-item">
+                    <label className="profile-comment-item__header">
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={(event) =>
+                          toggleCommentSelection(comment.id, event.target.checked)
+                        }
+                      />
+                      <span className="profile-comment-item__date">
+                        {formatDate(comment.createdAt)}
+                      </span>
+                    </label>
+
+                    <p className="profile-comment-item__content">{comment.content}</p>
+
+                    <div className="profile-comment-item__meta">
+                      <Tag color={comment.isPrivate ? 'default' : 'geekblue'}>
+                        {comment.isPrivate
+                          ? t('profile.commentsPrivate')
+                          : t('profile.commentsPublic')}
+                      </Tag>
+                      <span className="profile-comment-item__target">
+                        {resolveCommentTarget(comment)}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
       </div>
     </AppLayout>
   );
