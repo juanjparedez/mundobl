@@ -12,6 +12,7 @@ export async function GET(request: NextRequest) {
     const target = searchParams.get('target');
     const userId = searchParams.get('userId');
     const search = searchParams.get('q')?.trim();
+    const reportedOnly = searchParams.get('reported') === 'true';
     const page = Math.max(parseInt(searchParams.get('page') || '1', 10), 1);
     const pageSize = Math.min(
       Math.max(parseInt(searchParams.get('pageSize') || '50', 10), 1),
@@ -25,6 +26,7 @@ export async function GET(request: NextRequest) {
       seasonId?: { not: null };
       episodeId?: { not: null };
       content?: { contains: string; mode: 'insensitive' };
+      reportCount?: { gt: number };
     } = { isPrivate: false };
 
     if (target === 'series') where.seriesId = { not: null };
@@ -33,11 +35,14 @@ export async function GET(request: NextRequest) {
 
     if (userId) where.userId = userId;
     if (search) where.content = { contains: search, mode: 'insensitive' };
+    if (reportedOnly) where.reportCount = { gt: 0 };
 
     const [comments, total] = await Promise.all([
       prisma.comment.findMany({
         where,
-        orderBy: { createdAt: 'desc' },
+        orderBy: reportedOnly
+          ? [{ reportCount: 'desc' }, { reportedAt: 'desc' }]
+          : { createdAt: 'desc' },
         skip: (page - 1) * pageSize,
         take: pageSize,
         include: {

@@ -18,6 +18,7 @@ import {
   ContentTypeValue,
 } from '@/types/content';
 import { JsonLd } from '@/components/seo/JsonLd';
+import { ShareButton } from '@/components/common/ShareButton/ShareButton';
 import type { TVSeries } from 'schema-dts';
 import { FloatButton } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
@@ -148,6 +149,11 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
             seriesId={serie.id}
             initialStatus={serie.viewStatus?.[0]?.status ?? 'SIN_VER'}
             seasons={serie.seasons}
+          />
+          <ShareButton
+            title={serie.title}
+            text={serie.synopsis ?? undefined}
+            path={`/series/${serie.id}`}
           />
         </div>
 
