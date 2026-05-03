@@ -222,9 +222,28 @@ export function CatalogoClient({
     initialYearNum && !isNaN(initialYearNum) ? initialYearNum : undefined
   );
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
+  const [pageSize, setPageSize] = useState<number>(() => {
+    if (typeof window === 'undefined') return DEFAULT_PAGE_SIZE;
+    const raw = window.localStorage.getItem('catalog-page-size');
+    const n = raw ? Number(raw) : NaN;
+    return PAGE_SIZE_OPTIONS.includes(n) ? n : DEFAULT_PAGE_SIZE;
+  });
   const [filtersVisible, setFiltersVisible] = useState(false);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>(() => {
+    if (typeof window === 'undefined') return 'grid';
+    const raw = window.localStorage.getItem('catalog-view-mode');
+    return raw === 'list' ? 'list' : 'grid';
+  });
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem('catalog-view-mode', viewMode);
+  }, [viewMode]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem('catalog-page-size', String(pageSize));
+  }, [pageSize]);
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
   const [selectedQuickFilter, setSelectedQuickFilter] =
     useState<QuickFilterValue>(null);
@@ -1631,7 +1650,13 @@ export function CatalogoClient({
               ? t('catalogo.emptyFiltered')
               : t('catalogo.emptyCatalog')
           }
-        />
+        >
+          {hasActiveFilters && (
+            <Button type="primary" onClick={clearFilters}>
+              {t('catalogo.clearAllFilters')}
+            </Button>
+          )}
+        </Empty>
       )}
     </>
   );

@@ -297,6 +297,16 @@ type TranslationShape = {
     statsTopCountries: string;
     statsCompletedByYear: string;
     statsNoData: string;
+    sectionSettings: string;
+    settingsAppearanceTitle: string;
+    settingsAppearanceHint: string;
+    settingsAppearanceOpen: string;
+    settingsSessionTitle: string;
+    settingsSessionHint: string;
+    settingsDangerTitle: string;
+    settingsDangerHint: string;
+    settingsExportData: string;
+    settingsComingSoon: string;
   };
   bottomNav: {
     mainNavigation: string;
@@ -1031,6 +1041,7 @@ type TranslationShape = {
     newButton: string;
     emptyFiltered: string;
     emptyCatalog: string;
+    clearAllFilters: string;
     paginationTotal: string;
     favoriteAdded: string;
     favoriteRemoved: string;
@@ -1538,6 +1549,19 @@ const es: TranslationShape = {
     statsTopCountries: 'Países más vistos',
     statsCompletedByYear: 'Completadas por año',
     statsNoData: 'Sin datos aún',
+    sectionSettings: 'Configuración',
+    settingsAppearanceTitle: 'Apariencia y accesibilidad',
+    settingsAppearanceHint:
+      'Tema, color de acento, tono base, fuente, tamaño de texto, densidad y animaciones. Estas preferencias viven en este navegador.',
+    settingsAppearanceOpen: 'Abrir preferencias',
+    settingsSessionTitle: 'Sesión y cache',
+    settingsSessionHint:
+      'Soluciona problemas raros: limpiá el cache local, reseteá el Service Worker o cerrá sesión en todos los dispositivos.',
+    settingsDangerTitle: 'Zona peligrosa',
+    settingsDangerHint:
+      'Exportar tus datos o eliminar tu cuenta. Próximamente disponible.',
+    settingsExportData: 'Exportar mis datos',
+    settingsComingSoon: 'Próximamente',
   },
   bottomNav: {
     mainNavigation: 'Navegacion principal',
@@ -2298,6 +2322,7 @@ const es: TranslationShape = {
     newButton: 'Nueva',
     emptyFiltered: 'No se encontraron series con estos filtros',
     emptyCatalog: 'No hay series en el catálogo',
+    clearAllFilters: 'Limpiar todos los filtros',
     paginationTotal: '{from}-{to} de {total}',
     favoriteAdded: 'Agregado a favoritos',
     favoriteRemoved: 'Removido de favoritos',
@@ -2804,6 +2829,18 @@ const en: TranslationShape = {
     statsTopCountries: 'Most watched countries',
     statsCompletedByYear: 'Completed per year',
     statsNoData: 'No data yet',
+    sectionSettings: 'Settings',
+    settingsAppearanceTitle: 'Appearance & accessibility',
+    settingsAppearanceHint:
+      'Theme, accent color, base tone, font, text size, density and motion. These preferences live in this browser.',
+    settingsAppearanceOpen: 'Open preferences',
+    settingsSessionTitle: 'Session & cache',
+    settingsSessionHint:
+      'Fix odd issues: clear local cache, reset the service worker or sign out of every device.',
+    settingsDangerTitle: 'Danger zone',
+    settingsDangerHint: 'Export your data or delete your account. Coming soon.',
+    settingsExportData: 'Export my data',
+    settingsComingSoon: 'Coming soon',
   },
   bottomNav: {
     mainNavigation: 'Main navigation',
@@ -3560,6 +3597,7 @@ const en: TranslationShape = {
     newButton: 'New',
     emptyFiltered: 'No series found with these filters',
     emptyCatalog: 'No series in the catalog',
+    clearAllFilters: 'Clear all filters',
     paginationTotal: '{from}-{to} of {total}',
     favoriteAdded: 'Added to favorites',
     favoriteRemoved: 'Removed from favorites',
