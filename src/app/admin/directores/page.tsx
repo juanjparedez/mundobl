@@ -167,7 +167,9 @@ export default function DirectoresAdminPage() {
       loadDirectors();
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : t('adminDirectors.deleteError');
+        error instanceof Error
+          ? error.message
+          : t('adminDirectors.deleteError');
       message.error(errorMessage);
     }
   };
@@ -254,9 +256,12 @@ export default function DirectoresAdminPage() {
               title={t('adminDirectors.deleteTitle')}
               description={
                 count > 0
-                  ? interpolateMessage(t('adminDirectors.deleteBlockedDescription'), {
-                      count,
-                    })
+                  ? interpolateMessage(
+                      t('adminDirectors.deleteBlockedDescription'),
+                      {
+                        count,
+                      }
+                    )
                   : t('adminDirectors.deleteDescription')
               }
               onConfirm={() => handleDelete(record.id)}
@@ -383,7 +388,10 @@ export default function DirectoresAdminPage() {
               <Input placeholder={t('adminDirectors.hintNationality')} />
             </Form.Item>
 
-            <Form.Item label={t('adminDirectors.fieldImageUrl')} name="imageUrl">
+            <Form.Item
+              label={t('adminDirectors.fieldImageUrl')}
+              name="imageUrl"
+            >
               <Input placeholder={t('adminDirectors.hintImageUrl')} />
             </Form.Item>
 
@@ -391,7 +399,10 @@ export default function DirectoresAdminPage() {
               label={t('adminDirectors.fieldBiography')}
               name="biography"
             >
-              <TextArea rows={3} placeholder={t('adminDirectors.hintBiography')} />
+              <TextArea
+                rows={3}
+                placeholder={t('adminDirectors.hintBiography')}
+              />
             </Form.Item>
           </Form>
         </Modal>
@@ -423,7 +434,10 @@ export default function DirectoresAdminPage() {
               return (
                 <Radio key={String(id)} value={id}>
                   <strong>{director.name}</strong> (
-                  {interpolateMessage(t('adminDirectors.seriesCount'), { count })})
+                  {interpolateMessage(t('adminDirectors.seriesCount'), {
+                    count,
+                  })}
+                  )
                 </Radio>
               );
             })}

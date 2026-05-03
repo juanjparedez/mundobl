@@ -118,7 +118,13 @@ export async function GET() {
 
     // Resolve series titles for each ranking
     const allSeriesIds = new Set<number>();
-    [...topWatching, ...topCompleted, ...topFavorited, ...topCommented, ...topRated].forEach((row) => {
+    [
+      ...topWatching,
+      ...topCompleted,
+      ...topFavorited,
+      ...topCommented,
+      ...topRated,
+    ].forEach((row) => {
       if (row.seriesId) allSeriesIds.add(row.seriesId);
     });
 
@@ -126,7 +132,9 @@ export async function GET() {
       where: { id: { in: Array.from(allSeriesIds) } },
       select: { id: true, title: true, imageUrl: true },
     });
-    const titlesMap = new Map(seriesTitles.map((s) => [s.id, { title: s.title, imageUrl: s.imageUrl }]));
+    const titlesMap = new Map(
+      seriesTitles.map((s) => [s.id, { title: s.title, imageUrl: s.imageUrl }])
+    );
 
     const resolveRanking = (
       rows: { seriesId: number | null; _count: { seriesId: number } }[]

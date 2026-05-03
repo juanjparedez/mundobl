@@ -28,9 +28,7 @@ export function LandingPage() {
         />
       </div>
 
-      <p className="landing__subtitle">
-        {t('landing.subtitle')}
-      </p>
+      <p className="landing__subtitle">{t('landing.subtitle')}</p>
 
       <div className="landing__actions">
         <Button

@@ -132,12 +132,14 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
               name,
             })),
           }),
-          ...(serie.genres && serie.genres.length > 0 && {
-            genre: serie.genres.map((g) => g.genre.name),
-          }),
-          ...(serie.tags && serie.tags.length > 0 && {
-            keywords: serie.tags.map((t) => t.tag.name).join(', '),
-          }),
+          ...(serie.genres &&
+            serie.genres.length > 0 && {
+              genre: serie.genres.map((g) => g.genre.name),
+            }),
+          ...(serie.tags &&
+            serie.tags.length > 0 && {
+              keywords: serie.tags.map((t) => t.tag.name).join(', '),
+            }),
           ...(serie.overallRating && {
             aggregateRating: {
               '@type': 'AggregateRating',

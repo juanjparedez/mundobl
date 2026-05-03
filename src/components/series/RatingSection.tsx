@@ -17,11 +17,18 @@ interface RatingSectionProps {
   }>;
 }
 
-const RATING_CATEGORY_KEYS = [
-  'trama', 'casting', 'direccion', 'guion', 'produccion',
-  'fotografia', 'bso', 'quimica_principal', 'quimica_secundaria',
+const _RATING_CATEGORY_KEYS = [
+  'trama',
+  'casting',
+  'direccion',
+  'guion',
+  'produccion',
+  'fotografia',
+  'bso',
+  'quimica_principal',
+  'quimica_secundaria',
 ] as const;
-type RatingCategoryKey = typeof RATING_CATEGORY_KEYS[number];
+type RatingCategoryKey = (typeof _RATING_CATEGORY_KEYS)[number];
 
 interface UserRatingsData {
   averages: Record<string, number>;
@@ -47,7 +54,10 @@ export function RatingSection({
     { key: 'fotografia', label: t('ratingSection.catFotografia') },
     { key: 'bso', label: t('ratingSection.catBso') },
     { key: 'quimica_principal', label: t('ratingSection.catQuimicaPrincipal') },
-    { key: 'quimica_secundaria', label: t('ratingSection.catQuimicaSecundaria') },
+    {
+      key: 'quimica_secundaria',
+      label: t('ratingSection.catQuimicaSecundaria'),
+    },
   ];
 
   // Official ratings (admin)
@@ -181,8 +191,8 @@ export function RatingSection({
                     ? t('ratingSection.votesSingular')
                     : t('ratingSection.votesPlural'),
                   { n: String(userRatingsData.totalVoters) }
-                )}
-                {' '}{t('ratingSection.userAverageLabel')}
+                )}{' '}
+                {t('ratingSection.userAverageLabel')}
               </span>
             </div>
           </Card>
@@ -191,7 +201,9 @@ export function RatingSection({
       {/* Official Rating Sliders (Admin only) */}
       {isAdmin && (
         <div className="rating-section__categories">
-          <h4 className="rating-section__title">{t('ratingSection.officialTitle')}</h4>
+          <h4 className="rating-section__title">
+            {t('ratingSection.officialTitle')}
+          </h4>
           <span style={{ color: 'var(--text-secondary)' }}>
             {t('ratingSection.officialHint')}
           </span>
@@ -237,7 +249,9 @@ export function RatingSection({
       {/* User Rating Sliders (any logged-in user) */}
       {session?.user ? (
         <div className="rating-section__categories">
-          <h4 className="rating-section__title">{t('ratingSection.userTitle')}</h4>
+          <h4 className="rating-section__title">
+            {t('ratingSection.userTitle')}
+          </h4>
           <span style={{ color: 'var(--text-secondary)' }}>
             {t('ratingSection.userHint')}
           </span>

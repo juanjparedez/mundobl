@@ -45,8 +45,8 @@ export function WelcomeBanner({ isLoggedIn }: WelcomeBannerProps) {
       <div className="welcome-banner__content">
         <SmileOutlined className="welcome-banner__icon" />
         <div className="welcome-banner__text">
-            <strong>{t('welcomeBanner.title')}</strong>
-            <p>{t('welcomeBanner.description')}</p>
+          <strong>{t('welcomeBanner.title')}</strong>
+          <p>{t('welcomeBanner.description')}</p>
         </div>
       </div>
       <Button size="small" onClick={handleDismiss}>

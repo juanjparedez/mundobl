@@ -38,9 +38,7 @@ export function PrivacyBanner() {
 
   return (
     <div className="privacy-banner">
-      <p className="privacy-banner__text">
-        {t('privacyBanner.text')}
-      </p>
+      <p className="privacy-banner__text">{t('privacyBanner.text')}</p>
       <Button
         type="primary"
         size="small"

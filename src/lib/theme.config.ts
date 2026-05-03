@@ -20,38 +20,98 @@ export const ACCENT_PRESETS = {
   mauve: {
     name: 'Mauve',
     swatch: '#c57bb7',
-    light: { primary: '#c57bb7', hover: '#d591c7', active: '#ad5f9f', outline: 'rgba(197, 123, 183, 0.26)' },
-    dark:  { primary: '#c98ac0', hover: '#dca0d4', active: '#b575ac', outline: 'rgba(201, 138, 192, 0.26)' },
+    light: {
+      primary: '#c57bb7',
+      hover: '#d591c7',
+      active: '#ad5f9f',
+      outline: 'rgba(197, 123, 183, 0.26)',
+    },
+    dark: {
+      primary: '#c98ac0',
+      hover: '#dca0d4',
+      active: '#b575ac',
+      outline: 'rgba(201, 138, 192, 0.26)',
+    },
   },
   violet: {
     name: 'Violet',
     swatch: '#7c3aed',
-    light: { primary: '#7c3aed', hover: '#8b5cf6', active: '#6d28d9', outline: 'rgba(124, 58, 237, 0.18)' },
-    dark:  { primary: '#a78bfa', hover: '#c4b5fd', active: '#8b5cf6', outline: 'rgba(167, 139, 250, 0.22)' },
+    light: {
+      primary: '#7c3aed',
+      hover: '#8b5cf6',
+      active: '#6d28d9',
+      outline: 'rgba(124, 58, 237, 0.18)',
+    },
+    dark: {
+      primary: '#a78bfa',
+      hover: '#c4b5fd',
+      active: '#8b5cf6',
+      outline: 'rgba(167, 139, 250, 0.22)',
+    },
   },
   rose: {
     name: 'Rose',
     swatch: '#e11d48',
-    light: { primary: '#e11d48', hover: '#f43f5e', active: '#be123c', outline: 'rgba(225, 29, 72, 0.18)' },
-    dark:  { primary: '#fb7185', hover: '#fda4af', active: '#f43f5e', outline: 'rgba(251, 113, 133, 0.22)' },
+    light: {
+      primary: '#e11d48',
+      hover: '#f43f5e',
+      active: '#be123c',
+      outline: 'rgba(225, 29, 72, 0.18)',
+    },
+    dark: {
+      primary: '#fb7185',
+      hover: '#fda4af',
+      active: '#f43f5e',
+      outline: 'rgba(251, 113, 133, 0.22)',
+    },
   },
   teal: {
     name: 'Teal',
     swatch: '#0d9488',
-    light: { primary: '#0d9488', hover: '#14b8a6', active: '#0f766e', outline: 'rgba(13, 148, 136, 0.18)' },
-    dark:  { primary: '#2dd4bf', hover: '#5eead4', active: '#14b8a6', outline: 'rgba(45, 212, 191, 0.22)' },
+    light: {
+      primary: '#0d9488',
+      hover: '#14b8a6',
+      active: '#0f766e',
+      outline: 'rgba(13, 148, 136, 0.18)',
+    },
+    dark: {
+      primary: '#2dd4bf',
+      hover: '#5eead4',
+      active: '#14b8a6',
+      outline: 'rgba(45, 212, 191, 0.22)',
+    },
   },
   amber: {
     name: 'Amber',
     swatch: '#d97706',
-    light: { primary: '#d97706', hover: '#f59e0b', active: '#b45309', outline: 'rgba(217, 119, 6, 0.18)' },
-    dark:  { primary: '#fbbf24', hover: '#fcd34d', active: '#f59e0b', outline: 'rgba(251, 191, 36, 0.22)' },
+    light: {
+      primary: '#d97706',
+      hover: '#f59e0b',
+      active: '#b45309',
+      outline: 'rgba(217, 119, 6, 0.18)',
+    },
+    dark: {
+      primary: '#fbbf24',
+      hover: '#fcd34d',
+      active: '#f59e0b',
+      outline: 'rgba(251, 191, 36, 0.22)',
+    },
   },
   sky: {
     name: 'Sky',
     swatch: '#0284c7',
-    light: { primary: '#0284c7', hover: '#0ea5e9', active: '#0369a1', outline: 'rgba(2, 132, 199, 0.18)' },
-    dark:  { primary: '#38bdf8', hover: '#7dd3fc', active: '#0ea5e9', outline: 'rgba(56, 189, 248, 0.22)' },
+    light: {
+      primary: '#0284c7',
+      hover: '#0ea5e9',
+      active: '#0369a1',
+      outline: 'rgba(2, 132, 199, 0.18)',
+    },
+    dark: {
+      primary: '#38bdf8',
+      hover: '#7dd3fc',
+      active: '#0ea5e9',
+      outline: 'rgba(56, 189, 248, 0.22)',
+    },
   },
 } as const satisfies Record<string, AccentPreset>;
 
@@ -67,7 +127,10 @@ function hexToRgba(hex: string, alpha: number): string {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-export function buildTheme(mode: 'light' | 'dark', accent: AccentColors): ThemeConfig {
+export function buildTheme(
+  mode: 'light' | 'dark',
+  accent: AccentColors
+): ThemeConfig {
   if (mode === 'light') {
     return {
       token: {
@@ -78,7 +141,8 @@ export function buildTheme(mode: 'light' | 'dark', accent: AccentColors): ThemeC
         colorError: '#ff4d4f',
         fontSize: 14,
         borderRadius: 12,
-        fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+        fontFamily:
+          "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
       },
       components: {
         Layout: {
@@ -123,7 +187,8 @@ export function buildTheme(mode: 'light' | 'dark', accent: AccentColors): ThemeC
       colorFillTertiary: hexToRgba(accent.primary, 0.08),
       fontSize: 14,
       borderRadius: 12,
-      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+      fontFamily:
+        "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
     },
     components: {
       Layout: {
@@ -193,4 +258,3 @@ export function buildTheme(mode: 'light' | 'dark', accent: AccentColors): ThemeC
     },
   };
 }
-

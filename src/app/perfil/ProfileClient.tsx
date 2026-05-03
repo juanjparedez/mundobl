@@ -32,6 +32,10 @@ import {
   AppstoreOutlined,
   UnlockOutlined,
   LockOutlined,
+  BarChartOutlined,
+  ClockCircleOutlined,
+  GlobalOutlined,
+  FireOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -73,6 +77,11 @@ interface ProfileData {
     favorites: number;
     ratings: number;
     comments: number;
+    hoursWatched: number;
+    activeDaysThisWeek: number;
+    topGenres: Array<{ name: string; count: number }>;
+    topCountries: Array<{ name: string; code: string | null; count: number }>;
+    completedByYear: Array<{ year: number | null; count: number }>;
   };
   recentlyCompleted: Array<{ seriesId: number; series: SeriesMini | null }>;
   currentlyWatching: Array<{
@@ -211,7 +220,9 @@ export function ProfileClient() {
   const [isDeletingComments, setIsDeletingComments] = useState(false);
   const [isUpdatingVisibility, setIsUpdatingVisibility] = useState(false);
 
-  const [editingComment, setEditingComment] = useState<UserComment | null>(null);
+  const [editingComment, setEditingComment] = useState<UserComment | null>(
+    null
+  );
   const [editingContent, setEditingContent] = useState('');
   const [isSavingEdit, setIsSavingEdit] = useState(false);
 
@@ -265,7 +276,8 @@ export function ProfileClient() {
       params.set('page', String(commentsPage));
       params.set('pageSize', String(commentsPageSize));
       if (searchQuery) params.set('q', searchQuery);
-      if (visibilityFilter !== 'all') params.set('visibility', visibilityFilter);
+      if (visibilityFilter !== 'all')
+        params.set('visibility', visibilityFilter);
       if (targetFilter !== 'all') params.set('target', targetFilter);
       if (reportedOnly) params.set('reported', 'true');
 
@@ -279,7 +291,9 @@ export function ProfileClient() {
       setCommentsTotal(result.total);
 
       setSelectedCommentIds((prev) =>
-        prev.filter((id) => result.comments.some((comment) => comment.id === id))
+        prev.filter((id) =>
+          result.comments.some((comment) => comment.id === id)
+        )
       );
     } catch (error) {
       message.error(
@@ -406,7 +420,9 @@ export function ProfileClient() {
       );
     } catch (error) {
       message.error(
-        error instanceof Error ? error.message : t('profile.commentsDeleteError')
+        error instanceof Error
+          ? error.message
+          : t('profile.commentsDeleteError')
       );
     } finally {
       setIsDeletingComments(false);
@@ -536,7 +552,8 @@ export function ProfileClient() {
   };
 
   const handleExportComments = () => {
-    const exportRows = selectedComments.length > 0 ? selectedComments : comments;
+    const exportRows =
+      selectedComments.length > 0 ? selectedComments : comments;
 
     if (exportRows.length === 0) return;
 
@@ -588,13 +605,41 @@ export function ProfileClient() {
   const { user, stats } = data;
 
   const statItems = [
-    { icon: <CheckCircleOutlined />, value: stats.watched, label: t('profile.statWatched') },
-    { icon: <PlayCircleOutlined />, value: stats.watching, label: t('profile.statWatching') },
-    { icon: <CloseCircleOutlined />, value: stats.abandoned, label: t('profile.statAbandoned') },
-    { icon: <ReloadOutlined />, value: stats.toRewatch, label: t('profile.statToRewatch') },
-    { icon: <HeartOutlined />, value: stats.favorites, label: t('profile.statFavorites') },
-    { icon: <StarOutlined />, value: stats.ratings, label: t('profile.statRatings') },
-    { icon: <MessageOutlined />, value: stats.comments, label: t('profile.statComments') },
+    {
+      icon: <CheckCircleOutlined />,
+      value: stats.watched,
+      label: t('profile.statWatched'),
+    },
+    {
+      icon: <PlayCircleOutlined />,
+      value: stats.watching,
+      label: t('profile.statWatching'),
+    },
+    {
+      icon: <CloseCircleOutlined />,
+      value: stats.abandoned,
+      label: t('profile.statAbandoned'),
+    },
+    {
+      icon: <ReloadOutlined />,
+      value: stats.toRewatch,
+      label: t('profile.statToRewatch'),
+    },
+    {
+      icon: <HeartOutlined />,
+      value: stats.favorites,
+      label: t('profile.statFavorites'),
+    },
+    {
+      icon: <StarOutlined />,
+      value: stats.ratings,
+      label: t('profile.statRatings'),
+    },
+    {
+      icon: <MessageOutlined />,
+      value: stats.comments,
+      label: t('profile.statComments'),
+    },
   ];
 
   return (
@@ -629,6 +674,139 @@ export function ProfileClient() {
           ))}
         </div>
 
+        <section className="profile-section">
+          <div className="profile-section__header">
+            <BarChartOutlined className="profile-section__header-icon" />
+            {t('profile.sectionStats')}
+          </div>
+          <div className="profile-rich-stats">
+            {/* Hours watched */}
+            <div className="profile-rich-stat-card">
+              <div className="profile-rich-stat-card__icon">
+                <ClockCircleOutlined />
+              </div>
+              <div className="profile-rich-stat-card__value">
+                {stats.hoursWatched}h
+              </div>
+              <div className="profile-rich-stat-card__label">
+                {t('profile.statsHoursWatched')}
+              </div>
+            </div>
+
+            {/* Weekly activity */}
+            <div className="profile-rich-stat-card">
+              <div className="profile-rich-stat-card__icon">
+                <FireOutlined />
+              </div>
+              <div className="profile-rich-stat-card__value">
+                {stats.activeDaysThisWeek}/7
+              </div>
+              <div className="profile-rich-stat-card__label">
+                {t('profile.statsActiveDays')}
+              </div>
+              <div className="profile-weekly-dots">
+                {Array.from({ length: 7 }).map((_, i) => (
+                  <span
+                    key={i}
+                    className={`profile-weekly-dot${i < stats.activeDaysThisWeek ? ' profile-weekly-dot--active' : ''}`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Top genres */}
+            <div className="profile-rich-stat-card profile-rich-stat-card--wide">
+              <div className="profile-rich-stat-card__header">
+                <GlobalOutlined />
+                {t('profile.statsTopGenres')}
+              </div>
+              {stats.topGenres.length === 0 ? (
+                <span className="profile-rich-stat-card__empty">
+                  {t('profile.statsNoData')}
+                </span>
+              ) : (
+                <div className="profile-top-list">
+                  {stats.topGenres.map((g) => (
+                    <div key={g.name} className="profile-top-list__item">
+                      <span className="profile-top-list__name">{g.name}</span>
+                      <Progress
+                        percent={Math.round(
+                          (g.count / stats.topGenres[0].count) * 100
+                        )}
+                        showInfo={false}
+                        size="small"
+                        className="profile-top-list__bar"
+                      />
+                      <span className="profile-top-list__count">{g.count}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Top countries */}
+            <div className="profile-rich-stat-card profile-rich-stat-card--wide">
+              <div className="profile-rich-stat-card__header">
+                <GlobalOutlined />
+                {t('profile.statsTopCountries')}
+              </div>
+              {stats.topCountries.length === 0 ? (
+                <span className="profile-rich-stat-card__empty">
+                  {t('profile.statsNoData')}
+                </span>
+              ) : (
+                <div className="profile-top-list">
+                  {stats.topCountries.map((c) => (
+                    <div key={c.name} className="profile-top-list__item">
+                      <span className="profile-top-list__name">{c.name}</span>
+                      <Progress
+                        percent={Math.round(
+                          (c.count / stats.topCountries[0].count) * 100
+                        )}
+                        showInfo={false}
+                        size="small"
+                        className="profile-top-list__bar"
+                      />
+                      <span className="profile-top-list__count">{c.count}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Completed by year */}
+            {stats.completedByYear.length > 0 && (
+              <div className="profile-rich-stat-card profile-rich-stat-card--full">
+                <div className="profile-rich-stat-card__header">
+                  <CalendarOutlined />
+                  {t('profile.statsCompletedByYear')}
+                </div>
+                <div className="profile-year-bars">
+                  {stats.completedByYear.map((y) => {
+                    const max = Math.max(
+                      ...stats.completedByYear.map((r) => r.count)
+                    );
+                    return (
+                      <div key={y.year} className="profile-year-bar">
+                        <div
+                          className="profile-year-bar__fill"
+                          style={{
+                            height: `${Math.round((y.count / max) * 60)}px`,
+                          }}
+                        />
+                        <span className="profile-year-bar__count">
+                          {y.count}
+                        </span>
+                        <span className="profile-year-bar__year">{y.year}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+
         {data.currentlyWatching.length > 0 && (
           <section className="profile-section">
             <div className="profile-section__header">
@@ -658,7 +836,9 @@ export function ProfileClient() {
             </div>
             <div className="profile-series-grid">
               {data.recentlyCompleted.map((item) =>
-                item.series ? <SeriesCard key={item.seriesId} series={item.series} /> : null
+                item.series ? (
+                  <SeriesCard key={item.seriesId} series={item.series} />
+                ) : null
               )}
             </div>
           </section>
@@ -672,7 +852,9 @@ export function ProfileClient() {
             </div>
             <div className="profile-series-grid">
               {data.favorites.map((item) =>
-                item.series ? <SeriesCard key={item.seriesId} series={item.series} /> : null
+                item.series ? (
+                  <SeriesCard key={item.seriesId} series={item.series} />
+                ) : null
               )}
             </div>
           </section>
@@ -739,7 +921,10 @@ export function ProfileClient() {
           </div>
 
           <div className="profile-comments__toolbar">
-            <Button onClick={toggleSelectAllComments} disabled={comments.length === 0}>
+            <Button
+              onClick={toggleSelectAllComments}
+              disabled={comments.length === 0}
+            >
               {t('profile.commentsSelectAll')}
             </Button>
 
@@ -812,7 +997,10 @@ export function ProfileClient() {
                           type="checkbox"
                           checked={isSelected}
                           onChange={(event) =>
-                            toggleCommentSelection(comment.id, event.target.checked)
+                            toggleCommentSelection(
+                              comment.id,
+                              event.target.checked
+                            )
                           }
                         />
                         <span className="profile-comment-item__date">
@@ -820,7 +1008,9 @@ export function ProfileClient() {
                         </span>
                       </label>
 
-                      <p className="profile-comment-item__content">{comment.content}</p>
+                      <p className="profile-comment-item__content">
+                        {comment.content}
+                      </p>
 
                       <div className="profile-comment-item__meta">
                         <Tag color={comment.isPrivate ? 'default' : 'geekblue'}>
@@ -835,9 +1025,12 @@ export function ProfileClient() {
 
                         {comment.reportCount > 0 && (
                           <Tag color="warning">
-                            {interpolateMessage(t('profile.commentsReportCount'), {
-                              n: String(comment.reportCount),
-                            })}
+                            {interpolateMessage(
+                              t('profile.commentsReportCount'),
+                              {
+                                n: String(comment.reportCount),
+                              }
+                            )}
                           </Tag>
                         )}
                       </div>
@@ -904,7 +1097,9 @@ export function ProfileClient() {
               {disputes.map((dispute) => (
                 <div key={dispute.id} className="profile-dispute-item">
                   <div className="profile-dispute-item__header">
-                    <span className="profile-dispute-item__title">{dispute.title}</span>
+                    <span className="profile-dispute-item__title">
+                      {dispute.title}
+                    </span>
                     <Tag>{dispute.status}</Tag>
                   </div>
                   <div className="profile-dispute-item__meta">
@@ -917,7 +1112,9 @@ export function ProfileClient() {
                     <span>{dispute.target}</span>
                   </div>
                   {dispute.message && (
-                    <p className="profile-dispute-item__message">{dispute.message}</p>
+                    <p className="profile-dispute-item__message">
+                      {dispute.message}
+                    </p>
                   )}
                 </div>
               ))}

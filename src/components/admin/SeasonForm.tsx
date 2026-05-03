@@ -134,10 +134,16 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
             <div className="series-form__header-left">
               <Link href={`/series/${initialData.seriesId}`}>
                 <Button icon={<ArrowLeftOutlined />} type="text">
-                  {interpolateMessage(t('seasonForm.backButton'), { title: initialData.seriesTitle })}
+                  {interpolateMessage(t('seasonForm.backButton'), {
+                    title: initialData.seriesTitle,
+                  })}
                 </Button>
               </Link>
-              <span>{interpolateMessage(t('seasonForm.headerTitle'), { number: initialData.seasonNumber })}</span>
+              <span>
+                {interpolateMessage(t('seasonForm.headerTitle'), {
+                  number: initialData.seasonNumber,
+                })}
+              </span>
             </div>
             <Button icon={<CloseOutlined />} onClick={() => router.back()}>
               {t('seasonForm.cancelButton')}
@@ -164,7 +170,12 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
                 <Form.Item
                   label={t('seasonForm.fieldSeasonNumber')}
                   name="seasonNumber"
-                  rules={[{ required: true, message: t('seasonForm.requiredSeasonNumber') }]}
+                  rules={[
+                    {
+                      required: true,
+                      message: t('seasonForm.requiredSeasonNumber'),
+                    },
+                  ]}
                 >
                   <InputNumber min={1} style={{ width: '100%' }} size="large" />
                 </Form.Item>
@@ -177,7 +188,10 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
               </Col>
 
               <Col xs={24} md={6}>
-                <Form.Item label={t('seasonForm.fieldEpisodeCount')} name="episodeCount">
+                <Form.Item
+                  label={t('seasonForm.fieldEpisodeCount')}
+                  name="episodeCount"
+                >
                   <InputNumber
                     min={1}
                     style={{ width: '100%' }}
@@ -211,7 +225,10 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
               </Col>
 
               <Col xs={24}>
-                <Form.Item label={`📝 ${t('seasonForm.fieldObservations')}`} name="observations">
+                <Form.Item
+                  label={`📝 ${t('seasonForm.fieldObservations')}`}
+                  name="observations"
+                >
                   <TextArea
                     rows={3}
                     placeholder={t('seasonForm.hintObservations')}
@@ -240,7 +257,9 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
                         loading={uploading}
                         size="large"
                       >
-                        {uploading ? t('seasonForm.uploadingLabel') : t('seasonForm.uploadButton')}
+                        {uploading
+                          ? t('seasonForm.uploadingLabel')
+                          : t('seasonForm.uploadButton')}
                       </Button>
                     </Upload>
                   </Space.Compact>
@@ -267,7 +286,10 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
                         {...restField}
                         name={[name, 'name']}
                         rules={[
-                          { required: true, message: t('seasonForm.requiredActorName') },
+                          {
+                            required: true,
+                            message: t('seasonForm.requiredActorName'),
+                          },
                         ]}
                         style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
                       >

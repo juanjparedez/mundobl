@@ -1,13 +1,11 @@
-
 'use client';
 
 import Link from 'next/link';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 
-
 export default function NotFound() {
-    const { t } = useLocale();
+  const { t } = useLocale();
 
   return (
     <AppLayout>

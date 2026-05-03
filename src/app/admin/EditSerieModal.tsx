@@ -58,7 +58,7 @@ export function EditSerieModal({
     } finally {
       setFetching(false);
     }
-  }, [serieId, form, message]);
+  }, [serieId, form, message, t]);
 
   useEffect(() => {
     if (open && serieId) {
@@ -91,7 +91,9 @@ export function EditSerieModal({
       onClose();
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : t('editSerieModal.updateError');
+        error instanceof Error
+          ? error.message
+          : t('editSerieModal.updateError');
       message.error(errorMessage);
       console.error(error);
     } finally {
@@ -121,12 +123,17 @@ export function EditSerieModal({
           <Form.Item
             label={t('editSerieModal.fieldTitle')}
             name="title"
-            rules={[{ required: true, message: t('editSerieModal.requiredTitle') }]}
+            rules={[
+              { required: true, message: t('editSerieModal.requiredTitle') },
+            ]}
           >
             <Input placeholder={t('editSerieModal.placeholderTitle')} />
           </Form.Item>
 
-          <Form.Item label={t('editSerieModal.fieldOriginalTitle')} name="originalTitle">
+          <Form.Item
+            label={t('editSerieModal.fieldOriginalTitle')}
+            name="originalTitle"
+          >
             <Input placeholder={t('editSerieModal.placeholderOriginalTitle')} />
           </Form.Item>
 
@@ -146,7 +153,9 @@ export function EditSerieModal({
           <Form.Item
             label={t('editSerieModal.fieldType')}
             name="type"
-            rules={[{ required: true, message: t('editSerieModal.requiredType') }]}
+            rules={[
+              { required: true, message: t('editSerieModal.requiredType') },
+            ]}
           >
             <Select placeholder={t('editSerieModal.placeholderType')}>
               <Option value="serie">{t('seriesHeader.typeSerie')}</Option>
@@ -171,7 +180,10 @@ export function EditSerieModal({
             </Select>
           </Form.Item>
 
-          <Form.Item label={t('editSerieModal.fieldRating')} name="overallRating">
+          <Form.Item
+            label={t('editSerieModal.fieldRating')}
+            name="overallRating"
+          >
             <InputNumber
               placeholder={t('editSerieModal.placeholderRating')}
               min={1}
@@ -181,9 +193,14 @@ export function EditSerieModal({
           </Form.Item>
 
           <Form.Item label={t('editSerieModal.fieldBasedOn')} name="basedOn">
-            <Select placeholder={t('editSerieModal.placeholderBasedOn')} allowClear>
+            <Select
+              placeholder={t('editSerieModal.placeholderBasedOn')}
+              allowClear
+            >
               <Option value="libro">{t('editSerieModal.basedOnLibro')}</Option>
-              <Option value="novela">{t('editSerieModal.basedOnNovela')}</Option>
+              <Option value="novela">
+                {t('editSerieModal.basedOnNovela')}
+              </Option>
               <Option value="corto">{t('editSerieModal.basedOnCorto')}</Option>
               <Option value="manga">{t('editSerieModal.basedOnManga')}</Option>
               <Option value="anime">{t('editSerieModal.basedOnAnime')}</Option>
@@ -193,12 +210,18 @@ export function EditSerieModal({
           <Form.Item
             label={t('editSerieModal.fieldFormat')}
             name="format"
-            rules={[{ required: true, message: t('editSerieModal.requiredFormat') }]}
+            rules={[
+              { required: true, message: t('editSerieModal.requiredFormat') },
+            ]}
             initialValue="regular"
           >
             <Select>
-              <Option value="regular">{t('editSerieModal.formatRegular')}</Option>
-              <Option value="vertical">{t('editSerieModal.formatVertical')}</Option>
+              <Option value="regular">
+                {t('editSerieModal.formatRegular')}
+              </Option>
+              <Option value="vertical">
+                {t('editSerieModal.formatVertical')}
+              </Option>
             </Select>
           </Form.Item>
 
@@ -220,11 +243,17 @@ export function EditSerieModal({
             />
           </Form.Item>
 
-          <Form.Item label={t('editSerieModal.fieldSoundtrack')} name="soundtrack">
+          <Form.Item
+            label={t('editSerieModal.fieldSoundtrack')}
+            name="soundtrack"
+          >
             <Input placeholder={t('editSerieModal.placeholderSoundtrack')} />
           </Form.Item>
 
-          <Form.Item label={t('editSerieModal.fieldObservations')} name="observations">
+          <Form.Item
+            label={t('editSerieModal.fieldObservations')}
+            name="observations"
+          >
             <TextArea
               rows={6}
               placeholder={t('editSerieModal.placeholderObservations')}

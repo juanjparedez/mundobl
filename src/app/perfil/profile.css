@@ -368,6 +368,165 @@
 }
 
 /* ==========================================
+   Rich stats dashboard
+   ========================================== */
+.profile-rich-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.profile-rich-stat-card {
+  background: var(--bg-container);
+  border-radius: var(--border-radius-base);
+  padding: var(--spacing-md);
+  box-shadow: var(--box-shadow-card);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+}
+
+.profile-rich-stat-card--wide {
+  grid-column: span 2;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.profile-rich-stat-card--full {
+  grid-column: 1 / -1;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.profile-rich-stat-card__icon {
+  font-size: 22px;
+  color: var(--primary-color);
+}
+
+.profile-rich-stat-card__value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.profile-rich-stat-card__label {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.profile-rich-stat-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-sm);
+  width: 100%;
+}
+
+.profile-rich-stat-card__empty {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  padding: var(--spacing-xs) 0;
+}
+
+/* Weekly activity dots */
+.profile-weekly-dots {
+  display: flex;
+  gap: 5px;
+  margin-top: var(--spacing-xs);
+}
+
+.profile-weekly-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--border-color);
+  display: inline-block;
+}
+
+.profile-weekly-dot--active {
+  background: var(--primary-color);
+}
+
+/* Top list (genres / countries) */
+.profile-top-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.profile-top-list__item {
+  display: grid;
+  grid-template-columns: 110px 1fr 28px;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.profile-top-list__name {
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-top-list__bar {
+  flex: 1;
+}
+
+.profile-top-list__count {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  text-align: right;
+}
+
+/* Year bars chart */
+.profile-year-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--spacing-sm);
+  width: 100%;
+  height: 90px;
+  padding-top: var(--spacing-xs);
+}
+
+.profile-year-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  min-width: 36px;
+}
+
+.profile-year-bar__fill {
+  width: 100%;
+  max-width: 40px;
+  min-height: 4px;
+  background: var(--primary-color);
+  border-radius: 4px 4px 0 0;
+  transition: height 0.3s ease;
+  opacity: 0.85;
+}
+
+.profile-year-bar__count {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.profile-year-bar__year {
+  font-size: 10px;
+  color: var(--text-tertiary);
+}
+
+/* ==========================================
    Loading / not auth
    ========================================== */
 .profile-loading {
@@ -393,6 +552,14 @@
 
   .profile-stats {
     grid-template-columns: repeat(4, 1fr);
+  }
+
+  .profile-rich-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .profile-rich-stat-card--wide {
+    grid-column: span 2;
   }
 
   .profile-series-grid {

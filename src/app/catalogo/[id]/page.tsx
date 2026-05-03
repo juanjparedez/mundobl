@@ -85,7 +85,10 @@ export default async function SerieDetailPage({
             actor: actors.map((name) => ({ '@type': 'Person' as const, name })),
           }),
           ...(directors.length > 0 && {
-            director: directors.map((name) => ({ '@type': 'Person' as const, name })),
+            director: directors.map((name) => ({
+              '@type': 'Person' as const,
+              name,
+            })),
           }),
           ...(serie.overallRating && {
             aggregateRating: {
