@@ -6,6 +6,7 @@ export const ROUTES = {
   HOME: '/',
   CATALOGO: '/catalogo',
   WATCHING: '/watching',
+  PERFIL: '/perfil',
   ADMIN: '/admin',
   ADMIN_USUARIOS: '/admin/usuarios',
   FEEDBACK: '/feedback',

@@ -75,6 +75,16 @@ export function Sidebar() {
       label: t('sidebar.watching'),
       onClick: () => router.push(ROUTES.WATCHING),
     },
+    ...(session?.user
+      ? [
+          {
+            key: ROUTES.PERFIL,
+            icon: <UserOutlined />,
+            label: t('sidebar.profile'),
+            onClick: () => router.push(ROUTES.PERFIL),
+          },
+        ]
+      : []),
     {
       key: ROUTES.FEEDBACK,
       icon: <CommentOutlined />,
