@@ -11,6 +11,7 @@ export const ROUTES = {
   ADMIN_USUARIOS: '/admin/usuarios',
   FEEDBACK: '/feedback',
   NOVEDADES: '/novedades',
+  ESTADISTICAS: '/estadisticas',
 } as const;
 
 export const NAV_ITEMS = [
