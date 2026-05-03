@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
   Tabs,
   Button,
@@ -103,11 +104,28 @@ export function FeedbackClient() {
   const [submitting, setSubmitting] = useState(false);
   const [pendingImages, setPendingImages] = useState<PendingImage[]>([]);
   const [form] = Form.useForm();
+  const searchParams = useSearchParams();
+  const prefilledRef = useRef(false);
 
   const isAdmin = session?.user?.role === 'ADMIN';
   const userId = session?.user?.id;
   const [changelog, setChangelog] = useState<ChangelogEntry[]>([]);
   const [buildId, setBuildId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (prefilledRef.current) return;
+    const type = searchParams.get('type');
+    const title = searchParams.get('title');
+    const description = searchParams.get('description');
+    if (!type && !title && !description) return;
+    prefilledRef.current = true;
+    form.setFieldsValue({
+      type: type ?? 'bug',
+      title: title ?? '',
+      description: description ?? '',
+    });
+    setModalOpen(true);
+  }, [searchParams, form]);
 
   useEffect(() => {
     fetch('/api/changelog')
