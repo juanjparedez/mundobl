@@ -196,6 +196,102 @@
 }
 
 /* ==========================================
+   My comments section
+   ========================================== */
+.profile-comments__toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.profile-comments__toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border-color-secondary);
+  background: var(--bg-container);
+  color: var(--text-primary);
+  border-radius: var(--border-radius-sm);
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  transition: var(--transition-fast);
+}
+
+.profile-comments__toolbar-btn:hover:not(:disabled) {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.profile-comments__toolbar-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.profile-comments__toolbar-btn--danger:hover:not(:disabled) {
+  border-color: var(--error-color);
+  color: var(--error-color);
+}
+
+.profile-comments__selected-count {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+}
+
+.profile-comments__empty {
+  background: var(--bg-container);
+  border-radius: var(--border-radius-base);
+  padding: var(--spacing-md);
+}
+
+.profile-comments__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.profile-comment-item {
+  background: var(--bg-container);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-base);
+  padding: var(--spacing-sm);
+}
+
+.profile-comment-item__header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs);
+}
+
+.profile-comment-item__date {
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+}
+
+.profile-comment-item__content {
+  margin: 0;
+  white-space: pre-wrap;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.profile-comment-item__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.profile-comment-item__target {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+}
+
+/* ==========================================
    Loading / not auth
    ========================================== */
 .profile-loading {
@@ -225,6 +321,10 @@
 
   .profile-series-grid {
     grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  }
+
+  .profile-comments__toolbar {
+    align-items: stretch;
   }
 }
 
