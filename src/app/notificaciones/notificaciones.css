@@ -1,0 +1,111 @@
+.notificaciones-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.notificaciones-page__loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-xl);
+}
+
+.notificaciones-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius);
+}
+
+.notificaciones-toolbar__count {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.notificaciones-toolbar__actions {
+  display: flex;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+.notificaciones-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.notificaciones-item {
+  background: var(--bg-container);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius);
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.notificaciones-item:hover {
+  border-color: var(--primary-color);
+}
+
+.notificaciones-item--unread {
+  background: color-mix(in srgb, var(--primary-color) 6%, var(--bg-container));
+  border-color: color-mix(in srgb, var(--primary-color) 30%, transparent);
+}
+
+.notificaciones-item__link {
+  display: flex;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  color: inherit;
+  text-decoration: none;
+  align-items: stretch;
+}
+
+.notificaciones-item__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.notificaciones-item__header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+.notificaciones-item__title {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.notificaciones-item__body {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: 1.45;
+}
+
+.notificaciones-item__when {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+}
+
+.notificaciones-item__actions {
+  display: flex;
+  gap: 4px;
+  align-items: flex-start;
+}
+
+.notificaciones-empty-icon {
+  font-size: 64px;
+  color: var(--text-tertiary);
+}
