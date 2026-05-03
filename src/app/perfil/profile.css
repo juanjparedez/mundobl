@@ -206,6 +206,23 @@
   margin-bottom: var(--spacing-md);
 }
 
+.profile-comments__filters {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  margin-bottom: var(--spacing-sm);
+}
+
+.profile-comments__search {
+  min-width: 260px;
+  flex: 1;
+}
+
+.profile-comments__select {
+  min-width: 150px;
+}
+
 .profile-comments__toolbar-btn {
   display: inline-flex;
   align-items: center;
@@ -244,6 +261,12 @@
   background: var(--bg-container);
   border-radius: var(--border-radius-base);
   padding: var(--spacing-md);
+}
+
+.profile-comments__loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-lg);
 }
 
 .profile-comments__list {
@@ -286,9 +309,62 @@
   flex-wrap: wrap;
 }
 
+.profile-comment-item__actions {
+  display: flex;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-sm);
+}
+
 .profile-comment-item__target {
   font-size: var(--font-size-xs);
   color: var(--text-secondary);
+}
+
+.profile-comments__pagination-wrap {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--spacing-sm);
+}
+
+.profile-disputes__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.profile-dispute-item {
+  background: var(--bg-container);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-base);
+  padding: var(--spacing-sm);
+}
+
+.profile-dispute-item__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+}
+
+.profile-dispute-item__title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.profile-dispute-item__meta {
+  margin-top: var(--spacing-xs);
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+}
+
+.profile-dispute-item__message {
+  margin: var(--spacing-sm) 0 0;
+  color: var(--text-primary);
+  white-space: pre-wrap;
 }
 
 /* ==========================================
@@ -325,6 +401,24 @@
 
   .profile-comments__toolbar {
     align-items: stretch;
+  }
+
+  .profile-comments__filters {
+    align-items: stretch;
+  }
+
+  .profile-comments__search,
+  .profile-comments__select {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .profile-comment-item__actions {
+    flex-wrap: wrap;
+  }
+
+  .profile-comments__pagination-wrap {
+    justify-content: center;
   }
 }
 

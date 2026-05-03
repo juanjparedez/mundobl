@@ -6,6 +6,9 @@ import { requireAuth } from '@/lib/auth-helpers';
 export async function GET() {
   try {
     const requests = await prisma.featureRequest.findMany({
+      where: {
+        type: { in: ['bug', 'feature', 'idea'] },
+      },
       include: {
         user: { select: { id: true, name: true, image: true } },
         _count: { select: { votes: true } },

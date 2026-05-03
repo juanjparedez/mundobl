@@ -1,7 +1,18 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Avatar, Tag, Spin, Empty, Progress } from 'antd';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  Avatar,
+  Button,
+  Empty,
+  Input,
+  Modal,
+  Pagination,
+  Progress,
+  Select,
+  Spin,
+  Tag,
+} from 'antd';
 import {
   UserOutlined,
   CalendarOutlined,
@@ -13,10 +24,14 @@ import {
   CommentOutlined,
   DownloadOutlined,
   DeleteOutlined,
+  EditOutlined,
+  ExclamationCircleOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
   ReloadOutlined,
   AppstoreOutlined,
+  UnlockOutlined,
+  LockOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -76,15 +91,55 @@ interface UserComment {
   reportCount: number;
   createdAt: string;
   series: { id: number; title: string } | null;
-  season: { id: number; seasonNumber: number; series: { id: number; title: string } | null } | null;
+  season: {
+    id: number;
+    seasonNumber: number;
+    series: { id: number; title: string } | null;
+  } | null;
   episode: {
     id: number;
     episodeNumber: number;
-    season: { seasonNumber: number; series: { id: number; title: string } | null } | null;
+    season: {
+      seasonNumber: number;
+      series: { id: number; title: string } | null;
+    } | null;
   } | null;
 }
 
-function SeriesCard({ series, nextEpisode, progress }: {
+interface UserCommentsResponse {
+  comments: UserComment[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+interface UserDispute {
+  id: number;
+  title: string;
+  status: string;
+  priority: string;
+  createdAt: string;
+  updatedAt: string;
+  commentId: number | null;
+  message: string;
+  reportCount: number;
+  isPrivate: boolean;
+  commentPreview: string;
+  target: string;
+}
+
+interface UserDisputesResponse {
+  disputes: UserDispute[];
+}
+
+type VisibilityFilter = 'all' | 'public' | 'private';
+type TargetFilter = 'all' | 'series' | 'season' | 'episode';
+
+function SeriesCard({
+  series,
+  nextEpisode,
+  progress,
+}: {
   series: SeriesMini;
   nextEpisode?: { seasonNumber: number; episodeNumber: number } | null;
   progress?: { totalEpisodes: number; watchedEpisodes: number };
@@ -109,11 +164,13 @@ function SeriesCard({ series, nextEpisode, progress }: {
       <div className="profile-series-card__body">
         <span className="profile-series-card__title">{series.title}</span>
         <span className="profile-series-card__meta">
-          {series.year ?? '—'} · {series.country?.name ?? '—'}
+          {series.year ?? '-'} · {series.country?.name ?? '-'}
         </span>
         {progress && progress.totalEpisodes > 0 && (
           <Progress
-            percent={Math.round((progress.watchedEpisodes / progress.totalEpisodes) * 100)}
+            percent={Math.round(
+              (progress.watchedEpisodes / progress.totalEpisodes) * 100
+            )}
             size="small"
             showInfo={false}
             className="profile-series-card__progress"
@@ -133,88 +190,171 @@ export function ProfileClient() {
   const message = useMessage();
   const { data: session, status } = useSession();
   const { t } = useLocale();
+
   const [data, setData] = useState<ProfileData | null>(null);
-  const [comments, setComments] = useState<UserComment[]>([]);
-  const [selectedCommentIds, setSelectedCommentIds] = useState<number[]>([]);
-  const [isDeletingComments, setIsDeletingComments] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const [comments, setComments] = useState<UserComment[]>([]);
+  const [commentsTotal, setCommentsTotal] = useState(0);
+  const [commentsPage, setCommentsPage] = useState(1);
+  const [commentsPageSize, setCommentsPageSize] = useState(10);
+  const [commentsLoading, setCommentsLoading] = useState(false);
+  const [selectedCommentIds, setSelectedCommentIds] = useState<number[]>([]);
+
+  const [searchDraft, setSearchDraft] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [visibilityFilter, setVisibilityFilter] =
+    useState<VisibilityFilter>('all');
+  const [targetFilter, setTargetFilter] = useState<TargetFilter>('all');
+  const [reportedOnly, setReportedOnly] = useState(false);
+
+  const [isDeletingComments, setIsDeletingComments] = useState(false);
+  const [isUpdatingVisibility, setIsUpdatingVisibility] = useState(false);
+
+  const [editingComment, setEditingComment] = useState<UserComment | null>(null);
+  const [editingContent, setEditingContent] = useState('');
+  const [isSavingEdit, setIsSavingEdit] = useState(false);
+
+  const [disputes, setDisputes] = useState<UserDispute[]>([]);
+  const [disputesLoading, setDisputesLoading] = useState(false);
+  const [disputeTarget, setDisputeTarget] = useState<UserComment | null>(null);
+  const [disputeMessage, setDisputeMessage] = useState('');
+  const [isSubmittingDispute, setIsSubmittingDispute] = useState(false);
+
+  const formatDate = (iso: string) =>
+    new Date(iso).toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+
+  const resolveCommentTarget = useCallback(
+    (comment: UserComment) => {
+      if (comment.episode?.season?.series?.title) {
+        return `${comment.episode.season.series.title} · T${comment.episode.season.seasonNumber}E${comment.episode.episodeNumber}`;
+      }
+
+      if (comment.season?.series?.title) {
+        return `${comment.season.series.title} · T${comment.season.seasonNumber}`;
+      }
+
+      if (comment.series?.title) {
+        return comment.series.title;
+      }
+
+      return t('profile.commentsTargetUnknown');
+    },
+    [t]
+  );
+
+  const loadProfile = useCallback(async () => {
+    const response = await fetch('/api/user/profile');
+    if (!response.ok) {
+      throw new Error('No se pudo cargar el perfil');
+    }
+    const profileData = (await response.json()) as ProfileData;
+    setData(profileData);
+  }, []);
+
+  const loadComments = useCallback(async () => {
+    if (status !== 'authenticated') return;
+
+    setCommentsLoading(true);
+    try {
+      const params = new URLSearchParams();
+      params.set('page', String(commentsPage));
+      params.set('pageSize', String(commentsPageSize));
+      if (searchQuery) params.set('q', searchQuery);
+      if (visibilityFilter !== 'all') params.set('visibility', visibilityFilter);
+      if (targetFilter !== 'all') params.set('target', targetFilter);
+      if (reportedOnly) params.set('reported', 'true');
+
+      const response = await fetch(`/api/user/comments?${params.toString()}`);
+      if (!response.ok) {
+        throw new Error(t('profile.commentsLoadError'));
+      }
+
+      const result = (await response.json()) as UserCommentsResponse;
+      setComments(result.comments);
+      setCommentsTotal(result.total);
+
+      setSelectedCommentIds((prev) =>
+        prev.filter((id) => result.comments.some((comment) => comment.id === id))
+      );
+    } catch (error) {
+      message.error(
+        error instanceof Error ? error.message : t('profile.commentsLoadError')
+      );
+    } finally {
+      setCommentsLoading(false);
+    }
+  }, [
+    commentsPage,
+    commentsPageSize,
+    message,
+    reportedOnly,
+    searchQuery,
+    status,
+    t,
+    targetFilter,
+    visibilityFilter,
+  ]);
+
+  const loadDisputes = useCallback(async () => {
+    if (status !== 'authenticated') return;
+
+    setDisputesLoading(true);
+    try {
+      const response = await fetch('/api/user/comment-disputes?limit=100');
+      if (!response.ok) {
+        throw new Error(t('profile.disputesLoadError'));
+      }
+
+      const result = (await response.json()) as UserDisputesResponse;
+      setDisputes(result.disputes);
+    } catch (error) {
+      message.error(
+        error instanceof Error ? error.message : t('profile.disputesLoadError')
+      );
+    } finally {
+      setDisputesLoading(false);
+    }
+  }, [message, status, t]);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
       setLoading(false);
       return;
     }
+
     if (status !== 'authenticated') return;
 
-    Promise.all([fetch('/api/user/profile'), fetch('/api/user/comments?limit=120')])
-      .then(async ([profileRes, commentsRes]) => {
-        if (!profileRes.ok) {
-          throw new Error('No se pudo cargar el perfil');
-        }
-
-        const profileData = (await profileRes.json()) as ProfileData;
-        setData(profileData);
-
-        if (commentsRes.ok) {
-          const commentsData = (await commentsRes.json()) as { comments: UserComment[] };
-          setComments(commentsData.comments);
-        } else {
-          setComments([]);
-        }
-      })
+    Promise.all([loadProfile(), loadDisputes()])
       .catch((error) => {
         console.error(error);
         setData(null);
       })
       .finally(() => setLoading(false));
-  }, [status]);
+  }, [loadDisputes, loadProfile, status]);
 
-  const formatDate = (iso: string) =>
-    new Date(iso).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+  useEffect(() => {
+    void loadComments();
+  }, [loadComments]);
 
-  if (loading) {
-    return (
-      <AppLayout>
-        <div className="profile-loading"><Spin size="large" /></div>
-      </AppLayout>
-    );
-  }
-
-  if (!session?.user || !data) {
-    return (
-      <AppLayout>
-        <div className="profile-page">
-          <Empty description={t('profile.loginRequired')} image={Empty.PRESENTED_IMAGE_SIMPLE} />
-        </div>
-      </AppLayout>
-    );
-  }
-
-  const { user, stats } = data;
   const allCommentsSelected =
     comments.length > 0 && selectedCommentIds.length === comments.length;
 
-  const resolveCommentTarget = (comment: UserComment) => {
-    if (comment.episode?.season?.series?.title && comment.episode.season.seasonNumber) {
-      return `${comment.episode.season.series.title} · T${comment.episode.season.seasonNumber}E${comment.episode.episodeNumber}`;
-    }
-
-    if (comment.season?.series?.title) {
-      return `${comment.season.series.title} · T${comment.season.seasonNumber}`;
-    }
-
-    if (comment.series?.title) {
-      return comment.series.title;
-    }
-
-    return t('profile.commentsTargetUnknown');
-  };
+  const selectedComments = useMemo(
+    () => comments.filter((comment) => selectedCommentIds.includes(comment.id)),
+    [comments, selectedCommentIds]
+  );
 
   const toggleSelectAllComments = () => {
     if (allCommentsSelected) {
       setSelectedCommentIds([]);
       return;
     }
+
     setSelectedCommentIds(comments.map((comment) => comment.id));
   };
 
@@ -245,10 +385,9 @@ export function ProfileClient() {
       const result = (await response.json()) as { deleted: number };
       const deletedCount = Math.max(result.deleted ?? 0, 0);
 
-      setComments((prev) =>
-        prev.filter((comment) => !selectedCommentIds.includes(comment.id))
-      );
       setSelectedCommentIds([]);
+      await loadComments();
+
       setData((prev) => {
         if (!prev) return prev;
         return {
@@ -274,10 +413,134 @@ export function ProfileClient() {
     }
   };
 
-  const handleExportComments = () => {
-    if (comments.length === 0) return;
+  const handleSetSelectedVisibility = async (isPrivate: boolean) => {
+    if (selectedCommentIds.length === 0) return;
 
-    const payload = comments.map((comment) => ({
+    setIsUpdatingVisibility(true);
+    try {
+      const response = await fetch('/api/user/comments', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'setVisibility',
+          ids: selectedCommentIds,
+          isPrivate,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(t('profile.commentsVisibilityUpdateError'));
+      }
+
+      await loadComments();
+      setSelectedCommentIds([]);
+
+      message.success(
+        isPrivate
+          ? t('profile.commentsVisibilityPrivateSuccess')
+          : t('profile.commentsVisibilityPublicSuccess')
+      );
+    } catch (error) {
+      message.error(
+        error instanceof Error
+          ? error.message
+          : t('profile.commentsVisibilityUpdateError')
+      );
+    } finally {
+      setIsUpdatingVisibility(false);
+    }
+  };
+
+  const openEditModal = (comment: UserComment) => {
+    setEditingComment(comment);
+    setEditingContent(comment.content);
+  };
+
+  const closeEditModal = () => {
+    setEditingComment(null);
+    setEditingContent('');
+  };
+
+  const handleSaveCommentEdit = async () => {
+    if (!editingComment) return;
+
+    setIsSavingEdit(true);
+    try {
+      const response = await fetch('/api/user/comments', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'updateContent',
+          id: editingComment.id,
+          content: editingContent,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(t('profile.commentsEditError'));
+      }
+
+      message.success(t('profile.commentsEditSuccess'));
+      closeEditModal();
+      await loadComments();
+    } catch (error) {
+      message.error(
+        error instanceof Error ? error.message : t('profile.commentsEditError')
+      );
+    } finally {
+      setIsSavingEdit(false);
+    }
+  };
+
+  const openDisputeModal = (comment: UserComment) => {
+    setDisputeTarget(comment);
+    setDisputeMessage('');
+  };
+
+  const closeDisputeModal = () => {
+    setDisputeTarget(null);
+    setDisputeMessage('');
+  };
+
+  const handleSubmitDispute = async () => {
+    if (!disputeTarget) return;
+
+    setIsSubmittingDispute(true);
+    try {
+      const response = await fetch('/api/user/comment-disputes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          commentId: disputeTarget.id,
+          message: disputeMessage,
+        }),
+      });
+
+      if (!response.ok) {
+        const payload =
+          ((await response.json().catch(() => ({}))) as { error?: string }) ||
+          {};
+        throw new Error(payload.error || t('profile.disputeError'));
+      }
+
+      message.success(t('profile.disputeSuccess'));
+      closeDisputeModal();
+      await loadDisputes();
+    } catch (error) {
+      message.error(
+        error instanceof Error ? error.message : t('profile.disputeError')
+      );
+    } finally {
+      setIsSubmittingDispute(false);
+    }
+  };
+
+  const handleExportComments = () => {
+    const exportRows = selectedComments.length > 0 ? selectedComments : comments;
+
+    if (exportRows.length === 0) return;
+
+    const payload = exportRows.map((comment) => ({
       id: comment.id,
       content: comment.content,
       visibility: comment.isPrivate ? 'private' : 'public',
@@ -299,20 +562,44 @@ export function ProfileClient() {
     URL.revokeObjectURL(url);
   };
 
+  if (loading) {
+    return (
+      <AppLayout>
+        <div className="profile-loading">
+          <Spin size="large" />
+        </div>
+      </AppLayout>
+    );
+  }
+
+  if (!session?.user || !data) {
+    return (
+      <AppLayout>
+        <div className="profile-page">
+          <Empty
+            description={t('profile.loginRequired')}
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+          />
+        </div>
+      </AppLayout>
+    );
+  }
+
+  const { user, stats } = data;
+
   const statItems = [
-    { icon: <CheckCircleOutlined />, value: stats.watched,   label: t('profile.statWatched') },
-    { icon: <PlayCircleOutlined />, value: stats.watching,  label: t('profile.statWatching') },
+    { icon: <CheckCircleOutlined />, value: stats.watched, label: t('profile.statWatched') },
+    { icon: <PlayCircleOutlined />, value: stats.watching, label: t('profile.statWatching') },
     { icon: <CloseCircleOutlined />, value: stats.abandoned, label: t('profile.statAbandoned') },
-    { icon: <ReloadOutlined />,      value: stats.toRewatch, label: t('profile.statToRewatch') },
-    { icon: <HeartOutlined />,       value: stats.favorites, label: t('profile.statFavorites') },
-    { icon: <StarOutlined />,        value: stats.ratings,   label: t('profile.statRatings') },
-    { icon: <MessageOutlined />,     value: stats.comments,  label: t('profile.statComments') },
+    { icon: <ReloadOutlined />, value: stats.toRewatch, label: t('profile.statToRewatch') },
+    { icon: <HeartOutlined />, value: stats.favorites, label: t('profile.statFavorites') },
+    { icon: <StarOutlined />, value: stats.ratings, label: t('profile.statRatings') },
+    { icon: <MessageOutlined />, value: stats.comments, label: t('profile.statComments') },
   ];
 
   return (
     <AppLayout>
       <div className="profile-page">
-        {/* Header */}
         <div className="profile-header">
           <Avatar
             src={user.image}
@@ -332,18 +619,16 @@ export function ProfileClient() {
           </div>
         </div>
 
-        {/* Stats */}
         <div className="profile-stats">
-          {statItems.map((s, i) => (
-            <div key={i} className="profile-stat">
-              <div className="profile-stat__icon">{s.icon}</div>
-              <div className="profile-stat__value">{s.value}</div>
-              <div className="profile-stat__label">{s.label}</div>
+          {statItems.map((stat, index) => (
+            <div key={index} className="profile-stat">
+              <div className="profile-stat__icon">{stat.icon}</div>
+              <div className="profile-stat__value">{stat.value}</div>
+              <div className="profile-stat__label">{stat.label}</div>
             </div>
           ))}
         </div>
 
-        {/* Currently Watching */}
         {data.currentlyWatching.length > 0 && (
           <section className="profile-section">
             <div className="profile-section__header">
@@ -365,7 +650,6 @@ export function ProfileClient() {
           </section>
         )}
 
-        {/* Recently Completed */}
         {data.recentlyCompleted.length > 0 && (
           <section className="profile-section">
             <div className="profile-section__header">
@@ -374,15 +658,12 @@ export function ProfileClient() {
             </div>
             <div className="profile-series-grid">
               {data.recentlyCompleted.map((item) =>
-                item.series ? (
-                  <SeriesCard key={item.seriesId} series={item.series} />
-                ) : null
+                item.series ? <SeriesCard key={item.seriesId} series={item.series} /> : null
               )}
             </div>
           </section>
         )}
 
-        {/* Favorites */}
         {data.favorites.length > 0 && (
           <section className="profile-section">
             <div className="profile-section__header">
@@ -391,9 +672,7 @@ export function ProfileClient() {
             </div>
             <div className="profile-series-grid">
               {data.favorites.map((item) =>
-                item.series ? (
-                  <SeriesCard key={item.seriesId} series={item.series} />
-                ) : null
+                item.series ? <SeriesCard key={item.seriesId} series={item.series} /> : null
               )}
             </div>
           </section>
@@ -405,15 +684,64 @@ export function ProfileClient() {
             {t('profile.sectionMyComments')}
           </div>
 
-          <div className="profile-comments__toolbar">
-            <button
-              type="button"
-              className="profile-comments__toolbar-btn"
-              onClick={toggleSelectAllComments}
-              disabled={comments.length === 0}
+          <div className="profile-comments__filters">
+            <Input.Search
+              value={searchDraft}
+              onChange={(event) => setSearchDraft(event.target.value)}
+              onSearch={() => {
+                setCommentsPage(1);
+                setSearchQuery(searchDraft.trim());
+              }}
+              placeholder={t('profile.commentsSearchPlaceholder')}
+              allowClear
+              className="profile-comments__search"
+            />
+
+            <Select
+              value={visibilityFilter}
+              onChange={(value: VisibilityFilter) => {
+                setCommentsPage(1);
+                setVisibilityFilter(value);
+              }}
+              className="profile-comments__select"
+              options={[
+                { value: 'all', label: t('profile.commentsFilterAll') },
+                { value: 'public', label: t('profile.commentsFilterPublic') },
+                { value: 'private', label: t('profile.commentsFilterPrivate') },
+              ]}
+            />
+
+            <Select
+              value={targetFilter}
+              onChange={(value: TargetFilter) => {
+                setCommentsPage(1);
+                setTargetFilter(value);
+              }}
+              className="profile-comments__select"
+              options={[
+                { value: 'all', label: t('profile.commentsFilterTargetAll') },
+                { value: 'series', label: t('profile.commentsTargetSeries') },
+                { value: 'season', label: t('profile.commentsTargetSeason') },
+                { value: 'episode', label: t('profile.commentsTargetEpisode') },
+              ]}
+            />
+
+            <Button
+              type={reportedOnly ? 'primary' : 'default'}
+              icon={<ExclamationCircleOutlined />}
+              onClick={() => {
+                setCommentsPage(1);
+                setReportedOnly((prev) => !prev);
+              }}
             >
+              {t('profile.commentsFilterReported')}
+            </Button>
+          </div>
+
+          <div className="profile-comments__toolbar">
+            <Button onClick={toggleSelectAllComments} disabled={comments.length === 0}>
               {t('profile.commentsSelectAll')}
-            </button>
+            </Button>
 
             <span className="profile-comments__selected-count">
               {interpolateMessage(t('profile.commentsSelectedCount'), {
@@ -421,67 +749,224 @@ export function ProfileClient() {
               })}
             </span>
 
-            <button
-              type="button"
-              className="profile-comments__toolbar-btn"
+            <Button
+              icon={<UnlockOutlined />}
+              onClick={() => {
+                void handleSetSelectedVisibility(false);
+              }}
+              disabled={selectedCommentIds.length === 0 || isUpdatingVisibility}
+            >
+              {t('profile.commentsSetPublic')}
+            </Button>
+
+            <Button
+              icon={<LockOutlined />}
+              onClick={() => {
+                void handleSetSelectedVisibility(true);
+              }}
+              disabled={selectedCommentIds.length === 0 || isUpdatingVisibility}
+            >
+              {t('profile.commentsSetPrivate')}
+            </Button>
+
+            <Button
+              icon={<DownloadOutlined />}
               onClick={handleExportComments}
               disabled={comments.length === 0}
             >
-              <DownloadOutlined /> {t('profile.commentsExport')}
-            </button>
+              {t('profile.commentsExport')}
+            </Button>
 
-            <button
-              type="button"
-              className="profile-comments__toolbar-btn profile-comments__toolbar-btn--danger"
-              onClick={handleDeleteSelectedComments}
+            <Button
+              danger
+              icon={<DeleteOutlined />}
+              onClick={() => {
+                void handleDeleteSelectedComments();
+              }}
               disabled={selectedCommentIds.length === 0 || isDeletingComments}
             >
-              <DeleteOutlined /> {t('profile.commentsDeleteSelected')}
-            </button>
+              {t('profile.commentsDeleteSelected')}
+            </Button>
           </div>
 
-          {comments.length === 0 ? (
+          {commentsLoading ? (
+            <div className="profile-comments__loading">
+              <Spin />
+            </div>
+          ) : comments.length === 0 ? (
             <div className="profile-comments__empty">
-              <Empty description={t('profile.commentsEmpty')} image={Empty.PRESENTED_IMAGE_SIMPLE} />
+              <Empty
+                description={t('profile.commentsEmpty')}
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+              />
             </div>
           ) : (
-            <div className="profile-comments__list">
-              {comments.map((comment) => {
-                const isSelected = selectedCommentIds.includes(comment.id);
-                return (
-                  <div key={comment.id} className="profile-comment-item">
-                    <label className="profile-comment-item__header">
-                      <input
-                        type="checkbox"
-                        checked={isSelected}
-                        onChange={(event) =>
-                          toggleCommentSelection(comment.id, event.target.checked)
-                        }
-                      />
-                      <span className="profile-comment-item__date">
-                        {formatDate(comment.createdAt)}
-                      </span>
-                    </label>
+            <>
+              <div className="profile-comments__list">
+                {comments.map((comment) => {
+                  const isSelected = selectedCommentIds.includes(comment.id);
+                  return (
+                    <div key={comment.id} className="profile-comment-item">
+                      <label className="profile-comment-item__header">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={(event) =>
+                            toggleCommentSelection(comment.id, event.target.checked)
+                          }
+                        />
+                        <span className="profile-comment-item__date">
+                          {formatDate(comment.createdAt)}
+                        </span>
+                      </label>
 
-                    <p className="profile-comment-item__content">{comment.content}</p>
+                      <p className="profile-comment-item__content">{comment.content}</p>
 
-                    <div className="profile-comment-item__meta">
-                      <Tag color={comment.isPrivate ? 'default' : 'geekblue'}>
-                        {comment.isPrivate
-                          ? t('profile.commentsPrivate')
-                          : t('profile.commentsPublic')}
-                      </Tag>
-                      <span className="profile-comment-item__target">
-                        {resolveCommentTarget(comment)}
-                      </span>
+                      <div className="profile-comment-item__meta">
+                        <Tag color={comment.isPrivate ? 'default' : 'geekblue'}>
+                          {comment.isPrivate
+                            ? t('profile.commentsPrivate')
+                            : t('profile.commentsPublic')}
+                        </Tag>
+
+                        <span className="profile-comment-item__target">
+                          {resolveCommentTarget(comment)}
+                        </span>
+
+                        {comment.reportCount > 0 && (
+                          <Tag color="warning">
+                            {interpolateMessage(t('profile.commentsReportCount'), {
+                              n: String(comment.reportCount),
+                            })}
+                          </Tag>
+                        )}
+                      </div>
+
+                      <div className="profile-comment-item__actions">
+                        <Button
+                          size="small"
+                          icon={<EditOutlined />}
+                          onClick={() => openEditModal(comment)}
+                        >
+                          {t('profile.commentsEdit')}
+                        </Button>
+
+                        <Button
+                          size="small"
+                          icon={<ExclamationCircleOutlined />}
+                          disabled={comment.reportCount <= 0}
+                          onClick={() => openDisputeModal(comment)}
+                        >
+                          {t('profile.commentsOpenDispute')}
+                        </Button>
+                      </div>
                     </div>
+                  );
+                })}
+              </div>
+
+              <div className="profile-comments__pagination-wrap">
+                <Pagination
+                  current={commentsPage}
+                  pageSize={commentsPageSize}
+                  total={commentsTotal}
+                  showSizeChanger
+                  pageSizeOptions={['10', '20', '50']}
+                  onChange={(page, pageSize) => {
+                    setCommentsPage(page);
+                    setCommentsPageSize(pageSize);
+                  }}
+                />
+              </div>
+            </>
+          )}
+        </section>
+
+        <section className="profile-section">
+          <div className="profile-section__header">
+            <ExclamationCircleOutlined className="profile-section__header-icon" />
+            {t('profile.sectionDisputes')}
+          </div>
+
+          {disputesLoading ? (
+            <div className="profile-comments__loading">
+              <Spin />
+            </div>
+          ) : disputes.length === 0 ? (
+            <div className="profile-comments__empty">
+              <Empty
+                description={t('profile.disputesEmpty')}
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+              />
+            </div>
+          ) : (
+            <div className="profile-disputes__list">
+              {disputes.map((dispute) => (
+                <div key={dispute.id} className="profile-dispute-item">
+                  <div className="profile-dispute-item__header">
+                    <span className="profile-dispute-item__title">{dispute.title}</span>
+                    <Tag>{dispute.status}</Tag>
                   </div>
-                );
-              })}
+                  <div className="profile-dispute-item__meta">
+                    <span>
+                      {interpolateMessage(t('profile.disputeForComment'), {
+                        n: String(dispute.commentId ?? 0),
+                      })}
+                    </span>
+                    <span>{formatDate(dispute.createdAt)}</span>
+                    <span>{dispute.target}</span>
+                  </div>
+                  {dispute.message && (
+                    <p className="profile-dispute-item__message">{dispute.message}</p>
+                  )}
+                </div>
+              ))}
             </div>
           )}
         </section>
       </div>
+
+      <Modal
+        open={editingComment !== null}
+        title={t('profile.commentsEditTitle')}
+        okText={t('profile.commentsEditSave')}
+        cancelText={t('profile.commentsEditCancel')}
+        onCancel={closeEditModal}
+        onOk={() => {
+          void handleSaveCommentEdit();
+        }}
+        okButtonProps={{ loading: isSavingEdit }}
+      >
+        <Input.TextArea
+          rows={5}
+          maxLength={2000}
+          showCount
+          value={editingContent}
+          onChange={(event) => setEditingContent(event.target.value)}
+          placeholder={t('profile.commentsEditPlaceholder')}
+        />
+      </Modal>
+
+      <Modal
+        open={disputeTarget !== null}
+        title={t('profile.disputeOpenTitle')}
+        okText={t('profile.disputeSubmit')}
+        cancelText={t('profile.disputeCancel')}
+        onCancel={closeDisputeModal}
+        onOk={() => {
+          void handleSubmitDispute();
+        }}
+        okButtonProps={{ loading: isSubmittingDispute }}
+      >
+        <Input.TextArea
+          rows={5}
+          maxLength={2000}
+          showCount
+          value={disputeMessage}
+          onChange={(event) => setDisputeMessage(event.target.value)}
+          placeholder={t('profile.disputePlaceholder')}
+        />
+      </Modal>
     </AppLayout>
   );
 }
