@@ -143,7 +143,11 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
       />
       <div className="series-detail-page">
         <SeriesHeader
-          series={serie}
+          series={{
+            ...serie,
+            directors: serie.directors,
+            actors: serie.actors,
+          }}
           actionsSlot={
             <>
               <ViewStatusToggle
@@ -156,12 +160,6 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
                 text={serie.synopsis ?? undefined}
                 path={`/series/${serie.id}`}
               />
-              {serie.overallRating && (
-                <div className="series-actions-rating">
-                  <span>Rating</span>
-                  <strong>{serie.overallRating}/10</strong>
-                </div>
-              )}
             </>
           }
         />

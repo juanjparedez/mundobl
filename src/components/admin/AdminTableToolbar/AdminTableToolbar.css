@@ -5,7 +5,7 @@
   align-items: center;
   margin-bottom: var(--spacing-md);
   padding: var(--spacing-sm);
-  border-radius: 12px;
+  border-radius: var(--border-radius-base);
   border: 1px solid var(--border-color-secondary);
   background: color-mix(in srgb, var(--bg-elevated) 92%, var(--primary-color) 8%);
 }
