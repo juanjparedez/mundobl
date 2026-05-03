@@ -79,6 +79,8 @@
   border-radius: var(--border-radius-base);
   padding: var(--spacing-md);
   animation: tab-fade-in 0.24s ease;
+  content-visibility: auto;
+  contain-intrinsic-size: 560px;
 }
 
 .series-detail-section__header {

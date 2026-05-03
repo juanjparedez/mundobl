@@ -1,6 +1,12 @@
 'use client';
 
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import {
+  useState,
+  useMemo,
+  useEffect,
+  useCallback,
+  useDeferredValue,
+} from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Row,
@@ -144,11 +150,20 @@ export function CatalogoClient({
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    fetch('/api/favorites')
+    if (!userRole) {
+      setFavoriteIds(new Set());
+      return;
+    }
+
+    const controller = new AbortController();
+
+    fetch('/api/favorites', { signal: controller.signal })
       .then((res) => (res.ok ? res.json() : []))
       .then((ids: number[]) => setFavoriteIds(new Set(ids.map(String))))
       .catch(() => {});
-  }, []);
+
+    return () => controller.abort();
+  }, [userRole]);
 
   const isFavorite = useCallback(
     (serieId: string) => favoriteIds.has(serieId),
@@ -160,6 +175,7 @@ export function CatalogoClient({
   const initialYear = searchParams.get('year');
   const initialYearNum = initialYear ? parseInt(initialYear, 10) : undefined;
   const [searchTerm, setSearchTerm] = useState('');
+  const deferredSearchTerm = useDeferredValue(searchTerm);
   const [selectedCountry, setSelectedCountry] = useState<string | undefined>(
     searchParams.get('country') ?? undefined
   );
@@ -277,8 +293,8 @@ export function CatalogoClient({
   const filteredSeries = useMemo(() => {
     let filtered = [...series];
 
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
+    if (deferredSearchTerm) {
+      const term = deferredSearchTerm.toLowerCase();
       filtered = filtered.filter(
         (s) =>
           s.titulo.toLowerCase().includes(term) ||
@@ -393,7 +409,7 @@ export function CatalogoClient({
     return filtered;
   }, [
     series,
-    searchTerm,
+    deferredSearchTerm,
     selectedCountry,
     selectedType,
     selectedFormat,
