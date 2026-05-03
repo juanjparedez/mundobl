@@ -337,6 +337,18 @@ type TranslationShape = {
   offline: {
     message: string;
   };
+  cmdk: {
+    placeholder: string;
+    hintMinChars: string;
+    empty: string;
+    groupSeries: string;
+    groupActors: string;
+    groupDirectors: string;
+    groupTags: string;
+    navigate: string;
+    select: string;
+    close: string;
+  };
   bottomNav: {
     mainNavigation: string;
     catalog: string;
@@ -1626,6 +1638,18 @@ const es: TranslationShape = {
   },
   offline: {
     message: 'Estás sin conexión. Algunas funciones pueden no funcionar.',
+  },
+  cmdk: {
+    placeholder: 'Buscar series, actores, directores, tags...',
+    hintMinChars: 'Escribí al menos 2 caracteres para buscar.',
+    empty: 'Sin resultados.',
+    groupSeries: 'Series',
+    groupActors: 'Actores',
+    groupDirectors: 'Directores',
+    groupTags: 'Tags',
+    navigate: 'Navegar',
+    select: 'Seleccionar',
+    close: 'Cerrar',
   },
   bottomNav: {
     mainNavigation: 'Navegacion principal',
@@ -2942,6 +2966,18 @@ const en: TranslationShape = {
   },
   offline: {
     message: "You're offline. Some features may not work.",
+  },
+  cmdk: {
+    placeholder: 'Search series, actors, directors, tags...',
+    hintMinChars: 'Type at least 2 characters to search.',
+    empty: 'No results.',
+    groupSeries: 'Series',
+    groupActors: 'Actors',
+    groupDirectors: 'Directors',
+    groupTags: 'Tags',
+    navigate: 'Navigate',
+    select: 'Select',
+    close: 'Close',
   },
   bottomNav: {
     mainNavigation: 'Main navigation',
