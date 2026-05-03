@@ -33,7 +33,7 @@ interface RawAvgRatingRow {
 interface RawTopRatedRow {
   series_id: number;
   title: string;
-  rating: number;
+  avg_score: number;
   image_url: string | null;
 }
 
@@ -107,8 +107,11 @@ export async function GET(request: NextRequest) {
       // Total favorites
       prisma.userFavorite.count({ where: { userId } }),
 
-      // Total ratings given
-      prisma.userRating.count({ where: { userId } }),
+      // Total distinct series rated by user
+      prisma.userRating.groupBy({
+        by: ['seriesId'],
+        where: { userId },
+      }).then((rows) => rows.length),
 
       // Total comments
       prisma.comment.count({ where: { userId } }),
@@ -267,20 +270,21 @@ export async function GET(request: NextRequest) {
         LIMIT 10
       `,
 
-      // Average rating given by user
+      // Average rating given by user (across all scores)
       prisma.$queryRaw<RawAvgRatingRow[]>`
-        SELECT AVG(rating)::text as avg_rating
+        SELECT AVG(score)::text as avg_rating
         FROM "UserRating"
         WHERE "userId" = ${userId}
       `,
 
-      // Top-rated series (highest rating given by user)
+      // Top-rated series (average score across categories given by user)
       prisma.$queryRaw<RawTopRatedRow[]>`
-        SELECT s.id as series_id, s.title, ur.rating, s."imageUrl" as image_url
+        SELECT s.id as series_id, s.title, AVG(ur.score) as avg_score, s."imageUrl" as image_url
         FROM "UserRating" ur
         JOIN "Series" s ON s.id = ur."seriesId"
         WHERE ur."userId" = ${userId}
-        ORDER BY ur.rating DESC, s.title ASC
+        GROUP BY s.id, s.title, s."imageUrl"
+        ORDER BY avg_score DESC, s.title ASC
         LIMIT 5
       `,
 
@@ -430,7 +434,7 @@ export async function GET(request: NextRequest) {
         topRatedSeries: topRatedSeriesRaw.map((r) => ({
           seriesId: r.series_id,
           title: r.title,
-          rating: r.rating,
+          rating: Math.round(Number(r.avg_score) * 10) / 10,
           imageUrl: r.image_url,
         })),
         byType: byTypeRaw.map((r) => ({
