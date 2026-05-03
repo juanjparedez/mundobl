@@ -68,6 +68,15 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
     [items, platformFilter, categoryFilter, channelFilter]
   );
 
+  const hasActiveFilters = Boolean(
+    platformFilter || categoryFilter || channelFilter
+  );
+  const clearFilters = () => {
+    setPlatformFilter(null);
+    setCategoryFilter(null);
+    setChannelFilter(null);
+  };
+
   if (items.length === 0) {
     return (
       <AppLayout>
@@ -134,7 +143,13 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
         </div>
 
         {filtered.length === 0 ? (
-          <Empty description={t('contenidoPage.emptyFiltered')} />
+          <Empty description={t('contenidoPage.emptyFiltered')}>
+            {hasActiveFilters && (
+              <Button type="primary" onClick={clearFilters}>
+                {t('catalogo.clearAllFilters')}
+              </Button>
+            )}
+          </Empty>
         ) : (
           <Row gutter={[16, 16]}>
             {filtered.map((item) => (
