@@ -68,6 +68,15 @@ export async function GET(request: NextRequest) {
               },
             },
           },
+          reports: {
+            orderBy: { createdAt: 'desc' },
+            select: {
+              id: true,
+              reason: true,
+              createdAt: true,
+              user: { select: { id: true, name: true, email: true } },
+            },
+          },
         },
       }),
       prisma.comment.count({ where }),
