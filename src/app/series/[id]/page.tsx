@@ -20,6 +20,7 @@ import {
 } from '@/types/content';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { ShareButton } from '@/components/common/ShareButton/ShareButton';
+import { WhereToWatch } from '@/components/common/WhereToWatch/WhereToWatch';
 import type { TVSeries } from 'schema-dts';
 import { FloatButton } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
@@ -174,6 +175,10 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
             </>
           }
         />
+
+        {serie.watchLinks && serie.watchLinks.length > 0 && (
+          <WhereToWatch links={serie.watchLinks} variant="hero" />
+        )}
 
         <SeriesDetailClient
           seriesId={serie.id}
