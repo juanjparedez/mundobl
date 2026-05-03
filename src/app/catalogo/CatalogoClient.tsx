@@ -47,6 +47,7 @@ import { interpolateMessage } from '@/lib/i18n-format';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { WelcomeBanner } from '@/components/common/WelcomeBanner/WelcomeBanner';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { withViewTransition } from '@/lib/view-transitions';
 
 const { Option } = Select;
 
@@ -632,13 +633,13 @@ export function CatalogoClient({
 
   const handleCardClick = (id: string) => {
     rememberScroll();
-    router.push(`/series/${id}`);
+    withViewTransition(() => router.push(`/series/${id}`));
   };
 
   const handleQuickView = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     rememberScroll();
-    router.push(`/series/${id}`);
+    withViewTransition(() => router.push(`/series/${id}`));
   };
 
   const toggleUniverse = (universoId: number, e: React.MouseEvent) => {
