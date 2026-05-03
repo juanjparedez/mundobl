@@ -68,6 +68,8 @@ export function ViewStatusToggle({
     totalEpisodes > 0 ? Math.round((watchedEpisodes / totalEpisodes) * 100) : 0;
 
   const handleStatusChange = async (newStatus: WatchStatusValue) => {
+    const previous = status;
+    setStatus(newStatus);
     setIsUpdating(true);
     try {
       const response = await fetch(`/api/series/${seriesId}/view-status`, {
@@ -78,13 +80,13 @@ export function ViewStatusToggle({
 
       if (!response.ok) throw new Error('Error al actualizar');
 
-      setStatus(newStatus);
       message.success(
         interpolateMessage(t('viewStatus.statusMessage'), {
           label: watchStatusLabels[newStatus] ?? newStatus,
         })
       );
     } catch (error) {
+      setStatus(previous);
       message.error(t('viewStatus.errorUpdate'));
       console.error(error);
     } finally {
