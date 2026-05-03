@@ -263,7 +263,7 @@ export function ComentariosClient() {
               <Button
                 size="small"
                 icon={<ExportOutlined />}
-                href={`/catalogo/${seriesId}`}
+                href={`/series/${seriesId}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
