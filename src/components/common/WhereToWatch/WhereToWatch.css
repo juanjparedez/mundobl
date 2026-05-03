@@ -1,0 +1,92 @@
+.where-to-watch {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius);
+}
+
+.where-to-watch--inline {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.where-to-watch__title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.where-to-watch__title-icon {
+  color: var(--primary-color);
+}
+
+.where-to-watch__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.where-to-watch__item {
+  margin: 0;
+}
+
+.where-to-watch__link {
+  --platform-color: var(--primary-color);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--platform-color) 60%, transparent);
+  background: color-mix(in srgb, var(--platform-color) 12%, transparent);
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+}
+
+.where-to-watch__link:hover {
+  transform: translateY(-1px);
+  background: color-mix(in srgb, var(--platform-color) 22%, transparent);
+  border-color: var(--platform-color);
+}
+
+.where-to-watch__link:focus-visible {
+  outline: 2px solid var(--platform-color);
+  outline-offset: 2px;
+}
+
+.where-to-watch__link--unofficial {
+  border-style: dashed;
+  opacity: 0.85;
+}
+
+.where-to-watch__platform {
+  white-space: nowrap;
+}
+
+.where-to-watch__chevron {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-left: 2px;
+}
+
+.where-to-watch__tag {
+  margin: 0 0 0 4px;
+  font-size: 10px;
+  line-height: 1.4;
+}

@@ -80,6 +80,7 @@ interface SerieData {
   actors?: string[];
   productionCompany?: string | null;
   originalLanguage?: string | null;
+  platforms?: string[];
 }
 
 interface UniverseGroup {
@@ -201,6 +202,9 @@ export function CatalogoClient({
   const [selectedActor, setSelectedActor] = useState<string | undefined>(
     searchParams.get('actor') ?? undefined
   );
+  const [selectedPlatform, setSelectedPlatform] = useState<string | undefined>(
+    searchParams.get('platform') ?? undefined
+  );
   const [selectedViewed, setSelectedViewed] = useState<string | undefined>();
   const [selectedFavorite, setSelectedFavorite] = useState<
     string | undefined
@@ -238,6 +242,12 @@ export function CatalogoClient({
       new Set(series.map((s) => s.pais).filter(Boolean))
     );
     return uniqueCountries.sort();
+  }, [series]);
+
+  const availablePlatforms = useMemo(() => {
+    const platforms = new Set<string>();
+    series.forEach((s) => s.platforms?.forEach((p) => platforms.add(p)));
+    return Array.from(platforms).sort();
   }, [series]);
 
   const availableTags = useMemo(() => {
@@ -281,6 +291,7 @@ export function CatalogoClient({
     selectedProductionCompany ||
     selectedDirector ||
     selectedActor ||
+    selectedPlatform ||
     selectedViewed ||
     selectedFavorite ||
     selectedTags.length > 0 ||
@@ -352,6 +363,12 @@ export function CatalogoClient({
       );
     }
 
+    if (selectedPlatform) {
+      filtered = filtered.filter((s) =>
+        s.platforms?.includes(selectedPlatform)
+      );
+    }
+
     if (selectedViewed === 'watched') {
       filtered = filtered.filter((s) => s.visto === true);
     } else if (selectedViewed === 'unwatched') {
@@ -419,6 +436,7 @@ export function CatalogoClient({
     selectedProductionCompany,
     selectedDirector,
     selectedActor,
+    selectedPlatform,
     selectedViewed,
     selectedFavorite,
     favoriteIds,
@@ -498,6 +516,7 @@ export function CatalogoClient({
     setSelectedProductionCompany(undefined);
     setSelectedDirector(undefined);
     setSelectedActor(undefined);
+    setSelectedPlatform(undefined);
     setSelectedViewed(undefined);
     setSelectedFavorite(undefined);
     setSelectedTags([]);
@@ -1096,6 +1115,24 @@ export function CatalogoClient({
           <Option value="favorites">{t('catalogo.favoritesOnly')}</Option>
         </Select>
       </Col>
+
+      {availablePlatforms.length > 0 && (
+        <Col xs={12} sm={6} md={4} lg={3}>
+          <Select
+            size="small"
+            placeholder={t('contenidoPage.filterPlatform')}
+            style={{ width: '100%' }}
+            value={selectedPlatform}
+            onChange={(value) => {
+              setSelectedPlatform(value);
+              handleFilterChange();
+            }}
+            allowClear
+            showSearch
+            options={availablePlatforms.map((p) => ({ value: p, label: p }))}
+          />
+        </Col>
+      )}
 
       <Col xs={24} sm={12} md={8} lg={6}>
         <Select
