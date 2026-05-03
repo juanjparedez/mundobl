@@ -75,6 +75,13 @@ export default async function CatalogoPage() {
     }
   });
 
+  const platformsBySerie = new Map<number, string[]>();
+  filterIndex.platforms.forEach((p) => {
+    const arr = platformsBySerie.get(p.seriesId) ?? [];
+    if (!arr.includes(p.platform)) arr.push(p.platform);
+    platformsBySerie.set(p.seriesId, arr);
+  });
+
   // Transformar datos para las tarjetas
   const seriesData = seriesDB.map((serie) => {
     const episodiosTotales = serie.seasons.reduce(
@@ -111,6 +118,7 @@ export default async function CatalogoPage() {
       actors: actorsBySerie.get(serie.id) ?? [],
       productionCompany: productionCompanyBySerie.get(serie.id) ?? null,
       originalLanguage: languageBySerie.get(serie.id) ?? null,
+      platforms: platformsBySerie.get(serie.id) ?? [],
     };
   });
 

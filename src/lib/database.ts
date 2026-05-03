@@ -73,7 +73,7 @@ export async function getAllSeries() {
  * sirve para deep-links del detalle sin inflar getAllSeries.
  */
 export async function getCatalogFilterIndex() {
-  const [genres, directors, actors, productionCompanies, languages] =
+  const [genres, directors, actors, productionCompanies, languages, platforms] =
     await Promise.all([
       prisma.seriesGenre.findMany({
         select: { seriesId: true, genre: { select: { name: true } } },
@@ -98,6 +98,9 @@ export async function getCatalogFilterIndex() {
           originalLanguage: { select: { name: true } },
         },
       }),
+      prisma.watchLink.findMany({
+        select: { seriesId: true, platform: true },
+      }),
     ]);
 
   return {
@@ -106,6 +109,7 @@ export async function getCatalogFilterIndex() {
     actors,
     productionCompanies,
     languages,
+    platforms,
   };
 }
 
