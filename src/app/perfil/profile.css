@@ -402,6 +402,100 @@
   min-width: 140px;
 }
 
+/* ==========================================
+   Widget grid
+   ========================================== */
+.profile-widget-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--spacing-md);
+  align-items: start;
+}
+
+/* KPI inside a widget (hours, streak, avg rating) */
+.profile-widget-kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profile-widget-kpi__value {
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.profile-widget-kpi__sub {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+}
+
+/* Empty state inside widgets */
+.profile-widget-empty {
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  padding: var(--spacing-xs) 0;
+  display: block;
+}
+
+/* Heatmap (84 cells = 12 weeks) */
+.profile-heatmap {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 3px;
+  margin-top: var(--spacing-sm);
+}
+
+.profile-heatmap__cell {
+  aspect-ratio: 1;
+  border-radius: 2px;
+  background: var(--bg-spotlight);
+  cursor: default;
+  transition: background 0.15s;
+}
+
+.profile-heatmap__cell--active {
+  background: var(--primary-color);
+  opacity: 0.85;
+}
+
+/* Top rated series list */
+.profile-top-rated-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.profile-top-rated-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  text-decoration: none;
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  padding: 4px 0;
+  border-radius: 4px;
+  transition: color 0.15s;
+}
+
+.profile-top-rated-item:hover {
+  color: var(--primary-color);
+}
+
+.profile-top-rated-item__stars {
+  color: #faad14;
+  letter-spacing: 1px;
+  flex-shrink: 0;
+  font-size: 13px;
+}
+
+.profile-top-rated-item__title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .profile-rich-stat-card {
   background: var(--bg-container);
   border-radius: var(--border-radius-base);
@@ -608,6 +702,10 @@
     grid-column: span 2;
   }
 
+  .profile-widget-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .profile-series-grid {
     grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
   }
@@ -638,5 +736,9 @@
 @media (max-width: 480px) {
   .profile-stats {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  .profile-widget-grid {
+    grid-template-columns: 1fr;
   }
 }
