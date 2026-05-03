@@ -152,7 +152,7 @@ export function CurrentlyWatchingDashboard() {
 
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: '48px' }}>
+      <div className="watching-dashboard__loading">
         <Spin size="large" />
       </div>
     );
@@ -249,12 +249,12 @@ export function CurrentlyWatchingDashboard() {
                       size="small"
                       status={progress === 100 ? 'success' : 'active'}
                       format={() => `${watchedEpisodes}/${totalEpisodes}`}
-                      style={{ marginTop: '12px' }}
+                      className="watching-card__progress"
                     />
 
                     {nextEp && (
                       <div className="watching-card__next">
-                        <PlayCircleOutlined style={{ marginRight: '8px' }} />
+                        <PlayCircleOutlined className="watching-card__icon" />
                         <span>
                           {t('watchingDashboard.nextLabel')}: T{nextEp.seasonNumber}E
                           {nextEp.episodeNumber}
@@ -264,14 +264,14 @@ export function CurrentlyWatchingDashboard() {
                     )}
 
                     <div className="watching-card__last-watched">
-                      <ClockCircleOutlined style={{ marginRight: '8px' }} />
+                      <ClockCircleOutlined className="watching-card__icon" />
                       <span>{formatLastWatched(item.lastWatchedAt)}</span>
                     </div>
 
                     <div className="watching-card__actions">
                       <Link
                         href={`/series/${item.series.id}`}
-                        style={{ flex: 1 }}
+                        className="watching-card__action-link"
                       >
                         <Button type="primary" block>
                           {progress === 100

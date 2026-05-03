@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { CurrentlyWatchingDashboard } from '@/components/watching/CurrentlyWatchingDashboard';
+import './watching.css';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,16 +14,8 @@ export const metadata: Metadata = {
 export default function WatchingPage() {
   return (
     <AppLayout>
-      <div style={{ padding: '24px' }}>
-        <h1
-          style={{
-            fontSize: '24px',
-            marginBottom: '24px',
-            color: 'var(--text-primary)',
-          }}
-        >
-          📺 Viendo Ahora
-        </h1>
+      <div className="watching-page">
+        <h1 className="watching-page__title">📺 Viendo Ahora</h1>
         <CurrentlyWatchingDashboard />
       </div>
     </AppLayout>

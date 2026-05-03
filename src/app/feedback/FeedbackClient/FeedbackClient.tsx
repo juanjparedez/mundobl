@@ -545,6 +545,7 @@ export function FeedbackClient() {
             <div className="feedback-pending-images">
               {pendingImages.map((img, index) => (
                 <div key={index} className="feedback-pending-image">
+                  {/* blob: URLs (URL.createObjectURL) no son soportadas por next/image */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={img.preview} alt={`Preview ${index + 1}`} />
                   <Button

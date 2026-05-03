@@ -194,6 +194,3 @@ export function buildTheme(mode: 'light' | 'dark', accent: AccentColors): ThemeC
   };
 }
 
-// ─── Legacy named exports (kept for any direct import) ───────────────────────
-export const lightTheme = buildTheme('light', ACCENT_PRESETS.mauve.light);
-export const darkTheme  = buildTheme('dark',  ACCENT_PRESETS.mauve.dark);

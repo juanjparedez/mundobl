@@ -2,6 +2,11 @@
   width: 100%;
 }
 
+.watching-dashboard__loading {
+  text-align: center;
+  padding: 48px;
+}
+
 .watching-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -87,6 +92,19 @@
   padding: var(--spacing-xs);
   background: var(--bg-spotlight);
   border-radius: var(--border-radius-sm);
+}
+
+.watching-card__icon {
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.watching-card__progress {
+  margin-top: 12px;
+}
+
+.watching-card__action-link {
+  flex: 1;
 }
 
 .watching-card__last-watched {

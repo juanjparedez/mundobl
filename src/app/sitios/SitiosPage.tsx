@@ -8,6 +8,7 @@ import {
   AppstoreOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons';
+import Image from 'next/image';
 import {
   CATEGORY_COLORS,
   CATEGORY_LABELS,
@@ -107,10 +108,11 @@ export function SitiosPage({ sites }: SitiosPageProps) {
         >
           {site.imageUrl && (
             <div className="sitios-card__logo">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={site.imageUrl}
                 alt={`Logo de ${site.name}`}
+                width={120}
+                height={48}
                 className="sitios-card__logo-img"
               />
             </div>
