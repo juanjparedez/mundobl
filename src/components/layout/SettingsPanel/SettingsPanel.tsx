@@ -58,6 +58,10 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
   const [pushPermission, setPushPermission] =
     useState<PushPermission>('default');
   const [pushEnabled, setPushEnabled] = useState(false);
+  const [defaultCommentPrivate, setDefaultCommentPrivate] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.localStorage.getItem('comment-default-private') === 'true';
+  });
 
   useEffect(() => {
     if (!open) return;
@@ -329,6 +333,36 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
             }
             onChange={handleTogglePush}
             aria-label={t('settings.pushLabel')}
+          />
+        </div>
+      </section>
+
+      {/* Preferencias ──────────────────────────────── */}
+      <section className="settings-panel__section">
+        <h3 className="settings-panel__section-title">
+          {t('settings.sectionPreferences')}
+        </h3>
+
+        <div className="settings-panel__field settings-panel__field--inline">
+          <div>
+            <label className="settings-panel__label">
+              {t('settings.defaultCommentPrivateLabel')}
+            </label>
+            <p className="settings-panel__hint">
+              {t('settings.defaultCommentPrivateHint')}
+            </p>
+          </div>
+          <Switch
+            checked={defaultCommentPrivate}
+            onChange={(v) => {
+              setDefaultCommentPrivate(v);
+              if (typeof window !== 'undefined') {
+                window.localStorage.setItem(
+                  'comment-default-private',
+                  String(v)
+                );
+              }
+            }}
           />
         </div>
       </section>
