@@ -1,5 +1,11 @@
 .share-button {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: var(--spacing-xs);
+  width: 100%;
+  min-height: 56px;
+  border-radius: var(--border-radius);
+  background: var(--bg-elevated);
+  border-color: var(--border-color-secondary);
 }

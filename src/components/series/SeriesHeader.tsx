@@ -206,8 +206,9 @@ export function SeriesHeader({ series, actionsSlot }: SeriesHeaderProps) {
             </div>
           )}
 
-          {actionsSlot && <div className="series-header__actions">{actionsSlot}</div>}
         </div>
+
+        {actionsSlot && <div className="series-header__actions">{actionsSlot}</div>}
       </div>
     </section>
   );

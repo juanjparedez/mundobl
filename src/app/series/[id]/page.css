@@ -27,36 +27,76 @@
   font-size: 15px;
 }
 
-.series-detail-page .ant-tabs-nav {
-  margin-bottom: var(--spacing-md);
+.series-detail-sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
 }
 
-.series-detail-page .ant-tabs-tab {
-  transition: color 0.2s ease, transform 0.2s ease;
+.series-detail-sections__nav {
+  position: sticky;
+  top: var(--spacing-sm);
+  z-index: 3;
+  display: flex;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+  padding: var(--spacing-xs);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-base);
+  background: color-mix(in srgb, var(--bg-container) 88%, transparent);
+  backdrop-filter: blur(10px);
 }
 
-.series-detail-page .ant-tabs-tab:hover {
-  color: var(--primary-color);
-  transform: translateY(-1px);
-}
-
-.series-detail-page .ant-tabs-tab-active .ant-tabs-tab-btn {
-  color: var(--primary-color) !important;
-  font-weight: 600;
-}
-
-.series-detail-page .ant-tabs-ink-bar {
-  height: 3px !important;
+.series-detail-sections__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--primary-color), color-mix(in srgb, var(--primary-color) 70%, #ffd6b3)) !important;
-  transition: transform 0.28s ease, width 0.28s ease;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  border: 1px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
 }
 
-.series-detail-page .ant-tabs-content-holder {
+.series-detail-sections__link:hover {
+  color: var(--primary-color);
+  border-color: color-mix(in srgb, var(--primary-color) 35%, transparent);
+  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+}
+
+.series-detail-sections__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.series-detail-section {
+  scroll-margin-top: 88px;
   background: color-mix(in srgb, var(--bg-container) 86%, transparent);
   border: 1px solid var(--border-color-secondary);
   border-radius: var(--border-radius-base);
   padding: var(--spacing-md);
+  animation: tab-fade-in 0.24s ease;
+}
+
+.series-detail-section__header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-sm);
+  color: var(--primary-color);
+}
+
+.series-detail-section__title {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--text-primary);
+}
+
+.series-detail-section__body {
+  color: var(--text-primary);
 }
 
 .series-info-tab,
@@ -86,26 +126,32 @@
     margin: var(--spacing-sm) 0;
   }
 
-  .series-detail-page .ant-tabs-content-holder {
-    padding: var(--spacing-xs);
+  .series-detail-sections {
+    gap: var(--spacing-sm);
   }
 
-  /* Secciones colapsables en mobile */
-  .series-detail-sections .ant-collapse-header {
-    font-size: 15px;
-    font-weight: 500;
-    padding: var(--spacing-xs) var(--spacing-sm) !important;
+  .series-detail-sections__nav {
+    top: 4px;
+    gap: 6px;
+    padding: 6px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    scrollbar-width: thin;
   }
 
-  .series-detail-sections .ant-collapse-content-box {
-    padding: 4px !important;
+  .series-detail-sections__link {
+    white-space: nowrap;
+    font-size: 12px;
+    padding: 6px 8px;
   }
 
-  .series-detail-sections .series-info-tab,
-  .series-detail-sections .seasons-tab,
-  .series-detail-sections .ratings-tab,
-  .series-detail-sections .comments-tab {
-    padding-top: 0;
+  .series-detail-section {
+    scroll-margin-top: 78px;
+    padding: var(--spacing-sm);
+  }
+
+  .series-detail-section__title {
+    font-size: 1rem;
   }
 
   /* Collapse de temporadas: eliminar padding redundante */

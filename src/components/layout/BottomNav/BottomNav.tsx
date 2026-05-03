@@ -16,6 +16,7 @@ import { useSession, signIn, signOut } from 'next-auth/react';
 import { useTheme } from '@/lib/providers/ThemeProvider';
 import { ROUTES } from '@/constants/navigation';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { AccentPicker } from '@/components/layout/Sidebar/AccentPicker/AccentPicker';
 import './BottomNav.css';
 
 interface NavItem {
@@ -97,35 +98,40 @@ export function BottomNav() {
   ];
 
   return (
-    <nav className="bottom-nav" aria-label={t('bottomNav.mainNavigation')}>
-      {navItems.map((item) => (
+    <>
+      <div className="bottom-nav-accent" aria-label="Accent selector">
+        <AccentPicker />
+      </div>
+      <nav className="bottom-nav" aria-label={t('bottomNav.mainNavigation')}>
+        {navItems.map((item) => (
+          <button
+            key={item.key}
+            className={`bottom-nav-item ${item.path && isActive(item.path) ? 'bottom-nav-item--active' : ''}`}
+            onClick={item.onClick || (() => item.path && router.push(item.path))}
+            aria-label={item.label}
+            aria-current={item.path && isActive(item.path) ? 'page' : undefined}
+          >
+            <span className="bottom-nav-item-icon" aria-hidden="true">
+              {item.icon}
+            </span>
+            <span className="bottom-nav-item-label">{item.label}</span>
+          </button>
+        ))}
         <button
-          key={item.key}
-          className={`bottom-nav-item ${item.path && isActive(item.path) ? 'bottom-nav-item--active' : ''}`}
-          onClick={item.onClick || (() => item.path && router.push(item.path))}
-          aria-label={item.label}
-          aria-current={item.path && isActive(item.path) ? 'page' : undefined}
+          className="bottom-nav-item"
+          onClick={toggleTheme}
+          aria-label={
+            theme === 'dark'
+              ? t('bottomNav.switchToLight')
+              : t('bottomNav.switchToDark')
+          }
         >
           <span className="bottom-nav-item-icon" aria-hidden="true">
-            {item.icon}
+            {theme === 'dark' ? <BulbFilled /> : <BulbOutlined />}
           </span>
-          <span className="bottom-nav-item-label">{item.label}</span>
+          <span className="bottom-nav-item-label">{t('bottomNav.theme')}</span>
         </button>
-      ))}
-      <button
-        className="bottom-nav-item"
-        onClick={toggleTheme}
-        aria-label={
-          theme === 'dark'
-            ? t('bottomNav.switchToLight')
-            : t('bottomNav.switchToDark')
-        }
-      >
-        <span className="bottom-nav-item-icon" aria-hidden="true">
-          {theme === 'dark' ? <BulbFilled /> : <BulbOutlined />}
-        </span>
-        <span className="bottom-nav-item-label">{t('bottomNav.theme')}</span>
-      </button>
-    </nav>
+      </nav>
+    </>
   );
 }
