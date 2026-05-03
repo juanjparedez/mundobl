@@ -11,6 +11,9 @@ import {
 import { useSession } from 'next-auth/react';
 import './CommentsList.css';
 import { useMessage } from '@/hooks/useMessage';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
+import type { TranslationKey } from '@/i18n/messages';
 
 const { TextArea } = Input;
 
@@ -45,10 +48,12 @@ export function CommentsList({
   episodeId,
   initialComments = [],
   compact = false,
-  placeholder = 'Escribe tus impresiones, opiniones o notas...',
+  placeholder,
 }: CommentsListProps) {
   const message = useMessage();
+  const { t } = useLocale();
   const { data: session } = useSession();
+  const defaultPlaceholder = placeholder ?? t('comments.placeholderPublic');
   const currentUserId = session?.user?.id;
   const [comments, setComments] = useState<Comment[]>(initialComments);
   const [newComment, setNewComment] = useState('');
@@ -73,7 +78,7 @@ export function CommentsList({
 
   const handleSubmit = async () => {
     if (!newComment.trim()) {
-      message.warning('Escribe un comentario primero');
+      message.warning(t('comments.warningEmpty'));
       return;
     }
 
@@ -92,10 +97,10 @@ export function CommentsList({
       setNewComment('');
       setIsPrivate(false);
       message.success(
-        isPrivate ? 'Nota privada agregada' : 'Comentario agregado'
+        isPrivate ? t('comments.successPrivate') : t('comments.successPublic')
       );
     } catch (error) {
-      message.error('Error al guardar el comentario');
+      message.error(t('comments.errorSave'));
       console.error(error);
     } finally {
       setIsSubmitting(false);
@@ -116,12 +121,12 @@ export function CommentsList({
         throw new Error(data.error || 'No se pudo reportar');
       }
       setReportedIds((prev) => new Set(prev).add(reportTarget));
-      message.success('Comentario reportado. Gracias por avisar.');
+      message.success(t('comments.reportedSuccess'));
       setReportTarget(null);
       setReportReason('');
     } catch (error) {
       message.error(
-        error instanceof Error ? error.message : 'No se pudo reportar'
+        error instanceof Error ? error.message : t('comments.reportError')
       );
     } finally {
       setReportSubmitting(false);
@@ -138,26 +143,26 @@ export function CommentsList({
 
   const reportModal = (
     <Modal
-      title="Reportar comentario"
+      title={t('comments.reportModalTitle')}
       open={reportTarget !== null}
       onOk={submitReport}
       onCancel={() => {
         setReportTarget(null);
         setReportReason('');
       }}
-      okText="Reportar"
-      cancelText="Cancelar"
+      okText={t('comments.reportButton')}
+      cancelText={t('comments.cancelButton')}
       okButtonProps={{ danger: true, loading: reportSubmitting }}
       destroyOnHidden
     >
       <p style={{ color: 'var(--text-secondary)', marginTop: 0 }}>
-        Contanos brevemente por qué (opcional). Un admin lo va a revisar.
+        {t('comments.reportModalHint')}
       </p>
       <TextArea
         rows={3}
         maxLength={500}
         showCount
-        placeholder="Spam, contenido fuera de tema, datos personales..."
+        placeholder={t('comments.reportPlaceholder')}
         value={reportReason}
         onChange={(e) => setReportReason(e.target.value)}
       />
@@ -171,7 +176,7 @@ export function CommentsList({
           <TextArea
             rows={3}
             placeholder={
-              isPrivate ? 'Nota privada (solo vos la verás)...' : placeholder
+              isPrivate ? t('comments.placeholderPrivate') : defaultPlaceholder
             }
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
@@ -179,7 +184,7 @@ export function CommentsList({
             showCount
           />
           <div className="comments-list-compact__actions">
-            <Tooltip title="Solo vos verás este comentario">
+            <Tooltip title={t('comments.tooltipPrivate')}>
               <label className="comments-list__private-toggle">
                 <Switch
                   size="small"
@@ -196,7 +201,7 @@ export function CommentsList({
               onClick={handleSubmit}
               loading={isSubmitting}
             >
-              {isPrivate ? 'Nota Privada' : 'Comentar'}
+              {isPrivate ? t('comments.privateButtonCompact') : t('comments.commentButton')}
             </Button>
           </div>
         </div>
@@ -206,7 +211,7 @@ export function CommentsList({
             <h6
               style={{ fontSize: '13px', fontWeight: 600, marginBottom: '8px' }}
             >
-              Comentarios ({visibleComments.length})
+              {interpolateMessage(t('comments.listTitle'), { n: String(visibleComments.length) })}
             </h6>
             <div>
               {visibleComments.map((comment) => (
@@ -218,14 +223,14 @@ export function CommentsList({
                   <span className="comment-compact__date">
                     {comment.isPrivate && <LockOutlined />}
                     <ClockCircleOutlined />{' '}
-                    {formatDate(new Date(comment.createdAt))}
+                    {formatDate(new Date(comment.createdAt), t)}
                     {canReport(comment) && (
                       <Button
                         type="text"
                         size="small"
                         icon={<FlagOutlined />}
                         onClick={() => setReportTarget(comment.id)}
-                        aria-label="Reportar comentario"
+                        aria-label={t('comments.reportButton')}
                         className="comment-compact__report"
                       />
                     )}
@@ -243,13 +248,13 @@ export function CommentsList({
   return (
     <div className="comments-list">
       <Card
-        title={<h4 className="comments-list__title">Agregar Comentario</h4>}
+        title={<h4 className="comments-list__title">{t('comments.addTitle')}</h4>}
         className="comments-list__form"
       >
         <TextArea
           rows={4}
           placeholder={
-            isPrivate ? 'Nota privada (solo vos la verás)...' : placeholder
+            isPrivate ? t('comments.placeholderPrivate') : defaultPlaceholder
           }
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
@@ -257,7 +262,7 @@ export function CommentsList({
           showCount
         />
         <div className="comments-list__actions">
-          <Tooltip title="Solo vos verás este comentario">
+          <Tooltip title={t('comments.tooltipPrivate')}>
             <label className="comments-list__private-toggle">
               <Switch
                 size="small"
@@ -265,7 +270,7 @@ export function CommentsList({
                 onChange={setIsPrivate}
               />
               <LockOutlined />
-              <span>Privado</span>
+              <span>{t('comments.privateLabel')}</span>
             </label>
           </Tooltip>
           <Button
@@ -274,7 +279,7 @@ export function CommentsList({
             onClick={handleSubmit}
             loading={isSubmitting}
           >
-            {isPrivate ? 'Guardar Nota Privada' : 'Agregar Comentario'}
+            {isPrivate ? t('comments.savePrivateButton') : t('comments.addButton')}
           </Button>
         </div>
       </Card>
@@ -285,7 +290,7 @@ export function CommentsList({
         </h4>
 
         {visibleComments.length === 0 ? (
-          <Empty description="No hay comentarios aún" />
+          <Empty description={t('comments.emptyText')} />
         ) : (
           <div>
             {visibleComments.map((comment) => (
@@ -297,7 +302,7 @@ export function CommentsList({
                 <div className="comment-card__footer">
                   {comment.isPrivate && (
                     <Tag color="default" icon={<LockOutlined />}>
-                      Privado
+                      {t('comments.privateLabel')}
                     </Tag>
                   )}
                   <span
@@ -305,7 +310,7 @@ export function CommentsList({
                     className="comment-card__date"
                   >
                     <ClockCircleOutlined />{' '}
-                    {formatDate(new Date(comment.createdAt))}
+                    {formatDate(new Date(comment.createdAt), t)}
                   </span>
                   {canReport(comment) && (
                     <Button
@@ -315,7 +320,7 @@ export function CommentsList({
                       onClick={() => setReportTarget(comment.id)}
                       className="comment-card__report"
                     >
-                      Reportar
+                      {t('comments.reportButton')}
                     </Button>
                   )}
                 </div>
@@ -329,16 +334,16 @@ export function CommentsList({
   );
 }
 
-function formatDate(date: Date): string {
+function formatDate(date: Date, t: (key: TranslationKey) => string): string {
   const now = new Date();
   const diff = now.getTime() - date.getTime();
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-  if (days === 0) return 'Hoy';
-  if (days === 1) return 'Ayer';
-  if (days < 7) return `Hace ${days} días`;
-  if (days < 30) return `Hace ${Math.floor(days / 7)} semanas`;
-  if (days < 365) return `Hace ${Math.floor(days / 30)} meses`;
+  if (days === 0) return t('common.today');
+  if (days === 1) return t('common.yesterday');
+  if (days < 7) return interpolateMessage(t('common.daysAgo'), { n: String(days) });
+  if (days < 30) return interpolateMessage(t('common.weeksAgo'), { n: String(Math.floor(days / 7)) });
+  if (days < 365) return interpolateMessage(t('common.monthsAgo'), { n: String(Math.floor(days / 30)) });
 
-  return date.toLocaleDateString('es-ES');
+  return date.toLocaleDateString();
 }

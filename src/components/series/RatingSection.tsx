@@ -6,6 +6,8 @@ import { StarFilled, TeamOutlined } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import './RatingSection.css';
 import { useMessage } from '@/hooks/useMessage';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
 
 interface RatingSectionProps {
   seriesId: number;
@@ -15,17 +17,11 @@ interface RatingSectionProps {
   }>;
 }
 
-const RATING_CATEGORIES = [
-  { key: 'trama', label: 'Trama' },
-  { key: 'casting', label: 'Casting' },
-  { key: 'direccion', label: 'Dirección' },
-  { key: 'guion', label: 'Guión' },
-  { key: 'produccion', label: 'Producción' },
-  { key: 'fotografia', label: 'Fotografía' },
-  { key: 'bso', label: 'Banda Sonora' },
-  { key: 'quimica_principal', label: 'Química de pareja principal' },
-  { key: 'quimica_secundaria', label: 'Química de pareja secundaria' },
-];
+const RATING_CATEGORY_KEYS = [
+  'trama', 'casting', 'direccion', 'guion', 'produccion',
+  'fotografia', 'bso', 'quimica_principal', 'quimica_secundaria',
+] as const;
+type RatingCategoryKey = typeof RATING_CATEGORY_KEYS[number];
 
 interface UserRatingsData {
   averages: Record<string, number>;
@@ -38,8 +34,21 @@ export function RatingSection({
   existingRatings,
 }: RatingSectionProps) {
   const message = useMessage();
+  const { t } = useLocale();
   const { data: session } = useSession();
   const isAdmin = session?.user?.role === 'ADMIN';
+
+  const ratingCategories: Array<{ key: RatingCategoryKey; label: string }> = [
+    { key: 'trama', label: t('ratingSection.catTrama') },
+    { key: 'casting', label: t('ratingSection.catCasting') },
+    { key: 'direccion', label: t('ratingSection.catDireccion') },
+    { key: 'guion', label: t('ratingSection.catGuion') },
+    { key: 'produccion', label: t('ratingSection.catProduccion') },
+    { key: 'fotografia', label: t('ratingSection.catFotografia') },
+    { key: 'bso', label: t('ratingSection.catBso') },
+    { key: 'quimica_principal', label: t('ratingSection.catQuimicaPrincipal') },
+    { key: 'quimica_secundaria', label: t('ratingSection.catQuimicaSecundaria') },
+  ];
 
   // Official ratings (admin)
   const [ratings, setRatings] = useState<Record<string, number>>(() => {
@@ -104,9 +113,9 @@ export function RatingSection({
       });
 
       if (!response.ok) throw new Error('Error al guardar');
-      message.success('Puntuaciones oficiales guardadas');
+      message.success(t('ratingSection.successOfficial'));
     } catch (error) {
-      message.error('Error al guardar las puntuaciones');
+      message.error(t('ratingSection.errorOfficial'));
       console.error(error);
     } finally {
       setIsSaving(false);
@@ -123,10 +132,10 @@ export function RatingSection({
       });
 
       if (!response.ok) throw new Error('Error al guardar');
-      message.success('Tu puntuación fue guardada');
+      message.success(t('ratingSection.successUser'));
       fetchUserRatings();
     } catch (error) {
-      message.error('Error al guardar tu puntuación');
+      message.error(t('ratingSection.errorUser'));
       console.error(error);
     } finally {
       setIsSavingUserRating(false);
@@ -150,7 +159,7 @@ export function RatingSection({
             <StarFilled className="rating-average__icon" />
             <div className="rating-average__score">{averageRating}</div>
             <span style={{ color: 'var(--text-secondary)' }}>
-              Puntuación oficial
+              {t('ratingSection.officialLabel')}
             </span>
           </div>
         </Card>
@@ -167,8 +176,13 @@ export function RatingSection({
                 {userRatingsData.overallAverage}
               </div>
               <span style={{ color: 'var(--text-secondary)' }}>
-                Puntuación de usuarios ({userRatingsData.totalVoters}{' '}
-                {userRatingsData.totalVoters === 1 ? 'voto' : 'votos'})
+                {interpolateMessage(
+                  userRatingsData.totalVoters === 1
+                    ? t('ratingSection.votesSingular')
+                    : t('ratingSection.votesPlural'),
+                  { n: String(userRatingsData.totalVoters) }
+                )}
+                {' '}{t('ratingSection.userAverageLabel')}
               </span>
             </div>
           </Card>
@@ -177,13 +191,13 @@ export function RatingSection({
       {/* Official Rating Sliders (Admin only) */}
       {isAdmin && (
         <div className="rating-section__categories">
-          <h4 className="rating-section__title">Puntuación Oficial</h4>
+          <h4 className="rating-section__title">{t('ratingSection.officialTitle')}</h4>
           <span style={{ color: 'var(--text-secondary)' }}>
-            Evalúa cada aspecto de la serie del 1 al 10
+            {t('ratingSection.officialHint')}
           </span>
 
           <Row gutter={[16, 24]} style={{ marginTop: 24 }}>
-            {RATING_CATEGORIES.map((category) => (
+            {ratingCategories.map((category) => (
               <Col xs={24} sm={12} key={category.key}>
                 <Card className="rating-category">
                   <div className="rating-category__header">
@@ -214,7 +228,7 @@ export function RatingSection({
               onClick={handleSave}
               loading={isSaving}
             >
-              Guardar Puntuación Oficial
+              {t('ratingSection.saveOfficialButton')}
             </Button>
           </div>
         </div>
@@ -223,13 +237,13 @@ export function RatingSection({
       {/* User Rating Sliders (any logged-in user) */}
       {session?.user ? (
         <div className="rating-section__categories">
-          <h4 className="rating-section__title">Tu Puntuación</h4>
+          <h4 className="rating-section__title">{t('ratingSection.userTitle')}</h4>
           <span style={{ color: 'var(--text-secondary)' }}>
-            Tu puntuación será pública y contribuirá al promedio de usuarios
+            {t('ratingSection.userHint')}
           </span>
 
           <Row gutter={[16, 24]} style={{ marginTop: 24 }}>
-            {RATING_CATEGORIES.map((category) => (
+            {ratingCategories.map((category) => (
               <Col xs={24} sm={12} key={`user-${category.key}`}>
                 <Card className="rating-category">
                   <div className="rating-category__header">
@@ -260,14 +274,14 @@ export function RatingSection({
               onClick={handleSaveUserRating}
               loading={isSavingUserRating}
             >
-              Guardar Mi Puntuación
+              {t('ratingSection.saveUserButton')}
             </Button>
           </div>
         </div>
       ) : (
         <Card style={{ marginTop: 'var(--spacing-lg)' }}>
           <p style={{ color: 'var(--text-secondary)', textAlign: 'center' }}>
-            Inicia sesión para puntuar esta serie
+            {t('ratingSection.loginPrompt')}
           </p>
         </Card>
       )}
@@ -278,10 +292,10 @@ export function RatingSection({
         Object.keys(userRatingsData.averages).length > 0 && (
           <div className="rating-section__categories">
             <h4 className="rating-section__title">
-              Promedio de Usuarios por Categoría
+              {t('ratingSection.userAverageTitle')}
             </h4>
             <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
-              {RATING_CATEGORIES.map((category) => {
+              {ratingCategories.map((category) => {
                 const avg = userRatingsData.averages[category.key];
                 if (avg === undefined) return null;
                 return (

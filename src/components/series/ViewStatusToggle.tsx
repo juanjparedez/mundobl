@@ -10,6 +10,8 @@ import {
 } from '@/constants/series';
 import type { WatchStatusValue } from '@/constants/series';
 import './ViewStatusToggle.css';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
 import { useMessage } from '@/hooks/useMessage';
 
 type AntStatusColor =
@@ -35,9 +37,18 @@ export function ViewStatusToggle({
   seasons = [],
 }: ViewStatusToggleProps) {
   const message = useMessage();
+  const { t } = useLocale();
   const { data: session } = useSession();
   const [status, setStatus] = useState<WatchStatusValue>(initialStatus);
   const [isUpdating, setIsUpdating] = useState(false);
+
+  const watchStatusLabels: Record<string, string> = {
+    SIN_VER: t('viewStatus.sinVer'),
+    VIENDO: t('viewStatus.viendo'),
+    VISTA: t('viewStatus.vista'),
+    ABANDONADA: t('viewStatus.abandonada'),
+    RETOMAR: t('viewStatus.retomar'),
+  };
 
   // Calcular progreso de episodios vistos
   const calculateProgress = () => {
@@ -72,9 +83,9 @@ export function ViewStatusToggle({
       if (!response.ok) throw new Error('Error al actualizar');
 
       setStatus(newStatus);
-      message.success(`Estado: ${WATCH_STATUS_LABELS[newStatus]}`);
+      message.success(interpolateMessage(t('viewStatus.statusMessage'), { label: watchStatusLabels[newStatus] ?? newStatus }));
     } catch (error) {
-      message.error('Error al actualizar el estado');
+      message.error(t('viewStatus.errorUpdate'));
       console.error(error);
     } finally {
       setIsUpdating(false);
@@ -85,7 +96,7 @@ export function ViewStatusToggle({
     return (
       <div className="view-status-toggle">
         <Tag color={WATCH_STATUS_COLORS[status]}>
-          {WATCH_STATUS_LABELS[status]}
+          {watchStatusLabels[status] ?? status}
         </Tag>
         {totalEpisodes > 0 && (
           <div className="view-status-toggle__progress">
@@ -93,7 +104,10 @@ export function ViewStatusToggle({
               percent={progressPercent}
               size="small"
               status={progressPercent === 100 ? 'success' : 'active'}
-              format={() => `${watchedEpisodes}/${totalEpisodes} episodios`}
+              format={() => interpolateMessage(t('viewStatus.episodesUnit'), {
+                watched: String(watchedEpisodes),
+                total: String(totalEpisodes),
+              })}
             />
           </div>
         )}
@@ -106,7 +120,7 @@ export function ViewStatusToggle({
     label: (
       <span className="view-status-toggle__option">
         <Badge status={WATCH_STATUS_COLORS[value] as AntStatusColor} />
-        {WATCH_STATUS_LABELS[value]}
+        {watchStatusLabels[value] ?? value}
       </span>
     ),
   }));
@@ -121,19 +135,25 @@ export function ViewStatusToggle({
         options={statusOptions}
         className={`view-status-toggle__select view-status-toggle__select--${status.toLowerCase()}`}
         size="middle"
-        aria-label="Estado de visualización"
+        aria-label={t('viewStatus.ariaLabel')}
       />
 
       {totalEpisodes > 0 && (
         <div className="view-status-toggle__progress">
           <Tooltip
-            title={`${watchedEpisodes} de ${totalEpisodes} episodios vistos`}
+            title={interpolateMessage(t('viewStatus.tooltipEpisodes'), {
+              watched: String(watchedEpisodes),
+              total: String(totalEpisodes),
+            })}
           >
             <Progress
               percent={progressPercent}
               size="small"
               status={progressPercent === 100 ? 'success' : 'active'}
-              format={() => `${watchedEpisodes}/${totalEpisodes} episodios`}
+              format={() => interpolateMessage(t('viewStatus.episodesUnit'), {
+                watched: String(watchedEpisodes),
+                total: String(totalEpisodes),
+              })}
             />
           </Tooltip>
         </div>

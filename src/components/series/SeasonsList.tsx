@@ -10,6 +10,8 @@ import Link from 'next/link';
 import { EpisodesList } from './EpisodesList';
 import { CommentsList } from '@/components/common/CommentsList';
 import './SeasonsList.css';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
 
 interface SeasonsListProps {
   seasons: Array<{
@@ -64,11 +66,12 @@ interface SeasonsListProps {
 }
 
 export function SeasonsList({ seasons }: SeasonsListProps) {
+  const { t } = useLocale();
   if (!seasons || seasons.length === 0) {
     return (
       <div className="seasons-empty">
         <span style={{ color: 'var(--text-secondary)' }}>
-          No hay temporadas registradas
+          {t('seasonsList.emptyText')}
         </span>
       </div>
     );
@@ -94,7 +97,7 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
       label: (
         <div className="season-header">
           <span className="season-header__title">
-            <strong>Temporada {season.seasonNumber}</strong>
+            <strong>{interpolateMessage(t('seasonsList.seasonLabel'), { n: String(season.seasonNumber) })}</strong>
             {season.title && ` - ${season.title}`}
           </span>
           <div className="season-header__meta">
@@ -105,11 +108,11 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
             )}
             {season.episodeCount && (
               <Tag icon={<PlayCircleOutlined />} color="green">
-                {season.episodeCount} caps
+                {interpolateMessage(t('seasonsList.capsTag'), { n: String(season.episodeCount) })}
               </Tag>
             )}
             {season.viewStatus?.[0]?.status === 'VISTA' && (
-              <Tag color="success">✓ Vista</Tag>
+              <Tag color="success">✓ {t('seasonsList.watchedTag')}</Tag>
             )}
             {episodeProgress && episodeProgress.totalCount > 0 && (
               <Tag
@@ -120,7 +123,7 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
                 }
               >
                 📺 {episodeProgress.watchedCount}/{episodeProgress.totalCount}{' '}
-                vistos
+                {t('seasonsList.watchedTag').toLowerCase()}
               </Tag>
             )}
             <Link
@@ -133,7 +136,7 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
                 icon={<EditOutlined />}
                 onClick={(e) => e.stopPropagation()}
               >
-                Editar
+                {t('seasonsList.editButton')}
               </Button>
             </Link>
           </div>
@@ -144,7 +147,7 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
           {season.synopsis && (
             <div className="season-content__synopsis">
               <h5 className="season-section-title">
-                📖 Sinopsis de esta temporada
+                📖 {t('seasonsList.synopsisTitle')}
               </h5>
               <p>{season.synopsis}</p>
             </div>
@@ -152,7 +155,7 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
 
           {season.observations && (
             <div className="season-content__observations">
-              <h5 className="season-section-title">📝 Observaciones</h5>
+              <h5 className="season-section-title">📝 {t('seasonsList.observationsTitle')}</h5>
               <p
                 style={{
                   color: 'var(--text-secondary)',
@@ -168,7 +171,7 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
           {/* Comentarios de la temporada */}
           <div className="season-content__comments">
             <h5 className="season-section-title">
-              💬 Comentarios de esta temporada
+              💬 {t('seasonsList.commentsTitle')}
             </h5>
             <CommentsList
               seasonId={season.id}
@@ -181,7 +184,7 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
           {season.ratings && season.ratings.length > 0 && (
             <div className="season-content__ratings">
               <h5 className="season-section-title">
-                ⭐ Puntuación de esta temporada
+                ⭐ {t('seasonsList.ratingsTitle')}
               </h5>
               <div className="ratings-grid">
                 {season.ratings.map((rating) => (
@@ -199,7 +202,7 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
           {season.actors && season.actors.length > 0 && (
             <div className="season-content__actors">
               <h5 className="season-section-title">
-                👥 Reparto de esta temporada ({season.actors.length})
+                👥 {interpolateMessage(t('seasonsList.castTitle'), { n: String(season.actors.length) })}
               </h5>
               <Row gutter={[16, 16]}>
                 {season.actors.map((actorInfo) => (
@@ -227,7 +230,7 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
                           </span>
                         )}
                         {actorInfo.isMain && (
-                          <Tag color="red">Protagonista</Tag>
+                          <Tag color="red">{t('seasonsList.protagonistTag')}</Tag>
                         )}
                       </div>
                     </div>
