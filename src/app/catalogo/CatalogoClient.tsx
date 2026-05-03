@@ -46,6 +46,7 @@ import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { WelcomeBanner } from '@/components/common/WelcomeBanner/WelcomeBanner';
+import { isSupabaseImageUrl } from '@/lib/image-helpers';
 
 const { Option } = Select;
 
@@ -612,6 +613,7 @@ export function CatalogoClient({
               sizes="(max-width: 480px) 50vw, (max-width: 768px) 46vw, (max-width: 1200px) 31vw, 24vw"
               quality={55}
               fetchPriority="low"
+              unoptimized={isSupabaseImageUrl(serie.imageUrl)}
               style={{
                 objectFit: 'cover',
                 objectPosition: serie.imagePosition || 'center',
@@ -768,6 +770,7 @@ export function CatalogoClient({
                 sizes="(max-width: 480px) 50vw, (max-width: 768px) 46vw, (max-width: 1200px) 31vw, 24vw"
                 quality={55}
                 fetchPriority="low"
+                unoptimized={isSupabaseImageUrl(firstSerie.imageUrl)}
                 style={{
                   objectFit: 'cover',
                   objectPosition: firstSerie.imagePosition || 'center',
@@ -867,6 +870,7 @@ export function CatalogoClient({
               sizes="48px"
               quality={50}
               fetchPriority="low"
+              unoptimized={isSupabaseImageUrl(serie.imageUrl)}
               style={{
                 objectFit: 'cover',
                 objectPosition: serie.imagePosition || 'center',
@@ -967,6 +971,7 @@ export function CatalogoClient({
                     sizes="48px"
                     quality={50}
                     fetchPriority="low"
+                    unoptimized={isSupabaseImageUrl(serie.imageUrl)}
                     style={{
                       objectFit: 'cover',
                       objectPosition: serie.imagePosition || 'center',

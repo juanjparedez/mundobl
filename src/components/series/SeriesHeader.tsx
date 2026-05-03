@@ -6,6 +6,7 @@ import { BookOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
+import { isSupabaseImageUrl } from '@/lib/image-helpers';
 import { MetadataChip } from './MetadataPrimitives/MetadataPrimitives';
 import './SeriesHeader.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -87,6 +88,7 @@ export function SeriesHeader({ series, actionsSlot }: SeriesHeaderProps) {
                 sizes="(max-width: 640px) 110px, (max-width: 900px) 180px, 230px"
                 quality={72}
                 priority
+                unoptimized={isSupabaseImageUrl(imageUrl)}
               />
             </div>
           )}
