@@ -49,5 +49,14 @@ export default function manifest(): MetadataRoute.Manifest {
         icons: [{ src: '/icons/icon-192x192.png', sizes: '192x192' }],
       },
     ],
+    screenshots: [
+      {
+        src: '/images/og-image.png',
+        sizes: '1200x630',
+        type: 'image/png',
+        form_factor: 'wide',
+        label: 'MundoBL – Catálogo de Series BL, GL y Doramas',
+      },
+    ],
   };
 }
