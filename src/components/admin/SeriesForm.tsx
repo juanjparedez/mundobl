@@ -38,6 +38,8 @@ import {
   type PendingContentItem,
 } from './SeriesContentManager/SeriesContentManager';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -193,6 +195,7 @@ function ImagePositionSelector({
 export function SeriesForm({ initialData, mode }: SeriesFormProps) {
   const message = useMessage();
   const modal = useModal();
+  const { t } = useLocale();
   const router = useRouter();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -376,7 +379,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Error al crear universo');
+      if (!res.ok) throw new Error(data.error || t('seriesForm.universeCreateError'));
 
       const created: UniverseOption = { id: data.id, name: data.name };
       setUniverses((prev) =>
@@ -386,10 +389,10 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
       setNewUniverseModalOpen(false);
       setNewUniverseName('');
       setNewUniverseDescription('');
-      message.success(`Universo "${created.name}" creado`);
+      message.success(interpolateMessage(t('seriesForm.universeCreated'), { name: created.name }));
     } catch (err) {
       message.error(
-        err instanceof Error ? err.message : 'Error al crear universo'
+        err instanceof Error ? err.message : t('seriesForm.universeCreateError')
       );
     } finally {
       setCreatingUniverse(false);
@@ -436,13 +439,13 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
 
       message.success(
         mode === 'create'
-          ? 'Serie creada exitosamente'
-          : 'Serie actualizada exitosamente'
+          ? t('seriesForm.createSuccess')
+          : t('seriesForm.updateSuccess')
       );
 
       router.push(`/series/${savedSerie.id}`);
     } catch (error) {
-      message.error('Error al guardar la serie');
+      message.error(t('seriesForm.saveError'));
       console.error(error);
     } finally {
       setLoading(false);
@@ -469,12 +472,12 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
 
       // Actualizar el campo imageUrl en el formulario
       form.setFieldsValue({ imageUrl: data.url });
-      message.success('Imagen subida exitosamente');
+      message.success(t('seriesForm.uploadSuccess'));
 
       return false; // Prevent default upload behavior
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Error al subir la imagen';
+        error instanceof Error ? error.message : t('seriesForm.uploadError');
       message.error(errorMessage);
       return false;
     } finally {
@@ -492,10 +495,10 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
       const data = await response.json();
       setIsFavorite(data.isFavorite);
       message.success(
-        data.isFavorite ? 'Agregado a favoritos' : 'Removido de favoritos'
+        data.isFavorite ? t('seriesForm.favoriteAdded') : t('seriesForm.favoriteRemoved')
       );
     } catch {
-      message.error('Error al actualizar favorito');
+      message.error(t('seriesForm.favoriteError'));
     }
   };
 
@@ -521,12 +524,11 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
   const handleCancel = useCallback(() => {
     if (hasUnsavedChanges()) {
       modal.confirm({
-        title: 'Hay cambios sin guardar',
+        title: t('seriesForm.unsavedTitle'),
         icon: <ExclamationCircleOutlined />,
-        content:
-          'Si sales ahora, perderás los cambios que no hayas guardado. ¿Deseas continuar?',
-        okText: 'Salir sin guardar',
-        cancelText: 'Seguir editando',
+        content: t('seriesForm.unsavedContent'),
+        okText: t('seriesForm.unsavedOk'),
+        cancelText: t('seriesForm.unsavedCancel'),
         okButtonProps: { danger: true },
         onOk: () => router.back(),
       });
@@ -545,8 +547,8 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
           <div className="series-form__header">
             <span>
               {mode === 'create'
-                ? 'Nueva Serie/Película'
-                : 'Editar Serie/Película'}
+                ? t('seriesForm.headerCreate')
+                : t('seriesForm.headerEdit')}
             </span>
             <Space wrap>
               {mode === 'edit' && initialData?.id && (
@@ -559,11 +561,11 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                       : {}
                   }
                 >
-                  {isFavorite ? 'Favorito' : 'Agregar a Favoritos'}
+                  {isFavorite ? t('seriesForm.favoriteButton') : t('seriesForm.addFavoriteButton')}
                 </Button>
               )}
               <Button icon={<CloseOutlined />} onClick={handleCancel}>
-                Cancelar
+                {t('seriesForm.cancelButton')}
               </Button>
             </Space>
           </div>
@@ -587,52 +589,52 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
           {/* Información Básica */}
           <Card
             type="inner"
-            title="📝 Información Básica"
+            title={`📝 ${t('seriesForm.sectionBasic')}`}
             style={{ marginBottom: 24 }}
           >
             <Row gutter={16}>
               <Col xs={24} md={12}>
                 <Form.Item
-                  label="Título"
+                  label={t('seriesForm.fieldTitle')}
                   name="title"
                   rules={[
-                    { required: true, message: 'El título es obligatorio' },
+                    { required: true, message: t('seriesForm.requiredTitle') },
                   ]}
                 >
-                  <Input placeholder="Ej: 2 Moons" size="large" />
+                  <Input placeholder={t('seriesForm.hintTitle')} size="large" />
                 </Form.Item>
               </Col>
 
               <Col xs={24} md={12}>
-                <Form.Item label="Título Original" name="originalTitle">
-                  <Input placeholder="Título en idioma original" size="large" />
+                <Form.Item label={t('seriesForm.fieldOriginalTitle')} name="originalTitle">
+                  <Input placeholder={t('seriesForm.hintOriginalTitle')} size="large" />
                 </Form.Item>
               </Col>
 
               <Col xs={24} md={8}>
                 <Form.Item
-                  label="Tipo"
+                  label={t('seriesForm.fieldType')}
                   name="type"
-                  rules={[{ required: true, message: 'Selecciona un tipo' }]}
+                  rules={[{ required: true, message: t('seriesForm.requiredType') }]}
                 >
                   <Select
                     size="large"
                     onChange={(value) => setSelectedType(value)}
                   >
-                    <Option value="serie">📺 Serie</Option>
-                    <Option value="pelicula">🎬 Película</Option>
-                    <Option value="corto">🎞️ Cortometraje</Option>
-                    <Option value="especial">✨ Especial</Option>
-                    <Option value="anime">🎨 Animé</Option>
-                    <Option value="reality">🎤 Reality</Option>
+                    <Option value="serie">📺 {t('seriesForm.typeOption_serie')}</Option>
+                    <Option value="pelicula">🎬 {t('seriesForm.typeOption_pelicula')}</Option>
+                    <Option value="corto">🎞️ {t('seriesForm.typeOption_corto')}</Option>
+                    <Option value="especial">✨ {t('seriesForm.typeOption_especial')}</Option>
+                    <Option value="anime">🎨 {t('seriesForm.typeOption_anime')}</Option>
+                    <Option value="reality">🎤 {t('seriesForm.typeOption_reality')}</Option>
                   </Select>
                 </Form.Item>
               </Col>
 
               <Col xs={24} md={8}>
-                <Form.Item label="País" name="countryName">
+                <Form.Item label={t('seriesForm.fieldCountry')} name="countryName">
                   <Select
-                    placeholder="Selecciona un país"
+                    placeholder={t('seriesForm.hintCountry')}
                     size="large"
                     allowClear
                     showSearch
@@ -661,7 +663,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
               </Col>
 
               <Col xs={24} md={8}>
-                <Form.Item label="Año" name="year">
+                <Form.Item label={t('seriesForm.fieldYear')} name="year">
                   <InputNumber
                     placeholder="2024"
                     style={{ width: '100%' }}
@@ -673,11 +675,11 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
               </Col>
 
               <Col xs={24} md={12}>
-                <Form.Item label="Universo (opcional)">
+                <Form.Item label={t('seriesForm.fieldUniverse')}>
                   <Space.Compact style={{ width: '100%' }}>
                     <Form.Item name="universeId" noStyle>
                       <Select
-                        placeholder="¿Pertenece a algún universo/franquicia?"
+                        placeholder={t('seriesForm.hintUniverse')}
                         size="large"
                         allowClear
                         showSearch
@@ -699,7 +701,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                       size="large"
                       icon={<PlusOutlined />}
                       onClick={() => setNewUniverseModalOpen(true)}
-                      title="Crear nuevo universo"
+                      title={t('seriesForm.createNewUniverseTitle')}
                     />
                   </Space.Compact>
                 </Form.Item>
@@ -707,13 +709,13 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
 
               <Col xs={24} md={12}>
                 <Form.Item
-                  label="Basada en"
+                  label={t('seriesForm.fieldBasedOn')}
                   name="basedOn"
-                  help="Escribe para buscar o agregar nuevos (ej: Manga, Manhwa, Novela)"
+                  help={t('seriesForm.helpBasedOn')}
                 >
                   <Select
                     mode="tags"
-                    placeholder="Ej: Libro, Manga, Manhwa..."
+                    placeholder={t('seriesForm.hintBasedOn')}
                     size="large"
                     allowClear
                     maxCount={1}
@@ -734,26 +736,26 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
 
               <Col xs={24} md={12}>
                 <Form.Item
-                  label="Formato de Pantalla"
+                  label={t('seriesForm.fieldFormat')}
                   name="format"
-                  rules={[{ required: true, message: 'Selecciona un formato' }]}
+                  rules={[{ required: true, message: t('seriesForm.requiredFormat') }]}
                 >
                   <Select size="large">
-                    <Option value="regular">📱 Regular (Horizontal)</Option>
-                    <Option value="vertical">📲 Vertical (Para móvil)</Option>
+                    <Option value="regular">📱 {t('seriesForm.formatOption_regular')}</Option>
+                    <Option value="vertical">📲 {t('seriesForm.formatOption_vertical')}</Option>
                   </Select>
                 </Form.Item>
               </Col>
 
               <Col xs={24} md={12}>
                 <Form.Item
-                  label="Productora"
+                  label={t('seriesForm.fieldProduction')}
                   name="productionCompanyName"
-                  help="Escribe para buscar o crear una nueva productora"
+                  help={t('seriesForm.helpProduction')}
                 >
                   <AutoComplete
                     options={productionCompanies.map((pc) => ({ value: pc }))}
-                    placeholder="Ej: GMMTV"
+                    placeholder={t('seriesForm.hintProduction')}
                     size="large"
                     filterOption={(inputValue, option) =>
                       option!.value
@@ -766,13 +768,13 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
 
               <Col xs={24} md={12}>
                 <Form.Item
-                  label="Idioma Original"
+                  label={t('seriesForm.fieldLanguage')}
                   name="originalLanguageName"
-                  help="Escribe para buscar o crear un nuevo idioma"
+                  help={t('seriesForm.helpLanguage')}
                 >
                   <AutoComplete
                     options={languages.map((l) => ({ value: l }))}
-                    placeholder="Ej: Tailandés"
+                    placeholder={t('seriesForm.hintLanguage')}
                     size="large"
                     filterOption={(inputValue, option) =>
                       option!.value
@@ -785,14 +787,14 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
 
               <Col xs={24} md={12}>
                 <Form.Item
-                  label="Género"
+                  label={t('seriesForm.fieldGenres')}
                   name="genres"
-                  help="Escribe y presiona Enter para crear nuevos géneros. Ej: Drama, Romance, Comedia"
+                  help={t('seriesForm.helpGenres')}
                 >
                   <Select
                     mode="tags"
                     size="large"
-                    placeholder="Agrega géneros como Drama, Romance, etc."
+                    placeholder={t('seriesForm.hintGenres')}
                     tokenSeparators={[',']}
                     style={{ width: '100%' }}
                     options={genres.map((g) => ({ value: g, label: g }))}
@@ -801,18 +803,18 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
               </Col>
 
               <Col xs={24}>
-                <Form.Item label="Sinopsis" name="synopsis">
+                <Form.Item label={t('seriesForm.fieldSynopsis')} name="synopsis">
                   <TextArea
                     rows={4}
-                    placeholder="Breve descripción de la serie/película"
+                    placeholder={t('seriesForm.hintSynopsis')}
                   />
                 </Form.Item>
               </Col>
 
               <Col xs={24} md={12}>
-                <Form.Item label="Banda Sonora (BSO)" name="soundtrack">
+                <Form.Item label={t('seriesForm.fieldSoundtrack')} name="soundtrack">
                   <Input
-                    placeholder="Compositor o información de la BSO"
+                    placeholder={t('seriesForm.hintSoundtrack')}
                     size="large"
                   />
                 </Form.Item>
@@ -820,11 +822,11 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
 
               <Col xs={24} md={12}>
                 <Form.Item
-                  label="Puntuación General (1-10)"
+                  label={t('seriesForm.fieldRating')}
                   name="overallRating"
                 >
                   <InputNumber
-                    placeholder="8"
+                    placeholder={t('seriesForm.hintRating')}
                     style={{ width: '100%' }}
                     size="large"
                     min={1}
@@ -834,24 +836,24 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
               </Col>
 
               <Col xs={24}>
-                <Form.Item label="Observaciones" name="observations">
+                <Form.Item label={t('seriesForm.fieldObservations')} name="observations">
                   <TextArea
                     rows={3}
-                    placeholder="Notas personales, comentarios, etc."
+                    placeholder={t('seriesForm.hintObservations')}
                   />
                 </Form.Item>
               </Col>
 
               <Col xs={24}>
                 <Form.Item
-                  label="Tags / Etiquetas"
+                  label={t('seriesForm.fieldTags')}
                   name="tags"
-                  help="Escribe y presiona Enter para crear nuevos tags. Ej: Enemy to Lovers, Rico-Pobre, Escuela"
+                  help={t('seriesForm.helpTags')}
                 >
                   <Select
                     mode="tags"
                     size="large"
-                    placeholder="Agrega tags como Enemy to Lovers, Escuela, etc."
+                    placeholder={t('seriesForm.hintTags')}
                     tokenSeparators={[',']}
                     style={{ width: '100%' }}
                     options={tags.map((t) => ({ value: t, label: t }))}
@@ -866,14 +868,14 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
 
               <Col xs={24}>
                 <Form.Item
-                  label="🖼️ Imagen / Portada"
+                  label={`🖼️ ${t('seriesForm.fieldImage')}`}
                   name="imageUrl"
-                  help="Pega una URL o sube un archivo desde tu computadora"
+                  help={t('seriesForm.helpImage')}
                 >
                   <Space.Compact style={{ width: '100%' }}>
                     <Input
                       size="large"
-                      placeholder="https://example.com/imagen.jpg"
+                      placeholder={t('seriesForm.hintImage')}
                     />
                     <Upload
                       accept="image/*"
@@ -885,7 +887,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                         loading={uploading}
                         size="large"
                       >
-                        {uploading ? 'Subiendo...' : 'Subir'}
+                        {uploading ? t('seriesForm.uploadingLabel') : t('seriesForm.uploadButton')}
                       </Button>
                     </Upload>
                   </Space.Compact>
@@ -895,9 +897,9 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
               {imageUrl && (
                 <Col xs={24}>
                   <Form.Item
-                    label="📍 Posición de imagen en catálogo"
+                    label={`📍 ${t('seriesForm.fieldImagePosition')}`}
                     name="imagePosition"
-                    help="Seleccioná qué parte de la imagen se ve en las cards"
+                    help={t('seriesForm.helpImagePosition')}
                   >
                     <ImagePositionSelector imageUrl={imageUrl} />
                   </Form.Item>
@@ -907,11 +909,11 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
           </Card>
 
           {/* Reparto */}
-          <Card type="inner" title="👥 Reparto" style={{ marginBottom: 24 }}>
+          <Card type="inner" title={`👥 ${t('seriesForm.sectionCast')}`} style={{ marginBottom: 24 }}>
             {showSeasons && (
               <Alert
-                title="Reparto principal de la serie"
-                description="Este es el reparto que aparece en todas las temporadas. Para agregar reparto específico de cada temporada, usa el botón 'Editar' junto a cada temporada abajo."
+                title={t('seriesForm.castAlertTitle')}
+                description={t('seriesForm.castAlertDescription')}
                 type="info"
                 showIcon
                 style={{ marginBottom: 16 }}
@@ -924,8 +926,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                 marginBottom: 12,
               }}
             >
-              Para emparejar personajes, asigna el mismo numero en
-              &quot;Pareja&quot; (ej: 1 y 1 = primera pareja)
+              {t('seriesForm.castPairingHint')}
             </div>
             <Form.List name="actors">
               {(fields, { add, remove }) => (
@@ -939,7 +940,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                       >
                         <AutoComplete
                           options={actors.map((a) => ({ value: a }))}
-                          placeholder="Nombre del actor"
+                          placeholder={t('seriesForm.hintActorName')}
                           filterOption={(inputValue, option) =>
                             option!.value
                               .toLowerCase()
@@ -952,7 +953,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                         name={[name, 'character']}
                         style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
                       >
-                        <Input placeholder="Personaje" />
+                        <Input placeholder={t('seriesForm.hintCharacter')} />
                       </Form.Item>
                       <Form.Item
                         {...restField}
@@ -960,7 +961,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                         valuePropName="checked"
                         style={{ marginBottom: 0 }}
                       >
-                        <Checkbox>Protagonista</Checkbox>
+                        <Checkbox>{t('seriesForm.fieldIsMain')}</Checkbox>
                       </Form.Item>
                       <Form.Item
                         {...restField}
@@ -968,7 +969,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                         style={{ marginBottom: 0, width: 80 }}
                       >
                         <InputNumber
-                          placeholder="Pareja"
+                          placeholder={t('seriesForm.hintPairingGroup')}
                           min={1}
                           max={20}
                           style={{ width: '100%' }}
@@ -984,7 +985,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                       block
                       icon={<PlusOutlined />}
                     >
-                      Agregar Actor
+                      {t('seriesForm.addActorButton')}
                     </Button>
                   </Form.Item>
                 </>
@@ -993,7 +994,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
           </Card>
 
           {/* Directores */}
-          <Card type="inner" title="🎬 Directores" style={{ marginBottom: 24 }}>
+          <Card type="inner" title={`🎬 ${t('seriesForm.sectionDirectors')}`} style={{ marginBottom: 24 }}>
             <Form.List name="directors">
               {(fields, { add, remove }) => (
                 <>
@@ -1006,7 +1007,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                       >
                         <AutoComplete
                           options={directors.map((d) => ({ value: d }))}
-                          placeholder="Nombre del director"
+                          placeholder={t('seriesForm.hintDirectorName')}
                           filterOption={(inputValue, option) =>
                             option!.value
                               .toLowerCase()
@@ -1024,7 +1025,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                       block
                       icon={<PlusOutlined />}
                     >
-                      Agregar Director
+                      {t('seriesForm.addDirectorButton')}
                     </Button>
                   </Form.Item>
                 </>
@@ -1033,7 +1034,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
           </Card>
 
           {/* Donde Ver */}
-          <Card type="inner" title="Donde Ver" style={{ marginBottom: 24 }}>
+          <Card type="inner" title={t('seriesForm.sectionWatchLinks')} style={{ marginBottom: 24 }}>
             <Form.List name="watchLinks">
               {(fields, { add, remove }) => (
                 <>
@@ -1045,7 +1046,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                         style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
                       >
                         <Select
-                          placeholder="Plataforma"
+                          placeholder={t('seriesForm.fieldPlatform')}
                           options={[
                             { value: 'YouTube', label: 'YouTube' },
                             { value: 'Viki', label: 'Viki' },
@@ -1063,7 +1064,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                         name={[name, 'url']}
                         style={{ marginBottom: 0, flex: 2, minWidth: 0 }}
                       >
-                        <Input placeholder="URL del contenido" />
+                        <Input placeholder={t('seriesForm.hintWatchUrl')} />
                       </Form.Item>
                       <Form.Item
                         {...restField}
@@ -1072,7 +1073,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                         initialValue={true}
                         style={{ marginBottom: 0 }}
                       >
-                        <Checkbox>Oficial</Checkbox>
+                        <Checkbox>{t('seriesForm.fieldOfficial')}</Checkbox>
                       </Form.Item>
                       <MinusCircleOutlined onClick={() => remove(name)} />
                     </div>
@@ -1084,7 +1085,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                       block
                       icon={<PlusOutlined />}
                     >
-                      Agregar Plataforma
+                      {t('seriesForm.addPlatformButton')}
                     </Button>
                   </Form.Item>
                 </>
@@ -1100,11 +1101,11 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
               style={{ marginBottom: 24 }}
             >
               <Alert
-                title="Información básica de temporadas"
+                title={t('seriesForm.seasonAlertTitle')}
                 description={
                   mode === 'edit'
-                    ? "Usa el botón 'Editar' junto a cada temporada para agregar reparto específico, sinopsis, episodios, comentarios y ratings."
-                    : 'Primero guarda la serie, luego podrás editar cada temporada en detalle para agregar reparto, sinopsis, episodios, etc.'
+                    ? t('seriesForm.seasonAlertEdit')
+                    : t('seriesForm.seasonAlertCreate')
                 }
                 type="info"
                 showIcon
@@ -1126,9 +1127,9 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                           <Form.Item
                             {...restField}
                             name={[name, 'seasonNumber']}
-                            label="Temporada"
+                            label={t('seriesForm.fieldSeasonNumber')}
                             rules={[
-                              { required: true, message: 'Número requerido' },
+                              { required: true, message: t('seriesForm.requiredSeasonNumber') },
                             ]}
                             style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
                           >
@@ -1142,7 +1143,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                           <Form.Item
                             {...restField}
                             name={[name, 'episodeCount']}
-                            label="Capítulos"
+                            label={t('seriesForm.fieldEpisodeCount')}
                             style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
                           >
                             <InputNumber
@@ -1155,7 +1156,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                           <Form.Item
                             {...restField}
                             name={[name, 'year']}
-                            label="Año"
+                            label={t('seriesForm.fieldYear')}
                             style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
                           >
                             <InputNumber
@@ -1175,7 +1176,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                                 icon={<EditOutlined />}
                                 onClick={(e) => e.stopPropagation()}
                               >
-                                Editar
+                                {t('seriesForm.editSeasonButton')}
                               </Button>
                             </Link>
                           )}
@@ -1203,16 +1204,16 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
           {/* Series Relacionadas */}
           <Card
             type="inner"
-            title="🔗 Series Relacionadas"
+            title={`🔗 ${t('seriesForm.sectionRelated')}`}
             style={{ marginBottom: 24 }}
           >
             <Form.Item
               name="relatedSeriesIds"
-              help="Busca por título para vincular series que comparten personajes o historia"
+              help={t('seriesForm.helpRelated')}
             >
               <Select
                 mode="multiple"
-                placeholder="Busca y selecciona series relacionadas..."
+                placeholder={t('seriesForm.hintRelatedSeries')}
                 loading={searchingRelated}
                 onSearch={handleSearchRelatedSeries}
                 filterOption={false}
@@ -1224,7 +1225,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                   label: `${s.title}${s.year ? ` (${s.year})` : ''}`,
                 }))}
                 notFoundContent={
-                  searchingRelated ? 'Buscando...' : 'Escribe para buscar'
+                  searchingRelated ? t('seriesForm.relatedSearching') : t('seriesForm.relatedEmpty')
                 }
               />
             </Form.Item>
@@ -1233,7 +1234,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
           {/* Contenido Relacionado */}
           <Card
             type="inner"
-            title="📹 Contenido Relacionado"
+            title={`📹 ${t('seriesForm.sectionContent')}`}
             style={{ marginBottom: 24 }}
           >
             {mode === 'edit' && initialData?.id ? (
@@ -1256,10 +1257,10 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                 size="large"
                 loading={loading}
               >
-                {mode === 'create' ? 'Crear Serie' : 'Guardar Cambios'}
+                {mode === 'create' ? t('seriesForm.createButton') : t('seriesForm.saveButton')}
               </Button>
               <Button size="large" onClick={handleCancel}>
-                Cancelar
+                {t('seriesForm.cancelButton')}
               </Button>
             </Space>
           </Form.Item>
@@ -1267,7 +1268,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
       </Card>
 
       <Modal
-        title="Crear nuevo universo"
+        title={t('seriesForm.universeModalTitle')}
         open={newUniverseModalOpen}
         onOk={handleCreateUniverse}
         onCancel={() => {
@@ -1276,8 +1277,8 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
           setNewUniverseDescription('');
         }}
         confirmLoading={creatingUniverse}
-        okText="Crear"
-        cancelText="Cancelar"
+        okText={t('seriesForm.universeCreateButton')}
+        cancelText={t('seriesForm.universeCancelButton')}
         okButtonProps={{ disabled: !newUniverseName.trim() }}
       >
         <div
@@ -1289,7 +1290,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
           }}
         >
           <Input
-            placeholder="Nombre del universo"
+            placeholder={t('seriesForm.universeNamePlaceholder')}
             value={newUniverseName}
             onChange={(e) => setNewUniverseName(e.target.value)}
             onPressEnter={() =>
@@ -1297,7 +1298,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
             }
           />
           <Input.TextArea
-            placeholder="Descripción (opcional)"
+            placeholder={t('seriesForm.universeDescriptionPlaceholder')}
             value={newUniverseDescription}
             onChange={(e) => setNewUniverseDescription(e.target.value)}
             rows={3}
