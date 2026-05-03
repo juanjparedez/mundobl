@@ -379,6 +379,48 @@ type TranslationShape = {
     deleteSuccess: string;
     deleteError: string;
   };
+  adminUsers: {
+    title: string;
+    subtitle: string;
+    statsTotal: string;
+    statsBanned: string;
+    statsIps: string;
+    searchPlaceholder: string;
+    sectionUsers: string;
+    sectionBannedIps: string;
+    columnUser: string;
+    columnRole: string;
+    columnCreatedAt: string;
+    columnActions: string;
+    columnIp: string;
+    columnReason: string;
+    columnDate: string;
+    tagBanned: string;
+    actionBan: string;
+    actionUnban: string;
+    actionUnblockIp: string;
+    banTitle: string;
+    banDescription: string;
+    unbanTitle: string;
+    unbanDescription: string;
+    roleAdmin: string;
+    roleModerator: string;
+    roleVisitor: string;
+    ipPlaceholder: string;
+    ipReasonPlaceholder: string;
+    ipBlockButton: string;
+    ipMissingWarning: string;
+    ipBlockSuccess: string;
+    ipBlockError: string;
+    ipUnblockSuccess: string;
+    ipUnblockError: string;
+    loadError: string;
+    roleUpdateSuccess: string;
+    roleUpdateError: string;
+    banSuccess: string;
+    unbanSuccess: string;
+    banError: string;
+  };
 };
 
 const es: TranslationShape = {
@@ -767,6 +809,48 @@ const es: TranslationShape = {
     deleteSuccess: 'Sitio eliminado correctamente',
     deleteError: 'Error al eliminar el sitio',
   },
+  adminUsers: {
+    title: 'Administracion de Usuarios',
+    subtitle: 'Gestion de usuarios, roles y IPs bloqueadas.',
+    statsTotal: 'Total usuarios',
+    statsBanned: 'Baneados',
+    statsIps: 'IPs bloqueadas',
+    searchPlaceholder: 'Buscar por nombre o email...',
+    sectionUsers: 'Usuarios',
+    sectionBannedIps: 'IPs Bloqueadas',
+    columnUser: 'Usuario',
+    columnRole: 'Rol',
+    columnCreatedAt: 'Registro',
+    columnActions: 'Acciones',
+    columnIp: 'IP',
+    columnReason: 'Razon',
+    columnDate: 'Fecha',
+    tagBanned: 'Baneado',
+    actionBan: 'Banear',
+    actionUnban: 'Desbanear',
+    actionUnblockIp: 'Desbloquear',
+    banTitle: 'Banear usuario?',
+    banDescription: 'El usuario no podra acceder al sitio',
+    unbanTitle: 'Desbanear usuario?',
+    unbanDescription: 'El usuario podra acceder nuevamente',
+    roleAdmin: 'Administrador',
+    roleModerator: 'Moderador',
+    roleVisitor: 'Visitante',
+    ipPlaceholder: 'IP (ej: 192.168.1.1)',
+    ipReasonPlaceholder: 'Razon (opcional)',
+    ipBlockButton: 'Bloquear',
+    ipMissingWarning: 'Ingresa una IP',
+    ipBlockSuccess: 'IP bloqueada',
+    ipBlockError: 'Error al bloquear IP',
+    ipUnblockSuccess: 'IP desbloqueada',
+    ipUnblockError: 'Error al desbloquear IP',
+    loadError: 'Error al cargar usuarios',
+    roleUpdateSuccess: 'Rol actualizado',
+    roleUpdateError: 'Error al cambiar rol',
+    banSuccess: 'Usuario baneado',
+    unbanSuccess: 'Usuario desbaneado',
+    banError: 'Error al banear usuario',
+  },
 };
 
 const en: TranslationShape = {
@@ -1153,6 +1237,48 @@ const en: TranslationShape = {
     saveError: 'Error saving site',
     deleteSuccess: 'Site deleted successfully',
     deleteError: 'Error deleting site',
+  },
+  adminUsers: {
+    title: 'User Management',
+    subtitle: 'Manage users, roles and blocked IPs.',
+    statsTotal: 'Total users',
+    statsBanned: 'Banned',
+    statsIps: 'Blocked IPs',
+    searchPlaceholder: 'Search by name or email...',
+    sectionUsers: 'Users',
+    sectionBannedIps: 'Blocked IPs',
+    columnUser: 'User',
+    columnRole: 'Role',
+    columnCreatedAt: 'Registered',
+    columnActions: 'Actions',
+    columnIp: 'IP',
+    columnReason: 'Reason',
+    columnDate: 'Date',
+    tagBanned: 'Banned',
+    actionBan: 'Ban',
+    actionUnban: 'Unban',
+    actionUnblockIp: 'Unblock',
+    banTitle: 'Ban user?',
+    banDescription: 'The user will not be able to access the site',
+    unbanTitle: 'Unban user?',
+    unbanDescription: 'The user will be able to access again',
+    roleAdmin: 'Administrator',
+    roleModerator: 'Moderator',
+    roleVisitor: 'Visitor',
+    ipPlaceholder: 'IP (e.g. 192.168.1.1)',
+    ipReasonPlaceholder: 'Reason (optional)',
+    ipBlockButton: 'Block',
+    ipMissingWarning: 'Enter an IP address',
+    ipBlockSuccess: 'IP blocked',
+    ipBlockError: 'Error blocking IP',
+    ipUnblockSuccess: 'IP unblocked',
+    ipUnblockError: 'Error unblocking IP',
+    loadError: 'Error loading users',
+    roleUpdateSuccess: 'Role updated',
+    roleUpdateError: 'Error changing role',
+    banSuccess: 'User banned',
+    unbanSuccess: 'User unbanned',
+    banError: 'Error banning user',
   },
 };
 
