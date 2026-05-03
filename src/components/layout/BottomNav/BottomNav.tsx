@@ -15,6 +15,7 @@ import {
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { useTheme } from '@/lib/providers/ThemeProvider';
 import { ROUTES } from '@/constants/navigation';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 import './BottomNav.css';
 
 interface NavItem {
@@ -29,6 +30,7 @@ export function BottomNav() {
   const pathname = usePathname();
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
+  const { t } = useLocale();
   const { data: session, status } = useSession();
 
   const isAdmin = session?.user?.role === 'ADMIN';
@@ -41,19 +43,19 @@ export function BottomNav() {
     {
       key: 'catalogo',
       icon: <AppstoreOutlined />,
-      label: 'Catálogo',
+      label: t('bottomNav.catalog'),
       path: ROUTES.CATALOGO,
     },
     {
       key: 'watching',
       icon: <PlayCircleOutlined />,
-      label: 'Viendo',
+      label: t('bottomNav.watching'),
       path: ROUTES.WATCHING,
     },
     {
       key: 'feedback',
       icon: <CommentOutlined />,
-      label: 'Feedback',
+      label: t('bottomNav.feedback'),
       path: ROUTES.FEEDBACK,
     },
     ...(canAccessAdmin
@@ -61,7 +63,7 @@ export function BottomNav() {
           {
             key: 'admin',
             icon: <SettingOutlined />,
-            label: 'Admin',
+            label: t('bottomNav.admin'),
             path: ROUTES.ADMIN,
           },
         ]
@@ -71,7 +73,7 @@ export function BottomNav() {
           {
             key: 'loading',
             icon: <LoadingOutlined />,
-            label: 'Cargando',
+            label: t('bottomNav.loading'),
           },
         ]
       : !session
@@ -79,7 +81,7 @@ export function BottomNav() {
             {
               key: 'login',
               icon: <LoginOutlined />,
-              label: 'Entrar',
+              label: t('bottomNav.login'),
               onClick: () => signIn('google'),
             },
           ]
@@ -87,14 +89,15 @@ export function BottomNav() {
             {
               key: 'profile',
               icon: <UserOutlined />,
-              label: session.user?.name?.split(' ')[0] || 'Salir',
+              label:
+                session.user?.name?.split(' ')[0] || t('bottomNav.logout'),
               onClick: () => signOut({ callbackUrl: '/' }),
             },
           ]),
   ];
 
   return (
-    <nav className="bottom-nav" aria-label="Navegación principal">
+    <nav className="bottom-nav" aria-label={t('bottomNav.mainNavigation')}>
       {navItems.map((item) => (
         <button
           key={item.key}
@@ -113,13 +116,15 @@ export function BottomNav() {
         className="bottom-nav-item"
         onClick={toggleTheme}
         aria-label={
-          theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'
+          theme === 'dark'
+            ? t('bottomNav.switchToLight')
+            : t('bottomNav.switchToDark')
         }
       >
         <span className="bottom-nav-item-icon" aria-hidden="true">
           {theme === 'dark' ? <BulbFilled /> : <BulbOutlined />}
         </span>
-        <span className="bottom-nav-item-label">Tema</span>
+        <span className="bottom-nav-item-label">{t('bottomNav.theme')}</span>
       </button>
     </nav>
   );

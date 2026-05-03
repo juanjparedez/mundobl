@@ -145,6 +145,25 @@
   color: var(--primary-color) !important;
 }
 
+.sidebar-locale-selector {
+  padding: var(--spacing-xs) var(--spacing-md);
+  border-bottom: 1px solid var(--border-color-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+}
+
+.sidebar-locale-label {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.sidebar-locale-select {
+  min-width: 120px;
+}
+
 /* Theme toggle en el sidebar */
 .sidebar-theme-toggle {
   display: flex;
