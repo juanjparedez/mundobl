@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Drawer, Segmented, Select, Button, Switch, Popconfirm } from 'antd';
 import { signOut } from 'next-auth/react';
 import { useTheme } from '@/lib/providers/ThemeProvider';
@@ -9,6 +9,13 @@ import { useMessage } from '@/hooks/useMessage';
 import { LOCALE_LABELS, SUPPORTED_LOCALES } from '@/i18n/config';
 import { ACCENT_PRESETS } from '@/lib/theme.config';
 import { resetServiceWorker } from '@/lib/reset-recovery';
+import {
+  enablePush,
+  disablePush,
+  getPushPermission,
+  isPushEnabled,
+  type PushPermission,
+} from '@/lib/web-push-prefs';
 import type {
   AccentPresetKey,
   ToneKey,
@@ -48,6 +55,29 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
   const message = useMessage();
   const [clearing, setClearing] = useState(false);
   const [resettingSw, setResettingSw] = useState(false);
+  const [pushPermission, setPushPermission] =
+    useState<PushPermission>('default');
+  const [pushEnabled, setPushEnabled] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    setPushPermission(getPushPermission());
+    setPushEnabled(isPushEnabled());
+  }, [open]);
+
+  const handleTogglePush = async (next: boolean) => {
+    if (!next) {
+      disablePush();
+      setPushEnabled(false);
+      return;
+    }
+    const res = await enablePush();
+    setPushPermission(res.permission);
+    setPushEnabled(res.ok);
+    if (res.permission === 'denied') {
+      message.warning(t('settings.pushDeniedHint'));
+    }
+  };
 
   const handleClearCaches = async () => {
     setClearing(true);
@@ -269,6 +299,36 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
             checked={saver === 'on'}
             onChange={(v) => setSaver(v ? 'on' : 'off')}
             aria-label={t('settings.saverLabel')}
+          />
+        </div>
+      </section>
+
+      {/* Notificaciones ─────────────────────────────── */}
+      <section className="settings-panel__section">
+        <h3 className="settings-panel__section-title">
+          {t('settings.sectionNotifications')}
+        </h3>
+
+        <div className="settings-panel__field settings-panel__field--inline">
+          <div>
+            <label className="settings-panel__label">
+              {t('settings.pushLabel')}
+            </label>
+            <p className="settings-panel__hint">
+              {pushPermission === 'unsupported'
+                ? t('settings.pushUnsupported')
+                : pushPermission === 'denied'
+                  ? t('settings.pushDeniedHint')
+                  : t('settings.pushDescription')}
+            </p>
+          </div>
+          <Switch
+            checked={pushEnabled}
+            disabled={
+              pushPermission === 'unsupported' || pushPermission === 'denied'
+            }
+            onChange={handleTogglePush}
+            aria-label={t('settings.pushLabel')}
           />
         </div>
       </section>
