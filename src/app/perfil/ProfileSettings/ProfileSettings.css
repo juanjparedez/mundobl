@@ -50,3 +50,27 @@
   gap: var(--spacing-xs);
   margin-top: auto;
 }
+
+.profile-settings-delete__intro {
+  margin: 0 0 var(--spacing-sm) 0;
+  color: var(--text-secondary);
+}
+
+.profile-settings-delete__policy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-sm);
+}
+
+.profile-settings-delete__email-label {
+  margin: 0 0 6px 0;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.profile-settings-delete__email-hint {
+  margin: 8px 0 0 0;
+  color: var(--text-tertiary);
+  font-size: var(--font-size-sm);
+}

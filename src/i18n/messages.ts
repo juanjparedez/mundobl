@@ -311,6 +311,22 @@ type TranslationShape = {
     settingsDangerHint: string;
     settingsExportData: string;
     settingsComingSoon: string;
+    settingsIrreversible: string;
+    settingsExportSuccess: string;
+    settingsExportError: string;
+    settingsDeleteTitle: string;
+    settingsDeleteIntro: string;
+    settingsDeletePolicyKeep: string;
+    settingsDeletePolicyAnonymize: string;
+    settingsDeletePolicyDelete: string;
+    settingsDeleteEmailLabel: string;
+    settingsDeleteEmailPlaceholder: string;
+    settingsDeleteEmailHint: string;
+    settingsDeleteConfirmButton: string;
+    settingsDeleteCancelButton: string;
+    settingsDeleteSuccess: string;
+    settingsDeleteError: string;
+    settingsDeleteMissingEmail: string;
   };
   novedades: {
     title: string;
@@ -788,6 +804,10 @@ type TranslationShape = {
     roleAdmin: string;
     roleModerator: string;
     roleVisitor: string;
+    filterAllRoles: string;
+    filterOnlyAdmins: string;
+    filterOnlyModerators: string;
+    filterOnlyVisitors: string;
     ipPlaceholder: string;
     ipReasonPlaceholder: string;
     ipBlockButton: string;
@@ -1613,9 +1633,30 @@ const es: TranslationShape = {
       'Soluciona problemas raros: limpiá el cache local, reseteá el Service Worker o cerrá sesión en todos los dispositivos.',
     settingsDangerTitle: 'Zona peligrosa',
     settingsDangerHint:
-      'Exportar tus datos o eliminar tu cuenta. Próximamente disponible.',
+      'Exporta tus datos o elimina tu cuenta con confirmación por email.',
     settingsExportData: 'Exportar mis datos',
     settingsComingSoon: 'Próximamente',
+    settingsIrreversible: 'Irreversible',
+    settingsExportSuccess: 'Tu archivo JSON se descargó correctamente.',
+    settingsExportError: 'No se pudo exportar tu cuenta en este momento.',
+    settingsDeleteTitle: 'Eliminar cuenta',
+    settingsDeleteIntro:
+      'Esta acción elimina tu cuenta y datos personales. Elegí qué hacer con tus comentarios públicos.',
+    settingsDeletePolicyKeep:
+      'Conservar comentarios públicos (la autoría puede anonimizarse)',
+    settingsDeletePolicyAnonymize:
+      'Anonimizar comentarios públicos (recomendado)',
+    settingsDeletePolicyDelete: 'Eliminar todos mis comentarios públicos',
+    settingsDeleteEmailLabel:
+      'Escribe tu email para confirmar la eliminación de la cuenta',
+    settingsDeleteEmailPlaceholder: 'tu-email@ejemplo.com',
+    settingsDeleteEmailHint: 'Email esperado:',
+    settingsDeleteConfirmButton: 'Eliminar cuenta',
+    settingsDeleteCancelButton: 'Cancelar',
+    settingsDeleteSuccess: 'Tu cuenta fue eliminada.',
+    settingsDeleteError: 'No se pudo eliminar tu cuenta.',
+    settingsDeleteMissingEmail:
+      'No encontramos tu email de sesión para confirmar la acción.',
   },
   novedades: {
     title: 'Novedades',
@@ -2111,6 +2152,10 @@ const es: TranslationShape = {
     roleAdmin: 'Administrador',
     roleModerator: 'Moderador',
     roleVisitor: 'Visitante',
+    filterAllRoles: 'Todos los roles',
+    filterOnlyAdmins: 'Solo administradores',
+    filterOnlyModerators: 'Solo moderadores',
+    filterOnlyVisitors: 'Solo visitantes',
     ipPlaceholder: 'IP (ej: 192.168.1.1)',
     ipReasonPlaceholder: 'Razon (opcional)',
     ipBlockButton: 'Bloquear',
@@ -2945,9 +2990,29 @@ const en: TranslationShape = {
     settingsSessionHint:
       'Fix odd issues: clear local cache, reset the service worker or sign out of every device.',
     settingsDangerTitle: 'Danger zone',
-    settingsDangerHint: 'Export your data or delete your account. Coming soon.',
+    settingsDangerHint:
+      'Export your data or delete your account with email confirmation.',
     settingsExportData: 'Export my data',
     settingsComingSoon: 'Coming soon',
+    settingsIrreversible: 'Irreversible',
+    settingsExportSuccess: 'Your JSON file was downloaded successfully.',
+    settingsExportError: 'Could not export your account right now.',
+    settingsDeleteTitle: 'Delete account',
+    settingsDeleteIntro:
+      'This action removes your account and personal data. Choose what to do with your public comments.',
+    settingsDeletePolicyKeep:
+      'Keep public comments (authorship may be anonymized)',
+    settingsDeletePolicyAnonymize: 'Anonymize public comments (recommended)',
+    settingsDeletePolicyDelete: 'Delete all my public comments',
+    settingsDeleteEmailLabel: 'Type your email to confirm account deletion',
+    settingsDeleteEmailPlaceholder: 'your-email@example.com',
+    settingsDeleteEmailHint: 'Expected email:',
+    settingsDeleteConfirmButton: 'Delete account',
+    settingsDeleteCancelButton: 'Cancel',
+    settingsDeleteSuccess: 'Your account has been deleted.',
+    settingsDeleteError: 'Could not delete your account.',
+    settingsDeleteMissingEmail:
+      'We could not read your session email to confirm this action.',
   },
   novedades: {
     title: "What's new",
@@ -3440,6 +3505,10 @@ const en: TranslationShape = {
     roleAdmin: 'Administrator',
     roleModerator: 'Moderator',
     roleVisitor: 'Visitor',
+    filterAllRoles: 'All roles',
+    filterOnlyAdmins: 'Only administrators',
+    filterOnlyModerators: 'Only moderators',
+    filterOnlyVisitors: 'Only visitors',
     ipPlaceholder: 'IP (e.g. 192.168.1.1)',
     ipReasonPlaceholder: 'Reason (optional)',
     ipBlockButton: 'Block',
