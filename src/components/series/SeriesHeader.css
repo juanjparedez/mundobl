@@ -14,6 +14,17 @@
   opacity: 0.58;
 }
 
+@media (max-width: 768px) {
+  .series-hero__backdrop {
+    display: none;
+  }
+}
+
+.series-hero__backdrop-img {
+  object-fit: cover;
+  object-position: center 22%;
+}
+
 .series-hero__veil {
   position: absolute;
   inset: 0;

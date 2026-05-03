@@ -215,11 +215,9 @@ export function CurrentlyWatchingDashboard() {
                       alt={item.series.title}
                       width={400}
                       height={225}
-                      style={{
-                        width: '100%',
-                        height: 'auto',
-                        objectFit: 'cover',
-                      }}
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
+                      quality={65}
+                      className="watching-card__cover"
                     />
                   </div>
                 ) : null

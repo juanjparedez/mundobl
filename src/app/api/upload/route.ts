@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-helpers';
 import { uploadImage } from '@/lib/supabase';
+import { processPosterImage } from '@/lib/image-processing';
 
 export async function POST(request: NextRequest) {
   try {
@@ -42,24 +43,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate unique filename
+    const bytes = await file.arrayBuffer();
+    const original = Buffer.from(bytes);
+
+    const processed = await processPosterImage(original, file.type);
+
     const timestamp = Date.now();
-    const originalName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-    const filename = `${timestamp}_${originalName}`;
+    const baseName = file.name
+      .replace(/\.[^.]+$/, '')
+      .replace(/[^a-zA-Z0-9.-]/g, '_')
+      .slice(0, 60);
+    const filename = `${timestamp}_${baseName || 'image'}.${processed.ext}`;
     const path = `${folder}/${filename}`;
 
-    // Convert file to buffer
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    // Upload to Supabase Storage
-    const imageUrl = await uploadImage(buffer, path, file.type);
+    const imageUrl = await uploadImage(
+      processed.buffer,
+      path,
+      processed.contentType
+    );
 
     return NextResponse.json({
       url: imageUrl,
       filename,
-      size: file.size,
-      type: file.type,
+      size: processed.buffer.length,
+      type: processed.contentType,
     });
   } catch (error) {
     console.error('Error uploading file:', error);
