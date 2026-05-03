@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import {
-  Card,
   Table,
   Button,
   Input,
@@ -19,22 +18,33 @@ import {
   PlusOutlined,
   EditOutlined,
   DeleteOutlined,
-  SearchOutlined,
   MergeCellsOutlined,
 } from '@ant-design/icons';
 import Link from 'next/link';
 import { useMessage } from '@/hooks/useMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import type { DirectorAdmin } from '@/types/person.types';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { AdminPageHero } from '@/components/admin/AdminPageHero/AdminPageHero';
+import { AdminTableToolbar } from '@/components/admin/AdminTableToolbar/AdminTableToolbar';
+import { AdminAlphabetIndex } from '@/components/admin/AdminAlphabetIndex/AdminAlphabetIndex';
 import { AdminNav } from '../AdminNav';
 import '../admin.css';
 
 const { TextArea } = Input;
 const ALPHABET = '#ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
+function interpolate(template: string, params: Record<string, string | number>) {
+  return Object.entries(params).reduce(
+    (result, [key, value]) => result.replaceAll(`{${key}}`, String(value)),
+    template
+  );
+}
+
 export default function DirectoresAdminPage() {
   const message = useMessage();
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const { t } = useLocale();
   const [directors, setDirectors] = useState<DirectorAdmin[]>([]);
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -56,12 +66,12 @@ export default function DirectoresAdminPage() {
       const data = await response.json();
       setDirectors(data);
     } catch (error) {
-      message.error('Error al cargar los directores');
+      message.error(t('adminDirectors.loadError'));
       console.error(error);
     } finally {
       setLoading(false);
     }
-  }, [message]);
+  }, [message, t]);
 
   useEffect(() => {
     loadDirectors();
@@ -82,15 +92,15 @@ export default function DirectoresAdminPage() {
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(
-        (d) =>
-          d.name.toLowerCase().includes(term) ||
-          d.nationality?.toLowerCase().includes(term)
+        (director) =>
+          director.name.toLowerCase().includes(term) ||
+          director.nationality?.toLowerCase().includes(term)
       );
     }
 
     if (selectedLetter) {
-      filtered = filtered.filter((d) => {
-        const first = d.name.charAt(0).toUpperCase();
+      filtered = filtered.filter((director) => {
+        const first = director.name.charAt(0).toUpperCase();
         if (selectedLetter === '#') return !/[A-Z]/.test(first);
         return first === selectedLetter;
       });
@@ -131,19 +141,19 @@ export default function DirectoresAdminPage() {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Error al guardar');
+        throw new Error(error.error || t('adminDirectors.saveError'));
       }
 
       message.success(
         editingDirector
-          ? 'Director actualizado exitosamente'
-          : 'Director creado exitosamente'
+          ? t('adminDirectors.saveUpdateSuccess')
+          : t('adminDirectors.saveCreateSuccess')
       );
       handleCloseModal();
       loadDirectors();
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Error al guardar el director';
+        error instanceof Error ? error.message : t('adminDirectors.saveError');
       message.error(errorMessage);
     }
   };
@@ -156,16 +166,14 @@ export default function DirectoresAdminPage() {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Error al eliminar');
+        throw new Error(error.error || t('adminDirectors.deleteError'));
       }
 
-      message.success('Director eliminado correctamente');
+      message.success(t('adminDirectors.deleteSuccess'));
       loadDirectors();
     } catch (error) {
       const errorMessage =
-        error instanceof Error
-          ? error.message
-          : 'Error al eliminar el director';
+        error instanceof Error ? error.message : t('adminDirectors.deleteError');
       message.error(errorMessage);
     }
   };
@@ -173,6 +181,7 @@ export default function DirectoresAdminPage() {
   const handleMerge = async () => {
     if (!mergeTarget || selectedRowKeys.length !== 2) return;
     const sourceId = selectedRowKeys.find((id) => id !== mergeTarget);
+
     try {
       const response = await fetch('/api/directors/merge', {
         method: 'POST',
@@ -181,16 +190,16 @@ export default function DirectoresAdminPage() {
       });
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Error al fusionar');
+        throw new Error(error.error || t('adminDirectors.mergeError'));
       }
-      message.success('Directores fusionados exitosamente');
+      message.success(t('adminDirectors.mergeSuccess'));
       setMergeModalOpen(false);
       setSelectedRowKeys([]);
       setMergeTarget(null);
       loadDirectors();
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Error al fusionar directores';
+        error instanceof Error ? error.message : t('adminDirectors.mergeError');
       message.error(errorMessage);
     }
   };
@@ -204,7 +213,7 @@ export default function DirectoresAdminPage() {
 
   const columns = [
     {
-      title: 'Nombre',
+      title: t('adminDirectors.columnName'),
       dataIndex: 'name',
       key: 'name',
       sorter: (a: DirectorAdmin, b: DirectorAdmin) =>
@@ -216,14 +225,15 @@ export default function DirectoresAdminPage() {
       ),
     },
     {
-      title: 'Nacionalidad',
+      title: t('adminDirectors.columnNationality'),
       dataIndex: 'nationality',
       key: 'nationality',
-      render: (nationality: string | null) => nationality || '-',
+      render: (nationality: string | null) =>
+        nationality || t('adminDirectors.emptyValue'),
       responsive: ['md' as const],
     },
     {
-      title: 'Series',
+      title: t('adminDirectors.columnSeries'),
       key: 'count',
       render: (record: DirectorAdmin) => {
         const count = record._count?.series || 0;
@@ -233,7 +243,7 @@ export default function DirectoresAdminPage() {
         (a._count?.series || 0) - (b._count?.series || 0),
     },
     {
-      title: 'Acciones',
+      title: t('adminDirectors.columnActions'),
       key: 'actions',
       render: (record: DirectorAdmin) => {
         const count = record._count?.series || 0;
@@ -244,18 +254,20 @@ export default function DirectoresAdminPage() {
               onClick={() => handleOpenModal(record)}
               size="small"
             >
-              {!isMobile && 'Editar'}
+              {!isMobile && t('adminDirectors.actionEdit')}
             </Button>
             <Popconfirm
-              title="¿Eliminar director?"
+              title={t('adminDirectors.deleteTitle')}
               description={
                 count > 0
-                  ? `Este director tiene ${count} series. Primero desvincúlalo.`
-                  : '¿Estás seguro de eliminar este director?'
+                  ? interpolate(t('adminDirectors.deleteBlockedDescription'), {
+                      count,
+                    })
+                  : t('adminDirectors.deleteDescription')
               }
               onConfirm={() => handleDelete(record.id)}
-              okText="Eliminar"
-              cancelText="Cancelar"
+              okText={t('adminDirectors.actionDelete')}
+              cancelText={t('adminDirectors.cancel')}
               okButtonProps={{ danger: true }}
               disabled={count > 0}
             >
@@ -265,7 +277,7 @@ export default function DirectoresAdminPage() {
                 size="small"
                 disabled={count > 0}
               >
-                {!isMobile && 'Eliminar'}
+                {!isMobile && t('adminDirectors.actionDelete')}
               </Button>
             </Popconfirm>
           </Space>
@@ -278,146 +290,153 @@ export default function DirectoresAdminPage() {
     <AppLayout>
       <div className="admin-page-wrapper">
         <AdminNav />
-        <Card
-          title="🎬 Administración de Directores"
-          extra={
+
+        <AdminPageHero
+          title={t('adminDirectors.title')}
+          subtitle={t('adminDirectors.subtitle')}
+          stats={[
+            { label: t('adminDirectors.statsTotal'), value: directors.length },
+            {
+              label: t('adminDirectors.statsFiltered'),
+              value: filteredDirectors.length,
+            },
+            {
+              label: t('adminDirectors.statsSelected'),
+              value: selectedRowKeys.length,
+            },
+          ]}
+        />
+
+        <AdminTableToolbar
+          filters={
             <Button
               type="primary"
               icon={<PlusOutlined />}
               onClick={() => handleOpenModal()}
             >
-              Nuevo Director
+              {t('adminDirectors.newItem')}
             </Button>
           }
-        >
-          <div className="admin-search-bar">
-            <Input
-              className="admin-search-input"
-              placeholder="Buscar por nombre o nacionalidad..."
-              prefix={<SearchOutlined />}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              allowClear
-            />
-            <span className="admin-result-count">
-              {filteredDirectors.length} de {directors.length} directores
-            </span>
-          </div>
+          searchPlaceholder={t('adminDirectors.searchPlaceholder')}
+          searchValue={searchTerm}
+          onSearchChange={setSearchTerm}
+          onSearchSubmit={() => undefined}
+          onSearchClear={() => setSearchTerm('')}
+        />
 
-          <div className="admin-alpha-index">
-            {ALPHABET.map((letter) => {
-              const isAvailable = availableLetters.has(letter);
-              const isActive = selectedLetter === letter;
-              return (
-                <button
-                  key={letter}
-                  className={`admin-alpha-btn ${isActive ? 'admin-alpha-btn--active' : ''} ${!isAvailable ? 'admin-alpha-btn--disabled' : ''}`}
-                  disabled={!isAvailable}
-                  onClick={() => setSelectedLetter(isActive ? null : letter)}
-                >
-                  {letter}
-                </button>
-              );
-            })}
-          </div>
+        <AdminAlphabetIndex
+          letters={ALPHABET}
+          availableLetters={availableLetters}
+          selectedLetter={selectedLetter}
+          onSelectLetter={setSelectedLetter}
+        />
 
-          {selectedRowKeys.length === 2 && (
-            <Button
-              type="primary"
-              icon={<MergeCellsOutlined />}
-              onClick={() => {
-                setMergeTarget(selectedRowKeys[0] as number);
-                setMergeModalOpen(true);
-              }}
-              style={{ marginBottom: 12 }}
-            >
-              Fusionar seleccionados
-            </Button>
-          )}
-
-          <Table
-            dataSource={filteredDirectors}
-            columns={columns}
-            rowKey="id"
-            loading={loading}
-            rowSelection={rowSelection}
-            pagination={{
-              pageSize: 20,
-              showSizeChanger: true,
-              pageSizeOptions: ['10', '20', '50', '100'],
+        {selectedRowKeys.length === 2 && (
+          <Button
+            type="primary"
+            icon={<MergeCellsOutlined />}
+            onClick={() => {
+              setMergeTarget(selectedRowKeys[0] as number);
+              setMergeModalOpen(true);
             }}
-          />
-        </Card>
+            style={{ marginBottom: 12 }}
+          >
+            {t('adminDirectors.mergeSelected')}
+          </Button>
+        )}
+
+        <Table
+          dataSource={filteredDirectors}
+          columns={columns}
+          rowKey="id"
+          loading={loading}
+          rowSelection={rowSelection}
+          pagination={{
+            pageSize: 20,
+            showSizeChanger: true,
+            pageSizeOptions: ['10', '20', '50', '100'],
+          }}
+        />
 
         <Modal
-          title={editingDirector ? 'Editar Director' : 'Nuevo Director'}
+          title={
+            editingDirector
+              ? t('adminDirectors.modalEditTitle')
+              : t('adminDirectors.modalNewTitle')
+          }
           open={modalOpen}
           onCancel={handleCloseModal}
           forceRender
           onOk={() => form.submit()}
-          okText="Guardar"
-          cancelText="Cancelar"
+          okText={t('adminDirectors.save')}
+          cancelText={t('adminDirectors.cancel')}
         >
           <Form form={form} layout="vertical" onFinish={handleSubmit}>
             <Form.Item
-              label="Nombre"
+              label={t('adminDirectors.fieldName')}
               name="name"
-              rules={[{ required: true, message: 'El nombre es requerido' }]}
+              rules={[
+                { required: true, message: t('adminDirectors.requiredName') },
+              ]}
             >
-              <Input placeholder="Nombre del director" />
+              <Input placeholder={t('adminDirectors.hintName')} />
             </Form.Item>
 
-            <Form.Item label="Nacionalidad" name="nationality">
-              <Input placeholder="Ej: Tailandia, Corea del Sur" />
+            <Form.Item
+              label={t('adminDirectors.fieldNationality')}
+              name="nationality"
+            >
+              <Input placeholder={t('adminDirectors.hintNationality')} />
             </Form.Item>
 
-            <Form.Item label="URL de Imagen" name="imageUrl">
-              <Input placeholder="URL de la foto del director (opcional)" />
+            <Form.Item label={t('adminDirectors.fieldImageUrl')} name="imageUrl">
+              <Input placeholder={t('adminDirectors.hintImageUrl')} />
             </Form.Item>
 
-            <Form.Item label="Biografía" name="biography">
-              <TextArea
-                rows={3}
-                placeholder="Breve biografía del director (opcional)"
-              />
+            <Form.Item
+              label={t('adminDirectors.fieldBiography')}
+              name="biography"
+            >
+              <TextArea rows={3} placeholder={t('adminDirectors.hintBiography')} />
             </Form.Item>
           </Form>
         </Modal>
 
         <Modal
-          title="Fusionar Directores"
+          title={t('adminDirectors.mergeModalTitle')}
           open={mergeModalOpen}
           onCancel={() => {
             setMergeModalOpen(false);
             setMergeTarget(null);
           }}
           onOk={handleMerge}
-          okText="Fusionar"
+          okText={t('adminDirectors.mergeSelected')}
           okButtonProps={{ danger: true }}
-          cancelText="Cancelar"
+          cancelText={t('adminDirectors.cancel')}
         >
           <p style={{ marginBottom: 12 }}>
-            Selecciona qué director debe sobrevivir:
+            {t('adminDirectors.mergeSelectSurvivor')}
           </p>
           <Radio.Group
             value={mergeTarget}
-            onChange={(e) => setMergeTarget(e.target.value)}
+            onChange={(event) => setMergeTarget(event.target.value)}
             style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
           >
             {selectedRowKeys.map((id) => {
-              const director = directors.find((d) => d.id === id);
+              const director = directors.find((item) => item.id === id);
               if (!director) return null;
+              const count = director._count?.series || 0;
               return (
                 <Radio key={String(id)} value={id}>
                   <strong>{director.name}</strong> (
-                  {director._count?.series || 0} series)
+                  {interpolate(t('adminDirectors.seriesCount'), { count })})
                 </Radio>
               );
             })}
           </Radio.Group>
           <Alert
             type="warning"
-            title="El director no seleccionado será eliminado y todas sus referencias se moverán al director que sobreviva."
+            message={t('adminDirectors.mergeWarning')}
             style={{ marginTop: 16 }}
           />
         </Modal>

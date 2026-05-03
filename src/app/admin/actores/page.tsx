@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import {
-  Card,
   Table,
   Button,
   Input,
@@ -19,22 +18,33 @@ import {
   PlusOutlined,
   EditOutlined,
   DeleteOutlined,
-  SearchOutlined,
   MergeCellsOutlined,
 } from '@ant-design/icons';
 import Link from 'next/link';
 import { useMessage } from '@/hooks/useMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import type { ActorAdmin } from '@/types/person.types';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { AdminPageHero } from '@/components/admin/AdminPageHero/AdminPageHero';
+import { AdminTableToolbar } from '@/components/admin/AdminTableToolbar/AdminTableToolbar';
+import { AdminAlphabetIndex } from '@/components/admin/AdminAlphabetIndex/AdminAlphabetIndex';
 import { AdminNav } from '../AdminNav';
 import '../admin.css';
 
 const { TextArea } = Input;
 const ALPHABET = '#ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
+function interpolate(template: string, params: Record<string, string | number>) {
+  return Object.entries(params).reduce(
+    (result, [key, value]) => result.replaceAll(`{${key}}`, String(value)),
+    template
+  );
+}
+
 export default function ActoresAdminPage() {
   const message = useMessage();
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const { t } = useLocale();
   const [actors, setActors] = useState<ActorAdmin[]>([]);
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -54,12 +64,12 @@ export default function ActoresAdminPage() {
       const data = await response.json();
       setActors(data);
     } catch (error) {
-      message.error('Error al cargar los actores');
+      message.error(t('adminActors.loadError'));
       console.error(error);
     } finally {
       setLoading(false);
     }
-  }, [message]);
+  }, [message, t]);
 
   useEffect(() => {
     loadActors();
@@ -80,16 +90,16 @@ export default function ActoresAdminPage() {
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
       filtered = filtered.filter(
-        (a) =>
-          a.name.toLowerCase().includes(term) ||
-          a.stageName?.toLowerCase().includes(term) ||
-          a.nationality?.toLowerCase().includes(term)
+        (actor) =>
+          actor.name.toLowerCase().includes(term) ||
+          actor.stageName?.toLowerCase().includes(term) ||
+          actor.nationality?.toLowerCase().includes(term)
       );
     }
 
     if (selectedLetter) {
-      filtered = filtered.filter((a) => {
-        const first = a.name.charAt(0).toUpperCase();
+      filtered = filtered.filter((actor) => {
+        const first = actor.name.charAt(0).toUpperCase();
         if (selectedLetter === '#') return !/[A-Z]/.test(first);
         return first === selectedLetter;
       });
@@ -122,9 +132,7 @@ export default function ActoresAdminPage() {
 
   const handleSubmit = async (values: Record<string, unknown>) => {
     try {
-      const url = editingActor
-        ? `/api/actors/${editingActor.id}`
-        : '/api/actors';
+      const url = editingActor ? `/api/actors/${editingActor.id}` : '/api/actors';
       const method = editingActor ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
@@ -135,19 +143,19 @@ export default function ActoresAdminPage() {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Error al guardar');
+        throw new Error(error.error || t('adminActors.saveError'));
       }
 
       message.success(
         editingActor
-          ? 'Actor actualizado exitosamente'
-          : 'Actor creado exitosamente'
+          ? t('adminActors.saveUpdateSuccess')
+          : t('adminActors.saveCreateSuccess')
       );
       handleCloseModal();
       loadActors();
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Error al guardar el actor';
+        error instanceof Error ? error.message : t('adminActors.saveError');
       message.error(errorMessage);
     }
   };
@@ -160,14 +168,14 @@ export default function ActoresAdminPage() {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Error al eliminar');
+        throw new Error(error.error || t('adminActors.deleteError'));
       }
 
-      message.success('Actor eliminado correctamente');
+      message.success(t('adminActors.deleteSuccess'));
       loadActors();
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Error al eliminar el actor';
+        error instanceof Error ? error.message : t('adminActors.deleteError');
       message.error(errorMessage);
     }
   };
@@ -175,6 +183,7 @@ export default function ActoresAdminPage() {
   const handleMerge = async () => {
     if (!mergeTarget || selectedRowKeys.length !== 2) return;
     const sourceId = selectedRowKeys.find((id) => id !== mergeTarget);
+
     try {
       const response = await fetch('/api/actors/merge', {
         method: 'POST',
@@ -183,16 +192,16 @@ export default function ActoresAdminPage() {
       });
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Error al fusionar');
+        throw new Error(error.error || t('adminActors.mergeError'));
       }
-      message.success('Actores fusionados exitosamente');
+      message.success(t('adminActors.mergeSuccess'));
       setMergeModalOpen(false);
       setSelectedRowKeys([]);
       setMergeTarget(null);
       loadActors();
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Error al fusionar actores';
+        error instanceof Error ? error.message : t('adminActors.mergeError');
       message.error(errorMessage);
     }
   };
@@ -206,32 +215,33 @@ export default function ActoresAdminPage() {
 
   const columns = [
     {
-      title: 'Nombre',
+      title: t('adminActors.columnName'),
       dataIndex: 'name',
       key: 'name',
       sorter: (a: ActorAdmin, b: ActorAdmin) => a.name.localeCompare(b.name),
       render: (name: string, record: ActorAdmin) => (
         <Link href={`/actores/${record.id}`}>
-          <strong>{name}</strong>
+          <strong>{name || t('adminActors.unnamed')}</strong>
         </Link>
       ),
     },
     {
-      title: 'Nombre Artístico',
+      title: t('adminActors.columnStageName'),
       dataIndex: 'stageName',
       key: 'stageName',
-      render: (stageName: string | null) => stageName || '-',
+      render: (stageName: string | null) => stageName || t('adminActors.emptyValue'),
       responsive: ['md' as const],
     },
     {
-      title: 'Nacionalidad',
+      title: t('adminActors.columnNationality'),
       dataIndex: 'nationality',
       key: 'nationality',
-      render: (nationality: string | null) => nationality || '-',
+      render: (nationality: string | null) =>
+        nationality || t('adminActors.emptyValue'),
       responsive: ['md' as const],
     },
     {
-      title: 'Series',
+      title: t('adminActors.columnSeries'),
       key: 'count',
       render: (record: ActorAdmin) => {
         const seriesCount = record._count?.series || 0;
@@ -246,7 +256,7 @@ export default function ActoresAdminPage() {
       },
     },
     {
-      title: 'Acciones',
+      title: t('adminActors.columnActions'),
       key: 'actions',
       render: (record: ActorAdmin) => {
         const total =
@@ -258,18 +268,20 @@ export default function ActoresAdminPage() {
               onClick={() => handleOpenModal(record)}
               size="small"
             >
-              {!isMobile && 'Editar'}
+              {!isMobile && t('adminActors.actionEdit')}
             </Button>
             <Popconfirm
-              title="¿Eliminar actor?"
+              title={t('adminActors.deleteTitle')}
               description={
                 total > 0
-                  ? `Este actor tiene ${total} participaciones. Primero desvincúlalo.`
-                  : '¿Estás seguro de eliminar este actor?'
+                  ? interpolate(t('adminActors.deleteBlockedDescription'), {
+                      count: total,
+                    })
+                  : t('adminActors.deleteDescription')
               }
               onConfirm={() => handleDelete(record.id)}
-              okText="Eliminar"
-              cancelText="Cancelar"
+              okText={t('adminActors.actionDelete')}
+              cancelText={t('adminActors.cancel')}
               okButtonProps={{ danger: true }}
               disabled={total > 0}
             >
@@ -279,7 +291,7 @@ export default function ActoresAdminPage() {
                 size="small"
                 disabled={total > 0}
               >
-                {!isMobile && 'Eliminar'}
+                {!isMobile && t('adminActors.actionDelete')}
               </Button>
             </Popconfirm>
           </Space>
@@ -292,155 +304,147 @@ export default function ActoresAdminPage() {
     <AppLayout>
       <div className="admin-page-wrapper">
         <AdminNav />
-        <Card
-          title="👥 Administración de Actores"
-          extra={
+
+        <AdminPageHero
+          title={t('adminActors.title')}
+          subtitle={t('adminActors.subtitle')}
+          stats={[
+            { label: t('adminActors.statsTotal'), value: actors.length },
+            { label: t('adminActors.statsFiltered'), value: filteredActors.length },
+            { label: t('adminActors.statsSelected'), value: selectedRowKeys.length },
+          ]}
+        />
+
+        <AdminTableToolbar
+          filters={
             <Button
               type="primary"
               icon={<PlusOutlined />}
               onClick={() => handleOpenModal()}
             >
-              Nuevo Actor
+              {t('adminActors.newItem')}
             </Button>
           }
-        >
-          <div className="admin-search-bar">
-            <Input
-              className="admin-search-input"
-              placeholder="Buscar por nombre, nombre artístico o nacionalidad..."
-              prefix={<SearchOutlined />}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              allowClear
-            />
-            <span className="admin-result-count">
-              {filteredActors.length} de {actors.length} actores
-            </span>
-          </div>
+          searchPlaceholder={t('adminActors.searchPlaceholder')}
+          searchValue={searchTerm}
+          onSearchChange={setSearchTerm}
+          onSearchSubmit={() => undefined}
+          onSearchClear={() => setSearchTerm('')}
+        />
 
-          <div className="admin-alpha-index">
-            {ALPHABET.map((letter) => {
-              const isAvailable = availableLetters.has(letter);
-              const isActive = selectedLetter === letter;
-              return (
-                <button
-                  key={letter}
-                  className={`admin-alpha-btn ${isActive ? 'admin-alpha-btn--active' : ''} ${!isAvailable ? 'admin-alpha-btn--disabled' : ''}`}
-                  disabled={!isAvailable}
-                  onClick={() => setSelectedLetter(isActive ? null : letter)}
-                >
-                  {letter}
-                </button>
-              );
-            })}
-          </div>
+        <AdminAlphabetIndex
+          letters={ALPHABET}
+          availableLetters={availableLetters}
+          selectedLetter={selectedLetter}
+          onSelectLetter={setSelectedLetter}
+        />
 
-          {selectedRowKeys.length === 2 && (
-            <Button
-              type="primary"
-              icon={<MergeCellsOutlined />}
-              onClick={() => {
-                setMergeTarget(selectedRowKeys[0] as number);
-                setMergeModalOpen(true);
-              }}
-              style={{ marginBottom: 12 }}
-            >
-              Fusionar seleccionados
-            </Button>
-          )}
-
-          <Table
-            dataSource={filteredActors}
-            columns={columns}
-            rowKey="id"
-            loading={loading}
-            rowSelection={rowSelection}
-            pagination={{
-              pageSize: 20,
-              showSizeChanger: true,
-              pageSizeOptions: ['10', '20', '50', '100'],
+        {selectedRowKeys.length === 2 && (
+          <Button
+            type="primary"
+            icon={<MergeCellsOutlined />}
+            onClick={() => {
+              setMergeTarget(selectedRowKeys[0] as number);
+              setMergeModalOpen(true);
             }}
-          />
-        </Card>
+            style={{ marginBottom: 12 }}
+          >
+            {t('adminActors.mergeSelected')}
+          </Button>
+        )}
+
+        <Table
+          dataSource={filteredActors}
+          columns={columns}
+          rowKey="id"
+          loading={loading}
+          rowSelection={rowSelection}
+          pagination={{
+            pageSize: 20,
+            showSizeChanger: true,
+            pageSizeOptions: ['10', '20', '50', '100'],
+          }}
+        />
 
         <Modal
-          title={editingActor ? 'Editar Actor' : 'Nuevo Actor'}
+          title={
+            editingActor
+              ? t('adminActors.modalEditTitle')
+              : t('adminActors.modalNewTitle')
+          }
           open={modalOpen}
           onCancel={handleCloseModal}
           onOk={() => form.submit()}
-          okText="Guardar"
+          okText={t('adminActors.save')}
           forceRender
-          cancelText="Cancelar"
+          cancelText={t('adminActors.cancel')}
         >
           <Form form={form} layout="vertical" onFinish={handleSubmit}>
             <Form.Item
-              label="Nombre"
+              label={t('adminActors.fieldName')}
               name="name"
-              rules={[{ required: true, message: 'El nombre es requerido' }]}
+              rules={[{ required: true, message: t('adminActors.requiredName') }]}
             >
-              <Input placeholder="Nombre del actor" />
+              <Input placeholder={t('adminActors.hintName')} />
             </Form.Item>
 
-            <Form.Item label="Nombre Artístico" name="stageName">
-              <Input placeholder="Nombre artístico (opcional)" />
+            <Form.Item label={t('adminActors.fieldStageName')} name="stageName">
+              <Input placeholder={t('adminActors.hintStageName')} />
             </Form.Item>
 
-            <Form.Item label="Fecha de Nacimiento" name="birthDate">
+            <Form.Item label={t('adminActors.fieldBirthDate')} name="birthDate">
               <Input type="date" />
             </Form.Item>
 
-            <Form.Item label="Nacionalidad" name="nationality">
-              <Input placeholder="Ej: Tailandia, Corea del Sur" />
+            <Form.Item label={t('adminActors.fieldNationality')} name="nationality">
+              <Input placeholder={t('adminActors.hintNationality')} />
             </Form.Item>
 
-            <Form.Item label="URL de Imagen" name="imageUrl">
-              <Input placeholder="URL de la foto del actor (opcional)" />
+            <Form.Item label={t('adminActors.fieldImageUrl')} name="imageUrl">
+              <Input placeholder={t('adminActors.hintImageUrl')} />
             </Form.Item>
 
-            <Form.Item label="Biografía" name="biography">
-              <TextArea
-                rows={3}
-                placeholder="Breve biografía del actor (opcional)"
-              />
+            <Form.Item label={t('adminActors.fieldBiography')} name="biography">
+              <TextArea rows={3} placeholder={t('adminActors.hintBiography')} />
             </Form.Item>
           </Form>
         </Modal>
 
         <Modal
-          title="Fusionar Actores"
+          title={t('adminActors.mergeModalTitle')}
           open={mergeModalOpen}
           onCancel={() => {
             setMergeModalOpen(false);
             setMergeTarget(null);
           }}
           onOk={handleMerge}
-          okText="Fusionar"
+          okText={t('adminActors.mergeSelected')}
           okButtonProps={{ danger: true }}
-          cancelText="Cancelar"
+          cancelText={t('adminActors.cancel')}
         >
-          <p style={{ marginBottom: 12 }}>
-            Selecciona qué actor debe sobrevivir:
-          </p>
+          <p style={{ marginBottom: 12 }}>{t('adminActors.mergeSelectSurvivor')}</p>
           <Radio.Group
             value={mergeTarget}
-            onChange={(e) => setMergeTarget(e.target.value)}
+            onChange={(event) => setMergeTarget(event.target.value)}
             style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
           >
             {selectedRowKeys.map((id) => {
-              const actor = actors.find((a) => a.id === id);
+              const actor = actors.find((item) => item.id === id);
               if (!actor) return null;
               const total =
                 (actor._count?.series || 0) + (actor._count?.seasons || 0);
+
               return (
                 <Radio key={String(id)} value={id}>
-                  <strong>{actor.name}</strong> ({total} participaciones)
+                  <strong>{actor.name}</strong>{' '}
+                  ({interpolate(t('adminActors.participationCount'), { count: total })})
                 </Radio>
               );
             })}
           </Radio.Group>
           <Alert
             type="warning"
-            title="El actor no seleccionado será eliminado y todas sus referencias se moverán al actor que sobreviva."
+            message={t('adminActors.mergeWarning')}
             style={{ marginTop: 16 }}
           />
         </Modal>
