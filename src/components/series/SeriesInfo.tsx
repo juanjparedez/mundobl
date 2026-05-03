@@ -11,6 +11,8 @@ import {
   MetadataLinkList,
 } from './MetadataPrimitives/MetadataPrimitives';
 import './SeriesInfo.css';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
 
 interface SeriesInfoProps {
   series: {
@@ -110,6 +112,7 @@ function getBasedOnLabel(basedOn: string): string {
 
 export function SeriesInfo({ series }: SeriesInfoProps) {
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const { t } = useLocale();
 
   const fullSpan = isMobile ? 1 : 2;
 
@@ -126,25 +129,25 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
         size="small"
         layout="horizontal"
       >
-        <Descriptions.Item label="Título" span={fullSpan}>
+        <Descriptions.Item label={t('seriesInfo.fieldTitle')} span={fullSpan}>
           {series.title}
         </Descriptions.Item>
 
         {series.originalTitle && series.originalTitle !== series.title && (
-          <Descriptions.Item label="Título Original" span={fullSpan}>
+          <Descriptions.Item label={t('seriesInfo.fieldOriginalTitle')} span={fullSpan}>
             {series.originalTitle}
           </Descriptions.Item>
         )}
 
-        <Descriptions.Item label="Año">
+        <Descriptions.Item label={t('seriesInfo.fieldYear')}>
           {series.year ? (
             <MetadataChip filter="year" value={series.year} />
           ) : (
-            'N/A'
+            t('common.na')
           )}
         </Descriptions.Item>
 
-        <Descriptions.Item label="País">
+        <Descriptions.Item label={t('seriesInfo.fieldCountry')}>
           {series.country ? (
             <MetadataChip
               filter="country"
@@ -153,11 +156,11 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
               label={series.country.name}
             />
           ) : (
-            'N/A'
+            t('common.na')
           )}
         </Descriptions.Item>
 
-        <Descriptions.Item label="Tipo">
+        <Descriptions.Item label={t('seriesInfo.fieldType')}>
           <MetadataChip
             filter="type"
             value={series.type}
@@ -166,37 +169,37 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
           />
         </Descriptions.Item>
 
-        <Descriptions.Item label="Formato">
+        <Descriptions.Item label={t('seriesInfo.fieldFormat')}>
           <MetadataChip
             filter="format"
             value={series.format}
             color={series.format === 'vertical' ? 'orange' : 'blue'}
-            label={series.format === 'vertical' ? '📲 Vertical' : '📱 Regular'}
+            label={series.format === 'vertical' ? `📲 ${t('seriesInfo.formatVertical')}` : `📱 ${t('seriesInfo.formatRegular')}`}
           />
         </Descriptions.Item>
 
         {series.basedOn && (
-          <Descriptions.Item label="Basado en" span={fullSpan}>
+          <Descriptions.Item label={t('seriesInfo.fieldBasedOn')} span={fullSpan}>
             <Tag color="green">{getBasedOnLabel(series.basedOn)}</Tag>
           </Descriptions.Item>
         )}
 
-        <Descriptions.Item label="Temporadas">
+        <Descriptions.Item label={t('seriesInfo.fieldSeasons')}>
           {series.seasons?.length || 0}
         </Descriptions.Item>
 
-        <Descriptions.Item label="Episodios">
-          {totalEpisodes || 'N/A'}
+        <Descriptions.Item label={t('seriesInfo.fieldEpisodes')}>
+          {totalEpisodes || t('common.na')}
         </Descriptions.Item>
 
         {series.soundtrack && (
-          <Descriptions.Item label="BSO" span={fullSpan}>
+          <Descriptions.Item label={t('seriesInfo.fieldSoundtrack')} span={fullSpan}>
             {series.soundtrack}
           </Descriptions.Item>
         )}
 
         {series.productionCompany && (
-          <Descriptions.Item label="Productora" span={fullSpan}>
+          <Descriptions.Item label={t('seriesInfo.fieldProduction')} span={fullSpan}>
             <MetadataLink
               filter="productionCompany"
               value={series.productionCompany.name}
@@ -207,7 +210,7 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
         )}
 
         {series.originalLanguage && (
-          <Descriptions.Item label="Idioma Original" span={fullSpan}>
+          <Descriptions.Item label={t('seriesInfo.fieldLanguage')} span={fullSpan}>
             <MetadataChip
               filter="language"
               value={series.originalLanguage.name}
@@ -217,7 +220,7 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
         )}
 
         {series.dubbings && series.dubbings.length > 0 && (
-          <Descriptions.Item label="Doblajes" span={fullSpan}>
+          <Descriptions.Item label={t('seriesInfo.fieldDubbings')} span={fullSpan}>
             {series.dubbings.map((d) => (
               <Tag key={d.language.name}>{d.language.name}</Tag>
             ))}
@@ -225,7 +228,7 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
         )}
 
         {series.genres && series.genres.length > 0 && (
-          <Descriptions.Item label="Género" span={fullSpan}>
+          <Descriptions.Item label={t('seriesInfo.fieldGenre')} span={fullSpan}>
             <MetadataChipList
               filter="genre"
               items={series.genres.map((g) => ({
@@ -239,7 +242,7 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
         )}
 
         {series.directors && series.directors.length > 0 && (
-          <Descriptions.Item label="Director(es)" span={fullSpan}>
+          <Descriptions.Item label={t('seriesInfo.fieldDirectors')} span={fullSpan}>
             <MetadataLinkList
               filter="director"
               items={series.directors.map((d) => ({
@@ -254,7 +257,7 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
 
       {series.watchLinks && series.watchLinks.length > 0 && (
         <div className="series-info__watch-links">
-          <h4 className="series-info__section-title">Donde Ver</h4>
+          <h4 className="series-info__section-title">{t('seriesInfo.whereToWatch')}</h4>
           <div className="series-info__watch-links-list">
             {series.watchLinks.map((link) => {
               const youtubeId =
@@ -270,7 +273,7 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
                   >
                     <Tag color={link.official ? 'green' : 'default'}>
                       {link.platform}
-                      {!link.official && ' (no oficial)'}
+                      {!link.official && t('seriesInfo.unofficial')}
                     </Tag>
                   </a>
                   {youtubeId && (
@@ -318,14 +321,14 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
               </MetadataLink>
               {sa.character && (
                 <span className="series-info__cast-character">
-                  como {sa.character}
+                  {interpolateMessage(t('seriesInfo.asCharacter'), { character: sa.character })}
                 </span>
               )}
               {sa.isMain && (
                 <span
                   className="series-info__cast-star"
-                  title="Protagonista"
-                  aria-label="Protagonista"
+                  title={t('seriesInfo.protagonist')}
+                  aria-label={t('seriesInfo.protagonist')}
                 >
                   ⭐
                 </span>
@@ -335,7 +338,7 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
 
           return (
             <div className="series-info__cast-section">
-              <h4 className="series-info__section-title">👥 Reparto</h4>
+              <h4 className="series-info__section-title">👥 {t('seriesInfo.castSection')}</h4>
 
               {pairings.size > 0 && (
                 <div className="series-info__pairings">
@@ -344,7 +347,7 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
                     .map(([group, actors]) => (
                       <div key={group} className="series-info__pairing">
                         <span className="series-info__pairing-badge">
-                          💕 Pareja
+                          💕 {t('seriesInfo.couplebadge')}
                         </span>
                         <div className="series-info__pairing-actors">
                           {actors!.map(renderActor)}
@@ -365,21 +368,21 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
 
       {series.synopsis && (
         <div className="series-info__synopsis">
-          <h4 className="series-info__section-title">📖 Sinopsis</h4>
+          <h4 className="series-info__section-title">📖 {t('seriesInfo.synopsisSection')}</h4>
           <div className="series-info__synopsis-content">{series.synopsis}</div>
         </div>
       )}
 
       {series.review && (
         <div className="series-info__review">
-          <h4 className="series-info__section-title">⭐ Reseña Personal</h4>
+          <h4 className="series-info__section-title">⭐ {t('seriesInfo.reviewSection')}</h4>
           <div className="series-info__review-content">{series.review}</div>
         </div>
       )}
 
       {series.observations && (
         <div className="series-info__observations">
-          <h4 className="series-info__section-title">📝 Observaciones</h4>
+          <h4 className="series-info__section-title">📝 {t('seriesInfo.observationsSection')}</h4>
           <div className="series-info__observations-content">
             {series.observations}
           </div>
@@ -404,7 +407,7 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
         return (
           <div className="series-info__related">
             <h4 className="series-info__section-title">
-              🔗 Series Relacionadas
+              🔗 {t('seriesInfo.relatedSection')}
             </h4>
             <div className="series-info__related-list">
               {unique.map((s) => (

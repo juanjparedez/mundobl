@@ -3,6 +3,205 @@ import type { SupportedLocale } from './config';
 type TranslationShape = {
   common: {
     language: string;
+    na: string;
+    private: string;
+    today: string;
+    yesterday: string;
+    daysAgo: string;
+    weeksAgo: string;
+    monthsAgo: string;
+    neverWatched: string;
+    justNow: string;
+    minutesAgo: string;
+    hoursAgo: string;
+  };
+  seriesDetail: {
+    tabInfo: string;
+    tabContent: string;
+    tabRatings: string;
+    tabComments: string;
+  };
+  seriesHeader: {
+    universe: string;
+    originalTitle: string;
+    formatVertical: string;
+    basedOn: string;
+    typeSerie: string;
+    typePelicula: string;
+    typeCorto: string;
+    typeEspecial: string;
+    typeAnime: string;
+    typeReality: string;
+  };
+  seriesInfo: {
+    fieldTitle: string;
+    fieldOriginalTitle: string;
+    fieldYear: string;
+    fieldCountry: string;
+    fieldType: string;
+    fieldFormat: string;
+    fieldBasedOn: string;
+    fieldSeasons: string;
+    fieldEpisodes: string;
+    fieldSoundtrack: string;
+    fieldProduction: string;
+    fieldLanguage: string;
+    fieldDubbings: string;
+    fieldGenre: string;
+    fieldDirectors: string;
+    formatVertical: string;
+    formatRegular: string;
+    whereToWatch: string;
+    unofficial: string;
+    castSection: string;
+    couplebadge: string;
+    asCharacter: string;
+    protagonist: string;
+    synopsisSection: string;
+    reviewSection: string;
+    observationsSection: string;
+    relatedSection: string;
+  };
+  comments: {
+    addTitle: string;
+    placeholderPrivate: string;
+    placeholderPublic: string;
+    placeholderEpisode: string;
+    tooltipPrivate: string;
+    privateLabel: string;
+    savePrivateButton: string;
+    addButton: string;
+    privateButtonCompact: string;
+    commentButton: string;
+    loginPrompt: string;
+    listTitle: string;
+    emptyText: string;
+    warningEmpty: string;
+    successPrivate: string;
+    successPublic: string;
+    errorSave: string;
+    reportModalTitle: string;
+    reportModalHint: string;
+    reportPlaceholder: string;
+    reportButton: string;
+    cancelButton: string;
+    reportedSuccess: string;
+    reportError: string;
+  };
+  episodesList: {
+    headerTitle: string;
+    generateButton: string;
+    addButton: string;
+    emptyText: string;
+    selectedCount: string;
+    colEpisode: string;
+    colActions: string;
+    bulkWatched: string;
+    bulkUnwatched: string;
+    bulkDelete: string;
+    tooltipWatched: string;
+    tooltipUnwatched: string;
+    tooltipDelete: string;
+    tooltipEdit: string;
+    watchedTag: string;
+    deleteConfirmTitle: string;
+    deleteConfirmContent: string;
+    deleteBulkConfirmTitle: string;
+    deleteBulkConfirmContent: string;
+    confirmOk: string;
+    confirmCancel: string;
+    successUpdated: string;
+    successCreated: string;
+    successDeleted: string;
+    successBulkWatched: string;
+    successBulkUnwatched: string;
+    errorSave: string;
+    errorDelete: string;
+    errorBulkDelete: string;
+    errorToggleWatched: string;
+    errorBulkToggle: string;
+    errorGenerate: string;
+    modalEditTitle: string;
+    modalNewTitle: string;
+    fieldEpisodeNumber: string;
+    fieldEpisodeTitle: string;
+    fieldMinutes: string;
+    fieldSynopsis: string;
+    hintTitle: string;
+    hintSynopsis: string;
+    requiredEpisodeNumber: string;
+    saveButton: string;
+    createButton: string;
+    cancelButton: string;
+    markedWatched: string;
+    markedUnwatched: string;
+    episodesUnit: string;
+    bulkMarkedWatched: string;
+    bulkMarkedUnwatched: string;
+  };
+  seasonsList: {
+    emptyText: string;
+    seasonLabel: string;
+    capsTag: string;
+    watchedTag: string;
+    editButton: string;
+    synopsisTitle: string;
+    observationsTitle: string;
+    commentsTitle: string;
+    ratingsTitle: string;
+    castTitle: string;
+    protagonistTag: string;
+  };
+  ratingSection: {
+    officialLabel: string;
+    userAverageLabel: string;
+    votesSingular: string;
+    votesPlural: string;
+    officialTitle: string;
+    officialHint: string;
+    saveOfficialButton: string;
+    userTitle: string;
+    userHint: string;
+    saveUserButton: string;
+    loginPrompt: string;
+    userAverageTitle: string;
+    successOfficial: string;
+    errorOfficial: string;
+    successUser: string;
+    errorUser: string;
+    catTrama: string;
+    catCasting: string;
+    catDireccion: string;
+    catGuion: string;
+    catProduccion: string;
+    catFotografia: string;
+    catBso: string;
+    catQuimicaPrincipal: string;
+    catQuimicaSecundaria: string;
+  };
+  viewStatus: {
+    sinVer: string;
+    viendo: string;
+    vista: string;
+    abandonada: string;
+    retomar: string;
+    ariaLabel: string;
+    tooltipEpisodes: string;
+    episodesUnit: string;
+    errorUpdate: string;
+    statusMessage: string;
+  };
+  watchingDashboard: {
+    loginPrompt: string;
+    emptyText: string;
+    exploreCatalog: string;
+    removeTitle: string;
+    nextLabel: string;
+    continueButton: string;
+    detailsButton: string;
+    editButton: string;
+    removedMessage: string;
+    errorRemove: string;
   };
   appLayout: {
     skipToContent: string;
@@ -665,6 +864,205 @@ type TranslationShape = {
 const es: TranslationShape = {
   common: {
     language: 'Idioma',
+    na: 'N/A',
+    private: 'Privado',
+    today: 'Hoy',
+    yesterday: 'Ayer',
+    daysAgo: 'Hace {n} días',
+    weeksAgo: 'Hace {n} semanas',
+    monthsAgo: 'Hace {n} meses',
+    neverWatched: 'Nunca',
+    justNow: 'Justo ahora',
+    minutesAgo: 'Hace {n} min',
+    hoursAgo: 'Hace {n}h',
+  },
+  seriesDetail: {
+    tabInfo: 'Información',
+    tabContent: 'Contenido',
+    tabRatings: 'Puntuación',
+    tabComments: 'Comentarios',
+  },
+  seriesHeader: {
+    universe: 'Universo',
+    originalTitle: 'Título original',
+    formatVertical: 'Formato Vertical',
+    basedOn: 'Basado en {label}',
+    typeSerie: 'Serie',
+    typePelicula: 'Película',
+    typeCorto: 'Corto',
+    typeEspecial: 'Especial',
+    typeAnime: 'Animé',
+    typeReality: 'Reality',
+  },
+  seriesInfo: {
+    fieldTitle: 'Título',
+    fieldOriginalTitle: 'Título Original',
+    fieldYear: 'Año',
+    fieldCountry: 'País',
+    fieldType: 'Tipo',
+    fieldFormat: 'Formato',
+    fieldBasedOn: 'Basado en',
+    fieldSeasons: 'Temporadas',
+    fieldEpisodes: 'Episodios',
+    fieldSoundtrack: 'BSO',
+    fieldProduction: 'Productora',
+    fieldLanguage: 'Idioma Original',
+    fieldDubbings: 'Doblajes',
+    fieldGenre: 'Género',
+    fieldDirectors: 'Director(es)',
+    formatVertical: 'Vertical',
+    formatRegular: 'Regular',
+    whereToWatch: 'Donde Ver',
+    unofficial: ' (no oficial)',
+    castSection: 'Reparto',
+    couplebadge: 'Pareja',
+    asCharacter: 'como {character}',
+    protagonist: 'Protagonista',
+    synopsisSection: 'Sinopsis',
+    reviewSection: 'Reseña Personal',
+    observationsSection: 'Observaciones',
+    relatedSection: 'Series Relacionadas',
+  },
+  comments: {
+    addTitle: 'Agregar Comentario',
+    placeholderPrivate: 'Escribe una nota privada (solo vos la verás)...',
+    placeholderPublic: 'Escribe tus impresiones, opiniones o notas sobre esta serie...',
+    placeholderEpisode: 'Escribe tus notas sobre este episodio, escenas interesantes, momentos clave...',
+    tooltipPrivate: 'Los comentarios privados solo son visibles para vos',
+    privateLabel: 'Privado',
+    savePrivateButton: 'Guardar Nota Privada',
+    addButton: 'Agregar Comentario',
+    privateButtonCompact: 'Nota Privada',
+    commentButton: 'Comentar',
+    loginPrompt: 'Inicia sesión para dejar un comentario',
+    listTitle: 'Comentarios ({n})',
+    emptyText: 'No hay comentarios aún',
+    warningEmpty: 'Escribe un comentario primero',
+    successPrivate: 'Nota privada agregada',
+    successPublic: 'Comentario agregado',
+    errorSave: 'Error al guardar el comentario',
+    reportModalTitle: 'Reportar comentario',
+    reportModalHint: 'Contanos brevemente por qué (opcional). Un admin lo va a revisar.',
+    reportPlaceholder: 'Spam, contenido fuera de tema, datos personales...',
+    reportButton: 'Reportar',
+    cancelButton: 'Cancelar',
+    reportedSuccess: 'Comentario reportado. Gracias por avisar.',
+    reportError: 'No se pudo reportar',
+  },
+  episodesList: {
+    headerTitle: 'Episodios ({n})',
+    generateButton: 'Generar',
+    addButton: 'Agregar',
+    emptyText: 'No hay episodios registrados. Usa "Generar" o "Agregar" para comenzar.',
+    selectedCount: '{n} seleccionado{s}',
+    colEpisode: 'Episodio',
+    colActions: 'Acciones',
+    bulkWatched: 'Vistos',
+    bulkUnwatched: 'No vistos',
+    bulkDelete: 'Eliminar',
+    tooltipWatched: 'Marcar como vistos',
+    tooltipUnwatched: 'Marcar como no vistos',
+    tooltipDelete: 'Eliminar',
+    tooltipEdit: 'Editar',
+    watchedTag: 'Visto',
+    deleteConfirmTitle: '¿Eliminar episodio?',
+    deleteConfirmContent: '¿Estás seguro de eliminar el episodio {n}?',
+    deleteBulkConfirmTitle: '¿Eliminar episodios seleccionados?',
+    deleteBulkConfirmContent: 'Se eliminarán {n} episodio(s) con sus comentarios y estados de visualización.',
+    confirmOk: 'Sí, eliminar',
+    confirmCancel: 'Cancelar',
+    successUpdated: 'Episodio actualizado',
+    successCreated: 'Episodio creado',
+    successDeleted: 'Episodio eliminado',
+    successBulkWatched: '{n} episodio(s) marcado(s) como vistos',
+    successBulkUnwatched: '{n} episodio(s) marcado(s) como no vistos',
+    errorSave: 'Error al guardar el episodio',
+    errorDelete: 'Error al eliminar el episodio',
+    errorBulkDelete: 'Error al eliminar los episodios',
+    errorToggleWatched: 'Error al actualizar el estado',
+    errorBulkToggle: 'Error al actualizar los episodios',
+    errorGenerate: 'Error al generar episodios',
+    modalEditTitle: 'Editar Episodio',
+    modalNewTitle: 'Nuevo Episodio',
+    fieldEpisodeNumber: 'Número de Episodio',
+    fieldEpisodeTitle: 'Título (opcional)',
+    fieldMinutes: 'Minutos',
+    fieldSynopsis: 'Sinopsis',
+    hintTitle: 'Ej: The Beginning',
+    hintSynopsis: 'Breve descripción de lo que sucede en este episodio...',
+    requiredEpisodeNumber: 'Requerido',
+    saveButton: 'Guardar',
+    createButton: 'Crear',
+    cancelButton: 'Cancelar',
+    markedWatched: 'Episodio marcado como visto',
+    markedUnwatched: 'Episodio marcado como no visto',
+    episodesUnit: '{watched}/{total} episodios',
+    bulkMarkedWatched: '{n} episodio(s) marcado(s) como vistos',
+    bulkMarkedUnwatched: '{n} episodio(s) marcado(s) como no vistos',
+  },
+  seasonsList: {
+    emptyText: 'No hay temporadas registradas',
+    seasonLabel: 'Temporada {n}',
+    capsTag: '{n} caps',
+    watchedTag: 'Vista',
+    editButton: 'Editar',
+    synopsisTitle: 'Sinopsis de esta temporada',
+    observationsTitle: 'Observaciones',
+    commentsTitle: 'Comentarios de esta temporada',
+    ratingsTitle: 'Puntuación de esta temporada',
+    castTitle: 'Reparto de esta temporada ({n})',
+    protagonistTag: 'Protagonista',
+  },
+  ratingSection: {
+    officialLabel: 'Puntuación oficial',
+    userAverageLabel: 'Puntuación de usuarios',
+    votesSingular: '{n} voto',
+    votesPlural: '{n} votos',
+    officialTitle: 'Puntuación Oficial',
+    officialHint: 'Evalúa cada aspecto de la serie del 1 al 10',
+    saveOfficialButton: 'Guardar Puntuación Oficial',
+    userTitle: 'Tu Puntuación',
+    userHint: 'Tu puntuación será pública y contribuirá al promedio de usuarios',
+    saveUserButton: 'Guardar Mi Puntuación',
+    loginPrompt: 'Inicia sesión para puntuar esta serie',
+    userAverageTitle: 'Promedio de Usuarios por Categoría',
+    successOfficial: 'Puntuaciones oficiales guardadas',
+    errorOfficial: 'Error al guardar las puntuaciones',
+    successUser: 'Tu puntuación fue guardada',
+    errorUser: 'Error al guardar tu puntuación',
+    catTrama: 'Trama',
+    catCasting: 'Casting',
+    catDireccion: 'Dirección',
+    catGuion: 'Guión',
+    catProduccion: 'Producción',
+    catFotografia: 'Fotografía',
+    catBso: 'Banda Sonora',
+    catQuimicaPrincipal: 'Química de pareja principal',
+    catQuimicaSecundaria: 'Química de pareja secundaria',
+  },
+  viewStatus: {
+    sinVer: 'Sin ver',
+    viendo: 'Viendo ahora',
+    vista: 'Vista',
+    abandonada: 'Abandonada',
+    retomar: 'Retomar',
+    ariaLabel: 'Estado de visualización',
+    tooltipEpisodes: '{watched} de {total} episodios vistos',
+    episodesUnit: '{watched}/{total} episodios',
+    errorUpdate: 'Error al actualizar el estado',
+    statusMessage: 'Estado: {label}',
+  },
+  watchingDashboard: {
+    loginPrompt: 'Iniciá sesión para ver tu lista de series',
+    emptyText: 'No estás viendo ninguna serie actualmente',
+    exploreCatalog: 'Explorar Catálogo',
+    removeTitle: 'Remover de viendo ahora',
+    nextLabel: 'Siguiente',
+    continueButton: 'Continuar viendo',
+    detailsButton: 'Ver detalles',
+    editButton: 'Editar',
+    removedMessage: '"{title}" removida de "Viendo ahora"',
+    errorRemove: 'Error al remover de la lista',
   },
   appLayout: {
     skipToContent: 'Saltar al contenido principal',
@@ -1334,6 +1732,205 @@ const es: TranslationShape = {
 const en: TranslationShape = {
   common: {
     language: 'Language',
+    na: 'N/A',
+    private: 'Private',
+    today: 'Today',
+    yesterday: 'Yesterday',
+    daysAgo: '{n} days ago',
+    weeksAgo: '{n} weeks ago',
+    monthsAgo: '{n} months ago',
+    neverWatched: 'Never',
+    justNow: 'Just now',
+    minutesAgo: '{n} min ago',
+    hoursAgo: '{n}h ago',
+  },
+  seriesDetail: {
+    tabInfo: 'Information',
+    tabContent: 'Content',
+    tabRatings: 'Ratings',
+    tabComments: 'Comments',
+  },
+  seriesHeader: {
+    universe: 'Universe',
+    originalTitle: 'Original title',
+    formatVertical: 'Vertical Format',
+    basedOn: 'Based on {label}',
+    typeSerie: 'Series',
+    typePelicula: 'Movie',
+    typeCorto: 'Short',
+    typeEspecial: 'Special',
+    typeAnime: 'Anime',
+    typeReality: 'Reality',
+  },
+  seriesInfo: {
+    fieldTitle: 'Title',
+    fieldOriginalTitle: 'Original Title',
+    fieldYear: 'Year',
+    fieldCountry: 'Country',
+    fieldType: 'Type',
+    fieldFormat: 'Format',
+    fieldBasedOn: 'Based on',
+    fieldSeasons: 'Seasons',
+    fieldEpisodes: 'Episodes',
+    fieldSoundtrack: 'OST',
+    fieldProduction: 'Production',
+    fieldLanguage: 'Original Language',
+    fieldDubbings: 'Dubbings',
+    fieldGenre: 'Genre',
+    fieldDirectors: 'Director(s)',
+    formatVertical: 'Vertical',
+    formatRegular: 'Regular',
+    whereToWatch: 'Where to Watch',
+    unofficial: ' (unofficial)',
+    castSection: 'Cast',
+    couplebadge: 'Couple',
+    asCharacter: 'as {character}',
+    protagonist: 'Main',
+    synopsisSection: 'Synopsis',
+    reviewSection: 'Personal Review',
+    observationsSection: 'Observations',
+    relatedSection: 'Related Series',
+  },
+  comments: {
+    addTitle: 'Add Comment',
+    placeholderPrivate: 'Write a private note (only you will see it)...',
+    placeholderPublic: 'Write your impressions, opinions or notes about this series...',
+    placeholderEpisode: 'Write your notes about this episode, interesting scenes, key moments...',
+    tooltipPrivate: 'Private comments are only visible to you',
+    privateLabel: 'Private',
+    savePrivateButton: 'Save Private Note',
+    addButton: 'Add Comment',
+    privateButtonCompact: 'Private Note',
+    commentButton: 'Comment',
+    loginPrompt: 'Sign in to leave a comment',
+    listTitle: 'Comments ({n})',
+    emptyText: 'No comments yet',
+    warningEmpty: 'Write a comment first',
+    successPrivate: 'Private note added',
+    successPublic: 'Comment added',
+    errorSave: 'Error saving comment',
+    reportModalTitle: 'Report comment',
+    reportModalHint: 'Tell us briefly why (optional). An admin will review it.',
+    reportPlaceholder: 'Spam, off-topic content, personal data...',
+    reportButton: 'Report',
+    cancelButton: 'Cancel',
+    reportedSuccess: 'Comment reported. Thanks for letting us know.',
+    reportError: 'Could not report',
+  },
+  episodesList: {
+    headerTitle: 'Episodes ({n})',
+    generateButton: 'Generate',
+    addButton: 'Add',
+    emptyText: 'No episodes recorded. Use "Generate" or "Add" to start.',
+    selectedCount: '{n} selected',
+    colEpisode: 'Episode',
+    colActions: 'Actions',
+    bulkWatched: 'Watched',
+    bulkUnwatched: 'Unwatched',
+    bulkDelete: 'Delete',
+    tooltipWatched: 'Mark as watched',
+    tooltipUnwatched: 'Mark as unwatched',
+    tooltipDelete: 'Delete',
+    tooltipEdit: 'Edit',
+    watchedTag: 'Watched',
+    deleteConfirmTitle: 'Delete episode?',
+    deleteConfirmContent: 'Are you sure you want to delete episode {n}?',
+    deleteBulkConfirmTitle: 'Delete selected episodes?',
+    deleteBulkConfirmContent: '{n} episode(s) will be deleted with their comments and view statuses.',
+    confirmOk: 'Yes, delete',
+    confirmCancel: 'Cancel',
+    successUpdated: 'Episode updated',
+    successCreated: 'Episode created',
+    successDeleted: 'Episode deleted',
+    successBulkWatched: '{n} episode(s) marked as watched',
+    successBulkUnwatched: '{n} episode(s) marked as unwatched',
+    errorSave: 'Error saving episode',
+    errorDelete: 'Error deleting episode',
+    errorBulkDelete: 'Error deleting episodes',
+    errorToggleWatched: 'Error updating status',
+    errorBulkToggle: 'Error updating episodes',
+    errorGenerate: 'Error generating episodes',
+    modalEditTitle: 'Edit Episode',
+    modalNewTitle: 'New Episode',
+    fieldEpisodeNumber: 'Episode Number',
+    fieldEpisodeTitle: 'Title (optional)',
+    fieldMinutes: 'Minutes',
+    fieldSynopsis: 'Synopsis',
+    hintTitle: 'E.g. The Beginning',
+    hintSynopsis: 'Brief description of what happens in this episode...',
+    requiredEpisodeNumber: 'Required',
+    saveButton: 'Save',
+    createButton: 'Create',
+    cancelButton: 'Cancel',
+    markedWatched: 'Episode marked as watched',
+    markedUnwatched: 'Episode marked as unwatched',
+    episodesUnit: '{watched}/{total} episodes',
+    bulkMarkedWatched: '{n} episode(s) marked as watched',
+    bulkMarkedUnwatched: '{n} episode(s) marked as unwatched',
+  },
+  seasonsList: {
+    emptyText: 'No seasons recorded',
+    seasonLabel: 'Season {n}',
+    capsTag: '{n} eps',
+    watchedTag: 'Watched',
+    editButton: 'Edit',
+    synopsisTitle: 'Season synopsis',
+    observationsTitle: 'Observations',
+    commentsTitle: 'Season comments',
+    ratingsTitle: 'Season rating',
+    castTitle: 'Season cast ({n})',
+    protagonistTag: 'Main',
+  },
+  ratingSection: {
+    officialLabel: 'Official rating',
+    userAverageLabel: 'User rating',
+    votesSingular: '{n} vote',
+    votesPlural: '{n} votes',
+    officialTitle: 'Official Rating',
+    officialHint: 'Rate each aspect of the series from 1 to 10',
+    saveOfficialButton: 'Save Official Rating',
+    userTitle: 'Your Rating',
+    userHint: 'Your rating will be public and contribute to the user average',
+    saveUserButton: 'Save My Rating',
+    loginPrompt: 'Sign in to rate this series',
+    userAverageTitle: 'User Average by Category',
+    successOfficial: 'Official ratings saved',
+    errorOfficial: 'Error saving ratings',
+    successUser: 'Your rating was saved',
+    errorUser: 'Error saving your rating',
+    catTrama: 'Plot',
+    catCasting: 'Casting',
+    catDireccion: 'Direction',
+    catGuion: 'Script',
+    catProduccion: 'Production',
+    catFotografia: 'Photography',
+    catBso: 'Soundtrack',
+    catQuimicaPrincipal: 'Main couple chemistry',
+    catQuimicaSecundaria: 'Secondary couple chemistry',
+  },
+  viewStatus: {
+    sinVer: 'Not watched',
+    viendo: 'Watching now',
+    vista: 'Watched',
+    abandonada: 'Abandoned',
+    retomar: 'Resume',
+    ariaLabel: 'View status',
+    tooltipEpisodes: '{watched} of {total} episodes watched',
+    episodesUnit: '{watched}/{total} episodes',
+    errorUpdate: 'Error updating status',
+    statusMessage: 'Status: {label}',
+  },
+  watchingDashboard: {
+    loginPrompt: 'Sign in to see your series list',
+    emptyText: 'You are not watching any series currently',
+    exploreCatalog: 'Explore Catalog',
+    removeTitle: 'Remove from watching now',
+    nextLabel: 'Next',
+    continueButton: 'Continue watching',
+    detailsButton: 'View details',
+    editButton: 'Edit',
+    removedMessage: '"{title}" removed from "Watching now"',
+    errorRemove: 'Error removing from list',
   },
   appLayout: {
     skipToContent: 'Skip to main content',
@@ -2001,42 +2598,42 @@ const en: TranslationShape = {
 
 const it: TranslationShape = {
   ...en,
-  common: { language: 'Lingua' },
+  common: { ...en.common, language: 'Lingua' },
 };
 
 const de: TranslationShape = {
   ...en,
-  common: { language: 'Sprache' },
+  common: { ...en.common, language: 'Sprache' },
 };
 
 const fr: TranslationShape = {
   ...en,
-  common: { language: 'Langue' },
+  common: { ...en.common, language: 'Langue' },
 };
 
 const ja: TranslationShape = {
   ...en,
-  common: { language: '言語' },
+  common: { ...en.common, language: '言語' },
 };
 
 const ko: TranslationShape = {
   ...en,
-  common: { language: '언어' },
+  common: { ...en.common, language: '언어' },
 };
 
 const zhCN: TranslationShape = {
   ...en,
-  common: { language: '语言' },
+  common: { ...en.common, language: '语言' },
 };
 
 const zhTW: TranslationShape = {
   ...en,
-  common: { language: '語言' },
+  common: { ...en.common, language: '語言' },
 };
 
 const th: TranslationShape = {
   ...en,
-  common: { language: 'ภาษา' },
+  common: { ...en.common, language: 'ภาษา' },
 };
 
 export const MESSAGES: Record<SupportedLocale, TranslationShape> = {

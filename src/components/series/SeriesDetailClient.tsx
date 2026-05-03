@@ -10,6 +10,7 @@ import {
   CommentOutlined,
 } from '@ant-design/icons';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 
 interface SeriesDetailClientProps {
   seriesId: number;
@@ -34,6 +35,7 @@ export function SeriesDetailClient({
   commentsSection,
 }: SeriesDetailClientProps) {
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const { t } = useLocale();
 
   if (isMobile) {
     const collapseItems = [
@@ -41,7 +43,7 @@ export function SeriesDetailClient({
         key: 'info',
         label: (
           <span>
-            <InfoCircleOutlined /> Información
+            <InfoCircleOutlined /> {t('seriesDetail.tabInfo')}
           </span>
         ),
         children: <div className="series-info-tab">{infoSection}</div>,
@@ -50,7 +52,7 @@ export function SeriesDetailClient({
         key: 'content',
         label: (
           <span>
-            <PlaySquareOutlined /> Contenido
+            <PlaySquareOutlined /> {t('seriesDetail.tabContent')}
           </span>
         ),
         children: <div className="content-tab">{contentSection}</div>,
@@ -72,7 +74,7 @@ export function SeriesDetailClient({
         key: 'ratings',
         label: (
           <span>
-            <StarOutlined /> Puntuación
+            <StarOutlined /> {t('seriesDetail.tabRatings')}
           </span>
         ),
         children: <div className="ratings-tab">{ratingsSection}</div>,
@@ -81,7 +83,7 @@ export function SeriesDetailClient({
         key: 'comments',
         label: (
           <span>
-            <CommentOutlined /> Comentarios
+            <CommentOutlined /> {t('seriesDetail.tabComments')}
           </span>
         ),
         children: <div className="comments-tab">{commentsSection}</div>,
@@ -102,12 +104,12 @@ export function SeriesDetailClient({
   const tabItems = [
     {
       key: 'info',
-      label: 'Información',
+      label: t('seriesDetail.tabInfo'),
       children: <div className="series-info-tab">{infoSection}</div>,
     },
     {
       key: 'content',
-      label: 'Contenido',
+      label: t('seriesDetail.tabContent'),
       children: <div className="content-tab">{contentSection}</div>,
     },
     ...(showSeasons
@@ -121,12 +123,12 @@ export function SeriesDetailClient({
       : []),
     {
       key: 'ratings',
-      label: 'Puntuación',
+      label: t('seriesDetail.tabRatings'),
       children: <div className="ratings-tab">{ratingsSection}</div>,
     },
     {
       key: 'comments',
-      label: 'Comentarios',
+      label: t('seriesDetail.tabComments'),
       children: <div className="comments-tab">{commentsSection}</div>,
     },
   ];
