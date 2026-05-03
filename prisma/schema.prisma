@@ -41,6 +41,7 @@ model User {
   accessLogs      AccessLog[]
   suggestedSites  SuggestedSite[]
   commentReports  CommentReport[]
+  notifications   Notification[]
 }
 
 model Account {
@@ -661,4 +662,28 @@ model EmbeddableContent {
   series       Series?  @relation(fields: [seriesId], references: [id], onDelete: SetNull)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+// ============================================
+// NOTIFICACIONES IN-APP
+// ============================================
+// Notificaciones que el usuario ve dentro de la app (campana del header).
+// NO son web push: las push viven aparte y se opt-in explícitamente.
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   // "comment_reply", "feature_status", "season_added", "system", ...
+  title     String
+  body      String?
+  // URL relativa adonde lleva la notificación al hacer clic.
+  linkPath  String?
+  // Item relacionado (ej: id de la serie/season/comment) para deduplicar.
+  refType   String?
+  refId     String?
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([userId, readAt])
 }
