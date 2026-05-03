@@ -36,6 +36,8 @@ interface UserData {
   createdAt: string;
 }
 
+type RoleFilter = 'all' | UserData['role'];
+
 interface BannedIpData {
   id: number;
   ip: string;
@@ -56,12 +58,19 @@ export function UsuariosClient() {
   const [loading, setLoading] = useState(true);
   const [bannedIps, setBannedIps] = useState<BannedIpData[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [roleFilter, setRoleFilter] = useState<RoleFilter>('all');
   const [newBanIp, setNewBanIp] = useState('');
   const [newBanReason, setNewBanReason] = useState('');
 
   const fetchUsers = useCallback(async () => {
+    setLoading(true);
     try {
-      const response = await fetch('/api/users');
+      const params = new URLSearchParams();
+      if (roleFilter !== 'all') {
+        params.set('role', roleFilter);
+      }
+
+      const response = await fetch(`/api/users?${params.toString()}`);
       if (response.ok) {
         const data = await response.json();
         setUsers(data);
@@ -72,7 +81,7 @@ export function UsuariosClient() {
     } finally {
       setLoading(false);
     }
-  }, [message, t]);
+  }, [message, roleFilter, t]);
 
   const fetchBannedIps = useCallback(async () => {
     try {
@@ -347,7 +356,25 @@ export function UsuariosClient() {
         />
 
         <AdminTableToolbar
-          filters={null}
+          filters={
+            <Select
+              value={roleFilter}
+              onChange={(value: RoleFilter) => setRoleFilter(value)}
+              style={{ minWidth: 220 }}
+              options={[
+                { value: 'all', label: t('adminUsers.filterAllRoles') },
+                { value: 'ADMIN', label: t('adminUsers.filterOnlyAdmins') },
+                {
+                  value: 'MODERATOR',
+                  label: t('adminUsers.filterOnlyModerators'),
+                },
+                {
+                  value: 'VISITOR',
+                  label: t('adminUsers.filterOnlyVisitors'),
+                },
+              ]}
+            />
+          }
           searchPlaceholder={t('adminUsers.searchPlaceholder')}
           searchValue={searchTerm}
           onSearchChange={setSearchTerm}
