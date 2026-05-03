@@ -240,6 +240,8 @@ type TranslationShape = {
     loading: string;
     login: string;
     logout: string;
+    settings: string;
+    accentColor: string;
     theme: string;
     switchToLight: string;
     switchToDark: string;
@@ -1314,6 +1316,8 @@ const es: TranslationShape = {
     loading: 'Cargando',
     login: 'Entrar',
     logout: 'Salir',
+    settings: 'Ajustes',
+    accentColor: 'Color',
     theme: 'Tema',
     switchToLight: 'Cambiar a modo claro',
     switchToDark: 'Cambiar a modo oscuro',
@@ -2395,6 +2399,8 @@ const en: TranslationShape = {
     loading: 'Loading',
     login: 'Sign in',
     logout: 'Sign out',
+    settings: 'Settings',
+    accentColor: 'Accent color',
     theme: 'Theme',
     switchToLight: 'Switch to light mode',
     switchToDark: 'Switch to dark mode',

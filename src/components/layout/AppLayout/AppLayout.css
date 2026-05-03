@@ -33,7 +33,7 @@
   .app-content {
     margin: 0;
     padding: var(--spacing-xs);
-    padding-bottom: calc(var(--spacing-xs) + var(--bottom-nav-height) + 48px);
+    padding-bottom: calc(var(--spacing-xs) + var(--bottom-nav-height) + var(--spacing-sm));
     border-radius: 0;
     min-height: calc(100vh - var(--bottom-nav-height) - 40px);
   }

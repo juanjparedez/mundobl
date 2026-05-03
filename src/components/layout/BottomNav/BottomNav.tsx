@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   AppstoreOutlined,
@@ -11,11 +12,14 @@ import {
   LoadingOutlined,
   LoginOutlined,
   UserOutlined,
+  GlobalOutlined,
 } from '@ant-design/icons';
+import { Select } from 'antd';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { useTheme } from '@/lib/providers/ThemeProvider';
 import { ROUTES } from '@/constants/navigation';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { LOCALE_LABELS, SUPPORTED_LOCALES } from '@/i18n/config';
 import { AccentPicker } from '@/components/layout/Sidebar/AccentPicker/AccentPicker';
 import './BottomNav.css';
 
@@ -31,14 +35,19 @@ export function BottomNav() {
   const pathname = usePathname();
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
-  const { t } = useLocale();
+  const { locale, setLocale, t } = useLocale();
   const { data: session, status } = useSession();
+  const [isPreferencesOpen, setIsPreferencesOpen] = useState(false);
 
   const isAdmin = session?.user?.role === 'ADMIN';
   const isModerator = session?.user?.role === 'MODERATOR';
   const canAccessAdmin = isAdmin || isModerator;
 
   const isActive = (path: string) => pathname?.startsWith(path);
+
+  useEffect(() => {
+    setIsPreferencesOpen(false);
+  }, [pathname]);
 
   const navItems: NavItem[] = [
     {
@@ -99,9 +108,47 @@ export function BottomNav() {
 
   return (
     <>
-      <div className="bottom-nav-accent" aria-label="Accent selector">
-        <AccentPicker />
+      <div
+        id="bottom-nav-preferences"
+        className={`bottom-nav-preferences${isPreferencesOpen ? ' bottom-nav-preferences--open' : ''}`}
+        aria-hidden={!isPreferencesOpen}
+      >
+        <div className="bottom-nav-preferences__field">
+          <span className="bottom-nav-preferences__label">{t('common.language')}</span>
+          <Select
+            value={locale}
+            onChange={setLocale}
+            options={SUPPORTED_LOCALES.map((code) => ({
+              value: code,
+              label: LOCALE_LABELS[code],
+            }))}
+            size="small"
+            className="bottom-nav-preferences__select"
+            aria-label={t('common.language')}
+          />
+        </div>
+
+        <div className="bottom-nav-preferences__field">
+          <span className="bottom-nav-preferences__label">{t('bottomNav.accentColor')}</span>
+          <AccentPicker />
+        </div>
+
+        <button
+          className="bottom-nav-preferences__theme"
+          onClick={toggleTheme}
+          aria-label={
+            theme === 'dark'
+              ? t('bottomNav.switchToLight')
+              : t('bottomNav.switchToDark')
+          }
+        >
+          <span className="bottom-nav-preferences__theme-icon" aria-hidden="true">
+            {theme === 'dark' ? <BulbFilled /> : <BulbOutlined />}
+          </span>
+          <span>{t('bottomNav.theme')}</span>
+        </button>
       </div>
+
       <nav className="bottom-nav" aria-label={t('bottomNav.mainNavigation')}>
         {navItems.map((item) => (
           <button
@@ -118,18 +165,16 @@ export function BottomNav() {
           </button>
         ))}
         <button
-          className="bottom-nav-item"
-          onClick={toggleTheme}
-          aria-label={
-            theme === 'dark'
-              ? t('bottomNav.switchToLight')
-              : t('bottomNav.switchToDark')
-          }
+          className={`bottom-nav-item ${isPreferencesOpen ? 'bottom-nav-item--active' : ''}`}
+          onClick={() => setIsPreferencesOpen((prev) => !prev)}
+          aria-label={t('bottomNav.settings')}
+          aria-expanded={isPreferencesOpen}
+          aria-controls="bottom-nav-preferences"
         >
           <span className="bottom-nav-item-icon" aria-hidden="true">
-            {theme === 'dark' ? <BulbFilled /> : <BulbOutlined />}
+            <GlobalOutlined />
           </span>
-          <span className="bottom-nav-item-label">{t('bottomNav.theme')}</span>
+          <span className="bottom-nav-item-label">{t('bottomNav.settings')}</span>
         </button>
       </nav>
     </>
