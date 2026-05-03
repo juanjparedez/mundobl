@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { cache } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getSeriesById } from '@/lib/database';
@@ -24,6 +25,8 @@ import { FloatButton } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import './page.css';
 
+const getSeriesByIdCached = cache(getSeriesById);
+
 interface SeriesPageProps {
   params: Promise<{
     id: string;
@@ -40,7 +43,7 @@ export async function generateMetadata({
   const seriesId = parseInt(id, 10);
   if (isNaN(seriesId)) return {};
 
-  const serie = await getSeriesById(seriesId);
+  const serie = await getSeriesByIdCached(seriesId);
   if (!serie) return {};
 
   const typeLabel =
@@ -85,7 +88,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
     notFound();
   }
 
-  const serie = await getSeriesById(seriesId);
+  const serie = await getSeriesByIdCached(seriesId);
 
   if (!serie) {
     notFound();
@@ -193,7 +196,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
         />
 
         {/* Botón flotante para editar */}
-        <Link href={`/admin/series/${serie.id}/editar`}>
+        <Link href={`/admin/series/${serie.id}/editar`} prefetch={false}>
           <FloatButton
             icon={<EditOutlined />}
             type="primary"

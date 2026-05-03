@@ -23,6 +23,8 @@ export function LandingPage() {
           width={360}
           height={360}
           priority
+          sizes="(max-width: 768px) 220px, 360px"
+          quality={78}
         />
       </div>
 
