@@ -108,6 +108,43 @@ export async function getAccessLogs(filters: LogFilters) {
 }
 
 /**
+ * Retorna estadisticas agregadas de los logs y usuarios
+ */
+export async function getLogStats() {
+  const [totalLogs, totalUsers, topEndpointsRaw, actionBreakdownRaw] =
+    await Promise.all([
+      prisma.accessLog.count(),
+      prisma.user.count(),
+      prisma.$queryRaw<{ path: string; count: bigint }[]>`
+        SELECT path, COUNT(*) AS count
+        FROM "AccessLog"
+        GROUP BY path
+        ORDER BY count DESC
+        LIMIT 15
+      `,
+      prisma.$queryRaw<{ action: string; count: bigint }[]>`
+        SELECT action, COUNT(*) AS count
+        FROM "AccessLog"
+        GROUP BY action
+        ORDER BY count DESC
+      `,
+    ]);
+
+  return {
+    totalLogs,
+    totalUsers,
+    topEndpoints: topEndpointsRaw.map((r) => ({
+      path: r.path,
+      count: Number(r.count),
+    })),
+    actionBreakdown: actionBreakdownRaw.map((r) => ({
+      action: r.action,
+      count: Number(r.count),
+    })),
+  };
+}
+
+/**
  * Elimina logs mas viejos de X dias
  */
 export async function cleanOldLogs(daysToKeep: number = 90): Promise<number> {

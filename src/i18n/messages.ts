@@ -685,6 +685,9 @@ type TranslationShape = {
     title: string;
     subtitle: string;
     statsTotal: string;
+    statsTotalUsers: string;
+    statsTopEndpoints: string;
+    statsActions: string;
     filterActionPlaceholder: string;
     filterUserPlaceholder: string;
     filterIpPlaceholder: string;
@@ -692,6 +695,11 @@ type TranslationShape = {
     actionRefresh: string;
     actionCleanScanners: string;
     actionCleanOld: string;
+    cleanModalTitle: string;
+    cleanModalDaysLabel: string;
+    cleanModalConfirmText: string;
+    cleanModalOk: string;
+    cleanModalCancel: string;
     anonymous: string;
     loadingText: string;
     emptyText: string;
@@ -701,6 +709,7 @@ type TranslationShape = {
     columnPath: string;
     columnIp: string;
     columnUserAgent: string;
+    columnCount: string;
     paginationPrev: string;
     paginationNext: string;
     pageInfo: string;
@@ -1767,14 +1776,22 @@ const es: TranslationShape = {
   adminLogs: {
     title: 'Access Logs',
     subtitle: 'Registro de accesos y acciones del sistema.',
-    statsTotal: 'Registros',
+    statsTotal: 'Total logs',
+    statsTotalUsers: 'Usuarios registrados',
+    statsTopEndpoints: 'Top rutas',
+    statsActions: 'Por accion',
     filterActionPlaceholder: 'Accion',
     filterUserPlaceholder: 'Usuario',
     filterIpPlaceholder: 'Buscar IP',
     filterPathPlaceholder: 'Buscar ruta',
     actionRefresh: 'Refrescar',
     actionCleanScanners: 'Limpiar scanners',
-    actionCleanOld: 'Limpiar +90 dias',
+    actionCleanOld: 'Limpiar logs...',
+    cleanModalTitle: 'Limpiar logs antiguos',
+    cleanModalDaysLabel: 'Eliminar logs de mas de N dias',
+    cleanModalConfirmText: 'Se eliminaran todos los logs con mas de {days} dias. Esta accion no se puede deshacer.',
+    cleanModalOk: 'Eliminar',
+    cleanModalCancel: 'Cancelar',
     anonymous: 'Anonimo',
     loadingText: 'Cargando...',
     emptyText: 'Sin resultados',
@@ -1784,6 +1801,7 @@ const es: TranslationShape = {
     columnPath: 'Ruta',
     columnIp: 'IP',
     columnUserAgent: 'User Agent',
+    columnCount: 'Cantidad',
     paginationPrev: 'Anterior',
     paginationNext: 'Siguiente',
     pageInfo: '{page} / {total}',
@@ -2849,14 +2867,22 @@ const en: TranslationShape = {
   adminLogs: {
     title: 'Access Logs',
     subtitle: 'System access and action log.',
-    statsTotal: 'Records',
+    statsTotal: 'Total logs',
+    statsTotalUsers: 'Registered users',
+    statsTopEndpoints: 'Top paths',
+    statsActions: 'By action',
     filterActionPlaceholder: 'Action',
     filterUserPlaceholder: 'User',
     filterIpPlaceholder: 'Search IP',
     filterPathPlaceholder: 'Search path',
     actionRefresh: 'Refresh',
     actionCleanScanners: 'Clean scanners',
-    actionCleanOld: 'Clean +90 days',
+    actionCleanOld: 'Clean logs...',
+    cleanModalTitle: 'Clean old logs',
+    cleanModalDaysLabel: 'Delete logs older than N days',
+    cleanModalConfirmText: 'All logs older than {days} days will be deleted. This action cannot be undone.',
+    cleanModalOk: 'Delete',
+    cleanModalCancel: 'Cancel',
     anonymous: 'Anonymous',
     loadingText: 'Loading...',
     emptyText: 'No results',
@@ -2866,6 +2892,7 @@ const en: TranslationShape = {
     columnPath: 'Path',
     columnIp: 'IP',
     columnUserAgent: 'User Agent',
+    columnCount: 'Count',
     paginationPrev: 'Previous',
     paginationNext: 'Next',
     pageInfo: '{page} / {total}',
