@@ -956,6 +956,25 @@ type TranslationShape = {
     infoShort: string;
     logs: string;
     logsShort: string;
+    stats: string;
+    statsShort: string;
+  };
+  adminStats: {
+    pageTitle: string;
+    totalUsers: string;
+    currentlyWatching: string;
+    completedThisWeek: string;
+    commentsThisWeek: string;
+    rankingWatching: string;
+    rankingCompleted: string;
+    rankingFavorited: string;
+    rankingCommented: string;
+    rankingRated: string;
+    activeUsers: string;
+    badgeWatching: string;
+    badgeCompleted: string;
+    badgeFavorited: string;
+    badgeCommented: string;
   };
   adminTable: {
     searchPlaceholder: string;
@@ -2048,6 +2067,25 @@ const es: TranslationShape = {
     infoShort: 'Info',
     logs: 'Logs',
     logsShort: 'Logs',
+    stats: 'Estadísticas',
+    statsShort: 'Stats',
+  },
+  adminStats: {
+    pageTitle: 'Estadísticas de actividad',
+    totalUsers: 'Usuarios registrados',
+    currentlyWatching: 'Series en curso (únicas)',
+    completedThisWeek: 'Completadas esta semana',
+    commentsThisWeek: 'Comentarios esta semana',
+    rankingWatching: 'Más viendo ahora',
+    rankingCompleted: 'Más completadas',
+    rankingFavorited: 'Más en favoritos',
+    rankingCommented: 'Más comentadas',
+    rankingRated: 'Mejor calificadas por usuarios',
+    activeUsers: 'Usuarios activos (últimos 30 días)',
+    badgeWatching: '{n} viendo',
+    badgeCompleted: '{n} vistas',
+    badgeFavorited: '{n} favs',
+    badgeCommented: '{n} comentarios',
   },
   adminTable: {
     searchPlaceholder: 'Buscar por título, país o tipo...',
@@ -3139,6 +3177,25 @@ const en: TranslationShape = {
     infoShort: 'Info',
     logs: 'Logs',
     logsShort: 'Logs',
+    stats: 'Statistics',
+    statsShort: 'Stats',
+  },
+  adminStats: {
+    pageTitle: 'Activity Statistics',
+    totalUsers: 'Registered users',
+    currentlyWatching: 'Series in progress (unique)',
+    completedThisWeek: 'Completed this week',
+    commentsThisWeek: 'Comments this week',
+    rankingWatching: 'Most watching now',
+    rankingCompleted: 'Most completed',
+    rankingFavorited: 'Most favorited',
+    rankingCommented: 'Most commented',
+    rankingRated: 'Best rated by users',
+    activeUsers: 'Active users (last 30 days)',
+    badgeWatching: '{n} watching',
+    badgeCompleted: '{n} completed',
+    badgeFavorited: '{n} favs',
+    badgeCommented: '{n} comments',
   },
   adminTable: {
     searchPlaceholder: 'Search by title, country or type...',
