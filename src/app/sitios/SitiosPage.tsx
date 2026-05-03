@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { Card, Tag, Row, Col, Empty, Input, Select, Space, Button } from 'antd';
 import {
@@ -36,7 +36,23 @@ interface SitiosPageProps {
 export function SitiosPage({ sites }: SitiosPageProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>(() => {
+    if (typeof window === 'undefined') return 'grid';
+    return window.localStorage.getItem('sitios-view-mode') === 'list'
+      ? 'list'
+      : 'grid';
+  });
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem('sitios-view-mode', viewMode);
+  }, [viewMode]);
+
+  const hasActiveFilters = Boolean(categoryFilter || searchTerm);
+  const clearFilters = () => {
+    setCategoryFilter(null);
+    setSearchTerm('');
+  };
 
   const filteredSites = useMemo(
     () =>
@@ -214,7 +230,13 @@ export function SitiosPage({ sites }: SitiosPageProps) {
         </div>
 
         {filteredSites.length === 0 ? (
-          <Empty description="No hay sitios con estos filtros" />
+          <Empty description="No hay sitios con estos filtros">
+            {hasActiveFilters && (
+              <Button type="primary" onClick={clearFilters}>
+                Limpiar filtros
+              </Button>
+            )}
+          </Empty>
         ) : viewMode === 'list' ? (
           <div className="sitios-list">
             {(categoryFilter
