@@ -22,9 +22,11 @@
 .app-content {
   margin: var(--spacing-lg);
   padding: var(--spacing-lg);
-  background: var(--bg-container);
+  background: color-mix(in srgb, var(--bg-container) 94%, transparent);
   border-radius: var(--border-radius-base);
   min-height: calc(100vh - var(--spacing-lg) * 2);
+  border: 1px solid var(--border-color-secondary);
+  box-shadow: 0 18px 40px rgba(12, 8, 20, 0.26);
 }
 
 @media (max-width: 768px) {
