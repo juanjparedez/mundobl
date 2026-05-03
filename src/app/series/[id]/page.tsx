@@ -142,20 +142,29 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
         }}
       />
       <div className="series-detail-page">
-        <SeriesHeader series={serie} />
-
-        <div className="series-actions">
-          <ViewStatusToggle
-            seriesId={serie.id}
-            initialStatus={serie.viewStatus?.[0]?.status ?? 'SIN_VER'}
-            seasons={serie.seasons}
-          />
-          <ShareButton
-            title={serie.title}
-            text={serie.synopsis ?? undefined}
-            path={`/series/${serie.id}`}
-          />
-        </div>
+        <SeriesHeader
+          series={serie}
+          actionsSlot={
+            <>
+              <ViewStatusToggle
+                seriesId={serie.id}
+                initialStatus={serie.viewStatus?.[0]?.status ?? 'SIN_VER'}
+                seasons={serie.seasons}
+              />
+              <ShareButton
+                title={serie.title}
+                text={serie.synopsis ?? undefined}
+                path={`/series/${serie.id}`}
+              />
+              {serie.overallRating && (
+                <div className="series-actions-rating">
+                  <span>Rating</span>
+                  <strong>{serie.overallRating}/10</strong>
+                </div>
+              )}
+            </>
+          }
+        />
 
         <SeriesDetailClient
           seriesId={serie.id}

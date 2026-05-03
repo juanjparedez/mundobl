@@ -29,6 +29,9 @@ import {
   FontSizeOutlined,
   GlobalOutlined,
   RightOutlined,
+  FireOutlined,
+  ClockCircleOutlined,
+  ThunderboltOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
 import { useMessage } from '@/hooks/useMessage';
@@ -97,32 +100,34 @@ const ALPHABET = '#ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const getGradientByType = (tipo: string): string => {
   const gradients: Record<string, string> = {
     serie:
-      'linear-gradient(135deg, rgba(47, 84, 235, 0.7) 0%, rgba(104, 109, 224, 0.8) 100%)',
+      'linear-gradient(135deg, rgba(169, 115, 164, 0.76) 0%, rgba(112, 87, 168, 0.86) 100%)',
     pelicula:
-      'linear-gradient(135deg, rgba(235, 47, 150, 0.7) 0%, rgba(184, 50, 128, 0.8) 100%)',
+      'linear-gradient(135deg, rgba(212, 112, 150, 0.74) 0%, rgba(171, 82, 128, 0.86) 100%)',
     corto:
-      'linear-gradient(135deg, rgba(19, 194, 194, 0.7) 0%, rgba(65, 105, 225, 0.8) 100%)',
+      'linear-gradient(135deg, rgba(233, 144, 106, 0.74) 0%, rgba(183, 102, 146, 0.82) 100%)',
     especial:
-      'linear-gradient(135deg, rgba(250, 140, 22, 0.7) 0%, rgba(245, 89, 62, 0.8) 100%)',
+      'linear-gradient(135deg, rgba(227, 167, 92, 0.76) 0%, rgba(209, 112, 108, 0.86) 100%)',
     anime:
-      'linear-gradient(135deg, rgba(214, 51, 132, 0.7) 0%, rgba(255, 77, 109, 0.8) 100%)',
+      'linear-gradient(135deg, rgba(212, 97, 151, 0.74) 0%, rgba(198, 95, 179, 0.86) 100%)',
     reality:
-      'linear-gradient(135deg, rgba(250, 173, 20, 0.7) 0%, rgba(245, 124, 0, 0.8) 100%)',
+      'linear-gradient(135deg, rgba(226, 165, 93, 0.74) 0%, rgba(191, 126, 80, 0.86) 100%)',
   };
   return gradients[tipo] || gradients['serie'];
 };
 
 const getColorByType = (tipo: string) => {
   const colorMap: Record<string, string> = {
-    serie: 'geekblue',
+    serie: 'purple',
     pelicula: 'magenta',
-    corto: 'cyan',
-    especial: 'volcano',
+    corto: 'orange',
+    especial: 'gold',
     anime: 'pink',
     reality: 'gold',
   };
   return colorMap[tipo] || 'default';
 };
+
+type QuickFilterValue = 'popular' | 'recent' | 'trend' | null;
 
 export function CatalogoClient({
   series: initialSeries,
@@ -199,6 +204,8 @@ export function CatalogoClient({
   const [filtersVisible, setFiltersVisible] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
+  const [selectedQuickFilter, setSelectedQuickFilter] =
+    useState<QuickFilterValue>(null);
   const [showAlphaIndex, setShowAlphaIndex] = useState(false);
   const [expandedUniverses, setExpandedUniverses] = useState<Set<number>>(
     new Set()
@@ -363,6 +370,22 @@ export function CatalogoClient({
       });
     }
 
+    if (selectedQuickFilter === 'popular') {
+      filtered = filtered.filter((s) => (s.rating ?? 0) >= 8);
+    }
+
+    if (selectedQuickFilter === 'recent') {
+      const currentYear = new Date().getFullYear();
+      filtered = filtered.filter((s) => (s.anio ?? 0) >= currentYear - 1);
+    }
+
+    if (selectedQuickFilter === 'trend') {
+      const currentYear = new Date().getFullYear();
+      filtered = filtered.filter(
+        (s) => (s.rating ?? 0) >= 7 && (s.anio ?? 0) >= currentYear - 3
+      );
+    }
+
     return filtered;
   }, [
     series,
@@ -380,6 +403,7 @@ export function CatalogoClient({
     favoriteIds,
     selectedTags,
     selectedLetter,
+    selectedQuickFilter,
     minRating,
     yearFrom,
     yearTo,
@@ -457,6 +481,7 @@ export function CatalogoClient({
     setSelectedFavorite(undefined);
     setSelectedTags([]);
     setSelectedLetter(null);
+    setSelectedQuickFilter(null);
     setMinRating(0);
     setYearFrom(undefined);
     setYearTo(undefined);
@@ -577,19 +602,21 @@ export function CatalogoClient({
           </div>
         </div>
         <div className="serie-card-body">
-          <div className="serie-card-tags">
-            <Tag color={getColorByType(serie.tipo)}>
-              {serie.tipo.toUpperCase()}
-            </Tag>
-            {serie.visto && <Tag color="success">{t('catalogo.watchedTag')}</Tag>}
-            {serie.rating != null && serie.rating > 0 && (
-              <Tag color="gold">{serie.rating}</Tag>
-            )}
-          </div>
-          <div className="serie-card-info">
+          <div className="serie-card-title">{serie.titulo}</div>
+          <div className="serie-card-primary-meta">
             <span>
               <CountryFlag code={serie.paisCode} size="small" /> {serie.pais}
             </span>
+            {serie.rating != null && serie.rating > 0 && (
+              <Tag color="gold" style={{ margin: 0 }}>
+                ★ {serie.rating}
+              </Tag>
+            )}
+          </div>
+          <div className="serie-card-secondary-meta">
+            <Tag color={getColorByType(serie.tipo)} style={{ margin: 0 }}>
+              {serie.tipo.toUpperCase()}
+            </Tag>
             {serie.anio > 0 && (
               <>
                 <span className="serie-card-dot" />
@@ -605,6 +632,7 @@ export function CatalogoClient({
                 </span>
               </>
             )}
+            {serie.visto && <Tag color="success">{t('catalogo.watchedTag')}</Tag>}
           </div>
         </div>
       </div>
@@ -1069,6 +1097,42 @@ export function CatalogoClient({
         </div>
       </div>
 
+      <div className="catalogo-quick-filters" role="group" aria-label="Filtros rápidos">
+        <button
+          className={`catalogo-quick-chip${selectedQuickFilter === 'popular' ? ' catalogo-quick-chip--active' : ''}`}
+          onClick={() => {
+            setSelectedQuickFilter((prev) =>
+              prev === 'popular' ? null : 'popular'
+            );
+            handleFilterChange();
+          }}
+        >
+          <FireOutlined /> Populares
+        </button>
+        <button
+          className={`catalogo-quick-chip${selectedQuickFilter === 'recent' ? ' catalogo-quick-chip--active' : ''}`}
+          onClick={() => {
+            setSelectedQuickFilter((prev) =>
+              prev === 'recent' ? null : 'recent'
+            );
+            handleFilterChange();
+          }}
+        >
+          <ClockCircleOutlined /> Recién agregados
+        </button>
+        <button
+          className={`catalogo-quick-chip${selectedQuickFilter === 'trend' ? ' catalogo-quick-chip--active' : ''}`}
+          onClick={() => {
+            setSelectedQuickFilter((prev) =>
+              prev === 'trend' ? null : 'trend'
+            );
+            handleFilterChange();
+          }}
+        >
+          <ThunderboltOutlined /> Tendencia
+        </button>
+      </div>
+
       {/* Filtros activos (deep-links del detalle) */}
       {(selectedCountry ||
         selectedType ||
@@ -1078,6 +1142,7 @@ export function CatalogoClient({
         selectedProductionCompany ||
         selectedDirector ||
         selectedActor ||
+        selectedQuickFilter ||
         (yearFrom && yearTo && yearFrom === yearTo) ||
         selectedTags.length > 0) && (
         <div className="catalogo-active-filters">

@@ -25,7 +25,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--spacing-md);
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
   flex-wrap: wrap;
 }
 
@@ -45,7 +45,7 @@
 }
 
 .catalogo-search {
-  max-width: 320px;
+  width: min(360px, 100%);
 }
 
 .catalogo-count {
@@ -57,6 +57,40 @@
 .catalogo-filter-btn-active {
   color: var(--primary-color) !important;
   border-color: var(--primary-color) !important;
+}
+
+.catalogo-quick-filters {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.catalogo-quick-chip {
+  border: 1px solid var(--border-color-secondary);
+  border-radius: 999px;
+  padding: 6px 12px;
+  background: color-mix(in srgb, var(--bg-container) 90%, transparent);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.catalogo-quick-chip:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.catalogo-quick-chip--active {
+  background: var(--primary-color-outline);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
 }
 
 /* ==========================================
@@ -119,17 +153,17 @@
    ========================================== */
 .serie-card {
   height: 100%;
-  border-radius: 12px;
+  border-radius: var(--border-radius-lg);
   overflow: hidden;
   cursor: pointer;
   background: var(--bg-container);
   border: 1px solid var(--border-color-secondary);
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
   position: relative;
 }
 
 .serie-card:hover {
-  transform: translateY(-6px);
+  transform: scale(1.05);
 }
 
 /* Borde superior de color por tipo */
@@ -207,7 +241,7 @@
    Card cover (imagen/gradiente)
    ========================================== */
 .serie-card-cover {
-  height: 160px;
+  height: 178px;
   position: relative;
   overflow: hidden;
 }
@@ -227,8 +261,8 @@
   inset: 0;
   background: linear-gradient(
     to bottom,
-    transparent 30%,
-    rgba(0, 0, 0, 0.4) 100%
+    transparent 42%,
+    rgba(11, 8, 16, 0.74) 100%
   );
   z-index: 1;
   pointer-events: none;
@@ -298,50 +332,93 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   position: relative;
+  align-self: flex-end;
+  margin-top: auto;
+  text-align: left;
 }
 
 /* ==========================================
    Card body (tags + info)
    ========================================== */
 .serie-card-body {
-  padding: 10px 12px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   position: relative;
 }
 
 /* Tinte sutil de color en el body por tipo */
 .serie-card--serie .serie-card-body {
-  background: linear-gradient(135deg, rgba(47, 84, 235, 0.06) 0%, transparent 60%);
+  background: linear-gradient(135deg, rgba(169, 115, 164, 0.08) 0%, transparent 60%);
 }
 
 .serie-card--pelicula .serie-card-body {
-  background: linear-gradient(135deg, rgba(235, 47, 150, 0.06) 0%, transparent 60%);
+  background: linear-gradient(135deg, rgba(212, 112, 150, 0.08) 0%, transparent 60%);
 }
 
 .serie-card--corto .serie-card-body {
-  background: linear-gradient(135deg, rgba(19, 194, 194, 0.06) 0%, transparent 60%);
+  background: linear-gradient(135deg, rgba(233, 144, 106, 0.08) 0%, transparent 60%);
 }
 
 .serie-card--especial .serie-card-body {
-  background: linear-gradient(135deg, rgba(250, 140, 22, 0.06) 0%, transparent 60%);
+  background: linear-gradient(135deg, rgba(227, 167, 92, 0.08) 0%, transparent 60%);
 }
 
 [data-theme='dark'] .serie-card--serie .serie-card-body {
-  background: linear-gradient(135deg, rgba(47, 84, 235, 0.1) 0%, transparent 60%);
+  background: linear-gradient(135deg, rgba(169, 115, 164, 0.18) 0%, transparent 60%);
 }
 
 [data-theme='dark'] .serie-card--pelicula .serie-card-body {
-  background: linear-gradient(135deg, rgba(235, 47, 150, 0.1) 0%, transparent 60%);
+  background: linear-gradient(135deg, rgba(212, 112, 150, 0.16) 0%, transparent 60%);
 }
 
 [data-theme='dark'] .serie-card--corto .serie-card-body {
-  background: linear-gradient(135deg, rgba(19, 194, 194, 0.1) 0%, transparent 60%);
+  background: linear-gradient(135deg, rgba(233, 144, 106, 0.16) 0%, transparent 60%);
 }
 
 [data-theme='dark'] .serie-card--especial .serie-card-body {
-  background: linear-gradient(135deg, rgba(250, 140, 22, 0.1) 0%, transparent 60%);
+  background: linear-gradient(135deg, rgba(227, 167, 92, 0.16) 0%, transparent 60%);
+}
+
+.serie-card-title {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.35;
+  color: var(--text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.serie-card-primary-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.serie-card-secondary-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transform: translateY(4px);
+  transition: opacity 0.2s ease, transform 0.2s ease, max-height 0.2s ease;
+}
+
+.serie-card:hover .serie-card-secondary-meta {
+  opacity: 1;
+  max-height: 44px;
+  transform: translateY(0);
 }
 
 .serie-card-tags {
@@ -501,7 +578,8 @@
   }
 
   .catalogo-toolbar-left {
-    flex-direction: row;
+    flex-direction: column;
+    align-items: stretch;
     flex-wrap: nowrap;
   }
 
@@ -523,6 +601,7 @@
 
   .catalogo-toolbar-right {
     justify-content: space-between;
+    width: 100%;
   }
 
   .serie-card {
@@ -539,7 +618,7 @@
   }
 
   .serie-card-cover {
-    height: 140px;
+    height: 146px;
   }
 
   .serie-title-overlay {
@@ -767,5 +846,15 @@
 
   .universe-expand-entry-title {
     font-size: 12px;
+  }
+
+  .serie-card-secondary-meta {
+    opacity: 1;
+    max-height: none;
+    transform: none;
+  }
+
+  .catalogo-quick-filters {
+    margin-bottom: var(--spacing-sm);
   }
 }
