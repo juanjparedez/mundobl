@@ -57,6 +57,7 @@ interface SerieData {
   formato?: string;
   temporadas: number;
   episodios: number;
+  runtimeHours?: number;
   anio: number;
   rating: number | null;
   observaciones: string | null;
@@ -209,6 +210,9 @@ export function CatalogoClient({
   const [showAlphaIndex, setShowAlphaIndex] = useState(false);
   const [expandedUniverses, setExpandedUniverses] = useState<Set<number>>(
     new Set()
+  );
+  const [expandedInfoCardId, setExpandedInfoCardId] = useState<string | null>(
+    null
   );
   const isMobile = useMediaQuery('(max-width: 768px)');
 
@@ -541,6 +545,11 @@ export function CatalogoClient({
     });
   };
 
+  const toggleCardInfo = (serieId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setExpandedInfoCardId((prev) => (prev === serieId ? null : serieId));
+  };
+
   const yearOptions = Array.from(
     { length: yearBounds.max - yearBounds.min + 1 },
     (_, i) => yearBounds.min + i
@@ -550,6 +559,8 @@ export function CatalogoClient({
 
   const renderSingleCard = (serie: SerieData) => {
     const gradient = getGradientByType(serie.tipo);
+    const isInfoExpanded = expandedInfoCardId === serie.id;
+    const actorHighlights = (serie.actors ?? []).slice(0, 3);
     return (
       <div
         className={`serie-card serie-card--${serie.tipo}`}
@@ -561,7 +572,9 @@ export function CatalogoClient({
               src={serie.imageUrl}
               alt={serie.titulo}
               fill
-              sizes="(max-width: 768px) 50vw, 33vw"
+              sizes="(max-width: 480px) 50vw, (max-width: 768px) 46vw, (max-width: 1200px) 31vw, 24vw"
+              quality={60}
+              fetchPriority="low"
               style={{
                 objectFit: 'cover',
                 objectPosition: serie.imagePosition || 'center',
@@ -632,8 +645,52 @@ export function CatalogoClient({
                 </span>
               </>
             )}
+            {(serie.runtimeHours ?? 0) > 0 && (
+              <>
+                <span className="serie-card-dot" />
+                <span>
+                  {serie.runtimeHours}h
+                </span>
+              </>
+            )}
             {serie.visto && <Tag color="success">{t('catalogo.watchedTag')}</Tag>}
           </div>
+
+          <button
+            className={`serie-card-more-info-btn${isInfoExpanded ? ' serie-card-more-info-btn--active' : ''}`}
+            onClick={(e) => toggleCardInfo(serie.id, e)}
+          >
+            {isInfoExpanded ? t('catalogo.hideInfo') : t('catalogo.moreInfo')}
+          </button>
+
+          {isInfoExpanded && (
+            <div className="serie-card-info-panel">
+              <div className="serie-card-info-line">
+                <span>{t('catalogo.infoSeasons')}</span>
+                <strong>{serie.temporadas}</strong>
+              </div>
+              <div className="serie-card-info-line">
+                <span>{t('catalogo.infoEpisodes')}</span>
+                <strong>{serie.episodios}</strong>
+              </div>
+              <div className="serie-card-info-line">
+                <span>{t('catalogo.infoRuntime')}</span>
+                <strong>
+                  {(serie.runtimeHours ?? 0) > 0
+                    ? `${serie.runtimeHours}h`
+                    : t('catalogo.infoUnknown')}
+                </strong>
+              </div>
+              <div className="serie-card-info-line serie-card-info-line--stacked">
+                <span>{t('catalogo.infoActors')}</span>
+                <strong>
+                  {actorHighlights.length > 0
+                    ? actorHighlights.join(', ')
+                    : t('catalogo.infoNoActors')}
+                </strong>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );
@@ -654,7 +711,9 @@ export function CatalogoClient({
                 src={firstSerie.imageUrl}
                 alt={group.universoNombre}
                 fill
-                sizes="(max-width: 768px) 50vw, 33vw"
+                sizes="(max-width: 480px) 50vw, (max-width: 768px) 46vw, (max-width: 1200px) 31vw, 24vw"
+                quality={60}
+                fetchPriority="low"
                 style={{
                   objectFit: 'cover',
                   objectPosition: firstSerie.imagePosition || 'center',
@@ -732,6 +791,8 @@ export function CatalogoClient({
             alt={serie.titulo}
             fill
             sizes="48px"
+            quality={50}
+            fetchPriority="low"
             style={{
               objectFit: 'cover',
               objectPosition: serie.imagePosition || 'center',
@@ -802,6 +863,8 @@ export function CatalogoClient({
                     alt={serie.titulo}
                     fill
                     sizes="48px"
+                    quality={50}
+                    fetchPriority="low"
                     style={{
                       objectFit: 'cover',
                       objectPosition: serie.imagePosition || 'center',
