@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 import { auth } from '@/lib/auth';
+import { notifyParticipantsOfNewComment } from '@/lib/notifications';
 
 export async function GET(
   request: NextRequest,
@@ -74,6 +75,18 @@ export async function POST(
         user: { select: { id: true, name: true, image: true } },
       },
     });
+
+    // Avisar a otros usuarios que comentaron antes en esta misma serie
+    // (solo si el nuevo comentario es público — los privados no notifican).
+    if (!comment.isPrivate) {
+      void notifyParticipantsOfNewComment({
+        currentCommentId: comment.id,
+        currentUserId: authResult.userId,
+        target: { seriesId },
+        seriesIdForLink: seriesId,
+        excerpt: content.trim().slice(0, 80),
+      });
+    }
 
     return NextResponse.json(comment);
   } catch (error) {
