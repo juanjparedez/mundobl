@@ -5,7 +5,7 @@
 }
 
 .rating-section__average {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-color-active) 100%);
   border: none;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
@@ -21,7 +21,7 @@
 
 .rating-average__icon {
   font-size: 3em;
-  color: #ffd700;
+  color: var(--warning-color);
 }
 
 .rating-average__score {

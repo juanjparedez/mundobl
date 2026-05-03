@@ -15,7 +15,7 @@
 /* Active player */
 .series-content__player {
   background: var(--bg-secondary);
-  border-radius: 8px;
+  border-radius: var(--border-radius-base);
   overflow: hidden;
 }
 

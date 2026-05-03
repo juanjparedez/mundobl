@@ -28,7 +28,7 @@
 .admin-page-hero__stat-card {
   min-width: 110px;
   padding: 10px 12px;
-  border-radius: 12px;
+  border-radius: var(--border-radius-base);
   border: 1px solid var(--border-color-secondary);
   background: linear-gradient(
     165deg,

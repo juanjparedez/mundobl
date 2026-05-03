@@ -1,0 +1,35 @@
+.accent-picker {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xs) 0;
+}
+
+.accent-picker__swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background-color: var(--swatch-color);
+  cursor: pointer;
+  padding: 0;
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+  flex-shrink: 0;
+}
+
+.accent-picker__swatch:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--swatch-color) 35%, transparent);
+}
+
+.accent-picker__swatch--active {
+  border-color: var(--swatch-color);
+  box-shadow:
+    0 0 0 2px var(--bg-base),
+    0 0 0 4px var(--swatch-color);
+  transform: scale(1.15);
+}

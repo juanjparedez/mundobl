@@ -220,7 +220,7 @@
 .image-position-preview-card {
   width: 140px;
   height: 160px;
-  border-radius: 8px;
+  border-radius: var(--border-radius-base);
   border: 1px solid var(--border-color-secondary);
   background-color: var(--bg-elevated);
   background-size: cover;
