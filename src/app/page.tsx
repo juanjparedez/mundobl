@@ -2,6 +2,9 @@ import type { Metadata } from 'next';
 import { JsonLd } from '@/components/seo/JsonLd';
 import type { WebSite } from 'schema-dts';
 import { LandingPage } from './LandingPage/LandingPage';
+import { prisma } from '@/lib/database';
+
+export const revalidate = 300; // revalidar stats cada 5 min
 
 export const metadata: Metadata = {
   alternates: {
@@ -9,7 +12,25 @@ export const metadata: Metadata = {
   },
 };
 
-export default function HomePage() {
+async function getLandingStats() {
+  try {
+    const [totalSeries, totalCompletedViews, totalPublicComments] =
+      await Promise.all([
+        prisma.series.count(),
+        prisma.viewStatus.count({
+          where: { status: 'VISTA', seriesId: { not: null } },
+        }),
+        prisma.comment.count({ where: { isPrivate: false } }),
+      ]);
+    return { totalSeries, totalCompletedViews, totalPublicComments };
+  } catch {
+    return { totalSeries: 0, totalCompletedViews: 0, totalPublicComments: 0 };
+  }
+}
+
+export default async function HomePage() {
+  const stats = await getLandingStats();
+
   return (
     <>
       <JsonLd<WebSite>
@@ -33,7 +54,7 @@ export default function HomePage() {
           },
         }}
       />
-      <LandingPage />
+      <LandingPage stats={stats} />
     </>
   );
 }

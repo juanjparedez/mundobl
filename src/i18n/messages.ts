@@ -1160,6 +1160,25 @@ type TranslationShape = {
     subtitle: string;
     exploreCatalog: string;
     signIn: string;
+    description: string;
+    goToProfile: string;
+    statSeries: string;
+    statViews: string;
+    statComments: string;
+    featuresTitle: string;
+    featureCatalogTitle: string;
+    featureCatalogDesc: string;
+    featureRatingsTitle: string;
+    featureRatingsDesc: string;
+    featureTrackingTitle: string;
+    featureTrackingDesc: string;
+    featureCommentsTitle: string;
+    featureCommentsDesc: string;
+    featureFavoritesTitle: string;
+    featureFavoritesDesc: string;
+    featureStatsTitle: string;
+    featureStatsDesc: string;
+    footerCtaText: string;
   };
   welcomeBanner: {
     title: string;
@@ -2552,6 +2571,32 @@ const es: TranslationShape = {
     subtitle: 'Tu catálogo personal de series BL y más.',
     exploreCatalog: 'Explorar Catálogo',
     signIn: 'Iniciar Sesión',
+    description:
+      'Un espacio dedicado a las series BL, GL y doramas asiáticos. Seguí lo que estás viendo, calificá tus favoritas y compartir tus opiniones.',
+    goToProfile: 'Mi Perfil',
+    statSeries: 'series en catálogo',
+    statViews: 'veces vistas',
+    statComments: 'comentarios',
+    featuresTitle: '¿Qué podés hacer?',
+    featureCatalogTitle: 'Catálogo completo',
+    featureCatalogDesc:
+      'Explorá cientos de series organizadas por género, país, año y tipo de contenido.',
+    featureRatingsTitle: 'Calificaciones por categoría',
+    featureRatingsDesc:
+      'Puntuá cada serie en trama, acting, OST y más. Tenés tu propia puntuación.',
+    featureTrackingTitle: 'Seguimiento de episodios',
+    featureTrackingDesc:
+      'Registrá tu progreso episodio a episodio. Sabé siempre dónde quedás.',
+    featureCommentsTitle: 'Comentarios y reseñas',
+    featureCommentsDesc:
+      'Dejá tus reflexiones por serie, temporada o episodio. Públicás o guardás privado.',
+    featureFavoritesTitle: 'Favoritos',
+    featureFavoritesDesc:
+      'Armá tu lista de series favoritas para volver a ellas siempre que quieras.',
+    featureStatsTitle: 'Estadísticas personales',
+    featureStatsDesc:
+      'Descubrí cuántas horas viste, tus géneros preferidos y tus rachas de actividad.',
+    footerCtaText: 'Empezá a explorar el catálogo ahora.',
   },
   welcomeBanner: {
     title: 'Bienvenido/a a MundoBL',
@@ -3937,6 +3982,32 @@ const en: TranslationShape = {
     subtitle: 'Your personal BL series catalog and more.',
     exploreCatalog: 'Explore Catalog',
     signIn: 'Sign In',
+    description:
+      'A space dedicated to BL, GL and Asian dramas. Track what you are watching, rate your favorites and share your thoughts.',
+    goToProfile: 'My Profile',
+    statSeries: 'series in catalog',
+    statViews: 'times watched',
+    statComments: 'comments',
+    featuresTitle: 'What can you do?',
+    featureCatalogTitle: 'Full catalog',
+    featureCatalogDesc:
+      'Browse hundreds of series organized by genre, country, year and content type.',
+    featureRatingsTitle: 'Category ratings',
+    featureRatingsDesc:
+      'Rate each series on plot, acting, OST and more. Keep your own personal score.',
+    featureTrackingTitle: 'Episode tracking',
+    featureTrackingDesc:
+      'Log your progress episode by episode. Always know where you left off.',
+    featureCommentsTitle: 'Comments & reviews',
+    featureCommentsDesc:
+      'Leave your thoughts on a series, season or episode. Publish publicly or keep it private.',
+    featureFavoritesTitle: 'Favorites',
+    featureFavoritesDesc:
+      'Build your favorites list to come back to your most loved series anytime.',
+    featureStatsTitle: 'Personal stats',
+    featureStatsDesc:
+      'Discover how many hours you have watched, your favorite genres and your activity streaks.',
+    footerCtaText: 'Start exploring the catalog now.',
   },
   welcomeBanner: {
     title: 'Welcome to MundoBL',
