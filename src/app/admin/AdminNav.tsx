@@ -16,85 +16,28 @@ import {
   MessageOutlined,
 } from '@ant-design/icons';
 import './admin-nav.css';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 
-const adminLinks = [
-  {
-    key: '/admin',
-    icon: <AppstoreOutlined />,
-    label: 'Series',
-    shortLabel: 'Series',
-  },
-  {
-    key: '/admin/tags',
-    icon: <TagsOutlined />,
-    label: 'Tags',
-    shortLabel: 'Tags',
-  },
-  {
-    key: '/admin/universos',
-    icon: <GlobalOutlined />,
-    label: 'Universos',
-    shortLabel: 'Univ.',
-  },
-  {
-    key: '/admin/actores',
-    icon: <UserOutlined />,
-    label: 'Actores',
-    shortLabel: 'Actor.',
-  },
-  {
-    key: '/admin/directores',
-    icon: <VideoCameraOutlined />,
-    label: 'Directores',
-    shortLabel: 'Direct.',
-  },
-  {
-    key: '/admin/productoras',
-    icon: <BankOutlined />,
-    label: 'Productoras',
-    shortLabel: 'Prod.',
-  },
-  {
-    key: '/admin/idiomas',
-    icon: <TranslationOutlined />,
-    label: 'Idiomas',
-    shortLabel: 'Idiom.',
-  },
-  {
-    key: '/admin/sitios',
-    icon: <LinkOutlined />,
-    label: 'Sitios',
-    shortLabel: 'Sitios',
-  },
-  {
-    key: '/admin/contenido',
-    icon: <PlayCircleOutlined />,
-    label: 'Contenido',
-    shortLabel: 'Cont.',
-  },
-  {
-    key: '/admin/comentarios',
-    icon: <MessageOutlined />,
-    label: 'Comentarios',
-    shortLabel: 'Coment.',
-  },
-  {
-    key: '/admin/info',
-    icon: <InfoCircleOutlined />,
-    label: 'Info',
-    shortLabel: 'Info',
-  },
-  {
-    key: '/admin/logs',
-    icon: <FileTextOutlined />,
-    label: 'Logs',
-    shortLabel: 'Logs',
-  },
-];
 
 export function AdminNav() {
   const pathname = usePathname();
   const router = useRouter();
+  const { t } = useLocale();
+
+  const adminLinks = [
+    { key: '/admin', icon: <AppstoreOutlined />, label: t('adminNav.series'), shortLabel: t('adminNav.seriesShort') },
+    { key: '/admin/tags', icon: <TagsOutlined />, label: t('adminNav.tags'), shortLabel: t('adminNav.tagsShort') },
+    { key: '/admin/universos', icon: <GlobalOutlined />, label: t('adminNav.universes'), shortLabel: t('adminNav.universesShort') },
+    { key: '/admin/actores', icon: <UserOutlined />, label: t('adminNav.actors'), shortLabel: t('adminNav.actorsShort') },
+    { key: '/admin/directores', icon: <VideoCameraOutlined />, label: t('adminNav.directors'), shortLabel: t('adminNav.directorsShort') },
+    { key: '/admin/productoras', icon: <BankOutlined />, label: t('adminNav.productionCompanies'), shortLabel: t('adminNav.productionCompaniesShort') },
+    { key: '/admin/idiomas', icon: <TranslationOutlined />, label: t('adminNav.languages'), shortLabel: t('adminNav.languagesShort') },
+    { key: '/admin/sitios', icon: <LinkOutlined />, label: t('adminNav.sites'), shortLabel: t('adminNav.sitesShort') },
+    { key: '/admin/contenido', icon: <PlayCircleOutlined />, label: t('adminNav.content'), shortLabel: t('adminNav.contentShort') },
+    { key: '/admin/comentarios', icon: <MessageOutlined />, label: t('adminNav.comments'), shortLabel: t('adminNav.commentsShort') },
+    { key: '/admin/info', icon: <InfoCircleOutlined />, label: t('adminNav.info'), shortLabel: t('adminNav.infoShort') },
+    { key: '/admin/logs', icon: <FileTextOutlined />, label: t('adminNav.logs'), shortLabel: t('adminNav.logsShort') },
+  ];
 
   return (
     <nav className="admin-nav">

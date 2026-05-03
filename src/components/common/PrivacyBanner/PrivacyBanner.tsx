@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from 'react';
 import { Button } from 'antd';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 import './PrivacyBanner.css';
 
 const STORAGE_KEY = 'privacy-accepted';
@@ -25,6 +26,7 @@ export function PrivacyBanner() {
     getSnapshot,
     getServerSnapshot
   );
+  const { t } = useLocale();
 
   if (accepted) return null;
 
@@ -37,8 +39,7 @@ export function PrivacyBanner() {
   return (
     <div className="privacy-banner">
       <p className="privacy-banner__text">
-        Este sitio registra información de acceso con fines de seguridad y
-        mejora. Al continuar navegando, aceptás nuestra política de privacidad.
+        {t('privacyBanner.text')}
       </p>
       <Button
         type="primary"
@@ -46,7 +47,7 @@ export function PrivacyBanner() {
         onClick={handleAccept}
         className="privacy-banner__btn"
       >
-        Entendido
+        {t('privacyBanner.accept')}
       </Button>
     </div>
   );

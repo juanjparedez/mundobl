@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Modal, Form, Input, Select, InputNumber, Spin } from 'antd';
 import { useMessage } from '@/hooks/useMessage';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -26,12 +27,13 @@ export function EditSerieModal({
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
+  const { t } = useLocale();
 
   const fetchSerieData = useCallback(async () => {
     setFetching(true);
     try {
       const response = await fetch(`/api/series/${serieId}`);
-      if (!response.ok) throw new Error('Error al cargar la serie');
+      if (!response.ok) throw new Error(t('editSerieModal.loadError'));
 
       const data = await response.json();
 
@@ -51,7 +53,7 @@ export function EditSerieModal({
         countryId: data.countryId,
       });
     } catch (error) {
-      message.error('Error al cargar los datos de la serie');
+      message.error(t('editSerieModal.loadError'));
       console.error(error);
     } finally {
       setFetching(false);
@@ -84,12 +86,12 @@ export function EditSerieModal({
         throw new Error(error.error || 'Error al actualizar la serie');
       }
 
-      message.success('Serie actualizada correctamente');
+      message.success(t('editSerieModal.updateSuccess'));
       onSuccess();
       onClose();
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Error al actualizar la serie';
+        error instanceof Error ? error.message : t('editSerieModal.updateError');
       message.error(errorMessage);
       console.error(error);
     } finally {
@@ -99,14 +101,14 @@ export function EditSerieModal({
 
   return (
     <Modal
-      title="Editar Serie"
+      title={t('editSerieModal.title')}
       open={open}
       onCancel={onClose}
       onOk={() => form.submit()}
       confirmLoading={loading}
       width={800}
-      okText="Guardar"
-      cancelText="Cancelar"
+      okText={t('editSerieModal.save')}
+      cancelText={t('editSerieModal.cancel')}
       forceRender
     >
       <Spin spinning={fetching} size="large">
@@ -117,24 +119,24 @@ export function EditSerieModal({
           autoComplete="off"
         >
           <Form.Item
-            label="Título"
+            label={t('editSerieModal.fieldTitle')}
             name="title"
-            rules={[{ required: true, message: 'El título es requerido' }]}
+            rules={[{ required: true, message: t('editSerieModal.requiredTitle') }]}
           >
-            <Input placeholder="Título de la serie" />
+            <Input placeholder={t('editSerieModal.placeholderTitle')} />
           </Form.Item>
 
-          <Form.Item label="Título Original" name="originalTitle">
-            <Input placeholder="Título original (opcional)" />
+          <Form.Item label={t('editSerieModal.fieldOriginalTitle')} name="originalTitle">
+            <Input placeholder={t('editSerieModal.placeholderOriginalTitle')} />
           </Form.Item>
 
-          <Form.Item label="URL de Imagen" name="imageUrl">
-            <Input placeholder="URL de la imagen de portada" />
+          <Form.Item label={t('editSerieModal.fieldImageUrl')} name="imageUrl">
+            <Input placeholder={t('editSerieModal.placeholderImageUrl')} />
           </Form.Item>
 
-          <Form.Item label="Año" name="year">
+          <Form.Item label={t('editSerieModal.fieldYear')} name="year">
             <InputNumber
-              placeholder="Año de estreno"
+              placeholder={t('editSerieModal.placeholderYear')}
               min={1900}
               max={2100}
               style={{ width: '100%' }}
@@ -142,21 +144,21 @@ export function EditSerieModal({
           </Form.Item>
 
           <Form.Item
-            label="Tipo"
+            label={t('editSerieModal.fieldType')}
             name="type"
-            rules={[{ required: true, message: 'El tipo es requerido' }]}
+            rules={[{ required: true, message: t('editSerieModal.requiredType') }]}
           >
-            <Select placeholder="Selecciona el tipo">
-              <Option value="serie">Serie</Option>
-              <Option value="pelicula">Película</Option>
-              <Option value="corto">Corto</Option>
-              <Option value="especial">Especial</Option>
+            <Select placeholder={t('editSerieModal.placeholderType')}>
+              <Option value="serie">{t('seriesHeader.typeSerie')}</Option>
+              <Option value="pelicula">{t('seriesHeader.typePelicula')}</Option>
+              <Option value="corto">{t('seriesHeader.typeCorto')}</Option>
+              <Option value="especial">{t('seriesHeader.typeEspecial')}</Option>
             </Select>
           </Form.Item>
 
-          <Form.Item label="País de Origen" name="countryId">
+          <Form.Item label={t('editSerieModal.fieldCountry')} name="countryId">
             <Select
-              placeholder="Selecciona el país"
+              placeholder={t('editSerieModal.placeholderCountry')}
               showSearch
               optionFilterProp="children"
               allowClear
@@ -169,63 +171,63 @@ export function EditSerieModal({
             </Select>
           </Form.Item>
 
-          <Form.Item label="Rating General" name="overallRating">
+          <Form.Item label={t('editSerieModal.fieldRating')} name="overallRating">
             <InputNumber
-              placeholder="Rating (1-10)"
+              placeholder={t('editSerieModal.placeholderRating')}
               min={1}
               max={10}
               style={{ width: '100%' }}
             />
           </Form.Item>
 
-          <Form.Item label="Basado en" name="basedOn">
-            <Select placeholder="Selecciona si está basado en algo" allowClear>
-              <Option value="libro">📖 Libro</Option>
-              <Option value="novela">📚 Novela</Option>
-              <Option value="corto">📄 Cuento/Relato Corto</Option>
-              <Option value="manga">🎌 Manga</Option>
-              <Option value="anime">🎨 Anime</Option>
+          <Form.Item label={t('editSerieModal.fieldBasedOn')} name="basedOn">
+            <Select placeholder={t('editSerieModal.placeholderBasedOn')} allowClear>
+              <Option value="libro">{t('editSerieModal.basedOnLibro')}</Option>
+              <Option value="novela">{t('editSerieModal.basedOnNovela')}</Option>
+              <Option value="corto">{t('editSerieModal.basedOnCorto')}</Option>
+              <Option value="manga">{t('editSerieModal.basedOnManga')}</Option>
+              <Option value="anime">{t('editSerieModal.basedOnAnime')}</Option>
             </Select>
           </Form.Item>
 
           <Form.Item
-            label="Formato de Pantalla"
+            label={t('editSerieModal.fieldFormat')}
             name="format"
-            rules={[{ required: true, message: 'Selecciona un formato' }]}
+            rules={[{ required: true, message: t('editSerieModal.requiredFormat') }]}
             initialValue="regular"
           >
             <Select>
-              <Option value="regular">📱 Regular (Horizontal)</Option>
-              <Option value="vertical">📲 Vertical (Para móvil)</Option>
+              <Option value="regular">{t('editSerieModal.formatRegular')}</Option>
+              <Option value="vertical">{t('editSerieModal.formatVertical')}</Option>
             </Select>
           </Form.Item>
 
-          <Form.Item label="Sinopsis" name="synopsis">
+          <Form.Item label={t('editSerieModal.fieldSynopsis')} name="synopsis">
             <TextArea
               rows={4}
-              placeholder="Sinopsis de la serie..."
+              placeholder={t('editSerieModal.placeholderSynopsis')}
               showCount
               maxLength={1000}
             />
           </Form.Item>
 
-          <Form.Item label="Reseña Personal" name="review">
+          <Form.Item label={t('editSerieModal.fieldReview')} name="review">
             <TextArea
               rows={6}
-              placeholder="Tu reseña personal, opinión, crítica..."
+              placeholder={t('editSerieModal.placeholderReview')}
               showCount
               maxLength={2000}
             />
           </Form.Item>
 
-          <Form.Item label="Banda Sonora" name="soundtrack">
-            <Input placeholder="Información sobre la banda sonora" />
+          <Form.Item label={t('editSerieModal.fieldSoundtrack')} name="soundtrack">
+            <Input placeholder={t('editSerieModal.placeholderSoundtrack')} />
           </Form.Item>
 
-          <Form.Item label="Observaciones" name="observations">
+          <Form.Item label={t('editSerieModal.fieldObservations')} name="observations">
             <TextArea
               rows={6}
-              placeholder="Observaciones, comentarios, reseña personal..."
+              placeholder={t('editSerieModal.placeholderObservations')}
               showCount
               maxLength={2000}
             />

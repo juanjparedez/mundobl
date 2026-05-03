@@ -859,6 +859,219 @@ type TranslationShape = {
     uploadSuccess: string;
     uploadError: string;
   };
+  catalogo: {
+    searchPlaceholder: string;
+    filtersButton: string;
+    alphaFilterTooltip: string;
+    titlesCount: string;
+    filteredCount: string;
+    filterCountry: string;
+    filterType: string;
+    filterStatus: string;
+    filterFavorites: string;
+    filterTags: string;
+    filterMinRating: string;
+    filterFrom: string;
+    filterTo: string;
+    filterClear: string;
+    statusWatched: string;
+    statusUnwatched: string;
+    favoritesOnly: string;
+    universeTitles: string;
+    universeExpand: string;
+    filteringBy: string;
+    filterCountryLabel: string;
+    filterTypeLabel: string;
+    filterFormatLabel: string;
+    filterGenreLabel: string;
+    filterLanguageLabel: string;
+    filterProductionLabel: string;
+    filterDirectorLabel: string;
+    filterActorLabel: string;
+    filterYearLabel: string;
+    filterTagLabel: string;
+    drawerTitle: string;
+    addFavorite: string;
+    removeFavorite: string;
+    viewDetail: string;
+    watchedTag: string;
+    newButton: string;
+    emptyFiltered: string;
+    emptyCatalog: string;
+    paginationTotal: string;
+    favoriteAdded: string;
+    favoriteRemoved: string;
+    favoriteError: string;
+  };
+  landing: {
+    subtitle: string;
+    exploreCatalog: string;
+    signIn: string;
+  };
+  welcomeBanner: {
+    title: string;
+    description: string;
+    dismiss: string;
+  };
+  privacyBanner: {
+    text: string;
+    accept: string;
+  };
+  header: {
+    title: string;
+  };
+  adminNav: {
+    series: string;
+    seriesShort: string;
+    tags: string;
+    tagsShort: string;
+    universes: string;
+    universesShort: string;
+    actors: string;
+    actorsShort: string;
+    directors: string;
+    directorsShort: string;
+    productionCompanies: string;
+    productionCompaniesShort: string;
+    languages: string;
+    languagesShort: string;
+    sites: string;
+    sitesShort: string;
+    content: string;
+    contentShort: string;
+    comments: string;
+    commentsShort: string;
+    info: string;
+    infoShort: string;
+    logs: string;
+    logsShort: string;
+  };
+  adminTable: {
+    searchPlaceholder: string;
+    resultCount: string;
+    deleteConfirmTitle: string;
+    deleteConfirmContent: string;
+    deleteConfirmOk: string;
+    deleteConfirmCancel: string;
+    deleteSuccess: string;
+    deleteError: string;
+    columnTitle: string;
+    columnCountry: string;
+    columnType: string;
+    columnSeasons: string;
+    columnEpisodes: string;
+    columnYear: string;
+    columnStatus: string;
+    columnActions: string;
+    paginationTotal: string;
+  };
+  editSerieModal: {
+    title: string;
+    save: string;
+    cancel: string;
+    loadError: string;
+    updateSuccess: string;
+    updateError: string;
+    fieldTitle: string;
+    requiredTitle: string;
+    fieldOriginalTitle: string;
+    fieldImageUrl: string;
+    fieldYear: string;
+    fieldType: string;
+    requiredType: string;
+    fieldCountry: string;
+    fieldRating: string;
+    fieldBasedOn: string;
+    fieldFormat: string;
+    requiredFormat: string;
+    fieldSynopsis: string;
+    fieldReview: string;
+    fieldSoundtrack: string;
+    fieldObservations: string;
+    placeholderTitle: string;
+    placeholderOriginalTitle: string;
+    placeholderImageUrl: string;
+    placeholderYear: string;
+    placeholderType: string;
+    placeholderCountry: string;
+    placeholderRating: string;
+    placeholderBasedOn: string;
+    placeholderSynopsis: string;
+    placeholderReview: string;
+    placeholderSoundtrack: string;
+    placeholderObservations: string;
+    typeOption_serie: string;
+    typeOption_pelicula: string;
+    typeOption_corto: string;
+    typeOption_especial: string;
+    basedOnLibro: string;
+    basedOnNovela: string;
+    basedOnCorto: string;
+    basedOnManga: string;
+    basedOnAnime: string;
+    formatRegular: string;
+    formatVertical: string;
+  };
+  tagPage: {
+    titleCountSingular: string;
+    titleCountPlural: string;
+    seriesWithTag: string;
+    empty: string;
+  };
+  contenidoPage: {
+    pageTitle: string;
+    subtitle: string;
+    filterPlatform: string;
+    filterCategory: string;
+    filterChannel: string;
+    emptyNoContent: string;
+    emptyFiltered: string;
+    playButton: string;
+    unofficialTag: string;
+    modalSource: string;
+    modalViewOn: string;
+    modalRelatedSeries: string;
+  };
+  feedback: {
+    pageTitle: string;
+    tabRequests: string;
+    tabChangelog: string;
+    activeCount: string;
+    newRequest: string;
+    emptyRequests: string;
+    emptyChangelog: string;
+    completedSection: string;
+    currentVersion: string;
+    deleteButton: string;
+    createButton: string;
+    formTitle: string;
+    formFieldType: string;
+    formFieldTitle: string;
+    formFieldDescription: string;
+    formDescriptionPlaceholder: string;
+    formDescriptionHint: string;
+    formRequiredType: string;
+    formRequiredTitle: string;
+    statusPendiente: string;
+    statusEnProgreso: string;
+    statusCompletado: string;
+    statusDescartado: string;
+    typeBug: string;
+    typeFeature: string;
+    typeIdea: string;
+    successCreated: string;
+    successStatusUpdated: string;
+    successDeleted: string;
+    errorCreate: string;
+    errorVote: string;
+    errorStatusUpdate: string;
+    errorDelete: string;
+    errorUpload: string;
+  };
+  notFound: {
+    description: string;
+    backLink: string;
+  };
 };
 
 const es: TranslationShape = {
@@ -1727,6 +1940,219 @@ const es: TranslationShape = {
     uploadSuccess: 'Imagen subida exitosamente',
     uploadError: 'Error al subir la imagen',
   },
+  catalogo: {
+    searchPlaceholder: 'Buscar por título, país o tipo...',
+    filtersButton: 'Filtros',
+    alphaFilterTooltip: 'Filtro alfabético',
+    titlesCount: '{n} títulos',
+    filteredCount: '{from} de {total}',
+    filterCountry: 'País',
+    filterType: 'Tipo',
+    filterStatus: 'Estado',
+    filterFavorites: 'Favoritos',
+    filterTags: 'Tags',
+    filterMinRating: 'Rating mín.',
+    filterFrom: 'Desde',
+    filterTo: 'Hasta',
+    filterClear: 'Limpiar',
+    statusWatched: 'Vistas',
+    statusUnwatched: 'No vistas',
+    favoritesOnly: 'Favoritos',
+    universeTitles: '{n} títulos',
+    universeExpand: 'Ver series',
+    filteringBy: 'Filtrando por:',
+    filterCountryLabel: 'País: {value}',
+    filterTypeLabel: 'Tipo: {value}',
+    filterFormatLabel: 'Formato: {value}',
+    filterGenreLabel: 'Género: {value}',
+    filterLanguageLabel: 'Idioma: {value}',
+    filterProductionLabel: 'Productora: {value}',
+    filterDirectorLabel: 'Director: {value}',
+    filterActorLabel: 'Actor: {value}',
+    filterYearLabel: 'Año: {year}',
+    filterTagLabel: 'Tag: {name}',
+    drawerTitle: 'Filtros',
+    addFavorite: 'Agregar a favoritos',
+    removeFavorite: 'Quitar de favoritos',
+    viewDetail: 'Ver detalle',
+    watchedTag: 'Vista',
+    newButton: 'Nueva',
+    emptyFiltered: 'No se encontraron series con estos filtros',
+    emptyCatalog: 'No hay series en el catálogo',
+    paginationTotal: '{from}-{to} de {total}',
+    favoriteAdded: 'Agregado a favoritos',
+    favoriteRemoved: 'Removido de favoritos',
+    favoriteError: 'Error al actualizar favorito',
+  },
+  landing: {
+    subtitle: 'Tu catálogo personal de series BL y más.',
+    exploreCatalog: 'Explorar Catálogo',
+    signIn: 'Iniciar Sesión',
+  },
+  welcomeBanner: {
+    title: 'Bienvenido/a a MundoBL',
+    description: 'Este es mi catálogo personal de series BL que fui viendo, incluyendo las que aún están en emisión. Si viste alguna, me encantaría que dejes tu comentario, reflexión o reseña.',
+    dismiss: 'Entendido',
+  },
+  privacyBanner: {
+    text: 'Este sitio registra información de acceso con fines de seguridad y mejora. Al continuar navegando, aceptás nuestra política de privacidad.',
+    accept: 'Entendido',
+  },
+  header: {
+    title: 'MundoBL - Catálogo de Series',
+  },
+  adminNav: {
+    series: 'Series',
+    seriesShort: 'Series',
+    tags: 'Tags',
+    tagsShort: 'Tags',
+    universes: 'Universos',
+    universesShort: 'Univ.',
+    actors: 'Actores',
+    actorsShort: 'Actor.',
+    directors: 'Directores',
+    directorsShort: 'Direct.',
+    productionCompanies: 'Productoras',
+    productionCompaniesShort: 'Prod.',
+    languages: 'Idiomas',
+    languagesShort: 'Idiom.',
+    sites: 'Sitios',
+    sitesShort: 'Sitios',
+    content: 'Contenido',
+    contentShort: 'Cont.',
+    comments: 'Comentarios',
+    commentsShort: 'Coment.',
+    info: 'Info',
+    infoShort: 'Info',
+    logs: 'Logs',
+    logsShort: 'Logs',
+  },
+  adminTable: {
+    searchPlaceholder: 'Buscar por título, país o tipo...',
+    resultCount: '{n} de {total} series',
+    deleteConfirmTitle: '¿Estás seguro?',
+    deleteConfirmContent: '¿Deseas eliminar la serie "{title}"? Esta acción no se puede deshacer.',
+    deleteConfirmOk: 'Sí, eliminar',
+    deleteConfirmCancel: 'Cancelar',
+    deleteSuccess: 'Serie eliminada correctamente',
+    deleteError: 'Error al eliminar la serie',
+    columnTitle: 'Título',
+    columnCountry: 'País',
+    columnType: 'Tipo',
+    columnSeasons: 'Temporadas',
+    columnEpisodes: 'Episodios',
+    columnYear: 'Año',
+    columnStatus: 'Estado',
+    columnActions: 'Acciones',
+    paginationTotal: '{from}-{to} de {total} series',
+  },
+  editSerieModal: {
+    title: 'Editar Serie',
+    save: 'Guardar',
+    cancel: 'Cancelar',
+    loadError: 'Error al cargar los datos de la serie',
+    updateSuccess: 'Serie actualizada correctamente',
+    updateError: 'Error al actualizar la serie',
+    fieldTitle: 'Título',
+    requiredTitle: 'El título es requerido',
+    fieldOriginalTitle: 'Título Original',
+    fieldImageUrl: 'URL de Imagen',
+    fieldYear: 'Año',
+    fieldType: 'Tipo',
+    requiredType: 'El tipo es requerido',
+    fieldCountry: 'País de Origen',
+    fieldRating: 'Rating General',
+    fieldBasedOn: 'Basado en',
+    fieldFormat: 'Formato de Pantalla',
+    requiredFormat: 'Selecciona un formato',
+    fieldSynopsis: 'Sinopsis',
+    fieldReview: 'Reseña Personal',
+    fieldSoundtrack: 'Banda Sonora',
+    fieldObservations: 'Observaciones',
+    placeholderTitle: 'Título de la serie',
+    placeholderOriginalTitle: 'Título original (opcional)',
+    placeholderImageUrl: 'URL de la imagen de portada',
+    placeholderYear: 'Año de estreno',
+    placeholderType: 'Selecciona el tipo',
+    placeholderCountry: 'Selecciona el país',
+    placeholderRating: 'Rating (1-10)',
+    placeholderBasedOn: 'Selecciona si está basado en algo',
+    placeholderSynopsis: 'Sinopsis de la serie...',
+    placeholderReview: 'Tu reseña personal, opinión, crítica...',
+    placeholderSoundtrack: 'Información sobre la banda sonora',
+    placeholderObservations: 'Observaciones, comentarios, reseña personal...',
+    typeOption_serie: 'Serie',
+    typeOption_pelicula: 'Película',
+    typeOption_corto: 'Corto',
+    typeOption_especial: 'Especial',
+    basedOnLibro: '📖 Libro',
+    basedOnNovela: '📚 Novela',
+    basedOnCorto: '📄 Cuento/Relato Corto',
+    basedOnManga: '🎌 Manga',
+    basedOnAnime: '🎨 Anime',
+    formatRegular: '📱 Regular (Horizontal)',
+    formatVertical: '📲 Vertical (Para móvil)',
+  },
+  tagPage: {
+    titleCountSingular: '1 título',
+    titleCountPlural: '{n} títulos',
+    seriesWithTag: 'Series con este tag ({n})',
+    empty: 'No hay series con este tag',
+  },
+  contenidoPage: {
+    pageTitle: 'Contenido',
+    subtitle: 'Trailers, OSTs, entrevistas y más desde plataformas oficiales',
+    filterPlatform: 'Plataforma',
+    filterCategory: 'Categoría',
+    filterChannel: 'Canal / Fuente',
+    emptyNoContent: 'Aún no hay contenido disponible',
+    emptyFiltered: 'No hay contenido con estos filtros',
+    playButton: 'Ver',
+    unofficialTag: 'No oficial',
+    modalSource: 'Fuente: {platform}',
+    modalViewOn: 'Ver en {platform}',
+    modalRelatedSeries: 'Serie relacionada:',
+  },
+  feedback: {
+    pageTitle: 'Feedback',
+    tabRequests: 'Ideas y Bugs',
+    tabChangelog: 'Changelog',
+    activeCount: '{n} solicitudes activas',
+    newRequest: 'Nueva solicitud',
+    emptyRequests: 'No hay solicitudes activas',
+    emptyChangelog: 'No hay cambios registrados',
+    completedSection: 'Solicitudes completadas',
+    currentVersion: 'Versión actual: {version}',
+    deleteButton: 'Eliminar',
+    createButton: 'Crear',
+    formTitle: 'Nueva solicitud',
+    formFieldType: 'Tipo',
+    formFieldTitle: 'Título',
+    formFieldDescription: 'Descripción',
+    formDescriptionPlaceholder: 'Escribí la descripción... Podés pegar imágenes del clipboard (Ctrl+V)',
+    formDescriptionHint: 'Pegá imágenes del clipboard en la descripción',
+    formRequiredType: 'Seleccioná un tipo',
+    formRequiredTitle: 'Ingresá un título',
+    statusPendiente: 'Pendiente',
+    statusEnProgreso: 'En progreso',
+    statusCompletado: 'Completado',
+    statusDescartado: 'Descartado',
+    typeBug: 'Bug',
+    typeFeature: 'Feature',
+    typeIdea: 'Idea',
+    successCreated: 'Solicitud creada',
+    successStatusUpdated: 'Estado actualizado',
+    successDeleted: 'Solicitud eliminada',
+    errorCreate: 'Error al crear la solicitud',
+    errorVote: 'Error al votar',
+    errorStatusUpdate: 'Error al actualizar',
+    errorDelete: 'Error al eliminar',
+    errorUpload: 'Error al subir imagen',
+  },
+  notFound: {
+    description: 'La página que buscas no existe o fue movida.',
+    backLink: 'Volver al catálogo',
+  },
 };
 
 const en: TranslationShape = {
@@ -2593,6 +3019,219 @@ const en: TranslationShape = {
     saveError: 'Error saving season',
     uploadSuccess: 'Image uploaded successfully',
     uploadError: 'Error uploading image',
+  },
+  catalogo: {
+    searchPlaceholder: 'Search by title, country or type...',
+    filtersButton: 'Filters',
+    alphaFilterTooltip: 'Alphabetical filter',
+    titlesCount: '{n} titles',
+    filteredCount: '{from} of {total}',
+    filterCountry: 'Country',
+    filterType: 'Type',
+    filterStatus: 'Status',
+    filterFavorites: 'Favorites',
+    filterTags: 'Tags',
+    filterMinRating: 'Min. Rating',
+    filterFrom: 'From',
+    filterTo: 'To',
+    filterClear: 'Clear',
+    statusWatched: 'Watched',
+    statusUnwatched: 'Unwatched',
+    favoritesOnly: 'Favorites',
+    universeTitles: '{n} titles',
+    universeExpand: 'View series',
+    filteringBy: 'Filtering by:',
+    filterCountryLabel: 'Country: {value}',
+    filterTypeLabel: 'Type: {value}',
+    filterFormatLabel: 'Format: {value}',
+    filterGenreLabel: 'Genre: {value}',
+    filterLanguageLabel: 'Language: {value}',
+    filterProductionLabel: 'Studio: {value}',
+    filterDirectorLabel: 'Director: {value}',
+    filterActorLabel: 'Actor: {value}',
+    filterYearLabel: 'Year: {year}',
+    filterTagLabel: 'Tag: {name}',
+    drawerTitle: 'Filters',
+    addFavorite: 'Add to favorites',
+    removeFavorite: 'Remove from favorites',
+    viewDetail: 'View details',
+    watchedTag: 'Watched',
+    newButton: 'New',
+    emptyFiltered: 'No series found with these filters',
+    emptyCatalog: 'No series in the catalog',
+    paginationTotal: '{from}-{to} of {total}',
+    favoriteAdded: 'Added to favorites',
+    favoriteRemoved: 'Removed from favorites',
+    favoriteError: 'Error updating favorite',
+  },
+  landing: {
+    subtitle: 'Your personal BL series catalog and more.',
+    exploreCatalog: 'Explore Catalog',
+    signIn: 'Sign In',
+  },
+  welcomeBanner: {
+    title: 'Welcome to MundoBL',
+    description: 'This is my personal catalog of BL series I have watched, including those still airing. If you have watched any, I would love for you to leave a comment, reflection or review.',
+    dismiss: 'Got it',
+  },
+  privacyBanner: {
+    text: 'This site logs access information for security and improvement purposes. By continuing to browse, you accept our privacy policy.',
+    accept: 'Got it',
+  },
+  header: {
+    title: 'MundoBL - Series Catalog',
+  },
+  adminNav: {
+    series: 'Series',
+    seriesShort: 'Series',
+    tags: 'Tags',
+    tagsShort: 'Tags',
+    universes: 'Universes',
+    universesShort: 'Univ.',
+    actors: 'Actors',
+    actorsShort: 'Actor.',
+    directors: 'Directors',
+    directorsShort: 'Dir.',
+    productionCompanies: 'Studios',
+    productionCompaniesShort: 'Prod.',
+    languages: 'Languages',
+    languagesShort: 'Lang.',
+    sites: 'Sites',
+    sitesShort: 'Sites',
+    content: 'Content',
+    contentShort: 'Cont.',
+    comments: 'Comments',
+    commentsShort: 'Com.',
+    info: 'Info',
+    infoShort: 'Info',
+    logs: 'Logs',
+    logsShort: 'Logs',
+  },
+  adminTable: {
+    searchPlaceholder: 'Search by title, country or type...',
+    resultCount: '{n} of {total} series',
+    deleteConfirmTitle: 'Are you sure?',
+    deleteConfirmContent: 'Do you want to delete "{title}"? This action cannot be undone.',
+    deleteConfirmOk: 'Yes, delete',
+    deleteConfirmCancel: 'Cancel',
+    deleteSuccess: 'Series deleted successfully',
+    deleteError: 'Error deleting series',
+    columnTitle: 'Title',
+    columnCountry: 'Country',
+    columnType: 'Type',
+    columnSeasons: 'Seasons',
+    columnEpisodes: 'Episodes',
+    columnYear: 'Year',
+    columnStatus: 'Status',
+    columnActions: 'Actions',
+    paginationTotal: '{from}-{to} of {total} series',
+  },
+  editSerieModal: {
+    title: 'Edit Series',
+    save: 'Save',
+    cancel: 'Cancel',
+    loadError: 'Error loading series data',
+    updateSuccess: 'Series updated successfully',
+    updateError: 'Error updating series',
+    fieldTitle: 'Title',
+    requiredTitle: 'Title is required',
+    fieldOriginalTitle: 'Original Title',
+    fieldImageUrl: 'Image URL',
+    fieldYear: 'Year',
+    fieldType: 'Type',
+    requiredType: 'Type is required',
+    fieldCountry: 'Country of Origin',
+    fieldRating: 'Overall Rating',
+    fieldBasedOn: 'Based on',
+    fieldFormat: 'Screen Format',
+    requiredFormat: 'Select a format',
+    fieldSynopsis: 'Synopsis',
+    fieldReview: 'Personal Review',
+    fieldSoundtrack: 'Soundtrack',
+    fieldObservations: 'Observations',
+    placeholderTitle: 'Series title',
+    placeholderOriginalTitle: 'Original title (optional)',
+    placeholderImageUrl: 'Cover image URL',
+    placeholderYear: 'Release year',
+    placeholderType: 'Select type',
+    placeholderCountry: 'Select country',
+    placeholderRating: 'Rating (1-10)',
+    placeholderBasedOn: 'Select if based on something',
+    placeholderSynopsis: 'Series synopsis...',
+    placeholderReview: 'Your personal review, opinion, critique...',
+    placeholderSoundtrack: 'Soundtrack information',
+    placeholderObservations: 'Observations, comments, personal notes...',
+    typeOption_serie: 'Series',
+    typeOption_pelicula: 'Movie',
+    typeOption_corto: 'Short',
+    typeOption_especial: 'Special',
+    basedOnLibro: '📖 Book',
+    basedOnNovela: '📚 Novel',
+    basedOnCorto: '📄 Short Story',
+    basedOnManga: '🎌 Manga',
+    basedOnAnime: '🎨 Anime',
+    formatRegular: '📱 Regular (Horizontal)',
+    formatVertical: '📲 Vertical (Mobile)',
+  },
+  tagPage: {
+    titleCountSingular: '1 title',
+    titleCountPlural: '{n} titles',
+    seriesWithTag: 'Series with this tag ({n})',
+    empty: 'No series with this tag',
+  },
+  contenidoPage: {
+    pageTitle: 'Content',
+    subtitle: 'Trailers, OSTs, interviews and more from official platforms',
+    filterPlatform: 'Platform',
+    filterCategory: 'Category',
+    filterChannel: 'Channel / Source',
+    emptyNoContent: 'No content available yet',
+    emptyFiltered: 'No content with these filters',
+    playButton: 'Watch',
+    unofficialTag: 'Unofficial',
+    modalSource: 'Source: {platform}',
+    modalViewOn: 'Watch on {platform}',
+    modalRelatedSeries: 'Related series:',
+  },
+  feedback: {
+    pageTitle: 'Feedback',
+    tabRequests: 'Ideas & Bugs',
+    tabChangelog: 'Changelog',
+    activeCount: '{n} active requests',
+    newRequest: 'New request',
+    emptyRequests: 'No active requests',
+    emptyChangelog: 'No changes recorded',
+    completedSection: 'Completed requests',
+    currentVersion: 'Current version: {version}',
+    deleteButton: 'Delete',
+    createButton: 'Create',
+    formTitle: 'New request',
+    formFieldType: 'Type',
+    formFieldTitle: 'Title',
+    formFieldDescription: 'Description',
+    formDescriptionPlaceholder: 'Write your description... You can paste images from clipboard (Ctrl+V)',
+    formDescriptionHint: 'Paste images from clipboard in the description',
+    formRequiredType: 'Select a type',
+    formRequiredTitle: 'Enter a title',
+    statusPendiente: 'Pending',
+    statusEnProgreso: 'In progress',
+    statusCompletado: 'Completed',
+    statusDescartado: 'Discarded',
+    typeBug: 'Bug',
+    typeFeature: 'Feature',
+    typeIdea: 'Idea',
+    successCreated: 'Request created',
+    successStatusUpdated: 'Status updated',
+    successDeleted: 'Request deleted',
+    errorCreate: 'Error creating request',
+    errorVote: 'Error voting',
+    errorStatusUpdate: 'Error updating status',
+    errorDelete: 'Error deleting',
+    errorUpload: 'Error uploading image',
+  },
+  notFound: {
+    description: 'The page you are looking for does not exist or was moved.',
+    backLink: 'Back to catalog',
   },
 };
 

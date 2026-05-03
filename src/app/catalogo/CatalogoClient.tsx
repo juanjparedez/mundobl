@@ -33,6 +33,8 @@ import {
 import Image from 'next/image';
 import { useMessage } from '@/hooks/useMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { WelcomeBanner } from '@/components/common/WelcomeBanner/WelcomeBanner';
 
@@ -129,6 +131,7 @@ export function CatalogoClient({
   const router = useRouter();
   const searchParams = useSearchParams();
   const message = useMessage();
+  const { t } = useLocale();
   const canEdit = userRole === 'ADMIN' || userRole === 'EDITOR';
 
   const [series] = useState<SerieData[]>(initialSeries);
@@ -483,11 +486,11 @@ export function CatalogoClient({
       });
 
       message.success(
-        data.isFavorite ? 'Agregado a favoritos' : 'Removido de favoritos'
+        data.isFavorite ? t('catalogo.favoriteAdded') : t('catalogo.favoriteRemoved')
       );
     } catch (error) {
       console.error('Error toggling favorite:', error);
-      message.error('Error al actualizar favorito');
+      message.error(t('catalogo.favoriteError'));
     }
   };
 
@@ -550,8 +553,8 @@ export function CatalogoClient({
               <Tooltip
                 title={
                   isFavorite(serie.id)
-                    ? 'Quitar de favoritos'
-                    : 'Agregar a favoritos'
+                    ? t('catalogo.removeFavorite')
+                    : t('catalogo.addFavorite')
                 }
               >
                 <button
@@ -561,7 +564,7 @@ export function CatalogoClient({
                   {isFavorite(serie.id) ? <StarFilled /> : <StarOutlined />}
                 </button>
               </Tooltip>
-              <Tooltip title="Ver detalle">
+              <Tooltip title={t('catalogo.viewDetail')}>
                 <button
                   className="serie-card-action-btn"
                   onClick={(e) => handleQuickView(serie.id, e)}
@@ -578,7 +581,7 @@ export function CatalogoClient({
             <Tag color={getColorByType(serie.tipo)}>
               {serie.tipo.toUpperCase()}
             </Tag>
-            {serie.visto && <Tag color="success">Vista</Tag>}
+            {serie.visto && <Tag color="success">{t('catalogo.watchedTag')}</Tag>}
             {serie.rating != null && serie.rating > 0 && (
               <Tag color="gold">{serie.rating}</Tag>
             )}
@@ -648,12 +651,12 @@ export function CatalogoClient({
                 <CountryFlag code={firstSerie.paisCode} size="small" />
               )}
               <Tag color="purple" style={{ margin: 0 }}>
-                <GlobalOutlined /> {group.series.length} títulos
+                <GlobalOutlined /> {interpolateMessage(t('catalogo.universeTitles'), { n: String(group.series.length) })}
               </Tag>
             </div>
             <div className="serie-card-info">
               <span>
-                {isExpanded ? <UpOutlined /> : <DownOutlined />} Ver series
+                {isExpanded ? <UpOutlined /> : <DownOutlined />} {t('catalogo.universeExpand')}
               </span>
             </div>
           </div>
@@ -753,7 +756,7 @@ export function CatalogoClient({
           <GlobalOutlined />
           <span>{group.universoNombre}</span>
           <Tag color="purple" style={{ margin: 0 }}>
-            {group.series.length} títulos
+            {interpolateMessage(t('catalogo.universeTitles'), { n: String(group.series.length) })}
           </Tag>
           {isExpanded ? <UpOutlined /> : <DownOutlined />}
         </div>
@@ -821,7 +824,7 @@ export function CatalogoClient({
       <Col xs={12} sm={6} md={4} lg={3}>
         <Select
           size="small"
-          placeholder="País"
+          placeholder={t('catalogo.filterCountry')}
           style={{ width: '100%' }}
           value={selectedCountry}
           onChange={(value) => {
@@ -841,7 +844,7 @@ export function CatalogoClient({
       <Col xs={12} sm={6} md={4} lg={3}>
         <Select
           size="small"
-          placeholder="Tipo"
+          placeholder={t('catalogo.filterType')}
           style={{ width: '100%' }}
           value={selectedType}
           onChange={(value) => {
@@ -850,19 +853,19 @@ export function CatalogoClient({
           }}
           allowClear
         >
-          <Option value="serie">Serie</Option>
-          <Option value="pelicula">Película</Option>
-          <Option value="corto">Corto</Option>
-          <Option value="especial">Especial</Option>
-          <Option value="anime">Animé</Option>
-          <Option value="reality">Reality</Option>
+          <Option value="serie">{t('seriesHeader.typeSerie')}</Option>
+          <Option value="pelicula">{t('seriesHeader.typePelicula')}</Option>
+          <Option value="corto">{t('seriesHeader.typeCorto')}</Option>
+          <Option value="especial">{t('seriesHeader.typeEspecial')}</Option>
+          <Option value="anime">{t('seriesHeader.typeAnime')}</Option>
+          <Option value="reality">{t('seriesHeader.typeReality')}</Option>
         </Select>
       </Col>
 
       <Col xs={12} sm={6} md={4} lg={3}>
         <Select
           size="small"
-          placeholder="Estado"
+          placeholder={t('catalogo.filterStatus')}
           style={{ width: '100%' }}
           value={selectedViewed}
           onChange={(value) => {
@@ -871,15 +874,15 @@ export function CatalogoClient({
           }}
           allowClear
         >
-          <Option value="watched">Vistas</Option>
-          <Option value="unwatched">No vistas</Option>
+          <Option value="watched">{t('catalogo.statusWatched')}</Option>
+          <Option value="unwatched">{t('catalogo.statusUnwatched')}</Option>
         </Select>
       </Col>
 
       <Col xs={12} sm={6} md={4} lg={2}>
         <Select
           size="small"
-          placeholder="Favoritos"
+          placeholder={t('catalogo.filterFavorites')}
           style={{ width: '100%' }}
           value={selectedFavorite}
           onChange={(value) => {
@@ -888,7 +891,7 @@ export function CatalogoClient({
           }}
           allowClear
         >
-          <Option value="favorites">Favoritos</Option>
+          <Option value="favorites">{t('catalogo.favoritesOnly')}</Option>
         </Select>
       </Col>
 
@@ -896,7 +899,7 @@ export function CatalogoClient({
         <Select
           size="small"
           mode="multiple"
-          placeholder="Tags"
+          placeholder={t('catalogo.filterTags')}
           style={{ width: '100%' }}
           value={selectedTags}
           onChange={(value) => {
@@ -921,7 +924,7 @@ export function CatalogoClient({
       <Col xs={12} sm={6} md={4} lg={3}>
         <Select
           size="small"
-          placeholder="Rating mín."
+          placeholder={t('catalogo.filterMinRating')}
           style={{ width: '100%' }}
           value={minRating > 0 ? minRating : undefined}
           onChange={(value) => {
@@ -941,7 +944,7 @@ export function CatalogoClient({
       <Col xs={12} sm={6} md={3} lg={2}>
         <Select
           size="small"
-          placeholder="Desde"
+          placeholder={t('catalogo.filterFrom')}
           style={{ width: '100%' }}
           value={yearFrom}
           onChange={(value) => {
@@ -961,7 +964,7 @@ export function CatalogoClient({
       <Col xs={12} sm={6} md={3} lg={2}>
         <Select
           size="small"
-          placeholder="Hasta"
+          placeholder={t('catalogo.filterTo')}
           style={{ width: '100%' }}
           value={yearTo}
           onChange={(value) => {
@@ -986,7 +989,7 @@ export function CatalogoClient({
             onClick={clearFilters}
             block
           >
-            Limpiar
+            {t('catalogo.filterClear')}
           </Button>
         </Col>
       )}
@@ -1000,7 +1003,7 @@ export function CatalogoClient({
       <div className="catalogo-toolbar">
         <div className="catalogo-toolbar-left">
           <Input
-            placeholder="Buscar por título, país o tipo..."
+            placeholder={t('catalogo.searchPlaceholder')}
             prefix={
               <SearchOutlined style={{ color: 'var(--text-tertiary)' }} />
             }
@@ -1017,9 +1020,9 @@ export function CatalogoClient({
             onClick={() => setFiltersVisible(!filtersVisible)}
             className={hasActiveFilters ? 'catalogo-filter-btn-active' : ''}
           >
-            Filtros{hasActiveFilters ? ` (${filteredSeries.length})` : ''}
+            {t('catalogo.filtersButton')}{hasActiveFilters ? ` (${filteredSeries.length})` : ''}
           </Button>
-          <Tooltip title="Filtro alfabético">
+          <Tooltip title={t('catalogo.alphaFilterTooltip')}>
             <Button
               icon={<FontSizeOutlined />}
               onClick={() => {
@@ -1037,8 +1040,8 @@ export function CatalogoClient({
         <div className="catalogo-toolbar-right">
           <span className="catalogo-count">
             {filteredSeries.length === series.length
-              ? `${series.length} títulos`
-              : `${filteredSeries.length} de ${series.length}`}
+              ? interpolateMessage(t('catalogo.titlesCount'), { n: String(series.length) })
+              : interpolateMessage(t('catalogo.filteredCount'), { from: String(filteredSeries.length), total: String(series.length) })}
           </span>
           <Space.Compact>
             <Button
@@ -1060,7 +1063,7 @@ export function CatalogoClient({
               icon={<PlusOutlined />}
               onClick={() => router.push('/admin/series/nueva')}
             >
-              Nueva
+              {t('catalogo.newButton')}
             </Button>
           )}
         </div>
@@ -1078,7 +1081,7 @@ export function CatalogoClient({
         (yearFrom && yearTo && yearFrom === yearTo) ||
         selectedTags.length > 0) && (
         <div className="catalogo-active-filters">
-          <span className="catalogo-active-filters-label">Filtrando por:</span>
+          <span className="catalogo-active-filters-label">{t('catalogo.filteringBy')}</span>
           {selectedCountry && (
             <Tag
               closable
@@ -1087,7 +1090,7 @@ export function CatalogoClient({
                 handleFilterChange();
               }}
             >
-              País: {selectedCountry}
+              {interpolateMessage(t('catalogo.filterCountryLabel'), { value: selectedCountry })}
             </Tag>
           )}
           {selectedType && (
@@ -1098,7 +1101,7 @@ export function CatalogoClient({
                 handleFilterChange();
               }}
             >
-              Tipo: {selectedType}
+              {interpolateMessage(t('catalogo.filterTypeLabel'), { value: selectedType })}
             </Tag>
           )}
           {selectedFormat && (
@@ -1109,7 +1112,7 @@ export function CatalogoClient({
                 handleFilterChange();
               }}
             >
-              Formato: {selectedFormat}
+              {interpolateMessage(t('catalogo.filterFormatLabel'), { value: selectedFormat })}
             </Tag>
           )}
           {selectedGenre && (
@@ -1120,7 +1123,7 @@ export function CatalogoClient({
                 handleFilterChange();
               }}
             >
-              Género: {selectedGenre}
+              {interpolateMessage(t('catalogo.filterGenreLabel'), { value: selectedGenre })}
             </Tag>
           )}
           {selectedLanguage && (
@@ -1131,7 +1134,7 @@ export function CatalogoClient({
                 handleFilterChange();
               }}
             >
-              Idioma: {selectedLanguage}
+              {interpolateMessage(t('catalogo.filterLanguageLabel'), { value: selectedLanguage })}
             </Tag>
           )}
           {selectedProductionCompany && (
@@ -1142,7 +1145,7 @@ export function CatalogoClient({
                 handleFilterChange();
               }}
             >
-              Productora: {selectedProductionCompany}
+              {interpolateMessage(t('catalogo.filterProductionLabel'), { value: selectedProductionCompany })}
             </Tag>
           )}
           {selectedDirector && (
@@ -1153,7 +1156,7 @@ export function CatalogoClient({
                 handleFilterChange();
               }}
             >
-              Director: {selectedDirector}
+              {interpolateMessage(t('catalogo.filterDirectorLabel'), { value: selectedDirector })}
             </Tag>
           )}
           {selectedActor && (
@@ -1164,7 +1167,7 @@ export function CatalogoClient({
                 handleFilterChange();
               }}
             >
-              Actor: {selectedActor}
+              {interpolateMessage(t('catalogo.filterActorLabel'), { value: selectedActor })}
             </Tag>
           )}
           {yearFrom && yearTo && yearFrom === yearTo && (
@@ -1176,7 +1179,7 @@ export function CatalogoClient({
                 handleFilterChange();
               }}
             >
-              Año: {yearFrom}
+              {interpolateMessage(t('catalogo.filterYearLabel'), { year: String(yearFrom) })}
             </Tag>
           )}
           {selectedTags.length > 0 &&
@@ -1194,7 +1197,7 @@ export function CatalogoClient({
                     handleFilterChange();
                   }}
                 >
-                  Tag: {tag.name}
+                  {interpolateMessage(t('catalogo.filterTagLabel'), { name: tag.name })}
                 </Tag>
               );
             })}
@@ -1204,7 +1207,7 @@ export function CatalogoClient({
       {/* Panel de filtros colapsable */}
       {isMobile ? (
         <Drawer
-          title="Filtros"
+          title={t('catalogo.drawerTitle')}
           placement="bottom"
           open={filtersVisible}
           onClose={() => setFiltersVisible(false)}
@@ -1303,7 +1306,7 @@ export function CatalogoClient({
               showSizeChanger
               pageSizeOptions={PAGE_SIZE_OPTIONS.map(String)}
               showTotal={(total, range) =>
-                `${range[0]}-${range[1]} de ${total}`
+                interpolateMessage(t('catalogo.paginationTotal'), { from: String(range[0]), to: String(range[1]), total: String(total) })
               }
               size={isMobile ? 'small' : 'middle'}
             />
@@ -1313,8 +1316,8 @@ export function CatalogoClient({
         <Empty
           description={
             hasActiveFilters
-              ? 'No se encontraron series con estos filtros'
-              : 'No hay series en el catálogo'
+              ? t('catalogo.emptyFiltered')
+              : t('catalogo.emptyCatalog')
           }
         />
       )}

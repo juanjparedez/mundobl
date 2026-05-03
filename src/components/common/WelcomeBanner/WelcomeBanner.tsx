@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from 'react';
 import { Button } from 'antd';
 import { SmileOutlined } from '@ant-design/icons';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 import './WelcomeBanner.css';
 
 const STORAGE_KEY = 'welcome-dismissed';
@@ -30,6 +31,7 @@ export function WelcomeBanner({ isLoggedIn }: WelcomeBannerProps) {
     getSnapshot,
     getServerSnapshot
   );
+  const { t } = useLocale();
 
   if (dismissed || isLoggedIn) return null;
 
@@ -43,16 +45,12 @@ export function WelcomeBanner({ isLoggedIn }: WelcomeBannerProps) {
       <div className="welcome-banner__content">
         <SmileOutlined className="welcome-banner__icon" />
         <div className="welcome-banner__text">
-          <strong>Bienvenido/a a MundoBL</strong>
-          <p>
-            Este es mi catálogo personal de series BL que fui viendo, incluyendo
-            las que aún están en emisión. Si viste alguna, me encantaría que
-            dejes tu comentario, reflexión o reseña.
-          </p>
+            <strong>{t('welcomeBanner.title')}</strong>
+            <p>{t('welcomeBanner.description')}</p>
         </div>
       </div>
       <Button size="small" onClick={handleDismiss}>
-        Entendido
+        {t('welcomeBanner.dismiss')}
       </Button>
     </div>
   );
