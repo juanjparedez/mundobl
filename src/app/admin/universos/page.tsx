@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import {
-  Card,
   Table,
   Button,
   Input,
@@ -16,6 +15,10 @@ import {
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
+import { AdminPageHero } from '@/components/admin/AdminPageHero/AdminPageHero';
+import { AdminTableToolbar } from '@/components/admin/AdminTableToolbar/AdminTableToolbar';
 import { AdminNav } from '../AdminNav';
 import '../admin.css';
 
@@ -34,8 +37,10 @@ interface Universe {
 export default function UniversesAdminPage() {
   const message = useMessage();
   const isMobile = useMediaQuery('(max-width: 768px)');
+  const { t } = useLocale();
   const [universes, setUniverses] = useState<Universe[]>([]);
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [editingUniverse, setEditingUniverse] = useState<Universe | null>(null);
   const [form] = Form.useForm();
@@ -44,20 +49,30 @@ export default function UniversesAdminPage() {
     setLoading(true);
     try {
       const response = await fetch('/api/universes');
-      if (!response.ok) throw new Error('Error al cargar universos');
+      if (!response.ok) throw new Error(t('adminUniverses.loadError'));
       const data = await response.json();
       setUniverses(data);
     } catch (error) {
-      message.error('Error al cargar los universos');
+      message.error(t('adminUniverses.loadError'));
       console.error(error);
     } finally {
       setLoading(false);
     }
-  }, [message]);
+  }, [message, t]);
 
   useEffect(() => {
     loadUniverses();
   }, [loadUniverses]);
+
+  const filteredUniverses = useMemo(() => {
+    if (!searchTerm.trim()) return universes;
+    const term = searchTerm.toLowerCase();
+    return universes.filter(
+      (universe) =>
+        universe.name.toLowerCase().includes(term) ||
+        universe.description?.toLowerCase().includes(term)
+    );
+  }, [universes, searchTerm]);
 
   const handleOpenModal = (universe?: Universe) => {
     if (universe) {
@@ -91,19 +106,19 @@ export default function UniversesAdminPage() {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Error al guardar');
+        throw new Error(error.error || t('adminUniverses.saveError'));
       }
 
       message.success(
         editingUniverse
-          ? 'Universo actualizado exitosamente'
-          : 'Universo creado exitosamente'
+          ? t('adminUniverses.updateSuccess')
+          : t('adminUniverses.createSuccess')
       );
       handleCloseModal();
       loadUniverses();
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Error al guardar el universo';
+        error instanceof Error ? error.message : t('adminUniverses.saveError');
       message.error(errorMessage);
     }
   };
@@ -116,77 +131,92 @@ export default function UniversesAdminPage() {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Error al eliminar');
+        throw new Error(error.error || t('adminUniverses.deleteError'));
       }
 
-      message.success('Universo eliminado correctamente');
+      message.success(t('adminUniverses.deleteSuccess'));
       loadUniverses();
     } catch (error) {
       const errorMessage =
         error instanceof Error
           ? error.message
-          : 'Error al eliminar el universo';
+          : t('adminUniverses.deleteError');
       message.error(errorMessage);
     }
   };
 
   const columns = [
     {
-      title: 'Nombre',
+      title: t('adminUniverses.columnName'),
       dataIndex: 'name',
       key: 'name',
+      sorter: (a: Universe, b: Universe) => a.name.localeCompare(b.name),
       render: (name: string) => <strong>{name}</strong>,
     },
     {
-      title: 'Descripción',
+      title: t('adminUniverses.columnDescription'),
       dataIndex: 'description',
       key: 'description',
-      render: (description: string | null) => description || '-',
+      render: (description: string | null) =>
+        description || t('adminUniverses.emptyValue'),
       responsive: ['md' as const],
     },
     {
-      title: 'Series',
+      title: t('adminUniverses.columnSeries'),
       key: 'count',
+      sorter: (a: Universe, b: Universe) =>
+        (a._count?.series || 0) - (b._count?.series || 0),
       render: (record: Universe) => (
-        <Tag color="blue">{record._count?.series || 0} series</Tag>
+        <Tag color="blue">
+          {interpolateMessage(t('adminUniverses.seriesCount'), {
+            count: record._count?.series || 0,
+          })}
+        </Tag>
       ),
     },
     {
-      title: 'Acciones',
+      title: t('adminUniverses.columnActions'),
       key: 'actions',
-      render: (record: Universe) => (
-        <Space>
-          <Button
-            icon={<EditOutlined />}
-            onClick={() => handleOpenModal(record)}
-            size="small"
-          >
-            {!isMobile && 'Editar'}
-          </Button>
-          <Popconfirm
-            title="¿Eliminar universo?"
-            description={
-              record._count && record._count.series > 0
-                ? `Este universo tiene ${record._count.series} series. Primero desvincúlalas.`
-                : '¿Estás seguro de eliminar este universo?'
-            }
-            onConfirm={() => handleDelete(record.id)}
-            okText="Eliminar"
-            cancelText="Cancelar"
-            okButtonProps={{ danger: true }}
-            disabled={record._count ? record._count.series > 0 : false}
-          >
+      render: (record: Universe) => {
+        const linkedSeriesCount = record._count?.series || 0;
+        const isDeleteBlocked = linkedSeriesCount > 0;
+
+        return (
+          <Space>
             <Button
-              danger
-              icon={<DeleteOutlined />}
+              icon={<EditOutlined />}
+              onClick={() => handleOpenModal(record)}
               size="small"
-              disabled={record._count ? record._count.series > 0 : false}
             >
-              {!isMobile && 'Eliminar'}
+              {!isMobile && t('adminUniverses.actionEdit')}
             </Button>
-          </Popconfirm>
-        </Space>
-      ),
+            <Popconfirm
+              title={t('adminUniverses.deleteTitle')}
+              description={
+                isDeleteBlocked
+                  ? interpolateMessage(t('adminUniverses.deleteBlockedDescription'), {
+                      count: linkedSeriesCount,
+                    })
+                  : t('adminUniverses.deleteDescription')
+              }
+              onConfirm={() => handleDelete(record.id)}
+              okText={t('adminUniverses.actionDelete')}
+              cancelText={t('adminUniverses.cancel')}
+              okButtonProps={{ danger: true }}
+              disabled={isDeleteBlocked}
+            >
+              <Button
+                danger
+                icon={<DeleteOutlined />}
+                size="small"
+                disabled={isDeleteBlocked}
+              >
+                {!isMobile && t('adminUniverses.actionDelete')}
+              </Button>
+            </Popconfirm>
+          </Space>
+        );
+      },
     },
   ];
 
@@ -194,54 +224,80 @@ export default function UniversesAdminPage() {
     <AppLayout>
       <div className="admin-page-wrapper">
         <AdminNav />
-        <Card
-          title="🌌 Administración de Universos"
-          extra={
+
+        <AdminPageHero
+          title={t('adminUniverses.title')}
+          subtitle={t('adminUniverses.subtitle')}
+          stats={[
+            { label: t('adminUniverses.statsTotal'), value: universes.length },
+            {
+              label: t('adminUniverses.statsFiltered'),
+              value: filteredUniverses.length,
+            },
+          ]}
+        />
+
+        <AdminTableToolbar
+          filters={
             <Button
               type="primary"
               icon={<PlusOutlined />}
               onClick={() => handleOpenModal()}
             >
-              Nuevo Universo
+              {t('adminUniverses.newItem')}
             </Button>
           }
-        >
-          <Table
-            dataSource={universes}
-            columns={columns}
-            rowKey="id"
-            loading={loading}
-            pagination={{ pageSize: 20 }}
-          />
-        </Card>
+          searchPlaceholder={t('adminUniverses.searchPlaceholder')}
+          searchValue={searchTerm}
+          onSearchChange={setSearchTerm}
+          onSearchSubmit={() => undefined}
+          onSearchClear={() => setSearchTerm('')}
+        />
+
+        <Table
+          dataSource={filteredUniverses}
+          columns={columns}
+          rowKey="id"
+          loading={loading}
+          pagination={{ pageSize: 20, showSizeChanger: true }}
+        />
 
         <Modal
-          title={editingUniverse ? 'Editar Universo' : 'Nuevo Universo'}
+          title={
+            editingUniverse
+              ? t('adminUniverses.modalEditTitle')
+              : t('adminUniverses.modalNewTitle')
+          }
           open={modalOpen}
           onCancel={handleCloseModal}
           onOk={() => form.submit()}
-          okText="Guardar"
-          cancelText="Cancelar"
+          okText={t('adminUniverses.save')}
+          cancelText={t('adminUniverses.cancel')}
           forceRender
         >
           <Form form={form} layout="vertical" onFinish={handleSubmit}>
             <Form.Item
-              label="Nombre"
+              label={t('adminUniverses.fieldName')}
               name="name"
-              rules={[{ required: true, message: 'El nombre es requerido' }]}
+              rules={[
+                {
+                  required: true,
+                  message: t('adminUniverses.requiredName'),
+                },
+              ]}
             >
-              <Input placeholder="Ej: 2 Moons Universe" />
+              <Input placeholder={t('adminUniverses.hintName')} />
             </Form.Item>
 
-            <Form.Item label="Descripción" name="description">
-              <TextArea
-                rows={3}
-                placeholder="Descripción del universo (opcional)"
-              />
+            <Form.Item
+              label={t('adminUniverses.fieldDescription')}
+              name="description"
+            >
+              <TextArea rows={3} placeholder={t('adminUniverses.hintDescription')} />
             </Form.Item>
 
-            <Form.Item label="URL de Imagen" name="imageUrl">
-              <Input placeholder="URL de la imagen del universo (opcional)" />
+            <Form.Item label={t('adminUniverses.fieldImageUrl')} name="imageUrl">
+              <Input placeholder={t('adminUniverses.hintImageUrl')} />
             </Form.Item>
           </Form>
         </Modal>
