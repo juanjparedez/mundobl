@@ -68,8 +68,9 @@ export function SeriesHeader({ series, actionsSlot }: SeriesHeaderProps) {
             alt=""
             fill
             sizes="(max-width: 768px) 0px, 100vw"
-            quality={35}
+            quality={70}
             fetchPriority="low"
+            unoptimized={isSupabaseImageUrl(imageUrl)}
             className="series-hero__backdrop-img"
           />
         </div>
