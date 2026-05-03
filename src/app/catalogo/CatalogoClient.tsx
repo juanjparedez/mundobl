@@ -513,31 +513,35 @@ export function CatalogoClient({
   const toggleFavorite = async (serieId: string, e: React.MouseEvent) => {
     e.stopPropagation();
 
+    const wasFavorite = favoriteIds.has(serieId);
+    setFavoriteIds((prev) => {
+      const next = new Set(prev);
+      if (wasFavorite) next.delete(serieId);
+      else next.add(serieId);
+      return next;
+    });
+
     try {
       const response = await fetch(`/api/series/${serieId}/favorite`, {
         method: 'POST',
       });
-
       if (!response.ok) throw new Error('Error al actualizar favorito');
 
       const data = await response.json();
       setFavoriteIds((prev) => {
         const next = new Set(prev);
-        if (data.isFavorite) {
-          next.add(serieId);
-        } else {
-          next.delete(serieId);
-        }
+        if (data.isFavorite) next.add(serieId);
+        else next.delete(serieId);
         return next;
       });
-
-      message.success(
-        data.isFavorite
-          ? t('catalogo.favoriteAdded')
-          : t('catalogo.favoriteRemoved')
-      );
     } catch (error) {
       console.error('Error toggling favorite:', error);
+      setFavoriteIds((prev) => {
+        const next = new Set(prev);
+        if (wasFavorite) next.add(serieId);
+        else next.delete(serieId);
+        return next;
+      });
       message.error(t('catalogo.favoriteError'));
     }
   };
@@ -1516,7 +1520,7 @@ export function CatalogoClient({
       {paginatedItems.length > 0 ? (
         <>
           {viewMode === 'grid' ? (
-            <Row gutter={[16, 16]}>
+            <Row gutter={[16, 16]} className="catalogo-grid-fade">
               {paginatedItems.map((item) => {
                 if (item.type === 'universe') {
                   return (
