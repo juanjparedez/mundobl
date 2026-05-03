@@ -535,6 +535,13 @@
   padding: 80px;
 }
 
+.profile-loading-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+}
+
 /* ==========================================
    Responsive
    ========================================== */
