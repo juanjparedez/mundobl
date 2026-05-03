@@ -586,19 +586,31 @@ export function CatalogoClient({
     const hasExpandableInfo =
       hasSeasonInfo || hasEpisodeInfo || hasRuntimeInfo || hasActorInfo;
 
+    const favLabel = isFavorite(serie.id)
+      ? t('catalogo.removeFavorite')
+      : t('catalogo.addFavorite');
     return (
       <div
         className={`serie-card serie-card--${serie.tipo}`}
+        role="button"
+        tabIndex={0}
+        aria-label={serie.titulo}
         onClick={() => handleCardClick(serie.id)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleCardClick(serie.id);
+          }
+        }}
       >
         <div className="serie-card-cover">
           {serie.imageUrl ? (
             <Image
               src={serie.imageUrl}
-              alt={serie.titulo}
+              alt=""
               fill
               sizes="(max-width: 480px) 50vw, (max-width: 768px) 46vw, (max-width: 1200px) 31vw, 24vw"
-              quality={60}
+              quality={55}
               fetchPriority="low"
               style={{
                 objectFit: 'cover',
@@ -613,15 +625,12 @@ export function CatalogoClient({
           )}
           <div className="serie-card-gradient-overlay">
             <div className="serie-card-actions">
-              <Tooltip
-                title={
-                  isFavorite(serie.id)
-                    ? t('catalogo.removeFavorite')
-                    : t('catalogo.addFavorite')
-                }
-              >
+              <Tooltip title={favLabel}>
                 <button
+                  type="button"
                   className={`serie-card-action-btn ${isFavorite(serie.id) ? 'favorite-active' : ''}`}
+                  aria-label={favLabel}
+                  aria-pressed={isFavorite(serie.id)}
                   onClick={(e) => toggleFavorite(serie.id, e)}
                 >
                   {isFavorite(serie.id) ? <StarFilled /> : <StarOutlined />}
@@ -629,7 +638,9 @@ export function CatalogoClient({
               </Tooltip>
               <Tooltip title={t('catalogo.viewDetail')}>
                 <button
+                  type="button"
                   className="serie-card-action-btn"
+                  aria-label={t('catalogo.viewDetail')}
                   onClick={(e) => handleQuickView(serie.id, e)}
                 >
                   <EyeOutlined />
@@ -646,13 +657,16 @@ export function CatalogoClient({
               <CountryFlag code={serie.paisCode} size="small" /> {serie.pais}
             </span>
             {serie.rating != null && serie.rating > 0 && (
-              <Tag color="gold" style={{ margin: 0 }}>
+              <Tag color="gold" className="catalogo-tag-flat">
                 ★ {serie.rating}
               </Tag>
             )}
           </div>
           <div className="serie-card-secondary-meta">
-            <Tag color={getColorByType(serie.tipo)} style={{ margin: 0 }}>
+            <Tag
+              color={getColorByType(serie.tipo)}
+              className="catalogo-tag-flat"
+            >
               {serie.tipo.toUpperCase()}
             </Tag>
             {serie.anio > 0 && (
@@ -730,16 +744,29 @@ export function CatalogoClient({
       <div className="universe-card-wrapper">
         <div
           className="serie-card serie-card--universe"
+          role="button"
+          tabIndex={0}
+          aria-label={group.universoNombre}
+          aria-expanded={isExpanded}
           onClick={(e) => toggleUniverse(group.universoId, e)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              toggleUniverse(
+                group.universoId,
+                e as unknown as React.MouseEvent
+              );
+            }
+          }}
         >
           <div className="serie-card-cover">
             {firstSerie.imageUrl ? (
               <Image
                 src={firstSerie.imageUrl}
-                alt={group.universoNombre}
+                alt=""
                 fill
                 sizes="(max-width: 480px) 50vw, (max-width: 768px) 46vw, (max-width: 1200px) 31vw, 24vw"
-                quality={60}
+                quality={55}
                 fetchPriority="low"
                 style={{
                   objectFit: 'cover',
@@ -764,7 +791,7 @@ export function CatalogoClient({
               {firstSerie.paisCode && (
                 <CountryFlag code={firstSerie.paisCode} size="small" />
               )}
-              <Tag color="purple" style={{ margin: 0 }}>
+              <Tag color="purple" className="catalogo-tag-flat">
                 <GlobalOutlined />{' '}
                 {interpolateMessage(t('catalogo.universeTitles'), {
                   n: String(group.series.length),
@@ -791,12 +818,15 @@ export function CatalogoClient({
                   {serie.titulo}
                 </span>
                 <div className="universe-expand-entry-meta">
-                  <Tag color={getColorByType(serie.tipo)} style={{ margin: 0 }}>
+                  <Tag
+                    color={getColorByType(serie.tipo)}
+                    className="catalogo-tag-flat"
+                  >
                     {serie.tipo.toUpperCase()}
                   </Tag>
                   {serie.anio > 0 && <span>{serie.anio}</span>}
                   {serie.rating != null && serie.rating > 0 && (
-                    <Tag color="gold" style={{ margin: 0 }}>
+                    <Tag color="gold" className="catalogo-tag-flat">
                       {serie.rating}
                     </Tag>
                   )}
@@ -810,60 +840,77 @@ export function CatalogoClient({
     );
   };
 
-  const renderSingleListItem = (serie: SerieData) => (
-    <div
-      className={`serie-list-item serie-list-item--${serie.tipo}`}
-      onClick={() => handleCardClick(serie.id)}
-    >
-      <div className="serie-list-item-cover">
-        {serie.imageUrl ? (
-          <Image
-            src={serie.imageUrl}
-            alt={serie.titulo}
-            fill
-            sizes="48px"
-            quality={50}
-            fetchPriority="low"
-            style={{
-              objectFit: 'cover',
-              objectPosition: serie.imagePosition || 'center',
-            }}
-          />
-        ) : (
-          <div
-            style={{
-              width: '100%',
-              height: '100%',
-              background: getGradientByType(serie.tipo),
-            }}
-          />
-        )}
-      </div>
-      <div className="serie-list-item-content">
-        <span className="serie-list-item-title">{serie.titulo}</span>
-        <div className="serie-list-item-meta">
-          <Tag color={getColorByType(serie.tipo)} style={{ margin: 0 }}>
-            {serie.tipo.toUpperCase()}
-          </Tag>
-          <span>
-            <CountryFlag code={serie.paisCode} size="small" /> {serie.pais}
-          </span>
-          {serie.anio > 0 && <span>{serie.anio}</span>}
-          {serie.rating != null && serie.rating > 0 && (
-            <Tag color="gold" style={{ margin: 0 }}>
-              {serie.rating}
-            </Tag>
+  const renderSingleListItem = (serie: SerieData) => {
+    const favLabel = isFavorite(serie.id)
+      ? t('catalogo.removeFavorite')
+      : t('catalogo.addFavorite');
+    return (
+      <div
+        className={`serie-list-item serie-list-item--${serie.tipo}`}
+        role="button"
+        tabIndex={0}
+        aria-label={serie.titulo}
+        onClick={() => handleCardClick(serie.id)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleCardClick(serie.id);
+          }
+        }}
+      >
+        <div className="serie-list-item-cover">
+          {serie.imageUrl ? (
+            <Image
+              src={serie.imageUrl}
+              alt=""
+              fill
+              sizes="48px"
+              quality={50}
+              fetchPriority="low"
+              style={{
+                objectFit: 'cover',
+                objectPosition: serie.imagePosition || 'center',
+              }}
+            />
+          ) : (
+            <div
+              className="catalogo-fallback-cover"
+              style={{ background: getGradientByType(serie.tipo) }}
+            />
           )}
         </div>
+        <div className="serie-list-item-content">
+          <span className="serie-list-item-title">{serie.titulo}</span>
+          <div className="serie-list-item-meta">
+            <Tag
+              color={getColorByType(serie.tipo)}
+              className="catalogo-tag-flat"
+            >
+              {serie.tipo.toUpperCase()}
+            </Tag>
+            <span>
+              <CountryFlag code={serie.paisCode} size="small" /> {serie.pais}
+            </span>
+            {serie.anio > 0 && <span>{serie.anio}</span>}
+            {serie.rating != null && serie.rating > 0 && (
+              <Tag color="gold" className="catalogo-tag-flat">
+                {serie.rating}
+              </Tag>
+            )}
+          </div>
+        </div>
+        <button
+          type="button"
+          className={`serie-list-item-fav ${isFavorite(serie.id) ? 'favorite-active' : ''}`}
+          aria-label={favLabel}
+          aria-pressed={isFavorite(serie.id)}
+          onClick={(e) => toggleFavorite(serie.id, e)}
+        >
+          {isFavorite(serie.id) ? <StarFilled /> : <StarOutlined />}
+        </button>
       </div>
-      <button
-        className={`serie-list-item-fav ${isFavorite(serie.id) ? 'favorite-active' : ''}`}
-        onClick={(e) => toggleFavorite(serie.id, e)}
-      >
-        {isFavorite(serie.id) ? <StarFilled /> : <StarOutlined />}
-      </button>
-    </div>
-  );
+    );
+  };
 
   const renderUniverseListItem = (group: UniverseGroup) => {
     const isExpanded = expandedUniverses.has(group.universoId);
@@ -871,11 +918,24 @@ export function CatalogoClient({
       <div className="universe-list-group">
         <div
           className="universe-list-header"
+          role="button"
+          tabIndex={0}
+          aria-expanded={isExpanded}
+          aria-label={group.universoNombre}
           onClick={(e) => toggleUniverse(group.universoId, e)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              toggleUniverse(
+                group.universoId,
+                e as unknown as React.MouseEvent
+              );
+            }
+          }}
         >
           <GlobalOutlined />
           <span>{group.universoNombre}</span>
-          <Tag color="purple" style={{ margin: 0 }}>
+          <Tag color="purple" className="catalogo-tag-flat">
             {interpolateMessage(t('catalogo.universeTitles'), {
               n: String(group.series.length),
             })}
@@ -887,13 +947,22 @@ export function CatalogoClient({
             <div
               key={serie.id}
               className={`serie-list-item serie-list-item--${serie.tipo} serie-list-item--universe`}
+              role="button"
+              tabIndex={0}
+              aria-label={serie.titulo}
               onClick={() => handleCardClick(serie.id)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleCardClick(serie.id);
+                }
+              }}
             >
               <div className="serie-list-item-cover">
                 {serie.imageUrl ? (
                   <Image
                     src={serie.imageUrl}
-                    alt={serie.titulo}
+                    alt=""
                     fill
                     sizes="48px"
                     quality={50}
@@ -905,18 +974,18 @@ export function CatalogoClient({
                   />
                 ) : (
                   <div
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      background: getGradientByType(serie.tipo),
-                    }}
+                    className="catalogo-fallback-cover"
+                    style={{ background: getGradientByType(serie.tipo) }}
                   />
                 )}
               </div>
               <div className="serie-list-item-content">
                 <span className="serie-list-item-title">{serie.titulo}</span>
                 <div className="serie-list-item-meta">
-                  <Tag color={getColorByType(serie.tipo)} style={{ margin: 0 }}>
+                  <Tag
+                    color={getColorByType(serie.tipo)}
+                    className="catalogo-tag-flat"
+                  >
                     {serie.tipo.toUpperCase()}
                   </Tag>
                   <span>
@@ -925,7 +994,7 @@ export function CatalogoClient({
                   </span>
                   {serie.anio > 0 && <span>{serie.anio}</span>}
                   {serie.rating != null && serie.rating > 0 && (
-                    <Tag color="gold" style={{ margin: 0 }}>
+                    <Tag color="gold" className="catalogo-tag-flat">
                       {serie.rating}
                     </Tag>
                   )}

@@ -1,4 +1,5 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { processPosterImage } from './image-processing';
 
 const BUCKET = 'images';
 
@@ -85,14 +86,6 @@ const VALID_IMAGE_TYPES = new Set([
   'image/gif',
 ]);
 
-const EXTENSION_MAP: Record<string, string> = {
-  'image/jpeg': 'jpg',
-  'image/jpg': 'jpg',
-  'image/png': 'png',
-  'image/webp': 'webp',
-  'image/gif': 'gif',
-};
-
 /**
  * Descarga una imagen desde una URL externa y la sube a Supabase Storage.
  * Si la URL ya es de Supabase, retorna la URL sin cambios.
@@ -131,15 +124,15 @@ export async function downloadAndUploadExternalImage(
       throw new Error(`Tipo de contenido no soportado: ${contentType}`);
     }
 
-    const ext = EXTENSION_MAP[contentType] ?? 'jpg';
+    const arrayBuffer = await response.arrayBuffer();
+    const original = Buffer.from(arrayBuffer);
+    const processed = await processPosterImage(original, contentType);
+
     const timestamp = Date.now();
     const random = Math.random().toString(36).slice(2, 8);
-    const path = `${folder}/${timestamp}_${random}.${ext}`;
+    const path = `${folder}/${timestamp}_${random}.${processed.ext}`;
 
-    const arrayBuffer = await response.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-
-    return await uploadImage(buffer, path, contentType);
+    return await uploadImage(processed.buffer, path, processed.contentType);
   } catch (error) {
     clearTimeout(timeout);
     throw error;

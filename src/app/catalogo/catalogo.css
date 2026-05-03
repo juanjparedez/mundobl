@@ -168,6 +168,22 @@
   transform: scale(1.02);
 }
 
+.serie-card:focus-visible,
+.serie-list-item:focus-visible,
+.universe-list-header:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.catalogo-tag-flat {
+  margin: 0;
+}
+
+.catalogo-fallback-cover {
+  width: 100%;
+  height: 100%;
+}
+
 /* Borde superior de color por tipo */
 .serie-card--serie {
   border-top: 3px solid rgba(47, 84, 235, 0.6);
