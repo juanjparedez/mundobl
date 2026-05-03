@@ -48,7 +48,10 @@ export function CommentsSection({
   const currentUserId = session?.user?.id;
   const [comments, setComments] = useState<CommentData[]>(initialComments);
   const [newComment, setNewComment] = useState('');
-  const [isPrivate, setIsPrivate] = useState(false);
+  const [isPrivate, setIsPrivate] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.localStorage.getItem('comment-default-private') === 'true';
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Filtrar comentarios privados de otros usuarios
@@ -76,7 +79,11 @@ export function CommentsSection({
       const savedComment = await response.json();
       setComments((prev) => [savedComment, ...prev]);
       setNewComment('');
-      setIsPrivate(false);
+      // Reset to stored default, not always to false
+      setIsPrivate(
+        typeof window !== 'undefined' &&
+          window.localStorage.getItem('comment-default-private') === 'true'
+      );
       message.success(
         isPrivate ? t('comments.successPrivate') : t('comments.successPublic')
       );
