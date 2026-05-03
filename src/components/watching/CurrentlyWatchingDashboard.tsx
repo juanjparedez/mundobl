@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { Card, Empty, Spin, Progress, Tag, Button } from 'antd';
+import { Card, Empty, Progress, Tag, Button } from 'antd';
 import {
   PlayCircleOutlined,
   ClockCircleOutlined,
@@ -13,6 +13,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useMessage } from '@/hooks/useMessage';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { SerieCardSkeleton } from '@/components/common/SerieCardSkeleton/SerieCardSkeleton';
 import './CurrentlyWatchingDashboard.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
@@ -162,8 +163,8 @@ export function CurrentlyWatchingDashboard() {
 
   if (loading) {
     return (
-      <div className="watching-dashboard__loading">
-        <Spin size="large" />
+      <div className="watching-grid" aria-busy="true">
+        <SerieCardSkeleton count={6} />
       </div>
     );
   }
