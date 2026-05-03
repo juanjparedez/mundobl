@@ -46,6 +46,7 @@ import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { ProfileSettings } from './ProfileSettings/ProfileSettings';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { SerieCardSkeleton } from '@/components/common/SerieCardSkeleton/SerieCardSkeleton';
 import './profile.css';
 
 const ROLE_COLORS: Record<string, string> = {
@@ -586,8 +587,8 @@ export function ProfileClient() {
   if (loading) {
     return (
       <AppLayout>
-        <div className="profile-loading">
-          <Spin size="large" />
+        <div className="profile-loading-grid" aria-busy="true">
+          <SerieCardSkeleton count={4} />
         </div>
       </AppLayout>
     );
