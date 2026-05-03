@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { Layout, Menu, Switch, Avatar, Button } from 'antd';
+import { Layout, Menu, Switch, Avatar, Button, Select } from 'antd';
 import {
   AppstoreOutlined,
   SettingOutlined,
@@ -27,6 +27,8 @@ import {
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { ROUTES } from '@/constants/navigation';
 import { useTheme } from '@/lib/providers/ThemeProvider';
+import { LOCALE_LABELS, SUPPORTED_LOCALES } from '@/i18n/config';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 import './Sidebar.css';
 
 const { Sider } = Layout;
@@ -46,6 +48,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
+  const { locale, setLocale, t } = useLocale();
   const { data: session, status } = useSession();
 
   const isAdmin = session?.user?.role === 'ADMIN';
@@ -56,31 +59,31 @@ export function Sidebar() {
     {
       key: ROUTES.CATALOGO,
       icon: <AppstoreOutlined />,
-      label: 'Catálogo',
+      label: t('sidebar.catalog'),
       onClick: () => router.push(ROUTES.CATALOGO),
     },
     {
       key: ROUTES.WATCHING,
       icon: <PlayCircleOutlined />,
-      label: 'Viendo Ahora',
+      label: t('sidebar.watching'),
       onClick: () => router.push(ROUTES.WATCHING),
     },
     {
       key: ROUTES.FEEDBACK,
       icon: <CommentOutlined />,
-      label: 'Feedback',
+      label: t('sidebar.feedback'),
       onClick: () => router.push(ROUTES.FEEDBACK),
     },
     {
       key: '/sitios',
       icon: <LinkOutlined />,
-      label: 'Sitios de Interés',
+      label: t('sidebar.sites'),
       onClick: () => router.push('/sitios'),
     },
     {
       key: '/contenido',
       icon: <VideoCameraOutlined />,
-      label: 'Contenido',
+      label: t('sidebar.content'),
       onClick: () => router.push('/contenido'),
     },
     ...(canAccessAdmin
@@ -88,12 +91,12 @@ export function Sidebar() {
           {
             key: 'admin',
             icon: <SettingOutlined />,
-            label: 'Administración',
+            label: t('sidebar.administration'),
             children: [
               {
                 key: ROUTES.ADMIN,
                 icon: <AppstoreOutlined />,
-                label: 'Series',
+                label: t('sidebar.series'),
                 onClick: () => router.push(ROUTES.ADMIN),
               },
               ...(isAdmin
@@ -101,61 +104,61 @@ export function Sidebar() {
                     {
                       key: '/admin/tags',
                       icon: <TagsOutlined />,
-                      label: 'Tags',
+                      label: t('sidebar.tags'),
                       onClick: () => router.push('/admin/tags'),
                     },
                     {
                       key: '/admin/universos',
                       icon: <GlobalOutlined />,
-                      label: 'Universos',
+                      label: t('sidebar.universes'),
                       onClick: () => router.push('/admin/universos'),
                     },
                     {
                       key: '/admin/actores',
                       icon: <UserOutlined />,
-                      label: 'Actores',
+                      label: t('sidebar.actors'),
                       onClick: () => router.push('/admin/actores'),
                     },
                     {
                       key: '/admin/directores',
                       icon: <VideoCameraOutlined />,
-                      label: 'Directores',
+                      label: t('sidebar.directors'),
                       onClick: () => router.push('/admin/directores'),
                     },
                     {
                       key: '/admin/usuarios',
                       icon: <TeamOutlined />,
-                      label: 'Usuarios',
+                      label: t('sidebar.users'),
                       onClick: () => router.push('/admin/usuarios'),
                     },
                     {
                       key: '/admin/sitios',
                       icon: <LinkOutlined />,
-                      label: 'Sitios',
+                      label: t('sidebar.sites'),
                       onClick: () => router.push('/admin/sitios'),
                     },
                     {
                       key: '/admin/contenido',
                       icon: <PlayCircleOutlined />,
-                      label: 'Contenido',
+                      label: t('sidebar.content'),
                       onClick: () => router.push('/admin/contenido'),
                     },
                     {
                       key: '/admin/comentarios',
                       icon: <CommentOutlined />,
-                      label: 'Comentarios',
+                      label: t('sidebar.comments'),
                       onClick: () => router.push('/admin/comentarios'),
                     },
                     {
                       key: '/admin/info',
                       icon: <InfoCircleOutlined />,
-                      label: 'Info',
+                      label: t('sidebar.info'),
                       onClick: () => router.push('/admin/info'),
                     },
                     {
                       key: '/admin/logs',
                       icon: <FileTextOutlined />,
-                      label: 'Logs',
+                      label: t('sidebar.logs'),
                       onClick: () => router.push('/admin/logs'),
                     },
                   ]
@@ -185,7 +188,9 @@ export function Sidebar() {
         <button
           className="sidebar-collapse-btn"
           onClick={() => setCollapsed(!collapsed)}
-          aria-label={collapsed ? 'Expandir menú' : 'Colapsar menú'}
+          aria-label={
+            collapsed ? t('sidebar.expandMenu') : t('sidebar.collapseMenu')
+          }
         >
           {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
         </button>
@@ -204,7 +209,7 @@ export function Sidebar() {
               className="sidebar-user-info"
               role="button"
               tabIndex={0}
-              aria-label="Cerrar sesión"
+              aria-label={t('sidebar.logout')}
               onClick={() => signOut({ callbackUrl: '/' })}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
@@ -230,20 +235,39 @@ export function Sidebar() {
               icon={<LoginOutlined />}
               onClick={() => signIn('google')}
               className="sidebar-login-btn"
-              aria-label="Iniciar sesión"
+              aria-label={t('sidebar.login')}
               block
             >
-              {!collapsed && 'Iniciar sesión'}
+              {!collapsed && t('sidebar.login')}
             </Button>
           )}
         </div>
+
+        {!collapsed && (
+          <div className="sidebar-locale-selector">
+            <span className="sidebar-locale-label">{t('common.language')}</span>
+            <Select
+              value={locale}
+              onChange={setLocale}
+              options={SUPPORTED_LOCALES.map((code) => ({
+                value: code,
+                label: LOCALE_LABELS[code],
+              }))}
+              size="small"
+              className="sidebar-locale-select"
+              aria-label={t('common.language')}
+            />
+          </div>
+        )}
 
         <div
           className="sidebar-theme-toggle"
           role="button"
           tabIndex={0}
           aria-label={
-            theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'
+            theme === 'dark'
+              ? t('sidebar.switchToLight')
+              : t('sidebar.switchToDark')
           }
           onClick={toggleTheme}
           onKeyDown={(e) => {
@@ -259,8 +283,8 @@ export function Sidebar() {
             <Switch
               checked={theme === 'dark'}
               onChange={toggleTheme}
-              checkedChildren="Oscuro"
-              unCheckedChildren="Claro"
+              checkedChildren={t('sidebar.dark')}
+              unCheckedChildren={t('sidebar.light')}
               size="small"
             />
           )}
