@@ -249,8 +249,45 @@ export function CatalogoClient({
     useState<QuickFilterValue>(null);
   const [showAlphaIndex, setShowAlphaIndex] = useState(false);
   const [expandedUniverses, setExpandedUniverses] = useState<Set<number>>(
-    new Set()
+    () => {
+      if (typeof window === 'undefined') return new Set();
+      try {
+        const raw = window.localStorage.getItem('catalog-expanded-universes');
+        if (!raw) return new Set();
+        const arr = JSON.parse(raw);
+        return Array.isArray(arr)
+          ? new Set(arr.filter(Number.isFinite))
+          : new Set();
+      } catch {
+        return new Set();
+      }
+    }
   );
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem(
+      'catalog-expanded-universes',
+      JSON.stringify(Array.from(expandedUniverses))
+    );
+  }, [expandedUniverses]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const raw = window.sessionStorage.getItem('catalog-scroll-y');
+      if (!raw) return;
+      const y = Number(raw);
+      window.sessionStorage.removeItem('catalog-scroll-y');
+      if (Number.isFinite(y) && y > 0) {
+        window.requestAnimationFrame(() => {
+          window.scrollTo({ top: y, behavior: 'auto' });
+        });
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
   const [expandedInfoCardId, setExpandedInfoCardId] = useState<string | null>(
     null
   );
@@ -584,12 +621,23 @@ export function CatalogoClient({
     }
   };
 
+  const rememberScroll = () => {
+    if (typeof window === 'undefined') return;
+    try {
+      window.sessionStorage.setItem('catalog-scroll-y', String(window.scrollY));
+    } catch {
+      /* ignore */
+    }
+  };
+
   const handleCardClick = (id: string) => {
+    rememberScroll();
     router.push(`/series/${id}`);
   };
 
   const handleQuickView = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
+    rememberScroll();
     router.push(`/series/${id}`);
   };
 

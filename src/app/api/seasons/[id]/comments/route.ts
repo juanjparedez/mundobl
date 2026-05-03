@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 import { auth } from '@/lib/auth';
+import { notifyParticipantsOfNewComment } from '@/lib/notifications';
 
 export async function GET(
   request: NextRequest,
@@ -80,6 +81,22 @@ export async function POST(
         user: { select: { id: true, name: true, image: true } },
       },
     });
+
+    if (!comment.isPrivate) {
+      const season = await prisma.season.findUnique({
+        where: { id: seasonId },
+        select: { seriesId: true },
+      });
+      if (season) {
+        void notifyParticipantsOfNewComment({
+          currentCommentId: comment.id,
+          currentUserId: authResult.userId,
+          target: { seasonId },
+          seriesIdForLink: season.seriesId,
+          excerpt: content.trim().slice(0, 80),
+        });
+      }
+    }
 
     return NextResponse.json(comment, { status: 201 });
   } catch (error) {
