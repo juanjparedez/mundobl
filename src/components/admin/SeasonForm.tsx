@@ -26,6 +26,8 @@ import {
 import Link from 'next/link';
 import './SeasonForm.css';
 import { useMessage } from '@/hooks/useMessage';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
 
 const { TextArea } = Input;
 
@@ -49,6 +51,7 @@ interface SeasonFormProps {
 export function SeasonForm({ initialData }: SeasonFormProps) {
   const message = useMessage();
   const router = useRouter();
+  const { t } = useLocale();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -82,10 +85,10 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
 
       if (!response.ok) throw new Error('Error saving season');
 
-      message.success('Temporada actualizada exitosamente');
+      message.success(t('seasonForm.updateSuccess'));
       router.push(`/series/${initialData.seriesId}`);
     } catch (error) {
-      message.error('Error al guardar la temporada');
+      message.error(t('seasonForm.saveError'));
       console.error(error);
     } finally {
       setLoading(false);
@@ -110,12 +113,12 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
 
       const data = await response.json();
       form.setFieldsValue({ imageUrl: data.url });
-      message.success('Imagen subida exitosamente');
+      message.success(t('seasonForm.uploadSuccess'));
 
       return false;
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'Error al subir la imagen';
+        error instanceof Error ? error.message : t('seasonForm.uploadError');
       message.error(errorMessage);
       return false;
     } finally {
@@ -131,13 +134,13 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
             <div className="series-form__header-left">
               <Link href={`/series/${initialData.seriesId}`}>
                 <Button icon={<ArrowLeftOutlined />} type="text">
-                  Volver a {initialData.seriesTitle}
+                  {interpolateMessage(t('seasonForm.backButton'), { title: initialData.seriesTitle })}
                 </Button>
               </Link>
-              <span>Editar Temporada {initialData.seasonNumber}</span>
+              <span>{interpolateMessage(t('seasonForm.headerTitle'), { number: initialData.seasonNumber })}</span>
             </div>
             <Button icon={<CloseOutlined />} onClick={() => router.back()}>
-              Cancelar
+              {t('seasonForm.cancelButton')}
             </Button>
           </div>
         }
@@ -153,39 +156,39 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
           {/* Información Básica */}
           <Card
             type="inner"
-            title="📝 Información Básica de la Temporada"
+            title={`📝 ${t('seasonForm.sectionBasic')}`}
             style={{ marginBottom: 24 }}
           >
             <Row gutter={16}>
               <Col xs={24} md={6}>
                 <Form.Item
-                  label="Número de Temporada"
+                  label={t('seasonForm.fieldSeasonNumber')}
                   name="seasonNumber"
-                  rules={[{ required: true, message: 'Requerido' }]}
+                  rules={[{ required: true, message: t('seasonForm.requiredSeasonNumber') }]}
                 >
                   <InputNumber min={1} style={{ width: '100%' }} size="large" />
                 </Form.Item>
               </Col>
 
               <Col xs={24} md={6}>
-                <Form.Item label="Título (opcional)" name="title">
-                  <Input placeholder="Ej: The Beginning" size="large" />
+                <Form.Item label={t('seasonForm.fieldTitle')} name="title">
+                  <Input placeholder={t('seasonForm.hintTitle')} size="large" />
                 </Form.Item>
               </Col>
 
               <Col xs={24} md={6}>
-                <Form.Item label="Número de Capítulos" name="episodeCount">
+                <Form.Item label={t('seasonForm.fieldEpisodeCount')} name="episodeCount">
                   <InputNumber
                     min={1}
                     style={{ width: '100%' }}
                     size="large"
-                    placeholder="12"
+                    placeholder={t('seasonForm.hintEpisodeCount')}
                   />
                 </Form.Item>
               </Col>
 
               <Col xs={24} md={6}>
-                <Form.Item label="Año" name="year">
+                <Form.Item label={t('seasonForm.fieldYear')} name="year">
                   <InputNumber
                     min={1900}
                     max={2100}
@@ -197,35 +200,35 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
 
               <Col xs={24}>
                 <Form.Item
-                  label="📖 Sinopsis de esta Temporada"
+                  label={`📖 ${t('seasonForm.fieldSynopsis')}`}
                   name="synopsis"
                 >
                   <TextArea
                     rows={4}
-                    placeholder="Descripción de lo que sucede en esta temporada..."
+                    placeholder={t('seasonForm.hintSynopsis')}
                   />
                 </Form.Item>
               </Col>
 
               <Col xs={24}>
-                <Form.Item label="📝 Observaciones" name="observations">
+                <Form.Item label={`📝 ${t('seasonForm.fieldObservations')}`} name="observations">
                   <TextArea
                     rows={3}
-                    placeholder="Notas personales sobre esta temporada..."
+                    placeholder={t('seasonForm.hintObservations')}
                   />
                 </Form.Item>
               </Col>
 
               <Col xs={24}>
                 <Form.Item
-                  label="🖼️ Imagen de la Temporada"
+                  label={`🖼️ ${t('seasonForm.fieldImage')}`}
                   name="imageUrl"
-                  help="Pega una URL o sube un archivo desde tu computadora"
+                  help={t('seasonForm.helpImage')}
                 >
                   <Space.Compact style={{ width: '100%' }}>
                     <Input
                       size="large"
-                      placeholder="https://example.com/season-image.jpg"
+                      placeholder={t('seasonForm.hintImage')}
                     />
                     <Upload
                       accept="image/*"
@@ -237,7 +240,7 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
                         loading={uploading}
                         size="large"
                       >
-                        {uploading ? 'Subiendo...' : 'Subir'}
+                        {uploading ? t('seasonForm.uploadingLabel') : t('seasonForm.uploadButton')}
                       </Button>
                     </Upload>
                   </Space.Compact>
@@ -249,12 +252,11 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
           {/* Reparto de esta Temporada */}
           <Card
             type="inner"
-            title="👥 Reparto de esta Temporada"
+            title={`👥 ${t('seasonForm.sectionCast')}`}
             style={{ marginBottom: 24 }}
           >
             <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>
-              Agrega actores específicos de esta temporada. El reparto principal
-              de la serie se muestra automáticamente.
+              {t('seasonForm.castDescription')}
             </p>
             <Form.List name="actors">
               {(fields, { add, remove }) => (
@@ -265,13 +267,13 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
                         {...restField}
                         name={[name, 'name']}
                         rules={[
-                          { required: true, message: 'Nombre requerido' },
+                          { required: true, message: t('seasonForm.requiredActorName') },
                         ]}
                         style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
                       >
                         <AutoComplete
                           options={actors.map((a) => ({ value: a }))}
-                          placeholder="Nombre del actor"
+                          placeholder={t('seasonForm.hintActorName')}
                           filterOption={(inputValue, option) =>
                             option!.value
                               .toLowerCase()
@@ -285,7 +287,7 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
                         name={[name, 'character']}
                         style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
                       >
-                        <Input placeholder="Personaje" />
+                        <Input placeholder={t('seasonForm.hintCharacter')} />
                       </Form.Item>
 
                       <Form.Item
@@ -294,7 +296,7 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
                         valuePropName="checked"
                         style={{ marginBottom: 0 }}
                       >
-                        <Checkbox>Protagonista</Checkbox>
+                        <Checkbox>{t('seasonForm.fieldIsMain')}</Checkbox>
                       </Form.Item>
 
                       <MinusCircleOutlined onClick={() => remove(name)} />
@@ -307,7 +309,7 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
                       block
                       icon={<PlusOutlined />}
                     >
-                      Agregar Actor a esta Temporada
+                      {t('seasonForm.addActorButton')}
                     </Button>
                   </Form.Item>
                 </>
@@ -325,13 +327,13 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
                 size="large"
                 loading={loading}
               >
-                Guardar Cambios
+                {t('seasonForm.saveButton')}
               </Button>
               <Button size="large" onClick={() => router.back()}>
-                Cancelar
+                {t('seasonForm.cancelButton')}
               </Button>
               <Link href={`/series/${initialData.seriesId}`}>
-                <Button size="large">Ver Serie</Button>
+                <Button size="large">{t('seasonForm.viewSeriesButton')}</Button>
               </Link>
             </Space>
           </Form.Item>
