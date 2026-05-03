@@ -9,6 +9,7 @@ import {
   UnorderedListOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
+import { isSupabaseImageUrl } from '@/lib/image-helpers';
 import {
   CATEGORY_COLORS,
   CATEGORY_LABELS,
@@ -113,6 +114,8 @@ export function SitiosPage({ sites }: SitiosPageProps) {
                 alt={`Logo de ${site.name}`}
                 width={120}
                 height={48}
+                quality={75}
+                unoptimized={isSupabaseImageUrl(site.imageUrl)}
                 className="sitios-card__logo-img"
               />
             </div>

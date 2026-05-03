@@ -4,6 +4,7 @@ import { Avatar, Card, Tag, Row, Col, Empty } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
+import { isSupabaseImageUrl } from '@/lib/image-helpers';
 import './director-profile.css';
 
 interface DirectorData {
@@ -113,6 +114,8 @@ export function DirectorProfileClient({
                           src={entry.imageUrl}
                           width={300}
                           height={180}
+                          quality={70}
+                          unoptimized={isSupabaseImageUrl(entry.imageUrl)}
                           className="director-profile__film-image"
                           style={{
                             objectFit: 'cover',
