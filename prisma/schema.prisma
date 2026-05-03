@@ -40,6 +40,7 @@ model User {
   featureVotes    FeatureVote[]
   accessLogs      AccessLog[]
   suggestedSites  SuggestedSite[]
+  commentReports  CommentReport[]
 }
 
 model Account {
@@ -89,7 +90,7 @@ model Universe {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  series      Series[]
+  series Series[]
 }
 
 // ============================================
@@ -103,16 +104,16 @@ model ProductionCompany {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  series    Series[]
+  series Series[]
 }
 
 // ============================================
 // IDIOMAS
 // ============================================
 model Language {
-  id                     Int             @id @default(autoincrement())
-  name                   String          @unique
-  code                   String?
+  id   Int     @id @default(autoincrement())
+  name String  @unique
+  code String?
 
   seriesOriginalLanguage Series[]        @relation("OriginalLanguage")
   dubbings               SeriesDubbing[]
@@ -120,7 +121,7 @@ model Language {
 
 // Doblajes disponibles por serie
 model SeriesDubbing {
-  id         Int      @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
   seriesId   Int
   series     Series   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
@@ -134,75 +135,75 @@ model SeriesDubbing {
 // SERIES - Series, películas, cortos, etc.
 // ============================================
 model Series {
-  id            Int       @id @default(autoincrement())
+  id            Int      @id @default(autoincrement())
   title         String
   originalTitle String?
   year          Int?
-  type          String    // "serie", "pelicula", "corto", "especial"
-  basedOn       String?   // "libro", "novela", "corto", "manga", "anime"
-  format        String    @default("regular") // "regular", "vertical"
+  type          String // "serie", "pelicula", "corto", "especial"
+  basedOn       String? // "libro", "novela", "corto", "manga", "anime"
+  format        String   @default("regular") // "regular", "vertical"
   imageUrl      String?
-  imagePosition String    @default("center") // CSS background-position
-  synopsis      String?   // Sinopsis de la serie
-  review        String?   // Reseña personal
-  soundtrack    String?   // Banda sonora
-  overallRating Int?      // Puntuación general (del Excel)
-  observations  String?   // Observaciones
-  isFavorite    Boolean   @default(false) // Marcado como favorito
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  imagePosition String   @default("center") // CSS background-position
+  synopsis      String? // Sinopsis de la serie
+  review        String? // Reseña personal
+  soundtrack    String? // Banda sonora
+  overallRating Int? // Puntuación general (del Excel)
+  observations  String? // Observaciones
+  isFavorite    Boolean  @default(false) // Marcado como favorito
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   // Relaciones
-  universeId           Int?
-  universe             Universe?          @relation(fields: [universeId], references: [id])
-  countryId            Int?
-  country              Country?           @relation(fields: [countryId], references: [id])
-  productionCompanyId  Int?
-  productionCompany    ProductionCompany? @relation(fields: [productionCompanyId], references: [id])
-  originalLanguageId   Int?
-  originalLanguage     Language?          @relation("OriginalLanguage", fields: [originalLanguageId], references: [id])
+  universeId          Int?
+  universe            Universe?          @relation(fields: [universeId], references: [id])
+  countryId           Int?
+  country             Country?           @relation(fields: [countryId], references: [id])
+  productionCompanyId Int?
+  productionCompany   ProductionCompany? @relation(fields: [productionCompanyId], references: [id])
+  originalLanguageId  Int?
+  originalLanguage    Language?          @relation("OriginalLanguage", fields: [originalLanguageId], references: [id])
 
-  seasons       Season[]
-  actors        SeriesActor[]
-  directors     SeriesDirector[]
-  ratings       Rating[]
-  userRatings   UserRating[]
-  comments      Comment[]
-  viewStatus    ViewStatus[]
-  favorites     UserFavorite[]
-  tags          SeriesTag[]
-  dubbings      SeriesDubbing[]
-  genres        SeriesGenre[]
-  watchLinks         WatchLink[]
-  embeddableContent  EmbeddableContent[]
-  relatedSeriesFrom  RelatedSeries[] @relation("mainSeries")
-  relatedSeriesTo    RelatedSeries[] @relation("relatedSeries")
+  seasons           Season[]
+  actors            SeriesActor[]
+  directors         SeriesDirector[]
+  ratings           Rating[]
+  userRatings       UserRating[]
+  comments          Comment[]
+  viewStatus        ViewStatus[]
+  favorites         UserFavorite[]
+  tags              SeriesTag[]
+  dubbings          SeriesDubbing[]
+  genres            SeriesGenre[]
+  watchLinks        WatchLink[]
+  embeddableContent EmbeddableContent[]
+  relatedSeriesFrom RelatedSeries[]     @relation("mainSeries")
+  relatedSeriesTo   RelatedSeries[]     @relation("relatedSeries")
 }
 
 // ============================================
 // TEMPORADAS
 // ============================================
 model Season {
-  id            Int       @id @default(autoincrement())
-  seasonNumber  Int
-  title         String?
-  episodeCount  Int?      // Número de capítulos
-  year          Int?
-  imageUrl      String?
-  synopsis      String?
-  observations  String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id           Int      @id @default(autoincrement())
+  seasonNumber Int
+  title        String?
+  episodeCount Int? // Número de capítulos
+  year         Int?
+  imageUrl     String?
+  synopsis     String?
+  observations String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   // Relaciones
-  seriesId      Int
-  series        Series    @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  seriesId Int
+  series   Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
 
-  episodes      Episode[]
-  actors        SeasonActor[]
-  ratings       Rating[]
-  comments      Comment[]
-  viewStatus    ViewStatus[]
+  episodes   Episode[]
+  actors     SeasonActor[]
+  ratings    Rating[]
+  comments   Comment[]
+  viewStatus ViewStatus[]
 
   @@unique([seriesId, seasonNumber])
 }
@@ -214,17 +215,17 @@ model Episode {
   id            Int       @id @default(autoincrement())
   episodeNumber Int
   title         String?
-  duration      Int?      // Duración en minutos
+  duration      Int? // Duración en minutos
   airDate       DateTime?
   synopsis      String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
   // Relaciones
-  seasonId      Int
-  season        Season    @relation(fields: [seasonId], references: [id], onDelete: Cascade)
-  viewStatus    ViewStatus[] @relation("EpisodeViewStatus")
-  comments      Comment[]
+  seasonId   Int
+  season     Season       @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  viewStatus ViewStatus[] @relation("EpisodeViewStatus")
+  comments   Comment[]
 
   @@unique([seasonId, episodeNumber])
 }
@@ -233,45 +234,45 @@ model Episode {
 // ACTORES
 // ============================================
 model Actor {
-  id            Int       @id @default(autoincrement())
-  name          String    @unique
-  stageName     String?   // Nombre artístico
-  birthDate     DateTime?
-  nationality   String?
-  imageUrl      String?
-  biography     String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  stageName   String? // Nombre artístico
+  birthDate   DateTime?
+  nationality String?
+  imageUrl    String?
+  biography   String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  series        SeriesActor[]
-  seasons       SeasonActor[]
+  series  SeriesActor[]
+  seasons SeasonActor[]
 }
 
 // ============================================
 // DIRECTORES
 // ============================================
 model Director {
-  id            Int       @id @default(autoincrement())
-  name          String    @unique
-  nationality   String?
-  imageUrl      String?
-  biography     String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  nationality String?
+  imageUrl    String?
+  biography   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  series        SeriesDirector[]
+  series SeriesDirector[]
 }
 
 // ============================================
 // PAÍSES
 // ============================================
 model Country {
-  id            Int       @id @default(autoincrement())
-  name          String    @unique
-  code          String?   @unique // ISO code (ej: "KR", "TH", "JP")
-  flagUrl       String?
+  id      Int     @id @default(autoincrement())
+  name    String  @unique
+  code    String? @unique // ISO code (ej: "KR", "TH", "JP")
+  flagUrl String?
 
-  series        Series[]
+  series Series[]
 }
 
 // ============================================
@@ -283,12 +284,12 @@ model Genre {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  series    SeriesGenre[]
+  series SeriesGenre[]
 }
 
 // Géneros por Serie
 model SeriesGenre {
-  id       Int    @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
   seriesId Int
   series   Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
@@ -302,13 +303,13 @@ model SeriesGenre {
 // TAGS/ETIQUETAS
 // ============================================
 model Tag {
-  id            Int       @id @default(autoincrement())
-  name          String    @unique // "Enemy to Lovers", "Friends to Lovers", etc.
-  category      String?   // "trope", "genre", "mood", etc.
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id        Int      @id @default(autoincrement())
+  name      String   @unique // "Enemy to Lovers", "Friends to Lovers", etc.
+  category  String? // "trope", "genre", "mood", etc.
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  series        SeriesTag[]
+  series SeriesTag[]
 }
 
 // ============================================
@@ -317,53 +318,53 @@ model Tag {
 
 // Actores por Serie (general)
 model SeriesActor {
-  id            Int       @id @default(autoincrement())
-  character     String?   // Personaje que interpreta
-  isMain        Boolean   @default(false) // ¿Es protagonista?
-  pairingGroup  Int?      // Actores con el mismo número forman pareja
+  id           Int     @id @default(autoincrement())
+  character    String? // Personaje que interpreta
+  isMain       Boolean @default(false) // ¿Es protagonista?
+  pairingGroup Int? // Actores con el mismo número forman pareja
 
-  seriesId      Int
-  series        Series    @relation(fields: [seriesId], references: [id], onDelete: Cascade)
-  actorId       Int
-  actor         Actor     @relation(fields: [actorId], references: [id], onDelete: Cascade)
+  seriesId Int
+  series   Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  actorId  Int
+  actor    Actor  @relation(fields: [actorId], references: [id], onDelete: Cascade)
 
   @@unique([seriesId, actorId, character])
 }
 
 // Actores por Temporada (específico)
 model SeasonActor {
-  id            Int       @id @default(autoincrement())
-  character     String?   // Personaje que interpreta
-  isMain        Boolean   @default(false)
+  id        Int     @id @default(autoincrement())
+  character String? // Personaje que interpreta
+  isMain    Boolean @default(false)
 
-  seasonId      Int
-  season        Season    @relation(fields: [seasonId], references: [id], onDelete: Cascade)
-  actorId       Int
-  actor         Actor     @relation(fields: [actorId], references: [id], onDelete: Cascade)
+  seasonId Int
+  season   Season @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  actorId  Int
+  actor    Actor  @relation(fields: [actorId], references: [id], onDelete: Cascade)
 
   @@unique([seasonId, actorId, character])
 }
 
 // Directores por Serie
 model SeriesDirector {
-  id            Int       @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-  seriesId      Int
-  series        Series    @relation(fields: [seriesId], references: [id], onDelete: Cascade)
-  directorId    Int
-  director      Director  @relation(fields: [directorId], references: [id], onDelete: Cascade)
+  seriesId   Int
+  series     Series   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  directorId Int
+  director   Director @relation(fields: [directorId], references: [id], onDelete: Cascade)
 
   @@unique([seriesId, directorId])
 }
 
 // Tags/Etiquetas por Serie
 model SeriesTag {
-  id            Int       @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-  seriesId      Int
-  series        Series    @relation(fields: [seriesId], references: [id], onDelete: Cascade)
-  tagId         Int
-  tag           Tag       @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  seriesId Int
+  series   Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  tagId    Int
+  tag      Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@unique([seriesId, tagId])
 }
@@ -372,14 +373,14 @@ model SeriesTag {
 // SERIES RELACIONADAS (self-referential many-to-many)
 // ============================================
 model RelatedSeries {
-  id              Int      @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
   mainSeriesId    Int
-  mainSeries      Series   @relation("mainSeries", fields: [mainSeriesId], references: [id], onDelete: Cascade)
+  mainSeries      Series @relation("mainSeries", fields: [mainSeriesId], references: [id], onDelete: Cascade)
   relatedSeriesId Int
-  relatedSeries   Series   @relation("relatedSeries", fields: [relatedSeriesId], references: [id], onDelete: Cascade)
+  relatedSeries   Series @relation("relatedSeries", fields: [relatedSeriesId], references: [id], onDelete: Cascade)
 
-  createdAt       DateTime @default(now())
+  createdAt DateTime @default(now())
 
   @@unique([mainSeriesId, relatedSeriesId])
 }
@@ -388,17 +389,17 @@ model RelatedSeries {
 // RATINGS POR CATEGORÍA
 // ============================================
 model Rating {
-  id            Int       @id @default(autoincrement())
-  category      String    // "trama", "casting", "originalidad", "bso", etc.
-  score         Int       // 1-10
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id        Int      @id @default(autoincrement())
+  category  String // "trama", "casting", "originalidad", "bso", etc.
+  score     Int // 1-10
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Puede ser rating de Serie o Temporada
-  seriesId      Int?
-  series        Series?   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
-  seasonId      Int?
-  season        Season?   @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  seriesId Int?
+  series   Series? @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  seasonId Int?
+  season   Season? @relation(fields: [seasonId], references: [id], onDelete: Cascade)
 
   @@unique([seriesId, seasonId, category])
 }
@@ -408,8 +409,8 @@ model Rating {
 // ============================================
 model UserRating {
   id        Int      @id @default(autoincrement())
-  category  String   // mismas categorías que Rating
-  score     Int      // 1-10
+  category  String // mismas categorías que Rating
+  score     Int // 1-10
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -425,23 +426,49 @@ model UserRating {
 // COMENTARIOS
 // ============================================
 model Comment {
-  id            Int       @id @default(autoincrement())
-  content       String
-  isPrivate     Boolean   @default(false) // true = solo visible para el autor
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id          Int       @id @default(autoincrement())
+  content     String
+  isPrivate   Boolean   @default(false) // true = solo visible para el autor
+  reportCount Int       @default(0)
+  reportedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   // Usuario que comentó (opcional para preservar comentarios existentes)
-  userId        String?
-  user          User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   // Puede ser comentario de Serie, Temporada o Episodio
-  seriesId      Int?
-  series        Series?   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
-  seasonId      Int?
-  season        Season?   @relation(fields: [seasonId], references: [id], onDelete: Cascade)
-  episodeId     Int?
-  episode       Episode?  @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+  seriesId  Int?
+  series    Series?  @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  seasonId  Int?
+  season    Season?  @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  episodeId Int?
+  episode   Episode? @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+
+  reports CommentReport[]
+
+  @@index([userId])
+  @@index([seriesId])
+  @@index([seasonId])
+  @@index([episodeId])
+  @@index([reportCount])
+}
+
+// ============================================
+// REPORTES DE COMENTARIOS (un usuario puede reportar un comentario una sola vez)
+// ============================================
+model CommentReport {
+  id        Int      @id @default(autoincrement())
+  commentId Int
+  comment   Comment  @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reason    String?
+  createdAt DateTime @default(now())
+
+  @@unique([commentId, userId])
+  @@index([commentId])
 }
 
 // ============================================
@@ -451,11 +478,11 @@ model UserFavorite {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
 
-  userId   String
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   seriesId Int
-  series   Series   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  series   Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
 
   @@unique([userId, seriesId])
 }
@@ -472,24 +499,24 @@ enum WatchStatus {
 }
 
 model ViewStatus {
-  id                Int         @id @default(autoincrement())
-  status            WatchStatus @default(SIN_VER)
-  watchedDate       DateTime?
-  lastWatchedAt     DateTime? // Última vez que se vio
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  id            Int         @id @default(autoincrement())
+  status        WatchStatus @default(SIN_VER)
+  watchedDate   DateTime?
+  lastWatchedAt DateTime? // Última vez que se vio
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 
   // Usuario (opcional para preservar datos existentes)
-  userId        String?
-  user          User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Puede ser estado de Serie, Temporada o Episodio
-  seriesId      Int?
-  series        Series?   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
-  seasonId      Int?
-  season        Season?   @relation(fields: [seasonId], references: [id], onDelete: Cascade)
-  episodeId     Int?
-  episode       Episode?  @relation("EpisodeViewStatus", fields: [episodeId], references: [id], onDelete: Cascade)
+  seriesId  Int?
+  series    Series?  @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  seasonId  Int?
+  season    Season?  @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  episodeId Int?
+  episode   Episode? @relation("EpisodeViewStatus", fields: [episodeId], references: [id], onDelete: Cascade)
 
   @@unique([userId, seriesId])
   @@unique([userId, seasonId])
@@ -503,7 +530,7 @@ model FeatureRequest {
   id          Int      @id @default(autoincrement())
   title       String
   description String?
-  type        String   // "bug", "feature", "idea"
+  type        String // "bug", "feature", "idea"
   status      String   @default("pendiente") // "pendiente", "en_progreso", "completado", "descartado"
   priority    String   @default("media") // "baja", "media", "alta"
   createdAt   DateTime @default(now())
@@ -543,12 +570,12 @@ model AccessLog {
   id        Int      @id @default(autoincrement())
   userId    String?
   user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  action    String   // PAGE_VIEW, LOGIN, LOGOUT, CREATE, UPDATE, DELETE
-  path      String   // URL o recurso
-  method    String?  // GET, POST, PUT, DELETE
+  action    String // PAGE_VIEW, LOGIN, LOGOUT, CREATE, UPDATE, DELETE
+  path      String // URL o recurso
+  method    String? // GET, POST, PUT, DELETE
   ip        String?
   userAgent String?
-  metadata  String?  // JSON string con detalles extra
+  metadata  String? // JSON string con detalles extra
   createdAt DateTime @default(now())
 
   @@index([createdAt])
@@ -573,8 +600,8 @@ model RecommendedSite {
   name        String
   url         String
   description String?
-  category    String?  // "noticias", "comunidad", "streaming", "info", "otro"
-  language    String?  // "ES", "EN", "TH", "JP", "KR", "Multi", etc.
+  category    String? // "noticias", "comunidad", "streaming", "info", "otro"
+  language    String? // "ES", "EN", "TH", "JP", "KR", "Multi", etc.
   imageUrl    String?
   sortOrder   Int      @default(0)
   createdAt   DateTime @default(now())
@@ -604,12 +631,12 @@ model SuggestedSite {
 // ============================================
 model WatchLink {
   id       Int     @id @default(autoincrement())
-  platform String  // "YouTube", "Viki", "iQIYI", "WeTV", "Netflix", etc.
+  platform String // "YouTube", "Viki", "iQIYI", "WeTV", "Netflix", etc.
   url      String
   official Boolean @default(true)
 
   seriesId Int
-  series   Series  @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  series   Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
 }
 
 // ============================================
@@ -619,9 +646,9 @@ model EmbeddableContent {
   id           Int      @id @default(autoincrement())
   title        String
   description  String?
-  platform     String   // "YouTube", "Bilibili", "Vimeo", "Dailymotion", "TikTok", "Instagram", "Twitter", "Spotify"
+  platform     String // "YouTube", "Bilibili", "Vimeo", "Dailymotion", "TikTok", "Instagram", "Twitter", "Spotify"
   url          String
-  videoId      String?  // ID extraído automáticamente
+  videoId      String? // ID extraído automáticamente
   category     String   @default("other") // "trailer", "ost", "interview", "clip", "behind_scenes", "live", "other"
   language     String?
   thumbnailUrl String?

@@ -60,5 +60,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...staticPages, ...seriesPages, ...actorPages, ...directorPages];
+  const tags = await prisma.tag.findMany({
+    select: { id: true, updatedAt: true },
+  });
+
+  const tagPages: MetadataRoute.Sitemap = tags.map((tag) => ({
+    url: `${baseUrl}/tags/${tag.id}`,
+    lastModified: tag.updatedAt,
+    changeFrequency: 'weekly',
+    priority: 0.5,
+  }));
+
+  return [
+    ...staticPages,
+    ...seriesPages,
+    ...actorPages,
+    ...directorPages,
+    ...tagPages,
+  ];
 }
