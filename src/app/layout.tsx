@@ -3,6 +3,7 @@ import { AntdRegistry } from '@ant-design/nextjs-registry';
 import { App } from 'antd';
 import { ThemeProvider } from '@/lib/providers/ThemeProvider';
 import { SessionProvider } from '@/lib/providers/SessionProvider';
+import { LocaleProvider } from '@/lib/providers/LocaleProvider';
 import { ServiceWorkerRegistrar } from '@/components/ServiceWorkerRegistrar/ServiceWorkerRegistrar';
 import { JsonLd } from '@/components/seo/JsonLd';
 import type { WebSite } from 'schema-dts';
@@ -116,9 +117,11 @@ export default function RootLayout({
         <ServiceWorkerRegistrar />
         <SessionProvider>
           <AntdRegistry>
-            <ThemeProvider>
-              <App>{children}</App>
-            </ThemeProvider>
+            <LocaleProvider>
+              <ThemeProvider>
+                <App>{children}</App>
+              </ThemeProvider>
+            </LocaleProvider>
           </AntdRegistry>
         </SessionProvider>
       </body>
