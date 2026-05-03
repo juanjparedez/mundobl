@@ -1,25 +1,26 @@
-import type { Metadata } from 'next';
+
+'use client';
+
 import Link from 'next/link';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 
-export const metadata: Metadata = {
-  title: 'Página no encontrada',
-  description: 'La página que buscas no existe en MundoBL.',
-};
 
 export default function NotFound() {
+    const { t } = useLocale();
+
   return (
     <AppLayout>
       <div style={{ textAlign: 'center', padding: '80px 24px' }}>
         <h1>404</h1>
         <p style={{ fontSize: '18px', marginBottom: '24px' }}>
-          La página que buscas no existe o fue movida.
+          {t('notFound.description')}
         </p>
         <Link
           href="/catalogo"
           style={{ color: 'var(--color-primary)', fontWeight: 600 }}
         >
-          Volver al catálogo
+          {t('notFound.backLink')}
         </Link>
       </div>
     </AppLayout>

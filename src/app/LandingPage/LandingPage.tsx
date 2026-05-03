@@ -6,11 +6,13 @@ import { Button } from 'antd';
 import { SearchOutlined, LoginOutlined } from '@ant-design/icons';
 import { signIn, useSession } from 'next-auth/react';
 import { ROUTES } from '@/constants/navigation';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 import './LandingPage.css';
 
 export function LandingPage() {
   const router = useRouter();
   const { data: session } = useSession();
+  const { t } = useLocale();
 
   return (
     <div className="landing">
@@ -25,7 +27,7 @@ export function LandingPage() {
       </div>
 
       <p className="landing__subtitle">
-        Tu catálogo personal de series BL y más.
+        {t('landing.subtitle')}
       </p>
 
       <div className="landing__actions">
@@ -35,7 +37,7 @@ export function LandingPage() {
           icon={<SearchOutlined />}
           onClick={() => router.push(ROUTES.CATALOGO)}
         >
-          Explorar Catálogo
+          {t('landing.exploreCatalog')}
         </Button>
 
         {!session?.user && (
@@ -44,7 +46,7 @@ export function LandingPage() {
             icon={<LoginOutlined />}
             onClick={() => signIn('google', { callbackUrl: ROUTES.CATALOGO })}
           >
-            Iniciar Sesión
+            {t('landing.signIn')}
           </Button>
         )}
       </div>

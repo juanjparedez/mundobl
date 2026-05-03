@@ -29,6 +29,8 @@ import {
 import { useSession } from 'next-auth/react';
 import { PageTitle } from '@/components/common/PageTitle/PageTitle';
 import { useMessage } from '@/hooks/useMessage';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
 import './FeedbackClient.css';
 
 interface FeatureRequestUser {
@@ -57,21 +59,6 @@ interface FeatureRequest {
   images?: FeatureRequestImage[];
 }
 
-const TYPE_CONFIG: Record<
-  string,
-  { color: string; label: string; icon: React.ReactNode }
-> = {
-  bug: { color: 'red', label: 'Bug', icon: <BugOutlined /> },
-  feature: { color: 'blue', label: 'Feature', icon: <RocketOutlined /> },
-  idea: { color: 'purple', label: 'Idea', icon: <BulbOutlined /> },
-};
-
-const STATUS_CONFIG: Record<string, { color: string; label: string }> = {
-  pendiente: { color: 'default', label: 'Pendiente' },
-  en_progreso: { color: 'processing', label: 'En progreso' },
-  completado: { color: 'success', label: 'Completado' },
-  descartado: { color: 'error', label: 'Descartado' },
-};
 
 interface ChangelogEntry {
   version: string;
@@ -86,6 +73,20 @@ interface PendingImage {
 export function FeedbackClient() {
   const message = useMessage();
   const { data: session } = useSession();
+    const { t, locale } = useLocale();
+
+    const TYPE_CONFIG: Record<string, { color: string; label: string; icon: React.ReactNode }> = {
+      bug: { color: 'red', label: t('feedback.typeBug'), icon: <BugOutlined /> },
+      feature: { color: 'blue', label: t('feedback.typeFeature'), icon: <RocketOutlined /> },
+      idea: { color: 'purple', label: t('feedback.typeIdea'), icon: <BulbOutlined /> },
+    };
+
+    const STATUS_CONFIG: Record<string, { color: string; label: string }> = {
+      pendiente: { color: 'default', label: t('feedback.statusPendiente') },
+      en_progreso: { color: 'processing', label: t('feedback.statusEnProgreso') },
+      completado: { color: 'success', label: t('feedback.statusCompletado') },
+      descartado: { color: 'error', label: t('feedback.statusDescartado') },
+    };
   const [requests, setRequests] = useState<FeatureRequest[]>([]);
   const [_loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -204,9 +205,9 @@ export function FeedbackClient() {
       form.resetFields();
       pendingImages.forEach((img) => URL.revokeObjectURL(img.preview));
       setPendingImages([]);
-      message.success('Solicitud creada');
+      message.success(t('feedback.successCreated'));
     } catch (error) {
-      message.error('Error al crear la solicitud');
+      message.error(t('feedback.errorCreate'));
       console.error(error);
     } finally {
       setSubmitting(false);
@@ -257,9 +258,9 @@ export function FeedbackClient() {
       setRequests((prev) =>
         prev.map((r) => (r.id === requestId ? updated : r))
       );
-      message.success('Estado actualizado');
+      message.success(t('feedback.successStatusUpdated'));
     } catch (error) {
-      message.error('Error al actualizar');
+      message.error(t('feedback.errorStatusUpdate'));
       console.error(error);
     }
   };
@@ -273,9 +274,9 @@ export function FeedbackClient() {
       if (!response.ok) throw new Error('Error al eliminar');
 
       setRequests((prev) => prev.filter((r) => r.id !== requestId));
-      message.success('Solicitud eliminada');
+      message.success(t('feedback.successDeleted'));
     } catch (error) {
-      message.error('Error al eliminar');
+      message.error(t('feedback.errorDelete'));
       console.error(error);
     }
   };
@@ -342,7 +343,7 @@ export function FeedbackClient() {
               </>
             )}
             <span>
-              {new Date(request.createdAt).toLocaleDateString('es-ES')}
+              {new Date(request.createdAt).toLocaleDateString(locale)}
             </span>
           </div>
 
@@ -379,7 +380,7 @@ export function FeedbackClient() {
                 size="small"
                 onClick={() => handleDelete(request.id)}
               >
-                Eliminar
+                {t('feedback.deleteButton')}
               </Button>
             )}
           </div>
@@ -391,12 +392,12 @@ export function FeedbackClient() {
   const tabItems = [
     {
       key: 'requests',
-      label: 'Ideas y Bugs',
+      label: t('feedback.tabRequests'),
       children: (
         <>
           <div className="feedback-page__header">
             <span style={{ color: 'var(--text-secondary)' }}>
-              {activeRequests.length} solicitudes activas
+              {interpolateMessage(t('feedback.activeCount'), { n: String(activeRequests.length) })}
             </span>
             {session?.user && (
               <Button
@@ -404,7 +405,7 @@ export function FeedbackClient() {
                 icon={<PlusOutlined />}
                 onClick={() => setModalOpen(true)}
               >
-                Nueva solicitud
+                {t('feedback.newRequest')}
               </Button>
             )}
           </div>
@@ -413,7 +414,7 @@ export function FeedbackClient() {
               {activeRequests.map(renderRequestCard)}
             </div>
           ) : (
-            <Empty description="No hay solicitudes activas" />
+            <Empty description={t('feedback.emptyRequests')} />
           )}
         </>
       ),
@@ -425,7 +426,7 @@ export function FeedbackClient() {
         <div className="changelog-tab">
           {buildId && (
             <div className="changelog-version-badge">
-              Versión actual: <code>{buildId}</code>
+              {t('feedback.currentVersion')} <code>{buildId}</code>
             </div>
           )}
           {changelog.length > 0 ? (
@@ -446,12 +447,12 @@ export function FeedbackClient() {
               ))}
             </div>
           ) : (
-            <Empty description="No hay cambios registrados" />
+            <Empty description={t('feedback.emptyChangelog')} />
           )}
           {completedRequests.length > 0 && (
             <>
               <h4 className="changelog-section-title">
-                Solicitudes completadas
+                {t('feedback.completedSection')}
               </h4>
               <Timeline
                 items={completedRequests.map((r) => ({
@@ -480,7 +481,7 @@ export function FeedbackClient() {
                           marginTop: 4,
                         }}
                       >
-                        {new Date(r.updatedAt).toLocaleDateString('es-ES')}
+                        {new Date(r.updatedAt).toLocaleDateString(locale)}
                       </div>
                     </div>
                   ),
@@ -499,7 +500,7 @@ export function FeedbackClient() {
       <Tabs items={tabItems} />
 
       <Modal
-        title="Nueva solicitud"
+        title={t('feedback.newRequest')}
         open={modalOpen}
         onCancel={() => {
           setModalOpen(false);
@@ -511,8 +512,8 @@ export function FeedbackClient() {
         <Form form={form} layout="vertical" onFinish={handleCreate}>
           <Form.Item
             name="type"
-            label="Tipo"
-            rules={[{ required: true, message: 'Seleccioná un tipo' }]}
+            label={t('feedback.formFieldType')}
+            rules={[{ required: true, message: t('feedback.formRequiredType') }]}
           >
             <Select
               options={[
@@ -525,18 +526,18 @@ export function FeedbackClient() {
 
           <Form.Item
             name="title"
-            label="Título"
-            rules={[{ required: true, message: 'Ingresá un título' }]}
+            label={t('feedback.formFieldTitle')}
+            rules={[{ required: true, message: t('feedback.formRequiredTitle') }]}
           >
             <Input maxLength={200} />
           </Form.Item>
 
-          <Form.Item name="description" label="Descripción">
+          <Form.Item name="description" label={t('feedback.formFieldDescription')}>
             <Input.TextArea
               rows={3}
               maxLength={1000}
               onPaste={handlePaste}
-              placeholder="Escribí la descripción... Podés pegar imágenes del clipboard (Ctrl+V)"
+              placeholder={t('feedback.formDescriptionPlaceholder')}
             />
           </Form.Item>
 
@@ -560,12 +561,12 @@ export function FeedbackClient() {
           )}
 
           <div className="feedback-image-hint">
-            <PictureOutlined /> Pegá imágenes del clipboard en la descripción
+            <PictureOutlined /> {t('feedback.formDescriptionHint')}
           </div>
 
           <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
             <Button type="primary" htmlType="submit" loading={submitting}>
-              Crear
+              {t('feedback.createButton')}
             </Button>
           </Form.Item>
         </Form>
