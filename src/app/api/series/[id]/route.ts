@@ -190,6 +190,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
           ? parseInt(body.overallRating, 10)
           : null,
         observations: body.observations || null,
+        notesPrivate: body.notesPrivate === true,
         countryId,
         universeId: body.universeId ? parseInt(body.universeId, 10) : null,
         productionCompanyId,

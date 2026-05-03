@@ -38,6 +38,8 @@ export default async function EditSeriesPage({ params }: EditPageProps) {
     soundtrack: serie.soundtrack,
     overallRating: serie.overallRating,
     observations: serie.observations,
+    review: serie.review,
+    notesPrivate: serie.notesPrivate ?? false,
     countryName: serie.country?.name,
     universeId: serie.universeId,
     tags: serie.tags?.map((st) => st.tag.name) || [],

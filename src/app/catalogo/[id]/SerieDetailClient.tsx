@@ -21,6 +21,7 @@ import {
 } from '@ant-design/icons';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { PageTitleClient } from '@/components/common/PageTitle/PageTitleClient';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
 import './serie-detail.css';
@@ -63,6 +64,7 @@ interface SerieDetail {
   synopsis?: string | null;
   observations?: string | null;
   review?: string | null;
+  notesPrivate?: boolean;
   soundtrack?: string | null;
   isNovel?: boolean | null;
   overallRating?: number | null;
@@ -83,6 +85,8 @@ interface SerieDetailProps {
 
 export function SerieDetailClient({ serie }: SerieDetailProps) {
   const router = useRouter();
+  const { data: session } = useSession();
+  const canSeeNotes = !serie.notesPrivate || session?.user?.role === 'ADMIN';
 
   const getTypeColor = (type: string) => {
     const colorMap: Record<string, string> = {
@@ -303,7 +307,7 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
           )}
 
           {/* Observaciones */}
-          {serie.observations && (
+          {serie.observations && canSeeNotes && (
             <Card title="Observaciones" style={{ marginBottom: '24px' }}>
               <p style={{ whiteSpace: 'pre-wrap' }}>{serie.observations}</p>
             </Card>
@@ -317,7 +321,7 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
           )}
 
           {/* Reseña personal */}
-          {serie.review && (
+          {serie.review && canSeeNotes && (
             <Card title="Reseña Personal" style={{ marginBottom: '24px' }}>
               <p style={{ whiteSpace: 'pre-wrap' }}>{serie.review}</p>
             </Card>

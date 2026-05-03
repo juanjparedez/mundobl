@@ -2,6 +2,8 @@
 
 import { Descriptions, Tag } from 'antd';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import { LockOutlined } from '@ant-design/icons';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import {
@@ -22,6 +24,7 @@ interface SeriesInfoProps {
     type: string;
     basedOn?: string | null;
     format: string;
+    notesPrivate?: boolean;
     synopsis?: string | null;
     soundtrack?: string | null;
     observations?: string | null;
@@ -113,6 +116,9 @@ function getBasedOnLabel(basedOn: string): string {
 export function SeriesInfo({ series }: SeriesInfoProps) {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const { t } = useLocale();
+  const { data: session } = useSession();
+  const isAdmin = session?.user?.role === 'ADMIN';
+  const canSeeNotes = !series.notesPrivate || isAdmin;
 
   const fullSpan = isMobile ? 1 : 2;
 
@@ -406,19 +412,29 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
         </div>
       )}
 
-      {series.review && (
+      {series.review && canSeeNotes && (
         <div className="series-info__review">
           <h4 className="series-info__section-title">
             ⭐ {t('seriesInfo.reviewSection')}
+            {series.notesPrivate && (
+              <Tag color="default" className="series-info__private-tag">
+                <LockOutlined /> {t('seriesInfo.privateLabel')}
+              </Tag>
+            )}
           </h4>
           <div className="series-info__review-content">{series.review}</div>
         </div>
       )}
 
-      {series.observations && (
+      {series.observations && canSeeNotes && (
         <div className="series-info__observations">
           <h4 className="series-info__section-title">
             📝 {t('seriesInfo.observationsSection')}
+            {series.notesPrivate && (
+              <Tag color="default" className="series-info__private-tag">
+                <LockOutlined /> {t('seriesInfo.privateLabel')}
+              </Tag>
+            )}
           </h4>
           <div className="series-info__observations-content">
             {series.observations}

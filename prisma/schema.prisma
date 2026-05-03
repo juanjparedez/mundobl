@@ -150,6 +150,7 @@ model Series {
   soundtrack    String? // Banda sonora
   overallRating Int? // Puntuación general (del Excel)
   observations  String? // Observaciones
+  notesPrivate  Boolean  @default(false) // Si true, review/observations solo visible para ADMIN
   isFavorite    Boolean  @default(false) // Marcado como favorito
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

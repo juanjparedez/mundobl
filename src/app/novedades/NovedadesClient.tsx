@@ -13,6 +13,7 @@ import {
 import { PageTitle } from '@/components/common/PageTitle/PageTitle';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
 import type { TranslationKey } from '@/i18n/messages';
 import { LAST_SEEN_NOVEDADES_KEY } from './storage-keys';
@@ -60,9 +61,10 @@ function relativeTime(
   const days = Math.floor(ms / (1000 * 60 * 60 * 24));
   if (days < 1) return t('common.today');
   if (days === 1) return t('common.yesterday');
-  if (days < 7) return `${days} ${t('common.daysAgo')}`;
+  if (days < 7)
+    return interpolateMessage(t('common.daysAgo'), { n: String(days) });
   const weeks = Math.floor(days / 7);
-  return `${weeks} ${t('common.weeksAgo')}`;
+  return interpolateMessage(t('common.weeksAgo'), { n: String(weeks) });
 }
 
 export function NovedadesClient({
