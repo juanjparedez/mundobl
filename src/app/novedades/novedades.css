@@ -1,0 +1,178 @@
+.novedades-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.novedades-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.novedades-section__title {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Grid de series nuevas ─────────────────────────────────────────────── */
+.novedades-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.novedades-card {
+  background: var(--bg-container);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  transition: transform 0.18s ease, border-color 0.18s ease;
+}
+
+.novedades-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary-color);
+}
+
+.novedades-card__link {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.novedades-card__cover {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  background: var(--bg-spotlight);
+  overflow: hidden;
+}
+
+.novedades-card__cover-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 36px;
+  color: var(--text-tertiary);
+}
+
+.novedades-card__body {
+  padding: var(--spacing-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.novedades-card__title {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.novedades-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.novedades-card__when {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+}
+
+/* Lista de temporadas nuevas ─────────────────────────────────────────── */
+.novedades-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.novedades-list__item {
+  background: var(--bg-container);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-sm);
+  transition: border-color 0.18s ease;
+}
+
+.novedades-list__item:hover {
+  border-color: var(--primary-color);
+}
+
+.novedades-list__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm) var(--spacing-md);
+  color: inherit;
+  text-decoration: none;
+  gap: var(--spacing-md);
+}
+
+.novedades-list__main {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.novedades-list__when {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+}
+
+/* Changelog ─────────────────────────────────────────────────────────── */
+.novedades-changelog {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.novedades-changelog__entry {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-md);
+}
+
+.novedades-changelog__version {
+  font-weight: 700;
+  font-size: var(--font-size-base);
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-xs);
+}
+
+.novedades-changelog__items {
+  margin: 0;
+  padding-left: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
