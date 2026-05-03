@@ -9,6 +9,7 @@ import {
   Modal,
   Pagination,
   Progress,
+  Segmented,
   Select,
   Spin,
   Tag,
@@ -84,6 +85,8 @@ interface ProfileData {
     activeDaysThisWeek: number;
     topGenres: Array<{ name: string; count: number }>;
     topCountries: Array<{ name: string; code: string | null; count: number }>;
+    topActors: Array<{ name: string; count: number }>;
+    topProductionCompanies: Array<{ name: string; count: number }>;
     completedByYear: Array<{ year: number | null; count: number }>;
   };
   recentlyCompleted: Array<{ seriesId: number; series: SeriesMini | null }>;
@@ -146,6 +149,10 @@ interface UserDisputesResponse {
 
 type VisibilityFilter = 'all' | 'public' | 'private';
 type TargetFilter = 'all' | 'series' | 'season' | 'episode';
+type StatsMode = 'basic' | 'advanced';
+
+const PROFILE_STATS_MODE_STORAGE_KEY = 'profile-stats-mode';
+const PROFILE_STATS_TOP_N_STORAGE_KEY = 'profile-stats-top-n';
 
 function SeriesCard({
   series,
@@ -207,6 +214,8 @@ export function ProfileClient() {
 
   const [data, setData] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [statsMode, setStatsMode] = useState<StatsMode>('basic');
+  const [statsTopN, setStatsTopN] = useState<number>(25);
 
   const [comments, setComments] = useState<UserComment[]>([]);
   const [commentsTotal, setCommentsTotal] = useState(0);
@@ -263,14 +272,47 @@ export function ProfileClient() {
     [t]
   );
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const storedMode = window.localStorage.getItem(
+      PROFILE_STATS_MODE_STORAGE_KEY
+    );
+    if (storedMode === 'basic' || storedMode === 'advanced') {
+      setStatsMode(storedMode);
+    }
+
+    const storedTopN = Number.parseInt(
+      window.localStorage.getItem(PROFILE_STATS_TOP_N_STORAGE_KEY) || '25',
+      10
+    );
+    if (Number.isFinite(storedTopN) && storedTopN > 0 && storedTopN <= 200) {
+      setStatsTopN(storedTopN);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem(PROFILE_STATS_MODE_STORAGE_KEY, statsMode);
+  }, [statsMode]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem(
+      PROFILE_STATS_TOP_N_STORAGE_KEY,
+      String(statsTopN)
+    );
+  }, [statsTopN]);
+
   const loadProfile = useCallback(async () => {
-    const response = await fetch('/api/user/profile');
+    const params = new URLSearchParams({ topN: String(statsTopN) });
+    const response = await fetch(`/api/user/profile?${params.toString()}`);
     if (!response.ok) {
       throw new Error('No se pudo cargar el perfil');
     }
     const profileData = (await response.json()) as ProfileData;
     setData(profileData);
-  }, []);
+  }, [statsTopN]);
 
   const loadComments = useCallback(async () => {
     if (status !== 'authenticated') return;
@@ -608,6 +650,16 @@ export function ProfileClient() {
   }
 
   const { user, stats } = data;
+  const visibleTopGenres =
+    statsMode === 'basic' ? stats.topGenres.slice(0, 5) : stats.topGenres;
+  const visibleTopCountries =
+    statsMode === 'basic' ? stats.topCountries.slice(0, 5) : stats.topCountries;
+  const visibleTopActors =
+    statsMode === 'basic' ? stats.topActors.slice(0, 5) : stats.topActors;
+  const visibleTopProductionCompanies =
+    statsMode === 'basic'
+      ? stats.topProductionCompanies.slice(0, 5)
+      : stats.topProductionCompanies;
 
   const statItems = [
     {
@@ -684,6 +736,42 @@ export function ProfileClient() {
             <BarChartOutlined className="profile-section__header-icon" />
             {t('profile.sectionStats')}
           </div>
+          <div className="profile-rich-stats-controls">
+            <div className="profile-rich-stats-controls__group">
+              <span className="profile-rich-stats-controls__label">
+                {t('profile.statsModeLabel')}
+              </span>
+              <Segmented<StatsMode>
+                value={statsMode}
+                onChange={(value) => setStatsMode(value)}
+                options={[
+                  { value: 'basic', label: t('profile.statsModeBasic') },
+                  {
+                    value: 'advanced',
+                    label: t('profile.statsModeAdvanced'),
+                  },
+                ]}
+              />
+            </div>
+
+            <div className="profile-rich-stats-controls__group">
+              <span className="profile-rich-stats-controls__label">
+                {t('profile.statsTopNLabel')}
+              </span>
+              <Select
+                value={statsTopN}
+                onChange={(value: number) => setStatsTopN(value)}
+                options={[
+                  { value: 5, label: t('profile.statsTopN5') },
+                  { value: 10, label: t('profile.statsTopN10') },
+                  { value: 25, label: t('profile.statsTopN25') },
+                  { value: 50, label: t('profile.statsTopN50') },
+                  { value: 200, label: t('profile.statsTopNAll') },
+                ]}
+                className="profile-rich-stats-controls__select"
+              />
+            </div>
+          </div>
           <div className="profile-rich-stats">
             {/* Hours watched */}
             <div className="profile-rich-stat-card">
@@ -731,12 +819,12 @@ export function ProfileClient() {
                 </span>
               ) : (
                 <div className="profile-top-list">
-                  {stats.topGenres.map((g) => (
+                  {visibleTopGenres.map((g) => (
                     <div key={g.name} className="profile-top-list__item">
                       <span className="profile-top-list__name">{g.name}</span>
                       <Progress
                         percent={Math.round(
-                          (g.count / stats.topGenres[0].count) * 100
+                          (g.count / visibleTopGenres[0].count) * 100
                         )}
                         showInfo={false}
                         size="small"
@@ -761,12 +849,12 @@ export function ProfileClient() {
                 </span>
               ) : (
                 <div className="profile-top-list">
-                  {stats.topCountries.map((c) => (
+                  {visibleTopCountries.map((c) => (
                     <div key={c.name} className="profile-top-list__item">
                       <span className="profile-top-list__name">{c.name}</span>
                       <Progress
                         percent={Math.round(
-                          (c.count / stats.topCountries[0].count) * 100
+                          (c.count / visibleTopCountries[0].count) * 100
                         )}
                         showInfo={false}
                         size="small"
@@ -808,6 +896,81 @@ export function ProfileClient() {
                   })}
                 </div>
               </div>
+            )}
+
+            {statsMode === 'advanced' && (
+              <>
+                <div className="profile-rich-stat-card profile-rich-stat-card--wide">
+                  <div className="profile-rich-stat-card__header">
+                    <GlobalOutlined />
+                    {t('profile.statsTopActors')}
+                  </div>
+                  {visibleTopActors.length === 0 ? (
+                    <span className="profile-rich-stat-card__empty">
+                      {t('profile.statsNoData')}
+                    </span>
+                  ) : (
+                    <div className="profile-top-list">
+                      {visibleTopActors.map((a) => (
+                        <div key={a.name} className="profile-top-list__item">
+                          <span className="profile-top-list__name">
+                            {a.name}
+                          </span>
+                          <Progress
+                            percent={Math.round(
+                              (a.count / visibleTopActors[0].count) * 100
+                            )}
+                            showInfo={false}
+                            size="small"
+                            className="profile-top-list__bar"
+                          />
+                          <span className="profile-top-list__count">
+                            {a.count}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className="profile-rich-stat-card profile-rich-stat-card--wide">
+                  <div className="profile-rich-stat-card__header">
+                    <GlobalOutlined />
+                    {t('profile.statsTopProductionCompanies')}
+                  </div>
+                  {visibleTopProductionCompanies.length === 0 ? (
+                    <span className="profile-rich-stat-card__empty">
+                      {t('profile.statsNoData')}
+                    </span>
+                  ) : (
+                    <div className="profile-top-list">
+                      {visibleTopProductionCompanies.map((company) => (
+                        <div
+                          key={company.name}
+                          className="profile-top-list__item"
+                        >
+                          <span className="profile-top-list__name">
+                            {company.name}
+                          </span>
+                          <Progress
+                            percent={Math.round(
+                              (company.count /
+                                visibleTopProductionCompanies[0].count) *
+                                100
+                            )}
+                            showInfo={false}
+                            size="small"
+                            className="profile-top-list__bar"
+                          />
+                          <span className="profile-top-list__count">
+                            {company.count}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </>
             )}
           </div>
         </section>

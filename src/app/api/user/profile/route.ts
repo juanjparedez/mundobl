@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 
@@ -27,12 +27,20 @@ interface RawDayRow {
 }
 
 // GET /api/user/profile — returns stats + recent activity for authenticated user
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const authResult = await requireAuth();
     if (!authResult.authorized) return authResult.response;
 
     const userId = authResult.userId;
+    const topNParam = parseInt(
+      request.nextUrl.searchParams.get('topN') || '5',
+      10
+    );
+    const topN = Math.min(
+      Math.max(Number.isNaN(topNParam) ? 5 : topNParam, 1),
+      200
+    );
 
     const [
       user,
@@ -47,6 +55,8 @@ export async function GET() {
       weeklyActivity,
       topGenresRaw,
       topCountriesRaw,
+      topActorsRaw,
+      topProductionCompaniesRaw,
       completedByYearRaw,
     ] = await Promise.all([
       // Basic user info
@@ -164,7 +174,7 @@ export async function GET() {
         ORDER BY day
       `,
 
-      // Top 5 genres from watched series
+      // Top genres from watched series
       prisma.$queryRaw<RawCountRow[]>`
         SELECT g.name, COUNT(*) as count
         FROM "ViewStatus" vs
@@ -176,10 +186,9 @@ export async function GET() {
           AND vs."seriesId" IS NOT NULL
         GROUP BY g.name
         ORDER BY count DESC
-        LIMIT 5
       `,
 
-      // Top 5 countries from watched series
+      // Top countries from watched series
       prisma.$queryRaw<RawCountryRow[]>`
         SELECT c.name, c.code, COUNT(*) as count
         FROM "ViewStatus" vs
@@ -190,7 +199,33 @@ export async function GET() {
           AND vs."seriesId" IS NOT NULL
         GROUP BY c.name, c.code
         ORDER BY count DESC
-        LIMIT 5
+      `,
+
+      // Top actors from watched series
+      prisma.$queryRaw<RawCountRow[]>`
+        SELECT a.name, COUNT(*) as count
+        FROM "ViewStatus" vs
+        JOIN "SeriesActor" sa ON sa."seriesId" = vs."seriesId"
+        JOIN "Actor" a ON a.id = sa."actorId"
+        WHERE vs."userId" = ${userId}
+          AND vs.status = 'VISTA'
+          AND vs."seriesId" IS NOT NULL
+        GROUP BY a.name
+        ORDER BY count DESC
+      `,
+
+      // Top production companies from watched series
+      prisma.$queryRaw<RawCountRow[]>`
+        SELECT pc.name, COUNT(*) as count
+        FROM "ViewStatus" vs
+        JOIN "Series" s ON s.id = vs."seriesId"
+        JOIN "ProductionCompany" pc ON pc.id = s."productionCompanyId"
+        WHERE vs."userId" = ${userId}
+          AND vs.status = 'VISTA'
+          AND vs."seriesId" IS NOT NULL
+          AND s."productionCompanyId" IS NOT NULL
+        GROUP BY pc.name
+        ORDER BY count DESC
       `,
 
       // Series completed per year
@@ -270,15 +305,25 @@ export async function GET() {
           Math.round((Number(hoursResult[0]?.total_minutes ?? 0) / 60) * 10) /
           10,
         activeDaysThisWeek: weeklyActivity.length,
-        topGenres: topGenresRaw.map((g) => ({
+        topGenres: topGenresRaw.slice(0, topN).map((g) => ({
           name: g.name,
           count: Number(g.count),
         })),
-        topCountries: topCountriesRaw.map((c) => ({
+        topCountries: topCountriesRaw.slice(0, topN).map((c) => ({
           name: c.name,
           code: c.code,
           count: Number(c.count),
         })),
+        topActors: topActorsRaw.slice(0, topN).map((actor) => ({
+          name: actor.name,
+          count: Number(actor.count),
+        })),
+        topProductionCompanies: topProductionCompaniesRaw
+          .slice(0, topN)
+          .map((company) => ({
+            name: company.name,
+            count: Number(company.count),
+          })),
         completedByYear: completedByYearRaw.map((y) => ({
           year: y.year,
           count: Number(y.count),

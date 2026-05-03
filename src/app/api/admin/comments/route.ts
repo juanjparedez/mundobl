@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { Prisma } from '@/generated/prisma';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 
@@ -10,6 +11,7 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = request.nextUrl;
     const target = searchParams.get('target');
+    const author = searchParams.get('author');
     const userId = searchParams.get('userId');
     const search = searchParams.get('q')?.trim();
     const reportedOnly = searchParams.get('reported') === 'true';
@@ -19,21 +21,19 @@ export async function GET(request: NextRequest) {
       200
     );
 
-    const where: {
-      isPrivate: boolean;
-      userId?: string;
-      seriesId?: { not: null };
-      seasonId?: { not: null };
-      episodeId?: { not: null };
-      content?: { contains: string; mode: 'insensitive' };
-      reportCount?: { gt: number };
-    } = { isPrivate: false };
+    const where: Prisma.CommentWhereInput = { isPrivate: false };
 
     if (target === 'series') where.seriesId = { not: null };
     else if (target === 'season') where.seasonId = { not: null };
     else if (target === 'episode') where.episodeId = { not: null };
 
-    if (userId) where.userId = userId;
+    if (userId) {
+      where.userId = userId;
+    } else if (author === 'deleted') {
+      where.userId = null;
+    } else if (author === 'active') {
+      where.userId = { not: null };
+    }
     if (search) where.content = { contains: search, mode: 'insensitive' };
     if (reportedOnly) where.reportCount = { gt: 0 };
 
