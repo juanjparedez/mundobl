@@ -45,6 +45,58 @@ type TranslationShape = {
     switchToLight: string;
     switchToDark: string;
   };
+  adminComments: {
+    title: string;
+    subtitle: string;
+    statsTotal: string;
+    statsReported: string;
+    statsPage: string;
+    filterAll: string;
+    filterSeries: string;
+    filterSeasons: string;
+    filterEpisodes: string;
+    searchPlaceholder: string;
+    reportedOnly: string;
+    columnUser: string;
+    columnComment: string;
+    columnAbout: string;
+    columnDate: string;
+    columnActions: string;
+    targetEpisode: string;
+    targetSeason: string;
+    targetSeries: string;
+    targetSeriesFallback: string;
+    targetUnknown: string;
+    deletedUser: string;
+    unnamedUser: string;
+    edited: string;
+    reportsSuffixOne: string;
+    reportsSuffixMany: string;
+    actionView: string;
+    actionIgnore: string;
+    actionEdit: string;
+    actionDelete: string;
+    dismissReportsTitle: string;
+    dismissReportsDescription: string;
+    dismissReportsConfirm: string;
+    cancel: string;
+    deleteTitle: string;
+    deleteDescription: string;
+    deleteConfirm: string;
+    modalEditTitle: string;
+    modalEditPlaceholder: string;
+    save: string;
+    noReason: string;
+    loadError: string;
+    deleteSuccess: string;
+    deleteError: string;
+    dismissSuccess: string;
+    dismissError: string;
+    editEmptyWarning: string;
+    editLengthWarning: string;
+    editSuccess: string;
+    editError: string;
+  };
 };
 
 const es: TranslationShape = {
@@ -92,6 +144,59 @@ const es: TranslationShape = {
     switchToLight: 'Cambiar a modo claro',
     switchToDark: 'Cambiar a modo oscuro',
   },
+  adminComments: {
+    title: 'Comentarios publicos',
+    subtitle: 'Moderacion y curaduria editorial de comentarios de la comunidad.',
+    statsTotal: 'Total',
+    statsReported: 'Reportados',
+    statsPage: 'En pagina',
+    filterAll: 'Todos',
+    filterSeries: 'Series',
+    filterSeasons: 'Temporadas',
+    filterEpisodes: 'Episodios',
+    searchPlaceholder: 'Buscar contenido...',
+    reportedOnly: 'Solo reportados',
+    columnUser: 'Usuario',
+    columnComment: 'Comentario',
+    columnAbout: 'Sobre',
+    columnDate: 'Fecha',
+    columnActions: 'Acciones',
+    targetEpisode: 'Episodio',
+    targetSeason: 'Temporada',
+    targetSeries: 'Serie',
+    targetSeriesFallback: 'Serie',
+    targetUnknown: 'Sin objetivo',
+    deletedUser: 'Usuario eliminado',
+    unnamedUser: 'Sin nombre',
+    edited: 'Editado',
+    reportsSuffixOne: 'reporte',
+    reportsSuffixMany: 'reportes',
+    actionView: 'Ver',
+    actionIgnore: 'Ignorar',
+    actionEdit: 'Editar',
+    actionDelete: 'Eliminar',
+    dismissReportsTitle: 'Descartar reportes?',
+    dismissReportsDescription:
+      'Se eliminan los reportes y el contador vuelve a cero',
+    dismissReportsConfirm: 'Descartar',
+    cancel: 'Cancelar',
+    deleteTitle: 'Eliminar comentario?',
+    deleteDescription: 'Esta accion no se puede deshacer',
+    deleteConfirm: 'Eliminar',
+    modalEditTitle: 'Editar comentario',
+    modalEditPlaceholder: 'Edita el comentario...',
+    save: 'Guardar',
+    noReason: 'Sin razon',
+    loadError: 'Error al cargar comentarios',
+    deleteSuccess: 'Comentario eliminado',
+    deleteError: 'Error al eliminar comentario',
+    dismissSuccess: 'Reportes descartados',
+    dismissError: 'Error al descartar reportes',
+    editEmptyWarning: 'El contenido no puede estar vacio',
+    editLengthWarning: 'El comentario no puede superar 2000 caracteres',
+    editSuccess: 'Comentario editado',
+    editError: 'Error al editar comentario',
+  },
 };
 
 const en: TranslationShape = {
@@ -138,6 +243,58 @@ const en: TranslationShape = {
     theme: 'Theme',
     switchToLight: 'Switch to light mode',
     switchToDark: 'Switch to dark mode',
+  },
+  adminComments: {
+    title: 'Public comments',
+    subtitle: 'Moderation and editorial curation for community comments.',
+    statsTotal: 'Total',
+    statsReported: 'Reported',
+    statsPage: 'On page',
+    filterAll: 'All',
+    filterSeries: 'Series',
+    filterSeasons: 'Seasons',
+    filterEpisodes: 'Episodes',
+    searchPlaceholder: 'Search content...',
+    reportedOnly: 'Reported only',
+    columnUser: 'User',
+    columnComment: 'Comment',
+    columnAbout: 'About',
+    columnDate: 'Date',
+    columnActions: 'Actions',
+    targetEpisode: 'Episode',
+    targetSeason: 'Season',
+    targetSeries: 'Series',
+    targetSeriesFallback: 'Series',
+    targetUnknown: 'No target',
+    deletedUser: 'Deleted user',
+    unnamedUser: 'Unnamed',
+    edited: 'Edited',
+    reportsSuffixOne: 'report',
+    reportsSuffixMany: 'reports',
+    actionView: 'View',
+    actionIgnore: 'Ignore',
+    actionEdit: 'Edit',
+    actionDelete: 'Delete',
+    dismissReportsTitle: 'Dismiss reports?',
+    dismissReportsDescription: 'Reports will be deleted and counter reset to zero',
+    dismissReportsConfirm: 'Dismiss',
+    cancel: 'Cancel',
+    deleteTitle: 'Delete comment?',
+    deleteDescription: 'This action cannot be undone',
+    deleteConfirm: 'Delete',
+    modalEditTitle: 'Edit comment',
+    modalEditPlaceholder: 'Edit the comment...',
+    save: 'Save',
+    noReason: 'No reason',
+    loadError: 'Error loading comments',
+    deleteSuccess: 'Comment deleted',
+    deleteError: 'Error deleting comment',
+    dismissSuccess: 'Reports dismissed',
+    dismissError: 'Error dismissing reports',
+    editEmptyWarning: 'Content cannot be empty',
+    editLengthWarning: 'Comment cannot exceed 2000 characters',
+    editSuccess: 'Comment updated',
+    editError: 'Error updating comment',
   },
 };
 
