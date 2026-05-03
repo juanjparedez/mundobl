@@ -113,3 +113,46 @@ export async function DELETE(request: NextRequest) {
     );
   }
 }
+
+// PATCH /api/admin/comments?id=X — admin only, editar contenido de comentario
+export async function PATCH(request: NextRequest) {
+  try {
+    const authResult = await requireRole(['ADMIN']);
+    if (!authResult.authorized) return authResult.response;
+
+    const id = parseInt(request.nextUrl.searchParams.get('id') || '', 10);
+    if (isNaN(id)) {
+      return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
+    }
+
+    const body = (await request.json()) as { content?: string };
+    const content = body.content?.trim();
+
+    if (!content) {
+      return NextResponse.json(
+        { error: 'El contenido no puede estar vacío' },
+        { status: 400 }
+      );
+    }
+
+    if (content.length > 2000) {
+      return NextResponse.json(
+        { error: 'El comentario no puede superar 2000 caracteres' },
+        { status: 400 }
+      );
+    }
+
+    const updated = await prisma.comment.update({
+      where: { id },
+      data: { content },
+    });
+
+    return NextResponse.json({ success: true, comment: updated });
+  } catch (error) {
+    console.error('Error updating comment:', error);
+    return NextResponse.json(
+      { error: 'Error al editar comentario' },
+      { status: 500 }
+    );
+  }
+}

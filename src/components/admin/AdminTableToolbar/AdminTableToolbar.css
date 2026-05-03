@@ -1,0 +1,27 @@
+.admin-table-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-sm);
+  border-radius: 12px;
+  border: 1px solid var(--border-color-secondary);
+  background: color-mix(in srgb, var(--bg-elevated) 92%, var(--primary-color) 8%);
+}
+
+.admin-table-toolbar__search {
+  max-width: 320px;
+  flex: 1;
+}
+
+@media (max-width: 768px) {
+  .admin-table-toolbar {
+    align-items: stretch;
+  }
+
+  .admin-table-toolbar__search {
+    max-width: none;
+    width: 100%;
+  }
+}
