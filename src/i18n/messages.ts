@@ -60,6 +60,9 @@ type TranslationShape = {
     synopsisSection: string;
     reviewSection: string;
     observationsSection: string;
+    privateLabel: string;
+    notesPrivateLabel: string;
+    notesPrivateHelp: string;
     relatedSection: string;
   };
   comments: {
@@ -1351,6 +1354,10 @@ const es: TranslationShape = {
     synopsisSection: 'Sinopsis',
     reviewSection: 'Reseña Personal',
     observationsSection: 'Observaciones',
+    privateLabel: 'Privada',
+    notesPrivateLabel: 'Reseña y observaciones privadas',
+    notesPrivateHelp:
+      'Si está activado, sólo los administradores pueden ver la reseña y las observaciones de esta serie.',
     relatedSection: 'Series Relacionadas',
   },
   comments: {
@@ -2684,6 +2691,10 @@ const en: TranslationShape = {
     synopsisSection: 'Synopsis',
     reviewSection: 'Personal Review',
     observationsSection: 'Observations',
+    privateLabel: 'Private',
+    notesPrivateLabel: 'Private review and observations',
+    notesPrivateHelp:
+      'When enabled, only administrators can see the review and observations for this series.',
     relatedSection: 'Related Series',
   },
   comments: {

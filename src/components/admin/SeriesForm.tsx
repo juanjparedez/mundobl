@@ -893,6 +893,16 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
 
               <Col xs={24}>
                 <Form.Item
+                  name="notesPrivate"
+                  valuePropName="checked"
+                  help={t('seriesInfo.notesPrivateHelp')}
+                >
+                  <Checkbox>{t('seriesInfo.notesPrivateLabel')}</Checkbox>
+                </Form.Item>
+              </Col>
+
+              <Col xs={24}>
+                <Form.Item
                   label={t('seriesForm.fieldTags')}
                   name="tags"
                   help={t('seriesForm.helpTags')}
