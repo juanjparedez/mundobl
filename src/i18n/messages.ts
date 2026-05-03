@@ -508,6 +508,158 @@ type TranslationShape = {
     cleanError: string;
     cleanScannersError: string;
   };
+  seriesForm: {
+    headerCreate: string;
+    headerEdit: string;
+    favoriteButton: string;
+    addFavoriteButton: string;
+    cancelButton: string;
+    unsavedTitle: string;
+    unsavedContent: string;
+    unsavedOk: string;
+    unsavedCancel: string;
+    sectionBasic: string;
+    sectionCast: string;
+    sectionDirectors: string;
+    sectionWatchLinks: string;
+    sectionRelated: string;
+    sectionContent: string;
+    fieldTitle: string;
+    fieldOriginalTitle: string;
+    fieldType: string;
+    fieldCountry: string;
+    fieldYear: string;
+    fieldUniverse: string;
+    fieldBasedOn: string;
+    fieldFormat: string;
+    fieldProduction: string;
+    fieldLanguage: string;
+    fieldGenres: string;
+    fieldSynopsis: string;
+    fieldSoundtrack: string;
+    fieldRating: string;
+    fieldObservations: string;
+    fieldTags: string;
+    fieldImage: string;
+    fieldImagePosition: string;
+    typeOption_serie: string;
+    typeOption_pelicula: string;
+    typeOption_corto: string;
+    typeOption_especial: string;
+    typeOption_anime: string;
+    typeOption_reality: string;
+    formatOption_regular: string;
+    formatOption_vertical: string;
+    requiredTitle: string;
+    requiredType: string;
+    requiredFormat: string;
+    requiredSeasonNumber: string;
+    helpBasedOn: string;
+    helpProduction: string;
+    helpLanguage: string;
+    helpGenres: string;
+    helpTags: string;
+    helpImage: string;
+    helpImagePosition: string;
+    helpRelated: string;
+    hintTitle: string;
+    hintOriginalTitle: string;
+    hintCountry: string;
+    hintUniverse: string;
+    hintBasedOn: string;
+    hintProduction: string;
+    hintLanguage: string;
+    hintGenres: string;
+    hintSynopsis: string;
+    hintSoundtrack: string;
+    hintRating: string;
+    hintObservations: string;
+    hintTags: string;
+    hintImage: string;
+    hintActorName: string;
+    hintCharacter: string;
+    hintDirectorName: string;
+    hintPairingGroup: string;
+    hintWatchUrl: string;
+    hintRelatedSeries: string;
+    castAlertTitle: string;
+    castAlertDescription: string;
+    castPairingHint: string;
+    fieldActorName: string;
+    fieldCharacter: string;
+    fieldIsMain: string;
+    fieldPairingGroup: string;
+    addActorButton: string;
+    addDirectorButton: string;
+    fieldPlatform: string;
+    fieldWatchUrl: string;
+    fieldOfficial: string;
+    addPlatformButton: string;
+    seasonAlertTitle: string;
+    seasonAlertEdit: string;
+    seasonAlertCreate: string;
+    fieldSeasonNumber: string;
+    fieldEpisodeCount: string;
+    editSeasonButton: string;
+    addSeasonButton: string;
+    relatedSearching: string;
+    relatedEmpty: string;
+    createButton: string;
+    saveButton: string;
+    universeModalTitle: string;
+    universeCreateButton: string;
+    universeCancelButton: string;
+    universeNamePlaceholder: string;
+    universeDescriptionPlaceholder: string;
+    createNewUniverseTitle: string;
+    createSuccess: string;
+    updateSuccess: string;
+    saveError: string;
+    uploadSuccess: string;
+    uploadError: string;
+    uploadingLabel: string;
+    uploadButton: string;
+    favoriteAdded: string;
+    favoriteRemoved: string;
+    favoriteError: string;
+    universeCreated: string;
+    universeCreateError: string;
+  };
+  seasonForm: {
+    headerTitle: string;
+    backButton: string;
+    cancelButton: string;
+    sectionBasic: string;
+    sectionCast: string;
+    castDescription: string;
+    fieldSeasonNumber: string;
+    requiredSeasonNumber: string;
+    fieldTitle: string;
+    fieldEpisodeCount: string;
+    fieldYear: string;
+    fieldSynopsis: string;
+    fieldObservations: string;
+    fieldImage: string;
+    helpImage: string;
+    hintImage: string;
+    hintTitle: string;
+    hintEpisodeCount: string;
+    hintSynopsis: string;
+    hintObservations: string;
+    hintActorName: string;
+    hintCharacter: string;
+    fieldIsMain: string;
+    requiredActorName: string;
+    addActorButton: string;
+    saveButton: string;
+    viewSeriesButton: string;
+    uploadButton: string;
+    uploadingLabel: string;
+    updateSuccess: string;
+    saveError: string;
+    uploadSuccess: string;
+    uploadError: string;
+  };
 };
 
 const es: TranslationShape = {
@@ -1025,6 +1177,158 @@ const es: TranslationShape = {
     cleanError: 'Error al limpiar logs',
     cleanScannersError: 'Error al limpiar logs de scanners',
   },
+  seriesForm: {
+    headerCreate: 'Nueva Serie/Pelicula',
+    headerEdit: 'Editar Serie/Pelicula',
+    favoriteButton: 'Favorito',
+    addFavoriteButton: 'Agregar a Favoritos',
+    cancelButton: 'Cancelar',
+    unsavedTitle: 'Hay cambios sin guardar',
+    unsavedContent: 'Si sales ahora, perderas los cambios que no hayas guardado. Deseas continuar?',
+    unsavedOk: 'Salir sin guardar',
+    unsavedCancel: 'Seguir editando',
+    sectionBasic: 'Informacion Basica',
+    sectionCast: 'Reparto',
+    sectionDirectors: 'Directores',
+    sectionWatchLinks: 'Donde Ver',
+    sectionRelated: 'Series Relacionadas',
+    sectionContent: 'Contenido Relacionado',
+    fieldTitle: 'Titulo',
+    fieldOriginalTitle: 'Titulo Original',
+    fieldType: 'Tipo',
+    fieldCountry: 'Pais',
+    fieldYear: 'Anio',
+    fieldUniverse: 'Universo (opcional)',
+    fieldBasedOn: 'Basada en',
+    fieldFormat: 'Formato de Pantalla',
+    fieldProduction: 'Productora',
+    fieldLanguage: 'Idioma Original',
+    fieldGenres: 'Genero',
+    fieldSynopsis: 'Sinopsis',
+    fieldSoundtrack: 'Banda Sonora (BSO)',
+    fieldRating: 'Puntuacion General (1-10)',
+    fieldObservations: 'Observaciones',
+    fieldTags: 'Tags / Etiquetas',
+    fieldImage: 'Imagen / Portada',
+    fieldImagePosition: 'Posicion de imagen en catalogo',
+    typeOption_serie: 'Serie',
+    typeOption_pelicula: 'Pelicula',
+    typeOption_corto: 'Cortometraje',
+    typeOption_especial: 'Especial',
+    typeOption_anime: 'Anime',
+    typeOption_reality: 'Reality',
+    formatOption_regular: 'Regular (Horizontal)',
+    formatOption_vertical: 'Vertical (Para movil)',
+    requiredTitle: 'El titulo es obligatorio',
+    requiredType: 'Selecciona un tipo',
+    requiredFormat: 'Selecciona un formato',
+    requiredSeasonNumber: 'Numero requerido',
+    helpBasedOn: 'Escribe para buscar o agregar nuevos (ej: Manga, Manhwa, Novela)',
+    helpProduction: 'Escribe para buscar o crear una nueva productora',
+    helpLanguage: 'Escribe para buscar o crear un nuevo idioma',
+    helpGenres: 'Escribe y presiona Enter para crear nuevos generos. Ej: Drama, Romance, Comedia',
+    helpTags: 'Escribe y presiona Enter para crear nuevos tags. Ej: Enemy to Lovers, Rico-Pobre, Escuela',
+    helpImage: 'Pega una URL o sube un archivo desde tu computadora',
+    helpImagePosition: 'Selecciona que parte de la imagen se ve en las cards',
+    helpRelated: 'Busca por titulo para vincular series que comparten personajes o historia',
+    hintTitle: 'Ej: 2 Moons',
+    hintOriginalTitle: 'Titulo en idioma original',
+    hintCountry: 'Selecciona un pais',
+    hintUniverse: 'Pertenece a algun universo/franquicia?',
+    hintBasedOn: 'Ej: Libro, Manga, Manhwa...',
+    hintProduction: 'Ej: GMMTV',
+    hintLanguage: 'Ej: Tailandes',
+    hintGenres: 'Agrega generos como Drama, Romance, etc.',
+    hintSynopsis: 'Breve descripcion de la serie/pelicula',
+    hintSoundtrack: 'Compositor o informacion de la BSO',
+    hintRating: '8',
+    hintObservations: 'Notas personales, comentarios, etc.',
+    hintTags: 'Agrega tags como Enemy to Lovers, Escuela, etc.',
+    hintImage: 'https://example.com/imagen.jpg',
+    hintActorName: 'Nombre del actor',
+    hintCharacter: 'Personaje',
+    hintDirectorName: 'Nombre del director',
+    hintPairingGroup: 'Pareja',
+    hintWatchUrl: 'URL del contenido',
+    hintRelatedSeries: 'Busca y selecciona series relacionadas...',
+    castAlertTitle: 'Reparto principal de la serie',
+    castAlertDescription: 'Este es el reparto que aparece en todas las temporadas. Para agregar reparto especifico de cada temporada, usa el boton Editar junto a cada temporada abajo.',
+    castPairingHint: 'Para emparejar personajes, asigna el mismo numero en Pareja (ej: 1 y 1 = primera pareja)',
+    fieldActorName: 'Actor',
+    fieldCharacter: 'Personaje',
+    fieldIsMain: 'Protagonista',
+    fieldPairingGroup: 'Pareja',
+    addActorButton: 'Agregar Actor',
+    addDirectorButton: 'Agregar Director',
+    fieldPlatform: 'Plataforma',
+    fieldWatchUrl: 'URL',
+    fieldOfficial: 'Oficial',
+    addPlatformButton: 'Agregar Plataforma',
+    seasonAlertTitle: 'Informacion basica de temporadas',
+    seasonAlertEdit: 'Usa el boton Editar junto a cada temporada para agregar reparto especifico, sinopsis, episodios, comentarios y ratings.',
+    seasonAlertCreate: 'Primero guarda la serie, luego podras editar cada temporada en detalle para agregar reparto, sinopsis, episodios, etc.',
+    fieldSeasonNumber: 'Temporada',
+    fieldEpisodeCount: 'Capitulos',
+    editSeasonButton: 'Editar',
+    addSeasonButton: 'Agregar Temporada',
+    relatedSearching: 'Buscando...',
+    relatedEmpty: 'Escribe para buscar',
+    createButton: 'Crear Serie',
+    saveButton: 'Guardar Cambios',
+    universeModalTitle: 'Crear nuevo universo',
+    universeCreateButton: 'Crear',
+    universeCancelButton: 'Cancelar',
+    universeNamePlaceholder: 'Nombre del universo',
+    universeDescriptionPlaceholder: 'Descripcion (opcional)',
+    createNewUniverseTitle: 'Crear nuevo universo',
+    createSuccess: 'Serie creada exitosamente',
+    updateSuccess: 'Serie actualizada exitosamente',
+    saveError: 'Error al guardar la serie',
+    uploadSuccess: 'Imagen subida exitosamente',
+    uploadError: 'Error al subir la imagen',
+    uploadingLabel: 'Subiendo...',
+    uploadButton: 'Subir',
+    favoriteAdded: 'Agregado a favoritos',
+    favoriteRemoved: 'Removido de favoritos',
+    favoriteError: 'Error al actualizar favorito',
+    universeCreated: 'Universo "{name}" creado',
+    universeCreateError: 'Error al crear universo',
+  },
+  seasonForm: {
+    headerTitle: 'Editar Temporada {number}',
+    backButton: 'Volver a {title}',
+    cancelButton: 'Cancelar',
+    sectionBasic: 'Informacion Basica de la Temporada',
+    sectionCast: 'Reparto de esta Temporada',
+    castDescription: 'Agrega actores especificos de esta temporada. El reparto principal de la serie se muestra automaticamente.',
+    fieldSeasonNumber: 'Numero de Temporada',
+    requiredSeasonNumber: 'Requerido',
+    fieldTitle: 'Titulo (opcional)',
+    fieldEpisodeCount: 'Numero de Capitulos',
+    fieldYear: 'Anio',
+    fieldSynopsis: 'Sinopsis de esta Temporada',
+    fieldObservations: 'Observaciones',
+    fieldImage: 'Imagen de la Temporada',
+    helpImage: 'Pega una URL o sube un archivo desde tu computadora',
+    hintImage: 'https://example.com/season-image.jpg',
+    hintTitle: 'Ej: The Beginning',
+    hintEpisodeCount: '12',
+    hintSynopsis: 'Descripcion de lo que sucede en esta temporada...',
+    hintObservations: 'Notas personales sobre esta temporada...',
+    hintActorName: 'Nombre del actor',
+    hintCharacter: 'Personaje',
+    fieldIsMain: 'Protagonista',
+    requiredActorName: 'Nombre requerido',
+    addActorButton: 'Agregar Actor a esta Temporada',
+    saveButton: 'Guardar Cambios',
+    viewSeriesButton: 'Ver Serie',
+    uploadButton: 'Subir',
+    uploadingLabel: 'Subiendo...',
+    updateSuccess: 'Temporada actualizada exitosamente',
+    saveError: 'Error al guardar la temporada',
+    uploadSuccess: 'Imagen subida exitosamente',
+    uploadError: 'Error al subir la imagen',
+  },
 };
 
 const en: TranslationShape = {
@@ -1540,6 +1844,158 @@ const en: TranslationShape = {
     loadError: 'Error loading logs',
     cleanError: 'Error cleaning logs',
     cleanScannersError: 'Error cleaning scanner logs',
+  },
+  seriesForm: {
+    headerCreate: 'New Series/Movie',
+    headerEdit: 'Edit Series/Movie',
+    favoriteButton: 'Favorite',
+    addFavoriteButton: 'Add to Favorites',
+    cancelButton: 'Cancel',
+    unsavedTitle: 'Unsaved changes',
+    unsavedContent: 'If you leave now, you will lose unsaved changes. Do you want to continue?',
+    unsavedOk: 'Leave without saving',
+    unsavedCancel: 'Keep editing',
+    sectionBasic: 'Basic Information',
+    sectionCast: 'Cast',
+    sectionDirectors: 'Directors',
+    sectionWatchLinks: 'Where to Watch',
+    sectionRelated: 'Related Series',
+    sectionContent: 'Related Content',
+    fieldTitle: 'Title',
+    fieldOriginalTitle: 'Original Title',
+    fieldType: 'Type',
+    fieldCountry: 'Country',
+    fieldYear: 'Year',
+    fieldUniverse: 'Universe (optional)',
+    fieldBasedOn: 'Based on',
+    fieldFormat: 'Screen Format',
+    fieldProduction: 'Production Company',
+    fieldLanguage: 'Original Language',
+    fieldGenres: 'Genre',
+    fieldSynopsis: 'Synopsis',
+    fieldSoundtrack: 'Soundtrack (OST)',
+    fieldRating: 'Overall Rating (1-10)',
+    fieldObservations: 'Observations',
+    fieldTags: 'Tags',
+    fieldImage: 'Image / Cover',
+    fieldImagePosition: 'Image position in catalog',
+    typeOption_serie: 'Series',
+    typeOption_pelicula: 'Movie',
+    typeOption_corto: 'Short Film',
+    typeOption_especial: 'Special',
+    typeOption_anime: 'Anime',
+    typeOption_reality: 'Reality',
+    formatOption_regular: 'Regular (Horizontal)',
+    formatOption_vertical: 'Vertical (Mobile)',
+    requiredTitle: 'Title is required',
+    requiredType: 'Select a type',
+    requiredFormat: 'Select a format',
+    requiredSeasonNumber: 'Number required',
+    helpBasedOn: 'Type to search or add new (e.g. Manga, Manhwa, Novel)',
+    helpProduction: 'Type to search or create a new production company',
+    helpLanguage: 'Type to search or create a new language',
+    helpGenres: 'Type and press Enter to create genres. E.g. Drama, Romance, Comedy',
+    helpTags: 'Type and press Enter to create tags. E.g. Enemy to Lovers, School',
+    helpImage: 'Paste a URL or upload a file from your computer',
+    helpImagePosition: 'Select which part of the image is shown in cards',
+    helpRelated: 'Search by title to link series that share characters or story',
+    hintTitle: 'E.g. 2 Moons',
+    hintOriginalTitle: 'Title in original language',
+    hintCountry: 'Select a country',
+    hintUniverse: 'Belongs to a universe/franchise?',
+    hintBasedOn: 'E.g. Book, Manga, Manhwa...',
+    hintProduction: 'E.g. GMMTV',
+    hintLanguage: 'E.g. Thai',
+    hintGenres: 'Add genres like Drama, Romance, etc.',
+    hintSynopsis: 'Brief description of the series/movie',
+    hintSoundtrack: 'Composer or OST information',
+    hintRating: '8',
+    hintObservations: 'Personal notes, comments, etc.',
+    hintTags: 'Add tags like Enemy to Lovers, School, etc.',
+    hintImage: 'https://example.com/image.jpg',
+    hintActorName: 'Actor name',
+    hintCharacter: 'Character',
+    hintDirectorName: 'Director name',
+    hintPairingGroup: 'Pair',
+    hintWatchUrl: 'Content URL',
+    hintRelatedSeries: 'Search and select related series...',
+    castAlertTitle: 'Main series cast',
+    castAlertDescription: 'This is the cast that appears across all seasons. To add season-specific cast, use the Edit button next to each season below.',
+    castPairingHint: 'To pair characters, assign the same number in Pair (e.g. 1 and 1 = first pair)',
+    fieldActorName: 'Actor',
+    fieldCharacter: 'Character',
+    fieldIsMain: 'Main',
+    fieldPairingGroup: 'Pair',
+    addActorButton: 'Add Actor',
+    addDirectorButton: 'Add Director',
+    fieldPlatform: 'Platform',
+    fieldWatchUrl: 'URL',
+    fieldOfficial: 'Official',
+    addPlatformButton: 'Add Platform',
+    seasonAlertTitle: 'Basic season information',
+    seasonAlertEdit: 'Use the Edit button next to each season to add specific cast, synopsis, episodes, comments and ratings.',
+    seasonAlertCreate: 'Save the series first, then you can edit each season in detail to add cast, synopsis, episodes, etc.',
+    fieldSeasonNumber: 'Season',
+    fieldEpisodeCount: 'Episodes',
+    editSeasonButton: 'Edit',
+    addSeasonButton: 'Add Season',
+    relatedSearching: 'Searching...',
+    relatedEmpty: 'Type to search',
+    createButton: 'Create Series',
+    saveButton: 'Save Changes',
+    universeModalTitle: 'Create new universe',
+    universeCreateButton: 'Create',
+    universeCancelButton: 'Cancel',
+    universeNamePlaceholder: 'Universe name',
+    universeDescriptionPlaceholder: 'Description (optional)',
+    createNewUniverseTitle: 'Create new universe',
+    createSuccess: 'Series created successfully',
+    updateSuccess: 'Series updated successfully',
+    saveError: 'Error saving series',
+    uploadSuccess: 'Image uploaded successfully',
+    uploadError: 'Error uploading image',
+    uploadingLabel: 'Uploading...',
+    uploadButton: 'Upload',
+    favoriteAdded: 'Added to favorites',
+    favoriteRemoved: 'Removed from favorites',
+    favoriteError: 'Error updating favorite',
+    universeCreated: 'Universe "{name}" created',
+    universeCreateError: 'Error creating universe',
+  },
+  seasonForm: {
+    headerTitle: 'Edit Season {number}',
+    backButton: 'Back to {title}',
+    cancelButton: 'Cancel',
+    sectionBasic: 'Basic Season Information',
+    sectionCast: 'Season Cast',
+    castDescription: 'Add actors specific to this season. The main series cast is shown automatically.',
+    fieldSeasonNumber: 'Season Number',
+    requiredSeasonNumber: 'Required',
+    fieldTitle: 'Title (optional)',
+    fieldEpisodeCount: 'Episode Count',
+    fieldYear: 'Year',
+    fieldSynopsis: 'Season Synopsis',
+    fieldObservations: 'Observations',
+    fieldImage: 'Season Image',
+    helpImage: 'Paste a URL or upload a file from your computer',
+    hintImage: 'https://example.com/season-image.jpg',
+    hintTitle: 'E.g. The Beginning',
+    hintEpisodeCount: '12',
+    hintSynopsis: 'Description of what happens in this season...',
+    hintObservations: 'Personal notes about this season...',
+    hintActorName: 'Actor name',
+    hintCharacter: 'Character',
+    fieldIsMain: 'Main',
+    requiredActorName: 'Name required',
+    addActorButton: 'Add Actor to this Season',
+    saveButton: 'Save Changes',
+    viewSeriesButton: 'View Series',
+    uploadButton: 'Upload',
+    uploadingLabel: 'Uploading...',
+    updateSuccess: 'Season updated successfully',
+    saveError: 'Error saving season',
+    uploadSuccess: 'Image uploaded successfully',
+    uploadError: 'Error uploading image',
   },
 };
 
