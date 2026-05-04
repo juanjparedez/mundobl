@@ -184,7 +184,10 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
                 initialStatus={serie.viewStatus?.[0]?.status ?? 'SIN_VER'}
                 seasons={serie.seasons}
               />
-              <div className="series-quick-actions" aria-label="Acciones rápidas">
+              <div
+                className="series-quick-actions"
+                aria-label="Acciones rápidas"
+              >
                 <ShareButton
                   title={serie.title}
                   text={serie.synopsis ?? undefined}

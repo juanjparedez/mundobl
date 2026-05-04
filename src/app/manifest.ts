@@ -4,7 +4,8 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'MundoBL - Catálogo de Series BL',
     short_name: 'MundoBL',
-    description: 'Catálogo de series BL. Reseñas, calificaciones y seguimiento.',
+    description:
+      'Catálogo de series BL. Reseñas, calificaciones y seguimiento.',
     start_url: '/',
     display: 'standalone',
     background_color: '#141414',
