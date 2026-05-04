@@ -1231,9 +1231,36 @@ type TranslationShape = {
     signIn: string;
     description: string;
     goToProfile: string;
+    heroBadge: string;
     statSeries: string;
     statViews: string;
     statComments: string;
+    statReviews: string;
+    novedadesEyebrow: string;
+    novedadesTitle: string;
+    novedadesSubtitle: string;
+    novedadAiTag: string;
+    novedadAiTitle: string;
+    novedadAiDesc: string;
+    novedadReviewsTag: string;
+    novedadReviewsTitle: string;
+    novedadReviewsDesc: string;
+    novedadSpoilerTag: string;
+    novedadSpoilerTitle: string;
+    novedadSpoilerDesc: string;
+    novedadNotesTag: string;
+    novedadNotesTitle: string;
+    novedadNotesDesc: string;
+    novedadI18nTag: string;
+    novedadI18nTitle: string;
+    novedadI18nDesc: string;
+    novedadVotesTag: string;
+    novedadVotesTitle: string;
+    novedadVotesDesc: string;
+    latestSeriesTitle: string;
+    latestSeriesCta: string;
+    reviewSpotlightEyebrow: string;
+    reviewSpotlightTitle: string;
     featuresTitle: string;
     featureCatalogTitle: string;
     featureCatalogDesc: string;
@@ -2880,9 +2907,43 @@ const es: TranslationShape = {
     description:
       'Un espacio dedicado a las series BL, GL y doramas asiáticos. Seguí lo que estás viendo, calificá tus favoritas y compartir tus opiniones.',
     goToProfile: 'Mi Perfil',
+    heroBadge: 'Asistente IA · Reseñas · 10 idiomas',
     statSeries: 'series en catálogo',
     statViews: 'veces vistas',
     statComments: 'comentarios',
+    statReviews: 'reseñas publicadas',
+    novedadesEyebrow: 'Lo nuevo',
+    novedadesTitle: 'Funciones que cambian cómo mirás',
+    novedadesSubtitle:
+      'Las últimas mejoras pensadas para que disfrutes y compartas tus series como nunca.',
+    novedadAiTag: 'Nuevo',
+    novedadAiTitle: 'Asistente IA en tus reseñas',
+    novedadAiDesc:
+      'Pulí redacción, sugerí título, traducí a otros idiomas y detectá spoilers con un click. Gratis vía Gemini.',
+    novedadReviewsTag: 'Estrenado',
+    novedadReviewsTitle: 'Reseñas largas con veredicto',
+    novedadReviewsDesc:
+      'Escribí reseñas estructuradas con sub-puntuaciones de trama, química, OST y casting. Votos útil/no útil incluidos.',
+    novedadSpoilerTag: 'Modo seguro',
+    novedadSpoilerTitle: 'Modo sin spoilers',
+    novedadSpoilerDesc:
+      'Activá el toggle y oculta sinopsis de episodios no vistos y reseñas con spoilers de series que no terminaste.',
+    novedadNotesTag: 'Privado',
+    novedadNotesTitle: 'Notas privadas por episodio',
+    novedadNotesDesc:
+      'Anotá tus reacciones y momentos para volver, solo vos las ves. Ideal para acordarte de esa escena.',
+    novedadI18nTag: 'Multi-idioma',
+    novedadI18nTitle: '10 idiomas soportados',
+    novedadI18nDesc:
+      'Español, inglés, italiano, alemán, francés, japonés, coreano, chino simplificado/tradicional y tailandés.',
+    novedadVotesTag: 'Comunidad',
+    novedadVotesTitle: 'Votos útil / no útil',
+    novedadVotesDesc:
+      'Las reseñas más valoradas suben primero y el staff puede destacar una por serie como recomendación oficial.',
+    latestSeriesTitle: 'Series recién agregadas',
+    latestSeriesCta: 'Ver catálogo',
+    reviewSpotlightEyebrow: 'De la comunidad',
+    reviewSpotlightTitle: 'Una reseña que te recomendamos',
     featuresTitle: '¿Qué podés hacer?',
     featureCatalogTitle: 'Catálogo completo',
     featureCatalogDesc:
@@ -4532,9 +4593,43 @@ const en: TranslationShape = {
     description:
       'A space dedicated to BL, GL and Asian dramas. Track what you are watching, rate your favorites and share your thoughts.',
     goToProfile: 'My Profile',
+    heroBadge: 'AI assistant · Reviews · 10 languages',
     statSeries: 'series in catalog',
     statViews: 'times watched',
     statComments: 'comments',
+    statReviews: 'published reviews',
+    novedadesEyebrow: "What's new",
+    novedadesTitle: 'Features that change how you watch',
+    novedadesSubtitle:
+      'The latest improvements designed so you can enjoy and share your series like never before.',
+    novedadAiTag: 'New',
+    novedadAiTitle: 'AI assistant in your reviews',
+    novedadAiDesc:
+      'Polish writing, suggest title, translate to other languages and detect spoilers in one click. Free via Gemini.',
+    novedadReviewsTag: 'Released',
+    novedadReviewsTitle: 'Long reviews with verdict',
+    novedadReviewsDesc:
+      'Write structured reviews with sub-ratings for plot, chemistry, OST and casting. Helpful/not helpful votes included.',
+    novedadSpoilerTag: 'Safe mode',
+    novedadSpoilerTitle: 'Spoiler-free mode',
+    novedadSpoilerDesc:
+      'Enable the toggle and hide synopses of unwatched episodes and reviews flagged with spoilers for series you have not finished.',
+    novedadNotesTag: 'Private',
+    novedadNotesTitle: 'Private episode notes',
+    novedadNotesDesc:
+      'Jot down your reactions and moments to revisit, only you can read them. Perfect for remembering that scene.',
+    novedadI18nTag: 'Multi-language',
+    novedadI18nTitle: '10 languages supported',
+    novedadI18nDesc:
+      'Spanish, English, Italian, German, French, Japanese, Korean, Simplified/Traditional Chinese and Thai.',
+    novedadVotesTag: 'Community',
+    novedadVotesTitle: 'Helpful / not helpful votes',
+    novedadVotesDesc:
+      'Top-rated reviews surface first and the staff can feature one per series as the official recommendation.',
+    latestSeriesTitle: 'Recently added series',
+    latestSeriesCta: 'Browse catalog',
+    reviewSpotlightEyebrow: 'From the community',
+    reviewSpotlightTitle: 'A review we recommend',
     featuresTitle: 'What can you do?',
     featureCatalogTitle: 'Full catalog',
     featureCatalogDesc:
