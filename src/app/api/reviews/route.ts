@@ -3,6 +3,8 @@ import { Prisma } from '@/generated/prisma';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 import { auth } from '@/lib/auth';
+import { generateText, GeminiError } from '@/lib/gemini';
+import { isSupportedLocale, LOCALE_LABELS } from '@/i18n/config';
 
 const TITLE_MAX = 160;
 const BODY_MAX = 20000;
@@ -21,6 +23,9 @@ interface ReviewInput {
   body?: string;
   verdict?: Verdict | null;
   language?: string;
+  // Idiomas adicionales en los que crear traducciones automaticas
+  // (Gemini). Solo aplica al crear, no al editar.
+  translateTo?: string[];
   status?: Status;
   plotRating?: number | null;
   chemistryRating?: number | null;
@@ -28,6 +33,9 @@ interface ReviewInput {
   castingRating?: number | null;
   hasSpoilers?: boolean;
 }
+
+// Maximo de traducciones por save para no agotar la cuota de Gemini.
+const MAX_TRANSLATE_TARGETS = 3;
 
 function validateRating(value: unknown): number | null | 'invalid' {
   if (value === null || value === undefined) return null;
@@ -182,6 +190,18 @@ export async function POST(request: NextRequest) {
 
     const publishedAt = status === 'PUBLISHED' ? new Date() : null;
 
+    // Datos comunes a la review principal y a las traducciones generadas.
+    const commonData = {
+      verdict,
+      status,
+      plotRating: ratings.plotRating as number | null,
+      chemistryRating: ratings.chemistryRating as number | null,
+      ostRating: ratings.ostRating as number | null,
+      castingRating: ratings.castingRating as number | null,
+      hasSpoilers: body.hasSpoilers === true,
+      publishedAt,
+    };
+
     const review = await prisma.review.upsert({
       where: {
         userId_seriesId_language: {
@@ -195,34 +215,112 @@ export async function POST(request: NextRequest) {
         seriesId,
         title,
         body: text,
-        verdict,
         language,
-        status,
-        plotRating: ratings.plotRating as number | null,
-        chemistryRating: ratings.chemistryRating as number | null,
-        ostRating: ratings.ostRating as number | null,
-        castingRating: ratings.castingRating as number | null,
-        hasSpoilers: body.hasSpoilers === true,
-        publishedAt,
+        ...commonData,
       },
       update: {
         title,
         body: text,
-        verdict,
-        status,
-        plotRating: ratings.plotRating as number | null,
-        chemistryRating: ratings.chemistryRating as number | null,
-        ostRating: ratings.ostRating as number | null,
-        castingRating: ratings.castingRating as number | null,
-        hasSpoilers: body.hasSpoilers === true,
-        publishedAt,
+        ...commonData,
       },
       include: {
         user: { select: { id: true, name: true, image: true } },
       },
     });
 
-    return NextResponse.json(review);
+    // Auto-traducciones: crear/actualizar copias en otros idiomas con Gemini.
+    // Errores individuales no rompen el save principal — se reportan en
+    // `translationErrors` para que el cliente los muestre si quiere.
+    const requestedTargets = Array.isArray(body.translateTo)
+      ? body.translateTo
+      : [];
+    const targets = Array.from(
+      new Set(
+        requestedTargets
+          .filter((c) => typeof c === 'string')
+          .filter((c) => isSupportedLocale(c))
+          .filter((c) => c !== language)
+      )
+    ).slice(0, MAX_TRANSLATE_TARGETS);
+
+    const translations: Array<{ language: string; reviewId: number }> = [];
+    const translationErrors: Array<{ language: string; error: string }> = [];
+
+    if (targets.length > 0) {
+      const sourceLabel = LOCALE_LABELS[language as never] ?? language;
+      for (const target of targets) {
+        const targetLabel = LOCALE_LABELS[target as never] ?? target;
+        try {
+          const translated = await generateText({
+            systemInstruction: `Sos un traductor especializado en reseñas de series asiaticas (BL/GL).
+Traduci preservando el tono, las emociones y los terminos del fandom.
+NO interpretes ni resumas: traduci el texto completo.
+Devolve un JSON valido (y solo JSON, sin markdown fence) con la forma:
+{"title": string, "body": string}
+Idioma origen: ${sourceLabel}. Idioma destino: ${targetLabel}.`,
+            prompt: JSON.stringify({ title, body: text }),
+            temperature: 0.3,
+            maxOutputTokens: 4096,
+          });
+          // Limpiar fence accidental.
+          const cleaned = translated
+            .replace(/^```json\s*/i, '')
+            .replace(/^```\s*/i, '')
+            .replace(/```\s*$/i, '')
+            .trim();
+          const parsed = JSON.parse(cleaned) as {
+            title?: string;
+            body?: string;
+          };
+          if (
+            !parsed.title ||
+            !parsed.body ||
+            typeof parsed.title !== 'string' ||
+            typeof parsed.body !== 'string'
+          ) {
+            throw new Error('Respuesta de IA invalida');
+          }
+
+          const tr = await prisma.review.upsert({
+            where: {
+              userId_seriesId_language: {
+                userId: authResult.userId,
+                seriesId,
+                language: target,
+              },
+            },
+            create: {
+              userId: authResult.userId,
+              seriesId,
+              title: parsed.title.slice(0, 160),
+              body: parsed.body.slice(0, 20000),
+              language: target,
+              ...commonData,
+            },
+            update: {
+              title: parsed.title.slice(0, 160),
+              body: parsed.body.slice(0, 20000),
+              ...commonData,
+            },
+          });
+          translations.push({ language: target, reviewId: tr.id });
+        } catch (err) {
+          const msg =
+            err instanceof GeminiError
+              ? err.message
+              : err instanceof Error
+                ? err.message
+                : 'Error desconocido';
+          console.error(
+            `[reviews] traduccion ${language}->${target} fallo:`,
+            msg
+          );
+          translationErrors.push({ language: target, error: msg });
+        }
+      }
+    }
+
+    return NextResponse.json({ ...review, translations, translationErrors });
   } catch (error) {
     console.error('Error saving review:', error);
     return NextResponse.json(
