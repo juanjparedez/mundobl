@@ -23,6 +23,7 @@ import {
   InfoCircleOutlined,
   FileTextOutlined,
   NotificationOutlined,
+  UnorderedListOutlined,
 } from '@ant-design/icons';
 import { Badge } from 'antd';
 import Link from 'next/link';
@@ -216,6 +217,12 @@ export function Sidebar() {
                       icon: <FileTextOutlined />,
                       label: t('sidebar.logs'),
                       onClick: () => router.push('/admin/logs'),
+                    },
+                    {
+                      key: '/admin/changelog',
+                      icon: <UnorderedListOutlined />,
+                      label: t('sidebar.changelog'),
+                      onClick: () => router.push('/admin/changelog'),
                     },
                   ]
                 : []),
