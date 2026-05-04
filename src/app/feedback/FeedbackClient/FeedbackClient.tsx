@@ -119,11 +119,19 @@ export function FeedbackClient() {
   const [pendingImages, setPendingImages] = useState<PendingImage[]>([]);
   const [form] = Form.useForm();
   // comments state: requestId -> list; null = not loaded; loading = Set of ids
-  const [comments, setComments] = useState<Record<number, FeatureRequestComment[]>>({});
-  const [commentsLoading, setCommentsLoading] = useState<Set<number>>(new Set());
-  const [expandedComments, setExpandedComments] = useState<Set<number>>(new Set());
+  const [comments, setComments] = useState<
+    Record<number, FeatureRequestComment[]>
+  >({});
+  const [commentsLoading, setCommentsLoading] = useState<Set<number>>(
+    new Set()
+  );
+  const [expandedComments, setExpandedComments] = useState<Set<number>>(
+    new Set()
+  );
   const [commentTexts, setCommentTexts] = useState<Record<number, string>>({});
-  const [commentSubmitting, setCommentSubmitting] = useState<Set<number>>(new Set());
+  const [commentSubmitting, setCommentSubmitting] = useState<Set<number>>(
+    new Set()
+  );
   const searchParams = useSearchParams();
   const prefilledRef = useRef(false);
   const [activeTab, setActiveTab] = useState<string>(
@@ -185,25 +193,28 @@ export function FeedbackClient() {
     };
   }, [pendingImages]);
 
-  const loadComments = useCallback(async (requestId: number) => {
-    if (commentsLoading.has(requestId) || comments[requestId]) return;
-    setCommentsLoading((prev) => new Set(prev).add(requestId));
-    try {
-      const res = await fetch(`/api/feature-requests/${requestId}/comments`);
-      if (res.ok) {
-        const data: FeatureRequestComment[] = await res.json();
-        setComments((prev) => ({ ...prev, [requestId]: data }));
+  const loadComments = useCallback(
+    async (requestId: number) => {
+      if (commentsLoading.has(requestId) || comments[requestId]) return;
+      setCommentsLoading((prev) => new Set(prev).add(requestId));
+      try {
+        const res = await fetch(`/api/feature-requests/${requestId}/comments`);
+        if (res.ok) {
+          const data: FeatureRequestComment[] = await res.json();
+          setComments((prev) => ({ ...prev, [requestId]: data }));
+        }
+      } catch {
+        // silently fail
+      } finally {
+        setCommentsLoading((prev) => {
+          const next = new Set(prev);
+          next.delete(requestId);
+          return next;
+        });
       }
-    } catch {
-      // silently fail
-    } finally {
-      setCommentsLoading((prev) => {
-        const next = new Set(prev);
-        next.delete(requestId);
-        return next;
-      });
-    }
-  }, [commentsLoading, comments]);
+    },
+    [commentsLoading, comments]
+  );
 
   const toggleComments = (requestId: number) => {
     setExpandedComments((prev) => {
@@ -344,6 +355,7 @@ export function FeedbackClient() {
             ...r,
             _count: {
               votes: voted ? r._count.votes + 1 : r._count.votes - 1,
+              comments: r._count.comments,
             },
             votes: voted
               ? [...r.votes, { userId: userId! }]
@@ -412,97 +424,99 @@ export function FeedbackClient() {
 
     return (
       <div key={request.id}>
-      <div className="feedback-card">
-        <div className="feedback-card__header">
-          <h4 className="feedback-card__title">{request.title}</h4>
-          <div className="feedback-card__tags">
-            <Tag icon={typeConfig.icon} color={typeConfig.color}>
-              {typeConfig.label}
-            </Tag>
-            <Tag color={statusConfig.color}>{statusConfig.label}</Tag>
+        <div className="feedback-card">
+          <div className="feedback-card__header">
+            <h4 className="feedback-card__title">{request.title}</h4>
+            <div className="feedback-card__tags">
+              <Tag icon={typeConfig.icon} color={typeConfig.color}>
+                {typeConfig.label}
+              </Tag>
+              <Tag color={statusConfig.color}>{statusConfig.label}</Tag>
+            </div>
+          </div>
+
+          {request.description && (
+            <p className="feedback-card__description">{request.description}</p>
+          )}
+
+          {request.images && request.images.length > 0 && (
+            <div className="feedback-card__images">
+              <Image.PreviewGroup>
+                {request.images.map((img) => (
+                  <Image
+                    key={img.id}
+                    src={img.url}
+                    alt="Adjunto"
+                    width={120}
+                    height={80}
+                    style={{ objectFit: 'cover', borderRadius: 6 }}
+                  />
+                ))}
+              </Image.PreviewGroup>
+            </div>
+          )}
+
+          <div className="feedback-card__footer">
+            <div className="feedback-card__meta">
+              {request.user && (
+                <>
+                  <Avatar
+                    src={request.user.image}
+                    icon={!request.user.image ? <UserOutlined /> : undefined}
+                    size={20}
+                  />
+                  <span>{request.user.name}</span>
+                </>
+              )}
+              <span>
+                {new Date(request.createdAt).toLocaleDateString(locale)}
+              </span>
+            </div>
+
+            <div className="feedback-card__actions">
+              {userId && (
+                <Button
+                  type={hasVoted ? 'primary' : 'default'}
+                  size="small"
+                  icon={hasVoted ? <LikeFilled /> : <LikeOutlined />}
+                  onClick={() => handleVote(request.id)}
+                >
+                  {request._count.votes}
+                </Button>
+              )}
+
+              {isAdmin && (
+                <Select
+                  value={request.status}
+                  size="small"
+                  style={{ width: 130 }}
+                  onChange={(value) => handleStatusChange(request.id, value)}
+                  options={Object.entries(STATUS_CONFIG).map(
+                    ([value, config]) => ({
+                      value,
+                      label: config.label,
+                    })
+                  )}
+                />
+              )}
+
+              {isAdmin && (
+                <Button
+                  danger
+                  size="small"
+                  onClick={() => handleDelete(request.id)}
+                >
+                  {t('feedback.deleteButton')}
+                </Button>
+              )}
+            </div>
           </div>
         </div>
 
-        {request.description && (
-          <p className="feedback-card__description">{request.description}</p>
-        )}
-
-        {request.images && request.images.length > 0 && (
-          <div className="feedback-card__images">
-            <Image.PreviewGroup>
-              {request.images.map((img) => (
-                <Image
-                  key={img.id}
-                  src={img.url}
-                  alt="Adjunto"
-                  width={120}
-                  height={80}
-                  style={{ objectFit: 'cover', borderRadius: 6 }}
-                />
-              ))}
-            </Image.PreviewGroup>
-          </div>
-        )}
-
-        <div className="feedback-card__footer">
-          <div className="feedback-card__meta">
-            {request.user && (
-              <>
-                <Avatar
-                  src={request.user.image}
-                  icon={!request.user.image ? <UserOutlined /> : undefined}
-                  size={20}
-                />
-                <span>{request.user.name}</span>
-              </>
-            )}
-            <span>
-              {new Date(request.createdAt).toLocaleDateString(locale)}
-            </span>
-          </div>
-
-          <div className="feedback-card__actions">
-            {userId && (
-              <Button
-                type={hasVoted ? 'primary' : 'default'}
-                size="small"
-                icon={hasVoted ? <LikeFilled /> : <LikeOutlined />}
-                onClick={() => handleVote(request.id)}
-              >
-                {request._count.votes}
-              </Button>
-            )}
-
-            {isAdmin && (
-              <Select
-                value={request.status}
-                size="small"
-                style={{ width: 130 }}
-                onChange={(value) => handleStatusChange(request.id, value)}
-                options={Object.entries(STATUS_CONFIG).map(
-                  ([value, config]) => ({
-                    value,
-                    label: config.label,
-                  })
-                )}
-              />
-            )}
-
-            {isAdmin && (
-              <Button
-                danger
-                size="small"
-                onClick={() => handleDelete(request.id)}
-              >
-                {t('feedback.deleteButton')}
-              </Button>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Hilo de comentarios: visible solo para el dueño y admins */}
-      {userId && (request.user?.id === userId || isAdmin) && renderCommentThread(request)}
+        {/* Hilo de comentarios: visible solo para el dueño y admins */}
+        {userId &&
+          (request.user?.id === userId || isAdmin) &&
+          renderCommentThread(request)}
       </div>
     );
   };
@@ -521,10 +535,16 @@ export function FeedbackClient() {
         >
           <span>
             {commentCount > 0
-              ? interpolateMessage(t('feedback.commentsCount'), { n: String(commentCount) })
+              ? interpolateMessage(t('feedback.commentsCount'), {
+                  n: String(commentCount),
+                })
               : t('feedback.commentsTitle')}
           </span>
-          <span className={`feedback-card__comments-chevron${isExpanded ? ' expanded' : ''}`}>›</span>
+          <span
+            className={`feedback-card__comments-chevron${isExpanded ? ' expanded' : ''}`}
+          >
+            ›
+          </span>
         </button>
 
         {isExpanded && (
@@ -534,16 +554,24 @@ export function FeedbackClient() {
             ) : threadComments && threadComments.length > 0 ? (
               <div className="feedback-card__comments-list">
                 {threadComments.map((c) => (
-                  <div key={c.id} className={`feedback-comment${c.user.role === 'ADMIN' || c.user.role === 'MODERATOR' ? ' feedback-comment--admin' : ''}`}>
+                  <div
+                    key={c.id}
+                    className={`feedback-comment${c.user.role === 'ADMIN' || c.user.role === 'MODERATOR' ? ' feedback-comment--admin' : ''}`}
+                  >
                     <div className="feedback-comment__header">
                       <Avatar
                         src={c.user.image}
                         icon={!c.user.image ? <UserOutlined /> : undefined}
                         size={20}
                       />
-                      <span className="feedback-comment__name">{c.user.name}</span>
-                      {(c.user.role === 'ADMIN' || c.user.role === 'MODERATOR') && (
-                        <span className="feedback-comment__admin-badge">{t('feedback.adminBadge')}</span>
+                      <span className="feedback-comment__name">
+                        {c.user.name}
+                      </span>
+                      {(c.user.role === 'ADMIN' ||
+                        c.user.role === 'MODERATOR') && (
+                        <span className="feedback-comment__admin-badge">
+                          {t('feedback.adminBadge')}
+                        </span>
                       )}
                       <span className="feedback-comment__date">
                         {new Date(c.createdAt).toLocaleDateString(locale)}
@@ -554,7 +582,9 @@ export function FeedbackClient() {
                 ))}
               </div>
             ) : (
-              <p className="feedback-card__comments-empty">{t('feedback.commentsEmpty')}</p>
+              <p className="feedback-card__comments-empty">
+                {t('feedback.commentsEmpty')}
+              </p>
             )}
 
             {session?.user && (
@@ -564,7 +594,10 @@ export function FeedbackClient() {
                   maxLength={2000}
                   value={commentTexts[request.id] ?? ''}
                   onChange={(e) =>
-                    setCommentTexts((prev) => ({ ...prev, [request.id]: e.target.value }))
+                    setCommentTexts((prev) => ({
+                      ...prev,
+                      [request.id]: e.target.value,
+                    }))
                   }
                   placeholder={t('feedback.commentPlaceholder')}
                 />
