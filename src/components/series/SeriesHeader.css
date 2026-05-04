@@ -124,6 +124,42 @@
   margin: 0;
 }
 
+/* Chip-link clickeable para "Con reseña" / "Con contenido" */
+.series-header__status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--primary-color) 40%, transparent);
+  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+  color: var(--primary-color);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  text-decoration: none;
+  transition: var(--transition-fast, 0.15s ease);
+  cursor: pointer;
+}
+
+.series-header__status-chip:hover {
+  background: color-mix(in srgb, var(--primary-color) 25%, transparent);
+  transform: translateY(-1px);
+}
+
+.series-header__status-chip--gold {
+  border-color: rgba(250, 173, 20, 0.45);
+  background: rgba(250, 173, 20, 0.12);
+  color: #d48806;
+}
+
+[data-theme='dark'] .series-header__status-chip--gold {
+  color: #faad14;
+}
+
+.series-header__status-chip--gold:hover {
+  background: rgba(250, 173, 20, 0.25);
+}
+
 /* ─── Synopsis ─────────────────────────────────────────────────────────────── */
 .series-header__synopsis {
   padding: var(--spacing-md);

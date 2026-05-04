@@ -10,9 +10,13 @@
   scrollbar-width: thin;
 }
 
+/* Variante agrupada: en lugar de scroll horizontal, hace wrap a varias
+   filas para que todas las herramientas esten visibles sin scroll. */
 .admin-nav--grouped {
+  flex-wrap: wrap;
   align-items: stretch;
-  gap: 0;
+  gap: var(--spacing-xs, 6px);
+  overflow-x: visible;
 }
 
 .admin-nav__group {

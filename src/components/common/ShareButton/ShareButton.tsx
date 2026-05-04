@@ -16,6 +16,9 @@ interface ShareButtonProps {
   title: string;
   text?: string;
   path: string;
+  // Variante visual: 'compact' = solo icono, 'full' = boton con texto.
+  // Default 'compact' para evitar que pese mucho en headers densos.
+  variant?: 'compact' | 'full';
 }
 
 const subscribeNoop = () => () => undefined;
@@ -23,7 +26,12 @@ const getNativeShare = () =>
   typeof navigator !== 'undefined' && typeof navigator.share === 'function';
 const getServerNativeShare = () => false;
 
-export function ShareButton({ title, text, path }: ShareButtonProps) {
+export function ShareButton({
+  title,
+  text,
+  path,
+  variant = 'compact',
+}: ShareButtonProps) {
   const message = useMessage();
   const hasNativeShare = useSyncExternalStore(
     subscribeNoop,
@@ -103,9 +111,19 @@ export function ShareButton({ title, text, path }: ShareButtonProps) {
 
   return (
     <Dropdown menu={{ items }} trigger={['click']} placement="bottomRight">
-      <Button icon={<ShareAltOutlined />} className="share-button">
-        Compartir
-      </Button>
+      {variant === 'compact' ? (
+        <Button
+          icon={<ShareAltOutlined />}
+          shape="circle"
+          className="share-button share-button--compact"
+          aria-label="Compartir"
+          title="Compartir"
+        />
+      ) : (
+        <Button icon={<ShareAltOutlined />} className="share-button">
+          Compartir
+        </Button>
+      )}
     </Dropdown>
   );
 }
