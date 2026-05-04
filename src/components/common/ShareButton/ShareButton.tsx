@@ -120,7 +120,7 @@ export function ShareButton({
           title="Compartir"
         />
       ) : (
-        <Button icon={<ShareAltOutlined />} className="share-button">
+        <Button icon={<ShareAltOutlined />} className="share-button share-button--full">
           Compartir
         </Button>
       )}

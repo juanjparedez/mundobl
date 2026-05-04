@@ -24,7 +24,12 @@ import { ShareButton } from '@/components/common/ShareButton/ShareButton';
 import { WhereToWatch } from '@/components/common/WhereToWatch/WhereToWatch';
 import type { TVSeries } from 'schema-dts';
 import { FloatButton } from 'antd';
-import { EditOutlined } from '@ant-design/icons';
+import {
+  EditOutlined,
+  NotificationOutlined,
+  ReadOutlined,
+  CommentOutlined,
+} from '@ant-design/icons';
 import './page.css';
 
 const getSeriesByIdCached = cache(getSeriesById);
@@ -179,12 +184,39 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
                 initialStatus={serie.viewStatus?.[0]?.status ?? 'SIN_VER'}
                 seasons={serie.seasons}
               />
-              <ShareButton
-                title={serie.title}
-                text={serie.synopsis ?? undefined}
-                path={`/series/${serie.id}`}
-                variant="compact"
-              />
+              <div className="series-quick-actions" aria-label="Acciones rápidas">
+                <ShareButton
+                  title={serie.title}
+                  text={serie.synopsis ?? undefined}
+                  path={`/series/${serie.id}`}
+                  variant="compact"
+                />
+                <Link
+                  href="/notificaciones"
+                  prefetch={false}
+                  className="series-quick-actions__item"
+                  title="Notificaciones"
+                  aria-label="Notificaciones"
+                >
+                  <NotificationOutlined />
+                </Link>
+                <a
+                  href="#series-section-reviews"
+                  className="series-quick-actions__item"
+                  title="Reseñas"
+                  aria-label="Ir a reseñas"
+                >
+                  <ReadOutlined />
+                </a>
+                <a
+                  href="#series-section-comments"
+                  className="series-quick-actions__item"
+                  title="Comentarios"
+                  aria-label="Ir a comentarios"
+                >
+                  <CommentOutlined />
+                </a>
+              </div>
             </>
           }
         />
