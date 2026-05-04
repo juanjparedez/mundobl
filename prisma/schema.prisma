@@ -46,6 +46,7 @@ model User {
   reviews         Review[]
   reviewVotes     ReviewVote[]
   episodeNotes    EpisodeNote[]
+  approvedNews    News[]          @relation("NewsApprovedBy")
 }
 
 model Account {
@@ -183,6 +184,7 @@ model Series {
   watchLinks        WatchLink[]
   embeddableContent EmbeddableContent[]
   relatedSeriesFrom RelatedSeries[]     @relation("mainSeries")
+  news              News[]
   relatedSeriesTo   RelatedSeries[]     @relation("relatedSeries")
   reviews           Review[]
 }
@@ -337,6 +339,7 @@ model Tag {
   updatedAt DateTime @updatedAt
 
   series SeriesTag[]
+  news   NewsTag[]
 }
 
 // ============================================
@@ -827,4 +830,59 @@ model ChangelogItem {
   updatedAt DateTime @updatedAt
 
   @@index([version, sortOrder])
+}
+
+// ============================================
+// NOTICIAS BL/GL
+// ============================================
+
+enum NewsStatus {
+  DRAFT      // Borrador, solo visible en admin
+  REVIEW     // Esperando revision
+  APPROVED   // Aprobada, lista para publicar
+  PUBLISHED  // Publicada y visible al publico
+  REJECTED   // Rechazada
+}
+
+// Noticia de BL/GL generada/curada por la admin con asistencia de IA.
+// originalUrl + sourceName son OBLIGATORIOS para poder publicar (guardrail etico).
+model News {
+  id          Int        @id @default(autoincrement())
+  title       String
+  summary     String     // Resumen generado/editado (markdown)
+  originalUrl String     // URL de la noticia original (obligatorio para PUBLISHED)
+  sourceName  String     // Nombre del sitio fuente (obligatorio para PUBLISHED)
+  sourceLogo  String?    // Logo/favicon del sitio fuente (URL)
+  imageUrl    String?    // Imagen de portada
+  publishedAt DateTime?  // Fecha de publicacion en la fuente original
+  status      NewsStatus @default(DRAFT)
+  aiGenerated Boolean    @default(true)
+  florNotes   String?    // Notas privadas de la admin
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  approvedById String?
+  approvedBy   User?   @relation("NewsApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
+  approvedAt   DateTime?
+
+  relatedSeriesId Int?
+  relatedSeries   Series? @relation(fields: [relatedSeriesId], references: [id], onDelete: SetNull)
+
+  tags NewsTag[]
+
+  @@index([status, publishedAt])
+  @@index([createdAt])
+}
+
+// Etiquetas asociadas a una noticia (reutiliza el modelo Tag existente).
+model NewsTag {
+  id     Int  @id @default(autoincrement())
+  newsId Int
+  news   News @relation(fields: [newsId], references: [id], onDelete: Cascade)
+  tagId  Int
+  tag    Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([newsId, tagId])
+  @@index([tagId])
 }
