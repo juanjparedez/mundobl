@@ -31,7 +31,6 @@ import { ROUTES } from '@/constants/navigation';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { SettingsPanel } from '../SettingsPanel/SettingsPanel';
 import { LAST_SEEN_NOVEDADES_KEY } from '@/app/novedades/storage-keys';
-import { NotificationsBell } from '../NotificationsBell/NotificationsBell';
 import './Sidebar.css';
 
 const { Sider } = Layout;
@@ -301,8 +300,6 @@ export function Sidebar() {
             </Button>
           )}
         </div>
-
-        <NotificationsBell collapsed={collapsed} />
 
         <button
           className="sidebar-settings-trigger"

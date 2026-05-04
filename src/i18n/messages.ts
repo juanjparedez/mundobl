@@ -454,6 +454,8 @@ type TranslationShape = {
     resetSwDescription: string;
     resetSwConfirm: string;
     sectionNotifications: string;
+    openNotificationsCenterButton: string;
+    openNotificationsCenterHint: string;
     pushLabel: string;
     pushDescription: string;
     pushUnsupported: string;
@@ -658,6 +660,42 @@ type TranslationShape = {
     deleteError: string;
     mergeSuccess: string;
     mergeError: string;
+  };
+  adminChangelog: {
+    title: string;
+    subtitle: string;
+    statsTotal: string;
+    statsVersions: string;
+    searchPlaceholder: string;
+    addItem: string;
+    columnVersion: string;
+    columnCategory: string;
+    columnBody: string;
+    columnActions: string;
+    actionEdit: string;
+    actionDelete: string;
+    modalAddTitle: string;
+    modalEditTitle: string;
+    fieldVersion: string;
+    fieldCategory: string;
+    fieldBody: string;
+    requiredVersion: string;
+    requiredBody: string;
+    save: string;
+    cancel: string;
+    deleteTitle: string;
+    deleteDescription: string;
+    loadError: string;
+    createSuccess: string;
+    createError: string;
+    updateSuccess: string;
+    updateError: string;
+    deleteSuccess: string;
+    deleteError: string;
+    emptyCategory: string;
+    importFromFile: string;
+    importSuccess: string;
+    importError: string;
   };
   adminProductionCompanies: {
     title: string;
@@ -1222,6 +1260,8 @@ type TranslationShape = {
     logsShort: string;
     stats: string;
     statsShort: string;
+    changelog: string;
+    changelogShort: string;
   };
   adminStats: {
     pageTitle: string;
@@ -1843,6 +1883,9 @@ const es: TranslationShape = {
     resetSwConfirm:
       'Esto desinstalara el Service Worker y recargara la pagina. ¿Continuar?',
     sectionNotifications: 'Notificaciones',
+    openNotificationsCenterButton: 'Abrir bandeja de notificaciones',
+    openNotificationsCenterHint:
+      'Revisá tus notificaciones recientes y marcá elementos como leídos.',
     pushLabel: 'Notificaciones del navegador',
     pushDescription:
       'Recibí notificaciones del navegador cuando hay novedades. No vamos a pedir permiso a menos que actives esto.',
@@ -2060,6 +2103,42 @@ const es: TranslationShape = {
     deleteError: 'Error al eliminar el tag',
     mergeSuccess: 'Tags fusionados exitosamente',
     mergeError: 'Error al fusionar tags',
+  },
+  adminChangelog: {
+    title: 'Administracion de Changelog',
+    subtitle: 'Gestioná las entradas del changelog que se muestran en Novedades.',
+    statsTotal: 'Total items',
+    statsVersions: 'Versiones',
+    searchPlaceholder: 'Buscar por version, categoria o descripcion...',
+    addItem: 'Agregar item',
+    columnVersion: 'Version',
+    columnCategory: 'Categoria',
+    columnBody: 'Descripcion',
+    columnActions: 'Acciones',
+    actionEdit: 'Editar',
+    actionDelete: 'Eliminar',
+    modalAddTitle: 'Nuevo item de changelog',
+    modalEditTitle: 'Editar item',
+    fieldVersion: 'Version',
+    fieldCategory: 'Categoria (opcional)',
+    fieldBody: 'Descripcion',
+    requiredVersion: 'La version es requerida',
+    requiredBody: 'La descripcion es requerida',
+    save: 'Guardar',
+    cancel: 'Cancelar',
+    deleteTitle: 'Eliminar item?',
+    deleteDescription: 'Esta accion no se puede deshacer.',
+    loadError: 'Error al cargar el changelog',
+    createSuccess: 'Item creado exitosamente',
+    createError: 'Error al crear el item',
+    updateSuccess: 'Item actualizado exitosamente',
+    updateError: 'Error al actualizar el item',
+    deleteSuccess: 'Item eliminado correctamente',
+    deleteError: 'Error al eliminar el item',
+    emptyCategory: 'Sin categoria',
+    importFromFile: 'Importar desde CHANGELOG.md',
+    importSuccess: 'Changelog importado exitosamente',
+    importError: 'Error al importar el changelog',
   },
   adminProductionCompanies: {
     title: 'Administracion de Productoras',
@@ -2644,6 +2723,8 @@ const es: TranslationShape = {
     logsShort: 'Logs',
     stats: 'Estadísticas',
     statsShort: 'Stats',
+    changelog: 'Changelog',
+    changelogShort: 'CL',
   },
   adminStats: {
     pageTitle: 'Estadísticas de actividad',
@@ -3261,6 +3342,9 @@ const en: TranslationShape = {
     resetSwConfirm:
       'This will unregister the service worker and reload the page. Continue?',
     sectionNotifications: 'Notifications',
+    openNotificationsCenterButton: 'Open notifications inbox',
+    openNotificationsCenterHint:
+      'Review your recent notifications and mark items as read.',
     pushLabel: 'Browser notifications',
     pushDescription:
       "Get browser notifications when there's news. We won't ask for permission unless you turn this on.",
@@ -3476,6 +3560,42 @@ const en: TranslationShape = {
     deleteError: 'Error deleting tag',
     mergeSuccess: 'Tags merged successfully',
     mergeError: 'Error merging tags',
+  },
+  adminChangelog: {
+    title: 'Changelog Management',
+    subtitle: 'Manage changelog entries shown in Novedades.',
+    statsTotal: 'Total items',
+    statsVersions: 'Versions',
+    searchPlaceholder: 'Search by version, category or description...',
+    addItem: 'Add item',
+    columnVersion: 'Version',
+    columnCategory: 'Category',
+    columnBody: 'Description',
+    columnActions: 'Actions',
+    actionEdit: 'Edit',
+    actionDelete: 'Delete',
+    modalAddTitle: 'New changelog item',
+    modalEditTitle: 'Edit item',
+    fieldVersion: 'Version',
+    fieldCategory: 'Category (optional)',
+    fieldBody: 'Description',
+    requiredVersion: 'Version is required',
+    requiredBody: 'Description is required',
+    save: 'Save',
+    cancel: 'Cancel',
+    deleteTitle: 'Delete item?',
+    deleteDescription: 'This action cannot be undone.',
+    loadError: 'Error loading changelog',
+    createSuccess: 'Item created successfully',
+    createError: 'Error creating item',
+    updateSuccess: 'Item updated successfully',
+    updateError: 'Error updating item',
+    deleteSuccess: 'Item deleted successfully',
+    deleteError: 'Error deleting item',
+    emptyCategory: 'No category',
+    importFromFile: 'Import from CHANGELOG.md',
+    importSuccess: 'Changelog imported successfully',
+    importError: 'Error importing changelog',
   },
   adminProductionCompanies: {
     title: 'Production Companies Management',
@@ -4058,6 +4178,8 @@ const en: TranslationShape = {
     logsShort: 'Logs',
     stats: 'Statistics',
     statsShort: 'Stats',
+    changelog: 'Changelog',
+    changelogShort: 'CL',
   },
   adminStats: {
     pageTitle: 'Activity Statistics',

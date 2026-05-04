@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Drawer, Segmented, Select, Button, Switch, Popconfirm } from 'antd';
 import { signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { useTheme } from '@/lib/providers/ThemeProvider';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { useMessage } from '@/hooks/useMessage';
@@ -32,6 +33,7 @@ interface SettingsPanelProps {
 }
 
 export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
+  const router = useRouter();
   const {
     theme,
     setTheme,
@@ -312,6 +314,22 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
         <h3 className="settings-panel__section-title">
           {t('settings.sectionNotifications')}
         </h3>
+
+        <div className="settings-panel__field">
+          <Button
+            block
+            onClick={() => {
+              onClose();
+              router.push('/notificaciones');
+            }}
+            className="settings-panel__action"
+          >
+            {t('settings.openNotificationsCenterButton')}
+          </Button>
+          <p className="settings-panel__hint">
+            {t('settings.openNotificationsCenterHint')}
+          </p>
+        </div>
 
         <div className="settings-panel__field settings-panel__field--inline">
           <div>

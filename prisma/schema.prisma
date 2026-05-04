@@ -38,6 +38,7 @@ model User {
   favorites       UserFavorite[]
   featureRequests FeatureRequest[]
   featureVotes    FeatureVote[]
+  featureRequestComments FeatureRequestComment[]
   accessLogs      AccessLog[]
   suggestedSites  SuggestedSite[]
   commentReports  CommentReport[]
@@ -543,6 +544,7 @@ model FeatureRequest {
 
   votes  FeatureVote[]
   images FeatureRequestImage[]
+  comments FeatureRequestComment[]
 }
 
 model FeatureRequestImage {
@@ -563,6 +565,22 @@ model FeatureVote {
   featureRequest   FeatureRequest @relation(fields: [featureRequestId], references: [id], onDelete: Cascade)
 
   @@unique([userId, featureRequestId])
+}
+
+model FeatureRequestComment {
+  id        Int      @id @default(autoincrement())
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  featureRequestId Int
+  featureRequest   FeatureRequest @relation(fields: [featureRequestId], references: [id], onDelete: Cascade)
+
+  @@index([featureRequestId, createdAt])
+  @@index([userId, createdAt])
 }
 
 // ============================================
@@ -687,4 +705,22 @@ model Notification {
 
   @@index([userId, createdAt])
   @@index([userId, readAt])
+
+}
+
+// Entradas del changelog gestionadas desde el panel de admin.
+// version: label del grupo ("Proximo deploy", "v1.2.3", hash de commit...)
+// category: subcategoria opcional ("Features", "Fixes", "Seguridad")
+// body: texto del item
+// sortOrder: orden dentro del grupo (menor = primero)
+model ChangelogItem {
+  id        Int      @id @default(autoincrement())
+  version   String   // ej: "Proximo deploy", "22ba64c"
+  category  String?  // ej: "Features", "Fixes", "Seguridad"
+  body      String
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([version, sortOrder])
 }

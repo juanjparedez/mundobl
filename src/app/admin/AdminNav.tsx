@@ -15,6 +15,7 @@ import {
   FileTextOutlined,
   MessageOutlined,
   BarChartOutlined,
+  UnorderedListOutlined,
 } from '@ant-design/icons';
 import './admin-nav.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -96,6 +97,12 @@ export function AdminNav() {
       icon: <FileTextOutlined />,
       label: t('adminNav.logs'),
       shortLabel: t('adminNav.logsShort'),
+    },
+    {
+      key: '/admin/changelog',
+      icon: <UnorderedListOutlined />,
+      label: t('adminNav.changelog'),
+      shortLabel: t('adminNav.changelogShort'),
     },
     {
       key: '/admin/stats',
