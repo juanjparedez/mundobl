@@ -224,8 +224,8 @@ export async function POST(request: NextRequest) {
       data: {
         userId: authResult.userId,
         type: 'comment_dispute',
-        status: 'pendiente',
-        priority: 'media',
+        status: 'OPEN',
+        priority: 'MEDIUM',
         title: `Disputa comentario #${comment.id}`,
         description: JSON.stringify(payload),
       },

@@ -1316,6 +1316,8 @@ type TranslationShape = {
     reviewsShort: string;
     news: string;
     newsShort: string;
+    feedback: string;
+    feedbackShort: string;
     info: string;
     infoShort: string;
     logs: string;
@@ -3008,6 +3010,8 @@ const es: TranslationShape = {
     reviewsShort: 'Reseñ.',
     news: 'Noticias',
     newsShort: 'Notic.',
+    feedback: 'Casos',
+    feedbackShort: 'Casos',
     info: 'Info',
     infoShort: 'Info',
     logs: 'Logs',
@@ -4696,6 +4700,8 @@ const en: TranslationShape = {
     reviewsShort: 'Rev.',
     news: 'News',
     newsShort: 'News',
+    feedback: 'Cases',
+    feedbackShort: 'Cases',
     info: 'Info',
     infoShort: 'Info',
     logs: 'Logs',
