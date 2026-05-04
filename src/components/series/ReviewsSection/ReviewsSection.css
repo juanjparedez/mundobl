@@ -197,7 +197,25 @@
   line-height: 1.5;
 }
 
+.reviews-form__ai-suggestion .ant-alert-message {
+  /* Evita el clip del primer caracter cuando el texto es largo. */
+  white-space: normal;
+  overflow: visible;
+  word-break: break-word;
+}
+
 .reviews-form__spoiler-list {
-  margin: 0;
-  padding-left: var(--spacing-md, 16px);
+  margin: var(--spacing-xs, 8px) 0 0 0;
+  padding-left: var(--spacing-md, 20px);
+  list-style: disc;
+  color: var(--text-primary);
+}
+
+.reviews-form__spoiler-list li {
+  margin-bottom: var(--spacing-xs, 4px);
+  line-height: 1.5;
+}
+
+.reviews-form__spoiler-list li::marker {
+  color: var(--text-secondary);
 }
