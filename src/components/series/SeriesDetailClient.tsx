@@ -7,6 +7,7 @@ import {
   PlaySquareOutlined,
   StarOutlined,
   CommentOutlined,
+  ReadOutlined,
 } from '@ant-design/icons';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 
@@ -19,6 +20,7 @@ interface SeriesDetailClientProps {
   contentSection: ReactNode;
   seasonsSection: ReactNode;
   ratingsSection: ReactNode;
+  reviewsSection: ReactNode;
   commentsSection: ReactNode;
 }
 
@@ -30,6 +32,7 @@ export function SeriesDetailClient({
   contentSection,
   seasonsSection,
   ratingsSection,
+  reviewsSection,
   commentsSection,
 }: SeriesDetailClientProps) {
   const { t } = useLocale();
@@ -62,6 +65,12 @@ export function SeriesDetailClient({
       label: t('seriesDetail.tabRatings'),
       icon: <StarOutlined />,
       content: <div className="ratings-tab">{ratingsSection}</div>,
+    },
+    {
+      key: 'reviews',
+      label: t('seriesDetail.tabReviews'),
+      icon: <ReadOutlined />,
+      content: <div className="reviews-tab">{reviewsSection}</div>,
     },
     {
       key: 'comments',

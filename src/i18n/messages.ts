@@ -19,6 +19,7 @@ type TranslationShape = {
     tabInfo: string;
     tabContent: string;
     tabRatings: string;
+    tabReviews: string;
     tabComments: string;
   };
   seriesHeader: {
@@ -1255,6 +1256,8 @@ type TranslationShape = {
     contentShort: string;
     comments: string;
     commentsShort: string;
+    reviews: string;
+    reviewsShort: string;
     info: string;
     infoShort: string;
     logs: string;
@@ -1417,6 +1420,85 @@ type TranslationShape = {
     description: string;
     backLink: string;
   };
+  reviews: {
+    subtitle: string;
+    writeButton: string;
+    loginPrompt: string;
+    yourReview: string;
+    othersTitle: string;
+    empty: string;
+    anonymous: string;
+    edit: string;
+    delete: string;
+    deleteTitle: string;
+    deleteConfirm: string;
+    cancel: string;
+    save: string;
+    modalNewTitle: string;
+    modalEditTitle: string;
+    fieldTitle: string;
+    fieldBody: string;
+    fieldVerdict: string;
+    fieldLanguage: string;
+    fieldSpoilers: string;
+    fieldStatus: string;
+    markdownHint: string;
+    verdictPlaceholder: string;
+    verdictRecommended: string;
+    verdictMixed: string;
+    verdictSkip: string;
+    statusPublished: string;
+    statusDraft: string;
+    statusHidden: string;
+    spoilerTag: string;
+    ratingPlot: string;
+    ratingChemistry: string;
+    ratingOst: string;
+    ratingCasting: string;
+    aiAssistTooltip: string;
+    aiComingSoon: string;
+    savedDraft: string;
+    publishedSuccess: string;
+    saveError: string;
+    deleteSuccess: string;
+    deleteError: string;
+    loadError: string;
+  };
+  adminReviews: {
+    title: string;
+    subtitle: string;
+    statsTotal: string;
+    statsPage: string;
+    filterAll: string;
+    statusPublished: string;
+    statusDraft: string;
+    statusHidden: string;
+    spoilerTag: string;
+    searchPlaceholder: string;
+    columnUser: string;
+    columnTitle: string;
+    columnSeries: string;
+    columnLanguage: string;
+    columnStatus: string;
+    columnDate: string;
+    columnActions: string;
+    actionPreview: string;
+    actionView: string;
+    actionPublish: string;
+    actionHide: string;
+    actionDelete: string;
+    deleteTitle: string;
+    deleteDescription: string;
+    deleteConfirm: string;
+    cancel: string;
+    unnamedUser: string;
+    deletedUser: string;
+    statusUpdated: string;
+    statusError: string;
+    deleteSuccess: string;
+    deleteError: string;
+    loadError: string;
+  };
 };
 
 const es: TranslationShape = {
@@ -1438,6 +1520,7 @@ const es: TranslationShape = {
     tabInfo: 'Información',
     tabContent: 'Contenido',
     tabRatings: 'Puntuación',
+    tabReviews: 'Reseñas',
     tabComments: 'Comentarios',
   },
   seriesHeader: {
@@ -2730,6 +2813,8 @@ const es: TranslationShape = {
     contentShort: 'Cont.',
     comments: 'Comentarios',
     commentsShort: 'Coment.',
+    reviews: 'Reseñas',
+    reviewsShort: 'Reseñ.',
     info: 'Info',
     infoShort: 'Info',
     logs: 'Logs',
@@ -2894,6 +2979,88 @@ const es: TranslationShape = {
     description: 'La página que buscas no existe o fue movida.',
     backLink: 'Volver al catálogo',
   },
+  reviews: {
+    subtitle:
+      'Reseñas escritas por la comunidad. Compartí la tuya y ayudá a otros a decidir qué ver.',
+    writeButton: 'Escribir reseña',
+    loginPrompt: 'Iniciá sesión para escribir tu reseña.',
+    yourReview: 'Tu reseña',
+    othersTitle: 'Reseñas de la comunidad',
+    empty: 'Aún no hay reseñas. Sé el primero.',
+    anonymous: 'Anónimo',
+    edit: 'Editar',
+    delete: 'Eliminar',
+    deleteTitle: '¿Eliminar tu reseña?',
+    deleteConfirm: 'Eliminar',
+    cancel: 'Cancelar',
+    save: 'Guardar',
+    modalNewTitle: 'Nueva reseña',
+    modalEditTitle: 'Editar reseña',
+    fieldTitle: 'Título',
+    fieldBody: 'Reseña',
+    fieldVerdict: 'Veredicto',
+    fieldLanguage: 'Idioma',
+    fieldSpoilers: 'Contiene spoilers',
+    fieldStatus: 'Estado',
+    markdownHint: 'Podés usar Markdown (negrita, listas, links).',
+    verdictPlaceholder: 'Sin veredicto',
+    verdictRecommended: 'Recomendada',
+    verdictMixed: 'Mixta',
+    verdictSkip: 'Saltala',
+    statusPublished: 'Publicada',
+    statusDraft: 'Borrador',
+    statusHidden: 'Oculta',
+    spoilerTag: 'Spoilers',
+    ratingPlot: 'Trama',
+    ratingChemistry: 'Química',
+    ratingOst: 'BSO',
+    ratingCasting: 'Casting',
+    aiAssistTooltip:
+      'Próximamente: asistente IA para pulir el texto y traducir.',
+    aiComingSoon:
+      '✨ Asistente IA próximamente: pulir redacción, sugerir título y traducir.',
+    savedDraft: 'Borrador guardado',
+    publishedSuccess: 'Reseña publicada',
+    saveError: 'Error al guardar la reseña',
+    deleteSuccess: 'Reseña eliminada',
+    deleteError: 'Error al eliminar',
+    loadError: 'Error al cargar reseñas',
+  },
+  adminReviews: {
+    title: 'Reseñas',
+    subtitle: 'Moderá las reseñas escritas por la comunidad.',
+    statsTotal: 'Total',
+    statsPage: 'En esta página',
+    filterAll: 'Todas',
+    statusPublished: 'Publicadas',
+    statusDraft: 'Borradores',
+    statusHidden: 'Ocultas',
+    spoilerTag: 'Spoilers',
+    searchPlaceholder: 'Buscar por título, contenido, autor o serie',
+    columnUser: 'Autor',
+    columnTitle: 'Reseña',
+    columnSeries: 'Serie',
+    columnLanguage: 'Idioma',
+    columnStatus: 'Estado',
+    columnDate: 'Actualizada',
+    columnActions: 'Acciones',
+    actionPreview: 'Vista previa',
+    actionView: 'Ver serie',
+    actionPublish: 'Publicar',
+    actionHide: 'Ocultar',
+    actionDelete: 'Borrar',
+    deleteTitle: '¿Eliminar reseña?',
+    deleteDescription: 'Esta acción no se puede deshacer.',
+    deleteConfirm: 'Eliminar',
+    cancel: 'Cancelar',
+    unnamedUser: 'Sin nombre',
+    deletedUser: 'Usuario eliminado',
+    statusUpdated: 'Estado actualizado',
+    statusError: 'Error al actualizar el estado',
+    deleteSuccess: 'Reseña eliminada',
+    deleteError: 'Error al eliminar',
+    loadError: 'Error al cargar reseñas',
+  },
 };
 
 const en: TranslationShape = {
@@ -2915,6 +3082,7 @@ const en: TranslationShape = {
     tabInfo: 'Information',
     tabContent: 'Content',
     tabRatings: 'Ratings',
+    tabReviews: 'Reviews',
     tabComments: 'Comments',
   },
   seriesHeader: {
@@ -4196,6 +4364,8 @@ const en: TranslationShape = {
     contentShort: 'Cont.',
     comments: 'Comments',
     commentsShort: 'Com.',
+    reviews: 'Reviews',
+    reviewsShort: 'Rev.',
     info: 'Info',
     infoShort: 'Info',
     logs: 'Logs',
@@ -4359,6 +4529,87 @@ const en: TranslationShape = {
   notFound: {
     description: 'The page you are looking for does not exist or was moved.',
     backLink: 'Back to catalog',
+  },
+  reviews: {
+    subtitle:
+      'Reviews from the community. Share yours and help others decide what to watch.',
+    writeButton: 'Write review',
+    loginPrompt: 'Sign in to write your review.',
+    yourReview: 'Your review',
+    othersTitle: 'Community reviews',
+    empty: 'No reviews yet. Be the first.',
+    anonymous: 'Anonymous',
+    edit: 'Edit',
+    delete: 'Delete',
+    deleteTitle: 'Delete your review?',
+    deleteConfirm: 'Delete',
+    cancel: 'Cancel',
+    save: 'Save',
+    modalNewTitle: 'New review',
+    modalEditTitle: 'Edit review',
+    fieldTitle: 'Title',
+    fieldBody: 'Review',
+    fieldVerdict: 'Verdict',
+    fieldLanguage: 'Language',
+    fieldSpoilers: 'Contains spoilers',
+    fieldStatus: 'Status',
+    markdownHint: 'You can use Markdown (bold, lists, links).',
+    verdictPlaceholder: 'No verdict',
+    verdictRecommended: 'Recommended',
+    verdictMixed: 'Mixed',
+    verdictSkip: 'Skip',
+    statusPublished: 'Published',
+    statusDraft: 'Draft',
+    statusHidden: 'Hidden',
+    spoilerTag: 'Spoilers',
+    ratingPlot: 'Plot',
+    ratingChemistry: 'Chemistry',
+    ratingOst: 'OST',
+    ratingCasting: 'Casting',
+    aiAssistTooltip: 'Coming soon: AI assistant to polish text and translate.',
+    aiComingSoon:
+      '✨ AI assistant coming soon: polish writing, suggest title and translate.',
+    savedDraft: 'Draft saved',
+    publishedSuccess: 'Review published',
+    saveError: 'Error saving review',
+    deleteSuccess: 'Review deleted',
+    deleteError: 'Error deleting',
+    loadError: 'Error loading reviews',
+  },
+  adminReviews: {
+    title: 'Reviews',
+    subtitle: 'Moderate community-written reviews.',
+    statsTotal: 'Total',
+    statsPage: 'On this page',
+    filterAll: 'All',
+    statusPublished: 'Published',
+    statusDraft: 'Drafts',
+    statusHidden: 'Hidden',
+    spoilerTag: 'Spoilers',
+    searchPlaceholder: 'Search by title, content, author or series',
+    columnUser: 'Author',
+    columnTitle: 'Review',
+    columnSeries: 'Series',
+    columnLanguage: 'Language',
+    columnStatus: 'Status',
+    columnDate: 'Updated',
+    columnActions: 'Actions',
+    actionPreview: 'Preview',
+    actionView: 'View series',
+    actionPublish: 'Publish',
+    actionHide: 'Hide',
+    actionDelete: 'Delete',
+    deleteTitle: 'Delete review?',
+    deleteDescription: 'This action cannot be undone.',
+    deleteConfirm: 'Delete',
+    cancel: 'Cancel',
+    unnamedUser: 'Unnamed',
+    deletedUser: 'Deleted user',
+    statusUpdated: 'Status updated',
+    statusError: 'Error updating status',
+    deleteSuccess: 'Review deleted',
+    deleteError: 'Error deleting',
+    loadError: 'Error loading reviews',
   },
 };
 

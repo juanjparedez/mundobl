@@ -16,6 +16,7 @@ import {
   MessageOutlined,
   BarChartOutlined,
   UnorderedListOutlined,
+  ReadOutlined,
 } from '@ant-design/icons';
 import './admin-nav.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -85,6 +86,12 @@ export function AdminNav() {
       icon: <MessageOutlined />,
       label: t('adminNav.comments'),
       shortLabel: t('adminNav.commentsShort'),
+    },
+    {
+      key: '/admin/resenas',
+      icon: <ReadOutlined />,
+      label: t('adminNav.reviews'),
+      shortLabel: t('adminNav.reviewsShort'),
     },
     {
       key: '/admin/info',
