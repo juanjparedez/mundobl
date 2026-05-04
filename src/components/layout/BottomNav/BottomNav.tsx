@@ -95,8 +95,9 @@ export function BottomNav() {
             {
               key: 'profile',
               icon: <UserOutlined />,
-              label: session.user?.name?.split(' ')[0] || t('bottomNav.logout'),
-              onClick: () => signOut({ callbackUrl: '/' }),
+              label:
+                session.user?.name?.split(' ')[0] || t('sidebar.profile'),
+              path: ROUTES.PERFIL,
             },
           ]),
   ];

@@ -120,6 +120,9 @@ Resultado: automatizacion robusta y mantenible.
 
 ### Quick wins UX (Mayo 2026)
 
+- Navegacion usuario (prioridad alta):
+	- fix critico: en mobile, el tap sobre el usuario debe abrir `/perfil` y nunca cerrar sesion.
+	- agregar test/regla de regresion para evitar que acciones de perfil reutilicen handlers de logout.
 - Landing:
 	- forzar imagen hero local sin optimizacion de Next para evitar fallos en mobile (caso `image.bin` / render roto),
 	- refresco de cache de service worker al desplegar cambios de assets.
@@ -131,6 +134,75 @@ Resultado: automatizacion robusta y mantenible.
 - Admin idiomas:
 	- auditoria de i18n: confirmar cobertura completa de labels/mensajes y detectar cadenas hardcodeadas pendientes.
 	- checklist: `title/subtitle`, tabla, acciones, modal, validaciones, toasts, estados vacios, errores API.
+
+### Visibilidad y ranking (SEO + Robots + IA)
+
+Objetivo: mejorar descubrimiento organico, cobertura de indexacion y score de legibilidad para crawlers clasicos y robots de IA.
+
+#### Fase 1 - SEO tecnico base (prioridad alta)
+
+- Fortalecer `robots` por tipo de pagina:
+	- permitir catalogo, series, novedades, noticias, sitios;
+	- bloquear rutas privadas/admin, parametros irrelevantes y resultados internos sin valor SEO.
+- Sitemap segmentado por dominio de contenido:
+	- `sitemap-series.xml`, `sitemap-noticias.xml`, `sitemap-sitios.xml` y `sitemap-static.xml`;
+	- `lastmod` real por entidad para acelerar re-crawl.
+- Canonical consistente en todas las paginas indexables (sin duplicados por query params).
+- Metadatos OG/Twitter completos por serie/noticia para mejorar CTR en redes y buscadores.
+
+Resultado esperado: mejor cobertura en Search Console y menor tasa de URLs "Descubierta - actualmente sin indexar".
+
+#### Fase 2 - Mapping de sites y grafo interno (prioridad alta)
+
+- Crear un "site mapping" explicito entre entidades del producto:
+	- serie -> reseñas -> comentarios -> sitios recomendados -> noticias relacionadas.
+- Mejorar enlazado interno:
+	- bloques de "Relacionados" en series/noticias/sitios;
+	- breadcrumbs y hubs tematicos por tags, pais, idioma, genero.
+- Agregar schema.org por tipo:
+	- `TVSeries` / `Movie`, `Review`, `Article`, `BreadcrumbList`, `WebSite`.
+- Crear mapa editorial de fuentes confiables para noticias (lista blanca + categoria + idioma + autoridad).
+
+Resultado esperado: mas paginas profundas rastreadas y mejor distribucion de autoridad interna.
+
+#### Fase 3 - Robots de IA y data legible para LLM (prioridad media-alta)
+
+- Publicar `llms.txt` y `llms-full.txt` con:
+	- descripcion del proyecto,
+	- rutas clave,
+	- politicas de uso/citacion,
+	- prioridad de lectura para contenido actualizado.
+- Exponer un endpoint de mapa semantico para agentes (ej: `/api/ai-map`) con:
+	- entidades principales,
+	- relaciones,
+	- URLs canonicas,
+	- fecha de actualizacion.
+- Incluir bloques "Facts" en series/noticias (datos estructurados, fechas, fuente, estado) para reducir ambiguedad en respuestas de IA.
+- Definir politica de atribucion para resenas/noticias con fuente obligatoria y licencia visible.
+
+Resultado esperado: mejor interpretacion por asistentes de IA y mayor probabilidad de citas correctas de MundoBL.
+
+#### Operacion y medicion (KPI)
+
+- SEO tecnico:
+	- paginas validas indexadas,
+	- errores de rastreo,
+	- Core Web Vitals en URLs top.
+- Descubrimiento:
+	- impresiones organicas,
+	- CTR medio,
+	- crecimiento de landing pages por cluster (series/noticias/sitios).
+- IA:
+	- menciones/citas detectadas,
+	- precision de datos citados,
+	- trafico referencial desde agentes y respuestas enriquecidas.
+
+#### Checklist de implementacion sugerida
+
+1. Ajustar `src/app/robots.ts` y `src/app/sitemap.ts` para segmentar y priorizar rutas.
+2. Completar metadata por entidad en layouts/pages indexables.
+3. Implementar `llms.txt` + endpoint semantico para agentes.
+4. Medir durante 4 semanas y recalibrar reglas de rastreo/priority.
 
 ---
 
