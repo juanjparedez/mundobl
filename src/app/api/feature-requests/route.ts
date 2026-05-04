@@ -11,7 +11,7 @@ export async function GET() {
       },
       include: {
         user: { select: { id: true, name: true, image: true } },
-        _count: { select: { votes: true } },
+        _count: { select: { votes: true, comments: true } },
         votes: { select: { userId: true } },
         images: { select: { id: true, url: true } },
       },
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
       },
       include: {
         user: { select: { id: true, name: true, image: true } },
-        _count: { select: { votes: true } },
+        _count: { select: { votes: true, comments: true } },
         votes: { select: { userId: true } },
         images: { select: { id: true, url: true } },
       },

@@ -1401,6 +1401,16 @@ type TranslationShape = {
     errorStatusUpdate: string;
     errorDelete: string;
     errorUpload: string;
+    tabMySolicitudes: string;
+    myRequestsEmpty: string;
+    commentsCount: string;
+    commentsTitle: string;
+    commentsEmpty: string;
+    commentPlaceholder: string;
+    commentSubmit: string;
+    commentSuccess: string;
+    commentError: string;
+    adminBadge: string;
   };
   notFound: {
     description: string;
@@ -2866,6 +2876,16 @@ const es: TranslationShape = {
     errorStatusUpdate: 'Error al actualizar',
     errorDelete: 'Error al eliminar',
     errorUpload: 'Error al subir imagen',
+    tabMySolicitudes: 'Mis solicitudes',
+    myRequestsEmpty: 'No tenés solicitudes enviadas',
+    commentsCount: '{n} comentarios',
+    commentsTitle: 'Comentarios',
+    commentsEmpty: 'No hay comentarios aún',
+    commentPlaceholder: 'Escribí un comentario...',
+    commentSubmit: 'Enviar',
+    commentSuccess: 'Comentario enviado',
+    commentError: 'Error al enviar el comentario',
+    adminBadge: 'Admin',
   },
   notFound: {
     description: 'La página que buscas no existe o fue movida.',
@@ -4321,6 +4341,16 @@ const en: TranslationShape = {
     errorStatusUpdate: 'Error updating status',
     errorDelete: 'Error deleting',
     errorUpload: 'Error uploading image',
+    tabMySolicitudes: 'My requests',
+    myRequestsEmpty: 'You have no submitted requests',
+    commentsCount: '{n} comments',
+    commentsTitle: 'Comments',
+    commentsEmpty: 'No comments yet',
+    commentPlaceholder: 'Write a comment...',
+    commentSubmit: 'Send',
+    commentSuccess: 'Comment sent',
+    commentError: 'Error sending comment',
+    adminBadge: 'Admin',
   },
   notFound: {
     description: 'The page you are looking for does not exist or was moved.',

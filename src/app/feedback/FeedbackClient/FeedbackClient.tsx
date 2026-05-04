@@ -45,6 +45,20 @@ interface FeatureRequestImage {
   url: string;
 }
 
+interface FeatureRequestCommentUser {
+  id: string;
+  name: string | null;
+  image: string | null;
+  role: string;
+}
+
+interface FeatureRequestComment {
+  id: number;
+  body: string;
+  createdAt: string;
+  user: FeatureRequestCommentUser;
+}
+
 interface FeatureRequest {
   id: number;
   title: string;
@@ -55,7 +69,7 @@ interface FeatureRequest {
   createdAt: string;
   updatedAt: string;
   user: FeatureRequestUser | null;
-  _count: { votes: number };
+  _count: { votes: number; comments: number };
   votes: Array<{ userId: string }>;
   images?: FeatureRequestImage[];
 }
@@ -104,8 +118,17 @@ export function FeedbackClient() {
   const [submitting, setSubmitting] = useState(false);
   const [pendingImages, setPendingImages] = useState<PendingImage[]>([]);
   const [form] = Form.useForm();
+  // comments state: requestId -> list; null = not loaded; loading = Set of ids
+  const [comments, setComments] = useState<Record<number, FeatureRequestComment[]>>({});
+  const [commentsLoading, setCommentsLoading] = useState<Set<number>>(new Set());
+  const [expandedComments, setExpandedComments] = useState<Set<number>>(new Set());
+  const [commentTexts, setCommentTexts] = useState<Record<number, string>>({});
+  const [commentSubmitting, setCommentSubmitting] = useState<Set<number>>(new Set());
   const searchParams = useSearchParams();
   const prefilledRef = useRef(false);
+  const [activeTab, setActiveTab] = useState<string>(
+    searchParams.get('tab') ?? 'requests'
+  );
 
   const isAdmin = session?.user?.role === 'ADMIN';
   const userId = session?.user?.id;
@@ -161,6 +184,68 @@ export function FeedbackClient() {
       pendingImages.forEach((img) => URL.revokeObjectURL(img.preview));
     };
   }, [pendingImages]);
+
+  const loadComments = useCallback(async (requestId: number) => {
+    if (commentsLoading.has(requestId) || comments[requestId]) return;
+    setCommentsLoading((prev) => new Set(prev).add(requestId));
+    try {
+      const res = await fetch(`/api/feature-requests/${requestId}/comments`);
+      if (res.ok) {
+        const data: FeatureRequestComment[] = await res.json();
+        setComments((prev) => ({ ...prev, [requestId]: data }));
+      }
+    } catch {
+      // silently fail
+    } finally {
+      setCommentsLoading((prev) => {
+        const next = new Set(prev);
+        next.delete(requestId);
+        return next;
+      });
+    }
+  }, [commentsLoading, comments]);
+
+  const toggleComments = (requestId: number) => {
+    setExpandedComments((prev) => {
+      const next = new Set(prev);
+      if (next.has(requestId)) {
+        next.delete(requestId);
+      } else {
+        next.add(requestId);
+        loadComments(requestId);
+      }
+      return next;
+    });
+  };
+
+  const handleCommentSubmit = async (requestId: number) => {
+    const body = commentTexts[requestId]?.trim();
+    if (!body) return;
+    setCommentSubmitting((prev) => new Set(prev).add(requestId));
+    try {
+      const res = await fetch(`/api/feature-requests/${requestId}/comments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ body }),
+      });
+      if (!res.ok) throw new Error();
+      const newComment: FeatureRequestComment = await res.json();
+      setComments((prev) => ({
+        ...prev,
+        [requestId]: [...(prev[requestId] ?? []), newComment],
+      }));
+      setCommentTexts((prev) => ({ ...prev, [requestId]: '' }));
+      message.success(t('feedback.commentSuccess'));
+    } catch {
+      message.error(t('feedback.commentError'));
+    } finally {
+      setCommentSubmitting((prev) => {
+        const next = new Set(prev);
+        next.delete(requestId);
+        return next;
+      });
+    }
+  };
 
   const handlePaste = (e: React.ClipboardEvent) => {
     const items = e.clipboardData?.items;
@@ -326,7 +411,8 @@ export function FeedbackClient() {
       : false;
 
     return (
-      <div key={request.id} className="feedback-card">
+      <div key={request.id}>
+      <div className="feedback-card">
         <div className="feedback-card__header">
           <h4 className="feedback-card__title">{request.title}</h4>
           <div className="feedback-card__tags">
@@ -414,8 +500,92 @@ export function FeedbackClient() {
           </div>
         </div>
       </div>
+
+      {/* Hilo de comentarios: visible solo para el dueño y admins */}
+      {userId && (request.user?.id === userId || isAdmin) && renderCommentThread(request)}
+      </div>
     );
   };
+
+  const renderCommentThread = (request: FeatureRequest) => {
+    const isExpanded = expandedComments.has(request.id);
+    const isLoading = commentsLoading.has(request.id);
+    const threadComments = comments[request.id];
+    const commentCount = request._count.comments;
+
+    return (
+      <div className="feedback-card__comments">
+        <button
+          className="feedback-card__comments-toggle"
+          onClick={() => toggleComments(request.id)}
+        >
+          <span>
+            {commentCount > 0
+              ? interpolateMessage(t('feedback.commentsCount'), { n: String(commentCount) })
+              : t('feedback.commentsTitle')}
+          </span>
+          <span className={`feedback-card__comments-chevron${isExpanded ? ' expanded' : ''}`}>›</span>
+        </button>
+
+        {isExpanded && (
+          <div className="feedback-card__comments-body">
+            {isLoading ? (
+              <div className="feedback-card__comments-loading">…</div>
+            ) : threadComments && threadComments.length > 0 ? (
+              <div className="feedback-card__comments-list">
+                {threadComments.map((c) => (
+                  <div key={c.id} className={`feedback-comment${c.user.role === 'ADMIN' || c.user.role === 'MODERATOR' ? ' feedback-comment--admin' : ''}`}>
+                    <div className="feedback-comment__header">
+                      <Avatar
+                        src={c.user.image}
+                        icon={!c.user.image ? <UserOutlined /> : undefined}
+                        size={20}
+                      />
+                      <span className="feedback-comment__name">{c.user.name}</span>
+                      {(c.user.role === 'ADMIN' || c.user.role === 'MODERATOR') && (
+                        <span className="feedback-comment__admin-badge">{t('feedback.adminBadge')}</span>
+                      )}
+                      <span className="feedback-comment__date">
+                        {new Date(c.createdAt).toLocaleDateString(locale)}
+                      </span>
+                    </div>
+                    <p className="feedback-comment__body">{c.body}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="feedback-card__comments-empty">{t('feedback.commentsEmpty')}</p>
+            )}
+
+            {session?.user && (
+              <div className="feedback-card__comment-input">
+                <Input.TextArea
+                  rows={2}
+                  maxLength={2000}
+                  value={commentTexts[request.id] ?? ''}
+                  onChange={(e) =>
+                    setCommentTexts((prev) => ({ ...prev, [request.id]: e.target.value }))
+                  }
+                  placeholder={t('feedback.commentPlaceholder')}
+                />
+                <Button
+                  size="small"
+                  type="primary"
+                  loading={commentSubmitting.has(request.id)}
+                  onClick={() => handleCommentSubmit(request.id)}
+                  disabled={!commentTexts[request.id]?.trim()}
+                >
+                  {t('feedback.commentSubmit')}
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const myRequests = requests.filter((r) => userId && r.user?.id === userId);
 
   const tabItems = [
     {
@@ -522,12 +692,29 @@ export function FeedbackClient() {
         </div>
       ),
     },
+    ...(session?.user
+      ? [
+          {
+            key: 'mis-solicitudes',
+            label: t('feedback.tabMySolicitudes'),
+            children: (
+              <div className="feedback-list">
+                {myRequests.length > 0 ? (
+                  myRequests.map(renderRequestCard)
+                ) : (
+                  <Empty description={t('feedback.myRequestsEmpty')} />
+                )}
+              </div>
+            ),
+          },
+        ]
+      : []),
   ];
 
   return (
     <div className="feedback-page">
       <PageTitle title="Feedback" />
-      <Tabs items={tabItems} />
+      <Tabs items={tabItems} activeKey={activeTab} onChange={setActiveTab} />
 
       <Modal
         title={t('feedback.newRequest')}
