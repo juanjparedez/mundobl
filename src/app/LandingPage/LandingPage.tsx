@@ -201,6 +201,7 @@ export function LandingPage({ stats }: LandingPageProps) {
             width={720}
             height={720}
             quality={78}
+            unoptimized
             priority
             className="landing__hero-image"
           />
@@ -258,6 +259,7 @@ export function LandingPage({ stats }: LandingPageProps) {
             width={520}
             height={520}
             quality={75}
+            unoptimized
             className="landing__hero-image"
           />
           <div className="landing__hero-glow" />
@@ -400,7 +402,9 @@ export function LandingPage({ stats }: LandingPageProps) {
                   height={195}
                   quality={65}
                   unoptimized={
-                    shouldSkipOptimization(stats.featuredReview.series.imageUrl) ||
+                    shouldSkipOptimization(
+                      stats.featuredReview.series.imageUrl
+                    ) ||
                     isSupabaseImageUrl(stats.featuredReview.series.imageUrl)
                   }
                 />

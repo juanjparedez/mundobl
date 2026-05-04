@@ -1,6 +1,6 @@
-const SHELL_CACHE = 'mundobl-shell-v6';
-const IMAGE_CACHE = 'mundobl-img-v6';
-const REMOTE_IMAGE_CACHE = 'mundobl-remote-img-v6';
+const SHELL_CACHE = 'mundobl-shell-v7';
+const IMAGE_CACHE = 'mundobl-img-v7';
+const REMOTE_IMAGE_CACHE = 'mundobl-remote-img-v7';
 const IMAGE_CACHE_MAX_ENTRIES = 250;
 const REMOTE_IMAGE_CACHE_MAX_ENTRIES = 500;
 

@@ -1314,6 +1314,8 @@ type TranslationShape = {
     commentsShort: string;
     reviews: string;
     reviewsShort: string;
+    news: string;
+    newsShort: string;
     info: string;
     infoShort: string;
     logs: string;
@@ -2901,11 +2903,11 @@ const es: TranslationShape = {
     sortRatingDesc: 'Mejor valorado',
   },
   landing: {
-    subtitle: 'Tu catálogo personal de series BL y más.',
+    subtitle: 'Tu catálogo personal de series BL.',
     exploreCatalog: 'Explorar Catálogo',
     signIn: 'Iniciar Sesión',
     description:
-      'Un espacio dedicado a las series BL, GL y doramas asiáticos. Seguí lo que estás viendo, calificá tus favoritas y compartir tus opiniones.',
+      'Un espacio dedicado a las series BL. Seguí lo que estás viendo, calificá tus favoritas y compartí tus opiniones.',
     goToProfile: 'Mi Perfil',
     heroBadge: 'Asistente IA · Reseñas · 10 idiomas',
     statSeries: 'series en catálogo',
@@ -3004,6 +3006,8 @@ const es: TranslationShape = {
     commentsShort: 'Coment.',
     reviews: 'Reseñas',
     reviewsShort: 'Reseñ.',
+    news: 'Noticias',
+    newsShort: 'Notic.',
     info: 'Info',
     infoShort: 'Info',
     logs: 'Logs',
@@ -4587,11 +4591,11 @@ const en: TranslationShape = {
     sortRatingDesc: 'Best rated',
   },
   landing: {
-    subtitle: 'Your personal BL series catalog and more.',
+    subtitle: 'Your personal BL series catalog.',
     exploreCatalog: 'Explore Catalog',
     signIn: 'Sign In',
     description:
-      'A space dedicated to BL, GL and Asian dramas. Track what you are watching, rate your favorites and share your thoughts.',
+      'A space dedicated to BL series. Track what you are watching, rate your favorites, and share your thoughts.',
     goToProfile: 'My Profile',
     heroBadge: 'AI assistant · Reviews · 10 languages',
     statSeries: 'series in catalog',
@@ -4690,6 +4694,8 @@ const en: TranslationShape = {
     commentsShort: 'Com.',
     reviews: 'Reviews',
     reviewsShort: 'Rev.',
+    news: 'News',
+    newsShort: 'News',
     info: 'Info',
     infoShort: 'Info',
     logs: 'Logs',
