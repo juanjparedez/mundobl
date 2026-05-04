@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { prisma } from '@/lib/database';
 
 interface ChangelogEntry {
   version: string;
   items: string[];
 }
 
-function parseChangelog(): ChangelogEntry[] {
+function parseChangelogFile(): ChangelogEntry[] {
   try {
     const filePath = path.join(process.cwd(), 'CHANGELOG.md');
     const content = fs.readFileSync(filePath, 'utf-8');
@@ -44,8 +45,30 @@ function getBuildId(): string {
 }
 
 export async function GET() {
-  const entries = parseChangelog();
   const buildId = getBuildId();
+
+  // Leer de DB; si está vacía, usar el archivo como fallback
+  const dbItems = await prisma.changelogItem.findMany({
+    orderBy: [{ sortOrder: 'asc' }, { createdAt: 'asc' }],
+  });
+
+  let entries: ChangelogEntry[];
+
+  if (dbItems.length > 0) {
+    const versionMap = new Map<string, string[]>();
+    for (const item of dbItems) {
+      if (!versionMap.has(item.version)) {
+        versionMap.set(item.version, []);
+      }
+      versionMap.get(item.version)!.push(item.body);
+    }
+    entries = Array.from(versionMap.entries()).map(([version, items]) => ({
+      version,
+      items,
+    }));
+  } else {
+    entries = parseChangelogFile();
+  }
 
   return NextResponse.json({ buildId, entries });
 }
