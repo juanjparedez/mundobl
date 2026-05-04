@@ -31,6 +31,7 @@ import {
   CheckCircleOutlined,
   CloseCircleOutlined,
   ReloadOutlined,
+  ReadOutlined,
   AppstoreOutlined,
   UnlockOutlined,
   LockOutlined,
@@ -90,6 +91,7 @@ interface ProfileData {
     favorites: number;
     ratings: number;
     comments: number;
+    reviews: number;
     hoursWatched: number;
     activeDaysThisWeek: number;
     topGenres: Array<{ name: string; count: number }>;
@@ -117,6 +119,28 @@ interface ProfileData {
     nextEpisode: { seasonNumber: number; episodeNumber: number } | null;
   }>;
   favorites: Array<{ seriesId: number; series: SeriesMini | null }>;
+  recentReviews: ProfileReview[];
+}
+
+export interface ProfileReview {
+  id: number;
+  title: string;
+  body: string;
+  verdict: 'RECOMMENDED' | 'MIXED' | 'SKIP' | null;
+  language: string;
+  status: 'DRAFT' | 'PUBLISHED' | 'HIDDEN';
+  isFeatured: boolean;
+  helpfulCount: number;
+  unhelpfulCount: number;
+  hasSpoilers: boolean;
+  publishedAt: string | null;
+  updatedAt: string;
+  series: {
+    id: number;
+    title: string;
+    imageUrl: string | null;
+    year: number | null;
+  } | null;
 }
 
 interface UserComment {
@@ -245,7 +269,7 @@ function SeriesCard({
 export function ProfileClient() {
   const message = useMessage();
   const { data: session, status } = useSession();
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
 
   const [data, setData] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -765,6 +789,11 @@ export function ProfileClient() {
       value: stats.comments,
       label: t('profile.statComments'),
     },
+    {
+      icon: <ReadOutlined />,
+      value: stats.reviews,
+      label: t('profile.statReviews'),
+    },
   ];
 
   return (
@@ -1197,6 +1226,93 @@ export function ProfileClient() {
             </div>
           </section>
         )}
+
+        <section className="profile-section">
+          <div className="profile-section__header">
+            <ReadOutlined className="profile-section__header-icon" />
+            {t('profile.sectionMyReviews')}
+            <span className="profile-section__header-count">
+              ({data.recentReviews.length})
+            </span>
+          </div>
+          {data.recentReviews.length === 0 ? (
+            <Empty
+              description={t('profile.reviewEmptyText')}
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+            />
+          ) : (
+            <div className="profile-reviews-list">
+              {data.recentReviews.map((review) => (
+                <Link
+                  key={review.id}
+                  href={
+                    review.series
+                      ? `/series/${review.series.id}#series-section-reviews`
+                      : '#'
+                  }
+                  className="profile-review-card"
+                >
+                  <div className="profile-review-card__head">
+                    <h4 className="profile-review-card__series">
+                      {review.series?.title ?? '—'}
+                      {review.series?.year && (
+                        <span className="profile-review-card__year">
+                          {' '}
+                          ({review.series.year})
+                        </span>
+                      )}
+                    </h4>
+                    <div className="profile-review-card__badges">
+                      {review.isFeatured && (
+                        <Tag color="gold" icon={<StarOutlined />}>
+                          ★
+                        </Tag>
+                      )}
+                      {review.status === 'DRAFT' && (
+                        <Tag color="default">
+                          {t('profile.reviewStatusDraft')}
+                        </Tag>
+                      )}
+                      {review.status === 'HIDDEN' && (
+                        <Tag color="warning">
+                          {t('profile.reviewStatusHidden')}
+                        </Tag>
+                      )}
+                      {review.verdict === 'RECOMMENDED' && (
+                        <Tag color="green">
+                          {t('reviews.verdictRecommended')}
+                        </Tag>
+                      )}
+                      {review.verdict === 'MIXED' && (
+                        <Tag color="gold">{t('reviews.verdictMixed')}</Tag>
+                      )}
+                      {review.verdict === 'SKIP' && (
+                        <Tag color="red">{t('reviews.verdictSkip')}</Tag>
+                      )}
+                    </div>
+                  </div>
+                  <div className="profile-review-card__title">
+                    {review.title}
+                  </div>
+                  <p className="profile-review-card__excerpt">
+                    {review.body.slice(0, 160)}
+                    {review.body.length > 160 ? '…' : ''}
+                  </p>
+                  <div className="profile-review-card__footer">
+                    <span>
+                      {new Date(
+                        review.publishedAt ?? review.updatedAt
+                      ).toLocaleDateString(locale)}
+                    </span>
+                    {review.helpfulCount > 0 && (
+                      <span>👍 {review.helpfulCount}</span>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </section>
 
         {data.favorites.length > 0 && (
           <section className="profile-section">

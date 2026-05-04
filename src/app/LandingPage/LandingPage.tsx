@@ -89,17 +89,24 @@ export function LandingPage({ stats }: LandingPageProps) {
     <div className="landing">
       {/* ── Hero ── */}
       <section className="landing__hero">
+        {/* Artwork visible solo en mobile, arriba del titulo */}
+        <div
+          className="landing__hero-visual landing__hero-visual--mobile"
+          aria-hidden
+        >
+          <Image
+            src="/images/landing.png"
+            alt=""
+            width={720}
+            height={480}
+            quality={85}
+            priority
+            className="landing__hero-image"
+          />
+          <div className="landing__hero-glow" />
+        </div>
+
         <div className="landing__hero-content">
-          <div className="landing__logo">
-            <Image
-              src="/images/landing.png"
-              alt="MundoBL"
-              width={100}
-              height={100}
-              priority
-              quality={85}
-            />
-          </div>
           <h1 className="landing__title">MundoBL</h1>
           <p className="landing__subtitle">{t('landing.subtitle')}</p>
           <p className="landing__description">{t('landing.description')}</p>
@@ -137,7 +144,10 @@ export function LandingPage({ stats }: LandingPageProps) {
           </div>
         </div>
 
-        <div className="landing__hero-visual" aria-hidden>
+        <div
+          className="landing__hero-visual landing__hero-visual--desktop"
+          aria-hidden
+        >
           <Image
             src="/images/landing.png"
             alt=""

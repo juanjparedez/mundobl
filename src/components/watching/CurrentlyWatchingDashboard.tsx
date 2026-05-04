@@ -352,14 +352,15 @@ export function CurrentlyWatchingDashboard() {
                         </Button>
                       </Link>
                       {isAdminOrMod && (
-                        <Link href={`/admin/series/${item.series.id}/editar`}>
-                          <Button
-                            icon={<EditOutlined />}
-                            title={t('watchingDashboard.editButton')}
-                          >
-                            {t('watchingDashboard.editButton')}
-                          </Button>
-                        </Link>
+                        <Tooltip title={t('watchingDashboard.editButton')}>
+                          <Link href={`/admin/series/${item.series.id}/editar`}>
+                            <Button
+                              icon={<EditOutlined />}
+                              shape="circle"
+                              aria-label={t('watchingDashboard.editButton')}
+                            />
+                          </Link>
+                        </Tooltip>
                       )}
                     </div>
                   </div>
