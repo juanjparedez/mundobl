@@ -5,6 +5,13 @@ Todas las versiones notables del proyecto se documentan aqui.
 ## Proximo deploy
 
 ### Features
+- Panel de administracion de changelog en `/admin/changelog`
+- CRUD completo de novedades desde DB (`/api/admin/changelog`)
+- Endpoint publico de changelog (`/api/changelog`) ahora prioriza DB y usa fallback a archivo
+- Boton para importar changelog historico desde `CHANGELOG.md` al panel admin
+- Feedback: nueva pestaña "Mis solicitudes" para seguimiento de casos del usuario
+- Feedback: hilo de comentarios por solicitud con carga lazy y publicacion inline
+- Sidebar admin: acceso directo a "Novedades" agregado en navegacion lateral
 - Mapeo completo de paises del mundo (~200) con codigos ISO para banderas automaticas
 - Script de seed para insertar todos los paises en la DB (`scripts/seed-all-countries.ts`)
 - Rediseno de lista de episodios: layout compacto tipo tabla con seleccion masiva
@@ -14,6 +21,9 @@ Todas las versiones notables del proyecto se documentan aqui.
 - Categorias de rating eliminadas: Ritmo, Actuacion, Originalidad
 
 ### Fixes
+- Notificaciones movidas desde el acceso separado del sidebar al panel de configuracion de usuario
+- Correciones de i18n en admin/feedback para nuevas claves de navegacion y seguimiento
+- Ajustes de tipado y validaciones para soporte de comentarios en feature requests
 - Fix: dialogo "Deseas abandonar el sitio" al editar temporadas (beforeunload falso positivo)
 
 ### Seguridad
