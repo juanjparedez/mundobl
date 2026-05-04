@@ -1526,6 +1526,7 @@ type TranslationShape = {
     featuredTag: string;
     voteHelpful: string;
     voteUnhelpful: string;
+    spotlightReadMore: string;
     voteLoginRequired: string;
     voteError: string;
     savedDraft: string;
@@ -3179,6 +3180,7 @@ const es: TranslationShape = {
     featuredTag: 'Destacada',
     voteHelpful: 'Útil',
     voteUnhelpful: 'No útil',
+    spotlightReadMore: 'Ver todas las reseñas',
     voteLoginRequired: 'Iniciá sesión para votar.',
     voteError: 'Error al votar',
     savedDraft: 'Borrador guardado',
@@ -4819,6 +4821,7 @@ const en: TranslationShape = {
     featuredTag: 'Featured',
     voteHelpful: 'Helpful',
     voteUnhelpful: 'Not helpful',
+    spotlightReadMore: 'See all reviews',
     voteLoginRequired: 'Sign in to vote.',
     voteError: 'Error voting',
     savedDraft: 'Draft saved',
