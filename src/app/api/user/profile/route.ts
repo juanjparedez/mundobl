@@ -83,6 +83,8 @@ export async function GET(request: NextRequest) {
       byTypeRaw,
       totalEpisodesRaw,
       heatmapRaw,
+      reviewsCount,
+      recentReviews,
     ] = await Promise.all([
       // Basic user info
       prisma.user.findUnique({
@@ -321,6 +323,38 @@ export async function GET(request: NextRequest) {
           AND vs."updatedAt" >= NOW() - INTERVAL '84 days'
         ORDER BY day
       `,
+
+      // Total de reseñas del usuario (cualquier estado)
+      prisma.review.count({ where: { userId } }),
+
+      // Ultimas 12 reseñas para mostrar en el perfil
+      prisma.review.findMany({
+        where: { userId },
+        orderBy: [{ updatedAt: 'desc' }],
+        take: 12,
+        select: {
+          id: true,
+          title: true,
+          body: true,
+          verdict: true,
+          language: true,
+          status: true,
+          isFeatured: true,
+          helpfulCount: true,
+          unhelpfulCount: true,
+          hasSpoilers: true,
+          publishedAt: true,
+          updatedAt: true,
+          series: {
+            select: {
+              id: true,
+              title: true,
+              imageUrl: true,
+              year: true,
+            },
+          },
+        },
+      }),
     ]);
 
     if (!user) {
@@ -433,6 +467,7 @@ export async function GET(request: NextRequest) {
           avgRatingRaw[0]?.avg_rating != null
             ? Math.round(parseFloat(avgRatingRaw[0].avg_rating) * 10) / 10
             : null,
+        reviews: reviewsCount,
         topRatedSeries: topRatedSeriesRaw.map((r) => ({
           seriesId: r.series_id,
           title: r.title,
@@ -456,6 +491,21 @@ export async function GET(request: NextRequest) {
       favorites: favorites.map((f) => ({
         seriesId: f.seriesId,
         series: f.series,
+      })),
+      recentReviews: recentReviews.map((r) => ({
+        id: r.id,
+        title: r.title,
+        body: r.body,
+        verdict: r.verdict,
+        language: r.language,
+        status: r.status,
+        isFeatured: r.isFeatured,
+        helpfulCount: r.helpfulCount,
+        unhelpfulCount: r.unhelpfulCount,
+        hasSpoilers: r.hasSpoilers,
+        publishedAt: r.publishedAt,
+        updatedAt: r.updatedAt,
+        series: r.series,
       })),
     });
   } catch (error) {

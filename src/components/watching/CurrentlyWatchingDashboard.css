@@ -107,6 +107,11 @@
 
 .watching-card__action-link {
   flex: 1;
+  min-width: 140px;
+}
+
+.watching-card__action-link .ant-btn {
+  width: 100%;
 }
 
 .watching-card__last-watched {
@@ -118,8 +123,14 @@
 
 .watching-card__actions {
   display: flex;
-  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  gap: var(--spacing-xs, 8px);
   margin-top: 12px;
+  align-items: center;
+}
+
+.watching-card__mark-btn {
+  flex-shrink: 0;
 }
 
 @media (max-width: 768px) {

@@ -89,6 +89,11 @@
   flex-shrink: 0;
 }
 
+/* Variante mobile: oculta en desktop, full-width en mobile */
+.landing__hero-visual--mobile {
+  display: none;
+}
+
 .landing__hero-image {
   width: 100%;
   height: auto;
@@ -270,8 +275,40 @@
     justify-content: center;
   }
 
-  .landing__hero-visual {
+  /* En mobile ocultamos la visual de desktop... */
+  .landing__hero-visual--desktop {
     display: none;
+  }
+
+  /* ...y mostramos la version pensada para mobile arriba del titulo. */
+  .landing__hero-visual--mobile {
+    display: block;
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .landing__hero-visual--mobile .landing__hero-image {
+    width: 100%;
+    height: auto;
+    border-radius: 18px;
+    object-fit: cover;
+    aspect-ratio: 16 / 10;
+  }
+
+  .landing__hero-visual--mobile .landing__hero-glow {
+    inset: 0;
+    border-radius: 18px;
+    background: radial-gradient(
+      ellipse at center,
+      rgba(197, 123, 183, 0.35) 0%,
+      transparent 70%
+    );
+  }
+
+  .landing__hero {
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg) var(--spacing-md) var(--spacing-md);
   }
 }
 
