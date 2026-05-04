@@ -42,6 +42,11 @@
 - [x] View Transitions API en catalogo
 - [x] PWA: Service Worker + offline indicator + push notifications opt-in
 - [x] Observaciones privadas en series (reviews internas)
+- [x] Observaciones privadas en series (reviews internas)
+- [x] Sistema de tracking de feedback (bugs, ideas, features): CRUD completo para usuarios y admin (editar, replicar, comentar, eliminar, cambiar estado, asignar)
+- [x] Noticias BL - Fase 1 completa: schema, migraciones, admin CRUD, AI generate con Gemini, página pública /noticias
+- [x] Acciones rápidas en detalle de serie (ir a reseñas, ir a comentarios)
+- [x] PWA: arreglo de manifest (nombre/descripción cortos), eliminación de head.tsx que causaba manifest 404
 
 ---
 
@@ -53,7 +58,16 @@ Flor como admin podria gestionar recomendaciones.
 - Basado en generos, tags, o curado manualmente por admin
 
 ### Agente IA de noticias BL/GL (evaluado)
+### Agente IA de noticias BL/GL — Fase 1 COMPLETADA ✅
 
+Lo completado en Fase 1:
+- Modelo `News` en Prisma con `NewsStatus`, `NewsTag`, relaciones con `Series` y `User`
+- Admin `/admin/noticias`: tabla, filtros por status, search, crear/editar/eliminar, preview
+- API `POST /api/admin/news/ai-generate`: Gemini genera summary ≤280 palabras desde URL+texto
+- Página pública `/noticias`: grid con cards, search, paginación, solo PUBLISHED
+- APIs: `GET/POST/PATCH/DELETE /api/admin/news` y `GET /api/news`
+
+### Agente IA de noticias BL/GL (evaluado)
 Estado: idea viable y alineada con el producto, pero conviene implementarla por fases para controlar riesgo legal/editorial.
 
 #### Impacto esperado
@@ -85,7 +99,16 @@ Estado: idea viable y alineada con el producto, pero conviene implementarla por 
 Resultado: valor visible rapido con bajo riesgo operativo.
 
 ##### Fase 2 - Ingestion semiautomatica (1 semana)
+##### Fase 2 - Contenido enriquecido (siguiente a implementar)
 
+- Editor Markdown con preview en vivo para campo `summary` en admin noticias (branch `wip/markdown-editor` ya tiene base)
+	- Deps instaladas: `@tiptap/react`, `@tiptap/starter-kit`, `markdown-it`, `sharp`
+	- Componente `src/components/admin/MarkdownEditor/MarkdownEditor.tsx` creado pero con errores de tipos pendientes
+	- Problemas a resolver: Form.Item render prop pattern, Tabs API de Ant Design 6, tipo `MDIt`
+- Upload de imagen de portada para noticias (Supabase Storage, crop 16:9)
+- Tags UI mejorada con auto-suggest
+
+##### Fase 3 - Ingestion semiautomatica (1 semana)
 - Job diario de ingestion RSS a borradores (`DRAFT`) para fuentes permitidas.
 - Deteccion de duplicados por URL canonica + hash de titulo.
 - Filtrado BL/GL/Dorama por keywords + lista blanca de dominios.
