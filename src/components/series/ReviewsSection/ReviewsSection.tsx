@@ -37,6 +37,7 @@ import {
 import { useSession } from 'next-auth/react';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { useMessage } from '@/hooks/useMessage';
+import { SpoilerGate } from '@/components/common/SpoilerGate/SpoilerGate';
 import { SUPPORTED_LOCALES, LOCALE_LABELS } from '@/i18n/config';
 import './ReviewsSection.css';
 
@@ -76,6 +77,9 @@ export interface ReviewData {
 
 interface ReviewsSectionProps {
   seriesId: number;
+  // Si la serie ya esta VISTA o ABANDONADA, no aplicamos el gate
+  // sobre reseñas con spoilers. Default: false (asumir no vista).
+  seriesWatched?: boolean;
 }
 
 interface FormValues {
@@ -104,7 +108,10 @@ const EMPTY_FORM: FormValues = {
   castingRating: null,
 };
 
-export function ReviewsSection({ seriesId }: ReviewsSectionProps) {
+export function ReviewsSection({
+  seriesId,
+  seriesWatched = false,
+}: ReviewsSectionProps) {
   const { data: session } = useSession();
   const { locale, t } = useLocale();
   const message = useMessage();
@@ -505,7 +512,13 @@ export function ReviewsSection({ seriesId }: ReviewsSectionProps) {
                   )}
                 </span>
               </div>
-              <ReviewBody review={review} renderVerdict={null} />
+              <SpoilerGate
+                hide={review.hasSpoilers && !seriesWatched}
+                cacheKey={`review-${review.id}`}
+                reason={t('spoilerGate.reasonReviewSpoilers')}
+              >
+                <ReviewBody review={review} renderVerdict={null} />
+              </SpoilerGate>
               <div className="review-card__footer">
                 <span>
                   <ClockCircleOutlined />{' '}

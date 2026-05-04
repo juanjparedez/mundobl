@@ -45,6 +45,7 @@ model User {
   notifications   Notification[]
   reviews         Review[]
   reviewVotes     ReviewVote[]
+  episodeNotes    EpisodeNote[]
 }
 
 model Account {
@@ -232,8 +233,28 @@ model Episode {
   season     Season       @relation(fields: [seasonId], references: [id], onDelete: Cascade)
   viewStatus ViewStatus[] @relation("EpisodeViewStatus")
   comments   Comment[]
+  notes      EpisodeNote[]
 
   @@unique([seasonId, episodeNumber])
+}
+
+// Notas privadas del usuario sobre un episodio.
+// A diferencia de Comment, son SOLO visibles para el autor: pensadas
+// para registrar reacciones personales ("aca llore", "rever esta escena")
+// sin exponerlas como comentario publico.
+model EpisodeNote {
+  id        Int      @id @default(autoincrement())
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  episodeId Int
+  episode   Episode @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, episodeId])
+  @@index([userId, updatedAt])
 }
 
 // ============================================

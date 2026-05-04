@@ -1,0 +1,43 @@
+.spoiler-gate {
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  min-height: 60px;
+}
+
+.spoiler-gate__content {
+  filter: blur(8px);
+  user-select: none;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.spoiler-gate__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs, 8px);
+  padding: var(--spacing-sm, 12px);
+  background: rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(2px);
+  text-align: center;
+  z-index: 1;
+}
+
+[data-theme='dark'] .spoiler-gate__overlay {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.spoiler-gate__icon {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+}
+
+.spoiler-gate__reason {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
