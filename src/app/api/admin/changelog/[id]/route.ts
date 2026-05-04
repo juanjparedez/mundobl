@@ -18,7 +18,12 @@ export async function PATCH(
     }
 
     const body = await request.json();
-    const { version, category, body: itemBody, sortOrder } = body as {
+    const {
+      version,
+      category,
+      body: itemBody,
+      sortOrder,
+    } = body as {
       version?: string;
       category?: string | null;
       body?: string;

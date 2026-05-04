@@ -74,7 +74,11 @@ export async function POST(
     const body = await request.json();
     const { body: commentBody } = body as { body: string };
 
-    if (!commentBody || typeof commentBody !== 'string' || !commentBody.trim()) {
+    if (
+      !commentBody ||
+      typeof commentBody !== 'string' ||
+      !commentBody.trim()
+    ) {
       return NextResponse.json(
         { error: 'El comentario no puede estar vacío' },
         { status: 400 }
@@ -121,7 +125,11 @@ export async function POST(
     });
 
     // Si el comentario lo agrega admin/mod, notificar al dueño de la solicitud
-    if (isAdminOrMod && featureRequest.userId && featureRequest.userId !== authResult.userId!) {
+    if (
+      isAdminOrMod &&
+      featureRequest.userId &&
+      featureRequest.userId !== authResult.userId!
+    ) {
       const { notifyUser } = await import('@/lib/notifications');
       await notifyUser({
         userId: featureRequest.userId,
