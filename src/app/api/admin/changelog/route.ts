@@ -33,12 +33,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const {
       version,
+      versionLabel,
       category,
       body: itemBody,
       sortOrder,
       importFromFile,
     } = body as {
       version: string;
+      versionLabel?: string;
       category?: string;
       body: string;
       sortOrder?: number;
@@ -99,9 +101,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const trimmedVersion = version.trim();
+    const trimmedLabel = versionLabel?.trim() || null;
+
+    // Si vino un label, propagarlo a todos los items existentes de la
+    // misma version para mantener el grupo coherente.
+    if (trimmedLabel) {
+      await prisma.changelogItem.updateMany({
+        where: { version: trimmedVersion },
+        data: { versionLabel: trimmedLabel },
+      });
+    }
+
     const item = await prisma.changelogItem.create({
       data: {
-        version: version.trim(),
+        version: trimmedVersion,
+        versionLabel: trimmedLabel,
         category: category?.trim() || null,
         body: itemBody.trim(),
         sortOrder: sortOrder ?? 0,
