@@ -118,6 +118,20 @@ Resultado: automatizacion robusta y mantenible.
 - Este roadmap reutiliza piezas existentes del repo: moderacion tipo `resenas`, notificaciones in-app, y patron admin tabla+modal.
 - Priorizar API route interna para MVP; Edge Function queda para fase 3.
 
+### Quick wins UX (Mayo 2026)
+
+- Landing:
+	- forzar imagen hero local sin optimizacion de Next para evitar fallos en mobile (caso `image.bin` / render roto),
+	- refresco de cache de service worker al desplegar cambios de assets.
+- Detalle de serie:
+	- rediseñar el bloque inferior de acciones (hoy solo compartir) para hacerlo circular/compacto y sumar acciones de alto valor:
+		- suscribirse a notificaciones de novedades de esa serie,
+		- marcar/seguir estado rapidamente,
+		- acceso directo a reseñas/comentarios.
+- Admin idiomas:
+	- auditoria de i18n: confirmar cobertura completa de labels/mensajes y detectar cadenas hardcodeadas pendientes.
+	- checklist: `title/subtitle`, tabla, acciones, modal, validaciones, toasts, estados vacios, errores API.
+
 ---
 
 ## Largo plazo
