@@ -18,6 +18,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   ImportOutlined,
+  ThunderboltOutlined,
 } from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -50,7 +51,68 @@ export default function ChangelogAdminPage() {
   const [editingItem, setEditingItem] = useState<ChangelogItem | null>(null);
   const [saving, setSaving] = useState(false);
   const [importing, setImporting] = useState(false);
+  const [aiBusy, setAiBusy] = useState<'polish' | 'category' | null>(null);
   const [form] = Form.useForm();
+
+  const callChangelogAi = async (
+    action: 'polish' | 'suggest-category'
+  ): Promise<{ text?: string; category?: string }> => {
+    const body = (form.getFieldValue('body') as string | undefined)?.trim();
+    if (!body) {
+      message.warning(t('adminChangelog.aiNeedBody'));
+      throw new Error('no body');
+    }
+    const res = await fetch('/api/admin/changelog/ai-assist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action, body }),
+    });
+    const data = (await res.json()) as {
+      error?: string;
+      text?: string;
+      category?: string;
+    };
+    if (!res.ok) {
+      throw new Error(data.error || t('adminChangelog.aiError'));
+    }
+    return data;
+  };
+
+  const handleAiPolish = async () => {
+    setAiBusy('polish');
+    try {
+      const data = await callChangelogAi('polish');
+      if (data.text) {
+        form.setFieldValue('body', data.text);
+        message.success(t('adminChangelog.aiPolished'));
+      }
+    } catch (error) {
+      if (error instanceof Error && error.message !== 'no body') {
+        message.error(error.message);
+      }
+    } finally {
+      setAiBusy(null);
+    }
+  };
+
+  const handleAiSuggestCategory = async () => {
+    setAiBusy('category');
+    try {
+      const data = await callChangelogAi('suggest-category');
+      if (data.category) {
+        form.setFieldValue('category', data.category);
+        message.success(t('adminChangelog.aiCategorySuggested'));
+      } else {
+        message.info(t('adminChangelog.aiCategoryNone'));
+      }
+    } catch (error) {
+      if (error instanceof Error && error.message !== 'no body') {
+        message.error(error.message);
+      }
+    } finally {
+      setAiBusy(null);
+    }
+  };
 
   const loadItems = useCallback(async () => {
     setLoading(true);
@@ -374,6 +436,26 @@ export default function ChangelogAdminPage() {
             >
               <Input.TextArea rows={3} />
             </Form.Item>
+
+            <Space wrap size="small" style={{ marginBottom: 16 }}>
+              <Button
+                size="small"
+                icon={<ThunderboltOutlined />}
+                loading={aiBusy === 'polish'}
+                disabled={Boolean(aiBusy)}
+                onClick={handleAiPolish}
+              >
+                {t('adminChangelog.aiPolish')}
+              </Button>
+              <Button
+                size="small"
+                loading={aiBusy === 'category'}
+                disabled={Boolean(aiBusy)}
+                onClick={handleAiSuggestCategory}
+              >
+                {t('adminChangelog.aiSuggestCategory')}
+              </Button>
+            </Space>
 
             <Form.Item
               name="sortOrder"

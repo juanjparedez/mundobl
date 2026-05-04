@@ -88,6 +88,8 @@ interface FormValues {
   body: string;
   verdict: Verdict | null;
   language: string;
+  // Idiomas adicionales a los que se debe traducir (Gemini) al guardar.
+  translateTo: string[];
   hasSpoilers: boolean;
   status: Extract<Status, 'DRAFT' | 'PUBLISHED'>;
   plotRating: number | null;
@@ -101,6 +103,7 @@ const EMPTY_FORM: FormValues = {
   body: '',
   verdict: null,
   language: 'es',
+  translateTo: [],
   hasSpoilers: false,
   status: 'PUBLISHED',
   plotRating: null,
@@ -196,6 +199,9 @@ export function ReviewsSection({
       body: review.body,
       verdict: review.verdict,
       language: review.language,
+      // Editar una reseña existente NO re-traduce automáticamente —
+      // las traducciones ya viven como reseñas independientes.
+      translateTo: [],
       hasSpoilers: review.hasSpoilers,
       status: review.status === 'HIDDEN' ? 'PUBLISHED' : review.status,
       plotRating: review.plotRating,
@@ -359,11 +365,29 @@ export function ReviewsSection({
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error || 'Error');
       }
+      const data = (await res.json()) as {
+        translations?: Array<{ language: string }>;
+        translationErrors?: Array<{ language: string; error: string }>;
+      };
       message.success(
         values.status === 'DRAFT'
           ? t('reviews.savedDraft')
           : t('reviews.publishedSuccess')
       );
+      if (data.translations && data.translations.length > 0) {
+        message.success(
+          interpolateMessage(t('reviews.translatedSuccess'), {
+            n: String(data.translations.length),
+          })
+        );
+      }
+      if (data.translationErrors && data.translationErrors.length > 0) {
+        for (const errItem of data.translationErrors) {
+          message.warning(
+            `${LOCALE_LABELS[errItem.language as never] ?? errItem.language}: ${errItem.error}`
+          );
+        }
+      }
       closeModal();
       await fetchReviews();
     } catch (error) {
@@ -760,6 +784,25 @@ export function ReviewsSection({
               />
             </Form.Item>
           </div>
+
+          {!editingId && (
+            <Form.Item
+              name="translateTo"
+              label={t('reviews.fieldTranslateTo')}
+              tooltip={t('reviews.translateToHint')}
+            >
+              <Select
+                mode="multiple"
+                allowClear
+                placeholder={t('reviews.translateToPlaceholder')}
+                maxTagCount="responsive"
+                options={SUPPORTED_LOCALES.map((code) => ({
+                  value: code,
+                  label: LOCALE_LABELS[code],
+                }))}
+              />
+            </Form.Item>
+          )}
 
           <div className="reviews-form__row reviews-form__row--ratings">
             <Form.Item name="plotRating" label={t('reviews.ratingPlot')}>
