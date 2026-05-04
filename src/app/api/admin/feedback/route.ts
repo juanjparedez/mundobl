@@ -70,16 +70,14 @@ export async function PATCH(request: NextRequest) {
     const { id, status, priority, assignedToId } = body;
 
     if (!id) {
-      return NextResponse.json(
-        { error: 'ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'ID is required' }, { status: 400 });
     }
 
     const updateData: any = {};
     if (status) updateData.status = status;
     if (priority) updateData.priority = priority;
-    if (assignedToId !== undefined) updateData.assignedToId = assignedToId || null;
+    if (assignedToId !== undefined)
+      updateData.assignedToId = assignedToId || null;
 
     const updated = await prisma.featureRequest.update({
       where: { id: parseInt(id, 10) },
