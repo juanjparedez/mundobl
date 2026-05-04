@@ -9,6 +9,7 @@ import { SeasonsList } from '@/components/series/SeasonsList';
 import { SeriesInfo } from '@/components/series/SeriesInfo';
 import { RatingSection } from '@/components/series/RatingSection';
 import { CommentsSection } from '@/components/series/CommentsSection';
+import { ReviewsSection } from '@/components/series/ReviewsSection/ReviewsSection';
 import { ViewStatusToggle } from '@/components/series/ViewStatusToggle';
 import { SeriesDetailClient } from '@/components/series/SeriesDetailClient';
 import { SeriesContent } from '@/components/series/SeriesContent/SeriesContent';
@@ -194,6 +195,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
               existingRatings={serie.ratings || []}
             />
           }
+          reviewsSection={<ReviewsSection seriesId={serie.id} />}
           commentsSection={
             <CommentsSection
               seriesId={serie.id}
