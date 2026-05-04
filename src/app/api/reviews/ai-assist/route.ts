@@ -106,7 +106,11 @@ export async function POST(request: NextRequest) {
 
     if (!checkRateLimit(authResult.userId)) {
       return NextResponse.json(
-        { error: 'Demasiadas solicitudes. Esperá un momento.' },
+        {
+          error:
+            'Estas usando el asistente muy rapido. Limite local: 5 por minuto. Esperá unos segundos.',
+          source: 'local-throttle',
+        },
         { status: 429 }
       );
     }

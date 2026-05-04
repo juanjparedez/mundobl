@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Alert,
   Avatar,
@@ -37,6 +37,7 @@ import {
 import { useSession } from 'next-auth/react';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { useMessage } from '@/hooks/useMessage';
+import { interpolateMessage } from '@/lib/i18n-format';
 import { SpoilerGate } from '@/components/common/SpoilerGate/SpoilerGate';
 import { SUPPORTED_LOCALES, LOCALE_LABELS } from '@/i18n/config';
 import './ReviewsSection.css';
@@ -132,6 +133,19 @@ export function ReviewsSection({
   } | null>(null);
   const [spoilerWarning, setSpoilerWarning] = useState<string[] | null>(null);
   const [translateTo, setTranslateTo] = useState<string>('en');
+  // Cooldown disparado por 429 (en segundos restantes; 0 = sin cooldown).
+  const [aiCooldown, setAiCooldown] = useState(0);
+  // Cache simple de respuestas IA por (action + body + lang + target).
+  const aiCacheRef = useRef<Map<string, unknown>>(new Map());
+
+  // Tick del countdown de cooldown.
+  useEffect(() => {
+    if (aiCooldown <= 0) return;
+    const interval = setInterval(() => {
+      setAiCooldown((s) => Math.max(0, s - 1));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [aiCooldown]);
 
   const currentUserId = session?.user?.id;
 
@@ -205,6 +219,14 @@ export function ReviewsSection({
     action: AiAction,
     payload: Record<string, unknown>
   ): Promise<unknown> => {
+    if (aiCooldown > 0) {
+      throw new Error(t('reviews.aiCooldownActive'));
+    }
+    // Dedupe: si la misma combinacion ya devolvio resultado, lo reusamos.
+    const cacheKey = JSON.stringify({ action, ...payload });
+    const cached = aiCacheRef.current.get(cacheKey);
+    if (cached !== undefined) return cached;
+
     setAiBusy(action);
     try {
       const res = await fetch('/api/reviews/ai-assist', {
@@ -212,13 +234,18 @@ export function ReviewsSection({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action, ...payload }),
       });
-      const data = (await res.json()) as { error?: string } & Record<
-        string,
-        unknown
-      >;
+      const data = (await res.json()) as {
+        error?: string;
+        source?: string;
+      } & Record<string, unknown>;
       if (!res.ok) {
+        if (res.status === 429) {
+          // Throttle local = 60s, Gemini = 60s tambien (ventana por minuto).
+          setAiCooldown(60);
+        }
         throw new Error(data.error || 'Error');
       }
+      aiCacheRef.current.set(cacheKey, data);
       return data;
     } finally {
       setAiBusy(null);
@@ -584,7 +611,7 @@ export function ReviewsSection({
                   type="link"
                   icon={<ThunderboltOutlined />}
                   loading={aiBusy === 'suggest-title'}
-                  disabled={Boolean(aiBusy)}
+                  disabled={Boolean(aiBusy) || aiCooldown > 0}
                   onClick={handleAiSuggestTitle}
                 >
                   {t('reviews.aiSuggestTitle')}
@@ -610,7 +637,7 @@ export function ReviewsSection({
                 size="small"
                 icon={<ThunderboltOutlined />}
                 loading={aiBusy === 'polish'}
-                disabled={Boolean(aiBusy)}
+                disabled={Boolean(aiBusy) || aiCooldown > 0}
                 onClick={handleAiPolish}
               >
                 {t('reviews.aiPolish')}
@@ -619,7 +646,7 @@ export function ReviewsSection({
                 size="small"
                 icon={<WarningOutlined />}
                 loading={aiBusy === 'spoiler-check'}
-                disabled={Boolean(aiBusy)}
+                disabled={Boolean(aiBusy) || aiCooldown > 0}
                 onClick={handleAiSpoilerCheck}
               >
                 {t('reviews.aiSpoilerCheck')}
@@ -639,7 +666,7 @@ export function ReviewsSection({
                   size="small"
                   icon={<TranslationOutlined />}
                   loading={aiBusy === 'translate'}
-                  disabled={Boolean(aiBusy)}
+                  disabled={Boolean(aiBusy) || aiCooldown > 0}
                   onClick={handleAiTranslate}
                 >
                   {t('reviews.aiTranslate')}
@@ -647,7 +674,11 @@ export function ReviewsSection({
               </Space.Compact>
             </Space>
             <span className="reviews-form__ai-meta">
-              {t('reviews.aiPoweredBy')}
+              {aiCooldown > 0
+                ? interpolateMessage(t('reviews.aiCooldownMessage'), {
+                    s: String(aiCooldown),
+                  })
+                : t('reviews.aiPoweredBy')}
             </span>
           </div>
 
