@@ -2,10 +2,13 @@
 // Sin SDK extra: fetch directo para mantener bundle chico.
 // Cadena de modelos: probamos en orden y si uno devuelve 429/5xx
 // caemos al siguiente. Override via env GEMINI_MODELS (csv).
+// gemini-2.0-flash quedo deprecado para cuentas nuevas (Q2 2026).
+// Empezamos con 2.5-flash que sigue siendo free y robusto, y caemos a
+// flash-latest (alias) y flash-lite si hay 429/5xx.
 const DEFAULT_MODELS = [
-  'gemini-2.0-flash',
   'gemini-2.5-flash',
   'gemini-flash-latest',
+  'gemini-2.5-flash-lite',
 ];
 
 function getModels(): string[] {
