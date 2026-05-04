@@ -232,6 +232,10 @@ type TranslationShape = {
     productionCompanies: string;
     languages: string;
     adminStats: string;
+    adminHome: string;
+    groupCatalog: string;
+    groupCommunity: string;
+    groupSystem: string;
     info: string;
     logs: string;
     changelog: string;
@@ -1825,6 +1829,10 @@ const es: TranslationShape = {
     productionCompanies: 'Productoras',
     languages: 'Idiomas',
     adminStats: 'Estadísticas',
+    adminHome: 'Panel principal',
+    groupCatalog: 'Catálogo',
+    groupCommunity: 'Comunidad',
+    groupSystem: 'Sistema',
     info: 'Info',
     logs: 'Logs',
     changelog: 'Novedades',
@@ -3476,6 +3484,10 @@ const en: TranslationShape = {
     productionCompanies: 'Studios',
     languages: 'Languages',
     adminStats: 'Stats',
+    adminHome: 'Dashboard',
+    groupCatalog: 'Catalog',
+    groupCommunity: 'Community',
+    groupSystem: 'System',
     info: 'Info',
     logs: 'Logs',
     changelog: 'Changelog',
