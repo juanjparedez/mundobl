@@ -24,6 +24,7 @@ import {
 } from '@ant-design/icons';
 import { AdminPageHero } from '@/components/admin/AdminPageHero/AdminPageHero';
 import { AdminTableToolbar } from '@/components/admin/AdminTableToolbar/AdminTableToolbar';
+import { MarkdownEditor } from '@/components/admin/MarkdownEditor/MarkdownEditor';
 import { useMessage } from '@/hooks/useMessage';
 import './noticias-admin.css';
 
@@ -543,10 +544,14 @@ export function NoticiasClient() {
             name="summary"
             rules={[{ required: true, message: 'El resumen es requerido' }]}
           >
-            <Input.TextArea
-              rows={6}
-              placeholder="Resumen de la noticia (soporta Markdown básico)"
-            />
+            {({ value, onChange }) => (
+              <MarkdownEditor
+                value={value || ''}
+                onChange={onChange}
+                rows={8}
+                placeholder="Resumen de la noticia (soporta Markdown)"
+              />
+            )}
           </Form.Item>
 
           <div className="noticias-admin__form-row">

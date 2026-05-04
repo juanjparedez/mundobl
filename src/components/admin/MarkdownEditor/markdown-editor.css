@@ -1,0 +1,126 @@
+.markdown-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.markdown-editor__toolbar {
+  padding: 0.5rem;
+  background: var(--color-bg-secondary);
+  border-radius: 4px 4px 0 0;
+}
+
+.markdown-editor__textarea {
+  width: 100%;
+  padding: 1rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  border: 1px solid var(--color-border);
+  border-radius: 0 0 4px 4px;
+  background: var(--color-bg-container);
+  color: var(--color-text);
+  resize: vertical;
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+  }
+}
+
+.markdown-editor__preview {
+  min-height: 12rem;
+  padding: 1rem;
+  background: var(--color-bg-container);
+  border: 1px solid var(--color-border);
+  border-radius: 0 0 4px 4px;
+  font-size: 1rem;
+  line-height: 1.6;
+
+  /* Estilos para el contenido markdown renderizado */
+  h1, h2, h3, h4, h5, h6 {
+    margin: 1rem 0 0.5rem;
+    font-weight: 600;
+  }
+
+  h1 { font-size: 1.75rem; }
+  h2 { font-size: 1.5rem; }
+  h3 { font-size: 1.25rem; }
+
+  p {
+    margin: 0.5rem 0;
+  }
+
+  ul, ol {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+  }
+
+  li {
+    margin: 0.25rem 0;
+  }
+
+  code {
+    background: rgba(99, 102, 241, 0.1);
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+  }
+
+  pre {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin: 0.5rem 0;
+
+    code {
+      background: none;
+      padding: 0;
+      color: #a0aec0;
+    }
+  }
+
+  blockquote {
+    border-left: 4px solid var(--color-primary);
+    padding-left: 1rem;
+    margin: 0.5rem 0;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  a {
+    color: var(--color-primary);
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  strong {
+    font-weight: 600;
+  }
+
+  em {
+    font-style: italic;
+  }
+}
+
+.markdown-editor__hint {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 0.5rem;
+  background: rgba(99, 102, 241, 0.1);
+  border-radius: 4px;
+}
+
+/* Integración con Ant Design dark theme */
+:global(.ant-theme-dark) {
+  --color-bg-secondary: rgba(255, 255, 255, 0.05);
+  --color-bg-container: rgba(255, 255, 255, 0.02);
+  --color-border: rgba(255, 255, 255, 0.15);
+  --color-text: rgba(255, 255, 255, 0.85);
+  --color-primary: #6366f1;
+}
