@@ -20,11 +20,13 @@ export async function PATCH(
     const body = await request.json();
     const {
       version,
+      versionLabel,
       category,
       body: itemBody,
       sortOrder,
     } = body as {
       version?: string;
+      versionLabel?: string | null;
       category?: string | null;
       body?: string;
       sortOrder?: number;
@@ -34,11 +36,28 @@ export async function PATCH(
       where: { id: itemId },
       data: {
         ...(version !== undefined && { version: version.trim() }),
+        ...(versionLabel !== undefined && {
+          versionLabel:
+            typeof versionLabel === 'string'
+              ? versionLabel.trim() || null
+              : null,
+        }),
         ...(category !== undefined && { category: category?.trim() || null }),
         ...(itemBody !== undefined && { body: itemBody.trim() }),
         ...(sortOrder !== undefined && { sortOrder }),
       },
     });
+
+    // Si actualizaron el label, propagarlo a todos los items de la misma
+    // version (asi el grupo queda coherente).
+    if (versionLabel !== undefined && item.version) {
+      const propagated =
+        typeof versionLabel === 'string' ? versionLabel.trim() || null : null;
+      await prisma.changelogItem.updateMany({
+        where: { version: item.version, NOT: { id: itemId } },
+        data: { versionLabel: propagated },
+      });
+    }
 
     return NextResponse.json(item);
   } catch (error) {

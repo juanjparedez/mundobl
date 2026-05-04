@@ -31,6 +31,7 @@ import '../admin.css';
 interface ChangelogItem {
   id: number;
   version: string;
+  versionLabel: string | null;
   category: string | null;
   body: string;
   sortOrder: number;
@@ -159,6 +160,7 @@ export default function ChangelogAdminPage() {
     setEditingItem(item);
     form.setFieldsValue({
       version: item.version,
+      versionLabel: item.versionLabel ?? '',
       category: item.category,
       body: item.body,
       sortOrder: item.sortOrder,
@@ -258,12 +260,33 @@ export default function ChangelogAdminPage() {
   const columns = [
     {
       title: t('adminChangelog.columnVersion'),
-      dataIndex: 'version',
       key: 'version',
-      width: 160,
+      width: 220,
       sorter: (a: ChangelogItem, b: ChangelogItem) =>
-        a.version.localeCompare(b.version),
-      render: (version: string) => <Tag color="purple">{version}</Tag>,
+        (a.versionLabel ?? a.version).localeCompare(
+          b.versionLabel ?? b.version
+        ),
+      render: (_: unknown, record: ChangelogItem) => (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Tag
+            color="purple"
+            style={{ marginRight: 0, alignSelf: 'flex-start' }}
+          >
+            {record.versionLabel ?? record.version}
+          </Tag>
+          {record.versionLabel && record.versionLabel !== record.version && (
+            <span
+              style={{
+                fontSize: 11,
+                color: 'var(--text-secondary)',
+                fontFamily: 'monospace',
+              }}
+            >
+              {record.version}
+            </span>
+          )}
+        </div>
+      ),
     },
     {
       title: t('adminChangelog.columnCategory'),
@@ -399,6 +422,7 @@ export default function ChangelogAdminPage() {
                   message: t('adminChangelog.requiredVersion'),
                 },
               ]}
+              tooltip={t('adminChangelog.fieldVersionHint')}
             >
               <Select
                 showSearch
@@ -411,6 +435,18 @@ export default function ChangelogAdminPage() {
                 ]}
                 onSearch={(value) => form.setFieldValue('version', value)}
                 placeholder="ej: Proximo deploy, v1.2.3"
+              />
+            </Form.Item>
+
+            <Form.Item
+              name="versionLabel"
+              label={t('adminChangelog.fieldVersionLabel')}
+              tooltip={t('adminChangelog.fieldVersionLabelHint')}
+            >
+              <Input
+                placeholder={t('adminChangelog.fieldVersionLabelPlaceholder')}
+                maxLength={120}
+                showCount
               />
             </Form.Item>
 

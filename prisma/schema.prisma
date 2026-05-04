@@ -816,6 +816,10 @@ model ReviewVote {
 model ChangelogItem {
   id        Int      @id @default(autoincrement())
   version   String   // ej: "Proximo deploy", "22ba64c"
+  // Label legible para el grupo de version (ej: "Pagina de contenido
+  // y sitios recomendados" en lugar de "137c773"). Si esta vacio,
+  // se cae al `version` (hash) como antes.
+  versionLabel String?
   category  String?  // ej: "Features", "Fixes", "Seguridad"
   body      String
   sortOrder Int      @default(0)
