@@ -694,6 +694,13 @@ type TranslationShape = {
     deleteTitle: string;
     deleteDescription: string;
     loadError: string;
+    aiPolish: string;
+    aiSuggestCategory: string;
+    aiPolished: string;
+    aiCategorySuggested: string;
+    aiCategoryNone: string;
+    aiNeedBody: string;
+    aiError: string;
     createSuccess: string;
     createError: string;
     updateSuccess: string;
@@ -1471,6 +1478,10 @@ type TranslationShape = {
     fieldBody: string;
     fieldVerdict: string;
     fieldLanguage: string;
+    fieldTranslateTo: string;
+    translateToHint: string;
+    translateToPlaceholder: string;
+    translatedSuccess: string;
     fieldSpoilers: string;
     fieldStatus: string;
     markdownHint: string;
@@ -2298,6 +2309,13 @@ const es: TranslationShape = {
     deleteTitle: 'Eliminar item?',
     deleteDescription: 'Esta accion no se puede deshacer.',
     loadError: 'Error al cargar el changelog',
+    aiPolish: 'Pulir descripcion',
+    aiSuggestCategory: 'Sugerir categoria',
+    aiPolished: 'Descripcion pulida',
+    aiCategorySuggested: 'Categoria sugerida',
+    aiCategoryNone: 'No se pudo sugerir una categoria.',
+    aiNeedBody: 'Escribi una descripcion primero.',
+    aiError: 'Error del asistente IA',
     createSuccess: 'Item creado exitosamente',
     createError: 'Error al crear el item',
     updateSuccess: 'Item actualizado exitosamente',
@@ -3100,6 +3118,11 @@ const es: TranslationShape = {
     fieldBody: 'Reseña',
     fieldVerdict: 'Veredicto',
     fieldLanguage: 'Idioma',
+    fieldTranslateTo: 'Traducir también a (IA)',
+    translateToHint:
+      'Al guardar, la IA traduce la reseña a estos idiomas y crea una copia para cada uno (máximo 3).',
+    translateToPlaceholder: 'Elegí 1 a 3 idiomas',
+    translatedSuccess: '{n} traducción(es) generada(s) con IA.',
     fieldSpoilers: 'Contiene spoilers',
     fieldStatus: 'Estado',
     markdownHint: 'Podés usar Markdown (negrita, listas, links).',
@@ -3920,6 +3943,13 @@ const en: TranslationShape = {
     deleteTitle: 'Delete item?',
     deleteDescription: 'This action cannot be undone.',
     loadError: 'Error loading changelog',
+    aiPolish: 'Polish description',
+    aiSuggestCategory: 'Suggest category',
+    aiPolished: 'Description polished',
+    aiCategorySuggested: 'Category suggested',
+    aiCategoryNone: 'Could not suggest a category.',
+    aiNeedBody: 'Write a description first.',
+    aiError: 'AI assistant error',
     createSuccess: 'Item created successfully',
     createError: 'Error creating item',
     updateSuccess: 'Item updated successfully',
@@ -4719,6 +4749,11 @@ const en: TranslationShape = {
     fieldBody: 'Review',
     fieldVerdict: 'Verdict',
     fieldLanguage: 'Language',
+    fieldTranslateTo: 'Also translate to (AI)',
+    translateToHint:
+      'On save, AI translates the review to these languages and creates a copy for each (max 3).',
+    translateToPlaceholder: 'Pick 1 to 3 languages',
+    translatedSuccess: '{n} translation(s) generated with AI.',
     fieldSpoilers: 'Contains spoilers',
     fieldStatus: 'Status',
     markdownHint: 'You can use Markdown (bold, lists, links).',
