@@ -144,7 +144,12 @@ export async function POST(request: NextRequest) {
       prompt,
       systemInstruction,
       temperature: input.action === 'spoiler-check' ? 0.1 : 0.5,
-      maxOutputTokens: input.action === 'suggest-title' ? 64 : 2048,
+      // Margenes mas generosos: gemini-2.5 usa "thinking tokens" por
+      // default que se consumen antes de la salida visible.
+      maxOutputTokens: input.action === 'suggest-title' ? 512 : 4096,
+      // Para tareas cortas/deterministicas, deshabilitamos thinking
+      // para que toda la cuota vaya al texto de salida.
+      thinkingBudget: input.action === 'suggest-title' ? 0 : undefined,
     });
 
     if (input.action === 'spoiler-check') {

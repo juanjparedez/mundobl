@@ -14,6 +14,9 @@ import {
   PlayCircleOutlined,
   UserOutlined,
   VideoCameraOutlined,
+  ReadOutlined,
+  BankOutlined,
+  TranslationOutlined,
   LoadingOutlined,
   LoginOutlined,
   LogoutOutlined,
@@ -183,6 +186,18 @@ export function Sidebar() {
                       onClick: () => router.push('/admin/directores'),
                     },
                     {
+                      key: '/admin/productoras',
+                      icon: <BankOutlined />,
+                      label: t('sidebar.productionCompanies'),
+                      onClick: () => router.push('/admin/productoras'),
+                    },
+                    {
+                      key: '/admin/idiomas',
+                      icon: <TranslationOutlined />,
+                      label: t('sidebar.languages'),
+                      onClick: () => router.push('/admin/idiomas'),
+                    },
+                    {
                       key: '/admin/usuarios',
                       icon: <TeamOutlined />,
                       label: t('sidebar.users'),
@@ -207,6 +222,12 @@ export function Sidebar() {
                       onClick: () => router.push('/admin/comentarios'),
                     },
                     {
+                      key: '/admin/resenas',
+                      icon: <ReadOutlined />,
+                      label: t('sidebar.reviews'),
+                      onClick: () => router.push('/admin/resenas'),
+                    },
+                    {
                       key: '/admin/info',
                       icon: <InfoCircleOutlined />,
                       label: t('sidebar.info'),
@@ -223,6 +244,12 @@ export function Sidebar() {
                       icon: <UnorderedListOutlined />,
                       label: t('sidebar.changelog'),
                       onClick: () => router.push('/admin/changelog'),
+                    },
+                    {
+                      key: '/admin/stats',
+                      icon: <BarChartOutlined />,
+                      label: t('sidebar.adminStats'),
+                      onClick: () => router.push('/admin/stats'),
                     },
                   ]
                 : []),

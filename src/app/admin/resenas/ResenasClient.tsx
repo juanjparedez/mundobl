@@ -30,9 +30,27 @@ import { useLocale } from '@/lib/providers/LocaleProvider';
 import { LOCALE_LABELS } from '@/i18n/config';
 import '../admin.css';
 
-type StatusFilter = 'all' | 'PUBLISHED' | 'DRAFT' | 'HIDDEN';
+type ViewMode = 'all' | 'PUBLISHED' | 'DRAFT' | 'HIDDEN' | 'PENDING_SERIES';
 type Status = 'PUBLISHED' | 'DRAFT' | 'HIDDEN';
 type Verdict = 'RECOMMENDED' | 'MIXED' | 'SKIP';
+
+interface PendingSeriesRow {
+  id: number;
+  title: string;
+  year: number | null;
+  type: string;
+  imageUrl: string | null;
+  country: { id: number; name: string; code: string | null } | null;
+}
+
+interface PendingResponse {
+  series: PendingSeriesRow[];
+  total: number;
+  totalSeries: number;
+  withReviews: number;
+  page: number;
+  pageSize: number;
+}
 
 interface ReviewRow {
   id: number;
@@ -70,40 +88,61 @@ export function ResenasClient() {
   const message = useMessage();
   const { locale, t } = useLocale();
   const [reviews, setReviews] = useState<ReviewRow[]>([]);
+  const [pendingSeries, setPendingSeries] = useState<PendingSeriesRow[]>([]);
+  const [pendingMeta, setPendingMeta] = useState<{
+    total: number;
+    totalSeries: number;
+    withReviews: number;
+  }>({ total: 0, totalSeries: 0, withReviews: 0 });
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [status, setStatus] = useState<StatusFilter>('all');
+  const [view, setView] = useState<ViewMode>('all');
   const [search, setSearch] = useState('');
   const [searchInput, setSearchInput] = useState('');
   const [loading, setLoading] = useState(true);
   const [previewing, setPreviewing] = useState<ReviewRow | null>(null);
 
-  const fetchReviews = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({
         page: String(page),
         pageSize: String(PAGE_SIZE),
       });
-      if (status !== 'all') params.set('status', status);
       if (search) params.set('q', search);
 
-      const res = await fetch(`/api/admin/reviews?${params.toString()}`);
-      if (!res.ok) throw new Error('Error');
-      const data: ReviewsResponse = await res.json();
-      setReviews(data.reviews);
-      setTotal(data.total);
+      if (view === 'PENDING_SERIES') {
+        const res = await fetch(
+          `/api/admin/reviews/pending-series?${params.toString()}`
+        );
+        if (!res.ok) throw new Error('Error');
+        const data: PendingResponse = await res.json();
+        setPendingSeries(data.series);
+        setPendingMeta({
+          total: data.total,
+          totalSeries: data.totalSeries,
+          withReviews: data.withReviews,
+        });
+        setTotal(data.total);
+      } else {
+        if (view !== 'all') params.set('status', view);
+        const res = await fetch(`/api/admin/reviews?${params.toString()}`);
+        if (!res.ok) throw new Error('Error');
+        const data: ReviewsResponse = await res.json();
+        setReviews(data.reviews);
+        setTotal(data.total);
+      }
     } catch (error) {
       console.error(error);
       message.error(t('adminReviews.loadError'));
     } finally {
       setLoading(false);
     }
-  }, [page, status, search, message, t]);
+  }, [page, view, search, message, t]);
 
   useEffect(() => {
-    fetchReviews();
-  }, [fetchReviews]);
+    fetchData();
+  }, [fetchData]);
 
   const handleStatusChange = async (id: number, newStatus: Status) => {
     try {
@@ -137,7 +176,7 @@ export function ResenasClient() {
           : t('adminReviews.featuredOff')
       );
       // Refrescar lista entera porque destacar puede des-destacar otra reseña.
-      await fetchReviews();
+      await fetchData();
     } catch (error) {
       console.error(error);
       message.error(t('adminReviews.featuredError'));
@@ -313,6 +352,71 @@ export function ResenasClient() {
     },
   ];
 
+  const pendingColumns: ColumnsType<PendingSeriesRow> = [
+    {
+      title: t('adminReviews.columnSeries'),
+      key: 'series',
+      render: (_, record) => (
+        <div>
+          <div style={{ fontWeight: 500 }}>{record.title}</div>
+          <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
+            {[record.year, record.country?.name, record.type]
+              .filter(Boolean)
+              .join(' · ')}
+          </div>
+        </div>
+      ),
+    },
+    {
+      title: t('adminReviews.columnActions'),
+      key: 'actions',
+      width: 280,
+      render: (_, record) => (
+        <Space size="small" wrap>
+          <Button
+            size="small"
+            icon={<ExportOutlined />}
+            href={`/series/${record.id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {t('adminReviews.actionViewSeries')}
+          </Button>
+          <Button
+            size="small"
+            type="primary"
+            href={`/series/${record.id}#series-section-reviews`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {t('adminReviews.actionWriteReview')}
+          </Button>
+        </Space>
+      ),
+    },
+  ];
+
+  const heroStats =
+    view === 'PENDING_SERIES'
+      ? [
+          {
+            label: t('adminReviews.statsPendingSeries'),
+            value: pendingMeta.total,
+          },
+          {
+            label: t('adminReviews.statsCoveredSeries'),
+            value: pendingMeta.withReviews,
+          },
+          {
+            label: t('adminReviews.statsTotalSeries'),
+            value: pendingMeta.totalSeries,
+          },
+        ]
+      : [
+          { label: t('adminReviews.statsTotal'), value: total },
+          { label: t('adminReviews.statsPage'), value: reviews.length },
+        ];
+
   return (
     <AppLayout>
       <div className="admin-page-wrapper">
@@ -321,18 +425,15 @@ export function ResenasClient() {
           <AdminPageHero
             title={t('adminReviews.title')}
             subtitle={t('adminReviews.subtitle')}
-            stats={[
-              { label: t('adminReviews.statsTotal'), value: total },
-              { label: t('adminReviews.statsPage'), value: reviews.length },
-            ]}
+            stats={heroStats}
           />
 
           <AdminTableToolbar
             filters={
-              <Segmented<StatusFilter>
-                value={status}
+              <Segmented<ViewMode>
+                value={view}
                 onChange={(value) => {
-                  setStatus(value);
+                  setView(value);
                   setPage(1);
                 }}
                 options={[
@@ -343,10 +444,18 @@ export function ResenasClient() {
                   },
                   { label: t('adminReviews.statusDraft'), value: 'DRAFT' },
                   { label: t('adminReviews.statusHidden'), value: 'HIDDEN' },
+                  {
+                    label: t('adminReviews.filterPendingSeries'),
+                    value: 'PENDING_SERIES',
+                  },
                 ]}
               />
             }
-            searchPlaceholder={t('adminReviews.searchPlaceholder')}
+            searchPlaceholder={
+              view === 'PENDING_SERIES'
+                ? t('adminReviews.searchPlaceholderPending')
+                : t('adminReviews.searchPlaceholder')
+            }
             searchValue={searchInput}
             onSearchChange={setSearchInput}
             onSearchSubmit={() => {
@@ -360,20 +469,37 @@ export function ResenasClient() {
             }}
           />
 
-          <Table
-            columns={columns}
-            dataSource={reviews}
-            rowKey="id"
-            loading={loading}
-            size="small"
-            pagination={{
-              current: page,
-              pageSize: PAGE_SIZE,
-              total,
-              showSizeChanger: false,
-              onChange: (newPage) => setPage(newPage),
-            }}
-          />
+          {view === 'PENDING_SERIES' ? (
+            <Table<PendingSeriesRow>
+              columns={pendingColumns}
+              dataSource={pendingSeries}
+              rowKey="id"
+              loading={loading}
+              size="small"
+              pagination={{
+                current: page,
+                pageSize: PAGE_SIZE,
+                total,
+                showSizeChanger: false,
+                onChange: (newPage) => setPage(newPage),
+              }}
+            />
+          ) : (
+            <Table<ReviewRow>
+              columns={columns}
+              dataSource={reviews}
+              rowKey="id"
+              loading={loading}
+              size="small"
+              pagination={{
+                current: page,
+                pageSize: PAGE_SIZE,
+                total,
+                showSizeChanger: false,
+                onChange: (newPage) => setPage(newPage),
+              }}
+            />
+          )}
 
           <Modal
             title={previewing?.title}
