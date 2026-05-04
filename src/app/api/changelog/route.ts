@@ -5,6 +5,9 @@ import { prisma } from '@/lib/database';
 
 interface ChangelogEntry {
   version: string;
+  // Label legible del grupo (puede coincidir con `version` o ser distinto,
+  // ej: "Pagina de contenido" en lugar de "137c773"). Si es null usar version.
+  label?: string | null;
   items: string[];
 }
 
@@ -55,17 +58,27 @@ export async function GET() {
   let entries: ChangelogEntry[];
 
   if (dbItems.length > 0) {
-    const versionMap = new Map<string, string[]>();
+    const versionMap = new Map<
+      string,
+      { label: string | null; items: string[] }
+    >();
     for (const item of dbItems) {
-      if (!versionMap.has(item.version)) {
-        versionMap.set(item.version, []);
+      const existing = versionMap.get(item.version);
+      if (existing) {
+        existing.items.push(item.body);
+        if (!existing.label && item.versionLabel) {
+          existing.label = item.versionLabel;
+        }
+      } else {
+        versionMap.set(item.version, {
+          label: item.versionLabel ?? null,
+          items: [item.body],
+        });
       }
-      versionMap.get(item.version)!.push(item.body);
     }
-    entries = Array.from(versionMap.entries()).map(([version, items]) => ({
-      version,
-      items,
-    }));
+    entries = Array.from(versionMap.entries()).map(
+      ([version, { label, items }]) => ({ version, label, items })
+    );
   } else {
     entries = parseChangelogFile();
   }

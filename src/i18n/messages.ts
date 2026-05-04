@@ -685,6 +685,10 @@ type TranslationShape = {
     modalAddTitle: string;
     modalEditTitle: string;
     fieldVersion: string;
+    fieldVersionHint: string;
+    fieldVersionLabel: string;
+    fieldVersionLabelHint: string;
+    fieldVersionLabelPlaceholder: string;
     fieldCategory: string;
     fieldBody: string;
     requiredVersion: string;
@@ -1249,6 +1253,9 @@ type TranslationShape = {
     title: string;
   };
   adminNav: {
+    groupCatalog: string;
+    groupCommunity: string;
+    groupSystem: string;
     series: string;
     seriesShort: string;
     tags: string;
@@ -2300,6 +2307,13 @@ const es: TranslationShape = {
     modalAddTitle: 'Nuevo item de changelog',
     modalEditTitle: 'Editar item',
     fieldVersion: 'Version',
+    fieldVersionHint:
+      'Etiqueta o hash que identifica este grupo de cambios (ej: "Proximo deploy", "v1.2.3", "137c773").',
+    fieldVersionLabel: 'Titulo legible (opcional)',
+    fieldVersionLabelHint:
+      'Nombre amigable que se muestra a los usuarios en lugar del hash. Si lo cambias, se aplica a todos los items de la misma version.',
+    fieldVersionLabelPlaceholder:
+      'ej: "Pagina de contenido y sitios recomendados"',
     fieldCategory: 'Categoria (opcional)',
     fieldBody: 'Descripcion',
     requiredVersion: 'La version es requerida',
@@ -2884,6 +2898,9 @@ const es: TranslationShape = {
     title: 'MundoBL - Catálogo de Series',
   },
   adminNav: {
+    groupCatalog: 'Catálogo',
+    groupCommunity: 'Comunidad',
+    groupSystem: 'Sistema',
     series: 'Series',
     seriesShort: 'Series',
     tags: 'Tags',
@@ -3934,6 +3951,12 @@ const en: TranslationShape = {
     modalAddTitle: 'New changelog item',
     modalEditTitle: 'Edit item',
     fieldVersion: 'Version',
+    fieldVersionHint:
+      'Label or hash identifying this group of changes (e.g. "Next deploy", "v1.2.3", "137c773").',
+    fieldVersionLabel: 'Friendly title (optional)',
+    fieldVersionLabelHint:
+      'Human-readable name shown to users instead of the hash. Editing it applies to every item in the same version.',
+    fieldVersionLabelPlaceholder: 'e.g. "Content page and recommended sites"',
     fieldCategory: 'Category (optional)',
     fieldBody: 'Description',
     requiredVersion: 'Version is required',
@@ -4516,6 +4539,9 @@ const en: TranslationShape = {
     title: 'MundoBL - Series Catalog',
   },
   adminNav: {
+    groupCatalog: 'Catalog',
+    groupCommunity: 'Community',
+    groupSystem: 'System',
     series: 'Series',
     seriesShort: 'Series',
     tags: 'Tags',
