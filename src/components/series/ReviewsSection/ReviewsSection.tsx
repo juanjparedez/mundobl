@@ -21,9 +21,14 @@ import {
 import {
   ClockCircleOutlined,
   DeleteOutlined,
+  DislikeFilled,
+  DislikeOutlined,
   EditOutlined,
   EyeInvisibleOutlined,
+  LikeFilled,
+  LikeOutlined,
   PlusOutlined,
+  StarFilled,
   TranslationOutlined,
   ThunderboltOutlined,
   WarningOutlined,
@@ -58,7 +63,10 @@ export interface ReviewData {
   ostRating: number | null;
   castingRating: number | null;
   helpfulCount: number;
+  unhelpfulCount: number;
   hasSpoilers: boolean;
+  isFeatured: boolean;
+  myVote: boolean | null;
   publishedAt: string | null;
   createdAt: string;
   updatedAt: string;
@@ -348,6 +356,43 @@ export function ReviewsSection({ seriesId }: ReviewsSectionProps) {
     }
   };
 
+  const handleVote = async (reviewId: number, helpful: boolean) => {
+    if (!session?.user) {
+      message.warning(t('reviews.voteLoginRequired'));
+      return;
+    }
+    try {
+      const res = await fetch(`/api/reviews/${reviewId}/vote`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ helpful }),
+      });
+      const data = (await res.json()) as {
+        error?: string;
+        myVote?: boolean | null;
+        helpfulCount?: number;
+        unhelpfulCount?: number;
+      };
+      if (!res.ok) throw new Error(data.error || 'Error');
+      setReviews((prev) =>
+        prev.map((r) =>
+          r.id === reviewId
+            ? {
+                ...r,
+                myVote: data.myVote ?? null,
+                helpfulCount: data.helpfulCount ?? r.helpfulCount,
+                unhelpfulCount: data.unhelpfulCount ?? r.unhelpfulCount,
+              }
+            : r
+        )
+      );
+    } catch (error) {
+      message.error(
+        error instanceof Error ? error.message : t('reviews.voteError')
+      );
+    }
+  };
+
   const renderVerdict = (verdict: Verdict | null) => {
     if (!verdict) return null;
     const map: Record<Verdict, { color: string; key: string }> = {
@@ -382,6 +427,11 @@ export function ReviewsSection({ seriesId }: ReviewsSectionProps) {
           title={
             <span className="review-card__mine-title">
               {t('reviews.yourReview')}
+              {myReview.isFeatured && (
+                <Tag color="gold" icon={<StarFilled />}>
+                  {t('reviews.featuredTag')}
+                </Tag>
+              )}
               {myReview.status === 'DRAFT' && (
                 <Tag color="default">{t('reviews.statusDraft')}</Tag>
               )}
@@ -427,7 +477,10 @@ export function ReviewsSection({ seriesId }: ReviewsSectionProps) {
           <Empty description={t('reviews.empty')} />
         ) : (
           otherReviews.map((review) => (
-            <Card key={review.id} className="review-card">
+            <Card
+              key={review.id}
+              className={`review-card${review.isFeatured ? ' review-card--featured' : ''}`}
+            >
               <div className="review-card__head">
                 <span className="review-card__author">
                   <Avatar
@@ -438,6 +491,11 @@ export function ReviewsSection({ seriesId }: ReviewsSectionProps) {
                   <span>{review.user?.name ?? t('reviews.anonymous')}</span>
                 </span>
                 <span className="review-card__meta">
+                  {review.isFeatured && (
+                    <Tag color="gold" icon={<StarFilled />}>
+                      {t('reviews.featuredTag')}
+                    </Tag>
+                  )}
                   <Tag>
                     {LOCALE_LABELS[review.language as never] ?? review.language}
                   </Tag>
@@ -455,6 +513,35 @@ export function ReviewsSection({ seriesId }: ReviewsSectionProps) {
                     review.publishedAt ?? review.createdAt
                   ).toLocaleDateString(locale)}
                 </span>
+                <Space size={4} className="review-card__votes">
+                  <Button
+                    size="small"
+                    type={review.myVote === true ? 'primary' : 'text'}
+                    icon={
+                      review.myVote === true ? <LikeFilled /> : <LikeOutlined />
+                    }
+                    onClick={() => handleVote(review.id, true)}
+                    aria-label={t('reviews.voteHelpful')}
+                  >
+                    {review.helpfulCount}
+                  </Button>
+                  <Button
+                    size="small"
+                    type={review.myVote === false ? 'primary' : 'text'}
+                    danger={review.myVote === false}
+                    icon={
+                      review.myVote === false ? (
+                        <DislikeFilled />
+                      ) : (
+                        <DislikeOutlined />
+                      )
+                    }
+                    onClick={() => handleVote(review.id, false)}
+                    aria-label={t('reviews.voteUnhelpful')}
+                  >
+                    {review.unhelpfulCount}
+                  </Button>
+                </Space>
               </div>
             </Card>
           ))

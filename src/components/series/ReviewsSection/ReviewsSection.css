@@ -42,6 +42,25 @@
   border-width: 2px;
 }
 
+.review-card--featured {
+  border-color: #faad14;
+  border-width: 2px;
+  background: linear-gradient(
+    180deg,
+    rgba(250, 173, 20, 0.06) 0%,
+    var(--bg-base) 60%
+  );
+}
+
+.review-card__votes {
+  margin-left: auto;
+}
+
+.review-card__footer {
+  justify-content: space-between;
+  width: 100%;
+}
+
 .review-card__mine-title {
   display: inline-flex;
   align-items: center;

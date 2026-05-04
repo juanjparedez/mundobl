@@ -16,6 +16,8 @@ import {
   ExportOutlined,
   EyeInvisibleOutlined,
   EyeOutlined,
+  StarFilled,
+  StarOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
@@ -40,6 +42,9 @@ interface ReviewRow {
   language: string;
   status: Status;
   hasSpoilers: boolean;
+  isFeatured: boolean;
+  helpfulCount: number;
+  unhelpfulCount: number;
   publishedAt: string | null;
   createdAt: string;
   updatedAt: string;
@@ -115,6 +120,27 @@ export function ResenasClient() {
     } catch (error) {
       console.error(error);
       message.error(t('adminReviews.statusError'));
+    }
+  };
+
+  const handleToggleFeatured = async (id: number, isFeatured: boolean) => {
+    try {
+      const res = await fetch(`/api/admin/reviews?id=${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isFeatured }),
+      });
+      if (!res.ok) throw new Error('Error');
+      message.success(
+        isFeatured
+          ? t('adminReviews.featuredOn')
+          : t('adminReviews.featuredOff')
+      );
+      // Refrescar lista entera porque destacar puede des-destacar otra reseña.
+      await fetchReviews();
+    } catch (error) {
+      console.error(error);
+      message.error(t('adminReviews.featuredError'));
     }
   };
 
@@ -197,9 +223,14 @@ export function ResenasClient() {
     {
       title: t('adminReviews.columnStatus'),
       key: 'status',
-      width: 130,
+      width: 150,
       render: (_, record) => (
         <>
+          {record.isFeatured && (
+            <Tag color="gold" icon={<StarFilled />}>
+              {t('adminReviews.featuredTag')}
+            </Tag>
+          )}
           {renderStatus(record.status)}
           {record.hasSpoilers && (
             <Tag color="volcano">{t('adminReviews.spoilerTag')}</Tag>
@@ -241,6 +272,19 @@ export function ResenasClient() {
               onClick={() => handleStatusChange(record.id, 'PUBLISHED')}
             >
               {t('adminReviews.actionPublish')}
+            </Button>
+          )}
+          {record.status === 'PUBLISHED' && (
+            <Button
+              size="small"
+              icon={record.isFeatured ? <StarFilled /> : <StarOutlined />}
+              onClick={() =>
+                handleToggleFeatured(record.id, !record.isFeatured)
+              }
+            >
+              {record.isFeatured
+                ? t('adminReviews.actionUnfeature')
+                : t('adminReviews.actionFeature')}
             </Button>
           )}
           {record.status !== 'HIDDEN' && (

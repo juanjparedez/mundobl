@@ -65,13 +65,35 @@ export async function GET(request: NextRequest) {
 
     const reviews = await prisma.review.findMany({
       where,
-      orderBy: [{ publishedAt: 'desc' }, { createdAt: 'desc' }],
+      // Destacadas primero, luego mas votadas, luego mas recientes.
+      orderBy: [
+        { isFeatured: 'desc' },
+        { helpfulCount: 'desc' },
+        { publishedAt: 'desc' },
+        { createdAt: 'desc' },
+      ],
       include: {
         user: { select: { id: true, name: true, image: true } },
+        // Solo el voto del usuario actual (si esta logueado).
+        ...(currentUserId && {
+          votes: {
+            where: { userId: currentUserId },
+            select: { helpful: true },
+          },
+        }),
       },
     });
 
-    return NextResponse.json(reviews);
+    type ReviewWithVotes = (typeof reviews)[number] & {
+      votes?: { helpful: boolean }[];
+    };
+    const enriched = (reviews as ReviewWithVotes[]).map((r) => {
+      const myVote = r.votes && r.votes.length > 0 ? r.votes[0].helpful : null;
+      const { votes: _votes, ...rest } = r;
+      return { ...rest, myVote };
+    });
+
+    return NextResponse.json(enriched);
   } catch (error) {
     console.error('Error fetching reviews:', error);
     return NextResponse.json(

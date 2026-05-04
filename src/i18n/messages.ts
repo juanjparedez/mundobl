@@ -1472,6 +1472,11 @@ type TranslationShape = {
     spoilerDetectedTitle: string;
     spoilerDetectedHint: string;
     spoilerNoneFound: string;
+    featuredTag: string;
+    voteHelpful: string;
+    voteUnhelpful: string;
+    voteLoginRequired: string;
+    voteError: string;
     savedDraft: string;
     publishedSuccess: string;
     saveError: string;
@@ -1489,6 +1494,7 @@ type TranslationShape = {
     statusDraft: string;
     statusHidden: string;
     spoilerTag: string;
+    featuredTag: string;
     searchPlaceholder: string;
     columnUser: string;
     columnTitle: string;
@@ -1501,7 +1507,12 @@ type TranslationShape = {
     actionView: string;
     actionPublish: string;
     actionHide: string;
+    actionFeature: string;
+    actionUnfeature: string;
     actionDelete: string;
+    featuredOn: string;
+    featuredOff: string;
+    featuredError: string;
     deleteTitle: string;
     deleteDescription: string;
     deleteConfirm: string;
@@ -3049,6 +3060,11 @@ const es: TranslationShape = {
     spoilerDetectedHint:
       'Considerá activar el toggle "Contiene spoilers" para avisar a los demás.',
     spoilerNoneFound: 'No se detectaron spoilers obvios.',
+    featuredTag: 'Destacada',
+    voteHelpful: 'Útil',
+    voteUnhelpful: 'No útil',
+    voteLoginRequired: 'Iniciá sesión para votar.',
+    voteError: 'Error al votar',
     savedDraft: 'Borrador guardado',
     publishedSuccess: 'Reseña publicada',
     saveError: 'Error al guardar la reseña',
@@ -3066,6 +3082,7 @@ const es: TranslationShape = {
     statusDraft: 'Borradores',
     statusHidden: 'Ocultas',
     spoilerTag: 'Spoilers',
+    featuredTag: 'Destacada',
     searchPlaceholder: 'Buscar por título, contenido, autor o serie',
     columnUser: 'Autor',
     columnTitle: 'Reseña',
@@ -3078,7 +3095,12 @@ const es: TranslationShape = {
     actionView: 'Ver serie',
     actionPublish: 'Publicar',
     actionHide: 'Ocultar',
+    actionFeature: 'Destacar',
+    actionUnfeature: 'Quitar destacado',
     actionDelete: 'Borrar',
+    featuredOn: 'Reseña destacada',
+    featuredOff: 'Destacado removido',
+    featuredError: 'Error al destacar',
     deleteTitle: '¿Eliminar reseña?',
     deleteDescription: 'Esta acción no se puede deshacer.',
     deleteConfirm: 'Eliminar',
@@ -4615,6 +4637,11 @@ const en: TranslationShape = {
     spoilerDetectedHint:
       'Consider turning on the "Contains spoilers" toggle to warn others.',
     spoilerNoneFound: 'No obvious spoilers detected.',
+    featuredTag: 'Featured',
+    voteHelpful: 'Helpful',
+    voteUnhelpful: 'Not helpful',
+    voteLoginRequired: 'Sign in to vote.',
+    voteError: 'Error voting',
     savedDraft: 'Draft saved',
     publishedSuccess: 'Review published',
     saveError: 'Error saving review',
@@ -4632,6 +4659,7 @@ const en: TranslationShape = {
     statusDraft: 'Drafts',
     statusHidden: 'Hidden',
     spoilerTag: 'Spoilers',
+    featuredTag: 'Featured',
     searchPlaceholder: 'Search by title, content, author or series',
     columnUser: 'Author',
     columnTitle: 'Review',
@@ -4644,7 +4672,12 @@ const en: TranslationShape = {
     actionView: 'View series',
     actionPublish: 'Publish',
     actionHide: 'Hide',
+    actionFeature: 'Feature',
+    actionUnfeature: 'Unfeature',
     actionDelete: 'Delete',
+    featuredOn: 'Review featured',
+    featuredOff: 'Feature removed',
+    featuredError: 'Error toggling feature',
     deleteTitle: 'Delete review?',
     deleteDescription: 'This action cannot be undone.',
     deleteConfirm: 'Delete',
