@@ -1490,6 +1490,8 @@ type TranslationShape = {
     aiSpoilerCheck: string;
     aiPoweredBy: string;
     aiThinking: string;
+    aiCooldownActive: string;
+    aiCooldownMessage: string;
     aiSuggestionTitle: string;
     aiSuggestionBody: string;
     aiAccept: string;
@@ -3107,6 +3109,8 @@ const es: TranslationShape = {
     aiSpoilerCheck: 'Detectar spoilers',
     aiPoweredBy: 'Asistido por Gemini',
     aiThinking: 'El asistente está pensando…',
+    aiCooldownActive: 'Esperá unos segundos antes de reintentar.',
+    aiCooldownMessage: 'Reintentá en {s}s',
     aiSuggestionTitle: 'Título sugerido',
     aiSuggestionBody: 'Versión sugerida',
     aiAccept: 'Usar esta versión',
@@ -4713,6 +4717,8 @@ const en: TranslationShape = {
     aiSpoilerCheck: 'Check for spoilers',
     aiPoweredBy: 'Powered by Gemini',
     aiThinking: 'Assistant is thinking…',
+    aiCooldownActive: 'Wait a few seconds before retrying.',
+    aiCooldownMessage: 'Retry in {s}s',
     aiSuggestionTitle: 'Suggested title',
     aiSuggestionBody: 'Suggested version',
     aiAccept: 'Use this version',
