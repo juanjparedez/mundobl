@@ -66,6 +66,10 @@ interface GenerateOptions {
   // 0 = deterministico, 1 = creativo. Default bajo para asistencia de texto.
   temperature?: number;
   maxOutputTokens?: number;
+  // Solo gemini-2.5+: presupuesto de "thinking tokens" antes de generar
+  // la salida visible. 0 desactiva thinking (recomendado para tareas
+  // cortas como "sugerir titulo").
+  thinkingBudget?: number;
 }
 
 // Cuando uno de estos errores ocurre, vale la pena probar el siguiente modelo.
@@ -165,6 +169,7 @@ export async function generateText({
   systemInstruction,
   temperature = 0.4,
   maxOutputTokens = 2048,
+  thinkingBudget,
 }: GenerateOptions): Promise<string> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
@@ -183,6 +188,9 @@ export async function generateText({
       temperature,
       maxOutputTokens,
       responseMimeType: 'text/plain',
+      ...(thinkingBudget !== undefined && {
+        thinkingConfig: { thinkingBudget },
+      }),
     },
     safetySettings: [
       { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_ONLY_HIGH' },

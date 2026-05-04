@@ -228,6 +228,10 @@ type TranslationShape = {
     directors: string;
     users: string;
     comments: string;
+    reviews: string;
+    productionCompanies: string;
+    languages: string;
+    adminStats: string;
     info: string;
     logs: string;
     changelog: string;
@@ -1524,7 +1528,14 @@ type TranslationShape = {
     statusHidden: string;
     spoilerTag: string;
     featuredTag: string;
+    filterPendingSeries: string;
+    statsPendingSeries: string;
+    statsCoveredSeries: string;
+    statsTotalSeries: string;
     searchPlaceholder: string;
+    searchPlaceholderPending: string;
+    actionViewSeries: string;
+    actionWriteReview: string;
     columnUser: string;
     columnTitle: string;
     columnSeries: string;
@@ -1791,6 +1802,10 @@ const es: TranslationShape = {
     directors: 'Directores',
     users: 'Usuarios',
     comments: 'Comentarios',
+    reviews: 'Reseñas',
+    productionCompanies: 'Productoras',
+    languages: 'Idiomas',
+    adminStats: 'Estadísticas',
     info: 'Info',
     logs: 'Logs',
     changelog: 'Novedades',
@@ -3144,7 +3159,14 @@ const es: TranslationShape = {
     statusHidden: 'Ocultas',
     spoilerTag: 'Spoilers',
     featuredTag: 'Destacada',
+    filterPendingSeries: 'Por reseñar',
+    statsPendingSeries: 'Sin reseña',
+    statsCoveredSeries: 'Con reseña',
+    statsTotalSeries: 'Total series',
     searchPlaceholder: 'Buscar por título, contenido, autor o serie',
+    searchPlaceholderPending: 'Buscar serie por título',
+    actionViewSeries: 'Ver serie',
+    actionWriteReview: 'Escribir reseña',
     columnUser: 'Autor',
     columnTitle: 'Reseña',
     columnSeries: 'Serie',
@@ -3408,6 +3430,10 @@ const en: TranslationShape = {
     directors: 'Directors',
     users: 'Users',
     comments: 'Comments',
+    reviews: 'Reviews',
+    productionCompanies: 'Studios',
+    languages: 'Languages',
+    adminStats: 'Stats',
     info: 'Info',
     logs: 'Logs',
     changelog: 'Changelog',
@@ -4752,7 +4778,14 @@ const en: TranslationShape = {
     statusHidden: 'Hidden',
     spoilerTag: 'Spoilers',
     featuredTag: 'Featured',
+    filterPendingSeries: 'Pending reviews',
+    statsPendingSeries: 'No review yet',
+    statsCoveredSeries: 'With review',
+    statsTotalSeries: 'Total series',
     searchPlaceholder: 'Search by title, content, author or series',
+    searchPlaceholderPending: 'Search series by title',
+    actionViewSeries: 'View series',
+    actionWriteReview: 'Write review',
     columnUser: 'Author',
     columnTitle: 'Review',
     columnSeries: 'Series',
