@@ -6,6 +6,7 @@ import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/lib/providers/ThemeProvider';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { useSpoilerFree } from '@/lib/providers/SpoilerFreeProvider';
 import { useMessage } from '@/hooks/useMessage';
 import { LOCALE_LABELS, SUPPORTED_LOCALES } from '@/i18n/config';
 import { ACCENT_PRESETS } from '@/lib/theme.config';
@@ -54,6 +55,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
     resetPreferences,
   } = useTheme();
   const { locale, setLocale, t } = useLocale();
+  const { enabled: spoilerFree, setEnabled: setSpoilerFree } = useSpoilerFree();
   const message = useMessage();
   const [clearing, setClearing] = useState(false);
   const [resettingSw, setResettingSw] = useState(false);
@@ -381,6 +383,22 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
                 );
               }
             }}
+          />
+        </div>
+
+        <div className="settings-panel__field settings-panel__field--inline">
+          <div>
+            <label className="settings-panel__label">
+              {t('settings.spoilerFreeLabel')}
+            </label>
+            <p className="settings-panel__hint">
+              {t('settings.spoilerFreeHint')}
+            </p>
+          </div>
+          <Switch
+            checked={spoilerFree}
+            onChange={setSpoilerFree}
+            aria-label={t('settings.spoilerFreeLabel')}
           />
         </div>
       </section>

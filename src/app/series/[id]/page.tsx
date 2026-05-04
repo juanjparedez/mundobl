@@ -195,7 +195,15 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
               existingRatings={serie.ratings || []}
             />
           }
-          reviewsSection={<ReviewsSection seriesId={serie.id} />}
+          reviewsSection={
+            <ReviewsSection
+              seriesId={serie.id}
+              seriesWatched={
+                serie.viewStatus?.[0]?.status === 'VISTA' ||
+                serie.viewStatus?.[0]?.status === 'ABANDONADA'
+              }
+            />
+          }
           commentsSection={
             <CommentsSection
               seriesId={serie.id}

@@ -4,6 +4,7 @@ import { App } from 'antd';
 import { ThemeProvider } from '@/lib/providers/ThemeProvider';
 import { SessionProvider } from '@/lib/providers/SessionProvider';
 import { LocaleProvider } from '@/lib/providers/LocaleProvider';
+import { SpoilerFreeProvider } from '@/lib/providers/SpoilerFreeProvider';
 import { ServiceWorkerRegistrar } from '@/components/ServiceWorkerRegistrar/ServiceWorkerRegistrar';
 import { JsonLd } from '@/components/seo/JsonLd';
 import type { WebSite } from 'schema-dts';
@@ -119,7 +120,9 @@ export default function RootLayout({
           <AntdRegistry>
             <LocaleProvider>
               <ThemeProvider>
-                <App>{children}</App>
+                <SpoilerFreeProvider>
+                  <App>{children}</App>
+                </SpoilerFreeProvider>
               </ThemeProvider>
             </LocaleProvider>
           </AntdRegistry>

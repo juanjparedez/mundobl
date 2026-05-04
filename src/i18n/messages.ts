@@ -472,6 +472,8 @@ type TranslationShape = {
     sectionPreferences: string;
     defaultCommentPrivateLabel: string;
     defaultCommentPrivateHint: string;
+    spoilerFreeLabel: string;
+    spoilerFreeHint: string;
   };
   adminComments: {
     title: string;
@@ -1420,6 +1422,31 @@ type TranslationShape = {
     description: string;
     backLink: string;
   };
+  spoilerGate: {
+    label: string;
+    defaultReason: string;
+    reasonEpisodeNotWatched: string;
+    reasonReviewSpoilers: string;
+    reveal: string;
+  };
+  episodeNote: {
+    title: string;
+    privateTag: string;
+    hint: string;
+    placeholder: string;
+    save: string;
+    delete: string;
+    cancel: string;
+    saved: string;
+    saveError: string;
+    deleted: string;
+    deleteError: string;
+    deleteConfirm: string;
+    loadError: string;
+    empty: string;
+    lastUpdated: string;
+    tooltipOpen: string;
+  };
   reviews: {
     subtitle: string;
     writeButton: string;
@@ -2027,6 +2054,9 @@ const es: TranslationShape = {
     defaultCommentPrivateLabel: 'Notas privadas por defecto',
     defaultCommentPrivateHint:
       'Tus nuevos comentarios se marcarán como privados al escribirlos.',
+    spoilerFreeLabel: 'Modo sin spoilers',
+    spoilerFreeHint:
+      'Oculta sinopsis de episodios no vistos y reseñas marcadas con spoilers de series que no terminaste.',
   },
   adminComments: {
     title: 'Comentarios publicos',
@@ -3005,6 +3035,33 @@ const es: TranslationShape = {
     description: 'La página que buscas no existe o fue movida.',
     backLink: 'Volver al catálogo',
   },
+  spoilerGate: {
+    label: 'Contenido oculto por modo sin spoilers',
+    defaultReason: 'Contenido marcado como posible spoiler.',
+    reasonEpisodeNotWatched: 'No marcaste este episodio como visto.',
+    reasonReviewSpoilers:
+      'Esta reseña tiene spoilers y no terminaste la serie.',
+    reveal: 'Mostrar igual',
+  },
+  episodeNote: {
+    title: 'Nota privada del episodio',
+    privateTag: 'Privado',
+    hint: 'Solo vos podés ver esta nota. Ideal para anotar reacciones, escenas o momentos para volver.',
+    placeholder:
+      'Acá lloré, este intercambio me destruyó, rever el minuto 32...',
+    save: 'Guardar nota',
+    delete: 'Eliminar',
+    cancel: 'Cancelar',
+    saved: 'Nota guardada',
+    saveError: 'Error al guardar la nota',
+    deleted: 'Nota eliminada',
+    deleteError: 'Error al eliminar',
+    deleteConfirm: '¿Eliminar esta nota?',
+    loadError: 'Error al cargar la nota',
+    empty: 'Escribí algo antes de guardar.',
+    lastUpdated: 'Última edición:',
+    tooltipOpen: 'Mi nota privada',
+  },
   reviews: {
     subtitle:
       'Reseñas escritas por la comunidad. Compartí la tuya y ayudá a otros a decidir qué ver.',
@@ -3609,6 +3666,9 @@ const en: TranslationShape = {
     defaultCommentPrivateLabel: 'Private notes by default',
     defaultCommentPrivateHint:
       'Your new comments will be marked as private when you write them.',
+    spoilerFreeLabel: 'Spoiler-free mode',
+    spoilerFreeHint:
+      'Hide synopses of episodes you have not watched and reviews flagged with spoilers for series you have not finished.',
   },
   adminComments: {
     title: 'Public comments',
@@ -4581,6 +4641,32 @@ const en: TranslationShape = {
   notFound: {
     description: 'The page you are looking for does not exist or was moved.',
     backLink: 'Back to catalog',
+  },
+  spoilerGate: {
+    label: 'Content hidden by spoiler-free mode',
+    defaultReason: 'Content marked as a possible spoiler.',
+    reasonEpisodeNotWatched: 'You have not marked this episode as watched.',
+    reasonReviewSpoilers:
+      'This review contains spoilers and you have not finished the series.',
+    reveal: 'Show anyway',
+  },
+  episodeNote: {
+    title: 'Private episode note',
+    privateTag: 'Private',
+    hint: 'Only you can see this note. Great for jotting down reactions, scenes or moments to revisit.',
+    placeholder: 'I cried here, this exchange wrecked me, rewatch minute 32...',
+    save: 'Save note',
+    delete: 'Delete',
+    cancel: 'Cancel',
+    saved: 'Note saved',
+    saveError: 'Error saving the note',
+    deleted: 'Note deleted',
+    deleteError: 'Error deleting',
+    deleteConfirm: 'Delete this note?',
+    loadError: 'Error loading the note',
+    empty: 'Write something before saving.',
+    lastUpdated: 'Last edited:',
+    tooltipOpen: 'My private note',
   },
   reviews: {
     subtitle:
