@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
+  Alert,
   Avatar,
   Button,
   Card,
@@ -12,9 +13,10 @@ import {
   Modal,
   Popconfirm,
   Select,
+  Space,
+  Spin,
   Switch,
   Tag,
-  Tooltip,
 } from 'antd';
 import {
   ClockCircleOutlined,
@@ -22,6 +24,9 @@ import {
   EditOutlined,
   EyeInvisibleOutlined,
   PlusOutlined,
+  TranslationOutlined,
+  ThunderboltOutlined,
+  WarningOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
@@ -103,6 +108,16 @@ export function ReviewsSection({ seriesId }: ReviewsSectionProps) {
   const [form] = Form.useForm<FormValues>();
   const [editingId, setEditingId] = useState<number | null>(null);
 
+  // Estado del asistente IA (Gemini)
+  type AiAction = 'polish' | 'translate' | 'suggest-title' | 'spoiler-check';
+  const [aiBusy, setAiBusy] = useState<AiAction | null>(null);
+  const [aiSuggestion, setAiSuggestion] = useState<{
+    field: 'title' | 'body';
+    text: string;
+  } | null>(null);
+  const [spoilerWarning, setSpoilerWarning] = useState<string[] | null>(null);
+  const [translateTo, setTranslateTo] = useState<string>('en');
+
   const currentUserId = session?.user?.id;
 
   const fetchReviews = useCallback(async () => {
@@ -163,11 +178,131 @@ export function ReviewsSection({ seriesId }: ReviewsSectionProps) {
   };
 
   const closeModal = () => {
-    if (submitting) return;
+    if (submitting || aiBusy) return;
     setModalOpen(false);
     form.resetFields();
     setEditingId(null);
+    setAiSuggestion(null);
+    setSpoilerWarning(null);
   };
+
+  const callAi = async (
+    action: AiAction,
+    payload: Record<string, unknown>
+  ): Promise<unknown> => {
+    setAiBusy(action);
+    try {
+      const res = await fetch('/api/reviews/ai-assist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, ...payload }),
+      });
+      const data = (await res.json()) as { error?: string } & Record<
+        string,
+        unknown
+      >;
+      if (!res.ok) {
+        throw new Error(data.error || 'Error');
+      }
+      return data;
+    } finally {
+      setAiBusy(null);
+    }
+  };
+
+  const handleAiPolish = async () => {
+    const body = (form.getFieldValue('body') as string | undefined)?.trim();
+    if (!body) {
+      message.warning(t('reviews.aiNeedBody'));
+      return;
+    }
+    try {
+      const result = (await callAi('polish', {
+        body,
+        language: form.getFieldValue('language'),
+      })) as { text: string };
+      setAiSuggestion({ field: 'body', text: result.text });
+    } catch (error) {
+      message.error(
+        error instanceof Error ? error.message : t('reviews.aiError')
+      );
+    }
+  };
+
+  const handleAiSuggestTitle = async () => {
+    const body = (form.getFieldValue('body') as string | undefined)?.trim();
+    if (!body) {
+      message.warning(t('reviews.aiNeedBody'));
+      return;
+    }
+    try {
+      const result = (await callAi('suggest-title', {
+        body,
+        language: form.getFieldValue('language'),
+      })) as { text: string };
+      setAiSuggestion({ field: 'title', text: result.text });
+    } catch (error) {
+      message.error(
+        error instanceof Error ? error.message : t('reviews.aiError')
+      );
+    }
+  };
+
+  const handleAiTranslate = async () => {
+    const body = (form.getFieldValue('body') as string | undefined)?.trim();
+    if (!body) {
+      message.warning(t('reviews.aiNeedBody'));
+      return;
+    }
+    try {
+      const result = (await callAi('translate', {
+        body,
+        title: form.getFieldValue('title'),
+        language: form.getFieldValue('language'),
+        targetLanguage: translateTo,
+      })) as { text: string };
+      setAiSuggestion({ field: 'body', text: result.text });
+    } catch (error) {
+      message.error(
+        error instanceof Error ? error.message : t('reviews.aiError')
+      );
+    }
+  };
+
+  const handleAiSpoilerCheck = async () => {
+    const body = (form.getFieldValue('body') as string | undefined)?.trim();
+    if (!body) {
+      message.warning(t('reviews.aiNeedBody'));
+      return;
+    }
+    try {
+      const result = (await callAi('spoiler-check', {
+        body,
+        language: form.getFieldValue('language'),
+      })) as { hasSpoilers: boolean; reasons: string[] };
+      if (result.hasSpoilers) {
+        setSpoilerWarning(result.reasons);
+        if (form.getFieldValue('hasSpoilers') !== true) {
+          message.info(t('reviews.spoilerDetectedHint'));
+        }
+      } else {
+        setSpoilerWarning([]);
+        message.success(t('reviews.spoilerNoneFound'));
+      }
+    } catch (error) {
+      message.error(
+        error instanceof Error ? error.message : t('reviews.aiError')
+      );
+    }
+  };
+
+  const acceptSuggestion = () => {
+    if (!aiSuggestion) return;
+    form.setFieldValue(aiSuggestion.field, aiSuggestion.text);
+    setAiSuggestion(null);
+  };
+
+  const dismissSuggestion = () => setAiSuggestion(null);
 
   const handleSubmit = async () => {
     try {
@@ -341,7 +476,21 @@ export function ReviewsSection({ seriesId }: ReviewsSectionProps) {
         <Form form={form} layout="vertical" initialValues={EMPTY_FORM}>
           <Form.Item
             name="title"
-            label={t('reviews.fieldTitle')}
+            label={
+              <span className="reviews-form__label-row">
+                {t('reviews.fieldTitle')}
+                <Button
+                  size="small"
+                  type="link"
+                  icon={<ThunderboltOutlined />}
+                  loading={aiBusy === 'suggest-title'}
+                  disabled={Boolean(aiBusy)}
+                  onClick={handleAiSuggestTitle}
+                >
+                  {t('reviews.aiSuggestTitle')}
+                </Button>
+              </span>
+            }
             rules={[{ required: true, max: 160 }]}
           >
             <Input maxLength={160} showCount />
@@ -354,6 +503,107 @@ export function ReviewsSection({ seriesId }: ReviewsSectionProps) {
           >
             <TextArea rows={10} maxLength={20000} showCount />
           </Form.Item>
+
+          <div className="reviews-form__ai-bar">
+            <Space wrap size="small">
+              <Button
+                size="small"
+                icon={<ThunderboltOutlined />}
+                loading={aiBusy === 'polish'}
+                disabled={Boolean(aiBusy)}
+                onClick={handleAiPolish}
+              >
+                {t('reviews.aiPolish')}
+              </Button>
+              <Button
+                size="small"
+                icon={<WarningOutlined />}
+                loading={aiBusy === 'spoiler-check'}
+                disabled={Boolean(aiBusy)}
+                onClick={handleAiSpoilerCheck}
+              >
+                {t('reviews.aiSpoilerCheck')}
+              </Button>
+              <Space.Compact>
+                <Select
+                  size="small"
+                  value={translateTo}
+                  onChange={setTranslateTo}
+                  options={SUPPORTED_LOCALES.map((code) => ({
+                    value: code,
+                    label: LOCALE_LABELS[code],
+                  }))}
+                  style={{ width: 130 }}
+                />
+                <Button
+                  size="small"
+                  icon={<TranslationOutlined />}
+                  loading={aiBusy === 'translate'}
+                  disabled={Boolean(aiBusy)}
+                  onClick={handleAiTranslate}
+                >
+                  {t('reviews.aiTranslate')}
+                </Button>
+              </Space.Compact>
+            </Space>
+            <span className="reviews-form__ai-meta">
+              {t('reviews.aiPoweredBy')}
+            </span>
+          </div>
+
+          {aiBusy && (
+            <div className="reviews-form__ai-loading">
+              <Spin size="small" /> <span>{t('reviews.aiThinking')}</span>
+            </div>
+          )}
+
+          {aiSuggestion && (
+            <Alert
+              type="info"
+              showIcon
+              className="reviews-form__ai-suggestion"
+              message={
+                aiSuggestion.field === 'title'
+                  ? t('reviews.aiSuggestionTitle')
+                  : t('reviews.aiSuggestionBody')
+              }
+              description={
+                <>
+                  <div className="reviews-form__ai-text">
+                    {aiSuggestion.text}
+                  </div>
+                  <Space>
+                    <Button
+                      size="small"
+                      type="primary"
+                      onClick={acceptSuggestion}
+                    >
+                      {t('reviews.aiAccept')}
+                    </Button>
+                    <Button size="small" onClick={dismissSuggestion}>
+                      {t('reviews.aiDiscard')}
+                    </Button>
+                  </Space>
+                </>
+              }
+            />
+          )}
+
+          {spoilerWarning && spoilerWarning.length > 0 && (
+            <Alert
+              type="warning"
+              showIcon
+              className="reviews-form__ai-suggestion"
+              message={t('reviews.spoilerDetectedTitle')}
+              description={
+                <ul className="reviews-form__spoiler-list">
+                  {spoilerWarning.map((reason, i) => (
+                    <li key={i}>{reason}</li>
+                  ))}
+                </ul>
+              }
+            />
+          )}
 
           <div className="reviews-form__row">
             <Form.Item name="verdict" label={t('reviews.fieldVerdict')}>
@@ -415,9 +665,6 @@ export function ReviewsSection({ seriesId }: ReviewsSectionProps) {
               />
             </Form.Item>
           </div>
-          <Tooltip title={t('reviews.aiAssistTooltip')}>
-            <p className="reviews-form__ai-hint">{t('reviews.aiComingSoon')}</p>
-          </Tooltip>
         </Form>
       </Modal>
     </div>
