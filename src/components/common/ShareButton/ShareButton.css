@@ -9,3 +9,12 @@
   background: var(--bg-elevated);
   border-color: var(--border-color-secondary);
 }
+
+/* Variante compacta: boton circular icon-only para no robar atencion. */
+.share-button--compact {
+  width: 40px;
+  min-width: 40px;
+  height: 40px;
+  min-height: 40px;
+  padding: 0;
+}

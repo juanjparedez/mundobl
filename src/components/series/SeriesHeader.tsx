@@ -2,7 +2,14 @@
 
 import { ReactNode } from 'react';
 import { Tag } from 'antd';
-import { BookOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
+import {
+  BookOutlined,
+  TeamOutlined,
+  UserOutlined,
+  BankOutlined,
+  ReadOutlined,
+  PlayCircleOutlined,
+} from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
@@ -29,6 +36,9 @@ interface SeriesHeaderProps {
       name: string;
       code?: string | null;
     } | null;
+    productionCompany?: {
+      name: string;
+    } | null;
     universe?: {
       name: string;
     } | null;
@@ -48,10 +58,19 @@ interface SeriesHeaderProps {
       actor: { id: number; name: string };
     }>;
   };
+  // Indicadores rapidos: si hay reseña publicada y/o contenido embebido
+  // mostramos chips clickeables a su seccion correspondiente.
+  hasReview?: boolean;
+  hasContent?: boolean;
   actionsSlot?: ReactNode;
 }
 
-export function SeriesHeader({ series, actionsSlot }: SeriesHeaderProps) {
+export function SeriesHeader({
+  series,
+  hasReview = false,
+  hasContent = false,
+  actionsSlot,
+}: SeriesHeaderProps) {
   const { t } = useLocale();
 
   const mainActors = series.actors?.filter((a) => a.isMain).slice(0, 4) ?? [];
@@ -154,6 +173,36 @@ export function SeriesHeader({ series, actionsSlot }: SeriesHeaderProps) {
               <Tag color="gold" className="series-header__rating-tag">
                 ★ {series.overallRating}/10
               </Tag>
+            )}
+
+            {series.productionCompany && (
+              <MetadataChip
+                filter="productionCompany"
+                value={series.productionCompany.name}
+                icon={<BankOutlined />}
+                label={series.productionCompany.name}
+                color="cyan"
+              />
+            )}
+
+            {hasContent && (
+              <a
+                href="#series-section-content"
+                className="series-header__status-chip"
+                aria-label="Ir a contenido"
+              >
+                <PlayCircleOutlined /> Con contenido
+              </a>
+            )}
+
+            {hasReview && (
+              <a
+                href="#series-section-reviews"
+                className="series-header__status-chip series-header__status-chip--gold"
+                aria-label="Ir a reseñas"
+              >
+                <ReadOutlined /> Con reseña
+              </a>
             )}
           </div>
 

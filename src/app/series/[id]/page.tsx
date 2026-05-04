@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { cache } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { getSeriesById } from '@/lib/database';
+import { getSeriesById, prisma } from '@/lib/database';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { SeriesHeader } from '@/components/series/SeriesHeader';
 import { SeasonsList } from '@/components/series/SeasonsList';
@@ -99,6 +99,15 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
   const config = getContentTypeConfig(serie.type);
   const showSeasons = shouldShowSeasons(serie.type);
 
+  // Quick counts para los chips de estado del header. Hechos en paralelo
+  // para no penalizar TTFB.
+  const [reviewCount, contentCount] = await Promise.all([
+    prisma.review.count({
+      where: { seriesId: serie.id, status: 'PUBLISHED' },
+    }),
+    prisma.embeddableContent.count({ where: { seriesId: serie.id } }),
+  ]);
+
   const seasonLabel =
     'seasonLabel' in config ? config.seasonLabel : 'Temporadas';
 
@@ -161,6 +170,8 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
             directors: serie.directors,
             actors: serie.actors,
           }}
+          hasReview={reviewCount > 0}
+          hasContent={contentCount > 0}
           actionsSlot={
             <>
               <ViewStatusToggle
@@ -172,6 +183,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
                 title={serie.title}
                 text={serie.synopsis ?? undefined}
                 path={`/series/${serie.id}`}
+                variant="compact"
               />
             </>
           }
