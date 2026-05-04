@@ -11,7 +11,12 @@ Todas las versiones notables del proyecto se documentan aqui.
 - Boton para importar changelog historico desde `CHANGELOG.md` al panel admin
 - Feedback: nueva pestaña "Mis solicitudes" para seguimiento de casos del usuario
 - Feedback: hilo de comentarios por solicitud con carga lazy y publicacion inline
+- Feedback: gestion completa de casos del usuario en perfil (editar, replicar, comentar, eliminar, cambiar estado)
+- Feedback: nuevos endpoints para CRUD de casos y comentarios (`/api/feedback`, `/api/feedback/[id]`, `/api/feedback/[id]/comments`, `/api/feedback/update-status`)
 - Sidebar admin: acceso directo a "Novedades" agregado en navegacion lateral
+- Sidebar admin: acceso directo a "Casos" en seccion Comunidad
+- Noticias BL: Fase 1 completa con panel admin `/admin/noticias`, generacion de resumen con IA y feed publico `/noticias`
+- Noticias BL: modelo `News` + `NewsTag` con estados editoriales (`DRAFT | REVIEW | APPROVED | PUBLISHED | REJECTED`)
 - Mapeo completo de paises del mundo (~200) con codigos ISO para banderas automaticas
 - Script de seed para insertar todos los paises en la DB (`scripts/seed-all-countries.ts`)
 - Rediseno de lista de episodios: layout compacto tipo tabla con seleccion masiva
@@ -25,6 +30,11 @@ Todas las versiones notables del proyecto se documentan aqui.
 - Correciones de i18n en admin/feedback para nuevas claves de navegacion y seguimiento
 - Ajustes de tipado y validaciones para soporte de comentarios en feature requests
 - Fix: dialogo "Deseas abandonar el sitio" al editar temporadas (beforeunload falso positivo)
+- Fix mobile: boton de perfil en BottomNav ya no cierra sesion por error y navega a `/perfil`
+- Fix landing: estabilizacion de imagen hero en mobile (evita errores del optimizador)
+- Fix PWA: correccion de manifest para instalacion (name/description acotados, iconos con `purpose`)
+- Fix PWA: eliminado `head.tsx` incorrecto que apuntaba a `/manifest.json` (404) y bloqueaba instalacion
+- Fix Next.js 16: route handlers dinamicos de feedback actualizados a `params: Promise<{ id: string }>`
 
 ### Seguridad
 - Filtro de paths de scanners en middleware (bloqueo sin loguear)
