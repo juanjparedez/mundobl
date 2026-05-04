@@ -15,26 +15,19 @@ import '@/styles/dark-mode-fixes.css';
 export const metadata: Metadata = {
   metadataBase: new URL('https://mundobl.win'),
   title: {
-    default: 'MundoBL - Catálogo de Series BL, GL y Doramas Asiáticos',
+    default: 'MundoBL - Catálogo de Series BL',
     template: '%s | MundoBL',
   },
   description:
-    'Descubre y explora el catálogo más completo de series BL (Boys Love), GL (Girls Love) y doramas asiáticos. Reseñas, calificaciones, actores y más de series de Tailandia, Japón, Corea, China y Taiwán.',
+    'Catálogo de series BL. Reseñas, calificaciones, episodios y seguimiento de series.',
   keywords: [
     'series BL',
     'Boys Love',
-    'GL',
-    'Girls Love',
-    'doramas asiáticos',
-    'doramas BL',
-    'series tailandesas',
-    'BL tailandés',
-    'BL japonés',
-    'BL coreano',
-    'BL chino',
-    'BL taiwanés',
     'catálogo BL',
-    'reseñas doramas',
+    'reseñas series',
+    'tailandés',
+    'coreano',
+    'japonés',
   ],
   verification: {
     google: 'Yp0Pjs7gScD3_wH8Za8VkiyA1tlnEIG6gjmKp_WcMyg',
@@ -43,23 +36,23 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'es_LA',
     siteName: 'MundoBL',
-    title: 'MundoBL - Catálogo de Series BL, GL y Doramas Asiáticos',
+    title: 'MundoBL - Catálogo de Series BL',
     description:
-      'Descubre y explora el catálogo más completo de series BL (Boys Love), GL (Girls Love) y doramas asiáticos.',
+      'Catálogo de series BL. Reseñas, calificaciones y seguimiento.',
     images: [
       {
         url: '/images/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'MundoBL - Catálogo de Series BL, GL y Doramas Asiáticos',
+        alt: 'MundoBL - Catálogo de Series BL',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'MundoBL - Catálogo de Series BL, GL y Doramas Asiáticos',
+    title: 'MundoBL - Catálogo de Series BL',
     description:
-      'Descubre y explora el catálogo más completo de series BL (Boys Love), GL (Girls Love) y doramas asiáticos.',
+      'Catálogo de series BL. Reseñas, calificaciones y seguimiento.',
     images: ['/images/og-image.png'],
   },
   appleWebApp: {

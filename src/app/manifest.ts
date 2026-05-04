@@ -2,10 +2,9 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'MundoBL - Catálogo de Series BL, GL y Doramas Asiáticos',
+    name: 'MundoBL - Catálogo de Series BL',
     short_name: 'MundoBL',
-    description:
-      'Descubre y explora el catálogo más completo de series BL (Boys Love), GL (Girls Love) y doramas asiáticos. Reseñas, calificaciones, actores y más.',
+    description: 'Catálogo de series BL. Reseñas, calificaciones y seguimiento.',
     start_url: '/',
     display: 'standalone',
     background_color: '#141414',
@@ -16,11 +15,13 @@ export default function manifest(): MetadataRoute.Manifest {
         src: '/icons/icon-192x192.png',
         sizes: '192x192',
         type: 'image/png',
+        purpose: 'any',
       },
       {
         src: '/icons/icon-512x512.png',
         sizes: '512x512',
         type: 'image/png',
+        purpose: 'any',
       },
       {
         src: '/icons/icon-maskable-512x512.png',
@@ -55,7 +56,6 @@ export default function manifest(): MetadataRoute.Manifest {
         sizes: '1200x630',
         type: 'image/png',
         form_factor: 'wide',
-        label: 'MundoBL – Catálogo de Series BL, GL y Doramas',
       },
     ],
   };
