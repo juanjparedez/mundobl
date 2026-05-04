@@ -1,0 +1,139 @@
+.reviews-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg, 24px);
+}
+
+.reviews-section__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md, 16px);
+  flex-wrap: wrap;
+}
+
+.reviews-section__subtitle {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.reviews-section__login {
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.reviews-section__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md, 16px);
+}
+
+.reviews-section__list-title {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.review-card {
+  background: var(--bg-base);
+}
+
+.review-card--mine {
+  border-color: var(--color-primary, #1677ff);
+  border-width: 2px;
+}
+
+.review-card__mine-title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs, 8px);
+}
+
+.review-card__actions {
+  display: flex;
+  gap: var(--spacing-xs, 8px);
+}
+
+.review-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-sm, 12px);
+  flex-wrap: wrap;
+  margin-bottom: var(--spacing-sm, 12px);
+}
+
+.review-card__author {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs, 8px);
+  font-weight: 500;
+}
+
+.review-card__meta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs, 8px);
+  flex-wrap: wrap;
+}
+
+.review-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm, 12px);
+}
+
+.review-card__title {
+  margin: 0;
+  font-size: 1.15rem;
+  color: var(--text-primary);
+}
+
+.review-card__verdict {
+  display: flex;
+  gap: var(--spacing-xs, 8px);
+}
+
+.review-card__text {
+  white-space: pre-wrap;
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+.review-card__ratings {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs, 8px);
+}
+
+.review-card__footer {
+  margin-top: var(--spacing-sm, 12px);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  display: flex;
+  gap: var(--spacing-xs, 8px);
+  align-items: center;
+}
+
+.reviews-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md, 16px);
+}
+
+.reviews-form__row--ratings {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+@media (max-width: 600px) {
+  .reviews-form__row,
+  .reviews-form__row--ratings {
+    grid-template-columns: 1fr;
+  }
+}
+
+.reviews-form__ai-hint {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-style: italic;
+}

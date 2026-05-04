@@ -43,6 +43,7 @@ model User {
   suggestedSites  SuggestedSite[]
   commentReports  CommentReport[]
   notifications   Notification[]
+  reviews         Review[]
 }
 
 model Account {
@@ -181,6 +182,7 @@ model Series {
   embeddableContent EmbeddableContent[]
   relatedSeriesFrom RelatedSeries[]     @relation("mainSeries")
   relatedSeriesTo   RelatedSeries[]     @relation("relatedSeries")
+  reviews           Review[]
 }
 
 // ============================================
@@ -706,6 +708,57 @@ model Notification {
   @@index([userId, createdAt])
   @@index([userId, readAt])
 
+}
+
+// ============================================
+// RESEÑAS (texto largo, estructuradas, con i18n)
+// ============================================
+// Diferente de Comment: una review por usuario+serie+idioma, texto largo,
+// con titulo, veredicto y estado de moderacion. Pensada para texto rico
+// (markdown), votos de utilidad y traducciones futuras.
+enum ReviewStatus {
+  DRAFT       // Borrador del autor (no visible al publico)
+  PUBLISHED   // Publicada
+  HIDDEN      // Oculta por moderacion (autor la ve, otros no)
+}
+
+enum ReviewVerdict {
+  RECOMMENDED
+  MIXED
+  SKIP
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  title     String
+  body      String   // Markdown
+  verdict   ReviewVerdict?
+  // Codigo de idioma de la review (es, en, pt, ko, ja, th, ...).
+  // Se guarda explicito porque el contenido del texto es del usuario,
+  // no traducible por t(). Permite filtrar/listar por idioma.
+  language  String   @default("es")
+  status    ReviewStatus @default(PUBLISHED)
+  // Sub-ratings opcionales especificos del nicho BL/GL.
+  plotRating       Int? // 1-10
+  chemistryRating  Int? // 1-10
+  ostRating        Int? // 1-10
+  castingRating    Int? // 1-10
+  helpfulCount     Int  @default(0)
+  hasSpoilers      Boolean @default(false)
+  publishedAt      DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  seriesId Int
+  series   Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+
+  // Un usuario puede tener una review por serie POR idioma (asi puede
+  // escribir su propia version en es y en sin chocar).
+  @@unique([userId, seriesId, language])
+  @@index([seriesId, status, publishedAt])
+  @@index([userId, createdAt])
 }
 
 // Entradas del changelog gestionadas desde el panel de admin.
