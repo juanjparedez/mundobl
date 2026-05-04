@@ -19,6 +19,7 @@ import {
   UnorderedListOutlined,
   ReadOutlined,
   NotificationOutlined,
+  BugOutlined,
 } from '@ant-design/icons';
 import './admin-nav.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -119,6 +120,12 @@ const ADMIN_GROUPS: AdminGroup[] = [
         icon: <NotificationOutlined />,
         labelKey: 'adminNav.news',
         shortKey: 'adminNav.newsShort',
+      },
+      {
+        key: '/admin/feedback',
+        icon: <BugOutlined />,
+        labelKey: 'adminNav.feedback',
+        shortKey: 'adminNav.feedbackShort',
       },
     ],
   },

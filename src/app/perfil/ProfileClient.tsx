@@ -42,6 +42,7 @@ import {
   ThunderboltOutlined,
   TrophyOutlined,
   PieChartOutlined,
+  BugOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -58,6 +59,7 @@ import {
   StatBar,
   StatWidgetRestoreBar,
 } from '@/components/common/StatWidget/StatWidget';
+import { MyCasesSection } from './MyCasesSection/MyCasesSection';
 import './profile.css';
 
 const ROLE_COLORS: Record<string, string> = {
@@ -1590,6 +1592,14 @@ export function ProfileClient() {
               ))}
             </div>
           )}
+        </section>
+
+        <section className="profile-section">
+          <div className="profile-section__header">
+            <BugOutlined className="profile-section__header-icon" />
+            Mis Casos de Feedback
+          </div>
+          <MyCasesSection />
         </section>
 
         <ProfileSettings />
