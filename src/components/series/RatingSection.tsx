@@ -1,13 +1,26 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Slider, Button, Card, Row, Col } from 'antd';
-import { StarFilled, TeamOutlined } from '@ant-design/icons';
+import { Button, Card } from 'antd';
+import {
+  StarFilled,
+  TeamOutlined,
+  BookOutlined,
+  UserOutlined,
+  VideoCameraOutlined,
+  EditOutlined,
+  BulbOutlined,
+  CameraOutlined,
+  SoundOutlined,
+  HeartOutlined,
+  FireOutlined,
+} from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import './RatingSection.css';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
+import { CategoryRater } from './CategoryRater/CategoryRater';
 
 interface RatingSectionProps {
   seriesId: number;
@@ -29,6 +42,18 @@ const _RATING_CATEGORY_KEYS = [
   'quimica_secundaria',
 ] as const;
 type RatingCategoryKey = (typeof _RATING_CATEGORY_KEYS)[number];
+
+const CATEGORY_ICONS: Record<RatingCategoryKey, React.ReactNode> = {
+  trama: <BookOutlined />,
+  casting: <UserOutlined />,
+  direccion: <VideoCameraOutlined />,
+  guion: <EditOutlined />,
+  produccion: <BulbOutlined />,
+  fotografia: <CameraOutlined />,
+  bso: <SoundOutlined />,
+  quimica_principal: <HeartOutlined />,
+  quimica_secundaria: <FireOutlined />,
+};
 
 interface UserRatingsData {
   averages: Record<string, number>;
@@ -60,7 +85,6 @@ export function RatingSection({
     },
   ];
 
-  // Official ratings (admin)
   const [ratings, setRatings] = useState<Record<string, number>>(() => {
     const initial: Record<string, number> = {};
     existingRatings.forEach((rating) => {
@@ -70,7 +94,6 @@ export function RatingSection({
   });
   const [isSaving, setIsSaving] = useState(false);
 
-  // User ratings
   const [userRatings, setUserRatings] = useState<Record<string, number>>({});
   const [userRatingsData, setUserRatingsData] =
     useState<UserRatingsData | null>(null);
@@ -83,7 +106,6 @@ export function RatingSection({
         const data = await response.json();
         setUserRatingsData(data);
 
-        // If the user has their own ratings, populate the sliders
         if (session?.user?.id && data.ratings) {
           const myRatings: Record<string, number> = {};
           for (const rating of data.ratings) {
@@ -162,169 +184,143 @@ export function RatingSection({
 
   return (
     <div className="rating-section">
-      {/* Official Rating Average */}
-      {averageRating && (
-        <Card className="rating-section__average">
-          <div className="rating-average">
-            <StarFilled className="rating-average__icon" />
-            <div className="rating-average__score">{averageRating}</div>
-            <span style={{ color: 'var(--text-secondary)' }}>
+      {/* Hero combo: oficial + comunidad lado a lado si ambos existen */}
+      <div className="rating-hero">
+        {averageRating && (
+          <div className="rating-hero__card rating-hero__card--official">
+            <StarFilled className="rating-hero__icon" />
+            <div className="rating-hero__score">{averageRating}</div>
+            <div className="rating-hero__label">
               {t('ratingSection.officialLabel')}
-            </span>
+            </div>
           </div>
-        </Card>
-      )}
+        )}
 
-      {/* User Rating Average */}
-      {userRatingsData &&
-        userRatingsData.totalVoters > 0 &&
-        userRatingsData.overallAverage !== null && (
-          <Card className="rating-section__average rating-section__user-average">
-            <div className="rating-average">
-              <TeamOutlined className="rating-average__icon" />
-              <div className="rating-average__score">
+        {userRatingsData &&
+          userRatingsData.totalVoters > 0 &&
+          userRatingsData.overallAverage !== null && (
+            <div className="rating-hero__card rating-hero__card--user">
+              <TeamOutlined className="rating-hero__icon" />
+              <div className="rating-hero__score">
                 {userRatingsData.overallAverage}
               </div>
-              <span style={{ color: 'var(--text-secondary)' }}>
+              <div className="rating-hero__label">
                 {interpolateMessage(
                   userRatingsData.totalVoters === 1
                     ? t('ratingSection.votesSingular')
                     : t('ratingSection.votesPlural'),
                   { n: String(userRatingsData.totalVoters) }
-                )}{' '}
-                {t('ratingSection.userAverageLabel')}
-              </span>
+                )}
+              </div>
             </div>
-          </Card>
-        )}
+          )}
+      </div>
 
-      {/* Official Rating Sliders (Admin only) */}
+      {/* Rating oficial (solo admin) */}
       {isAdmin && (
-        <div className="rating-section__categories">
-          <h4 className="rating-section__title">
-            {t('ratingSection.officialTitle')}
-          </h4>
-          <span style={{ color: 'var(--text-secondary)' }}>
-            {t('ratingSection.officialHint')}
-          </span>
-
-          <Row gutter={[16, 24]} style={{ marginTop: 24 }}>
-            {ratingCategories.map((category) => (
-              <Col xs={24} sm={12} key={category.key}>
-                <Card className="rating-category">
-                  <div className="rating-category__header">
-                    <strong>{category.label}</strong>
-                    <span className="rating-category__score">
-                      {ratings[category.key] || 0}/10
-                    </span>
-                  </div>
-                  <Slider
-                    min={0}
-                    max={10}
-                    value={ratings[category.key] || 0}
-                    onChange={(value) =>
-                      handleRatingChange(category.key, value)
-                    }
-                    marks={{ 0: '0', 5: '5', 10: '10' }}
-                    tooltip={{ formatter: (value) => `${value}/10` }}
-                  />
-                </Card>
-              </Col>
-            ))}
-          </Row>
-
-          <div className="rating-section__actions">
+        <section className="rating-block">
+          <header className="rating-block__header">
+            <div>
+              <h4 className="rating-block__title">
+                {t('ratingSection.officialTitle')}
+              </h4>
+              <p className="rating-block__hint">
+                {t('ratingSection.officialHint')}
+              </p>
+            </div>
             <Button
               type="primary"
-              size="large"
               onClick={handleSave}
               loading={isSaving}
+              size="middle"
             >
               {t('ratingSection.saveOfficialButton')}
             </Button>
+          </header>
+          <div className="rating-block__grid">
+            {ratingCategories.map((category) => (
+              <CategoryRater
+                key={category.key}
+                label={category.label}
+                icon={CATEGORY_ICONS[category.key]}
+                value={ratings[category.key] || 0}
+                onChange={(v) => handleRatingChange(category.key, v)}
+                tone="gold"
+              />
+            ))}
           </div>
-        </div>
+        </section>
       )}
 
-      {/* User Rating Sliders (any logged-in user) */}
+      {/* Rating del usuario (cualquier logueado) */}
       {session?.user ? (
-        <div className="rating-section__categories">
-          <h4 className="rating-section__title">
-            {t('ratingSection.userTitle')}
-          </h4>
-          <span style={{ color: 'var(--text-secondary)' }}>
-            {t('ratingSection.userHint')}
-          </span>
-
-          <Row gutter={[16, 24]} style={{ marginTop: 24 }}>
-            {ratingCategories.map((category) => (
-              <Col xs={24} sm={12} key={`user-${category.key}`}>
-                <Card className="rating-category">
-                  <div className="rating-category__header">
-                    <strong>{category.label}</strong>
-                    <span className="rating-category__score">
-                      {userRatings[category.key] || 0}/10
-                    </span>
-                  </div>
-                  <Slider
-                    min={0}
-                    max={10}
-                    value={userRatings[category.key] || 0}
-                    onChange={(value) =>
-                      handleUserRatingChange(category.key, value)
-                    }
-                    marks={{ 0: '0', 5: '5', 10: '10' }}
-                    tooltip={{ formatter: (value) => `${value}/10` }}
-                  />
-                </Card>
-              </Col>
-            ))}
-          </Row>
-
-          <div className="rating-section__actions">
+        <section className="rating-block">
+          <header className="rating-block__header">
+            <div>
+              <h4 className="rating-block__title">
+                {t('ratingSection.userTitle')}
+              </h4>
+              <p className="rating-block__hint">
+                {t('ratingSection.userHint')}
+              </p>
+            </div>
             <Button
               type="primary"
-              size="large"
               onClick={handleSaveUserRating}
               loading={isSavingUserRating}
+              size="middle"
             >
               {t('ratingSection.saveUserButton')}
             </Button>
+          </header>
+          <div className="rating-block__grid">
+            {ratingCategories.map((category) => (
+              <CategoryRater
+                key={`user-${category.key}`}
+                label={category.label}
+                icon={CATEGORY_ICONS[category.key]}
+                value={userRatings[category.key] || 0}
+                onChange={(v) => handleUserRatingChange(category.key, v)}
+                tone="primary"
+              />
+            ))}
           </div>
-        </div>
+        </section>
       ) : (
-        <Card style={{ marginTop: 'var(--spacing-lg)' }}>
-          <p style={{ color: 'var(--text-secondary)', textAlign: 'center' }}>
-            {t('ratingSection.loginPrompt')}
-          </p>
+        <Card className="rating-block__login">
+          <p>{t('ratingSection.loginPrompt')}</p>
         </Card>
       )}
 
-      {/* User Rating Averages by Category */}
+      {/* Promedios de la comunidad por categoria (solo lectura) */}
       {userRatingsData &&
         userRatingsData.totalVoters > 0 &&
         Object.keys(userRatingsData.averages).length > 0 && (
-          <div className="rating-section__categories">
-            <h4 className="rating-section__title">
-              {t('ratingSection.userAverageTitle')}
-            </h4>
-            <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
+          <section className="rating-block">
+            <header className="rating-block__header">
+              <div>
+                <h4 className="rating-block__title">
+                  {t('ratingSection.userAverageTitle')}
+                </h4>
+              </div>
+            </header>
+            <div className="rating-block__grid">
               {ratingCategories.map((category) => {
                 const avg = userRatingsData.averages[category.key];
                 if (avg === undefined) return null;
                 return (
-                  <Col xs={12} sm={6} key={`avg-${category.key}`}>
-                    <Card size="small" className="rating-category">
-                      <div className="rating-category__header">
-                        <strong>{category.label}</strong>
-                        <span className="rating-category__score">{avg}/10</span>
-                      </div>
-                    </Card>
-                  </Col>
+                  <CategoryRater
+                    key={`avg-${category.key}`}
+                    label={category.label}
+                    icon={CATEGORY_ICONS[category.key]}
+                    value={avg}
+                    readonly
+                    tone="neutral"
+                  />
                 );
               })}
-            </Row>
-          </div>
+            </div>
+          </section>
         )}
     </div>
   );

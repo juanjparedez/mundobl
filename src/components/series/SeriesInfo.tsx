@@ -12,12 +12,14 @@ import {
   MetadataLink,
   MetadataLinkList,
 } from './MetadataPrimitives/MetadataPrimitives';
+import { ReviewSpotlight } from './ReviewSpotlight/ReviewSpotlight';
 import './SeriesInfo.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 
 interface SeriesInfoProps {
   series: {
+    id: number;
     title: string;
     originalTitle?: string | null;
     year?: number | null;
@@ -411,6 +413,8 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
           <div className="series-info__synopsis-content">{series.synopsis}</div>
         </div>
       )}
+
+      <ReviewSpotlight seriesId={series.id} />
 
       {series.review && canSeeNotes && (
         <div className="series-info__review">
