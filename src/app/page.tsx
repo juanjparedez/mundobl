@@ -14,17 +14,66 @@ export const metadata: Metadata = {
 
 async function getLandingStats() {
   try {
-    const [totalSeries, totalCompletedViews, totalPublicComments] =
-      await Promise.all([
-        prisma.series.count(),
-        prisma.viewStatus.count({
-          where: { status: 'VISTA', seriesId: { not: null } },
-        }),
-        prisma.comment.count({ where: { isPrivate: false } }),
-      ]);
-    return { totalSeries, totalCompletedViews, totalPublicComments };
+    const [
+      totalSeries,
+      totalCompletedViews,
+      totalPublicComments,
+      totalReviews,
+      latestSeries,
+      featuredReview,
+    ] = await Promise.all([
+      prisma.series.count(),
+      prisma.viewStatus.count({
+        where: { status: 'VISTA', seriesId: { not: null } },
+      }),
+      prisma.comment.count({ where: { isPrivate: false } }),
+      prisma.review.count({ where: { status: 'PUBLISHED' } }),
+      prisma.series.findMany({
+        orderBy: { createdAt: 'desc' },
+        take: 8,
+        select: {
+          id: true,
+          title: true,
+          year: true,
+          imageUrl: true,
+          country: { select: { name: true, code: true } },
+        },
+      }),
+      prisma.review.findFirst({
+        where: { status: 'PUBLISHED' },
+        orderBy: [
+          { isFeatured: 'desc' },
+          { helpfulCount: 'desc' },
+          { publishedAt: 'desc' },
+        ],
+        select: {
+          id: true,
+          title: true,
+          body: true,
+          verdict: true,
+          helpfulCount: true,
+          user: { select: { name: true, image: true } },
+          series: { select: { id: true, title: true, imageUrl: true } },
+        },
+      }),
+    ]);
+    return {
+      totalSeries,
+      totalCompletedViews,
+      totalPublicComments,
+      totalReviews,
+      latestSeries,
+      featuredReview,
+    };
   } catch {
-    return { totalSeries: 0, totalCompletedViews: 0, totalPublicComments: 0 };
+    return {
+      totalSeries: 0,
+      totalCompletedViews: 0,
+      totalPublicComments: 0,
+      totalReviews: 0,
+      latestSeries: [],
+      featuredReview: null,
+    };
   }
 }
 
