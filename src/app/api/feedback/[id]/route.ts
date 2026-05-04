@@ -6,13 +6,14 @@ export const runtime = 'nodejs';
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const result = await requireAuth();
     if (!result.authorized) return result.response;
 
-    const caseId = parseInt(params.id, 10);
+    const { id } = await params;
+    const caseId = parseInt(id, 10);
     const body = await request.json();
 
     // Verificar que el usuario es propietario del caso
@@ -58,13 +59,14 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const result = await requireAuth();
     if (!result.authorized) return result.response;
 
-    const caseId = parseInt(params.id, 10);
+    const { id } = await params;
+    const caseId = parseInt(id, 10);
 
     // Verificar que el usuario es propietario del caso
     const existingCase = await prisma.featureRequest.findUnique({
