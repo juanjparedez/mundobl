@@ -17,6 +17,11 @@ interface RawTypeCountRow {
   count: bigint;
 }
 
+interface RawYearCountRow {
+  year: number | null;
+  count: bigint;
+}
+
 // GET /api/stats/public - metricas globales anonimas para todo publico
 export async function GET() {
   try {
@@ -24,17 +29,26 @@ export async function GET() {
       totalSeries,
       totalPublicComments,
       totalCompletedViews,
+      totalActors,
+      totalDirectors,
       topSeriesRows,
       topActorsRows,
       topProductionCompaniesRows,
       topCountriesRows,
       topTypesRows,
+      // Catalog fixed stats (series count, not view count)
+      catalogByCountryRows,
+      catalogByTypeRows,
+      catalogByGenreRows,
+      catalogByYearRows,
     ] = await Promise.all([
       prisma.series.count(),
       prisma.comment.count({ where: { isPrivate: false } }),
       prisma.viewStatus.count({
         where: { status: 'VISTA', seriesId: { not: null } },
       }),
+      prisma.actor.count(),
+      prisma.director.count(),
       prisma.viewStatus.groupBy({
         by: ['seriesId'],
         where: { status: 'VISTA', seriesId: { not: null } },
@@ -86,6 +100,41 @@ export async function GET() {
         GROUP BY s.type
         ORDER BY count DESC
       `,
+      // Catalog: series per country
+      prisma.$queryRaw<RawNamedCountRow[]>`
+        SELECT c.name, COUNT(*) as count
+        FROM "Series" s
+        JOIN "Country" c ON c.id = s."countryId"
+        WHERE s."countryId" IS NOT NULL
+        GROUP BY c.name
+        ORDER BY count DESC
+        LIMIT 20
+      `,
+      // Catalog: series per type
+      prisma.$queryRaw<RawTypeCountRow[]>`
+        SELECT type, COUNT(*) as count
+        FROM "Series"
+        GROUP BY type
+        ORDER BY count DESC
+      `,
+      // Catalog: series per genre
+      prisma.$queryRaw<RawNamedCountRow[]>`
+        SELECT g.name, COUNT(*) as count
+        FROM "SeriesGenre" sg
+        JOIN "Genre" g ON g.id = sg."genreId"
+        GROUP BY g.name
+        ORDER BY count DESC
+        LIMIT 20
+      `,
+      // Catalog: series per release year
+      prisma.$queryRaw<RawYearCountRow[]>`
+        SELECT year, COUNT(*) as count
+        FROM "Series"
+        WHERE year IS NOT NULL
+        GROUP BY year
+        ORDER BY year DESC
+        LIMIT 20
+      `,
     ]);
 
     const seriesIds = topSeriesRows
@@ -105,6 +154,8 @@ export async function GET() {
         totalSeries,
         totalPublicComments,
         totalCompletedViews,
+        totalActors,
+        totalDirectors,
       },
       rankings: {
         topSeries: topSeriesRows
@@ -131,6 +182,26 @@ export async function GET() {
           type: row.type,
           count: Number(row.count),
         })),
+      },
+      catalog: {
+        byCountry: catalogByCountryRows.map((r) => ({
+          name: r.name,
+          count: Number(r.count),
+        })),
+        byType: catalogByTypeRows.map((r) => ({
+          type: r.type,
+          count: Number(r.count),
+        })),
+        byGenre: catalogByGenreRows.map((r) => ({
+          name: r.name,
+          count: Number(r.count),
+        })),
+        byYear: catalogByYearRows
+          .filter((r) => r.year !== null)
+          .map((r) => ({
+            year: r.year as number,
+            count: Number(r.count),
+          })),
       },
     });
 

@@ -105,10 +105,12 @@ export function StatWidgetRestoreBar({
   hiddenIds,
   onRestore,
   label,
+  labels,
 }: {
   hiddenIds: string[];
   onRestore: (id: string) => void;
   label: string;
+  labels?: Record<string, string>;
 }) {
   if (hiddenIds.length === 0) return null;
 
@@ -123,7 +125,7 @@ export function StatWidgetRestoreBar({
             className="stat-widget-restore-bar__pill"
             onClick={() => onRestore(id)}
           >
-            {id}
+            {labels?.[id] ?? id}
           </button>
         ))}
       </div>

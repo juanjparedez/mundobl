@@ -108,10 +108,12 @@ export async function GET(request: NextRequest) {
       prisma.userFavorite.count({ where: { userId } }),
 
       // Total distinct series rated by user
-      prisma.userRating.groupBy({
-        by: ['seriesId'],
-        where: { userId },
-      }).then((rows) => rows.length),
+      prisma.userRating
+        .groupBy({
+          by: ['seriesId'],
+          where: { userId },
+        })
+        .then((rows) => rows.length),
 
       // Total comments
       prisma.comment.count({ where: { userId } }),

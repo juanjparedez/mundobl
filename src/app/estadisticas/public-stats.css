@@ -35,13 +35,152 @@
   font-size: var(--font-size-sm);
 }
 
-/* ─── Summary cards ──────────────────────────────────────────────── */
+/* ─── Summary cards — updated to 5-col ──────────────────────────── */
 .public-stats-summary {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-lg);
 }
+
+.public-stats-summary__card[data-variant='actors'] {
+  --stats-card-accent: #8b5cf6;
+}
+
+.public-stats-summary__card[data-variant='directors'] {
+  --stats-card-accent: #06b6d4;
+}
+
+/* ─── Section titles ─────────────────────────────────────────────── */
+.public-stats-section-title {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: var(--spacing-xl) 0 var(--spacing-md);
+  padding-bottom: var(--spacing-xs);
+  border-bottom: 2px solid var(--border-color-secondary);
+}
+
+/* ─── Chart card header with toggle ─────────────────────────────── */
+.public-stats-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  min-width: 0;
+}
+
+.public-stats-card-header__icon {
+  color: var(--primary-color);
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.public-stats-card-header__toggle {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* ─── Bar fill accent override ───────────────────────────────────── */
+.public-stats-ranking-item__bar-fill {
+  background: var(--bar-accent, var(--primary-color));
+}
+
+/* ─── Simple list (list mode) ────────────────────────────────────── */
+.public-stats-simple-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.public-stats-simple-list__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-color-secondary);
+  gap: var(--spacing-sm);
+}
+
+.public-stats-simple-list__item:last-child {
+  border-bottom: none;
+}
+
+.public-stats-simple-list__label {
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.public-stats-simple-list__label a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.public-stats-simple-list__label a:hover {
+  color: var(--primary-color);
+}
+
+.public-stats-simple-list__value {
+  color: var(--text-tertiary);
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ─── Year histogram ─────────────────────────────────────────────── */
+.public-stats-year-histogram {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 100px;
+  overflow-x: auto;
+  padding-bottom: var(--spacing-xs);
+}
+
+.public-stats-year-histogram__col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  min-width: 28px;
+  cursor: default;
+}
+
+.public-stats-year-histogram__bar {
+  width: 100%;
+  max-width: 32px;
+  background: var(--primary-color);
+  border-radius: 3px 3px 0 0;
+  opacity: 0.8;
+  transition: opacity 0.15s;
+}
+
+.public-stats-year-histogram__col:hover .public-stats-year-histogram__bar {
+  opacity: 1;
+}
+
+.public-stats-year-histogram__year {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  height: 28px;
+  line-height: 1;
+}
+
+/* Compact grid card */
+.public-stats-grid__compact .ant-card-body {
+  padding: var(--spacing-md);
+}
+
 
 .public-stats-summary__card {
   border-top: 3px solid var(--stats-card-accent, var(--border-color)) !important;
@@ -256,15 +395,17 @@
 /* ─── Responsive ─────────────────────────────────────────────────── */
 @media (max-width: 900px) {
   .public-stats-summary {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, 1fr);
   }
 
   .public-stats-grid {
     grid-template-columns: 1fr;
   }
+}
 
-  .public-stats-type-chart__item {
-    grid-template-columns: 90px 1fr 44px;
+@media (max-width: 600px) {
+  .public-stats-summary {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
