@@ -260,10 +260,15 @@ type TranslationShape = {
     statFavorites: string;
     statRatings: string;
     statComments: string;
+    statReviews: string;
     sectionWatching: string;
     sectionRecent: string;
     sectionFavorites: string;
     sectionMyComments: string;
+    sectionMyReviews: string;
+    reviewStatusDraft: string;
+    reviewStatusHidden: string;
+    reviewEmptyText: string;
     sectionDisputes: string;
     commentsSelectAll: string;
     commentsSelectedCount: string;
@@ -1857,10 +1862,16 @@ const es: TranslationShape = {
     statFavorites: 'Favoritos',
     statRatings: 'Ratings',
     statComments: 'Comentarios',
+    statReviews: 'Reseñas',
     sectionWatching: 'Viendo ahora',
     sectionRecent: 'Completadas recientemente',
     sectionFavorites: 'Mis favoritos',
     sectionMyComments: 'Mis comentarios',
+    sectionMyReviews: 'Mis reseñas',
+    reviewStatusDraft: 'Borrador',
+    reviewStatusHidden: 'Oculta',
+    reviewEmptyText:
+      'Aún no escribiste reseñas. Cuando termines una serie, vení a contar qué te pareció.',
     sectionDisputes: 'Mis disputas',
     commentsSelectAll: 'Seleccionar todo',
     commentsSelectedCount: '{n} seleccionados',
@@ -3512,10 +3523,16 @@ const en: TranslationShape = {
     statFavorites: 'Favorites',
     statRatings: 'Ratings',
     statComments: 'Comments',
+    statReviews: 'Reviews',
     sectionWatching: 'Currently watching',
     sectionRecent: 'Recently completed',
     sectionFavorites: 'My favorites',
     sectionMyComments: 'My comments',
+    sectionMyReviews: 'My reviews',
+    reviewStatusDraft: 'Draft',
+    reviewStatusHidden: 'Hidden',
+    reviewEmptyText:
+      "You haven't written any reviews yet. When you finish a series, come back and share what you thought.",
     sectionDisputes: 'My disputes',
     commentsSelectAll: 'Select all',
     commentsSelectedCount: '{n} selected',
