@@ -229,6 +229,7 @@ type TranslationShape = {
     comments: string;
     info: string;
     logs: string;
+    changelog: string;
     collapseMenu: string;
     expandMenu: string;
     login: string;
@@ -1654,6 +1655,7 @@ const es: TranslationShape = {
     comments: 'Comentarios',
     info: 'Info',
     logs: 'Logs',
+    changelog: 'Novedades',
     collapseMenu: 'Colapsar menu',
     expandMenu: 'Expandir menu',
     login: 'Iniciar sesion',
@@ -3126,6 +3128,7 @@ const en: TranslationShape = {
     comments: 'Comments',
     info: 'Info',
     logs: 'Logs',
+    changelog: 'Changelog',
     collapseMenu: 'Collapse menu',
     expandMenu: 'Expand menu',
     login: 'Sign in',
