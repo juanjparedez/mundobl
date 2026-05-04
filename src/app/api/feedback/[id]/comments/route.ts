@@ -6,13 +6,14 @@ export const runtime = 'nodejs';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const result = await requireAuth();
     if (!result.authorized) return result.response;
 
-    const caseId = parseInt(params.id, 10);
+    const { id } = await params;
+    const caseId = parseInt(id, 10);
     const body = await request.json();
     const { body: commentBody } = body;
 
