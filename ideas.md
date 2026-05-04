@@ -29,35 +29,23 @@
 - [x] Sugerencias de sitios por la comunidad (SuggestedSite)
 - [x] Deteccion de contenido duplicado en admin
 - [x] Filtros clickeables en logs de admin
+- [x] Temporadas unificadas: admin completo de temporadas con SeasonForm + SeasonsList
+- [x] Proteccion contra inyeccion: todos los $queryRaw usan tagged template literals de Prisma (parametrizados automaticamente)
+- [x] Tracking mejorado en "Viendo Ahora": CurrentlyWatchingDashboard con progreso detallado
+- [x] Landing page rediseñada: hero, stats band, features grid
+- [x] Notificaciones in-app: modelo, API, campanita, pagina /notificaciones, push opt-in
+- [x] Novedades publicas: feed de nuevas series + temporadas + changelog
+- [x] Estadisticas avanzadas: dashboard publico + perfil con heatmap, ratings, distribucion por tipo/pais/año
+- [x] Command palette global (Cmd+K)
+- [x] Preferencias persistidas: catalogo, privacidad por defecto, tema, tipografia
+- [x] Export/delete de cuenta
+- [x] View Transitions API en catalogo
+- [x] PWA: Service Worker + offline indicator + push notifications opt-in
+- [x] Observaciones privadas en series (reviews internas)
 
 ---
 
-## Proximas (corto plazo)
-
-### Temporadas unificadas
-Cuando una serie tiene mas de una temporada pero no es un Universo, poder unificarlas.
-- Tarea pendiente de Flor (id 15 en feedback)
-
-### Revision de proteccion contra inyeccion
-Revisar campos de entrada manual para prevenir inyeccion SQL u otros ataques.
-- Tarea pendiente en feedback (id 3)
-- Prisma ya previene SQL injection por parametrizacion, pero revisar inputs raw si existen
-
----
-
-## Mediano plazo
-
-### Landing page
-Como no es obligatorio loguearse, crear una landing page atractiva.
-- Imagen que paso Flor como hero
-- Call to action para explorar el catalogo
-- Breve descripcion del sitio
-
-### Tracking mejorado en "Viendo Ahora"
-Ahora que tenemos WatchStatus enum, mejorar la pagina Viendo Ahora:
-- Tracking mas detallado del progreso
-- Siguiente episodio a ver
-- Historial de lo visto recientemente
+## Pendiente
 
 ### Sistema de recomendaciones
 Flor como admin podria gestionar recomendaciones.
@@ -81,12 +69,6 @@ Hacer la app generica y reutilizable:
 - Quedaria como una app de gestion de contenido audiovisual personalizable
 - Podria subirse como parte de un portfolio en GitHub
 - Requiere abstraer las referencias a "BL" y hacerlas configurables
-
-### Estadisticas avanzadas
-Dashboard con:
-- Top-rated por pais, genero, ano
-- Trending (mas vistos recientemente)
-- Distribucion por pais, tipo, estado
 
 ### Busqueda avanzada
 Multiples criterios combinados (pais + genero + tag + ano + rating minimo).

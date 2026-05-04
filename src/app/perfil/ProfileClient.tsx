@@ -846,6 +846,18 @@ export function ProfileClient() {
             hiddenIds={hiddenWidgets}
             onRestore={restoreWidget}
             label={t('profile.statsRestoreWidgets')}
+            labels={{
+              hours: t('profile.statsHoursWatched'),
+              streak: t('profile.statsStreakTitle'),
+              'avg-rating': t('profile.statsAvgRating'),
+              genres: t('profile.statsTopGenres'),
+              countries: t('profile.statsTopCountries'),
+              'by-type': t('profile.statsByType'),
+              'completed-by-year': t('profile.statsCompletedByYear'),
+              'top-rated': t('profile.statsTopRated'),
+              actors: t('profile.statsTopActors'),
+              companies: t('profile.statsTopProductionCompanies'),
+            }}
           />
 
           {/* Widget grid */}
@@ -1075,7 +1087,9 @@ export function ProfileClient() {
                             <span className="profile-top-rated-item__stars">
                               {(() => {
                                 const filled = Math.round(s.rating / 2);
-                                return '★'.repeat(filled) + '☆'.repeat(5 - filled);
+                                return (
+                                  '★'.repeat(filled) + '☆'.repeat(5 - filled)
+                                );
                               })()}
                             </span>
                             <span className="profile-top-rated-item__score">

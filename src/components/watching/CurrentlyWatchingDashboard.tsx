@@ -1,13 +1,14 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { Card, Empty, Progress, Tag, Button } from 'antd';
+import { Card, Empty, Progress, Tag, Button, Tooltip } from 'antd';
 import {
   PlayCircleOutlined,
   ClockCircleOutlined,
   CloseOutlined,
   EditOutlined,
+  CheckOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -56,15 +57,12 @@ export function CurrentlyWatchingDashboard() {
   const [watchingSeries, setWatchingSeries] = useState<WatchingSeriesData[]>(
     []
   );
+  const [markingEpisode, setMarkingEpisode] = useState<number | null>(null);
 
   const isAdminOrMod =
     session?.user?.role === 'ADMIN' || session?.user?.role === 'MODERATOR';
 
-  useEffect(() => {
-    loadWatchingSeries();
-  }, []);
-
-  const loadWatchingSeries = async () => {
+  const loadWatchingSeries = useCallback(async () => {
     try {
       const response = await fetch('/api/currently-watching');
       if (response.status === 401) {
@@ -78,7 +76,11 @@ export function CurrentlyWatchingDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    void loadWatchingSeries();
+  }, [loadWatchingSeries]);
 
   const calculateProgress = (series: WatchingSeriesData['series']) => {
     let totalEpisodes = 0;
@@ -101,6 +103,7 @@ export function CurrentlyWatchingDashboard() {
       for (const episode of season.episodes || []) {
         if (episode.viewStatus?.[0]?.status !== 'VISTA') {
           return {
+            id: episode.id,
             seasonNumber: season.seasonNumber,
             episodeNumber: episode.episodeNumber,
             title: episode.title,
@@ -146,7 +149,6 @@ export function CurrentlyWatchingDashboard() {
 
       if (!response.ok) throw new Error('Error al actualizar');
 
-      // Remover de la lista local
       setWatchingSeries((prev) =>
         prev.filter((item) => item.series.id !== seriesId)
       );
@@ -158,6 +160,36 @@ export function CurrentlyWatchingDashboard() {
     } catch (error) {
       message.error(t('watchingDashboard.errorRemove'));
       console.error(error);
+    }
+  };
+
+  const handleMarkNextEpisode = async (
+    episodeId: number,
+    seriesId: number,
+    label: string
+  ) => {
+    setMarkingEpisode(episodeId);
+    try {
+      const response = await fetch(`/api/episodes/${episodeId}/view-status`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'VISTA' }),
+      });
+
+      if (!response.ok) throw new Error('Error al marcar episodio');
+
+      message.success(
+        interpolateMessage(t('watchingDashboard.episodeMarkedMessage'), {
+          ep: label,
+        })
+      );
+      // Reload to get updated progress
+      await loadWatchingSeries();
+    } catch (error) {
+      message.error(t('watchingDashboard.errorMarkEpisode'));
+      console.error(error);
+    } finally {
+      setMarkingEpisode(null);
     }
   };
 
@@ -203,6 +235,9 @@ export function CurrentlyWatchingDashboard() {
           const progress =
             totalEpisodes > 0 ? (watchedEpisodes / totalEpisodes) * 100 : 0;
           const nextEp = getNextEpisode(item.series);
+          const nextEpLabel = nextEp
+            ? `T${nextEp.seasonNumber}E${nextEp.episodeNumber}`
+            : null;
 
           return (
             <Card
@@ -233,7 +268,10 @@ export function CurrentlyWatchingDashboard() {
                 className="watching-card__remove-btn"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleRemoveFromWatching(item.series.id, item.series.title);
+                  void handleRemoveFromWatching(
+                    item.series.id,
+                    item.series.title
+                  );
                 }}
                 title={t('watchingDashboard.removeTitle')}
               />
@@ -268,8 +306,7 @@ export function CurrentlyWatchingDashboard() {
                       <div className="watching-card__next">
                         <PlayCircleOutlined className="watching-card__icon" />
                         <span>
-                          {t('watchingDashboard.nextLabel')}: T
-                          {nextEp.seasonNumber}E{nextEp.episodeNumber}
+                          {t('watchingDashboard.nextLabel')}: {nextEpLabel}
                           {nextEp.title && ` - ${nextEp.title}`}
                         </span>
                       </div>
@@ -281,6 +318,29 @@ export function CurrentlyWatchingDashboard() {
                     </div>
 
                     <div className="watching-card__actions">
+                      {nextEp && (
+                        <Tooltip
+                          title={interpolateMessage(
+                            t('watchingDashboard.markEpisodeTooltip'),
+                            { ep: nextEpLabel ?? '' }
+                          )}
+                        >
+                          <Button
+                            icon={<CheckOutlined />}
+                            loading={markingEpisode === nextEp.id}
+                            onClick={() =>
+                              void handleMarkNextEpisode(
+                                nextEp.id,
+                                item.series.id,
+                                nextEpLabel ?? ''
+                              )
+                            }
+                            className="watching-card__mark-btn"
+                          >
+                            {nextEpLabel}
+                          </Button>
+                        </Tooltip>
+                      )}
                       <Link
                         href={`/series/${item.series.id}`}
                         className="watching-card__action-link"

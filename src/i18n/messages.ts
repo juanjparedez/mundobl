@@ -205,6 +205,9 @@ type TranslationShape = {
     editButton: string;
     removedMessage: string;
     errorRemove: string;
+    episodeMarkedMessage: string;
+    errorMarkEpisode: string;
+    markEpisodeTooltip: string;
   };
   appLayout: {
     skipToContent: string;
@@ -1575,8 +1578,11 @@ const es: TranslationShape = {
     continueButton: 'Continuar viendo',
     detailsButton: 'Ver detalles',
     editButton: 'Editar',
-    removedMessage: '"{title}" removida de "Viendo ahora"',
+    removedMessage: '"\{title}" removida de "Viendo ahora"',
     errorRemove: 'Error al remover de la lista',
+    episodeMarkedMessage: 'Episodio {ep} marcado como visto',
+    errorMarkEpisode: 'Error al marcar el episodio',
+    markEpisodeTooltip: 'Marcar {ep} como visto',
   },
   appLayout: {
     skipToContent: 'Saltar al contenido principal',
@@ -2995,6 +3001,9 @@ const en: TranslationShape = {
     editButton: 'Edit',
     removedMessage: '"{title}" removed from "Watching now"',
     errorRemove: 'Error removing from list',
+    episodeMarkedMessage: 'Episode {ep} marked as watched',
+    errorMarkEpisode: 'Error marking episode',
+    markEpisodeTooltip: 'Mark {ep} as watched',
   },
   appLayout: {
     skipToContent: 'Skip to main content',
