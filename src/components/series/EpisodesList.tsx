@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   Tag,
   Modal,
@@ -22,8 +22,13 @@ import {
   CheckCircleFilled,
   EyeOutlined,
   EyeInvisibleOutlined,
+  FileTextOutlined,
+  FileTextFilled,
 } from '@ant-design/icons';
+import { useSession } from 'next-auth/react';
 import { CommentsList } from '@/components/common/CommentsList';
+import { SpoilerGate } from '@/components/common/SpoilerGate/SpoilerGate';
+import { EpisodeNoteModal } from './EpisodeNoteModal/EpisodeNoteModal';
 import './EpisodesList.css';
 import { useMessage, useModal } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -61,6 +66,7 @@ export function EpisodesList({
   const message = useMessage();
   const modal = useModal();
   const { t } = useLocale();
+  const { data: session } = useSession();
   const [episodes, setEpisodes] = useState<Episode[]>(initialEpisodes);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEpisode, setEditingEpisode] = useState<Episode | null>(null);
@@ -68,7 +74,34 @@ export function EpisodesList({
   const [generating, setGenerating] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [bulkDeleting, setBulkDeleting] = useState(false);
+  const [noteEpisodeId, setNoteEpisodeId] = useState<number | null>(null);
+  // Marca local de qué episodios tienen nota (para refrescar el icono al
+  // crear/borrar sin recargar). Se hidrata bajo demanda via /has-notes.
+  const [episodesWithNotes, setEpisodesWithNotes] = useState<Set<number>>(
+    new Set()
+  );
   const [form] = Form.useForm();
+
+  // Al montar (con usuario logueado), cargo en bulk los IDs con nota.
+  const userId = session?.user?.id;
+  useEffect(() => {
+    if (!userId || episodes.length === 0) return;
+    const ids = episodes.map((e) => e.id).join(',');
+    let cancelled = false;
+    fetch(`/api/episodes/notes-summary?ids=${ids}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: { episodeIds?: number[] } | null) => {
+        if (!cancelled && data?.episodeIds) {
+          setEpisodesWithNotes(new Set(data.episodeIds));
+        }
+      })
+      .catch(() => null);
+    return () => {
+      cancelled = true;
+    };
+    // Solo re-correr si cambia el usuario o la lista de IDs.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId, episodes.map((e) => e.id).join(',')]);
 
   const allSelected = useMemo(
     () => episodes.length > 0 && selectedIds.size === episodes.length,
@@ -501,6 +534,27 @@ export function EpisodesList({
                           )}
                         </Button>
                       </Tooltip>
+                      {session?.user && (
+                        <Tooltip title={t('episodeNote.tooltipOpen')}>
+                          <Button
+                            type="text"
+                            size="small"
+                            icon={
+                              episodesWithNotes.has(episode.id) ? (
+                                <FileTextFilled />
+                              ) : (
+                                <FileTextOutlined />
+                              )
+                            }
+                            className={
+                              episodesWithNotes.has(episode.id)
+                                ? 'episodes-table__action-btn--active'
+                                : ''
+                            }
+                            onClick={() => setNoteEpisodeId(episode.id)}
+                          />
+                        </Tooltip>
+                      )}
                       <Tooltip title={t('episodesList.tooltipEdit')}>
                         <Button
                           type="text"
@@ -535,18 +589,30 @@ export function EpisodesList({
 
                   {/* Synopsis expandible */}
                   {episode.synopsis && expandedEpisode !== episode.id && (
-                    <div className="episodes-table__synopsis-preview">
-                      {episode.synopsis}
-                    </div>
+                    <SpoilerGate
+                      hide={!isWatched}
+                      cacheKey={`ep-synopsis-${episode.id}`}
+                      reason={t('spoilerGate.reasonEpisodeNotWatched')}
+                    >
+                      <div className="episodes-table__synopsis-preview">
+                        {episode.synopsis}
+                      </div>
+                    </SpoilerGate>
                   )}
 
                   {/* Comments section */}
                   {expandedEpisode === episode.id && (
                     <div className="episodes-table__comments">
                       {episode.synopsis && (
-                        <p className="episodes-table__synopsis">
-                          {episode.synopsis}
-                        </p>
+                        <SpoilerGate
+                          hide={!isWatched}
+                          cacheKey={`ep-synopsis-full-${episode.id}`}
+                          reason={t('spoilerGate.reasonEpisodeNotWatched')}
+                        >
+                          <p className="episodes-table__synopsis">
+                            {episode.synopsis}
+                          </p>
+                        </SpoilerGate>
                       )}
                       <CommentsList
                         episodeId={episode.id}
@@ -613,6 +679,28 @@ export function EpisodesList({
           </Form.Item>
         </Form>
       </Modal>
+
+      <EpisodeNoteModal
+        episodeId={noteEpisodeId}
+        episodeLabel={(() => {
+          const ep = episodes.find((e) => e.id === noteEpisodeId);
+          if (!ep) return undefined;
+          return ep.title
+            ? `E${ep.episodeNumber} · ${ep.title}`
+            : `E${ep.episodeNumber}`;
+        })()}
+        open={noteEpisodeId !== null}
+        onClose={() => setNoteEpisodeId(null)}
+        onNoteChange={(hasNote) => {
+          if (noteEpisodeId === null) return;
+          setEpisodesWithNotes((prev) => {
+            const next = new Set(prev);
+            if (hasNote) next.add(noteEpisodeId);
+            else next.delete(noteEpisodeId);
+            return next;
+          });
+        }}
+      />
     </div>
   );
 }
