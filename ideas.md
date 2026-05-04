@@ -52,6 +52,72 @@ Flor como admin podria gestionar recomendaciones.
 - Cada usuario decide si acepta recomendaciones o no en su config
 - Basado en generos, tags, o curado manualmente por admin
 
+### Agente IA de noticias BL/GL (evaluado)
+
+Estado: idea viable y alineada con el producto, pero conviene implementarla por fases para controlar riesgo legal/editorial.
+
+#### Impacto esperado
+
+- Alto impacto de producto: contenido fresco diario mejora retorno y posicionamiento SEO.
+- Alto impacto para Flor: reduce tiempo de curacion si la IA deja borradores listos para revisar.
+- Riesgo alto si se hace sin guardrails: copyright, citas incompletas, y alucinaciones.
+
+#### Decision recomendada (orden por impacto real)
+
+1. Empezar por un MVP editorial seguro dentro del admin actual (sin cron full automatico).
+2. Agregar automatizacion diaria recien cuando la calidad legal/editorial sea consistente.
+3. Publicacion siempre humana (Flor aprueba), nunca auto-publicar desde el agente.
+
+#### Fases sugeridas
+
+##### Fase 1 - MVP de mayor impacto inmediato (1-2 semanas)
+
+- Modelo `News` en Prisma con estados editoriales: `DRAFT | REVIEW | APPROVED | PUBLISHED | REJECTED`.
+- Admin nuevo `/admin/noticias` siguiendo patron de `/admin/resenas`.
+- Boton manual "Generar borrador IA" a partir de URL + fuente (flujo pull, no push).
+- Guardrails obligatorios:
+	- resumen maximo,
+	- cita de fuente + enlace,
+	- disclaimer de IA,
+	- bloqueo de publicacion sin `sourceName` y `originalUrl`.
+- Pagina publica `/noticias` con solo items `PUBLISHED`.
+
+Resultado: valor visible rapido con bajo riesgo operativo.
+
+##### Fase 2 - Ingestion semiautomatica (1 semana)
+
+- Job diario de ingestion RSS a borradores (`DRAFT`) para fuentes permitidas.
+- Deteccion de duplicados por URL canonica + hash de titulo.
+- Filtrado BL/GL/Dorama por keywords + lista blanca de dominios.
+- Notificacion in-app a Flor usando `src/lib/notifications.ts`.
+
+Resultado: menos trabajo manual, sin perder control editorial.
+
+##### Fase 3 - Agente completo (2+ semanas)
+
+- Supabase Edge Function + cron diario para pipeline completo.
+- LangChain.js con herramientas de RSS + lectura de articulo respetando robots.
+- Reintentos, observabilidad y tablero de errores.
+- Integracion opcional con changelog cuando se publique noticia relevante.
+
+Resultado: automatizacion robusta y mantenible.
+
+#### Criterios de "hecho" para pasar de fase
+
+- Precision editorial aceptable (sin copiar texto literal).
+- 100% de noticias con fuente clickeable y disclaimer.
+- Baja tasa de duplicados.
+- Tiempo de revision de Flor realmente menor.
+
+#### Prompt etico base (version recomendada)
+
+"Sos redactor/a de noticias BL/GL en espanol neutro (Argentina). Redacta un resumen original en hasta 180 palabras, basado unicamente en hechos verificables del articulo fuente. No copies frases textuales ni inventes datos. Inclui contexto minimo (quien, que, cuando) y separa claramente hechos de interpretaciones. Cierra siempre con: 'Resumen generado por IA - Fuente original: [NOMBRE]' y agrega `sourceUrl` como enlace. Si faltan datos clave, devolve estado REVIEW con nota de verificacion."
+
+#### Nota de arquitectura
+
+- Este roadmap reutiliza piezas existentes del repo: moderacion tipo `resenas`, notificaciones in-app, y patron admin tabla+modal.
+- Priorizar API route interna para MVP; Edge Function queda para fase 3.
+
 ---
 
 ## Largo plazo

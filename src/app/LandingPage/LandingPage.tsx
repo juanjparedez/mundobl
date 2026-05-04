@@ -178,6 +178,12 @@ export function LandingPage({ stats }: LandingPageProps) {
     return slice.slice(0, lastSpace > 0 ? lastSpace : max).trim() + '…';
   };
 
+  const shouldSkipOptimization = (url: string | null): boolean => {
+    if (!url) return false;
+    if (url.startsWith('/')) return false;
+    return true;
+  };
+
   return (
     <div className="landing">
       {/* ── Hero ── */}
@@ -329,6 +335,7 @@ export function LandingPage({ stats }: LandingPageProps) {
                 key={s.id}
                 href={`/series/${s.id}`}
                 className="landing__series-card"
+                prefetch={false}
               >
                 <div className="landing__series-cover">
                   {s.imageUrl ? (
@@ -339,7 +346,10 @@ export function LandingPage({ stats }: LandingPageProps) {
                       height={270}
                       sizes="(max-width: 600px) 130px, 180px"
                       quality={65}
-                      unoptimized={isSupabaseImageUrl(s.imageUrl)}
+                      unoptimized={
+                        shouldSkipOptimization(s.imageUrl) ||
+                        isSupabaseImageUrl(s.imageUrl)
+                      }
                     />
                   ) : (
                     <div className="landing__series-cover-placeholder">
@@ -377,8 +387,9 @@ export function LandingPage({ stats }: LandingPageProps) {
             </h2>
           </header>
           <Link
-            href={`/series/${stats.featuredReview.series.id}#series-section-reviews`}
+            href={`/series/${stats.featuredReview.series.id}`}
             className="landing__featured-review"
+            prefetch={false}
           >
             {stats.featuredReview.series.imageUrl && (
               <div className="landing__featured-review-cover">
@@ -388,9 +399,10 @@ export function LandingPage({ stats }: LandingPageProps) {
                   width={130}
                   height={195}
                   quality={65}
-                  unoptimized={isSupabaseImageUrl(
-                    stats.featuredReview.series.imageUrl
-                  )}
+                  unoptimized={
+                    shouldSkipOptimization(stats.featuredReview.series.imageUrl) ||
+                    isSupabaseImageUrl(stats.featuredReview.series.imageUrl)
+                  }
                 />
               </div>
             )}
