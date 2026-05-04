@@ -268,7 +268,11 @@ export function FeedbackClient() {
       render: (email: string | null, record: FeedbackCase) =>
         record.user ? (
           <Space size="small">
-            <Avatar src={record.user.image} size="small" icon={<UserOutlined />} />
+            <Avatar
+              src={record.user.image}
+              size="small"
+              icon={<UserOutlined />}
+            />
             <span>{record.user.name || email}</span>
           </Space>
         ) : (
@@ -346,16 +350,16 @@ export function FeedbackClient() {
         <AdminPageHero title="Casos de Feedback" />
 
         <div className="admin__content">
-        <div style={{ marginBottom: '1.5rem' }}>
-          <Input
-            placeholder="Buscar por título o descripción..."
-            allowClear
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onPressEnter={() => setPage(1)}
-            style={{ marginBottom: '1rem' }}
-          />
-        </div>
+          <div style={{ marginBottom: '1.5rem' }}>
+            <Input
+              placeholder="Buscar por título o descripción..."
+              allowClear
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onPressEnter={() => setPage(1)}
+              style={{ marginBottom: '1rem' }}
+            />
+          </div>
           <div className="admin__controls" style={{ marginBottom: '1.5rem' }}>
             <Segmented<'ALL' | Status>
               value={status}
@@ -406,11 +410,18 @@ export function FeedbackClient() {
         footer={null}
       >
         {detailCase && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div
+            style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+          >
             <div>
               <h3>{detailCase.title}</h3>
               <Space size="middle">
-                <Tag color={STATUS_OPTIONS.find((o) => o.value === detailCase.status)?.color}>
+                <Tag
+                  color={
+                    STATUS_OPTIONS.find((o) => o.value === detailCase.status)
+                      ?.color
+                  }
+                >
                   {
                     STATUS_OPTIONS.find((o) => o.value === detailCase.status)
                       ?.label
@@ -418,13 +429,15 @@ export function FeedbackClient() {
                 </Tag>
                 <Tag
                   color={
-                    PRIORITY_OPTIONS.find((o) => o.value === detailCase.priority)
-                      ?.color
+                    PRIORITY_OPTIONS.find(
+                      (o) => o.value === detailCase.priority
+                    )?.color
                   }
                 >
                   {
-                    PRIORITY_OPTIONS.find((o) => o.value === detailCase.priority)
-                      ?.label
+                    PRIORITY_OPTIONS.find(
+                      (o) => o.value === detailCase.priority
+                    )?.label
                   }
                 </Tag>
               </Space>

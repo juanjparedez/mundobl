@@ -95,8 +95,7 @@ export function BottomNav() {
             {
               key: 'profile',
               icon: <UserOutlined />,
-              label:
-                session.user?.name?.split(' ')[0] || t('sidebar.profile'),
+              label: session.user?.name?.split(' ')[0] || t('sidebar.profile'),
               path: ROUTES.PERFIL,
             },
           ]),
