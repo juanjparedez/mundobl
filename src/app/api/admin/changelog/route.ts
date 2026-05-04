@@ -31,7 +31,13 @@ export async function POST(request: NextRequest) {
     if (!authResult.authorized) return authResult.response;
 
     const body = await request.json();
-    const { version, category, body: itemBody, sortOrder, importFromFile } = body as {
+    const {
+      version,
+      category,
+      body: itemBody,
+      sortOrder,
+      importFromFile,
+    } = body as {
       version: string;
       category?: string;
       body: string;

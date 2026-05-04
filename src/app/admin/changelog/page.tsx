@@ -123,12 +123,20 @@ export default function ChangelogAdminPage() {
         const err = await res.json();
         throw new Error(
           err.error ||
-            t(isEdit ? 'adminChangelog.updateError' : 'adminChangelog.createError')
+            t(
+              isEdit
+                ? 'adminChangelog.updateError'
+                : 'adminChangelog.createError'
+            )
         );
       }
 
       message.success(
-        t(isEdit ? 'adminChangelog.updateSuccess' : 'adminChangelog.createSuccess')
+        t(
+          isEdit
+            ? 'adminChangelog.updateSuccess'
+            : 'adminChangelog.createSuccess'
+        )
       );
       setModalOpen(false);
       setEditingItem(null);
@@ -173,7 +181,9 @@ export default function ChangelogAdminPage() {
       });
       if (!res.ok) throw new Error(t('adminChangelog.importError'));
       const data = await res.json();
-      message.success(`${t('adminChangelog.importSuccess')} (${data.imported} items)`);
+      message.success(
+        `${t('adminChangelog.importSuccess')} (${data.imported} items)`
+      );
       void loadItems();
     } catch (error) {
       message.error(t('adminChangelog.importError'));
@@ -200,7 +210,9 @@ export default function ChangelogAdminPage() {
       width: 120,
       responsive: ['md' as const],
       render: (cat: string | null) =>
-        cat ? <Tag color="blue">{cat}</Tag> : (
+        cat ? (
+          <Tag color="blue">{cat}</Tag>
+        ) : (
           <span style={{ color: 'var(--color-text-secondary)' }}>
             {t('adminChangelog.emptyCategory')}
           </span>
@@ -320,7 +332,10 @@ export default function ChangelogAdminPage() {
               name="version"
               label={t('adminChangelog.fieldVersion')}
               rules={[
-                { required: true, message: t('adminChangelog.requiredVersion') },
+                {
+                  required: true,
+                  message: t('adminChangelog.requiredVersion'),
+                },
               ]}
             >
               <Select
@@ -360,7 +375,11 @@ export default function ChangelogAdminPage() {
               <Input.TextArea rows={3} />
             </Form.Item>
 
-            <Form.Item name="sortOrder" label="Orden" style={{ display: 'none' }}>
+            <Form.Item
+              name="sortOrder"
+              label="Orden"
+              style={{ display: 'none' }}
+            >
               <Input type="number" />
             </Form.Item>
 

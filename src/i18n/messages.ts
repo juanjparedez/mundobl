@@ -2118,7 +2118,8 @@ const es: TranslationShape = {
   },
   adminChangelog: {
     title: 'Administracion de Changelog',
-    subtitle: 'Gestioná las entradas del changelog que se muestran en Novedades.',
+    subtitle:
+      'Gestioná las entradas del changelog que se muestran en Novedades.',
     statsTotal: 'Total items',
     statsVersions: 'Versiones',
     searchPlaceholder: 'Buscar por version, categoria o descripcion...',
