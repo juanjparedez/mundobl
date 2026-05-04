@@ -1457,6 +1457,21 @@ type TranslationShape = {
     ratingCasting: string;
     aiAssistTooltip: string;
     aiComingSoon: string;
+    aiPolish: string;
+    aiSuggestTitle: string;
+    aiTranslate: string;
+    aiSpoilerCheck: string;
+    aiPoweredBy: string;
+    aiThinking: string;
+    aiSuggestionTitle: string;
+    aiSuggestionBody: string;
+    aiAccept: string;
+    aiDiscard: string;
+    aiNeedBody: string;
+    aiError: string;
+    spoilerDetectedTitle: string;
+    spoilerDetectedHint: string;
+    spoilerNoneFound: string;
     savedDraft: string;
     publishedSuccess: string;
     saveError: string;
@@ -3016,9 +3031,24 @@ const es: TranslationShape = {
     ratingOst: 'BSO',
     ratingCasting: 'Casting',
     aiAssistTooltip:
-      'Próximamente: asistente IA para pulir el texto y traducir.',
-    aiComingSoon:
-      '✨ Asistente IA próximamente: pulir redacción, sugerir título y traducir.',
+      'Asistente IA: pulir el texto, sugerir título, traducir y detectar spoilers.',
+    aiComingSoon: '',
+    aiPolish: 'Pulir redacción',
+    aiSuggestTitle: 'Sugerir título',
+    aiTranslate: 'Traducir',
+    aiSpoilerCheck: 'Detectar spoilers',
+    aiPoweredBy: 'Asistido por Gemini',
+    aiThinking: 'El asistente está pensando…',
+    aiSuggestionTitle: 'Título sugerido',
+    aiSuggestionBody: 'Versión sugerida',
+    aiAccept: 'Usar esta versión',
+    aiDiscard: 'Descartar',
+    aiNeedBody: 'Escribí algo en la reseña primero.',
+    aiError: 'Error del asistente IA',
+    spoilerDetectedTitle: 'Posibles spoilers detectados',
+    spoilerDetectedHint:
+      'Considerá activar el toggle "Contiene spoilers" para avisar a los demás.',
+    spoilerNoneFound: 'No se detectaron spoilers obvios.',
     savedDraft: 'Borrador guardado',
     publishedSuccess: 'Reseña publicada',
     saveError: 'Error al guardar la reseña',
@@ -4566,9 +4596,25 @@ const en: TranslationShape = {
     ratingChemistry: 'Chemistry',
     ratingOst: 'OST',
     ratingCasting: 'Casting',
-    aiAssistTooltip: 'Coming soon: AI assistant to polish text and translate.',
-    aiComingSoon:
-      '✨ AI assistant coming soon: polish writing, suggest title and translate.',
+    aiAssistTooltip:
+      'AI assistant: polish text, suggest title, translate and detect spoilers.',
+    aiComingSoon: '',
+    aiPolish: 'Polish writing',
+    aiSuggestTitle: 'Suggest title',
+    aiTranslate: 'Translate',
+    aiSpoilerCheck: 'Check for spoilers',
+    aiPoweredBy: 'Powered by Gemini',
+    aiThinking: 'Assistant is thinking…',
+    aiSuggestionTitle: 'Suggested title',
+    aiSuggestionBody: 'Suggested version',
+    aiAccept: 'Use this version',
+    aiDiscard: 'Discard',
+    aiNeedBody: 'Write something in the review first.',
+    aiError: 'AI assistant error',
+    spoilerDetectedTitle: 'Possible spoilers detected',
+    spoilerDetectedHint:
+      'Consider turning on the "Contains spoilers" toggle to warn others.',
+    spoilerNoneFound: 'No obvious spoilers detected.',
     savedDraft: 'Draft saved',
     publishedSuccess: 'Review published',
     saveError: 'Error saving review',

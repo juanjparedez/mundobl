@@ -131,9 +131,54 @@
   }
 }
 
-.reviews-form__ai-hint {
-  margin: 0;
+.reviews-form__label-row {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs, 8px);
+}
+
+.reviews-form__ai-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-sm, 12px);
+  padding: var(--spacing-sm, 12px);
+  background: var(--bg-elevated, rgba(0, 0, 0, 0.03));
+  border-radius: 6px;
+  margin-bottom: var(--spacing-md, 16px);
+}
+
+.reviews-form__ai-meta {
   color: var(--text-secondary);
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   font-style: italic;
+}
+
+.reviews-form__ai-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs, 8px);
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-sm, 12px);
+}
+
+.reviews-form__ai-suggestion {
+  margin-bottom: var(--spacing-md, 16px);
+}
+
+.reviews-form__ai-text {
+  white-space: pre-wrap;
+  margin-bottom: var(--spacing-sm, 12px);
+  padding: var(--spacing-sm, 12px);
+  background: var(--bg-base);
+  border-radius: 4px;
+  max-height: 240px;
+  overflow-y: auto;
+  line-height: 1.5;
+}
+
+.reviews-form__spoiler-list {
+  margin: 0;
+  padding-left: var(--spacing-md, 16px);
 }
