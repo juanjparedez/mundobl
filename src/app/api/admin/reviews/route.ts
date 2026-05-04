@@ -60,7 +60,9 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// PATCH /api/admin/reviews?id=X — cambiar status (PUBLISHED/HIDDEN)
+// PATCH /api/admin/reviews?id=X — cambiar status o destacar/quitar destacado.
+// Solo se permite UNA reseña destacada por (seriesId, language): si destacamos
+// otra, des-destacamos la anterior automaticamente.
 export async function PATCH(request: NextRequest) {
   try {
     const authResult = await requireRole(['ADMIN', 'MODERATOR']);
@@ -71,7 +73,44 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'ID invalido' }, { status: 400 });
     }
 
-    const body = (await request.json()) as { status?: string };
+    const body = (await request.json()) as {
+      status?: string;
+      isFeatured?: boolean;
+    };
+
+    if (typeof body.isFeatured === 'boolean') {
+      const target = await prisma.review.findUnique({
+        where: { id },
+        select: { id: true, seriesId: true, language: true },
+      });
+      if (!target) {
+        return NextResponse.json(
+          { error: 'Reseña no encontrada' },
+          { status: 404 }
+        );
+      }
+
+      const updated = await prisma.$transaction(async (tx) => {
+        if (body.isFeatured) {
+          await tx.review.updateMany({
+            where: {
+              seriesId: target.seriesId,
+              language: target.language,
+              isFeatured: true,
+              NOT: { id },
+            },
+            data: { isFeatured: false },
+          });
+        }
+        return tx.review.update({
+          where: { id },
+          data: { isFeatured: body.isFeatured ?? false },
+        });
+      });
+
+      return NextResponse.json({ success: true, review: updated });
+    }
+
     const status = body.status;
     if (!status || !STATUS_VALUES.includes(status as StatusValue)) {
       return NextResponse.json({ error: 'status invalido' }, { status: 400 });
@@ -87,7 +126,7 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ success: true, review: updated });
   } catch (error) {
-    console.error('Error updating review status:', error);
+    console.error('Error updating review:', error);
     return NextResponse.json(
       { error: 'Error al actualizar reseña' },
       { status: 500 }
