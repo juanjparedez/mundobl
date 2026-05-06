@@ -34,6 +34,7 @@ import { useSession, signIn, signOut } from 'next-auth/react';
 import { ROUTES } from '@/constants/navigation';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { SettingsPanel } from '../SettingsPanel/SettingsPanel';
+import { NotificationsBell } from '../NotificationsBell/NotificationsBell';
 import { LAST_SEEN_NOVEDADES_KEY } from '@/app/novedades/storage-keys';
 import './Sidebar.css';
 
@@ -364,6 +365,8 @@ export function Sidebar() {
             </Button>
           )}
         </div>
+
+        <NotificationsBell collapsed={collapsed} />
 
         <button
           className="sidebar-settings-trigger"

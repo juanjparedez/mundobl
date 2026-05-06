@@ -1,29 +1,30 @@
 .notifications-bell {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--spacing-sm);
-  width: 100%;
+  width: calc(100% - var(--spacing-sm) * 2);
+  margin: var(--spacing-xs);
   padding: var(--spacing-xs) var(--spacing-sm);
   background: transparent;
-  border: none;
+  border: 1px solid transparent;
   border-radius: var(--border-radius-sm);
   cursor: pointer;
   color: var(--text-secondary);
-  transition:
-    background 0.15s ease,
-    color 0.15s ease;
-  font-size: var(--font-size-base);
+  transition: var(--transition-fast);
+  font-size: var(--font-size-sm);
 }
 
 .notifications-bell:hover {
   background: var(--bg-spotlight);
+  border-color: var(--border-color-secondary);
   color: var(--text-primary);
 }
 
 .notifications-bell__icon {
   display: inline-flex;
   align-items: center;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .notifications-bell__label {
