@@ -56,7 +56,10 @@
   font-size: var(--font-size-sm);
   font-weight: 600;
   text-decoration: none;
-  transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+  transition:
+    transform 0.18s ease,
+    background 0.18s ease,
+    border-color 0.18s ease;
 }
 
 .where-to-watch__link:hover {

@@ -137,7 +137,11 @@
 
 /* --- Alert --- */
 [data-theme='dark'] .ant-alert-info {
-  background-color: color-mix(in srgb, var(--info-color) 10%, transparent) !important;
+  background-color: color-mix(
+    in srgb,
+    var(--info-color) 10%,
+    transparent
+  ) !important;
   border: 1px solid color-mix(in srgb, var(--info-color) 20%, transparent) !important;
 }
 

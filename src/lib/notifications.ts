@@ -109,3 +109,50 @@ export async function notifyUser(input: NotificationInput): Promise<void> {
     },
   });
 }
+
+interface NotifySeriesSubscribersOpts {
+  seriesId: number;
+  type: string;
+  title: string;
+  body?: string;
+  refType?: string;
+  refId?: string | number;
+  excludeUserId?: string;
+}
+
+/**
+ * Avisa a todos los usuarios suscritos a una serie. No-bloqueante y
+ * silencioso: errores se ignoran para no romper la creacion del recurso
+ * que disparo el aviso. El link siempre apunta a la pagina de la serie.
+ */
+export async function notifySeriesSubscribers(
+  opts: NotifySeriesSubscribersOpts
+): Promise<void> {
+  try {
+    const subscribers = await prisma.seriesSubscription.findMany({
+      where: { seriesId: opts.seriesId },
+      select: { userId: true },
+    });
+    const recipients = subscribers
+      .map((s) => s.userId)
+      .filter((id) => id !== opts.excludeUserId);
+    if (recipients.length === 0) return;
+
+    const linkPath = `/series/${opts.seriesId}`;
+    await Promise.all(
+      recipients.map((userId) =>
+        notifyUser({
+          userId,
+          type: opts.type,
+          title: opts.title,
+          body: opts.body,
+          linkPath,
+          refType: opts.refType,
+          refId: opts.refId,
+        })
+      )
+    );
+  } catch {
+    /* never block the main op */
+  }
+}

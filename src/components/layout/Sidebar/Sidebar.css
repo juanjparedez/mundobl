@@ -5,7 +5,11 @@
   left: 0;
   top: 0;
   bottom: 0;
-  background: color-mix(in srgb, var(--bg-elevated) 86%, transparent) !important;
+  background: color-mix(
+    in srgb,
+    var(--bg-elevated) 86%,
+    transparent
+  ) !important;
   border-right: 1px solid var(--border-color-secondary);
   display: flex;
   flex-direction: column;

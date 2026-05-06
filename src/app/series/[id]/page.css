@@ -3,7 +3,11 @@
   isolation: isolate;
   padding: var(--spacing-lg);
   border-radius: var(--border-radius-lg);
-  background: radial-gradient(circle at center, rgba(201, 138, 192, 0.12) 0%, rgba(20, 15, 28, 0) 70%);
+  background: radial-gradient(
+    circle at center,
+    rgba(201, 138, 192, 0.12) 0%,
+    rgba(20, 15, 28, 0) 70%
+  );
 }
 
 .series-actions {
@@ -28,7 +32,10 @@
   background: color-mix(in srgb, var(--bg-container) 90%, transparent);
   color: var(--text-secondary);
   text-decoration: none;
-  transition: transform 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .series-quick-actions__item:hover {
@@ -84,7 +91,10 @@
   text-decoration: none;
   font-size: var(--font-size-sm);
   border: 1px solid transparent;
-  transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .series-detail-sections__link:hover {

@@ -1,0 +1,26 @@
+.series-subscribe-btn {
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+  padding: 0;
+}
+
+.series-subscribe-btn:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
+
+.series-subscribe-btn--active {
+  color: var(--gold-color, #d4a546);
+  border-color: color-mix(in srgb, var(--gold-color, #d4a546) 50%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--gold-color, #d4a546) 12%,
+    var(--bg-container)
+  );
+}
+
+.series-subscribe-btn--active:hover {
+  color: var(--gold-color, #d4a546);
+  border-color: color-mix(in srgb, var(--gold-color, #d4a546) 70%, transparent);
+}
