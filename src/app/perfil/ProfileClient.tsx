@@ -43,6 +43,7 @@ import {
   TrophyOutlined,
   PieChartOutlined,
   BugOutlined,
+  BellOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -60,6 +61,8 @@ import {
   StatWidgetRestoreBar,
 } from '@/components/common/StatWidget/StatWidget';
 import { MyCasesSection } from './MyCasesSection/MyCasesSection';
+import { NotificationsWidget } from './NotificationsWidget/NotificationsWidget';
+import { SubscriptionsSection } from './SubscriptionsSection/SubscriptionsSection';
 import './profile.css';
 
 const ROLE_COLORS: Record<string, string> = {
@@ -1592,6 +1595,22 @@ export function ProfileClient() {
               ))}
             </div>
           )}
+        </section>
+
+        <section className="profile-section">
+          <div className="profile-section__header">
+            <BellOutlined className="profile-section__header-icon" />
+            Notificaciones recientes
+          </div>
+          <NotificationsWidget />
+        </section>
+
+        <section className="profile-section">
+          <div className="profile-section__header">
+            <BellOutlined className="profile-section__header-icon" />
+            Mis suscripciones
+          </div>
+          <SubscriptionsSection />
         </section>
 
         <section className="profile-section">

@@ -63,6 +63,8 @@ model User {
   approvedNews    News[]          @relation("NewsApprovedBy")
   assignedFeatureRequests FeatureRequest[] @relation("FeatureRequestAssignedTo")
   seriesSubscriptions SeriesSubscription[]
+  pushSubscriptions   PushSubscription[]
+  notificationPrefs   NotificationPrefs?
 }
 
 model Account {
@@ -553,6 +555,65 @@ model SeriesSubscription {
 
   @@unique([userId, seriesId])
   @@index([seriesId])
+}
+
+// ============================================
+// WEB PUSH SUBSCRIPTIONS
+// ============================================
+// Cada navegador/dispositivo del usuario que activo notificaciones
+// push registra un endpoint propio. Un mismo usuario puede tener
+// muchas (laptop + telefono + tablet). Si el endpoint expira o el
+// usuario revoca el permiso, el envio devuelve 410/404 y borramos
+// la fila.
+model PushSubscription {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  lastUsedAt DateTime @default(now())
+  // Identificador legible del dispositivo (extraido del User-Agent en
+  // el momento del registro). Sirve para que el usuario pueda
+  // distinguir cuales dispositivos tiene suscritos.
+  userAgent  String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // PushSubscription nativo del browser, serializado.
+  endpoint String @unique
+  p256dh   String
+  authKey  String
+
+  @@index([userId])
+}
+
+// ============================================
+// PREFERENCIAS DE NOTIFICACIONES
+// ============================================
+// Una fila por usuario (1:1) con sus preferencias granulares.
+// Cada flag controla un canal+tipo de evento. La ausencia de fila
+// se interpreta como "todo activo" (defaults razonables).
+model NotificationPrefs {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Por canal: in-app siempre on (es el inbox). Push se opt-in.
+  pushEnabled  Boolean @default(true)
+
+  // Por tipo de evento: si el usuario apaga uno, no recibe ni in-app
+  // ni push de ese tipo. Esto le da control fino sobre el ruido.
+  notifySeasonAdded      Boolean @default(true)
+  notifyContentAdded     Boolean @default(true)
+  notifyReviewPublished  Boolean @default(true)
+  notifyCommentReply     Boolean @default(true)
+
+  // Quiet hours: si estan dentro de la ventana, los pushes se omiten
+  // (pero la notificacion in-app igual se crea). Formato HH:MM en UTC.
+  // Si ambos son null, no hay quiet hours.
+  quietStart String?
+  quietEnd   String?
 }
 
 // ============================================
