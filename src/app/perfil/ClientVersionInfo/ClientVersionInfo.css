@@ -1,0 +1,58 @@
+.client-version-info {
+  margin-top: var(--spacing-md);
+  padding: 8px 12px;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-color-secondary);
+  background: color-mix(in srgb, var(--bg-elevated) 60%, transparent);
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.client-version-info:hover {
+  border-color: color-mix(in srgb, var(--primary-color) 35%, transparent);
+  background: color-mix(in srgb, var(--bg-elevated) 90%, transparent);
+}
+
+.client-version-info:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.client-version-info__line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 0.78em;
+  color: var(--text-tertiary);
+}
+
+.client-version-info__label {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.client-version-info__value {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.client-version-info__env-tag {
+  margin: 0;
+  font-size: 0.85em;
+}
+
+.client-version-info__copy {
+  margin-left: auto;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.client-version-info:hover .client-version-info__copy {
+  color: var(--primary-color);
+}

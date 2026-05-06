@@ -63,6 +63,7 @@ import {
 import { MyCasesSection } from './MyCasesSection/MyCasesSection';
 import { NotificationsWidget } from './NotificationsWidget/NotificationsWidget';
 import { SubscriptionsSection } from './SubscriptionsSection/SubscriptionsSection';
+import { ClientVersionInfo } from './ClientVersionInfo/ClientVersionInfo';
 import './profile.css';
 
 const ROLE_COLORS: Record<string, string> = {
@@ -1622,6 +1623,8 @@ export function ProfileClient() {
         </section>
 
         <ProfileSettings />
+
+        <ClientVersionInfo />
       </div>
 
       <Modal
