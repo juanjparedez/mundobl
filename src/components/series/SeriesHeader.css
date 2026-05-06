@@ -253,63 +253,89 @@
 @media (max-width: 640px) {
   .series-hero {
     margin-bottom: var(--spacing-lg);
+    margin-left: calc(-1 * var(--spacing-xs));
+    margin-right: calc(-1 * var(--spacing-xs));
+    border-radius: 0;
   }
 
   .series-header {
-    grid-template-columns: 110px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
-      'aside content'
-      'actions actions';
-    align-items: start;
-    gap: var(--spacing-md);
-    padding: var(--spacing-sm);
+      'aside'
+      'content'
+      'actions';
+    align-items: stretch;
+    gap: 0;
+    padding: 0;
+    border-radius: 0;
+    border: none;
+    background: transparent;
   }
 
-  /* Poster: small, fixed width */
+  /* Poster: full-width cinematic hero on top */
   .series-header__aside {
     flex-shrink: 0;
+    margin: 0;
   }
 
   .series-header__image {
-    width: 110px;
-    box-shadow: 0 8px 16px rgba(10, 8, 16, 0.45);
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    max-height: 65vh;
+    border-radius: 0;
+    box-shadow: none;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      black 0%,
+      black 72%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      black 0%,
+      black 72%,
+      transparent 100%
+    );
   }
 
-  /* Content beside poster on mobile */
+  /* Content slides up under the poster's fade */
   .series-header__content {
-    gap: var(--spacing-xs);
+    gap: var(--spacing-sm);
+    padding: 0 var(--spacing-md) var(--spacing-md);
+    margin-top: -8vh;
+    position: relative;
+    z-index: 1;
   }
 
   .series-header__title {
-    font-size: 1.15rem;
+    font-size: 1.45rem;
+    line-height: 1.2;
   }
 
   .series-header__original-title {
-    font-size: 0.8em;
+    font-size: 0.85em;
   }
 
   .series-header__meta {
     gap: 6px;
   }
 
-  /* Synopsis full-width below the row */
   .series-header__synopsis {
-    padding: var(--spacing-sm);
+    padding: var(--spacing-sm) 0;
     margin-top: 0;
   }
 
   .series-header__synopsis p {
-    font-size: 0.88em;
+    font-size: 0.92em;
     line-height: 1.55;
-    /* clamp to ~5 lines */
     display: -webkit-box;
-    -webkit-line-clamp: 5;
+    -webkit-line-clamp: 6;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
 
   .series-header__quick-cast {
-    padding: var(--spacing-xs) var(--spacing-sm);
+    padding: var(--spacing-xs) 0;
   }
 
   .series-header__cast-label {
@@ -319,6 +345,7 @@
   .series-header__actions {
     grid-template-columns: 1fr;
     gap: var(--spacing-xs);
+    padding: 0 var(--spacing-md) var(--spacing-md);
   }
 
   .series-header__actions > * {
