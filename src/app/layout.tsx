@@ -113,9 +113,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   return (
     <html lang="es" data-theme="dark" suppressHydrationWarning>
       <body>
+        {supabaseUrl && (
+          <link rel="preconnect" href={supabaseUrl} crossOrigin="anonymous" />
+        )}
+        <link rel="dns-prefetch" href="https://i.ytimg.com" />
+        <link rel="dns-prefetch" href="https://img.youtube.com" />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var d=document.documentElement;var ls=window.localStorage;function s(k,v,def){var raw=ls.getItem(k);if(raw&&v.indexOf(raw)>-1&&raw!==def){d.setAttribute('data-'+k.replace('theme-',''),raw)}}var t=ls.getItem('theme');if(t==='light'||t==='dark')d.setAttribute('data-theme',t);s('theme-tone',['default','warm','cool','contrast'],'default');s('theme-font',['system','serif','mono','dyslexic'],'system');s('theme-scale',['sm','md','lg','xl'],'md');s('theme-density',['compact','comfortable','spacious'],'comfortable');s('theme-motion',['auto','reduce'],'auto');s('theme-saver',['off','on'],'off')}catch(e){}})()`,

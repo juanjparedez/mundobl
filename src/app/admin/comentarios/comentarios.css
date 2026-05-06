@@ -69,17 +69,27 @@
 }
 
 .comentarios-table .ant-table-thead > tr > th {
-  background: color-mix(in srgb, var(--bg-elevated) 80%, var(--primary-color) 20%);
+  background: color-mix(
+    in srgb,
+    var(--bg-elevated) 80%,
+    var(--primary-color) 20%
+  );
   color: var(--text-primary);
   font-weight: 600;
 }
 
 .comentarios-table .ant-table-tbody > tr {
-  transition: transform 180ms ease, background-color 180ms ease;
+  transition:
+    transform 180ms ease,
+    background-color 180ms ease;
 }
 
 .comentarios-table .ant-table-tbody > tr:hover > td {
-  background: color-mix(in srgb, var(--bg-spotlight) 90%, var(--primary-color) 10%) !important;
+  background: color-mix(
+    in srgb,
+    var(--bg-spotlight) 90%,
+    var(--primary-color) 10%
+  ) !important;
 }
 
 .comentarios-table .ant-table-tbody > tr:hover {

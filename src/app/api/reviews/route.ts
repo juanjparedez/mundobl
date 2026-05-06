@@ -5,6 +5,7 @@ import { requireAuth } from '@/lib/auth-helpers';
 import { auth } from '@/lib/auth';
 import { generateText, GeminiError } from '@/lib/gemini';
 import { isSupportedLocale, LOCALE_LABELS } from '@/i18n/config';
+import { notifySeriesSubscribers } from '@/lib/notifications';
 
 const TITLE_MAX = 160;
 const BODY_MAX = 20000;
@@ -179,7 +180,7 @@ export async function POST(request: NextRequest) {
 
     const seriesExists = await prisma.series.findUnique({
       where: { id: seriesId },
-      select: { id: true },
+      select: { id: true, title: true },
     });
     if (!seriesExists) {
       return NextResponse.json(
@@ -187,6 +188,23 @@ export async function POST(request: NextRequest) {
         { status: 404 }
       );
     }
+
+    // Necesario para decidir si disparar notificaciones de "nueva review
+    // publicada": solo cuando el upsert TRANSICIONA a PUBLISHED (es decir,
+    // antes no existia o estaba en DRAFT/HIDDEN).
+    const previousReview = await prisma.review.findUnique({
+      where: {
+        userId_seriesId_language: {
+          userId: authResult.userId,
+          seriesId,
+          language,
+        },
+      },
+      select: { status: true },
+    });
+    const isNewlyPublished =
+      status === 'PUBLISHED' &&
+      (previousReview === null || previousReview.status !== 'PUBLISHED');
 
     const publishedAt = status === 'PUBLISHED' ? new Date() : null;
 
@@ -227,6 +245,18 @@ export async function POST(request: NextRequest) {
         user: { select: { id: true, name: true, image: true } },
       },
     });
+
+    if (isNewlyPublished) {
+      await notifySeriesSubscribers({
+        seriesId,
+        type: 'review_published',
+        title: `Nueva reseña en ${seriesExists.title}`,
+        body: title,
+        refType: 'review',
+        refId: review.id,
+        excludeUserId: authResult.userId,
+      });
+    }
 
     // Auto-traducciones: crear/actualizar copias en otros idiomas con Gemini.
     // Errores individuales no rompen el save principal — se reportan en

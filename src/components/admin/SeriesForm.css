@@ -104,7 +104,11 @@
 }
 
 /* Botones de acción finales */
-.series-form > .ant-card > .ant-card-body > .ant-form > .ant-form-item:last-child {
+.series-form
+  > .ant-card
+  > .ant-card-body
+  > .ant-form
+  > .ant-form-item:last-child {
   margin-top: var(--spacing-lg);
   margin-bottom: 0;
   padding-top: var(--spacing-lg);
@@ -161,12 +165,22 @@
   }
 
   /* Action buttons full width */
-  .series-form > .ant-card > .ant-card-body > .ant-form > .ant-form-item:last-child .ant-space {
+  .series-form
+    > .ant-card
+    > .ant-card-body
+    > .ant-form
+    > .ant-form-item:last-child
+    .ant-space {
     flex-direction: column;
     width: 100%;
   }
 
-  .series-form > .ant-card > .ant-card-body > .ant-form > .ant-form-item:last-child .ant-btn {
+  .series-form
+    > .ant-card
+    > .ant-card-body
+    > .ant-form
+    > .ant-form-item:last-child
+    .ant-btn {
     width: 100%;
   }
 }

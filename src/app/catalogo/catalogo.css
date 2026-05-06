@@ -162,7 +162,10 @@
   cursor: pointer;
   background: var(--bg-container);
   border: 1px solid var(--border-color-secondary);
-  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
   position: relative;
   content-visibility: auto;
   contain-intrinsic-size: 320px;
@@ -302,7 +305,9 @@
   gap: 4px;
   opacity: 0;
   transform: translateY(-4px);
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
 .serie-card:hover .serie-card-actions {
@@ -323,7 +328,9 @@
   align-items: center;
   justify-content: center;
   font-size: 14px;
-  transition: background 0.2s ease, transform 0.15s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease;
 }
 
 .serie-card-action-btn:hover {
@@ -333,7 +340,8 @@
 
 .serie-card-action-btn.favorite-active {
   color: var(--warning-color);
-  animation: favorite-pop 0.36s var(--ease-pop, cubic-bezier(0.34, 1.56, 0.64, 1));
+  animation: favorite-pop 0.36s
+    var(--ease-pop, cubic-bezier(0.34, 1.56, 0.64, 1));
 }
 
 @keyframes favorite-pop {
@@ -356,7 +364,9 @@
   font-weight: 700;
   color: white;
   text-align: center;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6), 0 2px 12px rgba(0, 0, 0, 0.4);
+  text-shadow:
+    0 1px 4px rgba(0, 0, 0, 0.6),
+    0 2px 12px rgba(0, 0, 0, 0.4);
   z-index: 2;
   padding: var(--spacing-sm) var(--spacing-md);
   line-height: 1.35;
@@ -385,35 +395,67 @@
 
 /* Tinte sutil de color en el body por tipo */
 .serie-card--serie .serie-card-body {
-  background: linear-gradient(135deg, rgba(169, 115, 164, 0.08) 0%, transparent 60%);
+  background: linear-gradient(
+    135deg,
+    rgba(169, 115, 164, 0.08) 0%,
+    transparent 60%
+  );
 }
 
 .serie-card--pelicula .serie-card-body {
-  background: linear-gradient(135deg, rgba(212, 112, 150, 0.08) 0%, transparent 60%);
+  background: linear-gradient(
+    135deg,
+    rgba(212, 112, 150, 0.08) 0%,
+    transparent 60%
+  );
 }
 
 .serie-card--corto .serie-card-body {
-  background: linear-gradient(135deg, rgba(233, 144, 106, 0.08) 0%, transparent 60%);
+  background: linear-gradient(
+    135deg,
+    rgba(233, 144, 106, 0.08) 0%,
+    transparent 60%
+  );
 }
 
 .serie-card--especial .serie-card-body {
-  background: linear-gradient(135deg, rgba(227, 167, 92, 0.08) 0%, transparent 60%);
+  background: linear-gradient(
+    135deg,
+    rgba(227, 167, 92, 0.08) 0%,
+    transparent 60%
+  );
 }
 
 [data-theme='dark'] .serie-card--serie .serie-card-body {
-  background: linear-gradient(135deg, rgba(169, 115, 164, 0.18) 0%, transparent 60%);
+  background: linear-gradient(
+    135deg,
+    rgba(169, 115, 164, 0.18) 0%,
+    transparent 60%
+  );
 }
 
 [data-theme='dark'] .serie-card--pelicula .serie-card-body {
-  background: linear-gradient(135deg, rgba(212, 112, 150, 0.16) 0%, transparent 60%);
+  background: linear-gradient(
+    135deg,
+    rgba(212, 112, 150, 0.16) 0%,
+    transparent 60%
+  );
 }
 
 [data-theme='dark'] .serie-card--corto .serie-card-body {
-  background: linear-gradient(135deg, rgba(233, 144, 106, 0.16) 0%, transparent 60%);
+  background: linear-gradient(
+    135deg,
+    rgba(233, 144, 106, 0.16) 0%,
+    transparent 60%
+  );
 }
 
 [data-theme='dark'] .serie-card--especial .serie-card-body {
-  background: linear-gradient(135deg, rgba(227, 167, 92, 0.16) 0%, transparent 60%);
+  background: linear-gradient(
+    135deg,
+    rgba(227, 167, 92, 0.16) 0%,
+    transparent 60%
+  );
 }
 
 .serie-card-title {
@@ -447,7 +489,10 @@
   max-height: 0;
   overflow: hidden;
   transform: translateY(4px);
-  transition: opacity 0.2s ease, transform 0.2s ease, max-height 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    max-height 0.2s ease;
 }
 
 .serie-card:hover .serie-card-secondary-meta {
@@ -494,7 +539,9 @@
   font-weight: 600;
   width: fit-content;
   cursor: pointer;
-  transition: background 0.18s ease, color 0.18s ease;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease;
 }
 
 .serie-card-more-info-btn:hover {
@@ -584,10 +631,18 @@
   border-left: 3px solid transparent;
 }
 
-.serie-list-item--serie { border-left-color: rgba(47, 84, 235, 0.6); }
-.serie-list-item--pelicula { border-left-color: rgba(235, 47, 150, 0.6); }
-.serie-list-item--corto { border-left-color: rgba(19, 194, 194, 0.6); }
-.serie-list-item--especial { border-left-color: rgba(250, 140, 22, 0.6); }
+.serie-list-item--serie {
+  border-left-color: rgba(47, 84, 235, 0.6);
+}
+.serie-list-item--pelicula {
+  border-left-color: rgba(235, 47, 150, 0.6);
+}
+.serie-list-item--corto {
+  border-left-color: rgba(19, 194, 194, 0.6);
+}
+.serie-list-item--especial {
+  border-left-color: rgba(250, 140, 22, 0.6);
+}
 
 .serie-list-item:hover {
   background: var(--bg-spotlight);
@@ -654,7 +709,8 @@
 
 .serie-list-item-fav.favorite-active {
   color: var(--warning-color);
-  animation: favorite-pop 0.36s var(--ease-pop, cubic-bezier(0.34, 1.56, 0.64, 1));
+  animation: favorite-pop 0.36s
+    var(--ease-pop, cubic-bezier(0.34, 1.56, 0.64, 1));
 }
 
 /* Fade-in suave del grid en cada cambio de página/filtros */
@@ -802,7 +858,6 @@
   .universe-card {
     -webkit-tap-highlight-color: transparent;
   }
-
 }
 
 /* ==========================================
@@ -906,7 +961,11 @@
   align-items: center;
   gap: var(--spacing-sm);
   padding: var(--spacing-xs) var(--spacing-sm);
-  background: linear-gradient(135deg, rgba(130, 87, 229, 0.1) 0%, rgba(82, 73, 200, 0.06) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(130, 87, 229, 0.1) 0%,
+    rgba(82, 73, 200, 0.06) 100%
+  );
   color: var(--text-primary);
   font-weight: 600;
   font-size: 13px;
@@ -916,11 +975,19 @@
 }
 
 .universe-list-header:hover {
-  background: linear-gradient(135deg, rgba(130, 87, 229, 0.18) 0%, rgba(82, 73, 200, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(130, 87, 229, 0.18) 0%,
+    rgba(82, 73, 200, 0.1) 100%
+  );
 }
 
 [data-theme='dark'] .universe-list-header {
-  background: linear-gradient(135deg, rgba(130, 87, 229, 0.15) 0%, rgba(82, 73, 200, 0.08) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(130, 87, 229, 0.15) 0%,
+    rgba(82, 73, 200, 0.08) 100%
+  );
 }
 
 .universe-list-header .anticon {

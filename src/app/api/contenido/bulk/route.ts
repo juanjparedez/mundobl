@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { extractVideoId, type Platform } from '@/lib/embed-helpers';
+import { notifySeriesSubscribers } from '@/lib/notifications';
 
 interface BulkItem {
   title: string;
@@ -64,6 +65,26 @@ export async function POST(request: NextRequest) {
       data,
       skipDuplicates: true,
     });
+
+    if (seriesId && result.count > 0) {
+      const sid = Number(seriesId);
+      const serieMeta = await prisma.series.findUnique({
+        where: { id: sid },
+        select: { title: true },
+      });
+      const serieTitle = serieMeta?.title ?? 'una serie';
+      await notifySeriesSubscribers({
+        seriesId: sid,
+        type: 'content_added',
+        title: `Nuevo contenido en ${serieTitle}`,
+        body:
+          result.count === 1
+            ? 'Se agrego un contenido nuevo'
+            : `Se agregaron ${result.count} contenidos nuevos`,
+        refType: 'embeddable_content_bulk',
+        refId: `${sid}:${Date.now()}`,
+      });
+    }
 
     return NextResponse.json({ created: result.count }, { status: 201 });
   } catch (error) {

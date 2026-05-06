@@ -23,14 +23,11 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
 import { ShareButton } from '@/components/common/ShareButton/ShareButton';
 import { WhereToWatch } from '@/components/common/WhereToWatch/WhereToWatch';
+import { SeriesSubscribeButton } from '@/components/series/SeriesSubscribeButton/SeriesSubscribeButton';
+import { auth } from '@/lib/auth';
 import type { TVSeries } from 'schema-dts';
 import { FloatButton } from 'antd';
-import {
-  EditOutlined,
-  NotificationOutlined,
-  ReadOutlined,
-  CommentOutlined,
-} from '@ant-design/icons';
+import { EditOutlined, ReadOutlined, CommentOutlined } from '@ant-design/icons';
 import './page.css';
 
 const getSeriesByIdCached = cache(getSeriesById);
@@ -105,14 +102,24 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
   const config = getContentTypeConfig(serie.type);
   const showSeasons = shouldShowSeasons(serie.type);
 
+  const session = await auth();
+  const userId = session?.user?.id ?? null;
+
   // Quick counts para los chips de estado del header. Hechos en paralelo
   // para no penalizar TTFB.
-  const [reviewCount, contentCount] = await Promise.all([
+  const [reviewCount, contentCount, subscription] = await Promise.all([
     prisma.review.count({
       where: { seriesId: serie.id, status: 'PUBLISHED' },
     }),
     prisma.embeddableContent.count({ where: { seriesId: serie.id } }),
+    userId
+      ? prisma.seriesSubscription.findUnique({
+          where: { userId_seriesId: { userId, seriesId: serie.id } },
+          select: { id: true },
+        })
+      : Promise.resolve(null),
   ]);
+  const isSubscribed = subscription !== null;
 
   const seasonLabel =
     'seasonLabel' in config ? config.seasonLabel : 'Temporadas';
@@ -202,15 +209,10 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
                   path={`/series/${serie.id}`}
                   variant="compact"
                 />
-                <Link
-                  href="/notificaciones"
-                  prefetch={false}
-                  className="series-quick-actions__item"
-                  title="Notificaciones"
-                  aria-label="Notificaciones"
-                >
-                  <NotificationOutlined />
-                </Link>
+                <SeriesSubscribeButton
+                  seriesId={serie.id}
+                  initialSubscribed={isSubscribed}
+                />
                 <a
                   href="#series-section-reviews"
                   className="series-quick-actions__item"

@@ -35,7 +35,9 @@
   border: 1px solid var(--border-color-secondary);
   border-radius: var(--border-radius);
   overflow: hidden;
-  transition: transform 0.18s ease, border-color 0.18s ease;
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease;
 }
 
 .novedades-card:hover {

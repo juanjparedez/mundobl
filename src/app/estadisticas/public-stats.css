@@ -181,7 +181,6 @@
   padding: var(--spacing-md);
 }
 
-
 .public-stats-summary__card {
   border-top: 3px solid var(--stats-card-accent, var(--border-color)) !important;
   transition: transform 0.18s var(--ease-pop);

@@ -62,6 +62,7 @@ model User {
   episodeNotes    EpisodeNote[]
   approvedNews    News[]          @relation("NewsApprovedBy")
   assignedFeatureRequests FeatureRequest[] @relation("FeatureRequestAssignedTo")
+  seriesSubscriptions SeriesSubscription[]
 }
 
 model Account {
@@ -202,6 +203,7 @@ model Series {
   news              News[]
   relatedSeriesTo   RelatedSeries[]     @relation("relatedSeries")
   reviews           Review[]
+  subscriptions     SeriesSubscription[]
 }
 
 // ============================================
@@ -530,6 +532,27 @@ model UserFavorite {
   series   Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
 
   @@unique([userId, seriesId])
+}
+
+// ============================================
+// SUSCRIPCIONES A SERIES
+// ============================================
+// Un usuario "se suscribe" a una serie para recibir notificaciones cuando
+// haya cambios relevantes (nueva temporada, nuevo contenido embebido,
+// nueva reseña, etc.). Diferente de favoritos: favorito = me gusta;
+// suscripcion = quiero saber cuando cambie.
+model SeriesSubscription {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  seriesId Int
+  series   Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, seriesId])
+  @@index([seriesId])
 }
 
 // ============================================
