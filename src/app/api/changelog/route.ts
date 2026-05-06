@@ -50,9 +50,10 @@ function getBuildId(): string {
 export async function GET() {
   const buildId = getBuildId();
 
-  // Leer de DB; si está vacía, usar el archivo como fallback
+  // Leer de DB; si está vacía, usar el archivo como fallback.
+  // Orden: novedades mas recientes primero (sortOrder/createdAt desc).
   const dbItems = await prisma.changelogItem.findMany({
-    orderBy: [{ sortOrder: 'asc' }, { createdAt: 'asc' }],
+    orderBy: [{ sortOrder: 'desc' }, { createdAt: 'desc' }],
   });
 
   let entries: ChangelogEntry[];
