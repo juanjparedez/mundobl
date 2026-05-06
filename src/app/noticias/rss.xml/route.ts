@@ -2,7 +2,7 @@ import { prisma } from '@/lib/database';
 
 export const revalidate = 600; // 10 minutos
 
-const BASE_URL = 'https://mundobl.win';
+const BASE_URL = 'https://mundobl.com.ar';
 
 function escapeXml(str: string): string {
   return str

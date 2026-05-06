@@ -87,7 +87,7 @@ export default async function HomePage() {
           '@context': 'https://schema.org',
           '@type': 'WebSite',
           name: 'MundoBL',
-          url: 'https://mundobl.win',
+          url: 'https://mundobl.com.ar',
           description:
             'Catálogo de series BL (Boys Love), GL (Girls Love) y doramas asiáticos.',
           potentialAction: {
@@ -95,7 +95,7 @@ export default async function HomePage() {
             target: {
               '@type': 'EntryPoint',
               urlTemplate:
-                'https://mundobl.win/catalogo?q={search_term_string}',
+                'https://mundobl.com.ar/catalogo?q={search_term_string}',
             },
 
             // @ts-expect-error query-input is valid JSON-LD but not yet typed in schema-dts

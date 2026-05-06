@@ -64,11 +64,11 @@ export default async function TagPage({ params }: TagPageProps) {
           '@type': 'CollectionPage',
           name: `Series con tag "${tag.name}"`,
           description: `Series, películas y especiales con la etiqueta "${tag.name}". ${seriesCount} título${seriesCount === 1 ? '' : 's'} en MundoBL.`,
-          url: `https://mundobl.win/tags/${tag.id}`,
+          url: `https://mundobl.com.ar/tags/${tag.id}`,
           isPartOf: {
             '@type': 'WebSite',
             name: 'MundoBL',
-            url: 'https://mundobl.win',
+            url: 'https://mundobl.com.ar',
           },
           mainEntity: {
             '@type': 'ItemList',
@@ -76,7 +76,7 @@ export default async function TagPage({ params }: TagPageProps) {
             itemListElement: tag.series.slice(0, 20).map((s, i) => ({
               '@type': 'ListItem',
               position: i + 1,
-              url: `https://mundobl.win/series/${s.series.id}`,
+              url: `https://mundobl.com.ar/series/${s.series.id}`,
               name: s.series.title,
             })),
           },
