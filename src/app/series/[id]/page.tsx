@@ -166,7 +166,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
               ratingCount: Math.max(serie.ratings?.length ?? 1, 1),
             },
           }),
-          url: `https://mundobl.win/series/${serie.id}`,
+          url: `https://mundobl.com.ar/series/${serie.id}`,
         }}
       />
       <div className="series-detail-page">

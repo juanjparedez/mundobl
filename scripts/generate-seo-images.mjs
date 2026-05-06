@@ -72,7 +72,7 @@ async function generateOgImage() {
       <!-- Subtitle -->
       <text x="535" y="440" font-family="Arial, Helvetica, sans-serif" font-size="18" fill="#888888" text-anchor="left">Reseñas · Calificaciones · Actores · Episodios</text>
       <!-- URL -->
-      <text x="535" y="540" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#e94560" text-anchor="left">mundobl.win</text>
+      <text x="535" y="540" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="#e94560" text-anchor="left">mundobl.com.ar</text>
     </svg>
   `;
 

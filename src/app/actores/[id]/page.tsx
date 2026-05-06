@@ -84,7 +84,7 @@ export default async function ActorPage({ params }: ActorPageProps) {
           ...(actor.birthDate && {
             birthDate: actor.birthDate.toISOString().split('T')[0],
           }),
-          url: `https://mundobl.win/actores/${actor.id}`,
+          url: `https://mundobl.com.ar/actores/${actor.id}`,
         }}
       />
       <Breadcrumbs
