@@ -11,11 +11,15 @@ import {
   LoginOutlined,
   UserOutlined,
   GlobalOutlined,
+  BellOutlined,
+  BellFilled,
 } from '@ant-design/icons';
+import { Badge } from 'antd';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { ROUTES } from '@/constants/navigation';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { SettingsPanel } from '@/components/layout/SettingsPanel/SettingsPanel';
+import { useUnreadNotifications } from '@/hooks/useUnreadNotifications';
 import './BottomNav.css';
 
 interface NavItem {
@@ -32,6 +36,7 @@ export function BottomNav() {
   const { t } = useLocale();
   const { data: session, status } = useSession();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const unreadCount = useUnreadNotifications();
 
   const isAdmin = session?.user?.role === 'ADMIN';
   const isModerator = session?.user?.role === 'MODERATOR';
@@ -44,6 +49,12 @@ export function BottomNav() {
       setIsSettingsOpen(false);
     });
   }, [pathname]);
+
+  const bellIcon = (
+    <Badge count={unreadCount} size="small" overflowCount={99} offset={[2, -2]}>
+      {unreadCount > 0 ? <BellFilled /> : <BellOutlined />}
+    </Badge>
+  );
 
   const navItems: NavItem[] = [
     {
@@ -64,6 +75,16 @@ export function BottomNav() {
       label: t('bottomNav.feedback'),
       path: ROUTES.FEEDBACK,
     },
+    ...(session
+      ? [
+          {
+            key: 'notifications',
+            icon: bellIcon,
+            label: t('notifications.label'),
+            path: '/notificaciones',
+          },
+        ]
+      : []),
     ...(canAccessAdmin
       ? [
           {
