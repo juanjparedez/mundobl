@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { extractVideoId, type Platform } from '@/lib/embed-helpers';
+import { notifySeriesSubscribers } from '@/lib/notifications';
 
 export async function GET(request: NextRequest) {
   try {
@@ -75,6 +76,17 @@ export async function POST(request: NextRequest) {
         series: { select: { id: true, title: true } },
       },
     });
+
+    if (item.seriesId && item.series) {
+      await notifySeriesSubscribers({
+        seriesId: item.seriesId,
+        type: 'content_added',
+        title: `Nuevo contenido en ${item.series.title}`,
+        body: item.title,
+        refType: 'embeddable_content',
+        refId: item.id,
+      });
+    }
 
     return NextResponse.json(item, { status: 201 });
   } catch (error) {

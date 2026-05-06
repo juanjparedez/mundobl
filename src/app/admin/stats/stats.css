@@ -33,12 +33,25 @@
   flex-shrink: 0;
 }
 
-.stats-summary-card__icon--users   { background: rgba(114, 46, 209, 0.12); color: #722ed1; }
-.stats-summary-card__icon--watching { background: rgba(22, 119, 255, 0.12); color: #1677ff; }
-.stats-summary-card__icon--completed { background: rgba(82, 196, 26, 0.12); color: #52c41a; }
-.stats-summary-card__icon--comments { background: rgba(250, 173, 20, 0.12); color: #faad14; }
+.stats-summary-card__icon--users {
+  background: rgba(114, 46, 209, 0.12);
+  color: #722ed1;
+}
+.stats-summary-card__icon--watching {
+  background: rgba(22, 119, 255, 0.12);
+  color: #1677ff;
+}
+.stats-summary-card__icon--completed {
+  background: rgba(82, 196, 26, 0.12);
+  color: #52c41a;
+}
+.stats-summary-card__icon--comments {
+  background: rgba(250, 173, 20, 0.12);
+  color: #faad14;
+}
 
-.stats-summary-card__body {}
+.stats-summary-card__body {
+}
 
 .stats-summary-card__value {
   font-size: 28px;
@@ -122,9 +135,18 @@
   flex-shrink: 0;
 }
 
-.stats-ranking-item__pos--gold   { background: #faad14; color: #fff; }
-.stats-ranking-item__pos--silver { background: #8c8c8c; color: #fff; }
-.stats-ranking-item__pos--bronze { background: #d46b08; color: #fff; }
+.stats-ranking-item__pos--gold {
+  background: #faad14;
+  color: #fff;
+}
+.stats-ranking-item__pos--silver {
+  background: #8c8c8c;
+  color: #fff;
+}
+.stats-ranking-item__pos--bronze {
+  background: #d46b08;
+  color: #fff;
+}
 
 .stats-ranking-item__title {
   flex: 1;

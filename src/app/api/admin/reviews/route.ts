@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Prisma } from '@/generated/prisma';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
+import { notifySeriesSubscribers } from '@/lib/notifications';
 
 const STATUS_VALUES = ['DRAFT', 'PUBLISHED', 'HIDDEN'] as const;
 type StatusValue = (typeof STATUS_VALUES)[number];
@@ -116,6 +117,23 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'status invalido' }, { status: 400 });
     }
 
+    const previous = await prisma.review.findUnique({
+      where: { id },
+      select: {
+        status: true,
+        userId: true,
+        title: true,
+        seriesId: true,
+        series: { select: { title: true } },
+      },
+    });
+    if (!previous) {
+      return NextResponse.json(
+        { error: 'Reseña no encontrada' },
+        { status: 404 }
+      );
+    }
+
     const updated = await prisma.review.update({
       where: { id },
       data: {
@@ -123,6 +141,18 @@ export async function PATCH(request: NextRequest) {
         publishedAt: status === 'PUBLISHED' ? new Date() : null,
       },
     });
+
+    if (status === 'PUBLISHED' && previous.status !== 'PUBLISHED') {
+      await notifySeriesSubscribers({
+        seriesId: previous.seriesId,
+        type: 'review_published',
+        title: `Nueva reseña en ${previous.series.title}`,
+        body: previous.title,
+        refType: 'review',
+        refId: id,
+        excludeUserId: previous.userId,
+      });
+    }
 
     return NextResponse.json({ success: true, review: updated });
   } catch (error) {

@@ -29,8 +29,16 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at center, rgba(208, 154, 199, 0.18) 0%, rgba(28, 20, 39, 0.86) 74%),
-    linear-gradient(120deg, rgba(21, 15, 30, 0.65) 0%, rgba(20, 15, 26, 0.94) 100%);
+    radial-gradient(
+      circle at center,
+      rgba(208, 154, 199, 0.18) 0%,
+      rgba(28, 20, 39, 0.86) 74%
+    ),
+    linear-gradient(
+      120deg,
+      rgba(21, 15, 30, 0.65) 0%,
+      rgba(20, 15, 26, 0.94) 100%
+    );
 }
 
 /* ─── Header layout ────────────────────────────────────────────────────────── */
@@ -46,7 +54,8 @@
   padding: var(--spacing-lg);
   background: color-mix(in srgb, var(--bg-elevated) 78%, transparent);
   border-radius: var(--border-radius);
-  border: 1px solid color-mix(in srgb, var(--border-color-secondary) 78%, transparent);
+  border: 1px solid
+    color-mix(in srgb, var(--border-color-secondary) 78%, transparent);
   align-items: start;
 }
 

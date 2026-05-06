@@ -3,6 +3,7 @@ import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { getCountryCode } from '@/lib/country-codes';
 import { downloadAndUploadExternalImage } from '@/lib/supabase';
+import { notifySeriesSubscribers } from '@/lib/notifications';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -291,6 +292,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         });
       }
 
+      const newSeasonsForNotify: Array<{ id: number; seasonNumber: number }> =
+        [];
       for (const seasonData of incoming) {
         const data = {
           seasonNumber: seasonData.seasonNumber,
@@ -303,8 +306,29 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
             data,
           });
         } else {
-          await prisma.season.create({
+          const created = await prisma.season.create({
             data: { ...data, seriesId: serieId },
+            select: { id: true, seasonNumber: true },
+          });
+          newSeasonsForNotify.push(created);
+        }
+      }
+
+      // Disparar avisos a suscriptores por cada temporada nueva.
+      if (newSeasonsForNotify.length > 0) {
+        const serieMeta = await prisma.series.findUnique({
+          where: { id: serieId },
+          select: { title: true },
+        });
+        const serieTitle = serieMeta?.title ?? 'una serie';
+        for (const s of newSeasonsForNotify) {
+          await notifySeriesSubscribers({
+            seriesId: serieId,
+            type: 'season_added',
+            title: `Nueva temporada en ${serieTitle}`,
+            body: `Se agrego la temporada ${s.seasonNumber}`,
+            refType: 'season',
+            refId: s.id,
           });
         }
       }

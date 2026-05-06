@@ -81,7 +81,9 @@
   border: 2px solid transparent;
   cursor: pointer;
   padding: 0;
-  transition: transform 0.15s ease, border-color 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .settings-panel__accent:hover {
@@ -98,15 +100,23 @@
   font-weight: 700;
 }
 
-.settings-panel__scale .ant-segmented-item:nth-child(1) .ant-segmented-item-label {
+.settings-panel__scale
+  .ant-segmented-item:nth-child(1)
+  .ant-segmented-item-label {
   font-size: 11px;
 }
-.settings-panel__scale .ant-segmented-item:nth-child(2) .ant-segmented-item-label {
+.settings-panel__scale
+  .ant-segmented-item:nth-child(2)
+  .ant-segmented-item-label {
   font-size: 14px;
 }
-.settings-panel__scale .ant-segmented-item:nth-child(3) .ant-segmented-item-label {
+.settings-panel__scale
+  .ant-segmented-item:nth-child(3)
+  .ant-segmented-item-label {
   font-size: 17px;
 }
-.settings-panel__scale .ant-segmented-item:nth-child(4) .ant-segmented-item-label {
+.settings-panel__scale
+  .ant-segmented-item:nth-child(4)
+  .ant-segmented-item-label {
   font-size: 20px;
 }

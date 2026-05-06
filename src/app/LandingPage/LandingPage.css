@@ -334,7 +334,10 @@
   border-radius: 14px;
   background: var(--bg-container);
   border: 1px solid var(--border-color-secondary);
-  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s,
+    border-color 0.2s;
   overflow: hidden;
   isolation: isolate;
 }
@@ -525,7 +528,9 @@
   border: 1px solid color-mix(in srgb, var(--primary-color) 30%, transparent);
   text-decoration: none;
   color: inherit;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
   position: relative;
   overflow: hidden;
 }
@@ -640,7 +645,9 @@
   flex-direction: column;
   gap: var(--spacing-xs);
   border: 1px solid var(--border-color-secondary);
-  transition: box-shadow 0.2s, transform 0.2s;
+  transition:
+    box-shadow 0.2s,
+    transform 0.2s;
 }
 
 .landing__feature-card:hover {
@@ -796,4 +803,3 @@
     padding: 32px var(--spacing-md);
   }
 }
-
