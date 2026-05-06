@@ -7,7 +7,7 @@ import { LocaleProvider } from '@/lib/providers/LocaleProvider';
 import { SpoilerFreeProvider } from '@/lib/providers/SpoilerFreeProvider';
 import { ServiceWorkerRegistrar } from '@/components/ServiceWorkerRegistrar/ServiceWorkerRegistrar';
 import { JsonLd } from '@/components/seo/JsonLd';
-import type { WebSite } from 'schema-dts';
+import type { WebSite, Organization } from 'schema-dts';
 import 'flag-icons/css/flag-icons.min.css';
 import '@/styles/globals.css';
 import '@/styles/dark-mode-fixes.css';
@@ -32,6 +32,15 @@ export const metadata: Metadata = {
   verification: {
     google: 'Yp0Pjs7gScD3_wH8Za8VkiyA1tlnEIG6gjmKp_WcMyg',
   },
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  category: 'entertainment',
+  authors: [{ name: 'MundoBL' }],
+  creator: 'MundoBL',
+  publisher: 'MundoBL',
   openGraph: {
     type: 'website',
     locale: 'es_LA',
@@ -59,6 +68,19 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: 'black-translucent',
     title: 'MundoBL',
+  },
+  alternates: {
+    canonical: '/',
+    languages: {
+      'es-LA': '/',
+      es: '/',
+      'x-default': '/',
+    },
+    types: {
+      'application/rss+xml': [
+        { url: '/noticias/rss.xml', title: 'MundoBL - Noticias BL/GL' },
+      ],
+    },
   },
   icons: {
     icon: [
@@ -107,10 +129,22 @@ export default function RootLayout({
             url: 'https://mundobl.win',
             description:
               'Catálogo de series BL (Boys Love), GL (Girls Love) y doramas asiáticos.',
+            inLanguage: ['es', 'en'],
             potentialAction: {
               '@type': 'SearchAction',
               target: 'https://mundobl.win/catalogo?q={search_term_string}',
             },
+          }}
+        />
+        <JsonLd<Organization>
+          data={{
+            '@context': 'https://schema.org',
+            '@type': 'Organization',
+            name: 'MundoBL',
+            url: 'https://mundobl.win',
+            logo: 'https://mundobl.win/icons/icon-512x512.png',
+            description:
+              'Comunidad y catálogo de series BL (Boys Love) y GL (Girls Love) con reseñas, calificaciones y seguimiento.',
           }}
         />
         <ServiceWorkerRegistrar />
