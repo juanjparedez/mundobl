@@ -3,6 +3,9 @@ export const dynamic = 'force-dynamic';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
+import type { CollectionPage } from 'schema-dts';
 import { getTagById } from '@/lib/database';
 import { TagPageClient } from './TagPageClient';
 
@@ -51,8 +54,41 @@ export default async function TagPage({ params }: TagPageProps) {
     notFound();
   }
 
+  const seriesCount = tag.series.length;
+
   return (
     <AppLayout>
+      <JsonLd<CollectionPage>
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'CollectionPage',
+          name: `Series con tag "${tag.name}"`,
+          description: `Series, películas y especiales con la etiqueta "${tag.name}". ${seriesCount} título${seriesCount === 1 ? '' : 's'} en MundoBL.`,
+          url: `https://mundobl.win/tags/${tag.id}`,
+          isPartOf: {
+            '@type': 'WebSite',
+            name: 'MundoBL',
+            url: 'https://mundobl.win',
+          },
+          mainEntity: {
+            '@type': 'ItemList',
+            numberOfItems: seriesCount,
+            itemListElement: tag.series.slice(0, 20).map((s, i) => ({
+              '@type': 'ListItem',
+              position: i + 1,
+              url: `https://mundobl.win/series/${s.series.id}`,
+              name: s.series.title,
+            })),
+          },
+        }}
+      />
+      <Breadcrumbs
+        items={[
+          { name: 'Inicio', href: '/' },
+          { name: 'Tags', href: '/catalogo' },
+          { name: tag.name },
+        ]}
+      />
       <TagPageClient tag={tag} />
     </AppLayout>
   );

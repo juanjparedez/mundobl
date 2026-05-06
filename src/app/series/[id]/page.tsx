@@ -20,6 +20,7 @@ import {
   ContentTypeValue,
 } from '@/types/content';
 import { JsonLd } from '@/components/seo/JsonLd';
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
 import { ShareButton } from '@/components/common/ShareButton/ShareButton';
 import { WhereToWatch } from '@/components/common/WhereToWatch/WhereToWatch';
 import type { TVSeries } from 'schema-dts';
@@ -169,6 +170,13 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
         }}
       />
       <div className="series-detail-page">
+        <Breadcrumbs
+          items={[
+            { name: 'Inicio', href: '/' },
+            { name: 'Catálogo', href: '/catalogo' },
+            { name: serie.title },
+          ]}
+        />
         <SeriesHeader
           series={{
             ...serie,
