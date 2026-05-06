@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { JsonLd } from '@/components/seo/JsonLd';
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
 import type { Person } from 'schema-dts';
 import { getActorById } from '@/lib/database';
 import { ActorProfileClient } from './ActorProfileClient';
@@ -85,6 +86,13 @@ export default async function ActorPage({ params }: ActorPageProps) {
           }),
           url: `https://mundobl.win/actores/${actor.id}`,
         }}
+      />
+      <Breadcrumbs
+        items={[
+          { name: 'Inicio', href: '/' },
+          { name: 'Actores', href: '/catalogo' },
+          { name: displayName },
+        ]}
       />
       <ActorProfileClient actor={actor} />
     </AppLayout>

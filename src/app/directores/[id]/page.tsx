@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { JsonLd } from '@/components/seo/JsonLd';
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
 import type { Person } from 'schema-dts';
 import { getDirectorById } from '@/lib/database';
 import { DirectorProfileClient } from './DirectorProfileClient';
@@ -78,6 +79,13 @@ export default async function DirectorPage({ params }: DirectorPageProps) {
           }),
           url: `https://mundobl.win/directores/${director.id}`,
         }}
+      />
+      <Breadcrumbs
+        items={[
+          { name: 'Inicio', href: '/' },
+          { name: 'Directores', href: '/catalogo' },
+          { name: director.name },
+        ]}
       />
       <DirectorProfileClient director={director} />
     </AppLayout>

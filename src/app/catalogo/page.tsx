@@ -3,20 +3,29 @@ import { unstable_cache } from 'next/cache';
 
 import type { Metadata } from 'next';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
 import { getAllSeries } from '@/lib/database';
+
+const CATALOGO_DESCRIPTION =
+  'Explora el catálogo completo de series BL (Boys Love), GL (Girls Love), películas y doramas asiáticos. Filtra por país, año, género y calificación.';
 
 export const metadata: Metadata = {
   title: 'Catálogo de Series BL y GL',
-  description:
-    'Explora el catálogo completo de series BL (Boys Love), GL (Girls Love), películas y doramas asiáticos. Filtra por país, año, género y calificación.',
+  description: CATALOGO_DESCRIPTION,
   alternates: {
     canonical: '/catalogo',
   },
   openGraph: {
-    title: 'Catálogo de Series BL y GL',
-    description:
-      'Explora el catálogo completo de series BL, GL y doramas asiáticos.',
+    type: 'website',
+    title: 'Catálogo de Series BL y GL | MundoBL',
+    description: CATALOGO_DESCRIPTION,
     url: '/catalogo',
+    siteName: 'MundoBL',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Catálogo de Series BL y GL | MundoBL',
+    description: CATALOGO_DESCRIPTION,
   },
 };
 import { auth } from '@/lib/auth';
@@ -125,6 +134,9 @@ export default async function CatalogoPage() {
   return (
     <AppLayout>
       <div className="catalogo-page">
+        <Breadcrumbs
+          items={[{ name: 'Inicio', href: '/' }, { name: 'Catálogo' }]}
+        />
         <CatalogoClient series={seriesData} userRole={userRole} />
       </div>
     </AppLayout>
