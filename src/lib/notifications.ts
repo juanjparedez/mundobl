@@ -1,4 +1,5 @@
 import { prisma } from './database';
+import { isUserAllowedToReceiveInApp, sendPushToUser } from './web-push';
 
 interface CommentTarget {
   seriesId?: number;
@@ -74,14 +75,28 @@ export interface NotificationInput {
 }
 
 /**
- * Crea una notificación in-app. Idempotente: si ya existe una con
- * (userId, type, refType, refId) NO LEÍDA, no crea otra duplicada.
+ * Crea una notificación in-app + intenta enviar Web Push si el usuario
+ * tiene suscripcion activa y sus preferencias lo permiten.
  *
- * Esto evita que un mismo evento que se reprocesa varias veces (por
- * retries, jobs desfasados, etc.) genere ruido visual.
+ * Idempotente: si ya existe una con (userId, type, refType, refId) NO
+ * LEÍDA, no crea otra duplicada. Esto evita que un mismo evento que se
+ * reprocesa varias veces genere ruido visual.
+ *
+ * El envio de push es no-bloqueante para el llamador en el sentido de
+ * que sus errores no rompen el flujo principal — pero si lo awaiteamos
+ * para que en route handlers que terminan rapido no se cancele el
+ * background work cuando vercel cierra la lambda.
  */
 export async function notifyUser(input: NotificationInput): Promise<void> {
   const refIdStr = input.refId !== undefined ? String(input.refId) : undefined;
+
+  // Respetar preferencias por tipo: si el usuario apago el tipo,
+  // no creamos ni in-app ni push.
+  const allowedInApp = await isUserAllowedToReceiveInApp(
+    input.userId,
+    input.type
+  );
+  if (!allowedInApp) return;
 
   if (input.refType && refIdStr) {
     const existing = await prisma.notification.findFirst({
@@ -108,6 +123,16 @@ export async function notifyUser(input: NotificationInput): Promise<void> {
       refId: refIdStr ?? null,
     },
   });
+
+  // Web Push: respeta preferencias internas (push enabled, quiet hours,
+  // tipo de evento) y borra suscripciones expiradas automaticamente.
+  await sendPushToUser(input.userId, {
+    title: input.title,
+    body: input.body ?? '',
+    url: input.linkPath ?? '/notificaciones',
+    type: input.type,
+    tag: input.refType && refIdStr ? `${input.refType}-${refIdStr}` : undefined,
+  }).catch(() => undefined);
 }
 
 interface NotifySeriesSubscribersOpts {
