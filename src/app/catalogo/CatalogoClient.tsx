@@ -825,6 +825,16 @@ export function CatalogoClient({
                 <span>{serie.runtimeHours}h</span>
               </>
             )}
+            {serie.platforms && serie.platforms.length > 0 && (
+              <Tag color="cyan" className="catalogo-tag-flat">
+                {serie.platforms[0]}
+              </Tag>
+            )}
+            {serie.genres && serie.genres.length > 0 && (
+              <Tag color="default" className="catalogo-tag-flat">
+                {serie.genres[0]}
+              </Tag>
+            )}
             {serie.visto && (
               <Tag color="success">{t('catalogo.watchedTag')}</Tag>
             )}
