@@ -2,6 +2,22 @@
 
 Todas las versiones notables del proyecto se documentan aqui.
 
+## 2026-05-06 — Suscripciones, mobile cinematografico y performance
+
+### Features
+- Suscripciones a series: boton de campana en pagina de serie permite suscribirse para recibir avisos cuando hay novedades
+- Modelo `SeriesSubscription` con dispatch automatico de notificaciones in-app a suscriptores cuando se agregan temporadas, contenido embebido o se publica una resena
+- Helper `notifySeriesSubscribers` no-bloqueante e idempotente reutilizable en cualquier endpoint
+- Catalogo: chips adicionales en cada card (plataforma, genero) para mejor identificacion visual
+- Mobile: rediseno cinematografico del header de serie — poster full-width con fade-out, contenido emerge debajo
+
+### Performance
+- Preconnect a Supabase storage en root layout (ahorra 100-200ms en primera carga de imagenes)
+- DNS-prefetch a hosts de YouTube (i.ytimg.com, img.youtube.com)
+
+### Fixes
+- Eliminada navegacion a /notificaciones desde acciones rapidas de serie (reemplazada por toggle de suscripcion)
+
 ## Proximo deploy
 
 ### Features
