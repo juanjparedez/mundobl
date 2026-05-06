@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/admin', '/api', '/watching'],
       },
     ],
-    sitemap: 'https://mundobl.win/sitemap.xml',
+    sitemap: 'https://mundobl.com.ar/sitemap.xml',
   };
 }

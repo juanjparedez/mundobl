@@ -77,7 +77,7 @@ export default async function DirectorPage({ params }: DirectorPageProps) {
           ...(director.nationality && {
             nationality: { '@type': 'Country', name: director.nationality },
           }),
-          url: `https://mundobl.win/directores/${director.id}`,
+          url: `https://mundobl.com.ar/directores/${director.id}`,
         }}
       />
       <Breadcrumbs

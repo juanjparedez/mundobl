@@ -13,7 +13,7 @@ import '@/styles/globals.css';
 import '@/styles/dark-mode-fixes.css';
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://mundobl.win'),
+  metadataBase: new URL('https://mundobl.com.ar'),
   title: {
     default: 'MundoBL - Catálogo de Series BL',
     template: '%s | MundoBL',
@@ -126,13 +126,13 @@ export default function RootLayout({
             '@context': 'https://schema.org',
             '@type': 'WebSite',
             name: 'MundoBL',
-            url: 'https://mundobl.win',
+            url: 'https://mundobl.com.ar',
             description:
               'Catálogo de series BL (Boys Love), GL (Girls Love) y doramas asiáticos.',
             inLanguage: ['es', 'en'],
             potentialAction: {
               '@type': 'SearchAction',
-              target: 'https://mundobl.win/catalogo?q={search_term_string}',
+              target: 'https://mundobl.com.ar/catalogo?q={search_term_string}',
             },
           }}
         />
@@ -141,8 +141,8 @@ export default function RootLayout({
             '@context': 'https://schema.org',
             '@type': 'Organization',
             name: 'MundoBL',
-            url: 'https://mundobl.win',
-            logo: 'https://mundobl.win/icons/icon-512x512.png',
+            url: 'https://mundobl.com.ar',
+            logo: 'https://mundobl.com.ar/icons/icon-512x512.png',
             description:
               'Comunidad y catálogo de series BL (Boys Love) y GL (Girls Love) con reseñas, calificaciones y seguimiento.',
           }}

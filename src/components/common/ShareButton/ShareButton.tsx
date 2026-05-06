@@ -41,7 +41,7 @@ export function ShareButton({
 
   const buildUrl = () =>
     typeof window === 'undefined'
-      ? `https://mundobl.win${path}`
+      ? `https://mundobl.com.ar${path}`
       : new URL(path, window.location.origin).toString();
 
   const nativeShare = async () => {

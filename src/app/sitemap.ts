@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next';
 import { prisma } from '@/lib/database';
 
-const BASE_URL = 'https://mundobl.win';
+const BASE_URL = 'https://mundobl.com.ar';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages: MetadataRoute.Sitemap = [

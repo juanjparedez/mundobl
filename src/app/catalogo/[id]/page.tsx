@@ -99,7 +99,7 @@ export default async function SerieDetailPage({
               ratingCount: Math.max(serie.ratings?.length ?? 1, 1),
             },
           }),
-          url: `https://mundobl.win/series/${serie.id}`,
+          url: `https://mundobl.com.ar/series/${serie.id}`,
         }}
       />
       <SerieDetailClient serie={serie} />

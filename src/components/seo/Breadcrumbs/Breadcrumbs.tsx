@@ -13,7 +13,7 @@ interface BreadcrumbsProps {
   baseUrl?: string;
 }
 
-const DEFAULT_BASE_URL = 'https://mundobl.win';
+const DEFAULT_BASE_URL = 'https://mundobl.com.ar';
 
 export function Breadcrumbs({
   items,

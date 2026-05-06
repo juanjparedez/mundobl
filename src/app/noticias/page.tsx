@@ -61,11 +61,11 @@ export default async function NoticiasPage() {
           '@type': 'CollectionPage',
           name: 'Noticias BL/GL',
           description: NOTICIAS_DESCRIPTION,
-          url: 'https://mundobl.win/noticias',
+          url: 'https://mundobl.com.ar/noticias',
           isPartOf: {
             '@type': 'WebSite',
             name: 'MundoBL',
-            url: 'https://mundobl.win',
+            url: 'https://mundobl.com.ar',
           },
           mainEntity: {
             '@type': 'ItemList',
@@ -73,7 +73,7 @@ export default async function NoticiasPage() {
             itemListElement: initialNews.map((n, i) => ({
               '@type': 'ListItem',
               position: i + 1,
-              url: `https://mundobl.win/noticias/${n.id}`,
+              url: `https://mundobl.com.ar/noticias/${n.id}`,
               name: n.title,
             })),
           },
