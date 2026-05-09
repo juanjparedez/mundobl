@@ -190,6 +190,134 @@ export async function fetchYouTubeChannel(
   };
 }
 
+// ---- YouTube Playlists (para importar series completas) ----
+
+interface YouTubePlaylistInfoResponse {
+  items?: Array<{
+    id: string;
+    snippet?: {
+      title: string;
+      description: string;
+      channelId: string;
+      channelTitle: string;
+      thumbnails: {
+        high?: { url: string };
+        medium?: { url: string };
+        default?: { url: string };
+      };
+    };
+    contentDetails?: { itemCount: number };
+  }>;
+}
+
+export interface PlaylistFetchResult extends ChannelFetchResult {
+  playlistId: string;
+  playlistTitle: string;
+  playlistDescription: string;
+  playlistThumbnailUrl: string;
+  itemCount: number;
+}
+
+function parseYouTubePlaylistId(url: string): string | null {
+  const match = url.match(/[?&]list=([\w-]+)/);
+  if (match) return match[1];
+  const slashMatch = url.match(/youtube\.com\/playlist\/([\w-]+)/);
+  if (slashMatch) return slashMatch[1];
+  return null;
+}
+
+export async function fetchYouTubePlaylist(
+  url: string,
+  pageToken?: string
+): Promise<PlaylistFetchResult> {
+  const playlistId = parseYouTubePlaylistId(url);
+  if (!playlistId)
+    throw new Error(
+      'URL de playlist de YouTube invalida (esperaba ?list=PLxxx)'
+    );
+
+  const infoRes = await ytFetch('playlists', {
+    part: 'snippet,contentDetails',
+    id: playlistId,
+  });
+  const infoData: YouTubePlaylistInfoResponse = await infoRes.json();
+  const info = infoData.items?.[0];
+  if (!info) throw new Error(`Playlist no encontrada: ${playlistId}`);
+
+  const channelId = info.snippet?.channelId || '';
+  const channelName = info.snippet?.channelTitle || '';
+  const channelUrl = channelId
+    ? `https://www.youtube.com/channel/${channelId}`
+    : '';
+
+  const playlistParams: Record<string, string> = {
+    part: 'snippet',
+    playlistId,
+    maxResults: '50',
+  };
+  if (pageToken) playlistParams.pageToken = pageToken;
+
+  const playlistRes = await ytFetch('playlistItems', playlistParams);
+  const playlistData: YouTubePlaylistResponse = await playlistRes.json();
+
+  const videos: ChannelVideo[] = (playlistData.items || []).map((item) => {
+    const thumb =
+      item.snippet.thumbnails.high?.url ||
+      item.snippet.thumbnails.medium?.url ||
+      item.snippet.thumbnails.default?.url ||
+      '';
+    return {
+      title: item.snippet.title,
+      description: item.snippet.description,
+      thumbnailUrl: thumb,
+      videoUrl: `https://www.youtube.com/watch?v=${item.snippet.resourceId.videoId}`,
+      videoId: item.snippet.resourceId.videoId,
+      channelName: item.snippet.channelTitle || channelName,
+      channelUrl,
+      publishedAt: item.snippet.publishedAt,
+      platform: 'YouTube' as const,
+    };
+  });
+
+  const playlistThumb =
+    info.snippet?.thumbnails.high?.url ||
+    info.snippet?.thumbnails.medium?.url ||
+    info.snippet?.thumbnails.default?.url ||
+    '';
+
+  return {
+    videos,
+    channelName,
+    channelUrl,
+    nextPageToken: playlistData.nextPageToken || null,
+    totalResults: playlistData.pageInfo?.totalResults || videos.length,
+    playlistId,
+    playlistTitle: info.snippet?.title || '',
+    playlistDescription: info.snippet?.description || '',
+    playlistThumbnailUrl: playlistThumb,
+    itemCount: info.contentDetails?.itemCount || videos.length,
+  };
+}
+
+export async function fetchAllYouTubePlaylistVideos(
+  url: string,
+  maxPages: number = 10
+): Promise<PlaylistFetchResult> {
+  const first = await fetchYouTubePlaylist(url);
+  let allVideos = [...first.videos];
+  let nextPageToken = first.nextPageToken;
+  let pages = 1;
+
+  while (nextPageToken && pages < maxPages) {
+    const next = await fetchYouTubePlaylist(url, nextPageToken);
+    allVideos = allVideos.concat(next.videos);
+    nextPageToken = next.nextPageToken;
+    pages++;
+  }
+
+  return { ...first, videos: allVideos, nextPageToken };
+}
+
 // ---- Vimeo ----
 
 const VIMEO_API_BASE = 'https://api.vimeo.com';
