@@ -5,6 +5,14 @@ import { ConfigProvider } from 'antd';
 import type { Locale } from 'antd/es/locale';
 import esES from 'antd/locale/es_ES';
 import enUS from 'antd/locale/en_US';
+import itIT from 'antd/locale/it_IT';
+import deDE from 'antd/locale/de_DE';
+import frFR from 'antd/locale/fr_FR';
+import jaJP from 'antd/locale/ja_JP';
+import koKR from 'antd/locale/ko_KR';
+import zhCN from 'antd/locale/zh_CN';
+import zhTW from 'antd/locale/zh_TW';
+import thTH from 'antd/locale/th_TH';
 import {
   buildTheme,
   ACCENT_PRESETS,
@@ -250,6 +258,14 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   const antdLocaleMap: Record<string, Locale> = {
     es: esES,
     en: enUS,
+    it: itIT,
+    de: deDE,
+    fr: frFR,
+    ja: jaJP,
+    ko: koKR,
+    'zh-CN': zhCN,
+    'zh-TW': zhTW,
+    th: thTH,
   };
 
   return (

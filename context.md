@@ -86,6 +86,19 @@ PROJECT_SUPABASE_URL
   - Usa el endpoint `users/{userId}/videos`, 25 videos por pagina, ordenado por fecha
   - Misma forma de retorno (`ChannelVideo[]`) que YouTube → flujo unificado
 
+### Internacionalizacion (i18n)
+
+- **10 locales soportados con traduccion completa**: `es`, `en`, `it`, `de`, `fr`, `ja`, `ko`, `zh-CN`, `zh-TW`, `th`. Default: `es`.
+- Storage: `localStorage['app-locale']` (client-side). El toggle es client-side, las URLs NO cambian por locale.
+- **Estructura**:
+  - [src/i18n/config.ts](src/i18n/config.ts): SUPPORTED_LOCALES, LOCALE_LABELS, isSupportedLocale
+  - [src/i18n/messages.ts](src/i18n/messages.ts): TranslationShape (tipo), bloques `es` y `en` inline (~1500 lineas cada uno), MESSAGES record que importa los otros 8 desde `locales/`
+  - `src/i18n/locales/{code}.ts`: traducciones generadas por IA (Gemini), una por locale. Editables a mano si una frase suena mal.
+- **Helper**: [src/lib/providers/LocaleProvider.tsx](src/lib/providers/LocaleProvider.tsx) → `useLocale()` retorna `{ locale, setLocale, t(key) }`. `t` falla a `en` si la clave no existe en el locale activo, y a la propia clave si tampoco existe en `en`.
+- **antd locales**: [src/lib/providers/ThemeProvider.tsx](src/lib/providers/ThemeProvider.tsx) mapea cada locale al pack de antd (`antd/locale/xx_YY`) para DatePicker, Calendar, etc.
+- **Para regenerar un locale via IA**: `npx tsx scripts/translate-locales.ts {code}` (usa `MESSAGES.en` como source de verdad, batchea en groups de 40 strings, escribe el archivo). Free tier de Gemini suficiente.
+- **Para agregar un locale nuevo**: ver header de [config.ts](src/i18n/config.ts).
+
 ### Google Gemini API (asistente IA)
 
 - **Env**: `GEMINI_API_KEY` (configurada en Vercel; **no** en `.env` local). Free tier: 15 RPM / 1500 RPD compartido por key.
