@@ -14,6 +14,7 @@ import {
   VideoCameraOutlined,
 } from '@ant-design/icons';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { DonutChart, LineChart } from '@/components/charts';
 import './public-stats.css';
 
 interface PublicStatsResponse {
@@ -587,24 +588,52 @@ export function PublicStatsClient() {
           title={copy.catalogByType}
           className="public-stats-grid__full public-stats-grid__compact"
         >
-          <HorizontalBar
-            items={data.catalog.byType.map((r) => ({
-              key: r.type,
-              count: r.count,
-            }))}
-            renderLabel={renderPlainLabel}
-            renderValue={renderCount}
-            empty={copy.empty}
-            accentColor="#f59e0b"
-          />
+          {data.catalog.byType.length === 0 ? (
+            <Empty
+              description={copy.empty}
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+            />
+          ) : (
+            <DonutChart
+              data={data.catalog.byType.map((r) => ({
+                name: r.type,
+                value: r.count,
+              }))}
+              centerLabel={{
+                value: data.catalog.byType.reduce((s, r) => s + r.count, 0),
+                sublabel: copy.cardSeries,
+              }}
+              showLegend
+            />
+          )}
         </Card>
 
         <Card title={copy.catalogByYear} className="public-stats-grid__full">
-          <YearHistogram
-            items={data.catalog.byYear}
-            locale={locale}
-            empty={copy.empty}
-          />
+          {data.catalog.byYear.length === 0 ? (
+            <Empty
+              description={copy.empty}
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+            />
+          ) : (
+            <LineChart
+              data={[...data.catalog.byYear].sort((a, b) => a.year - b.year)}
+              xAxisKey="year"
+              series={[
+                {
+                  dataKey: 'count',
+                  name: copy.cardSeries,
+                },
+              ]}
+              height={260}
+              tooltipFormatter={(value, name) => [
+                value === undefined ? '' : String(value),
+                name,
+              ]}
+              tooltipLabelFormatter={(label) =>
+                label === undefined ? '' : String(label)
+              }
+            />
+          )}
         </Card>
       </section>
     </div>
