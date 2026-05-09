@@ -2079,6 +2079,16 @@ export type TranslationShape = {
     widgetNotificationsDesc: string;
     widgetMyCases: string;
     widgetMyCasesDesc: string;
+    widgetHeatmap: string;
+    widgetHeatmapDesc: string;
+    widgetGenres: string;
+    widgetGenresDesc: string;
+    genresEmpty: string;
+    genresTotalLabel: string;
+    widgetCompletedByYear: string;
+    widgetCompletedByYearDesc: string;
+    completedByYearEmpty: string;
+    completedByYearLabel: string;
     loadError: string;
   };
   serieDashboard: {
@@ -4319,6 +4329,16 @@ const es: TranslationShape = {
     widgetNotificationsDesc: 'Tus ultimas notificaciones sin leer.',
     widgetMyCases: 'Mis casos de feedback',
     widgetMyCasesDesc: 'Bugs e ideas que reportaste o votaste.',
+    widgetHeatmap: 'Actividad reciente',
+    widgetHeatmapDesc: 'Heatmap de tus dias activos en los ultimos 6 meses.',
+    widgetGenres: 'Generos favoritos',
+    widgetGenresDesc: 'Distribucion de los generos que mas ves.',
+    genresEmpty: 'Aun no hay generos registrados.',
+    genresTotalLabel: 'series totales',
+    widgetCompletedByYear: 'Series completadas por año',
+    widgetCompletedByYearDesc: 'Curva temporal de tus series completadas.',
+    completedByYearEmpty: 'Aun no completaste ninguna serie.',
+    completedByYearLabel: 'Completadas',
     loadError: 'Error al cargar tu perfil. Refresca la pagina.',
   },
   serieDashboard: {
@@ -6547,6 +6567,16 @@ const en: TranslationShape = {
     widgetNotificationsDesc: 'Your latest unread notifications.',
     widgetMyCases: 'My feedback cases',
     widgetMyCasesDesc: 'Bugs and ideas you reported or voted on.',
+    widgetHeatmap: 'Recent activity',
+    widgetHeatmapDesc: 'Heatmap of your active days in the last 6 months.',
+    widgetGenres: 'Favorite genres',
+    widgetGenresDesc: 'Distribution of the genres you watch the most.',
+    genresEmpty: 'No genres tracked yet.',
+    genresTotalLabel: 'total series',
+    widgetCompletedByYear: 'Completed series by year',
+    widgetCompletedByYearDesc: 'Time curve of your completed series.',
+    completedByYearEmpty: "You haven't completed any series yet.",
+    completedByYearLabel: 'Completed',
     loadError: 'Error loading your profile. Refresh the page.',
   },
   serieDashboard: {

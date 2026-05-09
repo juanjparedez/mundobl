@@ -2168,6 +2168,17 @@ const th: TranslationShape = {
     widgetNotificationsDesc: 'การแจ้งเตือนที่ยังไม่ได้อ่านล่าสุดของคุณ',
     widgetMyCases: 'เคสคำติชมของฉัน',
     widgetMyCasesDesc: 'บั๊กและไอเดียที่คุณรายงานหรือโหวต',
+    widgetHeatmap: 'กิจกรรมล่าสุด',
+    widgetHeatmapDesc:
+      'แผนภาพความหนาแน่นของวันที่ใช้งานในช่วง 6 เดือนที่ผ่านมา',
+    widgetGenres: 'ประเภทยอดนิยม',
+    widgetGenresDesc: 'การกระจายของประเภทที่คุณดูมากที่สุด',
+    genresEmpty: 'ยังไม่มีประเภทที่บันทึกไว้',
+    genresTotalLabel: 'ซีรีส์ทั้งหมด',
+    widgetCompletedByYear: 'ซีรีส์ที่ดูจบตามปี',
+    widgetCompletedByYearDesc: 'เส้นโค้งเวลาของซีรีส์ที่คุณดูจบ',
+    completedByYearEmpty: 'คุณยังไม่ได้ดูซีรีส์ไหนจบ',
+    completedByYearLabel: 'ดูจบแล้ว',
     loadError: 'เกิดข้อผิดพลาดในการโหลดโปรไฟล์ กรุณารีเฟรชหน้า',
   },
   serieDashboard: {
