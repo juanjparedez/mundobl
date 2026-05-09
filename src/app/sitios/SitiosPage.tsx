@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
 import { Card, Tag, Row, Col, Empty, Input, Select, Space, Button } from 'antd';
 import {
   LinkOutlined,
@@ -93,6 +94,9 @@ export function SitiosPage({ sites }: SitiosPageProps) {
     return (
       <AppLayout>
         <div className="sitios-public">
+          <Breadcrumbs
+            items={[{ name: 'Inicio', href: '/' }, { name: 'Sitios' }]}
+          />
           <h1 className="sitios-public__title">Sitios de Interés</h1>
           <Empty description="Aún no hay sitios recomendados" />
         </div>
@@ -189,6 +193,9 @@ export function SitiosPage({ sites }: SitiosPageProps) {
   return (
     <AppLayout>
       <div className="sitios-public">
+        <Breadcrumbs
+          items={[{ name: 'Inicio', href: '/' }, { name: 'Sitios' }]}
+        />
         <h1 className="sitios-public__title">Sitios de Interés</h1>
         <p className="sitios-public__subtitle">
           Sitios recomendados relacionados con el mundo BL

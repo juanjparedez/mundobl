@@ -136,7 +136,18 @@ Soporta 8 plataformas para reproducir/parsear:
 
 - Paquete `web-push`. Suscripciones en `PushSubscription` model. Server actions en [src/lib/push-server.ts](src/lib/push-server.ts) (si existe).
 
-### SEO (robots + sitemap segmentado)
+### SEO (JSON-LD + Breadcrumbs + sitemap segmentado + robots)
+
+**JSON-LD** ([src/components/seo/JsonLd.tsx](src/components/seo/JsonLd.tsx) helper):
+- Layout/home: `WebSite` + `Organization`
+- `/series/[id]` y `/catalogo/[id]`: `TVSeries` con name, alternateName, description, image, datePublished, countryOfOrigin, inLanguage, productionCompany, numberOfSeasons, numberOfEpisodes, actor, director, genre, keywords, aggregateRating
+- `/ver/[id]`: `TVSeries` simplificada con `WatchAction`
+- `/catalogo`, `/ver`, `/sitios`, `/noticias`: `CollectionPage` con `ItemList` (top 20-30)
+- `/actores/[id]`, `/directores/[id]`: `Person`
+- `/tags/[id]`: `CollectionPage`
+- Cada `<Breadcrumbs>` emite `BreadcrumbList` automaticamente
+
+**Robots y Sitemap**:
 
 - [src/app/robots.ts](src/app/robots.ts): permite contenido publico, bloquea admin/api/perfil/notificaciones/watching/auth/scanners. Apunta a `/sitemap.xml`.
 - [src/app/sitemap.ts](src/app/sitemap.ts): usa `generateSitemaps()` para segmentar en 7 sub-sitemaps:

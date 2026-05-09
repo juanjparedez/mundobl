@@ -126,6 +126,10 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
 
   const actors = serie.actors?.map((sa) => sa.actor.name) ?? [];
   const directors = serie.directors?.map((sd) => sd.director.name) ?? [];
+  const totalEpisodes = (serie.seasons ?? []).reduce(
+    (acc, s) => acc + (s.episodes?.length ?? 0),
+    0
+  );
 
   return (
     <AppLayout>
@@ -144,6 +148,20 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
               name: serie.country.name,
             },
           }),
+          ...(serie.originalLanguage?.name && {
+            inLanguage: serie.originalLanguage.name,
+          }),
+          ...(serie.productionCompany?.name && {
+            productionCompany: {
+              '@type': 'Organization',
+              name: serie.productionCompany.name,
+            },
+          }),
+          ...(serie.seasons &&
+            serie.seasons.length > 0 && {
+              numberOfSeasons: serie.seasons.length,
+            }),
+          ...(totalEpisodes > 0 && { numberOfEpisodes: totalEpisodes }),
           ...(actors.length > 0 && {
             actor: actors.map((name) => ({
               '@type': 'Person' as const,
