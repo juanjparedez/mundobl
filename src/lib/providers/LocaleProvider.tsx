@@ -83,7 +83,8 @@ export function LocaleProvider({ children }: LocaleProviderProps) {
   const t = useCallback(
     (key: TranslationKey, params?: Record<string, string | number>) => {
       const localized = getByPath(MESSAGES[locale], key);
-      const fallback = localized ?? getByPath(MESSAGES[DEFAULT_LOCALE], key) ?? key;
+      const fallback =
+        localized ?? getByPath(MESSAGES[DEFAULT_LOCALE], key) ?? key;
       if (!params) return fallback;
       let out = fallback;
       for (const [k, v] of Object.entries(params)) {

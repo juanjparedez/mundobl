@@ -97,7 +97,10 @@ export function SitiosPage({ sites }: SitiosPageProps) {
       <AppLayout>
         <div className="sitios-public">
           <Breadcrumbs
-            items={[{ name: t('sitiosPage.breadcrumbsHome'), href: '/' }, { name: t('sitiosPage.breadcrumbsSitios') }]}
+            items={[
+              { name: t('sitiosPage.breadcrumbsHome'), href: '/' },
+              { name: t('sitiosPage.breadcrumbsSitios') },
+            ]}
           />
           <h1 className="sitios-public__title">{t('sitiosPage.pageTitle')}</h1>
           <Empty description={t('sitiosPage.emptySitesDescription')} />
@@ -196,7 +199,10 @@ export function SitiosPage({ sites }: SitiosPageProps) {
     <AppLayout>
       <div className="sitios-public">
         <Breadcrumbs
-          items={[{ name: t('sitiosPage.breadcrumbsHome'), href: '/' }, { name: t('sitiosPage.breadcrumbsSitios') }]}
+          items={[
+            { name: t('sitiosPage.breadcrumbsHome'), href: '/' },
+            { name: t('sitiosPage.breadcrumbsSitios') },
+          ]}
         />
         <h1 className="sitios-public__title">{t('sitiosPage.pageTitle')}</h1>
         <p className="sitios-public__subtitle">

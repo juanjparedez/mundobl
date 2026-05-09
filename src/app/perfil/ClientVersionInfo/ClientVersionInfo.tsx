@@ -68,10 +68,7 @@ export function ClientVersionInfo() {
       }}
       aria-label={t('clientVersionInfo.copyDiagnosticLabel')}
     >
-      <Tooltip
-        title={t('clientVersionInfo.copyTooltip')}
-        placement="top"
-      >
+      <Tooltip title={t('clientVersionInfo.copyTooltip')} placement="top">
         <span className="client-version-info__line">
           <span className="client-version-info__label">
             {t('clientVersionInfo.clientVersionLabel')}

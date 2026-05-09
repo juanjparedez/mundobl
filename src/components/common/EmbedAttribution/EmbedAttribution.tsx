@@ -31,7 +31,9 @@ export function EmbedAttribution({
 
   return (
     <div className="embed-attribution">
-      <span className="embed-attribution__via">{t('embedAttribution.via')}</span>
+      <span className="embed-attribution__via">
+        {t('embedAttribution.via')}
+      </span>
       {channelUrl && channelName ? (
         <Link
           href={channelUrl}

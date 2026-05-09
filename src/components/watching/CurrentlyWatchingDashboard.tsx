@@ -176,7 +176,8 @@ export function CurrentlyWatchingDashboard() {
         body: JSON.stringify({ status: 'VISTA' }),
       });
 
-      if (!response.ok) throw new Error(t('watchingDashboard.errorMarkEpisode'));
+      if (!response.ok)
+        throw new Error(t('watchingDashboard.errorMarkEpisode'));
 
       message.success(
         interpolateMessage(t('watchingDashboard.episodeMarkedMessage'), {

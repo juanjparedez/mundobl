@@ -90,7 +90,8 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ catalogScope: 'PERSONAL' }),
       });
-      if (!res.ok) throw new Error(t('verSerie.couldNotMoveSeriesToCatalogError'));
+      if (!res.ok)
+        throw new Error(t('verSerie.couldNotMoveSeriesToCatalogError'));
       setScope('PERSONAL');
       message.success(t('verSerie.seriesMovedToPersonalCatalogSuccess'));
     } catch {
@@ -265,7 +266,10 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
                       E{ep.episodeNumber}
                     </span>
                     <span className="ver-serie__episode-name">
-                      {ep.title || t('verSerie.episodeDefaultTitle', { episodeNumber: ep.episodeNumber })}
+                      {ep.title ||
+                        t('verSerie.episodeDefaultTitle', {
+                          episodeNumber: ep.episodeNumber,
+                        })}
                     </span>
                     {isActive && (
                       <CheckCircleFilled className="ver-serie__episode-active-icon" />

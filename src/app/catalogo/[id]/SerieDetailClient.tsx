@@ -198,7 +198,9 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
             <Tag icon={<GlobalOutlined />}>{serie.country.name}</Tag>
           )}
           {serie.year && <Tag icon={<CalendarOutlined />}>{serie.year}</Tag>}
-          {serie.isNovel && <Tag color="gold">{t('serieDetail.basedOnNovel')}</Tag>}
+          {serie.isNovel && (
+            <Tag color="gold">{t('serieDetail.basedOnNovel')}</Tag>
+          )}
           {serie.overallRating && (
             <Tag color="gold" icon={<StarOutlined />}>
               {t('serieDetail.overallRating', { rating: serie.overallRating })}
@@ -227,16 +229,25 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
           )}
 
           {/* Información básica */}
-          <Card title={t('serieDetail.generalInformationTitle')} style={{ marginBottom: '24px' }}>
+          <Card
+            title={t('serieDetail.generalInformationTitle')}
+            style={{ marginBottom: '24px' }}
+          >
             <Descriptions column={1}>
-              <Descriptions.Item label={t('serieDetail.typeLabel')}>{getTranslatedType(serie.type)}</Descriptions.Item>
+              <Descriptions.Item label={t('serieDetail.typeLabel')}>
+                {getTranslatedType(serie.type)}
+              </Descriptions.Item>
               {serie.country && (
-                <Descriptions.Item label={t('serieDetail.countryOfOriginLabel')}>
+                <Descriptions.Item
+                  label={t('serieDetail.countryOfOriginLabel')}
+                >
                   {serie.country.name}
                 </Descriptions.Item>
               )}
               {serie.year && (
-                <Descriptions.Item label={t('serieDetail.yearLabel')}>{serie.year}</Descriptions.Item>
+                <Descriptions.Item label={t('serieDetail.yearLabel')}>
+                  {serie.year}
+                </Descriptions.Item>
               )}
               {/* Solo mostrar temporadas/episodios para series, no para películas/cortos */}
               {serie.type === 'serie' && serie.seasons.length > 0 && (
@@ -244,7 +255,9 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
                   <Descriptions.Item label={t('serieDetail.seasonsLabel')}>
                     {serie.seasons.length}
                   </Descriptions.Item>
-                  <Descriptions.Item label={t('serieDetail.totalEpisodesLabel')}>
+                  <Descriptions.Item
+                    label={t('serieDetail.totalEpisodesLabel')}
+                  >
                     {serie.seasons.reduce(
                       (acc: number, s: SeasonData) =>
                         acc + (s.episodeCount || 0),
@@ -254,14 +267,19 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
                 </>
               )}
               {serie.isNovel && (
-                <Descriptions.Item label={t('serieDetail.basedOnLabel')}>{t('serieDetail.novelValue')}</Descriptions.Item>
+                <Descriptions.Item label={t('serieDetail.basedOnLabel')}>
+                  {t('serieDetail.novelValue')}
+                </Descriptions.Item>
               )}
             </Descriptions>
           </Card>
 
           {/* Temporadas */}
           {serie.seasons.length > 0 && (
-            <Card title={t('serieDetail.seasonsTitle')} style={{ marginBottom: '24px' }}>
+            <Card
+              title={t('serieDetail.seasonsTitle')}
+              style={{ marginBottom: '24px' }}
+            >
               <div>
                 {serie.seasons.map((season: SeasonData) => (
                   <div
@@ -273,7 +291,11 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
                   >
                     <div>
                       <Space>
-                        <span>{t('serieDetail.seasonNumber', { number: season.seasonNumber })}</span>
+                        <span>
+                          {t('serieDetail.seasonNumber', {
+                            number: season.seasonNumber,
+                          })}
+                        </span>
                         {season.title && (
                           <span style={{ color: 'var(--text-secondary)' }}>
                             - {season.title}
@@ -287,9 +309,17 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
                       style={{ marginTop: '8px' }}
                     >
                       {season.episodeCount && (
-                        <div>{t('serieDetail.episodesCount', { count: season.episodeCount })}</div>
+                        <div>
+                          {t('serieDetail.episodesCount', {
+                            count: season.episodeCount,
+                          })}
+                        </div>
                       )}
-                      {season.year && <div>{t('serieDetail.yearValue', { year: season.year })}</div>}
+                      {season.year && (
+                        <div>
+                          {t('serieDetail.yearValue', { year: season.year })}
+                        </div>
+                      )}
                       {season.observations && (
                         <div
                           style={{
@@ -325,21 +355,30 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
 
           {/* Observaciones */}
           {serie.observations && canSeeNotes && (
-            <Card title={t('serieDetail.observationsTitle')} style={{ marginBottom: '24px' }}>
+            <Card
+              title={t('serieDetail.observationsTitle')}
+              style={{ marginBottom: '24px' }}
+            >
               <p style={{ whiteSpace: 'pre-wrap' }}>{serie.observations}</p>
             </Card>
           )}
 
           {/* Synopsis */}
           {serie.synopsis && (
-            <Card title={t('serieDetail.synopsisTitle')} style={{ marginBottom: '24px' }}>
+            <Card
+              title={t('serieDetail.synopsisTitle')}
+              style={{ marginBottom: '24px' }}
+            >
               <p style={{ whiteSpace: 'pre-wrap' }}>{serie.synopsis}</p>
             </Card>
           )}
 
           {/* Reseña personal */}
           {serie.review && canSeeNotes && (
-            <Card title={t('serieDetail.personalReviewTitle')} style={{ marginBottom: '24px' }}>
+            <Card
+              title={t('serieDetail.personalReviewTitle')}
+              style={{ marginBottom: '24px' }}
+            >
               <p style={{ whiteSpace: 'pre-wrap' }}>{serie.review}</p>
             </Card>
           )}
@@ -353,7 +392,9 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
               title={
                 <Space>
                   <UserOutlined />
-                  {t('serieDetail.actorsCountTitle', { count: uniqueActors.length })}
+                  {t('serieDetail.actorsCountTitle', {
+                    count: uniqueActors.length,
+                  })}
                 </Space>
               }
               style={{ marginBottom: '24px' }}
@@ -406,7 +447,9 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
                       <span style={{ textTransform: 'capitalize' }}>
                         {rating.category}:
                       </span>
-                      <Tag color="gold">{t('serieDetail.ratingScore', { score: rating.score })}</Tag>
+                      <Tag color="gold">
+                        {t('serieDetail.ratingScore', { score: rating.score })}
+                      </Tag>
                     </div>
                     <Rate disabled defaultValue={rating.score / 2} />
                     <Divider style={{ margin: '12px 0' }} />
@@ -418,7 +461,10 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
 
           {/* Comentarios */}
           {serie.comments && serie.comments.length > 0 && (
-            <Card title={t('serieDetail.commentsTitle')} style={{ marginBottom: '24px' }}>
+            <Card
+              title={t('serieDetail.commentsTitle')}
+              style={{ marginBottom: '24px' }}
+            >
               <List
                 dataSource={serie.comments}
                 renderItem={(comment: CommentData) => (
@@ -432,14 +478,20 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
 
           {/* Banda sonora */}
           {serie.soundtrack && (
-            <Card title={t('serieDetail.soundtrackTitle')} style={{ marginBottom: '24px' }}>
+            <Card
+              title={t('serieDetail.soundtrackTitle')}
+              style={{ marginBottom: '24px' }}
+            >
               <p>{serie.soundtrack}</p>
             </Card>
           )}
 
           {/* Universo */}
           {serie.universe && (
-            <Card title={t('serieDetail.universeTitle')} style={{ marginBottom: '24px' }}>
+            <Card
+              title={t('serieDetail.universeTitle')}
+              style={{ marginBottom: '24px' }}
+            >
               <Tag color="purple" style={{ fontSize: '14px' }}>
                 {serie.universe.name}
               </Tag>
