@@ -36,9 +36,9 @@ const { TextArea } = Input;
 const ALPHABET = '#ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 export default function DirectoresAdminPage() {
+  const { t } = useLocale();
   const message = useMessage();
   const isMobile = useMediaQuery('(max-width: 768px)');
-  const { t } = useLocale();
   const [directors, setDirectors] = useState<DirectorAdmin[]>([]);
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -56,7 +56,7 @@ export default function DirectoresAdminPage() {
     setLoading(true);
     try {
       const response = await fetch('/api/directors');
-      if (!response.ok) throw new Error('Error al cargar directores');
+      if (!response.ok) throw new Error(t('adminDirectors.loadError'));
       const data = await response.json();
       setDirectors(data);
     } catch (error) {

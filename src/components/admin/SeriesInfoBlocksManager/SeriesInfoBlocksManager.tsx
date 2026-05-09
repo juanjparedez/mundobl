@@ -23,6 +23,7 @@ import {
   AppstoreOutlined,
 } from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 import './SeriesInfoBlocksManager.css';
 
 interface InfoBlock {
@@ -36,18 +37,8 @@ interface Props {
   seriesId: number;
 }
 
-// Sugerencias de labels comunes — solo guia, el admin puede escribir cualquier cosa.
-const LABEL_SUGGESTIONS = [
-  'Basado en',
-  'Curiosidades',
-  'Premios',
-  'Polemica',
-  'Datos de produccion',
-  'Banda sonora',
-  'Citas / Frases',
-];
-
 export function SeriesInfoBlocksManager({ seriesId }: Props) {
+  const { t } = useLocale();
   const message = useMessage();
   const [blocks, setBlocks] = useState<InfoBlock[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,6 +46,17 @@ export function SeriesInfoBlocksManager({ seriesId }: Props) {
   const [editLabel, setEditLabel] = useState('');
   const [editBody, setEditBody] = useState('');
   const [saving, setSaving] = useState(false);
+
+  // Sugerencias de labels comunes — solo guia, el admin puede escribir cualquier cosa.
+  const LABEL_SUGGESTIONS = [
+    t('seriesInfoBlocksManager.labelSuggestionBasedOn'),
+    t('seriesInfoBlocksManager.labelSuggestionCuriosities'),
+    t('seriesInfoBlocksManager.labelSuggestionAwards'),
+    t('seriesInfoBlocksManager.labelSuggestionControversy'),
+    t('seriesInfoBlocksManager.labelSuggestionProductionData'),
+    t('seriesInfoBlocksManager.labelSuggestionSoundtrack'),
+    t('seriesInfoBlocksManager.labelSuggestionQuotes'),
+  ];
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -65,12 +67,12 @@ export function SeriesInfoBlocksManager({ seriesId }: Props) {
       setBlocks(data);
     } catch (e) {
       message.error(
-        e instanceof Error ? e.message : 'Error al cargar bloques'
+        e instanceof Error ? e.message : t('seriesInfoBlocksManager.errorLoadingBlocks')
       );
     } finally {
       setLoading(false);
     }
-  }, [seriesId, message]);
+  }, [seriesId, message, t]);
 
   useEffect(() => {
     void load();
@@ -96,7 +98,7 @@ export function SeriesInfoBlocksManager({ seriesId }: Props) {
 
   async function handleSave() {
     if (!editLabel.trim() || !editBody.trim()) {
-      message.warning('Faltan campos: label y contenido son requeridos');
+      message.warning(t('seriesInfoBlocksManager.missingFieldsWarning'));
       return;
     }
     setSaving(true);
@@ -125,11 +127,15 @@ export function SeriesInfoBlocksManager({ seriesId }: Props) {
         const err = await res.json().catch(() => ({}));
         throw new Error(err.error || `Error ${res.status}`);
       }
-      message.success(editingId === 'new' ? 'Bloque creado' : 'Bloque actualizado');
+      message.success(
+        editingId === 'new'
+          ? t('seriesInfoBlocksManager.blockCreatedSuccess')
+          : t('seriesInfoBlocksManager.blockUpdatedSuccess')
+      );
       cancelEdit();
       await load();
     } catch (e) {
-      message.error(e instanceof Error ? e.message : 'Error al guardar');
+      message.error(e instanceof Error ? e.message : t('seriesInfoBlocksManager.errorSavingBlock'));
     } finally {
       setSaving(false);
     }
@@ -141,10 +147,10 @@ export function SeriesInfoBlocksManager({ seriesId }: Props) {
         method: 'DELETE',
       });
       if (!res.ok) throw new Error(`Error ${res.status}`);
-      message.success('Bloque eliminado');
+      message.success(t('seriesInfoBlocksManager.blockDeletedSuccess'));
       await load();
     } catch (e) {
-      message.error(e instanceof Error ? e.message : 'Error al eliminar');
+      message.error(e instanceof Error ? e.message : t('seriesInfoBlocksManager.errorDeletingBlock'));
     }
   }
 
@@ -166,7 +172,7 @@ export function SeriesInfoBlocksManager({ seriesId }: Props) {
       });
       if (!res.ok) throw new Error(`Error ${res.status}`);
     } catch (e) {
-      message.error(e instanceof Error ? e.message : 'Error al reordenar');
+      message.error(e instanceof Error ? e.message : t('seriesInfoBlocksManager.errorReorderingBlocks'));
       await load(); // rollback
     }
   }
@@ -178,17 +184,15 @@ export function SeriesInfoBlocksManager({ seriesId }: Props) {
       <div className="series-info-blocks__header">
         <div>
           <h3 className="series-info-blocks__title">
-            <AppstoreOutlined /> Bloques de informacion adicional
+            <AppstoreOutlined /> {t('seriesInfoBlocksManager.title')}
           </h3>
           <Typography.Text type="secondary" style={{ fontSize: 13 }}>
-            Cards libres que aparecen en la pagina publica de la serie. Solo
-            se muestran las que tienen contenido. Sirve para "Basado en",
-            "Curiosidades", "Premios", o lo que se te ocurra.
+            {t('seriesInfoBlocksManager.description')}
           </Typography.Text>
         </div>
         {!isEditing && (
           <Button type="primary" icon={<PlusOutlined />} onClick={startCreate}>
-            Agregar bloque
+            {t('seriesInfoBlocksManager.addButton')}
           </Button>
         )}
       </div>
@@ -197,7 +201,7 @@ export function SeriesInfoBlocksManager({ seriesId }: Props) {
         <Card className="series-info-blocks__editor" size="small">
           <Space direction="vertical" style={{ width: '100%' }}>
             <Input
-              placeholder="Label (ej. Basado en, Curiosidades, Premios)"
+              placeholder={t('seriesInfoBlocksManager.labelPlaceholder')}
               value={editLabel}
               maxLength={60}
               onChange={(e) => setEditLabel(e.target.value)}
@@ -215,7 +219,7 @@ export function SeriesInfoBlocksManager({ seriesId }: Props) {
               ))}
             </div>
             <Input.TextArea
-              placeholder="Contenido del bloque (saltos de linea preservados)"
+              placeholder={t('seriesInfoBlocksManager.bodyPlaceholder')}
               value={editBody}
               rows={5}
               onChange={(e) => setEditBody(e.target.value)}
@@ -227,10 +231,10 @@ export function SeriesInfoBlocksManager({ seriesId }: Props) {
                 loading={saving}
                 onClick={handleSave}
               >
-                Guardar
+                {t('seriesInfoBlocksManager.saveButton')}
               </Button>
               <Button icon={<CloseOutlined />} onClick={cancelEdit}>
-                Cancelar
+                {t('seriesInfoBlocksManager.cancelButton')}
               </Button>
             </Space>
           </Space>
@@ -238,10 +242,10 @@ export function SeriesInfoBlocksManager({ seriesId }: Props) {
       )}
 
       {loading ? (
-        <Alert message="Cargando..." type="info" />
+        <Alert message={t('seriesInfoBlocksManager.loadingMessage')} type="info" />
       ) : blocks.length === 0 && editingId !== 'new' ? (
         <Empty
-          description="Aún no hay bloques. Agregá uno con el boton arriba."
+          description={t('seriesInfoBlocksManager.emptyDescription')}
           style={{ padding: '32px 0' }}
         />
       ) : (
@@ -274,10 +278,10 @@ export function SeriesInfoBlocksManager({ seriesId }: Props) {
                         loading={saving}
                         onClick={handleSave}
                       >
-                        Guardar
+                        {t('seriesInfoBlocksManager.saveButton')}
                       </Button>
                       <Button icon={<CloseOutlined />} onClick={cancelEdit}>
-                        Cancelar
+                        {t('seriesInfoBlocksManager.cancelButton')}
                       </Button>
                     </Space>
                   </Space>
@@ -310,7 +314,7 @@ export function SeriesInfoBlocksManager({ seriesId }: Props) {
                           onClick={() => startEdit(block)}
                         />
                         <Popconfirm
-                          title="¿Eliminar este bloque?"
+                          title={t('seriesInfoBlocksManager.deleteConfirmTitle')}
                           onConfirm={() => handleDelete(block.id)}
                           disabled={isEditing}
                         >

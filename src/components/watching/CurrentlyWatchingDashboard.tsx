@@ -147,7 +147,7 @@ export function CurrentlyWatchingDashboard() {
         body: JSON.stringify({ status: 'SIN_VER' }),
       });
 
-      if (!response.ok) throw new Error('Error al actualizar');
+      if (!response.ok) throw new Error(t('watchingDashboard.errorRemove'));
 
       setWatchingSeries((prev) =>
         prev.filter((item) => item.series.id !== seriesId)
@@ -176,7 +176,7 @@ export function CurrentlyWatchingDashboard() {
         body: JSON.stringify({ status: 'VISTA' }),
       });
 
-      if (!response.ok) throw new Error('Error al marcar episodio');
+      if (!response.ok) throw new Error(t('watchingDashboard.errorMarkEpisode'));
 
       message.success(
         interpolateMessage(t('watchingDashboard.episodeMarkedMessage'), {

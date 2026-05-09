@@ -67,9 +67,9 @@ export function EpisodesList({
   seasonId,
   initialEpisodes = [],
 }: EpisodesListProps) {
+  const { t } = useLocale();
   const message = useMessage();
   const modal = useModal();
-  const { t } = useLocale();
   const { data: session } = useSession();
   const [episodes, setEpisodes] = useState<Episode[]>(initialEpisodes);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -337,7 +337,7 @@ export function EpisodesList({
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Error al generar');
+        throw new Error(error.error || t('episodesList.errorGenerating'));
       }
 
       const result = await response.json();
@@ -515,7 +515,7 @@ export function EpisodesList({
                     </div>
 
                     <div className="episodes-table__cell episodes-table__cell--actions">
-                      <Tooltip title={`Comentarios (${commentCount})`}>
+                      <Tooltip title={interpolateMessage(t('episodesList.tooltipComments'), { n: String(commentCount) })}>
                         <Button
                           type="text"
                           size="small"
@@ -596,7 +596,7 @@ export function EpisodesList({
                     <SpoilerGate
                       hide={!isWatched}
                       cacheKey={`ep-synopsis-${episode.id}`}
-                      reason={t('spoilerGate.reasonEpisodeNotWatched')}
+                      reason={t('episodesList.spoilerGateReasonEpisodeNotWatched')}
                     >
                       <div className="episodes-table__synopsis-preview">
                         {episode.synopsis}
@@ -611,7 +611,7 @@ export function EpisodesList({
                         <SpoilerGate
                           hide={!isWatched}
                           cacheKey={`ep-synopsis-full-${episode.id}`}
-                          reason={t('spoilerGate.reasonEpisodeNotWatched')}
+                          reason={t('episodesList.spoilerGateReasonEpisodeNotWatched')}
                         >
                           <p className="episodes-table__synopsis">
                             {episode.synopsis}
@@ -622,7 +622,7 @@ export function EpisodesList({
                         episodeId={episode.id}
                         initialComments={episode.comments || []}
                         compact={true}
-                        placeholder="Escribe tus notas sobre este episodio, escenas interesantes, momentos clave..."
+                        placeholder={t('episodesList.commentsPlaceholder')}
                       />
                     </div>
                   )}
@@ -673,31 +673,29 @@ export function EpisodesList({
 
           <div className="episodes-list__embed-section">
             <h5 className="episodes-list__embed-title">
-              📺 Reproducción oficial (opcional)
+              {t('episodesList.embedSectionTitle')}
             </h5>
             <p className="episodes-list__embed-help">
-              Pegá la URL de YouTube/Vimeo del canal oficial. Solo si la
-              plataforma permite embeber legalmente. La plataforma se detecta
-              automaticamente.
+              {t('episodesList.embedHelpText')}
             </p>
             <Form.Item
-              label="URL del video"
+              label={t('episodesList.embedUrlLabel')}
               name="embedUrl"
               rules={[
                 {
                   type: 'url',
-                  message: 'URL invalida',
+                  message: t('episodesList.embedUrlInvalid'),
                   validateTrigger: 'onBlur',
                 },
               ]}
             >
-              <Input placeholder="https://www.youtube.com/watch?v=..." />
+              <Input placeholder={t('episodesList.embedUrlPlaceholder')} />
             </Form.Item>
-            <Form.Item label="Canal / Productora" name="embedChannelName">
-              <Input placeholder="Ej: GMMTV" />
+            <Form.Item label={t('episodesList.embedChannelNameLabel')} name="embedChannelName">
+              <Input placeholder={t('episodesList.embedChannelNamePlaceholder')} />
             </Form.Item>
-            <Form.Item label="URL del canal" name="embedChannelUrl">
-              <Input placeholder="https://www.youtube.com/@GMMTV" />
+            <Form.Item label={t('episodesList.embedChannelUrlLabel')} name="embedChannelUrl">
+              <Input placeholder={t('episodesList.embedChannelUrlPlaceholder')} />
             </Form.Item>
           </div>
 

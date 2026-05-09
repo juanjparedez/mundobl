@@ -34,9 +34,10 @@ import { useLocale } from './LocaleProvider';
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const useTheme = () => {
+  const { t } = useLocale();
   const context = useContext(ThemeContext);
   if (!context) {
-    throw new Error('useTheme debe usarse dentro de ThemeProvider');
+    throw new Error(t('themeProvider.useThemeError'));
   }
   return context;
 };
