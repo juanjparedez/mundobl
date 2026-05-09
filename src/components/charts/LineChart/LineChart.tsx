@@ -32,8 +32,9 @@ export interface LineChartProps<TData extends Record<string, unknown>> {
   xAxisKey: keyof TData & string;
   /** Series a graficar. */
   series: LineChartSeries[];
-  /** Altura del chart en px. Default 240. */
-  height?: number;
+  /** Altura del chart. Numero (px) o '100%' para llenar el contenedor.
+   *  Default 240. Cuando es '100%', el padre debe tener una altura definida. */
+  height?: number | string;
   /** Si true, suaviza la linea con monotone curve. */
   smooth?: boolean;
   /** Custom formatter para tooltip. */
@@ -59,10 +60,10 @@ export function LineChart<TData extends Record<string, unknown>>({
   hideXAxis = false,
 }: LineChartProps<TData>) {
   return (
-    <ResponsiveContainer width="100%" height={height}>
+    <ResponsiveContainer width="100%" height={height as number | `${number}%`}>
       <RechartsLineChart
         data={data}
-        margin={{ top: 8, right: 16, bottom: 8, left: 0 }}
+        margin={{ top: 12, right: 20, bottom: 8, left: 4 }}
       >
         <CartesianGrid
           stroke={CHART_TOKENS.borderSecondary}

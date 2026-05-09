@@ -50,7 +50,7 @@ export function CompletedByYearWidget({
             name: t('profileDashboard.completedByYearLabel'),
           },
         ]}
-        height={220}
+        height={170}
         smooth
         tooltipFormatter={(value, name) => [
           value === undefined ? '' : String(value),

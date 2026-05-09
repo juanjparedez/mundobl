@@ -19,8 +19,8 @@ export interface DonutChartItem {
 
 export interface DonutChartProps {
   data: DonutChartItem[];
-  /** Altura en px. Default 220. */
-  height?: number;
+  /** Altura en px o '100%' para llenar el contenedor. Default 220. */
+  height?: number | string;
   /** Inner radius (donut hole). Default 50. */
   innerRadius?: number;
   /** Outer radius. Default 80. */
@@ -42,8 +42,15 @@ export function DonutChart({
   showLegend = true,
   tooltipFormatter,
 }: DonutChartProps) {
+  // Cuando height='100%' el padre .mb-donut-chart tambien debe llenar la
+  // altura disponible, sino el contenedor interno con height='100%' colapsa.
+  const isFillHeight = typeof height === 'string';
+
   return (
-    <div className="mb-donut-chart">
+    <div
+      className="mb-donut-chart"
+      style={isFillHeight ? { height: '100%', minHeight: 0 } : undefined}
+    >
       <div className="mb-donut-chart__chart" style={{ height }}>
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
