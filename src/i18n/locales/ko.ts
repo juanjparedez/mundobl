@@ -2145,6 +2145,26 @@ const ko: TranslationShape = {
     pickerEmpty: '추가할 수 있는 위젯이 없습니다.',
     pickerAlreadyAdded: '이미 대시보드에 있습니다',
   },
+  profileDashboard: {
+    title: '내 대시보드',
+    subtitle: '재정렬 가능한 위젯으로 프로필 보기를 사용자 지정하세요.',
+    fromClassicLink: '대시보드 보기 시도',
+    backToClassic: '기본 보기',
+    avgRating: '평균 평점',
+    hoursWatched: '시청 시간',
+    widgetOverview: '개요',
+    widgetOverviewDesc: '주요 카운터: 시청, 시청 중, 중단, 다시 시청.',
+    widgetRatings: '평점 및 리뷰',
+    widgetRatingsDesc: '평균 평점, 리뷰, 댓글 및 시청 시간.',
+    widgetRecentlyCompleted: '최근 완료',
+    widgetRecentlyCompletedDesc: '최근에 시청을 마친 시리즈.',
+    recentlyCompletedEmpty: '아직 완료한 시리즈가 없습니다.',
+    widgetNotifications: '최근 알림',
+    widgetNotificationsDesc: '최신 읽지 않은 알림.',
+    widgetMyCases: '내 피드백 사례',
+    widgetMyCasesDesc: '신고하거나 투표한 버그 및 아이디어.',
+    loadError: '프로필 불러오기 오류. 페이지를 새로 고치세요.',
+  },
 } as TranslationShape;
 
 export default ko;

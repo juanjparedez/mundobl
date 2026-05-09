@@ -2190,6 +2190,31 @@ const fr: TranslationShape = {
     pickerEmpty: 'Aucun widget disponible à ajouter.',
     pickerAlreadyAdded: 'Déjà sur votre tableau de bord',
   },
+  profileDashboard: {
+    title: 'Mon tableau de bord',
+    subtitle:
+      'Personnalisez votre vue de profil avec des widgets réorganisables.',
+    fromClassicLink: 'Essayer la vue tableau de bord',
+    backToClassic: 'Vue classique',
+    avgRating: 'Note moyenne',
+    hoursWatched: 'Heures regardées',
+    widgetOverview: 'Aperçu',
+    widgetOverviewDesc:
+      'Vos compteurs principaux : vu, en cours, abandonné, à revoir.',
+    widgetRatings: 'Notes et critiques',
+    widgetRatingsDesc:
+      'Note moyenne, critiques, commentaires et heures regardées.',
+    widgetRecentlyCompleted: 'Récemment terminés',
+    widgetRecentlyCompletedDesc:
+      'Les dernières séries que vous avez terminées.',
+    recentlyCompletedEmpty: "Vous n'avez encore terminé aucune série.",
+    widgetNotifications: 'Notifications récentes',
+    widgetNotificationsDesc: 'Vos dernières notifications non lues.',
+    widgetMyCases: 'Mes cas de retour',
+    widgetMyCasesDesc:
+      'Bugs et idées que vous avez signalés ou pour lesquels vous avez voté.',
+    loadError: 'Erreur lors du chargement de votre profil. Actualisez la page.',
+  },
 } as TranslationShape;
 
 export default fr;

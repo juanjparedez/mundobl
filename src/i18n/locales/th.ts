@@ -2146,6 +2146,26 @@ const th: TranslationShape = {
     pickerEmpty: 'ไม่มีวิดเจ็ตให้เพิ่ม',
     pickerAlreadyAdded: 'มีอยู่ในแดชบอร์ดแล้ว',
   },
+  profileDashboard: {
+    title: 'แดชบอร์ดของฉัน',
+    subtitle: 'ปรับแต่งมุมมองโปรไฟล์ของคุณด้วยวิดเจ็ตที่จัดเรียงได้',
+    fromClassicLink: 'ลองมุมมองแดชบอร์ด',
+    backToClassic: 'มุมมองคลาสสิก',
+    avgRating: 'คะแนนเฉลี่ย',
+    hoursWatched: 'ชั่วโมงที่ดู',
+    widgetOverview: 'ภาพรวม',
+    widgetOverviewDesc: 'ตัวนับหลักของคุณ: ดูแล้ว กำลังดู เลิกดู ดูใหม่',
+    widgetRatings: 'คะแนนและรีวิว',
+    widgetRatingsDesc: 'คะแนนเฉลี่ย รีวิว ความคิดเห็น และชั่วโมงที่ดู',
+    widgetRecentlyCompleted: 'เสร็จล่าสุด',
+    widgetRecentlyCompletedDesc: 'ซีรีส์ล่าสุดที่คุณดูจบ',
+    recentlyCompletedEmpty: 'คุณยังไม่ได้ดูซีรีส์ไหนจบ',
+    widgetNotifications: 'การแจ้งเตือนล่าสุด',
+    widgetNotificationsDesc: 'การแจ้งเตือนที่ยังไม่ได้อ่านล่าสุดของคุณ',
+    widgetMyCases: 'เคสคำติชมของฉัน',
+    widgetMyCasesDesc: 'บั๊กและไอเดียที่คุณรายงานหรือโหวต',
+    loadError: 'เกิดข้อผิดพลาดในการโหลดโปรไฟล์ กรุณารีเฟรชหน้า',
+  },
 } as TranslationShape;
 
 export default th;

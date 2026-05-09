@@ -2100,6 +2100,26 @@ const zhCN: TranslationShape = {
     pickerEmpty: '没有可添加的小组件。',
     pickerAlreadyAdded: '已在你的仪表板中',
   },
+  profileDashboard: {
+    title: '我的仪表板',
+    subtitle: '使用可重排的小组件自定义你的资料视图。',
+    fromClassicLink: '尝试仪表板视图',
+    backToClassic: '经典视图',
+    avgRating: '平均评分',
+    hoursWatched: '观看小时数',
+    widgetOverview: '概览',
+    widgetOverviewDesc: '你的主要计数器：已看、在看、放弃、重看。',
+    widgetRatings: '评分与评论',
+    widgetRatingsDesc: '平均评分、评论、留言和观看小时数。',
+    widgetRecentlyCompleted: '最近完成',
+    widgetRecentlyCompletedDesc: '你最近看完的剧集。',
+    recentlyCompletedEmpty: '你还没有完成任何剧集。',
+    widgetNotifications: '最近通知',
+    widgetNotificationsDesc: '你最新的未读通知。',
+    widgetMyCases: '我的反馈案例',
+    widgetMyCasesDesc: '你报告或投票的错误和建议。',
+    loadError: '加载资料出错。请刷新页面。',
+  },
 } as TranslationShape;
 
 export default zhCN;
