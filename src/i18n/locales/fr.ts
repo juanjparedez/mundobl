@@ -2217,6 +2217,17 @@ const fr: TranslationShape = {
     widgetMyCases: 'Mes cas de retour',
     widgetMyCasesDesc:
       'Bugs et idées que vous avez signalés ou pour lesquels vous avez voté.',
+    widgetHeatmap: 'Activité récente',
+    widgetHeatmapDesc:
+      'Heatmap de vos jours actifs au cours des 6 derniers mois.',
+    widgetGenres: 'Genres favoris',
+    widgetGenresDesc: 'Répartition des genres que vous regardez le plus.',
+    genresEmpty: 'Aucun genre enregistré pour le moment.',
+    genresTotalLabel: 'séries au total',
+    widgetCompletedByYear: 'Séries terminées par année',
+    widgetCompletedByYearDesc: 'Courbe temporelle de vos séries terminées.',
+    completedByYearEmpty: "Vous n'avez encore terminé aucune série.",
+    completedByYearLabel: 'Terminées',
     loadError: 'Erreur lors du chargement de votre profil. Actualisez la page.',
   },
   serieDashboard: {

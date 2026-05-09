@@ -23,6 +23,9 @@ import { RatingsWidget } from './widgets/RatingsWidget/RatingsWidget';
 import { RecentlyCompletedWidget } from './widgets/RecentlyCompletedWidget/RecentlyCompletedWidget';
 import { DashboardNotificationsWidget } from './widgets/NotificationsWidget/DashboardNotificationsWidget';
 import { MyCasesWidget } from './widgets/MyCasesWidget/MyCasesWidget';
+import { HeatmapWidget } from './widgets/HeatmapWidget/HeatmapWidget';
+import { GenresDonutWidget } from './widgets/GenresDonutWidget/GenresDonutWidget';
+import { CompletedByYearWidget } from './widgets/CompletedByYearWidget/CompletedByYearWidget';
 import './dashboard.css';
 
 const WIDGET_IDS = {
@@ -31,6 +34,9 @@ const WIDGET_IDS = {
   recentlyCompleted: 'profile.recentlyCompleted',
   notifications: 'profile.notifications',
   myCases: 'profile.myCases',
+  heatmap: 'profile.heatmap',
+  genres: 'profile.genres',
+  completedByYear: 'profile.completedByYear',
 } as const;
 
 const DEFAULT_LAYOUTS: DashboardLayouts = {
@@ -55,28 +61,48 @@ const DEFAULT_LAYOUTS: DashboardLayouts = {
       minW: 4,
       minH: 4,
     },
-    { i: WIDGET_IDS.myCases, x: 0, y: 10, w: 12, h: 6, minW: 4, minH: 4 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 10, w: 12, h: 4, minW: 6, minH: 3 },
+    { i: WIDGET_IDS.genres, x: 0, y: 14, w: 6, h: 6, minW: 4, minH: 5 },
+    {
+      i: WIDGET_IDS.completedByYear,
+      x: 6,
+      y: 14,
+      w: 6,
+      h: 6,
+      minW: 4,
+      minH: 5,
+    },
+    { i: WIDGET_IDS.myCases, x: 0, y: 20, w: 12, h: 6, minW: 4, minH: 4 },
   ],
   md: [
     { i: WIDGET_IDS.overview, x: 0, y: 0, w: 6, h: 4 },
     { i: WIDGET_IDS.ratings, x: 6, y: 0, w: 4, h: 4 },
     { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 4, w: 5, h: 6 },
     { i: WIDGET_IDS.notifications, x: 5, y: 4, w: 5, h: 6 },
-    { i: WIDGET_IDS.myCases, x: 0, y: 10, w: 10, h: 6 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 10, w: 10, h: 4 },
+    { i: WIDGET_IDS.genres, x: 0, y: 14, w: 5, h: 6 },
+    { i: WIDGET_IDS.completedByYear, x: 5, y: 14, w: 5, h: 6 },
+    { i: WIDGET_IDS.myCases, x: 0, y: 20, w: 10, h: 6 },
   ],
   sm: [
     { i: WIDGET_IDS.overview, x: 0, y: 0, w: 6, h: 4 },
     { i: WIDGET_IDS.ratings, x: 0, y: 4, w: 6, h: 4 },
     { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 8, w: 6, h: 6 },
     { i: WIDGET_IDS.notifications, x: 0, y: 14, w: 6, h: 6 },
-    { i: WIDGET_IDS.myCases, x: 0, y: 20, w: 6, h: 6 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 20, w: 6, h: 4 },
+    { i: WIDGET_IDS.genres, x: 0, y: 24, w: 6, h: 6 },
+    { i: WIDGET_IDS.completedByYear, x: 0, y: 30, w: 6, h: 6 },
+    { i: WIDGET_IDS.myCases, x: 0, y: 36, w: 6, h: 6 },
   ],
   xs: [
     { i: WIDGET_IDS.overview, x: 0, y: 0, w: 4, h: 5 },
     { i: WIDGET_IDS.ratings, x: 0, y: 5, w: 4, h: 5 },
     { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 10, w: 4, h: 6 },
     { i: WIDGET_IDS.notifications, x: 0, y: 16, w: 4, h: 6 },
-    { i: WIDGET_IDS.myCases, x: 0, y: 22, w: 4, h: 6 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 22, w: 4, h: 5 },
+    { i: WIDGET_IDS.genres, x: 0, y: 27, w: 4, h: 6 },
+    { i: WIDGET_IDS.completedByYear, x: 0, y: 33, w: 4, h: 6 },
+    { i: WIDGET_IDS.myCases, x: 0, y: 39, w: 4, h: 6 },
   ],
 };
 
@@ -134,6 +160,30 @@ export function DashboardClient() {
       defaultSize: { w: 12, h: 6, minW: 4, minH: 4 },
       Component: MyCasesWidget as never,
     });
+    WidgetRegistry.register({
+      id: WIDGET_IDS.heatmap,
+      category: 'activity',
+      labelKey: 'profileDashboard.widgetHeatmap',
+      descriptionKey: 'profileDashboard.widgetHeatmapDesc',
+      defaultSize: { w: 12, h: 4, minW: 6, minH: 3 },
+      Component: HeatmapWidget as never,
+    });
+    WidgetRegistry.register({
+      id: WIDGET_IDS.genres,
+      category: 'overview',
+      labelKey: 'profileDashboard.widgetGenres',
+      descriptionKey: 'profileDashboard.widgetGenresDesc',
+      defaultSize: { w: 6, h: 6, minW: 4, minH: 5 },
+      Component: GenresDonutWidget as never,
+    });
+    WidgetRegistry.register({
+      id: WIDGET_IDS.completedByYear,
+      category: 'activity',
+      labelKey: 'profileDashboard.widgetCompletedByYear',
+      descriptionKey: 'profileDashboard.widgetCompletedByYearDesc',
+      defaultSize: { w: 6, h: 6, minW: 4, minH: 5 },
+      Component: CompletedByYearWidget as never,
+    });
   }, []);
 
   useEffect(() => {
@@ -166,6 +216,11 @@ export function DashboardClient() {
     map[WIDGET_IDS.recentlyCompleted] = { items: data.recentlyCompleted };
     map[WIDGET_IDS.notifications] = {};
     map[WIDGET_IDS.myCases] = {};
+    map[WIDGET_IDS.heatmap] = { heatmap: data.stats.heatmap };
+    map[WIDGET_IDS.genres] = { topGenres: data.stats.topGenres };
+    map[WIDGET_IDS.completedByYear] = {
+      completedByYear: data.stats.completedByYear,
+    };
     return map;
   }, [data]);
 
