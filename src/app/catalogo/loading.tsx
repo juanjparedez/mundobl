@@ -12,7 +12,7 @@ export default function CatalogoLoading() {
           minHeight: '60vh',
         }}
       >
-        <Spin size="large" tip="Cargando catálogo..." />
+        <Spin size="large" description="Cargando catálogo..." />
       </div>
     </AppLayout>
   );

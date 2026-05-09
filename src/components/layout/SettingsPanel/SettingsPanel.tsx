@@ -90,7 +90,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
       placement="right"
       open={open}
       onClose={onClose}
-      width={420}
+      styles={{ wrapper: { width: 420 } }}
       destroyOnHidden
       className="settings-panel"
     >

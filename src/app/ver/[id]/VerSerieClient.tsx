@@ -169,7 +169,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         <Alert
           type="info"
           showIcon
-          message={
+          title={
             <span>
               Reproducción oficial. Los derechos pertenecen a sus titulares.{' '}
               <Link href="/creditos">Créditos</Link> ·{' '}
