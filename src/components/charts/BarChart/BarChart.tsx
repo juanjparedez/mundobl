@@ -29,8 +29,8 @@ export interface BarChartProps<TData extends Record<string, unknown>> {
   xAxisKey: keyof TData & string;
   /** Series a graficar (puede ser una sola). */
   series: BarChartSeries[];
-  /** Altura en px. Default 240. */
-  height?: number;
+  /** Altura en px o '100%' para llenar el contenedor. Default 240. */
+  height?: number | string;
   /** Layout horizontal — invierte ejes (default vertical bars). */
   horizontal?: boolean;
   /** Si true, cada barra usa un color distinto de la paleta categorica.
@@ -55,11 +55,11 @@ export function BarChart<TData extends Record<string, unknown>>({
   hideXAxis = false,
 }: BarChartProps<TData>) {
   return (
-    <ResponsiveContainer width="100%" height={height}>
+    <ResponsiveContainer width="100%" height={height as number | `${number}%`}>
       <RechartsBarChart
         data={data}
         layout={horizontal ? 'vertical' : 'horizontal'}
-        margin={{ top: 8, right: 16, bottom: 8, left: 0 }}
+        margin={{ top: 12, right: 20, bottom: 8, left: 4 }}
       >
         <CartesianGrid
           stroke={CHART_TOKENS.borderSecondary}
