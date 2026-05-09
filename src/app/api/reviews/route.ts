@@ -74,7 +74,6 @@ export async function GET(request: NextRequest) {
 
     const reviews = await prisma.review.findMany({
       where,
-      // Destacadas primero, luego mas votadas, luego mas recientes.
       orderBy: [
         { isFeatured: 'desc' },
         { helpfulCount: 'desc' },
@@ -82,8 +81,7 @@ export async function GET(request: NextRequest) {
         { createdAt: 'desc' },
       ],
       include: {
-        user: { select: { id: true, name: true, image: true } },
-        // Solo el voto del usuario actual (si esta logueado).
+        user: { select: { id: true, name: true, nickname: true, image: true } },
         ...(currentUserId && {
           votes: {
             where: { userId: currentUserId },
@@ -112,8 +110,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/reviews — crea o actualiza la review propia del usuario
-// (clave: userId + seriesId + language). Si existe, hace upsert.
 export async function POST(request: NextRequest) {
   try {
     const authResult = await requireAuth();
@@ -189,9 +185,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Necesario para decidir si disparar notificaciones de "nueva review
-    // publicada": solo cuando el upsert TRANSICIONA a PUBLISHED (es decir,
-    // antes no existia o estaba en DRAFT/HIDDEN).
     const previousReview = await prisma.review.findUnique({
       where: {
         userId_seriesId_language: {
@@ -208,7 +201,6 @@ export async function POST(request: NextRequest) {
 
     const publishedAt = status === 'PUBLISHED' ? new Date() : null;
 
-    // Datos comunes a la review principal y a las traducciones generadas.
     const commonData = {
       verdict,
       status,
@@ -242,7 +234,7 @@ export async function POST(request: NextRequest) {
         ...commonData,
       },
       include: {
-        user: { select: { id: true, name: true, image: true } },
+        user: { select: { id: true, name: true, nickname: true, image: true } },
       },
     });
 
@@ -258,9 +250,6 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Auto-traducciones: crear/actualizar copias en otros idiomas con Gemini.
-    // Errores individuales no rompen el save principal — se reportan en
-    // `translationErrors` para que el cliente los muestre si quiere.
     const requestedTargets = Array.isArray(body.translateTo)
       ? body.translateTo
       : [];
@@ -360,7 +349,6 @@ Idioma origen: ${sourceLabel}. Idioma destino: ${targetLabel}.`,
   }
 }
 
-// DELETE /api/reviews?id=X — borra la review propia
 export async function DELETE(request: NextRequest) {
   try {
     const authResult = await requireAuth();

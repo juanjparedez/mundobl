@@ -36,7 +36,13 @@ export async function GET(request: NextRequest) {
         take: pageSize,
         include: {
           user: {
-            select: { id: true, name: true, email: true, image: true },
+            select: {
+              id: true,
+              name: true,
+              nickname: true,
+              email: true,
+              image: true,
+            },
           },
           assignedTo: {
             select: { id: true, name: true, email: true },
@@ -84,7 +90,13 @@ export async function PATCH(request: NextRequest) {
       data: updateData,
       include: {
         user: {
-          select: { id: true, name: true, email: true, image: true },
+          select: {
+            id: true,
+            name: true,
+            nickname: true,
+            email: true,
+            image: true,
+          },
         },
         assignedTo: {
           select: { id: true, name: true, email: true },

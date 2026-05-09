@@ -247,7 +247,14 @@ export async function getSeriesById(id: number) {
               viewStatus: true,
               comments: {
                 include: {
-                  user: { select: { id: true, name: true, image: true } },
+                  user: {
+                    select: {
+                      id: true,
+                      name: true,
+                      nickname: true,
+                      image: true,
+                    },
+                  },
                 },
                 orderBy: { createdAt: 'desc' },
               },
@@ -259,7 +266,9 @@ export async function getSeriesById(id: number) {
           ratings: true,
           comments: {
             include: {
-              user: { select: { id: true, name: true, image: true } },
+              user: {
+                select: { id: true, name: true, nickname: true, image: true },
+              },
             },
             orderBy: { createdAt: 'desc' },
           },
@@ -281,7 +290,11 @@ export async function getSeriesById(id: number) {
       },
       ratings: true,
       comments: {
-        include: { user: { select: { id: true, name: true, image: true } } },
+        include: {
+          user: {
+            select: { id: true, name: true, nickname: true, image: true },
+          },
+        },
         orderBy: { createdAt: 'desc' },
       },
       viewStatus: true,

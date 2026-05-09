@@ -6,7 +6,6 @@ interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
-// GET /api/series/[id]/user-ratings - Obtener ratings de usuarios (público)
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
@@ -19,11 +18,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const userRatings = await prisma.userRating.findMany({
       where: { seriesId },
       include: {
-        user: { select: { id: true, name: true, image: true } },
+        user: { select: { id: true, name: true, nickname: true, image: true } },
       },
     });
 
-    // Calcular promedios por categoría y general
     const byCategory: Record<string, { total: number; count: number }> = {};
     const userIds = new Set<string>();
 
@@ -66,7 +64,6 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-// POST /api/series/[id]/user-ratings - Guardar ratings del usuario
 export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
     const authResult = await requireAuth();
@@ -89,7 +86,6 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    // Upsert cada categoría del usuario
     const savedRatings = await Promise.all(
       Object.entries(ratings).map(([category, score]) =>
         prisma.userRating.upsert({

@@ -46,7 +46,15 @@ export async function GET(request: NextRequest) {
         skip: (page - 1) * pageSize,
         take: pageSize,
         include: {
-          user: { select: { id: true, name: true, email: true, image: true } },
+          user: {
+            select: {
+              id: true,
+              name: true,
+              nickname: true,
+              email: true,
+              image: true,
+            },
+          },
           series: { select: { id: true, title: true } },
           season: {
             select: {

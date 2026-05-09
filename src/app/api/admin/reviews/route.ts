@@ -7,7 +7,6 @@ import { notifySeriesSubscribers } from '@/lib/notifications';
 const STATUS_VALUES = ['DRAFT', 'PUBLISHED', 'HIDDEN'] as const;
 type StatusValue = (typeof STATUS_VALUES)[number];
 
-// GET /api/admin/reviews — admin/mod, lista todas las reseñas con filtros
 export async function GET(request: NextRequest) {
   try {
     const authResult = await requireRole(['ADMIN', 'MODERATOR']);
@@ -44,7 +43,15 @@ export async function GET(request: NextRequest) {
         skip: (page - 1) * pageSize,
         take: pageSize,
         include: {
-          user: { select: { id: true, name: true, email: true, image: true } },
+          user: {
+            select: {
+              id: true,
+              name: true,
+              nickname: true,
+              email: true,
+              image: true,
+            },
+          },
           series: { select: { id: true, title: true } },
         },
       }),
@@ -61,9 +68,6 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// PATCH /api/admin/reviews?id=X — cambiar status o destacar/quitar destacado.
-// Solo se permite UNA reseña destacada por (seriesId, language): si destacamos
-// otra, des-destacamos la anterior automaticamente.
 export async function PATCH(request: NextRequest) {
   try {
     const authResult = await requireRole(['ADMIN', 'MODERATOR']);
@@ -164,7 +168,6 @@ export async function PATCH(request: NextRequest) {
   }
 }
 
-// DELETE /api/admin/reviews?id=X — admin only
 export async function DELETE(request: NextRequest) {
   try {
     const authResult = await requireRole(['ADMIN']);

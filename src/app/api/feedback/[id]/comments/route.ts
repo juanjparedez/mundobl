@@ -24,7 +24,6 @@ export async function POST(
       );
     }
 
-    // Verificar que el caso existe
     const existingCase = await prisma.featureRequest.findUnique({
       where: { id: caseId },
     });
@@ -40,7 +39,15 @@ export async function POST(
         featureRequestId: caseId,
       },
       include: {
-        user: { select: { id: true, name: true, email: true, image: true } },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            nickname: true,
+            email: true,
+            image: true,
+          },
+        },
       },
     });
 

@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 
-// GET /api/feature-requests — público, lista todos con conteo de votos
 export async function GET() {
   try {
     const requests = await prisma.featureRequest.findMany({
@@ -10,7 +9,7 @@ export async function GET() {
         type: { in: ['bug', 'feature', 'idea'] },
       },
       include: {
-        user: { select: { id: true, name: true, image: true } },
+        user: { select: { id: true, name: true, nickname: true, image: true } },
         _count: { select: { votes: true, comments: true } },
         votes: { select: { userId: true } },
         images: { select: { id: true, url: true } },
@@ -28,7 +27,6 @@ export async function GET() {
   }
 }
 
-// POST /api/feature-requests — autenticado, crear nuevo
 export async function POST(request: NextRequest) {
   try {
     const authResult = await requireAuth();
@@ -66,7 +64,7 @@ export async function POST(request: NextRequest) {
             : undefined,
       },
       include: {
-        user: { select: { id: true, name: true, image: true } },
+        user: { select: { id: true, name: true, nickname: true, image: true } },
         _count: { select: { votes: true, comments: true } },
         votes: { select: { userId: true } },
         images: { select: { id: true, url: true } },
