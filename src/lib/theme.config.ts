@@ -207,9 +207,28 @@ function hexToRgba(hex: string, alpha: number): string {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
+export type SkinKey = 'default' | 'premium';
+
+// Paleta cruda de la skin premium-dark. Tiene que mantenerse en sync con
+// `src/styles/skins/premium-dark.css` (--mb-*) porque AntD ConfigProvider
+// no acepta CSS vars en sus tokens.
+const PREMIUM_DARK_PALETTE = {
+  bg: '#090911',
+  bgSoft: '#11101d',
+  panel: '#171423',
+  panel2: '#211b32',
+  panel3: '#2a2340',
+  text: '#f5f1ff',
+  textMuted: '#d2cce0',
+  textDim: '#a9a1b8',
+  border: '#2a2340',
+  borderStrong: '#3a3052',
+} as const;
+
 export function buildTheme(
   mode: 'light' | 'dark',
-  accent: AccentColors
+  accent: AccentColors,
+  skin: SkinKey = 'default'
 ): ThemeConfig {
   if (mode === 'light') {
     return {
@@ -245,6 +264,120 @@ export function buildTheme(
         Table: {
           headerBg: '#fafafa',
           rowHoverBg: '#f5f5f5',
+        },
+      },
+    };
+  }
+
+  if (skin === 'premium') {
+    const p = PREMIUM_DARK_PALETTE;
+    return {
+      token: {
+        colorPrimary: accent.primary,
+        colorInfo: accent.primary,
+        colorBgBase: p.bgSoft,
+        colorBgContainer: p.panel,
+        colorBgElevated: p.panel2,
+        colorBorder: p.border,
+        colorBorderSecondary: p.border,
+        colorText: p.text,
+        colorTextSecondary: p.textMuted,
+        colorTextTertiary: p.textDim,
+        colorTextQuaternary: 'rgba(245, 241, 255, 0.4)',
+        colorFillSecondary: hexToRgba(accent.primary, 0.14),
+        colorFillTertiary: hexToRgba(accent.primary, 0.08),
+        fontSize: 14,
+        borderRadius: 14,
+        fontFamily:
+          "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+      },
+      components: {
+        Layout: {
+          headerBg: p.panel,
+          headerHeight: 64,
+          headerPadding: '0 24px',
+          siderBg: p.bgSoft,
+          bodyBg: p.bg,
+        },
+        Menu: {
+          darkItemBg: 'transparent',
+          darkSubMenuItemBg: 'transparent',
+          darkItemSelectedBg: hexToRgba(accent.primary, 0.14),
+          darkItemSelectedColor: accent.primary,
+          darkItemHoverBg: 'rgba(255, 255, 255, 0.04)',
+        },
+        Button: {
+          controlHeight: 36,
+          controlHeightLG: 44,
+          controlHeightSM: 28,
+          defaultBg: 'rgba(255, 255, 255, 0.04)',
+          defaultBorderColor: p.borderStrong,
+          defaultColor: p.text,
+        },
+        Input: {
+          colorBgContainer: p.panel,
+          colorBorder: p.borderStrong,
+          colorText: p.text,
+          colorTextPlaceholder: 'rgba(245, 241, 255, 0.36)',
+          activeBorderColor: accent.primary,
+          hoverBorderColor: accent.hover,
+        },
+        InputNumber: {
+          colorBgContainer: p.panel,
+          colorBorder: p.borderStrong,
+          colorText: p.text,
+          colorTextPlaceholder: 'rgba(245, 241, 255, 0.36)',
+          activeBorderColor: accent.primary,
+          hoverBorderColor: accent.hover,
+        },
+        Select: {
+          colorBgContainer: p.panel,
+          colorBorder: p.borderStrong,
+          colorText: p.text,
+          colorTextPlaceholder: 'rgba(245, 241, 255, 0.36)',
+          optionSelectedBg: hexToRgba(accent.primary, 0.22),
+          colorBgElevated: p.panel2,
+        },
+        Card: {
+          colorBgContainer: p.panel,
+          colorBorderSecondary: p.border,
+          borderRadiusLG: 18,
+        },
+        Table: {
+          headerBg: p.panel2,
+          rowHoverBg: p.panel3,
+          colorBgContainer: p.panel,
+          headerColor: p.textMuted,
+        },
+        Tabs: {
+          itemColor: p.textDim,
+          itemHoverColor: p.text,
+          itemSelectedColor: accent.primary,
+          inkBarColor: accent.primary,
+        },
+        Alert: {
+          colorInfoBg: hexToRgba(accent.primary, 0.14),
+          colorInfoBorder: hexToRgba(accent.primary, 0.3),
+        },
+        Modal: {
+          contentBg: p.panel,
+          headerBg: p.panel,
+        },
+        Drawer: {
+          colorBgElevated: p.panel,
+        },
+        Form: {
+          labelColor: p.text,
+        },
+        Tag: {
+          defaultBg: hexToRgba(accent.primary, 0.12),
+          defaultColor: accent.primary,
+        },
+        Tooltip: {
+          colorBgSpotlight: p.panel2,
+        },
+        Dropdown: {
+          colorBgElevated: p.panel2,
         },
       },
     };

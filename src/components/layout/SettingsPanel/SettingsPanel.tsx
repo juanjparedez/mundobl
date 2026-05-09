@@ -19,6 +19,7 @@ import type {
   ScaleKey,
   DensityKey,
   MotionKey,
+  SkinKey,
 } from '@/types/theme.types';
 import './SettingsPanel.css';
 
@@ -46,6 +47,8 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
     setMotion,
     saver,
     setSaver,
+    skin,
+    setSkin,
     resetPreferences,
   } = useTheme();
   const { locale, setLocale, t } = useLocale();
@@ -110,6 +113,21 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
             options={[
               { value: 'light', label: t('settings.themeLight') },
               { value: 'dark', label: t('settings.themeDark') },
+            ]}
+            block
+          />
+        </div>
+
+        <div className="settings-panel__field">
+          <label className="settings-panel__label">
+            {t('settings.skinLabel')}
+          </label>
+          <Segmented
+            value={skin}
+            onChange={(v) => setSkin(v as SkinKey)}
+            options={[
+              { value: 'default', label: t('settings.skinDefault') },
+              { value: 'premium', label: t('settings.skinPremium') },
             ]}
             block
           />

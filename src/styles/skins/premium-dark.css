@@ -1,0 +1,131 @@
+/* ─── Skin: Premium Dark ─────────────────────────────────────────────
+ * Estetica premium dark inspirada en pro admin dashboards / SaaS.
+ * Solo aplica cuando data-theme='dark'. En light cae al default.
+ *
+ * Mapea los tokens existentes (--bg-*, --text-*, --border-*, --radius-*,
+ * --box-shadow-*) y agrega un namespace --mb-* para componentes nuevos
+ * que quieran usar la paleta directamente.
+ *
+ * El accent (--primary-color y derivados) NO se toca: queda configurable
+ * por el usuario via Settings > accent.
+ */
+
+html[data-skin='premium'][data-theme='dark'] {
+  /* ─── Paleta cruda (namespace --mb-*) ─────────────────────────── */
+  --mb-bg: #090911;
+  --mb-bg-soft: #11101d;
+  --mb-panel: #171423;
+  --mb-panel-2: #211b32;
+  --mb-panel-3: #2a2340;
+  --mb-text: #f5f1ff;
+  --mb-text-muted: #d2cce0;
+  --mb-text-dim: #a9a1b8;
+  --mb-text-disabled: #6b6378;
+  --mb-border: rgba(255, 255, 255, 0.08);
+  --mb-border-soft: rgba(255, 255, 255, 0.06);
+  --mb-border-strong: rgba(255, 255, 255, 0.14);
+  --mb-radius-sm: 10px;
+  --mb-radius-md: 14px;
+  --mb-radius-lg: 18px;
+  --mb-radius-xl: 24px;
+  --mb-shadow-soft:
+    0 1px 2px rgba(0, 0, 0, 0.25), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --mb-shadow-elevated:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 12px 40px rgba(0, 0, 0, 0.5);
+  --mb-shadow-pressed: inset 0 2px 6px rgba(0, 0, 0, 0.45);
+
+  /* ─── Mapeo a tokens existentes ───────────────────────────────── */
+  --bg-base: var(--mb-bg-soft);
+  --bg-layout: var(--mb-bg);
+  --bg-container: var(--mb-panel);
+  --bg-elevated: var(--mb-panel-2);
+  --bg-spotlight: var(--mb-panel-3);
+  --bg-input: var(--mb-panel);
+
+  --text-primary: var(--mb-text);
+  --text-secondary: var(--mb-text-muted);
+  --text-tertiary: var(--mb-text-dim);
+  --text-disabled: var(--mb-text-disabled);
+
+  --border-color: var(--mb-border);
+  --border-color-secondary: var(--mb-border-soft);
+
+  --border-radius-base: var(--mb-radius-md);
+  --border-radius-sm: var(--mb-radius-sm);
+  --border-radius-lg: var(--mb-radius-lg);
+  --border-radius: var(--border-radius-base);
+
+  --box-shadow-base: var(--mb-shadow-soft);
+  --box-shadow-card: var(--mb-shadow-soft);
+
+  /* Soft fill derivado del accent (gold-soft, purple-soft, etc.):
+   * el accent activo lo decide el ThemeProvider via --primary-color. */
+  --accent-soft: color-mix(in srgb, var(--primary-color) 14%, transparent);
+  --accent-soft-strong: color-mix(
+    in srgb,
+    var(--primary-color) 22%,
+    transparent
+  );
+}
+
+/* ─── Backdrop premium del shell ─────────────────────────────────── */
+html[data-skin='premium'][data-theme='dark'] body {
+  background:
+    radial-gradient(
+      ellipse at top left,
+      rgba(124, 77, 255, 0.06),
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse at bottom right,
+      rgba(79, 140, 255, 0.04),
+      transparent 60%
+    ),
+    var(--mb-bg);
+}
+
+/* ─── Content area sin doble marco ───────────────────────────────── */
+html[data-skin='premium'][data-theme='dark'] .app-content {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+/* ─── Sidebar premium ────────────────────────────────────────────── */
+html[data-skin='premium'][data-theme='dark'] .app-sidebar {
+  background: var(--mb-bg-soft);
+  border-right: 1px solid var(--mb-border-soft);
+}
+
+html[data-skin='premium'][data-theme='dark'] .ant-menu-dark.ant-menu-root,
+html[data-skin='premium'][data-theme='dark'] .app-sidebar .ant-menu {
+  background: transparent;
+}
+
+html[data-skin='premium'][data-theme='dark']
+  .ant-menu-dark
+  .ant-menu-item-selected {
+  background: var(--accent-soft) !important;
+  color: var(--primary-color) !important;
+  font-weight: 600;
+  position: relative;
+}
+
+html[data-skin='premium'][data-theme='dark']
+  .ant-menu-dark
+  .ant-menu-item-selected::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--primary-color);
+}
+
+html[data-skin='premium'][data-theme='dark']
+  .ant-menu-dark
+  .ant-menu-item:hover {
+  background: rgba(255, 255, 255, 0.04) !important;
+}
