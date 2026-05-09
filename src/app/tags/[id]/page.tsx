@@ -27,7 +27,7 @@ export async function generateMetadata({
   const description = `Series, películas y especiales con la etiqueta "${tag.name}". ${seriesCount} título${seriesCount === 1 ? '' : 's'} en MundoBL.`;
 
   return {
-    title: `${tag.name} - Tag`,
+    title: `${tag.name} | Series BL con este tag (${seriesCount} título${seriesCount === 1 ? '' : 's'})`,
     description,
     alternates: {
       canonical: `/tags/${tag.id}`,

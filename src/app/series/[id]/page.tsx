@@ -55,7 +55,9 @@ export async function generateMetadata({
     ContentTypeConfig[serie.type as ContentTypeValue]?.label ?? 'Serie';
   const year = serie.year ? ` (${serie.year})` : '';
   const country = serie.country?.name ?? '';
-  const title = `${serie.title}${year} - ${typeLabel} BL`;
+  // Keyword-first: nombre + año + intent keywords (reseña/reparto) ANTES
+  // del qualifier "Serie BL". Mejora CTR en busquedas como "bad buddy resena".
+  const title = `${serie.title}${year} | Reseña, Reparto y Episodios - ${typeLabel} BL`;
 
   const synopsis = serie.synopsis
     ? serie.synopsis.slice(0, 160).replace(/\n/g, ' ')

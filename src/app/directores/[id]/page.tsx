@@ -29,7 +29,7 @@ export async function generateMetadata({
     : `Perfil de ${director.name}. ${seriesCount} series BL dirigidas. Descubre su trabajo en MundoBL.`;
 
   return {
-    title: `${director.name} - Director BL`,
+    title: `${director.name} | Series Dirigidas y Filmografía - Director BL`,
     description,
     alternates: {
       canonical: `/directores/${director.id}`,
