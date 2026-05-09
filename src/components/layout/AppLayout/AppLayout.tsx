@@ -2,6 +2,7 @@
 
 import { Layout } from 'antd';
 import { Sidebar } from '../Sidebar/Sidebar';
+import { TopBar } from '../TopBar/TopBar';
 import { BottomNav } from '../BottomNav/BottomNav';
 import { PrivacyBanner } from '../../common/PrivacyBanner/PrivacyBanner';
 import { StaleVersionNotifier } from '../../common/StaleVersionNotifier/StaleVersionNotifier';
@@ -28,6 +29,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         </a>
         <Sidebar />
         <Layout>
+          <TopBar />
           <Content id="main-content" role="main" className="app-content">
             {children}
           </Content>

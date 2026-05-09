@@ -2,7 +2,7 @@
 
 import { startTransition, useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { Layout, Menu, Avatar, Button } from 'antd';
+import { Layout, Menu } from 'antd';
 import {
   AppstoreOutlined,
   BarChartOutlined,
@@ -17,9 +17,6 @@ import {
   ReadOutlined,
   BankOutlined,
   TranslationOutlined,
-  LoadingOutlined,
-  LoginOutlined,
-  LogoutOutlined,
   TeamOutlined,
   CommentOutlined,
   LinkOutlined,
@@ -29,12 +26,10 @@ import {
   UnorderedListOutlined,
 } from '@ant-design/icons';
 import { Badge } from 'antd';
-import Link from 'next/link';
-import { useSession, signIn, signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { ROUTES } from '@/constants/navigation';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { SettingsPanel } from '../SettingsPanel/SettingsPanel';
-import { NotificationsBell } from '../NotificationsBell/NotificationsBell';
 import { LAST_SEEN_NOVEDADES_KEY } from '@/app/novedades/storage-keys';
 import './Sidebar.css';
 
@@ -55,7 +50,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { t } = useLocale();
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [hasNovedades, setHasNovedades] = useState(false);
 
@@ -326,54 +321,6 @@ export function Sidebar() {
       <Menu mode="inline" selectedKeys={[selectedKey]} items={menuItems} />
 
       <div className="sidebar-footer">
-        <div className="sidebar-user-section">
-          {status === 'loading' ? (
-            <div className="sidebar-user-loading">
-              <LoadingOutlined />
-            </div>
-          ) : session?.user ? (
-            <div className="sidebar-user-info">
-              <Link
-                href="/perfil"
-                className="sidebar-user-profile-link"
-                aria-label={t('sidebar.profile')}
-              >
-                <Avatar
-                  src={session.user.image}
-                  icon={!session.user.image ? <UserOutlined /> : undefined}
-                  size="small"
-                />
-                {!collapsed && (
-                  <span className="sidebar-user-name">{session.user.name}</span>
-                )}
-              </Link>
-              {!collapsed && (
-                <button
-                  className="sidebar-logout-btn"
-                  onClick={() => signOut({ callbackUrl: '/' })}
-                  aria-label={t('sidebar.logout')}
-                  title={t('sidebar.logout')}
-                >
-                  <LogoutOutlined />
-                </button>
-              )}
-            </div>
-          ) : (
-            <Button
-              type="text"
-              icon={<LoginOutlined />}
-              onClick={() => signIn('google')}
-              className="sidebar-login-btn"
-              aria-label={t('sidebar.login')}
-              block
-            >
-              {!collapsed && t('sidebar.login')}
-            </Button>
-          )}
-        </div>
-
-        <NotificationsBell collapsed={collapsed} />
-
         <button
           className="sidebar-settings-trigger"
           onClick={() => setIsSettingsOpen(true)}

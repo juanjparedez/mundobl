@@ -1,11 +1,8 @@
 .notifications-bell {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--spacing-sm);
-  width: calc(100% - var(--spacing-sm) * 2);
-  margin: var(--spacing-xs);
-  padding: var(--spacing-xs) var(--spacing-sm);
   background: transparent;
   border: 1px solid transparent;
   border-radius: var(--border-radius-sm);
@@ -19,6 +16,19 @@
   background: var(--bg-spotlight);
   border-color: var(--border-color-secondary);
   color: var(--text-primary);
+}
+
+.notifications-bell--sidebar {
+  display: flex;
+  width: calc(100% - var(--spacing-sm) * 2);
+  margin: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+.notifications-bell--topbar {
+  width: 36px;
+  height: 36px;
+  padding: 0;
 }
 
 .notifications-bell__icon {
