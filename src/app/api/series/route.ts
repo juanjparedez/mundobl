@@ -138,6 +138,10 @@ export async function POST(request: NextRequest) {
         observations,
         review: review ?? null,
         notesPrivate: notesPrivate === true,
+        catalogScope:
+          body.catalogScope === 'WATCHABLE_ONLY'
+            ? 'WATCHABLE_ONLY'
+            : 'PERSONAL',
         countryId: resolvedCountryId,
         universeId,
         productionCompanyId: resolvedProductionCompanyId,

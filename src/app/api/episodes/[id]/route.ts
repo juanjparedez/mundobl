@@ -1,6 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
+import {
+  detectPlatform,
+  extractVideoId,
+  type Platform,
+} from '@/lib/embed-helpers';
+
+function resolveEmbedFields(input: {
+  embedUrl?: string | null;
+  embedPlatform?: string | null;
+  embedChannelName?: string | null;
+  embedChannelUrl?: string | null;
+}) {
+  const url = input.embedUrl?.trim() || null;
+  if (!url) {
+    return {
+      embedUrl: null,
+      embedPlatform: null,
+      embedVideoId: null,
+      embedChannelName: null,
+      embedChannelUrl: null,
+    };
+  }
+  const platform =
+    (input.embedPlatform as Platform | null) ?? detectPlatform(url);
+  const videoId = platform ? extractVideoId(platform, url) : null;
+  return {
+    embedUrl: url,
+    embedPlatform: platform,
+    embedVideoId: videoId,
+    embedChannelName: input.embedChannelName?.trim() || null,
+    embedChannelUrl: input.embedChannelUrl?.trim() || null,
+  };
+}
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -72,6 +105,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         duration: body.duration || null,
         airDate: body.airDate ? new Date(body.airDate) : null,
         synopsis: body.synopsis || null,
+        ...resolveEmbedFields(body),
       },
     });
 

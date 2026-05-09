@@ -192,6 +192,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
           : null,
         observations: body.observations || null,
         notesPrivate: body.notesPrivate === true,
+        catalogScope:
+          body.catalogScope === 'WATCHABLE_ONLY'
+            ? 'WATCHABLE_ONLY'
+            : 'PERSONAL',
         countryId,
         universeId: body.universeId ? parseInt(body.universeId, 10) : null,
         productionCompanyId,

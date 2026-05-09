@@ -40,6 +40,7 @@ export default async function EditSeriesPage({ params }: EditPageProps) {
     observations: serie.observations,
     review: serie.review,
     notesPrivate: serie.notesPrivate ?? false,
+    catalogScope: serie.catalogScope ?? 'PERSONAL',
     countryName: serie.country?.name,
     universeId: serie.universeId,
     tags: serie.tags?.map((st) => st.tag.name) || [],

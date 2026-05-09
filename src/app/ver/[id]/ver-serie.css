@@ -1,0 +1,214 @@
+.ver-serie-page {
+  padding: var(--spacing-md);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.ver-serie-back {
+  margin-bottom: var(--spacing-sm);
+}
+
+.ver-serie {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.ver-serie__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.ver-serie__title {
+  margin: 0;
+  font-size: 1.8rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.ver-serie__year {
+  color: var(--text-secondary);
+  font-weight: normal;
+  font-size: 0.85em;
+}
+
+.ver-serie__original-title {
+  margin: 4px 0 0 0;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.ver-serie__header-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.ver-serie__player-wrap {
+  width: 100%;
+  background: #000;
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.ver-serie__player-wrap .embed-player {
+  border-radius: 0;
+}
+
+.ver-serie__attribution-row {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.ver-serie__legal-note {
+  flex: 1;
+  min-width: 280px;
+  margin: 0;
+}
+
+.ver-serie__nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--bg-elevated);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-color);
+}
+
+.ver-serie__current-label {
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.ver-serie__episode-synopsis,
+.ver-serie__series-synopsis {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md);
+}
+
+.ver-serie__episode-synopsis h3,
+.ver-serie__series-synopsis h3 {
+  margin: 0 0 var(--spacing-sm) 0;
+  font-size: 1.05rem;
+  color: var(--text-primary);
+}
+
+.ver-serie__episode-synopsis p,
+.ver-serie__series-synopsis p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.ver-serie__chips {
+  margin-top: var(--spacing-sm);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.ver-serie__episodes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.ver-serie__episodes h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: var(--text-primary);
+}
+
+.ver-serie__season {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.ver-serie__season-title {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.ver-serie__episode-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--spacing-xs);
+}
+
+.ver-serie__episode-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: var(--text-primary);
+  transition: all 0.15s ease;
+}
+
+.ver-serie__episode-btn:hover {
+  border-color: var(--ant-primary-color, #1677ff);
+  background: var(--bg-subtle);
+}
+
+.ver-serie__episode-btn--active {
+  border-color: var(--ant-primary-color, #1677ff);
+  background: rgba(22, 119, 255, 0.08);
+  font-weight: 600;
+}
+
+.ver-serie__episode-num {
+  flex-shrink: 0;
+  font-weight: 700;
+  color: var(--ant-primary-color, #1677ff);
+  min-width: 32px;
+}
+
+.ver-serie__episode-name {
+  flex: 1;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ver-serie__episode-active-icon {
+  color: var(--ant-color-success, #52c41a);
+  flex-shrink: 0;
+}
+
+@media (max-width: 720px) {
+  .ver-serie__title {
+    font-size: 1.4rem;
+  }
+
+  .ver-serie__nav {
+    flex-direction: column;
+  }
+
+  .ver-serie__current-label {
+    order: -1;
+  }
+}
