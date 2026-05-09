@@ -2153,6 +2153,26 @@ const zhCN: TranslationShape = {
     widgetRecentlyAdded: '最近添加',
     widgetRecentlyAddedDesc: '目录中新增的剧集。',
   },
+  adminDashboard: {
+    title: '管理员仪表板',
+    subtitle: '管理员角色的 KPI 和活动警报。',
+    backToClassic: '返回经典面板',
+    fromClassicLink: '查看仪表板',
+    kpiSeries: '剧集',
+    kpiReviews: '评论',
+    kpiComments: '公开留言',
+    kpiUsers: '用户',
+    alertsTitle: '活动警报',
+    alertsEmpty: '没有待处理的警报。干得好！',
+    alertSeriesWithoutReview: '{count} 部剧集没有发布评论',
+    alertSeriesWithoutContent: '{count} 部剧集没有可嵌入内容',
+    alertCommentsReported: '{count} 条被举报留言',
+    alertSuggestedSitesPending: '{count} 个待处理建议站点',
+    widgetKPIs: '主要 KPI',
+    widgetKPIsDesc: '剧集、评论、留言和用户的汇总计数器。',
+    widgetAlerts: '警报',
+    widgetAlertsDesc: '需要处理的项目：审核、缺失、建议。',
+  },
 } as TranslationShape;
 
 export default zhCN;

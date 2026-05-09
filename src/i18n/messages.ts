@@ -2110,6 +2110,26 @@ export type TranslationShape = {
     widgetRecentlyAdded: string;
     widgetRecentlyAddedDesc: string;
   };
+  adminDashboard: {
+    title: string;
+    subtitle: string;
+    backToClassic: string;
+    fromClassicLink: string;
+    kpiSeries: string;
+    kpiReviews: string;
+    kpiComments: string;
+    kpiUsers: string;
+    alertsTitle: string;
+    alertsEmpty: string;
+    alertSeriesWithoutReview: string;
+    alertSeriesWithoutContent: string;
+    alertCommentsReported: string;
+    alertSuggestedSitesPending: string;
+    widgetKPIs: string;
+    widgetKPIsDesc: string;
+    widgetAlerts: string;
+    widgetAlertsDesc: string;
+  };
 };
 
 const es: TranslationShape = {
@@ -4327,6 +4347,28 @@ const es: TranslationShape = {
     widgetRecentlyAdded: 'Agregadas recientemente',
     widgetRecentlyAddedDesc: 'Las ultimas series sumadas al catalogo.',
   },
+  adminDashboard: {
+    title: 'Panel de admin',
+    subtitle: 'KPIs y alertas activas para tu rol de administrador.',
+    backToClassic: 'Volver al panel clasico',
+    fromClassicLink: 'Ver dashboard',
+    kpiSeries: 'Series',
+    kpiReviews: 'Resenas',
+    kpiComments: 'Comentarios publicos',
+    kpiUsers: 'Usuarios',
+    alertsTitle: 'Alertas activas',
+    alertsEmpty: 'Sin alertas pendientes. Buen trabajo!',
+    alertSeriesWithoutReview: '{count} serie(s) sin resena publicada',
+    alertSeriesWithoutContent: '{count} serie(s) sin contenido embebible',
+    alertCommentsReported: '{count} comentario(s) reportado(s)',
+    alertSuggestedSitesPending: '{count} sitio(s) sugerido(s) pendientes',
+    widgetKPIs: 'KPIs principales',
+    widgetKPIsDesc:
+      'Contadores agregados de series, reviews, comentarios y usuarios.',
+    widgetAlerts: 'Alertas',
+    widgetAlertsDesc:
+      'Items que requieren accion: moderacion, faltantes, sugerencias.',
+  },
 };
 
 const en: TranslationShape = {
@@ -6527,6 +6569,28 @@ const en: TranslationShape = {
     widgetStatsDesc: 'Total counters across the catalog.',
     widgetRecentlyAdded: 'Recently added',
     widgetRecentlyAddedDesc: 'Latest series added to the catalog.',
+  },
+  adminDashboard: {
+    title: 'Admin dashboard',
+    subtitle: 'KPIs and active alerts for your admin role.',
+    backToClassic: 'Back to classic admin',
+    fromClassicLink: 'View dashboard',
+    kpiSeries: 'Series',
+    kpiReviews: 'Reviews',
+    kpiComments: 'Public comments',
+    kpiUsers: 'Users',
+    alertsTitle: 'Active alerts',
+    alertsEmpty: 'No pending alerts. Great job!',
+    alertSeriesWithoutReview: '{count} series without published review',
+    alertSeriesWithoutContent: '{count} series without embeddable content',
+    alertCommentsReported: '{count} reported comment(s)',
+    alertSuggestedSitesPending: '{count} pending site suggestion(s)',
+    widgetKPIs: 'Main KPIs',
+    widgetKPIsDesc:
+      'Aggregated counters for series, reviews, comments and users.',
+    widgetAlerts: 'Alerts',
+    widgetAlertsDesc:
+      'Items that need action: moderation, missing, suggestions.',
   },
 };
 

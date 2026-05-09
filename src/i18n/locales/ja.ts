@@ -1777,6 +1777,26 @@ const ja: TranslationShape = {
     widgetRecentlyAdded: '最近追加',
     widgetRecentlyAddedDesc: 'カタログに追加された最新のシリーズ。',
   },
+  adminDashboard: {
+    title: '管理ダッシュボード',
+    subtitle: '管理者ロールのKPIとアクティブなアラート。',
+    backToClassic: 'クラシックパネルに戻る',
+    fromClassicLink: 'ダッシュボードを表示',
+    kpiSeries: 'シリーズ',
+    kpiReviews: 'レビュー',
+    kpiComments: '公開コメント',
+    kpiUsers: 'ユーザー',
+    alertsTitle: 'アクティブなアラート',
+    alertsEmpty: '保留中のアラートはありません。お疲れ様！',
+    alertSeriesWithoutReview: 'レビュー未公開のシリーズ {count} 件',
+    alertSeriesWithoutContent: '埋め込みコンテンツのないシリーズ {count} 件',
+    alertCommentsReported: '報告されたコメント {count} 件',
+    alertSuggestedSitesPending: '保留中の提案サイト {count} 件',
+    widgetKPIs: '主要KPI',
+    widgetKPIsDesc: 'シリーズ、レビュー、コメント、ユーザーの集計カウンター。',
+    widgetAlerts: 'アラート',
+    widgetAlertsDesc: '対応が必要な項目：モデレーション、欠落、提案。',
+  },
 } as TranslationShape;
 
 export default ja;

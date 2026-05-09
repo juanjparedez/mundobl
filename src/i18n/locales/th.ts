@@ -2199,6 +2199,27 @@ const th: TranslationShape = {
     widgetRecentlyAdded: 'เพิ่มล่าสุด',
     widgetRecentlyAddedDesc: 'ซีรีส์ล่าสุดที่เพิ่มในแคตตาล็อก',
   },
+  adminDashboard: {
+    title: 'แดชบอร์ดผู้ดูแล',
+    subtitle: 'KPI และการแจ้งเตือนที่ใช้งานสำหรับบทบาทผู้ดูแล',
+    backToClassic: 'กลับไปยังแผงคลาสสิก',
+    fromClassicLink: 'ดูแดชบอร์ด',
+    kpiSeries: 'ซีรีส์',
+    kpiReviews: 'รีวิว',
+    kpiComments: 'ความคิดเห็นสาธารณะ',
+    kpiUsers: 'ผู้ใช้',
+    alertsTitle: 'การแจ้งเตือนที่ใช้งาน',
+    alertsEmpty: 'ไม่มีการแจ้งเตือนที่ค้างอยู่ เยี่ยมมาก!',
+    alertSeriesWithoutReview: 'ซีรีส์ {count} เรื่องไม่มีรีวิวที่เผยแพร่',
+    alertSeriesWithoutContent: 'ซีรีส์ {count} เรื่องไม่มีเนื้อหาฝัง',
+    alertCommentsReported: 'ความคิดเห็นที่ถูกรายงาน {count} รายการ',
+    alertSuggestedSitesPending: 'เว็บไซต์แนะนำที่รออยู่ {count} รายการ',
+    widgetKPIs: 'KPI หลัก',
+    widgetKPIsDesc: 'ตัวนับรวมของซีรีส์ รีวิว ความคิดเห็น และผู้ใช้',
+    widgetAlerts: 'การแจ้งเตือน',
+    widgetAlertsDesc:
+      'รายการที่ต้องดำเนินการ: การกลั่นกรอง รายการที่ขาด ข้อเสนอแนะ',
+  },
 } as TranslationShape;
 
 export default th;

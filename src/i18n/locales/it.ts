@@ -2234,6 +2234,28 @@ const it: TranslationShape = {
     widgetRecentlyAdded: 'Aggiunte di recente',
     widgetRecentlyAddedDesc: 'Le ultime serie aggiunte al catalogo.',
   },
+  adminDashboard: {
+    title: 'Dashboard amministratore',
+    subtitle: 'KPI e avvisi attivi per il tuo ruolo admin.',
+    backToClassic: 'Torna al pannello classico',
+    fromClassicLink: 'Vedi dashboard',
+    kpiSeries: 'Serie',
+    kpiReviews: 'Recensioni',
+    kpiComments: 'Commenti pubblici',
+    kpiUsers: 'Utenti',
+    alertsTitle: 'Avvisi attivi',
+    alertsEmpty: 'Nessun avviso in sospeso. Ottimo lavoro!',
+    alertSeriesWithoutReview: '{count} serie senza recensione pubblicata',
+    alertSeriesWithoutContent: '{count} serie senza contenuto integrato',
+    alertCommentsReported: '{count} commento(i) segnalato(i)',
+    alertSuggestedSitesPending: '{count} sito(i) suggerito(i) in attesa',
+    widgetKPIs: 'KPI principali',
+    widgetKPIsDesc:
+      'Contatori aggregati di serie, recensioni, commenti e utenti.',
+    widgetAlerts: 'Avvisi',
+    widgetAlertsDesc:
+      'Elementi che richiedono azione: moderazione, mancanti, suggerimenti.',
+  },
 } as TranslationShape;
 
 export default it;
