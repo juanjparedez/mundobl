@@ -23,23 +23,171 @@ Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-s
 | **Base de datos** | Supabase PostgreSQL (sa-east-1, Sao Paulo) |
 | **Almacenamiento** | Supabase Storage (bucket `images`) |
 | **Auth** | NextAuth.js (Google OAuth) |
-| **Dominio** | mundobl.win (DNS en Cloudflare, CNAME a Vercel) |
+| **Dominio** | **mundobl.com.ar** (primario), mundobl.win (backup). Redireccion `.win → .com.ar` via Cloudflare (DNS / Page Rules), NO en codigo. |
 | **SSL** | Automatico via Vercel |
 
 ### Variables de Entorno (Vercel + .env local)
 
 ```
+# Base de datos
 DATABASE_URL                # Transaction pooler (puerto 6543) - para la app
 DIRECT_URL                  # Session pooler (puerto 5432) - para migraciones Prisma
+SUPABASE_PASSWORD           # Password del proyecto Supabase
+
+# Auth (NextAuth + Google OAuth)
 AUTH_SECRET                 # Secret para NextAuth
-AUTH_GOOGLE_ID              # Google OAuth client ID
-AUTH_GOOGLE_SECRET          # Google OAuth client secret
-NEXT_PUBLIC_SUPABASE_URL    # URL del proyecto Supabase
-SUPABASE_SERVICE_ROLE_KEY   # Service role key de Supabase
-PROJECT_GITHUB_URL          # Link a GitHub (para /admin/info)
-PROJECT_VERCEL_URL          # Link a Vercel (para /admin/info)
-PROJECT_SUPABASE_URL        # Link a Supabase (para /admin/info)
+NEXTAUTH_URL                # URL absoluta del sitio
+GOOGLE_CLIENT_ID            # Google OAuth client ID
+GOOGLE_CLIENT_SECRET        # Google OAuth client secret
+ADMIN_EMAILS                # Emails admin separados por coma
+
+# Supabase Storage (subida de imagenes)
+NEXT_PUBLIC_SUPABASE_URL                       # URL del proyecto Supabase
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY   # Anon key publica
+SUPABASE_SERVICE_ROLE_KEY                      # Service role key (server-only)
+
+# Integraciones externas
+YOUTUBE_API_KEY             # YouTube Data API v3 (importacion de videos/canales/playlists)
+VIMEO_CLIENT_ID             # Vimeo API
+VIMEO_ACCESS_TOKEN          # Token de acceso de Vimeo
+
+# Links del proyecto (admin/info)
+PROJECT_GITHUB_URL
+PROJECT_VERCEL_URL
+PROJECT_SUPABASE_URL
 ```
+
+> **Limpiar del `.env` local**: las vars `DEV_AUTH_BYPASS`, `DEV_AUTH_ROLE`, `DEV_AUTH_USER_ID` no las lee ningun archivo en `src/`. Son dead config (auditado 2026-05-09). Si en el futuro se reintroduce un bypass de auth dev, debe ir guardado tras `process.env.NODE_ENV !== 'production'`.
+
+**Asistente IA del proyecto:** **Gemini** (no Claude/Anthropic). El helper esta en [src/lib/gemini.ts](src/lib/gemini.ts) y la env var es `GEMINI_API_KEY`. Cualquier feature de IA debe usar este helper, no integrar otro proveedor.
+
+---
+
+## Integraciones Externas
+
+### YouTube Data API v3
+
+- **Env**: `YOUTUBE_API_KEY` (configurada). Cuota gratuita: 10k unidades/dia.
+- **Helper**: [src/lib/channel-fetcher.ts](src/lib/channel-fetcher.ts) → `fetchYouTubeChannel(url, pageToken?)`
+  - Acepta URLs de canal: `/channel/UCxxx`, `/@handle`, `/c/customname`, `/user/username`
+  - Usa el endpoint `playlistItems` sobre la playlist `uploads` del canal
+  - Pagina con `nextPageToken`, 50 videos por pagina
+  - Devuelve `ChannelVideo[]` con `videoId`, `title`, `description`, `thumbnailUrl`, `channelName`, `channelUrl`, `publishedAt`, `platform: 'YouTube'`
+- **`fetchYouTubePlaylist(url, pageToken?)`**: importa una playlist (ej. la playlist oficial de una serie en GMMTV). Acepta URLs `?list=PLxxx` o `playlist/PLxxx`. Devuelve `PlaylistFetchResult` con metadata del playlist (titulo, descripcion, thumbnail, itemCount) ademas de los videos.
+- **`fetchAllYouTubePlaylistVideos(url, maxPages=10)`**: paginacion automatica hasta `maxPages` (500 videos) — para series con muchos episodios.
+- **Lo que NO esta implementado todavia**:
+  - Fetch por **video unico** con metadata enriquecida (`videos` endpoint con `contentDetails` para duracion)
+
+### Vimeo API
+
+- **Env**: `VIMEO_CLIENT_ID`, `VIMEO_ACCESS_TOKEN` (configuradas).
+- **Helper**: [src/lib/channel-fetcher.ts](src/lib/channel-fetcher.ts) → `fetchVimeoChannel(url, pageToken?)`
+  - Acepta URLs de usuario/canal: `/channels/name`, `/username`
+  - Usa el endpoint `users/{userId}/videos`, 25 videos por pagina, ordenado por fecha
+  - Misma forma de retorno (`ChannelVideo[]`) que YouTube → flujo unificado
+
+### Google Gemini API (asistente IA)
+
+- **Env**: `GEMINI_API_KEY` (configurada en Vercel; **no** en `.env` local). Free tier: 15 RPM / 1500 RPD compartido por key.
+- **Modelo**: cadena con fallback automatico. Default: `gemini-2.5-flash` → `gemini-flash-latest` → `gemini-2.5-flash-lite`. Override via env `GEMINI_MODELS` (csv).
+- **Helper**: [src/lib/gemini.ts](src/lib/gemini.ts) → `generateText({prompt, systemInstruction, temperature?, maxOutputTokens?, thinkingBudget?})`
+  - `thinkingBudget: 0` desactiva "thinking tokens" (recomendado para tareas cortas)
+  - Tira `GeminiError` con `status` HTTP + `googleStatus` simbolico (RESOURCE_EXHAUSTED, PERMISSION_DENIED, etc.)
+  - Fallback automatico ante 429/404/5xx; errores definitivos (400, prompt invalido) frenan
+- **Consumidores actuales**:
+  - `POST /api/reviews/ai-assist` — sugerencias de resena
+  - `POST /api/admin/changelog/ai-assist` — redaccion de changelog
+  - `POST /api/admin/news/ai-generate` — generacion de news
+  - `POST /api/reviews` — asistencia inline
+- **Casos de uso futuros**: traduccion de sinopsis al español al importar series, normalizacion de titulos parseados de YouTube, deteccion de pais/año desde metadata de canal.
+
+### Embed helpers ([src/lib/embed-helpers.ts](src/lib/embed-helpers.ts))
+
+Soporta 8 plataformas para reproducir/parsear:
+- **YouTube**, **Vimeo**, **Bilibili**, **Dailymotion**, **TikTok**, **Instagram**, **Twitter/X**, **Spotify**
+- `getYouTubeId`, `getVimeoId`, `getBilibiliId`, `detectPlatform(url)`, `buildEmbedSrc(url)`, `getThumbnailUrl(url)`
+- Constantes: `PLATFORM_OPTIONS`, `CATEGORY_OPTIONS`, `PLATFORM_COLORS`
+
+### Supabase Storage
+
+- **Helper**: [src/lib/supabase.ts](src/lib/supabase.ts)
+- Bucket: `images`. Funciones: `uploadImage`, `deleteImage`, `downloadAndUploadImage` (re-hostea imagen desde URL externa)
+
+### NextAuth (Google OAuth)
+
+- [src/lib/auth.ts](src/lib/auth.ts), [src/lib/auth-helpers.ts](src/lib/auth-helpers.ts)
+- `requireAuth()`, `requireRole(['ADMIN' | 'MODERATOR' | 'USER'])` para proteger endpoints
+- Roles via `User.role` (enum `Role`); admin se puede sembrar via `ADMIN_EMAILS`
+- **Authorized Redirect URIs** que tienen que estar registrados en Google Cloud Console (cliente OAuth):
+  - `https://mundobl.com.ar/api/auth/callback/google` (primario)
+  - `https://mundobl.win/api/auth/callback/google` (backup; aunque el proxy redirige .win → .com.ar, conviene tenerlo por si el callback llega antes del redirect)
+  - `http://localhost:3000/api/auth/callback/google` (dev)
+
+### Display name publico (privacidad)
+
+- `User.nickname String?` (migracion `20260509064748_add_user_nickname`).
+- Helper [src/lib/user-display.ts](src/lib/user-display.ts) → `formatPublicName({name, nickname})` y `getInitials(...)`. Usar en TODO contexto donde otros usuarios ven el nombre (comentarios, feedback, reseñas). El sidebar/menu propio puede seguir mostrando `session.user.name` directo (uno se ve a si mismo con apellido completo).
+- Fallback cuando no hay nickname: `"Nombre I."` (inicial del apellido). Si el usuario solo tiene un nombre: se muestra tal cual.
+- API: `PATCH /api/user/me` body `{nickname: string | null}` para que el usuario edite su propio nickname.
+- UI: input en [/perfil → ProfileSettings](src/app/perfil/ProfileSettings/ProfileSettings.tsx) (primer card del grid).
+- **Importante para futuras queries**: cualquier `prisma.user.findX` o `select: { user: ... }` que vaya a renderizar publicamente debe incluir `nickname: true` ademas de `name: true`.
+
+### Web Push (notificaciones)
+
+- Paquete `web-push`. Suscripciones en `PushSubscription` model. Server actions en [src/lib/push-server.ts](src/lib/push-server.ts) (si existe).
+
+---
+
+## Flujos de Catalogo (PERSONAL vs WATCHABLE_ONLY)
+
+A partir de la migracion `20260508053232_add_catalog_scope_and_episode_embed`, `Series.catalogScope` define donde aparece la serie:
+
+| Scope | Donde aparece | Uso |
+|---|---|---|
+| `PERSONAL` (default) | `/catalogo` (curado) **y** `/ver` si tiene episodios con `embedUrl` | Tu catalogo personal con resena, tags, ratings |
+| `WATCHABLE_ONLY` | Solo `/ver` | Series importadas para ver via embed, sin resena propia |
+
+**Campos de embed en `Episode`:**
+- `embedUrl` — URL canonica del video (YouTube, Vimeo, etc.)
+- `embedPlatform` — Plataforma detectada (`'YouTube'`, `'Vimeo'`, etc.)
+- `embedVideoId` — ID extraido (para construir thumbnails / iframes)
+- `embedChannelName` — Nombre del canal oficial
+- `embedChannelUrl` — Link al canal (atribucion en `/creditos`)
+
+**Helpers en [src/lib/database.ts](src/lib/database.ts):**
+- `getAllSeries({ scope })` — `'PERSONAL' | 'WATCHABLE_ONLY' | 'ALL'`
+- `getWatchableSeries()` — series con al menos un episodio con `embedUrl` (cualquier scope)
+- `getWatchableSeriesById(id)` — detalle para `/ver/[id]`
+- Catalogos personales (`/catalogo`) filtran por `catalogScope: 'PERSONAL'` para no contaminar actores/generos/etc. con series importadas
+
+**API:**
+- `POST /api/series/[id]/scope` — cambia `catalogScope` (admin only)
+
+---
+
+## Flujos de Importacion
+
+### 1. Import de canal a `EmbeddableContent` (existente)
+
+- **Ruta admin**: [/admin/contenido](src/app/admin/contenido/)
+- **Endpoint**: `POST /api/contenido/import-channel`
+- **Drawer**: [src/app/admin/contenido/ImportChannelDrawer/](src/app/admin/contenido/ImportChannelDrawer)
+- **Caso de uso**: importar trailers/OSTs/clips/entrevistas sueltas de un canal de YouTube/Vimeo
+- **Destino**: tabla `EmbeddableContent` (no se asocia automaticamente a una `Series`)
+- Workflow: pegar URL de canal → preview de videos → seleccionar y categorizar → guardar
+
+### 2. Import de playlist → Series + Episodes (IMPLEMENTADO)
+
+- **Caso de uso**: pegar una playlist de YouTube de una serie completa (ej. GMMTV) y crear `Series` (default scope `WATCHABLE_ONLY`) + `Season` + `Episode[]` con todos los `embed*` poblados.
+- **Ruta admin**: [/admin/series/importar](src/app/admin/series/importar/) → form para pegar URL + scope + opcional traduccion ES via Gemini → preview editable (titulo, año, pais sugerido por canal, sinopsis, tabla de episodios con renumerar/eliminar) → boton confirmar.
+- **Helpers**:
+  - [src/lib/channel-fetcher.ts](src/lib/channel-fetcher.ts) → `fetchYouTubePlaylist(url, pageToken?)` + `fetchAllYouTubePlaylistVideos(url, maxPages=10)`
+  - [src/lib/episode-parser.ts](src/lib/episode-parser.ts) → `parseEpisodeTitle(title)` extrae `seasonNumber`, `episodeNumber`, `partNumber/partTotal` (para videos partidos como `[1/4]`), `cleanTitle` sin marcadores. Cubre `EP.X`, `Episode X`, `S1E12`, `1x01`, `Capitulo X`, `E01`. `inferSeriesTitle(cleanTitles[])` deduce el nombre por prefijo comun.
+  - [src/lib/playlist-importer.ts](src/lib/playlist-importer.ts) → `buildImportPreview({url, autoTranslate, catalogScope, maxPages})` orquesta fetch + parse + traduccion + agrupacion por temporada + deteccion de duplicados/missing. Incluye mapping de canales → pais ISO (GMMTV→TH, BeOnCloud→TH, IdeaFirstCompany→PH, etc.).
+- **Endpoints**:
+  - `POST /api/series/import-playlist` (admin) → devuelve `ImportPreview` sin escribir DB
+  - `POST /api/series/import-playlist/confirm` (admin) → persiste tras validar uniqueness `(seasonId, episodeNumber)` en una transaccion Prisma
+- **Decision de producto sobre videos partidos** (`[1/4]`, `[2/4]`...): cada video → un Episode. Si dos parsean al mismo `episodeNumber`, la UI marca duplicados como warning bloqueante; el admin debe renumerar o eliminar antes de confirmar (boton "Renumerar 1..N" disponible). No hay campos `partNumber`/`partTotal` en `Episode` — solo se exponen como Tag informativo en el preview.
 
 ---
 
@@ -115,10 +263,16 @@ src/
 │   │   ├── admin/                # Logs, info del proyecto (solo admin)
 │   │   ├── changelog/            # Changelog publico
 │   │   └── build-info/           # Info de build/version
-│   ├── catalogo/                 # Catalogo publico
+│   ├── catalogo/                 # Catalogo personal publico (scope PERSONAL)
 │   │   ├── page.tsx              # Server component: fetch series
 │   │   ├── CatalogoClient.tsx    # Client component: filtros, busqueda, paginacion
 │   │   └── [id]/                 # Detalle de serie
+│   ├── ver/                      # Catalogo "ver completo" (series con embedUrl)
+│   │   ├── page.tsx              # Server: fetch via getWatchableSeries
+│   │   ├── VerPage.tsx           # Client: filtros (busqueda, pais, plataforma)
+│   │   └── [id]/                 # Player con seleccion de episodio
+│   ├── creditos/                 # Atribucion a canales oficiales (YouTube, etc.)
+│   ├── legal/                    # Aviso legal sobre embeds y derechos
 │   ├── contenido/                # Pagina publica de contenido embebible
 │   ├── sitios/                   # Pagina publica de sitios recomendados
 │   ├── admin/                    # Panel de administracion
@@ -202,9 +356,9 @@ import { getAllSeries, getSeriesById, searchSeriesByTitle } from '@/lib/database
 ### Schema: `prisma/schema.prisma`
 
 **Modelos principales:**
-- `Series` - Series/peliculas/cortos
+- `Series` - Series/peliculas/cortos. Campo `catalogScope` (`PERSONAL` | `WATCHABLE_ONLY`) define donde se muestra
 - `Season` - Temporadas por serie
-- `Episode` - Episodios por temporada
+- `Episode` - Episodios. Campos de embed: `embedUrl`, `embedPlatform`, `embedVideoId`, `embedChannelName`, `embedChannelUrl`
 - `Actor` - Actores
 - `Director` - Directores
 - `Country` - Paises
@@ -308,6 +462,21 @@ npx prisma studio
 - Variables CSS: `src/styles/variables.css`
 - Tema Ant Design: `src/lib/theme.config.ts`
 - Dark mode fixes: `src/styles/dark-mode-fixes.css`
+
+### Agregar una integracion externa (API de terceros)
+
+1. Agregar la env var en `.env.example` con un comentario describiendo el uso
+2. Agregar la env var en Vercel (production)
+3. Crear el helper en `src/lib/<nombre>-fetcher.ts` o `src/lib/<servicio>.ts`
+4. Documentar en este archivo (`context.md`) bajo "Integraciones Externas":
+   - Que env var necesita
+   - Que helper expone (signature + ejemplo de retorno)
+   - Que casos de uso cubre y cuales NO
+5. Si genera datos persistidos, mencionar el modelo Prisma destino
+
+### Mantener `context.md` al dia
+
+**Regla**: cada vez que se agrega una feature, integracion, modelo, env var, ruta nueva o flujo, actualizar este archivo en el mismo PR. Los flujos paralelos (ej. `/catalogo` vs `/ver`) deben quedar documentados con su scope, helpers y diferencias.
 
 ---
 

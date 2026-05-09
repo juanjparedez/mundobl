@@ -258,5 +258,4 @@ Progressive Web App con cache offline.
 
 ## Notas
 
-- Correo de Flor (admin): florstratovarius@gmail.com
-- Correo de Juan (admin): juanjparedez@gmail.com
+- Admins: Flor y Juan (los emails reales viven en la DB y en `ADMIN_EMAILS` env var; no documentar correos personales en archivos versionados).

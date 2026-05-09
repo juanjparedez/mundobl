@@ -147,5 +147,7 @@ npm run type-check && npm run lint 2>&1 | grep "error" | wc -l
 
 ## Usuarios admin
 
-- Flor (admin): florstratovarius@gmail.com
-- Juan (admin): juanjparedez@gmail.com
+- Flor (admin)
+- Juan (admin)
+
+> Los `User.id` y emails reales viven en la DB (`User` + `ADMIN_EMAILS` env var). No documentar correos personales en archivos versionados.
