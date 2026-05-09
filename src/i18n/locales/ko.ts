@@ -2130,6 +2130,10 @@ const ko: TranslationShape = {
   themeProvider: {
     useThemeError: 'useTheme은 ThemeProvider 내에서 사용해야 합니다',
   },
+  dashboard: {
+    dragHandleAria: '위젯 이동',
+    removeWidgetAria: '위젯 제거',
+  },
 } as TranslationShape;
 
 export default ko;
