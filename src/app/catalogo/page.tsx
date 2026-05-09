@@ -4,6 +4,8 @@ import { unstable_cache } from 'next/cache';
 import type { Metadata } from 'next';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
+import { JsonLd } from '@/components/seo/JsonLd';
+import type { CollectionPage } from 'schema-dts';
 import { getAllSeries } from '@/lib/database';
 
 const CATALOGO_DESCRIPTION =
@@ -136,6 +138,30 @@ export default async function CatalogoPage() {
 
   return (
     <AppLayout>
+      <JsonLd<CollectionPage>
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'CollectionPage',
+          name: 'Catálogo de Series BL y GL',
+          description: CATALOGO_DESCRIPTION,
+          url: 'https://mundobl.com.ar/catalogo',
+          isPartOf: {
+            '@type': 'WebSite',
+            name: 'MundoBL',
+            url: 'https://mundobl.com.ar',
+          },
+          mainEntity: {
+            '@type': 'ItemList',
+            numberOfItems: seriesData.length,
+            itemListElement: seriesData.slice(0, 20).map((s, i) => ({
+              '@type': 'ListItem',
+              position: i + 1,
+              url: `https://mundobl.com.ar/series/${s.id}`,
+              name: s.titulo,
+            })),
+          },
+        }}
+      />
       <div className="catalogo-page">
         <Breadcrumbs
           items={[{ name: 'Inicio', href: '/' }, { name: 'Catálogo' }]}
