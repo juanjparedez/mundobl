@@ -31,7 +31,7 @@ export async function GET(
       },
       orderBy: { createdAt: 'desc' },
       include: {
-        user: { select: { id: true, name: true, image: true } },
+        user: { select: { id: true, name: true, nickname: true, image: true } },
       },
     });
 
@@ -78,7 +78,7 @@ export async function POST(
         userId: authResult.userId,
       },
       include: {
-        user: { select: { id: true, name: true, image: true } },
+        user: { select: { id: true, name: true, nickname: true, image: true } },
       },
     });
 

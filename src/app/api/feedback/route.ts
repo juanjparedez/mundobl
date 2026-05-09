@@ -26,11 +26,25 @@ export async function POST(request: NextRequest) {
         status: 'OPEN',
       },
       include: {
-        user: { select: { id: true, name: true, email: true, image: true } },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            nickname: true,
+            email: true,
+            image: true,
+          },
+        },
         comments: {
           include: {
             user: {
-              select: { id: true, name: true, email: true, image: true },
+              select: {
+                id: true,
+                name: true,
+                nickname: true,
+                email: true,
+                image: true,
+              },
             },
           },
         },

@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 
-// GET /api/feature-requests/[id]/comments — requiere auth (solo el dueño o admin/mod puede ver)
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -17,7 +16,6 @@ export async function GET(
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
     }
 
-    // Verificar que la solicitud existe y que el usuario es el dueño o admin/mod
     const featureRequest = await prisma.featureRequest.findUnique({
       where: { id: requestId },
       select: { userId: true },
@@ -41,7 +39,15 @@ export async function GET(
     const comments = await prisma.featureRequestComment.findMany({
       where: { featureRequestId: requestId },
       include: {
-        user: { select: { id: true, name: true, image: true, role: true } },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            nickname: true,
+            image: true,
+            role: true,
+          },
+        },
       },
       orderBy: { createdAt: 'asc' },
     });
@@ -56,7 +62,6 @@ export async function GET(
   }
 }
 
-// POST /api/feature-requests/[id]/comments — requiere auth
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -92,7 +97,6 @@ export async function POST(
       );
     }
 
-    // Verificar acceso: dueño o admin/mod
     const featureRequest = await prisma.featureRequest.findUnique({
       where: { id: requestId },
       select: { userId: true, title: true },
@@ -120,11 +124,18 @@ export async function POST(
         featureRequestId: requestId,
       },
       include: {
-        user: { select: { id: true, name: true, image: true, role: true } },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            nickname: true,
+            image: true,
+            role: true,
+          },
+        },
       },
     });
 
-    // Si el comentario lo agrega admin/mod, notificar al dueño de la solicitud
     if (
       isAdminOrMod &&
       featureRequest.userId &&

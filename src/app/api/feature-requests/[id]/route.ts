@@ -3,7 +3,6 @@ import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { notifyUser } from '@/lib/notifications';
 
-// PUT /api/feature-requests/[id] — admin, actualizar status/priority
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -53,13 +52,12 @@ export async function PUT(
       where: { id: parseInt(id) },
       data: updateData,
       include: {
-        user: { select: { id: true, name: true, image: true } },
+        user: { select: { id: true, name: true, nickname: true, image: true } },
         _count: { select: { votes: true } },
         votes: { select: { userId: true } },
       },
     });
 
-    // Avisar al autor si su solicitud cambió de status (no si solo cambió priority).
     if (
       previous &&
       previous.userId &&
@@ -90,7 +88,6 @@ export async function PUT(
   }
 }
 
-// DELETE /api/feature-requests/[id] — admin
 export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }

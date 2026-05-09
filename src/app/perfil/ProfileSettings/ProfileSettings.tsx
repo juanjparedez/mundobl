@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Input, Modal, Popconfirm, Radio, Tag } from 'antd';
 import {
   SettingOutlined,
@@ -9,6 +9,8 @@ import {
   LogoutOutlined,
   DeleteOutlined,
   DownloadOutlined,
+  UserOutlined,
+  SaveOutlined,
 } from '@ant-design/icons';
 import { signOut } from 'next-auth/react';
 import { useSession } from 'next-auth/react';
@@ -16,6 +18,7 @@ import { useLocale } from '@/lib/providers/LocaleProvider';
 import { useMessage } from '@/hooks/useMessage';
 import { resetServiceWorker, clearAllCaches } from '@/lib/reset-recovery';
 import { SettingsPanel } from '@/components/layout/SettingsPanel/SettingsPanel';
+import { formatPublicName } from '@/lib/user-display';
 import './ProfileSettings.css';
 
 type CommentsPolicy = 'keep' | 'anonymize' | 'delete';
@@ -29,6 +32,49 @@ export function ProfileSettings() {
   const [deletePolicy, setDeletePolicy] = useState<CommentsPolicy>('anonymize');
   const [confirmEmail, setConfirmEmail] = useState('');
   const [busy, setBusy] = useState<string | null>(null);
+  const [nickname, setNickname] = useState<string>('');
+  const [nicknameInitial, setNicknameInitial] = useState<string>('');
+
+  useEffect(() => {
+    let aborted = false;
+    fetch('/api/user/profile?topN=0')
+      .then(async (res) => {
+        if (!res.ok) return;
+        const data = (await res.json().catch(() => null)) as {
+          user?: { nickname?: string | null };
+        } | null;
+        if (aborted || !data) return;
+        const nick = data.user?.nickname ?? '';
+        setNickname(nick);
+        setNicknameInitial(nick);
+      })
+      .catch(() => {});
+    return () => {
+      aborted = true;
+    };
+  }, []);
+
+  const handleSaveNickname = async () => {
+    setBusy('nickname');
+    try {
+      const res = await fetch('/api/user/me', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nickname: nickname.trim() || null }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || 'Error al guardar');
+      }
+      const data = (await res.json()) as { nickname: string | null };
+      setNicknameInitial(data.nickname ?? '');
+      message.success('Nickname actualizado');
+    } catch (e) {
+      message.error(e instanceof Error ? e.message : 'Error al guardar');
+    } finally {
+      setBusy(null);
+    }
+  };
 
   const handleClearCache = async () => {
     setBusy('cache');
@@ -142,6 +188,51 @@ export function ProfileSettings() {
         </div>
 
         <div className="profile-settings-grid">
+          <article className="profile-settings-card">
+            <header className="profile-settings-card__header">
+              <h3 className="profile-settings-card__title">
+                <UserOutlined /> Nombre publico
+              </h3>
+              <p className="profile-settings-card__hint">
+                Es lo que ven otros usuarios en tus comentarios y reseñas. Si lo
+                dejas vacio se muestra tu nombre con apellido abreviado (ej.{' '}
+                <strong>
+                  {formatPublicName({
+                    name: session?.user?.name,
+                    nickname: null,
+                  })}
+                </strong>
+                ).
+              </p>
+            </header>
+            <div
+              style={{
+                display: 'flex',
+                gap: 8,
+                alignItems: 'center',
+                flexWrap: 'wrap',
+              }}
+            >
+              <Input
+                placeholder="Sin nickname (usar nombre + inicial)"
+                value={nickname}
+                maxLength={40}
+                onChange={(e) => setNickname(e.target.value)}
+                onPressEnter={handleSaveNickname}
+                style={{ flex: 1, minWidth: 200 }}
+              />
+              <Button
+                type="primary"
+                icon={<SaveOutlined />}
+                loading={busy === 'nickname'}
+                disabled={nickname.trim() === nicknameInitial.trim()}
+                onClick={handleSaveNickname}
+              >
+                Guardar
+              </Button>
+            </div>
+          </article>
+
           <article className="profile-settings-card">
             <header className="profile-settings-card__header">
               <h3 className="profile-settings-card__title">

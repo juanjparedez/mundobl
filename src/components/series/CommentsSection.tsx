@@ -13,6 +13,7 @@ import './CommentsSection.css';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
+import { formatPublicName } from '@/lib/user-display';
 import type { TranslationKey } from '@/i18n/messages';
 
 const { TextArea } = Input;
@@ -20,6 +21,7 @@ const { TextArea } = Input;
 interface CommentUser {
   id: string;
   name: string | null;
+  nickname: string | null;
   image: string | null;
 }
 
@@ -177,7 +179,7 @@ export function CommentsSection({
                         }
                         size={20}
                       />
-                      <span>{comment.user.name}</span>
+                      <span>{formatPublicName(comment.user)}</span>
                     </span>
                   )}
                   {comment.isPrivate && (

@@ -2,13 +2,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 
-// GET - Obtener sitios sugeridos aprobados (público)
 export async function GET() {
   try {
     const suggestions = await prisma.suggestedSite.findMany({
       where: { status: 'aprobado' },
       include: {
-        user: { select: { id: true, name: true, image: true } },
+        user: { select: { id: true, name: true, nickname: true, image: true } },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -23,7 +22,6 @@ export async function GET() {
   }
 }
 
-// POST - Crear una nueva sugerencia (requiere autenticación)
 export async function POST(request: NextRequest) {
   try {
     const authResult = await requireAuth();
@@ -39,7 +37,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validar URL
     try {
       new URL(url);
     } catch {
