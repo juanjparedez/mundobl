@@ -6,6 +6,12 @@ import type { Role } from '@/generated/prisma';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
+  // En NextAuth v5 cuando el Host header difiere de NEXTAUTH_URL (ej. dev
+  // local en localhost:3000 mientras NEXTAUTH_URL=https://mundobl.com.ar),
+  // tira "Server error - problem with server configuration" salvo que
+  // confiemos en el host. Vercel ya seta esto a true en prod, pero en
+  // local hay que forzarlo explicito.
+  trustHost: true,
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
