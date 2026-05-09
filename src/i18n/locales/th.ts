@@ -2166,6 +2166,22 @@ const th: TranslationShape = {
     widgetMyCasesDesc: 'บั๊กและไอเดียที่คุณรายงานหรือโหวต',
     loadError: 'เกิดข้อผิดพลาดในการโหลดโปรไฟล์ กรุณารีเฟรชหน้า',
   },
+  serieDashboard: {
+    title: 'มุมมองแดชบอร์ด',
+    subtitle: 'ปรับแต่งหน้าซีรีส์นี้ด้วยวิดเจ็ตที่จัดเรียงได้',
+    fromClassicLink: 'ลองมุมมองแดชบอร์ด',
+    backToClassic: 'มุมมองคลาสสิก',
+    actorsEmpty: 'ไม่มีนักแสดงที่ลงทะเบียนไว้',
+    ratingsEmpty: 'ยังไม่มีคะแนนตามหมวดหมู่',
+    widgetHero: 'ส่วนหัว',
+    widgetHeroDesc: 'หน้าปก ชื่อเรื่อง แท็กหลัก และเรื่องย่อ',
+    widgetInfo: 'ข้อมูลทั่วไป',
+    widgetInfoDesc: 'เมตาดาตา: ประเภท ปี ฤดูกาล ตอน นวนิยายต้นฉบับ',
+    widgetActors: 'ทีมนักแสดง',
+    widgetActorsDesc: 'นักแสดงหลักพร้อมตัวละคร',
+    widgetRatings: 'คะแนนตามหมวดหมู่',
+    widgetRatingsDesc: 'คะแนนของคุณตามหมวดหมู่ (เรื่องราว นักแสดง OST ฯลฯ)',
+  },
 } as TranslationShape;
 
 export default th;

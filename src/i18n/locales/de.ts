@@ -2216,6 +2216,23 @@ const de: TranslationShape = {
     widgetMyCasesDesc: 'Bugs und Ideen, die du gemeldet oder gevotet hast.',
     loadError: 'Fehler beim Laden deines Profils. Aktualisiere die Seite.',
   },
+  serieDashboard: {
+    title: 'Dashboard-Ansicht',
+    subtitle: 'Passe diese Titelseite mit verschiebbaren Widgets an.',
+    fromClassicLink: 'Dashboard-Ansicht ausprobieren',
+    backToClassic: 'Klassische Ansicht',
+    actorsEmpty: 'Keine Schauspieler erfasst.',
+    ratingsEmpty: 'Noch keine Bewertungen nach Kategorie.',
+    widgetHero: 'Kopf',
+    widgetHeroDesc: 'Cover, Titel, Haupt-Tags und Synopsis.',
+    widgetInfo: 'Allgemeine Informationen',
+    widgetInfoDesc: 'Metadaten: Typ, Jahr, Staffeln, Episoden, Romanvorlage.',
+    widgetActors: 'Besetzung',
+    widgetActorsDesc: 'Hauptdarsteller mit ihren Charakteren.',
+    widgetRatings: 'Bewertungen nach Kategorie',
+    widgetRatingsDesc:
+      'Deine Bewertungen nach Kategorie (Plot, Cast, OST usw).',
+  },
 } as TranslationShape;
 
 export default de;
