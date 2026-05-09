@@ -2089,6 +2089,9 @@ export type TranslationShape = {
     widgetCompletedByYearDesc: string;
     completedByYearEmpty: string;
     completedByYearLabel: string;
+    editProfile: string;
+    streak: string;
+    totalEpisodes: string;
     loadError: string;
   };
   serieDashboard: {
@@ -4339,6 +4342,9 @@ const es: TranslationShape = {
     widgetCompletedByYearDesc: 'Curva temporal de tus series completadas.',
     completedByYearEmpty: 'Aun no completaste ninguna serie.',
     completedByYearLabel: 'Completadas',
+    editProfile: 'Editar perfil',
+    streak: 'Dias seguidos',
+    totalEpisodes: 'Episodios',
     loadError: 'Error al cargar tu perfil. Refresca la pagina.',
   },
   serieDashboard: {
@@ -6577,6 +6583,9 @@ const en: TranslationShape = {
     widgetCompletedByYearDesc: 'Time curve of your completed series.',
     completedByYearEmpty: "You haven't completed any series yet.",
     completedByYearLabel: 'Completed',
+    editProfile: 'Edit profile',
+    streak: 'Day streak',
+    totalEpisodes: 'Episodes',
     loadError: 'Error loading your profile. Refresh the page.',
   },
   serieDashboard: {

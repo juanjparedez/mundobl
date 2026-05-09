@@ -2134,6 +2134,9 @@ const zhTW: TranslationShape = {
     widgetCompletedByYearDesc: '你完成劇集的時間曲線。',
     completedByYearEmpty: '你還沒有完成任何劇集。',
     completedByYearLabel: '已完成',
+    editProfile: '編輯個人檔案',
+    streak: '連續天數',
+    totalEpisodes: '集數',
     loadError: '載入個人檔案時發生錯誤。請重新整理頁面。',
   },
   serieDashboard: {

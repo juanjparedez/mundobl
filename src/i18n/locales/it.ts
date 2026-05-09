@@ -2212,6 +2212,9 @@ const it: TranslationShape = {
     widgetCompletedByYearDesc: 'Curva temporale delle tue serie completate.',
     completedByYearEmpty: 'Non hai ancora completato nessuna serie.',
     completedByYearLabel: 'Completate',
+    editProfile: 'Modifica profilo',
+    streak: 'Giorni consecutivi',
+    totalEpisodes: 'Episodi',
     loadError: 'Errore caricando il profilo. Aggiorna la pagina.',
   },
   serieDashboard: {

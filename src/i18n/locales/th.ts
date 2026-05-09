@@ -2179,6 +2179,9 @@ const th: TranslationShape = {
     widgetCompletedByYearDesc: 'เส้นโค้งเวลาของซีรีส์ที่คุณดูจบ',
     completedByYearEmpty: 'คุณยังไม่ได้ดูซีรีส์ไหนจบ',
     completedByYearLabel: 'ดูจบแล้ว',
+    editProfile: 'แก้ไขโปรไฟล์',
+    streak: 'วันต่อเนื่อง',
+    totalEpisodes: 'ตอน',
     loadError: 'เกิดข้อผิดพลาดในการโหลดโปรไฟล์ กรุณารีเฟรชหน้า',
   },
   serieDashboard: {
