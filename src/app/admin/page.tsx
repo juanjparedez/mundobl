@@ -121,6 +121,11 @@ export default async function AdminLandingPage() {
               : undefined,
         },
         {
+          href: '/admin/series/importar',
+          icon: '📥',
+          title: 'Importar serie (YouTube)',
+        },
+        {
           href: '/admin/tags',
           icon: '🏷️',
           title: 'Tags',

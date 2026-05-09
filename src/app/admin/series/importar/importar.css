@@ -1,0 +1,84 @@
+.importar-page {
+  padding: var(--spacing-lg);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.importar-page__header {
+  margin-bottom: var(--spacing-lg);
+}
+
+.importar-page__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 var(--spacing-xs);
+  color: var(--text-primary);
+}
+
+.importar-page__subtitle {
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.importar-form {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+}
+
+.importar-form__row {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.importar-form__row > * {
+  flex: 1;
+  min-width: 200px;
+}
+
+.importar-preview {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: 8px;
+  padding: var(--spacing-lg);
+}
+
+.importar-preview__section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.importar-preview__section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 var(--spacing-md);
+  color: var(--text-primary);
+}
+
+.importar-preview__warnings {
+  margin-bottom: var(--spacing-md);
+}
+
+.importar-episode-warning {
+  font-size: 0.8rem;
+  color: var(--ant-color-warning, #faad14);
+  margin-top: 4px;
+  display: block;
+}
+
+.importar-episode-thumb {
+  width: 80px;
+  height: 45px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.importar-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
+}
