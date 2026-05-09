@@ -23,6 +23,19 @@
   min-width: 0;
 }
 
+.profile-header__actions {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .profile-header__actions {
+    width: 100%;
+    margin-top: var(--spacing-sm);
+  }
+}
+
 .profile-header__name {
   font-size: 1.8em;
   font-weight: 700;
