@@ -29,3 +29,6 @@ export type { StatCardProps } from './StatCard/StatCard';
 
 export { ActionCard } from './ActionCard/ActionCard';
 export type { ActionCardProps } from './ActionCard/ActionCard';
+
+export { MediaCard } from './MediaCard/MediaCard';
+export type { MediaCardProps } from './MediaCard/MediaCard';

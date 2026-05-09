@@ -11,7 +11,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Row,
   Col,
-  Empty,
   Tag,
   Input,
   Select,
@@ -38,6 +37,7 @@ import {
   FireOutlined,
   ClockCircleOutlined,
   ThunderboltOutlined,
+  InboxOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
 import { useMessage } from '@/hooks/useMessage';
@@ -46,6 +46,7 @@ import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { WelcomeBanner } from '@/components/common/WelcomeBanner/WelcomeBanner';
+import { EmptyState } from '@/components/design-system';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
 import { withViewTransition } from '@/lib/view-transitions';
 
@@ -1759,19 +1760,22 @@ export function CatalogoClient({
           </div>
         </>
       ) : (
-        <Empty
-          description={
+        <EmptyState
+          icon={<InboxOutlined />}
+          title={
             hasActiveFilters
               ? t('catalogo.emptyFiltered')
               : t('catalogo.emptyCatalog')
           }
-        >
-          {hasActiveFilters && (
-            <Button type="primary" onClick={clearFilters}>
-              {t('catalogo.clearAllFilters')}
-            </Button>
-          )}
-        </Empty>
+          variant="soft"
+          action={
+            hasActiveFilters && (
+              <Button type="primary" onClick={clearFilters}>
+                {t('catalogo.clearAllFilters')}
+              </Button>
+            )
+          }
+        />
       )}
     </>
   );
