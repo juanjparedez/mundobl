@@ -32,8 +32,14 @@ if (process.env.NODE_ENV !== 'production') {
 /**
  * Obtener todas las series con información básica
  */
-export async function getAllSeries() {
+export async function getAllSeries(options?: {
+  scope?: 'PERSONAL' | 'WATCHABLE_ONLY' | 'ALL';
+}) {
+  // Default: ALL (admin, sitemap, etc. ven todo).
+  // /catalogo pasa scope: 'PERSONAL' para mostrar solo lo curado.
+  const scope = options?.scope ?? 'ALL';
   return await prisma.series.findMany({
+    where: scope === 'ALL' ? undefined : { catalogScope: scope },
     include: {
       country: true,
       universe: true,
@@ -68,37 +74,144 @@ export async function getAllSeries() {
 }
 
 /**
+ * Series mirables: las que tienen al menos un episodio con embedUrl.
+ * Incluye tanto PERSONAL como WATCHABLE_ONLY.
+ * Usado por /ver.
+ */
+export async function getWatchableSeries() {
+  const series = await prisma.series.findMany({
+    where: {
+      seasons: {
+        some: {
+          episodes: {
+            some: { embedUrl: { not: null } },
+          },
+        },
+      },
+    },
+    include: {
+      country: true,
+      universe: true,
+      seasons: {
+        select: {
+          id: true,
+          seasonNumber: true,
+          title: true,
+          episodes: {
+            where: { embedUrl: { not: null } },
+            select: {
+              id: true,
+              episodeNumber: true,
+              embedPlatform: true,
+              embedChannelName: true,
+            },
+            orderBy: { episodeNumber: 'asc' },
+          },
+        },
+        orderBy: { seasonNumber: 'asc' },
+      },
+      tags: {
+        select: { tag: { select: { id: true, name: true } } },
+      },
+    },
+    orderBy: { title: 'asc' },
+  });
+
+  return series.map((s) => {
+    const episodesWithEmbed = s.seasons.reduce(
+      (acc, season) => acc + season.episodes.length,
+      0
+    );
+    const totalEpisodes = s.seasons.reduce((acc, season) => {
+      // Aproximación: cuenta los episodios con embed (los que importan en /ver).
+      // Si querés "X de Y disponibles", habría que cargar episodeCount aparte.
+      return acc + season.episodes.length;
+    }, 0);
+    return {
+      ...s,
+      episodesWithEmbed,
+      totalEpisodes,
+    };
+  });
+}
+
+/**
+ * Detalle para /ver/[id]: serie con todas las temporadas y episodios
+ * embebidos.
+ */
+export async function getWatchableSeriesById(id: number) {
+  return await prisma.series.findUnique({
+    where: { id },
+    include: {
+      country: true,
+      universe: true,
+      seasons: {
+        include: {
+          episodes: {
+            orderBy: { episodeNumber: 'asc' },
+          },
+        },
+        orderBy: { seasonNumber: 'asc' },
+      },
+      directors: {
+        include: { director: { select: { id: true, name: true } } },
+      },
+      tags: {
+        select: { tag: { select: { id: true, name: true } } },
+      },
+      genres: {
+        select: { genre: { select: { id: true, name: true } } },
+      },
+    },
+  });
+}
+
+/**
  * Carga liviana de los filtros "extendidos" del catálogo (género, director,
  * actor, productora, idioma). Sólo IDs y nombres, sin includes anidados —
  * sirve para deep-links del detalle sin inflar getAllSeries.
  */
 export async function getCatalogFilterIndex() {
+  // Solo se indexa para series PERSONAL — el catalogo principal no muestra
+  // las WATCHABLE_ONLY, asi que sus actores/generos/etc. no deben aparecer
+  // como opciones de filtro.
+  const personalScope = { series: { catalogScope: 'PERSONAL' } };
   const [genres, directors, actors, productionCompanies, languages, platforms] =
     await Promise.all([
       prisma.seriesGenre.findMany({
+        where: personalScope,
         select: { seriesId: true, genre: { select: { name: true } } },
       }),
       prisma.seriesDirector.findMany({
+        where: personalScope,
         select: { seriesId: true, director: { select: { name: true } } },
       }),
       prisma.seriesActor.findMany({
+        where: personalScope,
         select: { seriesId: true, actor: { select: { name: true } } },
       }),
       prisma.series.findMany({
-        where: { productionCompanyId: { not: null } },
+        where: {
+          productionCompanyId: { not: null },
+          catalogScope: 'PERSONAL',
+        },
         select: {
           id: true,
           productionCompany: { select: { name: true } },
         },
       }),
       prisma.series.findMany({
-        where: { originalLanguageId: { not: null } },
+        where: {
+          originalLanguageId: { not: null },
+          catalogScope: 'PERSONAL',
+        },
         select: {
           id: true,
           originalLanguage: { select: { name: true } },
         },
       }),
       prisma.watchLink.findMany({
+        where: personalScope,
         select: { seriesId: true, platform: true },
       }),
     ]);

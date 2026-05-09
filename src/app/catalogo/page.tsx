@@ -35,7 +35,10 @@ import './catalogo.css';
 
 const getCatalogDataCached = unstable_cache(
   async () => {
-    return await Promise.all([getAllSeries(), getCatalogFilterIndex()]);
+    return await Promise.all([
+      getAllSeries({ scope: 'PERSONAL' }),
+      getCatalogFilterIndex(),
+    ]);
   },
   ['catalog-page-data-v1'],
   { revalidate: 120 }

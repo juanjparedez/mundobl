@@ -98,6 +98,12 @@ export function Sidebar() {
       onClick: () => router.push(ROUTES.CATALOGO),
     },
     {
+      key: ROUTES.VER,
+      icon: <PlayCircleOutlined />,
+      label: 'Ver series',
+      onClick: () => router.push(ROUTES.VER),
+    },
+    {
       key: ROUTES.WATCHING,
       icon: <PlayCircleOutlined />,
       label: t('sidebar.watching'),

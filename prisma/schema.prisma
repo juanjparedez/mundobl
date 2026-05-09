@@ -175,6 +175,10 @@ model Series {
   observations  String? // Observaciones
   notesPrivate  Boolean  @default(false) // Si true, review/observations solo visible para ADMIN
   isFavorite    Boolean  @default(false) // Marcado como favorito
+  // "PERSONAL": en el catalogo curado del admin (con review propio).
+  // "WATCHABLE_ONLY": importada solo porque se puede mirar legalmente
+  // (canales oficiales con embed). Aparece en /ver, no en /catalogo.
+  catalogScope  String   @default("PERSONAL")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -246,6 +250,14 @@ model Episode {
   duration      Int? // Duración en minutos
   airDate       DateTime?
   synopsis      String?
+  // Embed oficial del episodio (canal oficial, plataforma con TOS de embed
+  // permitido: YouTube, Vimeo, Bilibili, Dailymotion).
+  // Si embedUrl está presente, el episodio se considera "mirable".
+  embedUrl         String?
+  embedPlatform    String?
+  embedVideoId     String?
+  embedChannelName String?
+  embedChannelUrl  String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
