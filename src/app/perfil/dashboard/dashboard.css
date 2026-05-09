@@ -1,0 +1,24 @@
+.mb-perfil-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.mb-perfil-dashboard__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 360px;
+}
+
+.mb-perfil-dashboard__error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  min-height: 360px;
+  padding: var(--spacing-lg);
+  text-align: center;
+  color: var(--text-secondary);
+}

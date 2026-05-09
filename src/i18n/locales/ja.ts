@@ -1722,6 +1722,27 @@ const ja: TranslationShape = {
     pickerEmpty: '追加できるウィジェットはありません。',
     pickerAlreadyAdded: 'すでにダッシュボードにあります',
   },
+  profileDashboard: {
+    title: 'マイダッシュボード',
+    subtitle: 'プロフィール表示を並べ替え可能なウィジェットでカスタマイズ。',
+    fromClassicLink: 'ダッシュボード表示を試す',
+    backToClassic: 'クラシック表示',
+    avgRating: '平均評価',
+    hoursWatched: '視聴時間',
+    widgetOverview: '概要',
+    widgetOverviewDesc:
+      'メインカウンター：視聴済み、視聴中、中断、再視聴予定。',
+    widgetRatings: '評価とレビュー',
+    widgetRatingsDesc: '平均評価、レビュー、コメント、視聴時間。',
+    widgetRecentlyCompleted: '最近完了',
+    widgetRecentlyCompletedDesc: '最近視聴し終えたシリーズ。',
+    recentlyCompletedEmpty: 'まだ完了したシリーズはありません。',
+    widgetNotifications: '最近の通知',
+    widgetNotificationsDesc: '最新の未読通知。',
+    widgetMyCases: 'マイフィードバックケース',
+    widgetMyCasesDesc: 'あなたが報告または投票したバグやアイデア。',
+    loadError: 'プロフィールの読み込みエラー。ページを更新してください。',
+  },
 } as TranslationShape;
 
 export default ja;

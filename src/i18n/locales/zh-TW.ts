@@ -2102,6 +2102,26 @@ const zhTW: TranslationShape = {
     pickerEmpty: '沒有可新增的小工具。',
     pickerAlreadyAdded: '已在你的儀表板中',
   },
+  profileDashboard: {
+    title: '我的儀表板',
+    subtitle: '用可重新排列的小工具自訂你的個人檔案檢視。',
+    fromClassicLink: '試用儀表板檢視',
+    backToClassic: '經典檢視',
+    avgRating: '平均評分',
+    hoursWatched: '觀看小時數',
+    widgetOverview: '概覽',
+    widgetOverviewDesc: '你的主要計數器：已看、在看、放棄、再看。',
+    widgetRatings: '評分與評論',
+    widgetRatingsDesc: '平均評分、評論、留言和觀看小時數。',
+    widgetRecentlyCompleted: '最近完成',
+    widgetRecentlyCompletedDesc: '你最近看完的劇集。',
+    recentlyCompletedEmpty: '你還沒有完成任何劇集。',
+    widgetNotifications: '最近通知',
+    widgetNotificationsDesc: '你最新的未讀通知。',
+    widgetMyCases: '我的回饋案件',
+    widgetMyCasesDesc: '你回報或投票的錯誤與想法。',
+    loadError: '載入個人檔案時發生錯誤。請重新整理頁面。',
+  },
 } as TranslationShape;
 
 export default zhTW;

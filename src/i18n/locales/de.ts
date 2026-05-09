@@ -2193,6 +2193,29 @@ const de: TranslationShape = {
     pickerEmpty: 'Keine Widgets zum Hinzufügen verfügbar.',
     pickerAlreadyAdded: 'Bereits in deinem Dashboard',
   },
+  profileDashboard: {
+    title: 'Mein Dashboard',
+    subtitle: 'Passe deine Profilansicht mit verschiebbaren Widgets an.',
+    fromClassicLink: 'Dashboard-Ansicht ausprobieren',
+    backToClassic: 'Klassische Ansicht',
+    avgRating: 'Durchschnittliche Bewertung',
+    hoursWatched: 'Gesehene Stunden',
+    widgetOverview: 'Übersicht',
+    widgetOverviewDesc:
+      'Deine Hauptzähler: gesehen, läuft, abgebrochen, erneut ansehen.',
+    widgetRatings: 'Bewertungen & Reviews',
+    widgetRatingsDesc:
+      'Durchschnittliche Bewertung, Reviews, Kommentare und Stunden.',
+    widgetRecentlyCompleted: 'Kürzlich abgeschlossen',
+    widgetRecentlyCompletedDesc:
+      'Die letzten Serien, die du fertig gesehen hast.',
+    recentlyCompletedEmpty: 'Du hast noch keine Serie abgeschlossen.',
+    widgetNotifications: 'Aktuelle Benachrichtigungen',
+    widgetNotificationsDesc: 'Deine neuesten ungelesenen Benachrichtigungen.',
+    widgetMyCases: 'Meine Feedback-Fälle',
+    widgetMyCasesDesc: 'Bugs und Ideen, die du gemeldet oder gevotet hast.',
+    loadError: 'Fehler beim Laden deines Profils. Aktualisiere die Seite.',
+  },
 } as TranslationShape;
 
 export default de;

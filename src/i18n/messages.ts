@@ -2057,6 +2057,26 @@ export type TranslationShape = {
     pickerEmpty: string;
     pickerAlreadyAdded: string;
   };
+  profileDashboard: {
+    title: string;
+    subtitle: string;
+    fromClassicLink: string;
+    backToClassic: string;
+    avgRating: string;
+    hoursWatched: string;
+    widgetOverview: string;
+    widgetOverviewDesc: string;
+    widgetRatings: string;
+    widgetRatingsDesc: string;
+    widgetRecentlyCompleted: string;
+    widgetRecentlyCompletedDesc: string;
+    recentlyCompletedEmpty: string;
+    widgetNotifications: string;
+    widgetNotificationsDesc: string;
+    widgetMyCases: string;
+    widgetMyCasesDesc: string;
+    loadError: string;
+  };
 };
 
 const es: TranslationShape = {
@@ -4218,6 +4238,28 @@ const es: TranslationShape = {
     pickerEmpty: 'No hay widgets disponibles para agregar.',
     pickerAlreadyAdded: 'Ya esta en tu dashboard',
   },
+  profileDashboard: {
+    title: 'Mi dashboard',
+    subtitle: 'Personaliza tu vista de perfil con widgets reordenables.',
+    fromClassicLink: 'Probar vista dashboard',
+    backToClassic: 'Vista clasica',
+    avgRating: 'Rating promedio',
+    hoursWatched: 'Horas vistas',
+    widgetOverview: 'Resumen',
+    widgetOverviewDesc:
+      'Tus contadores principales: vistos, viendo, abandonadas, retomar.',
+    widgetRatings: 'Ratings y resenas',
+    widgetRatingsDesc:
+      'Rating promedio, total de resenas, comentarios y horas vistas.',
+    widgetRecentlyCompleted: 'Recientemente completadas',
+    widgetRecentlyCompletedDesc: 'Las ultimas series que terminaste de ver.',
+    recentlyCompletedEmpty: 'Aun no completaste ninguna serie.',
+    widgetNotifications: 'Notificaciones recientes',
+    widgetNotificationsDesc: 'Tus ultimas notificaciones sin leer.',
+    widgetMyCases: 'Mis casos de feedback',
+    widgetMyCasesDesc: 'Bugs e ideas que reportaste o votaste.',
+    loadError: 'Error al cargar tu perfil. Refresca la pagina.',
+  },
 };
 
 const en: TranslationShape = {
@@ -6363,6 +6405,28 @@ const en: TranslationShape = {
     pickerTitle: 'Add widget',
     pickerEmpty: 'No widgets available to add.',
     pickerAlreadyAdded: 'Already on your dashboard',
+  },
+  profileDashboard: {
+    title: 'My dashboard',
+    subtitle: 'Customize your profile view with reorderable widgets.',
+    fromClassicLink: 'Try dashboard view',
+    backToClassic: 'Classic view',
+    avgRating: 'Average rating',
+    hoursWatched: 'Hours watched',
+    widgetOverview: 'Overview',
+    widgetOverviewDesc:
+      'Your main counters: watched, watching, abandoned, to rewatch.',
+    widgetRatings: 'Ratings & reviews',
+    widgetRatingsDesc:
+      'Average rating, total reviews, comments and hours watched.',
+    widgetRecentlyCompleted: 'Recently completed',
+    widgetRecentlyCompletedDesc: 'The latest series you finished watching.',
+    recentlyCompletedEmpty: "You haven't completed any series yet.",
+    widgetNotifications: 'Recent notifications',
+    widgetNotificationsDesc: 'Your latest unread notifications.',
+    widgetMyCases: 'My feedback cases',
+    widgetMyCasesDesc: 'Bugs and ideas you reported or voted on.',
+    loadError: 'Error loading your profile. Refresh the page.',
   },
 };
 
