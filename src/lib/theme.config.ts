@@ -113,6 +113,86 @@ export const ACCENT_PRESETS = {
       outline: 'rgba(56, 189, 248, 0.22)',
     },
   },
+  emerald: {
+    name: 'Emerald',
+    swatch: '#059669',
+    light: {
+      primary: '#059669',
+      hover: '#10b981',
+      active: '#047857',
+      outline: 'rgba(5, 150, 105, 0.18)',
+    },
+    dark: {
+      primary: '#34d399',
+      hover: '#6ee7b7',
+      active: '#10b981',
+      outline: 'rgba(52, 211, 153, 0.22)',
+    },
+  },
+  coral: {
+    name: 'Coral',
+    swatch: '#f97316',
+    light: {
+      primary: '#f97316',
+      hover: '#fb923c',
+      active: '#ea580c',
+      outline: 'rgba(249, 115, 22, 0.18)',
+    },
+    dark: {
+      primary: '#fb923c',
+      hover: '#fdba74',
+      active: '#f97316',
+      outline: 'rgba(251, 146, 60, 0.22)',
+    },
+  },
+  indigo: {
+    name: 'Indigo',
+    swatch: '#4f46e5',
+    light: {
+      primary: '#4f46e5',
+      hover: '#6366f1',
+      active: '#4338ca',
+      outline: 'rgba(79, 70, 229, 0.18)',
+    },
+    dark: {
+      primary: '#818cf8',
+      hover: '#a5b4fc',
+      active: '#6366f1',
+      outline: 'rgba(129, 140, 248, 0.22)',
+    },
+  },
+  crimson: {
+    name: 'Crimson',
+    swatch: '#dc2626',
+    light: {
+      primary: '#dc2626',
+      hover: '#ef4444',
+      active: '#b91c1c',
+      outline: 'rgba(220, 38, 38, 0.18)',
+    },
+    dark: {
+      primary: '#f87171',
+      hover: '#fca5a5',
+      active: '#ef4444',
+      outline: 'rgba(248, 113, 113, 0.22)',
+    },
+  },
+  slate: {
+    name: 'Slate',
+    swatch: '#475569',
+    light: {
+      primary: '#475569',
+      hover: '#64748b',
+      active: '#334155',
+      outline: 'rgba(71, 85, 105, 0.18)',
+    },
+    dark: {
+      primary: '#94a3b8',
+      hover: '#cbd5e1',
+      active: '#64748b',
+      outline: 'rgba(148, 163, 184, 0.22)',
+    },
+  },
 } as const satisfies Record<string, AccentPreset>;
 
 export type AccentPresetKey = keyof typeof ACCENT_PRESETS;
