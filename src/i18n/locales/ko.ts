@@ -2165,6 +2165,22 @@ const ko: TranslationShape = {
     widgetMyCasesDesc: '신고하거나 투표한 버그 및 아이디어.',
     loadError: '프로필 불러오기 오류. 페이지를 새로 고치세요.',
   },
+  serieDashboard: {
+    title: '대시보드 보기',
+    subtitle: '재정렬 가능한 위젯으로 이 작품 페이지를 사용자 지정합니다.',
+    fromClassicLink: '대시보드 보기 시도',
+    backToClassic: '기본 보기',
+    actorsEmpty: '등록된 배우가 없습니다.',
+    ratingsEmpty: '아직 카테고리별 평점이 없습니다.',
+    widgetHero: '헤더',
+    widgetHeroDesc: '커버, 제목, 주요 태그 및 줄거리.',
+    widgetInfo: '일반 정보',
+    widgetInfoDesc: '메타데이터: 유형, 연도, 시즌, 에피소드, 원작 소설.',
+    widgetActors: '출연진',
+    widgetActorsDesc: '주요 배우와 그들의 역할.',
+    widgetRatings: '카테고리별 평점',
+    widgetRatingsDesc: '카테고리별 평점 (스토리, 캐스트, OST 등).',
+  },
 } as TranslationShape;
 
 export default ko;

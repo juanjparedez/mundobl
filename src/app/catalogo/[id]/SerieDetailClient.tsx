@@ -18,6 +18,7 @@ import {
   StarOutlined,
   UserOutlined,
   ArrowLeftOutlined,
+  AppstoreOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -57,6 +58,7 @@ interface CommentData {
 }
 
 interface SerieDetail {
+  id?: number;
   title: string;
   originalTitle?: string | null;
   type: string;
@@ -160,7 +162,16 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
   return (
     <div style={{ padding: '24px' }}>
       {/* Header con botón de volver */}
-      <div style={{ marginBottom: '24px' }}>
+      <div
+        style={{
+          marginBottom: '24px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '16px',
+          flexWrap: 'wrap',
+        }}
+      >
         <a
           onClick={() => router.back()}
           style={{
@@ -174,6 +185,26 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
           <ArrowLeftOutlined />
           {t('serieDetail.backToCatalog')}
         </a>
+        {serie.id && (
+          <a
+            href={`/catalogo/${serie.id}/dashboard`}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '6px 12px',
+              borderRadius: 'var(--border-radius-base)',
+              border: '1px solid var(--border-color)',
+              background: 'var(--bg-spotlight)',
+              color: 'var(--text-primary)',
+              textDecoration: 'none',
+              fontSize: 'var(--font-size-sm)',
+            }}
+          >
+            <AppstoreOutlined />
+            {t('serieDashboard.fromClassicLink')}
+          </a>
+        )}
       </div>
 
       {/* Título y tags principales */}

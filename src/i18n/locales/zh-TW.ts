@@ -2122,6 +2122,22 @@ const zhTW: TranslationShape = {
     widgetMyCasesDesc: '你回報或投票的錯誤與想法。',
     loadError: '載入個人檔案時發生錯誤。請重新整理頁面。',
   },
+  serieDashboard: {
+    title: '儀表板檢視',
+    subtitle: '用可重新排列的小工具自訂此作品頁面。',
+    fromClassicLink: '試用儀表板檢視',
+    backToClassic: '經典檢視',
+    actorsEmpty: '沒有登記的演員。',
+    ratingsEmpty: '尚無分類評分。',
+    widgetHero: '標題區',
+    widgetHeroDesc: '封面、標題、主要標籤和劇情簡介。',
+    widgetInfo: '一般資訊',
+    widgetInfoDesc: '中繼資料：類型、年份、季、集數、原著小說。',
+    widgetActors: '演員陣容',
+    widgetActorsDesc: '主要演員與其角色。',
+    widgetRatings: '分類評分',
+    widgetRatingsDesc: '你按類別的評分（劇情、選角、OST 等）。',
+  },
 } as TranslationShape;
 
 export default zhTW;

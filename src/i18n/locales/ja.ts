@@ -1743,6 +1743,23 @@ const ja: TranslationShape = {
     widgetMyCasesDesc: 'あなたが報告または投票したバグやアイデア。',
     loadError: 'プロフィールの読み込みエラー。ページを更新してください。',
   },
+  serieDashboard: {
+    title: 'ダッシュボード表示',
+    subtitle: 'このタイトルページを並べ替え可能なウィジェットでカスタマイズ。',
+    fromClassicLink: 'ダッシュボード表示を試す',
+    backToClassic: 'クラシック表示',
+    actorsEmpty: '俳優が登録されていません。',
+    ratingsEmpty: 'まだカテゴリ別評価がありません。',
+    widgetHero: 'ヘッダー',
+    widgetHeroDesc: 'カバー、タイトル、主要タグ、あらすじ。',
+    widgetInfo: '一般情報',
+    widgetInfoDesc: 'メタデータ：種類、年、シーズン、エピソード、原作小説。',
+    widgetActors: 'キャスト',
+    widgetActorsDesc: '主要キャストとその役名。',
+    widgetRatings: 'カテゴリ別評価',
+    widgetRatingsDesc:
+      'カテゴリ別のあなたの評価（プロット、キャスト、OSTなど）。',
+  },
 } as TranslationShape;
 
 export default ja;
