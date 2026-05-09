@@ -2120,6 +2120,22 @@ const zhCN: TranslationShape = {
     widgetMyCasesDesc: '你报告或投票的错误和建议。',
     loadError: '加载资料出错。请刷新页面。',
   },
+  serieDashboard: {
+    title: '仪表板视图',
+    subtitle: '使用可重排的小组件自定义此剧集页面。',
+    fromClassicLink: '尝试仪表板视图',
+    backToClassic: '经典视图',
+    actorsEmpty: '没有注册的演员。',
+    ratingsEmpty: '尚无分类评分。',
+    widgetHero: '标题区',
+    widgetHeroDesc: '封面、标题、主要标签和简介。',
+    widgetInfo: '一般信息',
+    widgetInfoDesc: '元数据：类型、年份、季、集数、原著小说。',
+    widgetActors: '演员阵容',
+    widgetActorsDesc: '主要演员及其角色。',
+    widgetRatings: '分类评分',
+    widgetRatingsDesc: '你按类别的评分（剧情、选角、OST 等）。',
+  },
 } as TranslationShape;
 
 export default zhCN;

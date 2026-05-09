@@ -2215,6 +2215,24 @@ const fr: TranslationShape = {
       'Bugs et idées que vous avez signalés ou pour lesquels vous avez voté.',
     loadError: 'Erreur lors du chargement de votre profil. Actualisez la page.',
   },
+  serieDashboard: {
+    title: 'Vue tableau de bord',
+    subtitle:
+      'Personnalisez cette page de titre avec des widgets réorganisables.',
+    fromClassicLink: 'Essayer la vue tableau de bord',
+    backToClassic: 'Vue classique',
+    actorsEmpty: 'Aucun acteur enregistré.',
+    ratingsEmpty: 'Aucune note par catégorie pour le moment.',
+    widgetHero: 'En-tête',
+    widgetHeroDesc: 'Couverture, titre, tags principaux et synopsis.',
+    widgetInfo: 'Informations générales',
+    widgetInfoDesc:
+      'Métadonnées : type, année, saisons, épisodes, base romanesque.',
+    widgetActors: 'Distribution',
+    widgetActorsDesc: 'Acteurs principaux avec leurs personnages.',
+    widgetRatings: 'Notes par catégorie',
+    widgetRatingsDesc: 'Vos notes par catégorie (intrigue, casting, BO, etc).',
+  },
 } as TranslationShape;
 
 export default fr;

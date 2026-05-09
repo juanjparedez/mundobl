@@ -2200,6 +2200,23 @@ const it: TranslationShape = {
     widgetMyCasesDesc: 'Bug e idee che hai segnalato o votato.',
     loadError: 'Errore caricando il profilo. Aggiorna la pagina.',
   },
+  serieDashboard: {
+    title: 'Vista dashboard',
+    subtitle: 'Personalizza questa scheda con widget riordinabili.',
+    fromClassicLink: 'Prova vista dashboard',
+    backToClassic: 'Vista classica',
+    actorsEmpty: 'Nessun attore registrato.',
+    ratingsEmpty: 'Nessun voto per categoria ancora.',
+    widgetHero: 'Intestazione',
+    widgetHeroDesc: 'Copertina, titolo, tag principali e sinossi.',
+    widgetInfo: 'Informazioni generali',
+    widgetInfoDesc: 'Metadati: tipo, anno, stagioni, episodi, base romanzo.',
+    widgetActors: 'Cast',
+    widgetActorsDesc: 'Attori principali con i loro personaggi.',
+    widgetRatings: 'Voti per categoria',
+    widgetRatingsDesc:
+      'I tuoi voti per categoria (trama, cast, colonna sonora, ecc).',
+  },
 } as TranslationShape;
 
 export default it;

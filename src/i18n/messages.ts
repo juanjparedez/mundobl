@@ -2077,6 +2077,22 @@ export type TranslationShape = {
     widgetMyCasesDesc: string;
     loadError: string;
   };
+  serieDashboard: {
+    title: string;
+    subtitle: string;
+    fromClassicLink: string;
+    backToClassic: string;
+    actorsEmpty: string;
+    ratingsEmpty: string;
+    widgetHero: string;
+    widgetHeroDesc: string;
+    widgetInfo: string;
+    widgetInfoDesc: string;
+    widgetActors: string;
+    widgetActorsDesc: string;
+    widgetRatings: string;
+    widgetRatingsDesc: string;
+  };
 };
 
 const es: TranslationShape = {
@@ -4260,6 +4276,23 @@ const es: TranslationShape = {
     widgetMyCasesDesc: 'Bugs e ideas que reportaste o votaste.',
     loadError: 'Error al cargar tu perfil. Refresca la pagina.',
   },
+  serieDashboard: {
+    title: 'Vista dashboard',
+    subtitle: 'Personaliza la ficha de este titulo con widgets reordenables.',
+    fromClassicLink: 'Probar vista dashboard',
+    backToClassic: 'Vista clasica',
+    actorsEmpty: 'No hay actores cargados.',
+    ratingsEmpty: 'Aun no hay ratings por categoria.',
+    widgetHero: 'Cabecera',
+    widgetHeroDesc: 'Imagen, titulo, tags principales y sinopsis.',
+    widgetInfo: 'Informacion general',
+    widgetInfoDesc: 'Metadata: tipo, año, temporadas, episodios, novela.',
+    widgetActors: 'Reparto',
+    widgetActorsDesc: 'Lista de actores principales con sus personajes.',
+    widgetRatings: 'Ratings por categoria',
+    widgetRatingsDesc:
+      'Tus puntuaciones por categoria (trama, casting, BSO, etc).',
+  },
 };
 
 const en: TranslationShape = {
@@ -6427,6 +6460,22 @@ const en: TranslationShape = {
     widgetMyCases: 'My feedback cases',
     widgetMyCasesDesc: 'Bugs and ideas you reported or voted on.',
     loadError: 'Error loading your profile. Refresh the page.',
+  },
+  serieDashboard: {
+    title: 'Dashboard view',
+    subtitle: 'Customize this title page with reorderable widgets.',
+    fromClassicLink: 'Try dashboard view',
+    backToClassic: 'Classic view',
+    actorsEmpty: 'No actors registered.',
+    ratingsEmpty: 'No category ratings yet.',
+    widgetHero: 'Hero',
+    widgetHeroDesc: 'Cover image, title, key tags and synopsis.',
+    widgetInfo: 'General information',
+    widgetInfoDesc: 'Metadata: type, year, seasons, episodes, novel basis.',
+    widgetActors: 'Cast',
+    widgetActorsDesc: 'Main actors with their characters.',
+    widgetRatings: 'Ratings by category',
+    widgetRatingsDesc: 'Your scores by category (plot, cast, OST, etc).',
   },
 };
 
