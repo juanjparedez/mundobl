@@ -1,0 +1,101 @@
+.mb-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  white-space: nowrap;
+  line-height: 1;
+  font-weight: 500;
+  cursor: default;
+  transition: var(--transition-fast);
+}
+
+.mb-chip__icon,
+.mb-chip__trailing {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.9em;
+}
+
+/* Sizes */
+.mb-chip--sm {
+  padding: 3px 8px;
+  font-size: 11px;
+}
+.mb-chip--md {
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+/* Tones — fill */
+.mb-chip--neutral {
+  background: var(--bg-spotlight);
+  color: var(--text-secondary);
+  border-color: var(--border-color-secondary);
+}
+
+.mb-chip--accent {
+  background: color-mix(in srgb, var(--primary-color) 14%, transparent);
+  color: var(--primary-color);
+  border-color: color-mix(in srgb, var(--primary-color) 26%, transparent);
+}
+
+.mb-chip--success {
+  background: rgba(82, 196, 26, 0.14);
+  color: #6fdc4d;
+  border-color: rgba(82, 196, 26, 0.3);
+}
+
+.mb-chip--warning {
+  background: rgba(250, 173, 20, 0.14);
+  color: #ffc145;
+  border-color: rgba(250, 173, 20, 0.32);
+}
+
+.mb-chip--error {
+  background: rgba(255, 92, 92, 0.14);
+  color: #ff8585;
+  border-color: rgba(255, 92, 92, 0.32);
+}
+
+.mb-chip--info {
+  background: rgba(79, 140, 255, 0.14);
+  color: #82a8ff;
+  border-color: rgba(79, 140, 255, 0.32);
+}
+
+/* Outline variant: transparent bg, visible border */
+.mb-chip--outline {
+  background: transparent;
+}
+
+.mb-chip--outline.mb-chip--neutral {
+  border-color: var(--border-color);
+  color: var(--text-secondary);
+}
+
+.mb-chip--outline.mb-chip--accent {
+  border-color: color-mix(in srgb, var(--primary-color) 40%, transparent);
+}
+
+/* Interactive (filter chip) */
+.mb-chip--interactive {
+  cursor: pointer;
+}
+
+.mb-chip--interactive:hover {
+  filter: brightness(1.12);
+}
+
+.mb-chip--interactive[aria-pressed='true'] {
+  background: var(--primary-color);
+  color: #ffffff;
+  border-color: var(--primary-color);
+}
+
+.mb-chip--interactive:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
