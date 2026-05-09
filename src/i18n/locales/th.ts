@@ -2182,6 +2182,23 @@ const th: TranslationShape = {
     widgetRatings: 'คะแนนตามหมวดหมู่',
     widgetRatingsDesc: 'คะแนนของคุณตามหมวดหมู่ (เรื่องราว นักแสดง OST ฯลฯ)',
   },
+  catalogoDashboard: {
+    title: 'แดชบอร์ดแคตตาล็อก',
+    subtitle: 'สถิติรวมและรายการที่เพิ่มล่าสุดในแคตตาล็อก',
+    fromClassicLink: 'ดูแดชบอร์ด',
+    backToClassic: 'มุมมองคลาสสิก',
+    totalSeries: 'ซีรีส์ทั้งหมด',
+    totalSeasons: 'ฤดูกาล',
+    totalEpisodes: 'ตอน',
+    totalActors: 'นักแสดง',
+    totalCountries: 'ประเทศ',
+    recentlyAddedTitle: 'เพิ่มล่าสุด',
+    recentlyAddedEmpty: 'ยังไม่มีการเพิ่มซีรีส์ใด',
+    widgetStats: 'สถิติรวม',
+    widgetStatsDesc: 'ตัวนับทั้งหมดของแคตตาล็อก',
+    widgetRecentlyAdded: 'เพิ่มล่าสุด',
+    widgetRecentlyAddedDesc: 'ซีรีส์ล่าสุดที่เพิ่มในแคตตาล็อก',
+  },
 } as TranslationShape;
 
 export default th;

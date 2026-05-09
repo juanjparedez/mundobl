@@ -1760,6 +1760,23 @@ const ja: TranslationShape = {
     widgetRatingsDesc:
       'カテゴリ別のあなたの評価（プロット、キャスト、OSTなど）。',
   },
+  catalogoDashboard: {
+    title: 'カタログダッシュボード',
+    subtitle: 'カタログのグローバル統計と最近の追加。',
+    fromClassicLink: 'ダッシュボードを見る',
+    backToClassic: 'クラシック表示',
+    totalSeries: '合計シリーズ',
+    totalSeasons: 'シーズン',
+    totalEpisodes: 'エピソード',
+    totalActors: '俳優',
+    totalCountries: '国',
+    recentlyAddedTitle: '最近追加',
+    recentlyAddedEmpty: 'まだシリーズが追加されていません。',
+    widgetStats: 'グローバル統計',
+    widgetStatsDesc: 'カタログ全体の合計カウンター。',
+    widgetRecentlyAdded: '最近追加',
+    widgetRecentlyAddedDesc: 'カタログに追加された最新のシリーズ。',
+  },
 } as TranslationShape;
 
 export default ja;

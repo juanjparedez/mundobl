@@ -2093,6 +2093,23 @@ export type TranslationShape = {
     widgetRatings: string;
     widgetRatingsDesc: string;
   };
+  catalogoDashboard: {
+    title: string;
+    subtitle: string;
+    fromClassicLink: string;
+    backToClassic: string;
+    totalSeries: string;
+    totalSeasons: string;
+    totalEpisodes: string;
+    totalActors: string;
+    totalCountries: string;
+    recentlyAddedTitle: string;
+    recentlyAddedEmpty: string;
+    widgetStats: string;
+    widgetStatsDesc: string;
+    widgetRecentlyAdded: string;
+    widgetRecentlyAddedDesc: string;
+  };
 };
 
 const es: TranslationShape = {
@@ -4293,6 +4310,23 @@ const es: TranslationShape = {
     widgetRatingsDesc:
       'Tus puntuaciones por categoria (trama, casting, BSO, etc).',
   },
+  catalogoDashboard: {
+    title: 'Dashboard del catalogo',
+    subtitle: 'Estadisticas globales y novedades del catalogo personal.',
+    fromClassicLink: 'Ver dashboard',
+    backToClassic: 'Vista clasica',
+    totalSeries: 'Series totales',
+    totalSeasons: 'Temporadas',
+    totalEpisodes: 'Episodios',
+    totalActors: 'Actores',
+    totalCountries: 'Paises',
+    recentlyAddedTitle: 'Agregadas recientemente',
+    recentlyAddedEmpty: 'Aun no hay series agregadas.',
+    widgetStats: 'Estadisticas globales',
+    widgetStatsDesc: 'Contadores totales del catalogo.',
+    widgetRecentlyAdded: 'Agregadas recientemente',
+    widgetRecentlyAddedDesc: 'Las ultimas series sumadas al catalogo.',
+  },
 };
 
 const en: TranslationShape = {
@@ -6476,6 +6510,23 @@ const en: TranslationShape = {
     widgetActorsDesc: 'Main actors with their characters.',
     widgetRatings: 'Ratings by category',
     widgetRatingsDesc: 'Your scores by category (plot, cast, OST, etc).',
+  },
+  catalogoDashboard: {
+    title: 'Catalog dashboard',
+    subtitle: 'Global stats and recent additions of your personal catalog.',
+    fromClassicLink: 'View dashboard',
+    backToClassic: 'Classic view',
+    totalSeries: 'Total series',
+    totalSeasons: 'Seasons',
+    totalEpisodes: 'Episodes',
+    totalActors: 'Actors',
+    totalCountries: 'Countries',
+    recentlyAddedTitle: 'Recently added',
+    recentlyAddedEmpty: 'No series added yet.',
+    widgetStats: 'Global stats',
+    widgetStatsDesc: 'Total counters across the catalog.',
+    widgetRecentlyAdded: 'Recently added',
+    widgetRecentlyAddedDesc: 'Latest series added to the catalog.',
   },
 };
 
