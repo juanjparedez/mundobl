@@ -377,7 +377,7 @@ export default function TagsAdminPage() {
           </Radio.Group>
           <Alert
             type="warning"
-            message={t('adminTags.mergeWarning')}
+            title={t('adminTags.mergeWarning')}
             style={{ marginTop: 16 }}
           />
         </Modal>

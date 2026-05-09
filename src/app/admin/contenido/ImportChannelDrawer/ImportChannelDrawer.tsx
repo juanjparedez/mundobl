@@ -231,7 +231,7 @@ export function ImportChannelDrawer({
       title="Importar desde canal"
       open={open}
       onClose={handleClose}
-      width={720}
+      styles={{ wrapper: { width: 720 } }}
       destroyOnClose
     >
       <div className="import-channel__url-row">
@@ -254,7 +254,7 @@ export function ImportChannelDrawer({
 
       {error && (
         <Alert
-          message={error}
+          title={error}
           type="error"
           showIcon
           closable

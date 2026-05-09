@@ -717,7 +717,7 @@ export function ReviewsSection({
               type="info"
               showIcon
               className="reviews-form__ai-suggestion"
-              message={
+              title={
                 aiSuggestion.field === 'title'
                   ? t('reviews.aiSuggestionTitle')
                   : t('reviews.aiSuggestionBody')
@@ -749,7 +749,7 @@ export function ReviewsSection({
               type="warning"
               showIcon
               className="reviews-form__ai-suggestion"
-              message={t('reviews.spoilerDetectedTitle')}
+              title={t('reviews.spoilerDetectedTitle')}
               description={
                 <ul className="reviews-form__spoiler-list">
                   {spoilerWarning.map((reason, i) => (

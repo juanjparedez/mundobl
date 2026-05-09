@@ -233,7 +233,7 @@ export function CommandK() {
       width={620}
       destroyOnHidden
       className="cmdk-modal"
-      maskClosable
+      mask={{ closable: true }}
       centered
     >
       <Input

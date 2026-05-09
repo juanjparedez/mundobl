@@ -309,7 +309,7 @@ export function PublicStatsClient() {
   if (loading) {
     return (
       <div className="public-stats-loading">
-        <Spin size="large" tip={copy.loading} />
+        <Spin size="large" description={copy.loading} />
       </div>
     );
   }
