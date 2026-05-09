@@ -3,6 +3,7 @@
 import { CloseOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import './StatWidget.css';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 
 interface StatWidgetProps {
   id: string;
@@ -30,6 +31,7 @@ export function StatWidget({
   accent,
   className,
 }: StatWidgetProps) {
+  const { t } = useLocale();
   return (
     <div
       className={[
@@ -48,11 +50,11 @@ export function StatWidget({
       <div className="stat-widget__header">
         {icon && <span className="stat-widget__icon">{icon}</span>}
         <span className="stat-widget__title">{title}</span>
-        <Tooltip title="Ocultar widget">
+        <Tooltip title={t('statWidget.hideWidgetTooltip')}>
           <button
             className="stat-widget__close"
             onClick={() => onHide(id)}
-            aria-label={`Ocultar ${title}`}
+            aria-label={t('statWidget.hideWidgetAriaLabel', { title })}
             type="button"
           >
             <CloseOutlined />

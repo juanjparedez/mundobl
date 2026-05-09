@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Button, Empty, Input, Tag } from 'antd';
 import { LinkOutlined, RobotOutlined, SearchOutlined } from '@ant-design/icons';
 import { PageTitle } from '@/components/common/PageTitle/PageTitle';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 import './noticias.css';
 
 interface NewsTag {
@@ -46,6 +47,7 @@ export function NoticiasListClient({
   initialNews,
   initialTotal,
 }: NoticiasListClientProps) {
+  const { t } = useLocale();
   const [news, setNews] = useState<NewsItem[]>(initialNews);
   const [total, setTotal] = useState(initialTotal);
   const [page, setPage] = useState(1);
@@ -62,7 +64,7 @@ export function NoticiasListClient({
       });
       if (q) params.set('q', q);
       const res = await fetch(`/api/news?${params.toString()}`);
-      if (!res.ok) throw new Error('Error');
+      if (!res.ok) throw new Error(t('noticiasList.fetchError'));
       const data = (await res.json()) as {
         news: NewsItem[];
         total: number;
@@ -75,7 +77,7 @@ export function NoticiasListClient({
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   const handleSearch = () => {
     setActiveSearch(searchInput);
@@ -93,13 +95,13 @@ export function NoticiasListClient({
   return (
     <div className="noticias-list">
       <PageTitle
-        title="Noticias BL/GL"
-        subtitle="Las últimas novedades del mundo Boys Love y Girls Love, curadas para la comunidad."
+        title={t('noticiasList.pageTitle')}
+        subtitle={t('noticiasList.pageSubtitle')}
       />
 
       <div className="noticias-list__toolbar">
         <Input
-          placeholder="Buscar noticias…"
+          placeholder={t('noticiasList.searchPlaceholder')}
           prefix={<SearchOutlined />}
           value={searchInput}
           onChange={(e) => setSearchInput(e.target.value)}
@@ -109,19 +111,18 @@ export function NoticiasListClient({
           className="noticias-list__search"
         />
         <Button onClick={handleSearch} type="primary">
-          Buscar
+          {t('noticiasList.searchButton')}
         </Button>
       </div>
 
       {activeSearch && (
         <p className="noticias-list__search-label">
-          Resultados para <strong>&quot;{activeSearch}&quot;</strong> · {total}{' '}
-          {total === 1 ? 'noticia' : 'noticias'}
+          {t('noticiasList.searchResultsLabel', { activeSearch, total })}
         </p>
       )}
 
       {news.length === 0 && !loading ? (
-        <Empty description="No hay noticias todavía" />
+        <Empty description={t('noticiasList.emptyDescription')} />
       ) : (
         <div className="noticias-list__grid">
           {news.map((item) => (
@@ -158,7 +159,7 @@ export function NoticiasListClient({
                   )}
                   {item.aiGenerated && (
                     <span className="noticias-card__ai-badge">
-                      <RobotOutlined /> IA
+                      <RobotOutlined /> {t('noticiasList.aiBadge')}
                     </span>
                   )}
                 </div>
@@ -194,7 +195,7 @@ export function NoticiasListClient({
                   rel="noopener noreferrer"
                   className="noticias-card__source-link"
                 >
-                  <LinkOutlined /> Ver fuente original
+                  <LinkOutlined /> {t('noticiasList.viewOriginalSource')}
                 </a>
               </div>
             </article>
@@ -208,7 +209,7 @@ export function NoticiasListClient({
             loading={loading}
             onClick={() => fetchPage(page + 1, activeSearch)}
           >
-            Cargar más
+            {t('noticiasList.loadMoreButton')}
           </Button>
         </div>
       )}

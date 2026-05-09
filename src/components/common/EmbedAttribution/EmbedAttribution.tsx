@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { LinkOutlined, YoutubeOutlined } from '@ant-design/icons';
 import './EmbedAttribution.css';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 
 interface EmbedAttributionProps {
   platform: string | null;
@@ -25,11 +26,12 @@ export function EmbedAttribution({
   channelUrl,
   originalUrl,
 }: EmbedAttributionProps) {
+  const { t } = useLocale();
   if (!platform && !channelName) return null;
 
   return (
     <div className="embed-attribution">
-      <span className="embed-attribution__via">Via</span>
+      <span className="embed-attribution__via">{t('embedAttribution.via')}</span>
       {channelUrl && channelName ? (
         <Link
           href={channelUrl}
@@ -54,7 +56,7 @@ export function EmbedAttribution({
           target="_blank"
           rel="noopener noreferrer"
           className="embed-attribution__original"
-          aria-label="Abrir en la plataforma original"
+          aria-label={t('embedAttribution.openInOriginalPlatform')}
         >
           <LinkOutlined />
         </Link>

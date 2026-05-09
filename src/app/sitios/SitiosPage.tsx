@@ -18,6 +18,7 @@ import {
   CATEGORY_SELECT_OPTIONS,
 } from '@/constants/sitios';
 import './sitios.css';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 
 interface Site {
   id: number;
@@ -35,6 +36,7 @@ interface SitiosPageProps {
 }
 
 export function SitiosPage({ sites }: SitiosPageProps) {
+  const { t } = useLocale();
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>(() => {
@@ -95,10 +97,10 @@ export function SitiosPage({ sites }: SitiosPageProps) {
       <AppLayout>
         <div className="sitios-public">
           <Breadcrumbs
-            items={[{ name: 'Inicio', href: '/' }, { name: 'Sitios' }]}
+            items={[{ name: t('sitiosPage.breadcrumbsHome'), href: '/' }, { name: t('sitiosPage.breadcrumbsSitios') }]}
           />
-          <h1 className="sitios-public__title">Sitios de Interés</h1>
-          <Empty description="Aún no hay sitios recomendados" />
+          <h1 className="sitios-public__title">{t('sitiosPage.pageTitle')}</h1>
+          <Empty description={t('sitiosPage.emptySitesDescription')} />
         </div>
       </AppLayout>
     );
@@ -131,7 +133,7 @@ export function SitiosPage({ sites }: SitiosPageProps) {
             <div className="sitios-card__logo">
               <Image
                 src={site.imageUrl}
-                alt={`Logo de ${site.name}`}
+                alt={t('sitiosPage.siteLogoAlt', { siteName: site.name })}
                 width={120}
                 height={48}
                 quality={75}
@@ -194,17 +196,17 @@ export function SitiosPage({ sites }: SitiosPageProps) {
     <AppLayout>
       <div className="sitios-public">
         <Breadcrumbs
-          items={[{ name: 'Inicio', href: '/' }, { name: 'Sitios' }]}
+          items={[{ name: t('sitiosPage.breadcrumbsHome'), href: '/' }, { name: t('sitiosPage.breadcrumbsSitios') }]}
         />
-        <h1 className="sitios-public__title">Sitios de Interés</h1>
+        <h1 className="sitios-public__title">{t('sitiosPage.pageTitle')}</h1>
         <p className="sitios-public__subtitle">
-          Sitios recomendados relacionados con el mundo BL
+          {t('sitiosPage.pageSubtitle')}
         </p>
 
         <div className="sitios-public__toolbar">
           <Space wrap>
             <Input.Search
-              placeholder="Buscar sitio..."
+              placeholder={t('sitiosPage.searchPlaceholder')}
               allowClear
               style={{ width: 220 }}
               onSearch={setSearchTerm}
@@ -213,7 +215,7 @@ export function SitiosPage({ sites }: SitiosPageProps) {
               }}
             />
             <Select
-              placeholder="Categoría"
+              placeholder={t('sitiosPage.categoryPlaceholder')}
               options={CATEGORY_SELECT_OPTIONS}
               allowClear
               style={{ width: 160 }}
@@ -237,10 +239,10 @@ export function SitiosPage({ sites }: SitiosPageProps) {
         </div>
 
         {filteredSites.length === 0 ? (
-          <Empty description="No hay sitios con estos filtros">
+          <Empty description={t('sitiosPage.noSitesWithFilters')}>
             {hasActiveFilters && (
               <Button type="primary" onClick={clearFilters}>
-                Limpiar filtros
+                {t('sitiosPage.clearFiltersButton')}
               </Button>
             )}
           </Empty>

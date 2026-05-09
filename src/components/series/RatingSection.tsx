@@ -144,7 +144,7 @@ export function RatingSection({
         body: JSON.stringify({ ratings }),
       });
 
-      if (!response.ok) throw new Error('Error al guardar');
+      if (!response.ok) throw new Error(t('ratingSection.errorSaving'));
       message.success(t('ratingSection.successOfficial'));
     } catch (error) {
       message.error(t('ratingSection.errorOfficial'));
@@ -163,7 +163,7 @@ export function RatingSection({
         body: JSON.stringify({ ratings: userRatings }),
       });
 
-      if (!response.ok) throw new Error('Error al guardar');
+      if (!response.ok) throw new Error(t('ratingSection.errorSaving'));
       message.success(t('ratingSection.successUser'));
       fetchUserRatings();
     } catch (error) {

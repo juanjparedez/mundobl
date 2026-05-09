@@ -10,6 +10,7 @@ import {
   WhatsAppOutlined,
 } from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 import './ShareButton.css';
 
 interface ShareButtonProps {
@@ -32,6 +33,7 @@ export function ShareButton({
   path,
   variant = 'compact',
 }: ShareButtonProps) {
+  const { t } = useLocale();
   const message = useMessage();
   const hasNativeShare = useSyncExternalStore(
     subscribeNoop,
@@ -50,16 +52,16 @@ export function ShareButton({
     } catch (error) {
       if ((error as DOMException)?.name === 'AbortError') return;
       console.error(error);
-      message.error('No se pudo compartir');
+      message.error(t('shareButton.shareError'));
     }
   };
 
   const copyLink = async () => {
     try {
       await navigator.clipboard.writeText(buildUrl());
-      message.success('Link copiado');
+      message.success(t('shareButton.linkCopied'));
     } catch {
-      message.error('No se pudo copiar el link');
+      message.error(t('shareButton.copyLinkError'));
     }
   };
 
@@ -67,13 +69,13 @@ export function ShareButton({
     {
       key: 'copy',
       icon: <LinkOutlined />,
-      label: 'Copiar link',
+      label: t('shareButton.copyLink'),
       onClick: copyLink,
     },
     {
       key: 'whatsapp',
       icon: <WhatsAppOutlined />,
-      label: 'WhatsApp',
+      label: t('shareButton.whatsapp'),
       onClick: () => {
         window.open(
           `https://wa.me/?text=${encodeURIComponent(`${title} — ${buildUrl()}`)}`,
@@ -85,7 +87,7 @@ export function ShareButton({
     {
       key: 'twitter',
       icon: <TwitterOutlined />,
-      label: 'X / Twitter',
+      label: t('shareButton.twitter'),
       onClick: () => {
         window.open(
           `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(buildUrl())}`,
@@ -101,7 +103,7 @@ export function ShareButton({
         {
           key: 'native',
           icon: <ShareAltOutlined />,
-          label: 'Compartir...',
+          label: t('shareButton.shareOption'),
           onClick: nativeShare,
         },
         { type: 'divider' as const },
@@ -116,15 +118,15 @@ export function ShareButton({
           icon={<ShareAltOutlined />}
           shape="circle"
           className="share-button share-button--compact"
-          aria-label="Compartir"
-          title="Compartir"
+          aria-label={t('shareButton.share')}
+          title={t('shareButton.share')}
         />
       ) : (
         <Button
           icon={<ShareAltOutlined />}
           className="share-button share-button--full"
         >
-          Compartir
+          {t('shareButton.share')}
         </Button>
       )}
     </Dropdown>

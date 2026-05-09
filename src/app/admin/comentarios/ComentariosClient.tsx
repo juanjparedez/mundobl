@@ -82,8 +82,8 @@ interface CommentsResponse {
 const PAGE_SIZE = 50;
 
 export function ComentariosClient() {
+  const { t, locale } = useLocale();
   const message = useMessage();
-  const { locale, t } = useLocale();
   const [comments, setComments] = useState<CommentRow[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -110,7 +110,7 @@ export function ComentariosClient() {
       if (reportedOnly) params.set('reported', 'true');
 
       const response = await fetch(`/api/admin/comments?${params.toString()}`);
-      if (!response.ok) throw new Error('Error al cargar comentarios');
+      if (!response.ok) throw new Error(t('adminComments.loadError'));
       const data: CommentsResponse = await response.json();
       setComments(data.comments);
       setTotal(data.total);
@@ -131,7 +131,7 @@ export function ComentariosClient() {
       const response = await fetch(`/api/admin/comments?id=${id}`, {
         method: 'DELETE',
       });
-      if (!response.ok) throw new Error('Error al eliminar');
+      if (!response.ok) throw new Error(t('adminComments.deleteError'));
       message.success(t('adminComments.deleteSuccess'));
       setComments((prev) => prev.filter((c) => c.id !== id));
       setTotal((prev) => Math.max(prev - 1, 0));
@@ -147,7 +147,7 @@ export function ComentariosClient() {
         `/api/admin/comments/${id}/dismiss-reports`,
         { method: 'POST' }
       );
-      if (!response.ok) throw new Error('Error al descartar reportes');
+      if (!response.ok) throw new Error(t('adminComments.dismissError'));
       message.success(t('adminComments.dismissSuccess'));
       if (reportedOnly) {
         setComments((prev) => prev.filter((c) => c.id !== id));
@@ -202,7 +202,7 @@ export function ComentariosClient() {
         }
       );
 
-      if (!response.ok) throw new Error('Error al editar comentario');
+      if (!response.ok) throw new Error(t('adminComments.editError'));
 
       const nowIso = new Date().toISOString();
       setComments((prev) =>

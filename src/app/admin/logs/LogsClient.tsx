@@ -329,7 +329,7 @@ export function LogsClient() {
           <div
             className="logs-table__user logs-table__clickable"
             onClick={() => applyFilter('user', record.user!.id)}
-            title="Filtrar por este usuario"
+            title={t('adminLogs.filterByUserTooltip')}
           >
             <Avatar
               src={record.user.image}
@@ -353,7 +353,7 @@ export function LogsClient() {
           color={ACTION_COLORS[record.action] || 'default'}
           className="logs-table__clickable"
           onClick={() => applyFilter('action', record.action)}
-          title="Filtrar por esta acción"
+          title={t('adminLogs.filterByActionTooltip')}
         >
           {record.action}
         </Tag>
@@ -367,7 +367,7 @@ export function LogsClient() {
         <span
           className="logs-table__clickable"
           onClick={() => applyFilter('path', record.path)}
-          title="Filtrar por esta ruta"
+          title={t('adminLogs.filterByPathTooltip')}
         >
           {record.path}
         </span>
@@ -383,7 +383,7 @@ export function LogsClient() {
           <span
             className="logs-table__clickable"
             onClick={() => applyFilter('ip', record.ip!)}
-            title="Filtrar por esta IP"
+            title={t('adminLogs.filterByIpTooltip')}
           >
             {record.ip}
           </span>
@@ -592,7 +592,7 @@ export function LogsClient() {
                 max={3650}
                 value={cleanDays}
                 onChange={(v) => setCleanDays(v ?? 90)}
-                addonAfter="días"
+                addonAfter={t('adminLogs.cleanModalDaysAddon')}
                 style={{ width: 160 }}
               />
               <p className="logs-clean-modal__warning">

@@ -9,6 +9,7 @@ import {
   useMemo,
   useState,
 } from 'react';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 
 const STORAGE_KEY = 'spoiler-free-mode';
 
@@ -32,6 +33,7 @@ interface SpoilerFreeProviderProps {
 }
 
 export function SpoilerFreeProvider({ children }: SpoilerFreeProviderProps) {
+  const { t } = useLocale();
   const [enabled, setEnabledState] = useState(false);
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
 
@@ -84,9 +86,10 @@ export function SpoilerFreeProvider({ children }: SpoilerFreeProviderProps) {
 }
 
 export function useSpoilerFree() {
+  const { t } = useLocale();
   const ctx = useContext(SpoilerFreeContext);
   if (!ctx) {
-    throw new Error('useSpoilerFree debe usarse dentro de SpoilerFreeProvider');
+    throw new Error(t('spoilerFreeProvider.useSpoilerFreeError'));
   }
   return ctx;
 }

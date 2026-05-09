@@ -88,9 +88,9 @@ interface PendingImage {
 }
 
 export function FeedbackClient() {
+  const { t, locale } = useLocale();
   const message = useMessage();
   const { data: session } = useSession();
-  const { t, locale } = useLocale();
 
   const TYPE_CONFIG: Record<
     string,
@@ -297,7 +297,7 @@ export function FeedbackClient() {
       });
 
       if (!response.ok) {
-        throw new Error('Error al subir imagen');
+        throw new Error(t('feedback.errorUploadImage'));
       }
 
       const result = await response.json();
@@ -324,7 +324,7 @@ export function FeedbackClient() {
         body: JSON.stringify({ ...values, imageUrls }),
       });
 
-      if (!response.ok) throw new Error('Error al crear');
+      if (!response.ok) throw new Error(t('feedback.errorCreate'));
 
       const newRequest = await response.json();
       setRequests((prev) => [newRequest, ...prev]);
@@ -334,7 +334,7 @@ export function FeedbackClient() {
       setPendingImages([]);
       message.success(t('feedback.successCreated'));
     } catch (error) {
-      message.error(t('feedback.errorCreate'));
+      message.error(t('feedback.errorCreateRequest'));
       console.error(error);
     } finally {
       setSubmitting(false);
@@ -347,7 +347,7 @@ export function FeedbackClient() {
         method: 'POST',
       });
 
-      if (!response.ok) throw new Error('Error al votar');
+      if (!response.ok) throw new Error(t('feedback.errorVote'));
 
       const { voted } = await response.json();
 
@@ -367,7 +367,7 @@ export function FeedbackClient() {
         })
       );
     } catch (error) {
-      message.error('Error al votar');
+      message.error(t('feedback.errorVote'));
       console.error(error);
     }
   };
@@ -380,7 +380,7 @@ export function FeedbackClient() {
         body: JSON.stringify({ status }),
       });
 
-      if (!response.ok) throw new Error('Error al actualizar');
+      if (!response.ok) throw new Error(t('feedback.errorStatusUpdate'));
 
       const updated = await response.json();
       setRequests((prev) =>
@@ -399,7 +399,7 @@ export function FeedbackClient() {
         method: 'DELETE',
       });
 
-      if (!response.ok) throw new Error('Error al eliminar');
+      if (!response.ok) throw new Error(t('feedback.errorDelete'));
 
       setRequests((prev) => prev.filter((r) => r.id !== requestId));
       message.success(t('feedback.successDeleted'));
@@ -449,7 +449,7 @@ export function FeedbackClient() {
                   <Image
                     key={img.id}
                     src={img.url}
-                    alt="Adjunto"
+                    alt={t('feedback.imageAltAttachment')}
                     width={120}
                     height={80}
                     style={{ objectFit: 'cover', borderRadius: 6 }}
@@ -749,7 +749,7 @@ export function FeedbackClient() {
 
   return (
     <div className="feedback-page">
-      <PageTitle title="Feedback" />
+      <PageTitle title={t('feedback.pageTitle')} />
       <Tabs items={tabItems} activeKey={activeTab} onChange={setActiveTab} />
 
       <Modal
