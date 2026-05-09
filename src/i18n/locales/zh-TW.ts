@@ -2155,6 +2155,26 @@ const zhTW: TranslationShape = {
     widgetRecentlyAdded: '最近新增',
     widgetRecentlyAddedDesc: '目錄中新增的劇集。',
   },
+  adminDashboard: {
+    title: '管理員儀表板',
+    subtitle: '管理員角色的 KPI 和活動警示。',
+    backToClassic: '返回經典面板',
+    fromClassicLink: '查看儀表板',
+    kpiSeries: '劇集',
+    kpiReviews: '評論',
+    kpiComments: '公開留言',
+    kpiUsers: '使用者',
+    alertsTitle: '活動警示',
+    alertsEmpty: '沒有待處理的警示。做得好！',
+    alertSeriesWithoutReview: '{count} 部劇集沒有發布評論',
+    alertSeriesWithoutContent: '{count} 部劇集沒有可嵌入內容',
+    alertCommentsReported: '{count} 則被檢舉留言',
+    alertSuggestedSitesPending: '{count} 個待處理建議網站',
+    widgetKPIs: '主要 KPI',
+    widgetKPIsDesc: '劇集、評論、留言和使用者的彙總計數器。',
+    widgetAlerts: '警示',
+    widgetAlertsDesc: '需要處理的項目：審核、缺漏、建議。',
+  },
 } as TranslationShape;
 
 export default zhTW;

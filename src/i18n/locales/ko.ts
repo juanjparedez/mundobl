@@ -2198,6 +2198,26 @@ const ko: TranslationShape = {
     widgetRecentlyAdded: '최근 추가됨',
     widgetRecentlyAddedDesc: '카탈로그에 추가된 최신 시리즈.',
   },
+  adminDashboard: {
+    title: '관리자 대시보드',
+    subtitle: '관리자 역할의 KPI와 활성 알림.',
+    backToClassic: '기본 관리 패널로 돌아가기',
+    fromClassicLink: '대시보드 보기',
+    kpiSeries: '시리즈',
+    kpiReviews: '리뷰',
+    kpiComments: '공개 댓글',
+    kpiUsers: '사용자',
+    alertsTitle: '활성 알림',
+    alertsEmpty: '대기 중인 알림이 없습니다. 잘했어요!',
+    alertSeriesWithoutReview: '게시된 리뷰가 없는 시리즈 {count}개',
+    alertSeriesWithoutContent: '임베드 콘텐츠가 없는 시리즈 {count}개',
+    alertCommentsReported: '신고된 댓글 {count}개',
+    alertSuggestedSitesPending: '대기 중인 사이트 제안 {count}개',
+    widgetKPIs: '주요 KPI',
+    widgetKPIsDesc: '시리즈, 리뷰, 댓글, 사용자의 집계 카운터.',
+    widgetAlerts: '알림',
+    widgetAlertsDesc: '조치가 필요한 항목: 검토, 누락, 제안.',
+  },
 } as TranslationShape;
 
 export default ko;
