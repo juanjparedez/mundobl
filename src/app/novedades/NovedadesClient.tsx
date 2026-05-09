@@ -42,9 +42,14 @@ interface NewSeason {
   };
 }
 
+interface ChangelogItemEntry {
+  body: string;
+  category: string | null;
+}
+
 interface ChangelogEntry {
   version: string;
-  items: string[];
+  items: ChangelogItemEntry[];
 }
 
 interface NovedadesClientProps {
@@ -193,21 +198,43 @@ export function NovedadesClient({
                 {t('novedades.changelogTitle')}
               </h2>
               <div className="novedades-changelog">
-                {changelog.slice(0, 6).map((entry) => (
-                  <article
-                    key={entry.version}
-                    className="novedades-changelog__entry"
-                  >
-                    <header className="novedades-changelog__version">
-                      {entry.version}
-                    </header>
-                    <ul className="novedades-changelog__items">
-                      {entry.items.map((item, i) => (
-                        <li key={i}>{item}</li>
+                {changelog.slice(0, 6).map((entry) => {
+                  // Agrupar items por categoria preservando el orden de
+                  // primer aparicion. Items sin categoria van al grupo "_".
+                  const grouped = new Map<string, ChangelogItemEntry[]>();
+                  for (const item of entry.items) {
+                    const cat = item.category ?? '_';
+                    if (!grouped.has(cat)) grouped.set(cat, []);
+                    grouped.get(cat)!.push(item);
+                  }
+                  return (
+                    <article
+                      key={entry.version}
+                      className="novedades-changelog__entry"
+                    >
+                      <header className="novedades-changelog__version">
+                        {entry.version}
+                      </header>
+                      {Array.from(grouped.entries()).map(([cat, items]) => (
+                        <div
+                          key={cat}
+                          className="novedades-changelog__group"
+                        >
+                          {cat !== '_' && (
+                            <h4 className="novedades-changelog__category">
+                              {cat}
+                            </h4>
+                          )}
+                          <ul className="novedades-changelog__items">
+                            {items.map((item, i) => (
+                              <li key={i}>{item.body}</li>
+                            ))}
+                          </ul>
+                        </div>
                       ))}
-                    </ul>
-                  </article>
-                ))}
+                    </article>
+                  );
+                })}
               </div>
             </section>
           )}

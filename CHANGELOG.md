@@ -4,22 +4,53 @@ Todas las versiones notables del proyecto se documentan aqui.
 
 ## Proximo deploy
 
-### Features
-- Suscripciones a series: boton de campana en pagina de serie permite suscribirse para recibir avisos cuando hay novedades
-- Modelo `SeriesSubscription` con dispatch automatico de notificaciones in-app a suscriptores cuando se agregan temporadas, contenido embebido o se publica una resena
-- Helper `notifySeriesSubscribers` no-bloqueante e idempotente reutilizable en cualquier endpoint
-- Campana de notificaciones renderizada en sidebar (desktop) y BottomNav (mobile) con badge de no leidas
-- Hook `useUnreadNotifications` con poll cada 30s, refresh inmediato al volver a la pestaña y pausa cuando esta oculta
-- Catalogo: chips adicionales en cada card (plataforma, genero) para mejor identificacion visual
-- Mobile: rediseno cinematografico del header de serie — poster full-width con fade-out, contenido emerge debajo
-- Pagina /novedades reorganizada: changelog en orden cronologico (mas reciente primero), layout mas compacto
+_Sin items pendientes._
 
-### Performance
-- Preconnect a Supabase storage en root layout (ahorra 100-200ms en primera carga de imagenes)
-- DNS-prefetch a hosts de YouTube (i.ytimg.com, img.youtube.com)
+## 2026-05 — i18n masivo, SEO, import YouTube, paletas y nickname (deployado)
+
+### Features
+- **Internacionalizacion completa**: 10 idiomas reales (es, en, it, de, fr, ja, ko, zh-CN, zh-TW, th). Antes 8 eran aliases de ingles, ahora cada uno tiene ~1500 strings traducidos via Gemini API. Selector honesto en sidebar.
+- **Auto-i18n tooling** (`scripts/audit-i18n.ts`, `scripts/auto-i18n-file.ts`, `scripts/translate-locales.ts`): scanner detecta strings hardcoded, Gemini reescribe componentes para usar `useLocale().t()`, regenera todos los locales automaticamente. 31 componentes migrados en una pasada.
+- **t(key, params)** ahora soporta interpolacion nativa (`t('paginationTotal', { total: 42 })` → "Total: 42"), antes habia que usar `interpolateMessage()` aparte.
+- **6 paletas de acento nuevas**: emerald, coral, indigo, crimson, slate (12 totales). AccentPicker en sidebar las auto-detecta.
+- **Import de series por playlist YouTube** en `/admin/series/importar`: pegar URL → extrae metadata, parsea episodios (EP.X, S1E12, [1/4], etc.), traduce sinopsis con Gemini, crea Series + Season + Episodes en una transaccion. Helpers en `src/lib/playlist-importer.ts`.
+- **`SeriesInfoBlock` genérico**: cards labeladas libres por serie ("Basado en", "Curiosidades", "Premios"...). Editables desde el admin, render publico solo si tienen contenido. Schema flexible — Flor agrega bloques nuevos sin migracion.
+- **Nickname publico opcional** para privacidad: cada usuario puede setear un nickname desde `/perfil`. En contextos publicos (comentarios, reseñas, feedback) se muestra el nickname o `"Nombre I."` (inicial del apellido) en vez del nombre completo de Google OAuth.
+
+### SEO
+- **Sitemap segmentado** con `generateSitemaps()`: `/sitemap.xml` ahora es sitemap-index automatico, con sub-sitemaps por dominio (static, series, noticias, ver, actores, directores, tags). `lastModified` real desde DB para acelerar re-crawl.
+- **Robots fortalecido**: bloqueos por seccion (admin, api, perfil, notificaciones, watching, auth, scanners) y declara `host` canonico.
+- **JSON-LD enriquecido**: TVSeries con `numberOfSeasons`, `numberOfEpisodes`, `inLanguage`, `productionCompany`. Nuevos schemas en `/catalogo`, `/ver`, `/sitios` (CollectionPage). `WatchAction` en `/ver/[id]`. Breadcrumbs JSON-LD en todas las paginas con migas.
+- **Meta titles keyword-first** en paginas de entidad: "Bad Buddy (2021) | Reseña, Reparto y Episodios — Serie BL" en lugar de generico. Mejora CTR en queries tipo "[serie] reseña" y "[actor] filmografia".
+
+### Auth y dominio
+- **Dominio canonico** ahora `mundobl.com.ar` (era `mundobl.win`). Redirect a nivel Cloudflare DNS, no en codigo.
+- **NextAuth `trustHost: true`** para que el flow OAuth funcione en local dev sin necesidad de cambiar `NEXTAUTH_URL`.
 
 ### Fixes
-- Eliminada navegacion a /notificaciones desde acciones rapidas de serie (reemplazada por toggle de suscripcion)
+- **antd v6 deprecations**: `Drawer.width` → `styles.wrapper.width`, `Modal.maskClosable` → `mask.closable`, `Spin.tip` → `description`, `Alert.message` → `title`. Limpieza completa de warnings.
+- **CSS Modules `:global()`**: removido de `CategoryRater.css` (Next.js 16 ya no lo tolera fuera de modulos CSS).
+- **Image quality whitelist**: `quality={60}` agregado a `images.qualities` en `next.config.ts`.
+- **Regresion seasonLabel**: la auto-migracion habia reemplazado una prop dinamica por una constante; restaurada.
+
+### Refactor / housekeeping
+- 25 items de roadmap migrados de `ideas.md`/`retomar.md` (que se borraron) a la tabla `FeatureRequest` para tracking real.
+- Trim de `README.md` (de 11 KB a 1 KB) — el changelog inline ya esta en DB y la doc tecnica en `context.md`.
+- PII removida de notas: emails de admin reemplazados por roles "Flor"/"Juan" sin contacto.
+
+### Suscripciones (deployado antes)
+- Suscripciones a series: boton de campana en pagina de serie permite suscribirse para recibir avisos cuando hay novedades.
+- Modelo `SeriesSubscription` con dispatch automatico de notificaciones in-app a suscriptores cuando se agregan temporadas, contenido embebido o se publica una resena.
+- Helper `notifySeriesSubscribers` no-bloqueante e idempotente reutilizable en cualquier endpoint.
+- Campana de notificaciones renderizada en sidebar (desktop) y BottomNav (mobile) con badge de no leidas.
+- Hook `useUnreadNotifications` con poll cada 30s, refresh inmediato al volver a la pestaña y pausa cuando esta oculta.
+- Catalogo: chips adicionales en cada card (plataforma, genero) para mejor identificacion visual.
+- Mobile: rediseno cinematografico del header de serie — poster full-width con fade-out, contenido emerge debajo.
+- Pagina /novedades reorganizada: changelog en orden cronologico (mas reciente primero), layout mas compacto.
+
+### Performance
+- Preconnect a Supabase storage en root layout (ahorra 100-200ms en primera carga de imagenes).
+- DNS-prefetch a hosts de YouTube (i.ytimg.com, img.youtube.com).
 
 ## 2026-04 — Catalogo, news, feedback y PWA (deployado)
 
