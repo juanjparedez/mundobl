@@ -63,3 +63,5 @@ next-env.d.ts
 
 .mcp.json
 skills-lock.json
+# Mocks visuales locales (no se commitean — son artefactos personales del workflow de diseño)
+/style-guide/
