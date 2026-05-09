@@ -2181,6 +2181,23 @@ const ko: TranslationShape = {
     widgetRatings: '카테고리별 평점',
     widgetRatingsDesc: '카테고리별 평점 (스토리, 캐스트, OST 등).',
   },
+  catalogoDashboard: {
+    title: '카탈로그 대시보드',
+    subtitle: '카탈로그의 전체 통계와 최근 추가 항목.',
+    fromClassicLink: '대시보드 보기',
+    backToClassic: '기본 보기',
+    totalSeries: '전체 시리즈',
+    totalSeasons: '시즌',
+    totalEpisodes: '에피소드',
+    totalActors: '배우',
+    totalCountries: '국가',
+    recentlyAddedTitle: '최근 추가됨',
+    recentlyAddedEmpty: '아직 추가된 시리즈가 없습니다.',
+    widgetStats: '전체 통계',
+    widgetStatsDesc: '카탈로그의 전체 카운터.',
+    widgetRecentlyAdded: '최근 추가됨',
+    widgetRecentlyAddedDesc: '카탈로그에 추가된 최신 시리즈.',
+  },
 } as TranslationShape;
 
 export default ko;

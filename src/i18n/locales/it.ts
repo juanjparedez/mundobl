@@ -2217,6 +2217,23 @@ const it: TranslationShape = {
     widgetRatingsDesc:
       'I tuoi voti per categoria (trama, cast, colonna sonora, ecc).',
   },
+  catalogoDashboard: {
+    title: 'Dashboard del catalogo',
+    subtitle: 'Statistiche globali e ultime aggiunte al catalogo.',
+    fromClassicLink: 'Vedi dashboard',
+    backToClassic: 'Vista classica',
+    totalSeries: 'Serie totali',
+    totalSeasons: 'Stagioni',
+    totalEpisodes: 'Episodi',
+    totalActors: 'Attori',
+    totalCountries: 'Paesi',
+    recentlyAddedTitle: 'Aggiunte di recente',
+    recentlyAddedEmpty: 'Nessuna serie aggiunta ancora.',
+    widgetStats: 'Statistiche globali',
+    widgetStatsDesc: 'Contatori totali del catalogo.',
+    widgetRecentlyAdded: 'Aggiunte di recente',
+    widgetRecentlyAddedDesc: 'Le ultime serie aggiunte al catalogo.',
+  },
 } as TranslationShape;
 
 export default it;
