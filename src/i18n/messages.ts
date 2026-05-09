@@ -5017,57 +5017,15 @@ const en: TranslationShape = {
   },
 };
 
-const it: TranslationShape = {
-  ...en,
-  common: { ...en.common, language: 'Lingua' },
-};
-
-const de: TranslationShape = {
-  ...en,
-  common: { ...en.common, language: 'Sprache' },
-};
-
-const fr: TranslationShape = {
-  ...en,
-  common: { ...en.common, language: 'Langue' },
-};
-
-const ja: TranslationShape = {
-  ...en,
-  common: { ...en.common, language: '言語' },
-};
-
-const ko: TranslationShape = {
-  ...en,
-  common: { ...en.common, language: '언어' },
-};
-
-const zhCN: TranslationShape = {
-  ...en,
-  common: { ...en.common, language: '语言' },
-};
-
-const zhTW: TranslationShape = {
-  ...en,
-  common: { ...en.common, language: '語言' },
-};
-
-const th: TranslationShape = {
-  ...en,
-  common: { ...en.common, language: 'ภาษา' },
-};
+// NOTA: anteriormente habia bloques para it, de, fr, ja, ko, zh-CN, zh-TW, th
+// pero todos eran `...en` con solo `language` cambiado — generaban la
+// falsa expectativa de multi-idioma. Removidos para que solo aparezcan
+// en el selector locales con traduccion completa. Ver i18n/config.ts
+// para el proceso de agregar un idioma nuevo.
 
 export const MESSAGES: Record<SupportedLocale, TranslationShape> = {
   es,
   en,
-  it,
-  de,
-  fr,
-  ja,
-  ko,
-  'zh-CN': zhCN,
-  'zh-TW': zhTW,
-  th,
 };
 
 type Join<K extends string, P extends string> = `${K}.${P}`;
