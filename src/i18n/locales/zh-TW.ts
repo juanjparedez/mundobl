@@ -2087,6 +2087,10 @@ const zhTW: TranslationShape = {
   themeProvider: {
     useThemeError: 'useTheme 必須在 ThemeProvider 內使用',
   },
+  dashboard: {
+    dragHandleAria: '拖曳小工具',
+    removeWidgetAria: '移除小工具',
+  },
 } as TranslationShape;
 
 export default zhTW;

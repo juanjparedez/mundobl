@@ -2174,6 +2174,10 @@ const fr: TranslationShape = {
   themeProvider: {
     useThemeError: 'useTheme doit être utilisé dans ThemeProvider',
   },
+  dashboard: {
+    dragHandleAria: 'Déplacer le widget',
+    removeWidgetAria: 'Supprimer le widget',
+  },
 } as TranslationShape;
 
 export default fr;

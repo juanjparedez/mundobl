@@ -2162,6 +2162,10 @@ const it: TranslationShape = {
   themeProvider: {
     useThemeError: "useTheme deve essere usato all'interno di ThemeProvider",
   },
+  dashboard: {
+    dragHandleAria: 'Trascina widget',
+    removeWidgetAria: 'Rimuovi widget',
+  },
 } as TranslationShape;
 
 export default it;

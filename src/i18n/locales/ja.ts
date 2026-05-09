@@ -1707,6 +1707,10 @@ const ja: TranslationShape = {
     deleteError: '削除エラー',
     loadError: 'レビューの読み込みエラー',
   },
+  dashboard: {
+    dragHandleAria: 'ウィジェットをドラッグ',
+    removeWidgetAria: 'ウィジェットを削除',
+  },
 } as TranslationShape;
 
 export default ja;

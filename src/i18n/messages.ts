@@ -2042,6 +2042,10 @@ export type TranslationShape = {
   themeProvider: {
     useThemeError: string;
   };
+  dashboard: {
+    dragHandleAria: string;
+    removeWidgetAria: string;
+  };
 };
 
 const es: TranslationShape = {
@@ -4187,6 +4191,10 @@ const es: TranslationShape = {
   themeProvider: {
     useThemeError: 'useTheme debe usarse dentro de ThemeProvider',
   },
+  dashboard: {
+    dragHandleAria: 'Arrastrar widget',
+    removeWidgetAria: 'Quitar widget',
+  },
 };
 
 const en: TranslationShape = {
@@ -6316,6 +6324,10 @@ const en: TranslationShape = {
   },
   themeProvider: {
     useThemeError: 'useTheme must be used within ThemeProvider',
+  },
+  dashboard: {
+    dragHandleAria: 'Drag widget',
+    removeWidgetAria: 'Remove widget',
   },
 };
 

@@ -2085,6 +2085,10 @@ const zhCN: TranslationShape = {
   themeProvider: {
     useThemeError: 'useTheme 必须在 ThemeProvider 中使用',
   },
+  dashboard: {
+    dragHandleAria: '拖动小组件',
+    removeWidgetAria: '移除小组件',
+  },
 } as TranslationShape;
 
 export default zhCN;
