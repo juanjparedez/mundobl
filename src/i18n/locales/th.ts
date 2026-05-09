@@ -2134,6 +2134,17 @@ const th: TranslationShape = {
   dashboard: {
     dragHandleAria: 'ลากวิดเจ็ต',
     removeWidgetAria: 'นำวิดเจ็ตออก',
+    editLayout: 'แก้ไขเลย์เอาต์',
+    doneEditing: 'เสร็จสิ้น',
+    addWidget: 'เพิ่มวิดเจ็ต',
+    resetLayout: 'รีเซ็ต',
+    resetConfirmTitle: 'รีเซ็ตเป็นเลย์เอาต์เริ่มต้นหรือไม่?',
+    resetConfirmDescription: 'คุณจะสูญเสียการเปลี่ยนแปลงตำแหน่งและขนาดที่ทำไว้',
+    resetConfirmOk: 'รีเซ็ต',
+    resetConfirmCancel: 'ยกเลิก',
+    pickerTitle: 'เพิ่มวิดเจ็ต',
+    pickerEmpty: 'ไม่มีวิดเจ็ตให้เพิ่ม',
+    pickerAlreadyAdded: 'มีอยู่ในแดชบอร์ดแล้ว',
   },
 } as TranslationShape;
 

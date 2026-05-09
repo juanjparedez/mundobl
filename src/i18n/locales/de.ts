@@ -2180,6 +2180,18 @@ const de: TranslationShape = {
   dashboard: {
     dragHandleAria: 'Widget verschieben',
     removeWidgetAria: 'Widget entfernen',
+    editLayout: 'Layout bearbeiten',
+    doneEditing: 'Fertig',
+    addWidget: 'Widget hinzufügen',
+    resetLayout: 'Zurücksetzen',
+    resetConfirmTitle: 'Standardlayout wiederherstellen?',
+    resetConfirmDescription:
+      'Du verlierst die vorgenommenen Positions- und Größenänderungen.',
+    resetConfirmOk: 'Zurücksetzen',
+    resetConfirmCancel: 'Abbrechen',
+    pickerTitle: 'Widget hinzufügen',
+    pickerEmpty: 'Keine Widgets zum Hinzufügen verfügbar.',
+    pickerAlreadyAdded: 'Bereits in deinem Dashboard',
   },
 } as TranslationShape;
 
