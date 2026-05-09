@@ -19,7 +19,6 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    // Verificar que el usuario es propietario del caso
     const existingCase = await prisma.featureRequest.findUnique({
       where: { id: parseInt(id, 10) },
     });
@@ -32,11 +31,25 @@ export async function PATCH(request: NextRequest) {
       where: { id: parseInt(id, 10) },
       data: { status },
       include: {
-        user: { select: { id: true, name: true, email: true, image: true } },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            nickname: true,
+            email: true,
+            image: true,
+          },
+        },
         comments: {
           include: {
             user: {
-              select: { id: true, name: true, email: true, image: true },
+              select: {
+                id: true,
+                name: true,
+                nickname: true,
+                email: true,
+                image: true,
+              },
             },
           },
         },

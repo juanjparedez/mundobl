@@ -32,11 +32,13 @@ import { PageTitle } from '@/components/common/PageTitle/PageTitle';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
+import { formatPublicName } from '@/lib/user-display';
 import './FeedbackClient.css';
 
 interface FeatureRequestUser {
   id: string;
   name: string | null;
+  nickname: string | null;
   image: string | null;
 }
 
@@ -48,6 +50,7 @@ interface FeatureRequestImage {
 interface FeatureRequestCommentUser {
   id: string;
   name: string | null;
+  nickname: string | null;
   image: string | null;
   role: string;
 }
@@ -465,7 +468,7 @@ export function FeedbackClient() {
                     icon={!request.user.image ? <UserOutlined /> : undefined}
                     size={20}
                   />
-                  <span>{request.user.name}</span>
+                  <span>{formatPublicName(request.user)}</span>
                 </>
               )}
               <span>
@@ -565,7 +568,7 @@ export function FeedbackClient() {
                         size={20}
                       />
                       <span className="feedback-comment__name">
-                        {c.user.name}
+                        {formatPublicName(c.user)}
                       </span>
                       {(c.user.role === 'ADMIN' ||
                         c.user.role === 'MODERATOR') && (

@@ -30,7 +30,7 @@ export async function GET(
       },
       orderBy: { createdAt: 'desc' },
       include: {
-        user: { select: { id: true, name: true, image: true } },
+        user: { select: { id: true, name: true, nickname: true, image: true } },
       },
     });
 
@@ -72,12 +72,10 @@ export async function POST(
         userId: authResult.userId,
       },
       include: {
-        user: { select: { id: true, name: true, image: true } },
+        user: { select: { id: true, name: true, nickname: true, image: true } },
       },
     });
 
-    // Avisar a otros usuarios que comentaron antes en esta misma serie
-    // (solo si el nuevo comentario es público — los privados no notifican).
     if (!comment.isPrivate) {
       void notifyParticipantsOfNewComment({
         currentCommentId: comment.id,

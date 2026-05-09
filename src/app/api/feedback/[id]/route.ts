@@ -36,11 +36,25 @@ export async function PATCH(
         priority: body.priority || existingCase.priority,
       },
       include: {
-        user: { select: { id: true, name: true, email: true, image: true } },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            nickname: true,
+            email: true,
+            image: true,
+          },
+        },
         comments: {
           include: {
             user: {
-              select: { id: true, name: true, email: true, image: true },
+              select: {
+                id: true,
+                name: true,
+                nickname: true,
+                email: true,
+                image: true,
+              },
             },
           },
         },
@@ -68,7 +82,6 @@ export async function DELETE(
     const { id } = await params;
     const caseId = parseInt(id, 10);
 
-    // Verificar que el usuario es propietario del caso
     const existingCase = await prisma.featureRequest.findUnique({
       where: { id: caseId },
     });
