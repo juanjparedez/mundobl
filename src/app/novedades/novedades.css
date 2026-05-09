@@ -183,6 +183,23 @@
   word-break: break-all;
 }
 
+.novedades-changelog__group {
+  margin-bottom: var(--spacing-sm);
+}
+
+.novedades-changelog__group:last-child {
+  margin-bottom: 0;
+}
+
+.novedades-changelog__category {
+  margin: 0 0 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 .novedades-changelog__items {
   margin: 0;
   padding: 0;
