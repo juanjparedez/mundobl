@@ -28,6 +28,7 @@ import type {
   DensityKey,
   MotionKey,
   SaverKey,
+  SkinKey,
 } from '@/types/theme.types';
 import { useLocale } from './LocaleProvider';
 
@@ -55,6 +56,7 @@ const STORAGE_KEYS = {
   density: 'theme-density',
   motion: 'theme-motion',
   saver: 'theme-saver',
+  skin: 'theme-skin',
 } as const;
 
 const VALID_TONES: ToneKey[] = ['default', 'warm', 'cool', 'contrast'];
@@ -63,6 +65,7 @@ const VALID_SCALES: ScaleKey[] = ['sm', 'md', 'lg', 'xl'];
 const VALID_DENSITIES: DensityKey[] = ['compact', 'comfortable', 'spacious'];
 const VALID_MOTIONS: MotionKey[] = ['auto', 'reduce'];
 const VALID_SAVERS: SaverKey[] = ['off', 'on'];
+const VALID_SKINS: SkinKey[] = ['default', 'premium'];
 
 function pick<T extends string>(
   raw: string | null,
@@ -81,6 +84,7 @@ interface ThemeState {
   density: DensityKey;
   motion: MotionKey;
   saver: SaverKey;
+  skin: SkinKey;
   mounted: boolean;
 }
 
@@ -111,6 +115,7 @@ const DEFAULTS: Omit<ThemeState, 'mounted'> = {
   density: 'comfortable',
   motion: 'auto',
   saver: 'off',
+  skin: 'default',
 };
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
@@ -143,6 +148,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       DEFAULTS.motion
     );
     const saver = pick(get(STORAGE_KEYS.saver), VALID_SAVERS, DEFAULTS.saver);
+    const skin = pick(get(STORAGE_KEYS.skin), VALID_SKINS, DEFAULTS.skin);
 
     document.documentElement.setAttribute('data-theme', theme);
     applyAccentVars(accent, theme);
@@ -152,6 +158,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     applyDataAttribute('density', density, DEFAULTS.density);
     applyDataAttribute('motion', motion, DEFAULTS.motion);
     applyDataAttribute('saver', saver, DEFAULTS.saver);
+    applyDataAttribute('skin', skin, DEFAULTS.skin);
 
     // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration: read localStorage on mount
     setState({
@@ -163,6 +170,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       density,
       motion,
       saver,
+      skin,
       mounted: true,
     });
   }, []);
@@ -233,6 +241,12 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     applyDataAttribute('saver', newSaver, DEFAULTS.saver);
   };
 
+  const handleSetSkin = (newSkin: SkinKey) => {
+    setState((prev) => ({ ...prev, skin: newSkin }));
+    persist(STORAGE_KEYS.skin, newSkin);
+    applyDataAttribute('skin', newSkin, DEFAULTS.skin);
+  };
+
   const resetPreferences = () => {
     Object.values(STORAGE_KEYS).forEach((k) => {
       try {
@@ -244,9 +258,9 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     setState({ ...DEFAULTS, mounted: true });
     document.documentElement.setAttribute('data-theme', DEFAULTS.theme);
     applyAccentVars(DEFAULTS.accent, DEFAULTS.theme);
-    (['tone', 'font', 'scale', 'density', 'motion', 'saver'] as const).forEach(
-      (k) => document.documentElement.removeAttribute(`data-${k}`)
-    );
+    (
+      ['tone', 'font', 'scale', 'density', 'motion', 'saver', 'skin'] as const
+    ).forEach((k) => document.documentElement.removeAttribute(`data-${k}`));
   };
 
   if (!state.mounted) {
@@ -254,7 +268,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   }
 
   const accentColors = ACCENT_PRESETS[state.accent][state.theme];
-  const currentTheme = buildTheme(state.theme, accentColors);
+  const currentTheme = buildTheme(state.theme, accentColors, state.skin);
 
   const antdLocaleMap: Record<string, Locale> = {
     es: esES,
@@ -289,6 +303,8 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
         setMotion: handleSetMotion,
         saver: state.saver,
         setSaver: handleSetSaver,
+        skin: state.skin,
+        setSkin: handleSetSkin,
         resetPreferences,
       }}
     >

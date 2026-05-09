@@ -1,4 +1,5 @@
 @import './variables.css';
+@import './skins/index.css';
 
 * {
   box-sizing: border-box;
