@@ -2250,6 +2250,27 @@ const de: TranslationShape = {
     widgetRecentlyAdded: 'Kürzlich hinzugefügt',
     widgetRecentlyAddedDesc: 'Die neuesten Serien im Katalog.',
   },
+  adminDashboard: {
+    title: 'Admin-Dashboard',
+    subtitle: 'KPIs und aktive Hinweise für deine Admin-Rolle.',
+    backToClassic: 'Zurück zum klassischen Panel',
+    fromClassicLink: 'Dashboard ansehen',
+    kpiSeries: 'Serien',
+    kpiReviews: 'Reviews',
+    kpiComments: 'Öffentliche Kommentare',
+    kpiUsers: 'Benutzer',
+    alertsTitle: 'Aktive Hinweise',
+    alertsEmpty: 'Keine offenen Hinweise. Gut gemacht!',
+    alertSeriesWithoutReview: '{count} Serie(n) ohne veröffentlichte Review',
+    alertSeriesWithoutContent: '{count} Serie(n) ohne einbettbaren Inhalt',
+    alertCommentsReported: '{count} gemeldete(r) Kommentar(e)',
+    alertSuggestedSitesPending: '{count} ausstehende Seitenvorschläge',
+    widgetKPIs: 'Haupt-KPIs',
+    widgetKPIsDesc:
+      'Aggregierte Zähler für Serien, Reviews, Kommentare und Benutzer.',
+    widgetAlerts: 'Hinweise',
+    widgetAlertsDesc: 'Aktionspunkte: Moderation, Fehlendes, Vorschläge.',
+  },
 } as TranslationShape;
 
 export default de;
