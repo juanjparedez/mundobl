@@ -2177,6 +2177,18 @@ const fr: TranslationShape = {
   dashboard: {
     dragHandleAria: 'Déplacer le widget',
     removeWidgetAria: 'Supprimer le widget',
+    editLayout: 'Modifier la disposition',
+    doneEditing: 'Terminé',
+    addWidget: 'Ajouter un widget',
+    resetLayout: 'Réinitialiser',
+    resetConfirmTitle: 'Réinitialiser la disposition par défaut ?',
+    resetConfirmDescription:
+      'Vous perdrez les modifications de position et de taille effectuées.',
+    resetConfirmOk: 'Réinitialiser',
+    resetConfirmCancel: 'Annuler',
+    pickerTitle: 'Ajouter un widget',
+    pickerEmpty: 'Aucun widget disponible à ajouter.',
+    pickerAlreadyAdded: 'Déjà sur votre tableau de bord',
   },
 } as TranslationShape;
 

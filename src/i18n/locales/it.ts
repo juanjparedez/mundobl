@@ -2165,6 +2165,18 @@ const it: TranslationShape = {
   dashboard: {
     dragHandleAria: 'Trascina widget',
     removeWidgetAria: 'Rimuovi widget',
+    editLayout: 'Modifica layout',
+    doneEditing: 'Fatto',
+    addWidget: 'Aggiungi widget',
+    resetLayout: 'Reimposta',
+    resetConfirmTitle: 'Ripristinare il layout predefinito?',
+    resetConfirmDescription:
+      'Perderai le modifiche di posizione e dimensione effettuate.',
+    resetConfirmOk: 'Reimposta',
+    resetConfirmCancel: 'Annulla',
+    pickerTitle: 'Aggiungi widget',
+    pickerEmpty: 'Nessun widget disponibile da aggiungere.',
+    pickerAlreadyAdded: 'Già nel tuo dashboard',
   },
 } as TranslationShape;
 

@@ -24,7 +24,16 @@
 export { DashboardGrid } from './DashboardGrid/DashboardGrid';
 export type { DashboardGridProps } from './DashboardGrid/DashboardGrid';
 
+export { DashboardEditToolbar } from './DashboardEditToolbar/DashboardEditToolbar';
+export type { DashboardEditToolbarProps } from './DashboardEditToolbar/DashboardEditToolbar';
+
 export { Widget } from './Widget/Widget';
+
+export { WidgetPickerDrawer } from './WidgetPickerDrawer/WidgetPickerDrawer';
+export type { WidgetPickerDrawerProps } from './WidgetPickerDrawer/WidgetPickerDrawer';
+
+export { useDashboardLayout } from './useDashboardLayout';
+export type { UseDashboardLayoutResult } from './useDashboardLayout';
 
 export { WidgetRegistry } from './WidgetRegistry/WidgetRegistry';
 

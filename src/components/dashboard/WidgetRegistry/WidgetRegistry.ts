@@ -8,7 +8,8 @@
  * El registro es global por aplicacion (singleton). Si una pagina necesita
  * widgets locales que no quiere exponer al picker, puede usar `hidden: true`.
  */
-import type { WidgetDefinition } from '../types';
+import type { Role } from '@/generated/prisma';
+import type { WidgetCategory, WidgetDefinition, WidgetMode } from '../types';
 
 class WidgetRegistryImpl {
   private widgets = new Map<string, WidgetDefinition>();
@@ -37,9 +38,9 @@ class WidgetRegistryImpl {
 
   /** Lista todos los widgets — opcional filtrado por roles/modo/categoria. */
   list(filter?: {
-    roles?: WidgetDefinition['roles'];
-    mode?: WidgetDefinition['modes'] extends (infer T)[] ? T : never;
-    category?: WidgetDefinition['category'];
+    roles?: Role[];
+    mode?: WidgetMode;
+    category?: WidgetCategory;
     includeHidden?: boolean;
   }): WidgetDefinition[] {
     const all = Array.from(this.widgets.values());
@@ -47,9 +48,7 @@ class WidgetRegistryImpl {
       if (!filter?.includeHidden && w.hidden) return false;
       if (filter?.category && w.category !== filter.category) return false;
       if (filter?.roles && w.roles) {
-        const intersects = w.roles.some((r) =>
-          (filter.roles as string[]).includes(r)
-        );
+        const intersects = w.roles.some((r) => filter.roles!.includes(r));
         if (!intersects) return false;
       }
       if (filter?.mode && w.modes && !w.modes.includes(filter.mode)) {

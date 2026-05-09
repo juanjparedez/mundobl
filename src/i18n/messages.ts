@@ -2045,6 +2045,17 @@ export type TranslationShape = {
   dashboard: {
     dragHandleAria: string;
     removeWidgetAria: string;
+    editLayout: string;
+    doneEditing: string;
+    addWidget: string;
+    resetLayout: string;
+    resetConfirmTitle: string;
+    resetConfirmDescription: string;
+    resetConfirmOk: string;
+    resetConfirmCancel: string;
+    pickerTitle: string;
+    pickerEmpty: string;
+    pickerAlreadyAdded: string;
   };
 };
 
@@ -4194,6 +4205,18 @@ const es: TranslationShape = {
   dashboard: {
     dragHandleAria: 'Arrastrar widget',
     removeWidgetAria: 'Quitar widget',
+    editLayout: 'Editar layout',
+    doneEditing: 'Listo',
+    addWidget: 'Agregar widget',
+    resetLayout: 'Restablecer',
+    resetConfirmTitle: '¿Restablecer el layout por defecto?',
+    resetConfirmDescription:
+      'Vas a perder los cambios de posicion y tamaño que hayas hecho.',
+    resetConfirmOk: 'Restablecer',
+    resetConfirmCancel: 'Cancelar',
+    pickerTitle: 'Agregar widget',
+    pickerEmpty: 'No hay widgets disponibles para agregar.',
+    pickerAlreadyAdded: 'Ya esta en tu dashboard',
   },
 };
 
@@ -6328,6 +6351,18 @@ const en: TranslationShape = {
   dashboard: {
     dragHandleAria: 'Drag widget',
     removeWidgetAria: 'Remove widget',
+    editLayout: 'Edit layout',
+    doneEditing: 'Done',
+    addWidget: 'Add widget',
+    resetLayout: 'Reset',
+    resetConfirmTitle: 'Reset to default layout?',
+    resetConfirmDescription:
+      'You will lose the position and size changes you made.',
+    resetConfirmOk: 'Reset',
+    resetConfirmCancel: 'Cancel',
+    pickerTitle: 'Add widget',
+    pickerEmpty: 'No widgets available to add.',
+    pickerAlreadyAdded: 'Already on your dashboard',
   },
 };
 

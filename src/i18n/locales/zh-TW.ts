@@ -2090,6 +2090,17 @@ const zhTW: TranslationShape = {
   dashboard: {
     dragHandleAria: '拖曳小工具',
     removeWidgetAria: '移除小工具',
+    editLayout: '編輯版面',
+    doneEditing: '完成',
+    addWidget: '新增小工具',
+    resetLayout: '重設',
+    resetConfirmTitle: '是否重設為預設版面？',
+    resetConfirmDescription: '你將失去所做的位置與大小變更。',
+    resetConfirmOk: '重設',
+    resetConfirmCancel: '取消',
+    pickerTitle: '新增小工具',
+    pickerEmpty: '沒有可新增的小工具。',
+    pickerAlreadyAdded: '已在你的儀表板中',
   },
 } as TranslationShape;
 

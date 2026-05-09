@@ -2133,6 +2133,17 @@ const ko: TranslationShape = {
   dashboard: {
     dragHandleAria: '위젯 이동',
     removeWidgetAria: '위젯 제거',
+    editLayout: '레이아웃 편집',
+    doneEditing: '완료',
+    addWidget: '위젯 추가',
+    resetLayout: '재설정',
+    resetConfirmTitle: '기본 레이아웃으로 재설정하시겠습니까?',
+    resetConfirmDescription: '변경한 위치와 크기가 모두 사라집니다.',
+    resetConfirmOk: '재설정',
+    resetConfirmCancel: '취소',
+    pickerTitle: '위젯 추가',
+    pickerEmpty: '추가할 수 있는 위젯이 없습니다.',
+    pickerAlreadyAdded: '이미 대시보드에 있습니다',
   },
 } as TranslationShape;
 

@@ -1710,6 +1710,17 @@ const ja: TranslationShape = {
   dashboard: {
     dragHandleAria: 'ウィジェットをドラッグ',
     removeWidgetAria: 'ウィジェットを削除',
+    editLayout: 'レイアウトを編集',
+    doneEditing: '完了',
+    addWidget: 'ウィジェットを追加',
+    resetLayout: 'リセット',
+    resetConfirmTitle: 'デフォルトレイアウトに戻しますか？',
+    resetConfirmDescription: '変更した位置とサイズが失われます。',
+    resetConfirmOk: 'リセット',
+    resetConfirmCancel: 'キャンセル',
+    pickerTitle: 'ウィジェットを追加',
+    pickerEmpty: '追加できるウィジェットはありません。',
+    pickerAlreadyAdded: 'すでにダッシュボードにあります',
   },
 } as TranslationShape;
 
