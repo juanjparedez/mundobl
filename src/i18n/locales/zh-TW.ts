@@ -2138,6 +2138,23 @@ const zhTW: TranslationShape = {
     widgetRatings: '分類評分',
     widgetRatingsDesc: '你按類別的評分（劇情、選角、OST 等）。',
   },
+  catalogoDashboard: {
+    title: '目錄儀表板',
+    subtitle: '目錄的全域統計與最近新增項目。',
+    fromClassicLink: '查看儀表板',
+    backToClassic: '經典檢視',
+    totalSeries: '總劇集',
+    totalSeasons: '季',
+    totalEpisodes: '集',
+    totalActors: '演員',
+    totalCountries: '國家',
+    recentlyAddedTitle: '最近新增',
+    recentlyAddedEmpty: '尚未新增任何劇集。',
+    widgetStats: '全域統計',
+    widgetStatsDesc: '目錄的總計數器。',
+    widgetRecentlyAdded: '最近新增',
+    widgetRecentlyAddedDesc: '目錄中新增的劇集。',
+  },
 } as TranslationShape;
 
 export default zhTW;

@@ -2136,6 +2136,23 @@ const zhCN: TranslationShape = {
     widgetRatings: '分类评分',
     widgetRatingsDesc: '你按类别的评分（剧情、选角、OST 等）。',
   },
+  catalogoDashboard: {
+    title: '目录仪表板',
+    subtitle: '目录的全局统计和最近添加。',
+    fromClassicLink: '查看仪表板',
+    backToClassic: '经典视图',
+    totalSeries: '总剧集',
+    totalSeasons: '季',
+    totalEpisodes: '集',
+    totalActors: '演员',
+    totalCountries: '国家',
+    recentlyAddedTitle: '最近添加',
+    recentlyAddedEmpty: '尚未添加任何剧集。',
+    widgetStats: '全局统计',
+    widgetStatsDesc: '目录的总计数器。',
+    widgetRecentlyAdded: '最近添加',
+    widgetRecentlyAddedDesc: '目录中新增的剧集。',
+  },
 } as TranslationShape;
 
 export default zhCN;

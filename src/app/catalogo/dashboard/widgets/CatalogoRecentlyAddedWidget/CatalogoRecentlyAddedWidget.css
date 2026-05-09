@@ -1,0 +1,6 @@
+.mb-catalogo-recently-added {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+}
