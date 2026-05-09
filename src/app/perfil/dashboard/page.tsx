@@ -1,14 +1,8 @@
-import type { Metadata } from 'next';
-import { DashboardClient } from './DashboardClient';
+import { redirect } from 'next/navigation';
 
-export const dynamic = 'force-dynamic';
-
-export const metadata: Metadata = {
-  title: 'Mi Dashboard',
-  description: 'Tu dashboard personal con widgets reordenables.',
-  robots: { index: false, follow: false },
-};
-
-export default function PerfilDashboardPage() {
-  return <DashboardClient />;
+// /perfil/dashboard fue la ruta opt-in original cuando la vista nueva
+// convivia con la clasica. Desde Fase 8.2 /perfil ES el dashboard, asi
+// que esta URL queda como redirect para bookmarks viejos.
+export default function PerfilDashboardLegacyRedirect(): never {
+  redirect('/perfil');
 }

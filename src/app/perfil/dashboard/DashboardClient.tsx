@@ -16,7 +16,6 @@ import {
   type DashboardLayouts,
 } from '@/components/dashboard';
 import { useLocale } from '@/lib/providers/LocaleProvider';
-import { ROUTES } from '@/constants/navigation';
 import type { ProfileData } from '../types';
 import { OverviewWidget } from './widgets/OverviewWidget/OverviewWidget';
 import { RatingsWidget } from './widgets/RatingsWidget/RatingsWidget';
@@ -239,7 +238,7 @@ export function DashboardClient() {
       <AppLayout>
         <div className="mb-perfil-dashboard__error">
           <p>{t('profileDashboard.loadError')}</p>
-          <Link href={ROUTES.PERFIL}>
+          <Link href="/perfil/clasico">
             <Button icon={<ArrowLeftOutlined />}>
               {t('profileDashboard.backToClassic')}
             </Button>
@@ -258,7 +257,7 @@ export function DashboardClient() {
           title={t('profileDashboard.title')}
           subtitle={t('profileDashboard.subtitle')}
           actions={
-            <Link href={ROUTES.PERFIL}>
+            <Link href="/perfil/clasico">
               <Button icon={<ArrowLeftOutlined />}>
                 {t('profileDashboard.backToClassic')}
               </Button>
