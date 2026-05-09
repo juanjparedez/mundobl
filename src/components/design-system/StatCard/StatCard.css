@@ -1,0 +1,108 @@
+.mb-stat-card {
+  --mb-stat-accent: var(--primary-color);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  padding: var(--spacing-md);
+  background: var(--bg-container);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--box-shadow-card);
+  cursor: default;
+  transition: var(--transition-fast);
+}
+
+.mb-stat-card--interactive {
+  cursor: pointer;
+}
+.mb-stat-card--interactive:hover {
+  transform: translateY(-1px);
+  border-color: color-mix(in srgb, var(--mb-stat-accent) 38%, transparent);
+}
+
+.mb-stat-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-xs);
+}
+
+.mb-stat-card__label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-tertiary);
+  font-weight: 500;
+}
+
+.mb-stat-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--mb-stat-accent) 14%, transparent);
+  color: var(--mb-stat-accent);
+  font-size: 16px;
+}
+
+.mb-stat-card__value {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.mb-stat-card__hint {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: 12px;
+  color: var(--text-tertiary);
+  flex-wrap: wrap;
+}
+
+.mb-stat-card__delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.mb-stat-card__delta--up {
+  background: rgba(82, 196, 26, 0.14);
+  color: #6fdc4d;
+}
+.mb-stat-card__delta--down {
+  background: rgba(255, 92, 92, 0.14);
+  color: #ff8585;
+}
+.mb-stat-card__delta--neutral {
+  background: var(--bg-spotlight);
+  color: var(--text-tertiary);
+}
+
+.mb-stat-card__hint-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.mb-stat-card__extra {
+  margin-top: var(--spacing-xs);
+}
+
+html[data-skin='premium'][data-theme='dark'] .mb-stat-card {
+  background: var(--mb-panel);
+  border-color: var(--mb-border);
+  border-radius: var(--mb-radius-lg);
+  box-shadow: var(--mb-shadow-soft);
+}
