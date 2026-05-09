@@ -823,7 +823,7 @@ export function ProfileClient() {
             </div>
           </div>
           <div className="profile-header__actions">
-            <Link href="/perfil/dashboard">
+            <Link href="/perfil">
               <Button icon={<AppstoreOutlined />}>
                 {t('profileDashboard.fromClassicLink')}
               </Button>
