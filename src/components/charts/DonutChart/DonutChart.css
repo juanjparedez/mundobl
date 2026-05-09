@@ -3,11 +3,13 @@
   flex-direction: column;
   gap: var(--spacing-sm);
   width: 100%;
+  min-width: 0;
 }
 
 .mb-donut-chart__chart {
   position: relative;
   width: 100%;
+  min-width: 0;
 }
 
 .mb-donut-chart__center {
@@ -18,10 +20,14 @@
   align-items: center;
   justify-content: center;
   pointer-events: none;
+  /* No salirse del agujero del donut: max-width relativo a la altura del
+   * chart para evitar choque con los slices. */
+  padding: 0 var(--spacing-md);
+  text-align: center;
 }
 
 .mb-donut-chart__center-value {
-  font-size: 22px;
+  font-size: clamp(18px, 4vw, 22px);
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.02em;
@@ -34,6 +40,10 @@
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .mb-donut-chart__legend {
