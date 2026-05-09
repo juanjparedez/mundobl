@@ -1458,6 +1458,10 @@ const fr: TranslationShape = {
     badgeCompleted: '{n} terminés',
     badgeFavorited: '{n} favoris',
     badgeCommented: '{n} commentaires',
+    chartByTypeTitle: 'Séries par type',
+    chartTotalSeries: 'séries au total',
+    chartCompletedByDayTitle: 'Séries terminées (30 derniers jours)',
+    chartCompletedSeriesLabel: 'Terminées',
   },
   adminTable: {
     searchPlaceholder: 'Rechercher par titre, pays ou type...',

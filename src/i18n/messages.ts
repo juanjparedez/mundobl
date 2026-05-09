@@ -1367,6 +1367,10 @@ export type TranslationShape = {
     badgeCompleted: string;
     badgeFavorited: string;
     badgeCommented: string;
+    chartByTypeTitle: string;
+    chartTotalSeries: string;
+    chartCompletedByDayTitle: string;
+    chartCompletedSeriesLabel: string;
   };
   adminTable: {
     searchPlaceholder: string;
@@ -3570,6 +3574,10 @@ const es: TranslationShape = {
     badgeCompleted: '{n} vistas',
     badgeFavorited: '{n} favs',
     badgeCommented: '{n} comentarios',
+    chartByTypeTitle: 'Series por tipo',
+    chartTotalSeries: 'series totales',
+    chartCompletedByDayTitle: 'Series completadas (ult. 30 dias)',
+    chartCompletedSeriesLabel: 'Completadas',
   },
   adminTable: {
     searchPlaceholder: 'Buscar por título, país o tipo...',
@@ -5797,6 +5805,10 @@ const en: TranslationShape = {
     badgeCompleted: '{n} completed',
     badgeFavorited: '{n} favs',
     badgeCommented: '{n} comments',
+    chartByTypeTitle: 'Series by type',
+    chartTotalSeries: 'total series',
+    chartCompletedByDayTitle: 'Completed series (last 30 days)',
+    chartCompletedSeriesLabel: 'Completed',
   },
   adminTable: {
     searchPlaceholder: 'Search by title, country or type...',
