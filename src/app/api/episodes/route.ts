@@ -1,6 +1,43 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
+import {
+  detectPlatform,
+  extractVideoId,
+  type Platform,
+} from '@/lib/embed-helpers';
+
+/**
+ * Resuelve los campos de embed a partir de la URL.
+ * Devuelve `null` para todos los campos si la URL viene vacia.
+ */
+function resolveEmbedFields(input: {
+  embedUrl?: string | null;
+  embedPlatform?: string | null;
+  embedChannelName?: string | null;
+  embedChannelUrl?: string | null;
+}) {
+  const url = input.embedUrl?.trim() || null;
+  if (!url) {
+    return {
+      embedUrl: null,
+      embedPlatform: null,
+      embedVideoId: null,
+      embedChannelName: null,
+      embedChannelUrl: null,
+    };
+  }
+  const platform =
+    (input.embedPlatform as Platform | null) ?? detectPlatform(url);
+  const videoId = platform ? extractVideoId(platform, url) : null;
+  return {
+    embedUrl: url,
+    embedPlatform: platform,
+    embedVideoId: videoId,
+    embedChannelName: input.embedChannelName?.trim() || null,
+    embedChannelUrl: input.embedChannelUrl?.trim() || null,
+  };
+}
 
 // GET - Obtener episodios de una temporada
 export async function GET(request: NextRequest) {
@@ -53,6 +90,7 @@ export async function POST(request: NextRequest) {
         duration: body.duration || null,
         airDate: body.airDate ? new Date(body.airDate) : null,
         synopsis: body.synopsis || null,
+        ...resolveEmbedFields(body),
       },
     });
 

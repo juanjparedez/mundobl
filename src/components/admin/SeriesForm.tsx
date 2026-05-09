@@ -590,6 +590,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
             format: 'regular',
             actors: [],
             directors: [],
+            catalogScope: 'PERSONAL',
             ...(showSeasons
               ? { seasons: [{ seasonNumber: 1, episodeCount: null }] }
               : {}),
@@ -898,6 +899,24 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                   help={t('seriesInfo.notesPrivateHelp')}
                 >
                   <Checkbox>{t('seriesInfo.notesPrivateLabel')}</Checkbox>
+                </Form.Item>
+              </Col>
+
+              <Col xs={24}>
+                <Form.Item
+                  name="catalogScope"
+                  label="Alcance en el catalogo"
+                  help="PERSONAL: aparece en /catalogo (curado por vos). WATCHABLE_ONLY: solo en /ver, sin reseña tuya."
+                >
+                  <Select
+                    options={[
+                      { value: 'PERSONAL', label: 'Catalogo personal' },
+                      {
+                        value: 'WATCHABLE_ONLY',
+                        label: 'Solo mirable (no esta en mi catalogo)',
+                      },
+                    ]}
+                  />
                 </Form.Item>
               </Col>
 

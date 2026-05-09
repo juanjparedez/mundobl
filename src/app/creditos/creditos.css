@@ -1,0 +1,86 @@
+.creditos-page {
+  padding: var(--spacing-md);
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.creditos-hero {
+  text-align: center;
+  padding: var(--spacing-md) 0;
+}
+
+.creditos-hero h1 {
+  margin: 0 0 var(--spacing-sm) 0;
+  font-size: 2rem;
+  color: var(--text-primary);
+}
+
+.creditos-hero p {
+  margin: 0 auto var(--spacing-sm);
+  max-width: 720px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.creditos-hero__legal {
+  font-size: 0.9rem;
+  color: var(--text-tertiary);
+}
+
+.creditos-section h2 {
+  margin: 0 0 var(--spacing-xs) 0;
+  font-size: 1.4rem;
+  color: var(--text-primary);
+}
+
+.creditos-section__sub {
+  margin: 0 0 var(--spacing-md) 0;
+  color: var(--text-secondary);
+}
+
+.creditos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.creditos-card {
+  height: 100%;
+}
+
+.creditos-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs);
+}
+
+.creditos-card__head h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--text-primary);
+}
+
+.creditos-card__desc,
+.creditos-card__stats {
+  margin: 0 0 var(--spacing-sm) 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.creditos-card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ant-primary-color, #1677ff);
+  font-size: 0.9rem;
+}
+
+.creditos-card__link:hover {
+  text-decoration: underline;
+}

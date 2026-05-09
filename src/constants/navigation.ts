@@ -5,6 +5,9 @@
 export const ROUTES = {
   HOME: '/',
   CATALOGO: '/catalogo',
+  VER: '/ver',
+  CREDITOS: '/creditos',
+  LEGAL: '/legal',
   WATCHING: '/watching',
   PERFIL: '/perfil',
   ADMIN: '/admin',

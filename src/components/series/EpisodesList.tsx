@@ -42,6 +42,10 @@ interface Episode {
   title?: string | null;
   duration?: number | null;
   synopsis?: string | null;
+  embedUrl?: string | null;
+  embedPlatform?: string | null;
+  embedChannelName?: string | null;
+  embedChannelUrl?: string | null;
   viewStatus?: Array<{
     status: string;
     watchedDate?: Date | null;
@@ -666,6 +670,36 @@ export function EpisodesList({
           <Form.Item label={t('episodesList.fieldSynopsis')} name="synopsis">
             <TextArea rows={4} placeholder={t('episodesList.hintSynopsis')} />
           </Form.Item>
+
+          <div className="episodes-list__embed-section">
+            <h5 className="episodes-list__embed-title">
+              📺 Reproducción oficial (opcional)
+            </h5>
+            <p className="episodes-list__embed-help">
+              Pegá la URL de YouTube/Vimeo del canal oficial. Solo si la
+              plataforma permite embeber legalmente. La plataforma se detecta
+              automaticamente.
+            </p>
+            <Form.Item
+              label="URL del video"
+              name="embedUrl"
+              rules={[
+                {
+                  type: 'url',
+                  message: 'URL invalida',
+                  validateTrigger: 'onBlur',
+                },
+              ]}
+            >
+              <Input placeholder="https://www.youtube.com/watch?v=..." />
+            </Form.Item>
+            <Form.Item label="Canal / Productora" name="embedChannelName">
+              <Input placeholder="Ej: GMMTV" />
+            </Form.Item>
+            <Form.Item label="URL del canal" name="embedChannelUrl">
+              <Input placeholder="https://www.youtube.com/@GMMTV" />
+            </Form.Item>
+          </div>
 
           <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
             <Button onClick={handleCloseModal} style={{ marginRight: 8 }}>
