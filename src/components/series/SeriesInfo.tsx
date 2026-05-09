@@ -31,6 +31,12 @@ interface SeriesInfoProps {
     soundtrack?: string | null;
     observations?: string | null;
     review?: string | null;
+    infoBlocks?: Array<{
+      id: number;
+      label: string;
+      body: string;
+      sortOrder: number;
+    }>;
     country?: {
       name: string;
       code?: string | null;
@@ -411,6 +417,17 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
             📖 {t('seriesInfo.synopsisSection')}
           </h4>
           <div className="series-info__synopsis-content">{series.synopsis}</div>
+        </div>
+      )}
+
+      {series.infoBlocks && series.infoBlocks.length > 0 && (
+        <div className="series-info__blocks">
+          {series.infoBlocks.map((block) => (
+            <div key={block.id} className="series-info__block">
+              <h4 className="series-info__section-title">{block.label}</h4>
+              <div className="series-info__block-body">{block.body}</div>
+            </div>
+          ))}
         </div>
       )}
 
