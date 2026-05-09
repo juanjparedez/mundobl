@@ -1402,6 +1402,10 @@ const zhTW: TranslationShape = {
     badgeCompleted: '{n} 已完成',
     badgeFavorited: '{n} 收藏',
     badgeCommented: '{n} 評論',
+    chartByTypeTitle: '依類型分布',
+    chartTotalSeries: '劇集總數',
+    chartCompletedByDayTitle: '已完成劇集（最近30天）',
+    chartCompletedSeriesLabel: '已完成',
   },
   adminTable: {
     searchPlaceholder: '按標題、國家或類型搜尋...',

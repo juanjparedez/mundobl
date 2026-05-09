@@ -1418,6 +1418,10 @@ const ja: TranslationShape = {
     badgeCompleted: '{n}人が完了',
     badgeFavorited: '{n}件のお気に入り',
     badgeCommented: '{n}件のコメント',
+    chartByTypeTitle: 'タイプ別シリーズ',
+    chartTotalSeries: '総シリーズ数',
+    chartCompletedByDayTitle: '完了したシリーズ（過去30日）',
+    chartCompletedSeriesLabel: '完了',
   },
   adminTable: {
     searchPlaceholder: 'タイトル、国、タイプで検索...',

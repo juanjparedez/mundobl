@@ -1433,6 +1433,10 @@ const th: TranslationShape = {
     badgeCompleted: '{n} ดูจบแล้ว',
     badgeFavorited: '{n} รายการโปรด',
     badgeCommented: '{n} ความคิดเห็น',
+    chartByTypeTitle: 'ซีรีส์ตามประเภท',
+    chartTotalSeries: 'ซีรีส์ทั้งหมด',
+    chartCompletedByDayTitle: 'ซีรีส์ที่ดูจบ (30 วันล่าสุด)',
+    chartCompletedSeriesLabel: 'ดูจบแล้ว',
   },
   adminTable: {
     searchPlaceholder: 'ค้นหาตามชื่อเรื่อง, ประเทศ หรือประเภท...',

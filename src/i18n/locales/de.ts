@@ -1460,6 +1460,10 @@ const de: TranslationShape = {
     badgeCompleted: '{n} abgeschlossen',
     badgeFavorited: '{n} Favoriten',
     badgeCommented: '{n} Kommentare',
+    chartByTypeTitle: 'Serien nach Typ',
+    chartTotalSeries: 'Serien insgesamt',
+    chartCompletedByDayTitle: 'Abgeschlossene Serien (letzte 30 Tage)',
+    chartCompletedSeriesLabel: 'Abgeschlossen',
   },
   adminTable: {
     searchPlaceholder: 'Nach Titel, Land oder Typ suchen...',

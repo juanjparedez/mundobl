@@ -1432,6 +1432,10 @@ const ko: TranslationShape = {
     badgeCompleted: '{n} 완료',
     badgeFavorited: '{n} 즐겨찾기',
     badgeCommented: '{n} 댓글',
+    chartByTypeTitle: '유형별 시리즈',
+    chartTotalSeries: '총 시리즈',
+    chartCompletedByDayTitle: '완료된 시리즈 (최근 30일)',
+    chartCompletedSeriesLabel: '완료',
   },
   adminTable: {
     searchPlaceholder: '제목, 국가 또는 유형으로 검색...',
