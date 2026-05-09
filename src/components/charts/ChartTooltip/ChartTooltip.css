@@ -1,0 +1,61 @@
+.mb-chart-tooltip {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-base);
+  box-shadow: var(--box-shadow-base);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  min-width: 140px;
+  pointer-events: none;
+}
+
+.mb-chart-tooltip__label {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 12px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.mb-chart-tooltip__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mb-chart-tooltip__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mb-chart-tooltip__swatch {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.mb-chart-tooltip__name {
+  color: var(--text-secondary);
+  font-size: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.mb-chart-tooltip__value {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+html[data-skin='premium'][data-theme='dark'] .mb-chart-tooltip {
+  background: var(--mb-panel-2);
+  border-color: var(--mb-border-strong);
+}
