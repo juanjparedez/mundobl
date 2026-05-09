@@ -30,7 +30,7 @@ export async function generateMetadata({
     : `${typeLabel} BL. Descubre la ficha completa en MundoBL.`;
 
   return {
-    title: `${serie.title}${year} - ${typeLabel} BL`,
+    title: `${serie.title}${year} | Reseña, Reparto y Episodios - ${typeLabel} BL`,
     description: synopsis,
     alternates: {
       canonical: `/series/${serie.id}`,
