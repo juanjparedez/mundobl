@@ -2092,6 +2092,16 @@ export type TranslationShape = {
     editProfile: string;
     streak: string;
     totalEpisodes: string;
+    widgetTopGenresList: string;
+    widgetTopGenresListDesc: string;
+    widgetTopCountries: string;
+    widgetTopCountriesDesc: string;
+    topCountriesEmpty: string;
+    widgetCurrentlyWatching: string;
+    widgetCurrentlyWatchingDesc: string;
+    currentlyWatchingEmpty: string;
+    currentlyWatchingNext: string;
+    currentlyWatchingProgress: string;
     loadError: string;
   };
   serieDashboard: {
@@ -4345,6 +4355,16 @@ const es: TranslationShape = {
     editProfile: 'Editar perfil',
     streak: 'Dias seguidos',
     totalEpisodes: 'Episodios',
+    widgetTopGenresList: 'Generos mas vistos',
+    widgetTopGenresListDesc: 'Lista compacta con barras de progreso.',
+    widgetTopCountries: 'Paises mas vistos',
+    widgetTopCountriesDesc: 'Top 8 paises de las series que ves.',
+    topCountriesEmpty: 'Aun no hay paises registrados.',
+    widgetCurrentlyWatching: 'Seguir viendo',
+    widgetCurrentlyWatchingDesc: 'Series que estas viendo actualmente.',
+    currentlyWatchingEmpty: 'No estas viendo ninguna serie ahora mismo.',
+    currentlyWatchingNext: 'Proximo: T{season} E{episode}',
+    currentlyWatchingProgress: '{watched} de {total} episodios',
     loadError: 'Error al cargar tu perfil. Refresca la pagina.',
   },
   serieDashboard: {
@@ -6586,6 +6606,16 @@ const en: TranslationShape = {
     editProfile: 'Edit profile',
     streak: 'Day streak',
     totalEpisodes: 'Episodes',
+    widgetTopGenresList: 'Most watched genres',
+    widgetTopGenresListDesc: 'Compact list with progress bars.',
+    widgetTopCountries: 'Most watched countries',
+    widgetTopCountriesDesc: 'Top 8 countries of the series you watch.',
+    topCountriesEmpty: 'No countries tracked yet.',
+    widgetCurrentlyWatching: 'Continue watching',
+    widgetCurrentlyWatchingDesc: 'Series you are currently watching.',
+    currentlyWatchingEmpty: "You're not watching any series right now.",
+    currentlyWatchingNext: 'Next: S{season} E{episode}',
+    currentlyWatchingProgress: '{watched} of {total} episodes',
     loadError: 'Error loading your profile. Refresh the page.',
   },
   serieDashboard: {
