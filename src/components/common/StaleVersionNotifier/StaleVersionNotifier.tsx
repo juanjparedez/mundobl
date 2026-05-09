@@ -66,7 +66,7 @@ export function StaleVersionNotifier() {
       closable={false}
       footer={null}
       centered
-      maskClosable={false}
+      mask={{ closable: false }}
       className="stale-version-modal"
     >
       <div className="stale-version-modal__content">

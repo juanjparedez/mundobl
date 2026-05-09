@@ -73,7 +73,7 @@ export function VerPage({ items }: VerPageProps) {
         type="info"
         showIcon
         className="ver-disclaimer"
-        message="Contenido reproducido desde plataformas oficiales"
+        title="Contenido reproducido desde plataformas oficiales"
         description={
           <span>
             Todos los videos son embebidos desde canales oficiales (YouTube,

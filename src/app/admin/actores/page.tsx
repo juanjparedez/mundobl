@@ -460,7 +460,7 @@ export default function ActoresAdminPage() {
           </Radio.Group>
           <Alert
             type="warning"
-            message={t('adminActors.mergeWarning')}
+            title={t('adminActors.mergeWarning')}
             style={{ marginTop: 16 }}
           />
         </Modal>

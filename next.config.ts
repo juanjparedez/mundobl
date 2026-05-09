@@ -21,7 +21,7 @@ const nextConfig: NextConfig = {
     imageSizes: [48, 64, 96, 110, 160, 180, 230, 260, 320],
     // Next 15+ requires every <Image quality={n}> value to be whitelisted here,
     // otherwise the optimizer responds 400 INVALID_IMAGE_OPTIMIZE_REQUEST.
-    qualities: [35, 50, 55, 65, 70, 72, 75, 78],
+    qualities: [35, 50, 55, 60, 65, 70, 72, 75, 78],
     remotePatterns: [
       { protocol: 'https', hostname: '*.supabase.co', pathname: '/storage/**' },
       { protocol: 'https', hostname: 'i.ytimg.com' },

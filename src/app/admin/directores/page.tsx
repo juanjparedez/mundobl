@@ -444,7 +444,7 @@ export default function DirectoresAdminPage() {
           </Radio.Group>
           <Alert
             type="warning"
-            message={t('adminDirectors.mergeWarning')}
+            title={t('adminDirectors.mergeWarning')}
             style={{ marginTop: 16 }}
           />
         </Modal>

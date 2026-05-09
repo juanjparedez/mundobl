@@ -339,7 +339,7 @@ export function ImportarClient() {
                   key={i}
                   type="warning"
                   showIcon
-                  message={w}
+                  title={w}
                   style={{ marginBottom: 8 }}
                 />
               ))}
@@ -347,7 +347,7 @@ export function ImportarClient() {
                 <Alert
                   type="error"
                   showIcon
-                  message={`${blockingDuplicates} episodios duplicados — renumerá o eliminá antes de confirmar.`}
+                  title={`${blockingDuplicates} episodios duplicados — renumerá o eliminá antes de confirmar.`}
                   style={{ marginBottom: 8 }}
                 />
               )}
@@ -355,7 +355,7 @@ export function ImportarClient() {
                 <Alert
                   type="error"
                   showIcon
-                  message={`${missingNumbers} episodios sin numero asignado — completalos antes de confirmar.`}
+                  title={`${missingNumbers} episodios sin numero asignado — completalos antes de confirmar.`}
                   style={{ marginBottom: 8 }}
                 />
               )}
