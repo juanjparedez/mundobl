@@ -26,6 +26,9 @@ import { MyCasesWidget } from './widgets/MyCasesWidget/MyCasesWidget';
 import { HeatmapWidget } from './widgets/HeatmapWidget/HeatmapWidget';
 import { GenresDonutWidget } from './widgets/GenresDonutWidget/GenresDonutWidget';
 import { CompletedByYearWidget } from './widgets/CompletedByYearWidget/CompletedByYearWidget';
+import { TopGenresListWidget } from './widgets/TopGenresListWidget/TopGenresListWidget';
+import { TopCountriesListWidget } from './widgets/TopCountriesListWidget/TopCountriesListWidget';
+import { CurrentlyWatchingWidget } from './widgets/CurrentlyWatchingWidget/CurrentlyWatchingWidget';
 import './dashboard.css';
 
 const WIDGET_IDS = {
@@ -37,72 +40,95 @@ const WIDGET_IDS = {
   heatmap: 'profile.heatmap',
   genres: 'profile.genres',
   completedByYear: 'profile.completedByYear',
+  topGenresList: 'profile.topGenresList',
+  topCountries: 'profile.topCountries',
+  currentlyWatching: 'profile.currentlyWatching',
 } as const;
 
+// Grid denso alineado al mock: 11 widgets distribuidos en filas mas densas
+// con rowHeight 48 + gap 12 (definidos en DashboardGrid props mas abajo).
 const DEFAULT_LAYOUTS: DashboardLayouts = {
   lg: [
-    { i: WIDGET_IDS.overview, x: 0, y: 0, w: 8, h: 4, minW: 4, minH: 3 },
-    { i: WIDGET_IDS.ratings, x: 8, y: 0, w: 4, h: 4, minW: 3, minH: 3 },
+    // Fila 1: Currently watching + Notifications
+    {
+      i: WIDGET_IDS.currentlyWatching,
+      x: 0,
+      y: 0,
+      w: 6,
+      h: 5,
+      minW: 4,
+      minH: 4,
+    },
+    { i: WIDGET_IDS.notifications, x: 6, y: 0, w: 6, h: 5, minW: 4, minH: 4 },
+    // Fila 2: 3 columnas con TopGenres list + Genres donut + TopCountries list
+    { i: WIDGET_IDS.topGenresList, x: 0, y: 5, w: 4, h: 5, minW: 3, minH: 4 },
+    { i: WIDGET_IDS.genres, x: 4, y: 5, w: 4, h: 5, minW: 3, minH: 4 },
+    { i: WIDGET_IDS.topCountries, x: 8, y: 5, w: 4, h: 5, minW: 3, minH: 4 },
+    // Fila 3: Heatmap full-width
+    { i: WIDGET_IDS.heatmap, x: 0, y: 10, w: 12, h: 3, minW: 6, minH: 3 },
+    // Fila 4: Recently completed + Completed by year
     {
       i: WIDGET_IDS.recentlyCompleted,
       x: 0,
-      y: 4,
-      w: 6,
-      h: 6,
+      y: 13,
+      w: 7,
+      h: 5,
       minW: 4,
       minH: 4,
     },
-    {
-      i: WIDGET_IDS.notifications,
-      x: 6,
-      y: 4,
-      w: 6,
-      h: 6,
-      minW: 4,
-      minH: 4,
-    },
-    { i: WIDGET_IDS.heatmap, x: 0, y: 10, w: 12, h: 4, minW: 6, minH: 3 },
-    { i: WIDGET_IDS.genres, x: 0, y: 14, w: 6, h: 6, minW: 4, minH: 5 },
     {
       i: WIDGET_IDS.completedByYear,
-      x: 6,
-      y: 14,
-      w: 6,
-      h: 6,
+      x: 7,
+      y: 13,
+      w: 5,
+      h: 5,
       minW: 4,
-      minH: 5,
+      minH: 4,
     },
-    { i: WIDGET_IDS.myCases, x: 0, y: 20, w: 12, h: 6, minW: 4, minH: 4 },
+    // Fila 5: Overview KPIs + Ratings KPIs
+    { i: WIDGET_IDS.overview, x: 0, y: 18, w: 6, h: 4, minW: 4, minH: 3 },
+    { i: WIDGET_IDS.ratings, x: 6, y: 18, w: 6, h: 4, minW: 4, minH: 3 },
+    // Fila 6: My cases full-width
+    { i: WIDGET_IDS.myCases, x: 0, y: 22, w: 12, h: 5, minW: 4, minH: 4 },
   ],
   md: [
-    { i: WIDGET_IDS.overview, x: 0, y: 0, w: 6, h: 4 },
-    { i: WIDGET_IDS.ratings, x: 6, y: 0, w: 4, h: 4 },
-    { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 4, w: 5, h: 6 },
-    { i: WIDGET_IDS.notifications, x: 5, y: 4, w: 5, h: 6 },
-    { i: WIDGET_IDS.heatmap, x: 0, y: 10, w: 10, h: 4 },
-    { i: WIDGET_IDS.genres, x: 0, y: 14, w: 5, h: 6 },
-    { i: WIDGET_IDS.completedByYear, x: 5, y: 14, w: 5, h: 6 },
-    { i: WIDGET_IDS.myCases, x: 0, y: 20, w: 10, h: 6 },
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 5, h: 5 },
+    { i: WIDGET_IDS.notifications, x: 5, y: 0, w: 5, h: 5 },
+    { i: WIDGET_IDS.topGenresList, x: 0, y: 5, w: 5, h: 5 },
+    { i: WIDGET_IDS.genres, x: 5, y: 5, w: 5, h: 5 },
+    { i: WIDGET_IDS.topCountries, x: 0, y: 10, w: 5, h: 5 },
+    { i: WIDGET_IDS.completedByYear, x: 5, y: 10, w: 5, h: 5 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 15, w: 10, h: 3 },
+    { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 18, w: 5, h: 5 },
+    { i: WIDGET_IDS.overview, x: 5, y: 18, w: 5, h: 5 },
+    { i: WIDGET_IDS.ratings, x: 0, y: 23, w: 10, h: 4 },
+    { i: WIDGET_IDS.myCases, x: 0, y: 27, w: 10, h: 5 },
   ],
   sm: [
-    { i: WIDGET_IDS.overview, x: 0, y: 0, w: 6, h: 4 },
-    { i: WIDGET_IDS.ratings, x: 0, y: 4, w: 6, h: 4 },
-    { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 8, w: 6, h: 6 },
-    { i: WIDGET_IDS.notifications, x: 0, y: 14, w: 6, h: 6 },
-    { i: WIDGET_IDS.heatmap, x: 0, y: 20, w: 6, h: 4 },
-    { i: WIDGET_IDS.genres, x: 0, y: 24, w: 6, h: 6 },
-    { i: WIDGET_IDS.completedByYear, x: 0, y: 30, w: 6, h: 6 },
-    { i: WIDGET_IDS.myCases, x: 0, y: 36, w: 6, h: 6 },
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 6, h: 5 },
+    { i: WIDGET_IDS.notifications, x: 0, y: 5, w: 6, h: 5 },
+    { i: WIDGET_IDS.topGenresList, x: 0, y: 10, w: 6, h: 5 },
+    { i: WIDGET_IDS.topCountries, x: 0, y: 15, w: 6, h: 5 },
+    { i: WIDGET_IDS.genres, x: 0, y: 20, w: 6, h: 5 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 25, w: 6, h: 3 },
+    { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 28, w: 6, h: 5 },
+    { i: WIDGET_IDS.completedByYear, x: 0, y: 33, w: 6, h: 5 },
+    { i: WIDGET_IDS.overview, x: 0, y: 38, w: 6, h: 4 },
+    { i: WIDGET_IDS.ratings, x: 0, y: 42, w: 6, h: 4 },
+    { i: WIDGET_IDS.myCases, x: 0, y: 46, w: 6, h: 5 },
   ],
   xs: [
-    { i: WIDGET_IDS.overview, x: 0, y: 0, w: 4, h: 5 },
-    { i: WIDGET_IDS.ratings, x: 0, y: 5, w: 4, h: 5 },
-    { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 10, w: 4, h: 6 },
-    { i: WIDGET_IDS.notifications, x: 0, y: 16, w: 4, h: 6 },
-    { i: WIDGET_IDS.heatmap, x: 0, y: 22, w: 4, h: 5 },
-    { i: WIDGET_IDS.genres, x: 0, y: 27, w: 4, h: 6 },
-    { i: WIDGET_IDS.completedByYear, x: 0, y: 33, w: 4, h: 6 },
-    { i: WIDGET_IDS.myCases, x: 0, y: 39, w: 4, h: 6 },
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 4, h: 5 },
+    { i: WIDGET_IDS.notifications, x: 0, y: 5, w: 4, h: 5 },
+    { i: WIDGET_IDS.topGenresList, x: 0, y: 10, w: 4, h: 5 },
+    { i: WIDGET_IDS.topCountries, x: 0, y: 15, w: 4, h: 5 },
+    { i: WIDGET_IDS.genres, x: 0, y: 20, w: 4, h: 5 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 25, w: 4, h: 3 },
+    { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 28, w: 4, h: 5 },
+    { i: WIDGET_IDS.completedByYear, x: 0, y: 33, w: 4, h: 5 },
+    { i: WIDGET_IDS.overview, x: 0, y: 38, w: 4, h: 5 },
+    { i: WIDGET_IDS.ratings, x: 0, y: 43, w: 4, h: 5 },
+    { i: WIDGET_IDS.myCases, x: 0, y: 48, w: 4, h: 5 },
   ],
 };
 
@@ -181,8 +207,32 @@ export function DashboardClient() {
       category: 'activity',
       labelKey: 'profileDashboard.widgetCompletedByYear',
       descriptionKey: 'profileDashboard.widgetCompletedByYearDesc',
-      defaultSize: { w: 6, h: 6, minW: 4, minH: 5 },
+      defaultSize: { w: 5, h: 5, minW: 4, minH: 4 },
       Component: CompletedByYearWidget as never,
+    });
+    WidgetRegistry.register({
+      id: WIDGET_IDS.topGenresList,
+      category: 'overview',
+      labelKey: 'profileDashboard.widgetTopGenresList',
+      descriptionKey: 'profileDashboard.widgetTopGenresListDesc',
+      defaultSize: { w: 4, h: 5, minW: 3, minH: 4 },
+      Component: TopGenresListWidget as never,
+    });
+    WidgetRegistry.register({
+      id: WIDGET_IDS.topCountries,
+      category: 'overview',
+      labelKey: 'profileDashboard.widgetTopCountries',
+      descriptionKey: 'profileDashboard.widgetTopCountriesDesc',
+      defaultSize: { w: 4, h: 5, minW: 3, minH: 4 },
+      Component: TopCountriesListWidget as never,
+    });
+    WidgetRegistry.register({
+      id: WIDGET_IDS.currentlyWatching,
+      category: 'media',
+      labelKey: 'profileDashboard.widgetCurrentlyWatching',
+      descriptionKey: 'profileDashboard.widgetCurrentlyWatchingDesc',
+      defaultSize: { w: 6, h: 5, minW: 4, minH: 4 },
+      Component: CurrentlyWatchingWidget as never,
     });
   }, []);
 
@@ -221,6 +271,9 @@ export function DashboardClient() {
     map[WIDGET_IDS.completedByYear] = {
       completedByYear: data.stats.completedByYear,
     };
+    map[WIDGET_IDS.topGenresList] = { topGenres: data.stats.topGenres };
+    map[WIDGET_IDS.topCountries] = { topCountries: data.stats.topCountries };
+    map[WIDGET_IDS.currentlyWatching] = { items: data.currentlyWatching };
     return map;
   }, [data]);
 
@@ -268,6 +321,8 @@ export function DashboardClient() {
           editing={editing}
           onLayoutsChange={setLayouts}
           onRemoveWidget={removeWidget}
+          rowHeight={48}
+          gap={12}
         />
 
         <WidgetPickerDrawer

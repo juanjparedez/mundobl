@@ -35,6 +35,8 @@ export interface DashboardGridProps {
   onRemoveWidget?: (id: string) => void;
   /** Altura por celda, en px. Default 60. */
   rowHeight?: number;
+  /** Margin horizontal/vertical entre items, en px. Default 16. */
+  gap?: number;
   /** className adicional. */
   className?: string;
 }
@@ -81,6 +83,7 @@ export function DashboardGrid({
   onLayoutsChange,
   onRemoveWidget,
   rowHeight = 60,
+  gap = 16,
   className,
 }: DashboardGridProps) {
   const [currentBp, setCurrentBp] = useState<DashboardBreakpoint>('lg');
@@ -107,7 +110,7 @@ export function DashboardGrid({
           breakpoints={DASHBOARD_BREAKPOINTS}
           cols={DASHBOARD_COLS}
           rowHeight={rowHeight}
-          margin={[16, 16]}
+          margin={[gap, gap]}
           containerPadding={[0, 0]}
           dragConfig={{
             enabled: editing,
