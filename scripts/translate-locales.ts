@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // Carga env files con la MISMA logica que `next dev` (.env, .env.local,
 // .env.development, .env.development.local) en vez de solo `.env` que
 // daria `dotenv/config`. Esto matchea como funciona la app cuando corre
@@ -8,7 +9,7 @@ loadEnvConfig(process.cwd());
 import * as fs from 'fs';
 import * as path from 'path';
 import { generateText, GeminiError } from '../src/lib/gemini';
-import { MESSAGES, type TranslationShape } from '../src/i18n/messages';
+import { MESSAGES } from '../src/i18n/messages';
 
 // Genera traducciones reales (no aliases) para los 8 locales que antes
 // eran solo `{ ...en, common: { language: 'XXX' } }`. El source de
@@ -81,7 +82,9 @@ function extractJsonArray(response: string): string[] {
   const candidate = fenced ? fenced[1] : response;
   const arrMatch = candidate.match(/\[[\s\S]*\]/);
   if (!arrMatch) {
-    throw new Error(`No JSON array found in response: ${response.slice(0, 300)}`);
+    throw new Error(
+      `No JSON array found in response: ${response.slice(0, 300)}`
+    );
   }
   return JSON.parse(arrMatch[0]);
 }
@@ -90,7 +93,9 @@ async function translateBatch(
   strings: string[],
   target: { code: string; name: string }
 ): Promise<string[]> {
-  const numbered = strings.map((s, i) => `${i}: ${JSON.stringify(s)}`).join('\n');
+  const numbered = strings
+    .map((s, i) => `${i}: ${JSON.stringify(s)}`)
+    .join('\n');
 
   const prompt = `Translate the following ${strings.length} UI strings from English to ${target.name} for a website about Asian BL/GL TV series.
 
@@ -149,9 +154,11 @@ export default ${escapeForTemplate(varName)};
 `;
 }
 
-async function translateLocale(
-  target: { code: string; name: string; varName: string }
-): Promise<void> {
+async function translateLocale(target: {
+  code: string;
+  name: string;
+  varName: string;
+}): Promise<void> {
   console.log(`\n=== ${target.name} (${target.code}) ===`);
   const enSource = MESSAGES.en;
   const flat = flatten(enSource);
@@ -164,7 +171,9 @@ async function translateLocale(
     const batchNum = Math.floor(i / BATCH_SIZE) + 1;
     const batch = flat.slice(i, i + BATCH_SIZE);
     const inputs = batch.map((b) => b.value);
-    process.stdout.write(`  batch ${batchNum}/${totalBatches} (${batch.length} strings)... `);
+    process.stdout.write(
+      `  batch ${batchNum}/${totalBatches} (${batch.length} strings)... `
+    );
 
     let outputs: string[] | null = null;
     let attempts = 0;
@@ -210,7 +219,9 @@ async function main() {
     : TARGETS;
 
   if (arg && targets.length === 0) {
-    console.error(`Unknown locale "${arg}". Valid: ${TARGETS.map((t) => t.code).join(', ')}`);
+    console.error(
+      `Unknown locale "${arg}". Valid: ${TARGETS.map((t) => t.code).join(', ')}`
+    );
     process.exit(1);
   }
 
@@ -219,7 +230,9 @@ async function main() {
     process.exit(1);
   }
 
-  console.log(`Translating to ${targets.length} locale(s): ${targets.map((t) => t.code).join(', ')}`);
+  console.log(
+    `Translating to ${targets.length} locale(s): ${targets.map((t) => t.code).join(', ')}`
+  );
   for (const target of targets) {
     await translateLocale(target);
   }

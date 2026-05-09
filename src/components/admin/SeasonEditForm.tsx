@@ -212,7 +212,9 @@ export function SeasonEditForm({ initialData }: SeasonEditFormProps) {
                         valuePropName="checked"
                         style={{ marginBottom: 0 }}
                       >
-                        <Checkbox>{t('seasonEditForm.isMainCheckbox')}</Checkbox>
+                        <Checkbox>
+                          {t('seasonEditForm.isMainCheckbox')}
+                        </Checkbox>
                       </Form.Item>
                       <MinusCircleOutlined onClick={() => remove(name)} />
                     </div>

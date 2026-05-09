@@ -33,7 +33,6 @@ interface SpoilerFreeProviderProps {
 }
 
 export function SpoilerFreeProvider({ children }: SpoilerFreeProviderProps) {
-  const { t } = useLocale();
   const [enabled, setEnabledState] = useState(false);
   const [revealed, setRevealed] = useState<Set<string>>(new Set());
 

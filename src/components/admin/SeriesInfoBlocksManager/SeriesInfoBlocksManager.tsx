@@ -67,7 +67,9 @@ export function SeriesInfoBlocksManager({ seriesId }: Props) {
       setBlocks(data);
     } catch (e) {
       message.error(
-        e instanceof Error ? e.message : t('seriesInfoBlocksManager.errorLoadingBlocks')
+        e instanceof Error
+          ? e.message
+          : t('seriesInfoBlocksManager.errorLoadingBlocks')
       );
     } finally {
       setLoading(false);
@@ -135,7 +137,11 @@ export function SeriesInfoBlocksManager({ seriesId }: Props) {
       cancelEdit();
       await load();
     } catch (e) {
-      message.error(e instanceof Error ? e.message : t('seriesInfoBlocksManager.errorSavingBlock'));
+      message.error(
+        e instanceof Error
+          ? e.message
+          : t('seriesInfoBlocksManager.errorSavingBlock')
+      );
     } finally {
       setSaving(false);
     }
@@ -150,7 +156,11 @@ export function SeriesInfoBlocksManager({ seriesId }: Props) {
       message.success(t('seriesInfoBlocksManager.blockDeletedSuccess'));
       await load();
     } catch (e) {
-      message.error(e instanceof Error ? e.message : t('seriesInfoBlocksManager.errorDeletingBlock'));
+      message.error(
+        e instanceof Error
+          ? e.message
+          : t('seriesInfoBlocksManager.errorDeletingBlock')
+      );
     }
   }
 
@@ -172,7 +182,11 @@ export function SeriesInfoBlocksManager({ seriesId }: Props) {
       });
       if (!res.ok) throw new Error(`Error ${res.status}`);
     } catch (e) {
-      message.error(e instanceof Error ? e.message : t('seriesInfoBlocksManager.errorReorderingBlocks'));
+      message.error(
+        e instanceof Error
+          ? e.message
+          : t('seriesInfoBlocksManager.errorReorderingBlocks')
+      );
       await load(); // rollback
     }
   }
@@ -242,7 +256,10 @@ export function SeriesInfoBlocksManager({ seriesId }: Props) {
       )}
 
       {loading ? (
-        <Alert message={t('seriesInfoBlocksManager.loadingMessage')} type="info" />
+        <Alert
+          message={t('seriesInfoBlocksManager.loadingMessage')}
+          type="info"
+        />
       ) : blocks.length === 0 && editingId !== 'new' ? (
         <Empty
           description={t('seriesInfoBlocksManager.emptyDescription')}
@@ -314,7 +331,9 @@ export function SeriesInfoBlocksManager({ seriesId }: Props) {
                           onClick={() => startEdit(block)}
                         />
                         <Popconfirm
-                          title={t('seriesInfoBlocksManager.deleteConfirmTitle')}
+                          title={t(
+                            'seriesInfoBlocksManager.deleteConfirmTitle'
+                          )}
                           onConfirm={() => handleDelete(block.id)}
                           disabled={isEditing}
                         >

@@ -134,7 +134,8 @@ export function SeriesContentManager({
   const handlePreview = () => {
     const url: string = form.getFieldValue('url') || '';
     const platform: string = form.getFieldValue('platform');
-    const title: string = form.getFieldValue('title') || t('seriesContentManager.previewTitle');
+    const title: string =
+      form.getFieldValue('title') || t('seriesContentManager.previewTitle');
     if (!url || !platform) {
       message.warning(t('seriesContentManager.enterUrlAndPlatform'));
       return;
@@ -195,7 +196,9 @@ export function SeriesContentManager({
 
       onPendingItemsChange?.(updated);
       message.success(
-        editingPendingItem ? t('seriesContentManager.contentUpdated') : t('seriesContentManager.contentAdded')
+        editingPendingItem
+          ? t('seriesContentManager.contentUpdated')
+          : t('seriesContentManager.contentAdded')
       );
       handleCloseModal();
       return;
@@ -216,13 +219,17 @@ export function SeriesContentManager({
         throw new Error(err.error || t('seriesContentManager.errorSaving'));
       }
       message.success(
-        editingItem ? t('seriesContentManager.contentUpdated') : t('seriesContentManager.contentAdded')
+        editingItem
+          ? t('seriesContentManager.contentUpdated')
+          : t('seriesContentManager.contentAdded')
       );
       handleCloseModal();
       loadItems();
     } catch (error) {
       message.error(
-        error instanceof Error ? error.message : t('seriesContentManager.errorSaving')
+        error instanceof Error
+          ? error.message
+          : t('seriesContentManager.errorSaving')
       );
     }
   };
@@ -322,7 +329,11 @@ export function SeriesContentManager({
       />
 
       <Modal
-        title={editingItem ? t('seriesContentManager.editContentModalTitle') : t('seriesContentManager.addContentModalTitle')}
+        title={
+          editingItem
+            ? t('seriesContentManager.editContentModalTitle')
+            : t('seriesContentManager.addContentModalTitle')
+        }
         open={modalOpen}
         onCancel={handleCloseModal}
         onOk={() => form.submit()}
@@ -335,7 +346,12 @@ export function SeriesContentManager({
           <Form.Item
             label={t('seriesContentManager.titleLabel')}
             name="title"
-            rules={[{ required: true, message: t('seriesContentManager.titleRequired') }]}
+            rules={[
+              {
+                required: true,
+                message: t('seriesContentManager.titleRequired'),
+              },
+            ]}
           >
             <Input placeholder={t('seriesContentManager.titlePlaceholder')} />
           </Form.Item>
@@ -344,7 +360,10 @@ export function SeriesContentManager({
             label={t('seriesContentManager.urlLabel')}
             name="url"
             rules={[
-              { required: true, message: t('seriesContentManager.urlRequired') },
+              {
+                required: true,
+                message: t('seriesContentManager.urlRequired'),
+              },
               { type: 'url', message: t('seriesContentManager.invalidUrl') },
             ]}
           >
@@ -357,7 +376,12 @@ export function SeriesContentManager({
           <Form.Item
             label={t('seriesContentManager.platformLabel')}
             name="platform"
-            rules={[{ required: true, message: t('seriesContentManager.platformRequired') }]}
+            rules={[
+              {
+                required: true,
+                message: t('seriesContentManager.platformRequired'),
+              },
+            ]}
           >
             <Select
               options={PLATFORM_OPTIONS}
@@ -365,12 +389,22 @@ export function SeriesContentManager({
             />
           </Form.Item>
 
-          <Form.Item label={t('seriesContentManager.categoryLabel')} name="category" initialValue="trailer">
+          <Form.Item
+            label={t('seriesContentManager.categoryLabel')}
+            name="category"
+            initialValue="trailer"
+          >
             <Select options={CATEGORY_OPTIONS} />
           </Form.Item>
 
-          <Form.Item label={t('seriesContentManager.descriptionLabel')} name="description">
-            <Input.TextArea rows={2} placeholder={t('seriesContentManager.descriptionPlaceholder')} />
+          <Form.Item
+            label={t('seriesContentManager.descriptionLabel')}
+            name="description"
+          >
+            <Input.TextArea
+              rows={2}
+              placeholder={t('seriesContentManager.descriptionPlaceholder')}
+            />
           </Form.Item>
 
           <Form.Item
@@ -378,11 +412,18 @@ export function SeriesContentManager({
             name="thumbnailUrl"
             extra={t('seriesContentManager.thumbnailUrlExtra')}
           >
-            <Input placeholder={t('seriesContentManager.thumbnailUrlPlaceholder')} />
+            <Input
+              placeholder={t('seriesContentManager.thumbnailUrlPlaceholder')}
+            />
           </Form.Item>
 
-          <Form.Item label={t('seriesContentManager.channelNameLabel')} name="channelName">
-            <Input placeholder={t('seriesContentManager.channelNamePlaceholder')} />
+          <Form.Item
+            label={t('seriesContentManager.channelNameLabel')}
+            name="channelName"
+          >
+            <Input
+              placeholder={t('seriesContentManager.channelNamePlaceholder')}
+            />
           </Form.Item>
 
           <Space>
@@ -402,7 +443,11 @@ export function SeriesContentManager({
             </Form.Item>
           </Space>
 
-          <Form.Item label={t('seriesContentManager.sortOrderLabel')} name="sortOrder" initialValue={0}>
+          <Form.Item
+            label={t('seriesContentManager.sortOrderLabel')}
+            name="sortOrder"
+            initialValue={0}
+          >
             <InputNumber min={0} />
           </Form.Item>
 

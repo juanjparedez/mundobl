@@ -50,9 +50,21 @@ export function InfoClient() {
     string,
     { label: string; icon: React.ReactNode; color: string }
   > = {
-    github: { label: t('adminInfo.linkConfigGithubLabel'), icon: <GithubOutlined />, color: '#24292e' },
-    vercel: { label: t('adminInfo.linkConfigVercelLabel'), icon: <CloudOutlined />, color: '#000' },
-    supabase: { label: t('adminInfo.linkConfigSupabaseLabel'), icon: <DatabaseOutlined />, color: '#3ecf8e' },
+    github: {
+      label: t('adminInfo.linkConfigGithubLabel'),
+      icon: <GithubOutlined />,
+      color: '#24292e',
+    },
+    vercel: {
+      label: t('adminInfo.linkConfigVercelLabel'),
+      icon: <CloudOutlined />,
+      color: '#000',
+    },
+    supabase: {
+      label: t('adminInfo.linkConfigSupabaseLabel'),
+      icon: <DatabaseOutlined />,
+      color: '#3ecf8e',
+    },
   };
 
   const [links, setLinks] = useState<ProjectLinks | null>(null);
@@ -85,7 +97,10 @@ export function InfoClient() {
         <AdminNav />
         <div className="info-page">
           <div className="info-sections">
-            <Card title={t('adminInfo.platformsCardTitle')} className="info-card">
+            <Card
+              title={t('adminInfo.platformsCardTitle')}
+              className="info-card"
+            >
               {loading ? (
                 <div className="info-loading">
                   <Spin />
@@ -115,7 +130,9 @@ export function InfoClient() {
                   })}
                 </div>
               ) : (
-                <Empty description={t('adminInfo.noLinksConfiguredDescription')} />
+                <Empty
+                  description={t('adminInfo.noLinksConfiguredDescription')}
+                />
               )}
             </Card>
 
