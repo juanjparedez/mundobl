@@ -6,25 +6,25 @@ Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-s
 
 ## Stack Tecnologico
 
-| Tecnologia | Version | Uso |
-|---|---|---|
-| **Next.js** | 16 | Framework (App Router) |
-| **React** | 19 | UI |
-| **TypeScript** | 5.9 | Tipado estricto |
-| **Ant Design** | 6 | Componentes UI |
-| **Prisma** | 7.4 | ORM |
-| **PostgreSQL** | - | Base de datos (Supabase) |
+| Tecnologia     | Version | Uso                      |
+| -------------- | ------- | ------------------------ |
+| **Next.js**    | 16      | Framework (App Router)   |
+| **React**      | 19      | UI                       |
+| **TypeScript** | 5.9     | Tipado estricto          |
+| **Ant Design** | 6       | Componentes UI           |
+| **Prisma**     | 7.4     | ORM                      |
+| **PostgreSQL** | -       | Base de datos (Supabase) |
 
 ## Infraestructura
 
-| Servicio | Detalle |
-|---|---|
-| **Hosting** | Vercel (deploy automatico desde GitHub) |
-| **Base de datos** | Supabase PostgreSQL (sa-east-1, Sao Paulo) |
-| **Almacenamiento** | Supabase Storage (bucket `images`) |
-| **Auth** | NextAuth.js (Google OAuth) |
-| **Dominio** | **mundobl.com.ar** (primario), mundobl.win (backup). Redireccion `.win → .com.ar` via Cloudflare (DNS / Page Rules), NO en codigo. |
-| **SSL** | Automatico via Vercel |
+| Servicio           | Detalle                                                                                                                            |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| **Hosting**        | Vercel (deploy automatico desde GitHub)                                                                                            |
+| **Base de datos**  | Supabase PostgreSQL (sa-east-1, Sao Paulo)                                                                                         |
+| **Almacenamiento** | Supabase Storage (bucket `images`)                                                                                                 |
+| **Auth**           | NextAuth.js (Google OAuth)                                                                                                         |
+| **Dominio**        | **mundobl.com.ar** (primario), mundobl.win (backup). Redireccion `.win → .com.ar` via Cloudflare (DNS / Page Rules), NO en codigo. |
+| **SSL**            | Automatico via Vercel                                                                                                              |
 
 ### Variables de Entorno (Vercel + .env local)
 
@@ -117,6 +117,7 @@ PROJECT_SUPABASE_URL
 ### Embed helpers ([src/lib/embed-helpers.ts](src/lib/embed-helpers.ts))
 
 Soporta 8 plataformas para reproducir/parsear:
+
 - **YouTube**, **Vimeo**, **Bilibili**, **Dailymotion**, **TikTok**, **Instagram**, **Twitter/X**, **Spotify**
 - `getYouTubeId`, `getVimeoId`, `getBilibiliId`, `detectPlatform(url)`, `buildEmbedSrc(url)`, `getThumbnailUrl(url)`
 - Constantes: `PLATFORM_OPTIONS`, `CATEGORY_OPTIONS`, `PLATFORM_COLORS`
@@ -152,6 +153,7 @@ Soporta 8 plataformas para reproducir/parsear:
 ### SEO (JSON-LD + Breadcrumbs + sitemap segmentado + robots)
 
 **JSON-LD** ([src/components/seo/JsonLd.tsx](src/components/seo/JsonLd.tsx) helper):
+
 - Layout/home: `WebSite` + `Organization`
 - `/series/[id]` y `/catalogo/[id]`: `TVSeries` con name, alternateName, description, image, datePublished, countryOfOrigin, inLanguage, productionCompany, numberOfSeasons, numberOfEpisodes, actor, director, genre, keywords, aggregateRating
 - `/ver/[id]`: `TVSeries` simplificada con `WatchAction`
@@ -180,12 +182,13 @@ Soporta 8 plataformas para reproducir/parsear:
 
 A partir de la migracion `20260508053232_add_catalog_scope_and_episode_embed`, `Series.catalogScope` define donde aparece la serie:
 
-| Scope | Donde aparece | Uso |
-|---|---|---|
-| `PERSONAL` (default) | `/catalogo` (curado) **y** `/ver` si tiene episodios con `embedUrl` | Tu catalogo personal con resena, tags, ratings |
-| `WATCHABLE_ONLY` | Solo `/ver` | Series importadas para ver via embed, sin resena propia |
+| Scope                | Donde aparece                                                       | Uso                                                     |
+| -------------------- | ------------------------------------------------------------------- | ------------------------------------------------------- |
+| `PERSONAL` (default) | `/catalogo` (curado) **y** `/ver` si tiene episodios con `embedUrl` | Tu catalogo personal con resena, tags, ratings          |
+| `WATCHABLE_ONLY`     | Solo `/ver`                                                         | Series importadas para ver via embed, sin resena propia |
 
 **Campos de embed en `Episode`:**
+
 - `embedUrl` — URL canonica del video (YouTube, Vimeo, etc.)
 - `embedPlatform` — Plataforma detectada (`'YouTube'`, `'Vimeo'`, etc.)
 - `embedVideoId` — ID extraido (para construir thumbnails / iframes)
@@ -193,12 +196,14 @@ A partir de la migracion `20260508053232_add_catalog_scope_and_episode_embed`, `
 - `embedChannelUrl` — Link al canal (atribucion en `/creditos`)
 
 **Helpers en [src/lib/database.ts](src/lib/database.ts):**
+
 - `getAllSeries({ scope })` — `'PERSONAL' | 'WATCHABLE_ONLY' | 'ALL'`
 - `getWatchableSeries()` — series con al menos un episodio con `embedUrl` (cualquier scope)
 - `getWatchableSeriesById(id)` — detalle para `/ver/[id]`
 - Catalogos personales (`/catalogo`) filtran por `catalogScope: 'PERSONAL'` para no contaminar actores/generos/etc. con series importadas
 
 **API:**
+
 - `POST /api/series/[id]/scope` — cambia `catalogScope` (admin only)
 
 ---
@@ -232,6 +237,7 @@ A partir de la migracion `20260508053232_add_catalog_scope_and_episode_embed`, `
 ## Principios de Desarrollo
 
 ### SOLID
+
 - **Single Responsibility**: Cada componente/archivo hace una sola cosa
 - **Open/Closed**: Componentes extensibles via props
 - **Liskov Substitution**: Componentes intercambiables via interfaces
@@ -239,6 +245,7 @@ A partir de la migracion `20260508053232_add_catalog_scope_and_episode_embed`, `
 - **Dependency Inversion**: Inyeccion de dependencias via props
 
 ### DRY & Buenas Practicas
+
 - No repetir logica: extraer a helpers en `src/lib/` o hooks en `src/hooks/`
 - Componentes reutilizables en `src/components/common/`
 - Tipos compartidos en `src/types/`
@@ -246,6 +253,7 @@ A partir de la migracion `20260508053232_add_catalog_scope_and_episode_embed`, `
 - No usar `any` en TypeScript, usar tipos especificos o `unknown`
 
 ### Estilos
+
 - **NO usar CSS-in-JS**. Estilos en archivos `.css` separados por componente
 - Usar variables CSS definidas en `src/styles/variables.css`
 - Temas claro/oscuro via atributo `[data-theme]` en HTML
@@ -258,6 +266,7 @@ A partir de la migracion `20260508053232_add_catalog_scope_and_episode_embed`, `
 - Tema de Ant Design configurado en `src/lib/theme.config.ts`
 
 ### Componentes
+
 - Funcionales con hooks (no clases)
 - Exportar con nombre (no default export)
 - Props con interfaz TypeScript explicita
@@ -266,6 +275,7 @@ A partir de la migracion `20260508053232_add_catalog_scope_and_episode_embed`, `
 - Importar Ant Design individualmente: `import { Button, Input } from 'antd'`
 
 ### Nomenclatura
+
 - Componentes: **PascalCase** (`SearchBar`, `PageTitle`)
 - Archivos componentes: **PascalCase**, utilidades: **camelCase**
 - Variables CSS: **kebab-case** (`--primary-color`, `--spacing-md`)
@@ -376,7 +386,11 @@ page.tsx (Server Component)
 
 ```typescript
 // En Server Components o API routes:
-import { getAllSeries, getSeriesById, searchSeriesByTitle } from '@/lib/database';
+import {
+  getAllSeries,
+  getSeriesById,
+  searchSeriesByTitle,
+} from '@/lib/database';
 
 // Funciones disponibles:
 // Series: getAllSeries, getSeriesById, searchSeriesByTitle, getSeriesByCountry, getSeriesByType
@@ -394,6 +408,7 @@ import { getAllSeries, getSeriesById, searchSeriesByTitle } from '@/lib/database
 ### Schema: `prisma/schema.prisma`
 
 **Modelos principales:**
+
 - `Series` - Series/peliculas/cortos. Campo `catalogScope` (`PERSONAL` | `WATCHABLE_ONLY`) define donde se muestra
 - `Season` - Temporadas por serie
 - `Episode` - Episodios. Campos de embed: `embedUrl`, `embedPlatform`, `embedVideoId`, `embedChannelName`, `embedChannelUrl`
@@ -402,6 +417,7 @@ import { getAllSeries, getSeriesById, searchSeriesByTitle } from '@/lib/database
 - `Country` - Paises
 
 **Modelos de relacion:**
+
 - `SeriesActor`, `SeasonActor` - Actores por serie/temporada (con pairingGroup)
 - `SeriesDirector` - Directores por serie
 - `SeriesTag` - Tags por serie
@@ -410,6 +426,7 @@ import { getAllSeries, getSeriesById, searchSeriesByTitle } from '@/lib/database
 - `RelatedSeries` - Series relacionadas (bidireccional)
 
 **Modelos de metadata:**
+
 - `Universe` - Agrupacion de series relacionadas
 - `Tag` - Etiquetas (tropes, genres, moods)
 - `Genre` - Generos
@@ -420,6 +437,7 @@ import { getAllSeries, getSeriesById, searchSeriesByTitle } from '@/lib/database
 - `ViewStatus` - Estado de visualizacion (`WatchStatus` enum, por usuario)
 
 **Modelos de contenido:**
+
 - `SeriesInfoBlock` - Cards labeladas libres por serie ("Basado en", "Curiosidades", "Premios"...). Render publico solo si tiene contenido. Editables desde `/admin/series/[id]/editar` via `SeriesInfoBlocksManager`.
 - `EmbeddableContent` - Contenido embebido (trailers, OSTs, entrevistas)
 - `RecommendedSite` - Sitios recomendados curados por admin
@@ -427,16 +445,19 @@ import { getAllSeries, getSeriesById, searchSeriesByTitle } from '@/lib/database
 - `WatchLink` - Plataformas donde ver cada serie
 
 **Modelos de feedback:**
+
 - `FeatureRequest` - Solicitudes de bugs/features/ideas con status y prioridad
 - `FeatureRequestImage` - Imagenes adjuntas a solicitudes
 - `FeatureVote` - Votos de usuarios en solicitudes
 
 **Modelos de sistema:**
+
 - `User`, `Account`, `Session`, `VerificationToken` - NextAuth
 - `AccessLog` - Registro de visitas y acciones
 - `BannedIp` - IPs bloqueadas
 
 **Enums:**
+
 - `Role` - USER, MODERATOR, ADMIN
 - `WatchStatus` - SIN_VER, VIENDO, VISTA, ABANDONADA, RETOMAR
 
@@ -500,7 +521,89 @@ npx prisma studio
 
 - Variables CSS: `src/styles/variables.css`
 - Tema Ant Design: `src/lib/theme.config.ts`
-- Dark mode fixes: `src/styles/dark-mode-fixes.css`
+- Skins: `src/styles/skins/<nombre>.css` (ver "Sistema de skins" abajo)
+- Dark mode fixes: `src/styles/dark-mode-fixes.css` (limpiado a 113 lineas, sin `!important`. Solo quedan reglas para componentes que AntD no expone como token)
+
+---
+
+## Sistema de skins
+
+Las skins son una dimension visual ortogonal a `theme` (light/dark), `tone` (default/warm/cool/contrast), `accent` (los 11 presets) y `density`. Una skin remapea los tokens base (`--bg-*`, `--text-*`, `--border-*`, `--radius-*`, `--shadow-*`) a una paleta nueva, y opcionalmente aplica overrides al shell (sidebar, topbar, content area).
+
+**Skins disponibles:**
+
+| Skin      | Archivo                                                                | Cuando aplica                                                                                                                                                                                                                              |
+| --------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `default` | (sin archivo)                                                          | Default — usa tokens base de [variables.css](src/styles/variables.css)                                                                                                                                                                     |
+| `premium` | [src/styles/skins/premium-dark.css](src/styles/skins/premium-dark.css) | Solo cuando `data-theme='dark'`. Paleta premium dark (`#090911`/`#11101d`/`#171423`/`#211b32`), bordes sutiles `rgba(255,255,255,0.06–0.14)`, sombras soft, radii 14/18. Expone tambien `--mb-*` para componentes nuevos del design-system |
+
+**Como agregar una skin nueva:**
+
+1. Crear `src/styles/skins/<nombre>.css` con `html[data-skin='<nombre>'] { ... }`
+2. Importarla en [src/styles/skins/index.css](src/styles/skins/index.css)
+3. Agregar la key a `SkinKey` en [src/types/theme.types.ts](src/types/theme.types.ts)
+4. Sumar la opcion al toggle en [src/components/layout/SettingsPanel/SettingsPanel.tsx](src/components/layout/SettingsPanel/SettingsPanel.tsx)
+5. Agregar las claves i18n `settings.skinDefault`/`<nombre>` en `messages.ts` y los 10 locales
+6. Si la skin requiere tokens distintos en AntD ConfigProvider (Layout, Modal, Tooltip), extender `buildTheme(mode, accent, skin)` en [src/lib/theme.config.ts](src/lib/theme.config.ts)
+
+**ATENCION sobre el accent dorado de la skin premium:** NO esta hardcodeado. El "dorado" sale del accent que el usuario eligio en Settings (en este caso, probablemente `amber`). Si se elige otro accent, la skin sigue siendo coherente — los items selected/focus/primary toman el accent del usuario via `--primary-color`. Cualquier hex tone-of-brand hardcodeado en componentes nuevos rompe esto: usar siempre tokens.
+
+---
+
+## Design system primitivos
+
+[src/components/design-system/](src/components/design-system/) — primitivos sin texto hardcodeado (cada componente recibe el texto via props/children traducidos por la pagina).
+
+| Componente      | Cuando usar                                                                                                                      |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `PanelCard`     | Wrapper de `Card` con variant (default/soft/flat) + slots header/footer. Reemplaza `<Card>` directos en paginas refactorizadas   |
+| `SectionHeader` | Title + subtitle + actions, 3 sizes (sm/md/lg), heading semantico ajustable                                                      |
+| `StatCard`      | Label + value + delta (up/down/neutral) + icon. Para KPIs de paneles                                                             |
+| `ActionCard`    | Icon + title + description + badge. Para grids de quick actions                                                                  |
+| `MediaCard`     | Cover (aspect ratio 2:3 default, 16:9, 1:1) + title + subtitle + overlay tags + actions on hover. Para grids de series/peliculas |
+| `Chip`          | Pills con tones (neutral/accent/success/warning/error/info), opcional toggle clickable                                           |
+| `EmptyState`    | Icon + title + description + action. Para listas vacias                                                                          |
+
+Convencion: ningun primitivo contiene texto fijo, ningun hex de marca. Todo via tokens CSS y props.
+
+---
+
+## Sistema de dashboards modulares
+
+Cada vista premium se monta como un grid responsive de **widgets reordenables y resizables**. Cada usuario puede customizar su layout y se sincroniza entre dispositivos via DB.
+
+**Stack:**
+
+- `react-grid-layout@2.x` (~80kb gzipped). API v2 sin `WidthProvider` — usa el hook `useContainerWidth`.
+- Persistencia: localStorage como cache + DB (model `UserDashboardLayout`) como source of truth cross-device.
+
+**Arquitectura:** [src/components/dashboard/](src/components/dashboard/)
+
+- `DashboardGrid` — wrapper de `Responsive` de react-grid-layout. Recibe `layouts` por breakpoint (lg/md/sm/xs/xxs), `widgetProps` por id, flag `editing`, callbacks `onLayoutsChange` + `onRemoveWidget`.
+- `Widget` — panel premium con header (icono + title + actions), drag handle (visible solo en editing) y remove btn. Si vive en un grid, lee meta via `DashboardItemContext`; si no, acepta props.
+- `WidgetRegistry` — registro singleton donde cada feature registra sus widgets con id + categoria + roles + modos + defaultSize + Component.
+- `useDashboardLayout(key, defaults)` — hook con persistencia 3-capas (server > localStorage > defaults). Debounce 600ms al server. Si no auth, cae a localStorage solo.
+- `DashboardEditToolbar` — toggle "Editar layout"/"Listo" + "Agregar widget" + "Reset".
+- `WidgetPickerDrawer` — drawer con widgets del registry filtrados por roles/modo/categoria.
+
+**Vistas dashboard implementadas (todas opt-in via URL alterna, la vista clasica queda intacta):**
+
+| Vista             | Ruta                       | Widgets                                                      | dashboardKey    |
+| ----------------- | -------------------------- | ------------------------------------------------------------ | --------------- |
+| Perfil de usuario | `/perfil/dashboard`        | Overview, Ratings, RecentlyCompleted, Notifications, MyCases | `profile`       |
+| Detalle de titulo | `/catalogo/[id]/dashboard` | Hero, Info, Actors, Ratings                                  | `series-detail` |
+| Catalogo          | `/catalogo/dashboard`      | Stats globales, RecentlyAdded                                | `catalogo`      |
+| Admin home        | `/admin/dashboard`         | KPIs, Alerts                                                 | `admin-home`    |
+
+**Como agregar una vista dashboard nueva:**
+
+1. Crear `src/app/<ruta>/dashboard/page.tsx` (Server Component) que fetchea data y pasa al Client.
+2. Crear `DashboardClient.tsx` (Client) que: (a) registra los widgets en `WidgetRegistry` con `useMemo`; (b) usa `useDashboardLayout('<key>', DEFAULT_LAYOUTS)`; (c) pasa `widgetProps` a `<DashboardGrid>`.
+3. Crear cada widget en `widgets/<NombreWidget>/<NombreWidget>.tsx` envolviendo el contenido en `<Widget>`. Recibir datos por props.
+4. Agregar las i18n keys del dashboard (`<vista>Dashboard.*`) al shape de `messages.ts` y los 10 locales.
+5. Agregar un link "Ver dashboard" desde la vista clasica.
+
+**Persistencia DB:** [src/app/api/user/dashboards/[key]/route.ts](src/app/api/user/dashboards/[key]/route.ts) — GET/PUT/DELETE. Scoped por `session.user.id`. El hook `useDashboardLayout` hace write-through automatico cuando el usuario esta autenticado.
 
 ### Agregar una integracion externa (API de terceros)
 
