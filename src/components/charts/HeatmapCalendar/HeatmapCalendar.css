@@ -1,0 +1,48 @@
+.mb-heatmap-calendar {
+  --mb-heatmap-base: var(--primary-color);
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.mb-heatmap-calendar__grid {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.mb-heatmap-calendar__week {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.mb-heatmap-calendar__cell {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  background: var(--bg-spotlight);
+  transition: transform var(--transition-fast);
+}
+
+.mb-heatmap-calendar__cell:hover {
+  transform: scale(1.4);
+  z-index: 1;
+}
+
+.mb-heatmap-calendar__cell--lvl-0 {
+  background: var(--bg-spotlight);
+  border: 1px solid var(--border-color-secondary);
+}
+.mb-heatmap-calendar__cell--lvl-1 {
+  background: color-mix(in srgb, var(--mb-heatmap-base) 25%, transparent);
+}
+.mb-heatmap-calendar__cell--lvl-2 {
+  background: color-mix(in srgb, var(--mb-heatmap-base) 50%, transparent);
+}
+.mb-heatmap-calendar__cell--lvl-3 {
+  background: color-mix(in srgb, var(--mb-heatmap-base) 75%, transparent);
+}
+.mb-heatmap-calendar__cell--lvl-4 {
+  background: var(--mb-heatmap-base);
+}
