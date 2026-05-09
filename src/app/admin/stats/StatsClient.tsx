@@ -17,6 +17,7 @@ import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { AdminNav } from '../AdminNav';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
+import { DonutChart, LineChart } from '@/components/charts';
 import '../admin.css';
 import './stats.css';
 
@@ -59,6 +60,10 @@ interface StatsData {
     rated: RatedItem[];
   };
   activeUsers: ActiveUser[];
+  distribution?: {
+    byType: Array<{ type: string; count: number }>;
+    completedByDay: Array<{ day: string; count: number }>;
+  };
 }
 
 const ROLE_COLORS: Record<string, string> = {
@@ -249,6 +254,58 @@ export function StatsClient() {
                   label={t('adminStats.commentsThisWeek')}
                 />
               </div>
+
+              {/* Charts: distribution by type + completed by day */}
+              {data.distribution && (
+                <div className="stats-charts">
+                  {data.distribution.byType.length > 0 && (
+                    <div className="stats-charts__panel">
+                      <div className="stats-charts__title">
+                        {t('adminStats.chartByTypeTitle')}
+                      </div>
+                      <DonutChart
+                        data={data.distribution.byType.map((row) => ({
+                          name: row.type,
+                          value: row.count,
+                        }))}
+                        centerLabel={{
+                          value: data.distribution.byType.reduce(
+                            (s, r) => s + r.count,
+                            0
+                          ),
+                          sublabel: t('adminStats.chartTotalSeries'),
+                        }}
+                      />
+                    </div>
+                  )}
+                  {data.distribution.completedByDay.length > 0 && (
+                    <div className="stats-charts__panel">
+                      <div className="stats-charts__title">
+                        {t('adminStats.chartCompletedByDayTitle')}
+                      </div>
+                      <LineChart
+                        data={data.distribution.completedByDay}
+                        xAxisKey="day"
+                        series={[
+                          {
+                            dataKey: 'count',
+                            name: t('adminStats.chartCompletedSeriesLabel'),
+                          },
+                        ]}
+                        height={220}
+                        smooth
+                        tooltipFormatter={(value, name) => [
+                          value === undefined ? '' : String(value),
+                          name,
+                        ]}
+                        tooltipLabelFormatter={(label) =>
+                          label === undefined ? '' : String(label)
+                        }
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Rankings */}
               <div className="stats-rankings">

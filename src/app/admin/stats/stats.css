@@ -243,3 +243,40 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ─── Charts panel ─────────────────────────────────────────────────── */
+.stats-charts {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) 2fr;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+@media (max-width: 768px) {
+  .stats-charts {
+    grid-template-columns: 1fr;
+  }
+}
+
+.stats-charts__panel {
+  background: var(--bg-container);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-md);
+  box-shadow: var(--box-shadow-card);
+}
+
+.stats-charts__title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+html[data-skin='premium'][data-theme='dark'] .stats-charts__panel {
+  background: var(--mb-panel);
+  border-color: var(--mb-border);
+  box-shadow: var(--mb-shadow-soft);
+}

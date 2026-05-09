@@ -1451,6 +1451,10 @@ const it: TranslationShape = {
     badgeCompleted: '{n} completati',
     badgeFavorited: '{n} preferiti',
     badgeCommented: '{n} commenti',
+    chartByTypeTitle: 'Serie per tipo',
+    chartTotalSeries: 'serie totali',
+    chartCompletedByDayTitle: 'Serie completate (ultimi 30 giorni)',
+    chartCompletedSeriesLabel: 'Completate',
   },
   adminTable: {
     searchPlaceholder: 'Cerca per titolo, paese o tipo...',

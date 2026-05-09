@@ -23,6 +23,8 @@ export async function GET() {
       topCommented,
       topRated,
       activeUsers,
+      seriesByType,
+      completedByDay,
     ] = await Promise.all([
       // Total users (not banned)
       prisma.user.count({ where: { banned: false } }),
@@ -114,6 +116,26 @@ export async function GET() {
         orderBy: { name: 'asc' },
         take: 20,
       }),
+
+      // Distribucion de series por tipo (en el catalogo entero).
+      prisma.series.groupBy({
+        by: ['type'],
+        _count: { id: true },
+        orderBy: { _count: { id: 'desc' } },
+      }),
+
+      // Series completadas por dia (ultimos 30 dias) — viewStatus VISTA.
+      // Usamos $queryRaw para agrupar por fecha truncada porque Prisma
+      // no expone date_trunc nativo.
+      prisma.$queryRaw<Array<{ day: Date; count: bigint }>>`
+        SELECT date_trunc('day', "updatedAt") AS day, COUNT(*) AS count
+        FROM "ViewStatus"
+        WHERE "status" = 'VISTA'
+          AND "updatedAt" >= ${thirtyDaysAgo}
+          AND "seriesId" IS NOT NULL
+        GROUP BY day
+        ORDER BY day ASC
+      `,
     ]);
 
     // Resolve series titles for each ranking
@@ -171,6 +193,16 @@ export async function GET() {
           })),
       },
       activeUsers,
+      distribution: {
+        byType: seriesByType.map((row) => ({
+          type: row.type,
+          count: row._count.id,
+        })),
+        completedByDay: completedByDay.map((row) => ({
+          day: row.day.toISOString().slice(0, 10),
+          count: Number(row.count),
+        })),
+      },
     });
   } catch (error) {
     console.error('Error fetching admin stats:', error);
