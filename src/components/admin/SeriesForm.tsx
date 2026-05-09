@@ -1349,9 +1349,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
               title="🧱 Bloques de informacion adicional"
               style={{ marginBottom: 24 }}
             >
-              <SeriesInfoBlocksManager
-                seriesId={initialData.id as number}
-              />
+              <SeriesInfoBlocksManager seriesId={initialData.id as number} />
             </Card>
           )}
 

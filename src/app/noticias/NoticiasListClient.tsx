@@ -55,29 +55,32 @@ export function NoticiasListClient({
   const [activeSearch, setActiveSearch] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const fetchPage = useCallback(async (nextPage: number, q: string) => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({
-        page: String(nextPage),
-        pageSize: String(PAGE_SIZE),
-      });
-      if (q) params.set('q', q);
-      const res = await fetch(`/api/news?${params.toString()}`);
-      if (!res.ok) throw new Error(t('noticiasList.fetchError'));
-      const data = (await res.json()) as {
-        news: NewsItem[];
-        total: number;
-      };
-      setNews(data.news);
-      setTotal(data.total);
-      setPage(nextPage);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  }, [t]);
+  const fetchPage = useCallback(
+    async (nextPage: number, q: string) => {
+      setLoading(true);
+      try {
+        const params = new URLSearchParams({
+          page: String(nextPage),
+          pageSize: String(PAGE_SIZE),
+        });
+        if (q) params.set('q', q);
+        const res = await fetch(`/api/news?${params.toString()}`);
+        if (!res.ok) throw new Error(t('noticiasList.fetchError'));
+        const data = (await res.json()) as {
+          news: NewsItem[];
+          total: number;
+        };
+        setNews(data.news);
+        setTotal(data.total);
+        setPage(nextPage);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [t]
+  );
 
   const handleSearch = () => {
     setActiveSearch(searchInput);

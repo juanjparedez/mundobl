@@ -54,7 +54,7 @@ export function SeriesDetailClient({
       ? [
           {
             key: 'seasons',
-            label: `${t('seriesDetail.seasonLabel')} (${seasonCount})`,
+            label: `${seasonLabel} (${seasonCount})`,
             icon: <PlayCircleOutlined />,
             content: <div className="seasons-tab">{seasonsSection}</div>,
           },
@@ -82,7 +82,10 @@ export function SeriesDetailClient({
 
   return (
     <div className="series-detail-sections">
-      <nav className="series-detail-sections__nav" aria-label={t('seriesDetail.seriesSectionsAriaLabel')}>
+      <nav
+        className="series-detail-sections__nav"
+        aria-label={t('seriesDetail.seriesSectionsAriaLabel')}
+      >
         {sectionItems.map((section) => (
           <a
             key={section.key}

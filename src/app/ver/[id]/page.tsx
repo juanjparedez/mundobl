@@ -78,10 +78,7 @@ export default async function VerSeriePage({ params }: PageProps) {
     notFound();
   }
 
-  const totalEpisodes = seasons.reduce(
-    (acc, s) => acc + s.episodes.length,
-    0
-  );
+  const totalEpisodes = seasons.reduce((acc, s) => acc + s.episodes.length, 0);
 
   return (
     <AppLayout>

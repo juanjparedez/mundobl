@@ -70,7 +70,9 @@ export function ProfileSettings() {
       setNicknameInitial(data.nickname ?? '');
       message.success(t('profileSettings.nicknameUpdated'));
     } catch (e) {
-      message.error(e instanceof Error ? e.message : t('profileSettings.saveError'));
+      message.error(
+        e instanceof Error ? e.message : t('profileSettings.saveError')
+      );
     } finally {
       setBusy(null);
     }

@@ -13,7 +13,11 @@ export function AccentPicker() {
   const { accent, setAccent } = useTheme();
 
   return (
-    <div className="accent-picker" role="group" aria-label={t('accentPicker.colorThemeLabel')}>
+    <div
+      className="accent-picker"
+      role="group"
+      aria-label={t('accentPicker.colorThemeLabel')}
+    >
       {ACCENT_KEYS.map((key) => {
         const preset = ACCENT_PRESETS[key];
         const isActive = key === accent;

@@ -47,9 +47,12 @@ export function SeriesSubscribeButton({
       const res = await fetch(`/api/series/${seriesId}/subscribe`, {
         method: next ? 'POST' : 'DELETE',
       });
-      if (!res.ok) throw new Error(t('seriesSubscribeButton.subscribeFailedError'));
+      if (!res.ok)
+        throw new Error(t('seriesSubscribeButton.subscribeFailedError'));
       message.success(
-        next ? t('seriesSubscribeButton.subscribeSuccessMessage') : t('seriesSubscribeButton.unsubscribeSuccessMessage')
+        next
+          ? t('seriesSubscribeButton.subscribeSuccessMessage')
+          : t('seriesSubscribeButton.unsubscribeSuccessMessage')
       );
     } catch {
       setSubscribed(!next);

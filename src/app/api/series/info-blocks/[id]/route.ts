@@ -67,7 +67,10 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
     }
 
     if (Object.prototype.hasOwnProperty.call(body, 'sortOrder')) {
-      if (typeof body.sortOrder !== 'number' || !Number.isFinite(body.sortOrder)) {
+      if (
+        typeof body.sortOrder !== 'number' ||
+        !Number.isFinite(body.sortOrder)
+      ) {
         return NextResponse.json(
           { error: 'sortOrder debe ser numero' },
           { status: 400 }

@@ -238,12 +238,15 @@ export function NoticiasClient() {
       }
 
       message.success(
-        isEdit ? t('newsAdmin.newsUpdatedSuccess') : t('newsAdmin.newsCreatedSuccess')
+        isEdit
+          ? t('newsAdmin.newsUpdatedSuccess')
+          : t('newsAdmin.newsCreatedSuccess')
       );
       setIsFormOpen(false);
       await fetchData();
     } catch (error) {
-      const msg = error instanceof Error ? error.message : t('newsAdmin.errorSavingNews');
+      const msg =
+        error instanceof Error ? error.message : t('newsAdmin.errorSavingNews');
       message.error(msg);
     } finally {
       setIsSaving(false);
@@ -284,7 +287,10 @@ export function NoticiasClient() {
       setIsFormOpen(true);
       message.success(t('newsAdmin.aiSummarySuccess'));
     } catch (error) {
-      const msg = error instanceof Error ? error.message : t('newsAdmin.aiGenerationError');
+      const msg =
+        error instanceof Error
+          ? error.message
+          : t('newsAdmin.aiGenerationError');
       message.error(msg);
     } finally {
       setIsGenerating(false);
@@ -447,7 +453,8 @@ export function NoticiasClient() {
           current: page,
           pageSize: PAGE_SIZE,
           total,
-          showTotal: (t_total) => t('newsAdmin.paginationTotal', { total: t_total }),
+          showTotal: (t_total) =>
+            t('newsAdmin.paginationTotal', { total: t_total }),
           onChange: (p) => setPage(p),
         }}
         className="noticias-admin__table"
@@ -475,7 +482,9 @@ export function NoticiasClient() {
                 {t('newsAdmin.viewSourceButton')}
               </Button>
             )}
-            <Button onClick={() => setPreviewRow(null)}>{t('newsAdmin.closeButton')}</Button>
+            <Button onClick={() => setPreviewRow(null)}>
+              {t('newsAdmin.closeButton')}
+            </Button>
           </Space>
         }
         width={680}
@@ -491,7 +500,8 @@ export function NoticiasClient() {
               />
             )}
             <p className="noticias-admin__preview-source">
-              {t('newsAdmin.previewSourceLabel')} <strong>{previewRow.sourceName}</strong>
+              {t('newsAdmin.previewSourceLabel')}{' '}
+              <strong>{previewRow.sourceName}</strong>
               {previewRow.publishedAt && (
                 <>
                   {' '}
@@ -512,7 +522,8 @@ export function NoticiasClient() {
             )}
             {previewRow.florNotes && (
               <div className="noticias-admin__preview-notes">
-                <strong>{t('newsAdmin.previewPrivateNotesLabel')}</strong> {previewRow.florNotes}
+                <strong>{t('newsAdmin.previewPrivateNotesLabel')}</strong>{' '}
+                {previewRow.florNotes}
               </div>
             )}
           </div>
@@ -522,7 +533,9 @@ export function NoticiasClient() {
       {/* ── Modal form crear/editar ── */}
       <Modal
         title={
-          editingRow ? t('newsAdmin.editNewsModalTitle', { id: editingRow.id }) : t('newsAdmin.newNewsModalTitle')
+          editingRow
+            ? t('newsAdmin.editNewsModalTitle', { id: editingRow.id })
+            : t('newsAdmin.newNewsModalTitle')
         }
         open={isFormOpen}
         onCancel={() => setIsFormOpen(false)}
@@ -547,7 +560,9 @@ export function NoticiasClient() {
           <Form.Item
             label={t('newsAdmin.summaryLabel')}
             name="summary"
-            rules={[{ required: true, message: t('newsAdmin.summaryRequired') }]}
+            rules={[
+              { required: true, message: t('newsAdmin.summaryRequired') },
+            ]}
           >
             <Input.TextArea
               rows={6}
@@ -621,17 +636,21 @@ export function NoticiasClient() {
             </Form.Item>
           </div>
 
-          <Form.Item
-            label={t('newsAdmin.privateNotesLabel')}
-            name="florNotes"
-          >
-            <Input.TextArea rows={2} placeholder={t('newsAdmin.privateNotesPlaceholder')} />
+          <Form.Item label={t('newsAdmin.privateNotesLabel')} name="florNotes">
+            <Input.TextArea
+              rows={2}
+              placeholder={t('newsAdmin.privateNotesPlaceholder')}
+            />
           </Form.Item>
 
           <div className="noticias-admin__form-actions">
-            <Button onClick={() => setIsFormOpen(false)}>{t('newsAdmin.cancelButton')}</Button>
+            <Button onClick={() => setIsFormOpen(false)}>
+              {t('newsAdmin.cancelButton')}
+            </Button>
             <Button type="primary" htmlType="submit" loading={isSaving}>
-              {editingRow ? t('newsAdmin.saveChangesButton') : t('newsAdmin.createNewsButton')}
+              {editingRow
+                ? t('newsAdmin.saveChangesButton')
+                : t('newsAdmin.createNewsButton')}
             </Button>
           </div>
         </Form>
@@ -682,7 +701,9 @@ export function NoticiasClient() {
             />
           </Form.Item>
           <div className="noticias-admin__form-actions">
-            <Button onClick={() => setIsAiOpen(false)}>{t('newsAdmin.cancelButton')}</Button>
+            <Button onClick={() => setIsAiOpen(false)}>
+              {t('newsAdmin.cancelButton')}
+            </Button>
             <Button
               type="primary"
               htmlType="submit"

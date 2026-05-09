@@ -69,7 +69,11 @@ function staticPages(): MetadataRoute.Sitemap {
     { url: `${BASE_URL}/ver`, changeFrequency: 'daily', priority: 0.9 },
     { url: `${BASE_URL}/noticias`, changeFrequency: 'daily', priority: 0.85 },
     { url: `${BASE_URL}/novedades`, changeFrequency: 'daily', priority: 0.8 },
-    { url: `${BASE_URL}/estadisticas`, changeFrequency: 'weekly', priority: 0.6 },
+    {
+      url: `${BASE_URL}/estadisticas`,
+      changeFrequency: 'weekly',
+      priority: 0.6,
+    },
     { url: `${BASE_URL}/sitios`, changeFrequency: 'monthly', priority: 0.5 },
     { url: `${BASE_URL}/creditos`, changeFrequency: 'monthly', priority: 0.4 },
     { url: `${BASE_URL}/legal`, changeFrequency: 'yearly', priority: 0.3 },

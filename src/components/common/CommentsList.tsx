@@ -97,7 +97,9 @@ export function CommentsList({
       setNewComment('');
       setIsPrivate(false);
       message.success(
-        isPrivate ? t('commentsList.successPrivate') : t('commentsList.successPublic')
+        isPrivate
+          ? t('commentsList.successPrivate')
+          : t('commentsList.successPublic')
       );
     } catch (error) {
       message.error(t('commentsList.errorSave'));
@@ -176,7 +178,9 @@ export function CommentsList({
           <TextArea
             rows={3}
             placeholder={
-              isPrivate ? t('commentsList.placeholderPrivate') : defaultPlaceholder
+              isPrivate
+                ? t('commentsList.placeholderPrivate')
+                : defaultPlaceholder
             }
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
@@ -260,7 +264,9 @@ export function CommentsList({
         <TextArea
           rows={4}
           placeholder={
-            isPrivate ? t('commentsList.placeholderPrivate') : defaultPlaceholder
+            isPrivate
+              ? t('commentsList.placeholderPrivate')
+              : defaultPlaceholder
           }
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}

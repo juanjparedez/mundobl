@@ -515,7 +515,12 @@ export function EpisodesList({
                     </div>
 
                     <div className="episodes-table__cell episodes-table__cell--actions">
-                      <Tooltip title={interpolateMessage(t('episodesList.tooltipComments'), { n: String(commentCount) })}>
+                      <Tooltip
+                        title={interpolateMessage(
+                          t('episodesList.tooltipComments'),
+                          { n: String(commentCount) }
+                        )}
+                      >
                         <Button
                           type="text"
                           size="small"
@@ -596,7 +601,9 @@ export function EpisodesList({
                     <SpoilerGate
                       hide={!isWatched}
                       cacheKey={`ep-synopsis-${episode.id}`}
-                      reason={t('episodesList.spoilerGateReasonEpisodeNotWatched')}
+                      reason={t(
+                        'episodesList.spoilerGateReasonEpisodeNotWatched'
+                      )}
                     >
                       <div className="episodes-table__synopsis-preview">
                         {episode.synopsis}
@@ -611,7 +618,9 @@ export function EpisodesList({
                         <SpoilerGate
                           hide={!isWatched}
                           cacheKey={`ep-synopsis-full-${episode.id}`}
-                          reason={t('episodesList.spoilerGateReasonEpisodeNotWatched')}
+                          reason={t(
+                            'episodesList.spoilerGateReasonEpisodeNotWatched'
+                          )}
                         >
                           <p className="episodes-table__synopsis">
                             {episode.synopsis}
@@ -691,11 +700,21 @@ export function EpisodesList({
             >
               <Input placeholder={t('episodesList.embedUrlPlaceholder')} />
             </Form.Item>
-            <Form.Item label={t('episodesList.embedChannelNameLabel')} name="embedChannelName">
-              <Input placeholder={t('episodesList.embedChannelNamePlaceholder')} />
+            <Form.Item
+              label={t('episodesList.embedChannelNameLabel')}
+              name="embedChannelName"
+            >
+              <Input
+                placeholder={t('episodesList.embedChannelNamePlaceholder')}
+              />
             </Form.Item>
-            <Form.Item label={t('episodesList.embedChannelUrlLabel')} name="embedChannelUrl">
-              <Input placeholder={t('episodesList.embedChannelUrlPlaceholder')} />
+            <Form.Item
+              label={t('episodesList.embedChannelUrlLabel')}
+              name="embedChannelUrl"
+            >
+              <Input
+                placeholder={t('episodesList.embedChannelUrlPlaceholder')}
+              />
             </Form.Item>
           </div>
 
