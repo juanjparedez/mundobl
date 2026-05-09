@@ -7,10 +7,24 @@
 .series-info__synopsis,
 .series-info__review,
 .series-info__observations,
-.series-info__related {
+.series-info__related,
+.series-info__block {
   padding: var(--spacing-md);
   background: var(--bg-base);
   border-radius: var(--border-radius);
+}
+
+.series-info__blocks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.series-info__block-body {
+  margin-top: var(--spacing-md);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .series-info__section-title {

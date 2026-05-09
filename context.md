@@ -382,6 +382,7 @@ import { getAllSeries, getSeriesById, searchSeriesByTitle } from '@/lib/database
 - `ViewStatus` - Estado de visualizacion (`WatchStatus` enum, por usuario)
 
 **Modelos de contenido:**
+- `SeriesInfoBlock` - Cards labeladas libres por serie ("Basado en", "Curiosidades", "Premios"...). Render publico solo si tiene contenido. Editables desde `/admin/series/[id]/editar` via `SeriesInfoBlocksManager`.
 - `EmbeddableContent` - Contenido embebido (trailers, OSTs, entrevistas)
 - `RecommendedSite` - Sitios recomendados curados por admin
 - `SuggestedSite` - Sitios sugeridos por la comunidad

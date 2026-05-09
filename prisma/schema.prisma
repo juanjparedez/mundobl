@@ -216,6 +216,26 @@ model Series {
   relatedSeriesTo   RelatedSeries[]     @relation("relatedSeries")
   reviews           Review[]
   subscriptions     SeriesSubscription[]
+  infoBlocks        SeriesInfoBlock[]
+}
+
+// Bloques de informacion adicionales por serie. Cards labeladas y libres
+// que el admin (Flor) puede agregar de a poco: "Basado en", "Curiosidades",
+// "Premios", "Polemica", "Fun facts", lo que sea. Se renderizan publicamente
+// solo si tienen contenido — sin necesidad de agregar un campo nuevo al
+// schema de Series cada vez que aparece un tipo de info nuevo.
+model SeriesInfoBlock {
+  id        Int      @id @default(autoincrement())
+  label     String   // "Basado en", "Curiosidades", "Premios", etc.
+  body      String   // Plain text con saltos de linea preservados
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  seriesId Int
+  series   Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+
+  @@index([seriesId, sortOrder])
 }
 
 // ============================================

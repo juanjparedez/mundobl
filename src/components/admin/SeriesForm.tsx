@@ -37,6 +37,7 @@ import {
   SeriesContentManager,
   type PendingContentItem,
 } from './SeriesContentManager/SeriesContentManager';
+import { SeriesInfoBlocksManager } from './SeriesInfoBlocksManager/SeriesInfoBlocksManager';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
@@ -1341,6 +1342,18 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
               />
             )}
           </Card>
+
+          {mode === 'edit' && initialData?.id && (
+            <Card
+              type="inner"
+              title="🧱 Bloques de informacion adicional"
+              style={{ marginBottom: 24 }}
+            >
+              <SeriesInfoBlocksManager
+                seriesId={initialData.id as number}
+              />
+            </Card>
+          )}
 
           {/* Botones de acción */}
           <Form.Item>

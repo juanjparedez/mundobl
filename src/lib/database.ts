@@ -303,6 +303,9 @@ export async function getSeriesById(id: number) {
           tag: true,
         },
       },
+      infoBlocks: {
+        orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }],
+      },
       productionCompany: true,
       originalLanguage: true,
       dubbings: {
