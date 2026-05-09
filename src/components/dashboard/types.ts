@@ -1,5 +1,6 @@
 import type { ComponentType, ReactNode } from 'react';
 import type { Role } from '@/generated/prisma';
+import type { TranslationKey } from '@/i18n/messages';
 
 /** Breakpoints estandar usados por DashboardGrid (matchea react-grid-layout). */
 export const DASHBOARD_BREAKPOINTS = {
@@ -55,10 +56,12 @@ export interface WidgetDefinition<TProps = Record<string, unknown>> {
   roles?: Role[];
   /** Variantes de modo (consumer = vista normal, creator = enfocado en producir). */
   modes?: WidgetMode[];
-  /** Etiqueta visible — clave i18n: la pagina la pasa por t() al renderizar. */
-  labelKey: string;
-  /** Descripcion corta — clave i18n. */
-  descriptionKey?: string;
+  /** Etiqueta visible — clave i18n: el caller la pasa por t() al renderizar.
+   *  Tipada a TranslationKey para forzar disciplina (la key tiene que estar
+   *  en el shape de los 10 locales). */
+  labelKey: TranslationKey;
+  /** Descripcion corta — clave i18n (misma disciplina). */
+  descriptionKey?: TranslationKey;
   /** Tamaño por defecto al agregar al grid. */
   defaultSize: {
     w: number;
@@ -88,7 +91,7 @@ export interface DashboardPreset {
   /** id estable. */
   id: string;
   /** Clave i18n para el nombre visible. */
-  labelKey: string;
+  labelKey: TranslationKey;
   /** Layouts por breakpoint. */
   layouts: DashboardLayouts;
   /** Modo asociado (para filtrar widgets disponibles al editarlo). */

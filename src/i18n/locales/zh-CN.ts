@@ -2088,6 +2088,17 @@ const zhCN: TranslationShape = {
   dashboard: {
     dragHandleAria: '拖动小组件',
     removeWidgetAria: '移除小组件',
+    editLayout: '编辑布局',
+    doneEditing: '完成',
+    addWidget: '添加小组件',
+    resetLayout: '重置',
+    resetConfirmTitle: '是否重置为默认布局？',
+    resetConfirmDescription: '你将丢失所做的位置和大小更改。',
+    resetConfirmOk: '重置',
+    resetConfirmCancel: '取消',
+    pickerTitle: '添加小组件',
+    pickerEmpty: '没有可添加的小组件。',
+    pickerAlreadyAdded: '已在你的仪表板中',
   },
 } as TranslationShape;
 

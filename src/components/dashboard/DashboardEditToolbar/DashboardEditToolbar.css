@@ -1,0 +1,30 @@
+.mb-dashboard-edit-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.mb-dashboard-edit-toolbar__start {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex: 1;
+  min-width: 0;
+}
+
+.mb-dashboard-edit-toolbar__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-left: auto;
+}
+
+@media (max-width: 640px) {
+  .mb-dashboard-edit-toolbar__actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
