@@ -136,6 +136,20 @@ Soporta 8 plataformas para reproducir/parsear:
 
 - Paquete `web-push`. Suscripciones en `PushSubscription` model. Server actions en [src/lib/push-server.ts](src/lib/push-server.ts) (si existe).
 
+### SEO (robots + sitemap segmentado)
+
+- [src/app/robots.ts](src/app/robots.ts): permite contenido publico, bloquea admin/api/perfil/notificaciones/watching/auth/scanners. Apunta a `/sitemap.xml`.
+- [src/app/sitemap.ts](src/app/sitemap.ts): usa `generateSitemaps()` para segmentar en 7 sub-sitemaps:
+  - `/sitemap/0.xml` static (home, /catalogo, /ver, /noticias, /novedades, /sitios, /creditos, /legal, /feedback, /estadisticas)
+  - `/sitemap/1.xml` series — solo `catalogScope: 'PERSONAL'` (las del catalogo curado)
+  - `/sitemap/2.xml` noticias — solo `status: 'PUBLISHED'`
+  - `/sitemap/3.xml` ver — series con al menos un `Episode.embedUrl`
+  - `/sitemap/4.xml` actores
+  - `/sitemap/5.xml` directores
+  - `/sitemap/6.xml` tags
+- Next.js genera automaticamente `/sitemap.xml` como sitemap-index que apunta a los 7.
+- `lastModified` por entidad sale de `updatedAt` → acelera re-crawl de lo que cambia.
+
 ---
 
 ## Flujos de Catalogo (PERSONAL vs WATCHABLE_ONLY)
