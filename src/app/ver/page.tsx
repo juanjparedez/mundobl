@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
+import { JsonLd } from '@/components/seo/JsonLd';
+import type { CollectionPage } from 'schema-dts';
 import { getWatchableSeries } from '@/lib/database';
 import { VerPage } from './VerPage';
 import './ver.css';
@@ -60,6 +62,30 @@ export default async function VerPageRoute() {
 
   return (
     <AppLayout>
+      <JsonLd<CollectionPage>
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'CollectionPage',
+          name: 'Ver Series BL Completas',
+          description: VER_DESCRIPTION,
+          url: 'https://mundobl.com.ar/ver',
+          isPartOf: {
+            '@type': 'WebSite',
+            name: 'MundoBL',
+            url: 'https://mundobl.com.ar',
+          },
+          mainEntity: {
+            '@type': 'ItemList',
+            numberOfItems: items.length,
+            itemListElement: items.slice(0, 20).map((s, i) => ({
+              '@type': 'ListItem',
+              position: i + 1,
+              url: `https://mundobl.com.ar/ver/${s.id}`,
+              name: s.title,
+            })),
+          },
+        }}
+      />
       <div className="ver-page">
         <Breadcrumbs items={[{ name: 'Inicio', href: '/' }, { name: 'Ver' }]} />
         <VerPage items={items} />

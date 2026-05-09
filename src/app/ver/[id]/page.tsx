@@ -5,6 +5,8 @@ import { Button } from 'antd';
 import { LeftOutlined } from '@ant-design/icons';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
+import { JsonLd } from '@/components/seo/JsonLd';
+import type { TVSeries } from 'schema-dts';
 import { getWatchableSeriesById } from '@/lib/database';
 import { VerSerieClient } from './VerSerieClient';
 import './ver-serie.css';
@@ -76,8 +78,41 @@ export default async function VerSeriePage({ params }: PageProps) {
     notFound();
   }
 
+  const totalEpisodes = seasons.reduce(
+    (acc, s) => acc + s.episodes.length,
+    0
+  );
+
   return (
     <AppLayout>
+      <JsonLd<TVSeries>
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'TVSeries',
+          name: serie.title,
+          ...(serie.originalTitle && { alternateName: serie.originalTitle }),
+          ...(serie.synopsis && { description: serie.synopsis }),
+          ...(serie.imageUrl && { image: serie.imageUrl }),
+          ...(serie.year && { datePublished: String(serie.year) }),
+          ...(serie.country?.name && {
+            countryOfOrigin: {
+              '@type': 'Country',
+              name: serie.country.name,
+            },
+          }),
+          ...(serie.genres &&
+            serie.genres.length > 0 && {
+              genre: serie.genres.map((sg) => sg.genre.name),
+            }),
+          numberOfSeasons: seasons.length,
+          numberOfEpisodes: totalEpisodes,
+          potentialAction: {
+            '@type': 'WatchAction',
+            target: `https://mundobl.com.ar/ver/${serie.id}`,
+          },
+          url: `https://mundobl.com.ar/ver/${serie.id}`,
+        }}
+      />
       <div className="ver-serie-page">
         <Breadcrumbs
           items={[
