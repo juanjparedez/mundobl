@@ -1,274 +1,113 @@
-/* ============================================
-   Mejoras de contraste para modo oscuro
-   ============================================ */
+/* ────────────────────────────────────────────────────────────────────
+ * Mejoras de contraste para modo oscuro.
+ *
+ * NOTA: la mayoria del look-and-feel de AntD ya se controla desde
+ * `src/lib/theme.config.ts` via ConfigProvider (Input, Select, Card,
+ * Modal, Table, Tabs, Drawer, Tag, Tooltip). Aca solo viven las reglas
+ * para componentes que AntD NO expone como token, o ajustes finos de
+ * estados especificos (form-item-explain, pagination, etc).
+ *
+ * Sin `!important`: gracias a que la skin/tema usa CSS vars y mayor
+ * especificidad declarada, podemos confiar en la cascada normal.
+ */
 
-/* --- Inputs --- */
-[data-theme='dark'] .ant-input,
-[data-theme='dark'] .ant-input-number,
-[data-theme='dark'] .ant-input-number-input,
-[data-theme='dark'] .ant-select-selector,
-[data-theme='dark'] .ant-picker,
-[data-theme='dark'] .ant-input-textarea textarea {
-  background-color: var(--bg-input) !important;
-  border-color: var(--border-color) !important;
-  color: var(--text-primary) !important;
-}
-
-[data-theme='dark'] .ant-input::placeholder,
-[data-theme='dark'] .ant-input-number-input::placeholder,
-[data-theme='dark'] .ant-input-textarea textarea::placeholder {
-  color: rgba(255, 255, 255, 0.38) !important;
-}
-
-[data-theme='dark'] .ant-input:hover,
-[data-theme='dark'] .ant-input-number:hover,
-[data-theme='dark'] .ant-select-selector:hover {
-  border-color: var(--primary-color-hover) !important;
-}
-
-[data-theme='dark'] .ant-input:focus,
-[data-theme='dark'] .ant-input-focused,
-[data-theme='dark'] .ant-input-number-focused,
-[data-theme='dark'] .ant-select-focused .ant-select-selector {
-  border-color: var(--primary-color) !important;
-  box-shadow: 0 0 0 2px var(--primary-color-outline) !important;
-}
-
-/* --- Select dropdown --- */
-[data-theme='dark'] .ant-select-dropdown {
-  background-color: var(--bg-elevated) !important;
-  border: 1px solid var(--border-color) !important;
-}
-
-[data-theme='dark'] .ant-select-item {
-  color: var(--text-primary) !important;
-}
-
-[data-theme='dark'] .ant-select-item-option-active {
-  background-color: rgba(255, 255, 255, 0.08) !important;
-}
-
-[data-theme='dark'] .ant-select-item-option-selected {
-  background-color: var(--primary-color-outline) !important;
-  font-weight: 600;
-}
-
-/* Select selection item (tags mode) */
-[data-theme='dark'] .ant-select-selection-item {
-  color: var(--text-primary) !important;
-}
-
-/* --- Cards --- */
-[data-theme='dark'] .ant-card {
-  background-color: var(--bg-container) !important;
-  border-color: var(--border-color) !important;
-}
-
-[data-theme='dark'] .ant-card-head {
-  border-bottom-color: var(--border-color) !important;
-  color: var(--text-primary) !important;
-}
-
-/* Inner cards: un nivel más elevado para crear jerarquía */
-[data-theme='dark'] .ant-card .ant-card {
-  background-color: var(--bg-elevated) !important;
-  border-color: var(--border-color) !important;
-}
-
-/* --- Form labels --- */
-[data-theme='dark'] .ant-form-item-label > label {
-  color: var(--text-primary) !important;
-}
-
+/* --- Form item: labels + explain + required asterisk ────────────── */
 [data-theme='dark'] .ant-form-item-extra,
 [data-theme='dark'] .ant-form-item-explain {
-  color: var(--text-tertiary) !important;
+  color: var(--text-tertiary);
 }
 
-/* Required asterisk */
 [data-theme='dark'] .ant-form-item-required::before {
-  color: var(--error-color) !important;
+  color: var(--error-color);
 }
 
-/* --- AutoComplete --- */
+/* --- AutoComplete (input dentro de select) ──────────────────────── */
 [data-theme='dark'] .ant-select-auto-complete .ant-input {
-  background-color: var(--bg-input) !important;
-  color: var(--text-primary) !important;
+  background-color: var(--bg-input);
+  color: var(--text-primary);
 }
 
-/* --- Table --- */
-[data-theme='dark'] .ant-table {
-  background-color: var(--bg-container) !important;
-}
-
-[data-theme='dark'] .ant-table-thead > tr > th {
-  background-color: var(--bg-elevated) !important;
-  color: var(--text-primary) !important;
-  border-bottom-color: var(--border-color) !important;
-}
-
-[data-theme='dark'] .ant-table-tbody > tr > td {
-  border-bottom-color: var(--border-color-secondary) !important;
-  color: var(--text-primary) !important;
-}
-
-[data-theme='dark'] .ant-table-tbody > tr:hover > td {
-  background-color: rgba(255, 255, 255, 0.06) !important;
-}
-
-/* --- Pagination --- */
+/* --- Pagination ─────────────────────────────────────────────────── */
 [data-theme='dark'] .ant-pagination-item {
-  background-color: var(--bg-elevated) !important;
-  border-color: var(--border-color) !important;
+  background-color: var(--bg-elevated);
+  border-color: var(--border-color);
 }
 
 [data-theme='dark'] .ant-pagination-item a {
-  color: var(--text-primary) !important;
+  color: var(--text-primary);
 }
 
 [data-theme='dark'] .ant-pagination-item-active {
-  background-color: var(--primary-color) !important;
-  border-color: var(--primary-color) !important;
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
 }
 
 [data-theme='dark'] .ant-pagination-item-active a {
-  color: #fff !important;
+  color: #fff;
 }
 
-/* --- Alert --- */
+/* --- Alert info (matchea accent activo) ──────────────────────────── */
 [data-theme='dark'] .ant-alert-info {
-  background-color: color-mix(
-    in srgb,
-    var(--info-color) 10%,
-    transparent
-  ) !important;
-  border: 1px solid color-mix(in srgb, var(--info-color) 20%, transparent) !important;
+  background-color: color-mix(in srgb, var(--info-color) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--info-color) 20%, transparent);
 }
 
 [data-theme='dark'] .ant-alert-info .ant-alert-icon {
-  color: var(--info-color) !important;
+  color: var(--info-color);
 }
 
-[data-theme='dark'] .ant-alert-message,
-[data-theme='dark'] .ant-alert-description {
-  color: var(--text-primary) !important;
-}
-
-/* --- Buttons --- */
+/* --- Button variants (default/dashed/text — no son tokens AntD) ──── */
 [data-theme='dark'] .ant-btn {
-  box-shadow: none !important;
-}
-
-[data-theme='dark'] .ant-btn-default {
-  background-color: rgba(255, 255, 255, 0.06) !important;
-  border-color: var(--border-color) !important;
-  color: var(--text-primary) !important;
+  box-shadow: none;
 }
 
 [data-theme='dark'] .ant-btn-default:hover {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-  border-color: var(--primary-color) !important;
-  color: var(--primary-color) !important;
+  border-color: var(--primary-color);
+  color: var(--primary-color);
 }
 
 [data-theme='dark'] .ant-btn-dashed {
-  background-color: transparent !important;
-  border-color: var(--border-color) !important;
-  color: var(--text-secondary) !important;
+  background-color: transparent;
+  border-color: var(--border-color);
+  color: var(--text-secondary);
 }
 
 [data-theme='dark'] .ant-btn-dashed:hover {
-  border-color: var(--primary-color) !important;
-  color: var(--primary-color) !important;
+  border-color: var(--primary-color);
+  color: var(--primary-color);
 }
 
 [data-theme='dark'] .ant-btn-text {
-  color: var(--text-secondary) !important;
+  color: var(--text-secondary);
 }
 
 [data-theme='dark'] .ant-btn-text:hover {
-  background-color: rgba(255, 255, 255, 0.08) !important;
-  color: var(--text-primary) !important;
+  background-color: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
 }
 
-/* --- Modal --- */
-[data-theme='dark'] .ant-modal-content {
-  background-color: var(--bg-container) !important;
-}
-
-[data-theme='dark'] .ant-modal-header {
-  background-color: var(--bg-container) !important;
-  border-bottom-color: var(--border-color) !important;
-}
-
-[data-theme='dark'] .ant-modal-title {
-  color: var(--text-primary) !important;
-}
-
-[data-theme='dark'] .ant-modal-body {
-  color: var(--text-primary) !important;
-}
-
-[data-theme='dark'] .ant-modal-footer {
-  border-top-color: var(--border-color) !important;
-}
-
-/* Confirm modal (Modal.confirm / Popconfirm) */
-[data-theme='dark'] .ant-modal-confirm-title {
-  color: var(--text-primary) !important;
-}
-
-[data-theme='dark'] .ant-modal-confirm-content {
-  color: var(--text-secondary) !important;
-}
-
-/* --- Popconfirm --- */
-[data-theme='dark'] .ant-popconfirm .ant-popover-inner {
-  background-color: var(--bg-container) !important;
-}
-
-[data-theme='dark'] .ant-popconfirm .ant-popover-message-title,
-[data-theme='dark'] .ant-popconfirm .ant-popconfirm-title {
-  color: var(--text-primary) !important;
-}
-
-[data-theme='dark'] .ant-popconfirm .ant-popconfirm-description {
-  color: var(--text-secondary) !important;
-}
-
-[data-theme='dark'] .ant-popover-inner {
-  background-color: var(--bg-container) !important;
-}
-
-[data-theme='dark'] .ant-popover-arrow::before,
-[data-theme='dark'] .ant-popover-arrow::after {
-  background-color: var(--bg-container) !important;
-}
-
-/* --- Divider --- */
+/* --- Divider ─────────────────────────────────────────────────────── */
 [data-theme='dark'] .ant-divider {
-  border-color: var(--border-color) !important;
+  border-color: var(--border-color);
 }
 
-/* --- Upload --- */
+/* --- Upload (dropzone) ──────────────────────────────────────────── */
 [data-theme='dark'] .ant-upload {
-  background-color: rgba(255, 255, 255, 0.04) !important;
-  border-color: var(--border-color) !important;
+  background-color: rgba(255, 255, 255, 0.04);
+  border-color: var(--border-color);
 }
 
 [data-theme='dark'] .ant-upload:hover {
-  border-color: var(--primary-color) !important;
+  border-color: var(--primary-color);
 }
 
-/* --- Tooltip --- */
-[data-theme='dark'] .ant-tooltip-inner {
-  background-color: var(--bg-elevated) !important;
-  color: var(--text-primary) !important;
+/* --- Inner cards: nested ant-card un nivel mas elevado ──────────── */
+[data-theme='dark'] .ant-card .ant-card {
+  background-color: var(--bg-elevated);
 }
 
-/* --- Tag --- */
-[data-theme='dark'] .ant-tag {
-  background-color: rgba(255, 255, 255, 0.08) !important;
-  border-color: var(--border-color-secondary) !important;
-  color: var(--text-primary) !important;
+/* --- Premium skin: refuerzo en pagination + tag para usar paleta */
+html[data-skin='premium'][data-theme='dark'] .ant-pagination-item {
+  background-color: var(--mb-panel-2);
+  border-color: var(--mb-border);
 }
