@@ -2228,6 +2228,9 @@ const fr: TranslationShape = {
     widgetCompletedByYearDesc: 'Courbe temporelle de vos séries terminées.',
     completedByYearEmpty: "Vous n'avez encore terminé aucune série.",
     completedByYearLabel: 'Terminées',
+    editProfile: 'Modifier le profil',
+    streak: 'Jours consécutifs',
+    totalEpisodes: 'Épisodes',
     loadError: 'Erreur lors du chargement de votre profil. Actualisez la page.',
   },
   serieDashboard: {

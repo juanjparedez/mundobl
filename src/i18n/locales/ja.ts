@@ -1755,6 +1755,9 @@ const ja: TranslationShape = {
     widgetCompletedByYearDesc: '完了したシリーズの時系列カーブ。',
     completedByYearEmpty: 'まだ完了したシリーズはありません。',
     completedByYearLabel: '完了',
+    editProfile: 'プロフィールを編集',
+    streak: '連続日数',
+    totalEpisodes: 'エピソード',
     loadError: 'プロフィールの読み込みエラー。ページを更新してください。',
   },
   serieDashboard: {
