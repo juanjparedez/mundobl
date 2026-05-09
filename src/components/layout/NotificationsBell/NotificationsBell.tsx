@@ -9,10 +9,18 @@ import { useUnreadNotifications } from '@/hooks/useUnreadNotifications';
 import './NotificationsBell.css';
 
 interface NotificationsBellProps {
+  /** 'sidebar' (default): boton ancho con icono + label.
+   *  'topbar': solo icono, layout compacto para el TopBar. */
+  variant?: 'sidebar' | 'topbar';
+  /** Solo aplica a variant='sidebar': oculta la label cuando el sidebar
+   *  esta colapsado. */
   collapsed?: boolean;
 }
 
-export function NotificationsBell({ collapsed }: NotificationsBellProps) {
+export function NotificationsBell({
+  variant = 'sidebar',
+  collapsed,
+}: NotificationsBellProps) {
   const router = useRouter();
   const { t } = useLocale();
   const { status } = useSession();
@@ -20,11 +28,17 @@ export function NotificationsBell({ collapsed }: NotificationsBellProps) {
 
   if (status !== 'authenticated') return null;
 
+  const isTopbar = variant === 'topbar';
+  const showLabel = !isTopbar && !collapsed;
+
   return (
-    <Tooltip title={t('notifications.openTitle')} placement="right">
+    <Tooltip
+      title={t('notifications.openTitle')}
+      placement={isTopbar ? 'bottom' : 'right'}
+    >
       <button
         type="button"
-        className="notifications-bell"
+        className={`notifications-bell notifications-bell--${variant}`}
         onClick={() => router.push('/notificaciones')}
         aria-label={t('notifications.openTitle')}
       >
@@ -33,7 +47,7 @@ export function NotificationsBell({ collapsed }: NotificationsBellProps) {
             {count > 0 ? <BellFilled /> : <BellOutlined />}
           </span>
         </Badge>
-        {!collapsed && (
+        {showLabel && (
           <span className="notifications-bell__label">
             {t('notifications.label')}
           </span>

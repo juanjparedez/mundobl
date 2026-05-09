@@ -126,8 +126,13 @@ export function CommandK() {
         setOpen(true);
       }
     };
+    const openHandler = () => setOpen(true);
     window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
+    window.addEventListener('mb:open-command-k', openHandler);
+    return () => {
+      window.removeEventListener('keydown', handler);
+      window.removeEventListener('mb:open-command-k', openHandler);
+    };
   }, [open]);
 
   // Reset al cerrar / focus al abrir
