@@ -34,6 +34,7 @@ import {
 } from '@/lib/embed-helpers';
 import { useMessage } from '@/hooks/useMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 import './SeriesContentManager.css';
 
 interface ContentItem {
@@ -78,6 +79,7 @@ export function SeriesContentManager({
   pendingItems,
   onPendingItemsChange,
 }: SeriesContentManagerProps) {
+  const { t } = useLocale();
   const message = useMessage();
   const isMobile = useMediaQuery('(max-width: 768px)');
   const [items, setItems] = useState<ContentItem[]>([]);
@@ -105,11 +107,11 @@ export function SeriesContentManager({
       if (!res.ok) throw new Error();
       setItems(await res.json());
     } catch {
-      message.error('Error al cargar el contenido');
+      message.error(t('seriesContentManager.errorLoadingContent'));
     } finally {
       setLoading(false);
     }
-  }, [seriesId, isLocalMode, message]);
+  }, [seriesId, isLocalMode, message, t]);
 
   useEffect(() => {
     loadItems();
@@ -132,9 +134,9 @@ export function SeriesContentManager({
   const handlePreview = () => {
     const url: string = form.getFieldValue('url') || '';
     const platform: string = form.getFieldValue('platform');
-    const title: string = form.getFieldValue('title') || 'Preview';
+    const title: string = form.getFieldValue('title') || t('seriesContentManager.previewTitle');
     if (!url || !platform) {
-      message.warning('Ingresa una URL y plataforma primero');
+      message.warning(t('seriesContentManager.enterUrlAndPlatform'));
       return;
     }
     const videoId = extractVideoId(platform as Platform, url);
@@ -193,7 +195,7 @@ export function SeriesContentManager({
 
       onPendingItemsChange?.(updated);
       message.success(
-        editingPendingItem ? 'Contenido actualizado' : 'Contenido agregado'
+        editingPendingItem ? t('seriesContentManager.contentUpdated') : t('seriesContentManager.contentAdded')
       );
       handleCloseModal();
       return;
@@ -211,16 +213,16 @@ export function SeriesContentManager({
       });
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.error || 'Error al guardar');
+        throw new Error(err.error || t('seriesContentManager.errorSaving'));
       }
       message.success(
-        editingItem ? 'Contenido actualizado' : 'Contenido agregado'
+        editingItem ? t('seriesContentManager.contentUpdated') : t('seriesContentManager.contentAdded')
       );
       handleCloseModal();
       loadItems();
     } catch (error) {
       message.error(
-        error instanceof Error ? error.message : 'Error al guardar'
+        error instanceof Error ? error.message : t('seriesContentManager.errorSaving')
       );
     }
   };
@@ -229,17 +231,17 @@ export function SeriesContentManager({
     if (isLocalMode) {
       const updated = (pendingItems ?? []).filter((i) => i._tempId !== id);
       onPendingItemsChange?.(updated);
-      message.success('Contenido eliminado');
+      message.success(t('seriesContentManager.contentDeleted'));
       return;
     }
 
     try {
       const res = await fetch(`/api/contenido/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error();
-      message.success('Contenido eliminado');
+      message.success(t('seriesContentManager.contentDeleted'));
       loadItems();
     } catch {
-      message.error('Error al eliminar');
+      message.error(t('seriesContentManager.errorDeleting'));
     }
   };
 
@@ -250,12 +252,12 @@ export function SeriesContentManager({
 
   const columns = [
     {
-      title: 'Título',
+      title: t('seriesContentManager.titleColumn'),
       dataIndex: 'title',
       key: 'title',
     },
     {
-      title: 'Plataforma',
+      title: t('seriesContentManager.platformColumn'),
       key: 'platform',
       render: (r: TableRow) => (
         <Tag color={PLATFORM_COLORS[r.platform] ?? 'default'}>{r.platform}</Tag>
@@ -263,7 +265,7 @@ export function SeriesContentManager({
       responsive: ['sm' as const],
     },
     {
-      title: 'Categoría',
+      title: t('seriesContentManager.categoryColumn'),
       key: 'category',
       render: (r: TableRow) => (
         <Tag>{CATEGORY_LABELS[r.category] ?? r.category}</Tag>
@@ -271,7 +273,7 @@ export function SeriesContentManager({
       responsive: ['md' as const],
     },
     {
-      title: 'Acciones',
+      title: t('seriesContentManager.actionsColumn'),
       key: 'actions',
       render: (record: TableRow) => (
         <Space>
@@ -280,17 +282,17 @@ export function SeriesContentManager({
             size="small"
             onClick={() => handleOpenModal(record)}
           >
-            {!isMobile && 'Editar'}
+            {!isMobile && t('seriesContentManager.editButton')}
           </Button>
           <Popconfirm
-            title="¿Eliminar este contenido?"
+            title={t('seriesContentManager.deleteConfirmTitle')}
             onConfirm={() => handleDelete(getRowId(record))}
-            okText="Eliminar"
-            cancelText="Cancelar"
+            okText={t('seriesContentManager.deleteButton')}
+            cancelText={t('seriesContentManager.cancelButton')}
             okButtonProps={{ danger: true }}
           >
             <Button danger icon={<DeleteOutlined />} size="small">
-              {!isMobile && 'Eliminar'}
+              {!isMobile && t('seriesContentManager.deleteButton')}
             </Button>
           </Popconfirm>
         </Space>
@@ -306,7 +308,7 @@ export function SeriesContentManager({
           icon={<PlusOutlined />}
           onClick={() => handleOpenModal()}
         >
-          Agregar contenido
+          {t('seriesContentManager.addContentButton')}
         </Button>
       </div>
 
@@ -320,67 +322,67 @@ export function SeriesContentManager({
       />
 
       <Modal
-        title={editingItem ? 'Editar contenido' : 'Agregar contenido'}
+        title={editingItem ? t('seriesContentManager.editContentModalTitle') : t('seriesContentManager.addContentModalTitle')}
         open={modalOpen}
         onCancel={handleCloseModal}
         onOk={() => form.submit()}
-        okText="Guardar"
-        cancelText="Cancelar"
+        okText={t('seriesContentManager.saveButton')}
+        cancelText={t('seriesContentManager.cancelButton')}
         width={600}
         forceRender
       >
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <Form.Item
-            label="Título"
+            label={t('seriesContentManager.titleLabel')}
             name="title"
-            rules={[{ required: true, message: 'El título es requerido' }]}
+            rules={[{ required: true, message: t('seriesContentManager.titleRequired') }]}
           >
-            <Input placeholder="Ej: Tráiler oficial" />
+            <Input placeholder={t('seriesContentManager.titlePlaceholder')} />
           </Form.Item>
 
           <Form.Item
-            label="URL"
+            label={t('seriesContentManager.urlLabel')}
             name="url"
             rules={[
-              { required: true, message: 'La URL es requerida' },
-              { type: 'url', message: 'URL inválida' },
+              { required: true, message: t('seriesContentManager.urlRequired') },
+              { type: 'url', message: t('seriesContentManager.invalidUrl') },
             ]}
           >
             <Input
-              placeholder="https://www.youtube.com/watch?v=..."
+              placeholder={t('seriesContentManager.urlPlaceholder')}
               onBlur={handleUrlBlur}
             />
           </Form.Item>
 
           <Form.Item
-            label="Plataforma"
+            label={t('seriesContentManager.platformLabel')}
             name="platform"
-            rules={[{ required: true, message: 'La plataforma es requerida' }]}
+            rules={[{ required: true, message: t('seriesContentManager.platformRequired') }]}
           >
             <Select
               options={PLATFORM_OPTIONS}
-              placeholder="Seleccionar plataforma"
+              placeholder={t('seriesContentManager.selectPlatformPlaceholder')}
             />
           </Form.Item>
 
-          <Form.Item label="Categoría" name="category" initialValue="trailer">
+          <Form.Item label={t('seriesContentManager.categoryLabel')} name="category" initialValue="trailer">
             <Select options={CATEGORY_OPTIONS} />
           </Form.Item>
 
-          <Form.Item label="Descripción" name="description">
-            <Input.TextArea rows={2} placeholder="Descripción opcional" />
+          <Form.Item label={t('seriesContentManager.descriptionLabel')} name="description">
+            <Input.TextArea rows={2} placeholder={t('seriesContentManager.descriptionPlaceholder')} />
           </Form.Item>
 
           <Form.Item
-            label="Miniatura (URL)"
+            label={t('seriesContentManager.thumbnailUrlLabel')}
             name="thumbnailUrl"
-            extra="Se detecta automáticamente para YouTube"
+            extra={t('seriesContentManager.thumbnailUrlExtra')}
           >
-            <Input placeholder="https://..." />
+            <Input placeholder={t('seriesContentManager.thumbnailUrlPlaceholder')} />
           </Form.Item>
 
-          <Form.Item label="Canal / Fuente" name="channelName">
-            <Input placeholder="Nombre del canal" />
+          <Form.Item label={t('seriesContentManager.channelNameLabel')} name="channelName">
+            <Input placeholder={t('seriesContentManager.channelNamePlaceholder')} />
           </Form.Item>
 
           <Space>
@@ -389,25 +391,25 @@ export function SeriesContentManager({
               valuePropName="checked"
               initialValue={true}
             >
-              <Checkbox>Oficial</Checkbox>
+              <Checkbox>{t('seriesContentManager.officialCheckbox')}</Checkbox>
             </Form.Item>
             <Form.Item
               name="featured"
               valuePropName="checked"
               initialValue={false}
             >
-              <Checkbox>Destacado</Checkbox>
+              <Checkbox>{t('seriesContentManager.featuredCheckbox')}</Checkbox>
             </Form.Item>
           </Space>
 
-          <Form.Item label="Orden" name="sortOrder" initialValue={0}>
+          <Form.Item label={t('seriesContentManager.sortOrderLabel')} name="sortOrder" initialValue={0}>
             <InputNumber min={0} />
           </Form.Item>
 
           <Divider />
 
           <Button icon={<PlayCircleOutlined />} onClick={handlePreview} block>
-            Vista previa del embed
+            {t('seriesContentManager.previewEmbedButton')}
           </Button>
 
           {previewData && (

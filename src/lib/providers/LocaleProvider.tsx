@@ -20,7 +20,10 @@ import { MESSAGES, type TranslationKey } from '@/i18n/messages';
 interface LocaleContextType {
   locale: SupportedLocale;
   setLocale: (newLocale: SupportedLocale) => void;
-  t: (key: TranslationKey) => string;
+  // `t(key)` devuelve la traduccion. `t(key, { var: value })` interpola
+  // placeholders {var} en la traduccion. Ej: `t('paginationTotal', { total: 42 })`
+  // sobre la string "Total: {total}" → "Total: 42".
+  t: (key: TranslationKey, params?: Record<string, string | number>) => string;
 }
 
 const LocaleContext = createContext<LocaleContextType | undefined>(undefined);
@@ -78,12 +81,15 @@ export function LocaleProvider({ children }: LocaleProviderProps) {
   }, []);
 
   const t = useCallback(
-    (key: TranslationKey) => {
+    (key: TranslationKey, params?: Record<string, string | number>) => {
       const localized = getByPath(MESSAGES[locale], key);
-      if (localized) return localized;
-
-      const fallback = getByPath(MESSAGES[DEFAULT_LOCALE], key);
-      return fallback ?? key;
+      const fallback = localized ?? getByPath(MESSAGES[DEFAULT_LOCALE], key) ?? key;
+      if (!params) return fallback;
+      let out = fallback;
+      for (const [k, v] of Object.entries(params)) {
+        out = out.replaceAll(`{${k}}`, String(v));
+      }
+      return out;
     },
     [locale]
   );

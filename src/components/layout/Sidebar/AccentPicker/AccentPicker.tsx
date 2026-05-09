@@ -3,15 +3,17 @@
 import { Tooltip } from 'antd';
 import { useTheme } from '@/lib/providers/ThemeProvider';
 import { ACCENT_PRESETS, type AccentPresetKey } from '@/lib/theme.config';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 import './AccentPicker.css';
 
 const ACCENT_KEYS = Object.keys(ACCENT_PRESETS) as AccentPresetKey[];
 
 export function AccentPicker() {
+  const { t } = useLocale();
   const { accent, setAccent } = useTheme();
 
   return (
-    <div className="accent-picker" role="group" aria-label="Color theme">
+    <div className="accent-picker" role="group" aria-label={t('accentPicker.colorThemeLabel')}>
       {ACCENT_KEYS.map((key) => {
         const preset = ACCENT_PRESETS[key];
         const isActive = key === accent;

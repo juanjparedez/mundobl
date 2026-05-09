@@ -25,6 +25,7 @@ import {
 import { AdminPageHero } from '@/components/admin/AdminPageHero/AdminPageHero';
 import { AdminTableToolbar } from '@/components/admin/AdminTableToolbar/AdminTableToolbar';
 import { useMessage } from '@/hooks/useMessage';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 import './noticias-admin.css';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -93,17 +94,10 @@ const STATUS_COLOR: Record<NewsStatus, string> = {
   REJECTED: 'error',
 };
 
-const STATUS_LABEL: Record<NewsStatus, string> = {
-  DRAFT: 'Borrador',
-  REVIEW: 'En revisión',
-  APPROVED: 'Aprobada',
-  PUBLISHED: 'Publicada',
-  REJECTED: 'Rechazada',
-};
-
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function NoticiasClient() {
+  const { t } = useLocale();
   const message = useMessage();
 
   const [news, setNews] = useState<NewsRow[]>([]);
@@ -139,17 +133,17 @@ export function NoticiasClient() {
       if (search) params.set('q', search);
 
       const res = await fetch(`/api/admin/news?${params.toString()}`);
-      if (!res.ok) throw new Error('Error al cargar noticias');
+      if (!res.ok) throw new Error(t('newsAdmin.errorLoadingNews'));
       const data: NewsResponse = await res.json();
       setNews(data.news);
       setTotal(data.total);
     } catch (error) {
       console.error(error);
-      message.error('Error al cargar noticias');
+      message.error(t('newsAdmin.errorLoadingNews'));
     } finally {
       setLoading(false);
     }
-  }, [page, view, search, message]);
+  }, [page, view, search, message, t]);
 
   useEffect(() => {
     fetchData();
@@ -166,15 +160,17 @@ export function NoticiasClient() {
       });
       if (!res.ok) {
         const err = (await res.json()) as { error?: string };
-        throw new Error(err.error ?? 'Error');
+        throw new Error(err.error ?? t('newsAdmin.errorUpdatingStatus'));
       }
-      message.success('Estado actualizado');
+      message.success(t('newsAdmin.statusUpdatedSuccess'));
       setNews((prev) =>
         prev.map((n) => (n.id === id ? { ...n, status: newStatus } : n))
       );
     } catch (error) {
       const msg =
-        error instanceof Error ? error.message : 'Error al actualizar';
+        error instanceof Error
+          ? error.message
+          : t('newsAdmin.errorUpdatingStatus');
       message.error(msg);
     }
   };
@@ -184,13 +180,13 @@ export function NoticiasClient() {
   const handleDelete = async (id: number) => {
     try {
       const res = await fetch(`/api/admin/news?id=${id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('Error al eliminar');
-      message.success('Noticia eliminada');
+      if (!res.ok) throw new Error(t('newsAdmin.errorDeletingNews'));
+      message.success(t('newsAdmin.newsDeletedSuccess'));
       setNews((prev) => prev.filter((n) => n.id !== id));
       setTotal((prev) => Math.max(prev - 1, 0));
     } catch (error) {
       console.error(error);
-      message.error('Error al eliminar noticia');
+      message.error(t('newsAdmin.errorDeletingNews'));
     }
   };
 
@@ -238,14 +234,16 @@ export function NoticiasClient() {
       });
       if (!res.ok) {
         const err = (await res.json()) as { error?: string };
-        throw new Error(err.error ?? 'Error');
+        throw new Error(err.error ?? t('newsAdmin.errorSavingNews'));
       }
 
-      message.success(isEdit ? 'Noticia actualizada' : 'Noticia creada');
+      message.success(
+        isEdit ? t('newsAdmin.newsUpdatedSuccess') : t('newsAdmin.newsCreatedSuccess')
+      );
       setIsFormOpen(false);
       await fetchData();
     } catch (error) {
-      const msg = error instanceof Error ? error.message : 'Error al guardar';
+      const msg = error instanceof Error ? error.message : t('newsAdmin.errorSavingNews');
       message.error(msg);
     } finally {
       setIsSaving(false);
@@ -264,7 +262,7 @@ export function NoticiasClient() {
       });
       if (!res.ok) {
         const err = (await res.json()) as { error?: string };
-        throw new Error(err.error ?? 'Error de IA');
+        throw new Error(err.error ?? t('newsAdmin.aiGenerationError'));
       }
       const data = (await res.json()) as {
         summary: string;
@@ -284,9 +282,9 @@ export function NoticiasClient() {
       });
       setEditingRow(null);
       setIsFormOpen(true);
-      message.success('Resumen generado — revisá antes de publicar');
+      message.success(t('newsAdmin.aiSummarySuccess'));
     } catch (error) {
-      const msg = error instanceof Error ? error.message : 'Error de IA';
+      const msg = error instanceof Error ? error.message : t('newsAdmin.aiGenerationError');
       message.error(msg);
     } finally {
       setIsGenerating(false);
@@ -295,14 +293,22 @@ export function NoticiasClient() {
 
   // ─── Columns ─────────────────────────────────────────────────────────────────
 
+  const STATUS_LABEL: Record<NewsStatus, string> = {
+    DRAFT: t('newsAdmin.draftStatus'),
+    REVIEW: t('newsAdmin.reviewStatus'),
+    APPROVED: t('newsAdmin.approvedStatus'),
+    PUBLISHED: t('newsAdmin.publishedStatus'),
+    REJECTED: t('newsAdmin.rejectedStatus'),
+  };
+
   const columns: ColumnsType<NewsRow> = [
     {
-      title: 'ID',
+      title: t('newsAdmin.tableColumnId'),
       dataIndex: 'id',
       width: 60,
     },
     {
-      title: 'Título',
+      title: t('newsAdmin.tableColumnTitle'),
       dataIndex: 'title',
       render: (title: string, row) => (
         <div className="noticias-admin__title-cell">
@@ -312,7 +318,7 @@ export function NoticiasClient() {
       ),
     },
     {
-      title: 'Estado',
+      title: t('newsAdmin.tableColumnStatus'),
       dataIndex: 'status',
       width: 130,
       render: (status: NewsStatus, row) => (
@@ -329,24 +335,24 @@ export function NoticiasClient() {
       ),
     },
     {
-      title: 'IA',
+      title: t('newsAdmin.tableColumnAi'),
       dataIndex: 'aiGenerated',
       width: 50,
       render: (ai: boolean) =>
         ai ? (
-          <Tooltip title="Generado con IA">
+          <Tooltip title={t('newsAdmin.aiGeneratedTooltip')}>
             <RobotOutlined style={{ color: '#6366f1' }} />
           </Tooltip>
         ) : null,
     },
     {
-      title: 'Creada',
+      title: t('newsAdmin.tableColumnCreatedAt'),
       dataIndex: 'createdAt',
       width: 110,
       render: (d: string) => new Date(d).toLocaleDateString('es-AR'),
     },
     {
-      title: 'Acciones',
+      title: t('newsAdmin.tableColumnActions'),
       key: 'actions',
       width: 120,
       render: (_: unknown, row: NewsRow) => (
@@ -362,10 +368,10 @@ export function NoticiasClient() {
             onClick={() => openEditForm(row)}
           />
           <Popconfirm
-            title="¿Eliminar esta noticia?"
+            title={t('newsAdmin.deleteConfirmTitle')}
             onConfirm={() => handleDelete(row.id)}
-            okText="Eliminar"
-            cancelText="Cancelar"
+            okText={t('newsAdmin.deleteButton')}
+            cancelText={t('newsAdmin.cancelButton')}
           >
             <Button icon={<DeleteOutlined />} size="small" danger />
           </Popconfirm>
@@ -377,20 +383,20 @@ export function NoticiasClient() {
   // ─── Render ──────────────────────────────────────────────────────────────────
 
   const viewOptions = [
-    { label: 'Todas', value: 'all' },
-    { label: 'Borrador', value: 'DRAFT' },
-    { label: 'Revisión', value: 'REVIEW' },
-    { label: 'Aprobada', value: 'APPROVED' },
-    { label: 'Publicada', value: 'PUBLISHED' },
-    { label: 'Rechazada', value: 'REJECTED' },
+    { label: t('newsAdmin.allViewOption'), value: 'all' },
+    { label: t('newsAdmin.draftStatus'), value: 'DRAFT' },
+    { label: t('newsAdmin.reviewStatus'), value: 'REVIEW' },
+    { label: t('newsAdmin.approvedStatus'), value: 'APPROVED' },
+    { label: t('newsAdmin.publishedStatus'), value: 'PUBLISHED' },
+    { label: t('newsAdmin.rejectedStatus'), value: 'REJECTED' },
   ];
 
   return (
     <div className="noticias-admin">
       <AdminPageHero
-        title="Noticias BL/GL"
-        subtitle="Gestión de noticias curadas con asistencia de IA"
-        stats={[{ label: 'Total', value: total }]}
+        title={t('newsAdmin.pageTitle')}
+        subtitle={t('newsAdmin.pageSubtitle')}
+        stats={[{ label: t('newsAdmin.totalNewsStat'), value: total }]}
       />
 
       <AdminTableToolbar
@@ -404,7 +410,7 @@ export function NoticiasClient() {
             }}
           />
         }
-        searchPlaceholder="Buscar por título, fuente…"
+        searchPlaceholder={t('newsAdmin.searchPlaceholder')}
         searchValue={searchInput}
         onSearchChange={setSearchInput}
         onSearchSubmit={() => {
@@ -419,14 +425,14 @@ export function NoticiasClient() {
         rightActions={
           <Space>
             <Button icon={<RobotOutlined />} onClick={() => setIsAiOpen(true)}>
-              Generar con IA
+              {t('newsAdmin.generateWithAiButton')}
             </Button>
             <Button
               type="primary"
               icon={<PlusOutlined />}
               onClick={openCreateForm}
             >
-              Nueva noticia
+              {t('newsAdmin.newNewsButton')}
             </Button>
           </Space>
         }
@@ -441,7 +447,7 @@ export function NoticiasClient() {
           current: page,
           pageSize: PAGE_SIZE,
           total,
-          showTotal: (t) => `${t} noticias`,
+          showTotal: (t_total) => t('newsAdmin.paginationTotal', { total: t_total }),
           onChange: (p) => setPage(p),
         }}
         className="noticias-admin__table"
@@ -449,7 +455,7 @@ export function NoticiasClient() {
 
       {/* ── Modal preview ── */}
       <Modal
-        title={previewRow?.title ?? 'Vista previa'}
+        title={previewRow?.title ?? t('newsAdmin.previewModalTitle')}
         open={!!previewRow}
         onCancel={() => setPreviewRow(null)}
         footer={
@@ -466,10 +472,10 @@ export function NoticiasClient() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Ver fuente →
+                {t('newsAdmin.viewSourceButton')}
               </Button>
             )}
-            <Button onClick={() => setPreviewRow(null)}>Cerrar</Button>
+            <Button onClick={() => setPreviewRow(null)}>{t('newsAdmin.closeButton')}</Button>
           </Space>
         }
         width={680}
@@ -485,7 +491,7 @@ export function NoticiasClient() {
               />
             )}
             <p className="noticias-admin__preview-source">
-              Fuente: <strong>{previewRow.sourceName}</strong>
+              {t('newsAdmin.previewSourceLabel')} <strong>{previewRow.sourceName}</strong>
               {previewRow.publishedAt && (
                 <>
                   {' '}
@@ -499,14 +505,14 @@ export function NoticiasClient() {
             </div>
             {previewRow.tags.length > 0 && (
               <div className="noticias-admin__preview-tags">
-                {previewRow.tags.map((t) => (
-                  <Tag key={t.tag.id}>{t.tag.name}</Tag>
+                {previewRow.tags.map((t_tag) => (
+                  <Tag key={t_tag.tag.id}>{t_tag.tag.name}</Tag>
                 ))}
               </div>
             )}
             {previewRow.florNotes && (
               <div className="noticias-admin__preview-notes">
-                <strong>Notas privadas:</strong> {previewRow.florNotes}
+                <strong>{t('newsAdmin.previewPrivateNotesLabel')}</strong> {previewRow.florNotes}
               </div>
             )}
           </div>
@@ -516,7 +522,7 @@ export function NoticiasClient() {
       {/* ── Modal form crear/editar ── */}
       <Modal
         title={
-          editingRow ? `Editar noticia #${editingRow.id}` : 'Nueva noticia'
+          editingRow ? t('newsAdmin.editNewsModalTitle', { id: editingRow.id }) : t('newsAdmin.newNewsModalTitle')
         }
         open={isFormOpen}
         onCancel={() => setIsFormOpen(false)}
@@ -531,77 +537,77 @@ export function NoticiasClient() {
           className="noticias-admin__form"
         >
           <Form.Item
-            label="Título"
+            label={t('newsAdmin.titleLabel')}
             name="title"
-            rules={[{ required: true, message: 'El título es requerido' }]}
+            rules={[{ required: true, message: t('newsAdmin.titleRequired') }]}
           >
-            <Input placeholder="Título de la noticia" />
+            <Input placeholder={t('newsAdmin.titlePlaceholder')} />
           </Form.Item>
 
           <Form.Item
-            label="Resumen"
+            label={t('newsAdmin.summaryLabel')}
             name="summary"
-            rules={[{ required: true, message: 'El resumen es requerido' }]}
+            rules={[{ required: true, message: t('newsAdmin.summaryRequired') }]}
           >
             <Input.TextArea
               rows={6}
-              placeholder="Resumen de la noticia (soporta Markdown básico)"
+              placeholder={t('newsAdmin.summaryPlaceholder')}
             />
           </Form.Item>
 
           <div className="noticias-admin__form-row">
             <Form.Item
-              label="URL original"
+              label={t('newsAdmin.originalUrlLabel')}
               name="originalUrl"
               rules={[
-                { required: true, message: 'La URL original es requerida' },
+                { required: true, message: t('newsAdmin.originalUrlRequired') },
               ]}
               style={{ flex: 1 }}
             >
               <Input placeholder="https://…" />
             </Form.Item>
             <Form.Item
-              label="Nombre de la fuente"
+              label={t('newsAdmin.sourceNameLabel')}
               name="sourceName"
               rules={[
                 {
                   required: true,
-                  message: 'El nombre de la fuente es requerido',
+                  message: t('newsAdmin.sourceNameRequired'),
                 },
               ]}
               style={{ flex: 1 }}
             >
-              <Input placeholder="Ej: Anime News Network" />
+              <Input placeholder={t('newsAdmin.sourceNamePlaceholder')} />
             </Form.Item>
           </div>
 
           <div className="noticias-admin__form-row">
             <Form.Item
-              label="Logo de la fuente (URL)"
+              label={t('newsAdmin.sourceLogoUrlLabel')}
               name="sourceLogo"
               style={{ flex: 1 }}
             >
-              <Input placeholder="https://…/favicon.ico" />
+              <Input placeholder={t('newsAdmin.sourceLogoUrlPlaceholder')} />
             </Form.Item>
             <Form.Item
-              label="Imagen de portada (URL)"
+              label={t('newsAdmin.imageUrlLabel')}
               name="imageUrl"
               style={{ flex: 1 }}
             >
-              <Input placeholder="https://…/imagen.jpg" />
+              <Input placeholder={t('newsAdmin.imageUrlPlaceholder')} />
             </Form.Item>
           </div>
 
           <div className="noticias-admin__form-row">
             <Form.Item
-              label="Fecha de publicación original"
+              label={t('newsAdmin.publishedAtLabel')}
               name="publishedAt"
               style={{ flex: 1 }}
             >
               <Input type="date" />
             </Form.Item>
             <Form.Item
-              label="Estado"
+              label={t('newsAdmin.statusLabel')}
               name="status"
               rules={[{ required: true }]}
               style={{ flex: 1 }}
@@ -616,16 +622,16 @@ export function NoticiasClient() {
           </div>
 
           <Form.Item
-            label="Notas privadas (no visibles al público)"
+            label={t('newsAdmin.privateNotesLabel')}
             name="florNotes"
           >
-            <Input.TextArea rows={2} placeholder="Notas internas…" />
+            <Input.TextArea rows={2} placeholder={t('newsAdmin.privateNotesPlaceholder')} />
           </Form.Item>
 
           <div className="noticias-admin__form-actions">
-            <Button onClick={() => setIsFormOpen(false)}>Cancelar</Button>
+            <Button onClick={() => setIsFormOpen(false)}>{t('newsAdmin.cancelButton')}</Button>
             <Button type="primary" htmlType="submit" loading={isSaving}>
-              {editingRow ? 'Guardar cambios' : 'Crear noticia'}
+              {editingRow ? t('newsAdmin.saveChangesButton') : t('newsAdmin.createNewsButton')}
             </Button>
           </div>
         </Form>
@@ -633,7 +639,7 @@ export function NoticiasClient() {
 
       {/* ── Modal AI generator ── */}
       <Modal
-        title="Generar noticia con IA"
+        title={t('newsAdmin.aiGeneratorModalTitle')}
         open={isAiOpen}
         onCancel={() => setIsAiOpen(false)}
         footer={null}
@@ -641,51 +647,49 @@ export function NoticiasClient() {
         destroyOnHidden
       >
         <p className="noticias-admin__ai-disclaimer">
-          La IA genera un resumen basado en el texto que pegues. El resultado
-          siempre incluye el crédito a la fuente original. Revisá antes de
-          publicar.
+          {t('newsAdmin.aiDisclaimer')}
         </p>
         <Form form={aiForm} layout="vertical" onFinish={handleAiGenerate}>
           <Form.Item
-            label="URL del artículo original"
+            label={t('newsAdmin.aiUrlLabel')}
             name="url"
-            rules={[{ required: true, message: 'La URL es requerida' }]}
+            rules={[{ required: true, message: t('newsAdmin.aiUrlRequired') }]}
           >
             <Input placeholder="https://…" />
           </Form.Item>
           <Form.Item
-            label="Nombre del sitio fuente"
+            label={t('newsAdmin.aiSourceNameLabel')}
             name="sourceName"
             rules={[
               {
                 required: true,
-                message: 'El nombre de la fuente es requerido',
+                message: t('newsAdmin.aiSourceNameRequired'),
               },
             ]}
           >
-            <Input placeholder="Ej: Anime News Network" />
+            <Input placeholder={t('newsAdmin.sourceNamePlaceholder')} />
           </Form.Item>
           <Form.Item
-            label="Texto del artículo (pegá el contenido principal)"
+            label={t('newsAdmin.aiArticleTextLabel')}
             name="articleText"
             rules={[
-              { required: true, message: 'El texto del artículo es requerido' },
+              { required: true, message: t('newsAdmin.aiArticleTextRequired') },
             ]}
           >
             <Input.TextArea
               rows={8}
-              placeholder="Copiá y pegá el texto del artículo acá…"
+              placeholder={t('newsAdmin.aiArticleTextPlaceholder')}
             />
           </Form.Item>
           <div className="noticias-admin__form-actions">
-            <Button onClick={() => setIsAiOpen(false)}>Cancelar</Button>
+            <Button onClick={() => setIsAiOpen(false)}>{t('newsAdmin.cancelButton')}</Button>
             <Button
               type="primary"
               htmlType="submit"
               icon={<RobotOutlined />}
               loading={isGenerating}
             >
-              Generar resumen
+              {t('newsAdmin.generateSummaryButton')}
             </Button>
           </div>
         </Form>

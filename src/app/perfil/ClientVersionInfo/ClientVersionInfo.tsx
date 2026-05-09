@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Tag, Tooltip } from 'antd';
 import { CopyOutlined, CheckOutlined } from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 import './ClientVersionInfo.css';
 
 interface BuildInfo {
@@ -13,6 +14,7 @@ interface BuildInfo {
 }
 
 export function ClientVersionInfo() {
+  const { t } = useLocale();
   const message = useMessage();
   const [info, setInfo] = useState<BuildInfo | null>(null);
   const [copied, setCopied] = useState(false);
@@ -36,19 +38,19 @@ export function ClientVersionInfo() {
 
   const handleCopy = async () => {
     const lines = [
-      `Version: ${info.version}`,
-      `Build: ${info.buildId}`,
-      `Env: ${info.env}`,
-      `User-Agent: ${navigator.userAgent}`,
-      `URL: ${window.location.href}`,
+      t('clientVersionInfo.versionLine', { version: info.version }),
+      t('clientVersionInfo.buildLine', { buildId: info.buildId }),
+      t('clientVersionInfo.envLine', { env: info.env }),
+      t('clientVersionInfo.userAgentLine', { userAgent: navigator.userAgent }),
+      t('clientVersionInfo.urlLine', { url: window.location.href }),
     ];
     try {
       await navigator.clipboard.writeText(lines.join('\n'));
       setCopied(true);
-      message.success('Copiado: pegalo en tu reporte de feedback');
+      message.success(t('clientVersionInfo.copySuccessMessage'));
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      message.error('No pudimos copiar al portapapeles');
+      message.error(t('clientVersionInfo.copyErrorMessage'));
     }
   };
 
@@ -64,15 +66,15 @@ export function ClientVersionInfo() {
           handleCopy();
         }
       }}
-      aria-label="Copiar diagnostico de version"
+      aria-label={t('clientVersionInfo.copyDiagnosticLabel')}
     >
       <Tooltip
-        title="Click para copiar version + dispositivo. Util para reportes de feedback."
+        title={t('clientVersionInfo.copyTooltip')}
         placement="top"
       >
         <span className="client-version-info__line">
           <span className="client-version-info__label">
-            Version del cliente
+            {t('clientVersionInfo.clientVersionLabel')}
           </span>
           <span className="client-version-info__value">{summary}</span>
           {info.env !== 'production' && (

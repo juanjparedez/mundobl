@@ -15,6 +15,7 @@ import { EmbedPlayer } from '@/components/common/EmbedPlayer/EmbedPlayer';
 import { EmbedAttribution } from '@/components/common/EmbedAttribution/EmbedAttribution';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { useMessage } from '@/hooks/useMessage';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 
 interface Episode {
   id: number;
@@ -55,6 +56,7 @@ interface VerSerieClientProps {
 }
 
 export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
+  const { t } = useLocale();
   const { data: session } = useSession();
   const message = useMessage();
   const isAdmin = session?.user?.role === 'ADMIN';
@@ -88,18 +90,18 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ catalogScope: 'PERSONAL' }),
       });
-      if (!res.ok) throw new Error();
+      if (!res.ok) throw new Error(t('verSerie.couldNotMoveSeriesToCatalogError'));
       setScope('PERSONAL');
-      message.success('Serie movida a tu catálogo personal');
+      message.success(t('verSerie.seriesMovedToPersonalCatalogSuccess'));
     } catch {
-      message.error('No se pudo mover la serie al catálogo');
+      message.error(t('verSerie.couldNotMoveSeriesToCatalogError'));
     } finally {
       setMovingScope(false);
     }
   };
 
   if (!active) {
-    return <Empty description="No hay episodios disponibles" />;
+    return <Empty description={t('verSerie.noEpisodesAvailable')} />;
   }
 
   return (
@@ -120,18 +122,18 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         </div>
         <div className="ver-serie__header-actions">
           {scope === 'PERSONAL' ? (
-            <Tooltip title="Esta serie también está en mi catálogo personal">
+            <Tooltip title={t('verSerie.inMyPersonalCatalogTooltip')}>
               <Tag icon={<StarFilled />} color="gold">
-                En mi catálogo
+                {t('verSerie.inMyCatalogTag')}
               </Tag>
             </Tooltip>
           ) : (
             <Tag icon={<StarOutlined />} color="default">
-              Solo mirable
+              {t('verSerie.watchableOnlyTag')}
             </Tag>
           )}
           <Link href={`/series/${series.id}`} prefetch={false}>
-            <Button>Ver ficha completa</Button>
+            <Button>{t('verSerie.viewFullDetailsButton')}</Button>
           </Link>
           {isAdmin && scope === 'WATCHABLE_ONLY' && (
             <Button
@@ -140,7 +142,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
               loading={movingScope}
               onClick={handleMoveToCatalog}
             >
-              Pasar a mi catálogo
+              {t('verSerie.moveToMyCatalogButton')}
             </Button>
           )}
         </div>
@@ -171,9 +173,9 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           showIcon
           title={
             <span>
-              Reproducción oficial. Los derechos pertenecen a sus titulares.{' '}
-              <Link href="/creditos">Créditos</Link> ·{' '}
-              <Link href="/legal">Aviso legal</Link>
+              {t('verSerie.officialPlaybackNote')}{' '}
+              <Link href="/creditos">{t('verSerie.creditsLink')}</Link> ·{' '}
+              <Link href="/legal">{t('verSerie.legalNoticeLink')}</Link>
             </span>
           }
           className="ver-serie__legal-note"
@@ -187,7 +189,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           disabled={!hasPrev}
           onClick={() => setActiveIdx((i) => i - 1)}
         >
-          Anterior
+          {t('verSerie.previousButton')}
         </Button>
         <span className="ver-serie__current-label">
           {flatEpisodes.length > 1 && (
@@ -203,14 +205,14 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           disabled={!hasNext}
           onClick={() => setActiveIdx((i) => i + 1)}
         >
-          Siguiente
+          {t('verSerie.nextButton')}
         </Button>
       </div>
 
       {/* Sinopsis del episodio */}
       {active.synopsis && (
         <div className="ver-serie__episode-synopsis">
-          <h3>Sinopsis del episodio</h3>
+          <h3>{t('verSerie.episodeSynopsisTitle')}</h3>
           <p>{active.synopsis}</p>
         </div>
       )}
@@ -218,7 +220,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
       {/* Sinopsis general */}
       {series.synopsis && (
         <div className="ver-serie__series-synopsis">
-          <h3>Sobre la serie</h3>
+          <h3>{t('verSerie.aboutTheSeriesTitle')}</h3>
           <p>{series.synopsis}</p>
           {(series.genres.length > 0 || series.tags.length > 0) && (
             <div className="ver-serie__chips">
@@ -237,11 +239,11 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
 
       {/* Lista de episodios */}
       <div className="ver-serie__episodes">
-        <h2>Episodios</h2>
+        <h2>{t('verSerie.episodesTitle')}</h2>
         {seasons.map((season) => (
           <div key={season.id} className="ver-serie__season">
             <h3 className="ver-serie__season-title">
-              Temporada {season.seasonNumber}
+              {t('verSerie.seasonTitle', { seasonNumber: season.seasonNumber })}
               {season.title ? ` — ${season.title}` : ''}
             </h3>
             <div className="ver-serie__episode-grid">
@@ -263,7 +265,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
                       E{ep.episodeNumber}
                     </span>
                     <span className="ver-serie__episode-name">
-                      {ep.title || `Episodio ${ep.episodeNumber}`}
+                      {ep.title || t('verSerie.episodeDefaultTitle', { episodeNumber: ep.episodeNumber })}
                     </span>
                     {isActive && (
                       <CheckCircleFilled className="ver-serie__episode-active-icon" />

@@ -20,6 +20,7 @@ import {
   CloseOutlined,
 } from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 import './SeriesForm.css';
 
 const { TextArea } = Input;
@@ -44,6 +45,7 @@ interface SeasonEditFormProps {
 }
 
 export function SeasonEditForm({ initialData }: SeasonEditFormProps) {
+  const { t } = useLocale();
   const message = useMessage();
   const router = useRouter();
   const [form] = Form.useForm();
@@ -58,12 +60,12 @@ export function SeasonEditForm({ initialData }: SeasonEditFormProps) {
         body: JSON.stringify(values),
       });
 
-      if (!response.ok) throw new Error('Error al actualizar temporada');
+      if (!response.ok) throw new Error(t('seasonEditForm.updateSeasonError'));
 
-      message.success('Temporada actualizada exitosamente');
+      message.success(t('seasonEditForm.seasonUpdateSuccess'));
       router.push(`/series/${initialData.seriesId}`);
     } catch (error) {
-      message.error('Error al actualizar la temporada');
+      message.error(t('seasonEditForm.seasonUpdateError'));
       console.error(error);
     } finally {
       setLoading(false);
@@ -76,14 +78,16 @@ export function SeasonEditForm({ initialData }: SeasonEditFormProps) {
         title={
           <div className="series-form__header">
             <span>
-              Editar Temporada {initialData.seasonNumber} -{' '}
-              {initialData.seriesTitle}
+              {t('seasonEditForm.editSeasonTitle', {
+                seasonNumber: initialData.seasonNumber,
+                seriesTitle: initialData.seriesTitle,
+              })}
             </span>
             <Button
               icon={<CloseOutlined />}
               onClick={() => router.push(`/series/${initialData.seriesId}`)}
             >
-              Cancelar
+              {t('seasonEditForm.cancelButton')}
             </Button>
           </div>
         }
@@ -96,23 +100,29 @@ export function SeasonEditForm({ initialData }: SeasonEditFormProps) {
         >
           <Card
             type="inner"
-            title="📝 Información de la Temporada"
+            title={t('seasonEditForm.infoCardTitle')}
             style={{ marginBottom: 24 }}
           >
             <Row gutter={16}>
               <Col xs={24} md={12}>
                 <Form.Item
-                  label="Título de la Temporada (opcional)"
+                  label={t('seasonEditForm.seasonTitleLabel')}
                   name="title"
                 >
-                  <Input placeholder="Ej: The Ambassador" size="large" />
+                  <Input
+                    placeholder={t('seasonEditForm.seasonTitlePlaceholder')}
+                    size="large"
+                  />
                 </Form.Item>
               </Col>
 
               <Col xs={24} md={6}>
-                <Form.Item label="Número de Capítulos" name="episodeCount">
+                <Form.Item
+                  label={t('seasonEditForm.episodeCountLabel')}
+                  name="episodeCount"
+                >
                   <InputNumber
-                    placeholder="12"
+                    placeholder={t('seasonEditForm.episodeCountPlaceholder')}
                     style={{ width: '100%' }}
                     size="large"
                     min={1}
@@ -121,9 +131,9 @@ export function SeasonEditForm({ initialData }: SeasonEditFormProps) {
               </Col>
 
               <Col xs={24} md={6}>
-                <Form.Item label="Año" name="year">
+                <Form.Item label={t('seasonEditForm.yearLabel')} name="year">
                   <InputNumber
-                    placeholder="2024"
+                    placeholder={t('seasonEditForm.yearPlaceholder')}
                     style={{ width: '100%' }}
                     size="large"
                     min={1900}
@@ -133,19 +143,25 @@ export function SeasonEditForm({ initialData }: SeasonEditFormProps) {
               </Col>
 
               <Col xs={24}>
-                <Form.Item label="Sinopsis" name="synopsis">
+                <Form.Item
+                  label={t('seasonEditForm.synopsisLabel')}
+                  name="synopsis"
+                >
                   <TextArea
                     rows={4}
-                    placeholder="Sinopsis de esta temporada específica..."
+                    placeholder={t('seasonEditForm.synopsisPlaceholder')}
                   />
                 </Form.Item>
               </Col>
 
               <Col xs={24}>
-                <Form.Item label="Observaciones" name="observations">
+                <Form.Item
+                  label={t('seasonEditForm.observationsLabel')}
+                  name="observations"
+                >
                   <TextArea
                     rows={3}
-                    placeholder="Notas personales sobre esta temporada..."
+                    placeholder={t('seasonEditForm.observationsPlaceholder')}
                   />
                 </Form.Item>
               </Col>
@@ -155,12 +171,11 @@ export function SeasonEditForm({ initialData }: SeasonEditFormProps) {
           {/* Reparto Específico de la Temporada */}
           <Card
             type="inner"
-            title="👥 Reparto de esta Temporada"
+            title={t('seasonEditForm.castCardTitle')}
             style={{ marginBottom: 24 }}
           >
             <p style={{ color: 'var(--text-secondary)', marginBottom: 16 }}>
-              Actores específicos de esta temporada (si difieren de la serie
-              general)
+              {t('seasonEditForm.castDescription')}
             </p>
             <Form.List name="actors">
               {(fields, { add, remove }) => (
@@ -171,18 +186,25 @@ export function SeasonEditForm({ initialData }: SeasonEditFormProps) {
                         {...restField}
                         name={[name, 'name']}
                         rules={[
-                          { required: true, message: 'Nombre requerido' },
+                          {
+                            required: true,
+                            message: t('seasonEditForm.actorNameRequired'),
+                          },
                         ]}
                         style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
                       >
-                        <Input placeholder="Nombre del actor" />
+                        <Input
+                          placeholder={t('seasonEditForm.actorNamePlaceholder')}
+                        />
                       </Form.Item>
                       <Form.Item
                         {...restField}
                         name={[name, 'character']}
                         style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
                       >
-                        <Input placeholder="Personaje" />
+                        <Input
+                          placeholder={t('seasonEditForm.characterPlaceholder')}
+                        />
                       </Form.Item>
                       <Form.Item
                         {...restField}
@@ -190,7 +212,7 @@ export function SeasonEditForm({ initialData }: SeasonEditFormProps) {
                         valuePropName="checked"
                         style={{ marginBottom: 0 }}
                       >
-                        <Checkbox>Protagonista</Checkbox>
+                        <Checkbox>{t('seasonEditForm.isMainCheckbox')}</Checkbox>
                       </Form.Item>
                       <MinusCircleOutlined onClick={() => remove(name)} />
                     </div>
@@ -202,7 +224,7 @@ export function SeasonEditForm({ initialData }: SeasonEditFormProps) {
                       block
                       icon={<PlusOutlined />}
                     >
-                      Agregar Actor
+                      {t('seasonEditForm.addActorButton')}
                     </Button>
                   </Form.Item>
                 </>
@@ -220,13 +242,13 @@ export function SeasonEditForm({ initialData }: SeasonEditFormProps) {
                 size="large"
                 loading={loading}
               >
-                Guardar Cambios
+                {t('seasonEditForm.saveChangesButton')}
               </Button>
               <Button
                 size="large"
                 onClick={() => router.push(`/series/${initialData.seriesId}`)}
               >
-                Cancelar
+                {t('seasonEditForm.cancelButton')}
               </Button>
             </Space>
           </Form.Item>

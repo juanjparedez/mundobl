@@ -64,13 +64,13 @@ export function ProfileSettings() {
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        throw new Error(err.error || 'Error al guardar');
+        throw new Error(err.error || t('profileSettings.saveError'));
       }
       const data = (await res.json()) as { nickname: string | null };
       setNicknameInitial(data.nickname ?? '');
-      message.success('Nickname actualizado');
+      message.success(t('profileSettings.nicknameUpdated'));
     } catch (e) {
-      message.error(e instanceof Error ? e.message : 'Error al guardar');
+      message.error(e instanceof Error ? e.message : t('profileSettings.saveError'));
     } finally {
       setBusy(null);
     }
@@ -191,18 +191,15 @@ export function ProfileSettings() {
           <article className="profile-settings-card">
             <header className="profile-settings-card__header">
               <h3 className="profile-settings-card__title">
-                <UserOutlined /> Nombre publico
+                <UserOutlined /> {t('profileSettings.publicNameTitle')}
               </h3>
               <p className="profile-settings-card__hint">
-                Es lo que ven otros usuarios en tus comentarios y reseñas. Si lo
-                dejas vacio se muestra tu nombre con apellido abreviado (ej.{' '}
-                <strong>
-                  {formatPublicName({
+                {t('profileSettings.publicNameHint', {
+                  exampleName: formatPublicName({
                     name: session?.user?.name,
                     nickname: null,
-                  })}
-                </strong>
-                ).
+                  }),
+                })}
               </p>
             </header>
             <div
@@ -214,7 +211,7 @@ export function ProfileSettings() {
               }}
             >
               <Input
-                placeholder="Sin nickname (usar nombre + inicial)"
+                placeholder={t('profileSettings.nicknamePlaceholder')}
                 value={nickname}
                 maxLength={40}
                 onChange={(e) => setNickname(e.target.value)}
@@ -228,7 +225,7 @@ export function ProfileSettings() {
                 disabled={nickname.trim() === nicknameInitial.trim()}
                 onClick={handleSaveNickname}
               >
-                Guardar
+                {t('profileSettings.saveButton')}
               </Button>
             </div>
           </article>
@@ -271,7 +268,7 @@ export function ProfileSettings() {
               <Popconfirm
                 title={t('settings.resetSwConfirm')}
                 onConfirm={handleResetSw}
-                okText="OK"
+                okText={t('profileSettings.deleteConfirmOk')}
                 cancelText={t('settings.closeButton')}
               >
                 <Button icon={<ReloadOutlined />} loading={busy === 'sw'}>
@@ -281,7 +278,7 @@ export function ProfileSettings() {
               <Popconfirm
                 title={t('settings.closeAllSessionsConfirm')}
                 onConfirm={handleSignOutAll}
-                okText="OK"
+                okText={t('profileSettings.deleteConfirmOk')}
                 cancelText={t('settings.closeButton')}
               >
                 <Button
@@ -320,7 +317,7 @@ export function ProfileSettings() {
                 icon={<DeleteOutlined />}
                 onClick={() => setDeleteOpen(true)}
               >
-                {t('settings.deleteAccountButton')}
+                {t('profileSettings.deleteAccountButton')}
               </Button>
             </div>
           </article>
@@ -352,7 +349,7 @@ export function ProfileSettings() {
         }}
       >
         <p className="profile-settings-delete__intro">
-          {t('profile.settingsDeleteIntro')}
+          {t('profileSettings.deleteIntro')}
         </p>
 
         <Radio.Group
@@ -362,28 +359,28 @@ export function ProfileSettings() {
             setDeletePolicy(event.target.value as CommentsPolicy)
           }
         >
-          <Radio value="keep">{t('profile.settingsDeletePolicyKeep')}</Radio>
+          <Radio value="keep">{t('profileSettings.deletePolicyKeep')}</Radio>
           <Radio value="anonymize">
-            {t('profile.settingsDeletePolicyAnonymize')}
+            {t('profileSettings.deletePolicyAnonymize')}
           </Radio>
           <Radio value="delete">
-            {t('profile.settingsDeletePolicyDelete')}
+            {t('profileSettings.deletePolicyDelete')}
           </Radio>
         </Radio.Group>
 
         <p className="profile-settings-delete__email-label">
-          {t('profile.settingsDeleteEmailLabel')}
+          {t('profileSettings.deleteEmailLabel')}
         </p>
 
         <Input
           value={confirmEmail}
           onChange={(event) => setConfirmEmail(event.target.value)}
-          placeholder={t('profile.settingsDeleteEmailPlaceholder')}
+          placeholder={t('profileSettings.deleteEmailPlaceholder')}
         />
 
         {currentUserEmail && (
           <p className="profile-settings-delete__email-hint">
-            {t('profile.settingsDeleteEmailHint')}{' '}
+            {t('profileSettings.deleteEmailHint')}{' '}
             <strong>{currentUserEmail}</strong>
           </p>
         )}

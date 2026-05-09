@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 
 type Politeness = 'polite' | 'assertive';
 
@@ -20,9 +21,10 @@ const LiveRegionContext = createContext<LiveRegionContextValue | undefined>(
 );
 
 export function useLiveAnnouncer() {
+  const { t } = useLocale();
   const ctx = useContext(LiveRegionContext);
   if (!ctx) {
-    throw new Error('useLiveAnnouncer must be used within <LiveRegion>');
+    throw new Error(t('liveRegion.useLiveAnnouncerError'));
   }
   return ctx.announce;
 }

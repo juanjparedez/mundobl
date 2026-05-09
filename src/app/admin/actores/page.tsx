@@ -36,9 +36,9 @@ const { TextArea } = Input;
 const ALPHABET = '#ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
 export default function ActoresAdminPage() {
+  const { t } = useLocale();
   const message = useMessage();
   const isMobile = useMediaQuery('(max-width: 768px)');
-  const { t } = useLocale();
   const [actors, setActors] = useState<ActorAdmin[]>([]);
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -54,7 +54,7 @@ export default function ActoresAdminPage() {
     setLoading(true);
     try {
       const response = await fetch('/api/actors');
-      if (!response.ok) throw new Error('Error al cargar actores');
+      if (!response.ok) throw new Error(t('adminActors.loadError'));
       const data = await response.json();
       setActors(data);
     } catch (error) {

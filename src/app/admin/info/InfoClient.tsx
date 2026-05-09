@@ -13,6 +13,7 @@ import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { AdminNav } from '../AdminNav';
 import '../admin.css';
 import './info.css';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 
 interface ProjectLinks {
   github: string | null;
@@ -27,31 +28,33 @@ interface TeamMember {
   color: string;
 }
 
-const TEAM: TeamMember[] = [
-  {
-    name: 'Juan',
-    role: 'Desarrollador',
-    bio: 'Full-stack developer. Responsable del desarrollo y mantenimiento de MundoBL.',
-    color: 'blue',
-  },
-  {
-    name: 'Flor',
-    role: 'Product Owner',
-    bio: 'Responsable de las ideas, el contenido y la dirección del sitio. La verdadera experta en BLs.',
-    color: 'magenta',
-  },
-];
-
-const LINK_CONFIG: Record<
-  string,
-  { label: string; icon: React.ReactNode; color: string }
-> = {
-  github: { label: 'GitHub', icon: <GithubOutlined />, color: '#24292e' },
-  vercel: { label: 'Vercel', icon: <CloudOutlined />, color: '#000' },
-  supabase: { label: 'Supabase', icon: <DatabaseOutlined />, color: '#3ecf8e' },
-};
-
 export function InfoClient() {
+  const { t } = useLocale();
+
+  const TEAM: TeamMember[] = [
+    {
+      name: t('adminInfo.teamMemberJuanName'),
+      role: t('adminInfo.teamMemberJuanRole'),
+      bio: t('adminInfo.teamMemberJuanBio'),
+      color: 'blue',
+    },
+    {
+      name: t('adminInfo.teamMemberFlorName'),
+      role: t('adminInfo.teamMemberFlorRole'),
+      bio: t('adminInfo.teamMemberFlorBio'),
+      color: 'magenta',
+    },
+  ];
+
+  const LINK_CONFIG: Record<
+    string,
+    { label: string; icon: React.ReactNode; color: string }
+  > = {
+    github: { label: t('adminInfo.linkConfigGithubLabel'), icon: <GithubOutlined />, color: '#24292e' },
+    vercel: { label: t('adminInfo.linkConfigVercelLabel'), icon: <CloudOutlined />, color: '#000' },
+    supabase: { label: t('adminInfo.linkConfigSupabaseLabel'), icon: <DatabaseOutlined />, color: '#3ecf8e' },
+  };
+
   const [links, setLinks] = useState<ProjectLinks | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -82,7 +85,7 @@ export function InfoClient() {
         <AdminNav />
         <div className="info-page">
           <div className="info-sections">
-            <Card title="Plataformas" className="info-card">
+            <Card title={t('adminInfo.platformsCardTitle')} className="info-card">
               {loading ? (
                 <div className="info-loading">
                   <Spin />
@@ -112,11 +115,11 @@ export function InfoClient() {
                   })}
                 </div>
               ) : (
-                <Empty description="No hay links configurados. Agregá las variables PROJECT_GITHUB_URL, PROJECT_VERCEL_URL, PROJECT_SUPABASE_URL en tu .env" />
+                <Empty description={t('adminInfo.noLinksConfiguredDescription')} />
               )}
             </Card>
 
-            <Card title="Equipo" className="info-card">
+            <Card title={t('adminInfo.teamCardTitle')} className="info-card">
               <div className="info-team">
                 {TEAM.map((member) => (
                   <div key={member.name} className="info-member">

@@ -39,11 +39,11 @@ export function ViewStatusToggle({
   const [isUpdating, setIsUpdating] = useState(false);
 
   const watchStatusLabels: Record<string, string> = {
-    SIN_VER: t('viewStatus.sinVer'),
-    VIENDO: t('viewStatus.viendo'),
-    VISTA: t('viewStatus.vista'),
-    ABANDONADA: t('viewStatus.abandonada'),
-    RETOMAR: t('viewStatus.retomar'),
+    SIN_VER: t('viewStatusToggle.sinVer'),
+    VIENDO: t('viewStatusToggle.viendo'),
+    VISTA: t('viewStatusToggle.vista'),
+    ABANDONADA: t('viewStatusToggle.abandonada'),
+    RETOMAR: t('viewStatusToggle.retomar'),
   };
 
   // Calcular progreso de episodios vistos
@@ -78,16 +78,16 @@ export function ViewStatusToggle({
         body: JSON.stringify({ status: newStatus }),
       });
 
-      if (!response.ok) throw new Error('Error al actualizar');
+      if (!response.ok) throw new Error(t('viewStatusToggle.errorUpdating'));
 
       message.success(
-        interpolateMessage(t('viewStatus.statusMessage'), {
+        interpolateMessage(t('viewStatusToggle.statusUpdateSuccess'), {
           label: watchStatusLabels[newStatus] ?? newStatus,
         })
       );
     } catch (error) {
       setStatus(previous);
-      message.error(t('viewStatus.errorUpdate'));
+      message.error(t('viewStatusToggle.errorUpdate'));
       console.error(error);
     } finally {
       setIsUpdating(false);
@@ -107,7 +107,7 @@ export function ViewStatusToggle({
               size="small"
               status={progressPercent === 100 ? 'success' : 'active'}
               format={() =>
-                interpolateMessage(t('viewStatus.episodesUnit'), {
+                interpolateMessage(t('viewStatusToggle.episodesUnit'), {
                   watched: String(watchedEpisodes),
                   total: String(totalEpisodes),
                 })
@@ -139,13 +139,13 @@ export function ViewStatusToggle({
         options={statusOptions}
         className={`view-status-toggle__select view-status-toggle__select--${status.toLowerCase()}`}
         size="middle"
-        aria-label={t('viewStatus.ariaLabel')}
+        aria-label={t('viewStatusToggle.ariaLabel')}
       />
 
       {totalEpisodes > 0 && (
         <div className="view-status-toggle__progress">
           <Tooltip
-            title={interpolateMessage(t('viewStatus.tooltipEpisodes'), {
+            title={interpolateMessage(t('viewStatusToggle.tooltipEpisodes'), {
               watched: String(watchedEpisodes),
               total: String(totalEpisodes),
             })}
@@ -155,7 +155,7 @@ export function ViewStatusToggle({
               size="small"
               status={progressPercent === 100 ? 'success' : 'active'}
               format={() =>
-                interpolateMessage(t('viewStatus.episodesUnit'), {
+                interpolateMessage(t('viewStatusToggle.episodesUnit'), {
                   watched: String(watchedEpisodes),
                   total: String(totalEpisodes),
                 })
