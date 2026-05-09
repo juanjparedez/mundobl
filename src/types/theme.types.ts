@@ -10,6 +10,7 @@ export type ScaleKey = 'sm' | 'md' | 'lg' | 'xl';
 export type DensityKey = 'compact' | 'comfortable' | 'spacious';
 export type MotionKey = 'auto' | 'reduce';
 export type SaverKey = 'off' | 'on';
+export type SkinKey = 'default' | 'premium';
 
 export type { AccentPresetKey } from '@/lib/theme.config';
 
@@ -31,5 +32,7 @@ export interface ThemeContextType {
   setMotion: (motion: MotionKey) => void;
   saver: SaverKey;
   setSaver: (saver: SaverKey) => void;
+  skin: SkinKey;
+  setSkin: (skin: SkinKey) => void;
   resetPreferences: () => void;
 }

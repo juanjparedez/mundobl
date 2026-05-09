@@ -1,0 +1,13 @@
+/* ─── Skins disponibles ─────────────────────────────────────────────
+ * Cada skin se declara dentro de su propio archivo y se aplica via
+ * html[data-skin='<key>']. La skin 'default' no necesita archivo:
+ * cae a las variables base de variables.css.
+ *
+ * Para agregar una skin nueva:
+ *   1. Crear `src/styles/skins/<nombre>.css` con `html[data-skin='<nombre>'] { ... }`
+ *   2. Importarla aca abajo
+ *   3. Agregar la key a SkinKey en `src/types/theme.types.ts`
+ *   4. Sumar la opcion al SettingsPanel
+ */
+
+@import './premium-dark.css';

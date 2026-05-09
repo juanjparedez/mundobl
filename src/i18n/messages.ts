@@ -449,6 +449,9 @@ export type TranslationShape = {
     themeLabel: string;
     themeLight: string;
     themeDark: string;
+    skinLabel: string;
+    skinDefault: string;
+    skinPremium: string;
     accentLabel: string;
     toneLabel: string;
     toneDefault: string;
@@ -2511,6 +2514,9 @@ const es: TranslationShape = {
     themeLabel: 'Tema',
     themeLight: 'Claro',
     themeDark: 'Oscuro',
+    skinLabel: 'Estilo visual',
+    skinDefault: 'Predeterminado',
+    skinPremium: 'Premium Dark',
     accentLabel: 'Color de acento',
     toneLabel: 'Tono base',
     toneDefault: 'Predeterminado',
@@ -4647,6 +4653,9 @@ const en: TranslationShape = {
     themeLabel: 'Theme',
     themeLight: 'Light',
     themeDark: 'Dark',
+    skinLabel: 'Visual style',
+    skinDefault: 'Default',
+    skinPremium: 'Premium Dark',
     accentLabel: 'Accent color',
     toneLabel: 'Base tone',
     toneDefault: 'Default',
