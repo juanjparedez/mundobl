@@ -6,7 +6,6 @@ import { useSession } from 'next-auth/react';
 import { Button, Spin } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
-import { SectionHeader } from '@/components/design-system';
 import {
   DashboardEditToolbar,
   DashboardGrid,
@@ -17,6 +16,8 @@ import {
 } from '@/components/dashboard';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import type { ProfileData } from '../types';
+import { ProfileDashboardHeader } from './ProfileDashboardHeader/ProfileDashboardHeader';
+import { ProfileStatsStrip } from './ProfileStatsStrip/ProfileStatsStrip';
 import { OverviewWidget } from './widgets/OverviewWidget/OverviewWidget';
 import { RatingsWidget } from './widgets/RatingsWidget/RatingsWidget';
 import { RecentlyCompletedWidget } from './widgets/RecentlyCompletedWidget/RecentlyCompletedWidget';
@@ -251,19 +252,8 @@ export function DashboardClient() {
   return (
     <AppLayout>
       <div className="mb-perfil-dashboard">
-        <SectionHeader
-          as="h1"
-          size="lg"
-          title={t('profileDashboard.title')}
-          subtitle={t('profileDashboard.subtitle')}
-          actions={
-            <Link href="/perfil/clasico">
-              <Button icon={<ArrowLeftOutlined />}>
-                {t('profileDashboard.backToClassic')}
-              </Button>
-            </Link>
-          }
-        />
+        <ProfileDashboardHeader user={data.user} />
+        <ProfileStatsStrip stats={data.stats} />
 
         <DashboardEditToolbar
           editing={editing}

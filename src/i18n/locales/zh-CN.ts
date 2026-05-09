@@ -2132,6 +2132,9 @@ const zhCN: TranslationShape = {
     widgetCompletedByYearDesc: '你完成剧集的时间曲线。',
     completedByYearEmpty: '你还没有完成任何剧集。',
     completedByYearLabel: '已完成',
+    editProfile: '编辑资料',
+    streak: '连续天数',
+    totalEpisodes: '集数',
     loadError: '加载资料出错。请刷新页面。',
   },
   serieDashboard: {

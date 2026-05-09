@@ -2177,6 +2177,9 @@ const ko: TranslationShape = {
     widgetCompletedByYearDesc: '완료된 시리즈의 시간 곡선.',
     completedByYearEmpty: '아직 완료한 시리즈가 없습니다.',
     completedByYearLabel: '완료',
+    editProfile: '프로필 편집',
+    streak: '연속 일수',
+    totalEpisodes: '에피소드',
     loadError: '프로필 불러오기 오류. 페이지를 새로 고치세요.',
   },
   serieDashboard: {
