@@ -30,7 +30,7 @@ export async function generateMetadata({
     : `Perfil de ${displayName}. ${seriesCount} series BL en su filmografía. Descubre su trayectoria en MundoBL.`;
 
   return {
-    title: `${displayName} - Actor BL`,
+    title: `${displayName} | Filmografía y Series - Actor BL`,
     description,
     alternates: {
       canonical: `/actores/${actor.id}`,
