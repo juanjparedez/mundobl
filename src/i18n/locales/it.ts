@@ -2281,6 +2281,12 @@ const it: TranslationShape = {
     "auditLog": "Registro di controllo",
     "news": "Notizie"
   },
+  "adminHero": {
+    "actionInsights": "Approfondimenti",
+    "actionAuditLog": "Verifica",
+    "actionChangelog": "Uscite",
+    "actionUsers": "Utenti"
+  },
   "workspace": {
     "backToCatalog": "Torna al catalogo",
     "viewPublic": "Vista pubblica",
