@@ -152,7 +152,9 @@ export function OverviewAchievements({ stats }: Props) {
 
   const unlocked = achievements.filter((a) => a.current >= a.goal);
   const pending = achievements.filter((a) => a.current < a.goal);
-  const visible = showAll ? achievements : [...unlocked, ...pending].slice(0, 4);
+  const visible = showAll
+    ? achievements
+    : [...unlocked, ...pending].slice(0, 4);
 
   return (
     <section className="overview-achievements">
@@ -207,9 +209,7 @@ export function OverviewAchievements({ stats }: Props) {
           className="overview-achievements__toggle"
           onClick={() => setShowAll((v) => !v)}
         >
-          {showAll
-            ? 'Ver menos'
-            : `Ver todos (${achievements.length})`}
+          {showAll ? 'Ver menos' : `Ver todos (${achievements.length})`}
         </button>
       )}
     </section>

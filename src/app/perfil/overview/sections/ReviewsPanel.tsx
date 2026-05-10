@@ -40,9 +40,7 @@ export function OverviewReviewsPanel({ recentReviews }: Props) {
   const [hidden, setHidden] = useState<Set<number>>(new Set());
   const [busyId, setBusyId] = useState<number | null>(null);
 
-  const visible = recentReviews
-    .filter((r) => !hidden.has(r.id))
-    .slice(0, 2);
+  const visible = recentReviews.filter((r) => !hidden.has(r.id)).slice(0, 2);
   const total = recentReviews.filter((r) => !hidden.has(r.id)).length;
 
   const handleDelete = async (id: number) => {

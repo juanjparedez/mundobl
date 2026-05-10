@@ -84,7 +84,9 @@ export function ProfileOverviewClient() {
         <div className="overview-page__state">
           <p>No pudimos cargar tu perfil.</p>
           <Link href="/perfil/clasico">
-            <Button icon={<ArrowLeftOutlined />}>Volver a la vista clásica</Button>
+            <Button icon={<ArrowLeftOutlined />}>
+              Volver a la vista clásica
+            </Button>
           </Link>
         </div>
       </AppLayout>
@@ -101,14 +103,9 @@ export function ProfileOverviewClient() {
       <OverviewReviewsActivity key="ra" stats={data.stats} />
     ),
     v('countries') && (
-      <OverviewCountriesPanel
-        key="cp"
-        topCountries={data.stats.topCountries}
-      />
+      <OverviewCountriesPanel key="cp" topCountries={data.stats.topCountries} />
     ),
-    v('yearSummary') && (
-      <OverviewYearSummary key="ys" stats={data.stats} />
-    ),
+    v('yearSummary') && <OverviewYearSummary key="ys" stats={data.stats} />,
   ].filter(Boolean);
 
   return (
@@ -126,8 +123,7 @@ export function ProfileOverviewClient() {
         {/* Bloque principal: hasta 3 columnas. Cada una se omite si
          *  todos sus paneles estan ocultos para no dejar dead space. */}
         {(() => {
-          const hasLeft =
-            v('watching') || v('mystats') || row3Items.length > 0;
+          const hasLeft = v('watching') || v('mystats') || row3Items.length > 0;
           const hasMid = v('reviews') || v('collections');
           const hasRight = v('comments');
           const colCount = [hasLeft, hasMid, hasRight].filter(Boolean).length;
@@ -153,9 +149,7 @@ export function ProfileOverviewClient() {
               {hasMid && (
                 <div className="overview-page__col-mid">
                   {v('reviews') && (
-                    <OverviewReviewsPanel
-                      recentReviews={data.recentReviews}
-                    />
+                    <OverviewReviewsPanel recentReviews={data.recentReviews} />
                   )}
                   {v('collections') && (
                     <OverviewCollections stats={data.stats} />

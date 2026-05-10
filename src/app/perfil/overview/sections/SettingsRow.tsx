@@ -81,7 +81,9 @@ export function OverviewSettingsRow({ onCardClick }: Props) {
   return (
     <section className="overview-settings">
       <header className="overview-settings__head">
-        <h3 className="overview-settings__title">Configuración y preferencias</h3>
+        <h3 className="overview-settings__title">
+          Configuración y preferencias
+        </h3>
       </header>
       <ul className="overview-settings__grid">
         {cards.map((c) => (

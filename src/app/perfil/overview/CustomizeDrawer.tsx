@@ -37,8 +37,8 @@ export function CustomizeDrawer({
       className="customize-drawer"
     >
       <p className="customize-drawer__hint">
-        Mostrá u ocultá los paneles de tu perfil. Tus preferencias se
-        guardan en este dispositivo.
+        Mostrá u ocultá los paneles de tu perfil. Tus preferencias se guardan en
+        este dispositivo.
       </p>
 
       <ul className="customize-drawer__list">
@@ -55,12 +55,7 @@ export function CustomizeDrawer({
       </ul>
 
       <div className="customize-drawer__footer">
-        <Button
-          icon={<ReloadOutlined />}
-          onClick={onReset}
-          size="small"
-          block
-        >
+        <Button icon={<ReloadOutlined />} onClick={onReset} size="small" block>
           Restaurar todos
         </Button>
       </div>
