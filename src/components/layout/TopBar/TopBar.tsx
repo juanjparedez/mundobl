@@ -135,7 +135,15 @@ export function TopBar() {
             type="primary"
             size="small"
             icon={<LoginOutlined />}
-            onClick={() => signIn('google')}
+            onClick={() =>
+              signIn('google', {
+                callbackUrl:
+                  typeof window !== 'undefined' &&
+                  window.location.pathname !== '/'
+                    ? window.location.pathname + window.location.search
+                    : '/catalogo',
+              })
+            }
           >
             {t('sidebar.login')}
           </Button>

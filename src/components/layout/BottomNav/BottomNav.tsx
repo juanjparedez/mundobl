@@ -109,7 +109,14 @@ export function BottomNav() {
               key: 'login',
               icon: <LoginOutlined />,
               label: t('bottomNav.login'),
-              onClick: () => signIn('google'),
+              onClick: () =>
+                signIn('google', {
+                  callbackUrl:
+                    typeof window !== 'undefined' &&
+                    window.location.pathname !== '/'
+                      ? window.location.pathname + window.location.search
+                      : '/catalogo',
+                }),
             },
           ]
         : [
