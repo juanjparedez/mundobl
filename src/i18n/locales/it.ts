@@ -2288,6 +2288,14 @@ const it: TranslationShape = {
     "actionChangelog": "Uscite",
     "actionUsers": "Utenti"
   },
+  "adminActivity": {
+    "title": "Attività del team",
+    "empty": "Nessuna attività recente.",
+    "anonymous": "Anonimo",
+    "actionCreate": "Creato",
+    "actionUpdate": "Modificato",
+    "actionDelete": "Eliminato"
+  },
   "workspace": {
     "backToCatalog": "Torna al catalogo",
     "viewPublic": "Vista pubblica",

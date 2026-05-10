@@ -2288,6 +2288,14 @@ const zhTW: TranslationShape = {
     "actionChangelog": "發行",
     "actionUsers": "用戶"
   },
+  "adminActivity": {
+    "title": "團隊動態",
+    "empty": "沒有近期動態。",
+    "anonymous": "匿名",
+    "actionCreate": "已建立",
+    "actionUpdate": "已編輯",
+    "actionDelete": "已刪除"
+  },
   "workspace": {
     "backToCatalog": "返回目錄",
     "viewPublic": "公開檢視",

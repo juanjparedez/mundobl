@@ -1,0 +1,241 @@
+'use client';
+
+import { useMemo, useState } from 'react';
+import Link from 'next/link';
+import {
+  DashboardEditToolbar,
+  DashboardGrid,
+  WidgetPickerDrawer,
+  WidgetRegistry,
+  useDashboardLayout,
+  type DashboardLayouts,
+} from '@/components/dashboard';
+import { AdminNav } from './AdminNav';
+import { AdminDashboardHero } from './AdminDashboardHero';
+import { AdminKPIsWidget } from './widgets/AdminKPIsWidget/AdminKPIsWidget';
+import { AdminAlertsWidget } from './widgets/AdminAlertsWidget/AdminAlertsWidget';
+import { RecentAdminActivityWidget } from './widgets/RecentAdminActivityWidget/RecentAdminActivityWidget';
+import type { ReactNode } from 'react';
+
+const WIDGET_IDS = {
+  kpis: 'admin.kpis',
+  alerts: 'admin.alerts',
+  recentActivity: 'admin.recentActivity',
+} as const;
+
+const DEFAULT_LAYOUTS: DashboardLayouts = {
+  lg: [
+    { i: WIDGET_IDS.kpis, x: 0, y: 0, w: 7, h: 3 },
+    { i: WIDGET_IDS.alerts, x: 7, y: 0, w: 5, h: 5 },
+    { i: WIDGET_IDS.recentActivity, x: 0, y: 3, w: 7, h: 5 },
+  ],
+  md: [
+    { i: WIDGET_IDS.kpis, x: 0, y: 0, w: 10, h: 3 },
+    { i: WIDGET_IDS.alerts, x: 0, y: 3, w: 5, h: 5 },
+    { i: WIDGET_IDS.recentActivity, x: 5, y: 3, w: 5, h: 5 },
+  ],
+  sm: [
+    { i: WIDGET_IDS.kpis, x: 0, y: 0, w: 6, h: 3 },
+    { i: WIDGET_IDS.alerts, x: 0, y: 3, w: 6, h: 5 },
+    { i: WIDGET_IDS.recentActivity, x: 0, y: 8, w: 6, h: 5 },
+  ],
+  xs: [
+    { i: WIDGET_IDS.kpis, x: 0, y: 0, w: 4, h: 4 },
+    { i: WIDGET_IDS.alerts, x: 0, y: 4, w: 4, h: 5 },
+    { i: WIDGET_IDS.recentActivity, x: 0, y: 9, w: 4, h: 5 },
+  ],
+};
+
+interface ToolCard {
+  href: string;
+  icon: string;
+  title: string;
+  count?: number;
+  alert?: { count: number; label: string };
+}
+
+interface ToolGroup {
+  title: string;
+  tools: ToolCard[];
+}
+
+interface HeadlineAlert {
+  key: string;
+  icon: string;
+  label: string;
+  href: string;
+  tone: 'danger' | 'warning' | 'info';
+}
+
+interface KPICounts {
+  series: number;
+  reviews: number;
+  comments: number;
+  users: number;
+  seriesWithoutReview: number;
+  seriesWithoutContent: number;
+  commentsReported: number;
+  suggestedSitesPending: number;
+}
+
+export interface AdminHomeClientProps {
+  heroStats: Array<{ label: string; value: number; icon: ReactNode }>;
+  groups: ToolGroup[];
+  headlineAlerts: HeadlineAlert[];
+  kpiCounts: KPICounts;
+}
+
+/** Admin home /admin con dashboard configurable (widgets reordenables
+ *  via grid + WidgetPicker) ENCIMA de los tool cards de navegacion.
+ *  La configurabilidad fue removida en commit 57149a5 cuando unifique
+ *  /admin/dashboard en /perfil — restaurada acá para no perder esa
+ *  funcionalidad. /admin sigue siendo el panel de gestion con tool nav
+ *  abajo + ahora dashboard real arriba. */
+export function AdminHomeClient({
+  heroStats,
+  groups,
+  headlineAlerts,
+  kpiCounts,
+}: AdminHomeClientProps) {
+  const [editing, setEditing] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
+
+  const { layouts, setLayouts, removeWidget, addWidget, reset, widgetIds } =
+    useDashboardLayout('admin-home-v1', DEFAULT_LAYOUTS);
+
+  useMemo(() => {
+    WidgetRegistry.register({
+      id: WIDGET_IDS.kpis,
+      category: 'overview',
+      labelKey: 'adminDashboard.widgetKPIs',
+      descriptionKey: 'adminDashboard.widgetKPIsDesc',
+      defaultSize: { w: 7, h: 3, minW: 4, minH: 3 },
+      Component: AdminKPIsWidget as never,
+      roles: ['ADMIN', 'MODERATOR'],
+    });
+    WidgetRegistry.register({
+      id: WIDGET_IDS.alerts,
+      category: 'admin',
+      labelKey: 'adminDashboard.widgetAlerts',
+      descriptionKey: 'adminDashboard.widgetAlertsDesc',
+      defaultSize: { w: 5, h: 5, minW: 4, minH: 4 },
+      Component: AdminAlertsWidget as never,
+      roles: ['ADMIN', 'MODERATOR'],
+    });
+    WidgetRegistry.register({
+      id: WIDGET_IDS.recentActivity,
+      category: 'activity',
+      labelKey: 'adminActivity.title',
+      descriptionKey: 'adminActivity.title',
+      defaultSize: { w: 7, h: 5, minW: 4, minH: 4 },
+      Component: RecentAdminActivityWidget as never,
+      roles: ['ADMIN', 'MODERATOR'],
+    });
+  }, []);
+
+  const widgetProps = useMemo<Record<string, Record<string, unknown>>>(
+    () => ({
+      [WIDGET_IDS.kpis]: {
+        series: kpiCounts.series,
+        reviews: kpiCounts.reviews,
+        comments: kpiCounts.comments,
+        users: kpiCounts.users,
+      },
+      [WIDGET_IDS.alerts]: {},
+      [WIDGET_IDS.recentActivity]: {},
+    }),
+    [kpiCounts]
+  );
+
+  return (
+    <div className="admin-page-wrapper">
+      <AdminNav />
+      <div className="admin-dashboard">
+        <AdminDashboardHero stats={heroStats} />
+
+        {headlineAlerts.length > 0 && (
+          <div className="admin-dashboard__alerts">
+            {headlineAlerts.map((alert) => (
+              <Link
+                key={alert.key}
+                href={alert.href}
+                className={`admin-dashboard__alert admin-dashboard__alert--${alert.tone}`}
+              >
+                <span className="admin-dashboard__alert-icon">
+                  {alert.icon}
+                </span>
+                <span>{alert.label}</span>
+                <span className="admin-dashboard__alert-arrow">→</span>
+              </Link>
+            ))}
+          </div>
+        )}
+
+        {/* Dashboard configurable: KPIs + Alerts + RecentActivity. El
+         *  user puede entrar en modo edicion, mover widgets, agregar
+         *  desde el picker. La preferencia persiste por dashboardKey en
+         *  localStorage. */}
+        <DashboardEditToolbar
+          editing={editing}
+          onToggleEditing={() => setEditing((v) => !v)}
+          onAddWidget={() => setPickerOpen(true)}
+          onReset={reset}
+        />
+
+        <DashboardGrid
+          layouts={layouts}
+          widgetProps={widgetProps}
+          editing={editing}
+          onLayoutsChange={setLayouts}
+          onRemoveWidget={removeWidget}
+          rowHeight={36}
+          gap={10}
+        />
+
+        <WidgetPickerDrawer
+          open={pickerOpen}
+          onClose={() => setPickerOpen(false)}
+          onPick={addWidget}
+          alreadyAdded={widgetIds}
+        />
+
+        {/* Tool cards de navegacion — sin tocar, mismo grupo data
+         *  que ya existía. Quedan debajo del dashboard configurable
+         *  como atajos rapidos. */}
+        {groups.map((group) => (
+          <section
+            key={group.title}
+            className="admin-dashboard__section"
+            data-group={group.title.toLowerCase()}
+          >
+            <h2 className="admin-dashboard__section-title">{group.title}</h2>
+            <div className="admin-dashboard__grid">
+              {group.tools.map((tool) => (
+                <Link
+                  key={tool.href}
+                  href={tool.href}
+                  className="admin-tool-card"
+                >
+                  <div className="admin-tool-card__head">
+                    <span className="admin-tool-card__icon">{tool.icon}</span>
+                    {tool.count !== undefined && (
+                      <span className="admin-tool-card__count">
+                        {tool.count}
+                      </span>
+                    )}
+                  </div>
+                  <div className="admin-tool-card__title">{tool.title}</div>
+                  {tool.alert && (
+                    <div className="admin-tool-card__alert">
+                      {tool.alert.count} {tool.alert.label}
+                    </div>
+                  )}
+                </Link>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+    </div>
+  );
+}

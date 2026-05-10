@@ -2288,6 +2288,14 @@ const ko: TranslationShape = {
     "actionChangelog": "출시작",
     "actionUsers": "사용자"
   },
+  "adminActivity": {
+    "title": "팀 활동",
+    "empty": "최근 활동 없음.",
+    "anonymous": "익명",
+    "actionCreate": "생성됨",
+    "actionUpdate": "수정됨",
+    "actionDelete": "삭제됨"
+  },
   "workspace": {
     "backToCatalog": "카탈로그로 돌아가기",
     "viewPublic": "공개 보기",
