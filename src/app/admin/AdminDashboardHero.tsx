@@ -1,6 +1,15 @@
 'use client';
 
+import Link from 'next/link';
+import { Button } from 'antd';
+import {
+  LineChartOutlined,
+  FileTextOutlined,
+  BellOutlined,
+  AppstoreOutlined,
+} from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 
 interface Stat {
   label: string;
@@ -11,10 +20,14 @@ interface AdminDashboardHeroProps {
   stats: Stat[];
 }
 
-// Hero del dashboard admin: saludo personalizado + tarjetas de stats
-// resumen de la app. Es client porque usa la sesion para el saludo.
+// Hero del dashboard admin: saludo personalizado + acciones rapidas
+// top-right (mock-aligned con style-guide/admin.png) + 4 KPIs.
+// Las acciones linkean a rutas que ya existen (/admin/stats, /admin/logs,
+// /admin/changelog, /admin/usuarios) — no se inventan features. Es
+// client porque usa session para el saludo.
 export function AdminDashboardHero({ stats }: AdminDashboardHeroProps) {
   const { data: session } = useSession();
+  const { t } = useLocale();
   const firstName = session?.user?.name?.split(' ')[0] ?? null;
 
   return (
@@ -34,6 +47,30 @@ export function AdminDashboardHero({ stats }: AdminDashboardHeroProps) {
             <div className="admin-dashboard__hero-stat-label">{s.label}</div>
           </div>
         ))}
+      </div>
+      {/* Acciones rapidas top-right (mock-aligned). Linkean a rutas
+       *  existentes — no agregan funcionalidad nueva, solo shortcuts. */}
+      <div className="admin-dashboard__hero-actions">
+        <Link href="/admin/stats">
+          <Button size="small" icon={<LineChartOutlined />}>
+            {t('adminHero.actionInsights')}
+          </Button>
+        </Link>
+        <Link href="/admin/logs">
+          <Button size="small" icon={<FileTextOutlined />}>
+            {t('adminHero.actionAuditLog')}
+          </Button>
+        </Link>
+        <Link href="/admin/changelog">
+          <Button size="small" icon={<BellOutlined />}>
+            {t('adminHero.actionChangelog')}
+          </Button>
+        </Link>
+        <Link href="/admin/usuarios">
+          <Button size="small" icon={<AppstoreOutlined />}>
+            {t('adminHero.actionUsers')}
+          </Button>
+        </Link>
       </div>
     </header>
   );

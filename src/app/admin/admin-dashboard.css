@@ -5,15 +5,38 @@
 }
 
 .admin-dashboard__hero {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    'text actions'
+    'stats stats';
   align-items: center;
-  gap: 12px;
+  gap: 10px 16px;
   padding: 12px 14px;
   background: var(--bg-container);
   border-radius: var(--border-radius-lg);
   border: 1px solid var(--border-color-secondary);
+}
+
+.admin-dashboard__hero-text {
+  grid-area: text;
+  min-width: 0;
+}
+
+.admin-dashboard__hero-stats {
+  grid-area: stats;
+}
+
+.admin-dashboard__hero-actions {
+  grid-area: actions;
+  display: flex;
+  gap: 6px;
   flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.admin-dashboard__hero-actions .ant-btn {
+  font-size: 11px;
 }
 
 .admin-dashboard__hero-title {
@@ -31,10 +54,8 @@
 
 .admin-dashboard__hero-stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+  grid-template-columns: repeat(4, minmax(80px, 1fr));
   gap: 6px;
-  flex: 1;
-  max-width: 420px;
 }
 
 .admin-dashboard__hero-stat {

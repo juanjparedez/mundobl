@@ -2281,6 +2281,12 @@ const th: TranslationShape = {
     "auditLog": "Audit log",
     "news": "Noticias"
   },
+  "adminHero": {
+    "actionInsights": "ข้อมูลเชิงลึก",
+    "actionAuditLog": "ตรวจสอบ",
+    "actionChangelog": "รายการใหม่",
+    "actionUsers": "ผู้ใช้"
+  },
   "workspace": {
     "backToCatalog": "กลับสู่แคตตาล็อก",
     "viewPublic": "มุมมองสาธารณะ",
