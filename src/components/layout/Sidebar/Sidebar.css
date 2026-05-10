@@ -5,11 +5,7 @@
   left: 0;
   top: 0;
   bottom: 0;
-  background: color-mix(
-    in srgb,
-    var(--bg-elevated) 86%,
-    transparent
-  ) !important;
+  background: color-mix(in srgb, var(--bg-elevated) 92%, transparent) !important;
   border-right: 1px solid var(--border-color-secondary);
   display: flex;
   flex-direction: column;
@@ -22,11 +18,17 @@
   background: transparent !important;
   color: var(--text-primary) !important;
   flex: 1;
+  padding: var(--spacing-sm);
 }
 
 .app-sidebar .ant-menu-item,
 .app-sidebar .ant-menu-submenu-title {
   color: var(--text-primary) !important;
+  border-radius: var(--border-radius-sm);
+  margin-inline: 0;
+  margin-block: 4px;
+  height: 40px;
+  line-height: 40px;
 }
 
 .app-sidebar .ant-menu-item:hover,
@@ -36,10 +38,12 @@
 }
 
 .app-sidebar .ant-menu-item-selected {
-  background: var(--primary-color-outline) !important;
+  background: color-mix(in srgb, var(--primary-color) 18%, transparent) !important;
   color: var(--primary-color) !important;
   font-weight: 600;
-  box-shadow: inset 3px 0 0 var(--primary-color);
+  box-shadow:
+    inset 2px 0 0 var(--primary-color),
+    0 0 0 1px color-mix(in srgb, var(--primary-color) 20%, transparent);
 }
 
 .app-sidebar .ant-menu-submenu-arrow {
@@ -68,8 +72,9 @@
 }
 
 .sidebar-logo-text {
-  font-size: var(--font-size-lg);
-  font-weight: 600;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   white-space: nowrap;
 }
 
@@ -97,6 +102,7 @@
 .sidebar-footer {
   flex-shrink: 0;
   border-top: 1px solid var(--border-color-secondary);
+  padding: var(--spacing-xs);
 }
 
 .sidebar-settings-trigger {
@@ -104,8 +110,8 @@
   align-items: center;
   justify-content: center;
   gap: var(--spacing-sm);
-  width: calc(100% - var(--spacing-sm) * 2);
-  margin: var(--spacing-xs);
+  width: 100%;
+  margin: 0;
   padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--border-radius-sm);
   border: 1px solid transparent;

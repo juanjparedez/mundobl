@@ -1,16 +1,18 @@
 .mb-recently-completed-widget {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: var(--spacing-sm);
   display: flex;
   flex-direction: column;
+  gap: var(--spacing-xs);
 }
 
 .mb-recently-completed-widget__item {
   display: flex;
   gap: var(--spacing-sm);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-bottom: 1px solid var(--border-color-secondary);
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-base);
   text-decoration: none;
   color: inherit;
   transition: background var(--transition-fast);
@@ -20,15 +22,9 @@
   background: var(--bg-spotlight);
 }
 
-.mb-recently-completed-widget
-  li:last-child
-  .mb-recently-completed-widget__item {
-  border-bottom: none;
-}
-
 .mb-recently-completed-widget__cover {
-  width: 48px;
-  height: 68px;
+  width: 56px;
+  height: 78px;
   flex-shrink: 0;
   overflow: hidden;
   border-radius: var(--border-radius-sm);

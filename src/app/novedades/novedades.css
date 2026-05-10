@@ -2,12 +2,20 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  background: color-mix(in srgb, var(--bg-container) 84%, transparent);
 }
 
 .novedades-section {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  background: color-mix(in srgb, var(--bg-elevated) 72%, transparent);
 }
 
 .novedades-section__title {
@@ -16,8 +24,10 @@
   gap: var(--spacing-xs);
   margin: 0;
   font-size: var(--font-size-base);
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 /* Grid de series nuevas ─────────────────────────────────────────────── */
@@ -33,7 +43,7 @@
 .novedades-card {
   background: var(--bg-container);
   border: 1px solid var(--border-color-secondary);
-  border-radius: var(--border-radius);
+  border-radius: var(--border-radius-lg);
   overflow: hidden;
   transition:
     transform 0.18s ease,
@@ -155,9 +165,9 @@
 .novedades-changelog {
   display: flex;
   flex-direction: column;
-  background: var(--bg-elevated);
+  background: color-mix(in srgb, var(--bg-elevated) 86%, transparent);
   border: 1px solid var(--border-color-secondary);
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--border-radius-base);
   overflow: hidden;
 }
 

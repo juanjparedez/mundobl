@@ -5,6 +5,10 @@
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-md);
   flex-wrap: wrap;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  background: color-mix(in srgb, var(--bg-elevated) 76%, transparent);
 }
 
 .mb-dashboard-edit-toolbar__start {

@@ -4,9 +4,9 @@
   padding: 0;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 1px;
-  background: var(--border-color-secondary);
-  border: 1px solid var(--border-color-secondary);
+  gap: var(--spacing-xs);
+  background: transparent;
+  border: none;
   border-radius: var(--border-radius-lg);
   overflow: hidden;
 }
@@ -16,7 +16,9 @@
   align-items: center;
   gap: 10px;
   padding: var(--spacing-sm) var(--spacing-md);
-  background: var(--bg-container);
+  background: color-mix(in srgb, var(--bg-container) 92%, transparent);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-base);
   min-width: 0;
 }
 
@@ -40,7 +42,7 @@
 }
 
 .mb-profile-stats-strip__value {
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1;

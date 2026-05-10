@@ -12,7 +12,15 @@
 
 .ver-hero {
   text-align: center;
-  padding: var(--spacing-lg) 0;
+  padding: var(--spacing-lg);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  background:
+    linear-gradient(
+      120deg,
+      color-mix(in srgb, var(--bg-container) 92%, transparent) 0%,
+      color-mix(in srgb, var(--bg-elevated) 64%, transparent) 100%
+    );
 }
 
 .ver-hero__title {
@@ -40,6 +48,10 @@
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
   gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  background: color-mix(in srgb, var(--bg-container) 88%, transparent);
 }
 
 @media (max-width: 720px) {
@@ -63,9 +75,9 @@
 .ver-card {
   display: flex;
   flex-direction: column;
-  background: var(--bg-elevated);
+  background: color-mix(in srgb, var(--bg-elevated) 92%, transparent);
   border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
+  border-radius: var(--border-radius-lg);
   overflow: hidden;
   text-decoration: none;
   color: inherit;
@@ -77,14 +89,14 @@
 
 .ver-card:hover {
   transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--ant-primary-color, #1677ff);
+  box-shadow: var(--box-shadow-card);
+  border-color: color-mix(in srgb, var(--primary-color) 40%, transparent);
 }
 
 .ver-card__cover {
   position: relative;
   aspect-ratio: 2 / 3;
-  background: var(--bg-subtle);
+  background: var(--bg-spotlight);
   overflow: hidden;
 }
 
@@ -139,7 +151,7 @@
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: var(--ant-color-warning, #faad14);
+  background: var(--warning-color);
   color: white;
   display: grid;
   place-items: center;
