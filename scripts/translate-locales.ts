@@ -36,7 +36,11 @@ const TARGETS: { code: string; name: string; varName: string }[] = [
   { code: 'th', name: 'Thai (ไทย)', varName: 'th' },
 ];
 
-const BATCH_SIZE = 40;
+// BATCH_SIZE 20 (antes 40): Gemini fallaba flaky devolviendo array N-1
+// con batches grandes, especialmente para japones y koreano. 20 strings
+// por batch reduce drasticamente la frecuencia de retries. Alineado con
+// scripts/translate-missing-keys.ts.
+const BATCH_SIZE = 20;
 const THROTTLE_MS = 4500; // 15 RPM free tier
 
 interface FlatEntry {
