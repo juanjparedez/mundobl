@@ -1281,7 +1281,7 @@ const zhCN: TranslationShape = {
     description:
       '一个专注于BL剧集的空间。追踪您正在观看的剧集，评价您的最爱，并分享您的想法。',
     goToProfile: '我的资料',
-    heroBadge: 'AI助手 · 评论 · 10种语言',
+    heroBadge: '评论 · 10种语言',
     statSeries: '目录中的剧集',
     statViews: '观看次数',
     statComments: '评论',

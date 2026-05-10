@@ -1332,7 +1332,7 @@ const fr: TranslationShape = {
     description:
       'Un espace dédié aux séries BL. Suivez ce que vous regardez, notez vos favoris et partagez vos réflexions.',
     goToProfile: 'Mon profil',
-    heroBadge: 'Assistant IA · Avis · 10 langues',
+    heroBadge: 'Avis · 10 langues',
     statSeries: 'séries au catalogue',
     statViews: 'fois regardé',
     statComments: 'commentaires',
