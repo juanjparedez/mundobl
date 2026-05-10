@@ -13,6 +13,10 @@
 }
 
 /* ─── Search ─────────────────────────────────────────────────────── */
+.app-topbar__search-spacer {
+  flex: 1;
+}
+
 .app-topbar__search {
   flex: 1;
   display: inline-flex;
