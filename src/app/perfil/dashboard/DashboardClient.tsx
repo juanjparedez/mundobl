@@ -36,6 +36,7 @@ import { FavoritesWidget } from './widgets/FavoritesWidget/FavoritesWidget';
 import { MyReviewsWidget } from './widgets/MyReviewsWidget/MyReviewsWidget';
 import { MyDisputesWidget } from './widgets/MyDisputesWidget/MyDisputesWidget';
 import { MyCommentsWidget } from './widgets/MyCommentsWidget/MyCommentsWidget';
+import { QuickAdminActionsWidget } from './widgets/QuickAdminActionsWidget/QuickAdminActionsWidget';
 import { ProfileSettings } from '../ProfileSettings/ProfileSettings';
 import { SubscriptionsSection } from '../SubscriptionsSection/SubscriptionsSection';
 import { ClientVersionInfo } from '../ClientVersionInfo/ClientVersionInfo';
@@ -60,140 +61,247 @@ const WIDGET_IDS = {
   myReviews: 'profile.myReviews',
   myDisputes: 'profile.myDisputes',
   myComments: 'profile.myComments',
+  quickAdmin: 'profile.quickAdmin',
 } as const;
 
-// Grid denso alineado al mock: rowHeight 40 + gap 8 (en DashboardGrid).
-// Alturas mas bajas (h:3-4 en lugar de h:5-6) para evitar widgets gigantes
-// con whitespace cuando hay poca data.
-const DEFAULT_LAYOUTS: DashboardLayouts = {
+// Layout USER (regular): prioriza el contenido propio (seguir viendo,
+// reseñas, comentarios, stats personales). Alineado al mock my-.profile2.png.
+const USER_LAYOUTS: DashboardLayouts = {
   lg: [
-    // Fila 1 (h:4 = 184px): Currently watching + Notifications
+    // Fila 1: Overview + Ratings (KPIs consolidados arriba)
+    { i: WIDGET_IDS.overview, x: 0, y: 0, w: 6, h: 3, minW: 4, minH: 3 },
+    { i: WIDGET_IDS.ratings, x: 6, y: 0, w: 6, h: 3, minW: 4, minH: 3 },
+    // Fila 2 (h:5): Currently watching shelf full-width — el carrusel necesita ancho
     {
       i: WIDGET_IDS.currentlyWatching,
       x: 0,
-      y: 0,
-      w: 6,
-      h: 4,
-      minW: 4,
-      minH: 3,
+      y: 3,
+      w: 12,
+      h: 5,
+      minW: 6,
+      minH: 4,
     },
-    { i: WIDGET_IDS.notifications, x: 6, y: 0, w: 6, h: 4, minW: 4, minH: 3 },
-    // Fila 2 (h:4): TopGenres list + Genres donut + TopCountries list
-    { i: WIDGET_IDS.topGenresList, x: 0, y: 4, w: 4, h: 4, minW: 3, minH: 3 },
-    { i: WIDGET_IDS.genres, x: 4, y: 4, w: 4, h: 4, minW: 3, minH: 3 },
-    { i: WIDGET_IDS.topCountries, x: 8, y: 4, w: 4, h: 4, minW: 3, minH: 3 },
-    // Fila 3 (h:3 = 136px): Heatmap full-width
-    { i: WIDGET_IDS.heatmap, x: 0, y: 8, w: 12, h: 3, minW: 6, minH: 3 },
-    // Fila 4 (h:4): Recently completed + Completed by year
+    // Fila 3: My reviews + Notifications + My cases lateral
+    { i: WIDGET_IDS.myReviews, x: 0, y: 8, w: 5, h: 5, minW: 3, minH: 4 },
+    { i: WIDGET_IDS.notifications, x: 5, y: 8, w: 4, h: 5, minW: 3, minH: 4 },
+    { i: WIDGET_IDS.myCases, x: 9, y: 8, w: 3, h: 5, minW: 3, minH: 4 },
+    // Fila 4: Charts (Genres donut + Heatmap)
+    { i: WIDGET_IDS.genres, x: 0, y: 13, w: 4, h: 4, minW: 3, minH: 3 },
+    { i: WIDGET_IDS.heatmap, x: 4, y: 13, w: 8, h: 4, minW: 6, minH: 3 },
+    // Fila 5: Top lists (genres / countries / actors)
+    { i: WIDGET_IDS.topGenresList, x: 0, y: 17, w: 4, h: 4, minW: 3, minH: 3 },
+    { i: WIDGET_IDS.topCountries, x: 4, y: 17, w: 4, h: 4, minW: 3, minH: 3 },
+    { i: WIDGET_IDS.topActors, x: 8, y: 17, w: 4, h: 4, minW: 3, minH: 3 },
+    // Fila 6: Recently completed + Favorites + Top rated
     {
       i: WIDGET_IDS.recentlyCompleted,
       x: 0,
-      y: 11,
-      w: 7,
-      h: 4,
-      minW: 4,
-      minH: 3,
+      y: 21,
+      w: 4,
+      h: 5,
+      minW: 3,
+      minH: 4,
     },
+    { i: WIDGET_IDS.favorites, x: 4, y: 21, w: 4, h: 5, minW: 3, minH: 4 },
+    { i: WIDGET_IDS.topRated, x: 8, y: 21, w: 4, h: 5, minW: 3, minH: 4 },
+    // Fila 7: CompletedByYear + TopCompanies + Disputes
     {
       i: WIDGET_IDS.completedByYear,
-      x: 7,
-      y: 11,
+      x: 0,
+      y: 26,
       w: 5,
       h: 4,
       minW: 4,
       minH: 3,
     },
-    // Fila 5 (h:3): Overview KPIs + Ratings KPIs (4 KPIs c/u, no necesitan mucho)
-    { i: WIDGET_IDS.overview, x: 0, y: 15, w: 6, h: 3, minW: 4, minH: 3 },
-    { i: WIDGET_IDS.ratings, x: 6, y: 15, w: 6, h: 3, minW: 4, minH: 3 },
-    // Fila 6 (h:4): My cases full-width
-    { i: WIDGET_IDS.myCases, x: 0, y: 18, w: 12, h: 4, minW: 4, minH: 3 },
-    // Fila 7 (h:5): Top rated + Favorites + My reviews
-    { i: WIDGET_IDS.topRated, x: 0, y: 22, w: 4, h: 5, minW: 3, minH: 4 },
-    { i: WIDGET_IDS.favorites, x: 4, y: 22, w: 4, h: 5, minW: 3, minH: 4 },
-    { i: WIDGET_IDS.myReviews, x: 8, y: 22, w: 4, h: 5, minW: 3, minH: 4 },
-    // Fila 8 (h:4): Top actors + Top companies + Disputes
-    { i: WIDGET_IDS.topActors, x: 0, y: 27, w: 4, h: 4, minW: 3, minH: 3 },
-    { i: WIDGET_IDS.topCompanies, x: 4, y: 27, w: 4, h: 4, minW: 3, minH: 3 },
-    { i: WIDGET_IDS.myDisputes, x: 8, y: 27, w: 4, h: 4, minW: 3, minH: 3 },
-    // Fila 9 (h:8): My comments full-width (filtros + paginacion ocupan)
-    { i: WIDGET_IDS.myComments, x: 0, y: 31, w: 12, h: 8, minW: 6, minH: 6 },
+    { i: WIDGET_IDS.topCompanies, x: 5, y: 26, w: 4, h: 4, minW: 3, minH: 3 },
+    { i: WIDGET_IDS.myDisputes, x: 9, y: 26, w: 3, h: 4, minW: 3, minH: 3 },
+    // Fila 8: My comments full-width
+    { i: WIDGET_IDS.myComments, x: 0, y: 30, w: 12, h: 8, minW: 6, minH: 6 },
   ],
   md: [
-    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 5, h: 4 },
-    { i: WIDGET_IDS.notifications, x: 5, y: 0, w: 5, h: 4 },
-    { i: WIDGET_IDS.topGenresList, x: 0, y: 4, w: 5, h: 4 },
-    { i: WIDGET_IDS.genres, x: 5, y: 4, w: 5, h: 4 },
-    { i: WIDGET_IDS.topCountries, x: 0, y: 8, w: 5, h: 4 },
-    { i: WIDGET_IDS.completedByYear, x: 5, y: 8, w: 5, h: 4 },
-    { i: WIDGET_IDS.heatmap, x: 0, y: 12, w: 10, h: 3 },
-    { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 15, w: 5, h: 4 },
-    { i: WIDGET_IDS.overview, x: 5, y: 15, w: 5, h: 4 },
-    { i: WIDGET_IDS.ratings, x: 0, y: 19, w: 10, h: 3 },
-    { i: WIDGET_IDS.myCases, x: 0, y: 22, w: 10, h: 4 },
-    { i: WIDGET_IDS.topRated, x: 0, y: 26, w: 5, h: 5 },
-    { i: WIDGET_IDS.favorites, x: 5, y: 26, w: 5, h: 5 },
-    { i: WIDGET_IDS.myReviews, x: 0, y: 31, w: 10, h: 5 },
-    { i: WIDGET_IDS.topActors, x: 0, y: 36, w: 5, h: 4 },
-    { i: WIDGET_IDS.topCompanies, x: 5, y: 36, w: 5, h: 4 },
-    { i: WIDGET_IDS.myDisputes, x: 0, y: 40, w: 10, h: 4 },
-    { i: WIDGET_IDS.myComments, x: 0, y: 44, w: 10, h: 8 },
+    { i: WIDGET_IDS.overview, x: 0, y: 0, w: 5, h: 3 },
+    { i: WIDGET_IDS.ratings, x: 5, y: 0, w: 5, h: 3 },
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 3, w: 10, h: 5 },
+    { i: WIDGET_IDS.myReviews, x: 0, y: 8, w: 5, h: 5 },
+    { i: WIDGET_IDS.notifications, x: 5, y: 8, w: 5, h: 5 },
+    { i: WIDGET_IDS.genres, x: 0, y: 13, w: 5, h: 4 },
+    { i: WIDGET_IDS.heatmap, x: 5, y: 13, w: 5, h: 4 },
+    { i: WIDGET_IDS.topGenresList, x: 0, y: 17, w: 5, h: 4 },
+    { i: WIDGET_IDS.topCountries, x: 5, y: 17, w: 5, h: 4 },
+    { i: WIDGET_IDS.topActors, x: 0, y: 21, w: 5, h: 4 },
+    { i: WIDGET_IDS.topCompanies, x: 5, y: 21, w: 5, h: 4 },
+    { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 25, w: 5, h: 5 },
+    { i: WIDGET_IDS.favorites, x: 5, y: 25, w: 5, h: 5 },
+    { i: WIDGET_IDS.topRated, x: 0, y: 30, w: 5, h: 5 },
+    { i: WIDGET_IDS.completedByYear, x: 5, y: 30, w: 5, h: 4 },
+    { i: WIDGET_IDS.myCases, x: 0, y: 35, w: 5, h: 4 },
+    { i: WIDGET_IDS.myDisputes, x: 5, y: 35, w: 5, h: 4 },
+    { i: WIDGET_IDS.myComments, x: 0, y: 39, w: 10, h: 8 },
   ],
   sm: [
-    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 6, h: 4 },
-    { i: WIDGET_IDS.notifications, x: 0, y: 4, w: 6, h: 4 },
-    { i: WIDGET_IDS.topGenresList, x: 0, y: 8, w: 6, h: 4 },
-    { i: WIDGET_IDS.topCountries, x: 0, y: 12, w: 6, h: 4 },
-    { i: WIDGET_IDS.genres, x: 0, y: 16, w: 6, h: 4 },
-    { i: WIDGET_IDS.heatmap, x: 0, y: 20, w: 6, h: 3 },
-    { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 23, w: 6, h: 4 },
-    { i: WIDGET_IDS.completedByYear, x: 0, y: 27, w: 6, h: 4 },
-    { i: WIDGET_IDS.overview, x: 0, y: 31, w: 6, h: 3 },
-    { i: WIDGET_IDS.ratings, x: 0, y: 34, w: 6, h: 3 },
-    { i: WIDGET_IDS.myCases, x: 0, y: 37, w: 6, h: 4 },
-    { i: WIDGET_IDS.topRated, x: 0, y: 41, w: 6, h: 5 },
-    { i: WIDGET_IDS.favorites, x: 0, y: 46, w: 6, h: 5 },
-    { i: WIDGET_IDS.myReviews, x: 0, y: 51, w: 6, h: 5 },
-    { i: WIDGET_IDS.topActors, x: 0, y: 56, w: 6, h: 4 },
-    { i: WIDGET_IDS.topCompanies, x: 0, y: 60, w: 6, h: 4 },
-    { i: WIDGET_IDS.myDisputes, x: 0, y: 64, w: 6, h: 4 },
-    { i: WIDGET_IDS.myComments, x: 0, y: 68, w: 6, h: 9 },
+    { i: WIDGET_IDS.overview, x: 0, y: 0, w: 6, h: 3 },
+    { i: WIDGET_IDS.ratings, x: 0, y: 3, w: 6, h: 3 },
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 6, w: 6, h: 5 },
+    { i: WIDGET_IDS.myReviews, x: 0, y: 11, w: 6, h: 5 },
+    { i: WIDGET_IDS.notifications, x: 0, y: 16, w: 6, h: 4 },
+    { i: WIDGET_IDS.genres, x: 0, y: 20, w: 6, h: 4 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 24, w: 6, h: 3 },
+    { i: WIDGET_IDS.topGenresList, x: 0, y: 27, w: 6, h: 4 },
+    { i: WIDGET_IDS.topCountries, x: 0, y: 31, w: 6, h: 4 },
+    { i: WIDGET_IDS.topActors, x: 0, y: 35, w: 6, h: 4 },
+    { i: WIDGET_IDS.topCompanies, x: 0, y: 39, w: 6, h: 4 },
+    { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 43, w: 6, h: 5 },
+    { i: WIDGET_IDS.favorites, x: 0, y: 48, w: 6, h: 5 },
+    { i: WIDGET_IDS.topRated, x: 0, y: 53, w: 6, h: 5 },
+    { i: WIDGET_IDS.completedByYear, x: 0, y: 58, w: 6, h: 4 },
+    { i: WIDGET_IDS.myCases, x: 0, y: 62, w: 6, h: 4 },
+    { i: WIDGET_IDS.myDisputes, x: 0, y: 66, w: 6, h: 4 },
+    { i: WIDGET_IDS.myComments, x: 0, y: 70, w: 6, h: 9 },
   ],
   xs: [
-    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 4, h: 4 },
-    { i: WIDGET_IDS.notifications, x: 0, y: 4, w: 4, h: 4 },
-    { i: WIDGET_IDS.topGenresList, x: 0, y: 8, w: 4, h: 4 },
-    { i: WIDGET_IDS.topCountries, x: 0, y: 12, w: 4, h: 4 },
-    { i: WIDGET_IDS.genres, x: 0, y: 16, w: 4, h: 4 },
-    { i: WIDGET_IDS.heatmap, x: 0, y: 20, w: 4, h: 3 },
-    { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 23, w: 4, h: 4 },
-    { i: WIDGET_IDS.completedByYear, x: 0, y: 27, w: 4, h: 4 },
-    { i: WIDGET_IDS.overview, x: 0, y: 31, w: 4, h: 4 },
-    { i: WIDGET_IDS.ratings, x: 0, y: 35, w: 4, h: 4 },
-    { i: WIDGET_IDS.myCases, x: 0, y: 39, w: 4, h: 4 },
-    { i: WIDGET_IDS.topRated, x: 0, y: 43, w: 4, h: 5 },
+    { i: WIDGET_IDS.overview, x: 0, y: 0, w: 4, h: 3 },
+    { i: WIDGET_IDS.ratings, x: 0, y: 3, w: 4, h: 3 },
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 6, w: 4, h: 5 },
+    { i: WIDGET_IDS.myReviews, x: 0, y: 11, w: 4, h: 5 },
+    { i: WIDGET_IDS.notifications, x: 0, y: 16, w: 4, h: 4 },
+    { i: WIDGET_IDS.genres, x: 0, y: 20, w: 4, h: 4 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 24, w: 4, h: 3 },
+    { i: WIDGET_IDS.topGenresList, x: 0, y: 27, w: 4, h: 4 },
+    { i: WIDGET_IDS.topCountries, x: 0, y: 31, w: 4, h: 4 },
+    { i: WIDGET_IDS.topActors, x: 0, y: 35, w: 4, h: 4 },
+    { i: WIDGET_IDS.topCompanies, x: 0, y: 39, w: 4, h: 4 },
+    { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 43, w: 4, h: 5 },
     { i: WIDGET_IDS.favorites, x: 0, y: 48, w: 4, h: 5 },
-    { i: WIDGET_IDS.myReviews, x: 0, y: 53, w: 4, h: 5 },
-    { i: WIDGET_IDS.topActors, x: 0, y: 58, w: 4, h: 4 },
-    { i: WIDGET_IDS.topCompanies, x: 0, y: 62, w: 4, h: 4 },
+    { i: WIDGET_IDS.topRated, x: 0, y: 53, w: 4, h: 5 },
+    { i: WIDGET_IDS.completedByYear, x: 0, y: 58, w: 4, h: 4 },
+    { i: WIDGET_IDS.myCases, x: 0, y: 62, w: 4, h: 4 },
     { i: WIDGET_IDS.myDisputes, x: 0, y: 66, w: 4, h: 4 },
     { i: WIDGET_IDS.myComments, x: 0, y: 70, w: 4, h: 9 },
   ],
 };
 
+// Layout ADMIN: prioriza herramientas de moderacion + overview admin.
+// Alineado al mock my-profile.png. El admin sigue viendo sus widgets
+// personales pero abajo del bloque admin.
+const ADMIN_LAYOUTS: DashboardLayouts = {
+  lg: [
+    // Fila 1: Resumen (overview) + Quick admin actions side-by-side (mock)
+    { i: WIDGET_IDS.overview, x: 0, y: 0, w: 6, h: 3, minW: 4, minH: 3 },
+    { i: WIDGET_IDS.quickAdmin, x: 6, y: 0, w: 6, h: 3, minW: 4, minH: 3 },
+    // Fila 2: Heatmap + Notifications (lateral)
+    { i: WIDGET_IDS.heatmap, x: 0, y: 3, w: 8, h: 4, minW: 6, minH: 3 },
+    { i: WIDGET_IDS.notifications, x: 8, y: 3, w: 4, h: 4, minW: 3, minH: 3 },
+    // Fila 3: Currently watching + My cases + My disputes
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 7, w: 6, h: 5 },
+    { i: WIDGET_IDS.myCases, x: 6, y: 7, w: 3, h: 5 },
+    { i: WIDGET_IDS.myDisputes, x: 9, y: 7, w: 3, h: 5 },
+    // Fila 4: Stats personales del admin
+    { i: WIDGET_IDS.ratings, x: 0, y: 12, w: 6, h: 3 },
+    { i: WIDGET_IDS.genres, x: 6, y: 12, w: 6, h: 3 },
+    // Fila 5: Top lists
+    { i: WIDGET_IDS.topGenresList, x: 0, y: 15, w: 4, h: 4 },
+    { i: WIDGET_IDS.topCountries, x: 4, y: 15, w: 4, h: 4 },
+    { i: WIDGET_IDS.topActors, x: 8, y: 15, w: 4, h: 4 },
+    // Fila 6: My reviews / Favorites / Top rated
+    { i: WIDGET_IDS.myReviews, x: 0, y: 19, w: 4, h: 5 },
+    { i: WIDGET_IDS.favorites, x: 4, y: 19, w: 4, h: 5 },
+    { i: WIDGET_IDS.topRated, x: 8, y: 19, w: 4, h: 5 },
+    // Fila 7
+    {
+      i: WIDGET_IDS.recentlyCompleted,
+      x: 0,
+      y: 24,
+      w: 4,
+      h: 4,
+    },
+    { i: WIDGET_IDS.completedByYear, x: 4, y: 24, w: 4, h: 4 },
+    { i: WIDGET_IDS.topCompanies, x: 8, y: 24, w: 4, h: 4 },
+    // Fila 8: My comments full-width
+    { i: WIDGET_IDS.myComments, x: 0, y: 28, w: 12, h: 8, minW: 6, minH: 6 },
+  ],
+  md: [
+    { i: WIDGET_IDS.overview, x: 0, y: 0, w: 5, h: 3 },
+    { i: WIDGET_IDS.quickAdmin, x: 5, y: 0, w: 5, h: 3 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 3, w: 10, h: 4 },
+    { i: WIDGET_IDS.notifications, x: 0, y: 7, w: 5, h: 4 },
+    { i: WIDGET_IDS.myCases, x: 5, y: 7, w: 5, h: 4 },
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 11, w: 10, h: 5 },
+    { i: WIDGET_IDS.ratings, x: 0, y: 16, w: 5, h: 3 },
+    { i: WIDGET_IDS.genres, x: 5, y: 16, w: 5, h: 3 },
+    { i: WIDGET_IDS.myReviews, x: 0, y: 19, w: 5, h: 5 },
+    { i: WIDGET_IDS.favorites, x: 5, y: 19, w: 5, h: 5 },
+    { i: WIDGET_IDS.topRated, x: 0, y: 24, w: 5, h: 5 },
+    { i: WIDGET_IDS.recentlyCompleted, x: 5, y: 24, w: 5, h: 5 },
+    { i: WIDGET_IDS.topGenresList, x: 0, y: 29, w: 5, h: 4 },
+    { i: WIDGET_IDS.topCountries, x: 5, y: 29, w: 5, h: 4 },
+    { i: WIDGET_IDS.topActors, x: 0, y: 33, w: 5, h: 4 },
+    { i: WIDGET_IDS.topCompanies, x: 5, y: 33, w: 5, h: 4 },
+    { i: WIDGET_IDS.completedByYear, x: 0, y: 37, w: 5, h: 4 },
+    { i: WIDGET_IDS.myDisputes, x: 5, y: 37, w: 5, h: 4 },
+    { i: WIDGET_IDS.myComments, x: 0, y: 41, w: 10, h: 8 },
+  ],
+  sm: [
+    { i: WIDGET_IDS.quickAdmin, x: 0, y: 0, w: 6, h: 4 },
+    { i: WIDGET_IDS.overview, x: 0, y: 4, w: 6, h: 3 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 7, w: 6, h: 3 },
+    { i: WIDGET_IDS.notifications, x: 0, y: 10, w: 6, h: 4 },
+    { i: WIDGET_IDS.myCases, x: 0, y: 14, w: 6, h: 4 },
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 18, w: 6, h: 5 },
+    { i: WIDGET_IDS.ratings, x: 0, y: 23, w: 6, h: 3 },
+    { i: WIDGET_IDS.myReviews, x: 0, y: 26, w: 6, h: 5 },
+    { i: WIDGET_IDS.genres, x: 0, y: 31, w: 6, h: 4 },
+    { i: WIDGET_IDS.topGenresList, x: 0, y: 35, w: 6, h: 4 },
+    { i: WIDGET_IDS.topCountries, x: 0, y: 39, w: 6, h: 4 },
+    { i: WIDGET_IDS.topActors, x: 0, y: 43, w: 6, h: 4 },
+    { i: WIDGET_IDS.topCompanies, x: 0, y: 47, w: 6, h: 4 },
+    { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 51, w: 6, h: 5 },
+    { i: WIDGET_IDS.favorites, x: 0, y: 56, w: 6, h: 5 },
+    { i: WIDGET_IDS.topRated, x: 0, y: 61, w: 6, h: 5 },
+    { i: WIDGET_IDS.completedByYear, x: 0, y: 66, w: 6, h: 4 },
+    { i: WIDGET_IDS.myDisputes, x: 0, y: 70, w: 6, h: 4 },
+    { i: WIDGET_IDS.myComments, x: 0, y: 74, w: 6, h: 9 },
+  ],
+  xs: [
+    { i: WIDGET_IDS.quickAdmin, x: 0, y: 0, w: 4, h: 4 },
+    { i: WIDGET_IDS.overview, x: 0, y: 4, w: 4, h: 3 },
+    { i: WIDGET_IDS.notifications, x: 0, y: 7, w: 4, h: 4 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 11, w: 4, h: 3 },
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 14, w: 4, h: 5 },
+    { i: WIDGET_IDS.ratings, x: 0, y: 19, w: 4, h: 3 },
+    { i: WIDGET_IDS.myCases, x: 0, y: 22, w: 4, h: 4 },
+    { i: WIDGET_IDS.myReviews, x: 0, y: 26, w: 4, h: 5 },
+    { i: WIDGET_IDS.genres, x: 0, y: 31, w: 4, h: 4 },
+    { i: WIDGET_IDS.topGenresList, x: 0, y: 35, w: 4, h: 4 },
+    { i: WIDGET_IDS.topCountries, x: 0, y: 39, w: 4, h: 4 },
+    { i: WIDGET_IDS.topActors, x: 0, y: 43, w: 4, h: 4 },
+    { i: WIDGET_IDS.topCompanies, x: 0, y: 47, w: 4, h: 4 },
+    { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 51, w: 4, h: 5 },
+    { i: WIDGET_IDS.favorites, x: 0, y: 56, w: 4, h: 5 },
+    { i: WIDGET_IDS.topRated, x: 0, y: 61, w: 4, h: 5 },
+    { i: WIDGET_IDS.completedByYear, x: 0, y: 66, w: 4, h: 4 },
+    { i: WIDGET_IDS.myDisputes, x: 0, y: 70, w: 4, h: 4 },
+    { i: WIDGET_IDS.myComments, x: 0, y: 74, w: 4, h: 9 },
+  ],
+};
+
 export function DashboardClient() {
   const { t } = useLocale();
-  const { status } = useSession();
+  const { status, data: session } = useSession();
   const [data, setData] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
 
-  // dashboardKey 'profile-v3' invalida cache de layout previo. v3 suma
-  // 7 widgets nuevos (TopActors, TopCompanies, TopRated, Favorites,
-  // MyReviews, MyDisputes, MyComments) que el layout v2 no incluia.
+  // Layout y dashboardKey distintos segun rol — admin tiene QuickActions
+  // como widget destacado y orden propio; user prioriza contenido personal.
+  const isAdmin =
+    (data?.user.role ?? (session?.user as { role?: string })?.role) === 'ADMIN';
+  const dashboardKey = isAdmin ? 'profile-admin-v1' : 'profile-user-v1';
+  const defaultLayouts = isAdmin ? ADMIN_LAYOUTS : USER_LAYOUTS;
+
   const { layouts, setLayouts, removeWidget, addWidget, reset, widgetIds } =
-    useDashboardLayout('profile-v3', DEFAULT_LAYOUTS);
+    useDashboardLayout(dashboardKey, defaultLayouts);
 
   // Registro de widgets — corre antes del primer paint en cada mount.
   // El registry es un singleton, asi que `register` es idempotente por id.
@@ -342,6 +450,18 @@ export function DashboardClient() {
       defaultSize: { w: 12, h: 8, minW: 6, minH: 6 },
       Component: MyCommentsWidget as never,
     });
+    // QuickAdmin solo para admins. El picker / WidgetRegistry no expone
+    // roles, asi que el filtrado lo hace el layout default que solo lo
+    // pone en ADMIN_LAYOUTS. Si un user regular intenta agregarlo, el
+    // componente igual renderiza pero los links a /admin/* devuelven 403.
+    WidgetRegistry.register({
+      id: WIDGET_IDS.quickAdmin,
+      category: 'admin',
+      labelKey: 'quickAdmin.title',
+      descriptionKey: 'quickAdmin.title',
+      defaultSize: { w: 6, h: 3, minW: 4, minH: 3 },
+      Component: QuickAdminActionsWidget as never,
+    });
   }, []);
 
   useEffect(() => {
@@ -391,6 +511,7 @@ export function DashboardClient() {
     map[WIDGET_IDS.myReviews] = { recentReviews: data.recentReviews };
     map[WIDGET_IDS.myDisputes] = {};
     map[WIDGET_IDS.myComments] = {};
+    map[WIDGET_IDS.quickAdmin] = {};
     return map;
   }, [data]);
 

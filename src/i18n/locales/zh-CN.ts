@@ -2219,6 +2219,15 @@ const zhCN: TranslationShape = {
     widgetAlerts: '警报',
     widgetAlertsDesc: '需要处理的项目：审核、缺失、建议。',
   },
+  quickAdmin: {
+    title: 'Acciones rapidas',
+    moderateComments: 'Moderar comentarios',
+    manageContent: 'Gestionar contenido',
+    reviewUsers: 'Revisar usuarios',
+    reports: 'Reportes',
+    auditLog: 'Audit log',
+    news: 'Noticias',
+  },
 } as TranslationShape;
 
 export default zhCN;

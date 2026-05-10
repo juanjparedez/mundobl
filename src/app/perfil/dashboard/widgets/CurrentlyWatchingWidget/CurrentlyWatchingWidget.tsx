@@ -1,7 +1,6 @@
 'use client';
 
 import { PlayCircleOutlined } from '@ant-design/icons';
-import { Progress } from 'antd';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Widget } from '@/components/dashboard';
@@ -16,6 +15,9 @@ export interface CurrentlyWatchingWidgetProps {
   items: ProfileData['currentlyWatching'];
 }
 
+/** Shelf horizontal de "Seguir viendo" alineado al mock my-.profile2.png:
+ *  cards grandes con poster prominente, titulo, proximo episodio y barra
+ *  de progreso. Scroll horizontal con scroll-snap para feel premium. */
 export function CurrentlyWatchingWidget({
   items,
 }: CurrentlyWatchingWidgetProps) {
@@ -41,9 +43,8 @@ export function CurrentlyWatchingWidget({
       title={t('profileDashboard.widgetCurrentlyWatching')}
       icon={<PlayCircleOutlined />}
       noPadding
-      fade={items.length > 3}
     >
-      <ul className="mb-currently-watching">
+      <div className="mb-cw-shelf" role="list">
         {items.map(({ seriesId, series, progress, nextEpisode }) => {
           if (!series) return null;
           const pct =
@@ -53,58 +54,61 @@ export function CurrentlyWatchingWidget({
                 )
               : 0;
           return (
-            <li key={seriesId}>
-              <Link
-                href={`/series/${series.id}`}
-                className="mb-currently-watching__item"
-              >
-                <span className="mb-currently-watching__cover">
-                  {series.imageUrl ? (
-                    <Image
-                      src={series.imageUrl}
-                      alt=""
-                      width={44}
-                      height={62}
-                      unoptimized={!isSupabaseImageUrl(series.imageUrl)}
-                    />
-                  ) : (
-                    <span className="mb-currently-watching__cover-placeholder" />
-                  )}
-                </span>
-                <span className="mb-currently-watching__body">
-                  <span className="mb-currently-watching__title">
-                    {series.title}
+            <Link
+              key={seriesId}
+              href={`/series/${series.id}`}
+              className="mb-cw-shelf__card"
+              role="listitem"
+            >
+              <span className="mb-cw-shelf__cover">
+                {series.imageUrl ? (
+                  <Image
+                    src={series.imageUrl}
+                    alt=""
+                    width={160}
+                    height={90}
+                    sizes="160px"
+                    quality={70}
+                    unoptimized={!isSupabaseImageUrl(series.imageUrl)}
+                  />
+                ) : (
+                  <span className="mb-cw-shelf__cover-placeholder">
+                    <PlayCircleOutlined />
                   </span>
-                  <span className="mb-currently-watching__meta">
-                    {nextEpisode
-                      ? interpolateMessage(
-                          t('profileDashboard.currentlyWatchingNext'),
-                          {
-                            season: nextEpisode.seasonNumber,
-                            episode: nextEpisode.episodeNumber,
-                          }
-                        )
-                      : interpolateMessage(
-                          t('profileDashboard.currentlyWatchingProgress'),
-                          {
-                            watched: progress.watchedEpisodes,
-                            total: progress.totalEpisodes,
-                          }
-                        )}
-                  </span>
-                  <Progress
-                    percent={pct}
-                    showInfo={false}
-                    size="small"
-                    strokeColor="var(--primary-color)"
-                    trailColor="var(--bg-spotlight)"
+                )}
+                <span className="mb-cw-shelf__progress-bar">
+                  <span
+                    className="mb-cw-shelf__progress-fill"
+                    style={{ width: `${pct}%` }}
                   />
                 </span>
-              </Link>
-            </li>
+              </span>
+              <span className="mb-cw-shelf__body">
+                <span className="mb-cw-shelf__title" title={series.title}>
+                  {series.title}
+                </span>
+                <span className="mb-cw-shelf__next">
+                  {nextEpisode
+                    ? interpolateMessage(
+                        t('profileDashboard.currentlyWatchingNext'),
+                        {
+                          season: nextEpisode.seasonNumber,
+                          episode: nextEpisode.episodeNumber,
+                        }
+                      )
+                    : interpolateMessage(
+                        t('profileDashboard.currentlyWatchingProgress'),
+                        {
+                          watched: progress.watchedEpisodes,
+                          total: progress.totalEpisodes,
+                        }
+                      )}
+                </span>
+              </span>
+            </Link>
           );
         })}
-      </ul>
+      </div>
     </Widget>
   );
 }
