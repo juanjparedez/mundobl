@@ -109,11 +109,17 @@ export function FeedbackClient() {
     },
   };
 
+  // El DB enum FeatureRequestStatus usa keys en ingles (OPEN/IN_PROGRESS/
+  // COMPLETED/REJECTED). Antes este config tenia keys en espaniol y nunca
+  // matcheaba — todo se renderizaba como "pendiente" por fallback.
   const STATUS_CONFIG: Record<string, { color: string; label: string }> = {
-    pendiente: { color: 'default', label: t('feedback.statusPendiente') },
-    en_progreso: { color: 'processing', label: t('feedback.statusEnProgreso') },
-    completado: { color: 'success', label: t('feedback.statusCompletado') },
-    descartado: { color: 'error', label: t('feedback.statusDescartado') },
+    OPEN: { color: 'default', label: t('feedback.statusPendiente') },
+    IN_PROGRESS: {
+      color: 'processing',
+      label: t('feedback.statusEnProgreso'),
+    },
+    COMPLETED: { color: 'success', label: t('feedback.statusCompletado') },
+    REJECTED: { color: 'error', label: t('feedback.statusDescartado') },
   };
   const [requests, setRequests] = useState<FeatureRequest[]>([]);
   const [_loading, setLoading] = useState(true);
@@ -409,9 +415,9 @@ export function FeedbackClient() {
     }
   };
 
-  const activeRequests = requests.filter((r) => r.status !== 'completado');
+  const activeRequests = requests.filter((r) => r.status !== 'COMPLETED');
   const completedRequests = requests
-    .filter((r) => r.status === 'completado')
+    .filter((r) => r.status === 'COMPLETED')
     .sort(
       (a, b) =>
         new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
@@ -419,8 +425,7 @@ export function FeedbackClient() {
 
   const renderRequestCard = (request: FeatureRequest) => {
     const typeConfig = TYPE_CONFIG[request.type] || TYPE_CONFIG.idea;
-    const statusConfig =
-      STATUS_CONFIG[request.status] || STATUS_CONFIG.pendiente;
+    const statusConfig = STATUS_CONFIG[request.status] || STATUS_CONFIG.OPEN;
     const hasVoted = userId
       ? request.votes.some((v) => v.userId === userId)
       : false;

@@ -78,7 +78,7 @@ export function MyCommentsWidget() {
   const [comments, setComments] = useState<UserComment[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(5);
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<number[]>([]);
 
@@ -517,7 +517,7 @@ export function MyCommentsWidget() {
                 total={total}
                 size="small"
                 showSizeChanger
-                pageSizeOptions={['5', '10', '20', '50']}
+                pageSizeOptions={['5', '10']}
                 onChange={(p, ps) => {
                   setPage(p);
                   setPageSize(ps);

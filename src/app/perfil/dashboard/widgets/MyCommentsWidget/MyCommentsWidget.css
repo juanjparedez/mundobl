@@ -55,9 +55,9 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  overflow-y: auto;
-  flex: 1;
-  min-height: 0;
+  /* Sin scroll interno: la paginacion (5/10/20 por pagina) ya limita
+   * cuanto se ve. El widget crece naturalmente con la altura del cell. */
+  overflow: visible;
 }
 
 .mb-my-comments__item {
