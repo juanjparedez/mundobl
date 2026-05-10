@@ -1587,7 +1587,12 @@ const th: TranslationShape = {
     "adminBadge": "ผู้ดูแลระบบ",
     "errorUploadImage": "เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ",
     "errorCreateRequest": "เกิดข้อผิดพลาดในการสร้างคำขอ",
-    "imageAltAttachment": "ไฟล์แนบ"
+    "imageAltAttachment": "ไฟล์แนบ",
+    "attachImage": "แนบรูปภาพ",
+    "takePhoto": "ถ่ายรูป",
+    "dropImagesHere": "วางรูปภาพที่นี่",
+    "errorImageType": "{name} ไม่ใช่รูปภาพที่ถูกต้อง",
+    "errorImageSize": "{name} มีขนาดเกิน 5MB"
   },
   "notFound": {
     "description": "หน้าที่คุณกำลังมองหาไม่มีอยู่หรือไม่ก็ถูกย้ายไปแล้ว",

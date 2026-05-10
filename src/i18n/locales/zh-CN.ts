@@ -1587,7 +1587,12 @@ const zhCN: TranslationShape = {
     "adminBadge": "管理员",
     "errorUploadImage": "上传图片失败",
     "errorCreateRequest": "创建请求失败",
-    "imageAltAttachment": "附件"
+    "imageAltAttachment": "附件",
+    "attachImage": "附加图片",
+    "takePhoto": "拍照",
+    "dropImagesHere": "将图片拖至此处",
+    "errorImageType": "{name} 不是有效的图片",
+    "errorImageSize": "{name} 超过 5MB"
   },
   "notFound": {
     "description": "您要查找的页面不存在或已移动。",
