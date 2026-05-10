@@ -1,0 +1,113 @@
+.overview-comments {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  background: var(--bg-container);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+}
+
+.overview-comments__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.overview-comments__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.overview-comments__title .anticon {
+  color: var(--primary-color);
+}
+
+.overview-comments__see-all,
+.overview-comments__more {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  text-decoration: none;
+}
+
+.overview-comments__see-all:hover,
+.overview-comments__more:hover {
+  color: var(--primary-color);
+}
+
+.overview-comments__filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 110px;
+  gap: 6px;
+}
+
+.overview-comments__filter-select {
+  width: 100%;
+}
+
+.overview-comments__loading,
+.overview-comments__empty {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  padding: 14px 8px;
+  text-align: center;
+}
+
+.overview-comments__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.overview-comments__item {
+  padding: 8px 10px;
+  background: var(--bg-spotlight);
+  border-radius: var(--border-radius-base);
+}
+
+.overview-comments__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+
+.overview-comments__series {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.overview-comments__date {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+.overview-comments__text {
+  margin: 0;
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.overview-comments__more {
+  margin-top: 4px;
+  text-align: center;
+}

@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { DashboardClient } from './dashboard/DashboardClient';
+import { ProfileOverviewClient } from './overview/ProfileOverviewClient';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,5 +10,5 @@ export const metadata: Metadata = {
 };
 
 export default function PerfilPage() {
-  return <DashboardClient />;
+  return <ProfileOverviewClient />;
 }

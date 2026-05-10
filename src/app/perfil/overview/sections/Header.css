@@ -1,0 +1,96 @@
+.overview-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: var(--bg-container);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+}
+
+.overview-header__avatar {
+  flex-shrink: 0;
+  border: 2px solid color-mix(in srgb, var(--primary-color) 30%, transparent);
+}
+
+.overview-header__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.overview-header__name {
+  margin: 0;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.overview-header__email {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.overview-header__meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.overview-header__role-pill {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.overview-header__role-pill--admin {
+  background: color-mix(in srgb, #ff5c5c 18%, transparent);
+  color: #ff8585;
+  border: 1px solid color-mix(in srgb, #ff5c5c 35%, transparent);
+}
+
+.overview-header__role-pill--user {
+  background: color-mix(in srgb, var(--primary-color) 16%, transparent);
+  color: var(--primary-color);
+  border: 1px solid color-mix(in srgb, var(--primary-color) 35%, transparent);
+}
+
+.overview-header__joined {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.overview-header__actions {
+  flex-shrink: 0;
+  display: inline-flex;
+  gap: 8px;
+}
+
+@media (max-width: 720px) {
+  .overview-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .overview-header__actions {
+    width: 100%;
+  }
+  .overview-header__actions > * {
+    flex: 1;
+  }
+}
