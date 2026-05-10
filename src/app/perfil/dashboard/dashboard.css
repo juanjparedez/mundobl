@@ -2,6 +2,16 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md);
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  background:
+    radial-gradient(
+      circle at top right,
+      color-mix(in srgb, var(--primary-color) 12%, transparent) 0%,
+      transparent 56%
+    ),
+    color-mix(in srgb, var(--bg-container) 82%, transparent);
 }
 
 .mb-perfil-dashboard__loading {

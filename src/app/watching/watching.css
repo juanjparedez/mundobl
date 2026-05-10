@@ -1,9 +1,21 @@
 .watching-page {
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  background: color-mix(in srgb, var(--bg-container) 84%, transparent);
 }
 
 .watching-page__title {
-  font-size: 24px;
-  margin-bottom: var(--spacing-lg);
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  margin-bottom: var(--spacing-md);
   color: var(--text-primary);
+  padding: var(--spacing-md);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  background:
+    linear-gradient(
+      125deg,
+      color-mix(in srgb, var(--bg-container) 92%, transparent) 0%,
+      color-mix(in srgb, var(--bg-elevated) 64%, transparent) 100%
+    );
 }

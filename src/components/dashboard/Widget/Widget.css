@@ -5,10 +5,10 @@
   height: 100%;
   background: var(--bg-container);
   border: 1px solid var(--border-color-secondary);
-  border-radius: var(--border-radius-base);
+  border-radius: var(--border-radius-lg);
   /* Sin shadow por default — los widgets viven en una grid densa donde
    * la shadow agrega ruido visual. La separacion la da el gap. */
-  box-shadow: none;
+  box-shadow: var(--box-shadow-card);
   overflow: hidden;
   transition: var(--transition-fast);
 }
@@ -25,6 +25,8 @@
   padding: 8px var(--spacing-md);
   flex-shrink: 0;
   min-height: 36px;
+  border-bottom: 1px solid var(--border-color-secondary);
+  background: color-mix(in srgb, var(--bg-elevated) 68%, transparent);
 }
 
 .mb-widget__drag-handle {
@@ -64,11 +66,11 @@
 
 .mb-widget__title {
   margin: 0;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--text-primary);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
   flex: 1;
   min-width: 0;
   white-space: nowrap;
@@ -109,6 +111,7 @@
   min-height: 0;
   padding: 12px;
   overflow: auto;
+  background: color-mix(in srgb, var(--bg-container) 90%, transparent);
 }
 
 .mb-widget__body--flush {

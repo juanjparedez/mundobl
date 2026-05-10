@@ -115,7 +115,7 @@ const DEFAULTS: Omit<ThemeState, 'mounted'> = {
   density: 'comfortable',
   motion: 'auto',
   saver: 'off',
-  skin: 'default',
+  skin: 'premium',
 };
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
@@ -148,7 +148,11 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       DEFAULTS.motion
     );
     const saver = pick(get(STORAGE_KEYS.saver), VALID_SAVERS, DEFAULTS.saver);
-    const skin = pick(get(STORAGE_KEYS.skin), VALID_SKINS, DEFAULTS.skin);
+    const rawSkin = get(STORAGE_KEYS.skin);
+    const skin =
+      rawSkin === 'default'
+        ? DEFAULTS.skin
+        : pick(rawSkin, VALID_SKINS, DEFAULTS.skin);
 
     document.documentElement.setAttribute('data-theme', theme);
     applyAccentVars(accent, theme);
@@ -158,7 +162,17 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     applyDataAttribute('density', density, DEFAULTS.density);
     applyDataAttribute('motion', motion, DEFAULTS.motion);
     applyDataAttribute('saver', saver, DEFAULTS.saver);
-    applyDataAttribute('skin', skin, DEFAULTS.skin);
+    document.documentElement.setAttribute('data-skin', skin);
+
+    // Migra preferencias viejas: si la skin guardada era "default",
+    // persistimos premium para que el rediseno se aplique de forma real.
+    if (rawSkin === 'default') {
+      try {
+        localStorage.setItem(STORAGE_KEYS.skin, DEFAULTS.skin);
+      } catch {
+        /* silent */
+      }
+    }
 
     // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration: read localStorage on mount
     setState({
@@ -244,7 +258,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   const handleSetSkin = (newSkin: SkinKey) => {
     setState((prev) => ({ ...prev, skin: newSkin }));
     persist(STORAGE_KEYS.skin, newSkin);
-    applyDataAttribute('skin', newSkin, DEFAULTS.skin);
+    document.documentElement.setAttribute('data-skin', newSkin);
   };
 
   const resetPreferences = () => {
@@ -258,9 +272,10 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     setState({ ...DEFAULTS, mounted: true });
     document.documentElement.setAttribute('data-theme', DEFAULTS.theme);
     applyAccentVars(DEFAULTS.accent, DEFAULTS.theme);
-    (
-      ['tone', 'font', 'scale', 'density', 'motion', 'saver', 'skin'] as const
-    ).forEach((k) => document.documentElement.removeAttribute(`data-${k}`));
+    (['tone', 'font', 'scale', 'density', 'motion', 'saver'] as const).forEach(
+      (k) => document.documentElement.removeAttribute(`data-${k}`)
+    );
+    document.documentElement.setAttribute('data-skin', DEFAULTS.skin);
   };
 
   if (!state.mounted) {
