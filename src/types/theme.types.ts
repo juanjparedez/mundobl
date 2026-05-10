@@ -20,6 +20,10 @@ export interface ThemeContextType {
   setTheme: (theme: ThemeMode) => void;
   accent: import('@/lib/theme.config').AccentPresetKey;
   setAccent: (accent: import('@/lib/theme.config').AccentPresetKey) => void;
+  /** Hex custom (#rrggbb). Si esta seteado, sobreescribe al preset y se
+   *  derivan hover/active/outline automaticamente. */
+  customAccent: string | null;
+  setCustomAccent: (hex: string | null) => void;
   tone: ToneKey;
   setTone: (tone: ToneKey) => void;
   font: FontKey;
