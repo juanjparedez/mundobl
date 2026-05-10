@@ -2296,6 +2296,12 @@ const ko: TranslationShape = {
     "actionUpdate": "수정됨",
     "actionDelete": "삭제됨"
   },
+  "topCommenters": {
+    "title": "추천 커뮤니티",
+    "empty": "최근 댓글이 없습니다.",
+    "roleAdmin": "관리자",
+    "roleModerator": "모더레이터"
+  },
   "workspace": {
     "backToCatalog": "카탈로그로 돌아가기",
     "viewPublic": "공개 보기",

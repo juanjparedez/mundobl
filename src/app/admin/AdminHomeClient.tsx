@@ -15,12 +15,14 @@ import { AdminDashboardHero } from './AdminDashboardHero';
 import { AdminKPIsWidget } from './widgets/AdminKPIsWidget/AdminKPIsWidget';
 import { AdminAlertsWidget } from './widgets/AdminAlertsWidget/AdminAlertsWidget';
 import { RecentAdminActivityWidget } from './widgets/RecentAdminActivityWidget/RecentAdminActivityWidget';
+import { TopCommentersWidget } from './widgets/TopCommentersWidget/TopCommentersWidget';
 import type { ReactNode } from 'react';
 
 const WIDGET_IDS = {
   kpis: 'admin.kpis',
   alerts: 'admin.alerts',
   recentActivity: 'admin.recentActivity',
+  topCommenters: 'admin.topCommenters',
 } as const;
 
 const DEFAULT_LAYOUTS: DashboardLayouts = {
@@ -28,21 +30,25 @@ const DEFAULT_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.kpis, x: 0, y: 0, w: 7, h: 3 },
     { i: WIDGET_IDS.alerts, x: 7, y: 0, w: 5, h: 5 },
     { i: WIDGET_IDS.recentActivity, x: 0, y: 3, w: 7, h: 5 },
+    { i: WIDGET_IDS.topCommenters, x: 0, y: 8, w: 6, h: 5 },
   ],
   md: [
     { i: WIDGET_IDS.kpis, x: 0, y: 0, w: 10, h: 3 },
     { i: WIDGET_IDS.alerts, x: 0, y: 3, w: 5, h: 5 },
     { i: WIDGET_IDS.recentActivity, x: 5, y: 3, w: 5, h: 5 },
+    { i: WIDGET_IDS.topCommenters, x: 0, y: 8, w: 10, h: 5 },
   ],
   sm: [
     { i: WIDGET_IDS.kpis, x: 0, y: 0, w: 6, h: 3 },
     { i: WIDGET_IDS.alerts, x: 0, y: 3, w: 6, h: 5 },
     { i: WIDGET_IDS.recentActivity, x: 0, y: 8, w: 6, h: 5 },
+    { i: WIDGET_IDS.topCommenters, x: 0, y: 13, w: 6, h: 5 },
   ],
   xs: [
     { i: WIDGET_IDS.kpis, x: 0, y: 0, w: 4, h: 4 },
     { i: WIDGET_IDS.alerts, x: 0, y: 4, w: 4, h: 5 },
     { i: WIDGET_IDS.recentActivity, x: 0, y: 9, w: 4, h: 5 },
+    { i: WIDGET_IDS.topCommenters, x: 0, y: 14, w: 4, h: 5 },
   ],
 };
 
@@ -131,6 +137,15 @@ export function AdminHomeClient({
       Component: RecentAdminActivityWidget as never,
       roles: ['ADMIN', 'MODERATOR'],
     });
+    WidgetRegistry.register({
+      id: WIDGET_IDS.topCommenters,
+      category: 'social',
+      labelKey: 'topCommenters.title',
+      descriptionKey: 'topCommenters.title',
+      defaultSize: { w: 6, h: 5, minW: 4, minH: 4 },
+      Component: TopCommentersWidget as never,
+      roles: ['ADMIN', 'MODERATOR'],
+    });
   }, []);
 
   const widgetProps = useMemo<Record<string, Record<string, unknown>>>(
@@ -143,6 +158,7 @@ export function AdminHomeClient({
       },
       [WIDGET_IDS.alerts]: {},
       [WIDGET_IDS.recentActivity]: {},
+      [WIDGET_IDS.topCommenters]: {},
     }),
     [kpiCounts]
   );

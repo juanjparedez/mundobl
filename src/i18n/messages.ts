@@ -2287,6 +2287,12 @@ export type TranslationShape = {
     actionUpdate: string;
     actionDelete: string;
   };
+  topCommenters: {
+    title: string;
+    empty: string;
+    roleAdmin: string;
+    roleModerator: string;
+  };
   workspace: {
     backToCatalog: string;
     viewPublic: string;
@@ -4746,6 +4752,12 @@ const es: TranslationShape = {
     actionUpdate: 'Editó',
     actionDelete: 'Eliminó',
   },
+  topCommenters: {
+    title: 'Comunidad destacada',
+    empty: 'Sin comentarios recientes.',
+    roleAdmin: 'Admin',
+    roleModerator: 'Mod',
+  },
   workspace: {
     backToCatalog: 'Volver al catálogo',
     viewPublic: 'Vista pública',
@@ -7191,6 +7203,12 @@ const en: TranslationShape = {
     actionCreate: 'Created',
     actionUpdate: 'Edited',
     actionDelete: 'Deleted',
+  },
+  topCommenters: {
+    title: 'Featured community',
+    empty: 'No recent comments.',
+    roleAdmin: 'Admin',
+    roleModerator: 'Mod',
   },
   workspace: {
     backToCatalog: 'Back to catalog',

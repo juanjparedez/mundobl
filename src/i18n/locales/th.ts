@@ -2296,6 +2296,12 @@ const th: TranslationShape = {
     "actionUpdate": "แก้ไขแล้ว",
     "actionDelete": "ลบแล้ว"
   },
+  "topCommenters": {
+    "title": "ชุมชนแนะนำ",
+    "empty": "ไม่มีความคิดเห็นล่าสุด",
+    "roleAdmin": "ผู้ดูแลระบบ",
+    "roleModerator": "ผู้ดูแล"
+  },
   "workspace": {
     "backToCatalog": "กลับสู่แคตตาล็อก",
     "viewPublic": "มุมมองสาธารณะ",
