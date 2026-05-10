@@ -241,7 +241,7 @@ export function DashboardClient() {
   const { t } = useLocale();
   const { status, data: session } = useSession();
   const [data, setData] = useState<ProfileData | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [errored, setErrored] = useState(false);
   const [editing, setEditing] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
 
@@ -419,18 +419,15 @@ export function DashboardClient() {
   useEffect(() => {
     if (status !== 'authenticated') return;
     let cancelled = false;
-    setLoading(true);
     fetch('/api/user/profile')
       .then((res) => (res.ok ? res.json() : null))
       .then((profile: ProfileData | null) => {
         if (cancelled) return;
-        setData(profile);
+        if (profile) setData(profile);
+        else setErrored(true);
       })
       .catch(() => {
-        /* manejo silencioso — el render muestra estado de error */
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) setErrored(true);
       });
     return () => {
       cancelled = true;
@@ -467,7 +464,10 @@ export function DashboardClient() {
     return map;
   }, [data]);
 
-  if (status === 'loading' || (loading && !data)) {
+  if (
+    status === 'loading' ||
+    (status === 'authenticated' && !data && !errored)
+  ) {
     return (
       <AppLayout>
         <div className="mb-perfil-dashboard__loading">

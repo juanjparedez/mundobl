@@ -15,6 +15,8 @@ import {
   CheckCircleFilled,
 } from '@ant-design/icons';
 import type { ProfileData } from '../../types';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
 import './Achievements.css';
 
 interface Props {
@@ -37,14 +39,15 @@ interface Achievement {
  *  y se separan visualmente entre obtenidos y pendientes. Cuando exista
  *  modelo Achievement en backend se reemplaza esta lista por la real. */
 export function OverviewAchievements({ stats }: Props) {
+  const { t } = useLocale();
   const [showAll, setShowAll] = useState(false);
 
   const achievements: Achievement[] = [
     {
       key: 'first-step',
       icon: <CheckCircleFilled />,
-      name: 'Primer paso',
-      description: 'Marcá tu primera serie como vista',
+      name: t('achievements.firstStepName'),
+      description: t('achievements.firstStepDesc'),
       current: stats.watched,
       goal: 1,
       tone: 'green',
@@ -52,8 +55,8 @@ export function OverviewAchievements({ stats }: Props) {
     {
       key: 'starter',
       icon: <CompassFilled />,
-      name: 'Iniciante',
-      description: 'Ver 10 series diferentes',
+      name: t('achievements.starterName'),
+      description: t('achievements.starterDesc'),
       current: stats.watched,
       goal: 10,
       tone: 'green',
@@ -61,8 +64,8 @@ export function OverviewAchievements({ stats }: Props) {
     {
       key: 'explorer',
       icon: <CompassFilled />,
-      name: 'Explorador',
-      description: 'Ver 50 series diferentes',
+      name: t('achievements.explorerName'),
+      description: t('achievements.explorerDesc'),
       current: stats.watched,
       goal: 50,
       tone: 'gold',
@@ -70,8 +73,8 @@ export function OverviewAchievements({ stats }: Props) {
     {
       key: 'completionist',
       icon: <CrownFilled />,
-      name: 'Coleccionista',
-      description: 'Ver 100 series diferentes',
+      name: t('achievements.completionistName'),
+      description: t('achievements.completionistDesc'),
       current: stats.watched,
       goal: 100,
       tone: 'gold',
@@ -79,8 +82,8 @@ export function OverviewAchievements({ stats }: Props) {
     {
       key: 'first-review',
       icon: <ReadFilled />,
-      name: 'Primera reseña',
-      description: 'Publicar tu primera reseña',
+      name: t('achievements.firstReviewName'),
+      description: t('achievements.firstReviewDesc'),
       current: stats.reviews,
       goal: 1,
       tone: 'green',
@@ -88,8 +91,8 @@ export function OverviewAchievements({ stats }: Props) {
     {
       key: 'critic',
       icon: <ReadFilled />,
-      name: 'Crítico',
-      description: 'Publicar 10 reseñas',
+      name: t('achievements.criticName'),
+      description: t('achievements.criticDesc'),
       current: stats.reviews,
       goal: 10,
       tone: 'purple',
@@ -97,8 +100,8 @@ export function OverviewAchievements({ stats }: Props) {
     {
       key: 'voice',
       icon: <CommentOutlined />,
-      name: 'Comunidad',
-      description: 'Publicar 50 comentarios',
+      name: t('achievements.voiceName'),
+      description: t('achievements.voiceDesc'),
       current: stats.comments,
       goal: 50,
       tone: 'blue',
@@ -106,8 +109,8 @@ export function OverviewAchievements({ stats }: Props) {
     {
       key: 'rater',
       icon: <StarFilled />,
-      name: 'Puntuador',
-      description: 'Valorar 25 series',
+      name: t('achievements.raterName'),
+      description: t('achievements.raterDesc'),
       current: stats.ratings,
       goal: 25,
       tone: 'gold',
@@ -115,8 +118,8 @@ export function OverviewAchievements({ stats }: Props) {
     {
       key: 'fan',
       icon: <HeartFilled />,
-      name: 'Fan de corazón',
-      description: 'Agregar 25 títulos a favoritos',
+      name: t('achievements.fanName'),
+      description: t('achievements.fanDesc'),
       current: stats.favorites,
       goal: 25,
       tone: 'red',
@@ -124,8 +127,8 @@ export function OverviewAchievements({ stats }: Props) {
     {
       key: 'binger',
       icon: <ClockCircleFilled />,
-      name: 'Maratoneador',
-      description: 'Acumular 100 horas vistas',
+      name: t('achievements.bingerName'),
+      description: t('achievements.bingerDesc'),
       current: Math.floor(stats.hoursWatched),
       goal: 100,
       tone: 'purple',
@@ -133,8 +136,8 @@ export function OverviewAchievements({ stats }: Props) {
     {
       key: 'streak-7',
       icon: <FireFilled />,
-      name: 'Racha semanal',
-      description: 'Lograr una racha de 7 días',
+      name: t('achievements.streak7Name'),
+      description: t('achievements.streak7Desc'),
       current: stats.longestStreak,
       goal: 7,
       tone: 'red',
@@ -142,8 +145,8 @@ export function OverviewAchievements({ stats }: Props) {
     {
       key: 'streak-30',
       icon: <ThunderboltFilled />,
-      name: 'Mes constante',
-      description: 'Lograr una racha de 30 días',
+      name: t('achievements.streak30Name'),
+      description: t('achievements.streak30Desc'),
       current: stats.longestStreak,
       goal: 30,
       tone: 'gold',
@@ -160,7 +163,7 @@ export function OverviewAchievements({ stats }: Props) {
     <section className="overview-achievements">
       <header className="overview-achievements__head">
         <h3 className="overview-achievements__title">
-          <TrophyOutlined /> Logros y hitos
+          <TrophyOutlined /> {t('profile.sectionAchievements')}
         </h3>
         <span className="overview-achievements__count">
           {unlocked.length} / {achievements.length}
@@ -209,7 +212,11 @@ export function OverviewAchievements({ stats }: Props) {
           className="overview-achievements__toggle"
           onClick={() => setShowAll((v) => !v)}
         >
-          {showAll ? 'Ver menos' : `Ver todos (${achievements.length})`}
+          {showAll
+            ? t('profile.overviewViewLess')
+            : interpolateMessage(t('profile.overviewViewAllCount'), {
+                count: String(achievements.length),
+              })}
         </button>
       )}
     </section>

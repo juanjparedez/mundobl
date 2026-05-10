@@ -3,29 +3,18 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
   Avatar,
-  Button,
   Input,
   Modal,
-  Pagination,
   Segmented,
   Space,
   Table,
   Tag,
   Select,
-  Tooltip,
-  Empty,
   Spin,
-  Form,
   Divider,
 } from 'antd';
 import {
-  DeleteOutlined,
-  EditOutlined,
-  ExclamationCircleOutlined,
   UserOutlined,
-  CheckCircleOutlined,
-  ClockCircleOutlined,
-  CloseCircleOutlined,
   FileTextOutlined,
   BugOutlined,
   BulbOutlined,
@@ -36,12 +25,10 @@ import { AdminPageHero } from '@/components/admin/AdminPageHero/AdminPageHero';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { AdminNav } from '../AdminNav';
 import { useMessage } from '@/hooks/useMessage';
-import { useLocale } from '@/lib/providers/LocaleProvider';
 import '../admin.css';
 
 type Status = 'OPEN' | 'IN_PROGRESS' | 'COMPLETED' | 'REJECTED';
 type Priority = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-type FeedbackType = 'bug' | 'feature' | 'idea';
 
 interface FeedbackCase {
   id: number;
@@ -122,7 +109,6 @@ function formatDate(date: string): string {
 
 export function FeedbackClient() {
   const message = useMessage();
-  const { locale, t } = useLocale();
   const [cases, setCases] = useState<FeedbackCase[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -130,9 +116,7 @@ export function FeedbackClient() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [detailCase, setDetailCase] = useState<FeedbackCase | null>(null);
-  const [editingCase, setEditingCase] = useState<FeedbackCase | null>(null);
   const [adminUsers, setAdminUsers] = useState<AdminUser[]>([]);
-  const [form] = Form.useForm();
 
   // Load cases
   const loadCases = useCallback(async () => {
@@ -213,7 +197,6 @@ export function FeedbackClient() {
       if (!res.ok) throw new Error('Failed to assign');
       message.success('Asignación actualizada');
       loadCases();
-      setEditingCase(null);
     } catch (error) {
       console.error('Error assigning:', error);
       message.error('Error al asignar');
@@ -315,35 +298,29 @@ export function FeedbackClient() {
       title: 'Estado',
       dataIndex: 'status',
       width: 120,
-      render: (status: Status, record: FeedbackCase) => {
-        const option = STATUS_OPTIONS.find((o) => o.value === status);
-        return (
-          <Select
-            value={status}
-            onChange={(value) => handleStatusChange(record.id, value)}
-            style={{ width: '100%' }}
-            options={STATUS_OPTIONS}
-            onClick={(e) => e.stopPropagation()}
-          />
-        );
-      },
+      render: (status: Status, record: FeedbackCase) => (
+        <Select
+          value={status}
+          onChange={(value) => handleStatusChange(record.id, value)}
+          style={{ width: '100%' }}
+          options={STATUS_OPTIONS}
+          onClick={(e) => e.stopPropagation()}
+        />
+      ),
     },
     {
       title: 'Prioridad',
       dataIndex: 'priority',
       width: 120,
-      render: (priority: Priority, record: FeedbackCase) => {
-        const option = PRIORITY_OPTIONS.find((o) => o.value === priority);
-        return (
-          <Select
-            value={priority}
-            onChange={(value) => handlePriorityChange(record.id, value)}
-            style={{ width: '100%' }}
-            options={PRIORITY_OPTIONS}
-            onClick={(e) => e.stopPropagation()}
-          />
-        );
-      },
+      render: (priority: Priority, record: FeedbackCase) => (
+        <Select
+          value={priority}
+          onChange={(value) => handlePriorityChange(record.id, value)}
+          style={{ width: '100%' }}
+          options={PRIORITY_OPTIONS}
+          onClick={(e) => e.stopPropagation()}
+        />
+      ),
     },
     {
       title: 'Fecha',
