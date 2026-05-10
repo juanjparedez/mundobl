@@ -68,3 +68,6 @@ skills-lock.json
 
 # Handoff temporal entre sesiones de Claude Code (no se commitea)
 SESSION_HANDOFF.md
+
+# Logs de scripts (se generan al correr, no se commitean)
+/scripts/*.log
