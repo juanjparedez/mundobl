@@ -95,9 +95,14 @@ export async function proxy(request: NextRequest) {
 
     const role = session.user?.role;
 
-    // Rutas de crear/editar series y seasons: Admin + Moderator
+    // Rutas de crear/editar series y seasons: Admin + Moderator. El
+    // workspace /admin/series/[id] (vista densa con tabs, analisis por
+    // episodio, reseñas vinculadas y herramientas) tambien lo permite
+    // MODERATOR — es la vista de trabajo principal para administrar el
+    // catalogo, no solo el form puntual de /editar.
     const isEditRoute =
       pathname === '/admin/series/nueva' ||
+      /^\/admin\/series\/\d+$/.test(pathname) ||
       /^\/admin\/series\/\d+\/editar$/.test(pathname) ||
       /^\/admin\/seasons\/\d+\/editar$/.test(pathname);
 

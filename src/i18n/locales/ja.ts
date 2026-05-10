@@ -2280,6 +2280,25 @@ const ja: TranslationShape = {
     "reports": "レポート",
     "auditLog": "監査ログ",
     "news": "ニュース"
+  },
+  "workspace": {
+    "backToCatalog": "カタログに戻る",
+    "viewPublic": "公開ビュー",
+    "metaSeasons": "シーズン",
+    "metaEpisodes": "エピソード",
+    "metaReviews": "レビュー",
+    "metaPrivateNotes": "プライベートノート",
+    "actionEdit": "編集",
+    "tabOverview": "概要",
+    "tabOverviewPlaceholder": "シリーズ概要。近日公開。",
+    "tabAnalysis": "エピソード分析",
+    "tabAnalysisPlaceholder": "各エピソードのトーン、サブプロット、キャラクター、タグ、メモを含む詳細な表。近日公開。",
+    "tabNotes": "プライベートノート",
+    "tabNotesPlaceholder": "このシリーズに関するチームのプライベートノート。",
+    "tabData": "データ",
+    "tabDataPlaceholder": "シリーズの編集可能な生メタデータ。",
+    "tabReviews": "レビュー",
+    "tabReviewsPlaceholder": "このシリーズにリンクされたレビュー。"
   }
 } as TranslationShape;
 

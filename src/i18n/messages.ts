@@ -2272,6 +2272,25 @@ export type TranslationShape = {
     auditLog: string;
     news: string;
   };
+  workspace: {
+    backToCatalog: string;
+    viewPublic: string;
+    metaSeasons: string;
+    metaEpisodes: string;
+    metaReviews: string;
+    metaPrivateNotes: string;
+    actionEdit: string;
+    tabOverview: string;
+    tabOverviewPlaceholder: string;
+    tabAnalysis: string;
+    tabAnalysisPlaceholder: string;
+    tabNotes: string;
+    tabNotesPlaceholder: string;
+    tabData: string;
+    tabDataPlaceholder: string;
+    tabReviews: string;
+    tabReviewsPlaceholder: string;
+  };
 };
 
 const es: TranslationShape = {
@@ -4659,6 +4678,26 @@ const es: TranslationShape = {
     auditLog: 'Audit log',
     news: 'Noticias',
   },
+  workspace: {
+    backToCatalog: 'Volver al catálogo',
+    viewPublic: 'Vista pública',
+    metaSeasons: 'temporadas',
+    metaEpisodes: 'episodios',
+    metaReviews: 'reseñas',
+    metaPrivateNotes: 'Notas privadas',
+    actionEdit: 'Editar',
+    tabOverview: 'Resumen',
+    tabOverviewPlaceholder: 'Resumen de la serie. Próximamente.',
+    tabAnalysis: 'Análisis por episodio',
+    tabAnalysisPlaceholder:
+      'Tabla densa con tono, subtramas, personajes, tags y notas por episodio. Próximamente.',
+    tabNotes: 'Notas privadas',
+    tabNotesPlaceholder: 'Notas privadas del equipo sobre esta serie.',
+    tabData: 'Datos',
+    tabDataPlaceholder: 'Metadatos crudos editables de la serie.',
+    tabReviews: 'Reseñas',
+    tabReviewsPlaceholder: 'Reseñas vinculadas a esta serie.',
+  },
 };
 
 const en: TranslationShape = {
@@ -7027,6 +7066,26 @@ const en: TranslationShape = {
     reports: 'Reports',
     auditLog: 'Audit log',
     news: 'News',
+  },
+  workspace: {
+    backToCatalog: 'Back to catalog',
+    viewPublic: 'Public view',
+    metaSeasons: 'seasons',
+    metaEpisodes: 'episodes',
+    metaReviews: 'reviews',
+    metaPrivateNotes: 'Private notes',
+    actionEdit: 'Edit',
+    tabOverview: 'Overview',
+    tabOverviewPlaceholder: 'Series overview. Coming soon.',
+    tabAnalysis: 'Episode analysis',
+    tabAnalysisPlaceholder:
+      'Dense table with tone, subplots, characters, tags and notes per episode. Coming soon.',
+    tabNotes: 'Private notes',
+    tabNotesPlaceholder: 'Team private notes about this series.',
+    tabData: 'Data',
+    tabDataPlaceholder: 'Raw editable metadata for the series.',
+    tabReviews: 'Reviews',
+    tabReviewsPlaceholder: 'Reviews linked to this series.',
   },
 };
 

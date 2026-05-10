@@ -1,0 +1,150 @@
+/* Workspace admin de una serie — denso, mock-aligned (catalogo.png).
+ * Layout vertical: breadcrumb + hero + tabs. RightRail y Footer 4-cols
+ * en commits siguientes (puede convertirse a grid sidebar cuando estos
+ * existan). */
+
+.mb-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0;
+}
+
+.mb-workspace__breadcrumb {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+/* Hero compacto: poster izquierda + info centro + actions derecha. */
+.mb-workspace__hero {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 16px;
+  padding: 14px;
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  background: var(--bg-container);
+  align-items: flex-start;
+}
+
+.mb-workspace__poster {
+  flex-shrink: 0;
+  width: 120px;
+  height: 168px;
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border-color-secondary);
+  background: var(--bg-spotlight);
+}
+
+.mb-workspace__poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mb-workspace__hero-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mb-workspace__title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.mb-workspace__original-title {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+.mb-workspace__badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.mb-workspace__badges .ant-tag {
+  margin: 0;
+}
+
+.mb-workspace__rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.mb-workspace__rating-star {
+  color: var(--primary-color);
+  font-size: 18px;
+}
+
+.mb-workspace__rating-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.mb-workspace__rating-stars .ant-rate {
+  font-size: 14px;
+}
+
+.mb-workspace__rating-count {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.mb-workspace__actions {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+/* Tabs principales */
+.mb-workspace__tabs .ant-tabs-nav {
+  margin-bottom: 8px;
+}
+
+.mb-workspace__placeholder {
+  padding: var(--spacing-lg);
+  text-align: center;
+  color: var(--text-tertiary);
+  background: var(--bg-container);
+  border: 1px dashed var(--border-color-secondary);
+  border-radius: var(--border-radius-md);
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive: mobile <720px stackea hero a 1 col */
+@media (max-width: 720px) {
+  .mb-workspace__hero {
+    grid-template-columns: 1fr;
+    text-align: left;
+  }
+  .mb-workspace__poster {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 5 / 7;
+    max-width: 200px;
+  }
+  .mb-workspace__actions {
+    width: 100%;
+  }
+  .mb-workspace__actions .ant-btn {
+    flex: 1;
+  }
+}

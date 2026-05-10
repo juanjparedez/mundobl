@@ -2280,6 +2280,25 @@ const zhTW: TranslationShape = {
     "reports": "Reportes",
     "auditLog": "Audit log",
     "news": "Noticias"
+  },
+  "workspace": {
+    "backToCatalog": "返回目錄",
+    "viewPublic": "公開檢視",
+    "metaSeasons": "季",
+    "metaEpisodes": "集",
+    "metaReviews": "評論",
+    "metaPrivateNotes": "私人筆記",
+    "actionEdit": "編輯",
+    "tabOverview": "總覽",
+    "tabOverviewPlaceholder": "劇集總覽。即將推出。",
+    "tabAnalysis": "分集分析",
+    "tabAnalysisPlaceholder": "包含每集基調、支線劇情、角色、標籤和筆記的詳細表格。即將推出。",
+    "tabNotes": "私人筆記",
+    "tabNotesPlaceholder": "團隊關於此劇集的私人筆記。",
+    "tabData": "資料",
+    "tabDataPlaceholder": "此劇集的原始可編輯元數據。",
+    "tabReviews": "評論",
+    "tabReviewsPlaceholder": "連結到此劇集的評論。"
   }
 } as TranslationShape;
 
