@@ -66,8 +66,10 @@
 
 .series-detail-sections__nav {
   position: sticky;
-  top: 8px;
-  z-index: 3;
+  /* Pegar JUSTO debajo del TopBar (sticky a top:0 con altura --header-height).
+   * Antes era top:8px → la nav quedaba tapada por el TopBar al scrollear. */
+  top: var(--header-height);
+  z-index: 4;
   display: flex;
   gap: 4px;
   flex-wrap: wrap;
@@ -76,6 +78,7 @@
   border-radius: var(--border-radius-lg);
   background: color-mix(in srgb, var(--bg-container) 92%, transparent);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .series-detail-sections__link {
@@ -110,7 +113,9 @@
 /* Seccion: chrome plano consistente con el resto de la app. Sin
  * gradientes alternados que ensuciaban la lectura. */
 .series-detail-section {
-  scroll-margin-top: 70px;
+  /* Reservar TopBar (--header-height) + nav sticky (~46px) + aire para que
+   * el header de la seccion quede visible cuando se navega via anchor. */
+  scroll-margin-top: calc(var(--header-height) + 56px);
   position: relative;
   isolation: isolate;
   border: 1px solid var(--border-color-secondary);
@@ -178,7 +183,8 @@
   }
 
   .series-detail-sections__nav {
-    top: 4px;
+    /* Mismo principio que desktop: pegado debajo del TopBar mobile. */
+    top: var(--header-height);
     gap: 6px;
     padding: 6px;
     overflow-x: auto;
@@ -193,7 +199,7 @@
   }
 
   .series-detail-section {
-    scroll-margin-top: 78px;
+    scroll-margin-top: calc(var(--header-height) + 52px);
     padding: var(--spacing-sm);
   }
 

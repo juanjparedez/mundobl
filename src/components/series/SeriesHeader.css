@@ -330,7 +330,9 @@
   }
 
   .series-header__synopsis {
-    padding: var(--spacing-sm) 0;
+    /* Mantener padding horizontal: si quedaba en 0 el texto se pegaba al
+     * borde del card y el background del synopsis no se notaba. */
+    padding: var(--spacing-sm) var(--spacing-sm);
     margin-top: 0;
   }
 
