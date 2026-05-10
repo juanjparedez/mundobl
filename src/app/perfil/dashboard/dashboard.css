@@ -1,17 +1,14 @@
+/* Container plano del dashboard. Antes tenia border + gradient propio
+ * que generaba doble marco (panel padre + panels widgets). Mock es
+ * plano: el bg lo da el body via skin premium-dark. Esto deja respirar
+ * a los widgets individuales y aprovecha mas ancho. */
 .mb-perfil-dashboard {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
-  padding: var(--spacing-sm);
-  border: 1px solid var(--border-color-secondary);
-  border-radius: var(--border-radius-lg);
-  background:
-    radial-gradient(
-      circle at top right,
-      color-mix(in srgb, var(--primary-color) 12%, transparent) 0%,
-      transparent 56%
-    ),
-    color-mix(in srgb, var(--bg-container) 82%, transparent);
+  gap: 12px;
+  padding: 0;
+  background: transparent;
+  border: none;
 }
 
 .mb-perfil-dashboard__loading {
