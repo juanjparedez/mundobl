@@ -18,6 +18,7 @@ import { useLocale } from '@/lib/providers/LocaleProvider';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
 import { EpisodeAnalysisTable } from '../EpisodeAnalysisTable/EpisodeAnalysisTable';
 import { RightRail } from '../RightRail/RightRail';
+import { WorkspaceFooter } from '../WorkspaceFooter/WorkspaceFooter';
 import './WorkspaceClient.css';
 
 // Tipo derivado del helper para no duplicar el shape. Se actualiza
@@ -286,6 +287,10 @@ export function WorkspaceClient({ serie }: WorkspaceClientProps) {
           <RightRail seriesId={serie.id} />
         </div>
       </div>
+
+      {/* Footer 4-cols del mock: Reseñas / Notas privadas / Actividad
+       *  equipo / Herramientas admin. Col 2 y 3 placeholder hasta wiring. */}
+      <WorkspaceFooter seriesId={serie.id} />
     </div>
   );
 }

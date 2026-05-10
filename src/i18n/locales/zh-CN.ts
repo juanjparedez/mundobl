@@ -2324,7 +2324,19 @@ const zhCN: TranslationShape = {
     "tableEmpty": "此剧集尚未加载任何剧集。",
     "rightRailLinkedReviews": "关联评论",
     "rightRailEmpty": "此剧集暂无评论。",
-    "rightRailAnonymous": "匿名"
+    "rightRailAnonymous": "匿名",
+    "footerPublicReviewsTitle": "公开评论",
+    "footerPublicReviewsHint": "社区对本剧集发布的评论。",
+    "footerPublicReviewsAction": "查看全部",
+    "footerPrivateNotesTitle": "私人笔记",
+    "footerPrivateNotesHint": "团队笔记，不对公众可见。可在“分析”选项卡中按剧集编辑。",
+    "footerTeamActivityTitle": "团队活动",
+    "footerTeamActivityHint": "管理员/版主对本剧集的近期更改。",
+    "footerAdminToolsTitle": "工具",
+    "footerAdminToolsEdit": "编辑剧集",
+    "footerAdminToolsView": "查看公开页面",
+    "footerAdminToolsList": "返回列表",
+    "footerPending": "即将推出"
   }
 } as TranslationShape;
 

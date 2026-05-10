@@ -2324,7 +2324,19 @@ const ko: TranslationShape = {
     "tableEmpty": "이 시리즈는 아직 에피소드가 로드되지 않았습니다.",
     "rightRailLinkedReviews": "연결된 리뷰",
     "rightRailEmpty": "이 시리즈에 대한 리뷰가 아직 없습니다.",
-    "rightRailAnonymous": "익명"
+    "rightRailAnonymous": "익명",
+    "footerPublicReviewsTitle": "공개 리뷰",
+    "footerPublicReviewsHint": "이 시리즈에 대해 커뮤니티에서 작성한 리뷰입니다.",
+    "footerPublicReviewsAction": "모두 보기",
+    "footerPrivateNotesTitle": "비공개 노트",
+    "footerPrivateNotesHint": "일반에 공개되지 않는 팀 노트입니다. 분석 탭에서 에피소드별로 편집할 수 있습니다.",
+    "footerTeamActivityTitle": "팀 활동",
+    "footerTeamActivityHint": "관리자/운영자가 이 시리즈에 대해 최근 변경한 내용입니다.",
+    "footerAdminToolsTitle": "도구",
+    "footerAdminToolsEdit": "시리즈 편집",
+    "footerAdminToolsView": "공개 보기",
+    "footerAdminToolsList": "목록으로 돌아가기",
+    "footerPending": "출시 예정"
   }
 } as TranslationShape;
 
