@@ -1,5 +1,5 @@
 .contenido-page {
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
   max-width: var(--content-max-width);
   margin: 0 auto;
 }
@@ -17,7 +17,7 @@
 }
 
 .contenido-page__filters {
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
 }
 
 /* Cards */

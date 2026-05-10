@@ -7,12 +7,12 @@
 .ver-content {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-md);
 }
 
 .ver-hero {
   text-align: center;
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
   border: 1px solid var(--border-color-secondary);
   border-radius: var(--border-radius-lg);
   background:
