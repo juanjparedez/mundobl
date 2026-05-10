@@ -1592,7 +1592,8 @@ const th: TranslationShape = {
     "takePhoto": "ถ่ายรูป",
     "dropImagesHere": "วางรูปภาพที่นี่",
     "errorImageType": "{name} ไม่ใช่รูปภาพที่ถูกต้อง",
-    "errorImageSize": "{name} มีขนาดเกิน 5MB"
+    "errorImageSize": "{name} มีขนาดเกิน 5MB",
+    "errorImageDuplicate": "{name} มีอยู่ในรายการแล้ว"
   },
   "notFound": {
     "description": "หน้าที่คุณกำลังมองหาไม่มีอยู่หรือไม่ก็ถูกย้ายไปแล้ว",

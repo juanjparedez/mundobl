@@ -289,16 +289,24 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
           }
         />
 
-        {/* Botón flotante para editar */}
-        <Link href={`/admin/series/${serie.id}/editar`} prefetch={false}>
-          <FloatButton
-            icon={<EditOutlined />}
-            type="primary"
-            style={{ right: 24, bottom: 24, zIndex: 100 }}
-            tooltip="Editar serie"
-            aria-label="Editar serie"
-          />
-        </Link>
+        {/* Botón flotante para editar — solo admin/moderator. En user
+         * regular apuntaba a /admin/series/X/editar y devolvia 403, asi
+         * que ademas de tapar contenido (reportado por Flor en feedback
+         * #98) era un dead-end. La posicion `bottom` la maneja CSS para
+         * subirlo arriba del BottomNav en mobile y evitar la
+         * superposicion sobre el ultimo comentario. */}
+        {(session?.user?.role === 'ADMIN' ||
+          session?.user?.role === 'MODERATOR') && (
+          <Link href={`/admin/series/${serie.id}/editar`} prefetch={false}>
+            <FloatButton
+              icon={<EditOutlined />}
+              type="primary"
+              className="series-edit-fab"
+              tooltip="Editar serie"
+              aria-label="Editar serie"
+            />
+          </Link>
+        )}
       </div>
     </AppLayout>
   );

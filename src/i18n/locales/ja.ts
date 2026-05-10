@@ -1592,7 +1592,8 @@ const ja: TranslationShape = {
     "takePhoto": "写真を撮る",
     "dropImagesHere": "画像をここにドロップ",
     "errorImageType": "{name} は有効な画像ではありません",
-    "errorImageSize": "{name} は5MBを超えています"
+    "errorImageSize": "{name} は5MBを超えています",
+    "errorImageDuplicate": "{name}はすでにリストにあります"
   },
   "notFound": {
     "description": "お探しのページは存在しないか、移動されました。",

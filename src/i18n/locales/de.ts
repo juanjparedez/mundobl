@@ -1592,7 +1592,8 @@ const de: TranslationShape = {
     "takePhoto": "Foto aufnehmen",
     "dropImagesHere": "Bilder hier ablegen",
     "errorImageType": "{name} ist kein gültiges Bild",
-    "errorImageSize": "{name} ist größer als 5 MB"
+    "errorImageSize": "{name} ist größer als 5 MB",
+    "errorImageDuplicate": "{name} ist bereits in der Liste"
   },
   "notFound": {
     "description": "Die gesuchte Seite existiert nicht oder wurde verschoben.",

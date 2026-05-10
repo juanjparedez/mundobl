@@ -1442,8 +1442,14 @@ export function CatalogoClient({
               type="primary"
               icon={<PlusOutlined />}
               onClick={() => router.push('/admin/series/nueva')}
+              size={isMobile ? 'small' : 'middle'}
+              aria-label={t('catalogo.newButton')}
             >
-              {t('catalogo.newButton')}
+              {/* En mobile el texto desbordaba el viewport (reportado por
+               * Flor en feedback #99). Dejamos solo el icono para que la
+               * toolbar entre en una sola fila. aria-label preserva
+               * accesibilidad. */}
+              {!isMobile && t('catalogo.newButton')}
             </Button>
           )}
         </div>

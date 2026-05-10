@@ -1592,7 +1592,8 @@ const zhCN: TranslationShape = {
     "takePhoto": "拍照",
     "dropImagesHere": "将图片拖至此处",
     "errorImageType": "{name} 不是有效的图片",
-    "errorImageSize": "{name} 超过 5MB"
+    "errorImageSize": "{name} 超过 5MB",
+    "errorImageDuplicate": "{name}已在列表中"
   },
   "notFound": {
     "description": "您要查找的页面不存在或已移动。",
