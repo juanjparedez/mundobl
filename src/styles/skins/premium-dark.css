@@ -84,16 +84,15 @@ html[data-skin='premium'][data-theme='dark'] {
   --box-shadow-base: var(--mb-shadow-soft);
   --box-shadow-card: var(--mb-shadow-soft);
 
-  /* ─── Accent dorado forzado ──────────────────────────────────
-   * !important para ganar contra los inline styles que pone el
-   * ThemeProvider en :root cuando aplica el accent del usuario.
-   * Esto asegura que premium siempre se vea premium. */
-  --primary-color: var(--mb-gold) !important;
-  --primary-color-hover: var(--mb-gold-hover) !important;
-  --primary-color-active: var(--mb-gold-active) !important;
-  --primary-color-outline: var(--mb-gold-soft-strong) !important;
-  --accent-soft: var(--mb-gold-soft);
-  --accent-soft-strong: var(--mb-gold-soft-strong);
+  /* Soft fills derivados del accent activo. Si el user eligio un accent
+   * (gold por default en skin premium, ver theme.config.ts), todo lo
+   * "selected/focus/primary" toma ese color via --primary-color. */
+  --accent-soft: color-mix(in srgb, var(--primary-color) 14%, transparent);
+  --accent-soft-strong: color-mix(
+    in srgb,
+    var(--primary-color) 28%,
+    transparent
+  );
 }
 
 /* ─── Backdrop premium del shell ─────────────────────────────────── */
@@ -130,13 +129,14 @@ html[data-skin='premium'][data-theme='dark'] .app-sidebar .ant-menu {
   background: transparent;
 }
 
-/* Sidebar item activo: fondo gold-soft + texto gold + barra dorada
- * a la izquierda. Coincide con el mock. */
+/* Sidebar item activo: fondo accent-soft + texto accent + barra accent
+ * a la izquierda. Toma --primary-color del accent del user (gold por
+ * default en skin premium). */
 html[data-skin='premium'][data-theme='dark']
   .ant-menu-dark
   .ant-menu-item-selected {
-  background: var(--mb-gold-soft) !important;
-  color: var(--mb-gold) !important;
+  background: var(--accent-soft) !important;
+  color: var(--primary-color) !important;
   font-weight: 600;
   position: relative;
   border-radius: var(--mb-radius-sm);
@@ -152,7 +152,7 @@ html[data-skin='premium'][data-theme='dark']
   bottom: 6px;
   width: 3px;
   border-radius: 0 3px 3px 0;
-  background: var(--mb-gold);
+  background: var(--primary-color);
 }
 
 html[data-skin='premium'][data-theme='dark']
@@ -194,33 +194,19 @@ html[data-skin='premium'][data-theme='dark'] .ant-picker {
 
 html[data-skin='premium'][data-theme='dark'] .ant-input:focus,
 html[data-skin='premium'][data-theme='dark'] .ant-input-affix-wrapper-focused {
-  border-color: var(--mb-gold) !important;
-  box-shadow: 0 0 0 2px var(--mb-gold-soft);
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 2px var(--accent-soft);
 }
 
-/* Tabs con underline dorado en active */
+/* Tabs con underline del accent activo */
 html[data-skin='premium'][data-theme='dark']
   .ant-tabs-tab.ant-tabs-tab-active
   .ant-tabs-tab-btn {
-  color: var(--mb-gold) !important;
+  color: var(--primary-color) !important;
 }
 
 html[data-skin='premium'][data-theme='dark'] .ant-tabs-ink-bar {
-  background: var(--mb-gold) !important;
-}
-
-/* Botones primarios dorados */
-html[data-skin='premium'][data-theme='dark'] .ant-btn-primary {
-  background: var(--mb-gold);
-  border-color: var(--mb-gold);
-  color: #1a1408;
-  font-weight: 600;
-}
-
-html[data-skin='premium'][data-theme='dark'] .ant-btn-primary:hover {
-  background: var(--mb-gold-hover) !important;
-  border-color: var(--mb-gold-hover) !important;
-  color: #1a1408 !important;
+  background: var(--primary-color) !important;
 }
 
 /* Tablas oscuras con header diferenciado */
