@@ -2308,6 +2308,12 @@ const fr: TranslationShape = {
     "seriesViews": "Vues",
     "seriesActions": "Actions admin"
   },
+  "worldMap": {
+    "title": "Pays visités",
+    "empty": "Aucun pays dans votre catalogue pour l'instant.",
+    "serieSingular": "séries",
+    "seriePlural": "série"
+  },
   "workspace": {
     "backToCatalog": "Retour au catalogue",
     "viewPublic": "Vue publique",

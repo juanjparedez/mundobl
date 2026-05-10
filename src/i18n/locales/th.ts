@@ -2308,6 +2308,12 @@ const th: TranslationShape = {
     "seriesViews": "ยอดดู",
     "seriesActions": "การดำเนินการของผู้ดูแลระบบ"
   },
+  "worldMap": {
+    "title": "ประเทศที่เคยไป",
+    "empty": "ยังไม่มีประเทศในแค็ตตาล็อกของคุณ",
+    "serieSingular": "ซีรีส์",
+    "seriePlural": "ซีรีส์"
+  },
   "workspace": {
     "backToCatalog": "กลับสู่แคตตาล็อก",
     "viewPublic": "มุมมองสาธารณะ",

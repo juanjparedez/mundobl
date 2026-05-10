@@ -2308,6 +2308,12 @@ const ja: TranslationShape = {
     "seriesViews": "視聴数",
     "seriesActions": "管理者アクション"
   },
+  "worldMap": {
+    "title": "訪問した国",
+    "empty": "カタログにまだ国がありません。",
+    "serieSingular": "シリーズ",
+    "seriePlural": "シリーズ"
+  },
   "workspace": {
     "backToCatalog": "カタログに戻る",
     "viewPublic": "公開ビュー",

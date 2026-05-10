@@ -54,6 +54,7 @@ import { FollowedTitlesWidget } from './widgets/FollowedTitlesWidget/FollowedTit
 import { SettingsRowWidget } from './widgets/SettingsRowWidget/SettingsRowWidget';
 import { RecentAdminActivityWidget } from '@/app/admin/widgets/RecentAdminActivityWidget/RecentAdminActivityWidget';
 import { TopCommentersWidget } from '@/app/admin/widgets/TopCommentersWidget/TopCommentersWidget';
+import { WorldMapWidget } from './widgets/WorldMapWidget/WorldMapWidget';
 import './dashboard.css';
 
 // IDs estables de cada widget. Usados en layouts persistidos y registry.
@@ -91,6 +92,7 @@ const WIDGET_IDS = {
   // mismos componentes — sin duplicar codigo.
   recentAdminActivity: 'profile.recentAdminActivity',
   topCommenters: 'profile.topCommenters',
+  worldMap: 'profile.worldMap',
 } as const;
 
 // Mapa de widgetId -> section key del CustomizeDrawer. Permite que el
@@ -104,6 +106,7 @@ const WIDGET_TO_SECTION: Record<string, string> = {
   [WIDGET_IDS.completedByYear]: 'mystats',
   [WIDGET_IDS.topGenresList]: 'countries',
   [WIDGET_IDS.topCountries]: 'countries',
+  [WIDGET_IDS.worldMap]: 'countries',
   [WIDGET_IDS.topActors]: 'countries',
   [WIDGET_IDS.topCompanies]: 'countries',
   [WIDGET_IDS.myReviews]: 'reviews',
@@ -144,27 +147,31 @@ const ADMIN_LAYOUTS: DashboardLayouts = {
     // Row 7: GenresDonut + CompletedByYear (charts 4/8)
     { i: WIDGET_IDS.genres, x: 0, y: 20, w: 4, h: 5 },
     { i: WIDGET_IDS.completedByYear, x: 4, y: 20, w: 8, h: 5 },
-    // Row 8: 4 top lists
-    { i: WIDGET_IDS.topGenresList, x: 0, y: 25, w: 3, h: 4 },
-    { i: WIDGET_IDS.topCountries, x: 3, y: 25, w: 3, h: 4 },
-    { i: WIDGET_IDS.topActors, x: 6, y: 25, w: 3, h: 4 },
-    { i: WIDGET_IDS.topCompanies, x: 9, y: 25, w: 3, h: 4 },
+    // Row 8: WorldMap wide (6) + TopCountries lista (3) + TopGenres (3).
+    // El world map complementa la lista — uno geografico, el otro
+    // detallado con counts y banderas.
+    { i: WIDGET_IDS.worldMap, x: 0, y: 25, w: 6, h: 4 },
+    { i: WIDGET_IDS.topCountries, x: 6, y: 25, w: 3, h: 4 },
+    { i: WIDGET_IDS.topGenresList, x: 9, y: 25, w: 3, h: 4 },
+    // Row 8b: TopActors + TopCompanies
+    { i: WIDGET_IDS.topActors, x: 0, y: 29, w: 6, h: 4 },
+    { i: WIDGET_IDS.topCompanies, x: 6, y: 29, w: 6, h: 4 },
     // Row 9: Collections + Achievements (2up)
-    { i: WIDGET_IDS.collections, x: 0, y: 29, w: 6, h: 4 },
-    { i: WIDGET_IDS.achievements, x: 6, y: 29, w: 6, h: 4 },
+    { i: WIDGET_IDS.collections, x: 0, y: 33, w: 6, h: 4 },
+    { i: WIDGET_IDS.achievements, x: 6, y: 33, w: 6, h: 4 },
     // Row 10: FollowedTitles + Favorites + TopRated (3up)
-    { i: WIDGET_IDS.followedTitles, x: 0, y: 33, w: 4, h: 4 },
-    { i: WIDGET_IDS.favorites, x: 4, y: 33, w: 4, h: 4 },
-    { i: WIDGET_IDS.topRated, x: 8, y: 33, w: 4, h: 4 },
+    { i: WIDGET_IDS.followedTitles, x: 0, y: 37, w: 4, h: 4 },
+    { i: WIDGET_IDS.favorites, x: 4, y: 37, w: 4, h: 4 },
+    { i: WIDGET_IDS.topRated, x: 8, y: 37, w: 4, h: 4 },
     // Row 11: MyComments full
-    { i: WIDGET_IDS.myComments, x: 0, y: 37, w: 12, h: 6, minW: 6, minH: 5 },
+    { i: WIDGET_IDS.myComments, x: 0, y: 41, w: 12, h: 6, minW: 6, minH: 5 },
     // Row 12: Admin shared widgets (RecentAdminActivity + TopCommenters)
     // — reusados desde /admin. Solo visibles para admin/moderator por
     // los roles del registry.
-    { i: WIDGET_IDS.recentAdminActivity, x: 0, y: 43, w: 6, h: 5 },
-    { i: WIDGET_IDS.topCommenters, x: 6, y: 43, w: 6, h: 5 },
+    { i: WIDGET_IDS.recentAdminActivity, x: 0, y: 47, w: 6, h: 5 },
+    { i: WIDGET_IDS.topCommenters, x: 6, y: 47, w: 6, h: 5 },
     // Row 13: SettingsRow (6 cards horizontales del mock)
-    { i: WIDGET_IDS.settingsRow, x: 0, y: 48, w: 12, h: 4, minW: 6, minH: 3 },
+    { i: WIDGET_IDS.settingsRow, x: 0, y: 52, w: 12, h: 4, minW: 6, minH: 3 },
   ],
   md: [
     { i: WIDGET_IDS.heatmap, x: 0, y: 0, w: 10, h: 3 },
@@ -614,6 +621,14 @@ export function DashboardClient() {
       Component: TopCommentersWidget as never,
       roles: ['ADMIN', 'MODERATOR'],
     });
+    WidgetRegistry.register({
+      id: WIDGET_IDS.worldMap,
+      category: 'overview',
+      labelKey: 'worldMap.title',
+      descriptionKey: 'worldMap.title',
+      defaultSize: { w: 8, h: 5, minW: 4, minH: 4 },
+      Component: WorldMapWidget as never,
+    });
   }, []);
 
   useEffect(() => {
@@ -670,6 +685,7 @@ export function DashboardClient() {
     map[WIDGET_IDS.settingsRow] = {};
     map[WIDGET_IDS.recentAdminActivity] = {};
     map[WIDGET_IDS.topCommenters] = {};
+    map[WIDGET_IDS.worldMap] = { topCountries: data.stats.topCountries };
     return map;
   }, [data]);
 
