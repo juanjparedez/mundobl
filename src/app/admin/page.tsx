@@ -1,6 +1,12 @@
 export const dynamic = 'force-dynamic';
 
 import Link from 'next/link';
+import {
+  AppstoreOutlined,
+  ReadOutlined,
+  MessageOutlined,
+  TeamOutlined,
+} from '@ant-design/icons';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { prisma } from '@/lib/database';
 import { AdminNav } from './AdminNav';
@@ -268,10 +274,26 @@ export default async function AdminLandingPage() {
         <div className="admin-dashboard">
           <AdminDashboardHero
             stats={[
-              { label: 'Series', value: counts.series },
-              { label: 'Reseñas', value: counts.reviews },
-              { label: 'Comentarios', value: counts.comments },
-              { label: 'Usuarios', value: counts.users },
+              {
+                label: 'Series',
+                value: counts.series,
+                icon: <AppstoreOutlined />,
+              },
+              {
+                label: 'Reseñas',
+                value: counts.reviews,
+                icon: <ReadOutlined />,
+              },
+              {
+                label: 'Comentarios',
+                value: counts.comments,
+                icon: <MessageOutlined />,
+              },
+              {
+                label: 'Usuarios',
+                value: counts.users,
+                icon: <TeamOutlined />,
+              },
             ]}
           />
 
