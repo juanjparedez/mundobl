@@ -1,7 +1,11 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
+import { FloatButton } from 'antd';
+import { ToolOutlined } from '@ant-design/icons';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { getSeriesById } from '@/lib/database';
+import { auth } from '@/lib/auth';
 import { SerieDetailClient } from './SerieDetailClient';
 import { ContentTypeConfig, ContentTypeValue } from '@/types/content';
 import { JsonLd } from '@/components/seo/JsonLd';
@@ -56,11 +60,14 @@ export default async function SerieDetailPage({
     notFound();
   }
 
-  const serie = await getSeriesById(serieId);
+  const [serie, session] = await Promise.all([getSeriesById(serieId), auth()]);
 
   if (!serie) {
     notFound();
   }
+
+  const role = session?.user?.role;
+  const isAdminOrMod = role === 'ADMIN' || role === 'MODERATOR';
 
   const actors = serie.actors?.map((sa) => sa.actor.name) ?? [];
   const directors = serie.directors?.map((sd) => sd.director.name) ?? [];
@@ -103,6 +110,20 @@ export default async function SerieDetailPage({
         }}
       />
       <SerieDetailClient serie={serie} />
+      {/* FAB para entrar al workspace admin denso de esta serie.
+       *  Solo visible para ADMIN/MODERATOR. La ruta /admin/series/[id]
+       *  esta protegida por proxy.ts. */}
+      {isAdminOrMod && (
+        <Link href={`/admin/series/${serie.id}`} prefetch={false}>
+          <FloatButton
+            icon={<ToolOutlined />}
+            type="primary"
+            tooltip="Workspace admin"
+            aria-label="Workspace admin"
+            style={{ right: 24, bottom: 24, zIndex: 100 }}
+          />
+        </Link>
+      )}
     </AppLayout>
   );
 }
