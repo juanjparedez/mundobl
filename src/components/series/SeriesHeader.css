@@ -3,7 +3,7 @@
   position: relative;
   overflow: hidden;
   border-radius: var(--border-radius-lg);
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: 10px;
 }
 
 .series-hero__backdrop {
