@@ -165,13 +165,24 @@ export function FeedbackClient() {
     loadCases();
   }, [loadCases]);
 
-  // Mock admin users (in real app, fetch from /api/users/admins)
+  // Lista real de admins+mods (los que pueden ser asignados a un caso).
   useEffect(() => {
-    // Placeholder: you would fetch actual admins from API
-    setAdminUsers([
-      { id: 'admin1', name: 'Juan José Paredez', email: 'juan@example.com' },
-      { id: 'admin2', name: 'Flor', email: 'flor@example.com' },
-    ]);
+    let cancelled = false;
+    Promise.all([
+      fetch('/api/users?role=ADMIN').then((r) => (r.ok ? r.json() : [])),
+      fetch('/api/users?role=MODERATOR').then((r) => (r.ok ? r.json() : [])),
+    ])
+      .then((lists: AdminUser[][]) => {
+        if (cancelled) return;
+        const merged = ([] as AdminUser[]).concat(...lists);
+        setAdminUsers(merged);
+      })
+      .catch(() => {
+        /* silent — el select queda con 'Sin asignar' como unica opcion */
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const handleStatusChange = async (caseId: number, newStatus: Status) => {

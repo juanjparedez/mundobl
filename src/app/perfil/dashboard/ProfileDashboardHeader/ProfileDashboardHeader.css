@@ -1,6 +1,6 @@
-/* Header del perfil: layout horizontal compacto alineado al mock.
+/* Header del perfil: layout horizontal compacto alineado al style-guide.
  * Avatar grande + info al medio + acciones a la derecha. Sin
- * gradientes excesivos — el mock es un panel sobrio. */
+ * gradientes excesivos — el style-guide es un panel sobrio. */
 .mb-profile-header {
   display: flex;
   align-items: center;

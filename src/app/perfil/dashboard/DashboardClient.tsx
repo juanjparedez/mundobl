@@ -64,7 +64,7 @@ const WIDGET_IDS = {
   quickAdmin: 'profile.quickAdmin',
 } as const;
 
-// Layout USER: alineado al mock my-.profile2.png — denso, sin scroll en lg.
+// Layout USER: alineado al style-guide my-.profile2.png — denso, sin scroll en lg.
 // KPIs ya viven en ProfileStatsStrip (fuera del grid), por eso NO incluimos
 // overview/ratings aca: agrega ruido y duplica info.
 const USER_LAYOUTS: DashboardLayouts = {
@@ -148,7 +148,7 @@ const USER_LAYOUTS: DashboardLayouts = {
   ],
 };
 
-// Layout ADMIN: alineado al mock my-profile.png — denso, sin scroll en lg.
+// Layout ADMIN: alineado al style-guide my-profile.png — denso, sin scroll en lg.
 // KPIs en ProfileStatsStrip; este grid prioriza herramientas de moderacion
 // + heatmap + recent admin activity + cosas personales compactas.
 const ADMIN_LAYOUTS: DashboardLayouts = {
