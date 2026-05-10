@@ -5,6 +5,17 @@
   background: transparent;
 }
 
+.overview-page__top {
+  position: relative;
+}
+
+.overview-page__customize-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+}
+
 .overview-page__state {
   display: flex;
   align-items: center;
@@ -39,6 +50,14 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
+}
+
+.overview-page__row-3[data-cols='1'] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.overview-page__row-3[data-cols='2'] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .overview-page__row-4 {
