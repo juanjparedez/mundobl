@@ -28,6 +28,7 @@ import { SubscriptionsSection } from '../SubscriptionsSection/SubscriptionsSecti
 import { ClientVersionInfo } from '../ClientVersionInfo/ClientVersionInfo';
 import { CustomizeDrawer } from './CustomizeDrawer';
 import { useSectionVisibility } from './useSectionVisibility';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 import './ProfileOverviewClient.css';
 
 /** Vista por defecto de /perfil — composicion fija alineada al style-guide.
@@ -35,6 +36,7 @@ import './ProfileOverviewClient.css';
  *  el header) — la preferencia persiste en localStorage. La vista
  *  configurable con widgets reordenables vive en /perfil/dashboard. */
 export function ProfileOverviewClient() {
+  const { t } = useLocale();
   const { status } = useSession();
   const [data, setData] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -82,10 +84,10 @@ export function ProfileOverviewClient() {
     return (
       <AppLayout>
         <div className="overview-page__state">
-          <p>No pudimos cargar tu perfil.</p>
+          <p>{t('profile.overviewLoadError')}</p>
           <Link href="/perfil/clasico">
             <Button icon={<ArrowLeftOutlined />}>
-              Volver a la vista clásica
+              {t('profile.overviewBackToClassic')}
             </Button>
           </Link>
         </div>
@@ -195,7 +197,7 @@ export function ProfileOverviewClient() {
             <ClientVersionInfo />
             <p className="overview-page__alt">
               <Link href="/perfil/dashboard">
-                ¿Querés reordenar los paneles? Abrí la vista configurable →
+                {t('profile.overviewDashboardLink')}
               </Link>
             </p>
           </div>

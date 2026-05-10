@@ -189,9 +189,9 @@ export function SeriesHeader({
               <a
                 href="#series-section-content"
                 className="series-header__status-chip"
-                aria-label="Ir a contenido"
+                aria-label={t('seriesHeader.goToContent')}
               >
-                <PlayCircleOutlined /> Con contenido
+                <PlayCircleOutlined /> {t('seriesHeader.hasContent')}
               </a>
             )}
 
@@ -199,9 +199,9 @@ export function SeriesHeader({
               <a
                 href="#series-section-reviews"
                 className="series-header__status-chip series-header__status-chip--gold"
-                aria-label="Ir a reseñas"
+                aria-label={t('seriesHeader.goToReviews')}
               >
-                <ReadOutlined /> Con reseña
+                <ReadOutlined /> {t('seriesHeader.hasReview')}
               </a>
             )}
           </div>
@@ -218,7 +218,9 @@ export function SeriesHeader({
                 <div className="series-header__cast-row">
                   <span className="series-header__cast-label">
                     <UserOutlined />{' '}
-                    {directors.length === 1 ? 'Director' : 'Directores'}
+                    {directors.length === 1
+                      ? t('seriesHeader.directorSingular')
+                      : t('seriesHeader.directorPlural')}
                   </span>
                   <span className="series-header__cast-names">
                     {directors.map((d) => d.director.name).join(', ')}
@@ -228,7 +230,7 @@ export function SeriesHeader({
               {mainActors.length > 0 && (
                 <div className="series-header__cast-row">
                   <span className="series-header__cast-label">
-                    <TeamOutlined /> Reparto
+                    <TeamOutlined /> {t('seriesHeader.cast')}
                   </span>
                   <span className="series-header__cast-names">
                     {mainActors.map((a, i) => (

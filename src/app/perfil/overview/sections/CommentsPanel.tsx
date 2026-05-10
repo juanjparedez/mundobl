@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { CommentOutlined, SearchOutlined } from '@ant-design/icons';
 import { Input, Select } from 'antd';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
 import './CommentsPanel.css';
 
 interface ApiComment {
@@ -41,6 +43,7 @@ function getSeriesTitle(c: ApiComment): string {
 /** "Mis comentarios" del style-guide: search + filter + lista compacta.
  *  Reusa el endpoint /api/user/comments. Sin data sintetizada. */
 export function OverviewCommentsPanel() {
+  const { t } = useLocale();
   const [comments, setComments] = useState<ApiComment[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -88,10 +91,10 @@ export function OverviewCommentsPanel() {
     <section className="overview-comments">
       <header className="overview-comments__head">
         <h3 className="overview-comments__title">
-          <CommentOutlined /> Mis comentarios
+          <CommentOutlined /> {t('profile.sectionMyComments')}
         </h3>
         <Link href="/perfil/clasico" className="overview-comments__see-all">
-          Ver todos
+          {t('profile.overviewViewAll')}
         </Link>
       </header>
 
@@ -99,7 +102,7 @@ export function OverviewCommentsPanel() {
         <Input
           size="small"
           prefix={<SearchOutlined />}
-          placeholder="Buscar en comentarios..."
+          placeholder={t('profile.overviewCommentsSearchPlaceholder')}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -108,21 +111,23 @@ export function OverviewCommentsPanel() {
           value={filter}
           onChange={(v) => setFilter(v as FilterValue)}
           options={[
-            { value: 'all', label: 'Todos' },
-            { value: 'public', label: 'Públicos' },
-            { value: 'private', label: 'Privados' },
+            { value: 'all', label: t('profile.commentsFilterAll') },
+            { value: 'public', label: t('profile.commentsFilterPublic') },
+            { value: 'private', label: t('profile.commentsFilterPrivate') },
           ]}
           className="overview-comments__filter-select"
         />
       </div>
 
       {loading ? (
-        <div className="overview-comments__loading">Cargando...</div>
+        <div className="overview-comments__loading">
+          {t('profile.overviewLoading')}
+        </div>
       ) : filtered.length === 0 ? (
         <div className="overview-comments__empty">
           {comments.length === 0
-            ? 'Aún no comentaste en ninguna serie.'
-            : 'No hay comentarios que coincidan con el filtro.'}
+            ? t('profile.overviewCommentsEmpty')
+            : t('profile.overviewCommentsFilterEmpty')}
         </div>
       ) : (
         <ul className="overview-comments__list">
@@ -144,7 +149,9 @@ export function OverviewCommentsPanel() {
 
       {total > 5 && (
         <Link href="/perfil/clasico" className="overview-comments__more">
-          Ver todos los comentarios ({total})
+          {interpolateMessage(t('profile.overviewViewAllComments'), {
+            count: String(total),
+          })}
         </Link>
       )}
     </section>

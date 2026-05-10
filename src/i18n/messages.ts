@@ -35,6 +35,13 @@ export type TranslationShape = {
     typeEspecial: string;
     typeAnime: string;
     typeReality: string;
+    directorSingular: string;
+    directorPlural: string;
+    cast: string;
+    hasContent: string;
+    hasReview: string;
+    goToContent: string;
+    goToReviews: string;
   };
   seriesInfo: {
     fieldTitle: string;
@@ -381,6 +388,69 @@ export type TranslationShape = {
     settingsDeleteSuccess: string;
     settingsDeleteError: string;
     settingsDeleteMissingEmail: string;
+    sectionMyStats: string;
+    sectionReviewsActivity: string;
+    sectionCountries: string;
+    sectionYearSummary: string;
+    sectionCollections: string;
+    sectionFollowedTitles: string;
+    sectionNotifications: string;
+    sectionCases: string;
+    sectionAchievements: string;
+    customizeTitle: string;
+    customizeHint: string;
+    customizeReset: string;
+    overviewLoadError: string;
+    overviewBackToClassic: string;
+    overviewDashboardLink: string;
+    overviewViewAll: string;
+    overviewViewLess: string;
+    overviewViewAllCount: string;
+    overviewCommentsEmpty: string;
+    overviewCommentsFilterEmpty: string;
+    overviewYearWatchedLabel: string;
+    overviewLoading: string;
+    overviewViewAllComments: string;
+    overviewCommentsSearchPlaceholder: string;
+    overviewYearTotalHoursLabel: string;
+    settingsCardPublicNameTitle: string;
+    settingsCardPublicNameDesc: string;
+    settingsCardAppearanceTitle: string;
+    settingsCardAppearanceDesc: string;
+    settingsCardNotificationsTitle: string;
+    settingsCardNotificationsDesc: string;
+    settingsCardPrivacyTitle: string;
+    settingsCardPrivacyDesc: string;
+    settingsCardSessionsTitle: string;
+    settingsCardSessionsDesc: string;
+    settingsCardDangerTitle: string;
+    settingsCardDangerDesc: string;
+  };
+  achievements: {
+    firstStepName: string;
+    firstStepDesc: string;
+    starterName: string;
+    starterDesc: string;
+    explorerName: string;
+    explorerDesc: string;
+    completionistName: string;
+    completionistDesc: string;
+    firstReviewName: string;
+    firstReviewDesc: string;
+    criticName: string;
+    criticDesc: string;
+    voiceName: string;
+    voiceDesc: string;
+    raterName: string;
+    raterDesc: string;
+    fanName: string;
+    fanDesc: string;
+    bingerName: string;
+    bingerDesc: string;
+    streak7Name: string;
+    streak7Desc: string;
+    streak30Name: string;
+    streak30Desc: string;
   };
   novedades: {
     title: string;
@@ -2225,6 +2295,13 @@ const es: TranslationShape = {
     typeEspecial: 'Especial',
     typeAnime: 'Animé',
     typeReality: 'Reality',
+    directorSingular: 'Director',
+    directorPlural: 'Directores',
+    cast: 'Reparto',
+    hasContent: 'Con contenido',
+    hasReview: 'Con reseña',
+    goToContent: 'Ir a contenido',
+    goToReviews: 'Ir a reseñas',
   },
   seriesInfo: {
     fieldTitle: 'Título',
@@ -2591,6 +2668,72 @@ const es: TranslationShape = {
     settingsDeleteError: 'No se pudo eliminar tu cuenta.',
     settingsDeleteMissingEmail:
       'No encontramos tu email de sesión para confirmar la acción.',
+    sectionMyStats: 'Mis estadísticas',
+    sectionReviewsActivity: 'Actividad de reseñas',
+    sectionCountries: 'Países favoritos',
+    sectionYearSummary: 'Resumen anual',
+    sectionCollections: 'Mis listas',
+    sectionFollowedTitles: 'Títulos seguidos',
+    sectionNotifications: 'Notificaciones',
+    sectionCases: 'Mis casos de feedback',
+    sectionAchievements: 'Logros y hitos',
+    customizeTitle: 'Personalizar mi perfil',
+    customizeHint:
+      'Mostrá u ocultá los paneles de tu perfil. Tus preferencias se guardan en este dispositivo.',
+    customizeReset: 'Restaurar todos',
+    overviewLoadError: 'No pudimos cargar tu perfil.',
+    overviewBackToClassic: 'Volver a la vista clásica',
+    overviewDashboardLink:
+      '¿Querés reordenar los paneles? Abrí la vista configurable →',
+    overviewViewAll: 'Ver todos',
+    overviewViewLess: 'Ver menos',
+    overviewViewAllCount: 'Ver todos ({count})',
+    overviewCommentsEmpty: 'Aún no comentaste en ninguna serie.',
+    overviewCommentsFilterEmpty:
+      'No hay comentarios que coincidan con el filtro.',
+    overviewYearWatchedLabel: 'Vistos en {year}',
+    overviewLoading: 'Cargando...',
+    overviewViewAllComments: 'Ver todos los comentarios ({count})',
+    overviewCommentsSearchPlaceholder: 'Buscar en comentarios...',
+    overviewYearTotalHoursLabel: 'Horas totales',
+    settingsCardPublicNameTitle: 'Nombre público',
+    settingsCardPublicNameDesc: 'Tu nombre visible en la comunidad',
+    settingsCardAppearanceTitle: 'Apariencia y accesibilidad',
+    settingsCardAppearanceDesc: 'Tema, acento, tamaño de texto y más',
+    settingsCardNotificationsTitle: 'Notificaciones',
+    settingsCardNotificationsDesc: 'Email, push y preferencias',
+    settingsCardPrivacyTitle: 'Privacidad y datos',
+    settingsCardPrivacyDesc: 'Exportar datos y controles',
+    settingsCardSessionsTitle: 'Sesiones y dispositivos',
+    settingsCardSessionsDesc: 'Gestionar tus sesiones activas',
+    settingsCardDangerTitle: 'Zona de peligro',
+    settingsCardDangerDesc: 'Eliminar cuenta y más',
+  },
+  achievements: {
+    firstStepName: 'Primer paso',
+    firstStepDesc: 'Marcá tu primera serie como vista',
+    starterName: 'Iniciante',
+    starterDesc: 'Ver 10 series diferentes',
+    explorerName: 'Explorador',
+    explorerDesc: 'Ver 50 series diferentes',
+    completionistName: 'Coleccionista',
+    completionistDesc: 'Ver 100 series diferentes',
+    firstReviewName: 'Primera reseña',
+    firstReviewDesc: 'Publicar tu primera reseña',
+    criticName: 'Crítico',
+    criticDesc: 'Publicar 10 reseñas',
+    voiceName: 'Comunidad',
+    voiceDesc: 'Publicar 50 comentarios',
+    raterName: 'Puntuador',
+    raterDesc: 'Valorar 25 series',
+    fanName: 'Fan de corazón',
+    fanDesc: 'Agregar 25 títulos a favoritos',
+    bingerName: 'Maratoneador',
+    bingerDesc: 'Acumular 100 horas vistas',
+    streak7Name: 'Racha semanal',
+    streak7Desc: 'Lograr una racha de 7 días',
+    streak30Name: 'Mes constante',
+    streak30Desc: 'Lograr una racha de 30 días',
   },
   novedades: {
     title: 'Novedades',
@@ -4525,6 +4668,13 @@ const en: TranslationShape = {
     typeEspecial: 'Special',
     typeAnime: 'Anime',
     typeReality: 'Reality',
+    directorSingular: 'Director',
+    directorPlural: 'Directors',
+    cast: 'Cast',
+    hasContent: 'Has content',
+    hasReview: 'Has review',
+    goToContent: 'Go to content',
+    goToReviews: 'Go to reviews',
   },
   seriesInfo: {
     fieldTitle: 'Title',
@@ -4885,6 +5035,71 @@ const en: TranslationShape = {
     settingsDeleteError: 'Could not delete your account.',
     settingsDeleteMissingEmail:
       'We could not read your session email to confirm this action.',
+    sectionMyStats: 'My stats',
+    sectionReviewsActivity: 'Reviews activity',
+    sectionCountries: 'Favorite countries',
+    sectionYearSummary: 'Year summary',
+    sectionCollections: 'My lists',
+    sectionFollowedTitles: 'Followed titles',
+    sectionNotifications: 'Notifications',
+    sectionCases: 'My feedback cases',
+    sectionAchievements: 'Achievements & milestones',
+    customizeTitle: 'Customize my profile',
+    customizeHint:
+      'Show or hide your profile panels. Your preferences are saved on this device.',
+    customizeReset: 'Restore all',
+    overviewLoadError: 'We could not load your profile.',
+    overviewBackToClassic: 'Back to classic view',
+    overviewDashboardLink:
+      'Want to reorder the panels? Open the configurable view →',
+    overviewViewAll: 'View all',
+    overviewViewLess: 'View less',
+    overviewViewAllCount: 'View all ({count})',
+    overviewCommentsEmpty: "You haven't commented on any series yet.",
+    overviewCommentsFilterEmpty: 'No comments match the current filter.',
+    overviewYearWatchedLabel: 'Watched in {year}',
+    overviewLoading: 'Loading...',
+    overviewViewAllComments: 'View all comments ({count})',
+    overviewCommentsSearchPlaceholder: 'Search in comments...',
+    overviewYearTotalHoursLabel: 'Total hours',
+    settingsCardPublicNameTitle: 'Public name',
+    settingsCardPublicNameDesc: 'Your name visible in the community',
+    settingsCardAppearanceTitle: 'Appearance & accessibility',
+    settingsCardAppearanceDesc: 'Theme, accent, text size and more',
+    settingsCardNotificationsTitle: 'Notifications',
+    settingsCardNotificationsDesc: 'Email, push and preferences',
+    settingsCardPrivacyTitle: 'Privacy & data',
+    settingsCardPrivacyDesc: 'Export data and controls',
+    settingsCardSessionsTitle: 'Sessions & devices',
+    settingsCardSessionsDesc: 'Manage your active sessions',
+    settingsCardDangerTitle: 'Danger zone',
+    settingsCardDangerDesc: 'Delete account and more',
+  },
+  achievements: {
+    firstStepName: 'First step',
+    firstStepDesc: 'Mark your first series as watched',
+    starterName: 'Starter',
+    starterDesc: 'Watch 10 different series',
+    explorerName: 'Explorer',
+    explorerDesc: 'Watch 50 different series',
+    completionistName: 'Completionist',
+    completionistDesc: 'Watch 100 different series',
+    firstReviewName: 'First review',
+    firstReviewDesc: 'Publish your first review',
+    criticName: 'Critic',
+    criticDesc: 'Publish 10 reviews',
+    voiceName: 'Community',
+    voiceDesc: 'Publish 50 comments',
+    raterName: 'Rater',
+    raterDesc: 'Rate 25 series',
+    fanName: 'Fan at heart',
+    fanDesc: 'Add 25 titles to favorites',
+    bingerName: 'Binger',
+    bingerDesc: 'Accumulate 100 hours watched',
+    streak7Name: 'Weekly streak',
+    streak7Desc: 'Reach a 7-day streak',
+    streak30Name: 'Steady month',
+    streak30Desc: 'Reach a 30-day streak',
   },
   novedades: {
     title: "What's new",

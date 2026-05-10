@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import type { TranslationKey } from '@/i18n/messages';
 
 /** Identificadores estables de cada seccion del overview de /perfil.
  *  Son las llaves que el user puede ocultar/mostrar y que persistimos
@@ -22,31 +23,76 @@ export type OverviewSectionKey =
 
 export interface OverviewSectionMeta {
   key: OverviewSectionKey;
-  label: string;
+  /** Key i18n del label visible. El consumer resuelve via t(). */
+  labelKey: TranslationKey;
   /** Default = true: la seccion se ve hasta que el user la oculte. */
   defaultVisible: boolean;
 }
 
 export const OVERVIEW_SECTIONS: OverviewSectionMeta[] = [
-  { key: 'watching', label: 'Seguir viendo', defaultVisible: true },
-  { key: 'mystats', label: 'Mis estadísticas', defaultVisible: true },
   {
-    key: 'reviewsActivity',
-    label: 'Actividad de reseñas',
+    key: 'watching',
+    labelKey: 'profile.sectionWatching',
     defaultVisible: true,
   },
-  { key: 'countries', label: 'Países favoritos', defaultVisible: true },
-  { key: 'yearSummary', label: 'Resumen anual', defaultVisible: true },
-  { key: 'reviews', label: 'Mis reseñas', defaultVisible: true },
-  { key: 'collections', label: 'Mis listas', defaultVisible: true },
-  { key: 'comments', label: 'Mis comentarios', defaultVisible: true },
-  { key: 'followed', label: 'Títulos seguidos', defaultVisible: true },
-  { key: 'notifications', label: 'Notificaciones', defaultVisible: true },
-  { key: 'cases', label: 'Mis casos de feedback', defaultVisible: true },
-  { key: 'achievements', label: 'Logros y hitos', defaultVisible: true },
+  {
+    key: 'mystats',
+    labelKey: 'profile.sectionMyStats',
+    defaultVisible: true,
+  },
+  {
+    key: 'reviewsActivity',
+    labelKey: 'profile.sectionReviewsActivity',
+    defaultVisible: true,
+  },
+  {
+    key: 'countries',
+    labelKey: 'profile.sectionCountries',
+    defaultVisible: true,
+  },
+  {
+    key: 'yearSummary',
+    labelKey: 'profile.sectionYearSummary',
+    defaultVisible: true,
+  },
+  {
+    key: 'reviews',
+    labelKey: 'profile.sectionMyReviews',
+    defaultVisible: true,
+  },
+  {
+    key: 'collections',
+    labelKey: 'profile.sectionCollections',
+    defaultVisible: true,
+  },
+  {
+    key: 'comments',
+    labelKey: 'profile.sectionMyComments',
+    defaultVisible: true,
+  },
+  {
+    key: 'followed',
+    labelKey: 'profile.sectionFollowedTitles',
+    defaultVisible: true,
+  },
+  {
+    key: 'notifications',
+    labelKey: 'profile.sectionNotifications',
+    defaultVisible: true,
+  },
+  {
+    key: 'cases',
+    labelKey: 'profile.sectionCases',
+    defaultVisible: true,
+  },
+  {
+    key: 'achievements',
+    labelKey: 'profile.sectionAchievements',
+    defaultVisible: true,
+  },
   {
     key: 'settings',
-    label: 'Configuración y preferencias',
+    labelKey: 'profile.sectionSettings',
     defaultVisible: true,
   },
 ];

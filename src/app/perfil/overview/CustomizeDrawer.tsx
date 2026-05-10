@@ -6,6 +6,7 @@ import {
   OVERVIEW_SECTIONS,
   type OverviewSectionKey,
 } from './useSectionVisibility';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 import './CustomizeDrawer.css';
 
 interface Props {
@@ -27,24 +28,24 @@ export function CustomizeDrawer({
   onToggle,
   onReset,
 }: Props) {
+  const { t } = useLocale();
   return (
     <Drawer
-      title="Personalizar mi perfil"
+      title={t('profile.customizeTitle')}
       placement="right"
       open={open}
       onClose={onClose}
       styles={{ wrapper: { width: 360 } }}
       className="customize-drawer"
     >
-      <p className="customize-drawer__hint">
-        Mostrá u ocultá los paneles de tu perfil. Tus preferencias se guardan en
-        este dispositivo.
-      </p>
+      <p className="customize-drawer__hint">{t('profile.customizeHint')}</p>
 
       <ul className="customize-drawer__list">
         {OVERVIEW_SECTIONS.map((section) => (
           <li key={section.key} className="customize-drawer__item">
-            <span className="customize-drawer__label">{section.label}</span>
+            <span className="customize-drawer__label">
+              {t(section.labelKey)}
+            </span>
             <Switch
               size="small"
               checked={isVisible(section.key)}
@@ -56,7 +57,7 @@ export function CustomizeDrawer({
 
       <div className="customize-drawer__footer">
         <Button icon={<ReloadOutlined />} onClick={onReset} size="small" block>
-          Restaurar todos
+          {t('profile.customizeReset')}
         </Button>
       </div>
     </Drawer>
