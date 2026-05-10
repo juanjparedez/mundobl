@@ -294,7 +294,11 @@ export default async function AdminLandingPage() {
           )}
 
           {groups.map((group) => (
-            <section key={group.title} className="admin-dashboard__section">
+            <section
+              key={group.title}
+              className="admin-dashboard__section"
+              data-group={group.title.toLowerCase()}
+            >
               <h2 className="admin-dashboard__section-title">{group.title}</h2>
               <div className="admin-dashboard__grid">
                 {group.tools.map((tool) => (
