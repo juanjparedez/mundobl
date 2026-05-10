@@ -1,0 +1,117 @@
+.overview-achievements {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  background: var(--bg-container);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+}
+
+.overview-achievements__head {
+  display: flex;
+  align-items: center;
+}
+
+.overview-achievements__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.overview-achievements__title .anticon {
+  color: var(--primary-color);
+}
+
+.overview-achievements__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.overview-achievements__item {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: var(--bg-spotlight);
+  border-radius: var(--border-radius-base);
+}
+
+.overview-achievements__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.overview-achievements__item--gold .overview-achievements__icon {
+  background: color-mix(in srgb, var(--primary-color) 22%, transparent);
+  color: var(--primary-color);
+}
+
+.overview-achievements__item--purple .overview-achievements__icon {
+  background: color-mix(in srgb, #7c4dff 22%, transparent);
+  color: #a18bff;
+}
+
+.overview-achievements__item--red .overview-achievements__icon {
+  background: color-mix(in srgb, #ff5c5c 22%, transparent);
+  color: #ff8585;
+}
+
+.overview-achievements__item--locked .overview-achievements__icon {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-tertiary);
+}
+
+.overview-achievements__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.overview-achievements__name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.overview-achievements__item--locked .overview-achievements__name {
+  color: var(--text-tertiary);
+}
+
+.overview-achievements__desc {
+  font-size: 10px;
+  color: var(--text-tertiary);
+}
+
+.overview-achievements__status {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  white-space: nowrap;
+}
+
+.overview-achievements__item:not(.overview-achievements__item--locked)
+  .overview-achievements__status {
+  color: #58d484;
+  background: color-mix(in srgb, #48c774 16%, transparent);
+}

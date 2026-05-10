@@ -1,0 +1,113 @@
+.overview-page {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: transparent;
+}
+
+.overview-page__state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 360px;
+  color: var(--text-secondary);
+}
+
+/* Bloque principal: izq grande + media + chica derecha. Alineado al mock
+ * my-.profile2.png — la columna izquierda concentra contenido (shelf +
+ * stats + 3-up con paises/year/activity), la del medio reviews+collections,
+ * y la derecha es comentarios full-height. */
+.overview-page__main {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 3fr) minmax(0, 3fr);
+  gap: 12px;
+  align-items: start;
+}
+
+.overview-page__col-left,
+.overview-page__col-mid,
+.overview-page__col-right {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.overview-page__row-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.overview-page__row-4 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+/* Footer */
+.overview-page__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 6px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color-secondary);
+}
+
+.overview-page__legacy-panels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.overview-page__legacy-card {
+  background: var(--bg-container);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  padding: 14px;
+}
+
+.overview-page__alt {
+  margin: 0;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  text-align: center;
+}
+
+.overview-page__alt a {
+  color: var(--text-tertiary);
+  text-decoration: none;
+}
+
+.overview-page__alt a:hover {
+  color: var(--primary-color);
+}
+
+/* ─── Responsive ───────────────────────────────────────────────────────── */
+
+@media (max-width: 1280px) {
+  .overview-page__main {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+  .overview-page__col-right {
+    grid-column: 1 / -1;
+  }
+  .overview-page__row-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .overview-page__main {
+    grid-template-columns: 1fr;
+  }
+  .overview-page__row-3 {
+    grid-template-columns: 1fr;
+  }
+  .overview-page__row-4 {
+    grid-template-columns: 1fr;
+  }
+}
