@@ -409,6 +409,7 @@ const ko: TranslationShape = {
     "customizeTitle": "내 프로필 맞춤 설정",
     "customizeHint": "프로필 패널을 표시하거나 숨깁니다. 설정은 이 기기에 저장됩니다.",
     "customizeReset": "모두 복원",
+    "customizeButton": "맞춤 설정",
     "overviewLoadError": "프로필을 로드할 수 없습니다.",
     "overviewBackToClassic": "클래식 보기로 돌아가기",
     "overviewDashboardLink": "패널 순서를 바꾸고 싶으신가요? 구성 가능한 보기 열기 →",

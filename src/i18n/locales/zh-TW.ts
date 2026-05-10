@@ -409,6 +409,7 @@ const zhTW: TranslationShape = {
     "customizeTitle": "自訂我的個人資料",
     "customizeHint": "顯示或隱藏您的個人資料面板。您的偏好設定已儲存於此裝置。",
     "customizeReset": "全部還原",
+    "customizeButton": "自訂",
     "overviewLoadError": "我們無法載入您的個人資料。",
     "overviewBackToClassic": "返回經典視圖",
     "overviewDashboardLink": "想重新排序面板？開啟可配置視圖 →",

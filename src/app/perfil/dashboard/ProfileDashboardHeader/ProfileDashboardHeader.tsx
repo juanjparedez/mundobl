@@ -1,9 +1,10 @@
 'use client';
 
-import { Avatar, Button, Tag } from 'antd';
+import { Avatar, Button, Space, Tag } from 'antd';
 import {
   CalendarOutlined,
   EditOutlined,
+  SettingOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -18,6 +19,10 @@ const ROLE_COLORS: Record<string, string> = {
 
 export interface ProfileDashboardHeaderProps {
   user: ProfileData['user'];
+  /** Callback opcional para abrir el drawer de personalizar. Cuando se
+   *  pasa, se renderea un boton extra "Personalizar" que abre el panel
+   *  con switches por section. */
+  onCustomizeClick?: () => void;
 }
 
 function formatJoinedDate(iso: string, locale: string): string {
@@ -35,7 +40,10 @@ function formatJoinedDate(iso: string, locale: string): string {
 /** Header denso del perfil dashboard. Click en "Editar perfil" hace scroll
  *  al footer del dashboard donde vive ProfileSettings. Antes apuntaba a
  *  /perfil/clasico (no hacia nada util mas que recargar). */
-export function ProfileDashboardHeader({ user }: ProfileDashboardHeaderProps) {
+export function ProfileDashboardHeader({
+  user,
+  onCustomizeClick,
+}: ProfileDashboardHeaderProps) {
   const { t, locale } = useLocale();
 
   const handleEditClick = () => {
@@ -68,9 +76,16 @@ export function ProfileDashboardHeader({ user }: ProfileDashboardHeaderProps) {
         </div>
       </div>
       <div className="mb-profile-header__actions">
-        <Button icon={<EditOutlined />} onClick={handleEditClick}>
-          {t('profileDashboard.editProfile')}
-        </Button>
+        <Space size={8} wrap>
+          <Button icon={<EditOutlined />} onClick={handleEditClick}>
+            {t('profileDashboard.editProfile')}
+          </Button>
+          {onCustomizeClick && (
+            <Button icon={<SettingOutlined />} onClick={onCustomizeClick}>
+              {t('profile.customizeButton')}
+            </Button>
+          )}
+        </Space>
       </div>
     </header>
   );

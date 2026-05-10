@@ -409,6 +409,7 @@ const th: TranslationShape = {
     "customizeTitle": "ปรับแต่งโปรไฟล์ของฉัน",
     "customizeHint": "แสดงหรือซ่อนแผงโปรไฟล์ของคุณ การตั้งค่าของคุณจะถูกบันทึกในอุปกรณ์นี้",
     "customizeReset": "กู้คืนทั้งหมด",
+    "customizeButton": "ปรับแต่ง",
     "overviewLoadError": "เราไม่สามารถโหลดโปรไฟล์ของคุณได้",
     "overviewBackToClassic": "กลับสู่มุมมองคลาสสิก",
     "overviewDashboardLink": "ต้องการจัดเรียงแผงใหม่หรือไม่? เปิดมุมมองที่กำหนดค่าได้ →",

@@ -409,6 +409,7 @@ const fr: TranslationShape = {
     "customizeTitle": "Personnaliser mon profil",
     "customizeHint": "Afficher ou masquer les panneaux de votre profil. Vos préférences sont enregistrées sur cet appareil.",
     "customizeReset": "Restaurer tout",
+    "customizeButton": "Personnaliser",
     "overviewLoadError": "Nous n'avons pas pu charger votre profil.",
     "overviewBackToClassic": "Retour à la vue classique",
     "overviewDashboardLink": "Envie de réorganiser les panneaux ? Ouvrez la vue configurable →",
