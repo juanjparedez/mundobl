@@ -409,6 +409,7 @@ const ja: TranslationShape = {
     "customizeTitle": "プロフィールをカスタマイズ",
     "customizeHint": "プロフィールパネルの表示/非表示を切り替えます。設定はこのデバイスに保存されます。",
     "customizeReset": "すべて復元",
+    "customizeButton": "カスタマイズ",
     "overviewLoadError": "プロフィールを読み込めませんでした。",
     "overviewBackToClassic": "クラシック表示に戻る",
     "overviewDashboardLink": "パネルの順序を変更しますか？設定可能な表示を開く →",

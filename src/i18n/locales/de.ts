@@ -409,6 +409,7 @@ const de: TranslationShape = {
     "customizeTitle": "Mein Profil anpassen",
     "customizeHint": "Zeigen oder verbergen Sie Ihre Profilfelder. Ihre Präferenzen werden auf diesem Gerät gespeichert.",
     "customizeReset": "Alle wiederherstellen",
+    "customizeButton": "Anpassen",
     "overviewLoadError": "Wir konnten Ihr Profil nicht laden.",
     "overviewBackToClassic": "Zurück zur klassischen Ansicht",
     "overviewDashboardLink": "Möchten Sie die Panels neu anordnen? Öffnen Sie die konfigurierbare Ansicht →",

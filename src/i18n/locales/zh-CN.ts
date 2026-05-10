@@ -409,6 +409,7 @@ const zhCN: TranslationShape = {
     "customizeTitle": "自定义我的个人资料",
     "customizeHint": "显示或隐藏您的个人资料面板。您的偏好已保存到此设备。",
     "customizeReset": "恢复所有",
+    "customizeButton": "自定义",
     "overviewLoadError": "我们无法加载您的个人资料。",
     "overviewBackToClassic": "返回经典视图",
     "overviewDashboardLink": "想要重新排序面板？打开可配置视图 →",

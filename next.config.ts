@@ -60,13 +60,19 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  // Redirects permanentes 301: /admin/dashboard fue absorbido por /perfil
-  // (admin layout ya muestra alerts + quick actions). Se redirige para
-  // bookmarks viejos y links externos.
+  // Redirects permanentes 301: rutas absorbidas por consolidaciones del
+  // dashboard. /admin/dashboard y /perfil/dashboard ambas apuntan ahora
+  // a /perfil que renderea el DashboardClient con layouts fijos por rol
+  // y customizacion via CustomizeDrawer.
   async redirects() {
     return [
       {
         source: '/admin/dashboard',
+        destination: '/perfil',
+        permanent: true,
+      },
+      {
+        source: '/perfil/dashboard',
         destination: '/perfil',
         permanent: true,
       },

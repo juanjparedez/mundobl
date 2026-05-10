@@ -400,6 +400,7 @@ export type TranslationShape = {
     customizeTitle: string;
     customizeHint: string;
     customizeReset: string;
+    customizeButton: string;
     overviewLoadError: string;
     overviewBackToClassic: string;
     overviewDashboardLink: string;
@@ -2687,6 +2688,7 @@ const es: TranslationShape = {
     customizeHint:
       'Mostrá u ocultá los paneles de tu perfil. Tus preferencias se guardan en este dispositivo.',
     customizeReset: 'Restaurar todos',
+    customizeButton: 'Personalizar',
     overviewLoadError: 'No pudimos cargar tu perfil.',
     overviewBackToClassic: 'Volver a la vista clásica',
     overviewDashboardLink:
@@ -5060,6 +5062,7 @@ const en: TranslationShape = {
     customizeHint:
       'Show or hide your profile panels. Your preferences are saved on this device.',
     customizeReset: 'Restore all',
+    customizeButton: 'Customize',
     overviewLoadError: 'We could not load your profile.',
     overviewBackToClassic: 'Back to classic view',
     overviewDashboardLink:
