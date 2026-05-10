@@ -136,6 +136,86 @@
   justify-content: center;
 }
 
+/* User block reemplaza al settings trigger cuando hay session.
+ * Avatar + nombre + rol pill. Click abre SettingsPanel (mismo target). */
+.sidebar-user-block {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  width: 100%;
+  margin: 0;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-base);
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  text-align: left;
+}
+
+.sidebar-user-block:hover,
+.sidebar-user-block:focus-visible {
+  background: var(--bg-spotlight);
+  border-color: var(--border-color-secondary);
+}
+
+.sidebar-user-block__avatar {
+  flex-shrink: 0;
+}
+
+.sidebar-user-block__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-user-block__name {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.sidebar-user-block__role {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-tertiary);
+  line-height: 1.2;
+}
+
+.sidebar-user-block__role--admin {
+  color: var(--primary-color);
+}
+
+.sidebar-user-block__role--moderator {
+  color: color-mix(in srgb, var(--primary-color) 70%, var(--text-secondary));
+}
+
+.sidebar-user-block__settings-icon {
+  font-size: 14px;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+  transition: var(--transition-fast);
+}
+
+.sidebar-user-block:hover .sidebar-user-block__settings-icon,
+.sidebar-user-block:focus-visible .sidebar-user-block__settings-icon {
+  color: var(--text-primary);
+}
+
+/* Collapsed: solo avatar centrado */
+.ant-layout-sider-collapsed .sidebar-user-block {
+  justify-content: center;
+  padding: var(--spacing-xs);
+}
+
 .sidebar-preferences {
   margin: 0 var(--spacing-xs) var(--spacing-xs);
   padding: var(--spacing-sm);

@@ -1402,6 +1402,7 @@ const fr: TranslationShape = {
   },
   header: {
     title: 'MundoBL - Catalogue de séries',
+    adminModeLabel: 'Mode : Admin',
   },
   adminNav: {
     groupCatalog: 'Catalogue',
@@ -2254,12 +2255,15 @@ const fr: TranslationShape = {
     widgetFavoritesDesc: 'Grid visual con tus series favoritas.',
     favoritesEmpty: 'No agregaste series a favoritas todavia.',
     widgetMyReviews: 'Mis resenas',
-    widgetMyReviewsDesc: 'Tus resenas escritas, con badges de status y verdict.',
+    widgetMyReviewsDesc:
+      'Tus resenas escritas, con badges de status y verdict.',
     myReviewsEmpty: 'Aun no escribiste resenas.',
     widgetMyDisputes: 'Mis disputas',
-    widgetMyDisputesDesc: 'Disputas que abriste contra reportes en tus comentarios.',
+    widgetMyDisputesDesc:
+      'Disputas que abriste contra reportes en tus comentarios.',
     widgetMyComments: 'Mis comentarios',
-    widgetMyCommentsDesc: 'Gestion completa de tus comentarios: filtros, bulk ops, edit, disputa, export.',
+    widgetMyCommentsDesc:
+      'Gestion completa de tus comentarios: filtros, bulk ops, edit, disputa, export.',
     loadError: 'Erreur lors du chargement de votre profil. Actualisez la page.',
   },
   serieDashboard: {

@@ -87,6 +87,27 @@
   color: var(--text-primary);
 }
 
+.app-topbar__admin-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--primary-color) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary-color) 35%, transparent);
+  color: var(--primary-color);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.app-topbar__admin-pill-text {
+  line-height: 1;
+}
+
 .app-topbar__avatar-btn {
   background: transparent;
   border: none;
@@ -121,6 +142,17 @@
   .app-topbar__search {
     flex: 0 1 auto;
     width: 36px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  /* En mobile el pill ocupa demasiado: solo el icono. */
+  .app-topbar__admin-pill-text {
+    display: none;
+  }
+
+  .app-topbar__admin-pill {
+    width: 28px;
     padding: 0;
     justify-content: center;
   }

@@ -1362,6 +1362,7 @@ const ja: TranslationShape = {
   },
   header: {
     title: 'MundoBL - シリーズカタログ',
+    adminModeLabel: 'モード: 管理者',
   },
   adminNav: {
     groupCatalog: 'カタログ',
@@ -1781,12 +1782,15 @@ const ja: TranslationShape = {
     widgetFavoritesDesc: 'Grid visual con tus series favoritas.',
     favoritesEmpty: 'No agregaste series a favoritas todavia.',
     widgetMyReviews: 'Mis resenas',
-    widgetMyReviewsDesc: 'Tus resenas escritas, con badges de status y verdict.',
+    widgetMyReviewsDesc:
+      'Tus resenas escritas, con badges de status y verdict.',
     myReviewsEmpty: 'Aun no escribiste resenas.',
     widgetMyDisputes: 'Mis disputas',
-    widgetMyDisputesDesc: 'Disputas que abriste contra reportes en tus comentarios.',
+    widgetMyDisputesDesc:
+      'Disputas que abriste contra reportes en tus comentarios.',
     widgetMyComments: 'Mis comentarios',
-    widgetMyCommentsDesc: 'Gestion completa de tus comentarios: filtros, bulk ops, edit, disputa, export.',
+    widgetMyCommentsDesc:
+      'Gestion completa de tus comentarios: filtros, bulk ops, edit, disputa, export.',
     loadError: 'プロフィールの読み込みエラー。ページを更新してください。',
   },
   serieDashboard: {

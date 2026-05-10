@@ -2,7 +2,7 @@
 
 import { startTransition, useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { Layout, Menu } from 'antd';
+import { Avatar, Layout, Menu } from 'antd';
 import {
   AppstoreOutlined,
   BarChartOutlined,
@@ -321,17 +321,55 @@ export function Sidebar() {
       <Menu mode="inline" selectedKeys={[selectedKey]} items={menuItems} />
 
       <div className="sidebar-footer">
-        <button
-          className="sidebar-settings-trigger"
-          onClick={() => setIsSettingsOpen(true)}
-          aria-label={t('bottomNav.settings')}
-          aria-haspopup="dialog"
-        >
-          <span className="sidebar-settings-trigger__icon" aria-hidden="true">
-            <SettingOutlined />
-          </span>
-          {!collapsed && <span>{t('bottomNav.settings')}</span>}
-        </button>
+        {session?.user ? (
+          <button
+            className="sidebar-user-block"
+            onClick={() => setIsSettingsOpen(true)}
+            aria-label={t('bottomNav.settings')}
+            aria-haspopup="dialog"
+          >
+            <Avatar
+              src={session.user.image}
+              icon={!session.user.image ? <UserOutlined /> : undefined}
+              size={32}
+              className="sidebar-user-block__avatar"
+            />
+            {!collapsed && (
+              <>
+                <div className="sidebar-user-block__info">
+                  <span className="sidebar-user-block__name">
+                    {session.user.name ?? t('sidebar.profile')}
+                  </span>
+                  <span
+                    className={`sidebar-user-block__role sidebar-user-block__role--${session.user.role.toLowerCase()}`}
+                  >
+                    {isAdmin
+                      ? t('adminUsers.roleAdmin')
+                      : isModerator
+                        ? t('adminUsers.roleModerator')
+                        : t('adminUsers.roleVisitor')}
+                  </span>
+                </div>
+                <SettingOutlined
+                  className="sidebar-user-block__settings-icon"
+                  aria-hidden
+                />
+              </>
+            )}
+          </button>
+        ) : (
+          <button
+            className="sidebar-settings-trigger"
+            onClick={() => setIsSettingsOpen(true)}
+            aria-label={t('bottomNav.settings')}
+            aria-haspopup="dialog"
+          >
+            <span className="sidebar-settings-trigger__icon" aria-hidden="true">
+              <SettingOutlined />
+            </span>
+            {!collapsed && <span>{t('bottomNav.settings')}</span>}
+          </button>
+        )}
       </div>
       <SettingsPanel
         open={isSettingsOpen}
