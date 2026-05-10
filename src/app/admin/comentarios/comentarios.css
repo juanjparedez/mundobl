@@ -1,5 +1,5 @@
 .comentarios-page {
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
   border-radius: var(--border-radius-lg);
   background:
     radial-gradient(
