@@ -1,0 +1,81 @@
+.mb-profile-user {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.mb-profile-user__row {
+  display: grid;
+  gap: var(--spacing-md);
+}
+
+.mb-profile-user__cell {
+  min-width: 0;
+  display: flex;
+  min-height: 240px;
+}
+
+.mb-profile-user__cell > * {
+  width: 100%;
+  height: 100%;
+}
+
+/* ─── Row variants ───────────────────────────────────────────────────────── */
+
+.mb-profile-user__row--full {
+  grid-template-columns: 1fr;
+}
+
+.mb-profile-user__cell--shelf {
+  min-height: 280px;
+}
+
+.mb-profile-user__row--social {
+  grid-template-columns: minmax(0, 5fr) minmax(0, 4fr) minmax(0, 3fr);
+}
+
+.mb-profile-user__row--social .mb-profile-user__cell {
+  min-height: 280px;
+}
+
+/* Charts row: heatmap wide + 2 charts mas chicos */
+.mb-profile-user__row--charts {
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.mb-profile-user__row--charts .mb-profile-user__cell {
+  min-height: 240px;
+}
+
+.mb-profile-user__row--4up {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.mb-profile-user__row--4up .mb-profile-user__cell {
+  min-height: 240px;
+}
+
+.mb-profile-user__row--full .mb-profile-user__cell:not(.mb-profile-user__cell--shelf) {
+  min-height: 480px;
+}
+
+/* ─── Responsive ────────────────────────────────────────────────────────── */
+
+@media (max-width: 1280px) {
+  .mb-profile-user__row--4up {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1024px) {
+  .mb-profile-user__row--social,
+  .mb-profile-user__row--charts {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .mb-profile-user__row--4up {
+    grid-template-columns: 1fr;
+  }
+}
