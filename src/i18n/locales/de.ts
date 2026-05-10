@@ -2296,6 +2296,12 @@ const de: TranslationShape = {
     "actionUpdate": "Bearbeitet",
     "actionDelete": "Gelöscht"
   },
+  "topCommenters": {
+    "title": "Empfohlene Community",
+    "empty": "Keine aktuellen Kommentare.",
+    "roleAdmin": "Admin",
+    "roleModerator": "Mod"
+  },
   "workspace": {
     "backToCatalog": "Zurück zum Katalog",
     "viewPublic": "Öffentliche Ansicht",

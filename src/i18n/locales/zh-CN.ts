@@ -2296,6 +2296,12 @@ const zhCN: TranslationShape = {
     "actionUpdate": "已编辑",
     "actionDelete": "已删除"
   },
+  "topCommenters": {
+    "title": "精选社区",
+    "empty": "暂无近期评论。",
+    "roleAdmin": "管理员",
+    "roleModerator": "版主"
+  },
   "workspace": {
     "backToCatalog": "返回目录",
     "viewPublic": "公开视图",
