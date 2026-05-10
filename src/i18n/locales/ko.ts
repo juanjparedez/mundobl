@@ -2298,7 +2298,30 @@ const ko: TranslationShape = {
     "tabData": "데이터",
     "tabDataPlaceholder": "시리즈의 원본 편집 가능 메타데이터.",
     "tabReviews": "리뷰",
-    "tabReviewsPlaceholder": "이 시리즈와 연결된 리뷰."
+    "tabReviewsPlaceholder": "이 시리즈와 연결된 리뷰.",
+    "overviewSynopsis": "줄거리",
+    "overviewObservations": "관찰",
+    "overviewReview": "개인 리뷰",
+    "overviewSoundtrack": "OST",
+    "overviewUniverse": "세계관",
+    "dataType": "유형",
+    "dataFormat": "형식",
+    "dataBasedOn": "원작",
+    "dataCatalogScope": "카탈로그 범위",
+    "dataRating": "평점",
+    "dataCreatedAt": "생성일",
+    "dataUpdatedAt": "업데이트일",
+    "tableColEpisode": "에피소드",
+    "tableColDuration": "재생 시간",
+    "tableColTitle": "제목",
+    "tableColTone": "분위기",
+    "tableColToneHint": "에피소드의 주된 분위기. 구현 예정.",
+    "tableColSubplots": "서브플롯",
+    "tableColSubplotsHint": "이 에피소드에서 진행되는 서브플롯. 구현 예정.",
+    "tableColSynopsis": "줄거리",
+    "tableColNotes": "내 노트",
+    "tableCellPending": "대기 중",
+    "tableEmpty": "이 시리즈는 아직 에피소드가 로드되지 않았습니다."
   }
 } as TranslationShape;
 

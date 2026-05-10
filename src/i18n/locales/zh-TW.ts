@@ -2298,7 +2298,30 @@ const zhTW: TranslationShape = {
     "tabData": "資料",
     "tabDataPlaceholder": "此劇集的原始可編輯元數據。",
     "tabReviews": "評論",
-    "tabReviewsPlaceholder": "連結到此劇集的評論。"
+    "tabReviewsPlaceholder": "連結到此劇集的評論。",
+    "overviewSynopsis": "劇情簡介",
+    "overviewObservations": "觀察",
+    "overviewReview": "個人評論",
+    "overviewSoundtrack": "原聲帶",
+    "overviewUniverse": "世界觀",
+    "dataType": "類型",
+    "dataFormat": "格式",
+    "dataBasedOn": "改編自",
+    "dataCatalogScope": "收錄範圍",
+    "dataRating": "評分",
+    "dataCreatedAt": "建立日期",
+    "dataUpdatedAt": "更新日期",
+    "tableColEpisode": "集數",
+    "tableColDuration": "時長",
+    "tableColTitle": "標題",
+    "tableColTone": "基調",
+    "tableColToneHint": "本集的基調。待實施。",
+    "tableColSubplots": "支線劇情",
+    "tableColSubplotsHint": "本集推進的支線劇情。待實施。",
+    "tableColSynopsis": "劇情簡介",
+    "tableColNotes": "我的筆記",
+    "tableCellPending": "待定",
+    "tableEmpty": "此劇集尚未載入任何劇集。"
   }
 } as TranslationShape;
 

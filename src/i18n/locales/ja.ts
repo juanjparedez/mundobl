@@ -2298,7 +2298,30 @@ const ja: TranslationShape = {
     "tabData": "データ",
     "tabDataPlaceholder": "シリーズの編集可能な生メタデータ。",
     "tabReviews": "レビュー",
-    "tabReviewsPlaceholder": "このシリーズにリンクされたレビュー。"
+    "tabReviewsPlaceholder": "このシリーズにリンクされたレビュー。",
+    "overviewSynopsis": "あらすじ",
+    "overviewObservations": "考察",
+    "overviewReview": "個人的レビュー",
+    "overviewSoundtrack": "サウンドトラック",
+    "overviewUniverse": "ユニバース",
+    "dataType": "タイプ",
+    "dataFormat": "フォーマット",
+    "dataBasedOn": "原作",
+    "dataCatalogScope": "カタログ範囲",
+    "dataRating": "評価",
+    "dataCreatedAt": "作成日",
+    "dataUpdatedAt": "更新日",
+    "tableColEpisode": "エピソード",
+    "tableColDuration": "期間",
+    "tableColTitle": "タイトル",
+    "tableColTone": "トーン",
+    "tableColToneHint": "エピソードの主要なトーン。実装予定。",
+    "tableColSubplots": "サブプロット",
+    "tableColSubplotsHint": "このエピソードで進展するサブプロット。実装予定。",
+    "tableColSynopsis": "あらすじ",
+    "tableColNotes": "マイノート",
+    "tableCellPending": "保留中",
+    "tableEmpty": "このシリーズにはまだエピソードがありません。"
   }
 } as TranslationShape;
 

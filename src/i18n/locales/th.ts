@@ -2298,7 +2298,30 @@ const th: TranslationShape = {
     "tabData": "ข้อมูล",
     "tabDataPlaceholder": "ข้อมูลเมตาที่แก้ไขได้สำหรับซีรีส์",
     "tabReviews": "รีวิว",
-    "tabReviewsPlaceholder": "รีวิวที่เชื่อมโยงกับซีรีส์นี้"
+    "tabReviewsPlaceholder": "รีวิวที่เชื่อมโยงกับซีรีส์นี้",
+    "overviewSynopsis": "เรื่องย่อ",
+    "overviewObservations": "ข้อสังเกต",
+    "overviewReview": "รีวิวส่วนตัว",
+    "overviewSoundtrack": "เพลงประกอบ",
+    "overviewUniverse": "จักรวาล",
+    "dataType": "ประเภท",
+    "dataFormat": "รูปแบบ",
+    "dataBasedOn": "อ้างอิงจาก",
+    "dataCatalogScope": "ขอบเขตแคตตาล็อก",
+    "dataRating": "เรตติ้ง",
+    "dataCreatedAt": "สร้างเมื่อ",
+    "dataUpdatedAt": "อัปเดตเมื่อ",
+    "tableColEpisode": "ตอนที่",
+    "tableColDuration": "ระยะเวลา",
+    "tableColTitle": "ชื่อเรื่อง",
+    "tableColTone": "โทน",
+    "tableColToneHint": "โทนหลักของตอนนี้ จะถูกนำมาใช้",
+    "tableColSubplots": "โครงเรื่องย่อย",
+    "tableColSubplotsHint": "โครงเรื่องย่อยที่ดำเนินไปในตอนนี้ จะถูกนำมาใช้",
+    "tableColSynopsis": "เรื่องย่อ",
+    "tableColNotes": "บันทึกของฉัน",
+    "tableCellPending": "รอดำเนินการ",
+    "tableEmpty": "ซีรีส์นี้ยังไม่มีตอนที่โหลด"
   }
 } as TranslationShape;
 

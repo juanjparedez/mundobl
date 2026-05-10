@@ -2298,7 +2298,30 @@ const it: TranslationShape = {
     "tabData": "Dati",
     "tabDataPlaceholder": "Metadati grezzi modificabili per la serie.",
     "tabReviews": "Recensioni",
-    "tabReviewsPlaceholder": "Recensioni collegate a questa serie."
+    "tabReviewsPlaceholder": "Recensioni collegate a questa serie.",
+    "overviewSynopsis": "Sinossi",
+    "overviewObservations": "Osservazioni",
+    "overviewReview": "Recensione personale",
+    "overviewSoundtrack": "Colonna sonora",
+    "overviewUniverse": "Universo",
+    "dataType": "Tipo",
+    "dataFormat": "Formato",
+    "dataBasedOn": "Basato su",
+    "dataCatalogScope": "Ambito catalogo",
+    "dataRating": "Valutazione",
+    "dataCreatedAt": "Creato",
+    "dataUpdatedAt": "Aggiornato",
+    "tableColEpisode": "Episodio",
+    "tableColDuration": "Durata",
+    "tableColTitle": "Titolo",
+    "tableColTone": "Tono",
+    "tableColToneHint": "Tono dominante dell'episodio. Da implementare.",
+    "tableColSubplots": "Sottotrame",
+    "tableColSubplotsHint": "Sottotrame che avanzano in questo episodio. Da implementare.",
+    "tableColSynopsis": "Sinossi",
+    "tableColNotes": "Le mie note",
+    "tableCellPending": "in sospeso",
+    "tableEmpty": "Questa serie non ha ancora episodi caricati."
   }
 } as TranslationShape;
 
