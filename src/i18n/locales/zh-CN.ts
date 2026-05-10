@@ -1402,6 +1402,7 @@ const zhCN: TranslationShape = {
     "adminModeLabel": "模式：管理员"
   },
   "adminNav": {
+    "ariaLabel": "管理员导航",
     "groupCatalog": "目录",
     "groupCommunity": "社区",
     "groupSystem": "系统",

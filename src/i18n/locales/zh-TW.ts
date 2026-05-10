@@ -1402,6 +1402,7 @@ const zhTW: TranslationShape = {
     "adminModeLabel": "模式：管理員"
   },
   "adminNav": {
+    "ariaLabel": "管理員導覽",
     "groupCatalog": "目錄",
     "groupCommunity": "社群",
     "groupSystem": "系統",
