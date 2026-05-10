@@ -52,6 +52,8 @@ import { YearSummaryWidget } from './widgets/YearSummaryWidget/YearSummaryWidget
 import { ReviewsActivityWidget } from './widgets/ReviewsActivityWidget/ReviewsActivityWidget';
 import { FollowedTitlesWidget } from './widgets/FollowedTitlesWidget/FollowedTitlesWidget';
 import { SettingsRowWidget } from './widgets/SettingsRowWidget/SettingsRowWidget';
+import { RecentAdminActivityWidget } from '@/app/admin/widgets/RecentAdminActivityWidget/RecentAdminActivityWidget';
+import { TopCommentersWidget } from '@/app/admin/widgets/TopCommentersWidget/TopCommentersWidget';
 import './dashboard.css';
 
 // IDs estables de cada widget. Usados en layouts persistidos y registry.
@@ -84,6 +86,11 @@ const WIDGET_IDS = {
   reviewsActivity: 'profile.reviewsActivity',
   followedTitles: 'profile.followedTitles',
   settingsRow: 'profile.settingsRow',
+  // Widgets compartidos con /admin (admin/moderator only) — reusados
+  // del registry de /admin via import cross-feature. Mismos endpoints,
+  // mismos componentes — sin duplicar codigo.
+  recentAdminActivity: 'profile.recentAdminActivity',
+  topCommenters: 'profile.topCommenters',
 } as const;
 
 // Mapa de widgetId -> section key del CustomizeDrawer. Permite que el
@@ -151,8 +158,13 @@ const ADMIN_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.topRated, x: 8, y: 33, w: 4, h: 4 },
     // Row 11: MyComments full
     { i: WIDGET_IDS.myComments, x: 0, y: 37, w: 12, h: 6, minW: 6, minH: 5 },
-    // Row 12: SettingsRow (6 cards horizontales del mock)
-    { i: WIDGET_IDS.settingsRow, x: 0, y: 43, w: 12, h: 4, minW: 6, minH: 3 },
+    // Row 12: Admin shared widgets (RecentAdminActivity + TopCommenters)
+    // — reusados desde /admin. Solo visibles para admin/moderator por
+    // los roles del registry.
+    { i: WIDGET_IDS.recentAdminActivity, x: 0, y: 43, w: 6, h: 5 },
+    { i: WIDGET_IDS.topCommenters, x: 6, y: 43, w: 6, h: 5 },
+    // Row 13: SettingsRow (6 cards horizontales del mock)
+    { i: WIDGET_IDS.settingsRow, x: 0, y: 48, w: 12, h: 4, minW: 6, minH: 3 },
   ],
   md: [
     { i: WIDGET_IDS.heatmap, x: 0, y: 0, w: 10, h: 3 },
@@ -580,6 +592,28 @@ export function DashboardClient() {
       defaultSize: { w: 12, h: 4, minW: 6, minH: 3 },
       Component: SettingsRowWidget as never,
     });
+    // Widgets admin-only reusados desde /admin/widgets. roles filtra el
+    // picker para que solo aparezcan a admin/moderator. Endpoints
+    // backend ya devuelven 403 a non-admin, asi que aunque alguien
+    // los agregue al layout, no muestran data sensible.
+    WidgetRegistry.register({
+      id: WIDGET_IDS.recentAdminActivity,
+      category: 'activity',
+      labelKey: 'adminActivity.title',
+      descriptionKey: 'adminActivity.title',
+      defaultSize: { w: 6, h: 5, minW: 4, minH: 4 },
+      Component: RecentAdminActivityWidget as never,
+      roles: ['ADMIN', 'MODERATOR'],
+    });
+    WidgetRegistry.register({
+      id: WIDGET_IDS.topCommenters,
+      category: 'social',
+      labelKey: 'topCommenters.title',
+      descriptionKey: 'topCommenters.title',
+      defaultSize: { w: 6, h: 5, minW: 4, minH: 4 },
+      Component: TopCommentersWidget as never,
+      roles: ['ADMIN', 'MODERATOR'],
+    });
   }, []);
 
   useEffect(() => {
@@ -634,6 +668,8 @@ export function DashboardClient() {
     map[WIDGET_IDS.reviewsActivity] = { stats: data.stats };
     map[WIDGET_IDS.followedTitles] = { favorites: data.favorites };
     map[WIDGET_IDS.settingsRow] = {};
+    map[WIDGET_IDS.recentAdminActivity] = {};
+    map[WIDGET_IDS.topCommenters] = {};
     return map;
   }, [data]);
 
