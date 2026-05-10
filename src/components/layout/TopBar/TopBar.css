@@ -7,9 +7,9 @@
   gap: var(--spacing-md);
   height: var(--header-height);
   padding: 0 var(--spacing-lg);
-  background: var(--bg-container);
+  background: color-mix(in srgb, var(--bg-container) 86%, transparent);
   border-bottom: 1px solid var(--border-color-secondary);
-  backdrop-filter: saturate(140%) blur(8px);
+  backdrop-filter: saturate(140%) blur(12px);
 }
 
 /* ─── Search ─────────────────────────────────────────────────────── */
@@ -19,11 +19,11 @@
   align-items: center;
   gap: var(--spacing-sm);
   height: 36px;
-  max-width: 480px;
+  max-width: 560px;
   padding: 0 var(--spacing-sm);
   background: var(--bg-input);
   border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-base);
+  border-radius: var(--border-radius-lg);
   color: var(--text-tertiary);
   cursor: pointer;
   font-size: var(--font-size-sm);
@@ -32,8 +32,9 @@
 
 .app-topbar__search:hover,
 .app-topbar__search:focus-visible {
-  border-color: var(--primary-color);
+  border-color: color-mix(in srgb, var(--primary-color) 60%, var(--border-color));
   color: var(--text-secondary);
+  background: color-mix(in srgb, var(--bg-spotlight) 86%, transparent);
 }
 
 .app-topbar__search-icon {
@@ -72,7 +73,7 @@
   justify-content: center;
   background: transparent;
   border: 1px solid transparent;
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--border-radius-base);
   color: var(--text-secondary);
   cursor: pointer;
   font-size: 16px;
@@ -81,7 +82,7 @@
 
 .app-topbar__icon-btn:hover,
 .app-topbar__icon-btn:focus-visible {
-  background: var(--bg-spotlight);
+  background: color-mix(in srgb, var(--bg-spotlight) 88%, transparent);
   border-color: var(--border-color-secondary);
   color: var(--text-primary);
 }

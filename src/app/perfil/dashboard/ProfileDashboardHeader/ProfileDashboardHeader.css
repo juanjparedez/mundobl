@@ -3,7 +3,13 @@
   align-items: center;
   gap: var(--spacing-md);
   padding: var(--spacing-md) var(--spacing-lg);
-  background: var(--bg-container);
+  background:
+    linear-gradient(
+      110deg,
+      color-mix(in srgb, var(--bg-container) 94%, transparent) 0%,
+      color-mix(in srgb, var(--bg-elevated) 66%, transparent) 52%,
+      color-mix(in srgb, var(--bg-container) 92%, transparent) 100%
+    );
   border: 1px solid var(--border-color-secondary);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--box-shadow-card);
@@ -12,6 +18,7 @@
 .mb-profile-header__avatar {
   flex-shrink: 0;
   border: 2px solid var(--border-color-secondary);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary-color) 16%, transparent);
 }
 
 .mb-profile-header__info {

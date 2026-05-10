@@ -1,13 +1,16 @@
 .series-detail-page {
   position: relative;
   isolation: isolate;
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
   border-radius: var(--border-radius-lg);
-  background: radial-gradient(
-    circle at center,
-    rgba(201, 138, 192, 0.12) 0%,
-    rgba(20, 15, 28, 0) 70%
-  );
+  background:
+    radial-gradient(
+      circle at top right,
+      color-mix(in srgb, var(--primary-color) 14%, transparent) 0%,
+      transparent 52%
+    ),
+    color-mix(in srgb, var(--bg-container) 78%, transparent);
+  border: 1px solid var(--border-color-secondary);
 }
 
 .series-actions {
@@ -76,7 +79,7 @@
   flex-wrap: wrap;
   padding: var(--spacing-xs);
   border: 1px solid var(--border-color-secondary);
-  border-radius: var(--border-radius-base);
+  border-radius: var(--border-radius-lg);
   background: color-mix(in srgb, var(--bg-container) 88%, transparent);
   backdrop-filter: blur(10px);
 }
@@ -113,7 +116,7 @@
   scroll-margin-top: 88px;
   background: color-mix(in srgb, var(--bg-container) 86%, transparent);
   border: 1px solid var(--border-color-secondary);
-  border-radius: var(--border-radius-base);
+  border-radius: var(--border-radius-lg);
   padding: var(--spacing-md);
   animation: tab-fade-in 0.24s ease;
   content-visibility: auto;

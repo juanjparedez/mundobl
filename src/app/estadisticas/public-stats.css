@@ -1,12 +1,19 @@
 .public-stats-page {
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
   max-width: 1200px;
   margin: 0 auto;
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  background: color-mix(in srgb, var(--bg-container) 84%, transparent);
 }
 
 /* ─── Hero ───────────────────────────────────────────────────────── */
 .public-stats-hero {
   margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-md);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  background: color-mix(in srgb, var(--bg-elevated) 74%, transparent);
 }
 
 .public-stats-hero__title {
@@ -184,6 +191,8 @@
 .public-stats-summary__card {
   border-top: 3px solid var(--stats-card-accent, var(--border-color)) !important;
   transition: transform 0.18s var(--ease-pop);
+  border-radius: var(--border-radius-lg) !important;
+  background: color-mix(in srgb, var(--bg-container) 92%, transparent);
 }
 
 .public-stats-summary__card:hover {
@@ -231,6 +240,11 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--spacing-md);
+}
+
+.public-stats-grid .ant-card {
+  border-radius: var(--border-radius-lg);
+  background: color-mix(in srgb, var(--bg-container) 92%, transparent);
 }
 
 .public-stats-grid__full {

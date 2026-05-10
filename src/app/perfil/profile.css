@@ -1,6 +1,6 @@
 .profile-page {
-  padding: var(--spacing-lg);
-  max-width: 1100px;
+  padding: var(--spacing-md);
+  max-width: 1320px;
   margin: 0 auto;
 }
 
@@ -11,10 +11,17 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-lg);
-  margin-bottom: var(--spacing-xl);
-  padding: var(--spacing-xl);
-  background: var(--bg-container);
-  border-radius: var(--border-radius-base);
+  margin-bottom: var(--spacing-lg);
+  padding: var(--spacing-lg);
+  background:
+    linear-gradient(
+      110deg,
+      color-mix(in srgb, var(--bg-container) 94%, transparent) 0%,
+      color-mix(in srgb, var(--bg-elevated) 66%, transparent) 50%,
+      color-mix(in srgb, var(--bg-container) 92%, transparent) 100%
+    );
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--border-color-secondary);
   box-shadow: var(--box-shadow-card);
 }
 
@@ -71,15 +78,16 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: var(--spacing-sm);
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: var(--spacing-lg);
 }
 
 .profile-stat {
-  background: var(--bg-container);
-  border-radius: var(--border-radius-base);
+  background: color-mix(in srgb, var(--bg-container) 92%, transparent);
+  border-radius: var(--border-radius-lg);
   padding: var(--spacing-md) var(--spacing-sm);
   text-align: center;
   box-shadow: var(--box-shadow-card);
+  border: 1px solid var(--border-color-secondary);
 }
 
 .profile-stat__icon {
@@ -105,7 +113,7 @@
    Sections
    ========================================== */
 .profile-section {
-  margin-bottom: var(--spacing-xl);
+  margin-bottom: var(--spacing-lg);
 }
 
 .profile-section__header {
@@ -115,7 +123,9 @@
   font-size: var(--font-size-base);
   font-weight: 600;
   color: var(--text-primary);
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .profile-section__header-icon {
