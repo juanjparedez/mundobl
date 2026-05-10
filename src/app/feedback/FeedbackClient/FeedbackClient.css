@@ -292,7 +292,7 @@
 }
 
 .feedback-comment--admin {
-  border-left-color: var(--color-primary);
+  border-left-color: var(--primary-color);
   background: var(--bg-spotlight);
 }
 
@@ -312,8 +312,8 @@
 .feedback-comment__admin-badge {
   font-size: 10px;
   font-weight: 600;
-  color: var(--color-primary);
-  background: var(--color-primary-bg);
+  color: var(--primary-color);
+  background: color-mix(in srgb, var(--primary-color) 14%, transparent);
   padding: 0 4px;
   border-radius: 3px;
   line-height: 16px;

@@ -29,6 +29,16 @@ import { CompletedByYearWidget } from './widgets/CompletedByYearWidget/Completed
 import { TopGenresListWidget } from './widgets/TopGenresListWidget/TopGenresListWidget';
 import { TopCountriesListWidget } from './widgets/TopCountriesListWidget/TopCountriesListWidget';
 import { CurrentlyWatchingWidget } from './widgets/CurrentlyWatchingWidget/CurrentlyWatchingWidget';
+import { TopActorsListWidget } from './widgets/TopActorsListWidget/TopActorsListWidget';
+import { TopCompaniesListWidget } from './widgets/TopCompaniesListWidget/TopCompaniesListWidget';
+import { TopRatedSeriesWidget } from './widgets/TopRatedSeriesWidget/TopRatedSeriesWidget';
+import { FavoritesWidget } from './widgets/FavoritesWidget/FavoritesWidget';
+import { MyReviewsWidget } from './widgets/MyReviewsWidget/MyReviewsWidget';
+import { MyDisputesWidget } from './widgets/MyDisputesWidget/MyDisputesWidget';
+import { MyCommentsWidget } from './widgets/MyCommentsWidget/MyCommentsWidget';
+import { ProfileSettings } from '../ProfileSettings/ProfileSettings';
+import { SubscriptionsSection } from '../SubscriptionsSection/SubscriptionsSection';
+import { ClientVersionInfo } from '../ClientVersionInfo/ClientVersionInfo';
 import './dashboard.css';
 
 const WIDGET_IDS = {
@@ -43,6 +53,13 @@ const WIDGET_IDS = {
   topGenresList: 'profile.topGenresList',
   topCountries: 'profile.topCountries',
   currentlyWatching: 'profile.currentlyWatching',
+  topActors: 'profile.topActors',
+  topCompanies: 'profile.topCompanies',
+  topRated: 'profile.topRated',
+  favorites: 'profile.favorites',
+  myReviews: 'profile.myReviews',
+  myDisputes: 'profile.myDisputes',
+  myComments: 'profile.myComments',
 } as const;
 
 // Grid denso alineado al mock: rowHeight 40 + gap 8 (en DashboardGrid).
@@ -91,6 +108,16 @@ const DEFAULT_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.ratings, x: 6, y: 15, w: 6, h: 3, minW: 4, minH: 3 },
     // Fila 6 (h:4): My cases full-width
     { i: WIDGET_IDS.myCases, x: 0, y: 18, w: 12, h: 4, minW: 4, minH: 3 },
+    // Fila 7 (h:5): Top rated + Favorites + My reviews
+    { i: WIDGET_IDS.topRated, x: 0, y: 22, w: 4, h: 5, minW: 3, minH: 4 },
+    { i: WIDGET_IDS.favorites, x: 4, y: 22, w: 4, h: 5, minW: 3, minH: 4 },
+    { i: WIDGET_IDS.myReviews, x: 8, y: 22, w: 4, h: 5, minW: 3, minH: 4 },
+    // Fila 8 (h:4): Top actors + Top companies + Disputes
+    { i: WIDGET_IDS.topActors, x: 0, y: 27, w: 4, h: 4, minW: 3, minH: 3 },
+    { i: WIDGET_IDS.topCompanies, x: 4, y: 27, w: 4, h: 4, minW: 3, minH: 3 },
+    { i: WIDGET_IDS.myDisputes, x: 8, y: 27, w: 4, h: 4, minW: 3, minH: 3 },
+    // Fila 9 (h:8): My comments full-width (filtros + paginacion ocupan)
+    { i: WIDGET_IDS.myComments, x: 0, y: 31, w: 12, h: 8, minW: 6, minH: 6 },
   ],
   md: [
     { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 5, h: 4 },
@@ -104,6 +131,13 @@ const DEFAULT_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.overview, x: 5, y: 15, w: 5, h: 4 },
     { i: WIDGET_IDS.ratings, x: 0, y: 19, w: 10, h: 3 },
     { i: WIDGET_IDS.myCases, x: 0, y: 22, w: 10, h: 4 },
+    { i: WIDGET_IDS.topRated, x: 0, y: 26, w: 5, h: 5 },
+    { i: WIDGET_IDS.favorites, x: 5, y: 26, w: 5, h: 5 },
+    { i: WIDGET_IDS.myReviews, x: 0, y: 31, w: 10, h: 5 },
+    { i: WIDGET_IDS.topActors, x: 0, y: 36, w: 5, h: 4 },
+    { i: WIDGET_IDS.topCompanies, x: 5, y: 36, w: 5, h: 4 },
+    { i: WIDGET_IDS.myDisputes, x: 0, y: 40, w: 10, h: 4 },
+    { i: WIDGET_IDS.myComments, x: 0, y: 44, w: 10, h: 8 },
   ],
   sm: [
     { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 6, h: 4 },
@@ -117,6 +151,13 @@ const DEFAULT_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.overview, x: 0, y: 31, w: 6, h: 3 },
     { i: WIDGET_IDS.ratings, x: 0, y: 34, w: 6, h: 3 },
     { i: WIDGET_IDS.myCases, x: 0, y: 37, w: 6, h: 4 },
+    { i: WIDGET_IDS.topRated, x: 0, y: 41, w: 6, h: 5 },
+    { i: WIDGET_IDS.favorites, x: 0, y: 46, w: 6, h: 5 },
+    { i: WIDGET_IDS.myReviews, x: 0, y: 51, w: 6, h: 5 },
+    { i: WIDGET_IDS.topActors, x: 0, y: 56, w: 6, h: 4 },
+    { i: WIDGET_IDS.topCompanies, x: 0, y: 60, w: 6, h: 4 },
+    { i: WIDGET_IDS.myDisputes, x: 0, y: 64, w: 6, h: 4 },
+    { i: WIDGET_IDS.myComments, x: 0, y: 68, w: 6, h: 9 },
   ],
   xs: [
     { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 4, h: 4 },
@@ -130,6 +171,13 @@ const DEFAULT_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.overview, x: 0, y: 31, w: 4, h: 4 },
     { i: WIDGET_IDS.ratings, x: 0, y: 35, w: 4, h: 4 },
     { i: WIDGET_IDS.myCases, x: 0, y: 39, w: 4, h: 4 },
+    { i: WIDGET_IDS.topRated, x: 0, y: 43, w: 4, h: 5 },
+    { i: WIDGET_IDS.favorites, x: 0, y: 48, w: 4, h: 5 },
+    { i: WIDGET_IDS.myReviews, x: 0, y: 53, w: 4, h: 5 },
+    { i: WIDGET_IDS.topActors, x: 0, y: 58, w: 4, h: 4 },
+    { i: WIDGET_IDS.topCompanies, x: 0, y: 62, w: 4, h: 4 },
+    { i: WIDGET_IDS.myDisputes, x: 0, y: 66, w: 4, h: 4 },
+    { i: WIDGET_IDS.myComments, x: 0, y: 70, w: 4, h: 9 },
   ],
 };
 
@@ -141,11 +189,11 @@ export function DashboardClient() {
   const [editing, setEditing] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
 
-  // dashboardKey 'profile-v2' invalida el cache localStorage/server del
-  // layout viejo (h:5 muy alto). Si el usuario tenia uno custom, podra
-  // reordenar sobre los defaults nuevos mas densos.
+  // dashboardKey 'profile-v3' invalida cache de layout previo. v3 suma
+  // 7 widgets nuevos (TopActors, TopCompanies, TopRated, Favorites,
+  // MyReviews, MyDisputes, MyComments) que el layout v2 no incluia.
   const { layouts, setLayouts, removeWidget, addWidget, reset, widgetIds } =
-    useDashboardLayout('profile-v2', DEFAULT_LAYOUTS);
+    useDashboardLayout('profile-v3', DEFAULT_LAYOUTS);
 
   // Registro de widgets — corre antes del primer paint en cada mount.
   // El registry es un singleton, asi que `register` es idempotente por id.
@@ -238,6 +286,62 @@ export function DashboardClient() {
       defaultSize: { w: 6, h: 5, minW: 4, minH: 4 },
       Component: CurrentlyWatchingWidget as never,
     });
+    WidgetRegistry.register({
+      id: WIDGET_IDS.topActors,
+      category: 'overview',
+      labelKey: 'profileDashboard.widgetTopActors',
+      descriptionKey: 'profileDashboard.widgetTopActorsDesc',
+      defaultSize: { w: 4, h: 4, minW: 3, minH: 3 },
+      Component: TopActorsListWidget as never,
+    });
+    WidgetRegistry.register({
+      id: WIDGET_IDS.topCompanies,
+      category: 'overview',
+      labelKey: 'profileDashboard.widgetTopCompanies',
+      descriptionKey: 'profileDashboard.widgetTopCompaniesDesc',
+      defaultSize: { w: 4, h: 4, minW: 3, minH: 3 },
+      Component: TopCompaniesListWidget as never,
+    });
+    WidgetRegistry.register({
+      id: WIDGET_IDS.topRated,
+      category: 'overview',
+      labelKey: 'profileDashboard.widgetTopRated',
+      descriptionKey: 'profileDashboard.widgetTopRatedDesc',
+      defaultSize: { w: 4, h: 5, minW: 3, minH: 4 },
+      Component: TopRatedSeriesWidget as never,
+    });
+    WidgetRegistry.register({
+      id: WIDGET_IDS.favorites,
+      category: 'media',
+      labelKey: 'profileDashboard.widgetFavorites',
+      descriptionKey: 'profileDashboard.widgetFavoritesDesc',
+      defaultSize: { w: 4, h: 5, minW: 3, minH: 4 },
+      Component: FavoritesWidget as never,
+    });
+    WidgetRegistry.register({
+      id: WIDGET_IDS.myReviews,
+      category: 'social',
+      labelKey: 'profileDashboard.widgetMyReviews',
+      descriptionKey: 'profileDashboard.widgetMyReviewsDesc',
+      defaultSize: { w: 6, h: 5, minW: 4, minH: 4 },
+      Component: MyReviewsWidget as never,
+    });
+    WidgetRegistry.register({
+      id: WIDGET_IDS.myDisputes,
+      category: 'social',
+      labelKey: 'profileDashboard.widgetMyDisputes',
+      descriptionKey: 'profileDashboard.widgetMyDisputesDesc',
+      defaultSize: { w: 4, h: 4, minW: 3, minH: 3 },
+      Component: MyDisputesWidget as never,
+    });
+    WidgetRegistry.register({
+      id: WIDGET_IDS.myComments,
+      category: 'social',
+      labelKey: 'profileDashboard.widgetMyComments',
+      descriptionKey: 'profileDashboard.widgetMyCommentsDesc',
+      defaultSize: { w: 12, h: 8, minW: 6, minH: 6 },
+      Component: MyCommentsWidget as never,
+    });
   }, []);
 
   useEffect(() => {
@@ -278,6 +382,15 @@ export function DashboardClient() {
     map[WIDGET_IDS.topGenresList] = { topGenres: data.stats.topGenres };
     map[WIDGET_IDS.topCountries] = { topCountries: data.stats.topCountries };
     map[WIDGET_IDS.currentlyWatching] = { items: data.currentlyWatching };
+    map[WIDGET_IDS.topActors] = { topActors: data.stats.topActors };
+    map[WIDGET_IDS.topCompanies] = {
+      topProductionCompanies: data.stats.topProductionCompanies,
+    };
+    map[WIDGET_IDS.topRated] = { topRatedSeries: data.stats.topRatedSeries };
+    map[WIDGET_IDS.favorites] = { favorites: data.favorites };
+    map[WIDGET_IDS.myReviews] = { recentReviews: data.recentReviews };
+    map[WIDGET_IDS.myDisputes] = {};
+    map[WIDGET_IDS.myComments] = {};
     return map;
   }, [data]);
 
@@ -335,6 +448,22 @@ export function DashboardClient() {
           onPick={addWidget}
           alreadyAdded={widgetIds}
         />
+
+        {/* Settings + suscripciones + version info — features que estaban
+         * en el perfil clasico y que migraron al dashboard como bloque
+         * fijo abajo del grid. No son widgets reordenables porque son
+         * singletons que el usuario espera en una posicion estable. */}
+        <div className="mb-perfil-dashboard__footer">
+          <div className="mb-perfil-dashboard__footer-grid">
+            <div className="mb-perfil-dashboard__footer-panel">
+              <ProfileSettings />
+            </div>
+            <div className="mb-perfil-dashboard__footer-panel">
+              <SubscriptionsSection />
+            </div>
+          </div>
+          <ClientVersionInfo />
+        </div>
       </div>
     </AppLayout>
   );

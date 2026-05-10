@@ -2102,6 +2102,25 @@ export type TranslationShape = {
     currentlyWatchingEmpty: string;
     currentlyWatchingNext: string;
     currentlyWatchingProgress: string;
+    widgetTopActors: string;
+    widgetTopActorsDesc: string;
+    topActorsEmpty: string;
+    widgetTopCompanies: string;
+    widgetTopCompaniesDesc: string;
+    topCompaniesEmpty: string;
+    widgetTopRated: string;
+    widgetTopRatedDesc: string;
+    topRatedEmpty: string;
+    widgetFavorites: string;
+    widgetFavoritesDesc: string;
+    favoritesEmpty: string;
+    widgetMyReviews: string;
+    widgetMyReviewsDesc: string;
+    myReviewsEmpty: string;
+    widgetMyDisputes: string;
+    widgetMyDisputesDesc: string;
+    widgetMyComments: string;
+    widgetMyCommentsDesc: string;
     loadError: string;
   };
   serieDashboard: {
@@ -4365,6 +4384,26 @@ const es: TranslationShape = {
     currentlyWatchingEmpty: 'No estas viendo ninguna serie ahora mismo.',
     currentlyWatchingNext: 'Proximo: T{season} E{episode}',
     currentlyWatchingProgress: '{watched} de {total} episodios',
+    widgetTopActors: 'Actores mas vistos',
+    widgetTopActorsDesc: 'Top 8 actores que mas aparecen en tu catalogo.',
+    topActorsEmpty: 'Aun no hay actores registrados.',
+    widgetTopCompanies: 'Productoras mas vistas',
+    widgetTopCompaniesDesc: 'Top 8 productoras de tus series.',
+    topCompaniesEmpty: 'Aun no hay productoras registradas.',
+    widgetTopRated: 'Mejor calificadas',
+    widgetTopRatedDesc: 'Las series que mejor puntuaste.',
+    topRatedEmpty: 'Aun no calificaste series.',
+    widgetFavorites: 'Favoritas',
+    widgetFavoritesDesc: 'Grid visual con tus series favoritas.',
+    favoritesEmpty: 'No agregaste series a favoritas todavia.',
+    widgetMyReviews: 'Mis resenas',
+    widgetMyReviewsDesc: 'Tus resenas escritas, con badges de status y verdict.',
+    myReviewsEmpty: 'Aun no escribiste resenas.',
+    widgetMyDisputes: 'Mis disputas',
+    widgetMyDisputesDesc: 'Disputas que abriste contra reportes en tus comentarios.',
+    widgetMyComments: 'Mis comentarios',
+    widgetMyCommentsDesc:
+      'Gestion completa de tus comentarios: filtros, bulk ops, edit, disputa, export.',
     loadError: 'Error al cargar tu perfil. Refresca la pagina.',
   },
   serieDashboard: {
@@ -6616,6 +6655,26 @@ const en: TranslationShape = {
     currentlyWatchingEmpty: "You're not watching any series right now.",
     currentlyWatchingNext: 'Next: S{season} E{episode}',
     currentlyWatchingProgress: '{watched} of {total} episodes',
+    widgetTopActors: 'Most watched actors',
+    widgetTopActorsDesc: 'Top 8 actors that appear the most in your catalog.',
+    topActorsEmpty: 'No actors tracked yet.',
+    widgetTopCompanies: 'Most watched studios',
+    widgetTopCompaniesDesc: 'Top 8 production companies of your series.',
+    topCompaniesEmpty: 'No production companies tracked yet.',
+    widgetTopRated: 'Top rated',
+    widgetTopRatedDesc: 'The series you scored highest.',
+    topRatedEmpty: "You haven't rated any series yet.",
+    widgetFavorites: 'Favorites',
+    widgetFavoritesDesc: 'Visual grid with your favorite series.',
+    favoritesEmpty: "You haven't added series to favorites yet.",
+    widgetMyReviews: 'My reviews',
+    widgetMyReviewsDesc: 'Your written reviews with status and verdict badges.',
+    myReviewsEmpty: "You haven't written reviews yet.",
+    widgetMyDisputes: 'My disputes',
+    widgetMyDisputesDesc: 'Disputes you opened against reports on your comments.',
+    widgetMyComments: 'My comments',
+    widgetMyCommentsDesc:
+      'Full comments management: filters, bulk ops, edit, dispute, export.',
     loadError: 'Error loading your profile. Refresh the page.',
   },
   serieDashboard: {

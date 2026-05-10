@@ -12,7 +12,7 @@
   padding: var(--spacing-lg, 24px) var(--spacing-xl, 28px);
   background: linear-gradient(
     135deg,
-    color-mix(in srgb, var(--color-primary, #1677ff) 15%, var(--bg-elevated)) 0%,
+    color-mix(in srgb, var(--primary-color) 15%, var(--bg-elevated)) 0%,
     var(--bg-elevated) 100%
   );
   border-radius: 14px;
@@ -53,7 +53,7 @@
   font-size: 1.75em;
   font-weight: 700;
   line-height: 1;
-  color: var(--color-primary, #1677ff);
+  color: var(--primary-color);
   font-variant-numeric: tabular-nums;
 }
 
@@ -169,7 +169,7 @@
 
 .admin-tool-card:hover {
   transform: translateY(-2px);
-  border-color: var(--color-primary, #1677ff);
+  border-color: var(--primary-color);
   box-shadow: 0 8px 24px rgba(22, 119, 255, 0.1);
 }
 
@@ -191,7 +191,7 @@
 .admin-tool-card__count {
   font-size: 1.1em;
   font-weight: 700;
-  color: var(--color-primary, #1677ff);
+  color: var(--primary-color);
   font-variant-numeric: tabular-nums;
 }
 

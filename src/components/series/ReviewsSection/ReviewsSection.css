@@ -50,7 +50,7 @@
 }
 
 .review-card--mine {
-  border-color: var(--color-primary, #1677ff);
+  border-color: var(--primary-color);
   border-width: 1px;
   background: linear-gradient(
     180deg,

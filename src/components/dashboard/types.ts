@@ -115,6 +115,9 @@ export interface WidgetSlotProps {
   children: ReactNode;
   /** Sin padding en body. */
   noPadding?: boolean;
+  /** Aplica fade-out abajo cuando el contenido excede la altura del widget.
+   *  Pista visual sutil, en lugar de scrollbar interno. */
+  fade?: boolean;
   /** Override del modo edicion. Si esta en un DashboardGrid, prefiere context. */
   editing?: boolean;
   /** Override del remove handler. Si esta en un DashboardGrid, prefiere context. */

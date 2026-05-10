@@ -16,7 +16,7 @@ export default function NotFound() {
         </p>
         <Link
           href="/catalogo"
-          style={{ color: 'var(--color-primary)', fontWeight: 600 }}
+          style={{ color: 'var(--primary-color)', fontWeight: 600 }}
         >
           {t('notFound.backLink')}
         </Link>

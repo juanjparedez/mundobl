@@ -1,4 +1,6 @@
 .mb-widget {
+  position: relative;
+  isolation: isolate;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -11,6 +13,27 @@
   box-shadow: var(--box-shadow-card);
   overflow: hidden;
   transition: var(--transition-fast);
+}
+
+/* Acento diagonal sutil — da textura y separacion sin gritar. Cada widget
+ * tiene una sombra tipo "carta" que se acumula con el grid. */
+.mb-widget::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(
+      circle at top right,
+      color-mix(in srgb, var(--primary-color) 8%, transparent) 0%,
+      transparent 56%
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--bg-spotlight) 32%, transparent) 0%,
+      transparent 52%
+    );
+  pointer-events: none;
 }
 
 .mb-widget--editing {
@@ -107,15 +130,39 @@
 }
 
 .mb-widget__body {
+  position: relative;
   flex: 1;
   min-height: 0;
   padding: 12px;
-  overflow: auto;
+  /* Sin scroll interno: los widgets deben fitear su contenido. Si el
+   * widget es mas chico que su contenido, se clipea con una mascara
+   * fade-out abajo (mb-widget--fade) que da una pista visual sutil sin
+   * agregar la fealdad de un scrollbar interno. */
+  overflow: hidden;
   background: color-mix(in srgb, var(--bg-container) 90%, transparent);
 }
 
 .mb-widget__body--flush {
   padding: 0;
+}
+
+/* Fade-out inferior cuando el contenido excede la altura disponible.
+ * Activable con clase mb-widget--fade en el article — los widgets que
+ * tipicamente tienen listas largas (recently completed, currently
+ * watching, notifications) la activan. */
+.mb-widget--fade .mb-widget__body::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 28px;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in srgb, var(--bg-container) 96%, transparent)
+  );
 }
 
 html[data-skin='premium'][data-theme='dark'] .mb-widget {

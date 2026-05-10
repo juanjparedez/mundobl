@@ -32,3 +32,47 @@
   text-align: center;
   color: var(--text-secondary);
 }
+
+.mb-perfil-dashboard__footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-sm);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid var(--border-color-secondary);
+}
+
+.mb-perfil-dashboard__footer-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--spacing-md);
+}
+
+.mb-perfil-dashboard__footer-panel {
+  background: var(--bg-container);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-md);
+  position: relative;
+  isolation: isolate;
+}
+
+.mb-perfil-dashboard__footer-panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--primary-color) 6%, transparent) 0%,
+    transparent 48%
+  );
+  pointer-events: none;
+}
+
+@media (max-width: 900px) {
+  .mb-perfil-dashboard__footer-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

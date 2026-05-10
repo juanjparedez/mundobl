@@ -112,15 +112,71 @@
   gap: var(--spacing-md);
 }
 
+/* Cada seccion tiene un gradiente diagonal sutil que se alterna entre
+ * pares e impares — da identidad visual y rompe la sensacion de "todo el
+ * mismo bloque" sin necesidad de hex hardcodeados. La pieza clave es la
+ * banda de color con el accent del tema mas un acento del bg-spotlight. */
 .series-detail-section {
   scroll-margin-top: 88px;
-  background: color-mix(in srgb, var(--bg-container) 86%, transparent);
+  position: relative;
+  isolation: isolate;
   border: 1px solid var(--border-color-secondary);
   border-radius: var(--border-radius-lg);
   padding: var(--spacing-md);
   animation: tab-fade-in 0.24s ease;
   content-visibility: auto;
   contain-intrinsic-size: 560px;
+  overflow: hidden;
+}
+
+.series-detail-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--primary-color) 7%, transparent) 0%,
+      transparent 38%
+    ),
+    color-mix(in srgb, var(--bg-container) 88%, transparent);
+}
+
+/* Alternancia: secciones pares invierten la diagonal del gradiente,
+ * y suman un toque mas calido del bg-spotlight para que el ojo separe
+ * cada bloque sin que ninguno se sienta extranio. */
+.series-detail-section:nth-of-type(even)::before {
+  background:
+    linear-gradient(
+      225deg,
+      color-mix(in srgb, var(--primary-color) 6%, transparent) 0%,
+      transparent 38%
+    ),
+    linear-gradient(
+      315deg,
+      color-mix(in srgb, var(--bg-spotlight) 60%, transparent) 0%,
+      transparent 60%
+    ),
+    color-mix(in srgb, var(--bg-container) 90%, transparent);
+}
+
+/* Banda de acento de 3px arriba de cada seccion: identifica el bloque
+ * con el accent del tema, ayuda a "marcar" visualmente la transicion. */
+.series-detail-section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--primary-color) 55%, transparent) 18%,
+    color-mix(in srgb, var(--primary-color) 28%, transparent) 50%,
+    transparent 100%
+  );
 }
 
 .series-detail-section__header {
@@ -128,6 +184,8 @@
   align-items: center;
   gap: var(--spacing-xs);
   margin-bottom: var(--spacing-sm);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px solid color-mix(in srgb, var(--border-color-secondary) 75%, transparent);
   color: var(--primary-color);
 }
 
@@ -135,6 +193,8 @@
   margin: 0;
   font-size: 1.05rem;
   color: var(--text-primary);
+  font-weight: 600;
+  letter-spacing: 0.01em;
 }
 
 .series-detail-section__body {

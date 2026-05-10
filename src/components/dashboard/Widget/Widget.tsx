@@ -26,6 +26,7 @@ export function Widget({
   actions,
   children,
   noPadding = false,
+  fade = false,
   editing: editingProp,
   onRemove: onRemoveProp,
   dragHandleClassName: dragHandleClassNameProp,
@@ -41,7 +42,7 @@ export function Widget({
 
   return (
     <article
-      className={`mb-widget${editing ? ' mb-widget--editing' : ''}`}
+      className={`mb-widget${editing ? ' mb-widget--editing' : ''}${fade ? ' mb-widget--fade' : ''}`}
       role="region"
     >
       {(title || editing) && (

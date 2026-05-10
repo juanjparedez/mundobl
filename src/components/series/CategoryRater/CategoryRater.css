@@ -10,7 +10,7 @@
 }
 
 .category-rater:hover {
-  border-color: var(--color-primary, #1677ff);
+  border-color: var(--primary-color);
   background: var(--bg-elevated, rgba(22, 119, 255, 0.03));
 }
 
@@ -54,7 +54,7 @@
 .category-rater__icon {
   display: inline-flex;
   align-items: center;
-  color: var(--color-primary, #1677ff);
+  color: var(--primary-color);
   opacity: 0.85;
   font-size: 14px;
 }
@@ -62,7 +62,7 @@
 .category-rater__score {
   font-size: 14px;
   font-weight: 700;
-  color: var(--color-primary, #1677ff);
+  color: var(--primary-color);
   font-variant-numeric: tabular-nums;
 }
 
