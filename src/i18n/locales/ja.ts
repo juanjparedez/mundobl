@@ -1402,6 +1402,7 @@ const ja: TranslationShape = {
     "adminModeLabel": "モード: 管理者"
   },
   "adminNav": {
+    "ariaLabel": "管理者ナビゲーション",
     "groupCatalog": "カタログ",
     "groupCommunity": "コミュニティ",
     "groupSystem": "システム",

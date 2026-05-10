@@ -1402,6 +1402,7 @@ const ko: TranslationShape = {
     "adminModeLabel": "모드: 관리자"
   },
   "adminNav": {
+    "ariaLabel": "관리자 탐색",
     "groupCatalog": "카탈로그",
     "groupCommunity": "커뮤니티",
     "groupSystem": "시스템",

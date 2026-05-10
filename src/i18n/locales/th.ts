@@ -1402,6 +1402,7 @@ const th: TranslationShape = {
     "adminModeLabel": "โหมด: แอดมิน"
   },
   "adminNav": {
+    "ariaLabel": "การนำทางของผู้ดูแลระบบ",
     "groupCatalog": "แคตตาล็อก",
     "groupCommunity": "ชุมชน",
     "groupSystem": "ระบบ",

@@ -1,89 +1,93 @@
+/* Admin nav: una sola row horizontal de chips agrupados visualmente
+ * por gap (sin titulos visibles ni separadores). Compacto, sin
+ * agregar altura sobre la version anterior. El grouping queda en
+ * codigo (role="group" + aria-label) para accessibility pero no se
+ * renderea titulo a nivel visual — el mock muestra la nav como
+ * pills sutiles, no como buckets categorizados. */
+
 .admin-nav {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 4px;
   margin-bottom: var(--spacing-md);
-  padding: var(--spacing-xs);
+  padding: 6px 8px;
   background: var(--bg-elevated);
-  border-radius: var(--border-radius-base);
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
-}
-
-/* Variante agrupada: en lugar de scroll horizontal, hace wrap a varias
-   filas para que todas las herramientas esten visibles sin scroll. */
-.admin-nav--grouped {
-  flex-wrap: wrap;
-  align-items: stretch;
-  gap: var(--spacing-xs, 6px);
-  overflow-x: visible;
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-md);
 }
 
 .admin-nav__group {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 0 var(--spacing-xs, 6px);
-  flex-shrink: 0;
-}
-
-.admin-nav__group-title {
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-secondary);
-  padding: 0 4px;
-  opacity: 0.7;
-}
-
-.admin-nav__group-items {
-  display: flex;
+  display: inline-flex;
   gap: 4px;
+  flex-wrap: wrap;
 }
 
-.admin-nav__separator {
-  width: 1px;
-  background: var(--border-color, rgba(128, 128, 128, 0.2));
-  margin: 4px 2px;
+/* Gap visual entre grupos: 14px horizontal en lugar de separator
+ * vertical (mas limpio, no agrega line). aria-hidden span permite
+ * spacing sin afectar el DOM semantico. */
+.admin-nav__group-gap {
+  display: inline-block;
+  width: 10px;
+  height: 1px;
   flex-shrink: 0;
-}
-
-@media (max-width: 480px) {
-  .admin-nav__group-title {
-    display: none;
-  }
 }
 
 .admin-nav__item {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 14px;
-  border: none;
-  border-radius: var(--border-radius-sm);
+  padding: 6px 12px;
+  border: 1px solid transparent;
+  border-radius: 999px;
   background: transparent;
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   cursor: pointer;
   transition: var(--transition-fast);
   white-space: nowrap;
+  line-height: 1.2;
 }
 
 .admin-nav__item:hover {
-  background: var(--bg-base);
+  background: color-mix(in srgb, var(--primary-color) 8%, transparent);
   color: var(--text-primary);
+  border-color: color-mix(in srgb, var(--primary-color) 20%, transparent);
 }
 
+/* Active state sutil — accent bg + accent text + accent border (no
+ * background solido feo de !important). */
 .admin-nav__item--active {
-  background: var(--primary-color) !important;
-  color: #fff !important;
+  background: color-mix(in srgb, var(--primary-color) 14%, transparent);
+  color: var(--primary-color);
+  border-color: color-mix(in srgb, var(--primary-color) 40%, transparent);
+  font-weight: 600;
+}
+
+.admin-nav__item--active:hover {
+  background: color-mix(in srgb, var(--primary-color) 18%, transparent);
+}
+
+/* Por grupo: items del grupo "community" usan blue, "system" purple
+ * (coherente con la differentiation que ya aplico al main /admin).
+ * Solo cuando estan active — hover los mantiene gold default para no
+ * ser confuso. */
+.admin-nav__group[data-group='community'] .admin-nav__item--active {
+  background: color-mix(in srgb, var(--mb-blue, var(--primary-color)) 14%, transparent);
+  color: var(--mb-blue, var(--primary-color));
+  border-color: color-mix(in srgb, var(--mb-blue, var(--primary-color)) 40%, transparent);
+}
+
+.admin-nav__group[data-group='system'] .admin-nav__item--active {
+  background: color-mix(in srgb, var(--mb-purple, var(--primary-color)) 14%, transparent);
+  color: var(--mb-purple, var(--primary-color));
+  border-color: color-mix(in srgb, var(--mb-purple, var(--primary-color)) 40%, transparent);
 }
 
 .admin-nav__icon {
-  font-size: 14px;
-  display: flex;
+  font-size: 13px;
+  display: inline-flex;
 }
 
 /* Short labels hidden on desktop */
@@ -93,19 +97,21 @@
 
 @media (max-width: 768px) {
   .admin-nav {
-    margin-bottom: var(--spacing-sm);
-    padding: 3px;
-    gap: 2px;
+    padding: 4px 6px;
+    gap: 3px;
   }
 
   .admin-nav__item {
-    padding: 6px 8px;
+    padding: 5px 10px;
     font-size: 11px;
     gap: 4px;
-    flex-shrink: 0;
   }
 
-  /* Show short labels, hide full labels on mobile */
+  .admin-nav__group-gap {
+    width: 6px;
+  }
+
+  /* Mobile: short labels en lugar de full */
   .admin-nav__label {
     display: none;
   }
@@ -113,21 +119,12 @@
   .admin-nav__label-short {
     display: inline;
   }
-
-  .admin-nav__icon {
-    font-size: 13px;
-  }
 }
 
-/* Very small screens: icon-only tabs */
+/* Very small screens: solo iconos */
 @media (max-width: 480px) {
-  .admin-nav {
-    padding: 2px;
-    gap: 1px;
-  }
-
   .admin-nav__item {
-    padding: 8px 10px;
+    padding: 6px 9px;
     gap: 0;
   }
 
@@ -137,6 +134,6 @@
   }
 
   .admin-nav__icon {
-    font-size: 16px;
+    font-size: 15px;
   }
 }

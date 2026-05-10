@@ -1402,6 +1402,7 @@ const de: TranslationShape = {
     "adminModeLabel": "Modus: Admin"
   },
   "adminNav": {
+    "ariaLabel": "Admin-Navigation",
     "groupCatalog": "Katalog",
     "groupCommunity": "Community",
     "groupSystem": "System",

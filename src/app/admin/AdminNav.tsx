@@ -166,33 +166,37 @@ export function AdminNav() {
   const { t } = useLocale();
 
   return (
-    <nav className="admin-nav admin-nav--grouped">
+    <nav className="admin-nav" aria-label={t('adminNav.ariaLabel')}>
       {ADMIN_GROUPS.map((group, groupIdx) => (
         <Fragment key={group.titleKey}>
           {groupIdx > 0 && (
-            <span className="admin-nav__separator" aria-hidden="true" />
+            <span className="admin-nav__group-gap" aria-hidden="true" />
           )}
           <div
             className="admin-nav__group"
             role="group"
             aria-label={t(group.titleKey)}
+            data-group={group.titleKey
+              .replace('adminNav.group', '')
+              .toLowerCase()}
           >
-            <span className="admin-nav__group-title">{t(group.titleKey)}</span>
-            <div className="admin-nav__group-items">
-              {group.links.map((link) => (
-                <button
-                  key={link.key}
-                  className={`admin-nav__item ${pathname === link.key ? 'admin-nav__item--active' : ''}`}
-                  onClick={() => router.push(link.key)}
-                >
-                  <span className="admin-nav__icon">{link.icon}</span>
-                  <span className="admin-nav__label">{t(link.labelKey)}</span>
-                  <span className="admin-nav__label-short">
-                    {t(link.shortKey)}
-                  </span>
-                </button>
-              ))}
-            </div>
+            {group.links.map((link) => (
+              <button
+                key={link.key}
+                type="button"
+                className={`admin-nav__item${pathname === link.key ? ' admin-nav__item--active' : ''}`}
+                onClick={() => router.push(link.key)}
+                title={t(link.labelKey)}
+              >
+                <span className="admin-nav__icon" aria-hidden>
+                  {link.icon}
+                </span>
+                <span className="admin-nav__label">{t(link.labelKey)}</span>
+                <span className="admin-nav__label-short">
+                  {t(link.shortKey)}
+                </span>
+              </button>
+            ))}
           </div>
         </Fragment>
       ))}
