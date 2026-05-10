@@ -3,24 +3,32 @@
 }
 
 .admin-page-wrapper {
-  padding: var(--spacing-lg);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .admin-header {
-  margin-bottom: var(--spacing-lg);
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--spacing-md);
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--bg-container);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  margin: 0;
 }
 
 .admin-content {
   width: 100%;
-  background: var(--bg-base);
-  padding: var(--spacing-lg);
-  border-radius: var(--border-radius-base);
-  box-shadow: var(--box-shadow-card);
+  background: var(--bg-container);
+  padding: 12px;
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  box-shadow: none;
 }
 
 /* ==========================================
@@ -29,19 +37,21 @@
 .admin-search-bar {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-md);
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
 .admin-search-input {
-  max-width: 400px;
+  max-width: 360px;
   flex: 1;
 }
 
 .admin-result-count {
-  font-size: 13px;
+  font-size: 11px;
   color: var(--text-tertiary);
   white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 /* ==========================================
@@ -50,23 +60,23 @@
 .admin-alpha-index {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
-  margin-bottom: var(--spacing-md);
-  padding: var(--spacing-xs) 0;
+  gap: 3px;
+  margin-bottom: 8px;
+  padding: 0;
 }
 
 .admin-alpha-btn {
-  width: 32px;
-  height: 32px;
+  width: 26px;
+  height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 1px solid var(--border-color-secondary);
   border-radius: var(--border-radius-sm);
-  background: var(--bg-container);
-  color: var(--text-primary);
-  font-size: 13px;
-  font-weight: 500;
+  background: var(--bg-spotlight);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
   cursor: pointer;
   transition: var(--transition-fast);
 }
