@@ -1843,6 +1843,15 @@ const ja: TranslationShape = {
     widgetAlerts: 'アラート',
     widgetAlertsDesc: '対応が必要な項目：モデレーション、欠落、提案。',
   },
+  quickAdmin: {
+    title: 'Acciones rapidas',
+    moderateComments: 'Moderar comentarios',
+    manageContent: 'Gestionar contenido',
+    reviewUsers: 'Revisar usuarios',
+    reports: 'Reportes',
+    auditLog: 'Audit log',
+    news: 'Noticias',
+  },
 } as TranslationShape;
 
 export default ja;
