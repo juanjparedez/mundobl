@@ -465,10 +465,7 @@ export function PublicStatsClient() {
                   value: r.count,
                 }))}
                 centerLabel={{
-                  value: data.catalog.byType.reduce(
-                    (s, r) => s + r.count,
-                    0
-                  ),
+                  value: data.catalog.byType.reduce((s, r) => s + r.count, 0),
                   sublabel: copy.cardSeries,
                 }}
                 height={220}
@@ -489,9 +486,7 @@ export function PublicStatsClient() {
               <div className="app-panel__empty">{copy.empty}</div>
             ) : (
               <BarChart
-                data={[...data.catalog.byYear].sort(
-                  (a, b) => a.year - b.year
-                )}
+                data={[...data.catalog.byYear].sort((a, b) => a.year - b.year)}
                 xAxisKey="year"
                 series={[{ dataKey: 'count', name: copy.cardSeries }]}
                 height={220}

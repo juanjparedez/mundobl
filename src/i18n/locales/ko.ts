@@ -474,7 +474,8 @@ const ko: TranslationShape = {
     skinLabel: '시각 스타일',
     skinDefault: '기본',
     skinPremium: '프리미엄',
-    skinPremiumLightDisabledHint: '프리미엄은 다크 모드에서만 사용할 수 있습니다',
+    skinPremiumLightDisabledHint:
+      '프리미엄은 다크 모드에서만 사용할 수 있습니다',
     accentLabel: '강조 색상',
     accentResetCustom: '재설정',
     toneLabel: '기본 톤',

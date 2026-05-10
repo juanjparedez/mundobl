@@ -483,8 +483,7 @@ const fr: TranslationShape = {
     skinLabel: 'Style visuel',
     skinDefault: 'Par défaut',
     skinPremium: 'Premium',
-    skinPremiumLightDisabledHint:
-      "Premium n'est disponible qu'en mode sombre",
+    skinPremiumLightDisabledHint: "Premium n'est disponible qu'en mode sombre",
     accentLabel: "Couleur d'accentuation",
     accentResetCustom: 'Réinitialiser',
     toneLabel: 'Teinte de base',

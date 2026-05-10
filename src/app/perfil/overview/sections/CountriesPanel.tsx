@@ -28,13 +28,9 @@ export function OverviewCountriesPanel({ topCountries }: Props) {
       ) : (
         <ul className="overview-countries__list">
           {visible.map((c, idx) => {
-            const pct =
-              total > 0 ? Math.round((c.count / total) * 100) : 0;
+            const pct = total > 0 ? Math.round((c.count / total) * 100) : 0;
             return (
-              <li
-                key={`${c.name}-${idx}`}
-                className="overview-countries__item"
-              >
+              <li key={`${c.name}-${idx}`} className="overview-countries__item">
                 <span className="overview-countries__flag">
                   {c.code ? (
                     <CountryFlag code={c.code} size="medium" />

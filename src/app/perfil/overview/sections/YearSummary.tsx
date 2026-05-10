@@ -28,7 +28,9 @@ export function OverviewYearSummary({ stats }: Props) {
       <ul className="overview-year__kpis">
         <li className="overview-year__kpi">
           <span className="overview-year__kpi-value">{yearWatched}</span>
-          <span className="overview-year__kpi-label">Vistos en {currentYear}</span>
+          <span className="overview-year__kpi-label">
+            Vistos en {currentYear}
+          </span>
         </li>
         <li className="overview-year__kpi">
           <span className="overview-year__kpi-value">

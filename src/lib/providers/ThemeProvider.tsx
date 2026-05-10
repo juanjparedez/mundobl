@@ -66,7 +66,9 @@ const HEX6_REGEX = /^#?[0-9a-f]{6}$/i;
 
 function normalizeHex(value: string): string | null {
   if (!HEX6_REGEX.test(value)) return null;
-  return value.startsWith('#') ? value.toLowerCase() : `#${value.toLowerCase()}`;
+  return value.startsWith('#')
+    ? value.toLowerCase()
+    : `#${value.toLowerCase()}`;
 }
 
 const VALID_TONES: ToneKey[] = ['default', 'warm', 'cool', 'contrast'];

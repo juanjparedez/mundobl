@@ -44,7 +44,11 @@ export const OVERVIEW_SECTIONS: OverviewSectionMeta[] = [
   { key: 'notifications', label: 'Notificaciones', defaultVisible: true },
   { key: 'cases', label: 'Mis casos de feedback', defaultVisible: true },
   { key: 'achievements', label: 'Logros y hitos', defaultVisible: true },
-  { key: 'settings', label: 'Configuración y preferencias', defaultVisible: true },
+  {
+    key: 'settings',
+    label: 'Configuración y preferencias',
+    defaultVisible: true,
+  },
 ];
 
 const STORAGE_KEY = 'profile-overview-hidden-sections';
@@ -67,7 +71,7 @@ export function useSectionVisibility() {
     } catch {
       /* silent — corruption rara, default = todas visibles */
     }
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration
+
     setHydrated(true);
   }, []);
 

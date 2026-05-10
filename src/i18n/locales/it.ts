@@ -483,7 +483,8 @@ const it: TranslationShape = {
     skinLabel: 'Stile visivo',
     skinDefault: 'Predefinito',
     skinPremium: 'Premium',
-    skinPremiumLightDisabledHint: 'Premium è disponibile solo in modalità scura',
+    skinPremiumLightDisabledHint:
+      'Premium è disponibile solo in modalità scura',
     accentLabel: 'Colore accento',
     accentResetCustom: 'Ripristina',
     toneLabel: 'Tonalità base',
