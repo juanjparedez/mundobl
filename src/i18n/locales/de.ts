@@ -1587,7 +1587,12 @@ const de: TranslationShape = {
     "adminBadge": "Admin",
     "errorUploadImage": "Fehler beim Hochladen des Bildes",
     "errorCreateRequest": "Fehler beim Erstellen der Anfrage",
-    "imageAltAttachment": "Anhang"
+    "imageAltAttachment": "Anhang",
+    "attachImage": "Bild anhängen",
+    "takePhoto": "Foto aufnehmen",
+    "dropImagesHere": "Bilder hier ablegen",
+    "errorImageType": "{name} ist kein gültiges Bild",
+    "errorImageSize": "{name} ist größer als 5 MB"
   },
   "notFound": {
     "description": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
