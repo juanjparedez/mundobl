@@ -1,15 +1,12 @@
+/* Header del perfil: layout horizontal compacto alineado al mock.
+ * Avatar grande + info al medio + acciones a la derecha. Sin
+ * gradientes excesivos — el mock es un panel sobrio. */
 .mb-profile-header {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
-  padding: var(--spacing-md) var(--spacing-lg);
-  background:
-    linear-gradient(
-      110deg,
-      color-mix(in srgb, var(--bg-container) 94%, transparent) 0%,
-      color-mix(in srgb, var(--bg-elevated) 66%, transparent) 52%,
-      color-mix(in srgb, var(--bg-container) 92%, transparent) 100%
-    );
+  padding: 14px 18px;
+  background: var(--bg-container);
   border: 1px solid var(--border-color-secondary);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--box-shadow-card);
@@ -17,8 +14,8 @@
 
 .mb-profile-header__avatar {
   flex-shrink: 0;
-  border: 2px solid var(--border-color-secondary);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary-color) 16%, transparent);
+  border: 2px solid color-mix(in srgb, var(--primary-color) 30%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary-color) 8%, transparent);
 }
 
 .mb-profile-header__info {
@@ -50,9 +47,20 @@
 .mb-profile-header__meta {
   display: inline-flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  margin-top: 4px;
+  gap: 10px;
+  margin-top: 6px;
   flex-wrap: wrap;
+}
+
+.mb-profile-header__meta .ant-tag {
+  margin: 0;
+  font-size: 10px;
+  padding: 0 8px;
+  height: 20px;
+  line-height: 20px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .mb-profile-header__joined {
@@ -65,6 +73,8 @@
 
 .mb-profile-header__actions {
   flex-shrink: 0;
+  display: inline-flex;
+  gap: 8px;
 }
 
 @media (max-width: 640px) {
@@ -72,10 +82,13 @@
     flex-direction: column;
     align-items: flex-start;
     text-align: left;
-    padding: var(--spacing-md);
+    padding: 14px;
   }
   .mb-profile-header__actions {
     width: 100%;
+  }
+  .mb-profile-header__actions > * {
+    flex: 1;
   }
 }
 
@@ -83,4 +96,9 @@ html[data-skin='premium'][data-theme='dark'] .mb-profile-header {
   background: var(--mb-panel);
   border-color: var(--mb-border);
   box-shadow: var(--mb-shadow-soft);
+}
+
+html[data-skin='premium'][data-theme='dark'] .mb-profile-header__avatar {
+  border-color: color-mix(in srgb, var(--mb-gold) 35%, transparent);
+  box-shadow: 0 0 0 4px var(--mb-gold-soft);
 }
