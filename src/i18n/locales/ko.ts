@@ -1376,6 +1376,7 @@ const ko: TranslationShape = {
   },
   header: {
     title: 'MundoBL - 시리즈 카탈로그',
+    adminModeLabel: '모드: 관리자',
   },
   adminNav: {
     groupCatalog: '카탈로그',
@@ -2203,12 +2204,15 @@ const ko: TranslationShape = {
     widgetFavoritesDesc: 'Grid visual con tus series favoritas.',
     favoritesEmpty: 'No agregaste series a favoritas todavia.',
     widgetMyReviews: 'Mis resenas',
-    widgetMyReviewsDesc: 'Tus resenas escritas, con badges de status y verdict.',
+    widgetMyReviewsDesc:
+      'Tus resenas escritas, con badges de status y verdict.',
     myReviewsEmpty: 'Aun no escribiste resenas.',
     widgetMyDisputes: 'Mis disputas',
-    widgetMyDisputesDesc: 'Disputas que abriste contra reportes en tus comentarios.',
+    widgetMyDisputesDesc:
+      'Disputas que abriste contra reportes en tus comentarios.',
     widgetMyComments: 'Mis comentarios',
-    widgetMyCommentsDesc: 'Gestion completa de tus comentarios: filtros, bulk ops, edit, disputa, export.',
+    widgetMyCommentsDesc:
+      'Gestion completa de tus comentarios: filtros, bulk ops, edit, disputa, export.',
     loadError: '프로필 불러오기 오류. 페이지를 새로 고치세요.',
   },
   serieDashboard: {
