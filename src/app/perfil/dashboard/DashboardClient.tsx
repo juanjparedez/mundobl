@@ -51,6 +51,7 @@ import { CollectionsWidget } from './widgets/CollectionsWidget/CollectionsWidget
 import { YearSummaryWidget } from './widgets/YearSummaryWidget/YearSummaryWidget';
 import { ReviewsActivityWidget } from './widgets/ReviewsActivityWidget/ReviewsActivityWidget';
 import { FollowedTitlesWidget } from './widgets/FollowedTitlesWidget/FollowedTitlesWidget';
+import { SettingsRowWidget } from './widgets/SettingsRowWidget/SettingsRowWidget';
 import './dashboard.css';
 
 // IDs estables de cada widget. Usados en layouts persistidos y registry.
@@ -82,6 +83,7 @@ const WIDGET_IDS = {
   yearSummary: 'profile.yearSummary',
   reviewsActivity: 'profile.reviewsActivity',
   followedTitles: 'profile.followedTitles',
+  settingsRow: 'profile.settingsRow',
 } as const;
 
 // Mapa de widgetId -> section key del CustomizeDrawer. Permite que el
@@ -106,6 +108,7 @@ const WIDGET_TO_SECTION: Record<string, string> = {
   [WIDGET_IDS.yearSummary]: 'yearSummary',
   [WIDGET_IDS.reviewsActivity]: 'reviewsActivity',
   [WIDGET_IDS.followedTitles]: 'followed',
+  [WIDGET_IDS.settingsRow]: 'settings',
 };
 
 // Layout default ADMIN — mock-aligned (style-guide/my-profile.png), denso,
@@ -148,6 +151,8 @@ const ADMIN_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.topRated, x: 8, y: 33, w: 4, h: 4 },
     // Row 11: MyComments full
     { i: WIDGET_IDS.myComments, x: 0, y: 37, w: 12, h: 6, minW: 6, minH: 5 },
+    // Row 12: SettingsRow (6 cards horizontales del mock)
+    { i: WIDGET_IDS.settingsRow, x: 0, y: 43, w: 12, h: 4, minW: 6, minH: 3 },
   ],
   md: [
     { i: WIDGET_IDS.heatmap, x: 0, y: 0, w: 10, h: 3 },
@@ -173,6 +178,7 @@ const ADMIN_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.topRated, x: 0, y: 41, w: 5, h: 4 },
     { i: WIDGET_IDS.recentlyCompleted, x: 5, y: 41, w: 5, h: 4 },
     { i: WIDGET_IDS.myComments, x: 0, y: 45, w: 10, h: 6 },
+    { i: WIDGET_IDS.settingsRow, x: 0, y: 51, w: 10, h: 4 },
   ],
   sm: [
     { i: WIDGET_IDS.quickAdmin, x: 0, y: 0, w: 6, h: 3 },
@@ -198,6 +204,7 @@ const ADMIN_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.topCompanies, x: 0, y: 71, w: 6, h: 3 },
     { i: WIDGET_IDS.completedByYear, x: 0, y: 74, w: 6, h: 4 },
     { i: WIDGET_IDS.myComments, x: 0, y: 78, w: 6, h: 7 },
+    { i: WIDGET_IDS.settingsRow, x: 0, y: 85, w: 6, h: 4 },
   ],
   xs: [
     { i: WIDGET_IDS.quickAdmin, x: 0, y: 0, w: 4, h: 3 },
@@ -223,6 +230,7 @@ const ADMIN_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.topCompanies, x: 0, y: 71, w: 4, h: 3 },
     { i: WIDGET_IDS.completedByYear, x: 0, y: 74, w: 4, h: 4 },
     { i: WIDGET_IDS.myComments, x: 0, y: 78, w: 4, h: 7 },
+    { i: WIDGET_IDS.settingsRow, x: 0, y: 85, w: 4, h: 4 },
   ],
 };
 
@@ -252,6 +260,8 @@ const USER_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.myDisputes, x: 9, y: 22, w: 3, h: 4 },
     { i: WIDGET_IDS.followedTitles, x: 0, y: 26, w: 12, h: 3 },
     { i: WIDGET_IDS.myComments, x: 0, y: 29, w: 12, h: 6, minW: 6, minH: 5 },
+    // Row final: SettingsRow (6 cards horizontales del mock)
+    { i: WIDGET_IDS.settingsRow, x: 0, y: 35, w: 12, h: 4, minW: 6, minH: 3 },
   ],
   md: [
     { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 10, h: 4 },
@@ -275,6 +285,7 @@ const USER_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.myDisputes, x: 5, y: 34, w: 5, h: 4 },
     { i: WIDGET_IDS.followedTitles, x: 0, y: 38, w: 10, h: 3 },
     { i: WIDGET_IDS.myComments, x: 0, y: 41, w: 10, h: 6 },
+    { i: WIDGET_IDS.settingsRow, x: 0, y: 47, w: 10, h: 4 },
   ],
   sm: [
     { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 6, h: 4 },
@@ -298,6 +309,7 @@ const USER_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.followedTitles, x: 0, y: 63, w: 6, h: 3 },
     { i: WIDGET_IDS.completedByYear, x: 0, y: 66, w: 6, h: 3 },
     { i: WIDGET_IDS.myComments, x: 0, y: 69, w: 6, h: 7 },
+    { i: WIDGET_IDS.settingsRow, x: 0, y: 76, w: 6, h: 4 },
   ],
   xs: [
     { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 4, h: 4 },
@@ -321,6 +333,7 @@ const USER_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.followedTitles, x: 0, y: 63, w: 4, h: 3 },
     { i: WIDGET_IDS.completedByYear, x: 0, y: 66, w: 4, h: 3 },
     { i: WIDGET_IDS.myComments, x: 0, y: 69, w: 4, h: 7 },
+    { i: WIDGET_IDS.settingsRow, x: 0, y: 76, w: 4, h: 4 },
   ],
 };
 
@@ -559,6 +572,14 @@ export function DashboardClient() {
       defaultSize: { w: 12, h: 3, minW: 6, minH: 3 },
       Component: FollowedTitlesWidget as never,
     });
+    WidgetRegistry.register({
+      id: WIDGET_IDS.settingsRow,
+      category: 'overview',
+      labelKey: 'profile.sectionSettings',
+      descriptionKey: 'profile.sectionSettings',
+      defaultSize: { w: 12, h: 4, minW: 6, minH: 3 },
+      Component: SettingsRowWidget as never,
+    });
   }, []);
 
   useEffect(() => {
@@ -612,6 +633,7 @@ export function DashboardClient() {
     map[WIDGET_IDS.yearSummary] = { stats: data.stats };
     map[WIDGET_IDS.reviewsActivity] = { stats: data.stats };
     map[WIDGET_IDS.followedTitles] = { favorites: data.favorites };
+    map[WIDGET_IDS.settingsRow] = {};
     return map;
   }, [data]);
 
