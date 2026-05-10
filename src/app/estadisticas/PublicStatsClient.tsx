@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { Card, Empty, Segmented, Spin, Tooltip } from 'antd';
+import { Empty, Segmented, Spin } from 'antd';
 import {
   AppstoreOutlined,
   BarsOutlined,
@@ -14,7 +14,7 @@ import {
   VideoCameraOutlined,
 } from '@ant-design/icons';
 import { useLocale } from '@/lib/providers/LocaleProvider';
-import { DonutChart, LineChart } from '@/components/charts';
+import { BarChart, DonutChart } from '@/components/charts';
 import './public-stats.css';
 
 interface PublicStatsResponse {
@@ -45,175 +45,136 @@ type ChartMode = 'bar' | 'list';
 
 const CHART_MODE_KEY = 'public-stats-chart-mode';
 
-// ─── Reusable chart components ────────────────────────────────────
+/** Trunca el label cuando es muy largo para que entre en el eje del
+ *  chart sin romper layout. Mantiene los primeros 22 chars + ellipsis. */
+function truncate(label: string, max = 22): string {
+  return label.length > max ? `${label.slice(0, max - 1)}…` : label;
+}
 
-function HorizontalBar({
+interface RankingItem {
+  key: string;
+  count: number;
+  href?: string;
+}
+
+/** Bar chart horizontal usando la libreria recharts. Reemplaza la lista
+ *  custom con barras simuladas que habia antes — ahora si hay una
+ *  visualizacion real con ejes, tooltips, etc. */
+function RankingBarChart({
   items,
-  renderLabel,
-  renderValue,
   empty,
-  accentColor,
 }: {
-  items: Array<{ key: string; count: number; href?: string; pos?: number }>;
-  renderLabel: (item: { key: string; href?: string }) => React.ReactNode;
-  renderValue: (item: { key: string; count: number }) => React.ReactNode;
+  items: RankingItem[];
   empty: string;
-  accentColor?: string;
 }) {
-  if (items.length === 0)
-    return <Empty description={empty} image={Empty.PRESENTED_IMAGE_SIMPLE} />;
-
-  const max = items[0]?.count ?? 1;
-
+  if (items.length === 0) {
+    return <div className="app-panel__empty">{empty}</div>;
+  }
+  const top = items.slice(0, 10);
+  const data = top.map((it) => ({
+    label: truncate(it.key),
+    fullLabel: it.key,
+    count: it.count,
+  }));
+  // Altura proporcional al numero de barras para que no queden apretadas.
+  const height = Math.max(180, top.length * 28 + 30);
   return (
-    <ol className="public-stats-ranking-list">
-      {items.map((item, index) => {
-        const pos = item.pos ?? index + 1;
-        return (
-          <li
-            key={`${item.key}-${index}`}
-            className="public-stats-ranking-item"
-            data-pos={pos}
-          >
-            <div className="public-stats-ranking-item__row">
-              <span className="public-stats-ranking-item__pos">{pos}</span>
-              <span className="public-stats-ranking-item__label">
-                {renderLabel(item)}
-              </span>
-              <span className="public-stats-ranking-item__value">
-                {renderValue(item)}
-              </span>
-            </div>
-            <div className="public-stats-ranking-item__bar-track">
-              <div
-                className="public-stats-ranking-item__bar-fill"
-                style={
-                  {
-                    '--bar-pct': `${Math.round((item.count / max) * 100)}%`,
-                    ...(accentColor ? { '--bar-accent': accentColor } : {}),
-                  } as React.CSSProperties
-                }
-              />
-            </div>
-          </li>
-        );
-      })}
+    <BarChart
+      data={data}
+      xAxisKey="label"
+      series={[{ dataKey: 'count', name: 'Total' }]}
+      horizontal
+      multicolor
+      height={height}
+    />
+  );
+}
+
+/** Lista compacta cuando el user prefiere vista de lista en lugar de chart. */
+function RankingList({
+  items,
+  empty,
+  unit,
+  formatNumber,
+}: {
+  items: RankingItem[];
+  empty: string;
+  unit?: string;
+  formatNumber: (n: number) => string;
+}) {
+  if (items.length === 0) {
+    return <div className="app-panel__empty">{empty}</div>;
+  }
+  return (
+    <ol className="public-stats-list">
+      {items.map((it, idx) => (
+        <li key={`${it.key}-${idx}`} className="public-stats-list__row">
+          <span className="public-stats-list__pos">{idx + 1}</span>
+          <span className="public-stats-list__label">
+            {it.href ? <Link href={it.href}>{it.key}</Link> : it.key}
+          </span>
+          <span className="public-stats-list__value">
+            {formatNumber(it.count)}
+            {unit ? ` ${unit}` : ''}
+          </span>
+        </li>
+      ))}
     </ol>
   );
 }
 
-function SimpleList({
-  items,
-  renderLabel,
-  renderValue,
-  empty,
-}: {
-  items: Array<{ key: string; count: number; href?: string }>;
-  renderLabel: (item: { key: string; href?: string }) => React.ReactNode;
-  renderValue: (item: { key: string; count: number }) => React.ReactNode;
-  empty: string;
-}) {
-  if (items.length === 0)
-    return <Empty description={empty} image={Empty.PRESENTED_IMAGE_SIMPLE} />;
-
-  return (
-    <ul className="public-stats-simple-list">
-      {items.map((item, i) => (
-        <li key={`${item.key}-${i}`} className="public-stats-simple-list__item">
-          <span className="public-stats-simple-list__label">
-            {renderLabel(item)}
-          </span>
-          <span className="public-stats-simple-list__value">
-            {renderValue(item)}
-          </span>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function YearHistogram({
-  items,
-  locale,
-  empty,
-}: {
-  items: Array<{ year: number; count: number }>;
-  locale: string;
-  empty: string;
-}) {
-  if (items.length === 0)
-    return <Empty description={empty} image={Empty.PRESENTED_IMAGE_SIMPLE} />;
-
-  const sorted = [...items].sort((a, b) => a.year - b.year);
-  const max = Math.max(...sorted.map((r) => r.count));
-
-  return (
-    <div className="public-stats-year-histogram">
-      {sorted.map((r) => (
-        <Tooltip
-          key={r.year}
-          title={`${r.year}: ${r.count.toLocaleString(locale)}`}
-        >
-          <div className="public-stats-year-histogram__col">
-            <div
-              className="public-stats-year-histogram__bar"
-              style={{
-                height: `${Math.max(4, Math.round((r.count / max) * 80))}px`,
-              }}
-            />
-            <span className="public-stats-year-histogram__year">{r.year}</span>
-          </div>
-        </Tooltip>
-      ))}
-    </div>
-  );
-}
-
-// ─── Switchable chart card ────────────────────────────────────────
-
-function ChartCard({
-  title,
-  icon,
-  chartMode,
-  onChartModeChange,
-  barContent,
-  listContent,
-}: {
+interface RankingPanelProps {
   title: string;
-  icon?: React.ReactNode;
+  icon: React.ReactNode;
+  items: RankingItem[];
+  empty: string;
+  unit?: string;
   chartMode: ChartMode;
   onChartModeChange: (mode: ChartMode) => void;
-  barContent: React.ReactNode;
-  listContent: React.ReactNode;
-}) {
-  return (
-    <Card
-      title={
-        <div className="public-stats-card-header">
-          {icon && (
-            <span className="public-stats-card-header__icon">{icon}</span>
-          )}
-          <span>{title}</span>
-          <div className="public-stats-card-header__toggle">
-            <Segmented<ChartMode>
-              size="small"
-              value={chartMode}
-              onChange={onChartModeChange}
-              options={[
-                { value: 'bar', icon: <BarChartOutlined /> },
-                { value: 'list', icon: <BarsOutlined /> },
-              ]}
-            />
-          </div>
-        </div>
-      }
-    >
-      {chartMode === 'bar' ? barContent : listContent}
-    </Card>
-  );
+  formatNumber: (n: number) => string;
 }
 
-// ─── Main component ───────────────────────────────────────────────
+function RankingPanel({
+  title,
+  icon,
+  items,
+  empty,
+  unit,
+  chartMode,
+  onChartModeChange,
+  formatNumber,
+}: RankingPanelProps) {
+  return (
+    <section className="app-panel">
+      <header className="app-panel__header">
+        <h3 className="app-panel__title">
+          {icon} {title}
+        </h3>
+        <Segmented<ChartMode>
+          size="small"
+          value={chartMode}
+          onChange={onChartModeChange}
+          options={[
+            { value: 'bar', icon: <BarChartOutlined /> },
+            { value: 'list', icon: <BarsOutlined /> },
+          ]}
+        />
+      </header>
+      <div className="app-panel__body">
+        {chartMode === 'bar' ? (
+          <RankingBarChart items={items} empty={empty} />
+        ) : (
+          <RankingList
+            items={items}
+            empty={empty}
+            unit={unit}
+            formatNumber={formatNumber}
+          />
+        )}
+      </div>
+    </section>
+  );
+}
 
 export function PublicStatsClient() {
   const { locale } = useLocale();
@@ -226,8 +187,9 @@ export function PublicStatsClient() {
 
   const persistChartMode = useCallback((mode: ChartMode) => {
     setChartMode(mode);
-    if (typeof window !== 'undefined')
+    if (typeof window !== 'undefined') {
       localStorage.setItem(CHART_MODE_KEY, mode);
+    }
   }, []);
 
   const copy = useMemo(
@@ -310,7 +272,8 @@ export function PublicStatsClient() {
   if (loading) {
     return (
       <div className="public-stats-loading">
-        <Spin size="large" description={copy.loading} />
+        <Spin size="large" />
+        <span>{copy.loading}</span>
       </div>
     );
   }
@@ -321,16 +284,10 @@ export function PublicStatsClient() {
     );
   }
 
-  const renderCount = (item: { count: number }) =>
-    item.count.toLocaleString(locale);
-
-  const renderSeriesLabel = (item: { key: string; href?: string }) =>
-    item.href ? <Link href={item.href}>{item.key}</Link> : item.key;
-
-  const renderPlainLabel = (item: { key: string }) => item.key;
+  const fmt = (n: number) => n.toLocaleString(locale);
 
   return (
-    <div className="public-stats-page">
+    <div className="public-stats-page app-page">
       <header className="public-stats-hero">
         <h1 className="public-stats-hero__title">{copy.title}</h1>
         <p className="public-stats-hero__subtitle">{copy.subtitle}</p>
@@ -339,303 +296,210 @@ export function PublicStatsClient() {
         </p>
       </header>
 
-      {/* ── Summary KPIs ── */}
+      {/* ── KPI summary tiles ── */}
       <section className="public-stats-summary">
-        <Card className="public-stats-summary__card" data-variant="series">
-          <AppstoreOutlined className="public-stats-summary__card-icon" />
-          <strong>{data.summary.totalSeries.toLocaleString(locale)}</strong>
-          <span>{copy.cardSeries}</span>
-        </Card>
-        <Card className="public-stats-summary__card" data-variant="views">
-          <EyeOutlined className="public-stats-summary__card-icon" />
-          <strong>
-            {data.summary.totalCompletedViews.toLocaleString(locale)}
-          </strong>
-          <span>{copy.cardCompletedViews}</span>
-        </Card>
-        <Card className="public-stats-summary__card" data-variant="comments">
-          <CommentOutlined className="public-stats-summary__card-icon" />
-          <strong>
-            {data.summary.totalPublicComments.toLocaleString(locale)}
-          </strong>
-          <span>{copy.cardPublicComments}</span>
-        </Card>
-        <Card className="public-stats-summary__card" data-variant="actors">
-          <TeamOutlined className="public-stats-summary__card-icon" />
-          <strong>{data.summary.totalActors.toLocaleString(locale)}</strong>
-          <span>{copy.cardActors}</span>
-        </Card>
-        <Card className="public-stats-summary__card" data-variant="directors">
-          <VideoCameraOutlined className="public-stats-summary__card-icon" />
-          <strong>{data.summary.totalDirectors.toLocaleString(locale)}</strong>
-          <span>{copy.cardDirectors}</span>
-        </Card>
+        {[
+          {
+            icon: <AppstoreOutlined />,
+            value: data.summary.totalSeries,
+            label: copy.cardSeries,
+          },
+          {
+            icon: <EyeOutlined />,
+            value: data.summary.totalCompletedViews,
+            label: copy.cardCompletedViews,
+          },
+          {
+            icon: <CommentOutlined />,
+            value: data.summary.totalPublicComments,
+            label: copy.cardPublicComments,
+          },
+          {
+            icon: <TeamOutlined />,
+            value: data.summary.totalActors,
+            label: copy.cardActors,
+          },
+          {
+            icon: <VideoCameraOutlined />,
+            value: data.summary.totalDirectors,
+            label: copy.cardDirectors,
+          },
+        ].map((kpi) => (
+          <div key={kpi.label} className="public-stats-kpi">
+            <span className="public-stats-kpi__icon" aria-hidden>
+              {kpi.icon}
+            </span>
+            <span className="public-stats-kpi__value">{fmt(kpi.value)}</span>
+            <span className="public-stats-kpi__label">{kpi.label}</span>
+          </div>
+        ))}
       </section>
 
-      {/* ── Community activity section ── */}
+      {/* ── Community activity ── */}
       <h2 className="public-stats-section-title">{copy.sectionActivity}</h2>
-      <section className="public-stats-grid">
-        <ChartCard
+      <div className="app-page__row app-page__row--2">
+        <RankingPanel
           title={copy.topSeries}
           icon={<EyeOutlined />}
+          items={data.rankings.topSeries.map((r) => ({
+            key: r.title,
+            count: r.count,
+            href: `/series/${r.seriesId}`,
+          }))}
+          empty={copy.empty}
+          unit={copy.timesWatched}
           chartMode={chartMode}
           onChartModeChange={persistChartMode}
-          barContent={
-            <HorizontalBar
-              items={data.rankings.topSeries.map((r) => ({
-                key: r.title,
-                count: r.count,
-                href: `/series/${r.seriesId}`,
-              }))}
-              renderLabel={renderSeriesLabel}
-              renderValue={(item) =>
-                `${renderCount(item)} ${copy.timesWatched}`
-              }
-              empty={copy.empty}
-            />
-          }
-          listContent={
-            <SimpleList
-              items={data.rankings.topSeries.map((r) => ({
-                key: r.title,
-                count: r.count,
-                href: `/series/${r.seriesId}`,
-              }))}
-              renderLabel={renderSeriesLabel}
-              renderValue={(item) =>
-                `${renderCount(item)} ${copy.timesWatched}`
-              }
-              empty={copy.empty}
-            />
-          }
+          formatNumber={fmt}
         />
-
-        <ChartCard
+        <RankingPanel
           title={copy.topActors}
           icon={<TeamOutlined />}
+          items={data.rankings.topActors.map((r) => ({
+            key: r.name,
+            count: r.count,
+            href: `/actores/${r.actorId}`,
+          }))}
+          empty={copy.empty}
+          unit={copy.timesWatched}
           chartMode={chartMode}
           onChartModeChange={persistChartMode}
-          barContent={
-            <HorizontalBar
-              items={data.rankings.topActors.map((r) => ({
-                key: r.name,
-                count: r.count,
-                href: `/actores/${r.actorId}`,
-              }))}
-              renderLabel={renderSeriesLabel}
-              renderValue={(item) =>
-                `${renderCount(item)} ${copy.timesWatched}`
-              }
-              empty={copy.empty}
-            />
-          }
-          listContent={
-            <SimpleList
-              items={data.rankings.topActors.map((r) => ({
-                key: r.name,
-                count: r.count,
-                href: `/actores/${r.actorId}`,
-              }))}
-              renderLabel={renderSeriesLabel}
-              renderValue={(item) =>
-                `${renderCount(item)} ${copy.timesWatched}`
-              }
-              empty={copy.empty}
-            />
-          }
+          formatNumber={fmt}
         />
-
-        <ChartCard
+        <RankingPanel
           title={copy.topProductionCompanies}
           icon={<AppstoreOutlined />}
+          items={data.rankings.topProductionCompanies.map((r) => ({
+            key: r.name,
+            count: r.count,
+          }))}
+          empty={copy.empty}
           chartMode={chartMode}
           onChartModeChange={persistChartMode}
-          barContent={
-            <HorizontalBar
-              items={data.rankings.topProductionCompanies.map((r) => ({
-                key: r.name,
-                count: r.count,
-              }))}
-              renderLabel={renderPlainLabel}
-              renderValue={renderCount}
-              empty={copy.empty}
-            />
-          }
-          listContent={
-            <SimpleList
-              items={data.rankings.topProductionCompanies.map((r) => ({
-                key: r.name,
-                count: r.count,
-              }))}
-              renderLabel={renderPlainLabel}
-              renderValue={renderCount}
-              empty={copy.empty}
-            />
-          }
+          formatNumber={fmt}
         />
-
-        <ChartCard
+        <RankingPanel
           title={copy.topCountries}
           icon={<GlobalOutlined />}
+          items={data.rankings.topCountries.map((r) => ({
+            key: r.name,
+            count: r.count,
+          }))}
+          empty={copy.empty}
+          unit={copy.timesWatched}
           chartMode={chartMode}
           onChartModeChange={persistChartMode}
-          barContent={
-            <HorizontalBar
-              items={data.rankings.topCountries.map((r) => ({
-                key: r.name,
-                count: r.count,
-              }))}
-              renderLabel={renderPlainLabel}
-              renderValue={(item) =>
-                `${renderCount(item)} ${copy.timesWatched}`
-              }
-              empty={copy.empty}
-            />
-          }
-          listContent={
-            <SimpleList
-              items={data.rankings.topCountries.map((r) => ({
-                key: r.name,
-                count: r.count,
-              }))}
-              renderLabel={renderPlainLabel}
-              renderValue={(item) =>
-                `${renderCount(item)} ${copy.timesWatched}`
-              }
-              empty={copy.empty}
-            />
-          }
+          formatNumber={fmt}
         />
+      </div>
 
-        <Card title={copy.byType} className="public-stats-grid__full">
-          <HorizontalBar
-            items={data.rankings.byType.map((r) => ({
-              key: r.type,
-              count: r.count,
-            }))}
-            renderLabel={renderPlainLabel}
-            renderValue={(item) => `${renderCount(item)} ${copy.timesWatched}`}
-            empty={copy.empty}
-            accentColor="var(--primary-color-hover)"
-          />
-        </Card>
-      </section>
-
-      {/* ── Catalog breakdown section ── */}
-      <h2 className="public-stats-section-title">{copy.sectionCatalog}</h2>
-      <section className="public-stats-grid">
-        <ChartCard
-          title={copy.catalogByCountry}
-          icon={<GlobalOutlined />}
-          chartMode={chartMode}
-          onChartModeChange={persistChartMode}
-          barContent={
-            <HorizontalBar
-              items={data.catalog.byCountry.map((r) => ({
-                key: r.name,
-                count: r.count,
-              }))}
-              renderLabel={renderPlainLabel}
-              renderValue={renderCount}
-              empty={copy.empty}
-              accentColor="#10b981"
-            />
-          }
-          listContent={
-            <SimpleList
-              items={data.catalog.byCountry.map((r) => ({
-                key: r.name,
-                count: r.count,
-              }))}
-              renderLabel={renderPlainLabel}
-              renderValue={renderCount}
-              empty={copy.empty}
-            />
-          }
-        />
-
-        <ChartCard
-          title={copy.catalogByGenre}
-          icon={<AppstoreOutlined />}
-          chartMode={chartMode}
-          onChartModeChange={persistChartMode}
-          barContent={
-            <HorizontalBar
-              items={data.catalog.byGenre.map((r) => ({
-                key: r.name,
-                count: r.count,
-              }))}
-              renderLabel={renderPlainLabel}
-              renderValue={renderCount}
-              empty={copy.empty}
-              accentColor="#8b5cf6"
-            />
-          }
-          listContent={
-            <SimpleList
-              items={data.catalog.byGenre.map((r) => ({
-                key: r.name,
-                count: r.count,
-              }))}
-              renderLabel={renderPlainLabel}
-              renderValue={renderCount}
-              empty={copy.empty}
-            />
-          }
-        />
-
-        <Card
-          title={copy.catalogByType}
-          className="public-stats-grid__full public-stats-grid__compact"
-        >
-          {data.catalog.byType.length === 0 ? (
-            <Empty
-              description={copy.empty}
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-            />
+      <section className="app-panel">
+        <header className="app-panel__header">
+          <h3 className="app-panel__title">
+            <AppstoreOutlined /> {copy.byType}
+          </h3>
+        </header>
+        <div className="app-panel__body">
+          {data.rankings.byType.length === 0 ? (
+            <div className="app-panel__empty">{copy.empty}</div>
           ) : (
             <DonutChart
-              data={data.catalog.byType.map((r) => ({
+              data={data.rankings.byType.map((r) => ({
                 name: r.type,
                 value: r.count,
               }))}
               centerLabel={{
-                value: data.catalog.byType.reduce((s, r) => s + r.count, 0),
-                sublabel: copy.cardSeries,
+                value: data.rankings.byType.reduce((s, r) => s + r.count, 0),
+                sublabel: copy.timesWatched,
               }}
+              height={220}
               showLegend
             />
           )}
-        </Card>
-
-        <Card title={copy.catalogByYear} className="public-stats-grid__full">
-          {data.catalog.byYear.length === 0 ? (
-            <Empty
-              description={copy.empty}
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-            />
-          ) : (
-            <LineChart
-              data={[...data.catalog.byYear].sort((a, b) => a.year - b.year)}
-              xAxisKey="year"
-              series={[
-                {
-                  dataKey: 'count',
-                  name: copy.cardSeries,
-                },
-              ]}
-              height={260}
-              tooltipFormatter={(value, name) => [
-                value === undefined ? '' : String(value),
-                name,
-              ]}
-              tooltipLabelFormatter={(label) =>
-                label === undefined ? '' : String(label)
-              }
-            />
-          )}
-        </Card>
+        </div>
       </section>
+
+      {/* ── Catalog breakdown ── */}
+      <h2 className="public-stats-section-title">{copy.sectionCatalog}</h2>
+      <div className="app-page__row app-page__row--2">
+        <RankingPanel
+          title={copy.catalogByCountry}
+          icon={<GlobalOutlined />}
+          items={data.catalog.byCountry.map((r) => ({
+            key: r.name,
+            count: r.count,
+          }))}
+          empty={copy.empty}
+          chartMode={chartMode}
+          onChartModeChange={persistChartMode}
+          formatNumber={fmt}
+        />
+        <RankingPanel
+          title={copy.catalogByGenre}
+          icon={<AppstoreOutlined />}
+          items={data.catalog.byGenre.map((r) => ({
+            key: r.name,
+            count: r.count,
+          }))}
+          empty={copy.empty}
+          chartMode={chartMode}
+          onChartModeChange={persistChartMode}
+          formatNumber={fmt}
+        />
+      </div>
+
+      <div className="app-page__row app-page__row--2">
+        <section className="app-panel">
+          <header className="app-panel__header">
+            <h3 className="app-panel__title">
+              <AppstoreOutlined /> {copy.catalogByType}
+            </h3>
+          </header>
+          <div className="app-panel__body">
+            {data.catalog.byType.length === 0 ? (
+              <div className="app-panel__empty">{copy.empty}</div>
+            ) : (
+              <DonutChart
+                data={data.catalog.byType.map((r) => ({
+                  name: r.type,
+                  value: r.count,
+                }))}
+                centerLabel={{
+                  value: data.catalog.byType.reduce(
+                    (s, r) => s + r.count,
+                    0
+                  ),
+                  sublabel: copy.cardSeries,
+                }}
+                height={220}
+                showLegend
+              />
+            )}
+          </div>
+        </section>
+
+        <section className="app-panel">
+          <header className="app-panel__header">
+            <h3 className="app-panel__title">
+              <BarChartOutlined /> {copy.catalogByYear}
+            </h3>
+          </header>
+          <div className="app-panel__body">
+            {data.catalog.byYear.length === 0 ? (
+              <div className="app-panel__empty">{copy.empty}</div>
+            ) : (
+              <BarChart
+                data={[...data.catalog.byYear].sort(
+                  (a, b) => a.year - b.year
+                )}
+                xAxisKey="year"
+                series={[{ dataKey: 'count', name: copy.cardSeries }]}
+                height={220}
+              />
+            )}
+          </div>
+        </section>
+      </div>
     </div>
   );
 }

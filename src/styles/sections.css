@@ -1,0 +1,204 @@
+/* ─── App Panel: chrome compartido para secciones de pagina ─────────────
+ *
+ * Visual language unificado para que todas las paginas se vean cortadas
+ * con la misma tijera. Reemplaza usos puntuales de AntD Card + paneles
+ * caseros con bordes/paddings inconsistentes.
+ *
+ * Markup canonico:
+ *   <section class="app-panel">
+ *     <header class="app-panel__header">
+ *       <h3 class="app-panel__title">
+ *         <Icon /> Titulo
+ *       </h3>
+ *       <a class="app-panel__action">Ver todo</a>
+ *     </header>
+ *     <div class="app-panel__body">...</div>
+ *   </section>
+ */
+
+.app-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--bg-container);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  min-width: 0;
+}
+
+.app-panel--flush {
+  /* Sin padding interno cuando el contenido maneja su propio espaciado
+   * (ej. tablas a sangre). El header conserva su padding. */
+  padding: 0;
+}
+
+.app-panel--flush > .app-panel__header {
+  padding: 10px 12px;
+  margin: 0;
+  border-bottom: 1px solid var(--border-color-secondary);
+}
+
+.app-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0;
+}
+
+.app-panel__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.app-panel__title--upper {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.app-panel__title .anticon {
+  color: var(--primary-color);
+  font-size: 13px;
+}
+
+.app-panel__action {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  text-decoration: none;
+}
+
+.app-panel__action:hover {
+  color: var(--primary-color);
+}
+
+.app-panel__body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* ─── Pill: chip pequeño consistente (reemplazo unificado de AntD Tag
+ *   cuando se usa decorativamente). */
+.app-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  white-space: nowrap;
+  background: color-mix(in srgb, var(--primary-color) 14%, transparent);
+  color: var(--primary-color);
+  border: 1px solid color-mix(in srgb, var(--primary-color) 28%, transparent);
+}
+
+.app-pill--neutral {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-tertiary);
+  border-color: var(--border-color-secondary);
+}
+
+.app-pill--info {
+  background: color-mix(in srgb, #4f8cff 16%, transparent);
+  color: #6da3ff;
+  border-color: color-mix(in srgb, #4f8cff 30%, transparent);
+}
+
+.app-pill--success {
+  background: color-mix(in srgb, #48c774 16%, transparent);
+  color: #58d484;
+  border-color: color-mix(in srgb, #48c774 30%, transparent);
+}
+
+.app-pill--warning {
+  background: color-mix(in srgb, var(--warning-color, #f6b51e) 16%, transparent);
+  color: var(--warning-color, #f6b51e);
+  border-color: color-mix(in srgb, var(--warning-color, #f6b51e) 30%, transparent);
+}
+
+.app-pill--danger {
+  background: color-mix(in srgb, #ff5c5c 16%, transparent);
+  color: #ff8585;
+  border-color: color-mix(in srgb, #ff5c5c 30%, transparent);
+}
+
+/* ─── Empty state inline: cuando un panel no tiene data pero no quiere
+ *   mostrar el EmptyState gigante de AntD. */
+.app-panel__empty {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  padding: 12px 4px;
+  text-align: center;
+}
+
+/* ─── Page wrapper: gap consistente entre paneles de una pagina ───────── */
+.app-page {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.app-page__row {
+  display: grid;
+  gap: 10px;
+}
+
+.app-page__row--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.app-page__row--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.app-page__row--4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 1100px) {
+  .app-page__row--3,
+  .app-page__row--4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .app-page__row--2,
+  .app-page__row--3,
+  .app-page__row--4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─── AntD overrides puntuales para coherencia ─────────────────────────
+ * Achican defaults de AntD que en el style-guide son siempre mas chicos.
+ * NO sobrescribe componentes con sus propios estilos custom. */
+
+.app-page .ant-card-body,
+.app-panel .ant-card-body {
+  padding: 10px 12px;
+}
+
+/* AntD Tag dentro de un app-panel: mismo look que app-pill */
+.app-panel .ant-tag {
+  font-size: 10px;
+  height: 18px;
+  line-height: 16px;
+  padding: 0 6px;
+  border-radius: 999px;
+  margin: 0;
+}
