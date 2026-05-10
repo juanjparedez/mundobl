@@ -17,6 +17,7 @@ import type { getSeriesById } from '@/lib/database';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
 import { EpisodeAnalysisTable } from '../EpisodeAnalysisTable/EpisodeAnalysisTable';
+import { RightRail } from '../RightRail/RightRail';
 import './WorkspaceClient.css';
 
 // Tipo derivado del helper para no duplicar el shape. Se actualiza
@@ -269,14 +270,22 @@ export function WorkspaceClient({ serie }: WorkspaceClientProps) {
         </div>
       </header>
 
-      {/* Tabs principales */}
-      <Tabs
-        activeKey={activeTab}
-        onChange={setActiveTab}
-        items={tabs}
-        className="mb-workspace__tabs"
-        size="large"
-      />
+      {/* Main + RightRail: en desktop el RightRail con reseñas vive al
+       *  lado de los tabs; en mobile cae debajo. Layout via CSS grid. */}
+      <div className="mb-workspace__main">
+        <div className="mb-workspace__main-tabs">
+          <Tabs
+            activeKey={activeTab}
+            onChange={setActiveTab}
+            items={tabs}
+            className="mb-workspace__tabs"
+            size="large"
+          />
+        </div>
+        <div className="mb-workspace__main-rail">
+          <RightRail seriesId={serie.id} />
+        </div>
+      </div>
     </div>
   );
 }

@@ -2321,7 +2321,10 @@ const ja: TranslationShape = {
     "tableColSynopsis": "あらすじ",
     "tableColNotes": "マイノート",
     "tableCellPending": "保留中",
-    "tableEmpty": "このシリーズにはまだエピソードがありません。"
+    "tableEmpty": "このシリーズにはまだエピソードがありません。",
+    "rightRailLinkedReviews": "関連レビュー",
+    "rightRailEmpty": "このシリーズにはまだレビューがありません。",
+    "rightRailAnonymous": "匿名"
   }
 } as TranslationShape;
 

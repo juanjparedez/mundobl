@@ -2321,7 +2321,10 @@ const it: TranslationShape = {
     "tableColSynopsis": "Sinossi",
     "tableColNotes": "Le mie note",
     "tableCellPending": "in sospeso",
-    "tableEmpty": "Questa serie non ha ancora episodi caricati."
+    "tableEmpty": "Questa serie non ha ancora episodi caricati.",
+    "rightRailLinkedReviews": "Recensioni collegate",
+    "rightRailEmpty": "Nessuna recensione ancora per questa serie.",
+    "rightRailAnonymous": "Anonimo"
   }
 } as TranslationShape;
 

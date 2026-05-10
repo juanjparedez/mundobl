@@ -2321,7 +2321,10 @@ const zhTW: TranslationShape = {
     "tableColSynopsis": "劇情簡介",
     "tableColNotes": "我的筆記",
     "tableCellPending": "待定",
-    "tableEmpty": "此劇集尚未載入任何劇集。"
+    "tableEmpty": "此劇集尚未載入任何劇集。",
+    "rightRailLinkedReviews": "相關評論",
+    "rightRailEmpty": "此劇集暫無評論。",
+    "rightRailAnonymous": "匿名"
   }
 } as TranslationShape;
 

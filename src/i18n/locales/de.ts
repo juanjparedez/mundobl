@@ -2321,7 +2321,10 @@ const de: TranslationShape = {
     "tableColSynopsis": "Synopsis",
     "tableColNotes": "Meine Notizen",
     "tableCellPending": "ausstehend",
-    "tableEmpty": "Diese Serie hat noch keine Episoden geladen."
+    "tableEmpty": "Diese Serie hat noch keine Episoden geladen.",
+    "rightRailLinkedReviews": "Verknüpfte Rezensionen",
+    "rightRailEmpty": "Noch keine Rezensionen für diese Serie.",
+    "rightRailAnonymous": "Anonym"
   }
 } as TranslationShape;
 

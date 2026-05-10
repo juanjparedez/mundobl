@@ -111,6 +111,29 @@
   align-items: flex-start;
 }
 
+/* Main + RightRail: grid 2-col en desktop (tabs wide + rail 320px),
+ * stackeable en mobile. */
+.mb-workspace__main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.mb-workspace__main-tabs {
+  min-width: 0;
+}
+
+.mb-workspace__main-rail {
+  min-width: 0;
+}
+
+@media (max-width: 1100px) {
+  .mb-workspace__main {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 /* Tabs principales */
 .mb-workspace__tabs .ant-tabs-nav {
   margin-bottom: 8px;
