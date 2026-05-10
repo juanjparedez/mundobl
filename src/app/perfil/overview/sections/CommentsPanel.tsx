@@ -78,10 +78,7 @@ export function OverviewCommentsPanel() {
   const filtered = comments.filter((c) => {
     if (filter === 'public' && c.isPrivate) return false;
     if (filter === 'private' && !c.isPrivate) return false;
-    if (
-      search &&
-      !c.content.toLowerCase().includes(search.toLowerCase())
-    ) {
+    if (search && !c.content.toLowerCase().includes(search.toLowerCase())) {
       return false;
     }
     return true;

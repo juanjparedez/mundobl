@@ -14,9 +14,7 @@ interface Props {
 /** "Títulos seguidos" del style-guide: strip de posters chicos con
  *  bell icon. Usa stats.favorites real (no inventa). */
 export function OverviewFollowedTitles({ favorites }: Props) {
-  const visible = (favorites ?? [])
-    .filter((f) => f.series)
-    .slice(0, 5);
+  const visible = (favorites ?? []).filter((f) => f.series).slice(0, 5);
 
   return (
     <section className="overview-followed">
@@ -60,7 +58,10 @@ export function OverviewFollowedTitles({ favorites }: Props) {
                       <BellFilled />
                     </span>
                   </div>
-                  <span className="overview-followed__name" title={series.title}>
+                  <span
+                    className="overview-followed__name"
+                    title={series.title}
+                  >
                     {series.title}
                   </span>
                 </Link>
