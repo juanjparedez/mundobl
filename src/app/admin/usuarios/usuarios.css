@@ -1,5 +1,8 @@
 .usuarios-page {
-  padding: var(--spacing-md);
+  padding: 10px 12px;
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  background: var(--bg-container);
 }
 
 .usuarios-table__user {

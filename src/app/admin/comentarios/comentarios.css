@@ -1,13 +1,8 @@
 .comentarios-page {
-  padding: var(--spacing-md);
+  padding: 10px 12px;
+  border: 1px solid var(--border-color-secondary);
   border-radius: var(--border-radius-lg);
-  background:
-    radial-gradient(
-      circle at 10% -20%,
-      color-mix(in srgb, var(--primary-color) 16%, transparent),
-      transparent 48%
-    ),
-    var(--bg-base);
+  background: var(--bg-container);
 }
 
 .comentarios-user {
