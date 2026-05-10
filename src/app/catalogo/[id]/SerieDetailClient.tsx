@@ -160,15 +160,15 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
   const uniqueActors = getAllUniqueActors();
 
   return (
-    <div style={{ padding: '24px' }}>
+    <div style={{ padding: '12px' }}>
       {/* Header con botón de volver */}
       <div
         style={{
-          marginBottom: '24px',
+          marginBottom: '10px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          gap: '16px',
+          gap: '6px',
           flexWrap: 'wrap',
         }}
       >
@@ -177,7 +177,7 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
           style={{
             display: 'inline-flex',
             alignItems: 'center',
-            gap: '8px',
+            gap: '6px',
             cursor: 'pointer',
             color: 'var(--primary-color)',
           }}
@@ -191,7 +191,7 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '8px',
+              gap: '6px',
               padding: '6px 12px',
               borderRadius: 'var(--border-radius-base)',
               border: '1px solid var(--border-color)',
@@ -208,14 +208,14 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
       </div>
 
       {/* Título y tags principales */}
-      <div style={{ marginBottom: '24px' }}>
+      <div style={{ marginBottom: '10px' }}>
         <PageTitleClient level={2}>{serie.title}</PageTitleClient>
         {serie.originalTitle && serie.originalTitle !== serie.title && (
           <div
             style={{
-              fontSize: '16px',
+              fontSize: '13px',
               color: 'var(--text-secondary)',
-              marginBottom: '16px',
+              marginBottom: '8px',
             }}
           >
             {t('serieDetail.originalTitle')} {serie.originalTitle}
@@ -240,12 +240,12 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
         </Space>
       </div>
 
-      <Row gutter={[24, 24]}>
+      <Row gutter={[12, 12]}>
         {/* Columna principal */}
         <Col xs={24} lg={16}>
           {/* Imagen de portada */}
           {serie.imageUrl && (
-            <Card style={{ marginBottom: '24px' }}>
+            <Card style={{ marginBottom: '10px' }}>
               <Image
                 src={serie.imageUrl}
                 alt={serie.title}
@@ -262,7 +262,7 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
           {/* Información básica */}
           <Card
             title={t('serieDetail.generalInformationTitle')}
-            style={{ marginBottom: '24px' }}
+            style={{ marginBottom: '10px' }}
           >
             <Descriptions column={1}>
               <Descriptions.Item label={t('serieDetail.typeLabel')}>
@@ -309,7 +309,7 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
           {serie.seasons.length > 0 && (
             <Card
               title={t('serieDetail.seasonsTitle')}
-              style={{ marginBottom: '24px' }}
+              style={{ marginBottom: '10px' }}
             >
               <div>
                 {serie.seasons.map((season: SeasonData) => (
@@ -388,7 +388,7 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
           {serie.observations && canSeeNotes && (
             <Card
               title={t('serieDetail.observationsTitle')}
-              style={{ marginBottom: '24px' }}
+              style={{ marginBottom: '10px' }}
             >
               <p style={{ whiteSpace: 'pre-wrap' }}>{serie.observations}</p>
             </Card>
@@ -398,7 +398,7 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
           {serie.synopsis && (
             <Card
               title={t('serieDetail.synopsisTitle')}
-              style={{ marginBottom: '24px' }}
+              style={{ marginBottom: '10px' }}
             >
               <p style={{ whiteSpace: 'pre-wrap' }}>{serie.synopsis}</p>
             </Card>
@@ -408,7 +408,7 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
           {serie.review && canSeeNotes && (
             <Card
               title={t('serieDetail.personalReviewTitle')}
-              style={{ marginBottom: '24px' }}
+              style={{ marginBottom: '10px' }}
             >
               <p style={{ whiteSpace: 'pre-wrap' }}>{serie.review}</p>
             </Card>
@@ -428,7 +428,7 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
                   })}
                 </Space>
               }
-              style={{ marginBottom: '24px' }}
+              style={{ marginBottom: '10px' }}
             >
               <div>
                 {uniqueActors.map((actor) => (
@@ -462,7 +462,7 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
           {serie.ratings && serie.ratings.length > 0 && (
             <Card
               title={t('serieDetail.ratingsByCategoryTitle')}
-              style={{ marginBottom: '24px' }}
+              style={{ marginBottom: '10px' }}
             >
               <Space orientation="vertical" style={{ width: '100%' }}>
                 {serie.ratings.map((rating: RatingData) => (
@@ -494,7 +494,7 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
           {serie.comments && serie.comments.length > 0 && (
             <Card
               title={t('serieDetail.commentsTitle')}
-              style={{ marginBottom: '24px' }}
+              style={{ marginBottom: '10px' }}
             >
               <List
                 dataSource={serie.comments}
@@ -511,7 +511,7 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
           {serie.soundtrack && (
             <Card
               title={t('serieDetail.soundtrackTitle')}
-              style={{ marginBottom: '24px' }}
+              style={{ marginBottom: '10px' }}
             >
               <p>{serie.soundtrack}</p>
             </Card>
@@ -521,7 +521,7 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
           {serie.universe && (
             <Card
               title={t('serieDetail.universeTitle')}
-              style={{ marginBottom: '24px' }}
+              style={{ marginBottom: '10px' }}
             >
               <Tag color="purple" style={{ fontSize: '14px' }}>
                 {serie.universe.name}
