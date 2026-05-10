@@ -81,6 +81,22 @@ export const ACCENT_PRESETS = {
       outline: 'rgba(45, 212, 191, 0.22)',
     },
   },
+  gold: {
+    name: 'Gold',
+    swatch: '#f6b51e',
+    light: {
+      primary: '#d99a13',
+      hover: '#f6b51e',
+      active: '#b07d0a',
+      outline: 'rgba(246, 181, 30, 0.22)',
+    },
+    dark: {
+      primary: '#f6b51e',
+      hover: '#ffc83d',
+      active: '#d99a13',
+      outline: 'rgba(246, 181, 30, 0.28)',
+    },
+  },
   amber: {
     name: 'Amber',
     swatch: '#d97706',
@@ -196,7 +212,7 @@ export const ACCENT_PRESETS = {
 } as const satisfies Record<string, AccentPreset>;
 
 export type AccentPresetKey = keyof typeof ACCENT_PRESETS;
-export const DEFAULT_ACCENT: AccentPresetKey = 'mauve';
+export const DEFAULT_ACCENT: AccentPresetKey = 'gold';
 
 // ─── Theme builder ───────────────────────────────────────────────────────────
 
