@@ -2288,6 +2288,14 @@ const th: TranslationShape = {
     "actionChangelog": "รายการใหม่",
     "actionUsers": "ผู้ใช้"
   },
+  "adminActivity": {
+    "title": "กิจกรรมของทีม",
+    "empty": "ไม่มีกิจกรรมล่าสุด",
+    "anonymous": "ไม่ระบุชื่อ",
+    "actionCreate": "สร้างแล้ว",
+    "actionUpdate": "แก้ไขแล้ว",
+    "actionDelete": "ลบแล้ว"
+  },
   "workspace": {
     "backToCatalog": "กลับสู่แคตตาล็อก",
     "viewPublic": "มุมมองสาธารณะ",

@@ -1,6 +1,5 @@
 export const dynamic = 'force-dynamic';
 
-import Link from 'next/link';
 import {
   AppstoreOutlined,
   ReadOutlined,
@@ -9,8 +8,7 @@ import {
 } from '@ant-design/icons';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { prisma } from '@/lib/database';
-import { AdminNav } from './AdminNav';
-import { AdminDashboardHero } from './AdminDashboardHero';
+import { AdminHomeClient } from './AdminHomeClient';
 import './admin.css';
 import './admin-dashboard.css';
 
@@ -267,89 +265,48 @@ export default async function AdminLandingPage() {
     tone: 'danger' | 'warning' | 'info';
   }>;
 
+  const heroStats = [
+    {
+      label: 'Series',
+      value: counts.series,
+      icon: <AppstoreOutlined />,
+    },
+    {
+      label: 'Reseñas',
+      value: counts.reviews,
+      icon: <ReadOutlined />,
+    },
+    {
+      label: 'Comentarios',
+      value: counts.comments,
+      icon: <MessageOutlined />,
+    },
+    {
+      label: 'Usuarios',
+      value: counts.users,
+      icon: <TeamOutlined />,
+    },
+  ];
+
+  const kpiCounts = {
+    series: counts.series,
+    reviews: counts.reviews,
+    comments: counts.comments,
+    users: counts.users,
+    seriesWithoutReview: counts.seriesWithoutReview,
+    seriesWithoutContent: counts.seriesWithoutContent,
+    commentsReported: counts.commentsReported,
+    suggestedSitesPending: counts.suggestedSitesPending,
+  };
+
   return (
     <AppLayout>
-      <div className="admin-page-wrapper">
-        <AdminNav />
-        <div className="admin-dashboard">
-          <AdminDashboardHero
-            stats={[
-              {
-                label: 'Series',
-                value: counts.series,
-                icon: <AppstoreOutlined />,
-              },
-              {
-                label: 'Reseñas',
-                value: counts.reviews,
-                icon: <ReadOutlined />,
-              },
-              {
-                label: 'Comentarios',
-                value: counts.comments,
-                icon: <MessageOutlined />,
-              },
-              {
-                label: 'Usuarios',
-                value: counts.users,
-                icon: <TeamOutlined />,
-              },
-            ]}
-          />
-
-          {headlineAlerts.length > 0 && (
-            <div className="admin-dashboard__alerts">
-              {headlineAlerts.map((alert) => (
-                <Link
-                  key={alert.key}
-                  href={alert.href}
-                  className={`admin-dashboard__alert admin-dashboard__alert--${alert.tone}`}
-                >
-                  <span className="admin-dashboard__alert-icon">
-                    {alert.icon}
-                  </span>
-                  <span>{alert.label}</span>
-                  <span className="admin-dashboard__alert-arrow">→</span>
-                </Link>
-              ))}
-            </div>
-          )}
-
-          {groups.map((group) => (
-            <section
-              key={group.title}
-              className="admin-dashboard__section"
-              data-group={group.title.toLowerCase()}
-            >
-              <h2 className="admin-dashboard__section-title">{group.title}</h2>
-              <div className="admin-dashboard__grid">
-                {group.tools.map((tool) => (
-                  <Link
-                    key={tool.href}
-                    href={tool.href}
-                    className="admin-tool-card"
-                  >
-                    <div className="admin-tool-card__head">
-                      <span className="admin-tool-card__icon">{tool.icon}</span>
-                      {tool.count !== undefined && (
-                        <span className="admin-tool-card__count">
-                          {tool.count}
-                        </span>
-                      )}
-                    </div>
-                    <div className="admin-tool-card__title">{tool.title}</div>
-                    {tool.alert && (
-                      <div className="admin-tool-card__alert">
-                        {tool.alert.count} {tool.alert.label}
-                      </div>
-                    )}
-                  </Link>
-                ))}
-              </div>
-            </section>
-          ))}
-        </div>
-      </div>
+      <AdminHomeClient
+        heroStats={heroStats}
+        groups={groups}
+        headlineAlerts={headlineAlerts}
+        kpiCounts={kpiCounts}
+      />
     </AppLayout>
   );
 }

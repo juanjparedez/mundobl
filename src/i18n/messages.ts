@@ -2279,6 +2279,14 @@ export type TranslationShape = {
     actionChangelog: string;
     actionUsers: string;
   };
+  adminActivity: {
+    title: string;
+    empty: string;
+    anonymous: string;
+    actionCreate: string;
+    actionUpdate: string;
+    actionDelete: string;
+  };
   workspace: {
     backToCatalog: string;
     viewPublic: string;
@@ -4730,6 +4738,14 @@ const es: TranslationShape = {
     actionChangelog: 'Versiones',
     actionUsers: 'Usuarios',
   },
+  adminActivity: {
+    title: 'Actividad del equipo',
+    empty: 'Sin actividad reciente.',
+    anonymous: 'Anónimo',
+    actionCreate: 'Creó',
+    actionUpdate: 'Editó',
+    actionDelete: 'Eliminó',
+  },
   workspace: {
     backToCatalog: 'Volver al catálogo',
     viewPublic: 'Vista pública',
@@ -7167,6 +7183,14 @@ const en: TranslationShape = {
     actionAuditLog: 'Audit',
     actionChangelog: 'Releases',
     actionUsers: 'Users',
+  },
+  adminActivity: {
+    title: 'Team activity',
+    empty: 'No recent activity.',
+    anonymous: 'Anonymous',
+    actionCreate: 'Created',
+    actionUpdate: 'Edited',
+    actionDelete: 'Deleted',
   },
   workspace: {
     backToCatalog: 'Back to catalog',

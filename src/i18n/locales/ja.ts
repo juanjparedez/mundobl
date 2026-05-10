@@ -2288,6 +2288,14 @@ const ja: TranslationShape = {
     "actionChangelog": "リリース",
     "actionUsers": "ユーザー"
   },
+  "adminActivity": {
+    "title": "チームアクティビティ",
+    "empty": "最近のアクティビティはありません。",
+    "anonymous": "匿名",
+    "actionCreate": "作成済み",
+    "actionUpdate": "編集済み",
+    "actionDelete": "削除済み"
+  },
   "workspace": {
     "backToCatalog": "カタログに戻る",
     "viewPublic": "公開ビュー",
