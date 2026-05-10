@@ -47,6 +47,46 @@
   --spacing-lg: 24px;
   --spacing-xl: 32px;
 
+  /* ─── Component sizing tokens ─────────────────────────────────────
+   * Defaults = densidad "comfortable" (cómoda). Density compact los
+   * achica para alinear con los mocks; spacious los agranda. Sirve
+   * tanto a perfil como a otros dashboards.
+   *
+   * Cambiar la densidad en Settings ya basta para ver/no ver scroll.
+   */
+  /* Profile header (perfil dashboard) */
+  --profile-header-padding-block: 14px;
+  --profile-header-padding-inline: 18px;
+  --profile-header-gap: var(--spacing-md);
+  --profile-header-avatar-size: 72px;
+  --profile-header-name-size: 22px;
+  --profile-header-meta-margin-top: 6px;
+
+  /* Stats strip (KPIs row) */
+  --statstrip-tile-padding-block: 12px;
+  --statstrip-tile-padding-inline: 14px;
+  --statstrip-tile-gap: 10px;
+  --statstrip-icon-size: 28px;
+  --statstrip-icon-radius: 8px;
+  --statstrip-icon-font-size: 13px;
+  --statstrip-value-size: 20px;
+  --statstrip-label-size: 10px;
+
+  /* Widget chrome (cards del dashboard) */
+  --widget-body-padding: 12px;
+  --widget-header-padding-block: 8px;
+  --widget-header-padding-inline: 14px;
+  --widget-header-min-height: 36px;
+  --widget-title-size: 11px;
+  --widget-icon-size: 22px;
+
+  /* Layout cells (alturas mínimas de las celdas en /perfil) */
+  --layout-cell-min: 220px;
+  --layout-cell-min-shelf: 260px;
+  --layout-cell-min-tall: 280px;
+  --layout-cell-min-full: 440px;
+  --layout-row-gap: 14px;
+
   /* Tipografía: stack por defecto (sistema) */
   --font-family:
     'Space Grotesk', 'Manrope', 'Avenir Next', 'Segoe UI', sans-serif;
@@ -208,6 +248,8 @@
 }
 
 /* ─── Densidad ──────────────────────────────────────────────────────── */
+/* Compact: alineado al mock premium (style-guide/). Todo entra en una
+ * vista 1080p sin scroll. */
 [data-density='compact'] {
   --spacing-xs: 6px;
   --spacing-sm: 9px;
@@ -216,6 +258,39 @@
   --spacing-xl: 24px;
   --header-height: 52px;
   --bottom-nav-height: 48px;
+
+  /* Profile header chico */
+  --profile-header-padding-block: 10px;
+  --profile-header-padding-inline: 14px;
+  --profile-header-gap: 12px;
+  --profile-header-avatar-size: 48px;
+  --profile-header-name-size: 17px;
+  --profile-header-meta-margin-top: 3px;
+
+  /* Stats strip denso */
+  --statstrip-tile-padding-block: 8px;
+  --statstrip-tile-padding-inline: 10px;
+  --statstrip-tile-gap: 8px;
+  --statstrip-icon-size: 22px;
+  --statstrip-icon-radius: 6px;
+  --statstrip-icon-font-size: 11px;
+  --statstrip-value-size: 16px;
+  --statstrip-label-size: 9px;
+
+  /* Widget chrome chico */
+  --widget-body-padding: 9px;
+  --widget-header-padding-block: 5px;
+  --widget-header-padding-inline: 10px;
+  --widget-header-min-height: 28px;
+  --widget-title-size: 10px;
+  --widget-icon-size: 18px;
+
+  /* Cells bajos — sin scroll en lg */
+  --layout-cell-min: 150px;
+  --layout-cell-min-shelf: 190px;
+  --layout-cell-min-tall: 200px;
+  --layout-cell-min-full: 340px;
+  --layout-row-gap: 10px;
 }
 
 [data-density='spacious'] {
@@ -225,6 +300,35 @@
   --spacing-lg: 30px;
   --spacing-xl: 40px;
   --header-height: 72px;
+
+  --profile-header-padding-block: 18px;
+  --profile-header-padding-inline: 24px;
+  --profile-header-gap: 22px;
+  --profile-header-avatar-size: 96px;
+  --profile-header-name-size: 26px;
+  --profile-header-meta-margin-top: 8px;
+
+  --statstrip-tile-padding-block: 16px;
+  --statstrip-tile-padding-inline: 18px;
+  --statstrip-tile-gap: 12px;
+  --statstrip-icon-size: 34px;
+  --statstrip-icon-radius: 10px;
+  --statstrip-icon-font-size: 15px;
+  --statstrip-value-size: 24px;
+  --statstrip-label-size: 11px;
+
+  --widget-body-padding: 16px;
+  --widget-header-padding-block: 12px;
+  --widget-header-padding-inline: 18px;
+  --widget-header-min-height: 44px;
+  --widget-title-size: 12px;
+  --widget-icon-size: 26px;
+
+  --layout-cell-min: 320px;
+  --layout-cell-min-shelf: 360px;
+  --layout-cell-min-tall: 380px;
+  --layout-cell-min-full: 560px;
+  --layout-row-gap: 18px;
 }
 
 /* ─── Modo "ahorrar datos" ──────────────────────────────────────────── */
