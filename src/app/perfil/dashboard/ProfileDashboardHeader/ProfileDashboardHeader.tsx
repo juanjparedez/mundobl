@@ -1,13 +1,16 @@
 'use client';
 
+import { useState } from 'react';
 import { Avatar, Button, Space, Tag } from 'antd';
 import {
   CalendarOutlined,
   EditOutlined,
   SettingOutlined,
+  SlidersOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { SettingsPanel } from '@/components/layout/SettingsPanel/SettingsPanel';
 import type { ProfileData } from '../../types';
 import './ProfileDashboardHeader.css';
 
@@ -45,6 +48,7 @@ export function ProfileDashboardHeader({
   onCustomizeClick,
 }: ProfileDashboardHeaderProps) {
   const { t, locale } = useLocale();
+  const [preferencesOpen, setPreferencesOpen] = useState(false);
 
   const handleEditClick = () => {
     const target = document.getElementById('mb-profile-settings');
@@ -80,6 +84,16 @@ export function ProfileDashboardHeader({
           <Button icon={<EditOutlined />} onClick={handleEditClick}>
             {t('profileDashboard.editProfile')}
           </Button>
+          {/* Preferencias: abre el SettingsPanel global (theme, accent,
+           *  locale, density). Restaurado del OverviewHeader — antes del
+           *  refactor a grid se podia abrir desde aca y se habia perdido.
+           *  Sigue accesible tambien desde la sidebar. */}
+          <Button
+            icon={<SlidersOutlined />}
+            onClick={() => setPreferencesOpen(true)}
+          >
+            {t('profileDashboard.preferencesButton')}
+          </Button>
           {onCustomizeClick && (
             <Button icon={<SettingOutlined />} onClick={onCustomizeClick}>
               {t('profile.customizeButton')}
@@ -87,6 +101,10 @@ export function ProfileDashboardHeader({
           )}
         </Space>
       </div>
+      <SettingsPanel
+        open={preferencesOpen}
+        onClose={() => setPreferencesOpen(false)}
+      />
     </header>
   );
 }

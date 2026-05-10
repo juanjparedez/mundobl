@@ -401,6 +401,12 @@ export type TranslationShape = {
     customizeHint: string;
     customizeReset: string;
     customizeButton: string;
+    reviewDeletedSuccess: string;
+    reviewDeletedError: string;
+    reviewDeleteConfirm: string;
+    reviewDeleteOk: string;
+    reviewDeleteCancel: string;
+    reviewDeleteAriaLabel: string;
     overviewLoadError: string;
     overviewBackToClassic: string;
     overviewDashboardLink: string;
@@ -2170,6 +2176,7 @@ export type TranslationShape = {
     completedByYearEmpty: string;
     completedByYearLabel: string;
     editProfile: string;
+    preferencesButton: string;
     streak: string;
     totalEpisodes: string;
     widgetTopGenresList: string;
@@ -2689,6 +2696,12 @@ const es: TranslationShape = {
       'Mostrá u ocultá los paneles de tu perfil. Tus preferencias se guardan en este dispositivo.',
     customizeReset: 'Restaurar todos',
     customizeButton: 'Personalizar',
+    reviewDeletedSuccess: 'Reseña eliminada',
+    reviewDeletedError: 'No pudimos eliminar la reseña',
+    reviewDeleteConfirm: '¿Eliminar esta reseña?',
+    reviewDeleteOk: 'Eliminar',
+    reviewDeleteCancel: 'Cancelar',
+    reviewDeleteAriaLabel: 'Eliminar reseña',
     overviewLoadError: 'No pudimos cargar tu perfil.',
     overviewBackToClassic: 'Volver a la vista clásica',
     overviewDashboardLink:
@@ -4544,6 +4557,7 @@ const es: TranslationShape = {
     completedByYearEmpty: 'Aun no completaste ninguna serie.',
     completedByYearLabel: 'Completadas',
     editProfile: 'Editar perfil',
+    preferencesButton: 'Preferencias',
     streak: 'Dias seguidos',
     totalEpisodes: 'Episodios',
     widgetTopGenresList: 'Generos mas vistos',
@@ -5063,6 +5077,12 @@ const en: TranslationShape = {
       'Show or hide your profile panels. Your preferences are saved on this device.',
     customizeReset: 'Restore all',
     customizeButton: 'Customize',
+    reviewDeletedSuccess: 'Review deleted',
+    reviewDeletedError: 'We could not delete the review',
+    reviewDeleteConfirm: 'Delete this review?',
+    reviewDeleteOk: 'Delete',
+    reviewDeleteCancel: 'Cancel',
+    reviewDeleteAriaLabel: 'Delete review',
     overviewLoadError: 'We could not load your profile.',
     overviewBackToClassic: 'Back to classic view',
     overviewDashboardLink:
@@ -6908,6 +6928,7 @@ const en: TranslationShape = {
     completedByYearEmpty: "You haven't completed any series yet.",
     completedByYearLabel: 'Completed',
     editProfile: 'Edit profile',
+    preferencesButton: 'Preferences',
     streak: 'Day streak',
     totalEpisodes: 'Episodes',
     widgetTopGenresList: 'Most watched genres',
