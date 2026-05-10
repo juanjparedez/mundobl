@@ -98,6 +98,40 @@
   cursor: not-allowed;
 }
 
+/* ──────────────────────────────────────────────────────────────────────
+ * AntD overrides scoped al admin: tablas, descriptions y rate compactos
+ * para alinear con el lenguaje visual unificado (.app-panel + density).
+ * ────────────────────────────────────────────────────────────────────── */
+.admin-page-wrapper .ant-table-cell,
+.admin-page-wrapper .ant-table-thead > tr > th,
+.admin-page-wrapper .ant-table-tbody > tr > td {
+  padding: 6px 10px !important;
+}
+
+.admin-page-wrapper .ant-table-thead > tr > th {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.admin-page-wrapper .ant-table-tbody > tr > td {
+  font-size: 12px;
+}
+
+.admin-page-wrapper .ant-pagination {
+  margin: 8px 0 0;
+}
+
+.admin-page-wrapper .ant-pagination-item,
+.admin-page-wrapper .ant-pagination-prev,
+.admin-page-wrapper .ant-pagination-next {
+  min-width: 26px;
+  height: 26px;
+  line-height: 24px;
+  font-size: 11px;
+}
+
 @media (max-width: 768px) {
   .admin-page-wrapper {
     padding: var(--spacing-sm);
