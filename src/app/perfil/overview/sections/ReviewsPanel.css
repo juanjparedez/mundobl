@@ -1,8 +1,8 @@
 .overview-reviews {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 14px;
+  gap: 8px;
+  padding: 10px;
   background: var(--bg-container);
   border: 1px solid var(--border-color-secondary);
   border-radius: var(--border-radius-lg);
@@ -19,7 +19,7 @@
   align-items: center;
   gap: 6px;
   margin: 0;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-primary);
 }
@@ -60,13 +60,13 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .overview-reviews__item {
   display: grid;
   grid-template-columns: 56px minmax(0, 1fr);
-  gap: 10px;
+  gap: 8px;
   padding: 10px;
   background: var(--bg-spotlight);
   border-radius: var(--border-radius-base);
@@ -74,7 +74,7 @@
 
 .overview-reviews__poster {
   width: 56px;
-  aspect-ratio: 2 / 3;
+  aspect-ratio: 16 / 22;
   border-radius: 6px;
   overflow: hidden;
   background: var(--bg-elevated);

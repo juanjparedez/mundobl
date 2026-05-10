@@ -1,8 +1,8 @@
 .overview-mystats {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 14px;
+  gap: 8px;
+  padding: 10px;
   background: var(--bg-container);
   border: 1px solid var(--border-color-secondary);
   border-radius: var(--border-radius-lg);
@@ -19,7 +19,7 @@
   align-items: center;
   gap: 6px;
   margin: 0;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--text-primary);
 }
@@ -41,7 +41,7 @@
 .overview-mystats__grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px;
 }
 
 .overview-mystats__panel {
@@ -52,7 +52,7 @@
   background: var(--bg-spotlight);
   border: 1px solid var(--border-color-secondary);
   border-radius: var(--border-radius-base);
-  min-height: 130px;
+  min-height: 96px;
 }
 
 .overview-mystats__panel-head {
@@ -69,7 +69,7 @@
 }
 
 .overview-mystats__big-value {
-  font-size: 22px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--primary-color);
   line-height: 1.05;
@@ -166,7 +166,7 @@
 .overview-mystats__rating-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   margin-top: auto;
 }
 
@@ -183,7 +183,7 @@
 }
 
 .overview-mystats__rating-value {
-  font-size: 22px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1;
