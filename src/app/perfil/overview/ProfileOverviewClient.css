@@ -23,7 +23,9 @@
   display: grid;
   grid-template-columns: minmax(0, 7fr) minmax(0, 3fr) minmax(0, 3fr);
   gap: 8px;
-  align-items: start;
+  /* align-items:stretch (default) hace que cada columna mida lo mismo
+   * que la mas alta — evita el dead space en la columna derecha
+   * cuando MyComments es corto. */
 }
 
 /* Cuando el user oculta todos los paneles de una columna entera, el
@@ -43,6 +45,14 @@
   flex-direction: column;
   gap: 8px;
   min-width: 0;
+}
+
+/* Que el unico panel de la col derecha (MyComments) crezca para
+ * llenar toda la altura disponible — evita dead space al final. */
+.overview-page__col-right > * {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .overview-page__row-3 {

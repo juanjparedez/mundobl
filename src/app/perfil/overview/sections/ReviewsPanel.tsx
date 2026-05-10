@@ -1,9 +1,17 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ReadOutlined, StarFilled } from '@ant-design/icons';
+import { Popconfirm } from 'antd';
+import {
+  ReadOutlined,
+  StarFilled,
+  EditOutlined,
+  DeleteOutlined,
+} from '@ant-design/icons';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { useMessage } from '@/hooks/useMessage';
 import type { ProfileData } from '../../types';
 import './ReviewsPanel.css';
 
@@ -24,11 +32,34 @@ function formatDate(iso: string | null): string {
   }
 }
 
-/** "Mis reseñas" del style-guide: cards con poster + titulo + stars +
- *  cuerpo + fecha. Usa solo data real de stats.recentReviews. */
+/** "Mis reseñas" del overview: cards con poster + titulo + stars +
+ *  cuerpo + fecha. Editar lleva al detalle de la serie (donde vive el
+ *  formulario). Eliminar es inline con confirm — DELETE /api/reviews?id=N. */
 export function OverviewReviewsPanel({ recentReviews }: Props) {
-  const visible = recentReviews.slice(0, 2);
-  const total = recentReviews.length;
+  const message = useMessage();
+  const [hidden, setHidden] = useState<Set<number>>(new Set());
+  const [busyId, setBusyId] = useState<number | null>(null);
+
+  const visible = recentReviews
+    .filter((r) => !hidden.has(r.id))
+    .slice(0, 2);
+  const total = recentReviews.filter((r) => !hidden.has(r.id)).length;
+
+  const handleDelete = async (id: number) => {
+    setBusyId(id);
+    try {
+      const res = await fetch(`/api/reviews?id=${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('failed');
+      // Optimistic local removal: ocultamos para no recargar todo el
+      // ProfileData (refetch lo hace la siguiente navegacion).
+      setHidden((prev) => new Set(prev).add(id));
+      message.success('Reseña eliminada');
+    } catch {
+      message.error('No pudimos eliminar la reseña');
+    } finally {
+      setBusyId(null);
+    }
+  };
 
   return (
     <section className="overview-reviews">
@@ -43,7 +74,9 @@ export function OverviewReviewsPanel({ recentReviews }: Props) {
 
       {visible.length === 0 ? (
         <div className="overview-reviews__empty">
-          Aún no escribiste reseñas. Vas a poder publicarlas desde el detalle de cada serie.
+          {recentReviews.length === 0
+            ? 'Aún no escribiste reseñas. Vas a poder publicarlas desde el detalle de cada serie.'
+            : 'No tenés reseñas visibles.'}
         </div>
       ) : (
         <ul className="overview-reviews__list">
@@ -93,6 +126,37 @@ export function OverviewReviewsPanel({ recentReviews }: Props) {
                     </div>
                   )}
                   <p className="overview-reviews__text">{r.body}</p>
+                  <div className="overview-reviews__actions">
+                    {r.series && (
+                      <Link
+                        href={`/series/${r.series.id}#mi-resena`}
+                        className="overview-reviews__action"
+                        title="Editar reseña"
+                      >
+                        <EditOutlined /> Editar
+                      </Link>
+                    )}
+                    <Popconfirm
+                      title="¿Eliminar esta reseña?"
+                      description="Se borra para siempre."
+                      okText="Eliminar"
+                      cancelText="Cancelar"
+                      okButtonProps={{
+                        danger: true,
+                        loading: busyId === r.id,
+                      }}
+                      onConfirm={() => handleDelete(r.id)}
+                    >
+                      <button
+                        type="button"
+                        className="overview-reviews__action overview-reviews__action--danger"
+                        title="Eliminar reseña"
+                        disabled={busyId === r.id}
+                      >
+                        <DeleteOutlined /> Eliminar
+                      </button>
+                    </Popconfirm>
+                  </div>
                 </div>
               </li>
             );

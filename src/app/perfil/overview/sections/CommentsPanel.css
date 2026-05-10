@@ -6,7 +6,12 @@
   background: var(--bg-container);
   border: 1px solid var(--border-color-secondary);
   border-radius: var(--border-radius-lg);
+  /* Crece para llenar la columna derecha cuando esta es la unica
+   * seccion ahi (evita dead space al final). */
+  flex: 1;
+  min-height: 0;
 }
+
 
 .overview-comments__head {
   display: flex;
@@ -65,6 +70,10 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  /* Crece para llenar el panel — search/filter arriba, "Ver todos" abajo. */
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .overview-comments__item {
