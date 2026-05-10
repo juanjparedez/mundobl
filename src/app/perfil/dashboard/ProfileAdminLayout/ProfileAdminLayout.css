@@ -51,6 +51,13 @@
   min-height: 260px;
 }
 
+/* Cell de alerts: el widget tiene su propio padding interno y un grid de
+ * ActionCards. min-height chico porque cuando no hay alerts (estado ideal)
+ * muestra un EmptyState compacto y no queremos un hueco grande. */
+.mb-profile-admin__cell--alerts {
+  min-height: 140px;
+}
+
 /* Rows N-up: igual ancho por cell. */
 .mb-profile-admin__row--2up {
   grid-template-columns: repeat(2, minmax(0, 1fr));

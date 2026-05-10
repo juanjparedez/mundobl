@@ -60,6 +60,18 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  // Redirects permanentes 301: /admin/dashboard fue absorbido por /perfil
+  // (admin layout ya muestra alerts + quick actions). Se redirige para
+  // bookmarks viejos y links externos.
+  async redirects() {
+    return [
+      {
+        source: '/admin/dashboard',
+        destination: '/perfil',
+        permanent: true,
+      },
+    ];
+  },
   // allowedDevOrigins solo aplica en dev local
   ...(process.env.NODE_ENV === 'development' && {
     allowedDevOrigins: ['192.168.1.36'],
