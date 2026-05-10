@@ -216,10 +216,7 @@ export function NovedadesClient({
                         {entry.version}
                       </header>
                       {Array.from(grouped.entries()).map(([cat, items]) => (
-                        <div
-                          key={cat}
-                          className="novedades-changelog__group"
-                        >
+                        <div key={cat} className="novedades-changelog__group">
                           {cat !== '_' && (
                             <h4 className="novedades-changelog__category">
                               {cat}
