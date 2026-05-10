@@ -1579,6 +1579,11 @@ export type TranslationShape = {
     errorUploadImage: string;
     errorCreateRequest: string;
     imageAltAttachment: string;
+    attachImage: string;
+    takePhoto: string;
+    dropImagesHere: string;
+    errorImageType: string;
+    errorImageSize: string;
   };
   notFound: {
     description: string;
@@ -3915,6 +3920,11 @@ const es: TranslationShape = {
     errorUploadImage: 'Error al subir imagen',
     errorCreateRequest: 'Error al crear la solicitud',
     imageAltAttachment: 'Adjunto',
+    attachImage: 'Adjuntar imagen',
+    takePhoto: 'Tomar foto',
+    dropImagesHere: 'Soltá las imágenes aquí',
+    errorImageType: '{name} no es una imagen válida',
+    errorImageSize: '{name} pesa más de 5MB',
   },
   notFound: {
     description: 'La página que buscas no existe o fue movida.',
@@ -6275,6 +6285,11 @@ const en: TranslationShape = {
     errorUploadImage: 'Error uploading image',
     errorCreateRequest: 'Error creating request',
     imageAltAttachment: 'Attachment',
+    attachImage: 'Attach image',
+    takePhoto: 'Take photo',
+    dropImagesHere: 'Drop images here',
+    errorImageType: '{name} is not a valid image',
+    errorImageSize: '{name} is over 5MB',
   },
   notFound: {
     description: 'The page you are looking for does not exist or was moved.',

@@ -177,6 +177,59 @@
   margin-bottom: var(--spacing-sm);
 }
 
+/* Drag-drop zone que envuelve todo el form. En desktop muestra un
+ * overlay cuando se arrastra un archivo encima. En mobile no se activa
+ * (touch no dispara dragover) pero el wrapper no estorba. */
+.feedback-drop-zone {
+  position: relative;
+  border-radius: var(--border-radius-md);
+  transition: background var(--transition-base);
+}
+
+.feedback-drop-zone--active {
+  background: color-mix(in srgb, var(--primary-color) 6%, transparent);
+  outline: 2px dashed var(--primary-color);
+  outline-offset: -2px;
+}
+
+.feedback-drop-zone__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  background: color-mix(in srgb, var(--bg-container) 92%, transparent);
+  color: var(--primary-color);
+  font-weight: 600;
+  pointer-events: none;
+  border-radius: var(--border-radius-md);
+}
+
+.feedback-drop-zone__overlay .anticon {
+  font-size: 28px;
+}
+
+/* Botonera para adjuntar imagenes: file picker + camara mobile.
+ * En desktop el "camara" termina abriendo file picker tambien (el
+ * browser ignora capture si no hay device disponible). */
+.feedback-attach-actions {
+  display: flex;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+  margin-bottom: var(--spacing-sm);
+}
+
+/* En desktop "Tomar foto" no agrega valor sobre el file picker; solo
+ * tiene sentido en mobile donde abre la camara directamente. */
+@media (min-width: 720px) {
+  .feedback-attach-actions__camera {
+    display: none;
+  }
+}
+
 /* Pending images in create modal */
 .feedback-pending-images {
   display: flex;
@@ -224,6 +277,34 @@
   font-size: var(--font-size-sm);
   color: var(--text-tertiary);
   margin-bottom: var(--spacing-md);
+}
+
+/* Mobile: el modal de crear caso aprovecha todo el ancho del viewport
+ * (con un margen chico para que el corner radius respire), y el grid
+ * de previews se acomoda a 3-cols asi entran varios sin scroll. La
+ * botonera attach hace que cada boton ocupe min 44px de altura para
+ * tap-target accesible. */
+@media (max-width: 720px) {
+  .feedback-modal .ant-modal-content {
+    padding: var(--spacing-md);
+  }
+
+  .feedback-attach-actions .ant-btn {
+    flex: 1;
+    min-height: 44px;
+  }
+
+  .feedback-pending-images {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--spacing-xs);
+  }
+
+  .feedback-pending-image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
 }
 
 /* ================================================

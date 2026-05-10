@@ -25,7 +25,11 @@ import { generateText, GeminiError } from '../src/lib/gemini';
 import { MESSAGES } from '../src/i18n/messages';
 
 const TARGETS: { code: string; name: string; varName: string }[] = [
+  { code: 'it', name: 'Italian (Italiano)', varName: 'it' },
   { code: 'de', name: 'German (Deutsch)', varName: 'de' },
+  { code: 'fr', name: 'French (Français)', varName: 'fr' },
+  { code: 'ja', name: 'Japanese (日本語)', varName: 'ja' },
+  { code: 'ko', name: 'Korean (한국어)', varName: 'ko' },
   { code: 'zh-CN', name: 'Simplified Chinese (简体中文)', varName: 'zhCN' },
   { code: 'zh-TW', name: 'Traditional Chinese (繁體中文)', varName: 'zhTW' },
   { code: 'th', name: 'Thai (ไทย)', varName: 'th' },

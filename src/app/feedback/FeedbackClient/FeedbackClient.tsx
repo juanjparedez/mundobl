@@ -26,6 +26,7 @@ import {
   UserOutlined,
   PictureOutlined,
   DeleteOutlined,
+  CameraOutlined,
 } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import { PageTitle } from '@/components/common/PageTitle/PageTitle';
@@ -132,6 +133,9 @@ export function FeedbackClient() {
   const [modalOpen, setModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [pendingImages, setPendingImages] = useState<PendingImage[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
   const [form] = Form.useForm();
   // comments state: requestId -> list; null = not loaded; loading = Set of ids
   const [comments, setComments] = useState<
@@ -273,20 +277,73 @@ export function FeedbackClient() {
     }
   };
 
+  // Validacion centralizada para los 3 entry points (paste, drop, file input).
+  // Filtra non-image, descarta archivos > 5MB (mismo limite que el endpoint),
+  // muestra toast por cada rechazo asi el usuario sabe por que no aparece el
+  // preview. Crea object URLs y appendea a pendingImages.
+  const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+
+  const addImageFiles = (files: File[] | FileList | null) => {
+    if (!files) return;
+    const list = Array.from(files);
+    const accepted: PendingImage[] = [];
+    for (const file of list) {
+      if (!file.type.startsWith('image/')) {
+        message.warning(
+          interpolateMessage(t('feedback.errorImageType'), { name: file.name })
+        );
+        continue;
+      }
+      if (file.size > MAX_IMAGE_BYTES) {
+        message.warning(
+          interpolateMessage(t('feedback.errorImageSize'), { name: file.name })
+        );
+        continue;
+      }
+      accepted.push({ file, preview: URL.createObjectURL(file) });
+    }
+    if (accepted.length > 0) {
+      setPendingImages((prev) => [...prev, ...accepted]);
+    }
+  };
+
   const handlePaste = (e: React.ClipboardEvent) => {
     const items = e.clipboardData?.items;
     if (!items) return;
-
+    const files: File[] = [];
     for (const item of Array.from(items)) {
       if (item.type.startsWith('image/')) {
-        e.preventDefault();
         const file = item.getAsFile();
-        if (file) {
-          const preview = URL.createObjectURL(file);
-          setPendingImages((prev) => [...prev, { file, preview }]);
-        }
+        if (file) files.push(file);
       }
     }
+    if (files.length > 0) {
+      e.preventDefault();
+      addImageFiles(files);
+    }
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    addImageFiles(e.target.files);
+    // Reset asi seleccionar el mismo archivo dos veces sigue disparando onChange.
+    e.target.value = '';
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    if (e.dataTransfer?.types.includes('Files')) setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    // Solo salir si estamos saliendo del contenedor (no de un hijo). En mobile
+    // este event no aplica pero no molesta.
+    if (e.currentTarget === e.target) setIsDragging(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    addImageFiles(e.dataTransfer?.files ?? null);
   };
 
   const removePendingImage = (index: number) => {
@@ -301,9 +358,11 @@ export function FeedbackClient() {
     for (const img of images) {
       const formData = new FormData();
       formData.append('file', img.file);
-      formData.append('folder', 'feedback');
 
-      const response = await fetch('/api/upload', {
+      // /api/feedback/upload acepta cualquier user logueado y namespacea el
+      // folder por userId. /api/upload requiere ADMIN/MODERATOR (portadas
+      // de series), por eso aca usamos el endpoint dedicado.
+      const response = await fetch('/api/feedback/upload', {
         method: 'POST',
         body: formData,
       });
@@ -782,76 +841,130 @@ export function FeedbackClient() {
           setPendingImages([]);
         }}
         footer={null}
+        className="feedback-modal"
+        width="min(560px, 100vw - 32px)"
       >
-        <Form form={form} layout="vertical" onFinish={handleCreate}>
-          <Form.Item
-            name="type"
-            label={t('feedback.formFieldType')}
-            rules={[
-              { required: true, message: t('feedback.formRequiredType') },
-            ]}
-          >
-            <Select
-              options={[
-                { label: 'Bug', value: 'bug' },
-                { label: 'Feature', value: 'feature' },
-                { label: 'Idea', value: 'idea' },
+        {/* Drag-drop zone envuelve todo el form. En mobile no aplica
+         * (touch no dispara dragover) pero no molesta. */}
+        <div
+          className={`feedback-drop-zone${isDragging ? ' feedback-drop-zone--active' : ''}`}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          onPaste={handlePaste}
+        >
+          <Form form={form} layout="vertical" onFinish={handleCreate}>
+            <Form.Item
+              name="type"
+              label={t('feedback.formFieldType')}
+              rules={[
+                { required: true, message: t('feedback.formRequiredType') },
               ]}
-            />
-          </Form.Item>
+            >
+              <Select
+                options={[
+                  { label: 'Bug', value: 'bug' },
+                  { label: 'Feature', value: 'feature' },
+                  { label: 'Idea', value: 'idea' },
+                ]}
+              />
+            </Form.Item>
 
-          <Form.Item
-            name="title"
-            label={t('feedback.formFieldTitle')}
-            rules={[
-              { required: true, message: t('feedback.formRequiredTitle') },
-            ]}
-          >
-            <Input maxLength={200} />
-          </Form.Item>
+            <Form.Item
+              name="title"
+              label={t('feedback.formFieldTitle')}
+              rules={[
+                { required: true, message: t('feedback.formRequiredTitle') },
+              ]}
+            >
+              <Input maxLength={200} />
+            </Form.Item>
 
-          <Form.Item
-            name="description"
-            label={t('feedback.formFieldDescription')}
-          >
-            <Input.TextArea
-              rows={3}
-              maxLength={1000}
-              onPaste={handlePaste}
-              placeholder={t('feedback.formDescriptionPlaceholder')}
-            />
-          </Form.Item>
+            <Form.Item
+              name="description"
+              label={t('feedback.formFieldDescription')}
+            >
+              <Input.TextArea
+                rows={3}
+                maxLength={1000}
+                placeholder={t('feedback.formDescriptionPlaceholder')}
+              />
+            </Form.Item>
 
-          {pendingImages.length > 0 && (
-            <div className="feedback-pending-images">
-              {pendingImages.map((img, index) => (
-                <div key={index} className="feedback-pending-image">
-                  {/* blob: URLs (URL.createObjectURL) no son soportadas por next/image */}
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={img.preview} alt={`Preview ${index + 1}`} />
-                  <Button
-                    type="text"
-                    danger
-                    size="small"
-                    icon={<DeleteOutlined />}
-                    className="feedback-pending-image__remove"
-                    onClick={() => removePendingImage(index)}
-                  />
-                </div>
-              ))}
+            {/* Acciones de adjuntar: en mobile el primero abre galeria y
+             * el segundo (capture) abre directamente la camara. En desktop
+             * el "camera" igual abre file picker (el browser lo ignora si
+             * no hay camara). */}
+            <div className="feedback-attach-actions">
+              <Button
+                icon={<PictureOutlined />}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                {t('feedback.attachImage')}
+              </Button>
+              <Button
+                icon={<CameraOutlined />}
+                onClick={() => cameraInputRef.current?.click()}
+                className="feedback-attach-actions__camera"
+              >
+                {t('feedback.takePhoto')}
+              </Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                hidden
+                onChange={handleFileInputChange}
+              />
+              <input
+                ref={cameraInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                hidden
+                onChange={handleFileInputChange}
+              />
+            </div>
+
+            {pendingImages.length > 0 && (
+              <div className="feedback-pending-images">
+                {pendingImages.map((img, index) => (
+                  <div key={index} className="feedback-pending-image">
+                    {/* blob: URLs (URL.createObjectURL) no son soportadas por next/image */}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={img.preview} alt={`Preview ${index + 1}`} />
+                    <Button
+                      type="text"
+                      danger
+                      size="small"
+                      icon={<DeleteOutlined />}
+                      className="feedback-pending-image__remove"
+                      onClick={() => removePendingImage(index)}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="feedback-image-hint">
+              <PictureOutlined /> {t('feedback.formDescriptionHint')}
+            </div>
+
+            <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
+              <Button type="primary" htmlType="submit" loading={submitting}>
+                {t('feedback.createButton')}
+              </Button>
+            </Form.Item>
+          </Form>
+
+          {isDragging && (
+            <div className="feedback-drop-zone__overlay" aria-hidden>
+              <PictureOutlined />
+              <span>{t('feedback.dropImagesHere')}</span>
             </div>
           )}
-
-          <div className="feedback-image-hint">
-            <PictureOutlined /> {t('feedback.formDescriptionHint')}
-          </div>
-
-          <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
-            <Button type="primary" htmlType="submit" loading={submitting}>
-              {t('feedback.createButton')}
-            </Button>
-          </Form.Item>
-        </Form>
+        </div>
       </Modal>
     </div>
   );

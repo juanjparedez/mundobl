@@ -1587,7 +1587,12 @@ const zhTW: TranslationShape = {
     "adminBadge": "管理員",
     "errorUploadImage": "上傳圖片時發生錯誤",
     "errorCreateRequest": "建立請求時發生錯誤",
-    "imageAltAttachment": "附件"
+    "imageAltAttachment": "附件",
+    "attachImage": "附加圖片",
+    "takePhoto": "拍照",
+    "dropImagesHere": "將圖片拖曳至此",
+    "errorImageType": "{name} 不是有效的圖片",
+    "errorImageSize": "{name} 超過 5MB"
   },
   "notFound": {
     "description": "您要找的頁面不存在或已移動。",
