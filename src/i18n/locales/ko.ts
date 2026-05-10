@@ -2302,6 +2302,12 @@ const ko: TranslationShape = {
     "roleAdmin": "관리자",
     "roleModerator": "모더레이터"
   },
+  "activityChart": {
+    "title": "활동",
+    "empty": "최근 활동이 없습니다.",
+    "seriesViews": "조회수",
+    "seriesActions": "관리자 작업"
+  },
   "workspace": {
     "backToCatalog": "카탈로그로 돌아가기",
     "viewPublic": "공개 보기",
