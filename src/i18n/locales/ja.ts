@@ -2296,6 +2296,12 @@ const ja: TranslationShape = {
     "actionUpdate": "編集済み",
     "actionDelete": "削除済み"
   },
+  "topCommenters": {
+    "title": "注目のコミュニティ",
+    "empty": "最近のコメントはありません。",
+    "roleAdmin": "管理者",
+    "roleModerator": "モデレーター"
+  },
   "workspace": {
     "backToCatalog": "カタログに戻る",
     "viewPublic": "公開ビュー",

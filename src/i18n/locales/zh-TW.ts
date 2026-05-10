@@ -2296,6 +2296,12 @@ const zhTW: TranslationShape = {
     "actionUpdate": "已編輯",
     "actionDelete": "已刪除"
   },
+  "topCommenters": {
+    "title": "精選社群",
+    "empty": "沒有近期留言。",
+    "roleAdmin": "管理員",
+    "roleModerator": "版主"
+  },
   "workspace": {
     "backToCatalog": "返回目錄",
     "viewPublic": "公開檢視",

@@ -2296,6 +2296,12 @@ const fr: TranslationShape = {
     "actionUpdate": "Modifié",
     "actionDelete": "Supprimé"
   },
+  "topCommenters": {
+    "title": "Communauté à la une",
+    "empty": "Aucun commentaire récent.",
+    "roleAdmin": "Admin",
+    "roleModerator": "Modérateur"
+  },
   "workspace": {
     "backToCatalog": "Retour au catalogue",
     "viewPublic": "Vue publique",
