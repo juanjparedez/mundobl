@@ -45,90 +45,91 @@ const WIDGET_IDS = {
   currentlyWatching: 'profile.currentlyWatching',
 } as const;
 
-// Grid denso alineado al mock: 11 widgets distribuidos en filas mas densas
-// con rowHeight 48 + gap 12 (definidos en DashboardGrid props mas abajo).
+// Grid denso alineado al mock: rowHeight 40 + gap 8 (en DashboardGrid).
+// Alturas mas bajas (h:3-4 en lugar de h:5-6) para evitar widgets gigantes
+// con whitespace cuando hay poca data.
 const DEFAULT_LAYOUTS: DashboardLayouts = {
   lg: [
-    // Fila 1: Currently watching + Notifications
+    // Fila 1 (h:4 = 184px): Currently watching + Notifications
     {
       i: WIDGET_IDS.currentlyWatching,
       x: 0,
       y: 0,
       w: 6,
-      h: 5,
+      h: 4,
       minW: 4,
-      minH: 4,
+      minH: 3,
     },
-    { i: WIDGET_IDS.notifications, x: 6, y: 0, w: 6, h: 5, minW: 4, minH: 4 },
-    // Fila 2: 3 columnas con TopGenres list + Genres donut + TopCountries list
-    { i: WIDGET_IDS.topGenresList, x: 0, y: 5, w: 4, h: 5, minW: 3, minH: 4 },
-    { i: WIDGET_IDS.genres, x: 4, y: 5, w: 4, h: 5, minW: 3, minH: 4 },
-    { i: WIDGET_IDS.topCountries, x: 8, y: 5, w: 4, h: 5, minW: 3, minH: 4 },
-    // Fila 3: Heatmap full-width
-    { i: WIDGET_IDS.heatmap, x: 0, y: 10, w: 12, h: 3, minW: 6, minH: 3 },
-    // Fila 4: Recently completed + Completed by year
+    { i: WIDGET_IDS.notifications, x: 6, y: 0, w: 6, h: 4, minW: 4, minH: 3 },
+    // Fila 2 (h:4): TopGenres list + Genres donut + TopCountries list
+    { i: WIDGET_IDS.topGenresList, x: 0, y: 4, w: 4, h: 4, minW: 3, minH: 3 },
+    { i: WIDGET_IDS.genres, x: 4, y: 4, w: 4, h: 4, minW: 3, minH: 3 },
+    { i: WIDGET_IDS.topCountries, x: 8, y: 4, w: 4, h: 4, minW: 3, minH: 3 },
+    // Fila 3 (h:3 = 136px): Heatmap full-width
+    { i: WIDGET_IDS.heatmap, x: 0, y: 8, w: 12, h: 3, minW: 6, minH: 3 },
+    // Fila 4 (h:4): Recently completed + Completed by year
     {
       i: WIDGET_IDS.recentlyCompleted,
       x: 0,
-      y: 13,
+      y: 11,
       w: 7,
-      h: 5,
+      h: 4,
       minW: 4,
-      minH: 4,
+      minH: 3,
     },
     {
       i: WIDGET_IDS.completedByYear,
       x: 7,
-      y: 13,
+      y: 11,
       w: 5,
-      h: 5,
+      h: 4,
       minW: 4,
-      minH: 4,
+      minH: 3,
     },
-    // Fila 5: Overview KPIs + Ratings KPIs
-    { i: WIDGET_IDS.overview, x: 0, y: 18, w: 6, h: 4, minW: 4, minH: 3 },
-    { i: WIDGET_IDS.ratings, x: 6, y: 18, w: 6, h: 4, minW: 4, minH: 3 },
-    // Fila 6: My cases full-width
-    { i: WIDGET_IDS.myCases, x: 0, y: 22, w: 12, h: 5, minW: 4, minH: 4 },
+    // Fila 5 (h:3): Overview KPIs + Ratings KPIs (4 KPIs c/u, no necesitan mucho)
+    { i: WIDGET_IDS.overview, x: 0, y: 15, w: 6, h: 3, minW: 4, minH: 3 },
+    { i: WIDGET_IDS.ratings, x: 6, y: 15, w: 6, h: 3, minW: 4, minH: 3 },
+    // Fila 6 (h:4): My cases full-width
+    { i: WIDGET_IDS.myCases, x: 0, y: 18, w: 12, h: 4, minW: 4, minH: 3 },
   ],
   md: [
-    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 5, h: 5 },
-    { i: WIDGET_IDS.notifications, x: 5, y: 0, w: 5, h: 5 },
-    { i: WIDGET_IDS.topGenresList, x: 0, y: 5, w: 5, h: 5 },
-    { i: WIDGET_IDS.genres, x: 5, y: 5, w: 5, h: 5 },
-    { i: WIDGET_IDS.topCountries, x: 0, y: 10, w: 5, h: 5 },
-    { i: WIDGET_IDS.completedByYear, x: 5, y: 10, w: 5, h: 5 },
-    { i: WIDGET_IDS.heatmap, x: 0, y: 15, w: 10, h: 3 },
-    { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 18, w: 5, h: 5 },
-    { i: WIDGET_IDS.overview, x: 5, y: 18, w: 5, h: 5 },
-    { i: WIDGET_IDS.ratings, x: 0, y: 23, w: 10, h: 4 },
-    { i: WIDGET_IDS.myCases, x: 0, y: 27, w: 10, h: 5 },
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 5, h: 4 },
+    { i: WIDGET_IDS.notifications, x: 5, y: 0, w: 5, h: 4 },
+    { i: WIDGET_IDS.topGenresList, x: 0, y: 4, w: 5, h: 4 },
+    { i: WIDGET_IDS.genres, x: 5, y: 4, w: 5, h: 4 },
+    { i: WIDGET_IDS.topCountries, x: 0, y: 8, w: 5, h: 4 },
+    { i: WIDGET_IDS.completedByYear, x: 5, y: 8, w: 5, h: 4 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 12, w: 10, h: 3 },
+    { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 15, w: 5, h: 4 },
+    { i: WIDGET_IDS.overview, x: 5, y: 15, w: 5, h: 4 },
+    { i: WIDGET_IDS.ratings, x: 0, y: 19, w: 10, h: 3 },
+    { i: WIDGET_IDS.myCases, x: 0, y: 22, w: 10, h: 4 },
   ],
   sm: [
-    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 6, h: 5 },
-    { i: WIDGET_IDS.notifications, x: 0, y: 5, w: 6, h: 5 },
-    { i: WIDGET_IDS.topGenresList, x: 0, y: 10, w: 6, h: 5 },
-    { i: WIDGET_IDS.topCountries, x: 0, y: 15, w: 6, h: 5 },
-    { i: WIDGET_IDS.genres, x: 0, y: 20, w: 6, h: 5 },
-    { i: WIDGET_IDS.heatmap, x: 0, y: 25, w: 6, h: 3 },
-    { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 28, w: 6, h: 5 },
-    { i: WIDGET_IDS.completedByYear, x: 0, y: 33, w: 6, h: 5 },
-    { i: WIDGET_IDS.overview, x: 0, y: 38, w: 6, h: 4 },
-    { i: WIDGET_IDS.ratings, x: 0, y: 42, w: 6, h: 4 },
-    { i: WIDGET_IDS.myCases, x: 0, y: 46, w: 6, h: 5 },
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 6, h: 4 },
+    { i: WIDGET_IDS.notifications, x: 0, y: 4, w: 6, h: 4 },
+    { i: WIDGET_IDS.topGenresList, x: 0, y: 8, w: 6, h: 4 },
+    { i: WIDGET_IDS.topCountries, x: 0, y: 12, w: 6, h: 4 },
+    { i: WIDGET_IDS.genres, x: 0, y: 16, w: 6, h: 4 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 20, w: 6, h: 3 },
+    { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 23, w: 6, h: 4 },
+    { i: WIDGET_IDS.completedByYear, x: 0, y: 27, w: 6, h: 4 },
+    { i: WIDGET_IDS.overview, x: 0, y: 31, w: 6, h: 3 },
+    { i: WIDGET_IDS.ratings, x: 0, y: 34, w: 6, h: 3 },
+    { i: WIDGET_IDS.myCases, x: 0, y: 37, w: 6, h: 4 },
   ],
   xs: [
-    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 4, h: 5 },
-    { i: WIDGET_IDS.notifications, x: 0, y: 5, w: 4, h: 5 },
-    { i: WIDGET_IDS.topGenresList, x: 0, y: 10, w: 4, h: 5 },
-    { i: WIDGET_IDS.topCountries, x: 0, y: 15, w: 4, h: 5 },
-    { i: WIDGET_IDS.genres, x: 0, y: 20, w: 4, h: 5 },
-    { i: WIDGET_IDS.heatmap, x: 0, y: 25, w: 4, h: 3 },
-    { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 28, w: 4, h: 5 },
-    { i: WIDGET_IDS.completedByYear, x: 0, y: 33, w: 4, h: 5 },
-    { i: WIDGET_IDS.overview, x: 0, y: 38, w: 4, h: 5 },
-    { i: WIDGET_IDS.ratings, x: 0, y: 43, w: 4, h: 5 },
-    { i: WIDGET_IDS.myCases, x: 0, y: 48, w: 4, h: 5 },
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 4, h: 4 },
+    { i: WIDGET_IDS.notifications, x: 0, y: 4, w: 4, h: 4 },
+    { i: WIDGET_IDS.topGenresList, x: 0, y: 8, w: 4, h: 4 },
+    { i: WIDGET_IDS.topCountries, x: 0, y: 12, w: 4, h: 4 },
+    { i: WIDGET_IDS.genres, x: 0, y: 16, w: 4, h: 4 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 20, w: 4, h: 3 },
+    { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 23, w: 4, h: 4 },
+    { i: WIDGET_IDS.completedByYear, x: 0, y: 27, w: 4, h: 4 },
+    { i: WIDGET_IDS.overview, x: 0, y: 31, w: 4, h: 4 },
+    { i: WIDGET_IDS.ratings, x: 0, y: 35, w: 4, h: 4 },
+    { i: WIDGET_IDS.myCases, x: 0, y: 39, w: 4, h: 4 },
   ],
 };
 
@@ -140,8 +141,11 @@ export function DashboardClient() {
   const [editing, setEditing] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
 
+  // dashboardKey 'profile-v2' invalida el cache localStorage/server del
+  // layout viejo (h:5 muy alto). Si el usuario tenia uno custom, podra
+  // reordenar sobre los defaults nuevos mas densos.
   const { layouts, setLayouts, removeWidget, addWidget, reset, widgetIds } =
-    useDashboardLayout('profile', DEFAULT_LAYOUTS);
+    useDashboardLayout('profile-v2', DEFAULT_LAYOUTS);
 
   // Registro de widgets — corre antes del primer paint en cada mount.
   // El registry es un singleton, asi que `register` es idempotente por id.
@@ -321,8 +325,8 @@ export function DashboardClient() {
           editing={editing}
           onLayoutsChange={setLayouts}
           onRemoveWidget={removeWidget}
-          rowHeight={48}
-          gap={12}
+          rowHeight={40}
+          gap={8}
         />
 
         <WidgetPickerDrawer
