@@ -8,13 +8,13 @@
 }
 
 .mb-my-reviews__item {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 4px;
   padding: 8px 10px;
   border: 1px solid var(--border-color-secondary);
   border-radius: var(--border-radius-sm);
-  text-decoration: none;
   color: inherit;
   transition: var(--transition-fast);
 }
@@ -22,6 +22,30 @@
 .mb-my-reviews__item:hover {
   border-color: color-mix(in srgb, var(--primary-color) 35%, transparent);
   background: color-mix(in srgb, var(--primary-color) 4%, transparent);
+}
+
+/* El link envuelve el contenido tappable; el boton delete vive fuera
+ * del link para que no navegue al hacer click. Ambos comparten la
+ * misma caja visual del __item via posicion absoluta del boton. */
+.mb-my-reviews__link {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.mb-my-reviews__delete {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 2;
+  opacity: 0.6;
+  transition: opacity var(--transition-fast);
+}
+
+.mb-my-reviews__item:hover .mb-my-reviews__delete {
+  opacity: 1;
 }
 
 .mb-my-reviews__head {
