@@ -2280,6 +2280,25 @@ const zhCN: TranslationShape = {
     "reports": "Reportes",
     "auditLog": "Audit log",
     "news": "Noticias"
+  },
+  "workspace": {
+    "backToCatalog": "返回目录",
+    "viewPublic": "公开视图",
+    "metaSeasons": "季",
+    "metaEpisodes": "集",
+    "metaReviews": "评论",
+    "metaPrivateNotes": "私人笔记",
+    "actionEdit": "编辑",
+    "tabOverview": "概览",
+    "tabOverviewPlaceholder": "剧集概览。即将推出。",
+    "tabAnalysis": "剧集分析",
+    "tabAnalysisPlaceholder": "包含每集基调、支线、角色、标签和笔记的详细表格。即将推出。",
+    "tabNotes": "私人笔记",
+    "tabNotesPlaceholder": "团队关于此剧集的私人笔记。",
+    "tabData": "数据",
+    "tabDataPlaceholder": "剧集的原始可编辑元数据。",
+    "tabReviews": "评论",
+    "tabReviewsPlaceholder": "与此剧集相关的评论。"
   }
 } as TranslationShape;
 

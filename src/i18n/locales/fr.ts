@@ -2280,6 +2280,25 @@ const fr: TranslationShape = {
     "reports": "Rapports",
     "auditLog": "Journal d'audit",
     "news": "Actualités"
+  },
+  "workspace": {
+    "backToCatalog": "Retour au catalogue",
+    "viewPublic": "Vue publique",
+    "metaSeasons": "saisons",
+    "metaEpisodes": "épisodes",
+    "metaReviews": "avis",
+    "metaPrivateNotes": "Notes privées",
+    "actionEdit": "Modifier",
+    "tabOverview": "Aperçu",
+    "tabOverviewPlaceholder": "Aperçu de la série. Bientôt disponible.",
+    "tabAnalysis": "Analyse d'épisode",
+    "tabAnalysisPlaceholder": "Tableau détaillé avec le ton, les sous-intrigues, les personnages, les tags et les notes par épisode. Bientôt disponible.",
+    "tabNotes": "Notes privées",
+    "tabNotesPlaceholder": "Notes privées de l'équipe concernant cette série.",
+    "tabData": "Données",
+    "tabDataPlaceholder": "Métadonnées brutes modifiables pour la série.",
+    "tabReviews": "Avis",
+    "tabReviewsPlaceholder": "Avis liés à cette série."
   }
 } as TranslationShape;
 
