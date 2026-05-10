@@ -3,6 +3,7 @@
 import type { ProfileData } from '../../types';
 import { HeatmapWidget } from '../widgets/HeatmapWidget/HeatmapWidget';
 import { QuickAdminActionsWidget } from '../widgets/QuickAdminActionsWidget/QuickAdminActionsWidget';
+import { AdminAlertsWidget } from '../widgets/AdminAlertsWidget/AdminAlertsWidget';
 import { MyCasesWidget } from '../widgets/MyCasesWidget/MyCasesWidget';
 import { DashboardNotificationsWidget } from '../widgets/NotificationsWidget/DashboardNotificationsWidget';
 import { CurrentlyWatchingWidget } from '../widgets/CurrentlyWatchingWidget/CurrentlyWatchingWidget';
@@ -37,6 +38,16 @@ export function ProfileAdminLayout({ data }: ProfileAdminLayoutProps) {
         </div>
         <div className="mb-profile-admin__cell mb-profile-admin__cell--quickadmin">
           <QuickAdminActionsWidget />
+        </div>
+      </section>
+
+      {/* Row admin alerts: counts accionables (series sin resena, comments
+       *  reportados, sitios sugeridos pendientes). Antes vivian en
+       *  /admin/dashboard; ahora unificadas aca. Full-width para que el
+       *  ActionCard grid respire y los counts grandes sean legibles. */}
+      <section className="mb-profile-admin__row mb-profile-admin__row--full">
+        <div className="mb-profile-admin__cell mb-profile-admin__cell--alerts">
+          <AdminAlertsWidget />
         </div>
       </section>
 
