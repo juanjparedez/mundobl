@@ -1592,7 +1592,8 @@ const ko: TranslationShape = {
     "takePhoto": "사진 촬영",
     "dropImagesHere": "여기에 이미지를 드롭하세요",
     "errorImageType": "{name}은(는) 유효한 이미지가 아닙니다",
-    "errorImageSize": "{name}은(는) 5MB를 초과합니다"
+    "errorImageSize": "{name}은(는) 5MB를 초과합니다",
+    "errorImageDuplicate": "{name} 님은 이미 목록에 있습니다"
   },
   "notFound": {
     "description": "찾으시는 페이지가 존재하지 않거나 이동되었습니다.",

@@ -279,32 +279,54 @@ export function FeedbackClient() {
 
   // Validacion centralizada para los 3 entry points (paste, drop, file input).
   // Filtra non-image, descarta archivos > 5MB (mismo limite que el endpoint),
-  // muestra toast por cada rechazo asi el usuario sabe por que no aparece el
-  // preview. Crea object URLs y appendea a pendingImages.
+  // deduplica vs los ya pendientes (Flor reporto en feedback #99 que el
+  // mismo screenshot quedo subido dos veces), y muestra toast por cada
+  // rechazo asi el usuario sabe por que no aparece el preview.
   const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+
+  // Clave de deduplicacion: name + size + lastModified. Es el triple que
+  // identifica univocamente un archivo del device en una sesion. No usamos
+  // un hash del contenido porque no se justifica el costo (CPU + async)
+  // para este caso de uso.
+  const fileKey = (f: File) => `${f.name}|${f.size}|${f.lastModified}`;
 
   const addImageFiles = (files: File[] | FileList | null) => {
     if (!files) return;
     const list = Array.from(files);
     const accepted: PendingImage[] = [];
-    for (const file of list) {
-      if (!file.type.startsWith('image/')) {
-        message.warning(
-          interpolateMessage(t('feedback.errorImageType'), { name: file.name })
-        );
-        continue;
+    setPendingImages((prev) => {
+      const existingKeys = new Set(prev.map((p) => fileKey(p.file)));
+      for (const file of list) {
+        if (!file.type.startsWith('image/')) {
+          message.warning(
+            interpolateMessage(t('feedback.errorImageType'), {
+              name: file.name,
+            })
+          );
+          continue;
+        }
+        if (file.size > MAX_IMAGE_BYTES) {
+          message.warning(
+            interpolateMessage(t('feedback.errorImageSize'), {
+              name: file.name,
+            })
+          );
+          continue;
+        }
+        const key = fileKey(file);
+        if (existingKeys.has(key)) {
+          message.warning(
+            interpolateMessage(t('feedback.errorImageDuplicate'), {
+              name: file.name,
+            })
+          );
+          continue;
+        }
+        existingKeys.add(key);
+        accepted.push({ file, preview: URL.createObjectURL(file) });
       }
-      if (file.size > MAX_IMAGE_BYTES) {
-        message.warning(
-          interpolateMessage(t('feedback.errorImageSize'), { name: file.name })
-        );
-        continue;
-      }
-      accepted.push({ file, preview: URL.createObjectURL(file) });
-    }
-    if (accepted.length > 0) {
-      setPendingImages((prev) => [...prev, ...accepted]);
-    }
+      return accepted.length > 0 ? [...prev, ...accepted] : prev;
+    });
   };
 
   const handlePaste = (e: React.ClipboardEvent) => {
