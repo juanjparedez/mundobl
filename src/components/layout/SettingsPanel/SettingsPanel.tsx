@@ -1,7 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { Drawer, Segmented, Select, Button, Switch, Popconfirm } from 'antd';
+import {
+  ColorPicker,
+  Drawer,
+  Segmented,
+  Select,
+  Button,
+  Switch,
+  Popconfirm,
+  Tooltip,
+} from 'antd';
+import type { Color } from 'antd/es/color-picker';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/lib/providers/ThemeProvider';
@@ -35,6 +45,8 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
     setTheme,
     accent,
     setAccent,
+    customAccent,
+    setCustomAccent,
     tone,
     setTone,
     font,
@@ -127,7 +139,21 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
             onChange={(v) => setSkin(v as SkinKey)}
             options={[
               { value: 'default', label: t('settings.skinDefault') },
-              { value: 'premium', label: t('settings.skinPremium') },
+              {
+                value: 'premium',
+                label: (
+                  <Tooltip
+                    title={
+                      theme === 'light'
+                        ? t('settings.skinPremiumLightDisabledHint')
+                        : ''
+                    }
+                  >
+                    <span>{t('settings.skinPremium')}</span>
+                  </Tooltip>
+                ),
+                disabled: theme === 'light',
+              },
             ]}
             block
           />
@@ -137,27 +163,47 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
           <label className="settings-panel__label">
             {t('settings.accentLabel')}
           </label>
-          <div
-            className="settings-panel__accents"
-            role="radiogroup"
-            aria-label={t('settings.accentLabel')}
-          >
-            {(Object.keys(ACCENT_PRESETS) as AccentPresetKey[]).map((key) => {
-              const preset = ACCENT_PRESETS[key];
-              const isActive = accent === key;
-              return (
-                <button
-                  key={key}
-                  type="button"
-                  role="radio"
-                  aria-checked={isActive}
-                  aria-label={preset.name}
-                  onClick={() => setAccent(key)}
-                  className={`settings-panel__accent${isActive ? ' settings-panel__accent--active' : ''}`}
-                  style={{ background: preset.swatch }}
-                />
-              );
-            })}
+          <div className="settings-panel__accent-row">
+            <div
+              className="settings-panel__accents"
+              role="radiogroup"
+              aria-label={t('settings.accentLabel')}
+            >
+              {(Object.keys(ACCENT_PRESETS) as AccentPresetKey[]).map((key) => {
+                const preset = ACCENT_PRESETS[key];
+                const isActive = !customAccent && accent === key;
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    role="radio"
+                    aria-checked={isActive}
+                    aria-label={preset.name}
+                    onClick={() => setAccent(key)}
+                    className={`settings-panel__accent${isActive ? ' settings-panel__accent--active' : ''}`}
+                    style={{ background: preset.swatch }}
+                  />
+                );
+              })}
+            </div>
+            <ColorPicker
+              value={customAccent ?? ACCENT_PRESETS[accent].swatch}
+              onChange={(c: Color) => setCustomAccent(c.toHexString())}
+              size="small"
+              showText={false}
+              format="hex"
+              className={`settings-panel__color-picker${customAccent ? ' settings-panel__color-picker--active' : ''}`}
+            />
+            {customAccent && (
+              <Button
+                size="small"
+                type="text"
+                onClick={() => setCustomAccent(null)}
+                aria-label={t('settings.accentResetCustom')}
+              >
+                {t('settings.accentResetCustom')}
+              </Button>
+            )}
           </div>
         </div>
 

@@ -452,7 +452,9 @@ export type TranslationShape = {
     skinLabel: string;
     skinDefault: string;
     skinPremium: string;
+    skinPremiumLightDisabledHint: string;
     accentLabel: string;
+    accentResetCustom: string;
     toneLabel: string;
     toneDefault: string;
     toneWarm: string;
@@ -2660,8 +2662,10 @@ const es: TranslationShape = {
     themeDark: 'Oscuro',
     skinLabel: 'Estilo visual',
     skinDefault: 'Predeterminado',
-    skinPremium: 'Premium Dark',
+    skinPremium: 'Premium',
+    skinPremiumLightDisabledHint: 'Premium solo esta disponible en modo oscuro',
     accentLabel: 'Color de acento',
+    accentResetCustom: 'Restaurar',
     toneLabel: 'Tono base',
     toneDefault: 'Predeterminado',
     toneWarm: 'Calido',
@@ -4952,8 +4956,10 @@ const en: TranslationShape = {
     themeDark: 'Dark',
     skinLabel: 'Visual style',
     skinDefault: 'Default',
-    skinPremium: 'Premium Dark',
+    skinPremium: 'Premium',
+    skinPremiumLightDisabledHint: 'Premium is only available in dark mode',
     accentLabel: 'Accent color',
+    accentResetCustom: 'Reset',
     toneLabel: 'Base tone',
     toneDefault: 'Default',
     toneWarm: 'Warm',

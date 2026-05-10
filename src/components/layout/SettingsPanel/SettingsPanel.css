@@ -67,11 +67,29 @@
   color: var(--primary-color);
 }
 
+/* Row con presets + ColorPicker custom + reset opcional */
+.settings-panel__accent-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
 /* Acentos: swatches circulares */
 .settings-panel__accents {
   display: flex;
   flex-wrap: wrap;
   gap: var(--spacing-xs);
+}
+
+.settings-panel__color-picker {
+  margin-left: auto;
+}
+
+.settings-panel__color-picker--active {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  border-radius: 50%;
 }
 
 .settings-panel__accent {

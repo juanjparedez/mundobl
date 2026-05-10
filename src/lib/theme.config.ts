@@ -214,6 +214,35 @@ export const ACCENT_PRESETS = {
 export type AccentPresetKey = keyof typeof ACCENT_PRESETS;
 export const DEFAULT_ACCENT: AccentPresetKey = 'gold';
 
+// ─── Derivacion de AccentColors desde hex libre ────────────────────────────
+// Cuando el usuario elige un color custom (ColorPicker en SettingsPanel),
+// derivamos hover (mas claro), active (mas oscuro) y outline (alpha 22%)
+// del primary. Sirve tanto para light como dark, sin paleta dual.
+
+function shiftLightness(hex: string, deltaPct: number): string {
+  const m = hex.match(/^#?([0-9a-f]{6})$/i);
+  if (!m) return hex;
+  const n = parseInt(m[1], 16);
+  let r = (n >> 16) & 0xff;
+  let g = (n >> 8) & 0xff;
+  let b = n & 0xff;
+  const factor = 1 + deltaPct / 100;
+  r = Math.max(0, Math.min(255, Math.round(r * factor)));
+  g = Math.max(0, Math.min(255, Math.round(g * factor)));
+  b = Math.max(0, Math.min(255, Math.round(b * factor)));
+  return `#${((r << 16) | (g << 8) | b).toString(16).padStart(6, '0')}`;
+}
+
+export function deriveAccentColorsFromHex(hex: string): AccentColors {
+  const normalized = hex.startsWith('#') ? hex : `#${hex}`;
+  return {
+    primary: normalized,
+    hover: shiftLightness(normalized, 15),
+    active: shiftLightness(normalized, -15),
+    outline: hexToRgba(normalized, 0.24),
+  };
+}
+
 // ─── Theme builder ───────────────────────────────────────────────────────────
 
 function hexToRgba(hex: string, alpha: number): string {

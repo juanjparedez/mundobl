@@ -482,8 +482,11 @@ const fr: TranslationShape = {
     themeDark: 'Sombre',
     skinLabel: 'Style visuel',
     skinDefault: 'Par défaut',
-    skinPremium: 'Premium Dark',
+    skinPremium: 'Premium',
+    skinPremiumLightDisabledHint:
+      "Premium n'est disponible qu'en mode sombre",
     accentLabel: "Couleur d'accentuation",
+    accentResetCustom: 'Réinitialiser',
     toneLabel: 'Teinte de base',
     toneDefault: 'Par défaut',
     toneWarm: 'Chaude',
