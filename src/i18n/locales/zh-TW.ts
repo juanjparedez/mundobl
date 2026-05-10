@@ -2308,6 +2308,12 @@ const zhTW: TranslationShape = {
     "seriesViews": "觀看次數",
     "seriesActions": "管理員操作"
   },
+  "worldMap": {
+    "title": "已瀏覽國家",
+    "empty": "您的目錄中尚未有任何國家。",
+    "serieSingular": "劇集",
+    "seriePlural": "劇集"
+  },
   "workspace": {
     "backToCatalog": "返回目錄",
     "viewPublic": "公開檢視",

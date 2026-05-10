@@ -2299,6 +2299,12 @@ export type TranslationShape = {
     seriesViews: string;
     seriesActions: string;
   };
+  worldMap: {
+    title: string;
+    empty: string;
+    serieSingular: string;
+    seriePlural: string;
+  };
   workspace: {
     backToCatalog: string;
     viewPublic: string;
@@ -4770,6 +4776,12 @@ const es: TranslationShape = {
     seriesViews: 'Visitas',
     seriesActions: 'Acciones admin',
   },
+  worldMap: {
+    title: 'Países visitados',
+    empty: 'Aún no hay países en tu catálogo.',
+    serieSingular: 'serie',
+    seriePlural: 'series',
+  },
   workspace: {
     backToCatalog: 'Volver al catálogo',
     viewPublic: 'Vista pública',
@@ -7227,6 +7239,12 @@ const en: TranslationShape = {
     empty: 'No recent activity.',
     seriesViews: 'Views',
     seriesActions: 'Admin actions',
+  },
+  worldMap: {
+    title: 'Countries visited',
+    empty: 'No countries in your catalog yet.',
+    serieSingular: 'series',
+    seriePlural: 'series',
   },
   workspace: {
     backToCatalog: 'Back to catalog',

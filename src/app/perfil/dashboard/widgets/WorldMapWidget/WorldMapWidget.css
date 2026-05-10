@@ -1,0 +1,40 @@
+.mb-world-map {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  padding: 8px;
+}
+
+.mb-world-map svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+}
+
+.mb-world-map__tooltip {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 10px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-sm);
+  font-size: 11px;
+  pointer-events: none;
+  box-shadow: var(--box-shadow-card);
+}
+
+.mb-world-map__tooltip strong {
+  color: var(--primary-color);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.mb-world-map__tooltip span {
+  color: var(--text-secondary);
+}
