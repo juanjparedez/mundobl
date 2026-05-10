@@ -67,23 +67,32 @@
   color: var(--primary-color);
 }
 
-/* Row con presets + ColorPicker custom + reset opcional */
+/* Row con presets + ColorPicker custom + reset opcional.
+ * UNA sola fila: presets scrollean horizontal si no entran. ColorPicker
+ * pegado a la derecha como "abrir picker libre". */
 .settings-panel__accent-row {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: var(--spacing-xs);
+  gap: 8px;
+  min-width: 0;
 }
 
-/* Acentos: swatches circulares */
 .settings-panel__accents {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-xs);
+  flex: 1;
+  min-width: 0;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none; /* firefox */
+  padding: 2px 0; /* deja respirar el outline del activo */
+}
+
+.settings-panel__accents::-webkit-scrollbar {
+  display: none;
 }
 
 .settings-panel__color-picker {
-  margin-left: auto;
+  flex-shrink: 0;
 }
 
 .settings-panel__color-picker--active {
@@ -93,8 +102,9 @@
 }
 
 .settings-panel__accent {
-  width: 28px;
-  height: 28px;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
   border-radius: 50%;
   border: 2px solid transparent;
   cursor: pointer;

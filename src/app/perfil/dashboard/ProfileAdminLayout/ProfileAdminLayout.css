@@ -66,6 +66,11 @@
   min-height: var(--layout-cell-min-full);
 }
 
+/* Cell shelf override: solo el shelf, no el de myComments */
+.mb-profile-admin__row--full .mb-profile-admin__cell--shelf {
+  min-height: var(--layout-cell-min-shelf);
+}
+
 /* ─── Responsive ────────────────────────────────────────────────────────── */
 
 @media (max-width: 1280px) {

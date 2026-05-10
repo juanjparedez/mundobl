@@ -40,20 +40,25 @@ export function ProfileAdminLayout({ data }: ProfileAdminLayoutProps) {
         </div>
       </section>
 
-      {/* Row 2: Casos + Notificaciones (recent admin activity) + Currently watching */}
-      <section className="mb-profile-admin__row mb-profile-admin__row--3up">
+      {/* Row 2: Currently watching shelf full-width (necesita ancho para
+       *  el carrusel horizontal de cards). */}
+      <section className="mb-profile-admin__row mb-profile-admin__row--full">
+        <div className="mb-profile-admin__cell mb-profile-admin__cell--shelf">
+          <CurrentlyWatchingWidget items={data.currentlyWatching} />
+        </div>
+      </section>
+
+      {/* Row 3: Mis casos + Notificaciones (admin activity) en 2 cols */}
+      <section className="mb-profile-admin__row mb-profile-admin__row--2up">
         <div className="mb-profile-admin__cell">
           <MyCasesWidget />
         </div>
         <div className="mb-profile-admin__cell">
           <DashboardNotificationsWidget />
         </div>
-        <div className="mb-profile-admin__cell">
-          <CurrentlyWatchingWidget items={data.currentlyWatching} />
-        </div>
       </section>
 
-      {/* Row 3: Mis reviews + Disputas + Recently completed */}
+      {/* Row 4: Mis reviews + Disputas + Recently completed */}
       <section className="mb-profile-admin__row mb-profile-admin__row--3up">
         <div className="mb-profile-admin__cell">
           <MyReviewsWidget recentReviews={data.recentReviews} />
