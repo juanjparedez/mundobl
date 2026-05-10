@@ -87,7 +87,10 @@ export async function GET() {
     for (const item of dbItems) {
       const existing = versionMap.get(item.version);
       if (existing) {
-        existing.items.push({ body: item.body, category: item.category ?? null });
+        existing.items.push({
+          body: item.body,
+          category: item.category ?? null,
+        });
         if (!existing.label && item.versionLabel) {
           existing.label = item.versionLabel;
         }
