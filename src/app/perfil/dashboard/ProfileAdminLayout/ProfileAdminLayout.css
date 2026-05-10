@@ -1,0 +1,97 @@
+/* Layout fijo admin del /perfil — copia literal de style-guide/my-profile.png.
+ * No es grid reordenable: cada seccion vive en una posicion definida via
+ * CSS grid. El bg lo da el body via skin premium-dark; los widgets traen
+ * su propio panel chrome (Widget shell). Aca solo distribuimos celdas y
+ * gaps. */
+
+.mb-profile-admin {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.mb-profile-admin__row {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+}
+
+.mb-profile-admin__cell {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.mb-profile-admin__cell > * {
+  flex: 1;
+  min-height: 0;
+}
+
+/* Row heatmap (8/4 split): heatmap wide a la izquierda + quickadmin
+ * lateral. En el mock el heatmap es la pieza visual mas prominente
+ * arriba; quickadmin es un bloque de botones compacto al lado. */
+.mb-profile-admin__row--heatmap {
+  grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+}
+.mb-profile-admin__cell--heatmap {
+  min-height: 220px;
+}
+.mb-profile-admin__cell--quickadmin {
+  min-height: 220px;
+}
+
+/* Row full-width (1 col): para shelves o tablas que necesitan ancho
+ * completo (CurrentlyWatching carrusel, MyComments). */
+.mb-profile-admin__row--full {
+  grid-template-columns: minmax(0, 1fr);
+}
+.mb-profile-admin__cell--shelf {
+  min-height: 260px;
+}
+
+/* Rows N-up: igual ancho por cell. */
+.mb-profile-admin__row--2up {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.mb-profile-admin__row--3up {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.mb-profile-admin__row--4up {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+/* Row charts: donut compacto (4 cols) + completedByYear wide (8 cols).
+ * El mock muestra el donut prominente pero sigue siendo mas chico que
+ * el line chart de actividad por año. */
+.mb-profile-admin__row--charts {
+  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+}
+.mb-profile-admin__row--charts .mb-profile-admin__cell {
+  min-height: 280px;
+}
+.mb-profile-admin__cell--wide {
+  min-width: 0;
+}
+
+/* Tablet: 2up se mantiene; 3up/4up colapsan a 2 cols; charts a 1 col. */
+@media (max-width: 1100px) {
+  .mb-profile-admin__row--heatmap,
+  .mb-profile-admin__row--charts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .mb-profile-admin__row--3up,
+  .mb-profile-admin__row--4up {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Mobile: todo a 1 col. */
+@media (max-width: 720px) {
+  .mb-profile-admin__row--2up,
+  .mb-profile-admin__row--3up,
+  .mb-profile-admin__row--4up {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
