@@ -194,16 +194,9 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
               format="hex"
               className={`settings-panel__color-picker${customAccent ? ' settings-panel__color-picker--active' : ''}`}
             />
-            {customAccent && (
-              <Button
-                size="small"
-                type="text"
-                onClick={() => setCustomAccent(null)}
-                aria-label={t('settings.accentResetCustom')}
-              >
-                {t('settings.accentResetCustom')}
-              </Button>
-            )}
+            {/* Para volver al preset basta con clickear cualquier swatch
+             * (handleSetAccent limpia customAccent). No hace falta un
+             * boton extra de "Restaurar". */}
           </div>
         </div>
 

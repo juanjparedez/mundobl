@@ -87,6 +87,19 @@
   --layout-cell-min-full: 440px;
   --layout-row-gap: 14px;
 
+  /* Currently-watching shelf (CurrentlyWatchingWidget) */
+  --cw-card-width: 160px;
+  --cw-shelf-gap: 10px;
+  --cw-shelf-padding: 10px;
+
+  /* Empty state */
+  --empty-icon-size: 36px;
+  --empty-title-size: 13px;
+  --empty-desc-size: 12px;
+  --empty-padding: var(--spacing-md);
+  --empty-gap: 8px;
+  --empty-min-height: 200px;
+
   /* Tipografía: stack por defecto (sistema) */
   --font-family:
     'Space Grotesk', 'Manrope', 'Avenir Next', 'Segoe UI', sans-serif;
@@ -291,6 +304,19 @@
   --layout-cell-min-tall: 200px;
   --layout-cell-min-full: 340px;
   --layout-row-gap: 10px;
+
+  /* Shelf de currently watching mas compacto */
+  --cw-card-width: 130px;
+  --cw-shelf-gap: 8px;
+  --cw-shelf-padding: 8px;
+
+  /* Empty state denso: icono mas chico + texto chico + sin min-height */
+  --empty-icon-size: 28px;
+  --empty-title-size: 12px;
+  --empty-desc-size: 11px;
+  --empty-padding: 8px;
+  --empty-gap: 6px;
+  --empty-min-height: 100px;
 }
 
 [data-density='spacious'] {
@@ -329,6 +355,17 @@
   --layout-cell-min-tall: 380px;
   --layout-cell-min-full: 560px;
   --layout-row-gap: 18px;
+
+  --cw-card-width: 200px;
+  --cw-shelf-gap: 14px;
+  --cw-shelf-padding: 14px;
+
+  --empty-icon-size: 44px;
+  --empty-title-size: 14px;
+  --empty-desc-size: 13px;
+  --empty-padding: var(--spacing-lg);
+  --empty-gap: 10px;
+  --empty-min-height: 240px;
 }
 
 /* ─── Modo "ahorrar datos" ──────────────────────────────────────────── */
