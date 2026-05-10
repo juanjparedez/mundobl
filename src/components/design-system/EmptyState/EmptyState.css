@@ -3,8 +3,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: var(--spacing-md) var(--spacing-md);
+  gap: var(--empty-gap, 8px);
+  padding: var(--empty-padding, var(--spacing-md));
   text-align: center;
   border-radius: var(--border-radius-base);
   height: 100%;
@@ -16,24 +16,24 @@
 }
 
 .mb-empty-state--full {
-  min-height: 200px;
+  min-height: var(--empty-min-height, 200px);
 }
 
 .mb-empty-state__icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: var(--empty-icon-size, 36px);
+  height: var(--empty-icon-size, 36px);
   border-radius: 50%;
   background: color-mix(in srgb, var(--primary-color) 12%, transparent);
   color: var(--primary-color);
-  font-size: 16px;
+  font-size: calc(var(--empty-icon-size, 36px) * 0.45);
 }
 
 .mb-empty-state__title {
   margin: 0;
-  font-size: 13px;
+  font-size: var(--empty-title-size, 13px);
   font-weight: 500;
   color: var(--text-secondary);
   letter-spacing: 0;
@@ -42,7 +42,7 @@
 .mb-empty-state__description {
   margin: 0;
   max-width: 360px;
-  font-size: 12px;
+  font-size: var(--empty-desc-size, 12px);
   color: var(--text-tertiary);
   line-height: 1.4;
 }
