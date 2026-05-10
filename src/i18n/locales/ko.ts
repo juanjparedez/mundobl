@@ -2280,6 +2280,25 @@ const ko: TranslationShape = {
     "reports": "보고서",
     "auditLog": "감사 로그",
     "news": "뉴스"
+  },
+  "workspace": {
+    "backToCatalog": "카탈로그로 돌아가기",
+    "viewPublic": "공개 보기",
+    "metaSeasons": "시즌",
+    "metaEpisodes": "에피소드",
+    "metaReviews": "리뷰",
+    "metaPrivateNotes": "비공개 메모",
+    "actionEdit": "편집",
+    "tabOverview": "개요",
+    "tabOverviewPlaceholder": "시리즈 개요. 출시 예정.",
+    "tabAnalysis": "에피소드 분석",
+    "tabAnalysisPlaceholder": "에피소드별 분위기, 서브플롯, 캐릭터, 태그 및 메모가 포함된 상세 표. 출시 예정.",
+    "tabNotes": "비공개 메모",
+    "tabNotesPlaceholder": "이 시리즈에 대한 팀 비공개 메모.",
+    "tabData": "데이터",
+    "tabDataPlaceholder": "시리즈의 원본 편집 가능 메타데이터.",
+    "tabReviews": "리뷰",
+    "tabReviewsPlaceholder": "이 시리즈와 연결된 리뷰."
   }
 } as TranslationShape;
 

@@ -2280,6 +2280,25 @@ const th: TranslationShape = {
     "reports": "Reportes",
     "auditLog": "Audit log",
     "news": "Noticias"
+  },
+  "workspace": {
+    "backToCatalog": "กลับสู่แคตตาล็อก",
+    "viewPublic": "มุมมองสาธารณะ",
+    "metaSeasons": "ซีซัน",
+    "metaEpisodes": "ตอน",
+    "metaReviews": "รีวิว",
+    "metaPrivateNotes": "บันทึกส่วนตัว",
+    "actionEdit": "แก้ไข",
+    "tabOverview": "ภาพรวม",
+    "tabOverviewPlaceholder": "ภาพรวมซีรีส์ เร็วๆ นี้",
+    "tabAnalysis": "วิเคราะห์ตอน",
+    "tabAnalysisPlaceholder": "ตารางละเอียดพร้อมโทนเรื่อง, โครงเรื่องย่อย, ตัวละคร, แท็ก และบันทึกต่อตอน เร็วๆ นี้",
+    "tabNotes": "บันทึกส่วนตัว",
+    "tabNotesPlaceholder": "บันทึกส่วนตัวของทีมเกี่ยวกับซีรีส์นี้",
+    "tabData": "ข้อมูล",
+    "tabDataPlaceholder": "ข้อมูลเมตาที่แก้ไขได้สำหรับซีรีส์",
+    "tabReviews": "รีวิว",
+    "tabReviewsPlaceholder": "รีวิวที่เชื่อมโยงกับซีรีส์นี้"
   }
 } as TranslationShape;
 
