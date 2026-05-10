@@ -100,7 +100,7 @@ export function ProfileOverviewClient() {
 
         <ProfileStatsStrip stats={data.stats} />
 
-        {/* Bloque principal: 3 columnas alineadas al mock */}
+        {/* Bloque principal: 3 columnas alineadas al style-guide */}
         <div className="overview-page__main">
           <div className="overview-page__col-left">
             <OverviewWatchingShelf items={data.currentlyWatching} />

@@ -29,7 +29,7 @@ export interface ProfileStatsStripProps {
 }
 
 /** Fila horizontal compacta con los KPIs principales del usuario,
- *  alineada al mock (avatar header + stats strip + grid de widgets).
+ *  alineada al style-guide (avatar header + stats strip + grid de widgets).
  *  Vive FUERA del DashboardGrid: es siempre visible y no reordenable. */
 export function ProfileStatsStrip({ stats }: ProfileStatsStripProps) {
   const { t } = useLocale();
