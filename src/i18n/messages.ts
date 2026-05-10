@@ -1584,6 +1584,7 @@ export type TranslationShape = {
     dropImagesHere: string;
     errorImageType: string;
     errorImageSize: string;
+    errorImageDuplicate: string;
   };
   notFound: {
     description: string;
@@ -3925,6 +3926,7 @@ const es: TranslationShape = {
     dropImagesHere: 'Soltá las imágenes aquí',
     errorImageType: '{name} no es una imagen válida',
     errorImageSize: '{name} pesa más de 5MB',
+    errorImageDuplicate: '{name} ya está en la lista',
   },
   notFound: {
     description: 'La página que buscas no existe o fue movida.',
@@ -6290,6 +6292,7 @@ const en: TranslationShape = {
     dropImagesHere: 'Drop images here',
     errorImageType: '{name} is not a valid image',
     errorImageSize: '{name} is over 5MB',
+    errorImageDuplicate: '{name} is already in the list',
   },
   notFound: {
     description: 'The page you are looking for does not exist or was moved.',

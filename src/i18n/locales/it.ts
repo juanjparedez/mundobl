@@ -1592,7 +1592,8 @@ const it: TranslationShape = {
     "takePhoto": "Scatta foto",
     "dropImagesHere": "Trascina qui le immagini",
     "errorImageType": "{name} non è un'immagine valida",
-    "errorImageSize": "{name} supera i 5MB"
+    "errorImageSize": "{name} supera i 5MB",
+    "errorImageDuplicate": "{name} è già nella lista"
   },
   "notFound": {
     "description": "La pagina che stai cercando non esiste o è stata spostata.",

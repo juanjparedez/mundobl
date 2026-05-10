@@ -1592,7 +1592,8 @@ const zhTW: TranslationShape = {
     "takePhoto": "拍照",
     "dropImagesHere": "將圖片拖曳至此",
     "errorImageType": "{name} 不是有效的圖片",
-    "errorImageSize": "{name} 超過 5MB"
+    "errorImageSize": "{name} 超過 5MB",
+    "errorImageDuplicate": "{name}已在列表中"
   },
   "notFound": {
     "description": "您要找的頁面不存在或已移動。",
