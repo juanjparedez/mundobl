@@ -13,7 +13,6 @@ import {
   HeartOutlined,
   PlayCircleOutlined,
   GlobalOutlined,
-  ThunderboltOutlined,
   ReadOutlined,
   EyeInvisibleOutlined,
   TranslationOutlined,
@@ -97,14 +96,10 @@ export function LandingPage({ stats }: LandingPageProps) {
     },
   ];
 
+  // Novedad de "Asistente IA" oculta de la landing por ahora — la
+  // funcionalidad sigue viva (helper en src/lib/gemini.ts), pero no
+  // queremos promocionarla en home hasta que este pulida.
   const novedades = [
-    {
-      icon: <ThunderboltOutlined />,
-      tag: t('landing.novedadAiTag'),
-      title: t('landing.novedadAiTitle'),
-      desc: t('landing.novedadAiDesc'),
-      color: 'gold' as const,
-    },
     {
       icon: <ReadOutlined />,
       tag: t('landing.novedadReviewsTag'),
@@ -210,7 +205,7 @@ export function LandingPage({ stats }: LandingPageProps) {
 
         <div className="landing__hero-content">
           <div className="landing__hero-badge">
-            <ThunderboltOutlined /> {t('landing.heroBadge')}
+            <ReadOutlined /> {t('landing.heroBadge')}
           </div>
           <h1 className="landing__title">MundoBL</h1>
           <p className="landing__subtitle">{t('landing.subtitle')}</p>
@@ -264,10 +259,8 @@ export function LandingPage({ stats }: LandingPageProps) {
           />
           <div className="landing__hero-glow" />
 
-          {/* Floating chips sobre la artwork */}
-          <div className="landing__floating-chip landing__floating-chip--ai">
-            <ThunderboltOutlined /> AI
-          </div>
+          {/* Floating chips sobre la artwork. Chip 'AI' oculto por ahora
+           * (mismo motivo que la novedad arriba). */}
           <div className="landing__floating-chip landing__floating-chip--lang">
             <TranslationOutlined /> 10 idiomas
           </div>

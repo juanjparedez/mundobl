@@ -1307,7 +1307,7 @@ const th: TranslationShape = {
     description:
       'พื้นที่สำหรับซีรีส์ BL ติดตามสิ่งที่คุณกำลังดู ให้คะแนนเรื่องโปรด และแบ่งปันความคิดของคุณ',
     goToProfile: 'โปรไฟล์ของฉัน',
-    heroBadge: 'ผู้ช่วย AI · รีวิว · 10 ภาษา',
+    heroBadge: 'รีวิว · 10 ภาษา',
     statSeries: 'ซีรีส์ในแคตตาล็อก',
     statViews: 'ครั้งที่ดู',
     statComments: 'ความคิดเห็น',

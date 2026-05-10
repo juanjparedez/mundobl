@@ -1292,7 +1292,7 @@ const ja: TranslationShape = {
     description:
       'BLシリーズ専門のスペース。視聴中の作品を追跡し、お気に入りを評価し、感想を共有しましょう。',
     goToProfile: 'マイプロフィール',
-    heroBadge: 'AIアシスタント · レビュー · 10言語',
+    heroBadge: 'レビュー · 10言語',
     statSeries: 'カタログ内のシリーズ',
     statViews: '視聴回数',
     statComments: 'コメント',

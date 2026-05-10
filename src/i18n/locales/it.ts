@@ -1325,7 +1325,7 @@ const it: TranslationShape = {
     description:
       'Uno spazio dedicato alle serie BL. Tieni traccia di ciò che guardi, valuta i tuoi preferiti e condividi i tuoi pensieri.',
     goToProfile: 'Il mio profilo',
-    heroBadge: 'Assistente AI · Recensioni · 10 lingue',
+    heroBadge: 'Recensioni · 10 lingue',
     statSeries: 'serie nel catalogo',
     statViews: 'volte guardato',
     statComments: 'commenti',

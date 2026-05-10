@@ -3490,7 +3490,7 @@ const es: TranslationShape = {
     description:
       'Un espacio dedicado a las series BL. Seguí lo que estás viendo, calificá tus favoritas y compartí tus opiniones.',
     goToProfile: 'Mi Perfil',
-    heroBadge: 'Asistente IA · Reseñas · 10 idiomas',
+    heroBadge: 'Reseñas · 10 idiomas',
     statSeries: 'series en catálogo',
     statViews: 'veces vistas',
     statComments: 'comentarios',
@@ -5764,7 +5764,7 @@ const en: TranslationShape = {
     description:
       'A space dedicated to BL series. Track what you are watching, rate your favorites, and share your thoughts.',
     goToProfile: 'My Profile',
-    heroBadge: 'AI assistant · Reviews · 10 languages',
+    heroBadge: 'Reviews · 10 languages',
     statSeries: 'series in catalog',
     statViews: 'times watched',
     statComments: 'comments',

@@ -1281,7 +1281,7 @@ const zhTW: TranslationShape = {
     description:
       '一個專為 BL 劇集打造的空間。追蹤您正在觀看的劇集、評價您的最愛並分享您的想法。',
     goToProfile: '我的個人資料',
-    heroBadge: 'AI 助理 · 評論 · 10 種語言',
+    heroBadge: '評論 · 10 種語言',
     statSeries: '目錄中的劇集',
     statViews: '觀看次數',
     statComments: '評論',

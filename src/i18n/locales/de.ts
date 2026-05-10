@@ -1334,7 +1334,7 @@ const de: TranslationShape = {
     description:
       'Ein Bereich, der BL-Serien gewidmet ist. Verfolge, was du schaust, bewerte deine Favoriten und teile deine Gedanken.',
     goToProfile: 'Mein Profil',
-    heroBadge: 'KI-Assistent · Rezensionen · 10 Sprachen',
+    heroBadge: 'Rezensionen · 10 Sprachen',
     statSeries: 'Serien im Katalog',
     statViews: 'Mal angesehen',
     statComments: 'Kommentare',
