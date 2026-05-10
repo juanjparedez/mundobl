@@ -143,15 +143,15 @@
     color-mix(in srgb, var(--primary-color) 40%, transparent);
 }
 
-/* Hero right side — decorative image */
+/* Hero right side — decorative image.
+ * Sin overflow:hidden: los floating chips estan posicionados con offsets
+ * negativos (right: -8%, left: -2%) y necesitan poder salirse del card.
+ * La imagen interna mantiene su propio border-radius. Sin border ni
+ * background del card — la artwork se sostiene sola y queda mas limpio. */
 .landing__hero-visual {
   position: relative;
   width: 380px;
   flex-shrink: 0;
-  border-radius: calc(var(--border-radius-lg) + 6px);
-  overflow: hidden;
-  border: 1px solid var(--border-color-secondary);
-  background: color-mix(in srgb, var(--bg-elevated) 90%, transparent);
 }
 
 /* Variante mobile: oculta en desktop, full-width en mobile */

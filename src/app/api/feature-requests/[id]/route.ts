@@ -15,13 +15,8 @@ export async function PUT(
     const body = await request.json();
     const { status, priority } = body;
 
-    const validStatuses = [
-      'pendiente',
-      'en_progreso',
-      'completado',
-      'descartado',
-    ];
-    const validPriorities = ['baja', 'media', 'alta'];
+    const validStatuses = ['OPEN', 'IN_PROGRESS', 'COMPLETED', 'REJECTED'];
+    const validPriorities = ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'];
 
     const updateData: Record<string, string> = {};
     if (status) {
