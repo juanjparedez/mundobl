@@ -1,0 +1,71 @@
+.mb-my-disputes__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-md);
+}
+
+.mb-my-disputes {
+  list-style: none;
+  margin: 0;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mb-my-disputes__item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px;
+  border-left: 2px solid
+    color-mix(in srgb, var(--warning-color) 60%, transparent);
+  background: color-mix(in srgb, var(--warning-color) 6%, transparent);
+  border-radius: var(--border-radius-sm);
+}
+
+.mb-my-disputes__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.mb-my-disputes__title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.mb-my-disputes__head .ant-tag {
+  margin: 0;
+  font-size: 10px;
+  padding: 0 6px;
+  line-height: 16px;
+  height: 18px;
+}
+
+.mb-my-disputes__meta {
+  display: flex;
+  gap: 4px;
+  font-size: 10px;
+  color: var(--text-tertiary);
+  flex-wrap: wrap;
+}
+
+.mb-my-disputes__target {
+  color: var(--text-secondary);
+}
+
+.mb-my-disputes__message {
+  margin: 2px 0 0;
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

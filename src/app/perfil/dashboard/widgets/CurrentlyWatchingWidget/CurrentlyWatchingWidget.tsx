@@ -41,6 +41,7 @@ export function CurrentlyWatchingWidget({
       title={t('profileDashboard.widgetCurrentlyWatching')}
       icon={<PlayCircleOutlined />}
       noPadding
+      fade={items.length > 3}
     >
       <ul className="mb-currently-watching">
         {items.map(({ seriesId, series, progress, nextEpisode }) => {

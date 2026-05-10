@@ -28,30 +28,31 @@
 .rating-hero__card--official {
   background: linear-gradient(
     135deg,
-    var(--color-primary, #1677ff) 0%,
-    color-mix(in srgb, var(--color-primary, #1677ff) 80%, #000) 100%
+    var(--primary-color) 0%,
+    color-mix(in srgb, var(--primary-color) 70%, #000) 100%
   );
   color: #fff;
-  box-shadow: 0 4px 14px rgba(22, 119, 255, 0.18);
+  box-shadow: 0 4px 14px
+    color-mix(in srgb, var(--primary-color) 22%, transparent);
 }
 
 .rating-hero__card--user {
   background: linear-gradient(
     135deg,
-    rgba(250, 173, 20, 0.12) 0%,
+    color-mix(in srgb, var(--warning-color) 14%, transparent) 0%,
     var(--bg-base) 100%
   );
-  border-color: rgba(250, 173, 20, 0.3);
+  border-color: color-mix(in srgb, var(--warning-color) 32%, transparent);
 }
 
 .rating-hero__icon {
   font-size: 1.5em;
-  color: #faad14;
+  color: var(--warning-color);
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15));
 }
 
 .rating-hero__card--official .rating-hero__icon {
-  color: #ffd54f;
+  color: color-mix(in srgb, var(--warning-color) 70%, #fff);
 }
 
 .rating-hero__score {

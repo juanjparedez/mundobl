@@ -588,12 +588,16 @@ Cada vista premium se monta como un grid responsive de **widgets reordenables y 
 
 **Vistas dashboard implementadas (todas opt-in via URL alterna, la vista clasica queda intacta):**
 
-| Vista             | Ruta                       | Widgets                                                      | dashboardKey    |
-| ----------------- | -------------------------- | ------------------------------------------------------------ | --------------- |
-| Perfil de usuario | `/perfil/dashboard`        | Overview, Ratings, RecentlyCompleted, Notifications, MyCases | `profile`       |
-| Detalle de titulo | `/catalogo/[id]/dashboard` | Hero, Info, Actors, Ratings                                  | `series-detail` |
-| Catalogo          | `/catalogo/dashboard`      | Stats globales, RecentlyAdded                                | `catalogo`      |
-| Admin home        | `/admin/dashboard`         | KPIs, Alerts                                                 | `admin-home`    |
+| Vista             | Ruta                       | Widgets                                                                                                                                                                                                                                                                  | dashboardKey    |
+| ----------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------- |
+| Perfil de usuario | `/perfil` (= dashboard)    | Overview, Ratings, RecentlyCompleted, Notifications, MyCases, Heatmap, GenresDonut, CompletedByYear, TopGenresList, TopCountriesList, CurrentlyWatching, TopActors, TopCompanies, TopRated, Favorites, MyReviews, MyDisputes, MyComments. Footer: ProfileSettings + SubscriptionsSection + ClientVersionInfo. | `profile-v3`    |
+| Detalle de titulo | `/catalogo/[id]/dashboard` | Hero, Info, Actors, Ratings                                                                                                                                                                                                                                              | `series-detail` |
+| Catalogo          | `/catalogo/dashboard`      | Stats globales, RecentlyAdded                                                                                                                                                                                                                                            | `catalogo`      |
+| Admin home        | `/admin/dashboard`         | KPIs, Alerts                                                                                                                                                                                                                                                             | `admin-home`    |
+
+**Convencion `fade` en Widgets:** los widgets cuyo contenido puede exceder la altura del cell del grid pasan `fade={true}` al `<Widget>` para activar un degradado fade-out abajo. Reemplaza el `overflow: auto` previo (scrollbar interno feo). Casos: listas largas (RecentlyCompleted, CurrentlyWatching, Notifications, MyCases, TopActors, etc.) y MyCommentsWidget que sí mantiene scroll interno explícitamente porque su lista paginada no se presta al fade.
+
+**Layout footer del dashboard de perfil:** abajo del grid se renderizan `ProfileSettings` + `SubscriptionsSection` + `ClientVersionInfo` como bloque fijo (no son widgets reordenables — son singletons que se esperan en una posicion estable). Ver `mb-perfil-dashboard__footer*` en [dashboard.css](src/app/perfil/dashboard/dashboard.css).
 
 **Como agregar una vista dashboard nueva:**
 

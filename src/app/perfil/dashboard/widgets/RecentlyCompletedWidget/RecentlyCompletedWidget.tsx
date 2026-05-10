@@ -24,6 +24,7 @@ export function RecentlyCompletedWidget({
       title={t('profileDashboard.widgetRecentlyCompleted')}
       icon={<CheckCircleOutlined />}
       noPadding
+      fade={items.length > 4}
     >
       {items.length === 0 ? (
         <EmptyState
@@ -46,8 +47,8 @@ export function RecentlyCompletedWidget({
                       <Image
                         src={series.imageUrl}
                         alt=""
-                        width={48}
-                        height={68}
+                        width={40}
+                        height={56}
                         unoptimized={!isSupabaseImageUrl(series.imageUrl)}
                       />
                     ) : (

@@ -9,7 +9,11 @@ import { MyCasesSection } from '../../../MyCasesSection/MyCasesSection';
 export function MyCasesWidget() {
   const { t } = useLocale();
   return (
-    <Widget title={t('profileDashboard.widgetMyCases')} icon={<BugOutlined />}>
+    <Widget
+      title={t('profileDashboard.widgetMyCases')}
+      icon={<BugOutlined />}
+      fade
+    >
       <MyCasesSection />
     </Widget>
   );
