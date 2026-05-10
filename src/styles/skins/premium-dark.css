@@ -1,40 +1,66 @@
 /* ─── Skin: Premium Dark ─────────────────────────────────────────────
- * Estetica premium dark inspirada en pro admin dashboards / SaaS.
- * Solo aplica cuando data-theme='dark'. En light cae al default.
+ * Estetica premium dark: SaaS pro admin / streaming platform.
+ * Aplicada por default cuando data-skin='premium' AND data-theme='dark'.
  *
- * Mapea los tokens existentes (--bg-*, --text-*, --border-*, --radius-*,
- * --box-shadow-*) y agrega un namespace --mb-* para componentes nuevos
- * que quieran usar la paleta directamente.
- *
- * El accent (--primary-color y derivados) NO se toca: queda configurable
- * por el usuario via Settings > accent.
+ * Token philosophy:
+ *  - --mb-*: paleta cruda, namespace propio. Componentes nuevos usan
+ *    estos directos.
+ *  - mapeo a tokens existentes (--bg-*, --text-*, --border-*, etc.)
+ *    para que TODA la app preexistente herede la paleta sin tocar JS.
+ *  - acento dorado FORZADO con !important para que el accent picker
+ *    no pueda ensuciar la skin premium. Si un usuario quiere otro
+ *    color, debe primero cambiar a skin='default'.
  */
 
 html[data-skin='premium'][data-theme='dark'] {
-  /* ─── Paleta cruda (namespace --mb-*) ─────────────────────────── */
-  --mb-bg: #090911;
+  /* ─── Surfaces (negro/violeta profundo) ─────────────────────── */
+  --mb-bg: #0c0a14;
   --mb-bg-soft: #11101d;
   --mb-panel: #171423;
-  --mb-panel-2: #211b32;
-  --mb-panel-3: #2a2340;
+  --mb-panel-2: #1d1830;
+  --mb-panel-3: #251f3d;
+  --mb-panel-strong: #2c2545;
+
+  /* ─── Texto ─────────────────────────────────────────────────── */
   --mb-text: #f5f1ff;
   --mb-text-muted: #d2cce0;
   --mb-text-dim: #a9a1b8;
   --mb-text-disabled: #6b6378;
+
+  /* ─── Borders sutiles ───────────────────────────────────────── */
   --mb-border: rgba(255, 255, 255, 0.08);
-  --mb-border-soft: rgba(255, 255, 255, 0.06);
+  --mb-border-soft: rgba(255, 255, 255, 0.05);
   --mb-border-strong: rgba(255, 255, 255, 0.14);
+
+  /* ─── Acentos (gold principal, secundarios para estados) ────── */
+  --mb-gold: #f6b51e;
+  --mb-gold-hover: #ffc83d;
+  --mb-gold-active: #d99a13;
+  --mb-gold-soft: rgba(246, 181, 30, 0.14);
+  --mb-gold-soft-strong: rgba(246, 181, 30, 0.28);
+  --mb-purple: #7c4dff;
+  --mb-purple-soft: rgba(124, 77, 255, 0.16);
+  --mb-blue: #4f8cff;
+  --mb-blue-soft: rgba(79, 140, 255, 0.16);
+  --mb-green: #48c774;
+  --mb-green-soft: rgba(72, 199, 116, 0.16);
+  --mb-red: #ff5c5c;
+  --mb-red-soft: rgba(255, 92, 92, 0.16);
+
+  /* ─── Radii ─────────────────────────────────────────────────── */
   --mb-radius-sm: 10px;
   --mb-radius-md: 14px;
   --mb-radius-lg: 18px;
   --mb-radius-xl: 24px;
+
+  /* ─── Shadows ───────────────────────────────────────────────── */
   --mb-shadow-soft:
-    0 1px 2px rgba(0, 0, 0, 0.25), 0 8px 24px rgba(0, 0, 0, 0.35);
+    0 1px 2px rgba(0, 0, 0, 0.25), 0 8px 24px rgba(0, 0, 0, 0.32);
   --mb-shadow-elevated:
     0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 12px 40px rgba(0, 0, 0, 0.5);
   --mb-shadow-pressed: inset 0 2px 6px rgba(0, 0, 0, 0.45);
 
-  /* ─── Mapeo a tokens existentes ───────────────────────────────── */
+  /* ─── Mapeo a tokens existentes (la app entera hereda) ───────── */
   --bg-base: var(--mb-bg-soft);
   --bg-layout: var(--mb-bg);
   --bg-container: var(--mb-panel);
@@ -58,14 +84,16 @@ html[data-skin='premium'][data-theme='dark'] {
   --box-shadow-base: var(--mb-shadow-soft);
   --box-shadow-card: var(--mb-shadow-soft);
 
-  /* Soft fill derivado del accent (gold-soft, purple-soft, etc.):
-   * el accent activo lo decide el ThemeProvider via --primary-color. */
-  --accent-soft: color-mix(in srgb, var(--primary-color) 14%, transparent);
-  --accent-soft-strong: color-mix(
-    in srgb,
-    var(--primary-color) 22%,
-    transparent
-  );
+  /* ─── Accent dorado forzado ──────────────────────────────────
+   * !important para ganar contra los inline styles que pone el
+   * ThemeProvider en :root cuando aplica el accent del usuario.
+   * Esto asegura que premium siempre se vea premium. */
+  --primary-color: var(--mb-gold) !important;
+  --primary-color-hover: var(--mb-gold-hover) !important;
+  --primary-color-active: var(--mb-gold-active) !important;
+  --primary-color-outline: var(--mb-gold-soft-strong) !important;
+  --accent-soft: var(--mb-gold-soft);
+  --accent-soft-strong: var(--mb-gold-soft-strong);
 }
 
 /* ─── Backdrop premium del shell ─────────────────────────────────── */
@@ -73,12 +101,12 @@ html[data-skin='premium'][data-theme='dark'] body {
   background:
     radial-gradient(
       ellipse at top left,
-      rgba(124, 77, 255, 0.06),
+      rgba(124, 77, 255, 0.05),
       transparent 60%
     ),
     radial-gradient(
       ellipse at bottom right,
-      rgba(79, 140, 255, 0.04),
+      rgba(246, 181, 30, 0.04),
       transparent 60%
     ),
     var(--mb-bg);
@@ -102,13 +130,16 @@ html[data-skin='premium'][data-theme='dark'] .app-sidebar .ant-menu {
   background: transparent;
 }
 
+/* Sidebar item activo: fondo gold-soft + texto gold + barra dorada
+ * a la izquierda. Coincide con el mock. */
 html[data-skin='premium'][data-theme='dark']
   .ant-menu-dark
   .ant-menu-item-selected {
-  background: var(--accent-soft) !important;
-  color: var(--primary-color) !important;
+  background: var(--mb-gold-soft) !important;
+  color: var(--mb-gold) !important;
   font-weight: 600;
   position: relative;
+  border-radius: var(--mb-radius-sm);
 }
 
 html[data-skin='premium'][data-theme='dark']
@@ -121,11 +152,123 @@ html[data-skin='premium'][data-theme='dark']
   bottom: 6px;
   width: 3px;
   border-radius: 0 3px 3px 0;
-  background: var(--primary-color);
+  background: var(--mb-gold);
 }
 
 html[data-skin='premium'][data-theme='dark']
   .ant-menu-dark
   .ant-menu-item:hover {
   background: rgba(255, 255, 255, 0.04) !important;
+}
+
+/* ─── TopBar premium ─────────────────────────────────────────────── */
+html[data-skin='premium'][data-theme='dark'] .topbar {
+  background: rgba(12, 10, 20, 0.78);
+  border-bottom-color: var(--mb-border-soft);
+  backdrop-filter: saturate(160%) blur(14px);
+}
+
+/* ─── Cards: bordes y radii consistentes ─────────────────────────── */
+html[data-skin='premium'][data-theme='dark'] .ant-card,
+html[data-skin='premium'][data-theme='dark'] .mb-panel-card,
+html[data-skin='premium'][data-theme='dark'] .mb-stat-card {
+  background: var(--mb-panel);
+  border-color: var(--mb-border);
+  border-radius: var(--mb-radius-md);
+}
+
+html[data-skin='premium'][data-theme='dark']
+  .ant-card-bordered:hover,
+html[data-skin='premium'][data-theme='dark'] .mb-panel-card:hover {
+  border-color: var(--mb-border-strong);
+}
+
+/* ─── AntD overrides puntuales para dark profundo ────────────────── */
+html[data-skin='premium'][data-theme='dark'] .ant-input,
+html[data-skin='premium'][data-theme='dark'] .ant-input-affix-wrapper,
+html[data-skin='premium'][data-theme='dark'] .ant-select-selector,
+html[data-skin='premium'][data-theme='dark'] .ant-picker {
+  background: var(--mb-panel) !important;
+  border-color: var(--mb-border) !important;
+}
+
+html[data-skin='premium'][data-theme='dark'] .ant-input:focus,
+html[data-skin='premium'][data-theme='dark'] .ant-input-affix-wrapper-focused {
+  border-color: var(--mb-gold) !important;
+  box-shadow: 0 0 0 2px var(--mb-gold-soft);
+}
+
+/* Tabs con underline dorado en active */
+html[data-skin='premium'][data-theme='dark']
+  .ant-tabs-tab.ant-tabs-tab-active
+  .ant-tabs-tab-btn {
+  color: var(--mb-gold) !important;
+}
+
+html[data-skin='premium'][data-theme='dark'] .ant-tabs-ink-bar {
+  background: var(--mb-gold) !important;
+}
+
+/* Botones primarios dorados */
+html[data-skin='premium'][data-theme='dark'] .ant-btn-primary {
+  background: var(--mb-gold);
+  border-color: var(--mb-gold);
+  color: #1a1408;
+  font-weight: 600;
+}
+
+html[data-skin='premium'][data-theme='dark'] .ant-btn-primary:hover {
+  background: var(--mb-gold-hover) !important;
+  border-color: var(--mb-gold-hover) !important;
+  color: #1a1408 !important;
+}
+
+/* Tablas oscuras con header diferenciado */
+html[data-skin='premium'][data-theme='dark'] .ant-table {
+  background: transparent;
+}
+
+html[data-skin='premium'][data-theme='dark'] .ant-table-thead > tr > th {
+  background: var(--mb-panel-2) !important;
+  border-bottom-color: var(--mb-border) !important;
+  color: var(--mb-text-muted);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+html[data-skin='premium'][data-theme='dark'] .ant-table-tbody > tr > td {
+  border-bottom-color: var(--mb-border-soft) !important;
+}
+
+html[data-skin='premium'][data-theme='dark']
+  .ant-table-tbody
+  > tr:hover
+  > td {
+  background: var(--mb-panel-2) !important;
+}
+
+/* Tags y badges: bordes mas suaves */
+html[data-skin='premium'][data-theme='dark'] .ant-tag {
+  border-radius: 6px;
+}
+
+/* Modal/Drawer premium */
+html[data-skin='premium'][data-theme='dark'] .ant-modal-content,
+html[data-skin='premium'][data-theme='dark'] .ant-drawer-content {
+  background: var(--mb-panel);
+  border-radius: var(--mb-radius-lg);
+}
+
+html[data-skin='premium'][data-theme='dark'] .ant-modal-header,
+html[data-skin='premium'][data-theme='dark'] .ant-drawer-header {
+  background: transparent;
+  border-bottom-color: var(--mb-border-soft);
+}
+
+/* Dropdown items hover */
+html[data-skin='premium'][data-theme='dark']
+  .ant-dropdown-menu-item:hover {
+  background: var(--mb-panel-2) !important;
 }

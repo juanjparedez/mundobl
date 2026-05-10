@@ -438,8 +438,8 @@ export function DashboardClient() {
           editing={editing}
           onLayoutsChange={setLayouts}
           onRemoveWidget={removeWidget}
-          rowHeight={40}
-          gap={8}
+          rowHeight={36}
+          gap={10}
         />
 
         <WidgetPickerDrawer
