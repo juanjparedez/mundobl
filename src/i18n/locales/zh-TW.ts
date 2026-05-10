@@ -2302,6 +2302,12 @@ const zhTW: TranslationShape = {
     "roleAdmin": "管理員",
     "roleModerator": "版主"
   },
+  "activityChart": {
+    "title": "動態",
+    "empty": "沒有近期動態。",
+    "seriesViews": "觀看次數",
+    "seriesActions": "管理員操作"
+  },
   "workspace": {
     "backToCatalog": "返回目錄",
     "viewPublic": "公開檢視",

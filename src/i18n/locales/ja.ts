@@ -2302,6 +2302,12 @@ const ja: TranslationShape = {
     "roleAdmin": "管理者",
     "roleModerator": "モデレーター"
   },
+  "activityChart": {
+    "title": "アクティビティ",
+    "empty": "最近のアクティビティはありません。",
+    "seriesViews": "視聴数",
+    "seriesActions": "管理者アクション"
+  },
   "workspace": {
     "backToCatalog": "カタログに戻る",
     "viewPublic": "公開ビュー",
