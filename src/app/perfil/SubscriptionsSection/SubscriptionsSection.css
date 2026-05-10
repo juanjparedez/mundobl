@@ -5,7 +5,7 @@
 }
 
 .subscriptions-section__loading {
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
   display: flex;
   justify-content: center;
 }

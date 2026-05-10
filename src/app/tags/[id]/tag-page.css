@@ -1,5 +1,5 @@
 .tag-page {
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
   max-width: 1200px;
   margin: 0 auto;
 }

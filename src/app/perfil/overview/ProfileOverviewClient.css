@@ -26,6 +26,16 @@
   align-items: start;
 }
 
+/* Cuando el user oculta todos los paneles de una columna entera, el
+ * grid se compacta para no dejar dead space. */
+.overview-page__main[data-cols='1'] {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.overview-page__main[data-cols='2'] {
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+}
+
 .overview-page__col-left,
 .overview-page__col-mid,
 .overview-page__col-right {
