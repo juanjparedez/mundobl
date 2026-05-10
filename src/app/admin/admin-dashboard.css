@@ -174,9 +174,9 @@
   display: inline-block;
 }
 
-/* Accent diferenciado por grupo del mock — el bar antes del titulo
- * cambia segun la seccion. Las tool cards siguen siendo gold-centric
- * para mantener cohesion con el accent system del skin. */
+/* Accent diferenciado por grupo del mock — el bar antes del titulo Y
+ * el gradient de las cards cambian segun la seccion. Catalogo hereda
+ * el gold default; Comunidad usa blue; Sistema usa purple. */
 .admin-dashboard__section[data-group='comunidad']
   .admin-dashboard__section-title::before {
   background: var(--mb-blue, var(--primary-color));
@@ -185,6 +185,44 @@
 .admin-dashboard__section[data-group='sistema']
   .admin-dashboard__section-title::before {
   background: var(--mb-purple, var(--primary-color));
+}
+
+/* Tool card gradient por grupo — sutil 5% del accent en la esquina sup
+ * izq, sin afectar height ni padding. */
+.admin-dashboard__section[data-group='comunidad'] .admin-tool-card::before {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--mb-blue, var(--primary-color)) 5%, transparent) 0%,
+    transparent 50%
+  );
+}
+
+.admin-dashboard__section[data-group='sistema'] .admin-tool-card::before {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--mb-purple, var(--primary-color)) 5%, transparent)
+      0%,
+    transparent 50%
+  );
+}
+
+/* Hover border tambien por grupo: pequeño detalle pero mantiene
+ * coherencia visual entre el bar del titulo y la card cuando interactua. */
+.admin-dashboard__section[data-group='comunidad']
+  .admin-tool-card:hover {
+  border-color: color-mix(
+    in srgb,
+    var(--mb-blue, var(--primary-color)) 50%,
+    var(--border-color-secondary)
+  );
+}
+
+.admin-dashboard__section[data-group='sistema'] .admin-tool-card:hover {
+  border-color: color-mix(
+    in srgb,
+    var(--mb-purple, var(--primary-color)) 50%,
+    var(--border-color-secondary)
+  );
 }
 
 .admin-dashboard__grid {
