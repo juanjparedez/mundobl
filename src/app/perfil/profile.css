@@ -10,9 +10,9 @@
 .profile-header {
   display: flex;
   align-items: center;
-  gap: var(--spacing-lg);
-  margin-bottom: var(--spacing-lg);
-  padding: var(--spacing-lg);
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-md);
   background:
     linear-gradient(
       110deg,
@@ -78,7 +78,7 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: var(--spacing-sm);
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
 }
 
 .profile-stat {
@@ -113,7 +113,7 @@
    Sections
    ========================================== */
 .profile-section {
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
 }
 
 .profile-section__header {
@@ -372,7 +372,7 @@
 .profile-comments__loading {
   display: flex;
   justify-content: center;
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
 }
 
 .profile-comments__list {
@@ -773,7 +773,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: var(--spacing-md);
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
 }
 
 /* ==========================================
@@ -788,7 +788,7 @@
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: var(--spacing-lg);
+    padding: var(--spacing-md);
   }
 
   .profile-stats {

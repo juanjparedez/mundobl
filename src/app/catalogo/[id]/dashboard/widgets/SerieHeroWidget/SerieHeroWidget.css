@@ -1,7 +1,7 @@
 .mb-serie-hero-widget {
   display: flex;
-  gap: var(--spacing-lg);
-  padding: var(--spacing-lg);
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
   height: 100%;
   align-items: flex-start;
 }

@@ -1,7 +1,7 @@
 .series-form {
   max-width: 1000px;
   margin: 0 auto;
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
 }
 
 /* Card principal */
@@ -32,7 +32,7 @@
 }
 
 .series-form .ant-card-type-inner > .ant-card-body {
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
 }
 
 /* Labels del formulario */

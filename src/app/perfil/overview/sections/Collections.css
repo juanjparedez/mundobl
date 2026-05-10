@@ -89,14 +89,3 @@
   font-variant-numeric: tabular-nums;
 }
 
-.overview-collections__custom {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 10px;
-  font-size: 11px;
-  color: var(--text-tertiary);
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px dashed var(--border-color-secondary);
-  border-radius: var(--border-radius-base);
-}

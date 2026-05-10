@@ -123,32 +123,53 @@ export function ProfileOverviewClient() {
 
         <ProfileStatsStrip stats={data.stats} />
 
-        {/* Bloque principal: 3 columnas */}
-        <div className="overview-page__main">
-          <div className="overview-page__col-left">
-            {v('watching') && (
-              <OverviewWatchingShelf items={data.currentlyWatching} />
-            )}
-            {v('mystats') && <OverviewMyStats stats={data.stats} />}
-            {row3Items.length > 0 && (
-              <div
-                className="overview-page__row-3"
-                data-cols={row3Items.length}
-              >
-                {row3Items}
-              </div>
-            )}
-          </div>
-          <div className="overview-page__col-mid">
-            {v('reviews') && (
-              <OverviewReviewsPanel recentReviews={data.recentReviews} />
-            )}
-            {v('collections') && <OverviewCollections stats={data.stats} />}
-          </div>
-          <div className="overview-page__col-right">
-            {v('comments') && <OverviewCommentsPanel />}
-          </div>
-        </div>
+        {/* Bloque principal: hasta 3 columnas. Cada una se omite si
+         *  todos sus paneles estan ocultos para no dejar dead space. */}
+        {(() => {
+          const hasLeft =
+            v('watching') || v('mystats') || row3Items.length > 0;
+          const hasMid = v('reviews') || v('collections');
+          const hasRight = v('comments');
+          const colCount = [hasLeft, hasMid, hasRight].filter(Boolean).length;
+          if (colCount === 0) return null;
+          return (
+            <div className="overview-page__main" data-cols={colCount}>
+              {hasLeft && (
+                <div className="overview-page__col-left">
+                  {v('watching') && (
+                    <OverviewWatchingShelf items={data.currentlyWatching} />
+                  )}
+                  {v('mystats') && <OverviewMyStats stats={data.stats} />}
+                  {row3Items.length > 0 && (
+                    <div
+                      className="overview-page__row-3"
+                      data-cols={row3Items.length}
+                    >
+                      {row3Items}
+                    </div>
+                  )}
+                </div>
+              )}
+              {hasMid && (
+                <div className="overview-page__col-mid">
+                  {v('reviews') && (
+                    <OverviewReviewsPanel
+                      recentReviews={data.recentReviews}
+                    />
+                  )}
+                  {v('collections') && (
+                    <OverviewCollections stats={data.stats} />
+                  )}
+                </div>
+              )}
+              {hasRight && (
+                <div className="overview-page__col-right">
+                  {v('comments') && <OverviewCommentsPanel />}
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         {/* Bloque secundario: 4 cells abajo (oculto si todas estan off) */}
         {(v('followed') ||
