@@ -2321,7 +2321,10 @@ const zhCN: TranslationShape = {
     "tableColSynopsis": "剧情简介",
     "tableColNotes": "我的笔记",
     "tableCellPending": "待定",
-    "tableEmpty": "此剧集尚未加载任何剧集。"
+    "tableEmpty": "此剧集尚未加载任何剧集。",
+    "rightRailLinkedReviews": "关联评论",
+    "rightRailEmpty": "此剧集暂无评论。",
+    "rightRailAnonymous": "匿名"
   }
 } as TranslationShape;
 

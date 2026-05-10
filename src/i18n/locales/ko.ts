@@ -2321,7 +2321,10 @@ const ko: TranslationShape = {
     "tableColSynopsis": "줄거리",
     "tableColNotes": "내 노트",
     "tableCellPending": "대기 중",
-    "tableEmpty": "이 시리즈는 아직 에피소드가 로드되지 않았습니다."
+    "tableEmpty": "이 시리즈는 아직 에피소드가 로드되지 않았습니다.",
+    "rightRailLinkedReviews": "연결된 리뷰",
+    "rightRailEmpty": "이 시리즈에 대한 리뷰가 아직 없습니다.",
+    "rightRailAnonymous": "익명"
   }
 } as TranslationShape;
 

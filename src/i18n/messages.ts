@@ -2313,6 +2313,9 @@ export type TranslationShape = {
     tableColNotes: string;
     tableCellPending: string;
     tableEmpty: string;
+    rightRailLinkedReviews: string;
+    rightRailEmpty: string;
+    rightRailAnonymous: string;
   };
 };
 
@@ -4744,6 +4747,9 @@ const es: TranslationShape = {
     tableColNotes: 'Mis notas',
     tableCellPending: 'pendiente',
     tableEmpty: 'Esta serie aún no tiene episodios cargados.',
+    rightRailLinkedReviews: 'Reseñas vinculadas',
+    rightRailEmpty: 'Aún no hay reseñas para esta serie.',
+    rightRailAnonymous: 'Anónimo',
   },
 };
 
@@ -7157,6 +7163,9 @@ const en: TranslationShape = {
     tableColNotes: 'My notes',
     tableCellPending: 'pending',
     tableEmpty: 'This series has no episodes loaded yet.',
+    rightRailLinkedReviews: 'Linked reviews',
+    rightRailEmpty: 'No reviews yet for this series.',
+    rightRailAnonymous: 'Anonymous',
   },
 };
 
