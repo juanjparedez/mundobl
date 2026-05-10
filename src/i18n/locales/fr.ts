@@ -2319,6 +2319,15 @@ const fr: TranslationShape = {
     widgetAlertsDesc:
       'Éléments qui demandent une action : modération, manquants, suggestions.',
   },
+  quickAdmin: {
+    title: 'Acciones rapidas',
+    moderateComments: 'Moderar comentarios',
+    manageContent: 'Gestionar contenido',
+    reviewUsers: 'Revisar usuarios',
+    reports: 'Reportes',
+    auditLog: 'Audit log',
+    news: 'Noticias',
+  },
 } as TranslationShape;
 
 export default fr;

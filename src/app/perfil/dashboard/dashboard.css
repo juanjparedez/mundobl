@@ -39,19 +39,24 @@
   border-top: 1px solid var(--border-color-secondary);
 }
 
+/* Mock muestra el footer Settings como grid de cards horizontales chicas
+ * (Apariencia, Sesion, Privacidad, Datos, Suscripciones, Build info).
+ * Pasamos a auto-fit con minmax 280px — entran 3-4 en desktop, 2 en
+ * tablet, 1 en mobile. Mas denso que el 2-col fijo anterior. */
 .mb-perfil-dashboard__footer-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: var(--spacing-md);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
 }
 
 .mb-perfil-dashboard__footer-panel {
   background: var(--bg-container);
   border: 1px solid var(--border-color-secondary);
   border-radius: var(--border-radius-lg);
-  padding: var(--spacing-md);
+  padding: 14px;
   position: relative;
   isolation: isolate;
+  min-height: 0;
 }
 
 .mb-perfil-dashboard__footer-panel::before {

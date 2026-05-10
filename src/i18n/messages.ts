@@ -2176,6 +2176,15 @@ export type TranslationShape = {
     widgetAlerts: string;
     widgetAlertsDesc: string;
   };
+  quickAdmin: {
+    title: string;
+    moderateComments: string;
+    manageContent: string;
+    reviewUsers: string;
+    reports: string;
+    auditLog: string;
+    news: string;
+  };
 };
 
 const es: TranslationShape = {
@@ -4462,6 +4471,15 @@ const es: TranslationShape = {
     widgetAlertsDesc:
       'Items que requieren accion: moderacion, faltantes, sugerencias.',
   },
+  quickAdmin: {
+    title: 'Acciones rapidas',
+    moderateComments: 'Moderar comentarios',
+    manageContent: 'Gestionar contenido',
+    reviewUsers: 'Revisar usuarios',
+    reports: 'Reportes',
+    auditLog: 'Audit log',
+    news: 'Noticias',
+  },
 };
 
 const en: TranslationShape = {
@@ -6731,6 +6749,15 @@ const en: TranslationShape = {
     widgetAlerts: 'Alerts',
     widgetAlertsDesc:
       'Items that need action: moderation, missing, suggestions.',
+  },
+  quickAdmin: {
+    title: 'Quick actions',
+    moderateComments: 'Moderate comments',
+    manageContent: 'Manage content',
+    reviewUsers: 'Review users',
+    reports: 'Reports',
+    auditLog: 'Audit log',
+    news: 'News',
   },
 };
 

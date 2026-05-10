@@ -2221,6 +2221,15 @@ const zhTW: TranslationShape = {
     widgetAlerts: '警示',
     widgetAlertsDesc: '需要處理的項目：審核、缺漏、建議。',
   },
+  quickAdmin: {
+    title: 'Acciones rapidas',
+    moderateComments: 'Moderar comentarios',
+    manageContent: 'Gestionar contenido',
+    reviewUsers: 'Revisar usuarios',
+    reports: 'Reportes',
+    auditLog: 'Audit log',
+    news: 'Noticias',
+  },
 } as TranslationShape;
 
 export default zhTW;

@@ -2264,6 +2264,15 @@ const ko: TranslationShape = {
     widgetAlerts: '알림',
     widgetAlertsDesc: '조치가 필요한 항목: 검토, 누락, 제안.',
   },
+  quickAdmin: {
+    title: 'Acciones rapidas',
+    moderateComments: 'Moderar comentarios',
+    manageContent: 'Gestionar contenido',
+    reviewUsers: 'Revisar usuarios',
+    reports: 'Reportes',
+    auditLog: 'Audit log',
+    news: 'Noticias',
+  },
 } as TranslationShape;
 
 export default ko;
