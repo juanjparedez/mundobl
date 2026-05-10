@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import Link from 'next/link';
 import { Button } from 'antd';
 import {
@@ -14,6 +15,7 @@ import { useLocale } from '@/lib/providers/LocaleProvider';
 interface Stat {
   label: string;
   value: number;
+  icon?: ReactNode;
 }
 
 interface AdminDashboardHeroProps {
@@ -43,8 +45,15 @@ export function AdminDashboardHero({ stats }: AdminDashboardHeroProps) {
       <div className="admin-dashboard__hero-stats">
         {stats.map((s) => (
           <div key={s.label} className="admin-dashboard__hero-stat">
-            <div className="admin-dashboard__hero-stat-value">{s.value}</div>
-            <div className="admin-dashboard__hero-stat-label">{s.label}</div>
+            {s.icon && (
+              <span className="admin-dashboard__hero-stat-icon" aria-hidden>
+                {s.icon}
+              </span>
+            )}
+            <div className="admin-dashboard__hero-stat-body">
+              <div className="admin-dashboard__hero-stat-value">{s.value}</div>
+              <div className="admin-dashboard__hero-stat-label">{s.label}</div>
+            </div>
           </div>
         ))}
       </div>

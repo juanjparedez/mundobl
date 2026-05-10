@@ -59,15 +59,39 @@
 }
 
 .admin-dashboard__hero-stat {
-  text-align: center;
-  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
   background: var(--bg-spotlight);
   border-radius: var(--border-radius-base);
   border: 1px solid var(--border-color-secondary);
+  text-align: left;
+}
+
+/* Icon a la izquierda del value/label — cuadrado sutil con accent bg
+ * para dar presencia visual sin altura. */
+.admin-dashboard__hero-stat-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: var(--border-radius-sm);
+  background: color-mix(in srgb, var(--primary-color) 14%, transparent);
+  color: var(--primary-color);
+  font-size: 16px;
+}
+
+.admin-dashboard__hero-stat-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .admin-dashboard__hero-stat-value {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   line-height: 1;
   font-variant-numeric: tabular-nums;
@@ -87,7 +111,7 @@
 
 .admin-dashboard__hero-stat-label {
   margin-top: 2px;
-  font-size: 9px;
+  font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-tertiary);
