@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { Button, Spin } from 'antd';
-import { ArrowLeftOutlined } from '@ant-design/icons';
+import { Button, Spin, Tooltip } from 'antd';
+import { ArrowLeftOutlined, ControlOutlined } from '@ant-design/icons';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { SettingsPanel } from '@/components/layout/SettingsPanel/SettingsPanel';
 import { ProfileStatsStrip } from '../dashboard/ProfileStatsStrip/ProfileStatsStrip';
@@ -26,19 +26,21 @@ import { OverviewSettingsRow } from './sections/SettingsRow';
 import { ProfileSettings } from '../ProfileSettings/ProfileSettings';
 import { SubscriptionsSection } from '../SubscriptionsSection/SubscriptionsSection';
 import { ClientVersionInfo } from '../ClientVersionInfo/ClientVersionInfo';
+import { CustomizeDrawer } from './CustomizeDrawer';
+import { useSectionVisibility } from './useSectionVisibility';
 import './ProfileOverviewClient.css';
 
-/** Vista por defecto de /perfil — composicion fija alineada al style-guide
- *  (style-guide/my-profile.png + my-.profile2.png). Toda la data viene de
- *  /api/user/profile + endpoints satelite (/api/notifications,
- *  /api/feedback/my-cases, /api/user/comments). Sin data sintetizada.
- *
- *  La vista configurable con widgets reordenables vive en /perfil/dashboard. */
+/** Vista por defecto de /perfil — composicion fija alineada al style-guide.
+ *  Cada seccion puede ocultarse desde el drawer "Personalizar" (boton en
+ *  el header) — la preferencia persiste en localStorage. La vista
+ *  configurable con widgets reordenables vive en /perfil/dashboard. */
 export function ProfileOverviewClient() {
   const { status } = useSession();
   const [data, setData] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [customizeOpen, setCustomizeOpen] = useState(false);
+  const { isVisible, toggle, reset } = useSectionVisibility();
 
   useEffect(() => {
     if (status !== 'authenticated') return;
@@ -89,68 +91,124 @@ export function ProfileOverviewClient() {
     );
   }
 
+  // Helper para que el JSX abajo sea legible.
+  const v = isVisible;
+
+  // Cuento qué bloques de la izquierda (mystats / row3) estan visibles
+  // para no dejar dead space.
+  const row3Items = [
+    v('reviewsActivity') && (
+      <OverviewReviewsActivity key="ra" stats={data.stats} />
+    ),
+    v('countries') && (
+      <OverviewCountriesPanel
+        key="cp"
+        topCountries={data.stats.topCountries}
+      />
+    ),
+    v('yearSummary') && (
+      <OverviewYearSummary key="ys" stats={data.stats} />
+    ),
+  ].filter(Boolean);
+
   return (
     <AppLayout>
       <div className="overview-page">
-        <OverviewHeader
-          user={data.user}
-          onEditClick={handleEditClick}
-          onPreferencesClick={() => setSettingsOpen(true)}
-        />
+        <div className="overview-page__top">
+          <OverviewHeader
+            user={data.user}
+            onEditClick={handleEditClick}
+            onPreferencesClick={() => setSettingsOpen(true)}
+          />
+          <Tooltip title="Personalizar paneles visibles">
+            <Button
+              icon={<ControlOutlined />}
+              onClick={() => setCustomizeOpen(true)}
+              className="overview-page__customize-btn"
+              size="small"
+            >
+              Personalizar
+            </Button>
+          </Tooltip>
+        </div>
 
         <ProfileStatsStrip stats={data.stats} />
 
-        {/* Bloque principal: 3 columnas alineadas al style-guide */}
+        {/* Bloque principal: 3 columnas */}
         <div className="overview-page__main">
           <div className="overview-page__col-left">
-            <OverviewWatchingShelf items={data.currentlyWatching} />
-            <OverviewMyStats stats={data.stats} />
-            <div className="overview-page__row-3">
-              <OverviewReviewsActivity stats={data.stats} />
-              <OverviewCountriesPanel topCountries={data.stats.topCountries} />
-              <OverviewYearSummary stats={data.stats} />
-            </div>
+            {v('watching') && (
+              <OverviewWatchingShelf items={data.currentlyWatching} />
+            )}
+            {v('mystats') && <OverviewMyStats stats={data.stats} />}
+            {row3Items.length > 0 && (
+              <div
+                className="overview-page__row-3"
+                data-cols={row3Items.length}
+              >
+                {row3Items}
+              </div>
+            )}
           </div>
           <div className="overview-page__col-mid">
-            <OverviewReviewsPanel recentReviews={data.recentReviews} />
-            <OverviewCollections stats={data.stats} />
+            {v('reviews') && (
+              <OverviewReviewsPanel recentReviews={data.recentReviews} />
+            )}
+            {v('collections') && <OverviewCollections stats={data.stats} />}
           </div>
           <div className="overview-page__col-right">
-            <OverviewCommentsPanel />
+            {v('comments') && <OverviewCommentsPanel />}
           </div>
         </div>
 
-        {/* Bloque secundario: 4 cells abajo */}
-        <div className="overview-page__row-4">
-          <OverviewFollowedTitles favorites={data.favorites} />
-          <OverviewNotifications />
-          <OverviewCases />
-          <OverviewAchievements stats={data.stats} />
-        </div>
-
-        {/* Footer config + paneles existentes (Settings + Subs + Version) */}
-        <div className="overview-page__footer" id="mb-profile-settings">
-          <OverviewSettingsRow />
-          <div className="overview-page__legacy-panels">
-            <div className="overview-page__legacy-card">
-              <ProfileSettings />
-            </div>
-            <div className="overview-page__legacy-card">
-              <SubscriptionsSection />
-            </div>
+        {/* Bloque secundario: 4 cells abajo (oculto si todas estan off) */}
+        {(v('followed') ||
+          v('notifications') ||
+          v('cases') ||
+          v('achievements')) && (
+          <div className="overview-page__row-4">
+            {v('followed') && (
+              <OverviewFollowedTitles favorites={data.favorites} />
+            )}
+            {v('notifications') && <OverviewNotifications />}
+            {v('cases') && <OverviewCases />}
+            {v('achievements') && <OverviewAchievements stats={data.stats} />}
           </div>
-          <ClientVersionInfo />
-          <p className="overview-page__alt">
-            <Link href="/perfil/dashboard">
-              ¿Querés reordenar los paneles? Abrí la vista configurable →
-            </Link>
-          </p>
-        </div>
+        )}
+
+        {/* Footer config + paneles existentes */}
+        {v('settings') && (
+          <div className="overview-page__footer" id="mb-profile-settings">
+            <OverviewSettingsRow />
+            <div className="overview-page__legacy-panels">
+              <div className="overview-page__legacy-card">
+                <ProfileSettings />
+              </div>
+              <div className="overview-page__legacy-card">
+                <SubscriptionsSection />
+              </div>
+            </div>
+            <ClientVersionInfo />
+            <p className="overview-page__alt">
+              <Link href="/perfil/dashboard">
+                ¿Querés reordenar los paneles? Abrí la vista configurable →
+              </Link>
+            </p>
+          </div>
+        )}
       </div>
 
       <SettingsPanel
         open={settingsOpen}
         onClose={() => setSettingsOpen(false)}
+      />
+
+      <CustomizeDrawer
+        open={customizeOpen}
+        onClose={() => setCustomizeOpen(false)}
+        isVisible={isVisible}
+        onToggle={toggle}
+        onReset={reset}
       />
     </AppLayout>
   );

@@ -236,7 +236,7 @@ export function NotificationsSettings() {
     permission === 'unsupported'
       ? 'Tu navegador no soporta notificaciones push'
       : permission === 'denied'
-        ? 'Permiso bloqueado por el navegador. Desbloquealo desde la configuracion del sitio.'
+        ? 'Permiso bloqueado por el navegador. Tocá el candado/escudo en la barra de direcciones → "Notificaciones" → "Permitir", luego recargá la página.'
         : permission === 'granted'
           ? subscribed
             ? 'Activas en este dispositivo'

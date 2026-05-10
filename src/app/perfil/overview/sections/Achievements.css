@@ -11,6 +11,7 @@
 .overview-achievements__head {
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
 
 .overview-achievements__title {
@@ -24,6 +25,28 @@
 }
 
 .overview-achievements__title .anticon {
+  color: var(--primary-color);
+}
+
+.overview-achievements__count {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--primary-color);
+  font-variant-numeric: tabular-nums;
+}
+
+.overview-achievements__toggle {
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.overview-achievements__toggle:hover {
   color: var(--primary-color);
 }
 
@@ -71,6 +94,16 @@
   color: #ff8585;
 }
 
+.overview-achievements__item--blue .overview-achievements__icon {
+  background: color-mix(in srgb, #4f8cff 22%, transparent);
+  color: #6da3ff;
+}
+
+.overview-achievements__item--green .overview-achievements__icon {
+  background: color-mix(in srgb, #48c774 22%, transparent);
+  color: #58d484;
+}
+
 .overview-achievements__item--locked .overview-achievements__icon {
   background: rgba(255, 255, 255, 0.04);
   color: var(--text-tertiary);
@@ -79,8 +112,15 @@
 .overview-achievements__body {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
   min-width: 0;
+}
+
+.overview-achievements__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 .overview-achievements__name {
@@ -93,25 +133,37 @@
   color: var(--text-tertiary);
 }
 
+.overview-achievements__progress-text {
+  font-size: 10px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-tertiary);
+}
+
+.overview-achievements__item:not(.overview-achievements__item--locked)
+  .overview-achievements__progress-text {
+  color: #58d484;
+}
+
 .overview-achievements__desc {
   font-size: 10px;
   color: var(--text-tertiary);
 }
 
-.overview-achievements__status {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-  padding: 2px 6px;
+.overview-achievements__bar-track {
+  margin-top: 3px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.06);
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.04);
-  white-space: nowrap;
+  overflow: hidden;
 }
 
-.overview-achievements__item:not(.overview-achievements__item--locked)
-  .overview-achievements__status {
-  color: #58d484;
-  background: color-mix(in srgb, #48c774 16%, transparent);
+.overview-achievements__bar-fill {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--primary-color),
+    color-mix(in srgb, var(--primary-color) 50%, transparent)
+  );
+  border-radius: 999px;
 }
