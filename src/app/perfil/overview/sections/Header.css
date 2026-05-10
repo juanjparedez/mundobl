@@ -78,7 +78,9 @@
 .overview-header__actions {
   flex-shrink: 0;
   display: inline-flex;
-  gap: 8px;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 @media (max-width: 720px) {

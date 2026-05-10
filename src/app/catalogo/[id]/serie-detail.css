@@ -3,6 +3,6 @@
   height: auto;
   max-height: 400px;
   object-fit: cover;
-  border-radius: var(--radius-md, 8px);
+  border-radius: var(--border-radius-base);
   display: block;
 }

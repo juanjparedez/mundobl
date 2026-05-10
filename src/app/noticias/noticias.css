@@ -37,9 +37,9 @@
 /* ── Card ── */
 .noticias-card {
   border: 1px solid var(--border-color, #e5e7eb);
-  border-radius: var(--radius-lg, 12px);
+  border-radius: var(--border-radius-lg);
   overflow: hidden;
-  background: var(--surface-primary, #fff);
+  background: var(--bg-container);
   display: flex;
   flex-direction: column;
   transition: box-shadow 0.2s;
