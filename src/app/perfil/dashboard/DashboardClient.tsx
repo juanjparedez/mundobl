@@ -54,6 +54,7 @@ import { FollowedTitlesWidget } from './widgets/FollowedTitlesWidget/FollowedTit
 import { SettingsRowWidget } from './widgets/SettingsRowWidget/SettingsRowWidget';
 import { RecentAdminActivityWidget } from '@/app/admin/widgets/RecentAdminActivityWidget/RecentAdminActivityWidget';
 import { TopCommentersWidget } from '@/app/admin/widgets/TopCommentersWidget/TopCommentersWidget';
+import { ActivityChartWidget } from '@/app/admin/widgets/ActivityChartWidget/ActivityChartWidget';
 import { WorldMapWidget } from './widgets/WorldMapWidget/WorldMapWidget';
 import './dashboard.css';
 
@@ -92,6 +93,7 @@ const WIDGET_IDS = {
   // mismos componentes — sin duplicar codigo.
   recentAdminActivity: 'profile.recentAdminActivity',
   topCommenters: 'profile.topCommenters',
+  activityChart: 'profile.activityChart',
   worldMap: 'profile.worldMap',
 } as const;
 
@@ -165,13 +167,13 @@ const ADMIN_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.topRated, x: 8, y: 37, w: 4, h: 4 },
     // Row 11: MyComments full
     { i: WIDGET_IDS.myComments, x: 0, y: 41, w: 12, h: 6, minW: 6, minH: 5 },
-    // Row 12: Admin shared widgets (RecentAdminActivity + TopCommenters)
-    // — reusados desde /admin. Solo visibles para admin/moderator por
-    // los roles del registry.
-    { i: WIDGET_IDS.recentAdminActivity, x: 0, y: 47, w: 6, h: 5 },
-    { i: WIDGET_IDS.topCommenters, x: 6, y: 47, w: 6, h: 5 },
+    // Row 12: Admin shared widgets — reusados desde /admin. Solo
+    // visibles para admin/moderator por roles del registry.
+    { i: WIDGET_IDS.activityChart, x: 0, y: 47, w: 12, h: 5 },
+    { i: WIDGET_IDS.recentAdminActivity, x: 0, y: 52, w: 6, h: 5 },
+    { i: WIDGET_IDS.topCommenters, x: 6, y: 52, w: 6, h: 5 },
     // Row 13: SettingsRow (6 cards horizontales del mock)
-    { i: WIDGET_IDS.settingsRow, x: 0, y: 52, w: 12, h: 4, minW: 6, minH: 3 },
+    { i: WIDGET_IDS.settingsRow, x: 0, y: 57, w: 12, h: 4, minW: 6, minH: 3 },
   ],
   md: [
     { i: WIDGET_IDS.heatmap, x: 0, y: 0, w: 10, h: 3 },
@@ -629,6 +631,15 @@ export function DashboardClient() {
       defaultSize: { w: 8, h: 5, minW: 4, minH: 4 },
       Component: WorldMapWidget as never,
     });
+    WidgetRegistry.register({
+      id: WIDGET_IDS.activityChart,
+      category: 'activity',
+      labelKey: 'activityChart.title',
+      descriptionKey: 'activityChart.title',
+      defaultSize: { w: 7, h: 5, minW: 4, minH: 4 },
+      Component: ActivityChartWidget as never,
+      roles: ['ADMIN', 'MODERATOR'],
+    });
   }, []);
 
   useEffect(() => {
@@ -685,6 +696,7 @@ export function DashboardClient() {
     map[WIDGET_IDS.settingsRow] = {};
     map[WIDGET_IDS.recentAdminActivity] = {};
     map[WIDGET_IDS.topCommenters] = {};
+    map[WIDGET_IDS.activityChart] = {};
     map[WIDGET_IDS.worldMap] = { topCountries: data.stats.topCountries };
     return map;
   }, [data]);
