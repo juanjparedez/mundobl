@@ -1,18 +1,18 @@
 .mb-profile-user {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: var(--layout-row-gap);
 }
 
 .mb-profile-user__row {
   display: grid;
-  gap: var(--spacing-md);
+  gap: var(--layout-row-gap);
 }
 
 .mb-profile-user__cell {
   min-width: 0;
   display: flex;
-  min-height: 240px;
+  min-height: var(--layout-cell-min);
 }
 
 .mb-profile-user__cell > * {
@@ -27,7 +27,7 @@
 }
 
 .mb-profile-user__cell--shelf {
-  min-height: 280px;
+  min-height: var(--layout-cell-min-shelf);
 }
 
 .mb-profile-user__row--social {
@@ -35,7 +35,7 @@
 }
 
 .mb-profile-user__row--social .mb-profile-user__cell {
-  min-height: 280px;
+  min-height: var(--layout-cell-min-tall);
 }
 
 /* Charts row: heatmap wide + 2 charts mas chicos */
@@ -43,20 +43,12 @@
   grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
 }
 
-.mb-profile-user__row--charts .mb-profile-user__cell {
-  min-height: 240px;
-}
-
 .mb-profile-user__row--4up {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
-.mb-profile-user__row--4up .mb-profile-user__cell {
-  min-height: 240px;
-}
-
 .mb-profile-user__row--full .mb-profile-user__cell:not(.mb-profile-user__cell--shelf) {
-  min-height: 480px;
+  min-height: var(--layout-cell-min-full);
 }
 
 /* ─── Responsive ────────────────────────────────────────────────────────── */

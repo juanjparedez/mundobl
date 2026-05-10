@@ -45,9 +45,10 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px var(--spacing-md);
+  padding: var(--widget-header-padding-block)
+    var(--widget-header-padding-inline);
   flex-shrink: 0;
-  min-height: 36px;
+  min-height: var(--widget-header-min-height);
   border-bottom: 1px solid var(--border-color-secondary);
   background: color-mix(in srgb, var(--bg-elevated) 68%, transparent);
 }
@@ -78,18 +79,18 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
+  width: var(--widget-icon-size);
+  height: var(--widget-icon-size);
   border-radius: 6px;
   background: color-mix(in srgb, var(--primary-color) 14%, transparent);
   color: var(--primary-color);
-  font-size: 12px;
+  font-size: calc(var(--widget-icon-size) * 0.55);
   flex-shrink: 0;
 }
 
 .mb-widget__title {
   margin: 0;
-  font-size: 11px;
+  font-size: var(--widget-title-size);
   font-weight: 600;
   color: var(--text-primary);
   text-transform: uppercase;
@@ -133,7 +134,7 @@
   position: relative;
   flex: 1;
   min-height: 0;
-  padding: 12px;
+  padding: var(--widget-body-padding);
   /* Sin scroll interno: los widgets deben fitear su contenido. Si el
    * widget es mas chico que su contenido, se clipea con una mascara
    * fade-out abajo (mb-widget--fade) que da una pista visual sutil sin
