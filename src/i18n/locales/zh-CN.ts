@@ -2281,6 +2281,12 @@ const zhCN: TranslationShape = {
     "auditLog": "Audit log",
     "news": "Noticias"
   },
+  "adminHero": {
+    "actionInsights": "洞察",
+    "actionAuditLog": "审核",
+    "actionChangelog": "发布",
+    "actionUsers": "用户"
+  },
   "workspace": {
     "backToCatalog": "返回目录",
     "viewPublic": "公开视图",

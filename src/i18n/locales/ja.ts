@@ -2281,6 +2281,12 @@ const ja: TranslationShape = {
     "auditLog": "監査ログ",
     "news": "ニュース"
   },
+  "adminHero": {
+    "actionInsights": "インサイト",
+    "actionAuditLog": "監査",
+    "actionChangelog": "リリース",
+    "actionUsers": "ユーザー"
+  },
   "workspace": {
     "backToCatalog": "カタログに戻る",
     "viewPublic": "公開ビュー",

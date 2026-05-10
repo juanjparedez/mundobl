@@ -2272,6 +2272,12 @@ export type TranslationShape = {
     auditLog: string;
     news: string;
   };
+  adminHero: {
+    actionInsights: string;
+    actionAuditLog: string;
+    actionChangelog: string;
+    actionUsers: string;
+  };
   workspace: {
     backToCatalog: string;
     viewPublic: string;
@@ -4716,6 +4722,12 @@ const es: TranslationShape = {
     auditLog: 'Audit log',
     news: 'Noticias',
   },
+  adminHero: {
+    actionInsights: 'Insights',
+    actionAuditLog: 'Audit',
+    actionChangelog: 'Versiones',
+    actionUsers: 'Usuarios',
+  },
   workspace: {
     backToCatalog: 'Volver al catálogo',
     viewPublic: 'Vista pública',
@@ -7146,6 +7158,12 @@ const en: TranslationShape = {
     reports: 'Reports',
     auditLog: 'Audit log',
     news: 'News',
+  },
+  adminHero: {
+    actionInsights: 'Insights',
+    actionAuditLog: 'Audit',
+    actionChangelog: 'Releases',
+    actionUsers: 'Users',
   },
   workspace: {
     backToCatalog: 'Back to catalog',

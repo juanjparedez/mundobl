@@ -2281,6 +2281,12 @@ const zhTW: TranslationShape = {
     "auditLog": "Audit log",
     "news": "Noticias"
   },
+  "adminHero": {
+    "actionInsights": "分析",
+    "actionAuditLog": "審核",
+    "actionChangelog": "發行",
+    "actionUsers": "用戶"
+  },
   "workspace": {
     "backToCatalog": "返回目錄",
     "viewPublic": "公開檢視",

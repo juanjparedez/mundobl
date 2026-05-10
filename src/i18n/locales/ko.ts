@@ -2281,6 +2281,12 @@ const ko: TranslationShape = {
     "auditLog": "감사 로그",
     "news": "뉴스"
   },
+  "adminHero": {
+    "actionInsights": "인사이트",
+    "actionAuditLog": "감사",
+    "actionChangelog": "출시작",
+    "actionUsers": "사용자"
+  },
   "workspace": {
     "backToCatalog": "카탈로그로 돌아가기",
     "viewPublic": "공개 보기",
