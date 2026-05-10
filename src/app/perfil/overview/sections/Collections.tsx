@@ -5,7 +5,6 @@ import {
   HeartFilled,
   ClockCircleOutlined,
   EyeInvisibleOutlined,
-  PlusOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
 import type { ProfileData } from '../../types';
@@ -15,10 +14,10 @@ interface Props {
   stats: ProfileData['stats'];
 }
 
-/** "Mis listas y colecciones" del style-guide. La app todavia no tiene
- *  un modelo Collection en DB; mostramos las "listas" derivables del
- *  estado de tracking (favorites, retomar, ver despues) con contadores
- *  reales y un aviso de que las listas custom estan en desarrollo. */
+/** "Mis listas" — listas derivables del estado de tracking del usuario
+ *  (favoritos, retomar, viendo ahora, abandonadas). Listas personalizadas
+ *  no existen como feature todavia en la app; cuando se implemente
+ *  Collection en Prisma se agrega aqui un boton 'Nueva lista'. */
 export function OverviewCollections({ stats }: Props) {
   const items = [
     {
@@ -76,10 +75,6 @@ export function OverviewCollections({ stats }: Props) {
           </li>
         ))}
       </ul>
-      <div className="overview-collections__custom" aria-disabled>
-        <PlusOutlined />
-        <span>Listas personalizadas — próximamente</span>
-      </div>
     </section>
   );
 }
