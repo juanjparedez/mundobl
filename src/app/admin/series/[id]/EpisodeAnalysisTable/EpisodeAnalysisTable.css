@@ -1,0 +1,55 @@
+/* Tabla densa de analisis por episodio del workspace admin. */
+
+.mb-episode-table {
+  background: var(--bg-container);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+}
+
+.mb-episode-table .ant-table-thead > tr > th {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  background: var(--bg-spotlight);
+}
+
+.mb-episode-table .ant-table-tbody > tr > td {
+  font-size: 12px;
+  padding: 6px 8px;
+}
+
+.mb-episode-table__id {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.mb-episode-table__placeholder {
+  font-style: italic;
+  font-size: 11px;
+  opacity: 0.6;
+}
+
+.mb-episode-table__synopsis {
+  color: var(--text-secondary);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.mb-episode-table__note-tag {
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0;
+}
+
+.mb-episode-table__empty {
+  padding: var(--spacing-lg);
+  text-align: center;
+  color: var(--text-tertiary);
+  background: var(--bg-container);
+  border: 1px dashed var(--border-color-secondary);
+  border-radius: var(--border-radius-md);
+}

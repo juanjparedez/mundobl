@@ -2290,6 +2290,29 @@ export type TranslationShape = {
     tabDataPlaceholder: string;
     tabReviews: string;
     tabReviewsPlaceholder: string;
+    overviewSynopsis: string;
+    overviewObservations: string;
+    overviewReview: string;
+    overviewSoundtrack: string;
+    overviewUniverse: string;
+    dataType: string;
+    dataFormat: string;
+    dataBasedOn: string;
+    dataCatalogScope: string;
+    dataRating: string;
+    dataCreatedAt: string;
+    dataUpdatedAt: string;
+    tableColEpisode: string;
+    tableColDuration: string;
+    tableColTitle: string;
+    tableColTone: string;
+    tableColToneHint: string;
+    tableColSubplots: string;
+    tableColSubplotsHint: string;
+    tableColSynopsis: string;
+    tableColNotes: string;
+    tableCellPending: string;
+    tableEmpty: string;
   };
 };
 
@@ -4697,6 +4720,30 @@ const es: TranslationShape = {
     tabDataPlaceholder: 'Metadatos crudos editables de la serie.',
     tabReviews: 'Reseñas',
     tabReviewsPlaceholder: 'Reseñas vinculadas a esta serie.',
+    overviewSynopsis: 'Sinopsis',
+    overviewObservations: 'Observaciones',
+    overviewReview: 'Reseña personal',
+    overviewSoundtrack: 'Banda sonora',
+    overviewUniverse: 'Universo',
+    dataType: 'Tipo',
+    dataFormat: 'Formato',
+    dataBasedOn: 'Basado en',
+    dataCatalogScope: 'Scope del catálogo',
+    dataRating: 'Rating',
+    dataCreatedAt: 'Creado',
+    dataUpdatedAt: 'Actualizado',
+    tableColEpisode: 'Episodio',
+    tableColDuration: 'Duración',
+    tableColTitle: 'Título',
+    tableColTone: 'Tono',
+    tableColToneHint: 'Tono dominante del episodio. Pendiente de implementar.',
+    tableColSubplots: 'Subtramas',
+    tableColSubplotsHint:
+      'Subtramas que avanzan en este episodio. Pendiente de implementar.',
+    tableColSynopsis: 'Sinopsis',
+    tableColNotes: 'Mis notas',
+    tableCellPending: 'pendiente',
+    tableEmpty: 'Esta serie aún no tiene episodios cargados.',
   },
 };
 
@@ -7086,6 +7133,30 @@ const en: TranslationShape = {
     tabDataPlaceholder: 'Raw editable metadata for the series.',
     tabReviews: 'Reviews',
     tabReviewsPlaceholder: 'Reviews linked to this series.',
+    overviewSynopsis: 'Synopsis',
+    overviewObservations: 'Observations',
+    overviewReview: 'Personal review',
+    overviewSoundtrack: 'Soundtrack',
+    overviewUniverse: 'Universe',
+    dataType: 'Type',
+    dataFormat: 'Format',
+    dataBasedOn: 'Based on',
+    dataCatalogScope: 'Catalog scope',
+    dataRating: 'Rating',
+    dataCreatedAt: 'Created',
+    dataUpdatedAt: 'Updated',
+    tableColEpisode: 'Episode',
+    tableColDuration: 'Duration',
+    tableColTitle: 'Title',
+    tableColTone: 'Tone',
+    tableColToneHint: 'Dominant tone of the episode. To be implemented.',
+    tableColSubplots: 'Subplots',
+    tableColSubplotsHint:
+      'Subplots that advance in this episode. To be implemented.',
+    tableColSynopsis: 'Synopsis',
+    tableColNotes: 'My notes',
+    tableCellPending: 'pending',
+    tableEmpty: 'This series has no episodes loaded yet.',
   },
 };
 

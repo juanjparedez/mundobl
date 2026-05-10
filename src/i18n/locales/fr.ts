@@ -2298,7 +2298,30 @@ const fr: TranslationShape = {
     "tabData": "Données",
     "tabDataPlaceholder": "Métadonnées brutes modifiables pour la série.",
     "tabReviews": "Avis",
-    "tabReviewsPlaceholder": "Avis liés à cette série."
+    "tabReviewsPlaceholder": "Avis liés à cette série.",
+    "overviewSynopsis": "Synopsis",
+    "overviewObservations": "Observations",
+    "overviewReview": "Avis personnel",
+    "overviewSoundtrack": "Bande originale",
+    "overviewUniverse": "Univers",
+    "dataType": "Type",
+    "dataFormat": "Format",
+    "dataBasedOn": "Basé sur",
+    "dataCatalogScope": "Portée du catalogue",
+    "dataRating": "Évaluation",
+    "dataCreatedAt": "Créé",
+    "dataUpdatedAt": "Mis à jour",
+    "tableColEpisode": "Épisode",
+    "tableColDuration": "Durée",
+    "tableColTitle": "Titre",
+    "tableColTone": "Ton",
+    "tableColToneHint": "Ton dominant de l'épisode. À implémenter.",
+    "tableColSubplots": "Intrigues secondaires",
+    "tableColSubplotsHint": "Intrigues secondaires qui avancent dans cet épisode. À implémenter.",
+    "tableColSynopsis": "Synopsis",
+    "tableColNotes": "Mes notes",
+    "tableCellPending": "en attente",
+    "tableEmpty": "Cette série n'a pas encore d'épisodes chargés."
   }
 } as TranslationShape;
 
