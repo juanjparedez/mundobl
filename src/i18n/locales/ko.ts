@@ -2308,6 +2308,12 @@ const ko: TranslationShape = {
     "seriesViews": "조회수",
     "seriesActions": "관리자 작업"
   },
+  "worldMap": {
+    "title": "방문한 국가",
+    "empty": "아직 카탈로그에 국가가 없습니다.",
+    "serieSingular": "시리즈",
+    "seriePlural": "시리즈"
+  },
   "workspace": {
     "backToCatalog": "카탈로그로 돌아가기",
     "viewPublic": "공개 보기",

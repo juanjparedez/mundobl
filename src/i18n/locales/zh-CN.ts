@@ -2308,6 +2308,12 @@ const zhCN: TranslationShape = {
     "seriesViews": "观看次数",
     "seriesActions": "管理员操作"
   },
+  "worldMap": {
+    "title": "已访问国家",
+    "empty": "您的目录中还没有国家。",
+    "serieSingular": "剧集",
+    "seriePlural": "系列"
+  },
   "workspace": {
     "backToCatalog": "返回目录",
     "viewPublic": "公开视图",
