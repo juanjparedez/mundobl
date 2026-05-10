@@ -13,7 +13,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-xl);
+  gap: var(--spacing-md);
   /* Top mas pequeno (40px en vez de 80px) — el AppLayout ya da su
    * propia respiracion arriba. La pagina se ve mas densa sin perder aire. */
   padding: 40px var(--spacing-lg) 48px;
@@ -92,7 +92,7 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--spacing-md);
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
   border-radius: var(--border-radius-lg);
   border: 1px solid var(--border-color-secondary);
   background: color-mix(in srgb, var(--bg-container) 84%, transparent);
@@ -233,8 +233,8 @@
 .landing__stats {
   display: flex;
   justify-content: center;
-  gap: var(--spacing-xl);
-  padding: var(--spacing-xl) var(--spacing-lg);
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
   background: color-mix(in srgb, var(--bg-container) 88%, transparent);
   border: 1px solid var(--border-color-secondary);
   border-radius: var(--border-radius-lg);
@@ -530,7 +530,7 @@
 .landing__featured-review {
   display: flex;
   gap: var(--spacing-md);
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
   border-radius: 14px;
   background: linear-gradient(
     135deg,
@@ -652,7 +652,7 @@
 .landing__feature-card {
   background: var(--bg-container);
   border-radius: var(--border-radius-base);
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
   box-shadow: var(--box-shadow-card);
   display: flex;
   flex-direction: column;
@@ -752,7 +752,7 @@
 
 @media (max-width: 600px) {
   .landing__stats {
-    gap: var(--spacing-lg);
+    gap: var(--spacing-md);
     flex-wrap: wrap;
   }
 
@@ -808,13 +808,13 @@
 
   .landing__hero {
     gap: var(--spacing-md);
-    padding: var(--spacing-lg) var(--spacing-md) var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-md) var(--spacing-md);
   }
 
   .landing__novedades,
   .landing__latest,
   .landing__review-spotlight {
-    padding: 32px var(--spacing-md);
+    padding: 14px var(--spacing-md);
   }
 }
 

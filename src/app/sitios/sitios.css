@@ -1,5 +1,5 @@
 .sitios-public {
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md);
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -22,7 +22,7 @@
   align-items: center;
   flex-wrap: wrap;
   gap: var(--spacing-sm);
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
 }
 
 .sitios-public__category-title {
@@ -468,7 +468,7 @@
 
 .sitios-empty {
   text-align: center;
-  padding: var(--spacing-xl);
+  padding: var(--spacing-md);
   color: var(--text-secondary);
 }
 
