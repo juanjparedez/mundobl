@@ -6,10 +6,21 @@
 
 .series-content__loading,
 .series-content__empty {
-  padding: 48px 0;
+  padding: 16px 0;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+/* Empty state densificado: en vez de bloque gigante, una linea con icono. */
+.series-content__empty .ant-empty-image {
+  height: 36px;
+  margin-bottom: 4px;
+}
+
+.series-content__empty .ant-empty-description {
+  color: var(--text-tertiary);
+  font-size: var(--font-size-sm);
 }
 
 /* Active player */
@@ -68,7 +79,7 @@
 }
 
 .series-content__card--active {
-  box-shadow: 0 0 0 2px var(--color-primary);
+  box-shadow: 0 0 0 2px var(--primary-color);
 }
 
 .series-content__card .ant-card-body {

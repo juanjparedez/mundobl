@@ -12,6 +12,7 @@ export function DashboardNotificationsWidget() {
     <Widget
       title={t('profileDashboard.widgetNotifications')}
       icon={<BellOutlined />}
+      fade
     >
       <NotificationsContent />
     </Widget>
