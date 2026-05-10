@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { Button, Spin, Tooltip } from 'antd';
-import { ArrowLeftOutlined, ControlOutlined } from '@ant-design/icons';
+import { Button, Spin } from 'antd';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { SettingsPanel } from '@/components/layout/SettingsPanel/SettingsPanel';
 import { ProfileStatsStrip } from '../dashboard/ProfileStatsStrip/ProfileStatsStrip';
@@ -114,23 +114,12 @@ export function ProfileOverviewClient() {
   return (
     <AppLayout>
       <div className="overview-page">
-        <div className="overview-page__top">
-          <OverviewHeader
-            user={data.user}
-            onEditClick={handleEditClick}
-            onPreferencesClick={() => setSettingsOpen(true)}
-          />
-          <Tooltip title="Personalizar paneles visibles">
-            <Button
-              icon={<ControlOutlined />}
-              onClick={() => setCustomizeOpen(true)}
-              className="overview-page__customize-btn"
-              size="small"
-            >
-              Personalizar
-            </Button>
-          </Tooltip>
-        </div>
+        <OverviewHeader
+          user={data.user}
+          onEditClick={handleEditClick}
+          onPreferencesClick={() => setSettingsOpen(true)}
+          onCustomizeClick={() => setCustomizeOpen(true)}
+        />
 
         <ProfileStatsStrip stats={data.stats} />
 

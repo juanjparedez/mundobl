@@ -3,6 +3,7 @@
 import { Avatar, Button } from 'antd';
 import {
   CalendarOutlined,
+  ControlOutlined,
   EditOutlined,
   SettingOutlined,
   UserOutlined,
@@ -14,6 +15,7 @@ interface Props {
   user: ProfileData['user'];
   onEditClick: () => void;
   onPreferencesClick: () => void;
+  onCustomizeClick?: () => void;
 }
 
 const ROLE_LABEL: Record<string, string> = {
@@ -28,6 +30,7 @@ export function OverviewHeader({
   user,
   onEditClick,
   onPreferencesClick,
+  onCustomizeClick,
 }: Props) {
   const roleLabel = ROLE_LABEL[user.role] ?? 'USUARIO';
   const isAdmin = user.role === 'ADMIN';
@@ -67,10 +70,23 @@ export function OverviewHeader({
         </div>
       </div>
       <div className="overview-header__actions">
-        <Button icon={<EditOutlined />} onClick={onEditClick}>
+        {onCustomizeClick && (
+          <Button
+            icon={<ControlOutlined />}
+            onClick={onCustomizeClick}
+            size="small"
+          >
+            Personalizar
+          </Button>
+        )}
+        <Button icon={<EditOutlined />} onClick={onEditClick} size="small">
           Editar perfil
         </Button>
-        <Button icon={<SettingOutlined />} onClick={onPreferencesClick}>
+        <Button
+          icon={<SettingOutlined />}
+          onClick={onPreferencesClick}
+          size="small"
+        >
           Preferencias
         </Button>
       </div>
