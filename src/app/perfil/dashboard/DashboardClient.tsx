@@ -15,6 +15,8 @@ import { ProfileUserLayout } from './ProfileUserLayout/ProfileUserLayout';
 import { ProfileSettings } from '../ProfileSettings/ProfileSettings';
 import { SubscriptionsSection } from '../SubscriptionsSection/SubscriptionsSection';
 import { ClientVersionInfo } from '../ClientVersionInfo/ClientVersionInfo';
+import { useSectionVisibility } from '../overview/useSectionVisibility';
+import { CustomizeDrawer } from '../overview/CustomizeDrawer';
 import './dashboard.css';
 
 export function DashboardClient() {
@@ -22,10 +24,17 @@ export function DashboardClient() {
   const { status, data: session } = useSession();
   const [data, setData] = useState<ProfileData | null>(null);
   const [errored, setErrored] = useState(false);
+  const [customizeOpen, setCustomizeOpen] = useState(false);
+
+  // Customizacion por section: persiste hidden keys en localStorage. El
+  // mismo hook que usaba el overview, reusado aca para no duplicar la
+  // logica de visibilidad (regla: codigo reusable, no dashboards en
+  // paralelo).
+  const { isVisible, toggle, reset } = useSectionVisibility();
 
   // Layout por rol — copia literal de los mocks (style-guide/my-profile.png
-  // y my-.profile2.png). No es grid reordenable: cada rol tiene su layout
-  // fijo con composicion hardcoded para garantizar paridad con los mocks.
+  // y my-.profile2.png). Composicion fija con cells togglables via
+  // CustomizeDrawer.
   const isAdmin =
     (data?.user.role ?? (session?.user as { role?: string })?.role) === 'ADMIN';
 
@@ -78,31 +87,43 @@ export function DashboardClient() {
   return (
     <AppLayout>
       <div className="mb-perfil-dashboard">
-        <ProfileDashboardHeader user={data.user} />
+        <ProfileDashboardHeader
+          user={data.user}
+          onCustomizeClick={() => setCustomizeOpen(true)}
+        />
         <ProfileStatsStrip stats={data.stats} />
 
         {isAdmin ? (
-          <ProfileAdminLayout data={data} />
+          <ProfileAdminLayout data={data} isVisible={isVisible} />
         ) : (
-          <ProfileUserLayout data={data} />
+          <ProfileUserLayout data={data} isVisible={isVisible} />
         )}
 
-        {/* Settings + suscripciones + version info — features que estaban
-         * en el perfil clasico y que migraron al dashboard como bloque
-         * fijo abajo del layout. El id mb-profile-settings es target de
-         * scroll del boton "Editar perfil" del header. */}
-        <div className="mb-perfil-dashboard__footer" id="mb-profile-settings">
-          <div className="mb-perfil-dashboard__footer-grid">
-            <div className="mb-perfil-dashboard__footer-panel">
-              <ProfileSettings />
+        {/* Settings + suscripciones + version info — togglable via key
+         *  'settings'. El id mb-profile-settings es target de scroll del
+         *  boton "Editar perfil" del header. */}
+        {isVisible('settings') && (
+          <div className="mb-perfil-dashboard__footer" id="mb-profile-settings">
+            <div className="mb-perfil-dashboard__footer-grid">
+              <div className="mb-perfil-dashboard__footer-panel">
+                <ProfileSettings />
+              </div>
+              <div className="mb-perfil-dashboard__footer-panel">
+                <SubscriptionsSection />
+              </div>
             </div>
-            <div className="mb-perfil-dashboard__footer-panel">
-              <SubscriptionsSection />
-            </div>
+            <ClientVersionInfo />
           </div>
-          <ClientVersionInfo />
-        </div>
+        )}
       </div>
+
+      <CustomizeDrawer
+        open={customizeOpen}
+        onClose={() => setCustomizeOpen(false)}
+        isVisible={isVisible}
+        onToggle={toggle}
+        onReset={reset}
+      />
     </AppLayout>
   );
 }
