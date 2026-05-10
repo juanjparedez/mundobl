@@ -15,7 +15,7 @@ export interface CurrentlyWatchingWidgetProps {
   items: ProfileData['currentlyWatching'];
 }
 
-/** Shelf horizontal de "Seguir viendo" alineado al mock my-.profile2.png:
+/** Shelf horizontal de "Seguir viendo" alineado al style-guide my-.profile2.png:
  *  cards grandes con poster prominente, titulo, proximo episodio y barra
  *  de progreso. Scroll horizontal con scroll-snap para feel premium. */
 export function CurrentlyWatchingWidget({

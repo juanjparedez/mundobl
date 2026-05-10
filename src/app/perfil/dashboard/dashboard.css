@@ -1,5 +1,5 @@
 /* Container plano del dashboard. Antes tenia border + gradient propio
- * que generaba doble marco (panel padre + panels widgets). Mock es
+ * que generaba doble marco (panel padre + panels widgets). El style-guide es
  * plano: el bg lo da el body via skin premium-dark. Esto deja respirar
  * a los widgets individuales y aprovecha mas ancho. */
 .mb-perfil-dashboard {
@@ -39,7 +39,7 @@
   border-top: 1px solid var(--border-color-secondary);
 }
 
-/* Mock muestra el footer Settings como grid de cards horizontales chicas
+/* El style-guide muestra el footer Settings como grid de cards horizontales chicas
  * (Apariencia, Sesion, Privacidad, Datos, Suscripciones, Build info).
  * Pasamos a auto-fit con minmax 280px — entran 3-4 en desktop, 2 en
  * tablet, 1 en mobile. Mas denso que el 2-col fijo anterior. */

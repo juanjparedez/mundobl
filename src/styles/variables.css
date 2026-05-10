@@ -49,7 +49,7 @@
 
   /* ─── Component sizing tokens ─────────────────────────────────────
    * Defaults = densidad "comfortable" (cómoda). Density compact los
-   * achica para alinear con los mocks; spacious los agranda. Sirve
+   * achica para alinear con el style-guide; spacious los agranda. Sirve
    * tanto a perfil como a otros dashboards.
    *
    * Cambiar la densidad en Settings ya basta para ver/no ver scroll.
@@ -261,7 +261,7 @@
 }
 
 /* ─── Densidad ──────────────────────────────────────────────────────── */
-/* Compact: alineado al mock premium (style-guide/). Todo entra en una
+/* Compact: alineado al style-guide premium (style-guide/). Todo entra en una
  * vista 1080p sin scroll. */
 [data-density='compact'] {
   --spacing-xs: 6px;

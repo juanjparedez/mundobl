@@ -15,7 +15,7 @@
   color: var(--text-secondary);
 }
 
-/* Bloque principal: izq grande + media + chica derecha. Alineado al mock
+/* Bloque principal: izq grande + media + chica derecha. Alineado al style-guide
  * my-.profile2.png — la columna izquierda concentra contenido (shelf +
  * stats + 3-up con paises/year/activity), la del medio reviews+collections,
  * y la derecha es comentarios full-height. */

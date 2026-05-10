@@ -16,7 +16,7 @@ import './QuickAdminActionsWidget.css';
 
 /** Grid de acciones rapidas para admins. Cada accion = card clickable con
  *  icono + label que linkea a la ruta admin correspondiente. Pensado para
- *  vivir al lado del Resumen en el header del perfil admin (mock my-profile.png).
+ *  vivir al lado del Resumen en el header del perfil admin (style-guide/my-profile.png).
  *
  *  Reusa rutas admin existentes — no crea nada nuevo en backend. */
 export function QuickAdminActionsWidget() {
