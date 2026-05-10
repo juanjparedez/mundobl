@@ -1,0 +1,111 @@
+/* Layout fijo user del /perfil — copia literal de style-guide/my-.profile2.png.
+ * No es grid reordenable: cada seccion vive en una posicion definida via
+ * CSS grid. Mismo principio que ProfileAdminLayout: bg viene del body, los
+ * widgets traen panel propio. */
+
+.mb-profile-user {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.mb-profile-user__row {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+}
+
+.mb-profile-user__cell {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.mb-profile-user__cell > * {
+  flex: 1;
+  min-height: 0;
+}
+
+/* Row full-width (CurrentlyWatching shelf hero, MyComments). */
+.mb-profile-user__row--full {
+  grid-template-columns: minmax(0, 1fr);
+}
+.mb-profile-user__cell--shelf {
+  min-height: 280px;
+}
+
+/* Row "social" del mock: reseñas wide + notifs + cases compactos.
+ * Reviews ocupa 5 cols (lo mas alto del row), Notifications y Cases 1 fr
+ * cada uno (compactos). */
+.mb-profile-user__row--social {
+  grid-template-columns: minmax(0, 5fr) minmax(0, 4fr) minmax(0, 3fr);
+}
+.mb-profile-user__row--social .mb-profile-user__cell {
+  min-height: 240px;
+}
+.mb-profile-user__cell--reviews {
+  /* reviews tiene mas contenido textual; lo dejamos respirar */
+}
+
+/* Row charts: heatmap ancho (mock muestra calendar grande) + donut +
+ * completed-by-year. El donut user es mas prominente que en admin. */
+.mb-profile-user__row--charts {
+  grid-template-columns: minmax(0, 6fr) minmax(0, 3fr) minmax(0, 3fr);
+}
+.mb-profile-user__row--charts .mb-profile-user__cell {
+  min-height: 240px;
+}
+.mb-profile-user__cell--heatmap {
+  min-width: 0;
+}
+
+/* Row 4-up: lists alineadas con igual ancho. */
+.mb-profile-user__row--4up {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+/* Row 3-up (no usado en este layout pero queda definido por simetria). */
+.mb-profile-user__row--3up {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* Row 2-up. */
+.mb-profile-user__row--2up {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* Tablet: charts y social colapsan a 2 cols, 4-up a 2 cols. */
+@media (max-width: 1100px) {
+  .mb-profile-user__row--social,
+  .mb-profile-user__row--charts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .mb-profile-user__row--4up {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  /* En tablet la review y el heatmap ocupan ambas columnas para no
+   * achicarse demasiado. */
+  .mb-profile-user__row--social .mb-profile-user__cell--reviews {
+    grid-column: 1 / -1;
+  }
+  .mb-profile-user__row--charts .mb-profile-user__cell--heatmap {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Mobile: 1 col stacked. */
+@media (max-width: 720px) {
+  .mb-profile-user__row--2up,
+  .mb-profile-user__row--3up,
+  .mb-profile-user__row--4up,
+  .mb-profile-user__row--social,
+  .mb-profile-user__row--charts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .mb-profile-user__row--social .mb-profile-user__cell--reviews,
+  .mb-profile-user__row--charts .mb-profile-user__cell--heatmap {
+    grid-column: auto;
+  }
+}
