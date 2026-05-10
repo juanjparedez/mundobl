@@ -2288,6 +2288,14 @@ const zhCN: TranslationShape = {
     "actionChangelog": "发布",
     "actionUsers": "用户"
   },
+  "adminActivity": {
+    "title": "团队活动",
+    "empty": "暂无近期活动。",
+    "anonymous": "匿名用户",
+    "actionCreate": "已创建",
+    "actionUpdate": "已编辑",
+    "actionDelete": "已删除"
+  },
   "workspace": {
     "backToCatalog": "返回目录",
     "viewPublic": "公开视图",
