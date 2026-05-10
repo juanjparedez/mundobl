@@ -2298,7 +2298,30 @@ const zhCN: TranslationShape = {
     "tabData": "数据",
     "tabDataPlaceholder": "剧集的原始可编辑元数据。",
     "tabReviews": "评论",
-    "tabReviewsPlaceholder": "与此剧集相关的评论。"
+    "tabReviewsPlaceholder": "与此剧集相关的评论。",
+    "overviewSynopsis": "剧情简介",
+    "overviewObservations": "备注",
+    "overviewReview": "个人评价",
+    "overviewSoundtrack": "原声带",
+    "overviewUniverse": "世界观",
+    "dataType": "类型",
+    "dataFormat": "形式",
+    "dataBasedOn": "改编自",
+    "dataCatalogScope": "收录范围",
+    "dataRating": "评分",
+    "dataCreatedAt": "创建日期",
+    "dataUpdatedAt": "更新日期",
+    "tableColEpisode": "剧集",
+    "tableColDuration": "时长",
+    "tableColTitle": "标题",
+    "tableColTone": "基调",
+    "tableColToneHint": "本集主要基调。待实现。",
+    "tableColSubplots": "支线剧情",
+    "tableColSubplotsHint": "本集推进的支线剧情。待实现。",
+    "tableColSynopsis": "剧情简介",
+    "tableColNotes": "我的笔记",
+    "tableCellPending": "待定",
+    "tableEmpty": "此剧集尚未加载任何剧集。"
   }
 } as TranslationShape;
 

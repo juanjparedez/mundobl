@@ -2298,7 +2298,30 @@ const de: TranslationShape = {
     "tabData": "Daten",
     "tabDataPlaceholder": "Rohe, bearbeitbare Metadaten für die Serie.",
     "tabReviews": "Bewertungen",
-    "tabReviewsPlaceholder": "Mit dieser Serie verknüpfte Bewertungen."
+    "tabReviewsPlaceholder": "Mit dieser Serie verknüpfte Bewertungen.",
+    "overviewSynopsis": "Synopsis",
+    "overviewObservations": "Beobachtungen",
+    "overviewReview": "Persönliche Bewertung",
+    "overviewSoundtrack": "Soundtrack",
+    "overviewUniverse": "Universum",
+    "dataType": "Typ",
+    "dataFormat": "Format",
+    "dataBasedOn": "Basiert auf",
+    "dataCatalogScope": "Katalogumfang",
+    "dataRating": "Bewertung",
+    "dataCreatedAt": "Erstellt",
+    "dataUpdatedAt": "Aktualisiert",
+    "tableColEpisode": "Episode",
+    "tableColDuration": "Dauer",
+    "tableColTitle": "Titel",
+    "tableColTone": "Ton",
+    "tableColToneHint": "Dominanter Ton der Episode. Wird noch implementiert.",
+    "tableColSubplots": "Nebenhandlungen",
+    "tableColSubplotsHint": "Nebenhandlungen, die in dieser Episode voranschreiten. Wird noch implementiert.",
+    "tableColSynopsis": "Synopsis",
+    "tableColNotes": "Meine Notizen",
+    "tableCellPending": "ausstehend",
+    "tableEmpty": "Diese Serie hat noch keine Episoden geladen."
   }
 } as TranslationShape;
 

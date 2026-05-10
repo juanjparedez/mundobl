@@ -3,7 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Tabs, Button, Tag, Rate } from 'antd';
+import { Tabs, Button, Tag, Rate, Descriptions } from 'antd';
+import { useSession } from 'next-auth/react';
 import {
   EditOutlined,
   StarFilled,
@@ -15,6 +16,7 @@ import {
 import type { getSeriesById } from '@/lib/database';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { EpisodeAnalysisTable } from '../EpisodeAnalysisTable/EpisodeAnalysisTable';
 import './WorkspaceClient.css';
 
 // Tipo derivado del helper para no duplicar el shape. Se actualiza
@@ -32,6 +34,7 @@ export interface WorkspaceClientProps {
  *  administracion densa. */
 export function WorkspaceClient({ serie }: WorkspaceClientProps) {
   const { t } = useLocale();
+  const { data: session } = useSession();
   const [activeTab, setActiveTab] = useState('overview');
 
   const seasonCount = serie.seasons?.length ?? 0;
@@ -49,9 +52,52 @@ export function WorkspaceClient({ serie }: WorkspaceClientProps) {
       key: 'overview',
       label: t('workspace.tabOverview'),
       children: (
-        <div className="mb-workspace__placeholder">
-          {/* TODO commit siguiente: contenido real del tab Resumen */}
-          <p>{t('workspace.tabOverviewPlaceholder')}</p>
+        <div className="mb-workspace__tab-overview">
+          {serie.synopsis && (
+            <section className="mb-workspace__section">
+              <h3 className="mb-workspace__section-title">
+                {t('workspace.overviewSynopsis')}
+              </h3>
+              <p className="mb-workspace__paragraph">{serie.synopsis}</p>
+            </section>
+          )}
+          {serie.observations && (
+            <section className="mb-workspace__section">
+              <h3 className="mb-workspace__section-title">
+                {t('workspace.overviewObservations')}
+              </h3>
+              <p className="mb-workspace__paragraph">{serie.observations}</p>
+            </section>
+          )}
+          {serie.review && (
+            <section className="mb-workspace__section">
+              <h3 className="mb-workspace__section-title">
+                {t('workspace.overviewReview')}
+              </h3>
+              <p className="mb-workspace__paragraph">{serie.review}</p>
+            </section>
+          )}
+          {serie.soundtrack && (
+            <section className="mb-workspace__section">
+              <h3 className="mb-workspace__section-title">
+                {t('workspace.overviewSoundtrack')}
+              </h3>
+              <p className="mb-workspace__paragraph">{serie.soundtrack}</p>
+            </section>
+          )}
+          {serie.universe && (
+            <section className="mb-workspace__section">
+              <h3 className="mb-workspace__section-title">
+                {t('workspace.overviewUniverse')}
+              </h3>
+              <Tag color="purple">{serie.universe.name}</Tag>
+              {serie.universe.description && (
+                <p className="mb-workspace__paragraph">
+                  {serie.universe.description}
+                </p>
+              )}
+            </section>
+          )}
         </div>
       ),
     },
@@ -59,9 +105,10 @@ export function WorkspaceClient({ serie }: WorkspaceClientProps) {
       key: 'analysis',
       label: t('workspace.tabAnalysis'),
       children: (
-        <div className="mb-workspace__placeholder">
-          <p>{t('workspace.tabAnalysisPlaceholder')}</p>
-        </div>
+        <EpisodeAnalysisTable
+          seasons={serie.seasons ?? []}
+          currentUserId={session?.user?.id ?? null}
+        />
       ),
     },
     {
@@ -77,9 +124,50 @@ export function WorkspaceClient({ serie }: WorkspaceClientProps) {
       key: 'data',
       label: t('workspace.tabData'),
       children: (
-        <div className="mb-workspace__placeholder">
-          <p>{t('workspace.tabDataPlaceholder')}</p>
-        </div>
+        <Descriptions
+          column={2}
+          size="small"
+          bordered
+          className="mb-workspace__data"
+          items={[
+            { key: 'id', label: 'ID', children: serie.id },
+            {
+              key: 'type',
+              label: t('workspace.dataType'),
+              children: serie.type,
+            },
+            {
+              key: 'format',
+              label: t('workspace.dataFormat'),
+              children: serie.format ?? '—',
+            },
+            {
+              key: 'basedOn',
+              label: t('workspace.dataBasedOn'),
+              children: serie.basedOn ?? '—',
+            },
+            {
+              key: 'catalogScope',
+              label: t('workspace.dataCatalogScope'),
+              children: serie.catalogScope,
+            },
+            {
+              key: 'rating',
+              label: t('workspace.dataRating'),
+              children: serie.overallRating ?? '—',
+            },
+            {
+              key: 'createdAt',
+              label: t('workspace.dataCreatedAt'),
+              children: new Date(serie.createdAt).toLocaleDateString(),
+            },
+            {
+              key: 'updatedAt',
+              label: t('workspace.dataUpdatedAt'),
+              children: new Date(serie.updatedAt).toLocaleDateString(),
+            },
+          ]}
+        />
       ),
     },
     {
