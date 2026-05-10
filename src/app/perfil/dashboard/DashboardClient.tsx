@@ -452,8 +452,10 @@ export function DashboardClient() {
         {/* Settings + suscripciones + version info — features que estaban
          * en el perfil clasico y que migraron al dashboard como bloque
          * fijo abajo del grid. No son widgets reordenables porque son
-         * singletons que el usuario espera en una posicion estable. */}
-        <div className="mb-perfil-dashboard__footer">
+         * singletons que el usuario espera en una posicion estable.
+         * El id mb-profile-settings es target de scroll del boton
+         * "Editar perfil" del header. */}
+        <div className="mb-perfil-dashboard__footer" id="mb-profile-settings">
           <div className="mb-perfil-dashboard__footer-grid">
             <div className="mb-perfil-dashboard__footer-panel">
               <ProfileSettings />
