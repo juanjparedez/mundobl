@@ -14,7 +14,9 @@
   align-items: center;
   justify-content: center;
   gap: var(--spacing-xl);
-  padding: 80px var(--spacing-lg) 60px;
+  /* Top mas pequeno (40px en vez de 80px) — el AppLayout ya da su
+   * propia respiracion arriba. La pagina se ve mas densa sin perder aire. */
+  padding: 40px var(--spacing-lg) 48px;
   max-width: 1320px;
   margin: 0 auto;
   width: 100%;
@@ -203,19 +205,10 @@
   border-color: rgba(0, 0, 0, 0.08);
 }
 
-.landing__floating-chip--ai {
-  top: 8%;
-  left: -4%;
-  color: #ffd54f;
-  animation-delay: 0s;
-}
-
-[data-theme='light'] .landing__floating-chip--ai {
-  color: #d48806;
-}
+/* Chip --ai removido junto con la mencion al asistente IA en el hero. */
 
 .landing__floating-chip--lang {
-  top: 38%;
+  top: 12%;
   right: -8%;
   animation-delay: 1.3s;
 }
@@ -330,15 +323,17 @@
 
 /* ── Novedades ── */
 .landing__novedades {
-  padding: 56px var(--spacing-lg);
+  padding: 40px var(--spacing-lg);
   max-width: 1320px;
   margin: 0 auto;
   width: 100%;
 }
 
+/* auto-fit en lugar de 3 fijos para tolerar N cards sin que la ultima
+ * fila quede coja (al sacar la novedad de IA quedaron 5 cards). */
 .landing__novedades-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: var(--spacing-md);
 }
 

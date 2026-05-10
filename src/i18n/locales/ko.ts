@@ -1306,7 +1306,7 @@ const ko: TranslationShape = {
     description:
       'BL 시리즈 전용 공간. 시청 중인 콘텐츠를 추적하고, 좋아하는 콘텐츠를 평가하고, 생각을 공유하세요.',
     goToProfile: '내 프로필',
-    heroBadge: 'AI 비서 · 리뷰 · 10개 언어',
+    heroBadge: '리뷰 · 10개 언어',
     statSeries: '카탈로그 시리즈',
     statViews: '시청 횟수',
     statComments: '댓글',
