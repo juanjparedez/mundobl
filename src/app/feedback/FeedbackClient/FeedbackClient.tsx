@@ -77,9 +77,15 @@ interface FeatureRequest {
   images?: FeatureRequestImage[];
 }
 
+interface ChangelogItemEntry {
+  body: string;
+  category: string | null;
+}
+
 interface ChangelogEntry {
   version: string;
-  items: string[];
+  label?: string | null;
+  items: ChangelogItemEntry[];
 }
 
 interface PendingImage {
@@ -681,7 +687,17 @@ export function FeedbackClient() {
                   </div>
                   <ul className="changelog-entry__list">
                     {entry.items.map((item, j) => (
-                      <li key={j}>{item}</li>
+                      <li key={j}>
+                        {item.category && (
+                          <Tag
+                            color="default"
+                            className="changelog-entry__cat-tag"
+                          >
+                            {item.category}
+                          </Tag>
+                        )}
+                        {item.body}
+                      </li>
                     ))}
                   </ul>
                 </div>

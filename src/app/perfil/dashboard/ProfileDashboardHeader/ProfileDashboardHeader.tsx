@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { Avatar, Button, Tag } from 'antd';
 import {
   CalendarOutlined,
@@ -19,8 +18,6 @@ const ROLE_COLORS: Record<string, string> = {
 
 export interface ProfileDashboardHeaderProps {
   user: ProfileData['user'];
-  /** Click en "Editar perfil". Apunta al apartado de settings. */
-  editHref?: string;
 }
 
 function formatJoinedDate(iso: string, locale: string): string {
@@ -35,14 +32,18 @@ function formatJoinedDate(iso: string, locale: string): string {
   }
 }
 
-/** Header denso del perfil dashboard, alineado al mock:
- *  Avatar + nombre + email + role badge + fecha de alta + boton "Editar perfil".
- *  Vive FUERA del DashboardGrid (no es un widget). */
-export function ProfileDashboardHeader({
-  user,
-  editHref = '/perfil/clasico',
-}: ProfileDashboardHeaderProps) {
+/** Header denso del perfil dashboard. Click en "Editar perfil" hace scroll
+ *  al footer del dashboard donde vive ProfileSettings. Antes apuntaba a
+ *  /perfil/clasico (no hacia nada util mas que recargar). */
+export function ProfileDashboardHeader({ user }: ProfileDashboardHeaderProps) {
   const { t, locale } = useLocale();
+
+  const handleEditClick = () => {
+    const target = document.getElementById('mb-profile-settings');
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
 
   return (
     <header className="mb-profile-header" role="banner">
@@ -65,11 +66,9 @@ export function ProfileDashboardHeader({
         </div>
       </div>
       <div className="mb-profile-header__actions">
-        <Link href={editHref}>
-          <Button icon={<EditOutlined />}>
-            {t('profileDashboard.editProfile')}
-          </Button>
-        </Link>
+        <Button icon={<EditOutlined />} onClick={handleEditClick}>
+          {t('profileDashboard.editProfile')}
+        </Button>
       </div>
     </header>
   );
