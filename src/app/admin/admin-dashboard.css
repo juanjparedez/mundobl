@@ -1,289 +1,221 @@
-/* Admin dashboard home — mock-aligned (style-guide/admin.png).
- * Hero prominente con saludo + KPIs grandes. Tool cards mas visuales
- * con iconos grandes + count destacado. Alerts mock-style con icon
- * a la izquierda + label + arrow. */
-
 .admin-dashboard {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
-/* Hero: saludo + subtitle a la izquierda, stats strip a la derecha.
- * Padding generoso, fondo elevado. */
 .admin-dashboard__hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 20px;
-  padding: 20px 24px;
+  gap: 12px;
+  padding: 12px 14px;
   background: var(--bg-container);
   border-radius: var(--border-radius-lg);
   border: 1px solid var(--border-color-secondary);
-}
-
-.admin-dashboard__hero-text {
-  min-width: 0;
+  flex-wrap: wrap;
 }
 
 .admin-dashboard__hero-title {
-  margin: 0 0 4px 0;
-  font-size: 24px;
+  margin: 0 0 2px 0;
+  font-size: 16px;
   font-weight: 700;
   letter-spacing: -0.01em;
-  color: var(--text-primary);
 }
 
 .admin-dashboard__hero-subtitle {
   margin: 0;
   color: var(--text-secondary);
-  font-size: 13px;
-  line-height: 1.5;
+  font-size: 11px;
 }
 
-/* Stats strip dentro del hero: 4 KPIs prominentes, valores grandes,
- * labels chicos uppercase. */
 .admin-dashboard__hero-stats {
   display: grid;
-  grid-template-columns: repeat(4, minmax(80px, 1fr));
-  gap: 10px;
-  width: auto;
+  grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+  gap: 6px;
+  flex: 1;
+  max-width: 420px;
 }
 
 .admin-dashboard__hero-stat {
   text-align: center;
-  padding: 10px 14px;
+  padding: 6px 10px;
   background: var(--bg-spotlight);
-  border-radius: var(--border-radius-md);
+  border-radius: var(--border-radius-base);
   border: 1px solid var(--border-color-secondary);
-  min-width: 80px;
 }
 
 .admin-dashboard__hero-stat-value {
-  font-size: 26px;
+  font-size: 18px;
   font-weight: 700;
-  line-height: 1.1;
+  line-height: 1;
   color: var(--primary-color);
   font-variant-numeric: tabular-nums;
 }
 
 .admin-dashboard__hero-stat-label {
-  margin-top: 4px;
-  font-size: 10px;
+  margin-top: 2px;
+  font-size: 9px;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   color: var(--text-tertiary);
   font-weight: 600;
 }
 
-/* Headline alerts: card prominente con icon grande + label + arrow.
- * Mock muestra una alert dorada/amarilla bien visible al top. */
+/* Headline alerts */
 .admin-dashboard__alerts {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--spacing-xs, 8px);
 }
 
 .admin-dashboard__alert {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 14px 18px;
-  border-radius: var(--border-radius-md);
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: var(--border-radius-base);
   text-decoration: none;
   color: var(--text-primary);
   font-weight: 500;
-  font-size: 14px;
+  font-size: 12px;
   border: 1px solid transparent;
   transition: var(--transition-fast, 0.15s ease);
 }
 
 .admin-dashboard__alert:hover {
   transform: translateX(2px);
-  border-color: color-mix(
-    in srgb,
-    var(--primary-color) 30%,
-    var(--border-color-secondary)
-  );
 }
 
 .admin-dashboard__alert--danger {
-  background: rgba(255, 77, 79, 0.1);
-  border-color: rgba(255, 77, 79, 0.3);
+  background: rgba(255, 77, 79, 0.08);
+  border-color: rgba(255, 77, 79, 0.25);
 }
 
 .admin-dashboard__alert--warning {
-  background: rgba(250, 173, 20, 0.1);
-  border-color: rgba(250, 173, 20, 0.3);
+  background: rgba(250, 173, 20, 0.08);
+  border-color: rgba(250, 173, 20, 0.25);
 }
 
 .admin-dashboard__alert--info {
-  background: color-mix(in srgb, var(--primary-color) 8%, transparent);
-  border-color: color-mix(in srgb, var(--primary-color) 30%, transparent);
+  background: rgba(22, 119, 255, 0.06);
+  border-color: rgba(22, 119, 255, 0.2);
 }
 
 .admin-dashboard__alert-icon {
-  font-size: 22px;
-  flex-shrink: 0;
+  font-size: 1.25em;
 }
 
 .admin-dashboard__alert-arrow {
   margin-left: auto;
   color: var(--text-secondary);
-  font-size: 18px;
+  font-size: 16px;
 }
 
-/* Sections: titulo upper + grid de tool cards. */
+/* Sections + grid */
 .admin-dashboard__section {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .admin-dashboard__section-title {
   margin: 0;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-secondary);
+  letter-spacing: 0.06em;
+  color: var(--text-tertiary);
 }
 
 .admin-dashboard__grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
 }
 
-/* Tool card: icon arriba grande + title + count a la derecha + alert
- * opcional al pie. Mock muestra cards con icons prominentes y counts
- * en la esquina. */
 .admin-tool-card {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 14px 16px;
+  gap: 4px;
+  padding: 10px 12px;
   background: var(--bg-container);
   border: 1px solid var(--border-color-secondary);
-  border-radius: var(--border-radius-md);
+  border-radius: var(--border-radius-base);
   text-decoration: none;
   color: var(--text-primary);
   transition: var(--transition-fast, 0.15s ease);
   position: relative;
   overflow: hidden;
-  min-height: 78px;
-}
-
-.admin-tool-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: inherit;
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--primary-color) 4%, transparent) 0%,
-    transparent 60%
-  );
-  opacity: 0;
-  transition: opacity var(--transition-fast, 0.15s ease);
 }
 
 .admin-tool-card:hover {
-  border-color: color-mix(
-    in srgb,
-    var(--primary-color) 50%,
-    var(--border-color-secondary)
-  );
-  transform: translateY(-1px);
-}
-
-.admin-tool-card:hover::before {
-  opacity: 1;
+  border-color: color-mix(in srgb, var(--primary-color) 50%, var(--border-color-secondary));
+  background: color-mix(in srgb, var(--bg-elevated) 80%, transparent);
 }
 
 .admin-tool-card__head {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
-  gap: 8px;
+  align-items: center;
 }
 
 .admin-tool-card__icon {
-  font-size: 22px;
+  font-size: 16px;
   display: inline-flex;
-  line-height: 1;
 }
 
 .admin-tool-card__count {
-  font-size: 18px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--primary-color);
   font-variant-numeric: tabular-nums;
-  line-height: 1;
 }
 
 .admin-tool-card__title {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
-  color: var(--text-primary);
 }
 
 .admin-tool-card__alert {
-  font-size: 11px;
+  font-size: 10px;
+  color: #ff8585;
   font-weight: 500;
   margin-top: 2px;
-  color: #ff8585;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.admin-tool-card__alert::before {
-  content: '●';
-  font-size: 8px;
-  color: currentColor;
 }
 
 [data-theme='dark'] .admin-tool-card__alert {
-  color: #ff8a65;
-}
-
-/* Responsive: en mobile el hero se stackea, stats van a 2 cols. */
-@media (max-width: 900px) {
-  .admin-dashboard__hero {
-    grid-template-columns: 1fr;
-  }
+  color: #ff7a45;
 }
 
 @media (max-width: 640px) {
   .admin-dashboard__hero {
-    padding: 16px 18px;
+    padding: var(--spacing-md, 18px);
   }
 
   .admin-dashboard__hero-title {
-    font-size: 20px;
+    font-size: 1.4em;
   }
 
   .admin-dashboard__hero-stats {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
+    max-width: none;
     width: 100%;
   }
 
   .admin-dashboard__hero-stat {
-    padding: 8px 10px;
+    padding: 8px;
   }
 
   .admin-dashboard__hero-stat-value {
-    font-size: 22px;
+    font-size: 1.3em;
   }
 
   .admin-dashboard__grid {
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
   }
 
-  .admin-dashboard__alert {
+  .admin-tool-card {
     padding: 12px 14px;
-    font-size: 13px;
   }
 }
