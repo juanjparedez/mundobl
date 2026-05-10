@@ -2316,6 +2316,18 @@ export type TranslationShape = {
     rightRailLinkedReviews: string;
     rightRailEmpty: string;
     rightRailAnonymous: string;
+    footerPublicReviewsTitle: string;
+    footerPublicReviewsHint: string;
+    footerPublicReviewsAction: string;
+    footerPrivateNotesTitle: string;
+    footerPrivateNotesHint: string;
+    footerTeamActivityTitle: string;
+    footerTeamActivityHint: string;
+    footerAdminToolsTitle: string;
+    footerAdminToolsEdit: string;
+    footerAdminToolsView: string;
+    footerAdminToolsList: string;
+    footerPending: string;
   };
 };
 
@@ -4750,6 +4762,21 @@ const es: TranslationShape = {
     rightRailLinkedReviews: 'Reseñas vinculadas',
     rightRailEmpty: 'Aún no hay reseñas para esta serie.',
     rightRailAnonymous: 'Anónimo',
+    footerPublicReviewsTitle: 'Reseñas públicas',
+    footerPublicReviewsHint:
+      'Reseñas publicadas por la comunidad sobre esta serie.',
+    footerPublicReviewsAction: 'Ver todas',
+    footerPrivateNotesTitle: 'Notas privadas',
+    footerPrivateNotesHint:
+      'Notas del equipo no visibles al público. Editables por episodio en el tab Análisis.',
+    footerTeamActivityTitle: 'Actividad del equipo',
+    footerTeamActivityHint:
+      'Cambios recientes de admins/moderadores sobre esta serie.',
+    footerAdminToolsTitle: 'Herramientas',
+    footerAdminToolsEdit: 'Editar serie',
+    footerAdminToolsView: 'Ver pública',
+    footerAdminToolsList: 'Volver al listado',
+    footerPending: 'Próximamente',
   },
 };
 
@@ -7166,6 +7193,21 @@ const en: TranslationShape = {
     rightRailLinkedReviews: 'Linked reviews',
     rightRailEmpty: 'No reviews yet for this series.',
     rightRailAnonymous: 'Anonymous',
+    footerPublicReviewsTitle: 'Public reviews',
+    footerPublicReviewsHint:
+      'Reviews published by the community about this series.',
+    footerPublicReviewsAction: 'View all',
+    footerPrivateNotesTitle: 'Private notes',
+    footerPrivateNotesHint:
+      'Team notes not visible to the public. Editable per episode in the Analysis tab.',
+    footerTeamActivityTitle: 'Team activity',
+    footerTeamActivityHint:
+      'Recent changes by admins/moderators on this series.',
+    footerAdminToolsTitle: 'Tools',
+    footerAdminToolsEdit: 'Edit series',
+    footerAdminToolsView: 'View public',
+    footerAdminToolsList: 'Back to list',
+    footerPending: 'Coming soon',
   },
 };
 

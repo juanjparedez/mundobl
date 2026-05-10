@@ -2324,7 +2324,19 @@ const th: TranslationShape = {
     "tableEmpty": "ซีรีส์นี้ยังไม่มีตอนที่โหลด",
     "rightRailLinkedReviews": "รีวิวที่เชื่อมโยง",
     "rightRailEmpty": "ยังไม่มีรีวิวสำหรับซีรีส์นี้",
-    "rightRailAnonymous": "ไม่ระบุชื่อ"
+    "rightRailAnonymous": "ไม่ระบุชื่อ",
+    "footerPublicReviewsTitle": "รีวิวสาธารณะ",
+    "footerPublicReviewsHint": "รีวิวที่เผยแพร่โดยชุมชนเกี่ยวกับซีรีส์นี้",
+    "footerPublicReviewsAction": "ดูทั้งหมด",
+    "footerPrivateNotesTitle": "บันทึกส่วนตัว",
+    "footerPrivateNotesHint": "บันทึกของทีมที่ไม่แสดงต่อสาธารณะ สามารถแก้ไขได้แต่ละตอนในแท็บการวิเคราะห์",
+    "footerTeamActivityTitle": "กิจกรรมของทีม",
+    "footerTeamActivityHint": "การเปลี่ยนแปลงล่าสุดโดยผู้ดูแลระบบ/ผู้ดูแลในซีรีส์นี้",
+    "footerAdminToolsTitle": "เครื่องมือ",
+    "footerAdminToolsEdit": "แก้ไขซีรีส์",
+    "footerAdminToolsView": "ดูสาธารณะ",
+    "footerAdminToolsList": "กลับสู่รายการ",
+    "footerPending": "เร็วๆ นี้"
   }
 } as TranslationShape;
 

@@ -2324,7 +2324,19 @@ const it: TranslationShape = {
     "tableEmpty": "Questa serie non ha ancora episodi caricati.",
     "rightRailLinkedReviews": "Recensioni collegate",
     "rightRailEmpty": "Nessuna recensione ancora per questa serie.",
-    "rightRailAnonymous": "Anonimo"
+    "rightRailAnonymous": "Anonimo",
+    "footerPublicReviewsTitle": "Recensioni pubbliche",
+    "footerPublicReviewsHint": "Recensioni pubblicate dalla community su questa serie.",
+    "footerPublicReviewsAction": "Visualizza tutto",
+    "footerPrivateNotesTitle": "Note private",
+    "footerPrivateNotesHint": "Note del team non visibili al pubblico. Modificabili per episodio nella scheda Analisi.",
+    "footerTeamActivityTitle": "Attività del team",
+    "footerTeamActivityHint": "Modifiche recenti da parte di amministratori/moderatori su questa serie.",
+    "footerAdminToolsTitle": "Strumenti",
+    "footerAdminToolsEdit": "Modifica serie",
+    "footerAdminToolsView": "Visualizza pubblico",
+    "footerAdminToolsList": "Torna all'elenco",
+    "footerPending": "Prossimamente"
   }
 } as TranslationShape;
 

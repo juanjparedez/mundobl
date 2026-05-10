@@ -2324,7 +2324,19 @@ const ja: TranslationShape = {
     "tableEmpty": "このシリーズにはまだエピソードがありません。",
     "rightRailLinkedReviews": "関連レビュー",
     "rightRailEmpty": "このシリーズにはまだレビューがありません。",
-    "rightRailAnonymous": "匿名"
+    "rightRailAnonymous": "匿名",
+    "footerPublicReviewsTitle": "公開レビュー",
+    "footerPublicReviewsHint": "このシリーズについてコミュニティが公開したレビューです。",
+    "footerPublicReviewsAction": "すべて表示",
+    "footerPrivateNotesTitle": "非公開メモ",
+    "footerPrivateNotesHint": "一般公開されていないチームメモです。分析タブでエピソードごとに編集できます。",
+    "footerTeamActivityTitle": "チームアクティビティ",
+    "footerTeamActivityHint": "このシリーズに対する管理者/モデレーターによる最近の変更です。",
+    "footerAdminToolsTitle": "ツール",
+    "footerAdminToolsEdit": "シリーズを編集",
+    "footerAdminToolsView": "公開ページを表示",
+    "footerAdminToolsList": "リストに戻る",
+    "footerPending": "近日公開"
   }
 } as TranslationShape;
 

@@ -2324,7 +2324,19 @@ const zhTW: TranslationShape = {
     "tableEmpty": "此劇集尚未載入任何劇集。",
     "rightRailLinkedReviews": "相關評論",
     "rightRailEmpty": "此劇集暫無評論。",
-    "rightRailAnonymous": "匿名"
+    "rightRailAnonymous": "匿名",
+    "footerPublicReviewsTitle": "公開評論",
+    "footerPublicReviewsHint": "社群對此劇集的評論。",
+    "footerPublicReviewsAction": "查看全部",
+    "footerPrivateNotesTitle": "私人筆記",
+    "footerPrivateNotesHint": "團隊筆記，不對外公開。可在分析分頁中按劇集編輯。",
+    "footerTeamActivityTitle": "團隊活動",
+    "footerTeamActivityHint": "管理員/版主對此劇集的近期變更。",
+    "footerAdminToolsTitle": "工具",
+    "footerAdminToolsEdit": "編輯劇集",
+    "footerAdminToolsView": "查看公開頁面",
+    "footerAdminToolsList": "返回列表",
+    "footerPending": "即將推出"
   }
 } as TranslationShape;
 
