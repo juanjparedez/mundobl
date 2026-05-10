@@ -19,8 +19,9 @@
 .mb-profile-stats-strip__item {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 14px;
+  gap: var(--statstrip-tile-gap);
+  padding: var(--statstrip-tile-padding-block)
+    var(--statstrip-tile-padding-inline);
   border-right: 1px solid var(--border-color-secondary);
   min-width: 0;
 }
@@ -33,13 +34,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: var(--statstrip-icon-size);
+  height: var(--statstrip-icon-size);
   flex-shrink: 0;
-  border-radius: 8px;
+  border-radius: var(--statstrip-icon-radius);
   background: color-mix(in srgb, var(--primary-color) 14%, transparent);
   color: var(--primary-color);
-  font-size: 13px;
+  font-size: var(--statstrip-icon-font-size);
 }
 
 .mb-profile-stats-strip__body {
@@ -49,7 +50,7 @@
 }
 
 .mb-profile-stats-strip__value {
-  font-size: 20px;
+  font-size: var(--statstrip-value-size);
   font-weight: 700;
   color: var(--text-primary);
   line-height: 1;
@@ -59,7 +60,7 @@
 
 .mb-profile-stats-strip__label {
   margin-top: 3px;
-  font-size: 10px;
+  font-size: var(--statstrip-label-size);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--text-tertiary);

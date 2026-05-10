@@ -50,7 +50,9 @@ export function ProfileDashboardHeader({ user }: ProfileDashboardHeaderProps) {
       <Avatar
         src={user.image}
         icon={!user.image ? <UserOutlined /> : undefined}
-        size={88}
+        // size base para SSR / fallback. CSS sobreescribe via
+        // --profile-header-avatar-size segun density.
+        size={72}
         className="mb-profile-header__avatar"
       />
       <div className="mb-profile-header__info">

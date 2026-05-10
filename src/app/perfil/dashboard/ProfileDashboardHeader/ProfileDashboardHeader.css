@@ -4,8 +4,9 @@
 .mb-profile-header {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
-  padding: 14px 18px;
+  gap: var(--profile-header-gap);
+  padding: var(--profile-header-padding-block)
+    var(--profile-header-padding-inline);
   background: var(--bg-container);
   border: 1px solid var(--border-color-secondary);
   border-radius: var(--border-radius-lg);
@@ -14,6 +15,11 @@
 
 .mb-profile-header__avatar {
   flex-shrink: 0;
+  /* Override del size inline de AntD: la densidad manda. */
+  width: var(--profile-header-avatar-size) !important;
+  height: var(--profile-header-avatar-size) !important;
+  font-size: calc(var(--profile-header-avatar-size) * 0.5);
+  line-height: var(--profile-header-avatar-size);
   border: 2px solid color-mix(in srgb, var(--primary-color) 30%, transparent);
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary-color) 8%, transparent);
 }
@@ -28,7 +34,7 @@
 
 .mb-profile-header__name {
   margin: 0;
-  font-size: 22px;
+  font-size: var(--profile-header-name-size);
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.01em;
@@ -48,7 +54,7 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  margin-top: 6px;
+  margin-top: var(--profile-header-meta-margin-top);
   flex-wrap: wrap;
 }
 

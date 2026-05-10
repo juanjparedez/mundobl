@@ -1,20 +1,20 @@
 .mb-profile-admin {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: var(--layout-row-gap);
 }
 
 .mb-profile-admin__row {
   display: grid;
-  gap: var(--spacing-md);
+  gap: var(--layout-row-gap);
 }
 
 .mb-profile-admin__cell {
   min-width: 0;
-  /* Cada cell pasa altura completa al widget interno para que se ajuste
-   * al row-height implicito de la grilla. */
+  /* Cada cell pasa altura completa al widget interno. La altura
+   * minima la dicta la densidad (--layout-cell-min en variables.css). */
   display: flex;
-  min-height: 220px;
+  min-height: var(--layout-cell-min);
 }
 
 .mb-profile-admin__cell > * {
@@ -29,18 +29,13 @@
   grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
 }
 
-.mb-profile-admin__row--heatmap .mb-profile-admin__cell--heatmap,
-.mb-profile-admin__row--heatmap .mb-profile-admin__cell--quickadmin {
-  min-height: 240px;
-}
-
 /* 3-up igual ancho */
 .mb-profile-admin__row--3up {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .mb-profile-admin__row--3up .mb-profile-admin__cell {
-  min-height: 280px;
+  min-height: var(--layout-cell-min-tall);
 }
 
 /* Charts: donut chico + chart wide */
@@ -48,21 +43,9 @@
   grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
 }
 
-.mb-profile-admin__row--charts .mb-profile-admin__cell {
-  min-height: 220px;
-}
-
-.mb-profile-admin__row--charts .mb-profile-admin__cell--wide {
-  /* tag opcional, mantiene altura pareja */
-}
-
 /* 4-up para top lists */
 .mb-profile-admin__row--4up {
   grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
-.mb-profile-admin__row--4up .mb-profile-admin__cell {
-  min-height: 240px;
 }
 
 /* 2-up */
@@ -71,7 +54,7 @@
 }
 
 .mb-profile-admin__row--2up .mb-profile-admin__cell {
-  min-height: 300px;
+  min-height: var(--layout-cell-min-tall);
 }
 
 /* Full width */
@@ -80,7 +63,7 @@
 }
 
 .mb-profile-admin__row--full .mb-profile-admin__cell {
-  min-height: 480px;
+  min-height: var(--layout-cell-min-full);
 }
 
 /* ─── Responsive ────────────────────────────────────────────────────────── */
