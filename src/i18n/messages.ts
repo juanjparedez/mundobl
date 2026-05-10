@@ -1393,6 +1393,7 @@ export type TranslationShape = {
     adminModeLabel: string;
   };
   adminNav: {
+    ariaLabel: string;
     groupCatalog: string;
     groupCommunity: string;
     groupSystem: string;
@@ -3804,6 +3805,7 @@ const es: TranslationShape = {
     adminModeLabel: 'Modo: Admin',
   },
   adminNav: {
+    ariaLabel: 'Navegación admin',
     groupCatalog: 'Catálogo',
     groupCommunity: 'Comunidad',
     groupSystem: 'Sistema',
@@ -6246,6 +6248,7 @@ const en: TranslationShape = {
     adminModeLabel: 'Mode: Admin',
   },
   adminNav: {
+    ariaLabel: 'Admin navigation',
     groupCatalog: 'Catalog',
     groupCommunity: 'Community',
     groupSystem: 'System',
