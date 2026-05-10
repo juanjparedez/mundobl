@@ -1,0 +1,11 @@
+.mb-activity-chart {
+  height: 100%;
+  min-height: 0;
+  padding: 8px;
+}
+
+.mb-activity-chart__loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-md);
+}

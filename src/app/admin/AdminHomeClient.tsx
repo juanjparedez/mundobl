@@ -16,6 +16,7 @@ import { AdminKPIsWidget } from './widgets/AdminKPIsWidget/AdminKPIsWidget';
 import { AdminAlertsWidget } from './widgets/AdminAlertsWidget/AdminAlertsWidget';
 import { RecentAdminActivityWidget } from './widgets/RecentAdminActivityWidget/RecentAdminActivityWidget';
 import { TopCommentersWidget } from './widgets/TopCommentersWidget/TopCommentersWidget';
+import { ActivityChartWidget } from './widgets/ActivityChartWidget/ActivityChartWidget';
 import type { ReactNode } from 'react';
 
 const WIDGET_IDS = {
@@ -23,32 +24,37 @@ const WIDGET_IDS = {
   alerts: 'admin.alerts',
   recentActivity: 'admin.recentActivity',
   topCommenters: 'admin.topCommenters',
+  activityChart: 'admin.activityChart',
 } as const;
 
 const DEFAULT_LAYOUTS: DashboardLayouts = {
   lg: [
     { i: WIDGET_IDS.kpis, x: 0, y: 0, w: 7, h: 3 },
     { i: WIDGET_IDS.alerts, x: 7, y: 0, w: 5, h: 5 },
-    { i: WIDGET_IDS.recentActivity, x: 0, y: 3, w: 7, h: 5 },
-    { i: WIDGET_IDS.topCommenters, x: 0, y: 8, w: 6, h: 5 },
+    { i: WIDGET_IDS.activityChart, x: 0, y: 3, w: 7, h: 5 },
+    { i: WIDGET_IDS.recentActivity, x: 0, y: 8, w: 6, h: 5 },
+    { i: WIDGET_IDS.topCommenters, x: 6, y: 8, w: 6, h: 5 },
   ],
   md: [
     { i: WIDGET_IDS.kpis, x: 0, y: 0, w: 10, h: 3 },
     { i: WIDGET_IDS.alerts, x: 0, y: 3, w: 5, h: 5 },
-    { i: WIDGET_IDS.recentActivity, x: 5, y: 3, w: 5, h: 5 },
-    { i: WIDGET_IDS.topCommenters, x: 0, y: 8, w: 10, h: 5 },
+    { i: WIDGET_IDS.activityChart, x: 5, y: 3, w: 5, h: 5 },
+    { i: WIDGET_IDS.recentActivity, x: 0, y: 8, w: 5, h: 5 },
+    { i: WIDGET_IDS.topCommenters, x: 5, y: 8, w: 5, h: 5 },
   ],
   sm: [
     { i: WIDGET_IDS.kpis, x: 0, y: 0, w: 6, h: 3 },
     { i: WIDGET_IDS.alerts, x: 0, y: 3, w: 6, h: 5 },
-    { i: WIDGET_IDS.recentActivity, x: 0, y: 8, w: 6, h: 5 },
-    { i: WIDGET_IDS.topCommenters, x: 0, y: 13, w: 6, h: 5 },
+    { i: WIDGET_IDS.activityChart, x: 0, y: 8, w: 6, h: 5 },
+    { i: WIDGET_IDS.recentActivity, x: 0, y: 13, w: 6, h: 5 },
+    { i: WIDGET_IDS.topCommenters, x: 0, y: 18, w: 6, h: 5 },
   ],
   xs: [
     { i: WIDGET_IDS.kpis, x: 0, y: 0, w: 4, h: 4 },
     { i: WIDGET_IDS.alerts, x: 0, y: 4, w: 4, h: 5 },
-    { i: WIDGET_IDS.recentActivity, x: 0, y: 9, w: 4, h: 5 },
-    { i: WIDGET_IDS.topCommenters, x: 0, y: 14, w: 4, h: 5 },
+    { i: WIDGET_IDS.activityChart, x: 0, y: 9, w: 4, h: 5 },
+    { i: WIDGET_IDS.recentActivity, x: 0, y: 14, w: 4, h: 5 },
+    { i: WIDGET_IDS.topCommenters, x: 0, y: 19, w: 4, h: 5 },
   ],
 };
 
@@ -146,6 +152,15 @@ export function AdminHomeClient({
       Component: TopCommentersWidget as never,
       roles: ['ADMIN', 'MODERATOR'],
     });
+    WidgetRegistry.register({
+      id: WIDGET_IDS.activityChart,
+      category: 'activity',
+      labelKey: 'activityChart.title',
+      descriptionKey: 'activityChart.title',
+      defaultSize: { w: 7, h: 5, minW: 4, minH: 4 },
+      Component: ActivityChartWidget as never,
+      roles: ['ADMIN', 'MODERATOR'],
+    });
   }, []);
 
   const widgetProps = useMemo<Record<string, Record<string, unknown>>>(
@@ -159,6 +174,7 @@ export function AdminHomeClient({
       [WIDGET_IDS.alerts]: {},
       [WIDGET_IDS.recentActivity]: {},
       [WIDGET_IDS.topCommenters]: {},
+      [WIDGET_IDS.activityChart]: {},
     }),
     [kpiCounts]
   );

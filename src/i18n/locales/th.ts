@@ -2302,6 +2302,12 @@ const th: TranslationShape = {
     "roleAdmin": "ผู้ดูแลระบบ",
     "roleModerator": "ผู้ดูแล"
   },
+  "activityChart": {
+    "title": "กิจกรรม",
+    "empty": "ไม่มีกิจกรรมล่าสุด",
+    "seriesViews": "ยอดดู",
+    "seriesActions": "การดำเนินการของผู้ดูแลระบบ"
+  },
   "workspace": {
     "backToCatalog": "กลับสู่แคตตาล็อก",
     "viewPublic": "มุมมองสาธารณะ",

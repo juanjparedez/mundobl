@@ -2302,6 +2302,12 @@ const de: TranslationShape = {
     "roleAdmin": "Admin",
     "roleModerator": "Mod"
   },
+  "activityChart": {
+    "title": "Aktivität",
+    "empty": "Keine aktuelle Aktivität.",
+    "seriesViews": "Aufrufe",
+    "seriesActions": "Admin-Aktionen"
+  },
   "workspace": {
     "backToCatalog": "Zurück zum Katalog",
     "viewPublic": "Öffentliche Ansicht",

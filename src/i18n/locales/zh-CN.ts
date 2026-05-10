@@ -2302,6 +2302,12 @@ const zhCN: TranslationShape = {
     "roleAdmin": "管理员",
     "roleModerator": "版主"
   },
+  "activityChart": {
+    "title": "动态",
+    "empty": "暂无近期动态。",
+    "seriesViews": "观看次数",
+    "seriesActions": "管理员操作"
+  },
   "workspace": {
     "backToCatalog": "返回目录",
     "viewPublic": "公开视图",

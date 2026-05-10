@@ -2293,6 +2293,12 @@ export type TranslationShape = {
     roleAdmin: string;
     roleModerator: string;
   };
+  activityChart: {
+    title: string;
+    empty: string;
+    seriesViews: string;
+    seriesActions: string;
+  };
   workspace: {
     backToCatalog: string;
     viewPublic: string;
@@ -4758,6 +4764,12 @@ const es: TranslationShape = {
     roleAdmin: 'Admin',
     roleModerator: 'Mod',
   },
+  activityChart: {
+    title: 'Recursos de actividad',
+    empty: 'Sin actividad reciente.',
+    seriesViews: 'Visitas',
+    seriesActions: 'Acciones admin',
+  },
   workspace: {
     backToCatalog: 'Volver al catálogo',
     viewPublic: 'Vista pública',
@@ -7209,6 +7221,12 @@ const en: TranslationShape = {
     empty: 'No recent comments.',
     roleAdmin: 'Admin',
     roleModerator: 'Mod',
+  },
+  activityChart: {
+    title: 'Activity',
+    empty: 'No recent activity.',
+    seriesViews: 'Views',
+    seriesActions: 'Admin actions',
   },
   workspace: {
     backToCatalog: 'Back to catalog',
