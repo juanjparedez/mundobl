@@ -40,12 +40,15 @@
     0 1px 2px rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02),
     0 2px 4px rgba(0, 0, 0, 0.02);
 
-  /* Espaciado base (puede ser sobreescrito por densidad) */
-  --spacing-xs: 8px;
-  --spacing-sm: 12px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
+  /* Espaciado base (defaults intermedios entre compact y comfortable
+   * para que la app sea densa por defecto sin obligar a setear
+   * data-density='compact'). Quien quiera mas aire puede elegir
+   * 'comfortable' o 'spacious' en Settings. */
+  --spacing-xs: 6px;
+  --spacing-sm: 10px;
+  --spacing-md: 14px;
+  --spacing-lg: 20px;
+  --spacing-xl: 28px;
 
   /* ─── Component sizing tokens ─────────────────────────────────────
    * Defaults = densidad "comfortable" (cómoda). Density compact los
@@ -261,6 +264,56 @@
 }
 
 /* ─── Densidad ──────────────────────────────────────────────────────── */
+/* Comfortable: explicito 'mas aire' para quienes prefieren UI menos
+ * apretada que el default. */
+[data-density='comfortable'] {
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  --profile-header-padding-block: 14px;
+  --profile-header-padding-inline: 18px;
+  --profile-header-gap: var(--spacing-md);
+  --profile-header-avatar-size: 72px;
+  --profile-header-name-size: 22px;
+  --profile-header-meta-margin-top: 6px;
+
+  --statstrip-tile-padding-block: 12px;
+  --statstrip-tile-padding-inline: 14px;
+  --statstrip-tile-gap: 10px;
+  --statstrip-icon-size: 28px;
+  --statstrip-icon-radius: 8px;
+  --statstrip-icon-font-size: 13px;
+  --statstrip-value-size: 20px;
+  --statstrip-label-size: 10px;
+
+  --widget-body-padding: 12px;
+  --widget-header-padding-block: 8px;
+  --widget-header-padding-inline: 14px;
+  --widget-header-min-height: 36px;
+  --widget-title-size: 11px;
+  --widget-icon-size: 22px;
+
+  --layout-cell-min: 220px;
+  --layout-cell-min-shelf: 260px;
+  --layout-cell-min-tall: 280px;
+  --layout-cell-min-full: 440px;
+  --layout-row-gap: 14px;
+
+  --cw-card-width: 160px;
+  --cw-shelf-gap: 10px;
+  --cw-shelf-padding: 10px;
+
+  --empty-icon-size: 36px;
+  --empty-title-size: 13px;
+  --empty-desc-size: 12px;
+  --empty-padding: var(--spacing-md);
+  --empty-gap: 8px;
+  --empty-min-height: 200px;
+}
+
 /* Compact: alineado al style-guide premium (style-guide/). Todo entra en una
  * vista 1080p sin scroll. */
 [data-density='compact'] {

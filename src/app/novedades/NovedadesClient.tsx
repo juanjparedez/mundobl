@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Empty, Tag } from 'antd';
+import { Empty } from 'antd';
 import {
   ClockCircleOutlined,
   PlusCircleOutlined,
@@ -96,7 +96,7 @@ export function NovedadesClient({
     newSeries.length > 0 || newSeasons.length > 0 || changelog.length > 0;
 
   return (
-    <div className="novedades-page">
+    <div className="novedades-page app-page">
       <PageTitle
         title={t('novedades.title')}
         subtitle={t('novedades.subtitle')}
@@ -107,11 +107,13 @@ export function NovedadesClient({
       ) : (
         <>
           {newSeries.length > 0 && (
-            <section className="novedades-section">
-              <h2 className="novedades-section__title">
-                <PlusCircleOutlined />
-                {t('novedades.newSeriesTitle')}
-              </h2>
+            <section className="app-panel">
+              <header className="app-panel__header">
+                <h2 className="app-panel__title app-panel__title--upper">
+                  <PlusCircleOutlined />
+                  {t('novedades.newSeriesTitle')}
+                </h2>
+              </header>
               <ul className="novedades-grid">
                 {newSeries.map((s) => (
                   <li key={s.id} className="novedades-card">
@@ -162,11 +164,13 @@ export function NovedadesClient({
           )}
 
           {newSeasons.length > 0 && (
-            <section className="novedades-section">
-              <h2 className="novedades-section__title">
-                <PlayCircleOutlined />
-                {t('novedades.newSeasonsTitle')}
-              </h2>
+            <section className="app-panel">
+              <header className="app-panel__header">
+                <h2 className="app-panel__title app-panel__title--upper">
+                  <PlayCircleOutlined />
+                  {t('novedades.newSeasonsTitle')}
+                </h2>
+              </header>
               <ul className="novedades-list">
                 {newSeasons.map((season) => (
                   <li key={season.id} className="novedades-list__item">
@@ -176,9 +180,9 @@ export function NovedadesClient({
                     >
                       <span className="novedades-list__main">
                         <strong>{season.series.title}</strong>
-                        <Tag color="blue">
+                        <span className="app-pill app-pill--info">
                           {t('novedades.seasonLabel')} {season.seasonNumber}
-                        </Tag>
+                        </span>
                       </span>
                       <span className="novedades-list__when">
                         <ClockCircleOutlined />{' '}
@@ -192,11 +196,13 @@ export function NovedadesClient({
           )}
 
           {changelog.length > 0 && (
-            <section className="novedades-section">
-              <h2 className="novedades-section__title">
-                <FileTextOutlined />
-                {t('novedades.changelogTitle')}
-              </h2>
+            <section className="app-panel">
+              <header className="app-panel__header">
+                <h2 className="app-panel__title app-panel__title--upper">
+                  <FileTextOutlined />
+                  {t('novedades.changelogTitle')}
+                </h2>
+              </header>
               <div className="novedades-changelog">
                 {changelog.slice(0, 6).map((entry) => {
                   // Agrupar items por categoria preservando el orden de

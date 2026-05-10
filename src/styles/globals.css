@@ -1,4 +1,5 @@
 @import './variables.css';
+@import './sections.css';
 @import './skins/index.css';
 
 * {
