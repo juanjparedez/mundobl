@@ -153,12 +153,10 @@ export function CommentsSection({
       )}
 
       <div className="comments-section__list">
-        <h4 className="comments-section__title">
-          {interpolateMessage(t('comments.listTitle'), {
-            n: String(visibleComments.length),
-          })}
-        </h4>
-
+        {/* El title de la seccion ("Comentarios") ya lo pone el wrapper
+         * SeriesDetailClient en el header de cada section; aca lo
+         * repetiriamos. Si en el futuro se quiere mostrar el conteo (N),
+         * va como badge en el nav superior, no como h4 duplicado. */}
         {visibleComments.length === 0 ? (
           <Empty description={t('comments.emptyText')} />
         ) : (
