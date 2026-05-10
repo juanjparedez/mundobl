@@ -1404,6 +1404,7 @@ const de: TranslationShape = {
   },
   header: {
     title: 'MundoBL - Serienkatalog',
+    adminModeLabel: 'Modus: Admin',
   },
   adminNav: {
     groupCatalog: 'Katalog',
@@ -2254,12 +2255,15 @@ const de: TranslationShape = {
     widgetFavoritesDesc: 'Grid visual con tus series favoritas.',
     favoritesEmpty: 'No agregaste series a favoritas todavia.',
     widgetMyReviews: 'Mis resenas',
-    widgetMyReviewsDesc: 'Tus resenas escritas, con badges de status y verdict.',
+    widgetMyReviewsDesc:
+      'Tus resenas escritas, con badges de status y verdict.',
     myReviewsEmpty: 'Aun no escribiste resenas.',
     widgetMyDisputes: 'Mis disputas',
-    widgetMyDisputesDesc: 'Disputas que abriste contra reportes en tus comentarios.',
+    widgetMyDisputesDesc:
+      'Disputas que abriste contra reportes en tus comentarios.',
     widgetMyComments: 'Mis comentarios',
-    widgetMyCommentsDesc: 'Gestion completa de tus comentarios: filtros, bulk ops, edit, disputa, export.',
+    widgetMyCommentsDesc:
+      'Gestion completa de tus comentarios: filtros, bulk ops, edit, disputa, export.',
     loadError: 'Fehler beim Laden deines Profils. Aktualisiere die Seite.',
   },
   serieDashboard: {

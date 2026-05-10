@@ -42,9 +42,10 @@ export function GenresDonutWidget({ topGenres }: GenresDonutWidgetProps) {
           value: total,
           sublabel: t('profileDashboard.genresTotalLabel'),
         }}
-        height={140}
-        innerRadius={36}
-        outerRadius={56}
+        height="100%"
+        innerRadius={60}
+        outerRadius={92}
+        showLegend={false}
       />
     </Widget>
   );

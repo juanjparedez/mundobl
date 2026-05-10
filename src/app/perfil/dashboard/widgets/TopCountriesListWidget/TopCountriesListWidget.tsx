@@ -41,29 +41,38 @@ export function TopCountriesListWidget({
       noPadding
     >
       <ul className="mb-top-countries-list">
-        {topCountries.slice(0, 8).map((c, idx) => {
+        {topCountries.slice(0, 6).map((c, idx) => {
           const pct = Math.round((c.count / max) * 100);
+          const rank = idx + 1;
           return (
             <li
               key={`${c.name}-${idx}`}
               className="mb-top-countries-list__item"
+              data-rank={rank <= 3 ? rank : undefined}
             >
-              <div className="mb-top-countries-list__row">
-                <span className="mb-top-countries-list__flag">
-                  {c.code ? (
-                    <CountryFlag code={c.code} size="small" />
-                  ) : (
-                    <GlobalOutlined />
-                  )}
-                </span>
-                <span className="mb-top-countries-list__name">{c.name}</span>
-                <span className="mb-top-countries-list__count">{c.count}</span>
-              </div>
-              <div className="mb-top-countries-list__bar-track">
-                <div
-                  className="mb-top-countries-list__bar-fill"
-                  style={{ width: `${pct}%` }}
-                />
+              <span className="mb-top-countries-list__rank" aria-hidden>
+                {rank}
+              </span>
+              <span className="mb-top-countries-list__flag">
+                {c.code ? (
+                  <CountryFlag code={c.code} size="medium" />
+                ) : (
+                  <GlobalOutlined />
+                )}
+              </span>
+              <div className="mb-top-countries-list__main">
+                <div className="mb-top-countries-list__head">
+                  <span className="mb-top-countries-list__name">{c.name}</span>
+                  <span className="mb-top-countries-list__count">
+                    {c.count}
+                  </span>
+                </div>
+                <div className="mb-top-countries-list__bar-track">
+                  <div
+                    className="mb-top-countries-list__bar-fill"
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
               </div>
             </li>
           );

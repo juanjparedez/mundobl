@@ -1345,6 +1345,7 @@ const zhCN: TranslationShape = {
   },
   header: {
     title: 'MundoBL - 剧集目录',
+    adminModeLabel: '模式：管理员',
   },
   adminNav: {
     groupCatalog: '目录',
@@ -2158,12 +2159,15 @@ const zhCN: TranslationShape = {
     widgetFavoritesDesc: 'Grid visual con tus series favoritas.',
     favoritesEmpty: 'No agregaste series a favoritas todavia.',
     widgetMyReviews: 'Mis resenas',
-    widgetMyReviewsDesc: 'Tus resenas escritas, con badges de status y verdict.',
+    widgetMyReviewsDesc:
+      'Tus resenas escritas, con badges de status y verdict.',
     myReviewsEmpty: 'Aun no escribiste resenas.',
     widgetMyDisputes: 'Mis disputas',
-    widgetMyDisputesDesc: 'Disputas que abriste contra reportes en tus comentarios.',
+    widgetMyDisputesDesc:
+      'Disputas que abriste contra reportes en tus comentarios.',
     widgetMyComments: 'Mis comentarios',
-    widgetMyCommentsDesc: 'Gestion completa de tus comentarios: filtros, bulk ops, edit, disputa, export.',
+    widgetMyCommentsDesc:
+      'Gestion completa de tus comentarios: filtros, bulk ops, edit, disputa, export.',
     loadError: '加载资料出错。请刷新页面。',
   },
   serieDashboard: {

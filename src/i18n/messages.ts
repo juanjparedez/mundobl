@@ -1311,6 +1311,7 @@ export type TranslationShape = {
   };
   header: {
     title: string;
+    adminModeLabel: string;
   };
   adminNav: {
     groupCatalog: string;
@@ -3569,6 +3570,7 @@ const es: TranslationShape = {
   },
   header: {
     title: 'MundoBL - Catálogo de Series',
+    adminModeLabel: 'Modo: Admin',
   },
   adminNav: {
     groupCatalog: 'Catálogo',
@@ -4406,10 +4408,12 @@ const es: TranslationShape = {
     widgetFavoritesDesc: 'Grid visual con tus series favoritas.',
     favoritesEmpty: 'No agregaste series a favoritas todavia.',
     widgetMyReviews: 'Mis resenas',
-    widgetMyReviewsDesc: 'Tus resenas escritas, con badges de status y verdict.',
+    widgetMyReviewsDesc:
+      'Tus resenas escritas, con badges de status y verdict.',
     myReviewsEmpty: 'Aun no escribiste resenas.',
     widgetMyDisputes: 'Mis disputas',
-    widgetMyDisputesDesc: 'Disputas que abriste contra reportes en tus comentarios.',
+    widgetMyDisputesDesc:
+      'Disputas que abriste contra reportes en tus comentarios.',
     widgetMyComments: 'Mis comentarios',
     widgetMyCommentsDesc:
       'Gestion completa de tus comentarios: filtros, bulk ops, edit, disputa, export.',
@@ -5852,6 +5856,7 @@ const en: TranslationShape = {
   },
   header: {
     title: 'MundoBL - Series Catalog',
+    adminModeLabel: 'Mode: Admin',
   },
   adminNav: {
     groupCatalog: 'Catalog',
@@ -6689,7 +6694,8 @@ const en: TranslationShape = {
     widgetMyReviewsDesc: 'Your written reviews with status and verdict badges.',
     myReviewsEmpty: "You haven't written reviews yet.",
     widgetMyDisputes: 'My disputes',
-    widgetMyDisputesDesc: 'Disputes you opened against reports on your comments.',
+    widgetMyDisputesDesc:
+      'Disputes you opened against reports on your comments.',
     widgetMyComments: 'My comments',
     widgetMyCommentsDesc:
       'Full comments management: filters, bulk ops, edit, dispute, export.',

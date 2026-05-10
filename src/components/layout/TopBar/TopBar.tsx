@@ -10,6 +10,7 @@ import {
   LoginOutlined,
   LogoutOutlined,
   GlobalOutlined,
+  SafetyOutlined,
 } from '@ant-design/icons';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -30,6 +31,8 @@ export function TopBar() {
   const { t, locale, setLocale } = useLocale();
   const { data: session, status } = useSession();
   const [settingsOpen, setSettingsOpen] = useState(false);
+
+  const isAdmin = session?.user?.role === 'ADMIN';
 
   const localeItems = SUPPORTED_LOCALES.map((code) => ({
     key: code,
@@ -80,6 +83,18 @@ export function TopBar() {
       </button>
 
       <div className="app-topbar__actions">
+        {isAdmin && (
+          <span
+            className="app-topbar__admin-pill"
+            role="status"
+            aria-label={t('header.adminModeLabel')}
+          >
+            <SafetyOutlined aria-hidden />
+            <span className="app-topbar__admin-pill-text">
+              {t('header.adminModeLabel')}
+            </span>
+          </span>
+        )}
         <NotificationsBell variant="topbar" />
 
         <Dropdown
