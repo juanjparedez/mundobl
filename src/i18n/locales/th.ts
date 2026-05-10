@@ -2321,7 +2321,10 @@ const th: TranslationShape = {
     "tableColSynopsis": "เรื่องย่อ",
     "tableColNotes": "บันทึกของฉัน",
     "tableCellPending": "รอดำเนินการ",
-    "tableEmpty": "ซีรีส์นี้ยังไม่มีตอนที่โหลด"
+    "tableEmpty": "ซีรีส์นี้ยังไม่มีตอนที่โหลด",
+    "rightRailLinkedReviews": "รีวิวที่เชื่อมโยง",
+    "rightRailEmpty": "ยังไม่มีรีวิวสำหรับซีรีส์นี้",
+    "rightRailAnonymous": "ไม่ระบุชื่อ"
   }
 } as TranslationShape;
 
