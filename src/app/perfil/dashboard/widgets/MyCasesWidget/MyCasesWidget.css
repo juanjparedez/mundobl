@@ -1,0 +1,60 @@
+.mb-my-cases-widget__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--widget-body-padding);
+  flex: 1;
+}
+
+.mb-my-cases-widget__list {
+  list-style: none;
+  margin: 0;
+  padding: var(--widget-body-padding);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mb-my-cases-widget__item {
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-sm);
+  background: color-mix(in srgb, var(--bg-elevated) 60%, transparent);
+  transition: background var(--transition-fast);
+}
+
+.mb-my-cases-widget__item:hover {
+  background: color-mix(in srgb, var(--bg-elevated) 100%, transparent);
+}
+
+.mb-my-cases-widget__link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.mb-my-cases-widget__title {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: var(--font-size-sm);
+}
+
+.mb-my-cases-widget__tags {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.mb-my-cases-widget__tags .ant-tag {
+  margin: 0;
+  font-size: 10px;
+  line-height: 16px;
+  height: 18px;
+  padding: 0 6px;
+}

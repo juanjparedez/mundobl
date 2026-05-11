@@ -2190,6 +2190,7 @@ const zhTW: TranslationShape = {
     "widgetNotificationsDesc": "你最新的未讀通知。",
     "widgetMyCases": "我的回饋案件",
     "widgetMyCasesDesc": "你回報或投票的錯誤與想法。",
+    "widgetMyCasesEmpty": "尚未有案例回報。",
     "widgetHeatmap": "近期活動",
     "widgetHeatmapDesc": "最近 6 個月活躍日的熱力圖。",
     "widgetGenres": "常看類型",

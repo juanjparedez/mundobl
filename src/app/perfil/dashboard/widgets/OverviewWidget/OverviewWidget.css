@@ -2,6 +2,6 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: var(--spacing-sm);
-  padding: var(--spacing-md);
+  padding: var(--widget-body-padding);
   height: 100%;
 }

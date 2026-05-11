@@ -2190,6 +2190,7 @@ const ko: TranslationShape = {
     "widgetNotificationsDesc": "가장 최근에 읽지 않은 알림.",
     "widgetMyCases": "내 피드백 사례",
     "widgetMyCasesDesc": "보고했거나 투표한 버그 및 아이디어.",
+    "widgetMyCasesEmpty": "아직 보고된 사례가 없습니다.",
     "widgetHeatmap": "최근 활동",
     "widgetHeatmapDesc": "지난 6개월간 활동한 날짜 히트맵입니다.",
     "widgetGenres": "선호 장르",

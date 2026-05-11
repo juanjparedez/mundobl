@@ -2190,6 +2190,7 @@ const th: TranslationShape = {
     "widgetNotificationsDesc": "การแจ้งเตือนที่ยังไม่ได้อ่านล่าสุดของคุณ",
     "widgetMyCases": "เคสคำติชมของฉัน",
     "widgetMyCasesDesc": "บั๊กและไอเดียที่คุณรายงานหรือโหวต",
+    "widgetMyCasesEmpty": "ยังไม่มีรายงานกรณีใดๆ",
     "widgetHeatmap": "กิจกรรมล่าสุด",
     "widgetHeatmapDesc": "แผนภาพความหนาแน่นของวันที่ใช้งานในช่วง 6 เดือนที่ผ่านมา",
     "widgetGenres": "ประเภทยอดนิยม",
