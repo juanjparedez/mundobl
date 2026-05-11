@@ -14,6 +14,7 @@ export type TranslationShape = {
     justNow: string;
     minutesAgo: string;
     hoursAgo: string;
+    backToHome: string;
   };
   seriesDetail: {
     tabInfo: string;
@@ -2404,6 +2405,7 @@ const es: TranslationShape = {
     justNow: 'Justo ahora',
     minutesAgo: 'Hace {n} min',
     hoursAgo: 'Hace {n}h',
+    backToHome: 'Volver al inicio',
   },
   seriesDetail: {
     tabInfo: 'Información',
@@ -4915,6 +4917,7 @@ const en: TranslationShape = {
     justNow: 'Just now',
     minutesAgo: '{n} min ago',
     hoursAgo: '{n}h ago',
+    backToHome: 'Back to home',
   },
   seriesDetail: {
     tabInfo: 'Information',

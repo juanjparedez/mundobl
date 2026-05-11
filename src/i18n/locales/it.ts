@@ -22,7 +22,8 @@ const it: TranslationShape = {
     "neverWatched": "Mai",
     "justNow": "Appena adesso",
     "minutesAgo": "{n} min fa",
-    "hoursAgo": "{n}h fa"
+    "hoursAgo": "{n}h fa",
+    "backToHome": "Torna alla home"
   },
   "seriesDetail": {
     "tabInfo": "Informazioni",

@@ -810,9 +810,9 @@ export function DashboardClient() {
       <AppLayout>
         <div className="mb-perfil-dashboard__error">
           <p>{t('profileDashboard.loadError')}</p>
-          <Link href="/perfil/clasico">
+          <Link href="/">
             <Button icon={<ArrowLeftOutlined />}>
-              {t('profileDashboard.backToClassic')}
+              {t('common.backToHome')}
             </Button>
           </Link>
         </div>

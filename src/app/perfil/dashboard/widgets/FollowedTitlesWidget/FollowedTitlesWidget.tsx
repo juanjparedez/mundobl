@@ -1,7 +1,6 @@
 'use client';
 
 import { HeartOutlined } from '@ant-design/icons';
-import Link from 'next/link';
 import { Widget } from '@/components/dashboard';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { OverviewFollowedTitles } from '../../../overview/sections/FollowedTitles';
@@ -12,7 +11,10 @@ export interface FollowedTitlesWidgetProps {
 }
 
 /** Widget "Títulos seguidos". Strip horizontal de posters chicos con
- *  bell icon (suscripciones). */
+ *  bell icon (suscripciones). Sin action "Ver todos" porque no hay ruta
+ *  dedicada de listado completo (pendiente — /perfil/clasico se borro
+ *  iter 15). El widget muestra top 5 y el user puede resize el grid
+ *  cell para ver mas. */
 export function FollowedTitlesWidget({ favorites }: FollowedTitlesWidgetProps) {
   const { t } = useLocale();
   return (
@@ -20,11 +22,6 @@ export function FollowedTitlesWidget({ favorites }: FollowedTitlesWidgetProps) {
       title={t('profile.sectionFollowedTitles')}
       icon={<HeartOutlined />}
       noPadding
-      actions={
-        <Link href="/perfil/clasico" className="overview-followed__see-all">
-          {t('profile.overviewViewAll')}
-        </Link>
-      }
     >
       <OverviewFollowedTitles favorites={favorites} />
     </Widget>

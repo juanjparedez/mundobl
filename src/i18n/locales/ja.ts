@@ -22,7 +22,8 @@ const ja: TranslationShape = {
     "neverWatched": "なし",
     "justNow": "たった今",
     "minutesAgo": "{n}分前",
-    "hoursAgo": "{n}時間前"
+    "hoursAgo": "{n}時間前",
+    "backToHome": "ホームに戻る"
   },
   "seriesDetail": {
     "tabInfo": "情報",

@@ -22,7 +22,8 @@ const th: TranslationShape = {
     "neverWatched": "ไม่เคย",
     "justNow": "เมื่อสักครู่",
     "minutesAgo": "เมื่อ {n} นาทีที่แล้ว",
-    "hoursAgo": "เมื่อ {n} ชั่วโมงที่แล้ว"
+    "hoursAgo": "เมื่อ {n} ชั่วโมงที่แล้ว",
+    "backToHome": "กลับสู่หน้าหลัก"
   },
   "seriesDetail": {
     "tabInfo": "ข้อมูล",

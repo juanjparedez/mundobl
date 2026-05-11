@@ -22,7 +22,8 @@ const zhTW: TranslationShape = {
     "neverWatched": "從未",
     "justNow": "剛才",
     "minutesAgo": "{n} 分鐘前",
-    "hoursAgo": "{n} 小時前"
+    "hoursAgo": "{n} 小時前",
+    "backToHome": "返回首頁"
   },
   "seriesDetail": {
     "tabInfo": "資訊",
