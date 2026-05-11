@@ -45,9 +45,6 @@ import { QuickAdminActionsWidget } from './widgets/QuickAdminActionsWidget/Quick
 import { AdminAlertsWidget } from './widgets/AdminAlertsWidget/AdminAlertsWidget';
 import { AchievementsWidget } from './widgets/AchievementsWidget/AchievementsWidget';
 import { CollectionsWidget } from './widgets/CollectionsWidget/CollectionsWidget';
-import { YearSummaryWidget } from './widgets/YearSummaryWidget/YearSummaryWidget';
-import { ReviewsActivityWidget } from './widgets/ReviewsActivityWidget/ReviewsActivityWidget';
-import { FollowedTitlesWidget } from './widgets/FollowedTitlesWidget/FollowedTitlesWidget';
 import { SocialsWidget } from './widgets/SocialsWidget/SocialsWidget';
 import { RecentAdminActivityWidget } from '@/app/admin/widgets/RecentAdminActivityWidget/RecentAdminActivityWidget';
 import { TopCommentersWidget } from '@/app/admin/widgets/TopCommentersWidget/TopCommentersWidget';
@@ -79,9 +76,6 @@ const WIDGET_IDS = {
   adminAlerts: 'profile.adminAlerts',
   achievements: 'profile.achievements',
   collections: 'profile.collections',
-  yearSummary: 'profile.yearSummary',
-  reviewsActivity: 'profile.reviewsActivity',
-  followedTitles: 'profile.followedTitles',
   socials: 'profile.socials',
   // Widgets compartidos con /admin (admin/moderator only) — reusados
   // del registry de /admin via import cross-feature. Mismos endpoints,
@@ -116,9 +110,6 @@ const WIDGET_TO_SECTION: Record<string, string> = {
   [WIDGET_IDS.favorites]: 'collections',
   [WIDGET_IDS.topRated]: 'collections',
   [WIDGET_IDS.recentlyCompleted]: 'watching',
-  [WIDGET_IDS.yearSummary]: 'yearSummary',
-  [WIDGET_IDS.reviewsActivity]: 'reviewsActivity',
-  [WIDGET_IDS.followedTitles]: 'followed',
   [WIDGET_IDS.socials]: 'socials',
 };
 
@@ -142,9 +133,7 @@ const ADMIN_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.myReviews, x: 0, y: 13, w: 4, h: 4 },
     { i: WIDGET_IDS.myDisputes, x: 4, y: 13, w: 4, h: 4 },
     { i: WIDGET_IDS.recentlyCompleted, x: 8, y: 13, w: 4, h: 4 },
-    // Row 6: ReviewsActivity + YearSummary (2up)
-    { i: WIDGET_IDS.yearSummary, x: 6, y: 17, w: 6, h: 3 },
-    // Row 7: GenresDonut + CompletedByYear (charts 4/8)
+    // Row 6: GenresDonut + CompletedByYear (charts 4/8)
     { i: WIDGET_IDS.genres, x: 0, y: 20, w: 4, h: 5 },
     { i: WIDGET_IDS.completedByYear, x: 4, y: 20, w: 8, h: 5 },
     // Row 8: WorldMap wide (6) + TopCountries lista (3) + TopGenres (3).
@@ -179,7 +168,6 @@ const ADMIN_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.notifications, x: 5, y: 10, w: 5, h: 3 },
     { i: WIDGET_IDS.myReviews, x: 0, y: 13, w: 5, h: 4 },
     { i: WIDGET_IDS.myDisputes, x: 5, y: 13, w: 5, h: 4 },
-    { i: WIDGET_IDS.yearSummary, x: 5, y: 17, w: 5, h: 3 },
     { i: WIDGET_IDS.genres, x: 0, y: 20, w: 5, h: 5 },
     { i: WIDGET_IDS.completedByYear, x: 5, y: 20, w: 5, h: 5 },
     { i: WIDGET_IDS.topGenresList, x: 0, y: 25, w: 5, h: 4 },
@@ -201,7 +189,6 @@ const ADMIN_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.notifications, x: 0, y: 13, w: 6, h: 3 },
     { i: WIDGET_IDS.myCases, x: 0, y: 16, w: 6, h: 3 },
     { i: WIDGET_IDS.myReviews, x: 0, y: 19, w: 6, h: 4 },
-    { i: WIDGET_IDS.yearSummary, x: 0, y: 26, w: 6, h: 3 },
     { i: WIDGET_IDS.genres, x: 0, y: 29, w: 6, h: 5 },
     { i: WIDGET_IDS.collections, x: 0, y: 34, w: 6, h: 4 },
     { i: WIDGET_IDS.achievements, x: 0, y: 38, w: 6, h: 5 },
@@ -224,7 +211,6 @@ const ADMIN_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.notifications, x: 0, y: 13, w: 4, h: 3 },
     { i: WIDGET_IDS.myCases, x: 0, y: 16, w: 4, h: 3 },
     { i: WIDGET_IDS.myReviews, x: 0, y: 19, w: 4, h: 4 },
-    { i: WIDGET_IDS.yearSummary, x: 0, y: 26, w: 4, h: 3 },
     { i: WIDGET_IDS.genres, x: 0, y: 29, w: 4, h: 5 },
     { i: WIDGET_IDS.collections, x: 0, y: 34, w: 4, h: 4 },
     { i: WIDGET_IDS.achievements, x: 0, y: 38, w: 4, h: 5 },
@@ -250,7 +236,6 @@ const USER_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.myReviews, x: 0, y: 4, w: 5, h: 4 },
     { i: WIDGET_IDS.notifications, x: 5, y: 4, w: 4, h: 4 },
     { i: WIDGET_IDS.myCases, x: 9, y: 4, w: 3, h: 4 },
-    { i: WIDGET_IDS.yearSummary, x: 6, y: 8, w: 6, h: 3 },
     { i: WIDGET_IDS.heatmap, x: 0, y: 11, w: 6, h: 3 },
     { i: WIDGET_IDS.genres, x: 6, y: 11, w: 3, h: 3 },
     { i: WIDGET_IDS.completedByYear, x: 9, y: 11, w: 3, h: 3 },
@@ -275,7 +260,6 @@ const USER_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.myReviews, x: 0, y: 4, w: 5, h: 4 },
     { i: WIDGET_IDS.notifications, x: 5, y: 4, w: 5, h: 4 },
     { i: WIDGET_IDS.myCases, x: 0, y: 8, w: 5, h: 3 },
-    { i: WIDGET_IDS.yearSummary, x: 0, y: 11, w: 5, h: 3 },
     { i: WIDGET_IDS.heatmap, x: 5, y: 11, w: 5, h: 3 },
     { i: WIDGET_IDS.genres, x: 0, y: 14, w: 5, h: 4 },
     { i: WIDGET_IDS.completedByYear, x: 5, y: 14, w: 5, h: 4 },
@@ -296,7 +280,6 @@ const USER_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.myReviews, x: 0, y: 4, w: 6, h: 4 },
     { i: WIDGET_IDS.notifications, x: 0, y: 8, w: 6, h: 3 },
     { i: WIDGET_IDS.myCases, x: 0, y: 11, w: 6, h: 3 },
-    { i: WIDGET_IDS.yearSummary, x: 0, y: 17, w: 6, h: 3 },
     { i: WIDGET_IDS.heatmap, x: 0, y: 20, w: 6, h: 3 },
     { i: WIDGET_IDS.genres, x: 0, y: 23, w: 6, h: 4 },
     { i: WIDGET_IDS.collections, x: 0, y: 27, w: 6, h: 4 },
@@ -317,7 +300,6 @@ const USER_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.myReviews, x: 0, y: 4, w: 4, h: 4 },
     { i: WIDGET_IDS.notifications, x: 0, y: 8, w: 4, h: 3 },
     { i: WIDGET_IDS.myCases, x: 0, y: 11, w: 4, h: 3 },
-    { i: WIDGET_IDS.yearSummary, x: 0, y: 17, w: 4, h: 3 },
     { i: WIDGET_IDS.heatmap, x: 0, y: 20, w: 4, h: 3 },
     { i: WIDGET_IDS.genres, x: 0, y: 23, w: 4, h: 4 },
     { i: WIDGET_IDS.collections, x: 0, y: 27, w: 4, h: 4 },
@@ -610,30 +592,6 @@ export function DashboardClient() {
       defaultSize: { w: 6, h: 4, minW: 4, minH: 3 },
       Component: CollectionsWidget as never,
     });
-    WidgetRegistry.register({
-      id: WIDGET_IDS.yearSummary,
-      category: 'activity',
-      labelKey: 'profile.sectionYearSummary',
-      descriptionKey: 'profile.sectionYearSummary',
-      defaultSize: { w: 6, h: 3, minW: 4, minH: 3 },
-      Component: YearSummaryWidget as never,
-    });
-    WidgetRegistry.register({
-      id: WIDGET_IDS.reviewsActivity,
-      category: 'social',
-      labelKey: 'profile.sectionReviewsActivity',
-      descriptionKey: 'profile.sectionReviewsActivity',
-      defaultSize: { w: 6, h: 3, minW: 4, minH: 3 },
-      Component: ReviewsActivityWidget as never,
-    });
-    WidgetRegistry.register({
-      id: WIDGET_IDS.followedTitles,
-      category: 'media',
-      labelKey: 'profile.sectionFollowedTitles',
-      descriptionKey: 'profile.sectionFollowedTitles',
-      defaultSize: { w: 12, h: 3, minW: 6, minH: 3 },
-      Component: FollowedTitlesWidget as never,
-    });
     // Widgets admin-only reusados desde /admin/widgets. roles filtra el
     // picker para que solo aparezcan a admin/moderator. Endpoints
     // backend ya devuelven 403 a non-admin, asi que aunque alguien
@@ -729,9 +687,6 @@ export function DashboardClient() {
     map[WIDGET_IDS.adminAlerts] = {};
     map[WIDGET_IDS.achievements] = { stats: data.stats };
     map[WIDGET_IDS.collections] = { stats: data.stats };
-    map[WIDGET_IDS.yearSummary] = { stats: data.stats };
-    map[WIDGET_IDS.reviewsActivity] = { stats: data.stats };
-    map[WIDGET_IDS.followedTitles] = { favorites: data.favorites };
     map[WIDGET_IDS.recentAdminActivity] = {};
     map[WIDGET_IDS.topCommenters] = {};
     map[WIDGET_IDS.activityChart] = {};
