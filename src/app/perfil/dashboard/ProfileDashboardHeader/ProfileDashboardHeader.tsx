@@ -3,8 +3,12 @@
 import { useState } from 'react';
 import { Avatar, Button, Space, Tag } from 'antd';
 import {
+  AppstoreAddOutlined,
   CalendarOutlined,
+  CheckOutlined,
   EditOutlined,
+  LayoutOutlined,
+  ReloadOutlined,
   SettingOutlined,
   SlidersOutlined,
   UserOutlined,
@@ -26,6 +30,13 @@ export interface ProfileDashboardHeaderProps {
    *  pasa, se renderea un boton extra "Personalizar" que abre el panel
    *  con switches por section. */
   onCustomizeClick?: () => void;
+  /** Si presentes, integran los controles del DashboardEditToolbar
+   *  directamente al header (toggle edit + add widget + reset).
+   *  Cuando editing=true se muestran ademas "Agregar" y "Reset" inline. */
+  editing?: boolean;
+  onToggleEditing?: () => void;
+  onAddWidget?: () => void;
+  onResetLayout?: () => void;
 }
 
 function formatJoinedDate(iso: string, locale: string): string {
@@ -46,6 +57,10 @@ function formatJoinedDate(iso: string, locale: string): string {
 export function ProfileDashboardHeader({
   user,
   onCustomizeClick,
+  editing = false,
+  onToggleEditing,
+  onAddWidget,
+  onResetLayout,
 }: ProfileDashboardHeaderProps) {
   const { t, locale } = useLocale();
   const [preferencesOpen, setPreferencesOpen] = useState(false);
@@ -97,6 +112,30 @@ export function ProfileDashboardHeader({
           {onCustomizeClick && (
             <Button icon={<SettingOutlined />} onClick={onCustomizeClick}>
               {t('profile.customizeButton')}
+            </Button>
+          )}
+          {/* Controles del dashboard grid integrados al header (en lugar
+           *  de toolbar suelto debajo). Cuando editing=true se expanden
+           *  con Add + Reset inline. */}
+          {onToggleEditing && (
+            <Button
+              icon={editing ? <CheckOutlined /> : <LayoutOutlined />}
+              onClick={onToggleEditing}
+              type={editing ? 'primary' : 'default'}
+            >
+              {editing
+                ? t('profileDashboard.editLayoutDone')
+                : t('profileDashboard.editLayout')}
+            </Button>
+          )}
+          {editing && onAddWidget && (
+            <Button icon={<AppstoreAddOutlined />} onClick={onAddWidget}>
+              {t('profileDashboard.addWidget')}
+            </Button>
+          )}
+          {editing && onResetLayout && (
+            <Button icon={<ReloadOutlined />} onClick={onResetLayout}>
+              {t('profileDashboard.resetLayout')}
             </Button>
           )}
         </Space>
