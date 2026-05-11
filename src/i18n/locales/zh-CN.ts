@@ -22,7 +22,8 @@ const zhCN: TranslationShape = {
     "neverWatched": "从不",
     "justNow": "刚才",
     "minutesAgo": "{n} 分钟前",
-    "hoursAgo": "{n} 小时前"
+    "hoursAgo": "{n} 小时前",
+    "backToHome": "返回首页"
   },
   "seriesDetail": {
     "tabInfo": "信息",

@@ -22,7 +22,8 @@ const ko: TranslationShape = {
     "neverWatched": "없음",
     "justNow": "방금 전",
     "minutesAgo": "{n}분 전",
-    "hoursAgo": "{n}시간 전"
+    "hoursAgo": "{n}시간 전",
+    "backToHome": "홈으로 돌아가기"
   },
   "seriesDetail": {
     "tabInfo": "정보",
