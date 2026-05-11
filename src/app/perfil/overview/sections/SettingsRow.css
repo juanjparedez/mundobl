@@ -1,7 +1,10 @@
+/* Section pensada para vivir DENTRO de un Widget. Transparente — bg lo
+ * pone el Widget root. */
 .overview-settings {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  padding: var(--widget-body-padding);
 }
 
 .overview-settings__head {

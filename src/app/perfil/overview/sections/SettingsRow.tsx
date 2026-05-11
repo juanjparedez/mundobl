@@ -80,13 +80,9 @@ export function OverviewSettingsRow({ onCardClick }: Props) {
     },
   ];
 
+  // Header lo provee el Widget wrapper (SettingsRowWidget).
   return (
     <section className="overview-settings">
-      <header className="overview-settings__head">
-        <h3 className="overview-settings__title">
-          {t('profile.sectionSettings')}
-        </h3>
-      </header>
       <ul className="overview-settings__grid">
         {cards.map((c) => (
           <li key={c.key}>

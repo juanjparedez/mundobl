@@ -1,24 +1,11 @@
+/* Section pensada para vivir DENTRO de un Widget. El bg/border/padding
+ * los pone Widget (header) y .mb-widget__body (padding). Esta section
+ * es transparente para no generar paper-in-paper. */
 .overview-collections {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 10px;
-  background: var(--bg-container);
-  border: 1px solid var(--border-color-secondary);
-  border-radius: var(--border-radius-lg);
-}
-
-.overview-collections__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.overview-collections__title {
-  margin: 0;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-primary);
+  padding: var(--widget-body-padding);
 }
 
 .overview-collections__list {
