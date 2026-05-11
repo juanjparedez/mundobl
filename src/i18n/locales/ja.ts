@@ -2314,6 +2314,12 @@ const ja: TranslationShape = {
     "serieSingular": "シリーズ",
     "seriePlural": "シリーズ"
   },
+  "profileMode": {
+    "label": "モード",
+    "basic": "ベーシック",
+    "advanced": "アドバンスト",
+    "admin": "管理者"
+  },
   "workspace": {
     "backToCatalog": "カタログに戻る",
     "viewPublic": "公開ビュー",

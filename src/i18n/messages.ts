@@ -2305,6 +2305,12 @@ export type TranslationShape = {
     serieSingular: string;
     seriePlural: string;
   };
+  profileMode: {
+    label: string;
+    basic: string;
+    advanced: string;
+    admin: string;
+  };
   workspace: {
     backToCatalog: string;
     viewPublic: string;
@@ -4782,6 +4788,12 @@ const es: TranslationShape = {
     serieSingular: 'serie',
     seriePlural: 'series',
   },
+  profileMode: {
+    label: 'Modo',
+    basic: 'Básica',
+    advanced: 'Avanzada',
+    admin: 'Admin',
+  },
   workspace: {
     backToCatalog: 'Volver al catálogo',
     viewPublic: 'Vista pública',
@@ -7245,6 +7257,12 @@ const en: TranslationShape = {
     empty: 'No countries in your catalog yet.',
     serieSingular: 'series',
     seriePlural: 'series',
+  },
+  profileMode: {
+    label: 'Mode',
+    basic: 'Basic',
+    advanced: 'Advanced',
+    admin: 'Admin',
   },
   workspace: {
     backToCatalog: 'Back to catalog',

@@ -2314,6 +2314,12 @@ const zhCN: TranslationShape = {
     "serieSingular": "剧集",
     "seriePlural": "系列"
   },
+  "profileMode": {
+    "label": "模式",
+    "basic": "基础",
+    "advanced": "高级",
+    "admin": "管理员"
+  },
   "workspace": {
     "backToCatalog": "返回目录",
     "viewPublic": "公开视图",

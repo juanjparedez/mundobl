@@ -2314,6 +2314,12 @@ const th: TranslationShape = {
     "serieSingular": "ซีรีส์",
     "seriePlural": "ซีรีส์"
   },
+  "profileMode": {
+    "label": "โหมด",
+    "basic": "พื้นฐาน",
+    "advanced": "ขั้นสูง",
+    "admin": "ผู้ดูแลระบบ"
+  },
   "workspace": {
     "backToCatalog": "กลับสู่แคตตาล็อก",
     "viewPublic": "มุมมองสาธารณะ",
