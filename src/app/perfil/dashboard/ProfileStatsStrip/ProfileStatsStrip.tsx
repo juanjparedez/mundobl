@@ -1,6 +1,7 @@
 'use client';
 
 import {
+  CalendarOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
   CommentOutlined,
@@ -15,6 +16,7 @@ import {
 } from '@ant-design/icons';
 import type { ReactNode } from 'react';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
 import type { ProfileData } from '../../types';
 import './ProfileStatsStrip.css';
 
@@ -34,6 +36,9 @@ export interface ProfileStatsStripProps {
  *  Vive FUERA del DashboardGrid: es siempre visible y no reordenable. */
 export function ProfileStatsStrip({ stats }: ProfileStatsStripProps) {
   const { t } = useLocale();
+  const currentYear = new Date().getFullYear();
+  const yearWatched =
+    stats.completedByYear.find((y) => y.year === currentYear)?.count ?? 0;
 
   const items: StripItem[] = [
     {
@@ -55,6 +60,13 @@ export function ProfileStatsStrip({ stats }: ProfileStatsStripProps) {
       icon: <CloseCircleOutlined />,
       value: stats.abandoned,
       label: t('profile.statAbandoned'),
+    },
+    {
+      icon: <CalendarOutlined />,
+      value: yearWatched,
+      label: interpolateMessage(t('profile.overviewYearWatchedLabel'), {
+        year: String(currentYear),
+      }),
     },
     {
       icon: <HeartOutlined />,
