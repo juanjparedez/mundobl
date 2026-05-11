@@ -35,6 +35,17 @@ export interface ProfileReview {
   } | null;
 }
 
+/** Handles de redes sociales del usuario. Solo se persisten en User.socials
+ *  (Json field) los keys que el usuario completo — el resto undefined o
+ *  null significa "no configurado". Renderizado por SocialsWidget. */
+export interface UserSocials {
+  twitter?: string | null;
+  instagram?: string | null;
+  letterboxd?: string | null;
+  mal?: string | null;
+  mdl?: string | null;
+}
+
 export interface ProfileData {
   user: {
     id: string;
@@ -43,6 +54,7 @@ export interface ProfileData {
     image: string | null;
     role: string;
     createdAt: string;
+    socials?: UserSocials | null;
   };
   stats: {
     watched: number;

@@ -475,6 +475,20 @@ export type TranslationShape = {
     streak30Name: string;
     streak30Desc: string;
   };
+  socials: {
+    title: string;
+    emptyTitle: string;
+    emptyHint: string;
+    emptyCta: string;
+    editTitle: string;
+    editHint: string;
+    editTooltip: string;
+    handlePlaceholder: string;
+    saveButton: string;
+    cancelButton: string;
+    saveSuccess: string;
+    saveError: string;
+  };
   novedades: {
     title: string;
     subtitle: string;
@@ -2891,6 +2905,20 @@ const es: TranslationShape = {
     streak7Desc: 'Lograr una racha de 7 días',
     streak30Name: 'Mes constante',
     streak30Desc: 'Lograr una racha de 30 días',
+  },
+  socials: {
+    title: 'Mis redes',
+    emptyTitle: 'Sin redes configuradas',
+    emptyHint: 'Agregá tus handles de redes sociales para que otros usuarios puedan encontrarte.',
+    emptyCta: 'Configurar',
+    editTitle: 'Mis redes sociales',
+    editHint: 'Ingresá solo el handle (sin URL completa). Dejá vacío para quitar una red.',
+    editTooltip: 'Editar redes',
+    handlePlaceholder: 'tu_usuario',
+    saveButton: 'Guardar',
+    cancelButton: 'Cancelar',
+    saveSuccess: 'Redes actualizadas',
+    saveError: 'No se pudieron guardar tus redes',
   },
   novedades: {
     title: 'Novedades',
@@ -5396,6 +5424,20 @@ const en: TranslationShape = {
     streak7Desc: 'Reach a 7-day streak',
     streak30Name: 'Steady month',
     streak30Desc: 'Reach a 30-day streak',
+  },
+  socials: {
+    title: 'My socials',
+    emptyTitle: 'No socials configured',
+    emptyHint: 'Add your social handles so other users can find you.',
+    emptyCta: 'Set up',
+    editTitle: 'My social handles',
+    editHint: 'Enter just the handle (not the full URL). Leave empty to remove a network.',
+    editTooltip: 'Edit socials',
+    handlePlaceholder: 'your_handle',
+    saveButton: 'Save',
+    cancelButton: 'Cancel',
+    saveSuccess: 'Socials updated',
+    saveError: 'Could not save your socials',
   },
   novedades: {
     title: "What's new",

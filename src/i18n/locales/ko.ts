@@ -484,6 +484,20 @@ const ko: TranslationShape = {
     "streak30Name": "꾸준한 한 달",
     "streak30Desc": "30일 연속 달성"
   },
+  "socials": {
+    "title": "내 소셜",
+    "emptyTitle": "설정된 소셜 없음",
+    "emptyHint": "다른 사용자가 회원님을 찾을 수 있도록 소셜 핸들을 추가하세요.",
+    "emptyCta": "설정하기",
+    "editTitle": "내 소셜 핸들",
+    "editHint": "핸들만 입력하세요 (전체 URL 아님). 네트워크를 제거하려면 비워두세요.",
+    "editTooltip": "소셜 편집",
+    "handlePlaceholder": "회원님의_핸들",
+    "saveButton": "저장",
+    "cancelButton": "취소",
+    "saveSuccess": "소셜 업데이트됨",
+    "saveError": "소셜을 저장할 수 없습니다"
+  },
   "novedades": {
     "title": "새로운 소식",
     "subtitle": "최근 추가된 시리즈, 새 시즌 및 MundoBL의 최신 변경 사항.",

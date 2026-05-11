@@ -484,6 +484,20 @@ const it: TranslationShape = {
     "streak30Name": "Mese costante",
     "streak30Desc": "Raggiungi una serie di 30 giorni"
   },
+  "socials": {
+    "title": "I miei social",
+    "emptyTitle": "Nessun social configurato",
+    "emptyHint": "Aggiungi i tuoi handle social così gli altri utenti possono trovarti.",
+    "emptyCta": "Configura",
+    "editTitle": "I miei handle social",
+    "editHint": "Inserisci solo l'handle (non l'URL completo). Lascia vuoto per rimuovere un network.",
+    "editTooltip": "Modifica social",
+    "handlePlaceholder": "il_tuo_handle",
+    "saveButton": "Salva",
+    "cancelButton": "Annulla",
+    "saveSuccess": "Social aggiornati",
+    "saveError": "Impossibile salvare i tuoi social"
+  },
   "novedades": {
     "title": "Novità",
     "subtitle": "Serie aggiunte di recente, nuove stagioni e gli ultimi cambiamenti in MundoBL.",

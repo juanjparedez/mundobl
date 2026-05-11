@@ -484,6 +484,20 @@ const ja: TranslationShape = {
     "streak30Name": "月間連続",
     "streak30Desc": "30日間連続を達成する"
   },
+  "socials": {
+    "title": "マイソーシャル",
+    "emptyTitle": "ソーシャルが設定されていません",
+    "emptyHint": "他のユーザーが見つけられるように、ソーシャルアカウントを追加してください。",
+    "emptyCta": "設定",
+    "editTitle": "マイソーシャルアカウント",
+    "editHint": "ハンドル名のみを入力してください（完全なURLは不要です）。ネットワークを削除するには空欄にしてください。",
+    "editTooltip": "ソーシャルを編集",
+    "handlePlaceholder": "あなたのハンドル名",
+    "saveButton": "保存",
+    "cancelButton": "キャンセル",
+    "saveSuccess": "ソーシャルを更新しました",
+    "saveError": "ソーシャルを保存できませんでした"
+  },
   "novedades": {
     "title": "新着情報",
     "subtitle": "最近追加されたシリーズ、新シーズン、MundoBLの最新変更点。",

@@ -484,6 +484,20 @@ const zhCN: TranslationShape = {
     "streak30Name": "每月连看",
     "streak30Desc": "达成30天连看"
   },
+  "socials": {
+    "title": "我的社交账号",
+    "emptyTitle": "未配置社交账号",
+    "emptyHint": "添加您的社交账号，以便其他用户找到您。",
+    "emptyCta": "设置",
+    "editTitle": "我的社交账号",
+    "editHint": "仅输入账号（而非完整网址）。留空以移除某个网络。",
+    "editTooltip": "编辑社交账号",
+    "handlePlaceholder": "您的账号",
+    "saveButton": "保存",
+    "cancelButton": "取消",
+    "saveSuccess": "社交账号已更新",
+    "saveError": "无法保存您的社交账号"
+  },
   "novedades": {
     "title": "最新动态",
     "subtitle": "MundoBL 中最近添加的剧集、新季和最新更改。",
