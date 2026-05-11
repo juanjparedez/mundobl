@@ -47,6 +47,10 @@ model User {
   image         String?
   role          Role      @default(VISITOR)
   banned        Boolean   @default(false)
+  // Redes sociales del usuario, opcional. JSON con { twitter, mal, mdl,
+  // letterboxd, instagram, custom[] }. Renderizado por SocialsWidget en
+  // /perfil. No-public; editable solo por el dueño via PATCH /api/user/me.
+  socials       Json?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

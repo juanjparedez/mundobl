@@ -484,6 +484,20 @@ const zhTW: TranslationShape = {
     "streak30Name": "穩定月份",
     "streak30Desc": "達成 30 天連勝"
   },
+  "socials": {
+    "title": "我的社群",
+    "emptyTitle": "未設定社群帳號",
+    "emptyHint": "新增您的社群帳號，讓其他使用者可以找到您。",
+    "emptyCta": "設定",
+    "editTitle": "我的社群帳號",
+    "editHint": "只需輸入帳號（而非完整網址）。留空以移除網路。",
+    "editTooltip": "編輯社群帳號",
+    "handlePlaceholder": "您的帳號",
+    "saveButton": "儲存",
+    "cancelButton": "取消",
+    "saveSuccess": "社群帳號已更新",
+    "saveError": "無法儲存您的社群帳號"
+  },
   "novedades": {
     "title": "最新消息",
     "subtitle": "MundoBL 中最近新增的影集、新季度和最新變更。",

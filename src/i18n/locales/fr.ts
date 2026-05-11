@@ -484,6 +484,20 @@ const fr: TranslationShape = {
     "streak30Name": "Mois stable",
     "streak30Desc": "Atteignez une série de 30 jours"
   },
+  "socials": {
+    "title": "Mes réseaux sociaux",
+    "emptyTitle": "Aucun réseau social configuré",
+    "emptyHint": "Ajoutez vos identifiants de réseaux sociaux pour que les autres utilisateurs puissent vous trouver.",
+    "emptyCta": "Configurer",
+    "editTitle": "Mes identifiants de réseaux sociaux",
+    "editHint": "Saisissez uniquement l'identifiant (pas l'URL complète). Laissez vide pour supprimer un réseau.",
+    "editTooltip": "Modifier les réseaux sociaux",
+    "handlePlaceholder": "votre_identifiant",
+    "saveButton": "Enregistrer",
+    "cancelButton": "Annuler",
+    "saveSuccess": "Réseaux sociaux mis à jour",
+    "saveError": "Impossible d'enregistrer vos réseaux sociaux"
+  },
   "novedades": {
     "title": "Quoi de neuf",
     "subtitle": "Séries récemment ajoutées, nouvelles saisons et les dernières modifications dans MundoBL.",

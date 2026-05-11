@@ -51,6 +51,7 @@ import { YearSummaryWidget } from './widgets/YearSummaryWidget/YearSummaryWidget
 import { ReviewsActivityWidget } from './widgets/ReviewsActivityWidget/ReviewsActivityWidget';
 import { FollowedTitlesWidget } from './widgets/FollowedTitlesWidget/FollowedTitlesWidget';
 import { SettingsRowWidget } from './widgets/SettingsRowWidget/SettingsRowWidget';
+import { SocialsWidget } from './widgets/SocialsWidget/SocialsWidget';
 import { RecentAdminActivityWidget } from '@/app/admin/widgets/RecentAdminActivityWidget/RecentAdminActivityWidget';
 import { TopCommentersWidget } from '@/app/admin/widgets/TopCommentersWidget/TopCommentersWidget';
 import { ActivityChartWidget } from '@/app/admin/widgets/ActivityChartWidget/ActivityChartWidget';
@@ -87,6 +88,7 @@ const WIDGET_IDS = {
   reviewsActivity: 'profile.reviewsActivity',
   followedTitles: 'profile.followedTitles',
   settingsRow: 'profile.settingsRow',
+  socials: 'profile.socials',
   // Widgets compartidos con /admin (admin/moderator only) — reusados
   // del registry de /admin via import cross-feature. Mismos endpoints,
   // mismos componentes — sin duplicar codigo.
@@ -126,6 +128,7 @@ const WIDGET_TO_SECTION: Record<string, string> = {
   [WIDGET_IDS.reviewsActivity]: 'reviewsActivity',
   [WIDGET_IDS.followedTitles]: 'followed',
   [WIDGET_IDS.settingsRow]: 'settings',
+  [WIDGET_IDS.socials]: 'socials',
 };
 
 // Layout default ADMIN — mock-aligned (style-guide/my-profile.png), denso,
@@ -278,7 +281,8 @@ const USER_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.favorites, x: 3, y: 26, w: 3, h: 4 },
     { i: WIDGET_IDS.topRated, x: 6, y: 26, w: 3, h: 4 },
     { i: WIDGET_IDS.myDisputes, x: 9, y: 26, w: 3, h: 4 },
-    { i: WIDGET_IDS.myComments, x: 0, y: 33, w: 12, h: 6, minW: 6, minH: 5 },
+    { i: WIDGET_IDS.myComments, x: 0, y: 33, w: 8, h: 6, minW: 6, minH: 5 },
+    { i: WIDGET_IDS.socials, x: 8, y: 33, w: 4, h: 6 },
     // Row final: SettingsRow (6 cards horizontales del mock)
     { i: WIDGET_IDS.settingsRow, x: 0, y: 39, w: 12, h: 4, minW: 6, minH: 3 },
   ],
@@ -365,14 +369,16 @@ const BASIC_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.myComments, x: 6, y: 4, w: 6, h: 4 },
     { i: WIDGET_IDS.heatmap, x: 0, y: 8, w: 8, h: 3 },
     { i: WIDGET_IDS.collections, x: 8, y: 8, w: 4, h: 3 },
-    { i: WIDGET_IDS.settingsRow, x: 0, y: 11, w: 12, h: 4 },
+    { i: WIDGET_IDS.socials, x: 0, y: 11, w: 4, h: 4 },
+    { i: WIDGET_IDS.settingsRow, x: 4, y: 11, w: 8, h: 4 },
   ],
   md: [
     { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 10, h: 4 },
     { i: WIDGET_IDS.myReviews, x: 0, y: 4, w: 5, h: 4 },
     { i: WIDGET_IDS.myComments, x: 5, y: 4, w: 5, h: 4 },
     { i: WIDGET_IDS.heatmap, x: 0, y: 8, w: 10, h: 3 },
-    { i: WIDGET_IDS.collections, x: 0, y: 11, w: 10, h: 3 },
+    { i: WIDGET_IDS.collections, x: 0, y: 11, w: 5, h: 3 },
+    { i: WIDGET_IDS.socials, x: 5, y: 11, w: 5, h: 3 },
     { i: WIDGET_IDS.settingsRow, x: 0, y: 14, w: 10, h: 4 },
   ],
   sm: [
@@ -381,7 +387,8 @@ const BASIC_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.myComments, x: 0, y: 8, w: 6, h: 4 },
     { i: WIDGET_IDS.heatmap, x: 0, y: 12, w: 6, h: 3 },
     { i: WIDGET_IDS.collections, x: 0, y: 15, w: 6, h: 3 },
-    { i: WIDGET_IDS.settingsRow, x: 0, y: 18, w: 6, h: 4 },
+    { i: WIDGET_IDS.socials, x: 0, y: 18, w: 6, h: 4 },
+    { i: WIDGET_IDS.settingsRow, x: 0, y: 22, w: 6, h: 4 },
   ],
   xs: [
     { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 4, h: 4 },
@@ -389,7 +396,8 @@ const BASIC_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.myComments, x: 0, y: 8, w: 4, h: 4 },
     { i: WIDGET_IDS.heatmap, x: 0, y: 12, w: 4, h: 3 },
     { i: WIDGET_IDS.collections, x: 0, y: 15, w: 4, h: 3 },
-    { i: WIDGET_IDS.settingsRow, x: 0, y: 18, w: 4, h: 4 },
+    { i: WIDGET_IDS.socials, x: 0, y: 18, w: 4, h: 4 },
+    { i: WIDGET_IDS.settingsRow, x: 0, y: 22, w: 4, h: 4 },
   ],
 };
 
@@ -712,6 +720,14 @@ export function DashboardClient() {
       Component: ActivityChartWidget as never,
       roles: ['ADMIN', 'MODERATOR'],
     });
+    WidgetRegistry.register({
+      id: WIDGET_IDS.socials,
+      category: 'overview',
+      labelKey: 'socials.title',
+      descriptionKey: 'socials.emptyHint',
+      defaultSize: { w: 4, h: 4, minW: 3, minH: 3 },
+      Component: SocialsWidget as never,
+    });
   }, []);
 
   useEffect(() => {
@@ -770,6 +786,7 @@ export function DashboardClient() {
     map[WIDGET_IDS.topCommenters] = {};
     map[WIDGET_IDS.activityChart] = {};
     map[WIDGET_IDS.worldMap] = { topCountries: data.stats.topCountries };
+    map[WIDGET_IDS.socials] = { socials: data.user.socials };
     return map;
   }, [data]);
 
