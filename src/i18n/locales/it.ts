@@ -379,6 +379,8 @@ const it: TranslationShape = {
     "settingsSessionHint": "Risolvi problemi strani: svuota la cache locale, ripristina il service worker o disconnettiti da ogni dispositivo.",
     "settingsDangerTitle": "Zona pericolo",
     "settingsDangerHint": "Esporta i tuoi dati o elimina il tuo account con conferma via email.",
+    "settingsPrivacyTitle": "Privacy e dati",
+    "settingsPrivacyHint": "Scarica una copia completa dei tuoi dati personali (commenti, valutazioni, stato di visualizzazione, preferiti, voti, notifiche).",
     "settingsExportData": "Esporta i miei dati",
     "settingsComingSoon": "Prossimamente",
     "settingsIrreversible": "Irreversibile",
