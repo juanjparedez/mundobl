@@ -2314,6 +2314,12 @@ const zhTW: TranslationShape = {
     "serieSingular": "劇集",
     "seriePlural": "劇集"
   },
+  "profileMode": {
+    "label": "模式",
+    "basic": "基本",
+    "advanced": "進階",
+    "admin": "管理員"
+  },
   "workspace": {
     "backToCatalog": "返回目錄",
     "viewPublic": "公開檢視",
