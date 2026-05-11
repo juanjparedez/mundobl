@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Avatar, Button, Space, Tag } from 'antd';
+import { Avatar, Button, Segmented, Space, Tag } from 'antd';
 import {
   AppstoreAddOutlined,
   CalendarOutlined,
@@ -24,6 +24,8 @@ const ROLE_COLORS: Record<string, string> = {
   VISITOR: 'default',
 };
 
+export type ProfileHeaderMode = 'basic' | 'advanced' | 'admin';
+
 export interface ProfileDashboardHeaderProps {
   user: ProfileData['user'];
   /** Callback opcional para abrir el drawer de personalizar. Cuando se
@@ -37,6 +39,12 @@ export interface ProfileDashboardHeaderProps {
   onToggleEditing?: () => void;
   onAddWidget?: () => void;
   onResetLayout?: () => void;
+  /** Mode selector integrado al header (Basic / Advanced / Admin).
+   *  Cuando se pasan estas 3 props, se renderea el Segmented en una
+   *  sub-row de actions. La opcion 'admin' aparece solo si admin=true. */
+  mode?: ProfileHeaderMode;
+  onModeChange?: (next: ProfileHeaderMode) => void;
+  showAdminMode?: boolean;
 }
 
 function formatJoinedDate(iso: string, locale: string): string {
@@ -61,6 +69,9 @@ export function ProfileDashboardHeader({
   onToggleEditing,
   onAddWidget,
   onResetLayout,
+  mode,
+  onModeChange,
+  showAdminMode = false,
 }: ProfileDashboardHeaderProps) {
   const { t, locale } = useLocale();
   const [preferencesOpen, setPreferencesOpen] = useState(false);
@@ -95,50 +106,87 @@ export function ProfileDashboardHeader({
         </div>
       </div>
       <div className="mb-profile-header__actions">
+        {/* Primary actions: cosas de la cuenta del user (perfil, prefs).
+         *  Visualmente separadas de los controles del dashboard layout
+         *  (mode + customize + edit). */}
         <Space size={8} wrap>
-          <Button icon={<EditOutlined />} onClick={handleEditClick}>
+          <Button
+            type="primary"
+            icon={<EditOutlined />}
+            onClick={handleEditClick}
+          >
             {t('profileDashboard.editProfile')}
           </Button>
           {/* Preferencias: abre el SettingsPanel global (theme, accent,
-           *  locale, density). Restaurado del OverviewHeader — antes del
-           *  refactor a grid se podia abrir desde aca y se habia perdido.
-           *  Sigue accesible tambien desde la sidebar. */}
+           *  locale, density). Accesible tambien desde la sidebar. */}
           <Button
             icon={<SlidersOutlined />}
             onClick={() => setPreferencesOpen(true)}
           >
             {t('profileDashboard.preferencesButton')}
           </Button>
-          {onCustomizeClick && (
-            <Button icon={<SettingOutlined />} onClick={onCustomizeClick}>
-              {t('profile.customizeButton')}
-            </Button>
-          )}
-          {/* Controles del dashboard grid integrados al header (en lugar
-           *  de toolbar suelto debajo). Cuando editing=true se expanden
-           *  con Add + Reset inline. */}
-          {onToggleEditing && (
-            <Button
-              icon={editing ? <CheckOutlined /> : <LayoutOutlined />}
-              onClick={onToggleEditing}
-              type={editing ? 'primary' : 'default'}
-            >
-              {editing
-                ? t('profileDashboard.editLayoutDone')
-                : t('profileDashboard.editLayout')}
-            </Button>
-          )}
-          {editing && onAddWidget && (
-            <Button icon={<AppstoreAddOutlined />} onClick={onAddWidget}>
-              {t('profileDashboard.addWidget')}
-            </Button>
-          )}
-          {editing && onResetLayout && (
-            <Button icon={<ReloadOutlined />} onClick={onResetLayout}>
-              {t('profileDashboard.resetLayout')}
-            </Button>
-          )}
         </Space>
+        {/* Layout / mode controls. Mode selector + Customize + Edit-layout
+         *  conviven aca para que el user encuentre TODOS los controles del
+         *  dashboard en un mismo lugar (antes el mode vivia en una toolbar
+         *  separada — iter 16 lo consolidamos). */}
+        {(mode || onCustomizeClick || onToggleEditing) && (
+          <Space size={8} wrap className="mb-profile-header__layout-actions">
+            {mode && onModeChange && (
+              <Segmented
+                value={mode}
+                onChange={(v) => onModeChange(v as ProfileHeaderMode)}
+                size="small"
+                options={[
+                  { label: t('profileMode.basic'), value: 'basic' },
+                  { label: t('profileMode.advanced'), value: 'advanced' },
+                  ...(showAdminMode
+                    ? [{ label: t('profileMode.admin'), value: 'admin' }]
+                    : []),
+                ]}
+              />
+            )}
+            {onCustomizeClick && (
+              <Button
+                icon={<SettingOutlined />}
+                onClick={onCustomizeClick}
+                size="small"
+              >
+                {t('profile.customizeButton')}
+              </Button>
+            )}
+            {onToggleEditing && (
+              <Button
+                icon={editing ? <CheckOutlined /> : <LayoutOutlined />}
+                onClick={onToggleEditing}
+                type={editing ? 'primary' : 'default'}
+                size="small"
+              >
+                {editing
+                  ? t('profileDashboard.editLayoutDone')
+                  : t('profileDashboard.editLayout')}
+              </Button>
+            )}
+            {editing && onAddWidget && (
+              <Button
+                icon={<AppstoreAddOutlined />}
+                onClick={onAddWidget}
+                size="small"
+              >
+                {t('profileDashboard.addWidget')}
+              </Button>
+            )}
+            {editing && onResetLayout && (
+              <Button
+                icon={<ReloadOutlined />}
+                onClick={onResetLayout}
+                size="small"
+              >
+                {t('profileDashboard.resetLayout')}
+              </Button>
+            )}
+          </Space>
+        )}
       </div>
       <SettingsPanel
         open={preferencesOpen}

@@ -79,8 +79,19 @@
 
 .mb-profile-header__actions {
   flex-shrink: 0;
-  display: inline-flex;
-  gap: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+}
+
+/* Sub-row de layout controls (mode segmented + customize + edit layout).
+ * Visualmente diferenciada de las primary actions por densidad reducida
+ * y un borde superior tenue. */
+.mb-profile-header__layout-actions {
+  border-top: 1px dashed
+    color-mix(in srgb, var(--border-color-secondary) 60%, transparent);
+  padding-top: 6px;
 }
 
 @media (max-width: 640px) {
