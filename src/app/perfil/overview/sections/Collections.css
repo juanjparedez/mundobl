@@ -35,6 +35,16 @@
   background: color-mix(in srgb, var(--bg-elevated) 80%, transparent);
 }
 
+/* Variante static: items sin ruta dedicada (favoritos, rewatch, abandonadas).
+ * No hover state, cursor default. Cuando exista /favoritos /retomar
+ * /abandonadas se quita el modifier. */
+.overview-collections__item--static {
+  cursor: default;
+}
+.overview-collections__item--static:hover {
+  background: var(--bg-spotlight);
+}
+
 .overview-collections__icon {
   display: inline-flex;
   align-items: center;

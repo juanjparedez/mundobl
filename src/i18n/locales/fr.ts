@@ -22,7 +22,8 @@ const fr: TranslationShape = {
     "neverWatched": "Jamais",
     "justNow": "À l'instant",
     "minutesAgo": "Il y a {n} min",
-    "hoursAgo": "Il y a {n}h"
+    "hoursAgo": "Il y a {n}h",
+    "backToHome": "Retour à l'accueil"
   },
   "seriesDetail": {
     "tabInfo": "Informations",
