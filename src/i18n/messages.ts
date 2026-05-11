@@ -373,6 +373,19 @@ export type TranslationShape = {
     settingsPrivacyTitle: string;
     settingsPrivacyHint: string;
     settingsExportData: string;
+    settingsImportData: string;
+    settingsImportTitle: string;
+    settingsImportFileLabel: string;
+    settingsImportFileHint: string;
+    settingsImportPreviewButton: string;
+    settingsImportConfirmButton: string;
+    settingsImportCancelButton: string;
+    settingsImportPreviewTitle: string;
+    settingsImportNothingToImport: string;
+    settingsImportSuccess: string;
+    settingsImportError: string;
+    settingsImportInvalidFile: string;
+    settingsImportSafetyNotice: string;
     settingsComingSoon: string;
     settingsIrreversible: string;
     settingsExportSuccess: string;
@@ -2763,8 +2776,23 @@ const es: TranslationShape = {
       'Eliminá tu cuenta con confirmación por email. Esta acción es irreversible.',
     settingsPrivacyTitle: 'Privacidad y datos',
     settingsPrivacyHint:
-      'Descargá una copia completa de tus datos personales (comentarios, ratings, view-status, favoritos, votos, notificaciones).',
+      'Descargá una copia completa de tus datos personales (comentarios, ratings, view-status, favoritos, votos, notificaciones). También podés restaurar datos desde un JSON exportado.',
     settingsExportData: 'Exportar mis datos',
+    settingsImportData: 'Importar datos',
+    settingsImportTitle: 'Importar datos desde JSON',
+    settingsImportFileLabel: 'Archivo JSON',
+    settingsImportFileHint:
+      'Subí un archivo exportado previamente (máximo 5MB). El import nunca borra datos existentes, solo agrega lo que falta.',
+    settingsImportPreviewButton: 'Vista previa (sin guardar)',
+    settingsImportConfirmButton: 'Confirmar importación',
+    settingsImportCancelButton: 'Cancelar',
+    settingsImportPreviewTitle: 'Vista previa',
+    settingsImportNothingToImport: 'No hay nada nuevo para importar.',
+    settingsImportSuccess: 'Importación completada.',
+    settingsImportError: 'No se pudo procesar el archivo.',
+    settingsImportInvalidFile: 'El archivo no es un JSON válido o no tiene el formato esperado.',
+    settingsImportSafetyNotice:
+      'Tu rol, email y identidad nunca se modifican via import. Solo se importan tus propios contenidos (ratings, comentarios, etc.). Items que ya existen se omiten.',
     settingsComingSoon: 'Próximamente',
     settingsIrreversible: 'Irreversible',
     settingsExportSuccess: 'Tu archivo JSON se descargó correctamente.',
@@ -5254,8 +5282,23 @@ const en: TranslationShape = {
       'Delete your account with email confirmation. This action is irreversible.',
     settingsPrivacyTitle: 'Privacy & data',
     settingsPrivacyHint:
-      'Download a full copy of your personal data (comments, ratings, view-status, favorites, votes, notifications).',
+      'Download a full copy of your personal data (comments, ratings, view-status, favorites, votes, notifications). You can also restore data from a previously exported JSON.',
     settingsExportData: 'Export my data',
+    settingsImportData: 'Import data',
+    settingsImportTitle: 'Import data from JSON',
+    settingsImportFileLabel: 'JSON file',
+    settingsImportFileHint:
+      'Upload a previously exported file (max 5MB). Import never deletes existing data — it only adds what is missing.',
+    settingsImportPreviewButton: 'Preview (without saving)',
+    settingsImportConfirmButton: 'Confirm import',
+    settingsImportCancelButton: 'Cancel',
+    settingsImportPreviewTitle: 'Preview',
+    settingsImportNothingToImport: 'Nothing new to import.',
+    settingsImportSuccess: 'Import completed.',
+    settingsImportError: 'Could not process the file.',
+    settingsImportInvalidFile: 'The file is not valid JSON or has the wrong shape.',
+    settingsImportSafetyNotice:
+      'Your role, email and identity are never changed via import. Only your own content (ratings, comments, etc.) is imported. Items that already exist are skipped.',
     settingsComingSoon: 'Coming soon',
     settingsIrreversible: 'Irreversible',
     settingsExportSuccess: 'Your JSON file was downloaded successfully.',
