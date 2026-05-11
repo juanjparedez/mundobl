@@ -2314,6 +2314,12 @@ const it: TranslationShape = {
     "serieSingular": "serie",
     "seriePlural": "serie"
   },
+  "profileMode": {
+    "label": "Modalità",
+    "basic": "Base",
+    "advanced": "Avanzate",
+    "admin": "Amministratore"
+  },
   "workspace": {
     "backToCatalog": "Torna al catalogo",
     "viewPublic": "Vista pubblica",

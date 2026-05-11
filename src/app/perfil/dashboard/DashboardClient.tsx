@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { Button, Spin } from 'antd';
+import { Button, Segmented, Spin } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import {
@@ -361,6 +361,49 @@ const USER_LAYOUTS: DashboardLayouts = {
   ],
 };
 
+// Modos del dashboard — presets de widgets por nivel de uso. El user
+// elige desde un dropdown en el toolbar. Cada modo tiene su preset
+// (Subset del WidgetRegistry) que se aplica al hacer reset. Los
+// layouts custom siguen persistiendo por (dashboardKey + mode).
+type ProfileMode = 'basic' | 'advanced' | 'admin';
+
+// Preset BASIC user: solo widgets esenciales (KPIs ya estan fuera
+// del grid en ProfileStatsStrip — aca van los visuales mas usados).
+const BASIC_LAYOUTS: DashboardLayouts = {
+  lg: [
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 12, h: 4 },
+    { i: WIDGET_IDS.myReviews, x: 0, y: 4, w: 6, h: 4 },
+    { i: WIDGET_IDS.myComments, x: 6, y: 4, w: 6, h: 4 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 8, w: 8, h: 3 },
+    { i: WIDGET_IDS.collections, x: 8, y: 8, w: 4, h: 3 },
+    { i: WIDGET_IDS.settingsRow, x: 0, y: 11, w: 12, h: 4 },
+  ],
+  md: [
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 10, h: 4 },
+    { i: WIDGET_IDS.myReviews, x: 0, y: 4, w: 5, h: 4 },
+    { i: WIDGET_IDS.myComments, x: 5, y: 4, w: 5, h: 4 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 8, w: 10, h: 3 },
+    { i: WIDGET_IDS.collections, x: 0, y: 11, w: 10, h: 3 },
+    { i: WIDGET_IDS.settingsRow, x: 0, y: 14, w: 10, h: 4 },
+  ],
+  sm: [
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 6, h: 4 },
+    { i: WIDGET_IDS.myReviews, x: 0, y: 4, w: 6, h: 4 },
+    { i: WIDGET_IDS.myComments, x: 0, y: 8, w: 6, h: 4 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 12, w: 6, h: 3 },
+    { i: WIDGET_IDS.collections, x: 0, y: 15, w: 6, h: 3 },
+    { i: WIDGET_IDS.settingsRow, x: 0, y: 18, w: 6, h: 4 },
+  ],
+  xs: [
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 4, h: 4 },
+    { i: WIDGET_IDS.myReviews, x: 0, y: 4, w: 4, h: 4 },
+    { i: WIDGET_IDS.myComments, x: 0, y: 8, w: 4, h: 4 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 12, w: 4, h: 3 },
+    { i: WIDGET_IDS.collections, x: 0, y: 15, w: 4, h: 3 },
+    { i: WIDGET_IDS.settingsRow, x: 0, y: 18, w: 4, h: 4 },
+  ],
+};
+
 export function DashboardClient() {
   const { t } = useLocale();
   const { status, data: session } = useSession();
@@ -372,11 +415,48 @@ export function DashboardClient() {
 
   const isAdmin =
     (data?.user.role ?? (session?.user as { role?: string })?.role) === 'ADMIN';
-  // Bumped a v4 al integrar las 5 sections del overview como widgets nuevos
-  // (achievements, collections, yearSummary, reviewsActivity, followedTitles)
-  // — layouts viejos cacheados por user serian incompatibles.
-  const dashboardKey = isAdmin ? 'profile-admin-v4' : 'profile-user-v4';
-  const defaultLayouts = isAdmin ? ADMIN_LAYOUTS : USER_LAYOUTS;
+
+  // Mode persistido en localStorage. Default per-rol: admin arranca en
+  // 'admin' mode, user normal en 'advanced' (lo que ya tenian antes).
+  const [mode, setMode] = useState<ProfileMode>(() => {
+    if (typeof window === 'undefined') return 'advanced';
+    const stored = window.localStorage.getItem('profile-mode-v1');
+    if (stored === 'basic' || stored === 'advanced' || stored === 'admin') {
+      return stored;
+    }
+    return 'advanced';
+  });
+
+  // Auto-corregir mode si el user no-admin tiene guardado 'admin'
+  // (cambio de rol, sesion cambiada, etc.) — la opcion no esta
+  // disponible para ellos asi que cae a 'advanced'.
+  const effectiveMode: ProfileMode =
+    mode === 'admin' && !isAdmin ? 'advanced' : mode;
+
+  const handleModeChange = (next: ProfileMode) => {
+    setMode(next);
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('profile-mode-v1', next);
+    }
+  };
+
+  // dashboardKey incluye el mode para que cada modo tenga su layout
+  // custom independiente (cambiar de modo no machaca el layout del
+  // otro modo). Bumped a v5 con la introduccion de modos.
+  const dashboardKey = `profile-${isAdmin ? 'admin' : 'user'}-${effectiveMode}-v5`;
+
+  // Preset segun el modo:
+  // - basic: BASIC_LAYOUTS (todos los roles)
+  // - advanced: USER_LAYOUTS (sin admin widgets) o ADMIN_LAYOUTS (con admin) segun role
+  // - admin: ADMIN_LAYOUTS (solo admin/moderator pueden estar en este modo)
+  const defaultLayouts: DashboardLayouts =
+    effectiveMode === 'basic'
+      ? BASIC_LAYOUTS
+      : effectiveMode === 'admin'
+        ? ADMIN_LAYOUTS
+        : isAdmin
+          ? ADMIN_LAYOUTS
+          : USER_LAYOUTS;
 
   const { layouts, setLayouts, removeWidget, addWidget, reset, widgetIds } =
     useDashboardLayout(dashboardKey, defaultLayouts);
@@ -759,6 +839,27 @@ export function DashboardClient() {
           onCustomizeClick={() => setCustomizeOpen(true)}
         />
         <ProfileStatsStrip stats={data.stats} />
+
+        {/* Selector de modo del dashboard. Admin ve 3 opciones; users
+         *  no-admin ven 2 (admin queda oculta). Cambiar modo cambia el
+         *  dashboardKey (cada modo tiene su layout custom independiente). */}
+        <div className="mb-perfil-dashboard__mode-toolbar">
+          <span className="mb-perfil-dashboard__mode-label">
+            {t('profileMode.label')}
+          </span>
+          <Segmented
+            value={effectiveMode}
+            onChange={(v) => handleModeChange(v as ProfileMode)}
+            size="small"
+            options={[
+              { label: t('profileMode.basic'), value: 'basic' },
+              { label: t('profileMode.advanced'), value: 'advanced' },
+              ...(isAdmin
+                ? [{ label: t('profileMode.admin'), value: 'admin' }]
+                : []),
+            ]}
+          />
+        </div>
 
         <DashboardEditToolbar
           editing={editing}

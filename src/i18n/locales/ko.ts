@@ -2314,6 +2314,12 @@ const ko: TranslationShape = {
     "serieSingular": "시리즈",
     "seriePlural": "시리즈"
   },
+  "profileMode": {
+    "label": "모드",
+    "basic": "기본",
+    "advanced": "고급",
+    "admin": "관리자"
+  },
   "workspace": {
     "backToCatalog": "카탈로그로 돌아가기",
     "viewPublic": "공개 보기",
