@@ -54,11 +54,12 @@ export function OverviewCollections({ stats }: Props) {
     },
   ];
 
+  // El header lo provee el Widget wrapper (CollectionsWidget) — esta
+  // section solo rendea el body. Cuando se usa standalone (raro), no
+  // tiene titulo, lo cual esta OK porque la unica via de uso es como
+  // widget desde 2026-05-11 (iter 11 limpio /perfil/overview/).
   return (
     <section className="overview-collections">
-      <header className="overview-collections__head">
-        <h3 className="overview-collections__title">Mis listas</h3>
-      </header>
       <ul className="overview-collections__list">
         {items.map((it) => (
           <li key={it.key}>

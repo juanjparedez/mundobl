@@ -1,12 +1,9 @@
+/* Section pensada para vivir DENTRO de un Widget. Transparente. */
 .overview-reviews-activity {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 10px;
-  background: var(--bg-container);
-  border: 1px solid var(--border-color-secondary);
-  border-radius: var(--border-radius-lg);
-  min-height: 88px;
+  padding: var(--widget-body-padding);
 }
 
 .overview-reviews-activity__head {
