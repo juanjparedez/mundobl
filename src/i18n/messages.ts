@@ -2178,6 +2178,10 @@ export type TranslationShape = {
     completedByYearLabel: string;
     editProfile: string;
     preferencesButton: string;
+    editLayout: string;
+    editLayoutDone: string;
+    addWidget: string;
+    resetLayout: string;
     streak: string;
     totalEpisodes: string;
     widgetTopGenresList: string;
@@ -4655,6 +4659,10 @@ const es: TranslationShape = {
     completedByYearLabel: 'Completadas',
     editProfile: 'Editar perfil',
     preferencesButton: 'Preferencias',
+    editLayout: 'Editar layout',
+    editLayoutDone: 'Listo',
+    addWidget: 'Agregar widget',
+    resetLayout: 'Restablecer',
     streak: 'Dias seguidos',
     totalEpisodes: 'Episodios',
     widgetTopGenresList: 'Generos mas vistos',
@@ -7127,6 +7135,10 @@ const en: TranslationShape = {
     completedByYearLabel: 'Completed',
     editProfile: 'Edit profile',
     preferencesButton: 'Preferences',
+    editLayout: 'Edit layout',
+    editLayoutDone: 'Done',
+    addWidget: 'Add widget',
+    resetLayout: 'Reset',
     streak: 'Day streak',
     totalEpisodes: 'Episodes',
     widgetTopGenresList: 'Most watched genres',
