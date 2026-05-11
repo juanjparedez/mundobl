@@ -2081,6 +2081,7 @@ export type TranslationShape = {
     deleteEmailLabel: string;
     deleteEmailPlaceholder: string;
     deleteEmailHint: string;
+    openNotifications: string;
   };
   commentsList: {
     errorMissingId: string;
@@ -4587,6 +4588,7 @@ const es: TranslationShape = {
       'Para confirmar, escribe tu dirección de correo electrónico:',
     deleteEmailPlaceholder: 'Tu correo electrónico',
     deleteEmailHint: 'Tu correo electrónico actual es:',
+    openNotifications: 'Abrir notificaciones',
   },
   commentsList: {
     errorMissingId: 'Debe proporcionar seriesId, seasonId o episodeId',
@@ -7098,6 +7100,7 @@ const en: TranslationShape = {
     deleteEmailLabel: 'To confirm, please type your email address:',
     deleteEmailPlaceholder: 'Your email address',
     deleteEmailHint: 'Your current email is:',
+    openNotifications: 'Open notifications',
   },
   commentsList: {
     errorMissingId: 'Must provide seriesId, seasonId, or episodeId',

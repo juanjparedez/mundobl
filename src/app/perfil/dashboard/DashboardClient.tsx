@@ -25,8 +25,6 @@ import {
   type OverviewSectionKey,
 } from '../overview/useSectionVisibility';
 import { CustomizeDrawer } from '../overview/CustomizeDrawer';
-import { OverviewWidget } from './widgets/OverviewWidget/OverviewWidget';
-import { RatingsWidget } from './widgets/RatingsWidget/RatingsWidget';
 import { HeatmapWidget } from './widgets/HeatmapWidget/HeatmapWidget';
 import { GenresDonutWidget } from './widgets/GenresDonutWidget/GenresDonutWidget';
 import { CompletedByYearWidget } from './widgets/CompletedByYearWidget/CompletedByYearWidget';
@@ -50,7 +48,6 @@ import { CollectionsWidget } from './widgets/CollectionsWidget/CollectionsWidget
 import { YearSummaryWidget } from './widgets/YearSummaryWidget/YearSummaryWidget';
 import { ReviewsActivityWidget } from './widgets/ReviewsActivityWidget/ReviewsActivityWidget';
 import { FollowedTitlesWidget } from './widgets/FollowedTitlesWidget/FollowedTitlesWidget';
-import { SettingsRowWidget } from './widgets/SettingsRowWidget/SettingsRowWidget';
 import { SocialsWidget } from './widgets/SocialsWidget/SocialsWidget';
 import { RecentAdminActivityWidget } from '@/app/admin/widgets/RecentAdminActivityWidget/RecentAdminActivityWidget';
 import { TopCommentersWidget } from '@/app/admin/widgets/TopCommentersWidget/TopCommentersWidget';
@@ -62,8 +59,6 @@ import './dashboard.css';
 // Si renombrás uno, hay que bumpear dashboardKey abajo para invalidar
 // localStorage de users con layouts viejos.
 const WIDGET_IDS = {
-  overview: 'profile.overview',
-  ratings: 'profile.ratings',
   heatmap: 'profile.heatmap',
   genres: 'profile.genres',
   completedByYear: 'profile.completedByYear',
@@ -87,7 +82,6 @@ const WIDGET_IDS = {
   yearSummary: 'profile.yearSummary',
   reviewsActivity: 'profile.reviewsActivity',
   followedTitles: 'profile.followedTitles',
-  settingsRow: 'profile.settingsRow',
   socials: 'profile.socials',
   // Widgets compartidos con /admin (admin/moderator only) — reusados
   // del registry de /admin via import cross-feature. Mismos endpoints,
@@ -107,8 +101,6 @@ const WIDGET_TO_SECTION: Record<string, string> = {
   [WIDGET_IDS.heatmap]: 'mystats',
   [WIDGET_IDS.genres]: 'mystats',
   [WIDGET_IDS.completedByYear]: 'mystats',
-  [WIDGET_IDS.overview]: 'mystats',
-  [WIDGET_IDS.ratings]: 'mystats',
   [WIDGET_IDS.topGenresList]: 'countries',
   [WIDGET_IDS.topCountries]: 'countries',
   [WIDGET_IDS.worldMap]: 'countries',
@@ -127,7 +119,6 @@ const WIDGET_TO_SECTION: Record<string, string> = {
   [WIDGET_IDS.yearSummary]: 'yearSummary',
   [WIDGET_IDS.reviewsActivity]: 'reviewsActivity',
   [WIDGET_IDS.followedTitles]: 'followed',
-  [WIDGET_IDS.settingsRow]: 'settings',
   [WIDGET_IDS.socials]: 'socials',
 };
 
@@ -178,8 +169,6 @@ const ADMIN_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.activityChart, x: 0, y: 47, w: 12, h: 5 },
     { i: WIDGET_IDS.recentAdminActivity, x: 0, y: 52, w: 6, h: 5 },
     { i: WIDGET_IDS.topCommenters, x: 6, y: 52, w: 6, h: 5 },
-    // Row 13: SettingsRow (6 cards horizontales del mock)
-    { i: WIDGET_IDS.settingsRow, x: 0, y: 57, w: 12, h: 4, minW: 6, minH: 3 },
   ],
   md: [
     { i: WIDGET_IDS.heatmap, x: 0, y: 0, w: 10, h: 3 },
@@ -203,7 +192,6 @@ const ADMIN_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.topRated, x: 0, y: 41, w: 5, h: 4 },
     { i: WIDGET_IDS.recentlyCompleted, x: 5, y: 41, w: 5, h: 4 },
     { i: WIDGET_IDS.myComments, x: 0, y: 45, w: 10, h: 6 },
-    { i: WIDGET_IDS.settingsRow, x: 0, y: 51, w: 10, h: 4 },
   ],
   sm: [
     { i: WIDGET_IDS.quickAdmin, x: 0, y: 0, w: 6, h: 3 },
@@ -227,7 +215,6 @@ const ADMIN_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.topCompanies, x: 0, y: 71, w: 6, h: 3 },
     { i: WIDGET_IDS.completedByYear, x: 0, y: 74, w: 6, h: 4 },
     { i: WIDGET_IDS.myComments, x: 0, y: 78, w: 6, h: 7 },
-    { i: WIDGET_IDS.settingsRow, x: 0, y: 85, w: 6, h: 4 },
   ],
   xs: [
     { i: WIDGET_IDS.quickAdmin, x: 0, y: 0, w: 4, h: 3 },
@@ -251,7 +238,6 @@ const ADMIN_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.topCompanies, x: 0, y: 71, w: 4, h: 3 },
     { i: WIDGET_IDS.completedByYear, x: 0, y: 74, w: 4, h: 4 },
     { i: WIDGET_IDS.myComments, x: 0, y: 78, w: 4, h: 7 },
-    { i: WIDGET_IDS.settingsRow, x: 0, y: 85, w: 4, h: 4 },
   ],
 };
 
@@ -283,8 +269,6 @@ const USER_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.myDisputes, x: 9, y: 26, w: 3, h: 4 },
     { i: WIDGET_IDS.myComments, x: 0, y: 33, w: 8, h: 6, minW: 6, minH: 5 },
     { i: WIDGET_IDS.socials, x: 8, y: 33, w: 4, h: 6 },
-    // Row final: SettingsRow (6 cards horizontales del mock)
-    { i: WIDGET_IDS.settingsRow, x: 0, y: 39, w: 12, h: 4, minW: 6, minH: 3 },
   ],
   md: [
     { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 10, h: 4 },
@@ -306,7 +290,6 @@ const USER_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.topRated, x: 0, y: 34, w: 5, h: 4 },
     { i: WIDGET_IDS.myDisputes, x: 5, y: 34, w: 5, h: 4 },
     { i: WIDGET_IDS.myComments, x: 0, y: 41, w: 10, h: 6 },
-    { i: WIDGET_IDS.settingsRow, x: 0, y: 47, w: 10, h: 4 },
   ],
   sm: [
     { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 6, h: 4 },
@@ -328,7 +311,6 @@ const USER_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.myDisputes, x: 0, y: 60, w: 6, h: 3 },
     { i: WIDGET_IDS.completedByYear, x: 0, y: 66, w: 6, h: 3 },
     { i: WIDGET_IDS.myComments, x: 0, y: 69, w: 6, h: 7 },
-    { i: WIDGET_IDS.settingsRow, x: 0, y: 76, w: 6, h: 4 },
   ],
   xs: [
     { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 4, h: 4 },
@@ -350,7 +332,6 @@ const USER_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.myDisputes, x: 0, y: 60, w: 4, h: 3 },
     { i: WIDGET_IDS.completedByYear, x: 0, y: 66, w: 4, h: 3 },
     { i: WIDGET_IDS.myComments, x: 0, y: 69, w: 4, h: 7 },
-    { i: WIDGET_IDS.settingsRow, x: 0, y: 76, w: 4, h: 4 },
   ],
 };
 
@@ -370,7 +351,6 @@ const BASIC_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.heatmap, x: 0, y: 8, w: 8, h: 3 },
     { i: WIDGET_IDS.collections, x: 8, y: 8, w: 4, h: 3 },
     { i: WIDGET_IDS.socials, x: 0, y: 11, w: 4, h: 4 },
-    { i: WIDGET_IDS.settingsRow, x: 4, y: 11, w: 8, h: 4 },
   ],
   md: [
     { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 10, h: 4 },
@@ -379,7 +359,6 @@ const BASIC_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.heatmap, x: 0, y: 8, w: 10, h: 3 },
     { i: WIDGET_IDS.collections, x: 0, y: 11, w: 5, h: 3 },
     { i: WIDGET_IDS.socials, x: 5, y: 11, w: 5, h: 3 },
-    { i: WIDGET_IDS.settingsRow, x: 0, y: 14, w: 10, h: 4 },
   ],
   sm: [
     { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 6, h: 4 },
@@ -388,7 +367,6 @@ const BASIC_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.heatmap, x: 0, y: 12, w: 6, h: 3 },
     { i: WIDGET_IDS.collections, x: 0, y: 15, w: 6, h: 3 },
     { i: WIDGET_IDS.socials, x: 0, y: 18, w: 6, h: 4 },
-    { i: WIDGET_IDS.settingsRow, x: 0, y: 22, w: 6, h: 4 },
   ],
   xs: [
     { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 4, h: 4 },
@@ -397,7 +375,6 @@ const BASIC_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.heatmap, x: 0, y: 12, w: 4, h: 3 },
     { i: WIDGET_IDS.collections, x: 0, y: 15, w: 4, h: 3 },
     { i: WIDGET_IDS.socials, x: 0, y: 18, w: 4, h: 4 },
-    { i: WIDGET_IDS.settingsRow, x: 0, y: 22, w: 4, h: 4 },
   ],
 };
 
@@ -467,22 +444,6 @@ export function DashboardClient() {
   // Registro de widgets — corre antes del primer paint en cada mount.
   // El registry es un singleton, asi que `register` es idempotente por id.
   useMemo(() => {
-    WidgetRegistry.register({
-      id: WIDGET_IDS.overview,
-      category: 'overview',
-      labelKey: 'profileDashboard.widgetOverview',
-      descriptionKey: 'profileDashboard.widgetOverviewDesc',
-      defaultSize: { w: 8, h: 4, minW: 4, minH: 3 },
-      Component: OverviewWidget as never,
-    });
-    WidgetRegistry.register({
-      id: WIDGET_IDS.ratings,
-      category: 'overview',
-      labelKey: 'profileDashboard.widgetRatings',
-      descriptionKey: 'profileDashboard.widgetRatingsDesc',
-      defaultSize: { w: 4, h: 4, minW: 3, minH: 3 },
-      Component: RatingsWidget as never,
-    });
     WidgetRegistry.register({
       id: WIDGET_IDS.heatmap,
       category: 'activity',
@@ -673,14 +634,6 @@ export function DashboardClient() {
       defaultSize: { w: 12, h: 3, minW: 6, minH: 3 },
       Component: FollowedTitlesWidget as never,
     });
-    WidgetRegistry.register({
-      id: WIDGET_IDS.settingsRow,
-      category: 'overview',
-      labelKey: 'profile.sectionSettings',
-      descriptionKey: 'profile.sectionSettings',
-      defaultSize: { w: 12, h: 4, minW: 6, minH: 3 },
-      Component: SettingsRowWidget as never,
-    });
     // Widgets admin-only reusados desde /admin/widgets. roles filtra el
     // picker para que solo aparezcan a admin/moderator. Endpoints
     // backend ya devuelven 403 a non-admin, asi que aunque alguien
@@ -752,8 +705,6 @@ export function DashboardClient() {
   const widgetProps = useMemo((): Record<string, Record<string, unknown>> => {
     if (!data) return {};
     const map: Record<string, Record<string, unknown>> = {};
-    map[WIDGET_IDS.overview] = { stats: data.stats };
-    map[WIDGET_IDS.ratings] = { stats: data.stats };
     map[WIDGET_IDS.heatmap] = { heatmap: data.stats.heatmap };
     map[WIDGET_IDS.genres] = { topGenres: data.stats.topGenres };
     map[WIDGET_IDS.completedByYear] = {
@@ -781,7 +732,6 @@ export function DashboardClient() {
     map[WIDGET_IDS.yearSummary] = { stats: data.stats };
     map[WIDGET_IDS.reviewsActivity] = { stats: data.stats };
     map[WIDGET_IDS.followedTitles] = { favorites: data.favorites };
-    map[WIDGET_IDS.settingsRow] = {};
     map[WIDGET_IDS.recentAdminActivity] = {};
     map[WIDGET_IDS.topCommenters] = {};
     map[WIDGET_IDS.activityChart] = {};

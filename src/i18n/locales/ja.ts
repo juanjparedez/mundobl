@@ -2089,7 +2089,8 @@ const ja: TranslationShape = {
     "deletePolicyDelete": "すべてのコメントとレビューを削除する。",
     "deleteEmailLabel": "確認のため、メールアドレスを入力してください:",
     "deleteEmailPlaceholder": "あなたのメールアドレス",
-    "deleteEmailHint": "現在のメールアドレスは:"
+    "deleteEmailHint": "現在のメールアドレスは:",
+    "openNotifications": "通知を開く"
   },
   "commentsList": {
     "errorMissingId": "seriesId、seasonId、またはepisodeIdを指定する必要があります",

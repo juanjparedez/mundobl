@@ -2,6 +2,7 @@
 
 import {
   ClockCircleOutlined,
+  CloseCircleOutlined,
   CommentOutlined,
   EyeOutlined,
   FireOutlined,
@@ -49,6 +50,11 @@ export function ProfileStatsStrip({ stats }: ProfileStatsStripProps) {
       icon: <ReloadOutlined />,
       value: stats.toRewatch,
       label: t('profile.statToRewatch'),
+    },
+    {
+      icon: <CloseCircleOutlined />,
+      value: stats.abandoned,
+      label: t('profile.statAbandoned'),
     },
     {
       icon: <HeartOutlined />,
