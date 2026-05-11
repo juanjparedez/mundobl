@@ -1,20 +1,35 @@
 'use client';
 
+import { TrophyOutlined } from '@ant-design/icons';
 import { Widget } from '@/components/dashboard';
-import { OverviewAchievements } from '../../../overview/sections/Achievements';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import {
+  OverviewAchievements,
+  countUnlockedAchievements,
+  ACHIEVEMENTS_TOTAL,
+} from '../../../overview/sections/Achievements';
 import type { ProfileData } from '../../../types';
 
 export interface AchievementsWidgetProps {
   stats: ProfileData['stats'];
 }
 
-/** Widget wrapper de la section "Logros y hitos" del overview. La section
- *  trae su propio header interno (titulo + counter), por eso no pasamos
- *  title al Widget — evitamos duplicacion. noPadding porque la section
- *  maneja su propio spacing. */
+/** Widget "Logros y hitos". Title + counter unlocked/total los rendea
+ *  el Widget canonico. La section solo aporta el body (lista + toggle). */
 export function AchievementsWidget({ stats }: AchievementsWidgetProps) {
+  const { t } = useLocale();
+  const unlocked = countUnlockedAchievements(stats);
   return (
-    <Widget noPadding>
+    <Widget
+      title={t('profile.sectionAchievements')}
+      icon={<TrophyOutlined />}
+      noPadding
+      actions={
+        <span className="overview-achievements__count">
+          {unlocked} / {ACHIEVEMENTS_TOTAL}
+        </span>
+      }
+    >
       <OverviewAchievements stats={stats} />
     </Widget>
   );

@@ -5,7 +5,6 @@ import {
   CompassFilled,
   ReadFilled,
   HeartFilled,
-  TrophyOutlined,
   StarFilled,
   CommentOutlined,
   FireFilled,
@@ -32,6 +31,33 @@ interface Achievement {
   current: number;
   goal: number;
   tone: 'gold' | 'purple' | 'red' | 'blue' | 'green';
+}
+
+/** Numero total de achievements definidos. Util para el contador
+ *  unlocked/total que aparece en el header del widget (sin necesidad
+ *  de instanciar todas las traducciones). */
+export const ACHIEVEMENTS_TOTAL = 12;
+
+/** Cuenta cuantos achievements estan unlocked con un set de stats dado.
+ *  Espejo de la logica `current >= goal` del array interno — se exporta
+ *  para que AchievementsWidget pueda renderizar el contador como Widget
+ *  action sin re-instanciar todo el array de achievements. */
+export function countUnlockedAchievements(stats: ProfileData['stats']): number {
+  const goals: { current: number; goal: number }[] = [
+    { current: stats.watched, goal: 1 },        // first-step
+    { current: stats.watched, goal: 10 },       // starter
+    { current: stats.watched, goal: 50 },       // explorer
+    { current: stats.watched, goal: 100 },      // completionist
+    { current: stats.reviews, goal: 1 },        // first-review
+    { current: stats.reviews, goal: 10 },       // critic
+    { current: stats.comments, goal: 50 },      // voice
+    { current: stats.ratings, goal: 25 },       // rater
+    { current: stats.favorites, goal: 25 },     // fan
+    { current: Math.floor(stats.hoursWatched), goal: 100 }, // binger
+    { current: stats.longestStreak, goal: 7 },  // streak-7
+    { current: stats.longestStreak, goal: 30 }, // streak-30
+  ];
+  return goals.filter((g) => g.current >= g.goal).length;
 }
 
 /** "Logros y hitos". Logros derivados de stats reales — sin modelo
@@ -159,17 +185,10 @@ export function OverviewAchievements({ stats }: Props) {
     ? achievements
     : [...unlocked, ...pending].slice(0, 4);
 
+  // Header (title + counter) lo provee el Widget wrapper. Esta section
+  // solo rendea el body (lista de achievements + boton toggle).
   return (
     <section className="overview-achievements">
-      <header className="overview-achievements__head">
-        <h3 className="overview-achievements__title">
-          <TrophyOutlined /> {t('profile.sectionAchievements')}
-        </h3>
-        <span className="overview-achievements__count">
-          {unlocked.length} / {achievements.length}
-        </span>
-      </header>
-
       <ul className="overview-achievements__list">
         {visible.map((a) => {
           const isUnlocked = a.current >= a.goal;

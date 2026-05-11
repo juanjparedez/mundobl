@@ -1,31 +1,11 @@
+/* Section pensada para vivir DENTRO de un Widget. El bg/border/title
+ * los maneja el Widget wrapper. Section transparente para no generar
+ * paper-in-paper. */
 .overview-achievements {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 10px;
-  background: var(--bg-container);
-  border: 1px solid var(--border-color-secondary);
-  border-radius: var(--border-radius-lg);
-}
-
-.overview-achievements__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.overview-achievements__title {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin: 0;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.overview-achievements__title .anticon {
-  color: var(--primary-color);
+  padding: var(--widget-body-padding);
 }
 
 .overview-achievements__count {

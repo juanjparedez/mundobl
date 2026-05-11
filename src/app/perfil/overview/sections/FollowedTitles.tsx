@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { HeartOutlined, BellFilled } from '@ant-design/icons';
+import { BellFilled } from '@ant-design/icons';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
 import type { ProfileData } from '../../types';
 import './FollowedTitles.css';
@@ -16,16 +16,9 @@ interface Props {
 export function OverviewFollowedTitles({ favorites }: Props) {
   const visible = (favorites ?? []).filter((f) => f.series).slice(0, 5);
 
+  // Header + "Ver todos" los rendea el Widget wrapper.
   return (
     <section className="overview-followed">
-      <header className="overview-followed__head">
-        <h3 className="overview-followed__title">
-          <HeartOutlined /> Títulos seguidos
-        </h3>
-        <Link href="/perfil/clasico" className="overview-followed__see-all">
-          Ver todos
-        </Link>
-      </header>
       {visible.length === 0 ? (
         <div className="overview-followed__empty">
           Aún no tenés títulos en favoritos.
