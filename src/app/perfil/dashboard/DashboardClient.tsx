@@ -7,7 +7,6 @@ import { Button, Segmented, Spin } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import {
-  DashboardEditToolbar,
   DashboardGrid,
   WidgetPickerDrawer,
   WidgetRegistry,
@@ -821,6 +820,10 @@ export function DashboardClient() {
         <ProfileDashboardHeader
           user={data.user}
           onCustomizeClick={() => setCustomizeOpen(true)}
+          editing={editing}
+          onToggleEditing={() => setEditing((v) => !v)}
+          onAddWidget={() => setPickerOpen(true)}
+          onResetLayout={reset}
         />
         <ProfileStatsStrip stats={data.stats} />
 
@@ -844,13 +847,6 @@ export function DashboardClient() {
             ]}
           />
         </div>
-
-        <DashboardEditToolbar
-          editing={editing}
-          onToggleEditing={() => setEditing((v) => !v)}
-          onAddWidget={() => setPickerOpen(true)}
-          onReset={reset}
-        />
 
         <DashboardGrid
           layouts={visibleLayouts}
