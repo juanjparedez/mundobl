@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { Button, Segmented, Spin } from 'antd';
+import { Button, Spin } from 'antd';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import {
@@ -830,29 +830,11 @@ export function DashboardClient() {
           onToggleEditing={() => setEditing((v) => !v)}
           onAddWidget={() => setPickerOpen(true)}
           onResetLayout={reset}
+          mode={effectiveMode}
+          onModeChange={(next) => handleModeChange(next)}
+          showAdminMode={isAdmin}
         />
         <ProfileStatsStrip stats={data.stats} />
-
-        {/* Selector de modo del dashboard. Admin ve 3 opciones; users
-         *  no-admin ven 2 (admin queda oculta). Cambiar modo cambia el
-         *  dashboardKey (cada modo tiene su layout custom independiente). */}
-        <div className="mb-perfil-dashboard__mode-toolbar">
-          <span className="mb-perfil-dashboard__mode-label">
-            {t('profileMode.label')}
-          </span>
-          <Segmented
-            value={effectiveMode}
-            onChange={(v) => handleModeChange(v as ProfileMode)}
-            size="small"
-            options={[
-              { label: t('profileMode.basic'), value: 'basic' },
-              { label: t('profileMode.advanced'), value: 'advanced' },
-              ...(isAdmin
-                ? [{ label: t('profileMode.admin'), value: 'admin' }]
-                : []),
-            ]}
-          />
-        </div>
 
         <DashboardGrid
           layouts={visibleLayouts}
