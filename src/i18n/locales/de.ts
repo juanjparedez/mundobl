@@ -2089,7 +2089,8 @@ const de: TranslationShape = {
     "deletePolicyDelete": "Alle meine Kommentare und Rezensionen löschen.",
     "deleteEmailLabel": "Zur Bestätigung geben Sie bitte Ihre E-Mail-Adresse ein:",
     "deleteEmailPlaceholder": "Ihre E-Mail-Adresse",
-    "deleteEmailHint": "Ihre aktuelle E-Mail-Adresse ist:"
+    "deleteEmailHint": "Ihre aktuelle E-Mail-Adresse ist:",
+    "openNotifications": "Benachrichtigungen öffnen"
   },
   "commentsList": {
     "errorMissingId": "seriesId, seasonId oder episodeId muss angegeben werden",

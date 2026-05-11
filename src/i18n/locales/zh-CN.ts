@@ -2089,7 +2089,8 @@ const zhCN: TranslationShape = {
     "deletePolicyDelete": "删除我的所有评论和评价。",
     "deleteEmailLabel": "为确认，请输入您的电子邮件地址：",
     "deleteEmailPlaceholder": "您的电子邮件地址",
-    "deleteEmailHint": "您当前的电子邮件是："
+    "deleteEmailHint": "您当前的电子邮件是：",
+    "openNotifications": "打开通知"
   },
   "commentsList": {
     "errorMissingId": "必须提供 seriesId、seasonId 或 episodeId",

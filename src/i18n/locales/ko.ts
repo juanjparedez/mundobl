@@ -2089,7 +2089,8 @@ const ko: TranslationShape = {
     "deletePolicyDelete": "내 모든 댓글 및 리뷰 삭제",
     "deleteEmailLabel": "확인을 위해 이메일 주소를 입력하세요:",
     "deleteEmailPlaceholder": "이메일 주소",
-    "deleteEmailHint": "현재 이메일은 다음과 같습니다:"
+    "deleteEmailHint": "현재 이메일은 다음과 같습니다:",
+    "openNotifications": "알림 열기"
   },
   "commentsList": {
     "errorMissingId": "seriesId, seasonId 또는 episodeId를 제공해야 합니다.",

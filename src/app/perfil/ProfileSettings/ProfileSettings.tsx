@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import { Alert, Button, Input, Modal, Popconfirm, Radio, Tag } from 'antd';
 import {
   SettingOutlined,
@@ -11,6 +12,7 @@ import {
   DownloadOutlined,
   UploadOutlined,
   UserOutlined,
+  BellOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
 import { signOut } from 'next-auth/react';
@@ -314,6 +316,23 @@ export function ProfileSettings() {
             >
               {t('profile.settingsAppearanceOpen')}
             </Button>
+          </article>
+
+          <article className="profile-settings-card">
+            <header className="profile-settings-card__header">
+              <h3 className="profile-settings-card__title">
+                <BellOutlined />{' '}
+                {t('profile.settingsCardNotificationsTitle')}
+              </h3>
+              <p className="profile-settings-card__hint">
+                {t('profile.settingsCardNotificationsDesc')}
+              </p>
+            </header>
+            <Link href="/notificaciones">
+              <Button icon={<BellOutlined />}>
+                {t('profileSettings.openNotifications')}
+              </Button>
+            </Link>
           </article>
 
           <article className="profile-settings-card">

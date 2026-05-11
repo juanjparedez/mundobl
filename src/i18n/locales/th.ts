@@ -2089,7 +2089,8 @@ const th: TranslationShape = {
     "deletePolicyDelete": "ลบความคิดเห็นและรีวิวทั้งหมดของฉัน",
     "deleteEmailLabel": "เพื่อยืนยัน โปรดพิมพ์ที่อยู่อีเมลของคุณ:",
     "deleteEmailPlaceholder": "ที่อยู่อีเมลของคุณ",
-    "deleteEmailHint": "อีเมลปัจจุบันของคุณคือ:"
+    "deleteEmailHint": "อีเมลปัจจุบันของคุณคือ:",
+    "openNotifications": "เปิดการแจ้งเตือน"
   },
   "commentsList": {
     "errorMissingId": "ต้องระบุ seriesId, seasonId หรือ episodeId",
