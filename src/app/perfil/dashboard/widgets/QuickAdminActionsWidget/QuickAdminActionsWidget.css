@@ -2,7 +2,7 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
-  padding: 10px;
+  padding: var(--widget-body-padding);
 }
 
 .mb-quick-admin__item {

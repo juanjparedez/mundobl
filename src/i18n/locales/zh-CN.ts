@@ -2190,6 +2190,7 @@ const zhCN: TranslationShape = {
     "widgetNotificationsDesc": "你最新的未读通知。",
     "widgetMyCases": "我的反馈案例",
     "widgetMyCasesDesc": "你报告或投票的错误和建议。",
+    "widgetMyCasesEmpty": "暂无报告案例。",
     "widgetHeatmap": "近期活动",
     "widgetHeatmapDesc": "最近 6 个月活跃日的热力图。",
     "widgetGenres": "常看类型",

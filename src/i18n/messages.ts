@@ -2181,6 +2181,7 @@ export type TranslationShape = {
     widgetNotificationsDesc: string;
     widgetMyCases: string;
     widgetMyCasesDesc: string;
+    widgetMyCasesEmpty: string;
     widgetHeatmap: string;
     widgetHeatmapDesc: string;
     widgetGenres: string;
@@ -4680,6 +4681,7 @@ const es: TranslationShape = {
     widgetNotificationsDesc: 'Tus ultimas notificaciones sin leer.',
     widgetMyCases: 'Mis casos de feedback',
     widgetMyCasesDesc: 'Bugs e ideas que reportaste o votaste.',
+    widgetMyCasesEmpty: 'Sin casos reportados todavía.',
     widgetHeatmap: 'Actividad reciente',
     widgetHeatmapDesc: 'Heatmap de tus dias activos en los ultimos 6 meses.',
     widgetGenres: 'Generos favoritos',
@@ -7174,6 +7176,7 @@ const en: TranslationShape = {
     widgetNotificationsDesc: 'Your latest unread notifications.',
     widgetMyCases: 'My feedback cases',
     widgetMyCasesDesc: 'Bugs and ideas you reported or voted on.',
+    widgetMyCasesEmpty: 'No cases reported yet.',
     widgetHeatmap: 'Recent activity',
     widgetHeatmapDesc: 'Heatmap of your active days in the last 6 months.',
     widgetGenres: 'Favorite genres',

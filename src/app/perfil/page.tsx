@@ -9,17 +9,22 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-// /perfil renderea el DashboardClient con layouts fijos mock-aligned
-// (ProfileAdminLayout para admin, ProfileUserLayout para user). Incluye:
-//   - Todos los widgets del dashboard (Heatmap, GenresDonut, MyComments,
-//     etc) y las sections del overview integradas (Achievements,
-//     Collections, YearSummary, ReviewsActivity, FollowedTitles).
-//   - CustomizeDrawer con switches por section que persisten en
-//     localStorage (via useSectionVisibility).
-// La ruta /perfil/dashboard hace redirect 301 a /perfil (ver next.config).
-// El overview viejo en src/app/perfil/overview/ queda como deprecated:
-// sus sections se siguen importando desde los layouts, pero la ruta y
-// el ProfileOverviewClient ya no se rendean en ningun lado.
+// /perfil renderea el DashboardClient: grid configurable de widgets con
+// drag/resize (modo edicion) y CustomizeDrawer (switches on/off por
+// section, persistidos en localStorage via useSectionVisibility).
+//
+// Los widgets se definen en ./dashboard/widgets/ y se registran en
+// WidgetRegistry. La ruta /perfil/dashboard hace redirect 301 a /perfil
+// (ver next.config).
+//
+// src/app/perfil/overview/ ahora contiene SOLO las sections que widgets
+// activos reusan (Achievements, Collections, YearSummary, FollowedTitles,
+// ReviewsActivity, Header, ReviewsPanel, SettingsRow) + useSectionVisibility
+// + CustomizeDrawer. Los orchestrators viejos (ProfileOverviewClient,
+// ProfileUserLayout, ProfileAdminLayout) y las sections duplicadas
+// (Cases, CommentsPanel, CountriesPanel, MyStats, Notifications,
+// WatchingShelf — cada una reemplazada por su widget) se borraron en
+// iter 11.
 export default function PerfilPage() {
   return <DashboardClient />;
 }

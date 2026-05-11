@@ -1,7 +1,7 @@
 .mb-cw-shelf {
   display: flex;
   gap: var(--cw-shelf-gap, 10px);
-  padding: var(--cw-shelf-padding, 10px);
+  padding: var(--widget-body-padding);
   overflow-x: auto;
   scroll-snap-type: x proximity;
   scrollbar-width: thin;

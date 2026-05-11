@@ -8,7 +8,7 @@
 .mb-my-disputes {
   list-style: none;
   margin: 0;
-  padding: 8px;
+  padding: var(--widget-body-padding);
   display: flex;
   flex-direction: column;
   gap: 6px;

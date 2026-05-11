@@ -2190,6 +2190,7 @@ const ja: TranslationShape = {
     "widgetNotificationsDesc": "最新の未読通知。",
     "widgetMyCases": "マイフィードバックケース",
     "widgetMyCasesDesc": "報告または投票したバグやアイデア。",
+    "widgetMyCasesEmpty": "まだ報告されたケースはありません。",
     "widgetHeatmap": "最近のアクティビティ",
     "widgetHeatmapDesc": "過去6ヶ月間のアクティブな日のヒートマップ。",
     "widgetGenres": "お気に入りのジャンル",
