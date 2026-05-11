@@ -1,0 +1,88 @@
+.mb-socials {
+  padding: var(--widget-body-padding);
+}
+
+.mb-socials__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mb-socials__item {
+  /* Hover lo maneja el link inside. */
+}
+
+.mb-socials__link {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: var(--border-radius-base);
+  background: color-mix(in srgb, var(--bg-elevated) 60%, transparent);
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: background var(--transition-fast);
+}
+
+.mb-socials__link:hover {
+  background: color-mix(in srgb, var(--bg-elevated) 100%, transparent);
+}
+
+.mb-socials__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+/* Tonos por plataforma. Tokens via color-mix con --primary-color como
+ * fallback — no hardcodeo hex; respeta tema/accent del usuario. */
+.mb-socials__link--twitter .mb-socials__icon {
+  background: color-mix(in srgb, #1da1f2 18%, transparent);
+  color: #1da1f2;
+}
+.mb-socials__link--instagram .mb-socials__icon {
+  background: color-mix(in srgb, #e1306c 18%, transparent);
+  color: #e1306c;
+}
+.mb-socials__link--letterboxd .mb-socials__icon {
+  background: color-mix(in srgb, #00d735 18%, transparent);
+  color: #00d735;
+}
+.mb-socials__link--mal .mb-socials__icon {
+  background: color-mix(in srgb, #2e51a2 22%, transparent);
+  color: #6c8cff;
+}
+.mb-socials__link--mdl .mb-socials__icon {
+  background: color-mix(in srgb, var(--primary-color) 18%, transparent);
+  color: var(--primary-color);
+}
+
+.mb-socials__meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.mb-socials__platform {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.mb-socials__handle {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}

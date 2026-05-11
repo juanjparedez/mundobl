@@ -484,6 +484,20 @@ const de: TranslationShape = {
     "streak30Name": "Stetiger Monat",
     "streak30Desc": "Eine 30-Tage-Serie erreichen"
   },
+  "socials": {
+    "title": "Meine sozialen Medien",
+    "emptyTitle": "Keine sozialen Medien konfiguriert",
+    "emptyHint": "Füge deine Social-Media-Handles hinzu, damit andere Benutzer dich finden können.",
+    "emptyCta": "Einrichten",
+    "editTitle": "Meine Social-Media-Handles",
+    "editHint": "Gib nur den Handle ein (nicht die vollständige URL). Lasse es leer, um ein Netzwerk zu entfernen.",
+    "editTooltip": "Soziale Medien bearbeiten",
+    "handlePlaceholder": "dein_handle",
+    "saveButton": "Speichern",
+    "cancelButton": "Abbrechen",
+    "saveSuccess": "Soziale Medien aktualisiert",
+    "saveError": "Deine sozialen Medien konnten nicht gespeichert werden"
+  },
   "novedades": {
     "title": "Was ist neu",
     "subtitle": "Kürzlich hinzugefügte Serien, neue Staffeln und die neuesten Änderungen in MundoBL.",
