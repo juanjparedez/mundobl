@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Button, Input, Modal, Popconfirm, Radio, Tag } from 'antd';
+import { useEffect, useRef, useState } from 'react';
+import { Alert, Button, Input, Modal, Popconfirm, Radio, Tag } from 'antd';
 import {
   SettingOutlined,
   ClearOutlined,
@@ -9,6 +9,7 @@ import {
   LogoutOutlined,
   DeleteOutlined,
   DownloadOutlined,
+  UploadOutlined,
   UserOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
@@ -23,6 +24,15 @@ import './ProfileSettings.css';
 
 type CommentsPolicy = 'keep' | 'anonymize' | 'delete';
 
+interface ImportSummary {
+  dryRun: boolean;
+  schemaVersion: number;
+  imported: Record<string, number>;
+  skipped: Record<string, number>;
+  missingRefs: { section: string; reason: string; ref: unknown }[];
+  errors: string[];
+}
+
 export function ProfileSettings() {
   const { data: session } = useSession();
   const { t } = useLocale();
@@ -34,6 +44,10 @@ export function ProfileSettings() {
   const [busy, setBusy] = useState<string | null>(null);
   const [nickname, setNickname] = useState<string>('');
   const [nicknameInitial, setNicknameInitial] = useState<string>('');
+  const [importOpen, setImportOpen] = useState(false);
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const [importPreview, setImportPreview] = useState<ImportSummary | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     let aborted = false;
@@ -130,6 +144,58 @@ export function ProfileSettings() {
           ? error.message
           : t('profile.settingsExportError')
       );
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const runImport = async (dryRun: boolean): Promise<ImportSummary | null> => {
+    if (!importFile) return null;
+    const text = await importFile.text();
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      message.error(t('profile.settingsImportInvalidFile'));
+      return null;
+    }
+    const res = await fetch(
+      `/api/user/account/import?dryRun=${dryRun ? 'true' : 'false'}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(parsed),
+      }
+    );
+    if (!res.ok) {
+      const err = (await res.json().catch(() => ({}))) as { error?: string };
+      message.error(err.error || t('profile.settingsImportError'));
+      return null;
+    }
+    return (await res.json()) as ImportSummary;
+  };
+
+  const handleImportPreview = async () => {
+    setBusy('import');
+    try {
+      const summary = await runImport(true);
+      if (summary) setImportPreview(summary);
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const handleImportConfirm = async () => {
+    setBusy('import');
+    try {
+      const summary = await runImport(false);
+      if (summary) {
+        message.success(t('profile.settingsImportSuccess'));
+        setImportOpen(false);
+        setImportFile(null);
+        setImportPreview(null);
+        if (fileInputRef.current) fileInputRef.current.value = '';
+      }
     } finally {
       setBusy(null);
     }
@@ -313,6 +379,12 @@ export function ProfileSettings() {
               >
                 {t('profile.settingsExportData')}
               </Button>
+              <Button
+                icon={<UploadOutlined />}
+                onClick={() => setImportOpen(true)}
+              >
+                {t('profile.settingsImportData')}
+              </Button>
             </div>
           </article>
 
@@ -343,6 +415,121 @@ export function ProfileSettings() {
         open={settingsOpen}
         onClose={() => setSettingsOpen(false)}
       />
+
+      <Modal
+        open={importOpen}
+        title={t('profile.settingsImportTitle')}
+        onCancel={() => {
+          setImportOpen(false);
+          setImportFile(null);
+          setImportPreview(null);
+          if (fileInputRef.current) fileInputRef.current.value = '';
+        }}
+        footer={
+          <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+            <Button
+              onClick={() => {
+                setImportOpen(false);
+                setImportFile(null);
+                setImportPreview(null);
+                if (fileInputRef.current) fileInputRef.current.value = '';
+              }}
+            >
+              {t('profile.settingsImportCancelButton')}
+            </Button>
+            <Button
+              onClick={() => {
+                void handleImportPreview();
+              }}
+              disabled={!importFile || busy === 'import'}
+              loading={busy === 'import' && !importPreview}
+            >
+              {t('profile.settingsImportPreviewButton')}
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => {
+                void handleImportConfirm();
+              }}
+              disabled={!importPreview || busy === 'import'}
+              loading={busy === 'import' && !!importPreview}
+            >
+              {t('profile.settingsImportConfirmButton')}
+            </Button>
+          </div>
+        }
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <Alert
+            type="info"
+            showIcon
+            message={t('profile.settingsImportSafetyNotice')}
+          />
+          <div>
+            <p style={{ marginBottom: 4 }}>
+              <strong>{t('profile.settingsImportFileLabel')}</strong>
+            </p>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="application/json,.json"
+              onChange={(e) => {
+                const f = e.target.files?.[0] ?? null;
+                setImportFile(f);
+                setImportPreview(null);
+              }}
+            />
+            <p
+              style={{
+                marginTop: 6,
+                fontSize: 12,
+                color: 'var(--text-tertiary)',
+              }}
+            >
+              {t('profile.settingsImportFileHint')}
+            </p>
+          </div>
+          {importPreview && (
+            <div>
+              <p style={{ marginBottom: 6 }}>
+                <strong>{t('profile.settingsImportPreviewTitle')}</strong>
+              </p>
+              {Object.values(importPreview.imported).every((n) => n === 0) ? (
+                <Alert
+                  type="warning"
+                  message={t('profile.settingsImportNothingToImport')}
+                />
+              ) : (
+                <ul style={{ margin: 0, paddingLeft: 20, fontSize: 13 }}>
+                  {Object.entries(importPreview.imported).map(([k, v]) => (
+                    <li key={k}>
+                      <code>{k}</code>: {v}
+                      {importPreview.skipped[k] > 0 && (
+                        <span style={{ color: 'var(--text-tertiary)' }}>
+                          {' '}
+                          (+{importPreview.skipped[k]} ya existían)
+                        </span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {importPreview.missingRefs.length > 0 && (
+                <p
+                  style={{
+                    marginTop: 8,
+                    fontSize: 12,
+                    color: 'var(--text-tertiary)',
+                  }}
+                >
+                  {importPreview.missingRefs.length} referencias no encontradas
+                  en este entorno (se saltean).
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+      </Modal>
 
       <Modal
         open={deleteOpen}
