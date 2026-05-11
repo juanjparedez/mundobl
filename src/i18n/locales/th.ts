@@ -379,6 +379,8 @@ const th: TranslationShape = {
     "settingsSessionHint": "แก้ไขปัญหาแปลกๆ: ล้างแคชในเครื่อง, รีเซ็ต Service Worker หรือออกจากระบบทุกอุปกรณ์",
     "settingsDangerTitle": "โซนอันตราย",
     "settingsDangerHint": "ส่งออกข้อมูลของคุณหรือลบบัญชีของคุณพร้อมการยืนยันทางอีเมล",
+    "settingsPrivacyTitle": "ความเป็นส่วนตัวและข้อมูล",
+    "settingsPrivacyHint": "ดาวน์โหลดสำเนาข้อมูลส่วนตัวทั้งหมดของคุณ (ความคิดเห็น, การให้คะแนน, สถานะการรับชม, รายการโปรด, การโหวต, การแจ้งเตือน)",
     "settingsExportData": "ส่งออกข้อมูลของฉัน",
     "settingsComingSoon": "เร็วๆ นี้",
     "settingsIrreversible": "ไม่สามารถย้อนกลับได้",

@@ -379,6 +379,8 @@ const zhCN: TranslationShape = {
     "settingsSessionHint": "修复异常问题：清除本地缓存、重置服务工作线程或退出所有设备。",
     "settingsDangerTitle": "危险区域",
     "settingsDangerHint": "导出您的数据或通过电子邮件确认删除您的账户。",
+    "settingsPrivacyTitle": "隐私与数据",
+    "settingsPrivacyHint": "下载您的个人数据完整副本（评论、评分、观看状态、收藏、投票、通知）。",
     "settingsExportData": "导出我的数据",
     "settingsComingSoon": "即将推出",
     "settingsIrreversible": "不可逆",
