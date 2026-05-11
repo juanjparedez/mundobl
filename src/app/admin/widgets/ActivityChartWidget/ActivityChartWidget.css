@@ -1,7 +1,7 @@
 .mb-activity-chart {
   height: 100%;
   min-height: 0;
-  padding: 8px;
+  padding: var(--widget-body-padding);
 }
 
 .mb-activity-chart__loading {

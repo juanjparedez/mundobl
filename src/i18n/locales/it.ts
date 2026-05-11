@@ -2190,6 +2190,7 @@ const it: TranslationShape = {
     "widgetNotificationsDesc": "Le tue ultime notifiche non lette.",
     "widgetMyCases": "I miei casi di feedback",
     "widgetMyCasesDesc": "Bug e idee che hai segnalato o votato.",
+    "widgetMyCasesEmpty": "Nessun caso segnalato finora.",
     "widgetHeatmap": "Attività recenti",
     "widgetHeatmapDesc": "Heatmap dei tuoi giorni attivi negli ultimi 6 mesi.",
     "widgetGenres": "Generi preferiti",

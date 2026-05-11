@@ -1,7 +1,7 @@
 .mb-favorites-grid {
   list-style: none;
   margin: 0;
-  padding: 8px;
+  padding: var(--widget-body-padding);
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
   gap: 8px;
