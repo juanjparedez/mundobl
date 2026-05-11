@@ -379,6 +379,8 @@ const ja: TranslationShape = {
     "settingsSessionHint": "奇妙な問題を修正: ローカルキャッシュをクリア、サービスワーカーをリセット、またはすべてのデバイスからサインアウト。",
     "settingsDangerTitle": "危険ゾーン",
     "settingsDangerHint": "メール確認でデータをエクスポートまたはアカウントを削除。",
+    "settingsPrivacyTitle": "プライバシーとデータ",
+    "settingsPrivacyHint": "個人データ（コメント、評価、視聴状況、お気に入り、投票、通知）の完全なコピーをダウンロードします。",
     "settingsExportData": "データをエクスポート",
     "settingsComingSoon": "近日公開",
     "settingsIrreversible": "元に戻せません",

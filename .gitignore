@@ -71,3 +71,4 @@ SESSION_HANDOFF.md
 
 # Logs de scripts (se generan al correr, no se commitean)
 /scripts/*.log
+*.db

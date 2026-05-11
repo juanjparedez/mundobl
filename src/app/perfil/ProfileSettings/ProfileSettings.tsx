@@ -294,14 +294,13 @@ export function ProfileSettings() {
             </div>
           </article>
 
-          <article className="profile-settings-card profile-settings-card--danger">
+          <article className="profile-settings-card">
             <header className="profile-settings-card__header">
               <h3 className="profile-settings-card__title">
-                {t('profile.settingsDangerTitle')}{' '}
-                <Tag color="warning">{t('profile.settingsIrreversible')}</Tag>
+                {t('profile.settingsPrivacyTitle')}
               </h3>
               <p className="profile-settings-card__hint">
-                {t('profile.settingsDangerHint')}
+                {t('profile.settingsPrivacyHint')}
               </p>
             </header>
             <div className="profile-settings-card__actions">
@@ -314,6 +313,20 @@ export function ProfileSettings() {
               >
                 {t('profile.settingsExportData')}
               </Button>
+            </div>
+          </article>
+
+          <article className="profile-settings-card profile-settings-card--danger">
+            <header className="profile-settings-card__header">
+              <h3 className="profile-settings-card__title">
+                {t('profile.settingsDangerTitle')}{' '}
+                <Tag color="warning">{t('profile.settingsIrreversible')}</Tag>
+              </h3>
+              <p className="profile-settings-card__hint">
+                {t('profile.settingsDangerHint')}
+              </p>
+            </header>
+            <div className="profile-settings-card__actions">
               <Button
                 danger
                 icon={<DeleteOutlined />}

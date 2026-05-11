@@ -370,6 +370,8 @@ export type TranslationShape = {
     settingsSessionHint: string;
     settingsDangerTitle: string;
     settingsDangerHint: string;
+    settingsPrivacyTitle: string;
+    settingsPrivacyHint: string;
     settingsExportData: string;
     settingsComingSoon: string;
     settingsIrreversible: string;
@@ -2758,7 +2760,10 @@ const es: TranslationShape = {
       'Soluciona problemas raros: limpiá el cache local, reseteá el Service Worker o cerrá sesión en todos los dispositivos.',
     settingsDangerTitle: 'Zona peligrosa',
     settingsDangerHint:
-      'Exporta tus datos o elimina tu cuenta con confirmación por email.',
+      'Eliminá tu cuenta con confirmación por email. Esta acción es irreversible.',
+    settingsPrivacyTitle: 'Privacidad y datos',
+    settingsPrivacyHint:
+      'Descargá una copia completa de tus datos personales (comentarios, ratings, view-status, favoritos, votos, notificaciones).',
     settingsExportData: 'Exportar mis datos',
     settingsComingSoon: 'Próximamente',
     settingsIrreversible: 'Irreversible',
@@ -5246,7 +5251,10 @@ const en: TranslationShape = {
       'Fix odd issues: clear local cache, reset the service worker or sign out of every device.',
     settingsDangerTitle: 'Danger zone',
     settingsDangerHint:
-      'Export your data or delete your account with email confirmation.',
+      'Delete your account with email confirmation. This action is irreversible.',
+    settingsPrivacyTitle: 'Privacy & data',
+    settingsPrivacyHint:
+      'Download a full copy of your personal data (comments, ratings, view-status, favorites, votes, notifications).',
     settingsExportData: 'Export my data',
     settingsComingSoon: 'Coming soon',
     settingsIrreversible: 'Irreversible',

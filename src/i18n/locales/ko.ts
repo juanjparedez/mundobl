@@ -379,6 +379,8 @@ const ko: TranslationShape = {
     "settingsSessionHint": "이상한 문제 해결: 로컬 캐시 지우기, 서비스 워커 재설정 또는 모든 기기에서 로그아웃.",
     "settingsDangerTitle": "위험 구역",
     "settingsDangerHint": "이메일 확인을 통해 데이터 내보내기 또는 계정 삭제.",
+    "settingsPrivacyTitle": "개인정보 및 데이터",
+    "settingsPrivacyHint": "개인 데이터(댓글, 평점, 시청 상태, 즐겨찾기, 투표, 알림) 전체 사본을 다운로드하세요.",
     "settingsExportData": "내 데이터 내보내기",
     "settingsComingSoon": "출시 예정",
     "settingsIrreversible": "돌이킬 수 없음",

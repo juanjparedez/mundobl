@@ -379,6 +379,8 @@ const zhTW: TranslationShape = {
     "settingsSessionHint": "修復異常問題：清除本地快取、重設服務工作者或登出所有裝置。",
     "settingsDangerTitle": "危險區域",
     "settingsDangerHint": "匯出您的資料或透過電子郵件確認刪除您的帳戶。",
+    "settingsPrivacyTitle": "隱私與資料",
+    "settingsPrivacyHint": "下載您的個人資料完整副本（評論、評分、觀看狀態、最愛、投票、通知）。",
     "settingsExportData": "匯出我的資料",
     "settingsComingSoon": "即將推出",
     "settingsIrreversible": "不可逆",

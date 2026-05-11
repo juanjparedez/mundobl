@@ -140,7 +140,10 @@
    * fade-out abajo (mb-widget--fade) que da una pista visual sutil sin
    * agregar la fealdad de un scrollbar interno. */
   overflow: hidden;
-  background: color-mix(in srgb, var(--bg-container) 90%, transparent);
+  /* Sin background propio: usar el del .mb-widget root. Un body con su
+   * propio shade genera efecto "paper-in-paper" donde el body parece
+   * un panel inset distinto del widget. Single source of background. */
+  background: transparent;
 }
 
 .mb-widget__body--flush {

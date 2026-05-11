@@ -379,6 +379,8 @@ const de: TranslationShape = {
     "settingsSessionHint": "Ungewöhnliche Probleme beheben: Lokalen Cache leeren, Service Worker zurücksetzen oder sich von allen Geräten abmelden.",
     "settingsDangerTitle": "Gefahrenzone",
     "settingsDangerHint": "Exportieren Sie Ihre Daten oder löschen Sie Ihr Konto mit E-Mail-Bestätigung.",
+    "settingsPrivacyTitle": "Datenschutz & Daten",
+    "settingsPrivacyHint": "Laden Sie eine vollständige Kopie Ihrer persönlichen Daten herunter (Kommentare, Bewertungen, Ansichtsstatus, Favoriten, Abstimmungen, Benachrichtigungen).",
     "settingsExportData": "Meine Daten exportieren",
     "settingsComingSoon": "Demnächst verfügbar",
     "settingsIrreversible": "Irreversibel",
