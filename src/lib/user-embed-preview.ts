@@ -8,7 +8,7 @@
  * edita antes de POST /api/user/series/embed/confirm.
  */
 
-import { detectPlatform, extractVideoId, type Platform } from './embed-helpers';
+import { detectPlatform, extractVideoId } from './embed-helpers';
 import { generateText, GeminiError } from './gemini';
 
 export type EmbedPlatform = 'YouTube' | 'Vimeo' | 'Bilibili' | 'Dailymotion';
@@ -390,7 +390,9 @@ async function suggestWithGemini(
     });
   } catch (err) {
     if (err instanceof GeminiError) {
-      warnings.push(`Asistente IA no respondio (${err.status}): ${err.message}`);
+      warnings.push(
+        `Asistente IA no respondio (${err.status}): ${err.message}`
+      );
     } else {
       warnings.push(
         `Asistente IA fallo: ${err instanceof Error ? err.message : 'desconocido'}.`
