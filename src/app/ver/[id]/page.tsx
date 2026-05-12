@@ -134,6 +134,11 @@ export default async function VerSeriePage({ params }: PageProps) {
             synopsis: serie.synopsis,
             imageUrl: serie.imageUrl,
             catalogScope: serie.catalogScope,
+            origin: serie.origin,
+            submittedByName:
+              serie.submittedBy?.nickname ??
+              serie.submittedBy?.name ??
+              null,
             country: serie.country
               ? { name: serie.country.name, code: serie.country.code }
               : null,
