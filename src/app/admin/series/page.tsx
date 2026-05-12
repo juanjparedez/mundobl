@@ -21,8 +21,9 @@ interface SerieData {
 
 export default async function AdminPage() {
   // Obtener datos reales desde la base de datos
+  // Solo lista CURATED — los aportes USER_EMBED viven en /admin/series/user-submitted.
   const [seriesDB, countriesDB] = await Promise.all([
-    getAllSeries(),
+    getAllSeries({ origin: 'CURATED' }),
     getAllCountries(),
   ]);
 

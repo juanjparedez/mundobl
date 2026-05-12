@@ -22,13 +22,18 @@ async function getLandingStats() {
       latestSeries,
       featuredReview,
     ] = await Promise.all([
-      prisma.series.count(),
+      prisma.series.count({ where: { origin: 'CURATED' } }),
       prisma.viewStatus.count({
-        where: { status: 'VISTA', seriesId: { not: null } },
+        where: {
+          status: 'VISTA',
+          seriesId: { not: null },
+          series: { origin: 'CURATED' },
+        },
       }),
       prisma.comment.count({ where: { isPrivate: false } }),
       prisma.review.count({ where: { status: 'PUBLISHED' } }),
       prisma.series.findMany({
+        where: { origin: 'CURATED', catalogScope: 'PERSONAL' },
         orderBy: { createdAt: 'desc' },
         take: 8,
         select: {

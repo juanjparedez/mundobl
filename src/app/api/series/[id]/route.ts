@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
+import { auth } from '@/lib/auth';
 import { requireRole } from '@/lib/auth-helpers';
 import { getCountryCode } from '@/lib/country-codes';
 import { downloadAndUploadExternalImage } from '@/lib/supabase';
@@ -87,6 +88,22 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         { error: 'Serie no encontrada' },
         { status: 404 }
       );
+    }
+
+    // USER_EMBED: solo accesible para admin/moderator o el submitter.
+    // Los users normales reciben 404 (mismo comportamiento que si no existiera).
+    if (serie.origin === 'USER_EMBED') {
+      const session = await auth();
+      const role = session?.user?.role;
+      const isPrivileged = role === 'ADMIN' || role === 'MODERATOR';
+      const isSubmitter =
+        session?.user?.id != null && session.user.id === serie.submittedById;
+      if (!isPrivileged && !isSubmitter) {
+        return NextResponse.json(
+          { error: 'Serie no encontrada' },
+          { status: 404 }
+        );
+      }
     }
 
     return NextResponse.json(serie);
