@@ -93,7 +93,10 @@ export async function POST(req: NextRequest) {
   }
 
   if (!isObject(payload)) {
-    return NextResponse.json({ error: 'Payload must be an object' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Payload must be an object' },
+      { status: 400 }
+    );
   }
 
   // 3. Schema version.
@@ -129,18 +132,29 @@ export async function POST(req: NextRequest) {
   // ─── userRatings ─────────────────────────────────────────────────
   {
     const items = asArray<Record<string, unknown>>(payload.userRatings);
-    const toInsert: { userId: string; seriesId: number; category: string; score: number }[] = [];
+    const toInsert: {
+      userId: string;
+      seriesId: number;
+      category: string;
+      score: number;
+    }[] = [];
     for (const it of items) {
       if (!isObject(it)) continue;
       const seriesId = asInt(it.seriesId);
       const category = asString(it.category);
       const score = asInt(it.score);
       if (!seriesId || !category || score === null || score < 1 || score > 10) {
-        summary.errors.push(`userRatings: invalid item ${JSON.stringify(it).slice(0, 80)}`);
+        summary.errors.push(
+          `userRatings: invalid item ${JSON.stringify(it).slice(0, 80)}`
+        );
         continue;
       }
       if (!seriesIds.has(seriesId)) {
-        summary.missingRefs.push({ section: 'userRatings', reason: 'series-not-found', ref: { seriesId } });
+        summary.missingRefs.push({
+          section: 'userRatings',
+          reason: 'series-not-found',
+          ref: { seriesId },
+        });
         continue;
       }
       // 1, 2. userId siempre de la sesion; ignoramos cualquier user.id del payload.
@@ -168,7 +182,13 @@ export async function POST(req: NextRequest) {
       status: 'SIN_VER' | 'VIENDO' | 'VISTA' | 'ABANDONADA' | 'RETOMAR';
       watchedDate: Date | null;
     }[] = [];
-    const validStatuses = new Set(['SIN_VER', 'VIENDO', 'VISTA', 'ABANDONADA', 'RETOMAR']);
+    const validStatuses = new Set([
+      'SIN_VER',
+      'VIENDO',
+      'VISTA',
+      'ABANDONADA',
+      'RETOMAR',
+    ]);
     for (const it of items) {
       if (!isObject(it)) continue;
       const seriesId = asInt(it.seriesId);
@@ -178,14 +198,23 @@ export async function POST(req: NextRequest) {
         continue;
       }
       if (!seriesIds.has(seriesId)) {
-        summary.missingRefs.push({ section: 'viewStatuses', reason: 'series-not-found', ref: { seriesId } });
+        summary.missingRefs.push({
+          section: 'viewStatuses',
+          reason: 'series-not-found',
+          ref: { seriesId },
+        });
         continue;
       }
       const watchedDate = asString(it.watchedDate);
       toInsert.push({
         userId,
         seriesId,
-        status: status as 'SIN_VER' | 'VIENDO' | 'VISTA' | 'ABANDONADA' | 'RETOMAR',
+        status: status as
+          | 'SIN_VER'
+          | 'VIENDO'
+          | 'VISTA'
+          | 'ABANDONADA'
+          | 'RETOMAR',
         watchedDate: watchedDate ? new Date(watchedDate) : null,
       });
     }
@@ -211,7 +240,11 @@ export async function POST(req: NextRequest) {
       const seriesId = asInt(it.seriesId);
       if (!seriesId) continue;
       if (!seriesIds.has(seriesId)) {
-        summary.missingRefs.push({ section: 'favorites', reason: 'series-not-found', ref: { seriesId } });
+        summary.missingRefs.push({
+          section: 'favorites',
+          reason: 'series-not-found',
+          ref: { seriesId },
+        });
         continue;
       }
       toInsert.push({ userId, seriesId });
@@ -239,8 +272,15 @@ export async function POST(req: NextRequest) {
       where: { userId },
       select: { seriesId: true, content: true },
     });
-    const existingSet = new Set(existing.map((c) => `${c.seriesId}::${c.content}`));
-    const toInsert: { userId: string; seriesId: number; content: string; isPrivate: boolean }[] = [];
+    const existingSet = new Set(
+      existing.map((c) => `${c.seriesId}::${c.content}`)
+    );
+    const toInsert: {
+      userId: string;
+      seriesId: number;
+      content: string;
+      isPrivate: boolean;
+    }[] = [];
     let skipped = 0;
     for (const it of items) {
       if (!isObject(it)) continue;
@@ -248,14 +288,23 @@ export async function POST(req: NextRequest) {
       const content = asString(it.content);
       if (!seriesId || !content || content.length === 0) continue;
       if (!seriesIds.has(seriesId)) {
-        summary.missingRefs.push({ section: 'comments', reason: 'series-not-found', ref: { seriesId } });
+        summary.missingRefs.push({
+          section: 'comments',
+          reason: 'series-not-found',
+          ref: { seriesId },
+        });
         continue;
       }
       if (existingSet.has(`${seriesId}::${content}`)) {
         skipped++;
         continue;
       }
-      toInsert.push({ userId, seriesId, content, isPrivate: asBool(it.isPrivate) });
+      toInsert.push({
+        userId,
+        seriesId,
+        content,
+        isPrivate: asBool(it.isPrivate),
+      });
       existingSet.add(`${seriesId}::${content}`);
     }
     if (!dryRun && toInsert.length > 0) {

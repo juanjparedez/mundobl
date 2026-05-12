@@ -43,9 +43,7 @@ const SOCIAL_DEFS: SocialEntry[] = [
     label: 'Instagram',
     icon: <InstagramOutlined />,
     buildUrl: (h) =>
-      h.startsWith('http')
-        ? h
-        : `https://instagram.com/${h.replace(/^@/, '')}`,
+      h.startsWith('http') ? h : `https://instagram.com/${h.replace(/^@/, '')}`,
     tone: 'instagram',
   },
   {

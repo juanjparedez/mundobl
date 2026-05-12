@@ -44,17 +44,17 @@ export const ACHIEVEMENTS_TOTAL = 12;
  *  action sin re-instanciar todo el array de achievements. */
 export function countUnlockedAchievements(stats: ProfileData['stats']): number {
   const goals: { current: number; goal: number }[] = [
-    { current: stats.watched, goal: 1 },        // first-step
-    { current: stats.watched, goal: 10 },       // starter
-    { current: stats.watched, goal: 50 },       // explorer
-    { current: stats.watched, goal: 100 },      // completionist
-    { current: stats.reviews, goal: 1 },        // first-review
-    { current: stats.reviews, goal: 10 },       // critic
-    { current: stats.comments, goal: 50 },      // voice
-    { current: stats.ratings, goal: 25 },       // rater
-    { current: stats.favorites, goal: 25 },     // fan
+    { current: stats.watched, goal: 1 }, // first-step
+    { current: stats.watched, goal: 10 }, // starter
+    { current: stats.watched, goal: 50 }, // explorer
+    { current: stats.watched, goal: 100 }, // completionist
+    { current: stats.reviews, goal: 1 }, // first-review
+    { current: stats.reviews, goal: 10 }, // critic
+    { current: stats.comments, goal: 50 }, // voice
+    { current: stats.ratings, goal: 25 }, // rater
+    { current: stats.favorites, goal: 25 }, // fan
     { current: Math.floor(stats.hoursWatched), goal: 100 }, // binger
-    { current: stats.longestStreak, goal: 7 },  // streak-7
+    { current: stats.longestStreak, goal: 7 }, // streak-7
     { current: stats.longestStreak, goal: 30 }, // streak-30
   ];
   return goals.filter((g) => g.current >= g.goal).length;
