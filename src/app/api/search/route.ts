@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
   const [series, actors, directors, tags] = await Promise.all([
     prisma.series.findMany({
       where: {
+        origin: 'CURATED',
         OR: [{ title: insensitive }, { originalTitle: insensitive }],
       },
       select: {

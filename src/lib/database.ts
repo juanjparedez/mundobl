@@ -7,7 +7,7 @@
 
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from '../generated/prisma';
+import { Prisma, PrismaClient } from '../generated/prisma';
 
 // Singleton pattern para PrismaClient
 // Esto evita crear múltiples instancias del cliente en desarrollo
@@ -34,12 +34,18 @@ if (process.env.NODE_ENV !== 'production') {
  */
 export async function getAllSeries(options?: {
   scope?: 'PERSONAL' | 'WATCHABLE_ONLY' | 'ALL';
+  origin?: 'CURATED' | 'USER_EMBED' | 'ALL';
 }) {
   // Default: ALL (admin, sitemap, etc. ven todo).
-  // /catalogo pasa scope: 'PERSONAL' para mostrar solo lo curado.
+  // /catalogo pasa scope: 'PERSONAL' + origin: 'CURATED' para mostrar
+  // solo lo curado por Flor (excluye los aportes USER_EMBED).
   const scope = options?.scope ?? 'ALL';
+  const origin = options?.origin ?? 'ALL';
+  const where: { catalogScope?: string; origin?: string } = {};
+  if (scope !== 'ALL') where.catalogScope = scope;
+  if (origin !== 'ALL') where.origin = origin;
   return await prisma.series.findMany({
-    where: scope === 'ALL' ? undefined : { catalogScope: scope },
+    where: Object.keys(where).length === 0 ? undefined : where,
     include: {
       country: true,
       universe: true,
@@ -75,12 +81,13 @@ export async function getAllSeries(options?: {
 
 /**
  * Series mirables: las que tienen al menos un episodio con embedUrl.
- * Incluye tanto PERSONAL como WATCHABLE_ONLY.
- * Usado por /ver.
+ * Incluye CURATED (PERSONAL + WATCHABLE_ONLY) y USER_EMBED, pero solo
+ * las que tienen visibility='VISIBLE'. Usado por /ver.
  */
 export async function getWatchableSeries() {
   const series = await prisma.series.findMany({
     where: {
+      visibility: 'VISIBLE',
       seasons: {
         some: {
           episodes: {
@@ -92,6 +99,9 @@ export async function getWatchableSeries() {
     include: {
       country: true,
       universe: true,
+      submittedBy: {
+        select: { id: true, name: true, nickname: true },
+      },
       seasons: {
         select: {
           id: true,
@@ -137,34 +147,51 @@ export async function getWatchableSeries() {
 
 /**
  * Detalle para /ver/[id]: serie con todas las temporadas y episodios
- * embebidos.
+ * embebidos. Solo retorna si visibility='VISIBLE' (admin/owner ven HIDDEN
+ * via getWatchableSeriesByIdAdmin).
  */
 export async function getWatchableSeriesById(id: number) {
-  return await prisma.series.findUnique({
-    where: { id },
-    include: {
-      country: true,
-      universe: true,
-      seasons: {
-        include: {
-          episodes: {
-            orderBy: { episodeNumber: 'asc' },
-          },
-        },
-        orderBy: { seasonNumber: 'asc' },
-      },
-      directors: {
-        include: { director: { select: { id: true, name: true } } },
-      },
-      tags: {
-        select: { tag: { select: { id: true, name: true } } },
-      },
-      genres: {
-        select: { genre: { select: { id: true, name: true } } },
-      },
-    },
+  return await prisma.series.findFirst({
+    where: { id, visibility: 'VISIBLE' },
+    include: watchableInclude,
   });
 }
+
+/**
+ * Variante admin de getWatchableSeriesById: no filtra visibility.
+ * Usar solo desde rutas /admin y desde flow de owner que ya validaron sesion.
+ */
+export async function getWatchableSeriesByIdAdmin(id: number) {
+  return await prisma.series.findUnique({
+    where: { id },
+    include: watchableInclude,
+  });
+}
+
+const watchableInclude = Prisma.validator<Prisma.SeriesInclude>()({
+  country: true,
+  universe: true,
+  submittedBy: {
+    select: { id: true, name: true, nickname: true },
+  },
+  seasons: {
+    include: {
+      episodes: {
+        orderBy: { episodeNumber: 'asc' },
+      },
+    },
+    orderBy: { seasonNumber: 'asc' },
+  },
+  directors: {
+    include: { director: { select: { id: true, name: true } } },
+  },
+  tags: {
+    select: { tag: { select: { id: true, name: true } } },
+  },
+  genres: {
+    select: { genre: { select: { id: true, name: true } } },
+  },
+});
 
 /**
  * Carga liviana de los filtros "extendidos" del catálogo (género, director,
@@ -172,10 +199,12 @@ export async function getWatchableSeriesById(id: number) {
  * sirve para deep-links del detalle sin inflar getAllSeries.
  */
 export async function getCatalogFilterIndex() {
-  // Solo se indexa para series PERSONAL — el catalogo principal no muestra
-  // las WATCHABLE_ONLY, asi que sus actores/generos/etc. no deben aparecer
-  // como opciones de filtro.
-  const personalScope = { series: { catalogScope: 'PERSONAL' } };
+  // Solo se indexa para series PERSONAL + CURATED — el catalogo principal
+  // no muestra WATCHABLE_ONLY ni USER_EMBED, asi que sus actores/generos/
+  // etc. no deben aparecer como opciones de filtro.
+  const personalScope = {
+    series: { catalogScope: 'PERSONAL', origin: 'CURATED' },
+  };
   const [genres, directors, actors, productionCompanies, languages, platforms] =
     await Promise.all([
       prisma.seriesGenre.findMany({
@@ -194,6 +223,7 @@ export async function getCatalogFilterIndex() {
         where: {
           productionCompanyId: { not: null },
           catalogScope: 'PERSONAL',
+          origin: 'CURATED',
         },
         select: {
           id: true,
@@ -204,6 +234,7 @@ export async function getCatalogFilterIndex() {
         where: {
           originalLanguageId: { not: null },
           catalogScope: 'PERSONAL',
+          origin: 'CURATED',
         },
         select: {
           id: true,
@@ -227,65 +258,57 @@ export async function getCatalogFilterIndex() {
 }
 
 /**
- * Obtener una serie por ID con toda la información
+ * Obtener una serie por ID con toda la información (publico). Devuelve null
+ * si origin='USER_EMBED' — los detalles user-submitted viven solo en /ver,
+ * no en /series/[id]. Para acceso admin, usar getSeriesByIdAdmin.
  */
 export async function getSeriesById(id: number) {
+  return await prisma.series.findFirst({
+    where: { id, origin: 'CURATED' },
+    include: seriesFullInclude,
+  });
+}
+
+/**
+ * Variante admin: no filtra origin. Usar solo desde rutas /admin que ya
+ * validaron sesion ADMIN/MODERATOR.
+ */
+export async function getSeriesByIdAdmin(id: number) {
   return await prisma.series.findUnique({
     where: { id },
+    include: seriesFullInclude,
+  });
+}
+
+const seriesFullInclude = Prisma.validator<Prisma.SeriesInclude>()({
+  country: true,
+  universe: true,
+  seasons: {
     include: {
-      country: true,
-      universe: true,
-      seasons: {
-        include: {
-          actors: {
-            include: {
-              actor: true,
-            },
-          },
-          episodes: {
-            include: {
-              viewStatus: true,
-              comments: {
-                include: {
-                  user: {
-                    select: {
-                      id: true,
-                      name: true,
-                      nickname: true,
-                      image: true,
-                    },
-                  },
-                },
-                orderBy: { createdAt: 'desc' },
-              },
-            },
-            orderBy: {
-              episodeNumber: 'asc',
-            },
-          },
-          ratings: true,
-          comments: {
-            include: {
-              user: {
-                select: { id: true, name: true, nickname: true, image: true },
-              },
-            },
-            orderBy: { createdAt: 'desc' },
-          },
-          viewStatus: true,
-        },
-        orderBy: {
-          seasonNumber: 'asc',
-        },
-      },
       actors: {
         include: {
           actor: true,
         },
       },
-      directors: {
+      episodes: {
         include: {
-          director: true,
+          viewStatus: true,
+          comments: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  nickname: true,
+                  image: true,
+                },
+              },
+            },
+            orderBy: { createdAt: 'desc' },
+          },
+        },
+        orderBy: {
+          episodeNumber: 'asc',
         },
       },
       ratings: true,
@@ -298,56 +321,79 @@ export async function getSeriesById(id: number) {
         orderBy: { createdAt: 'desc' },
       },
       viewStatus: true,
-      tags: {
-        include: {
-          tag: true,
-        },
+    },
+    orderBy: {
+      seasonNumber: 'asc',
+    },
+  },
+  actors: {
+    include: {
+      actor: true,
+    },
+  },
+  directors: {
+    include: {
+      director: true,
+    },
+  },
+  ratings: true,
+  comments: {
+    include: {
+      user: {
+        select: { id: true, name: true, nickname: true, image: true },
       },
-      infoBlocks: {
-        orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }],
-      },
-      productionCompany: true,
-      originalLanguage: true,
-      dubbings: {
-        include: {
-          language: true,
-        },
-      },
-      genres: {
-        include: {
-          genre: true,
-        },
-      },
-      watchLinks: true,
-      relatedSeriesFrom: {
-        include: {
-          relatedSeries: {
-            select: {
-              id: true,
-              title: true,
-              imageUrl: true,
-              year: true,
-              type: true,
-            },
-          },
-        },
-      },
-      relatedSeriesTo: {
-        include: {
-          mainSeries: {
-            select: {
-              id: true,
-              title: true,
-              imageUrl: true,
-              year: true,
-              type: true,
-            },
-          },
+    },
+    orderBy: { createdAt: 'desc' },
+  },
+  viewStatus: true,
+  tags: {
+    include: {
+      tag: true,
+    },
+  },
+  infoBlocks: {
+    orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }],
+  },
+  productionCompany: true,
+  originalLanguage: true,
+  dubbings: {
+    include: {
+      language: true,
+    },
+  },
+  genres: {
+    include: {
+      genre: true,
+    },
+  },
+  watchLinks: true,
+  relatedSeriesFrom: {
+    include: {
+      relatedSeries: {
+        select: {
+          id: true,
+          title: true,
+          imageUrl: true,
+          year: true,
+          type: true,
         },
       },
     },
-  });
-}
+  },
+  relatedSeriesTo: {
+    include: {
+      mainSeries: {
+        select: {
+          id: true,
+          title: true,
+          imageUrl: true,
+          year: true,
+          type: true,
+        },
+      },
+    },
+  },
+});
 
 /**
  * Buscar series por título
@@ -355,6 +401,7 @@ export async function getSeriesById(id: number) {
 export async function searchSeriesByTitle(query: string) {
   return await prisma.series.findMany({
     where: {
+      origin: 'CURATED',
       OR: [
         { title: { contains: query } },
         { originalTitle: { contains: query } },
@@ -380,7 +427,7 @@ export async function searchSeriesByTitle(query: string) {
  */
 export async function getSeriesByCountry(countryId: number) {
   return await prisma.series.findMany({
-    where: { countryId },
+    where: { countryId, origin: 'CURATED' },
     include: {
       country: true,
       seasons: true,
@@ -396,7 +443,7 @@ export async function getSeriesByCountry(countryId: number) {
  */
 export async function getSeriesByType(type: string) {
   return await prisma.series.findMany({
-    where: { type },
+    where: { type, origin: 'CURATED' },
     include: {
       country: true,
       seasons: true,
@@ -412,7 +459,7 @@ export async function getSeriesByType(type: string) {
  */
 export async function getSeriesByUniverse(universeId: number) {
   return await prisma.series.findMany({
-    where: { universeId },
+    where: { universeId, origin: 'CURATED' },
     include: {
       country: true,
       seasons: true,
@@ -442,10 +489,13 @@ export async function getAllActors() {
  * Obtener un actor por ID con sus series
  */
 export async function getActorById(id: number) {
+  // Filtra series por origin='CURATED' y catalogScope='PERSONAL' — los
+  // actores asociados a USER_EMBED no exponen sus aportes en /actores/[id].
   return await prisma.actor.findUnique({
     where: { id },
     include: {
       series: {
+        where: { series: { origin: 'CURATED', catalogScope: 'PERSONAL' } },
         include: {
           series: {
             include: {
@@ -455,6 +505,11 @@ export async function getActorById(id: number) {
         },
       },
       seasons: {
+        where: {
+          season: {
+            series: { origin: 'CURATED', catalogScope: 'PERSONAL' },
+          },
+        },
         include: {
           season: {
             include: {
@@ -489,9 +544,26 @@ export async function searchActorsByName(query: string) {
  * Obtener todos los actores con conteo de series/temporadas
  */
 export async function getAllActorsWithCount() {
+  // _count.series cuenta solo CURATED+PERSONAL: actores que solo aparecen
+  // en USER_EMBED no inflan el listing /actores.
   return await prisma.actor.findMany({
     include: {
-      _count: { select: { series: true, seasons: true } },
+      _count: {
+        select: {
+          series: {
+            where: {
+              series: { origin: 'CURATED', catalogScope: 'PERSONAL' },
+            },
+          },
+          seasons: {
+            where: {
+              season: {
+                series: { origin: 'CURATED', catalogScope: 'PERSONAL' },
+              },
+            },
+          },
+        },
+      },
     },
     orderBy: { name: 'asc' },
   });
@@ -516,7 +588,15 @@ export async function getAllDirectors() {
 export async function getAllDirectorsWithCount() {
   return await prisma.director.findMany({
     include: {
-      _count: { select: { series: true } },
+      _count: {
+        select: {
+          series: {
+            where: {
+              series: { origin: 'CURATED', catalogScope: 'PERSONAL' },
+            },
+          },
+        },
+      },
     },
     orderBy: { name: 'asc' },
   });
@@ -530,6 +610,7 @@ export async function getDirectorById(id: number) {
     where: { id },
     include: {
       series: {
+        where: { series: { origin: 'CURATED', catalogScope: 'PERSONAL' } },
         include: {
           series: {
             include: {
@@ -562,10 +643,13 @@ export async function searchDirectorsByName(query: string) {
  * Obtener un tag por ID con todas sus series
  */
 export async function getTagById(id: number) {
+  // Filtra series por origin='CURATED' y catalogScope='PERSONAL' — los tags
+  // de USER_EMBED no exponen sus aportes en /tags/[id].
   return await prisma.tag.findUnique({
     where: { id },
     include: {
       series: {
+        where: { series: { origin: 'CURATED', catalogScope: 'PERSONAL' } },
         include: {
           series: {
             include: {
@@ -598,7 +682,9 @@ export async function getAllCountries() {
     include: {
       _count: {
         select: {
-          series: true,
+          series: {
+            where: { origin: 'CURATED', catalogScope: 'PERSONAL' },
+          },
         },
       },
     },
@@ -618,6 +704,7 @@ export async function getCountryById(id: number) {
     where: { id },
     include: {
       series: {
+        where: { origin: 'CURATED', catalogScope: 'PERSONAL' },
         include: {
           seasons: true,
         },
@@ -688,7 +775,9 @@ export async function getAllUniverses() {
     include: {
       _count: {
         select: {
-          series: true,
+          series: {
+            where: { origin: 'CURATED', catalogScope: 'PERSONAL' },
+          },
         },
       },
     },
@@ -706,6 +795,7 @@ export async function getUniverseById(id: number) {
     where: { id },
     include: {
       series: {
+        where: { origin: 'CURATED', catalogScope: 'PERSONAL' },
         include: {
           country: true,
           seasons: true,

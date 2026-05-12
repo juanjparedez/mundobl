@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
 
     const series = await prisma.series.findMany({
       where: {
+        origin: 'CURATED',
         AND: [
           {
             OR: [

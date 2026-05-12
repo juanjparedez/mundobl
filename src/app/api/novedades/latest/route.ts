@@ -11,10 +11,12 @@ const getLatestNovedadTimestamp = unstable_cache(
   async () => {
     const [latestSerie, latestSeason] = await Promise.all([
       prisma.series.findFirst({
+        where: { origin: 'CURATED' },
         orderBy: { createdAt: 'desc' },
         select: { createdAt: true },
       }),
       prisma.season.findFirst({
+        where: { series: { origin: 'CURATED' } },
         orderBy: { createdAt: 'desc' },
         select: { createdAt: true },
       }),

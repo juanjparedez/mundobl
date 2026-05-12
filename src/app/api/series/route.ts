@@ -5,10 +5,11 @@ import { extractVideoId, type Platform } from '@/lib/embed-helpers';
 import { getCountryCode } from '@/lib/country-codes';
 import { downloadAndUploadExternalImage } from '@/lib/supabase';
 
-// GET /api/series - Obtener todas las series
+// GET /api/series - Obtener todas las series del catalogo curado (excluye USER_EMBED)
 export async function GET() {
   try {
     const series = await prisma.series.findMany({
+      where: { origin: 'CURATED' },
       include: {
         country: true,
         universe: true,

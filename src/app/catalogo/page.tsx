@@ -38,7 +38,7 @@ import './catalogo.css';
 const getCatalogDataCached = unstable_cache(
   async () => {
     return await Promise.all([
-      getAllSeries({ scope: 'PERSONAL' }),
+      getAllSeries({ scope: 'PERSONAL', origin: 'CURATED' }),
       getCatalogFilterIndex(),
     ]);
   },

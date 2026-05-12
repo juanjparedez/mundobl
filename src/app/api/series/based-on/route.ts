@@ -4,7 +4,7 @@ import { prisma } from '@/lib/database';
 export async function GET() {
   try {
     const results = await prisma.series.findMany({
-      where: { basedOn: { not: null } },
+      where: { basedOn: { not: null }, origin: 'CURATED' },
       select: { basedOn: true },
       distinct: ['basedOn'],
       orderBy: { basedOn: 'asc' },

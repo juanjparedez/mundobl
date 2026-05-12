@@ -16,7 +16,7 @@ export default async function CatalogoDashboardPage() {
   const [stats, recentSeries] = await Promise.all([
     getStats(),
     prisma.series.findMany({
-      where: { catalogScope: 'PERSONAL' },
+      where: { catalogScope: 'PERSONAL', origin: 'CURATED' },
       orderBy: { createdAt: 'desc' },
       take: 12,
       select: {

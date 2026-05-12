@@ -22,7 +22,7 @@ const getNovedadesData = unstable_cache(
 
     const [newSeries, newSeasons] = await Promise.all([
       prisma.series.findMany({
-        where: { createdAt: { gte: since } },
+        where: { createdAt: { gte: since }, origin: 'CURATED' },
         orderBy: { createdAt: 'desc' },
         take: 24,
         select: {
@@ -37,7 +37,10 @@ const getNovedadesData = unstable_cache(
         },
       }),
       prisma.season.findMany({
-        where: { createdAt: { gte: since } },
+        where: {
+          createdAt: { gte: since },
+          series: { origin: 'CURATED' },
+        },
         orderBy: { createdAt: 'desc' },
         take: 24,
         select: {
