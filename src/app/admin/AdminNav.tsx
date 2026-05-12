@@ -7,6 +7,7 @@ import {
   TagsOutlined,
   GlobalOutlined,
   UserOutlined,
+  UserAddOutlined,
   VideoCameraOutlined,
   BankOutlined,
   TranslationOutlined,
@@ -49,6 +50,12 @@ const ADMIN_GROUPS: AdminGroup[] = [
         icon: <AppstoreOutlined />,
         labelKey: 'adminNav.series',
         shortKey: 'adminNav.seriesShort',
+      },
+      {
+        key: '/admin/series/user-submitted',
+        icon: <UserAddOutlined />,
+        labelKey: 'adminNav.userEmbed',
+        shortKey: 'adminNav.userEmbedShort',
       },
       {
         key: '/admin/tags',

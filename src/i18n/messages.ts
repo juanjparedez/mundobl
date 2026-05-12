@@ -1429,6 +1429,8 @@ export type TranslationShape = {
     groupSystem: string;
     series: string;
     seriesShort: string;
+    userEmbed: string;
+    userEmbedShort: string;
     tags: string;
     tagsShort: string;
     universes: string;
@@ -2808,7 +2810,8 @@ const es: TranslationShape = {
     settingsImportNothingToImport: 'No hay nada nuevo para importar.',
     settingsImportSuccess: 'Importación completada.',
     settingsImportError: 'No se pudo procesar el archivo.',
-    settingsImportInvalidFile: 'El archivo no es un JSON válido o no tiene el formato esperado.',
+    settingsImportInvalidFile:
+      'El archivo no es un JSON válido o no tiene el formato esperado.',
     settingsImportSafetyNotice:
       'Tu rol, email y identidad nunca se modifican via import. Solo se importan tus propios contenidos (ratings, comentarios, etc.). Items que ya existen se omiten.',
     settingsComingSoon: 'Próximamente',
@@ -2910,10 +2913,12 @@ const es: TranslationShape = {
   socials: {
     title: 'Mis redes',
     emptyTitle: 'Sin redes configuradas',
-    emptyHint: 'Agregá tus handles de redes sociales para que otros usuarios puedan encontrarte.',
+    emptyHint:
+      'Agregá tus handles de redes sociales para que otros usuarios puedan encontrarte.',
     emptyCta: 'Configurar',
     editTitle: 'Mis redes sociales',
-    editHint: 'Ingresá solo el handle (sin URL completa). Dejá vacío para quitar una red.',
+    editHint:
+      'Ingresá solo el handle (sin URL completa). Dejá vacío para quitar una red.',
     editTooltip: 'Editar redes',
     handlePlaceholder: 'tu_usuario',
     saveButton: 'Guardar',
@@ -3912,6 +3917,8 @@ const es: TranslationShape = {
     groupSystem: 'Sistema',
     series: 'Series',
     seriesShort: 'Series',
+    userEmbed: 'Aportes',
+    userEmbedShort: 'Aportes',
     tags: 'Tags',
     tagsShort: 'Tags',
     universes: 'Universos',
@@ -5331,7 +5338,8 @@ const en: TranslationShape = {
     settingsImportNothingToImport: 'Nothing new to import.',
     settingsImportSuccess: 'Import completed.',
     settingsImportError: 'Could not process the file.',
-    settingsImportInvalidFile: 'The file is not valid JSON or has the wrong shape.',
+    settingsImportInvalidFile:
+      'The file is not valid JSON or has the wrong shape.',
     settingsImportSafetyNotice:
       'Your role, email and identity are never changed via import. Only your own content (ratings, comments, etc.) is imported. Items that already exist are skipped.',
     settingsComingSoon: 'Coming soon',
@@ -5433,7 +5441,8 @@ const en: TranslationShape = {
     emptyHint: 'Add your social handles so other users can find you.',
     emptyCta: 'Set up',
     editTitle: 'My social handles',
-    editHint: 'Enter just the handle (not the full URL). Leave empty to remove a network.',
+    editHint:
+      'Enter just the handle (not the full URL). Leave empty to remove a network.',
     editTooltip: 'Edit socials',
     handlePlaceholder: 'your_handle',
     saveButton: 'Save',
@@ -6426,6 +6435,8 @@ const en: TranslationShape = {
     groupSystem: 'System',
     series: 'Series',
     seriesShort: 'Series',
+    userEmbed: 'Contributions',
+    userEmbedShort: 'Contribs',
     tags: 'Tags',
     tagsShort: 'Tags',
     universes: 'Universes',
