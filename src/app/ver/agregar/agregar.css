@@ -1,0 +1,108 @@
+.ver-agregar-page {
+  padding: var(--spacing-md);
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.ver-agregar-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.ver-agregar-hero {
+  text-align: center;
+  padding: var(--spacing-md);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  background: linear-gradient(
+    120deg,
+    color-mix(in srgb, var(--bg-container) 92%, transparent) 0%,
+    color-mix(in srgb, var(--bg-elevated) 64%, transparent) 100%
+  );
+}
+
+.ver-agregar-hero__title {
+  font-size: 1.9rem;
+  margin: 0 0 var(--spacing-sm) 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  color: var(--text-primary);
+}
+
+.ver-agregar-hero__subtitle {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-secondary);
+  max-width: 640px;
+  margin-inline: auto;
+}
+
+.ver-agregar-paste {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  background: color-mix(in srgb, var(--bg-container) 88%, transparent);
+}
+
+@media (max-width: 720px) {
+  .ver-agregar-paste {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ver-agregar-preview {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  background: var(--bg-container);
+}
+
+.ver-agregar-preview__source {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 1px dashed var(--border-color-secondary);
+}
+
+.ver-agregar-preview__source img {
+  border-radius: var(--border-radius-md);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.ver-agregar-preview__meta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.ver-agregar-form__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--spacing-sm);
+}
+
+.ver-agregar-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+
+@media (max-width: 600px) {
+  .ver-agregar-preview__source {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

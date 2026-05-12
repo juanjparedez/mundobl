@@ -3,9 +3,11 @@
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Empty, Input, Select, Tag, Alert } from 'antd';
+import { useSession } from 'next-auth/react';
+import { Button, Empty, Input, Select, Tag, Alert } from 'antd';
 import {
   PlayCircleFilled,
+  PlusOutlined,
   SearchOutlined,
   YoutubeOutlined,
 } from '@ant-design/icons';
@@ -20,6 +22,8 @@ interface VerItem {
   imageUrl: string | null;
   synopsis: string | null;
   catalogScope: string;
+  origin: string;
+  submittedByNickname: string | null;
   country: { name: string; code: string | null } | null;
   episodesWithEmbed: number;
   platforms: string[];
@@ -31,9 +35,12 @@ interface VerPageProps {
 }
 
 export function VerPage({ items }: VerPageProps) {
+  const { status } = useSession();
+  const isAuthenticated = status === 'authenticated';
   const [search, setSearch] = useState('');
   const [country, setCountry] = useState<string | null>(null);
   const [platform, setPlatform] = useState<string | null>(null);
+  const [onlyCurated, setOnlyCurated] = useState(false);
 
   const countries = useMemo(() => {
     const set = new Set<string>();
@@ -53,9 +60,10 @@ export function VerPage({ items }: VerPageProps) {
       if (q && !i.title.toLowerCase().includes(q)) return false;
       if (country && i.country?.name !== country) return false;
       if (platform && !i.platforms.includes(platform)) return false;
+      if (onlyCurated && i.origin !== 'CURATED') return false;
       return true;
     });
-  }, [items, search, country, platform]);
+  }, [items, search, country, platform, onlyCurated]);
 
   return (
     <div className="ver-content">
@@ -67,6 +75,15 @@ export function VerPage({ items }: VerPageProps) {
           Series y películas BL/GL que se pueden mirar embebidas desde los
           canales oficiales de las productoras.
         </p>
+        {isAuthenticated && (
+          <div className="ver-hero__cta">
+            <Link href="/ver/agregar" prefetch={false}>
+              <Button type="primary" icon={<PlusOutlined />}>
+                Agregar una serie
+              </Button>
+            </Link>
+          </div>
+        )}
       </header>
 
       <Alert
@@ -111,6 +128,14 @@ export function VerPage({ items }: VerPageProps) {
           options={platforms.map((p) => ({ value: p, label: p }))}
           className="ver-filters__select"
         />
+        <Button
+          size="large"
+          type={onlyCurated ? 'primary' : 'default'}
+          onClick={() => setOnlyCurated((v) => !v)}
+          className="ver-filters__toggle"
+        >
+          Solo curadas por Flor
+        </Button>
       </div>
 
       <p className="ver-count">
@@ -159,6 +184,14 @@ export function VerPage({ items }: VerPageProps) {
                     title="También está en mi catálogo personal"
                   >
                     ★
+                  </span>
+                )}
+                {item.origin === 'USER_EMBED' && item.submittedByNickname && (
+                  <span
+                    className="ver-card__submitted-badge"
+                    title={`Aportado por @${item.submittedByNickname}`}
+                  >
+                    @{item.submittedByNickname}
                   </span>
                 )}
               </div>
