@@ -48,7 +48,9 @@ export function ProfileSettings() {
   const [nicknameInitial, setNicknameInitial] = useState<string>('');
   const [importOpen, setImportOpen] = useState(false);
   const [importFile, setImportFile] = useState<File | null>(null);
-  const [importPreview, setImportPreview] = useState<ImportSummary | null>(null);
+  const [importPreview, setImportPreview] = useState<ImportSummary | null>(
+    null
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -321,8 +323,7 @@ export function ProfileSettings() {
           <article className="profile-settings-card">
             <header className="profile-settings-card__header">
               <h3 className="profile-settings-card__title">
-                <BellOutlined />{' '}
-                {t('profile.settingsCardNotificationsTitle')}
+                <BellOutlined /> {t('profile.settingsCardNotificationsTitle')}
               </h3>
               <p className="profile-settings-card__hint">
                 {t('profile.settingsCardNotificationsDesc')}
