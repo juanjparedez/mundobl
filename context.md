@@ -178,33 +178,60 @@ Soporta 8 plataformas para reproducir/parsear:
 
 ---
 
-## Flujos de Catalogo (PERSONAL vs WATCHABLE_ONLY)
+## Flujos de Catalogo (CURATED / USER_EMBED + PERSONAL / WATCHABLE_ONLY)
 
-A partir de la migracion `20260508053232_add_catalog_scope_and_episode_embed`, `Series.catalogScope` define donde aparece la serie:
+`Series` tiene dos discriminadores ortogonales:
 
-| Scope                | Donde aparece                                                       | Uso                                                     |
-| -------------------- | ------------------------------------------------------------------- | ------------------------------------------------------- |
-| `PERSONAL` (default) | `/catalogo` (curado) **y** `/ver` si tiene episodios con `embedUrl` | Tu catalogo personal con resena, tags, ratings          |
-| `WATCHABLE_ONLY`     | Solo `/ver`                                                         | Series importadas para ver via embed, sin resena propia |
+- **`origin`** (`'CURATED'` default | `'USER_EMBED'`): quien creo el row.
+  - `CURATED`: Flor (admin) la subio al catalogo.
+  - `USER_EMBED`: aportada por un user registrado via `/ver/agregar`.
+- **`catalogScope`** (`'PERSONAL'` default | `'WATCHABLE_ONLY'`): donde aparece publicamente.
+- **`visibility`** (`'VISIBLE'` default | `'HIDDEN'`): Flor puede ocultar aportes post-hoc.
+- **`submittedById`**: User que aporto la USER_EMBED (nullable; on-delete SetNull).
 
-**Campos de embed en `Episode`:**
+Matriz publica:
 
-- `embedUrl` — URL canonica del video (YouTube, Vimeo, etc.)
-- `embedPlatform` — Plataforma detectada (`'YouTube'`, `'Vimeo'`, etc.)
-- `embedVideoId` — ID extraido (para construir thumbnails / iframes)
-- `embedChannelName` — Nombre del canal oficial
-- `embedChannelUrl` — Link al canal (atribucion en `/creditos`)
+| origin / scope | /catalogo | /ver (si tiene embedUrl) | /series/[id] | sitemap series | sitemap ver |
+| -------------- | --------- | ------------------------ | ------------ | -------------- | ----------- |
+| CURATED + PERSONAL | ✓ | ✓ | ✓ | ✓ | ✓ |
+| CURATED + WATCHABLE_ONLY | — | ✓ | ✓ | — | ✓ |
+| USER_EMBED + WATCHABLE_ONLY (VISIBLE) | — | ✓ | 404 (excepto submitter/admin) | — | ✓ |
+| USER_EMBED + WATCHABLE_ONLY (HIDDEN) | — | — | 404 (excepto submitter/admin) | — | — |
+
+**Campos de embed en `Episode`:** `embedUrl`, `embedPlatform`, `embedVideoId`, `embedChannelName`, `embedChannelUrl`.
 
 **Helpers en [src/lib/database.ts](src/lib/database.ts):**
 
-- `getAllSeries({ scope })` — `'PERSONAL' | 'WATCHABLE_ONLY' | 'ALL'`
-- `getWatchableSeries()` — series con al menos un episodio con `embedUrl` (cualquier scope)
-- `getWatchableSeriesById(id)` — detalle para `/ver/[id]`
-- Catalogos personales (`/catalogo`) filtran por `catalogScope: 'PERSONAL'` para no contaminar actores/generos/etc. con series importadas
+- `getAllSeries({ scope, origin })` — `scope: PERSONAL|WATCHABLE_ONLY|ALL`, `origin: CURATED|USER_EMBED|ALL`.
+- `getWatchableSeries()` — filtra `visibility=VISIBLE` + episodios con `embedUrl` (cualquier origin).
+- `getWatchableSeriesById(id)` — filtra `visibility=VISIBLE`. Variante admin: `getWatchableSeriesByIdAdmin(id)` (sin filtro).
+- `getSeriesById(id)` — filtra `origin=CURATED` (USER_EMBED no se sirve por aca). Variante admin: `getSeriesByIdAdmin(id)`.
+- `getActorById`, `getTagById`, `getDirectorById`, `getCountryById`, `getUniverseById`, `getCatalogFilterIndex`, `getAllActorsWithCount`, `getAllDirectorsWithCount`, `getAllUniverses` — todos filtran sus `include.series` (o `_count.series`) por `origin=CURATED, catalogScope=PERSONAL` para no exponer aportes USER_EMBED en listings publicos. Actores/tags/etc. con count=0 quedan ocultos.
 
 **API:**
 
-- `POST /api/series/[id]/scope` — cambia `catalogScope` (admin only)
+- `POST /api/series/[id]/scope` — admin cambia `catalogScope` entre PERSONAL ↔ WATCHABLE_ONLY (solo CURATED).
+- `POST /api/series/[id]/subscribe`, `POST /api/reviews` — rechazan con 422 si la serie es USER_EMBED (suscripcion/resena solo despues de linkear).
+
+### Aporte de series por users (flow USER_EMBED)
+
+Cualquier user registrado puede agregar series embebidas via `/ver/agregar`. UI cliente: [src/app/ver/agregar/AgregarVerClient.tsx](src/app/ver/agregar/AgregarVerClient.tsx).
+
+**Endpoints (en [src/app/api/user/series/embed/](src/app/api/user/series/embed/)):**
+
+- `POST /api/user/series/embed/preview` — body `{ url }`. Llama `buildEmbedPreview(url)` en [src/lib/user-embed-preview.ts](src/lib/user-embed-preview.ts), que combina oEmbed (YouTube/Vimeo/Dailymotion) o scrape og: (Bilibili) con Gemini ([src/lib/gemini.ts](src/lib/gemini.ts)) para autopoblar metadata. Devuelve `EmbedPreview` con `confidence: high|medium|low`. No persiste. Dedupe global por `Episode.embedUrl` (409 con `existingSeriesId`).
+- `POST /api/user/series/embed/confirm` — persiste `Series` con `origin=USER_EMBED`, `visibility=VISIBLE`, `catalogScope=WATCHABLE_ONLY`, `submittedById=session.user.id` + `Season` + `Episode`. Upsert silencioso de tablas compartidas (`Actor/ProductionCompany/Tag/Language/Genre/Country` por nombre). Rate limit ([src/lib/rate-limit.ts](src/lib/rate-limit.ts)): max 5/h y 20/dia por user (429 + `Retry-After`).
+- Plataformas soportadas: YouTube, Vimeo, Bilibili, Dailymotion. Otras → 422.
+
+### Panel admin `/admin/series/user-submitted`
+
+Lista de aportes USER_EMBED con acciones de moderacion ([src/app/admin/series/user-submitted/](src/app/admin/series/user-submitted/)):
+
+- `POST /api/admin/user-series/[id]/visibility` — toggle VISIBLE/HIDDEN (HIDDEN saca del listing publico, admin sigue accediendo).
+- `DELETE /api/admin/user-series/[id]` — borra el aporte (cascade limpia Episodes/tags/etc.).
+- `POST /api/admin/user-series/[id]/link` — transaccion que mueve los `Episode` con embedUrl al `Season` equivalente de una serie `CURATED` target (crea Season si falta, enriquece episode destino sin embed, omite duplicados) y luego borra el USER_EMBED. Es la unica forma de "promover" un aporte: no se cambia el `origin` del row, se fusiona al row CURATED existente.
+
+`/admin/series` (la tabla curada principal) ahora filtra `origin=CURATED` para no mezclar los aportes con el catalogo de Flor.
 
 ---
 
@@ -317,8 +344,9 @@ src/
 │   │   └── [id]/                 # Detalle de serie
 │   ├── ver/                      # Catalogo "ver completo" (series con embedUrl)
 │   │   ├── page.tsx              # Server: fetch via getWatchableSeries
-│   │   ├── VerPage.tsx           # Client: filtros (busqueda, pais, plataforma)
-│   │   └── [id]/                 # Player con seleccion de episodio
+│   │   ├── VerPage.tsx           # Client: filtros (busqueda, pais, plataforma, toggle "solo curadas")
+│   │   ├── agregar/              # /ver/agregar - aporte user-embed (login-gated, IA autopobla)
+│   │   └── [id]/                 # Player con seleccion de episodio (badge submitter para USER_EMBED)
 │   ├── creditos/                 # Atribucion a canales oficiales (YouTube, etc.)
 │   ├── legal/                    # Aviso legal sobre embeds y derechos
 │   ├── contenido/                # Pagina publica de contenido embebible
@@ -327,6 +355,7 @@ src/
 │   │   ├── page.tsx              # Tabla de series
 │   │   ├── series/nueva/         # Crear serie
 │   │   ├── series/[id]/editar/   # Editar serie
+│   │   ├── series/user-submitted/# Panel de moderacion de aportes USER_EMBED (hide/delete/link)
 │   │   ├── actores/              # Gestion actores
 │   │   ├── directores/           # Gestion directores
 │   │   ├── tags/                 # Gestion tags
@@ -409,7 +438,7 @@ import {
 
 **Modelos principales:**
 
-- `Series` - Series/peliculas/cortos. Campo `catalogScope` (`PERSONAL` | `WATCHABLE_ONLY`) define donde se muestra
+- `Series` - Series/peliculas/cortos. Campos discriminadores: `catalogScope` (`PERSONAL` | `WATCHABLE_ONLY`), `origin` (`CURATED` | `USER_EMBED`), `visibility` (`VISIBLE` | `HIDDEN`), `submittedById` (User ref nullable)
 - `Season` - Temporadas por serie
 - `Episode` - Episodios. Campos de embed: `embedUrl`, `embedPlatform`, `embedVideoId`, `embedChannelName`, `embedChannelUrl`
 - `Actor` - Actores

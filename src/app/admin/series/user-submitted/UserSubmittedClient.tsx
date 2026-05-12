@@ -57,14 +57,11 @@ export function UserSubmittedClient({ items: initial }: Props) {
   async function toggleVisibility(row: UserSubmittedRow) {
     const next = row.visibility === 'VISIBLE' ? 'HIDDEN' : 'VISIBLE';
     try {
-      const res = await fetch(
-        `/api/admin/user-series/${row.id}/visibility`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ visibility: next }),
-        }
-      );
+      const res = await fetch(`/api/admin/user-series/${row.id}/visibility`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ visibility: next }),
+      });
       const data = await res.json();
       if (!res.ok) {
         message.error(data.error || 'No se pudo cambiar la visibilidad.');
@@ -74,7 +71,9 @@ export function UserSubmittedClient({ items: initial }: Props) {
         prev.map((i) => (i.id === row.id ? { ...i, visibility: next } : i))
       );
       message.success(
-        next === 'HIDDEN' ? 'Aporte ocultado de /ver.' : 'Aporte visible en /ver.'
+        next === 'HIDDEN'
+          ? 'Aporte ocultado de /ver.'
+          : 'Aporte visible en /ver.'
       );
     } catch (err) {
       console.error(err);
@@ -153,14 +152,11 @@ export function UserSubmittedClient({ items: initial }: Props) {
   async function confirmLink() {
     if (!linkTarget || !linkSelectedId) return;
     try {
-      const res = await fetch(
-        `/api/admin/user-series/${linkTarget.id}/link`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ targetCuratedSeriesId: linkSelectedId }),
-        }
-      );
+      const res = await fetch(`/api/admin/user-series/${linkTarget.id}/link`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ targetCuratedSeriesId: linkSelectedId }),
+      });
       const data = await res.json();
       if (!res.ok) {
         message.error(data.error || 'No se pudo linkear.');
@@ -312,7 +308,9 @@ export function UserSubmittedClient({ items: initial }: Props) {
   ];
 
   return (
-    <div style={{ padding: 'var(--spacing-md)', maxWidth: 1400, margin: '0 auto' }}>
+    <div
+      style={{ padding: 'var(--spacing-md)', maxWidth: 1400, margin: '0 auto' }}
+    >
       <h1>Aportes de usuarios</h1>
       <p style={{ color: 'var(--text-secondary)' }}>
         Series embebidas agregadas por usuarios registrados desde /ver/agregar.

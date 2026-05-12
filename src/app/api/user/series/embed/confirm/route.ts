@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth-helpers';
 import { prisma } from '@/lib/database';
 import { detectPlatform, extractVideoId } from '@/lib/embed-helpers';
-import { getCountryCode } from '@/lib/country-codes';
 import { checkUserEmbedRateLimit } from '@/lib/rate-limit';
 import {
   ALLOWED_COUNTRY_CODES,
@@ -37,7 +36,9 @@ interface ParsedInput {
   channelUrl: string | null;
 }
 
-function parseAndValidate(body: EmbedConfirmInput):
+function parseAndValidate(
+  body: EmbedConfirmInput
+):
   | { ok: true; data: ParsedInput }
   | { ok: false; status: number; error: string } {
   const url = (body?.url ?? '').trim();

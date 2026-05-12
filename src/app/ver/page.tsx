@@ -37,8 +37,7 @@ export default async function VerPageRoute() {
     synopsis: s.synopsis,
     catalogScope: s.catalogScope,
     origin: s.origin,
-    submittedByNickname:
-      s.submittedBy?.nickname ?? s.submittedBy?.name ?? null,
+    submittedByNickname: s.submittedBy?.nickname ?? s.submittedBy?.name ?? null,
     country: s.country ? { name: s.country.name, code: s.country.code } : null,
     episodesWithEmbed: s.episodesWithEmbed,
     platforms: Array.from(
