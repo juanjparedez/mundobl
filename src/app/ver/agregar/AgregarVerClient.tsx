@@ -3,15 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import {
-  Alert,
-  Button,
-  Input,
-  InputNumber,
-  Select,
-  Tag,
-  Form,
-} from 'antd';
+import { Alert, Button, Input, InputNumber, Select, Tag, Form } from 'antd';
 import {
   LinkOutlined,
   RobotOutlined,
@@ -194,7 +186,8 @@ export function AgregarVerClient() {
         </h1>
         <p className="ver-agregar-hero__subtitle">
           Pegá la URL de un canal oficial (YouTube, Vimeo, Bilibili,
-          Dailymotion) y la IA autocompleta el resto. Aparece en /ver al instante.
+          Dailymotion) y la IA autocompleta el resto. Aparece en /ver al
+          instante.
         </p>
       </header>
 
@@ -204,8 +197,8 @@ export function AgregarVerClient() {
         message="Solo plataformas con embed legal"
         description={
           <span>
-            Aceptamos URLs de canales oficiales que permiten incrustación. Si
-            la productora no se aprueba el embed, el contenido no podrá
+            Aceptamos URLs de canales oficiales que permiten incrustación. Si la
+            productora no se aprueba el embed, el contenido no podrá
             reproducirse acá. <Link href="/legal">Ver aviso completo</Link>.
           </span>
         }
@@ -329,15 +322,27 @@ export function AgregarVerClient() {
             </Form.Item>
 
             <Form.Item label="Cast principal" name="actorNames">
-              <Select mode="tags" tokenSeparators={[',']} placeholder="Ej: Bright Vachirawit, Win Metawin" />
+              <Select
+                mode="tags"
+                tokenSeparators={[',']}
+                placeholder="Ej: Bright Vachirawit, Win Metawin"
+              />
             </Form.Item>
 
             <div className="ver-agregar-form__grid">
               <Form.Item label="Tags" name="tagNames">
-                <Select mode="tags" tokenSeparators={[',']} placeholder="Ej: Universitarios, Slow burn" />
+                <Select
+                  mode="tags"
+                  tokenSeparators={[',']}
+                  placeholder="Ej: Universitarios, Slow burn"
+                />
               </Form.Item>
               <Form.Item label="Generos" name="genreNames">
-                <Select mode="tags" tokenSeparators={[',']} placeholder="Ej: Romance, Drama" />
+                <Select
+                  mode="tags"
+                  tokenSeparators={[',']}
+                  placeholder="Ej: Romance, Drama"
+                />
               </Form.Item>
             </div>
 

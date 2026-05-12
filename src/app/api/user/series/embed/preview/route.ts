@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth-helpers';
 import { prisma } from '@/lib/database';
-import {
-  buildEmbedPreview,
-  EmbedPreviewError,
-} from '@/lib/user-embed-preview';
+import { buildEmbedPreview, EmbedPreviewError } from '@/lib/user-embed-preview';
 
 /**
  * POST /api/user/series/embed/preview
@@ -39,7 +36,9 @@ export async function POST(request: NextRequest) {
     new URL(url);
   } catch {
     return NextResponse.json(
-      { error: 'URL invalida — debe ser una direccion completa con http(s)://' },
+      {
+        error: 'URL invalida — debe ser una direccion completa con http(s)://',
+      },
       { status: 400 }
     );
   }
