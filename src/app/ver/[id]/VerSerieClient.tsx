@@ -45,6 +45,8 @@ interface SeriesInfo {
   synopsis: string | null;
   imageUrl: string | null;
   catalogScope: string;
+  origin: string;
+  submittedByName: string | null;
   country: { name: string; code: string | null } | null;
   tags: string[];
   genres: string[];
@@ -57,9 +59,13 @@ interface VerSerieClientProps {
 
 export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
   const { t } = useLocale();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const message = useMessage();
-  const isAdmin = session?.user?.role === 'ADMIN';
+  // Solo mostrar acciones admin cuando la sesion termino de cargar
+  // (evita flicker durante SSR-hydrate).
+  const isAuthed = status === 'authenticated';
+  const isAdmin = isAuthed && session?.user?.role === 'ADMIN';
+  const isUserEmbed = series.origin === 'USER_EMBED';
 
   // Aplanado de todos los episodios (con su season) para navegacion siguiente/anterior.
   const flatEpisodes = useMemo(
@@ -122,7 +128,11 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           )}
         </div>
         <div className="ver-serie__header-actions">
-          {scope === 'PERSONAL' ? (
+          {isUserEmbed ? (
+            <Tag color="purple">
+              Aporte de @{series.submittedByName ?? 'usuario'}
+            </Tag>
+          ) : scope === 'PERSONAL' ? (
             <Tooltip title={t('verSerie.inMyPersonalCatalogTooltip')}>
               <Tag icon={<StarFilled />} color="gold">
                 {t('verSerie.inMyCatalogTag')}
@@ -133,10 +143,12 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
               {t('verSerie.watchableOnlyTag')}
             </Tag>
           )}
-          <Link href={`/series/${series.id}`} prefetch={false}>
-            <Button>{t('verSerie.viewFullDetailsButton')}</Button>
-          </Link>
-          {isAdmin && scope === 'WATCHABLE_ONLY' && (
+          {!isUserEmbed && (
+            <Link href={`/series/${series.id}`} prefetch={false}>
+              <Button>{t('verSerie.viewFullDetailsButton')}</Button>
+            </Link>
+          )}
+          {isAdmin && !isUserEmbed && scope === 'WATCHABLE_ONLY' && (
             <Button
               type="primary"
               icon={<StarFilled />}
@@ -145,6 +157,11 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
             >
               {t('verSerie.moveToMyCatalogButton')}
             </Button>
+          )}
+          {isAdmin && isUserEmbed && (
+            <Link href="/admin/series/user-submitted" prefetch={false}>
+              <Button>Linkear con curada (admin)</Button>
+            </Link>
           )}
         </div>
       </header>
