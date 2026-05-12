@@ -51,9 +51,7 @@ export default async function UserSubmittedAdminPage() {
       ? {
           id: s.submittedBy.id,
           displayName:
-            s.submittedBy.nickname ??
-            s.submittedBy.name ??
-            s.submittedBy.email,
+            s.submittedBy.nickname ?? s.submittedBy.name ?? s.submittedBy.email,
         }
       : null,
     embedCount: s.seasons.reduce((acc, sn) => acc + sn.episodes.length, 0),
@@ -61,9 +59,7 @@ export default async function UserSubmittedAdminPage() {
       new Set(
         s.seasons.flatMap(
           (sn) =>
-            sn.episodes
-              .map((e) => e.embedPlatform)
-              .filter(Boolean) as string[]
+            sn.episodes.map((e) => e.embedPlatform).filter(Boolean) as string[]
         )
       )
     ),
