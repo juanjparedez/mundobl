@@ -46,7 +46,7 @@
 
 .ver-filters {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr auto;
   gap: var(--spacing-sm);
   padding: var(--spacing-sm);
   border: 1px solid var(--border-color-secondary);
@@ -157,6 +157,31 @@
   place-items: center;
   font-size: 0.85rem;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+.ver-card__submitted-badge {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  max-width: calc(100% - 16px);
+  padding: 2px 8px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--bg-elevated) 88%, transparent);
+  color: var(--text-primary);
+  font-size: 0.72rem;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.ver-hero__cta {
+  margin-top: var(--spacing-sm);
+}
+
+.ver-filters__toggle {
+  align-self: stretch;
 }
 
 .ver-card__info {
