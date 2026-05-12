@@ -4,7 +4,21 @@ Todas las versiones notables del proyecto se documentan aqui.
 
 ## Proximo deploy
 
-_Sin items pendientes._
+### /ver: aporte de series por users registrados + panel admin de moderacion
+
+- **Nueva ruta `/ver/agregar`** (login-gated): cualquier usuario logueado pega una URL de canal oficial (YouTube / Vimeo / Bilibili / Dailymotion) y la IA precarga title, year, country, sinopsis, cast, productora, idiomas, subs, tags, generos. Confianza expuesta (high / medium / low) y warnings si Gemini no respondio o devolvio JSON dudoso. Form editable antes de confirmar; al guardar aparece al instante en `/ver` con badge `@nickname`.
+- **Helper `buildEmbedPreview`** en `src/lib/user-embed-preview.ts`: oEmbed nativo de cada plataforma (titulo / canal / thumbnail confiables) + Gemini con shape JSON estricta para el resto. Plataformas no soportadas (Netflix, TikTok, etc.) → 422.
+- **Dedupes + rate limit**: dedupe global por `Episode.embedUrl` (409 redirige al existente), dedupe submitter+title+year, max 5 aportes/h y 20/dia por user (429 + `Retry-After`).
+- **Schema**: `Series.origin` (`CURATED` / `USER_EMBED`), `Series.visibility` (`VISIBLE` / `HIDDEN`), `Series.submittedById`. Migration `add_series_origin_visibility_submittedby`. Defaults preservan todo el catalogo existente como CURATED+VISIBLE.
+- **Panel admin `/admin/series/user-submitted`**: tabla de aportes con thumb, @submitter, plataformas, embeds, visibility. Acciones HIDE/SHOW (oculta de `/ver` post-hoc sin borrar), DELETE (cascade), LINK con una serie CURATED (transaccion que mueve Episodes con embedUrl al Season equivalente del target, crea Season si falta, enriquece episode destino sin embed, y borra el aporte). Nuevo item "Aportes" en AdminNav (groupCatalog).
+- **Fix anti-leak transversal**: las series `USER_EMBED` no aparecen en `/catalogo`, `/series/[id]`, homepage, `/novedades`, `/actores/[id]`, `/tags/[id]`, sitemap-series, `/api/series`, `/api/search`, `/api/stats/public`. Listings de actores/tags filtran `_count.series` por curadas (cero contaminacion). `/ver` y sitemap-ver SI las incluyen si `visibility=VISIBLE`.
+- **VerSerieClient**: badge "Aporte de @user" cuando origin=USER_EMBED, oculta el link a `/series/[id]` (esa pagina da 404 para user-embed), reemplaza el boton "Mover a catalogo" admin por "Linkear con curada" → `/admin/series/user-submitted`. Fix flicker auth (espera `status==='authenticated'` antes de mostrar acciones admin).
+- **/ver `VerPage`**: CTA "Agregar una serie" en hero (solo authenticated). Toggle "Solo curadas por Flor" en filtros. Badge `@nickname` en cards user-embed.
+- **Endpoints rechazo 422 para USER_EMBED**: `POST /api/series/[id]/subscribe` y `POST /api/reviews` (no se suscribe ni resena un aporte hasta que admin lo linkea con una curada).
+
+Cobertura parcial de los items #109 (pagina agregar serie con AI), #110 (full AI integration en creacion) y #111 (precarga IMDB/MDL/YouTube): el lado user-embed (`/ver/agregar`) esta listo; el lado admin (catalogScope=PERSONAL con AI + fetch IMDB/MDL) queda pendiente. Comentarios de progreso en las 3 features.
+
+
 
 ## 2026-05 — i18n masivo, SEO, import YouTube, paletas y nickname (deployado)
 
