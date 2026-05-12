@@ -54,28 +54,29 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  accounts        Account[]
-  sessions        Session[]
-  comments        Comment[]
-  userRatings     UserRating[]
-  viewStatuses    ViewStatus[]
-  favorites       UserFavorite[]
-  featureRequests FeatureRequest[]
-  featureVotes    FeatureVote[]
-  featureRequestComments FeatureRequestComment[]
-  accessLogs      AccessLog[]
-  suggestedSites  SuggestedSite[]
-  commentReports  CommentReport[]
-  notifications   Notification[]
-  reviews         Review[]
-  reviewVotes     ReviewVote[]
-  episodeNotes    EpisodeNote[]
-  approvedNews    News[]          @relation("NewsApprovedBy")
-  assignedFeatureRequests FeatureRequest[] @relation("FeatureRequestAssignedTo")
-  seriesSubscriptions SeriesSubscription[]
-  pushSubscriptions   PushSubscription[]
-  notificationPrefs   NotificationPrefs?
-  dashboardLayouts    UserDashboardLayout[]
+  accounts                Account[]
+  sessions                Session[]
+  comments                Comment[]
+  userRatings             UserRating[]
+  viewStatuses            ViewStatus[]
+  favorites               UserFavorite[]
+  featureRequests         FeatureRequest[]
+  featureVotes            FeatureVote[]
+  featureRequestComments  FeatureRequestComment[]
+  accessLogs              AccessLog[]
+  suggestedSites          SuggestedSite[]
+  commentReports          CommentReport[]
+  notifications           Notification[]
+  reviews                 Review[]
+  reviewVotes             ReviewVote[]
+  episodeNotes            EpisodeNote[]
+  approvedNews            News[]                  @relation("NewsApprovedBy")
+  assignedFeatureRequests FeatureRequest[]        @relation("FeatureRequestAssignedTo")
+  seriesSubscriptions     SeriesSubscription[]
+  pushSubscriptions       PushSubscription[]
+  notificationPrefs       NotificationPrefs?
+  dashboardLayouts        UserDashboardLayout[]
+  submittedSeries         Series[]                @relation("UserSubmittedSeries")
 }
 
 // Persistencia de layouts del dashboard modular (drag/resize por widget).
@@ -211,6 +212,17 @@ model Series {
   // "WATCHABLE_ONLY": importada solo porque se puede mirar legalmente
   // (canales oficiales con embed). Aparece en /ver, no en /catalogo.
   catalogScope  String   @default("PERSONAL")
+  // "CURATED": creada por Flor (admin) — el catalogo oficial.
+  // "USER_EMBED": aportada por un user registrado desde /ver/agregar.
+  // Filtros publicos por defecto excluyen USER_EMBED salvo /ver que lo
+  // permite. El "link" con una CURATED se hace fusionando episodios y
+  // borrando el row USER_EMBED desde /admin/series/user-submitted.
+  origin        String   @default("CURATED")
+  // "VISIBLE": visible para todos en /ver (si tiene embeds).
+  // "HIDDEN": ocultada post-hoc por admin. Solo ADMIN y el submitter
+  // siguen viendola.
+  visibility    String   @default("VISIBLE")
+  submittedById String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -237,12 +249,16 @@ model Series {
   genres            SeriesGenre[]
   watchLinks        WatchLink[]
   embeddableContent EmbeddableContent[]
-  relatedSeriesFrom RelatedSeries[]     @relation("mainSeries")
+  relatedSeriesFrom RelatedSeries[]      @relation("mainSeries")
   news              News[]
-  relatedSeriesTo   RelatedSeries[]     @relation("relatedSeries")
+  relatedSeriesTo   RelatedSeries[]      @relation("relatedSeries")
   reviews           Review[]
   subscriptions     SeriesSubscription[]
   infoBlocks        SeriesInfoBlock[]
+  submittedBy       User?                @relation("UserSubmittedSeries", fields: [submittedById], references: [id], onDelete: SetNull)
+
+  @@index([origin, visibility])
+  @@index([submittedById, createdAt])
 }
 
 // Bloques de informacion adicionales por serie. Cards labeladas y libres
@@ -252,8 +268,8 @@ model Series {
 // schema de Series cada vez que aparece un tipo de info nuevo.
 model SeriesInfoBlock {
   id        Int      @id @default(autoincrement())
-  label     String   // "Basado en", "Curiosidades", "Premios", etc.
-  body      String   // Plain text con saltos de linea preservados
+  label     String // "Basado en", "Curiosidades", "Premios", etc.
+  body      String // Plain text con saltos de linea preservados
   sortOrder Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -296,12 +312,12 @@ model Season {
 // EPISODIOS (OPCIONAL)
 // ============================================
 model Episode {
-  id            Int       @id @default(autoincrement())
-  episodeNumber Int
-  title         String?
-  duration      Int? // Duración en minutos
-  airDate       DateTime?
-  synopsis      String?
+  id               Int       @id @default(autoincrement())
+  episodeNumber    Int
+  title            String?
+  duration         Int? // Duración en minutos
+  airDate          DateTime?
+  synopsis         String?
   // Embed oficial del episodio (canal oficial, plataforma con TOS de embed
   // permitido: YouTube, Vimeo, Bilibili, Dailymotion).
   // Si embedUrl está presente, el episodio se considera "mirable".
@@ -310,13 +326,13 @@ model Episode {
   embedVideoId     String?
   embedChannelName String?
   embedChannelUrl  String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   // Relaciones
   seasonId   Int
-  season     Season       @relation(fields: [seasonId], references: [id], onDelete: Cascade)
-  viewStatus ViewStatus[] @relation("EpisodeViewStatus")
+  season     Season        @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  viewStatus ViewStatus[]  @relation("EpisodeViewStatus")
   comments   Comment[]
   notes      EpisodeNote[]
 
@@ -630,8 +646,8 @@ model SeriesSubscription {
 // usuario revoca el permiso, el envio devuelve 410/404 y borramos
 // la fila.
 model PushSubscription {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
+  id         Int      @id @default(autoincrement())
+  createdAt  DateTime @default(now())
   lastUsedAt DateTime @default(now())
   // Identificador legible del dispositivo (extraido del User-Agent en
   // el momento del registro). Sirve para que el usuario pueda
@@ -664,14 +680,14 @@ model NotificationPrefs {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Por canal: in-app siempre on (es el inbox). Push se opt-in.
-  pushEnabled  Boolean @default(true)
+  pushEnabled Boolean @default(true)
 
   // Por tipo de evento: si el usuario apaga uno, no recibe ni in-app
   // ni push de ese tipo. Esto le da control fino sobre el ruido.
-  notifySeasonAdded      Boolean @default(true)
-  notifyContentAdded     Boolean @default(true)
-  notifyReviewPublished  Boolean @default(true)
-  notifyCommentReply     Boolean @default(true)
+  notifySeasonAdded     Boolean @default(true)
+  notifyContentAdded    Boolean @default(true)
+  notifyReviewPublished Boolean @default(true)
+  notifyCommentReply    Boolean @default(true)
 
   // Quiet hours: si estan dentro de la ventana, los pushes se omiten
   // (pero la notificacion in-app igual se crea). Formato HH:MM en UTC.
@@ -720,14 +736,14 @@ model ViewStatus {
 // FEATURE REQUESTS / BUGS / IDEAS
 // ============================================
 model FeatureRequest {
-  id          Int      @id @default(autoincrement())
+  id          Int                    @id @default(autoincrement())
   title       String
   description String?
   type        String // "bug", "feature", "idea"
-  status      FeatureRequestStatus @default(OPEN)
+  status      FeatureRequestStatus   @default(OPEN)
   priority    FeatureRequestPriority @default(MEDIUM)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
 
   userId String?
   user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
@@ -735,8 +751,8 @@ model FeatureRequest {
   assignedToId String?
   assignedTo   User?   @relation("FeatureRequestAssignedTo", fields: [assignedToId], references: [id], onDelete: SetNull)
 
-  votes  FeatureVote[]
-  images FeatureRequestImage[]
+  votes    FeatureVote[]
+  images   FeatureRequestImage[]
   comments FeatureRequestComment[]
 }
 
@@ -767,7 +783,7 @@ model FeatureRequestComment {
   updatedAt DateTime @updatedAt
 
   userId String
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   featureRequestId Int
   featureRequest   FeatureRequest @relation(fields: [featureRequestId], references: [id], onDelete: Cascade)
@@ -882,10 +898,10 @@ model EmbeddableContent {
 // Notificaciones que el usuario ve dentro de la app (campana del header).
 // NO son web push: las push viven aparte y se opt-in explícitamente.
 model Notification {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type      String   // "comment_reply", "feature_status", "season_added", "system", ...
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String // "comment_reply", "feature_status", "season_added", "system", ...
   title     String
   body      String?
   // URL relativa adonde lleva la notificación al hacer clic.
@@ -894,11 +910,10 @@ model Notification {
   refType   String?
   refId     String?
   readAt    DateTime?
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
 
   @@index([userId, createdAt])
   @@index([userId, readAt])
-
 }
 
 // ============================================
@@ -908,9 +923,9 @@ model Notification {
 // con titulo, veredicto y estado de moderacion. Pensada para texto rico
 // (markdown), votos de utilidad y traducciones futuras.
 enum ReviewStatus {
-  DRAFT       // Borrador del autor (no visible al publico)
-  PUBLISHED   // Publicada
-  HIDDEN      // Oculta por moderacion (autor la ve, otros no)
+  DRAFT // Borrador del autor (no visible al publico)
+  PUBLISHED // Publicada
+  HIDDEN // Oculta por moderacion (autor la ve, otros no)
 }
 
 enum ReviewVerdict {
@@ -920,30 +935,30 @@ enum ReviewVerdict {
 }
 
 model Review {
-  id        Int      @id @default(autoincrement())
-  title     String
-  body      String   // Markdown
-  verdict   ReviewVerdict?
+  id              Int            @id @default(autoincrement())
+  title           String
+  body            String // Markdown
+  verdict         ReviewVerdict?
   // Codigo de idioma de la review (es, en, pt, ko, ja, th, ...).
   // Se guarda explicito porque el contenido del texto es del usuario,
   // no traducible por t(). Permite filtrar/listar por idioma.
-  language  String   @default("es")
-  status    ReviewStatus @default(PUBLISHED)
+  language        String         @default("es")
+  status          ReviewStatus   @default(PUBLISHED)
   // Sub-ratings opcionales especificos del nicho BL/GL.
-  plotRating       Int? // 1-10
-  chemistryRating  Int? // 1-10
-  ostRating        Int? // 1-10
-  castingRating    Int? // 1-10
+  plotRating      Int? // 1-10
+  chemistryRating Int? // 1-10
+  ostRating       Int? // 1-10
+  castingRating   Int? // 1-10
   // Contadores denormalizados (mantenidos por el endpoint de voto).
-  helpfulCount     Int  @default(0)
-  unhelpfulCount   Int  @default(0)
-  hasSpoilers      Boolean @default(false)
+  helpfulCount    Int            @default(0)
+  unhelpfulCount  Int            @default(0)
+  hasSpoilers     Boolean        @default(false)
   // Una review destacada por serie+idioma; el admin la marca como
   // "review oficial" o "del staff". Aparece arriba de la lista.
-  isFeatured       Boolean @default(false)
-  publishedAt      DateTime?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  isFeatured      Boolean        @default(false)
+  publishedAt     DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
 
   userId   String
   user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -964,7 +979,7 @@ model Review {
 // Un usuario solo puede votar una vez por review (toggle update).
 model ReviewVote {
   id        Int      @id @default(autoincrement())
-  helpful   Boolean  // true = util, false = no util
+  helpful   Boolean // true = util, false = no util
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -983,17 +998,17 @@ model ReviewVote {
 // body: texto del item
 // sortOrder: orden dentro del grupo (menor = primero)
 model ChangelogItem {
-  id        Int      @id @default(autoincrement())
-  version   String   // ej: "Proximo deploy", "22ba64c"
+  id           Int      @id @default(autoincrement())
+  version      String // ej: "Proximo deploy", "22ba64c"
   // Label legible para el grupo de version (ej: "Pagina de contenido
   // y sitios recomendados" en lugar de "137c773"). Si esta vacio,
   // se cae al `version` (hash) como antes.
   versionLabel String?
-  category  String?  // ej: "Features", "Fixes", "Seguridad"
-  body      String
-  sortOrder Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  category     String? // ej: "Features", "Fixes", "Seguridad"
+  body         String
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@index([version, sortOrder])
 }
@@ -1003,11 +1018,11 @@ model ChangelogItem {
 // ============================================
 
 enum NewsStatus {
-  DRAFT      // Borrador, solo visible en admin
-  REVIEW     // Esperando revision
-  APPROVED   // Aprobada, lista para publicar
-  PUBLISHED  // Publicada y visible al publico
-  REJECTED   // Rechazada
+  DRAFT // Borrador, solo visible en admin
+  REVIEW // Esperando revision
+  APPROVED // Aprobada, lista para publicar
+  PUBLISHED // Publicada y visible al publico
+  REJECTED // Rechazada
 }
 
 // Noticia de BL/GL generada/curada por la admin con asistencia de IA.
@@ -1015,21 +1030,21 @@ enum NewsStatus {
 model News {
   id          Int        @id @default(autoincrement())
   title       String
-  summary     String     // Resumen generado/editado (markdown)
-  originalUrl String     // URL de la noticia original (obligatorio para PUBLISHED)
-  sourceName  String     // Nombre del sitio fuente (obligatorio para PUBLISHED)
-  sourceLogo  String?    // Logo/favicon del sitio fuente (URL)
-  imageUrl    String?    // Imagen de portada
-  publishedAt DateTime?  // Fecha de publicacion en la fuente original
+  summary     String // Resumen generado/editado (markdown)
+  originalUrl String // URL de la noticia original (obligatorio para PUBLISHED)
+  sourceName  String // Nombre del sitio fuente (obligatorio para PUBLISHED)
+  sourceLogo  String? // Logo/favicon del sitio fuente (URL)
+  imageUrl    String? // Imagen de portada
+  publishedAt DateTime? // Fecha de publicacion en la fuente original
   status      NewsStatus @default(DRAFT)
   aiGenerated Boolean    @default(true)
-  florNotes   String?    // Notas privadas de la admin
+  florNotes   String? // Notas privadas de la admin
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   approvedById String?
-  approvedBy   User?   @relation("NewsApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
+  approvedBy   User?     @relation("NewsApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
   approvedAt   DateTime?
 
   relatedSeriesId Int?

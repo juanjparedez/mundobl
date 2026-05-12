@@ -83,7 +83,7 @@ function staticPages(): MetadataRoute.Sitemap {
 
 async function seriesPages(): Promise<MetadataRoute.Sitemap> {
   const series = await prisma.series.findMany({
-    where: { catalogScope: 'PERSONAL' },
+    where: { catalogScope: 'PERSONAL', origin: 'CURATED' },
     select: { id: true, updatedAt: true },
   });
   return series.map((s) => ({
@@ -108,10 +108,11 @@ async function noticiasPages(): Promise<MetadataRoute.Sitemap> {
 }
 
 // Series mirables: las que tienen al menos un episodio con embedUrl.
-// Pueden ser PERSONAL o WATCHABLE_ONLY.
+// Incluye CURATED (PERSONAL+WATCHABLE_ONLY) y USER_EMBED si visibility=VISIBLE.
 async function verPages(): Promise<MetadataRoute.Sitemap> {
   const series = await prisma.series.findMany({
     where: {
+      visibility: 'VISIBLE',
       seasons: {
         some: { episodes: { some: { embedUrl: { not: null } } } },
       },
