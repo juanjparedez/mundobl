@@ -275,33 +275,15 @@ export function CatalogoClient({
   const [selectedQuickFilter, setSelectedQuickFilter] =
     useState<QuickFilterValue>(null);
   const [showAlphaIndex, setShowAlphaIndex] = useState(false);
-  // sessionStorage en vez de localStorage: el state vive lo necesario para
-  // navegar a /series/[id] y volver con el universo abierto, pero se resetea
-  // al cerrar la pestaña. Antes en localStorage quedaba "pegado" indefinidamente
-  // — UX confusa al volver dias despues y encontrar universos expandidos.
+  // Solo useState (sin storage). Anteriormente persistia en localStorage y
+  // despues sessionStorage para mantener universos abiertos al ir a
+  // /series/[id] y volver. Pero la persistencia era confusa: al paginar,
+  // refrescar o volver al catalogo, universos quedaban expandidos sin
+  // contexto. Trade-off: si vas a /series/X y volves, perdes la expansion
+  // — pero es una interaccion explicita de un click, no es disruptivo.
   const [expandedUniverses, setExpandedUniverses] = useState<Set<number>>(
-    () => {
-      if (typeof window === 'undefined') return new Set();
-      try {
-        const raw = window.sessionStorage.getItem('catalog-expanded-universes');
-        if (!raw) return new Set();
-        const arr = JSON.parse(raw);
-        return Array.isArray(arr)
-          ? new Set(arr.filter(Number.isFinite))
-          : new Set();
-      } catch {
-        return new Set();
-      }
-    }
+    new Set()
   );
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    window.sessionStorage.setItem(
-      'catalog-expanded-universes',
-      JSON.stringify(Array.from(expandedUniverses))
-    );
-  }, [expandedUniverses]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -638,11 +620,21 @@ export function CatalogoClient({
     }
   };
 
+  // Helper: colapsa cualquier panel expandido (+info de single, "Ver series"
+  // de universo). Se llama al cambiar pagina o filtro — sino los paneles
+  // quedan abiertos sobre data que ya no se muestra y al volver siguen
+  // abiertos sin contexto.
+  const collapseExpandedPanels = () => {
+    setExpandedInfoCardId(null);
+    setExpandedUniverses(new Set());
+  };
+
   const handleFilterChange = () => {
     // Filtros cambian "lo mostrado" pero no son una navegacion semantica
     // — uses replace para no inflar history en cada keystroke.
     setCurrentPage(1);
     syncPageInUrl(1, 'replace');
+    collapseExpandedPanels();
   };
 
   const clearFilters = () => {
@@ -1751,6 +1743,7 @@ export function CatalogoClient({
                   setCurrentPage(page);
                   syncPageInUrl(page, 'push');
                 }
+                collapseExpandedPanels();
               }}
               showSizeChanger
               pageSizeOptions={PAGE_SIZE_OPTIONS.map(String)}
@@ -1822,6 +1815,7 @@ export function CatalogoClient({
                   setCurrentPage(page);
                   syncPageInUrl(page, 'push');
                 }
+                collapseExpandedPanels();
               }}
               showSizeChanger
               pageSizeOptions={PAGE_SIZE_OPTIONS.map(String)}

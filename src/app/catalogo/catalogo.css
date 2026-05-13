@@ -901,18 +901,17 @@
     0 0 0 1px rgba(130, 87, 229, 0.2);
 }
 
+/* Antes era position:absolute top:100% z-index:10 — flotaba sobre la
+ * fila siguiente del grid tapando otras cards. Pasamos a flujo normal:
+ * el panel crece dentro del wrapper, el grid se ajusta a la altura del
+ * card mas alto. Sin overlap visual. */
 .universe-expand-panel {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: 10;
   background: var(--bg-container);
   border: 1px solid rgba(130, 87, 229, 0.3);
   border-top: none;
   border-radius: 0 0 8px 8px;
   overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
 }
 
 .universe-expand-entry {
