@@ -13,6 +13,7 @@ import {
   Tag,
   Radio,
   Alert,
+  Select,
 } from 'antd';
 import {
   PlusOutlined,
@@ -403,6 +404,42 @@ export default function DirectoresAdminPage() {
                 rows={3}
                 placeholder={t('adminDirectors.hintBiography')}
               />
+            </Form.Item>
+
+            <Form.Item
+              label={t('adminDirectors.fieldAliases')}
+              name="aliases"
+              tooltip={t('adminDirectors.hintAliases')}
+            >
+              <Select
+                mode="tags"
+                tokenSeparators={[',']}
+                placeholder={t('adminDirectors.hintAliases')}
+              />
+            </Form.Item>
+
+            <Form.Item
+              label={t('adminDirectors.fieldImdbUrl')}
+              name="imdbUrl"
+              rules={[{ type: 'url', message: t('adminDirectors.invalidUrl') }]}
+            >
+              <Input placeholder={t('adminDirectors.hintImdbUrl')} />
+            </Form.Item>
+
+            <Form.Item
+              label={t('adminDirectors.fieldMdlUrl')}
+              name="mdlUrl"
+              rules={[{ type: 'url', message: t('adminDirectors.invalidUrl') }]}
+            >
+              <Input placeholder={t('adminDirectors.hintMdlUrl')} />
+            </Form.Item>
+
+            <Form.Item
+              label={t('adminDirectors.fieldWikiUrl')}
+              name="wikiUrl"
+              rules={[{ type: 'url', message: t('adminDirectors.invalidUrl') }]}
+            >
+              <Input placeholder={t('adminDirectors.hintWikiUrl')} />
             </Form.Item>
           </Form>
         </Modal>

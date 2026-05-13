@@ -19,6 +19,7 @@ import { isSupabaseImageUrl } from '@/lib/image-helpers';
 import { EpisodeAnalysisTable } from '../EpisodeAnalysisTable/EpisodeAnalysisTable';
 import { RightRail } from '../RightRail/RightRail';
 import { WorkspaceFooter } from '../WorkspaceFooter/WorkspaceFooter';
+import { CompletenessCard } from '../CompletenessCard/CompletenessCard';
 import './WorkspaceClient.css';
 
 // Tipo derivado del helper para no duplicar el shape. Se actualiza
@@ -55,6 +56,7 @@ export function WorkspaceClient({ serie }: WorkspaceClientProps) {
       label: t('workspace.tabOverview'),
       children: (
         <div className="mb-workspace__tab-overview">
+          <CompletenessCard series={serie} />
           {serie.synopsis && (
             <section className="mb-workspace__section">
               <h3 className="mb-workspace__section-title">

@@ -746,10 +746,19 @@ export type TranslationShape = {
     fieldNationality: string;
     fieldImageUrl: string;
     fieldBiography: string;
+    fieldAliases: string;
+    fieldImdbUrl: string;
+    fieldMdlUrl: string;
+    fieldWikiUrl: string;
     hintName: string;
     hintNationality: string;
     hintImageUrl: string;
     hintBiography: string;
+    hintAliases: string;
+    hintImdbUrl: string;
+    hintMdlUrl: string;
+    hintWikiUrl: string;
+    invalidUrl: string;
     deleteTitle: string;
     deleteDescription: string;
     deleteBlockedDescription: string;
@@ -2406,6 +2415,34 @@ export type TranslationShape = {
     footerAdminToolsList: string;
     footerPending: string;
   };
+  completeness: {
+    title: string;
+    missingLabel: string;
+    tier: {
+      low: string;
+      mid: string;
+      high: string;
+    };
+    field: {
+      synopsis: string;
+      imageUrl: string;
+      directors: string;
+      country: string;
+      year: string;
+      originalTitle: string;
+      review: string;
+      tags: string;
+      soundtrack: string;
+      cast: string;
+    };
+  };
+  directorProfile: {
+    aliasesLabel: string;
+    linksLabel: string;
+    linkImdb: string;
+    linkMdl: string;
+    linkWiki: string;
+  };
 };
 
 const es: TranslationShape = {
@@ -3200,10 +3237,19 @@ const es: TranslationShape = {
     fieldNationality: 'Nacionalidad',
     fieldImageUrl: 'URL de Imagen',
     fieldBiography: 'Biografia',
+    fieldAliases: 'Alias / nombres alternativos',
+    fieldImdbUrl: 'URL de IMDb',
+    fieldMdlUrl: 'URL de MyDramaList',
+    fieldWikiUrl: 'URL de Wikipedia',
     hintName: 'Nombre del director',
     hintNationality: 'Ej: Tailandia, Corea del Sur',
     hintImageUrl: 'URL de la foto del director (opcional)',
     hintBiography: 'Breve biografia del director (opcional)',
+    hintAliases: 'Ingresa cada alias y presiona Enter o coma',
+    hintImdbUrl: 'https://www.imdb.com/name/nm...',
+    hintMdlUrl: 'https://mydramalist.com/people/...',
+    hintWikiUrl: 'https://es.wikipedia.org/wiki/...',
+    invalidUrl: 'URL invalida',
     deleteTitle: 'Eliminar director?',
     deleteDescription: 'Estas seguro de eliminar este director?',
     deleteBlockedDescription:
@@ -4938,6 +4984,34 @@ const es: TranslationShape = {
     footerAdminToolsList: 'Volver al listado',
     footerPending: 'Próximamente',
   },
+  completeness: {
+    title: 'Completitud',
+    missingLabel: 'Faltan',
+    tier: {
+      low: 'Incompleta',
+      mid: 'En progreso',
+      high: 'Completa',
+    },
+    field: {
+      synopsis: 'Sinopsis',
+      imageUrl: 'Poster',
+      directors: 'Director',
+      country: 'País',
+      year: 'Año',
+      originalTitle: 'Título original',
+      review: 'Reseña',
+      tags: 'Tags (≥3)',
+      soundtrack: 'Banda sonora',
+      cast: 'Cast',
+    },
+  },
+  directorProfile: {
+    aliasesLabel: 'Alias',
+    linksLabel: 'Links externos',
+    linkImdb: 'IMDb',
+    linkMdl: 'MyDramaList',
+    linkWiki: 'Wikipedia',
+  },
 };
 
 const en: TranslationShape = {
@@ -5723,10 +5797,19 @@ const en: TranslationShape = {
     fieldNationality: 'Nationality',
     fieldImageUrl: 'Image URL',
     fieldBiography: 'Biography',
+    fieldAliases: 'Aliases / alternative names',
+    fieldImdbUrl: 'IMDb URL',
+    fieldMdlUrl: 'MyDramaList URL',
+    fieldWikiUrl: 'Wikipedia URL',
     hintName: 'Director name',
     hintNationality: 'Ex: Thailand, South Korea',
     hintImageUrl: 'Director photo URL (optional)',
     hintBiography: 'Brief director biography (optional)',
+    hintAliases: 'Type each alias and press Enter or comma',
+    hintImdbUrl: 'https://www.imdb.com/name/nm...',
+    hintMdlUrl: 'https://mydramalist.com/people/...',
+    hintWikiUrl: 'https://en.wikipedia.org/wiki/...',
+    invalidUrl: 'Invalid URL',
     deleteTitle: 'Delete director?',
     deleteDescription: 'Are you sure you want to delete this director?',
     deleteBlockedDescription: 'This director has {count} series. Unlink first.',
@@ -7450,6 +7533,34 @@ const en: TranslationShape = {
     footerAdminToolsView: 'View public',
     footerAdminToolsList: 'Back to list',
     footerPending: 'Coming soon',
+  },
+  completeness: {
+    title: 'Completeness',
+    missingLabel: 'Missing',
+    tier: {
+      low: 'Incomplete',
+      mid: 'In progress',
+      high: 'Complete',
+    },
+    field: {
+      synopsis: 'Synopsis',
+      imageUrl: 'Poster',
+      directors: 'Director',
+      country: 'Country',
+      year: 'Year',
+      originalTitle: 'Original title',
+      review: 'Review',
+      tags: 'Tags (≥3)',
+      soundtrack: 'Soundtrack',
+      cast: 'Cast',
+    },
+  },
+  directorProfile: {
+    aliasesLabel: 'Aliases',
+    linksLabel: 'External links',
+    linkImdb: 'IMDb',
+    linkMdl: 'MyDramaList',
+    linkWiki: 'Wikipedia',
   },
 };
 

@@ -1,0 +1,83 @@
+.mb-completeness-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 12px);
+}
+
+.mb-completeness-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2, 8px);
+}
+
+.mb-completeness-card__label {
+  font-size: var(--font-size-sm, 13px);
+  color: var(--text-secondary);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.mb-completeness-card__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 12px);
+}
+
+.mb-completeness-card__bar .ant-progress {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.mb-completeness-card__score {
+  font-size: var(--font-size-xl, 20px);
+  font-weight: 700;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+  min-width: 3ch;
+  text-align: right;
+}
+
+.mb-completeness-card__missing {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 8px);
+}
+
+.mb-completeness-card__missing-label {
+  font-size: var(--font-size-xs, 12px);
+  color: var(--text-secondary);
+}
+
+.mb-completeness-card__missing-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1, 4px) var(--space-2, 8px);
+}
+
+.mb-completeness-card__missing-list li {
+  display: inline-flex;
+}
+
+.mb-completeness-card__weight {
+  opacity: 0.65;
+  font-size: 0.85em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Tier accents: borde sutil para reforzar el chip de estado */
+.mb-completeness-card--low {
+  border-color: var(--color-error-border, var(--border-light));
+}
+
+.mb-completeness-card--mid {
+  border-color: var(--color-warning-border, var(--border-light));
+}
+
+.mb-completeness-card--high {
+  border-color: var(--color-success-border, var(--border-light));
+}

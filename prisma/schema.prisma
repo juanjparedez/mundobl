@@ -385,6 +385,10 @@ model Director {
   nationality String?
   imageUrl    String?
   biography   String?
+  aliases     String[] @default([])
+  imdbUrl     String?
+  mdlUrl      String?
+  wikiUrl     String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
