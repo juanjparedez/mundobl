@@ -292,35 +292,13 @@ export function CatalogoClient({
   const [showAlphaIndex, setShowAlphaIndex] = useState(false);
   // sessionStorage: persiste mientras la pestaña este abierta. Sobrevive
   // F5, paginacion, filtros, navegacion a /series/X y vuelta. Se resetea
-  // solo al cerrar la pestaña — es lo que pide el usuario para no perder
-  // contexto. (Antes localStorage = forever, sessionStorage es mas acotado).
-  const [expandedUniverses, setExpandedUniverses] = useState<Set<number>>(
-    () => {
-      if (typeof window === 'undefined') return new Set();
-      try {
-        const raw = window.sessionStorage.getItem('catalog-expanded-universes');
-        if (!raw) return new Set();
-        const arr = JSON.parse(raw);
-        return Array.isArray(arr)
-          ? new Set(arr.filter(Number.isFinite))
-          : new Set();
-      } catch {
-        return new Set();
-      }
-    }
-  );
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    try {
-      window.sessionStorage.setItem(
-        'catalog-expanded-universes',
-        JSON.stringify(Array.from(expandedUniverses))
-      );
-    } catch {
-      /* ignore */
-    }
-  }, [expandedUniverses]);
+  // Solo una card expandida a la vez (single +info o universo "Ver series").
+  // Sin storage: si volves desde /series/X, F5, o cerras pestaña, todo cerrado.
+  // Comportamiento consistente con expectativa natural — abrir info en otra
+  // card cierra la previa, como ya hacian los single cards entre si.
+  // Key format: 'serie-${id}' para +info de single, 'universe-${id}' para
+  // expansion de universo.
+  const [expandedItemKey, setExpandedItemKey] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -338,34 +316,6 @@ export function CatalogoClient({
       /* ignore */
     }
   }, []);
-  // Mismo principio que expandedUniverses: sessionStorage por tab para no
-  // perder contexto al paginar/refrescar/navegar a /series/X.
-  const [expandedInfoCardId, setExpandedInfoCardId] = useState<string | null>(
-    () => {
-      if (typeof window === 'undefined') return null;
-      try {
-        return window.sessionStorage.getItem('catalog-expanded-info-card');
-      } catch {
-        return null;
-      }
-    }
-  );
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    try {
-      if (expandedInfoCardId) {
-        window.sessionStorage.setItem(
-          'catalog-expanded-info-card',
-          expandedInfoCardId
-        );
-      } else {
-        window.sessionStorage.removeItem('catalog-expanded-info-card');
-      }
-    } catch {
-      /* ignore */
-    }
-  }, [expandedInfoCardId]);
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   const countries = useMemo(() => {
@@ -770,22 +720,19 @@ export function CatalogoClient({
     withViewTransition(() => router.push(`/series/${id}`));
   };
 
-  const toggleUniverse = (universoId: number, e: React.MouseEvent) => {
+  // Toggle unico: cierra cualquier otra card expandida (single o universo)
+  // y abre la nueva. Re-click sobre la misma cierra.
+  const toggleExpandedItem = (key: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setExpandedUniverses((prev) => {
-      const next = new Set(prev);
-      if (next.has(universoId)) {
-        next.delete(universoId);
-      } else {
-        next.add(universoId);
-      }
-      return next;
-    });
+    setExpandedItemKey((prev) => (prev === key ? null : key));
+  };
+
+  const toggleUniverse = (universoId: number, e: React.MouseEvent) => {
+    toggleExpandedItem(`universe-${universoId}`, e);
   };
 
   const toggleCardInfo = (serieId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setExpandedInfoCardId((prev) => (prev === serieId ? null : serieId));
+    toggleExpandedItem(`serie-${serieId}`, e);
   };
 
   const yearOptions = Array.from(
@@ -797,7 +744,7 @@ export function CatalogoClient({
 
   const renderSingleCard = (serie: SerieData) => {
     const gradient = getGradientByType(serie.tipo);
-    const isInfoExpanded = expandedInfoCardId === serie.id;
+    const isInfoExpanded = expandedItemKey === `serie-${serie.id}`;
     const actorHighlights = (serie.actors ?? []).slice(0, 3);
     const hasSeasonInfo = serie.temporadas > 0;
     const hasEpisodeInfo = serie.episodios > 0;
@@ -970,7 +917,7 @@ export function CatalogoClient({
 
   const renderUniverseCard = (group: UniverseGroup) => {
     const firstSerie = group.series[0];
-    const isExpanded = expandedUniverses.has(group.universoId);
+    const isExpanded = expandedItemKey === `universe-${group.universoId}`;
     return (
       <div className="universe-card-wrapper">
         <div
@@ -1146,7 +1093,7 @@ export function CatalogoClient({
   };
 
   const renderUniverseListItem = (group: UniverseGroup) => {
-    const isExpanded = expandedUniverses.has(group.universoId);
+    const isExpanded = expandedItemKey === `universe-${group.universoId}`;
     return (
       <div className="universe-list-group">
         <div
