@@ -25,6 +25,62 @@
   gap: 6px;
 }
 
+/* Toolbar de filtros del tab "Ideas y Bugs" */
+.feedback-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  padding: 10px 12px;
+  margin: 8px 0;
+  background: var(--bg-container);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+}
+
+.feedback-toolbar__search {
+  min-width: 220px;
+  flex: 1 1 240px;
+  max-width: 360px;
+}
+
+.feedback-toolbar__group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+}
+
+.feedback-toolbar__label {
+  font-size: var(--font-size-sm, 13px);
+  color: var(--text-secondary);
+  margin-right: 4px;
+}
+
+.feedback-toolbar__chip {
+  /* Ant Design Tag.CheckableTag custom hook */
+  font-size: var(--font-size-sm, 13px);
+}
+
+.feedback-toolbar__sort {
+  min-width: 160px;
+  margin-left: auto;
+}
+
+@media (max-width: 640px) {
+  .feedback-toolbar {
+    gap: 8px;
+  }
+  .feedback-toolbar__search {
+    max-width: none;
+    width: 100%;
+  }
+  .feedback-toolbar__sort {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
 .feedback-card {
   border: 1px solid var(--border-color-secondary);
   border-radius: var(--border-radius-base);

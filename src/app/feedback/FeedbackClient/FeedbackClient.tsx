@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
   Tabs,
@@ -27,6 +27,7 @@ import {
   PictureOutlined,
   DeleteOutlined,
   CameraOutlined,
+  SearchOutlined,
 } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import { PageTitle } from '@/components/common/PageTitle/PageTitle';
@@ -161,6 +162,31 @@ export function FeedbackClient() {
   const userId = session?.user?.id;
   const [changelog, setChangelog] = useState<ChangelogEntry[]>([]);
   const [buildId, setBuildId] = useState<string | null>(null);
+
+  // Filtros del tab "Ideas y Bugs". Status default: solo Pendiente +
+  // En progreso (las cerradas/descartadas se muestran si user las activa).
+  const [searchQuery, setSearchQuery] = useState('');
+  const [typeFilter, setTypeFilter] = useState<Set<string>>(
+    new Set(['bug', 'feature', 'idea'])
+  );
+  const [statusFilter, setStatusFilter] = useState<Set<string>>(
+    new Set(['OPEN', 'IN_PROGRESS'])
+  );
+  const [sortBy, setSortBy] = useState<'recent' | 'votes' | 'comments'>(
+    'recent'
+  );
+
+  const toggleSetMember = <T,>(
+    setter: React.Dispatch<React.SetStateAction<Set<T>>>,
+    value: T
+  ) => {
+    setter((prev) => {
+      const next = new Set(prev);
+      if (next.has(value)) next.delete(value);
+      else next.add(value);
+      return next;
+    });
+  };
 
   useEffect(() => {
     if (prefilledRef.current) return;
@@ -502,13 +528,48 @@ export function FeedbackClient() {
     }
   };
 
-  const activeRequests = requests.filter((r) => r.status !== 'COMPLETED');
+  // Solo lo cerrado para timeline del Changelog. El listado principal usa
+  // filteredRequests (toolbar de search/type/status/sort).
   const completedRequests = requests
     .filter((r) => r.status === 'COMPLETED')
     .sort(
       (a, b) =>
         new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
     );
+
+  const filteredRequests = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    const filtered = requests.filter((r) => {
+      if (!typeFilter.has(r.type)) return false;
+      if (!statusFilter.has(r.status)) return false;
+      if (q) {
+        const hay = `${r.title} ${r.description ?? ''}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+    // Sort
+    return filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'votes':
+          return b._count.votes - a._count.votes;
+        case 'comments':
+          return b._count.comments - a._count.comments;
+        case 'recent':
+        default:
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+      }
+    });
+  }, [requests, searchQuery, typeFilter, statusFilter, sortBy]);
+
+  const hasActiveFilter =
+    searchQuery.trim().length > 0 ||
+    typeFilter.size !== 3 ||
+    statusFilter.size !== 2 ||
+    !statusFilter.has('OPEN') ||
+    !statusFilter.has('IN_PROGRESS');
 
   const renderRequestCard = (request: FeatureRequest) => {
     const typeConfig = TYPE_CONFIG[request.type] || TYPE_CONFIG.idea;
@@ -723,9 +784,14 @@ export function FeedbackClient() {
         <>
           <div className="feedback-page__header">
             <span style={{ color: 'var(--text-secondary)' }}>
-              {interpolateMessage(t('feedback.activeCount'), {
-                n: String(activeRequests.length),
-              })}
+              {hasActiveFilter
+                ? interpolateMessage(t('feedback.filteredCount'), {
+                    shown: String(filteredRequests.length),
+                    total: String(requests.length),
+                  })
+                : interpolateMessage(t('feedback.activeCount'), {
+                    n: String(filteredRequests.length),
+                  })}
             </span>
             {session?.user && (
               <Button
@@ -737,12 +803,82 @@ export function FeedbackClient() {
               </Button>
             )}
           </div>
-          {activeRequests.length > 0 ? (
+
+          <div className="feedback-toolbar">
+            <Input
+              prefix={<SearchOutlined />}
+              placeholder={t('feedback.searchPlaceholder')}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              allowClear
+              className="feedback-toolbar__search"
+            />
+
+            <div className="feedback-toolbar__group">
+              <span className="feedback-toolbar__label">
+                {t('feedback.filterTypeLabel')}
+              </span>
+              {['bug', 'feature', 'idea'].map((type) => {
+                const cfg = TYPE_CONFIG[type];
+                const active = typeFilter.has(type);
+                return (
+                  <Tag.CheckableTag
+                    key={type}
+                    checked={active}
+                    onChange={() => toggleSetMember(setTypeFilter, type)}
+                    className="feedback-toolbar__chip"
+                  >
+                    {cfg.icon} {cfg.label}
+                  </Tag.CheckableTag>
+                );
+              })}
+            </div>
+
+            <div className="feedback-toolbar__group">
+              <span className="feedback-toolbar__label">
+                {t('feedback.filterStatusLabel')}
+              </span>
+              {['OPEN', 'IN_PROGRESS', 'COMPLETED', 'REJECTED'].map((st) => {
+                const cfg = STATUS_CONFIG[st];
+                const active = statusFilter.has(st);
+                return (
+                  <Tag.CheckableTag
+                    key={st}
+                    checked={active}
+                    onChange={() => toggleSetMember(setStatusFilter, st)}
+                    className="feedback-toolbar__chip"
+                  >
+                    {cfg.label}
+                  </Tag.CheckableTag>
+                );
+              })}
+            </div>
+
+            <Select
+              value={sortBy}
+              onChange={(v) => setSortBy(v)}
+              className="feedback-toolbar__sort"
+              size="middle"
+              options={[
+                { value: 'recent', label: t('feedback.sortRecent') },
+                { value: 'votes', label: t('feedback.sortVotes') },
+                { value: 'comments', label: t('feedback.sortComments') },
+              ]}
+            />
+          </div>
+
+          {filteredRequests.length > 0 ? (
             <div className="feedback-list">
-              {activeRequests.map(renderRequestCard)}
+              {filteredRequests.map(renderRequestCard)}
             </div>
           ) : (
-            <Empty description={t('feedback.emptyRequests')} />
+            <Empty
+              description={
+                hasActiveFilter
+                  ? t('feedback.emptyFiltered')
+                  : t('feedback.emptyRequests')
+              }
+            />
           )}
         </>
       ),
