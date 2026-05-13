@@ -655,6 +655,34 @@ Cada vista premium se monta como un grid responsive de **widgets reordenables y 
 
 ---
 
+## Backlog (FeatureRequest)
+
+### Triage 2026-05-13
+
+Triage completo del backlog (`FeatureRequest`) categorizado por area funcional + scoring `effort/impact` para identificar quick wins. Detalle en [docs/backlog-triage-2026-05-13.md](docs/backlog-triage-2026-05-13.md).
+
+- **Persistencia de categoria**: prefijo en `FeatureRequest.description` con forma `[cat:X][effort:Y][impact:Z]` (sin migracion; idempotente; reversible).
+- **Categorias** (10): noticias, directores, ai, catalogo, perfil, admin, i18n, seo, cleanup, infra.
+- **Effort**: S ≤2h, M ≤6h, L 1-2 dias, XL ≥3 dias. **Impact**: H/M/L. **Quick win** = `(S∧H) ∨ (S∧M) ∨ (M∧H)`.
+- **Scripts**:
+  - `npx tsx scripts/triage-backlog-2026-05-13.ts` — dry-run que infiere y muestra tabla por categoria.
+  - `npx tsx scripts/triage-backlog-2026-05-13.ts --apply` — escribe prefijos.
+  - `npx tsx scripts/triage-backlog-2026-05-13.ts --report` — regenera el .md.
+  - `npx tsx scripts/audit-2026-05-13.ts [--apply]` — audit comments en items con cobertura parcial (#109/#110/#111) + creates de items del slice 1.
+
+### Slice 1 (2026-05-13) — quick wins (4 items, ~8h)
+
+1. **Audit + creates de items** (Item 1): `scripts/audit-2026-05-13.ts`.
+2. **Triage script + report** (Item 2): `scripts/triage-backlog-2026-05-13.ts` + `docs/backlog-triage-2026-05-13.md`.
+3. **Score de completitud de series** (admin/editor): [src/lib/series-completeness.ts](src/lib/series-completeness.ts) — helper puro `computeCompleteness(series) → { score, missing }`. UI: `CompletenessCard` en `/admin/series/[id]` + widget `SeriesIncompletasWidget` en `/perfil` (solo rol admin).
+4. **Director links basicos**: campos `Director.aliases`, `imdbUrl`, `mdlUrl`, `wikiUrl` (migracion `add_director_aliases_and_external_links`). Render en [src/app/directores/[id]/DirectorProfileClient.tsx](src/app/directores/[id]/DirectorProfileClient.tsx) como fila de iconos + Chip list de aliases.
+
+Items que se decidió **no** incluir en este slice:
+- Tags sensibles → reformulado como **policy doc editorial** (no codigo), va a `docs/`.
+- IMDB/MDL precarga, UserList/Collection, Command palette, Push UI, Achievements → roadmap.
+
+---
+
 ## Comandos
 
 ```bash
