@@ -275,15 +275,37 @@ export function CatalogoClient({
   const [selectedQuickFilter, setSelectedQuickFilter] =
     useState<QuickFilterValue>(null);
   const [showAlphaIndex, setShowAlphaIndex] = useState(false);
-  // Solo useState (sin storage). Anteriormente persistia en localStorage y
-  // despues sessionStorage para mantener universos abiertos al ir a
-  // /series/[id] y volver. Pero la persistencia era confusa: al paginar,
-  // refrescar o volver al catalogo, universos quedaban expandidos sin
-  // contexto. Trade-off: si vas a /series/X y volves, perdes la expansion
-  // — pero es una interaccion explicita de un click, no es disruptivo.
+  // sessionStorage: persiste mientras la pestaña este abierta. Sobrevive
+  // F5, paginacion, filtros, navegacion a /series/X y vuelta. Se resetea
+  // solo al cerrar la pestaña — es lo que pide el usuario para no perder
+  // contexto. (Antes localStorage = forever, sessionStorage es mas acotado).
   const [expandedUniverses, setExpandedUniverses] = useState<Set<number>>(
-    new Set()
+    () => {
+      if (typeof window === 'undefined') return new Set();
+      try {
+        const raw = window.sessionStorage.getItem('catalog-expanded-universes');
+        if (!raw) return new Set();
+        const arr = JSON.parse(raw);
+        return Array.isArray(arr)
+          ? new Set(arr.filter(Number.isFinite))
+          : new Set();
+      } catch {
+        return new Set();
+      }
+    }
   );
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      window.sessionStorage.setItem(
+        'catalog-expanded-universes',
+        JSON.stringify(Array.from(expandedUniverses))
+      );
+    } catch {
+      /* ignore */
+    }
+  }, [expandedUniverses]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -301,9 +323,34 @@ export function CatalogoClient({
       /* ignore */
     }
   }, []);
+  // Mismo principio que expandedUniverses: sessionStorage por tab para no
+  // perder contexto al paginar/refrescar/navegar a /series/X.
   const [expandedInfoCardId, setExpandedInfoCardId] = useState<string | null>(
-    null
+    () => {
+      if (typeof window === 'undefined') return null;
+      try {
+        return window.sessionStorage.getItem('catalog-expanded-info-card');
+      } catch {
+        return null;
+      }
+    }
   );
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      if (expandedInfoCardId) {
+        window.sessionStorage.setItem(
+          'catalog-expanded-info-card',
+          expandedInfoCardId
+        );
+      } else {
+        window.sessionStorage.removeItem('catalog-expanded-info-card');
+      }
+    } catch {
+      /* ignore */
+    }
+  }, [expandedInfoCardId]);
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   const countries = useMemo(() => {
@@ -620,21 +667,13 @@ export function CatalogoClient({
     }
   };
 
-  // Helper: colapsa cualquier panel expandido (+info de single, "Ver series"
-  // de universo). Se llama al cambiar pagina o filtro — sino los paneles
-  // quedan abiertos sobre data que ya no se muestra y al volver siguen
-  // abiertos sin contexto.
-  const collapseExpandedPanels = () => {
-    setExpandedInfoCardId(null);
-    setExpandedUniverses(new Set());
-  };
-
   const handleFilterChange = () => {
     // Filtros cambian "lo mostrado" pero no son una navegacion semantica
-    // — uses replace para no inflar history en cada keystroke.
+    // — uses replace para no inflar history en cada keystroke. NO colapsa
+    // los paneles expandidos: el usuario los quiere persistentes durante
+    // la sesion (sessionStorage los mantiene).
     setCurrentPage(1);
     syncPageInUrl(1, 'replace');
-    collapseExpandedPanels();
   };
 
   const clearFilters = () => {
@@ -1743,7 +1782,6 @@ export function CatalogoClient({
                   setCurrentPage(page);
                   syncPageInUrl(page, 'push');
                 }
-                collapseExpandedPanels();
               }}
               showSizeChanger
               pageSizeOptions={PAGE_SIZE_OPTIONS.map(String)}
@@ -1815,7 +1853,6 @@ export function CatalogoClient({
                   setCurrentPage(page);
                   syncPageInUrl(page, 'push');
                 }
-                collapseExpandedPanels();
               }}
               showSizeChanger
               pageSizeOptions={PAGE_SIZE_OPTIONS.map(String)}
