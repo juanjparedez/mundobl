@@ -225,13 +225,28 @@ export function CatalogoClient({
     initialYearNum && !isNaN(initialYearNum) ? initialYearNum : undefined
   );
   // currentPage en URL para que back desde /series/[id] vuelva a la pagina
-  // correcta. Initial read de ?page=N; cambios via router.replace (no inflar
-  // history con cada cambio de paginacion).
+  // correcta. Initial read de ?page=N; cambios via router.push/replace.
   const [currentPage, setCurrentPage] = useState(() => {
     const raw = searchParams.get('page');
     const n = raw ? Number(raw) : NaN;
     return Number.isFinite(n) && n >= 1 ? n : 1;
   });
+
+  // Sync currentPage <- URL. Cuando el usuario hace browser back/forward,
+  // backspace, o cambia la URL manualmente, searchParams se actualiza pero
+  // currentPage se quedaria con el valor anterior y el contenido no
+  // refrescaria. Este effect cierra el loop. La guarda `pageFromUrl !==
+  // currentPage` previene el doble-set tras un cambio iniciado por el
+  // propio user (Pagination onChange ya setea currentPage antes del push).
+  useEffect(() => {
+    const raw = searchParams.get('page');
+    const n = raw ? Number(raw) : NaN;
+    const pageFromUrl = Number.isFinite(n) && n >= 1 ? n : 1;
+    if (pageFromUrl !== currentPage) {
+      setCurrentPage(pageFromUrl);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
   const [pageSize, setPageSize] = useState<number>(() => {
     if (typeof window === 'undefined') return DEFAULT_PAGE_SIZE;
     const raw = window.localStorage.getItem('catalog-page-size');
