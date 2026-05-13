@@ -398,8 +398,11 @@ export function DashboardClient() {
 
   // dashboardKey incluye el mode para que cada modo tenga su layout
   // custom independiente (cambiar de modo no machaca el layout del
-  // otro modo). Bumped a v5 con la introduccion de modos.
-  const dashboardKey = `profile-${isAdmin ? 'admin' : 'user'}-${effectiveMode}-v5`;
+  // otro modo). Bumped a v6 (2026-05-13) tras cleanup de 6 widgets en
+  // iter 18-19: SettingsRow, Overview, Ratings, YearSummary,
+  // ReviewsActivity, FollowedTitles. Los users con layouts cached v5
+  // veian "Missing widget" en slots; v6 invalida cache y aplica defaults.
+  const dashboardKey = `profile-${isAdmin ? 'admin' : 'user'}-${effectiveMode}-v6`;
 
   // Preset segun el modo:
   // - basic: BASIC_LAYOUTS (todos los roles)

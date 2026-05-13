@@ -2503,6 +2503,6 @@ const ko: TranslationShape = {
     footerAdminToolsList: '목록으로 돌아가기',
     footerPending: '출시 예정',
   },
-} as TranslationShape;
+} as unknown as TranslationShape;
 
 export default ko;
