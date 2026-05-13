@@ -83,6 +83,46 @@ async function main() {
       body: 'Slice 2: 7 keys nuevas en TranslationShape + es + en (adminDirectors.fieldBirthYear/fieldAwards/hintBirthYear/hintAwards + directorProfile.birthYear/awardsTitle/featuredWorksTitle). Interpolacion {year} en directorProfile.birthYear.',
       sortOrder: 11,
     },
+    {
+      category: 'Fixes',
+      body: 'Migration que faltaba (#2c9167d): los commits del slice 1 y 2 agregaron 6 columnas nuevas al modelo Director (aliases, imdbUrl, mdlUrl, wikiUrl, birthYear, awards) pero las migration files nunca se generaron (no habia DB local). En prod: Prisma Client SELECTea las columnas, DB sigue con schema viejo → /series/1 crashea (digest 3266671265). Generada y commiteada migration `add_director_aliases_links_birth_awards`. Para aplicar: `npm run migrate:supabase`.',
+      sortOrder: 12,
+    },
+    {
+      category: 'Fixes',
+      body: 'Catalogo - bloque "card universo se ve raro al expandir" (#6300c47 + #60cb9d0): el .universe-expand-panel tenia position:absolute top:100% z-index:10 — flotaba sobre la siguiente fila del grid tapando otras cards. Cambiado a flujo normal: el panel crece dentro del wrapper, el grid ajusta la altura de la fila al card mas alto. Comportamiento consistente con +info de single cards.',
+      sortOrder: 13,
+    },
+    {
+      category: 'Fixes',
+      body: 'Catalogo - paginacion (#5f75f0e + #f7e1ffb + #2a34a5a): cierra ticket de Flor "Volver al catalogo en la pagina correcta". currentPage ahora se sincroniza con ?page=N en URL. Click en pagina hace router.push (genera back entry — page 1→2→5 + back retorna a 2). Cambio de filtro hace router.replace (no infla history con cada keystroke). Nuevo useEffect [searchParams] sincroniza state ← URL para que browser back/forward/backspace actualicen el contenido visible. Tambien (#5f75f0e) Pagination duplicado arriba del grid (otro ticket de Flor "numero de paginas arriba").',
+      sortOrder: 14,
+    },
+    {
+      category: 'Features',
+      body: 'NavigationGuard global (#27bf01c): nuevo componente client montado en root layout que garantiza que el back nativo del browser (o swipe-back de mobile) siempre tenga destino interno. Si referrer es externo, inyecta el "parent logico" en history (mapa: /series/[id] → /catalogo, /directores/[id] → /catalogo, /noticias/X → /noticias, /admin/X/[id] → /admin/X, /perfil/* → /perfil, home secciones → /). Idempotente via state marker + sessionStorage flag por tab.',
+      sortOrder: 15,
+    },
+    {
+      category: 'Features',
+      body: 'BackToCatalogButton (#5f75f0e + #27bf01c): boton "← Volver al catalogo" arriba del breadcrumb en /series/[id]. Si referrer es /catalogo (mismo origen), llama router.back() preservando ?page=N. Sino, router.push("/catalogo"). i18n: seriesDetail.backToCatalog (es + en).',
+      sortOrder: 16,
+    },
+    {
+      category: 'Fixes',
+      body: 'Catalogo - estado expandido reescrito (#5a27bf8): unificado expandedInfoCardId (string|null + sessionStorage) y expandedUniverses (Set<number> + sessionStorage) en un solo expandedItemKey (string|null sin storage). Keys: "serie-${id}" o "universe-${id}". Resultado: solo una card expandida a la vez (single o universo), abrir una cierra la otra, F5/cerrar pestaña/ir a /series/X y volver = todo cerrado. Coherente con como ya funcionaban los single cards. -72/+19 lineas.',
+      sortOrder: 17,
+    },
+    {
+      category: 'SEO',
+      body: 'SEO polish (#fab2847): layout.tsx keywords mas SEO-friendly ("series tailandesas/coreanas/japonesas" en vez de gentilicios solos, + "dramas BL" + "series LGBTQ+"). robots.ts bloquea /scripts y /data (no son rutas reales del app pero crawlers prueban). JsonLd.tsx con null guard runtime.',
+      sortOrder: 18,
+    },
+    {
+      category: 'Tooling',
+      body: 'audit-2026-05-13.ts ampliado (#TBD): nueva seccion CLOSE_BY_TITLE para cerrar tickets existentes en DB por titulo (en vez de ID — porque los tickets de Flor estan creados via UI y no conocemos los IDs localmente). Marca COMPLETED a "Volver al catalogo" (Flor) y "numero de paginas" (Flor) referenciando commits 5f75f0e + 2a34a5a. Nuevos items NEW_ITEMS COMPLETED para los fixes que no tenian tickets previos: visual universe panel, NavigationGuard, push/replace en pagination, URL sync.',
+      sortOrder: 19,
+    },
   ];
 
   let added = 0;
