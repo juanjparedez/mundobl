@@ -224,7 +224,14 @@ export function CatalogoClient({
   const [yearTo, setYearTo] = useState<number | undefined>(
     initialYearNum && !isNaN(initialYearNum) ? initialYearNum : undefined
   );
-  const [currentPage, setCurrentPage] = useState(1);
+  // currentPage en URL para que back desde /series/[id] vuelva a la pagina
+  // correcta. Initial read de ?page=N; cambios via router.replace (no inflar
+  // history con cada cambio de paginacion).
+  const [currentPage, setCurrentPage] = useState(() => {
+    const raw = searchParams.get('page');
+    const n = raw ? Number(raw) : NaN;
+    return Number.isFinite(n) && n >= 1 ? n : 1;
+  });
   const [pageSize, setPageSize] = useState<number>(() => {
     if (typeof window === 'undefined') return DEFAULT_PAGE_SIZE;
     const raw = window.localStorage.getItem('catalog-page-size');
@@ -268,11 +275,15 @@ export function CatalogoClient({
   const [selectedQuickFilter, setSelectedQuickFilter] =
     useState<QuickFilterValue>(null);
   const [showAlphaIndex, setShowAlphaIndex] = useState(false);
+  // sessionStorage en vez de localStorage: el state vive lo necesario para
+  // navegar a /series/[id] y volver con el universo abierto, pero se resetea
+  // al cerrar la pestaña. Antes en localStorage quedaba "pegado" indefinidamente
+  // — UX confusa al volver dias despues y encontrar universos expandidos.
   const [expandedUniverses, setExpandedUniverses] = useState<Set<number>>(
     () => {
       if (typeof window === 'undefined') return new Set();
       try {
-        const raw = window.localStorage.getItem('catalog-expanded-universes');
+        const raw = window.sessionStorage.getItem('catalog-expanded-universes');
         if (!raw) return new Set();
         const arr = JSON.parse(raw);
         return Array.isArray(arr)
@@ -286,7 +297,7 @@ export function CatalogoClient({
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    window.localStorage.setItem(
+    window.sessionStorage.setItem(
       'catalog-expanded-universes',
       JSON.stringify(Array.from(expandedUniverses))
     );
@@ -602,8 +613,24 @@ export function CatalogoClient({
     return catalogItems.slice(startIndex, startIndex + pageSize);
   }, [catalogItems, currentPage, pageSize]);
 
+  // Sincroniza currentPage con ?page=N en URL. router.replace para no inflar
+  // history (cada paginacion no genera back entry); el back desde /series/[id]
+  // restaura la URL con la pagina correcta. page=1 se omite del query (URL limpia).
+  const pushPageToUrl = (nextPage: number) => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(searchParams.toString());
+    if (nextPage <= 1) {
+      params.delete('page');
+    } else {
+      params.set('page', String(nextPage));
+    }
+    const qs = params.toString();
+    router.replace(qs ? `/catalogo?${qs}` : '/catalogo', { scroll: false });
+  };
+
   const handleFilterChange = () => {
     setCurrentPage(1);
+    pushPageToUrl(1);
   };
 
   const clearFilters = () => {
@@ -1697,6 +1724,35 @@ export function CatalogoClient({
       {/* Grid/List de Series */}
       {paginatedItems.length > 0 ? (
         <>
+          {/* Pagination arriba (espejo del de abajo) — pedido de Flor */}
+          <div className="catalogo-pagination catalogo-pagination--top">
+            <Pagination
+              current={currentPage}
+              pageSize={pageSize}
+              total={catalogItems.length}
+              onChange={(page, size) => {
+                if (size !== pageSize) {
+                  setPageSize(size);
+                  setCurrentPage(1);
+                  pushPageToUrl(1);
+                } else {
+                  setCurrentPage(page);
+                  pushPageToUrl(page);
+                }
+              }}
+              showSizeChanger
+              pageSizeOptions={PAGE_SIZE_OPTIONS.map(String)}
+              showTotal={(total, range) =>
+                interpolateMessage(t('catalogo.paginationTotal'), {
+                  from: String(range[0]),
+                  to: String(range[1]),
+                  total: String(total),
+                })
+              }
+              size={isMobile ? 'small' : 'middle'}
+            />
+          </div>
+
           {viewMode === 'grid' ? (
             <Row gutter={[16, 16]} className="catalogo-grid-fade">
               {paginatedItems.map((item) => {
@@ -1746,10 +1802,13 @@ export function CatalogoClient({
               pageSize={pageSize}
               total={catalogItems.length}
               onChange={(page, size) => {
-                setCurrentPage(page);
                 if (size !== pageSize) {
                   setPageSize(size);
                   setCurrentPage(1);
+                  pushPageToUrl(1);
+                } else {
+                  setCurrentPage(page);
+                  pushPageToUrl(page);
                 }
               }}
               showSizeChanger

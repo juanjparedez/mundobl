@@ -24,6 +24,7 @@ export type TranslationShape = {
     tabComments: string;
     seasonLabel: string;
     seriesSectionsAriaLabel: string;
+    backToCatalog: string;
   };
   seriesHeader: {
     universe: string;
@@ -2476,6 +2477,7 @@ const es: TranslationShape = {
     tabComments: 'Comentarios',
     seasonLabel: 'Temporadas',
     seriesSectionsAriaLabel: 'Secciones de la serie',
+    backToCatalog: 'Volver al catálogo',
   },
   seriesHeader: {
     universe: 'Universo',
@@ -5052,6 +5054,7 @@ const en: TranslationShape = {
     tabComments: 'Comments',
     seasonLabel: 'Seasons',
     seriesSectionsAriaLabel: 'Series sections',
+    backToCatalog: 'Back to catalog',
   },
   seriesHeader: {
     universe: 'Universe',

@@ -617,6 +617,12 @@
   justify-content: center;
 }
 
+/* Espejo arriba: separa del toolbar y de la grilla, sin background extra */
+.catalogo-pagination--top {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
 /* ==========================================
    Vista Lista
    ========================================== */
