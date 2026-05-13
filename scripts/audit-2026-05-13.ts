@@ -120,12 +120,89 @@ const NEW_ITEMS: NewItem[] = [
     priority: 'MEDIUM',
     initialStatus: 'COMPLETED',
   },
+  // Bloque catalogo + navegacion (2026-05-13 tarde/noche)
+  {
+    title: 'Catalogo: universe card panel flotaba tapando siguiente fila',
+    description:
+      '[completed:6300c47+60cb9d0] .universe-expand-panel tenia position:absolute top:100% z-index:10 — al expandir "Ver series" en un universo, la lista de series flotaba sobre la fila siguiente del grid tapando otras cards. Cambiado a flujo normal: el panel crece dentro del wrapper, el grid ajusta la altura de la fila al card mas alto. Comportamiento consistente con +info de single cards.',
+    type: 'bug',
+    priority: 'MEDIUM',
+    initialStatus: 'COMPLETED',
+  },
+  {
+    title: 'Catalogo: estado expandido single/universo unificado',
+    description:
+      '[completed:5a27bf8] Refactor: expandedInfoCardId (string|null + sessionStorage) + expandedUniverses (Set<number> + sessionStorage) unificados en un solo expandedItemKey (string|null sin storage). Keys: "serie-${id}" o "universe-${id}". Solo una card expandida a la vez (single o universo). Abrir una cierra la otra. Al ir a /series/X y volver, F5, o cerrar pestaña: todo cerrado. -72/+19 lineas. Comportamiento natural alineado con como cierran los single cards entre si.',
+    type: 'bug',
+    priority: 'LOW',
+    initialStatus: 'COMPLETED',
+  },
+  {
+    title: 'NavigationGuard global: back nativo nunca sale del sitio',
+    description:
+      '[completed:27bf01c] Componente client montado en root layout (src/components/layout/NavigationGuard/) que inyecta entry sintetica en history si referrer es externo. Mapa de fallbacks: /series/[id] → /catalogo, /directores/[id] → /catalogo, /noticias/X → /noticias, /admin/X/[id] → /admin/X, /perfil/* → /perfil, home de secciones → /. Idempotente via state marker (history.state.__mb_back_injected) y sessionStorage flag (__mb_first_nav_handled). Resuelve "back va al landing/sale del sitio" reportado por el usuario.',
+    type: 'feature',
+    priority: 'MEDIUM',
+    initialStatus: 'COMPLETED',
+  },
+  {
+    title: 'Catalogo: pagination usa push para back entry, filtros mantienen replace',
+    description:
+      '[completed:5f75f0e+f7e1ffb+2a34a5a] (1) Click en Pagination usa router.push → cada pagina es una back entry, page 1→2→5 + back retorna a 2 (no salta al referrer). (2) handleFilterChange (search keystroke, filtros) sigue usando router.replace para no inflar history con cada tecla. (3) Nuevo useEffect [searchParams] sincroniza state ← URL para que browser back/forward/backspace actualicen el contenido visible del catalogo. Resuelve "URL cambia pero contenido se queda en pagina 1".',
+    type: 'bug',
+    priority: 'HIGH',
+    initialStatus: 'COMPLETED',
+  },
+  {
+    title: 'BackToCatalogButton + boton volver explicito en /series/[id]',
+    description:
+      '[completed:5f75f0e+27bf01c] Boton "← Volver al catalogo" arriba del breadcrumb en /series/[id]. Si vino del catalogo, llama router.back() (preserva ?page=N). Sino, router.push("/catalogo"). Componente client en src/components/series/BackToCatalogButton/. i18n: seriesDetail.backToCatalog. Complementa el back nativo (que ahora tambien funciona via NavigationGuard).',
+    type: 'feature',
+    priority: 'LOW',
+    initialStatus: 'COMPLETED',
+  },
+  {
+    title: 'Migration faltante: Director +6 columnas (aliases, links, birthYear, awards)',
+    description:
+      '[completed:2c9167d] Bug reportado en prod (error digest 3266671265 en /series/1). Los commits de slice 1 (43b4644) + slice 2 (0c726b9) modificaron schema.prisma pero las migration files no se generaron (no habia DB local). Resultado: Prisma Client en build de Vercel SELECTea las columnas nuevas, DB sigue con schema viejo, queries de directors crashean Server Component. Generada migration `add_director_aliases_links_birth_awards` via `prisma migrate diff`. Para aplicar a prod: npm run migrate:supabase.',
+    type: 'bug',
+    priority: 'CRITICAL',
+    initialStatus: 'COMPLETED',
+  },
+  {
+    title: 'SEO polish: keywords + robots /scripts /data + JsonLd guard',
+    description:
+      '[completed:fab2847] layout.tsx keywords mas SEO-friendly (series tailandesas/coreanas/japonesas + dramas BL + series LGBTQ+). robots.ts bloquea /scripts y /data (no son rutas reales pero crawlers prueban convenciones). JsonLd.tsx con null guard runtime para no emitir <script> invalido si data viene null.',
+    type: 'feature',
+    priority: 'LOW',
+    initialStatus: 'COMPLETED',
+  },
+];
+
+// Items que YA existen en DB (creados via UI por Flor u otros) y queremos
+// cerrar como COMPLETED. Lookup por title porque no conocemos los IDs
+// localmente. Idempotente: si el item ya esta COMPLETED, skip.
+interface CloseByTitle {
+  title: string;
+  reason: string;
+}
+
+const CLOSE_BY_TITLE: CloseByTitle[] = [
+  {
+    title: 'Volver al catálogo',
+    reason:
+      '[completed:5f75f0e+27bf01c+2a34a5a] Ticket de Flor: al volver atras al catalogo, queria que regrese a la pagina donde estaba (no a la 1). Implementado: ?page=N en URL + router.push en Pagination + useEffect sync state ← URL + boton explicito BackToCatalogButton + NavigationGuard global.',
+  },
+  {
+    title: 'número de páginas',
+    reason:
+      '[completed:5f75f0e] Ticket de Flor: paginacion duplicada arriba del grid ademas de abajo. Implementado con CSS .catalogo-pagination--top y el mismo onChange handler.',
+  },
 ];
 
 const CLOSE_AS_COMPLETED: StatusClose[] = [
-  // Hoy vacio: la evidencia disponible no confirma cierres mas alla de los ya
-  // marcados COMPLETED en cleanup-feature-requests.ts (#51, #62, #65).
-  // El triage del Item 2 puede sumar items aqui.
+  // Hoy vacio: los cierres relevantes van por CLOSE_BY_TITLE (titulo) o
+  // por NEW_ITEMS con initialStatus COMPLETED (items que se crean ya cerrados).
 ];
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
@@ -215,9 +292,61 @@ async function main() {
     created++;
   }
 
-  console.log('\n--- Close as COMPLETED ---');
+  console.log('\n--- Close by title (tickets creados via UI, ej. por Flor) ---');
+  let closedByTitle = 0;
+  let closeByTitleSkipped = 0;
+  for (const entry of CLOSE_BY_TITLE) {
+    const fr = await prisma.featureRequest.findFirst({
+      where: { title: entry.title },
+      select: { id: true, title: true, status: true },
+    });
+    if (!fr) {
+      console.log(`  [title:"${entry.title}"] NOT FOUND — skip`);
+      continue;
+    }
+    if (fr.status === 'COMPLETED') {
+      console.log(`  [#${fr.id}] ya es COMPLETED — skip`);
+      closeByTitleSkipped++;
+      continue;
+    }
+    if (APPLY) {
+      await prisma.featureRequest.update({
+        where: { id: fr.id },
+        data: { status: 'COMPLETED' },
+      });
+      // Tambien deja un comment con la razon/SHA para historia
+      const hasComment = await prisma.featureRequestComment.findFirst({
+        where: {
+          featureRequestId: fr.id,
+          body: { contains: MARKER },
+        },
+        select: { id: true },
+      });
+      if (!hasComment) {
+        await prisma.featureRequestComment.create({
+          data: {
+            featureRequestId: fr.id,
+            userId: admin.id,
+            body: `${MARKER} ${entry.reason}`,
+          },
+        });
+      }
+    }
+    console.log(
+      `  [#${fr.id}] ${fr.status} → COMPLETED ${APPLY ? '' : '(dry-run)'}: "${fr.title}"`
+    );
+    console.log(`     reason: ${entry.reason}`);
+    closedByTitle++;
+  }
+  if (closedByTitle === 0 && closeByTitleSkipped === 0) {
+    console.log('  (no hay items a cerrar por titulo)');
+  } else {
+    console.log(`  Cerrados por titulo: ${closedByTitle} (skipped: ${closeByTitleSkipped}).`);
+  }
+
+  console.log('\n--- Close as COMPLETED (by id) ---');
   if (CLOSE_AS_COMPLETED.length === 0) {
-    console.log('  (vacio — no hay items con evidencia firme para cerrar hoy)');
+    console.log('  (vacio — los cierres relevantes hoy van por CLOSE_BY_TITLE)');
   } else {
     let closed = 0;
     let closeSkipped = 0;
