@@ -39,6 +39,10 @@ export default function robots(): MetadataRoute.Robots {
           '/wordpress/*',
           '/.env',
           '/.git/*',
+          // Paths internos (no son rutas reales del app, pero algunos
+          // crawlers prueban estas convenciones)
+          '/scripts',
+          '/data',
         ],
       },
     ],
