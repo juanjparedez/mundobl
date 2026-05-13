@@ -21,6 +21,7 @@ import {
 } from '@/types/content';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
+import { BackToCatalogButton } from '@/components/series/BackToCatalogButton/BackToCatalogButton';
 import { ShareButton } from '@/components/common/ShareButton/ShareButton';
 import { WhereToWatch } from '@/components/common/WhereToWatch/WhereToWatch';
 import { SeriesSubscribeButton } from '@/components/series/SeriesSubscribeButton/SeriesSubscribeButton';
@@ -197,6 +198,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
         }}
       />
       <div className="series-detail-page">
+        <BackToCatalogButton />
         <Breadcrumbs
           items={[
             { name: 'Inicio', href: '/' },
