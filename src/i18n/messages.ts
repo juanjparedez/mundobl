@@ -1590,6 +1590,14 @@ export type TranslationShape = {
     tabRequests: string;
     tabChangelog: string;
     activeCount: string;
+    filteredCount: string;
+    searchPlaceholder: string;
+    filterTypeLabel: string;
+    filterStatusLabel: string;
+    sortRecent: string;
+    sortVotes: string;
+    sortComments: string;
+    emptyFiltered: string;
     newRequest: string;
     emptyRequests: string;
     emptyChangelog: string;
@@ -4124,6 +4132,14 @@ const es: TranslationShape = {
     tabRequests: 'Ideas y Bugs',
     tabChangelog: 'Changelog',
     activeCount: '{n} solicitudes activas',
+    filteredCount: 'Mostrando {shown} de {total}',
+    searchPlaceholder: 'Buscar por título o descripción…',
+    filterTypeLabel: 'Tipo',
+    filterStatusLabel: 'Estado',
+    sortRecent: 'Más recientes',
+    sortVotes: 'Más votadas',
+    sortComments: 'Más comentadas',
+    emptyFiltered: 'No hay solicitudes que coincidan con el filtro',
     newRequest: 'Nueva solicitud',
     emptyRequests: 'No hay solicitudes activas',
     emptyChangelog: 'No hay cambios registrados',
@@ -6687,6 +6703,14 @@ const en: TranslationShape = {
     tabRequests: 'Ideas & Bugs',
     tabChangelog: 'Changelog',
     activeCount: '{n} active requests',
+    filteredCount: 'Showing {shown} of {total}',
+    searchPlaceholder: 'Search by title or description…',
+    filterTypeLabel: 'Type',
+    filterStatusLabel: 'Status',
+    sortRecent: 'Most recent',
+    sortVotes: 'Most voted',
+    sortComments: 'Most commented',
+    emptyFiltered: 'No requests match the filter',
     newRequest: 'New request',
     emptyRequests: 'No active requests',
     emptyChangelog: 'No changes recorded',
