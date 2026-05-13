@@ -19,7 +19,8 @@ async function main() {
   const { prisma } = await import('../src/lib/database');
 
   const version = '2026-05-13';
-  const versionLabel = 'Triage backlog + slice 1 (score completitud + director links)';
+  const versionLabel =
+    'Triage backlog + slice 1 (score completitud + director links) + slice 2 (director rico fase 2)';
 
   const changelogItems = [
     {
@@ -61,6 +62,26 @@ async function main() {
       category: 'Docs',
       body: 'context.md: nueva seccion "Backlog (FeatureRequest)" con triage 2026-05-13 + scripts + slice 1. /home/juanparedez/.claude/plans/hagamos-un-relevamiento-general-glimmering-shannon.md: plan completo del relevamiento + roadmap (slice 2: director rico fase 2, command palette, push UI; slice 3: IMDB/MDL precarga, UserList, achievements).',
       sortOrder: 7,
+    },
+    {
+      category: 'Features',
+      body: 'Slice 2 (#0c726b9) - Director rico fase 2: campos Director.birthYear (Int?) + Director.awards (String[]) sumados al schema. Admin form acepta los nuevos campos. En /directores/[id]: chip de año de nacimiento con CalendarOutlined, seccion "Premios" con icono trofeo + lista bullet, y seccion "Obras destacadas" entre el header y la filmografia.',
+      sortOrder: 8,
+    },
+    {
+      category: 'Features',
+      body: 'Obras destacadas en /directores/[id] (slice 2): seccion auto-derivada del top 3 series del director por overallRating. Solo aparece si al menos 2 series tienen rating cargado (no inventa data). Cards con borde gold + tag de rating destacado. Idea: si mas adelante queremos curaduria manual, agregar SeriesDirector.featured boolean (sin necesidad hoy).',
+      sortOrder: 9,
+    },
+    {
+      category: 'SEO',
+      body: 'JSON-LD de /directores/[id] (slice 2): suma birthDate (año) + award (lista de premios) al Person schema. Junto con alternateName (aliases) y sameAs (IMDb/MDL/Wiki) del slice 1, el schema Person queda completo para crawlers.',
+      sortOrder: 10,
+    },
+    {
+      category: 'i18n',
+      body: 'Slice 2: 7 keys nuevas en TranslationShape + es + en (adminDirectors.fieldBirthYear/fieldAwards/hintBirthYear/hintAwards + directorProfile.birthYear/awardsTitle/featuredWorksTitle). Interpolacion {year} en directorProfile.birthYear.',
+      sortOrder: 11,
     },
   ];
 
