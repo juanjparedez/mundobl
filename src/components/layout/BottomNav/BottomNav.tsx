@@ -15,7 +15,7 @@ import {
   BellFilled,
 } from '@ant-design/icons';
 import { Badge } from 'antd';
-import { useSession, signIn, signOut } from 'next-auth/react';
+import { useSession, signIn } from 'next-auth/react';
 import { ROUTES } from '@/constants/navigation';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { SettingsPanel } from '@/components/layout/SettingsPanel/SettingsPanel';
