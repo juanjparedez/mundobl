@@ -25,17 +25,18 @@
   gap: 6px;
 }
 
-/* Toolbar de filtros del tab "Ideas y Bugs" */
+/* Toolbar de filtros del tab "Ideas y Bugs".
+ * Wrapper visual: <PanelCard padding="md"> del design-system.
+ * El flex layout va en el __body de PanelCard (donde caen los children). */
 .feedback-toolbar {
+  margin: 8px 0;
+}
+
+.feedback-toolbar .mb-panel-card__body {
   display: flex;
   flex-wrap: wrap;
   gap: 8px 12px;
   align-items: center;
-  padding: 10px 12px;
-  margin: 8px 0;
-  background: var(--bg-container);
-  border: 1px solid var(--border-color-secondary);
-  border-radius: var(--border-radius-lg);
 }
 
 .feedback-toolbar__search {
@@ -57,18 +58,13 @@
   margin-right: 4px;
 }
 
-.feedback-toolbar__chip {
-  /* Ant Design Tag.CheckableTag custom hook */
-  font-size: var(--font-size-sm, 13px);
-}
-
 .feedback-toolbar__sort {
   min-width: 160px;
   margin-left: auto;
 }
 
 @media (max-width: 640px) {
-  .feedback-toolbar {
+  .feedback-toolbar .mb-panel-card__body {
     gap: 8px;
   }
   .feedback-toolbar__search {

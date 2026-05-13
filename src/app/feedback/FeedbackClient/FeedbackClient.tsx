@@ -31,6 +31,7 @@ import {
 } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import { PageTitle } from '@/components/common/PageTitle/PageTitle';
+import { PanelCard, Chip } from '@/components/design-system';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
@@ -629,43 +630,45 @@ export function FeedbackClient() {
               </span>
             </div>
 
-            <div className="feedback-card__actions">
-              {userId && (
-                <Button
-                  type={hasVoted ? 'primary' : 'default'}
-                  size="small"
-                  icon={hasVoted ? <LikeFilled /> : <LikeOutlined />}
-                  onClick={() => handleVote(request.id)}
-                >
-                  {request._count.votes}
-                </Button>
-              )}
+            {(userId || isAdmin) && (
+              <div className="feedback-card__actions">
+                {userId && (
+                  <Button
+                    type={hasVoted ? 'primary' : 'default'}
+                    size="small"
+                    icon={hasVoted ? <LikeFilled /> : <LikeOutlined />}
+                    onClick={() => handleVote(request.id)}
+                  >
+                    {request._count.votes}
+                  </Button>
+                )}
 
-              {isAdmin && (
-                <Select
-                  value={request.status}
-                  size="small"
-                  style={{ width: 130 }}
-                  onChange={(value) => handleStatusChange(request.id, value)}
-                  options={Object.entries(STATUS_CONFIG).map(
-                    ([value, config]) => ({
-                      value,
-                      label: config.label,
-                    })
-                  )}
-                />
-              )}
+                {isAdmin && (
+                  <Select
+                    value={request.status}
+                    size="small"
+                    style={{ width: 130 }}
+                    onChange={(value) => handleStatusChange(request.id, value)}
+                    options={Object.entries(STATUS_CONFIG).map(
+                      ([value, config]) => ({
+                        value,
+                        label: config.label,
+                      })
+                    )}
+                  />
+                )}
 
-              {isAdmin && (
-                <Button
-                  danger
-                  size="small"
-                  onClick={() => handleDelete(request.id)}
-                >
-                  {t('feedback.deleteButton')}
-                </Button>
-              )}
-            </div>
+                {isAdmin && (
+                  <Button
+                    danger
+                    size="small"
+                    onClick={() => handleDelete(request.id)}
+                  >
+                    {t('feedback.deleteButton')}
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -804,7 +807,7 @@ export function FeedbackClient() {
             )}
           </div>
 
-          <div className="feedback-toolbar">
+          <PanelCard padding="md" className="feedback-toolbar">
             <Input
               prefix={<SearchOutlined />}
               placeholder={t('feedback.searchPlaceholder')}
@@ -822,14 +825,17 @@ export function FeedbackClient() {
                 const cfg = TYPE_CONFIG[type];
                 const active = typeFilter.has(type);
                 return (
-                  <Tag.CheckableTag
+                  <Chip
                     key={type}
-                    checked={active}
-                    onChange={() => toggleSetMember(setTypeFilter, type)}
-                    className="feedback-toolbar__chip"
+                    size="sm"
+                    icon={cfg.icon}
+                    tone={active ? 'accent' : 'neutral'}
+                    outline={!active}
+                    pressed={active}
+                    onClick={() => toggleSetMember(setTypeFilter, type)}
                   >
-                    {cfg.icon} {cfg.label}
-                  </Tag.CheckableTag>
+                    {cfg.label}
+                  </Chip>
                 );
               })}
             </div>
@@ -842,14 +848,16 @@ export function FeedbackClient() {
                 const cfg = STATUS_CONFIG[st];
                 const active = statusFilter.has(st);
                 return (
-                  <Tag.CheckableTag
+                  <Chip
                     key={st}
-                    checked={active}
-                    onChange={() => toggleSetMember(setStatusFilter, st)}
-                    className="feedback-toolbar__chip"
+                    size="sm"
+                    tone={active ? 'accent' : 'neutral'}
+                    outline={!active}
+                    pressed={active}
+                    onClick={() => toggleSetMember(setStatusFilter, st)}
                   >
                     {cfg.label}
-                  </Tag.CheckableTag>
+                  </Chip>
                 );
               })}
             </div>
@@ -865,7 +873,7 @@ export function FeedbackClient() {
                 { value: 'comments', label: t('feedback.sortComments') },
               ]}
             />
-          </div>
+          </PanelCard>
 
           {filteredRequests.length > 0 ? (
             <div className="feedback-list">
