@@ -674,8 +674,15 @@ Triage completo del backlog (`FeatureRequest`) categorizado por area funcional +
 
 1. **Audit + creates de items** (Item 1): `scripts/audit-2026-05-13.ts`.
 2. **Triage script + report** (Item 2): `scripts/triage-backlog-2026-05-13.ts` + `docs/backlog-triage-2026-05-13.md`.
-3. **Score de completitud de series** (admin/editor): [src/lib/series-completeness.ts](src/lib/series-completeness.ts) — helper puro `computeCompleteness(series) → { score, missing }`. UI: `CompletenessCard` en `/admin/series/[id]` + widget `SeriesIncompletasWidget` en `/perfil` (solo rol admin).
+3. **Score de completitud de series** (admin/editor): [src/lib/series-completeness.ts](src/lib/series-completeness.ts) — helper puro `computeCompleteness(series) → { score, missing }`. UI: `CompletenessCard` en `/admin/series/[id]` + widget `SeriesIncompletasWidget` en `/perfil` (solo rol admin, diferido).
 4. **Director links basicos**: campos `Director.aliases`, `imdbUrl`, `mdlUrl`, `wikiUrl` (migracion `add_director_aliases_and_external_links`). Render en [src/app/directores/[id]/DirectorProfileClient.tsx](src/app/directores/[id]/DirectorProfileClient.tsx) como fila de iconos + Chip list de aliases.
+
+### Slice 2 (2026-05-13) — Director rico fase 2 (commit 0c726b9)
+
+1. **Schema:** `Director.birthYear Int?` + `Director.awards String[] @default([])`. Migracion `add_director_birth_year_and_awards`.
+2. **Admin** (`/admin/directores`): `InputNumber` (range 1900..año actual) para birthYear + `Select mode="tags"` con separador `;` para awards.
+3. **Publico** (`/directores/[id]`): chip de año (`n. 1985`) + seccion "Premios" con trofeo + lista. Nueva seccion **"Obras destacadas"** entre el header y la filmografia: auto-derivada del top 3 series por `overallRating` (solo si ≥2 series tienen rating; no inventa data). Cards con borde gold + tag de rating.
+4. **JSON-LD:** suma `birthDate` (año) + `award` (lista) al schema Person.
 
 Items que se decidió **no** incluir en este slice:
 - Tags sensibles → reformulado como **policy doc editorial** (no codigo), va a `docs/`.
