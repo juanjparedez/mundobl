@@ -2457,6 +2457,6 @@ const zhCN: TranslationShape = {
     footerAdminToolsList: '返回列表',
     footerPending: '即将推出',
   },
-} as TranslationShape;
+} as unknown as TranslationShape;
 
 export default zhCN;

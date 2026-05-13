@@ -2564,6 +2564,6 @@ const de: TranslationShape = {
     footerAdminToolsList: 'Zurück zur Liste',
     footerPending: 'Demnächst',
   },
-} as TranslationShape;
+} as unknown as TranslationShape;
 
 export default de;

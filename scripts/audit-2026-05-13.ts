@@ -198,6 +198,32 @@ const CLOSE_BY_TITLE: CloseByTitle[] = [
     reason:
       '[completed:5f75f0e] Ticket de Flor: paginacion duplicada arriba del grid ademas de abajo. Implementado con CSS .catalogo-pagination--top y el mismo onChange handler.',
   },
+  // Revision de tickets bug del backlog (2026-05-13 noche)
+  {
+    title: 'Bump dashboardKey de v5 → v6 (post-cleanup widgets)',
+    reason:
+      '[completed:TBD-this-commit] dashboardKey en DashboardClient.tsx pasa de v5 a v6. Invalida layouts cached con widgets borrados (SettingsRow, Overview, Ratings, YearSummary, ReviewsActivity, FollowedTitles) — los users veian "Missing widget" en slots.',
+  },
+  {
+    title: 'Limpiar i18n keys huerfanas post-cleanup de /perfil',
+    reason:
+      '[completed:TBD-this-commit] 15 keys eliminadas del shape + es + en: profileDashboard.widgetOverview/Desc/Ratings/RatingsDesc + profile.overviewYearTotalHoursLabel + 5 pares profile.settingsCard{PublicName,Appearance,Sessions,Privacy,Danger}{Title,Desc}. 6 keys mantenidas (siguen usadas): sectionYearSummary, sectionReviewsActivity, sectionFollowedTitles, sectionSettings, settingsCardNotificationsTitle/Desc. Cast en 8 locales y en translate-{locales,missing-keys}.ts: as TranslationShape → as unknown as TranslationShape (necesario porque la separacion de shape vs locales crecio: locales tienen orphans + faltan completeness/directorProfile).',
+  },
+  {
+    title: 'Episodios: nombre + duracion no se muestran en /series/[id]',
+    reason:
+      '[verified-implemented-already] Ya implementado en src/components/series/EpisodesList.tsx lineas 489-503: episode.title se renderiza como span con clase episodes-table__ep-title y episode.duration se renderiza como Tag con ClockCircleOutlined + "X min". No requiere trabajo adicional.',
+  },
+  {
+    title: 'Empty space en /perfil overview cuando MyComments es corto',
+    reason:
+      '[obsolete-structure-changed] La estructura del overview original (3 columnas con MyCommentsPanel en columna derecha) ya no existe — /perfil migro a DashboardGrid + widgets (iter 18-19). MyCommentsWidget se renderiza en su propio row del grid, no en columna lateral. El bug es de una estructura que ya no esta en el codigo.',
+  },
+  {
+    title: 'Audit completo de regresiones post-auto-i18n',
+    reason:
+      '[verified-no-regressions] Corri tsc --noUnusedParameters: solo 2 warnings no-i18n (admin/feedback FeedbackClient.tsx:280 \'name\' que es arg de column render; CurrentlyWatchingDashboard.tsx:168 \'seriesId\' que es arg de handler). Ninguna es prop-de-componente-replazada-por-t(). La migracion auto-i18n no dejo regresiones de ese patron.',
+  },
 ];
 
 const CLOSE_AS_COMPLETED: StatusClose[] = [

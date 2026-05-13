@@ -2529,6 +2529,6 @@ const ja: TranslationShape = {
     footerAdminToolsList: 'リストに戻る',
     footerPending: '近日公開',
   },
-} as TranslationShape;
+} as unknown as TranslationShape;
 
 export default ja;

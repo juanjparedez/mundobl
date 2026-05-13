@@ -436,19 +436,8 @@ export type TranslationShape = {
     overviewLoading: string;
     overviewViewAllComments: string;
     overviewCommentsSearchPlaceholder: string;
-    overviewYearTotalHoursLabel: string;
-    settingsCardPublicNameTitle: string;
-    settingsCardPublicNameDesc: string;
-    settingsCardAppearanceTitle: string;
-    settingsCardAppearanceDesc: string;
     settingsCardNotificationsTitle: string;
     settingsCardNotificationsDesc: string;
-    settingsCardPrivacyTitle: string;
-    settingsCardPrivacyDesc: string;
-    settingsCardSessionsTitle: string;
-    settingsCardSessionsDesc: string;
-    settingsCardDangerTitle: string;
-    settingsCardDangerDesc: string;
   };
   achievements: {
     firstStepName: string;
@@ -2210,10 +2199,6 @@ export type TranslationShape = {
     backToClassic: string;
     avgRating: string;
     hoursWatched: string;
-    widgetOverview: string;
-    widgetOverviewDesc: string;
-    widgetRatings: string;
-    widgetRatingsDesc: string;
     widgetRecentlyCompleted: string;
     widgetRecentlyCompletedDesc: string;
     recentlyCompletedEmpty: string;
@@ -2924,19 +2909,8 @@ const es: TranslationShape = {
     overviewLoading: 'Cargando...',
     overviewViewAllComments: 'Ver todos los comentarios ({count})',
     overviewCommentsSearchPlaceholder: 'Buscar en comentarios...',
-    overviewYearTotalHoursLabel: 'Horas totales',
-    settingsCardPublicNameTitle: 'Nombre público',
-    settingsCardPublicNameDesc: 'Tu nombre visible en la comunidad',
-    settingsCardAppearanceTitle: 'Apariencia y accesibilidad',
-    settingsCardAppearanceDesc: 'Tema, acento, tamaño de texto y más',
     settingsCardNotificationsTitle: 'Notificaciones',
     settingsCardNotificationsDesc: 'Email, push y preferencias',
-    settingsCardPrivacyTitle: 'Privacidad y datos',
-    settingsCardPrivacyDesc: 'Exportar datos y controles',
-    settingsCardSessionsTitle: 'Sesiones y dispositivos',
-    settingsCardSessionsDesc: 'Gestionar tus sesiones activas',
-    settingsCardDangerTitle: 'Zona de peligro',
-    settingsCardDangerDesc: 'Eliminar cuenta y más',
   },
   achievements: {
     firstStepName: 'Primer paso',
@@ -4782,12 +4756,6 @@ const es: TranslationShape = {
     backToClassic: 'Vista clasica',
     avgRating: 'Rating promedio',
     hoursWatched: 'Horas vistas',
-    widgetOverview: 'Resumen',
-    widgetOverviewDesc:
-      'Tus contadores principales: vistos, viendo, abandonadas, retomar.',
-    widgetRatings: 'Ratings y resenas',
-    widgetRatingsDesc:
-      'Rating promedio, total de resenas, comentarios y horas vistas.',
     widgetRecentlyCompleted: 'Recientemente completadas',
     widgetRecentlyCompletedDesc: 'Las ultimas series que terminaste de ver.',
     recentlyCompletedEmpty: 'Aun no completaste ninguna serie.',
@@ -5502,19 +5470,8 @@ const en: TranslationShape = {
     overviewLoading: 'Loading...',
     overviewViewAllComments: 'View all comments ({count})',
     overviewCommentsSearchPlaceholder: 'Search in comments...',
-    overviewYearTotalHoursLabel: 'Total hours',
-    settingsCardPublicNameTitle: 'Public name',
-    settingsCardPublicNameDesc: 'Your name visible in the community',
-    settingsCardAppearanceTitle: 'Appearance & accessibility',
-    settingsCardAppearanceDesc: 'Theme, accent, text size and more',
     settingsCardNotificationsTitle: 'Notifications',
     settingsCardNotificationsDesc: 'Email, push and preferences',
-    settingsCardPrivacyTitle: 'Privacy & data',
-    settingsCardPrivacyDesc: 'Export data and controls',
-    settingsCardSessionsTitle: 'Sessions & devices',
-    settingsCardSessionsDesc: 'Manage your active sessions',
-    settingsCardDangerTitle: 'Danger zone',
-    settingsCardDangerDesc: 'Delete account and more',
   },
   achievements: {
     firstStepName: 'First step',
@@ -7350,12 +7307,6 @@ const en: TranslationShape = {
     backToClassic: 'Classic view',
     avgRating: 'Average rating',
     hoursWatched: 'Hours watched',
-    widgetOverview: 'Overview',
-    widgetOverviewDesc:
-      'Your main counters: watched, watching, abandoned, to rewatch.',
-    widgetRatings: 'Ratings & reviews',
-    widgetRatingsDesc:
-      'Average rating, total reviews, comments and hours watched.',
     widgetRecentlyCompleted: 'Recently completed',
     widgetRecentlyCompletedDesc: 'The latest series you finished watching.',
     recentlyCompletedEmpty: "You haven't completed any series yet.",

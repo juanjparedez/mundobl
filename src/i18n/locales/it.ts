@@ -2553,6 +2553,6 @@ const it: TranslationShape = {
     footerAdminToolsList: "Torna all'elenco",
     footerPending: 'Prossimamente',
   },
-} as TranslationShape;
+} as unknown as TranslationShape;
 
 export default it;
