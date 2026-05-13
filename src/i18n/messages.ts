@@ -750,6 +750,8 @@ export type TranslationShape = {
     fieldImdbUrl: string;
     fieldMdlUrl: string;
     fieldWikiUrl: string;
+    fieldBirthYear: string;
+    fieldAwards: string;
     hintName: string;
     hintNationality: string;
     hintImageUrl: string;
@@ -758,6 +760,8 @@ export type TranslationShape = {
     hintImdbUrl: string;
     hintMdlUrl: string;
     hintWikiUrl: string;
+    hintBirthYear: string;
+    hintAwards: string;
     invalidUrl: string;
     deleteTitle: string;
     deleteDescription: string;
@@ -2442,6 +2446,9 @@ export type TranslationShape = {
     linkImdb: string;
     linkMdl: string;
     linkWiki: string;
+    birthYear: string;
+    awardsTitle: string;
+    featuredWorksTitle: string;
   };
 };
 
@@ -3241,6 +3248,8 @@ const es: TranslationShape = {
     fieldImdbUrl: 'URL de IMDb',
     fieldMdlUrl: 'URL de MyDramaList',
     fieldWikiUrl: 'URL de Wikipedia',
+    fieldBirthYear: 'Año de nacimiento',
+    fieldAwards: 'Premios',
     hintName: 'Nombre del director',
     hintNationality: 'Ej: Tailandia, Corea del Sur',
     hintImageUrl: 'URL de la foto del director (opcional)',
@@ -3249,6 +3258,8 @@ const es: TranslationShape = {
     hintImdbUrl: 'https://www.imdb.com/name/nm...',
     hintMdlUrl: 'https://mydramalist.com/people/...',
     hintWikiUrl: 'https://es.wikipedia.org/wiki/...',
+    hintBirthYear: 'Ej: 1985',
+    hintAwards: 'Ingresa cada premio y presiona Enter o ; (punto y coma)',
     invalidUrl: 'URL invalida',
     deleteTitle: 'Eliminar director?',
     deleteDescription: 'Estas seguro de eliminar este director?',
@@ -5011,6 +5022,9 @@ const es: TranslationShape = {
     linkImdb: 'IMDb',
     linkMdl: 'MyDramaList',
     linkWiki: 'Wikipedia',
+    birthYear: 'n. {year}',
+    awardsTitle: 'Premios',
+    featuredWorksTitle: 'Obras destacadas',
   },
 };
 
@@ -5801,6 +5815,8 @@ const en: TranslationShape = {
     fieldImdbUrl: 'IMDb URL',
     fieldMdlUrl: 'MyDramaList URL',
     fieldWikiUrl: 'Wikipedia URL',
+    fieldBirthYear: 'Birth year',
+    fieldAwards: 'Awards',
     hintName: 'Director name',
     hintNationality: 'Ex: Thailand, South Korea',
     hintImageUrl: 'Director photo URL (optional)',
@@ -5809,6 +5825,8 @@ const en: TranslationShape = {
     hintImdbUrl: 'https://www.imdb.com/name/nm...',
     hintMdlUrl: 'https://mydramalist.com/people/...',
     hintWikiUrl: 'https://en.wikipedia.org/wiki/...',
+    hintBirthYear: 'Ex: 1985',
+    hintAwards: 'Type each award and press Enter or ; (semicolon)',
     invalidUrl: 'Invalid URL',
     deleteTitle: 'Delete director?',
     deleteDescription: 'Are you sure you want to delete this director?',
@@ -7561,6 +7579,9 @@ const en: TranslationShape = {
     linkImdb: 'IMDb',
     linkMdl: 'MyDramaList',
     linkWiki: 'Wikipedia',
+    birthYear: 'b. {year}',
+    awardsTitle: 'Awards',
+    featuredWorksTitle: 'Featured works',
   },
 };
 

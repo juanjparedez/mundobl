@@ -1,13 +1,30 @@
 'use client';
 
 import { Avatar, Card, Tag, Row, Col, Empty, Tooltip } from 'antd';
-import { UserOutlined, LinkOutlined } from '@ant-design/icons';
+import {
+  UserOutlined,
+  LinkOutlined,
+  TrophyOutlined,
+  CalendarOutlined,
+  StarFilled,
+} from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
 import { Chip } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
 import './director-profile.css';
+
+interface DirectorSeries {
+  id: number;
+  title: string;
+  year?: number | null;
+  type: string;
+  imageUrl?: string | null;
+  overallRating?: number | null;
+  country?: { name: string } | null;
+}
 
 interface DirectorData {
   id: number;
@@ -19,17 +36,15 @@ interface DirectorData {
   imdbUrl?: string | null;
   mdlUrl?: string | null;
   wikiUrl?: string | null;
-  series: Array<{
-    series: {
-      id: number;
-      title: string;
-      year?: number | null;
-      type: string;
-      imageUrl?: string | null;
-      country?: { name: string } | null;
-    };
-  }>;
+  birthYear?: number | null;
+  awards?: string[];
+  series: Array<{ series: DirectorSeries }>;
 }
+
+// Umbral minimo: solo mostramos "Obras destacadas" si al menos 2 series tienen
+// overallRating cargado. Si no hay suficiente data, no inventamos un top.
+const FEATURED_MIN_RATED = 2;
+const FEATURED_TAKE = 3;
 
 interface DirectorProfileClientProps {
   director: DirectorData;
@@ -79,6 +94,18 @@ export function DirectorProfileClient({
   ].filter((x): x is { url: string; label: string } => !!x);
 
   const aliases = director.aliases ?? [];
+  const awards = director.awards ?? [];
+
+  const ratedSeries = filmography.filter(
+    (s): s is DirectorSeries & { overallRating: number } =>
+      typeof s.overallRating === 'number'
+  );
+  const featuredWorks =
+    ratedSeries.length >= FEATURED_MIN_RATED
+      ? [...ratedSeries]
+          .sort((a, b) => b.overallRating - a.overallRating)
+          .slice(0, FEATURED_TAKE)
+      : [];
 
   return (
     <div className="director-profile">
@@ -115,6 +142,13 @@ export function DirectorProfileClient({
               {director.nationality && (
                 <Tag color="blue">{director.nationality}</Tag>
               )}
+              {director.birthYear && (
+                <Tag icon={<CalendarOutlined />}>
+                  {interpolateMessage(t('directorProfile.birthYear'), {
+                    year: director.birthYear,
+                  })}
+                </Tag>
+              )}
               <Tag>{filmography.length} series dirigidas</Tag>
             </div>
             {externalLinks.length > 0 && (
@@ -146,7 +180,85 @@ export function DirectorProfileClient({
             <p>{director.biography}</p>
           </div>
         )}
+
+        {awards.length > 0 && (
+          <div className="director-profile__awards">
+            <h3>
+              <TrophyOutlined /> {t('directorProfile.awardsTitle')}
+            </h3>
+            <ul className="director-profile__awards-list">
+              {awards.map((award) => (
+                <li key={award}>{award}</li>
+              ))}
+            </ul>
+          </div>
+        )}
       </Card>
+
+      {featuredWorks.length > 0 && (
+        <Card
+          title={
+            <>
+              <StarFilled className="director-profile__featured-icon" />{' '}
+              {t('directorProfile.featuredWorksTitle')}
+            </>
+          }
+          className="director-profile__featured"
+        >
+          <Row gutter={[16, 16]}>
+            {featuredWorks.map((entry) => (
+              <Col xs={24} sm={12} md={8} key={entry.id}>
+                <Link href={`/series/${entry.id}`}>
+                  <Card
+                    hoverable
+                    size="small"
+                    className="director-profile__film-card director-profile__featured-card"
+                    cover={
+                      entry.imageUrl ? (
+                        <Image
+                          alt={entry.title}
+                          src={entry.imageUrl}
+                          width={300}
+                          height={180}
+                          quality={75}
+                          unoptimized={isSupabaseImageUrl(entry.imageUrl)}
+                          className="director-profile__film-image"
+                          style={{
+                            objectFit: 'cover',
+                            width: '100%',
+                            height: 'auto',
+                          }}
+                        />
+                      ) : undefined
+                    }
+                  >
+                    <Card.Meta
+                      title={entry.title}
+                      description={
+                        <div className="director-profile__film-tags">
+                          <Tag
+                            color="gold"
+                            icon={<StarFilled />}
+                            className="director-profile__rating-tag"
+                          >
+                            {(entry.overallRating / 10).toFixed(1)}
+                          </Tag>
+                          {entry.year && <Tag>{entry.year}</Tag>}
+                          {entry.country && (
+                            <span className="director-profile__country">
+                              {entry.country.name}
+                            </span>
+                          )}
+                        </div>
+                      }
+                    />
+                  </Card>
+                </Link>
+              </Col>
+            ))}
+          </Row>
+        </Card>
+      )}
 
       <Card
         title={`Filmografía (${filmography.length})`}

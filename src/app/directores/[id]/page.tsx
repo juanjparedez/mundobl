@@ -88,6 +88,11 @@ export default async function DirectorPage({ params }: DirectorPageProps) {
               director.wikiUrl,
             ].filter((u): u is string => !!u),
           }),
+          ...(director.birthYear && { birthDate: String(director.birthYear) }),
+          ...(director.awards &&
+            director.awards.length > 0 && {
+              award: director.awards,
+            }),
           url: `https://mundobl.com.ar/directores/${director.id}`,
         }}
       />
