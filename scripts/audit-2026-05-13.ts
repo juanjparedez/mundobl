@@ -107,7 +107,15 @@ const NEW_ITEMS: NewItem[] = [
   {
     title: 'Directores: links externos (IMDB, MDL, Wiki)',
     description:
-      '[completed:43b4644] Campos Director.imdbUrl/mdlUrl/wikiUrl (String?). Migracion add_director_aliases_and_external_links. Render en /directores/[id] como nav con links clicables (icono LinkOutlined + label i18n) debajo del nombre, condicional por campo. Editable desde admin form (Ant Input con rules type="url"). JSON-LD enriquecido con sameAs. Otros campos del item original (birthYear, awards, obras destacadas) quedan para slice 2.',
+      '[completed:43b4644] Campos Director.imdbUrl/mdlUrl/wikiUrl (String?). Migracion add_director_aliases_and_external_links. Render en /directores/[id] como nav con links clicables (icono LinkOutlined + label i18n) debajo del nombre, condicional por campo. Editable desde admin form (Ant Input con rules type="url"). JSON-LD enriquecido con sameAs.',
+    type: 'feature',
+    priority: 'MEDIUM',
+    initialStatus: 'COMPLETED',
+  },
+  {
+    title: 'Directores: birthYear + awards + obras destacadas',
+    description:
+      '[completed:0c726b9] Slice 2 director rico (continuacion de aliases/links del slice 1). Schema: Director.birthYear Int? + Director.awards String[] @default([]). Migracion add_director_birth_year_and_awards. Admin: InputNumber (range 1900..currentYear) + Select mode="tags" con separador ";". Publico: chip de birthYear + seccion "Premios" con icono trofeo + seccion "Obras destacadas" auto-derivada del top 3 por overallRating (solo si >=2 series tienen rating; no inventa data). JSON-LD enriquecido (birthDate + award).',
     type: 'feature',
     priority: 'MEDIUM',
     initialStatus: 'COMPLETED',
