@@ -389,6 +389,8 @@ model Director {
   imdbUrl     String?
   mdlUrl      String?
   wikiUrl     String?
+  birthYear   Int?
+  awards      String[] @default([])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

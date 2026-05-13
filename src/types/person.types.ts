@@ -22,6 +22,8 @@ export interface DirectorAdmin {
   imdbUrl?: string | null;
   mdlUrl?: string | null;
   wikiUrl?: string | null;
+  birthYear?: number | null;
+  awards?: string[];
   _count?: {
     series: number;
   };
