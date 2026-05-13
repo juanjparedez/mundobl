@@ -6,6 +6,7 @@ import { SessionProvider } from '@/lib/providers/SessionProvider';
 import { LocaleProvider } from '@/lib/providers/LocaleProvider';
 import { SpoilerFreeProvider } from '@/lib/providers/SpoilerFreeProvider';
 import { ServiceWorkerRegistrar } from '@/components/ServiceWorkerRegistrar/ServiceWorkerRegistrar';
+import { NavigationGuard } from '@/components/layout/NavigationGuard/NavigationGuard';
 import { JsonLd } from '@/components/seo/JsonLd';
 import type { WebSite, Organization } from 'schema-dts';
 import 'flag-icons/css/flag-icons.min.css';
@@ -156,6 +157,7 @@ export default function RootLayout({
           }}
         />
         <ServiceWorkerRegistrar />
+        <NavigationGuard />
         <SessionProvider>
           <AntdRegistry>
             <LocaleProvider>
