@@ -38,6 +38,7 @@ interface NewItem {
   description: string;
   type: 'bug' | 'feature' | 'idea';
   priority: FeatureRequestPriority;
+  initialStatus?: FeatureRequestStatus; // default OPEN
 }
 
 interface StatusClose {
@@ -90,23 +91,26 @@ const NEW_ITEMS: NewItem[] = [
   {
     title: 'Score de completitud para series (admin/editor)',
     description:
-      'Metrica de curacion 0-100 computada on-the-fly sobre Series (sin migracion). Pesos sugeridos: synopsis 15, poster 15, >=1 review 10, director 10, country 5, year 5, runtime 5, >=3 tags 10, soundtrack 10, cast 15. Helper src/lib/series-completeness.ts. Visible en /admin/series/[id] (CompletenessCard usando StatCard) + widget SeriesIncompletasWidget en /perfil solo para rol admin (lista series con score < 60). NO publico — es metrica interna de curacion. Slice 1 del triage 2026-05-13.',
+      '[completed:43b4644] Metrica de curacion 0-100 computada on-the-fly sobre Series (sin migracion). Pesos: synopsis 15, poster 15, cast 15, director 10, tags >=3 10, review 10, soundtrack 10, country 5, year 5, originalTitle 5 (suman 100). Helper src/lib/series-completeness.ts (puro). Visible en /admin/series/[id] como CompletenessCard al tope del overview tab (PanelCard + Chip + Ant Progress). NO publico — metrica interna de curacion. Widget SeriesIncompletasWidget en /perfil para rol admin queda diferido a slice 1.5.',
     type: 'feature',
     priority: 'MEDIUM',
+    initialStatus: 'COMPLETED',
   },
   {
     title: 'Directores: aliases (nombres alternativos)',
     description:
-      'Campo Director.aliases String[] para nombres alternativos / variantes (ej. romanizaciones, nombres artisticos, alias internacionales). Renderizado en /directores/[id] como Chip list con tone neutral, debajo del nombre principal. Editable desde el admin form. Migracion: add_director_aliases. Parte del slice 1 del triage 2026-05-13 (subitem de "Directores: ampliar info publica").',
+      '[completed:43b4644] Campo Director.aliases String[] @default([]). Migracion add_director_aliases_and_external_links (combinada con links externos). Renderizado en /directores/[id] como Chip list con tone neutral debajo del nombre principal. Editable desde admin form (Ant Select mode="tags" con tokenSeparators=","). Enriquece JSON-LD con alternateName.',
     type: 'feature',
     priority: 'MEDIUM',
+    initialStatus: 'COMPLETED',
   },
   {
     title: 'Directores: links externos (IMDB, MDL, Wiki)',
     description:
-      'Campos Director.imdbUrl/mdlUrl/wikiUrl (String?). Renderizado en /directores/[id] como fila de iconos clicables debajo del nombre, render condicional. Editable desde el admin form. Migracion: add_director_external_links. Parte del slice 1 del triage 2026-05-13 (subitem de "Directores: ampliar info publica"). Otros campos del item original (birthYear, awards, obras destacadas) quedan para slice 2.',
+      '[completed:43b4644] Campos Director.imdbUrl/mdlUrl/wikiUrl (String?). Migracion add_director_aliases_and_external_links. Render en /directores/[id] como nav con links clicables (icono LinkOutlined + label i18n) debajo del nombre, condicional por campo. Editable desde admin form (Ant Input con rules type="url"). JSON-LD enriquecido con sameAs. Otros campos del item original (birthYear, awards, obras destacadas) quedan para slice 2.',
     type: 'feature',
     priority: 'MEDIUM',
+    initialStatus: 'COMPLETED',
   },
 ];
 
@@ -184,6 +188,7 @@ async function main() {
       exists++;
       continue;
     }
+    const status = item.initialStatus ?? 'OPEN';
     if (APPLY) {
       const fr = await prisma.featureRequest.create({
         data: {
@@ -191,12 +196,13 @@ async function main() {
           description: item.description,
           type: item.type,
           priority: item.priority,
+          status,
         },
         select: { id: true },
       });
-      console.log(`  [#${fr.id}] CREADO [${item.priority}/${item.type}]: "${item.title}"`);
+      console.log(`  [#${fr.id}] CREADO [${item.priority}/${item.type}/${status}]: "${item.title}"`);
     } else {
-      console.log(`  [NEW] SE CREARIA [${item.priority}/${item.type}]: "${item.title}"`);
+      console.log(`  [NEW] SE CREARIA [${item.priority}/${item.type}/${status}]: "${item.title}"`);
     }
     created++;
   }
