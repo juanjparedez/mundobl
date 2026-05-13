@@ -123,6 +123,26 @@ async function main() {
       body: 'audit-2026-05-13.ts ampliado (#TBD): nueva seccion CLOSE_BY_TITLE para cerrar tickets existentes en DB por titulo (en vez de ID — porque los tickets de Flor estan creados via UI y no conocemos los IDs localmente). Marca COMPLETED a "Volver al catalogo" (Flor) y "numero de paginas" (Flor) referenciando commits 5f75f0e + 2a34a5a. Nuevos items NEW_ITEMS COMPLETED para los fixes que no tenian tickets previos: visual universe panel, NavigationGuard, push/replace en pagination, URL sync.',
       sortOrder: 19,
     },
+    {
+      category: 'Features',
+      body: 'Toolbar de filtros en /feedback tab "Ideas y Bugs" (#f6e1cfd): tenia 81 solicitudes activas sin filtros — imposible navegar. Suma search instant (sobre title+description), chips multi-toggle por tipo (bug/feature/idea) y por status (default: solo OPEN+IN_PROGRESS para "ocultar cerradas"; togglear COMPLETED/REJECTED para verlas mezcladas), sort dropdown (mas recientes / mas votadas / mas comentadas), contador dinamico "X de Y" cuando hay filtro. Empty state diferenciado segun causa. Responsive: <640px todo en columna.',
+      sortOrder: 20,
+    },
+    {
+      category: 'Fixes',
+      body: 'Backlog review 5 bug tickets (#69007f4): (1) dashboardKey v5→v6 en DashboardClient.tsx — invalida layouts cached con widgets borrados en iter 18-19. (2) 15 i18n keys orphan eliminadas del shape + es + en (profileDashboard.widgetOverview/Desc/Ratings/RatingsDesc + profile.overviewYearTotalHoursLabel + 5 pares profile.settingsCard{X}{Title,Desc}); 6 keys MANTENIDAS (siguen usadas). Cast `as TranslationShape` → `as unknown as TranslationShape` en 8 locales y en scripts translate-{locales,missing-keys}.ts (la separacion shape vs locales crecio). 3 tickets verificados y cerrados sin trabajo: episodios title+duration ya implementado en EpisodesList.tsx, empty space /perfil obsoleto (estructura cambio), audit i18n regresiones sin hallazgos.',
+      sortOrder: 21,
+    },
+    {
+      category: 'Refactor',
+      body: '/feedback toolbar reusa primitivos del design-system (#031cc2b): <div className="feedback-toolbar"> + CSS custom → <PanelCard padding="md">; <Tag.CheckableTag> → <Chip pressed={active} onClick={...}>. PanelCard provee chrome visual (padding/border/bg/radius); Chip provee aria-pressed styling (primary-color cuando pressed). -60/+64 lineas net. Alinea con CLAUDE.md "preferir design-system antes de inventar". Cualquier cambio futuro a PanelCard/Chip se propaga gratis.',
+      sortOrder: 22,
+    },
+    {
+      category: 'Fixes',
+      body: '/feedback empty .feedback-card__actions div (#031cc2b): el div se renderizaba siempre, incluso vacio (todos los children son condicionales userId&& / isAdmin&&). Para usuarios anonimos quedaba un flex-child 0x0 en el footer derecho. Wrap del div en `{(userId || isAdmin) && (...)}` — si no hay acciones, no se renderiza el div. Layout consistente para anonimos vs admins. Resuelve la percepcion del usuario de "ultimo card cortado".',
+      sortOrder: 23,
+    },
   ];
 
   let added = 0;

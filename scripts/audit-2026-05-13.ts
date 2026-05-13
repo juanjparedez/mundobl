@@ -177,6 +177,31 @@ const NEW_ITEMS: NewItem[] = [
     priority: 'LOW',
     initialStatus: 'COMPLETED',
   },
+  // Bloque /feedback toolbar + backlog review (2026-05-13 madrugada)
+  {
+    title: '/feedback: toolbar con search + filtros tipo/status + sort',
+    description:
+      '[completed:f6e1cfd] Tab "Ideas y Bugs" tenia 81 solicitudes activas sin filtros. Toolbar nueva entre header y listado con: search instant (title+description), chips multi-toggle tipo y status (default solo OPEN+IN_PROGRESS — mostrar COMPLETED/REJECTED es opt-in), sort dropdown (mas recientes / mas votadas / mas comentadas), contador dinamico, empty state diferenciado. Responsive en <640px.',
+    type: 'feature',
+    priority: 'MEDIUM',
+    initialStatus: 'COMPLETED',
+  },
+  {
+    title: '/feedback: reusar PanelCard + Chip del design-system',
+    description:
+      '[completed:031cc2b] Refactor del toolbar inicial: <div> custom + CSS propio → <PanelCard padding="md">; <Tag.CheckableTag> → <Chip pressed onClick>. Alinea con CLAUDE.md ("preferir design-system antes de inventar"). Cambio visual gratis a futuro via Chip/PanelCard. -60/+64 lineas net.',
+    type: 'feature',
+    priority: 'LOW',
+    initialStatus: 'COMPLETED',
+  },
+  {
+    title: '/feedback: fix div feedback-card__actions vacio para anonimos',
+    description:
+      '[completed:031cc2b] El div .feedback-card__actions se renderizaba siempre, incluso vacio cuando user no es admin/logueado. Quedaba un flex-child 0x0 en el footer creando inconsistencia layout. Wrap en `{(userId || isAdmin) && (...)}`. Confirmado via Playwright que en anonimos no se renderizaba ningun boton (era el caso esperado, pero el div quedaba presente). Resuelve la percepcion de "ultimo card cortado".',
+    type: 'bug',
+    priority: 'LOW',
+    initialStatus: 'COMPLETED',
+  },
 ];
 
 // Items que YA existen en DB (creados via UI por Flor u otros) y queremos
