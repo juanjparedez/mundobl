@@ -35,6 +35,10 @@ export async function POST(request: NextRequest) {
         nationality: body.nationality || null,
         imageUrl: body.imageUrl || null,
         biography: body.biography || null,
+        aliases: Array.isArray(body.aliases) ? body.aliases : [],
+        imdbUrl: body.imdbUrl || null,
+        mdlUrl: body.mdlUrl || null,
+        wikiUrl: body.wikiUrl || null,
       },
     });
 

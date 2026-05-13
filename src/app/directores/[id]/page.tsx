@@ -77,6 +77,17 @@ export default async function DirectorPage({ params }: DirectorPageProps) {
           ...(director.nationality && {
             nationality: { '@type': 'Country', name: director.nationality },
           }),
+          ...(director.aliases &&
+            director.aliases.length > 0 && {
+              alternateName: director.aliases,
+            }),
+          ...((director.imdbUrl || director.mdlUrl || director.wikiUrl) && {
+            sameAs: [
+              director.imdbUrl,
+              director.mdlUrl,
+              director.wikiUrl,
+            ].filter((u): u is string => !!u),
+          }),
           url: `https://mundobl.com.ar/directores/${director.id}`,
         }}
       />

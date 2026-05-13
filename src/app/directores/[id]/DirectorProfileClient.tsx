@@ -1,10 +1,12 @@
 'use client';
 
-import { Avatar, Card, Tag, Row, Col, Empty } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import { Avatar, Card, Tag, Row, Col, Empty, Tooltip } from 'antd';
+import { UserOutlined, LinkOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { Chip } from '@/components/design-system';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 import './director-profile.css';
 
 interface DirectorData {
@@ -13,6 +15,10 @@ interface DirectorData {
   nationality?: string | null;
   imageUrl?: string | null;
   biography?: string | null;
+  aliases?: string[];
+  imdbUrl?: string | null;
+  mdlUrl?: string | null;
+  wikiUrl?: string | null;
   series: Array<{
     series: {
       id: number;
@@ -47,6 +53,7 @@ function getTypeColor(type: string): string {
 export function DirectorProfileClient({
   director,
 }: DirectorProfileClientProps) {
+  const { t } = useLocale();
   const filmography = director.series
     .map((entry) => entry.series)
     .sort((a, b) => {
@@ -55,6 +62,23 @@ export function DirectorProfileClient({
       if (b.year) return 1;
       return a.title.localeCompare(b.title);
     });
+
+  const externalLinks = [
+    director.imdbUrl && {
+      url: director.imdbUrl,
+      label: t('directorProfile.linkImdb'),
+    },
+    director.mdlUrl && {
+      url: director.mdlUrl,
+      label: t('directorProfile.linkMdl'),
+    },
+    director.wikiUrl && {
+      url: director.wikiUrl,
+      label: t('directorProfile.linkWiki'),
+    },
+  ].filter((x): x is { url: string; label: string } => !!x);
+
+  const aliases = director.aliases ?? [];
 
   return (
     <div className="director-profile">
@@ -75,12 +99,44 @@ export function DirectorProfileClient({
           )}
           <div className="director-profile__info">
             <h1 className="director-profile__name">{director.name}</h1>
+            {aliases.length > 0 && (
+              <div
+                className="director-profile__aliases"
+                aria-label={t('directorProfile.aliasesLabel')}
+              >
+                {aliases.map((alias) => (
+                  <Chip key={alias} tone="neutral" size="sm">
+                    {alias}
+                  </Chip>
+                ))}
+              </div>
+            )}
             <div className="director-profile__meta">
               {director.nationality && (
                 <Tag color="blue">{director.nationality}</Tag>
               )}
               <Tag>{filmography.length} series dirigidas</Tag>
             </div>
+            {externalLinks.length > 0 && (
+              <nav
+                className="director-profile__links"
+                aria-label={t('directorProfile.linksLabel')}
+              >
+                {externalLinks.map((link) => (
+                  <Tooltip key={link.url} title={link.label}>
+                    <a
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="director-profile__link"
+                      aria-label={link.label}
+                    >
+                      <LinkOutlined /> <span>{link.label}</span>
+                    </a>
+                  </Tooltip>
+                ))}
+              </nav>
+            )}
           </div>
         </div>
 

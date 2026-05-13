@@ -18,6 +18,10 @@ export interface DirectorAdmin {
   nationality?: string | null;
   imageUrl?: string | null;
   biography?: string | null;
+  aliases?: string[];
+  imdbUrl?: string | null;
+  mdlUrl?: string | null;
+  wikiUrl?: string | null;
   _count?: {
     series: number;
   };

@@ -32,6 +32,39 @@
   gap: 4px;
 }
 
+.director-profile__aliases {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 0 0 8px 0;
+}
+
+.director-profile__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.director-profile__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm, 6px);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 13px;
+  text-decoration: none;
+  border: 1px solid var(--border-light);
+  transition: background-color 0.15s ease;
+}
+
+.director-profile__link:hover {
+  background: var(--bg-tertiary, var(--bg-secondary));
+  color: var(--primary-color);
+}
+
 .director-profile__biography {
   margin-top: var(--spacing-lg);
   padding-top: var(--spacing-lg);
