@@ -65,6 +65,60 @@
   color: var(--primary-color);
 }
 
+.director-profile__awards {
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--border-color-secondary);
+}
+
+.director-profile__awards h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.1em;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.director-profile__awards-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.director-profile__awards-list li {
+  position: relative;
+  padding-left: 18px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.director-profile__awards-list li::before {
+  content: '\2022';
+  position: absolute;
+  left: 4px;
+  color: var(--primary-color);
+}
+
+.director-profile__featured {
+  margin-top: var(--spacing-lg);
+}
+
+.director-profile__featured-icon {
+  color: var(--ant-color-warning, #faad14);
+  margin-right: 4px;
+}
+
+.director-profile__featured-card {
+  border: 1px solid var(--ant-color-warning-border, var(--border-light));
+}
+
+.director-profile__rating-tag {
+  font-variant-numeric: tabular-nums;
+}
+
 .director-profile__biography {
   margin-top: var(--spacing-lg);
   padding-top: var(--spacing-lg);

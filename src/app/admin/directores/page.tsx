@@ -6,6 +6,7 @@ import {
   Table,
   Button,
   Input,
+  InputNumber,
   Modal,
   Form,
   Popconfirm,
@@ -415,6 +416,30 @@ export default function DirectoresAdminPage() {
                 mode="tags"
                 tokenSeparators={[',']}
                 placeholder={t('adminDirectors.hintAliases')}
+              />
+            </Form.Item>
+
+            <Form.Item
+              label={t('adminDirectors.fieldBirthYear')}
+              name="birthYear"
+            >
+              <InputNumber
+                min={1900}
+                max={new Date().getFullYear()}
+                placeholder={t('adminDirectors.hintBirthYear')}
+                style={{ width: '100%' }}
+              />
+            </Form.Item>
+
+            <Form.Item
+              label={t('adminDirectors.fieldAwards')}
+              name="awards"
+              tooltip={t('adminDirectors.hintAwards')}
+            >
+              <Select
+                mode="tags"
+                tokenSeparators={[';']}
+                placeholder={t('adminDirectors.hintAwards')}
               />
             </Form.Item>
 

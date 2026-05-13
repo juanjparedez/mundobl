@@ -39,6 +39,11 @@ export async function POST(request: NextRequest) {
         imdbUrl: body.imdbUrl || null,
         mdlUrl: body.mdlUrl || null,
         wikiUrl: body.wikiUrl || null,
+        birthYear:
+          typeof body.birthYear === 'number' && body.birthYear > 0
+            ? body.birthYear
+            : null,
+        awards: Array.isArray(body.awards) ? body.awards : [],
       },
     });
 
