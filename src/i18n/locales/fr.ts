@@ -2568,6 +2568,6 @@ const fr: TranslationShape = {
     footerAdminToolsList: 'Retour à la liste',
     footerPending: 'Bientôt disponible',
   },
-} as TranslationShape;
+} as unknown as TranslationShape;
 
 export default fr;

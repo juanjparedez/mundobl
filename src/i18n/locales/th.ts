@@ -2509,6 +2509,6 @@ const th: TranslationShape = {
     footerAdminToolsList: 'กลับสู่รายการ',
     footerPending: 'เร็วๆ นี้',
   },
-} as TranslationShape;
+} as unknown as TranslationShape;
 
 export default th;
