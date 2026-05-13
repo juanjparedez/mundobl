@@ -613,10 +613,15 @@ export function CatalogoClient({
     return catalogItems.slice(startIndex, startIndex + pageSize);
   }, [catalogItems, currentPage, pageSize]);
 
-  // Sincroniza currentPage con ?page=N en URL. router.replace para no inflar
-  // history (cada paginacion no genera back entry); el back desde /series/[id]
-  // restaura la URL con la pagina correcta. page=1 se omite del query (URL limpia).
-  const pushPageToUrl = (nextPage: number) => {
+  // Sincroniza currentPage con ?page=N en URL.
+  // - `mode: 'push'`: navegacion intencional (click en Pagination). Cada cambio
+  //   genera una back entry, asi `back` desde page 5 va a page 4 (o la pagina
+  //   anterior si saltaron). Necesario para no perder pasos al navegar.
+  // - `mode: 'replace'`: reset implicito (cambio de filtro, search keystroke,
+  //   alphabet jump). NO genera back entry — sino cada tecla del search
+  //   crearia una.
+  // page=1 se omite del query string (URL limpia).
+  const syncPageInUrl = (nextPage: number, mode: 'push' | 'replace') => {
     if (typeof window === 'undefined') return;
     const params = new URLSearchParams(searchParams.toString());
     if (nextPage <= 1) {
@@ -625,12 +630,19 @@ export function CatalogoClient({
       params.set('page', String(nextPage));
     }
     const qs = params.toString();
-    router.replace(qs ? `/catalogo?${qs}` : '/catalogo', { scroll: false });
+    const href = qs ? `/catalogo?${qs}` : '/catalogo';
+    if (mode === 'push') {
+      router.push(href, { scroll: false });
+    } else {
+      router.replace(href, { scroll: false });
+    }
   };
 
   const handleFilterChange = () => {
+    // Filtros cambian "lo mostrado" pero no son una navegacion semantica
+    // — uses replace para no inflar history en cada keystroke.
     setCurrentPage(1);
-    pushPageToUrl(1);
+    syncPageInUrl(1, 'replace');
   };
 
   const clearFilters = () => {
@@ -1734,10 +1746,10 @@ export function CatalogoClient({
                 if (size !== pageSize) {
                   setPageSize(size);
                   setCurrentPage(1);
-                  pushPageToUrl(1);
+                  syncPageInUrl(1, 'replace');
                 } else {
                   setCurrentPage(page);
-                  pushPageToUrl(page);
+                  syncPageInUrl(page, 'push');
                 }
               }}
               showSizeChanger
@@ -1805,10 +1817,10 @@ export function CatalogoClient({
                 if (size !== pageSize) {
                   setPageSize(size);
                   setCurrentPage(1);
-                  pushPageToUrl(1);
+                  syncPageInUrl(1, 'replace');
                 } else {
                   setCurrentPage(page);
-                  pushPageToUrl(page);
+                  syncPageInUrl(page, 'push');
                 }
               }}
               showSizeChanger
