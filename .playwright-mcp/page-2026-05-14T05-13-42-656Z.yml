@@ -1,0 +1,115 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e2]
+  - generic [ref=e4]:
+    - link "Saltar al contenido principal" [ref=e5] [cursor=pointer]:
+      - /url: "#main-content"
+    - complementary [ref=e6]:
+      - generic [ref=e7]:
+        - generic [ref=e8]:
+          - generic [ref=e9]:
+            - img "appstore" [ref=e10]:
+              - img [ref=e11]
+            - generic [ref=e13]: MundoBL
+          - button "Colapsar menu" [ref=e14] [cursor=pointer]:
+            - img "menu-fold" [ref=e15]:
+              - img [ref=e16]
+        - menu [ref=e18]:
+          - menuitem "appstore Catalogo" [ref=e19] [cursor=pointer]:
+            - img "appstore" [ref=e20]:
+              - img [ref=e21]
+            - generic [ref=e23]: Catalogo
+          - menuitem "play-circle Ver series" [ref=e24] [cursor=pointer]:
+            - img "play-circle" [ref=e25]:
+              - img [ref=e26]
+            - generic [ref=e29]: Ver series
+          - menuitem "play-circle Viendo Ahora" [ref=e30] [cursor=pointer]:
+            - img "play-circle" [ref=e31]:
+              - img [ref=e32]
+            - generic [ref=e35]: Viendo Ahora
+          - menuitem "notification Novedades" [ref=e36] [cursor=pointer]:
+            - img "notification" [ref=e38]:
+              - img [ref=e39]
+            - generic [ref=e41]: Novedades
+          - menuitem "comment Feedback" [ref=e42] [cursor=pointer]:
+            - img "comment" [ref=e43]:
+              - img [ref=e44]
+            - generic [ref=e48]: Feedback
+          - menuitem "link Sitios de Interes" [ref=e49] [cursor=pointer]:
+            - img "link" [ref=e50]:
+              - img [ref=e51]
+            - generic [ref=e53]: Sitios de Interes
+          - menuitem "video-camera Contenido" [ref=e54] [cursor=pointer]:
+            - img "video-camera" [ref=e55]:
+              - img [ref=e56]
+            - generic [ref=e58]: Contenido
+          - menuitem "bar-chart Estadísticas" [ref=e59] [cursor=pointer]:
+            - img "bar-chart" [ref=e60]:
+              - img [ref=e61]
+            - generic [ref=e63]: Estadísticas
+        - button "Ajustes" [ref=e65] [cursor=pointer]:
+          - img [ref=e67]:
+            - img [ref=e68]
+          - generic [ref=e70]: Ajustes
+    - generic [ref=e71]:
+      - banner [ref=e72]:
+        - generic [ref=e73]:
+          - button "Espanol" [ref=e74] [cursor=pointer]:
+            - img "global" [ref=e75]:
+              - img [ref=e76]
+          - button "Ajustes" [ref=e78] [cursor=pointer]:
+            - img "setting" [ref=e79]:
+              - img [ref=e80]
+          - img "user" [ref=e83]:
+            - img [ref=e84]
+      - main [ref=e86]:
+        - generic [ref=e87]:
+          - heading "Feedback" [level=2] [ref=e89]
+          - generic [ref=e90]:
+            - tablist [ref=e91]:
+              - generic [ref=e93]:
+                - tab "Ideas y Bugs" [selected] [ref=e95] [cursor=pointer]
+                - tab "Changelog" [ref=e97] [cursor=pointer]
+            - tabpanel "Ideas y Bugs" [ref=e100]:
+              - generic [ref=e102]: 0 solicitudes activas
+              - generic [ref=e104]:
+                - generic [ref=e105]:
+                  - img "search" [ref=e107]:
+                    - img [ref=e108]
+                  - textbox "Buscar por título o descripción…" [ref=e110]
+                - generic [ref=e112]:
+                  - generic [ref=e113]: Tipo
+                  - button "Bug" [pressed] [ref=e114] [cursor=pointer]:
+                    - img [ref=e116]:
+                      - img [ref=e117]
+                    - generic [ref=e120]: Bug
+                  - button "Feature" [pressed] [ref=e121] [cursor=pointer]:
+                    - img [ref=e123]:
+                      - img [ref=e124]
+                    - generic [ref=e126]: Feature
+                  - button "Idea" [pressed] [ref=e127] [cursor=pointer]:
+                    - img [ref=e129]:
+                      - img [ref=e130]
+                    - generic [ref=e132]: Idea
+                - generic [ref=e133]:
+                  - generic [ref=e134]: Estado
+                  - button "Pendiente" [pressed] [ref=e135] [cursor=pointer]:
+                    - generic [ref=e136]: Pendiente
+                  - button "En progreso" [pressed] [ref=e137] [cursor=pointer]:
+                    - generic [ref=e138]: En progreso
+                  - button "Completado" [ref=e139] [cursor=pointer]:
+                    - generic [ref=e140]: Completado
+                  - button "Descartado" [ref=e141] [cursor=pointer]:
+                    - generic [ref=e142]: Descartado
+                - generic [ref=e143] [cursor=pointer]:
+                  - generic "Más recientes" [ref=e144]:
+                    - text: Más recientes
+                    - combobox [ref=e145]
+                  - img "down" [ref=e147]:
+                    - img [ref=e148]
+              - generic [ref=e150]:
+                - img "No hay datos" [ref=e152]
+                - generic [ref=e163]: No hay solicitudes activas
+    - generic [ref=e164]:
+      - paragraph [ref=e165]: Este sitio registra información de acceso con fines de seguridad y mejora. Al continuar navegando, aceptás nuestra política de privacidad.
+      - button "Entendido" [ref=e166] [cursor=pointer]:
+        - generic [ref=e167]: Entendido

@@ -224,10 +224,7 @@ export function BottomNav() {
                   }
                 }}
               >
-                <span
-                  className="bottom-nav-more-item__icon"
-                  aria-hidden="true"
-                >
+                <span className="bottom-nav-more-item__icon" aria-hidden="true">
                   {item.icon}
                 </span>
                 <span className="bottom-nav-more-item__label">
