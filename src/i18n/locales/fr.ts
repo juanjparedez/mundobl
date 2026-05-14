@@ -579,6 +579,7 @@ const fr: TranslationShape = {
     login: 'Se connecter',
     logout: 'Se déconnecter',
     settings: 'Paramètres',
+    ver: 'Regarder',
     accentColor: "Couleur d'accentuation",
     theme: 'Thème',
     switchToLight: 'Passer au mode clair',

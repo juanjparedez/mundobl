@@ -15,6 +15,10 @@ import {
   BellOutlined,
   BellFilled,
   MenuOutlined,
+  VideoCameraOutlined,
+  NotificationOutlined,
+  LinkOutlined,
+  BarChartOutlined,
 } from '@ant-design/icons';
 import { Badge, Drawer } from 'antd';
 import { useSession, signIn, signOut } from 'next-auth/react';
@@ -95,10 +99,43 @@ export function BottomNav() {
       : []),
   ];
 
-  // Items que viven dentro del drawer "Mas" (5to slot del bar). Incluye
-  // accesos secundarios: perfil, admin, login/logout, ajustes. Asi el bar
-  // queda limpio para 5 slots fijos sin importar el rol.
+  // Items que viven dentro del drawer "Mas" (5to slot del bar). Incluye:
+  //  1) acceso a las paginas publicas que no caben como primary (ver,
+  //     novedades, sitios, contenido, estadisticas) — equivalentes al
+  //     Sidebar de desktop;
+  //  2) accesos de cuenta (perfil/login, admin, ajustes, logout).
+  // Asi mobile no pierde features que existen en desktop.
   const moreItems: NavItem[] = [
+    {
+      key: 'ver',
+      icon: <VideoCameraOutlined />,
+      label: t('bottomNav.ver'),
+      path: ROUTES.VER,
+    },
+    {
+      key: 'novedades',
+      icon: <NotificationOutlined />,
+      label: t('sidebar.novedades'),
+      path: ROUTES.NOVEDADES,
+    },
+    {
+      key: 'sitios',
+      icon: <LinkOutlined />,
+      label: t('sidebar.sites'),
+      path: '/sitios',
+    },
+    {
+      key: 'contenido',
+      icon: <PlayCircleOutlined />,
+      label: t('sidebar.content'),
+      path: '/contenido',
+    },
+    {
+      key: 'estadisticas',
+      icon: <BarChartOutlined />,
+      label: t('sidebar.stats'),
+      path: ROUTES.ESTADISTICAS,
+    },
     ...(status === 'loading'
       ? [
           {

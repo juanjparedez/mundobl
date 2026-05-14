@@ -583,6 +583,7 @@ const de: TranslationShape = {
     login: 'Anmelden',
     logout: 'Abmelden',
     settings: 'Einstellungen',
+    ver: 'Ansehen',
     accentColor: 'Akzentfarbe',
     theme: 'Design',
     switchToLight: 'Zum hellen Modus wechseln',

@@ -579,6 +579,7 @@ const it: TranslationShape = {
     login: 'Accedi',
     logout: 'Esci',
     settings: 'Impostazioni',
+    ver: 'Guarda',
     accentColor: 'Colore accento',
     theme: 'Tema',
     switchToLight: 'Passa alla modalità chiara',
