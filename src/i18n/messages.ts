@@ -3944,7 +3944,7 @@ const es: TranslationShape = {
     title: 'Bienvenido/a a MundoBL',
     description:
       'Este es mi catálogo personal de series BL que fui viendo, incluyendo las que aún están en emisión. Si viste alguna, me encantaría que dejes tu comentario, reflexión o reseña.',
-    dismiss: 'Entendido',
+    dismiss: '¡Vamos!',
   },
   privacyBanner: {
     text: 'Guardamos algunos datos para que la app funcione (sesión, preferencias, actividad).',
@@ -6500,7 +6500,7 @@ const en: TranslationShape = {
     title: 'Welcome to MundoBL',
     description:
       'This is my personal catalog of BL series I have watched, including those still airing. If you have watched any, I would love for you to leave a comment, reflection or review.',
-    dismiss: 'Got it',
+    dismiss: "Let's go!",
   },
   privacyBanner: {
     text: 'We store some data so the app works (session, preferences, activity).',
