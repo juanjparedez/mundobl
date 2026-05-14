@@ -4,14 +4,17 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
-import { Button, Empty, Input, Select, Tag, Alert } from 'antd';
+import { useRouter } from 'next/navigation';
+import { Button, Empty, Input, Select, Tag, Alert, Popconfirm } from 'antd';
 import {
   PlayCircleFilled,
   PlusOutlined,
   SearchOutlined,
   YoutubeOutlined,
+  DeleteOutlined,
 } from '@ant-design/icons';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
+import { useMessage } from '@/hooks/useMessage';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
 
 interface VerItem {
@@ -23,7 +26,6 @@ interface VerItem {
   synopsis: string | null;
   catalogScope: string;
   origin: string;
-  submittedByNickname: string | null;
   country: { name: string; code: string | null } | null;
   episodesWithEmbed: number;
   platforms: string[];
@@ -35,12 +37,34 @@ interface VerPageProps {
 }
 
 export function VerPage({ items }: VerPageProps) {
-  const { status } = useSession();
+  const { data: session, status } = useSession();
   const isAuthenticated = status === 'authenticated';
+  const isAdmin = session?.user?.role === 'ADMIN';
+  const router = useRouter();
+  const message = useMessage();
   const [search, setSearch] = useState('');
   const [country, setCountry] = useState<string | null>(null);
   const [platform, setPlatform] = useState<string | null>(null);
   const [onlyCurated, setOnlyCurated] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+
+  const handleDelete = async (id: number) => {
+    setDeletingId(id);
+    try {
+      // /api/series/[id] DELETE permite ADMIN borrar tanto CURATED como
+      // USER_EMBED (cascade en las relaciones). El endpoint
+      // /api/admin/user-series solo permite USER_EMBED.
+      const res = await fetch(`/api/series/${id}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('delete failed');
+      message.success('Serie eliminada');
+      router.refresh();
+    } catch (err) {
+      console.error(err);
+      message.error('Error al eliminar la serie');
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   const countries = useMemo(() => {
     const set = new Set<string>();
@@ -134,7 +158,7 @@ export function VerPage({ items }: VerPageProps) {
           onClick={() => setOnlyCurated((v) => !v)}
           className="ver-filters__toggle"
         >
-          Solo curadas por Flor
+          Series curadas
         </Button>
       </div>
 
@@ -186,12 +210,37 @@ export function VerPage({ items }: VerPageProps) {
                     ★
                   </span>
                 )}
-                {item.origin === 'USER_EMBED' && item.submittedByNickname && (
+                {isAdmin && (
+                  // stopPropagation porque el Link envuelve todo el card.
+                  // Popconfirm evita borrar por error con un click suelto.
                   <span
-                    className="ver-card__submitted-badge"
-                    title={`Aportado por @${item.submittedByNickname}`}
+                    className="ver-card__admin-delete"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
                   >
-                    @{item.submittedByNickname}
+                    <Popconfirm
+                      title="¿Eliminar esta serie?"
+                      description="No se puede deshacer. Las reseñas, comentarios y suscripciones también se borran."
+                      okText="Eliminar"
+                      okButtonProps={{ danger: true }}
+                      cancelText="Cancelar"
+                      onConfirm={(e) => {
+                        e?.preventDefault();
+                        e?.stopPropagation();
+                        handleDelete(item.id);
+                      }}
+                    >
+                      <Button
+                        type="text"
+                        danger
+                        size="small"
+                        icon={<DeleteOutlined />}
+                        loading={deletingId === item.id}
+                        aria-label="Eliminar serie"
+                      />
+                    </Popconfirm>
                   </span>
                 )}
               </div>

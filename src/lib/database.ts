@@ -114,6 +114,7 @@ export async function getWatchableSeries() {
               episodeNumber: true,
               embedPlatform: true,
               embedChannelName: true,
+              embedUrl: true,
             },
             orderBy: { episodeNumber: 'asc' },
           },
