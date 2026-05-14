@@ -1420,6 +1420,7 @@ export type TranslationShape = {
   };
   privacyBanner: {
     text: string;
+    detailsLink: string;
     accept: string;
   };
   header: {
@@ -3946,8 +3947,9 @@ const es: TranslationShape = {
     dismiss: 'Entendido',
   },
   privacyBanner: {
-    text: 'Este sitio registra información de acceso con fines de seguridad y mejora. Al continuar navegando, aceptás nuestra política de privacidad.',
-    accept: 'Entendido',
+    text: 'Guardamos algunos datos para que la app funcione (sesión, preferencias, actividad).',
+    detailsLink: 'Ver qué guardamos y cómo borrarlo',
+    accept: 'Ok, entendido',
   },
   header: {
     title: 'MundoBL - Catálogo de Series',
@@ -6501,7 +6503,8 @@ const en: TranslationShape = {
     dismiss: 'Got it',
   },
   privacyBanner: {
-    text: 'This site logs access information for security and improvement purposes. By continuing to browse, you accept our privacy policy.',
+    text: 'We store some data so the app works (session, preferences, activity).',
+    detailsLink: 'See what we store and how to delete it',
     accept: 'Got it',
   },
   header: {
