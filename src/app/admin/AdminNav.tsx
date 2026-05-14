@@ -193,8 +193,8 @@ export function AdminNav() {
   return (
     <>
       {/* Mobile (<=768px via CSS): trigger compact que abre Drawer con
-        * todos los grupos. La nav horizontal de desktop sigue abajo
-        * oculta via media query. */}
+       * todos los grupos. La nav horizontal de desktop sigue abajo
+       * oculta via media query. */}
       <button
         type="button"
         className="admin-nav-mobile-trigger"
@@ -204,9 +204,7 @@ export function AdminNav() {
         aria-label={t('adminNav.ariaLabel')}
       >
         <MenuOutlined className="admin-nav-mobile-trigger__icon" />
-        <span className="admin-nav-mobile-trigger__label">
-          {activeLabel}
-        </span>
+        <span className="admin-nav-mobile-trigger__label">{activeLabel}</span>
         <RightOutlined className="admin-nav-mobile-trigger__chevron" />
       </button>
 

@@ -1,10 +1,10 @@
 export const dynamic = 'force-dynamic';
 
 import {
-  AppstoreOutlined,
-  ReadOutlined,
-  MessageOutlined,
-  TeamOutlined,
+  TagsOutlined,
+  GlobalOutlined,
+  VideoCameraOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { prisma } from '@/lib/database';
@@ -265,26 +265,29 @@ export default async function AdminLandingPage() {
     tone: 'danger' | 'warning' | 'info';
   }>;
 
+  // Hero stats: inventario del catalogo (complementario al AdminKPIsWidget,
+  // que muestra actividad: series/reseñas/comentarios/usuarios). Si los
+  // dos espacios mostraban los mismos numeros se sentia duplicado.
   const heroStats = [
     {
-      label: 'Series',
-      value: counts.series,
-      icon: <AppstoreOutlined />,
+      label: 'Tags',
+      value: counts.tags,
+      icon: <TagsOutlined />,
     },
     {
-      label: 'Reseñas',
-      value: counts.reviews,
-      icon: <ReadOutlined />,
+      label: 'Universos',
+      value: counts.universes,
+      icon: <GlobalOutlined />,
     },
     {
-      label: 'Comentarios',
-      value: counts.comments,
-      icon: <MessageOutlined />,
+      label: 'Directores',
+      value: counts.directors,
+      icon: <VideoCameraOutlined />,
     },
     {
-      label: 'Usuarios',
-      value: counts.users,
-      icon: <TeamOutlined />,
+      label: 'Actores',
+      value: counts.actors,
+      icon: <UserOutlined />,
     },
   ];
 

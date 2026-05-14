@@ -1,0 +1,33 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e2]
+  - generic [ref=e4]:
+    - link "Saltar al contenido principal" [ref=e5] [cursor=pointer]:
+      - /url: "#main-content"
+    - generic [ref=e6]:
+      - banner [ref=e7]:
+        - button "Buscar..." [ref=e8] [cursor=pointer]:
+          - img [ref=e9]:
+            - img [ref=e10]
+      - main [ref=e12]:
+        - generic [ref=e21]: Cargando catálogo...
+    - navigation "Navegacion principal" [ref=e22]:
+      - button "Catalogo" [ref=e23] [cursor=pointer]:
+        - img [ref=e25]:
+          - img [ref=e26]
+        - generic [ref=e28]: Catalogo
+      - button "Viendo" [ref=e29] [cursor=pointer]:
+        - img [ref=e31]:
+          - img [ref=e32]
+        - generic [ref=e35]: Viendo
+      - button "Feedback" [ref=e36] [cursor=pointer]:
+        - img [ref=e38]:
+          - img [ref=e39]
+        - generic [ref=e43]: Feedback
+      - button "Más" [ref=e44] [cursor=pointer]:
+        - img [ref=e46]:
+          - img [ref=e47]
+        - generic [ref=e49]: Más
+    - generic [ref=e50]:
+      - paragraph [ref=e51]: Este sitio registra información de acceso con fines de seguridad y mejora. Al continuar navegando, aceptás nuestra política de privacidad.
+      - button "Entendido" [ref=e52] [cursor=pointer]:
+        - generic [ref=e53]: Entendido
