@@ -556,6 +556,7 @@ const zhTW: TranslationShape = {
     login: '登入',
     logout: '登出',
     settings: '設定',
+    ver: '觀看',
     accentColor: '強調色',
     theme: '主題',
     switchToLight: '切換至淺色模式',

@@ -569,6 +569,7 @@ const th: TranslationShape = {
     login: 'ลงชื่อเข้าใช้',
     logout: 'ออกจากระบบ',
     settings: 'การตั้งค่า',
+    ver: 'ดู',
     accentColor: 'สีเน้น',
     theme: 'ธีม',
     switchToLight: 'เปลี่ยนเป็นโหมดสว่าง',

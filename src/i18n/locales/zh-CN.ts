@@ -556,6 +556,7 @@ const zhCN: TranslationShape = {
     login: '登录',
     logout: '退出',
     settings: '设置',
+    ver: '观看',
     accentColor: '强调色',
     theme: '主题',
     switchToLight: '切换到浅色模式',
