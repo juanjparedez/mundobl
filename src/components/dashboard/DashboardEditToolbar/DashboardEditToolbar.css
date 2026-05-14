@@ -11,6 +11,18 @@
   background: color-mix(in srgb, var(--bg-elevated) 76%, transparent);
 }
 
+/* Cuando el toolbar tiene SOLO el boton "Editar layout" a la derecha
+ * (sin startContent), el chrome de caja (bg + border + padding) lo
+ * hace parecer un widget aislado mal posicionado en mobile. En ese caso
+ * sacamos el chrome y el toolbar queda como un boton inline natural,
+ * alineado a la derecha del flow. */
+.mb-dashboard-edit-toolbar:not(:has(.mb-dashboard-edit-toolbar__start)) {
+  padding: 0;
+  border: none;
+  background: transparent;
+  margin-bottom: var(--spacing-sm);
+}
+
 .mb-dashboard-edit-toolbar__start {
   display: inline-flex;
   align-items: center;
