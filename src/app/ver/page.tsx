@@ -58,6 +58,9 @@ export default async function VerPageRoute() {
       country: s.country
         ? { name: s.country.name, code: s.country.code }
         : null,
+      linkedSeries: s.linkedSeries
+        ? { id: s.linkedSeries.id, title: s.linkedSeries.title }
+        : null,
       episodesWithEmbed: s.episodesWithEmbed,
       platforms: Array.from(
         new Set(

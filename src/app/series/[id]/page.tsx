@@ -206,6 +206,21 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
             { name: serie.title },
           ]}
         />
+        {/* Banner cuando hay aportes USER_EMBED linkeados a esta CURATED.
+         * El user puede saltar a /ver/[id] para mirar la serie. */}
+        {serie.linkedFromUserEmbeds &&
+          serie.linkedFromUserEmbeds.length > 0 && (
+            <div className="series-linked-from-user-embeds">
+              <Link
+                href={`/ver/${serie.linkedFromUserEmbeds[0].id}`}
+                className="series-linked-from-user-embeds__link"
+              >
+                ▶ También disponible para ver en /ver
+                {serie.linkedFromUserEmbeds.length > 1 &&
+                  ` (${serie.linkedFromUserEmbeds.length} aportes)`}
+              </Link>
+            </div>
+          )}
         <SeriesHeader
           series={{
             ...serie,

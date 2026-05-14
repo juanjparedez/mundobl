@@ -34,6 +34,7 @@ interface ParsedInput {
   seasonNumber: number;
   channelName: string | null;
   channelUrl: string | null;
+  linkedSeriesId: number | null;
 }
 
 function parseAndValidate(
@@ -96,6 +97,15 @@ function parseAndValidate(
     ? (series.type as AllowedType)
     : 'serie';
 
+  const linkedSeriesIdRaw =
+    typeof series.linkedSeriesId === 'number'
+      ? series.linkedSeriesId
+      : Number(series.linkedSeriesId ?? NaN);
+  const linkedSeriesId =
+    Number.isFinite(linkedSeriesIdRaw) && linkedSeriesIdRaw > 0
+      ? Math.floor(linkedSeriesIdRaw)
+      : null;
+
   const episode = body.episode ?? { episodeNumber: 1 };
   const episodeNumberRaw =
     typeof episode.episodeNumber === 'number'
@@ -137,6 +147,7 @@ function parseAndValidate(
       seasonNumber,
       channelName: clean(episode.channelName, 200),
       channelUrl: clean(episode.channelUrl, 500),
+      linkedSeriesId,
     },
   };
 }
@@ -288,6 +299,21 @@ export async function POST(request: NextRequest) {
     originalLanguageId = lang.id;
   }
 
+  // Validamos linkedSeriesId antes del create: tiene que existir + ser
+  // CURATED. Si el front mando un ID invalido o de un USER_EMBED, lo
+  // descartamos silenciosamente (mejor crear sin link que rechazar el
+  // submit entero).
+  let validatedLinkedSeriesId: number | null = null;
+  if (data.linkedSeriesId !== null) {
+    const target = await prisma.series.findUnique({
+      where: { id: data.linkedSeriesId },
+      select: { id: true, origin: true },
+    });
+    if (target && target.origin === 'CURATED') {
+      validatedLinkedSeriesId = target.id;
+    }
+  }
+
   const newSeries = await prisma.series.create({
     data: {
       title: data.title,
@@ -302,6 +328,7 @@ export async function POST(request: NextRequest) {
       countryId,
       productionCompanyId,
       originalLanguageId,
+      linkedSeriesId: validatedLinkedSeriesId,
     },
   });
 

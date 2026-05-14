@@ -106,3 +106,101 @@
     align-items: flex-start;
   }
 }
+
+/* Asociacion con catalogo curado */
+.ver-agregar-link-catalog {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: var(--bg-container);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+}
+
+.ver-agregar-link-catalog__head {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  color: var(--text-primary);
+}
+
+.ver-agregar-link-catalog__head h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.ver-agregar-link-catalog__hint {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.ver-agregar-link-catalog__loading,
+.ver-agregar-link-catalog__empty {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  color: var(--text-tertiary);
+  text-align: center;
+  padding: var(--spacing-sm);
+}
+
+.ver-agregar-link-catalog__results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.ver-agregar-link-catalog__result {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-base);
+  background: var(--bg-elevated);
+}
+
+.ver-agregar-link-catalog__result img {
+  border-radius: var(--border-radius-sm);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.ver-agregar-link-catalog__result-placeholder {
+  width: 42px;
+  height: 60px;
+  display: grid;
+  place-items: center;
+  background: var(--bg-spotlight);
+  border-radius: var(--border-radius-sm);
+  flex-shrink: 0;
+  font-size: 1.5rem;
+}
+
+.ver-agregar-link-catalog__result-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ver-agregar-link-catalog__result-title {
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ver-agregar-link-catalog__result-meta {
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+}
