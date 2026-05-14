@@ -128,10 +128,10 @@ export function TopBar() {
           </span>
         )}
         {/* En mobile estos items se duplican con BottomNav (notifications,
-          * idioma via SettingsPanel, ajustes, login). Los ocultamos con
-          * .app-topbar__mobile-hide en media query <768px para evitar
-          * doble entry. El avatar+dropdown del user logueado SI queda
-          * (es el unico acceso a logout). */}
+         * idioma via SettingsPanel, ajustes, login). Los ocultamos con
+         * .app-topbar__mobile-hide en media query <768px para evitar
+         * doble entry. El avatar+dropdown del user logueado SI queda
+         * (es el unico acceso a logout). */}
         <span className="app-topbar__mobile-hide">
           <NotificationsBell variant="topbar" />
         </span>
