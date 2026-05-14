@@ -223,6 +223,12 @@ model Series {
   // siguen viendola.
   visibility    String   @default("VISIBLE")
   submittedById String?
+  // Para series USER_EMBED que el submitter declaro como "la misma serie
+  // que esta otra del catalogo curado" (boton "asociar" en /ver/agregar).
+  // Ambas series existen como entidades separadas; el link permite mostrar
+  // badges bidireccionales en /ver y /catalogo y a admins linkear sin
+  // moderar manualmente. Solo se setea en USER_EMBED → CURATED.
+  linkedSeriesId Int?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -256,9 +262,12 @@ model Series {
   subscriptions     SeriesSubscription[]
   infoBlocks        SeriesInfoBlock[]
   submittedBy       User?                @relation("UserSubmittedSeries", fields: [submittedById], references: [id], onDelete: SetNull)
+  linkedSeries      Series?              @relation("UserEmbedLink", fields: [linkedSeriesId], references: [id], onDelete: SetNull)
+  linkedFromUserEmbeds Series[]          @relation("UserEmbedLink")
 
   @@index([origin, visibility])
   @@index([submittedById, createdAt])
+  @@index([linkedSeriesId])
 }
 
 // Bloques de informacion adicionales por serie. Cards labeladas y libres
@@ -379,6 +388,20 @@ model Actor {
 // ============================================
 // DIRECTORES
 // ============================================
+/// Cache del payload que devuelve Gemini al armar la preview de un video
+/// embebido en /ver/agregar. Evita pagar la llamada IA cuando el mismo
+/// videoId+platform se prueba mas de una vez (typical: user pega URL,
+/// abandona el form, vuelve a abrirlo).
+model EmbedPreviewCache {
+  videoId   String
+  platform  String
+  payload   Json
+  createdAt DateTime @default(now())
+
+  @@id([videoId, platform])
+  @@index([createdAt])
+}
+
 model Director {
   id          Int      @id @default(autoincrement())
   name        String   @unique
