@@ -323,6 +323,27 @@
   transform: translateY(0);
 }
 
+/* En mobile/touch (no hay :hover), los botones overlay deben estar
+ * SIEMPRE visibles. Antes el ojito "Ver detalle" y la estrella favorito
+ * eran inalcanzables en mobile. Usamos hover:none para detectar touch
+ * devices y dejamos visibles sin transition. */
+@media (hover: none) {
+  .serie-card-actions {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* En mobile (<=768px) tambien aumentamos el tap target a 36px (era 30)
+ * para cumplir guidelines de touch (minimo 44px sumando padding). */
+@media (max-width: 768px) {
+  .serie-card-action-btn {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 16px;
+  }
+}
+
 .serie-card-action-btn {
   width: 30px;
   height: 30px;
