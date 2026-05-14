@@ -264,7 +264,9 @@ async function loadSource(
 
 const GEMINI_SYSTEM_INSTRUCTION = `Sos un asistente experto en doramas BL/GL asiaticos (Tailandia, Corea, Japon, China, Taiwan, Filipinas, Vietnam, Indonesia, Malasia, Hong Kong).
 
-Devolves SOLO JSON valido, sin markdown ni texto adicional, con esta shape exacta:
+Tu tarea: identificar la serie/pelicula a partir del titulo del video, el canal oficial y la descripcion. Cuando puedas, usa Google Search para verificar el nombre exacto, el año, el reparto y la productora.
+
+Devolves SOLO JSON valido (response mime type es application/json), con esta shape exacta:
 {
   "title": string,
   "originalTitle": string | null,
@@ -280,14 +282,23 @@ Devolves SOLO JSON valido, sin markdown ni texto adicional, con esta shape exact
   "confidence": "high" | "medium" | "low"
 }
 
-Reglas:
-- Si no estas seguro de un campo, devolve null o [].
-- "synopsis" en espanol neutro, max 500 caracteres.
-- "actorNames" max 8 nombres con formato "Nombre Apellido".
-- "tagNames" max 8 (ej: "Romance", "Universitarios", "Doctores").
-- "genreNames" max 5 (ej: "Drama", "Romance", "Comedia").
-- "year" entre 1990 y 2030.
-- "confidence": "high" si reconoces el titulo exacto en bases publicas; "medium" si deduces por canal+titulo; "low" si solo adivinas.`;
+REGLAS CRITICAS (anti-alucinacion):
+
+1. NO INVENTES actores. Si no podes confirmar el reparto con certeza (busqueda web o conocimiento solido de la serie), devolve actorNames: []. Mejor vacio que inventado.
+2. NO INVENTES titulo. Si el video parece ser un episodio individual sin nombre de serie identificable, devolve el rawTitle del video tal cual y confidence "low".
+3. NO INVENTES productora. Si no es obvio por el canal (ej. canal "GMMTV Official" → productionCompanyName "GMMTV"; canal random sin marca clara → null).
+4. Para titulo de serie: SACA prefijos tipo "[EP 1]", "EP01", "EP1 |", "Episode 1:", "Capitulo 1", "第1集" del rawTitle. Tambien saca sufijos tipo "Full Episode", "Sub English", "ENG SUB", "[Eng Sub]". Devolve el titulo limpio de la serie completa.
+5. originalTitle: el titulo en idioma original (tailandes/coreano/japones/chino) si lo conoces. Si solo conoces el titulo en ingles, originalTitle = null.
+6. Para series BL/GL, los actores suelen aparecer como pareja. Maximo 8 nombres con formato "Nombre Apellido" (no nicknames tipo "Bright" sin apellido — usa el nombre real completo, ej. "Vachirawit Chivaaree").
+7. synopsis: espanol neutro, max 500 caracteres. Sin spoilers fuertes. Si no tenes informacion fiable, devolve null.
+8. year: año de estreno entre 1990 y 2030. Si no estas seguro, null.
+9. tagNames max 8 (ej: "Romance", "Universitarios", "Doctores", "Enemy to Lovers", "Slow Burn"). genreNames max 5 (ej: "Drama", "Romance", "Comedia").
+10. countryCode: solo TH, KR, JP, CN, TW, PH, VN, ID, MY, HK. Si la serie es de otro pais, devolve null (no aceptamos otros origenes).
+
+CONFIDENCE:
+- "high": reconociste la serie con certeza (titulo exacto + año + productora confirmadas). Usa SOLO si efectivamente la busqueda web o tu conocimiento te dan certeza, no como default.
+- "medium": deducis razonablemente por contexto (canal oficial + titulo claro) pero algunos campos quedan inferidos.
+- "low": adivinas con poca info. La mayoria de campos quedan null o [].`;
 
 interface GeminiPayload {
   title?: unknown;
@@ -371,21 +382,36 @@ async function suggestWithGemini(
   const prompt = [
     `Titulo del video: "${rawTitle ?? '(sin titulo)'}".`,
     `Canal oficial: "${source.channelName ?? '(desconocido)'}".`,
+    source.channelUrl ? `URL del canal: ${source.channelUrl}.` : null,
     `Plataforma: ${source.platform}.`,
-    `Descripcion del video: "${description ?? ''}".`,
+    description ? `Descripcion del video: "${description}".` : null,
     '',
-    'Identifica si es una serie BL/GL conocida, pelicula, corto o especial.',
-    'Si es un episodio individual, deducir la serie completa.',
+    'Si el video parece ser un episodio individual de una serie, identifica',
+    'la SERIE completa (no el episodio). Saca prefijos tipo "[EP 1]" del titulo.',
+    'Cuando tengas duda, busca en web para verificar nombre, reparto y',
+    'productora.',
+    '',
     'Devolve SOLO el JSON pedido en las instrucciones del sistema.',
-  ].join('\n');
+  ]
+    .filter(Boolean)
+    .join('\n');
 
   let rawResponse: string;
   try {
     rawResponse = await generateText({
       prompt,
       systemInstruction: GEMINI_SYSTEM_INSTRUCTION,
-      temperature: 0.3,
+      // Temperature 0: tarea de extraccion, no creativa. Mismo input
+      // deberia dar mismo output, sin variabilidad.
+      temperature: 0,
       maxOutputTokens: 1024,
+      // application/json garantiza JSON sintacticamente valido.
+      responseMimeType: 'application/json',
+      // googleSearch: grounding via web — permite a Gemini verificar
+      // nombre de serie, reparto y productora con fuentes externas. Reduce
+      // drasticamente la alucinacion (especialmente en actores). Si el
+      // modelo de fallback no soporta tools, Google lo ignora silenciosamente.
+      tools: [{ googleSearch: {} }],
       thinkingBudget: 0,
     });
   } catch (err) {
@@ -401,6 +427,8 @@ async function suggestWithGemini(
     return fallbackSuggested(rawTitle);
   }
 
+  // JSON mode garantiza JSON valido pero a veces Gemini igual envuelve en
+  // ```json ... ``` por habito. stripJsonFences cubre ese caso.
   const stripped = stripJsonFences(rawResponse);
   let parsed: GeminiPayload;
   try {
@@ -414,20 +442,52 @@ async function suggestWithGemini(
 
   const title =
     clampString(parsed.title, 200) ?? rawTitle?.trim() ?? 'Sin titulo';
+  const actorNames = asStringArray(parsed.actorNames, 8, 80);
+  const productionCompanyName = clampString(parsed.productionCompanyName, 150);
+  const year = pickYear(parsed.year);
+  const countryCode = pickCountry(parsed.countryCode);
+  let confidence = pickConfidence(parsed.confidence);
+
+  // Validacion cruzada: downgrade confidence si las "señales fuertes"
+  // estan ausentes. Confidence "high" requiere que el modelo haya
+  // confirmado al menos titulo + año + (productora || pais). Si Gemini
+  // marca "high" pero alguna pata esta vacia, lo bajamos a "medium".
+  if (confidence === 'high') {
+    const hasYear = year !== null;
+    const hasOriginContext =
+      countryCode !== null || productionCompanyName !== null;
+    if (!hasYear || !hasOriginContext) {
+      confidence = 'medium';
+      warnings.push(
+        'IA marco confidence alta pero faltan señales fuertes (año o origen). Revisa los datos antes de confirmar.'
+      );
+    }
+  }
+
+  // Si la confidence es "low" pero igual devolvio actores, los limpiamos.
+  // Tiramos el sesgo hacia "vacio mejor que inventado" — el user puede
+  // agregarlos manualmente.
+  const finalActors =
+    confidence === 'low' && actorNames.length > 0
+      ? (warnings.push(
+          'IA con baja confidence sugirio actores; descartados para evitar nombres inventados. Agregalos manualmente.'
+        ),
+        [])
+      : actorNames;
 
   return {
     title,
     originalTitle: clampString(parsed.originalTitle, 200),
-    year: pickYear(parsed.year),
-    countryCode: pickCountry(parsed.countryCode),
+    year,
+    countryCode,
     synopsis: clampString(parsed.synopsis, 500),
-    actorNames: asStringArray(parsed.actorNames, 8, 80),
-    productionCompanyName: clampString(parsed.productionCompanyName, 150),
+    actorNames: finalActors,
+    productionCompanyName,
     originalLanguageName: clampString(parsed.originalLanguageName, 60),
     dubbingLanguageNames: asStringArray(parsed.dubbingLanguageNames, 8, 60),
     tagNames: asStringArray(parsed.tagNames, 8, 60),
     genreNames: asStringArray(parsed.genreNames, 5, 60),
-    confidence: pickConfidence(parsed.confidence),
+    confidence,
   };
 }
 

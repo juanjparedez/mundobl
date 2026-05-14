@@ -70,6 +70,15 @@ interface GenerateOptions {
   // la salida visible. 0 desactiva thinking (recomendado para tareas
   // cortas como "sugerir titulo").
   thinkingBudget?: number;
+  // 'application/json' fuerza JSON mode (Gemini garantiza JSON sintacticamente
+  // valido — evita stripJsonFences). Default 'text/plain'.
+  responseMimeType?: 'text/plain' | 'application/json';
+  // Tools de Gemini 2.5. El uso mas comun: grounding via Google Search,
+  // permite al modelo consultar web para responder con info actualizada
+  // y reducir alucinaciones. Pasar `[{ googleSearch: {} }]`.
+  // Nota: NO todos los modelos soportan tools (lite no). Si el fallback
+  // cae a uno sin soporte, la llamada igual va; Google ignora el tool.
+  tools?: Array<Record<string, unknown>>;
 }
 
 // Cuando uno de estos errores ocurre, vale la pena probar el siguiente modelo.
@@ -170,6 +179,8 @@ export async function generateText({
   temperature = 0.4,
   maxOutputTokens = 2048,
   thinkingBudget,
+  responseMimeType = 'text/plain',
+  tools,
 }: GenerateOptions): Promise<string> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
@@ -184,10 +195,11 @@ export async function generateText({
     ...(systemInstruction && {
       systemInstruction: { parts: [{ text: systemInstruction }] },
     }),
+    ...(tools && tools.length > 0 && { tools }),
     generationConfig: {
       temperature,
       maxOutputTokens,
-      responseMimeType: 'text/plain',
+      responseMimeType,
       ...(thinkingBudget !== undefined && {
         thinkingConfig: { thinkingBudget },
       }),
