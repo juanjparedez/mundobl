@@ -107,6 +107,30 @@
   }
 }
 
+/* Alert de warnings post-preview IA. Sobre dark theme el Alert warning
+ * de Ant tiene fondo amarillento — agregamos contraste extra al texto
+ * para que sea legible y separamos message/description con mas aire. */
+.ver-agregar-warnings .ant-alert-message {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.ver-agregar-warnings .ant-alert-description {
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-top: 4px;
+}
+
+.ver-agregar-warnings__list {
+  margin: 0;
+  padding: 0 0 0 var(--spacing-md);
+  list-style: disc outside;
+}
+
+.ver-agregar-warnings__list li + li {
+  margin-top: 4px;
+}
+
 /* Asociacion con catalogo curado */
 .ver-agregar-link-catalog {
   display: flex;
