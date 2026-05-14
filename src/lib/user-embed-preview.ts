@@ -4,107 +4,41 @@
  * para titulo/canal/thumb) con autopoblado IA de Gemini (sinopsis, año,
  * pais, cast, productora, idiomas, subs, tags, genero).
  *
- * El helper NO persiste — solo arma el objeto que el cliente confirma o
- * edita antes de POST /api/user/series/embed/confirm.
+ * Este modulo importa prisma (cache) — SOLO usar desde rutas API.
+ * Para client components, importar de user-embed-preview-shared.ts
+ * (types + constants sin deps Node).
  */
 
 import { detectPlatform, extractVideoId } from './embed-helpers';
 import { generateText, GeminiError } from './gemini';
 import { prisma } from './database';
+import {
+  ALLOWED_COUNTRY_CODES,
+  SUPPORTED_EMBED_PLATFORMS,
+  type AllowedCountryCode,
+  type EmbedPlatform,
+  type EmbedPreview,
+  type EmbedPreviewSource,
+  type EmbedPreviewSuggested,
+} from './user-embed-preview-shared';
+
+// Re-export para que callers server-side (rutas API) no rompan:
+// /api/user/series/embed/{preview,confirm} importan desde aca.
+export {
+  ALLOWED_COUNTRY_CODES,
+  SUPPORTED_EMBED_PLATFORMS,
+  type AllowedCountryCode,
+  type EmbedPlatform,
+  type EmbedPreview,
+  type EmbedPreviewSource,
+  type EmbedPreviewSuggested,
+};
+export type { EmbedConfirmInput } from './user-embed-preview-shared';
 
 // 30 dias: balance entre evitar pagar Gemini repetidamente y permitir
 // que el modelo mejore con tiempo. Se puede invalidar manualmente borrando
 // rows de EmbedPreviewCache.
 const CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
-
-export type EmbedPlatform = 'YouTube' | 'Vimeo' | 'Bilibili' | 'Dailymotion';
-
-export const SUPPORTED_EMBED_PLATFORMS: EmbedPlatform[] = [
-  'YouTube',
-  'Vimeo',
-  'Bilibili',
-  'Dailymotion',
-];
-
-/**
- * Paises permitidos. Coincide con el set hardcoded de ImportarClient para
- * mantener consistencia con el catalogo curado de Flor. Si Gemini sugiere
- * algo fuera de esta lista, se descarta y queda null.
- */
-export const ALLOWED_COUNTRY_CODES = [
-  'TH',
-  'KR',
-  'JP',
-  'CN',
-  'TW',
-  'PH',
-  'VN',
-  'ID',
-  'MY',
-  'HK',
-] as const;
-
-export type AllowedCountryCode = (typeof ALLOWED_COUNTRY_CODES)[number];
-
-export interface EmbedPreviewSource {
-  platform: EmbedPlatform;
-  videoId: string;
-  embedUrl: string;
-  thumbnailUrl: string | null;
-  channelName: string | null;
-  channelUrl: string | null;
-  rawTitle: string | null;
-}
-
-export interface EmbedPreviewSuggested {
-  title: string;
-  originalTitle: string | null;
-  year: number | null;
-  countryCode: AllowedCountryCode | null;
-  synopsis: string | null;
-  actorNames: string[];
-  productionCompanyName: string | null;
-  originalLanguageName: string | null;
-  dubbingLanguageNames: string[];
-  tagNames: string[];
-  genreNames: string[];
-  confidence: 'high' | 'medium' | 'low';
-}
-
-export interface EmbedPreview {
-  source: EmbedPreviewSource;
-  suggested: EmbedPreviewSuggested;
-  warnings: string[];
-}
-
-export interface EmbedConfirmInput {
-  url: string;
-  series: {
-    title: string;
-    originalTitle?: string | null;
-    year?: number | null;
-    type?: 'serie' | 'pelicula' | 'corto' | 'especial';
-    countryCode?: string | null;
-    synopsis?: string | null;
-    actorNames?: string[];
-    productionCompanyName?: string | null;
-    originalLanguageName?: string | null;
-    dubbingLanguageNames?: string[];
-    tagNames?: string[];
-    genreNames?: string[];
-    /** ID de la Series CURATED del catalogo a la que el user vincula este
-     *  aporte. Ambas entidades coexisten; el link permite badges
-     *  bidireccionales en /ver y /catalogo. Null = sin vincular. */
-    linkedSeriesId?: number | null;
-  };
-  episode: {
-    episodeNumber: number;
-    title?: string | null;
-    seasonNumber?: number;
-    channelName?: string | null;
-    channelUrl?: string | null;
-  };
-}
 
 interface OEmbedData {
   rawTitle: string | null;

@@ -13,11 +13,14 @@ import {
   CloseCircleOutlined,
 } from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
+// Importamos del modulo "-shared" porque user-embed-preview.ts trae
+// `prisma` (cache) que no compila en client bundle ("Module not found: tls"
+// via pg). El shared solo tiene types + constants.
 import type {
   EmbedPreview,
   AllowedCountryCode,
-} from '@/lib/user-embed-preview';
-import { ALLOWED_COUNTRY_CODES } from '@/lib/user-embed-preview';
+} from '@/lib/user-embed-preview-shared';
+import { ALLOWED_COUNTRY_CODES } from '@/lib/user-embed-preview-shared';
 
 interface CatalogSearchResult {
   id: number;
