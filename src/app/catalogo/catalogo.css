@@ -879,9 +879,23 @@
    ========================================== */
 .universe-card-wrapper {
   position: relative;
-  height: 100%;
+  /* height: 100% causaba que el wrapper estuviera constrainted al alto
+   * del row del grid (Ant Row align stretch). Con el panel expandido,
+   * sus 3 entries necesitan ~110px extra que no caben en el alto
+   * fijo → la 3ra entry quedaba clippeada por overflow:hidden del
+   * panel. Sin height:100%, el wrapper crece con su contenido. Trade-off:
+   * la altura del card queda menos uniforme con singles del mismo row,
+   * pero el panel se ve completo. */
   display: flex;
   flex-direction: column;
+}
+
+/* La .serie-card global tiene height:100% (asume que tiene parent con
+ * altura definida). Dentro del wrapper sin height:100%, ese 100% se
+ * resuelve a 0. Override: la altura de la card universe la define su
+ * contenido (cover 150px + body padding). */
+.universe-card-wrapper .serie-card--universe {
+  height: auto;
 }
 
 .serie-card--universe {
