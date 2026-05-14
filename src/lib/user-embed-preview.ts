@@ -276,7 +276,11 @@ const GEMINI_SYSTEM_INSTRUCTION = `Sos un asistente experto en doramas BL/GL asi
 
 Tu tarea: identificar la serie/pelicula a partir del titulo del video, el canal oficial y la descripcion. Cuando puedas, usa Google Search para verificar el nombre exacto, el año, el reparto y la productora.
 
-Devolves SOLO JSON valido (response mime type es application/json), con esta shape exacta:
+Devolves SOLO un objeto JSON valido. Nada antes, nada despues. Sin markdown,
+sin code fences, sin citas tipo "[1]" o "[2]" del grounding, sin texto
+explicativo. La primera linea debe arrancar con "{" y la ultima cerrar con "}".
+
+Shape exacta:
 {
   "title": string,
   "originalTitle": string | null,
@@ -415,12 +419,12 @@ async function suggestWithGemini(
       // deberia dar mismo output, sin variabilidad.
       temperature: 0,
       maxOutputTokens: 1024,
-      // application/json garantiza JSON sintacticamente valido.
-      responseMimeType: 'application/json',
-      // googleSearch: grounding via web — permite a Gemini verificar
-      // nombre de serie, reparto y productora con fuentes externas. Reduce
-      // drasticamente la alucinacion (especialmente en actores). Si el
-      // modelo de fallback no soporta tools, Google lo ignora silenciosamente.
+      // NOTA: Gemini rechaza tools + responseMimeType:'application/json'
+      // con 400 "Tool use with a response mime type: 'application/json'
+      // is unsupported". Como priorizamos grounding (mucho impacto en
+      // accuracy), dejamos el responseMimeType default text/plain y
+      // confiamos en stripJsonFences + JSON.parse en try/catch para
+      // recuperar el JSON.
       tools: [{ googleSearch: {} }],
       // Vision: el thumbnail del video suele tener key visual reconocible
       // (cover/poster, actores, logo de productora, tipografia del titulo).
