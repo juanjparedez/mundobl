@@ -10,6 +10,12 @@
 
 import { detectPlatform, extractVideoId } from './embed-helpers';
 import { generateText, GeminiError } from './gemini';
+import { prisma } from './database';
+
+// 30 dias: balance entre evitar pagar Gemini repetidamente y permitir
+// que el modelo mejore con tiempo. Se puede invalidar manualmente borrando
+// rows de EmbedPreviewCache.
+const CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
 export type EmbedPlatform = 'YouTube' | 'Vimeo' | 'Bilibili' | 'Dailymotion';
 
@@ -412,6 +418,14 @@ async function suggestWithGemini(
       // drasticamente la alucinacion (especialmente en actores). Si el
       // modelo de fallback no soporta tools, Google lo ignora silenciosamente.
       tools: [{ googleSearch: {} }],
+      // Vision: el thumbnail del video suele tener key visual reconocible
+      // (cover/poster, actores, logo de productora, tipografia del titulo).
+      // Pasarlo como inline image ayuda a Gemini a identificar series que
+      // por solo titulo+canal serian dificiles. Fallback silencioso si la
+      // URL no responde.
+      images: source.thumbnailUrl
+        ? [{ url: source.thumbnailUrl, mimeType: 'image/jpeg' }]
+        : undefined,
       thinkingBudget: 0,
     });
   } catch (err) {
@@ -506,17 +520,68 @@ export async function buildEmbedPreview(url: string): Promise<EmbedPreview> {
     throw new EmbedPreviewError(source.error, 422);
   }
 
+  // Cache lookup: si tenemos un preview reciente (TTL 30d) para este
+  // (videoId, platform), reusamos el suggested + saltamos la llamada Gemini.
+  // source.embedUrl / source.thumbnailUrl / source.channelName se rearmaron
+  // arriba en loadSource, asi siempre estan frescos del oEmbed.
+  try {
+    const cached = await prisma.embedPreviewCache.findUnique({
+      where: {
+        videoId_platform: {
+          videoId: source.videoId,
+          platform: source.platform,
+        },
+      },
+    });
+    if (
+      cached &&
+      Date.now() - cached.createdAt.getTime() < CACHE_TTL_MS
+    ) {
+      // payload es Json en Prisma — castiamos asumiendo que lo escribimos
+      // nosotros con la shape de EmbedPreviewSuggested.
+      const suggested = cached.payload as unknown as EmbedPreviewSuggested;
+      return { source, suggested, warnings };
+    }
+  } catch {
+    // Cache failure es no-fatal — seguimos al call de Gemini.
+  }
+
   // Bilibili scrape ya pobla description en og:description. YouTube oEmbed
   // no incluye descripcion; queda null y Gemini trabaja sin ella.
   let description: string | null = null;
   if (source.platform === 'Bilibili') {
-    // El loadSource ya hizo scrape; necesitamos releerlo. Como pequena
-    // optimizacion, lo hacemos un solo fetch arriba y lo pasamos. Pero
-    // mantengo simple: Gemini funciona bien sin description para BL.
     description = null;
   }
 
   const suggested = await suggestWithGemini(source, description, warnings);
+
+  // Cache write — solo si el call no fallback'eo a "Sin titulo" (señal
+  // de que Gemini se cayo o devolvio JSON invalido). Tampoco cachear si
+  // confidence es 'low' — futuras llamadas podrian dar mejor resultado
+  // con cambios al prompt/modelo.
+  if (suggested.title !== 'Sin titulo' && suggested.confidence !== 'low') {
+    try {
+      await prisma.embedPreviewCache.upsert({
+        where: {
+          videoId_platform: {
+            videoId: source.videoId,
+            platform: source.platform,
+          },
+        },
+        create: {
+          videoId: source.videoId,
+          platform: source.platform,
+          payload: suggested as unknown as object,
+        },
+        update: {
+          payload: suggested as unknown as object,
+          createdAt: new Date(),
+        },
+      });
+    } catch {
+      // No-fatal: si el cache falla, igual devolvemos el preview.
+    }
+  }
 
   return { source, suggested, warnings };
 }

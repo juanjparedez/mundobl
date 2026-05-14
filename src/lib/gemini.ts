@@ -60,6 +60,18 @@ export class GeminiError extends Error {
   }
 }
 
+/** Imagen para input multimodal. Gemini la consume como inlineData (base64).
+ *  El caller puede pasar bytes ya descargados (Buffer/Uint8Array) o un URL
+ *  y nosotros descargamos. */
+export interface GeminiImageInput {
+  /** Bytes ya en memoria (preferido para performance — caller hizo el fetch). */
+  data?: Uint8Array | Buffer | ArrayBuffer;
+  /** URL externa (https://...) — fetcheada por gemini.ts si no hay data. */
+  url?: string;
+  /** mime type. Default 'image/jpeg'. */
+  mimeType?: 'image/jpeg' | 'image/png' | 'image/webp' | 'image/gif';
+}
+
 interface GenerateOptions {
   prompt: string;
   systemInstruction?: string;
@@ -79,6 +91,9 @@ interface GenerateOptions {
   // Nota: NO todos los modelos soportan tools (lite no). Si el fallback
   // cae a uno sin soporte, la llamada igual va; Google ignora el tool.
   tools?: Array<Record<string, unknown>>;
+  // Multimodal: imagenes que el modelo "ve" junto al prompt. Util para
+  // identificar series a partir del thumbnail del video (cover/poster).
+  images?: GeminiImageInput[];
 }
 
 // Cuando uno de estos errores ocurre, vale la pena probar el siguiente modelo.
@@ -173,6 +188,32 @@ async function callOnce(
   return { text };
 }
 
+async function imageToInlinePart(
+  img: GeminiImageInput
+): Promise<{ inlineData: { mimeType: string; data: string } } | null> {
+  const mimeType = img.mimeType ?? 'image/jpeg';
+  let bytes: ArrayBuffer | Uint8Array | Buffer | null = img.data ?? null;
+  if (!bytes && img.url) {
+    try {
+      const res = await fetch(img.url, { cache: 'no-store' });
+      if (!res.ok) return null;
+      bytes = await res.arrayBuffer();
+    } catch {
+      return null;
+    }
+  }
+  if (!bytes) return null;
+  // Convertir a base64 (Node.js Buffer es la forma standard server-side).
+  const buf = Buffer.from(
+    bytes instanceof ArrayBuffer
+      ? new Uint8Array(bytes)
+      : (bytes as Uint8Array | Buffer)
+  );
+  return {
+    inlineData: { mimeType, data: buf.toString('base64') },
+  };
+}
+
 export async function generateText({
   prompt,
   systemInstruction,
@@ -181,6 +222,7 @@ export async function generateText({
   thinkingBudget,
   responseMimeType = 'text/plain',
   tools,
+  images,
 }: GenerateOptions): Promise<string> {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
@@ -190,8 +232,19 @@ export async function generateText({
     );
   }
 
+  // Construir parts: texto + imagenes (si las hay). Cualquier imagen que
+  // falle de fetchear se omite silenciosamente (mejor degradar a text-only
+  // que romper toda la llamada).
+  const parts: Array<Record<string, unknown>> = [{ text: prompt }];
+  if (images && images.length > 0) {
+    for (const img of images) {
+      const part = await imageToInlinePart(img);
+      if (part) parts.push(part);
+    }
+  }
+
   const payload = {
-    contents: [{ role: 'user', parts: [{ text: prompt }] }],
+    contents: [{ role: 'user', parts }],
     ...(systemInstruction && {
       systemInstruction: { parts: [{ text: systemInstruction }] },
     }),
