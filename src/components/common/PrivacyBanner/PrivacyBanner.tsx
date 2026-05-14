@@ -1,6 +1,7 @@
 'use client';
 
 import { useSyncExternalStore } from 'react';
+import Link from 'next/link';
 import { Button } from 'antd';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import './PrivacyBanner.css';
@@ -37,10 +38,14 @@ export function PrivacyBanner() {
   };
 
   return (
-    <div className="privacy-banner">
-      <p className="privacy-banner__text">{t('privacyBanner.text')}</p>
+    <div className="privacy-banner" role="region" aria-label="Aviso de privacidad">
+      <p className="privacy-banner__text">
+        {t('privacyBanner.text')}{' '}
+        <Link href="/privacidad" className="privacy-banner__link">
+          {t('privacyBanner.detailsLink')}
+        </Link>
+      </p>
       <Button
-        type="primary"
         size="small"
         onClick={handleAccept}
         className="privacy-banner__btn"

@@ -342,12 +342,35 @@
 }
 
 @media (max-width: 640px) {
+  /* En mobile el grid 'text actions / stats stats' rompia el layout:
+   * los 4 botones de acciones (Insights/Audit/Versiones/Usuarios) son anchos
+   * en su columna 'auto' y comprimian la columna 'text' a un ~70px de
+   * ancho, donde el titulo "Hola, Juan" y el subtitulo de 8 palabras
+   * caian con una palabra por linea. Fix: layout vertical apilado en
+   * mobile (text encima, actions abajo a full-width, stats al final). */
   .admin-dashboard__hero {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'text'
+      'actions'
+      'stats';
     padding: var(--spacing-md, 18px);
   }
 
   .admin-dashboard__hero-title {
     font-size: 1.4em;
+  }
+
+  .admin-dashboard__hero-actions {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .admin-dashboard__hero-actions .ant-btn {
+    /* Tap target accesible + cada boton toma el espacio que necesita */
+    min-height: 40px;
+    flex: 0 1 auto;
   }
 
   .admin-dashboard__hero-stats {
