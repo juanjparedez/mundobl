@@ -116,7 +116,9 @@
   --sidebar-width: 250px;
   --sidebar-collapsed-width: 80px;
   --content-max-width: 1200px;
-  --bottom-nav-height: 56px;
+  /* 64px — Material guideline: bar height 56-72px para nav con icon+label.
+   * Subimos de 56 a 64 para que el icono 24px + label 12px respiren. */
+  --bottom-nav-height: 64px;
 
   /* Transiciones */
   --transition-base: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
@@ -323,7 +325,9 @@
   --spacing-lg: 18px;
   --spacing-xl: 24px;
   --header-height: 52px;
-  --bottom-nav-height: 48px;
+  /* compact mode: 56px (era 48). Aun con density compact necesitamos
+   * espacio para icono 24px + label 12px. */
+  --bottom-nav-height: 56px;
 
   /* Profile header chico */
   --profile-header-padding-block: 10px;

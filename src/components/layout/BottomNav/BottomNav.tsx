@@ -9,13 +9,15 @@ import {
   CommentOutlined,
   LoadingOutlined,
   LoginOutlined,
+  LogoutOutlined,
   UserOutlined,
   GlobalOutlined,
   BellOutlined,
   BellFilled,
+  MenuOutlined,
 } from '@ant-design/icons';
-import { Badge } from 'antd';
-import { useSession, signIn } from 'next-auth/react';
+import { Badge, Drawer } from 'antd';
+import { useSession, signIn, signOut } from 'next-auth/react';
 import { ROUTES } from '@/constants/navigation';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { SettingsPanel } from '@/components/layout/SettingsPanel/SettingsPanel';
@@ -36,6 +38,7 @@ export function BottomNav() {
   const { t } = useLocale();
   const { data: session, status } = useSession();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
   const unreadCount = useUnreadNotifications();
 
   const isAdmin = session?.user?.role === 'ADMIN';
@@ -47,6 +50,7 @@ export function BottomNav() {
   useEffect(() => {
     startTransition(() => {
       setIsSettingsOpen(false);
+      setIsMoreOpen(false);
     });
   }, [pathname]);
 
@@ -56,7 +60,11 @@ export function BottomNav() {
     </Badge>
   );
 
-  const navItems: NavItem[] = [
+  // Material guideline: nav bar con 3-5 items. Para no apretar mas alla
+  // de eso, mostramos siempre 4 primarios + "Mas" (drawer con el resto).
+  // Hace que el bar sea consistente para todos los roles y previene
+  // labels/icons demasiado chicos cuando hay muchos items.
+  const primaryItems: NavItem[] = [
     {
       key: 'catalogo',
       icon: <AppstoreOutlined />,
@@ -85,16 +93,12 @@ export function BottomNav() {
           },
         ]
       : []),
-    ...(canAccessAdmin
-      ? [
-          {
-            key: 'admin',
-            icon: <SettingOutlined />,
-            label: t('bottomNav.admin'),
-            path: ROUTES.ADMIN,
-          },
-        ]
-      : []),
+  ];
+
+  // Items que viven dentro del drawer "Mas" (5to slot del bar). Incluye
+  // accesos secundarios: perfil, admin, login/logout, ajustes. Asi el bar
+  // queda limpio para 5 slots fijos sin importar el rol.
+  const moreItems: NavItem[] = [
     ...(status === 'loading'
       ? [
           {
@@ -127,12 +131,41 @@ export function BottomNav() {
               path: ROUTES.PERFIL,
             },
           ]),
+    ...(canAccessAdmin
+      ? [
+          {
+            key: 'admin',
+            icon: <SettingOutlined />,
+            label: t('bottomNav.admin'),
+            path: ROUTES.ADMIN,
+          },
+        ]
+      : []),
+    {
+      key: 'settings',
+      icon: <GlobalOutlined />,
+      label: t('bottomNav.settings'),
+      onClick: () => {
+        setIsMoreOpen(false);
+        setIsSettingsOpen(true);
+      },
+    },
+    ...(session
+      ? [
+          {
+            key: 'logout',
+            icon: <LogoutOutlined />,
+            label: t('sidebar.logout'),
+            onClick: () => signOut({ callbackUrl: '/' }),
+          },
+        ]
+      : []),
   ];
 
   return (
     <>
       <nav className="bottom-nav" aria-label={t('bottomNav.mainNavigation')}>
-        {navItems.map((item) => (
+        {primaryItems.map((item) => (
           <button
             key={item.key}
             className={`bottom-nav-item ${item.path && isActive(item.path) ? 'bottom-nav-item--active' : ''}`}
@@ -149,19 +182,63 @@ export function BottomNav() {
           </button>
         ))}
         <button
-          className={`bottom-nav-item ${isSettingsOpen ? 'bottom-nav-item--active' : ''}`}
-          onClick={() => setIsSettingsOpen(true)}
-          aria-label={t('bottomNav.settings')}
+          className={`bottom-nav-item ${isMoreOpen ? 'bottom-nav-item--active' : ''}`}
+          onClick={() => setIsMoreOpen(true)}
+          aria-label={t('bottomNav.more') || 'Más'}
           aria-haspopup="dialog"
         >
           <span className="bottom-nav-item-icon" aria-hidden="true">
-            <GlobalOutlined />
+            <MenuOutlined />
           </span>
           <span className="bottom-nav-item-label">
-            {t('bottomNav.settings')}
+            {t('bottomNav.more') || 'Más'}
           </span>
         </button>
       </nav>
+
+      <Drawer
+        title={t('bottomNav.more') || 'Más'}
+        placement="bottom"
+        height="auto"
+        open={isMoreOpen}
+        onClose={() => setIsMoreOpen(false)}
+        className="bottom-nav-more-drawer"
+        styles={{ body: { padding: 0 } }}
+      >
+        <ul className="bottom-nav-more-list">
+          {moreItems.map((item) => (
+            <li key={item.key}>
+              <button
+                type="button"
+                className={`bottom-nav-more-item ${
+                  item.path && isActive(item.path)
+                    ? 'bottom-nav-more-item--active'
+                    : ''
+                }`}
+                onClick={() => {
+                  if (item.onClick) {
+                    item.onClick();
+                  } else if (item.path) {
+                    router.push(item.path);
+                    setIsMoreOpen(false);
+                  }
+                }}
+              >
+                <span
+                  className="bottom-nav-more-item__icon"
+                  aria-hidden="true"
+                >
+                  {item.icon}
+                </span>
+                <span className="bottom-nav-more-item__label">
+                  {item.label}
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </Drawer>
+
       <SettingsPanel
         open={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}

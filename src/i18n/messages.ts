@@ -529,6 +529,7 @@ export type TranslationShape = {
     login: string;
     logout: string;
     settings: string;
+    more: string;
     accentColor: string;
     theme: string;
     switchToLight: string;
@@ -3005,6 +3006,7 @@ const es: TranslationShape = {
     login: 'Entrar',
     logout: 'Salir',
     settings: 'Ajustes',
+    more: 'Más',
     accentColor: 'Color',
     theme: 'Tema',
     switchToLight: 'Cambiar a modo claro',
@@ -5565,6 +5567,7 @@ const en: TranslationShape = {
     login: 'Sign in',
     logout: 'Sign out',
     settings: 'Settings',
+    more: 'More',
     accentColor: 'Accent color',
     theme: 'Theme',
     switchToLight: 'Switch to light mode',

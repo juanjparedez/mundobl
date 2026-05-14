@@ -1,3 +1,7 @@
+/* BottomNav Material-style: solid bar + active indicator. Iconos 24px,
+ * labels 12px, tap targets 56px (Material guideline). En modo dark el
+ * bar usa bg-elevated con un sutil shadow superior para separar del
+ * contenido. */
 .bottom-nav {
   display: none;
   position: fixed;
@@ -7,8 +11,12 @@
   height: var(--bottom-nav-height);
   background: var(--bg-elevated);
   border-top: 1px solid var(--border-color-secondary);
+  /* Sutil sombra para separar de contenido scrolleado debajo */
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
   z-index: 1000;
   align-items: stretch;
+  /* Soporte para safe area de iOS (notch / home indicator) */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .bottom-nav-preferences {
@@ -79,18 +87,22 @@
 }
 
 .bottom-nav-item {
+  /* Material guidelines: tap target minimo 48x48px. Acomodamos hasta 5
+   * items via flex:1 — para 6+ usamos el overflow menu "Más". */
   flex: 1;
+  min-width: 56px;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: 4px;
   border: none;
   background: transparent;
   color: var(--text-secondary);
   cursor: pointer;
-  padding: 6px 0;
-  transition: var(--transition-fast);
+  padding: 8px 4px 6px;
+  transition: color 0.18s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -102,8 +114,24 @@
   color: var(--primary-color);
 }
 
+/* Indicator Material: pill bajo el item activo. Se anima de ancho con
+ * un pseudo-element para que sea perf-friendly (no JS, transition CSS
+ * pura). */
+.bottom-nav-item--active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 36px;
+  height: 3px;
+  background: var(--primary-color);
+  border-radius: 0 0 4px 4px;
+  transform: translateX(-50%);
+}
+
 .bottom-nav-item-icon {
-  font-size: 20px;
+  /* Icon size 24px (era 20px) — Material standard para nav bars. */
+  font-size: 24px;
   line-height: 1;
   display: inline-flex;
   align-items: center;
@@ -124,10 +152,76 @@
 /* El sup del Badge (el numerito) queda absoluto sobre la esquina; nos
  * aseguramos de que no empuje el flujo. */
 .bottom-nav-item-icon .ant-badge > .anticon {
-  font-size: 20px;
+  font-size: 24px;
 }
 
 .bottom-nav-item-label {
-  font-size: 10px;
-  line-height: 1;
+  /* 12px (era 10px) — legible en mobile sin agrandar mucho el bar. */
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Drawer "Más" — contiene los items secundarios (perfil, admin, login,
+ * settings, logout) que no caben en los 5 slots del bar. Bottom drawer
+ * nativo de mobile. */
+.bottom-nav-more-drawer .ant-drawer-content-wrapper {
+  /* En mobile el drawer respeta el safe area inferior del device */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.bottom-nav-more-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.bottom-nav-more-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md, 16px);
+  padding: 16px var(--spacing-md, 16px);
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 15px;
+  text-align: left;
+  transition: background-color 0.15s ease;
+  border-bottom: 1px solid var(--border-color-secondary);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bottom-nav-more-item:last-child {
+  border-bottom: none;
+}
+
+.bottom-nav-more-item:hover,
+.bottom-nav-more-item:focus-visible {
+  background: var(--bg-spotlight);
+}
+
+.bottom-nav-more-item--active {
+  color: var(--primary-color);
+  background: color-mix(in srgb, var(--primary-color) 10%, transparent);
+}
+
+.bottom-nav-more-item__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  width: 24px;
+}
+
+.bottom-nav-more-item__label {
+  flex: 1;
+  font-weight: 500;
 }

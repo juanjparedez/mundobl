@@ -150,6 +150,15 @@
     justify-content: center;
   }
 
+  /* En mobile ocultamos items que ya viven en BottomNav (notifications,
+   * idioma via SettingsPanel, ajustes, login). Evita duplicaciones que
+   * confunden al user — el BottomNav es el single-source para esos
+   * accesos. El avatar+dropdown del user logueado queda visible (unico
+   * acceso a logout). */
+  .app-topbar__mobile-hide {
+    display: none !important;
+  }
+
   /* En mobile el pill ocupa demasiado: solo el icono. */
   .app-topbar__admin-pill-text {
     display: none;

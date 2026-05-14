@@ -127,7 +127,14 @@ export function TopBar() {
             </span>
           </span>
         )}
-        <NotificationsBell variant="topbar" />
+        {/* En mobile estos items se duplican con BottomNav (notifications,
+          * idioma via SettingsPanel, ajustes, login). Los ocultamos con
+          * .app-topbar__mobile-hide en media query <768px para evitar
+          * doble entry. El avatar+dropdown del user logueado SI queda
+          * (es el unico acceso a logout). */}
+        <span className="app-topbar__mobile-hide">
+          <NotificationsBell variant="topbar" />
+        </span>
 
         <Dropdown
           menu={{ items: localeItems, selectedKeys: [locale] }}
@@ -137,7 +144,7 @@ export function TopBar() {
           <Tooltip title={LOCALE_LABELS[locale]} placement="bottom">
             <button
               type="button"
-              className="app-topbar__icon-btn"
+              className="app-topbar__icon-btn app-topbar__mobile-hide"
               aria-label={LOCALE_LABELS[locale]}
             >
               <GlobalOutlined />
@@ -148,7 +155,7 @@ export function TopBar() {
         <Tooltip title={t('bottomNav.settings')} placement="bottom">
           <button
             type="button"
-            className="app-topbar__icon-btn"
+            className="app-topbar__icon-btn app-topbar__mobile-hide"
             onClick={() => setSettingsOpen(true)}
             aria-label={t('bottomNav.settings')}
             aria-haspopup="dialog"
@@ -182,6 +189,7 @@ export function TopBar() {
             type="primary"
             size="small"
             icon={<LoginOutlined />}
+            className="app-topbar__mobile-hide"
             onClick={() =>
               signIn('google', {
                 callbackUrl:
