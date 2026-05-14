@@ -569,6 +569,7 @@ const ko: TranslationShape = {
     login: '로그인',
     logout: '로그아웃',
     settings: '설정',
+    ver: '시청',
     accentColor: '강조 색상',
     theme: '테마',
     switchToLight: '라이트 모드로 전환',

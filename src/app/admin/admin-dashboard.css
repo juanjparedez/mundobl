@@ -373,8 +373,11 @@
     flex: 0 1 auto;
   }
 
+  /* 4 cols en 360px ahogaba a cada stat: icon 32 + value + label uppercase
+   * no caben. 2x2 da espacio y los 4 stats siguen siendo visibles arriba
+   * del fold sin scroll horizontal. */
   .admin-dashboard__hero-stats {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     max-width: none;
     width: 100%;
   }

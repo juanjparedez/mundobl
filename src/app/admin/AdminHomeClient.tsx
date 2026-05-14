@@ -49,12 +49,15 @@ const DEFAULT_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.recentActivity, x: 0, y: 13, w: 6, h: 5 },
     { i: WIDGET_IDS.topCommenters, x: 0, y: 18, w: 6, h: 5 },
   ],
+  // xs (<480px): KPIs como 2x2 stack necesitan h: 7 para no recortar
+  // los StatCards de la fila inferior. Chart y listas requieren h: 7
+  // tambien o el contenido de adentro se trunca con overflow hidden.
   xs: [
-    { i: WIDGET_IDS.kpis, x: 0, y: 0, w: 4, h: 4 },
-    { i: WIDGET_IDS.alerts, x: 0, y: 4, w: 4, h: 5 },
-    { i: WIDGET_IDS.activityChart, x: 0, y: 9, w: 4, h: 5 },
-    { i: WIDGET_IDS.recentActivity, x: 0, y: 14, w: 4, h: 5 },
-    { i: WIDGET_IDS.topCommenters, x: 0, y: 19, w: 4, h: 5 },
+    { i: WIDGET_IDS.kpis, x: 0, y: 0, w: 4, h: 7 },
+    { i: WIDGET_IDS.alerts, x: 0, y: 7, w: 4, h: 6 },
+    { i: WIDGET_IDS.activityChart, x: 0, y: 13, w: 4, h: 7 },
+    { i: WIDGET_IDS.recentActivity, x: 0, y: 20, w: 4, h: 7 },
+    { i: WIDGET_IDS.topCommenters, x: 0, y: 27, w: 4, h: 7 },
   ],
 };
 
@@ -112,8 +115,11 @@ export function AdminHomeClient({
   const [editing, setEditing] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
 
+  // Bump v1 → v2 (2026-05-14): xs heights updated para que KPI cards
+  // 2x2 y listas no se recorten en mobile. Sin bump, users con layout
+  // guardado en localStorage seguirian con h:4 y verian widgets cortados.
   const { layouts, setLayouts, removeWidget, addWidget, reset, widgetIds } =
-    useDashboardLayout('admin-home-v1', DEFAULT_LAYOUTS);
+    useDashboardLayout('admin-home-v2', DEFAULT_LAYOUTS);
 
   useMemo(() => {
     WidgetRegistry.register({

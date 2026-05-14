@@ -573,6 +573,7 @@ const ja: TranslationShape = {
     login: 'サインイン',
     logout: 'サインアウト',
     settings: '設定',
+    ver: '視聴',
     accentColor: 'アクセントカラー',
     theme: 'テーマ',
     switchToLight: 'ライトモードに切り替える',
