@@ -306,15 +306,24 @@ export function AgregarVerClient() {
 
           {preview.warnings.length > 0 && (
             <Alert
+              className="ver-agregar-warnings"
               type="warning"
               showIcon
               message="Revisá los datos antes de confirmar"
               description={
-                <ul style={{ margin: 0, paddingLeft: 20 }}>
-                  {preview.warnings.map((w) => (
-                    <li key={w}>{w}</li>
-                  ))}
-                </ul>
+                // Si es un solo warning, render plano (sin bullet con
+                // indent que con 1 sola entry se ve desprolijo). Si son
+                // varios, lista no-marker con padding cero — los warnings
+                // ya son frases completas, el bullet no aporta info.
+                preview.warnings.length === 1 ? (
+                  <span>{preview.warnings[0]}</span>
+                ) : (
+                  <ul className="ver-agregar-warnings__list">
+                    {preview.warnings.map((w) => (
+                      <li key={w}>{w}</li>
+                    ))}
+                  </ul>
+                )
               }
             />
           )}
