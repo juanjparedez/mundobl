@@ -4,6 +4,7 @@ import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
 import { JsonLd } from '@/components/seo/JsonLd';
 import type { CollectionPage } from 'schema-dts';
 import { getWatchableSeries } from '@/lib/database';
+import { getAutoThumbnailUrl, type Platform } from '@/lib/embed-helpers';
 import { VerPage } from './VerPage';
 import './ver.css';
 
@@ -28,39 +29,58 @@ export const dynamic = 'force-dynamic';
 export default async function VerPageRoute() {
   const series = await getWatchableSeries();
 
-  const items = series.map((s) => ({
-    id: s.id,
-    title: s.title,
-    year: s.year,
-    type: s.type,
-    imageUrl: s.imageUrl,
-    synopsis: s.synopsis,
-    catalogScope: s.catalogScope,
-    origin: s.origin,
-    submittedByNickname: s.submittedBy?.nickname ?? s.submittedBy?.name ?? null,
-    country: s.country ? { name: s.country.name, code: s.country.code } : null,
-    episodesWithEmbed: s.episodesWithEmbed,
-    platforms: Array.from(
-      new Set(
-        s.seasons.flatMap(
-          (season) =>
-            season.episodes
-              .map((e) => e.embedPlatform)
-              .filter(Boolean) as string[]
+  const items = series.map((s) => {
+    // Fallback de thumbnail: si Series.imageUrl es null pero la serie tiene
+    // episodes con embed de YouTube, derivamos img.youtube.com/vi/{id}/...
+    // Cubre el caso "user-embed sin poster cargado".
+    let imageUrl = s.imageUrl;
+    if (!imageUrl) {
+      const firstWithEmbed = s.seasons
+        .flatMap((season) => season.episodes)
+        .find((e) => e.embedPlatform && e.embedUrl);
+      if (firstWithEmbed) {
+        imageUrl = getAutoThumbnailUrl(
+          firstWithEmbed.embedPlatform as Platform,
+          firstWithEmbed.embedUrl as string
+        );
+      }
+    }
+
+    return {
+      id: s.id,
+      title: s.title,
+      year: s.year,
+      type: s.type,
+      imageUrl,
+      synopsis: s.synopsis,
+      catalogScope: s.catalogScope,
+      origin: s.origin,
+      country: s.country
+        ? { name: s.country.name, code: s.country.code }
+        : null,
+      episodesWithEmbed: s.episodesWithEmbed,
+      platforms: Array.from(
+        new Set(
+          s.seasons.flatMap(
+            (season) =>
+              season.episodes
+                .map((e) => e.embedPlatform)
+                .filter(Boolean) as string[]
+          )
         )
-      )
-    ),
-    channels: Array.from(
-      new Set(
-        s.seasons.flatMap(
-          (season) =>
-            season.episodes
-              .map((e) => e.embedChannelName)
-              .filter(Boolean) as string[]
+      ),
+      channels: Array.from(
+        new Set(
+          s.seasons.flatMap(
+            (season) =>
+              season.episodes
+                .map((e) => e.embedChannelName)
+                .filter(Boolean) as string[]
+          )
         )
-      )
-    ),
-  }));
+      ),
+    };
+  });
 
   return (
     <AppLayout>
