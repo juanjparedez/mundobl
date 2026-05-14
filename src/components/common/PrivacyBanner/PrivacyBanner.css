@@ -1,24 +1,41 @@
 .privacy-banner {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
+  bottom: calc(var(--bottom-nav-height, 0px) + 8px);
+  left: 8px;
+  right: 8px;
+  z-index: 999; /* abajo del bottom-nav (1000) */
+  max-width: 720px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: var(--spacing-md);
-  padding: var(--spacing-sm) var(--spacing-lg);
-  background: var(--bg-elevated);
-  border-top: 1px solid var(--border-color-secondary);
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.15);
+  padding: 10px 14px;
+  background: color-mix(in srgb, var(--bg-elevated) 95%, transparent);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
 }
 
 .privacy-banner__text {
   margin: 0;
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-sm, 13px);
   color: var(--text-secondary);
-  max-width: 600px;
+  line-height: 1.5;
+  flex: 1;
+  min-width: 0;
+}
+
+.privacy-banner__link {
+  color: var(--primary-color);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.privacy-banner__link:hover {
+  text-decoration-thickness: 2px;
 }
 
 .privacy-banner__btn {
@@ -28,8 +45,18 @@
 @media (max-width: 768px) {
   .privacy-banner {
     flex-direction: column;
-    gap: var(--spacing-xs);
-    padding: var(--spacing-sm);
-    text-align: center;
+    align-items: stretch;
+    gap: 8px;
+    padding: 10px 12px;
+    /* Sobre el BottomNav (64px) con un poquito de margin */
+    bottom: calc(var(--bottom-nav-height, 64px) + 8px);
+  }
+
+  .privacy-banner__text {
+    text-align: left;
+  }
+
+  .privacy-banner__btn {
+    align-self: flex-end;
   }
 }

@@ -1,0 +1,105 @@
+.privacidad-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--spacing-md);
+}
+
+.privacidad-article {
+  padding: var(--spacing-lg) var(--spacing-md);
+  background: var(--bg-container);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+}
+
+.privacidad-hero {
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--border-color-secondary);
+}
+
+.privacidad-hero h1 {
+  margin: 0 0 8px 0;
+  font-size: 1.8em;
+  color: var(--text-primary);
+}
+
+.privacidad-hero__lead {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 1.05em;
+  line-height: 1.6;
+}
+
+.privacidad-article section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.privacidad-article section:last-child {
+  margin-bottom: 0;
+}
+
+.privacidad-article h2 {
+  margin: 0 0 var(--spacing-sm) 0;
+  font-size: 1.2em;
+  color: var(--text-primary);
+}
+
+.privacidad-article p {
+  margin: 0 0 var(--spacing-sm) 0;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.privacidad-article ul {
+  margin: 0 0 var(--spacing-sm) 0;
+  padding-left: var(--spacing-lg);
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.privacidad-article li + li {
+  margin-top: 4px;
+}
+
+.privacidad-article strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.privacidad-article em {
+  font-style: normal;
+  color: var(--primary-color);
+}
+
+.privacidad-article a {
+  color: var(--primary-color);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+/* La seccion "Tus controles" — destacada con un color de fondo sutil */
+.privacidad-actions {
+  background: color-mix(in srgb, var(--primary-color) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary-color) 18%, transparent);
+  border-radius: var(--border-radius-base);
+  padding: var(--spacing-md);
+}
+
+.privacidad-actions h2 {
+  color: var(--primary-color);
+}
+
+.privacidad-actions__list ul {
+  margin-top: 4px;
+  padding-left: var(--spacing-md);
+}
+
+@media (max-width: 600px) {
+  .privacidad-article {
+    padding: var(--spacing-md) var(--spacing-sm);
+  }
+  .privacidad-hero h1 {
+    font-size: 1.5em;
+  }
+}
