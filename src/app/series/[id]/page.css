@@ -2,9 +2,27 @@
   position: relative;
   isolation: isolate;
   padding: 10px 12px;
+  /* padding-bottom extra: el FloatButton "Editar serie" es fixed
+   * bottom-right (~24px del viewport). Sin este colchon, al scrollear
+   * al final de la pagina el FAB tapa el ultimo card (ej. empty state
+   * del thread de comentarios). 100px = clearance suficiente para FAB
+   * de 56px + margin. */
+  padding-bottom: 100px;
   border-radius: var(--border-radius-lg);
   background: var(--bg-container);
   border: 1px solid var(--border-color-secondary);
+}
+
+/* FAB "Editar serie" admin: lo dejamos un poco mas transparente cuando
+ * no hover, para que cualquier resto de overlap visual sea minimo. */
+.series-edit-fab {
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+}
+
+.series-edit-fab:hover,
+.series-edit-fab:focus-visible {
+  opacity: 1;
 }
 
 .series-actions {
