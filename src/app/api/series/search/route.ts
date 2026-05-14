@@ -25,7 +25,15 @@ export async function GET(request: NextRequest) {
           excludeId ? { id: { not: parseInt(excludeId, 10) } } : {},
         ],
       },
-      select: { id: true, title: true, imageUrl: true, year: true, type: true },
+      select: {
+        id: true,
+        title: true,
+        originalTitle: true,
+        imageUrl: true,
+        year: true,
+        type: true,
+        country: { select: { name: true, code: true } },
+      },
       take: 10,
       orderBy: { title: 'asc' },
     });

@@ -232,3 +232,27 @@
     right: 16px !important;
   }
 }
+
+/* Banner "tambien en /ver" — para series CURATED que tienen aportes
+ * USER_EMBED linkeados (Series.linkedFromUserEmbeds). */
+.series-linked-from-user-embeds {
+  margin: var(--spacing-xs) 0 var(--spacing-sm);
+}
+
+.series-linked-from-user-embeds__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary-color) 30%, transparent);
+  border-radius: var(--border-radius-base);
+  color: var(--primary-color);
+  font-size: var(--font-size-sm);
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+.series-linked-from-user-embeds__link:hover {
+  background: color-mix(in srgb, var(--primary-color) 20%, transparent);
+}
