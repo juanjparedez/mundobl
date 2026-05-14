@@ -8,6 +8,9 @@ import {
   LinkOutlined,
   RobotOutlined,
   PlayCircleFilled,
+  SearchOutlined,
+  CheckCircleFilled,
+  CloseCircleOutlined,
 } from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
 import type {
@@ -15,6 +18,16 @@ import type {
   AllowedCountryCode,
 } from '@/lib/user-embed-preview';
 import { ALLOWED_COUNTRY_CODES } from '@/lib/user-embed-preview';
+
+interface CatalogSearchResult {
+  id: number;
+  title: string;
+  originalTitle: string | null;
+  imageUrl: string | null;
+  year: number | null;
+  type: string;
+  country: { name: string; code: string | null } | null;
+}
 
 const TYPE_OPTIONS = [
   { value: 'serie', label: 'Serie' },
@@ -63,6 +76,40 @@ export function AgregarVerClient() {
   const [preview, setPreview] = useState<EmbedPreview | null>(null);
   const [loadingPreview, setLoadingPreview] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  // Catalog linking state — el user puede asociar el aporte con una serie
+  // CURATED ya existente del catalogo. Ambas conviven; el link genera
+  // badges bidireccionales (esta serie tambien en /ver / esta serie tambien
+  // en /catalogo).
+  const [linkSearchQuery, setLinkSearchQuery] = useState('');
+  const [linkSearchResults, setLinkSearchResults] = useState<
+    CatalogSearchResult[]
+  >([]);
+  const [linkSearchLoading, setLinkSearchLoading] = useState(false);
+  const [linkedSeries, setLinkedSeries] = useState<CatalogSearchResult | null>(
+    null
+  );
+
+  async function handleSearchCatalog(query: string) {
+    const q = query.trim();
+    if (!q) {
+      setLinkSearchResults([]);
+      return;
+    }
+    setLinkSearchLoading(true);
+    try {
+      const res = await fetch(`/api/series/search?q=${encodeURIComponent(q)}`);
+      if (!res.ok) {
+        setLinkSearchResults([]);
+        return;
+      }
+      const data = (await res.json()) as CatalogSearchResult[];
+      setLinkSearchResults(data);
+    } catch {
+      setLinkSearchResults([]);
+    } finally {
+      setLinkSearchLoading(false);
+    }
+  }
 
   async function handleLoadPreview() {
     const trimmed = url.trim();
@@ -114,6 +161,11 @@ export function AgregarVerClient() {
           `Preview cargada (confianza: ${p.suggested.confidence}).`
         );
       }
+      // Disparar busqueda inicial en el catalogo con el titulo sugerido
+      // — el user ve match potenciales sin tener que tipear.
+      setLinkedSeries(null);
+      setLinkSearchQuery(p.suggested.title);
+      void handleSearchCatalog(p.suggested.title);
     } catch (err) {
       console.error(err);
       message.error('Error al cargar la preview.');
@@ -144,6 +196,7 @@ export function AgregarVerClient() {
             dubbingLanguageNames: values.dubbingLanguageNames ?? [],
             tagNames: values.tagNames ?? [],
             genreNames: values.genreNames ?? [],
+            linkedSeriesId: linkedSeries?.id ?? null,
           },
           episode: {
             episodeNumber: values.episodeNumber,
@@ -265,6 +318,119 @@ export function AgregarVerClient() {
               }
             />
           )}
+
+          {/* Asociacion con catalogo: el user puede vincular este aporte
+           * con una serie CURATED ya existente. Ambas conviven; el link
+           * permite badges bidireccionales en /ver y /catalogo. */}
+          <section className="ver-agregar-link-catalog">
+            <header className="ver-agregar-link-catalog__head">
+              <LinkOutlined />
+              <h3>¿Esta serie ya está en el catálogo?</h3>
+            </header>
+            <p className="ver-agregar-link-catalog__hint">
+              Si la encontrás, asocialá: van a quedar vinculadas pero como
+              entidades separadas (tu aporte en /ver, la curada en /catalogo).
+              Si es una serie nueva o no la encontrás, dejá sin asociar.
+            </p>
+
+            {linkedSeries ? (
+              <Alert
+                type="success"
+                showIcon
+                icon={<CheckCircleFilled />}
+                message={
+                  <span>
+                    Asociada con <strong>{linkedSeries.title}</strong>
+                    {linkedSeries.year ? ` (${linkedSeries.year})` : ''}
+                  </span>
+                }
+                description={
+                  <span>
+                    Cuando confirmes, esta entrada de /ver quedará linkeada a{' '}
+                    <Link href={`/series/${linkedSeries.id}`} target="_blank">
+                      {linkedSeries.title} en el catálogo
+                    </Link>
+                    .
+                  </span>
+                }
+                action={
+                  <Button
+                    size="small"
+                    icon={<CloseCircleOutlined />}
+                    onClick={() => setLinkedSeries(null)}
+                  >
+                    Desvincular
+                  </Button>
+                }
+              />
+            ) : (
+              <>
+                <Input
+                  prefix={<SearchOutlined />}
+                  placeholder="Buscar en el catálogo por título..."
+                  value={linkSearchQuery}
+                  onChange={(e) => {
+                    setLinkSearchQuery(e.target.value);
+                    void handleSearchCatalog(e.target.value);
+                  }}
+                  allowClear
+                />
+                {linkSearchLoading ? (
+                  <p className="ver-agregar-link-catalog__loading">
+                    Buscando...
+                  </p>
+                ) : linkSearchResults.length === 0 && linkSearchQuery.trim() ? (
+                  <p className="ver-agregar-link-catalog__empty">
+                    Sin coincidencias en el catálogo. Si la serie es nueva,
+                    seguí sin asociar.
+                  </p>
+                ) : (
+                  <ul className="ver-agregar-link-catalog__results">
+                    {linkSearchResults.map((s) => (
+                      <li
+                        key={s.id}
+                        className="ver-agregar-link-catalog__result"
+                      >
+                        {s.imageUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={s.imageUrl}
+                            alt=""
+                            width={42}
+                            height={60}
+                            loading="lazy"
+                          />
+                        ) : (
+                          <span className="ver-agregar-link-catalog__result-placeholder">
+                            🎬
+                          </span>
+                        )}
+                        <div className="ver-agregar-link-catalog__result-info">
+                          <span className="ver-agregar-link-catalog__result-title">
+                            {s.title}
+                          </span>
+                          <span className="ver-agregar-link-catalog__result-meta">
+                            {s.year ?? '—'}
+                            {s.country?.name ? ` · ${s.country.name}` : ''}
+                            {' · '}
+                            {s.type}
+                          </span>
+                        </div>
+                        <Button
+                          size="small"
+                          type="primary"
+                          icon={<LinkOutlined />}
+                          onClick={() => setLinkedSeries(s)}
+                        >
+                          Asociar
+                        </Button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </>
+            )}
+          </section>
 
           <Form
             form={form}

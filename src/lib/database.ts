@@ -124,6 +124,9 @@ export async function getWatchableSeries() {
       tags: {
         select: { tag: { select: { id: true, name: true } } },
       },
+      linkedSeries: {
+        select: { id: true, title: true, imageUrl: true },
+      },
     },
     orderBy: { title: 'asc' },
   });
@@ -393,6 +396,13 @@ const seriesFullInclude = Prisma.validator<Prisma.SeriesInclude>()({
         },
       },
     },
+  },
+  // User-embeds que se asociaron a esta serie CURATED via /ver/agregar.
+  // Para mostrar badge "También disponible para ver →" en /series/[id].
+  // Solo trae los VISIBLE — si el admin escondió alguno, no aparece.
+  linkedFromUserEmbeds: {
+    where: { origin: 'USER_EMBED', visibility: 'VISIBLE' },
+    select: { id: true, title: true },
   },
 });
 

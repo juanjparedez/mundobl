@@ -27,6 +27,7 @@ interface VerItem {
   catalogScope: string;
   origin: string;
   country: { name: string; code: string | null } | null;
+  linkedSeries: { id: number; title: string } | null;
   episodesWithEmbed: number;
   platforms: string[];
   channels: string[];
@@ -258,6 +259,14 @@ export function VerPage({ items }: VerPageProps) {
                   {item.platforms.includes('YouTube') && (
                     <Tag color="red" icon={<YoutubeOutlined />}>
                       YouTube
+                    </Tag>
+                  )}
+                  {item.linkedSeries && (
+                    <Tag
+                      color="purple"
+                      title={`Vinculada con "${item.linkedSeries.title}" en el catálogo`}
+                    >
+                      También en catálogo
                     </Tag>
                   )}
                 </div>

@@ -92,6 +92,10 @@ export interface EmbedConfirmInput {
     dubbingLanguageNames?: string[];
     tagNames?: string[];
     genreNames?: string[];
+    /** ID de la Series CURATED del catalogo a la que el user vincula este
+     *  aporte. Ambas entidades coexisten; el link permite badges
+     *  bidireccionales en /ver y /catalogo. Null = sin vincular. */
+    linkedSeriesId?: number | null;
   };
   episode: {
     episodeNumber: number;
@@ -533,10 +537,7 @@ export async function buildEmbedPreview(url: string): Promise<EmbedPreview> {
         },
       },
     });
-    if (
-      cached &&
-      Date.now() - cached.createdAt.getTime() < CACHE_TTL_MS
-    ) {
+    if (cached && Date.now() - cached.createdAt.getTime() < CACHE_TTL_MS) {
       // payload es Json en Prisma — castiamos asumiendo que lo escribimos
       // nosotros con la shape de EmbedPreviewSuggested.
       const suggested = cached.payload as unknown as EmbedPreviewSuggested;
