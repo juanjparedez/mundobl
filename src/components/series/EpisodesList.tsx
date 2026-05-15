@@ -61,11 +61,14 @@ interface Episode {
 interface EpisodesListProps {
   seasonId: number;
   initialEpisodes?: Episode[];
+  /** Solo ADMIN/MODERATOR pueden editar/borrar; USER visitante no ve botones. */
+  canEdit?: boolean;
 }
 
 export function EpisodesList({
   seasonId,
   initialEpisodes = [],
+  canEdit = false,
 }: EpisodesListProps) {
   const { t } = useLocale();
   const message = useMessage();
@@ -364,24 +367,26 @@ export function EpisodesList({
             n: String(episodes.length),
           })}
         </h5>
-        <Space>
-          <Button
-            size="small"
-            icon={<ThunderboltOutlined />}
-            onClick={handleGenerateEpisodes}
-            loading={generating}
-          >
-            {t('episodesList.generateButton')}
-          </Button>
-          <Button
-            type="dashed"
-            size="small"
-            icon={<PlusOutlined />}
-            onClick={() => handleOpenModal()}
-          >
-            {t('episodesList.addButton')}
-          </Button>
-        </Space>
+        {canEdit && (
+          <Space>
+            <Button
+              size="small"
+              icon={<ThunderboltOutlined />}
+              onClick={handleGenerateEpisodes}
+              loading={generating}
+            >
+              {t('episodesList.generateButton')}
+            </Button>
+            <Button
+              type="dashed"
+              size="small"
+              icon={<PlusOutlined />}
+              onClick={() => handleOpenModal()}
+            >
+              {t('episodesList.addButton')}
+            </Button>
+          </Space>
+        )}
       </div>
 
       {episodes.length === 0 ? (
@@ -428,27 +433,29 @@ export function EpisodesList({
                     {t('episodesList.bulkUnwatched')}
                   </Button>
                 </Tooltip>
-                <Button
-                  size="small"
-                  danger
-                  icon={<DeleteOutlined />}
-                  loading={bulkDeleting}
-                  onClick={() => {
-                    modal.confirm({
-                      title: t('episodesList.deleteBulkConfirmTitle'),
-                      content: interpolateMessage(
-                        t('episodesList.deleteBulkConfirmContent'),
-                        { n: String(selectedIds.size) }
-                      ),
-                      okText: t('episodesList.confirmOk'),
-                      cancelText: t('episodesList.confirmCancel'),
-                      okButtonProps: { danger: true },
-                      onOk: handleBulkDelete,
-                    });
-                  }}
-                >
-                  {t('episodesList.bulkDelete')}
-                </Button>
+                {canEdit && (
+                  <Button
+                    size="small"
+                    danger
+                    icon={<DeleteOutlined />}
+                    loading={bulkDeleting}
+                    onClick={() => {
+                      modal.confirm({
+                        title: t('episodesList.deleteBulkConfirmTitle'),
+                        content: interpolateMessage(
+                          t('episodesList.deleteBulkConfirmContent'),
+                          { n: String(selectedIds.size) }
+                        ),
+                        okText: t('episodesList.confirmOk'),
+                        cancelText: t('episodesList.confirmCancel'),
+                        okButtonProps: { danger: true },
+                        onOk: handleBulkDelete,
+                      });
+                    }}
+                  >
+                    {t('episodesList.bulkDelete')}
+                  </Button>
+                )}
               </Space>
             ) : (
               <span className="episodes-table__col-label episodes-table__col-label--actions">
@@ -564,35 +571,39 @@ export function EpisodesList({
                           />
                         </Tooltip>
                       )}
-                      <Tooltip title={t('episodesList.tooltipEdit')}>
-                        <Button
-                          type="text"
-                          size="small"
-                          icon={<EditOutlined />}
-                          onClick={() => handleOpenModal(episode)}
-                        />
-                      </Tooltip>
-                      <Tooltip title={t('episodesList.tooltipDelete')}>
-                        <Button
-                          type="text"
-                          size="small"
-                          danger
-                          icon={<DeleteOutlined />}
-                          onClick={() => {
-                            modal.confirm({
-                              title: t('episodesList.deleteConfirmTitle'),
-                              content: interpolateMessage(
-                                t('episodesList.deleteConfirmContent'),
-                                { n: String(episode.episodeNumber) }
-                              ),
-                              okText: t('episodesList.confirmOk'),
-                              cancelText: t('episodesList.confirmCancel'),
-                              okButtonProps: { danger: true },
-                              onOk: () => handleDelete(episode.id),
-                            });
-                          }}
-                        />
-                      </Tooltip>
+                      {canEdit && (
+                        <>
+                          <Tooltip title={t('episodesList.tooltipEdit')}>
+                            <Button
+                              type="text"
+                              size="small"
+                              icon={<EditOutlined />}
+                              onClick={() => handleOpenModal(episode)}
+                            />
+                          </Tooltip>
+                          <Tooltip title={t('episodesList.tooltipDelete')}>
+                            <Button
+                              type="text"
+                              size="small"
+                              danger
+                              icon={<DeleteOutlined />}
+                              onClick={() => {
+                                modal.confirm({
+                                  title: t('episodesList.deleteConfirmTitle'),
+                                  content: interpolateMessage(
+                                    t('episodesList.deleteConfirmContent'),
+                                    { n: String(episode.episodeNumber) }
+                                  ),
+                                  okText: t('episodesList.confirmOk'),
+                                  cancelText: t('episodesList.confirmCancel'),
+                                  okButtonProps: { danger: true },
+                                  onOk: () => handleDelete(episode.id),
+                                });
+                              }}
+                            />
+                          </Tooltip>
+                        </>
+                      )}
                     </div>
                   </div>
 

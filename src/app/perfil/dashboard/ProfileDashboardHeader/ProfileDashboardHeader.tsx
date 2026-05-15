@@ -15,6 +15,7 @@ import {
 } from '@ant-design/icons';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { SettingsPanel } from '@/components/layout/SettingsPanel/SettingsPanel';
+import { ClientVersionInfo } from '../../ClientVersionInfo/ClientVersionInfo';
 import type { ProfileData } from '../../types';
 import './ProfileDashboardHeader.css';
 
@@ -103,6 +104,10 @@ export function ProfileDashboardHeader({
             {t('profile.memberSince')}{' '}
             {formatJoinedDate(user.createdAt, locale)}
           </span>
+          {/* Version del cliente movida del footer al header (iter
+           *  fine_tunning_1 #4) — sigue siendo discreta, util para
+           *  reporte de bugs y copy-to-clipboard. */}
+          <ClientVersionInfo />
         </div>
       </div>
       <div className="mb-profile-header__actions">

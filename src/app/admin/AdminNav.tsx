@@ -143,6 +143,12 @@ const ADMIN_GROUPS: AdminGroup[] = [
     titleKey: 'adminNav.groupSystem',
     links: [
       {
+        key: '/admin/usuarios',
+        icon: <UserOutlined />,
+        labelKey: 'adminNav.users',
+        shortKey: 'adminNav.usersShort',
+      },
+      {
         key: '/admin/info',
         icon: <InfoCircleOutlined />,
         labelKey: 'adminNav.info',

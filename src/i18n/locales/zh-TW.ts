@@ -375,6 +375,8 @@ const zhTW: TranslationShape = {
     statsByType: '按內容類型',
     statsTopRated: '熱門影集',
     sectionSettings: '設定',
+    sectionSubscriptions: '訂閱的劇集',
+    sectionSubscriptionsHint: '你關注的劇集。有新一集時我們會通知你。',
     settingsAppearanceTitle: '外觀與輔助功能',
     settingsAppearanceHint:
       '主題、強調色、基調、字體、文字大小、密度和動態。這些偏好設定儲存在此瀏覽器中。',
@@ -514,6 +516,10 @@ const zhTW: TranslationShape = {
     newSeasonsTitle: '新季度',
     seasonLabel: '季',
     changelogTitle: '近期變更',
+    watchableTitle: '可觀看的完整劇集',
+  },
+  watchableCarousel: {
+    watchNow: '立即觀看',
   },
   notifications: {
     title: '通知',
@@ -1502,6 +1508,8 @@ const zhTW: TranslationShape = {
     statsShort: '統計',
     changelog: '更新日誌',
     changelogShort: '更新',
+    users: '用戶',
+    usersShort: '用戶',
   },
   adminStats: {
     pageTitle: '活動統計',
@@ -2249,6 +2257,11 @@ const zhTW: TranslationShape = {
     widgetMyCases: '我的回饋案件',
     widgetMyCasesDesc: '你回報或投票的錯誤與想法。',
     widgetMyCasesEmpty: '尚未有案例回報。',
+    widgetStatsStrip: '我的統計',
+    widgetStatsStripDesc: '可設定的一行主要指標。',
+    statsStripConfigTitle: '設定統計',
+    statsStripConfigHint: '選擇要顯示的項目:',
+    statsStripAllHidden: '所有統計已隱藏。點擊齒輪以啟用。',
     widgetHeatmap: '近期活動',
     widgetHeatmapDesc: '最近 6 個月活躍日的熱力圖。',
     widgetGenres: '常看類型',

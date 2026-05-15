@@ -20,6 +20,9 @@ interface Stat {
 
 interface AdminDashboardHeroProps {
   stats: Stat[];
+  /** Toolbar de edicion de layout. Se renderiza pegado al hero, debajo
+   *  de stats, para evitar que el control de layout quede flotando. */
+  editToolbar?: ReactNode;
 }
 
 // Hero del dashboard admin: saludo personalizado + acciones rapidas
@@ -27,7 +30,10 @@ interface AdminDashboardHeroProps {
 // Las acciones linkean a rutas que ya existen (/admin/stats, /admin/logs,
 // /admin/changelog, /admin/usuarios) — no se inventan features. Es
 // client porque usa session para el saludo.
-export function AdminDashboardHero({ stats }: AdminDashboardHeroProps) {
+export function AdminDashboardHero({
+  stats,
+  editToolbar,
+}: AdminDashboardHeroProps) {
   const { data: session } = useSession();
   const { t } = useLocale();
   const firstName = session?.user?.name?.split(' ')[0] ?? null;
@@ -81,6 +87,9 @@ export function AdminDashboardHero({ stats }: AdminDashboardHeroProps) {
           </Button>
         </Link>
       </div>
+      {editToolbar && (
+        <div className="admin-dashboard__hero-tools">{editToolbar}</div>
+      )}
     </header>
   );
 }

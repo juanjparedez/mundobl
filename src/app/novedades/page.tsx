@@ -20,7 +20,7 @@ const getNovedadesData = unstable_cache(
   async () => {
     const since = new Date(Date.now() - RECENT_DAYS * 24 * 60 * 60 * 1000);
 
-    const [newSeries, newSeasons] = await Promise.all([
+    const [newSeries, newSeasons, watchableSeries] = await Promise.all([
       prisma.series.findMany({
         where: { createdAt: { gte: since }, origin: 'CURATED' },
         orderBy: { createdAt: 'desc' },
@@ -57,11 +57,32 @@ const getNovedadesData = unstable_cache(
           },
         },
       }),
+      // Series watchable: series con al menos un episodio con embedUrl.
+      // Para el carousel "Series completas para ver" (item 17 fine_tunning_1).
+      prisma.series.findMany({
+        where: {
+          visibility: 'VISIBLE',
+          seasons: {
+            some: { episodes: { some: { embedUrl: { not: null } } } },
+          },
+        },
+        orderBy: { createdAt: 'desc' },
+        take: 12,
+        select: {
+          id: true,
+          title: true,
+          imageUrl: true,
+          imagePosition: true,
+          year: true,
+          type: true,
+          country: { select: { name: true, code: true } },
+        },
+      }),
     ]);
 
-    return { newSeries, newSeasons };
+    return { newSeries, newSeasons, watchableSeries };
   },
-  ['novedades-data-v1'],
+  ['novedades-data-v2'],
   { revalidate: 600 }
 );
 

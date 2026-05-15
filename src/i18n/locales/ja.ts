@@ -383,6 +383,9 @@ const ja: TranslationShape = {
     statsByType: 'コンテンツタイプ別',
     statsTopRated: '高評価シリーズ',
     sectionSettings: '設定',
+    sectionSubscriptions: '購読中のシリーズ',
+    sectionSubscriptionsHint:
+      'フォローしているシリーズ。新エピソードが配信されたらお知らせします。',
     settingsAppearanceTitle: '表示とアクセシビリティ',
     settingsAppearanceHint:
       'テーマ、アクセントカラー、ベーストーン、フォント、テキストサイズ、密度、モーション。これらの設定はこのブラウザに保存されます。',
@@ -531,6 +534,10 @@ const ja: TranslationShape = {
     newSeasonsTitle: '新シーズン',
     seasonLabel: 'シーズン',
     changelogTitle: '最近の変更',
+    watchableTitle: '視聴可能な完全シリーズ',
+  },
+  watchableCarousel: {
+    watchNow: '今すぐ視聴',
   },
   notifications: {
     title: '通知',
@@ -1545,6 +1552,8 @@ const ja: TranslationShape = {
     statsShort: '統計',
     changelog: '変更履歴',
     changelogShort: '変更履歴',
+    users: 'ユーザー',
+    usersShort: 'ユーザー',
   },
   adminStats: {
     pageTitle: 'アクティビティ統計',
@@ -2315,6 +2324,12 @@ const ja: TranslationShape = {
     widgetMyCases: 'マイフィードバックケース',
     widgetMyCasesDesc: '報告または投票したバグやアイデア。',
     widgetMyCasesEmpty: 'まだ報告されたケースはありません。',
+    widgetStatsStrip: '私の統計',
+    widgetStatsStripDesc: '主要なKPIを設定可能な1行で表示。',
+    statsStripConfigTitle: '統計を設定',
+    statsStripConfigHint: '表示する項目を選択:',
+    statsStripAllHidden:
+      'すべての統計が非表示です。歯車をタップして有効にしてください。',
     widgetHeatmap: '最近のアクティビティ',
     widgetHeatmapDesc: '過去6ヶ月間のアクティブな日のヒートマップ。',
     widgetGenres: 'お気に入りのジャンル',

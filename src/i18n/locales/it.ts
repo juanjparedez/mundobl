@@ -385,6 +385,9 @@ const it: TranslationShape = {
     statsByType: 'Per tipo di contenuto',
     statsTopRated: 'Serie più votate',
     sectionSettings: 'Impostazioni',
+    sectionSubscriptions: 'Abbonamenti',
+    sectionSubscriptionsHint:
+      'Serie che segui. Ti avvisiamo quando ci sono nuovi episodi.',
     settingsAppearanceTitle: 'Aspetto e accessibilità',
     settingsAppearanceHint:
       'Tema, colore accento, tono base, carattere, dimensione testo, densità e movimento. Queste preferenze sono salvate in questo browser.',
@@ -537,6 +540,10 @@ const it: TranslationShape = {
     newSeasonsTitle: 'Nuove stagioni',
     seasonLabel: 'Stagione',
     changelogTitle: 'Modifiche recenti',
+    watchableTitle: 'Serie complete da guardare',
+  },
+  watchableCarousel: {
+    watchNow: 'Guarda ora',
   },
   notifications: {
     title: 'Notifiche',
@@ -1558,6 +1565,8 @@ const it: TranslationShape = {
     statsShort: 'Stat.',
     changelog: 'Changelog',
     changelogShort: 'CL',
+    users: 'Utenti',
+    usersShort: 'Utenti',
   },
   adminStats: {
     pageTitle: 'Statistiche attività',
@@ -2334,6 +2343,12 @@ const it: TranslationShape = {
     widgetMyCases: 'I miei casi di feedback',
     widgetMyCasesDesc: 'Bug e idee che hai segnalato o votato.',
     widgetMyCasesEmpty: 'Nessun caso segnalato finora.',
+    widgetStatsStrip: 'Le mie statistiche',
+    widgetStatsStripDesc: 'KPI principali in una riga configurabile.',
+    statsStripConfigTitle: 'Configura statistiche',
+    statsStripConfigHint: 'Scegli quali mostrare:',
+    statsStripAllHidden:
+      "Tutte le statistiche sono nascoste. Tocca l'ingranaggio per attivarne alcune.",
     widgetHeatmap: 'Attività recenti',
     widgetHeatmapDesc: 'Heatmap dei tuoi giorni attivi negli ultimi 6 mesi.',
     widgetGenres: 'Generi preferiti',

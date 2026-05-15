@@ -38,7 +38,11 @@ export function PrivacyBanner() {
   };
 
   return (
-    <div className="privacy-banner" role="region" aria-label="Aviso de privacidad">
+    <div
+      className="privacy-banner"
+      role="region"
+      aria-label="Aviso de privacidad"
+    >
       <p className="privacy-banner__text">
         {t('privacyBanner.text')}{' '}
         <Link href="/privacidad" className="privacy-banner__link">

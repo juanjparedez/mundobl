@@ -381,6 +381,9 @@ const th: TranslationShape = {
     statsByType: 'ตามประเภทเนื้อหา',
     statsTopRated: 'ซีรีส์ยอดนิยม',
     sectionSettings: 'การตั้งค่า',
+    sectionSubscriptions: 'การติดตามซีรีส์',
+    sectionSubscriptionsHint:
+      'ซีรีส์ที่คุณติดตาม เราจะแจ้งเตือนเมื่อมีตอนใหม่ออกฉาย',
     settingsAppearanceTitle: 'รูปลักษณ์และการเข้าถึง',
     settingsAppearanceHint:
       'ธีม, สีเน้น, โทนสีพื้นฐาน, ฟอนต์, ขนาดตัวอักษร, ความหนาแน่นและการเคลื่อนไหว การตั้งค่าเหล่านี้จะถูกบันทึกในเบราว์เซอร์นี้',
@@ -527,6 +530,10 @@ const th: TranslationShape = {
     newSeasonsTitle: 'ซีซันใหม่',
     seasonLabel: 'ซีซัน',
     changelogTitle: 'การเปลี่ยนแปลงล่าสุด',
+    watchableTitle: 'ซีรีส์เต็มเรื่องที่ดูได้',
+  },
+  watchableCarousel: {
+    watchNow: 'ดูเลย',
   },
   notifications: {
     title: 'การแจ้งเตือน',
@@ -1536,6 +1543,8 @@ const th: TranslationShape = {
     statsShort: 'สถิติ',
     changelog: 'บันทึกการเปลี่ยนแปลง',
     changelogShort: 'บันทึกการเปลี่ยนแปลง',
+    users: 'ผู้ใช้',
+    usersShort: 'ผู้ใช้',
   },
   adminStats: {
     pageTitle: 'สถิติกิจกรรม',
@@ -2296,6 +2305,11 @@ const th: TranslationShape = {
     widgetMyCases: 'เคสคำติชมของฉัน',
     widgetMyCasesDesc: 'บั๊กและไอเดียที่คุณรายงานหรือโหวต',
     widgetMyCasesEmpty: 'ยังไม่มีรายงานกรณีใดๆ',
+    widgetStatsStrip: 'สถิติของฉัน',
+    widgetStatsStripDesc: 'KPI หลักในแถวที่กำหนดค่าได้',
+    statsStripConfigTitle: 'กำหนดค่าสถิติ',
+    statsStripConfigHint: 'เลือกรายการที่จะแสดง:',
+    statsStripAllHidden: 'ซ่อนสถิติทั้งหมดแล้ว แตะที่ไอคอนเฟืองเพื่อเปิดใช้งาน',
     widgetHeatmap: 'กิจกรรมล่าสุด',
     widgetHeatmapDesc:
       'แผนภาพความหนาแน่นของวันที่ใช้งานในช่วง 6 เดือนที่ผ่านมา',

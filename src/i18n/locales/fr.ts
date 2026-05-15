@@ -385,6 +385,9 @@ const fr: TranslationShape = {
     statsByType: 'Par type de contenu',
     statsTopRated: 'Séries les mieux notées',
     sectionSettings: 'Paramètres',
+    sectionSubscriptions: 'Abonnements',
+    sectionSubscriptionsHint:
+      'Séries que tu suis. On te prévient quand de nouveaux épisodes sortent.',
     settingsAppearanceTitle: 'Apparence et accessibilité',
     settingsAppearanceHint:
       "Thème, couleur d'accentuation, ton de base, police, taille du texte, densité et mouvement. Ces préférences sont enregistrées dans ce navigateur.",
@@ -536,6 +539,10 @@ const fr: TranslationShape = {
     newSeasonsTitle: 'Nouvelles saisons',
     seasonLabel: 'Saison',
     changelogTitle: 'Modifications récentes',
+    watchableTitle: 'Séries complètes à regarder',
+  },
+  watchableCarousel: {
+    watchNow: 'Regarder',
   },
   notifications: {
     title: 'Notifications',
@@ -1565,6 +1572,8 @@ const fr: TranslationShape = {
     statsShort: 'Stats',
     changelog: 'Historique',
     changelogShort: 'Hist.',
+    users: 'Utilisateurs',
+    usersShort: 'Util.',
   },
   adminStats: {
     pageTitle: "Statistiques d'activité",
@@ -2348,6 +2357,12 @@ const fr: TranslationShape = {
     widgetMyCasesDesc:
       'Bugs et idées que vous avez signalés ou pour lesquels vous avez voté.',
     widgetMyCasesEmpty: "Aucun cas signalé pour l'instant.",
+    widgetStatsStrip: 'Mes statistiques',
+    widgetStatsStripDesc: 'Indicateurs clés dans une ligne configurable.',
+    statsStripConfigTitle: 'Configurer les statistiques',
+    statsStripConfigHint: 'Choisis ceux à afficher :',
+    statsStripAllHidden:
+      "Toutes les statistiques sont masquées. Appuie sur l'engrenage pour en activer.",
     widgetHeatmap: 'Activité récente',
     widgetHeatmapDesc:
       'Carte thermique de vos jours actifs au cours des 6 derniers mois.',

@@ -365,6 +365,8 @@ export type TranslationShape = {
     statsByType: string;
     statsTopRated: string;
     sectionSettings: string;
+    sectionSubscriptions: string;
+    sectionSubscriptionsHint: string;
     settingsAppearanceTitle: string;
     settingsAppearanceHint: string;
     settingsAppearanceOpen: string;
@@ -487,6 +489,10 @@ export type TranslationShape = {
     newSeasonsTitle: string;
     seasonLabel: string;
     changelogTitle: string;
+    watchableTitle: string;
+  };
+  watchableCarousel: {
+    watchNow: string;
   };
   notifications: {
     title: string;
@@ -1469,6 +1475,8 @@ export type TranslationShape = {
     statsShort: string;
     changelog: string;
     changelogShort: string;
+    users: string;
+    usersShort: string;
   };
   adminStats: {
     pageTitle: string;
@@ -2210,6 +2218,11 @@ export type TranslationShape = {
     widgetMyCases: string;
     widgetMyCasesDesc: string;
     widgetMyCasesEmpty: string;
+    widgetStatsStrip: string;
+    widgetStatsStripDesc: string;
+    statsStripConfigTitle: string;
+    statsStripConfigHint: string;
+    statsStripAllHidden: string;
     widgetHeatmap: string;
     widgetHeatmapDesc: string;
     widgetGenres: string;
@@ -2826,6 +2839,9 @@ const es: TranslationShape = {
     statsByType: 'Por tipo de contenido',
     statsTopRated: 'Series mejor calificadas',
     sectionSettings: 'Configuración',
+    sectionSubscriptions: 'Suscripciones a novedades',
+    sectionSubscriptionsHint:
+      'Series que vas siguiendo. Te avisamos cuando hay nuevos episodios.',
     settingsAppearanceTitle: 'Apariencia y accesibilidad',
     settingsAppearanceHint:
       'Tema, color de acento, tono base, fuente, tamaño de texto, densidad y animaciones. Estas preferencias viven en este navegador.',
@@ -2966,6 +2982,10 @@ const es: TranslationShape = {
     newSeasonsTitle: 'Nuevas temporadas',
     seasonLabel: 'Temporada',
     changelogTitle: 'Cambios recientes',
+    watchableTitle: 'Series completas para ver',
+  },
+  watchableCarousel: {
+    watchNow: 'Ver ahora',
   },
   notifications: {
     title: 'Notificaciones',
@@ -3998,6 +4018,8 @@ const es: TranslationShape = {
     statsShort: 'Stats',
     changelog: 'Changelog',
     changelogShort: 'CL',
+    users: 'Usuarios',
+    usersShort: 'Usuarios',
   },
   adminStats: {
     pageTitle: 'Estadísticas de actividad',
@@ -4767,9 +4789,16 @@ const es: TranslationShape = {
     recentlyCompletedEmpty: 'Aun no completaste ninguna serie.',
     widgetNotifications: 'Notificaciones recientes',
     widgetNotificationsDesc: 'Tus ultimas notificaciones sin leer.',
-    widgetMyCases: 'Mis casos de feedback',
-    widgetMyCasesDesc: 'Bugs e ideas que reportaste o votaste.',
-    widgetMyCasesEmpty: 'Sin casos reportados todavía.',
+    widgetMyCases: 'Mis feedbacks',
+    widgetMyCasesDesc:
+      'Bugs, ideas y solicitudes que reportaste. Tocá para abrir el detalle.',
+    widgetMyCasesEmpty: 'Aún no reportaste feedback. Probá desde /feedback.',
+    widgetStatsStrip: 'Mis estadísticas',
+    widgetStatsStripDesc: 'KPIs principales en una fila configurable.',
+    statsStripConfigTitle: 'Configurar estadísticas',
+    statsStripConfigHint: 'Elegí cuáles mostrar:',
+    statsStripAllHidden:
+      'Todas las estadísticas están ocultas. Tocá el engranaje para activar alguna.',
     widgetHeatmap: 'Actividad reciente',
     widgetHeatmapDesc: 'Heatmap de tus dias activos en los ultimos 6 meses.',
     widgetGenres: 'Generos favoritos',
@@ -5393,6 +5422,9 @@ const en: TranslationShape = {
     statsByType: 'By content type',
     statsTopRated: 'Top rated series',
     sectionSettings: 'Settings',
+    sectionSubscriptions: 'Subscriptions',
+    sectionSubscriptionsHint:
+      'Series you follow. We notify you when new episodes drop.',
     settingsAppearanceTitle: 'Appearance & accessibility',
     settingsAppearanceHint:
       'Theme, accent color, base tone, font, text size, density and motion. These preferences live in this browser.',
@@ -5529,6 +5561,10 @@ const en: TranslationShape = {
     newSeasonsTitle: 'New seasons',
     seasonLabel: 'Season',
     changelogTitle: 'Recent changes',
+    watchableTitle: 'Full series to watch',
+  },
+  watchableCarousel: {
+    watchNow: 'Watch now',
   },
   notifications: {
     title: 'Notifications',
@@ -6555,6 +6591,8 @@ const en: TranslationShape = {
     statsShort: 'Stats',
     changelog: 'Changelog',
     changelogShort: 'CL',
+    users: 'Users',
+    usersShort: 'Users',
   },
   adminStats: {
     pageTitle: 'Activity Statistics',
@@ -7321,9 +7359,16 @@ const en: TranslationShape = {
     recentlyCompletedEmpty: "You haven't completed any series yet.",
     widgetNotifications: 'Recent notifications',
     widgetNotificationsDesc: 'Your latest unread notifications.',
-    widgetMyCases: 'My feedback cases',
-    widgetMyCasesDesc: 'Bugs and ideas you reported or voted on.',
-    widgetMyCasesEmpty: 'No cases reported yet.',
+    widgetMyCases: 'My feedback',
+    widgetMyCasesDesc:
+      'Bugs, ideas, and requests you submitted. Tap to open detail.',
+    widgetMyCasesEmpty: 'No feedback submitted yet. Try /feedback.',
+    widgetStatsStrip: 'My stats',
+    widgetStatsStripDesc: 'Main KPIs in a configurable row.',
+    statsStripConfigTitle: 'Configure stats',
+    statsStripConfigHint: 'Pick which ones to show:',
+    statsStripAllHidden:
+      'All stats are hidden. Tap the gear icon to enable some.',
     widgetHeatmap: 'Recent activity',
     widgetHeatmapDesc: 'Heatmap of your active days in the last 6 months.',
     widgetGenres: 'Favorite genres',

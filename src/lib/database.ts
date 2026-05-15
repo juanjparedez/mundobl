@@ -30,17 +30,21 @@ if (process.env.NODE_ENV !== 'production') {
 // ============================================
 
 /**
- * Obtener todas las series con información básica
+ * Obtener todas las series con información básica.
+ *
+ * Si se proporciona `userId`, incluye el `ViewStatus` filtrado por ese
+ * usuario para que `/catalogo` muestre los badges (Visto/Viendo/etc.)
+ * del usuario actual. Sin `userId`, NO se incluye `viewStatus` para
+ * evitar que el cache global filtre datos de otro usuario.
  */
 export async function getAllSeries(options?: {
   scope?: 'PERSONAL' | 'WATCHABLE_ONLY' | 'ALL';
   origin?: 'CURATED' | 'USER_EMBED' | 'ALL';
+  userId?: string;
 }) {
-  // Default: ALL (admin, sitemap, etc. ven todo).
-  // /catalogo pasa scope: 'PERSONAL' + origin: 'CURATED' para mostrar
-  // solo lo curado por Flor (excluye los aportes USER_EMBED).
   const scope = options?.scope ?? 'ALL';
   const origin = options?.origin ?? 'ALL';
+  const userId = options?.userId;
   const where: { catalogScope?: string; origin?: string } = {};
   if (scope !== 'ALL') where.catalogScope = scope;
   if (origin !== 'ALL') where.origin = origin;
@@ -56,12 +60,17 @@ export async function getAllSeries(options?: {
           episodeCount: true,
         },
       },
-      viewStatus: {
-        select: {
-          status: true,
-        },
-        take: 1,
-      },
+      viewStatus: userId
+        ? {
+            select: { status: true },
+            where: { userId },
+            take: 1,
+          }
+        : {
+            select: { status: true },
+            where: { userId: '__none__' },
+            take: 0,
+          },
       tags: {
         select: {
           tag: {
@@ -265,146 +274,167 @@ export async function getCatalogFilterIndex() {
  * Obtener una serie por ID con toda la información (publico). Devuelve null
  * si origin='USER_EMBED' — los detalles user-submitted viven solo en /ver,
  * no en /series/[id]. Para acceso admin, usar getSeriesByIdAdmin.
+ *
+ * Si se pasa `userId`, los includes de `viewStatus` (a nivel serie, season
+ * y episode) se filtran por ese usuario para que el render publico no
+ * exponga el estado de otros usuarios.
  */
-export async function getSeriesById(id: number) {
+export async function getSeriesById(id: number, userId?: string) {
   return await prisma.series.findFirst({
     where: { id, origin: 'CURATED' },
-    include: seriesFullInclude,
+    include: buildSeriesFullInclude(userId),
   });
 }
 
 /**
- * Variante admin: no filtra origin. Usar solo desde rutas /admin que ya
- * validaron sesion ADMIN/MODERATOR.
+ * Variante admin: no filtra origin y trae TODOS los viewStatuses (para
+ * que el admin pueda ver el estado de todos los usuarios). Usar solo
+ * desde rutas /admin que ya validaron sesion ADMIN/MODERATOR.
  */
 export async function getSeriesByIdAdmin(id: number) {
   return await prisma.series.findUnique({
     where: { id },
-    include: seriesFullInclude,
+    include: buildSeriesFullInclude(undefined, { adminViewAll: true }),
   });
 }
 
-const seriesFullInclude = Prisma.validator<Prisma.SeriesInclude>()({
-  country: true,
-  universe: true,
-  seasons: {
-    include: {
-      actors: {
-        include: {
-          actor: true,
+// Filter helper para viewStatus segun el userId:
+// - userId presente: trae solo el row del usuario actual (take: 1)
+// - userId ausente + adminViewAll: trae TODO (vista admin completa)
+// - userId ausente + !adminViewAll: NO trae nada (vista publica anonima)
+function viewStatusFilter(userId?: string, adminViewAll = false) {
+  if (userId) return { where: { userId }, take: 1 };
+  if (adminViewAll) return true as const;
+  return { where: { userId: '__none__' }, take: 0 };
+}
+
+function buildSeriesFullInclude(
+  userId?: string,
+  opts: { adminViewAll?: boolean } = {}
+) {
+  const vs = viewStatusFilter(userId, opts.adminViewAll);
+  return {
+    country: true,
+    universe: true,
+    seasons: {
+      include: {
+        actors: {
+          include: {
+            actor: true,
+          },
         },
-      },
-      episodes: {
-        include: {
-          viewStatus: true,
-          comments: {
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  name: true,
-                  nickname: true,
-                  image: true,
+        episodes: {
+          include: {
+            viewStatus: vs,
+            comments: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                    nickname: true,
+                    image: true,
+                  },
                 },
               },
+              orderBy: { createdAt: 'desc' },
             },
-            orderBy: { createdAt: 'desc' },
+          },
+          orderBy: {
+            episodeNumber: 'asc',
           },
         },
-        orderBy: {
-          episodeNumber: 'asc',
+        ratings: true,
+        comments: {
+          include: {
+            user: {
+              select: { id: true, name: true, nickname: true, image: true },
+            },
+          },
+          orderBy: { createdAt: 'desc' },
+        },
+        viewStatus: vs,
+      },
+      orderBy: {
+        seasonNumber: 'asc',
+      },
+    },
+    actors: {
+      include: {
+        actor: true,
+      },
+    },
+    directors: {
+      include: {
+        director: true,
+      },
+    },
+    ratings: true,
+    comments: {
+      include: {
+        user: {
+          select: { id: true, name: true, nickname: true, image: true },
         },
       },
-      ratings: true,
-      comments: {
-        include: {
-          user: {
-            select: { id: true, name: true, nickname: true, image: true },
+      orderBy: { createdAt: 'desc' },
+    },
+    viewStatus: vs,
+    tags: {
+      include: {
+        tag: true,
+      },
+    },
+    infoBlocks: {
+      orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }],
+    },
+    productionCompany: true,
+    originalLanguage: true,
+    dubbings: {
+      include: {
+        language: true,
+      },
+    },
+    genres: {
+      include: {
+        genre: true,
+      },
+    },
+    watchLinks: true,
+    relatedSeriesFrom: {
+      include: {
+        relatedSeries: {
+          select: {
+            id: true,
+            title: true,
+            imageUrl: true,
+            year: true,
+            type: true,
           },
         },
-        orderBy: { createdAt: 'desc' },
-      },
-      viewStatus: true,
-    },
-    orderBy: {
-      seasonNumber: 'asc',
-    },
-  },
-  actors: {
-    include: {
-      actor: true,
-    },
-  },
-  directors: {
-    include: {
-      director: true,
-    },
-  },
-  ratings: true,
-  comments: {
-    include: {
-      user: {
-        select: { id: true, name: true, nickname: true, image: true },
       },
     },
-    orderBy: { createdAt: 'desc' },
-  },
-  viewStatus: true,
-  tags: {
-    include: {
-      tag: true,
-    },
-  },
-  infoBlocks: {
-    orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }],
-  },
-  productionCompany: true,
-  originalLanguage: true,
-  dubbings: {
-    include: {
-      language: true,
-    },
-  },
-  genres: {
-    include: {
-      genre: true,
-    },
-  },
-  watchLinks: true,
-  relatedSeriesFrom: {
-    include: {
-      relatedSeries: {
-        select: {
-          id: true,
-          title: true,
-          imageUrl: true,
-          year: true,
-          type: true,
+    relatedSeriesTo: {
+      include: {
+        mainSeries: {
+          select: {
+            id: true,
+            title: true,
+            imageUrl: true,
+            year: true,
+            type: true,
+          },
         },
       },
     },
-  },
-  relatedSeriesTo: {
-    include: {
-      mainSeries: {
-        select: {
-          id: true,
-          title: true,
-          imageUrl: true,
-          year: true,
-          type: true,
-        },
-      },
+    // User-embeds que se asociaron a esta serie CURATED via /ver/agregar.
+    // Para mostrar badge "También disponible para ver →" en /series/[id].
+    // Solo trae los VISIBLE — si el admin escondió alguno, no aparece.
+    linkedFromUserEmbeds: {
+      where: { origin: 'USER_EMBED', visibility: 'VISIBLE' },
+      select: { id: true, title: true },
     },
-  },
-  // User-embeds que se asociaron a esta serie CURATED via /ver/agregar.
-  // Para mostrar badge "También disponible para ver →" en /series/[id].
-  // Solo trae los VISIBLE — si el admin escondió alguno, no aparece.
-  linkedFromUserEmbeds: {
-    where: { origin: 'USER_EMBED', visibility: 'VISIBLE' },
-    select: { id: true, title: true },
-  },
-});
+  } satisfies Prisma.SeriesInclude;
+}
 
 /**
  * Buscar series por título

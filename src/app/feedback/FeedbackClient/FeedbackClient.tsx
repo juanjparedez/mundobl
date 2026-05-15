@@ -1075,12 +1075,24 @@ export function FeedbackClient() {
               >
                 {t('feedback.takePhoto')}
               </Button>
+              {/* file inputs ocultos: hidden attr no siempre es respetado
+               *  por mobile browsers (Android Chrome mostraba "Elegir
+               *  archivos" como label inline). Forzamos display:none +
+               *  aria-hidden para esconderlos totalmente. */}
               <input
                 ref={fileInputRef}
                 type="file"
                 accept="image/*"
                 multiple
-                hidden
+                aria-hidden="true"
+                tabIndex={-1}
+                style={{
+                  position: 'absolute',
+                  left: '-9999px',
+                  width: 1,
+                  height: 1,
+                  opacity: 0,
+                }}
                 onChange={handleFileInputChange}
               />
               <input
@@ -1088,7 +1100,15 @@ export function FeedbackClient() {
                 type="file"
                 accept="image/*"
                 capture="environment"
-                hidden
+                aria-hidden="true"
+                tabIndex={-1}
+                style={{
+                  position: 'absolute',
+                  left: '-9999px',
+                  width: 1,
+                  height: 1,
+                  opacity: 0,
+                }}
                 onChange={handleFileInputChange}
               />
             </div>

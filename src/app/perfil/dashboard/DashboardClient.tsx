@@ -16,10 +16,9 @@ import {
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import type { ProfileData } from '../types';
 import { ProfileDashboardHeader } from './ProfileDashboardHeader/ProfileDashboardHeader';
-import { ProfileStatsStrip } from './ProfileStatsStrip/ProfileStatsStrip';
+import { StatsStripWidget } from './widgets/StatsStripWidget/StatsStripWidget';
 import { ProfileSettings } from '../ProfileSettings/ProfileSettings';
 import { SubscriptionsSection } from '../SubscriptionsSection/SubscriptionsSection';
-import { ClientVersionInfo } from '../ClientVersionInfo/ClientVersionInfo';
 import {
   useSectionVisibility,
   type OverviewSectionKey,
@@ -84,6 +83,7 @@ const WIDGET_IDS = {
   topCommenters: 'profile.topCommenters',
   activityChart: 'profile.activityChart',
   worldMap: 'profile.worldMap',
+  statsStrip: 'profile.statsStrip',
 } as const;
 
 // Mapa de widgetId -> section key del CustomizeDrawer. Permite que el
@@ -119,51 +119,51 @@ const WIDGET_TO_SECTION: Record<string, string> = {
 // dashboardKey en localStorage.
 const ADMIN_LAYOUTS: DashboardLayouts = {
   lg: [
+    // Row 0: StatsStrip full (resumen KPIs)
+    { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 12, h: 3 },
     // Row 1: Heatmap wide (8) + QuickAdmin (4)
-    { i: WIDGET_IDS.heatmap, x: 0, y: 0, w: 8, h: 3 },
-    { i: WIDGET_IDS.quickAdmin, x: 8, y: 0, w: 4, h: 3 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 3, w: 8, h: 3 },
+    { i: WIDGET_IDS.quickAdmin, x: 8, y: 3, w: 4, h: 3 },
     // Row 2: AdminAlerts full
-    { i: WIDGET_IDS.adminAlerts, x: 0, y: 3, w: 12, h: 3 },
+    { i: WIDGET_IDS.adminAlerts, x: 0, y: 6, w: 12, h: 3 },
     // Row 3: CurrentlyWatching shelf full
-    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 6, w: 12, h: 4 },
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 9, w: 12, h: 4 },
     // Row 4: MyCases + Notifications (2up)
-    { i: WIDGET_IDS.myCases, x: 0, y: 10, w: 6, h: 3 },
-    { i: WIDGET_IDS.notifications, x: 6, y: 10, w: 6, h: 3 },
+    { i: WIDGET_IDS.myCases, x: 0, y: 13, w: 6, h: 3 },
+    { i: WIDGET_IDS.notifications, x: 6, y: 13, w: 6, h: 3 },
     // Row 5: MyReviews + MyDisputes + RecentlyCompleted (3up)
-    { i: WIDGET_IDS.myReviews, x: 0, y: 13, w: 4, h: 4 },
-    { i: WIDGET_IDS.myDisputes, x: 4, y: 13, w: 4, h: 4 },
-    { i: WIDGET_IDS.recentlyCompleted, x: 8, y: 13, w: 4, h: 4 },
+    { i: WIDGET_IDS.myReviews, x: 0, y: 16, w: 4, h: 4 },
+    { i: WIDGET_IDS.myDisputes, x: 4, y: 16, w: 4, h: 4 },
+    { i: WIDGET_IDS.recentlyCompleted, x: 8, y: 16, w: 4, h: 4 },
     // Row 6: GenresDonut + CompletedByYear (charts 4/8)
-    { i: WIDGET_IDS.genres, x: 0, y: 20, w: 4, h: 5 },
-    { i: WIDGET_IDS.completedByYear, x: 4, y: 20, w: 8, h: 5 },
+    { i: WIDGET_IDS.genres, x: 0, y: 23, w: 4, h: 5 },
+    { i: WIDGET_IDS.completedByYear, x: 4, y: 23, w: 8, h: 5 },
     // Row 8: WorldMap wide (6) + TopCountries lista (3) + TopGenres (3).
-    // El world map complementa la lista — uno geografico, el otro
-    // detallado con counts y banderas.
-    { i: WIDGET_IDS.worldMap, x: 0, y: 25, w: 6, h: 4 },
-    { i: WIDGET_IDS.topCountries, x: 6, y: 25, w: 3, h: 4 },
-    { i: WIDGET_IDS.topGenresList, x: 9, y: 25, w: 3, h: 4 },
+    { i: WIDGET_IDS.worldMap, x: 0, y: 28, w: 6, h: 4 },
+    { i: WIDGET_IDS.topCountries, x: 6, y: 28, w: 3, h: 4 },
+    { i: WIDGET_IDS.topGenresList, x: 9, y: 28, w: 3, h: 4 },
     // Row 8b: TopActors + TopCompanies
-    { i: WIDGET_IDS.topActors, x: 0, y: 29, w: 6, h: 4 },
-    { i: WIDGET_IDS.topCompanies, x: 6, y: 29, w: 6, h: 4 },
+    { i: WIDGET_IDS.topActors, x: 0, y: 32, w: 6, h: 4 },
+    { i: WIDGET_IDS.topCompanies, x: 6, y: 32, w: 6, h: 4 },
     // Row 9: Collections + Achievements (2up)
-    { i: WIDGET_IDS.collections, x: 0, y: 33, w: 6, h: 4 },
-    { i: WIDGET_IDS.achievements, x: 6, y: 33, w: 6, h: 4 },
-    // Row 10: FollowedTitles + Favorites + TopRated (3up)
-    { i: WIDGET_IDS.favorites, x: 4, y: 37, w: 4, h: 4 },
-    { i: WIDGET_IDS.topRated, x: 8, y: 37, w: 4, h: 4 },
+    { i: WIDGET_IDS.collections, x: 0, y: 36, w: 6, h: 5 },
+    { i: WIDGET_IDS.achievements, x: 6, y: 36, w: 6, h: 4 },
+    // Row 10: Favorites + TopRated (2up)
+    { i: WIDGET_IDS.favorites, x: 4, y: 40, w: 4, h: 4 },
+    { i: WIDGET_IDS.topRated, x: 8, y: 40, w: 4, h: 4 },
     // Row 11: MyComments full
-    { i: WIDGET_IDS.myComments, x: 0, y: 41, w: 12, h: 6, minW: 6, minH: 5 },
-    // Row 12: Admin shared widgets — reusados desde /admin. Solo
-    // visibles para admin/moderator por roles del registry.
-    { i: WIDGET_IDS.activityChart, x: 0, y: 47, w: 12, h: 5 },
-    { i: WIDGET_IDS.recentAdminActivity, x: 0, y: 52, w: 6, h: 5 },
-    { i: WIDGET_IDS.topCommenters, x: 6, y: 52, w: 6, h: 5 },
+    { i: WIDGET_IDS.myComments, x: 0, y: 44, w: 12, h: 6, minW: 6, minH: 5 },
+    // Row 12: Admin shared widgets
+    { i: WIDGET_IDS.activityChart, x: 0, y: 50, w: 12, h: 5 },
+    { i: WIDGET_IDS.recentAdminActivity, x: 0, y: 55, w: 6, h: 5 },
+    { i: WIDGET_IDS.topCommenters, x: 6, y: 55, w: 6, h: 5 },
   ],
   md: [
-    { i: WIDGET_IDS.heatmap, x: 0, y: 0, w: 10, h: 3 },
-    { i: WIDGET_IDS.quickAdmin, x: 0, y: 3, w: 5, h: 3 },
-    { i: WIDGET_IDS.adminAlerts, x: 5, y: 3, w: 5, h: 3 },
-    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 6, w: 10, h: 4 },
+    { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 10, h: 3 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 3, w: 10, h: 3 },
+    { i: WIDGET_IDS.quickAdmin, x: 0, y: 6, w: 5, h: 3 },
+    { i: WIDGET_IDS.adminAlerts, x: 5, y: 6, w: 5, h: 3 },
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 9, w: 10, h: 4 },
     { i: WIDGET_IDS.myCases, x: 0, y: 10, w: 5, h: 3 },
     { i: WIDGET_IDS.notifications, x: 5, y: 10, w: 5, h: 3 },
     { i: WIDGET_IDS.myReviews, x: 0, y: 13, w: 5, h: 4 },
@@ -174,7 +174,7 @@ const ADMIN_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.topCountries, x: 5, y: 25, w: 5, h: 4 },
     { i: WIDGET_IDS.topActors, x: 0, y: 29, w: 5, h: 4 },
     { i: WIDGET_IDS.topCompanies, x: 5, y: 29, w: 5, h: 4 },
-    { i: WIDGET_IDS.collections, x: 0, y: 33, w: 5, h: 4 },
+    { i: WIDGET_IDS.collections, x: 0, y: 33, w: 5, h: 5 },
     { i: WIDGET_IDS.achievements, x: 5, y: 33, w: 5, h: 4 },
     { i: WIDGET_IDS.favorites, x: 5, y: 37, w: 5, h: 4 },
     { i: WIDGET_IDS.topRated, x: 0, y: 41, w: 5, h: 4 },
@@ -182,15 +182,16 @@ const ADMIN_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.myComments, x: 0, y: 45, w: 10, h: 6 },
   ],
   sm: [
-    { i: WIDGET_IDS.quickAdmin, x: 0, y: 0, w: 6, h: 3 },
-    { i: WIDGET_IDS.adminAlerts, x: 0, y: 3, w: 6, h: 3 },
-    { i: WIDGET_IDS.heatmap, x: 0, y: 6, w: 6, h: 3 },
-    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 9, w: 6, h: 4 },
+    { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 6, h: 4 },
+    { i: WIDGET_IDS.quickAdmin, x: 0, y: 4, w: 6, h: 3 },
+    { i: WIDGET_IDS.adminAlerts, x: 0, y: 7, w: 6, h: 3 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 10, w: 6, h: 3 },
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 13, w: 6, h: 4 },
     { i: WIDGET_IDS.notifications, x: 0, y: 13, w: 6, h: 3 },
     { i: WIDGET_IDS.myCases, x: 0, y: 16, w: 6, h: 3 },
     { i: WIDGET_IDS.myReviews, x: 0, y: 19, w: 6, h: 4 },
     { i: WIDGET_IDS.genres, x: 0, y: 29, w: 6, h: 5 },
-    { i: WIDGET_IDS.collections, x: 0, y: 34, w: 6, h: 4 },
+    { i: WIDGET_IDS.collections, x: 0, y: 34, w: 6, h: 5 },
     { i: WIDGET_IDS.achievements, x: 0, y: 38, w: 6, h: 5 },
     { i: WIDGET_IDS.favorites, x: 0, y: 47, w: 6, h: 4 },
     { i: WIDGET_IDS.topRated, x: 0, y: 51, w: 6, h: 4 },
@@ -204,15 +205,16 @@ const ADMIN_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.myComments, x: 0, y: 78, w: 6, h: 7 },
   ],
   xs: [
-    { i: WIDGET_IDS.quickAdmin, x: 0, y: 0, w: 4, h: 3 },
-    { i: WIDGET_IDS.adminAlerts, x: 0, y: 3, w: 4, h: 3 },
-    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 6, w: 4, h: 4 },
-    { i: WIDGET_IDS.heatmap, x: 0, y: 10, w: 4, h: 3 },
+    { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 4, h: 5 },
+    { i: WIDGET_IDS.quickAdmin, x: 0, y: 5, w: 4, h: 3 },
+    { i: WIDGET_IDS.adminAlerts, x: 0, y: 8, w: 4, h: 3 },
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 11, w: 4, h: 4 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 15, w: 4, h: 3 },
     { i: WIDGET_IDS.notifications, x: 0, y: 13, w: 4, h: 3 },
     { i: WIDGET_IDS.myCases, x: 0, y: 16, w: 4, h: 3 },
     { i: WIDGET_IDS.myReviews, x: 0, y: 19, w: 4, h: 4 },
     { i: WIDGET_IDS.genres, x: 0, y: 29, w: 4, h: 5 },
-    { i: WIDGET_IDS.collections, x: 0, y: 34, w: 4, h: 4 },
+    { i: WIDGET_IDS.collections, x: 0, y: 34, w: 4, h: 5 },
     { i: WIDGET_IDS.achievements, x: 0, y: 38, w: 4, h: 5 },
     { i: WIDGET_IDS.favorites, x: 0, y: 47, w: 4, h: 4 },
     { i: WIDGET_IDS.topRated, x: 0, y: 51, w: 4, h: 4 },
@@ -228,14 +230,15 @@ const ADMIN_LAYOUTS: DashboardLayouts = {
 };
 
 // Layout default USER — mock-aligned (style-guide/my-.profile2.png).
-// Currently watching como hero arriba, despues social + charts +
-// listas. Sin admin tools.
+// StatsStrip al tope (resumen KPIs), despues currently watching hero,
+// social + charts + listas. Sin admin tools.
 const USER_LAYOUTS: DashboardLayouts = {
   lg: [
-    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 12, h: 4 },
-    { i: WIDGET_IDS.myReviews, x: 0, y: 4, w: 5, h: 4 },
-    { i: WIDGET_IDS.notifications, x: 5, y: 4, w: 4, h: 4 },
-    { i: WIDGET_IDS.myCases, x: 9, y: 4, w: 3, h: 4 },
+    { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 12, h: 3 },
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 3, w: 12, h: 4 },
+    { i: WIDGET_IDS.myReviews, x: 0, y: 7, w: 5, h: 4 },
+    { i: WIDGET_IDS.notifications, x: 5, y: 7, w: 4, h: 4 },
+    { i: WIDGET_IDS.myCases, x: 9, y: 7, w: 3, h: 4 },
     { i: WIDGET_IDS.heatmap, x: 0, y: 11, w: 6, h: 3 },
     { i: WIDGET_IDS.genres, x: 6, y: 11, w: 3, h: 3 },
     { i: WIDGET_IDS.completedByYear, x: 9, y: 11, w: 3, h: 3 },
@@ -246,7 +249,7 @@ const USER_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.topGenresList, x: 9, y: 14, w: 3, h: 4 },
     { i: WIDGET_IDS.topActors, x: 0, y: 18, w: 6, h: 4 },
     { i: WIDGET_IDS.topCompanies, x: 6, y: 18, w: 6, h: 4 },
-    { i: WIDGET_IDS.collections, x: 0, y: 22, w: 6, h: 4 },
+    { i: WIDGET_IDS.collections, x: 0, y: 22, w: 6, h: 5 },
     { i: WIDGET_IDS.achievements, x: 6, y: 22, w: 6, h: 4 },
     { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 26, w: 3, h: 4 },
     { i: WIDGET_IDS.favorites, x: 3, y: 26, w: 3, h: 4 },
@@ -256,18 +259,19 @@ const USER_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.socials, x: 8, y: 33, w: 4, h: 6 },
   ],
   md: [
-    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 10, h: 4 },
-    { i: WIDGET_IDS.myReviews, x: 0, y: 4, w: 5, h: 4 },
-    { i: WIDGET_IDS.notifications, x: 5, y: 4, w: 5, h: 4 },
-    { i: WIDGET_IDS.myCases, x: 0, y: 8, w: 5, h: 3 },
-    { i: WIDGET_IDS.heatmap, x: 5, y: 11, w: 5, h: 3 },
-    { i: WIDGET_IDS.genres, x: 0, y: 14, w: 5, h: 4 },
+    { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 10, h: 3 },
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 3, w: 10, h: 4 },
+    { i: WIDGET_IDS.myReviews, x: 0, y: 7, w: 5, h: 4 },
+    { i: WIDGET_IDS.notifications, x: 5, y: 7, w: 5, h: 4 },
+    { i: WIDGET_IDS.myCases, x: 0, y: 11, w: 5, h: 3 },
+    { i: WIDGET_IDS.heatmap, x: 5, y: 14, w: 5, h: 3 },
+    { i: WIDGET_IDS.genres, x: 0, y: 17, w: 5, h: 4 },
     { i: WIDGET_IDS.completedByYear, x: 5, y: 14, w: 5, h: 4 },
     { i: WIDGET_IDS.topGenresList, x: 0, y: 18, w: 5, h: 4 },
     { i: WIDGET_IDS.topCountries, x: 5, y: 18, w: 5, h: 4 },
     { i: WIDGET_IDS.topActors, x: 0, y: 22, w: 5, h: 4 },
     { i: WIDGET_IDS.topCompanies, x: 5, y: 22, w: 5, h: 4 },
-    { i: WIDGET_IDS.collections, x: 0, y: 26, w: 5, h: 4 },
+    { i: WIDGET_IDS.collections, x: 0, y: 26, w: 5, h: 5 },
     { i: WIDGET_IDS.achievements, x: 5, y: 26, w: 5, h: 4 },
     { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 30, w: 5, h: 4 },
     { i: WIDGET_IDS.favorites, x: 5, y: 30, w: 5, h: 4 },
@@ -276,33 +280,35 @@ const USER_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.myComments, x: 0, y: 41, w: 10, h: 6 },
   ],
   sm: [
-    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 6, h: 4 },
-    { i: WIDGET_IDS.myReviews, x: 0, y: 4, w: 6, h: 4 },
-    { i: WIDGET_IDS.notifications, x: 0, y: 8, w: 6, h: 3 },
-    { i: WIDGET_IDS.myCases, x: 0, y: 11, w: 6, h: 3 },
-    { i: WIDGET_IDS.heatmap, x: 0, y: 20, w: 6, h: 3 },
-    { i: WIDGET_IDS.genres, x: 0, y: 23, w: 6, h: 4 },
-    { i: WIDGET_IDS.collections, x: 0, y: 27, w: 6, h: 4 },
-    { i: WIDGET_IDS.achievements, x: 0, y: 31, w: 6, h: 5 },
-    { i: WIDGET_IDS.topGenresList, x: 0, y: 36, w: 6, h: 3 },
-    { i: WIDGET_IDS.topCountries, x: 0, y: 39, w: 6, h: 3 },
-    { i: WIDGET_IDS.topActors, x: 0, y: 42, w: 6, h: 3 },
-    { i: WIDGET_IDS.topCompanies, x: 0, y: 45, w: 6, h: 3 },
-    { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 48, w: 6, h: 4 },
-    { i: WIDGET_IDS.favorites, x: 0, y: 52, w: 6, h: 4 },
-    { i: WIDGET_IDS.topRated, x: 0, y: 56, w: 6, h: 4 },
-    { i: WIDGET_IDS.myDisputes, x: 0, y: 60, w: 6, h: 3 },
-    { i: WIDGET_IDS.completedByYear, x: 0, y: 66, w: 6, h: 3 },
-    { i: WIDGET_IDS.myComments, x: 0, y: 69, w: 6, h: 7 },
+    { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 6, h: 4 },
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 4, w: 6, h: 4 },
+    { i: WIDGET_IDS.myReviews, x: 0, y: 8, w: 6, h: 4 },
+    { i: WIDGET_IDS.notifications, x: 0, y: 12, w: 6, h: 3 },
+    { i: WIDGET_IDS.myCases, x: 0, y: 15, w: 6, h: 3 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 24, w: 6, h: 3 },
+    { i: WIDGET_IDS.genres, x: 0, y: 27, w: 6, h: 4 },
+    { i: WIDGET_IDS.collections, x: 0, y: 31, w: 6, h: 5 },
+    { i: WIDGET_IDS.achievements, x: 0, y: 35, w: 6, h: 5 },
+    { i: WIDGET_IDS.topGenresList, x: 0, y: 40, w: 6, h: 3 },
+    { i: WIDGET_IDS.topCountries, x: 0, y: 43, w: 6, h: 3 },
+    { i: WIDGET_IDS.topActors, x: 0, y: 46, w: 6, h: 3 },
+    { i: WIDGET_IDS.topCompanies, x: 0, y: 49, w: 6, h: 3 },
+    { i: WIDGET_IDS.recentlyCompleted, x: 0, y: 52, w: 6, h: 4 },
+    { i: WIDGET_IDS.favorites, x: 0, y: 56, w: 6, h: 4 },
+    { i: WIDGET_IDS.topRated, x: 0, y: 60, w: 6, h: 4 },
+    { i: WIDGET_IDS.myDisputes, x: 0, y: 64, w: 6, h: 3 },
+    { i: WIDGET_IDS.completedByYear, x: 0, y: 70, w: 6, h: 3 },
+    { i: WIDGET_IDS.myComments, x: 0, y: 73, w: 6, h: 7 },
   ],
   xs: [
-    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 4, h: 4 },
-    { i: WIDGET_IDS.myReviews, x: 0, y: 4, w: 4, h: 4 },
-    { i: WIDGET_IDS.notifications, x: 0, y: 8, w: 4, h: 3 },
-    { i: WIDGET_IDS.myCases, x: 0, y: 11, w: 4, h: 3 },
-    { i: WIDGET_IDS.heatmap, x: 0, y: 20, w: 4, h: 3 },
-    { i: WIDGET_IDS.genres, x: 0, y: 23, w: 4, h: 4 },
-    { i: WIDGET_IDS.collections, x: 0, y: 27, w: 4, h: 4 },
+    { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 4, h: 5 },
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 5, w: 4, h: 4 },
+    { i: WIDGET_IDS.myReviews, x: 0, y: 9, w: 4, h: 4 },
+    { i: WIDGET_IDS.notifications, x: 0, y: 13, w: 4, h: 3 },
+    { i: WIDGET_IDS.myCases, x: 0, y: 16, w: 4, h: 3 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 25, w: 4, h: 3 },
+    { i: WIDGET_IDS.genres, x: 0, y: 28, w: 4, h: 4 },
+    { i: WIDGET_IDS.collections, x: 0, y: 27, w: 4, h: 5 },
     { i: WIDGET_IDS.achievements, x: 0, y: 31, w: 4, h: 5 },
     { i: WIDGET_IDS.topGenresList, x: 0, y: 36, w: 4, h: 3 },
     { i: WIDGET_IDS.topCountries, x: 0, y: 39, w: 4, h: 3 },
@@ -323,40 +329,44 @@ const USER_LAYOUTS: DashboardLayouts = {
 // layouts custom siguen persistiendo por (dashboardKey + mode).
 type ProfileMode = 'basic' | 'advanced' | 'admin';
 
-// Preset BASIC user: solo widgets esenciales (KPIs ya estan fuera
-// del grid en ProfileStatsStrip — aca van los visuales mas usados).
+// Preset BASIC user: solo widgets esenciales. StatsStrip al tope como
+// resumen de KPIs (es el widget que reemplaza al strip fijo).
 const BASIC_LAYOUTS: DashboardLayouts = {
   lg: [
-    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 12, h: 4 },
-    { i: WIDGET_IDS.myReviews, x: 0, y: 4, w: 6, h: 4 },
-    { i: WIDGET_IDS.myComments, x: 6, y: 4, w: 6, h: 4 },
-    { i: WIDGET_IDS.heatmap, x: 0, y: 8, w: 8, h: 3 },
-    { i: WIDGET_IDS.collections, x: 8, y: 8, w: 4, h: 3 },
-    { i: WIDGET_IDS.socials, x: 0, y: 11, w: 4, h: 4 },
+    { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 12, h: 3 },
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 3, w: 12, h: 4 },
+    { i: WIDGET_IDS.myReviews, x: 0, y: 7, w: 6, h: 4 },
+    { i: WIDGET_IDS.myComments, x: 6, y: 7, w: 6, h: 4 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 11, w: 8, h: 3 },
+    { i: WIDGET_IDS.collections, x: 8, y: 11, w: 4, h: 5 },
+    { i: WIDGET_IDS.socials, x: 0, y: 14, w: 4, h: 4 },
   ],
   md: [
-    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 10, h: 4 },
-    { i: WIDGET_IDS.myReviews, x: 0, y: 4, w: 5, h: 4 },
-    { i: WIDGET_IDS.myComments, x: 5, y: 4, w: 5, h: 4 },
-    { i: WIDGET_IDS.heatmap, x: 0, y: 8, w: 10, h: 3 },
-    { i: WIDGET_IDS.collections, x: 0, y: 11, w: 5, h: 3 },
-    { i: WIDGET_IDS.socials, x: 5, y: 11, w: 5, h: 3 },
+    { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 10, h: 3 },
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 3, w: 10, h: 4 },
+    { i: WIDGET_IDS.myReviews, x: 0, y: 7, w: 5, h: 4 },
+    { i: WIDGET_IDS.myComments, x: 5, y: 7, w: 5, h: 4 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 11, w: 10, h: 3 },
+    { i: WIDGET_IDS.collections, x: 0, y: 14, w: 5, h: 5 },
+    { i: WIDGET_IDS.socials, x: 5, y: 14, w: 5, h: 3 },
   ],
   sm: [
-    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 6, h: 4 },
-    { i: WIDGET_IDS.myReviews, x: 0, y: 4, w: 6, h: 4 },
-    { i: WIDGET_IDS.myComments, x: 0, y: 8, w: 6, h: 4 },
-    { i: WIDGET_IDS.heatmap, x: 0, y: 12, w: 6, h: 3 },
-    { i: WIDGET_IDS.collections, x: 0, y: 15, w: 6, h: 3 },
-    { i: WIDGET_IDS.socials, x: 0, y: 18, w: 6, h: 4 },
+    { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 6, h: 4 },
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 4, w: 6, h: 4 },
+    { i: WIDGET_IDS.myReviews, x: 0, y: 8, w: 6, h: 4 },
+    { i: WIDGET_IDS.myComments, x: 0, y: 12, w: 6, h: 4 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 16, w: 6, h: 3 },
+    { i: WIDGET_IDS.collections, x: 0, y: 19, w: 6, h: 5 },
+    { i: WIDGET_IDS.socials, x: 0, y: 22, w: 6, h: 4 },
   ],
   xs: [
-    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 0, w: 4, h: 4 },
-    { i: WIDGET_IDS.myReviews, x: 0, y: 4, w: 4, h: 4 },
-    { i: WIDGET_IDS.myComments, x: 0, y: 8, w: 4, h: 4 },
-    { i: WIDGET_IDS.heatmap, x: 0, y: 12, w: 4, h: 3 },
-    { i: WIDGET_IDS.collections, x: 0, y: 15, w: 4, h: 3 },
-    { i: WIDGET_IDS.socials, x: 0, y: 18, w: 4, h: 4 },
+    { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 4, h: 5 },
+    { i: WIDGET_IDS.currentlyWatching, x: 0, y: 5, w: 4, h: 4 },
+    { i: WIDGET_IDS.myReviews, x: 0, y: 9, w: 4, h: 4 },
+    { i: WIDGET_IDS.myComments, x: 0, y: 13, w: 4, h: 4 },
+    { i: WIDGET_IDS.heatmap, x: 0, y: 17, w: 4, h: 3 },
+    { i: WIDGET_IDS.collections, x: 0, y: 20, w: 4, h: 5 },
+    { i: WIDGET_IDS.socials, x: 0, y: 23, w: 4, h: 4 },
   ],
 };
 
@@ -398,11 +408,46 @@ export function DashboardClient() {
 
   // dashboardKey incluye el mode para que cada modo tenga su layout
   // custom independiente (cambiar de modo no machaca el layout del
-  // otro modo). Bumped a v6 (2026-05-13) tras cleanup de 6 widgets en
-  // iter 18-19: SettingsRow, Overview, Ratings, YearSummary,
-  // ReviewsActivity, FollowedTitles. Los users con layouts cached v5
-  // veian "Missing widget" en slots; v6 invalida cache y aplica defaults.
-  const dashboardKey = `profile-${isAdmin ? 'admin' : 'user'}-${effectiveMode}-v6`;
+  // otro modo). Bumped a v7 (iter fine_tunning_1) tras agregar
+  // statsStrip widget al preset. Los users con layouts cached v6 veian
+  // el strip pero como bloque fijo separado; v7 invalida cache y aplica
+  // defaults con statsStrip dentro del grid.
+  const dashboardKey = `profile-${isAdmin ? 'admin' : 'user'}-${effectiveMode}-v7`;
+
+  // Cada modo limita el set de widgets disponibles desde el picker
+  // (iter fine_tunning_1 #1). El user reportaba que los modos no tenian
+  // efecto visible porque el picker mostraba siempre todos los widgets:
+  //  - basic: solo widgets esenciales (lo que ya esta en BASIC_LAYOUTS).
+  //  - advanced: USER_LAYOUTS + algunos extras como heatmap/charts.
+  //  - admin: ADMIN_LAYOUTS completo (admin only).
+  const modeAllowedIds: Set<string> = useMemo(() => {
+    if (effectiveMode === 'basic') {
+      return new Set([
+        WIDGET_IDS.statsStrip,
+        WIDGET_IDS.currentlyWatching,
+        WIDGET_IDS.myReviews,
+        WIDGET_IDS.myComments,
+        WIDGET_IDS.heatmap,
+        WIDGET_IDS.collections,
+        WIDGET_IDS.socials,
+        WIDGET_IDS.favorites,
+        WIDGET_IDS.notifications,
+      ]);
+    }
+    if (effectiveMode === 'admin' && isAdmin) {
+      // Admin: todos los widgets (incluyendo admin tools).
+      return new Set(Object.values(WIDGET_IDS));
+    }
+    // advanced: todos los widgets EXCEPTO admin-only (quickAdmin, adminAlerts,
+    // recentAdminActivity, topCommenters, activityChart).
+    const advanced = new Set(Object.values(WIDGET_IDS));
+    advanced.delete(WIDGET_IDS.quickAdmin);
+    advanced.delete(WIDGET_IDS.adminAlerts);
+    advanced.delete(WIDGET_IDS.recentAdminActivity);
+    advanced.delete(WIDGET_IDS.topCommenters);
+    advanced.delete(WIDGET_IDS.activityChart);
+    return advanced;
+  }, [effectiveMode, isAdmin]);
 
   // Preset segun el modo:
   // - basic: BASIC_LAYOUTS (todos los roles)
@@ -592,7 +637,10 @@ export function DashboardClient() {
       category: 'overview',
       labelKey: 'profile.sectionCollections',
       descriptionKey: 'profile.sectionCollections',
-      defaultSize: { w: 6, h: 4, minW: 4, minH: 3 },
+      // 4 rows (Favoritos / Para volver a ver / Viendo / Abandonadas) +
+      // widget header. h:5 garantiza que todos los items se vean sin
+      // cortar (item 3 del fine_tunning_1).
+      defaultSize: { w: 6, h: 5, minW: 4, minH: 5 },
       Component: CollectionsWidget as never,
     });
     // Widgets admin-only reusados desde /admin/widgets. roles filtra el
@@ -641,6 +689,14 @@ export function DashboardClient() {
       descriptionKey: 'socials.emptyHint',
       defaultSize: { w: 4, h: 4, minW: 3, minH: 3 },
       Component: SocialsWidget as never,
+    });
+    WidgetRegistry.register({
+      id: WIDGET_IDS.statsStrip,
+      category: 'overview',
+      labelKey: 'profileDashboard.widgetStatsStrip',
+      descriptionKey: 'profileDashboard.widgetStatsStripDesc',
+      defaultSize: { w: 12, h: 3, minW: 6, minH: 2 },
+      Component: StatsStripWidget as never,
     });
   }, []);
 
@@ -695,6 +751,7 @@ export function DashboardClient() {
     map[WIDGET_IDS.activityChart] = {};
     map[WIDGET_IDS.worldMap] = { topCountries: data.stats.topCountries };
     map[WIDGET_IDS.socials] = { socials: data.user.socials };
+    map[WIDGET_IDS.statsStrip] = { stats: data.stats };
     return map;
   }, [data]);
 
@@ -759,8 +816,9 @@ export function DashboardClient() {
           onModeChange={(next) => handleModeChange(next)}
           showAdminMode={isAdmin}
         />
-        <ProfileStatsStrip stats={data.stats} />
-
+        {/* StatsStripWidget se monta dentro del grid como widget removable
+         *  con toggles internos para cada mini-stat (iter fine_tunning_1 #7).
+         *  Antes vivia fuera del grid como ProfileStatsStrip fijo. */}
         <DashboardGrid
           layouts={visibleLayouts}
           widgetProps={widgetProps}
@@ -776,6 +834,7 @@ export function DashboardClient() {
           onClose={() => setPickerOpen(false)}
           onPick={addWidget}
           alreadyAdded={widgetIds}
+          allowedIds={modeAllowedIds}
         />
 
         {/* Settings + suscripciones + version info — togglable via key
@@ -791,7 +850,6 @@ export function DashboardClient() {
                 <SubscriptionsSection />
               </div>
             </div>
-            <ClientVersionInfo />
           </div>
         )}
       </div>

@@ -77,6 +77,23 @@
   color: var(--text-tertiary);
 }
 
+/* ClientVersionInfo en el header: forzar compacto inline (el componente
+ * tiene su propio padding+margin para uso standalone en footer, aca lo
+ * suprimimos para que entre en la meta line junto al "Miembro desde"). */
+.mb-profile-header__meta .client-version-info {
+  margin-top: 0;
+  padding: 2px 8px;
+  background: transparent;
+  border: 1px dashed
+    color-mix(in srgb, var(--border-color-secondary) 60%, transparent);
+  font-size: 11px;
+}
+
+.mb-profile-header__meta .client-version-info__line {
+  font-size: 11px;
+  gap: 6px;
+}
+
 .mb-profile-header__actions {
   flex-shrink: 0;
   display: flex;

@@ -9,13 +9,22 @@
   grid-template-columns: minmax(0, 1fr) auto;
   grid-template-areas:
     'text actions'
-    'stats stats';
+    'stats stats'
+    'tools tools';
   align-items: center;
   gap: 10px 16px;
   padding: 12px 14px;
   background: var(--bg-container);
   border-radius: var(--border-radius-lg);
   border: 1px solid var(--border-color-secondary);
+}
+
+.admin-dashboard__hero-tools {
+  grid-area: tools;
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 4px;
+  border-top: 1px dashed var(--border-color-secondary);
 }
 
 .admin-dashboard__hero-text {

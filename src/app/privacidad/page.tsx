@@ -23,9 +23,8 @@ export default function PrivacidadPage() {
           <header className="privacidad-hero">
             <h1>¿Qué guardamos sobre vos?</h1>
             <p className="privacidad-hero__lead">
-              Esto es lo que la app necesita almacenar para funcionar.
-              Tenés control total: podés exportar todo, o borrarlo cuando
-              quieras.
+              Esto es lo que la app necesita almacenar para funcionar. Tenés
+              control total: podés exportar todo, o borrarlo cuando quieras.
             </p>
           </header>
 
@@ -37,13 +36,13 @@ export default function PrivacidadPage() {
                 densidad) — viven en tu browser, no las vemos.
               </li>
               <li>
-                <strong>Cookies técnicas</strong> que Next.js y Cloudflare
-                usan para servirte el sitio (load balancing, CSRF).
+                <strong>Cookies técnicas</strong> que Next.js y Cloudflare usan
+                para servirte el sitio (load balancing, CSRF).
               </li>
               <li>
                 <strong>Logs de acceso</strong> (IP, user-agent, ruta) que
-                Vercel y Cloudflare guardan automáticamente por días para
-                debug y prevención de abuso. No los exponemos en /admin.
+                Vercel y Cloudflare guardan automáticamente por días para debug
+                y prevención de abuso. No los exponemos en /admin.
               </li>
             </ul>
           </section>
@@ -56,13 +55,13 @@ export default function PrivacidadPage() {
                 cuando aceptás el login.
               </li>
               <li>
-                <strong>Nickname opcional</strong> que vos elegís en tu
-                perfil. Si lo dejás vacío, mostramos tu nombre con apellido
-                abreviado (ej. <em>Juan P.</em>).
+                <strong>Nickname opcional</strong> que vos elegís en tu perfil.
+                Si lo dejás vacío, mostramos tu nombre con apellido abreviado
+                (ej. <em>Juan P.</em>).
               </li>
               <li>
-                <strong>Rol</strong> (USER por default; ADMIN/MODERATOR si te
-                lo asigna el admin).
+                <strong>Rol</strong> (USER por default; ADMIN/MODERATOR si te lo
+                asigna el admin).
               </li>
             </ul>
           </section>
@@ -75,7 +74,8 @@ export default function PrivacidadPage() {
                 vistos / viendo / abandonadas / retomar.
               </li>
               <li>
-                <strong>Ratings</strong> (estrellas) y <strong>favoritos</strong>.
+                <strong>Ratings</strong> (estrellas) y{' '}
+                <strong>favoritos</strong>.
               </li>
               <li>
                 <strong>Reseñas y comentarios</strong> (públicos o privados —
@@ -83,8 +83,8 @@ export default function PrivacidadPage() {
               </li>
               <li>
                 <strong>Series que aportaste</strong> a /ver (con tu nickname
-                como autor del aporte; cualquiera lo puede ver en /admin
-                aunque desde 2026-05-13 ya no se muestra en el front).
+                como autor del aporte; cualquiera lo puede ver en /admin aunque
+                desde 2026-05-13 ya no se muestra en el front).
               </li>
               <li>
                 <strong>Suscripciones</strong> a series (notificaciones cuando
@@ -92,8 +92,8 @@ export default function PrivacidadPage() {
               </li>
               <li>
                 <strong>Layout customizado</strong> de tu /perfil dashboard
-                (orden y visibilidad de widgets — vive en tu cuenta, sincronizado
-                entre dispositivos).
+                (orden y visibilidad de widgets — vive en tu cuenta,
+                sincronizado entre dispositivos).
               </li>
               <li>
                 <strong>Push subscriptions</strong> si habilitaste
@@ -106,24 +106,24 @@ export default function PrivacidadPage() {
             <h2>Lo que NO guardamos</h2>
             <ul>
               <li>
-                <strong>Contraseñas</strong>. El login es OAuth con Google;
-                tu password vive en Google, no acá.
+                <strong>Contraseñas</strong>. El login es OAuth con Google; tu
+                password vive en Google, no acá.
               </li>
               <li>
                 <strong>Tracking de terceros</strong>. No usamos Google
                 Analytics, Meta Pixel, Hotjar, ni similares.
               </li>
               <li>
-                <strong>Tu ubicación precisa</strong>. Solo el país inferido
-                por Vercel/Cloudflare a partir de la IP, y nunca lo
-                persistimos en DB.
+                <strong>Tu ubicación precisa</strong>. Solo el país inferido por
+                Vercel/Cloudflare a partir de la IP, y nunca lo persistimos en
+                DB.
               </li>
               <li>
-                <strong>El contenido de los videos</strong> que mirás. Todo
-                lo que se reproduce son iframes oficiales de YouTube/Vimeo/
-                Bilibili/Dailymotion — esas plataformas pueden tener sus
-                propios trackers. Ver{' '}
-                <Link href="/legal">aviso legal</Link> para más sobre embeds.
+                <strong>El contenido de los videos</strong> que mirás. Todo lo
+                que se reproduce son iframes oficiales de YouTube/Vimeo/
+                Bilibili/Dailymotion — esas plataformas pueden tener sus propios
+                trackers. Ver <Link href="/legal">aviso legal</Link> para más
+                sobre embeds.
               </li>
             </ul>
           </section>
@@ -139,10 +139,10 @@ export default function PrivacidadPage() {
                 → Privacidad y datos:
                 <ul>
                   <li>
-                    <em>Exportar mis datos</em> — descarga JSON con todo lo
-                    que tenés en la app (vistas, ratings, comentarios,
-                    favoritos, reseñas, suscripciones, layout). Sin contraseña
-                    ni datos de Google.
+                    <em>Exportar mis datos</em> — descarga JSON con todo lo que
+                    tenés en la app (vistas, ratings, comentarios, favoritos,
+                    reseñas, suscripciones, layout). Sin contraseña ni datos de
+                    Google.
                   </li>
                   <li>
                     <em>Importar datos</em> — restaurar desde un JSON que
