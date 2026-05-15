@@ -375,6 +375,8 @@ const zhCN: TranslationShape = {
     statsByType: '按内容类型',
     statsTopRated: '评分最高的剧集',
     sectionSettings: '设置',
+    sectionSubscriptions: '订阅的剧集',
+    sectionSubscriptionsHint: '你关注的剧集。有新一集时我们会通知你。',
     settingsAppearanceTitle: '外观与辅助功能',
     settingsAppearanceHint:
       '主题、强调色、基调、字体、文字大小、密度和动态。这些偏好设置存储在此浏览器中。',
@@ -514,6 +516,10 @@ const zhCN: TranslationShape = {
     newSeasonsTitle: '新季',
     seasonLabel: '季',
     changelogTitle: '最近更改',
+    watchableTitle: '可观看的完整剧集',
+  },
+  watchableCarousel: {
+    watchNow: '立即观看',
   },
   notifications: {
     title: '通知',
@@ -1501,6 +1507,8 @@ const zhCN: TranslationShape = {
     statsShort: '统计',
     changelog: '更新日志',
     changelogShort: '更新',
+    users: '用户',
+    usersShort: '用户',
   },
   adminStats: {
     pageTitle: '活动统计',
@@ -2247,6 +2255,11 @@ const zhCN: TranslationShape = {
     widgetMyCases: '我的反馈案例',
     widgetMyCasesDesc: '你报告或投票的错误和建议。',
     widgetMyCasesEmpty: '暂无报告案例。',
+    widgetStatsStrip: '我的统计',
+    widgetStatsStripDesc: '可配置的一行主要指标。',
+    statsStripConfigTitle: '配置统计',
+    statsStripConfigHint: '选择要显示的项目:',
+    statsStripAllHidden: '所有统计已隐藏。点击齿轮以启用。',
     widgetHeatmap: '近期活动',
     widgetHeatmapDesc: '最近 6 个月活跃日的热力图。',
     widgetGenres: '常看类型',

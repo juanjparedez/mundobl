@@ -24,6 +24,8 @@ import {
 } from '@ant-design/icons';
 import { AdminPageHero } from '@/components/admin/AdminPageHero/AdminPageHero';
 import { AdminTableToolbar } from '@/components/admin/AdminTableToolbar/AdminTableToolbar';
+import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
+import { AdminNav } from '../AdminNav';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import './noticias-admin.css';
@@ -398,323 +400,352 @@ export function NoticiasClient() {
   ];
 
   return (
-    <div className="noticias-admin">
-      <AdminPageHero
-        title={t('newsAdmin.pageTitle')}
-        subtitle={t('newsAdmin.pageSubtitle')}
-        stats={[{ label: t('newsAdmin.totalNewsStat'), value: total }]}
-      />
+    <AppLayout>
+      <div className="admin-page-wrapper">
+        <AdminNav />
+        <div className="noticias-admin">
+          <AdminPageHero
+            title={t('newsAdmin.pageTitle')}
+            subtitle={t('newsAdmin.pageSubtitle')}
+            stats={[{ label: t('newsAdmin.totalNewsStat'), value: total }]}
+          />
 
-      <AdminTableToolbar
-        filters={
-          <Segmented
-            options={viewOptions}
-            value={view}
-            onChange={(val) => {
-              setView(val as ViewMode);
+          <AdminTableToolbar
+            filters={
+              <Segmented
+                options={viewOptions}
+                value={view}
+                onChange={(val) => {
+                  setView(val as ViewMode);
+                  setPage(1);
+                }}
+              />
+            }
+            searchPlaceholder={t('newsAdmin.searchPlaceholder')}
+            searchValue={searchInput}
+            onSearchChange={setSearchInput}
+            onSearchSubmit={() => {
+              setSearch(searchInput);
               setPage(1);
             }}
+            onSearchClear={() => {
+              setSearchInput('');
+              setSearch('');
+              setPage(1);
+            }}
+            rightActions={
+              <Space>
+                <Button
+                  icon={<RobotOutlined />}
+                  onClick={() => setIsAiOpen(true)}
+                >
+                  {t('newsAdmin.generateWithAiButton')}
+                </Button>
+                <Button
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  onClick={openCreateForm}
+                >
+                  {t('newsAdmin.newNewsButton')}
+                </Button>
+              </Space>
+            }
           />
-        }
-        searchPlaceholder={t('newsAdmin.searchPlaceholder')}
-        searchValue={searchInput}
-        onSearchChange={setSearchInput}
-        onSearchSubmit={() => {
-          setSearch(searchInput);
-          setPage(1);
-        }}
-        onSearchClear={() => {
-          setSearchInput('');
-          setSearch('');
-          setPage(1);
-        }}
-        rightActions={
-          <Space>
-            <Button icon={<RobotOutlined />} onClick={() => setIsAiOpen(true)}>
-              {t('newsAdmin.generateWithAiButton')}
-            </Button>
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={openCreateForm}
-            >
-              {t('newsAdmin.newNewsButton')}
-            </Button>
-          </Space>
-        }
-      />
 
-      <Table<NewsRow>
-        columns={columns}
-        dataSource={news}
-        rowKey="id"
-        loading={loading}
-        pagination={{
-          current: page,
-          pageSize: PAGE_SIZE,
-          total,
-          showTotal: (t_total) =>
-            t('newsAdmin.paginationTotal', { total: t_total }),
-          onChange: (p) => setPage(p),
-        }}
-        className="noticias-admin__table"
-      />
+          <Table<NewsRow>
+            columns={columns}
+            dataSource={news}
+            rowKey="id"
+            loading={loading}
+            pagination={{
+              current: page,
+              pageSize: PAGE_SIZE,
+              total,
+              showTotal: (t_total) =>
+                t('newsAdmin.paginationTotal', { total: t_total }),
+              onChange: (p) => setPage(p),
+            }}
+            className="noticias-admin__table"
+          />
 
-      {/* ── Modal preview ── */}
-      <Modal
-        title={previewRow?.title ?? t('newsAdmin.previewModalTitle')}
-        open={!!previewRow}
-        onCancel={() => setPreviewRow(null)}
-        footer={
-          <Space>
-            <Tag
-              color={previewRow ? STATUS_COLOR[previewRow.status] : 'default'}
-            >
-              {previewRow ? STATUS_LABEL[previewRow.status] : ''}
-            </Tag>
+          {/* ── Modal preview ── */}
+          <Modal
+            title={previewRow?.title ?? t('newsAdmin.previewModalTitle')}
+            open={!!previewRow}
+            onCancel={() => setPreviewRow(null)}
+            footer={
+              <Space>
+                <Tag
+                  color={
+                    previewRow ? STATUS_COLOR[previewRow.status] : 'default'
+                  }
+                >
+                  {previewRow ? STATUS_LABEL[previewRow.status] : ''}
+                </Tag>
+                {previewRow && (
+                  <Button
+                    size="small"
+                    href={previewRow.originalUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {t('newsAdmin.viewSourceButton')}
+                  </Button>
+                )}
+                <Button onClick={() => setPreviewRow(null)}>
+                  {t('newsAdmin.closeButton')}
+                </Button>
+              </Space>
+            }
+            width={680}
+          >
             {previewRow && (
-              <Button
-                size="small"
-                href={previewRow.originalUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              <div className="noticias-admin__preview">
+                {previewRow.imageUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={previewRow.imageUrl}
+                    alt={previewRow.title}
+                    className="noticias-admin__preview-img"
+                  />
+                )}
+                <p className="noticias-admin__preview-source">
+                  {t('newsAdmin.previewSourceLabel')}{' '}
+                  <strong>{previewRow.sourceName}</strong>
+                  {previewRow.publishedAt && (
+                    <>
+                      {' '}
+                      ·{' '}
+                      {new Date(previewRow.publishedAt).toLocaleDateString(
+                        'es-AR'
+                      )}
+                    </>
+                  )}
+                </p>
+                <div className="noticias-admin__preview-body">
+                  {previewRow.summary}
+                </div>
+                {previewRow.tags.length > 0 && (
+                  <div className="noticias-admin__preview-tags">
+                    {previewRow.tags.map((t_tag) => (
+                      <Tag key={t_tag.tag.id}>{t_tag.tag.name}</Tag>
+                    ))}
+                  </div>
+                )}
+                {previewRow.florNotes && (
+                  <div className="noticias-admin__preview-notes">
+                    <strong>{t('newsAdmin.previewPrivateNotesLabel')}</strong>{' '}
+                    {previewRow.florNotes}
+                  </div>
+                )}
+              </div>
+            )}
+          </Modal>
+
+          {/* ── Modal form crear/editar ── */}
+          <Modal
+            title={
+              editingRow
+                ? t('newsAdmin.editNewsModalTitle', { id: editingRow.id })
+                : t('newsAdmin.newNewsModalTitle')
+            }
+            open={isFormOpen}
+            onCancel={() => setIsFormOpen(false)}
+            footer={null}
+            width={700}
+            destroyOnHidden
+          >
+            <Form
+              form={mainForm}
+              layout="vertical"
+              onFinish={handleFormSubmit}
+              className="noticias-admin__form"
+            >
+              <Form.Item
+                label={t('newsAdmin.titleLabel')}
+                name="title"
+                rules={[
+                  { required: true, message: t('newsAdmin.titleRequired') },
+                ]}
               >
-                {t('newsAdmin.viewSourceButton')}
-              </Button>
-            )}
-            <Button onClick={() => setPreviewRow(null)}>
-              {t('newsAdmin.closeButton')}
-            </Button>
-          </Space>
-        }
-        width={680}
-      >
-        {previewRow && (
-          <div className="noticias-admin__preview">
-            {previewRow.imageUrl && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={previewRow.imageUrl}
-                alt={previewRow.title}
-                className="noticias-admin__preview-img"
-              />
-            )}
-            <p className="noticias-admin__preview-source">
-              {t('newsAdmin.previewSourceLabel')}{' '}
-              <strong>{previewRow.sourceName}</strong>
-              {previewRow.publishedAt && (
-                <>
-                  {' '}
-                  ·{' '}
-                  {new Date(previewRow.publishedAt).toLocaleDateString('es-AR')}
-                </>
-              )}
+                <Input placeholder={t('newsAdmin.titlePlaceholder')} />
+              </Form.Item>
+
+              <Form.Item
+                label={t('newsAdmin.summaryLabel')}
+                name="summary"
+                rules={[
+                  { required: true, message: t('newsAdmin.summaryRequired') },
+                ]}
+              >
+                <Input.TextArea
+                  rows={6}
+                  placeholder={t('newsAdmin.summaryPlaceholder')}
+                />
+              </Form.Item>
+
+              <div className="noticias-admin__form-row">
+                <Form.Item
+                  label={t('newsAdmin.originalUrlLabel')}
+                  name="originalUrl"
+                  rules={[
+                    {
+                      required: true,
+                      message: t('newsAdmin.originalUrlRequired'),
+                    },
+                  ]}
+                  style={{ flex: 1 }}
+                >
+                  <Input placeholder="https://…" />
+                </Form.Item>
+                <Form.Item
+                  label={t('newsAdmin.sourceNameLabel')}
+                  name="sourceName"
+                  rules={[
+                    {
+                      required: true,
+                      message: t('newsAdmin.sourceNameRequired'),
+                    },
+                  ]}
+                  style={{ flex: 1 }}
+                >
+                  <Input placeholder={t('newsAdmin.sourceNamePlaceholder')} />
+                </Form.Item>
+              </div>
+
+              <div className="noticias-admin__form-row">
+                <Form.Item
+                  label={t('newsAdmin.sourceLogoUrlLabel')}
+                  name="sourceLogo"
+                  style={{ flex: 1 }}
+                >
+                  <Input
+                    placeholder={t('newsAdmin.sourceLogoUrlPlaceholder')}
+                  />
+                </Form.Item>
+                <Form.Item
+                  label={t('newsAdmin.imageUrlLabel')}
+                  name="imageUrl"
+                  style={{ flex: 1 }}
+                >
+                  <Input placeholder={t('newsAdmin.imageUrlPlaceholder')} />
+                </Form.Item>
+              </div>
+
+              <div className="noticias-admin__form-row">
+                <Form.Item
+                  label={t('newsAdmin.publishedAtLabel')}
+                  name="publishedAt"
+                  style={{ flex: 1 }}
+                >
+                  <Input type="date" />
+                </Form.Item>
+                <Form.Item
+                  label={t('newsAdmin.statusLabel')}
+                  name="status"
+                  rules={[{ required: true }]}
+                  style={{ flex: 1 }}
+                >
+                  <Select
+                    options={Object.entries(STATUS_LABEL).map(
+                      ([value, label]) => ({
+                        value,
+                        label,
+                      })
+                    )}
+                  />
+                </Form.Item>
+              </div>
+
+              <Form.Item
+                label={t('newsAdmin.privateNotesLabel')}
+                name="florNotes"
+              >
+                <Input.TextArea
+                  rows={2}
+                  placeholder={t('newsAdmin.privateNotesPlaceholder')}
+                />
+              </Form.Item>
+
+              <div className="noticias-admin__form-actions">
+                <Button onClick={() => setIsFormOpen(false)}>
+                  {t('newsAdmin.cancelButton')}
+                </Button>
+                <Button type="primary" htmlType="submit" loading={isSaving}>
+                  {editingRow
+                    ? t('newsAdmin.saveChangesButton')
+                    : t('newsAdmin.createNewsButton')}
+                </Button>
+              </div>
+            </Form>
+          </Modal>
+
+          {/* ── Modal AI generator ── */}
+          <Modal
+            title={t('newsAdmin.aiGeneratorModalTitle')}
+            open={isAiOpen}
+            onCancel={() => setIsAiOpen(false)}
+            footer={null}
+            width={640}
+            destroyOnHidden
+          >
+            <p className="noticias-admin__ai-disclaimer">
+              {t('newsAdmin.aiDisclaimer')}
             </p>
-            <div className="noticias-admin__preview-body">
-              {previewRow.summary}
-            </div>
-            {previewRow.tags.length > 0 && (
-              <div className="noticias-admin__preview-tags">
-                {previewRow.tags.map((t_tag) => (
-                  <Tag key={t_tag.tag.id}>{t_tag.tag.name}</Tag>
-                ))}
+            <Form form={aiForm} layout="vertical" onFinish={handleAiGenerate}>
+              <Form.Item
+                label={t('newsAdmin.aiUrlLabel')}
+                name="url"
+                rules={[
+                  { required: true, message: t('newsAdmin.aiUrlRequired') },
+                ]}
+              >
+                <Input placeholder="https://…" />
+              </Form.Item>
+              <Form.Item
+                label={t('newsAdmin.aiSourceNameLabel')}
+                name="sourceName"
+                rules={[
+                  {
+                    required: true,
+                    message: t('newsAdmin.aiSourceNameRequired'),
+                  },
+                ]}
+              >
+                <Input placeholder={t('newsAdmin.sourceNamePlaceholder')} />
+              </Form.Item>
+              <Form.Item
+                label={t('newsAdmin.aiArticleTextLabel')}
+                name="articleText"
+                rules={[
+                  {
+                    required: true,
+                    message: t('newsAdmin.aiArticleTextRequired'),
+                  },
+                ]}
+              >
+                <Input.TextArea
+                  rows={8}
+                  placeholder={t('newsAdmin.aiArticleTextPlaceholder')}
+                />
+              </Form.Item>
+              <div className="noticias-admin__form-actions">
+                <Button onClick={() => setIsAiOpen(false)}>
+                  {t('newsAdmin.cancelButton')}
+                </Button>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  icon={<RobotOutlined />}
+                  loading={isGenerating}
+                >
+                  {t('newsAdmin.generateSummaryButton')}
+                </Button>
               </div>
-            )}
-            {previewRow.florNotes && (
-              <div className="noticias-admin__preview-notes">
-                <strong>{t('newsAdmin.previewPrivateNotesLabel')}</strong>{' '}
-                {previewRow.florNotes}
-              </div>
-            )}
-          </div>
-        )}
-      </Modal>
-
-      {/* ── Modal form crear/editar ── */}
-      <Modal
-        title={
-          editingRow
-            ? t('newsAdmin.editNewsModalTitle', { id: editingRow.id })
-            : t('newsAdmin.newNewsModalTitle')
-        }
-        open={isFormOpen}
-        onCancel={() => setIsFormOpen(false)}
-        footer={null}
-        width={700}
-        destroyOnHidden
-      >
-        <Form
-          form={mainForm}
-          layout="vertical"
-          onFinish={handleFormSubmit}
-          className="noticias-admin__form"
-        >
-          <Form.Item
-            label={t('newsAdmin.titleLabel')}
-            name="title"
-            rules={[{ required: true, message: t('newsAdmin.titleRequired') }]}
-          >
-            <Input placeholder={t('newsAdmin.titlePlaceholder')} />
-          </Form.Item>
-
-          <Form.Item
-            label={t('newsAdmin.summaryLabel')}
-            name="summary"
-            rules={[
-              { required: true, message: t('newsAdmin.summaryRequired') },
-            ]}
-          >
-            <Input.TextArea
-              rows={6}
-              placeholder={t('newsAdmin.summaryPlaceholder')}
-            />
-          </Form.Item>
-
-          <div className="noticias-admin__form-row">
-            <Form.Item
-              label={t('newsAdmin.originalUrlLabel')}
-              name="originalUrl"
-              rules={[
-                { required: true, message: t('newsAdmin.originalUrlRequired') },
-              ]}
-              style={{ flex: 1 }}
-            >
-              <Input placeholder="https://…" />
-            </Form.Item>
-            <Form.Item
-              label={t('newsAdmin.sourceNameLabel')}
-              name="sourceName"
-              rules={[
-                {
-                  required: true,
-                  message: t('newsAdmin.sourceNameRequired'),
-                },
-              ]}
-              style={{ flex: 1 }}
-            >
-              <Input placeholder={t('newsAdmin.sourceNamePlaceholder')} />
-            </Form.Item>
-          </div>
-
-          <div className="noticias-admin__form-row">
-            <Form.Item
-              label={t('newsAdmin.sourceLogoUrlLabel')}
-              name="sourceLogo"
-              style={{ flex: 1 }}
-            >
-              <Input placeholder={t('newsAdmin.sourceLogoUrlPlaceholder')} />
-            </Form.Item>
-            <Form.Item
-              label={t('newsAdmin.imageUrlLabel')}
-              name="imageUrl"
-              style={{ flex: 1 }}
-            >
-              <Input placeholder={t('newsAdmin.imageUrlPlaceholder')} />
-            </Form.Item>
-          </div>
-
-          <div className="noticias-admin__form-row">
-            <Form.Item
-              label={t('newsAdmin.publishedAtLabel')}
-              name="publishedAt"
-              style={{ flex: 1 }}
-            >
-              <Input type="date" />
-            </Form.Item>
-            <Form.Item
-              label={t('newsAdmin.statusLabel')}
-              name="status"
-              rules={[{ required: true }]}
-              style={{ flex: 1 }}
-            >
-              <Select
-                options={Object.entries(STATUS_LABEL).map(([value, label]) => ({
-                  value,
-                  label,
-                }))}
-              />
-            </Form.Item>
-          </div>
-
-          <Form.Item label={t('newsAdmin.privateNotesLabel')} name="florNotes">
-            <Input.TextArea
-              rows={2}
-              placeholder={t('newsAdmin.privateNotesPlaceholder')}
-            />
-          </Form.Item>
-
-          <div className="noticias-admin__form-actions">
-            <Button onClick={() => setIsFormOpen(false)}>
-              {t('newsAdmin.cancelButton')}
-            </Button>
-            <Button type="primary" htmlType="submit" loading={isSaving}>
-              {editingRow
-                ? t('newsAdmin.saveChangesButton')
-                : t('newsAdmin.createNewsButton')}
-            </Button>
-          </div>
-        </Form>
-      </Modal>
-
-      {/* ── Modal AI generator ── */}
-      <Modal
-        title={t('newsAdmin.aiGeneratorModalTitle')}
-        open={isAiOpen}
-        onCancel={() => setIsAiOpen(false)}
-        footer={null}
-        width={640}
-        destroyOnHidden
-      >
-        <p className="noticias-admin__ai-disclaimer">
-          {t('newsAdmin.aiDisclaimer')}
-        </p>
-        <Form form={aiForm} layout="vertical" onFinish={handleAiGenerate}>
-          <Form.Item
-            label={t('newsAdmin.aiUrlLabel')}
-            name="url"
-            rules={[{ required: true, message: t('newsAdmin.aiUrlRequired') }]}
-          >
-            <Input placeholder="https://…" />
-          </Form.Item>
-          <Form.Item
-            label={t('newsAdmin.aiSourceNameLabel')}
-            name="sourceName"
-            rules={[
-              {
-                required: true,
-                message: t('newsAdmin.aiSourceNameRequired'),
-              },
-            ]}
-          >
-            <Input placeholder={t('newsAdmin.sourceNamePlaceholder')} />
-          </Form.Item>
-          <Form.Item
-            label={t('newsAdmin.aiArticleTextLabel')}
-            name="articleText"
-            rules={[
-              { required: true, message: t('newsAdmin.aiArticleTextRequired') },
-            ]}
-          >
-            <Input.TextArea
-              rows={8}
-              placeholder={t('newsAdmin.aiArticleTextPlaceholder')}
-            />
-          </Form.Item>
-          <div className="noticias-admin__form-actions">
-            <Button onClick={() => setIsAiOpen(false)}>
-              {t('newsAdmin.cancelButton')}
-            </Button>
-            <Button
-              type="primary"
-              htmlType="submit"
-              icon={<RobotOutlined />}
-              loading={isGenerating}
-            >
-              {t('newsAdmin.generateSummaryButton')}
-            </Button>
-          </div>
-        </Form>
-      </Modal>
-    </div>
+            </Form>
+          </Modal>
+        </div>
+      </div>
+    </AppLayout>
   );
 }

@@ -14,6 +14,7 @@ import {
 } from '@ant-design/icons';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { LOCALE_LABELS, SUPPORTED_LOCALES } from '@/i18n/config';
 import { ROUTES } from '@/constants/navigation';
 import { NotificationsBell } from '../NotificationsBell/NotificationsBell';
@@ -56,6 +57,16 @@ export function TopBar() {
   const { t, locale, setLocale } = useLocale();
   const { data: session, status } = useSession();
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const isMobile = useMediaQuery('(max-width: 768px)');
+
+  // En /perfil mobile la TopBar queda casi vacia (search no aplica, los
+  // unicos chips son avatar + idioma + settings que ya estan en el
+  // ProfileDashboardHeader). Ocultarla para no duplicar y dar mas
+  // espacio vertical (iter fine_tunning_1 #9). Logout sigue accesible
+  // desde el ProfileSettings card "Sesion".
+  if (isMobile && pathname?.startsWith('/perfil')) {
+    return null;
+  }
 
   const isAdmin = session?.user?.role === 'ADMIN';
   const showSearch = shouldShowSearch(pathname);

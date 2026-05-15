@@ -179,3 +179,25 @@ html[data-skin='premium'][data-theme='dark'] .mb-widget {
 html[data-skin='premium'][data-theme='dark'] .mb-widget__header {
   border-bottom-color: transparent;
 }
+
+/* Touch devices: handles mas grandes para dragear/cerrar/resize con dedo
+ * sin necesidad de precision pixel-perfect (item 8 fine_tunning_1).
+ * Aplica con pointer:coarse (touchscreens), no afecta desktop con mouse. */
+@media (pointer: coarse) {
+  .mb-widget__drag-handle,
+  .mb-widget__remove {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  /* Handle de resize de react-grid-layout. La libreria pone un span SE
+   * en el bottom-right de cada item editing. Lo agrandamos para touch. */
+  .mb-widget--editing
+    + .react-resizable-handle,
+  .react-grid-item.react-grid-placeholder + .react-resizable-handle,
+  .react-resizable-handle {
+    width: 24px !important;
+    height: 24px !important;
+  }
+}

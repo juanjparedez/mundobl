@@ -12,6 +12,8 @@ import {
 } from '@ant-design/icons';
 import { PageTitle } from '@/components/common/PageTitle/PageTitle';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
+import { WatchableCarousel } from '@/components/common/WatchableCarousel/WatchableCarousel';
+import type { WatchableCarouselItem } from '@/components/common/WatchableCarousel/WatchableCarousel';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
@@ -55,6 +57,9 @@ interface ChangelogEntry {
 interface NovedadesClientProps {
   newSeries: NewSerie[];
   newSeasons: NewSeason[];
+  /** Series watchable (con embedUrl) para el carousel "Series completas
+   *  para ver" — anuncia la feature en novedades (item 17). */
+  watchableSeries?: WatchableCarouselItem[];
 }
 
 function relativeTime(
@@ -75,6 +80,7 @@ function relativeTime(
 export function NovedadesClient({
   newSeries,
   newSeasons,
+  watchableSeries = [],
 }: NovedadesClientProps) {
   const { t } = useLocale();
   const [changelog, setChangelog] = useState<ChangelogEntry[]>([]);
@@ -101,6 +107,16 @@ export function NovedadesClient({
         title={t('novedades.title')}
         subtitle={t('novedades.subtitle')}
       />
+
+      {/* Carousel de series watchable: anuncia la feature "Ver series
+       *  completas" arriba de las novedades para que se vea inmediato
+       *  (item 17 fine_tunning_1). Solo renderea si hay items. */}
+      {watchableSeries.length > 0 && (
+        <WatchableCarousel
+          items={watchableSeries}
+          title={t('novedades.watchableTitle')}
+        />
+      )}
 
       {!hasContent ? (
         <Empty description={t('novedades.empty')} />

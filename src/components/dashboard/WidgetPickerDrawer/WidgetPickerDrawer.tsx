@@ -26,6 +26,10 @@ export interface WidgetPickerDrawerProps {
     mode?: WidgetMode;
     category?: WidgetCategory;
   };
+  /** Set opcional de ids permitidos. Si se pasa, solo aparecen widgets
+   *  cuyo id este incluido. Usado por /perfil para limitar el picker
+   *  segun el modo basico/avanzado/admin. */
+  allowedIds?: Set<string>;
   /** Ids de widgets ya presentes en el dashboard (se muestran deshabilitados). */
   alreadyAdded?: string[];
 }
@@ -35,17 +39,20 @@ export function WidgetPickerDrawer({
   onClose,
   onPick,
   filter,
+  allowedIds,
   alreadyAdded,
 }: WidgetPickerDrawerProps) {
   const { t } = useLocale();
 
   const widgets = useMemo(() => {
-    return WidgetRegistry.list({
+    const list = WidgetRegistry.list({
       roles: filter?.roles,
       mode: filter?.mode,
       category: filter?.category,
     });
-  }, [filter?.roles, filter?.mode, filter?.category]);
+    if (!allowedIds) return list;
+    return list.filter((w) => allowedIds.has(w.id));
+  }, [filter?.roles, filter?.mode, filter?.category, allowedIds]);
 
   return (
     <Drawer

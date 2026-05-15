@@ -23,6 +23,7 @@ import {
 import { signIn, useSession } from 'next-auth/react';
 import { ROUTES } from '@/constants/navigation';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
+import { WatchableCarousel } from '@/components/common/WatchableCarousel/WatchableCarousel';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import './LandingPage.css';
@@ -45,6 +46,16 @@ interface FeaturedReview {
   series: { id: number; title: string; imageUrl: string | null } | null;
 }
 
+interface WatchableLanding {
+  id: number;
+  title: string;
+  imageUrl: string | null;
+  imagePosition: string | null;
+  year: number | null;
+  type: string;
+  country: { name: string; code: string | null } | null;
+}
+
 interface LandingStats {
   totalSeries: number;
   totalCompletedViews: number;
@@ -52,6 +63,7 @@ interface LandingStats {
   totalReviews: number;
   latestSeries: LatestSeries[];
   featuredReview: FeaturedReview | null;
+  watchableSeries?: WatchableLanding[];
 }
 
 interface LandingPageProps {
@@ -312,6 +324,18 @@ export function LandingPage({ stats }: LandingPageProps) {
           ))}
         </div>
       </section>
+
+      {/* ── Watchable series carousel ── (item 17 fine_tunning_1)
+       * Anuncia la feature "Ver series completas" como un carousel
+       * Netflix-like en la landing. Solo aparece si hay items. */}
+      {stats.watchableSeries && stats.watchableSeries.length > 0 && (
+        <section className="landing__watchable">
+          <WatchableCarousel
+            items={stats.watchableSeries}
+            title={t('novedades.watchableTitle')}
+          />
+        </section>
+      )}
 
       {/* ── Latest series teaser ── */}
       {stats.latestSeries.length > 0 && (

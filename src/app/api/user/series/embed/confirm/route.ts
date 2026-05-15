@@ -408,5 +408,20 @@ export async function POST(request: NextRequest) {
     },
   });
 
+  // Aporto = quiere verla. Marcamos automaticamente VIENDO para que
+  // aparezca en el widget "Viendo ahora" del dashboard y en /watching
+  // sin que el usuario tenga que click el toggle de estado.
+  await prisma.viewStatus.upsert({
+    where: {
+      userId_seriesId: { userId: auth.userId, seriesId: newSeries.id },
+    },
+    update: { status: 'VIENDO' },
+    create: {
+      userId: auth.userId,
+      seriesId: newSeries.id,
+      status: 'VIENDO',
+    },
+  });
+
   return NextResponse.json({ seriesId: newSeries.id }, { status: 201 });
 }
