@@ -1,12 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
-import { Carousel } from 'antd';
 import { PlayCircleFilled } from '@ant-design/icons';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
-import { isSupabaseImageUrl } from '@/lib/image-helpers';
 import './WatchableCarousel.css';
 
 export interface WatchableCarouselItem {
@@ -23,20 +20,16 @@ interface WatchableCarouselProps {
   items: WatchableCarouselItem[];
   /** Titulo opcional para mostrar arriba del carousel (header). */
   title?: string;
-  /** Cantidad de slides visibles por viewport en desktop. Mobile usa 1. */
-  slidesPerView?: number;
 }
 
-/** Carousel tipo Netflix de series watchable (con embedUrl). Click va a
+/** Carrusel tipo Netflix de series watchable (con embedUrl). Click va a
  *  /ver/[id] (player). Reutilizable en landing, novedades y donde aplique.
  *
- *  Usa Ant Design <Carousel> con autoplay + flechas. En mobile, 1 card por
- *  slide; en desktop, hasta 4. La card es link directo al player. */
-export function WatchableCarousel({
-  items,
-  title,
-  slidesPerView = 4,
-}: WatchableCarouselProps) {
+ *  Implementado como scroll horizontal con scroll-snap (NO AntD Carousel —
+ *  ese con slidesToShow rendereaba 1 card a pantalla completa con
+ *  aspect-ratio 2:3 gigante, bug fine_tunning_3 #3). Cada card tiene ancho
+ *  fijo y poster 2:3 chico. El usuario scrollea con el dedo / trackpad. */
+export function WatchableCarousel({ items, title }: WatchableCarouselProps) {
   const { t } = useLocale();
 
   if (items.length === 0) return null;
@@ -49,23 +42,7 @@ export function WatchableCarousel({
           <h2 className="watchable-carousel__title">{title}</h2>
         </header>
       )}
-      <Carousel
-        dots={items.length > slidesPerView}
-        arrows
-        autoplay
-        autoplaySpeed={5000}
-        slidesToShow={slidesPerView}
-        slidesToScroll={1}
-        infinite
-        responsive={[
-          {
-            breakpoint: 1200,
-            settings: { slidesToShow: 3, slidesToScroll: 1 },
-          },
-          { breakpoint: 900, settings: { slidesToShow: 2, slidesToScroll: 1 } },
-          { breakpoint: 600, settings: { slidesToShow: 1, slidesToScroll: 1 } },
-        ]}
-      >
+      <div className="watchable-carousel__track">
         {items.map((item) => (
           <Link
             key={item.id}
@@ -73,31 +50,24 @@ export function WatchableCarousel({
             className="watchable-carousel__slide"
             prefetch={false}
           >
-            <div
-              className="watchable-carousel__cover"
-              style={{
-                objectPosition: item.imagePosition ?? 'center',
-              }}
-            >
+            <div className="watchable-carousel__cover">
               {item.imageUrl ? (
-                isSupabaseImageUrl(item.imageUrl) ? (
-                  <Image
-                    src={item.imageUrl}
-                    alt={item.title}
-                    fill
-                    sizes="(max-width: 600px) 100vw, 25vw"
-                    style={{ objectFit: 'cover' }}
-                  />
-                ) : (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={item.imageUrl}
-                    alt={item.title}
-                    className="watchable-carousel__img"
-                  />
-                )
+                // <img> regular en vez de next/image: las portadas de
+                // series pueden venir de cualquier CDN (YouTube thumbs,
+                // etc.) que no esta en remotePatterns. next/image fallaba
+                // silenciosamente -> "sin imagen" (bug fine_tunning_3 #3).
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={item.imageUrl}
+                  alt={item.title}
+                  loading="lazy"
+                  className="watchable-carousel__img"
+                  style={{ objectPosition: item.imagePosition ?? 'center' }}
+                />
               ) : (
-                <div className="watchable-carousel__cover-placeholder" />
+                <div className="watchable-carousel__cover-placeholder">
+                  <PlayCircleFilled />
+                </div>
               )}
               <div className="watchable-carousel__overlay">
                 <PlayCircleFilled className="watchable-carousel__play-icon" />
@@ -120,7 +90,7 @@ export function WatchableCarousel({
             </div>
           </Link>
         ))}
-      </Carousel>
+      </div>
     </section>
   );
 }

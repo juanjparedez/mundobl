@@ -128,20 +128,35 @@ export function useDashboardLayout(
   options: UseDashboardLayoutOptions = {}
 ): UseDashboardLayoutResult {
   const { persist = true, syncWithServer = true } = options;
+  // defaultsRef se mantiene actualizado via effect (no en render — el
+  // linter prohibe mutar refs en render). Lo usa reset() para volver al
+  // preset del modo vigente.
   const defaultsRef = useRef(defaultLayouts);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [layouts, setLayoutsState] = useState<DashboardLayouts>(defaultLayouts);
 
-  // Hidratacion: localStorage primero (sincrono), despues server (asincrono).
   useEffect(() => {
-    if (!persist) return;
+    defaultsRef.current = defaultLayouts;
+  }, [defaultLayouts]);
+
+  // Hidratacion: localStorage primero (sincrono), despues server (asincrono).
+  // Corre cada vez que dashboardKey o defaultLayouts cambian. defaultLayouts
+  // es referencia estable (constante module-level por modo) asi que solo
+  // cambia al cambiar de modo basic/advanced/admin — ahi re-hidrata.
+  // Critico: si no hay layout persistido para la nueva key, aplica el
+  // preset NUEVO en vez de quedarse con el del modo anterior (bug
+  // fine_tunning_3 #2: "los botones Basica|Avanzada no funcionan").
+  useEffect(() => {
+    if (!persist) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- aplica preset del modo actual
+      setLayoutsState(defaultLayouts);
+      return;
+    }
     let cancelled = false;
     const stored = readFromStorage(dashboardKey);
-    if (stored) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration: read localStorage on mount
-      setLayoutsState(stored);
-    }
+
+    setLayoutsState(stored ?? defaultLayouts);
     if (syncWithServer) {
       fetchFromServer(dashboardKey).then((remote) => {
         if (cancelled || !remote) return;
@@ -152,7 +167,7 @@ export function useDashboardLayout(
     return () => {
       cancelled = true;
     };
-  }, [dashboardKey, persist, syncWithServer]);
+  }, [dashboardKey, persist, syncWithServer, defaultLayouts]);
 
   // Debounce de write a server.
   const scheduleServerPush = useCallback(

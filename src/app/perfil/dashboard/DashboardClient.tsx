@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { Button, Spin } from 'antd';
@@ -774,6 +774,28 @@ export function DashboardClient() {
     };
   }, [layouts, isVisible]);
 
+  // El grid solo conoce los widgets visibles. Cuando emite onLayoutsChange
+  // (drag/resize o porque un widget desaparecio al ocultar su section),
+  // hay que RE-INYECTAR los items ocultos preservando su posicion en el
+  // layout persistido. Sin esto, ocultar una section borraba el widget
+  // del layout y al reactivarla no reaparecia (bug fine_tunning_3 #1:
+  // "funciona para desactivar pero no para reactivar").
+  const handleLayoutsChange = useCallback(
+    (next: DashboardLayouts) => {
+      const merged: DashboardLayouts = {};
+      (['lg', 'md', 'sm', 'xs'] as const).forEach((bp) => {
+        const visibleItems = next[bp] ?? [];
+        const hiddenItems = (layouts[bp] ?? []).filter((item) => {
+          const sk = WIDGET_TO_SECTION[item.i];
+          return sk ? !isVisible(sk as OverviewSectionKey) : false;
+        });
+        merged[bp] = [...visibleItems, ...hiddenItems];
+      });
+      setLayouts(merged);
+    },
+    [layouts, isVisible, setLayouts]
+  );
+
   if (
     status === 'loading' ||
     (status === 'authenticated' && !data && !errored)
@@ -823,7 +845,7 @@ export function DashboardClient() {
           layouts={visibleLayouts}
           widgetProps={widgetProps}
           editing={editing}
-          onLayoutsChange={setLayouts}
+          onLayoutsChange={handleLayoutsChange}
           onRemoveWidget={removeWidget}
           rowHeight={36}
           gap={10}
