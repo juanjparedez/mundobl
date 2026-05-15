@@ -2,9 +2,42 @@
 
 Todas las versiones notables del proyecto se documentan aqui.
 
-## Proximo deploy
+> El changelog activo vive en la DB (`ChangelogItem`, editable desde
+> `/admin/changelog`). Este archivo es el fallback si la DB esta vacia —
+> mantener ambos en sync al agregar entregas.
 
-### /ver: aporte de series por users registrados + panel admin de moderacion
+## 2026-05-15 — Pulido post-launch: /perfil, catalogo, novedades, sitios (3 iters)
+
+### Fixes
+
+- **BUG CRITICO catalogo**: el catalogo mostraba series marcadas "Visto" que el usuario nunca vio. El cache global servia el `viewStatus` del primer visitante (Flor) a todos. Ahora `getAllSeries`/`getSeriesById` filtran el estado por usuario y el cache es scoped por `userId`.
+- **Roles**: el rol USER (visitante) ya no ve botones de editar/borrar episodios y temporadas (helper `canEditCatalog` gatea la UI; el backend ya lo rechazaba). Aportar series via `/ver/agregar` sigue habilitado para todos.
+- **Modos del perfil** (Basica/Avanzada/Admin): al cambiar de modo se aplica el preset de widgets correcto. Antes se quedaba con el layout del modo anterior y parecia que los botones no hacian nada.
+- **Personalizar perfil**: reactivar una seccion oculta vuelve a mostrarla (antes desactivaba pero no reactivaba — el widget se perdia del layout al ocultarlo).
+- **Layout admin**: `/admin/noticias` se renderiza dentro del layout admin. El boton "Editar layout" de `/admin` se integro al hero en vez de quedar flotando.
+- **Accesos**: gestion de usuarios accesible desde el menu admin (grupo Sistema). Modal de feedback sin inputs de archivo nativos duplicados.
+
+### Features
+
+- **Estadisticas del perfil** como widget removible y configurable: cada mini-stat (vistas, viendo, favoritos, etc.) se muestra/oculta individualmente.
+- **Widget "Mis feedbacks"** recuperado en el perfil. Aportar una serie via `/ver/agregar` la deja automaticamente en "Viendo ahora".
+- **Carrusel de series completas** (estilo Netflix) en landing y `/novedades`: scroll horizontal con portada, click directo al reproductor.
+
+### UX
+
+- Novedades: "Nuevas temporadas" con portada de la serie (antes solo texto). Changelog renderizado con formato real (listas, negritas, links) via `react-markdown`.
+- Sitios de interes: cada sitio muestra su favicon (logo propio o el del dominio). Header del perfil reorganizado con la version del cliente arriba.
+- Mobile: en `/perfil` se oculta la barra superior casi vacia. Handles de widgets mas grandes para touch.
+
+### i18n
+
+- Nuevas claves de interfaz traducidas a los 10 idiomas (es/en/it/de/fr/ja/ko/zh-CN/zh-TW/th).
+
+### Infra
+
+- Notificaciones push: codigo listo, falta configurar las VAPID keys del servidor (tarea de infraestructura).
+
+## 2026-05-12 — /ver: aporte de series por users registrados + panel admin de moderacion
 
 - **Nueva ruta `/ver/agregar`** (login-gated): cualquier usuario logueado pega una URL de canal oficial (YouTube / Vimeo / Bilibili / Dailymotion) y la IA precarga title, year, country, sinopsis, cast, productora, idiomas, subs, tags, generos. Confianza expuesta (high / medium / low) y warnings si Gemini no respondio o devolvio JSON dudoso. Form editable antes de confirmar; al guardar aparece al instante en `/ver` con badge `@nickname`.
 - **Helper `buildEmbedPreview`** en `src/lib/user-embed-preview.ts`: oEmbed nativo de cada plataforma (titulo / canal / thumbnail confiables) + Gemini con shape JSON estricta para el resto. Plataformas no soportadas (Netflix, TikTok, etc.) → 422.
