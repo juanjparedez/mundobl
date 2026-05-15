@@ -72,38 +72,60 @@ export async function GET() {
   const buildId = getBuildId();
 
   // Leer de DB; si está vacía, usar el archivo como fallback.
-  // Orden: novedades mas recientes primero (sortOrder/createdAt desc).
-  const dbItems = await prisma.changelogItem.findMany({
-    orderBy: [{ sortOrder: 'desc' }, { createdAt: 'desc' }],
-  });
+  const dbItems = await prisma.changelogItem.findMany();
 
   let entries: ChangelogEntry[];
 
   if (dbItems.length > 0) {
+    // Agrupar por version. Importante: el orden de las VERSIONES se
+    // calcula por su recencia real (max createdAt de sus items), NO por
+    // el sortOrder global — antes "2026-04" (sortOrder 1-33) salia antes
+    // que "2026-05-12" (sortOrder 0-9) y el changelog mostraba lo viejo
+    // primero. Dentro de cada version, los items van por sortOrder desc.
     const versionMap = new Map<
       string,
-      { label: string | null; items: ChangelogItemEntry[] }
+      {
+        label: string | null;
+        items: { body: string; category: string | null; sort: number }[];
+        recency: number;
+      }
     >();
     for (const item of dbItems) {
+      const ts = item.createdAt.getTime();
       const existing = versionMap.get(item.version);
       if (existing) {
         existing.items.push({
           body: item.body,
           category: item.category ?? null,
+          sort: item.sortOrder,
         });
         if (!existing.label && item.versionLabel) {
           existing.label = item.versionLabel;
         }
+        if (ts > existing.recency) existing.recency = ts;
       } else {
         versionMap.set(item.version, {
           label: item.versionLabel ?? null,
-          items: [{ body: item.body, category: item.category ?? null }],
+          items: [
+            {
+              body: item.body,
+              category: item.category ?? null,
+              sort: item.sortOrder,
+            },
+          ],
+          recency: ts,
         });
       }
     }
-    entries = Array.from(versionMap.entries()).map(
-      ([version, { label, items }]) => ({ version, label, items })
-    );
+    entries = Array.from(versionMap.entries())
+      .sort((a, b) => b[1].recency - a[1].recency)
+      .map(([version, { label, items }]) => ({
+        version,
+        label,
+        items: items
+          .sort((x, y) => y.sort - x.sort)
+          .map(({ body, category }) => ({ body, category })),
+      }));
   } else {
     entries = parseChangelogFile();
   }
