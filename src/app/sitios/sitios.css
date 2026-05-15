@@ -297,7 +297,7 @@
   );
 }
 
-/* Logo / imagen del sitio */
+/* Logo / imagen del sitio (legacy) */
 .sitios-card__logo {
   display: flex;
   align-items: center;
@@ -312,6 +312,71 @@
   max-width: 100%;
   object-fit: contain;
   border-radius: 4px;
+}
+
+/* Title row con favicon + nombre. El favicon vive en un container
+ * cuadrado con un fondo y borde sutil para que se vea consistente
+ * aunque cada sitio devuelva favicons de tamano/forma distinta. */
+.sitios-card__title-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.sitios-card__favicon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--bg-spotlight) 80%, transparent);
+  border: 1px solid var(--border-color-secondary);
+  overflow: hidden;
+}
+
+.sitios-card__favicon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.sitios-card__favicon-fallback {
+  font-size: 18px;
+  color: var(--text-tertiary);
+}
+
+.sitios-card__name {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+/* Favicon en list view: mas chico, inline con el nombre. */
+.sitios-list-item__favicon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--bg-spotlight) 80%, transparent);
+  border: 1px solid var(--border-color-secondary);
+  overflow: hidden;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.sitios-list-item__favicon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
 }
 
 .sitios-card__description {
