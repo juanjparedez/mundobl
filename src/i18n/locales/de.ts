@@ -387,6 +387,9 @@ const de: TranslationShape = {
     statsByType: 'Nach Inhaltstyp',
     statsTopRated: 'Top-bewertete Serien',
     sectionSettings: 'Einstellungen',
+    sectionSubscriptions: 'Abonnements',
+    sectionSubscriptionsHint:
+      'Serien, denen du folgst. Wir benachrichtigen dich bei neuen Episoden.',
     settingsAppearanceTitle: 'Erscheinungsbild & Barrierefreiheit',
     settingsAppearanceHint:
       'Design, Akzentfarbe, Grundton, Schriftart, Textgröße, Dichte und Bewegung. Diese Einstellungen sind in diesem Browser gespeichert.',
@@ -539,6 +542,10 @@ const de: TranslationShape = {
     newSeasonsTitle: 'Neue Staffeln',
     seasonLabel: 'Staffel',
     changelogTitle: 'Letzte Änderungen',
+    watchableTitle: 'Komplette Serien zum Anschauen',
+  },
+  watchableCarousel: {
+    watchNow: 'Jetzt ansehen',
   },
   notifications: {
     title: 'Benachrichtigungen',
@@ -1566,6 +1573,8 @@ const de: TranslationShape = {
     statsShort: 'Stat.',
     changelog: 'Änderungsprotokoll',
     changelogShort: 'ÄP',
+    users: 'Benutzer',
+    usersShort: 'Benutzer',
   },
   adminStats: {
     pageTitle: 'Aktivitätsstatistiken',
@@ -2349,6 +2358,12 @@ const de: TranslationShape = {
     widgetMyCases: 'Meine Feedback-Fälle',
     widgetMyCasesDesc: 'Bugs und Ideen, die du gemeldet oder gevotet hast.',
     widgetMyCasesEmpty: 'Noch keine Fälle gemeldet.',
+    widgetStatsStrip: 'Meine Statistiken',
+    widgetStatsStripDesc: 'Wichtige KPIs in einer konfigurierbaren Zeile.',
+    statsStripConfigTitle: 'Statistiken konfigurieren',
+    statsStripConfigHint: 'Wähle, was angezeigt werden soll:',
+    statsStripAllHidden:
+      'Alle Statistiken sind ausgeblendet. Tippe auf das Zahnrad, um welche zu aktivieren.',
     widgetHeatmap: 'Aktuelle Aktivität',
     widgetHeatmapDesc: 'Heatmap deiner aktiven Tage in den letzten 6 Monaten.',
     widgetGenres: 'Lieblingsgenres',

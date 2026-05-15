@@ -21,6 +21,7 @@ async function getLandingStats() {
       totalReviews,
       latestSeries,
       featuredReview,
+      watchableSeries,
     ] = await Promise.all([
       prisma.series.count({ where: { origin: 'CURATED' } }),
       prisma.viewStatus.count({
@@ -61,6 +62,28 @@ async function getLandingStats() {
           series: { select: { id: true, title: true, imageUrl: true } },
         },
       }),
+      // Series watchable para el carousel Netflix-like en landing
+      // (item 17 fine_tunning_1). Solo VISIBLE + tiene al menos un
+      // episodio con embedUrl. Top 12 mas recientes.
+      prisma.series.findMany({
+        where: {
+          visibility: 'VISIBLE',
+          seasons: {
+            some: { episodes: { some: { embedUrl: { not: null } } } },
+          },
+        },
+        orderBy: { createdAt: 'desc' },
+        take: 12,
+        select: {
+          id: true,
+          title: true,
+          imageUrl: true,
+          imagePosition: true,
+          year: true,
+          type: true,
+          country: { select: { name: true, code: true } },
+        },
+      }),
     ]);
     return {
       totalSeries,
@@ -69,6 +92,7 @@ async function getLandingStats() {
       totalReviews,
       latestSeries,
       featuredReview,
+      watchableSeries,
     };
   } catch {
     return {
@@ -78,6 +102,7 @@ async function getLandingStats() {
       totalReviews: 0,
       latestSeries: [],
       featuredReview: null,
+      watchableSeries: [],
     };
   }
 }

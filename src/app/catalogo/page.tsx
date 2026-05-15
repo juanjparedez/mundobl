@@ -35,23 +35,31 @@ import { CatalogoClient } from './CatalogoClient';
 import { getCatalogFilterIndex } from '@/lib/database';
 import './catalogo.css';
 
+// Cache scoped por userId: el viewStatus de cada serie es per-user, asi
+// que no podemos compartir el cache entre todos los visitantes. Next.js
+// usa los args como parte del cache key automaticamente.
 const getCatalogDataCached = unstable_cache(
-  async () => {
+  async (userId: string | null) => {
     return await Promise.all([
-      getAllSeries({ scope: 'PERSONAL', origin: 'CURATED' }),
+      getAllSeries({
+        scope: 'PERSONAL',
+        origin: 'CURATED',
+        userId: userId ?? undefined,
+      }),
       getCatalogFilterIndex(),
     ]);
   },
-  ['catalog-page-data-v1'],
+  ['catalog-page-data-v2'],
   { revalidate: 120 }
 );
 
 export default async function CatalogoPage() {
   const session = await auth();
   const userRole = session?.user?.role || null;
+  const userId = session?.user?.id ?? null;
 
   // Obtener datos reales desde la base de datos
-  const [seriesDB, filterIndex] = await getCatalogDataCached();
+  const [seriesDB, filterIndex] = await getCatalogDataCached(userId);
 
   // Index seriesId -> nombres (para filtros extendidos)
   const genresBySerie = new Map<number, string[]>();

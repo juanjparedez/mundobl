@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
+import { auth } from '@/lib/auth';
 import { getSeriesById } from '@/lib/database';
 import { SerieDashboardClient } from './DashboardClient';
 
@@ -30,7 +31,8 @@ export default async function SerieDetailDashboardPage({ params }: PageProps) {
   const serieId = parseInt(id, 10);
   if (isNaN(serieId)) notFound();
 
-  const serie = await getSeriesById(serieId);
+  const session = await auth();
+  const serie = await getSeriesById(serieId, session?.user?.id ?? undefined);
   if (!serie) notFound();
 
   return (

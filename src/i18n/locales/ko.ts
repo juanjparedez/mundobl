@@ -383,6 +383,9 @@ const ko: TranslationShape = {
     statsByType: '콘텐츠 유형별',
     statsTopRated: '최고 평점 시리즈',
     sectionSettings: '설정',
+    sectionSubscriptions: '구독 중인 시리즈',
+    sectionSubscriptionsHint:
+      '팔로우 중인 시리즈. 새 에피소드 공개 시 알려드립니다.',
     settingsAppearanceTitle: '외모 및 접근성',
     settingsAppearanceHint:
       '테마, 강조 색상, 기본 톤, 글꼴, 텍스트 크기, 밀도 및 모션. 이 기본 설정은 이 브라우저에 저장됩니다.',
@@ -527,6 +530,10 @@ const ko: TranslationShape = {
     newSeasonsTitle: '새 시즌',
     seasonLabel: '시즌',
     changelogTitle: '최근 변경 사항',
+    watchableTitle: '시청 가능한 전체 시리즈',
+  },
+  watchableCarousel: {
+    watchNow: '지금 보기',
   },
   notifications: {
     title: '알림',
@@ -1535,6 +1542,8 @@ const ko: TranslationShape = {
     statsShort: '통계',
     changelog: '변경 로그',
     changelogShort: 'CL',
+    users: '사용자',
+    usersShort: '사용자',
   },
   adminStats: {
     pageTitle: '활동 통계',
@@ -2294,6 +2303,12 @@ const ko: TranslationShape = {
     widgetMyCases: '내 피드백 사례',
     widgetMyCasesDesc: '보고했거나 투표한 버그 및 아이디어.',
     widgetMyCasesEmpty: '아직 보고된 사례가 없습니다.',
+    widgetStatsStrip: '내 통계',
+    widgetStatsStripDesc: '주요 KPI를 구성 가능한 한 줄로 표시.',
+    statsStripConfigTitle: '통계 구성',
+    statsStripConfigHint: '표시할 항목 선택:',
+    statsStripAllHidden:
+      '모든 통계가 숨겨져 있습니다. 톱니바퀴를 탭하여 활성화하세요.',
     widgetHeatmap: '최근 활동',
     widgetHeatmapDesc: '지난 6개월간 활동한 날짜 히트맵입니다.',
     widgetGenres: '선호 장르',

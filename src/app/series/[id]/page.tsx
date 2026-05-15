@@ -26,6 +26,7 @@ import { ShareButton } from '@/components/common/ShareButton/ShareButton';
 import { WhereToWatch } from '@/components/common/WhereToWatch/WhereToWatch';
 import { SeriesSubscribeButton } from '@/components/series/SeriesSubscribeButton/SeriesSubscribeButton';
 import { auth } from '@/lib/auth';
+import { canEditCatalog } from '@/lib/auth-client';
 import type { TVSeries } from 'schema-dts';
 import { FloatButton } from 'antd';
 import { EditOutlined, ReadOutlined, CommentOutlined } from '@ant-design/icons';
@@ -96,7 +97,13 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
     notFound();
   }
 
-  const serie = await getSeriesByIdCached(seriesId);
+  const session = await auth();
+  const userId = session?.user?.id ?? null;
+
+  // El userId se pasa al query para filtrar `viewStatus` al usuario actual
+  // (sino el cache global servia los estados de otro usuario — bug del
+  // catalogo que mostraba "Visto" en series que el user nunca vio).
+  const serie = await getSeriesByIdCached(seriesId, userId ?? undefined);
 
   if (!serie) {
     notFound();
@@ -104,9 +111,6 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
 
   const config = getContentTypeConfig(serie.type);
   const showSeasons = shouldShowSeasons(serie.type);
-
-  const session = await auth();
-  const userId = session?.user?.id ?? null;
 
   // Quick counts para los chips de estado del header. Hechos en paralelo
   // para no penalizar TTFB.
@@ -282,7 +286,12 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
           seasonCount={serie.seasons?.length || 0}
           infoSection={<SeriesInfo series={serie} />}
           contentSection={<SeriesContent seriesId={serie.id} />}
-          seasonsSection={<SeasonsList seasons={serie.seasons || []} />}
+          seasonsSection={
+            <SeasonsList
+              seasons={serie.seasons || []}
+              canEdit={canEditCatalog(session?.user?.role)}
+            />
+          }
           ratingsSection={
             <RatingSection
               seriesId={serie.id}
@@ -312,8 +321,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
          * #98) era un dead-end. La posicion `bottom` la maneja CSS para
          * subirlo arriba del BottomNav en mobile y evitar la
          * superposicion sobre el ultimo comentario. */}
-        {(session?.user?.role === 'ADMIN' ||
-          session?.user?.role === 'MODERATOR') && (
+        {canEditCatalog(session?.user?.role) && (
           <Link href={`/admin/series/${serie.id}/editar`} prefetch={false}>
             <FloatButton
               icon={<EditOutlined />}

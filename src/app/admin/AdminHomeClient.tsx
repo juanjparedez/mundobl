@@ -189,7 +189,17 @@ export function AdminHomeClient({
     <div className="admin-page-wrapper">
       <AdminNav />
       <div className="admin-dashboard">
-        <AdminDashboardHero stats={heroStats} />
+        <AdminDashboardHero
+          stats={heroStats}
+          editToolbar={
+            <DashboardEditToolbar
+              editing={editing}
+              onToggleEditing={() => setEditing((v) => !v)}
+              onAddWidget={() => setPickerOpen(true)}
+              onReset={reset}
+            />
+          }
+        />
 
         {headlineAlerts.length > 0 && (
           <div className="admin-dashboard__alerts">
@@ -208,17 +218,9 @@ export function AdminHomeClient({
             ))}
           </div>
         )}
-
         {/* Dashboard configurable: KPIs + Alerts + RecentActivity. El
-         *  user puede entrar en modo edicion, mover widgets, agregar
-         *  desde el picker. La preferencia persiste por dashboardKey en
-         *  localStorage. */}
-        <DashboardEditToolbar
-          editing={editing}
-          onToggleEditing={() => setEditing((v) => !v)}
-          onAddWidget={() => setPickerOpen(true)}
-          onReset={reset}
-        />
+         *  toolbar de edicion se monto dentro del hero (prop editToolbar)
+         *  para evitar quedar flotando suelto encima del grid. */}
 
         <DashboardGrid
           layouts={layouts}

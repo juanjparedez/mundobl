@@ -1,0 +1,149 @@
+/* Carousel Netflix-like de series watchable. Reutilizable en landing,
+ * novedades y otros lugares. */
+.watchable-carousel {
+  margin: var(--spacing-md) 0;
+}
+
+.watchable-carousel__header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+.watchable-carousel__header-icon {
+  font-size: 22px;
+  color: var(--primary-color);
+}
+
+.watchable-carousel__title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+/* Override de AntD Carousel para flechas oscuras + visibles. */
+.watchable-carousel .ant-carousel .slick-prev,
+.watchable-carousel .ant-carousel .slick-next {
+  width: 36px;
+  height: 36px;
+  z-index: 2;
+  background: color-mix(in srgb, var(--bg-container) 80%, transparent);
+  border-radius: 50%;
+  border: 1px solid var(--border-color-secondary);
+  color: var(--text-primary);
+  font-size: 16px;
+  opacity: 0.9;
+  transition: opacity 0.15s ease;
+}
+
+.watchable-carousel .ant-carousel .slick-prev:hover,
+.watchable-carousel .ant-carousel .slick-next:hover {
+  opacity: 1;
+  background: var(--bg-container);
+  color: var(--primary-color);
+}
+
+.watchable-carousel .ant-carousel .slick-prev::before,
+.watchable-carousel .ant-carousel .slick-next::before {
+  font-size: 18px;
+  color: inherit;
+}
+
+.watchable-carousel__slide {
+  display: block;
+  padding: 0 6px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.watchable-carousel__cover {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border-radius: var(--border-radius-base);
+  overflow: hidden;
+  background: var(--bg-spotlight);
+  transition: transform 0.18s ease;
+}
+
+.watchable-carousel__slide:hover .watchable-carousel__cover {
+  transform: scale(1.03);
+}
+
+.watchable-carousel__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.watchable-carousel__cover-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--primary-color) 20%, transparent),
+    var(--bg-elevated)
+  );
+}
+
+.watchable-carousel__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.75) 0%,
+    rgba(0, 0, 0, 0.35) 40%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+
+.watchable-carousel__slide:hover .watchable-carousel__overlay,
+.watchable-carousel__slide:focus-visible .watchable-carousel__overlay {
+  opacity: 1;
+}
+
+.watchable-carousel__play-icon {
+  font-size: 48px;
+  color: white;
+}
+
+.watchable-carousel__cta {
+  font-size: 13px;
+  font-weight: 600;
+  color: white;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.watchable-carousel__meta {
+  margin-top: 8px;
+  padding: 0 4px;
+}
+
+.watchable-carousel__series-title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 2px;
+}
+
+.watchable-carousel__series-sub {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-tertiary);
+}

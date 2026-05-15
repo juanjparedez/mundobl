@@ -1,0 +1,122 @@
+/* StatsStripWidget: wrapper del strip de KPIs convertido en widget
+ * removable del grid. Mantiene la misma estetica del strip original pero
+ * vive dentro del Widget cell (sin background propio extra para no
+ * duplicar borders).
+ *
+ * Layout: grid horizontal de columnas iguales en desktop, colapsa a
+ * 4 cols en tablet y 2 cols en mobile.
+ */
+.mb-stats-strip-widget__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  width: 100%;
+  height: 100%;
+}
+
+.mb-stats-strip-widget__item {
+  display: flex;
+  align-items: center;
+  gap: var(--statstrip-tile-gap);
+  padding: var(--statstrip-tile-padding-block)
+    var(--statstrip-tile-padding-inline);
+  border-right: 1px solid var(--border-color-secondary);
+  min-width: 0;
+}
+
+.mb-stats-strip-widget__item:last-child {
+  border-right: none;
+}
+
+.mb-stats-strip-widget__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--statstrip-icon-size);
+  height: var(--statstrip-icon-size);
+  flex-shrink: 0;
+  border-radius: var(--statstrip-icon-radius);
+  background: color-mix(in srgb, var(--primary-color) 14%, transparent);
+  color: var(--primary-color);
+  font-size: var(--statstrip-icon-font-size);
+}
+
+.mb-stats-strip-widget__body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.mb-stats-strip-widget__value {
+  font-size: var(--statstrip-value-size);
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.mb-stats-strip-widget__label {
+  margin-top: 3px;
+  font-size: var(--statstrip-label-size);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mb-stats-strip-widget__config {
+  min-width: 200px;
+  max-width: 280px;
+}
+
+.mb-stats-strip-widget__config-hint {
+  margin: 0 0 8px;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+@media (max-width: 900px) {
+  .mb-stats-strip-widget__list {
+    grid-auto-flow: row;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .mb-stats-strip-widget__item {
+    border-right: 1px solid var(--border-color-secondary);
+    border-bottom: 1px solid var(--border-color-secondary);
+  }
+  .mb-stats-strip-widget__item:nth-child(4n) {
+    border-right: none;
+  }
+  .mb-stats-strip-widget__item:nth-last-child(-n + 4) {
+    border-bottom: none;
+  }
+}
+
+@media (max-width: 540px) {
+  .mb-stats-strip-widget__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .mb-stats-strip-widget__item:nth-child(2n) {
+    border-right: none;
+  }
+  .mb-stats-strip-widget__item:nth-child(4n) {
+    border-right: none;
+  }
+}
+
+html[data-skin='premium'][data-theme='dark'] .mb-stats-strip-widget__item {
+  border-right-color: var(--mb-border-soft);
+  border-bottom-color: var(--mb-border-soft);
+}
+
+html[data-skin='premium'][data-theme='dark']
+  .mb-stats-strip-widget__icon {
+  background: var(--mb-gold-soft);
+  color: var(--mb-gold);
+}

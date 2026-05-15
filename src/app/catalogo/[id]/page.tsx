@@ -60,7 +60,10 @@ export default async function SerieDetailPage({
     notFound();
   }
 
-  const [serie, session] = await Promise.all([getSeriesById(serieId), auth()]);
+  const session = await auth();
+  // El userId se pasa al query para filtrar `viewStatus` al usuario actual
+  // (evita exponer estados de otros usuarios — bug original del catalogo).
+  const serie = await getSeriesById(serieId, session?.user?.id ?? undefined);
 
   if (!serie) {
     notFound();

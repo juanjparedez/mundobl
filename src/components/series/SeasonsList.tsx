@@ -14,6 +14,8 @@ import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 
 interface SeasonsListProps {
+  /** Solo ADMIN/MODERATOR pueden editar; otros roles no ven los botones. */
+  canEdit?: boolean;
   seasons: Array<{
     id: number;
     seasonNumber: number;
@@ -65,7 +67,7 @@ interface SeasonsListProps {
   }>;
 }
 
-export function SeasonsList({ seasons }: SeasonsListProps) {
+export function SeasonsList({ seasons, canEdit = false }: SeasonsListProps) {
   const { t } = useLocale();
   if (!seasons || seasons.length === 0) {
     return (
@@ -132,20 +134,22 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
                 {t('seasonsList.watchedTag').toLowerCase()}
               </Tag>
             )}
-            <Link
-              href={`/admin/seasons/${season.id}/editar`}
-              prefetch={false}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <Button
-                type="link"
-                size="small"
-                icon={<EditOutlined />}
+            {canEdit && (
+              <Link
+                href={`/admin/seasons/${season.id}/editar`}
+                prefetch={false}
                 onClick={(e) => e.stopPropagation()}
               >
-                {t('seasonsList.editButton')}
-              </Button>
-            </Link>
+                <Button
+                  type="link"
+                  size="small"
+                  icon={<EditOutlined />}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {t('seasonsList.editButton')}
+                </Button>
+              </Link>
+            )}
           </div>
         </div>
       ),
@@ -261,6 +265,7 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
           <EpisodesList
             seasonId={season.id}
             initialEpisodes={season.episodes || []}
+            canEdit={canEdit}
           />
         </div>
       ),
