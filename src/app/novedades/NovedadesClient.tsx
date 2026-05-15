@@ -10,10 +10,12 @@ import {
   FileTextOutlined,
   PlayCircleOutlined,
 } from '@ant-design/icons';
+import ReactMarkdown from 'react-markdown';
 import { PageTitle } from '@/components/common/PageTitle/PageTitle';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { WatchableCarousel } from '@/components/common/WatchableCarousel/WatchableCarousel';
 import type { WatchableCarouselItem } from '@/components/common/WatchableCarousel/WatchableCarousel';
+import { MediaCard } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
@@ -187,27 +189,33 @@ export function NovedadesClient({
                   {t('novedades.newSeasonsTitle')}
                 </h2>
               </header>
-              <ul className="novedades-list">
+              <div className="novedades-seasons-grid">
                 {newSeasons.map((season) => (
-                  <li key={season.id} className="novedades-list__item">
-                    <Link
-                      href={`/series/${season.series.id}`}
-                      className="novedades-list__link"
-                    >
-                      <span className="novedades-list__main">
-                        <strong>{season.series.title}</strong>
-                        <span className="app-pill app-pill--info">
-                          {t('novedades.seasonLabel')} {season.seasonNumber}
-                        </span>
+                  <MediaCard
+                    key={season.id}
+                    href={`/series/${season.series.id}`}
+                    imageUrl={season.series.imageUrl}
+                    imageAlt={season.series.title}
+                    unoptimizedImage={
+                      season.series.imageUrl
+                        ? isSupabaseImageUrl(season.series.imageUrl)
+                        : false
+                    }
+                    title={season.series.title}
+                    overlayTags={
+                      <span className="app-pill app-pill--info">
+                        {t('novedades.seasonLabel')} {season.seasonNumber}
                       </span>
-                      <span className="novedades-list__when">
+                    }
+                    subtitle={
+                      <span className="novedades-seasons-when">
                         <ClockCircleOutlined />{' '}
                         {relativeTime(season.createdAt, t)}
                       </span>
-                    </Link>
-                  </li>
+                    }
+                  />
                 ))}
-              </ul>
+              </div>
             </section>
           )}
 
@@ -246,7 +254,32 @@ export function NovedadesClient({
                           )}
                           <ul className="novedades-changelog__items">
                             {items.map((item, i) => (
-                              <li key={i}>{item.body}</li>
+                              <li key={i}>
+                                <div className="novedades-changelog__body">
+                                  <ReactMarkdown
+                                    components={{
+                                      // Forzar links external safe
+                                      a: ({ href, children }) => (
+                                        <a
+                                          href={href}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                        >
+                                          {children}
+                                        </a>
+                                      ),
+                                      // Headers internos del body se
+                                      // bajan a h5 para no chocar con la
+                                      // jerarquia del entry (h3/h4).
+                                      h1: ({ children }) => <h5>{children}</h5>,
+                                      h2: ({ children }) => <h5>{children}</h5>,
+                                      h3: ({ children }) => <h5>{children}</h5>,
+                                    }}
+                                  >
+                                    {item.body}
+                                  </ReactMarkdown>
+                                </div>
+                              </li>
                             ))}
                           </ul>
                         </div>
