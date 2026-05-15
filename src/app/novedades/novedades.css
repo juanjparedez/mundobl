@@ -152,6 +152,27 @@
   flex-shrink: 0;
 }
 
+/* "Nuevas temporadas": grid de MediaCards con poster vertical 2:3.
+ * Reemplaza el grid plano novedades-list que solo mostraba texto. */
+.novedades-seasons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--spacing-sm);
+}
+
+@media (max-width: 600px) {
+  .novedades-seasons-grid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 8px;
+  }
+}
+
+.novedades-seasons-when {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
 /* Changelog: cada version es una fila. Dentro de la fila, los grupos de
  * categoria se renderizan en multi-columna (auto-fill) para que las
  * Features/Fixes/SEO/Seguridad no ocupen 4 alturas de scroll cada una. */
@@ -221,6 +242,64 @@
 
 .novedades-changelog__items li {
   padding: 1px 0;
+}
+
+/* Body de cada item renderizado con react-markdown: bullets, bolds,
+ * links, headers. Resets de margin para que se vea compacto dentro de
+ * la card de changelog. */
+.novedades-changelog__body > * {
+  margin: 0;
+}
+
+.novedades-changelog__body > * + * {
+  margin-top: 4px;
+}
+
+.novedades-changelog__body p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+.novedades-changelog__body strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.novedades-changelog__body code {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  background: color-mix(in srgb, var(--primary-color) 8%, transparent);
+  padding: 0 4px;
+  border-radius: 3px;
+  font-size: 0.9em;
+  color: var(--primary-color);
+}
+
+.novedades-changelog__body a {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
+.novedades-changelog__body a:hover {
+  text-decoration: none;
+}
+
+.novedades-changelog__body ul,
+.novedades-changelog__body ol {
+  margin: 4px 0;
+  padding-left: 18px;
+}
+
+.novedades-changelog__body ul li,
+.novedades-changelog__body ol li {
+  list-style-type: disc;
+  padding: 0;
+}
+
+.novedades-changelog__body h5 {
+  margin: 4px 0 2px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 @media (max-width: 540px) {

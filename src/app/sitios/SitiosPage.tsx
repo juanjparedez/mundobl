@@ -11,6 +11,7 @@ import {
 } from '@ant-design/icons';
 import Image from 'next/image';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { getFaviconUrl, getDisplayHostname } from '@/lib/site-helpers';
 import {
   CATEGORY_COLORS,
   CATEGORY_LABELS,
@@ -111,6 +112,7 @@ export function SitiosPage({ sites }: SitiosPageProps) {
 
   const renderCard = (site: Site) => {
     const cat = site.category || 'otro';
+    const faviconUrl = getFaviconUrl(site.url, 64);
     return (
       <a
         href={site.url}
@@ -122,9 +124,37 @@ export function SitiosPage({ sites }: SitiosPageProps) {
           className={`sitios-card sitios-card--${cat}`}
           size="small"
           title={
-            <>
-              <LinkOutlined /> {site.name}
-            </>
+            <span className="sitios-card__title-row">
+              {/* Favicon: si el sitio tiene logo propio en DB, lo usamos;
+               *  si no, fallback al favicon de Google's S2 service. Asi
+               *  cada card tiene una identidad visual propia. */}
+              <span className="sitios-card__favicon-wrap">
+                {site.imageUrl ? (
+                  <Image
+                    src={site.imageUrl}
+                    alt={t('sitiosPage.siteLogoAlt', { siteName: site.name })}
+                    width={32}
+                    height={32}
+                    quality={75}
+                    unoptimized={isSupabaseImageUrl(site.imageUrl)}
+                    className="sitios-card__favicon"
+                  />
+                ) : faviconUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={faviconUrl}
+                    alt=""
+                    width={32}
+                    height={32}
+                    className="sitios-card__favicon"
+                    loading="lazy"
+                  />
+                ) : (
+                  <LinkOutlined className="sitios-card__favicon-fallback" />
+                )}
+              </span>
+              <span className="sitios-card__name">{site.name}</span>
+            </span>
           }
           extra={
             <Tag color={CATEGORY_COLORS[cat] || 'default'}>
@@ -132,25 +162,12 @@ export function SitiosPage({ sites }: SitiosPageProps) {
             </Tag>
           }
         >
-          {site.imageUrl && (
-            <div className="sitios-card__logo">
-              <Image
-                src={site.imageUrl}
-                alt={t('sitiosPage.siteLogoAlt', { siteName: site.name })}
-                width={120}
-                height={48}
-                quality={75}
-                unoptimized={isSupabaseImageUrl(site.imageUrl)}
-                className="sitios-card__logo-img"
-              />
-            </div>
-          )}
           {site.description && (
             <p className="sitios-card__description">{site.description}</p>
           )}
           <div className="sitios-card__footer">
             <span className="sitios-card__link">
-              {new URL(site.url).hostname}
+              {getDisplayHostname(site.url)}
             </span>
             {site.language && <Tag>{site.language}</Tag>}
           </div>
@@ -161,6 +178,7 @@ export function SitiosPage({ sites }: SitiosPageProps) {
 
   const renderListItem = (site: Site) => {
     const cat = site.category || 'otro';
+    const faviconUrl = getFaviconUrl(site.url, 32);
     return (
       <a
         key={site.id}
@@ -171,7 +189,22 @@ export function SitiosPage({ sites }: SitiosPageProps) {
       >
         <div className="sitios-list-item__content">
           <span className="sitios-list-item__name">
-            <LinkOutlined /> {site.name}
+            <span className="sitios-list-item__favicon-wrap">
+              {faviconUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={faviconUrl}
+                  alt=""
+                  width={20}
+                  height={20}
+                  className="sitios-list-item__favicon"
+                  loading="lazy"
+                />
+              ) : (
+                <LinkOutlined />
+              )}
+            </span>
+            {site.name}
           </span>
           <div className="sitios-list-item__meta">
             <Tag
@@ -180,7 +213,7 @@ export function SitiosPage({ sites }: SitiosPageProps) {
             >
               {CATEGORY_LABELS[cat] || cat}
             </Tag>
-            <span>{new URL(site.url).hostname}</span>
+            <span>{getDisplayHostname(site.url)}</span>
             {site.language && (
               <Tag className="sitios-list-item__tag">{site.language}</Tag>
             )}
