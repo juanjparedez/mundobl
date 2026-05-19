@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, after } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { extractVideoId, type Platform } from '@/lib/embed-helpers';
@@ -72,55 +72,47 @@ export async function POST(request: NextRequest) {
       contentItems,
     } = body;
 
-    // Crear o encontrar país (con código ISO automático)
-    let resolvedCountryId = null;
-    if (countryName) {
-      const code = getCountryCode(countryName);
-      const country = await prisma.country.upsert({
-        where: { name: countryName },
-        update: code ? { code } : {},
-        create: { name: countryName, ...(code ? { code } : {}) },
-      });
-      resolvedCountryId = country.id;
-    }
+    // País / productora / idioma son independientes entre sí: resolverlos
+    // en paralelo (antes eran 3 round-trips secuenciales a la DB remota).
+    const countryCode = countryName ? getCountryCode(countryName) : null;
+    const needCompany = !!productionCompanyName && !productionCompanyId;
+    const needLanguage = !!originalLanguageName && !originalLanguageId;
+    const [countryRow, companyRow, languageRow] = await Promise.all([
+      countryName
+        ? prisma.country.upsert({
+            where: { name: countryName },
+            update: countryCode ? { code: countryCode } : {},
+            create: {
+              name: countryName,
+              ...(countryCode ? { code: countryCode } : {}),
+            },
+          })
+        : Promise.resolve(null),
+      needCompany
+        ? prisma.productionCompany.upsert({
+            where: { name: productionCompanyName },
+            update: {},
+            create: { name: productionCompanyName },
+          })
+        : Promise.resolve(null),
+      needLanguage
+        ? prisma.language.upsert({
+            where: { name: originalLanguageName },
+            update: {},
+            create: { name: originalLanguageName },
+          })
+        : Promise.resolve(null),
+    ]);
+    const resolvedCountryId = countryRow?.id ?? null;
+    const resolvedProductionCompanyId =
+      productionCompanyId || companyRow?.id || null;
+    const resolvedOriginalLanguageId =
+      originalLanguageId || languageRow?.id || null;
 
-    // Crear o encontrar productora
-    let resolvedProductionCompanyId = productionCompanyId || null;
-    if (productionCompanyName && !resolvedProductionCompanyId) {
-      const company = await prisma.productionCompany.upsert({
-        where: { name: productionCompanyName },
-        update: {},
-        create: { name: productionCompanyName },
-      });
-      resolvedProductionCompanyId = company.id;
-    }
-
-    // Crear o encontrar idioma original
-    let resolvedOriginalLanguageId = originalLanguageId || null;
-    if (originalLanguageName && !resolvedOriginalLanguageId) {
-      const language = await prisma.language.upsert({
-        where: { name: originalLanguageName },
-        update: {},
-        create: { name: originalLanguageName },
-      });
-      resolvedOriginalLanguageId = language.id;
-    }
-
-    // Procesar imagen externa → subir a Supabase si es URL externa
-    let resolvedImageUrl = body.imageUrl || null;
-    if (resolvedImageUrl) {
-      try {
-        resolvedImageUrl = await downloadAndUploadExternalImage(
-          resolvedImageUrl,
-          'series'
-        );
-      } catch (error) {
-        console.warn(
-          `No se pudo migrar imagen a Supabase, manteniendo URL original:`,
-          error
-        );
-      }
-    }
+    // La serie se crea con la URL de imagen externa tal cual. La migración
+    // a Supabase (fetch + sharp + upload, varios segundos en el peor caso)
+    // se difiere a after() para NO bloquear el response del alta.
+    const externalImageUrl = body.imageUrl || null;
 
     // Crear la serie
     const serie = await prisma.series.create({
@@ -131,7 +123,7 @@ export async function POST(request: NextRequest) {
         type,
         basedOn,
         format: format || 'regular',
-        imageUrl: resolvedImageUrl,
+        imageUrl: externalImageUrl,
         imagePosition: body.imagePosition || 'center',
         synopsis,
         soundtrack,
@@ -150,185 +142,193 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    // Crear actores y vincularlos
-    if (actors && actors.length > 0) {
-      for (const actorData of actors) {
-        if (!actorData.name) continue;
-
-        const actor = await prisma.actor.upsert({
-          where: { name: actorData.name },
-          update: {},
-          create: { name: actorData.name },
-        });
-
-        await prisma.seriesActor.create({
-          data: {
-            seriesId: serie.id,
-            actorId: actor.id,
-            character: actorData.character || '',
-            isMain: actorData.isMain || false,
-            pairingGroup: actorData.pairingGroup ?? null,
-          },
-        });
-      }
-    }
-
-    // Crear directores y vincularlos
-    if (directors && directors.length > 0) {
-      for (const directorData of directors) {
-        if (!directorData.name) continue;
-
-        const director = await prisma.director.upsert({
-          where: { name: directorData.name },
-          update: {},
-          create: { name: directorData.name },
-        });
-
-        await prisma.seriesDirector.create({
-          data: {
-            seriesId: serie.id,
-            directorId: director.id,
-          },
-        });
-      }
-    }
-
-    // Crear doblajes
-    if (dubbingIds && dubbingIds.length > 0) {
-      for (const languageId of dubbingIds) {
-        await prisma.seriesDubbing.create({
-          data: { seriesId: serie.id, languageId },
-        });
-      }
-    }
-
-    // Crear temporadas (si es serie)
-    if (seasons && seasons.length > 0 && type === 'serie') {
-      for (const seasonData of seasons) {
-        await prisma.season.create({
-          data: {
-            seriesId: serie.id,
-            seasonNumber: seasonData.seasonNumber,
-            episodeCount: seasonData.episodeCount,
-            year: seasonData.year || year,
-          },
-        });
-      }
-    }
-
-    // Crear tags y vincularlos
-    if (tags && tags.length > 0) {
-      for (const tagName of tags) {
-        if (!tagName) continue;
-
-        const tag = await prisma.tag.upsert({
-          where: { name: tagName },
-          update: {},
-          create: { name: tagName, category: 'trope' },
-        });
-
-        await prisma.seriesTag.create({
-          data: {
-            seriesId: serie.id,
-            tagId: tag.id,
-          },
-        });
-      }
-    }
-
-    // Crear géneros y vincularlos
-    if (genres && genres.length > 0) {
-      for (const genreName of genres) {
-        if (!genreName) continue;
-
-        const genre = await prisma.genre.upsert({
-          where: { name: genreName },
-          update: {},
-          create: { name: genreName },
-        });
-
-        await prisma.seriesGenre.create({
-          data: {
-            seriesId: serie.id,
-            genreId: genre.id,
-          },
-        });
-      }
-    }
-
-    // Crear watch links
-    if (body.watchLinks && body.watchLinks.length > 0) {
-      for (const link of body.watchLinks) {
-        if (!link.platform || !link.url) continue;
-
-        await prisma.watchLink.create({
-          data: {
-            seriesId: serie.id,
-            platform: link.platform,
-            url: link.url,
-            official: link.official ?? true,
-          },
-        });
-      }
-    }
-
-    // Crear series relacionadas (bidireccional)
-    if (body.relatedSeriesIds && body.relatedSeriesIds.length > 0) {
-      for (const relatedId of body.relatedSeriesIds) {
-        if (!relatedId || relatedId === serie.id) continue;
-        await prisma.relatedSeries.createMany({
-          data: [
-            { mainSeriesId: serie.id, relatedSeriesId: relatedId },
-            { mainSeriesId: relatedId, relatedSeriesId: serie.id },
-          ],
-          skipDuplicates: true,
-        });
-      }
-    }
-
-    // Crear contenido audiovisual asociado
-    if (contentItems && contentItems.length > 0) {
-      console.warn(
-        `Creating ${contentItems.length} content items for series ${serie.id}`
-      );
-      for (const item of contentItems) {
-        if (!item.title?.trim() || !item.url?.trim() || !item.platform) {
-          console.warn('Skipping content item with missing data:', item);
-          continue;
-        }
-
-        const videoId = extractVideoId(
-          item.platform as Platform,
-          item.url.trim()
-        );
-
-        try {
-          await prisma.embeddableContent.create({
+    // Las entidades hijas solo dependen de serie.id y son independientes
+    // entre sí (tablas distintas). Antes se creaban en ~9 cascadas
+    // secuenciales (N+1 round-trips a la DB remota = el cuello de botella
+    // del alta). Ahora los 9 grupos corren en paralelo; dentro de cada
+    // grupo se mantiene el orden original (upsert→link) para no provocar
+    // carreras de unique constraint sobre el mismo nombre.
+    await Promise.all([
+      // Actores
+      (async () => {
+        if (!actors || actors.length === 0) return;
+        for (const actorData of actors) {
+          if (!actorData.name) continue;
+          const actor = await prisma.actor.upsert({
+            where: { name: actorData.name },
+            update: {},
+            create: { name: actorData.name },
+          });
+          await prisma.seriesActor.create({
             data: {
               seriesId: serie.id,
-              title: item.title.trim(),
-              description: item.description?.trim() || null,
-              platform: item.platform,
-              url: item.url.trim(),
-              videoId: videoId || null,
-              category: item.category || 'other',
-              thumbnailUrl: item.thumbnailUrl?.trim() || null,
-              channelName: item.channelName?.trim() || null,
-              official: item.official ?? true,
-              sortOrder: item.sortOrder ?? 0,
-              featured: item.featured ?? false,
+              actorId: actor.id,
+              character: actorData.character || '',
+              isMain: actorData.isMain || false,
+              pairingGroup: actorData.pairingGroup ?? null,
             },
           });
-          console.warn(`Created content: "${item.title}"`);
-        } catch (contentError) {
-          console.error(
-            `Failed to create content "${item.title}":`,
-            contentError
+        }
+      })(),
+      // Directores
+      (async () => {
+        if (!directors || directors.length === 0) return;
+        for (const directorData of directors) {
+          if (!directorData.name) continue;
+          const director = await prisma.director.upsert({
+            where: { name: directorData.name },
+            update: {},
+            create: { name: directorData.name },
+          });
+          await prisma.seriesDirector.create({
+            data: { seriesId: serie.id, directorId: director.id },
+          });
+        }
+      })(),
+      // Doblajes
+      (async () => {
+        if (!dubbingIds || dubbingIds.length === 0) return;
+        for (const languageId of dubbingIds) {
+          await prisma.seriesDubbing.create({
+            data: { seriesId: serie.id, languageId },
+          });
+        }
+      })(),
+      // Temporadas (si es serie)
+      (async () => {
+        if (!seasons || seasons.length === 0 || type !== 'serie') return;
+        for (const seasonData of seasons) {
+          await prisma.season.create({
+            data: {
+              seriesId: serie.id,
+              seasonNumber: seasonData.seasonNumber,
+              episodeCount: seasonData.episodeCount,
+              year: seasonData.year || year,
+            },
+          });
+        }
+      })(),
+      // Tags
+      (async () => {
+        if (!tags || tags.length === 0) return;
+        for (const tagName of tags) {
+          if (!tagName) continue;
+          const tag = await prisma.tag.upsert({
+            where: { name: tagName },
+            update: {},
+            create: { name: tagName, category: 'trope' },
+          });
+          await prisma.seriesTag.create({
+            data: { seriesId: serie.id, tagId: tag.id },
+          });
+        }
+      })(),
+      // Géneros
+      (async () => {
+        if (!genres || genres.length === 0) return;
+        for (const genreName of genres) {
+          if (!genreName) continue;
+          const genre = await prisma.genre.upsert({
+            where: { name: genreName },
+            update: {},
+            create: { name: genreName },
+          });
+          await prisma.seriesGenre.create({
+            data: { seriesId: serie.id, genreId: genre.id },
+          });
+        }
+      })(),
+      // Watch links
+      (async () => {
+        if (!body.watchLinks || body.watchLinks.length === 0) return;
+        for (const link of body.watchLinks) {
+          if (!link.platform || !link.url) continue;
+          await prisma.watchLink.create({
+            data: {
+              seriesId: serie.id,
+              platform: link.platform,
+              url: link.url,
+              official: link.official ?? true,
+            },
+          });
+        }
+      })(),
+      // Series relacionadas (bidireccional)
+      (async () => {
+        if (!body.relatedSeriesIds || body.relatedSeriesIds.length === 0)
+          return;
+        for (const relatedId of body.relatedSeriesIds) {
+          if (!relatedId || relatedId === serie.id) continue;
+          await prisma.relatedSeries.createMany({
+            data: [
+              { mainSeriesId: serie.id, relatedSeriesId: relatedId },
+              { mainSeriesId: relatedId, relatedSeriesId: serie.id },
+            ],
+            skipDuplicates: true,
+          });
+        }
+      })(),
+      // Contenido audiovisual asociado
+      (async () => {
+        if (!contentItems || contentItems.length === 0) return;
+        for (const item of contentItems) {
+          if (!item.title?.trim() || !item.url?.trim() || !item.platform) {
+            console.warn('Skipping content item with missing data:', item);
+            continue;
+          }
+          const videoId = extractVideoId(
+            item.platform as Platform,
+            item.url.trim()
+          );
+          try {
+            await prisma.embeddableContent.create({
+              data: {
+                seriesId: serie.id,
+                title: item.title.trim(),
+                description: item.description?.trim() || null,
+                platform: item.platform,
+                url: item.url.trim(),
+                videoId: videoId || null,
+                category: item.category || 'other',
+                thumbnailUrl: item.thumbnailUrl?.trim() || null,
+                channelName: item.channelName?.trim() || null,
+                official: item.official ?? true,
+                sortOrder: item.sortOrder ?? 0,
+                featured: item.featured ?? false,
+              },
+            });
+          } catch (contentError) {
+            console.error(
+              `Failed to create content "${item.title}":`,
+              contentError
+            );
+          }
+        }
+      })(),
+    ]);
+
+    // Migración de imagen diferida: no bloquea el response. Si falla, la
+    // serie queda con la URL externa original (mismo fallback que antes).
+    if (externalImageUrl) {
+      after(async () => {
+        try {
+          const migrated = await downloadAndUploadExternalImage(
+            externalImageUrl,
+            'series'
+          );
+          if (migrated && migrated !== externalImageUrl) {
+            await prisma.series.update({
+              where: { id: serie.id },
+              data: { imageUrl: migrated },
+            });
+          }
+        } catch (error) {
+          console.warn(
+            'No se pudo migrar imagen a Supabase, queda URL original:',
+            error
           );
         }
-      }
-    } else {
-      console.warn('No contentItems in request body. Keys:', Object.keys(body));
+      });
     }
 
     return NextResponse.json(serie, { status: 201 });
