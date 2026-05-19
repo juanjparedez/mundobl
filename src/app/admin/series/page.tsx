@@ -6,6 +6,7 @@ import { PageTitleClient } from '@/components/common/PageTitle/PageTitleClient';
 import { AdminNav } from '../AdminNav';
 import '../admin.css';
 import { AdminTableClient } from '../AdminTableClient';
+import { CatalogCompletenessPanel } from './CatalogCompletenessPanel/CatalogCompletenessPanel';
 
 interface SerieData {
   key: string;
@@ -55,6 +56,7 @@ export default async function AdminPage() {
         </div>
 
         <div className="admin-content">
+          <CatalogCompletenessPanel />
           <AdminTableClient data={seriesData} countries={countries} />
         </div>
       </div>
