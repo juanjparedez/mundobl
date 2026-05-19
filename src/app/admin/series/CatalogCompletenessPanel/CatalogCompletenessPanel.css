@@ -1,0 +1,75 @@
+/* Panel agregado de completitud del catálogo (#112 fase 2). Tokens
+ * únicamente, sin hex hardcodeado. */
+.catalog-completeness {
+  margin-bottom: var(--spacing-md);
+}
+
+.catalog-completeness__stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--spacing-sm);
+  margin: var(--spacing-sm) 0 var(--spacing-md);
+}
+
+.catalog-completeness__worst-title {
+  margin: 0 0 var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.catalog-completeness__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.catalog-completeness__row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: 6px 8px;
+  border-radius: var(--border-radius-base);
+  background: var(--bg-elevated);
+}
+
+.catalog-completeness__name {
+  flex: 0 0 auto;
+  min-width: 180px;
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.catalog-completeness__name:hover {
+  color: var(--primary-color);
+}
+
+.catalog-completeness__missing {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  flex: 1 1 auto;
+}
+
+@media (max-width: 768px) {
+  .catalog-completeness__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .catalog-completeness__row {
+    flex-wrap: wrap;
+  }
+
+  .catalog-completeness__name {
+    min-width: 0;
+    flex: 1 1 100%;
+  }
+}

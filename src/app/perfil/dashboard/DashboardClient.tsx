@@ -23,6 +23,7 @@ import { useLocale } from '@/lib/providers/LocaleProvider';
 import type { ProfileData } from '../types';
 import { ProfileDashboardHeader } from './ProfileDashboardHeader/ProfileDashboardHeader';
 import { StatsStripWidget } from './widgets/StatsStripWidget/StatsStripWidget';
+import { ProfileCompletenessWidget } from './widgets/ProfileCompletenessWidget/ProfileCompletenessWidget';
 import { ProfileSettings } from '../ProfileSettings/ProfileSettings';
 import { SubscriptionsSection } from '../SubscriptionsSection/SubscriptionsSection';
 import {
@@ -91,6 +92,7 @@ const WIDGET_IDS = {
   activityChart: 'profile.activityChart',
   worldMap: 'profile.worldMap',
   statsStrip: 'profile.statsStrip',
+  profileCompleteness: 'profile.profileCompleteness',
 } as const;
 
 // Mapa de widgetId -> section key del CustomizeDrawer. Permite que el
@@ -164,6 +166,9 @@ const ADMIN_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.activityChart, x: 0, y: 50, w: 12, h: 5 },
     { i: WIDGET_IDS.recentAdminActivity, x: 0, y: 55, w: 6, h: 5 },
     { i: WIDGET_IDS.topCommenters, x: 6, y: 55, w: 6, h: 5 },
+    // y alto → compactación vertical lo deja al final sin colisiones
+    // (#112 fase 3). El user puede arrastrarlo arriba si quiere.
+    { i: WIDGET_IDS.profileCompleteness, x: 0, y: 100, w: 4, h: 4 },
   ],
   md: [
     { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 10, h: 3 },
@@ -264,6 +269,7 @@ const USER_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.myDisputes, x: 9, y: 26, w: 3, h: 4 },
     { i: WIDGET_IDS.myComments, x: 0, y: 33, w: 8, h: 6, minW: 6, minH: 5 },
     { i: WIDGET_IDS.socials, x: 8, y: 33, w: 4, h: 6 },
+    { i: WIDGET_IDS.profileCompleteness, x: 0, y: 100, w: 4, h: 4 },
   ],
   md: [
     { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 10, h: 3 },
@@ -347,6 +353,7 @@ const BASIC_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.heatmap, x: 0, y: 11, w: 8, h: 3 },
     { i: WIDGET_IDS.collections, x: 8, y: 11, w: 4, h: 5 },
     { i: WIDGET_IDS.socials, x: 0, y: 14, w: 4, h: 4 },
+    { i: WIDGET_IDS.profileCompleteness, x: 0, y: 100, w: 4, h: 4 },
   ],
   md: [
     { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 10, h: 3 },
@@ -705,6 +712,13 @@ export function DashboardClient() {
       defaultSize: { w: 12, h: 3, minW: 6, minH: 2 },
       Component: StatsStripWidget as never,
     });
+    WidgetRegistry.register({
+      id: WIDGET_IDS.profileCompleteness,
+      category: 'overview',
+      labelKey: 'completeness.title',
+      defaultSize: { w: 4, h: 4, minW: 3, minH: 3 },
+      Component: ProfileCompletenessWidget as never,
+    });
   }, []);
 
   useEffect(() => {
@@ -759,6 +773,10 @@ export function DashboardClient() {
     map[WIDGET_IDS.worldMap] = { topCountries: data.stats.topCountries };
     map[WIDGET_IDS.socials] = { socials: data.user.socials };
     map[WIDGET_IDS.statsStrip] = { stats: data.stats };
+    map[WIDGET_IDS.profileCompleteness] = {
+      user: data.user,
+      stats: data.stats,
+    };
     return map;
   }, [data]);
 
