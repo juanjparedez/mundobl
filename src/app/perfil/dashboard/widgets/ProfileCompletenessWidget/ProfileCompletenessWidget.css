@@ -1,0 +1,25 @@
+/* Widget de completitud del perfil (#112 fase 3). Tokens únicamente. */
+.mb-profile-completeness {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.mb-profile-completeness__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+}
+
+.mb-profile-completeness__score {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.mb-profile-completeness__cta {
+  align-self: flex-start;
+  margin-top: var(--spacing-xs);
+}
