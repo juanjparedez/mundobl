@@ -3,12 +3,8 @@
 import { useState } from 'react';
 import { Avatar, Button, Segmented, Space, Tag } from 'antd';
 import {
-  AppstoreAddOutlined,
   CalendarOutlined,
-  CheckOutlined,
   EditOutlined,
-  LayoutOutlined,
-  ReloadOutlined,
   SettingOutlined,
   SlidersOutlined,
   UserOutlined,
@@ -33,13 +29,6 @@ export interface ProfileDashboardHeaderProps {
    *  pasa, se renderea un boton extra "Personalizar" que abre el panel
    *  con switches por section. */
   onCustomizeClick?: () => void;
-  /** Si presentes, integran los controles del DashboardEditToolbar
-   *  directamente al header (toggle edit + add widget + reset).
-   *  Cuando editing=true se muestran ademas "Agregar" y "Reset" inline. */
-  editing?: boolean;
-  onToggleEditing?: () => void;
-  onAddWidget?: () => void;
-  onResetLayout?: () => void;
   /** Mode selector integrado al header (Basic / Advanced / Admin).
    *  Cuando se pasan estas 3 props, se renderea el Segmented en una
    *  sub-row de actions. La opcion 'admin' aparece solo si admin=true. */
@@ -66,10 +55,6 @@ function formatJoinedDate(iso: string, locale: string): string {
 export function ProfileDashboardHeader({
   user,
   onCustomizeClick,
-  editing = false,
-  onToggleEditing,
-  onAddWidget,
-  onResetLayout,
   mode,
   onModeChange,
   showAdminMode = false,
@@ -131,11 +116,10 @@ export function ProfileDashboardHeader({
             {t('profileDashboard.preferencesButton')}
           </Button>
         </Space>
-        {/* Layout / mode controls. Mode selector + Customize + Edit-layout
-         *  conviven aca para que el user encuentre TODOS los controles del
-         *  dashboard en un mismo lugar (antes el mode vivia en una toolbar
-         *  separada — iter 16 lo consolidamos). */}
-        {(mode || onCustomizeClick || onToggleEditing) && (
+        {/* Layout / mode controls. El toggle de edicion de layout
+         *  (+ Agregar / Reset) se movio a un FAB flotante que sigue el
+         *  scroll (pedido de Flor). Aca quedan mode + Personalizar. */}
+        {(mode || onCustomizeClick) && (
           <Space size={8} wrap className="mb-profile-header__layout-actions">
             {mode && onModeChange && (
               <Segmented
@@ -158,36 +142,6 @@ export function ProfileDashboardHeader({
                 size="small"
               >
                 {t('profile.customizeButton')}
-              </Button>
-            )}
-            {onToggleEditing && (
-              <Button
-                icon={editing ? <CheckOutlined /> : <LayoutOutlined />}
-                onClick={onToggleEditing}
-                type={editing ? 'primary' : 'default'}
-                size="small"
-              >
-                {editing
-                  ? t('profileDashboard.editLayoutDone')
-                  : t('profileDashboard.editLayout')}
-              </Button>
-            )}
-            {editing && onAddWidget && (
-              <Button
-                icon={<AppstoreAddOutlined />}
-                onClick={onAddWidget}
-                size="small"
-              >
-                {t('profileDashboard.addWidget')}
-              </Button>
-            )}
-            {editing && onResetLayout && (
-              <Button
-                icon={<ReloadOutlined />}
-                onClick={onResetLayout}
-                size="small"
-              >
-                {t('profileDashboard.resetLayout')}
               </Button>
             )}
           </Space>
