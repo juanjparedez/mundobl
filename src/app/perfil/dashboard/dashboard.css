@@ -77,4 +77,14 @@
   .mb-perfil-dashboard__footer-grid {
     grid-template-columns: minmax(0, 1fr);
   }
+
+  /* FAB de edicion de layout: subirlo arriba del BottomNav para que no
+   * quede tapado en mobile (mismo patron que el FAB de /series). El
+   * className aplica tanto al boton unico (.ant-float-btn) como al
+   * grupo expandido (.ant-float-btn-group). */
+  .mb-perfil-dashboard__fab.ant-float-btn,
+  .mb-perfil-dashboard__fab.ant-float-btn-group {
+    inset-block-end: calc(var(--bottom-nav-height) + 16px) !important;
+    inset-inline-end: 16px !important;
+  }
 }
