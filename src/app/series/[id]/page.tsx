@@ -13,6 +13,7 @@ import { ReviewsSection } from '@/components/series/ReviewsSection/ReviewsSectio
 import { ViewStatusToggle } from '@/components/series/ViewStatusToggle';
 import { SeriesDetailClient } from '@/components/series/SeriesDetailClient';
 import { SeriesCompletenessBadge } from './SeriesCompletenessBadge/SeriesCompletenessBadge';
+import { FloatButtonPortal } from '@/components/common/FloatButtonPortal/FloatButtonPortal';
 import { SeriesContent } from '@/components/series/SeriesContent/SeriesContent';
 import {
   shouldShowSeasons,
@@ -325,19 +326,21 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
         {/* Botón flotante para editar — solo admin/moderator. En user
          * regular apuntaba a /admin/series/X/editar y devolvia 403, asi
          * que ademas de tapar contenido (reportado por Flor en feedback
-         * #98) era un dead-end. La posicion `bottom` la maneja CSS para
-         * subirlo arriba del BottomNav en mobile y evitar la
-         * superposicion sobre el ultimo comentario. */}
+         * #98) era un dead-end. Portalado a body: el backdrop-filter de
+         * .app-content rompia el position:fixed y lo dejaba pegado al
+         * fondo del panel en vez de flotar con el scroll. */}
         {canEditCatalog(session?.user?.role) && (
-          <Link href={`/admin/series/${serie.id}/editar`} prefetch={false}>
-            <FloatButton
-              icon={<EditOutlined />}
-              type="primary"
-              className="series-edit-fab"
-              tooltip="Editar serie"
-              aria-label="Editar serie"
-            />
-          </Link>
+          <FloatButtonPortal>
+            <Link href={`/admin/series/${serie.id}/editar`} prefetch={false}>
+              <FloatButton
+                icon={<EditOutlined />}
+                type="primary"
+                className="series-edit-fab"
+                tooltip="Editar serie"
+                aria-label="Editar serie"
+              />
+            </Link>
+          </FloatButtonPortal>
         )}
       </div>
     </AppLayout>

@@ -30,6 +30,7 @@ import {
   type OverviewSectionKey,
 } from '../overview/useSectionVisibility';
 import { CustomizeDrawer } from '../overview/CustomizeDrawer';
+import { FloatButtonPortal } from '@/components/common/FloatButtonPortal/FloatButtonPortal';
 import { HeatmapWidget } from './widgets/HeatmapWidget/HeatmapWidget';
 import { GenresDonutWidget } from './widgets/GenresDonutWidget/GenresDonutWidget';
 import { CompletedByYearWidget } from './widgets/CompletedByYearWidget/CompletedByYearWidget';
@@ -899,38 +900,43 @@ export function DashboardClient() {
        *  queda siempre a mano (pedido de Flor — antes vivia solo en el
        *  header y se perdia al scrollear). Fuera de edicion es un boton
        *  unico; al editar se expande a Agregar / Restablecer / Listo. */}
-      {editing ? (
-        <FloatButton.Group shape="circle" className="mb-perfil-dashboard__fab">
-          <FloatButton
-            icon={<AppstoreAddOutlined />}
-            tooltip={t('profileDashboard.addWidget')}
-            aria-label={t('profileDashboard.addWidget')}
-            onClick={() => setPickerOpen(true)}
-          />
-          <FloatButton
-            icon={<ReloadOutlined />}
-            tooltip={t('profileDashboard.resetLayout')}
-            aria-label={t('profileDashboard.resetLayout')}
-            onClick={reset}
-          />
+      <FloatButtonPortal>
+        {editing ? (
+          <FloatButton.Group
+            shape="circle"
+            className="mb-perfil-dashboard__fab"
+          >
+            <FloatButton
+              icon={<AppstoreAddOutlined />}
+              tooltip={t('profileDashboard.addWidget')}
+              aria-label={t('profileDashboard.addWidget')}
+              onClick={() => setPickerOpen(true)}
+            />
+            <FloatButton
+              icon={<ReloadOutlined />}
+              tooltip={t('profileDashboard.resetLayout')}
+              aria-label={t('profileDashboard.resetLayout')}
+              onClick={reset}
+            />
+            <FloatButton
+              type="primary"
+              icon={<CheckOutlined />}
+              tooltip={t('profileDashboard.editLayoutDone')}
+              aria-label={t('profileDashboard.editLayoutDone')}
+              onClick={() => setEditing(false)}
+            />
+          </FloatButton.Group>
+        ) : (
           <FloatButton
             type="primary"
-            icon={<CheckOutlined />}
-            tooltip={t('profileDashboard.editLayoutDone')}
-            aria-label={t('profileDashboard.editLayoutDone')}
-            onClick={() => setEditing(false)}
+            icon={<LayoutOutlined />}
+            tooltip={t('profileDashboard.editLayout')}
+            aria-label={t('profileDashboard.editLayout')}
+            className="mb-perfil-dashboard__fab"
+            onClick={() => setEditing(true)}
           />
-        </FloatButton.Group>
-      ) : (
-        <FloatButton
-          type="primary"
-          icon={<LayoutOutlined />}
-          tooltip={t('profileDashboard.editLayout')}
-          aria-label={t('profileDashboard.editLayout')}
-          className="mb-perfil-dashboard__fab"
-          onClick={() => setEditing(true)}
-        />
-      )}
+        )}
+      </FloatButtonPortal>
     </AppLayout>
   );
 }

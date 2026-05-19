@@ -244,8 +244,9 @@
     border-radius: var(--border-radius-sm);
   }
 
-  /* FloatButton sobre el BottomNav */
-  .series-detail-page .ant-float-btn {
+  /* FloatButton sobre el BottomNav. Scopeado por la clase del FAB
+   * (no por .series-detail-page) porque ahora se portala a body. */
+  .ant-float-btn.series-edit-fab {
     bottom: calc(var(--bottom-nav-height) + 16px) !important;
     right: 16px !important;
   }
