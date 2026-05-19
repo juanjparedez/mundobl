@@ -12,6 +12,7 @@ import { CommentsSection } from '@/components/series/CommentsSection';
 import { ReviewsSection } from '@/components/series/ReviewsSection/ReviewsSection';
 import { ViewStatusToggle } from '@/components/series/ViewStatusToggle';
 import { SeriesDetailClient } from '@/components/series/SeriesDetailClient';
+import { SeriesCompletenessBadge } from './SeriesCompletenessBadge/SeriesCompletenessBadge';
 import { SeriesContent } from '@/components/series/SeriesContent/SeriesContent';
 import {
   shouldShowSeasons,
@@ -273,6 +274,12 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
               </div>
             </>
           }
+        />
+
+        <SeriesCompletenessBadge
+          seriesId={serie.id}
+          series={serie}
+          canEdit={canEditCatalog(session?.user?.role)}
         />
 
         {serie.watchLinks && serie.watchLinks.length > 0 && (

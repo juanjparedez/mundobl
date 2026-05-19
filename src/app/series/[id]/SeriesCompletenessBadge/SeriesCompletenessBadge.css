@@ -1,0 +1,51 @@
+/* Sello de completitud de la ficha (#112 fase 1). Variante pública
+ * (solo ficha completa) y variante editor (link al editor, accionable).
+ * Todo via tokens — sin hex hardcodeado. */
+.mb-series-completeness {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  line-height: 1;
+  padding: 4px 10px;
+  border-radius: var(--border-radius-base);
+  width: fit-content;
+}
+
+.mb-series-completeness__icon {
+  font-size: 14px;
+}
+
+.mb-series-completeness__text {
+  font-weight: 600;
+}
+
+/* Público: sello positivo discreto. */
+.mb-series-completeness--public {
+  color: var(--success-color);
+  background: color-mix(in srgb, var(--success-color) 12%, transparent);
+}
+
+/* Editor: link al editor. El tono del borde refleja el tier. */
+.mb-series-completeness--edit {
+  color: var(--text-secondary);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color-secondary);
+  text-decoration: none;
+  transition:
+    border-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.mb-series-completeness--edit:hover {
+  color: var(--text-primary);
+  border-color: var(--primary-color);
+}
+
+.mb-series-completeness--edit.mb-series-completeness--low {
+  border-color: color-mix(in srgb, var(--error-color) 45%, transparent);
+}
+
+.mb-series-completeness--edit.mb-series-completeness--mid {
+  border-color: color-mix(in srgb, var(--warning-color) 45%, transparent);
+}
