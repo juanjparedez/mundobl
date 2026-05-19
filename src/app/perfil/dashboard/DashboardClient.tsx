@@ -3,8 +3,14 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { Button, Spin } from 'antd';
-import { ArrowLeftOutlined } from '@ant-design/icons';
+import { Button, FloatButton, Spin } from 'antd';
+import {
+  AppstoreAddOutlined,
+  ArrowLeftOutlined,
+  CheckOutlined,
+  LayoutOutlined,
+  ReloadOutlined,
+} from '@ant-design/icons';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import {
   DashboardGrid,
@@ -774,14 +780,23 @@ export function DashboardClient() {
     };
   }, [layouts, isVisible]);
 
-  // El grid solo conoce los widgets visibles. Cuando emite onLayoutsChange
-  // (drag/resize o porque un widget desaparecio al ocultar su section),
-  // hay que RE-INYECTAR los items ocultos preservando su posicion en el
-  // layout persistido. Sin esto, ocultar una section borraba el widget
-  // del layout y al reactivarla no reaparecia (bug fine_tunning_3 #1:
-  // "funciona para desactivar pero no para reactivar").
+  // RGL dispara onLayoutChange en CADA render, no solo al draggear: tambien
+  // cuando el layout prop cambia por motivos "prop-driven" (cambio de modo
+  // basic/advanced, toggle de visibilidad en el CustomizeDrawer, cambio de
+  // breakpoint). drag/resize solo estan habilitados con editing=true, asi
+  // que un onLayoutChange con editing=false es SIEMPRE programatico y NO
+  // debe persistirse. Persistirlo era la causa raiz de:
+  //   - fine_tunning_3 #2: al cambiar de modo se reescribia el layout del
+  //     modo anterior bajo la key del modo nuevo, pisando el preset ->
+  //     "los botones Basica|Avanzada no hacen nada".
+  //   - fine_tunning_3 #1: al ocultar una section se persistia el layout
+  //     compactado por RGL; al reactivar, el widget no volvia a su lugar ->
+  //     "funciona para desactivar pero no para reactivar".
+  // Cuando editing=true (drag/resize real) si re-inyectamos los items
+  // ocultos para preservar su posicion en el layout persistido.
   const handleLayoutsChange = useCallback(
     (next: DashboardLayouts) => {
+      if (!editing) return;
       const merged: DashboardLayouts = {};
       (['lg', 'md', 'sm', 'xs'] as const).forEach((bp) => {
         const visibleItems = next[bp] ?? [];
@@ -793,7 +808,7 @@ export function DashboardClient() {
       });
       setLayouts(merged);
     },
-    [layouts, isVisible, setLayouts]
+    [editing, layouts, isVisible, setLayouts]
   );
 
   if (
@@ -830,10 +845,6 @@ export function DashboardClient() {
         <ProfileDashboardHeader
           user={data.user}
           onCustomizeClick={() => setCustomizeOpen(true)}
-          editing={editing}
-          onToggleEditing={() => setEditing((v) => !v)}
-          onAddWidget={() => setPickerOpen(true)}
-          onResetLayout={reset}
           mode={effectiveMode}
           onModeChange={(next) => handleModeChange(next)}
           showAdminMode={isAdmin}
@@ -883,6 +894,43 @@ export function DashboardClient() {
         onToggle={toggle}
         onReset={resetVisibility}
       />
+
+      {/* Control de edicion de layout como FAB fixed: sigue el scroll y
+       *  queda siempre a mano (pedido de Flor — antes vivia solo en el
+       *  header y se perdia al scrollear). Fuera de edicion es un boton
+       *  unico; al editar se expande a Agregar / Restablecer / Listo. */}
+      {editing ? (
+        <FloatButton.Group shape="circle" className="mb-perfil-dashboard__fab">
+          <FloatButton
+            icon={<AppstoreAddOutlined />}
+            tooltip={t('profileDashboard.addWidget')}
+            aria-label={t('profileDashboard.addWidget')}
+            onClick={() => setPickerOpen(true)}
+          />
+          <FloatButton
+            icon={<ReloadOutlined />}
+            tooltip={t('profileDashboard.resetLayout')}
+            aria-label={t('profileDashboard.resetLayout')}
+            onClick={reset}
+          />
+          <FloatButton
+            type="primary"
+            icon={<CheckOutlined />}
+            tooltip={t('profileDashboard.editLayoutDone')}
+            aria-label={t('profileDashboard.editLayoutDone')}
+            onClick={() => setEditing(false)}
+          />
+        </FloatButton.Group>
+      ) : (
+        <FloatButton
+          type="primary"
+          icon={<LayoutOutlined />}
+          tooltip={t('profileDashboard.editLayout')}
+          aria-label={t('profileDashboard.editLayout')}
+          className="mb-perfil-dashboard__fab"
+          onClick={() => setEditing(true)}
+        />
+      )}
     </AppLayout>
   );
 }
