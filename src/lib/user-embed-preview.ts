@@ -344,11 +344,36 @@ async function suggestWithGemini(
     .filter(Boolean)
     .join('\n');
 
+  // Vocabulario existente del catalogo curado: se lo pasamos a la IA para que
+  // REUTILICE tags/generos que ya usamos (nuestro "lenguaje") en vez de inventar
+  // sinonimos nuevos (ej: "Superacion" en vez de crear "Sanacion Emocional").
+  // Solo deberia proponer valores nuevos cuando ninguno de los existentes aplica.
+  const curatedUse = {
+    some: { series: { origin: 'CURATED', catalogScope: 'PERSONAL' } },
+  } as const;
+  const [vocabTags, vocabGenres] = await Promise.all([
+    prisma.tag.findMany({
+      where: { series: curatedUse },
+      select: { name: true },
+      orderBy: { series: { _count: 'desc' } },
+      take: 150,
+    }),
+    prisma.genre.findMany({
+      where: { series: curatedUse },
+      select: { name: true },
+      orderBy: { name: 'asc' },
+    }),
+  ]);
+  const vocabularyInstruction =
+    vocabTags.length > 0 || vocabGenres.length > 0
+      ? `\n\nVOCABULARIO EXISTENTE DEL CATALOGO. Para "tagNames" y "genreNames": REUTILIZA estos valores cuando alguno describa el caso, respetando su forma exacta (mayusculas/acentos). NO inventes un sinonimo nuevo si ya existe uno equivalente — ej: si existe "Superacion", usala en vez de crear "Sanacion Emocional"; si existe "Enemy to lovers", no crees "Enemigos a amantes". Solo propone un valor NUEVO cuando NINGUNO de los existentes aplica realmente al caso.\nTags existentes (ordenados por uso): ${vocabTags.map((tg) => tg.name).join(', ')}.\nGeneros existentes: ${vocabGenres.map((g) => g.name).join(', ')}.`
+      : '';
+
   let rawResponse: string;
   try {
     rawResponse = await generateText({
       prompt,
-      systemInstruction: GEMINI_SYSTEM_INSTRUCTION,
+      systemInstruction: GEMINI_SYSTEM_INSTRUCTION + vocabularyInstruction,
       // Temperature 0: tarea de extraccion, no creativa. Mismo input
       // deberia dar mismo output, sin variabilidad.
       temperature: 0,
