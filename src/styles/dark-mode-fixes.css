@@ -111,3 +111,16 @@ html[data-skin='premium'][data-theme='dark'] .ant-pagination-item {
   background-color: var(--mb-panel-2);
   border-color: var(--mb-border);
 }
+
+/* El item activo debe conservar el highlight primario: la regla de arriba
+ * (mayor especificidad que `.ant-pagination-item-active`) le pisaba el fondo
+ * al item activo, dejando la pagina actual sin distincion (solo visible al
+ * hover). Restauramos el highlight con igual especificidad. */
+html[data-skin='premium'][data-theme='dark'] .ant-pagination-item-active {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+html[data-skin='premium'][data-theme='dark'] .ant-pagination-item-active a {
+  color: #fff;
+}
