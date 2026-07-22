@@ -1699,6 +1699,7 @@ const ko: TranslationShape = {
     commentSuccess: '댓글 전송 완료',
     commentError: '댓글 전송 오류',
     adminBadge: '관리자',
+    officialBadge: '운영팀',
     errorUploadImage: '이미지 업로드 오류',
     errorCreateRequest: '요청 생성 오류',
     imageAltAttachment: '첨부 파일',

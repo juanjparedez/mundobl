@@ -1638,6 +1638,7 @@ export type TranslationShape = {
     commentSuccess: string;
     commentError: string;
     adminBadge: string;
+    officialBadge: string;
     errorUploadImage: string;
     errorCreateRequest: string;
     imageAltAttachment: string;
@@ -4183,6 +4184,7 @@ const es: TranslationShape = {
     commentSuccess: 'Comentario enviado',
     commentError: 'Error al enviar el comentario',
     adminBadge: 'Admin',
+    officialBadge: 'Del equipo',
     errorUploadImage: 'Error al subir imagen',
     errorCreateRequest: 'Error al crear la solicitud',
     imageAltAttachment: 'Adjunto',
@@ -6756,6 +6758,7 @@ const en: TranslationShape = {
     commentSuccess: 'Comment sent',
     commentError: 'Error sending comment',
     adminBadge: 'Admin',
+    officialBadge: 'From the team',
     errorUploadImage: 'Error uploading image',
     errorCreateRequest: 'Error creating request',
     imageAltAttachment: 'Attachment',

@@ -1663,6 +1663,7 @@ const zhCN: TranslationShape = {
     commentSuccess: '评论已发送',
     commentError: '发送评论失败',
     adminBadge: '管理员',
+    officialBadge: '团队',
     errorUploadImage: '上传图片失败',
     errorCreateRequest: '创建请求失败',
     imageAltAttachment: '附件',

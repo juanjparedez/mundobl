@@ -1709,6 +1709,7 @@ const ja: TranslationShape = {
     commentSuccess: 'コメントを送信しました',
     commentError: 'コメントの送信中にエラーが発生しました',
     adminBadge: '管理者',
+    officialBadge: '運営チーム',
     errorUploadImage: '画像のアップロード中にエラーが発生しました',
     errorCreateRequest: 'リクエストの作成中にエラーが発生しました',
     imageAltAttachment: '添付ファイル',

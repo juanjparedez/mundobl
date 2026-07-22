@@ -1722,6 +1722,7 @@ const it: TranslationShape = {
     commentSuccess: 'Commento inviato',
     commentError: "Errore nell'invio del commento",
     adminBadge: 'Amministratore',
+    officialBadge: 'Dal team',
     errorUploadImage: "Errore nel caricamento dell'immagine",
     errorCreateRequest: 'Errore nella creazione della richiesta',
     imageAltAttachment: 'Allegato',
