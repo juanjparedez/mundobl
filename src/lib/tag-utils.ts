@@ -85,3 +85,42 @@ export async function findOrCreateGenre(
     throw error;
   }
 }
+
+/**
+ * Igual que {@link findOrCreateTag} pero para `Actor`. Evita duplicados por
+ * diferencia de mayúsculas/espacios (ej. "Usa Takuma" vs " Usa Takuma") al
+ * persistir reparto desde nombre.
+ */
+export async function findOrCreateActor(
+  client: Prisma.TransactionClient,
+  rawName: string
+): Promise<{ id: number; name: string } | null> {
+  const name = rawName.trim();
+  if (!name) return null;
+
+  const existing = await client.actor.findFirst({
+    where: { name: { equals: name, mode: 'insensitive' } },
+    select: { id: true, name: true },
+  });
+  if (existing) return existing;
+
+  try {
+    return await client.actor.create({
+      data: { name },
+      select: { id: true, name: true },
+    });
+  } catch (error) {
+    if (
+      error &&
+      typeof error === 'object' &&
+      'code' in error &&
+      (error as { code?: string }).code === 'P2002'
+    ) {
+      return client.actor.findFirst({
+        where: { name: { equals: name, mode: 'insensitive' } },
+        select: { id: true, name: true },
+      });
+    }
+    throw error;
+  }
+}

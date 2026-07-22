@@ -5,7 +5,11 @@ import { requireRole } from '@/lib/auth-helpers';
 import { extractVideoId, type Platform } from '@/lib/embed-helpers';
 import { getCountryCode } from '@/lib/country-codes';
 import { downloadAndUploadExternalImage } from '@/lib/supabase';
-import { findOrCreateTag, findOrCreateGenre } from '@/lib/tag-utils';
+import {
+  findOrCreateTag,
+  findOrCreateGenre,
+  findOrCreateActor,
+} from '@/lib/tag-utils';
 
 // GET /api/series - Obtener todas las series del catalogo curado (excluye USER_EMBED)
 export async function GET() {
@@ -178,12 +182,8 @@ export async function POST(request: NextRequest) {
       (async () => {
         if (!actors || actors.length === 0) return;
         for (const actorData of actors) {
-          if (!actorData.name) continue;
-          const actor = await prisma.actor.upsert({
-            where: { name: actorData.name },
-            update: {},
-            create: { name: actorData.name },
-          });
+          const actor = await findOrCreateActor(prisma, actorData.name ?? '');
+          if (!actor) continue;
           await prisma.seriesActor.create({
             data: {
               seriesId: serie.id,
