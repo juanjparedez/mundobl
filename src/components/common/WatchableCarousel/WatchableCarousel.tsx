@@ -66,7 +66,10 @@ export function WatchableCarousel({ items, title }: WatchableCarouselProps) {
                 />
               ) : (
                 <div className="watchable-carousel__cover-placeholder">
-                  <PlayCircleFilled />
+                  <PlayCircleFilled className="watchable-carousel__cover-placeholder-icon" />
+                  <span className="watchable-carousel__cover-placeholder-title">
+                    {item.title}
+                  </span>
                 </div>
               )}
               <div className="watchable-carousel__overlay">
