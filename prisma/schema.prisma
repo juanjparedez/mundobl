@@ -117,6 +117,7 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -126,6 +127,8 @@ model Session {
   expires      DateTime
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model VerificationToken {
@@ -186,51 +189,52 @@ model SeriesDubbing {
   language   Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
 
   @@unique([seriesId, languageId])
+  @@index([languageId])
 }
 
 // ============================================
 // SERIES - Series, películas, cortos, etc.
 // ============================================
 model Series {
-  id            Int      @id @default(autoincrement())
-  title         String
-  originalTitle String?
-  year          Int?
-  type          String // "serie", "pelicula", "corto", "especial"
-  basedOn       String? // "libro", "novela", "corto", "manga", "anime"
-  format        String   @default("regular") // "regular", "vertical"
-  imageUrl      String?
-  imagePosition String   @default("center") // CSS background-position
-  synopsis      String? // Sinopsis de la serie
-  review        String? // Reseña personal
-  soundtrack    String? // Banda sonora
-  overallRating Int? // Puntuación general (del Excel)
-  observations  String? // Observaciones
-  notesPrivate  Boolean  @default(false) // Si true, review/observations solo visible para ADMIN
-  isFavorite    Boolean  @default(false) // Marcado como favorito
+  id             Int      @id @default(autoincrement())
+  title          String
+  originalTitle  String?
+  year           Int?
+  type           String // "serie", "pelicula", "corto", "especial"
+  basedOn        String? // "libro", "novela", "corto", "manga", "anime"
+  format         String   @default("regular") // "regular", "vertical"
+  imageUrl       String?
+  imagePosition  String   @default("center") // CSS background-position
+  synopsis       String? // Sinopsis de la serie
+  review         String? // Reseña personal
+  soundtrack     String? // Banda sonora
+  overallRating  Int? // Puntuación general (del Excel)
+  observations   String? // Observaciones
+  notesPrivate   Boolean  @default(false) // Si true, review/observations solo visible para ADMIN
+  isFavorite     Boolean  @default(false) // Marcado como favorito
   // "PERSONAL": en el catalogo curado del admin (con review propio).
   // "WATCHABLE_ONLY": importada solo porque se puede mirar legalmente
   // (canales oficiales con embed). Aparece en /ver, no en /catalogo.
-  catalogScope  String   @default("PERSONAL")
+  catalogScope   String   @default("PERSONAL")
   // "CURATED": creada por Flor (admin) — el catalogo oficial.
   // "USER_EMBED": aportada por un user registrado desde /ver/agregar.
   // Filtros publicos por defecto excluyen USER_EMBED salvo /ver que lo
   // permite. El "link" con una CURATED se hace fusionando episodios y
   // borrando el row USER_EMBED desde /admin/series/user-submitted.
-  origin        String   @default("CURATED")
+  origin         String   @default("CURATED")
   // "VISIBLE": visible para todos en /ver (si tiene embeds).
   // "HIDDEN": ocultada post-hoc por admin. Solo ADMIN y el submitter
   // siguen viendola.
-  visibility    String   @default("VISIBLE")
-  submittedById String?
+  visibility     String   @default("VISIBLE")
+  submittedById  String?
   // Para series USER_EMBED que el submitter declaro como "la misma serie
   // que esta otra del catalogo curado" (boton "asociar" en /ver/agregar).
   // Ambas series existen como entidades separadas; el link permite mostrar
   // badges bidireccionales en /ver y /catalogo y a admins linkear sin
   // moderar manualmente. Solo se setea en USER_EMBED → CURATED.
   linkedSeriesId Int?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   // Relaciones
   universeId          Int?
@@ -242,32 +246,36 @@ model Series {
   originalLanguageId  Int?
   originalLanguage    Language?          @relation("OriginalLanguage", fields: [originalLanguageId], references: [id])
 
-  seasons           Season[]
-  actors            SeriesActor[]
-  directors         SeriesDirector[]
-  ratings           Rating[]
-  userRatings       UserRating[]
-  comments          Comment[]
-  viewStatus        ViewStatus[]
-  favorites         UserFavorite[]
-  tags              SeriesTag[]
-  dubbings          SeriesDubbing[]
-  genres            SeriesGenre[]
-  watchLinks        WatchLink[]
-  embeddableContent EmbeddableContent[]
-  relatedSeriesFrom RelatedSeries[]      @relation("mainSeries")
-  news              News[]
-  relatedSeriesTo   RelatedSeries[]      @relation("relatedSeries")
-  reviews           Review[]
-  subscriptions     SeriesSubscription[]
-  infoBlocks        SeriesInfoBlock[]
-  submittedBy       User?                @relation("UserSubmittedSeries", fields: [submittedById], references: [id], onDelete: SetNull)
-  linkedSeries      Series?              @relation("UserEmbedLink", fields: [linkedSeriesId], references: [id], onDelete: SetNull)
-  linkedFromUserEmbeds Series[]          @relation("UserEmbedLink")
+  seasons              Season[]
+  actors               SeriesActor[]
+  directors            SeriesDirector[]
+  ratings              Rating[]
+  userRatings          UserRating[]
+  comments             Comment[]
+  viewStatus           ViewStatus[]
+  favorites            UserFavorite[]
+  tags                 SeriesTag[]
+  dubbings             SeriesDubbing[]
+  genres               SeriesGenre[]
+  watchLinks           WatchLink[]
+  embeddableContent    EmbeddableContent[]
+  relatedSeriesFrom    RelatedSeries[]      @relation("mainSeries")
+  news                 News[]
+  relatedSeriesTo      RelatedSeries[]      @relation("relatedSeries")
+  reviews              Review[]
+  subscriptions        SeriesSubscription[]
+  infoBlocks           SeriesInfoBlock[]
+  submittedBy          User?                @relation("UserSubmittedSeries", fields: [submittedById], references: [id], onDelete: SetNull)
+  linkedSeries         Series?              @relation("UserEmbedLink", fields: [linkedSeriesId], references: [id], onDelete: SetNull)
+  linkedFromUserEmbeds Series[]             @relation("UserEmbedLink")
 
   @@index([origin, visibility])
   @@index([submittedById, createdAt])
   @@index([linkedSeriesId])
+  @@index([universeId])
+  @@index([countryId])
+  @@index([productionCompanyId])
+  @@index([originalLanguageId])
 }
 
 // Bloques de informacion adicionales por serie. Cards labeladas y libres
@@ -365,6 +373,7 @@ model EpisodeNote {
 
   @@unique([userId, episodeId])
   @@index([userId, updatedAt])
+  @@index([episodeId])
 }
 
 // ============================================
@@ -454,6 +463,7 @@ model SeriesGenre {
   genre    Genre  @relation(fields: [genreId], references: [id], onDelete: Cascade)
 
   @@unique([seriesId, genreId])
+  @@index([genreId])
 }
 
 // ============================================
@@ -487,6 +497,7 @@ model SeriesActor {
   actor    Actor  @relation(fields: [actorId], references: [id], onDelete: Cascade)
 
   @@unique([seriesId, actorId, character])
+  @@index([actorId])
 }
 
 // Actores por Temporada (específico)
@@ -501,6 +512,7 @@ model SeasonActor {
   actor    Actor  @relation(fields: [actorId], references: [id], onDelete: Cascade)
 
   @@unique([seasonId, actorId, character])
+  @@index([actorId])
 }
 
 // Directores por Serie
@@ -513,6 +525,7 @@ model SeriesDirector {
   director   Director @relation(fields: [directorId], references: [id], onDelete: Cascade)
 
   @@unique([seriesId, directorId])
+  @@index([directorId])
 }
 
 // Tags/Etiquetas por Serie
@@ -525,6 +538,7 @@ model SeriesTag {
   tag      Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@unique([seriesId, tagId])
+  @@index([tagId])
 }
 
 // ============================================
@@ -541,6 +555,7 @@ model RelatedSeries {
   createdAt DateTime @default(now())
 
   @@unique([mainSeriesId, relatedSeriesId])
+  @@index([relatedSeriesId])
 }
 
 // ============================================
@@ -560,6 +575,7 @@ model Rating {
   season   Season? @relation(fields: [seasonId], references: [id], onDelete: Cascade)
 
   @@unique([seriesId, seasonId, category])
+  @@index([seasonId])
 }
 
 // ============================================
@@ -578,6 +594,7 @@ model UserRating {
   series   Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
 
   @@unique([userId, seriesId, category])
+  @@index([seriesId])
 }
 
 // ============================================
@@ -627,6 +644,7 @@ model CommentReport {
 
   @@unique([commentId, userId])
   @@index([commentId])
+  @@index([userId])
 }
 
 // ============================================
@@ -643,6 +661,7 @@ model UserFavorite {
   series   Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
 
   @@unique([userId, seriesId])
+  @@index([seriesId])
 }
 
 // ============================================
@@ -759,6 +778,9 @@ model ViewStatus {
   @@unique([userId, seriesId])
   @@unique([userId, seasonId])
   @@unique([userId, episodeId])
+  @@index([seriesId])
+  @@index([seasonId])
+  @@index([episodeId])
 }
 
 // ============================================
@@ -783,6 +805,9 @@ model FeatureRequest {
   votes    FeatureVote[]
   images   FeatureRequestImage[]
   comments FeatureRequestComment[]
+
+  @@index([userId])
+  @@index([assignedToId])
 }
 
 model FeatureRequestImage {
@@ -791,6 +816,8 @@ model FeatureRequestImage {
   createdAt        DateTime       @default(now())
   featureRequestId Int
   featureRequest   FeatureRequest @relation(fields: [featureRequestId], references: [id], onDelete: Cascade)
+
+  @@index([featureRequestId])
 }
 
 model FeatureVote {
@@ -803,6 +830,7 @@ model FeatureVote {
   featureRequest   FeatureRequest @relation(fields: [featureRequestId], references: [id], onDelete: Cascade)
 
   @@unique([userId, featureRequestId])
+  @@index([featureRequestId])
 }
 
 model FeatureRequestComment {
@@ -882,6 +910,8 @@ model SuggestedSite {
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([userId])
 }
 
 // ============================================
@@ -895,6 +925,8 @@ model WatchLink {
 
   seriesId Int
   series   Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+
+  @@index([seriesId])
 }
 
 // ============================================
@@ -919,6 +951,8 @@ model EmbeddableContent {
   series       Series?  @relation(fields: [seriesId], references: [id], onDelete: SetNull)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  @@index([seriesId])
 }
 
 // ============================================
@@ -1083,6 +1117,8 @@ model News {
 
   @@index([status, publishedAt])
   @@index([createdAt])
+  @@index([approvedById])
+  @@index([relatedSeriesId])
 }
 
 // Etiquetas asociadas a una noticia (reutiliza el modelo Tag existente).
