@@ -68,15 +68,13 @@ function getBuildId(): string {
   }
 }
 
-export async function GET() {
-  const buildId = getBuildId();
-
-  // Leer de DB; si está vacía, usar el archivo como fallback.
+// Fallback: reconstruye el changelog desde la DB (`ChangelogItem`, editable
+// desde /admin/changelog). Solo se usa si CHANGELOG.md esta vacio/ausente.
+async function parseChangelogFromDb(): Promise<ChangelogEntry[]> {
   const dbItems = await prisma.changelogItem.findMany();
+  if (dbItems.length === 0) return [];
 
-  let entries: ChangelogEntry[];
-
-  if (dbItems.length > 0) {
+  {
     // Agrupar por version. Importante: el orden de las VERSIONES se
     // calcula por su recencia real (max createdAt de sus items), NO por
     // el sortOrder global — antes "2026-04" (sortOrder 1-33) salia antes
@@ -117,7 +115,7 @@ export async function GET() {
         });
       }
     }
-    entries = Array.from(versionMap.entries())
+    return Array.from(versionMap.entries())
       .sort((a, b) => b[1].recency - a[1].recency)
       .map(([version, { label, items }]) => ({
         version,
@@ -126,8 +124,18 @@ export async function GET() {
           .sort((x, y) => y.sort - x.sort)
           .map(({ body, category }) => ({ body, category })),
       }));
-  } else {
-    entries = parseChangelogFile();
+  }
+}
+
+export async function GET() {
+  const buildId = getBuildId();
+
+  // CHANGELOG.md es la fuente de verdad: se lee del repo en cada deploy, asi
+  // que actualizar el archivo (y deployar) alcanza para publicar novedades.
+  // La DB queda como fallback solo si el archivo esta vacio o ausente.
+  let entries = parseChangelogFile();
+  if (entries.length === 0) {
+    entries = await parseChangelogFromDb();
   }
 
   return NextResponse.json({ buildId, entries });
