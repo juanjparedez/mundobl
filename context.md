@@ -126,6 +126,13 @@ Soporta 8 plataformas para reproducir/parsear:
 
 - **Helper**: [src/lib/supabase.ts](src/lib/supabase.ts)
 - Bucket: `images`. Funciones: `uploadImage`, `deleteImage`, `downloadAndUploadImage` (re-hostea imagen desde URL externa)
+- Usa la **service role key** y SOLO para Storage. La app NUNCA consulta tablas via el cliente Supabase (`supabase.from(...)`) — todo el acceso a DB es via Prisma.
+
+### Seguridad DB — RLS (Row Level Security)
+
+- **Todas las tablas del schema `public` tienen RLS habilitado** (deny-by-default para el rol `anon`). Sin esto, la anon/publishable key (PUBLICA, `NEXT_PUBLIC_...`) permitiria leer/escribir tablas via la REST API de Supabase (PostgREST), salteando la app.
+- **No rompe la app**: Prisma conecta con el rol postgres (conexion directa `DATABASE_URL`), que **bypassea RLS**. Storage usa la service key (RLS aparte).
+- ⚠️ **RLS no lo maneja Prisma**: las tablas nuevas de futuras migraciones NO heredan RLS. Tras cada `prisma migrate` correr [scripts/enable-rls.ts](scripts/enable-rls.ts) (`--apply`) para re-habilitarlo en las nuevas.
 
 ### NextAuth (Google OAuth)
 
