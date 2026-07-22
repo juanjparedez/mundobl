@@ -65,29 +65,19 @@ const nextConfig: NextConfig = {
       'https://x.com',
       'https://open.spotify.com',
     ].join(' ');
-    // Hosts de imágenes permitidos (deben coincidir con images.remotePatterns).
-    const imgSrc = [
-      "'self'",
-      'data:',
-      'blob:',
-      'https://*.supabase.co',
-      'https://i.ytimg.com',
-      'https://img.youtube.com',
-      'https://*.googleusercontent.com',
-      'https://*.ggpht.com',
-      'https://avatars.githubusercontent.com',
-      'https://image.tmdb.org',
-      'https://i.vimeocdn.com',
-    ].join(' ');
     const isDev = process.env.NODE_ENV === 'development';
     // Next.js inyecta scripts inline de bootstrap y antd inyecta estilos inline;
     // por eso 'unsafe-inline'. 'unsafe-eval' solo en dev (Next dev usa eval en HMR).
+    // img-src: permitir cualquier https (las imágenes no ejecutan código → riesgo
+    // bajo). Necesario porque cargamos favicons externos (Google S2:
+    // www.google.com/s2/favicons via getFaviconUrl) y URLs de imagen externas
+    // legacy. Restringirlo por host rompía logos/favicons (ej. /sitios).
     const csp = [
       "default-src 'self'",
       `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`,
       "style-src 'self' 'unsafe-inline'",
-      `img-src ${imgSrc}`,
-      "font-src 'self' data:",
+      "img-src 'self' data: blob: https:",
+      "font-src 'self' data: https:",
       "connect-src 'self' https:",
       "media-src 'self' https: blob:",
       `frame-src ${frameSrc}`,
