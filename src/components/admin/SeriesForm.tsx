@@ -37,7 +37,10 @@ import {
   SeriesContentManager,
   type PendingContentItem,
 } from './SeriesContentManager/SeriesContentManager';
-import { SeriesInfoBlocksManager } from './SeriesInfoBlocksManager/SeriesInfoBlocksManager';
+import {
+  SeriesInfoBlocksManager,
+  type PendingInfoBlock,
+} from './SeriesInfoBlocksManager/SeriesInfoBlocksManager';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
@@ -221,6 +224,9 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
   const [pendingContent, setPendingContent] = useState<PendingContentItem[]>(
     []
   );
+  const [pendingInfoBlocks, setPendingInfoBlocks] = useState<
+    PendingInfoBlock[]
+  >([]);
   const [relatedSeriesOptions, setRelatedSeriesOptions] = useState<
     Array<{ id: number; title: string; year: number | null; type: string }>
   >([]);
@@ -420,14 +426,21 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
           : values.basedOn || null,
       };
 
-      // Include pending content items in the creation request
+      // Include pending content items + info blocks in the creation request
       const bodyPayload =
-        mode === 'create' && pendingContent.length > 0
+        mode === 'create'
           ? {
               ...submitValues,
-              contentItems: pendingContent.map(
-                ({ _tempId, ...contentData }) => contentData
-              ),
+              ...(pendingContent.length > 0 && {
+                contentItems: pendingContent.map(
+                  ({ _tempId, ...contentData }) => contentData
+                ),
+              }),
+              ...(pendingInfoBlocks.length > 0 && {
+                infoBlocks: pendingInfoBlocks.map(
+                  ({ _tempId, ...blockData }) => blockData
+                ),
+              }),
             }
           : submitValues;
 
@@ -1355,15 +1368,20 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
             )}
           </Card>
 
-          {mode === 'edit' && initialData?.id && (
-            <Card
-              type="inner"
-              title="🧱 Bloques de informacion adicional"
-              style={{ marginBottom: 24 }}
-            >
+          <Card
+            type="inner"
+            title="🧱 Bloques de informacion adicional"
+            style={{ marginBottom: 24 }}
+          >
+            {mode === 'edit' && initialData?.id ? (
               <SeriesInfoBlocksManager seriesId={initialData.id as number} />
-            </Card>
-          )}
+            ) : (
+              <SeriesInfoBlocksManager
+                pendingBlocks={pendingInfoBlocks}
+                onPendingBlocksChange={setPendingInfoBlocks}
+              />
+            )}
+          </Card>
 
           {/* Botones de acción */}
           <Form.Item>

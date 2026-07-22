@@ -22,11 +22,14 @@ export async function GET() {
               include: {
                 episodes: {
                   include: {
-                    viewStatus: true,
+                    // Solo el viewStatus del usuario autenticado: sin el filtro,
+                    // viewStatus[0] podía ser de otro user y corrompía el
+                    // progreso/proximo episodio de cada card.
+                    viewStatus: { where: { userId: authResult.userId } },
                   },
                   orderBy: { episodeNumber: 'asc' },
                 },
-                viewStatus: true,
+                viewStatus: { where: { userId: authResult.userId } },
               },
               orderBy: { seasonNumber: 'asc' },
             },
