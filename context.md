@@ -149,9 +149,10 @@ Soporta 8 plataformas para reproducir/parsear:
 ### Tags (matching sin duplicados)
 
 - `Tag.name` es `@unique` pero el indice de Postgres es case/espacios-sensible, asi que "Enemy to Lovers" vs "enemy to lovers" eran filas distintas.
-- Helpers en [src/lib/tag-utils.ts](src/lib/tag-utils.ts): `findOrCreateTag(client, rawName, category='trope')` y `findOrCreateGenre(client, rawName)`. Hacen `trim` + `findFirst({ name: { equals, mode: 'insensitive' } })` y solo crean si no existe (maneja carrera P2002). Aceptan el cliente Prisma o un `Prisma.TransactionClient`.
-- **Usar siempre estos helpers** al persistir tags/generos desde nombre (nunca `tag/genre.upsert({ where: { name } })` a pelo). Ya aplicados (tags + generos) en [POST /api/series](src/app/api/series/route.ts), [PATCH /api/series/[id]](src/app/api/series/[id]/route.ts) y [POST /api/user/series/embed/confirm](src/app/api/user/series/embed/confirm/route.ts). `POST /api/tags` rechaza duplicados case-insensitive.
-- Otras tablas compartidas que aun usan `upsert({ where: { name } })` exacto (Actor, ProductionCompany, Language): mismo bug latente; replicar el patron si aparecen duplicados.
+- Helpers en [src/lib/tag-utils.ts](src/lib/tag-utils.ts): `findOrCreateTag(client, rawName, category='trope')`, `findOrCreateGenre(client, rawName)` y `findOrCreateActor(client, rawName)`. Hacen `trim` + `findFirst({ name: { equals, mode: 'insensitive' } })` y solo crean si no existe (maneja carrera P2002). Aceptan el cliente Prisma o un `Prisma.TransactionClient`.
+- **Usar siempre estos helpers** al persistir tags/generos/actores desde nombre (nunca `X.upsert({ where: { name } })` a pelo). Aplicados en [POST /api/series](src/app/api/series/route.ts), [PATCH /api/series/[id]](src/app/api/series/[id]/route.ts), [POST /api/user/series/embed/confirm](src/app/api/user/series/embed/confirm/route.ts) y (actores) [PATCH /api/seasons/[id]](src/app/api/seasons/[id]/route.ts). `POST /api/tags` rechaza duplicados case-insensitive.
+- **Limpieza de duplicados existentes**: `scripts/merge-duplicate-tags.ts` y `scripts/merge-duplicate-actors.ts` (dry-run por defecto, `--apply` fusiona; reusan la logica de `/api/tags/merge` y `/api/actors/merge`). Corridos 2026-07-21: 6 tags + 5 actores fusionados (espacios al inicio/final).
+- Tablas compartidas que aun usan `upsert({ where: { name } })` exacto (ProductionCompany, Language): mismo bug latente; replicar `findOrCreate*` + script de merge si aparecen duplicados.
 
 ### Bloques de informacion adicional (crear + editar)
 

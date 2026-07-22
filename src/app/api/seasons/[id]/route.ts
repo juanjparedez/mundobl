@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
+import { findOrCreateActor } from '@/lib/tag-utils';
 
 export async function GET(
   request: NextRequest,
@@ -87,14 +88,8 @@ export async function PUT(
 
       // Crear o conectar nuevos actores
       for (const actorData of actors) {
-        if (!actorData.name || actorData.name.trim() === '') continue;
-
-        // Buscar o crear actor
-        const actor = await prisma.actor.upsert({
-          where: { name: actorData.name.trim() },
-          update: {},
-          create: { name: actorData.name.trim() },
-        });
+        const actor = await findOrCreateActor(prisma, actorData.name ?? '');
+        if (!actor) continue;
 
         // Crear relación SeasonActor
         await prisma.seasonActor.create({
