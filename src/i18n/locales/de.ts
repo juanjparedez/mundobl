@@ -1731,6 +1731,7 @@ const de: TranslationShape = {
     commentSuccess: 'Kommentar gesendet',
     commentError: 'Fehler beim Senden des Kommentars',
     adminBadge: 'Admin',
+    officialBadge: 'Vom Team',
     errorUploadImage: 'Fehler beim Hochladen des Bildes',
     errorCreateRequest: 'Fehler beim Erstellen der Anfrage',
     imageAltAttachment: 'Anhang',

@@ -50,7 +50,9 @@ export async function PUT(
         user: { select: { id: true, name: true, nickname: true, image: true } },
         images: true,
         _count: { select: { votes: true, comments: true } },
-        votes: { select: { userId: true } },
+        // Solo el voto del admin que edita, para derivar `hasVoted` sin
+        // exponer la lista completa de votantes.
+        votes: { where: { userId: authResult.userId }, select: { id: true } },
       },
     });
 
@@ -74,7 +76,8 @@ export async function PUT(
       });
     }
 
-    return NextResponse.json(updated);
+    const { votes, ...rest } = updated;
+    return NextResponse.json({ ...rest, hasVoted: votes.length > 0 });
   } catch (error) {
     console.error('Error updating feature request:', error);
     return NextResponse.json(
