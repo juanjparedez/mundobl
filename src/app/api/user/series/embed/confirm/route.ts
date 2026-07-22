@@ -3,7 +3,11 @@ import { requireAuth } from '@/lib/auth-helpers';
 import { prisma } from '@/lib/database';
 import { detectPlatform, extractVideoId } from '@/lib/embed-helpers';
 import { checkUserEmbedRateLimit } from '@/lib/rate-limit';
-import { findOrCreateTag, findOrCreateGenre } from '@/lib/tag-utils';
+import {
+  findOrCreateTag,
+  findOrCreateGenre,
+  findOrCreateActor,
+} from '@/lib/tag-utils';
 import {
   ALLOWED_COUNTRY_CODES,
   SUPPORTED_EMBED_PLATFORMS,
@@ -335,11 +339,8 @@ export async function POST(request: NextRequest) {
 
   // Actores
   for (const actorName of data.actorNames) {
-    const actor = await prisma.actor.upsert({
-      where: { name: actorName },
-      update: {},
-      create: { name: actorName },
-    });
+    const actor = await findOrCreateActor(prisma, actorName);
+    if (!actor) continue;
     await prisma.seriesActor.create({
       data: {
         seriesId: newSeries.id,

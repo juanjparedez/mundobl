@@ -6,7 +6,11 @@ import { requireRole } from '@/lib/auth-helpers';
 import { getCountryCode } from '@/lib/country-codes';
 import { downloadAndUploadExternalImage } from '@/lib/supabase';
 import { notifySeriesSubscribers } from '@/lib/notifications';
-import { findOrCreateTag, findOrCreateGenre } from '@/lib/tag-utils';
+import {
+  findOrCreateTag,
+  findOrCreateGenre,
+  findOrCreateActor,
+} from '@/lib/tag-utils';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -229,13 +233,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       });
 
       for (const actorData of body.actors) {
-        if (!actorData.name) continue;
-
-        const actor = await prisma.actor.upsert({
-          where: { name: actorData.name },
-          update: {},
-          create: { name: actorData.name },
-        });
+        const actor = await findOrCreateActor(prisma, actorData.name ?? '');
+        if (!actor) continue;
 
         await prisma.seriesActor.create({
           data: {
