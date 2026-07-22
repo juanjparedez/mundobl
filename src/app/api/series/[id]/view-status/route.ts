@@ -40,26 +40,17 @@ export async function POST(
       updateData.lastWatchedAt = new Date();
     }
 
-    const existing = await prisma.viewStatus.findUnique({
+    // upsert atómico: evita P2002 bajo doble-click / requests concurrentes
+    // (mismo patrón que el endpoint de episodios).
+    const viewStatus = await prisma.viewStatus.upsert({
       where: { userId_seriesId: { userId: authResult.userId, seriesId } },
+      update: updateData,
+      create: {
+        seriesId,
+        userId: authResult.userId,
+        ...updateData,
+      },
     });
-
-    let viewStatus;
-
-    if (existing) {
-      viewStatus = await prisma.viewStatus.update({
-        where: { userId_seriesId: { userId: authResult.userId, seriesId } },
-        data: updateData,
-      });
-    } else {
-      viewStatus = await prisma.viewStatus.create({
-        data: {
-          seriesId,
-          userId: authResult.userId,
-          ...updateData,
-        },
-      });
-    }
 
     return NextResponse.json(viewStatus);
   } catch (error) {

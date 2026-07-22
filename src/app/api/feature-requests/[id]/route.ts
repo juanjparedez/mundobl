@@ -48,7 +48,8 @@ export async function PUT(
       data: updateData,
       include: {
         user: { select: { id: true, name: true, nickname: true, image: true } },
-        _count: { select: { votes: true } },
+        images: true,
+        _count: { select: { votes: true, comments: true } },
         votes: { select: { userId: true } },
       },
     });

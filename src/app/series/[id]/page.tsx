@@ -31,7 +31,11 @@ import { auth } from '@/lib/auth';
 import { canEditCatalog } from '@/lib/auth-client';
 import type { TVSeries } from 'schema-dts';
 import { FloatButton } from 'antd';
-import { EditOutlined, ReadOutlined, CommentOutlined } from '@ant-design/icons';
+import {
+  EditOutlined,
+  ReadOutlined,
+  CommentOutlined,
+} from '@/lib/client-icons';
 import './page.css';
 
 const getSeriesByIdCached = cache(getSeriesById);

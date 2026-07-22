@@ -210,7 +210,7 @@ export function WorkspaceClient({ serie }: WorkspaceClientProps) {
               width={160}
               height={224}
               sizes="160px"
-              unoptimized={!isSupabaseImageUrl(serie.imageUrl)}
+              unoptimized={isSupabaseImageUrl(serie.imageUrl)}
             />
           </div>
         ) : null}

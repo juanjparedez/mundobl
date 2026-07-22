@@ -61,7 +61,7 @@ export function TopRatedSeriesWidget({
                       alt=""
                       width={32}
                       height={44}
-                      unoptimized={!isSupabaseImageUrl(s.imageUrl)}
+                      unoptimized={isSupabaseImageUrl(s.imageUrl)}
                     />
                   ) : (
                     <span className="mb-top-rated-list__cover-placeholder" />

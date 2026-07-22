@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { EditOutlined } from '@ant-design/icons';
+import { EditOutlined } from '@/lib/client-icons';
 import {
   PanelCard,
   SectionHeader,

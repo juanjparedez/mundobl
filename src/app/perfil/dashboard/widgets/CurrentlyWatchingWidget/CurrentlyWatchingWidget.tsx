@@ -69,7 +69,7 @@ export function CurrentlyWatchingWidget({
                     height={90}
                     sizes="160px"
                     quality={70}
-                    unoptimized={!isSupabaseImageUrl(series.imageUrl)}
+                    unoptimized={isSupabaseImageUrl(series.imageUrl)}
                   />
                 ) : (
                   <span className="mb-cw-shelf__cover-placeholder">

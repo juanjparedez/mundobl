@@ -14,9 +14,9 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const page = parseInt(searchParams.get('page') || '1', 10);
     const pageSize = parseInt(searchParams.get('pageSize') || '20', 10);
-    const type = searchParams.get('type') || 'all'; // all, bug, feature, idea
+    const type = searchParams.get('type') || 'all';
 
-    const where: any = {
+    const where: { userId: string; type?: string } = {
       userId: userId,
     };
 

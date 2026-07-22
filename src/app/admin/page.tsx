@@ -5,7 +5,7 @@ import {
   GlobalOutlined,
   VideoCameraOutlined,
   UserOutlined,
-} from '@ant-design/icons';
+} from '@/lib/client-icons';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { prisma } from '@/lib/database';
 import { AdminHomeClient } from './AdminHomeClient';
