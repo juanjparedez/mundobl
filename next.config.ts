@@ -10,6 +10,13 @@ const nextConfig: NextConfig = {
     }
   },
   reactStrictMode: true,
+  // /api/changelog lee CHANGELOG.md con fs en runtime (es la fuente de verdad
+  // del changelog publico). Con `next start` el archivo esta en cwd, pero si
+  // algun dia se pasa a output standalone/serverless este include garantiza
+  // que el .md entre al bundle de esa ruta.
+  outputFileTracingIncludes: {
+    '/api/changelog': ['./CHANGELOG.md'],
+  },
   // Reescribe `import { X } from 'antd'` / `'@ant-design/icons'` a imports
   // por-componente (antd/es/x, icons/es/icons/X). Cada módulo de icono va vía
   // AntdIcon (que tiene 'use client') → boundary client. Sin esto, el BARREL de
