@@ -26,6 +26,77 @@ const PER_HOUR = 5;
 const PER_DAY = 20;
 
 /**
+ * Core genérico: cuenta acciones del usuario en las ventanas de 1h y 1 día
+ * usando un contador provisto por el caller (una `prisma.<model>.count`).
+ */
+async function checkWindowedRateLimit(
+  countSince: (since: Date) => Promise<number>,
+  opts: { perHour: number; perDay: number; hourMsg: string; dayMsg: string }
+): Promise<RateLimitResult> {
+  const now = Date.now();
+  const [hourly, daily] = await Promise.all([
+    countSince(new Date(now - HOUR_MS)),
+    countSince(new Date(now - DAY_MS)),
+  ]);
+
+  if (hourly >= opts.perHour) {
+    return {
+      ok: false,
+      reason: opts.hourMsg,
+      retryAfterSeconds: Math.ceil(HOUR_MS / 1000),
+    };
+  }
+  if (daily >= opts.perDay) {
+    return {
+      ok: false,
+      reason: opts.dayMsg,
+      retryAfterSeconds: Math.ceil(DAY_MS / 1000),
+    };
+  }
+  return { ok: true };
+}
+
+/**
+ * Limita creación de comentarios por usuario (anti-spam): 20/hora, 100/día.
+ */
+export function checkCommentRateLimit(
+  userId: string
+): Promise<RateLimitResult> {
+  return checkWindowedRateLimit(
+    (since) =>
+      prisma.comment.count({
+        where: { userId, createdAt: { gte: since } },
+      }),
+    {
+      perHour: 20,
+      perDay: 100,
+      hourMsg: 'Demasiados comentarios en poco tiempo. Esperá un momento.',
+      dayMsg: 'Alcanzaste el máximo de comentarios por hoy.',
+    }
+  );
+}
+
+/**
+ * Limita creación de solicitudes de feedback por usuario: 10/hora, 30/día.
+ */
+export function checkFeatureRequestRateLimit(
+  userId: string
+): Promise<RateLimitResult> {
+  return checkWindowedRateLimit(
+    (since) =>
+      prisma.featureRequest.count({
+        where: { userId, createdAt: { gte: since } },
+      }),
+    {
+      perHour: 10,
+      perDay: 30,
+      hourMsg: 'Demasiadas solicitudes en poco tiempo. Esperá un momento.',
+      dayMsg: 'Alcanzaste el máximo de solicitudes por hoy.',
+    }
+  );
+}
+
+/**
  * Limita aportes de series USER_EMBED por usuario: max 5 por hora,
  * 20 por dia. Se calcula contando Series del submitter con createdAt
  * dentro de la ventana.

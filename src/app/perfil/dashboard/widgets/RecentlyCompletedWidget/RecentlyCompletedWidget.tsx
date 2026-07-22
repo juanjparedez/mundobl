@@ -49,7 +49,7 @@ export function RecentlyCompletedWidget({
                         alt=""
                         width={40}
                         height={56}
-                        unoptimized={!isSupabaseImageUrl(series.imageUrl)}
+                        unoptimized={isSupabaseImageUrl(series.imageUrl)}
                       />
                     ) : (
                       <span className="mb-recently-completed-widget__cover-placeholder" />

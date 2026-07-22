@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
-import { App } from 'antd';
+import { AntdApp } from '@/lib/providers/AntdApp';
 import { ThemeProvider } from '@/lib/providers/ThemeProvider';
 import { SessionProvider } from '@/lib/providers/SessionProvider';
 import { LocaleProvider } from '@/lib/providers/LocaleProvider';
@@ -163,7 +163,7 @@ export default function RootLayout({
             <LocaleProvider>
               <ThemeProvider>
                 <SpoilerFreeProvider>
-                  <App>{children}</App>
+                  <AntdApp>{children}</AntdApp>
                 </SpoilerFreeProvider>
               </ThemeProvider>
             </LocaleProvider>

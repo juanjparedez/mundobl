@@ -690,6 +690,15 @@ Items que se decidió **no** incluir en este slice:
 
 ---
 
+## Notas técnicas / gotchas
+
+- **Íconos de antd en Server Components**: importar de `@ant-design/icons` en un Server Component ROMPE el build (`createContext is not a function`): su barrel corre `createContext` sin `'use client'` y el entorno RSC no tiene `createContext`. Regla: en Server Components (page.tsx/layout/loading sin `'use client'`), importar íconos desde [src/lib/client-icons.ts](src/lib/client-icons.ts) (re-export `'use client'`). Los Client Components pueden importar de `@ant-design/icons` directo. Mismo motivo por el que el `App` de antd se usa vía [src/lib/providers/AntdApp.tsx](src/lib/providers/AntdApp.tsx), no importado en el layout server. `next.config.ts` NO debe poner `antd`/`@ant-design/icons` en `transpilePackages` (anula el barrel-optimization y reintroduce el crash); se usa `experimental.optimizePackageImports` en su lugar.
+- **Headers de seguridad**: [next.config.ts](next.config.ts) `headers()` define CSP completa + `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `HSTS`. La CSP whitelistea hosts de imágenes (deben coincidir con `images.remotePatterns`) y `frame-src` de los embeds soportados. Al agregar un host de imagen o plataforma de embed nueva, actualizar AMBOS (remotePatterns + CSP).
+- **RLS (Supabase)**: toda tabla nueva del schema `public` debe recibir `ALTER TABLE "X" ENABLE ROW LEVEL SECURITY` en su migración (Prisma usa el rol owner que bypassa RLS; sin esto la anon key expone la tabla vía PostgREST). Patrón en `prisma/migrations/*_enable_rls*`.
+- **Ban en API**: `requireAuth`/`requireRole` ([src/lib/auth-helpers.ts](src/lib/auth-helpers.ts)) chequean `banned` → 403. El middleware (`proxy.ts`) no cubre `/api` (su matcher lo excluye).
+- **Convención `unoptimized` en `<Image>`**: `unoptimized={isSupabaseImageUrl(url)}` (Supabase se sirve crudo; lo externo va al optimizador). NO invertir con `!`.
+- **Rate limiting**: [src/lib/rate-limit.ts](src/lib/rate-limit.ts) — `checkCommentRateLimit`, `checkFeatureRequestRateLimit`, `checkUserEmbedRateLimit` (cuenta filas Prisma por ventana, sin tabla auxiliar).
+
 ## Comandos
 
 ```bash

@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from 'antd';
-import { LeftOutlined } from '@ant-design/icons';
+import { LeftOutlined } from '@/lib/client-icons';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
 import { JsonLd } from '@/components/seo/JsonLd';

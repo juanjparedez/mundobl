@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/database';
 import { auth } from '@/lib/auth';
 import { requireRole } from '@/lib/auth-helpers';
@@ -452,6 +453,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       }
     }
 
+    revalidatePath('/admin/series');
+    revalidatePath('/catalogo');
+    revalidatePath('/ver');
+    revalidatePath(`/series/${serieId}`);
+    revalidatePath(`/catalogo/${serieId}`);
+
     return NextResponse.json(updatedSerie);
   } catch (error) {
     console.error('Error al actualizar serie:', error);
@@ -491,6 +498,14 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     await prisma.series.delete({
       where: { id: serieId },
     });
+
+    // Propagar el borrado a las páginas públicas cacheadas (el router.refresh()
+    // del cliente solo arregla la vista admin actual).
+    revalidatePath('/admin/series');
+    revalidatePath('/catalogo');
+    revalidatePath('/ver');
+    revalidatePath(`/series/${serieId}`);
+    revalidatePath(`/catalogo/${serieId}`);
 
     return NextResponse.json({ message: 'Serie eliminada correctamente' });
   } catch (error) {

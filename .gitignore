@@ -73,3 +73,6 @@ SESSION_HANDOFF.md
 /scripts/*.log
 *.db
 /requests
+
+# Playwright MCP artifacts
+.playwright-mcp/

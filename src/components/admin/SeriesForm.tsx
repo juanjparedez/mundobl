@@ -437,7 +437,12 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
         body: JSON.stringify(bodyPayload),
       });
 
-      if (!response.ok) throw new Error('Error saving series');
+      if (!response.ok) {
+        // Superficie el mensaje del server (ej. 409 "Ya existe una serie ...")
+        // en vez de un error genérico.
+        const errData = await response.json().catch(() => null);
+        throw new Error(errData?.error || 'Error saving series');
+      }
 
       const savedSerie = await response.json();
 
@@ -449,9 +454,16 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
           : t('seriesForm.updateSuccess')
       );
 
+      // Invalidar el Router Cache del cliente para que el listado /admin/series
+      // no sirva la lista vieja (serie creada "no aparece" al volver).
+      router.refresh();
       router.push(`/series/${savedSerie.id}`);
     } catch (error) {
-      message.error(t('seriesForm.saveError'));
+      message.error(
+        error instanceof Error && error.message !== 'Error saving series'
+          ? error.message
+          : t('seriesForm.saveError')
+      );
       console.error(error);
     } finally {
       setLoading(false);

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
+import { checkCommentRateLimit } from '@/lib/rate-limit';
 import { auth } from '@/lib/auth';
 import { notifyParticipantsOfNewComment } from '@/lib/notifications';
 
@@ -51,6 +52,17 @@ export async function POST(
   try {
     const authResult = await requireAuth();
     if (!authResult.authorized) return authResult.response;
+
+    const rl = await checkCommentRateLimit(authResult.userId);
+    if (!rl.ok) {
+      return NextResponse.json(
+        { error: rl.reason },
+        {
+          status: 429,
+          headers: { 'Retry-After': String(rl.retryAfterSeconds) },
+        }
+      );
+    }
 
     const resolvedParams = await params;
     const seriesId = parseInt(resolvedParams.id, 10);

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 
@@ -79,6 +80,25 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Dedupe por título dentro del catálogo curado: re-importar la misma
+    // playlist (o importar algo ya existente) creaba una serie CURATED gemela.
+    const existingSeries = await prisma.series.findFirst({
+      where: {
+        origin: 'CURATED',
+        title: { equals: body.series.title.trim(), mode: 'insensitive' },
+      },
+      select: { id: true, title: true },
+    });
+    if (existingSeries) {
+      return NextResponse.json(
+        {
+          error: `Ya existe una serie "${existingSeries.title}" en el catálogo. Editála para agregar episodios en vez de reimportar.`,
+          existingSeriesId: existingSeries.id,
+        },
+        { status: 409 }
+      );
+    }
+
     let countryId: number | null = null;
     if (body.series.countryCode) {
       const country = await prisma.country.findFirst({
@@ -129,6 +149,10 @@ export async function POST(request: NextRequest) {
 
       return series;
     });
+
+    revalidatePath('/admin/series');
+    revalidatePath('/catalogo');
+    revalidatePath('/ver');
 
     return NextResponse.json({
       seriesId: created.id,

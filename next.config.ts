@@ -10,7 +10,17 @@ const nextConfig: NextConfig = {
     }
   },
   reactStrictMode: true,
-  transpilePackages: ['antd', '@ant-design/icons'],
+  // Reescribe `import { X } from 'antd'` / `'@ant-design/icons'` a imports
+  // por-componente (antd/es/x, icons/es/icons/X). Cada módulo de icono va vía
+  // AntdIcon (que tiene 'use client') → boundary client. Sin esto, el BARREL de
+  // @ant-design/icons importa Context (createContext) sin 'use client' y, al
+  // evaluarse en el grafo de Server Components (RSC no tiene createContext),
+  // rompe el build ("createContext is not a function") — regresión de antd 6.5.
+  // NOTA: NO poner antd/@ant-design/icons en transpilePackages: anula esta
+  // optimización de barrel y reintroduce el crash.
+  experimental: {
+    optimizePackageImports: ['antd', '@ant-design/icons'],
+  },
   typescript: {
     ignoreBuildErrors: false,
   },
@@ -26,17 +36,83 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: '*.supabase.co', pathname: '/storage/**' },
       { protocol: 'https', hostname: 'i.ytimg.com' },
       { protocol: 'https', hostname: 'img.youtube.com' },
-      { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
+      // Avatares de Google: no solo lh3 (lh4/lh5/lh6, etc.) + fotos de perfil.
+      { protocol: 'https', hostname: '*.googleusercontent.com' },
+      { protocol: 'https', hostname: '*.ggpht.com' },
       { protocol: 'https', hostname: 'avatars.githubusercontent.com' },
+      // Posters/thumbnails externos que quedan como imageUrl cruda cuando el
+      // re-hosteo a Supabase falla (o se pegan a mano en el admin).
+      { protocol: 'https', hostname: 'image.tmdb.org' },
+      { protocol: 'https', hostname: 'i.vimeocdn.com' },
     ],
   },
-  // Headers globales: ajustes de Permissions-Policy para que iframes
-  // legítimos (YouTube embed, etc.) no llenen la consola de warnings.
+  // Headers globales de seguridad + ajustes de Permissions-Policy para que
+  // iframes legítimos (YouTube embed, etc.) no llenen la consola de warnings.
   async headers() {
+    // Hosts de embeds soportados (embed-helpers.ts: 8 plataformas).
+    const frameSrc = [
+      "'self'",
+      'https://www.youtube.com',
+      'https://www.youtube-nocookie.com',
+      'https://player.vimeo.com',
+      'https://player.bilibili.com',
+      'https://www.dailymotion.com',
+      'https://geo.dailymotion.com',
+      'https://www.tiktok.com',
+      'https://www.instagram.com',
+      'https://platform.twitter.com',
+      'https://twitter.com',
+      'https://x.com',
+      'https://open.spotify.com',
+    ].join(' ');
+    // Hosts de imágenes permitidos (deben coincidir con images.remotePatterns).
+    const imgSrc = [
+      "'self'",
+      'data:',
+      'blob:',
+      'https://*.supabase.co',
+      'https://i.ytimg.com',
+      'https://img.youtube.com',
+      'https://*.googleusercontent.com',
+      'https://*.ggpht.com',
+      'https://avatars.githubusercontent.com',
+      'https://image.tmdb.org',
+      'https://i.vimeocdn.com',
+    ].join(' ');
+    const isDev = process.env.NODE_ENV === 'development';
+    // Next.js inyecta scripts inline de bootstrap y antd inyecta estilos inline;
+    // por eso 'unsafe-inline'. 'unsafe-eval' solo en dev (Next dev usa eval en HMR).
+    const csp = [
+      "default-src 'self'",
+      `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`,
+      "style-src 'self' 'unsafe-inline'",
+      `img-src ${imgSrc}`,
+      "font-src 'self' data:",
+      "connect-src 'self' https:",
+      "media-src 'self' https: blob:",
+      `frame-src ${frameSrc}`,
+      "frame-ancestors 'self'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "object-src 'none'",
+      'upgrade-insecure-requests',
+    ].join('; ');
+
     return [
       {
         source: '/:path*',
         headers: [
+          { key: 'Content-Security-Policy', value: csp },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload',
+          },
           {
             key: 'Permissions-Policy',
             value: [

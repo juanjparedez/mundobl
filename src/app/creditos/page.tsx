@@ -4,7 +4,7 @@ import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
 import { prisma } from '@/lib/database';
 import { Card, Tag } from 'antd';
-import { YoutubeOutlined, LinkOutlined } from '@ant-design/icons';
+import { YoutubeOutlined, LinkOutlined } from '@/lib/client-icons';
 import './creditos.css';
 
 export const metadata: Metadata = {

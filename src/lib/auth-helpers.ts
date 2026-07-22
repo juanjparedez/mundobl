@@ -23,6 +23,18 @@ export async function requireAuth(): Promise<AuthResult> {
       response: NextResponse.json({ error: 'No autenticado' }, { status: 401 }),
     };
   }
+  // El middleware (proxy.ts) solo cubre paginas: su matcher excluye /api. Sin
+  // este chequeo, un usuario baneado seguiria pudiendo mutar via API (comentar,
+  // votar, aportar). Cubrimos todos los endpoints protegidos en un solo punto.
+  if (session.user.banned) {
+    return {
+      authorized: false,
+      response: NextResponse.json(
+        { error: 'Tu cuenta ha sido suspendida' },
+        { status: 403 }
+      ),
+    };
+  }
   return { authorized: true, userId: session.user.id, role: session.user.role };
 }
 

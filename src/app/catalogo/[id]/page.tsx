@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { FloatButton } from 'antd';
-import { ToolOutlined } from '@ant-design/icons';
+import { ToolOutlined } from '@/lib/client-icons';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 import { getSeriesById } from '@/lib/database';
 import { auth } from '@/lib/auth';

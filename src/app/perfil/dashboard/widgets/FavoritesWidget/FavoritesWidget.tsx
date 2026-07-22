@@ -58,7 +58,7 @@ export function FavoritesWidget({ favorites }: FavoritesWidgetProps) {
                       alt={series.title}
                       width={64}
                       height={96}
-                      unoptimized={!isSupabaseImageUrl(series.imageUrl)}
+                      unoptimized={isSupabaseImageUrl(series.imageUrl)}
                     />
                   ) : (
                     <span className="mb-favorites-grid__cover-placeholder">

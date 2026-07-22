@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse, after } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { extractVideoId, type Platform } from '@/lib/embed-helpers';
@@ -71,6 +72,28 @@ export async function POST(request: NextRequest) {
       dubbingIds,
       contentItems,
     } = body;
+
+    // Dedupe por título dentro del catálogo curado: sin unique constraint, dos
+    // altas del mismo título creaban filas gemelas (que luego "no se borran":
+    // se elimina una y queda la otra). Rechazar en vez de duplicar.
+    if (title && typeof title === 'string' && title.trim()) {
+      const existing = await prisma.series.findFirst({
+        where: {
+          origin: 'CURATED',
+          title: { equals: title.trim(), mode: 'insensitive' },
+        },
+        select: { id: true, title: true },
+      });
+      if (existing) {
+        return NextResponse.json(
+          {
+            error: `Ya existe una serie "${existing.title}" en el catálogo`,
+            existingSeriesId: existing.id,
+          },
+          { status: 409 }
+        );
+      }
+    }
 
     // País / productora / idioma son independientes entre sí: resolverlos
     // en paralelo (antes eran 3 round-trips secuenciales a la DB remota).
@@ -330,6 +353,13 @@ export async function POST(request: NextRequest) {
         }
       });
     }
+
+    // Invalidar caches de las vistas que listan series (el listado admin es
+    // dynamic pero el Router Cache del cliente sirve la lista vieja al volver
+    // por navegación soft → la serie nueva "no aparece" hasta un hard reload).
+    revalidatePath('/admin/series');
+    revalidatePath('/catalogo');
+    revalidatePath('/ver');
 
     return NextResponse.json(serie, { status: 201 });
   } catch (error) {

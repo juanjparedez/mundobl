@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
+import { checkFeatureRequestRateLimit } from '@/lib/rate-limit';
 
 export async function GET() {
   try {
@@ -31,6 +32,17 @@ export async function POST(request: NextRequest) {
   try {
     const authResult = await requireAuth();
     if (!authResult.authorized) return authResult.response;
+
+    const rl = await checkFeatureRequestRateLimit(authResult.userId);
+    if (!rl.ok) {
+      return NextResponse.json(
+        { error: rl.reason },
+        {
+          status: 429,
+          headers: { 'Retry-After': String(rl.retryAfterSeconds) },
+        }
+      );
+    }
 
     const body = await request.json();
     const { title, description, type, imageUrls } = body as {
