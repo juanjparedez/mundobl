@@ -2,9 +2,46 @@
 
 Todas las versiones notables del proyecto se documentan aqui.
 
-> El changelog activo vive en la DB (`ChangelogItem`, editable desde
-> `/admin/changelog`). Este archivo es el fallback si la DB esta vacia —
-> mantener ambos en sync al agregar entregas.
+> **Este archivo es la fuente de verdad.** `/api/changelog` lo lee del repo en
+> cada deploy y lo muestra en `/novedades`, el tab Changelog de `/feedback` y la
+> landing. Para publicar novedades: agregar la entrada aca y deployar. La DB
+> (`ChangelogItem`, `/admin/changelog`) quedo como fallback solo si este archivo
+> esta vacio.
+
+## 2026-07 — Seguridad, performance y mejoras de feedback
+
+### Seguridad
+
+- **RLS en toda la base**: Row Level Security activado en las 16 tablas publicas que faltaban (marcadas por el advisor de Supabase). Cierra el acceso publico via PostgREST sin afectar la app (Prisma usa el rol owner).
+- **Privacidad en votos**: el board de feedback ya no expone quien voto cada solicitud; solo se calcula si vos votaste.
+- **CSP**: se habilitan favicons externos (`img-src https:`) — los logos de `/sitios` volvieron a cargar.
+
+### Performance
+
+- **Indices en toda la DB**: indices de cobertura en las 30 claves foraneas que no los tenian, acelerando joins y borrados en cascada.
+- Alta de series en el admin con llamadas paralelizadas.
+
+### Features
+
+- **Badge "Del equipo"** en `/feedback`: los items del roadmap oficial se distinguen de los aportes de la comunidad.
+- **Precarga IA** al crear series reutiliza el vocabulario existente de tags y generos (menos duplicados).
+
+### Fixes
+
+- Card de serie "watchable" sin portada muestra el titulo (antes: rectangulo vacio).
+- Dedup case/space-insensitive de actores y tags, con scripts de merge.
+- Admin: conteos de tags/generos/productoras/universos con scope curado; highlight de la pagina activa; tags que linkean a sus series.
+- Tanda de bugs reportados por Flor (estados, imagenes, series).
+
+## 2026-05-19 — Completitud del catalogo (#112) y pulido del perfil
+
+### Features
+
+- **Score de completitud** de cada serie: indicador publico en la ficha, panel de gestion en el admin y widget configurable en el perfil.
+
+### Fixes
+
+- Perfil: corregida una race al cambiar de modo/personalizar; FAB de edicion mas estable (renderizado via portal al body para evitar recortes).
 
 ## 2026-05-15 — Pulido post-launch: /perfil, catalogo, novedades, sitios (3 iters)
 
