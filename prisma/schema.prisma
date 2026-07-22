@@ -793,6 +793,11 @@ model FeatureRequest {
   type        String // "bug", "feature", "idea"
   status      FeatureRequestStatus   @default(OPEN)
   priority    FeatureRequestPriority @default(MEDIUM)
+  // true = item del roadmap/equipo (sembrado por seed-feature-requests.ts,
+  // sin autor). false = aporte de un usuario de la comunidad. Se guarda
+  // explicito (no se infiere de userId==null) para no confundir un roadmap
+  // item con una solicitud cuyo autor fue borrado (onDelete: SetNull).
+  official    Boolean                @default(false)
   createdAt   DateTime               @default(now())
   updatedAt   DateTime               @updatedAt
 

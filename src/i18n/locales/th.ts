@@ -1700,6 +1700,7 @@ const th: TranslationShape = {
     commentSuccess: 'ส่งความคิดเห็นแล้ว',
     commentError: 'เกิดข้อผิดพลาดในการส่งความคิดเห็น',
     adminBadge: 'ผู้ดูแลระบบ',
+    officialBadge: 'ทีมงาน',
     errorUploadImage: 'เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ',
     errorCreateRequest: 'เกิดข้อผิดพลาดในการสร้างคำขอ',
     imageAltAttachment: 'ไฟล์แนบ',

@@ -28,6 +28,7 @@ import {
   DeleteOutlined,
   CameraOutlined,
   SearchOutlined,
+  TeamOutlined,
 } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import { PageTitle } from '@/components/common/PageTitle/PageTitle';
@@ -76,7 +77,10 @@ interface FeatureRequest {
   updatedAt: string;
   user: FeatureRequestUser | null;
   _count: { votes: number; comments: number };
-  votes: Array<{ userId: string }>;
+  // El endpoint calcula si el user actual voto; NO expone la lista de votantes.
+  hasVoted: boolean;
+  // true = item del roadmap/equipo (sin autor); muestra badge "Del equipo".
+  official: boolean;
   images?: FeatureRequestImage[];
 }
 
@@ -480,9 +484,7 @@ export function FeedbackClient() {
               votes: voted ? r._count.votes + 1 : r._count.votes - 1,
               comments: r._count.comments,
             },
-            votes: voted
-              ? [...r.votes, { userId: userId! }]
-              : r.votes.filter((v) => v.userId !== userId),
+            hasVoted: voted,
           };
         })
       );
@@ -575,9 +577,7 @@ export function FeedbackClient() {
   const renderRequestCard = (request: FeatureRequest) => {
     const typeConfig = TYPE_CONFIG[request.type] || TYPE_CONFIG.idea;
     const statusConfig = STATUS_CONFIG[request.status] || STATUS_CONFIG.OPEN;
-    const hasVoted = userId
-      ? request.votes.some((v) => v.userId === userId)
-      : false;
+    const hasVoted = request.hasVoted;
 
     return (
       <div key={request.id}>
@@ -585,6 +585,11 @@ export function FeedbackClient() {
           <div className="feedback-card__header">
             <h4 className="feedback-card__title">{request.title}</h4>
             <div className="feedback-card__tags">
+              {request.official && (
+                <Tag icon={<TeamOutlined />} color="gold">
+                  {t('feedback.officialBadge')}
+                </Tag>
+              )}
               <Tag icon={typeConfig.icon} color={typeConfig.color}>
                 {typeConfig.label}
               </Tag>

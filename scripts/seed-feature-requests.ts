@@ -244,6 +244,9 @@ async function main() {
         description: item.description,
         type: item.type,
         priority: item.priority,
+        // Items del roadmap del equipo (sin autor); los marca como oficiales
+        // para el badge "Del equipo" en /feedback.
+        official: true,
       },
       select: { id: true },
     });

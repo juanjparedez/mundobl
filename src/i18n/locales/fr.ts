@@ -1732,6 +1732,7 @@ const fr: TranslationShape = {
     commentSuccess: 'Commentaire envoyé',
     commentError: "Erreur lors de l'envoi du commentaire",
     adminBadge: 'Admin',
+    officialBadge: "De l'équipe",
     errorUploadImage: "Erreur lors du téléchargement de l'image",
     errorCreateRequest: 'Erreur lors de la création de la demande',
     imageAltAttachment: 'Pièce jointe',

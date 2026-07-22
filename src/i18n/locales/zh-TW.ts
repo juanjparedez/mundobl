@@ -1664,6 +1664,7 @@ const zhTW: TranslationShape = {
     commentSuccess: '評論已傳送',
     commentError: '傳送評論時發生錯誤',
     adminBadge: '管理員',
+    officialBadge: '團隊',
     errorUploadImage: '上傳圖片時發生錯誤',
     errorCreateRequest: '建立請求時發生錯誤',
     imageAltAttachment: '附件',
