@@ -9,7 +9,17 @@ export async function GET() {
       orderBy: [{ category: 'asc' }, { name: 'asc' }],
       include: {
         _count: {
-          select: { series: true },
+          select: {
+            // Mismo scope que la vista pública (getTagById) y el resto de
+            // listados: solo cuenta series del catálogo curado. Un tag que solo
+            // aparece en aportes USER_EMBED cuenta 0 acá también, para no
+            // mostrar "1 serie" en el admin mientras /tags/[id] muestra 0.
+            series: {
+              where: {
+                series: { origin: 'CURATED', catalogScope: 'PERSONAL' },
+              },
+            },
+          },
         },
       },
     });

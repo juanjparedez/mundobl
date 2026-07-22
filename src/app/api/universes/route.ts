@@ -8,8 +8,11 @@ export async function GET() {
     const universes = await prisma.universe.findMany({
       orderBy: { name: 'asc' },
       include: {
+        // Scope curado (igual que la vista pública): no contar aportes USER_EMBED.
         _count: {
-          select: { series: true },
+          select: {
+            series: { where: { origin: 'CURATED', catalogScope: 'PERSONAL' } },
+          },
         },
       },
     });
