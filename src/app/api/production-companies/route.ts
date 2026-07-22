@@ -6,7 +6,12 @@ export async function GET() {
   try {
     const companies = await prisma.productionCompany.findMany({
       include: {
-        _count: { select: { series: true } },
+        // Scope curado (igual que la vista pública): no contar aportes USER_EMBED.
+        _count: {
+          select: {
+            series: { where: { origin: 'CURATED', catalogScope: 'PERSONAL' } },
+          },
+        },
       },
       orderBy: { name: 'asc' },
     });

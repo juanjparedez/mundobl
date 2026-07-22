@@ -6,7 +6,16 @@ export async function GET() {
   try {
     const genres = await prisma.genre.findMany({
       include: {
-        _count: { select: { series: true } },
+        // Scope curado (igual que la vista pública): no contar aportes USER_EMBED.
+        _count: {
+          select: {
+            series: {
+              where: {
+                series: { origin: 'CURATED', catalogScope: 'PERSONAL' },
+              },
+            },
+          },
+        },
       },
       orderBy: { name: 'asc' },
     });
