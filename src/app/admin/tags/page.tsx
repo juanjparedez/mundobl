@@ -19,6 +19,7 @@ import {
   DeleteOutlined,
   EditOutlined,
   MergeCellsOutlined,
+  ExportOutlined,
 } from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -194,22 +195,35 @@ export default function TagsAdminPage() {
       dataIndex: 'name',
       key: 'name',
       sorter: (a: TagType, b: TagType) => a.name.localeCompare(b.name),
-      render: (name: string) => <Tag color="blue">{name}</Tag>,
-    },
-    {
-      title: t('adminTags.columnCategory'),
-      dataIndex: 'category',
-      key: 'category',
-      render: (category: string | null) =>
-        category || t('adminTags.emptyCategory'),
-      responsive: ['md' as const],
+      // El nombre linkea a /tags/[id] (pagina publica con las series de ese
+      // tag), en pestaña nueva para no perder la posicion en el admin.
+      render: (name: string, record: TagType) => (
+        <a
+          href={`/tags/${record.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Tag color="blue" style={{ cursor: 'pointer' }}>
+            {name} <ExportOutlined style={{ fontSize: 10 }} />
+          </Tag>
+        </a>
+      ),
     },
     {
       title: t('adminTags.columnSeries'),
       key: 'count',
       sorter: (a: TagType, b: TagType) =>
         (a._count?.series || 0) - (b._count?.series || 0),
-      render: (record: TagType) => <Tag>{record._count?.series || 0}</Tag>,
+      // El contador tambien linkea a las series del tag.
+      render: (record: TagType) => (
+        <a
+          href={`/tags/${record.id}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <Tag style={{ cursor: 'pointer' }}>{record._count?.series || 0}</Tag>
+        </a>
+      ),
     },
     {
       title: t('adminTags.columnActions'),
