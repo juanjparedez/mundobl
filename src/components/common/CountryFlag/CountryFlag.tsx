@@ -1,4 +1,4 @@
-import { GlobalOutlined } from '@ant-design/icons';
+import { GlobalOutlined } from '@/lib/client-icons';
 import './CountryFlag.css';
 
 interface CountryFlagProps {

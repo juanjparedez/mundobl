@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth-helpers';
+import { checkFeatureRequestRateLimit } from '@/lib/rate-limit';
 import { prisma } from '@/lib/database';
 
 export const runtime = 'nodejs';
@@ -8,6 +9,17 @@ export async function POST(request: NextRequest) {
   try {
     const result = await requireAuth();
     if (!result.authorized) return result.response;
+
+    const rl = await checkFeatureRequestRateLimit(result.userId);
+    if (!rl.ok) {
+      return NextResponse.json(
+        { error: rl.reason },
+        {
+          status: 429,
+          headers: { 'Retry-After': String(rl.retryAfterSeconds) },
+        }
+      );
+    }
 
     const body = await request.json();
     const { title, description, type, priority } = body;

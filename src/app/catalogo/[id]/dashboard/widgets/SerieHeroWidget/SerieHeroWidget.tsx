@@ -42,7 +42,7 @@ export function SerieHeroWidget({ serie }: SerieHeroWidgetProps) {
               alt={serie.title}
               width={180}
               height={260}
-              unoptimized={!isSupabaseImageUrl(serie.imageUrl)}
+              unoptimized={isSupabaseImageUrl(serie.imageUrl)}
             />
           </div>
         ) : (
