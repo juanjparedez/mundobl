@@ -54,7 +54,9 @@ export function SeriesDetailClient({
       ? [
           {
             key: 'seasons',
-            label: `${seasonLabel} (${seasonCount})`,
+            // Singular cuando hay una sola temporada ("Temporada (1)" en vez de
+            // "Temporadas (1)"). seasonLabel viene en plural desde la config.
+            label: `${seasonCount === 1 ? seasonLabel.replace(/s$/i, '') : seasonLabel} (${seasonCount})`,
             icon: <PlayCircleOutlined />,
             content: <div className="seasons-tab">{seasonsSection}</div>,
           },

@@ -3,6 +3,7 @@ import { requireAuth } from '@/lib/auth-helpers';
 import { prisma } from '@/lib/database';
 import { detectPlatform, extractVideoId } from '@/lib/embed-helpers';
 import { checkUserEmbedRateLimit } from '@/lib/rate-limit';
+import { findOrCreateTag, findOrCreateGenre } from '@/lib/tag-utils';
 import {
   ALLOWED_COUNTRY_CODES,
   SUPPORTED_EMBED_PLATFORMS,
@@ -351,11 +352,8 @@ export async function POST(request: NextRequest) {
 
   // Tags
   for (const tagName of data.tagNames) {
-    const tag = await prisma.tag.upsert({
-      where: { name: tagName },
-      update: {},
-      create: { name: tagName, category: 'trope' },
-    });
+    const tag = await findOrCreateTag(prisma, tagName);
+    if (!tag) continue;
     await prisma.seriesTag.create({
       data: { seriesId: newSeries.id, tagId: tag.id },
     });
@@ -363,11 +361,8 @@ export async function POST(request: NextRequest) {
 
   // Generos
   for (const genreName of data.genreNames) {
-    const genre = await prisma.genre.upsert({
-      where: { name: genreName },
-      update: {},
-      create: { name: genreName },
-    });
+    const genre = await findOrCreateGenre(prisma, genreName);
+    if (!genre) continue;
     await prisma.seriesGenre.create({
       data: { seriesId: newSeries.id, genreId: genre.id },
     });

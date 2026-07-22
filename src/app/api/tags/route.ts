@@ -32,16 +32,29 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
-    if (!body.name) {
+    const name = typeof body.name === 'string' ? body.name.trim() : '';
+    if (!name) {
       return NextResponse.json(
         { error: 'El nombre del tag es requerido' },
         { status: 400 }
       );
     }
 
+    // Evitar duplicados por diferencia de mayúsculas/espacios (ej. "Boys Love"
+    // vs "boys love"): si ya existe un tag equivalente, rechazar como duplicado.
+    const existing = await prisma.tag.findFirst({
+      where: { name: { equals: name, mode: 'insensitive' } },
+    });
+    if (existing) {
+      return NextResponse.json(
+        { error: 'Ya existe un tag con ese nombre' },
+        { status: 400 }
+      );
+    }
+
     const tag = await prisma.tag.create({
       data: {
-        name: body.name,
+        name,
         category: body.category || 'trope',
       },
     });

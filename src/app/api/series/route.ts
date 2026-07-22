@@ -5,6 +5,7 @@ import { requireRole } from '@/lib/auth-helpers';
 import { extractVideoId, type Platform } from '@/lib/embed-helpers';
 import { getCountryCode } from '@/lib/country-codes';
 import { downloadAndUploadExternalImage } from '@/lib/supabase';
+import { findOrCreateTag, findOrCreateGenre } from '@/lib/tag-utils';
 
 // GET /api/series - Obtener todas las series del catalogo curado (excluye USER_EMBED)
 export async function GET() {
@@ -71,6 +72,7 @@ export async function POST(request: NextRequest) {
       originalLanguageId,
       dubbingIds,
       contentItems,
+      infoBlocks,
     } = body;
 
     // Dedupe por título dentro del catálogo curado: sin unique constraint, dos
@@ -235,12 +237,8 @@ export async function POST(request: NextRequest) {
       (async () => {
         if (!tags || tags.length === 0) return;
         for (const tagName of tags) {
-          if (!tagName) continue;
-          const tag = await prisma.tag.upsert({
-            where: { name: tagName },
-            update: {},
-            create: { name: tagName, category: 'trope' },
-          });
+          const tag = await findOrCreateTag(prisma, tagName);
+          if (!tag) continue;
           await prisma.seriesTag.create({
             data: { seriesId: serie.id, tagId: tag.id },
           });
@@ -250,12 +248,8 @@ export async function POST(request: NextRequest) {
       (async () => {
         if (!genres || genres.length === 0) return;
         for (const genreName of genres) {
-          if (!genreName) continue;
-          const genre = await prisma.genre.upsert({
-            where: { name: genreName },
-            update: {},
-            create: { name: genreName },
-          });
+          const genre = await findOrCreateGenre(prisma, genreName);
+          if (!genre) continue;
           await prisma.seriesGenre.create({
             data: { seriesId: serie.id, genreId: genre.id },
           });
@@ -326,6 +320,22 @@ export async function POST(request: NextRequest) {
               contentError
             );
           }
+        }
+      })(),
+      // Bloques de informacion adicional (creados en el flujo de alta)
+      (async () => {
+        if (!infoBlocks || infoBlocks.length === 0) return;
+        for (let i = 0; i < infoBlocks.length; i++) {
+          const block = infoBlocks[i];
+          if (!block?.label?.trim() || !block?.body?.trim()) continue;
+          await prisma.seriesInfoBlock.create({
+            data: {
+              seriesId: serie.id,
+              label: block.label.trim(),
+              body: block.body.trim(),
+              sortOrder: i,
+            },
+          });
         }
       })(),
     ]);

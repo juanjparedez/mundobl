@@ -6,6 +6,7 @@ import { requireRole } from '@/lib/auth-helpers';
 import { getCountryCode } from '@/lib/country-codes';
 import { downloadAndUploadExternalImage } from '@/lib/supabase';
 import { notifySeriesSubscribers } from '@/lib/notifications';
+import { findOrCreateTag, findOrCreateGenre } from '@/lib/tag-utils';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -364,13 +365,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
       if (body.tags && body.tags.length > 0) {
         for (const tagName of body.tags) {
-          if (!tagName) continue;
-
-          const tag = await prisma.tag.upsert({
-            where: { name: tagName },
-            update: {},
-            create: { name: tagName, category: 'trope' },
-          });
+          const tag = await findOrCreateTag(prisma, tagName);
+          if (!tag) continue;
 
           await prisma.seriesTag.create({
             data: {
@@ -390,13 +386,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
       if (body.genres && body.genres.length > 0) {
         for (const genreName of body.genres) {
-          if (!genreName) continue;
-
-          const genre = await prisma.genre.upsert({
-            where: { name: genreName },
-            update: {},
-            create: { name: genreName },
-          });
+          const genre = await findOrCreateGenre(prisma, genreName);
+          if (!genre) continue;
 
           await prisma.seriesGenre.create({
             data: {

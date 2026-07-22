@@ -146,6 +146,17 @@ Soporta 8 plataformas para reproducir/parsear:
 - UI: input en [/perfil → ProfileSettings](src/app/perfil/ProfileSettings/ProfileSettings.tsx) (primer card del grid).
 - **Importante para futuras queries**: cualquier `prisma.user.findX` o `select: { user: ... }` que vaya a renderizar publicamente debe incluir `nickname: true` ademas de `name: true`.
 
+### Tags (matching sin duplicados)
+
+- `Tag.name` es `@unique` pero el indice de Postgres es case/espacios-sensible, asi que "Enemy to Lovers" vs "enemy to lovers" eran filas distintas.
+- Helpers en [src/lib/tag-utils.ts](src/lib/tag-utils.ts): `findOrCreateTag(client, rawName, category='trope')` y `findOrCreateGenre(client, rawName)`. Hacen `trim` + `findFirst({ name: { equals, mode: 'insensitive' } })` y solo crean si no existe (maneja carrera P2002). Aceptan el cliente Prisma o un `Prisma.TransactionClient`.
+- **Usar siempre estos helpers** al persistir tags/generos desde nombre (nunca `tag/genre.upsert({ where: { name } })` a pelo). Ya aplicados (tags + generos) en [POST /api/series](src/app/api/series/route.ts), [PATCH /api/series/[id]](src/app/api/series/[id]/route.ts) y [POST /api/user/series/embed/confirm](src/app/api/user/series/embed/confirm/route.ts). `POST /api/tags` rechaza duplicados case-insensitive.
+- Otras tablas compartidas que aun usan `upsert({ where: { name } })` exacto (Actor, ProductionCompany, Language): mismo bug latente; replicar el patron si aparecen duplicados.
+
+### Bloques de informacion adicional (crear + editar)
+
+- [SeriesInfoBlocksManager](src/components/admin/SeriesInfoBlocksManager/SeriesInfoBlocksManager.tsx) soporta 2 modos: **edicion** (prop `seriesId`, persiste via API en vivo) y **creacion** (props `pendingBlocks`/`onPendingBlocksChange`, en memoria). En creacion, [SeriesForm](src/components/admin/SeriesForm.tsx) adjunta `infoBlocks` al payload de `POST /api/series`, que los persiste como `SeriesInfoBlock`. Mismo patron que `SeriesContentManager` (`contentItems`).
+
 ### Web Push (notificaciones)
 
 - Paquete `web-push`. Suscripciones en `PushSubscription` model. Server actions en [src/lib/push-server.ts](src/lib/push-server.ts) (si existe).

@@ -102,7 +102,6 @@ export async function GET() {
           AND s."origin" = 'CURATED'
         GROUP BY c.name
         ORDER BY count DESC
-        LIMIT 15
       `,
       prisma.$queryRaw<RawTypeCountRow[]>`
         SELECT s.type, COUNT(*) as count
@@ -123,7 +122,6 @@ export async function GET() {
           AND s."origin" = 'CURATED'
         GROUP BY c.name
         ORDER BY count DESC
-        LIMIT 20
       `,
       // Catalog: series per type (solo CURATED)
       prisma.$queryRaw<RawTypeCountRow[]>`
