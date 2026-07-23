@@ -53,8 +53,25 @@ function isAssetPath(pathname: string): boolean {
   return ASSET_PATTERNS.some((pattern) => pattern.test(pathname));
 }
 
+function isPrefetchRequest(request: NextRequest): boolean {
+  const purpose = request.headers.get('purpose');
+  const nextPrefetch = request.headers.get('next-router-prefetch');
+  return purpose === 'prefetch' || nextPrefetch === '1';
+}
+
+function hasSessionCookie(request: NextRequest): boolean {
+  // NextAuth/Auth.js puede usar cualquiera de estas cookies segun entorno.
+  return (
+    request.cookies.has('authjs.session-token') ||
+    request.cookies.has('__Secure-authjs.session-token') ||
+    request.cookies.has('next-auth.session-token') ||
+    request.cookies.has('__Secure-next-auth.session-token')
+  );
+}
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const skipLog = isPrefetchRequest(request);
 
   // Bloquear scanners antes de cualquier procesamiento (no loguear, no gastar DB)
   if (isScannerPath(pathname)) {
@@ -118,17 +135,25 @@ export async function proxy(request: NextRequest) {
     }
 
     // Log page view (fire-and-forget)
-    logPageView(pathname, ip, userAgent, session.user?.id || null);
-  } else {
-    // Paginas publicas: loguear con session si existe
-    const session = await auth();
-
-    // Check user ban
-    if (session?.user?.banned) {
-      return new NextResponse('Tu cuenta ha sido suspendida', { status: 403 });
+    if (!skipLog) {
+      logPageView(pathname, ip, userAgent, session.user?.id || null);
     }
-
-    logPageView(pathname, ip, userAgent, session?.user?.id || null);
+  } else {
+    // Paginas publicas: evitar auth() cuando no hay cookie de sesion para
+    // bajar CPU en trafico anonimo (principal consumidor en Vercel).
+    if (hasSessionCookie(request)) {
+      const session = await auth();
+      if (session?.user?.banned) {
+        return new NextResponse('Tu cuenta ha sido suspendida', {
+          status: 403,
+        });
+      }
+      if (!skipLog) {
+        logPageView(pathname, ip, userAgent, session?.user?.id || null);
+      }
+    } else if (!skipLog) {
+      logPageView(pathname, ip, userAgent, null);
+    }
   }
 
   return NextResponse.next();
