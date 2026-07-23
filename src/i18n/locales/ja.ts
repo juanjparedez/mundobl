@@ -85,6 +85,7 @@ const ja: TranslationShape = {
     notesPrivateHelp:
       '有効にすると、管理者のみがこのシリーズのレビューと考察を見ることができます。',
     relatedSection: '関連シリーズ',
+    universeSection: 'このユニバースの他の作品',
   },
   comments: {
     addTitle: 'コメントを追加',

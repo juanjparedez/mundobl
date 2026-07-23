@@ -85,6 +85,7 @@ const th: TranslationShape = {
     notesPrivateHelp:
       'เมื่อเปิดใช้งาน เฉพาะผู้ดูแลระบบเท่านั้นที่จะเห็นรีวิวและข้อสังเกตสำหรับซีรีส์นี้',
     relatedSection: 'ซีรีส์ที่เกี่ยวข้อง',
+    universeSection: 'เนื้อหาอื่นในจักรวาลนี้',
   },
   comments: {
     addTitle: 'เพิ่มความคิดเห็น',

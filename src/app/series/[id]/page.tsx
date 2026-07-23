@@ -134,6 +134,25 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
   ]);
   const isSubscribed = subscription !== null;
 
+  const universeSeries = serie.universeId
+    ? await prisma.series.findMany({
+        where: {
+          universeId: serie.universeId,
+          id: { not: serie.id },
+          origin: 'CURATED',
+        },
+        select: {
+          id: true,
+          title: true,
+          imageUrl: true,
+          imagePosition: true,
+          year: true,
+          type: true,
+        },
+        orderBy: [{ year: 'asc' }, { title: 'asc' }],
+      })
+    : [];
+
   const seasonLabel =
     'seasonLabel' in config ? config.seasonLabel : 'Temporadas';
 
@@ -296,7 +315,14 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
           showSeasons={showSeasons}
           seasonLabel={seasonLabel}
           seasonCount={serie.seasons?.length || 0}
-          infoSection={<SeriesInfo series={serie} />}
+          infoSection={
+            <SeriesInfo
+              series={{
+                ...serie,
+                universeSeries,
+              }}
+            />
+          }
           contentSection={<SeriesContent seriesId={serie.id} />}
           seasonsSection={
             <SeasonsList

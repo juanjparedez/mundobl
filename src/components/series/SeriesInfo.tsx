@@ -1,11 +1,13 @@
 'use client';
 
 import { Descriptions, Tag } from 'antd';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { LockOutlined } from '@ant-design/icons';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
+import { isSupabaseImageUrl } from '@/lib/image-helpers';
 import {
   MetadataChip,
   MetadataChipList,
@@ -86,6 +88,7 @@ interface SeriesInfoProps {
         id: number;
         title: string;
         imageUrl?: string | null;
+        imagePosition?: string | null;
         year?: number | null;
         type: string;
       };
@@ -95,11 +98,33 @@ interface SeriesInfoProps {
         id: number;
         title: string;
         imageUrl?: string | null;
+        imagePosition?: string | null;
         year?: number | null;
         type: string;
       };
     }>;
+    universe?: {
+      id?: number;
+      name: string;
+    } | null;
+    universeSeries?: Array<{
+      id: number;
+      title: string;
+      imageUrl?: string | null;
+      imagePosition?: string | null;
+      year?: number | null;
+      type: string;
+    }>;
   };
+}
+
+interface PreviewSeries {
+  id: number;
+  title: string;
+  imageUrl?: string | null;
+  imagePosition?: string | null;
+  year?: number | null;
+  type: string;
 }
 
 function getYouTubeId(url: string): string | null {
@@ -133,6 +158,22 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
   const totalEpisodes = series.seasons?.reduce(
     (sum, season) => sum + (season.episodeCount || 0),
     0
+  );
+
+  const relatedSeries: PreviewSeries[] = [
+    ...(series.relatedSeriesFrom?.map((r) => r.relatedSeries) ?? []),
+    ...(series.relatedSeriesTo?.map((r) => r.mainSeries) ?? []),
+  ];
+
+  const uniqueRelatedSeries = relatedSeries.filter((item, index, arr) => {
+    return arr.findIndex((candidate) => candidate.id === item.id) === index;
+  });
+
+  const uniqueUniverseSeries = (series.universeSeries ?? []).filter(
+    (item, index, arr) => {
+      if (item.id === series.id) return false;
+      return arr.findIndex((candidate) => candidate.id === item.id) === index;
+    }
   );
 
   return (
@@ -463,43 +504,102 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
         </div>
       )}
 
-      {(() => {
-        const relatedSeries = [
-          ...(series.relatedSeriesFrom?.map((r) => r.relatedSeries) ?? []),
-          ...(series.relatedSeriesTo?.map((r) => r.mainSeries) ?? []),
-        ];
-        // Deduplicate by id
-        const seen = new Set<number>();
-        const unique = relatedSeries.filter((s) => {
-          if (seen.has(s.id)) return false;
-          seen.add(s.id);
-          return true;
-        });
-
-        if (unique.length === 0) return null;
-
-        return (
-          <div className="series-info__related">
-            <h4 className="series-info__section-title">
-              🔗 {t('seriesInfo.relatedSection')}
-            </h4>
-            <div className="series-info__related-list">
-              {unique.map((s) => (
-                <Link
-                  key={s.id}
-                  href={`/series/${s.id}`}
-                  className="series-info__related-item"
-                >
-                  <Tag color="cyan">
-                    {s.title}
-                    {s.year ? ` (${s.year})` : ''}
-                  </Tag>
-                </Link>
-              ))}
-            </div>
+      {uniqueRelatedSeries.length > 0 && (
+        <div className="series-info__related">
+          <h4 className="series-info__section-title">
+            🔗 {t('seriesInfo.relatedSection')}
+          </h4>
+          <div className="series-info__preview-track">
+            {uniqueRelatedSeries.map((item) => (
+              <Link
+                key={item.id}
+                href={`/series/${item.id}`}
+                className="series-info__preview-card"
+              >
+                <div className="series-info__preview-cover">
+                  {item.imageUrl ? (
+                    <Image
+                      src={item.imageUrl}
+                      alt={item.title}
+                      fill
+                      sizes="(max-width: 640px) 120px, 140px"
+                      unoptimized={isSupabaseImageUrl(item.imageUrl)}
+                      style={{
+                        objectFit: 'cover',
+                        objectPosition: item.imagePosition ?? 'center',
+                      }}
+                    />
+                  ) : (
+                    <div className="series-info__preview-placeholder">
+                      <span className="series-info__preview-placeholder-title">
+                        {item.title}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div className="series-info__preview-meta">
+                  <span className="series-info__preview-title">
+                    {item.title}
+                  </span>
+                  <span className="series-info__preview-subtitle">
+                    {item.type.toUpperCase()}
+                    {item.year ? ` · ${item.year}` : ''}
+                  </span>
+                </div>
+              </Link>
+            ))}
           </div>
-        );
-      })()}
+        </div>
+      )}
+
+      {uniqueUniverseSeries.length > 0 && (
+        <div className="series-info__universe">
+          <h4 className="series-info__section-title">
+            🌌 {t('seriesInfo.universeSection')}
+            {series.universe?.name ? ` · ${series.universe.name}` : ''}
+          </h4>
+          <div className="series-info__preview-track">
+            {uniqueUniverseSeries.map((item) => (
+              <Link
+                key={item.id}
+                href={`/series/${item.id}`}
+                className="series-info__preview-card"
+              >
+                <div className="series-info__preview-cover">
+                  {item.imageUrl ? (
+                    <Image
+                      src={item.imageUrl}
+                      alt={item.title}
+                      fill
+                      sizes="(max-width: 640px) 120px, 140px"
+                      unoptimized={isSupabaseImageUrl(item.imageUrl)}
+                      style={{
+                        objectFit: 'cover',
+                        objectPosition: item.imagePosition ?? 'center',
+                      }}
+                    />
+                  ) : (
+                    <div className="series-info__preview-placeholder">
+                      <span className="series-info__preview-placeholder-title">
+                        {item.title}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                <div className="series-info__preview-meta">
+                  <span className="series-info__preview-title">
+                    {item.title}
+                  </span>
+                  <span className="series-info__preview-subtitle">
+                    {item.type.toUpperCase()}
+                    {item.year ? ` · ${item.year}` : ''}
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
