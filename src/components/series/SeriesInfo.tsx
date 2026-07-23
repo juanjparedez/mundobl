@@ -1,10 +1,15 @@
 'use client';
 
+import { type RefObject, useRef } from 'react';
 import { Descriptions, Tag } from 'antd';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { LockOutlined } from '@ant-design/icons';
+import {
+  LeftOutlined,
+  LockOutlined,
+  RightOutlined,
+} from '@ant-design/icons';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
@@ -154,6 +159,8 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
   const canSeeNotes = !series.notesPrivate || isAdmin;
 
   const fullSpan = isMobile ? 1 : 2;
+  const relatedTrackRef = useRef<HTMLDivElement | null>(null);
+  const universeTrackRef = useRef<HTMLDivElement | null>(null);
 
   const totalEpisodes = series.seasons?.reduce(
     (sum, season) => sum + (season.episodeCount || 0),
@@ -175,6 +182,19 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
       return arr.findIndex((candidate) => candidate.id === item.id) === index;
     }
   );
+
+  const scrollTrack = (
+    trackRef: RefObject<HTMLDivElement | null>,
+    direction: 'left' | 'right'
+  ) => {
+    const track = trackRef.current;
+    if (!track) return;
+    const delta = Math.max(track.clientWidth * 0.8, 220);
+    track.scrollBy({
+      left: direction === 'left' ? -delta : delta,
+      behavior: 'smooth',
+    });
+  };
 
   return (
     <div className="series-info">
@@ -506,10 +526,32 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
 
       {uniqueRelatedSeries.length > 0 && (
         <div className="series-info__related">
-          <h4 className="series-info__section-title">
-            🔗 {t('seriesInfo.relatedSection')}
-          </h4>
-          <div className="series-info__preview-track">
+          <div className="series-info__carousel-header">
+            <h4 className="series-info__section-title">
+              🔗 {t('seriesInfo.relatedSection')}
+            </h4>
+            <div className="series-info__carousel-actions">
+              <button
+                type="button"
+                className="series-info__carousel-button"
+                onClick={() => scrollTrack(relatedTrackRef, 'left')}
+                aria-label={t('seriesInfo.carouselPrev')}
+                title={t('seriesInfo.carouselPrev')}
+              >
+                <LeftOutlined />
+              </button>
+              <button
+                type="button"
+                className="series-info__carousel-button"
+                onClick={() => scrollTrack(relatedTrackRef, 'right')}
+                aria-label={t('seriesInfo.carouselNext')}
+                title={t('seriesInfo.carouselNext')}
+              >
+                <RightOutlined />
+              </button>
+            </div>
+          </div>
+          <div className="series-info__preview-track" ref={relatedTrackRef}>
             {uniqueRelatedSeries.map((item) => (
               <Link
                 key={item.id}
@@ -554,11 +596,33 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
 
       {uniqueUniverseSeries.length > 0 && (
         <div className="series-info__universe">
-          <h4 className="series-info__section-title">
-            🌌 {t('seriesInfo.universeSection')}
-            {series.universe?.name ? ` · ${series.universe.name}` : ''}
-          </h4>
-          <div className="series-info__preview-track">
+          <div className="series-info__carousel-header">
+            <h4 className="series-info__section-title">
+              🌌 {t('seriesInfo.universeSection')}
+              {series.universe?.name ? ` · ${series.universe.name}` : ''}
+            </h4>
+            <div className="series-info__carousel-actions">
+              <button
+                type="button"
+                className="series-info__carousel-button"
+                onClick={() => scrollTrack(universeTrackRef, 'left')}
+                aria-label={t('seriesInfo.carouselPrev')}
+                title={t('seriesInfo.carouselPrev')}
+              >
+                <LeftOutlined />
+              </button>
+              <button
+                type="button"
+                className="series-info__carousel-button"
+                onClick={() => scrollTrack(universeTrackRef, 'right')}
+                aria-label={t('seriesInfo.carouselNext')}
+                title={t('seriesInfo.carouselNext')}
+              >
+                <RightOutlined />
+              </button>
+            </div>
+          </div>
+          <div className="series-info__preview-track" ref={universeTrackRef}>
             {uniqueUniverseSeries.map((item) => (
               <Link
                 key={item.id}

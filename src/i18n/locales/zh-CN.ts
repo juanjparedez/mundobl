@@ -85,6 +85,8 @@ const zhCN: TranslationShape = {
     notesPrivateHelp: '启用后，只有管理员才能看到此剧集的评价和备注。',
     relatedSection: '相关剧集',
     universeSection: '此宇宙中的更多内容',
+    carouselPrev: '向左滚动',
+    carouselNext: '向右滚动',
   },
   comments: {
     addTitle: '添加评论',

@@ -86,6 +86,8 @@ const ja: TranslationShape = {
       '有効にすると、管理者のみがこのシリーズのレビューと考察を見ることができます。',
     relatedSection: '関連シリーズ',
     universeSection: 'このユニバースの他の作品',
+    carouselPrev: '左にスクロール',
+    carouselNext: '右にスクロール',
   },
   comments: {
     addTitle: 'コメントを追加',

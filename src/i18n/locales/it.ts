@@ -86,6 +86,8 @@ const it: TranslationShape = {
       'Quando abilitato, solo gli amministratori possono vedere la recensione e le osservazioni per questa serie.',
     relatedSection: 'Serie Correlate',
     universeSection: 'Altri contenuti di questo universo',
+    carouselPrev: 'Scorri a sinistra',
+    carouselNext: 'Scorri a destra',
   },
   comments: {
     addTitle: 'Aggiungi Commento',

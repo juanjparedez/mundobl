@@ -86,6 +86,8 @@ const de: TranslationShape = {
       'Wenn aktiviert, können nur Administratoren die Bewertung und Anmerkungen zu dieser Serie sehen.',
     relatedSection: 'Ähnliche Serien',
     universeSection: 'Mehr aus diesem Universum',
+    carouselPrev: 'Nach links scrollen',
+    carouselNext: 'Nach rechts scrollen',
   },
   comments: {
     addTitle: 'Kommentar hinzufügen',
