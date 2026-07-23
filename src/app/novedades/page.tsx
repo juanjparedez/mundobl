@@ -5,7 +5,7 @@ import { prisma } from '@/lib/database';
 import { NovedadesClient } from './NovedadesClient';
 import './novedades.css';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 600;
 
 export const metadata: Metadata = {
   title: 'Novedades',
