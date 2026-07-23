@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth-helpers';
 import { generateText, GeminiError } from '@/lib/gemini';
 import { LOCALE_LABELS, isSupportedLocale } from '@/i18n/config';
+import { logCriticalAction } from '@/lib/access-log';
 
 const ACTIONS = [
   'polish',
@@ -100,9 +101,11 @@ Reasons debe listar frases o ideas detectadas, en ${langName}, max 3 items.`,
 // POST /api/reviews/ai-assist
 // body: { action, body, title?, language?, targetLanguage? }
 export async function POST(request: NextRequest) {
+  let requesterUserId: string | null = null;
   try {
     const authResult = await requireAuth();
     if (!authResult.authorized) return authResult.response;
+    requesterUserId = authResult.userId;
 
     if (!checkRateLimit(authResult.userId)) {
       return NextResponse.json(
@@ -184,6 +187,13 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof GeminiError) {
       console.error('[ai-assist] Gemini error:', error.message);
+      logCriticalAction(
+        'ERROR_AI_REVIEW_ASSIST',
+        '/api/reviews/ai-assist',
+        'POST',
+        requesterUserId,
+        error.message.slice(0, 500)
+      );
       return NextResponse.json(
         { error: error.message },
         { status: error.status }
