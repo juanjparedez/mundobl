@@ -36,6 +36,44 @@
   line-height: 1.4;
 }
 
+.series-info__carousel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+.series-info__carousel-header .series-info__section-title {
+  margin: 0;
+}
+
+.series-info__carousel-actions {
+  display: inline-flex;
+  gap: 6px;
+}
+
+.series-info__carousel-button {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color-secondary);
+  background: var(--bg-container);
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.series-info__carousel-button:hover,
+.series-info__carousel-button:focus-visible {
+  color: var(--text-primary);
+  border-color: color-mix(in srgb, var(--primary-color) 35%, transparent);
+  transform: translateY(-1px);
+}
+
 .series-info__synopsis-content,
 .series-info__review-content,
 .series-info__observations-content {
@@ -70,6 +108,7 @@
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   padding-bottom: 6px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .series-info__preview-card {
@@ -259,6 +298,11 @@
 
   .series-info__preview-card {
     width: 118px;
+  }
+
+  .series-info__carousel-button {
+    width: 28px;
+    height: 28px;
   }
 
   .series-info__youtube-embed {

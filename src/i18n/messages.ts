@@ -77,6 +77,8 @@ export type TranslationShape = {
     notesPrivateHelp: string;
     relatedSection: string;
     universeSection: string;
+    carouselPrev: string;
+    carouselNext: string;
   };
   comments: {
     addTitle: string;
@@ -2542,6 +2544,8 @@ const es: TranslationShape = {
       'Si está activado, sólo los administradores pueden ver la reseña y las observaciones de esta serie.',
     relatedSection: 'Series Relacionadas',
     universeSection: 'Más contenido de este universo',
+    carouselPrev: 'Desplazar a la izquierda',
+    carouselNext: 'Desplazar a la derecha',
   },
   comments: {
     addTitle: 'Agregar Comentario',
@@ -5131,6 +5135,8 @@ const en: TranslationShape = {
       'When enabled, only administrators can see the review and observations for this series.',
     relatedSection: 'Related Series',
     universeSection: 'More from this universe',
+    carouselPrev: 'Scroll left',
+    carouselNext: 'Scroll right',
   },
   comments: {
     addTitle: 'Add Comment',

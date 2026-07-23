@@ -86,6 +86,8 @@ const fr: TranslationShape = {
       "Lorsque cette option est activée, seuls les administrateurs peuvent voir l'avis et les observations de cette série.",
     relatedSection: 'Séries similaires',
     universeSection: 'Plus de contenus de cet univers',
+    carouselPrev: 'Faire défiler vers la gauche',
+    carouselNext: 'Faire défiler vers la droite',
   },
   comments: {
     addTitle: 'Ajouter un commentaire',
