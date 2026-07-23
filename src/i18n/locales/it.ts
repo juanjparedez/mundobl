@@ -85,6 +85,7 @@ const it: TranslationShape = {
     notesPrivateHelp:
       'Quando abilitato, solo gli amministratori possono vedere la recensione e le osservazioni per questa serie.',
     relatedSection: 'Serie Correlate',
+    universeSection: 'Altri contenuti di questo universo',
   },
   comments: {
     addTitle: 'Aggiungi Commento',

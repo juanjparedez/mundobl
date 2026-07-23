@@ -85,6 +85,7 @@ const ko: TranslationShape = {
     notesPrivateHelp:
       '활성화하면 관리자만 이 시리즈의 리뷰와 관찰을 볼 수 있습니다.',
     relatedSection: '관련 시리즈',
+    universeSection: '이 유니버스의 다른 작품',
   },
   comments: {
     addTitle: '댓글 추가',

@@ -85,6 +85,7 @@ const fr: TranslationShape = {
     notesPrivateHelp:
       "Lorsque cette option est activée, seuls les administrateurs peuvent voir l'avis et les observations de cette série.",
     relatedSection: 'Séries similaires',
+    universeSection: 'Plus de contenus de cet univers',
   },
   comments: {
     addTitle: 'Ajouter un commentaire',

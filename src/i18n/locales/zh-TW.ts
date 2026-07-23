@@ -84,6 +84,7 @@ const zhTW: TranslationShape = {
     notesPrivateLabel: '私人評論和備註',
     notesPrivateHelp: '啟用後，只有管理員才能看到此劇集的評論和備註。',
     relatedSection: '相關劇集',
+    universeSection: '此宇宙中的更多內容',
   },
   comments: {
     addTitle: '新增評論',
