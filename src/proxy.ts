@@ -3,6 +3,10 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { logPageView } from '@/lib/access-log';
 import { prisma } from '@/lib/database';
+import {
+  isRuntimeFreezeActive,
+  registerRuntimePressureHit,
+} from '@/lib/runtime-freeze';
 
 const BOT_UA_PATTERN =
   /bot|crawler|spider|slurp|bingpreview|google web preview|facebookexternalhit|whatsapp|telegrambot|discordbot/i;
@@ -298,12 +302,14 @@ export async function proxy(request: NextRequest) {
       }
     } else {
       const nowMs = Date.now();
+      registerRuntimePressureHit();
       registerAnonymousPublicHit(nowMs);
       const anonLoggingEnabledByGuard = !isAnonymousLoggingGuardActive(nowMs);
       if (
         !skipLog &&
         !DISABLE_ANON_LOGGING &&
         anonLoggingEnabledByGuard &&
+        !isRuntimeFreezeActive('logging') &&
         shouldLogAnonymousPublicPath(pathname)
       ) {
         logPageView(pathname, ip, userAgent, null);
