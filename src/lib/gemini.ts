@@ -1,3 +1,5 @@
+import { isRuntimeFreezeActive } from '@/lib/runtime-freeze';
+
 // Cliente liviano para Google Gemini API (free tier).
 // Sin SDK extra: fetch directo para mantener bundle chico.
 // Cadena de modelos: probamos en orden y si uno devuelve 429/5xx
@@ -224,6 +226,14 @@ export async function generateText({
   tools,
   images,
 }: GenerateOptions): Promise<string> {
+  if (isRuntimeFreezeActive('ai')) {
+    throw new GeminiError(
+      'Asistente IA temporalmente pausado por modo ahorro automatico. Reintentá en unos minutos.',
+      503,
+      'RUNTIME_FREEZE'
+    );
+  }
+
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     throw new GeminiError(

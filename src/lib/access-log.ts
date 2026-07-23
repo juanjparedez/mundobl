@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/database';
+import { isRuntimeFreezeActive } from '@/lib/runtime-freeze';
 
 /**
  * Registra un page view (llamado desde el proxy/middleware)
@@ -10,6 +11,8 @@ export function logPageView(
   userAgent: string | null,
   userId: string | null
 ): void {
+  if (isRuntimeFreezeActive('logging')) return;
+
   prisma.accessLog
     .create({
       data: {
@@ -37,6 +40,8 @@ export function logAction(
   userId: string | null,
   metadata?: string
 ): void {
+  if (isRuntimeFreezeActive('logging')) return;
+
   prisma.accessLog
     .create({
       data: {
