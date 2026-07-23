@@ -28,6 +28,8 @@
   background: var(--bg-secondary);
   border-radius: var(--border-radius-base);
   overflow: hidden;
+  width: min(100%, 900px);
+  margin-inline: auto;
 }
 
 .series-content__player-meta {
