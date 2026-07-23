@@ -85,6 +85,7 @@ const de: TranslationShape = {
     notesPrivateHelp:
       'Wenn aktiviert, können nur Administratoren die Bewertung und Anmerkungen zu dieser Serie sehen.',
     relatedSection: 'Ähnliche Serien',
+    universeSection: 'Mehr aus diesem Universum',
   },
   comments: {
     addTitle: 'Kommentar hinzufügen',

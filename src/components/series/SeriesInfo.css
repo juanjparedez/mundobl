@@ -8,6 +8,7 @@
 .series-info__review,
 .series-info__observations,
 .series-info__related,
+.series-info__universe,
 .series-info__block {
   padding: var(--spacing-md);
   background: var(--bg-base);
@@ -63,6 +64,82 @@
   gap: var(--spacing-xs);
 }
 
+.series-info__preview-track {
+  display: flex;
+  gap: var(--spacing-sm);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 6px;
+}
+
+.series-info__preview-card {
+  flex: 0 0 auto;
+  width: 140px;
+  scroll-snap-align: start;
+  text-decoration: none;
+  color: inherit;
+}
+
+.series-info__preview-cover {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border-radius: var(--border-radius-base);
+  overflow: hidden;
+  background: var(--bg-spotlight);
+  transition: transform 0.18s ease;
+}
+
+.series-info__preview-card:hover .series-info__preview-cover,
+.series-info__preview-card:focus-visible .series-info__preview-cover {
+  transform: scale(1.03);
+}
+
+.series-info__preview-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-sm);
+  background: linear-gradient(135deg, var(--bg-spotlight), var(--bg-elevated));
+}
+
+.series-info__preview-placeholder-title {
+  font-size: var(--font-size-sm);
+  text-align: center;
+  color: var(--text-secondary);
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.series-info__preview-meta {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.series-info__preview-title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.series-info__preview-subtitle {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .series-info__related-item {
   text-decoration: none;
 }
@@ -77,17 +154,19 @@
 
 .series-info__youtube-embed {
   position: relative;
-  padding-bottom: 56.25%;
-  height: 0;
+  width: min(100%, 560px);
+  aspect-ratio: 16 / 9;
+  height: auto;
   overflow: hidden;
   margin-top: var(--spacing-sm);
   border-radius: var(--border-radius);
+  border: 1px solid var(--border-color-secondary);
+  background: var(--bg-container);
 }
 
 .series-info__youtube-iframe {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
   border: none;
@@ -172,8 +251,18 @@
 
   .series-info__synopsis,
   .series-info__review,
-  .series-info__observations {
+  .series-info__observations,
+  .series-info__related,
+  .series-info__universe {
     padding: var(--spacing-xs);
+  }
+
+  .series-info__preview-card {
+    width: 118px;
+  }
+
+  .series-info__youtube-embed {
+    width: 100%;
   }
 
   .series-info__section-title {
