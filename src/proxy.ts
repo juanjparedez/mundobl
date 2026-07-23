@@ -4,6 +4,35 @@ import type { NextRequest } from 'next/server';
 import { logPageView } from '@/lib/access-log';
 import { prisma } from '@/lib/database';
 
+const BOT_UA_PATTERN =
+  /bot|crawler|spider|slurp|bingpreview|google web preview|facebookexternalhit|whatsapp|telegrambot|discordbot/i;
+
+const BANNED_IP_CACHE_TTL_MS = 5 * 60 * 1000;
+const ANON_LOG_SAMPLE_HIGH = normalizeSampleRate(
+  process.env.PUBLIC_PAGE_LOG_SAMPLE_HIGH,
+  0.2
+);
+const ANON_LOG_SAMPLE_LOW = normalizeSampleRate(
+  process.env.PUBLIC_PAGE_LOG_SAMPLE_LOW,
+  0.03
+);
+
+const HIGH_SIGNAL_PUBLIC_PATHS = new Set([
+  '/',
+  '/catalogo',
+  '/ver',
+  '/noticias',
+  '/novedades',
+  '/contenido',
+]);
+
+type BannedIpCacheRecord = {
+  banned: boolean;
+  expiresAt: number;
+};
+
+const bannedIpCache = new Map<string, BannedIpCacheRecord>();
+
 // Patrones de paths que solo buscan scanners de vulnerabilidades
 const SCANNER_PATTERNS = [
   /\.php/i,
@@ -69,9 +98,47 @@ function hasSessionCookie(request: NextRequest): boolean {
   );
 }
 
+function isCrawlerUserAgent(userAgent: string | null): boolean {
+  return userAgent ? BOT_UA_PATTERN.test(userAgent) : false;
+}
+
+function normalizeSampleRate(raw: string | undefined, fallback: number): number {
+  if (!raw) return fallback;
+  const parsed = Number(raw);
+  if (Number.isNaN(parsed)) return fallback;
+  return Math.max(0, Math.min(1, parsed));
+}
+
+function shouldLogAnonymousPublicPath(pathname: string): boolean {
+  const sampleRate = HIGH_SIGNAL_PUBLIC_PATHS.has(pathname)
+    ? ANON_LOG_SAMPLE_HIGH
+    : ANON_LOG_SAMPLE_LOW;
+  return Math.random() < sampleRate;
+}
+
+function getCachedBannedIp(ip: string): boolean | null {
+  const cached = bannedIpCache.get(ip);
+  if (!cached) return null;
+  if (cached.expiresAt < Date.now()) {
+    bannedIpCache.delete(ip);
+    return null;
+  }
+  return cached.banned;
+}
+
+function setCachedBannedIp(ip: string, banned: boolean): void {
+  bannedIpCache.set(ip, {
+    banned,
+    expiresAt: Date.now() + BANNED_IP_CACHE_TTL_MS,
+  });
+}
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const skipLog = isPrefetchRequest(request);
+  const userAgent = request.headers.get('user-agent') || null;
+  const skipLog =
+    isPrefetchRequest(request) ||
+    (isCrawlerUserAgent(userAgent) && !pathname.startsWith('/admin'));
 
   // Bloquear scanners antes de cualquier procesamiento (no loguear, no gastar DB)
   if (isScannerPath(pathname)) {
@@ -83,7 +150,6 @@ export async function proxy(request: NextRequest) {
     request.headers.get('cf-connecting-ip') ||
     request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
     null;
-  const userAgent = request.headers.get('user-agent') || null;
 
   // No loguear assets/PWA
   if (isAssetPath(pathname)) {
@@ -92,9 +158,17 @@ export async function proxy(request: NextRequest) {
 
   // Check IP ban
   if (ip) {
-    const bannedIp = await prisma.bannedIp.findUnique({ where: { ip } });
-    if (bannedIp) {
+    const cached = getCachedBannedIp(ip);
+    if (cached === true) {
       return new NextResponse('Acceso denegado', { status: 403 });
+    }
+    if (cached === null) {
+      const bannedIp = await prisma.bannedIp.findUnique({ where: { ip } });
+      const isBanned = bannedIp != null;
+      setCachedBannedIp(ip, isBanned);
+      if (isBanned) {
+        return new NextResponse('Acceso denegado', { status: 403 });
+      }
     }
   }
 
@@ -151,7 +225,7 @@ export async function proxy(request: NextRequest) {
       if (!skipLog) {
         logPageView(pathname, ip, userAgent, session?.user?.id || null);
       }
-    } else if (!skipLog) {
+    } else if (!skipLog && shouldLogAnonymousPublicPath(pathname)) {
       logPageView(pathname, ip, userAgent, null);
     }
   }
