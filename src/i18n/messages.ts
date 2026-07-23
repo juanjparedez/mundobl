@@ -277,6 +277,7 @@ export type TranslationShape = {
     dark: string;
     light: string;
     stats: string;
+    runtime: string;
   };
   profile: {
     loginRequired: string;
@@ -1480,6 +1481,8 @@ export type TranslationShape = {
     changelogShort: string;
     users: string;
     usersShort: string;
+    runtime: string;
+    runtimeShort: string;
   };
   adminStats: {
     pageTitle: string;
@@ -2344,6 +2347,37 @@ export type TranslationShape = {
     actionChangelog: string;
     actionUsers: string;
   };
+  adminRuntime: {
+    pageTitle: string;
+    pageSubtitle: string;
+    statusSection: string;
+    controlsSection: string;
+    errorsSection: string;
+    refresh: string;
+    loading: string;
+    updatedAt: string;
+    stateEnabled: string;
+    stateForced: string;
+    stateAuto: string;
+    stateOn: string;
+    stateOff: string;
+    hitsInWindow: string;
+    freezeRemaining: string;
+    manualForce: string;
+    manualAi: string;
+    manualLogging: string;
+    manualAnonLogging: string;
+    minutesLabel: string;
+    applyOn: string;
+    applyOff: string;
+    noErrors: string;
+    errorWhen: string;
+    errorPath: string;
+    errorDetails: string;
+    saveSuccess: string;
+    saveError: string;
+    loadError: string;
+  };
   adminActivity: {
     title: string;
     empty: string;
@@ -2753,6 +2787,7 @@ const es: TranslationShape = {
     light: 'Claro',
     profile: 'Mi Perfil',
     stats: 'Estad\u00edsticas',
+    runtime: 'Runtime',
   },
   profile: {
     loginRequired: 'Inicia sesion para ver tu perfil',
@@ -4027,6 +4062,8 @@ const es: TranslationShape = {
     changelogShort: 'CL',
     users: 'Usuarios',
     usersShort: 'Usuarios',
+    runtime: 'Runtime',
+    runtimeShort: 'Run',
   },
   adminStats: {
     pageTitle: 'Estadísticas de actividad',
@@ -4930,6 +4967,37 @@ const es: TranslationShape = {
     actionChangelog: 'Versiones',
     actionUsers: 'Usuarios',
   },
+  adminRuntime: {
+    pageTitle: 'Control de runtime',
+    pageSubtitle: 'Estado de freeze y guardrails de ahorro en tiempo real.',
+    statusSection: 'Estado actual',
+    controlsSection: 'Controles manuales',
+    errorsSection: 'Errores críticos recientes',
+    refresh: 'Refrescar',
+    loading: 'Cargando estado de runtime...',
+    updatedAt: 'Actualizado',
+    stateEnabled: 'Freeze activo',
+    stateForced: 'Freeze forzado por env',
+    stateAuto: 'Auto-freeze habilitado',
+    stateOn: 'Sí',
+    stateOff: 'No',
+    hitsInWindow: 'Presión en ventana',
+    freezeRemaining: 'Freeze restante',
+    manualForce: 'Forzar freeze global',
+    manualAi: 'Desactivar IA no crítica',
+    manualLogging: 'Desactivar logging normal',
+    manualAnonLogging: 'Desactivar logging anónimo',
+    minutesLabel: 'Minutos',
+    applyOn: 'ON',
+    applyOff: 'OFF',
+    noErrors: 'No hay errores críticos recientes.',
+    errorWhen: 'Cuándo',
+    errorPath: 'Ruta',
+    errorDetails: 'Detalle',
+    saveSuccess: 'Override aplicado correctamente',
+    saveError: 'No se pudo aplicar el override',
+    loadError: 'No se pudo cargar el estado de runtime',
+  },
   adminActivity: {
     title: 'Actividad del equipo',
     empty: 'Sin actividad reciente.',
@@ -5341,6 +5409,7 @@ const en: TranslationShape = {
     light: 'Light',
     profile: 'My Profile',
     stats: 'Statistics',
+    runtime: 'Runtime',
   },
   profile: {
     loginRequired: 'Sign in to view your profile',
@@ -6604,6 +6673,8 @@ const en: TranslationShape = {
     changelogShort: 'CL',
     users: 'Users',
     usersShort: 'Users',
+    runtime: 'Runtime',
+    runtimeShort: 'Run',
   },
   adminStats: {
     pageTitle: 'Activity Statistics',
@@ -7501,6 +7572,37 @@ const en: TranslationShape = {
     actionAuditLog: 'Audit',
     actionChangelog: 'Releases',
     actionUsers: 'Users',
+  },
+  adminRuntime: {
+    pageTitle: 'Runtime Control',
+    pageSubtitle: 'Live freeze status and cost-saver guardrails.',
+    statusSection: 'Current status',
+    controlsSection: 'Manual controls',
+    errorsSection: 'Recent critical errors',
+    refresh: 'Refresh',
+    loading: 'Loading runtime status...',
+    updatedAt: 'Updated',
+    stateEnabled: 'Freeze enabled',
+    stateForced: 'Freeze forced by env',
+    stateAuto: 'Auto-freeze enabled',
+    stateOn: 'Yes',
+    stateOff: 'No',
+    hitsInWindow: 'Window pressure',
+    freezeRemaining: 'Freeze remaining',
+    manualForce: 'Force global freeze',
+    manualAi: 'Disable non-critical AI',
+    manualLogging: 'Disable normal logging',
+    manualAnonLogging: 'Disable anonymous logging',
+    minutesLabel: 'Minutes',
+    applyOn: 'ON',
+    applyOff: 'OFF',
+    noErrors: 'No recent critical errors.',
+    errorWhen: 'When',
+    errorPath: 'Path',
+    errorDetails: 'Details',
+    saveSuccess: 'Override applied',
+    saveError: 'Could not apply override',
+    loadError: 'Could not load runtime status',
   },
   adminActivity: {
     title: 'Team activity',

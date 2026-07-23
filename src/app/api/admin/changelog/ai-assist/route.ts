@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-helpers';
 import { generateText, GeminiError } from '@/lib/gemini';
+import { logCriticalAction } from '@/lib/access-log';
 
 const ACTIONS = ['polish', 'suggest-category'] as const;
 type Action = (typeof ACTIONS)[number];
@@ -20,9 +21,11 @@ interface AssistInput {
 // - suggest-category: detecta la categoria (Features/Fixes/Seguridad/Mejoras)
 //   a partir del cuerpo. Devuelve { category }.
 export async function POST(request: NextRequest) {
+  let requesterUserId: string | null = null;
   try {
     const authResult = await requireRole(['ADMIN']);
     if (!authResult.authorized) return authResult.response;
+    requesterUserId = authResult.userId;
 
     const input = (await request.json()) as AssistInput;
     if (!input.action || !ACTIONS.includes(input.action)) {
@@ -93,6 +96,13 @@ Donde category debe ser exactamente una de las categorias listadas.`,
   } catch (error) {
     if (error instanceof GeminiError) {
       console.error('[changelog ai-assist] Gemini error:', error.message);
+      logCriticalAction(
+        'ERROR_AI_CHANGELOG_ASSIST',
+        '/api/admin/changelog/ai-assist',
+        'POST',
+        requesterUserId,
+        error.message.slice(0, 500)
+      );
       return NextResponse.json(
         { error: error.message },
         { status: error.status }

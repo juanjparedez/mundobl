@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-helpers';
 import { generateText, GeminiError } from '@/lib/gemini';
+import { logCriticalAction } from '@/lib/access-log';
 
 const MAX_SUMMARY_WORDS = 280;
 const MAX_URL_LENGTH = 2048;
@@ -16,9 +17,11 @@ interface AiGenerateInput {
 // Genera un resumen ético a partir de la URL/texto del artículo.
 // SIEMPRE incluye disclaimer de fuente — nunca auto-publica.
 export async function POST(request: NextRequest) {
+  let requesterUserId: string | null = null;
   try {
     const authResult = await requireRole(['ADMIN']);
     if (!authResult.authorized) return authResult.response;
+    requesterUserId = authResult.userId;
 
     const input = (await request.json()) as AiGenerateInput;
 
@@ -113,6 +116,13 @@ Reglas:
   } catch (error) {
     if (error instanceof GeminiError) {
       console.error('[news ai-generate] Gemini error:', error.message);
+      logCriticalAction(
+        'ERROR_AI_NEWS_GENERATE',
+        '/api/admin/news/ai-generate',
+        'POST',
+        requesterUserId,
+        error.message.slice(0, 500)
+      );
       return NextResponse.json(
         { error: error.message },
         { status: error.status }

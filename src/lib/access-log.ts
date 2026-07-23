@@ -57,6 +57,32 @@ export function logAction(
     });
 }
 
+/**
+ * Registra eventos criticos (errores) aun cuando el freeze desactiva
+ * logging normal. Uso intencionalmente acotado para no sumar carga.
+ */
+export function logCriticalAction(
+  action: string,
+  path: string,
+  method: string,
+  userId: string | null,
+  metadata?: string
+): void {
+  prisma.accessLog
+    .create({
+      data: {
+        action,
+        path,
+        method,
+        userId,
+        metadata,
+      },
+    })
+    .catch(() => {
+      // Silenciar errores criticos de logging para no afectar request
+    });
+}
+
 interface LogFilters {
   page?: number;
   limit?: number;

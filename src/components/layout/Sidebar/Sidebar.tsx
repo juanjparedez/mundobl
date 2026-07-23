@@ -24,6 +24,7 @@ import {
   FileTextOutlined,
   NotificationOutlined,
   UnorderedListOutlined,
+  ThunderboltOutlined,
 } from '@ant-design/icons';
 import { Badge } from 'antd';
 import { useSession } from 'next-auth/react';
@@ -280,6 +281,12 @@ export function Sidebar() {
                           icon: <BarChartOutlined />,
                           label: t('sidebar.adminStats'),
                           onClick: () => router.push('/admin/stats'),
+                        },
+                        {
+                          key: '/admin/runtime',
+                          icon: <ThunderboltOutlined />,
+                          label: t('sidebar.runtime'),
+                          onClick: () => router.push('/admin/runtime'),
                         },
                       ],
                     },

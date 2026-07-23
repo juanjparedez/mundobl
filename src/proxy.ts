@@ -309,7 +309,7 @@ export async function proxy(request: NextRequest) {
         !skipLog &&
         !DISABLE_ANON_LOGGING &&
         anonLoggingEnabledByGuard &&
-        !isRuntimeFreezeActive('logging') &&
+        !isRuntimeFreezeActive('anon-logging') &&
         shouldLogAnonymousPublicPath(pathname)
       ) {
         logPageView(pathname, ip, userAgent, null);
