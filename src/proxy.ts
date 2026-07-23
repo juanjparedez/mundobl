@@ -16,6 +16,26 @@ const ANON_LOG_SAMPLE_LOW = normalizeSampleRate(
   process.env.PUBLIC_PAGE_LOG_SAMPLE_LOW,
   0.03
 );
+const DISABLE_ANON_LOGGING = normalizeBoolean(
+  process.env.PUBLIC_ANON_LOG_DISABLED,
+  false
+);
+const ANON_LOG_GUARD_ENABLED = normalizeBoolean(
+  process.env.PUBLIC_ANON_LOG_GUARD_ENABLED,
+  true
+);
+const ANON_LOG_GUARD_WINDOW_MS = normalizePositiveInt(
+  process.env.PUBLIC_ANON_LOG_GUARD_WINDOW_MS,
+  60_000
+);
+const ANON_LOG_GUARD_HIT_THRESHOLD = normalizePositiveInt(
+  process.env.PUBLIC_ANON_LOG_GUARD_HIT_THRESHOLD,
+  800
+);
+const ANON_LOG_GUARD_COOLDOWN_MS = normalizePositiveInt(
+  process.env.PUBLIC_ANON_LOG_GUARD_COOLDOWN_MS,
+  15 * 60_000
+);
 
 const HIGH_SIGNAL_PUBLIC_PATHS = new Set([
   '/',
@@ -32,6 +52,18 @@ type BannedIpCacheRecord = {
 };
 
 const bannedIpCache = new Map<string, BannedIpCacheRecord>();
+
+type AnonymousLogGuardState = {
+  windowStartMs: number;
+  hitsInWindow: number;
+  disabledUntilMs: number;
+};
+
+const anonymousLogGuard: AnonymousLogGuardState = {
+  windowStartMs: Date.now(),
+  hitsInWindow: 0,
+  disabledUntilMs: 0,
+};
 
 // Patrones de paths que solo buscan scanners de vulnerabilidades
 const SCANNER_PATTERNS = [
@@ -109,11 +141,50 @@ function normalizeSampleRate(raw: string | undefined, fallback: number): number 
   return Math.max(0, Math.min(1, parsed));
 }
 
+function normalizePositiveInt(raw: string | undefined, fallback: number): number {
+  if (!raw) return fallback;
+  const parsed = Number(raw);
+  if (!Number.isFinite(parsed)) return fallback;
+  const rounded = Math.floor(parsed);
+  return rounded > 0 ? rounded : fallback;
+}
+
+function normalizeBoolean(raw: string | undefined, fallback: boolean): boolean {
+  if (!raw) return fallback;
+  const normalized = raw.trim().toLowerCase();
+  if (normalized === '1' || normalized === 'true' || normalized === 'yes') {
+    return true;
+  }
+  if (normalized === '0' || normalized === 'false' || normalized === 'no') {
+    return false;
+  }
+  return fallback;
+}
+
 function shouldLogAnonymousPublicPath(pathname: string): boolean {
   const sampleRate = HIGH_SIGNAL_PUBLIC_PATHS.has(pathname)
     ? ANON_LOG_SAMPLE_HIGH
     : ANON_LOG_SAMPLE_LOW;
   return Math.random() < sampleRate;
+}
+
+function isAnonymousLoggingGuardActive(nowMs: number): boolean {
+  return anonymousLogGuard.disabledUntilMs > nowMs;
+}
+
+function registerAnonymousPublicHit(nowMs: number): void {
+  if (!ANON_LOG_GUARD_ENABLED) return;
+
+  if (nowMs - anonymousLogGuard.windowStartMs >= ANON_LOG_GUARD_WINDOW_MS) {
+    anonymousLogGuard.windowStartMs = nowMs;
+    anonymousLogGuard.hitsInWindow = 0;
+  }
+
+  anonymousLogGuard.hitsInWindow += 1;
+
+  if (anonymousLogGuard.hitsInWindow >= ANON_LOG_GUARD_HIT_THRESHOLD) {
+    anonymousLogGuard.disabledUntilMs = nowMs + ANON_LOG_GUARD_COOLDOWN_MS;
+  }
 }
 
 function getCachedBannedIp(ip: string): boolean | null {
@@ -225,8 +296,18 @@ export async function proxy(request: NextRequest) {
       if (!skipLog) {
         logPageView(pathname, ip, userAgent, session?.user?.id || null);
       }
-    } else if (!skipLog && shouldLogAnonymousPublicPath(pathname)) {
-      logPageView(pathname, ip, userAgent, null);
+    } else {
+      const nowMs = Date.now();
+      registerAnonymousPublicHit(nowMs);
+      const anonLoggingEnabledByGuard = !isAnonymousLoggingGuardActive(nowMs);
+      if (
+        !skipLog &&
+        !DISABLE_ANON_LOGGING &&
+        anonLoggingEnabledByGuard &&
+        shouldLogAnonymousPublicPath(pathname)
+      ) {
+        logPageView(pathname, ip, userAgent, null);
+      }
     }
   }
 
