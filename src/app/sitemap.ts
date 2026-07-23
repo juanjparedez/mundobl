@@ -1,6 +1,8 @@
 import type { MetadataRoute } from 'next';
 import { prisma } from '@/lib/database';
 
+export const revalidate = 3600;
+
 const BASE_URL = 'https://mundobl.com.ar';
 
 // Sitemap segmentado por dominio de contenido. Next.js genera
