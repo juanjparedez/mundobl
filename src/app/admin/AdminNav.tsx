@@ -22,6 +22,7 @@ import {
   ReadOutlined,
   NotificationOutlined,
   BugOutlined,
+  ThunderboltOutlined,
   MenuOutlined,
   RightOutlined,
 } from '@ant-design/icons';
@@ -171,6 +172,12 @@ const ADMIN_GROUPS: AdminGroup[] = [
         icon: <BarChartOutlined />,
         labelKey: 'adminNav.stats',
         shortKey: 'adminNav.statsShort',
+      },
+      {
+        key: '/admin/runtime',
+        icon: <ThunderboltOutlined />,
+        labelKey: 'adminNav.runtime',
+        shortKey: 'adminNav.runtimeShort',
       },
     ],
   },
