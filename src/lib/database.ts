@@ -327,6 +327,7 @@ function buildSeriesFullInclude(
           include: {
             viewStatus: vs,
             comments: {
+              where: { parentId: null },
               include: {
                 user: {
                   select: {
@@ -334,7 +335,22 @@ function buildSeriesFullInclude(
                     name: true,
                     nickname: true,
                     image: true,
+                    role: true,
                   },
+                },
+                replies: {
+                  include: {
+                    user: {
+                      select: {
+                        id: true,
+                        name: true,
+                        nickname: true,
+                        image: true,
+                        role: true,
+                      },
+                    },
+                  },
+                  orderBy: { createdAt: 'asc' },
                 },
               },
               orderBy: { createdAt: 'desc' },
@@ -346,9 +362,30 @@ function buildSeriesFullInclude(
         },
         ratings: true,
         comments: {
+          where: { parentId: null },
           include: {
             user: {
-              select: { id: true, name: true, nickname: true, image: true },
+              select: {
+                id: true,
+                name: true,
+                nickname: true,
+                image: true,
+                role: true,
+              },
+            },
+            replies: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                    nickname: true,
+                    image: true,
+                    role: true,
+                  },
+                },
+              },
+              orderBy: { createdAt: 'asc' },
             },
           },
           orderBy: { createdAt: 'desc' },

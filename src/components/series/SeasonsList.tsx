@@ -189,7 +189,6 @@ export function SeasonsList({ seasons, canEdit = false }: SeasonsListProps) {
             <CommentsList
               seasonId={season.id}
               initialComments={season.comments || []}
-              compact={true}
               placeholder="Escribe tus comentarios sobre esta temporada, arcos narrativos, desarrollo de personajes..."
             />
           </div>

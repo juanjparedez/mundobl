@@ -641,7 +641,6 @@ export function EpisodesList({
                       <CommentsList
                         episodeId={episode.id}
                         initialComments={episode.comments || []}
-                        compact={true}
                         placeholder={t('episodesList.commentsPlaceholder')}
                       />
                     </div>
