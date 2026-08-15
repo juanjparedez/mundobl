@@ -13,6 +13,7 @@ export type CompletenessField =
   | 'review'
   | 'tags'
   | 'soundtrack'
+  | 'airDays'
   | 'cast';
 
 interface CompletenessInput {
@@ -22,6 +23,7 @@ interface CompletenessInput {
   originalTitle?: string | null;
   review?: string | null;
   soundtrack?: string | null;
+  airDays?: string | null;
   country?: { id: number } | null;
   directors?: Array<{ directorId: number } | { director?: { id: number } }>;
   tags?: Array<{ tagId: number } | { tag?: { id: number } }>;
@@ -68,8 +70,13 @@ const FIELDS: FieldWeight[] = [
   },
   {
     field: 'soundtrack',
-    weight: 10,
+    weight: 5,
     has: (s) => !!s.soundtrack && s.soundtrack.trim().length > 0,
+  },
+  {
+    field: 'airDays',
+    weight: 5,
+    has: (s) => !!s.airDays && s.airDays.trim().length > 0,
   },
   { field: 'country', weight: 5, has: (s) => !!s.country },
   {
