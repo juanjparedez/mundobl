@@ -1,7 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { Input, Button, Empty, Modal, Switch, Tag, Tooltip, Avatar } from 'antd';
+import {
+  Input,
+  Button,
+  Empty,
+  Modal,
+  Switch,
+  Tag,
+  Tooltip,
+  Avatar,
+} from 'antd';
 import {
   CommentOutlined,
   ClockCircleOutlined,
@@ -350,7 +359,9 @@ export function CommentsList({
                     </div>
                   </div>
 
-                  <p className="comment-list-item__content">{comment.content}</p>
+                  <p className="comment-list-item__content">
+                    {comment.content}
+                  </p>
 
                   <div className="comment-list-item__actions">
                     {session?.user && !comment.isPrivate && (
@@ -449,7 +460,9 @@ export function CommentsList({
                             </span>
                           </div>
                         </div>
-                        <p className="comment-list-item__content">{reply.content}</p>
+                        <p className="comment-list-item__content">
+                          {reply.content}
+                        </p>
                       </div>
                     ))}
                   </div>
