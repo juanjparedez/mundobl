@@ -107,10 +107,22 @@ export function LocaleProvider({ children }: LocaleProviderProps) {
   );
 }
 
-export function useLocale() {
+export function useLocale(): LocaleContextType {
   const context = useContext(LocaleContext);
   if (!context) {
-    throw new Error('useLocale debe usarse dentro de LocaleProvider');
+    return {
+      locale: DEFAULT_LOCALE,
+      setLocale: () => {},
+      t: (key: TranslationKey, params?: Record<string, string | number>) => {
+        const localized = getByPath(MESSAGES[DEFAULT_LOCALE], key) ?? key;
+        if (!params) return localized;
+        let out = localized;
+        for (const [k, v] of Object.entries(params)) {
+          out = out.replaceAll(`{${k}}`, String(v));
+        }
+        return out;
+      },
+    };
   }
   return context;
 }
