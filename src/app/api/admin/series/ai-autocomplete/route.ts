@@ -10,6 +10,14 @@ interface AutocompletePayload {
   country?: string;
   type?: string;
   currentSynopsis?: string;
+  scope?:
+    | 'all'
+    | 'synopsis'
+    | 'info'
+    | 'genres_tags'
+    | 'cast'
+    | 'directors'
+    | 'production';
 }
 
 export async function POST(request: NextRequest) {
@@ -20,7 +28,15 @@ export async function POST(request: NextRequest) {
     const body = (await request
       .json()
       .catch(() => ({}))) as AutocompletePayload;
-    const { title, originalTitle, year, country, type } = body;
+    const {
+      title,
+      originalTitle,
+      year,
+      country,
+      type,
+      currentSynopsis,
+      scope = 'all',
+    } = body;
 
     const searchSubject = [title, originalTitle].filter(Boolean).join(' / ');
     if (!searchSubject.trim()) {
@@ -46,34 +62,73 @@ export async function POST(request: NextRequest) {
     const countryNames = countries.map((c) => c.name).join(', ');
     const genreNames = genres
       .map((g) => g.name)
-      .slice(0, 20)
+      .slice(0, 30)
       .join(', ');
     const tagNames = tags
       .map((t) => t.name)
-      .slice(0, 30)
+      .slice(0, 40)
       .join(', ');
     const companyNames = productionCompanies
       .map((pc) => pc.name)
-      .slice(0, 20)
+      .slice(0, 30)
       .join(', ');
     const langNames = languages
       .map((l) => l.name)
-      .slice(0, 15)
+      .slice(0, 20)
       .join(', ');
 
     const systemInstruction = `Eres un asistente experto en series, películas y dramas asiáticos e internacionales (con especialización en dramas BL, GL, romances, dramas juveniles y producciones de Tailandia, Corea del Sur, Japón, Taiwán, China, Filipinas, etc.).
 
-Tu tarea es investigar la serie o película indicada y devolver un objeto JSON estructurado en español con datos verídicos y precisos.
+Tu tarea es investigar la producción audiovisual indicada y devolver un objeto JSON estructurado en español con datos verídicos y precisos.
 
-Sugerencias de catálogo existente:
+Sugerencias de catálogo existente en la base de datos:
 - Países: ${countryNames}
 - Géneros de referencia: ${genreNames}
 - Tags de referencia: ${tagNames}
 - Productoras de referencia: ${companyNames}
 - Idiomas: ${langNames}
 
-Formato JSON estricto requerido:
-{
+Formato JSON estricto requerido según el scope solicitado:
+${
+  scope === 'synopsis'
+    ? `{
+  "synopsis": "Sinopsis atractiva, fluida, profesional y completa en español (sin spoilers graves, de 2 a 4 párrafos bien redactados)."
+}`
+    : scope === 'cast'
+      ? `{
+  "actors": [
+    { "name": "Nombre Actor 1", "characterName": "Nombre Personaje 1", "isMain": true },
+    { "name": "Nombre Actor 2", "characterName": "Nombre Personaje 2", "isMain": true }
+  ]
+}`
+      : scope === 'directors'
+        ? `{
+  "directors": [
+    { "name": "Nombre Director 1" }
+  ]
+}`
+        : scope === 'genres_tags'
+          ? `{
+  "genres": ["Romance", "Drama", "Comedia"],
+  "tags": ["Enemies to Lovers", "Universidad", "Música"]
+}`
+          : scope === 'production'
+            ? `{
+  "productionCompany": "Productora o canal principal (ej. GMMTV, Domundi, Studio Wabi Sabi, Be On Cloud, TV Asahi, Me Mind Y, etc.)",
+  "originalLanguage": "Idioma original (ej. Tailandés, Coreano, Japonés, Chino Mandarín, Tagalo, Inglés, etc.)",
+  "basedOn": "Tipo de obra original si aplica (ej. Novela, Manga, Manhwa, Webtoon, Corto, Original)",
+  "airDays": ["Lunes", "Viernes"]
+}`
+            : scope === 'info'
+              ? `{
+  "title": "Título oficial o más conocido en español/inglés",
+  "originalTitle": "Título en idioma nativo (ej. tailandés, hangul, kanji o pinyin)",
+  "type": "serie" | "pelicula" | "corto" | "especial",
+  "year": 2024,
+  "countryName": "Nombre del país de origen (elige preferentemente entre: ${countryNames})",
+  "airDays": ["Lunes", "Viernes"]
+}`
+              : `{
   "title": "Título oficial o más conocido en español/inglés",
   "originalTitle": "Título en idioma nativo (ej. tailandés, hangul, kanji o pinyin)",
   "type": "serie" | "pelicula" | "corto" | "especial",
@@ -86,7 +141,7 @@ Formato JSON estricto requerido:
   "airDays": ["Lunes", "Viernes"],
   "genres": ["Romance", "Drama", "Comedia"],
   "tags": ["Enemies to Lovers", "Universidad", "Música"],
-  "observations": "Información adicional de interés (ej. novela en la que se basa, autor/a, plataformas oficiales de emisión como YouTube / WeTV / IQIYI / GagaOOLala).",
+  "observations": "Información adicional de interés (ej. novela en la que se basa, autor/a, plataformas oficiales de emisión).",
   "actors": [
     { "name": "Nombre Actor 1", "characterName": "Nombre Personaje 1", "isMain": true },
     { "name": "Nombre Actor 2", "characterName": "Nombre Personaje 2", "isMain": true }
@@ -94,20 +149,22 @@ Formato JSON estricto requerido:
   "directors": [
     { "name": "Nombre Director" }
   ]
+}`
 }`;
 
-    const prompt = `Investiga la siguiente producción audiovisual y completa todos los datos:
+    const prompt = `Investiga la siguiente producción audiovisual y completa los datos para el scope "${scope}":
 Título de búsqueda: "${searchSubject}"
 ${year ? `Año aproximado: ${year}` : ''}
 ${country ? `País indicado: ${country}` : ''}
 ${type ? `Tipo: ${type}` : ''}
+${currentSynopsis ? `Sinopsis actual de referencia: "${currentSynopsis}"` : ''}
 
 Recuerda responder ÚNICAMENTE con el objeto JSON válido.`;
 
     const aiResultRaw = await generateText({
       systemInstruction,
       prompt,
-      temperature: 0.2,
+      temperature: scope === 'synopsis' ? 0.4 : 0.2,
       responseMimeType: 'application/json',
       thinkingBudget: 0,
       tools: [{ googleSearch: {} }],

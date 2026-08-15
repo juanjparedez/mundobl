@@ -236,7 +236,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
   const [uploading, setUploading] = useState(false);
   const imageUrl = Form.useWatch('imageUrl', form);
   const [isFavorite, setIsFavorite] = useState(false);
-  const [isAutoCompleting, setIsAutoCompleting] = useState(false);
+  const [aiLoadingScope, setAiLoadingScope] = useState<string | null>(null);
 
   useEffect(() => {
     if (mode === 'edit' && initialData?.id) {
@@ -421,18 +421,18 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
     }
   };
 
-  const handleAiAutocomplete = async () => {
+  const handleAiAutocomplete = async (scope: string = 'all') => {
     const currentTitle = form.getFieldValue('title');
     const currentOriginalTitle = form.getFieldValue('originalTitle');
 
     if (!currentTitle?.trim() && !currentOriginalTitle?.trim()) {
       message.warning(
-        'Escribe al menos el título de la serie para autocompletar con IA.'
+        'Escribe al menos el título de la serie para consultar a la IA.'
       );
       return;
     }
 
-    setIsAutoCompleting(true);
+    setAiLoadingScope(scope);
     try {
       const res = await fetch('/api/admin/series/ai-autocomplete', {
         method: 'POST',
@@ -443,6 +443,8 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
           year: form.getFieldValue('year'),
           country: form.getFieldValue('countryName'),
           type: form.getFieldValue('type'),
+          currentSynopsis: form.getFieldValue('synopsis'),
+          scope,
         }),
       });
 
@@ -452,66 +454,85 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
       }
 
       const updates: Record<string, unknown> = {};
-      if (data.title && !currentTitle) updates.title = data.title;
-      if (data.originalTitle && !currentOriginalTitle)
-        updates.originalTitle = data.originalTitle;
-      if (data.type) {
-        updates.type = data.type;
-        setSelectedType(data.type);
-      }
-      if (data.year) updates.year = data.year;
-      if (data.countryName) updates.countryName = data.countryName;
-      if (data.productionCompany)
-        updates.productionCompany = data.productionCompany;
-      if (data.originalLanguage)
-        updates.originalLanguage = data.originalLanguage;
-      if (data.basedOn && data.basedOn.length > 0)
-        updates.basedOn = data.basedOn;
-      if (data.synopsis) updates.synopsis = data.synopsis;
-      if (data.airDays && data.airDays.length > 0)
-        updates.airDays = data.airDays;
-      if (data.genres && data.genres.length > 0) updates.genres = data.genres;
-      if (data.tags && data.tags.length > 0) updates.tags = data.tags;
-      if (data.observations) updates.observations = data.observations;
 
-      // Autocompletar actores si la lista está vacía
-      const currentActors = form.getFieldValue('actors') || [];
-      if (currentActors.length === 0 && data.actors && data.actors.length > 0) {
-        updates.actors = data.actors.map(
-          (
-            a: { name: string; characterName?: string; isMain?: boolean },
-            idx: number
-          ) => ({
-            name: a.name,
-            character: a.characterName || '',
-            isMain: a.isMain ?? idx < 2,
-            pairingGroup: idx < 2 ? 1 : undefined,
-          })
-        );
+      if (scope === 'all' || scope === 'info') {
+        if (data.title && !currentTitle) updates.title = data.title;
+        if (data.originalTitle && !currentOriginalTitle)
+          updates.originalTitle = data.originalTitle;
+        if (data.type) {
+          updates.type = data.type;
+          setSelectedType(data.type);
+        }
+        if (data.year) updates.year = data.year;
+        if (data.countryName) updates.countryName = data.countryName;
+        if (data.airDays && data.airDays.length > 0)
+          updates.airDays = data.airDays;
       }
 
-      // Autocompletar directores si la lista está vacía
-      const currentDirectors = form.getFieldValue('directors') || [];
-      if (
-        currentDirectors.length === 0 &&
-        data.directors &&
-        data.directors.length > 0
-      ) {
-        updates.directors = data.directors.map((d: { name: string }) => ({
-          name: d.name,
-        }));
+      if (scope === 'all' || scope === 'production') {
+        if (data.productionCompany)
+          updates.productionCompany = data.productionCompany;
+        if (data.originalLanguage)
+          updates.originalLanguage = data.originalLanguage;
+        if (data.basedOn && data.basedOn.length > 0)
+          updates.basedOn = data.basedOn;
+        if (data.airDays && data.airDays.length > 0)
+          updates.airDays = data.airDays;
+      }
+
+      if (scope === 'all' || scope === 'synopsis') {
+        if (data.synopsis) updates.synopsis = data.synopsis;
+        if (data.observations) updates.observations = data.observations;
+      }
+
+      if (scope === 'all' || scope === 'genres_tags') {
+        if (data.genres && data.genres.length > 0) updates.genres = data.genres;
+        if (data.tags && data.tags.length > 0) updates.tags = data.tags;
+      }
+
+      if (scope === 'all' || scope === 'cast') {
+        if (data.actors && data.actors.length > 0) {
+          updates.actors = data.actors.map(
+            (
+              a: { name: string; characterName?: string; isMain?: boolean },
+              idx: number
+            ) => ({
+              name: a.name,
+              character: a.characterName || '',
+              isMain: a.isMain ?? idx < 2,
+              pairingGroup: idx < 2 ? 1 : undefined,
+            })
+          );
+        }
+      }
+
+      if (scope === 'all' || scope === 'directors') {
+        if (data.directors && data.directors.length > 0) {
+          updates.directors = data.directors.map((d: { name: string }) => ({
+            name: d.name,
+          }));
+        }
       }
 
       form.setFieldsValue(updates);
-      message.success(
-        '¡Información completada con IA! Revisa los datos antes de guardar.'
-      );
+
+      const successMsgs: Record<string, string> = {
+        all: '¡Información completa generada con IA! Revisa los datos antes de guardar.',
+        synopsis: '¡Sinopsis generada con IA!',
+        cast: '¡Reparto completado con IA!',
+        directors: '¡Directores sugeridos con IA!',
+        genres_tags: '¡Géneros y tags sugeridos con IA!',
+        production: '¡Datos de producción completados con IA!',
+        info: '¡Información general completada con IA!',
+      };
+
+      message.success(successMsgs[scope] || '¡Campo autocompletado con IA!');
     } catch (error) {
       message.error(
         error instanceof Error ? error.message : 'Error al consultar la IA'
       );
     } finally {
-      setIsAutoCompleting(false);
+      setAiLoadingScope(null);
     }
   };
 
@@ -745,16 +766,26 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                 }}
               >
                 <span>📝 {t('seriesForm.sectionBasic')}</span>
-                <Button
-                  type="primary"
-                  ghost
-                  icon={<ThunderboltOutlined />}
-                  onClick={handleAiAutocomplete}
-                  loading={isAutoCompleting}
-                  size="small"
-                >
-                  Autocompletar con IA (Gemini)
-                </Button>
+                <Space wrap>
+                  <Button
+                    icon={<ThunderboltOutlined />}
+                    onClick={() => handleAiAutocomplete('info')}
+                    loading={aiLoadingScope === 'info'}
+                    size="small"
+                  >
+                    Completar info básica
+                  </Button>
+                  <Button
+                    type="primary"
+                    ghost
+                    icon={<ThunderboltOutlined />}
+                    onClick={() => handleAiAutocomplete('all')}
+                    loading={aiLoadingScope === 'all'}
+                    size="small"
+                  >
+                    Autocompletar todo con IA
+                  </Button>
+                </Space>
               </div>
             }
             style={{ marginBottom: 24 }}
@@ -971,7 +1002,28 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
 
               <Col xs={24} md={12}>
                 <Form.Item
-                  label={t('seriesForm.fieldProduction')}
+                  label={
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        width: '100%',
+                      }}
+                    >
+                      <span>{t('seriesForm.fieldProduction')}</span>
+                      <Button
+                        type="link"
+                        size="small"
+                        icon={<ThunderboltOutlined />}
+                        onClick={() => handleAiAutocomplete('production')}
+                        loading={aiLoadingScope === 'production'}
+                        style={{ padding: 0, fontSize: 12, height: 'auto' }}
+                      >
+                        Buscar productora/idioma con IA
+                      </Button>
+                    </div>
+                  }
                   name="productionCompanyName"
                   help={t('seriesForm.helpProduction')}
                 >
@@ -1009,7 +1061,28 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
 
               <Col xs={24} md={12}>
                 <Form.Item
-                  label={t('seriesForm.fieldGenres')}
+                  label={
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        width: '100%',
+                      }}
+                    >
+                      <span>{t('seriesForm.fieldGenres')}</span>
+                      <Button
+                        type="link"
+                        size="small"
+                        icon={<ThunderboltOutlined />}
+                        onClick={() => handleAiAutocomplete('genres_tags')}
+                        loading={aiLoadingScope === 'genres_tags'}
+                        style={{ padding: 0, fontSize: 12, height: 'auto' }}
+                      >
+                        Sugerir géneros y tags con IA
+                      </Button>
+                    </div>
+                  }
                   name="genres"
                   help={t('seriesForm.helpGenres')}
                 >
@@ -1026,7 +1099,28 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
 
               <Col xs={24}>
                 <Form.Item
-                  label={t('seriesForm.fieldSynopsis')}
+                  label={
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        width: '100%',
+                      }}
+                    >
+                      <span>{t('seriesForm.fieldSynopsis')}</span>
+                      <Button
+                        type="link"
+                        size="small"
+                        icon={<ThunderboltOutlined />}
+                        onClick={() => handleAiAutocomplete('synopsis')}
+                        loading={aiLoadingScope === 'synopsis'}
+                        style={{ padding: 0, fontSize: 12, height: 'auto' }}
+                      >
+                        Generar sinopsis con IA
+                      </Button>
+                    </div>
+                  }
                   name="synopsis"
                 >
                   <TextArea
@@ -1172,7 +1266,27 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
           {/* Reparto */}
           <Card
             type="inner"
-            title={`👥 ${t('seriesForm.sectionCast')}`}
+            title={
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: 8,
+                }}
+              >
+                <span>👥 {t('seriesForm.sectionCast')}</span>
+                <Button
+                  size="small"
+                  icon={<ThunderboltOutlined />}
+                  onClick={() => handleAiAutocomplete('cast')}
+                  loading={aiLoadingScope === 'cast'}
+                >
+                  Sugerir reparto con IA
+                </Button>
+              </div>
+            }
             style={{ marginBottom: 24 }}
           >
             {showSeasons && (
@@ -1261,7 +1375,27 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
           {/* Directores */}
           <Card
             type="inner"
-            title={`🎬 ${t('seriesForm.sectionDirectors')}`}
+            title={
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: 8,
+                }}
+              >
+                <span>🎬 {t('seriesForm.sectionDirectors')}</span>
+                <Button
+                  size="small"
+                  icon={<ThunderboltOutlined />}
+                  onClick={() => handleAiAutocomplete('directors')}
+                  loading={aiLoadingScope === 'directors'}
+                >
+                  Buscar directores con IA
+                </Button>
+              </div>
+            }
             style={{ marginBottom: 24 }}
           >
             <Form.List name="directors">
