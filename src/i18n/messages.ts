@@ -1471,6 +1471,8 @@ export type TranslationShape = {
     newsShort: string;
     feedback: string;
     feedbackShort: string;
+    suggestions: string;
+    suggestionsShort: string;
     info: string;
     infoShort: string;
     logs: string;
@@ -4053,6 +4055,8 @@ const es: TranslationShape = {
     newsShort: 'Notic.',
     feedback: 'Casos',
     feedbackShort: 'Casos',
+    suggestions: 'Sugerencias',
+    suggestionsShort: 'Suger.',
     info: 'Info',
     infoShort: 'Info',
     logs: 'Logs',
@@ -6665,6 +6669,8 @@ const en: TranslationShape = {
     newsShort: 'News',
     feedback: 'Cases',
     feedbackShort: 'Cases',
+    suggestions: 'Suggestions',
+    suggestionsShort: 'Suggs',
     info: 'Info',
     infoShort: 'Info',
     logs: 'Logs',

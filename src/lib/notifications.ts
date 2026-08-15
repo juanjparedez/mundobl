@@ -117,6 +117,51 @@ export async function notifyAdminsOfNewComment(
   }
 }
 
+interface NotifyAdminsSuggestionOpts {
+  suggestionId: number;
+  seriesId: number;
+  seriesTitle?: string;
+  authorName?: string | null;
+  suggestionType: string;
+  excerpt: string;
+}
+
+export async function notifyAdminsOfSuggestion(
+  opts: NotifyAdminsSuggestionOpts
+): Promise<void> {
+  try {
+    const admins = await prisma.user.findMany({
+      where: {
+        role: { in: ['ADMIN', 'MODERATOR'] },
+      },
+      select: { id: true },
+    });
+
+    if (admins.length === 0) return;
+
+    const linkPath = `/admin/series/${opts.seriesId}/editar`;
+    const author = opts.authorName || 'Un usuario de la comunidad';
+    const title = `💡 Sugerencia para ${opts.seriesTitle || 'una serie'}`;
+    const body = `${author} (${opts.suggestionType}): "${opts.excerpt}"`;
+
+    await Promise.all(
+      admins.map((admin) =>
+        notifyUser({
+          userId: admin.id,
+          type: 'admin_suggestion',
+          title,
+          body,
+          linkPath,
+          refType: 'admin_suggestion',
+          refId: opts.suggestionId,
+        })
+      )
+    );
+  } catch {
+    /* never block */
+  }
+}
+
 interface NotifyParentAuthorOpts {
   parentCommentId: number;
   currentCommentId: number;

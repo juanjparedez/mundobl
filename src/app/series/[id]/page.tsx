@@ -27,6 +27,7 @@ import { BackToCatalogButton } from '@/components/series/BackToCatalogButton/Bac
 import { ShareButton } from '@/components/common/ShareButton/ShareButton';
 import { WhereToWatch } from '@/components/common/WhereToWatch/WhereToWatch';
 import { SeriesSubscribeButton } from '@/components/series/SeriesSubscribeButton/SeriesSubscribeButton';
+import { SeriesSuggestionButton } from '@/components/series/SuggestionModal/SeriesSuggestionButton';
 import { auth } from '@/lib/auth';
 import { canEditCatalog } from '@/lib/auth-client';
 import type { TVSeries } from 'schema-dts';
@@ -278,6 +279,10 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
                 <SeriesSubscribeButton
                   seriesId={serie.id}
                   initialSubscribed={isSubscribed}
+                />
+                <SeriesSuggestionButton
+                  seriesId={serie.id}
+                  seriesTitle={serie.title}
                 />
                 <a
                   href="#series-section-reviews"
