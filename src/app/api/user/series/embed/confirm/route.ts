@@ -319,6 +319,9 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  const isAdmin = auth.role === 'ADMIN' || auth.role === 'MODERATOR';
+  const visibility = isAdmin ? 'VISIBLE' : 'PENDING_REVIEW';
+
   const newSeries = await prisma.series.create({
     data: {
       title: data.title,
@@ -328,7 +331,7 @@ export async function POST(request: NextRequest) {
       synopsis: data.synopsis,
       catalogScope: 'WATCHABLE_ONLY',
       origin: 'USER_EMBED',
-      visibility: 'VISIBLE',
+      visibility,
       submittedById: auth.userId,
       countryId,
       productionCompanyId,
@@ -337,36 +340,39 @@ export async function POST(request: NextRequest) {
     },
   });
 
-  // Actores
-  for (const actorName of data.actorNames) {
-    const actor = await findOrCreateActor(prisma, actorName);
-    if (!actor) continue;
-    await prisma.seriesActor.create({
-      data: {
-        seriesId: newSeries.id,
-        actorId: actor.id,
-        character: '',
-        isMain: false,
-      },
-    });
-  }
+  // Solo asociar actores/tags existentes si es usuario regular para no ensuciar el catalogo
+  if (isAdmin) {
+    // Actores
+    for (const actorName of data.actorNames) {
+      const actor = await findOrCreateActor(prisma, actorName);
+      if (!actor) continue;
+      await prisma.seriesActor.create({
+        data: {
+          seriesId: newSeries.id,
+          actorId: actor.id,
+          character: '',
+          isMain: false,
+        },
+      });
+    }
 
-  // Tags
-  for (const tagName of data.tagNames) {
-    const tag = await findOrCreateTag(prisma, tagName);
-    if (!tag) continue;
-    await prisma.seriesTag.create({
-      data: { seriesId: newSeries.id, tagId: tag.id },
-    });
-  }
+    // Tags
+    for (const tagName of data.tagNames) {
+      const tag = await findOrCreateTag(prisma, tagName);
+      if (!tag) continue;
+      await prisma.seriesTag.create({
+        data: { seriesId: newSeries.id, tagId: tag.id },
+      });
+    }
 
-  // Generos
-  for (const genreName of data.genreNames) {
-    const genre = await findOrCreateGenre(prisma, genreName);
-    if (!genre) continue;
-    await prisma.seriesGenre.create({
-      data: { seriesId: newSeries.id, genreId: genre.id },
-    });
+    // Generos
+    for (const genreName of data.genreNames) {
+      const genre = await findOrCreateGenre(prisma, genreName);
+      if (!genre) continue;
+      await prisma.seriesGenre.create({
+        data: { seriesId: newSeries.id, genreId: genre.id },
+      });
+    }
   }
 
   // Doblajes

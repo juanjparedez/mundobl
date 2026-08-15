@@ -6,18 +6,14 @@ interface RouteContext {
   params: Promise<{ id: string }>;
 }
 
-const ALLOWED = new Set(['VISIBLE', 'HIDDEN']);
+const ALLOWED = new Set(['VISIBLE', 'HIDDEN', 'PENDING_REVIEW', 'REJECTED']);
 
 /**
  * POST /api/admin/user-series/[id]/visibility
- * Body: { visibility: "VISIBLE" | "HIDDEN" }
- *
- * Solo aplica a series con origin='USER_EMBED'. Sirve para que Flor
- * oculte un aporte post-hoc sin borrarlo (el creador sigue viendolo
- * en /ver/[id]).
+ * Body: { visibility: "VISIBLE" | "HIDDEN" | "PENDING_REVIEW" | "REJECTED", adminNotes?: string }
  */
 export async function POST(request: NextRequest, context: RouteContext) {
-  const auth = await requireRole(['ADMIN']);
+  const auth = await requireRole(['ADMIN', 'MODERATOR']);
   if (!auth.authorized) return auth.response;
 
   const { id } = await context.params;
@@ -26,7 +22,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
     return NextResponse.json({ error: 'ID invalido.' }, { status: 400 });
   }
 
-  let body: { visibility?: string };
+  let body: { visibility?: string; adminNotes?: string };
   try {
     body = await request.json();
   } catch {
@@ -42,7 +38,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
   const existing = await prisma.series.findUnique({
     where: { id: seriesId },
-    select: { id: true, origin: true },
+    select: { id: true, title: true, origin: true, submittedById: true },
   });
   if (!existing) {
     return NextResponse.json(
@@ -60,10 +56,39 @@ export async function POST(request: NextRequest, context: RouteContext) {
     );
   }
 
-  await prisma.series.update({
+  const updated = await prisma.series.update({
     where: { id: seriesId },
     data: { visibility },
+    select: { id: true, title: true, visibility: true, submittedById: true },
   });
 
-  return NextResponse.json({ ok: true, visibility });
+  // Notificar al usuario que aportó la serie
+  if (updated.submittedById) {
+    if (visibility === 'VISIBLE') {
+      await prisma.notification.create({
+        data: {
+          userId: updated.submittedById,
+          type: 'series_approved',
+          title: '¡Tu serie sugerida fue aprobada!',
+          body: `Tu aporte "${updated.title}" fue aprobado y ya está disponible para ver en MundoBL.`,
+          linkPath: `/ver/${updated.id}`,
+          refType: 'series',
+          refId: String(updated.id),
+        },
+      }).catch(() => {});
+    } else if (visibility === 'REJECTED') {
+      await prisma.notification.create({
+        data: {
+          userId: updated.submittedById,
+          type: 'series_rejected',
+          title: 'Aporte no aprobado',
+          body: `Tu aporte "${updated.title}" no pudo ser publicado. ${body.adminNotes ? `Motivo: ${body.adminNotes}` : ''}`.trim(),
+          refType: 'series',
+          refId: String(updated.id),
+        },
+      }).catch(() => {});
+    }
+  }
+
+  return NextResponse.json({ ok: true, series: updated });
 }
