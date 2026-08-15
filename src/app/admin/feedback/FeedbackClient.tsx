@@ -35,8 +35,10 @@ interface FeedbackCase {
   title: string;
   description: string | null;
   type: string;
+  category?: string | null;
   status: Status;
   priority: Priority;
+  official?: boolean;
   createdAt: string;
   updatedAt: string;
   user: {
@@ -91,6 +93,16 @@ const PRIORITY_OPTIONS = [
   { label: 'Crítica', value: 'CRITICAL', color: 'red' },
 ];
 
+const CATEGORY_OPTIONS = [
+  { label: 'Todos los temas', value: 'ALL' },
+  { label: '⚙️ Backend', value: 'BACKEND' },
+  { label: '🖥️ Frontend', value: 'FRONTEND' },
+  { label: '📚 Catálogo', value: 'CATALOG' },
+  { label: '🎨 UI / UX', value: 'UI' },
+  { label: '🚀 Infra', value: 'INFRA' },
+  { label: '💬 General', value: 'GENERAL' },
+];
+
 const TYPE_ICONS: Record<string, React.ReactNode> = {
   bug: <BugOutlined />,
   feature: <PlusOutlined />,
@@ -112,7 +124,10 @@ export function FeedbackClient() {
   const [cases, setCases] = useState<FeedbackCase[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [status, setStatus] = useState<'ALL' | Status>('OPEN');
+  const [status, setStatus] = useState<'ACTIVE' | 'ALL' | Status>('ACTIVE');
+  const [category, setCategory] = useState<string>('ALL');
+  const [assignedToId, setAssignedToId] = useState<string>('ALL');
+  const [official, setOfficial] = useState<string>('ALL');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [detailCase, setDetailCase] = useState<FeedbackCase | null>(null);
@@ -126,6 +141,9 @@ export function FeedbackClient() {
         page: page.toString(),
         pageSize: PAGE_SIZE.toString(),
         status,
+        ...(category !== 'ALL' && { category }),
+        ...(assignedToId !== 'ALL' && { assignedToId }),
+        ...(official !== 'ALL' && { official }),
         ...(search && { search }),
       });
 
@@ -143,7 +161,7 @@ export function FeedbackClient() {
     } finally {
       setLoading(false);
     }
-  }, [page, status, search, message]);
+  }, [page, status, category, assignedToId, official, search, message]);
 
   useEffect(() => {
     loadCases();
@@ -203,6 +221,23 @@ export function FeedbackClient() {
     }
   };
 
+  const handleCategoryChange = async (caseId: number, newCategory: string) => {
+    try {
+      const res = await fetch('/api/admin/feedback', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: caseId, category: newCategory }),
+      });
+
+      if (!res.ok) throw new Error('Failed to update category');
+      message.success('Tema actualizado');
+      loadCases();
+    } catch (error) {
+      console.error('Error updating category:', error);
+      message.error('Error al actualizar tema');
+    }
+  };
+
   const handlePriorityChange = async (
     caseId: number,
     newPriority: Priority
@@ -242,17 +277,41 @@ export function FeedbackClient() {
       ),
     },
     {
+      title: 'Tema',
+      dataIndex: 'category',
+      width: 140,
+      render: (cat: string | null, record: FeedbackCase) => (
+        <Select
+          size="small"
+          value={cat || 'GENERAL'}
+          onChange={(val) => handleCategoryChange(record.id, val)}
+          style={{ width: '100%' }}
+          options={CATEGORY_OPTIONS.filter((c) => c.value !== 'ALL')}
+          onClick={(e) => e.stopPropagation()}
+        />
+      ),
+    },
+    {
       title: 'Título',
       dataIndex: 'title',
       width: 250,
       render: (text: string, record: FeedbackCase) => (
-        <a
-          onClick={() => setDetailCase(record)}
-          style={{ cursor: 'pointer' }}
-          title={text}
-        >
-          {text.length > 50 ? `${text.slice(0, 50)}...` : text}
-        </a>
+        <div>
+          <a
+            onClick={() => setDetailCase(record)}
+            style={{ cursor: 'pointer', fontWeight: 600 }}
+            title={text}
+          >
+            {text.length > 50 ? `${text.slice(0, 50)}...` : text}
+          </a>
+          {record.official && (
+            <div style={{ marginTop: 2 }}>
+              <Tag color="purple" style={{ fontSize: 10, padding: '0 4px' }}>
+                ⭐ Del equipo
+              </Tag>
+            </div>
+          )}
+        </div>
       ),
     },
     {
@@ -270,7 +329,9 @@ export function FeedbackClient() {
             <span>{record.user.name || email}</span>
           </Space>
         ) : (
-          <span style={{ color: '#999' }}>Anónimo</span>
+          <span style={{ color: '#999' }}>
+            {record.official ? 'Roadmap interno' : 'Anónimo'}
+          </span>
         ),
     },
     {
@@ -298,9 +359,9 @@ export function FeedbackClient() {
       title: 'Estado',
       dataIndex: 'status',
       width: 120,
-      render: (status: Status, record: FeedbackCase) => (
+      render: (statusVal: Status, record: FeedbackCase) => (
         <Select
-          value={status}
+          value={statusVal}
           onChange={(value) => handleStatusChange(record.id, value)}
           style={{ width: '100%' }}
           options={STATUS_OPTIONS}
@@ -338,7 +399,7 @@ export function FeedbackClient() {
         <AdminPageHero title="Casos de Feedback" />
 
         <div className="admin__content">
-          <div style={{ marginBottom: '1.5rem' }}>
+          <div style={{ marginBottom: '1rem' }}>
             <Input
               placeholder="Buscar por título o descripción..."
               allowClear
@@ -348,19 +409,70 @@ export function FeedbackClient() {
               style={{ marginBottom: '1rem' }}
             />
           </div>
-          <div className="admin__controls" style={{ marginBottom: '1.5rem' }}>
-            <Segmented<'ALL' | Status>
+          <div
+            className="admin__controls"
+            style={{
+              marginBottom: '1.5rem',
+              display: 'flex',
+              gap: 12,
+              flexWrap: 'wrap',
+              alignItems: 'center',
+            }}
+          >
+            <Segmented<'ACTIVE' | 'ALL' | Status>
               value={status}
               onChange={(value) => {
                 setStatus(value);
                 setPage(1);
               }}
               options={[
-                { label: 'Todos', value: 'ALL' as const },
+                { label: '🔥 Activos', value: 'ACTIVE' as const },
                 { label: 'Abiertos', value: 'OPEN' as const },
                 { label: 'En progreso', value: 'IN_PROGRESS' as const },
                 { label: 'Completados', value: 'COMPLETED' as const },
                 { label: 'Rechazados', value: 'REJECTED' as const },
+                { label: 'Todos', value: 'ALL' as const },
+              ]}
+            />
+
+            <Select
+              value={category}
+              onChange={(val) => {
+                setCategory(val);
+                setPage(1);
+              }}
+              style={{ width: 170 }}
+              options={CATEGORY_OPTIONS}
+            />
+
+            <Select
+              value={assignedToId}
+              onChange={(val) => {
+                setAssignedToId(val);
+                setPage(1);
+              }}
+              style={{ width: 190 }}
+              options={[
+                { label: 'Todas las asignaciones', value: 'ALL' },
+                { label: 'Sin asignar', value: 'UNASSIGNED' },
+                ...adminUsers.map((u) => ({
+                  label: `Asignado: ${u.name || u.email}`,
+                  value: u.id,
+                })),
+              ]}
+            />
+
+            <Select
+              value={official}
+              onChange={(val) => {
+                setOfficial(val);
+                setPage(1);
+              }}
+              style={{ width: 170 }}
+              options={[
+                { label: 'Todos los orígenes', value: 'ALL' },
+                { label: '⭐ Del equipo', value: 'true' },
+                { label: '👥 De comunidad', value: 'false' },
               ]}
             />
           </div>
