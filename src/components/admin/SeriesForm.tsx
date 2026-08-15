@@ -28,6 +28,7 @@ import {
   StarOutlined,
   StarFilled,
   ExclamationCircleOutlined,
+  ThunderboltOutlined,
 } from '@ant-design/icons/lib/icons';
 import Link from 'next/link';
 import { shouldShowSeasons, getContentTypeConfig } from '@/types/content';
@@ -235,6 +236,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
   const [uploading, setUploading] = useState(false);
   const imageUrl = Form.useWatch('imageUrl', form);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isAutoCompleting, setIsAutoCompleting] = useState(false);
 
   useEffect(() => {
     if (mode === 'edit' && initialData?.id) {
@@ -416,6 +418,100 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
       );
     } finally {
       setCreatingUniverse(false);
+    }
+  };
+
+  const handleAiAutocomplete = async () => {
+    const currentTitle = form.getFieldValue('title');
+    const currentOriginalTitle = form.getFieldValue('originalTitle');
+
+    if (!currentTitle?.trim() && !currentOriginalTitle?.trim()) {
+      message.warning(
+        'Escribe al menos el título de la serie para autocompletar con IA.'
+      );
+      return;
+    }
+
+    setIsAutoCompleting(true);
+    try {
+      const res = await fetch('/api/admin/series/ai-autocomplete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: currentTitle,
+          originalTitle: currentOriginalTitle,
+          year: form.getFieldValue('year'),
+          country: form.getFieldValue('countryName'),
+          type: form.getFieldValue('type'),
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Error al autocompletar con IA');
+      }
+
+      const updates: Record<string, unknown> = {};
+      if (data.title && !currentTitle) updates.title = data.title;
+      if (data.originalTitle && !currentOriginalTitle)
+        updates.originalTitle = data.originalTitle;
+      if (data.type) {
+        updates.type = data.type;
+        setSelectedType(data.type);
+      }
+      if (data.year) updates.year = data.year;
+      if (data.countryName) updates.countryName = data.countryName;
+      if (data.productionCompany)
+        updates.productionCompany = data.productionCompany;
+      if (data.originalLanguage)
+        updates.originalLanguage = data.originalLanguage;
+      if (data.basedOn && data.basedOn.length > 0)
+        updates.basedOn = data.basedOn;
+      if (data.synopsis) updates.synopsis = data.synopsis;
+      if (data.airDays && data.airDays.length > 0)
+        updates.airDays = data.airDays;
+      if (data.genres && data.genres.length > 0) updates.genres = data.genres;
+      if (data.tags && data.tags.length > 0) updates.tags = data.tags;
+      if (data.observations) updates.observations = data.observations;
+
+      // Autocompletar actores si la lista está vacía
+      const currentActors = form.getFieldValue('actors') || [];
+      if (currentActors.length === 0 && data.actors && data.actors.length > 0) {
+        updates.actors = data.actors.map(
+          (
+            a: { name: string; characterName?: string; isMain?: boolean },
+            idx: number
+          ) => ({
+            name: a.name,
+            character: a.characterName || '',
+            isMain: a.isMain ?? idx < 2,
+            pairingGroup: idx < 2 ? 1 : undefined,
+          })
+        );
+      }
+
+      // Autocompletar directores si la lista está vacía
+      const currentDirectors = form.getFieldValue('directors') || [];
+      if (
+        currentDirectors.length === 0 &&
+        data.directors &&
+        data.directors.length > 0
+      ) {
+        updates.directors = data.directors.map((d: { name: string }) => ({
+          name: d.name,
+        }));
+      }
+
+      form.setFieldsValue(updates);
+      message.success(
+        '¡Información completada con IA! Revisa los datos antes de guardar.'
+      );
+    } catch (error) {
+      message.error(
+        error instanceof Error ? error.message : 'Error al consultar la IA'
+      );
+    } finally {
+      setIsAutoCompleting(false);
     }
   };
 
@@ -638,7 +734,29 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
           {/* Información Básica */}
           <Card
             type="inner"
-            title={`📝 ${t('seriesForm.sectionBasic')}`}
+            title={
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: 8,
+                }}
+              >
+                <span>📝 {t('seriesForm.sectionBasic')}</span>
+                <Button
+                  type="primary"
+                  ghost
+                  icon={<ThunderboltOutlined />}
+                  onClick={handleAiAutocomplete}
+                  loading={isAutoCompleting}
+                  size="small"
+                >
+                  Autocompletar con IA (Gemini)
+                </Button>
+              </div>
+            }
             style={{ marginBottom: 24 }}
           >
             <Row gutter={16}>
