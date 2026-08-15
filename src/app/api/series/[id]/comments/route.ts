@@ -17,6 +17,8 @@ export async function GET(
   try {
     const session = await auth();
     const currentUserId = session?.user?.id;
+    const isAdminOrMod =
+      session?.user?.role === 'ADMIN' || session?.user?.role === 'MODERATOR';
 
     const { id } = await params;
     const seriesId = parseInt(id, 10);
@@ -71,7 +73,27 @@ export async function GET(
       },
     });
 
-    return NextResponse.json(comments);
+    // Sanitizar autor si es anónimo y el usuario no es admin/autor
+    const sanitizeComment = (c: typeof comments[0]) => {
+      const isAuthor = currentUserId && c.userId === currentUserId;
+      const hideIdentity = c.isAnonymous && !isAdminOrMod && !isAuthor;
+
+      return {
+        ...c,
+        user: hideIdentity ? null : c.user,
+        replies: c.replies?.map((r) => {
+          const isReplyAuthor = currentUserId && r.userId === currentUserId;
+          const hideReplyIdentity =
+            r.isAnonymous && !isAdminOrMod && !isReplyAuthor;
+          return {
+            ...r,
+            user: hideReplyIdentity ? null : r.user,
+          };
+        }),
+      };
+    };
+
+    return NextResponse.json(comments.map(sanitizeComment));
   } catch (error) {
     console.error('Error fetching series comments:', error);
     return NextResponse.json(
@@ -103,7 +125,7 @@ export async function POST(
     const resolvedParams = await params;
     const seriesId = parseInt(resolvedParams.id, 10);
     const body = await request.json();
-    const { content, isPrivate, parentId } = body;
+    const { content, isPrivate, isAnonymous, parentId } = body;
 
     if (!content || typeof content !== 'string' || content.trim() === '') {
       return NextResponse.json(
@@ -121,6 +143,7 @@ export async function POST(
         parentId: parsedParentId,
         content: content.trim(),
         isPrivate: isPrivate === true,
+        isAnonymous: isAnonymous === true,
         userId: authResult.userId,
       },
       include: {
@@ -154,7 +177,10 @@ export async function POST(
         where: { id: seriesId },
         select: { title: true },
       });
-      const authorName = formatPublicName(comment.user);
+      const rawAuthorName = formatPublicName(comment.user);
+      const authorName = comment.isAnonymous
+        ? `Anónimo (${rawAuthorName})`
+        : rawAuthorName;
       const excerpt = content.trim().slice(0, 80);
 
       // Notificar a los participantes del hilo
@@ -183,7 +209,7 @@ export async function POST(
           parentCommentId: parsedParentId,
           currentCommentId: comment.id,
           currentUserId: authResult.userId,
-          authorName,
+          authorName: comment.isAnonymous ? 'Un usuario anónimo' : rawAuthorName,
           seriesId,
           seriesTitle: series?.title,
           excerpt,
