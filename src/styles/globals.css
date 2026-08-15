@@ -122,6 +122,28 @@ body {
   background-color: var(--bg-layout);
 }
 
+/* ─── Universal Responsive Media Resets ───────────────────────────── */
+img,
+video,
+canvas,
+svg,
+iframe {
+  max-width: 100%;
+  height: auto;
+  box-sizing: border-box;
+}
+
+/* Prevenir desbordes horizontales accidentales en contenedores */
+.app-layout-main,
+.container,
+.main-content,
+.series-detail-page,
+.ver-page,
+.landing-page {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
 body {
   background-image:
     radial-gradient(

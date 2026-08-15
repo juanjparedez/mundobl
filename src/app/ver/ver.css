@@ -87,6 +87,29 @@
   gap: var(--spacing-md);
 }
 
+@media (max-width: 560px) {
+  .ver-page {
+    padding: var(--spacing-sm);
+  }
+
+  .ver-hero {
+    padding: var(--spacing-sm);
+  }
+
+  .ver-hero__title {
+    font-size: 1.5rem;
+  }
+
+  .ver-hero__subtitle {
+    font-size: 0.92rem;
+  }
+
+  .ver-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-sm);
+  }
+}
+
 .ver-card {
   display: flex;
   flex-direction: column;

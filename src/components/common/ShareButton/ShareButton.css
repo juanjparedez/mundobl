@@ -1,25 +1,67 @@
 .share-button {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: var(--spacing-xs);
-  min-height: 40px;
-  border-radius: var(--border-radius);
-  background: var(--bg-elevated);
-  border-color: var(--border-color-secondary);
+  gap: 6px;
 }
 
-.share-button--full {
-  width: 100%;
-  min-height: 56px;
+.share-modal__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
 }
 
-/* Variante compacta: boton circular icon-only para no robar atencion. */
-.share-button--compact {
-  width: 40px;
-  min-width: 40px;
-  height: 40px;
-  min-height: 40px;
-  border-radius: 999px;
-  padding: 0;
+.share-modal__content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 8px 0;
+}
+
+.share-modal__title {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-primary);
+  margin: 0;
+  text-align: center;
+}
+
+.share-modal__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.share-modal__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--border-radius-base);
+  text-decoration: none;
+  color: var(--text-primary);
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.share-modal__item:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
+
+.share-modal__copy-box {
+  margin-top: 4px;
+}
+
+.share-modal__input {
+  border-radius: var(--border-radius-base);
+}
+
+.share-modal__copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
 }

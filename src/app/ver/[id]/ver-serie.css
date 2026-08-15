@@ -219,3 +219,32 @@
     order: -1;
   }
 }
+
+@media (max-width: 560px) {
+  .ver-serie-page {
+    padding: var(--spacing-sm);
+    border-radius: var(--border-radius-base);
+  }
+
+  .ver-serie__header {
+    padding: var(--spacing-sm);
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-sm);
+  }
+
+  .ver-serie__title {
+    font-size: 1.25rem;
+    line-height: 1.25;
+  }
+
+  .ver-serie__header-actions {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 6px;
+  }
+
+  .ver-serie__episodes-grid {
+    grid-template-columns: 1fr;
+  }
+}
