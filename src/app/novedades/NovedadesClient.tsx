@@ -132,52 +132,34 @@ export function NovedadesClient({
                   {t('novedades.newSeriesTitle')}
                 </h2>
               </header>
-              <ul className="novedades-grid">
+              <div className="novedades-seasons-grid">
                 {newSeries.map((s) => (
-                  <li key={s.id} className="novedades-card">
-                    <Link
-                      href={`/series/${s.id}`}
-                      className="novedades-card__link"
-                    >
-                      <div className="novedades-card__cover">
-                        {s.imageUrl ? (
-                          <Image
-                            src={s.imageUrl}
-                            alt=""
-                            fill
-                            sizes="(max-width: 480px) 50vw, (max-width: 1024px) 33vw, 200px"
-                            quality={55}
-                            unoptimized={isSupabaseImageUrl(s.imageUrl)}
-                            style={{
-                              objectFit: 'cover',
-                              objectPosition: s.imagePosition || 'center',
-                            }}
-                          />
-                        ) : (
-                          <div className="novedades-card__cover-placeholder">
-                            <PlayCircleOutlined />
-                          </div>
-                        )}
-                      </div>
-                      <div className="novedades-card__body">
-                        <span className="novedades-card__title">{s.title}</span>
-                        <div className="novedades-card__meta">
-                          {s.country && (
-                            <span>
-                              <CountryFlag code={s.country.code} size="small" />{' '}
-                              {s.country.name}
-                            </span>
-                          )}
-                          {s.year && <span>{s.year}</span>}
-                        </div>
-                        <span className="novedades-card__when">
-                          <ClockCircleOutlined /> {relativeTime(s.createdAt, t)}
+                  <MediaCard
+                    key={s.id}
+                    href={`/series/${s.id}`}
+                    imageUrl={s.imageUrl}
+                    imageAlt={s.title}
+                    unoptimizedImage={
+                      s.imageUrl ? isSupabaseImageUrl(s.imageUrl) : false
+                    }
+                    title={s.title}
+                    overlayTags={
+                      s.country?.code ? (
+                        <span className="app-pill app-pill--info">
+                          <CountryFlag code={s.country.code} size="small" />{' '}
+                          {s.country.name}
                         </span>
-                      </div>
-                    </Link>
-                  </li>
+                      ) : undefined
+                    }
+                    subtitle={
+                      <span className="novedades-seasons-when">
+                        <ClockCircleOutlined /> {relativeTime(s.createdAt, t)}
+                        {s.year ? ` · ${s.year}` : ''}
+                      </span>
+                    }
+                  />
                 ))}
-              </ul>
+              </div>
             </section>
           )}
 
