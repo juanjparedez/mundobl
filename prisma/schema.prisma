@@ -605,7 +605,8 @@ model UserRating {
 model Comment {
   id          Int       @id @default(autoincrement())
   content     String
-  isPrivate   Boolean   @default(false) // true = solo visible para el autor
+  isPrivate   Boolean   @default(false) // Deprecado: conservado por retrocompatibilidad
+  isAnonymous Boolean   @default(false) // true = comentario publicado de forma anónima
   reportCount Int       @default(0)
   reportedAt  DateTime?
   createdAt   DateTime  @default(now())
