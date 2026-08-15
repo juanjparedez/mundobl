@@ -44,10 +44,33 @@ export async function POST(request: NextRequest) {
       ]);
 
     const countryNames = countries.map((c) => c.name).join(', ');
+    const genreNames = genres
+      .map((g) => g.name)
+      .slice(0, 20)
+      .join(', ');
+    const tagNames = tags
+      .map((t) => t.name)
+      .slice(0, 30)
+      .join(', ');
+    const companyNames = productionCompanies
+      .map((pc) => pc.name)
+      .slice(0, 20)
+      .join(', ');
+    const langNames = languages
+      .map((l) => l.name)
+      .slice(0, 15)
+      .join(', ');
 
     const systemInstruction = `Eres un asistente experto en series, películas y dramas asiáticos e internacionales (con especialización en dramas BL, GL, romances, dramas juveniles y producciones de Tailandia, Corea del Sur, Japón, Taiwán, China, Filipinas, etc.).
 
 Tu tarea es investigar la serie o película indicada y devolver un objeto JSON estructurado en español con datos verídicos y precisos.
+
+Sugerencias de catálogo existente:
+- Países: ${countryNames}
+- Géneros de referencia: ${genreNames}
+- Tags de referencia: ${tagNames}
+- Productoras de referencia: ${companyNames}
+- Idiomas: ${langNames}
 
 Formato JSON estricto requerido:
 {
