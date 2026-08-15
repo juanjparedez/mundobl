@@ -8,6 +8,21 @@ Todas las versiones notables del proyecto se documentan aqui.
 > (`ChangelogItem`, `/admin/changelog`) quedo como fallback solo si este archivo
 > esta vacio.
 
+## 2026-08 — Experiencia de reproducción, catálogo para ver y optimización mobile
+
+### Features
+
+- **Catálogo /ver ampliado y legal**: Importación de series BL oficiales completas desde YouTube (*My School President*, *A Tale of Thousand Stars*, *Vice Versa*, *Cooking Crush*, *Cupid's Last Wish*) con separación estricta de contextos (sin alterar el catálogo curado de Flor ni crear etiquetas/actores automáticos).
+- **Autocompletado con IA (Gemini) On-Demand por campo**: En el alta de series, Flor ahora puede solicitar asistencia de IA de forma granular sobre Sinopsis, Reparto, Directores, Géneros/Tags, Producción o Info Básica sin pisar lo completado a mano.
+- **Botón Compartir Inteligente**: Integración de Web Share API en dispositivos móviles (para enviar a WhatsApp, Instagram, Telegram en 1 toque) y modal desktop con enlaces directos y copiado rápido de URL.
+- **Skeletons de Carga Fluidos**: Nuevos esqueletos de carga accesibles (`loading.tsx`) en `/`, `/ver`, `/ver/[id]`, `/novedades` y `/feedback` para eliminar pantallas blancas y saltos de layout (CLS).
+
+### Fixes
+
+- **Reproductor de Video /ver**: Corrección en la resolución automática de IDs de video de YouTube para episodios embebidos y backfill en la base de datos.
+- **Responsividad Mobile Integral**: El póster hero ya no ocupa el 65% de la altura vertical de la pantalla en teléfonos; la grilla de `/ver` adopta un layout de 2 columnas tipo streaming para navegación fluida y se aplicaron reglas globales de prevención de desbordes (`overflow-x`).
+- **Feedback & Tareas**: Categorización de solicitudes por tema (Frontend, Backend, Catálogo, Infra, UI, General) y filtro de asignaciones.
+
 ## 2026-07 — Seguridad, performance y mejoras de feedback
 
 ### Seguridad
