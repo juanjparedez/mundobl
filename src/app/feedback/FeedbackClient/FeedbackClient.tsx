@@ -71,6 +71,7 @@ interface FeatureRequest {
   title: string;
   description: string | null;
   type: string;
+  category?: string | null;
   status: string;
   priority: string;
   createdAt: string;
@@ -174,6 +175,7 @@ export function FeedbackClient() {
   const [typeFilter, setTypeFilter] = useState<Set<string>>(
     new Set(['bug', 'feature', 'idea'])
   );
+  const [categoryFilter, setCategoryFilter] = useState<string>('ALL');
   const [statusFilter, setStatusFilter] = useState<Set<string>>(
     new Set(['OPEN', 'IN_PROGRESS'])
   );
@@ -540,11 +542,25 @@ export function FeedbackClient() {
         new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
     );
 
+  const CATEGORY_MAP: Record<string, { label: string; color: string }> = {
+    BACKEND: { label: '⚙️ Backend', color: 'blue' },
+    FRONTEND: { label: '🖥️ Frontend', color: 'cyan' },
+    CATALOG: { label: '📚 Catálogo', color: 'purple' },
+    UI: { label: '🎨 UI / UX', color: 'magenta' },
+    INFRA: { label: '🚀 Infra', color: 'green' },
+    GENERAL: { label: '💬 General', color: 'default' },
+  };
+
   const filteredRequests = useMemo(() => {
     const q = searchQuery.trim().toLowerCase();
     const filtered = requests.filter((r) => {
       if (!typeFilter.has(r.type)) return false;
       if (!statusFilter.has(r.status)) return false;
+      if (
+        categoryFilter !== 'ALL' &&
+        (r.category || 'GENERAL') !== categoryFilter
+      )
+        return false;
       if (q) {
         const hay = `${r.title} ${r.description ?? ''}`.toLowerCase();
         if (!hay.includes(q)) return false;
@@ -565,10 +581,11 @@ export function FeedbackClient() {
           );
       }
     });
-  }, [requests, searchQuery, typeFilter, statusFilter, sortBy]);
+  }, [requests, searchQuery, typeFilter, categoryFilter, statusFilter, sortBy]);
 
   const hasActiveFilter =
     searchQuery.trim().length > 0 ||
+    categoryFilter !== 'ALL' ||
     typeFilter.size !== 3 ||
     statusFilter.size !== 2 ||
     !statusFilter.has('OPEN') ||
@@ -588,6 +605,11 @@ export function FeedbackClient() {
               {request.official && (
                 <Tag icon={<TeamOutlined />} color="gold">
                   {t('feedback.officialBadge')}
+                </Tag>
+              )}
+              {request.category && request.category !== 'GENERAL' && (
+                <Tag color={CATEGORY_MAP[request.category]?.color || 'default'}>
+                  {CATEGORY_MAP[request.category]?.label || request.category}
                 </Tag>
               )}
               <Tag icon={typeConfig.icon} color={typeConfig.color}>
@@ -821,6 +843,32 @@ export function FeedbackClient() {
               allowClear
               className="feedback-toolbar__search"
             />
+
+            <div className="feedback-toolbar__group">
+              <span className="feedback-toolbar__label">Tema:</span>
+              {[
+                { value: 'ALL', label: 'Todos' },
+                { value: 'BACKEND', label: '⚙️ Backend' },
+                { value: 'FRONTEND', label: '🖥️ Frontend' },
+                { value: 'CATALOG', label: '📚 Catálogo' },
+                { value: 'UI', label: '🎨 UI / UX' },
+                { value: 'INFRA', label: '🚀 Infra' },
+              ].map((cat) => {
+                const active = categoryFilter === cat.value;
+                return (
+                  <Chip
+                    key={cat.value}
+                    size="sm"
+                    tone={active ? 'accent' : 'neutral'}
+                    outline={!active}
+                    pressed={active}
+                    onClick={() => setCategoryFilter(cat.value)}
+                  >
+                    {cat.label}
+                  </Chip>
+                );
+              })}
+            </div>
 
             <div className="feedback-toolbar__group">
               <span className="feedback-toolbar__label">

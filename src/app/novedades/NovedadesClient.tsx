@@ -242,48 +242,61 @@ export function NovedadesClient({
                       key={entry.version}
                       className="novedades-changelog__entry"
                     >
-                      <header className="novedades-changelog__version">
-                        {entry.version}
+                      <header className="novedades-changelog__header">
+                        <span className="novedades-changelog__version">
+                          {entry.version}
+                        </span>
                       </header>
-                      {Array.from(grouped.entries()).map(([cat, items]) => (
-                        <div key={cat} className="novedades-changelog__group">
-                          {cat !== '_' && (
-                            <h4 className="novedades-changelog__category">
-                              {cat}
-                            </h4>
-                          )}
-                          <ul className="novedades-changelog__items">
-                            {items.map((item, i) => (
-                              <li key={i}>
-                                <div className="novedades-changelog__body">
-                                  <ReactMarkdown
-                                    components={{
-                                      // Forzar links external safe
-                                      a: ({ href, children }) => (
-                                        <a
-                                          href={href}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                        >
-                                          {children}
-                                        </a>
-                                      ),
-                                      // Headers internos del body se
-                                      // bajan a h5 para no chocar con la
-                                      // jerarquia del entry (h3/h4).
-                                      h1: ({ children }) => <h5>{children}</h5>,
-                                      h2: ({ children }) => <h5>{children}</h5>,
-                                      h3: ({ children }) => <h5>{children}</h5>,
-                                    }}
-                                  >
-                                    {item.body}
-                                  </ReactMarkdown>
-                                </div>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))}
+                      <div className="novedades-changelog__content">
+                        {Array.from(grouped.entries()).map(([cat, items]) => (
+                          <div key={cat} className="novedades-changelog__group">
+                            {cat !== '_' && (
+                              <div className="novedades-changelog__category">
+                                <span
+                                  className={`novedades-changelog__cat-badge novedades-changelog__cat-badge--${cat
+                                    .toLowerCase()
+                                    .replace(/[^a-z0-9]/g, '')}`}
+                                >
+                                  {cat}
+                                </span>
+                              </div>
+                            )}
+                            <ul className="novedades-changelog__items">
+                              {items.map((item, i) => (
+                                <li key={i}>
+                                  <div className="novedades-changelog__body">
+                                    <ReactMarkdown
+                                      components={{
+                                        // Forzar links external safe
+                                        a: ({ href, children }) => (
+                                          <a
+                                            href={href}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                          >
+                                            {children}
+                                          </a>
+                                        ),
+                                        h1: ({ children }) => (
+                                          <h5>{children}</h5>
+                                        ),
+                                        h2: ({ children }) => (
+                                          <h5>{children}</h5>
+                                        ),
+                                        h3: ({ children }) => (
+                                          <h5>{children}</h5>
+                                        ),
+                                      }}
+                                    >
+                                      {item.body}
+                                    </ReactMarkdown>
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ))}
+                      </div>
                     </article>
                   );
                 })}

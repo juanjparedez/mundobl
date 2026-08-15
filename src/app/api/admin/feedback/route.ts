@@ -40,15 +40,38 @@ export async function GET(request: NextRequest) {
     if (!result.authorized) return result.response;
 
     const searchParams = request.nextUrl.searchParams;
-    const status = searchParams.get('status') || 'OPEN';
+    const status = searchParams.get('status') || 'ACTIVE';
+    const category = searchParams.get('category');
+    const assignedToId = searchParams.get('assignedToId');
+    const official = searchParams.get('official');
     const page = parseInt(searchParams.get('page') || '1', 10);
     const pageSize = parseInt(searchParams.get('pageSize') || '50', 10);
     const search = searchParams.get('search') || '';
 
     const where: Prisma.FeatureRequestWhereInput = {};
 
-    if (status !== 'ALL' && VALID_STATUSES.includes(status)) {
+    if (status === 'ACTIVE') {
+      where.status = { in: ['OPEN', 'IN_PROGRESS'] };
+    } else if (status !== 'ALL' && VALID_STATUSES.includes(status)) {
       where.status = status as Prisma.FeatureRequestWhereInput['status'];
+    }
+
+    if (category && category !== 'ALL') {
+      where.category = category;
+    }
+
+    if (assignedToId) {
+      if (assignedToId === 'UNASSIGNED') {
+        where.assignedToId = null;
+      } else if (assignedToId !== 'ALL') {
+        where.assignedToId = assignedToId;
+      }
+    }
+
+    if (official === 'true') {
+      where.official = true;
+    } else if (official === 'false') {
+      where.official = false;
     }
 
     if (search.trim()) {
@@ -61,7 +84,7 @@ export async function GET(request: NextRequest) {
     const [cases, total] = await Promise.all([
       prisma.featureRequest.findMany({
         where,
-        orderBy: { createdAt: 'desc' },
+        orderBy: [{ priority: 'desc' }, { createdAt: 'desc' }],
         skip: (page - 1) * pageSize,
         take: pageSize,
         include: CASE_INCLUDE,
@@ -90,7 +113,7 @@ export async function PATCH(request: NextRequest) {
     if (!result.authorized) return result.response;
 
     const body = await request.json();
-    const { id, status, priority, assignedToId } = body;
+    const { id, status, priority, assignedToId, category } = body;
 
     if (!id) {
       return NextResponse.json({ error: 'ID is required' }, { status: 400 });
@@ -114,6 +137,9 @@ export async function PATCH(request: NextRequest) {
         );
       }
       updateData.priority = priority;
+    }
+    if (category !== undefined) {
+      updateData.category = category || 'GENERAL';
     }
     if (assignedToId !== undefined)
       updateData.assignedToId = assignedToId || null;
