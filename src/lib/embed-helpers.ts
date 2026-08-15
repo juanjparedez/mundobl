@@ -151,12 +151,14 @@ export function getEmbedInfo(
   url: string,
   videoId: string | null
 ): EmbedInfo {
+  const resolvedId = videoId || (url ? extractVideoId(platform, url) : null);
+
   switch (platform) {
     case 'YouTube':
       return {
         type: 'iframe',
-        url: videoId
-          ? `https://www.youtube-nocookie.com/embed/${videoId}?rel=0`
+        url: resolvedId
+          ? `https://www.youtube-nocookie.com/embed/${resolvedId}?rel=0`
           : null,
         originalUrl: url,
         platform,
@@ -164,8 +166,8 @@ export function getEmbedInfo(
     case 'Bilibili':
       return {
         type: 'iframe',
-        url: videoId
-          ? `https://player.bilibili.com/player.html?bvid=${videoId}&autoplay=0`
+        url: resolvedId
+          ? `https://player.bilibili.com/player.html?bvid=${resolvedId}&autoplay=0`
           : null,
         originalUrl: url,
         platform,
@@ -173,15 +175,15 @@ export function getEmbedInfo(
     case 'Vimeo':
       return {
         type: 'iframe',
-        url: videoId ? `https://player.vimeo.com/video/${videoId}` : null,
+        url: resolvedId ? `https://player.vimeo.com/video/${resolvedId}` : null,
         originalUrl: url,
         platform,
       };
     case 'Dailymotion':
       return {
         type: 'iframe',
-        url: videoId
-          ? `https://www.dailymotion.com/embed/video/${videoId}`
+        url: resolvedId
+          ? `https://www.dailymotion.com/embed/video/${resolvedId}`
           : null,
         originalUrl: url,
         platform,
@@ -189,7 +191,7 @@ export function getEmbedInfo(
     case 'Spotify':
       return {
         type: 'iframe',
-        url: videoId ? `https://open.spotify.com/embed/${videoId}` : null,
+        url: resolvedId ? `https://open.spotify.com/embed/${resolvedId}` : null,
         originalUrl: url,
         platform,
       };
