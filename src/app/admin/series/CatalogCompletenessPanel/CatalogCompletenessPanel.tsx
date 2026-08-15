@@ -22,6 +22,7 @@ const FIELD_LABEL: Record<CompletenessField, string> = {
   review: 'Reseña',
   tags: 'Tags',
   soundtrack: 'OST',
+  airDays: 'Días de emisión',
   cast: 'Reparto',
 };
 

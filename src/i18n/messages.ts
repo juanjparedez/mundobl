@@ -2485,6 +2485,7 @@ export type TranslationShape = {
       review: string;
       tags: string;
       soundtrack: string;
+      airDays: string;
       cast: string;
     };
   };
@@ -5110,6 +5111,7 @@ const es: TranslationShape = {
       review: 'Reseña',
       tags: 'Tags (≥3)',
       soundtrack: 'Banda sonora',
+      airDays: 'Días de emisión',
       cast: 'Cast',
     },
   },
@@ -7716,6 +7718,7 @@ const en: TranslationShape = {
       review: 'Review',
       tags: 'Tags (≥3)',
       soundtrack: 'Soundtrack',
+      airDays: 'Air days',
       cast: 'Cast',
     },
   },
