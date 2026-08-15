@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Button, Empty, Modal, Select, Table, Tag, Tooltip } from 'antd';
+import { Button, Empty, Modal, Select, Table, Tag, Tooltip, Segmented } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import {
   DeleteOutlined,
@@ -44,6 +44,7 @@ export function UserSubmittedClient({ items: initial }: Props) {
   const router = useRouter();
   const message = useMessage();
   const [items, setItems] = useState(initial);
+  const [statusFilter, setStatusFilter] = useState<string>('all');
   const [linkTarget, setLinkTarget] = useState<UserSubmittedRow | null>(null);
   const [linkOptions, setLinkOptions] = useState<CuratedOption[]>([]);
   const [linkLoading, setLinkLoading] = useState(false);
@@ -54,8 +55,7 @@ export function UserSubmittedClient({ items: initial }: Props) {
     router.refresh();
   }
 
-  async function toggleVisibility(row: UserSubmittedRow) {
-    const next = row.visibility === 'VISIBLE' ? 'HIDDEN' : 'VISIBLE';
+  async function setVisibilityStatus(row: UserSubmittedRow, next: string) {
     try {
       const res = await fetch(`/api/admin/user-series/${row.id}/visibility`, {
         method: 'POST',
@@ -70,11 +70,15 @@ export function UserSubmittedClient({ items: initial }: Props) {
       setItems((prev) =>
         prev.map((i) => (i.id === row.id ? { ...i, visibility: next } : i))
       );
-      message.success(
-        next === 'HIDDEN'
-          ? 'Aporte ocultado de /ver.'
-          : 'Aporte visible en /ver.'
-      );
+      if (next === 'VISIBLE') {
+        message.success('Aporte aprobado y publicado en /ver.');
+      } else if (next === 'REJECTED') {
+        message.success('Aporte marcado como rechazado.');
+      } else if (next === 'HIDDEN') {
+        message.success('Aporte ocultado de /ver.');
+      } else {
+        message.success('Visibilidad actualizada.');
+      }
     } catch (err) {
       console.error(err);
       message.error('Error al cambiar la visibilidad.');
@@ -248,12 +252,18 @@ export function UserSubmittedClient({ items: initial }: Props) {
     {
       title: 'Visibilidad',
       key: 'visibility',
-      render: (_, row) =>
-        row.visibility === 'VISIBLE' ? (
-          <Tag color="green">Visible</Tag>
-        ) : (
-          <Tag color="red">Oculta</Tag>
-        ),
+      render: (_, row) => {
+        if (row.visibility === 'PENDING_REVIEW') {
+          return <Tag color="orange">⏳ Pendiente</Tag>;
+        }
+        if (row.visibility === 'VISIBLE') {
+          return <Tag color="green">✓ Visible</Tag>;
+        }
+        if (row.visibility === 'REJECTED') {
+          return <Tag color="red">✗ Rechazada</Tag>;
+        }
+        return <Tag color="default">Oculta</Tag>;
+      },
     },
     {
       title: 'Fecha',
@@ -265,28 +275,58 @@ export function UserSubmittedClient({ items: initial }: Props) {
     {
       title: 'Acciones',
       key: 'actions',
-      width: 200,
+      width: 220,
       render: (_, row) => (
-        <div style={{ display: 'flex', gap: 4 }}>
-          <Tooltip
-            title={
-              row.visibility === 'VISIBLE'
-                ? 'Ocultar de /ver'
-                : 'Hacer visible en /ver'
-            }
-          >
-            <Button
-              size="small"
-              icon={
-                row.visibility === 'VISIBLE' ? (
-                  <EyeInvisibleOutlined />
-                ) : (
-                  <EyeOutlined />
-                )
+        <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+          {row.visibility === 'PENDING_REVIEW' && (
+            <>
+              <Tooltip title="Aprobar y publicar en /ver">
+                <Button
+                  size="small"
+                  type="primary"
+                  style={{ background: '#52c41a', borderColor: '#52c41a' }}
+                  onClick={() => setVisibilityStatus(row, 'VISIBLE')}
+                >
+                  Aprobar
+                </Button>
+              </Tooltip>
+              <Tooltip title="Rechazar aporte">
+                <Button
+                  size="small"
+                  danger
+                  onClick={() => setVisibilityStatus(row, 'REJECTED')}
+                >
+                  Rechazar
+                </Button>
+              </Tooltip>
+            </>
+          )}
+          {row.visibility !== 'PENDING_REVIEW' && (
+            <Tooltip
+              title={
+                row.visibility === 'VISIBLE'
+                  ? 'Ocultar de /ver'
+                  : 'Hacer visible en /ver'
               }
-              onClick={() => toggleVisibility(row)}
-            />
-          </Tooltip>
+            >
+              <Button
+                size="small"
+                icon={
+                  row.visibility === 'VISIBLE' ? (
+                    <EyeInvisibleOutlined />
+                  ) : (
+                    <EyeOutlined />
+                  )
+                }
+                onClick={() =>
+                  setVisibilityStatus(
+                    row,
+                    row.visibility === 'VISIBLE' ? 'HIDDEN' : 'VISIBLE'
+                  )
+                }
+              />
+            </Tooltip>
+          )}
           <Tooltip title="Linkear con una serie del catalogo">
             <Button
               size="small"
@@ -307,6 +347,18 @@ export function UserSubmittedClient({ items: initial }: Props) {
     },
   ];
 
+  const pendingCount = items.filter((i) => i.visibility === 'PENDING_REVIEW').length;
+  const visibleCount = items.filter((i) => i.visibility === 'VISIBLE').length;
+  const hiddenCount = items.filter((i) => i.visibility === 'HIDDEN' || i.visibility === 'REJECTED').length;
+
+  const filteredItems = items.filter((i) => {
+    if (statusFilter === 'all') return true;
+    if (statusFilter === 'pending') return i.visibility === 'PENDING_REVIEW';
+    if (statusFilter === 'visible') return i.visibility === 'VISIBLE';
+    if (statusFilter === 'hidden') return i.visibility === 'HIDDEN' || i.visibility === 'REJECTED';
+    return true;
+  });
+
   return (
     <div
       style={{ padding: 'var(--spacing-md)', maxWidth: 1400, margin: '0 auto' }}
@@ -314,16 +366,33 @@ export function UserSubmittedClient({ items: initial }: Props) {
       <h1>Aportes de usuarios</h1>
       <p style={{ color: 'var(--text-secondary)' }}>
         Series embebidas agregadas por usuarios registrados desde /ver/agregar.
-        Podés ocultarlas, borrarlas o linkearlas con una serie del catálogo
+        Podés aprobar aportes pendientes, ocultarlas, borrarlas o linkearlas con una serie del catálogo
         curado (los episodios se fusionan al destino).
       </p>
 
-      {items.length === 0 ? (
-        <Empty description="Todavía no hay aportes de usuarios" />
+      <div style={{ marginBottom: 16 }}>
+        <Segmented
+          value={statusFilter}
+          onChange={(val) => setStatusFilter(val as string)}
+          options={[
+            { label: `Todos (${items.length})`, value: 'all' },
+            {
+              label: `Pendientes (${pendingCount})`,
+              value: 'pending',
+              disabled: false,
+            },
+            { label: `Visibles (${visibleCount})`, value: 'visible' },
+            { label: `Ocultas / Rechazadas (${hiddenCount})`, value: 'hidden' },
+          ]}
+        />
+      </div>
+
+      {filteredItems.length === 0 ? (
+        <Empty description="No hay aportes con este filtro" />
       ) : (
         <Table
           rowKey="id"
-          dataSource={items}
+          dataSource={filteredItems}
           columns={columns}
           pagination={{ pageSize: 20, showSizeChanger: true }}
         />
