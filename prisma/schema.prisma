@@ -824,6 +824,7 @@ model FeatureRequest {
   title       String
   description String?
   type        String // "bug", "feature", "idea"
+  category    String?                @default("GENERAL") // "FRONTEND", "BACKEND", "CATALOG", "INFRA", "UI", "GENERAL"
   status      FeatureRequestStatus   @default(OPEN)
   priority    FeatureRequestPriority @default(MEDIUM)
   // true = item del roadmap/equipo (sembrado por seed-feature-requests.ts,

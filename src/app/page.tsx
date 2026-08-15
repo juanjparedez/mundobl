@@ -3,6 +3,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import type { WebSite } from 'schema-dts';
 import { LandingPage } from './LandingPage/LandingPage';
 import { prisma } from '@/lib/database';
+import { getAutoThumbnailUrl, type Platform } from '@/lib/embed-helpers';
 
 export const revalidate = 300; // revalidar stats cada 5 min
 
@@ -82,9 +83,43 @@ async function getLandingStats() {
           year: true,
           type: true,
           country: { select: { name: true, code: true } },
+          seasons: {
+            select: {
+              episodes: {
+                where: { embedUrl: { not: null } },
+                select: { embedPlatform: true, embedUrl: true },
+                take: 1,
+              },
+            },
+          },
         },
       }),
     ]);
+
+    const formattedWatchable = watchableSeries.map((s) => {
+      let imageUrl = s.imageUrl;
+      if (!imageUrl) {
+        const firstWithEmbed = s.seasons
+          .flatMap((season) => season.episodes)
+          .find((e) => e.embedPlatform && e.embedUrl);
+        if (firstWithEmbed) {
+          imageUrl = getAutoThumbnailUrl(
+            firstWithEmbed.embedPlatform as Platform,
+            firstWithEmbed.embedUrl as string
+          );
+        }
+      }
+      return {
+        id: s.id,
+        title: s.title,
+        imageUrl,
+        imagePosition: s.imagePosition,
+        year: s.year,
+        type: s.type,
+        country: s.country,
+      };
+    });
+
     return {
       totalSeries,
       totalCompletedViews,
@@ -92,7 +127,7 @@ async function getLandingStats() {
       totalReviews,
       latestSeries,
       featuredReview,
-      watchableSeries,
+      watchableSeries: formattedWatchable,
     };
   } catch {
     return {

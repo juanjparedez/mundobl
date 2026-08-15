@@ -173,59 +173,96 @@
   gap: 4px;
 }
 
-/* Changelog: cada version es una fila. Dentro de la fila, los grupos de
- * categoria se renderizan en multi-columna (auto-fill) para que las
- * Features/Fixes/SEO/Seguridad no ocupen 4 alturas de scroll cada una. */
+/* Changelog: cada version es una card limpia con badge de categoria y bullets ordenados */
 .novedades-changelog {
   display: flex;
   flex-direction: column;
-  background: var(--bg-spotlight);
-  border: 1px solid var(--border-color-secondary);
-  border-radius: var(--border-radius-base);
-  overflow: hidden;
+  gap: 16px;
 }
 
 .novedades-changelog__entry {
-  display: grid;
-  grid-template-columns: minmax(72px, max-content) 1fr;
-  gap: 10px;
-  padding: 6px 10px;
-  border-bottom: 1px solid var(--border-color-secondary);
+  background: var(--bg-container);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
-.novedades-changelog__entry:last-child {
-  border-bottom: none;
+.novedades-changelog__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--border-color-split, rgba(255, 255, 255, 0.06));
+  padding-bottom: 10px;
 }
 
 .novedades-changelog__version {
-  font-weight: 600;
-  font-size: 11px;
+  font-weight: 700;
+  font-size: 14px;
   color: var(--primary-color);
   font-family: var(--font-mono, ui-monospace, monospace);
-  align-self: start;
-  padding-top: 2px;
-  word-break: break-all;
+  letter-spacing: -0.01em;
 }
 
-/* Wrapper de los grupos: multi-columna para densificar. */
-.novedades-changelog__entry > :nth-child(2n) {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 12px 16px;
+.novedades-changelog__content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .novedades-changelog__group {
-  margin: 0;
-  break-inside: avoid;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .novedades-changelog__category {
-  margin: 0 0 2px;
-  font-size: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.novedades-changelog__cat-badge {
+  display: inline-block;
+  font-size: 11px;
   font-weight: 700;
-  color: var(--primary-color);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+  color: var(--primary-color);
+}
+
+.novedades-changelog__cat-badge--seguridad {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
+
+.novedades-changelog__cat-badge--features {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+}
+
+.novedades-changelog__cat-badge--fixes {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+}
+
+.novedades-changelog__cat-badge--performance {
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+}
+
+.novedades-changelog__cat-badge--ux {
+  background: rgba(217, 70, 239, 0.15);
+  color: #e879f9;
+}
+
+.novedades-changelog__cat-badge--infra {
+  background: rgba(99, 102, 241, 0.15);
+  color: #818cf8;
 }
 
 .novedades-changelog__items {
@@ -234,19 +271,27 @@
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 8px;
   color: var(--text-secondary);
-  font-size: 12px;
-  line-height: 1.4;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .novedades-changelog__items li {
-  padding: 1px 0;
+  position: relative;
+  padding-left: 16px;
 }
 
-/* Body de cada item renderizado con react-markdown: bullets, bolds,
- * links, headers. Resets de margin para que se vea compacto dentro de
- * la card de changelog. */
+.novedades-changelog__items li::before {
+  content: '•';
+  position: absolute;
+  left: 2px;
+  top: 0;
+  color: var(--primary-color);
+  font-weight: bold;
+  font-size: 14px;
+}
+
 .novedades-changelog__body > * {
   margin: 0;
 }
@@ -257,7 +302,7 @@
 
 .novedades-changelog__body p {
   margin: 0;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 .novedades-changelog__body strong {
@@ -297,18 +342,7 @@
 
 .novedades-changelog__body h5 {
   margin: 4px 0 2px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--text-primary);
-}
-
-@media (max-width: 540px) {
-  .novedades-changelog__entry {
-    grid-template-columns: 1fr;
-    gap: 4px;
-  }
-  .novedades-changelog__entry > :nth-child(2n) {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
 }
