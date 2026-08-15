@@ -276,49 +276,45 @@
     align-items: stretch;
     gap: 0;
     padding: 0;
-    border-radius: 0;
-    border: none;
-    background: transparent;
+    border-radius: var(--border-radius-lg);
+    background: color-mix(in srgb, var(--bg-elevated) 70%, transparent);
+    border: 1px solid var(--border-color-secondary);
   }
 
-  /* Poster: full-width cinematic hero on top */
+  /* Poster: compact, high-quality centered portrait card */
   .series-header__aside {
-    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    padding: var(--spacing-md) var(--spacing-md) 0;
     margin: 0;
   }
 
   .series-header__image {
-    width: 100%;
+    width: 180px;
+    max-width: 60vw;
     aspect-ratio: 2 / 3;
-    max-height: 65vh;
-    border-radius: 0;
-    box-shadow: none;
-    -webkit-mask-image: linear-gradient(
-      to bottom,
-      black 0%,
-      black 72%,
-      transparent 100%
-    );
-    mask-image: linear-gradient(
-      to bottom,
-      black 0%,
-      black 72%,
-      transparent 100%
-    );
+    max-height: 270px;
+    border-radius: var(--border-radius-base);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
+    -webkit-mask-image: none;
+    mask-image: none;
   }
 
-  /* Content slides up under the poster's fade */
+  /* Content centered below poster */
   .series-header__content {
     gap: var(--spacing-sm);
-    padding: 0 var(--spacing-md) var(--spacing-md);
-    margin-top: -8vh;
+    padding: var(--spacing-sm) var(--spacing-md) var(--spacing-md);
+    margin-top: 0;
     position: relative;
     z-index: 1;
+    text-align: center;
+    align-items: center;
   }
 
   .series-header__title {
     font-size: 1.45rem;
-    line-height: 1.2;
+    line-height: 1.25;
+    word-break: break-word;
   }
 
   .series-header__original-title {
@@ -327,13 +323,14 @@
 
   .series-header__meta {
     gap: 6px;
+    justify-content: center;
   }
 
   .series-header__synopsis {
-    /* Mantener padding horizontal: si quedaba en 0 el texto se pegaba al
-     * borde del card y el background del synopsis no se notaba. */
-    padding: var(--spacing-sm) var(--spacing-sm);
+    padding: var(--spacing-sm);
     margin-top: 0;
+    text-align: left;
+    width: 100%;
   }
 
   .series-header__synopsis p {
@@ -347,6 +344,8 @@
 
   .series-header__quick-cast {
     padding: var(--spacing-xs) 0;
+    width: 100%;
+    justify-content: center;
   }
 
   .series-header__cast-label {
@@ -365,6 +364,7 @@
 
   .series-header__tags {
     gap: 6px;
+    justify-content: center;
   }
 }
 

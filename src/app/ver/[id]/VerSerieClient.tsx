@@ -14,6 +14,7 @@ import { useSession } from 'next-auth/react';
 import { EmbedPlayer } from '@/components/common/EmbedPlayer/EmbedPlayer';
 import { EmbedAttribution } from '@/components/common/EmbedAttribution/EmbedAttribution';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
+import { ShareButton } from '@/components/common/ShareButton/ShareButton';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 
@@ -163,6 +164,11 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
               <Button>Linkear con curada (admin)</Button>
             </Link>
           )}
+          <ShareButton
+            title={series.title}
+            text={series.synopsis ?? undefined}
+            path={`/ver/${series.id}`}
+          />
         </div>
       </header>
 
