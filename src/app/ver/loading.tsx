@@ -1,38 +1,36 @@
-import { Skeleton } from 'antd';
-
 export default function VerLoading() {
   return (
     <div style={{ maxWidth: 1400, margin: '0 auto', padding: 'var(--spacing-md)' }}>
       {/* Hero skeleton */}
       <div
         style={{
-          padding: 24,
+          padding: 28,
           borderRadius: 12,
-          background: 'var(--bg-elevated)',
+          background: 'var(--bg-elevated, #201c29)',
           marginBottom: 24,
           textAlign: 'center',
+          border: '1px solid var(--border-color, #332b40)',
         }}
       >
-        <Skeleton.Button active style={{ width: 140, height: 28, marginBottom: 12 }} />
-        <div style={{ maxWidth: 400, margin: '0 auto' }}>
-          <Skeleton active paragraph={{ rows: 2 }} />
-        </div>
-      </div>
-
-      {/* Filter bar skeleton */}
-      <div
-        style={{
-          display: 'flex',
-          gap: 12,
-          marginBottom: 24,
-          padding: 12,
-          background: 'var(--bg-container)',
-          borderRadius: 12,
-        }}
-      >
-        <Skeleton.Input active style={{ flex: 2, height: 40 }} />
-        <Skeleton.Input active style={{ flex: 1, height: 40 }} />
-        <Skeleton.Input active style={{ flex: 1, height: 40 }} />
+        <div
+          style={{
+            width: 160,
+            height: 28,
+            borderRadius: 6,
+            background: 'var(--bg-spotlight, #2e283b)',
+            margin: '0 auto 12px',
+          }}
+        />
+        <div
+          style={{
+            width: '60%',
+            maxWidth: 400,
+            height: 16,
+            borderRadius: 4,
+            background: 'var(--bg-spotlight, #2e283b)',
+            margin: '0 auto',
+          }}
+        />
       </div>
 
       {/* Cards grid skeleton */}
@@ -43,25 +41,41 @@ export default function VerLoading() {
           gap: 16,
         }}
       >
-        {Array.from({ length: 8 }).map((_, i) => (
+        {Array.from({ length: 12 }).map((_, i) => (
           <div
             key={i}
             style={{
               borderRadius: 12,
               overflow: 'hidden',
-              background: 'var(--bg-elevated)',
-              border: '1px solid var(--border-color)',
+              background: 'var(--bg-elevated, #201c29)',
+              border: '1px solid var(--border-color, #332b40)',
             }}
           >
             <div
               style={{
                 width: '100%',
                 aspectRatio: '2 / 3',
-                background: 'var(--bg-spotlight)',
+                background: 'var(--bg-spotlight, #2e283b)',
               }}
             />
             <div style={{ padding: 12 }}>
-              <Skeleton active paragraph={{ rows: 2 }} />
+              <div
+                style={{
+                  width: '80%',
+                  height: 16,
+                  borderRadius: 4,
+                  background: 'var(--bg-spotlight, #2e283b)',
+                  marginBottom: 8,
+                }}
+              />
+              <div
+                style={{
+                  width: '40%',
+                  height: 12,
+                  borderRadius: 4,
+                  background: 'var(--bg-spotlight, #2e283b)',
+                }}
+              />
             </div>
           </div>
         ))}

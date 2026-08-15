@@ -1,5 +1,3 @@
-import { Skeleton } from 'antd';
-
 export default function SeriesDetailLoading() {
   return (
     <div style={{ padding: 'var(--spacing-lg)' }}>
@@ -9,11 +7,36 @@ export default function SeriesDetailLoading() {
           width: '100%',
           height: 320,
           borderRadius: 12,
-          background: 'var(--bg-secondary)',
+          background: 'var(--bg-secondary, #201c29)',
+          marginBottom: 24,
         }}
       />
-      <Skeleton active paragraph={{ rows: 6 }} style={{ marginTop: 24 }} />
-      <Skeleton active paragraph={{ rows: 4 }} style={{ marginTop: 24 }} />
+      <div
+        style={{
+          width: '70%',
+          height: 24,
+          borderRadius: 4,
+          background: 'var(--bg-spotlight, #2e283b)',
+          marginBottom: 16,
+        }}
+      />
+      <div
+        style={{
+          width: '100%',
+          height: 16,
+          borderRadius: 4,
+          background: 'var(--bg-spotlight, #2e283b)',
+          marginBottom: 8,
+        }}
+      />
+      <div
+        style={{
+          width: '90%',
+          height: 16,
+          borderRadius: 4,
+          background: 'var(--bg-spotlight, #2e283b)',
+        }}
+      />
     </div>
   );
 }
