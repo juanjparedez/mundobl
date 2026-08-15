@@ -77,6 +77,7 @@ model User {
   notificationPrefs       NotificationPrefs?
   dashboardLayouts        UserDashboardLayout[]
   submittedSeries         Series[]                @relation("UserSubmittedSeries")
+  seriesSuggestions       SeriesSuggestion[]
 }
 
 // Persistencia de layouts del dashboard modular (drag/resize por widget).
@@ -267,6 +268,7 @@ model Series {
   reviews              Review[]
   subscriptions        SeriesSubscription[]
   infoBlocks           SeriesInfoBlock[]
+  suggestions          SeriesSuggestion[]
   submittedBy          User?                @relation("UserSubmittedSeries", fields: [submittedById], references: [id], onDelete: SetNull)
   linkedSeries         Series?              @relation("UserEmbedLink", fields: [linkedSeriesId], references: [id], onDelete: SetNull)
   linkedFromUserEmbeds Series[]             @relation("UserEmbedLink")
@@ -654,6 +656,27 @@ model CommentReport {
   @@unique([commentId, userId])
   @@index([commentId])
   @@index([userId])
+}
+
+// ============================================
+// SUGERENCIAS Y CORRECCIONES DE LA COMUNIDAD
+// ============================================
+model SeriesSuggestion {
+  id          Int      @id @default(autoincrement())
+  seriesId    Int
+  series      Series   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  type        String   // "DATO_FALTANTE", "CORRECCION_REPARTO", "DIAS_EMISION", "LINK_OFICIAL", "OTRO"
+  content     String
+  status      String   @default("PENDING") // "PENDING", "APPROVED", "DISCARDED"
+  adminNotes  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([seriesId])
+  @@index([userId])
+  @@index([status])
 }
 
 // ============================================
