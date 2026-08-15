@@ -425,5 +425,8 @@ export async function POST(request: NextRequest) {
     },
   });
 
-  return NextResponse.json({ seriesId: newSeries.id }, { status: 201 });
+  return NextResponse.json(
+    { seriesId: newSeries.id, pendingReview: !isAdmin },
+    { status: 201 }
+  );
 }

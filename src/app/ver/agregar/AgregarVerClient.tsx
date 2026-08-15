@@ -224,8 +224,15 @@ export function AgregarVerClient() {
         message.error(data.error || 'No se pudo guardar.');
         return;
       }
-      message.success('Serie agregada a /ver.');
-      router.push(`/ver/${data.seriesId}`);
+      if (data.pendingReview) {
+        message.success(
+          '¡Aporte enviado para moderación! Se publicará en /ver en cuanto el equipo lo apruebe.'
+        );
+        router.push('/ver');
+      } else {
+        message.success('Serie agregada a /ver.');
+        router.push(`/ver/${data.seriesId}`);
+      }
     } catch (err) {
       console.error(err);
       message.error('Error al confirmar.');

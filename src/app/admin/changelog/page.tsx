@@ -53,7 +53,92 @@ export default function ChangelogAdminPage() {
   const [saving, setSaving] = useState(false);
   const [importing, setImporting] = useState(false);
   const [aiBusy, setAiBusy] = useState<'polish' | 'category' | null>(null);
+  const [autoGenOpen, setAutoGenOpen] = useState(false);
+  const [autoGenLoading, setAutoGenLoading] = useState(false);
+  const [autoGenSaving, setAutoGenSaving] = useState(false);
+  const [autoGenDraft, setAutoGenDraft] = useState<{
+    version: string;
+    title: string;
+    features?: string[];
+    fixes?: string[];
+    improvements?: string[];
+  } | null>(null);
   const [form] = Form.useForm();
+
+  const handleAutoGenerate = async () => {
+    setAutoGenLoading(true);
+    try {
+      const res = await fetch('/api/admin/changelog/auto-generate', {
+        method: 'POST',
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al generar con IA');
+      setAutoGenDraft(data.draft);
+      setAutoGenOpen(true);
+    } catch (err) {
+      console.error(err);
+      message.error(
+        err instanceof Error ? err.message : 'Error al generar novedades.'
+      );
+    } finally {
+      setAutoGenLoading(false);
+    }
+  };
+
+  const handleSaveAutoGen = async () => {
+    if (!autoGenDraft) return;
+    setAutoGenSaving(true);
+    try {
+      const bulkItems: Array<{
+        version: string;
+        versionLabel: string;
+        category: string;
+        body: string;
+      }> = [];
+      const version = autoGenDraft.version;
+      const versionLabel = autoGenDraft.title || version;
+
+      autoGenDraft.features?.forEach((f) => {
+        bulkItems.push({
+          version,
+          versionLabel,
+          category: 'Features',
+          body: f,
+        });
+      });
+      autoGenDraft.fixes?.forEach((f) => {
+        bulkItems.push({
+          version,
+          versionLabel,
+          category: 'Fixes',
+          body: f,
+        });
+      });
+      autoGenDraft.improvements?.forEach((i) => {
+        bulkItems.push({
+          version,
+          versionLabel,
+          category: 'Performance',
+          body: i,
+        });
+      });
+
+      const res = await fetch('/api/admin/changelog', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bulkItems }),
+      });
+      if (!res.ok) throw new Error('Error al guardar items');
+      message.success('¡Novedades guardadas exitosamente en el changelog!');
+      setAutoGenOpen(false);
+      void loadItems();
+    } catch (err) {
+      console.error(err);
+      message.error('Error al guardar las novedades generadas.');
+    } finally {
+      setAutoGenSaving(false);
+    }
+  };
 
   const callChangelogAi = async (
     action: 'polish' | 'suggest-category'
@@ -364,7 +449,19 @@ export default function ChangelogAdminPage() {
           onSearchSubmit={() => undefined}
           onSearchClear={() => setSearchTerm('')}
           rightActions={
-            <Space>
+            <Space wrap>
+              <Button
+                icon={<ThunderboltOutlined />}
+                onClick={handleAutoGenerate}
+                loading={autoGenLoading}
+                style={{
+                  background: 'linear-gradient(135deg, #7c3aed, #db2777)',
+                  color: '#fff',
+                  borderColor: 'transparent',
+                }}
+              >
+                {!isMobile ? 'Generar con IA (Commits)' : 'IA'}
+              </Button>
               <Button
                 icon={<ImportOutlined />}
                 onClick={handleImport}
@@ -516,6 +613,78 @@ export default function ChangelogAdminPage() {
               </Button>
             </Space>
           </Form>
+        </Modal>
+
+        {/* Modal de Previsualización de Changelog generado con IA */}
+        <Modal
+          title="✨ Novedades generadas con IA a partir de commits recientes"
+          open={autoGenOpen}
+          width={700}
+          onCancel={() => setAutoGenOpen(false)}
+          footer={[
+            <Button key="cancel" onClick={() => setAutoGenOpen(false)}>
+              Cancelar
+            </Button>,
+            <Button
+              key="save"
+              type="primary"
+              loading={autoGenSaving}
+              onClick={handleSaveAutoGen}
+              style={{ background: '#7c3aed', borderColor: '#7c3aed' }}
+            >
+              Guardar y publicar en Changelog
+            </Button>,
+          ]}
+        >
+          {autoGenDraft && (
+            <div style={{ maxHeight: '60vh', overflowY: 'auto', paddingRight: 8 }}>
+              <div style={{ marginBottom: 16 }}>
+                <Tag color="purple" style={{ fontSize: 13, padding: '2px 8px' }}>
+                  Versión: {autoGenDraft.version}
+                </Tag>
+                <h3 style={{ marginTop: 8, marginBottom: 4 }}>{autoGenDraft.title}</h3>
+              </div>
+
+              {autoGenDraft.features && autoGenDraft.features.length > 0 && (
+                <div style={{ marginBottom: 16 }}>
+                  <Tag color="blue">Features</Tag>
+                  <ul style={{ paddingLeft: 20, marginTop: 6 }}>
+                    {autoGenDraft.features.map((f, i) => (
+                      <li key={i} style={{ marginBottom: 4 }}>
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {autoGenDraft.fixes && autoGenDraft.fixes.length > 0 && (
+                <div style={{ marginBottom: 16 }}>
+                  <Tag color="green">Fixes</Tag>
+                  <ul style={{ paddingLeft: 20, marginTop: 6 }}>
+                    {autoGenDraft.fixes.map((f, i) => (
+                      <li key={i} style={{ marginBottom: 4 }}>
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {autoGenDraft.improvements && autoGenDraft.improvements.length > 0 && (
+                <div style={{ marginBottom: 16 }}>
+                  <Tag color="orange">Rendimiento / UX</Tag>
+                  <ul style={{ paddingLeft: 20, marginTop: 6 }}>
+                    {autoGenDraft.improvements.map((im, i) => (
+                      <li key={i} style={{ marginBottom: 4 }}>
+                        {im}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
         </Modal>
       </div>
     </AppLayout>
