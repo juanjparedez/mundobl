@@ -1,14 +1,15 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { Card, Empty, Progress, Tag, Button, Tooltip } from 'antd';
+import { Card, Empty, Progress, Tag, Button, Tooltip, Select } from 'antd';
 import {
   PlayCircleOutlined,
   ClockCircleOutlined,
   CloseOutlined,
   EditOutlined,
   CheckOutlined,
+  CalendarOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -22,7 +23,7 @@ import { interpolateMessage } from '@/lib/i18n-format';
 interface WatchingSeriesData {
   id: number;
   status: string;
-  lastWatchedAt: Date | null;
+  lastWatchedAt: Date | string | null;
   series: {
     id: number;
     title: string;
@@ -30,6 +31,9 @@ interface WatchingSeriesData {
     year?: number | null;
     type: string;
     imageUrl?: string | null;
+    airDays?: string | null;
+    createdAt?: Date | string;
+    updatedAt?: Date | string;
     country?: {
       name: string;
     } | null;
@@ -48,6 +52,119 @@ interface WatchingSeriesData {
   };
 }
 
+type SortOption = 'lastWatched' | 'name' | 'start' | 'next';
+
+interface AirDayStatus {
+  type: 'today' | 'delayed_1' | 'delayed_2' | 'delayed_3_plus';
+  label: string;
+  color: 'success' | 'warning' | 'error';
+  tagText: string;
+  daysDiff: number;
+}
+
+const DAY_MAP: Record<string, number> = {
+  domingo: 0,
+  dom: 0,
+  sunday: 0,
+  sun: 0,
+  lunes: 1,
+  lun: 1,
+  monday: 1,
+  mon: 1,
+  martes: 2,
+  mar: 2,
+  tuesday: 2,
+  tue: 2,
+  miercoles: 3,
+  miércoles: 3,
+  mie: 3,
+  mié: 3,
+  wednesday: 3,
+  wed: 3,
+  jueves: 4,
+  jue: 4,
+  thursday: 4,
+  thu: 4,
+  viernes: 5,
+  vie: 5,
+  friday: 5,
+  fri: 5,
+  sabado: 6,
+  sábado: 6,
+  sab: 6,
+  sáb: 6,
+  saturday: 6,
+  sat: 6,
+};
+
+function getAirDayStatus(
+  airDays: string | null | undefined,
+  isFullyWatched: boolean
+): AirDayStatus | null {
+  if (!airDays || isFullyWatched) return null;
+
+  const rawTokens = airDays
+    .toLowerCase()
+    .split(/[,;\s]+/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+
+  const targetDays: number[] = [];
+  for (const token of rawTokens) {
+    if (token in DAY_MAP) {
+      targetDays.push(DAY_MAP[token]);
+    }
+  }
+
+  if (targetDays.length === 0) return null;
+
+  const today = new Date().getDay(); // 0 = Sunday .. 6 = Saturday
+
+  // Calcular la menor cantidad de días transcurridos desde el día de emisión más reciente
+  let minElapsed = 7;
+  for (const day of targetDays) {
+    const elapsed = (today - day + 7) % 7;
+    if (elapsed < minElapsed) {
+      minElapsed = elapsed;
+    }
+  }
+
+  if (minElapsed === 0) {
+    return {
+      type: 'today',
+      label: 'Hoy toca capítulo',
+      color: 'success',
+      tagText: '🟢 Hoy',
+      daysDiff: 0,
+    };
+  }
+  if (minElapsed === 1) {
+    return {
+      type: 'delayed_1',
+      label: 'Ayer emitió (1d atrasado)',
+      color: 'warning',
+      tagText: '🟡 +1d',
+      daysDiff: 1,
+    };
+  }
+  if (minElapsed === 2) {
+    return {
+      type: 'delayed_2',
+      label: '2 días atrasado',
+      color: 'warning',
+      tagText: '🟡 +2d',
+      daysDiff: 2,
+    };
+  }
+  return {
+    type: 'delayed_3_plus',
+    label: `${minElapsed} días atrasado`,
+    color: 'error',
+    tagText: `🔴 +${minElapsed}d`,
+    daysDiff: minElapsed,
+  };
+}
+
 export function CurrentlyWatchingDashboard() {
   const { data: session } = useSession();
   const message = useMessage();
@@ -58,6 +175,13 @@ export function CurrentlyWatchingDashboard() {
     []
   );
   const [markingEpisode, setMarkingEpisode] = useState<number | null>(null);
+  const [sortBy, setSortBy] = useState<SortOption>(() => {
+    if (typeof window === 'undefined') return 'lastWatched';
+    return (
+      (window.localStorage.getItem('watching-sort-by') as SortOption) ||
+      'lastWatched'
+    );
+  });
 
   const isAdminOrMod =
     session?.user?.role === 'ADMIN' || session?.user?.role === 'MODERATOR';
@@ -81,6 +205,13 @@ export function CurrentlyWatchingDashboard() {
   useEffect(() => {
     void loadWatchingSeries();
   }, [loadWatchingSeries]);
+
+  const handleSortChange = (newSort: SortOption) => {
+    setSortBy(newSort);
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem('watching-sort-by', newSort);
+    }
+  };
 
   const calculateProgress = (series: WatchingSeriesData['series']) => {
     let totalEpisodes = 0;
@@ -114,7 +245,7 @@ export function CurrentlyWatchingDashboard() {
     return null;
   };
 
-  const formatLastWatched = (date: Date | null) => {
+  const formatLastWatched = (date: Date | string | null) => {
     if (!date) return t('common.neverWatched');
     const d = new Date(date);
     const now = new Date();
@@ -194,6 +325,64 @@ export function CurrentlyWatchingDashboard() {
     }
   };
 
+  // Ordenamiento dinámico
+  const sortedWatchingSeries = useMemo(() => {
+    const list = [...watchingSeries];
+
+    switch (sortBy) {
+      case 'name':
+        return list.sort((a, b) =>
+          a.series.title.localeCompare(b.series.title, undefined, {
+            sensitivity: 'base',
+          })
+        );
+      case 'start':
+        return list.sort((a, b) => {
+          const yearA = a.series.year ?? 0;
+          const yearB = b.series.year ?? 0;
+          if (yearA !== yearB) return yearB - yearA;
+          const dateA = a.series.createdAt
+            ? new Date(a.series.createdAt).getTime()
+            : 0;
+          const dateB = b.series.createdAt
+            ? new Date(b.series.createdAt).getTime()
+            : 0;
+          return dateB - dateA;
+        });
+      case 'next':
+        return list.sort((a, b) => {
+          const nextA = getNextEpisode(a.series);
+          const nextB = getNextEpisode(b.series);
+          // Si una tiene próximo episodio y otra ya terminó, priorizar la que tiene pendiente
+          if (nextA && !nextB) return -1;
+          if (!nextA && nextB) return 1;
+
+          // Si ambas tienen pendiente, priorizar por semáforo de emisión (hoy / atrasadas primero)
+          const { totalEpisodes: totA, watchedEpisodes: watA } =
+            calculateProgress(a.series);
+          const { totalEpisodes: totB, watchedEpisodes: watB } =
+            calculateProgress(b.series);
+          const airA = getAirDayStatus(a.series.airDays, watA === totA);
+          const airB = getAirDayStatus(b.series.airDays, watB === totB);
+          if (airA && !airB) return -1;
+          if (!airA && airB) return 1;
+
+          return a.series.title.localeCompare(b.series.title);
+        });
+      case 'lastWatched':
+      default:
+        return list.sort((a, b) => {
+          const timeA = a.lastWatchedAt
+            ? new Date(a.lastWatchedAt).getTime()
+            : 0;
+          const timeB = b.lastWatchedAt
+            ? new Date(b.lastWatchedAt).getTime()
+            : 0;
+          return timeB - timeA;
+        });
+    }
+  }, [watchingSeries, sortBy]);
+
   if (loading) {
     return (
       <div className="watching-grid" aria-busy="true">
@@ -228,17 +417,47 @@ export function CurrentlyWatchingDashboard() {
 
   return (
     <div className="watching-dashboard">
+      {/* Barra de control: Contador + Ordenamiento */}
+      <div className="watching-header">
+        <div className="watching-header__lead">
+          <Tag color="blue" className="watching-header__count-badge">
+            📺 Viendo {watchingSeries.length}{' '}
+            {watchingSeries.length === 1 ? 'serie' : 'series'}
+          </Tag>
+        </div>
+
+        <div className="watching-header__controls">
+          <span className="watching-header__sort-label">Ordenar por:</span>
+          <Select
+            value={sortBy}
+            onChange={handleSortChange}
+            className="watching-header__sort-select"
+            options={[
+              { value: 'lastWatched', label: '🕒 Última actividad' },
+              { value: 'name', label: '🔤 Nombre (A-Z)' },
+              { value: 'start', label: '📅 Fecha de estreno' },
+              { value: 'next', label: '▶️ Próxima por ver' },
+            ]}
+          />
+        </div>
+      </div>
+
       <div className="watching-grid">
-        {watchingSeries.map((item) => {
+        {sortedWatchingSeries.map((item) => {
           const { totalEpisodes, watchedEpisodes } = calculateProgress(
             item.series
           );
           const progress =
             totalEpisodes > 0 ? (watchedEpisodes / totalEpisodes) * 100 : 0;
+          const isFullyWatched = progress === 100 && totalEpisodes > 0;
           const nextEp = getNextEpisode(item.series);
           const nextEpLabel = nextEp
             ? `T${nextEp.seasonNumber}E${nextEp.episodeNumber}`
             : null;
+          const airStatus = getAirDayStatus(
+            item.series.airDays,
+            isFullyWatched
+          );
 
           return (
             <Card
@@ -292,6 +511,18 @@ export function CurrentlyWatchingDashboard() {
                       )}
                       {item.series.country && (
                         <Tag>{item.series.country.name}</Tag>
+                      )}
+                      {airStatus && (
+                        <Tooltip
+                          title={`Día(s) de emisión: ${item.series.airDays} (${airStatus.label})`}
+                        >
+                          <Tag
+                            color={airStatus.color}
+                            className={`watching-card__air-tag watching-card__air-tag--${airStatus.type}`}
+                          >
+                            <CalendarOutlined /> {airStatus.tagText}
+                          </Tag>
+                        </Tooltip>
                       )}
                     </div>
 

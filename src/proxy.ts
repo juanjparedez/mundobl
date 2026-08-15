@@ -11,18 +11,18 @@ import {
 const BOT_UA_PATTERN =
   /bot|crawler|spider|slurp|bingpreview|google web preview|facebookexternalhit|whatsapp|telegrambot|discordbot/i;
 
-const BANNED_IP_CACHE_TTL_MS = 5 * 60 * 1000;
+const BANNED_IP_CACHE_TTL_MS = 30 * 60 * 1000;
 const ANON_LOG_SAMPLE_HIGH = normalizeSampleRate(
   process.env.PUBLIC_PAGE_LOG_SAMPLE_HIGH,
-  0.2
+  0.05
 );
 const ANON_LOG_SAMPLE_LOW = normalizeSampleRate(
   process.env.PUBLIC_PAGE_LOG_SAMPLE_LOW,
-  0.03
+  0.01
 );
 const DISABLE_ANON_LOGGING = normalizeBoolean(
   process.env.PUBLIC_ANON_LOG_DISABLED,
-  false
+  true
 );
 const ANON_LOG_GUARD_ENABLED = normalizeBoolean(
   process.env.PUBLIC_ANON_LOG_GUARD_ENABLED,
@@ -138,14 +138,20 @@ function isCrawlerUserAgent(userAgent: string | null): boolean {
   return userAgent ? BOT_UA_PATTERN.test(userAgent) : false;
 }
 
-function normalizeSampleRate(raw: string | undefined, fallback: number): number {
+function normalizeSampleRate(
+  raw: string | undefined,
+  fallback: number
+): number {
   if (!raw) return fallback;
   const parsed = Number(raw);
   if (Number.isNaN(parsed)) return fallback;
   return Math.max(0, Math.min(1, parsed));
 }
 
-function normalizePositiveInt(raw: string | undefined, fallback: number): number {
+function normalizePositiveInt(
+  raw: string | undefined,
+  fallback: number
+): number {
   if (!raw) return fallback;
   const parsed = Number(raw);
   if (!Number.isFinite(parsed)) return fallback;
@@ -231,18 +237,22 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Check IP ban
+  // Check IP ban (cached in memory)
   if (ip) {
     const cached = getCachedBannedIp(ip);
     if (cached === true) {
       return new NextResponse('Acceso denegado', { status: 403 });
     }
     if (cached === null) {
-      const bannedIp = await prisma.bannedIp.findUnique({ where: { ip } });
-      const isBanned = bannedIp != null;
-      setCachedBannedIp(ip, isBanned);
-      if (isBanned) {
-        return new NextResponse('Acceso denegado', { status: 403 });
+      try {
+        const bannedIp = await prisma.bannedIp.findUnique({ where: { ip } });
+        const isBanned = bannedIp != null;
+        setCachedBannedIp(ip, isBanned);
+        if (isBanned) {
+          return new NextResponse('Acceso denegado', { status: 403 });
+        }
+      } catch {
+        // En caso de timeout de DB, no bloquear al usuario
       }
     }
   }
