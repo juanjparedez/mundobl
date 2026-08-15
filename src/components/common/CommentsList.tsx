@@ -15,7 +15,6 @@ import {
   CommentOutlined,
   ClockCircleOutlined,
   FlagOutlined,
-  LockOutlined,
   UserOutlined,
   SendOutlined,
   CloseOutlined,
@@ -43,6 +42,7 @@ export interface CommentItemData {
   id: number;
   content: string;
   isPrivate?: boolean;
+  isAnonymous?: boolean;
   parentId?: number | null;
   createdAt: Date | string;
   updatedAt: Date | string;
@@ -72,9 +72,12 @@ export function CommentsList({
   const { data: session } = useSession();
   const defaultPlaceholder = placeholder ?? t('commentsList.placeholderPublic');
   const currentUserId = session?.user?.id;
+  const isAdminOrMod =
+    session?.user?.role === 'ADMIN' || session?.user?.role === 'MODERATOR';
+
   const [comments, setComments] = useState<CommentItemData[]>(initialComments);
   const [newComment, setNewComment] = useState('');
-  const [isPrivate, setIsPrivate] = useState(false);
+  const [isAnonymous, setIsAnonymous] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [reportedIds, setReportedIds] = useState<Set<number>>(new Set());
   const [reportTarget, setReportTarget] = useState<number | null>(null);
@@ -84,9 +87,10 @@ export function CommentsList({
   // Estado para respuesta inline
   const [replyingToId, setReplyingToId] = useState<number | null>(null);
   const [replyContent, setReplyContent] = useState('');
+  const [replyAnonymous, setReplyAnonymous] = useState(false);
   const [isSubmittingReply, setIsSubmittingReply] = useState(false);
 
-  // Filtrar comentarios privados de otros usuarios
+  // Filtrar comentarios privados legacy de otros usuarios
   const filterVisible = (items: CommentItemData[]): CommentItemData[] => {
     return items
       .filter(
@@ -121,7 +125,7 @@ export function CommentsList({
       const response = await fetch(getApiEndpoint(), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: newComment, isPrivate }),
+        body: JSON.stringify({ content: newComment, isAnonymous }),
       });
 
       if (!response.ok) throw new Error(t('commentsList.errorSaving'));
@@ -129,12 +133,8 @@ export function CommentsList({
       const savedComment = await response.json();
       setComments((prev) => [savedComment, ...prev]);
       setNewComment('');
-      setIsPrivate(false);
-      message.success(
-        isPrivate
-          ? t('commentsList.successPrivate')
-          : t('commentsList.successPublic')
-      );
+      setIsAnonymous(false);
+      message.success(t('commentsList.successPublic'));
     } catch (error) {
       message.error(t('commentsList.errorSave'));
       console.error(error);
@@ -156,7 +156,7 @@ export function CommentsList({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           content: replyContent,
-          isPrivate: false,
+          isAnonymous: replyAnonymous,
           parentId,
         }),
       });
@@ -179,6 +179,7 @@ export function CommentsList({
 
       setReplyingToId(null);
       setReplyContent('');
+      setReplyAnonymous(false);
       message.success(t('commentsList.successPublic'));
     } catch (error) {
       message.error(t('commentsList.errorSave'));
@@ -278,11 +279,7 @@ export function CommentsList({
       <div className="comments-list__composer">
         <TextArea
           rows={3}
-          placeholder={
-            isPrivate
-              ? t('commentsList.placeholderPrivate')
-              : defaultPlaceholder
-          }
+          placeholder={defaultPlaceholder}
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
           maxLength={2000}
@@ -290,15 +287,14 @@ export function CommentsList({
           className="comments-list__textarea"
         />
         <div className="comments-list__actions">
-          <Tooltip title={t('commentsList.tooltipPrivate')}>
+          <Tooltip title="Publicar de forma anónima (tu nombre no será visible públicamente)">
             <label className="comments-list__private-toggle">
               <Switch
                 size="small"
-                checked={isPrivate}
-                onChange={setIsPrivate}
+                checked={isAnonymous}
+                onChange={setIsAnonymous}
               />
-              <LockOutlined />
-              <span>{t('commentsList.privateLabel')}</span>
+              <span>Comentar como anónimo</span>
             </label>
           </Tooltip>
           <Button
@@ -307,9 +303,7 @@ export function CommentsList({
             onClick={handleSubmit}
             loading={isSubmitting}
           >
-            {isPrivate
-              ? t('commentsList.savePrivateButton')
-              : t('commentsList.addButton')}
+            {t('commentsList.addButton')}
           </Button>
         </div>
       </div>
@@ -328,147 +322,194 @@ export function CommentsList({
           <Empty description={t('commentsList.emptyText')} />
         ) : (
           <div className="comments-list__feed">
-            {visibleComments.map((comment) => (
-              <article key={comment.id} className="comment-list-thread">
-                <div
-                  className={`comment-list-item${comment.isPrivate ? ' comment-list-item--private' : ''}`}
-                >
-                  <div className="comment-list-item__header">
-                    <Avatar
-                      src={comment.user?.image}
-                      icon={!comment.user?.image ? <UserOutlined /> : undefined}
-                      size={28}
-                      className="comment-list-item__avatar"
-                    />
-                    <div className="comment-list-item__meta">
-                      <div className="comment-list-item__author-row">
-                        <span className="comment-list-item__author">
-                          {formatPublicName(comment.user)}
+            {visibleComments.map((comment) => {
+              const isAnon = comment.isAnonymous;
+              const isAuthor =
+                currentUserId && comment.userId === currentUserId;
+              const showIdentity = !isAnon || isAdminOrMod || isAuthor;
+
+              return (
+                <article key={comment.id} className="comment-list-thread">
+                  <div
+                    className={`comment-list-item${isAnon ? ' comment-list-item--anon' : ''}`}
+                  >
+                    <div className="comment-list-item__header">
+                      <Avatar
+                        src={showIdentity ? comment.user?.image : undefined}
+                        icon={<UserOutlined />}
+                        size={28}
+                        className="comment-list-item__avatar"
+                      />
+                      <div className="comment-list-item__meta">
+                        <div className="comment-list-item__author-row">
+                          <span className="comment-list-item__author">
+                            {showIdentity
+                              ? formatPublicName(comment.user)
+                              : 'Anónimo'}
+                          </span>
+                          {showIdentity && renderRoleBadge(comment.user?.role)}
+                          {isAnon && (
+                            <Tag color="purple">
+                              {isAdminOrMod
+                                ? 'Anónimo (Visible para admin)'
+                                : isAuthor
+                                  ? 'Tú (Anónimo)'
+                                  : 'Anónimo'}
+                            </Tag>
+                          )}
+                        </div>
+                        <span className="comment-list-item__date">
+                          <ClockCircleOutlined />{' '}
+                          {formatDate(new Date(comment.createdAt), t)}
                         </span>
-                        {renderRoleBadge(comment.user?.role)}
-                        {comment.isPrivate && (
-                          <Tag color="default" icon={<LockOutlined />}>
-                            {t('commentsList.privateLabel')}
-                          </Tag>
-                        )}
                       </div>
-                      <span className="comment-list-item__date">
-                        <ClockCircleOutlined />{' '}
-                        {formatDate(new Date(comment.createdAt), t)}
-                      </span>
                     </div>
-                  </div>
 
-                  <p className="comment-list-item__content">
-                    {comment.content}
-                  </p>
+                    <p className="comment-list-item__content">
+                      {comment.content}
+                    </p>
 
-                  <div className="comment-list-item__actions">
-                    {session?.user && !comment.isPrivate && (
-                      <Button
-                        type="text"
-                        size="small"
-                        icon={<CommentOutlined />}
-                        onClick={() => {
-                          setReplyingToId(
-                            replyingToId === comment.id ? null : comment.id
-                          );
-                          setReplyContent('');
-                        }}
-                        className="comment-list-item__reply-trigger"
-                      >
-                        Responder
-                      </Button>
-                    )}
-                    {canReport(comment) && (
-                      <Button
-                        type="text"
-                        size="small"
-                        icon={<FlagOutlined />}
-                        onClick={() => setReportTarget(comment.id)}
-                        className="comment-list-item__report"
-                        title={t('commentsList.reportButton')}
-                      />
-                    )}
-                  </div>
-
-                  {/* Sub-formulario inline de respuesta */}
-                  {replyingToId === comment.id && (
-                    <div className="comment-reply-composer">
-                      <TextArea
-                        rows={2}
-                        placeholder={`Respondiendo a ${formatPublicName(comment.user)}...`}
-                        value={replyContent}
-                        onChange={(e) => setReplyContent(e.target.value)}
-                        maxLength={1000}
-                        showCount
-                        autoFocus
-                        className="comment-reply-composer__input"
-                      />
-                      <div className="comment-reply-composer__actions">
+                    <div className="comment-list-item__actions">
+                      {session?.user && (
                         <Button
+                          type="text"
                           size="small"
-                          icon={<CloseOutlined />}
+                          icon={<CommentOutlined />}
                           onClick={() => {
-                            setReplyingToId(null);
+                            setReplyingToId(
+                              replyingToId === comment.id ? null : comment.id
+                            );
                             setReplyContent('');
                           }}
-                        >
-                          Cancelar
-                        </Button>
-                        <Button
-                          type="primary"
-                          size="small"
-                          icon={<SendOutlined />}
-                          onClick={() => handleReplySubmit(comment.id)}
-                          loading={isSubmittingReply}
+                          className="comment-list-item__reply-trigger"
                         >
                           Responder
                         </Button>
+                      )}
+                      {canReport(comment) && (
+                        <Button
+                          type="text"
+                          size="small"
+                          icon={<FlagOutlined />}
+                          onClick={() => setReportTarget(comment.id)}
+                          className="comment-list-item__report"
+                          title={t('commentsList.reportButton')}
+                        />
+                      )}
+                    </div>
+
+                    {/* Sub-formulario inline de respuesta */}
+                    {replyingToId === comment.id && (
+                      <div className="comment-reply-composer">
+                        <TextArea
+                          rows={2}
+                          placeholder={`Respondiendo a ${showIdentity ? formatPublicName(comment.user) : 'Anónimo'}...`}
+                          value={replyContent}
+                          onChange={(e) => setReplyContent(e.target.value)}
+                          maxLength={1000}
+                          showCount
+                          autoFocus
+                          className="comment-reply-composer__input"
+                        />
+                        <div className="comment-reply-composer__actions">
+                          <label
+                            className="comments-list__private-toggle"
+                            style={{ marginRight: 'auto' }}
+                          >
+                            <Switch
+                              size="small"
+                              checked={replyAnonymous}
+                              onChange={setReplyAnonymous}
+                            />
+                            <span>Anónimo</span>
+                          </label>
+                          <Button
+                            size="small"
+                            icon={<CloseOutlined />}
+                            onClick={() => {
+                              setReplyingToId(null);
+                              setReplyContent('');
+                              setReplyAnonymous(false);
+                            }}
+                          >
+                            Cancelar
+                          </Button>
+                          <Button
+                            type="primary"
+                            size="small"
+                            icon={<SendOutlined />}
+                            onClick={() => handleReplySubmit(comment.id)}
+                            loading={isSubmittingReply}
+                          >
+                            Responder
+                          </Button>
+                        </div>
                       </div>
+                    )}
+                  </div>
+
+                  {/* Hilo de respuestas */}
+                  {comment.replies && comment.replies.length > 0 && (
+                    <div className="comment-list-replies">
+                      {comment.replies.map((reply) => {
+                        const isReplyAnon = reply.isAnonymous;
+                        const isReplyAuthor =
+                          currentUserId && reply.userId === currentUserId;
+                        const showReplyIdentity =
+                          !isReplyAnon || isAdminOrMod || isReplyAuthor;
+
+                        return (
+                          <div
+                            key={reply.id}
+                            className={`comment-list-item comment-list-item--reply${isReplyAnon ? ' comment-list-item--reply--anon' : ''}`}
+                          >
+                            <div className="comment-list-item__header">
+                              <Avatar
+                                src={
+                                  showReplyIdentity
+                                    ? reply.user?.image
+                                    : undefined
+                                }
+                                icon={<UserOutlined />}
+                                size={22}
+                                className="comment-list-item__avatar comment-list-item__avatar--small"
+                              />
+                              <div className="comment-list-item__meta">
+                                <div className="comment-list-item__author-row">
+                                  <span className="comment-list-item__author">
+                                    {showReplyIdentity
+                                      ? formatPublicName(reply.user)
+                                      : 'Anónimo'}
+                                  </span>
+                                  {showReplyIdentity &&
+                                    renderRoleBadge(reply.user?.role)}
+                                  {isReplyAnon && (
+                                    <Tag color="purple">
+                                      {isAdminOrMod
+                                        ? 'Anónimo'
+                                        : isReplyAuthor
+                                          ? 'Tú (Anónimo)'
+                                          : 'Anónimo'}
+                                    </Tag>
+                                  )}
+                                </div>
+                                <span className="comment-list-item__date">
+                                  <ClockCircleOutlined />{' '}
+                                  {formatDate(new Date(reply.createdAt), t)}
+                                </span>
+                              </div>
+                            </div>
+                            <p className="comment-list-item__content">
+                              {reply.content}
+                            </p>
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
-                </div>
-
-                {/* Hilo de respuestas */}
-                {comment.replies && comment.replies.length > 0 && (
-                  <div className="comment-list-replies">
-                    {comment.replies.map((reply) => (
-                      <div
-                        key={reply.id}
-                        className={`comment-list-item comment-list-item--reply${reply.isPrivate ? ' comment-list-item--reply--private' : ''}`}
-                      >
-                        <div className="comment-list-item__header">
-                          <Avatar
-                            src={reply.user?.image}
-                            icon={
-                              !reply.user?.image ? <UserOutlined /> : undefined
-                            }
-                            size={22}
-                            className="comment-list-item__avatar comment-list-item__avatar--small"
-                          />
-                          <div className="comment-list-item__meta">
-                            <div className="comment-list-item__author-row">
-                              <span className="comment-list-item__author">
-                                {formatPublicName(reply.user)}
-                              </span>
-                              {renderRoleBadge(reply.user?.role)}
-                            </div>
-                            <span className="comment-list-item__date">
-                              <ClockCircleOutlined />{' '}
-                              {formatDate(new Date(reply.createdAt), t)}
-                            </span>
-                          </div>
-                        </div>
-                        <p className="comment-list-item__content">
-                          {reply.content}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </div>
         )}
       </div>

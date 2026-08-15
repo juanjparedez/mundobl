@@ -17,6 +17,8 @@ export async function GET(
   try {
     const session = await auth();
     const currentUserId = session?.user?.id;
+    const isAdminOrMod =
+      session?.user?.role === 'ADMIN' || session?.user?.role === 'MODERATOR';
 
     const resolvedParams = await params;
     const episodeId = parseInt(resolvedParams.id, 10);
@@ -72,7 +74,26 @@ export async function GET(
       },
     });
 
-    return NextResponse.json(comments);
+    const sanitizeComment = (c: typeof comments[0]) => {
+      const isAuthor = currentUserId && c.userId === currentUserId;
+      const hideIdentity = c.isAnonymous && !isAdminOrMod && !isAuthor;
+
+      return {
+        ...c,
+        user: hideIdentity ? null : c.user,
+        replies: c.replies?.map((r) => {
+          const isReplyAuthor = currentUserId && r.userId === currentUserId;
+          const hideReplyIdentity =
+            r.isAnonymous && !isAdminOrMod && !isReplyAuthor;
+          return {
+            ...r,
+            user: hideReplyIdentity ? null : r.user,
+          };
+        }),
+      };
+    };
+
+    return NextResponse.json(comments.map(sanitizeComment));
   } catch (error) {
     console.error('Error fetching episode comments:', error);
     return NextResponse.json(
@@ -109,7 +130,7 @@ export async function POST(
     }
 
     const body = await request.json();
-    const { content, isPrivate, parentId } = body;
+    const { content, isPrivate, isAnonymous, parentId } = body;
 
     if (!content || content.trim() === '') {
       return NextResponse.json(
@@ -125,6 +146,7 @@ export async function POST(
       data: {
         content: content.trim(),
         isPrivate: isPrivate === true,
+        isAnonymous: isAnonymous === true,
         episodeId,
         parentId: parsedParentId,
         userId: authResult.userId,
@@ -171,7 +193,10 @@ export async function POST(
       });
       const seriesId = episode?.season?.seriesId;
       if (seriesId && episode) {
-        const authorName = formatPublicName(comment.user);
+        const rawAuthorName = formatPublicName(comment.user);
+        const authorName = comment.isAnonymous
+          ? `Anónimo (${rawAuthorName})`
+          : rawAuthorName;
         const excerpt = content.trim().slice(0, 80);
         const titleLabel = `${episode.season.series.title} (T${episode.season.seasonNumber}E${episode.episodeNumber})`;
 
@@ -198,7 +223,7 @@ export async function POST(
             parentCommentId: parsedParentId,
             currentCommentId: comment.id,
             currentUserId: authResult.userId,
-            authorName,
+            authorName: comment.isAnonymous ? 'Un usuario anónimo' : rawAuthorName,
             seriesId,
             seriesTitle: titleLabel,
             excerpt,
