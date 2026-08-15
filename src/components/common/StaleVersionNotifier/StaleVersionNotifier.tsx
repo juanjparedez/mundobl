@@ -5,11 +5,11 @@ import { Modal, Button, Space } from 'antd';
 import { ReloadOutlined, WarningOutlined } from '@ant-design/icons';
 import './StaleVersionNotifier.css';
 
-const CHECK_INTERVAL_MS = 60_000; // Check every 60 seconds
+const CHECK_INTERVAL_MS = 600_000; // Check every 10 minutes (cached at Edge)
 
 async function fetchBuildId(): Promise<string | null> {
   try {
-    const res = await fetch('/api/build-info', { cache: 'no-store' });
+    const res = await fetch('/api/build-info');
     if (!res.ok) return null;
     const data = await res.json();
     return data.buildId as string;
@@ -37,7 +37,8 @@ export function StaleVersionNotifier() {
       }
     });
 
-    const interval = setInterval(async () => {
+    const checkVersion = async () => {
+      if (document.visibilityState !== 'visible') return;
       const latestId = await fetchBuildId();
       if (!latestId || !knownBuildId.current) return;
 
@@ -45,8 +46,9 @@ export function StaleVersionNotifier() {
         setNewBuildId(latestId);
         setStale(true);
       }
-    }, CHECK_INTERVAL_MS);
+    };
 
+    const interval = setInterval(checkVersion, CHECK_INTERVAL_MS);
     return () => clearInterval(interval);
   }, []);
 

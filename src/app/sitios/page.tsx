@@ -4,7 +4,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import type { CollectionPage } from 'schema-dts';
 import { SitiosPage } from './SitiosPage';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 const SITIOS_DESCRIPTION =
   'Lista de sitios y plataformas recomendadas para ver series BL (Boys Love), GL y doramas asiáticos online.';

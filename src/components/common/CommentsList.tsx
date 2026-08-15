@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Input, Button, Card, Empty, Modal, Switch, Tag, Tooltip } from 'antd';
+import { Input, Button, Empty, Modal, Switch, Tag, Tooltip } from 'antd';
 import {
   CommentOutlined,
   ClockCircleOutlined,
@@ -255,14 +255,9 @@ export function CommentsList({
 
   return (
     <div className="comments-list">
-      <Card
-        title={
-          <h4 className="comments-list__title">{t('commentsList.addTitle')}</h4>
-        }
-        className="comments-list__form"
-      >
+      <div className="comments-list__composer">
         <TextArea
-          rows={4}
+          rows={3}
           placeholder={
             isPrivate
               ? t('commentsList.placeholderPrivate')
@@ -272,6 +267,7 @@ export function CommentsList({
           onChange={(e) => setNewComment(e.target.value)}
           maxLength={2000}
           showCount
+          className="comments-list__textarea"
         />
         <div className="comments-list__actions">
           <Tooltip title={t('commentsList.tooltipPrivate')}>
@@ -296,35 +292,38 @@ export function CommentsList({
               : t('commentsList.addButton')}
           </Button>
         </div>
-      </Card>
+      </div>
 
       <div className="comments-list__items">
-        <h4 className="comments-list__title">
-          {interpolateMessage(t('commentsList.listTitle'), {
-            n: String(visibleComments.length),
-          })}
-        </h4>
+        <div className="comments-list__header">
+          <h4 className="comments-list__title">
+            {interpolateMessage(t('commentsList.listTitle'), {
+              n: String(visibleComments.length),
+            })}
+          </h4>
+        </div>
 
         {visibleComments.length === 0 ? (
           <Empty description={t('commentsList.emptyText')} />
         ) : (
-          <div>
+          <div className="comments-list__feed">
             {visibleComments.map((comment) => (
-              <Card
+              <div
                 key={comment.id}
-                className={`comment-card${comment.isPrivate ? ' comment-card--private' : ''}`}
+                className={`comment-list-item${comment.isPrivate ? ' comment-list-item--private' : ''}`}
               >
-                <p className="comment-card__content">{comment.content}</p>
-                <div className="comment-card__footer">
+                <div className="comment-list-item__header">
+                  {comment.user && (
+                    <span className="comment-list-item__author">
+                      {comment.user.name ?? 'Usuario'}
+                    </span>
+                  )}
                   {comment.isPrivate && (
                     <Tag color="default" icon={<LockOutlined />}>
                       {t('commentsList.privateLabel')}
                     </Tag>
                   )}
-                  <span
-                    style={{ color: 'var(--text-secondary)' }}
-                    className="comment-card__date"
-                  >
+                  <span className="comment-list-item__date">
                     <ClockCircleOutlined />{' '}
                     {formatDate(new Date(comment.createdAt), t)}
                   </span>
@@ -334,13 +333,13 @@ export function CommentsList({
                       size="small"
                       icon={<FlagOutlined />}
                       onClick={() => setReportTarget(comment.id)}
-                      className="comment-card__report"
-                    >
-                      {t('commentsList.reportButton')}
-                    </Button>
+                      className="comment-list-item__report"
+                      title={t('commentsList.reportButton')}
+                    />
                   )}
                 </div>
-              </Card>
+                <p className="comment-list-item__content">{comment.content}</p>
+              </div>
             ))}
           </div>
         )}

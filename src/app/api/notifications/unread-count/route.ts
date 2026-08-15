@@ -9,5 +9,12 @@ export async function GET() {
   const count = await prisma.notification.count({
     where: { userId: auth.userId, readAt: null },
   });
-  return NextResponse.json({ count });
+  return NextResponse.json(
+    { count },
+    {
+      headers: {
+        'Cache-Control': 'private, max-age=30, stale-while-revalidate=60',
+      },
+    }
+  );
 }

@@ -46,8 +46,8 @@ interface SeriesPageProps {
   }>;
 }
 
-// Disable static generation for now (causes slow dev performance)
-export const dynamic = 'force-dynamic';
+// ISR con revalidación a demanda y fallback a 5 minutos
+export const revalidate = 300;
 
 export async function generateMetadata({
   params,

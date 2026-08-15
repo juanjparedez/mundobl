@@ -34,5 +34,12 @@ const getLatestNovedadTimestamp = unstable_cache(
 
 export async function GET() {
   const ts = await getLatestNovedadTimestamp();
-  return NextResponse.json({ timestamp: ts });
+  return NextResponse.json(
+    { timestamp: ts },
+    {
+      headers: {
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+      },
+    }
+  );
 }

@@ -5,11 +5,7 @@ import { Descriptions, Tag } from 'antd';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import {
-  LeftOutlined,
-  LockOutlined,
-  RightOutlined,
-} from '@ant-design/icons';
+import { LeftOutlined, LockOutlined, RightOutlined } from '@ant-design/icons';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';

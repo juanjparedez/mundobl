@@ -160,6 +160,7 @@ export async function POST(request: NextRequest) {
         observations,
         review: review ?? null,
         notesPrivate: notesPrivate === true,
+        airDays: body.airDays || null,
         catalogScope:
           body.catalogScope === 'WATCHABLE_ONLY'
             ? 'WATCHABLE_ONLY'

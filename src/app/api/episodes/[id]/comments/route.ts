@@ -3,7 +3,12 @@ import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 import { checkCommentRateLimit } from '@/lib/rate-limit';
 import { auth } from '@/lib/auth';
-import { notifyParticipantsOfNewComment } from '@/lib/notifications';
+import {
+  notifyParticipantsOfNewComment,
+  notifyAdminsOfNewComment,
+  notifyParentAuthorOfReply,
+} from '@/lib/notifications';
+import { formatPublicName } from '@/lib/user-display';
 
 export async function GET(
   request: NextRequest,
@@ -23,6 +28,7 @@ export async function GET(
     const comments = await prisma.comment.findMany({
       where: {
         episodeId,
+        parentId: null,
         OR: [
           { isPrivate: false },
           ...(currentUserId
@@ -32,7 +38,37 @@ export async function GET(
       },
       orderBy: { createdAt: 'desc' },
       include: {
-        user: { select: { id: true, name: true, nickname: true, image: true } },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            nickname: true,
+            image: true,
+            role: true,
+          },
+        },
+        replies: {
+          where: {
+            OR: [
+              { isPrivate: false },
+              ...(currentUserId
+                ? [{ isPrivate: true, userId: currentUserId }]
+                : []),
+            ],
+          },
+          orderBy: { createdAt: 'asc' },
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                nickname: true,
+                image: true,
+                role: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -73,7 +109,7 @@ export async function POST(
     }
 
     const body = await request.json();
-    const { content, isPrivate } = body;
+    const { content, isPrivate, parentId } = body;
 
     if (!content || content.trim() === '') {
       return NextResponse.json(
@@ -82,32 +118,92 @@ export async function POST(
       );
     }
 
+    const parsedParentId =
+      typeof parentId === 'number' && parentId > 0 ? parentId : null;
+
     const comment = await prisma.comment.create({
       data: {
         content: content.trim(),
         isPrivate: isPrivate === true,
         episodeId,
+        parentId: parsedParentId,
         userId: authResult.userId,
       },
       include: {
-        user: { select: { id: true, name: true, nickname: true, image: true } },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            nickname: true,
+            image: true,
+            role: true,
+          },
+        },
+        replies: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                nickname: true,
+                image: true,
+                role: true,
+              },
+            },
+          },
+        },
       },
     });
 
     if (!comment.isPrivate) {
       const episode = await prisma.episode.findUnique({
         where: { id: episodeId },
-        select: { season: { select: { seriesId: true } } },
+        select: {
+          episodeNumber: true,
+          season: {
+            select: {
+              seriesId: true,
+              seasonNumber: true,
+              series: { select: { title: true } },
+            },
+          },
+        },
       });
       const seriesId = episode?.season?.seriesId;
-      if (seriesId) {
+      if (seriesId && episode) {
+        const authorName = formatPublicName(comment.user);
+        const excerpt = content.trim().slice(0, 80);
+        const titleLabel = `${episode.season.series.title} (T${episode.season.seasonNumber}E${episode.episodeNumber})`;
+
         void notifyParticipantsOfNewComment({
           currentCommentId: comment.id,
           currentUserId: authResult.userId,
           target: { episodeId },
           seriesIdForLink: seriesId,
-          excerpt: content.trim().slice(0, 80),
+          excerpt,
         });
+
+        void notifyAdminsOfNewComment({
+          currentCommentId: comment.id,
+          currentUserId: authResult.userId,
+          authorName,
+          seriesId,
+          seriesTitle: titleLabel,
+          excerpt,
+          isReply: parsedParentId !== null,
+        });
+
+        if (parsedParentId) {
+          void notifyParentAuthorOfReply({
+            parentCommentId: parsedParentId,
+            currentCommentId: comment.id,
+            currentUserId: authResult.userId,
+            authorName,
+            seriesId,
+            seriesTitle: titleLabel,
+            excerpt,
+          });
+        }
       }
     }
 

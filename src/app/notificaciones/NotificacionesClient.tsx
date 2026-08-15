@@ -58,6 +58,11 @@ const TYPE_META: Record<
     tone: 'purple',
     label: 'Comentario',
   },
+  admin_comment: {
+    icon: <CommentOutlined />,
+    tone: 'gold',
+    label: 'Comentarios',
+  },
   test: {
     icon: <ExperimentOutlined />,
     tone: 'default',
@@ -120,7 +125,7 @@ function timeAgo(value: string): string {
   return new Date(value).toLocaleDateString();
 }
 
-const POLL_MS = 30_000;
+const POLL_MS = 90_000;
 
 export function NotificacionesClient() {
   const { t } = useLocale();

@@ -64,6 +64,102 @@ export async function notifyParticipantsOfNewComment(
   }
 }
 
+interface NotifyAdminsOpts {
+  currentCommentId: number;
+  currentUserId: string;
+  authorName?: string | null;
+  seriesId: number;
+  seriesTitle?: string;
+  excerpt: string;
+  isReply?: boolean;
+}
+
+/**
+ * Notifica a todos los administradores y moderadores cuando alguien
+ * publica un comentario o respuesta pública en la plataforma.
+ */
+export async function notifyAdminsOfNewComment(
+  opts: NotifyAdminsOpts
+): Promise<void> {
+  try {
+    const admins = await prisma.user.findMany({
+      where: {
+        role: { in: ['ADMIN', 'MODERATOR'] },
+        id: { not: opts.currentUserId },
+      },
+      select: { id: true },
+    });
+
+    if (admins.length === 0) return;
+
+    const linkPath = `/series/${opts.seriesId}`;
+    const author = opts.authorName ? opts.authorName : 'Un usuario';
+    const title = opts.isReply
+      ? `💬 Respuesta a comentario en ${opts.seriesTitle ?? 'la plataforma'}`
+      : `💬 Nuevo comentario en ${opts.seriesTitle ?? 'la plataforma'}`;
+    const body = `${author}: "${opts.excerpt}"`;
+
+    await Promise.all(
+      admins.map((admin) =>
+        notifyUser({
+          userId: admin.id,
+          type: 'admin_comment',
+          title,
+          body,
+          linkPath,
+          refType: 'admin_comment',
+          refId: opts.currentCommentId,
+        })
+      )
+    );
+  } catch {
+    /* never block the main op */
+  }
+}
+
+interface NotifyParentAuthorOpts {
+  parentCommentId: number;
+  currentCommentId: number;
+  currentUserId: string;
+  authorName?: string | null;
+  seriesId: number;
+  seriesTitle?: string;
+  excerpt: string;
+}
+
+/**
+ * Notifica al autor de un comentario padre cuando alguien le responde directamente.
+ */
+export async function notifyParentAuthorOfReply(
+  opts: NotifyParentAuthorOpts
+): Promise<void> {
+  try {
+    const parent = await prisma.comment.findUnique({
+      where: { id: opts.parentCommentId },
+      select: { userId: true },
+    });
+
+    if (!parent || !parent.userId || parent.userId === opts.currentUserId) {
+      return;
+    }
+
+    const author = opts.authorName ? opts.authorName : 'Un usuario';
+    const linkPath = `/series/${opts.seriesId}`;
+
+    await notifyUser({
+      userId: parent.userId,
+      type: 'comment_thread',
+      title: `💬 ${author} respondió a tu comentario`,
+      body: opts.excerpt,
+      linkPath,
+      refType: 'comment_reply',
+      refId: opts.currentCommentId,
+    });
+  } catch {
+    /* never block the main op */
+  }
+}
+
 export interface NotificationInput {
   userId: string;
   type: string;

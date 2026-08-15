@@ -29,10 +29,7 @@ const AUTO_ENABLED = normalizeBoolean(
   process.env.RUNTIME_FREEZE_AUTO_ENABLED,
   true
 );
-const FORCE_ENABLED = normalizeBoolean(
-  process.env.RUNTIME_FREEZE_FORCE,
-  false
-);
+const FORCE_ENABLED = normalizeBoolean(process.env.RUNTIME_FREEZE_FORCE, false);
 const WINDOW_MS = normalizePositiveInt(
   process.env.RUNTIME_FREEZE_WINDOW_MS,
   60_000
@@ -71,7 +68,10 @@ function normalizeBoolean(raw: string | undefined, fallback: boolean): boolean {
   return fallback;
 }
 
-function normalizePositiveInt(raw: string | undefined, fallback: number): number {
+function normalizePositiveInt(
+  raw: string | undefined,
+  fallback: number
+): number {
   if (!raw) return fallback;
   const parsed = Number(raw);
   if (!Number.isFinite(parsed)) return fallback;
@@ -112,7 +112,9 @@ export function registerRuntimePressureHit(): void {
   }
 }
 
-export function isRuntimeFreezeActive(_feature: FreezeFeature = 'non-critical'): boolean {
+export function isRuntimeFreezeActive(
+  _feature: FreezeFeature = 'non-critical'
+): boolean {
   const nowMs = Date.now();
 
   if (FORCE_ENABLED) return true;
@@ -155,7 +157,8 @@ export function setRuntimeFreezeOverrides(input: {
 
   if (input.forceFreeze) {
     const ttlMs =
-      typeof input.forceFreeze.minutes === 'number' && input.forceFreeze.minutes > 0
+      typeof input.forceFreeze.minutes === 'number' &&
+      input.forceFreeze.minutes > 0
         ? input.forceFreeze.minutes * 60_000
         : COOLDOWN_MS;
     setOverride('forceFreezeUntilMs', input.forceFreeze.enabled, ttlMs, nowMs);
@@ -171,7 +174,8 @@ export function setRuntimeFreezeOverrides(input: {
 
   if (input.disableLogging) {
     const ttlMs =
-      typeof input.disableLogging.minutes === 'number' && input.disableLogging.minutes > 0
+      typeof input.disableLogging.minutes === 'number' &&
+      input.disableLogging.minutes > 0
         ? input.disableLogging.minutes * 60_000
         : COOLDOWN_MS;
     setOverride(

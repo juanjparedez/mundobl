@@ -50,7 +50,7 @@ const INFO: BuildInfo = {
 export async function GET() {
   return NextResponse.json(INFO, {
     headers: {
-      'Cache-Control': 'no-store, no-cache, must-revalidate',
+      'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=1200',
     },
   });
 }

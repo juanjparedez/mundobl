@@ -1,7 +1,17 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Avatar, Button, Empty, Select, Space, Spin, Switch, Table, Tag } from 'antd';
+import {
+  Avatar,
+  Button,
+  Empty,
+  Select,
+  Space,
+  Spin,
+  Switch,
+  Table,
+  Tag,
+} from 'antd';
 import {
   AlertOutlined,
   DashboardOutlined,
@@ -64,7 +74,11 @@ type RuntimeErrorsResponse = {
   serverTime: number;
 };
 
-type OverrideKey = 'forceFreeze' | 'disableAI' | 'disableLogging' | 'disableAnonLogging';
+type OverrideKey =
+  | 'forceFreeze'
+  | 'disableAI'
+  | 'disableLogging'
+  | 'disableAnonLogging';
 
 const TTL_OPTIONS = [
   { label: '15m', value: 15 },
@@ -256,7 +270,9 @@ export function RuntimeControlClient() {
         record.user ? (
           <div className="runtime-admin-user-cell">
             <Avatar icon={<UserOutlined />} size={22} />
-            <span>{record.user.nickname || record.user.name || record.user.id}</span>
+            <span>
+              {record.user.nickname || record.user.name || record.user.id}
+            </span>
           </div>
         ) : (
           <span className="runtime-admin-anonymous">-</span>
@@ -275,7 +291,9 @@ export function RuntimeControlClient() {
       render: (_, record) => (
         <div>
           <div className="runtime-admin-path">{record.path}</div>
-          {record.method && <div className="runtime-admin-method">{record.method}</div>}
+          {record.method && (
+            <div className="runtime-admin-method">{record.method}</div>
+          )}
         </div>
       ),
     },
@@ -340,11 +358,17 @@ export function RuntimeControlClient() {
 
                 {status && (
                   <div className="runtime-admin-status-extra">
-                    <Tag color={status.state.freezeRemainingMs > 0 ? 'gold' : 'default'}>
-                      {t('adminRuntime.freezeRemaining')}: {formatRemaining(status.state.freezeRemainingMs)}
+                    <Tag
+                      color={
+                        status.state.freezeRemainingMs > 0 ? 'gold' : 'default'
+                      }
+                    >
+                      {t('adminRuntime.freezeRemaining')}:{' '}
+                      {formatRemaining(status.state.freezeRemainingMs)}
                     </Tag>
                     <span className="runtime-admin-updated-at">
-                      {t('adminRuntime.updatedAt')}: {new Date(status.serverTime).toLocaleTimeString()}
+                      {t('adminRuntime.updatedAt')}:{' '}
+                      {new Date(status.serverTime).toLocaleTimeString()}
                     </span>
                   </div>
                 )}
@@ -388,7 +412,10 @@ export function RuntimeControlClient() {
                     remainingMs={manualState?.disableLoggingRemainingMs ?? 0}
                     ttl={ttlByKey.disableLogging}
                     onTtlChange={(value) =>
-                      setTtlByKey((prev) => ({ ...prev, disableLogging: value }))
+                      setTtlByKey((prev) => ({
+                        ...prev,
+                        disableLogging: value,
+                      }))
                     }
                     busy={savingKey === 'disableLogging'}
                     onEnable={() => updateOverride('disableLogging', true)}
@@ -397,21 +424,31 @@ export function RuntimeControlClient() {
 
                   <RuntimeToggleRow
                     title={t('adminRuntime.manualAnonLogging')}
-                    remainingMs={manualState?.disableAnonLoggingRemainingMs ?? 0}
+                    remainingMs={
+                      manualState?.disableAnonLoggingRemainingMs ?? 0
+                    }
                     ttl={ttlByKey.disableAnonLogging}
                     onTtlChange={(value) =>
-                      setTtlByKey((prev) => ({ ...prev, disableAnonLogging: value }))
+                      setTtlByKey((prev) => ({
+                        ...prev,
+                        disableAnonLogging: value,
+                      }))
                     }
                     busy={savingKey === 'disableAnonLogging'}
                     onEnable={() => updateOverride('disableAnonLogging', true)}
-                    onDisable={() => updateOverride('disableAnonLogging', false)}
+                    onDisable={() =>
+                      updateOverride('disableAnonLogging', false)
+                    }
                   />
                 </div>
               </PanelCard>
 
               <PanelCard
                 header={
-                  <SectionHeader title={t('adminRuntime.errorsSection')} size="sm" />
+                  <SectionHeader
+                    title={t('adminRuntime.errorsSection')}
+                    size="sm"
+                  />
                 }
               >
                 {errors.length === 0 ? (

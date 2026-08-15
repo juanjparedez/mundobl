@@ -1,4 +1,6 @@
-import 'dotenv/config';
+try {
+  process.loadEnvFile?.();
+} catch {}
 import path from 'node:path';
 import { defineConfig } from 'prisma/config';
 

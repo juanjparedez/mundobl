@@ -1,11 +1,12 @@
 .watching-page {
   padding: 10px 12px;
+  padding-bottom: calc(var(--bottom-nav-height, 64px) + 32px);
   border: 1px solid var(--border-color-secondary);
   border-radius: var(--border-radius-lg);
   background: var(--bg-container);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .watching-page__title {

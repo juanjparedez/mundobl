@@ -3,11 +3,13 @@
 import { startTransition, useCallback, useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 
-const POLL_MS = 30_000;
+const POLL_MS = 120_000;
+const THROTTLE_MS = 45_000;
 
 /**
- * Devuelve el conteo actual de notificaciones no leidas. Polea cada 30s
- * mientras la pestaña esta visible y refresca al volver el foco/visibilidad.
+ * Devuelve el conteo actual de notificaciones no leidas. Polea cada 2 min
+ * mientras la pestaña esta visible y refresca al volver el foco/visibilidad
+ * con un throttle de 45s para no saturar Serverless Functions.
  * Si el usuario no esta autenticado retorna 0.
  */
 export function useUnreadNotifications(): number {
@@ -32,10 +34,21 @@ export function useUnreadNotifications(): number {
     }
     const controller = new AbortController();
     let interval: number | null = null;
+    let lastFetchMs = Date.now();
+
+    const throttledRefresh = () => {
+      const now = Date.now();
+      if (now - lastFetchMs < THROTTLE_MS) return;
+      lastFetchMs = now;
+      refresh(controller.signal);
+    };
 
     const startPolling = () => {
       if (interval !== null) return;
-      interval = window.setInterval(() => refresh(controller.signal), POLL_MS);
+      interval = window.setInterval(() => {
+        lastFetchMs = Date.now();
+        refresh(controller.signal);
+      }, POLL_MS);
     };
     const stopPolling = () => {
       if (interval !== null) {
@@ -45,13 +58,13 @@ export function useUnreadNotifications(): number {
     };
     const handleVisibility = () => {
       if (document.visibilityState === 'visible') {
-        refresh(controller.signal);
+        throttledRefresh();
         startPolling();
       } else {
         stopPolling();
       }
     };
-    const handleFocus = () => refresh(controller.signal);
+    const handleFocus = () => throttledRefresh();
 
     // setState happens en un microtask despues del fetch — el rule no lo
     // detecta automaticamente, pero no es una cascada sincronica.

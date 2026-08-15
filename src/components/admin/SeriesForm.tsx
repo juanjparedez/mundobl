@@ -307,6 +307,14 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
       form.setFieldsValue({
         ...initialData,
         basedOn: initialData.basedOn ? [initialData.basedOn] : [],
+        airDays: initialData.airDays
+          ? typeof initialData.airDays === 'string'
+            ? (initialData.airDays as string)
+                .split(',')
+                .map((s) => s.trim())
+                .filter(Boolean)
+            : initialData.airDays
+          : [],
       });
       setSelectedType(initialData.type || 'serie');
 
@@ -424,6 +432,11 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
         basedOn: Array.isArray(values.basedOn)
           ? values.basedOn[0] || null
           : values.basedOn || null,
+        airDays: Array.isArray(values.airDays)
+          ? values.airDays.join(',')
+          : typeof values.airDays === 'string'
+            ? values.airDays
+            : null,
       };
 
       // Include pending content items + info blocks in the creation request
@@ -809,6 +822,32 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                       📲 {t('seriesForm.formatOption_vertical')}
                     </Option>
                   </Select>
+                </Form.Item>
+              </Col>
+
+              <Col xs={24} md={12}>
+                <Form.Item
+                  label="Días de emisión"
+                  name="airDays"
+                  help="Ej: lunes, jueves (usado para alertas de emisión en Viendo Ahora)"
+                >
+                  <Select
+                    mode="tags"
+                    placeholder="Seleccionar días de emisión"
+                    size="large"
+                    allowClear
+                    tokenSeparators={[',']}
+                    style={{ width: '100%' }}
+                    options={[
+                      { value: 'lunes', label: 'Lunes' },
+                      { value: 'martes', label: 'Martes' },
+                      { value: 'miércoles', label: 'Miércoles' },
+                      { value: 'jueves', label: 'Jueves' },
+                      { value: 'viernes', label: 'Viernes' },
+                      { value: 'sábado', label: 'Sábado' },
+                      { value: 'domingo', label: 'Domingo' },
+                    ]}
+                  />
                 </Form.Item>
               </Col>
 

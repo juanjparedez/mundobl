@@ -206,12 +206,6 @@ export function SeriesHeader({
             )}
           </div>
 
-          {series.synopsis && (
-            <div className="series-header__synopsis">
-              <p>{series.synopsis}</p>
-            </div>
-          )}
-
           {hasQuickCast && (
             <div className="series-header__quick-cast">
               {directors.length > 0 && (

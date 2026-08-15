@@ -140,6 +140,7 @@ export async function isUserAllowedToReceivePush(
   if (type === 'content_added' && !prefs.notifyContentAdded) return false;
   if (type === 'review_published' && !prefs.notifyReviewPublished) return false;
   if (type === 'comment_thread' && !prefs.notifyCommentReply) return false;
+  if (type === 'admin_comment' && !prefs.notifyAdminComments) return false;
 
   // Quiet hours: si esta en la ventana, omitimos push (pero el caller
   // puede seguir creando la notificacion in-app).
@@ -167,6 +168,7 @@ export async function isUserAllowedToReceiveInApp(
   if (type === 'content_added' && !prefs.notifyContentAdded) return false;
   if (type === 'review_published' && !prefs.notifyReviewPublished) return false;
   if (type === 'comment_thread' && !prefs.notifyCommentReply) return false;
+  if (type === 'admin_comment' && !prefs.notifyAdminComments) return false;
   return true;
 }
 

@@ -93,6 +93,9 @@ export function VerPage({ items }: VerPageProps) {
   return (
     <div className="ver-content">
       <header className="ver-hero">
+        <div className="ver-hero__badge">
+          <Tag color="purple">✨ Próximamente</Tag>
+        </div>
         <h1 className="ver-hero__title">
           <PlayCircleFilled /> Ver series completas
         </h1>
@@ -100,6 +103,12 @@ export function VerPage({ items }: VerPageProps) {
           Series y películas BL/GL que se pueden mirar embebidas desde los
           canales oficiales de las productoras.
         </p>
+        <div className="ver-hero__upcoming-banner">
+          <span>
+            📢 <strong>Próximamente:</strong> Nuevas series, episodios y canales
+            oficiales en camino.
+          </span>
+        </div>
         {isAuthenticated && (
           <div className="ver-hero__cta">
             <Link href="/ver/agregar" prefetch={false}>

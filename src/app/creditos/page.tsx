@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   alternates: { canonical: '/creditos' },
 };
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 86400;
 
 interface ChannelEntry {
   name: string;
