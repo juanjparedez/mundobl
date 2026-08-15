@@ -29,6 +29,7 @@ interface NotificationPrefs {
   notifyContentAdded: boolean;
   notifyReviewPublished: boolean;
   notifyCommentReply: boolean;
+  notifyAdminComments: boolean;
   quietStart: string | null;
   quietEnd: string | null;
 }
@@ -47,6 +48,7 @@ const DEFAULT_PREFS: NotificationPrefs = {
   notifyContentAdded: true,
   notifyReviewPublished: true,
   notifyCommentReply: true,
+  notifyAdminComments: true,
   quietStart: null,
   quietEnd: null,
 };
@@ -78,7 +80,9 @@ function relativeShort(value: string): string {
 
 export function NotificationsSettings() {
   const message = useMessage();
-  const { status } = useSession();
+  const { data: session, status } = useSession();
+  const userRole = (session?.user as { role?: string } | undefined)?.role;
+  const isAdmin = userRole === 'ADMIN' || userRole === 'MODERATOR';
   const [permission, setPermission] = useState<PushPermission>('default');
   const [subscribed, setSubscribed] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -372,6 +376,24 @@ export function NotificationsSettings() {
           onChange={(v) => savePref('notifyCommentReply', v)}
         />
       </div>
+
+      {isAdmin && (
+        <div className="ns-block">
+          <div className="ns-block__title">
+            Administración
+            <span className="ns-block__hint">
+              Alertas de moderación y actividad global
+            </span>
+          </div>
+          <PrefRow
+            label="Comentarios en la plataforma"
+            desc="Avisar cuando cualquier usuario publique un nuevo comentario o respuesta"
+            checked={prefs.notifyAdminComments}
+            loading={savingKey === 'notifyAdminComments'}
+            onChange={(v) => savePref('notifyAdminComments', v)}
+          />
+        </div>
+      )}
 
       {/* Quiet hours */}
       <div className="ns-block">

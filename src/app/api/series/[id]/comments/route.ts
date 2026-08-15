@@ -3,7 +3,12 @@ import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 import { checkCommentRateLimit } from '@/lib/rate-limit';
 import { auth } from '@/lib/auth';
-import { notifyParticipantsOfNewComment } from '@/lib/notifications';
+import {
+  notifyParticipantsOfNewComment,
+  notifyAdminsOfNewComment,
+  notifyParentAuthorOfReply,
+} from '@/lib/notifications';
+import { formatPublicName } from '@/lib/user-display';
 
 export async function GET(
   request: NextRequest,
@@ -22,6 +27,7 @@ export async function GET(
     const comments = await prisma.comment.findMany({
       where: {
         seriesId,
+        parentId: null,
         OR: [
           { isPrivate: false },
           ...(currentUserId
@@ -31,7 +37,37 @@ export async function GET(
       },
       orderBy: { createdAt: 'desc' },
       include: {
-        user: { select: { id: true, name: true, nickname: true, image: true } },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            nickname: true,
+            image: true,
+            role: true,
+          },
+        },
+        replies: {
+          where: {
+            OR: [
+              { isPrivate: false },
+              ...(currentUserId
+                ? [{ isPrivate: true, userId: currentUserId }]
+                : []),
+            ],
+          },
+          orderBy: { createdAt: 'asc' },
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                nickname: true,
+                image: true,
+                role: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -67,7 +103,7 @@ export async function POST(
     const resolvedParams = await params;
     const seriesId = parseInt(resolvedParams.id, 10);
     const body = await request.json();
-    const { content, isPrivate } = body;
+    const { content, isPrivate, parentId } = body;
 
     if (!content || typeof content !== 'string' || content.trim() === '') {
       return NextResponse.json(
@@ -76,26 +112,83 @@ export async function POST(
       );
     }
 
+    const parsedParentId =
+      typeof parentId === 'number' && parentId > 0 ? parentId : null;
+
     const comment = await prisma.comment.create({
       data: {
         seriesId,
+        parentId: parsedParentId,
         content: content.trim(),
         isPrivate: isPrivate === true,
         userId: authResult.userId,
       },
       include: {
-        user: { select: { id: true, name: true, nickname: true, image: true } },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            nickname: true,
+            image: true,
+            role: true,
+          },
+        },
+        replies: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                nickname: true,
+                image: true,
+                role: true,
+              },
+            },
+          },
+        },
       },
     });
 
     if (!comment.isPrivate) {
+      const series = await prisma.series.findUnique({
+        where: { id: seriesId },
+        select: { title: true },
+      });
+      const authorName = formatPublicName(comment.user);
+      const excerpt = content.trim().slice(0, 80);
+
+      // Notificar a los participantes del hilo
       void notifyParticipantsOfNewComment({
         currentCommentId: comment.id,
         currentUserId: authResult.userId,
         target: { seriesId },
         seriesIdForLink: seriesId,
-        excerpt: content.trim().slice(0, 80),
+        excerpt,
       });
+
+      // Notificar a administradores y moderadores
+      void notifyAdminsOfNewComment({
+        currentCommentId: comment.id,
+        currentUserId: authResult.userId,
+        authorName,
+        seriesId,
+        seriesTitle: series?.title,
+        excerpt,
+        isReply: parsedParentId !== null,
+      });
+
+      // Si es una respuesta a otro comentario, notificar al autor del padre
+      if (parsedParentId) {
+        void notifyParentAuthorOfReply({
+          parentCommentId: parsedParentId,
+          currentCommentId: comment.id,
+          currentUserId: authResult.userId,
+          authorName,
+          seriesId,
+          seriesTitle: series?.title,
+          excerpt,
+        });
+      }
     }
 
     return NextResponse.json(comment);

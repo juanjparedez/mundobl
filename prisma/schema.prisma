@@ -233,6 +233,8 @@ model Series {
   // badges bidireccionales en /ver y /catalogo y a admins linkear sin
   // moderar manualmente. Solo se setea en USER_EMBED → CURATED.
   linkedSeriesId Int?
+  // Días de emisión en formato string / lista separada por comas ("lunes,jueves")
+  airDays        String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
@@ -621,12 +623,18 @@ model Comment {
   episodeId Int?
   episode   Episode? @relation(fields: [episodeId], references: [id], onDelete: Cascade)
 
+  // Hilos de respuestas
+  parentId  Int?
+  parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies   Comment[] @relation("CommentReplies")
+
   reports CommentReport[]
 
   @@index([userId])
   @@index([seriesId])
   @@index([seasonId])
   @@index([episodeId])
+  @@index([parentId])
   @@index([reportCount])
 }
 
@@ -736,6 +744,7 @@ model NotificationPrefs {
   notifyContentAdded    Boolean @default(true)
   notifyReviewPublished Boolean @default(true)
   notifyCommentReply    Boolean @default(true)
+  notifyAdminComments   Boolean @default(true)
 
   // Quiet hours: si estan dentro de la ventana, los pushes se omiten
   // (pero la notificacion in-app igual se crea). Formato HH:MM en UTC.

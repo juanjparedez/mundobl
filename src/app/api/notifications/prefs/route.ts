@@ -8,6 +8,7 @@ interface PrefsInput {
   notifyContentAdded?: boolean;
   notifyReviewPublished?: boolean;
   notifyCommentReply?: boolean;
+  notifyAdminComments?: boolean;
   quietStart?: string | null;
   quietEnd?: string | null;
 }
@@ -31,6 +32,7 @@ const DEFAULT_PREFS = {
   notifyContentAdded: true,
   notifyReviewPublished: true,
   notifyCommentReply: true,
+  notifyAdminComments: true,
   quietStart: null as string | null,
   quietEnd: null as string | null,
 };
