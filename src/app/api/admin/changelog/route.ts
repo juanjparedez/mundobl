@@ -94,6 +94,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ imported: items.length }, { status: 201 });
     }
 
+    // Inserción en lote (ej: desde generador IA)
+    if (Array.isArray(body?.bulkItems) && body.bulkItems.length > 0) {
+      const created = [];
+      for (const raw of body.bulkItems) {
+        if (!raw.version?.trim() || !raw.body?.trim()) continue;
+        const it = await prisma.changelogItem.create({
+          data: {
+            version: raw.version.trim(),
+            versionLabel: raw.versionLabel?.trim() || null,
+            category: raw.category?.trim() || null,
+            body: raw.body.trim(),
+            sortOrder: raw.sortOrder ?? 0,
+          },
+        });
+        created.push(it);
+      }
+      return NextResponse.json({ created: created.length, items: created }, { status: 201 });
+    }
+
     if (!version?.trim() || !itemBody?.trim()) {
       return NextResponse.json(
         { error: 'version y body son requeridos' },
