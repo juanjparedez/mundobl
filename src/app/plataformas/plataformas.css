@@ -240,6 +240,40 @@
   color: var(--text-secondary);
 }
 
+.plataforma-card__affiliate-tag {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 4px;
+}
+
+/* ─── Manifiesto de Transparencia ────────────────────────────────── */
+.plataformas-transparency-note {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: color-mix(in srgb, var(--primary-color) 8%, var(--bg-elevated));
+  border: 1px solid color-mix(in srgb, var(--primary-color) 25%, transparent);
+  border-radius: var(--border-radius-base);
+  margin-bottom: var(--spacing-lg);
+}
+
+.plataformas-transparency-note__icon {
+  font-size: 1.6rem;
+  color: var(--primary-color);
+  flex-shrink: 0;
+}
+
+.plataformas-transparency-note__text {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.plataformas-transparency-note__text strong {
+  color: var(--text-primary);
+}
+
 /* ─── FAQ / Arbitraje ────────────────────────────────────────────── */
 .plataformas-faq {
   background: var(--bg-elevated);
