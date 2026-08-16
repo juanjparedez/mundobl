@@ -250,7 +250,7 @@
 
 .ver-serie__chapters-container {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: var(--spacing-sm);
 }
 
@@ -258,10 +258,10 @@
   background: var(--bg-elevated);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-base);
-  padding: 10px 14px;
+  padding: 10px;
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  gap: 12px;
+  align-items: flex-start;
   transition: all 0.15s ease;
 }
 
@@ -271,10 +271,76 @@
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary-color) 40%, transparent);
 }
 
+.ver-serie__chapter-thumb-wrap {
+  position: relative;
+  width: 110px;
+  height: 62px;
+  flex-shrink: 0;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #000;
+  cursor: pointer;
+}
+
+.ver-serie__chapter-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.ver-serie__chapter-thumb-wrap:hover .ver-serie__chapter-thumb {
+  transform: scale(1.05);
+}
+
+.ver-serie__chapter-thumb-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 60%);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 4px;
+}
+
+.ver-serie__part-count-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.ver-serie__duration-badge {
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(0, 0, 0, 0.6);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.ver-serie__play-icon-overlay {
+  font-size: 1.2rem;
+  color: #fff;
+  margin: auto;
+  opacity: 0.85;
+}
+
+.ver-serie__chapter-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
 .ver-serie__chapter-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
 .ver-serie__chapter-title {
@@ -286,20 +352,25 @@
   gap: 6px;
 }
 
+.ver-serie__chapter-parts-hint {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
 .ver-serie__parts-row {
   display: flex;
-  gap: 6px;
+  gap: 5px;
   flex-wrap: wrap;
 }
 
 .ver-serie__part-btn {
-  padding: 6px 12px;
+  padding: 4px 10px;
   border-radius: 6px;
   background: var(--bg-container);
   border: 1px solid var(--border-color-secondary);
   color: var(--text-secondary);
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
@@ -337,16 +408,72 @@
 
 .ver-serie__extras-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: var(--spacing-xs);
+}
+
+.ver-serie__extra-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-base);
+  padding: 8px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: var(--text-primary);
+  transition: all 0.15s ease;
+}
+
+.ver-serie__extra-card:hover {
+  border-color: var(--primary-color);
+  background: var(--bg-spotlight);
+}
+
+.ver-serie__extra-card--active {
+  border-color: color-mix(in srgb, var(--primary-color) 65%, transparent);
+  background: color-mix(in srgb, var(--primary-color) 10%, transparent);
+  font-weight: 600;
+}
+
+.ver-serie__extra-thumb-wrap {
+  position: relative;
+  width: 80px;
+  height: 45px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ver-serie__extra-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ver-serie__extra-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ver-serie__extra-name {
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .ver-serie__private-notice {
   margin-top: var(--spacing-xs);
-}
-
-.ver-serie__episode-btn--extra {
-  opacity: 0.9;
 }
 
 .ver-serie__episode-grid {

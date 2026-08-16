@@ -13,6 +13,8 @@ import {
   BankOutlined,
   PlayCircleOutlined,
   VideoCameraOutlined,
+  ClockCircleOutlined,
+  LockOutlined,
 } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import { EmbedPlayer } from '@/components/common/EmbedPlayer/EmbedPlayer';
@@ -203,7 +205,7 @@ export function parseEpisodeBadge(
     const epNum = detectedEp || episodeNumber;
     return {
       label: `Capítulo ${epNum} · Parte ${partNum}/${partTotal}`,
-      shortLabel: `[${partNum}/${partTotal}]`,
+      shortLabel: `Parte ${partNum}/${partTotal}`,
       isExtra: false,
       isPrivate: false,
       chapterNumber: epNum,
@@ -218,7 +220,7 @@ export function parseEpisodeBadge(
     const derivedPart = ((episodeNumber - 1) % 4) + 1;
     return {
       label: `Capítulo ${derivedChapter} · Parte ${derivedPart}/4`,
-      shortLabel: `[${derivedPart}/4]`,
+      shortLabel: `Parte ${derivedPart}/4`,
       isExtra: false,
       isPrivate: false,
       chapterNumber: derivedChapter,
@@ -268,6 +270,11 @@ export function parseEpisodeBadge(
   };
 }
 
+function getYouTubeThumbnail(videoId: string | null | undefined): string | null {
+  if (!videoId) return null;
+  return `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+}
+
 export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
   const { t } = useLocale();
   const { data: session, status } = useSession();
@@ -302,7 +309,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
   const hasPrev = activeIdx > 0;
   const hasNext = activeIdx < flatEpisodes.length - 1;
 
-  // Agrupación inteligente por Capítulo
+  // Agrupación inteligente por Capítulo con miniaturas
   const { chapterGroups, extraEpisodes, privateEpisodes } = useMemo(() => {
     const map = new Map<
       number,
@@ -342,13 +349,19 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
 
     const chapters = Array.from(map.entries())
       .sort(([a], [b]) => a - b)
-      .map(([chapterNum, items]) => ({
-        chapterNumber: chapterNum,
-        items,
-      }));
+      .map(([chapterNum, items]) => {
+        // Thumbnail de la primera parte del capítulo
+        const firstEp = items[0]?.episode;
+        const thumbnail = getYouTubeThumbnail(firstEp?.embedVideoId) || series.imageUrl;
+        return {
+          chapterNumber: chapterNum,
+          thumbnail,
+          items,
+        };
+      });
 
     return { chapterGroups: chapters, extraEpisodes: extras, privateEpisodes: privates };
-  }, [flatEpisodes]);
+  }, [flatEpisodes, series.imageUrl]);
 
   const handleMoveToCatalog = async () => {
     setMovingScope(true);
@@ -577,7 +590,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         )}
       </div>
 
-      {/* Lista de episodios agrupada */}
+      {/* Lista de episodios enriquecida con Miniaturas y Capítulos */}
       <div className="ver-serie__episodes">
         <div className="ver-serie__episodes-header">
           <h2>{t('verSerie.episodesTitle')} ({flatEpisodes.length})</h2>
@@ -594,12 +607,13 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           )}
         </div>
 
-        {/* 1. Capítulos principales organizados */}
+        {/* 1. Capítulos principales con preview visual */}
         {filterMode !== 'extras' && (
           <div className="ver-serie__chapters-container">
-            {chapterGroups.map(({ chapterNumber, items }) => {
+            {chapterGroups.map(({ chapterNumber, thumbnail, items }) => {
               const isChapterActive = items.some((it) => it.flatIndex === activeIdx);
               const isMultiPart = items.length > 1;
+              const firstEpisode = items[0]?.episode;
 
               return (
                 <div
@@ -608,35 +622,72 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
                     isChapterActive ? ' ver-serie__chapter-card--active' : ''
                   }`}
                 >
-                  <div className="ver-serie__chapter-head">
-                    <span className="ver-serie__chapter-title">
-                      <PlayCircleOutlined /> Capítulo {chapterNumber}
-                    </span>
-                  </div>
+                  {/* Preview de miniatura */}
+                  {thumbnail && (
+                    <div
+                      className="ver-serie__chapter-thumb-wrap"
+                      onClick={() => !isMultiPart && setActiveIdx(items[0].flatIndex)}
+                    >
+                      <img
+                        src={thumbnail}
+                        alt={`Capítulo ${chapterNumber}`}
+                        className="ver-serie__chapter-thumb"
+                        loading="lazy"
+                      />
+                      <div className="ver-serie__chapter-thumb-overlay">
+                        {isMultiPart ? (
+                          <span className="ver-serie__part-count-badge">
+                            {items.length} Partes
+                          </span>
+                        ) : (
+                          <PlayCircleOutlined className="ver-serie__play-icon-overlay" />
+                        )}
+                        {firstEpisode?.duration && (
+                          <span className="ver-serie__duration-badge">
+                            <ClockCircleOutlined /> {firstEpisode.duration} min
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
 
-                  <div className="ver-serie__parts-row">
-                    {items.map(({ flatIndex, episode }) => {
-                      const isActive = flatIndex === activeIdx;
-                      const partLabel = isMultiPart
-                        ? episode.parsed.partNumber
-                          ? `Parte ${episode.parsed.partNumber}/${episode.parsed.partTotal || 4}`
-                          : `Parte ${items.indexOf({ flatIndex, episode }) + 1}`
-                        : episode.parsed.shortLabel || `Ver capítulo`;
+                  <div className="ver-serie__chapter-body">
+                    <div className="ver-serie__chapter-head">
+                      <span className="ver-serie__chapter-title">
+                        <PlayCircleOutlined /> Capítulo {chapterNumber}
+                      </span>
+                      {isMultiPart && (
+                        <span className="ver-serie__chapter-parts-hint">
+                          Dividido en {items.length} partes
+                        </span>
+                      )}
+                    </div>
 
-                      return (
-                        <button
-                          key={episode.id}
-                          type="button"
-                          className={`ver-serie__part-btn${
-                            isActive ? ' ver-serie__part-btn--active' : ''
-                          }`}
-                          onClick={() => setActiveIdx(flatIndex)}
-                        >
-                          {isActive && <CheckCircleFilled />}
-                          {partLabel}
-                        </button>
-                      );
-                    })}
+                    {/* Selector de partes o botón directo */}
+                    <div className="ver-serie__parts-row">
+                      {items.map(({ flatIndex, episode }) => {
+                        const isActive = flatIndex === activeIdx;
+                        const partLabel = isMultiPart
+                          ? episode.parsed.partNumber
+                            ? `Parte ${episode.parsed.partNumber}/${episode.parsed.partTotal || 4}`
+                            : `Parte ${items.indexOf({ flatIndex, episode }) + 1}`
+                          : `Reproducir`;
+
+                        return (
+                          <button
+                            key={episode.id}
+                            type="button"
+                            className={`ver-serie__part-btn${
+                              isActive ? ' ver-serie__part-btn--active' : ''
+                            }`}
+                            onClick={() => setActiveIdx(flatIndex)}
+                          >
+                            {isActive && <CheckCircleFilled />}
+                            {partLabel}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               );
@@ -644,7 +695,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           </div>
         )}
 
-        {/* 2. Extras y Tráilers */}
+        {/* 2. Extras y Tráilers con miniatura */}
         {filterMode !== 'episodes' && extraEpisodes.length > 0 && (
           <div className="ver-serie__extras-section">
             <h3 className="ver-serie__section-subtitle">
@@ -654,24 +705,38 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
               {extraEpisodes.map(({ flatIndex, episode }) => {
                 const isActive = flatIndex === activeIdx;
                 const badge = episode.parsed;
+                const thumb = getYouTubeThumbnail(episode.embedVideoId);
 
                 return (
                   <button
                     key={episode.id}
                     type="button"
-                    className={`ver-serie__episode-btn${
-                      isActive ? ' ver-serie__episode-btn--active' : ''
-                    } ver-serie__episode-btn--extra`}
+                    className={`ver-serie__extra-card${
+                      isActive ? ' ver-serie__extra-card--active' : ''
+                    }`}
                     onClick={() => setActiveIdx(flatIndex)}
                   >
-                    <span className="ver-serie__episode-name">
-                      {badge.label}
-                    </span>
-                    {badge.tagColor && (
-                      <Tag color={badge.tagColor} style={{ marginLeft: 4 }}>
-                        {badge.badgeText}
-                      </Tag>
+                    {thumb && (
+                      <div className="ver-serie__extra-thumb-wrap">
+                        <img
+                          src={thumb}
+                          alt={badge.label}
+                          className="ver-serie__extra-thumb"
+                          loading="lazy"
+                        />
+                        <PlayCircleOutlined className="ver-serie__play-icon-overlay" />
+                      </div>
                     )}
+                    <div className="ver-serie__extra-info">
+                      <span className="ver-serie__extra-name">
+                        {badge.label}
+                      </span>
+                      {badge.tagColor && (
+                        <Tag color={badge.tagColor} style={{ alignSelf: 'flex-start' }}>
+                          {badge.badgeText}
+                        </Tag>
+                      )}
+                    </div>
                     {isActive && (
                       <CheckCircleFilled className="ver-serie__episode-active-icon" />
                     )}
@@ -686,7 +751,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         {privateEpisodes.length > 0 && filterMode === 'all' && (
           <div className="ver-serie__private-notice">
             <Tag color="default">
-              🔒 {privateEpisodes.length} video(s) privados o no disponibles en YouTube por el canal oficial
+              <LockOutlined /> {privateEpisodes.length} video(s) privados o retirados en YouTube por la productora oficial
             </Tag>
           </div>
         )}
