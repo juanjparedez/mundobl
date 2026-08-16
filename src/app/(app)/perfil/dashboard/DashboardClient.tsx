@@ -192,6 +192,16 @@ const ADMIN_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.topRated, x: 0, y: 52, w: 5, h: 5 },
     { i: WIDGET_IDS.recentlyCompleted, x: 5, y: 59, w: 5, h: 5 },
     { i: WIDGET_IDS.myComments, x: 0, y: 64, w: 10, h: 6 },
+    // Estos 4 faltaban en md/sm/xs (solo estaban en lg) — react-grid-layout
+    // les asignaba un layout fallback angosto/roto al no encontrar entrada
+    // para el breakpoint activo. Bug preexistente, expuesto ahora que el
+    // resto de los widgets ya no tapa el problema con su propio clipping.
+    { i: WIDGET_IDS.activityChart, x: 0, y: 70, w: 10, h: 6 },
+    { i: WIDGET_IDS.recentAdminActivity, x: 0, y: 76, w: 5, h: 6 },
+    { i: WIDGET_IDS.topCommenters, x: 5, y: 76, w: 5, h: 5 },
+    { i: WIDGET_IDS.profileCompleteness, x: 0, y: 82, w: 4, h: 4 },
+    // worldMap tambien faltaba (mismo bug que arriba).
+    { i: WIDGET_IDS.worldMap, x: 0, y: 86, w: 10, h: 6 },
   ],
   sm: [
     { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 6, h: 4 },
@@ -215,6 +225,11 @@ const ADMIN_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.topCompanies, x: 0, y: 96, w: 6, h: 6 },
     { i: WIDGET_IDS.completedByYear, x: 0, y: 102, w: 6, h: 6 },
     { i: WIDGET_IDS.myComments, x: 0, y: 108, w: 6, h: 7 },
+    { i: WIDGET_IDS.activityChart, x: 0, y: 115, w: 6, h: 6 },
+    { i: WIDGET_IDS.recentAdminActivity, x: 0, y: 121, w: 6, h: 6 },
+    { i: WIDGET_IDS.topCommenters, x: 0, y: 127, w: 6, h: 5 },
+    { i: WIDGET_IDS.profileCompleteness, x: 0, y: 132, w: 6, h: 4 },
+    { i: WIDGET_IDS.worldMap, x: 0, y: 136, w: 6, h: 6 },
   ],
   xs: [
     { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 4, h: 5 },
@@ -238,6 +253,11 @@ const ADMIN_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.topCompanies, x: 0, y: 97, w: 4, h: 6 },
     { i: WIDGET_IDS.completedByYear, x: 0, y: 103, w: 4, h: 6 },
     { i: WIDGET_IDS.myComments, x: 0, y: 109, w: 4, h: 7 },
+    { i: WIDGET_IDS.activityChart, x: 0, y: 116, w: 4, h: 6 },
+    { i: WIDGET_IDS.recentAdminActivity, x: 0, y: 122, w: 4, h: 6 },
+    { i: WIDGET_IDS.topCommenters, x: 0, y: 128, w: 4, h: 5 },
+    { i: WIDGET_IDS.profileCompleteness, x: 0, y: 133, w: 4, h: 4 },
+    { i: WIDGET_IDS.worldMap, x: 0, y: 137, w: 4, h: 6 },
   ],
 };
 
@@ -291,6 +311,11 @@ const USER_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.topRated, x: 0, y: 46, w: 5, h: 5 },
     { i: WIDGET_IDS.myDisputes, x: 5, y: 47, w: 5, h: 6 },
     { i: WIDGET_IDS.myComments, x: 0, y: 53, w: 10, h: 6 },
+    // worldMap/socials/profileCompleteness faltaban en md/sm/xs (mismo bug
+    // que en ADMIN_LAYOUTS — solo estaban en lg).
+    { i: WIDGET_IDS.worldMap, x: 0, y: 59, w: 10, h: 6 },
+    { i: WIDGET_IDS.socials, x: 0, y: 65, w: 10, h: 6 },
+    { i: WIDGET_IDS.profileCompleteness, x: 0, y: 71, w: 10, h: 4 },
   ],
   sm: [
     { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 6, h: 4 },
@@ -312,6 +337,9 @@ const USER_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.myDisputes, x: 0, y: 85, w: 6, h: 6 },
     { i: WIDGET_IDS.completedByYear, x: 0, y: 91, w: 6, h: 6 },
     { i: WIDGET_IDS.myComments, x: 0, y: 97, w: 6, h: 7 },
+    { i: WIDGET_IDS.worldMap, x: 0, y: 104, w: 6, h: 6 },
+    { i: WIDGET_IDS.socials, x: 0, y: 110, w: 6, h: 6 },
+    { i: WIDGET_IDS.profileCompleteness, x: 0, y: 116, w: 6, h: 4 },
   ],
   xs: [
     { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 4, h: 5 },
@@ -333,6 +361,9 @@ const USER_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.myDisputes, x: 0, y: 86, w: 4, h: 6 },
     { i: WIDGET_IDS.completedByYear, x: 0, y: 92, w: 4, h: 6 },
     { i: WIDGET_IDS.myComments, x: 0, y: 98, w: 4, h: 7 },
+    { i: WIDGET_IDS.worldMap, x: 0, y: 105, w: 4, h: 6 },
+    { i: WIDGET_IDS.socials, x: 0, y: 111, w: 4, h: 6 },
+    { i: WIDGET_IDS.profileCompleteness, x: 0, y: 117, w: 4, h: 4 },
   ],
 };
 
@@ -363,6 +394,8 @@ const BASIC_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.heatmap, x: 0, y: 14, w: 10, h: 5 },
     { i: WIDGET_IDS.collections, x: 0, y: 19, w: 5, h: 5 },
     { i: WIDGET_IDS.socials, x: 5, y: 19, w: 5, h: 4 },
+    // profileCompleteness faltaba en md/sm/xs (mismo bug de arriba).
+    { i: WIDGET_IDS.profileCompleteness, x: 0, y: 24, w: 5, h: 4 },
   ],
   sm: [
     { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 6, h: 4 },
@@ -372,6 +405,7 @@ const BASIC_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.heatmap, x: 0, y: 21, w: 6, h: 5 },
     { i: WIDGET_IDS.collections, x: 0, y: 26, w: 6, h: 5 },
     { i: WIDGET_IDS.socials, x: 0, y: 31, w: 6, h: 4 },
+    { i: WIDGET_IDS.profileCompleteness, x: 0, y: 35, w: 6, h: 4 },
   ],
   xs: [
     { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 4, h: 5 },
@@ -381,6 +415,7 @@ const BASIC_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.heatmap, x: 0, y: 22, w: 4, h: 5 },
     { i: WIDGET_IDS.collections, x: 0, y: 27, w: 4, h: 5 },
     { i: WIDGET_IDS.socials, x: 0, y: 32, w: 4, h: 4 },
+    { i: WIDGET_IDS.profileCompleteness, x: 0, y: 36, w: 4, h: 4 },
   ],
 };
 
