@@ -79,6 +79,94 @@ export function RecentAdminActivityWidget() {
     },
   };
 
+  // Clave de dia calendario en hora local (no depende del locale de
+  // formateo) para detectar cuando insertar un separador de seccion.
+  const dayKey = (iso: string) => {
+    const d = new Date(iso);
+    return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+  };
+
+  // "Hoy" / "Ayer" / fecha completa con dia de semana — referencia fija
+  // por dia en vez de que cada fila repita solo un numero suelto sin
+  // anclar (pedido explicito: agrupar y dar referencias externas fijas
+  // como mes/ano/dia de semana).
+  const formatDayLabel = (iso: string) => {
+    const d = new Date(iso);
+    const today = new Date();
+    const yesterday = new Date();
+    yesterday.setDate(today.getDate() - 1);
+    if (dayKey(iso) === dayKey(today.toISOString())) return t('common.today');
+    if (dayKey(iso) === dayKey(yesterday.toISOString()))
+      return t('common.yesterday');
+    return d.toLocaleDateString(locale, {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+    });
+  };
+
+  // Filas intercaladas: separador de dia (una vez por dia, antes del
+  // primer evento de ese dia) + evento. AutoFitList mide filas por
+  // offsetTop, asi que un <li> separador es simplemente una fila mas —
+  // no hace falta tocar AutoFitList para soportar esto.
+  let lastDayKey: string | null = null;
+  const rows: React.ReactNode[] = [];
+  events.forEach((e) => {
+    const key = dayKey(e.createdAt);
+    if (key !== lastDayKey) {
+      rows.push(
+        <li key={`day-${key}`} className="mb-recent-activity__day-header">
+          {formatDayLabel(e.createdAt)}
+        </li>
+      );
+      lastDayKey = key;
+    }
+    const cfg = actionConfig[e.action] ?? actionConfig.UPDATE;
+    const author = e.user
+      ? formatPublicName(e.user)
+      : t('adminActivity.anonymous');
+    const time = new Date(e.createdAt).toLocaleTimeString(locale, {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+    const pathShort = e.path.replace('/admin/', '/');
+    // Referencia externa real: lleva al registro completo filtrado por
+    // esta ruta + accion, en vez de dejar el path como texto suelto sin
+    // adonde ir (el tooltip del Tag no alcanza para ver el detalle real
+    // del evento).
+    const logsHref = `/admin/logs?path=${encodeURIComponent(e.path)}&action=${e.action}`;
+    rows.push(
+      <li key={e.id} className="mb-recent-activity__item">
+        <Avatar
+          src={e.user?.image}
+          icon={!e.user?.image ? <UserOutlined /> : undefined}
+          size={24}
+        />
+        <div className="mb-recent-activity__body">
+          <div className="mb-recent-activity__row">
+            <span className="mb-recent-activity__author">{author}</span>
+            <Tag color={cfg.color} icon={cfg.icon}>
+              {cfg.label}
+            </Tag>
+          </div>
+          <div className="mb-recent-activity__row">
+            <Link
+              href={logsHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mb-recent-activity__link"
+              title={t('adminActivity.viewInLogs')}
+            >
+              <code>{pathShort}</code>
+              <ExportOutlined />
+            </Link>
+            <span className="mb-recent-activity__date">{time}</span>
+          </div>
+        </div>
+      </li>
+    );
+  });
+
   return (
     <Widget title={t('adminActivity.title')} icon={<TeamOutlined />} noPadding>
       {!loaded ? (
@@ -102,55 +190,16 @@ export function RecentAdminActivityWidget() {
           as="ul"
           listClassName="mb-recent-activity"
           viewLessLabel={t('profile.overviewViewLess')}
-          viewMoreLabel={(count) =>
+          // Ignora el count que pasa AutoFitList (cuenta TODAS las filas
+          // medidas, incluidos los separadores de dia) — usamos
+          // events.length, la cantidad real de eventos.
+          viewMoreLabel={() =>
             interpolateMessage(t('profile.overviewViewAllCount'), {
-              count: String(count),
+              count: String(events.length),
             })
           }
         >
-          {events.map((e) => {
-            const cfg = actionConfig[e.action] ?? actionConfig.UPDATE;
-            const author = e.user
-              ? formatPublicName(e.user)
-              : t('adminActivity.anonymous');
-            const date = new Date(e.createdAt).toLocaleDateString(locale);
-            const pathShort = e.path.replace('/admin/', '/');
-            // Referencia externa real: lleva al registro completo
-            // filtrado por esta ruta + accion, en vez de dejar el path
-            // como texto suelto sin adonde ir (el tooltip del Tag no
-            // alcanza para ver el detalle real del evento).
-            const logsHref = `/admin/logs?path=${encodeURIComponent(e.path)}&action=${e.action}`;
-            return (
-              <li key={e.id} className="mb-recent-activity__item">
-                <Avatar
-                  src={e.user?.image}
-                  icon={!e.user?.image ? <UserOutlined /> : undefined}
-                  size={24}
-                />
-                <div className="mb-recent-activity__body">
-                  <div className="mb-recent-activity__row">
-                    <span className="mb-recent-activity__author">{author}</span>
-                    <Tag color={cfg.color} icon={cfg.icon}>
-                      {cfg.label}
-                    </Tag>
-                  </div>
-                  <div className="mb-recent-activity__row">
-                    <Link
-                      href={logsHref}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mb-recent-activity__link"
-                      title={t('adminActivity.viewInLogs')}
-                    >
-                      <code>{pathShort}</code>
-                      <ExportOutlined />
-                    </Link>
-                    <span className="mb-recent-activity__date">{date}</span>
-                  </div>
-                </div>
-              </li>
-            );
-          })}
+          {rows}
         </AutoFitList>
       )}
     </Widget>
