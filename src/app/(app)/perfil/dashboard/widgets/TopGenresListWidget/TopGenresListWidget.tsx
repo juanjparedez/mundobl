@@ -42,6 +42,7 @@ export function TopGenresListWidget({ topGenres }: TopGenresListWidgetProps) {
     >
       <AutoFitList
         as="ul"
+        collapsedCount={5}
         listClassName="mb-top-genres-list"
         viewLessLabel={t('profile.overviewViewLess')}
         viewMoreLabel={(count) =>

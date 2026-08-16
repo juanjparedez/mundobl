@@ -46,6 +46,7 @@ export function TopRatedSeriesWidget({
     >
       <AutoFitList
         as="ol"
+        collapsedCount={3}
         listClassName="mb-top-rated-list"
         viewLessLabel={t('profile.overviewViewLess')}
         viewMoreLabel={(count) =>

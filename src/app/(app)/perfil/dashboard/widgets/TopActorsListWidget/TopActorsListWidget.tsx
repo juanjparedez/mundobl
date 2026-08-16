@@ -42,6 +42,7 @@ export function TopActorsListWidget({ topActors }: TopActorsListWidgetProps) {
     >
       <AutoFitList
         as="ul"
+        collapsedCount={5}
         listClassName="mb-top-actors-list"
         viewLessLabel={t('profile.overviewViewLess')}
         viewMoreLabel={(count) =>

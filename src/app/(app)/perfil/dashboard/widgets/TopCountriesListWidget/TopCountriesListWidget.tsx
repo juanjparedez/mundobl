@@ -43,6 +43,7 @@ export function TopCountriesListWidget({
     >
       <AutoFitList
         as="ul"
+        collapsedCount={6}
         listClassName="mb-top-countries-list"
         viewLessLabel={t('profile.overviewViewLess')}
         viewMoreLabel={(count) =>

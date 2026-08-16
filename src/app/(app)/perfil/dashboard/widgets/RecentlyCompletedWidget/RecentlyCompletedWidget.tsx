@@ -35,6 +35,7 @@ export function RecentlyCompletedWidget({
       ) : (
         <AutoFitList
           as="ul"
+          collapsedCount={3}
           listClassName="mb-recently-completed-widget"
           viewLessLabel={t('profile.overviewViewLess')}
           viewMoreLabel={(count) =>

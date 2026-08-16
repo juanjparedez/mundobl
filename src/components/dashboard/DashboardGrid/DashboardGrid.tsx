@@ -29,6 +29,10 @@ interface DashboardGridItemProps {
   breakpoint: DashboardBreakpoint;
   onRemove?: () => void;
   widgetProps?: Record<string, unknown>;
+  rowHeight: number;
+  gap: number;
+  minH?: number;
+  onAutoHeight?: (h: number) => void;
 }
 
 /**
@@ -44,6 +48,10 @@ const DashboardGridItem = memo(function DashboardGridItem({
   breakpoint,
   onRemove,
   widgetProps,
+  rowHeight,
+  gap,
+  minH,
+  onAutoHeight,
 }: DashboardGridItemProps) {
   const def = WidgetRegistry.get(itemId);
 
@@ -53,8 +61,12 @@ const DashboardGridItem = memo(function DashboardGridItem({
       breakpoint,
       dragHandleClassName: DRAG_HANDLE_CLASS,
       onRemove,
+      rowHeight,
+      gap,
+      minH,
+      onAutoHeight,
     }),
-    [editing, breakpoint, onRemove]
+    [editing, breakpoint, onRemove, rowHeight, gap, minH, onAutoHeight]
   );
 
   if (!def) {
@@ -96,14 +108,25 @@ export interface DashboardGridProps {
   className?: string;
 }
 
+/**
+ * Convierte DashboardLayouts (nuestro shape) al shape que espera RGL,
+ * aplicando el override de auto-height SOLO al breakpoint activo (es el
+ * unico que se esta midiendo/renderizando ahora mismo — los demas
+ * conservan el `h` persistido/preset hasta que se activen y se midan).
+ */
 function toRglLayouts(
-  layouts: DashboardLayouts
+  layouts: DashboardLayouts,
+  autoHeights: Map<string, number>,
+  activeBp: DashboardBreakpoint
 ): ResponsiveLayouts<DashboardBreakpoint> {
   const out: Partial<Record<DashboardBreakpoint, LayoutItem[]>> = {};
   (Object.keys(layouts) as DashboardBreakpoint[]).forEach((bp) => {
     const items = layouts[bp];
     if (!items) return;
-    out[bp] = items.map((it) => ({ ...it }));
+    out[bp] = items.map((it) => {
+      const auto = bp === activeBp ? autoHeights.get(it.i) : undefined;
+      return auto ? { ...it, h: auto } : { ...it };
+    });
   });
   return out as ResponsiveLayouts<DashboardBreakpoint>;
 }
@@ -161,6 +184,29 @@ export function DashboardGrid({
     return map;
   }, [items, onRemoveWidget]);
 
+  // Alto real que cada widget reporto necesitar (medido con
+  // ResizeObserver en Widget). Vive SOLO aca (no se persiste, no pasa
+  // por onLayoutsChange) — es un override de render, no una preferencia
+  // del usuario. Cada widget lo recalcula y actualiza solo.
+  const [autoHeights, setAutoHeights] = useState<Map<string, number>>(
+    new Map()
+  );
+
+  const autoHeightHandlers = useMemo(() => {
+    const map = new Map<string, (h: number) => void>();
+    for (const item of items) {
+      map.set(item.i, (h: number) => {
+        setAutoHeights((prev) => {
+          if (prev.get(item.i) === h) return prev;
+          const next = new Map(prev);
+          next.set(item.i, h);
+          return next;
+        });
+      });
+    }
+    return map;
+  }, [items]);
+
   const handleLayoutChange = useCallback(
     (_layout: Layout, allLayouts: ResponsiveLayouts<DashboardBreakpoint>) => {
       if (onLayoutsChange) onLayoutsChange(fromRglLayouts(allLayouts));
@@ -179,7 +225,7 @@ export function DashboardGrid({
         <Responsive<DashboardBreakpoint>
           className="layout"
           width={width}
-          layouts={toRglLayouts(layouts)}
+          layouts={toRglLayouts(layouts, autoHeights, currentBp)}
           breakpoints={DASHBOARD_BREAKPOINTS}
           cols={DASHBOARD_COLS}
           rowHeight={rowHeight}
@@ -202,6 +248,12 @@ export function DashboardGrid({
                   breakpoint={currentBp}
                   onRemove={removeHandlers.get(item.i)}
                   widgetProps={widgetProps?.[item.i]}
+                  rowHeight={rowHeight}
+                  gap={gap}
+                  minH={
+                    item.minH ?? WidgetRegistry.get(item.i)?.defaultSize.minH
+                  }
+                  onAutoHeight={autoHeightHandlers.get(item.i)}
                 />
               </div>
             );

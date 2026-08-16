@@ -67,6 +67,7 @@ export function MyReviewsWidget({ recentReviews }: MyReviewsWidgetProps) {
     >
       <AutoFitList
         as="ul"
+        collapsedCount={2}
         listClassName="mb-my-reviews"
         viewLessLabel={t('profile.overviewViewLess')}
         viewMoreLabel={(count) =>

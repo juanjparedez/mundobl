@@ -134,16 +134,16 @@
   position: relative;
   flex: 1;
   min-height: 0;
-  padding: var(--widget-body-padding);
-  /* REVERTIDO (ver DashboardGrid/useAutoHeight): el scroll interno por
-   * widget capturaba el wheel de la pagina apenas el cursor pasaba por
-   * encima de CUALQUIER widget con el minimo overflow (incluso 1px por
-   * redondeo), rompiendo el scroll normal de la pagina. La solucion
-   * correcta no es scrollear el contenido cortado — es que el widget
-   * mida su contenido real y su `h` de grid se ajuste solo (ver
-   * useAutoHeight.ts). overflow:hidden vuelve a ser el estado normal;
-   * ya no hace falta que "absorba" un desajuste de altura porque la
-   * altura ahora se deriva del contenido, no al reves. */
+  /* REVERTIDO: hubo un intento de scroll interno por widget
+   * (overflow-y:auto) que capturaba el wheel de la pagina apenas el
+   * cursor pasaba por encima de CUALQUIER widget con el minimo overflow
+   * (incluso 1px por redondeo), rompiendo el scroll normal de la
+   * pagina. La solucion correcta no es scrollear contenido que no
+   * entra — es que el widget MIDA su contenido real (ver
+   * .mb-widget__measure y Widget.tsx) y reporte cuantas unidades `h` de
+   * grid necesita; DashboardGrid ajusta el layout solo. overflow:hidden
+   * es ahora solo una red de seguridad para el instante entre el primer
+   * render (con el `h` inicial/persistido) y la primera medicion real. */
   overflow: hidden;
   /* Sin background propio: usar el del .mb-widget root. Un body con su
    * propio shade genera efecto "paper-in-paper" donde el body parece
@@ -158,7 +158,16 @@
   container-name: mb-widget-body;
 }
 
-.mb-widget__body--flush {
+/* Wrapper SIN alto impuesto (a diferencia de .mb-widget__body, que esta
+ * acotado por el `h` de grid) — Widget.tsx lo mide con ResizeObserver
+ * para saber cuanto espacio necesita el contenido REAL, sin importar
+ * cuanto le haya tocado al widget hasta ahora. El padding vive aca (no
+ * en .mb-widget__body) para que la medicion ya lo incluya. */
+.mb-widget__measure {
+  padding: var(--widget-body-padding);
+}
+
+.mb-widget__measure--flush {
   padding: 0;
 }
 

@@ -193,6 +193,7 @@ export function OverviewAchievements({ stats }: Props) {
     <section className="overview-achievements">
       <AutoFitList
         as="ul"
+        collapsedCount={4}
         listClassName="overview-achievements__list"
         wrapClassName="overview-achievements__wrap"
         viewLessLabel={t('profile.overviewViewLess')}

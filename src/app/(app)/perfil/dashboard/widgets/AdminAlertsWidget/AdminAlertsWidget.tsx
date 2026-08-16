@@ -152,6 +152,7 @@ export function AdminAlertsWidget() {
     >
       <AutoFitList
         as="ul"
+        collapsedCount={2}
         listClassName="mb-admin-alerts-widget"
         viewLessLabel={t('profile.overviewViewLess')}
         viewMoreLabel={(count) =>

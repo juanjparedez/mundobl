@@ -1,12 +1,13 @@
 .mb-heatmap-calendar {
   --mb-heatmap-base: var(--primary-color);
-  /* El grid llena el contenedor completo. Las cells se distribuyen como
-   * fracciones tanto del ancho (1fr por semana) como del alto (1fr por
-   * dia). En widgets anchos+bajos las cells son rectangulos horizontales;
-   * en widgets cuadrados, cuadrados. No hay caps de tamaño — usar el
-   * espacio disponible es la prioridad sobre "verse como GitHub". */
+  /* Alto fijo (no 100%): el widget se auto-dimensiona a su contenido, asi
+   * que el calendario declara cuanto espacio necesita en vez de esperar
+   * que el grid le de una altura ambiente. 7 filas (dias) a ~18px + gaps,
+   * estilo GitHub contribution graph. El ancho si sigue siendo fluido
+   * (1fr por semana) — el widget puede ser mas ancho o angosto sin
+   * afectar la altura. */
   width: 100%;
-  height: 100%;
+  height: 140px;
 }
 
 .mb-heatmap-calendar__grid {

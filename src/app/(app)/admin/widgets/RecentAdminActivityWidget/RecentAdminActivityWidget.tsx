@@ -12,11 +12,13 @@ import {
   ExportOutlined,
 } from '@ant-design/icons';
 import { Widget } from '@/components/dashboard';
-import { AutoFitList, EmptyState } from '@/components/design-system';
+import { EmptyState } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { formatPublicName } from '@/lib/user-display';
 import { interpolateMessage } from '@/lib/i18n-format';
 import './RecentAdminActivityWidget.css';
+
+const COLLAPSED_COUNT = 5;
 
 interface ActivityEvent {
   id: number;
@@ -40,6 +42,7 @@ export function RecentAdminActivityWidget() {
   const { t, locale } = useLocale();
   const [events, setEvents] = useState<ActivityEvent[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -105,13 +108,15 @@ export function RecentAdminActivityWidget() {
     });
   };
 
-  // Filas intercaladas: separador de dia (una vez por dia, antes del
-  // primer evento de ese dia) + evento. AutoFitList mide filas por
-  // offsetTop, asi que un <li> separador es simplemente una fila mas —
-  // no hace falta tocar AutoFitList para soportar esto.
+  // Cortamos la cantidad de EVENTOS primero (no de filas) y recien
+  // despues intercalamos los separadores de dia — asi "ver mas (N)"
+  // sigue reflejando eventos reales, y nunca queda un separador colgado
+  // sin ningun evento debajo por culpa del corte.
+  const visibleEvents = showAll ? events : events.slice(0, COLLAPSED_COUNT);
+
   let lastDayKey: string | null = null;
   const rows: React.ReactNode[] = [];
-  events.forEach((e) => {
+  visibleEvents.forEach((e) => {
     const key = dayKey(e.createdAt);
     if (key !== lastDayKey) {
       rows.push(
@@ -186,21 +191,22 @@ export function RecentAdminActivityWidget() {
           fullHeight={false}
         />
       ) : (
-        <AutoFitList
-          as="ul"
-          listClassName="mb-recent-activity"
-          viewLessLabel={t('profile.overviewViewLess')}
-          // Ignora el count que pasa AutoFitList (cuenta TODAS las filas
-          // medidas, incluidos los separadores de dia) — usamos
-          // events.length, la cantidad real de eventos.
-          viewMoreLabel={() =>
-            interpolateMessage(t('profile.overviewViewAllCount'), {
-              count: String(events.length),
-            })
-          }
-        >
-          {rows}
-        </AutoFitList>
+        <div className="mb-recent-activity__wrap">
+          <ul className="mb-recent-activity">{rows}</ul>
+          {events.length > COLLAPSED_COUNT && (
+            <button
+              type="button"
+              className="mb-recent-activity__toggle"
+              onClick={() => setShowAll((v) => !v)}
+            >
+              {showAll
+                ? t('profile.overviewViewLess')
+                : interpolateMessage(t('profile.overviewViewAllCount'), {
+                    count: String(events.length),
+                  })}
+            </button>
+          )}
+        </div>
       )}
     </Widget>
   );
