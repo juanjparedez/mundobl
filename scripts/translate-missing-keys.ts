@@ -21,6 +21,7 @@ loadEnvConfig(process.cwd());
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { pathToFileURL } from 'url';
 import { generateText, GeminiError } from '../src/lib/gemini';
 import { MESSAGES } from '../src/i18n/messages';
 
@@ -122,7 +123,9 @@ function extractJsonArray(response: string): string[] {
   const candidate = fenced ? fenced[1] : response;
   const arrMatch = candidate.match(/\[[\s\S]*\]/);
   if (!arrMatch) {
-    throw new Error(`No JSON array found in response: ${response.slice(0, 300)}`);
+    throw new Error(
+      `No JSON array found in response: ${response.slice(0, 300)}`
+    );
   }
   return JSON.parse(arrMatch[0]);
 }
@@ -194,8 +197,10 @@ async function loadCurrentLocale(code: string): Promise<unknown> {
     'locales',
     `${code}.ts`
   );
-  // tsx soporta esto a traves de import dinamico
-  const mod = await import(filePath);
+  // tsx soporta esto a traves de import dinamico. Node exige file:// URL
+  // para paths absolutos en el ESM loader — un path Windows crudo
+  // (C:\...) rompe con ERR_UNSUPPORTED_ESM_URL_SCHEME.
+  const mod = await import(pathToFileURL(filePath).href);
   return mod.default;
 }
 
@@ -247,7 +252,9 @@ async function processLocale(target: {
         );
         if (attempts >= 3) {
           stats.errors++;
-          logRaw(err instanceof Error ? (err.stack ?? err.message) : String(err));
+          logRaw(
+            err instanceof Error ? (err.stack ?? err.message) : String(err)
+          );
           throw err;
         }
         await new Promise((r) => setTimeout(r, 2000 * attempts));
@@ -276,7 +283,9 @@ async function processLocale(target: {
     const fresh = translatedMap.get(key);
     const value = existing ?? fresh;
     if (value === undefined) {
-      throw new Error(`Missing value for ${key} after merge — should not happen`);
+      throw new Error(
+        `Missing value for ${key} after merge — should not happen`
+      );
     }
     setLeaf(merged, e.pathKeys, value);
   }

@@ -2422,6 +2422,13 @@ export type TranslationShape = {
     empty: string;
     seriesViews: string;
     seriesActions: string;
+    rangeWeek: string;
+    rangeMonth: string;
+    rangeYear: string;
+    rangeAria: string;
+    captionWeek: string;
+    captionMonth: string;
+    captionYear: string;
   };
   worldMap: {
     title: string;
@@ -5070,6 +5077,13 @@ const es: TranslationShape = {
     empty: 'Sin actividad reciente.',
     seriesViews: 'Visitas',
     seriesActions: 'Acciones admin',
+    rangeWeek: 'Semana',
+    rangeMonth: 'Mes',
+    rangeYear: 'Año',
+    rangeAria: 'Período del gráfico',
+    captionWeek: 'Últimos 7 días',
+    captionMonth: 'Últimos 30 días',
+    captionYear: 'Últimos 12 meses',
   },
   worldMap: {
     title: 'Países visitados',
@@ -7704,6 +7718,13 @@ const en: TranslationShape = {
     empty: 'No recent activity.',
     seriesViews: 'Views',
     seriesActions: 'Admin actions',
+    rangeWeek: 'Week',
+    rangeMonth: 'Month',
+    rangeYear: 'Year',
+    rangeAria: 'Chart period',
+    captionWeek: 'Last 7 days',
+    captionMonth: 'Last 30 days',
+    captionYear: 'Last 12 months',
   },
   worldMap: {
     title: 'Countries visited',
