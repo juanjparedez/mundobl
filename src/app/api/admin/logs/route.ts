@@ -4,6 +4,7 @@ import {
   getAccessLogs,
   cleanOldLogs,
   cleanScannerLogs,
+  logAction,
 } from '@/lib/access-log';
 
 // GET /api/admin/logs — admin only, retorna logs con filtros
@@ -47,6 +48,13 @@ export async function DELETE(request: NextRequest) {
     // DELETE /api/admin/logs?type=scanners — limpiar logs de scanners
     if (type === 'scanners') {
       const deleted = await cleanScannerLogs();
+      logAction(
+        'DELETE',
+        request.nextUrl.pathname,
+        'DELETE',
+        authResult.userId,
+        `scanners:${deleted}`
+      );
       return NextResponse.json({
         deleted,
         message: `${deleted} logs de scanners eliminados`,
@@ -56,6 +64,13 @@ export async function DELETE(request: NextRequest) {
     // DELETE /api/admin/logs?days=90 — limpiar logs viejos
     const days = parseInt(searchParams.get('days') || '90');
     const deleted = await cleanOldLogs(days);
+    logAction(
+      'DELETE',
+      request.nextUrl.pathname,
+      'DELETE',
+      authResult.userId,
+      `older-than-${days}d:${deleted}`
+    );
     return NextResponse.json({
       deleted,
       message: `${deleted} logs eliminados`,

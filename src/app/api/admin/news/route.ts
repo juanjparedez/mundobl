@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Prisma } from '@/generated/prisma';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
+import { logAction } from '@/lib/access-log';
 
 const STATUS_VALUES = [
   'DRAFT',
@@ -145,6 +146,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    logAction('CREATE', request.nextUrl.pathname, 'POST', authResult.userId);
     return NextResponse.json({ news }, { status: 201 });
   } catch (error) {
     console.error('[admin/news] POST error:', error);
@@ -245,6 +247,7 @@ export async function PATCH(request: NextRequest) {
       });
     });
 
+    logAction('UPDATE', request.nextUrl.pathname, 'PATCH', authResult.userId);
     return NextResponse.json({ news });
   } catch (error) {
     console.error('[admin/news] PATCH error:', error);
@@ -267,6 +270,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     await prisma.news.delete({ where: { id } });
+    logAction('DELETE', request.nextUrl.pathname, 'DELETE', authResult.userId);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('[admin/news] DELETE error:', error);

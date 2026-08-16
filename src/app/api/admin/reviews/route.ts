@@ -3,6 +3,7 @@ import { Prisma } from '@/generated/prisma';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { notifySeriesSubscribers } from '@/lib/notifications';
+import { logAction } from '@/lib/access-log';
 
 const STATUS_VALUES = ['DRAFT', 'PUBLISHED', 'HIDDEN'] as const;
 type StatusValue = (typeof STATUS_VALUES)[number];
@@ -113,6 +114,7 @@ export async function PATCH(request: NextRequest) {
         });
       });
 
+      logAction('UPDATE', request.nextUrl.pathname, 'PATCH', authResult.userId);
       return NextResponse.json({ success: true, review: updated });
     }
 
@@ -158,6 +160,7 @@ export async function PATCH(request: NextRequest) {
       });
     }
 
+    logAction('UPDATE', request.nextUrl.pathname, 'PATCH', authResult.userId);
     return NextResponse.json({ success: true, review: updated });
   } catch (error) {
     console.error('Error updating review:', error);
@@ -179,6 +182,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     await prisma.review.delete({ where: { id } });
+    logAction('DELETE', request.nextUrl.pathname, 'DELETE', authResult.userId);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting review:', error);

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
+import { logAction } from '@/lib/access-log';
 
 // GET /api/admin/banned-ips — admin only
 export async function GET() {
@@ -38,6 +39,7 @@ export async function POST(request: NextRequest) {
       data: { ip: ip.trim(), reason: reason || null },
     });
 
+    logAction('CREATE', request.nextUrl.pathname, 'POST', authResult.userId);
     return NextResponse.json(bannedIp, { status: 201 });
   } catch (error) {
     console.error('Error banning IP:', error);
@@ -60,6 +62,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     await prisma.bannedIp.delete({ where: { id } });
+    logAction('DELETE', request.nextUrl.pathname, 'DELETE', authResult.userId);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error unbanning IP:', error);

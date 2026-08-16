@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-helpers';
 import { prisma } from '@/lib/database';
+import { logAction } from '@/lib/access-log';
 
 // PATCH /api/admin/changelog/[id] — editar item
 export async function PATCH(
@@ -59,6 +60,7 @@ export async function PATCH(
       });
     }
 
+    logAction('UPDATE', request.nextUrl.pathname, 'PATCH', authResult.userId);
     return NextResponse.json(item);
   } catch (error) {
     console.error('Error updating changelog item:', error);
@@ -71,7 +73,7 @@ export async function PATCH(
 
 // DELETE /api/admin/changelog/[id] — eliminar item
 export async function DELETE(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -85,6 +87,7 @@ export async function DELETE(
     }
 
     await prisma.changelogItem.delete({ where: { id: itemId } });
+    logAction('DELETE', request.nextUrl.pathname, 'DELETE', authResult.userId);
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error('Error deleting changelog item:', error);

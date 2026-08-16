@@ -18,6 +18,12 @@
 .mb-dashboard-grid .react-grid-item.resizing {
   z-index: 3;
   opacity: 0.92;
+  /* react-grid-layout trae `transition: none` para que el resize siga al
+   * cursor 1 a 1 — pero nuestra regla base de arriba (transform/width/height
+   * 200ms) tiene mayor especificidad (.mb-dashboard-grid .react-grid-item vs
+   * .react-grid-item) y la pisa, dejando el resize "persiguiendo" al mouse
+   * con 200ms de demora. Reforzamos el reset acá. */
+  transition: none !important;
 }
 
 .mb-dashboard-grid .react-grid-item.react-grid-placeholder {
@@ -31,6 +37,10 @@
   z-index: 4;
   opacity: 0.95;
   cursor: grabbing;
+  /* Mismo motivo que en .resizing arriba: sin este reset, el drag se siente
+   * lento porque el widget anima 200ms detras del cursor en vez de seguirlo
+   * al instante. */
+  transition: none !important;
 }
 
 /* Resize handle: por defecto es una L gris, le damos look premium */

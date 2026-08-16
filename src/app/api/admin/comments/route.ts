@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Prisma } from '@/generated/prisma';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
+import { logAction } from '@/lib/access-log';
 
 // GET /api/admin/comments — admin only, lista comentarios publicos con filtros
 export async function GET(request: NextRequest) {
@@ -112,6 +113,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     await prisma.comment.delete({ where: { id } });
+    logAction('DELETE', request.nextUrl.pathname, 'DELETE', authResult.userId);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting comment:', error);
@@ -155,6 +157,7 @@ export async function PATCH(request: NextRequest) {
       data: { content },
     });
 
+    logAction('UPDATE', request.nextUrl.pathname, 'PATCH', authResult.userId);
     return NextResponse.json({ success: true, comment: updated });
   } catch (error) {
     console.error('Error updating comment:', error);
