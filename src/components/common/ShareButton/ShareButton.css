@@ -43,7 +43,9 @@
   color: var(--text-primary);
   font-weight: 500;
   font-size: 0.95rem;
-  transition: transform 0.15s ease, filter 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    filter 0.15s ease;
 }
 
 .share-modal__item:hover {

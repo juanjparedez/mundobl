@@ -222,7 +222,9 @@ export async function GET() {
 
     const allSeriesIdsToFetch = Array.from(
       new Set([
-        ...topSeriesRows.map((r) => r.seriesId).filter((id): id is number => id !== null),
+        ...topSeriesRows
+          .map((r) => r.seriesId)
+          .filter((id): id is number => id !== null),
         ...topFavoritedRows.map((r) => r.seriesId),
       ])
     );
@@ -331,4 +333,3 @@ export async function GET() {
     );
   }
 }
-

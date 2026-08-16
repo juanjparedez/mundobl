@@ -1686,6 +1686,24 @@ export type TranslationShape = {
     lastUpdated: string;
     tooltipOpen: string;
   };
+  seriesNote: {
+    title: string;
+    privateTag: string;
+    hint: string;
+    placeholder: string;
+    save: string;
+    delete: string;
+    cancel: string;
+    saved: string;
+    saveError: string;
+    deleted: string;
+    deleteError: string;
+    deleteConfirm: string;
+    loadError: string;
+    empty: string;
+    lastUpdated: string;
+    tooltipOpen: string;
+  };
   reviews: {
     subtitle: string;
     writeButton: string;
@@ -4261,6 +4279,25 @@ const es: TranslationShape = {
     hint: 'Solo vos podés ver esta nota. Ideal para anotar reacciones, escenas o momentos para volver.',
     placeholder:
       'Acá lloré, este intercambio me destruyó, rever el minuto 32...',
+    save: 'Guardar nota',
+    delete: 'Eliminar',
+    cancel: 'Cancelar',
+    saved: 'Nota guardada',
+    saveError: 'Error al guardar la nota',
+    deleted: 'Nota eliminada',
+    deleteError: 'Error al eliminar',
+    deleteConfirm: '¿Eliminar esta nota?',
+    loadError: 'Error al cargar la nota',
+    empty: 'Escribí algo antes de guardar.',
+    lastUpdated: 'Última edición:',
+    tooltipOpen: 'Mi nota privada',
+  },
+  seriesNote: {
+    title: 'Nota privada de la serie',
+    privateTag: 'Privado',
+    hint: 'Solo vos podés ver esta nota. Ideal para anotar dónde la ves si no es en una plataforma legal (ej. un canal de Telegram) u otro recordatorio personal.',
+    placeholder:
+      'La veo por el canal de Telegram de fulano, temporada 2 sale los jueves...',
     save: 'Guardar nota',
     delete: 'Eliminar',
     cancel: 'Cancelar',
@@ -6874,6 +6911,25 @@ const en: TranslationShape = {
     privateTag: 'Private',
     hint: 'Only you can see this note. Great for jotting down reactions, scenes or moments to revisit.',
     placeholder: 'I cried here, this exchange wrecked me, rewatch minute 32...',
+    save: 'Save note',
+    delete: 'Delete',
+    cancel: 'Cancel',
+    saved: 'Note saved',
+    saveError: 'Error saving the note',
+    deleted: 'Note deleted',
+    deleteError: 'Error deleting',
+    deleteConfirm: 'Delete this note?',
+    loadError: 'Error loading the note',
+    empty: 'Write something before saving.',
+    lastUpdated: 'Last edited:',
+    tooltipOpen: 'My private note',
+  },
+  seriesNote: {
+    title: 'Private series note',
+    privateTag: 'Private',
+    hint: "Only you can see this note. Great for jotting down where you watch it if it's not on a legal platform (e.g. a Telegram channel) or any other personal reminder.",
+    placeholder:
+      "I watch it on so-and-so's Telegram channel, season 2 drops on Thursdays...",
     save: 'Save note',
     delete: 'Delete',
     cancel: 'Cancel',

@@ -1,7 +1,11 @@
 export interface GlossaryTerm {
   term: string;
   transliteration?: string;
-  category: 'Honoríficos' | 'Relaciones' | 'Género y Conceptos' | 'Cultura Universitaria';
+  category:
+    | 'Honoríficos'
+    | 'Relaciones'
+    | 'Género y Conceptos'
+    | 'Cultura Universitaria';
   meaning: string;
   context: string;
   commonMistake?: string;
@@ -14,7 +18,8 @@ export const CULTURAL_GLOSSARY: GlossaryTerm[] = [
     transliteration: 'Faen',
     category: 'Relaciones',
     meaning: 'Novio / Novia / Pareja romántica',
-    context: 'Término coloquial y afectivo que usan los personajes para referirse a su pareja.',
+    context:
+      'Término coloquial y afectivo que usan los personajes para referirse a su pareja.',
     commonMistake:
       'Los traductores automáticos suelen traducirlo erróneamente como "fan" o "seguidor" (ej: traduciendo My School President como "Fan mío es el presidente...").',
     examples: 'แฟนผม (Faen phom = Mi novio)',
@@ -26,7 +31,8 @@ export const CULTURAL_GLOSSARY: GlossaryTerm[] = [
     meaning: 'Hermano mayor / Persona mayor de respeto y cariño',
     context:
       'Prefijo honorífico que se antepone al nombre de alguien mayor (compañero de universidad, colega o persona admirada). Transmite respeto y cercanía.',
-    commonMistake: 'Traducirlo rígidamente como "hermano de sangre" cuando en realidad es un trato social.',
+    commonMistake:
+      'Traducirlo rígidamente como "hermano de sangre" cuando en realidad es un trato social.',
     examples: 'P’Pran, P’Phupha, P’Kinn',
   },
   {
@@ -34,7 +40,8 @@ export const CULTURAL_GLOSSARY: GlossaryTerm[] = [
     transliteration: 'Nong / N’',
     category: 'Honoríficos',
     meaning: 'Hermano menor / Persona menor',
-    context: 'Prefijo cariñoso y protector que usa alguien mayor para dirigirse a una persona más joven.',
+    context:
+      'Prefijo cariñoso y protector que usa alguien mayor para dirigirse a una persona más joven.',
     examples: 'N’Gun, N’Pat, N’Tian',
   },
   {
@@ -42,7 +49,8 @@ export const CULTURAL_GLOSSARY: GlossaryTerm[] = [
     transliteration: 'Khun',
     category: 'Honoríficos',
     meaning: 'Señor / Señora / Usted (Tratamiento formal de respeto)',
-    context: 'Se usa en entornos laborales, familias aristocráticas o cuando dos personas aún no tienen confianza.',
+    context:
+      'Se usa en entornos laborales, familias aristocráticas o cuando dos personas aún no tienen confianza.',
     examples: 'Khun Sam, Khun Nueng',
   },
   {
@@ -50,7 +58,8 @@ export const CULTURAL_GLOSSARY: GlossaryTerm[] = [
     transliteration: 'Hia',
     category: 'Honoríficos',
     meaning: 'Hermano mayor (en familias tailandesas de ascendencia china)',
-    context: 'Equivalente a P’, pero con fuerte raíz cultural teochew / china. Denota afecto y protección.',
+    context:
+      'Equivalente a P’, pero con fuerte raíz cultural teochew / china. Denota afecto y protección.',
     examples: 'Hia Lian (en Cutie Pie), Hia Yi',
   },
   {

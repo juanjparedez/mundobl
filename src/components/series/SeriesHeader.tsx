@@ -191,15 +191,16 @@ export function SeriesHeader({
               </span>
             )}
 
-            {currentlyWatchingCount !== undefined && currentlyWatchingCount > 0 && (
-              <span
-                className="series-header__community-badge series-header__community-badge--watching"
-                title="Usuarios mirando esta serie ahora"
-              >
-                <EyeOutlined style={{ color: '#1677ff' }} />
-                {currentlyWatchingCount} viendo ahora
-              </span>
-            )}
+            {currentlyWatchingCount !== undefined &&
+              currentlyWatchingCount > 0 && (
+                <span
+                  className="series-header__community-badge series-header__community-badge--watching"
+                  title="Usuarios mirando esta serie ahora"
+                >
+                  <EyeOutlined style={{ color: '#1677ff' }} />
+                  {currentlyWatchingCount} viendo ahora
+                </span>
+              )}
 
             {series.productionCompany && (
               <MetadataChip

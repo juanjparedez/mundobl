@@ -83,7 +83,8 @@ export const STREAMING_PLATFORMS: StreamingPlatformInfo[] = [
     freeTier: true,
     vpnRequiredLatam: false,
     maxQuality: '1080p',
-    bestFor: 'Versiones completas sin censura y el catálogo más amplio de Taiwán, Japón y Tailandia.',
+    bestFor:
+      'Versiones completas sin censura y el catálogo más amplio de Taiwán, Japón y Tailandia.',
     highlights: [
       'Versiones Uncut exclusivas',
       'Subtítulos oficiales en español',
@@ -99,7 +100,8 @@ export const STREAMING_PLATFORMS: StreamingPlatformInfo[] = [
     color: '#1abc9c',
     website: 'https://www.viki.com',
     logoText: '💎 Rakuten Viki',
-    tagline: 'El hogar de los K-Dramas y BLs coreanos con subtítulos comunitarios',
+    tagline:
+      'El hogar de los K-Dramas y BLs coreanos con subtítulos comunitarios',
     description:
       'Líder global en dramas asiáticos. Cuenta con el catálogo más completo de BLs coreanos y japoneses, con subtítulos en español de máxima calidad hechos por su comunidad de traductores.',
     plans: [
@@ -141,7 +143,8 @@ export const STREAMING_PLATFORMS: StreamingPlatformInfo[] = [
     freeTier: true,
     vpnRequiredLatam: false,
     maxQuality: '1080p',
-    bestFor: 'BLs coreanos y japoneses con la mejor traducción en español y comunidad activa.',
+    bestFor:
+      'BLs coreanos y japoneses con la mejor traducción en español y comunidad activa.',
     highlights: [
       'Subtítulos en español de alta calidad',
       'Comentarios en vivo por timestamp',
@@ -214,7 +217,8 @@ export const STREAMING_PLATFORMS: StreamingPlatformInfo[] = [
     freeTier: true,
     vpnRequiredLatam: false,
     maxQuality: '4K HDR',
-    bestFor: 'Superproducciones tailandesas con versiones sin censura y máxima calidad 4K.',
+    bestFor:
+      'Superproducciones tailandesas con versiones sin censura y máxima calidad 4K.',
     highlights: [
       'Versiones Uncut exclusivas',
       'Calidad 4K y sonido Dolby Atmos',
@@ -312,7 +316,8 @@ export const STREAMING_PLATFORMS: StreamingPlatformInfo[] = [
     freeTier: true,
     vpnRequiredLatam: false,
     maxQuality: '4K HDR',
-    bestFor: 'Series tailandesas completas, gratuitas y de emisión semanal simultánea.',
+    bestFor:
+      'Series tailandesas completas, gratuitas y de emisión semanal simultánea.',
     highlights: [
       '100% legal y gratuito',
       'Subtítulos en español desde el reproductor',
@@ -348,7 +353,8 @@ export const STREAMING_PLATFORMS: StreamingPlatformInfo[] = [
     freeTier: false,
     vpnRequiredLatam: false,
     maxQuality: '1080p',
-    bestFor: 'K-BLs coreanos originales y estrenos exclusivos de productoras de Seúl.',
+    bestFor:
+      'K-BLs coreanos originales y estrenos exclusivos de productoras de Seúl.',
     highlights: [
       'Pionera en dramas BL de Corea del Sur',
       'Subtítulos en español',
@@ -370,19 +376,30 @@ export const STREAMING_PLATFORMS: StreamingPlatformInfo[] = [
         name: 'Estándar con anuncios',
         price: '~$6.99 USD',
         period: 'mes',
-        features: ['Full HD 1080p', '2 dispositivos simultáneos', 'Con pausas publicitarias'],
+        features: [
+          'Full HD 1080p',
+          '2 dispositivos simultáneos',
+          'Con pausas publicitarias',
+        ],
       },
       {
         name: 'Estándar',
         price: '~$15.49 USD',
         period: 'mes',
-        features: ['Full HD 1080p sin anuncios', '2 dispositivos simultáneos', 'Descargas offline'],
+        features: [
+          'Full HD 1080p sin anuncios',
+          '2 dispositivos simultáneos',
+          'Descargas offline',
+        ],
       },
       {
         name: 'Premium 4K',
         price: '~$22.99 USD',
         period: 'mes',
-        features: ['4K Ultra HD + HDR + Audio espacial', '4 dispositivos simultáneos'],
+        features: [
+          '4K Ultra HD + HDR + Audio espacial',
+          '4 dispositivos simultáneos',
+        ],
       },
     ],
     uncutAvailable: false,
@@ -390,7 +407,8 @@ export const STREAMING_PLATFORMS: StreamingPlatformInfo[] = [
     freeTier: false,
     vpnRequiredLatam: false,
     maxQuality: '4K HDR',
-    bestFor: 'Títulos occidentales premiados y licencias comerciales de éxito masivo.',
+    bestFor:
+      'Títulos occidentales premiados y licencias comerciales de éxito masivo.',
     highlights: [
       'Doblajes y subtítulos en español de estudio',
       'Excelente compatibilidad en cualquier TV o consola',
@@ -418,7 +436,11 @@ export const STREAMING_PLATFORMS: StreamingPlatformInfo[] = [
         name: 'Premium Mensual',
         price: '$4.99 USD',
         period: 'mes',
-        features: ['Acceso a todo el catálogo', '1080p y 4K sin anuncios', 'Descargas offline'],
+        features: [
+          'Acceso a todo el catálogo',
+          '1080p y 4K sin anuncios',
+          'Descargas offline',
+        ],
       },
     ],
     uncutAvailable: false,
@@ -427,7 +449,10 @@ export const STREAMING_PLATFORMS: StreamingPlatformInfo[] = [
     vpnRequiredLatam: false,
     maxQuality: '4K HDR',
     bestFor: 'Donghuas y adaptaciones de novelas danmei chinas.',
-    highlights: ['Catálogo de animación asiática y BL', 'Subtítulos en español'],
+    highlights: [
+      'Catálogo de animación asiática y BL',
+      'Subtítulos en español',
+    ],
     hasAffiliateProgram: false,
     affiliateDisclaimer: 'Enlace oficial directo a Bilibili TV.',
   },
@@ -467,7 +492,8 @@ export const STREAMING_PLATFORMS: StreamingPlatformInfo[] = [
     freeTier: false,
     vpnRequiredLatam: false,
     maxQuality: '1080p',
-    bestFor: 'Cortometrajes independientes y películas queer coreanas premiadas.',
+    bestFor:
+      'Cortometrajes independientes y películas queer coreanas premiadas.',
     highlights: [
       '100% de los ingresos van al creador',
       'Subtítulos oficiales en español',

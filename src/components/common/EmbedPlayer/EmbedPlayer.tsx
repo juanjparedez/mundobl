@@ -2,7 +2,6 @@
 
 import { getEmbedInfo, type Platform } from '@/lib/embed-helpers';
 import { LinkOutlined, VideoCameraOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
 import './EmbedPlayer.css';
 
 interface EmbedPlayerProps {
@@ -42,10 +41,14 @@ export function EmbedPlayer({
         {isVimeo && (
           <div className="embed-player__vimeo-tip">
             <span className="embed-player__vimeo-tip-text">
-              <VideoCameraOutlined /> ¿El video tiene bloqueo de privacidad o es de <strong>Vimeo On Demand</strong>?
+              <VideoCameraOutlined /> ¿El video tiene bloqueo de privacidad o es
+              de <strong>Vimeo On Demand</strong>?
             </span>
             <a
-              href={url || (videoId ? `https://vimeo.com/${videoId}` : 'https://vimeo.com')}
+              href={
+                url ||
+                (videoId ? `https://vimeo.com/${videoId}` : 'https://vimeo.com')
+              }
               target="_blank"
               rel="noopener noreferrer"
               className="embed-player__vimeo-btn"

@@ -35,7 +35,8 @@ export interface CommunitySupportConfig {
 
 export const COMMUNITY_SUPPORT: CommunitySupportConfig = {
   // Cambiar a true cuando tengas los enlaces creados
-  enabled: process.env.NEXT_PUBLIC_ENABLE_COMMUNITY_DONATIONS === 'true' || false,
+  enabled:
+    process.env.NEXT_PUBLIC_ENABLE_COMMUNITY_DONATIONS === 'true' || false,
   cafecito: {
     enabled: false,
     url: 'https://cafecito.app/mundobl',

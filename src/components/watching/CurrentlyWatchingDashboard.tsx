@@ -10,12 +10,15 @@ import {
   EditOutlined,
   CheckOutlined,
   CalendarOutlined,
+  FileTextOutlined,
+  FileTextFilled,
 } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useMessage } from '@/hooks/useMessage';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
 import { SerieCardSkeleton } from '@/components/common/SerieCardSkeleton/SerieCardSkeleton';
+import { SeriesNoteModal } from '@/components/series/SeriesNoteModal/SeriesNoteModal';
 import './CurrentlyWatchingDashboard.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
@@ -182,6 +185,12 @@ export function CurrentlyWatchingDashboard() {
       'lastWatched'
     );
   });
+  const [noteSeriesId, setNoteSeriesId] = useState<number | null>(null);
+  // Marca local de que series tienen nota privada (para refrescar el icono
+  // al crear/borrar sin recargar toda la lista).
+  const [seriesWithNotes, setSeriesWithNotes] = useState<Set<number>>(
+    new Set()
+  );
 
   const isAdminOrMod =
     session?.user?.role === 'ADMIN' || session?.user?.role === 'MODERATOR';
@@ -205,6 +214,28 @@ export function CurrentlyWatchingDashboard() {
   useEffect(() => {
     void loadWatchingSeries();
   }, [loadWatchingSeries]);
+
+  // Carga en bulk que series (de las que se estan viendo) tienen nota
+  // privada, para pintar el icono sin una request por card.
+  const userId = session?.user?.id;
+  useEffect(() => {
+    if (!userId || watchingSeries.length === 0) return;
+    const ids = watchingSeries.map((w) => w.series.id).join(',');
+    let cancelled = false;
+    fetch(`/api/series/notes-summary?ids=${ids}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: { seriesIds?: number[] } | null) => {
+        if (!cancelled && data?.seriesIds) {
+          setSeriesWithNotes(new Set(data.seriesIds));
+        }
+      })
+      .catch(() => null);
+    return () => {
+      cancelled = true;
+    };
+    // Solo re-correr si cambia el usuario o la lista de series.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId, watchingSeries.map((w) => w.series.id).join(',')]);
 
   const handleSortChange = (newSort: SortOption) => {
     setSortBy(newSort);
@@ -470,8 +501,7 @@ export function CurrentlyWatchingDashboard() {
                     <Image
                       src={item.series.imageUrl}
                       alt={item.series.title}
-                      width={400}
-                      height={225}
+                      fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
                       quality={65}
                       unoptimized={isSupabaseImageUrl(item.series.imageUrl)}
@@ -550,6 +580,22 @@ export function CurrentlyWatchingDashboard() {
                     </div>
 
                     <div className="watching-card__actions">
+                      {session?.user && (
+                        <Tooltip title={t('seriesNote.tooltipOpen')}>
+                          <Button
+                            icon={
+                              seriesWithNotes.has(item.series.id) ? (
+                                <FileTextFilled />
+                              ) : (
+                                <FileTextOutlined />
+                              )
+                            }
+                            shape="circle"
+                            aria-label={t('seriesNote.tooltipOpen')}
+                            onClick={() => setNoteSeriesId(item.series.id)}
+                          />
+                        </Tooltip>
+                      )}
                       {nextEp && (
                         <Tooltip
                           title={interpolateMessage(
@@ -602,6 +648,24 @@ export function CurrentlyWatchingDashboard() {
           );
         })}
       </div>
+
+      <SeriesNoteModal
+        seriesId={noteSeriesId}
+        seriesLabel={
+          watchingSeries.find((w) => w.series.id === noteSeriesId)?.series.title
+        }
+        open={noteSeriesId !== null}
+        onClose={() => setNoteSeriesId(null)}
+        onNoteChange={(hasNote) => {
+          if (noteSeriesId === null) return;
+          setSeriesWithNotes((prev) => {
+            const next = new Set(prev);
+            if (hasNote) next.add(noteSeriesId);
+            else next.delete(noteSeriesId);
+            return next;
+          });
+        }}
+      />
     </div>
   );
 }

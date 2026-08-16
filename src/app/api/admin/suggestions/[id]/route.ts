@@ -21,10 +21,7 @@ export async function PATCH(
 
     const validStatuses = ['PENDING', 'APPROVED', 'DISCARDED'];
     if (status && !validStatuses.includes(status)) {
-      return NextResponse.json(
-        { error: 'Estado no válido' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Estado no válido' }, { status: 400 });
     }
 
     const updated = await prisma.seriesSuggestion.update({

@@ -104,16 +104,26 @@ export function SeriesSuggestionButton({
             <div className="suggestion-modal__field">
               <label className="suggestion-modal__label">Tipo de aporte:</label>
               <Select value={type} onChange={setType} style={{ width: '100%' }}>
-                <Option value="DATO_FALTANTE">📌 Dato faltante (año, país, sinopsis)</Option>
-                <Option value="CORRECCION_REPARTO">🎭 Corrección de actores / personajes</Option>
-                <Option value="DIAS_EMISION">📅 Días de emisión o calendario</Option>
-                <Option value="LINK_OFICIAL">🔗 Link oficial de emisión (YouTube, WeTV, etc.)</Option>
+                <Option value="DATO_FALTANTE">
+                  📌 Dato faltante (año, país, sinopsis)
+                </Option>
+                <Option value="CORRECCION_REPARTO">
+                  🎭 Corrección de actores / personajes
+                </Option>
+                <Option value="DIAS_EMISION">
+                  📅 Días de emisión o calendario
+                </Option>
+                <Option value="LINK_OFICIAL">
+                  🔗 Link oficial de emisión (YouTube, WeTV, etc.)
+                </Option>
                 <Option value="OTRO">💬 Otra corrección o información</Option>
               </Select>
             </div>
 
             <div className="suggestion-modal__field">
-              <label className="suggestion-modal__label">Detalle de la sugerencia:</label>
+              <label className="suggestion-modal__label">
+                Detalle de la sugerencia:
+              </label>
               <TextArea
                 rows={4}
                 placeholder="Escribe aquí los datos correctos, links o detalles que quieras aportar..."
@@ -125,7 +135,14 @@ export function SeriesSuggestionButton({
               />
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8, marginTop: 8 }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                gap: 8,
+                marginTop: 8,
+              }}
+            >
               <Button onClick={() => setIsOpen(false)}>Cancelar</Button>
               <Button
                 type="primary"

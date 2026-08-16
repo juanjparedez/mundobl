@@ -2,9 +2,16 @@
 
 import { useRef } from 'react';
 import Link from 'next/link';
-import { LeftOutlined, RightOutlined, PlayCircleFilled, YoutubeFilled, VideoCameraFilled } from '@ant-design/icons';
-import { Tag } from 'antd';
+import Image from 'next/image';
+import {
+  LeftOutlined,
+  RightOutlined,
+  PlayCircleFilled,
+  YoutubeFilled,
+  VideoCameraFilled,
+} from '@ant-design/icons';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
+import { isSupabaseImageUrl } from '@/lib/image-helpers';
 import './MediaCarousel.css';
 
 export interface CarouselMediaItem {
@@ -27,7 +34,12 @@ interface MediaCarouselProps {
   items: CarouselMediaItem[];
 }
 
-export function MediaCarousel({ title, subtitle, icon, items }: MediaCarouselProps) {
+export function MediaCarousel({
+  title,
+  subtitle,
+  icon,
+  items,
+}: MediaCarouselProps) {
   const rowRef = useRef<HTMLDivElement>(null);
 
   const handleScroll = (direction: 'left' | 'right') => {
@@ -35,7 +47,10 @@ export function MediaCarousel({ title, subtitle, icon, items }: MediaCarouselPro
     const { scrollLeft, clientWidth } = rowRef.current;
     const scrollAmount = clientWidth * 0.75;
     rowRef.current.scrollTo({
-      left: direction === 'left' ? scrollLeft - scrollAmount : scrollLeft + scrollAmount,
+      left:
+        direction === 'left'
+          ? scrollLeft - scrollAmount
+          : scrollLeft + scrollAmount,
       behavior: 'smooth',
     });
   };
@@ -91,12 +106,26 @@ export function MediaCarousel({ title, subtitle, icon, items }: MediaCarouselPro
               >
                 <div className="media-carousel__poster-wrap">
                   {item.imageUrl ? (
-                    <img
-                      src={item.imageUrl}
-                      alt={item.title}
-                      className="media-carousel__poster"
-                      loading="lazy"
-                    />
+                    isSupabaseImageUrl(item.imageUrl) ? (
+                      <Image
+                        src={item.imageUrl}
+                        alt={item.title}
+                        fill
+                        sizes="(max-width: 768px) 160px, 200px"
+                        unoptimized
+                        className="media-carousel__poster"
+                      />
+                    ) : (
+                      // imageUrl puede ser una URL externa arbitraria no
+                      // whitelisteada en next.config.ts remotePatterns.
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={item.imageUrl}
+                        alt={item.title}
+                        className="media-carousel__poster"
+                        loading="lazy"
+                      />
+                    )
                   ) : (
                     <div className="media-carousel__poster-placeholder">
                       <span>{item.title}</span>
@@ -106,26 +135,42 @@ export function MediaCarousel({ title, subtitle, icon, items }: MediaCarouselPro
                   <div className="media-carousel__overlay">
                     <PlayCircleFilled className="media-carousel__play-btn" />
                     <span className="media-carousel__episodes-badge">
-                      {item.episodesWithEmbed} {item.episodesWithEmbed === 1 ? 'video' : 'videos'}
+                      {item.episodesWithEmbed}{' '}
+                      {item.episodesWithEmbed === 1 ? 'video' : 'videos'}
                     </span>
                   </div>
 
                   {/* Badges de plataforma en la esquina superior */}
                   <div className="media-carousel__platform-tag">
-                    {hasYoutube && <YoutubeFilled style={{ color: '#ff0000', fontSize: '1.1rem' }} />}
-                    {hasVimeo && <VideoCameraFilled style={{ color: '#1ab7ea', fontSize: '1.1rem' }} />}
+                    {hasYoutube && (
+                      <YoutubeFilled
+                        style={{ color: '#ff0000', fontSize: '1.1rem' }}
+                      />
+                    )}
+                    {hasVimeo && (
+                      <VideoCameraFilled
+                        style={{ color: '#1ab7ea', fontSize: '1.1rem' }}
+                      />
+                    )}
                   </div>
                 </div>
 
                 <div className="media-carousel__info">
                   <h3 className="media-carousel__item-title" title={item.title}>
-                    {item.country?.code && <CountryFlag code={item.country.code} />}{' '}
+                    {item.country?.code && (
+                      <CountryFlag code={item.country.code} />
+                    )}{' '}
                     {item.title}
                   </h3>
                   <div className="media-carousel__meta">
-                    {item.year && <span className="media-carousel__year">{item.year}</span>}
+                    {item.year && (
+                      <span className="media-carousel__year">{item.year}</span>
+                    )}
                     {item.channels[0] && (
-                      <span className="media-carousel__channel" title={item.channels[0]}>
+                      <span
+                        className="media-carousel__channel"
+                        title={item.channels[0]}
+                      >
                         {item.channels[0]}
                       </span>
                     )}

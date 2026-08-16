@@ -93,7 +93,9 @@
   border-radius: var(--border-radius-lg);
   box-shadow: var(--box-shadow-card);
   min-width: 0;
-  transition: transform var(--transition-fast), border-color var(--transition-fast);
+  transition:
+    transform var(--transition-fast),
+    border-color var(--transition-fast);
 }
 
 .public-stats-kpi:hover {
@@ -147,7 +149,9 @@
   height: 24px;
   border-radius: var(--border-radius-sm);
   color: var(--text-tertiary);
-  transition: color var(--transition-fast), background var(--transition-fast);
+  transition:
+    color var(--transition-fast),
+    background var(--transition-fast);
 }
 
 .public-stats-panel__admin-link:hover {
@@ -294,4 +298,3 @@
     grid-template-columns: 1fr 1fr;
   }
 }
-

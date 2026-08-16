@@ -77,7 +77,8 @@
   gap: var(--spacing-md);
   overflow-x: auto;
   scroll-behavior: smooth;
-  padding: var(--spacing-xs) var(--spacing-xs) var(--spacing-md) var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-xs) var(--spacing-md)
+    var(--spacing-xs);
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE/Edge */
 }
@@ -117,7 +118,9 @@
   background: #000;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
   border: 1px solid var(--border-color);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .media-carousel__card:hover .media-carousel__poster-wrap {
