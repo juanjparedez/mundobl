@@ -5,12 +5,10 @@ import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Spin, Tag } from 'antd';
 import { useSession } from 'next-auth/react';
 import { Widget } from '@/components/dashboard';
-import { EmptyState } from '@/components/design-system';
+import { AutoFitList, EmptyState } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import './MyDisputesWidget.css';
-
-const COLLAPSED_COUNT = 2;
 
 interface UserDispute {
   id: number;
@@ -39,7 +37,6 @@ export function MyDisputesWidget() {
   const { status } = useSession();
   const [disputes, setDisputes] = useState<UserDispute[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     if (status !== 'authenticated') return;
@@ -89,59 +86,49 @@ export function MyDisputesWidget() {
     );
   }
 
-  const visible = showAll ? disputes : disputes.slice(0, COLLAPSED_COUNT);
-
   return (
     <Widget
       title={t('profileDashboard.widgetMyDisputes')}
       icon={<ExclamationCircleOutlined />}
       noPadding
-      fade={disputes.length > COLLAPSED_COUNT}
     >
-      <div className="mb-my-disputes__wrap">
-        <ul className="mb-my-disputes">
-          {visible.map((d) => (
-            <li key={d.id} className="mb-my-disputes__item">
-              <div className="mb-my-disputes__head">
-                <span className="mb-my-disputes__title">{d.title}</span>
-                <Tag>{d.status}</Tag>
-              </div>
-              <div className="mb-my-disputes__meta">
-                <span>
-                  {interpolateMessage(t('profile.disputeForComment'), {
-                    n: String(d.commentId ?? 0),
-                  })}
-                </span>
-                <span>·</span>
-                <span>{new Date(d.createdAt).toLocaleDateString(locale)}</span>
-                {d.target && (
-                  <>
-                    <span>·</span>
-                    <span className="mb-my-disputes__target">{d.target}</span>
-                  </>
-                )}
-              </div>
-              {d.message && (
-                <p className="mb-my-disputes__message">{d.message}</p>
-              )}
-            </li>
-          ))}
-        </ul>
-
-        {disputes.length > COLLAPSED_COUNT && (
-          <button
-            type="button"
-            className="mb-my-disputes__toggle"
-            onClick={() => setShowAll((v) => !v)}
-          >
-            {showAll
-              ? t('profile.overviewViewLess')
-              : interpolateMessage(t('profile.overviewViewAllCount'), {
-                  count: String(disputes.length),
+      <AutoFitList
+        as="ul"
+        listClassName="mb-my-disputes"
+        viewLessLabel={t('profile.overviewViewLess')}
+        viewMoreLabel={(count) =>
+          interpolateMessage(t('profile.overviewViewAllCount'), {
+            count: String(count),
+          })
+        }
+      >
+        {disputes.map((d) => (
+          <li key={d.id} className="mb-my-disputes__item">
+            <div className="mb-my-disputes__head">
+              <span className="mb-my-disputes__title">{d.title}</span>
+              <Tag>{d.status}</Tag>
+            </div>
+            <div className="mb-my-disputes__meta">
+              <span>
+                {interpolateMessage(t('profile.disputeForComment'), {
+                  n: String(d.commentId ?? 0),
                 })}
-          </button>
-        )}
-      </div>
+              </span>
+              <span>·</span>
+              <span>{new Date(d.createdAt).toLocaleDateString(locale)}</span>
+              {d.target && (
+                <>
+                  <span>·</span>
+                  <span className="mb-my-disputes__target">{d.target}</span>
+                </>
+              )}
+            </div>
+            {d.message && (
+              <p className="mb-my-disputes__message">{d.message}</p>
+            )}
+          </li>
+        ))}
+      </AutoFitList>
     </Widget>
   );
 }

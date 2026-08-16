@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { Spin, Tag, Avatar } from 'antd';
 import {
   TeamOutlined,
@@ -8,15 +9,14 @@ import {
   PlusOutlined,
   EditOutlined,
   DeleteOutlined,
+  ExportOutlined,
 } from '@ant-design/icons';
 import { Widget } from '@/components/dashboard';
-import { EmptyState } from '@/components/design-system';
+import { AutoFitList, EmptyState } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { formatPublicName } from '@/lib/user-display';
 import { interpolateMessage } from '@/lib/i18n-format';
 import './RecentAdminActivityWidget.css';
-
-const COLLAPSED_COUNT = 5;
 
 interface ActivityEvent {
   id: number;
@@ -40,7 +40,6 @@ export function RecentAdminActivityWidget() {
   const { t, locale } = useLocale();
   const [events, setEvents] = useState<ActivityEvent[]>([]);
   const [loaded, setLoaded] = useState(false);
-  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -80,15 +79,8 @@ export function RecentAdminActivityWidget() {
     },
   };
 
-  const visible = showAll ? events : events.slice(0, COLLAPSED_COUNT);
-
   return (
-    <Widget
-      title={t('adminActivity.title')}
-      icon={<TeamOutlined />}
-      noPadding
-      fade={events.length > COLLAPSED_COUNT}
-    >
+    <Widget title={t('adminActivity.title')} icon={<TeamOutlined />} noPadding>
       {!loaded ? (
         <div
           style={{
@@ -106,55 +98,60 @@ export function RecentAdminActivityWidget() {
           fullHeight={false}
         />
       ) : (
-        <div className="mb-recent-activity__wrap">
-          <ul className="mb-recent-activity">
-            {visible.map((e) => {
-              const cfg = actionConfig[e.action] ?? actionConfig.UPDATE;
-              const author = e.user
-                ? formatPublicName(e.user)
-                : t('adminActivity.anonymous');
-              const date = new Date(e.createdAt).toLocaleDateString(locale);
-              const pathShort = e.path.replace('/admin/', '/');
-              return (
-                <li key={e.id} className="mb-recent-activity__item">
-                  <Avatar
-                    src={e.user?.image}
-                    icon={!e.user?.image ? <UserOutlined /> : undefined}
-                    size={24}
-                  />
-                  <div className="mb-recent-activity__body">
-                    <div className="mb-recent-activity__row">
-                      <span className="mb-recent-activity__author">
-                        {author}
-                      </span>
-                      <Tag color={cfg.color} icon={cfg.icon}>
-                        {cfg.label}
-                      </Tag>
-                    </div>
-                    <div className="mb-recent-activity__row">
-                      <code style={{ fontSize: 10 }}>{pathShort}</code>
-                      <span className="mb-recent-activity__date">{date}</span>
-                    </div>
+        <AutoFitList
+          as="ul"
+          listClassName="mb-recent-activity"
+          viewLessLabel={t('profile.overviewViewLess')}
+          viewMoreLabel={(count) =>
+            interpolateMessage(t('profile.overviewViewAllCount'), {
+              count: String(count),
+            })
+          }
+        >
+          {events.map((e) => {
+            const cfg = actionConfig[e.action] ?? actionConfig.UPDATE;
+            const author = e.user
+              ? formatPublicName(e.user)
+              : t('adminActivity.anonymous');
+            const date = new Date(e.createdAt).toLocaleDateString(locale);
+            const pathShort = e.path.replace('/admin/', '/');
+            // Referencia externa real: lleva al registro completo
+            // filtrado por esta ruta + accion, en vez de dejar el path
+            // como texto suelto sin adonde ir (el tooltip del Tag no
+            // alcanza para ver el detalle real del evento).
+            const logsHref = `/admin/logs?path=${encodeURIComponent(e.path)}&action=${e.action}`;
+            return (
+              <li key={e.id} className="mb-recent-activity__item">
+                <Avatar
+                  src={e.user?.image}
+                  icon={!e.user?.image ? <UserOutlined /> : undefined}
+                  size={24}
+                />
+                <div className="mb-recent-activity__body">
+                  <div className="mb-recent-activity__row">
+                    <span className="mb-recent-activity__author">{author}</span>
+                    <Tag color={cfg.color} icon={cfg.icon}>
+                      {cfg.label}
+                    </Tag>
                   </div>
-                </li>
-              );
-            })}
-          </ul>
-
-          {events.length > COLLAPSED_COUNT && (
-            <button
-              type="button"
-              className="mb-recent-activity__toggle"
-              onClick={() => setShowAll((v) => !v)}
-            >
-              {showAll
-                ? t('profile.overviewViewLess')
-                : interpolateMessage(t('profile.overviewViewAllCount'), {
-                    count: String(events.length),
-                  })}
-            </button>
-          )}
-        </div>
+                  <div className="mb-recent-activity__row">
+                    <Link
+                      href={logsHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mb-recent-activity__link"
+                      title={t('adminActivity.viewInLogs')}
+                    >
+                      <code>{pathShort}</code>
+                      <ExportOutlined />
+                    </Link>
+                    <span className="mb-recent-activity__date">{date}</span>
+                  </div>
+                </div>
+              </li>
+            );
+          })}
+        </AutoFitList>
       )}
     </Widget>
   );

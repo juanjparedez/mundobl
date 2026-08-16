@@ -2,9 +2,10 @@
 
 import { GlobalOutlined } from '@ant-design/icons';
 import { Widget } from '@/components/dashboard';
-import { EmptyState } from '@/components/design-system';
+import { AutoFitList, EmptyState } from '@/components/design-system';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
 import type { ProfileData } from '../../../types';
 import './TopCountriesListWidget.css';
 
@@ -40,8 +41,17 @@ export function TopCountriesListWidget({
       icon={<GlobalOutlined />}
       noPadding
     >
-      <ul className="mb-top-countries-list">
-        {topCountries.slice(0, 6).map((c, idx) => {
+      <AutoFitList
+        as="ul"
+        listClassName="mb-top-countries-list"
+        viewLessLabel={t('profile.overviewViewLess')}
+        viewMoreLabel={(count) =>
+          interpolateMessage(t('profile.overviewViewAllCount'), {
+            count: String(count),
+          })
+        }
+      >
+        {topCountries.map((c, idx) => {
           const pct = Math.round((c.count / max) * 100);
           const rank = idx + 1;
           return (
@@ -77,7 +87,7 @@ export function TopCountriesListWidget({
             </li>
           );
         })}
-      </ul>
+      </AutoFitList>
     </Widget>
   );
 }

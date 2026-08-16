@@ -2140,6 +2140,7 @@ const ja: TranslationShape = {
     envLine: '環境: {env}',
     userAgentLine: 'ユーザーエージェント: {userAgent}',
     urlLine: 'URL: {url}',
+    deployedAtLine: 'デプロイ: {date}',
   },
   verSerie: {
     noEpisodesAvailable: 'エピソードはありません',
@@ -2531,6 +2532,7 @@ const ja: TranslationShape = {
     actionCreate: '作成済み',
     actionUpdate: '編集済み',
     actionDelete: '削除済み',
+    viewInLogs: '完全なログで見る',
   },
   topCommenters: {
     title: '注目のコミュニティ',
@@ -2550,6 +2552,7 @@ const ja: TranslationShape = {
     captionWeek: '過去7日間',
     captionMonth: '過去30日間',
     captionYear: '過去12ヶ月',
+    viewFullLog: '完全なログを見る',
   },
   worldMap: {
     title: '訪問した国',

@@ -6,6 +6,7 @@ interface BuildInfo {
   buildId: string;
   version: string;
   env: string;
+  deployedAt: string | null;
 }
 
 function getBuildId(): string {
@@ -30,6 +31,19 @@ function getBuildId(): string {
   }
 }
 
+// Fecha/hora del deploy — usamos el mtime de .next/BUILD_ID (generado por
+// `next build` en cada deploy de Vercel) en vez de `Date.now()`, que solo
+// reflejaria cuando arranco el proceso serverless (cold start), no cuando
+// se genero el build real.
+function getBuildTime(): string | null {
+  try {
+    const buildIdPath = path.join(process.cwd(), '.next', 'BUILD_ID');
+    return fs.statSync(buildIdPath).mtime.toISOString();
+  } catch {
+    return null;
+  }
+}
+
 function getPackageVersion(): string {
   try {
     const pkg = JSON.parse(
@@ -45,6 +59,7 @@ const INFO: BuildInfo = {
   buildId: getBuildId(),
   version: getPackageVersion(),
   env: process.env.NODE_ENV ?? 'production',
+  deployedAt: getBuildTime(),
 };
 
 export async function GET() {

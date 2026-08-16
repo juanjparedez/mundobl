@@ -2167,6 +2167,7 @@ const fr: TranslationShape = {
     envLine: 'Env : {env}',
     userAgentLine: 'User-Agent : {userAgent}',
     urlLine: 'URL : {url}',
+    deployedAtLine: 'Déployé : {date}',
   },
   verSerie: {
     noEpisodesAvailable: 'Aucun épisode disponible',
@@ -2573,6 +2574,7 @@ const fr: TranslationShape = {
     actionCreate: 'Créé',
     actionUpdate: 'Modifié',
     actionDelete: 'Supprimé',
+    viewInLogs: 'Voir dans le journal complet',
   },
   topCommenters: {
     title: 'Communauté à la une',
@@ -2592,6 +2594,7 @@ const fr: TranslationShape = {
     captionWeek: '7 derniers jours',
     captionMonth: '30 derniers jours',
     captionYear: '12 derniers mois',
+    viewFullLog: 'Voir le journal complet',
   },
   worldMap: {
     title: 'Pays visités',

@@ -1,0 +1,31 @@
+.mb-autofit-list__wrap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Al expandir ("ver mas"), el contenido real puede superar la caja fija
+ * del widget — en vez de clipear invisible (el bug de siempre), habilita
+ * scroll interno acotado a la altura disponible. */
+.mb-autofit-list__wrap--expanded {
+  overflow-y: auto;
+}
+
+.mb-autofit-list__toggle {
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin: 0 var(--widget-body-padding) var(--widget-body-padding);
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mb-autofit-list__toggle:hover {
+  text-decoration: underline;
+}
