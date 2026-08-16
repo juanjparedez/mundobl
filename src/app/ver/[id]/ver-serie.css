@@ -227,8 +227,105 @@
   flex-wrap: wrap;
 }
 
+.ver-serie__chapters-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-sm);
+}
+
+.ver-serie__chapter-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-base);
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all 0.15s ease;
+}
+
+.ver-serie__chapter-card--active {
+  border-color: color-mix(in srgb, var(--primary-color) 60%, transparent);
+  background: color-mix(in srgb, var(--primary-color) 8%, var(--bg-elevated));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary-color) 40%, transparent);
+}
+
+.ver-serie__chapter-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ver-serie__chapter-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ver-serie__parts-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.ver-serie__part-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: var(--bg-container);
+  border: 1px solid var(--border-color-secondary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+}
+
+.ver-serie__part-btn:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background: var(--bg-spotlight);
+}
+
+.ver-serie__part-btn--active {
+  background: var(--primary-color);
+  color: #fff;
+  border-color: var(--primary-color);
+}
+
+.ver-serie__extras-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+
+.ver-serie__section-subtitle {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ver-serie__extras-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--spacing-xs);
+}
+
+.ver-serie__private-notice {
+  margin-top: var(--spacing-xs);
+}
+
 .ver-serie__episode-btn--extra {
-  opacity: 0.85;
+  opacity: 0.9;
 }
 
 .ver-serie__episode-grid {
