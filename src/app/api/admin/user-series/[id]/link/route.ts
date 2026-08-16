@@ -107,82 +107,93 @@ export async function POST(request: NextRequest, context: RouteContext) {
       );
     }
 
-    const result = await prisma.$transaction(async (tx) => {
-      let moved = 0;
-      let skipped = 0;
+    const result = await prisma.$transaction(
+      async (tx) => {
+        let moved = 0;
+        let skipped = 0;
 
-      for (const srcSeason of source.seasons) {
-        let targetSeason = await tx.season.findFirst({
-          where: { seriesId: targetId, seasonNumber: srcSeason.seasonNumber },
-          select: { id: true },
-        });
-
-        if (!targetSeason) {
-          targetSeason = await tx.season.create({
-            data: {
-              seriesId: targetId,
-              seasonNumber: srcSeason.seasonNumber,
-              episodeCount: srcSeason.episodes.length,
-              year: srcSeason.year ?? target.year ?? undefined,
-            },
+        for (const srcSeason of source.seasons) {
+          let targetSeason = await tx.season.findFirst({
+            where: { seriesId: targetId, seasonNumber: srcSeason.seasonNumber },
             select: { id: true },
           });
-        }
 
-        for (const ep of srcSeason.episodes) {
-          const existingEp = await tx.episode.findFirst({
-            where: {
-              seasonId: targetSeason.id,
-              episodeNumber: ep.episodeNumber,
-            },
-            select: { id: true, embedUrl: true },
-          });
-
-          if (existingEp) {
-            if (!existingEp.embedUrl) {
-              await tx.episode.update({
-                where: { id: existingEp.id },
-                data: {
-                  embedUrl: ep.embedUrl,
-                  embedPlatform: ep.embedPlatform,
-                  embedVideoId: ep.embedVideoId,
-                  embedChannelName: ep.embedChannelName,
-                  embedChannelUrl: ep.embedChannelUrl,
-                },
-              });
-              moved++;
-            } else {
-              skipped++;
-            }
-            // Eliminar el episodio del aporte fuente para evitar conflicto
-            await tx.episode.delete({ where: { id: ep.id } }).catch(() => {});
-            continue;
+          if (!targetSeason) {
+            targetSeason = await tx.season.create({
+              data: {
+                seriesId: targetId,
+                seasonNumber: srcSeason.seasonNumber,
+                episodeCount: srcSeason.episodes.length,
+                year: srcSeason.year ?? target.year ?? undefined,
+              },
+              select: { id: true },
+            });
           }
 
-          await tx.episode.update({
-            where: { id: ep.id },
-            data: { seasonId: targetSeason.id },
+          // Carga anticipada en memoria de todos los episodios existentes del target
+          const existingTargetEpisodes = await tx.episode.findMany({
+            where: { seasonId: targetSeason.id },
+            select: { id: true, episodeNumber: true, embedUrl: true },
           });
-          moved++;
+          const existingMap = new Map(
+            existingTargetEpisodes.map((e) => [e.episodeNumber, e])
+          );
+
+          for (const ep of srcSeason.episodes) {
+            const existingEp = existingMap.get(ep.episodeNumber);
+
+            if (existingEp) {
+              if (!existingEp.embedUrl) {
+                await tx.episode.update({
+                  where: { id: existingEp.id },
+                  data: {
+                    embedUrl: ep.embedUrl,
+                    embedPlatform: ep.embedPlatform,
+                    embedVideoId: ep.embedVideoId,
+                    embedChannelName: ep.embedChannelName,
+                    embedChannelUrl: ep.embedChannelUrl,
+                  },
+                });
+                moved++;
+              } else {
+                skipped++;
+              }
+              // Eliminar el episodio del aporte fuente para evitar duplicados
+              await tx.episode
+                .delete({ where: { id: ep.id } })
+                .catch(() => {});
+              continue;
+            }
+
+            await tx.episode.update({
+              where: { id: ep.id },
+              data: { seasonId: targetSeason.id },
+            });
+            moved++;
+          }
         }
+
+        // Limpieza de referencias hacia el aporte antes de borrar
+        await tx.series.updateMany({
+          where: { linkedSeriesId: userEmbedId },
+          data: { linkedSeriesId: null },
+        });
+
+        await tx.season.deleteMany({
+          where: { seriesId: userEmbedId },
+        });
+
+        await tx.series.delete({
+          where: { id: userEmbedId },
+        });
+
+        return { moved, skipped };
+      },
+      {
+        maxWait: 15000,
+        timeout: 60000, // 60 segundos de timeout para series de más de 100 episodios
       }
-
-      // Limpieza de referencias hacia el aporte antes de borrar
-      await tx.series.updateMany({
-        where: { linkedSeriesId: userEmbedId },
-        data: { linkedSeriesId: null },
-      });
-
-      await tx.season.deleteMany({
-        where: { seriesId: userEmbedId },
-      });
-
-      await tx.series.delete({
-        where: { id: userEmbedId },
-      });
-
-      return { moved, skipped };
-    });
+    );
 
     return NextResponse.json({
       ok: true,
