@@ -399,6 +399,12 @@ const ko: TranslationShape = {
       '이상한 문제 해결: 로컬 캐시 지우기, 서비스 워커 재설정 또는 모든 기기에서 로그아웃.',
     settingsDangerTitle: '위험 구역',
     settingsDangerHint: '이메일 확인을 통해 데이터 내보내기 또는 계정 삭제.',
+    settingsResetDataButton: '시청 기록 및 통계 초기화',
+    settingsResetDataConfirmTitle: '전체 시청 기록을 초기화하시겠습니까?',
+    settingsResetDataConfirmDescription:
+      '시청 기록, 평점, 즐겨찾기, 비공개 노트가 삭제됩니다. 계정과 공개 댓글은 삭제되지 않습니다. 프로필의 그래프가 0으로 초기화됩니다. 되돌릴 수 없습니다.',
+    settingsResetDataSuccess: '기록 및 통계 초기화 완료',
+    settingsResetDataError: '기록 초기화 오류',
     settingsPrivacyTitle: '개인정보 및 데이터',
     settingsPrivacyHint:
       '개인 데이터(댓글, 평점, 시청 상태, 즐겨찾기, 투표, 알림) 전체 사본을 다운로드하세요.',

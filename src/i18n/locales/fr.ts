@@ -402,6 +402,14 @@ const fr: TranslationShape = {
     settingsDangerTitle: 'Zone de danger',
     settingsDangerHint:
       'Exportez vos données ou supprimez votre compte avec confirmation par e-mail.',
+    settingsResetDataButton: 'Réinitialiser mon historique et mes stats',
+    settingsResetDataConfirmTitle:
+      'Réinitialiser tout votre historique de visionnage ?',
+    settingsResetDataConfirmDescription:
+      'Cela supprime ce que vous avez regardé, vos notes, favoris et notes privées. Votre compte et vos commentaires publics ne sont PAS touchés. Les graphiques de votre profil reviennent à zéro. Cette action est irréversible.',
+    settingsResetDataSuccess: 'Historique et statistiques réinitialisés',
+    settingsResetDataError:
+      "Erreur lors de la réinitialisation de l'historique",
     settingsPrivacyTitle: 'Confidentialité et données',
     settingsPrivacyHint:
       'Téléchargez une copie complète de vos données personnelles (commentaires, notes, statut de visionnage, favoris, votes, notifications).',
