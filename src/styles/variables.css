@@ -116,6 +116,13 @@
   --sidebar-width: 250px;
   --sidebar-collapsed-width: 80px;
   --content-max-width: 1200px;
+  /* Paginas tipo hub (ej. /ver: carruseles + grilla) se benefician de mas
+   * ancho que una pagina de lectura estandar. */
+  --content-max-width-wide: 1440px;
+  /* Proporcion unica para posters/miniaturas de series (grilla y carrusel).
+   * 16:9 evita recortar las miniaturas de YouTube (nativamente 16:9) que
+   * se usan como fallback cuando la serie no tiene imageUrl propio. */
+  --poster-aspect-ratio: 16 / 9;
   /* 64px — Material guideline: bar height 56-72px para nav con icon+label.
    * Subimos de 56 a 64 para que el icono 24px + label 12px respiren. */
   --bottom-nav-height: 64px;
