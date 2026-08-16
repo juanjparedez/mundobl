@@ -52,15 +52,6 @@ export async function POST(_req: Request, context: RouteContext) {
   if (!series) {
     return NextResponse.json({ error: 'Serie no encontrada' }, { status: 404 });
   }
-  if (series.origin === 'USER_EMBED') {
-    return NextResponse.json(
-      {
-        error:
-          'No se puede suscribir a una serie aportada por un usuario. Se podra suscribir cuando un admin la linkee con una serie del catalogo.',
-      },
-      { status: 422 }
-    );
-  }
 
   await prisma.seriesSubscription.upsert({
     where: {
