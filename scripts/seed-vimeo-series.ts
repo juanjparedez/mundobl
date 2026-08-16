@@ -184,35 +184,44 @@ async function main() {
       });
     }
 
+    // 6. Season 1
     let season = await prisma.season.findFirst({
-      where: { seriesId: series.id, number: 1 },
+      where: { seriesId: series.id, seasonNumber: 1 },
     });
     if (!season) {
       season = await prisma.season.create({
         data: {
           seriesId: series.id,
-          number: 1,
+          seasonNumber: 1,
           title: 'Temporada 1',
         },
       });
     }
 
+    // 7. Episodes
     for (const ep of s.episodes) {
       const existingEp = await prisma.episode.findFirst({
-        where: { seasonId: season.id, number: ep.episodeNumber },
+        where: { seasonId: season.id, episodeNumber: ep.episodeNumber },
       });
       if (!existingEp) {
+        const videoIdMatch = ep.embedUrl.match(/(\d+)/);
+        const videoId = videoIdMatch ? videoIdMatch[1] : null;
+
         await prisma.episode.create({
           data: {
             seasonId: season.id,
-            number: ep.episodeNumber,
+            episodeNumber: ep.episodeNumber,
             title: ep.title,
             embedUrl: ep.embedUrl,
-            channelName: ep.channelName,
-            channelUrl: ep.channelUrl,
+            embedPlatform: 'Vimeo',
+            embedVideoId: videoId,
+            embedChannelName: ep.channelName,
+            embedChannelUrl: ep.channelUrl,
           },
         });
-        console.log(`   🎬 Episodio #${ep.episodeNumber} cargado (${ep.embedUrl})`);
+        console.log(
+          `   🎬 Episodio #${ep.episodeNumber} cargado (${ep.embedUrl})`
+        );
       }
     }
   }
