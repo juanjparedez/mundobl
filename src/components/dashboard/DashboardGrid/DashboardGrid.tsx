@@ -1,8 +1,9 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import {
   Responsive,
+  type Layout,
   type LayoutItem,
   type ResponsiveLayouts,
 } from 'react-grid-layout';
@@ -21,6 +22,60 @@ import 'react-grid-layout/css/styles.css';
 import './DashboardGrid.css';
 
 const DRAG_HANDLE_CLASS = 'mb-widget__drag-handle';
+
+interface DashboardGridItemProps {
+  itemId: string;
+  editing: boolean;
+  breakpoint: DashboardBreakpoint;
+  onRemove?: () => void;
+  widgetProps?: Record<string, unknown>;
+}
+
+/**
+ * Un item del grid, memoizado (React.memo) para que arrastrar/redimensionar
+ * OTRO widget (que dispara un re-render de DashboardGrid entero via
+ * setLayouts) no fuerce el re-render de los widgets que no cambiaron —
+ * antes `ctxValue` se recreaba inline en el .map() de mas abajo en cada
+ * render, invalidando el context de TODOS los widgets a la vez.
+ */
+const DashboardGridItem = memo(function DashboardGridItem({
+  itemId,
+  editing,
+  breakpoint,
+  onRemove,
+  widgetProps,
+}: DashboardGridItemProps) {
+  const def = WidgetRegistry.get(itemId);
+
+  const ctxValue = useMemo(
+    () => ({
+      editing,
+      breakpoint,
+      dragHandleClassName: DRAG_HANDLE_CLASS,
+      onRemove,
+    }),
+    [editing, breakpoint, onRemove]
+  );
+
+  if (!def) {
+    return (
+      <DashboardItemProvider value={ctxValue}>
+        <Widget>
+          <div className="mb-dashboard-grid__missing">
+            Missing widget: {itemId}
+          </div>
+        </Widget>
+      </DashboardItemProvider>
+    );
+  }
+
+  const Component = def.Component;
+  return (
+    <DashboardItemProvider value={ctxValue}>
+      <Component {...(widgetProps ?? {})} />
+    </DashboardItemProvider>
+  );
+});
 
 export interface DashboardGridProps {
   /** Layouts iniciales por breakpoint. */
@@ -95,6 +150,24 @@ export function DashboardGrid({
     return layouts.lg ?? layouts.md ?? layouts.sm ?? layouts.xs ?? [];
   }, [layouts]);
 
+  // Un callback estable por widget (no uno nuevo en cada render) — solo se
+  // recalcula si cambia la lista de items o el handler de remove en si.
+  const removeHandlers = useMemo(() => {
+    const map = new Map<string, () => void>();
+    if (!onRemoveWidget) return map;
+    for (const item of items) {
+      map.set(item.i, () => onRemoveWidget(item.i));
+    }
+    return map;
+  }, [items, onRemoveWidget]);
+
+  const handleLayoutChange = useCallback(
+    (_layout: Layout, allLayouts: ResponsiveLayouts<DashboardBreakpoint>) => {
+      if (onLayoutsChange) onLayoutsChange(fromRglLayouts(allLayouts));
+    },
+    [onLayoutsChange]
+  );
+
   return (
     <div
       ref={containerRef}
@@ -118,40 +191,18 @@ export function DashboardGrid({
           }}
           resizeConfig={{ enabled: editing }}
           onBreakpointChange={(bp) => setCurrentBp(bp)}
-          onLayoutChange={(_layout, allLayouts) => {
-            if (onLayoutsChange) onLayoutsChange(fromRglLayouts(allLayouts));
-          }}
+          onLayoutChange={handleLayoutChange}
         >
           {items.map((item) => {
-            const def = WidgetRegistry.get(item.i);
-            const ctxValue = {
-              editing,
-              breakpoint: currentBp,
-              dragHandleClassName: DRAG_HANDLE_CLASS,
-              onRemove: onRemoveWidget
-                ? () => onRemoveWidget(item.i)
-                : undefined,
-            };
-            if (!def) {
-              return (
-                <div key={item.i}>
-                  <DashboardItemProvider value={ctxValue}>
-                    <Widget>
-                      <div className="mb-dashboard-grid__missing">
-                        Missing widget: {item.i}
-                      </div>
-                    </Widget>
-                  </DashboardItemProvider>
-                </div>
-              );
-            }
-            const Component = def.Component;
-            const propsForWidget = widgetProps?.[item.i] ?? {};
             return (
               <div key={item.i}>
-                <DashboardItemProvider value={ctxValue}>
-                  <Component {...propsForWidget} />
-                </DashboardItemProvider>
+                <DashboardGridItem
+                  itemId={item.i}
+                  editing={editing}
+                  breakpoint={currentBp}
+                  onRemove={removeHandlers.get(item.i)}
+                  widgetProps={widgetProps?.[item.i]}
+                />
               </div>
             );
           })}

@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
+import { logAction } from '@/lib/access-log';
 
 // POST /api/admin/comments/[id]/dismiss-reports — admin descarta reportes
 // borra los CommentReport del comentario y resetea reportCount/reportedAt
 export async function POST(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -37,6 +38,7 @@ export async function POST(
       }),
     ]);
 
+    logAction('UPDATE', request.nextUrl.pathname, 'POST', authResult.userId);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error dismissing comment reports:', error);

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-helpers';
 import { prisma } from '@/lib/database';
+import { logAction } from '@/lib/access-log';
 import fs from 'fs';
 import path from 'path';
 
@@ -91,6 +92,13 @@ export async function POST(request: NextRequest) {
       await prisma.changelogItem.deleteMany();
       await prisma.changelogItem.createMany({ data: items });
 
+      logAction(
+        'CREATE',
+        request.nextUrl.pathname,
+        'POST',
+        authResult.userId,
+        `import-from-file:${items.length}`
+      );
       return NextResponse.json({ imported: items.length }, { status: 201 });
     }
 
@@ -110,6 +118,13 @@ export async function POST(request: NextRequest) {
         });
         created.push(it);
       }
+      logAction(
+        'CREATE',
+        request.nextUrl.pathname,
+        'POST',
+        authResult.userId,
+        `bulk:${created.length}`
+      );
       return NextResponse.json(
         { created: created.length, items: created },
         { status: 201 }
@@ -145,6 +160,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    logAction('CREATE', request.nextUrl.pathname, 'POST', authResult.userId);
     return NextResponse.json(item, { status: 201 });
   } catch (error) {
     console.error('Error creating changelog item:', error);

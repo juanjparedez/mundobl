@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-helpers';
 import { prisma } from '@/lib/database';
 import { notifyUser } from '@/lib/notifications';
+import { logAction } from '@/lib/access-log';
 import { Prisma } from '@/generated/prisma';
 
 export const runtime = 'nodejs';
@@ -177,6 +178,7 @@ export async function PATCH(request: NextRequest) {
       });
     }
 
+    logAction('UPDATE', request.nextUrl.pathname, 'PATCH', result.userId);
     return NextResponse.json(updated);
   } catch (error) {
     console.error('[admin/feedback PATCH]', error);

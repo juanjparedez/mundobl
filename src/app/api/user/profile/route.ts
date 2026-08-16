@@ -284,6 +284,9 @@ export async function GET(request: NextRequest) {
       `,
 
       // Top-rated series (average score across categories given by user)
+      // LIMIT parametrizado por topN (antes era 5 fijo, independiente del
+      // resto de los "top N" — el widget nunca podia mostrar mas de 5 sin
+      // importar cuanto pidiera el caller).
       prisma.$queryRaw<RawTopRatedRow[]>`
         SELECT s.id as series_id, s.title, AVG(ur.score) as avg_score, s."imageUrl" as image_url
         FROM "UserRating" ur
@@ -291,7 +294,7 @@ export async function GET(request: NextRequest) {
         WHERE ur."userId" = ${userId}
         GROUP BY s.id, s.title, s."imageUrl"
         ORDER BY avg_score DESC, s.title ASC
-        LIMIT 5
+        LIMIT ${topN}
       `,
 
       // Series count by type (watched)

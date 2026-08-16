@@ -723,7 +723,11 @@ export function DashboardClient() {
   useEffect(() => {
     if (status !== 'authenticated') return;
     let cancelled = false;
-    fetch('/api/user/profile')
+    // topN=20: antes se pedia sin parametro (default 5 del lado del server),
+    // lo que dejaba a los widgets de listas (actores/productoras/mejor
+    // puntuadas) sin margen real para un "ver mas" — el fade nunca se
+    // activaba porque nunca habia mas de 5 items para empezar.
+    fetch('/api/user/profile?topN=20')
       .then((res) => (res.ok ? res.json() : null))
       .then((profile: ProfileData | null) => {
         if (cancelled) return;
