@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
   Table,
   Select,
@@ -161,6 +162,7 @@ function LogCard({
 }
 
 export function LogsClient() {
+  const searchParams = useSearchParams();
   const message = useMessage();
   const { t } = useLocale();
   const isMobile = useIsMobile();
@@ -168,10 +170,16 @@ export function LogsClient() {
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [actionFilter, setActionFilter] = useState('');
-  const [userFilter, setUserFilter] = useState('');
-  const [ipFilter, setIpFilter] = useState('');
-  const [pathFilter, setPathFilter] = useState('');
+  const [actionFilter, setActionFilter] = useState(
+    () => searchParams.get('action') ?? ''
+  );
+  const [userFilter, setUserFilter] = useState(
+    () => searchParams.get('userId') ?? searchParams.get('user') ?? ''
+  );
+  const [ipFilter, setIpFilter] = useState(() => searchParams.get('ip') ?? '');
+  const [pathFilter, setPathFilter] = useState(
+    () => searchParams.get('path') ?? ''
+  );
   const [dateRange, setDateRange] = useState<[string | null, string | null]>([
     null,
     null,

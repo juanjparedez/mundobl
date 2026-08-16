@@ -75,7 +75,9 @@ export function getBilibiliId(url: string): string | null {
 }
 
 export function getVimeoId(url: string): string | null {
-  const match = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  const match = url.match(
+    /(?:vimeo\.com\/(?:.*\/videos\/|.*\/channels\/[^/]+\/|video\/|event\/)?|player\.vimeo\.com\/video\/)(\d+)/
+  );
   return match ? match[1] : null;
 }
 
@@ -133,6 +135,78 @@ export function extractVideoId(platform: Platform, url: string): string | null {
     default:
       return null;
   }
+}
+
+export interface StreamingValidationResult {
+  valid: boolean;
+  platform: Platform | null;
+  videoId: string | null;
+  error?: string;
+}
+
+/**
+ * Valida de forma estricta si una URL es una fuente legal permitida para /ver (YouTube, Vimeo, Bilibili, Dailymotion).
+ */
+export function validateStreamingUrl(url: string): StreamingValidationResult {
+  const trimmed = (url || '').trim();
+  if (!trimmed) {
+    return {
+      valid: false,
+      platform: null,
+      videoId: null,
+      error: 'Ingresá una URL de video.',
+    };
+  }
+  if (!/^https?:\/\//i.test(trimmed)) {
+    return {
+      valid: false,
+      platform: null,
+      videoId: null,
+      error: 'La URL debe comenzar con http:// o https://',
+    };
+  }
+  if (/\.(mp4|m3u8|mkv|avi|mov|ts)(\?.*)?$/i.test(trimmed)) {
+    return {
+      valid: false,
+      platform: null,
+      videoId: null,
+      error: 'No se permiten enlaces directos a archivos de video.',
+    };
+  }
+  const platform = detectPlatform(trimmed);
+  if (!platform) {
+    return {
+      valid: false,
+      platform: null,
+      videoId: null,
+      error:
+        'Plataforma no soportada. Solo aceptamos fuentes oficiales de YouTube, Vimeo, Dailymotion y Bilibili.',
+    };
+  }
+  const allowedPlatforms: Platform[] = [
+    'YouTube',
+    'Vimeo',
+    'Bilibili',
+    'Dailymotion',
+  ];
+  if (!allowedPlatforms.includes(platform)) {
+    return {
+      valid: false,
+      platform,
+      videoId: null,
+      error: `La plataforma "${platform}" no está permitida para streaming completo de episodios en /ver.`,
+    };
+  }
+  const videoId = extractVideoId(platform, trimmed);
+  if (!videoId) {
+    return {
+      valid: false,
+      platform,
+      videoId: null,
+      error: `No se pudo extraer el identificador del video en ${platform}. Por favor revisá el enlace.`,
+    };
+  }
+  return { valid: true, platform, videoId };
 }
 
 // ---- Información de embed ----
