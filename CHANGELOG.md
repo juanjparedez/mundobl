@@ -8,6 +8,34 @@ Todas las versiones notables del proyecto se documentan aqui.
 > (`ChangelogItem`, `/admin/changelog`) quedo como fallback solo si este archivo
 > esta vacio.
 
+## 2026-08-16 — Streaming Hub, comparador de plataformas y Glosario Cultural
+
+### Features
+
+- **`/ver` rediseñado como Streaming Hub**: Hero Billboard destacando una serie, carruseles temáticos por categoría (plataforma, género, novedades) y switch de vista grid/carrusel, con seed masivo de series oficiales adicionales.
+- **Comparador de plataformas (`/plataformas`)**: precios, subtítulos y políticas de afiliados transparentes de cada plataforma de streaming, con reparto enriquecido y tip de geoblock/VPN.
+- **Glosario Cultural BL/GL (`/glosario`)**: sección interactiva con términos, honoríficos tailandeses y guía de traducción para quienes recién arrancan con el género.
+- **Página `/acerca`**: historia y manifiesto del proyecto.
+- **Capítulos con partes (1/4 a 4/4)**: nueva arquitectura para episodios multiparte, con miniaturas de video y duración en las tarjetas de capítulos/extras. Modal de ayuda con atajos de teclado en el reproductor.
+- **Notas privadas por serie**: además de las notas por episodio, ahora se puede guardar una nota privada a nivel serie (ej. "dónde verla si no está en una plataforma legal") — solo visible para quien la escribe.
+- **Borrar historial y estadísticas propias** desde `/perfil` → Configuración (zona de peligro): borra vistos, ratings, favoritos y notas del usuario sin tocar la cuenta ni comentarios/reseñas públicos.
+- **Suscripción y badges públicos**: suscripción a novedades habilitada en todas las series de `/ver`; el header de series ahora muestra el conteo público de favoritos y "viendo ahora".
+- **Moderación**: flujo `PENDING_REVIEW` para aportes de la comunidad, notificaciones al usuario cuando su aporte es revisado, y generador de changelog asistido por IA en el panel admin.
+- **Accesos rápidos**: acceso directo de un clic a admin en el sidebar y nuevos atajos en el Command-K.
+
+### Fixes
+
+- **Reproductor Vimeo On Demand**: detección de privacidad y botón de redirección directa al sitio oficial cuando el video no se puede embeber.
+- **Linkeo de aportes con el catálogo**: corregido error 500 al vincular series aportadas por usuarios con series curadas; precios de plataformas actualizados; linkeo masivo optimizado (timeout de 60s y memory mapping).
+- **Parser de capítulos en tailandés** corregido en la importación de episodios.
+- **Base de datos**: se previene el timeout del pool de conexiones en entornos serverless (conexión singleton reutilizada).
+- **Enlaces de video rotos en `/ver`**: 5 series (*Bed Friend*, *Choco Milk Shake*, *Some More*, *Long Time No See*, *Match Boy*) tenían IDs de video de YouTube inexistentes, generados sin verificar contra la API real en una carga de datos anterior. Se corrigieron con videos reales y verificados de los canales oficiales (Mandee Channel, STRONGBERRY); *Match Boy* se dio de baja al no encontrarse evidencia de que corresponda a un título real.
+- **Catálogo `/ver` ampliado con series verificadas**: se sumaron *SOTUS: The Series*, *The Eclipse*, *Only Friends* (GMMTV) y *The Middleman's Love* (Mandee), todas importadas desde playlists reales de YouTube y confirmadas video por video contra el canal oficial antes de publicarse.
+
+### Infra / Housekeeping
+
+- Reorganización de rutas bajo un grupo `(app)` para separar el layout público del autenticado.
+
 ## 2026-08 — Experiencia de reproducción, catálogo para ver y optimización mobile
 
 ### Features
