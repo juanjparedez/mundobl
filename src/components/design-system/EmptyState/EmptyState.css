@@ -7,7 +7,6 @@
   padding: var(--empty-padding, var(--spacing-md));
   text-align: center;
   border-radius: var(--border-radius-base);
-  height: 100%;
 }
 
 .mb-empty-state--soft {
@@ -15,7 +14,13 @@
   border: 1px dashed var(--border-color-secondary);
 }
 
+/* height:100% solo cuando fullHeight=true (default) — antes se aplicaba
+ * siempre en la clase base, ignorando fullHeight={false}: el estado
+ * vacio quedaba estirado y centrado en cajas grandes (ej. FavoritesWidget
+ * con 0 items en un widget alto) en vez del bloque compacto que el
+ * caller pidio explicitamente. */
 .mb-empty-state--full {
+  height: 100%;
   min-height: var(--empty-min-height, 200px);
 }
 

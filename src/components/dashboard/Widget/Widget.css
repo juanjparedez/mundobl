@@ -135,11 +135,22 @@
   flex: 1;
   min-height: 0;
   padding: var(--widget-body-padding);
-  /* Sin scroll interno: los widgets deben fitear su contenido. Si el
-   * widget es mas chico que su contenido, se clipea con una mascara
-   * fade-out abajo (mb-widget--fade) que da una pista visual sutil sin
-   * agregar la fealdad de un scrollbar interno. */
-  overflow: hidden;
+  /* Red de seguridad UNIVERSAL: ningun widget (de ninguna de las 4
+   * superficies que comparten este componente — /perfil, /admin,
+   * /catalogo/dashboard, /catalogo/[id]/dashboard) debe perder contenido
+   * de forma invisible. Si el contenido excede el alto disponible,
+   * scrollea en vez de clipear. Reemplaza la politica anterior de "sin
+   * scroll interno, los widgets deben fitear su contenido exacto" — esa
+   * politica dependia de calcular a mano la altura de grid de cada
+   * widget contra su contenido real, y se desincronizaba cada vez que el
+   * contenido, la density de UI o el layout cambiaban. El fade
+   * (mb-widget--fade, mas abajo) sigue dando una pista visual sutil de
+   * que hay mas contenido, ahora respaldada por scroll real en vez de
+   * ser el unico aviso. overscroll-behavior evita que el scroll interno
+   * "rebote" hacia el scroll de la pagina al llegar a un extremo. */
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
   /* Sin background propio: usar el del .mb-widget root. Un body con su
    * propio shade genera efecto "paper-in-paper" donde el body parece
    * un panel inset distinto del widget. Single source of background. */

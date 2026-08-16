@@ -7,6 +7,22 @@
   gap: 6px;
 }
 
+/* Separador de dia — referencia fija (Hoy/Ayer/dia de semana + fecha)
+ * antes del primer evento de cada dia. Texto chico, sin fondo, para no
+ * competir visualmente con los eventos reales. */
+.mb-recent-activity__day-header {
+  padding: 6px 6px 2px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary);
+}
+
+.mb-recent-activity__day-header:first-child {
+  padding-top: 0;
+}
+
 .mb-recent-activity__item {
   display: flex;
   align-items: center;
