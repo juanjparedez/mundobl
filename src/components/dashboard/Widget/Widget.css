@@ -135,22 +135,16 @@
   flex: 1;
   min-height: 0;
   padding: var(--widget-body-padding);
-  /* Red de seguridad UNIVERSAL: ningun widget (de ninguna de las 4
-   * superficies que comparten este componente — /perfil, /admin,
-   * /catalogo/dashboard, /catalogo/[id]/dashboard) debe perder contenido
-   * de forma invisible. Si el contenido excede el alto disponible,
-   * scrollea en vez de clipear. Reemplaza la politica anterior de "sin
-   * scroll interno, los widgets deben fitear su contenido exacto" — esa
-   * politica dependia de calcular a mano la altura de grid de cada
-   * widget contra su contenido real, y se desincronizaba cada vez que el
-   * contenido, la density de UI o el layout cambiaban. El fade
-   * (mb-widget--fade, mas abajo) sigue dando una pista visual sutil de
-   * que hay mas contenido, ahora respaldada por scroll real en vez de
-   * ser el unico aviso. overscroll-behavior evita que el scroll interno
-   * "rebote" hacia el scroll de la pagina al llegar a un extremo. */
-  overflow-y: auto;
-  overflow-x: hidden;
-  overscroll-behavior-y: contain;
+  /* REVERTIDO (ver DashboardGrid/useAutoHeight): el scroll interno por
+   * widget capturaba el wheel de la pagina apenas el cursor pasaba por
+   * encima de CUALQUIER widget con el minimo overflow (incluso 1px por
+   * redondeo), rompiendo el scroll normal de la pagina. La solucion
+   * correcta no es scrollear el contenido cortado — es que el widget
+   * mida su contenido real y su `h` de grid se ajuste solo (ver
+   * useAutoHeight.ts). overflow:hidden vuelve a ser el estado normal;
+   * ya no hace falta que "absorba" un desajuste de altura porque la
+   * altura ahora se deriva del contenido, no al reves. */
+  overflow: hidden;
   /* Sin background propio: usar el del .mb-widget root. Un body con su
    * propio shade genera efecto "paper-in-paper" donde el body parece
    * un panel inset distinto del widget. Single source of background. */
