@@ -12,7 +12,7 @@ import { isSupabaseImageUrl } from '@/lib/image-helpers';
 import type { ProfileData } from '../../../types';
 import './TopRatedSeriesWidget.css';
 
-const COLLAPSED_COUNT = 5;
+const COLLAPSED_COUNT = 3;
 
 export interface TopRatedSeriesWidgetProps {
   topRatedSeries: ProfileData['stats']['topRatedSeries'];
