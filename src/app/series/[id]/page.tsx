@@ -121,7 +121,13 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
 
   // Quick counts para los chips de estado del header. Hechos en paralelo
   // para no penalizar TTFB.
-  const [reviewCount, contentCount, subscription] = await Promise.all([
+  const [
+    reviewCount,
+    contentCount,
+    subscription,
+    favoriteCount,
+    currentlyWatchingCount,
+  ] = await Promise.all([
     prisma.review.count({
       where: { seriesId: serie.id, status: 'PUBLISHED' },
     }),
@@ -132,6 +138,10 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
           select: { id: true },
         })
       : Promise.resolve(null),
+    prisma.userFavorite.count({ where: { seriesId: serie.id } }),
+    prisma.viewStatus.count({
+      where: { seriesId: serie.id, status: 'VIENDO' },
+    }),
   ]);
   const isSubscribed = subscription !== null;
 
@@ -259,6 +269,8 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
           }}
           hasReview={reviewCount > 0}
           hasContent={contentCount > 0}
+          favoriteCount={favoriteCount}
+          currentlyWatchingCount={currentlyWatchingCount}
           actionsSlot={
             <>
               <ViewStatusToggle
