@@ -43,6 +43,7 @@ export function TopCompaniesListWidget({
     >
       <AutoFitList
         as="ul"
+        collapsedCount={5}
         listClassName="mb-top-companies-list"
         viewLessLabel={t('profile.overviewViewLess')}
         viewMoreLabel={(count) =>
