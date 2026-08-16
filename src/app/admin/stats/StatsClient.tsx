@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Spin, Table, Tag, Avatar } from 'antd';
+import { Spin, Table, Tag, Avatar, Tooltip, Button, Space } from 'antd';
 import {
   UserOutlined,
   PlayCircleOutlined,
@@ -11,6 +11,9 @@ import {
   StarOutlined,
   EyeOutlined,
   TeamOutlined,
+  EditOutlined,
+  HistoryOutlined,
+  SettingOutlined,
 } from '@ant-design/icons';
 import Link from 'next/link';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
@@ -130,6 +133,15 @@ function RankingCard({
               <Link href={`/series/${item.seriesId}`}>{item.title}</Link>
             </span>
             <span className="stats-ranking-item__badge">{badge(item)}</span>
+            <Tooltip title="Editar serie">
+              <Link
+                href={`/admin/series/${item.seriesId}/editar`}
+                className="stats-ranking-item__edit-link"
+                style={{ marginLeft: 6, opacity: 0.7 }}
+              >
+                <EditOutlined />
+              </Link>
+            </Tooltip>
           </li>
         ))}
       </ul>
@@ -171,6 +183,15 @@ function RatedRankingCard({
             <span className="stats-ranking-item__badge">
               ⭐ {item.avgScore} ({item.count})
             </span>
+            <Tooltip title="Editar serie">
+              <Link
+                href={`/admin/series/${item.seriesId}/editar`}
+                className="stats-ranking-item__edit-link"
+                style={{ marginLeft: 6, opacity: 0.7 }}
+              >
+                <EditOutlined />
+              </Link>
+            </Tooltip>
           </li>
         ))}
       </ul>
@@ -198,7 +219,13 @@ export function StatsClient() {
       render: (_: unknown, u: ActiveUser) => (
         <div className="stats-user-row">
           <Avatar src={u.image} icon={<UserOutlined />} size="small" />
-          <span>{u.name ?? u.email}</span>
+          <Link
+            href={`/admin/logs?userId=${encodeURIComponent(u.id)}`}
+            title="Ver actividad en logs"
+            style={{ fontWeight: 500 }}
+          >
+            {u.name ?? u.email}
+          </Link>
         </div>
       ),
     },
@@ -214,6 +241,33 @@ export function StatsClient() {
       title: 'Series completadas',
       key: 'completed',
       render: (_: unknown, u: ActiveUser) => u._count.viewStatuses,
+    },
+    {
+      title: 'Acciones',
+      key: 'actions',
+      align: 'right' as const,
+      render: (_: unknown, u: ActiveUser) => (
+        <Space size="small">
+          <Tooltip title="Filtrar logs de actividad de este usuario">
+            <Button
+              type="link"
+              size="small"
+              icon={<HistoryOutlined />}
+              href={`/admin/logs?userId=${encodeURIComponent(u.id)}`}
+            >
+              Logs
+            </Button>
+          </Tooltip>
+          <Tooltip title="Gestionar usuario y rol">
+            <Button
+              type="text"
+              size="small"
+              icon={<SettingOutlined />}
+              href={`/admin/usuarios?search=${encodeURIComponent(u.email || u.name || '')}`}
+            />
+          </Tooltip>
+        </Space>
+      ),
     },
   ];
   return (
