@@ -150,8 +150,33 @@ export function PlataformasClient() {
                 </span>
               ))}
             </div>
+
+            {/* Aviso de Afiliado sutil y con clase */}
+            {platform.hasAffiliateProgram ? (
+              <div className="plataforma-card__affiliate-tag">
+                <Tooltip title={platform.affiliateDisclaimer}>
+                  <Tag color="purple" style={{ fontSize: '0.75rem', cursor: 'help' }}>
+                    🤝 Enlace de afiliado oficial
+                  </Tag>
+                </Tooltip>
+              </div>
+            ) : (
+              <div className="plataforma-card__affiliate-tag">
+                <Tag color="default" style={{ fontSize: '0.75rem' }}>
+                  🌐 Enlace oficial directo
+                </Tag>
+              </div>
+            )}
           </div>
         ))}
+      </div>
+
+      {/* Manifiesto de Transparencia Ética */}
+      <div className="plataformas-transparency-note">
+        <SafetyCertificateOutlined className="plataformas-transparency-note__icon" />
+        <div className="plataformas-transparency-note__text">
+          <strong>Transparencia de MundoBL:</strong> Algunos enlaces de streaming son programas de afiliados oficiales autorizados. Si decidís contratar un plan a través de ellos, la plataforma destina una pequeña comisión para ayudarnos a cubrir los servidores de MundoBL, sin que vos pagues un solo centavo extra. Siempre priorizamos las opciones gratuitas y legales por encima de cualquier otra.
+        </div>
       </div>
 
       {/* Guía de Arbitraje / Preguntas Frecuentes */}

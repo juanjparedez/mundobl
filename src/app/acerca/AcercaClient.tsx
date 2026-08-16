@@ -39,11 +39,11 @@ export function AcercaClient() {
               icon={<UserOutlined />}
               className="acerca-member-card__avatar"
             />
-            <div className="acerca-member-card__info">
-              <div className="acerca-member-card__head">
-                <h3 className="acerca-member-card__name">Juan José Paredez</h3>
-                <Tag color="blue">Desarrollo & Arquitectura</Tag>
-              </div>
+              <div className="acerca-member-card__info">
+                <div className="acerca-member-card__head">
+                  <h3 className="acerca-member-card__name">Juanjo</h3>
+                  <Tag color="blue">Desarrollo & Arquitectura</Tag>
+                </div>
               <p className="acerca-member-card__bio">
                 Desarrollador Full-Stack. Responsable de la arquitectura técnica, diseño de interfaz, optimización de rendimiento y del reproductor integrado de MundoBL.
               </p>
