@@ -1,27 +1,19 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Tag, Input, Radio, Alert } from 'antd';
+import { Tag, Input, Radio } from 'antd';
 import {
-  ReadOutlined,
   SearchOutlined,
-  HeartFilled,
   BulbOutlined,
   WarningOutlined,
   TranslationOutlined,
 } from '@ant-design/icons';
-import { CULTURAL_GLOSSARY, type GlossaryTerm } from '@/data/cultural-glossary';
+import { CULTURAL_GLOSSARY } from '@/data/cultural-glossary';
 import './glosario.css';
 
 export function GlosarioClient() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState<string>('all');
-
-  const categories = useMemo(() => {
-    const set = new Set<string>();
-    CULTURAL_GLOSSARY.forEach((t) => set.add(t.category));
-    return ['all', ...Array.from(set)];
-  }, []);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();

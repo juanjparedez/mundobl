@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button, Tag } from 'antd';
 import {
   PlayCircleFilled,
@@ -12,6 +13,7 @@ import {
   VideoCameraFilled,
 } from '@ant-design/icons';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
+import { isSupabaseImageUrl } from '@/lib/image-helpers';
 import type { CarouselMediaItem } from '../MediaCarousel/MediaCarousel';
 import './HeroBillboard.css';
 
@@ -33,13 +35,27 @@ export function HeroBillboard({ featured }: HeroBillboardProps) {
     <div className="hero-billboard">
       {/* Imagen de fondo / Backdrop */}
       <div className="hero-billboard__backdrop-wrap">
-        {featured.imageUrl && (
-          <img
-            src={featured.imageUrl}
-            alt={featured.title}
-            className="hero-billboard__backdrop"
-          />
-        )}
+        {featured.imageUrl &&
+          (isSupabaseImageUrl(featured.imageUrl) ? (
+            <Image
+              src={featured.imageUrl}
+              alt={featured.title}
+              fill
+              sizes="100vw"
+              unoptimized
+              className="hero-billboard__backdrop"
+            />
+          ) : (
+            // imageUrl puede ser una URL externa arbitraria (pegada a mano
+            // en el admin, o donde fallo el re-hosteo a Supabase) que no
+            // esta necesariamente en next.config.ts remotePatterns.
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={featured.imageUrl}
+              alt={featured.title}
+              className="hero-billboard__backdrop"
+            />
+          ))}
         <div className="hero-billboard__gradient-overlay" />
       </div>
 

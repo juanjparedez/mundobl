@@ -95,11 +95,7 @@
 
 .runtime-admin-error-item {
   border: 1px solid
-    color-mix(
-      in srgb,
-      var(--error-color) 35%,
-      var(--border-color-secondary)
-    );
+    color-mix(in srgb, var(--error-color) 35%, var(--border-color-secondary));
   border-radius: var(--border-radius-base);
   background: color-mix(in srgb, var(--error-color) 6%, transparent);
   padding: 10px;

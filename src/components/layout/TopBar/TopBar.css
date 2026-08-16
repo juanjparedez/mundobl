@@ -36,7 +36,11 @@
 
 .app-topbar__search:hover,
 .app-topbar__search:focus-visible {
-  border-color: color-mix(in srgb, var(--primary-color) 60%, var(--border-color));
+  border-color: color-mix(
+    in srgb,
+    var(--primary-color) 60%,
+    var(--border-color)
+  );
   color: var(--text-secondary);
   background: color-mix(in srgb, var(--bg-spotlight) 86%, transparent);
 }

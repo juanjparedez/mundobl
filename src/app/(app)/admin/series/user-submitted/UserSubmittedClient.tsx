@@ -209,6 +209,9 @@ export function UserSubmittedClient({ items: initial }: Props) {
       render: (_, row) => (
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           {row.imageUrl && (
+            // Series.imageUrl aportada por el usuario: puede ser una URL
+            // externa arbitraria no whitelisteada en remotePatterns.
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={row.imageUrl}
               alt=""

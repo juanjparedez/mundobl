@@ -1,0 +1,25 @@
+.series-note-modal__title {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs, 8px);
+}
+
+.series-note-modal__label {
+  color: var(--text-secondary);
+  font-weight: 400;
+  font-size: 0.9rem;
+}
+
+.series-note-modal__hint {
+  margin: 0 0 var(--spacing-sm, 12px) 0;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.series-note-modal__meta {
+  margin: var(--spacing-sm, 12px) 0 0 0;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  text-align: right;
+}

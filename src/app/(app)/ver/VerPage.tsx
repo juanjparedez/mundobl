@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Button, Empty, Input, Select, Tag, Popconfirm, Segmented } from 'antd';
+import { Button, Empty, Input, Select, Popconfirm, Segmented } from 'antd';
 import {
   PlayCircleFilled,
   PlusOutlined,
@@ -15,8 +15,6 @@ import {
   AppstoreOutlined,
   BarsOutlined,
   VideoCameraFilled,
-  YoutubeFilled,
-  GlobalOutlined,
 } from '@ant-design/icons';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { useMessage } from '@/hooks/useMessage';
@@ -296,6 +294,9 @@ export function VerPage({ items }: VerPageProps) {
                               unoptimized
                             />
                           ) : (
+                            // imageUrl externa arbitraria, no whitelisteada
+                            // en next.config.ts remotePatterns.
+                            // eslint-disable-next-line @next/next/no-img-element
                             <img
                               src={item.imageUrl}
                               alt={item.title}

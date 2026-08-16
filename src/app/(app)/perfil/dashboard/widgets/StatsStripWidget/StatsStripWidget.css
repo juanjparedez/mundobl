@@ -115,8 +115,7 @@ html[data-skin='premium'][data-theme='dark'] .mb-stats-strip-widget__item {
   border-bottom-color: var(--mb-border-soft);
 }
 
-html[data-skin='premium'][data-theme='dark']
-  .mb-stats-strip-widget__icon {
+html[data-skin='premium'][data-theme='dark'] .mb-stats-strip-widget__icon {
   background: var(--mb-gold-soft);
   color: var(--mb-gold);
 }

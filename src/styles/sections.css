@@ -125,9 +125,17 @@
 }
 
 .app-pill--warning {
-  background: color-mix(in srgb, var(--warning-color, #f6b51e) 16%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--warning-color, #f6b51e) 16%,
+    transparent
+  );
   color: var(--warning-color, #f6b51e);
-  border-color: color-mix(in srgb, var(--warning-color, #f6b51e) 30%, transparent);
+  border-color: color-mix(
+    in srgb,
+    var(--warning-color, #f6b51e) 30%,
+    transparent
+  );
 }
 
 .app-pill--danger {

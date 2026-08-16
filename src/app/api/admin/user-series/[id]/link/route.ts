@@ -159,9 +159,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
                 skipped++;
               }
               // Eliminar el episodio del aporte fuente para evitar duplicados
-              await tx.episode
-                .delete({ where: { id: ep.id } })
-                .catch(() => {});
+              await tx.episode.delete({ where: { id: ep.id } }).catch(() => {});
               continue;
             }
 

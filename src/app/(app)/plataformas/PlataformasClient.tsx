@@ -1,10 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Card, Tag, Button, Radio, Collapse, Tooltip } from 'antd';
+import { Tag, Radio, Tooltip } from 'antd';
 import {
   SafetyCertificateOutlined,
-  PlayCircleOutlined,
   CheckOutlined,
   GlobalOutlined,
   TranslationOutlined,
@@ -14,10 +13,7 @@ import {
   InfoCircleOutlined,
   LinkOutlined,
 } from '@ant-design/icons';
-import {
-  STREAMING_PLATFORMS,
-  type StreamingPlatformInfo,
-} from '@/data/streaming-platforms';
+import { STREAMING_PLATFORMS } from '@/data/streaming-platforms';
 import './plataformas.css';
 
 export function PlataformasClient() {

@@ -74,15 +74,31 @@
  * Solo cuando estan active — hover los mantiene gold default para no
  * ser confuso. */
 .admin-nav__group[data-group='community'] .admin-nav__item--active {
-  background: color-mix(in srgb, var(--mb-blue, var(--primary-color)) 14%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--mb-blue, var(--primary-color)) 14%,
+    transparent
+  );
   color: var(--mb-blue, var(--primary-color));
-  border-color: color-mix(in srgb, var(--mb-blue, var(--primary-color)) 40%, transparent);
+  border-color: color-mix(
+    in srgb,
+    var(--mb-blue, var(--primary-color)) 40%,
+    transparent
+  );
 }
 
 .admin-nav__group[data-group='system'] .admin-nav__item--active {
-  background: color-mix(in srgb, var(--mb-purple, var(--primary-color)) 14%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--mb-purple, var(--primary-color)) 14%,
+    transparent
+  );
   color: var(--mb-purple, var(--primary-color));
-  border-color: color-mix(in srgb, var(--mb-purple, var(--primary-color)) 40%, transparent);
+  border-color: color-mix(
+    in srgb,
+    var(--mb-purple, var(--primary-color)) 40%,
+    transparent
+  );
 }
 
 .admin-nav__icon {

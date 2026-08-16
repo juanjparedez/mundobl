@@ -65,28 +65,32 @@ export async function POST(request: NextRequest, context: RouteContext) {
   // Notificar al usuario que aportó la serie
   if (updated.submittedById) {
     if (visibility === 'VISIBLE') {
-      await prisma.notification.create({
-        data: {
-          userId: updated.submittedById,
-          type: 'series_approved',
-          title: '¡Tu serie sugerida fue aprobada!',
-          body: `Tu aporte "${updated.title}" fue aprobado y ya está disponible para ver en MundoBL.`,
-          linkPath: `/ver/${updated.id}`,
-          refType: 'series',
-          refId: String(updated.id),
-        },
-      }).catch(() => {});
+      await prisma.notification
+        .create({
+          data: {
+            userId: updated.submittedById,
+            type: 'series_approved',
+            title: '¡Tu serie sugerida fue aprobada!',
+            body: `Tu aporte "${updated.title}" fue aprobado y ya está disponible para ver en MundoBL.`,
+            linkPath: `/ver/${updated.id}`,
+            refType: 'series',
+            refId: String(updated.id),
+          },
+        })
+        .catch(() => {});
     } else if (visibility === 'REJECTED') {
-      await prisma.notification.create({
-        data: {
-          userId: updated.submittedById,
-          type: 'series_rejected',
-          title: 'Aporte no aprobado',
-          body: `Tu aporte "${updated.title}" no pudo ser publicado. ${body.adminNotes ? `Motivo: ${body.adminNotes}` : ''}`.trim(),
-          refType: 'series',
-          refId: String(updated.id),
-        },
-      }).catch(() => {});
+      await prisma.notification
+        .create({
+          data: {
+            userId: updated.submittedById,
+            type: 'series_rejected',
+            title: 'Aporte no aprobado',
+            body: `Tu aporte "${updated.title}" no pudo ser publicado. ${body.adminNotes ? `Motivo: ${body.adminNotes}` : ''}`.trim(),
+            refType: 'series',
+            refId: String(updated.id),
+          },
+        })
+        .catch(() => {});
     }
   }
 

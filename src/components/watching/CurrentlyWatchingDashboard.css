@@ -28,6 +28,7 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
+  flex-wrap: wrap;
 }
 
 .watching-header__sort-label {
@@ -38,6 +39,17 @@
 
 .watching-header__sort-select {
   min-width: 190px;
+}
+
+@media (max-width: 480px) {
+  .watching-header__controls {
+    width: 100%;
+  }
+
+  .watching-header__sort-select {
+    min-width: 0;
+    flex: 1;
+  }
 }
 
 .watching-dashboard__loading {
@@ -110,9 +122,21 @@
   background: rgba(255, 77, 79, 0.9) !important;
 }
 
+/* En touch (no hay :hover real) el boton de quitar debe quedar visible
+ * siempre — de lo contrario queda "pegado" tras el primer tap en iOS y
+ * flota sobre el poster sin forma de ocultarlo (mismo criterio que
+ * catalogo.css .serie-card-actions). */
+@media (hover: none) {
+  .watching-card__remove-btn {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.5) !important;
+  }
+}
+
 .watching-card__image {
+  position: relative;
   width: 100%;
-  height: 200px;
+  aspect-ratio: var(--poster-aspect-ratio);
   overflow: hidden;
   background: var(--bg-spotlight);
 }
@@ -157,6 +181,13 @@
   padding: var(--spacing-xs);
   background: var(--bg-spotlight);
   border-radius: var(--border-radius-sm);
+}
+
+.watching-card__next span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .watching-card__icon {

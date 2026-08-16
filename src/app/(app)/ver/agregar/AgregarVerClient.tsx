@@ -320,6 +320,10 @@ export function AgregarVerClient() {
         <div className="ver-agregar-preview">
           <div className="ver-agregar-preview__source">
             {preview.source.thumbnailUrl && (
+              // og:image de una URL externa arbitraria que el usuario pego
+              // (cualquier dominio, no whitelisteable de antemano en
+              // next.config.ts remotePatterns) — no se puede usar next/image.
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={preview.source.thumbnailUrl}
                 alt={preview.source.rawTitle ?? 'thumbnail'}

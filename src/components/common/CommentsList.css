@@ -166,7 +166,8 @@
 .comment-list-replies {
   margin-left: 20px;
   padding-left: 14px;
-  border-left: 2px solid color-mix(in srgb, var(--border-color-secondary) 80%, transparent);
+  border-left: 2px solid
+    color-mix(in srgb, var(--border-color-secondary) 80%, transparent);
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
@@ -223,4 +224,3 @@
     margin-left: 0;
   }
 }
-

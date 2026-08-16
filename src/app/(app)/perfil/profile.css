@@ -13,13 +13,12 @@
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-md);
   padding: var(--spacing-md);
-  background:
-    linear-gradient(
-      110deg,
-      color-mix(in srgb, var(--bg-container) 94%, transparent) 0%,
-      color-mix(in srgb, var(--bg-elevated) 66%, transparent) 50%,
-      color-mix(in srgb, var(--bg-container) 92%, transparent) 100%
-    );
+  background: linear-gradient(
+    110deg,
+    color-mix(in srgb, var(--bg-container) 94%, transparent) 0%,
+    color-mix(in srgb, var(--bg-elevated) 66%, transparent) 50%,
+    color-mix(in srgb, var(--bg-container) 92%, transparent) 100%
+  );
   border-radius: var(--border-radius-lg);
   border: 1px solid var(--border-color-secondary);
   box-shadow: var(--box-shadow-card);

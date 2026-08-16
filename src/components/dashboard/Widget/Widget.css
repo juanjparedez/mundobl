@@ -193,8 +193,7 @@ html[data-skin='premium'][data-theme='dark'] .mb-widget__header {
 
   /* Handle de resize de react-grid-layout. La libreria pone un span SE
    * en el bottom-right de cada item editing. Lo agrandamos para touch. */
-  .mb-widget--editing
-    + .react-resizable-handle,
+  .mb-widget--editing + .react-resizable-handle,
   .react-grid-item.react-grid-placeholder + .react-resizable-handle,
   .react-resizable-handle {
     width: 24px !important;

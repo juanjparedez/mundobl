@@ -177,8 +177,7 @@ html[data-skin='premium'][data-theme='dark'] .mb-stat-card {
   border-radius: var(--mb-radius-md);
 }
 
-html[data-skin='premium'][data-theme='dark']
-  .ant-card-bordered:hover,
+html[data-skin='premium'][data-theme='dark'] .ant-card-bordered:hover,
 html[data-skin='premium'][data-theme='dark'] .mb-panel-card:hover {
   border-color: var(--mb-border-strong);
 }
@@ -228,10 +227,7 @@ html[data-skin='premium'][data-theme='dark'] .ant-table-tbody > tr > td {
   border-bottom-color: var(--mb-border-soft) !important;
 }
 
-html[data-skin='premium'][data-theme='dark']
-  .ant-table-tbody
-  > tr:hover
-  > td {
+html[data-skin='premium'][data-theme='dark'] .ant-table-tbody > tr:hover > td {
   background: var(--mb-panel-2) !important;
 }
 
@@ -254,7 +250,6 @@ html[data-skin='premium'][data-theme='dark'] .ant-drawer-header {
 }
 
 /* Dropdown items hover */
-html[data-skin='premium'][data-theme='dark']
-  .ant-dropdown-menu-item:hover {
+html[data-skin='premium'][data-theme='dark'] .ant-dropdown-menu-item:hover {
   background: var(--mb-panel-2) !important;
 }

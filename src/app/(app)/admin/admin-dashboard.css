@@ -241,8 +241,7 @@
 
 /* Hover border tambien por grupo: pequeño detalle pero mantiene
  * coherencia visual entre el bar del titulo y la card cuando interactua. */
-.admin-dashboard__section[data-group='comunidad']
-  .admin-tool-card:hover {
+.admin-dashboard__section[data-group='comunidad'] .admin-tool-card:hover {
   border-color: color-mix(
     in srgb,
     var(--mb-blue, var(--primary-color)) 50%,

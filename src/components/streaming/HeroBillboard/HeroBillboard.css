@@ -37,18 +37,19 @@
 .hero-billboard__gradient-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to right,
-    rgba(10, 10, 15, 0.95) 0%,
-    rgba(10, 10, 15, 0.8) 45%,
-    rgba(10, 10, 15, 0.3) 100%
-  ),
-  linear-gradient(
-    to top,
-    rgba(10, 10, 15, 1) 0%,
-    rgba(10, 10, 15, 0.4) 40%,
-    transparent 100%
-  );
+  background:
+    linear-gradient(
+      to right,
+      rgba(10, 10, 15, 0.95) 0%,
+      rgba(10, 10, 15, 0.8) 45%,
+      rgba(10, 10, 15, 0.3) 100%
+    ),
+    linear-gradient(
+      to top,
+      rgba(10, 10, 15, 1) 0%,
+      rgba(10, 10, 15, 0.4) 40%,
+      transparent 100%
+    );
 }
 
 @media (max-width: 768px) {

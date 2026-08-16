@@ -105,14 +105,12 @@ html[data-skin='premium'][data-theme='dark'] .mb-profile-stats-strip {
   box-shadow: var(--mb-shadow-soft);
 }
 
-html[data-skin='premium'][data-theme='dark']
-  .mb-profile-stats-strip__item {
+html[data-skin='premium'][data-theme='dark'] .mb-profile-stats-strip__item {
   border-right-color: var(--mb-border-soft);
   border-bottom-color: var(--mb-border-soft);
 }
 
-html[data-skin='premium'][data-theme='dark']
-  .mb-profile-stats-strip__icon {
+html[data-skin='premium'][data-theme='dark'] .mb-profile-stats-strip__icon {
   background: var(--mb-gold-soft);
   color: var(--mb-gold);
 }

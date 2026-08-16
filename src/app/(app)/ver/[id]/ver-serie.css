@@ -271,7 +271,8 @@
 .ver-serie__chapter-card--active {
   border-color: color-mix(in srgb, var(--primary-color) 60%, transparent);
   background: color-mix(in srgb, var(--primary-color) 8%, var(--bg-elevated));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--primary-color) 40%, transparent);
+  box-shadow: 0 0 0 1px
+    color-mix(in srgb, var(--primary-color) 40%, transparent);
 }
 
 .ver-serie__chapter-thumb-wrap {

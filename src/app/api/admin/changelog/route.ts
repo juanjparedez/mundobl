@@ -110,7 +110,10 @@ export async function POST(request: NextRequest) {
         });
         created.push(it);
       }
-      return NextResponse.json({ created: created.length, items: created }, { status: 201 });
+      return NextResponse.json(
+        { created: created.length, items: created },
+        { status: 201 }
+      );
     }
 
     if (!version?.trim() || !itemBody?.trim()) {

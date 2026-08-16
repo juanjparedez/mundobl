@@ -203,7 +203,9 @@ const watchableInclude = Prisma.validator<Prisma.SeriesInclude>()({
   },
   actors: {
     include: {
-      actor: { select: { id: true, name: true, stageName: true, imageUrl: true } },
+      actor: {
+        select: { id: true, name: true, stageName: true, imageUrl: true },
+      },
     },
     take: 8,
   },
