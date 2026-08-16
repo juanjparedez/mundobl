@@ -145,6 +145,12 @@ export function Sidebar() {
       onClick: () => router.push('/plataformas'),
     },
     {
+      key: '/glosario',
+      icon: <TranslationOutlined />,
+      label: 'Glosario Cultural',
+      onClick: () => router.push('/glosario'),
+    },
+    {
       key: '/contenido',
       icon: <VideoCameraOutlined />,
       label: t('sidebar.content'),
