@@ -2126,6 +2126,7 @@ const ko: TranslationShape = {
     envLine: '환경: {env}',
     userAgentLine: '사용자 에이전트: {userAgent}',
     urlLine: 'URL: {url}',
+    deployedAtLine: '배포: {date}',
   },
   verSerie: {
     noEpisodesAvailable: '이용 가능한 에피소드 없음',
@@ -2507,6 +2508,7 @@ const ko: TranslationShape = {
     actionCreate: '생성됨',
     actionUpdate: '수정됨',
     actionDelete: '삭제됨',
+    viewInLogs: '전체 로그에서 보기',
   },
   topCommenters: {
     title: '추천 커뮤니티',
@@ -2526,6 +2528,7 @@ const ko: TranslationShape = {
     captionWeek: '지난 7일',
     captionMonth: '지난 30일',
     captionYear: '지난 12개월',
+    viewFullLog: '전체 로그 보기',
   },
   worldMap: {
     title: '방문한 국가',

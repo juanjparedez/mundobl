@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import {
   CompassFilled,
   ReadFilled,
@@ -16,6 +15,7 @@ import {
 import type { ProfileData } from '../../types';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
+import { AutoFitList } from '@/components/design-system';
 import './Achievements.css';
 
 interface Props {
@@ -66,7 +66,6 @@ export function countUnlockedAchievements(stats: ProfileData['stats']): number {
  *  modelo Achievement en backend se reemplaza esta lista por la real. */
 export function OverviewAchievements({ stats }: Props) {
   const { t } = useLocale();
-  const [showAll, setShowAll] = useState(false);
 
   const achievements: Achievement[] = [
     {
@@ -179,18 +178,31 @@ export function OverviewAchievements({ stats }: Props) {
     },
   ];
 
+  // Prioridad: obtenidos primero, pendientes despues — tanto colapsado
+  // como expandido (AutoFitList corta la cola que no entra).
   const unlocked = achievements.filter((a) => a.current >= a.goal);
   const pending = achievements.filter((a) => a.current < a.goal);
-  const visible = showAll
-    ? achievements
-    : [...unlocked, ...pending].slice(0, 4);
+  const ordered = [...unlocked, ...pending];
 
   // Header (title + counter) lo provee el Widget wrapper. Esta section
-  // solo rendea el body (lista de achievements + boton toggle).
+  // solo rendea el body (lista de achievements + toggle). AutoFitList mide
+  // cuantos items entran realmente en el alto disponible del widget en vez
+  // de asumir un conteo fijo — evita que la lista quede cortada si el
+  // calculo manual de altura del grid se desincroniza.
   return (
     <section className="overview-achievements">
-      <ul className="overview-achievements__list">
-        {visible.map((a) => {
+      <AutoFitList
+        as="ul"
+        listClassName="overview-achievements__list"
+        wrapClassName="overview-achievements__wrap"
+        viewLessLabel={t('profile.overviewViewLess')}
+        viewMoreLabel={(count) =>
+          interpolateMessage(t('profile.overviewViewAllCount'), {
+            count: String(count),
+          })
+        }
+      >
+        {ordered.map((a) => {
           const isUnlocked = a.current >= a.goal;
           const pct = Math.min(100, Math.round((a.current / a.goal) * 100));
           return (
@@ -223,21 +235,7 @@ export function OverviewAchievements({ stats }: Props) {
             </li>
           );
         })}
-      </ul>
-
-      {achievements.length > 4 && (
-        <button
-          type="button"
-          className="overview-achievements__toggle"
-          onClick={() => setShowAll((v) => !v)}
-        >
-          {showAll
-            ? t('profile.overviewViewLess')
-            : interpolateMessage(t('profile.overviewViewAllCount'), {
-                count: String(achievements.length),
-              })}
-        </button>
-      )}
+      </AutoFitList>
     </section>
   );
 }

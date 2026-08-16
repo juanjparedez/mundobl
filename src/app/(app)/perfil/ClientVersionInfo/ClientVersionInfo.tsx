@@ -11,10 +11,11 @@ interface BuildInfo {
   buildId: string;
   version: string;
   env: string;
+  deployedAt: string | null;
 }
 
 export function ClientVersionInfo() {
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const message = useMessage();
   const [info, setInfo] = useState<BuildInfo | null>(null);
   const [copied, setCopied] = useState(false);
@@ -34,13 +35,27 @@ export function ClientVersionInfo() {
 
   if (!info) return null;
 
-  const summary = `v${info.version} · build ${info.buildId}${info.env !== 'production' ? ` · ${info.env}` : ''}`;
+  const deployedAtFormatted = info.deployedAt
+    ? new Date(info.deployedAt).toLocaleString(locale, {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+      })
+    : null;
+
+  const summary = `v${info.version} · build ${info.buildId}${info.env !== 'production' ? ` · ${info.env}` : ''}${deployedAtFormatted ? ` · ${deployedAtFormatted}` : ''}`;
 
   const handleCopy = async () => {
     const lines = [
       t('clientVersionInfo.versionLine', { version: info.version }),
       t('clientVersionInfo.buildLine', { buildId: info.buildId }),
       t('clientVersionInfo.envLine', { env: info.env }),
+      ...(deployedAtFormatted
+        ? [
+            t('clientVersionInfo.deployedAtLine', {
+              date: deployedAtFormatted,
+            }),
+          ]
+        : []),
       t('clientVersionInfo.userAgentLine', { userAgent: navigator.userAgent }),
       t('clientVersionInfo.urlLine', { url: window.location.href }),
     ];

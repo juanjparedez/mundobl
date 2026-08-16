@@ -2124,6 +2124,7 @@ const th: TranslationShape = {
     envLine: 'สภาพแวดล้อม: {env}',
     userAgentLine: 'User-Agent: {userAgent}',
     urlLine: 'URL: {url}',
+    deployedAtLine: 'ปรับใช้เมื่อ: {date}',
   },
   verSerie: {
     noEpisodesAvailable: 'ไม่มีตอนให้รับชม',
@@ -2512,6 +2513,7 @@ const th: TranslationShape = {
     actionCreate: 'สร้างแล้ว',
     actionUpdate: 'แก้ไขแล้ว',
     actionDelete: 'ลบแล้ว',
+    viewInLogs: 'ดูในบันทึกทั้งหมด',
   },
   topCommenters: {
     title: 'ชุมชนแนะนำ',
@@ -2531,6 +2533,7 @@ const th: TranslationShape = {
     captionWeek: '7 วันที่ผ่านมา',
     captionMonth: '30 วันที่ผ่านมา',
     captionYear: '12 เดือนที่ผ่านมา',
+    viewFullLog: 'ดูบันทึกทั้งหมด',
   },
   worldMap: {
     title: 'ประเทศที่เคยไป',
