@@ -25,6 +25,7 @@ import {
   NotificationOutlined,
   UnorderedListOutlined,
   ThunderboltOutlined,
+  SafetyCertificateOutlined,
 } from '@ant-design/icons';
 import { Badge } from 'antd';
 import { useSession } from 'next-auth/react';
@@ -136,6 +137,12 @@ export function Sidebar() {
       icon: <LinkOutlined />,
       label: t('sidebar.sites'),
       onClick: () => router.push('/sitios'),
+    },
+    {
+      key: '/plataformas',
+      icon: <SafetyCertificateOutlined />,
+      label: 'Plataformas & Planes',
+      onClick: () => router.push('/plataformas'),
     },
     {
       key: '/contenido',

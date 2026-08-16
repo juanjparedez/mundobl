@@ -130,33 +130,110 @@
   gap: 4px;
 }
 
-.ver-serie__episodes {
+/* ─── Subtitles Helper ────────────────────────────────────────────────── */
+.ver-serie__subtitles-tip {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: 8px 14px;
+  background: color-mix(in srgb, var(--primary-color) 10%, var(--bg-elevated));
+  border: 1px solid color-mix(in srgb, var(--primary-color) 30%, transparent);
+  border-radius: var(--border-radius-base);
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.ver-serie__subtitles-icon {
+  font-size: 1.2rem;
+  color: var(--primary-color);
+  flex-shrink: 0;
+}
+
+.ver-serie__subtitles-text strong {
+  color: var(--text-primary);
+}
+
+/* ─── Info Grid & Cast ────────────────────────────────────────────────── */
+.ver-serie__info-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
   gap: var(--spacing-md);
 }
 
-.ver-serie__episodes h2 {
-  margin: 0;
-  font-size: 1.3rem;
+@media (max-width: 860px) {
+  .ver-serie__info-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ver-serie__cast-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-md);
+}
+
+.ver-serie__cast-card h3 {
+  margin: 0 0 var(--spacing-sm) 0;
+  font-size: 1.05rem;
   color: var(--text-primary);
 }
 
-.ver-serie__season {
+.ver-serie__cast-list {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: 8px;
 }
 
-.ver-serie__season-title {
-  margin: 0;
-  font-size: 1rem;
+.ver-serie__cast-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px;
+  border-radius: var(--border-radius-sm);
   color: var(--text-primary);
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.ver-serie__cast-item:hover {
+  background: var(--bg-spotlight);
+}
+
+.ver-serie__cast-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ver-serie__cast-name {
+  font-weight: 500;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ver-serie__cast-stage {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.ver-serie__episodes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+.ver-serie__episode-btn--extra {
+  opacity: 0.85;
 }
 
 .ver-serie__episode-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: var(--spacing-xs);
 }
 
