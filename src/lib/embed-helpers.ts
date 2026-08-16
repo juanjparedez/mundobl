@@ -232,7 +232,7 @@ export function getEmbedInfo(
       return {
         type: 'iframe',
         url: resolvedId
-          ? `https://www.youtube-nocookie.com/embed/${resolvedId}?rel=0`
+          ? `https://www.youtube-nocookie.com/embed/${resolvedId}?rel=0&cc_load_policy=1&hl=es&cc_lang_pref=es`
           : null,
         originalUrl: url,
         platform,

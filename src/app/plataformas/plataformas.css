@@ -1,0 +1,293 @@
+.plataformas-page {
+  padding: var(--spacing-lg) var(--spacing-md);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.plataformas-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+/* ─── Hero ───────────────────────────────────────────────────────── */
+.plataformas-hero {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.plataformas-hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--primary-color) 35%, transparent);
+  border-radius: 999px;
+  color: var(--primary-color);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.plataformas-hero__title {
+  margin: 0;
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.plataformas-hero__subtitle {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.plataformas-filters {
+  margin-top: var(--spacing-md);
+}
+
+/* ─── Grid de Tarjetas ───────────────────────────────────────────── */
+.plataformas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.plataforma-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  box-shadow: var(--box-shadow-card);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.plataforma-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.plataforma-card__header {
+  border-top: 4px solid var(--primary-color);
+  padding-top: var(--spacing-sm);
+  margin-top: calc(-1 * var(--spacing-sm));
+}
+
+.plataforma-card__title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.plataforma-card__name {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.plataforma-card__visit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  transition: all 0.15s ease;
+}
+
+.plataforma-card__visit-btn:hover {
+  background: color-mix(in srgb, currentColor 20%, transparent);
+}
+
+.plataforma-card__tagline {
+  margin: 6px 0 0 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.plataforma-card__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.plataforma-card__desc {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.plataforma-card__best-for {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  background: color-mix(in srgb, var(--bg-spotlight) 80%, transparent);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-base);
+  font-size: 0.88rem;
+  color: var(--text-primary);
+}
+
+.plataforma-card__best-for-icon {
+  color: #faad14;
+  font-size: 1.1rem;
+  margin-top: 2px;
+}
+
+/* ─── Planes ─────────────────────────────────────────────────────── */
+.plataforma-card__plans-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.plataforma-card__plans-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.plataforma-card__plans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+}
+
+.plataforma-plan-box {
+  background: color-mix(in srgb, var(--bg-base) 60%, transparent);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-base);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.plataforma-plan-box__head {
+  display: flex;
+  flex-direction: column;
+}
+
+.plataforma-plan-box__name {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+}
+
+.plataforma-plan-box__price {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.plataforma-plan-box__price small {
+  font-size: 0.75rem;
+  font-weight: normal;
+  color: var(--text-secondary);
+}
+
+.plataforma-plan-box__features {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.plataforma-plan-box__check {
+  color: #52c41a;
+  margin-right: 2px;
+}
+
+.plataforma-card__highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+}
+
+.plataforma-highlight-chip {
+  font-size: 0.78rem;
+  padding: 2px 8px;
+  background: color-mix(in srgb, var(--primary-color) 8%, var(--bg-elevated));
+  border-radius: 4px;
+  color: var(--text-secondary);
+}
+
+/* ─── FAQ / Arbitraje ────────────────────────────────────────────── */
+.plataformas-faq {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-xl) var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.plataformas-faq__title {
+  margin: 0;
+  font-size: 1.3rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.plataformas-faq__cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.plataformas-faq__card {
+  background: color-mix(in srgb, var(--bg-base) 50%, transparent);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-base);
+  padding: var(--spacing-md);
+}
+
+.plataformas-faq__card h3 {
+  margin: 0 0 8px 0;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.plataformas-faq__card p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+@media (max-width: 600px) {
+  .plataformas-grid {
+    grid-template-columns: 1fr;
+  }
+}

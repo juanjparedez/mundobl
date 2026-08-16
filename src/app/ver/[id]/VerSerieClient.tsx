@@ -2,13 +2,17 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { Button, Tag, Tooltip, Alert, Empty } from 'antd';
+import { Button, Tag, Tooltip, Alert, Empty, Avatar, Segmented } from 'antd';
 import {
   StarFilled,
   StarOutlined,
   ArrowRightOutlined,
   ArrowLeftOutlined,
   CheckCircleFilled,
+  UserOutlined,
+  BankOutlined,
+  PlayCircleOutlined,
+  TranslationOutlined,
 } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import { EmbedPlayer } from '@/components/common/EmbedPlayer/EmbedPlayer';
@@ -47,10 +51,23 @@ interface SeriesInfo {
   imageUrl: string | null;
   catalogScope: string;
   origin: string;
+  productionCompanyName: string | null;
   submittedByName: string | null;
   country: { name: string; code: string | null } | null;
   tags: string[];
   genres: string[];
+  directors: string[];
+  actors: Array<{
+    id: number;
+    name: string;
+    stageName?: string | null;
+    imageUrl?: string | null;
+  }>;
+  linkedSeries: {
+    id: number;
+    title: string;
+    imageUrl?: string | null;
+  } | null;
 }
 
 interface VerSerieClientProps {
@@ -58,17 +75,83 @@ interface VerSerieClientProps {
   seasons: Season[];
 }
 
+export function parseEpisodeBadge(rawTitle: string | null, episodeNumber: number): {
+  label: string;
+  isExtra: boolean;
+  tagColor?: string;
+  badgeText?: string;
+} {
+  if (!rawTitle) return { label: `Episodio ${episodeNumber}`, isExtra: false };
+  const lower = rawTitle.toLowerCase();
+
+  if (
+    lower.includes('trailer') ||
+    lower.includes('teaser') ||
+    rawTitle.includes('ตัวอย่าง')
+  ) {
+    return {
+      label: `Tráiler · #${episodeNumber}`,
+      isExtra: true,
+      tagColor: 'orange',
+      badgeText: 'Tráiler',
+    };
+  }
+
+  if (
+    lower.includes('behind') ||
+    lower.includes('special') ||
+    lower.includes('beginning') ||
+    lower.includes('highlight') ||
+    lower.includes('interview')
+  ) {
+    return {
+      label: `Extra · #${episodeNumber}`,
+      isExtra: true,
+      tagColor: 'purple',
+      badgeText: 'Extra',
+    };
+  }
+
+  if (lower.includes('ost') || lower.includes('mv') || lower.includes('music video')) {
+    return {
+      label: `OST · #${episodeNumber}`,
+      isExtra: true,
+      tagColor: 'cyan',
+      badgeText: 'Música',
+    };
+  }
+
+  const partMatch =
+    rawTitle.match(/(?:ep\.?\s*(\d+))?.*?[\[\(](\d+)\/(\d+)[\]\)]/i) ||
+    rawTitle.match(/(?:ep\.?\s*(\d+))?.*?(\d+)\/(\d+)/i);
+
+  if (partMatch && partMatch[2] && partMatch[3]) {
+    const epNum = partMatch[1] ? partMatch[1] : episodeNumber;
+    return {
+      label: `Cap. ${epNum} [${partMatch[2]}/${partMatch[3]}]`,
+      isExtra: false,
+    };
+  }
+
+  const epMatch = rawTitle.match(/ep\.?\s*(\d+)/i);
+  if (epMatch) {
+    return { label: `Capítulo ${epMatch[1]}`, isExtra: false };
+  }
+
+  return {
+    label: rawTitle.length > 32 ? `${rawTitle.slice(0, 30)}...` : rawTitle,
+    isExtra: false,
+  };
+}
+
 export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
   const { t } = useLocale();
   const { data: session, status } = useSession();
   const message = useMessage();
-  // Solo mostrar acciones admin cuando la sesion termino de cargar
-  // (evita flicker durante SSR-hydrate).
   const isAuthed = status === 'authenticated';
   const isAdmin = isAuthed && session?.user?.role === 'ADMIN';
   const isUserEmbed = series.origin === 'USER_EMBED';
 
-  // Aplanado de todos los episodios (con su season) para navegacion siguiente/anterior.
   const flatEpisodes = useMemo(
     () =>
       seasons.flatMap((s) =>
@@ -76,12 +159,14 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           ...e,
           seasonId: s.id,
           seasonNumber: s.seasonNumber,
+          parsed: parseEpisodeBadge(e.title, e.episodeNumber),
         }))
       ),
     [seasons]
   );
 
   const [activeIdx, setActiveIdx] = useState(0);
+  const [filterMode, setFilterMode] = useState<'all' | 'episodes' | 'extras'>('all');
   const [scope, setScope] = useState(series.catalogScope);
   const [movingScope, setMovingScope] = useState(false);
 
@@ -112,6 +197,15 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
     return <Empty description={t('verSerie.noEpisodesAvailable')} />;
   }
 
+  const extrasCount = flatEpisodes.filter((e) => e.parsed.isExtra).length;
+  const mainEpisodesCount = flatEpisodes.length - extrasCount;
+
+  const displayEpisodes = flatEpisodes.filter((e) => {
+    if (filterMode === 'episodes') return !e.parsed.isExtra;
+    if (filterMode === 'extras') return e.parsed.isExtra;
+    return true;
+  });
+
   return (
     <div className="ver-serie">
       {/* Cabecera de la serie */}
@@ -126,6 +220,11 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           </h1>
           {series.originalTitle && (
             <p className="ver-serie__original-title">{series.originalTitle}</p>
+          )}
+          {series.productionCompanyName && (
+            <Tag icon={<BankOutlined />} color="cyan" className="ver-serie__company-tag">
+              {series.productionCompanyName}
+            </Tag>
           )}
         </div>
         <div className="ver-serie__header-actions">
@@ -146,7 +245,12 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           )}
           {!isUserEmbed && (
             <Link href={`/series/${series.id}`} prefetch={false}>
-              <Button>{t('verSerie.viewFullDetailsButton')}</Button>
+              <Button icon={<PlayCircleOutlined />}>{t('verSerie.viewFullDetailsButton')}</Button>
+            </Link>
+          )}
+          {series.linkedSeries && (
+            <Link href={`/series/${series.linkedSeries.id}`} prefetch={false}>
+              <Button type="primary" ghost>Ficha completa en catálogo</Button>
             </Link>
           )}
           {isAdmin && !isUserEmbed && scope === 'WATCHABLE_ONLY' && (
@@ -182,6 +286,14 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
             active.title ? ` · ${active.title}` : ''
           }`}
         />
+      </div>
+
+      {/* Helper de subtítulos automáticos */}
+      <div className="ver-serie__subtitles-tip">
+        <TranslationOutlined className="ver-serie__subtitles-icon" />
+        <div className="ver-serie__subtitles-text">
+          <strong>Subtítulos en español:</strong> Se solicitan automáticamente si la plataforma oficial los tiene disponibles. Podés cambiar el idioma o ajustar la sincronización desde el botón <strong>[CC]</strong> del reproductor.
+        </div>
       </div>
 
       {/* Atribución de origen */}
@@ -241,68 +353,105 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         </div>
       )}
 
-      {/* Sinopsis general */}
-      {series.synopsis && (
-        <div className="ver-serie__series-synopsis">
-          <h3>{t('verSerie.aboutTheSeriesTitle')}</h3>
-          <p>{series.synopsis}</p>
-          {(series.genres.length > 0 || series.tags.length > 0) && (
-            <div className="ver-serie__chips">
-              {series.genres.map((g) => (
-                <Tag key={`g-${g}`} color="blue">
-                  {g}
-                </Tag>
-              ))}
-              {series.tags.map((t) => (
-                <Tag key={`t-${t}`}>{t}</Tag>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+      {/* Sinopsis general & Reparto */}
+      <div className="ver-serie__info-grid">
+        {series.synopsis && (
+          <div className="ver-serie__series-synopsis">
+            <h3>{t('verSerie.aboutTheSeriesTitle')}</h3>
+            <p>{series.synopsis}</p>
+            {(series.genres.length > 0 || series.tags.length > 0) && (
+              <div className="ver-serie__chips">
+                {series.genres.map((g) => (
+                  <Tag key={`g-${g}`} color="blue">
+                    {g}
+                  </Tag>
+                ))}
+                {series.tags.map((t) => (
+                  <Tag key={`t-${t}`}>{t}</Tag>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
-      {/* Lista de episodios */}
-      <div className="ver-serie__episodes">
-        <h2>{t('verSerie.episodesTitle')}</h2>
-        {seasons.map((season) => (
-          <div key={season.id} className="ver-serie__season">
-            <h3 className="ver-serie__season-title">
-              {t('verSerie.seasonTitle', { seasonNumber: season.seasonNumber })}
-              {season.title ? ` — ${season.title}` : ''}
-            </h3>
-            <div className="ver-serie__episode-grid">
-              {season.episodes.map((ep) => {
-                const flatIndex = flatEpisodes.findIndex(
-                  (fe) => fe.id === ep.id
-                );
-                const isActive = flatIndex === activeIdx;
-                return (
-                  <button
-                    key={ep.id}
-                    type="button"
-                    className={`ver-serie__episode-btn${
-                      isActive ? ' ver-serie__episode-btn--active' : ''
-                    }`}
-                    onClick={() => setActiveIdx(flatIndex)}
-                  >
-                    <span className="ver-serie__episode-num">
-                      E{ep.episodeNumber}
-                    </span>
-                    <span className="ver-serie__episode-name">
-                      {ep.title ||
-                        t('verSerie.episodeDefaultTitle', {
-                          episodeNumber: ep.episodeNumber,
-                        })}
-                    </span>
-                    {isActive && (
-                      <CheckCircleFilled className="ver-serie__episode-active-icon" />
+        {series.actors && series.actors.length > 0 && (
+          <div className="ver-serie__cast-card">
+            <h3>Reparto</h3>
+            <div className="ver-serie__cast-list">
+              {series.actors.map((a) => (
+                <Link
+                  key={a.id}
+                  href={`/actores/${a.id}`}
+                  className="ver-serie__cast-item"
+                >
+                  <Avatar
+                    src={a.imageUrl || undefined}
+                    icon={<UserOutlined />}
+                    size={36}
+                  />
+                  <div className="ver-serie__cast-info">
+                    <span className="ver-serie__cast-name">{a.name}</span>
+                    {a.stageName && (
+                      <span className="ver-serie__cast-stage">{a.stageName}</span>
                     )}
-                  </button>
-                );
-              })}
+                  </div>
+                </Link>
+              ))}
             </div>
           </div>
-        ))}
+        )}
+      </div>
+
+      {/* Lista de episodios y filtros */}
+      <div className="ver-serie__episodes">
+        <div className="ver-serie__episodes-header">
+          <h2>{t('verSerie.episodesTitle')} ({flatEpisodes.length})</h2>
+          {extrasCount > 0 && (
+            <Segmented
+              value={filterMode}
+              onChange={(val) => setFilterMode(val as 'all' | 'episodes' | 'extras')}
+              options={[
+                { label: `Todos (${flatEpisodes.length})`, value: 'all' },
+                { label: `Capítulos (${mainEpisodesCount})`, value: 'episodes' },
+                { label: `Extras / Tráilers (${extrasCount})`, value: 'extras' },
+              ]}
+            />
+          )}
+        </div>
+
+        <div className="ver-serie__episode-grid">
+          {displayEpisodes.map((ep) => {
+            const flatIndex = flatEpisodes.findIndex((fe) => fe.id === ep.id);
+            const isActive = flatIndex === activeIdx;
+            const badge = ep.parsed;
+
+            return (
+              <button
+                key={ep.id}
+                type="button"
+                className={`ver-serie__episode-btn${
+                  isActive ? ' ver-serie__episode-btn--active' : ''
+                }${badge.isExtra ? ' ver-serie__episode-btn--extra' : ''}`}
+                onClick={() => setActiveIdx(flatIndex)}
+              >
+                <span className="ver-serie__episode-num">
+                  E{ep.episodeNumber}
+                </span>
+                <span className="ver-serie__episode-name" title={ep.title || ''}>
+                  {badge.label}
+                </span>
+                {badge.tagColor && (
+                  <Tag color={badge.tagColor} style={{ marginLeft: 4, marginInlineEnd: 0 }}>
+                    {badge.badgeText}
+                  </Tag>
+                )}
+                {isActive && (
+                  <CheckCircleFilled className="ver-serie__episode-active-icon" />
+                )}
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

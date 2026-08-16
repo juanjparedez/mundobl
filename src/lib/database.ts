@@ -186,8 +186,26 @@ export async function getWatchableSeriesByIdAdmin(id: number) {
 const watchableInclude = Prisma.validator<Prisma.SeriesInclude>()({
   country: true,
   universe: true,
+  productionCompany: {
+    select: { id: true, name: true },
+  },
   submittedBy: {
     select: { id: true, name: true, nickname: true },
+  },
+  linkedSeries: {
+    select: {
+      id: true,
+      title: true,
+      imageUrl: true,
+      synopsis: true,
+      year: true,
+    },
+  },
+  actors: {
+    include: {
+      actor: { select: { id: true, name: true, stageName: true, imageUrl: true } },
+    },
+    take: 8,
   },
   seasons: {
     include: {
