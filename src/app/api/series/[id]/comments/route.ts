@@ -74,7 +74,7 @@ export async function GET(
     });
 
     // Sanitizar autor si es anónimo y el usuario no es admin/autor
-    const sanitizeComment = (c: typeof comments[0]) => {
+    const sanitizeComment = (c: (typeof comments)[0]) => {
       const isAuthor = currentUserId && c.userId === currentUserId;
       const hideIdentity = c.isAnonymous && !isAdminOrMod && !isAuthor;
 
@@ -209,7 +209,9 @@ export async function POST(
           parentCommentId: parsedParentId,
           currentCommentId: comment.id,
           currentUserId: authResult.userId,
-          authorName: comment.isAnonymous ? 'Un usuario anónimo' : rawAuthorName,
+          authorName: comment.isAnonymous
+            ? 'Un usuario anónimo'
+            : rawAuthorName,
           seriesId,
           seriesTitle: series?.title,
           excerpt,

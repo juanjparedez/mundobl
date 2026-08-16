@@ -1771,6 +1771,25 @@ const it: TranslationShape = {
     lastUpdated: 'Ultima modifica:',
     tooltipOpen: 'La mia nota privata',
   },
+  seriesNote: {
+    title: 'Nota privata della serie',
+    privateTag: 'Privato',
+    hint: 'Solo tu puoi vedere questa nota. Ottima per annotare dove la guardi se non è su una piattaforma legale (es. un canale Telegram), o altri promemoria personali.',
+    placeholder:
+      'La guardo sul canale Telegram di tizio, la stagione 2 esce il giovedì...',
+    save: 'Salva nota',
+    delete: 'Elimina',
+    cancel: 'Annulla',
+    saved: 'Nota salvata',
+    saveError: 'Errore nel salvataggio della nota',
+    deleted: 'Nota eliminata',
+    deleteError: "Errore nell'eliminazione",
+    deleteConfirm: 'Eliminare questa nota?',
+    loadError: 'Errore nel caricamento della nota',
+    empty: 'Scrivi qualcosa prima di salvare.',
+    lastUpdated: 'Ultima modifica:',
+    tooltipOpen: 'La mia nota privata',
+  },
   reviews: {
     subtitle:
       'Recensioni dalla community. Condividi la tua e aiuta gli altri a decidere cosa guardare.',

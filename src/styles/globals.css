@@ -139,6 +139,7 @@ iframe {
 .main-content,
 .series-detail-page,
 .ver-page,
+.watching-page,
 .landing-page {
   max-width: 100%;
   overflow-x: clip;

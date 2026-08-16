@@ -1780,6 +1780,25 @@ const fr: TranslationShape = {
     lastUpdated: 'Dernière modification :',
     tooltipOpen: 'Ma note privée',
   },
+  seriesNote: {
+    title: 'Note privée de la série',
+    privateTag: 'Privé',
+    hint: "Seul vous pouvez voir cette note. Idéal pour noter où vous la regardez si ce n'est pas sur une plateforme légale (ex. une chaîne Telegram), ou tout autre rappel personnel.",
+    placeholder:
+      "Je la regarde sur la chaîne Telegram d'untel, la saison 2 sort le jeudi...",
+    save: 'Enregistrer la note',
+    delete: 'Supprimer',
+    cancel: 'Annuler',
+    saved: 'Note enregistrée',
+    saveError: "Erreur lors de l'enregistrement de la note",
+    deleted: 'Note supprimée',
+    deleteError: 'Erreur lors de la suppression',
+    deleteConfirm: 'Supprimer cette note ?',
+    loadError: 'Erreur lors du chargement de la note',
+    empty: "Écrivez quelque chose avant d'enregistrer.",
+    lastUpdated: 'Dernière modification :',
+    tooltipOpen: 'Ma note privée',
+  },
   reviews: {
     subtitle:
       'Critiques de la communauté. Partagez la vôtre et aidez les autres à décider quoi regarder.',

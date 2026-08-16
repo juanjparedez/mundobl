@@ -1780,6 +1780,25 @@ const de: TranslationShape = {
     lastUpdated: 'Zuletzt bearbeitet:',
     tooltipOpen: 'Meine private Notiz',
   },
+  seriesNote: {
+    title: 'Private Serien-Notiz',
+    privateTag: 'Privat',
+    hint: 'Nur Sie können diese Notiz sehen. Ideal, um festzuhalten, wo Sie die Serie schauen, wenn sie nicht auf einer legalen Plattform verfügbar ist (z. B. ein Telegram-Kanal), oder für andere persönliche Erinnerungen.',
+    placeholder:
+      'Ich schaue sie im Telegram-Kanal von XY, Staffel 2 kommt donnerstags...',
+    save: 'Notiz speichern',
+    delete: 'Löschen',
+    cancel: 'Abbrechen',
+    saved: 'Notiz gespeichert',
+    saveError: 'Fehler beim Speichern der Notiz',
+    deleted: 'Notiz gelöscht',
+    deleteError: 'Fehler beim Löschen',
+    deleteConfirm: 'Diese Notiz löschen?',
+    loadError: 'Fehler beim Laden der Notiz',
+    empty: 'Schreiben Sie etwas, bevor Sie speichern.',
+    lastUpdated: 'Zuletzt bearbeitet:',
+    tooltipOpen: 'Meine private Notiz',
+  },
   reviews: {
     subtitle:
       'Rezensionen aus der Community. Teilen Sie Ihre und helfen Sie anderen bei der Entscheidung, was sie sehen sollen.',

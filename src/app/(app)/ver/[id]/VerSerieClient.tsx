@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button, Tag, Tooltip, Alert, Empty, Avatar, Segmented } from 'antd';
 import {
   StarFilled,
@@ -688,6 +689,10 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
                         !isMultiPart && setActiveIdx(items[0].flatIndex)
                       }
                     >
+                      {/* thumbnail = thumb de YouTube (whitelisteado) o fallback
+                       * a series.imageUrl, que puede ser una URL externa
+                       * arbitraria no whitelisteada en remotePatterns. */}
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={thumbnail}
                         alt={`Capítulo ${chapterNumber}`}
@@ -778,11 +783,14 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
                   >
                     {thumb && (
                       <div className="ver-serie__extra-thumb-wrap">
-                        <img
+                        {/* thumb siempre viene de getYouTubeThumbnail(), dominio
+                         * ya whitelisteado en next.config.ts remotePatterns. */}
+                        <Image
                           src={thumb}
                           alt={badge.label}
+                          fill
+                          sizes="80px"
                           className="ver-serie__extra-thumb"
-                          loading="lazy"
                         />
                         <PlayCircleOutlined className="ver-serie__play-icon-overlay" />
                       </div>

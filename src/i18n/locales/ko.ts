@@ -1746,6 +1746,25 @@ const ko: TranslationShape = {
     lastUpdated: '마지막 편집:',
     tooltipOpen: '내 비공개 노트',
   },
+  seriesNote: {
+    title: '비공개 시리즈 노트',
+    privateTag: '비공개',
+    hint: '이 노트는 나만 볼 수 있습니다. 합법적인 플랫폼이 아닌 곳에서 시청하는 경우(예: 텔레그램 채널) 어디서 보는지 기록하거나 다른 개인적인 메모를 남기기에 좋습니다.',
+    placeholder:
+      '누구누구의 텔레그램 채널에서 보고 있음, 시즌 2는 목요일에 공개...',
+    save: '노트 저장',
+    delete: '삭제',
+    cancel: '취소',
+    saved: '노트 저장 완료',
+    saveError: '노트 저장 오류',
+    deleted: '노트 삭제 완료',
+    deleteError: '삭제 오류',
+    deleteConfirm: '이 노트를 삭제하시겠습니까?',
+    loadError: '노트 로드 오류',
+    empty: '저장하기 전에 내용을 작성하세요.',
+    lastUpdated: '마지막 편집:',
+    tooltipOpen: '내 비공개 노트',
+  },
   reviews: {
     subtitle:
       '커뮤니티 리뷰. 당신의 리뷰를 공유하고 다른 사람들이 무엇을 볼지 결정하는 데 도움을 주세요.',
