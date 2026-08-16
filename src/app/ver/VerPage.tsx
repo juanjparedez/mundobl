@@ -5,32 +5,32 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Button, Empty, Input, Select, Tag, Alert, Popconfirm } from 'antd';
+import { Button, Empty, Input, Select, Tag, Popconfirm, Segmented } from 'antd';
 import {
   PlayCircleFilled,
   PlusOutlined,
   SearchOutlined,
-  YoutubeOutlined,
   DeleteOutlined,
+  FireFilled,
+  AppstoreOutlined,
+  BarsOutlined,
+  VideoCameraFilled,
+  YoutubeFilled,
+  GlobalOutlined,
 } from '@ant-design/icons';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { useMessage } from '@/hooks/useMessage';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { HeroBillboard } from '@/components/streaming/HeroBillboard/HeroBillboard';
+import {
+  MediaCarousel,
+  type CarouselMediaItem,
+} from '@/components/streaming/MediaCarousel/MediaCarousel';
 
-interface VerItem {
-  id: number;
-  title: string;
-  year: number | null;
-  type: string;
-  imageUrl: string | null;
-  synopsis: string | null;
+interface VerItem extends CarouselMediaItem {
   catalogScope: string;
   origin: string;
-  country: { name: string; code: string | null } | null;
   linkedSeries: { id: number; title: string } | null;
-  episodesWithEmbed: number;
-  platforms: string[];
-  channels: string[];
 }
 
 interface VerPageProps {
@@ -43,18 +43,17 @@ export function VerPage({ items }: VerPageProps) {
   const isAdmin = session?.user?.role === 'ADMIN';
   const router = useRouter();
   const message = useMessage();
+
   const [search, setSearch] = useState('');
   const [country, setCountry] = useState<string | null>(null);
   const [platform, setPlatform] = useState<string | null>(null);
   const [onlyCurated, setOnlyCurated] = useState(false);
+  const [viewMode, setViewMode] = useState<'streaming' | 'grid'>('streaming');
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
   const handleDelete = async (id: number) => {
     setDeletingId(id);
     try {
-      // /api/series/[id] DELETE permite ADMIN borrar tanto CURATED como
-      // USER_EMBED (cascade en las relaciones). El endpoint
-      // /api/admin/user-series solo permite USER_EMBED.
       const res = await fetch(`/api/series/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('delete failed');
       message.success('Serie eliminada');
@@ -90,204 +89,295 @@ export function VerPage({ items }: VerPageProps) {
     });
   }, [items, search, country, platform, onlyCurated]);
 
+  // Serie destacada para el Hero Billboard (ej: 2gether, We Are o la primera con poster)
+  const featured = useMemo(() => {
+    return (
+      items.find(
+        (i) =>
+          i.imageUrl &&
+          (i.title.toLowerCase().includes('2gether') ||
+            i.title.toLowerCase().includes('we are') ||
+            i.title.toLowerCase().includes('cutie pie'))
+      ) ||
+      items.find((i) => i.imageUrl) ||
+      items[0]
+    );
+  }, [items]);
+
+  // Agrupaciones para Carruseles Temáticos
+  const trendingSeries = useMemo(() => {
+    return items.slice(0, 10);
+  }, [items]);
+
+  const thaiSeries = useMemo(() => {
+    return items.filter(
+      (i) =>
+        i.country?.code === 'th' ||
+        i.country?.name?.toLowerCase().includes('tailandia')
+    );
+  }, [items]);
+
+  const koreanSeries = useMemo(() => {
+    return items.filter(
+      (i) =>
+        i.country?.code === 'kr' ||
+        i.country?.name?.toLowerCase().includes('corea')
+    );
+  }, [items]);
+
+  const vimeoAndIndie = useMemo(() => {
+    return items.filter((i) =>
+      i.platforms.some((p) => p.toLowerCase().includes('vimeo'))
+    );
+  }, [items]);
+
+  const isFiltering = Boolean(search || country || platform || onlyCurated);
+
   return (
     <div className="ver-content">
-      <header className="ver-hero">
-        <div className="ver-hero__badge">
-          <Tag color="purple">✨ Próximamente</Tag>
+      {/* Hero Billboard Principal (cuando no hay filtro activo y en modo streaming) */}
+      {!isFiltering && viewMode === 'streaming' && featured && (
+        <HeroBillboard featured={featured} />
+      )}
+
+      {/* Barra de Control, Búsqueda y Filtros de Streaming */}
+      <div className="ver-control-bar">
+        <div className="ver-control-bar__search-wrap">
+          <Input
+            prefix={<SearchOutlined style={{ color: 'var(--text-secondary)' }} />}
+            placeholder="Buscar series, productoras o títulos oficiales..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            allowClear
+            size="large"
+            className="ver-control-bar__search"
+          />
         </div>
-        <h1 className="ver-hero__title">
-          <PlayCircleFilled /> Ver series completas
-        </h1>
-        <p className="ver-hero__subtitle">
-          Series y películas BL/GL que se pueden mirar embebidas desde los
-          canales oficiales de las productoras.
-        </p>
-        <div className="ver-hero__upcoming-banner">
-          <span>
-            📢 <strong>Próximamente:</strong> Nuevas series, episodios y canales
-            oficiales en camino.
-          </span>
-        </div>
-        {isAuthenticated && (
-          <div className="ver-hero__cta">
+
+        <div className="ver-control-bar__filters">
+          <Select
+            allowClear
+            placeholder="🌍 Todos los países"
+            value={country}
+            onChange={setCountry}
+            className="ver-filter-select"
+            size="middle"
+            options={countries.map((c) => ({ label: c, value: c }))}
+          />
+
+          <Select
+            allowClear
+            placeholder="🎬 Plataforma"
+            value={platform}
+            onChange={setPlatform}
+            className="ver-filter-select"
+            size="middle"
+            options={platforms.map((p) => ({ label: p, value: p }))}
+          />
+
+          <Segmented
+            value={viewMode}
+            onChange={(v) => setViewMode(v as 'streaming' | 'grid')}
+            options={[
+              {
+                label: 'Carruseles',
+                value: 'streaming',
+                icon: <BarsOutlined />,
+              },
+              {
+                label: 'Rejilla',
+                value: 'grid',
+                icon: <AppstoreOutlined />,
+              },
+            ]}
+          />
+
+          {isAuthenticated && (
             <Link href="/ver/agregar" prefetch={false}>
               <Button type="primary" icon={<PlusOutlined />}>
-                Agregar una serie
+                Aportar Serie
               </Button>
             </Link>
-          </div>
-        )}
-      </header>
-
-      <Alert
-        type="info"
-        showIcon
-        className="ver-disclaimer"
-        message="Contenido reproducido desde plataformas oficiales"
-        description={
-          <span>
-            Todos los videos son embebidos desde canales oficiales (YouTube,
-            Vimeo, etc.) y los derechos pertenecen a sus titulares. MundoBL no
-            hostea ningún video. <Link href="/legal">Ver aviso completo</Link>.
-          </span>
-        }
-      />
-
-      <div className="ver-filters">
-        <Input
-          allowClear
-          size="large"
-          prefix={<SearchOutlined />}
-          placeholder="Buscar serie..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="ver-filters__search"
-        />
-        <Select
-          allowClear
-          size="large"
-          placeholder="País"
-          value={country}
-          onChange={(v) => setCountry(v ?? null)}
-          options={countries.map((c) => ({ value: c, label: c }))}
-          className="ver-filters__select"
-        />
-        <Select
-          allowClear
-          size="large"
-          placeholder="Plataforma"
-          value={platform}
-          onChange={(v) => setPlatform(v ?? null)}
-          options={platforms.map((p) => ({ value: p, label: p }))}
-          className="ver-filters__select"
-        />
-        <Button
-          size="large"
-          type={onlyCurated ? 'primary' : 'default'}
-          onClick={() => setOnlyCurated((v) => !v)}
-          className="ver-filters__toggle"
-        >
-          Series curadas
-        </Button>
+          )}
+        </div>
       </div>
 
-      <p className="ver-count">
-        {filtered.length} {filtered.length === 1 ? 'serie' : 'series'}{' '}
-        disponibles
-      </p>
+      {/* VISTA 1: MODO STREAMING (Carruseles Temáticos) */}
+      {viewMode === 'streaming' && !isFiltering && (
+        <div className="ver-streaming-view">
+          <MediaCarousel
+            title="Tendencias & Éxitos Destacados"
+            subtitle="Las producciones más seguidas con episodios oficiales completos"
+            icon={<FireFilled style={{ color: '#ff4d4f' }} />}
+            items={trendingSeries}
+          />
 
-      {filtered.length === 0 ? (
-        <Empty description="No hay series disponibles con esos filtros" />
-      ) : (
-        <div className="ver-grid">
-          {filtered.map((item) => (
-            <Link
-              key={item.id}
-              href={`/ver/${item.id}`}
-              className="ver-card"
-              prefetch={false}
-            >
-              <div className="ver-card__cover">
-                {item.imageUrl ? (
-                  <Image
-                    src={item.imageUrl}
-                    alt={item.title}
-                    width={300}
-                    height={420}
-                    sizes="(max-width: 600px) 50vw, 300px"
-                    quality={70}
-                    unoptimized={isSupabaseImageUrl(item.imageUrl)}
-                  />
-                ) : (
-                  <div className="ver-card__cover-placeholder">
-                    <PlayCircleFilled />
-                  </div>
-                )}
-                <div className="ver-card__play-overlay" aria-hidden>
-                  <PlayCircleFilled />
-                </div>
-                {item.country?.code && (
-                  <span className="ver-card__flag">
-                    <CountryFlag code={item.country.code} />
-                  </span>
-                )}
-                {item.catalogScope === 'PERSONAL' && (
-                  <span
-                    className="ver-card__personal-badge"
-                    title="También está en mi catálogo personal"
-                  >
-                    ★
-                  </span>
-                )}
-                {isAdmin && (
-                  // stopPropagation porque el Link envuelve todo el card.
-                  // Popconfirm evita borrar por error con un click suelto.
-                  <span
-                    className="ver-card__admin-delete"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }}
-                  >
-                    <Popconfirm
-                      title="¿Eliminar esta serie?"
-                      description="No se puede deshacer. Las reseñas, comentarios y suscripciones también se borran."
-                      okText="Eliminar"
-                      okButtonProps={{ danger: true }}
-                      cancelText="Cancelar"
-                      onConfirm={(e) => {
-                        e?.preventDefault();
-                        e?.stopPropagation();
-                        handleDelete(item.id);
-                      }}
+          {thaiSeries.length > 0 && (
+            <MediaCarousel
+              title="Tailandia Oficial (GMMTV & Mandee)"
+              subtitle="Emisión legal semanal con subtítulos oficiales en español"
+              icon={<span style={{ fontSize: '1.2rem' }}>🇹🇭</span>}
+              items={thaiSeries}
+            />
+          )}
+
+          {koreanSeries.length > 0 && (
+            <MediaCarousel
+              title="K-BLs & Cine Coreano (Strongberry / Indie)"
+              subtitle="Cortometrajes premiados y producciones de autor de Corea del Sur"
+              icon={<span style={{ fontSize: '1.2rem' }}>🇰🇷</span>}
+              items={koreanSeries}
+            />
+          )}
+
+          {vimeoAndIndie.length > 0 && (
+            <MediaCarousel
+              title="Vimeo On Demand & Cine Independiente"
+              subtitle="Obras de realizadores independientes que apoyan el cine queer"
+              icon={<VideoCameraFilled style={{ color: '#1ab7ea' }} />}
+              items={vimeoAndIndie}
+            />
+          )}
+        </div>
+      )}
+
+      {/* VISTA 2: MODO REJILLA (o cuando hay un filtro/búsqueda activo) */}
+      {(viewMode === 'grid' || isFiltering) && (
+        <div className="ver-grid-view">
+          <div className="ver-grid-view__head">
+            <h2 className="ver-grid-view__title">
+              {isFiltering ? 'Resultados de Búsqueda' : 'Catálogo Completo para Ver'} ({filtered.length})
+            </h2>
+            {isFiltering && (
+              <Button
+                type="link"
+                onClick={() => {
+                  setSearch('');
+                  setCountry(null);
+                  setPlatform(null);
+                  setOnlyCurated(false);
+                }}
+              >
+                Limpiar filtros
+              </Button>
+            )}
+          </div>
+
+          {filtered.length === 0 ? (
+            <Empty
+              description="No encontramos series con esos filtros. Probá buscando por otro país o título."
+              className="ver-empty"
+            />
+          ) : (
+            <div className="ver-grid">
+              {filtered.map((item) => {
+                const isDeleting = deletingId === item.id;
+                return (
+                  <article key={item.id} className="ver-card">
+                    <Link
+                      href={`/ver/${item.id}`}
+                      className="ver-card__cover-link"
+                      prefetch={false}
                     >
-                      <Button
-                        type="text"
-                        danger
-                        size="small"
-                        icon={<DeleteOutlined />}
-                        loading={deletingId === item.id}
-                        aria-label="Eliminar serie"
-                      />
-                    </Popconfirm>
-                  </span>
-                )}
-              </div>
-              <div className="ver-card__info">
-                <h3 className="ver-card__title">{item.title}</h3>
-                <div className="ver-card__meta">
-                  {item.year && <span>{item.year}</span>}
-                  {item.country?.name && <span>· {item.country.name}</span>}
-                </div>
-                <div className="ver-card__tags">
-                  <Tag color="blue">
-                    {item.episodesWithEmbed}{' '}
-                    {item.episodesWithEmbed === 1 ? 'episodio' : 'episodios'}
-                  </Tag>
-                  {item.platforms.includes('YouTube') && (
-                    <Tag color="red" icon={<YoutubeOutlined />}>
-                      YouTube
-                    </Tag>
-                  )}
-                  {item.linkedSeries && (
-                    <Tag
-                      color="purple"
-                      title={`Vinculada con "${item.linkedSeries.title}" en el catálogo`}
-                    >
-                      También en catálogo
-                    </Tag>
-                  )}
-                </div>
-                {item.channels.length > 0 && (
-                  <span className="ver-card__channels">
-                    Vía {item.channels.slice(0, 2).join(', ')}
-                    {item.channels.length > 2 ? '...' : ''}
-                  </span>
-                )}
-              </div>
-            </Link>
-          ))}
+                      <div className="ver-card__cover-wrap">
+                        {item.imageUrl ? (
+                          isSupabaseImageUrl(item.imageUrl) ? (
+                            <Image
+                              src={item.imageUrl}
+                              alt={item.title}
+                              fill
+                              sizes="(max-width: 600px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                              className="ver-card__cover-img"
+                              unoptimized
+                            />
+                          ) : (
+                            <img
+                              src={item.imageUrl}
+                              alt={item.title}
+                              className="ver-card__cover-img"
+                              loading="lazy"
+                            />
+                          )
+                        ) : (
+                          <div className="ver-card__cover-placeholder">
+                            <span>{item.title}</span>
+                          </div>
+                        )}
+                        <div className="ver-card__cover-overlay">
+                          <PlayCircleFilled className="ver-card__play-icon" />
+                          <span className="ver-card__episodes-badge">
+                            {item.episodesWithEmbed}{' '}
+                            {item.episodesWithEmbed === 1 ? 'video' : 'videos'}
+                          </span>
+                        </div>
+                      </div>
+                    </Link>
+
+                    <div className="ver-card__body">
+                      <div className="ver-card__header-row">
+                        <Link
+                          href={`/ver/${item.id}`}
+                          className="ver-card__title-link"
+                          prefetch={false}
+                        >
+                          <h3 className="ver-card__title">
+                            {item.country?.code && (
+                              <CountryFlag code={item.country.code} />
+                            )}{' '}
+                            {item.title}
+                          </h3>
+                        </Link>
+                        {isAdmin && (
+                          <Popconfirm
+                            title="¿Eliminar serie?"
+                            description="Se borrará la serie y todos sus episodios embebidos."
+                            onConfirm={() => handleDelete(item.id)}
+                            okText="Sí, eliminar"
+                            cancelText="Cancelar"
+                            okButtonProps={{ danger: true, loading: isDeleting }}
+                          >
+                            <Button
+                              type="text"
+                              danger
+                              size="small"
+                              icon={<DeleteOutlined />}
+                              aria-label="Eliminar serie"
+                            />
+                          </Popconfirm>
+                        )}
+                      </div>
+
+                      <div className="ver-card__meta">
+                        {item.year && <span>{item.year}</span>}
+                        {item.country?.name && (
+                          <span>· {item.country.name}</span>
+                        )}
+                        {item.platforms.length > 0 && (
+                          <span>· {item.platforms.join(', ')}</span>
+                        )}
+                      </div>
+
+                      {item.synopsis && (
+                        <p className="ver-card__synopsis">{item.synopsis}</p>
+                      )}
+
+                      <div className="ver-card__footer">
+                        <Link href={`/ver/${item.id}`} prefetch={false}>
+                          <Button
+                            type="primary"
+                            icon={<PlayCircleFilled />}
+                            block
+                          >
+                            Reproducir
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
     </div>
