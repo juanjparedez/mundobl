@@ -94,6 +94,7 @@ export function MyDisputesWidget() {
     >
       <AutoFitList
         as="ul"
+        collapsedCount={2}
         listClassName="mb-my-disputes"
         viewLessLabel={t('profile.overviewViewLess')}
         viewMoreLabel={(count) =>

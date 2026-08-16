@@ -42,7 +42,10 @@ export function GenresDonutWidget({ topGenres }: GenresDonutWidgetProps) {
           value: total,
           sublabel: t('profileDashboard.genresTotalLabel'),
         }}
-        height="100%"
+        // Alto fijo (no "100%"): el widget ahora se auto-dimensiona a su
+        // contenido — un chart necesita declarar cuanto espacio quiere,
+        // no depender de que el grid le de una altura ambiente.
+        height={240}
         innerRadius={60}
         outerRadius={95}
         showLegend={false}

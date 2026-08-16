@@ -43,6 +43,7 @@ export function FavoritesWidget({ favorites }: FavoritesWidgetProps) {
     >
       <AutoFitList
         as="ul"
+        collapsedCount={6}
         listClassName="mb-favorites-grid"
         viewLessLabel={t('profile.overviewViewLess')}
         viewMoreLabel={(count) =>
