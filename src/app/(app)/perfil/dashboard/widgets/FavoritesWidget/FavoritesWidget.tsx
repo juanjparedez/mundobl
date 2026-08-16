@@ -12,7 +12,7 @@ import { isSupabaseImageUrl } from '@/lib/image-helpers';
 import type { ProfileData } from '../../../types';
 import './FavoritesWidget.css';
 
-const COLLAPSED_COUNT = 12;
+const COLLAPSED_COUNT = 6;
 
 export interface FavoritesWidgetProps {
   favorites: ProfileData['favorites'];

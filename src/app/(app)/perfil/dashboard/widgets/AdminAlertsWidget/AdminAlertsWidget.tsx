@@ -16,6 +16,8 @@ import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import './AdminAlertsWidget.css';
 
+const COLLAPSED_COUNT = 2;
+
 interface AdminAlertsData {
   seriesWithoutReview: number;
   seriesWithoutContent: number;
@@ -32,6 +34,7 @@ export function AdminAlertsWidget() {
   const { t } = useLocale();
   const [data, setData] = useState<AdminAlertsData | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -140,27 +143,46 @@ export function AdminAlertsWidget() {
     );
   }
 
+  const visible = showAll ? alerts : alerts.slice(0, COLLAPSED_COUNT);
+
   return (
     <Widget
       title={t('adminDashboard.alertsTitle')}
       icon={<ExclamationCircleOutlined />}
       noPadding
+      fade={alerts.length > COLLAPSED_COUNT}
     >
-      <div className="mb-admin-alerts-widget">
-        {alerts.map((alert) => (
-          <Link
-            key={alert.title}
-            href={alert.href}
-            style={{ textDecoration: 'none' }}
+      <div className="mb-admin-alerts-widget__wrap">
+        <div className="mb-admin-alerts-widget">
+          {visible.map((alert) => (
+            <Link
+              key={alert.title}
+              href={alert.href}
+              style={{ textDecoration: 'none' }}
+            >
+              <ActionCard
+                icon={alert.icon}
+                title={alert.title}
+                accent="#faad14"
+                featured={alert.count > 5}
+              />
+            </Link>
+          ))}
+        </div>
+
+        {alerts.length > COLLAPSED_COUNT && (
+          <button
+            type="button"
+            className="mb-admin-alerts-widget__toggle"
+            onClick={() => setShowAll((v) => !v)}
           >
-            <ActionCard
-              icon={alert.icon}
-              title={alert.title}
-              accent="#faad14"
-              featured={alert.count > 5}
-            />
-          </Link>
-        ))}
+            {showAll
+              ? t('profile.overviewViewLess')
+              : interpolateMessage(t('profile.overviewViewAllCount'), {
+                  count: String(alerts.length),
+                })}
+          </button>
+        )}
       </div>
     </Widget>
   );

@@ -13,7 +13,10 @@ import { Widget } from '@/components/dashboard';
 import { EmptyState } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { formatPublicName } from '@/lib/user-display';
+import { interpolateMessage } from '@/lib/i18n-format';
 import './RecentAdminActivityWidget.css';
+
+const COLLAPSED_COUNT = 5;
 
 interface ActivityEvent {
   id: number;
@@ -37,6 +40,7 @@ export function RecentAdminActivityWidget() {
   const { t, locale } = useLocale();
   const [events, setEvents] = useState<ActivityEvent[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -76,12 +80,14 @@ export function RecentAdminActivityWidget() {
     },
   };
 
+  const visible = showAll ? events : events.slice(0, COLLAPSED_COUNT);
+
   return (
     <Widget
       title={t('adminActivity.title')}
       icon={<TeamOutlined />}
       noPadding
-      fade={events.length > 5}
+      fade={events.length > COLLAPSED_COUNT}
     >
       {!loaded ? (
         <div
@@ -100,37 +106,55 @@ export function RecentAdminActivityWidget() {
           fullHeight={false}
         />
       ) : (
-        <ul className="mb-recent-activity">
-          {events.map((e) => {
-            const cfg = actionConfig[e.action] ?? actionConfig.UPDATE;
-            const author = e.user
-              ? formatPublicName(e.user)
-              : t('adminActivity.anonymous');
-            const date = new Date(e.createdAt).toLocaleDateString(locale);
-            const pathShort = e.path.replace('/admin/', '/');
-            return (
-              <li key={e.id} className="mb-recent-activity__item">
-                <Avatar
-                  src={e.user?.image}
-                  icon={!e.user?.image ? <UserOutlined /> : undefined}
-                  size={24}
-                />
-                <div className="mb-recent-activity__body">
-                  <div className="mb-recent-activity__row">
-                    <span className="mb-recent-activity__author">{author}</span>
-                    <Tag color={cfg.color} icon={cfg.icon}>
-                      {cfg.label}
-                    </Tag>
+        <div className="mb-recent-activity__wrap">
+          <ul className="mb-recent-activity">
+            {visible.map((e) => {
+              const cfg = actionConfig[e.action] ?? actionConfig.UPDATE;
+              const author = e.user
+                ? formatPublicName(e.user)
+                : t('adminActivity.anonymous');
+              const date = new Date(e.createdAt).toLocaleDateString(locale);
+              const pathShort = e.path.replace('/admin/', '/');
+              return (
+                <li key={e.id} className="mb-recent-activity__item">
+                  <Avatar
+                    src={e.user?.image}
+                    icon={!e.user?.image ? <UserOutlined /> : undefined}
+                    size={24}
+                  />
+                  <div className="mb-recent-activity__body">
+                    <div className="mb-recent-activity__row">
+                      <span className="mb-recent-activity__author">
+                        {author}
+                      </span>
+                      <Tag color={cfg.color} icon={cfg.icon}>
+                        {cfg.label}
+                      </Tag>
+                    </div>
+                    <div className="mb-recent-activity__row">
+                      <code style={{ fontSize: 10 }}>{pathShort}</code>
+                      <span className="mb-recent-activity__date">{date}</span>
+                    </div>
                   </div>
-                  <div className="mb-recent-activity__row">
-                    <code style={{ fontSize: 10 }}>{pathShort}</code>
-                    <span className="mb-recent-activity__date">{date}</span>
-                  </div>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+                </li>
+              );
+            })}
+          </ul>
+
+          {events.length > COLLAPSED_COUNT && (
+            <button
+              type="button"
+              className="mb-recent-activity__toggle"
+              onClick={() => setShowAll((v) => !v)}
+            >
+              {showAll
+                ? t('profile.overviewViewLess')
+                : interpolateMessage(t('profile.overviewViewAllCount'), {
+                    count: String(events.length),
+                  })}
+            </button>
+          )}
+        </div>
       )}
     </Widget>
   );

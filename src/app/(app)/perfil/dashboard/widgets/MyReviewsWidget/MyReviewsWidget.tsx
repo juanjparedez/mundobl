@@ -8,8 +8,11 @@ import { Widget } from '@/components/dashboard';
 import { EmptyState } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { useMessage } from '@/hooks/useMessage';
+import { interpolateMessage } from '@/lib/i18n-format';
 import type { ProfileData, ProfileReview } from '../../../types';
 import './MyReviewsWidget.css';
+
+const COLLAPSED_COUNT = 2;
 
 export interface MyReviewsWidgetProps {
   recentReviews: ProfileData['recentReviews'];
@@ -26,8 +29,10 @@ export function MyReviewsWidget({ recentReviews }: MyReviewsWidgetProps) {
   const message = useMessage();
   const [hidden, setHidden] = useState<Set<number>>(new Set());
   const [busyId, setBusyId] = useState<number | null>(null);
+  const [showAll, setShowAll] = useState(false);
 
-  const visible = recentReviews?.filter((r) => !hidden.has(r.id)) ?? [];
+  const allVisible = recentReviews?.filter((r) => !hidden.has(r.id)) ?? [];
+  const visible = showAll ? allVisible : allVisible.slice(0, COLLAPSED_COUNT);
 
   const handleDelete = async (id: number) => {
     setBusyId(id);
@@ -43,7 +48,7 @@ export function MyReviewsWidget({ recentReviews }: MyReviewsWidgetProps) {
     }
   };
 
-  if (!visible || visible.length === 0) {
+  if (allVisible.length === 0) {
     return (
       <Widget
         title={t('profileDashboard.widgetMyReviews')}
@@ -63,21 +68,37 @@ export function MyReviewsWidget({ recentReviews }: MyReviewsWidgetProps) {
       title={t('profileDashboard.widgetMyReviews')}
       icon={<ReadOutlined />}
       noPadding
-      fade={visible.length > 3}
+      fade={allVisible.length > COLLAPSED_COUNT}
     >
-      <ul className="mb-my-reviews">
-        {visible.map((r) => (
-          <li key={r.id}>
-            <ReviewRow
-              review={r}
-              locale={locale}
-              t={t}
-              onDelete={handleDelete}
-              busy={busyId === r.id}
-            />
-          </li>
-        ))}
-      </ul>
+      <div className="mb-my-reviews__wrap">
+        <ul className="mb-my-reviews">
+          {visible.map((r) => (
+            <li key={r.id}>
+              <ReviewRow
+                review={r}
+                locale={locale}
+                t={t}
+                onDelete={handleDelete}
+                busy={busyId === r.id}
+              />
+            </li>
+          ))}
+        </ul>
+
+        {allVisible.length > COLLAPSED_COUNT && (
+          <button
+            type="button"
+            className="mb-my-reviews__toggle"
+            onClick={() => setShowAll((v) => !v)}
+          >
+            {showAll
+              ? t('profile.overviewViewLess')
+              : interpolateMessage(t('profile.overviewViewAllCount'), {
+                  count: String(allVisible.length),
+                })}
+          </button>
+        )}
+      </div>
     </Widget>
   );
 }
