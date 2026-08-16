@@ -246,10 +246,18 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
             { name: serie.title },
           ]}
         />
-        {/* Banner cuando hay aportes USER_EMBED linkeados a esta CURATED.
-         * El user puede saltar a /ver/[id] para mirar la serie. */}
-        {serie.linkedFromUserEmbeds &&
-          serie.linkedFromUserEmbeds.length > 0 && (
+        {/* Banner cuando la serie se puede ver en /ver directamente o tiene aportes linkeados */}
+        {(serie.seasons ?? []).some((s) => (s.episodes ?? []).some((e) => !!e.embedUrl)) ? (
+          <div className="series-linked-from-user-embeds">
+            <Link
+              href={`/ver/${serie.id}`}
+              className="series-linked-from-user-embeds__link"
+            >
+              ▶ Ver episodios oficiales en el reproductor de MundoBL
+            </Link>
+          </div>
+        ) : serie.linkedFromUserEmbeds &&
+          serie.linkedFromUserEmbeds.length > 0 ? (
             <div className="series-linked-from-user-embeds">
               <Link
                 href={`/ver/${serie.linkedFromUserEmbeds[0].id}`}
@@ -260,7 +268,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
                   ` (${serie.linkedFromUserEmbeds.length} aportes)`}
               </Link>
             </div>
-          )}
+          ) : null}
         <SeriesHeader
           series={{
             ...serie,
