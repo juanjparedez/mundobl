@@ -257,7 +257,47 @@ export function CommandK() {
 
       <div className="cmdk-results" role="listbox">
         {query.trim().length < 2 ? (
-          <div className="cmdk-hint">{t('cmdk.hintMinChars')}</div>
+          <div className="cmdk-initial-suggestions">
+            <div className="cmdk-hint" style={{ paddingBottom: 8 }}>
+              {t('cmdk.hintMinChars')}
+            </div>
+            <div className="cmdk-group">
+              <div className="cmdk-group__title">
+                <AppstoreOutlined />
+                <span>Accesos Rápidos</span>
+              </div>
+              <ul className="cmdk-list">
+                <li
+                  className="cmdk-item"
+                  onClick={() => navigateTo('/catalogo')}
+                >
+                  <span className="cmdk-item__label">📚 Explorar Catálogo de Series</span>
+                  <span className="cmdk-item__hint">Filtros, géneros y países</span>
+                </li>
+                <li
+                  className="cmdk-item"
+                  onClick={() => navigateTo('/ver')}
+                >
+                  <span className="cmdk-item__label">▶ Ver Series Oficiales</span>
+                  <span className="cmdk-item__hint">Reproductor legal integrado</span>
+                </li>
+                <li
+                  className="cmdk-item"
+                  onClick={() => navigateTo('/plataformas')}
+                >
+                  <span className="cmdk-item__label">🛡️ Comparador de Plataformas & Planes</span>
+                  <span className="cmdk-item__hint">Precios, Uncut y suscripciones</span>
+                </li>
+                <li
+                  className="cmdk-item"
+                  onClick={() => navigateTo('/estadisticas')}
+                >
+                  <span className="cmdk-item__label">📊 Estadísticas Globales</span>
+                  <span className="cmdk-item__hint">Métricas reales de la comunidad</span>
+                </li>
+              </ul>
+            </div>
+          </div>
         ) : items.length === 0 && !loading ? (
           <Empty
             image={Empty.PRESENTED_IMAGE_SIMPLE}

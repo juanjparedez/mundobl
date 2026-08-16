@@ -19,6 +19,7 @@ import { EmbedPlayer } from '@/components/common/EmbedPlayer/EmbedPlayer';
 import { EmbedAttribution } from '@/components/common/EmbedAttribution/EmbedAttribution';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { ShareButton } from '@/components/common/ShareButton/ShareButton';
+import { SeriesSubscribeButton } from '@/components/series/SeriesSubscribeButton/SeriesSubscribeButton';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 
@@ -272,6 +273,10 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
             title={series.title}
             text={series.synopsis ?? undefined}
             path={`/ver/${series.id}`}
+          />
+          <SeriesSubscribeButton
+            seriesId={series.id}
+            initialSubscribed={false}
           />
         </div>
       </header>
