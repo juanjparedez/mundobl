@@ -1,7 +1,8 @@
 'use client';
 
 import { getEmbedInfo, type Platform } from '@/lib/embed-helpers';
-import { LinkOutlined } from '@ant-design/icons';
+import { LinkOutlined, VideoCameraOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
 import './EmbedPlayer.css';
 
 interface EmbedPlayerProps {
@@ -21,18 +22,38 @@ export function EmbedPlayer({
 
   if (embed.type === 'iframe' && embed.url) {
     const isSpotify = platform === 'Spotify';
+    const isVimeo = platform === 'Vimeo';
+
     return (
-      <div
-        className={`embed-player ${isSpotify ? 'embed-player--spotify' : ''}`}
-      >
-        <iframe
-          src={embed.url}
-          title={title}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          allowFullScreen
-          className="embed-player__iframe"
-          loading="lazy"
-        />
+      <div className="embed-player-container">
+        <div
+          className={`embed-player ${isSpotify ? 'embed-player--spotify' : ''}`}
+        >
+          <iframe
+            src={embed.url}
+            title={title}
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+            className="embed-player__iframe"
+            loading="lazy"
+          />
+        </div>
+
+        {isVimeo && (
+          <div className="embed-player__vimeo-tip">
+            <span className="embed-player__vimeo-tip-text">
+              <VideoCameraOutlined /> ¿El video tiene bloqueo de privacidad o es de <strong>Vimeo On Demand</strong>?
+            </span>
+            <a
+              href={url || (videoId ? `https://vimeo.com/${videoId}` : 'https://vimeo.com')}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="embed-player__vimeo-btn"
+            >
+              Abrir en Vimeo Oficial <LinkOutlined />
+            </a>
+          </div>
+        )}
       </div>
     );
   }
