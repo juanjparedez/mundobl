@@ -153,6 +153,27 @@
   color: var(--text-primary);
 }
 
+.ver-serie__geoblock-tip {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: 8px 14px;
+  background: color-mix(in srgb, #faad14 10%, var(--bg-elevated));
+  border: 1px solid color-mix(in srgb, #faad14 30%, transparent);
+  border-radius: var(--border-radius-base);
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.ver-serie__geoblock-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.ver-serie__geoblock-text strong {
+  color: var(--text-primary);
+}
+
 /* ─── Info Grid & Cast ────────────────────────────────────────────────── */
 .ver-serie__info-grid {
   display: grid;
