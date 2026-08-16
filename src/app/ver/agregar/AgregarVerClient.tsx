@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Alert, Button, Input, InputNumber, Select, Tag, Form } from 'antd';
@@ -13,6 +13,7 @@ import {
   CloseCircleOutlined,
 } from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
+import { validateStreamingUrl, PLATFORM_COLORS } from '@/lib/embed-helpers';
 // Importamos del modulo "-shared" porque user-embed-preview.ts trae
 // `prisma` (cache) que no compila en client bundle ("Module not found: tls"
 // via pg). El shared solo tiene types + constants.
@@ -79,6 +80,11 @@ export function AgregarVerClient() {
   const [preview, setPreview] = useState<EmbedPreview | null>(null);
   const [loadingPreview, setLoadingPreview] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  const validation = useMemo(() => {
+    if (!url.trim()) return null;
+    return validateStreamingUrl(url);
+  }, [url]);
   // Catalog linking state — el user puede asociar el aporte con una serie
   // CURATED ya existente del catalogo. Ambas conviven; el link genera
   // badges bidireccionales (esta serie tambien en /ver / esta serie tambien
@@ -120,6 +126,11 @@ export function AgregarVerClient() {
       message.warning('Pegá primero la URL del video.');
       return;
     }
+    const val = validateStreamingUrl(trimmed);
+    if (!val.valid) {
+      message.error(val.error ?? 'URL inválida o plataforma no soportada.');
+      return;
+    }
     setLoadingPreview(true);
     try {
       const res = await fetch('/api/user/series/embed/preview', {
@@ -140,12 +151,11 @@ export function AgregarVerClient() {
       const p = data as EmbedPreview;
       setPreview(p);
       form.setFieldsValue({
-        url: trimmed,
         title: p.suggested.title,
         originalTitle: p.suggested.originalTitle ?? undefined,
-        year: p.suggested.year ?? null,
+        year: p.suggested.year ?? undefined,
         type: 'serie',
-        countryCode: p.suggested.countryCode ?? null,
+        countryCode: p.suggested.countryCode,
         synopsis: p.suggested.synopsis ?? undefined,
         actorNames: p.suggested.actorNames,
         productionCompanyName: p.suggested.productionCompanyName ?? undefined,
@@ -157,21 +167,9 @@ export function AgregarVerClient() {
         episodeTitle: p.source.rawTitle ?? undefined,
         seasonNumber: 1,
       });
-      if (p.warnings.length > 0) {
-        message.warning(p.warnings[0]);
-      } else {
-        message.success(
-          `Preview cargada (confianza: ${p.suggested.confidence}).`
-        );
-      }
-      // Disparar busqueda inicial en el catalogo con el titulo sugerido
-      // — el user ve match potenciales sin tener que tipear.
-      setLinkedSeries(null);
-      setLinkSearchQuery(p.suggested.title);
-      void handleSearchCatalog(p.suggested.title);
-    } catch (err) {
-      console.error(err);
-      message.error('Error al cargar la preview.');
+      message.success('Preview cargada.');
+    } catch {
+      message.error('Falla al conectar con el servidor.');
     } finally {
       setLoadingPreview(false);
     }
@@ -185,17 +183,18 @@ export function AgregarVerClient() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          url: values.url,
+          url: url.trim(),
           series: {
-            title: values.title,
-            originalTitle: values.originalTitle ?? null,
+            title: values.title.trim(),
+            originalTitle: values.originalTitle?.trim() || null,
             year: values.year ?? null,
             type: values.type,
-            countryCode: values.countryCode ?? null,
-            synopsis: values.synopsis ?? null,
+            countryCode: values.countryCode || null,
+            synopsis: values.synopsis?.trim() || null,
             actorNames: values.actorNames ?? [],
-            productionCompanyName: values.productionCompanyName ?? null,
-            originalLanguageName: values.originalLanguageName ?? null,
+            productionCompanyName:
+              values.productionCompanyName?.trim() || null,
+            originalLanguageName: values.originalLanguageName?.trim() || null,
             dubbingLanguageNames: values.dubbingLanguageNames ?? [],
             tagNames: values.tagNames ?? [],
             genreNames: values.genreNames ?? [],
@@ -203,16 +202,16 @@ export function AgregarVerClient() {
           },
           episode: {
             episodeNumber: values.episodeNumber,
-            title: values.episodeTitle ?? null,
+            title: values.episodeTitle?.trim() || null,
             seasonNumber: values.seasonNumber,
-            channelName: preview.source.channelName,
-            channelUrl: preview.source.channelUrl,
+            channelName: preview.source.channelName || null,
+            channelUrl: preview.source.channelUrl || null,
           },
         }),
       });
       const data = await res.json();
       if (res.status === 409 && data.existingSeriesId) {
-        message.info(data.error || 'Ya existe.');
+        message.info(data.error || 'Esta serie ya existe.');
         router.push(`/ver/${data.existingSeriesId}`);
         return;
       }
@@ -221,7 +220,7 @@ export function AgregarVerClient() {
         return;
       }
       if (!res.ok) {
-        message.error(data.error || 'No se pudo guardar.');
+        message.error(data.error || 'No se pudo guardar la serie.');
         return;
       }
       if (data.pendingReview) {
@@ -230,12 +229,11 @@ export function AgregarVerClient() {
         );
         router.push('/ver');
       } else {
-        message.success('Serie agregada a /ver.');
+        message.success('Serie agregada a /ver con éxito.');
         router.push(`/ver/${data.seriesId}`);
       }
-    } catch (err) {
-      console.error(err);
-      message.error('Error al confirmar.');
+    } catch {
+      message.error('Falla al guardar.');
     } finally {
       setSubmitting(false);
     }
@@ -260,8 +258,8 @@ export function AgregarVerClient() {
         message="Solo plataformas con embed legal"
         description={
           <span>
-            Aceptamos URLs de canales oficiales que permiten incrustación. Si la
-            productora no se aprueba el embed, el contenido no podrá
+            Aceptamos URLs de canales oficiales que permiten incrustación (YouTube, Vimeo, Bilibili, Dailymotion). Si la
+            productora no aprueba el embed, el contenido no podrá
             reproducirse acá. <Link href="/legal">Ver aviso completo</Link>.
           </span>
         }
@@ -272,11 +270,12 @@ export function AgregarVerClient() {
           allowClear
           size="large"
           prefix={<LinkOutlined />}
-          placeholder="https://www.youtube.com/watch?v=..."
+          placeholder="https://www.youtube.com/watch?v=... o https://vimeo.com/..."
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           onPressEnter={handleLoadPreview}
           disabled={loadingPreview}
+          status={validation && !validation.valid ? 'error' : ''}
         />
         <Button
           type="primary"
@@ -284,10 +283,38 @@ export function AgregarVerClient() {
           icon={<RobotOutlined />}
           loading={loadingPreview}
           onClick={handleLoadPreview}
+          disabled={!url.trim() || (validation !== null && !validation.valid)}
         >
           Cargar preview con IA
         </Button>
       </div>
+
+      {validation && (
+        <div
+          style={{
+            marginTop: -8,
+            marginBottom: 12,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+          }}
+        >
+          {validation.valid && validation.platform ? (
+            <Tag color={PLATFORM_COLORS[validation.platform] || 'blue'}>
+              ✓ {validation.platform} detectado
+            </Tag>
+          ) : (
+            <span
+              style={{
+                fontSize: 12,
+                color: 'var(--ant-color-error, #ff4d4f)',
+              }}
+            >
+              ⚠️ {validation.error}
+            </span>
+          )}
+        </div>
+      )}
 
       {preview && (
         <div className="ver-agregar-preview">

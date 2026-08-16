@@ -2,7 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { Empty, Segmented, Spin } from 'antd';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { Empty, Segmented, Spin, Alert, Button, Space, Tooltip } from 'antd';
 import {
   AppstoreOutlined,
   BarsOutlined,
@@ -12,8 +14,15 @@ import {
   GlobalOutlined,
   TeamOutlined,
   VideoCameraOutlined,
+  HeartOutlined,
+  StarOutlined,
+  PlayCircleOutlined,
+  SettingOutlined,
+  SafetyCertificateOutlined,
+  DashboardOutlined,
 } from '@ant-design/icons';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { getCountryFlagEmoji } from '@/lib/country-codes';
 import { BarChart, DonutChart } from '@/components/charts';
 import './public-stats.css';
 
@@ -23,12 +32,18 @@ interface PublicStatsResponse {
     totalSeries: number;
     totalPublicComments: number;
     totalCompletedViews: number;
+    totalCurrentlyWatching: number;
+    totalFavorites: number;
     totalActors: number;
     totalDirectors: number;
+    averageCommunityRating: number | null;
+    totalUserRatings: number;
   };
   rankings: {
     topSeries: Array<{ seriesId: number; title: string; count: number }>;
+    topFavorited: Array<{ seriesId: number; title: string; count: number }>;
     topActors: Array<{ actorId: number; name: string; count: number }>;
+    topDirectors: Array<{ directorId: number; name: string; count: number }>;
     topProductionCompanies: Array<{ name: string; count: number }>;
     topCountries: Array<{ name: string; count: number }>;
     byType: Array<{ type: string; count: number }>;
@@ -39,14 +54,17 @@ interface PublicStatsResponse {
     byGenre: Array<{ name: string; count: number }>;
     byYear: Array<{ year: number; count: number }>;
   };
+  ratings?: {
+    averageCommunity: number | null;
+    total: number;
+    distribution: Array<{ score: number; count: number }>;
+  };
 }
 
 type ChartMode = 'bar' | 'list';
 
 const CHART_MODE_KEY = 'public-stats-chart-mode';
 
-/** Trunca el label cuando es muy largo para que entre en el eje del
- *  chart sin romper layout. Mantiene los primeros 22 chars + ellipsis. */
 function truncate(label: string, max = 22): string {
   return label.length > max ? `${label.slice(0, max - 1)}…` : label;
 }
@@ -55,28 +73,31 @@ interface RankingItem {
   key: string;
   count: number;
   href?: string;
+  flag?: string;
 }
 
-/** Bar chart horizontal usando la libreria recharts. Reemplaza la lista
- *  custom con barras simuladas que habia antes — ahora si hay una
- *  visualizacion real con ejes, tooltips, etc. */
 function RankingBarChart({
   items,
   empty,
+  onNavigate,
 }: {
   items: RankingItem[];
   empty: string;
+  onNavigate?: (href: string) => void;
 }) {
   if (items.length === 0) {
     return <div className="app-panel__empty">{empty}</div>;
   }
   const top = items.slice(0, 10);
-  const data = top.map((it) => ({
-    label: truncate(it.key),
-    fullLabel: it.key,
-    count: it.count,
-  }));
-  // Altura proporcional al numero de barras para que no queden apretadas.
+  const data = top.map((it) => {
+    const prefix = it.flag ? `${it.flag} ` : '';
+    return {
+      label: truncate(`${prefix}${it.key}`),
+      fullLabel: `${prefix}${it.key}`,
+      count: it.count,
+      href: it.href,
+    };
+  });
   const height = Math.max(180, top.length * 28 + 30);
   return (
     <BarChart
@@ -86,11 +107,15 @@ function RankingBarChart({
       horizontal
       multicolor
       height={height}
+      onBarClick={(item) => {
+        if (item.href && onNavigate) {
+          onNavigate(item.href);
+        }
+      }}
     />
   );
 }
 
-/** Lista compacta cuando el user prefiere vista de lista en lugar de chart. */
 function RankingList({
   items,
   empty,
@@ -111,7 +136,14 @@ function RankingList({
         <li key={`${it.key}-${idx}`} className="public-stats-list__row">
           <span className="public-stats-list__pos">{idx + 1}</span>
           <span className="public-stats-list__label">
-            {it.href ? <Link href={it.href}>{it.key}</Link> : it.key}
+            {it.flag && <span className="public-stats-list__flag">{it.flag} </span>}
+            {it.href ? (
+              <Link href={it.href} className="public-stats-list__link">
+                {it.key}
+              </Link>
+            ) : (
+              it.key
+            )}
           </span>
           <span className="public-stats-list__value">
             {formatNumber(it.count)}
@@ -132,6 +164,9 @@ interface RankingPanelProps {
   chartMode: ChartMode;
   onChartModeChange: (mode: ChartMode) => void;
   formatNumber: (n: number) => string;
+  onNavigate?: (href: string) => void;
+  adminActionHref?: string;
+  adminActionLabel?: string;
 }
 
 function RankingPanel({
@@ -143,6 +178,9 @@ function RankingPanel({
   chartMode,
   onChartModeChange,
   formatNumber,
+  onNavigate,
+  adminActionHref,
+  adminActionLabel,
 }: RankingPanelProps) {
   return (
     <section className="app-panel">
@@ -150,19 +188,35 @@ function RankingPanel({
         <h3 className="app-panel__title">
           {icon} {title}
         </h3>
-        <Segmented<ChartMode>
-          size="small"
-          value={chartMode}
-          onChange={onChartModeChange}
-          options={[
-            { value: 'bar', icon: <BarChartOutlined /> },
-            { value: 'list', icon: <BarsOutlined /> },
-          ]}
-        />
+        <div className="public-stats-panel__actions">
+          {adminActionHref && (
+            <Tooltip title={adminActionLabel ?? 'Administrar'}>
+              <Link
+                href={adminActionHref}
+                className="public-stats-panel__admin-link"
+              >
+                <SettingOutlined />
+              </Link>
+            </Tooltip>
+          )}
+          <Segmented<ChartMode>
+            size="small"
+            value={chartMode}
+            onChange={onChartModeChange}
+            options={[
+              { value: 'bar', icon: <BarChartOutlined /> },
+              { value: 'list', icon: <BarsOutlined /> },
+            ]}
+          />
+        </div>
       </header>
       <div className="app-panel__body">
         {chartMode === 'bar' ? (
-          <RankingBarChart items={items} empty={empty} />
+          <RankingBarChart
+            items={items}
+            empty={empty}
+            onNavigate={onNavigate}
+          />
         ) : (
           <RankingList
             items={items}
@@ -178,6 +232,10 @@ function RankingPanel({
 
 export function PublicStatsClient() {
   const { locale } = useLocale();
+  const router = useRouter();
+  const { data: session } = useSession();
+  const isAdmin = session?.user?.role === 'ADMIN';
+
   const [data, setData] = useState<PublicStatsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [chartMode, setChartMode] = useState<ChartMode>(() => {
@@ -192,25 +250,38 @@ export function PublicStatsClient() {
     }
   }, []);
 
+  const handleNavigate = useCallback(
+    (href: string) => {
+      router.push(href);
+    },
+    [router]
+  );
+
   const copy = useMemo(
     () =>
       locale === 'en'
         ? {
             title: 'Global Community Stats',
             subtitle:
-              'Anonymous metrics aggregated across the platform. No personal data is exposed.',
+              'Anonymous real-time metrics aggregated across the platform. No black-box algorithms or manipulation.',
             loading: 'Loading stats…',
             empty: 'No data yet',
             updatedAt: 'Updated',
             sectionActivity: 'Community activity',
             sectionCatalog: 'Catalog breakdown',
+            sectionRatings: 'Community ratings distribution',
             cardSeries: 'Series in catalog',
             cardPublicComments: 'Public comments',
             cardCompletedViews: 'Completed views',
+            cardCurrentlyWatching: 'Watching now',
+            cardFavorites: 'Favorited',
             cardActors: 'Actors',
             cardDirectors: 'Directors',
+            cardAverageRating: 'Community average',
             topSeries: 'Most watched series',
+            topFavorited: 'Most favorited series',
             topActors: 'Most watched actors',
+            topDirectors: 'Most watched directors',
             topProductionCompanies: 'Top production companies',
             topCountries: 'Most watched countries',
             byType: 'Views by content type',
@@ -218,24 +289,42 @@ export function PublicStatsClient() {
             catalogByType: 'Series by type',
             catalogByGenre: 'Series by genre',
             catalogByYear: 'Series by release year',
+            ratingScore: 'Stars',
+            ratingVotes: 'ratings',
             timesWatched: 'times',
+            timesSaved: 'saves',
+            methodologyTitle: 'Data Transparency & Methodology',
+            methodologyText:
+              'All metrics displayed on this page are computed dynamically from actual user interactions and curated catalog records. MundoBL does not use sponsored weighting or opaque recommendation algorithms.',
+            adminBannerTitle: 'Admin quick access',
+            adminManageSeries: 'Manage series',
+            adminManageCompanies: 'Manage companies',
+            adminManageActors: 'Manage actors',
+            adminManageDirectors: 'Manage directors',
+            adminDashboard: 'Admin internal stats',
           }
         : {
             title: 'Estadísticas Globales de la Comunidad',
             subtitle:
-              'Métricas anónimas agregadas de toda la plataforma. No se exponen datos personales.',
+              'Métricas anónimas agregadas de toda la plataforma en tiempo real. Datos reales, sin algoritmos opacos ni manipulación.',
             loading: 'Cargando estadísticas…',
             empty: 'Sin datos todavía',
             updatedAt: 'Actualizado',
             sectionActivity: 'Actividad de la comunidad',
             sectionCatalog: 'Desglose del catálogo',
+            sectionRatings: 'Distribución de calificaciones de la comunidad',
             cardSeries: 'Series en catálogo',
             cardPublicComments: 'Comentarios públicos',
             cardCompletedViews: 'Visualizaciones completadas',
+            cardCurrentlyWatching: 'Viendo ahora',
+            cardFavorites: 'En favoritos',
             cardActors: 'Actores',
             cardDirectors: 'Directores',
+            cardAverageRating: 'Promedio comunidad',
             topSeries: 'Series más vistas',
+            topFavorited: 'Series más guardadas en favoritos',
             topActors: 'Actores más vistos',
+            topDirectors: 'Directores más vistos',
             topProductionCompanies: 'Productoras más vistas',
             topCountries: 'Países más vistos',
             byType: 'Visualizaciones por tipo',
@@ -243,7 +332,19 @@ export function PublicStatsClient() {
             catalogByType: 'Series por tipo',
             catalogByGenre: 'Series por género',
             catalogByYear: 'Series por año de estreno',
+            ratingScore: 'Estrellas',
+            ratingVotes: 'votos',
             timesWatched: 'veces',
+            timesSaved: 'guardados',
+            methodologyTitle: 'Transparencia y Metodología',
+            methodologyText:
+              'Todas las estadísticas se calculan de manera directa y anónima sobre los registros de actividad de la comunidad y el catálogo curado. En MundoBL no existen algoritmos de relevancia paga ni cajas negras.',
+            adminBannerTitle: 'Atajos de administración',
+            adminManageSeries: 'Gestionar series',
+            adminManageCompanies: 'Gestionar productoras',
+            adminManageActors: 'Gestionar actores',
+            adminManageDirectors: 'Gestionar directores',
+            adminDashboard: 'Métricas internas admin',
           },
     [locale]
   );
@@ -289,12 +390,60 @@ export function PublicStatsClient() {
   return (
     <div className="public-stats-page app-page">
       <header className="public-stats-hero">
-        <h1 className="public-stats-hero__title">{copy.title}</h1>
-        <p className="public-stats-hero__subtitle">{copy.subtitle}</p>
+        <div className="public-stats-hero__main">
+          <h1 className="public-stats-hero__title">{copy.title}</h1>
+          <p className="public-stats-hero__subtitle">{copy.subtitle}</p>
+        </div>
         <p className="public-stats-hero__updated">
           {copy.updatedAt}: {new Date(data.generatedAt).toLocaleString(locale)}
         </p>
       </header>
+
+      {/* ── Admin Toolbar (visible only to admins) ── */}
+      {isAdmin && (
+        <div className="public-stats-admin-bar">
+          <span className="public-stats-admin-bar__label">
+            <SafetyCertificateOutlined /> {copy.adminBannerTitle}:
+          </span>
+          <Space wrap size="small">
+            <Button
+              size="small"
+              icon={<DashboardOutlined />}
+              href="/admin/stats"
+            >
+              {copy.adminDashboard}
+            </Button>
+            <Button
+              size="small"
+              icon={<AppstoreOutlined />}
+              href="/admin"
+            >
+              {copy.adminManageSeries}
+            </Button>
+            <Button
+              size="small"
+              icon={<AppstoreOutlined />}
+              href="/admin/productoras"
+            >
+              {copy.adminManageCompanies}
+            </Button>
+            <Button
+              size="small"
+              icon={<TeamOutlined />}
+              href="/admin/actores"
+            >
+              {copy.adminManageActors}
+            </Button>
+            <Button
+              size="small"
+              icon={<VideoCameraOutlined />}
+              href="/admin/directores"
+            >
+              {copy.adminManageDirectors}
+            </Button>
+          </Space>
+        </div>
+      )}
 
       {/* ── KPI summary tiles ── */}
       <section className="public-stats-summary">
@@ -308,6 +457,24 @@ export function PublicStatsClient() {
             icon: <EyeOutlined />,
             value: data.summary.totalCompletedViews,
             label: copy.cardCompletedViews,
+          },
+          {
+            icon: <PlayCircleOutlined />,
+            value: data.summary.totalCurrentlyWatching,
+            label: copy.cardCurrentlyWatching,
+          },
+          {
+            icon: <HeartOutlined />,
+            value: data.summary.totalFavorites,
+            label: copy.cardFavorites,
+          },
+          {
+            icon: <StarOutlined />,
+            value: data.summary.averageCommunityRating
+              ? `⭐ ${data.summary.averageCommunityRating}`
+              : '—',
+            isFormatted: true,
+            label: copy.cardAverageRating,
           },
           {
             icon: <CommentOutlined />,
@@ -329,7 +496,9 @@ export function PublicStatsClient() {
             <span className="public-stats-kpi__icon" aria-hidden>
               {kpi.icon}
             </span>
-            <span className="public-stats-kpi__value">{fmt(kpi.value)}</span>
+            <span className="public-stats-kpi__value">
+              {kpi.isFormatted ? kpi.value : fmt(kpi.value as number)}
+            </span>
             <span className="public-stats-kpi__label">{kpi.label}</span>
           </div>
         ))}
@@ -351,7 +520,28 @@ export function PublicStatsClient() {
           chartMode={chartMode}
           onChartModeChange={persistChartMode}
           formatNumber={fmt}
+          onNavigate={handleNavigate}
+          adminActionHref={isAdmin ? '/admin' : undefined}
+          adminActionLabel={copy.adminManageSeries}
         />
+        <RankingPanel
+          title={copy.topFavorited}
+          icon={<HeartOutlined />}
+          items={data.rankings.topFavorited.map((r) => ({
+            key: r.title,
+            count: r.count,
+            href: `/series/${r.seriesId}`,
+          }))}
+          empty={copy.empty}
+          unit={copy.timesSaved}
+          chartMode={chartMode}
+          onChartModeChange={persistChartMode}
+          formatNumber={fmt}
+          onNavigate={handleNavigate}
+        />
+      </div>
+
+      <div className="app-page__row app-page__row--2">
         <RankingPanel
           title={copy.topActors}
           icon={<TeamOutlined />}
@@ -365,18 +555,45 @@ export function PublicStatsClient() {
           chartMode={chartMode}
           onChartModeChange={persistChartMode}
           formatNumber={fmt}
+          onNavigate={handleNavigate}
+          adminActionHref={isAdmin ? '/admin/actores' : undefined}
+          adminActionLabel={copy.adminManageActors}
         />
+        <RankingPanel
+          title={copy.topDirectors}
+          icon={<VideoCameraOutlined />}
+          items={data.rankings.topDirectors.map((r) => ({
+            key: r.name,
+            count: r.count,
+            href: `/directores/${r.directorId}`,
+          }))}
+          empty={copy.empty}
+          unit={copy.timesWatched}
+          chartMode={chartMode}
+          onChartModeChange={persistChartMode}
+          formatNumber={fmt}
+          onNavigate={handleNavigate}
+          adminActionHref={isAdmin ? '/admin/directores' : undefined}
+          adminActionLabel={copy.adminManageDirectors}
+        />
+      </div>
+
+      <div className="app-page__row app-page__row--2">
         <RankingPanel
           title={copy.topProductionCompanies}
           icon={<AppstoreOutlined />}
           items={data.rankings.topProductionCompanies.map((r) => ({
             key: r.name,
             count: r.count,
+            href: `/catalogo?productionCompany=${encodeURIComponent(r.name)}`,
           }))}
           empty={copy.empty}
           chartMode={chartMode}
           onChartModeChange={persistChartMode}
           formatNumber={fmt}
+          onNavigate={handleNavigate}
+          adminActionHref={isAdmin ? '/admin/productoras' : undefined}
+          adminActionLabel={copy.adminManageCompanies}
         />
         <RankingPanel
           title={copy.topCountries}
@@ -384,12 +601,15 @@ export function PublicStatsClient() {
           items={data.rankings.topCountries.map((r) => ({
             key: r.name,
             count: r.count,
+            href: `/catalogo?country=${encodeURIComponent(r.name)}`,
+            flag: getCountryFlagEmoji(r.name),
           }))}
           empty={copy.empty}
           unit={copy.timesWatched}
           chartMode={chartMode}
           onChartModeChange={persistChartMode}
           formatNumber={fmt}
+          onNavigate={handleNavigate}
         />
       </div>
 
@@ -428,11 +648,14 @@ export function PublicStatsClient() {
           items={data.catalog.byCountry.map((r) => ({
             key: r.name,
             count: r.count,
+            href: `/catalogo?country=${encodeURIComponent(r.name)}`,
+            flag: getCountryFlagEmoji(r.name),
           }))}
           empty={copy.empty}
           chartMode={chartMode}
           onChartModeChange={persistChartMode}
           formatNumber={fmt}
+          onNavigate={handleNavigate}
         />
         <RankingPanel
           title={copy.catalogByGenre}
@@ -440,11 +663,13 @@ export function PublicStatsClient() {
           items={data.catalog.byGenre.map((r) => ({
             key: r.name,
             count: r.count,
+            href: `/catalogo?genre=${encodeURIComponent(r.name)}`,
           }))}
           empty={copy.empty}
           chartMode={chartMode}
           onChartModeChange={persistChartMode}
           formatNumber={fmt}
+          onNavigate={handleNavigate}
         />
       </div>
 
@@ -486,14 +711,61 @@ export function PublicStatsClient() {
               <div className="app-panel__empty">{copy.empty}</div>
             ) : (
               <BarChart
-                data={[...data.catalog.byYear].sort((a, b) => a.year - b.year)}
+                data={[...data.catalog.byYear]
+                  .sort((a, b) => a.year - b.year)
+                  .map((y) => ({
+                    year: String(y.year),
+                    count: y.count,
+                    href: `/catalogo?year=${y.year}`,
+                  }))}
                 xAxisKey="year"
                 series={[{ dataKey: 'count', name: copy.cardSeries }]}
                 height={220}
+                onBarClick={(item) => {
+                  if (item.href) handleNavigate(item.href as string);
+                }}
               />
             )}
           </div>
         </section>
+      </div>
+
+      {/* ── Community Ratings Breakdown ── */}
+      {data.ratings && data.ratings.distribution.length > 0 && (
+        <>
+          <h2 className="public-stats-section-title">{copy.sectionRatings}</h2>
+          <section className="app-panel">
+            <header className="app-panel__header">
+              <h3 className="app-panel__title">
+                <StarOutlined /> {copy.sectionRatings} (⭐ {data.ratings.averageCommunity ?? '—'} / 10 · {fmt(data.ratings.total)} {copy.ratingVotes})
+              </h3>
+            </header>
+            <div className="app-panel__body">
+              <BarChart
+                data={data.ratings.distribution.map((d) => ({
+                  label: `${d.score} ⭐`,
+                  count: d.count,
+                }))}
+                xAxisKey="label"
+                series={[{ dataKey: 'count', name: copy.ratingVotes }]}
+                multicolor
+                height={220}
+              />
+            </div>
+          </section>
+        </>
+      )}
+
+      {/* ── Transparency & Methodology Notice ── */}
+      <div className="public-stats-methodology">
+        <Alert
+          type="info"
+          showIcon
+          icon={<SafetyCertificateOutlined />}
+          message={copy.methodologyTitle}
+          description={copy.methodologyText}
+          className="public-stats-methodology__alert"
+        />
       </div>
     </div>
   );

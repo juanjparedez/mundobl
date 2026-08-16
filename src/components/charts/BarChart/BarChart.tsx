@@ -40,6 +40,7 @@ export interface BarChartProps<TData extends Record<string, unknown>> {
   tooltipLabelFormatter?: ChartTooltipLabelFormatter;
   hideYAxis?: boolean;
   hideXAxis?: boolean;
+  onBarClick?: (item: TData) => void;
 }
 
 export function BarChart<TData extends Record<string, unknown>>({
@@ -53,6 +54,7 @@ export function BarChart<TData extends Record<string, unknown>>({
   tooltipLabelFormatter,
   hideYAxis = false,
   hideXAxis = false,
+  onBarClick,
 }: BarChartProps<TData>) {
   return (
     <ResponsiveContainer width="100%" height={height as number | `${number}%`}>
@@ -127,7 +129,14 @@ export function BarChart<TData extends Record<string, unknown>>({
                     sIdx % CHART_CATEGORICAL_PALETTE.length
                   ])
             }
-            radius={[4, 4, 0, 0]}
+            radius={horizontal ? [0, 6, 6, 0] : [6, 6, 0, 0]}
+            style={{ cursor: onBarClick ? 'pointer' : 'default' }}
+            onClick={(entry) => {
+              if (onBarClick && entry && typeof entry === 'object') {
+                const payload = (entry as { payload?: TData }).payload;
+                if (payload) onBarClick(payload);
+              }
+            }}
           >
             {multicolor && series.length === 1
               ? data.map((_, idx) => (

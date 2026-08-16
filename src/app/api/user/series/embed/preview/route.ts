@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth-helpers';
 import { prisma } from '@/lib/database';
 import { buildEmbedPreview, EmbedPreviewError } from '@/lib/user-embed-preview';
+import { validateStreamingUrl } from '@/lib/embed-helpers';
 
 /**
  * POST /api/user/series/embed/preview
@@ -10,8 +11,7 @@ import { buildEmbedPreview, EmbedPreviewError } from '@/lib/user-embed-preview';
  * Devuelve EmbedPreview. NO persiste.
  *
  * - Requiere user logueado.
- * - 400 si la URL no parsea.
- * - 422 si la plataforma no esta soportada.
+ * - 422 si la URL no es valida o la plataforma no esta soportada.
  * - 409 si la URL ya esta en uso por otro Episode (devuelve existingSeriesId).
  */
 export async function POST(request: NextRequest) {
@@ -29,17 +29,11 @@ export async function POST(request: NextRequest) {
   }
 
   const url = (body?.url ?? '').trim();
-  if (!url) {
-    return NextResponse.json({ error: 'URL requerida.' }, { status: 400 });
-  }
-  try {
-    new URL(url);
-  } catch {
+  const validation = validateStreamingUrl(url);
+  if (!validation.valid) {
     return NextResponse.json(
-      {
-        error: 'URL invalida — debe ser una direccion completa con http(s)://',
-      },
-      { status: 400 }
+      { error: validation.error ?? 'URL invalida o plataforma no soportada.' },
+      { status: 422 }
     );
   }
 

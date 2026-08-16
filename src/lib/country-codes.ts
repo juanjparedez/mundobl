@@ -319,3 +319,19 @@ export function getCountryCode(name: string): string | null {
 
   return null;
 }
+
+/**
+ * Converts a country name or 2-letter ISO code into an emoji flag (e.g. "Tailandia" or "th" -> "🇹🇭").
+ */
+export function getCountryFlagEmoji(nameOrCode: string): string {
+  if (!nameOrCode) return '';
+  const code =
+    nameOrCode.length === 2
+      ? nameOrCode.toLowerCase()
+      : getCountryCode(nameOrCode);
+  if (!code || code.length !== 2) return '';
+  return code
+    .toUpperCase()
+    .replace(/./g, (char) => String.fromCodePoint(127397 + char.charCodeAt(0)));
+}
+

@@ -12,6 +12,12 @@ interface RawActorCountRow {
   count: bigint;
 }
 
+interface RawDirectorCountRow {
+  id: number;
+  name: string;
+  count: bigint;
+}
+
 interface RawTypeCountRow {
   type: string;
   count: bigint;
@@ -22,6 +28,11 @@ interface RawYearCountRow {
   count: bigint;
 }
 
+interface RawRatingDistRow {
+  score: number;
+  count: bigint;
+}
+
 // GET /api/stats/public - metricas globales anonimas para todo publico
 export async function GET() {
   try {
@@ -29,13 +40,19 @@ export async function GET() {
       totalSeries,
       totalPublicComments,
       totalCompletedViews,
+      totalCurrentlyWatching,
+      totalFavorites,
       totalActors,
       totalDirectors,
       topSeriesRows,
       topActorsRows,
+      topDirectorsRows,
       topProductionCompaniesRows,
       topCountriesRows,
       topTypesRows,
+      topFavoritedRows,
+      ratingDistRows,
+      ratingStats,
       // Catalog fixed stats (series count, not view count)
       catalogByCountryRows,
       catalogByTypeRows,
@@ -49,6 +66,18 @@ export async function GET() {
         where: {
           status: 'VISTA',
           seriesId: { not: null },
+          series: { origin: 'CURATED' },
+        },
+      }),
+      prisma.viewStatus.count({
+        where: {
+          status: 'VIENDO',
+          seriesId: { not: null },
+          series: { origin: 'CURATED' },
+        },
+      }),
+      prisma.userFavorite.count({
+        where: {
           series: { origin: 'CURATED' },
         },
       }),
@@ -75,6 +104,19 @@ export async function GET() {
           AND vs."seriesId" IS NOT NULL
           AND s."origin" = 'CURATED'
         GROUP BY a.id, a.name
+        ORDER BY count DESC
+        LIMIT 15
+      `,
+      prisma.$queryRaw<RawDirectorCountRow[]>`
+        SELECT d.id, d.name, COUNT(*) as count
+        FROM "ViewStatus" vs
+        JOIN "SeriesDirector" sd ON sd."seriesId" = vs."seriesId"
+        JOIN "Director" d ON d.id = sd."directorId"
+        JOIN "Series" s ON s.id = vs."seriesId"
+        WHERE vs.status = 'VISTA'
+          AND vs."seriesId" IS NOT NULL
+          AND s."origin" = 'CURATED'
+        GROUP BY d.id, d.name
         ORDER BY count DESC
         LIMIT 15
       `,
@@ -113,6 +155,30 @@ export async function GET() {
         GROUP BY s.type
         ORDER BY count DESC
       `,
+      prisma.userFavorite.groupBy({
+        by: ['seriesId'],
+        where: {
+          series: { origin: 'CURATED' },
+        },
+        _count: { seriesId: true },
+        orderBy: { _count: { seriesId: 'desc' } },
+        take: 15,
+      }),
+      prisma.$queryRaw<RawRatingDistRow[]>`
+        SELECT score, COUNT(*) as count
+        FROM "UserRating" ur
+        JOIN "Series" s ON s.id = ur."seriesId"
+        WHERE s."origin" = 'CURATED'
+        GROUP BY score
+        ORDER BY score ASC
+      `,
+      prisma.userRating.aggregate({
+        where: {
+          series: { origin: 'CURATED' },
+        },
+        _avg: { score: true },
+        _count: { id: true },
+      }),
       // Catalog: series per country (solo CURATED)
       prisma.$queryRaw<RawNamedCountRow[]>`
         SELECT c.name, COUNT(*) as count
@@ -154,12 +220,15 @@ export async function GET() {
       `,
     ]);
 
-    const seriesIds = topSeriesRows
-      .map((row) => row.seriesId)
-      .filter((id): id is number => id !== null);
+    const allSeriesIdsToFetch = Array.from(
+      new Set([
+        ...topSeriesRows.map((r) => r.seriesId).filter((id): id is number => id !== null),
+        ...topFavoritedRows.map((r) => r.seriesId),
+      ])
+    );
 
     const series = await prisma.series.findMany({
-      where: { id: { in: seriesIds } },
+      where: { id: { in: allSeriesIdsToFetch } },
       select: { id: true, title: true },
     });
 
@@ -171,8 +240,14 @@ export async function GET() {
         totalSeries,
         totalPublicComments,
         totalCompletedViews,
+        totalCurrentlyWatching,
+        totalFavorites,
         totalActors,
         totalDirectors,
+        averageCommunityRating: ratingStats._avg.score
+          ? Math.round(ratingStats._avg.score * 10) / 10
+          : null,
+        totalUserRatings: ratingStats._count.id,
       },
       rankings: {
         topSeries: topSeriesRows
@@ -182,8 +257,18 @@ export async function GET() {
             title: seriesById.get(row.seriesId as number) ?? 'Sin titulo',
             count: row._count.seriesId,
           })),
+        topFavorited: topFavoritedRows.map((row) => ({
+          seriesId: row.seriesId,
+          title: seriesById.get(row.seriesId) ?? 'Sin titulo',
+          count: row._count.seriesId,
+        })),
         topActors: topActorsRows.map((row) => ({
           actorId: row.id,
+          name: row.name,
+          count: Number(row.count),
+        })),
+        topDirectors: topDirectorsRows.map((row) => ({
+          directorId: row.id,
           name: row.name,
           count: Number(row.count),
         })),
@@ -220,6 +305,16 @@ export async function GET() {
             count: Number(r.count),
           })),
       },
+      ratings: {
+        averageCommunity: ratingStats._avg.score
+          ? Math.round(ratingStats._avg.score * 10) / 10
+          : null,
+        total: ratingStats._count.id,
+        distribution: ratingDistRows.map((r) => ({
+          score: Number(r.score),
+          count: Number(r.count),
+        })),
+      },
     });
 
     response.headers.set(
@@ -236,3 +331,4 @@ export async function GET() {
     );
   }
 }
+
