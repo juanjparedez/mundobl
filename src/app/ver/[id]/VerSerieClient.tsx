@@ -468,6 +468,14 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         </div>
       </div>
 
+      {/* Tip de bloqueo regional / VPN */}
+      <div className="ver-serie__geoblock-tip">
+        <span className="ver-serie__geoblock-icon">🌍</span>
+        <div className="ver-serie__geoblock-text">
+          <strong>¿El video dice &quot;No disponible en tu país&quot;?</strong> Algunas productoras limitan la emisión gratuita de YouTube si vendieron la licencia exclusiva a plataformas locales. Podés verlo con VPN (Tailandia, Taiwán o EE.UU.) o consultar las opciones en <Link href="/plataformas" style={{ color: 'var(--primary-color)', textDecoration: 'underline' }}>Plataformas & Planes</Link>.
+        </div>
+      </div>
+
       {/* Atribución de origen */}
       <div className="ver-serie__attribution-row">
         <EmbedAttribution

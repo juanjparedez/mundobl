@@ -113,22 +113,34 @@ export function UserSubmittedClient({ items: initial }: Props) {
     });
   }
 
+  function cleanSearchQuery(input: string): string {
+    return input
+      .replace(/\[.*?\]/g, ' ')
+      .replace(/\(.*?\)/g, ' ')
+      .replace(/\b(?:the series|series|thai bl|bl series|full episodes|episodes|sub|eng|spanish)\b/gi, ' ')
+      .replace(/[^a-zA-Z0-9\u0E00-\u0E7F\s]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
   async function openLinkModal(row: UserSubmittedRow) {
     setLinkTarget(row);
     setLinkSelectedId(null);
     setLinkOptions([]);
-    setLinkSearch(row.title);
-    await loadCuratedOptions(row.title);
+    const cleaned = cleanSearchQuery(row.title) || row.title;
+    setLinkSearch(cleaned);
+    await loadCuratedOptions(cleaned);
   }
 
   async function loadCuratedOptions(query: string) {
-    if (!query.trim()) {
+    const cleaned = cleanSearchQuery(query) || query.trim();
+    if (!cleaned) {
       setLinkOptions([]);
       return;
     }
     setLinkLoading(true);
     try {
-      const params = new URLSearchParams({ q: query });
+      const params = new URLSearchParams({ q: cleaned });
       const res = await fetch(`/api/series/search?${params.toString()}`);
       if (!res.ok) {
         setLinkOptions([]);
