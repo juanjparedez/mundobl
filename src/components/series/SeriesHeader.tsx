@@ -9,6 +9,8 @@ import {
   BankOutlined,
   ReadOutlined,
   PlayCircleOutlined,
+  HeartFilled,
+  EyeOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -62,6 +64,8 @@ interface SeriesHeaderProps {
   // mostramos chips clickeables a su seccion correspondiente.
   hasReview?: boolean;
   hasContent?: boolean;
+  favoriteCount?: number;
+  currentlyWatchingCount?: number;
   actionsSlot?: ReactNode;
 }
 
@@ -69,6 +73,8 @@ export function SeriesHeader({
   series,
   hasReview = false,
   hasContent = false,
+  favoriteCount,
+  currentlyWatchingCount,
   actionsSlot,
 }: SeriesHeaderProps) {
   const { t } = useLocale();
@@ -173,6 +179,26 @@ export function SeriesHeader({
               <Tag color="gold" className="series-header__rating-tag">
                 ★ {series.overallRating}/10
               </Tag>
+            )}
+
+            {favoriteCount !== undefined && favoriteCount > 0 && (
+              <span
+                className="series-header__community-badge"
+                title="Guardado en favoritos por la comunidad"
+              >
+                <HeartFilled style={{ color: '#ff4d4f' }} />
+                {favoriteCount} {favoriteCount === 1 ? 'favorito' : 'favoritos'}
+              </span>
+            )}
+
+            {currentlyWatchingCount !== undefined && currentlyWatchingCount > 0 && (
+              <span
+                className="series-header__community-badge series-header__community-badge--watching"
+                title="Usuarios mirando esta serie ahora"
+              >
+                <EyeOutlined style={{ color: '#1677ff' }} />
+                {currentlyWatchingCount} viendo ahora
+              </span>
             )}
 
             {series.productionCompany && (

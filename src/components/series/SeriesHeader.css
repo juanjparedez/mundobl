@@ -169,6 +169,26 @@
   background: rgba(250, 173, 20, 0.25);
 }
 
+/* ─── Badges de comunidad (Favoritos / Viendo ahora) ─────────────── */
+.series-header__community-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, #ff4d4f 12%, var(--bg-spotlight));
+  border: 1px solid color-mix(in srgb, #ff4d4f 35%, transparent);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  user-select: none;
+}
+
+.series-header__community-badge--watching {
+  background: color-mix(in srgb, #1677ff 12%, var(--bg-spotlight));
+  border-color: color-mix(in srgb, #1677ff 35%, transparent);
+}
+
 /* ─── Synopsis ─────────────────────────────────────────────────────────────── */
 .series-header__synopsis {
   padding: var(--spacing-md);
