@@ -1,6 +1,7 @@
 .hero-billboard {
   position: relative;
-  min-height: 420px;
+  aspect-ratio: 21 / 9;
+  min-height: 380px;
   border-radius: var(--border-radius-lg);
   overflow: hidden;
   margin-bottom: var(--spacing-xl);
@@ -13,7 +14,8 @@
 
 @media (max-width: 768px) {
   .hero-billboard {
-    min-height: 360px;
+    aspect-ratio: 4 / 3;
+    min-height: 320px;
   }
 }
 
@@ -139,15 +141,15 @@
   font-size: 0.95rem;
   line-height: 1.55;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 @media (max-width: 768px) {
   .hero-billboard__synopsis {
     font-size: 0.85rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
   }
 }
 

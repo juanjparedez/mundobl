@@ -32,7 +32,7 @@ import { useSession } from 'next-auth/react';
 import { ROUTES } from '@/constants/navigation';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { SettingsPanel } from '../SettingsPanel/SettingsPanel';
-import { LAST_SEEN_NOVEDADES_KEY } from '@/app/novedades/storage-keys';
+import { LAST_SEEN_NOVEDADES_KEY } from '@/app/(app)/novedades/storage-keys';
 import './Sidebar.css';
 
 const { Sider } = Layout;

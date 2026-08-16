@@ -1,0 +1,180 @@
+export const revalidate = 120;
+import { unstable_cache } from 'next/cache';
+
+import type { Metadata } from 'next';
+import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
+import { JsonLd } from '@/components/seo/JsonLd';
+import type { CollectionPage } from 'schema-dts';
+import { getAllSeries } from '@/lib/database';
+
+const CATALOGO_DESCRIPTION =
+  'Explora el catálogo completo de series BL (Boys Love), GL (Girls Love), películas y doramas asiáticos. Filtra por país, año, género y calificación.';
+
+export const metadata: Metadata = {
+  title: 'Catálogo de Series BL y GL',
+  description: CATALOGO_DESCRIPTION,
+  alternates: {
+    canonical: '/catalogo',
+  },
+  openGraph: {
+    type: 'website',
+    title: 'Catálogo de Series BL y GL | MundoBL',
+    description: CATALOGO_DESCRIPTION,
+    url: '/catalogo',
+    siteName: 'MundoBL',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Catálogo de Series BL y GL | MundoBL',
+    description: CATALOGO_DESCRIPTION,
+  },
+};
+import { auth } from '@/lib/auth';
+import { CatalogoClient } from './CatalogoClient';
+import { getCatalogFilterIndex } from '@/lib/database';
+import './catalogo.css';
+
+// Cache scoped por userId: el viewStatus de cada serie es per-user, asi
+// que no podemos compartir el cache entre todos los visitantes. Next.js
+// usa los args como parte del cache key automaticamente.
+const getCatalogDataCached = unstable_cache(
+  async (userId: string | null) => {
+    return await Promise.all([
+      getAllSeries({
+        scope: 'PERSONAL',
+        origin: 'CURATED',
+        userId: userId ?? undefined,
+      }),
+      getCatalogFilterIndex(),
+    ]);
+  },
+  ['catalog-page-data-v2'],
+  { revalidate: 120 }
+);
+
+export default async function CatalogoPage() {
+  const session = await auth();
+  const userRole = session?.user?.role || null;
+  const userId = session?.user?.id ?? null;
+
+  // Obtener datos reales desde la base de datos
+  const [seriesDB, filterIndex] = await getCatalogDataCached(userId);
+
+  // Index seriesId -> nombres (para filtros extendidos)
+  const genresBySerie = new Map<number, string[]>();
+  filterIndex.genres.forEach((sg) => {
+    const arr = genresBySerie.get(sg.seriesId) ?? [];
+    arr.push(sg.genre.name);
+    genresBySerie.set(sg.seriesId, arr);
+  });
+
+  const directorsBySerie = new Map<number, string[]>();
+  filterIndex.directors.forEach((sd) => {
+    const arr = directorsBySerie.get(sd.seriesId) ?? [];
+    arr.push(sd.director.name);
+    directorsBySerie.set(sd.seriesId, arr);
+  });
+
+  const actorsBySerie = new Map<number, string[]>();
+  filterIndex.actors.forEach((sa) => {
+    const arr = actorsBySerie.get(sa.seriesId) ?? [];
+    arr.push(sa.actor.name);
+    actorsBySerie.set(sa.seriesId, arr);
+  });
+
+  const productionCompanyBySerie = new Map<number, string>();
+  filterIndex.productionCompanies.forEach((s) => {
+    if (s.productionCompany) {
+      productionCompanyBySerie.set(s.id, s.productionCompany.name);
+    }
+  });
+
+  const languageBySerie = new Map<number, string>();
+  filterIndex.languages.forEach((s) => {
+    if (s.originalLanguage) {
+      languageBySerie.set(s.id, s.originalLanguage.name);
+    }
+  });
+
+  const platformsBySerie = new Map<number, string[]>();
+  filterIndex.platforms.forEach((p) => {
+    const arr = platformsBySerie.get(p.seriesId) ?? [];
+    if (!arr.includes(p.platform)) arr.push(p.platform);
+    platformsBySerie.set(p.seriesId, arr);
+  });
+
+  // Transformar datos para las tarjetas
+  const seriesData = seriesDB.map((serie) => {
+    const episodiosTotales = serie.seasons.reduce(
+      (acc, s) => acc + (s.episodeCount || 0),
+      0
+    );
+    const runtimeHours =
+      episodiosTotales > 0
+        ? Number(((episodiosTotales * 45) / 60).toFixed(1))
+        : 0;
+
+    return {
+      id: serie.id.toString(),
+      titulo: serie.title,
+      pais: serie.country?.name || 'Sin país',
+      paisCode: serie.country?.code || null,
+      tipo: serie.type,
+      formato: serie.format,
+      temporadas: serie.seasons.length,
+      episodios: episodiosTotales,
+      runtimeHours,
+      anio: serie.year || 0,
+      rating: serie.overallRating,
+      observaciones: serie.observations,
+      imageUrl: serie.imageUrl,
+      imagePosition: serie.imagePosition,
+      synopsis: serie.synopsis,
+      visto: serie.viewStatus?.[0]?.status === 'VISTA',
+      universoId: serie.universeId,
+      universoNombre: serie.universe?.name || null,
+      tags: serie.tags.map((st) => ({ id: st.tag.id, name: st.tag.name })),
+      genres: genresBySerie.get(serie.id) ?? [],
+      directors: directorsBySerie.get(serie.id) ?? [],
+      actors: actorsBySerie.get(serie.id) ?? [],
+      productionCompany: productionCompanyBySerie.get(serie.id) ?? null,
+      originalLanguage: languageBySerie.get(serie.id) ?? null,
+      platforms: platformsBySerie.get(serie.id) ?? [],
+    };
+  });
+
+  return (
+    <>
+      <JsonLd<CollectionPage>
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'CollectionPage',
+          name: 'Catálogo de Series BL y GL',
+          description: CATALOGO_DESCRIPTION,
+          url: 'https://mundobl.com.ar/catalogo',
+          isPartOf: {
+            '@type': 'WebSite',
+            name: 'MundoBL',
+            url: 'https://mundobl.com.ar',
+          },
+          mainEntity: {
+            '@type': 'ItemList',
+            numberOfItems: seriesData.length,
+            itemListElement: seriesData.slice(0, 20).map((s, i) => ({
+              '@type': 'ListItem',
+              position: i + 1,
+              url: `https://mundobl.com.ar/series/${s.id}`,
+              name: s.titulo,
+            })),
+          },
+        }}
+      />
+      <div className="catalogo-page">
+        <Breadcrumbs
+          items={[{ name: 'Inicio', href: '/' }, { name: 'Catálogo' }]}
+        />
+        <CatalogoClient series={seriesData} userRole={userRole} />
+      </div>
+    </>
+  );
+}

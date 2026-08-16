@@ -1,5 +1,6 @@
 .app-layout {
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .skip-to-content {
@@ -25,6 +26,7 @@
   background: color-mix(in srgb, var(--bg-container) 88%, transparent);
   border-radius: var(--border-radius-lg);
   min-height: calc(100vh - var(--header-height) - var(--spacing-lg) * 2);
+  min-height: calc(100dvh - var(--header-height) - var(--spacing-lg) * 2);
   border: 1px solid var(--border-color-secondary);
   box-shadow: var(--box-shadow-card);
   backdrop-filter: blur(14px);
@@ -41,6 +43,9 @@
     border-radius: 0;
     min-height: calc(
       100vh - var(--header-height) - var(--bottom-nav-height) - 40px
+    );
+    min-height: calc(
+      100dvh - var(--header-height) - var(--bottom-nav-height) - 40px
     );
   }
 }

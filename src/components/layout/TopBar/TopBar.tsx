@@ -51,6 +51,17 @@ function shouldShowSearch(pathname: string | null): boolean {
   );
 }
 
+/** Rutas donde ocultamos el TopBar completo en mobile para recuperar
+ *  espacio vertical (la pagina ya tiene su propio header/acciones). */
+const TOPBAR_HIDDEN_MOBILE_ROUTES = ['/perfil'];
+
+function shouldHideTopBar(pathname: string | null, isMobile: boolean): boolean {
+  if (!isMobile || !pathname) return false;
+  return TOPBAR_HIDDEN_MOBILE_ROUTES.some(
+    (r) => pathname === r || pathname.startsWith(`${r}/`)
+  );
+}
+
 export function TopBar() {
   const router = useRouter();
   const pathname = usePathname();
@@ -64,7 +75,7 @@ export function TopBar() {
   // ProfileDashboardHeader). Ocultarla para no duplicar y dar mas
   // espacio vertical (iter fine_tunning_1 #9). Logout sigue accesible
   // desde el ProfileSettings card "Sesion".
-  if (isMobile && pathname?.startsWith('/perfil')) {
+  if (shouldHideTopBar(pathname, isMobile)) {
     return null;
   }
 
