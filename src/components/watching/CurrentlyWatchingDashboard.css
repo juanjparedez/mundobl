@@ -88,6 +88,8 @@
 
 .watching-card {
   position: relative;
+  min-width: 0;
+  overflow: hidden;
   transition: transform 0.2s ease;
 }
 
@@ -153,8 +155,12 @@
   color: var(--text-primary);
   font-size: 16px;
   font-weight: 600;
-  display: block;
   margin-bottom: 8px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
 }
 
 .watching-card__title:hover {

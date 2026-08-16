@@ -600,6 +600,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   flex: 1;
+  min-width: 0;
 }
 
 .profile-top-rated-item__score {
