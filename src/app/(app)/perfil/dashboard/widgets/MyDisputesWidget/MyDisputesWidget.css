@@ -5,29 +5,6 @@
   padding: var(--spacing-md);
 }
 
-.mb-my-disputes__wrap {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  height: 100%;
-}
-
-.mb-my-disputes__toggle {
-  align-self: flex-start;
-  margin: 0 var(--widget-body-padding) var(--widget-body-padding);
-  padding: 0;
-  background: none;
-  border: none;
-  color: var(--primary-color);
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.mb-my-disputes__toggle:hover {
-  text-decoration: underline;
-}
-
 .mb-my-disputes {
   list-style: none;
   margin: 0;

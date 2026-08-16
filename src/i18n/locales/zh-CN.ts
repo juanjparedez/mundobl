@@ -2084,6 +2084,7 @@ const zhCN: TranslationShape = {
     envLine: '环境：{env}',
     userAgentLine: '用户代理：{userAgent}',
     urlLine: '网址：{url}',
+    deployedAtLine: '部署时间：{date}',
   },
   verSerie: {
     noEpisodesAvailable: '无可用剧集',
@@ -2460,6 +2461,7 @@ const zhCN: TranslationShape = {
     actionCreate: '已创建',
     actionUpdate: '已编辑',
     actionDelete: '已删除',
+    viewInLogs: '在完整日志中查看',
   },
   topCommenters: {
     title: '精选社区',
@@ -2479,6 +2481,7 @@ const zhCN: TranslationShape = {
     captionWeek: '过去7天',
     captionMonth: '过去30天',
     captionYear: '过去12个月',
+    viewFullLog: '查看完整日志',
   },
   worldMap: {
     title: '已访问国家',

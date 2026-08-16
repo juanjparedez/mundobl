@@ -11,12 +11,14 @@ import {
   LinkOutlined,
 } from '@ant-design/icons';
 import { Widget } from '@/components/dashboard';
-import { ActionCard, EmptyState } from '@/components/design-system';
+import {
+  ActionCard,
+  AutoFitList,
+  EmptyState,
+} from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import './AdminAlertsWidget.css';
-
-const COLLAPSED_COUNT = 2;
 
 interface AdminAlertsData {
   seriesWithoutReview: number;
@@ -34,7 +36,6 @@ export function AdminAlertsWidget() {
   const { t } = useLocale();
   const [data, setData] = useState<AdminAlertsData | null>(null);
   const [loaded, setLoaded] = useState(false);
-  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -143,23 +144,25 @@ export function AdminAlertsWidget() {
     );
   }
 
-  const visible = showAll ? alerts : alerts.slice(0, COLLAPSED_COUNT);
-
   return (
     <Widget
       title={t('adminDashboard.alertsTitle')}
       icon={<ExclamationCircleOutlined />}
       noPadding
-      fade={alerts.length > COLLAPSED_COUNT}
     >
-      <div className="mb-admin-alerts-widget__wrap">
-        <div className="mb-admin-alerts-widget">
-          {visible.map((alert) => (
-            <Link
-              key={alert.title}
-              href={alert.href}
-              style={{ textDecoration: 'none' }}
-            >
+      <AutoFitList
+        as="ul"
+        listClassName="mb-admin-alerts-widget"
+        viewLessLabel={t('profile.overviewViewLess')}
+        viewMoreLabel={(count) =>
+          interpolateMessage(t('profile.overviewViewAllCount'), {
+            count: String(count),
+          })
+        }
+      >
+        {alerts.map((alert) => (
+          <li key={alert.title}>
+            <Link href={alert.href} style={{ textDecoration: 'none' }}>
               <ActionCard
                 icon={alert.icon}
                 title={alert.title}
@@ -167,23 +170,9 @@ export function AdminAlertsWidget() {
                 featured={alert.count > 5}
               />
             </Link>
-          ))}
-        </div>
-
-        {alerts.length > COLLAPSED_COUNT && (
-          <button
-            type="button"
-            className="mb-admin-alerts-widget__toggle"
-            onClick={() => setShowAll((v) => !v)}
-          >
-            {showAll
-              ? t('profile.overviewViewLess')
-              : interpolateMessage(t('profile.overviewViewAllCount'), {
-                  count: String(alerts.length),
-                })}
-          </button>
-        )}
-      </div>
+          </li>
+        ))}
+      </AutoFitList>
     </Widget>
   );
 }

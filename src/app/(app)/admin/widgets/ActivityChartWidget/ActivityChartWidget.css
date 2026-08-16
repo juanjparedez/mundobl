@@ -7,11 +7,40 @@
   gap: 4px;
 }
 
+.mb-activity-chart__caption-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
 .mb-activity-chart__caption {
   margin: 0;
   font-size: 11px;
   color: var(--text-tertiary);
-  flex-shrink: 0;
+}
+
+/* Referencia externa real al registro completo — el tooltip del chart
+ * solo da un numero agregado por punto, este link lleva a los eventos
+ * reales detras de ese numero (mismo rango de fechas consultado). */
+.mb-activity-chart__log-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--primary-color);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.mb-activity-chart__log-link:hover {
+  text-decoration: underline;
+}
+
+.mb-activity-chart__log-link .anticon {
+  font-size: 10px;
 }
 
 .mb-activity-chart__chart-wrap {

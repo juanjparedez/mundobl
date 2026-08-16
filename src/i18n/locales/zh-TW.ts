@@ -2085,6 +2085,7 @@ const zhTW: TranslationShape = {
     envLine: '環境：{env}',
     userAgentLine: '使用者代理：{userAgent}',
     urlLine: '網址：{url}',
+    deployedAtLine: '部署時間：{date}',
   },
   verSerie: {
     noEpisodesAvailable: '無可用集數',
@@ -2462,6 +2463,7 @@ const zhTW: TranslationShape = {
     actionCreate: '已建立',
     actionUpdate: '已編輯',
     actionDelete: '已刪除',
+    viewInLogs: '在完整記錄中查看',
   },
   topCommenters: {
     title: '精選社群',
@@ -2481,6 +2483,7 @@ const zhTW: TranslationShape = {
     captionWeek: '過去 7 天',
     captionMonth: '過去 30 天',
     captionYear: '過去 12 個月',
+    viewFullLog: '查看完整記錄',
   },
   worldMap: {
     title: '已瀏覽國家',

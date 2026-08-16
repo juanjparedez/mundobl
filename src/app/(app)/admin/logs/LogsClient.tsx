@@ -179,10 +179,9 @@ export function LogsClient() {
   const [pathFilter, setPathFilter] = useState(
     () => searchParams.get('path') ?? ''
   );
-  const [dateRange, setDateRange] = useState<[string | null, string | null]>([
-    null,
-    null,
-  ]);
+  const [dateRange, setDateRange] = useState<[string | null, string | null]>(
+    () => [searchParams.get('from') ?? null, searchParams.get('to') ?? null]
+  );
   const [users, setUsers] = useState<UserOption[]>([]);
   const [stats, setStats] = useState<LogStats | null>(null);
   const [statsLoading, setStatsLoading] = useState(true);

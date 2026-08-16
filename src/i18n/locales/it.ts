@@ -2156,6 +2156,7 @@ const it: TranslationShape = {
     envLine: 'Ambiente: {env}',
     userAgentLine: 'User-Agent: {userAgent}',
     urlLine: 'URL: {url}',
+    deployedAtLine: 'Distribuito: {date}',
   },
   verSerie: {
     noEpisodesAvailable: 'Nessun episodio disponibile',
@@ -2555,6 +2556,7 @@ const it: TranslationShape = {
     actionCreate: 'Creato',
     actionUpdate: 'Modificato',
     actionDelete: 'Eliminato',
+    viewInLogs: 'Vedi nel registro completo',
   },
   topCommenters: {
     title: 'Community in evidenza',
@@ -2574,6 +2576,7 @@ const it: TranslationShape = {
     captionWeek: 'Ultimi 7 giorni',
     captionMonth: 'Ultimi 30 giorni',
     captionYear: 'Ultimi 12 mesi',
+    viewFullLog: 'Vedi registro completo',
   },
   worldMap: {
     title: 'Paesi visitati',

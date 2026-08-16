@@ -2167,6 +2167,7 @@ const de: TranslationShape = {
     envLine: 'Umgebung: {env}',
     userAgentLine: 'User-Agent: {userAgent}',
     urlLine: 'URL: {url}',
+    deployedAtLine: 'Bereitgestellt: {date}',
   },
   verSerie: {
     noEpisodesAvailable: 'Keine Episoden verfügbar',
@@ -2566,6 +2567,7 @@ const de: TranslationShape = {
     actionCreate: 'Erstellt',
     actionUpdate: 'Bearbeitet',
     actionDelete: 'Gelöscht',
+    viewInLogs: 'Im vollständigen Protokoll ansehen',
   },
   topCommenters: {
     title: 'Empfohlene Community',
@@ -2585,6 +2587,7 @@ const de: TranslationShape = {
     captionWeek: 'Letzte 7 Tage',
     captionMonth: 'Letzte 30 Tage',
     captionYear: 'Letzte 12 Monate',
+    viewFullLog: 'Vollständiges Protokoll ansehen',
   },
   worldMap: {
     title: 'Besuchte Länder',

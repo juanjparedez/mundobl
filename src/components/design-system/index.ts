@@ -32,3 +32,6 @@ export type { ActionCardProps } from './ActionCard/ActionCard';
 
 export { MediaCard } from './MediaCard/MediaCard';
 export type { MediaCardProps } from './MediaCard/MediaCard';
+
+export { AutoFitList } from './AutoFitList/AutoFitList';
+export type { AutoFitListProps } from './AutoFitList/AutoFitList';

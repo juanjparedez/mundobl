@@ -2042,6 +2042,7 @@ export type TranslationShape = {
     envLine: string;
     userAgentLine: string;
     urlLine: string;
+    deployedAtLine: string;
   };
   verSerie: {
     noEpisodesAvailable: string;
@@ -2410,6 +2411,7 @@ export type TranslationShape = {
     actionCreate: string;
     actionUpdate: string;
     actionDelete: string;
+    viewInLogs: string;
   };
   topCommenters: {
     title: string;
@@ -2429,6 +2431,7 @@ export type TranslationShape = {
     captionWeek: string;
     captionMonth: string;
     captionYear: string;
+    viewFullLog: string;
   };
   worldMap: {
     title: string;
@@ -4670,6 +4673,7 @@ const es: TranslationShape = {
     envLine: 'Env: {env}',
     userAgentLine: 'User-Agent: {userAgent}',
     urlLine: 'URL: {url}',
+    deployedAtLine: 'Desplegado: {date}',
   },
   verSerie: {
     noEpisodesAvailable: 'No hay episodios disponibles',
@@ -5065,6 +5069,7 @@ const es: TranslationShape = {
     actionCreate: 'Creó',
     actionUpdate: 'Editó',
     actionDelete: 'Eliminó',
+    viewInLogs: 'Ver en el registro completo',
   },
   topCommenters: {
     title: 'Comunidad destacada',
@@ -5084,6 +5089,7 @@ const es: TranslationShape = {
     captionWeek: 'Últimos 7 días',
     captionMonth: 'Últimos 30 días',
     captionYear: 'Últimos 12 meses',
+    viewFullLog: 'Ver registro completo',
   },
   worldMap: {
     title: 'Países visitados',
@@ -7315,6 +7321,7 @@ const en: TranslationShape = {
     envLine: 'Env: {env}',
     userAgentLine: 'User-Agent: {userAgent}',
     urlLine: 'URL: {url}',
+    deployedAtLine: 'Deployed: {date}',
   },
   verSerie: {
     noEpisodesAvailable: 'No episodes available',
@@ -7706,6 +7713,7 @@ const en: TranslationShape = {
     actionCreate: 'Created',
     actionUpdate: 'Edited',
     actionDelete: 'Deleted',
+    viewInLogs: 'View in full log',
   },
   topCommenters: {
     title: 'Featured community',
@@ -7725,6 +7733,7 @@ const en: TranslationShape = {
     captionWeek: 'Last 7 days',
     captionMonth: 'Last 30 days',
     captionYear: 'Last 12 months',
+    viewFullLog: 'View full log',
   },
   worldMap: {
     title: 'Countries visited',

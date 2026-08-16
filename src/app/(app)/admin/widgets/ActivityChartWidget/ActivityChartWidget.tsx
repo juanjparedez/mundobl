@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { Segmented, Spin } from 'antd';
-import { LineChartOutlined } from '@ant-design/icons';
+import { LineChartOutlined, ExportOutlined } from '@ant-design/icons';
 import { Widget } from '@/components/dashboard';
 import { LineChart } from '@/components/charts';
 import { EmptyState } from '@/components/design-system';
@@ -107,6 +108,19 @@ export function ActivityChartWidget() {
         ? 'activityChart.captionYear'
         : 'activityChart.captionMonth';
 
+  // Referencia externa real al registro completo (/admin/logs), con el
+  // mismo rango de fechas que consulto /api/admin/activity-by-day para
+  // este period — el tooltip del chart solo muestra un numero agregado,
+  // esto lleva a la lista real de eventos detras de ese numero.
+  const today = new Date();
+  const sinceDate =
+    period === 'year'
+      ? new Date(today.getFullYear(), today.getMonth() - 11, 1)
+      : new Date(
+          today.getTime() - (period === 'week' ? 7 : 30) * 24 * 60 * 60 * 1000
+        );
+  const logsHref = `/admin/logs?from=${sinceDate.toISOString().slice(0, 10)}&to=${today.toISOString().slice(0, 10)}`;
+
   return (
     <Widget
       title={t('activityChart.title')}
@@ -134,7 +148,18 @@ export function ActivityChartWidget() {
         />
       ) : (
         <div className="mb-activity-chart">
-          <p className="mb-activity-chart__caption">{t(captionKey)}</p>
+          <div className="mb-activity-chart__caption-row">
+            <p className="mb-activity-chart__caption">{t(captionKey)}</p>
+            <Link
+              href={logsHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mb-activity-chart__log-link"
+            >
+              {t('activityChart.viewFullLog')}
+              <ExportOutlined />
+            </Link>
+          </div>
           <div className="mb-activity-chart__chart-wrap">
             <LineChart
               data={formattedData}
