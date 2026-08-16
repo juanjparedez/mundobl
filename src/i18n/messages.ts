@@ -378,6 +378,11 @@ export type TranslationShape = {
     settingsSessionHint: string;
     settingsDangerTitle: string;
     settingsDangerHint: string;
+    settingsResetDataButton: string;
+    settingsResetDataConfirmTitle: string;
+    settingsResetDataConfirmDescription: string;
+    settingsResetDataSuccess: string;
+    settingsResetDataError: string;
     settingsPrivacyTitle: string;
     settingsPrivacyHint: string;
     settingsExportData: string;
@@ -2915,6 +2920,12 @@ const es: TranslationShape = {
     settingsDangerTitle: 'Zona peligrosa',
     settingsDangerHint:
       'Eliminá tu cuenta con confirmación por email. Esta acción es irreversible.',
+    settingsResetDataButton: 'Borrar mi historial y stats',
+    settingsResetDataConfirmTitle: '¿Borrar todo tu historial de seguimiento?',
+    settingsResetDataConfirmDescription:
+      'Se elimina lo que viste, tus calificaciones, favoritos y notas privadas. Tu cuenta y comentarios públicos NO se tocan. Los gráficos de tu perfil vuelven a cero. No se puede deshacer.',
+    settingsResetDataSuccess: 'Historial y estadísticas borrados',
+    settingsResetDataError: 'Error al borrar el historial',
     settingsPrivacyTitle: 'Privacidad y datos',
     settingsPrivacyHint:
       'Descargá una copia completa de tus datos personales (comentarios, ratings, view-status, favoritos, votos, notificaciones). También podés restaurar datos desde un JSON exportado.',
@@ -5558,6 +5569,12 @@ const en: TranslationShape = {
     settingsDangerTitle: 'Danger zone',
     settingsDangerHint:
       'Delete your account with email confirmation. This action is irreversible.',
+    settingsResetDataButton: 'Reset my history & stats',
+    settingsResetDataConfirmTitle: 'Reset your entire watch history?',
+    settingsResetDataConfirmDescription:
+      "This deletes what you've watched, your ratings, favorites and private notes. Your account and public comments are NOT touched. Charts on your profile go back to zero. This can't be undone.",
+    settingsResetDataSuccess: 'History and stats reset',
+    settingsResetDataError: 'Error resetting your history',
     settingsPrivacyTitle: 'Privacy & data',
     settingsPrivacyHint:
       'Download a full copy of your personal data (comments, ratings, view-status, favorites, votes, notifications). You can also restore data from a previously exported JSON.',
