@@ -85,34 +85,50 @@ export function parseEpisodeBadge(rawTitle: string | null, episodeNumber: number
   if (!rawTitle) return { label: `Episodio ${episodeNumber}`, isExtra: false };
   const lower = rawTitle.toLowerCase();
 
+  // Extraer número de episodio explícito en el título (ej: "EP.6", "EP. 6", "EP6", "Episodio 6")
+  const epMatch = rawTitle.match(/\b(?:ep|episodio|cap|capitulo)\.?\s*(\d{1,3})\b/i);
+  const detectedEp = epMatch ? epMatch[1] : null;
+
+  // Extraer parte (ej: [1/4], (1/4), 1/4, Part 1)
+  const partMatch =
+    rawTitle.match(/[\[\(](\d{1,2})\s*\/\s*(\d{1,2})[\]\)]/) ||
+    rawTitle.match(/\b(?:part|parte|pt)\.?\s*(\d{1,2})(?:\s*\/\s*(\d{1,2}))?\b/i);
+
+  // 1. Tráilers y Teasers
   if (
     lower.includes('trailer') ||
     lower.includes('teaser') ||
     rawTitle.includes('ตัวอย่าง')
   ) {
+    const trailerLabel = detectedEp
+      ? `Tráiler · Ep. ${detectedEp}`
+      : `Tráiler #${episodeNumber}`;
     return {
-      label: `Tráiler · #${episodeNumber}`,
+      label: trailerLabel,
       isExtra: true,
       tagColor: 'orange',
       badgeText: 'Tráiler',
     };
   }
 
+  // 2. Detrás de cámaras y especiales
   if (
     lower.includes('behind') ||
     lower.includes('special') ||
     lower.includes('beginning') ||
     lower.includes('highlight') ||
-    lower.includes('interview')
+    lower.includes('interview') ||
+    lower.includes('recap')
   ) {
     return {
-      label: `Extra · #${episodeNumber}`,
+      label: `Extra · #${detectedEp || episodeNumber}`,
       isExtra: true,
       tagColor: 'purple',
       badgeText: 'Extra',
     };
   }
 
+  // 3. OST / Música
   if (lower.includes('ost') || lower.includes('mv') || lower.includes('music video')) {
     return {
       label: `OST · #${episodeNumber}`,
@@ -122,21 +138,26 @@ export function parseEpisodeBadge(rawTitle: string | null, episodeNumber: number
     };
   }
 
-  const partMatch =
-    rawTitle.match(/(?:ep\.?\s*(\d+))?.*?[\[\(](\d+)\/(\d+)[\]\)]/i) ||
-    rawTitle.match(/(?:ep\.?\s*(\d+))?.*?(\d+)\/(\d+)/i);
-
-  if (partMatch && partMatch[2] && partMatch[3]) {
-    const epNum = partMatch[1] ? partMatch[1] : episodeNumber;
+  // 4. Partes de capítulos (ej: Cap. 8 [1/4])
+  if (partMatch) {
+    const partNum = partMatch[1];
+    const partTotal = partMatch[2] || '4';
+    const epNum = detectedEp || episodeNumber;
     return {
-      label: `Cap. ${epNum} [${partMatch[2]}/${partMatch[3]}]`,
+      label: `Cap. ${epNum} [${partNum}/${partTotal}]`,
       isExtra: false,
     };
   }
 
-  const epMatch = rawTitle.match(/ep\.?\s*(\d+)/i);
-  if (epMatch) {
-    return { label: `Capítulo ${epMatch[1]}`, isExtra: false };
+  // 5. Solo capítulo
+  if (detectedEp) {
+    return { label: `Capítulo ${detectedEp}`, isExtra: false };
+  }
+
+  // 6. Si el título está solo en tailandés o caracteres no latinos, limpiar a Episodio legible
+  const isAllThai = /^[\u0E00-\u0E7F\s\W\d]+$/.test(rawTitle);
+  if (isAllThai) {
+    return { label: `Episodio ${episodeNumber}`, isExtra: false };
   }
 
   return {

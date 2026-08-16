@@ -156,6 +156,12 @@ export function Sidebar() {
       label: t('sidebar.stats'),
       onClick: () => router.push(ROUTES.ESTADISTICAS),
     },
+    {
+      key: '/acerca',
+      icon: <InfoCircleOutlined />,
+      label: 'Acerca de MundoBL',
+      onClick: () => router.push('/acerca'),
+    },
     ...(canAccessAdmin
       ? [
           {
