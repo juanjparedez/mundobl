@@ -111,7 +111,7 @@
 .media-carousel__poster-wrap {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: var(--poster-aspect-ratio);
   border-radius: var(--border-radius-base);
   overflow: hidden;
   background: #000;

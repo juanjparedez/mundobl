@@ -1,0 +1,165 @@
+.glosario-container {
+  padding: var(--spacing-lg) var(--spacing-md);
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.glosario-hero {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xl) var(--spacing-md);
+  background:
+    radial-gradient(
+      ellipse at top,
+      color-mix(in srgb, var(--primary-color) 12%, transparent) 0%,
+      transparent 70%
+    ),
+    var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+}
+
+.glosario-hero__badge {
+  background: color-mix(in srgb, var(--primary-color) 15%, transparent);
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.glosario-hero__title {
+  margin: 0;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.glosario-hero__subtitle {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-secondary);
+  max-width: 680px;
+  line-height: 1.6;
+}
+
+.glosario-filters {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  width: 100%;
+  max-width: 600px;
+  margin-top: var(--spacing-sm);
+}
+
+.glosario-search {
+  width: 100%;
+  border-radius: var(--border-radius-base);
+}
+
+/* ─── Grid de Tarjetas ───────────────────────────────────────────── */
+.glosario-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.glosario-card {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-base);
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.glosario-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--primary-color);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+.glosario-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.glosario-card__term-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.glosario-card__term {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.glosario-card__transliteration {
+  font-size: 0.95rem;
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.glosario-card__meaning {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.glosario-card__context {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  flex: 1;
+}
+
+.glosario-card__example {
+  background: color-mix(in srgb, var(--warning-color) 8%, var(--bg-container));
+  border: 1px solid color-mix(in srgb, var(--warning-color) 25%, transparent);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.glosario-card__example .anticon {
+  color: var(--warning-color);
+}
+
+.glosario-card__mistake {
+  background: color-mix(in srgb, var(--error-color) 8%, var(--bg-container));
+  border: 1px solid color-mix(in srgb, var(--error-color) 25%, transparent);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.glosario-card__mistake .anticon {
+  color: var(--error-color);
+}
