@@ -135,6 +135,7 @@ export default async function VerSeriePage({ params }: PageProps) {
             imageUrl: serie.imageUrl,
             catalogScope: serie.catalogScope,
             origin: serie.origin,
+            productionCompanyName: serie.productionCompany?.name ?? null,
             submittedByName:
               serie.submittedBy?.nickname ?? serie.submittedBy?.name ?? null,
             country: serie.country
@@ -142,6 +143,20 @@ export default async function VerSeriePage({ params }: PageProps) {
               : null,
             tags: serie.tags.map((st) => st.tag.name),
             genres: serie.genres.map((sg) => sg.genre.name),
+            directors: serie.directors.map((sd) => sd.director.name),
+            actors: serie.actors.map((sa) => ({
+              id: sa.actor.id,
+              name: sa.actor.name,
+              stageName: sa.actor.stageName,
+              imageUrl: sa.actor.imageUrl,
+            })),
+            linkedSeries: serie.linkedSeries
+              ? {
+                  id: serie.linkedSeries.id,
+                  title: serie.linkedSeries.title,
+                  imageUrl: serie.linkedSeries.imageUrl,
+                }
+              : null,
           }}
           seasons={seasons}
         />

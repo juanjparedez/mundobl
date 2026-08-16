@@ -1,7 +1,8 @@
 'use client';
 
 import { Tag, Tooltip } from 'antd';
-import { PlayCircleOutlined, LinkOutlined } from '@ant-design/icons';
+import { PlayCircleOutlined, LinkOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
+import Link from 'next/link';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import './WhereToWatch.css';
 
@@ -52,10 +53,18 @@ export function WhereToWatch({ links, variant = 'hero' }: WhereToWatchProps) {
 
   return (
     <section className={`where-to-watch where-to-watch--${variant}`}>
-      <h3 className="where-to-watch__title">
-        <PlayCircleOutlined className="where-to-watch__title-icon" />
-        {t('seriesInfo.whereToWatch')}
-      </h3>
+      <div className="where-to-watch__header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+        <h3 className="where-to-watch__title" style={{ margin: 0 }}>
+          <PlayCircleOutlined className="where-to-watch__title-icon" />
+          {t('seriesInfo.whereToWatch')}
+        </h3>
+        <Link
+          href="/plataformas"
+          style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'inline-flex', alignItems: 'center', gap: 4 }}
+        >
+          <SafetyCertificateOutlined /> Comparar planes
+        </Link>
+      </div>
       <ul className="where-to-watch__list">
         {sorted.map((link) => (
           <li key={link.id} className="where-to-watch__item">

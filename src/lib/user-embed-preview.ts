@@ -65,6 +65,18 @@ async function fetchOEmbed(
       headers: { Accept: 'application/json' },
       cache: 'no-store',
     });
+    if (res.status === 403 || res.status === 401) {
+      throw new EmbedPreviewError(
+        'El creador de contenido no permite embeber este video en sitios externos (configuración de privacidad o reproducción restringida).',
+        422
+      );
+    }
+    if (res.status === 404) {
+      throw new EmbedPreviewError(
+        'El video no fue encontrado o está configurado como privado en la plataforma.',
+        404
+      );
+    }
     if (!res.ok) {
       warnings.push(`No se pudo cargar oEmbed (${res.status}).`);
       return EMPTY_OEMBED;
@@ -84,6 +96,7 @@ async function fetchOEmbed(
       description: data.description ?? null,
     };
   } catch (err) {
+    if (err instanceof EmbedPreviewError) throw err;
     warnings.push(
       `Falla al consultar oEmbed: ${err instanceof Error ? err.message : 'desconocido'}.`
     );
