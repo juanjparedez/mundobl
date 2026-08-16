@@ -2,6 +2,21 @@
   height: 100%;
   min-height: 0;
   padding: var(--widget-body-padding);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mb-activity-chart__caption {
+  margin: 0;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.mb-activity-chart__chart-wrap {
+  flex: 1;
+  min-height: 0;
 }
 
 .mb-activity-chart__loading {
