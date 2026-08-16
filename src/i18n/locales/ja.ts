@@ -400,6 +400,12 @@ const ja: TranslationShape = {
     settingsDangerTitle: '危険ゾーン',
     settingsDangerHint:
       'メール確認でデータをエクスポートまたはアカウントを削除。',
+    settingsResetDataButton: '視聴履歴と統計をリセット',
+    settingsResetDataConfirmTitle: '視聴履歴をすべてリセットしますか？',
+    settingsResetDataConfirmDescription:
+      '視聴済みの記録、評価、お気に入り、プライベートメモが削除されます。アカウントと公開コメントは削除されません。プロフィールのグラフはゼロに戻ります。元に戻すことはできません。',
+    settingsResetDataSuccess: '履歴と統計をリセットしました',
+    settingsResetDataError: '履歴のリセット中にエラーが発生しました',
     settingsPrivacyTitle: 'プライバシーとデータ',
     settingsPrivacyHint:
       '個人データ（コメント、評価、視聴状況、お気に入り、投票、通知）の完全なコピーをダウンロードします。',

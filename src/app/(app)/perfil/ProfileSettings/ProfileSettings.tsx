@@ -205,6 +205,27 @@ export function ProfileSettings() {
     }
   };
 
+  const handleResetData = async () => {
+    setBusy('reset-data');
+    try {
+      const response = await fetch('/api/user/account/reset-data', {
+        method: 'POST',
+      });
+      if (!response.ok) {
+        throw new Error(t('profile.settingsResetDataError'));
+      }
+      message.success(t('profile.settingsResetDataSuccess'));
+    } catch (error) {
+      message.error(
+        error instanceof Error
+          ? error.message
+          : t('profile.settingsResetDataError')
+      );
+    } finally {
+      setBusy(null);
+    }
+  };
+
   const handleDeleteAccount = async () => {
     const userEmail = session?.user?.email ?? '';
     if (!userEmail) {
@@ -419,6 +440,22 @@ export function ProfileSettings() {
               </p>
             </header>
             <div className="profile-settings-card__actions">
+              <Popconfirm
+                title={t('profile.settingsResetDataConfirmTitle')}
+                description={t('profile.settingsResetDataConfirmDescription')}
+                onConfirm={handleResetData}
+                okText={t('profileSettings.deleteConfirmOk')}
+                cancelText={t('settings.closeButton')}
+                okButtonProps={{ danger: true }}
+              >
+                <Button
+                  danger
+                  icon={<ClearOutlined />}
+                  loading={busy === 'reset-data'}
+                >
+                  {t('profile.settingsResetDataButton')}
+                </Button>
+              </Popconfirm>
               <Button
                 danger
                 icon={<DeleteOutlined />}

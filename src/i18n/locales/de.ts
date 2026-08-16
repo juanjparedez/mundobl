@@ -404,6 +404,12 @@ const de: TranslationShape = {
     settingsDangerTitle: 'Gefahrenzone',
     settingsDangerHint:
       'Exportieren Sie Ihre Daten oder löschen Sie Ihr Konto mit E-Mail-Bestätigung.',
+    settingsResetDataButton: 'Verlauf & Statistiken zurücksetzen',
+    settingsResetDataConfirmTitle: 'Ihren gesamten Verlauf zurücksetzen?',
+    settingsResetDataConfirmDescription:
+      'Damit werden Ihr Sehverlauf, Bewertungen, Favoriten und private Notizen gelöscht. Ihr Konto und öffentliche Kommentare bleiben unberührt. Die Diagramme in Ihrem Profil werden auf null zurückgesetzt. Dies kann nicht rückgängig gemacht werden.',
+    settingsResetDataSuccess: 'Verlauf und Statistiken zurückgesetzt',
+    settingsResetDataError: 'Fehler beim Zurücksetzen des Verlaufs',
     settingsPrivacyTitle: 'Datenschutz & Daten',
     settingsPrivacyHint:
       'Laden Sie eine vollständige Kopie Ihrer persönlichen Daten herunter (Kommentare, Bewertungen, Ansichtsstatus, Favoriten, Abstimmungen, Benachrichtigungen).',

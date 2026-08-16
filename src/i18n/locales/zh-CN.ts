@@ -390,6 +390,12 @@ const zhCN: TranslationShape = {
       '修复异常问题：清除本地缓存、重置服务工作线程或退出所有设备。',
     settingsDangerTitle: '危险区域',
     settingsDangerHint: '导出您的数据或通过电子邮件确认删除您的账户。',
+    settingsResetDataButton: '重置我的历史记录和统计',
+    settingsResetDataConfirmTitle: '重置全部观看历史？',
+    settingsResetDataConfirmDescription:
+      '这将删除您看过的内容、评分、收藏和私人笔记。您的账户和公开评论不会受到影响。个人资料中的图表将归零。此操作无法撤销。',
+    settingsResetDataSuccess: '历史记录和统计已重置',
+    settingsResetDataError: '重置历史记录失败',
     settingsPrivacyTitle: '隐私与数据',
     settingsPrivacyHint:
       '下载您的个人数据完整副本（评论、评分、观看状态、收藏、投票、通知）。',

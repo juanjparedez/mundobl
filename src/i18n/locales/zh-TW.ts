@@ -390,6 +390,12 @@ const zhTW: TranslationShape = {
       '修復異常問題：清除本地快取、重設服務工作者或登出所有裝置。',
     settingsDangerTitle: '危險區域',
     settingsDangerHint: '匯出您的資料或透過電子郵件確認刪除您的帳戶。',
+    settingsResetDataButton: '重置我的歷史記錄和統計',
+    settingsResetDataConfirmTitle: '重置全部觀看歷史？',
+    settingsResetDataConfirmDescription:
+      '這將刪除您看過的內容、評分、收藏和私人筆記。您的帳戶和公開評論不會受到影響。個人資料中的圖表將歸零。此操作無法復原。',
+    settingsResetDataSuccess: '歷史記錄和統計已重置',
+    settingsResetDataError: '重置歷史記錄失敗',
     settingsPrivacyTitle: '隱私與資料',
     settingsPrivacyHint:
       '下載您的個人資料完整副本（評論、評分、觀看狀態、最愛、投票、通知）。',

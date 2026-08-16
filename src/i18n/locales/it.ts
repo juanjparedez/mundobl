@@ -402,6 +402,13 @@ const it: TranslationShape = {
     settingsDangerTitle: 'Zona pericolo',
     settingsDangerHint:
       'Esporta i tuoi dati o elimina il tuo account con conferma via email.',
+    settingsResetDataButton: 'Reimposta cronologia e statistiche',
+    settingsResetDataConfirmTitle:
+      'Reimpostare tutta la cronologia di visione?',
+    settingsResetDataConfirmDescription:
+      'Questo elimina ciò che hai visto, le tue valutazioni, preferiti e note private. Il tuo account e i commenti pubblici NON vengono toccati. I grafici del tuo profilo tornano a zero. Non può essere annullato.',
+    settingsResetDataSuccess: 'Cronologia e statistiche reimpostate',
+    settingsResetDataError: 'Errore durante il reset della cronologia',
     settingsPrivacyTitle: 'Privacy e dati',
     settingsPrivacyHint:
       'Scarica una copia completa dei tuoi dati personali (commenti, valutazioni, stato di visualizzazione, preferiti, voti, notifiche).',
