@@ -12,7 +12,7 @@ import {
   UserOutlined,
   BankOutlined,
   PlayCircleOutlined,
-  TranslationOutlined,
+  VideoCameraOutlined,
 } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import { EmbedPlayer } from '@/components/common/EmbedPlayer/EmbedPlayer';
@@ -76,25 +76,68 @@ interface VerSerieClientProps {
   seasons: Season[];
 }
 
-export function parseEpisodeBadge(rawTitle: string | null, episodeNumber: number): {
+export interface ParsedBadge {
   label: string;
+  shortLabel: string;
   isExtra: boolean;
+  isPrivate: boolean;
+  chapterNumber: number;
+  partNumber: number | null;
+  partTotal: number | null;
   tagColor?: string;
   badgeText?: string;
-} {
-  if (!rawTitle) return { label: `Episodio ${episodeNumber}`, isExtra: false };
+}
+
+export function parseEpisodeBadge(
+  rawTitle: string | null,
+  episodeNumber: number,
+  totalEpisodesInSeason: number,
+  seriesTitle?: string
+): ParsedBadge {
+  if (!rawTitle) {
+    return {
+      label: `Episodio ${episodeNumber}`,
+      shortLabel: `E${episodeNumber}`,
+      isExtra: false,
+      isPrivate: false,
+      chapterNumber: episodeNumber,
+      partNumber: null,
+      partTotal: null,
+    };
+  }
+
   const lower = rawTitle.toLowerCase();
+
+  // 1. Private / Deleted videos
+  if (
+    lower.includes('private video') ||
+    lower.includes('deleted video') ||
+    lower.includes('video privado') ||
+    lower.includes('private')
+  ) {
+    return {
+      label: `Video Privado #${episodeNumber}`,
+      shortLabel: `Privado #${episodeNumber}`,
+      isExtra: true,
+      isPrivate: true,
+      chapterNumber: episodeNumber,
+      partNumber: null,
+      partTotal: null,
+      tagColor: 'default',
+      badgeText: 'Privado',
+    };
+  }
 
   // Extraer número de episodio explícito en el título (ej: "EP.6", "EP. 6", "EP6", "Episodio 6")
   const epMatch = rawTitle.match(/\b(?:ep|episodio|cap|capitulo)\.?\s*(\d{1,3})\b/i);
-  const detectedEp = epMatch ? epMatch[1] : null;
+  const detectedEp = epMatch ? parseInt(epMatch[1], 10) : null;
 
   // Extraer parte (ej: [1/4], (1/4), 1/4, Part 1)
   const partMatch =
     rawTitle.match(/[\[\(](\d{1,2})\s*\/\s*(\d{1,2})[\]\)]/) ||
     rawTitle.match(/\b(?:part|parte|pt)\.?\s*(\d{1,2})(?:\s*\/\s*(\d{1,2}))?\b/i);
 
-  // 1. Tráilers y Teasers
+  // 2. Tráilers y Teasers
   if (
     lower.includes('trailer') ||
     lower.includes('teaser') ||
@@ -105,13 +148,18 @@ export function parseEpisodeBadge(rawTitle: string | null, episodeNumber: number
       : `Tráiler #${episodeNumber}`;
     return {
       label: trailerLabel,
+      shortLabel: trailerLabel,
       isExtra: true,
+      isPrivate: false,
+      chapterNumber: detectedEp || episodeNumber,
+      partNumber: null,
+      partTotal: null,
       tagColor: 'orange',
       badgeText: 'Tráiler',
     };
   }
 
-  // 2. Detrás de cámaras y especiales
+  // 3. Detrás de cámaras y especiales
   if (
     lower.includes('behind') ||
     lower.includes('special') ||
@@ -122,47 +170,101 @@ export function parseEpisodeBadge(rawTitle: string | null, episodeNumber: number
   ) {
     return {
       label: `Extra · #${detectedEp || episodeNumber}`,
+      shortLabel: `Extra #${detectedEp || episodeNumber}`,
       isExtra: true,
+      isPrivate: false,
+      chapterNumber: detectedEp || episodeNumber,
+      partNumber: null,
+      partTotal: null,
       tagColor: 'purple',
       badgeText: 'Extra',
     };
   }
 
-  // 3. OST / Música
+  // 4. OST / Música
   if (lower.includes('ost') || lower.includes('mv') || lower.includes('music video')) {
     return {
       label: `OST · #${episodeNumber}`,
+      shortLabel: `OST #${episodeNumber}`,
       isExtra: true,
+      isPrivate: false,
+      chapterNumber: episodeNumber,
+      partNumber: null,
+      partTotal: null,
       tagColor: 'cyan',
       badgeText: 'Música',
     };
   }
 
-  // 4. Partes de capítulos (ej: Cap. 8 [1/4])
+  // 5. Partes explícitas de capítulos (ej: Cap. 8 [1/4])
   if (partMatch) {
-    const partNum = partMatch[1];
-    const partTotal = partMatch[2] || '4';
+    const partNum = parseInt(partMatch[1], 10);
+    const partTotal = parseInt(partMatch[2] || '4', 10);
     const epNum = detectedEp || episodeNumber;
     return {
-      label: `Cap. ${epNum} [${partNum}/${partTotal}]`,
+      label: `Capítulo ${epNum} · Parte ${partNum}/${partTotal}`,
+      shortLabel: `[${partNum}/${partTotal}]`,
       isExtra: false,
+      isPrivate: false,
+      chapterNumber: epNum,
+      partNumber: partNum,
+      partTotal: partTotal,
     };
   }
 
-  // 5. Solo capítulo
-  if (detectedEp) {
-    return { label: `Capítulo ${detectedEp}`, isExtra: false };
+  // 6. Si no hay parte explícita en título, pero la temporada tiene estructura secuencial de 4 partes (ej: GMMTV)
+  if (totalEpisodesInSeason >= 16 && !detectedEp) {
+    const derivedChapter = Math.floor((episodeNumber - 1) / 4) + 1;
+    const derivedPart = ((episodeNumber - 1) % 4) + 1;
+    return {
+      label: `Capítulo ${derivedChapter} · Parte ${derivedPart}/4`,
+      shortLabel: `[${derivedPart}/4]`,
+      isExtra: false,
+      isPrivate: false,
+      chapterNumber: derivedChapter,
+      partNumber: derivedPart,
+      partTotal: 4,
+    };
   }
 
-  // 6. Si el título está solo en tailandés o caracteres no latinos, limpiar a Episodio legible
+  // 7. Solo capítulo
+  if (detectedEp) {
+    return {
+      label: `Capítulo ${detectedEp}`,
+      shortLabel: `Capítulo ${detectedEp}`,
+      isExtra: false,
+      isPrivate: false,
+      chapterNumber: detectedEp,
+      partNumber: null,
+      partTotal: null,
+    };
+  }
+
+  // 8. Limpieza de títulos repetitivos con el nombre de la serie o solo tailandés
   const isAllThai = /^[\u0E00-\u0E7F\s\W\d]+$/.test(rawTitle);
-  if (isAllThai) {
-    return { label: `Episodio ${episodeNumber}`, isExtra: false };
+  const isRepeatedSeriesTitle =
+    seriesTitle && rawTitle.toLowerCase().includes(seriesTitle.toLowerCase().slice(0, 8));
+
+  if (isAllThai || isRepeatedSeriesTitle) {
+    return {
+      label: `Capítulo ${episodeNumber}`,
+      shortLabel: `Capítulo ${episodeNumber}`,
+      isExtra: false,
+      isPrivate: false,
+      chapterNumber: episodeNumber,
+      partNumber: null,
+      partTotal: null,
+    };
   }
 
   return {
-    label: rawTitle.length > 32 ? `${rawTitle.slice(0, 30)}...` : rawTitle,
+    label: rawTitle.length > 35 ? `${rawTitle.slice(0, 32)}...` : rawTitle,
+    shortLabel: rawTitle.length > 22 ? `${rawTitle.slice(0, 20)}...` : rawTitle,
     isExtra: false,
+    isPrivate: false,
+    chapterNumber: episodeNumber,
+    partNumber: null,
+    partTotal: null,
   };
 }
 
@@ -174,18 +276,22 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
   const isAdmin = isAuthed && session?.user?.role === 'ADMIN';
   const isUserEmbed = series.origin === 'USER_EMBED';
 
-  const flatEpisodes = useMemo(
-    () =>
-      seasons.flatMap((s) =>
-        s.episodes.map((e) => ({
-          ...e,
-          seasonId: s.id,
-          seasonNumber: s.seasonNumber,
-          parsed: parseEpisodeBadge(e.title, e.episodeNumber),
-        }))
-      ),
-    [seasons]
-  );
+  const flatEpisodes = useMemo(() => {
+    const totalCount = seasons.reduce((acc, s) => acc + s.episodes.length, 0);
+    return seasons.flatMap((s) =>
+      s.episodes.map((e) => ({
+        ...e,
+        seasonId: s.id,
+        seasonNumber: s.seasonNumber,
+        parsed: parseEpisodeBadge(
+          e.title,
+          e.episodeNumber,
+          totalCount,
+          series.title
+        ),
+      }))
+    );
+  }, [seasons, series.title]);
 
   const [activeIdx, setActiveIdx] = useState(0);
   const [filterMode, setFilterMode] = useState<'all' | 'episodes' | 'extras'>('all');
@@ -195,6 +301,54 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
   const active = flatEpisodes[activeIdx];
   const hasPrev = activeIdx > 0;
   const hasNext = activeIdx < flatEpisodes.length - 1;
+
+  // Agrupación inteligente por Capítulo
+  const { chapterGroups, extraEpisodes, privateEpisodes } = useMemo(() => {
+    const map = new Map<
+      number,
+      Array<{
+        flatIndex: number;
+        episode: (typeof flatEpisodes)[0];
+      }>
+    >();
+
+    const extras: Array<{
+      flatIndex: number;
+      episode: (typeof flatEpisodes)[0];
+    }> = [];
+
+    const privates: Array<{
+      flatIndex: number;
+      episode: (typeof flatEpisodes)[0];
+    }> = [];
+
+    flatEpisodes.forEach((ep, index) => {
+      if (ep.parsed.isPrivate) {
+        privates.push({ flatIndex: index, episode: ep });
+        return;
+      }
+
+      if (ep.parsed.isExtra) {
+        extras.push({ flatIndex: index, episode: ep });
+        return;
+      }
+
+      const chapter = ep.parsed.chapterNumber;
+      if (!map.has(chapter)) {
+        map.set(chapter, []);
+      }
+      map.get(chapter)!.push({ flatIndex: index, episode: ep });
+    });
+
+    const chapters = Array.from(map.entries())
+      .sort(([a], [b]) => a - b)
+      .map(([chapterNum, items]) => ({
+        chapterNumber: chapterNum,
+        items,
+      }));
+
+    return { chapterGroups: chapters, extraEpisodes: extras, privateEpisodes: privates };
+  }, [flatEpisodes]);
 
   const handleMoveToCatalog = async () => {
     setMovingScope(true);
@@ -219,14 +373,8 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
     return <Empty description={t('verSerie.noEpisodesAvailable')} />;
   }
 
-  const extrasCount = flatEpisodes.filter((e) => e.parsed.isExtra).length;
+  const extrasCount = extraEpisodes.length + privateEpisodes.length;
   const mainEpisodesCount = flatEpisodes.length - extrasCount;
-
-  const displayEpisodes = flatEpisodes.filter((e) => {
-    if (filterMode === 'episodes') return !e.parsed.isExtra;
-    if (filterMode === 'extras') return e.parsed.isExtra;
-    return true;
-  });
 
   return (
     <div className="ver-serie">
@@ -308,15 +456,13 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           platform={active.embedPlatform || 'YouTube'}
           url={active.embedUrl || ''}
           videoId={active.embedVideoId}
-          title={`${series.title} — E${active.episodeNumber}${
-            active.title ? ` · ${active.title}` : ''
-          }`}
+          title={active.title || series.title}
         />
       </div>
 
-      {/* Helper de subtítulos automáticos */}
+      {/* Tip de subtítulos en español */}
       <div className="ver-serie__subtitles-tip">
-        <TranslationOutlined className="ver-serie__subtitles-icon" />
+        <span className="ver-serie__subtitles-icon">💬</span>
         <div className="ver-serie__subtitles-text">
           <strong>Subtítulos en español:</strong> Se solicitan automáticamente si la plataforma oficial los tiene disponibles. Podés cambiar el idioma o ajustar la sincronización desde el botón <strong>[CC]</strong> del reproductor.
         </div>
@@ -354,12 +500,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           {t('verSerie.previousButton')}
         </Button>
         <span className="ver-serie__current-label">
-          {flatEpisodes.length > 1 && (
-            <>
-              T{active.seasonNumber} · E{active.episodeNumber}
-              {active.title ? ` — ${active.title}` : ''}
-            </>
-          )}
+          <strong>T{active.seasonNumber} · {active.parsed.label}</strong>
         </span>
         <Button
           icon={<ArrowRightOutlined />}
@@ -428,7 +569,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         )}
       </div>
 
-      {/* Lista de episodios y filtros */}
+      {/* Lista de episodios agrupada */}
       <div className="ver-serie__episodes">
         <div className="ver-serie__episodes-header">
           <h2>{t('verSerie.episodesTitle')} ({flatEpisodes.length})</h2>
@@ -445,39 +586,102 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           )}
         </div>
 
-        <div className="ver-serie__episode-grid">
-          {displayEpisodes.map((ep) => {
-            const flatIndex = flatEpisodes.findIndex((fe) => fe.id === ep.id);
-            const isActive = flatIndex === activeIdx;
-            const badge = ep.parsed;
+        {/* 1. Capítulos principales organizados */}
+        {filterMode !== 'extras' && (
+          <div className="ver-serie__chapters-container">
+            {chapterGroups.map(({ chapterNumber, items }) => {
+              const isChapterActive = items.some((it) => it.flatIndex === activeIdx);
+              const isMultiPart = items.length > 1;
 
-            return (
-              <button
-                key={ep.id}
-                type="button"
-                className={`ver-serie__episode-btn${
-                  isActive ? ' ver-serie__episode-btn--active' : ''
-                }${badge.isExtra ? ' ver-serie__episode-btn--extra' : ''}`}
-                onClick={() => setActiveIdx(flatIndex)}
-              >
-                <span className="ver-serie__episode-num">
-                  E{ep.episodeNumber}
-                </span>
-                <span className="ver-serie__episode-name" title={ep.title || ''}>
-                  {badge.label}
-                </span>
-                {badge.tagColor && (
-                  <Tag color={badge.tagColor} style={{ marginLeft: 4, marginInlineEnd: 0 }}>
-                    {badge.badgeText}
-                  </Tag>
-                )}
-                {isActive && (
-                  <CheckCircleFilled className="ver-serie__episode-active-icon" />
-                )}
-              </button>
-            );
-          })}
-        </div>
+              return (
+                <div
+                  key={`chap-${chapterNumber}`}
+                  className={`ver-serie__chapter-card${
+                    isChapterActive ? ' ver-serie__chapter-card--active' : ''
+                  }`}
+                >
+                  <div className="ver-serie__chapter-head">
+                    <span className="ver-serie__chapter-title">
+                      <PlayCircleOutlined /> Capítulo {chapterNumber}
+                    </span>
+                  </div>
+
+                  <div className="ver-serie__parts-row">
+                    {items.map(({ flatIndex, episode }) => {
+                      const isActive = flatIndex === activeIdx;
+                      const partLabel = isMultiPart
+                        ? episode.parsed.partNumber
+                          ? `Parte ${episode.parsed.partNumber}/${episode.parsed.partTotal || 4}`
+                          : `Parte ${items.indexOf({ flatIndex, episode }) + 1}`
+                        : episode.parsed.shortLabel || `Ver capítulo`;
+
+                      return (
+                        <button
+                          key={episode.id}
+                          type="button"
+                          className={`ver-serie__part-btn${
+                            isActive ? ' ver-serie__part-btn--active' : ''
+                          }`}
+                          onClick={() => setActiveIdx(flatIndex)}
+                        >
+                          {isActive && <CheckCircleFilled />}
+                          {partLabel}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* 2. Extras y Tráilers */}
+        {filterMode !== 'episodes' && extraEpisodes.length > 0 && (
+          <div className="ver-serie__extras-section">
+            <h3 className="ver-serie__section-subtitle">
+              <VideoCameraOutlined /> Tráilers y Material Adicional
+            </h3>
+            <div className="ver-serie__extras-grid">
+              {extraEpisodes.map(({ flatIndex, episode }) => {
+                const isActive = flatIndex === activeIdx;
+                const badge = episode.parsed;
+
+                return (
+                  <button
+                    key={episode.id}
+                    type="button"
+                    className={`ver-serie__episode-btn${
+                      isActive ? ' ver-serie__episode-btn--active' : ''
+                    } ver-serie__episode-btn--extra`}
+                    onClick={() => setActiveIdx(flatIndex)}
+                  >
+                    <span className="ver-serie__episode-name">
+                      {badge.label}
+                    </span>
+                    {badge.tagColor && (
+                      <Tag color={badge.tagColor} style={{ marginLeft: 4 }}>
+                        {badge.badgeText}
+                      </Tag>
+                    )}
+                    {isActive && (
+                      <CheckCircleFilled className="ver-serie__episode-active-icon" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* 3. Videos Privados no disponibles */}
+        {privateEpisodes.length > 0 && filterMode === 'all' && (
+          <div className="ver-serie__private-notice">
+            <Tag color="default">
+              🔒 {privateEpisodes.length} video(s) privados o no disponibles en YouTube por el canal oficial
+            </Tag>
+          </div>
+        )}
       </div>
     </div>
   );

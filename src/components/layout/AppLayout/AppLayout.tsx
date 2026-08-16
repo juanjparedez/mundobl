@@ -9,6 +9,7 @@ import { StaleVersionNotifier } from '../../common/StaleVersionNotifier/StaleVer
 import { LiveRegion } from '../../common/LiveRegion/LiveRegion';
 import { OfflineIndicator } from '../../common/OfflineIndicator/OfflineIndicator';
 import { CommandK } from '../../common/CommandK/CommandK';
+import { HelpShortcutsModal } from '../../common/HelpShortcutsModal/HelpShortcutsModal';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import './AppLayout.css';
 
@@ -39,6 +40,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         <StaleVersionNotifier />
         <OfflineIndicator />
         <CommandK />
+        <HelpShortcutsModal />
       </Layout>
     </LiveRegion>
   );
