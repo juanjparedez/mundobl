@@ -31,7 +31,7 @@ import {
   UpOutlined,
   AppstoreOutlined,
   UnorderedListOutlined,
-  FontSizeOutlined,
+  SortAscendingOutlined,
   GlobalOutlined,
   RightOutlined,
   FireOutlined,
@@ -1417,7 +1417,7 @@ export function CatalogoClient({
           </Button>
           <Tooltip title={t('catalogo.alphaFilterTooltip')}>
             <Button
-              icon={<FontSizeOutlined />}
+              icon={<SortAscendingOutlined />}
               onClick={() => {
                 setShowAlphaIndex(!showAlphaIndex);
                 if (showAlphaIndex) {
