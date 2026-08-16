@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
+import { logAction } from '@/lib/access-log';
 
 interface RouteContext {
   params: Promise<{ id: string }>;
@@ -193,6 +194,13 @@ export async function POST(request: NextRequest, context: RouteContext) {
       }
     );
 
+    logAction(
+      'UPDATE',
+      request.nextUrl.pathname,
+      'POST',
+      auth.userId,
+      `linked-to:${targetId}`
+    );
     return NextResponse.json({
       ok: true,
       targetCuratedSeriesId: targetId,

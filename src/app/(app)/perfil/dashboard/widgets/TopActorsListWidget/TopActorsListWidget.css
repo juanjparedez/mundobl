@@ -1,3 +1,10 @@
+.mb-top-actors-list__wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 100%;
+}
+
 .mb-top-actors-list {
   list-style: none;
   margin: 0;
@@ -17,14 +24,49 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
   font-size: 12px;
 }
 
 .mb-top-actors-list__name {
   color: var(--text-secondary);
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.mb-top-actors-list__toggle {
+  align-self: flex-start;
+  margin: 0 var(--widget-body-padding) var(--widget-body-padding);
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mb-top-actors-list__toggle:hover {
+  text-decoration: underline;
+}
+
+/* Container query: el widget reacciona a SU ancho real (no al del
+ * viewport). Achicado, se ganan pixeles reduciendo tipografia/gaps en
+ * vez de que el contenido se corte sin adaptarse. */
+@container mb-widget-body (max-width: 200px) {
+  .mb-top-actors-list {
+    gap: 6px;
+  }
+
+  .mb-top-actors-list__row {
+    font-size: 11px;
+  }
+
+  .mb-top-actors-list__bar-track {
+    height: 4px;
+  }
 }
 
 .mb-top-actors-list__count {

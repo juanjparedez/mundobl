@@ -147,3 +147,23 @@
   );
   border-radius: 999px;
 }
+
+/* Container query: el widget reacciona a su propio ancho (no al del
+ * viewport) — icono mas chico y sin descripcion para que el nombre y el
+ * progreso sigan legibles en vez de cortarse. */
+@container mb-widget-body (max-width: 220px) {
+  .overview-achievements__item {
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    padding: 6px 8px;
+  }
+
+  .overview-achievements__icon {
+    width: 24px;
+    height: 24px;
+    font-size: 13px;
+  }
+
+  .overview-achievements__desc {
+    display: none;
+  }
+}

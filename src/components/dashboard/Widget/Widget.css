@@ -144,6 +144,13 @@
    * propio shade genera efecto "paper-in-paper" donde el body parece
    * un panel inset distinto del widget. Single source of background. */
   background: transparent;
+  /* Habilita container queries: cada widget puede reaccionar a SU PROPIO
+   * ancho/alto (el que el usuario le dio arrastrando/redimensionando en
+   * el dashboard), no solo al breakpoint de la pagina completa. El CSS de
+   * cada widget usa `@container mb-widget-body (max-width: Npx) { ... }`
+   * para reflowear su contenido en vez de simplemente clipearlo. */
+  container-type: inline-size;
+  container-name: mb-widget-body;
 }
 
 .mb-widget__body--flush {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-helpers';
 import { prisma } from '@/lib/database';
+import { logAction } from '@/lib/access-log';
 
 export async function PATCH(
   request: NextRequest,
@@ -32,6 +33,7 @@ export async function PATCH(
       },
     });
 
+    logAction('UPDATE', request.nextUrl.pathname, 'PATCH', auth.userId);
     return NextResponse.json(updated);
   } catch (error) {
     console.error('Error updating suggestion:', error);
@@ -60,6 +62,7 @@ export async function DELETE(
       where: { id: suggestionId },
     });
 
+    logAction('DELETE', request.nextUrl.pathname, 'DELETE', auth.userId);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error deleting suggestion:', error);

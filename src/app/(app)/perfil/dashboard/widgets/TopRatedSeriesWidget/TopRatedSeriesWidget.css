@@ -1,3 +1,10 @@
+.mb-top-rated-list__wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 100%;
+}
+
 .mb-top-rated-list {
   list-style: none;
   margin: 0;
@@ -6,6 +13,35 @@
   flex-direction: column;
   gap: 4px;
   counter-reset: rank;
+}
+
+.mb-top-rated-list__toggle {
+  align-self: flex-start;
+  margin: 0 var(--widget-body-padding) var(--widget-body-padding);
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mb-top-rated-list__toggle:hover {
+  text-decoration: underline;
+}
+
+/* Container query: en widgets angostos se oculta el thumbnail chico y las
+ * estrellas para dejar mas lugar al titulo, en vez de que se corte solo. */
+@container mb-widget-body (max-width: 200px) {
+  .mb-top-rated-list__cover {
+    width: 24px;
+    height: 32px;
+  }
+
+  .mb-top-rated-list__stars {
+    display: none;
+  }
 }
 
 .mb-top-rated-list__item {

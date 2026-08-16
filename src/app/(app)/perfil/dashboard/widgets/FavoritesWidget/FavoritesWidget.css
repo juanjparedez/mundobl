@@ -1,3 +1,10 @@
+.mb-favorites-grid__wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 100%;
+}
+
 .mb-favorites-grid {
   list-style: none;
   margin: 0;
@@ -5,6 +12,35 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
   gap: 8px;
+}
+
+.mb-favorites-grid__toggle {
+  align-self: flex-start;
+  margin: 0 var(--widget-body-padding) var(--widget-body-padding);
+  padding: 0;
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.mb-favorites-grid__toggle:hover {
+  text-decoration: underline;
+}
+
+/* Container query: en widgets angostos, columnas mas chicas en vez de
+ * que el auto-fill de arriba deje solo 1 por fila y se vea desperdiciado. */
+@container mb-widget-body (max-width: 220px) {
+  .mb-favorites-grid {
+    grid-template-columns: repeat(auto-fill, minmax(52px, 1fr));
+    gap: 6px;
+  }
+
+  .mb-favorites-grid__title {
+    font-size: 9px;
+  }
 }
 
 .mb-favorites-grid__item {

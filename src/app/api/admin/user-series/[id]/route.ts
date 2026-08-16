@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
+import { logAction } from '@/lib/access-log';
 
 interface RouteContext {
   params: Promise<{ id: string }>;
@@ -50,6 +51,7 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
   }
 
   await prisma.series.delete({ where: { id: seriesId } });
+  logAction('DELETE', request.nextUrl.pathname, 'DELETE', auth.userId);
 
   return NextResponse.json({
     ok: true,

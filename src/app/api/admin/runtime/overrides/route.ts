@@ -5,6 +5,7 @@ import {
   setRuntimeFreezeOverrides,
   type RuntimeFreezeOverridesInput,
 } from '@/lib/runtime-freeze';
+import { logAction } from '@/lib/access-log';
 
 export const runtime = 'nodejs';
 
@@ -76,6 +77,13 @@ export async function PATCH(request: NextRequest) {
   }
 
   setRuntimeFreezeOverrides(updates);
+  logAction(
+    'UPDATE',
+    request.nextUrl.pathname,
+    'PATCH',
+    authResult.userId,
+    Object.keys(updates).join(',')
+  );
 
   return NextResponse.json({
     ok: true,

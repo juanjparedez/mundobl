@@ -85,3 +85,18 @@
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
 }
+
+/* Container query: reacciona al ancho real del widget. */
+@container mb-widget-body (max-width: 200px) {
+  .overview-collections__item {
+    grid-template-columns: 20px minmax(0, 1fr) auto;
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  .overview-collections__icon {
+    width: 20px;
+    height: 20px;
+    font-size: 11px;
+  }
+}
