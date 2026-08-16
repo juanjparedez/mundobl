@@ -43,9 +43,16 @@ const SEARCH_ROUTES = [
   '/admin/universos',
 ];
 
+/** Estas rutas ya tienen su propia búsqueda local real (input funcional
+ *  que filtra la lista en pantalla) — el botón del TopBar que abre el
+ *  buscador global queda redundante y confuso solo en el listado exacto,
+ *  no en sus sub-rutas (que no tienen búsqueda propia). */
+const SEARCH_HIDDEN_EXACT_ROUTES = ['/catalogo', '/ver', '/admin/series'];
+
 function shouldShowSearch(pathname: string | null): boolean {
   if (!pathname) return true;
   if (pathname === '/') return true;
+  if (SEARCH_HIDDEN_EXACT_ROUTES.includes(pathname)) return false;
   return SEARCH_ROUTES.some(
     (r) => pathname === r || pathname.startsWith(`${r}/`)
   );
