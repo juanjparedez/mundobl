@@ -429,6 +429,7 @@ export function ContenidoClient() {
         />
 
         <Table
+          scroll={{ x: 'max-content' }}
           dataSource={filteredItems}
           columns={columns}
           rowKey="id"
