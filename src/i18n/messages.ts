@@ -707,11 +707,13 @@ export type TranslationShape = {
     fieldNationality: string;
     fieldImageUrl: string;
     fieldBiography: string;
+    fieldFunFacts: string;
     hintName: string;
     hintStageName: string;
     hintNationality: string;
     hintImageUrl: string;
     hintBiography: string;
+    hintFunFacts: string;
     deleteTitle: string;
     deleteDescription: string;
     deleteBlockedDescription: string;
@@ -2596,6 +2598,45 @@ export type TranslationShape = {
     cardEpisodesBadge: string;
     cardPlayButton: string;
   };
+  actorProfile: {
+    funFactsTitle: string;
+  };
+  glosario: {
+    heroBadge: string;
+    heroTitle: string;
+    heroSubtitle: string;
+    searchPlaceholder: string;
+    countryAll: string;
+    countryThailand: string;
+    countryKorea: string;
+    countryJapan: string;
+    countryGeneral: string;
+    categoryAll: string;
+    categoryHonorifics: string;
+    categoryRelationships: string;
+    categoryGenreConcepts: string;
+    categoryUniversity: string;
+    categoryFandom: string;
+    viewDictionary: string;
+    viewTrivia: string;
+    meaningLabel: string;
+    examplesLabel: string;
+    commonMistakeLabel: string;
+    emptyTitle: string;
+    emptyDescription: string;
+  };
+  glosarioQuiz: {
+    promptTemplate: string;
+    questionCounter: string;
+    scoreLabel: string;
+    correctFeedback: string;
+    incorrectFeedbackPrefix: string;
+    nextButton: string;
+    finishButton: string;
+    finishTitle: string;
+    playAgainButton: string;
+    bestScoreLabel: string;
+  };
 };
 
 const es: TranslationShape = {
@@ -3351,11 +3392,14 @@ const es: TranslationShape = {
     fieldNationality: 'Nacionalidad',
     fieldImageUrl: 'URL de Imagen',
     fieldBiography: 'Biografia',
+    fieldFunFacts: 'Datos Curiosos',
     hintName: 'Nombre del actor',
     hintStageName: 'Nombre artistico (opcional)',
     hintNationality: 'Ej: Tailandia, Corea del Sur',
     hintImageUrl: 'URL de la foto del actor (opcional)',
     hintBiography: 'Breve biografia del actor (opcional)',
+    hintFunFacts:
+      'Un dato por linea o separados por ";". Se muestran en el perfil publico.',
     deleteTitle: 'Eliminar actor?',
     deleteDescription: 'Estas seguro de eliminar este actor?',
     deleteBlockedDescription:
@@ -5325,6 +5369,47 @@ const es: TranslationShape = {
     cardEpisodesBadge: '{count} videos',
     cardPlayButton: 'Reproducir',
   },
+  actorProfile: {
+    funFactsTitle: 'Datos curiosos',
+  },
+  glosario: {
+    heroBadge: 'Cultura & Traducción Ética',
+    heroTitle: 'Glosario Cultural BL & GL',
+    heroSubtitle:
+      'Los dramas asiáticos tienen códigos culturales únicos. Acá podés consultar el significado real de los honoríficos tailandeses (P’, N’, Khun), coreanos (Oppa, Hyung) y japoneses (Senpai, -kun), términos afectivos (Faen, Ti-lak) y evitar los errores típicos de la traducción automática.',
+    searchPlaceholder: 'Buscar término (ej: P’, Faen, SOTUS, Oppa, Senpai)...',
+    countryAll: 'Todos los países',
+    countryThailand: 'Tailandia',
+    countryKorea: 'Corea del Sur',
+    countryJapan: 'Japón',
+    countryGeneral: 'General / Fandom',
+    categoryAll: 'Todas',
+    categoryHonorifics: 'Honoríficos',
+    categoryRelationships: 'Relaciones & Pareja',
+    categoryGenreConcepts: 'Géneros y Conceptos',
+    categoryUniversity: 'Cultura Universitaria',
+    categoryFandom: 'Fandom',
+    viewDictionary: 'Diccionario',
+    viewTrivia: 'Trivia',
+    meaningLabel: 'Significado:',
+    examplesLabel: 'Ejemplos:',
+    commonMistakeLabel: 'Error de traducción común:',
+    emptyTitle: 'No encontramos términos',
+    emptyDescription:
+      'Probá con otra búsqueda o cambiá los filtros de país/categoría.',
+  },
+  glosarioQuiz: {
+    promptTemplate: '¿Qué significa "{term}"?',
+    questionCounter: 'Pregunta {current} de {total}',
+    scoreLabel: 'Acertaste {score} de {total}',
+    correctFeedback: '¡Correcto!',
+    incorrectFeedbackPrefix: 'Incorrecto. La respuesta correcta era:',
+    nextButton: 'Siguiente',
+    finishButton: 'Finalizar',
+    finishTitle: '¡Trivia completa!',
+    playAgainButton: 'Jugar de nuevo',
+    bestScoreLabel: 'Tu mejor puntaje: {score} de {total}',
+  },
 };
 
 const en: TranslationShape = {
@@ -6071,11 +6156,14 @@ const en: TranslationShape = {
     fieldNationality: 'Nationality',
     fieldImageUrl: 'Image URL',
     fieldBiography: 'Biography',
+    fieldFunFacts: 'Fun Facts',
     hintName: 'Actor name',
     hintStageName: 'Stage name (optional)',
     hintNationality: 'Ex: Thailand, South Korea',
     hintImageUrl: 'Actor photo URL (optional)',
     hintBiography: 'Brief actor biography (optional)',
+    hintFunFacts:
+      'One fact per line or separated by ";". Shown on the public profile.',
     deleteTitle: 'Delete actor?',
     deleteDescription: 'Are you sure you want to delete this actor?',
     deleteBlockedDescription:
@@ -8034,6 +8122,46 @@ const en: TranslationShape = {
       "We couldn't find series with those filters. Try a different country or title.",
     cardEpisodesBadge: '{count} videos',
     cardPlayButton: 'Play',
+  },
+  actorProfile: {
+    funFactsTitle: 'Fun Facts',
+  },
+  glosario: {
+    heroBadge: 'Culture & Ethical Translation',
+    heroTitle: 'BL & GL Cultural Glossary',
+    heroSubtitle:
+      'Asian dramas have unique cultural codes. Here you can look up the real meaning of Thai honorifics (P’, N’, Khun), Korean (Oppa, Hyung) and Japanese (Senpai, -kun) ones, affectionate terms (Faen, Ti-lak), and avoid typical machine-translation mistakes.',
+    searchPlaceholder: 'Search term (e.g: P’, Faen, SOTUS, Oppa, Senpai)...',
+    countryAll: 'All countries',
+    countryThailand: 'Thailand',
+    countryKorea: 'South Korea',
+    countryJapan: 'Japan',
+    countryGeneral: 'General / Fandom',
+    categoryAll: 'All',
+    categoryHonorifics: 'Honorifics',
+    categoryRelationships: 'Relationships & Romance',
+    categoryGenreConcepts: 'Genres & Concepts',
+    categoryUniversity: 'University Culture',
+    categoryFandom: 'Fandom',
+    viewDictionary: 'Dictionary',
+    viewTrivia: 'Trivia',
+    meaningLabel: 'Meaning:',
+    examplesLabel: 'Examples:',
+    commonMistakeLabel: 'Common translation mistake:',
+    emptyTitle: 'No terms found',
+    emptyDescription: 'Try a different search or change the country/category filters.',
+  },
+  glosarioQuiz: {
+    promptTemplate: 'What does "{term}" mean?',
+    questionCounter: 'Question {current} of {total}',
+    scoreLabel: 'You got {score} out of {total}',
+    correctFeedback: 'Correct!',
+    incorrectFeedbackPrefix: 'Incorrect. The right answer was:',
+    nextButton: 'Next',
+    finishButton: 'Finish',
+    finishTitle: 'Trivia complete!',
+    playAgainButton: 'Play again',
+    bestScoreLabel: 'Your best score: {score} out of {total}',
   },
 };
 

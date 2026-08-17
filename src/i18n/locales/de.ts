@@ -716,11 +716,13 @@ const de: TranslationShape = {
     "fieldNationality": "Nationalität",
     "fieldImageUrl": "Bild-URL",
     "fieldBiography": "Biografie",
+    "fieldFunFacts": "Wissenswertes",
     "hintName": "Name des Schauspielers",
     "hintStageName": "Künstlername (optional)",
     "hintNationality": "Bsp.: Thailand, Südkorea",
     "hintImageUrl": "Foto-URL des Schauspielers (optional)",
     "hintBiography": "Kurze Biografie des Schauspielers (optional)",
+    "hintFunFacts": "Ein Fakt pro Zeile oder durch \";\" getrennt. Wird im öffentlichen Profil angezeigt.",
     "deleteTitle": "Schauspieler löschen?",
     "deleteDescription": "Möchten Sie diesen Schauspieler wirklich löschen?",
     "deleteBlockedDescription": "Dieser Schauspieler hat {count} Teilnahmen. Zuerst die Verknüpfung aufheben.",
@@ -2604,6 +2606,45 @@ const de: TranslationShape = {
     "emptyDescription": "Wir konnten keine Serien mit diesen Filtern finden. Versuchen Sie ein anderes Land oder einen anderen Titel.",
     "cardEpisodesBadge": "{count} Videos",
     "cardPlayButton": "Abspielen"
+  },
+  "actorProfile": {
+    "funFactsTitle": "Wissenswertes"
+  },
+  "glosario": {
+    "heroBadge": "Kultur & Ethische Übersetzung",
+    "heroTitle": "BL & GL Kultur-Glossar",
+    "heroSubtitle": "Asiatische Dramen haben einzigartige kulturelle Codes. Hier können Sie die wahre Bedeutung thailändischer Anreden (P', N', Khun), koreanischer (Oppa, Hyung) und japanischer (Senpai, -kun), liebevoller Begriffe (Faen, Ti-lak) nachschlagen und typische maschinelle Übersetzungsfehler vermeiden.",
+    "searchPlaceholder": "Suchbegriff (z.B.: P', Faen, SOTUS, Oppa, Senpai)...",
+    "countryAll": "Alle Länder",
+    "countryThailand": "Thailand",
+    "countryKorea": "Südkorea",
+    "countryJapan": "Japan",
+    "countryGeneral": "Allgemein / Fandom",
+    "categoryAll": "Alle",
+    "categoryHonorifics": "Anreden",
+    "categoryRelationships": "Beziehungen & Romantik",
+    "categoryGenreConcepts": "Genres & Konzepte",
+    "categoryUniversity": "Universitätskultur",
+    "categoryFandom": "Fandom",
+    "viewDictionary": "Wörterbuch",
+    "viewTrivia": "Trivia",
+    "meaningLabel": "Bedeutung:",
+    "examplesLabel": "Beispiele:",
+    "commonMistakeLabel": "Häufiger Übersetzungsfehler:",
+    "emptyTitle": "Keine Begriffe gefunden",
+    "emptyDescription": "Versuchen Sie eine andere Suche oder ändern Sie die Länder-/Kategoriefilter."
+  },
+  "glosarioQuiz": {
+    "promptTemplate": "Was bedeutet „{term}“?",
+    "questionCounter": "Frage {current} von {total}",
+    "scoreLabel": "Sie haben {score} von {total} erreicht",
+    "correctFeedback": "Richtig!",
+    "incorrectFeedbackPrefix": "Falsch. Die richtige Antwort war:",
+    "nextButton": "Weiter",
+    "finishButton": "Beenden",
+    "finishTitle": "Quiz abgeschlossen!",
+    "playAgainButton": "Erneut spielen",
+    "bestScoreLabel": "Ihre beste Punktzahl: {score} von {total}"
   }
 } as unknown as TranslationShape;
 

@@ -68,6 +68,13 @@
   border-radius: var(--border-radius-base);
 }
 
+.glosario-filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+}
+
 /* ─── Grid de Tarjetas ───────────────────────────────────────────── */
 .glosario-grid {
   display: grid;
@@ -165,4 +172,38 @@
 
 .glosario-card__mistake .anticon {
   color: var(--error-color);
+}
+
+@media (max-width: 768px) {
+  .glosario-container {
+    padding: var(--spacing-md) var(--spacing-sm);
+    gap: var(--spacing-lg);
+  }
+
+  .glosario-hero {
+    padding: var(--spacing-lg) var(--spacing-sm);
+  }
+
+  .glosario-hero__title {
+    font-size: 1.6rem;
+  }
+
+  .glosario-hero__subtitle {
+    font-size: 0.9rem;
+  }
+
+  .glosario-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .glosario-hero__badge {
+    font-size: 0.72rem;
+  }
+
+  .glosario-filter-group .ant-radio-button-wrapper {
+    font-size: 0.78rem;
+    padding-inline: 8px;
+  }
 }

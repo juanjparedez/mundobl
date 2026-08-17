@@ -183,6 +183,50 @@ export async function getWatchableSeriesByIdAdmin(id: number) {
   });
 }
 
+/**
+ * Pool liviano para la trivia de series de /juegos: solo los campos que
+ * hacen falta para armar preguntas (país / año / protagonista / género),
+ * sin campos Date (evita el gotcha de unstable_cache serializando Date a
+ * string en un cache HIT — no aplica acá porque no cacheamos esto, pero
+ * mantenemos el shape libre de Date de entrada para no heredar el riesgo
+ * si en el futuro se agrega cache). Cada tipo de pregunta se genera en el
+ * cliente solo si la serie tiene ese dato — no todas tienen protagonista
+ * o género cargado.
+ */
+export async function getTriviaSeriesPool() {
+  const series = await prisma.series.findMany({
+    where: {
+      visibility: 'VISIBLE',
+      origin: 'CURATED',
+      catalogScope: 'PERSONAL',
+    },
+    select: {
+      id: true,
+      title: true,
+      year: true,
+      country: { select: { name: true } },
+      actors: {
+        where: { isMain: true },
+        take: 1,
+        select: { actor: { select: { name: true } } },
+      },
+      genres: {
+        take: 1,
+        select: { genre: { select: { name: true } } },
+      },
+    },
+  });
+
+  return series.map((s) => ({
+    id: s.id,
+    title: s.title,
+    year: s.year,
+    countryName: s.country?.name ?? null,
+    mainActorName: s.actors[0]?.actor.name ?? null,
+    genreName: s.genres[0]?.genre.name ?? null,
+  }));
+}
+
 const watchableInclude = Prisma.validator<Prisma.SeriesInclude>()({
   country: true,
   universe: true,
@@ -666,6 +710,27 @@ export async function getAllActorsWithCount() {
           },
         },
       },
+    },
+    orderBy: { name: 'asc' },
+  });
+}
+
+/**
+ * Actores con al menos un "dato curioso" cargado por un admin — pool para
+ * la sección Curiosidades de Actores en /juegos. Puede venir vacío (hoy:
+ * 0/1092 actores tienen funFacts) — el caller debe degradar amablemente,
+ * no asumir que siempre hay contenido.
+ */
+export async function getActorsWithFunFacts() {
+  return await prisma.actor.findMany({
+    where: { funFacts: { isEmpty: false } },
+    select: {
+      id: true,
+      name: true,
+      stageName: true,
+      imageUrl: true,
+      nationality: true,
+      funFacts: true,
     },
     orderBy: { name: 'asc' },
   });

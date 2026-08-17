@@ -716,11 +716,13 @@ const ja: TranslationShape = {
     "fieldNationality": "国籍",
     "fieldImageUrl": "画像URL",
     "fieldBiography": "略歴",
+    "fieldFunFacts": "豆知識",
     "hintName": "俳優名",
     "hintStageName": "芸名（任意）",
     "hintNationality": "例：タイ、韓国",
     "hintImageUrl": "俳優写真URL（任意）",
     "hintBiography": "俳優の簡単な略歴（任意）",
+    "hintFunFacts": "1行に1つ、または「;」で区切って入力してください。公開プロフィールに表示されます。",
     "deleteTitle": "俳優を削除しますか？",
     "deleteDescription": "この俳優を削除してもよろしいですか？",
     "deleteBlockedDescription": "この俳優は{count}件の出演があります。まずリンクを解除してください。",
@@ -2604,6 +2606,45 @@ const ja: TranslationShape = {
     "emptyDescription": "そのフィルターに一致するシリーズは見つかりませんでした。別の国またはタイトルをお試しください。",
     "cardEpisodesBadge": "{count}本の動画",
     "cardPlayButton": "再生"
+  },
+  "actorProfile": {
+    "funFactsTitle": "豆知識"
+  },
+  "glosario": {
+    "heroBadge": "文化と倫理的な翻訳",
+    "heroTitle": "BL・GL文化用語集",
+    "heroSubtitle": "アジアドラマには独自の文化的コードがあります。ここでは、タイの敬称（P'、N'、Khun）、韓国の敬称（Oppa、Hyung）、日本の敬称（Senpai、-kun）、愛情表現（Faen、Ti-lak）の本当の意味を調べ、典型的な機械翻訳の間違いを避けることができます。",
+    "searchPlaceholder": "検索語（例：P'、Faen、SOTUS、Oppa、Senpai）...",
+    "countryAll": "すべての国",
+    "countryThailand": "タイ",
+    "countryKorea": "韓国",
+    "countryJapan": "日本",
+    "countryGeneral": "一般 / ファンダム",
+    "categoryAll": "すべて",
+    "categoryHonorifics": "敬称",
+    "categoryRelationships": "人間関係とロマンス",
+    "categoryGenreConcepts": "ジャンルとコンセプト",
+    "categoryUniversity": "大学文化",
+    "categoryFandom": "ファンダム",
+    "viewDictionary": "辞書",
+    "viewTrivia": "トリビア",
+    "meaningLabel": "意味:",
+    "examplesLabel": "例:",
+    "commonMistakeLabel": "よくある翻訳ミス:",
+    "emptyTitle": "用語が見つかりません",
+    "emptyDescription": "別の検索を試すか、国/カテゴリフィルターを変更してください。"
+  },
+  "glosarioQuiz": {
+    "promptTemplate": "「{term}」の意味は？",
+    "questionCounter": "{total}問中{current}問目",
+    "scoreLabel": "{total}問中{score}問正解",
+    "correctFeedback": "正解！",
+    "incorrectFeedbackPrefix": "不正解。正解は:",
+    "nextButton": "次へ",
+    "finishButton": "終了",
+    "finishTitle": "トリビア完了！",
+    "playAgainButton": "もう一度プレイ",
+    "bestScoreLabel": "あなたの最高スコア: {total}問中{score}問"
   }
 } as unknown as TranslationShape;
 

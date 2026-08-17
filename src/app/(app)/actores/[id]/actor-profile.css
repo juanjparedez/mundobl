@@ -56,6 +56,33 @@
   line-height: 1.7;
 }
 
+.actor-profile__fun-facts {
+  margin-top: var(--spacing-lg);
+}
+
+.actor-profile__fun-facts-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.actor-profile__fun-facts-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.actor-profile__fun-fact-icon {
+  flex-shrink: 0;
+  margin-top: 4px;
+  color: var(--primary-color);
+}
+
 .actor-profile__filmography {
   margin-top: var(--spacing-lg);
 }

@@ -716,11 +716,13 @@ const zhCN: TranslationShape = {
     "fieldNationality": "国籍",
     "fieldImageUrl": "图片网址",
     "fieldBiography": "简介",
+    "fieldFunFacts": "趣闻",
     "hintName": "演员姓名",
     "hintStageName": "艺名（可选）",
     "hintNationality": "例如：泰国，韩国",
     "hintImageUrl": "演员照片网址（可选）",
     "hintBiography": "演员简介（可选）",
+    "hintFunFacts": "每行一个趣闻或用分号分隔。将显示在公开资料中。",
     "deleteTitle": "删除演员？",
     "deleteDescription": "您确定要删除此演员吗？",
     "deleteBlockedDescription": "此演员有 {count} 次参演。请先解除关联。",
@@ -2604,6 +2606,45 @@ const zhCN: TranslationShape = {
     "emptyDescription": "我们找不到符合这些筛选条件的剧集。请尝试其他国家或标题。",
     "cardEpisodesBadge": "{count} 个视频",
     "cardPlayButton": "播放"
+  },
+  "actorProfile": {
+    "funFactsTitle": "趣闻"
+  },
+  "glosario": {
+    "heroBadge": "文化与道德翻译",
+    "heroTitle": "BL与GL文化词汇表",
+    "heroSubtitle": "亚洲剧集拥有独特的文化代码。在这里，您可以查找泰语敬语（P'、N'、Khun）、韩语敬语（Oppa、Hyung）和日语敬语（Senpai、-kun）的真实含义，以及爱称（Faen、Ti-lak），避免常见的机器翻译错误。",
+    "searchPlaceholder": "搜索词（例如：P'、Faen、SOTUS、Oppa、Senpai）...",
+    "countryAll": "所有国家",
+    "countryThailand": "泰国",
+    "countryKorea": "韩国",
+    "countryJapan": "日本",
+    "countryGeneral": "通用/粉丝圈",
+    "categoryAll": "全部",
+    "categoryHonorifics": "敬语",
+    "categoryRelationships": "关系与浪漫",
+    "categoryGenreConcepts": "类型与概念",
+    "categoryUniversity": "大学文化",
+    "categoryFandom": "粉丝圈",
+    "viewDictionary": "词典",
+    "viewTrivia": "琐事",
+    "meaningLabel": "含义：",
+    "examplesLabel": "示例：",
+    "commonMistakeLabel": "常见翻译错误：",
+    "emptyTitle": "未找到词条",
+    "emptyDescription": "尝试不同的搜索或更改国家/类别筛选器。"
+  },
+  "glosarioQuiz": {
+    "promptTemplate": "“{term}”是什么意思？",
+    "questionCounter": "第 {current} 题，共 {total} 题",
+    "scoreLabel": "您得了 {score} 分，共 {total} 分",
+    "correctFeedback": "正确！",
+    "incorrectFeedbackPrefix": "不正确。正确答案是：",
+    "nextButton": "下一题",
+    "finishButton": "完成",
+    "finishTitle": "问答完成！",
+    "playAgainButton": "再玩一次",
+    "bestScoreLabel": "您的最佳分数：{score} 分，共 {total} 分"
   }
 } as unknown as TranslationShape;
 
