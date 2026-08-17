@@ -140,6 +140,10 @@ export default async function CatalogoPage() {
       productionCompany: productionCompanyBySerie.get(serie.id) ?? null,
       originalLanguage: languageBySerie.get(serie.id) ?? null,
       platforms: platformsBySerie.get(serie.id) ?? [],
+      // Fecha de alta en el catalogo (no confundir con `anio`, el año de
+      // estreno) — usado por la categoria "Recien agregadas" del modo
+      // carrusel.
+      createdAt: serie.createdAt.toISOString(),
     };
   });
 

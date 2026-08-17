@@ -1378,6 +1378,24 @@ export type TranslationShape = {
     sortYearOld: string;
     sortRatingDesc: string;
   };
+  catalogCarousel: {
+    viewToggleLabel: string;
+    configureButton: string;
+    drawerTitle: string;
+    drawerHint: string;
+    resetButton: string;
+    dragHandleAria: string;
+    scrollPrev: string;
+    scrollNext: string;
+    categoryRecentlyAdded: string;
+    categoryTopRated: string;
+    categoryFranchises: string;
+    categoryThailand: string;
+    categoryKorea: string;
+    categoryJapan: string;
+    categoryMovies: string;
+    categoryFavorites: string;
+  };
   landing: {
     subtitle: string;
     exploreCatalog: string;
@@ -3980,6 +3998,25 @@ const es: TranslationShape = {
     sortYearNew: 'Más nuevo',
     sortYearOld: 'Más antiguo',
     sortRatingDesc: 'Mejor valorado',
+  },
+  catalogCarousel: {
+    viewToggleLabel: 'Vista carrusel',
+    configureButton: 'Configurar categorías',
+    drawerTitle: 'Categorías del carrusel',
+    drawerHint:
+      'Elegí qué categorías ver y en qué orden. Arrastrá para reordenar.',
+    resetButton: 'Restablecer',
+    dragHandleAria: 'Arrastrar para reordenar',
+    scrollPrev: 'Anterior',
+    scrollNext: 'Siguiente',
+    categoryRecentlyAdded: 'Recién agregadas',
+    categoryTopRated: 'Mejor valoradas',
+    categoryFranchises: 'Sagas y universos',
+    categoryThailand: 'Tailandia',
+    categoryKorea: 'Corea del Sur',
+    categoryJapan: 'Japón',
+    categoryMovies: 'Películas',
+    categoryFavorites: 'Favoritas',
   },
   landing: {
     subtitle: 'Tu catálogo personal de series BL.',
@@ -6629,6 +6666,25 @@ const en: TranslationShape = {
     sortYearNew: 'Newest first',
     sortYearOld: 'Oldest first',
     sortRatingDesc: 'Best rated',
+  },
+  catalogCarousel: {
+    viewToggleLabel: 'Carousel view',
+    configureButton: 'Configure categories',
+    drawerTitle: 'Carousel categories',
+    drawerHint:
+      'Choose which categories to show and in what order. Drag to reorder.',
+    resetButton: 'Reset',
+    dragHandleAria: 'Drag to reorder',
+    scrollPrev: 'Previous',
+    scrollNext: 'Next',
+    categoryRecentlyAdded: 'Recently added',
+    categoryTopRated: 'Top rated',
+    categoryFranchises: 'Franchises',
+    categoryThailand: 'Thailand',
+    categoryKorea: 'South Korea',
+    categoryJapan: 'Japan',
+    categoryMovies: 'Movies',
+    categoryFavorites: 'Favorites',
   },
   landing: {
     subtitle: 'Your personal BL series catalog.',
