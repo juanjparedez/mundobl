@@ -54,8 +54,9 @@ import { withViewTransition } from '@/lib/view-transitions';
 import type { SerieData, UniverseGroup, CatalogItem } from './catalogTypes';
 import { groupIntoCatalogItems } from './catalogGrouping';
 import { CatalogCarouselView } from './carousel/CatalogCarouselView/CatalogCarouselView';
-import { CarouselConfigDrawer } from './carousel/CarouselConfigDrawer/CarouselConfigDrawer';
-import { useCarouselPrefs } from './carousel/useCarouselPrefs';
+import { ReorderConfigDrawer } from '@/components/carousel/ReorderConfigDrawer/ReorderConfigDrawer';
+import { useReorderablePrefs } from '@/components/carousel/useReorderablePrefs';
+import { CATALOG_CAROUSEL_CATEGORIES } from './carousel/catalogCarouselCategories';
 
 const { Option } = Select;
 
@@ -67,6 +68,9 @@ interface CatalogoClientProps {
 const PAGE_SIZE_OPTIONS = [24, 48, 96];
 const DEFAULT_PAGE_SIZE = 48;
 const ALPHABET = '#ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+const CATALOG_CAROUSEL_CATEGORY_IDS = CATALOG_CAROUSEL_CATEGORIES.map(
+  (c) => c.id
+);
 
 const getGradientByType = (tipo: string): string => {
   const gradients: Record<string, string> = {
@@ -222,7 +226,10 @@ export function CatalogoClient({
     return 'grid';
   });
   const [carouselConfigOpen, setCarouselConfigOpen] = useState(false);
-  const carouselPrefs = useCarouselPrefs();
+  const carouselPrefs = useReorderablePrefs(
+    'catalog-carousel-prefs',
+    CATALOG_CAROUSEL_CATEGORY_IDS
+  );
   const [sortBy, setSortBy] = useState<SortKey>(() => {
     if (typeof window === 'undefined') return 'az';
     const raw = window.localStorage.getItem('catalog-sort');
@@ -1825,14 +1832,22 @@ export function CatalogoClient({
         />
       )}
 
-      <CarouselConfigDrawer
+      <ReorderConfigDrawer
         open={carouselConfigOpen}
         onClose={() => setCarouselConfigOpen(false)}
+        items={CATALOG_CAROUSEL_CATEGORIES.map((c) => ({
+          id: c.id,
+          label: t(c.labelKey),
+        }))}
         order={carouselPrefs.order}
         hidden={carouselPrefs.hidden}
         onReorder={carouselPrefs.reorder}
         onToggleHidden={carouselPrefs.toggleHidden}
         onReset={carouselPrefs.reset}
+        title={t('catalogCarousel.drawerTitle')}
+        hint={t('catalogCarousel.drawerHint')}
+        resetLabel={t('catalogCarousel.resetButton')}
+        dragHandleAria={t('catalogCarousel.dragHandleAria')}
       />
     </>
   );

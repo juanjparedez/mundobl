@@ -2552,6 +2552,50 @@ export type TranslationShape = {
     awardsTitle: string;
     featuredWorksTitle: string;
   };
+  ver: {
+    searchPlaceholder: string;
+    searchShowTooltip: string;
+    searchHideTooltip: string;
+    countryPlaceholder: string;
+    platformPlaceholder: string;
+    onlyCuratedLabel: string;
+    viewStreaming: string;
+    viewGrid: string;
+    contributeButton: string;
+    deleteSuccess: string;
+    deleteError: string;
+    deleteConfirmTitle: string;
+    deleteConfirmDescription: string;
+    deleteConfirmOk: string;
+    deleteConfirmCancel: string;
+    deleteAriaLabel: string;
+    heroSpotlightBadge: string;
+    heroYoutubeTag: string;
+    heroVimeoTag: string;
+    heroEpisodesBadge: string;
+    heroPlayButton: string;
+    heroInfoButton: string;
+    heroCollapseTooltip: string;
+    heroExpandTooltip: string;
+    configureButton: string;
+    drawerTitle: string;
+    drawerHint: string;
+    resetButton: string;
+    dragHandleAria: string;
+    scrollPrev: string;
+    scrollNext: string;
+    categoryRecentlyAdded: string;
+    categoryThailand: string;
+    categoryKorea: string;
+    categoryCommunity: string;
+    categoryIndieVimeo: string;
+    resultsTitle: string;
+    catalogTitle: string;
+    clearFilters: string;
+    emptyDescription: string;
+    cardEpisodesBadge: string;
+    cardPlayButton: string;
+  };
 };
 
 const es: TranslationShape = {
@@ -5234,6 +5278,53 @@ const es: TranslationShape = {
     awardsTitle: 'Premios',
     featuredWorksTitle: 'Obras destacadas',
   },
+  ver: {
+    searchPlaceholder: 'Buscar series, productoras o títulos oficiales...',
+    searchShowTooltip: 'Mostrar buscador',
+    searchHideTooltip: 'Ocultar buscador',
+    countryPlaceholder: '🌍 Todos los países',
+    platformPlaceholder: '🎬 Plataforma',
+    onlyCuratedLabel: 'Solo curadas',
+    viewStreaming: 'Carruseles',
+    viewGrid: 'Rejilla',
+    contributeButton: 'Aportar Serie',
+    deleteSuccess: 'Serie eliminada',
+    deleteError: 'Error al eliminar la serie',
+    deleteConfirmTitle: '¿Eliminar serie?',
+    deleteConfirmDescription:
+      'Se borrará la serie y todos sus episodios embebidos.',
+    deleteConfirmOk: 'Sí, eliminar',
+    deleteConfirmCancel: 'Cancelar',
+    deleteAriaLabel: 'Eliminar serie',
+    heroSpotlightBadge: 'Serie Destacada de la Semana',
+    heroYoutubeTag: 'Emisión Oficial YouTube',
+    heroVimeoTag: 'Vimeo On Demand',
+    heroEpisodesBadge: '{count} Episodios Oficiales',
+    heroPlayButton: 'Reproducir Ahora',
+    heroInfoButton: 'Ficha & Reparto',
+    heroCollapseTooltip: 'Minimizar destacado',
+    heroExpandTooltip: 'Mostrar destacado',
+    configureButton: 'Configurar categorías',
+    drawerTitle: 'Categorías del carrusel',
+    drawerHint:
+      'Elegí qué categorías ver y en qué orden. Arrastrá para reordenar.',
+    resetButton: 'Restablecer',
+    dragHandleAria: 'Arrastrar para reordenar',
+    scrollPrev: 'Anterior',
+    scrollNext: 'Siguiente',
+    categoryRecentlyAdded: 'Recién agregadas',
+    categoryThailand: 'Tailandia',
+    categoryKorea: 'Corea del Sur',
+    categoryCommunity: 'Aportadas por la comunidad',
+    categoryIndieVimeo: 'Vimeo e independientes',
+    resultsTitle: 'Resultados de Búsqueda',
+    catalogTitle: 'Catálogo Completo para Ver',
+    clearFilters: 'Limpiar filtros',
+    emptyDescription:
+      'No encontramos series con esos filtros. Probá buscando por otro país o título.',
+    cardEpisodesBadge: '{count} videos',
+    cardPlayButton: 'Reproducir',
+  },
 };
 
 const en: TranslationShape = {
@@ -7896,6 +7987,53 @@ const en: TranslationShape = {
     birthYear: 'b. {year}',
     awardsTitle: 'Awards',
     featuredWorksTitle: 'Featured works',
+  },
+  ver: {
+    searchPlaceholder: 'Search series, studios or official titles...',
+    searchShowTooltip: 'Show search',
+    searchHideTooltip: 'Hide search',
+    countryPlaceholder: '🌍 All countries',
+    platformPlaceholder: '🎬 Platform',
+    onlyCuratedLabel: 'Curated only',
+    viewStreaming: 'Carousels',
+    viewGrid: 'Grid',
+    contributeButton: 'Contribute Series',
+    deleteSuccess: 'Series deleted',
+    deleteError: 'Error deleting series',
+    deleteConfirmTitle: 'Delete series?',
+    deleteConfirmDescription:
+      'The series and all its embedded episodes will be deleted.',
+    deleteConfirmOk: 'Yes, delete',
+    deleteConfirmCancel: 'Cancel',
+    deleteAriaLabel: 'Delete series',
+    heroSpotlightBadge: 'Series of the Week',
+    heroYoutubeTag: 'Official YouTube Release',
+    heroVimeoTag: 'Vimeo On Demand',
+    heroEpisodesBadge: '{count} Official Episodes',
+    heroPlayButton: 'Play Now',
+    heroInfoButton: 'Details & Cast',
+    heroCollapseTooltip: 'Minimize featured',
+    heroExpandTooltip: 'Show featured',
+    configureButton: 'Configure categories',
+    drawerTitle: 'Carousel categories',
+    drawerHint:
+      'Choose which categories to show and in what order. Drag to reorder.',
+    resetButton: 'Reset',
+    dragHandleAria: 'Drag to reorder',
+    scrollPrev: 'Previous',
+    scrollNext: 'Next',
+    categoryRecentlyAdded: 'Recently added',
+    categoryThailand: 'Thailand',
+    categoryKorea: 'South Korea',
+    categoryCommunity: 'Community contributed',
+    categoryIndieVimeo: 'Vimeo & independent',
+    resultsTitle: 'Search Results',
+    catalogTitle: 'Full Catalog to Watch',
+    clearFilters: 'Clear filters',
+    emptyDescription:
+      "We couldn't find series with those filters. Try a different country or title.",
+    cardEpisodesBadge: '{count} videos',
+    cardPlayButton: 'Play',
   },
 };
 

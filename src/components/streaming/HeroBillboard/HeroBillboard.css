@@ -19,6 +19,52 @@
   }
 }
 
+/* ─── Tira colapsada ─────────────────────────────────────────────── */
+.hero-billboard--collapsed {
+  aspect-ratio: unset;
+  min-height: 0;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px var(--spacing-md);
+  gap: var(--spacing-md);
+  background: var(--bg-elevated);
+}
+
+.hero-billboard__strip-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.hero-billboard__strip-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.hero-billboard__strip-play-btn {
+  color: var(--primary-color) !important;
+}
+
+.hero-billboard__collapse-btn {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  z-index: 3;
+  background: rgba(0, 0, 0, 0.35) !important;
+  color: #fff !important;
+  border: none !important;
+  backdrop-filter: blur(4px);
+}
+
+.hero-billboard__collapse-btn:hover {
+  background: rgba(0, 0, 0, 0.55) !important;
+}
+
 .hero-billboard__backdrop-wrap {
   position: absolute;
   inset: 0;

@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import { Drawer, Switch, Button } from 'antd';
 import { ReloadOutlined, HolderOutlined } from '@ant-design/icons';
 import {
@@ -19,23 +20,28 @@ import {
   sortableKeyboardCoordinates,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useLocale } from '@/lib/providers/LocaleProvider';
-import { CATALOG_CAROUSEL_CATEGORIES } from '../catalogCarouselCategories';
-import './CarouselConfigDrawer.css';
+import './ReorderConfigDrawer.css';
 
-interface CarouselConfigDrawerProps {
+export interface ReorderConfigDrawerProps {
   open: boolean;
   onClose: () => void;
+  /** Items en su orden de pool original — el caller ya resuelve el label
+   *  (t() la clave correspondiente); este componente no sabe de i18n. */
+  items: Array<{ id: string; label: ReactNode }>;
   order: string[];
   hidden: Set<string>;
   onReorder: (order: string[]) => void;
   onToggleHidden: (id: string) => void;
   onReset: () => void;
+  title: ReactNode;
+  hint: ReactNode;
+  resetLabel: ReactNode;
+  dragHandleAria: string;
 }
 
 interface SortableRowProps {
   id: string;
-  label: string;
+  label: ReactNode;
   visible: boolean;
   dragHandleAria: string;
   onToggle: () => void;
@@ -63,43 +69,49 @@ function SortableRow({
   };
 
   return (
-    <li ref={setNodeRef} style={style} className="carousel-config-drawer__item">
+    <li ref={setNodeRef} style={style} className="reorder-config-drawer__item">
       <span
-        className="carousel-config-drawer__handle"
+        className="reorder-config-drawer__handle"
         aria-label={dragHandleAria}
         {...attributes}
         {...listeners}
       >
         <HolderOutlined />
       </span>
-      <span className="carousel-config-drawer__label">{label}</span>
+      <span className="reorder-config-drawer__label">{label}</span>
       <Switch size="small" checked={visible} onChange={onToggle} />
     </li>
   );
 }
 
-/** Panel lateral para reordenar/ocultar las categorias del carrusel de
- *  /catalogo — mismo patron que CustomizeDrawer (perfil), con drag
- *  handle por fila (@dnd-kit) para el reordenamiento. */
-export function CarouselConfigDrawer({
+/** Panel lateral generico para reordenar/ocultar un set de items (drag
+ *  handle por fila via @dnd-kit + Switch de visibilidad + reset) —
+ *  mismo patron que CustomizeDrawer (perfil), generalizado para que lo
+ *  use cualquier feature con un pool de items configurable (hoy: el
+ *  carrusel de /catalogo y el de /ver, cada uno con su propio
+ *  storageKey/pool via useReorderablePrefs). No conoce nada de la
+ *  forma de los items ni de i18n — todo texto llega resuelto por props. */
+export function ReorderConfigDrawer({
   open,
   onClose,
+  items,
   order,
   hidden,
   onReorder,
   onToggleHidden,
   onReset,
-}: CarouselConfigDrawerProps) {
-  const { t } = useLocale();
+  title,
+  hint,
+  resetLabel,
+  dragHandleAria,
+}: ReorderConfigDrawerProps) {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
-  const labelById = new Map(
-    CATALOG_CAROUSEL_CATEGORIES.map((c) => [c.id, t(c.labelKey)])
-  );
+  const labelById = new Map(items.map((it) => [it.id, it.label]));
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -112,16 +124,14 @@ export function CarouselConfigDrawer({
 
   return (
     <Drawer
-      title={t('catalogCarousel.drawerTitle')}
+      title={title}
       placement="right"
       open={open}
       onClose={onClose}
       styles={{ wrapper: { width: 360 } }}
-      className="carousel-config-drawer"
+      className="reorder-config-drawer"
     >
-      <p className="carousel-config-drawer__hint">
-        {t('catalogCarousel.drawerHint')}
-      </p>
+      <p className="reorder-config-drawer__hint">{hint}</p>
 
       <DndContext
         sensors={sensors}
@@ -129,14 +139,14 @@ export function CarouselConfigDrawer({
         onDragEnd={handleDragEnd}
       >
         <SortableContext items={order} strategy={verticalListSortingStrategy}>
-          <ul className="carousel-config-drawer__list">
+          <ul className="reorder-config-drawer__list">
             {order.map((id) => (
               <SortableRow
                 key={id}
                 id={id}
                 label={labelById.get(id) ?? id}
                 visible={!hidden.has(id)}
-                dragHandleAria={t('catalogCarousel.dragHandleAria')}
+                dragHandleAria={dragHandleAria}
                 onToggle={() => onToggleHidden(id)}
               />
             ))}
@@ -144,9 +154,9 @@ export function CarouselConfigDrawer({
         </SortableContext>
       </DndContext>
 
-      <div className="carousel-config-drawer__footer">
+      <div className="reorder-config-drawer__footer">
         <Button icon={<ReloadOutlined />} onClick={onReset} size="small" block>
-          {t('catalogCarousel.resetButton')}
+          {resetLabel}
         </Button>
       </div>
     </Drawer>
