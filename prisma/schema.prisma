@@ -80,6 +80,7 @@ model User {
   submittedSeries         Series[]                @relation("UserSubmittedSeries")
   seriesSuggestions       SeriesSuggestion[]
   announcements           Announcement[]
+  announcementRecipients  AnnouncementRecipient[]
 }
 
 // Persistencia de layouts del dashboard modular (drag/resize por widget).
@@ -1150,6 +1151,7 @@ enum AnnouncementAudience {
   EVERYONE // Todos, incluye visitantes anonimos
   MEMBERS // Solo usuarios logueados
   NOTIFICATIONS_ENABLED // Logueados con NotificationPrefs.pushEnabled
+  SPECIFIC_USERS // Solo los usuarios listados en AnnouncementRecipient
 }
 
 enum AnnouncementTone {
@@ -1159,12 +1161,33 @@ enum AnnouncementTone {
   PROMO
 }
 
+// Donde/como aparece el anuncio. BANNER: franja arriba del contenido.
+// MODAL: dialogo que se abre solo al entrar a la pagina. TOAST: card chico
+// fixed en la esquina. Los 3 comparten el mismo render de contenido
+// (AnnouncementContent) — agregar una superficie nueva no implica reescribir
+// el markdown/CTA, solo un wrapper.
+enum AnnouncementSurface {
+  BANNER
+  MODAL
+  TOAST
+}
+
+// Preset de layout dentro de una superficie (icono default, si el CTA se ve
+// como boton o como link). No cambia los datos, solo como se organizan.
+enum AnnouncementTemplate {
+  SIMPLE
+  FEATURE
+  MAINTENANCE
+}
+
 model Announcement {
   id          Int                  @id @default(autoincrement())
   title       String
   body        String // Markdown, redactado via editor WYSIWYG
   tone        AnnouncementTone     @default(INFO)
   audience    AnnouncementAudience @default(EVERYONE)
+  surface     AnnouncementSurface  @default(BANNER)
+  template    AnnouncementTemplate @default(SIMPLE)
   // Page keys donde puede aparecer (ver src/constants/announcements.ts).
   // 'global' = todas las paginas instrumentadas.
   pages       String[]             @default([])
@@ -1183,7 +1206,23 @@ model Announcement {
   createdById String?
   createdBy   User?                @relation(fields: [createdById], references: [id], onDelete: SetNull)
 
+  // Solo se usa (y se muestra en el admin) cuando audience = SPECIFIC_USERS.
+  recipients AnnouncementRecipient[]
+
   @@index([isActive, startsAt, endsAt])
+}
+
+// Destinatarios especificos de un anuncio con audience = SPECIFIC_USERS.
+model AnnouncementRecipient {
+  id             Int          @id @default(autoincrement())
+  createdAt      DateTime     @default(now())
+  announcementId Int
+  announcement   Announcement @relation(fields: [announcementId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([announcementId, userId])
+  @@index([userId])
 }
 
 // ============================================

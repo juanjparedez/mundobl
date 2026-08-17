@@ -1,0 +1,39 @@
+.banner-surface {
+  position: relative;
+  padding: 12px var(--spacing-lg);
+  border-bottom: 1px solid var(--border-color-secondary);
+  background: color-mix(in srgb, var(--tone-color, var(--info-color)) 8%, var(--bg-elevated));
+}
+
+.banner-surface--info {
+  --tone-color: var(--info-color);
+}
+.banner-surface--success {
+  --tone-color: var(--success-color);
+}
+.banner-surface--warning {
+  --tone-color: var(--warning-color);
+}
+.banner-surface--promo {
+  --tone-color: var(--primary-color);
+}
+
+.banner-surface__body {
+  /* Deja lugar al boton de cerrar (fijo en la esquina) para que no se
+   * superponga con el titulo cuando el contenido es angosto. */
+  padding-right: 28px;
+  max-width: 900px;
+}
+
+.banner-surface__close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  color: var(--text-tertiary);
+}
+
+@media (max-width: 768px) {
+  .banner-surface {
+    padding: 10px var(--spacing-md);
+  }
+}
