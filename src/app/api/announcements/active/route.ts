@@ -49,10 +49,29 @@ export async function GET(request: NextRequest) {
       notificationsEnabled = prefs ? prefs.pushEnabled : true;
     }
 
+    // Idem para SPECIFIC_USERS: solo consulta AnnouncementRecipient si hay
+    // algun candidato que lo pida, y solo trae los ids del user actual.
+    let recipientAnnouncementIds: Set<number> = new Set();
+    const specificUserCandidateIds = candidates
+      .filter((a) => a.audience === 'SPECIFIC_USERS')
+      .map((a) => a.id);
+    if (userId && specificUserCandidateIds.length > 0) {
+      const recipientRows = await prisma.announcementRecipient.findMany({
+        where: { userId, announcementId: { in: specificUserCandidateIds } },
+        select: { announcementId: true },
+      });
+      recipientAnnouncementIds = new Set(
+        recipientRows.map((r) => r.announcementId)
+      );
+    }
+
     const visible = candidates.filter((a) => {
       if (a.audience === 'EVERYONE') return true;
       if (!userId) return false;
       if (a.audience === 'MEMBERS') return true;
+      if (a.audience === 'SPECIFIC_USERS') {
+        return recipientAnnouncementIds.has(a.id);
+      }
       return notificationsEnabled;
     });
 
