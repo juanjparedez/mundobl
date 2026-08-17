@@ -12,6 +12,7 @@ import {
   Tag,
   Radio,
   Alert,
+  Select,
 } from 'antd';
 import {
   PlusOutlined,
@@ -416,6 +417,18 @@ export default function ActoresAdminPage() {
 
             <Form.Item label={t('adminActors.fieldBiography')} name="biography">
               <TextArea rows={3} placeholder={t('adminActors.hintBiography')} />
+            </Form.Item>
+
+            <Form.Item
+              label={t('adminActors.fieldFunFacts')}
+              name="funFacts"
+              tooltip={t('adminActors.hintFunFacts')}
+            >
+              <Select
+                mode="tags"
+                tokenSeparators={[';']}
+                placeholder={t('adminActors.hintFunFacts')}
+              />
             </Form.Item>
           </Form>
         </Modal>

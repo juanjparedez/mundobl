@@ -716,11 +716,13 @@ const it: TranslationShape = {
     "fieldNationality": "Nazionalità",
     "fieldImageUrl": "URL immagine",
     "fieldBiography": "Biografia",
+    "fieldFunFacts": "Curiosità",
     "hintName": "Nome dell'attore",
     "hintStageName": "Nome d'arte (opzionale)",
     "hintNationality": "Es: Thailandia, Corea del Sud",
     "hintImageUrl": "URL foto attore (opzionale)",
     "hintBiography": "Breve biografia dell'attore (opzionale)",
+    "hintFunFacts": "Una curiosità per riga o separata da \";\". Mostrata sul profilo pubblico.",
     "deleteTitle": "Eliminare l'attore?",
     "deleteDescription": "Sei sicuro di voler eliminare questo attore?",
     "deleteBlockedDescription": "Questo attore ha {count} partecipazioni. Scollega prima.",
@@ -2604,6 +2606,45 @@ const it: TranslationShape = {
     "emptyDescription": "Non abbiamo trovato serie con questi filtri. Prova un paese o un titolo diverso.",
     "cardEpisodesBadge": "{count} video",
     "cardPlayButton": "Riproduci"
+  },
+  "actorProfile": {
+    "funFactsTitle": "Curiosità"
+  },
+  "glosario": {
+    "heroBadge": "Cultura e Traduzione Etica",
+    "heroTitle": "Glossario Culturale BL & GL",
+    "heroSubtitle": "I drama asiatici hanno codici culturali unici. Qui puoi cercare il vero significato degli onorifici thailandesi (P’, N’, Khun), coreani (Oppa, Hyung) e giapponesi (Senpai, -kun), dei termini affettuosi (Faen, Ti-lak) ed evitare i tipici errori di traduzione automatica.",
+    "searchPlaceholder": "Cerca termine (es: P’, Faen, SOTUS, Oppa, Senpai)...",
+    "countryAll": "Tutti i paesi",
+    "countryThailand": "Thailandia",
+    "countryKorea": "Corea del Sud",
+    "countryJapan": "Giappone",
+    "countryGeneral": "Generale / Fandom",
+    "categoryAll": "Tutti",
+    "categoryHonorifics": "Onorifici",
+    "categoryRelationships": "Relazioni e Romanticismo",
+    "categoryGenreConcepts": "Generi e Concetti",
+    "categoryUniversity": "Cultura Universitaria",
+    "categoryFandom": "Fandom",
+    "viewDictionary": "Dizionario",
+    "viewTrivia": "Curiosità",
+    "meaningLabel": "Significato:",
+    "examplesLabel": "Esempi:",
+    "commonMistakeLabel": "Errore di traduzione comune:",
+    "emptyTitle": "Nessun termine trovato",
+    "emptyDescription": "Prova una ricerca diversa o cambia i filtri paese/categoria."
+  },
+  "glosarioQuiz": {
+    "promptTemplate": "Cosa significa \"{term}\"?",
+    "questionCounter": "Domanda {current} di {total}",
+    "scoreLabel": "Hai ottenuto {score} su {total}",
+    "correctFeedback": "Corretto!",
+    "incorrectFeedbackPrefix": "Sbagliato. La risposta corretta era:",
+    "nextButton": "Avanti",
+    "finishButton": "Fine",
+    "finishTitle": "Trivia completata!",
+    "playAgainButton": "Gioca di nuovo",
+    "bestScoreLabel": "Il tuo miglior punteggio: {score} su {total}"
   }
 } as unknown as TranslationShape;
 

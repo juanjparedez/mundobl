@@ -716,11 +716,13 @@ const th: TranslationShape = {
     "fieldNationality": "สัญชาติ",
     "fieldImageUrl": "URL รูปภาพ",
     "fieldBiography": "ประวัติ",
+    "fieldFunFacts": "เกร็ดน่ารู้",
     "hintName": "ชื่อนักแสดง",
     "hintStageName": "ชื่อในวงการ (ไม่บังคับ)",
     "hintNationality": "ตัวอย่าง: ประเทศไทย, เกาหลีใต้",
     "hintImageUrl": "URL รูปภาพนักแสดง (ไม่บังคับ)",
     "hintBiography": "ประวัตินักแสดงโดยย่อ (ไม่บังคับ)",
+    "hintFunFacts": "หนึ่งข้อต่อหนึ่งบรรทัด หรือคั่นด้วย \";\" จะแสดงบนโปรไฟล์สาธารณะ",
     "deleteTitle": "ลบนักแสดง?",
     "deleteDescription": "คุณแน่ใจหรือไม่ว่าต้องการลบนักแสดงคนนี้?",
     "deleteBlockedDescription": "นักแสดงคนนี้มีส่วนร่วม {count} ครั้ง โปรดยกเลิกการเชื่อมโยงก่อน",
@@ -2604,6 +2606,45 @@ const th: TranslationShape = {
     "emptyDescription": "เราไม่พบซีรีส์ที่ตรงกับตัวกรองเหล่านี้ ลองเลือกประเทศหรือชื่อเรื่องอื่น",
     "cardEpisodesBadge": "{count} วิดีโอ",
     "cardPlayButton": "เล่น"
+  },
+  "actorProfile": {
+    "funFactsTitle": "เกร็ดน่ารู้"
+  },
+  "glosario": {
+    "heroBadge": "การแปลที่คำนึงถึงวัฒนธรรมและจริยธรรม",
+    "heroTitle": "อภิธานศัพท์วัฒนธรรม BL & GL",
+    "heroSubtitle": "ละครเอเชียมีรหัสทางวัฒนธรรมที่เป็นเอกลักษณ์ ที่นี่คุณสามารถค้นหาความหมายที่แท้จริงของคำนำหน้าชื่อภาษาไทย (พี่, น้อง, คุณ), เกาหลี (โอปป้า, ฮยอง) และญี่ปุ่น (เซนไป, -คุง), คำเรียกขานที่แสดงความรัก (แฟน, ที่รัก) และหลีกเลี่ยงข้อผิดพลาดจากการแปลด้วยเครื่องทั่วไป",
+    "searchPlaceholder": "ค้นหาคำ (เช่น: พี่, แฟน, SOTUS, โอปป้า, เซนไป)...",
+    "countryAll": "ทุกประเทศ",
+    "countryThailand": "ประเทศไทย",
+    "countryKorea": "เกาหลีใต้",
+    "countryJapan": "ญี่ปุ่น",
+    "countryGeneral": "ทั่วไป / แฟนด้อม",
+    "categoryAll": "ทั้งหมด",
+    "categoryHonorifics": "คำนำหน้าชื่อ",
+    "categoryRelationships": "ความสัมพันธ์และความรัก",
+    "categoryGenreConcepts": "ประเภทและแนวคิด",
+    "categoryUniversity": "วัฒนธรรมมหาวิทยาลัย",
+    "categoryFandom": "แฟนด้อม",
+    "viewDictionary": "พจนานุกรม",
+    "viewTrivia": "เรื่องไม่สำคัญ",
+    "meaningLabel": "ความหมาย:",
+    "examplesLabel": "ตัวอย่าง:",
+    "commonMistakeLabel": "ข้อผิดพลาดในการแปลที่พบบ่อย:",
+    "emptyTitle": "ไม่พบคำศัพท์",
+    "emptyDescription": "ลองค้นหาใหม่ หรือเปลี่ยนตัวกรองประเทศ/หมวดหมู่"
+  },
+  "glosarioQuiz": {
+    "promptTemplate": "\"{term}\" หมายความว่าอะไร?",
+    "questionCounter": "คำถามที่ {current} จาก {total}",
+    "scoreLabel": "คุณได้ {score} จาก {total}",
+    "correctFeedback": "ถูกต้อง!",
+    "incorrectFeedbackPrefix": "ไม่ถูกต้อง คำตอบที่ถูกต้องคือ:",
+    "nextButton": "ถัดไป",
+    "finishButton": "เสร็จสิ้น",
+    "finishTitle": "เกมทายปัญหาเสร็จสมบูรณ์!",
+    "playAgainButton": "เล่นอีกครั้ง",
+    "bestScoreLabel": "คะแนนที่ดีที่สุดของคุณ: {score} จาก {total}"
   }
 } as unknown as TranslationShape;
 

@@ -716,11 +716,13 @@ const fr: TranslationShape = {
     "fieldNationality": "Nationalité",
     "fieldImageUrl": "URL de l'image",
     "fieldBiography": "Biographie",
+    "fieldFunFacts": "Faits amusants",
     "hintName": "Nom de l'acteur",
     "hintStageName": "Nom de scène (facultatif)",
     "hintNationality": "Ex: Thaïlande, Corée du Sud",
     "hintImageUrl": "URL de la photo de l'acteur (facultatif)",
     "hintBiography": "Brève biographie de l'acteur (facultatif)",
+    "hintFunFacts": "Un fait par ligne ou séparé par \";\". Affiché sur le profil public.",
     "deleteTitle": "Supprimer l'acteur ?",
     "deleteDescription": "Êtes-vous sûr de vouloir supprimer cet acteur ?",
     "deleteBlockedDescription": "Cet acteur a {count} participations. Dissociez-les d'abord.",
@@ -2604,6 +2606,45 @@ const fr: TranslationShape = {
     "emptyDescription": "Nous n'avons pas trouvé de séries avec ces filtres. Essayez un autre pays ou titre.",
     "cardEpisodesBadge": "{count} vidéos",
     "cardPlayButton": "Lecture"
+  },
+  "actorProfile": {
+    "funFactsTitle": "Faits amusants"
+  },
+  "glosario": {
+    "heroBadge": "Traduction culturelle et éthique",
+    "heroTitle": "Glossaire culturel BL & GL",
+    "heroSubtitle": "Les dramas asiatiques ont des codes culturels uniques. Ici, vous pouvez rechercher la vraie signification des titres honorifiques thaïlandais (P’, N’, Khun), coréens (Oppa, Hyung) et japonais (Senpai, -kun), des termes affectueux (Faen, Ti-lak), et éviter les erreurs typiques de traduction automatique.",
+    "searchPlaceholder": "Terme de recherche (ex: P’, Faen, SOTUS, Oppa, Senpai)...",
+    "countryAll": "Tous les pays",
+    "countryThailand": "Thaïlande",
+    "countryKorea": "Corée du Sud",
+    "countryJapan": "Japon",
+    "countryGeneral": "Général / Fandom",
+    "categoryAll": "Tout",
+    "categoryHonorifics": "Titres honorifiques",
+    "categoryRelationships": "Relations & Romance",
+    "categoryGenreConcepts": "Genres & Concepts",
+    "categoryUniversity": "Culture universitaire",
+    "categoryFandom": "Fandom",
+    "viewDictionary": "Dictionnaire",
+    "viewTrivia": "Anecdotes",
+    "meaningLabel": "Signification :",
+    "examplesLabel": "Exemples :",
+    "commonMistakeLabel": "Erreur de traduction courante :",
+    "emptyTitle": "Aucun terme trouvé",
+    "emptyDescription": "Essayez une recherche différente ou modifiez les filtres pays/catégorie."
+  },
+  "glosarioQuiz": {
+    "promptTemplate": "Que signifie « {term} » ?",
+    "questionCounter": "Question {current} sur {total}",
+    "scoreLabel": "Vous avez {score} sur {total}",
+    "correctFeedback": "Correct !",
+    "incorrectFeedbackPrefix": "Incorrect. La bonne réponse était :",
+    "nextButton": "Suivant",
+    "finishButton": "Terminer",
+    "finishTitle": "Quiz terminé !",
+    "playAgainButton": "Rejouer",
+    "bestScoreLabel": "Votre meilleur score : {score} sur {total}"
   }
 } as unknown as TranslationShape;
 
