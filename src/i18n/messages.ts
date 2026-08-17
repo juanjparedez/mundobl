@@ -1022,6 +1022,62 @@ export type TranslationShape = {
     deleteSuccess: string;
     deleteError: string;
   };
+  adminAnnouncements: {
+    title: string;
+    subtitle: string;
+    statsTotal: string;
+    statsFiltered: string;
+    searchPlaceholder: string;
+    newItem: string;
+    newItemShort: string;
+    columnTitle: string;
+    columnTone: string;
+    columnAudience: string;
+    columnPages: string;
+    columnStatus: string;
+    columnActions: string;
+    actionEdit: string;
+    actionDelete: string;
+    modalNewTitle: string;
+    modalEditTitle: string;
+    save: string;
+    cancel: string;
+    fieldTitle: string;
+    fieldBody: string;
+    fieldTone: string;
+    fieldAudience: string;
+    fieldPages: string;
+    fieldSchedule: string;
+    fieldLink: string;
+    fieldLinkLabel: string;
+    fieldDismissible: string;
+    fieldActive: string;
+    requiredTitle: string;
+    requiredBody: string;
+    requiredPages: string;
+    hintTitle: string;
+    hintLink: string;
+    hintLinkLabel: string;
+    deleteTitle: string;
+    deleteDescription: string;
+    loadError: string;
+    createSuccess: string;
+    updateSuccess: string;
+    saveError: string;
+    deleteSuccess: string;
+    deleteError: string;
+    toneInfo: string;
+    toneSuccess: string;
+    toneWarning: string;
+    tonePromo: string;
+    audienceEveryone: string;
+    audienceMembers: string;
+    audienceNotificationsEnabled: string;
+    statusDraft: string;
+    statusScheduled: string;
+    statusActive: string;
+    statusExpired: string;
+  };
   adminUsers: {
     title: string;
     subtitle: string;
@@ -1459,6 +1515,9 @@ export type TranslationShape = {
     detailsLink: string;
     accept: string;
   };
+  announcementBanner: {
+    dismiss: string;
+  };
   header: {
     title: string;
     adminModeLabel: string;
@@ -1494,6 +1553,8 @@ export type TranslationShape = {
     reviewsShort: string;
     news: string;
     newsShort: string;
+    announcements: string;
+    announcementsShort: string;
     feedback: string;
     feedbackShort: string;
     suggestions: string;
@@ -3718,6 +3779,63 @@ const es: TranslationShape = {
     deleteSuccess: 'Sitio eliminado correctamente',
     deleteError: 'Error al eliminar el sitio',
   },
+  adminAnnouncements: {
+    title: 'Anuncios',
+    subtitle:
+      'Mensajes en banner que aparecen al entrar a ciertas páginas de la app.',
+    statsTotal: 'Total',
+    statsFiltered: 'Filtrados',
+    searchPlaceholder: 'Buscar por título...',
+    newItem: 'Nuevo Anuncio',
+    newItemShort: 'Nuevo',
+    columnTitle: 'Título',
+    columnTone: 'Tono',
+    columnAudience: 'Audiencia',
+    columnPages: 'Páginas',
+    columnStatus: 'Estado',
+    columnActions: 'Acciones',
+    actionEdit: 'Editar',
+    actionDelete: 'Eliminar',
+    modalNewTitle: 'Nuevo Anuncio',
+    modalEditTitle: 'Editar Anuncio',
+    save: 'Guardar',
+    cancel: 'Cancelar',
+    fieldTitle: 'Título',
+    fieldBody: 'Mensaje',
+    fieldTone: 'Tono',
+    fieldAudience: 'Audiencia',
+    fieldPages: 'Páginas donde aparece',
+    fieldSchedule: 'Vigencia (opcional)',
+    fieldLink: 'Link (opcional)',
+    fieldLinkLabel: 'Texto del link',
+    fieldDismissible: 'Se puede cerrar',
+    fieldActive: 'Publicado',
+    requiredTitle: 'El título es requerido',
+    requiredBody: 'El mensaje es requerido',
+    requiredPages: 'Elegí al menos una página',
+    hintTitle: 'Título breve del anuncio',
+    hintLink: 'https://ejemplo.com o /una-ruta',
+    hintLinkLabel: 'Ej: Ver más',
+    deleteTitle: '¿Eliminar anuncio?',
+    deleteDescription: 'Esto eliminará "{title}"',
+    loadError: 'Error al cargar los anuncios',
+    createSuccess: 'Anuncio creado exitosamente',
+    updateSuccess: 'Anuncio actualizado exitosamente',
+    saveError: 'Error al guardar el anuncio',
+    deleteSuccess: 'Anuncio eliminado correctamente',
+    deleteError: 'Error al eliminar el anuncio',
+    toneInfo: 'Info',
+    toneSuccess: 'Éxito',
+    toneWarning: 'Advertencia',
+    tonePromo: 'Promo',
+    audienceEveryone: 'Todos',
+    audienceMembers: 'Miembros',
+    audienceNotificationsEnabled: 'Con notificaciones activadas',
+    statusDraft: 'Borrador',
+    statusScheduled: 'Programado',
+    statusActive: 'Activo',
+    statusExpired: 'Vencido',
+  },
   adminUsers: {
     title: 'Administracion de Usuarios',
     subtitle: 'Gestion de usuarios, roles y IPs bloqueadas.',
@@ -4182,6 +4300,9 @@ const es: TranslationShape = {
     detailsLink: 'Ver qué guardamos y cómo borrarlo',
     accept: 'Ok, entendido',
   },
+  announcementBanner: {
+    dismiss: 'Cerrar aviso',
+  },
   header: {
     title: 'MundoBL - Catálogo de Series',
     adminModeLabel: 'Modo: Admin',
@@ -4217,6 +4338,8 @@ const es: TranslationShape = {
     reviewsShort: 'Reseñ.',
     news: 'Noticias',
     newsShort: 'Notic.',
+    announcements: 'Anuncios',
+    announcementsShort: 'Anunc.',
     feedback: 'Casos',
     feedbackShort: 'Casos',
     suggestions: 'Sugerencias',
@@ -6478,6 +6601,62 @@ const en: TranslationShape = {
     deleteSuccess: 'Site deleted successfully',
     deleteError: 'Error deleting site',
   },
+  adminAnnouncements: {
+    title: 'Announcements',
+    subtitle: 'Banner messages shown when entering certain pages of the app.',
+    statsTotal: 'Total',
+    statsFiltered: 'Filtered',
+    searchPlaceholder: 'Search by title...',
+    newItem: 'New Announcement',
+    newItemShort: 'New',
+    columnTitle: 'Title',
+    columnTone: 'Tone',
+    columnAudience: 'Audience',
+    columnPages: 'Pages',
+    columnStatus: 'Status',
+    columnActions: 'Actions',
+    actionEdit: 'Edit',
+    actionDelete: 'Delete',
+    modalNewTitle: 'New Announcement',
+    modalEditTitle: 'Edit Announcement',
+    save: 'Save',
+    cancel: 'Cancel',
+    fieldTitle: 'Title',
+    fieldBody: 'Message',
+    fieldTone: 'Tone',
+    fieldAudience: 'Audience',
+    fieldPages: 'Pages where it appears',
+    fieldSchedule: 'Active window (optional)',
+    fieldLink: 'Link (optional)',
+    fieldLinkLabel: 'Link text',
+    fieldDismissible: 'Can be dismissed',
+    fieldActive: 'Published',
+    requiredTitle: 'Title is required',
+    requiredBody: 'Message is required',
+    requiredPages: 'Pick at least one page',
+    hintTitle: 'Short title for the announcement',
+    hintLink: 'https://example.com or /a-route',
+    hintLinkLabel: 'E.g. Learn more',
+    deleteTitle: 'Delete announcement?',
+    deleteDescription: 'This will delete "{title}"',
+    loadError: 'Error loading announcements',
+    createSuccess: 'Announcement created successfully',
+    updateSuccess: 'Announcement updated successfully',
+    saveError: 'Error saving announcement',
+    deleteSuccess: 'Announcement deleted successfully',
+    deleteError: 'Error deleting announcement',
+    toneInfo: 'Info',
+    toneSuccess: 'Success',
+    toneWarning: 'Warning',
+    tonePromo: 'Promo',
+    audienceEveryone: 'Everyone',
+    audienceMembers: 'Members',
+    audienceNotificationsEnabled: 'With notifications enabled',
+    statusDraft: 'Draft',
+    statusScheduled: 'Scheduled',
+    statusActive: 'Active',
+    statusExpired: 'Expired',
+  },
   adminUsers: {
     title: 'User Management',
     subtitle: 'Manage users, roles and blocked IPs.',
@@ -6941,6 +7120,9 @@ const en: TranslationShape = {
     detailsLink: 'See what we store and how to delete it',
     accept: 'Got it',
   },
+  announcementBanner: {
+    dismiss: 'Dismiss',
+  },
   header: {
     title: 'MundoBL - Series Catalog',
     adminModeLabel: 'Mode: Admin',
@@ -6976,6 +7158,8 @@ const en: TranslationShape = {
     reviewsShort: 'Rev.',
     news: 'News',
     newsShort: 'News',
+    announcements: 'Announcements',
+    announcementsShort: 'Announc.',
     feedback: 'Cases',
     feedbackShort: 'Cases',
     suggestions: 'Suggestions',

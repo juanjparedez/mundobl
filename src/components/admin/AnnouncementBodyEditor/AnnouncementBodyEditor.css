@@ -1,0 +1,25 @@
+/* Puentea las custom properties de @uiw/react-md-editor a los tokens del
+ * proyecto (src/styles/variables.css) para que respete tema/skin/accent
+ * dinamicos en vez del tema por defecto de la libreria. */
+.announcement-body-editor {
+  --color-canvas-default: var(--bg-elevated);
+  --color-fg-default: var(--text-primary);
+  --color-border-default: var(--border-color-secondary);
+  --color-neutral-muted: var(--bg-spotlight);
+  --color-accent-fg: var(--primary-color);
+  --color-danger-fg: var(--error-color);
+  border-radius: var(--border-radius-base);
+  overflow: hidden;
+}
+
+.announcement-body-editor .w-md-editor {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  box-shadow: none;
+  border: 1px solid var(--border-color-secondary);
+}
+
+.announcement-body-editor .w-md-editor-toolbar {
+  background: var(--bg-container);
+  border-color: var(--border-color-secondary);
+}

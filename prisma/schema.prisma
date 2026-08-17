@@ -79,6 +79,7 @@ model User {
   dashboardLayouts        UserDashboardLayout[]
   submittedSeries         Series[]                @relation("UserSubmittedSeries")
   seriesSuggestions       SeriesSuggestion[]
+  announcements           Announcement[]
 }
 
 // Persistencia de layouts del dashboard modular (drag/resize por widget).
@@ -1136,6 +1137,53 @@ model ChangelogItem {
   updatedAt    DateTime @updatedAt
 
   @@index([version, sortOrder])
+}
+
+// ============================================
+// ANUNCIOS / BANNERS
+// ============================================
+// Mensajes que Flor escribe desde el admin y que aparecen como banner
+// liviano al entrar a ciertas paginas. Independiente del sistema de
+// Notification/push (campana): "audience" solo filtra a quien se le
+// muestra el banner, no dispara notificaciones.
+enum AnnouncementAudience {
+  EVERYONE // Todos, incluye visitantes anonimos
+  MEMBERS // Solo usuarios logueados
+  NOTIFICATIONS_ENABLED // Logueados con NotificationPrefs.pushEnabled
+}
+
+enum AnnouncementTone {
+  INFO
+  SUCCESS
+  WARNING
+  PROMO
+}
+
+model Announcement {
+  id          Int                  @id @default(autoincrement())
+  title       String
+  body        String // Markdown, redactado via editor WYSIWYG
+  tone        AnnouncementTone     @default(INFO)
+  audience    AnnouncementAudience @default(EVERYONE)
+  // Page keys donde puede aparecer (ver src/constants/announcements.ts).
+  // 'global' = todas las paginas instrumentadas.
+  pages       String[]             @default([])
+  // Si es false, el banner no muestra boton de cerrar (uso raro, para
+  // avisos que se quieren "insistentes" durante su ventana de vigencia).
+  dismissible Boolean              @default(true)
+  linkUrl     String?
+  linkLabel   String?
+  // false = borrador, no se sirve nunca aunque este dentro de la ventana.
+  isActive    Boolean              @default(true)
+  startsAt    DateTime?
+  endsAt      DateTime?
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+
+  createdById String?
+  createdBy   User?                @relation(fields: [createdById], references: [id], onDelete: SetNull)
+
+  @@index([isActive, startsAt, endsAt])
 }
 
 // ============================================
