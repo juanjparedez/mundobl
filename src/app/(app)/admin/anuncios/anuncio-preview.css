@@ -1,0 +1,86 @@
+.anuncio-preview {
+  position: sticky;
+  top: 0;
+  height: 100%;
+  padding: var(--spacing-md);
+  background: var(--bg-spotlight);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+}
+
+.anuncio-preview__frame-label {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--text-tertiary);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Banner: reusa BannerSurface real, solo lo enmarca (esa superficie ya no
+ * es fixed/absolute salvo el boton de cerrar, entra bien inline). */
+.anuncio-preview__banner-frame {
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-base);
+  overflow: hidden;
+  background: var(--bg-elevated);
+}
+
+.anuncio-preview__banner-frame .banner-surface {
+  border-bottom: none;
+}
+
+/* Modal/Toast: mock estatico (no antd Modal real ni fixed) para no pisar
+ * la UI del propio drawer de edicion. */
+.anuncio-preview__modal-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+  padding: 24px;
+  background: color-mix(in srgb, black 45%, transparent);
+  border-radius: var(--border-radius-base);
+}
+
+.anuncio-preview__modal-card {
+  width: 100%;
+  max-width: 360px;
+  padding: 20px;
+  background: var(--bg-elevated);
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+}
+
+.anuncio-preview__toast-frame {
+  display: flex;
+  justify-content: flex-end;
+  min-height: 180px;
+  padding: 16px;
+  background: color-mix(in srgb, var(--bg-container) 60%, transparent);
+  border-radius: var(--border-radius-base);
+}
+
+.anuncio-preview__toast-card {
+  width: min(320px, 100%);
+  height: fit-content;
+  padding: 14px 16px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color-secondary);
+  border-left: 3px solid var(--tone-color, var(--info-color));
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+}
+
+.anuncio-preview__toast-card--info {
+  --tone-color: var(--info-color);
+}
+.anuncio-preview__toast-card--success {
+  --tone-color: var(--success-color);
+}
+.anuncio-preview__toast-card--warning {
+  --tone-color: var(--warning-color);
+}
+.anuncio-preview__toast-card--promo {
+  --tone-color: var(--primary-color);
+}
