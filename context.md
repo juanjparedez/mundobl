@@ -252,6 +252,16 @@ Lista de aportes USER_EMBED con acciones de moderacion ([src/app/admin/series/us
 
 `/admin/series` (la tabla curada principal) ahora filtra `origin=CURATED` para no mezclar los aportes con el catalogo de Flor.
 
+### Vista carrusel de `/catalogo` (opt-in, no reemplaza grid/list)
+
+Tercer `viewMode` de `CatalogoClient.tsx` (`'grid' | 'list' | 'carousel'`), elegible por el usuario vía toggle en la toolbar — el default sigue siendo `'grid'`. Filas por categoría curada a mano (no una por cada género/país/plataforma), reordenables y ocultables por el usuario vía drag-and-drop (`@dnd-kit`), persistido en `localStorage`. **No reusa** `MediaCarousel`/`StreamingHub` de `/ver` (forma de datos distinta — `SerieData` vs `CarouselMediaItem`) ni se integra con `/catalogo/dashboard` (ese es un dashboard de estadísticas con el sistema de widgets pesado, sin relación).
+
+- **Tipos compartidos**: [src/app/(app)/catalogo/catalogTypes.ts](<src/app/(app)/catalogo/catalogTypes.ts>) (`SerieData`, `CatalogItem`, etc. — antes vivían inline en `CatalogoClient.tsx`).
+- **Agrupación por universo**: [src/app/(app)/catalogo/catalogGrouping.ts](<src/app/(app)/catalogo/catalogGrouping.ts>) → `groupIntoCatalogItems()`, compartida entre la grilla clásica y la categoría "Sagas y universos" del carrusel.
+- **Pool de categorías**: [src/app/(app)/catalogo/carousel/catalogCarouselCategories.ts](<src/app/(app)/catalogo/carousel/catalogCarouselCategories.ts>) — array fijo en código (`CarouselCategoryDef[]`: id, label i18n, filtro, sort opcional). Países curados (Tailandia/Corea/Japón) elegidos por distribución real del catálogo, no adivinados.
+- **Persistencia**: `localStorage['catalog-carousel-prefs']` = `{ order: string[]; hidden: string[] }`, manejado por `useCarouselPrefs.ts` — se reconcilia contra el pool actual en cada lectura (ids viejos se descartan, ids nuevos se agregan al final), así un storage vacío/corrupto/desactualizado siempre converge a un estado válido.
+- **Componentes**: `CatalogCarouselView` (orquestador), `CatalogCarouselRow` (una fila, scroll horizontal calcado de `MediaCarousel.css`), `CarouselConfigDrawer` (drawer de reorder/hide, mismo patrón que `CustomizeDrawer` de `/perfil` + drag handles de `@dnd-kit/sortable`). Las cards individuales reusan `renderSingleCard`/`renderUniverseCard` de `CatalogoClient.tsx` (pasadas como render-prop) en vez de reconstruir esa lógica.
+
 ---
 
 ## Flujos de Importacion
