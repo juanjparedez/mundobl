@@ -716,11 +716,13 @@ const zhTW: TranslationShape = {
     "fieldNationality": "國籍",
     "fieldImageUrl": "圖片網址",
     "fieldBiography": "個人簡介",
+    "fieldFunFacts": "趣聞",
     "hintName": "演員姓名",
     "hintStageName": "藝名（選填）",
     "hintNationality": "範例：泰國、韓國",
     "hintImageUrl": "演員照片網址（選填）",
     "hintBiography": "演員簡介（選填）",
+    "hintFunFacts": "每行一個趣聞，或以分號分隔。將顯示在公開個人資料上。",
     "deleteTitle": "刪除演員？",
     "deleteDescription": "您確定要刪除此演員嗎？",
     "deleteBlockedDescription": "此演員有 {count} 個參與項目。請先解除連結。",
@@ -2604,6 +2606,45 @@ const zhTW: TranslationShape = {
     "emptyDescription": "我們找不到符合這些篩選條件的影集。請嘗試不同的國家或標題。",
     "cardEpisodesBadge": "{count} 部影片",
     "cardPlayButton": "播放"
+  },
+  "actorProfile": {
+    "funFactsTitle": "趣聞"
+  },
+  "glosario": {
+    "heroBadge": "文化與道德翻譯",
+    "heroTitle": "BL & GL 文化詞彙表",
+    "heroSubtitle": "亞洲劇集擁有獨特的文化代碼。您可以在這裡查詢泰國敬語（P’、N’、Khun）、韓國敬語（Oppa、Hyung）和日本敬語（Senpai、-kun）、愛稱（Faen、Ti-lak）的真實含義，並避免典型的機器翻譯錯誤。",
+    "searchPlaceholder": "搜尋詞彙（例如：P’、Faen、SOTUS、Oppa、Senpai）...",
+    "countryAll": "所有國家",
+    "countryThailand": "泰國",
+    "countryKorea": "韓國",
+    "countryJapan": "日本",
+    "countryGeneral": "一般 / 粉絲文化",
+    "categoryAll": "全部",
+    "categoryHonorifics": "敬語",
+    "categoryRelationships": "關係與浪漫",
+    "categoryGenreConcepts": "類型與概念",
+    "categoryUniversity": "大學文化",
+    "categoryFandom": "粉絲文化",
+    "viewDictionary": "詞典",
+    "viewTrivia": "瑣事",
+    "meaningLabel": "意思：",
+    "examplesLabel": "範例：",
+    "commonMistakeLabel": "常見翻譯錯誤：",
+    "emptyTitle": "找不到詞彙",
+    "emptyDescription": "請嘗試不同的搜尋或更改國家/類別篩選器。"
+  },
+  "glosarioQuiz": {
+    "promptTemplate": "「{term}」是什麼意思？",
+    "questionCounter": "問題 {current} / {total}",
+    "scoreLabel": "您答對了 {score} 題（共 {total} 題）",
+    "correctFeedback": "正確！",
+    "incorrectFeedbackPrefix": "錯誤。正確答案是：",
+    "nextButton": "下一題",
+    "finishButton": "完成",
+    "finishTitle": "問答遊戲完成！",
+    "playAgainButton": "再玩一次",
+    "bestScoreLabel": "您的最佳成績：{score} 題（共 {total} 題）"
   }
 } as unknown as TranslationShape;
 

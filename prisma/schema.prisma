@@ -413,6 +413,7 @@ model Actor {
   nationality String?
   imageUrl    String?
   biography   String?
+  funFacts    String[]  @default([]) // Datos curiosos cargados a mano por admins
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 

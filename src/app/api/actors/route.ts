@@ -37,6 +37,7 @@ export async function POST(request: NextRequest) {
         nationality: body.nationality || null,
         imageUrl: body.imageUrl || null,
         biography: body.biography || null,
+        funFacts: Array.isArray(body.funFacts) ? body.funFacts : [],
       },
     });
 

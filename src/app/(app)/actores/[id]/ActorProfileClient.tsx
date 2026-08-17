@@ -1,10 +1,11 @@
 'use client';
 
 import { Avatar, Card, Tag, Row, Col, Empty } from 'antd';
-import { UserOutlined, CalendarOutlined } from '@ant-design/icons';
+import { UserOutlined, CalendarOutlined, BulbOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 import './actor-profile.css';
 
 interface ActorData {
@@ -15,6 +16,7 @@ interface ActorData {
   nationality?: string | null;
   imageUrl?: string | null;
   biography?: string | null;
+  funFacts?: string[];
   series: Array<{
     character?: string | null;
     isMain: boolean;
@@ -74,6 +76,8 @@ function formatDate(date: Date | string | null | undefined): string | null {
 }
 
 export function ActorProfileClient({ actor }: ActorProfileClientProps) {
+  const { t } = useLocale();
+
   // Build unique filmography entries from series + seasons
   const filmographyMap = new Map<
     number,
@@ -183,6 +187,22 @@ export function ActorProfileClient({ actor }: ActorProfileClientProps) {
           </div>
         )}
       </Card>
+
+      {actor.funFacts && actor.funFacts.length > 0 && (
+        <Card
+          title={t('actorProfile.funFactsTitle')}
+          className="actor-profile__fun-facts"
+        >
+          <ul className="actor-profile__fun-facts-list">
+            {actor.funFacts.map((fact, idx) => (
+              <li key={idx}>
+                <BulbOutlined className="actor-profile__fun-fact-icon" />
+                <span>{fact}</span>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
 
       <Card
         title={`Filmografía (${filmography.length})`}

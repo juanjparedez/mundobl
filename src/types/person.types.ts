@@ -6,6 +6,7 @@ export interface ActorAdmin {
   nationality?: string | null;
   imageUrl?: string | null;
   biography?: string | null;
+  funFacts?: string[];
   _count?: {
     series: number;
     seasons: number;

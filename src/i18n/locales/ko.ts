@@ -716,11 +716,13 @@ const ko: TranslationShape = {
     "fieldNationality": "국적",
     "fieldImageUrl": "이미지 URL",
     "fieldBiography": "약력",
+    "fieldFunFacts": "재미있는 사실",
     "hintName": "배우 이름",
     "hintStageName": "예명 (선택 사항)",
     "hintNationality": "예: 태국, 대한민국",
     "hintImageUrl": "배우 사진 URL (선택 사항)",
     "hintBiography": "간략한 배우 약력 (선택 사항)",
+    "hintFunFacts": "한 줄에 하나씩 또는 \";\"로 구분하여 입력하세요. 공개 프로필에 표시됩니다.",
     "deleteTitle": "배우를 삭제하시겠습니까?",
     "deleteDescription": "이 배우를 삭제하시겠습니까?",
     "deleteBlockedDescription": "이 배우는 {count}개의 참여가 있습니다. 먼저 연결을 해제하세요.",
@@ -2604,6 +2606,45 @@ const ko: TranslationShape = {
     "emptyDescription": "해당 필터로는 시리즈를 찾을 수 없습니다. 다른 국가나 제목으로 시도해 보세요.",
     "cardEpisodesBadge": "{count}개 동영상",
     "cardPlayButton": "재생"
+  },
+  "actorProfile": {
+    "funFactsTitle": "재미있는 사실"
+  },
+  "glosario": {
+    "heroBadge": "문화 및 윤리적 번역",
+    "heroTitle": "BL & GL 문화 용어집",
+    "heroSubtitle": "아시아 드라마에는 독특한 문화 코드가 있습니다. 여기에서 태국어 경칭(P’, N’, Khun), 한국어(오빠, 형), 일본어(선배, -군)의 실제 의미, 애칭(Faen, Ti-lak)을 찾아보고 일반적인 기계 번역 실수를 피할 수 있습니다.",
+    "searchPlaceholder": "검색어 (예: P’, Faen, SOTUS, 오빠, 선배)...",
+    "countryAll": "모든 국가",
+    "countryThailand": "태국",
+    "countryKorea": "대한민국",
+    "countryJapan": "일본",
+    "countryGeneral": "일반 / 팬덤",
+    "categoryAll": "전체",
+    "categoryHonorifics": "경칭",
+    "categoryRelationships": "관계 및 로맨스",
+    "categoryGenreConcepts": "장르 및 개념",
+    "categoryUniversity": "대학 문화",
+    "categoryFandom": "팬덤",
+    "viewDictionary": "사전",
+    "viewTrivia": "트리비아",
+    "meaningLabel": "의미:",
+    "examplesLabel": "예시:",
+    "commonMistakeLabel": "흔한 번역 실수:",
+    "emptyTitle": "용어를 찾을 수 없음",
+    "emptyDescription": "다른 검색을 시도하거나 국가/카테고리 필터를 변경하세요."
+  },
+  "glosarioQuiz": {
+    "promptTemplate": "\"{term}\"은(는) 무슨 뜻인가요?",
+    "questionCounter": "{total}개 중 {current}번째 질문",
+    "scoreLabel": "{total}개 중 {score}개 맞춤",
+    "correctFeedback": "정답!",
+    "incorrectFeedbackPrefix": "오답입니다. 정답은 다음과 같습니다:",
+    "nextButton": "다음",
+    "finishButton": "완료",
+    "finishTitle": "퀴즈 완료!",
+    "playAgainButton": "다시 플레이",
+    "bestScoreLabel": "최고 점수: {total}개 중 {score}개"
   }
 } as unknown as TranslationShape;
 

@@ -1,0 +1,128 @@
+.quiz-engine {
+  max-width: 560px;
+  margin: 0 auto;
+  gap: var(--spacing-md);
+}
+
+.quiz-engine__header {
+  display: flex;
+  justify-content: center;
+}
+
+.quiz-engine__counter {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.quiz-engine__prompt {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: center;
+  line-height: 1.4;
+}
+
+.quiz-engine__options {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.quiz-engine__option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: var(--border-radius-base);
+  border: 1px solid var(--border-color);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.quiz-engine__option:hover:not(:disabled) {
+  border-color: var(--primary-color);
+}
+
+.quiz-engine__option:disabled {
+  cursor: default;
+}
+
+.quiz-engine__option--correct {
+  border-color: var(--success-color);
+  background: color-mix(
+    in srgb,
+    var(--success-color) 12%,
+    var(--bg-elevated)
+  );
+  color: var(--success-color);
+}
+
+.quiz-engine__option--incorrect {
+  border-color: var(--error-color);
+  background: color-mix(
+    in srgb,
+    var(--error-color) 12%,
+    var(--bg-elevated)
+  );
+  color: var(--error-color);
+}
+
+.quiz-engine__feedback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  text-align: center;
+}
+
+.quiz-engine__feedback-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.quiz-engine__feedback-text--correct {
+  color: var(--success-color);
+}
+
+.quiz-engine__feedback-text--incorrect {
+  color: var(--error-color);
+}
+
+.quiz-engine--finished {
+  align-items: center;
+  text-align: center;
+  gap: var(--spacing-sm);
+}
+
+.quiz-engine__trophy {
+  font-size: 2.4rem;
+  color: var(--primary-color);
+}
+
+.quiz-engine__finish-title {
+  margin: 0;
+  font-size: 1.3rem;
+  color: var(--text-primary);
+}
+
+.quiz-engine__score {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+.quiz-engine__best-score {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-tertiary);
+}
