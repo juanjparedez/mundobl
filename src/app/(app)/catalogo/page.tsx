@@ -142,8 +142,13 @@ export default async function CatalogoPage() {
       platforms: platformsBySerie.get(serie.id) ?? [],
       // Fecha de alta en el catalogo (no confundir con `anio`, el año de
       // estreno) — usado por la categoria "Recien agregadas" del modo
-      // carrusel.
-      createdAt: serie.createdAt.toISOString(),
+      // carrusel. `new Date(...)` en vez de `.toISOString()` directo:
+      // seriesDB viene de getCatalogDataCached (unstable_cache), que
+      // serializa el resultado por JSON — en un cache HIT, createdAt
+      // llega como string, no como Date, y `.toISOString()` sobre un
+      // string rompe el render del Server Component (bug real en
+      // produccion: crasheaba /catalogo entero en cache hits).
+      createdAt: new Date(serie.createdAt).toISOString(),
     };
   });
 
