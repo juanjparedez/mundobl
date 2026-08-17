@@ -4,6 +4,7 @@ import { Layout } from 'antd';
 import { Sidebar } from '../Sidebar/Sidebar';
 import { TopBar } from '../TopBar/TopBar';
 import { BottomNav } from '../BottomNav/BottomNav';
+import { AnnouncementBanner } from '../../common/AnnouncementBanner/AnnouncementBanner';
 import { PrivacyBanner } from '../../common/PrivacyBanner/PrivacyBanner';
 import { StaleVersionNotifier } from '../../common/StaleVersionNotifier/StaleVersionNotifier';
 import { LiveRegion } from '../../common/LiveRegion/LiveRegion';
@@ -31,6 +32,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         <Sidebar />
         <Layout>
           <TopBar />
+          <AnnouncementBanner />
           <Content id="main-content" role="main" className="app-content">
             {children}
           </Content>
