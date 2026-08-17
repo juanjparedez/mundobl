@@ -25,6 +25,7 @@
     "@supabase/supabase-js": "^2.110.8",
     "@types/d3-geo": "^3.1.0",
     "@types/react-simple-maps": "^3.0.6",
+    "@uiw/react-md-editor": "^4.1.1",
     "antd": "^6.5.1",
     "d3-geo": "^3.1.1",
     "d3-scale": "^4.0.2",
