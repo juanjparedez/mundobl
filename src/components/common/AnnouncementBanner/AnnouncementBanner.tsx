@@ -28,18 +28,37 @@ const TONE_ICON: Record<ActiveAnnouncement['tone'], React.ReactNode> = {
   PROMO: <GiftOutlined />,
 };
 
+// useSyncExternalStore exige que getSnapshot devuelva la MISMA referencia
+// si el valor subyacente no cambio (usa Object.is para decidir si hay que
+// re-renderizar). JSON.parse crea un array nuevo en cada llamada -> sin este
+// cache, React ve "cambios" en cada render y entra en loop infinito
+// ("Maximum update depth exceeded"), lo que tira la app entera para abajo
+// via el error boundary. Cacheamos por el string crudo: solo re-parseamos
+// (y devolvemos una referencia nueva) cuando localStorage realmente cambio.
+let cachedRaw: string | null = null;
+let cachedIds: number[] = [];
+
 function getDismissedIds(): number[] {
+  let raw: string | null;
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    const parsed = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? parsed : [];
+    raw = localStorage.getItem(STORAGE_KEY);
   } catch {
-    return [];
+    return cachedIds;
   }
+  if (raw === cachedRaw) return cachedIds;
+  cachedRaw = raw;
+  try {
+    const parsed = raw ? JSON.parse(raw) : [];
+    cachedIds = Array.isArray(parsed) ? parsed : [];
+  } catch {
+    cachedIds = [];
+  }
+  return cachedIds;
 }
 
+const EMPTY_IDS: number[] = [];
 function getServerSnapshot(): number[] {
-  return [];
+  return EMPTY_IDS;
 }
 
 function subscribe(callback: () => void): () => void {
