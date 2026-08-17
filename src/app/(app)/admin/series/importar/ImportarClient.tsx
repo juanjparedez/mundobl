@@ -457,6 +457,7 @@ export function ImportarClient() {
                 </Button>
               </Space>
               <Table
+                scroll={{ x: 'max-content' }}
                 size="small"
                 pagination={false}
                 rowKey={(r) => r.videoId}

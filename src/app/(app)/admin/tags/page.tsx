@@ -322,6 +322,7 @@ export default function TagsAdminPage() {
         )}
 
         <Table
+          scroll={{ x: 'max-content' }}
           dataSource={filteredTags}
           columns={columns}
           rowKey="id"

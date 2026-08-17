@@ -360,6 +360,7 @@ export default function ActoresAdminPage() {
         )}
 
         <Table
+          scroll={{ x: 'max-content' }}
           dataSource={filteredActors}
           columns={columns}
           rowKey="id"

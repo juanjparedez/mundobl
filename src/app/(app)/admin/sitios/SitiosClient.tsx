@@ -273,6 +273,7 @@ export function SitiosClient() {
         />
 
         <Table
+          scroll={{ x: 'max-content' }}
           dataSource={filteredSites}
           columns={columns}
           rowKey="id"

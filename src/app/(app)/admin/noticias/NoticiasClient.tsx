@@ -452,6 +452,7 @@ export function NoticiasClient() {
           />
 
           <Table<NewsRow>
+            scroll={{ x: 'max-content' }}
             columns={columns}
             dataSource={news}
             rowKey="id"
