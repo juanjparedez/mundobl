@@ -3,6 +3,7 @@ import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 import { auth } from '@/lib/auth';
 import { checkFeatureRequestRateLimit } from '@/lib/rate-limit';
+import { logCriticalAction } from '@/lib/access-log';
 
 export async function GET() {
   try {
@@ -45,9 +46,11 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  let requesterUserId: string | null = null;
   try {
     const authResult = await requireAuth();
     if (!authResult.authorized) return authResult.response;
+    requesterUserId = authResult.userId;
 
     const rl = await checkFeatureRequestRateLimit(authResult.userId);
     if (!rl.ok) {
@@ -105,6 +108,14 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error('Error creating feature request:', error);
+    const message = error instanceof Error ? error.message : String(error);
+    logCriticalAction(
+      'ERROR_FEATURE_REQUEST_CREATE',
+      '/api/feature-requests',
+      'POST',
+      requesterUserId,
+      message.slice(0, 500)
+    );
     return NextResponse.json(
       { error: 'Error al crear la solicitud' },
       { status: 500 }
