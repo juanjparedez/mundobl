@@ -703,7 +703,7 @@ export function FeedbackClient() {
                   <Select
                     value={request.status}
                     size="small"
-                    style={{ width: 130 }}
+                    style={{ minWidth: 130, flex: '0 1 auto' }}
                     onChange={(value) => handleStatusChange(request.id, value)}
                     options={Object.entries(STATUS_CONFIG).map(
                       ([value, config]) => ({
