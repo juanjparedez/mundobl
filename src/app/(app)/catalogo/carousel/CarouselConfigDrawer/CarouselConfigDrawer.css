@@ -1,0 +1,54 @@
+.carousel-config-drawer .ant-drawer-body {
+  padding: 14px;
+}
+
+.carousel-config-drawer__hint {
+  margin: 0 0 12px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  line-height: 1.4;
+}
+
+.carousel-config-drawer__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.carousel-config-drawer__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: var(--bg-spotlight);
+  border-radius: var(--border-radius-base);
+}
+
+.carousel-config-drawer__handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-tertiary);
+  cursor: grab;
+  touch-action: none;
+}
+
+.carousel-config-drawer__handle:active {
+  cursor: grabbing;
+}
+
+.carousel-config-drawer__label {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  color: var(--text-primary);
+}
+
+.carousel-config-drawer__footer {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color-secondary);
+}

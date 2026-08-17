@@ -1,0 +1,77 @@
+.catalog-carousel-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.catalog-carousel-row__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.catalog-carousel-row__title {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.catalog-carousel-row__nav {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.catalog-carousel-row__nav-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color-secondary);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.catalog-carousel-row__nav-btn:hover {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: #fff;
+}
+
+.catalog-carousel-row__track {
+  display: flex;
+  gap: var(--spacing-md);
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x proximity;
+  padding: var(--spacing-xs) var(--spacing-xs) var(--spacing-md);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.catalog-carousel-row__track::-webkit-scrollbar {
+  display: none;
+}
+
+/* Cada card reusa .serie-card (catalogo.css) via renderSingleCard/
+ * renderUniverseCard — esta clase solo le da el ancho fijo + scroll-snap
+ * que necesita para vivir en una fila horizontal en vez de una grilla. */
+.catalog-carousel-row__item {
+  flex: 0 0 180px;
+  scroll-snap-align: start;
+}
+
+@media (max-width: 768px) {
+  .catalog-carousel-row__item {
+    flex-basis: 148px;
+  }
+}

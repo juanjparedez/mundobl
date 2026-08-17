@@ -38,6 +38,8 @@ import {
   ClockCircleOutlined,
   ThunderboltOutlined,
   InboxOutlined,
+  BarsOutlined,
+  SettingOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
 import { useMessage } from '@/hooks/useMessage';
@@ -49,55 +51,13 @@ import { WelcomeBanner } from '@/components/common/WelcomeBanner/WelcomeBanner';
 import { EmptyState } from '@/components/design-system';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
 import { withViewTransition } from '@/lib/view-transitions';
+import type { SerieData, UniverseGroup, CatalogItem } from './catalogTypes';
+import { groupIntoCatalogItems } from './catalogGrouping';
+import { CatalogCarouselView } from './carousel/CatalogCarouselView/CatalogCarouselView';
+import { CarouselConfigDrawer } from './carousel/CarouselConfigDrawer/CarouselConfigDrawer';
+import { useCarouselPrefs } from './carousel/useCarouselPrefs';
 
 const { Option } = Select;
-
-interface SerieTag {
-  id: number;
-  name: string;
-}
-
-interface SerieData {
-  id: string;
-  titulo: string;
-  pais: string;
-  paisCode?: string | null;
-  tipo: string;
-  formato?: string;
-  temporadas: number;
-  episodios: number;
-  runtimeHours?: number;
-  anio: number;
-  rating: number | null;
-  observaciones: string | null;
-  imageUrl?: string | null;
-  imagePosition?: string;
-  synopsis?: string | null;
-  visto?: boolean;
-  universoId?: number | null;
-  universoNombre?: string | null;
-  tags?: SerieTag[];
-  genres?: string[];
-  directors?: string[];
-  actors?: string[];
-  productionCompany?: string | null;
-  originalLanguage?: string | null;
-  platforms?: string[];
-}
-
-interface UniverseGroup {
-  type: 'universe';
-  universoId: number;
-  universoNombre: string;
-  series: SerieData[];
-}
-
-interface SingleSerie {
-  type: 'single';
-  serie: SerieData;
-}
-
-type CatalogItem = UniverseGroup | SingleSerie;
 
 interface CatalogoClientProps {
   series: SerieData[];
@@ -254,11 +214,15 @@ export function CatalogoClient({
     return PAGE_SIZE_OPTIONS.includes(n) ? n : DEFAULT_PAGE_SIZE;
   });
   const [filtersVisible, setFiltersVisible] = useState(false);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>(() => {
+  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'carousel'>(() => {
     if (typeof window === 'undefined') return 'grid';
     const raw = window.localStorage.getItem('catalog-view-mode');
-    return raw === 'list' ? 'list' : 'grid';
+    if (raw === 'list') return 'list';
+    if (raw === 'carousel') return 'carousel';
+    return 'grid';
   });
+  const [carouselConfigOpen, setCarouselConfigOpen] = useState(false);
+  const carouselPrefs = useCarouselPrefs();
   const [sortBy, setSortBy] = useState<SortKey>(() => {
     if (typeof window === 'undefined') return 'az';
     const raw = window.localStorage.getItem('catalog-sort');
@@ -529,44 +493,12 @@ export function CatalogoClient({
     yearTo,
   ]);
 
-  // Group filtered series into CatalogItems (universe groups + singles)
+  // Group filtered series into CatalogItems (universe groups + singles) —
+  // la agrupacion en si vive en catalogGrouping.ts (compartida con la
+  // categoria "Sagas y universos" del modo carrusel), el orden de
+  // presentacion queda aca porque es especifico de la grilla/lista.
   const catalogItems = useMemo((): CatalogItem[] => {
-    const universeMap = new Map<number, SerieData[]>();
-    const singles: SerieData[] = [];
-
-    filteredSeries.forEach((s) => {
-      if (s.universoId) {
-        const existing = universeMap.get(s.universoId) || [];
-        existing.push(s);
-        universeMap.set(s.universoId, existing);
-      } else {
-        singles.push(s);
-      }
-    });
-
-    const items: CatalogItem[] = [];
-
-    // Add universe groups
-    universeMap.forEach((groupSeries, universoId) => {
-      if (groupSeries.length > 1) {
-        // Sort series within a universe by year
-        groupSeries.sort((a, b) => (a.anio || 0) - (b.anio || 0));
-        items.push({
-          type: 'universe',
-          universoId,
-          universoNombre: groupSeries[0].universoNombre || 'Universo',
-          series: groupSeries,
-        });
-      } else {
-        // Only 1 series in this universe after filtering — show as single
-        singles.push(groupSeries[0]);
-      }
-    });
-
-    // Add singles
-    singles.forEach((serie) => {
-      items.push({ type: 'single', serie });
-    });
+    const items = groupIntoCatalogItems(filteredSeries);
 
     // Sort items according to user preference
     items.sort((a, b) => {
@@ -1415,20 +1347,22 @@ export function CatalogoClient({
             {t('catalogo.filtersButton')}
             {hasActiveFilters ? ` (${filteredSeries.length})` : ''}
           </Button>
-          <Tooltip title={t('catalogo.alphaFilterTooltip')}>
-            <Button
-              icon={<SortAscendingOutlined />}
-              onClick={() => {
-                setShowAlphaIndex(!showAlphaIndex);
-                if (showAlphaIndex) {
-                  setSelectedLetter(null);
-                  handleFilterChange();
-                }
-              }}
-              className={selectedLetter ? 'catalogo-filter-btn-active' : ''}
-              type={showAlphaIndex ? 'primary' : 'default'}
-            />
-          </Tooltip>
+          {viewMode !== 'carousel' && (
+            <Tooltip title={t('catalogo.alphaFilterTooltip')}>
+              <Button
+                icon={<SortAscendingOutlined />}
+                onClick={() => {
+                  setShowAlphaIndex(!showAlphaIndex);
+                  if (showAlphaIndex) {
+                    setSelectedLetter(null);
+                    handleFilterChange();
+                  }
+                }}
+                className={selectedLetter ? 'catalogo-filter-btn-active' : ''}
+                type={showAlphaIndex ? 'primary' : 'default'}
+              />
+            </Tooltip>
+          )}
         </div>
         <div className="catalogo-toolbar-right">
           <span className="catalogo-count">
@@ -1441,20 +1375,22 @@ export function CatalogoClient({
                   total: String(series.length),
                 })}
           </span>
-          <Select
-            value={sortBy}
-            onChange={(v) => setSortBy(v as SortKey)}
-            size={isMobile ? 'small' : 'middle'}
-            className="catalogo-sort-select"
-            options={[
-              { value: 'az', label: t('catalogo.sortAZ') },
-              { value: 'za', label: t('catalogo.sortZA') },
-              { value: 'year-desc', label: t('catalogo.sortYearNew') },
-              { value: 'year-asc', label: t('catalogo.sortYearOld') },
-              { value: 'rating-desc', label: t('catalogo.sortRatingDesc') },
-            ]}
-            popupMatchSelectWidth={false}
-          />
+          {viewMode !== 'carousel' && (
+            <Select
+              value={sortBy}
+              onChange={(v) => setSortBy(v as SortKey)}
+              size={isMobile ? 'small' : 'middle'}
+              className="catalogo-sort-select"
+              options={[
+                { value: 'az', label: t('catalogo.sortAZ') },
+                { value: 'za', label: t('catalogo.sortZA') },
+                { value: 'year-desc', label: t('catalogo.sortYearNew') },
+                { value: 'year-asc', label: t('catalogo.sortYearOld') },
+                { value: 'rating-desc', label: t('catalogo.sortRatingDesc') },
+              ]}
+              popupMatchSelectWidth={false}
+            />
+          )}
           <Space.Compact>
             <Button
               icon={<AppstoreOutlined />}
@@ -1468,7 +1404,26 @@ export function CatalogoClient({
               onClick={() => setViewMode('list')}
               size={isMobile ? 'small' : 'middle'}
             />
+            <Tooltip title={t('catalogCarousel.viewToggleLabel')}>
+              <Button
+                icon={<BarsOutlined />}
+                type={viewMode === 'carousel' ? 'primary' : 'default'}
+                onClick={() => setViewMode('carousel')}
+                size={isMobile ? 'small' : 'middle'}
+                aria-label={t('catalogCarousel.viewToggleLabel')}
+              />
+            </Tooltip>
           </Space.Compact>
+          {viewMode === 'carousel' && (
+            <Tooltip title={t('catalogCarousel.configureButton')}>
+              <Button
+                icon={<SettingOutlined />}
+                onClick={() => setCarouselConfigOpen(true)}
+                size={isMobile ? 'small' : 'middle'}
+                aria-label={t('catalogCarousel.configureButton')}
+              />
+            </Tooltip>
+          )}
           {canEdit && (
             <Button
               type="primary"
@@ -1487,45 +1442,47 @@ export function CatalogoClient({
         </div>
       </div>
 
-      <div
-        className="catalogo-quick-filters"
-        role="group"
-        aria-label="Filtros rápidos"
-      >
-        <button
-          className={`catalogo-quick-chip${selectedQuickFilter === 'popular' ? ' catalogo-quick-chip--active' : ''}`}
-          onClick={() => {
-            setSelectedQuickFilter((prev) =>
-              prev === 'popular' ? null : 'popular'
-            );
-            handleFilterChange();
-          }}
+      {viewMode !== 'carousel' && (
+        <div
+          className="catalogo-quick-filters"
+          role="group"
+          aria-label="Filtros rápidos"
         >
-          <FireOutlined /> Populares
-        </button>
-        <button
-          className={`catalogo-quick-chip${selectedQuickFilter === 'recent' ? ' catalogo-quick-chip--active' : ''}`}
-          onClick={() => {
-            setSelectedQuickFilter((prev) =>
-              prev === 'recent' ? null : 'recent'
-            );
-            handleFilterChange();
-          }}
-        >
-          <ClockCircleOutlined /> Recién agregados
-        </button>
-        <button
-          className={`catalogo-quick-chip${selectedQuickFilter === 'trend' ? ' catalogo-quick-chip--active' : ''}`}
-          onClick={() => {
-            setSelectedQuickFilter((prev) =>
-              prev === 'trend' ? null : 'trend'
-            );
-            handleFilterChange();
-          }}
-        >
-          <ThunderboltOutlined /> Tendencia
-        </button>
-      </div>
+          <button
+            className={`catalogo-quick-chip${selectedQuickFilter === 'popular' ? ' catalogo-quick-chip--active' : ''}`}
+            onClick={() => {
+              setSelectedQuickFilter((prev) =>
+                prev === 'popular' ? null : 'popular'
+              );
+              handleFilterChange();
+            }}
+          >
+            <FireOutlined /> Populares
+          </button>
+          <button
+            className={`catalogo-quick-chip${selectedQuickFilter === 'recent' ? ' catalogo-quick-chip--active' : ''}`}
+            onClick={() => {
+              setSelectedQuickFilter((prev) =>
+                prev === 'recent' ? null : 'recent'
+              );
+              handleFilterChange();
+            }}
+          >
+            <ClockCircleOutlined /> Recién agregados
+          </button>
+          <button
+            className={`catalogo-quick-chip${selectedQuickFilter === 'trend' ? ' catalogo-quick-chip--active' : ''}`}
+            onClick={() => {
+              setSelectedQuickFilter((prev) =>
+                prev === 'trend' ? null : 'trend'
+              );
+              handleFilterChange();
+            }}
+          >
+            <ThunderboltOutlined /> Tendencia
+          </button>
+        </div>
+      )}
 
       {/* Filtros activos (deep-links del detalle) */}
       {(selectedCountry ||
@@ -1704,7 +1661,7 @@ export function CatalogoClient({
       )}
 
       {/* Índice alfabético */}
-      {showAlphaIndex && (
+      {showAlphaIndex && viewMode !== 'carousel' && (
         <div className="catalogo-alpha-index">
           {ALPHABET.map((letter) => {
             const isAvailable = availableLetters.has(letter);
@@ -1726,8 +1683,28 @@ export function CatalogoClient({
         </div>
       )}
 
-      {/* Grid/List de Series */}
-      {paginatedItems.length > 0 ? (
+      {/* Carrusel: no pagina (scrollea por fila), curado por categoria en
+       *  vez de por pagina/orden global — se salta todo el bloque de
+       *  paginacion + grid/list de abajo. */}
+      {viewMode === 'carousel' ? (
+        <CatalogCarouselView
+          series={filteredSeries}
+          favoriteIds={favoriteIds}
+          isLoggedIn={userRole !== null}
+          orderedVisibleIds={carouselPrefs.orderedVisibleIds}
+          renderSingleCard={renderSingleCard}
+          renderUniverseCard={renderUniverseCard}
+          categoryLabel={t}
+          scrollPrevLabel={t('catalogCarousel.scrollPrev')}
+          scrollNextLabel={t('catalogCarousel.scrollNext')}
+          emptyTitle={
+            hasActiveFilters
+              ? t('catalogo.emptyFiltered')
+              : t('catalogo.emptyCatalog')
+          }
+        />
+      ) : /* Grid/List de Series */
+      paginatedItems.length > 0 ? (
         <>
           {/* Pagination arriba (espejo del de abajo) — pedido de Flor */}
           <div className="catalogo-pagination catalogo-pagination--top">
@@ -1847,6 +1824,16 @@ export function CatalogoClient({
           }
         />
       )}
+
+      <CarouselConfigDrawer
+        open={carouselConfigOpen}
+        onClose={() => setCarouselConfigOpen(false)}
+        order={carouselPrefs.order}
+        hidden={carouselPrefs.hidden}
+        onReorder={carouselPrefs.reorder}
+        onToggleHidden={carouselPrefs.toggleHidden}
+        onReset={carouselPrefs.reset}
+      />
     </>
   );
 }
