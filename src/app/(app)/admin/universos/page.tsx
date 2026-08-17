@@ -257,6 +257,7 @@ export default function UniversesAdminPage() {
         />
 
         <Table
+          scroll={{ x: 'max-content' }}
           dataSource={filteredUniverses}
           columns={columns}
           rowKey="id"

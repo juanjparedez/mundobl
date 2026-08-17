@@ -415,6 +415,7 @@ export function StatsClient() {
                   {t('adminStats.activeUsers')}
                 </div>
                 <Table
+                  scroll={{ x: 'max-content' }}
                   dataSource={data.activeUsers}
                   columns={userColumns}
                   rowKey="id"

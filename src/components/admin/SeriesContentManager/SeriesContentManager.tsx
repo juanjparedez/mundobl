@@ -320,6 +320,7 @@ export function SeriesContentManager({
       </div>
 
       <Table<TableRow>
+        scroll={{ x: 'max-content' }}
         dataSource={isLocalMode ? (pendingItems ?? []) : items}
         columns={columns}
         rowKey={(record) => String(getRowId(record))}
