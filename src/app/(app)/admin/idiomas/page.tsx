@@ -257,6 +257,7 @@ export default function IdiomasAdminPage() {
         />
 
         <Table
+          scroll={{ x: 'max-content' }}
           dataSource={filteredLanguages}
           columns={columns}
           rowKey="id"

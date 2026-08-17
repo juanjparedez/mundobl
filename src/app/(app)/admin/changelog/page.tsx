@@ -480,6 +480,7 @@ export default function ChangelogAdminPage() {
         />
 
         <Table
+          scroll={{ x: 'max-content' }}
           dataSource={filteredItems}
           columns={columns}
           rowKey="id"

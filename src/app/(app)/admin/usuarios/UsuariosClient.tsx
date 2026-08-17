@@ -385,6 +385,7 @@ export function UsuariosClient() {
           {t('adminUsers.sectionUsers')}
         </h2>
         <Table
+          scroll={{ x: 'max-content' }}
           columns={userColumns}
           dataSource={filteredUsers}
           rowKey="id"
@@ -415,6 +416,7 @@ export function UsuariosClient() {
           </Space.Compact>
         </div>
         <Table
+          scroll={{ x: 'max-content' }}
           columns={ipColumns}
           dataSource={bannedIps}
           rowKey="id"

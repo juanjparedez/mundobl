@@ -181,7 +181,8 @@
   background: var(--bg-container);
   border-radius: var(--border-radius-base);
   box-shadow: var(--box-shadow-card);
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   margin-bottom: var(--spacing-md);
 }
 
