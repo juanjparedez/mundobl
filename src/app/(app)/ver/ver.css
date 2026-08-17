@@ -43,6 +43,31 @@
   min-width: 150px;
 }
 
+@media (max-width: 768px) {
+  .ver-control-bar {
+    padding: var(--spacing-sm);
+  }
+
+  .ver-control-bar__filters {
+    width: 100%;
+  }
+
+  .ver-filter-select {
+    min-width: 0;
+    flex: 1 1 130px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ver-control-bar__search-wrap {
+    flex-basis: 100%;
+  }
+
+  .ver-control-bar__filters {
+    gap: var(--spacing-xs);
+  }
+}
+
 /* ─── Streaming View (Carruseles) ────────────────────────────────── */
 .ver-streaming-view {
   display: flex;
@@ -61,6 +86,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
 }
 
 .ver-grid-view__title {

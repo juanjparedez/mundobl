@@ -54,6 +54,10 @@ export default async function VerPageRoute() {
       synopsis: s.synopsis,
       catalogScope: s.catalogScope,
       origin: s.origin,
+      // new Date(...).toISOString() (no .toISOString() directo): defensa
+      // ante un futuro unstable_cache sobre getWatchableSeries, que
+      // deserializa Date como string en un cache HIT (ver /catalogo).
+      createdAt: new Date(s.createdAt).toISOString(),
       country: s.country
         ? { name: s.country.name, code: s.country.code }
         : null,
