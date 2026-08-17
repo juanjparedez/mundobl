@@ -5,6 +5,8 @@ export interface ActiveAnnouncement {
   title: string;
   body: string;
   tone: 'INFO' | 'SUCCESS' | 'WARNING' | 'PROMO';
+  surface: 'BANNER' | 'MODAL' | 'TOAST';
+  template: 'SIMPLE' | 'FEATURE' | 'MAINTENANCE';
   dismissible: boolean;
   linkUrl: string | null;
   linkLabel: string | null;

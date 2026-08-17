@@ -1031,6 +1031,7 @@ export type TranslationShape = {
     newItem: string;
     newItemShort: string;
     columnTitle: string;
+    columnSurface: string;
     columnTone: string;
     columnAudience: string;
     columnPages: string;
@@ -1045,7 +1046,10 @@ export type TranslationShape = {
     fieldTitle: string;
     fieldBody: string;
     fieldTone: string;
+    fieldSurface: string;
+    fieldTemplate: string;
     fieldAudience: string;
+    fieldRecipients: string;
     fieldPages: string;
     fieldSchedule: string;
     fieldLink: string;
@@ -1055,9 +1059,12 @@ export type TranslationShape = {
     requiredTitle: string;
     requiredBody: string;
     requiredPages: string;
+    requiredRecipients: string;
     hintTitle: string;
     hintLink: string;
     hintLinkLabel: string;
+    recipientsPlaceholder: string;
+    previewLabel: string;
     deleteTitle: string;
     deleteDescription: string;
     loadError: string;
@@ -1073,6 +1080,7 @@ export type TranslationShape = {
     audienceEveryone: string;
     audienceMembers: string;
     audienceNotificationsEnabled: string;
+    audienceSpecificUsers: string;
     statusDraft: string;
     statusScheduled: string;
     statusActive: string;
@@ -3789,6 +3797,7 @@ const es: TranslationShape = {
     newItem: 'Nuevo Anuncio',
     newItemShort: 'Nuevo',
     columnTitle: 'Título',
+    columnSurface: 'Superficie',
     columnTone: 'Tono',
     columnAudience: 'Audiencia',
     columnPages: 'Páginas',
@@ -3803,7 +3812,10 @@ const es: TranslationShape = {
     fieldTitle: 'Título',
     fieldBody: 'Mensaje',
     fieldTone: 'Tono',
+    fieldSurface: 'Superficie',
+    fieldTemplate: 'Template',
     fieldAudience: 'Audiencia',
+    fieldRecipients: 'Destinatarios',
     fieldPages: 'Páginas donde aparece',
     fieldSchedule: 'Vigencia (opcional)',
     fieldLink: 'Link (opcional)',
@@ -3813,9 +3825,12 @@ const es: TranslationShape = {
     requiredTitle: 'El título es requerido',
     requiredBody: 'El mensaje es requerido',
     requiredPages: 'Elegí al menos una página',
+    requiredRecipients: 'Elegí al menos un destinatario',
     hintTitle: 'Título breve del anuncio',
     hintLink: 'https://ejemplo.com o /una-ruta',
     hintLinkLabel: 'Ej: Ver más',
+    recipientsPlaceholder: 'Buscar por nombre o email...',
+    previewLabel: 'Vista previa',
     deleteTitle: '¿Eliminar anuncio?',
     deleteDescription: 'Esto eliminará "{title}"',
     loadError: 'Error al cargar los anuncios',
@@ -3831,6 +3846,7 @@ const es: TranslationShape = {
     audienceEveryone: 'Todos',
     audienceMembers: 'Miembros',
     audienceNotificationsEnabled: 'Con notificaciones activadas',
+    audienceSpecificUsers: 'Usuarios específicos',
     statusDraft: 'Borrador',
     statusScheduled: 'Programado',
     statusActive: 'Activo',
@@ -6610,6 +6626,7 @@ const en: TranslationShape = {
     newItem: 'New Announcement',
     newItemShort: 'New',
     columnTitle: 'Title',
+    columnSurface: 'Surface',
     columnTone: 'Tone',
     columnAudience: 'Audience',
     columnPages: 'Pages',
@@ -6624,7 +6641,10 @@ const en: TranslationShape = {
     fieldTitle: 'Title',
     fieldBody: 'Message',
     fieldTone: 'Tone',
+    fieldSurface: 'Surface',
+    fieldTemplate: 'Template',
     fieldAudience: 'Audience',
+    fieldRecipients: 'Recipients',
     fieldPages: 'Pages where it appears',
     fieldSchedule: 'Active window (optional)',
     fieldLink: 'Link (optional)',
@@ -6634,9 +6654,12 @@ const en: TranslationShape = {
     requiredTitle: 'Title is required',
     requiredBody: 'Message is required',
     requiredPages: 'Pick at least one page',
+    requiredRecipients: 'Pick at least one recipient',
     hintTitle: 'Short title for the announcement',
     hintLink: 'https://example.com or /a-route',
     hintLinkLabel: 'E.g. Learn more',
+    recipientsPlaceholder: 'Search by name or email...',
+    previewLabel: 'Preview',
     deleteTitle: 'Delete announcement?',
     deleteDescription: 'This will delete "{title}"',
     loadError: 'Error loading announcements',
@@ -6652,6 +6675,7 @@ const en: TranslationShape = {
     audienceEveryone: 'Everyone',
     audienceMembers: 'Members',
     audienceNotificationsEnabled: 'With notifications enabled',
+    audienceSpecificUsers: 'Specific users',
     statusDraft: 'Draft',
     statusScheduled: 'Scheduled',
     statusActive: 'Active',

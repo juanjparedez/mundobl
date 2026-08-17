@@ -12,6 +12,7 @@ export async function GET() {
   try {
     const items = await prisma.announcement.findMany({
       orderBy: { createdAt: 'desc' },
+      include: { _count: { select: { recipients: true } } },
     });
     return NextResponse.json(items);
   } catch (error) {
@@ -28,6 +29,8 @@ interface AnnouncementInput {
   body?: string;
   tone?: string;
   audience?: string;
+  surface?: string;
+  template?: string;
   pages?: string[];
   dismissible?: boolean;
   linkUrl?: string | null;
@@ -35,6 +38,7 @@ interface AnnouncementInput {
   isActive?: boolean;
   startsAt?: string | null;
   endsAt?: string | null;
+  recipientUserIds?: string[];
 }
 
 // POST /api/admin/announcements — crear
@@ -52,6 +56,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const recipientUserIds = Array.isArray(body.recipientUserIds)
+      ? [...new Set(body.recipientUserIds)]
+      : [];
+
     const data: Prisma.AnnouncementCreateInput = {
       title: body.title.trim(),
       body: body.body.trim(),
@@ -59,6 +67,11 @@ export async function POST(request: NextRequest) {
       audience:
         (body.audience as Prisma.AnnouncementCreateInput['audience']) ??
         'EVERYONE',
+      surface:
+        (body.surface as Prisma.AnnouncementCreateInput['surface']) ?? 'BANNER',
+      template:
+        (body.template as Prisma.AnnouncementCreateInput['template']) ??
+        'SIMPLE',
       pages: Array.isArray(body.pages) ? body.pages : [],
       dismissible: body.dismissible ?? true,
       linkUrl: body.linkUrl?.trim() || null,
@@ -67,6 +80,11 @@ export async function POST(request: NextRequest) {
       startsAt: body.startsAt ? new Date(body.startsAt) : null,
       endsAt: body.endsAt ? new Date(body.endsAt) : null,
       createdBy: { connect: { id: authResult.userId } },
+      ...(recipientUserIds.length > 0 && {
+        recipients: {
+          create: recipientUserIds.map((userId) => ({ userId })),
+        },
+      }),
     };
 
     const created = await prisma.announcement.create({ data });

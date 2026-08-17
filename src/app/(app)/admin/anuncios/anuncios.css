@@ -2,3 +2,38 @@
   color: var(--text-secondary);
   font-size: var(--font-size-sm);
 }
+
+.anuncios-editor {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-xl, 24px);
+  align-items: start;
+}
+
+.anuncios-editor__form {
+  min-width: 0;
+}
+
+.anuncios-editor__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-md);
+}
+
+.anuncios-editor__col {
+  min-width: 0;
+}
+
+.anuncios-editor__preview {
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .anuncios-editor {
+    grid-template-columns: 1fr;
+  }
+
+  .anuncios-editor__row {
+    grid-template-columns: 1fr;
+  }
+}
