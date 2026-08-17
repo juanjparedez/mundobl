@@ -408,6 +408,25 @@ export function FeedbackClient() {
     });
   };
 
+  // Antes: cualquier falla (subida de imagen, rate limit, validacion,
+  // error de servidor) mostraba siempre el mismo toast generico
+  // ("Error al crear la solicitud"), sin importar la causa real — asi
+  // era imposible para el usuario (o para nosotros al debuggear un
+  // reporte) saber si fallo por tamaño de imagen, rate limit u otra
+  // cosa. Ahora se lee el `error` que devuelve la API y se muestra tal
+  // cual, con el texto generico solo como ultimo fallback.
+  const readErrorMessage = async (
+    response: Response,
+    fallback: string
+  ): Promise<string> => {
+    try {
+      const body = await response.json();
+      return typeof body?.error === 'string' ? body.error : fallback;
+    } catch {
+      return fallback;
+    }
+  };
+
   const uploadImages = async (images: PendingImage[]): Promise<string[]> => {
     const urls: string[] = [];
     for (const img of images) {
@@ -423,7 +442,9 @@ export function FeedbackClient() {
       });
 
       if (!response.ok) {
-        throw new Error(t('feedback.errorUploadImage'));
+        throw new Error(
+          await readErrorMessage(response, t('feedback.errorUploadImage'))
+        );
       }
 
       const result = await response.json();
@@ -450,7 +471,11 @@ export function FeedbackClient() {
         body: JSON.stringify({ ...values, imageUrls }),
       });
 
-      if (!response.ok) throw new Error(t('feedback.errorCreate'));
+      if (!response.ok) {
+        throw new Error(
+          await readErrorMessage(response, t('feedback.errorCreate'))
+        );
+      }
 
       const newRequest = await response.json();
       setRequests((prev) => [newRequest, ...prev]);
@@ -460,7 +485,11 @@ export function FeedbackClient() {
       setPendingImages([]);
       message.success(t('feedback.successCreated'));
     } catch (error) {
-      message.error(t('feedback.errorCreateRequest'));
+      message.error(
+        error instanceof Error
+          ? error.message
+          : t('feedback.errorCreateRequest')
+      );
       console.error(error);
     } finally {
       setSubmitting(false);

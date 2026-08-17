@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth-helpers';
 import { uploadImage } from '@/lib/supabase';
 import { processPosterImage } from '@/lib/image-processing';
+import { logCriticalAction } from '@/lib/access-log';
 
 // POST /api/feedback/upload — sube una imagen para adjuntar a un feedback /
 // feature request. Cualquier usuario logueado (no requiere ADMIN), a
@@ -12,9 +13,11 @@ import { processPosterImage } from '@/lib/image-processing';
 // listar/limpiar por owner si despues se necesita (ej. caso eliminado o
 // user dado de baja). El client no controla el folder.
 export async function POST(request: NextRequest) {
+  let requesterUserId: string | null = null;
   try {
     const authResult = await requireAuth();
     if (!authResult.authorized) return authResult.response;
+    requesterUserId = authResult.userId;
 
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
@@ -74,6 +77,14 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Error uploading feedback file:', error);
+    const message = error instanceof Error ? error.message : String(error);
+    logCriticalAction(
+      'ERROR_FEEDBACK_UPLOAD',
+      '/api/feedback/upload',
+      'POST',
+      requesterUserId,
+      message.slice(0, 500)
+    );
     return NextResponse.json(
       { error: 'Error uploading file' },
       { status: 500 }
