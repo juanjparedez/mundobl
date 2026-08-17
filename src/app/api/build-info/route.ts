@@ -31,17 +31,14 @@ function getBuildId(): string {
   }
 }
 
-// Fecha/hora del deploy — usamos el mtime de .next/BUILD_ID (generado por
-// `next build` en cada deploy de Vercel) en vez de `Date.now()`, que solo
-// reflejaria cuando arranco el proceso serverless (cold start), no cuando
-// se genero el build real.
+// Fecha del commit deployado — inlineada en build time por next.config.ts
+// (BUILD_COMMIT_DATE, via `git log -1 --format=%cI`, con git disponible en
+// la maquina de build). Probamos antes con el mtime de .next/BUILD_ID en
+// runtime y en Vercel devolvia una fecha fija sin relacion con el deploy
+// real (la capa de cache/build reproducible lo pisa) — por eso se saca del
+// commit en vez del filesystem.
 function getBuildTime(): string | null {
-  try {
-    const buildIdPath = path.join(process.cwd(), '.next', 'BUILD_ID');
-    return fs.statSync(buildIdPath).mtime.toISOString();
-  } catch {
-    return null;
-  }
+  return process.env.BUILD_COMMIT_DATE ?? null;
 }
 
 function getPackageVersion(): string {

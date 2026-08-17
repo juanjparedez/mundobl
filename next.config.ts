@@ -1,6 +1,21 @@
 import type { NextConfig } from 'next';
 import { execSync } from 'child_process';
 
+// Fecha del commit que se esta buildeando, capturada en build time (con git
+// disponible en la maquina de build de Vercel) e inlineada como constante en
+// el bundle. NO usar fs.statSync(mtime) sobre archivos generados en runtime
+// para esto — se probo y el mtime de .next/BUILD_ID en Vercel no refleja la
+// hora real del deploy (la capa de cache/build reproducible lo pisa a una
+// fecha fija sin relacion con el deploy real, ej. "19 oct 2018"). El commit
+// date via git es determinista y no depende de como Vercel maneje mtimes.
+function getGitCommitDate(): string {
+  try {
+    return execSync('git log -1 --format=%cI').toString().trim();
+  } catch {
+    return new Date().toISOString();
+  }
+}
+
 const nextConfig: NextConfig = {
   generateBuildId: () => {
     try {
@@ -8,6 +23,9 @@ const nextConfig: NextConfig = {
     } catch {
       return Date.now().toString(36);
     }
+  },
+  env: {
+    BUILD_COMMIT_DATE: getGitCommitDate(),
   },
   reactStrictMode: true,
   // /api/changelog lee CHANGELOG.md con fs en runtime (es la fuente de verdad
