@@ -45,4 +45,37 @@ export const ANNOUNCEMENT_AUDIENCE_COLORS: Record<string, string> = {
   EVERYONE: 'default',
   MEMBERS: 'cyan',
   NOTIFICATIONS_ENABLED: 'purple',
+  SPECIFIC_USERS: 'magenta',
 };
+
+export const ANNOUNCEMENT_SURFACE_COLORS: Record<string, string> = {
+  BANNER: 'blue',
+  MODAL: 'gold',
+  TOAST: 'green',
+};
+
+// Superficie: donde/como aparece el anuncio. Cada valor mapea 1 a 1 con un
+// wrapper en src/components/common/AnnouncementDisplay/surfaces/ — agregar
+// una superficie nueva implica un componente nuevo ahi + una linea aca.
+export const ANNOUNCEMENT_SURFACE_OPTIONS = [
+  { value: 'BANNER', label: 'Banner (franja arriba del contenido)' },
+  { value: 'MODAL', label: 'Modal (se abre solo al entrar)' },
+  { value: 'TOAST', label: 'Toast (card chico, esquina inferior)' },
+] as const;
+
+// Template: preset de layout dentro de la superficie elegida (icono default,
+// si el CTA se ve como boton o como link). No agrega archivos nuevos: es una
+// entrada mas en TEMPLATE_CONFIG (ver AnnouncementContent.tsx).
+export const ANNOUNCEMENT_TEMPLATE_OPTIONS = [
+  { value: 'SIMPLE', label: 'Simple', description: 'Texto + link opcional.' },
+  {
+    value: 'FEATURE',
+    label: 'Feature',
+    description: 'CTA destacado como boton, ideal para promocionar algo.',
+  },
+  {
+    value: 'MAINTENANCE',
+    label: 'Mantenimiento',
+    description: 'Icono de alerta mas prominente, sin CTA como boton.',
+  },
+] as const;

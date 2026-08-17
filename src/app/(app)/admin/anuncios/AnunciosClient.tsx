@@ -5,7 +5,7 @@ import {
   Table,
   Button,
   Input,
-  Modal,
+  Drawer,
   Form,
   Select,
   Radio,
@@ -29,13 +29,23 @@ import {
   ANNOUNCEMENT_PAGE_OPTIONS,
   ANNOUNCEMENT_TONE_COLORS,
   ANNOUNCEMENT_AUDIENCE_COLORS,
+  ANNOUNCEMENT_SURFACE_COLORS,
+  ANNOUNCEMENT_SURFACE_OPTIONS,
+  ANNOUNCEMENT_TEMPLATE_OPTIONS,
 } from '@/constants/announcements';
 import { AdminNav } from '../AdminNav';
+import { AnuncioPreview } from './AnuncioPreview';
 import '../admin.css';
 import './anuncios.css';
 
 type Tone = 'INFO' | 'SUCCESS' | 'WARNING' | 'PROMO';
-type Audience = 'EVERYONE' | 'MEMBERS' | 'NOTIFICATIONS_ENABLED';
+type Audience =
+  | 'EVERYONE'
+  | 'MEMBERS'
+  | 'NOTIFICATIONS_ENABLED'
+  | 'SPECIFIC_USERS';
+type Surface = 'BANNER' | 'MODAL' | 'TOAST';
+type Template = 'SIMPLE' | 'FEATURE' | 'MAINTENANCE';
 type Status = 'draft' | 'scheduled' | 'active' | 'expired';
 
 interface AnnouncementType {
@@ -44,6 +54,8 @@ interface AnnouncementType {
   body: string;
   tone: Tone;
   audience: Audience;
+  surface: Surface;
+  template: Template;
   pages: string[];
   dismissible: boolean;
   linkUrl: string | null;
@@ -52,6 +64,13 @@ interface AnnouncementType {
   startsAt: string | null;
   endsAt: string | null;
   createdAt: string;
+  _count?: { recipients: number };
+}
+
+interface UserOption {
+  id: string;
+  name: string | null;
+  email: string;
 }
 
 interface FormValues {
@@ -59,12 +78,15 @@ interface FormValues {
   body: string;
   tone: Tone;
   audience: Audience;
+  surface: Surface;
+  template: Template;
   pages: string[];
   dismissible: boolean;
   linkUrl?: string;
   linkLabel?: string;
   isActive: boolean;
   schedule?: [Dayjs, Dayjs] | null;
+  recipientUserIds?: string[];
 }
 
 function computeStatus(item: AnnouncementType): Status {
@@ -93,9 +115,14 @@ export function AnunciosClient() {
   const [items, setItems] = useState<AnnouncementType[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [modalOpen, setModalOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<AnnouncementType | null>(null);
+  const [userOptions, setUserOptions] = useState<UserOption[]>([]);
   const [form] = Form.useForm<FormValues>();
+  // Watch reactivo de TODO el form -> alimenta el preview en vivo. Con
+  // valores undefined al montar (antes del primer setFieldsValue), asi que
+  // el preview tolera undefined en cada campo (ver fallbacks abajo).
+  const watched = Form.useWatch([], form) as Partial<FormValues> | undefined;
 
   const toneLabels: Record<Tone, string> = {
     INFO: t('adminAnnouncements.toneInfo'),
@@ -112,9 +139,18 @@ export function AnunciosClient() {
     EVERYONE: t('adminAnnouncements.audienceEveryone'),
     MEMBERS: t('adminAnnouncements.audienceMembers'),
     NOTIFICATIONS_ENABLED: t('adminAnnouncements.audienceNotificationsEnabled'),
+    SPECIFIC_USERS: t('adminAnnouncements.audienceSpecificUsers'),
   };
   const audienceOptions = (Object.keys(audienceLabels) as Audience[]).map(
     (value) => ({ value, label: audienceLabels[value] })
+  );
+
+  const surfaceLabels: Record<Surface, string> = useMemo(
+    () =>
+      Object.fromEntries(
+        ANNOUNCEMENT_SURFACE_OPTIONS.map((o) => [o.value, o.label])
+      ) as Record<Surface, string>,
+    []
   );
 
   const statusLabels: Record<Status, string> = {
@@ -130,6 +166,15 @@ export function AnunciosClient() {
         ANNOUNCEMENT_PAGE_OPTIONS.map((p) => [p.value, p.label])
       ),
     []
+  );
+
+  const userOptionItems = useMemo(
+    () =>
+      userOptions.map((u) => ({
+        value: u.id,
+        label: u.name ? `${u.name} · ${u.email}` : u.email,
+      })),
+    [userOptions]
   );
 
   const loadItems = useCallback(async () => {
@@ -151,13 +196,28 @@ export function AnunciosClient() {
     loadItems();
   }, [loadItems]);
 
+  // Usuarios para el picker de SPECIFIC_USERS: se traen una sola vez (no en
+  // cada apertura del drawer), lazy la primera vez que hace falta.
+  const ensureUserOptionsLoaded = useCallback(async () => {
+    if (userOptions.length > 0) return;
+    try {
+      const response = await fetch('/api/users');
+      if (!response.ok) return;
+      const data = await response.json();
+      setUserOptions(data);
+    } catch (error) {
+      console.error(error);
+    }
+  }, [userOptions.length]);
+
   const filteredItems = useMemo(() => {
     if (!searchTerm.trim()) return items;
     const term = searchTerm.toLowerCase();
     return items.filter((item) => item.title.toLowerCase().includes(term));
   }, [items, searchTerm]);
 
-  const handleOpenModal = (item?: AnnouncementType) => {
+  const handleOpenDrawer = (item?: AnnouncementType) => {
+    ensureUserOptionsLoaded();
     if (item) {
       setEditingItem(item);
       form.setFieldsValue({
@@ -165,6 +225,8 @@ export function AnunciosClient() {
         body: item.body,
         tone: item.tone,
         audience: item.audience,
+        surface: item.surface,
+        template: item.template,
         pages: item.pages,
         dismissible: item.dismissible,
         linkUrl: item.linkUrl ?? undefined,
@@ -174,23 +236,34 @@ export function AnunciosClient() {
           item.startsAt && item.endsAt
             ? [dayjs(item.startsAt), dayjs(item.endsAt)]
             : null,
+        recipientUserIds: undefined,
       });
+      // Los recipients no vienen en el listado (solo el count) — se cargan
+      // aparte solo si hace falta editarlos.
+      if (item.audience === 'SPECIFIC_USERS') {
+        fetch(`/api/admin/announcements/${item.id}/recipients`)
+          .then((res) => (res.ok ? res.json() : []))
+          .then((ids: string[]) => form.setFieldValue('recipientUserIds', ids))
+          .catch(() => undefined);
+      }
     } else {
       setEditingItem(null);
       form.resetFields();
       form.setFieldsValue({
         tone: 'INFO',
         audience: 'EVERYONE',
+        surface: 'BANNER',
+        template: 'SIMPLE',
         pages: ['global'],
         dismissible: true,
         isActive: true,
       });
     }
-    setModalOpen(true);
+    setDrawerOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setModalOpen(false);
+  const handleCloseDrawer = () => {
+    setDrawerOpen(false);
     setEditingItem(null);
     form.resetFields();
   };
@@ -203,6 +276,8 @@ export function AnunciosClient() {
         body: values.body,
         tone: values.tone,
         audience: values.audience,
+        surface: values.surface,
+        template: values.template,
         pages: values.pages,
         dismissible: values.dismissible,
         linkUrl: values.linkUrl || null,
@@ -210,6 +285,9 @@ export function AnunciosClient() {
         isActive: values.isActive,
         startsAt: startsAt ? startsAt.toISOString() : null,
         endsAt: endsAt ? endsAt.toISOString() : null,
+        ...(values.audience === 'SPECIFIC_USERS' && {
+          recipientUserIds: values.recipientUserIds ?? [],
+        }),
       };
 
       const url = editingItem
@@ -233,7 +311,7 @@ export function AnunciosClient() {
           ? t('adminAnnouncements.updateSuccess')
           : t('adminAnnouncements.createSuccess')
       );
-      handleCloseModal();
+      handleCloseDrawer();
       loadItems();
     } catch (error) {
       const errorMessage =
@@ -288,6 +366,16 @@ export function AnunciosClient() {
         a.title.localeCompare(b.title),
     },
     {
+      title: t('adminAnnouncements.columnSurface'),
+      key: 'surface',
+      render: (record: AnnouncementType) => (
+        <Tag color={ANNOUNCEMENT_SURFACE_COLORS[record.surface]}>
+          {surfaceLabels[record.surface]}
+        </Tag>
+      ),
+      responsive: ['md' as const],
+    },
+    {
       title: t('adminAnnouncements.columnTone'),
       key: 'tone',
       render: (record: AnnouncementType) => (
@@ -301,9 +389,14 @@ export function AnunciosClient() {
       title: t('adminAnnouncements.columnAudience'),
       key: 'audience',
       render: (record: AnnouncementType) => (
-        <Tag color={ANNOUNCEMENT_AUDIENCE_COLORS[record.audience]}>
-          {audienceLabels[record.audience]}
-        </Tag>
+        <Space size={4}>
+          <Tag color={ANNOUNCEMENT_AUDIENCE_COLORS[record.audience]}>
+            {audienceLabels[record.audience]}
+          </Tag>
+          {record.audience === 'SPECIFIC_USERS' && (
+            <Tag>{record._count?.recipients ?? 0}</Tag>
+          )}
+        </Space>
       ),
       responsive: ['md' as const],
     },
@@ -337,7 +430,7 @@ export function AnunciosClient() {
           />
           <Button
             icon={<EditOutlined />}
-            onClick={() => handleOpenModal(record)}
+            onClick={() => handleOpenDrawer(record)}
             size="small"
           >
             {!isMobile && t('adminAnnouncements.actionEdit')}
@@ -383,7 +476,7 @@ export function AnunciosClient() {
           <Button
             type="primary"
             icon={<PlusOutlined />}
-            onClick={() => handleOpenModal()}
+            onClick={() => handleOpenDrawer()}
           >
             {isMobile
               ? t('adminAnnouncements.newItemShort')
@@ -405,111 +498,206 @@ export function AnunciosClient() {
         pagination={{ pageSize: 20, showSizeChanger: true }}
       />
 
-      <Modal
+      <Drawer
         title={
           editingItem
             ? t('adminAnnouncements.modalEditTitle')
             : t('adminAnnouncements.modalNewTitle')
         }
-        open={modalOpen}
-        onCancel={handleCloseModal}
-        onOk={() => form.submit()}
-        okText={t('adminAnnouncements.save')}
-        cancelText={t('adminAnnouncements.cancel')}
-        width={640}
-        forceRender
+        open={drawerOpen}
+        onClose={handleCloseDrawer}
+        width={isMobile ? '100%' : 960}
+        destroyOnClose
+        extra={
+          <Space>
+            <Button onClick={handleCloseDrawer}>
+              {t('adminAnnouncements.cancel')}
+            </Button>
+            <Button type="primary" onClick={() => form.submit()}>
+              {t('adminAnnouncements.save')}
+            </Button>
+          </Space>
+        }
       >
-        <Form form={form} layout="vertical" onFinish={handleSubmit}>
-          <Form.Item
-            label={t('adminAnnouncements.fieldTitle')}
-            name="title"
-            rules={[
-              {
-                required: true,
-                message: t('adminAnnouncements.requiredTitle'),
-              },
-            ]}
+        <div className="anuncios-editor">
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={handleSubmit}
+            className="anuncios-editor__form"
           >
-            <Input placeholder={t('adminAnnouncements.hintTitle')} />
-          </Form.Item>
-
-          <Form.Item
-            label={t('adminAnnouncements.fieldBody')}
-            name="body"
-            rules={[
-              { required: true, message: t('adminAnnouncements.requiredBody') },
-            ]}
-          >
-            <AnnouncementBodyEditor />
-          </Form.Item>
-
-          <Form.Item label={t('adminAnnouncements.fieldTone')} name="tone">
-            <Select options={toneOptions} />
-          </Form.Item>
-
-          <Form.Item
-            label={t('adminAnnouncements.fieldAudience')}
-            name="audience"
-          >
-            <Radio.Group options={audienceOptions} optionType="button" />
-          </Form.Item>
-
-          <Form.Item
-            label={t('adminAnnouncements.fieldPages')}
-            name="pages"
-            rules={[
-              {
-                validator: async (_, value: string[]) => {
-                  if (!value || value.length === 0) {
-                    throw new Error(t('adminAnnouncements.requiredPages'));
-                  }
+            <Form.Item
+              label={t('adminAnnouncements.fieldTitle')}
+              name="title"
+              rules={[
+                {
+                  required: true,
+                  message: t('adminAnnouncements.requiredTitle'),
                 },
-              },
-            ]}
-          >
-            <Checkbox.Group
-              options={ANNOUNCEMENT_PAGE_OPTIONS.map((p) => ({
-                value: p.value,
-                label: p.label,
-              }))}
+              ]}
+            >
+              <Input placeholder={t('adminAnnouncements.hintTitle')} />
+            </Form.Item>
+
+            <Form.Item
+              label={t('adminAnnouncements.fieldBody')}
+              name="body"
+              rules={[
+                {
+                  required: true,
+                  message: t('adminAnnouncements.requiredBody'),
+                },
+              ]}
+            >
+              <AnnouncementBodyEditor />
+            </Form.Item>
+
+            <div className="anuncios-editor__row">
+              <Form.Item
+                label={t('adminAnnouncements.fieldSurface')}
+                name="surface"
+                className="anuncios-editor__col"
+              >
+                <Select
+                  options={ANNOUNCEMENT_SURFACE_OPTIONS.map((o) => ({
+                    value: o.value,
+                    label: o.label,
+                  }))}
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={t('adminAnnouncements.fieldTemplate')}
+                name="template"
+                className="anuncios-editor__col"
+              >
+                <Select
+                  options={ANNOUNCEMENT_TEMPLATE_OPTIONS.map((o) => ({
+                    value: o.value,
+                    label: `${o.label} — ${o.description}`,
+                  }))}
+                />
+              </Form.Item>
+            </div>
+
+            <Form.Item label={t('adminAnnouncements.fieldTone')} name="tone">
+              <Select options={toneOptions} />
+            </Form.Item>
+
+            <Form.Item
+              label={t('adminAnnouncements.fieldAudience')}
+              name="audience"
+            >
+              <Radio.Group options={audienceOptions} optionType="button" />
+            </Form.Item>
+
+            {watched?.audience === 'SPECIFIC_USERS' && (
+              <Form.Item
+                label={t('adminAnnouncements.fieldRecipients')}
+                name="recipientUserIds"
+                rules={[
+                  {
+                    validator: async (_, value: string[]) => {
+                      if (!value || value.length === 0) {
+                        throw new Error(
+                          t('adminAnnouncements.requiredRecipients')
+                        );
+                      }
+                    },
+                  },
+                ]}
+              >
+                <Select
+                  mode="multiple"
+                  showSearch
+                  optionFilterProp="label"
+                  options={userOptionItems}
+                  placeholder={t('adminAnnouncements.recipientsPlaceholder')}
+                  onFocus={ensureUserOptionsLoaded}
+                />
+              </Form.Item>
+            )}
+
+            <Form.Item
+              label={t('adminAnnouncements.fieldPages')}
+              name="pages"
+              rules={[
+                {
+                  validator: async (_, value: string[]) => {
+                    if (!value || value.length === 0) {
+                      throw new Error(t('adminAnnouncements.requiredPages'));
+                    }
+                  },
+                },
+              ]}
+            >
+              <Checkbox.Group
+                options={ANNOUNCEMENT_PAGE_OPTIONS.map((p) => ({
+                  value: p.value,
+                  label: p.label,
+                }))}
+              />
+            </Form.Item>
+
+            <Form.Item
+              label={t('adminAnnouncements.fieldSchedule')}
+              name="schedule"
+            >
+              <DatePicker.RangePicker showTime allowClear />
+            </Form.Item>
+
+            <div className="anuncios-editor__row">
+              <Form.Item
+                label={t('adminAnnouncements.fieldLink')}
+                name="linkUrl"
+                className="anuncios-editor__col"
+              >
+                <Input placeholder={t('adminAnnouncements.hintLink')} />
+              </Form.Item>
+
+              <Form.Item
+                label={t('adminAnnouncements.fieldLinkLabel')}
+                name="linkLabel"
+                className="anuncios-editor__col"
+              >
+                <Input placeholder={t('adminAnnouncements.hintLinkLabel')} />
+              </Form.Item>
+            </div>
+
+            <div className="anuncios-editor__row">
+              <Form.Item
+                label={t('adminAnnouncements.fieldDismissible')}
+                name="dismissible"
+                valuePropName="checked"
+              >
+                <Switch />
+              </Form.Item>
+
+              <Form.Item
+                label={t('adminAnnouncements.fieldActive')}
+                name="isActive"
+                valuePropName="checked"
+              >
+                <Switch />
+              </Form.Item>
+            </div>
+          </Form>
+
+          <div className="anuncios-editor__preview">
+            <AnuncioPreview
+              surface={watched?.surface ?? 'BANNER'}
+              tone={watched?.tone ?? 'INFO'}
+              template={watched?.template ?? 'SIMPLE'}
+              title={watched?.title ?? ''}
+              body={watched?.body ?? ''}
+              linkUrl={watched?.linkUrl}
+              linkLabel={watched?.linkLabel}
+              dismissible={watched?.dismissible ?? true}
+              frameLabel={t('adminAnnouncements.previewLabel')}
             />
-          </Form.Item>
-
-          <Form.Item
-            label={t('adminAnnouncements.fieldSchedule')}
-            name="schedule"
-          >
-            <DatePicker.RangePicker showTime allowClear />
-          </Form.Item>
-
-          <Form.Item label={t('adminAnnouncements.fieldLink')} name="linkUrl">
-            <Input placeholder={t('adminAnnouncements.hintLink')} />
-          </Form.Item>
-
-          <Form.Item
-            label={t('adminAnnouncements.fieldLinkLabel')}
-            name="linkLabel"
-          >
-            <Input placeholder={t('adminAnnouncements.hintLinkLabel')} />
-          </Form.Item>
-
-          <Form.Item
-            label={t('adminAnnouncements.fieldDismissible')}
-            name="dismissible"
-            valuePropName="checked"
-          >
-            <Switch />
-          </Form.Item>
-
-          <Form.Item
-            label={t('adminAnnouncements.fieldActive')}
-            name="isActive"
-            valuePropName="checked"
-          >
-            <Switch />
-          </Form.Item>
-        </Form>
-      </Modal>
+          </div>
+        </div>
+      </Drawer>
     </div>
   );
 }
