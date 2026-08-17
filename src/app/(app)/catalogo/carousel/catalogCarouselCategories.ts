@@ -29,8 +29,9 @@ export interface CarouselCategoryDef {
  *  cada genero/pais/plataforma posible (eso dejaria de ser "curado").
  *  Tailandia/Corea/Japon elegidos por distribucion real del catalogo
  *  (juntos son ~78% de las series curadas al momento de escribir esto).
- *  El usuario elige cuales ver y en que orden desde CarouselConfigDrawer
- *  — este array es solo el default/la fuente de verdad de que existe. */
+ *  El usuario elige cuales ver y en que orden desde ReorderConfigDrawer
+ *  (src/components/carousel/) — este array es solo el default/la fuente
+ *  de verdad de que existe. */
 export const CATALOG_CAROUSEL_CATEGORIES: CarouselCategoryDef[] = [
   {
     id: 'recentlyAdded',

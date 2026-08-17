@@ -32,6 +32,11 @@ interface MediaCarouselProps {
   subtitle?: string;
   icon?: React.ReactNode;
   items: CarouselMediaItem[];
+  scrollPrevLabel: string;
+  scrollNextLabel: string;
+  /** Caller resuelve el texto del badge por item (ya interpolado con
+   *  el count) — este componente no conoce i18n. */
+  episodesBadgeLabel: (count: number) => string;
 }
 
 export function MediaCarousel({
@@ -39,6 +44,9 @@ export function MediaCarousel({
   subtitle,
   icon,
   items,
+  scrollPrevLabel,
+  scrollNextLabel,
+  episodesBadgeLabel,
 }: MediaCarouselProps) {
   const rowRef = useRef<HTMLDivElement>(null);
 
@@ -72,7 +80,7 @@ export function MediaCarousel({
             type="button"
             className="media-carousel__arrow media-carousel__arrow--prev"
             onClick={() => handleScroll('left')}
-            aria-label="Desplazar hacia la izquierda"
+            aria-label={scrollPrevLabel}
           >
             <LeftOutlined />
           </button>
@@ -80,7 +88,7 @@ export function MediaCarousel({
             type="button"
             className="media-carousel__arrow media-carousel__arrow--next"
             onClick={() => handleScroll('right')}
-            aria-label="Desplazar hacia la derecha"
+            aria-label={scrollNextLabel}
           >
             <RightOutlined />
           </button>
@@ -135,8 +143,7 @@ export function MediaCarousel({
                   <div className="media-carousel__overlay">
                     <PlayCircleFilled className="media-carousel__play-btn" />
                     <span className="media-carousel__episodes-badge">
-                      {item.episodesWithEmbed}{' '}
-                      {item.episodesWithEmbed === 1 ? 'video' : 'videos'}
+                      {episodesBadgeLabel(item.episodesWithEmbed)}
                     </span>
                   </div>
 

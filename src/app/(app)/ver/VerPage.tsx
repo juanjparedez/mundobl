@@ -1,33 +1,48 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { Button, Empty, Input, Select, Popconfirm, Segmented } from 'antd';
+import {
+  Button,
+  Checkbox,
+  Empty,
+  Input,
+  Select,
+  Popconfirm,
+  Segmented,
+  Tooltip,
+} from 'antd';
 import {
   PlayCircleFilled,
   PlusOutlined,
   SearchOutlined,
   DeleteOutlined,
-  FireFilled,
   AppstoreOutlined,
   BarsOutlined,
-  VideoCameraFilled,
+  SettingOutlined,
 } from '@ant-design/icons';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { useMessage } from '@/hooks/useMessage';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
 import { HeroBillboard } from '@/components/streaming/HeroBillboard/HeroBillboard';
 import {
   MediaCarousel,
   type CarouselMediaItem,
 } from '@/components/streaming/MediaCarousel/MediaCarousel';
+import { useReorderablePrefs } from '@/components/carousel/useReorderablePrefs';
+import { ReorderConfigDrawer } from '@/components/carousel/ReorderConfigDrawer/ReorderConfigDrawer';
+import { VER_CAROUSEL_CATEGORIES } from './carousel/verCarouselCategories';
+
+const VER_CAROUSEL_CATEGORY_IDS = VER_CAROUSEL_CATEGORIES.map((c) => c.id);
 
 interface VerItem extends CarouselMediaItem {
   catalogScope: string;
   origin: string;
+  createdAt?: string;
   linkedSeries: { id: number; title: string } | null;
 }
 
@@ -41,6 +56,7 @@ export function VerPage({ items }: VerPageProps) {
   const isAdmin = session?.user?.role === 'ADMIN';
   const router = useRouter();
   const message = useMessage();
+  const { t } = useLocale();
 
   const [search, setSearch] = useState('');
   const [country, setCountry] = useState<string | null>(null);
@@ -48,17 +64,43 @@ export function VerPage({ items }: VerPageProps) {
   const [onlyCurated, setOnlyCurated] = useState(false);
   const [viewMode, setViewMode] = useState<'streaming' | 'grid'>('streaming');
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [carouselConfigOpen, setCarouselConfigOpen] = useState(false);
+
+  const [heroCollapsed, setHeroCollapsed] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.localStorage.getItem('ver-hero-collapsed') === 'true';
+  });
+  const [searchOpen, setSearchOpen] = useState(() => {
+    if (typeof window === 'undefined') return true;
+    const raw = window.localStorage.getItem('ver-search-open');
+    return raw === null ? true : raw === 'true';
+  });
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem('ver-hero-collapsed', String(heroCollapsed));
+  }, [heroCollapsed]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem('ver-search-open', String(searchOpen));
+  }, [searchOpen]);
+
+  const carouselPrefs = useReorderablePrefs(
+    'ver-carousel-prefs',
+    VER_CAROUSEL_CATEGORY_IDS
+  );
 
   const handleDelete = async (id: number) => {
     setDeletingId(id);
     try {
       const res = await fetch(`/api/series/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('delete failed');
-      message.success('Serie eliminada');
+      message.success(t('ver.deleteSuccess'));
       router.refresh();
     } catch (err) {
       console.error(err);
-      message.error('Error al eliminar la serie');
+      message.error(t('ver.deleteError'));
     } finally {
       setDeletingId(null);
     }
@@ -102,32 +144,21 @@ export function VerPage({ items }: VerPageProps) {
     );
   }, [items]);
 
-  // Agrupaciones para Carruseles Temáticos
-  const trendingSeries = useMemo(() => {
-    return items.slice(0, 10);
-  }, [items]);
-
-  const thaiSeries = useMemo(() => {
-    return items.filter(
-      (i) =>
-        i.country?.code === 'th' ||
-        i.country?.name?.toLowerCase().includes('tailandia')
-    );
-  }, [items]);
-
-  const koreanSeries = useMemo(() => {
-    return items.filter(
-      (i) =>
-        i.country?.code === 'kr' ||
-        i.country?.name?.toLowerCase().includes('corea')
-    );
-  }, [items]);
-
-  const vimeoAndIndie = useMemo(() => {
-    return items.filter((i) =>
-      i.platforms.some((p) => p.toLowerCase().includes('vimeo'))
-    );
-  }, [items]);
+  // Filas de carrusel: pool curado en verCarouselCategories.ts, orden y
+  // visibilidad los elige el usuario via ReorderConfigDrawer (persistido
+  // en localStorage por useReorderablePrefs). Se descartan las filas que
+  // quedan vacias para esta base de datos.
+  const carouselRows = useMemo(() => {
+    return carouselPrefs.orderedVisibleIds
+      .map((id) => VER_CAROUSEL_CATEGORIES.find((c) => c.id === id))
+      .filter((c): c is (typeof VER_CAROUSEL_CATEGORIES)[number] => !!c)
+      .map((category) => {
+        const rowItems = [...items].filter(category.filter);
+        if (category.sort) rowItems.sort(category.sort);
+        return { category, rowItems };
+      })
+      .filter((row) => row.rowItems.length > 0);
+  }, [items, carouselPrefs.orderedVisibleIds]);
 
   const isFiltering = Boolean(search || country || platform || onlyCurated);
 
@@ -135,29 +166,64 @@ export function VerPage({ items }: VerPageProps) {
     <div className="ver-content">
       {/* Hero Billboard Principal (cuando no hay filtro activo y en modo streaming) */}
       {!isFiltering && viewMode === 'streaming' && featured && (
-        <HeroBillboard featured={featured} />
+        <HeroBillboard
+          featured={featured}
+          collapsed={heroCollapsed}
+          onToggleCollapse={() => setHeroCollapsed((v) => !v)}
+          spotlightBadgeLabel={t('ver.heroSpotlightBadge')}
+          youtubeTagLabel={t('ver.heroYoutubeTag')}
+          vimeoTagLabel={t('ver.heroVimeoTag')}
+          episodesBadgeLabel={t('ver.heroEpisodesBadge', {
+            count: featured.episodesWithEmbed,
+          })}
+          playButtonLabel={t('ver.heroPlayButton')}
+          infoButtonLabel={t('ver.heroInfoButton')}
+          collapseTooltip={t('ver.heroCollapseTooltip')}
+          expandTooltip={t('ver.heroExpandTooltip')}
+        />
       )}
 
       {/* Barra de Control, Búsqueda y Filtros de Streaming */}
       <div className="ver-control-bar">
-        <div className="ver-control-bar__search-wrap">
-          <Input
-            prefix={
-              <SearchOutlined style={{ color: 'var(--text-secondary)' }} />
-            }
-            placeholder="Buscar series, productoras o títulos oficiales..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            allowClear
-            size="large"
-            className="ver-control-bar__search"
-          />
-        </div>
+        {searchOpen && (
+          <div className="ver-control-bar__search-wrap">
+            <Input
+              prefix={
+                <SearchOutlined style={{ color: 'var(--text-secondary)' }} />
+              }
+              placeholder={t('ver.searchPlaceholder')}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              allowClear
+              size="large"
+              className="ver-control-bar__search"
+            />
+          </div>
+        )}
 
         <div className="ver-control-bar__filters">
+          <Tooltip
+            title={
+              searchOpen
+                ? t('ver.searchHideTooltip')
+                : t('ver.searchShowTooltip')
+            }
+          >
+            <Button
+              icon={<SearchOutlined />}
+              type={searchOpen ? 'primary' : 'default'}
+              onClick={() => setSearchOpen((v) => !v)}
+              aria-label={
+                searchOpen
+                  ? t('ver.searchHideTooltip')
+                  : t('ver.searchShowTooltip')
+              }
+            />
+          </Tooltip>
+
           <Select
             allowClear
-            placeholder="🌍 Todos los países"
+            placeholder={t('ver.countryPlaceholder')}
             value={country}
             onChange={setCountry}
             className="ver-filter-select"
@@ -167,7 +233,7 @@ export function VerPage({ items }: VerPageProps) {
 
           <Select
             allowClear
-            placeholder="🎬 Plataforma"
+            placeholder={t('ver.platformPlaceholder')}
             value={platform}
             onChange={setPlatform}
             className="ver-filter-select"
@@ -175,69 +241,87 @@ export function VerPage({ items }: VerPageProps) {
             options={platforms.map((p) => ({ label: p, value: p }))}
           />
 
+          <Checkbox
+            checked={onlyCurated}
+            onChange={(e) => setOnlyCurated(e.target.checked)}
+          >
+            {t('ver.onlyCuratedLabel')}
+          </Checkbox>
+
           <Segmented
             value={viewMode}
             onChange={(v) => setViewMode(v as 'streaming' | 'grid')}
             options={[
               {
-                label: 'Carruseles',
+                label: t('ver.viewStreaming'),
                 value: 'streaming',
                 icon: <BarsOutlined />,
               },
               {
-                label: 'Rejilla',
+                label: t('ver.viewGrid'),
                 value: 'grid',
                 icon: <AppstoreOutlined />,
               },
             ]}
           />
 
+          {viewMode === 'streaming' && !isFiltering && (
+            <Tooltip title={t('ver.configureButton')}>
+              <Button
+                icon={<SettingOutlined />}
+                onClick={() => setCarouselConfigOpen(true)}
+                aria-label={t('ver.configureButton')}
+              />
+            </Tooltip>
+          )}
+
           {isAuthenticated && (
             <Link href="/ver/agregar" prefetch={false}>
               <Button type="primary" icon={<PlusOutlined />}>
-                Aportar Serie
+                {t('ver.contributeButton')}
               </Button>
             </Link>
           )}
         </div>
       </div>
 
+      <ReorderConfigDrawer
+        open={carouselConfigOpen}
+        onClose={() => setCarouselConfigOpen(false)}
+        items={VER_CAROUSEL_CATEGORIES.map((c) => ({
+          id: c.id,
+          label: t(c.labelKey),
+        }))}
+        order={carouselPrefs.order}
+        hidden={carouselPrefs.hidden}
+        onReorder={carouselPrefs.reorder}
+        onToggleHidden={carouselPrefs.toggleHidden}
+        onReset={carouselPrefs.reset}
+        title={t('ver.drawerTitle')}
+        hint={t('ver.drawerHint')}
+        resetLabel={t('ver.resetButton')}
+        dragHandleAria={t('ver.dragHandleAria')}
+      />
+
       {/* VISTA 1: MODO STREAMING (Carruseles Temáticos) */}
       {viewMode === 'streaming' && !isFiltering && (
         <div className="ver-streaming-view">
-          <MediaCarousel
-            title="Tendencias & Éxitos Destacados"
-            subtitle="Las producciones más seguidas con episodios oficiales completos"
-            icon={<FireFilled style={{ color: '#ff4d4f' }} />}
-            items={trendingSeries}
-          />
-
-          {thaiSeries.length > 0 && (
-            <MediaCarousel
-              title="Tailandia Oficial (GMMTV & Mandee)"
-              subtitle="Emisión legal semanal con subtítulos oficiales en español"
-              icon={<span style={{ fontSize: '1.2rem' }}>🇹🇭</span>}
-              items={thaiSeries}
-            />
-          )}
-
-          {koreanSeries.length > 0 && (
-            <MediaCarousel
-              title="K-BLs & Cine Coreano (Strongberry / Indie)"
-              subtitle="Cortometrajes premiados y producciones de autor de Corea del Sur"
-              icon={<span style={{ fontSize: '1.2rem' }}>🇰🇷</span>}
-              items={koreanSeries}
-            />
-          )}
-
-          {vimeoAndIndie.length > 0 && (
-            <MediaCarousel
-              title="Vimeo On Demand & Cine Independiente"
-              subtitle="Obras de realizadores independientes que apoyan el cine queer"
-              icon={<VideoCameraFilled style={{ color: '#1ab7ea' }} />}
-              items={vimeoAndIndie}
-            />
-          )}
+          {carouselRows.map(({ category, rowItems }) => {
+            const Icon = category.icon;
+            return (
+              <MediaCarousel
+                key={category.id}
+                title={t(category.labelKey)}
+                icon={<Icon />}
+                items={rowItems}
+                scrollPrevLabel={t('ver.scrollPrev')}
+                scrollNextLabel={t('ver.scrollNext')}
+                episodesBadgeLabel={(count) =>
+                  t('ver.cardEpisodesBadge', { count })
+                }
+              />
+            );
+          })}
         </div>
       )}
 
@@ -246,10 +330,8 @@ export function VerPage({ items }: VerPageProps) {
         <div className="ver-grid-view">
           <div className="ver-grid-view__head">
             <h2 className="ver-grid-view__title">
-              {isFiltering
-                ? 'Resultados de Búsqueda'
-                : 'Catálogo Completo para Ver'}{' '}
-              ({filtered.length})
+              {isFiltering ? t('ver.resultsTitle') : t('ver.catalogTitle')} (
+              {filtered.length})
             </h2>
             {isFiltering && (
               <Button
@@ -261,14 +343,14 @@ export function VerPage({ items }: VerPageProps) {
                   setOnlyCurated(false);
                 }}
               >
-                Limpiar filtros
+                {t('ver.clearFilters')}
               </Button>
             )}
           </div>
 
           {filtered.length === 0 ? (
             <Empty
-              description="No encontramos series con esos filtros. Probá buscando por otro país o título."
+              description={t('ver.emptyDescription')}
               className="ver-empty"
             />
           ) : (
@@ -312,8 +394,9 @@ export function VerPage({ items }: VerPageProps) {
                         <div className="ver-card__cover-overlay">
                           <PlayCircleFilled className="ver-card__play-icon" />
                           <span className="ver-card__episodes-badge">
-                            {item.episodesWithEmbed}{' '}
-                            {item.episodesWithEmbed === 1 ? 'video' : 'videos'}
+                            {t('ver.cardEpisodesBadge', {
+                              count: item.episodesWithEmbed,
+                            })}
                           </span>
                         </div>
                       </div>
@@ -335,11 +418,11 @@ export function VerPage({ items }: VerPageProps) {
                         </Link>
                         {isAdmin && (
                           <Popconfirm
-                            title="¿Eliminar serie?"
-                            description="Se borrará la serie y todos sus episodios embebidos."
+                            title={t('ver.deleteConfirmTitle')}
+                            description={t('ver.deleteConfirmDescription')}
                             onConfirm={() => handleDelete(item.id)}
-                            okText="Sí, eliminar"
-                            cancelText="Cancelar"
+                            okText={t('ver.deleteConfirmOk')}
+                            cancelText={t('ver.deleteConfirmCancel')}
                             okButtonProps={{
                               danger: true,
                               loading: isDeleting,
@@ -350,7 +433,7 @@ export function VerPage({ items }: VerPageProps) {
                               danger
                               size="small"
                               icon={<DeleteOutlined />}
-                              aria-label="Eliminar serie"
+                              aria-label={t('ver.deleteAriaLabel')}
                             />
                           </Popconfirm>
                         )}
@@ -377,7 +460,7 @@ export function VerPage({ items }: VerPageProps) {
                             icon={<PlayCircleFilled />}
                             block
                           >
-                            Reproducir
+                            {t('ver.cardPlayButton')}
                           </Button>
                         </Link>
                       </div>

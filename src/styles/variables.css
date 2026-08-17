@@ -117,8 +117,9 @@
   --sidebar-collapsed-width: 80px;
   --content-max-width: 1200px;
   /* Paginas tipo hub (ej. /ver: carruseles + grilla) se benefician de mas
-   * ancho que una pagina de lectura estandar. */
-  --content-max-width-wide: 1440px;
+   * ancho que una pagina de lectura estandar. Unico consumidor: /ver
+   * (verificado) — subir este valor no afecta ninguna otra pagina. */
+  --content-max-width-wide: 1800px;
   /* Proporcion unica para posters/miniaturas de series (grilla y carrusel).
    * 16:9 evita recortar las miniaturas de YouTube (nativamente 16:9) que
    * se usan como fallback cuando la serie no tiene imageUrl propio. */
