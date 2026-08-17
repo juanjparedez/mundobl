@@ -346,6 +346,7 @@ export default function DirectoresAdminPage() {
         )}
 
         <Table
+          scroll={{ x: 'max-content' }}
           dataSource={filteredDirectors}
           columns={columns}
           rowKey="id"

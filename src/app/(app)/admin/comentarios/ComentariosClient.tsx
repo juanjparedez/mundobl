@@ -486,6 +486,7 @@ export function ComentariosClient() {
 
           <Table
             className="comentarios-table"
+            scroll={{ x: 'max-content' }}
             columns={columns}
             dataSource={comments}
             rowKey="id"

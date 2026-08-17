@@ -491,6 +491,7 @@ export function AnunciosClient() {
       />
 
       <Table
+        scroll={{ x: 'max-content' }}
         dataSource={filteredItems}
         columns={columns}
         rowKey="id"

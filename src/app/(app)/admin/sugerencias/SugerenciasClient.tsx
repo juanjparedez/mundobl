@@ -330,6 +330,7 @@ export function SugerenciasClient({
           </Card>
 
           <Table
+            scroll={{ x: 'max-content' }}
             columns={columns}
             dataSource={filtered}
             rowKey="id"

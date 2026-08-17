@@ -423,6 +423,7 @@ export function UserSubmittedClient({ items: initial }: Props) {
         <Empty description="No hay aportes con este filtro" />
       ) : (
         <Table
+          scroll={{ x: 'max-content' }}
           rowKey="id"
           dataSource={filteredItems}
           columns={columns}

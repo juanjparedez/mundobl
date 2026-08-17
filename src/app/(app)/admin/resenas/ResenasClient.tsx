@@ -470,6 +470,7 @@ export function ResenasClient() {
 
           {view === 'PENDING_SERIES' ? (
             <Table<PendingSeriesRow>
+              scroll={{ x: 'max-content' }}
               columns={pendingColumns}
               dataSource={pendingSeries}
               rowKey="id"
@@ -485,6 +486,7 @@ export function ResenasClient() {
             />
           ) : (
             <Table<ReviewRow>
+              scroll={{ x: 'max-content' }}
               columns={columns}
               dataSource={reviews}
               rowKey="id"
