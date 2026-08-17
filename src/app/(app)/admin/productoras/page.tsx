@@ -244,6 +244,7 @@ export default function ProductorasAdminPage() {
         />
 
         <Table
+          scroll={{ x: 'max-content' }}
           dataSource={filteredCompanies}
           columns={columns}
           rowKey="id"
