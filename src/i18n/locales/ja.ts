@@ -510,7 +510,9 @@ const ja: TranslationShape = {
     "watchableTitle": "視聴可能な完全シリーズ"
   },
   "watchableCarousel": {
-    "watchNow": "今すぐ視聴"
+    "watchNow": "今すぐ視聴",
+    "scrollPrev": "前へ",
+    "scrollNext": "次へ"
   },
   "notifications": {
     "title": "通知",
@@ -1253,6 +1255,10 @@ const ja: TranslationShape = {
     "unsavedOk": "保存せずに終了",
     "unsavedCancel": "編集を続ける",
     "sectionBasic": "基本情報",
+    "sectionFeatured": "編集キュレーション",
+    "fieldFeatured": "このシリーズをカタログでおすすめに設定する",
+    "helpFeatured": "/catalogo の「おすすめ」フィルターに表示され、すべての訪問者に見えます — 各ユーザー個人のお気に入りとは異なります。",
+    "fieldFeaturedOrder": "順序（小さいほど先）",
     "sectionCast": "キャスト",
     "sectionDirectors": "監督",
     "sectionWatchLinks": "視聴可能な場所",
@@ -1451,7 +1457,8 @@ const ja: TranslationShape = {
     "sortZA": "Z-A",
     "sortYearNew": "新しい順",
     "sortYearOld": "古い順",
-    "sortRatingDesc": "評価の高い順"
+    "sortRatingDesc": "評価の高い順",
+    "quickFilterFeatured": "おすすめ"
   },
   "catalogCarousel": {
     "viewToggleLabel": "カルーセル表示",

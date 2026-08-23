@@ -502,6 +502,8 @@ export type TranslationShape = {
   };
   watchableCarousel: {
     watchNow: string;
+    scrollPrev: string;
+    scrollNext: string;
   };
   notifications: {
     title: string;
@@ -1244,6 +1246,10 @@ export type TranslationShape = {
     unsavedOk: string;
     unsavedCancel: string;
     sectionBasic: string;
+    sectionFeatured: string;
+    fieldFeatured: string;
+    helpFeatured: string;
+    fieldFeaturedOrder: string;
     sectionCast: string;
     sectionDirectors: string;
     sectionWatchLinks: string;
@@ -1443,6 +1449,7 @@ export type TranslationShape = {
     sortYearNew: string;
     sortYearOld: string;
     sortRatingDesc: string;
+    quickFilterFeatured: string;
   };
   catalogCarousel: {
     viewToggleLabel: string;
@@ -3242,6 +3249,8 @@ const es: TranslationShape = {
   },
   watchableCarousel: {
     watchNow: 'Ver ahora',
+    scrollPrev: 'Anterior',
+    scrollNext: 'Siguiente',
   },
   notifications: {
     title: 'Notificaciones',
@@ -4012,6 +4021,11 @@ const es: TranslationShape = {
     unsavedOk: 'Salir sin guardar',
     unsavedCancel: 'Seguir editando',
     sectionBasic: 'Informacion Basica',
+    sectionFeatured: 'Curaduría editorial',
+    fieldFeatured: 'Destacar esta serie en el catálogo',
+    helpFeatured:
+      'Aparece en el filtro "Destacadas" de /catalogo, visible para todos los visitantes — a diferencia de favoritos, que son personales de cada usuario.',
+    fieldFeaturedOrder: 'Orden (menor = primero)',
     sectionCast: 'Reparto',
     sectionDirectors: 'Directores',
     sectionWatchLinks: 'Donde Ver',
@@ -4220,6 +4234,7 @@ const es: TranslationShape = {
     sortYearNew: 'Más nuevo',
     sortYearOld: 'Más antiguo',
     sortRatingDesc: 'Mejor valorado',
+    quickFilterFeatured: 'Destacadas',
   },
   catalogCarousel: {
     viewToggleLabel: 'Vista carrusel',
@@ -6077,6 +6092,8 @@ const en: TranslationShape = {
   },
   watchableCarousel: {
     watchNow: 'Watch now',
+    scrollPrev: 'Previous',
+    scrollNext: 'Next',
   },
   notifications: {
     title: 'Notifications',
@@ -6841,6 +6858,11 @@ const en: TranslationShape = {
     unsavedOk: 'Leave without saving',
     unsavedCancel: 'Keep editing',
     sectionBasic: 'Basic Information',
+    sectionFeatured: 'Editorial curation',
+    fieldFeatured: 'Feature this series on the catalog',
+    helpFeatured:
+      'Shows up in the "Featured" filter on /catalog, visible to every visitor — unlike favorites, which are personal to each user.',
+    fieldFeaturedOrder: 'Order (lower = first)',
     sectionCast: 'Cast',
     sectionDirectors: 'Directors',
     sectionWatchLinks: 'Where to Watch',
@@ -7048,6 +7070,7 @@ const en: TranslationShape = {
     sortYearNew: 'Newest first',
     sortYearOld: 'Oldest first',
     sortRatingDesc: 'Best rated',
+    quickFilterFeatured: 'Featured',
   },
   catalogCarousel: {
     viewToggleLabel: 'Carousel view',
@@ -8357,7 +8380,8 @@ const en: TranslationShape = {
     examplesLabel: 'Examples:',
     commonMistakeLabel: 'Common translation mistake:',
     emptyTitle: 'No terms found',
-    emptyDescription: 'Try a different search or change the country/category filters.',
+    emptyDescription:
+      'Try a different search or change the country/category filters.',
   },
   glosarioQuiz: {
     promptTemplate: 'What does "{term}" mean?',

@@ -122,6 +122,13 @@ export function SitiosPage({ sites }: SitiosPageProps) {
         <Card
           className={`sitios-card sitios-card--${cat}`}
           size="small"
+          // title/extra en un solo nodo (en vez de repartir favicon+nombre
+          // en `title` y el Tag en `extra`): AntD reparte esos dos props
+          // en cajas flex separadas que no se enteran del ancho real del
+          // contenido custom, asi que con nombres largos el Tag terminaba
+          // dibujado ENCIMA del texto en vez de despues. Un solo flex row
+          // que controlamos nosotros (con la Tag flex-shrink:0 y el
+          // nombre con ellipsis) evita el solapamiento.
           title={
             <span className="sitios-card__title-row">
               {/* Favicon: si el sitio tiene logo propio en DB, lo usamos;
@@ -153,12 +160,13 @@ export function SitiosPage({ sites }: SitiosPageProps) {
                 )}
               </span>
               <span className="sitios-card__name">{site.name}</span>
+              <Tag
+                className="sitios-card__cat-tag"
+                color={CATEGORY_COLORS[cat] || 'default'}
+              >
+                {CATEGORY_LABELS[cat] || cat}
+              </Tag>
             </span>
-          }
-          extra={
-            <Tag color={CATEGORY_COLORS[cat] || 'default'}>
-              {CATEGORY_LABELS[cat] || cat}
-            </Tag>
           }
         >
           {site.description && (

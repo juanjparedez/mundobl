@@ -7,8 +7,16 @@
 .watchable-carousel__header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-sm);
+}
+
+.watchable-carousel__header-titlewrap {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  min-width: 0;
 }
 
 .watchable-carousel__header-icon {
@@ -24,26 +32,53 @@
   letter-spacing: -0.01em;
 }
 
+.watchable-carousel__nav-buttons {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.watchable-carousel__arrow {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.85rem;
+  padding: 0;
+}
+
+.watchable-carousel__arrow:hover {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: #fff;
+  transform: scale(1.1);
+}
+
 /* Track horizontal scrolleable. scroll-snap para que cada card quede
- * alineada al soltar. La scrollbar se oculta (sin perder funcionalidad
- * de scroll por trackpad/touch/teclado). */
+ * alineada al soltar. La scrollbar nativa se oculta del todo (quedaba
+ * gorda/gris y desentonaba con el tema en varios navegadores) — las
+ * flechas del header + drag por touch/trackpad cubren la navegacion. */
 .watchable-carousel__track {
   display: flex;
   gap: 12px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
   padding-bottom: 6px;
-  scrollbar-width: thin;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   -webkit-overflow-scrolling: touch;
 }
 
 .watchable-carousel__track::-webkit-scrollbar {
-  height: 6px;
-}
-
-.watchable-carousel__track::-webkit-scrollbar-thumb {
-  background: var(--border-color-secondary);
-  border-radius: 3px;
+  display: none;
 }
 
 .watchable-carousel__slide {

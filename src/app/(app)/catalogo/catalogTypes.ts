@@ -25,6 +25,10 @@ export interface SerieData {
   imagePosition?: string;
   synopsis?: string | null;
   visto?: boolean;
+  /** Curaduria editorial (Flor/admin) — filtro rapido "Destacadas". */
+  featured?: boolean;
+  /** Orden manual dentro de "Destacadas" (menor = primero). */
+  featuredOrder?: number;
   universoId?: number | null;
   universoNombre?: string | null;
   tags?: SerieTag[];
