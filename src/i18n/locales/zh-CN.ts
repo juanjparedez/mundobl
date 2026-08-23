@@ -510,7 +510,9 @@ const zhCN: TranslationShape = {
     "watchableTitle": "可观看的完整剧集"
   },
   "watchableCarousel": {
-    "watchNow": "立即观看"
+    "watchNow": "立即观看",
+    "scrollPrev": "上一个",
+    "scrollNext": "下一个"
   },
   "notifications": {
     "title": "通知",
@@ -1253,6 +1255,10 @@ const zhCN: TranslationShape = {
     "unsavedOk": "不保存并离开",
     "unsavedCancel": "继续编辑",
     "sectionBasic": "基本信息",
+    "sectionFeatured": "编辑精选",
+    "fieldFeatured": "在目录中将此剧集设为精选",
+    "helpFeatured": "会显示在 /catalogo 的“精选”筛选中，所有访客可见——与每个用户各自的个人收藏不同。",
+    "fieldFeaturedOrder": "顺序（越小越靠前）",
     "sectionCast": "演员",
     "sectionDirectors": "导演",
     "sectionWatchLinks": "观看平台",
@@ -1451,7 +1457,8 @@ const zhCN: TranslationShape = {
     "sortZA": "Z-A",
     "sortYearNew": "最新优先",
     "sortYearOld": "最旧优先",
-    "sortRatingDesc": "评分最高"
+    "sortRatingDesc": "评分最高",
+    "quickFilterFeatured": "精选"
   },
   "catalogCarousel": {
     "viewToggleLabel": "轮播视图",

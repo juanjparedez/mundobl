@@ -63,6 +63,8 @@ export async function POST(request: NextRequest) {
       observations,
       review,
       notesPrivate,
+      featured,
+      featuredOrder,
       countryName,
       universeId,
       actors,
@@ -160,6 +162,8 @@ export async function POST(request: NextRequest) {
         observations,
         review: review ?? null,
         notesPrivate: notesPrivate === true,
+        featured: featured === true,
+        featuredOrder: typeof featuredOrder === 'number' ? featuredOrder : 0,
         airDays: body.airDays || null,
         catalogScope:
           body.catalogScope === 'WATCHABLE_ONLY'
