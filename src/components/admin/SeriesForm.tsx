@@ -29,6 +29,7 @@ import {
   StarFilled,
   ExclamationCircleOutlined,
   ThunderboltOutlined,
+  CrownOutlined,
 } from '@ant-design/icons/lib/icons';
 import Link from 'next/link';
 import { shouldShowSeasons, getContentTypeConfig } from '@/types/content';
@@ -235,6 +236,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
   const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [uploading, setUploading] = useState(false);
   const imageUrl = Form.useWatch('imageUrl', form);
+  const isFeatured = Form.useWatch('featured', form);
   const [isFavorite, setIsFavorite] = useState(false);
   const [aiLoadingScope, setAiLoadingScope] = useState<string | null>(null);
 
@@ -747,6 +749,8 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
             actors: [],
             directors: [],
             catalogScope: 'PERSONAL',
+            featured: false,
+            featuredOrder: 0,
             ...(showSeasons
               ? { seasons: [{ seasonNumber: 1, episodeCount: null }] }
               : {}),
@@ -1257,6 +1261,46 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                     help={t('seriesForm.helpImagePosition')}
                   >
                     <ImagePositionSelector imageUrl={imageUrl} />
+                  </Form.Item>
+                </Col>
+              )}
+            </Row>
+          </Card>
+
+          {/* Curaduria editorial: destacar en catalogo (item 17 fine_tunning_4
+           * — Flor pidio poder elegir/ordenar/curar que aparece en el filtro
+           * "Destacadas" de /catalogo, separado de favoritos personales). */}
+          <Card
+            type="inner"
+            className="series-form__featured-card"
+            title={
+              <span>
+                <CrownOutlined /> {t('seriesForm.sectionFeatured')}
+              </span>
+            }
+            style={{ marginBottom: 24 }}
+          >
+            <Row gutter={16} align="middle">
+              <Col xs={24} md={isFeatured ? 16 : 24}>
+                <Form.Item
+                  name="featured"
+                  valuePropName="checked"
+                  style={{ marginBottom: 4 }}
+                >
+                  <Checkbox>{t('seriesForm.fieldFeatured')}</Checkbox>
+                </Form.Item>
+                <div style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>
+                  {t('seriesForm.helpFeatured')}
+                </div>
+              </Col>
+              {isFeatured && (
+                <Col xs={24} md={8}>
+                  <Form.Item
+                    label={t('seriesForm.fieldFeaturedOrder')}
+                    name="featuredOrder"
+                    style={{ marginBottom: 0 }}
+                  >
+                    <InputNumber min={0} style={{ width: '100%' }} />
                   </Form.Item>
                 </Col>
               )}

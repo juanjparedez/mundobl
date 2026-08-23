@@ -131,6 +131,11 @@ export default async function CatalogoPage() {
       imagePosition: serie.imagePosition,
       synopsis: serie.synopsis,
       visto: serie.viewStatus?.[0]?.status === 'VISTA',
+      // Curaduria editorial (item featured por Flor/admin) — alimenta el
+      // filtro rapido "Destacadas". No confundir con `visto`/favoritos
+      // (que son por-usuario): esto es global, lo decide el editor.
+      featured: serie.featured,
+      featuredOrder: serie.featuredOrder,
       universoId: serie.universeId,
       universoNombre: serie.universe?.name || null,
       tags: serie.tags.map((st) => ({ id: st.tag.id, name: st.tag.name })),

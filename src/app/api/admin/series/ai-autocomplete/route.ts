@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-helpers';
-import { generateText, GeminiError } from '@/lib/gemini';
+import { generateText, GeminiError, stripJsonFences } from '@/lib/gemini';
 import { prisma } from '@/lib/database';
 
 interface AutocompletePayload {
@@ -161,11 +161,19 @@ ${currentSynopsis ? `Sinopsis actual de referencia: "${currentSynopsis}"` : ''}
 
 Recuerda responder ÚNICAMENTE con el objeto JSON válido.`;
 
+    // NOTA: Gemini rechaza tools + responseMimeType:'application/json' con
+    // 400 "Tool use with a response mime type: 'application/json' is
+    // unsupported" (reproducido en vivo: esto es lo que rompia "Sugerir
+    // reparto con IA" / "Buscar directores con IA" y en realidad TODOS los
+    // scopes de este endpoint, ya que googleSearch se pasaba siempre).
+    // Priorizamos el grounding (busca datos reales en vez de alucinar
+    // actores/directores) y confiamos en stripJsonFences + JSON.parse
+    // para recuperar el JSON de una respuesta text/plain. Mismo patron
+    // que src/lib/user-embed-preview.ts.
     const aiResultRaw = await generateText({
       systemInstruction,
       prompt,
       temperature: scope === 'synopsis' ? 0.4 : 0.2,
-      responseMimeType: 'application/json',
       thinkingBudget: 0,
       tools: [{ googleSearch: {} }],
     });
@@ -193,7 +201,7 @@ Recuerda responder ÚNICAMENTE con el objeto JSON válido.`;
     };
 
     try {
-      aiData = JSON.parse(aiResultRaw);
+      aiData = JSON.parse(stripJsonFences(aiResultRaw));
     } catch {
       return NextResponse.json(
         { error: 'No se pudo procesar la respuesta del modelo IA' },

@@ -10,7 +10,7 @@
  */
 
 import { detectPlatform, extractVideoId } from './embed-helpers';
-import { generateText, GeminiError } from './gemini';
+import { generateText, GeminiError, stripJsonFences } from './gemini';
 import { prisma } from './database';
 import {
   ALLOWED_COUNTRY_CODES,
@@ -274,13 +274,6 @@ interface GeminiPayload {
   tagNames?: unknown;
   genreNames?: unknown;
   confidence?: unknown;
-}
-
-function stripJsonFences(raw: string): string {
-  return raw
-    .replace(/^\s*```(?:json)?\s*/i, '')
-    .replace(/\s*```\s*$/i, '')
-    .trim();
 }
 
 function clampString(value: unknown, max: number): string | null {
