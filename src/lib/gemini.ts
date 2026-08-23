@@ -50,6 +50,20 @@ interface GeminiErrorBody {
   };
 }
 
+// Gemini rechaza combinar `tools` (ej. googleSearch) con
+// generationConfig.responseMimeType: 'application/json' — 400
+// "Tool use with a response mime type: 'application/json' is unsupported".
+// Cualquier caller que necesite grounding + salida estructurada debe dejar
+// responseMimeType en el default (text/plain), pedir JSON por prompt, y
+// pasar la respuesta por este helper antes de JSON.parse (Gemini a veces
+// igual envuelve el JSON en ```json ... ``` por habito).
+export function stripJsonFences(raw: string): string {
+  return raw
+    .replace(/^\s*```(?:json)?\s*/i, '')
+    .replace(/\s*```\s*$/i, '')
+    .trim();
+}
+
 export class GeminiError extends Error {
   constructor(
     message: string,

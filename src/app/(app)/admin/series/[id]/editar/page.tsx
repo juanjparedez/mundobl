@@ -63,6 +63,8 @@ export default async function EditSeriesPage({ params }: EditPageProps) {
       })) || [],
     imageUrl: serie.imageUrl,
     isFavorite: serie.isFavorite ?? false,
+    featured: serie.featured ?? false,
+    featuredOrder: serie.featuredOrder ?? 0,
     productionCompanyName: serie.productionCompany?.name || undefined,
     originalLanguageName: serie.originalLanguage?.name || undefined,
     genres: serie.genres?.map((sg) => sg.genre.name) || [],

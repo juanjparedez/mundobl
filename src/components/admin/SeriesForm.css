@@ -20,19 +20,70 @@
   letter-spacing: -0.01em;
 }
 
-/* Inner cards (secciones) */
+/* Inner cards (secciones) — antes chatas: mismo gris que el body, sin
+ * separacion visual real entre "Reparto", "Directores", etc. Un tinte
+ * sutil (mismo formula que sitios-card/serie-card: color-mix sobre
+ * --primary-color, se adapta solo a tone/skin/accent) + borde acorde le
+ * da jerarquia sin inventar una paleta nueva por seccion. */
 .series-form .ant-card-type-inner {
   border-radius: var(--border-radius-base);
+  border-color: color-mix(
+    in srgb,
+    var(--primary-color) 16%,
+    var(--border-color-secondary)
+  );
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.series-form .ant-card-type-inner:focus-within {
+  border-color: color-mix(
+    in srgb,
+    var(--primary-color) 45%,
+    var(--border-color-secondary)
+  );
+  box-shadow: 0 0 0 1px
+    color-mix(in srgb, var(--primary-color) 25%, transparent);
 }
 
 .series-form .ant-card-type-inner > .ant-card-head {
   min-height: auto;
   padding: var(--spacing-sm) var(--spacing-md);
   font-size: 1.05em;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--primary-color) 16%, transparent) 0%,
+    color-mix(in srgb, var(--primary-color) 4%, transparent) 100%
+  );
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--primary-color) 18%, transparent);
 }
 
 .series-form .ant-card-type-inner > .ant-card-body {
   padding: var(--spacing-md);
+}
+
+/* Seccion de curaduria editorial (destacar en catalogo): acento gold en
+ * vez del tinte generico de --primary-color, para que se distinga como
+ * "esto es especial" (a Flor le importa encontrarla rapido en un form
+ * largo). */
+.series-form .series-form__featured-card > .ant-card-head {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--warning-color) 20%, transparent) 0%,
+    color-mix(in srgb, var(--warning-color) 5%, transparent) 100%
+  );
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--warning-color) 25%, transparent);
+}
+
+.series-form .series-form__featured-card {
+  border-color: color-mix(
+    in srgb,
+    var(--warning-color) 22%,
+    var(--border-color-secondary)
+  ) !important;
 }
 
 /* Labels del formulario */
