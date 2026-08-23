@@ -105,6 +105,19 @@
   color: var(--primary-color);
 }
 
+/* "Destacadas" es curaduria editorial (la elige Flor), no un heuristico
+ * como los otros 3 chips — acento gold para que se lea distinto. */
+.catalogo-quick-chip--featured:hover {
+  border-color: var(--warning-color);
+  color: var(--warning-color);
+}
+
+.catalogo-quick-chip--featured.catalogo-quick-chip--active {
+  background: color-mix(in srgb, var(--warning-color) 16%, transparent);
+  border-color: var(--warning-color);
+  color: var(--warning-color);
+}
+
 /* ==========================================
    Filtros colapsables
    ========================================== */

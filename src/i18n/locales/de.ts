@@ -510,7 +510,9 @@ const de: TranslationShape = {
     "watchableTitle": "Komplette Serien zum Anschauen"
   },
   "watchableCarousel": {
-    "watchNow": "Jetzt ansehen"
+    "watchNow": "Jetzt ansehen",
+    "scrollPrev": "Zurück",
+    "scrollNext": "Weiter"
   },
   "notifications": {
     "title": "Benachrichtigungen",
@@ -1253,6 +1255,10 @@ const de: TranslationShape = {
     "unsavedOk": "Ohne Speichern verlassen",
     "unsavedCancel": "Weiter bearbeiten",
     "sectionBasic": "Basisinformationen",
+    "sectionFeatured": "Redaktionelle Kuration",
+    "fieldFeatured": "Diese Serie im Katalog hervorheben",
+    "helpFeatured": "Erscheint im Filter \"Empfohlen\" von /catalogo, sichtbar für alle Besucher — im Gegensatz zu Favoriten, die für jeden Nutzer persönlich sind.",
+    "fieldFeaturedOrder": "Reihenfolge (niedriger = zuerst)",
     "sectionCast": "Besetzung",
     "sectionDirectors": "Regisseure",
     "sectionWatchLinks": "Wo zu sehen",
@@ -1451,7 +1457,8 @@ const de: TranslationShape = {
     "sortZA": "Z-A",
     "sortYearNew": "Neueste zuerst",
     "sortYearOld": "Älteste zuerst",
-    "sortRatingDesc": "Am besten bewertet"
+    "sortRatingDesc": "Am besten bewertet",
+    "quickFilterFeatured": "Empfohlen"
   },
   "catalogCarousel": {
     "viewToggleLabel": "Karussell-Ansicht",

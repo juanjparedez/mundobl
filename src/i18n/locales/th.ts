@@ -510,7 +510,9 @@ const th: TranslationShape = {
     "watchableTitle": "ซีรีส์เต็มเรื่องที่ดูได้"
   },
   "watchableCarousel": {
-    "watchNow": "ดูเลย"
+    "watchNow": "ดูเลย",
+    "scrollPrev": "ก่อนหน้า",
+    "scrollNext": "ถัดไป"
   },
   "notifications": {
     "title": "การแจ้งเตือน",
@@ -1253,6 +1255,10 @@ const th: TranslationShape = {
     "unsavedOk": "ออกโดยไม่บันทึก",
     "unsavedCancel": "แก้ไขต่อ",
     "sectionBasic": "ข้อมูลพื้นฐาน",
+    "sectionFeatured": "การคัดสรรโดยบรรณาธิการ",
+    "fieldFeatured": "ตั้งให้ซีรีส์นี้เป็นรายการแนะนำในแคตตาล็อก",
+    "helpFeatured": "จะแสดงในตัวกรอง \"แนะนำ\" ของ /catalogo มองเห็นได้สำหรับผู้เข้าชมทุกคน — ต่างจากรายการโปรดที่เป็นของแต่ละผู้ใช้",
+    "fieldFeaturedOrder": "ลำดับ (น้อยกว่า = มาก่อน)",
     "sectionCast": "นักแสดง",
     "sectionDirectors": "ผู้กำกับ",
     "sectionWatchLinks": "รับชมได้ที่ไหน",
@@ -1451,7 +1457,8 @@ const th: TranslationShape = {
     "sortZA": "ฮ-ก",
     "sortYearNew": "ใหม่สุด",
     "sortYearOld": "เก่าสุด",
-    "sortRatingDesc": "คะแนนสูงสุด"
+    "sortRatingDesc": "คะแนนสูงสุด",
+    "quickFilterFeatured": "แนะนำ"
   },
   "catalogCarousel": {
     "viewToggleLabel": "มุมมองแบบสไลด์",
