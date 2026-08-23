@@ -510,7 +510,9 @@ const it: TranslationShape = {
     "watchableTitle": "Serie complete da guardare"
   },
   "watchableCarousel": {
-    "watchNow": "Guarda ora"
+    "watchNow": "Guarda ora",
+    "scrollPrev": "Precedente",
+    "scrollNext": "Successivo"
   },
   "notifications": {
     "title": "Notifiche",
@@ -1253,6 +1255,10 @@ const it: TranslationShape = {
     "unsavedOk": "Esci senza salvare",
     "unsavedCancel": "Continua a modificare",
     "sectionBasic": "Informazioni di base",
+    "sectionFeatured": "Curatela editoriale",
+    "fieldFeatured": "Metti in evidenza questa serie nel catalogo",
+    "helpFeatured": "Compare nel filtro \"In evidenza\" di /catalogo, visibile a tutti i visitatori — a differenza dei preferiti, che sono personali per ogni utente.",
+    "fieldFeaturedOrder": "Ordine (minore = prima)",
     "sectionCast": "Cast",
     "sectionDirectors": "Registi",
     "sectionWatchLinks": "Dove guardare",
@@ -1451,7 +1457,8 @@ const it: TranslationShape = {
     "sortZA": "Z-A",
     "sortYearNew": "Più recenti",
     "sortYearOld": "Meno recenti",
-    "sortRatingDesc": "Migliori voti"
+    "sortRatingDesc": "Migliori voti",
+    "quickFilterFeatured": "In evidenza"
   },
   "catalogCarousel": {
     "viewToggleLabel": "Vista carosello",

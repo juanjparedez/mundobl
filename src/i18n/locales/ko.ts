@@ -510,7 +510,9 @@ const ko: TranslationShape = {
     "watchableTitle": "시청 가능한 전체 시리즈"
   },
   "watchableCarousel": {
-    "watchNow": "지금 보기"
+    "watchNow": "지금 보기",
+    "scrollPrev": "이전",
+    "scrollNext": "다음"
   },
   "notifications": {
     "title": "알림",
@@ -1253,6 +1255,10 @@ const ko: TranslationShape = {
     "unsavedOk": "저장하지 않고 나가기",
     "unsavedCancel": "계속 편집",
     "sectionBasic": "기본 정보",
+    "sectionFeatured": "편집 큐레이션",
+    "fieldFeatured": "이 시리즈를 카탈로그에서 추천으로 표시",
+    "helpFeatured": "/catalogo의 \"추천\" 필터에 표시되며 모든 방문자에게 보입니다 — 사용자 개인 즐겨찾기와는 다릅니다.",
+    "fieldFeaturedOrder": "순서 (작을수록 먼저)",
     "sectionCast": "출연진",
     "sectionDirectors": "감독",
     "sectionWatchLinks": "시청 가능한 곳",
@@ -1451,7 +1457,8 @@ const ko: TranslationShape = {
     "sortZA": "역가나다순",
     "sortYearNew": "최신순",
     "sortYearOld": "오래된순",
-    "sortRatingDesc": "최고 평점"
+    "sortRatingDesc": "최고 평점",
+    "quickFilterFeatured": "추천"
   },
   "catalogCarousel": {
     "viewToggleLabel": "캐러셀 보기",

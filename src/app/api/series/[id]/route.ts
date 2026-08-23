@@ -215,6 +215,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
           : null,
         observations: body.observations || null,
         notesPrivate: body.notesPrivate === true,
+        featured: body.featured === true,
+        featuredOrder:
+          typeof body.featuredOrder === 'number' ? body.featuredOrder : 0,
         airDays: body.airDays !== undefined ? body.airDays || null : undefined,
         catalogScope:
           body.catalogScope === 'WATCHABLE_ONLY'

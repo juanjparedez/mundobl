@@ -318,10 +318,19 @@
  * cuadrado con un fondo y borde sutil para que se vea consistente
  * aunque cada sitio devuelva favicons de tamano/forma distinta. */
 .sitios-card__title-row {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  width: 100%;
   min-width: 0;
+}
+
+/* Ver comentario en SitiosPage.tsx: la Tag de categoria vive adentro de
+ * este mismo row (no en `extra` de AntD Card) para que el layout completo
+ * lo controlemos nosotros y no se pise con el nombre del sitio. */
+.sitios-card__cat-tag {
+  flex-shrink: 0;
+  margin-inline-end: 0;
 }
 
 .sitios-card__favicon-wrap {

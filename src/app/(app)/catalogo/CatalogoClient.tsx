@@ -37,6 +37,7 @@ import {
   FireOutlined,
   ClockCircleOutlined,
   ThunderboltOutlined,
+  CrownOutlined,
   InboxOutlined,
   BarsOutlined,
   SettingOutlined,
@@ -102,7 +103,7 @@ const getColorByType = (tipo: string) => {
   return colorMap[tipo] || 'default';
 };
 
-type QuickFilterValue = 'popular' | 'recent' | 'trend' | null;
+type QuickFilterValue = 'popular' | 'recent' | 'trend' | 'featured' | null;
 type SortKey = 'az' | 'za' | 'year-desc' | 'year-asc' | 'rating-desc';
 
 export function CatalogoClient({
@@ -476,6 +477,15 @@ export function CatalogoClient({
       );
     }
 
+    if (selectedQuickFilter === 'featured') {
+      // Curadas por Flor/admin (item destacar-en-catalogo). Se ordenan por
+      // featuredOrder manual (menor = primero); empatadas en el default (0)
+      // caen a orden alfabetico, que ya trae `series` desde el server.
+      filtered = filtered
+        .filter((s) => s.featured)
+        .sort((a, b) => (a.featuredOrder ?? 0) - (b.featuredOrder ?? 0));
+    }
+
     return filtered;
   }, [
     series,
@@ -754,7 +764,10 @@ export function CatalogoClient({
                 </button>
               </Tooltip>
             </div>
-            <div className="serie-title-overlay">{serie.titulo}</div>
+            {/* Sin titulo acá: antes se repetia (overlay sobre la imagen +
+             * .serie-card-title abajo), tapando la portada con un bloque de
+             * texto+gradiente permanente y duplicando el nombre. El titulo
+             * vive una sola vez, en el body (linea de abajo). */}
           </div>
         </div>
         <div className="serie-card-body">
@@ -1487,6 +1500,17 @@ export function CatalogoClient({
             }}
           >
             <ThunderboltOutlined /> Tendencia
+          </button>
+          <button
+            className={`catalogo-quick-chip catalogo-quick-chip--featured${selectedQuickFilter === 'featured' ? ' catalogo-quick-chip--active' : ''}`}
+            onClick={() => {
+              setSelectedQuickFilter((prev) =>
+                prev === 'featured' ? null : 'featured'
+              );
+              handleFilterChange();
+            }}
+          >
+            <CrownOutlined /> {t('catalogo.quickFilterFeatured')}
           </button>
         </div>
       )}

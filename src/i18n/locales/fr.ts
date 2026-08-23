@@ -510,7 +510,9 @@ const fr: TranslationShape = {
     "watchableTitle": "Séries complètes à regarder"
   },
   "watchableCarousel": {
-    "watchNow": "Regarder"
+    "watchNow": "Regarder",
+    "scrollPrev": "Précédent",
+    "scrollNext": "Suivant"
   },
   "notifications": {
     "title": "Notifications",
@@ -1253,6 +1255,10 @@ const fr: TranslationShape = {
     "unsavedOk": "Quitter sans enregistrer",
     "unsavedCancel": "Continuer l'édition",
     "sectionBasic": "Informations de base",
+    "sectionFeatured": "Curation éditoriale",
+    "fieldFeatured": "Mettre cette série en vedette dans le catalogue",
+    "helpFeatured": "Apparaît dans le filtre « En vedette » de /catalogo, visible par tous les visiteurs — contrairement aux favoris, qui sont personnels à chaque utilisateur.",
+    "fieldFeaturedOrder": "Ordre (plus petit = en premier)",
     "sectionCast": "Distribution",
     "sectionDirectors": "Réalisateurs",
     "sectionWatchLinks": "Où regarder",
@@ -1451,7 +1457,8 @@ const fr: TranslationShape = {
     "sortZA": "Z-A",
     "sortYearNew": "Les plus récents",
     "sortYearOld": "Les plus anciens",
-    "sortRatingDesc": "Les mieux notés"
+    "sortRatingDesc": "Les mieux notés",
+    "quickFilterFeatured": "En vedette"
   },
   "catalogCarousel": {
     "viewToggleLabel": "Vue carrousel",

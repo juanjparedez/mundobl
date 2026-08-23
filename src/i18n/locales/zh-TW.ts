@@ -510,7 +510,9 @@ const zhTW: TranslationShape = {
     "watchableTitle": "可觀看的完整劇集"
   },
   "watchableCarousel": {
-    "watchNow": "立即觀看"
+    "watchNow": "立即觀看",
+    "scrollPrev": "上一個",
+    "scrollNext": "下一個"
   },
   "notifications": {
     "title": "通知",
@@ -1253,6 +1255,10 @@ const zhTW: TranslationShape = {
     "unsavedOk": "不儲存並離開",
     "unsavedCancel": "繼續編輯",
     "sectionBasic": "基本資訊",
+    "sectionFeatured": "編輯精選",
+    "fieldFeatured": "在目錄中將此劇集設為精選",
+    "helpFeatured": "會顯示在 /catalogo 的「精選」篩選中，所有訪客可見——與每位使用者各自的個人收藏不同。",
+    "fieldFeaturedOrder": "順序（越小越優先）",
     "sectionCast": "演員",
     "sectionDirectors": "導演",
     "sectionWatchLinks": "觀看平台",
@@ -1451,7 +1457,8 @@ const zhTW: TranslationShape = {
     "sortZA": "Z-A",
     "sortYearNew": "最新優先",
     "sortYearOld": "最舊優先",
-    "sortRatingDesc": "評價最佳"
+    "sortRatingDesc": "評價最佳",
+    "quickFilterFeatured": "精選"
   },
   "catalogCarousel": {
     "viewToggleLabel": "輪播檢視",
