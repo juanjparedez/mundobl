@@ -83,6 +83,7 @@ export function SeriesSuggestionButton({
         open={isOpen}
         onCancel={() => setIsOpen(false)}
         footer={null}
+        maskClosable={false}
         destroyOnHidden
       >
         <p className="suggestion-modal__desc">

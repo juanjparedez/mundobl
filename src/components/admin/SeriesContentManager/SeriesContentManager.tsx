@@ -340,6 +340,7 @@ export function SeriesContentManager({
         onOk={() => form.submit()}
         okText={t('seriesContentManager.saveButton')}
         cancelText={t('seriesContentManager.cancelButton')}
+        maskClosable={false}
         width={600}
         forceRender
       >
