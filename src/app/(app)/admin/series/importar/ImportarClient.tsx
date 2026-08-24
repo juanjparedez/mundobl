@@ -65,6 +65,7 @@ interface ImportPreview {
     suggestedYear: number | null;
     suggestedCountryCode: string | null;
     catalogScope: 'WATCHABLE_ONLY' | 'PERSONAL';
+    geoRestrictedCore: boolean;
   };
   seasons: PreviewSeason[];
   warnings: string[];
@@ -100,6 +101,7 @@ export function ImportarClient() {
   const [editSynopsis, setEditSynopsis] = useState('');
   const [editYear, setEditYear] = useState<number | null>(null);
   const [editCountry, setEditCountry] = useState<string | null>(null);
+  const [editGeoRestricted, setEditGeoRestricted] = useState(false);
   const [editSeasons, setEditSeasons] = useState<PreviewSeason[]>([]);
 
   const totalEpisodes = useMemo(
@@ -159,6 +161,7 @@ export function ImportarClient() {
       setEditSynopsis(data.series.synopsis || '');
       setEditYear(data.series.suggestedYear);
       setEditCountry(data.series.suggestedCountryCode);
+      setEditGeoRestricted(data.series.geoRestrictedCore);
       setEditSeasons(JSON.parse(JSON.stringify(data.seasons)));
     } catch (e) {
       message.error(e instanceof Error ? e.message : 'Error al cargar preview');
@@ -232,6 +235,7 @@ export function ImportarClient() {
             countryCode: editCountry,
             catalogScope: scope,
             type: 'serie',
+            geoRestrictedCore: editGeoRestricted,
           },
           seasons: editSeasons.map((s) => ({
             seasonNumber: s.seasonNumber,
@@ -414,6 +418,17 @@ export function ImportarClient() {
                   value={editSynopsis}
                   onChange={(e) => setEditSynopsis(e.target.value)}
                 />
+              </Form.Item>
+              <Form.Item
+                label="Disponibilidad regional"
+                help="Chequeado automático contra el primer video de la playlist (mercado core: AR/MX/ES/CL/CO/PE/US). Revisá y ajustá si hace falta antes de confirmar."
+              >
+                <Checkbox
+                  checked={editGeoRestricted}
+                  onChange={(e) => setEditGeoRestricted(e.target.checked)}
+                >
+                  Bloqueada en el mercado core (mostrar aviso en /ver)
+                </Checkbox>
               </Form.Item>
               <Typography.Text type="secondary" style={{ fontSize: 12 }}>
                 Fuente:{' '}
