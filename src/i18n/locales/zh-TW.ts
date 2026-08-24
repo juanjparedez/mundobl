@@ -2161,6 +2161,10 @@ const zhTW: TranslationShape = {
     "officialPlaybackNote": "官方播放。版權歸其各自所有者所有。",
     "creditsLink": "鳴謝",
     "legalNoticeLink": "法律聲明",
+    "copyLinkButton": "複製連結",
+    "linkCopiedLabel": "已複製！",
+    "linkCopiedSuccess": "連結已複製到剪貼簿！",
+    "linkCopyError": "無法複製連結。",
     "previousButton": "上一頁",
     "nextButton": "下一頁",
     "episodeSynopsisTitle": "劇集概要",
@@ -2681,7 +2685,8 @@ const zhTW: TranslationShape = {
     "clearFilters": "清除篩選",
     "emptyDescription": "我們找不到符合這些篩選條件的影集。請嘗試不同的國家或標題。",
     "cardEpisodesBadge": "{count} 部影片",
-    "cardPlayButton": "播放"
+    "cardPlayButton": "播放",
+    "geoRestrictedBadge": "在你所在地區受限"
   },
   "actorProfile": {
     "funFactsTitle": "趣聞"

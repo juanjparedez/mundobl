@@ -54,6 +54,9 @@ export default async function VerPageRoute() {
       synopsis: s.synopsis,
       catalogScope: s.catalogScope,
       origin: s.origin,
+      // Aviso "puede estar bloqueada en tu region" ANTES de que hagan
+      // click — snapshot manual via YouTube Data API, ver schema.prisma.
+      geoRestrictedCore: s.geoRestrictedCore,
       // new Date(...).toISOString() (no .toISOString() directo): defensa
       // ante un futuro unstable_cache sobre getWatchableSeries, que
       // deserializa Date como string en un cache HIT (ver /catalogo).
