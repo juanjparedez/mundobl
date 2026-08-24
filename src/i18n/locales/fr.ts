@@ -2161,6 +2161,10 @@ const fr: TranslationShape = {
     "officialPlaybackNote": "Lecture officielle. Les droits appartiennent à leurs propriétaires respectifs.",
     "creditsLink": "Crédits",
     "legalNoticeLink": "Mentions légales",
+    "copyLinkButton": "Copier le lien",
+    "linkCopiedLabel": "Copié !",
+    "linkCopiedSuccess": "Lien copié dans le presse-papiers !",
+    "linkCopyError": "Impossible de copier le lien.",
     "previousButton": "Précédent",
     "nextButton": "Suivant",
     "episodeSynopsisTitle": "Synopsis de l'épisode",
@@ -2681,7 +2685,8 @@ const fr: TranslationShape = {
     "clearFilters": "Effacer les filtres",
     "emptyDescription": "Nous n'avons pas trouvé de séries avec ces filtres. Essayez un autre pays ou titre.",
     "cardEpisodesBadge": "{count} vidéos",
-    "cardPlayButton": "Lecture"
+    "cardPlayButton": "Lecture",
+    "geoRestrictedBadge": "Restreint dans votre région"
   },
   "actorProfile": {
     "funFactsTitle": "Faits amusants"

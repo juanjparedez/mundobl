@@ -177,6 +177,18 @@
   color: var(--text-primary);
 }
 
+/* Link crudo copiable — igual si el embed esta geo-bloqueado, el link
+ * sirve para abrirlo directo con VPN/otro navegador/la app de YouTube. */
+.ver-serie__geoblock-link-input {
+  margin-top: 8px;
+  max-width: 480px;
+}
+
+.ver-serie__geoblock-link-input.ant-input-outlined {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+}
+
 /* ─── Info Grid & Cast ────────────────────────────────────────────────── */
 .ver-serie__info-grid {
   display: grid;

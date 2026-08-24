@@ -199,6 +199,25 @@
   backdrop-filter: blur(4px);
 }
 
+/* Aviso "puede estar bloqueada en tu region" — arriba a la izquierda,
+ * visible antes del click (el overlay de play+episodios vive abajo). */
+.ver-card__georestricted-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(4px);
+  color: var(--warning-color);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
 .ver-card__body {
   padding: 12px;
   display: flex;

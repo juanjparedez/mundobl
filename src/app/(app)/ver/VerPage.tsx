@@ -319,6 +319,7 @@ export function VerPage({ items }: VerPageProps) {
                 episodesBadgeLabel={(count) =>
                   t('ver.cardEpisodesBadge', { count })
                 }
+                geoRestrictedLabel={t('ver.geoRestrictedBadge')}
               />
             );
           })}
@@ -399,6 +400,14 @@ export function VerPage({ items }: VerPageProps) {
                             })}
                           </span>
                         </div>
+                        {item.geoRestrictedCore && (
+                          <span
+                            className="ver-card__georestricted-badge"
+                            title={t('ver.geoRestrictedBadge')}
+                          >
+                            🌍 {t('ver.geoRestrictedBadge')}
+                          </span>
+                        )}
                       </div>
                     </Link>
 

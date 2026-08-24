@@ -2161,6 +2161,10 @@ const zhCN: TranslationShape = {
     "officialPlaybackNote": "官方播放。版权归各自所有者所有。",
     "creditsLink": "鸣谢",
     "legalNoticeLink": "法律声明",
+    "copyLinkButton": "复制链接",
+    "linkCopiedLabel": "已复制！",
+    "linkCopiedSuccess": "链接已复制到剪贴板！",
+    "linkCopyError": "无法复制链接。",
     "previousButton": "上一页",
     "nextButton": "下一页",
     "episodeSynopsisTitle": "剧集简介",
@@ -2681,7 +2685,8 @@ const zhCN: TranslationShape = {
     "clearFilters": "清除筛选",
     "emptyDescription": "我们找不到符合这些筛选条件的剧集。请尝试其他国家或标题。",
     "cardEpisodesBadge": "{count} 个视频",
-    "cardPlayButton": "播放"
+    "cardPlayButton": "播放",
+    "geoRestrictedBadge": "在你所在地区受限"
   },
   "actorProfile": {
     "funFactsTitle": "趣闻"
