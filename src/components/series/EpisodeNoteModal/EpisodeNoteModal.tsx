@@ -122,7 +122,7 @@ export function EpisodeNoteModal({
       }
       open={open}
       onCancel={onClose}
-      mask={{ closable: !saving }}
+      maskClosable={false}
       destroyOnClose
       width={560}
       footer={[

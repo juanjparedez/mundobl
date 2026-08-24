@@ -342,6 +342,7 @@ export default function TagsAdminPage() {
           onOk={() => form.submit()}
           okText={t('adminTags.save')}
           cancelText={t('adminTags.cancel')}
+          maskClosable={false}
           forceRender
         >
           <Form form={form} layout="vertical" onFinish={handleEditTag}>

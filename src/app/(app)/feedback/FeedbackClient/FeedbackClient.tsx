@@ -1089,6 +1089,7 @@ export function FeedbackClient() {
           setPendingImages([]);
         }}
         footer={null}
+        maskClosable={false}
         className="feedback-modal"
         width="min(560px, 100vw - 32px)"
       >
