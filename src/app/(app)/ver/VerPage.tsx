@@ -129,17 +129,23 @@ export function VerPage({ items }: VerPageProps) {
     });
   }, [items, search, country, platform, onlyCurated]);
 
-  // Serie destacada para el Hero Billboard (ej: 2gether, We Are o la primera con poster)
+  // Serie destacada para el Hero Billboard (ej: 2gether, We Are o la primera
+  // con poster). Se excluyen las geo-restringidas: no tiene sentido dedicar
+  // el lugar mas visible de la pagina a algo que la mayoria no puede mirar
+  // (bug real: "2gether" estaba hardcodeada como primera preferencia y es
+  // justo una de las series bloqueadas en el mercado core).
   const featured = useMemo(() => {
+    const eligible = items.filter((i) => !i.geoRestrictedCore);
     return (
-      items.find(
+      eligible.find(
         (i) =>
           i.imageUrl &&
           (i.title.toLowerCase().includes('2gether') ||
             i.title.toLowerCase().includes('we are') ||
             i.title.toLowerCase().includes('cutie pie'))
       ) ||
-      items.find((i) => i.imageUrl) ||
+      eligible.find((i) => i.imageUrl) ||
+      eligible[0] ||
       items[0]
     );
   }, [items]);
@@ -180,6 +186,7 @@ export function VerPage({ items }: VerPageProps) {
           infoButtonLabel={t('ver.heroInfoButton')}
           collapseTooltip={t('ver.heroCollapseTooltip')}
           expandTooltip={t('ver.heroExpandTooltip')}
+          geoRestrictedLabel={t('ver.geoRestrictedBadge')}
         />
       )}
 
