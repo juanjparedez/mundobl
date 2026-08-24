@@ -2161,6 +2161,10 @@ const it: TranslationShape = {
     "officialPlaybackNote": "Riproduzione ufficiale. I diritti appartengono ai rispettivi proprietari.",
     "creditsLink": "Crediti",
     "legalNoticeLink": "Note legali",
+    "copyLinkButton": "Copia link",
+    "linkCopiedLabel": "Copiato!",
+    "linkCopiedSuccess": "Link copiato negli appunti!",
+    "linkCopyError": "Impossibile copiare il link.",
     "previousButton": "Precedente",
     "nextButton": "Successivo",
     "episodeSynopsisTitle": "Sinossi episodio",
@@ -2681,7 +2685,8 @@ const it: TranslationShape = {
     "clearFilters": "Cancella filtri",
     "emptyDescription": "Non abbiamo trovato serie con questi filtri. Prova un paese o un titolo diverso.",
     "cardEpisodesBadge": "{count} video",
-    "cardPlayButton": "Riproduci"
+    "cardPlayButton": "Riproduci",
+    "geoRestrictedBadge": "Limitato nella tua regione"
   },
   "actorProfile": {
     "funFactsTitle": "Curiosità"

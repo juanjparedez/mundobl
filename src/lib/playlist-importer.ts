@@ -6,7 +6,10 @@
 // preview editable que la UI de admin muestra antes de persistir
 // (ver POST /api/series/import-playlist y /confirm).
 
-import { fetchAllYouTubePlaylistVideos } from './channel-fetcher';
+import {
+  fetchAllYouTubePlaylistVideos,
+  checkYouTubeRegionRestriction,
+} from './channel-fetcher';
 import {
   parseEpisodeTitle,
   inferSeriesTitle,
@@ -87,6 +90,10 @@ export interface ImportPreview {
     suggestedYear: number | null;
     suggestedCountryCode: string | null;
     catalogScope: 'WATCHABLE_ONLY' | 'PERSONAL';
+    // Chequeado contra el primer video de la playlist — ver
+    // checkYouTubeRegionRestriction. false tambien si el chequeo fallo
+    // (no bloqueamos el import por eso, pero no da falsa seguridad).
+    geoRestrictedCore: boolean;
   };
   seasons: ImportPreviewSeason[];
   // Warnings globales (ej. "ningun video tenia numero de episodio").
@@ -117,6 +124,21 @@ export async function buildImportPreview(
 
   const fetched = await fetchAllYouTubePlaylistVideos(url, maxPages);
   const warnings: string[] = [];
+
+  // Chequeo de restriccion regional ANTES de armar el resto del preview:
+  // si esta bloqueada para el mercado core, mejor saberlo ya en el primer
+  // vistazo que despues de cargar 60+ episodios a mano.
+  let geoRestrictedCore = false;
+  const firstVideoId = fetched.videos[0]?.videoId;
+  if (firstVideoId) {
+    const region = await checkYouTubeRegionRestriction(firstVideoId);
+    if (region.checked && region.blockedCoreMarkets.length > 0) {
+      geoRestrictedCore = true;
+      warnings.push(
+        `⚠️ Bloqueada en tu mercado core (${region.blockedCoreMarkets.join(', ')}) — antes de cargar todos los episodios, confirmá si igual vale la pena (audiencia con VPN, etc.).`
+      );
+    }
+  }
 
   if (fetched.videos.length === 0) {
     warnings.push('La playlist no devolvió videos.');
@@ -281,6 +303,7 @@ export async function buildImportPreview(
       suggestedYear,
       suggestedCountryCode,
       catalogScope,
+      geoRestrictedCore,
     },
     seasons,
     warnings,

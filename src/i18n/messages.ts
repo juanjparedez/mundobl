@@ -2152,6 +2152,10 @@ export type TranslationShape = {
     officialPlaybackNote: string;
     creditsLink: string;
     legalNoticeLink: string;
+    copyLinkButton: string;
+    linkCopiedLabel: string;
+    linkCopiedSuccess: string;
+    linkCopyError: string;
     previousButton: string;
     nextButton: string;
     episodeSynopsisTitle: string;
@@ -2673,6 +2677,7 @@ export type TranslationShape = {
     emptyDescription: string;
     cardEpisodesBadge: string;
     cardPlayButton: string;
+    geoRestrictedBadge: string;
   };
   actorProfile: {
     funFactsTitle: string;
@@ -4968,6 +4973,10 @@ const es: TranslationShape = {
       'Reproducción oficial. Los derechos pertenecen a sus titulares.',
     creditsLink: 'Créditos',
     legalNoticeLink: 'Aviso legal',
+    copyLinkButton: 'Copiar link',
+    linkCopiedLabel: '¡Copiado!',
+    linkCopiedSuccess: '¡Link copiado al portapapeles!',
+    linkCopyError: 'No se pudo copiar el link.',
     previousButton: 'Anterior',
     nextButton: 'Siguiente',
     episodeSynopsisTitle: 'Sinopsis del episodio',
@@ -5522,6 +5531,7 @@ const es: TranslationShape = {
       'No encontramos series con esos filtros. Probá buscando por otro país o título.',
     cardEpisodesBadge: '{count} videos',
     cardPlayButton: 'Reproducir',
+    geoRestrictedBadge: 'Restringido en tu región',
   },
   actorProfile: {
     funFactsTitle: 'Datos curiosos',
@@ -7803,6 +7813,10 @@ const en: TranslationShape = {
       'Official playback. Rights belong to their respective owners.',
     creditsLink: 'Credits',
     legalNoticeLink: 'Legal notice',
+    copyLinkButton: 'Copy link',
+    linkCopiedLabel: 'Copied!',
+    linkCopiedSuccess: 'Link copied to clipboard!',
+    linkCopyError: 'Could not copy the link.',
     previousButton: 'Previous',
     nextButton: 'Next',
     episodeSynopsisTitle: 'Episode synopsis',
@@ -8353,6 +8367,7 @@ const en: TranslationShape = {
       "We couldn't find series with those filters. Try a different country or title.",
     cardEpisodesBadge: '{count} videos',
     cardPlayButton: 'Play',
+    geoRestrictedBadge: 'Restricted in your region',
   },
   actorProfile: {
     funFactsTitle: 'Fun Facts',

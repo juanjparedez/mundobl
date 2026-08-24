@@ -2161,6 +2161,10 @@ const ja: TranslationShape = {
     "officialPlaybackNote": "公式再生。権利はそれぞれの所有者に帰属します。",
     "creditsLink": "クレジット",
     "legalNoticeLink": "法的通知",
+    "copyLinkButton": "リンクをコピー",
+    "linkCopiedLabel": "コピーしました！",
+    "linkCopiedSuccess": "リンクをクリップボードにコピーしました！",
+    "linkCopyError": "リンクをコピーできませんでした。",
     "previousButton": "前へ",
     "nextButton": "次へ",
     "episodeSynopsisTitle": "エピソードのあらすじ",
@@ -2681,7 +2685,8 @@ const ja: TranslationShape = {
     "clearFilters": "フィルターをクリア",
     "emptyDescription": "そのフィルターに一致するシリーズは見つかりませんでした。別の国またはタイトルをお試しください。",
     "cardEpisodesBadge": "{count}本の動画",
-    "cardPlayButton": "再生"
+    "cardPlayButton": "再生",
+    "geoRestrictedBadge": "お住まいの地域では制限されています"
   },
   "actorProfile": {
     "funFactsTitle": "豆知識"

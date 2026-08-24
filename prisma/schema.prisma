@@ -224,6 +224,13 @@ model Series {
   // Orden manual dentro de "Destacadas" (menor = primero). Solo importa
   // cuando featured=true; con varias en 0 el filtro cae a orden alfabetico.
   featuredOrder  Int      @default(0)
+  // Chequeado a mano/con la YouTube Data API (regionRestriction en
+  // contentDetails): true si el embed de esta serie esta bloqueado en el
+  // mercado core del sitio (AR/MX/ES/CL/CO/PE/US). Usado para mostrar un
+  // aviso en /ver ANTES de que el usuario haga click (evita la frustacion
+  // de entrar y encontrarse "video no disponible en tu pais"). Es un
+  // snapshot manual, no se re-chequea solo — YouTube puede cambiar esto.
+  geoRestrictedCore Boolean @default(false)
   // "PERSONAL": en el catalogo curado del admin (con review propio).
   // "WATCHABLE_ONLY": importada solo porque se puede mirar legalmente
   // (canales oficiales con embed). Aparece en /ver, no en /catalogo.
