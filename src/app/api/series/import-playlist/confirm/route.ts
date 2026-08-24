@@ -26,6 +26,7 @@ interface ConfirmBody {
     countryCode?: string | null;
     catalogScope?: 'WATCHABLE_ONLY' | 'PERSONAL';
     type?: string;
+    geoRestrictedCore?: boolean;
   };
   seasons: ConfirmSeason[];
   source?: {
@@ -120,6 +121,7 @@ export async function POST(request: NextRequest) {
               ? 'PERSONAL'
               : 'WATCHABLE_ONLY',
           countryId,
+          geoRestrictedCore: body.series.geoRestrictedCore === true,
         },
       });
 

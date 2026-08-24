@@ -3,7 +3,16 @@
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Button, Tag, Tooltip, Alert, Empty, Avatar, Segmented } from 'antd';
+import {
+  Button,
+  Tag,
+  Tooltip,
+  Alert,
+  Empty,
+  Avatar,
+  Segmented,
+  Input,
+} from 'antd';
 import {
   StarFilled,
   StarOutlined,
@@ -16,6 +25,8 @@ import {
   VideoCameraOutlined,
   ClockCircleOutlined,
   LockOutlined,
+  CopyOutlined,
+  CheckOutlined,
 } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import { EmbedPlayer } from '@/components/common/EmbedPlayer/EmbedPlayer';
@@ -55,6 +66,7 @@ interface SeriesInfo {
   imageUrl: string | null;
   catalogScope: string;
   origin: string;
+  geoRestrictedCore: boolean;
   productionCompanyName: string | null;
   submittedByName: string | null;
   country: { name: string; code: string | null } | null;
@@ -318,6 +330,32 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
   );
   const [scope, setScope] = useState(series.catalogScope);
   const [movingScope, setMovingScope] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
+
+  // Copiar el link directo del episodio activo — pedido real de usuario:
+  // si el embed esta geo-bloqueado, el link crudo sirve igual para abrirlo
+  // manual con VPN/otro navegador. No cuesta nada exponerlo copiable.
+  const handleCopyEmbedLink = async (url: string) => {
+    try {
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(url);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = url;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
+      setLinkCopied(true);
+      message.success(t('verSerie.linkCopiedSuccess'));
+      setTimeout(() => setLinkCopied(false), 2500);
+    } catch {
+      message.error(t('verSerie.linkCopyError'));
+    }
+  };
 
   const active = flatEpisodes[activeIdx];
   const hasPrev = activeIdx > 0;
@@ -511,11 +549,19 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         </div>
       </div>
 
-      {/* Tip de bloqueo regional / VPN */}
+      {/* Tip de bloqueo regional / VPN — encabezado mas contundente cuando
+       *  YA sabemos (geoRestrictedCore) que esta bloqueada en el mercado
+       *  core, en vez del generico "¿el video dice...?" condicional. */}
       <div className="ver-serie__geoblock-tip">
         <span className="ver-serie__geoblock-icon">🌍</span>
         <div className="ver-serie__geoblock-text">
-          <strong>¿El video dice &quot;No disponible en tu país&quot;?</strong>{' '}
+          {series.geoRestrictedCore ? (
+            <strong>Esta serie está bloqueada en tu región.</strong>
+          ) : (
+            <strong>
+              ¿El video dice &quot;No disponible en tu país&quot;?
+            </strong>
+          )}{' '}
           Algunas productoras limitan la emisión gratuita de YouTube si
           vendieron la licencia exclusiva a plataformas locales. Podés verlo con
           VPN (Tailandia, Taiwán o EE.UU.) o consultar las opciones en{' '}
@@ -529,6 +575,34 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
             Plataformas & Planes
           </Link>
           .
+          {active.embedUrl && (
+            <Input
+              readOnly
+              value={active.embedUrl}
+              className="ver-serie__geoblock-link-input"
+              onFocus={(e) => e.target.select()}
+              addonAfter={
+                <Button
+                  type="text"
+                  size="small"
+                  icon={
+                    linkCopied ? (
+                      <CheckOutlined
+                        style={{ color: 'var(--success-color)' }}
+                      />
+                    ) : (
+                      <CopyOutlined />
+                    )
+                  }
+                  onClick={() => handleCopyEmbedLink(active.embedUrl!)}
+                >
+                  {linkCopied
+                    ? t('verSerie.linkCopiedLabel')
+                    : t('verSerie.copyLinkButton')}
+                </Button>
+              }
+            />
+          )}
         </div>
       </div>
 

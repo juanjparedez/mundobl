@@ -31,6 +31,7 @@ interface HeroBillboardProps {
   infoButtonLabel: string;
   collapseTooltip: string;
   expandTooltip: string;
+  geoRestrictedLabel?: string;
 }
 
 /** Hero destacado de /ver. Colapsable: en vez de desaparecer del todo,
@@ -50,6 +51,7 @@ export function HeroBillboard({
   infoButtonLabel,
   collapseTooltip,
   expandTooltip,
+  geoRestrictedLabel,
 }: HeroBillboardProps) {
   if (!featured) return null;
 
@@ -147,6 +149,9 @@ export function HeroBillboard({
             <Tag color="blue" icon={<VideoCameraFilled />}>
               {vimeoTagLabel}
             </Tag>
+          )}
+          {featured.geoRestrictedCore && geoRestrictedLabel && (
+            <Tag color="warning">{geoRestrictedLabel}</Tag>
           )}
         </div>
 

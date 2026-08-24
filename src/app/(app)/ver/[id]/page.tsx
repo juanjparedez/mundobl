@@ -134,6 +134,7 @@ export default async function VerSeriePage({ params }: PageProps) {
             imageUrl: serie.imageUrl,
             catalogScope: serie.catalogScope,
             origin: serie.origin,
+            geoRestrictedCore: serie.geoRestrictedCore,
             productionCompanyName: serie.productionCompany?.name ?? null,
             submittedByName:
               serie.submittedBy?.nickname ?? serie.submittedBy?.name ?? null,
