@@ -276,6 +276,7 @@ export default function UniversesAdminPage() {
           onOk={() => form.submit()}
           okText={t('adminUniverses.save')}
           cancelText={t('adminUniverses.cancel')}
+          maskClosable={false}
           forceRender
         >
           <Form form={form} layout="vertical" onFinish={handleSubmit}>

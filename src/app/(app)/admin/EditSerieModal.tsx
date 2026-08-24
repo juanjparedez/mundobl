@@ -112,6 +112,10 @@ export function EditSerieModal({
       okText={t('editSerieModal.save')}
       cancelText={t('editSerieModal.cancel')}
       forceRender
+      // Flor reportaba perder todo lo cargado al clickear afuera por error
+      // (feedback real, no hipotetico). El modal solo cierra con Cancelar/X
+      // o al guardar — nunca por click en el mask.
+      maskClosable={false}
     >
       <Spin spinning={fetching} size="large">
         <Form

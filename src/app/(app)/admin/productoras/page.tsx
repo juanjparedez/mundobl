@@ -263,6 +263,7 @@ export default function ProductorasAdminPage() {
           onOk={() => form.submit()}
           okText={t('adminProductionCompanies.save')}
           cancelText={t('adminProductionCompanies.cancel')}
+          maskClosable={false}
           forceRender
         >
           <Form form={form} layout="vertical" onFinish={handleSubmit}>
