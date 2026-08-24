@@ -318,6 +318,60 @@ export async function fetchAllYouTubePlaylistVideos(
   return { ...first, videos: allVideos, nextPageToken };
 }
 
+// Mercado core del sitio (locale primario ES + audiencia real LatAm/España).
+// Si el primer video de una playlist esta bloqueado en varios de estos,
+// la serie completa no le sirve a la audiencia real, sin importar cuantos
+// episodios tenga (aprendido en carne propia: se importaron 6 series BL
+// oficiales y una — Never Let Me Go — resulto bloqueada en TODO occidente).
+export const CORE_MARKETS = ['AR', 'MX', 'ES', 'CL', 'CO', 'PE', 'US'];
+
+export interface RegionRestrictionCheck {
+  checked: boolean; // false si el video no se encontro / la API fallo
+  blockedCoreMarkets: string[]; // subset de CORE_MARKETS bloqueado
+}
+
+/**
+ * Chequea si un video de YouTube esta geo-bloqueado en el mercado core
+ * del sitio, via contentDetails.regionRestriction (blocked o allowed —
+ * la API usa una lista u otra, nunca ambas). Se usa el PRIMER video de
+ * la playlist como muestra representativa: el bloqueo suele ser por
+ * licencia de toda la serie, no por episodio suelto.
+ */
+export async function checkYouTubeRegionRestriction(
+  videoId: string
+): Promise<RegionRestrictionCheck> {
+  try {
+    const res = await ytFetch('videos', {
+      part: 'contentDetails',
+      id: videoId,
+    });
+    const data = (await res.json()) as {
+      items?: Array<{
+        contentDetails?: {
+          regionRestriction?: { blocked?: string[]; allowed?: string[] };
+        };
+      }>;
+    };
+    const item = data.items?.[0];
+    if (!item) return { checked: false, blockedCoreMarkets: [] };
+
+    const rr = item.contentDetails?.regionRestriction;
+    if (!rr) return { checked: true, blockedCoreMarkets: [] };
+
+    const blockedCoreMarkets = rr.blocked
+      ? CORE_MARKETS.filter((m) => rr.blocked!.includes(m))
+      : rr.allowed
+        ? CORE_MARKETS.filter((m) => !rr.allowed!.includes(m))
+        : [];
+
+    return { checked: true, blockedCoreMarkets };
+  } catch {
+    // No bloqueamos el import por un error de esta llamada extra — el
+    // admin puede seguir sin el chequeo (queda "checked: false").
+    return { checked: false, blockedCoreMarkets: [] };
+  }
+}
+
 // ---- Vimeo ----
 
 const VIMEO_API_BASE = 'https://api.vimeo.com';

@@ -2161,6 +2161,10 @@ const ko: TranslationShape = {
     "officialPlaybackNote": "공식 재생. 저작권은 해당 소유자에게 있습니다.",
     "creditsLink": "크레딧",
     "legalNoticeLink": "법적 고지",
+    "copyLinkButton": "링크 복사",
+    "linkCopiedLabel": "복사됨!",
+    "linkCopiedSuccess": "링크가 클립보드에 복사되었습니다!",
+    "linkCopyError": "링크를 복사할 수 없습니다.",
     "previousButton": "이전",
     "nextButton": "다음",
     "episodeSynopsisTitle": "에피소드 줄거리",
@@ -2681,7 +2685,8 @@ const ko: TranslationShape = {
     "clearFilters": "필터 지우기",
     "emptyDescription": "해당 필터로는 시리즈를 찾을 수 없습니다. 다른 국가나 제목으로 시도해 보세요.",
     "cardEpisodesBadge": "{count}개 동영상",
-    "cardPlayButton": "재생"
+    "cardPlayButton": "재생",
+    "geoRestrictedBadge": "해당 지역에서 제한됨"
   },
   "actorProfile": {
     "funFactsTitle": "재미있는 사실"
