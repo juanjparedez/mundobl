@@ -553,6 +553,7 @@ export function NoticiasClient() {
             onCancel={() => setIsFormOpen(false)}
             footer={null}
             width={700}
+            maskClosable={false}
             destroyOnHidden
           >
             <Form
@@ -687,6 +688,7 @@ export function NoticiasClient() {
             onCancel={() => setIsAiOpen(false)}
             footer={null}
             width={640}
+            maskClosable={false}
             destroyOnHidden
           >
             <p className="noticias-admin__ai-disclaimer">

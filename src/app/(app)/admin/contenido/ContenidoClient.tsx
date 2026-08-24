@@ -449,6 +449,7 @@ export function ContenidoClient() {
           okText={t('adminContent.save')}
           cancelText={t('adminContent.cancel')}
           width={680}
+          maskClosable={false}
           forceRender
         >
           <Form form={form} layout="vertical" onFinish={handleSubmit}>

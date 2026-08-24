@@ -292,6 +292,7 @@ export function SitiosClient() {
           onOk={() => form.submit()}
           okText={t('adminSites.save')}
           cancelText={t('adminSites.cancel')}
+          maskClosable={false}
           forceRender
         >
           <Form form={form} layout="vertical" onFinish={handleSubmit}>

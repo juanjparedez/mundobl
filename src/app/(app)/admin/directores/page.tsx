@@ -371,6 +371,7 @@ export default function DirectoresAdminPage() {
           onOk={() => form.submit()}
           okText={t('adminDirectors.save')}
           cancelText={t('adminDirectors.cancel')}
+          maskClosable={false}
         >
           <Form form={form} layout="vertical" onFinish={handleSubmit}>
             <Form.Item
