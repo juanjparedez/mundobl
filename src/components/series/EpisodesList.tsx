@@ -662,6 +662,7 @@ export function EpisodesList({
         open={isModalOpen}
         onCancel={handleCloseModal}
         footer={null}
+        maskClosable={false}
         destroyOnHidden
       >
         <Form form={form} layout="vertical" onFinish={handleSubmit}>

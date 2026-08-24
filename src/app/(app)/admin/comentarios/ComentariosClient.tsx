@@ -541,6 +541,7 @@ export function ComentariosClient() {
             confirmLoading={isSavingEdit}
             okText={t('adminComments.save')}
             cancelText={t('adminComments.cancel')}
+            maskClosable={false}
           >
             <Input.TextArea
               value={editingContent}

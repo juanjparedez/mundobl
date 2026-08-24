@@ -385,6 +385,7 @@ export default function ActoresAdminPage() {
           okText={t('adminActors.save')}
           forceRender
           cancelText={t('adminActors.cancel')}
+          maskClosable={false}
         >
           <Form form={form} layout="vertical" onFinish={handleSubmit}>
             <Form.Item

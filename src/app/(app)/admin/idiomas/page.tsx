@@ -276,6 +276,7 @@ export default function IdiomasAdminPage() {
           onOk={() => form.submit()}
           okText={t('adminLanguages.save')}
           cancelText={t('adminLanguages.cancel')}
+          maskClosable={false}
           forceRender
         >
           <Form form={form} layout="vertical" onFinish={handleSubmit}>

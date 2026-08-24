@@ -503,6 +503,7 @@ export default function ChangelogAdminPage() {
           }}
           footer={null}
           destroyOnClose
+          maskClosable={false}
         >
           <Form
             form={form}
@@ -621,6 +622,7 @@ export default function ChangelogAdminPage() {
           open={autoGenOpen}
           width={700}
           onCancel={() => setAutoGenOpen(false)}
+          maskClosable={false}
           footer={[
             <Button key="cancel" onClick={() => setAutoGenOpen(false)}>
               Cancelar
