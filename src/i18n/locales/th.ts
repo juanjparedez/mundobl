@@ -2161,6 +2161,10 @@ const th: TranslationShape = {
     "officialPlaybackNote": "การเล่นอย่างเป็นทางการ สิทธิ์เป็นของเจ้าของที่เกี่ยวข้อง",
     "creditsLink": "เครดิต",
     "legalNoticeLink": "ประกาศทางกฎหมาย",
+    "copyLinkButton": "คัดลอกลิงก์",
+    "linkCopiedLabel": "คัดลอกแล้ว!",
+    "linkCopiedSuccess": "คัดลอกลิงก์ไปยังคลิปบอร์ดแล้ว!",
+    "linkCopyError": "ไม่สามารถคัดลอกลิงก์ได้",
     "previousButton": "ก่อนหน้า",
     "nextButton": "ถัดไป",
     "episodeSynopsisTitle": "เรื่องย่อตอน",
@@ -2681,7 +2685,8 @@ const th: TranslationShape = {
     "clearFilters": "ล้างตัวกรอง",
     "emptyDescription": "เราไม่พบซีรีส์ที่ตรงกับตัวกรองเหล่านี้ ลองเลือกประเทศหรือชื่อเรื่องอื่น",
     "cardEpisodesBadge": "{count} วิดีโอ",
-    "cardPlayButton": "เล่น"
+    "cardPlayButton": "เล่น",
+    "geoRestrictedBadge": "ถูกจำกัดในภูมิภาคของคุณ"
   },
   "actorProfile": {
     "funFactsTitle": "เกร็ดน่ารู้"

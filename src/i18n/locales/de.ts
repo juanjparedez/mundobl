@@ -2161,6 +2161,10 @@ const de: TranslationShape = {
     "officialPlaybackNote": "Offizielle Wiedergabe. Rechte gehören den jeweiligen Eigentümern.",
     "creditsLink": "Credits",
     "legalNoticeLink": "Impressum",
+    "copyLinkButton": "Link kopieren",
+    "linkCopiedLabel": "Kopiert!",
+    "linkCopiedSuccess": "Link in die Zwischenablage kopiert!",
+    "linkCopyError": "Der Link konnte nicht kopiert werden.",
     "previousButton": "Zurück",
     "nextButton": "Weiter",
     "episodeSynopsisTitle": "Episodenübersicht",
@@ -2681,7 +2685,8 @@ const de: TranslationShape = {
     "clearFilters": "Filter löschen",
     "emptyDescription": "Wir konnten keine Serien mit diesen Filtern finden. Versuchen Sie ein anderes Land oder einen anderen Titel.",
     "cardEpisodesBadge": "{count} Videos",
-    "cardPlayButton": "Abspielen"
+    "cardPlayButton": "Abspielen",
+    "geoRestrictedBadge": "In deiner Region eingeschränkt"
   },
   "actorProfile": {
     "funFactsTitle": "Wissenswertes"

@@ -200,6 +200,29 @@
   align-items: center;
 }
 
+/* Aviso "puede estar bloqueada en tu region" — visible en la card, antes
+ * del click, no solo dentro del player. Arriba a la izquierda: el badge
+ * de plataforma ya ocupa la esquina derecha, y abajo esta el overlay de
+ * play+episodios (align-items: flex-end), asi que no se pisan. */
+.media-carousel__georestricted-badge {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(4px);
+  color: var(--warning-color);
+  font-size: 0.68rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
 /* ─── Información de Serie ──────────────────────────────────────── */
 .media-carousel__info {
   display: flex;

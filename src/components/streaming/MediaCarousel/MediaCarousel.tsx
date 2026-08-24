@@ -9,6 +9,7 @@ import {
   PlayCircleFilled,
   YoutubeFilled,
   VideoCameraFilled,
+  GlobalOutlined,
 } from '@ant-design/icons';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
@@ -25,6 +26,9 @@ export interface CarouselMediaItem {
   episodesWithEmbed: number;
   platforms: string[];
   channels: string[];
+  /** Bloqueada en el mercado core del sitio (AR/MX/ES/CL/CO/PE/US) —
+   *  muestra un aviso ANTES del click. Ver Series.geoRestrictedCore. */
+  geoRestrictedCore?: boolean;
 }
 
 interface MediaCarouselProps {
@@ -37,6 +41,9 @@ interface MediaCarouselProps {
   /** Caller resuelve el texto del badge por item (ya interpolado con
    *  el count) — este componente no conoce i18n. */
   episodesBadgeLabel: (count: number) => string;
+  /** Texto del aviso "puede estar bloqueada en tu región" — mismo criterio
+   *  de i18n que episodesBadgeLabel. */
+  geoRestrictedLabel?: string;
 }
 
 export function MediaCarousel({
@@ -47,6 +54,7 @@ export function MediaCarousel({
   scrollPrevLabel,
   scrollNextLabel,
   episodesBadgeLabel,
+  geoRestrictedLabel,
 }: MediaCarouselProps) {
   const rowRef = useRef<HTMLDivElement>(null);
 
@@ -160,6 +168,17 @@ export function MediaCarousel({
                       />
                     )}
                   </div>
+
+                  {/* Aviso de bloqueo regional — visible ANTES del click,
+                   *  no solo cuando ya estas en el player. */}
+                  {item.geoRestrictedCore && geoRestrictedLabel && (
+                    <span
+                      className="media-carousel__georestricted-badge"
+                      title={geoRestrictedLabel}
+                    >
+                      <GlobalOutlined /> {geoRestrictedLabel}
+                    </span>
+                  )}
                 </div>
 
                 <div className="media-carousel__info">
