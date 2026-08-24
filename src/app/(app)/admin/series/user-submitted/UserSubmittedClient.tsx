@@ -438,6 +438,7 @@ export function UserSubmittedClient({ items: initial }: Props) {
         onOk={confirmLink}
         okText="Linkear"
         okButtonProps={{ disabled: !linkSelectedId }}
+        maskClosable={false}
       >
         <p style={{ color: 'var(--text-secondary)' }}>
           Busca y selecciona la serie del catálogo curado. Al confirmar, los

@@ -623,6 +623,7 @@ export function ReviewsSection({
         okText={t('reviews.save')}
         cancelText={t('reviews.cancel')}
         width={720}
+        maskClosable={false}
       >
         <Form form={form} layout="vertical" initialValues={EMPTY_FORM}>
           <Form.Item

@@ -508,6 +508,7 @@ export function AnunciosClient() {
         open={drawerOpen}
         onClose={handleCloseDrawer}
         width={isMobile ? '100%' : 960}
+        maskClosable={false}
         destroyOnClose
         extra={
           <Space>
