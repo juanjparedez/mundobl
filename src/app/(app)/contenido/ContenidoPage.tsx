@@ -187,7 +187,7 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
                     title={item.title}
                     description={
                       <Space
-                        direction="vertical"
+                        orientation="vertical"
                         size={4}
                         style={{ width: '100%' }}
                       >

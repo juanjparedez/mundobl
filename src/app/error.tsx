@@ -85,7 +85,7 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
         }
         extra={
           <Space
-            direction="vertical"
+            orientation="vertical"
             size="large"
             className="error-page__actions"
           >
