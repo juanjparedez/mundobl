@@ -117,13 +117,12 @@ export const STREAMING_PLATFORMS: StreamingPlatformInfo[] = [
       },
       {
         name: 'Viki Pass Standard',
-        price: '$4.99 USD',
+        price: 'Consultar en la región',
         period: 'mes',
         features: [
           'Acceso a la gran mayoría de series BL y K-Dramas',
-          'Full HD 1080p sin publicidad',
-          'Transmisión en 2 pantallas simultáneas',
-          'Opción anual: $49.99 USD / año (17% OFF)',
+          'Calidad HD 720p',
+          'Transmisión en 1 pantalla simultánea',
         ],
       },
       {
@@ -374,17 +373,25 @@ export const STREAMING_PLATFORMS: StreamingPlatformInfo[] = [
     plans: [
       {
         name: 'Estándar con anuncios',
-        price: '~$6.99 USD',
+        price: 'No disponible en Argentina',
         period: 'mes',
         features: [
-          'Full HD 1080p',
-          '2 dispositivos simultáneos',
-          'Con pausas publicitarias',
+          'El plan con anuncios no figura entre las opciones de Argentina',
+        ],
+      },
+      {
+        name: 'Básico',
+        price: 'ARS 8.999',
+        period: 'mes',
+        features: [
+          'HD 720p sin anuncios',
+          '1 dispositivo simultáneo',
+          'Descargas offline',
         ],
       },
       {
         name: 'Estándar',
-        price: '~$15.49 USD',
+        price: 'ARS 14.999',
         period: 'mes',
         features: [
           'Full HD 1080p sin anuncios',
@@ -393,12 +400,13 @@ export const STREAMING_PLATFORMS: StreamingPlatformInfo[] = [
         ],
       },
       {
-        name: 'Premium 4K',
-        price: '~$22.99 USD',
+        name: 'Premium',
+        price: 'ARS 19.999',
         period: 'mes',
         features: [
           '4K Ultra HD + HDR + Audio espacial',
           '4 dispositivos simultáneos',
+          'Descargas offline en hasta 6 dispositivos',
         ],
       },
     ],
@@ -467,23 +475,13 @@ export const STREAMING_PLATFORMS: StreamingPlatformInfo[] = [
       'Utilizado por productoras independientes coreanas (como Strongberry) para financiar sus cortometrajes y películas sin intermediarios.',
     plans: [
       {
-        name: 'Alquiler por título',
-        price: '$1.99 - $3.99 USD',
-        period: '48 horas',
+        name: 'Servicio en transición',
+        price: 'Hasta 21/09/2026',
+        period: 'fecha límite',
         features: [
-          'Acceso por 48 horas',
-          'Streaming Full HD',
-          'Apoyo 100% directo a los realizadores',
-        ],
-      },
-      {
-        name: 'Compra digital de por vida',
-        price: '$4.99 - $9.99 USD',
-        period: 'único',
-        features: [
-          'Acceso permanente ilimitado',
-          'Descarga en alta calidad',
-          'Behind the scenes incluidos',
+          'No se podrán hacer nuevas compras ni iniciar suscripciones desde el 21/09/2026',
+          'Las compras existentes conservarán el acceso hasta el 20/11/2026',
+          'Descargar el contenido adquirido antes del cierre definitivo',
         ],
       },
     ],
@@ -493,10 +491,10 @@ export const STREAMING_PLATFORMS: StreamingPlatformInfo[] = [
     vpnRequiredLatam: false,
     maxQuality: '1080p',
     bestFor:
-      'Cortometrajes independientes y películas queer coreanas premiadas.',
+      'Usar con cautela antes del cierre de Vimeo On Demand y respaldar las compras existentes.',
     highlights: [
-      '100% de los ingresos van al creador',
-      'Subtítulos oficiales en español',
+      'Nuevas compras hasta el 21/09/2026',
+      'Acceso a compras existentes hasta el 20/11/2026',
     ],
     hasAffiliateProgram: false,
     affiliateDisclaimer: 'Compra directa a los realizadores independientes.',
