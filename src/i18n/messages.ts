@@ -249,6 +249,7 @@ export type TranslationShape = {
     sites: string;
     content: string;
     administration: string;
+    collaboratorPanel: string;
     series: string;
     tags: string;
     universes: string;
@@ -1114,10 +1115,12 @@ export type TranslationShape = {
     unbanDescription: string;
     roleAdmin: string;
     roleModerator: string;
+    roleCollaborator: string;
     roleVisitor: string;
     filterAllRoles: string;
     filterOnlyAdmins: string;
     filterOnlyModerators: string;
+    filterOnlyCollaborators: string;
     filterOnlyVisitors: string;
     ipPlaceholder: string;
     ipReasonPlaceholder: string;
@@ -2979,6 +2982,7 @@ const es: TranslationShape = {
     sites: 'Sitios de Interes',
     content: 'Contenido',
     administration: 'Administracion',
+    collaboratorPanel: 'Mi panel de colaborador',
     series: 'Series',
     tags: 'Tags',
     universes: 'Universos',
@@ -3892,10 +3896,12 @@ const es: TranslationShape = {
     unbanDescription: 'El usuario podra acceder nuevamente',
     roleAdmin: 'Administrador',
     roleModerator: 'Moderador',
+    roleCollaborator: 'Colaborador externo',
     roleVisitor: 'Visitante',
     filterAllRoles: 'Todos los roles',
     filterOnlyAdmins: 'Solo administradores',
     filterOnlyModerators: 'Solo moderadores',
+    filterOnlyCollaborators: 'Solo colaboradores externos',
     filterOnlyVisitors: 'Solo visitantes',
     ipPlaceholder: 'IP (ej: 192.168.1.1)',
     ipReasonPlaceholder: 'Razon (opcional)',
@@ -5832,6 +5838,7 @@ const en: TranslationShape = {
     sites: 'Useful Sites',
     content: 'Content',
     administration: 'Administration',
+    collaboratorPanel: 'My collaborator panel',
     series: 'Series',
     tags: 'Tags',
     universes: 'Universes',
@@ -6734,10 +6741,12 @@ const en: TranslationShape = {
     unbanDescription: 'The user will be able to access again',
     roleAdmin: 'Administrator',
     roleModerator: 'Moderator',
+    roleCollaborator: 'External collaborator',
     roleVisitor: 'Visitor',
     filterAllRoles: 'All roles',
     filterOnlyAdmins: 'Only administrators',
     filterOnlyModerators: 'Only moderators',
+    filterOnlyCollaborators: 'Only external collaborators',
     filterOnlyVisitors: 'Only visitors',
     ipPlaceholder: 'IP (e.g. 192.168.1.1)',
     ipReasonPlaceholder: 'Reason (optional)',
