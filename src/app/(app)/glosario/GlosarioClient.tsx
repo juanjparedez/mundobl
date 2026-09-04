@@ -13,7 +13,7 @@ import {
 } from '@ant-design/icons';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { EmptyState } from '@/components/design-system/EmptyState/EmptyState';
-import { CULTURAL_GLOSSARY, type GlossaryTerm } from '@/data/cultural-glossary';
+import type { GlossaryTerm } from '@/data/cultural-glossary';
 import type { TranslationKey } from '@/i18n/messages';
 import { GlosarioQuiz } from './GlosarioQuiz/GlosarioQuiz';
 import './glosario.css';
@@ -41,13 +41,32 @@ const CATEGORIES: Array<{
   { id: 'fandom', labelKey: 'glosario.categoryFandom' },
 ];
 
-const CATEGORY_LABEL_BY_ID = new Map(CATEGORIES.map((c) => [c.id, c.labelKey]));
+const CATEGORY_LABEL_BY_ID = new Map<string, TranslationKey>(
+  CATEGORIES.map((c) => [c.id, c.labelKey])
+);
 
-function categoryLabelKey(category: GlossaryTerm['category']): TranslationKey {
+function categoryLabelKey(category: string): TranslationKey {
   return CATEGORY_LABEL_BY_ID.get(category) ?? 'glosario.categoryAll';
 }
 
-export function GlosarioClient() {
+interface GlossaryTermData {
+  id: number;
+  slug: string;
+  term: string;
+  transliteration: string | null;
+  country: string;
+  category: string;
+  meaning: string;
+  context: string;
+  commonMistake: string | null;
+  examples: string | null;
+}
+
+interface GlosarioClientProps {
+  terms: GlossaryTermData[];
+}
+
+export function GlosarioClient({ terms }: GlosarioClientProps) {
   const { t } = useLocale();
   const searchParams = useSearchParams();
 
@@ -62,7 +81,7 @@ export function GlosarioClient() {
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return CULTURAL_GLOSSARY.filter((item) => {
+    return terms.filter((item) => {
       if (country !== 'all' && item.country !== country) return false;
       if (category !== 'all' && item.category !== category) return false;
       if (!q) return true;
@@ -73,7 +92,7 @@ export function GlosarioClient() {
         item.context.toLowerCase().includes(q)
       );
     });
-  }, [search, country, category]);
+  }, [terms, search, country, category]);
 
   return (
     <div className="glosario-container">
@@ -148,7 +167,7 @@ export function GlosarioClient() {
       </header>
 
       {view === 'trivia' ? (
-        <GlosarioQuiz />
+        <GlosarioQuiz terms={terms} />
       ) : filtered.length === 0 ? (
         <EmptyState
           title={t('glosario.emptyTitle')}
@@ -156,8 +175,8 @@ export function GlosarioClient() {
         />
       ) : (
         <div className="glosario-grid">
-          {filtered.map((item, idx) => (
-            <article key={idx} className="glosario-card">
+              {filtered.map((item) => (
+                <article key={item.id} className="glosario-card">
               <div className="glosario-card__header">
                 <div className="glosario-card__term-wrap">
                   <span className="glosario-card__term">{item.term}</span>

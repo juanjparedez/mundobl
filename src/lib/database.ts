@@ -28,6 +28,30 @@ export const prisma = globalForPrisma.prisma ?? createPrismaClient();
 globalForPrisma.prisma = prisma;
 
 // ============================================
+// GLOSARIO CULTURAL
+// ============================================
+
+/** Terminos editoriales visibles en las superficies publicas del glosario. */
+export async function getPublishedGlossaryTerms() {
+  return prisma.glossaryTerm.findMany({
+    where: { status: 'PUBLISHED' },
+    select: {
+      id: true,
+      slug: true,
+      term: true,
+      transliteration: true,
+      country: true,
+      category: true,
+      meaning: true,
+      context: true,
+      commonMistake: true,
+      examples: true,
+    },
+    orderBy: [{ country: 'asc' }, { term: 'asc' }],
+  });
+}
+
+// ============================================
 // SERIES
 // ============================================
 
