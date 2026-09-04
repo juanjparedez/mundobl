@@ -100,7 +100,7 @@ export function StaleVersionNotifier() {
             </a>
           </div>
         )}
-        <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+        <Space orientation="vertical" size="middle" style={{ width: '100%' }}>
           <Button
             type="primary"
             icon={<ReloadOutlined />}

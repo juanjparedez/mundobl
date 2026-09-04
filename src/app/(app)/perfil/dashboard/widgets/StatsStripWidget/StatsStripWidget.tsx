@@ -203,7 +203,7 @@ export function StatsStripWidget({ stats }: StatsStripWidgetProps) {
       <p className="mb-stats-strip-widget__config-hint">
         {t('profileDashboard.statsStripConfigHint')}
       </p>
-      <Space direction="vertical" size={4}>
+      <Space orientation="vertical" size={4}>
         {allItems.map((item) => (
           <Checkbox
             key={item.key}

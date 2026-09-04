@@ -2703,6 +2703,32 @@ export type TranslationShape = {
     categoryFandom: string;
     viewDictionary: string;
     viewTrivia: string;
+    sectionResources: string;
+    sectionContribute: string;
+    resourcesTitle: string;
+    resourcesDescription: string;
+    resourceThaiDescription: string;
+    resourceJapaneseDescription: string;
+    resourceKoreanDescription: string;
+    contributeTitle: string;
+    contributeDescription: string;
+    pendingReview: string;
+    approvedTerms: string;
+    fieldTerm: string;
+    fieldTransliteration: string;
+    fieldMeaning: string;
+    fieldContext: string;
+    fieldSourceName: string;
+    fieldSourceUrl: string;
+    fieldNotes: string;
+    submitSuggestion: string;
+    reviewQueue: string;
+    emptyQueue: string;
+    statusPending: string;
+    statusApproved: string;
+    statusRejected: string;
+    approveAction: string;
+    rejectAction: string;
     meaningLabel: string;
     examplesLabel: string;
     commonMistakeLabel: string;
@@ -5561,6 +5587,37 @@ const es: TranslationShape = {
     categoryFandom: 'Fandom',
     viewDictionary: 'Diccionario',
     viewTrivia: 'Trivia',
+    sectionResources: 'Recursos',
+    sectionContribute: 'Contribuir',
+    resourcesTitle: 'Recursos externos recomendados',
+    resourcesDescription:
+      'Usamos fuentes externas como referencia complementaria y siempre con crédito claro, sin reemplazar la edición editorial propia del glosario.',
+    resourceThaiDescription:
+      'Guías de lectura, pronunciación y contexto cultural para tailandés y honoríficos.',
+    resourceJapaneseDescription:
+      'Referencia para honoríficos, frases cotidianas y tonalidades de trato en japonés.',
+    resourceKoreanDescription:
+      'Material práctico sobre honoríficos, etiquetas y uso social en coreano.',
+    contributeTitle: 'Contribuir al glosario',
+    contributeDescription:
+      'Proponé un término nuevo o una aclaración. Las sugerencias quedan en revisión antes de publicarse.',
+    pendingReview: 'Pendientes',
+    approvedTerms: 'Aprobados',
+    fieldTerm: 'Término',
+    fieldTransliteration: 'Transliteración',
+    fieldMeaning: 'Significado',
+    fieldContext: 'Contexto cultural',
+    fieldSourceName: 'Fuente / sitio',
+    fieldSourceUrl: 'URL de la fuente',
+    fieldNotes: 'Notas de edición',
+    submitSuggestion: 'Enviar sugerencia',
+    reviewQueue: 'Cola de revisión',
+    emptyQueue: 'Todavía no hay sugerencias.',
+    statusPending: 'Pendiente',
+    statusApproved: 'Aprobado',
+    statusRejected: 'Rechazado',
+    approveAction: 'Aprobar',
+    rejectAction: 'Rechazar',
     meaningLabel: 'Significado:',
     examplesLabel: 'Ejemplos:',
     commonMistakeLabel: 'Error de traducción común:',
@@ -8400,6 +8457,37 @@ const en: TranslationShape = {
     categoryFandom: 'Fandom',
     viewDictionary: 'Dictionary',
     viewTrivia: 'Trivia',
+    sectionResources: 'Resources',
+    sectionContribute: 'Contribute',
+    resourcesTitle: 'Recommended external resources',
+    resourcesDescription:
+      'We use external references as a complementary source and always credit them clearly, without replacing the editorial work of the glossary itself.',
+    resourceThaiDescription:
+      'Reading, pronunciation, and cultural context guides for Thai and honorific usage.',
+    resourceJapaneseDescription:
+      'Reference material for honorifics, everyday phrases, and Japanese social nuance.',
+    resourceKoreanDescription:
+      'Practical guides on honorifics, etiquette, and social usage in Korean.',
+    contributeTitle: 'Contribute to the glossary',
+    contributeDescription:
+      'Suggest a new term or clarification. Submissions stay in review before publication.',
+    pendingReview: 'Pending review',
+    approvedTerms: 'Approved',
+    fieldTerm: 'Term',
+    fieldTransliteration: 'Transliteration',
+    fieldMeaning: 'Meaning',
+    fieldContext: 'Cultural context',
+    fieldSourceName: 'Source / site',
+    fieldSourceUrl: 'Source URL',
+    fieldNotes: 'Editing notes',
+    submitSuggestion: 'Submit suggestion',
+    reviewQueue: 'Review queue',
+    emptyQueue: 'No suggestions yet.',
+    statusPending: 'Pending',
+    statusApproved: 'Approved',
+    statusRejected: 'Rejected',
+    approveAction: 'Approve',
+    rejectAction: 'Reject',
     meaningLabel: 'Meaning:',
     examplesLabel: 'Examples:',
     commonMistakeLabel: 'Common translation mistake:',
