@@ -40,7 +40,17 @@ interface PreviewEpisode {
   partTotal: number | null;
   publishedAt: string;
   warnings: string[];
+  // Solo se calcula (no siempre false) cuando el caller es COLLABORATOR —
+  // ver checkAgeRestriction en playlist-importer.ts.
+  ageRestricted: boolean;
 }
+
+// Estado editable en el preview: agrega `included` a PreviewEpisode para
+// poder des-tildar (sin borrar) episodios marcados por YouTube como
+// restringidos para mayores, sin tener que reconstruir la fila si el
+// colaborador cambia de opinion.
+type EditableEpisode = PreviewEpisode & { included: boolean };
+type EditableSeason = { seasonNumber: number; episodes: EditableEpisode[] };
 
 interface PreviewSeason {
   seasonNumber: number;
@@ -85,8 +95,19 @@ const COUNTRY_OPTIONS = [
   { value: 'HK', label: 'Hong Kong' },
 ];
 
-export function ImportarClient() {
+interface ImportarClientProps {
+  // 'admin' (default): flujo completo de /admin/series/importar, sin
+  // cambios de comportamiento respecto a como estaba.
+  // 'collaborator': flujo reducido de /admin/colaborador/importar — fuerza
+  // WATCHABLE_ONLY (no hay selector de alcance), redirige post-confirm a
+  // la ficha reducida del colaborador, y muestra el chequeo de edad de
+  // YouTube (checkAgeRestriction, calculado server-side segun el rol).
+  variant?: 'admin' | 'collaborator';
+}
+
+export function ImportarClient({ variant = 'admin' }: ImportarClientProps) {
   const router = useRouter();
+  const isCollaborator = variant === 'collaborator';
   const [url, setUrl] = useState('');
   const [autoTranslate, setAutoTranslate] = useState(false);
   const [scope, setScope] = useState<'WATCHABLE_ONLY' | 'PERSONAL'>(
@@ -102,10 +123,14 @@ export function ImportarClient() {
   const [editYear, setEditYear] = useState<number | null>(null);
   const [editCountry, setEditCountry] = useState<string | null>(null);
   const [editGeoRestricted, setEditGeoRestricted] = useState(false);
-  const [editSeasons, setEditSeasons] = useState<PreviewSeason[]>([]);
+  const [editSeasons, setEditSeasons] = useState<EditableSeason[]>([]);
 
   const totalEpisodes = useMemo(
-    () => editSeasons.reduce((acc, s) => acc + s.episodes.length, 0),
+    () =>
+      editSeasons.reduce(
+        (acc, s) => acc + s.episodes.filter((e) => e.included).length,
+        0
+      ),
     [editSeasons]
   );
 
@@ -114,6 +139,7 @@ export function ImportarClient() {
     for (const season of editSeasons) {
       const seen = new Map<number, number>();
       for (const ep of season.episodes) {
+        if (!ep.included) continue;
         if (ep.episodeNumber !== null) {
           seen.set(ep.episodeNumber, (seen.get(ep.episodeNumber) || 0) + 1);
         }
@@ -129,9 +155,16 @@ export function ImportarClient() {
     () =>
       editSeasons.reduce(
         (acc, s) =>
-          acc + s.episodes.filter((e) => e.episodeNumber === null).length,
+          acc +
+          s.episodes.filter((e) => e.included && e.episodeNumber === null)
+            .length,
         0
       ),
+    [editSeasons]
+  );
+
+  const hasAgeRestrictedEpisodes = useMemo(
+    () => editSeasons.some((s) => s.episodes.some((e) => e.ageRestricted)),
     [editSeasons]
   );
 
@@ -162,7 +195,17 @@ export function ImportarClient() {
       setEditYear(data.series.suggestedYear);
       setEditCountry(data.series.suggestedCountryCode);
       setEditGeoRestricted(data.series.geoRestrictedCore);
-      setEditSeasons(JSON.parse(JSON.stringify(data.seasons)));
+      setEditSeasons(
+        data.seasons.map((season) => ({
+          seasonNumber: season.seasonNumber,
+          episodes: season.episodes.map((ep) => ({
+            ...ep,
+            // Los que YouTube ya marco como restringidos arrancan
+            // des-tildados; el colaborador puede volver a incluirlos.
+            included: !ep.ageRestricted,
+          })),
+        }))
+      );
     } catch (e) {
       message.error(e instanceof Error ? e.message : 'Error al cargar preview');
     } finally {
@@ -173,7 +216,7 @@ export function ImportarClient() {
   function updateEpisode(
     seasonIdx: number,
     epIdx: number,
-    patch: Partial<PreviewEpisode>
+    patch: Partial<EditableEpisode>
   ) {
     setEditSeasons((prev) => {
       const next = [...prev];
@@ -239,15 +282,17 @@ export function ImportarClient() {
           },
           seasons: editSeasons.map((s) => ({
             seasonNumber: s.seasonNumber,
-            episodes: s.episodes.map((e) => ({
-              episodeNumber: e.episodeNumber as number,
-              title: e.title,
-              videoId: e.videoId,
-              embedUrl: e.embedUrl,
-              embedPlatform: e.embedPlatform,
-              embedChannelName: e.embedChannelName,
-              embedChannelUrl: e.embedChannelUrl,
-            })),
+            episodes: s.episodes
+              .filter((e) => e.included)
+              .map((e) => ({
+                episodeNumber: e.episodeNumber as number,
+                title: e.title,
+                videoId: e.videoId,
+                embedUrl: e.embedUrl,
+                embedPlatform: e.embedPlatform,
+                embedChannelName: e.embedChannelName,
+                embedChannelUrl: e.embedChannelUrl,
+              })),
           })),
           source: {
             playlistId: preview?.source.playlistId,
@@ -261,7 +306,11 @@ export function ImportarClient() {
       }
       const data = await res.json();
       message.success(`Serie "${data.title}" creada`);
-      router.push(`/admin/series/${data.seriesId}/editar`);
+      router.push(
+        isCollaborator
+          ? `/admin/colaborador/${data.seriesId}`
+          : `/admin/series/${data.seriesId}/editar`
+      );
     } catch (e) {
       message.error(e instanceof Error ? e.message : 'Error al confirmar');
     } finally {
@@ -276,8 +325,9 @@ export function ImportarClient() {
           <CloudDownloadOutlined /> Importar serie desde YouTube
         </h1>
         <p className="importar-page__subtitle">
-          Pegá una playlist de YouTube (ej. la playlist oficial de una serie en
-          GMMTV) y MundoBL crea la serie con sus episodios embebidos.
+          {isCollaborator
+            ? 'Pegá una playlist de YouTube (ej. la lista de episodios oficial de tu serie) y MundoBL crea la ficha con sus episodios embebidos en /ver.'
+            : 'Pegá una playlist de YouTube (ej. la playlist oficial de una serie en GMMTV) y MundoBL crea la serie con sus episodios embebidos.'}
         </p>
       </header>
 
@@ -293,22 +343,30 @@ export function ImportarClient() {
             />
           </Form.Item>
           <div className="importar-form__row">
-            <Form.Item label="Alcance del catalogo">
-              <Select
-                value={scope}
-                onChange={(v) => setScope(v)}
-                options={[
-                  {
-                    value: 'WATCHABLE_ONLY',
-                    label: 'Solo en /ver (no en catalogo personal)',
-                  },
-                  {
-                    value: 'PERSONAL',
-                    label: 'En /catalogo + /ver (personal)',
-                  },
-                ]}
-              />
-            </Form.Item>
+            {isCollaborator ? (
+              <Form.Item label="Alcance del catalogo">
+                <Tag color="default" style={{ padding: '6px 10px' }}>
+                  Se publica en /ver — nunca en el catálogo curado
+                </Tag>
+              </Form.Item>
+            ) : (
+              <Form.Item label="Alcance del catalogo">
+                <Select
+                  value={scope}
+                  onChange={(v) => setScope(v)}
+                  options={[
+                    {
+                      value: 'WATCHABLE_ONLY',
+                      label: 'Solo en /ver (no en catalogo personal)',
+                    },
+                    {
+                      value: 'PERSONAL',
+                      label: 'En /catalogo + /ver (personal)',
+                    },
+                  ]}
+                />
+              </Form.Item>
+            )}
             <Form.Item label=" " colon={false}>
               <Checkbox
                 checked={autoTranslate}
@@ -477,7 +535,33 @@ export function ImportarClient() {
                 pagination={false}
                 rowKey={(r) => r.videoId}
                 dataSource={season.episodes}
+                rowClassName={(r) =>
+                  r.included ? '' : 'importar-episode-row--excluded'
+                }
                 columns={[
+                  ...(hasAgeRestrictedEpisodes
+                    ? [
+                        {
+                          title: 'Incluir',
+                          dataIndex: 'included',
+                          width: 70,
+                          render: (
+                            included: boolean,
+                            _row: EditableEpisode,
+                            epIdx: number
+                          ) => (
+                            <Checkbox
+                              checked={included}
+                              onChange={(e) =>
+                                updateEpisode(sIdx, epIdx, {
+                                  included: e.target.checked,
+                                })
+                              }
+                            />
+                          ),
+                        },
+                      ]
+                    : []),
                   {
                     title: 'EP',
                     dataIndex: 'episodeNumber',

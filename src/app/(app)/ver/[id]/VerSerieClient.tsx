@@ -34,6 +34,8 @@ import { EmbedAttribution } from '@/components/common/EmbedAttribution/EmbedAttr
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { ShareButton } from '@/components/common/ShareButton/ShareButton';
 import { SeriesSubscribeButton } from '@/components/series/SeriesSubscribeButton/SeriesSubscribeButton';
+import { RatingSection } from '@/components/series/RatingSection';
+import { ReviewsSection } from '@/components/series/ReviewsSection/ReviewsSection';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 
@@ -69,6 +71,9 @@ interface SeriesInfo {
   geoRestrictedCore: boolean;
   productionCompanyName: string | null;
   submittedByName: string | null;
+  // true si quien aporto es un colaborador externo (rol COLLABORATOR,
+  // ej. una productora asociada) en vez de un user comun via /ver/agregar.
+  submittedByIsCollaborator: boolean;
   country: { name: string; code: string | null } | null;
   tags: string[];
   genres: string[];
@@ -473,9 +478,15 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         </div>
         <div className="ver-serie__header-actions">
           {isUserEmbed ? (
-            <Tag color="purple">
-              Aporte de @{series.submittedByName ?? 'usuario'}
-            </Tag>
+            series.submittedByIsCollaborator ? (
+              <Tag color="gold">
+                Contenido de {series.submittedByName ?? 'colaborador'}
+              </Tag>
+            ) : (
+              <Tag color="purple">
+                Aporte de @{series.submittedByName ?? 'usuario'}
+              </Tag>
+            )
           ) : scope === 'PERSONAL' ? (
             <Tooltip title={t('verSerie.inMyPersonalCatalogTooltip')}>
               <Tag icon={<StarFilled />} color="gold">
@@ -902,6 +913,16 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           </div>
         )}
       </div>
+
+      {/* Rating + reseñas: solo para USER_EMBED — para CURATED+WATCHABLE_ONLY
+       * ya existe en /series/[id] via "Ver ficha completa" mas arriba, asi
+       * que evitamos duplicar el mismo widget en dos paginas. */}
+      {isUserEmbed && (
+        <div className="ver-serie__ratings-reviews">
+          <RatingSection seriesId={series.id} existingRatings={[]} />
+          <ReviewsSection seriesId={series.id} />
+        </div>
+      )}
     </div>
   );
 }

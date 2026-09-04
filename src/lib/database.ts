@@ -234,7 +234,7 @@ const watchableInclude = Prisma.validator<Prisma.SeriesInclude>()({
     select: { id: true, name: true },
   },
   submittedBy: {
-    select: { id: true, name: true, nickname: true },
+    select: { id: true, name: true, nickname: true, role: true },
   },
   linkedSeries: {
     select: {

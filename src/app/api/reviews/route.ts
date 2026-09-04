@@ -174,6 +174,11 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Antes se rechazaban reseñas sobre series USER_EMBED (habia que
+    // esperar a que un admin la linkee con el catalogo curado). Se
+    // habilito: el origin ya aisla estas reseñas de las vidrieras del
+    // catalogo curado (ver /api/stats/public y demas agregados que
+    // filtran origin=CURATED), asi que no hay razon para bloquearlas.
     const seriesExists = await prisma.series.findUnique({
       where: { id: seriesId },
       select: { id: true, title: true, origin: true },
@@ -182,15 +187,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Serie no encontrada' },
         { status: 404 }
-      );
-    }
-    if (seriesExists.origin === 'USER_EMBED') {
-      return NextResponse.json(
-        {
-          error:
-            'No se pueden publicar resenas en una serie aportada por un usuario. Esperar a que un admin la linkee con una serie del catalogo.',
-        },
-        { status: 422 }
       );
     }
 

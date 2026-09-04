@@ -76,6 +76,13 @@
   border-radius: 4px;
 }
 
+/* Fila de episodio des-tildado (ej. restringido para mayores segun
+ * YouTube) — sigue editable, solo se atenua para marcar que no se va a
+ * confirmar tal cual esta. */
+.importar-episode-row--excluded {
+  opacity: 0.5;
+}
+
 .importar-actions {
   display: flex;
   justify-content: flex-end;

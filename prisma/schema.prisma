@@ -16,6 +16,11 @@ datasource db {
 enum Role {
   ADMIN
   MODERATOR
+  // Colaborador externo / proveedor de contenido (ej. productoras que
+  // aportan su propio catalogo). Accede a un admin reducido en
+  // /admin/colaborador para cargar contenido propio como USER_EMBED +
+  // WATCHABLE_ONLY (ver src/proxy.ts) — nunca toca el catalogo curado.
+  COLLABORATOR
   VISITOR
 }
 

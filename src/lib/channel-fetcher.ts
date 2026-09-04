@@ -372,6 +372,59 @@ export async function checkYouTubeRegionRestriction(
   }
 }
 
+/**
+ * Chequea, para una tanda de video IDs, cuales ya vienen marcados por
+ * YouTube como restringidos para mayores de edad
+ * (contentDetails.contentRating.ytRating === "ytAgeRestricted") o
+ * explicitamente no aptos para chicos (status.madeForKids === false no
+ * es señal suficiente por si sola — la mayoria del catalogo BL/GL cae ahi
+ * sin ser "para adultos" — asi que solo usamos ytRating como señal dura).
+ *
+ * Uso: import masivo del rol COLLABORATOR (ver /admin/colaborador) —
+ * defensa extra ademas de que el rol lo asigna un ADMIN a mano. NO
+ * reemplaza esa vetting: solo capta lo que la propia YouTube ya evaluo.
+ * Batchea de a 50 ids (limite de la API) via `videos.list`.
+ */
+export async function checkYouTubeAgeRestriction(
+  videoIds: string[]
+): Promise<Map<string, boolean>> {
+  const result = new Map<string, boolean>();
+  const uniqueIds = Array.from(new Set(videoIds)).filter(Boolean);
+  if (uniqueIds.length === 0) return result;
+
+  const chunks: string[][] = [];
+  for (let i = 0; i < uniqueIds.length; i += 50) {
+    chunks.push(uniqueIds.slice(i, i + 50));
+  }
+
+  for (const chunk of chunks) {
+    try {
+      const res = await ytFetch('videos', {
+        part: 'contentDetails',
+        id: chunk.join(','),
+      });
+      const data = (await res.json()) as {
+        items?: Array<{
+          id: string;
+          contentDetails?: { contentRating?: { ytRating?: string } };
+        }>;
+      };
+      for (const item of data.items ?? []) {
+        result.set(
+          item.id,
+          item.contentDetails?.contentRating?.ytRating === 'ytAgeRestricted'
+        );
+      }
+    } catch {
+      // Si esta tanda falla no bloqueamos el import — los ids de este
+      // chunk simplemente quedan sin entrada en el Map (tratados como
+      // "no chequeado" por el caller).
+    }
+  }
+
+  return result;
+}
+
 // ---- Vimeo ----
 
 const VIMEO_API_BASE = 'https://api.vimeo.com';
