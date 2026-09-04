@@ -526,8 +526,9 @@ model Tag {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  series SeriesTag[]
-  news   NewsTag[]
+  series        SeriesTag[]
+  news          NewsTag[]
+  glossaryTerms GlossaryTermTag[]
 }
 
 // ============================================
@@ -588,6 +589,49 @@ model SeriesTag {
   tag      Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@unique([seriesId, tagId])
+  @@index([tagId])
+}
+
+// ============================================
+// GLOSARIO CULTURAL
+// ============================================
+// Solo terminos editoriales publicados llegan a esta tabla. Los futuros
+// aportes de la comunidad viven en una entidad de propuestas separada para
+// que ningun borrador pueda filtrarse a las lecturas publicas.
+model GlossaryTerm {
+  id               Int      @id @default(autoincrement())
+  slug             String   @unique
+  term             String
+  transliteration  String?
+  locale           String   @default("es")
+  country          String
+  category         String
+  meaning          String
+  context          String
+  commonMistake    String?
+  examples         String?
+  status           String   @default("PUBLISHED")
+  publishedAt      DateTime?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  tags GlossaryTermTag[]
+
+  @@index([status, country, category])
+  @@index([status, publishedAt])
+}
+
+// Etiquetas compartidas con el catalogo, vinculadas por una relacion propia
+// del glosario para no mezclar los joins de ambos dominios.
+model GlossaryTermTag {
+  id Int @id @default(autoincrement())
+
+  glossaryTermId Int
+  glossaryTerm   GlossaryTerm @relation(fields: [glossaryTermId], references: [id], onDelete: Cascade)
+  tagId          Int
+  tag            Tag          @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([glossaryTermId, tagId])
   @@index([tagId])
 }
 
