@@ -1580,6 +1580,8 @@ const zhCN: TranslationShape = {
     "reviewsShort": "评价",
     "news": "新闻",
     "newsShort": "新闻",
+    "glossary": "词汇表",
+    "glossaryShort": "词汇",
     "announcements": "公告",
     "announcementsShort": "公告",
     "feedback": "案例",

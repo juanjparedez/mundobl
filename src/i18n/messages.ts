@@ -1571,6 +1571,8 @@ export type TranslationShape = {
     reviewsShort: string;
     news: string;
     newsShort: string;
+    glossary: string;
+    glossaryShort: string;
     announcements: string;
     announcementsShort: string;
     feedback: string;
@@ -4406,6 +4408,8 @@ const es: TranslationShape = {
     reviewsShort: 'Reseñ.',
     news: 'Noticias',
     newsShort: 'Notic.',
+    glossary: 'Glosario',
+    glossaryShort: 'Glos.',
     announcements: 'Anuncios',
     announcementsShort: 'Anunc.',
     feedback: 'Casos',
@@ -7281,6 +7285,8 @@ const en: TranslationShape = {
     reviewsShort: 'Rev.',
     news: 'News',
     newsShort: 'News',
+    glossary: 'Glossary',
+    glossaryShort: 'Gloss.',
     announcements: 'Announcements',
     announcementsShort: 'Announc.',
     feedback: 'Cases',

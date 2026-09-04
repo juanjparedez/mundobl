@@ -1580,6 +1580,8 @@ const de: TranslationShape = {
     "reviewsShort": "Bew.",
     "news": "Nachrichten",
     "newsShort": "Nachr.",
+    "glossary": "Glossar",
+    "glossaryShort": "Gloss.",
     "announcements": "Ankündigungen",
     "announcementsShort": "Ankünd.",
     "feedback": "Fälle",

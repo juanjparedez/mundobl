@@ -1580,6 +1580,8 @@ const ja: TranslationShape = {
     "reviewsShort": "レビュー",
     "news": "ニュース",
     "newsShort": "ニュース",
+    "glossary": "用語集",
+    "glossaryShort": "用語集",
     "announcements": "お知らせ",
     "announcementsShort": "お知らせ",
     "feedback": "ケース",
