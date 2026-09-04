@@ -12,6 +12,7 @@ export const ROUTES = {
   PERFIL: '/perfil',
   ADMIN: '/admin',
   ADMIN_USUARIOS: '/admin/usuarios',
+  ADMIN_COLABORADOR: '/admin/colaborador',
   FEEDBACK: '/feedback',
   NOVEDADES: '/novedades',
   ESTADISTICAS: '/estadisticas',

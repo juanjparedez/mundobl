@@ -16,7 +16,13 @@ export default async function UserSubmittedAdminPage() {
     include: {
       country: true,
       submittedBy: {
-        select: { id: true, name: true, nickname: true, email: true },
+        select: {
+          id: true,
+          name: true,
+          nickname: true,
+          email: true,
+          role: true,
+        },
       },
       seasons: {
         include: {
@@ -51,6 +57,7 @@ export default async function UserSubmittedAdminPage() {
           id: s.submittedBy.id,
           displayName:
             s.submittedBy.nickname ?? s.submittedBy.name ?? s.submittedBy.email,
+          isCollaborator: s.submittedBy.role === 'COLLABORATOR',
         }
       : null,
     embedCount: s.seasons.reduce((acc, sn) => acc + sn.episodes.length, 0),

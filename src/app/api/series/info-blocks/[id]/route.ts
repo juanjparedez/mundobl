@@ -1,21 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
+import { assertInfoBlockOwnership } from '@/lib/collaborator-guard';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
-// PATCH /api/series/info-blocks/[id] — editar label/body/sortOrder.
+// PATCH /api/series/info-blocks/[id] — editar label/body/sortOrder
+// (admin/moderator, o COLLABORATOR sobre su propio aporte).
 export async function PATCH(req: NextRequest, { params }: RouteParams) {
   try {
-    const auth = await requireRole(['ADMIN', 'MODERATOR']);
+    const auth = await requireRole(['ADMIN', 'MODERATOR', 'COLLABORATOR']);
     if (!auth.authorized) return auth.response;
 
     const { id } = await params;
     const blockId = parseInt(id, 10);
     if (isNaN(blockId)) {
       return NextResponse.json({ error: 'ID invalido' }, { status: 400 });
+    }
+    const ownership = await assertInfoBlockOwnership(blockId, auth);
+    if (!ownership.ok) {
+      return NextResponse.json(
+        { error: ownership.error },
+        { status: ownership.status }
+      );
     }
 
     const body = (await req.json()) as {
@@ -102,13 +111,20 @@ export async function PATCH(req: NextRequest, { params }: RouteParams) {
 // DELETE /api/series/info-blocks/[id]
 export async function DELETE(_req: NextRequest, { params }: RouteParams) {
   try {
-    const auth = await requireRole(['ADMIN', 'MODERATOR']);
+    const auth = await requireRole(['ADMIN', 'MODERATOR', 'COLLABORATOR']);
     if (!auth.authorized) return auth.response;
 
     const { id } = await params;
     const blockId = parseInt(id, 10);
     if (isNaN(blockId)) {
       return NextResponse.json({ error: 'ID invalido' }, { status: 400 });
+    }
+    const ownership = await assertInfoBlockOwnership(blockId, auth);
+    if (!ownership.ok) {
+      return NextResponse.json(
+        { error: ownership.error },
+        { status: ownership.status }
+      );
     }
     await prisma.seriesInfoBlock.delete({ where: { id: blockId } });
     return NextResponse.json({ ok: true });

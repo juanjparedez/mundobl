@@ -271,24 +271,38 @@ export async function proxy(request: NextRequest) {
 
     const role = session.user?.role;
 
-    // Rutas de crear/editar series y seasons: Admin + Moderator. El
-    // workspace /admin/series/[id] (vista densa con tabs, analisis por
-    // episodio, reseñas vinculadas y herramientas) tambien lo permite
-    // MODERATOR — es la vista de trabajo principal para administrar el
-    // catalogo, no solo el form puntual de /editar.
-    const isEditRoute =
-      pathname === '/admin/series/nueva' ||
-      /^\/admin\/series\/\d+$/.test(pathname) ||
-      /^\/admin\/series\/\d+\/editar$/.test(pathname) ||
-      /^\/admin\/seasons\/\d+\/editar$/.test(pathname);
+    // Admin reducido para colaboradores externos (productoras/proveedores
+    // de contenido a quienes un ADMIN les asigno el rol COLLABORATOR desde
+    // /admin/usuarios). Solo pueden entrar a /admin/colaborador/**, nunca
+    // al resto de /admin (catalogo curado, usuarios, etc.) — ver
+    // context.md "Rol de colaborador externo".
+    const isCollaboratorRoute = pathname.startsWith('/admin/colaborador');
 
-    if (isEditRoute) {
-      if (role !== 'ADMIN' && role !== 'MODERATOR') {
+    if (isCollaboratorRoute) {
+      if (role !== 'ADMIN' && role !== 'COLLABORATOR') {
         return NextResponse.redirect(new URL('/catalogo', request.url));
       }
+      // Un COLLABORATOR nunca debe caer al resto de /admin mas abajo.
+    } else if (role === 'COLLABORATOR') {
+      return NextResponse.redirect(new URL('/admin/colaborador', request.url));
     } else {
-      // Resto de /admin/* (listados, CRUD entidades, usuarios): solo Admin
-      if (role !== 'ADMIN') {
+      // Rutas de crear/editar series y seasons: Admin + Moderator. El
+      // workspace /admin/series/[id] (vista densa con tabs, analisis por
+      // episodio, reseñas vinculadas y herramientas) tambien lo permite
+      // MODERATOR — es la vista de trabajo principal para administrar el
+      // catalogo, no solo el form puntual de /editar.
+      const isEditRoute =
+        pathname === '/admin/series/nueva' ||
+        /^\/admin\/series\/\d+$/.test(pathname) ||
+        /^\/admin\/series\/\d+\/editar$/.test(pathname) ||
+        /^\/admin\/seasons\/\d+\/editar$/.test(pathname);
+
+      if (isEditRoute) {
+        if (role !== 'ADMIN' && role !== 'MODERATOR') {
+          return NextResponse.redirect(new URL('/catalogo', request.url));
+        }
+      } else if (role !== 'ADMIN') {
+        // Resto de /admin/* (listados, CRUD entidades, usuarios): solo Admin
         return NextResponse.redirect(new URL('/catalogo', request.url));
       }
     }

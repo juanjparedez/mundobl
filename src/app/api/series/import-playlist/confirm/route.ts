@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
+import { checkCollaboratorImportRateLimit } from '@/lib/rate-limit';
 
 interface ConfirmEpisode {
   episodeNumber: number;
@@ -37,8 +38,24 @@ interface ConfirmBody {
 
 export async function POST(request: NextRequest) {
   try {
-    const authResult = await requireRole(['ADMIN']);
+    const authResult = await requireRole(['ADMIN', 'COLLABORATOR']);
     if (!authResult.authorized) return authResult.response;
+    const isCollaborator = authResult.role === 'COLLABORATOR';
+
+    if (isCollaborator) {
+      const rateLimit = await checkCollaboratorImportRateLimit(
+        authResult.userId
+      );
+      if (!rateLimit.ok) {
+        return NextResponse.json(
+          { error: rateLimit.reason },
+          {
+            status: 429,
+            headers: { 'Retry-After': String(rateLimit.retryAfterSeconds) },
+          }
+        );
+      }
+    }
 
     const body = (await request.json()) as ConfirmBody;
 
@@ -102,8 +119,14 @@ export async function POST(request: NextRequest) {
 
     let countryId: number | null = null;
     if (body.series.countryCode) {
+      // Case-insensitive: Country.code se siembra en minuscula (ver
+      // src/lib/country-codes.ts) pero los selects de import mandan
+      // codigos ISO en mayuscula (COUNTRY_OPTIONS) — sin esto el match
+      // siempre fallaba y countryId quedaba null.
       const country = await prisma.country.findFirst({
-        where: { code: body.series.countryCode },
+        where: {
+          code: { equals: body.series.countryCode, mode: 'insensitive' },
+        },
         select: { id: true },
       });
       countryId = country?.id ?? null;
@@ -116,10 +139,16 @@ export async function POST(request: NextRequest) {
           synopsis: body.series.synopsis?.trim() || null,
           year: body.series.year ?? null,
           type: body.series.type || 'serie',
-          catalogScope:
-            body.series.catalogScope === 'PERSONAL'
+          // Un COLLABORATOR nunca puede escribir en el catalogo curado:
+          // se ignora lo que mande el body para estos 3 campos y se
+          // fuerzan server-side, igual que en /api/user/series/embed/confirm.
+          catalogScope: isCollaborator
+            ? 'WATCHABLE_ONLY'
+            : body.series.catalogScope === 'PERSONAL'
               ? 'PERSONAL'
               : 'WATCHABLE_ONLY',
+          origin: isCollaborator ? 'USER_EMBED' : 'CURATED',
+          submittedById: isCollaborator ? authResult.userId : null,
           countryId,
           geoRestrictedCore: body.series.geoRestrictedCore === true,
         },

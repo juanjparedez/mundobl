@@ -35,7 +35,11 @@ interface UserSubmittedRow {
   createdAt: string;
   countryName: string | null;
   countryCode: string | null;
-  submittedBy: { id: string; displayName: string } | null;
+  submittedBy: {
+    id: string;
+    displayName: string;
+    isCollaborator: boolean;
+  } | null;
   embedCount: number;
   platforms: string[];
 }
@@ -254,7 +258,14 @@ export function UserSubmittedClient({ items: initial }: Props) {
       key: 'submittedBy',
       render: (_, row) =>
         row.submittedBy ? (
-          <span>@{row.submittedBy.displayName}</span>
+          <span>
+            @{row.submittedBy.displayName}
+            {row.submittedBy.isCollaborator && (
+              <Tag color="gold" style={{ marginLeft: 6 }}>
+                Colaborador
+              </Tag>
+            )}
+          </span>
         ) : (
           <em>(usuario eliminado)</em>
         ),

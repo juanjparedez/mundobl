@@ -210,12 +210,12 @@ Soporta 8 plataformas para reproducir/parsear:
 
 Matriz publica:
 
-| origin / scope | /catalogo | /ver (si tiene embedUrl) | /series/[id] | sitemap series | sitemap ver |
-| -------------- | --------- | ------------------------ | ------------ | -------------- | ----------- |
-| CURATED + PERSONAL | ✓ | ✓ | ✓ | ✓ | ✓ |
-| CURATED + WATCHABLE_ONLY | — | ✓ | ✓ | — | ✓ |
-| USER_EMBED + WATCHABLE_ONLY (VISIBLE) | — | ✓ | 404 (excepto submitter/admin) | — | ✓ |
-| USER_EMBED + WATCHABLE_ONLY (HIDDEN) | — | — | 404 (excepto submitter/admin) | — | — |
+| origin / scope                        | /catalogo | /ver (si tiene embedUrl) | /series/[id]                  | sitemap series | sitemap ver |
+| ------------------------------------- | --------- | ------------------------ | ----------------------------- | -------------- | ----------- |
+| CURATED + PERSONAL                    | ✓         | ✓                        | ✓                             | ✓              | ✓           |
+| CURATED + WATCHABLE_ONLY              | —         | ✓                        | ✓                             | —              | ✓           |
+| USER_EMBED + WATCHABLE_ONLY (VISIBLE) | —         | ✓                        | 404 (excepto submitter/admin) | —              | ✓           |
+| USER_EMBED + WATCHABLE_ONLY (HIDDEN)  | —         | —                        | 404 (excepto submitter/admin) | —              | —           |
 
 **Campos de embed en `Episode`:** `embedUrl`, `embedPlatform`, `embedVideoId`, `embedChannelName`, `embedChannelUrl`.
 
@@ -287,6 +287,26 @@ Tercer `viewMode` de `CatalogoClient.tsx` (`'grid' | 'list' | 'carousel'`), eleg
   - `POST /api/series/import-playlist` (admin) → devuelve `ImportPreview` sin escribir DB
   - `POST /api/series/import-playlist/confirm` (admin) → persiste tras validar uniqueness `(seasonId, episodeNumber)` en una transaccion Prisma
 - **Decision de producto sobre videos partidos** (`[1/4]`, `[2/4]`...): cada video → un Episode. Si dos parsean al mismo `episodeNumber`, la UI marca duplicados como warning bloqueante; el admin debe renumerar o eliminar antes de confirmar (boton "Renumerar 1..N" disponible). No hay campos `partNumber`/`partTotal` en `Episode` — solo se exponen como Tag informativo en el preview.
+
+---
+
+## Rol de colaborador externo (`COLLABORATOR`)
+
+Cuarto valor del enum `Role` (junto a `ADMIN`/`MODERATOR`/`VISITOR`), pensado para productoras/proveedores de contenido externos (ej. XUXY) que Flor evalua y aprueba a mano — **nunca autoservicio**: solo un ADMIN asigna este rol desde `/admin/usuarios` (`PUT /api/users/[id]/role`).
+
+- **Acceso**: admin reducido en `/admin/colaborador/**`, gateado en [src/proxy.ts](src/proxy.ts) — un COLLABORATOR no puede entrar a ningun otro `/admin/*` (redirect a `/catalogo`); si intenta, cae directo a `/admin/colaborador`. El resto de `/admin` sigue exactamente igual que antes (ADMIN/MODERATOR).
+- **3 vistas** en [src/app/(app)/admin/colaborador/](<src/app/(app)/admin/colaborador/>):
+  - `/admin/colaborador` — listado de series propias (`ColaboradorClient.tsx`), filtra `origin=USER_EMBED, submittedById=self`.
+  - `/admin/colaborador/importar` — reusa [ImportarClient](src/app/admin/series/importar/ImportarClient.tsx) (`variant="collaborator"`): mismo flujo de playlist de YouTube que el importer de ADMIN, **pura YouTube Data API, sin Gemini** salvo que el propio colaborador tilde "traducir sinopsis" (una llamada por serie, no por video — no consume cuota relevante de `GEMINI_API_KEY`).
+  - `/admin/colaborador/[id]` — ficha reducida (`CollaboratorSeriesForm.tsx`): titulo/sinopsis/poster/pais/productora/actores/tags/generos + [SeriesInfoBlocksManager](src/components/admin/SeriesInfoBlocksManager/SeriesInfoBlocksManager.tsx) embebido (mismo componente que usa ADMIN) + tabla de episodios (solo lectura, con link a "importar mas"). **No** expone campos curatoriales (`featured`, `review`, `overallRating`, `notesPrivate`, universo, series relacionadas — esos siguen 100% ADMIN-only).
+- **Endpoints propios**: `POST /api/series/import-playlist(/confirm)` aceptan `COLLABORATOR` ademas de `ADMIN` y fuerzan server-side `origin=USER_EMBED`, `catalogScope=WATCHABLE_ONLY`, `submittedById=session.user.id` (ignoran lo que mande el body); `PATCH /api/colaborador/series/[id]` (ficha reducida). `DELETE /api/admin/user-series/[id]` y los 3 endpoints de `info-blocks` (`/api/series/[id]/info-blocks`, `/api/series/info-blocks/[id]`, `/api/series/[id]/info-blocks/reorder`) tambien aceptan `COLLABORATOR` sobre su propio aporte.
+- **Ownership guard reusable**: [src/lib/collaborator-guard.ts](src/lib/collaborator-guard.ts) → `assertSeriesOwnership(seriesId, auth)` / `assertInfoBlockOwnership(blockId, auth)`. ADMIN/MODERATOR pasan siempre (mismo comportamiento pre-COLLABORATOR); COLLABORATOR solo si `origin=USER_EMBED && submittedById === auth.userId`. Usar en cualquier endpoint nuevo que un colaborador pueda tocar, siempre despues de `requireRole([...])`.
+- **Rate limit propio**: [checkCollaboratorImportRateLimit](src/lib/rate-limit.ts) — 200 series/dia (vs. 5/hora + 20/dia de `checkUserEmbedRateLimit` para aportes casuales de usuarios comunes), pensado para onboarding masivo de un catalogo completo en pocas sesiones.
+- **Chequeo de edad de YouTube** (defensa extra, no reemplaza la vetting manual del rol): [checkYouTubeAgeRestriction](src/lib/channel-fetcher.ts) — batchea `videos.list?part=contentDetails` de a 50 ids, lee `contentRating.ytRating === 'ytAgeRestricted'`. Solo se activa (`checkAgeRestriction: true`) para el importer de COLLABORATOR. Los videos marcados aparecen con warning y **des-tildados por defecto** en el preview (columna "Incluir" en `ImportarClient`, solo visible si hay al menos un episodio marcado) — el colaborador puede volver a tildarlos.
+- **Publicacion**: inmediata (`visibility` default `VISIBLE`, igual que el resto de `Series.create` sin override explicito) — a diferencia de `/ver/agregar` para usuarios comunes, que arranca en `PENDING_REVIEW` si el submitter no es ADMIN/MODERATOR (ver `POST /api/user/series/embed/confirm`). La distincion es deliberada: COLLABORATOR ya paso por vetting humano al recibir el rol, un VISITOR anonimo no. Moderacion post-hoc sigue disponible en `/admin/series/user-submitted` (hide/delete/link) para AMBOS casos — ese panel ahora tambien muestra un tag "Colaborador" junto al nombre cuando el submitter tiene el rol.
+- **Reseñas y suscripcion habilitadas en USER_EMBED** (antes solo reseñas estaban bloqueadas con 422): decision de Flor al construir este feature — "mientras no afecte al catalogo curado". Las vidrieras publicas que agregaban reseñas SIN filtrar `origin` (spotlight + contador de la landing en [src/app/page.tsx](src/app/page.tsx)) se corrigieron para excluir `USER_EMBED`. La UI de rating+reseñas se agrego a `/ver/[id]` ([VerSerieClient.tsx](<src/app/(app)/ver/[id]/VerSerieClient.tsx>)), condicionada a `isUserEmbed` (para CURATED+WATCHABLE_ONLY ya existe en `/series/[id]` via "Ver ficha completa", no se duplica). Favoritos y "marcar visto" ya funcionaban sobre USER_EMBED desde antes — no fue necesario tocarlos.
+- **Sidebar**: item propio "Mi panel de colaborador" (`sidebar.collaboratorPanel`, i18n a 10 locales) visible solo para `role=COLLABORATOR`, en vez del item "Administracion" (que sigue sin mostrarse a este rol). Label de rol (`adminUsers.roleCollaborator`) tambien i18n'd — es el unico string nuevo de este feature que paso por los 10 locales: **el resto de `/admin/colaborador/**`queda hardcodeado en español**, mismo criterio que el resto de`/admin/\*` (`ImportarClient`, `UserSubmittedClient`, `SeriesForm`, etc. — ninguno usa `useLocale()`; el admin es una herramienta interna de Flor, no contenido público).
+- **Upload de imagenes**: `POST /api/upload` ahora acepta `COLLABORATOR` ademas de `ADMIN`/`MODERATOR` (mismo endpoint, sin distincion de carpeta).
 
 ---
 
@@ -646,12 +666,12 @@ Cada vista premium se monta como un grid responsive de **widgets reordenables y 
 
 **Vistas dashboard implementadas (todas opt-in via URL alterna, la vista clasica queda intacta):**
 
-| Vista             | Ruta                       | Widgets                                                                                                                                                                                                                                                                  | dashboardKey    |
-| ----------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------- |
+| Vista             | Ruta                       | Widgets                                                                                                                                                                                                                                                                                                       | dashboardKey    |
+| ----------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
 | Perfil de usuario | `/perfil` (= dashboard)    | Overview, Ratings, RecentlyCompleted, Notifications, MyCases, Heatmap, GenresDonut, CompletedByYear, TopGenresList, TopCountriesList, CurrentlyWatching, TopActors, TopCompanies, TopRated, Favorites, MyReviews, MyDisputes, MyComments. Footer: ProfileSettings + SubscriptionsSection + ClientVersionInfo. | `profile-v3`    |
-| Detalle de titulo | `/catalogo/[id]/dashboard` | Hero, Info, Actors, Ratings                                                                                                                                                                                                                                              | `series-detail` |
-| Catalogo          | `/catalogo/dashboard`      | Stats globales, RecentlyAdded                                                                                                                                                                                                                                            | `catalogo`      |
-| Admin home        | `/admin/dashboard`         | KPIs, Alerts                                                                                                                                                                                                                                                             | `admin-home`    |
+| Detalle de titulo | `/catalogo/[id]/dashboard` | Hero, Info, Actors, Ratings                                                                                                                                                                                                                                                                                   | `series-detail` |
+| Catalogo          | `/catalogo/dashboard`      | Stats globales, RecentlyAdded                                                                                                                                                                                                                                                                                 | `catalogo`      |
+| Admin home        | `/admin/dashboard`         | KPIs, Alerts                                                                                                                                                                                                                                                                                                  | `admin-home`    |
 
 **Convencion `fade` en Widgets:** los widgets cuyo contenido puede exceder la altura del cell del grid pasan `fade={true}` al `<Widget>` para activar un degradado fade-out abajo. Reemplaza el `overflow: auto` previo (scrollbar interno feo). Casos: listas largas (RecentlyCompleted, CurrentlyWatching, Notifications, MyCases, TopActors, etc.) y MyCommentsWidget que sí mantiene scroll interno explícitamente porque su lista paginada no se presta al fade.
 
@@ -714,6 +734,7 @@ Triage completo del backlog (`FeatureRequest`) categorizado por area funcional +
 4. **JSON-LD:** suma `birthDate` (año) + `award` (lista) al schema Person.
 
 Items que se decidió **no** incluir en este slice:
+
 - Tags sensibles → reformulado como **policy doc editorial** (no codigo), va a `docs/`.
 - IMDB/MDL precarga, UserList/Collection, Command palette, Push UI, Achievements → roadmap.
 
