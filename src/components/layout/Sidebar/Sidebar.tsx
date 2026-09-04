@@ -77,6 +77,7 @@ export function Sidebar() {
 
   const isAdmin = session?.user?.role === 'ADMIN';
   const isModerator = session?.user?.role === 'MODERATOR';
+  const isCollaborator = session?.user?.role === 'COLLABORATOR';
   const canAccessAdmin = isAdmin || isModerator;
 
   const menuItems = [
@@ -170,6 +171,18 @@ export function Sidebar() {
           },
         ]
       : []),
+    // Rol reducido: nunca ve "Administracion" (apunta a /admin, vetado
+    // por src/proxy.ts para COLLABORATOR) — item propio hacia su area.
+    ...(isCollaborator
+      ? [
+          {
+            key: ROUTES.ADMIN_COLABORADOR,
+            icon: <SettingOutlined />,
+            label: t('sidebar.collaboratorPanel'),
+            onClick: () => router.push(ROUTES.ADMIN_COLABORADOR),
+          },
+        ]
+      : []),
   ];
 
   const selectedKey = pathname || ROUTES.CATALOGO;
@@ -228,7 +241,9 @@ export function Sidebar() {
                       ? t('adminUsers.roleAdmin')
                       : isModerator
                         ? t('adminUsers.roleModerator')
-                        : t('adminUsers.roleVisitor')}
+                        : isCollaborator
+                          ? t('adminUsers.roleCollaborator')
+                          : t('adminUsers.roleVisitor')}
                   </span>
                 </div>
                 <SettingOutlined

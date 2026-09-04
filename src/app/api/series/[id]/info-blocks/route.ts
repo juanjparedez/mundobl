@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
+import { assertSeriesOwnership } from '@/lib/collaborator-guard';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -27,16 +28,24 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
   }
 }
 
-// POST /api/series/[id]/info-blocks — crear nuevo bloque (admin/moderator).
+// POST /api/series/[id]/info-blocks — crear nuevo bloque (admin/moderator,
+// o COLLABORATOR sobre su propio aporte).
 export async function POST(req: NextRequest, { params }: RouteParams) {
   try {
-    const auth = await requireRole(['ADMIN', 'MODERATOR']);
+    const auth = await requireRole(['ADMIN', 'MODERATOR', 'COLLABORATOR']);
     if (!auth.authorized) return auth.response;
 
     const { id } = await params;
     const seriesId = parseInt(id, 10);
     if (isNaN(seriesId)) {
       return NextResponse.json({ error: 'ID invalido' }, { status: 400 });
+    }
+    const ownership = await assertSeriesOwnership(seriesId, auth);
+    if (!ownership.ok) {
+      return NextResponse.json(
+        { error: ownership.error },
+        { status: ownership.status }
+      );
     }
 
     const body = (await req.json()) as {

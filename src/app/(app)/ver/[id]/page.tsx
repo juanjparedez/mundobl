@@ -138,6 +138,8 @@ export default async function VerSeriePage({ params }: PageProps) {
             productionCompanyName: serie.productionCompany?.name ?? null,
             submittedByName:
               serie.submittedBy?.nickname ?? serie.submittedBy?.name ?? null,
+            submittedByIsCollaborator:
+              serie.submittedBy?.role === 'COLLABORATOR',
             country: serie.country
               ? { name: serie.country.name, code: serie.country.code }
               : null,

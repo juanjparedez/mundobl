@@ -30,7 +30,7 @@ interface UserData {
   name: string | null;
   email: string | null;
   image: string | null;
-  role: 'ADMIN' | 'MODERATOR' | 'VISITOR';
+  role: 'ADMIN' | 'MODERATOR' | 'COLLABORATOR' | 'VISITOR';
   banned: boolean;
   createdAt: string;
 }
@@ -47,6 +47,7 @@ interface BannedIpData {
 const ROLE_COLORS: Record<string, string> = {
   ADMIN: 'red',
   MODERATOR: 'blue',
+  COLLABORATOR: 'purple',
   VISITOR: 'default',
 };
 
@@ -250,6 +251,10 @@ export function UsuariosClient() {
             options={[
               { label: t('adminUsers.roleVisitor'), value: 'VISITOR' },
               { label: t('adminUsers.roleModerator'), value: 'MODERATOR' },
+              {
+                label: t('adminUsers.roleCollaborator'),
+                value: 'COLLABORATOR',
+              },
             ]}
           />
         ),
@@ -366,6 +371,10 @@ export function UsuariosClient() {
                 {
                   value: 'MODERATOR',
                   label: t('adminUsers.filterOnlyModerators'),
+                },
+                {
+                  value: 'COLLABORATOR',
+                  label: t('adminUsers.filterOnlyCollaborators'),
                 },
                 {
                   value: 'VISITOR',

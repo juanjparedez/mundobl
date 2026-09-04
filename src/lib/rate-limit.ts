@@ -134,3 +134,34 @@ export async function checkUserEmbedRateLimit(
 
   return { ok: true };
 }
+
+// Colaboradores externos (rol COLLABORATOR) suben su catalogo completo en
+// pocas sesiones via el importer de playlists — el limite pensado para
+// aportes sueltos de un usuario comun (5/h) los trabaria. Tope mas amplio,
+// solo diario, para permitir una sesion grande de carga sin dejarlo abierto
+// del todo (protege cuota de YouTube API y la base).
+const COLLABORATOR_PER_DAY = 200;
+
+/**
+ * Limita series USER_EMBED creadas por dia por un colaborador externo
+ * (rol COLLABORATOR) via el importer de playlists en /admin/colaborador.
+ */
+export async function checkCollaboratorImportRateLimit(
+  userId: string
+): Promise<RateLimitResult> {
+  const oneDayAgo = new Date(Date.now() - DAY_MS);
+
+  const dailyCount = await prisma.series.count({
+    where: { submittedById: userId, createdAt: { gte: oneDayAgo } },
+  });
+
+  if (dailyCount >= COLLABORATOR_PER_DAY) {
+    return {
+      ok: false,
+      reason: `Maximo ${COLLABORATOR_PER_DAY} series por dia. Volvé mañana o pedile a un admin que ajuste el limite.`,
+      retryAfterSeconds: Math.ceil(DAY_MS / 1000),
+    };
+  }
+
+  return { ok: true };
+}
