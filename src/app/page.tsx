@@ -33,7 +33,11 @@ async function getLandingStats() {
         },
       }),
       prisma.comment.count({ where: { isPrivate: false } }),
-      prisma.review.count({ where: { status: 'PUBLISHED' } }),
+      // Reseñas de USER_EMBED ya se permiten (ver /api/reviews), pero esta
+      // vidriera es del catalogo curado de Flor — se filtran afuera.
+      prisma.review.count({
+        where: { status: 'PUBLISHED', series: { origin: 'CURATED' } },
+      }),
       prisma.series.findMany({
         where: { origin: 'CURATED', catalogScope: 'PERSONAL' },
         orderBy: { createdAt: 'desc' },
@@ -47,7 +51,9 @@ async function getLandingStats() {
         },
       }),
       prisma.review.findFirst({
-        where: { status: 'PUBLISHED' },
+        // Idem: el spotlight de la landing es del catalogo curado, nunca
+        // de un aporte USER_EMBED (colaborador o usuario comun).
+        where: { status: 'PUBLISHED', series: { origin: 'CURATED' } },
         orderBy: [
           { isFeatured: 'desc' },
           { helpfulCount: 'desc' },

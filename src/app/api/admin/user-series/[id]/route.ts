@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { logAction } from '@/lib/access-log';
+import { assertSeriesOwnership } from '@/lib/collaborator-guard';
 
 interface RouteContext {
   params: Promise<{ id: string }>;
@@ -18,13 +19,20 @@ interface RouteContext {
  * un counter informativo).
  */
 export async function DELETE(request: NextRequest, context: RouteContext) {
-  const auth = await requireRole(['ADMIN']);
+  const auth = await requireRole(['ADMIN', 'COLLABORATOR']);
   if (!auth.authorized) return auth.response;
 
   const { id } = await context.params;
   const seriesId = parseInt(id, 10);
   if (isNaN(seriesId)) {
     return NextResponse.json({ error: 'ID invalido.' }, { status: 400 });
+  }
+  const ownership = await assertSeriesOwnership(seriesId, auth);
+  if (!ownership.ok) {
+    return NextResponse.json(
+      { error: ownership.error },
+      { status: ownership.status }
+    );
   }
 
   const existing = await prisma.series.findUnique({

@@ -9,6 +9,7 @@
 import {
   fetchAllYouTubePlaylistVideos,
   checkYouTubeRegionRestriction,
+  checkYouTubeAgeRestriction,
 } from './channel-fetcher';
 import {
   parseEpisodeTitle,
@@ -65,6 +66,12 @@ export interface ImportPreviewEpisode {
   publishedAt: string;
   // Warnings por episodio: "no se detecto numero", "duplicado del EP3", etc.
   warnings: string[];
+  // true si YouTube ya marco este video como restringido para mayores
+  // (ver checkYouTubeAgeRestriction). Solo se calcula cuando el caller
+  // pide `checkAgeRestriction` (flujo de colaborador externo) — en el
+  // resto queda siempre false. Informativo: la UI lo usa para des-tildar
+  // el episodio por defecto en la seleccion de import.
+  ageRestricted: boolean;
 }
 
 export interface ImportPreviewSeason {
@@ -110,6 +117,12 @@ export interface ImportPreviewOptions {
   catalogScope?: 'WATCHABLE_ONLY' | 'PERSONAL';
   // Limite de paginas a paginar (50 videos cada una). Default 10 = 500 videos.
   maxPages?: number;
+  // Si true, chequea contra la YouTube Data API que videos ya vienen
+  // marcados como restringidos para mayores (ver checkYouTubeAgeRestriction)
+  // y los marca `ageRestricted` en el preview. Default false — solo lo
+  // activa el importer de /admin/colaborador (rol COLLABORATOR); el
+  // importer de ADMIN sigue igual que antes.
+  checkAgeRestriction?: boolean;
 }
 
 export async function buildImportPreview(
@@ -120,10 +133,23 @@ export async function buildImportPreview(
     autoTranslate = false,
     catalogScope = 'WATCHABLE_ONLY',
     maxPages = 10,
+    checkAgeRestriction = false,
   } = options;
 
   const fetched = await fetchAllYouTubePlaylistVideos(url, maxPages);
   const warnings: string[] = [];
+
+  const ageRestrictionByVideoId = checkAgeRestriction
+    ? await checkYouTubeAgeRestriction(fetched.videos.map((v) => v.videoId))
+    : new Map<string, boolean>();
+  const ageRestrictedCount = Array.from(
+    ageRestrictionByVideoId.values()
+  ).filter(Boolean).length;
+  if (ageRestrictedCount > 0) {
+    warnings.push(
+      `⚠️ ${ageRestrictedCount} video(s) ya vienen marcados por YouTube como restringidos para mayores — quedaron destildados en la seleccion, revisalos antes de incluirlos.`
+    );
+  }
 
   // Chequeo de restriccion regional ANTES de armar el resto del preview:
   // si esta bloqueada para el mercado core, mejor saberlo ya en el primer
@@ -220,6 +246,12 @@ export async function buildImportPreview(
         `Video parte ${p.partNumber}${p.partTotal ? `/${p.partTotal}` : ''} de un episodio — la DB no permite duplicados, hay que renumerar o consolidar antes de confirmar.`
       );
     }
+    const ageRestricted = ageRestrictionByVideoId.get(video.videoId) ?? false;
+    if (ageRestricted) {
+      epWarnings.push(
+        'YouTube marco este video como restringido para mayores — excluido de la seleccion por defecto.'
+      );
+    }
 
     seasonMap.get(season)!.push({
       episodeNumber: p.episodeNumber,
@@ -235,6 +267,7 @@ export async function buildImportPreview(
       partTotal: p.partTotal,
       publishedAt: video.publishedAt,
       warnings: epWarnings,
+      ageRestricted,
     });
   }
 

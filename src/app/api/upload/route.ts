@@ -5,7 +5,16 @@ import { processPosterImage } from '@/lib/image-processing';
 
 export async function POST(request: NextRequest) {
   try {
-    const authResult = await requireRole(['ADMIN', 'MODERATOR']);
+    // COLLABORATOR: sube poster/imagenes para su propia ficha en
+    // /admin/colaborador (ver CollaboratorSeriesForm) — mismo endpoint que
+    // ADMIN/MODERATOR, sin distincion de carpeta (el folder lo decide el
+    // caller via formData, y el resto de la app ya trata subidas por
+    // origen/serie, no por rol).
+    const authResult = await requireRole([
+      'ADMIN',
+      'MODERATOR',
+      'COLLABORATOR',
+    ]);
     if (!authResult.authorized) return authResult.response;
 
     const formData = await request.formData();

@@ -3,7 +3,7 @@ import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import type { Role } from '@/generated/prisma';
 
-const ALLOWED_ROLES: Role[] = ['VISITOR', 'MODERATOR'];
+const ALLOWED_ROLES: Role[] = ['VISITOR', 'MODERATOR', 'COLLABORATOR'];
 
 // PUT /api/users/[id]/role - Cambiar rol de usuario (Solo Admin)
 export async function PUT(
@@ -44,7 +44,8 @@ export async function PUT(
       if (!ALLOWED_ROLES.includes(role)) {
         return NextResponse.json(
           {
-            error: 'Rol no válido. Solo se puede asignar VISITOR o MODERATOR.',
+            error:
+              'Rol no válido. Solo se puede asignar VISITOR, MODERATOR o COLLABORATOR.',
           },
           { status: 400 }
         );
