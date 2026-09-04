@@ -84,6 +84,7 @@ model User {
   dashboardLayouts        UserDashboardLayout[]
   submittedSeries         Series[]                @relation("UserSubmittedSeries")
   seriesSuggestions       SeriesSuggestion[]
+  glossarySuggestions     GlossarySuggestion[]
   announcements           Announcement[]
   announcementRecipients  AnnouncementRecipient[]
 }
@@ -633,6 +634,28 @@ model GlossaryTermTag {
 
   @@unique([glossaryTermId, tagId])
   @@index([tagId])
+}
+
+model GlossarySuggestion {
+  id              Int      @id @default(autoincrement())
+  term            String
+  transliteration String?
+  country         String   @default("general")
+  category        String   @default("fandom")
+  meaning         String
+  context         String
+  sourceName      String?
+  sourceUrl       String?
+  notes           String?
+  status          String   @default("PENDING")
+  adminNotes      String?
+  userId          String?
+  user            User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([status, userId])
+  @@index([createdAt])
 }
 
 // ============================================

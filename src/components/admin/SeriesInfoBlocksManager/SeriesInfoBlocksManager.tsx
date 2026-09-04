@@ -287,7 +287,7 @@ export function SeriesInfoBlocksManager({
 
       {editingId === 'new' && (
         <Card className="series-info-blocks__editor" size="small">
-          <Space direction="vertical" style={{ width: '100%' }}>
+          <Space orientation="vertical" style={{ width: '100%' }}>
             <Input
               placeholder={t('seriesInfoBlocksManager.labelPlaceholder')}
               value={editLabel}
@@ -350,7 +350,7 @@ export function SeriesInfoBlocksManager({
                 className="series-info-blocks__card"
               >
                 {isThisEditing ? (
-                  <Space direction="vertical" style={{ width: '100%' }}>
+                  <Space orientation="vertical" style={{ width: '100%' }}>
                     <Input
                       value={editLabel}
                       maxLength={60}
