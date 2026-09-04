@@ -1580,6 +1580,8 @@ const it: TranslationShape = {
     "reviewsShort": "Rec.",
     "news": "Notizie",
     "newsShort": "Notizie",
+    "glossary": "Glossario",
+    "glossaryShort": "Gloss.",
     "announcements": "Annunci",
     "announcementsShort": "Annunci",
     "feedback": "Casi",

@@ -1580,6 +1580,8 @@ const th: TranslationShape = {
     "reviewsShort": "รีวิว",
     "news": "ข่าว",
     "newsShort": "ข่าว",
+    "glossary": "อภิธานศัพท์",
+    "glossaryShort": "อภิธาน",
     "announcements": "ประกาศ",
     "announcementsShort": "ประกาศ",
     "feedback": "กรณี",

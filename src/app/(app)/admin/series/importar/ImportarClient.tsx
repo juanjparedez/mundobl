@@ -346,7 +346,7 @@ export function ImportarClient({ variant = 'admin' }: ImportarClientProps) {
             {isCollaborator ? (
               <Form.Item label="Alcance del catalogo">
                 <Tag color="default" style={{ padding: '6px 10px' }}>
-                  Se publica en /ver — nunca en el catálogo curado
+                  Se publica en /ver
                 </Tag>
               </Form.Item>
             ) : (

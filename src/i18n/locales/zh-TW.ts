@@ -1580,6 +1580,8 @@ const zhTW: TranslationShape = {
     "reviewsShort": "評價",
     "news": "新聞",
     "newsShort": "新聞",
+    "glossary": "詞彙表",
+    "glossaryShort": "詞彙",
     "announcements": "公告",
     "announcementsShort": "公告",
     "feedback": "案例",

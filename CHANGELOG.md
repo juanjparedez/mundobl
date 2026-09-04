@@ -8,6 +8,39 @@ Todas las versiones notables del proyecto se documentan aqui.
 > (`ChangelogItem`, `/admin/changelog`) quedo como fallback solo si este archivo
 > esta vacio.
 
+## 2026-09-04 — Rol de colaborador externo y Glosario Cultural dinámico
+
+### Features
+
+- **Rol de colaborador externo (`COLLABORATOR`)**: nuevo admin reducido en
+  `/admin/colaborador` para productoras/proveedores externos que aportan su
+  propio catálogo — importan una serie completa desde una playlist de
+  YouTube (con chequeo automático de restricción de edad) y editan su
+  propia ficha (poster, sinopsis, cast, tags), sin acceso al resto del
+  panel ni al catálogo curado. Reseñas y suscripción habilitadas también
+  para aportes de la comunidad (antes solo reseñas estaban bloqueadas).
+- **Glosario Cultural dinámico**: los términos ahora salen de la base de
+  datos en vez de estar hardcodeados, con flujo de contribuciones
+  moderadas (cualquiera puede sugerir un término, un admin lo aprueba
+  antes de publicarlo). Sumado al menú de administración.
+
+### Fixes
+
+- **Precios de plataformas**: aclarados y corregido el cierre de Vimeo On
+  Demand en el comparador de `/plataformas`.
+- **Importador de series**: el país sugerido por canal no se estaba
+  asignando (comparaba código ISO en mayúscula contra códigos guardados en
+  minúscula).
+
+### Infra / Housekeeping
+
+- **Sesión de NextAuth por JWT** en vez de "database": bajó
+  significativamente el uso de Fluid Active CPU en Vercel (cada página
+  vista de un usuario logueado hacía una consulta extra a la base solo
+  para validar la sesión).
+- Aprobación explícita de los install scripts de Prisma/esbuild/
+  unrs-resolver (requerido por versiones recientes de npm).
+
 ## 2026-08-16 — Streaming Hub, comparador de plataformas y Glosario Cultural
 
 ### Features
