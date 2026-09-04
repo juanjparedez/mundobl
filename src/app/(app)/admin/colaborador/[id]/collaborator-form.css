@@ -1,0 +1,15 @@
+.collaborator-form__row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.collaborator-form__poster {
+  width: 160px;
+  height: 220px;
+  background-size: cover;
+  background-position: center;
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--border-color-secondary);
+  margin-bottom: 8px;
+}

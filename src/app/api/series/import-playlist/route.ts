@@ -4,8 +4,9 @@ import { buildImportPreview } from '@/lib/playlist-importer';
 
 export async function POST(request: NextRequest) {
   try {
-    const authResult = await requireRole(['ADMIN']);
+    const authResult = await requireRole(['ADMIN', 'COLLABORATOR']);
     if (!authResult.authorized) return authResult.response;
+    const isCollaborator = authResult.role === 'COLLABORATOR';
 
     const body = await request.json();
     const { url, autoTranslate, catalogScope, maxPages } = body as {
@@ -25,8 +26,14 @@ export async function POST(request: NextRequest) {
     const preview = await buildImportPreview({
       url,
       autoTranslate: autoTranslate === true,
-      catalogScope: catalogScope === 'PERSONAL' ? 'PERSONAL' : 'WATCHABLE_ONLY',
+      // Un COLLABORATOR nunca puede sumar al catalogo curado (PERSONAL) —
+      // su contenido siempre es WATCHABLE_ONLY, sin importar lo que mande.
+      catalogScope:
+        !isCollaborator && catalogScope === 'PERSONAL'
+          ? 'PERSONAL'
+          : 'WATCHABLE_ONLY',
       maxPages: typeof maxPages === 'number' ? maxPages : 10,
+      checkAgeRestriction: isCollaborator,
     });
 
     return NextResponse.json(preview);
