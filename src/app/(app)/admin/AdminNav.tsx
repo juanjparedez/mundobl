@@ -27,6 +27,7 @@ import {
   MenuOutlined,
   RightOutlined,
   SoundOutlined,
+  BookOutlined,
 } from '@ant-design/icons';
 import './admin-nav.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -133,6 +134,12 @@ const ADMIN_GROUPS: AdminGroup[] = [
         icon: <NotificationOutlined />,
         labelKey: 'adminNav.news',
         shortKey: 'adminNav.newsShort',
+      },
+      {
+        key: '/admin/glosario',
+        icon: <BookOutlined />,
+        labelKey: 'adminNav.glossary',
+        shortKey: 'adminNav.glossaryShort',
       },
       {
         key: '/admin/anuncios',

@@ -165,7 +165,7 @@ export function ColaboradorClient({ items: initial }: Props) {
       <ColaboradorNav />
       <AdminPageHero
         title="Mi panel de colaborador"
-        subtitle="Tu propio contenido en /ver — nunca se mezcla con el catalogo curado de MundoBL."
+        subtitle="Tu propio contenido, disponible en /ver."
         stats={[
           { label: 'Series', value: items.length },
           { label: 'Episodios', value: totalEpisodes },

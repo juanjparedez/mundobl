@@ -1580,6 +1580,8 @@ const ko: TranslationShape = {
     "reviewsShort": "리뷰",
     "news": "뉴스",
     "newsShort": "뉴스",
+    "glossary": "용어집",
+    "glossaryShort": "용어집",
     "announcements": "공지사항",
     "announcementsShort": "공지",
     "feedback": "사례",
