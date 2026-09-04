@@ -1,8 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useLocale } from '@/lib/providers/LocaleProvider';
-import { CULTURAL_GLOSSARY } from '@/data/cultural-glossary';
 import {
   QuizEngine,
   type QuizQuestion,
@@ -13,18 +12,20 @@ import type { TranslationKey } from '@/i18n/messages';
 
 const QUIZ_LENGTH = 8;
 
+interface GlosarioQuizTerm {
+  term: string;
+  transliteration: string | null;
+  meaning: string;
+}
+
 function buildQuestions(
+  terms: GlosarioQuizTerm[],
   t: (key: TranslationKey, params?: Record<string, string | number>) => string
 ): QuizQuestion[] {
-  const pool = shuffle(CULTURAL_GLOSSARY).slice(
-    0,
-    Math.min(QUIZ_LENGTH, CULTURAL_GLOSSARY.length)
-  );
+  const pool = shuffle(terms).slice(0, Math.min(QUIZ_LENGTH, terms.length));
 
   return pool.map((term, idx) => {
-    const distractors = shuffle(
-      CULTURAL_GLOSSARY.filter((other) => other !== term)
-    )
+    const distractors = shuffle(terms.filter((other) => other !== term))
       .slice(0, 3)
       .map((other) => other.meaning);
     const options = shuffle([term.meaning, ...distractors]);
@@ -41,17 +42,19 @@ function buildQuestions(
 }
 
 /** Mini-trivia del Glosario: reusa el motor genérico QuizEngine con
- *  preguntas armadas al vuelo desde CULTURAL_GLOSSARY (significado del
+ *  preguntas armadas al vuelo desde terminos publicados (significado del
  *  término + 3 significados de otros términos como distractores). Se
  *  monta tanto en la tab "Trivia" de /glosario como, potencialmente,
  *  linkeada desde /juegos — sin duplicar la mecánica. */
-export function GlosarioQuiz() {
+interface GlosarioQuizProps {
+  terms: GlosarioQuizTerm[];
+}
+
+export function GlosarioQuiz({ terms }: GlosarioQuizProps) {
   const { t } = useLocale();
   const [roundKey, setRoundKey] = useState(0);
+  const [questions, setQuestions] = useState(() => buildQuestions(terms, t));
   const { bestScore, reportScore } = useBestScore('glosario-quiz-best-score');
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const questions = useMemo(() => buildQuestions(t), [roundKey]);
 
   return (
     <QuizEngine
@@ -59,7 +62,10 @@ export function GlosarioQuiz() {
       questions={questions}
       bestScore={bestScore}
       onFinish={(score) => reportScore(score)}
-      onRestart={() => setRoundKey((k) => k + 1)}
+      onRestart={() => {
+        setQuestions(buildQuestions(terms, t));
+        setRoundKey((key) => key + 1);
+      }}
       labels={{
         questionCounter: (current, total) =>
           t('glosarioQuiz.questionCounter', { current, total }),
