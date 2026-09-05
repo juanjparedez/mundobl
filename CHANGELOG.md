@@ -22,7 +22,15 @@ Todas las versiones notables del proyecto se documentan aqui.
 - **Glosario Cultural dinámico**: los términos ahora salen de la base de
   datos en vez de estar hardcodeados, con flujo de contribuciones
   moderadas (cualquiera puede sugerir un término, un admin lo aprueba
-  antes de publicarlo). Sumado al menú de administración.
+  antes de publicarlo). Sumado al menú de administración. Las sugerencias
+  ahora también aceptan ejemplos de uso y errores comunes de traducción,
+  y la fuente citada se conserva y se muestra al publicar el término.
+- **Anuncios personalizados**: el título y cuerpo de un anuncio pueden
+  usar `{userName}` — se reemplaza por el nombre de quien lo está viendo,
+  así un mismo anuncio sirve para varios destinatarios sin reescribir el
+  texto.
+- **Suscribite al canal**: en `/ver`, los videos de YouTube ahora muestran
+  un botón directo para suscribirse al canal de origen.
 
 ### Fixes
 
