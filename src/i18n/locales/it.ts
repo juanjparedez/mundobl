@@ -1073,6 +1073,7 @@ const it: TranslationShape = {
     "requiredPages": "Seleziona almeno una pagina",
     "requiredRecipients": "Seleziona almeno un destinatario",
     "hintTitle": "Titolo breve per l'annuncio",
+    "hintUserName": "Puoi usare {userName} nel titolo o nel corpo — viene sostituito dal nome di chi lo vede.",
     "hintLink": "https://example.com o /un-percorso",
     "hintLinkLabel": "Es. Scopri di più",
     "recipientsPlaceholder": "Cerca per nome o email...",
@@ -2305,7 +2306,8 @@ const it: TranslationShape = {
   },
   "embedAttribution": {
     "via": "Tramite",
-    "openInOriginalPlatform": "Apri nella piattaforma originale"
+    "openInOriginalPlatform": "Apri nella piattaforma originale",
+    "subscribeButton": "Iscriviti a {channelName}"
   },
   "liveRegion": {
     "useLiveAnnouncerError": "useLiveAnnouncer deve essere usato all'interno di <LiveRegion>"
@@ -2729,6 +2731,8 @@ const it: TranslationShape = {
     "fieldTransliteration": "Traslitterazione",
     "fieldMeaning": "Significato",
     "fieldContext": "Contesto culturale",
+    "fieldExamples": "Esempi d'uso (opzionale)",
+    "fieldCommonMistake": "Errore comune di traduzione (opzionale)",
     "fieldSourceName": "Fonte / sito",
     "fieldSourceUrl": "URL della fonte",
     "fieldNotes": "Note di modifica",
@@ -2743,6 +2747,7 @@ const it: TranslationShape = {
     "meaningLabel": "Significato:",
     "examplesLabel": "Esempi:",
     "commonMistakeLabel": "Errore di traduzione comune:",
+    "sourceLabel": "Fonte:",
     "emptyTitle": "Nessun termine trovato",
     "emptyDescription": "Prova una ricerca diversa o cambia i filtri paese/categoria."
   },

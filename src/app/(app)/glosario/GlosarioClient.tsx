@@ -72,6 +72,8 @@ interface GlossaryTermData {
   context: string;
   commonMistake: string | null;
   examples: string | null;
+  sourceName: string | null;
+  sourceUrl: string | null;
 }
 
 interface GlosarioClientProps {
@@ -87,6 +89,8 @@ interface SuggestionFormValues {
   category: GlossaryTerm['category'];
   meaning: string;
   context: string;
+  examples?: string;
+  commonMistake?: string;
   sourceName?: string;
   sourceUrl?: string;
   notes?: string;
@@ -406,6 +410,18 @@ export function GlosarioClient({ terms }: GlosarioClientProps) {
                   <Input.TextArea rows={3} />
                 </Form.Item>
                 <Form.Item
+                  label={t('glosario.fieldExamples')}
+                  name="examples"
+                >
+                  <Input.TextArea rows={2} />
+                </Form.Item>
+                <Form.Item
+                  label={t('glosario.fieldCommonMistake')}
+                  name="commonMistake"
+                >
+                  <Input.TextArea rows={2} />
+                </Form.Item>
+                <Form.Item
                   label={t('glosario.fieldSourceName')}
                   name="sourceName"
                 >
@@ -507,6 +523,19 @@ export function GlosarioClient({ terms }: GlosarioClientProps) {
                     <strong>{t('glosario.commonMistakeLabel')}</strong>{' '}
                     {item.commonMistake}
                   </span>
+                </div>
+              )}
+
+              {(item.sourceName || item.sourceUrl) && (
+                <div className="glosario-card__source">
+                  <strong>{t('glosario.sourceLabel')}</strong>{' '}
+                  {item.sourceUrl ? (
+                    <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer">
+                      {item.sourceName || item.sourceUrl}
+                    </a>
+                  ) : (
+                    item.sourceName
+                  )}
                 </div>
               )}
             </article>

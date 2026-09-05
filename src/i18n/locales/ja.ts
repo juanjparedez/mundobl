@@ -1073,6 +1073,7 @@ const ja: TranslationShape = {
     "requiredPages": "少なくとも1ページ選択してください",
     "requiredRecipients": "少なくとも1人の受信者を選択してください",
     "hintTitle": "お知らせの短いタイトル",
+    "hintUserName": "{userName} をタイトルや本文で使えます — 閲覧者の名前に置き換わります。",
     "hintLink": "https://example.com または /a-route",
     "hintLinkLabel": "例: 詳細はこちら",
     "recipientsPlaceholder": "名前またはメールで検索...",
@@ -2305,7 +2306,8 @@ const ja: TranslationShape = {
   },
   "embedAttribution": {
     "via": "経由",
-    "openInOriginalPlatform": "元のプラットフォームで開く"
+    "openInOriginalPlatform": "元のプラットフォームで開く",
+    "subscribeButton": "{channelName} を登録"
   },
   "liveRegion": {
     "useLiveAnnouncerError": "useLiveAnnouncerは<LiveRegion>内で使用する必要があります"
@@ -2729,6 +2731,8 @@ const ja: TranslationShape = {
     "fieldTransliteration": "翻字",
     "fieldMeaning": "意味",
     "fieldContext": "文化的文脈",
+    "fieldExamples": "使用例（任意）",
+    "fieldCommonMistake": "よくある誤訳（任意）",
     "fieldSourceName": "出典 / サイト",
     "fieldSourceUrl": "出典URL",
     "fieldNotes": "編集メモ",
@@ -2743,6 +2747,7 @@ const ja: TranslationShape = {
     "meaningLabel": "意味:",
     "examplesLabel": "例:",
     "commonMistakeLabel": "よくある翻訳ミス:",
+    "sourceLabel": "出典:",
     "emptyTitle": "用語が見つかりません",
     "emptyDescription": "別の検索を試すか、国/カテゴリフィルターを変更してください。"
   },

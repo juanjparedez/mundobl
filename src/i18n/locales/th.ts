@@ -1073,6 +1073,7 @@ const th: TranslationShape = {
     "requiredPages": "เลือกอย่างน้อยหนึ่งหน้า",
     "requiredRecipients": "เลือกผู้รับอย่างน้อยหนึ่งคน",
     "hintTitle": "ชื่อย่อสำหรับการประกาศ",
+    "hintUserName": "คุณสามารถใช้ {userName} ในหัวข้อหรือเนื้อหาได้ — จะถูกแทนที่ด้วยชื่อของผู้ที่เห็น",
     "hintLink": "https://example.com หรือ /a-route",
     "hintLinkLabel": "เช่น เรียนรู้เพิ่มเติม",
     "recipientsPlaceholder": "ค้นหาด้วยชื่อหรืออีเมล...",
@@ -2305,7 +2306,8 @@ const th: TranslationShape = {
   },
   "embedAttribution": {
     "via": "ผ่าน",
-    "openInOriginalPlatform": "เปิดในแพลตฟอร์มต้นฉบับ"
+    "openInOriginalPlatform": "เปิดในแพลตฟอร์มต้นฉบับ",
+    "subscribeButton": "ติดตาม {channelName}"
   },
   "liveRegion": {
     "useLiveAnnouncerError": "useLiveAnnouncer ต้องใช้ภายใน <LiveRegion>"
@@ -2729,6 +2731,8 @@ const th: TranslationShape = {
     "fieldTransliteration": "การถอดเป็นอักษรโรมัน",
     "fieldMeaning": "ความหมาย",
     "fieldContext": "บริบททางวัฒนธรรม",
+    "fieldExamples": "ตัวอย่างการใช้งาน (ไม่บังคับ)",
+    "fieldCommonMistake": "ข้อผิดพลาดในการแปลที่พบบ่อย (ไม่บังคับ)",
     "fieldSourceName": "แหล่งที่มา / เว็บไซต์",
     "fieldSourceUrl": "URL แหล่งที่มา",
     "fieldNotes": "บันทึกการแก้ไข",
@@ -2743,6 +2747,7 @@ const th: TranslationShape = {
     "meaningLabel": "ความหมาย:",
     "examplesLabel": "ตัวอย่าง:",
     "commonMistakeLabel": "ข้อผิดพลาดในการแปลที่พบบ่อย:",
+    "sourceLabel": "แหล่งที่มา:",
     "emptyTitle": "ไม่พบคำศัพท์",
     "emptyDescription": "ลองค้นหาใหม่ หรือเปลี่ยนตัวกรองประเทศ/หมวดหมู่"
   },

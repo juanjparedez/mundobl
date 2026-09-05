@@ -46,6 +46,8 @@ export async function getPublishedGlossaryTerms() {
       context: true,
       commonMistake: true,
       examples: true,
+      sourceName: true,
+      sourceUrl: true,
     },
     orderBy: [{ country: 'asc' }, { term: 'asc' }],
   });

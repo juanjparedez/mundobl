@@ -1073,6 +1073,7 @@ const zhTW: TranslationShape = {
     "requiredPages": "請至少選擇一個頁面",
     "requiredRecipients": "請選擇至少一位收件人",
     "hintTitle": "公告的簡短標題",
+    "hintUserName": "你可以在標題或內文中使用 {userName} — 會替換成查看者的名字。",
     "hintLink": "https://example.com 或 /a-route",
     "hintLinkLabel": "例如：了解更多",
     "recipientsPlaceholder": "依姓名或電子郵件搜尋...",
@@ -2305,7 +2306,8 @@ const zhTW: TranslationShape = {
   },
   "embedAttribution": {
     "via": "透過",
-    "openInOriginalPlatform": "在原始平台開啟"
+    "openInOriginalPlatform": "在原始平台開啟",
+    "subscribeButton": "訂閱 {channelName}"
   },
   "liveRegion": {
     "useLiveAnnouncerError": "useLiveAnnouncer 必須在 <LiveRegion> 內使用"
@@ -2729,6 +2731,8 @@ const zhTW: TranslationShape = {
     "fieldTransliteration": "音譯",
     "fieldMeaning": "含義",
     "fieldContext": "文化語境",
+    "fieldExamples": "使用範例（選填）",
+    "fieldCommonMistake": "常見翻譯錯誤（選填）",
     "fieldSourceName": "來源 / 網站",
     "fieldSourceUrl": "來源 URL",
     "fieldNotes": "編輯說明",
@@ -2743,6 +2747,7 @@ const zhTW: TranslationShape = {
     "meaningLabel": "意思：",
     "examplesLabel": "範例：",
     "commonMistakeLabel": "常見翻譯錯誤：",
+    "sourceLabel": "來源：",
     "emptyTitle": "找不到詞彙",
     "emptyDescription": "請嘗試不同的搜尋或更改國家/類別篩選器。"
   },

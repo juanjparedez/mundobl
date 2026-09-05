@@ -345,6 +345,11 @@
   color: var(--error-color);
 }
 
+.glosario-card__source {
+  font-size: 0.78rem;
+  color: var(--text-tertiary);
+}
+
 @media (max-width: 768px) {
   .glosario-container {
     padding: var(--spacing-md) var(--spacing-sm);
