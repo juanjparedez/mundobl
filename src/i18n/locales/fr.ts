@@ -1073,6 +1073,7 @@ const fr: TranslationShape = {
     "requiredPages": "Choisissez au moins une page",
     "requiredRecipients": "Sélectionnez au moins un destinataire",
     "hintTitle": "Titre court pour l'annonce",
+    "hintUserName": "Tu peux utiliser {userName} dans le titre ou le corps — remplacé par le prénom de la personne qui le voit.",
     "hintLink": "https://exemple.com ou /une-route",
     "hintLinkLabel": "Ex: En savoir plus",
     "recipientsPlaceholder": "Rechercher par nom ou e-mail...",
@@ -2305,7 +2306,8 @@ const fr: TranslationShape = {
   },
   "embedAttribution": {
     "via": "Via",
-    "openInOriginalPlatform": "Ouvrir sur la plateforme originale"
+    "openInOriginalPlatform": "Ouvrir sur la plateforme originale",
+    "subscribeButton": "Abonne-toi à {channelName}"
   },
   "liveRegion": {
     "useLiveAnnouncerError": "useLiveAnnouncer doit être utilisé dans <LiveRegion>"
@@ -2729,6 +2731,8 @@ const fr: TranslationShape = {
     "fieldTransliteration": "Translittération",
     "fieldMeaning": "Signification",
     "fieldContext": "Contexte culturel",
+    "fieldExamples": "Exemples d'usage (facultatif)",
+    "fieldCommonMistake": "Erreur de traduction courante (facultatif)",
     "fieldSourceName": "Source / site",
     "fieldSourceUrl": "URL de la source",
     "fieldNotes": "Notes d'édition",
@@ -2743,6 +2747,7 @@ const fr: TranslationShape = {
     "meaningLabel": "Signification :",
     "examplesLabel": "Exemples :",
     "commonMistakeLabel": "Erreur de traduction courante :",
+    "sourceLabel": "Source :",
     "emptyTitle": "Aucun terme trouvé",
     "emptyDescription": "Essayez une recherche différente ou modifiez les filtres pays/catégorie."
   },

@@ -26,6 +26,24 @@
   text-decoration: underline;
 }
 
+.embed-attribution__subscribe {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: var(--border-radius-xs);
+  background: var(--primary-color);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.embed-attribution__subscribe:hover {
+  opacity: 0.88;
+  color: #fff;
+}
+
 .embed-attribution__platform {
   display: inline-flex;
   align-items: center;

@@ -15,6 +15,8 @@ export interface GlossarySuggestionItem {
   category: string;
   meaning: string;
   context: string;
+  examples: string | null;
+  commonMistake: string | null;
   sourceName: string | null;
   sourceUrl: string | null;
   notes: string | null;
@@ -79,6 +81,52 @@ export function GlosarioSuggestionsClient({ initialSuggestions }: Props) {
             rowKey="id"
             dataSource={filtered}
             scroll={{ x: 900 }}
+            expandable={{
+              rowExpandable: (item) =>
+                Boolean(
+                  item.examples ||
+                    item.commonMistake ||
+                    item.sourceName ||
+                    item.sourceUrl ||
+                    item.notes
+                ),
+              expandedRowRender: (item) => (
+                <Space direction="vertical" size="small">
+                  {item.examples && (
+                    <div>
+                      <strong>Ejemplos:</strong> {item.examples}
+                    </div>
+                  )}
+                  {item.commonMistake && (
+                    <div>
+                      <strong>Error común de traducción:</strong>{' '}
+                      {item.commonMistake}
+                    </div>
+                  )}
+                  {(item.sourceName || item.sourceUrl) && (
+                    <div>
+                      <strong>Fuente:</strong>{' '}
+                      {item.sourceUrl ? (
+                        <a
+                          href={item.sourceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {item.sourceName || item.sourceUrl}
+                        </a>
+                      ) : (
+                        item.sourceName
+                      )}
+                    </div>
+                  )}
+                  {item.notes && (
+                    <div>
+                      <strong>Nota de quien sugirió:</strong> {item.notes}
+                    </div>
+                  )}
+                </Space>
+              ),
+            }}
             columns={[
               {
                 title: 'Término',

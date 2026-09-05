@@ -1073,6 +1073,7 @@ const zhCN: TranslationShape = {
     "requiredPages": "请至少选择一个页面",
     "requiredRecipients": "请至少选择一位收件人",
     "hintTitle": "公告的短标题",
+    "hintUserName": "你可以在标题或正文中使用 {userName} — 会替换成查看者的名字。",
     "hintLink": "https://example.com 或 /a-route",
     "hintLinkLabel": "例如：了解更多",
     "recipientsPlaceholder": "按姓名或电子邮件搜索...",
@@ -2305,7 +2306,8 @@ const zhCN: TranslationShape = {
   },
   "embedAttribution": {
     "via": "通过",
-    "openInOriginalPlatform": "在原平台打开"
+    "openInOriginalPlatform": "在原平台打开",
+    "subscribeButton": "订阅 {channelName}"
   },
   "liveRegion": {
     "useLiveAnnouncerError": "useLiveAnnouncer 必须在 <LiveRegion> 中使用"
@@ -2729,6 +2731,8 @@ const zhCN: TranslationShape = {
     "fieldTransliteration": "音译",
     "fieldMeaning": "含义",
     "fieldContext": "文化语境",
+    "fieldExamples": "使用示例（可选）",
+    "fieldCommonMistake": "常见翻译错误（可选）",
     "fieldSourceName": "来源 / 网站",
     "fieldSourceUrl": "来源 URL",
     "fieldNotes": "编辑说明",
@@ -2743,6 +2747,7 @@ const zhCN: TranslationShape = {
     "meaningLabel": "含义：",
     "examplesLabel": "示例：",
     "commonMistakeLabel": "常见翻译错误：",
+    "sourceLabel": "来源：",
     "emptyTitle": "未找到词条",
     "emptyDescription": "尝试不同的搜索或更改国家/类别筛选器。"
   },

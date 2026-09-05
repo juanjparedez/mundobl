@@ -51,7 +51,16 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    if (term.length > 120 || meaning.length > 2000 || context.length > 3000) {
+    const examples = optionalString(data.examples);
+    const commonMistake = optionalString(data.commonMistake);
+
+    if (
+      term.length > 120 ||
+      meaning.length > 2000 ||
+      context.length > 3000 ||
+      (examples && examples.length > 2000) ||
+      (commonMistake && commonMistake.length > 1000)
+    ) {
       return NextResponse.json(
         { error: 'Uno de los campos supera el límite permitido.' },
         { status: 400 }
@@ -77,6 +86,8 @@ export async function POST(request: NextRequest) {
         category,
         meaning,
         context,
+        examples,
+        commonMistake,
         sourceName: optionalString(data.sourceName),
         sourceUrl,
         notes: optionalString(data.notes),
