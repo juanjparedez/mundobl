@@ -1073,6 +1073,7 @@ const ko: TranslationShape = {
     "requiredPages": "페이지를 하나 이상 선택하세요",
     "requiredRecipients": "수신자를 한 명 이상 선택하세요",
     "hintTitle": "공지사항의 짧은 제목",
+    "hintUserName": "제목이나 본문에 {userName}을 사용할 수 있어요 — 보는 사람의 이름으로 바뀝니다.",
     "hintLink": "https://example.com 또는 /a-route",
     "hintLinkLabel": "예: 더 알아보기",
     "recipientsPlaceholder": "이름 또는 이메일로 검색...",
@@ -2305,7 +2306,8 @@ const ko: TranslationShape = {
   },
   "embedAttribution": {
     "via": "경유",
-    "openInOriginalPlatform": "원래 플랫폼에서 열기"
+    "openInOriginalPlatform": "원래 플랫폼에서 열기",
+    "subscribeButton": "{channelName} 구독하기"
   },
   "liveRegion": {
     "useLiveAnnouncerError": "useLiveAnnouncer는 <LiveRegion> 내에서 사용해야 합니다"
@@ -2729,6 +2731,8 @@ const ko: TranslationShape = {
     "fieldTransliteration": "로마자 표기",
     "fieldMeaning": "의미",
     "fieldContext": "문화적 맥락",
+    "fieldExamples": "사용 예시 (선택)",
+    "fieldCommonMistake": "흔한 번역 오류 (선택)",
     "fieldSourceName": "출처 / 사이트",
     "fieldSourceUrl": "출처 URL",
     "fieldNotes": "편집 메모",
@@ -2743,6 +2747,7 @@ const ko: TranslationShape = {
     "meaningLabel": "의미:",
     "examplesLabel": "예시:",
     "commonMistakeLabel": "흔한 번역 실수:",
+    "sourceLabel": "출처:",
     "emptyTitle": "용어를 찾을 수 없음",
     "emptyDescription": "다른 검색을 시도하거나 국가/카테고리 필터를 변경하세요."
   },

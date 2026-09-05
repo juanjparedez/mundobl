@@ -1064,6 +1064,7 @@ export type TranslationShape = {
     requiredPages: string;
     requiredRecipients: string;
     hintTitle: string;
+    hintUserName: string;
     hintLink: string;
     hintLinkLabel: string;
     recipientsPlaceholder: string;
@@ -2297,6 +2298,7 @@ export type TranslationShape = {
   embedAttribution: {
     via: string;
     openInOriginalPlatform: string;
+    subscribeButton: string;
   };
   liveRegion: {
     useLiveAnnouncerError: string;
@@ -2720,6 +2722,8 @@ export type TranslationShape = {
     fieldTransliteration: string;
     fieldMeaning: string;
     fieldContext: string;
+    fieldExamples: string;
+    fieldCommonMistake: string;
     fieldSourceName: string;
     fieldSourceUrl: string;
     fieldNotes: string;
@@ -2734,6 +2738,7 @@ export type TranslationShape = {
     meaningLabel: string;
     examplesLabel: string;
     commonMistakeLabel: string;
+    sourceLabel: string;
     emptyTitle: string;
     emptyDescription: string;
   };
@@ -3873,6 +3878,8 @@ const es: TranslationShape = {
     requiredPages: 'Elegí al menos una página',
     requiredRecipients: 'Elegí al menos un destinatario',
     hintTitle: 'Título breve del anuncio',
+    hintUserName:
+      'Podés usar {userName} en el título o el cuerpo — se reemplaza por el primer nombre de quien lo ve.',
     hintLink: 'https://ejemplo.com o /una-ruta',
     hintLinkLabel: 'Ej: Ver más',
     recipientsPlaceholder: 'Buscar por nombre o email...',
@@ -5163,6 +5170,7 @@ const es: TranslationShape = {
   embedAttribution: {
     via: 'Via',
     openInOriginalPlatform: 'Abrir en la plataforma original',
+    subscribeButton: 'Suscribite a {channelName}',
   },
   liveRegion: {
     useLiveAnnouncerError:
@@ -5611,6 +5619,8 @@ const es: TranslationShape = {
     fieldTransliteration: 'Transliteración',
     fieldMeaning: 'Significado',
     fieldContext: 'Contexto cultural',
+    fieldExamples: 'Ejemplos de uso (opcional)',
+    fieldCommonMistake: 'Error común de traducción (opcional)',
     fieldSourceName: 'Fuente / sitio',
     fieldSourceUrl: 'URL de la fuente',
     fieldNotes: 'Notas de edición',
@@ -5625,6 +5635,7 @@ const es: TranslationShape = {
     meaningLabel: 'Significado:',
     examplesLabel: 'Ejemplos:',
     commonMistakeLabel: 'Error de traducción común:',
+    sourceLabel: 'Fuente:',
     emptyTitle: 'No encontramos términos',
     emptyDescription:
       'Probá con otra búsqueda o cambiá los filtros de país/categoría.',
@@ -6751,6 +6762,8 @@ const en: TranslationShape = {
     requiredPages: 'Pick at least one page',
     requiredRecipients: 'Pick at least one recipient',
     hintTitle: 'Short title for the announcement',
+    hintUserName:
+      "You can use {userName} in the title or body — it's replaced with the first name of whoever sees it.",
     hintLink: 'https://example.com or /a-route',
     hintLinkLabel: 'E.g. Learn more',
     recipientsPlaceholder: 'Search by name or email...',
@@ -8038,6 +8051,7 @@ const en: TranslationShape = {
   embedAttribution: {
     via: 'Via',
     openInOriginalPlatform: 'Open in original platform',
+    subscribeButton: 'Subscribe to {channelName}',
   },
   liveRegion: {
     useLiveAnnouncerError: 'useLiveAnnouncer must be used within <LiveRegion>',
@@ -8483,6 +8497,8 @@ const en: TranslationShape = {
     fieldTransliteration: 'Transliteration',
     fieldMeaning: 'Meaning',
     fieldContext: 'Cultural context',
+    fieldExamples: 'Usage examples (optional)',
+    fieldCommonMistake: 'Common translation mistake (optional)',
     fieldSourceName: 'Source / site',
     fieldSourceUrl: 'Source URL',
     fieldNotes: 'Editing notes',
@@ -8497,6 +8513,7 @@ const en: TranslationShape = {
     meaningLabel: 'Meaning:',
     examplesLabel: 'Examples:',
     commonMistakeLabel: 'Common translation mistake:',
+    sourceLabel: 'Source:',
     emptyTitle: 'No terms found',
     emptyDescription:
       'Try a different search or change the country/category filters.',

@@ -1,6 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/database';
+import { interpolateMessage } from '@/lib/i18n-format';
+
+/**
+ * Primer nombre de pila para un saludo directo ("Hola Juan"). No usa
+ * formatPublicName (esa es para mostrarle el nombre de ALGUIEN a otra
+ * persona, con apellido truncado por privacidad) — aca es la propia
+ * persona viendo un mensaje dirigido a si misma, y `session.user` no
+ * expone `nickname` (no viaja en el JWT, ver src/lib/auth.ts).
+ */
+function firstNameOf(name: string | null | undefined): string {
+  const trimmed = name?.trim();
+  if (!trimmed) return 'che';
+  return trimmed.split(/\s+/)[0];
+}
 
 /**
  * GET /api/announcements/active?pageKey=catalogo
@@ -9,6 +23,12 @@ import { prisma } from '@/lib/database';
  * anuncio: el banner siempre muestra un solo mensaje a la vez, a proposito,
  * para no sentirse pesado. Si hay mas de un candidato activo para la
  * pagina/audiencia, se prioriza el mas reciente.
+ *
+ * `title`/`body` soportan `{userName}` (ver interpolateMessage) — se
+ * resuelve aca, por-viewer, con el primer nombre de quien esta pidiendo el
+ * anuncio. Asi un mismo Announcement con audience=SPECIFIC_USERS sirve
+ * para todos sus destinatarios sin reescribir el texto por persona (ver
+ * plan "Anuncio de bienvenida para el rol Colaborador").
  */
 export async function GET(request: NextRequest) {
   try {
@@ -75,7 +95,17 @@ export async function GET(request: NextRequest) {
       return notificationsEnabled;
     });
 
-    return NextResponse.json(visible.slice(0, 1));
+    const chosen = visible[0];
+    if (!chosen) return NextResponse.json([]);
+
+    const userName = firstNameOf(session?.user?.name);
+    return NextResponse.json([
+      {
+        ...chosen,
+        title: interpolateMessage(chosen.title, { userName }),
+        body: interpolateMessage(chosen.body, { userName }),
+      },
+    ]);
   } catch (error) {
     console.error('Error fetching active announcements:', error);
     return NextResponse.json([]);

@@ -544,6 +544,7 @@ export function AnunciosClient() {
             <Form.Item
               label={t('adminAnnouncements.fieldBody')}
               name="body"
+              help={t('adminAnnouncements.hintUserName')}
               rules={[
                 {
                   required: true,

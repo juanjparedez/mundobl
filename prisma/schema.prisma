@@ -611,6 +611,12 @@ model GlossaryTerm {
   context          String
   commonMistake    String?
   examples         String?
+  // Atribucion opcional (de donde salio este termino/su traduccion) —
+  // copiada de GlossarySuggestion al aprobar, ver
+  // /api/admin/glossary-suggestions/[id]. Mostrada como "Fuente" en
+  // /glosario cuando esta presente.
+  sourceName       String?
+  sourceUrl        String?
   status           String   @default("PUBLISHED")
   publishedAt      DateTime?
   createdAt        DateTime @default(now())
@@ -644,8 +650,15 @@ model GlossarySuggestion {
   category        String   @default("fandom")
   meaning         String
   context         String
+  // Espejo de los mismos campos en GlossaryTerm — quien sugiere puede
+  // completarlos, y se copian al termino publicado si se aprueba.
+  commonMistake   String?
+  examples        String?
   sourceName      String?
   sourceUrl       String?
+  // Nota del que sugiere PARA el revisor (ej. "no estoy 100% seguro de
+  // esto"). A proposito nunca se copia a GlossaryTerm — es contexto de
+  // moderacion, no contenido del termino.
   notes           String?
   status          String   @default("PENDING")
   adminNotes      String?
