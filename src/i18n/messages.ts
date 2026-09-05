@@ -476,6 +476,12 @@ export type TranslationShape = {
     streak7Desc: string;
     streak30Name: string;
     streak30Desc: string;
+    glossaryContributorName: string;
+    glossaryContributorDesc: string;
+    glossaryScholarName: string;
+    glossaryScholarDesc: string;
+    triviaMasterName: string;
+    triviaMasterDesc: string;
   };
   socials: {
     title: string;
@@ -2705,12 +2711,15 @@ export type TranslationShape = {
     categoryGenreConcepts: string;
     categoryUniversity: string;
     categoryFandom: string;
+    tagsLabel: string;
     viewDictionary: string;
     viewTrivia: string;
     sectionResources: string;
     sectionContribute: string;
     resourcesTitle: string;
     resourcesDescription: string;
+    resourcesEmptyTitle: string;
+    resourcesEmptyDescription: string;
     resourceThaiDescription: string;
     resourceJapaneseDescription: string;
     resourceKoreanDescription: string;
@@ -3261,6 +3270,12 @@ const es: TranslationShape = {
     streak7Desc: 'Lograr una racha de 7 días',
     streak30Name: 'Mes constante',
     streak30Desc: 'Lograr una racha de 30 días',
+    glossaryContributorName: 'Voz cultural',
+    glossaryContributorDesc: 'Sumar un término aprobado al Glosario Cultural',
+    glossaryScholarName: 'Colaborador cultural',
+    glossaryScholarDesc: 'Sumar 5 términos aprobados al Glosario Cultural',
+    triviaMasterName: 'Sabelotodo cultural',
+    triviaMasterDesc: 'Sacar puntaje perfecto en la trivia del Glosario Cultural',
   },
   socials: {
     title: 'Mis redes',
@@ -5597,6 +5612,7 @@ const es: TranslationShape = {
     categoryGenreConcepts: 'Géneros y Conceptos',
     categoryUniversity: 'Cultura Universitaria',
     categoryFandom: 'Fandom',
+    tagsLabel: 'Tags:',
     viewDictionary: 'Diccionario',
     viewTrivia: 'Trivia',
     sectionResources: 'Recursos',
@@ -5604,6 +5620,9 @@ const es: TranslationShape = {
     resourcesTitle: 'Recursos externos recomendados',
     resourcesDescription:
       'Usamos fuentes externas como referencia complementaria y siempre con crédito claro, sin reemplazar la edición editorial propia del glosario.',
+    resourcesEmptyTitle: 'Todavía no hay recursos cargados',
+    resourcesEmptyDescription:
+      'Se administran desde /admin/sitios con la categoría "Glosario Cultural".',
     resourceThaiDescription:
       'Guías de lectura, pronunciación y contexto cultural para tailandés y honoríficos.',
     resourceJapaneseDescription:
@@ -6152,6 +6171,12 @@ const en: TranslationShape = {
     streak7Desc: 'Reach a 7-day streak',
     streak30Name: 'Steady month',
     streak30Desc: 'Reach a 30-day streak',
+    glossaryContributorName: 'Cultural voice',
+    glossaryContributorDesc: 'Get a term approved in the Cultural Glossary',
+    glossaryScholarName: 'Cultural contributor',
+    glossaryScholarDesc: 'Get 5 terms approved in the Cultural Glossary',
+    triviaMasterName: 'Cultural know-it-all',
+    triviaMasterDesc: 'Get a perfect score on the Cultural Glossary trivia',
   },
   socials: {
     title: 'My socials',
@@ -8475,6 +8500,7 @@ const en: TranslationShape = {
     categoryGenreConcepts: 'Genres & Concepts',
     categoryUniversity: 'University Culture',
     categoryFandom: 'Fandom',
+    tagsLabel: 'Tags:',
     viewDictionary: 'Dictionary',
     viewTrivia: 'Trivia',
     sectionResources: 'Resources',
@@ -8482,6 +8508,9 @@ const en: TranslationShape = {
     resourcesTitle: 'Recommended external resources',
     resourcesDescription:
       'We use external references as a complementary source and always credit them clearly, without replacing the editorial work of the glossary itself.',
+    resourcesEmptyTitle: 'No resources yet',
+    resourcesEmptyDescription:
+      'Managed from /admin/sitios under the "Glosario Cultural" category.',
     resourceThaiDescription:
       'Reading, pronunciation, and cultural context guides for Thai and honorific usage.',
     resourceJapaneseDescription:

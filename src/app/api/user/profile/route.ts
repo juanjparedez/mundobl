@@ -85,6 +85,7 @@ export async function GET(request: NextRequest) {
       heatmapRaw,
       reviewsCount,
       recentReviews,
+      approvedGlossaryTermsCount,
     ] = await Promise.all([
       // Basic user info
       prisma.user.findUnique({
@@ -98,6 +99,7 @@ export async function GET(request: NextRequest) {
           role: true,
           createdAt: true,
           socials: true,
+          glossaryQuizBestScore: true,
         },
       }),
 
@@ -360,6 +362,12 @@ export async function GET(request: NextRequest) {
           },
         },
       }),
+
+      // Contribuciones al Glosario Cultural aprobadas — alimenta el logro
+      // "colaborador cultural" (ver perfil/overview/sections/Achievements.tsx)
+      prisma.glossarySuggestion.count({
+        where: { userId, status: 'APPROVED' },
+      }),
     ]);
 
     if (!user) {
@@ -486,6 +494,8 @@ export async function GET(request: NextRequest) {
         totalEpisodes: Number(totalEpisodesRaw[0]?.total ?? 0),
         longestStreak,
         heatmap: heatmapDates,
+        approvedGlossaryTerms: approvedGlossaryTermsCount,
+        glossaryQuizBestScore: user?.glossaryQuizBestScore ?? null,
       },
       recentlyCompleted: recentlyCompleted.map((r) => ({
         seriesId: r.seriesId,
