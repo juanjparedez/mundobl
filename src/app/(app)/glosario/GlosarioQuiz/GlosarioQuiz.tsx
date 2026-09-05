@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import {
   QuizEngine,
@@ -52,16 +53,57 @@ interface GlosarioQuizProps {
 
 export function GlosarioQuiz({ terms }: GlosarioQuizProps) {
   const { t } = useLocale();
+  const { status: sessionStatus } = useSession();
   const [roundKey, setRoundKey] = useState(0);
   const [questions, setQuestions] = useState(() => buildQuestions(terms, t));
   const { bestScore, reportScore } = useBestScore('glosario-quiz-best-score');
+  // Mejor puntaje persistido en el server (por usuario, no por dispositivo)
+  // — ver /api/user/glossary-quiz-score. Si no hay sesión, queda en null y
+  // el mejor puntaje mostrado/usado es el de localStorage de siempre.
+  const [serverBest, setServerBest] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (sessionStatus !== 'authenticated') return;
+    let cancelled = false;
+    fetch('/api/user/glossary-quiz-score')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: { glossaryQuizBestScore: number | null } | null) => {
+        if (!cancelled && data) setServerBest(data.glossaryQuizBestScore);
+      })
+      .catch(() => {
+        // sin conexión / error puntual — sigue funcionando con localStorage
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [sessionStatus]);
+
+  const effectiveBest =
+    bestScore === null && serverBest === null
+      ? null
+      : Math.max(bestScore ?? 0, serverBest ?? 0);
 
   return (
     <QuizEngine
       key={roundKey}
       questions={questions}
-      bestScore={bestScore}
-      onFinish={(score) => reportScore(score)}
+      bestScore={effectiveBest}
+      onFinish={(score) => {
+        reportScore(score);
+        if (sessionStatus !== 'authenticated') return;
+        fetch('/api/user/glossary-quiz-score', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ score }),
+        })
+          .then((res) => (res.ok ? res.json() : null))
+          .then((data: { glossaryQuizBestScore: number } | null) => {
+            if (data) setServerBest(data.glossaryQuizBestScore);
+          })
+          .catch(() => {
+            // sin conexión / error puntual — el score local ya quedó guardado
+          });
+      }}
       onRestart={() => {
         setQuestions(buildQuestions(terms, t));
         setRoundKey((key) => key + 1);

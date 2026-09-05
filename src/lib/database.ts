@@ -48,6 +48,9 @@ export async function getPublishedGlossaryTerms() {
       examples: true,
       sourceName: true,
       sourceUrl: true,
+      tags: {
+        select: { tag: { select: { id: true, name: true } } },
+      },
     },
     orderBy: [{ country: 'asc' }, { term: 'asc' }],
   });

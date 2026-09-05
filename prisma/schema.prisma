@@ -56,6 +56,12 @@ model User {
   // letterboxd, instagram, custom[] }. Renderizado por SocialsWidget en
   // /perfil. No-public; editable solo por el dueño via PATCH /api/user/me.
   socials       Json?
+  // Mejor puntaje de la trivia del Glosario Cultural. Reemplaza el
+  // "mejor puntaje local" de useBestScore (localStorage, por dispositivo)
+  // para poder alimentar un logro server-side — ver
+  // PATCH /api/user/glossary-quiz-score y GlosarioQuiz.tsx. Solo sube
+  // (nunca se pisa con un puntaje menor).
+  glossaryQuizBestScore Int?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

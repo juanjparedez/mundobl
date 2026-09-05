@@ -74,10 +74,20 @@ interface GlossaryTermData {
   examples: string | null;
   sourceName: string | null;
   sourceUrl: string | null;
+  tagNames: string[];
+}
+
+interface GlossaryResource {
+  id: number;
+  name: string;
+  url: string;
+  description: string | null;
+  language: string | null;
 }
 
 interface GlosarioClientProps {
   terms: GlossaryTermData[];
+  resources: GlossaryResource[];
 }
 
 type GlossaryView = 'dictionary' | 'trivia' | 'resources' | 'contribute';
@@ -101,28 +111,7 @@ interface GlossarySuggestion extends SuggestionFormValues {
   status: 'PENDING' | 'APPROVED' | 'REJECTED';
 }
 
-const RESOURCES = [
-  {
-    name: 'Thai Language Wiki',
-    url: 'https://thai-language.com/',
-    label: 'Thai',
-    descriptionKey: 'glosario.resourceThaiDescription' as TranslationKey,
-  },
-  {
-    name: 'Tofugu Japanese Guide',
-    url: 'https://www.tofugu.com/japanese/',
-    label: 'Japanese',
-    descriptionKey: 'glosario.resourceJapaneseDescription' as TranslationKey,
-  },
-  {
-    name: 'How to Study Korean',
-    url: 'https://www.howtostudykorean.com/',
-    label: 'Korean',
-    descriptionKey: 'glosario.resourceKoreanDescription' as TranslationKey,
-  },
-] as const;
-
-export function GlosarioClient({ terms }: GlosarioClientProps) {
+export function GlosarioClient({ terms, resources }: GlosarioClientProps) {
   const { t } = useLocale();
   const { status: sessionStatus } = useSession();
   const searchParams = useSearchParams();
@@ -132,6 +121,14 @@ export function GlosarioClient({ terms }: GlosarioClientProps) {
     useState<(typeof COUNTRIES)[number]['id']>('all');
   const [category, setCategory] =
     useState<(typeof CATEGORIES)[number]['id']>('all');
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const allTags = useMemo(() => {
+    const set = new Set<string>();
+    for (const term of terms) {
+      for (const tagName of term.tagNames) set.add(tagName);
+    }
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }, [terms]);
   const [view, setView] = useState<GlossaryView>(() => {
     const requestedView = searchParams.get('view');
     return requestedView === 'trivia' ||
@@ -204,6 +201,7 @@ export function GlosarioClient({ terms }: GlosarioClientProps) {
     return terms.filter((item) => {
       if (country !== 'all' && item.country !== country) return false;
       if (category !== 'all' && item.category !== category) return false;
+      if (selectedTag && !item.tagNames.includes(selectedTag)) return false;
       if (!q) return true;
       return (
         item.term.toLowerCase().includes(q) ||
@@ -212,7 +210,7 @@ export function GlosarioClient({ terms }: GlosarioClientProps) {
         item.context.toLowerCase().includes(q)
       );
     });
-  }, [terms, search, country, category]);
+  }, [terms, search, country, category, selectedTag]);
 
   return (
     <div className="glosario-container">
@@ -292,6 +290,25 @@ export function GlosarioClient({ terms }: GlosarioClientProps) {
                 </Radio.Button>
               ))}
             </Radio.Group>
+
+            {allTags.length > 0 && (
+              <div className="glosario-tag-filter">
+                <span className="glosario-tag-filter__label">
+                  {t('glosario.tagsLabel')}
+                </span>
+                {allTags.map((tagName) => (
+                  <Tag.CheckableTag
+                    key={tagName}
+                    checked={selectedTag === tagName}
+                    onChange={(checked) =>
+                      setSelectedTag(checked ? tagName : null)
+                    }
+                  >
+                    {tagName}
+                  </Tag.CheckableTag>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </header>
@@ -304,23 +321,32 @@ export function GlosarioClient({ terms }: GlosarioClientProps) {
             <h2>{t('glosario.resourcesTitle')}</h2>
             <p>{t('glosario.resourcesDescription')}</p>
           </div>
+          {resources.length === 0 ? (
+            <EmptyState
+              title={t('glosario.resourcesEmptyTitle')}
+              description={t('glosario.resourcesEmptyDescription')}
+            />
+          ) : (
           <div className="glosario-resource-grid">
-            {RESOURCES.map((resource) => (
+            {resources.map((resource) => (
               <a
-                key={resource.url}
+                key={resource.id}
                 className="glosario-resource-card"
                 href={resource.url}
                 target="_blank"
                 rel="noreferrer"
               >
-                <span className="glosario-resource-card__meta">
-                  <LinkOutlined /> {resource.label}
-                </span>
+                {resource.language && (
+                  <span className="glosario-resource-card__meta">
+                    <LinkOutlined /> {resource.language}
+                  </span>
+                )}
                 <h3>{resource.name}</h3>
-                <p>{t(resource.descriptionKey)}</p>
+                {resource.description && <p>{resource.description}</p>}
               </a>
             ))}
           </div>
+          )}
         </section>
       ) : view === 'contribute' ? (
         <section className="glosario-section">
@@ -499,6 +525,22 @@ export function GlosarioClient({ terms }: GlosarioClientProps) {
                 </div>
                 <Tag color="blue">{t(categoryLabelKey(item.category))}</Tag>
               </div>
+
+              {item.tagNames.length > 0 && (
+                <div className="glosario-card__tags">
+                  {item.tagNames.map((tagName) => (
+                    <Tag.CheckableTag
+                      key={tagName}
+                      checked={selectedTag === tagName}
+                      onChange={(checked) =>
+                        setSelectedTag(checked ? tagName : null)
+                      }
+                    >
+                      {tagName}
+                    </Tag.CheckableTag>
+                  ))}
+                </div>
+              )}
 
               <div className="glosario-card__meaning">
                 <strong>{t('glosario.meaningLabel')}</strong> {item.meaning}

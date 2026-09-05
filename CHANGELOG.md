@@ -8,6 +8,27 @@ Todas las versiones notables del proyecto se documentan aqui.
 > (`ChangelogItem`, `/admin/changelog`) quedo como fallback solo si este archivo
 > esta vacio.
 
+## 2026-09-05 — Glosario Cultural: tags, recursos y logros
+
+### Features
+
+- **Tags reales en el Glosario Cultural**: los términos ahora muestran
+  chips de tag (compartidos con el catálogo) y se pueden filtrar por tag,
+  tanto desde la barra de filtros como haciendo click en un chip de una
+  tarjeta.
+- **Recursos externos editables**: la tab "Resources" de `/glosario` dejó
+  de ser una lista hardcodeada — ahora se gestiona como cualquier otro
+  sitio recomendado desde `/admin/sitios` (categoría "Glosario Cultural").
+- **Logros ligados al glosario y la trivia**: 3 logros nuevos en
+  `/perfil` — dos por contribuciones aprobadas al glosario ("Voz
+  cultural", "Colaborador cultural") y uno por sacar puntaje perfecto en
+  la trivia cultural ("Sabelotodo cultural"). El mejor puntaje de la
+  trivia ahora se guarda por usuario en la base (antes solo vivía en
+  `localStorage` del dispositivo); sin sesión sigue funcionando igual que
+  antes.
+- **README renovado**: presentación más visual del proyecto (pitch,
+  features, quick start) sin duplicar el detalle técnico de `context.md`.
+
 ## 2026-09-04 — Rol de colaborador externo y Glosario Cultural dinámico
 
 ### Features

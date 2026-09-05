@@ -83,6 +83,8 @@ export interface ProfileData {
     totalEpisodes: number;
     longestStreak: number;
     heatmap: string[];
+    approvedGlossaryTerms: number;
+    glossaryQuizBestScore: number | null;
   };
   recentlyCompleted: Array<{
     seriesId: number;

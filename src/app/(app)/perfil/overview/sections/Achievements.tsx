@@ -11,12 +11,21 @@ import {
   ThunderboltFilled,
   CrownFilled,
   CheckCircleFilled,
+  BookFilled,
+  BulbFilled,
 } from '@ant-design/icons';
 import type { ProfileData } from '../../types';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { AutoFitList } from '@/components/design-system';
 import './Achievements.css';
+
+// Cantidad de preguntas de la trivia del Glosario Cultural — debe
+// mantenerse igual a QUIZ_LENGTH en GlosarioQuiz.tsx. No se importa desde
+// ahí a propósito: ese archivo es un client component de la feature
+// /glosario con sus propias dependencias (QuizEngine, useSession, etc.)
+// que no tiene sentido arrastrar a /perfil solo por una constante.
+const GLOSSARY_QUIZ_LENGTH = 8;
 
 interface Props {
   stats: ProfileData['stats'];
@@ -36,7 +45,7 @@ interface Achievement {
 /** Numero total de achievements definidos. Util para el contador
  *  unlocked/total que aparece en el header del widget (sin necesidad
  *  de instanciar todas las traducciones). */
-export const ACHIEVEMENTS_TOTAL = 12;
+export const ACHIEVEMENTS_TOTAL = 15;
 
 /** Cuenta cuantos achievements estan unlocked con un set de stats dado.
  *  Espejo de la logica `current >= goal` del array interno — se exporta
@@ -56,6 +65,9 @@ export function countUnlockedAchievements(stats: ProfileData['stats']): number {
     { current: Math.floor(stats.hoursWatched), goal: 100 }, // binger
     { current: stats.longestStreak, goal: 7 }, // streak-7
     { current: stats.longestStreak, goal: 30 }, // streak-30
+    { current: stats.approvedGlossaryTerms, goal: 1 }, // glossary-contributor
+    { current: stats.approvedGlossaryTerms, goal: 5 }, // glossary-scholar
+    { current: stats.glossaryQuizBestScore ?? 0, goal: GLOSSARY_QUIZ_LENGTH }, // trivia-master
   ];
   return goals.filter((g) => g.current >= g.goal).length;
 }
@@ -174,6 +186,33 @@ export function OverviewAchievements({ stats }: Props) {
       description: t('achievements.streak30Desc'),
       current: stats.longestStreak,
       goal: 30,
+      tone: 'gold',
+    },
+    {
+      key: 'glossary-contributor',
+      icon: <BookFilled />,
+      name: t('achievements.glossaryContributorName'),
+      description: t('achievements.glossaryContributorDesc'),
+      current: stats.approvedGlossaryTerms,
+      goal: 1,
+      tone: 'blue',
+    },
+    {
+      key: 'glossary-scholar',
+      icon: <BookFilled />,
+      name: t('achievements.glossaryScholarName'),
+      description: t('achievements.glossaryScholarDesc'),
+      current: stats.approvedGlossaryTerms,
+      goal: 5,
+      tone: 'purple',
+    },
+    {
+      key: 'trivia-master',
+      icon: <BulbFilled />,
+      name: t('achievements.triviaMasterName'),
+      description: t('achievements.triviaMasterDesc'),
+      current: stats.glossaryQuizBestScore ?? 0,
+      goal: GLOSSARY_QUIZ_LENGTH,
       tone: 'gold',
     },
   ];

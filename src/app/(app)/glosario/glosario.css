@@ -75,6 +75,26 @@
   gap: 4px;
 }
 
+.glosario-tag-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.glosario-tag-filter__label {
+  color: var(--text-tertiary);
+  font-size: 0.82rem;
+}
+
+.glosario-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: -4px;
+}
+
 .glosario-section {
   display: flex;
   flex-direction: column;
