@@ -6,6 +6,10 @@ export const CATEGORY_COLORS: Record<string, string> = {
   noticias: 'blue',
   info: 'cyan',
   comunidad: 'green',
+  // Recursos externos citados desde /glosario (tab "Resources") — ver
+  // src/app/(app)/glosario/page.tsx. Mismo modelo RecommendedSite,
+  // gestionado igual que el resto desde /admin/sitios.
+  glosario: 'magenta',
   otro: 'default',
 };
 
@@ -17,6 +21,7 @@ export const CATEGORY_LABELS: Record<string, string> = {
   noticias: 'Noticias',
   info: 'Información',
   comunidad: 'Comunidad',
+  glosario: 'Glosario Cultural',
   otro: 'Otros',
 };
 
@@ -28,6 +33,7 @@ export const CATEGORY_ORDER = [
   'noticias',
   'info',
   'comunidad',
+  'glosario',
   'otro',
 ];
 
