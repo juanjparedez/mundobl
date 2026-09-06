@@ -17,6 +17,7 @@ import {
 } from '@ant-design/icons';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { getVerUrl, getSeriesUrl } from '@/lib/slug';
 import type { CarouselMediaItem } from '../MediaCarousel/MediaCarousel';
 import './HeroBillboard.css';
 
@@ -72,7 +73,7 @@ export function HeroBillboard({
           {featured.title}
         </span>
         <div className="hero-billboard__strip-actions">
-          <Link href={`/ver/${featured.id}`} prefetch={false}>
+          <Link href={getVerUrl(featured.id, featured.title)} prefetch={false}>
             <Button
               type="text"
               size="small"
@@ -194,7 +195,7 @@ export function HeroBillboard({
         )}
 
         <div className="hero-billboard__actions">
-          <Link href={`/ver/${featured.id}`} prefetch={false}>
+          <Link href={getVerUrl(featured.id, featured.title)} prefetch={false}>
             <Button
               type="primary"
               size="large"
@@ -204,7 +205,10 @@ export function HeroBillboard({
               {playButtonLabel}
             </Button>
           </Link>
-          <Link href={`/series/${featured.id}`} prefetch={false}>
+          <Link
+            href={getSeriesUrl(featured.id, featured.title)}
+            prefetch={false}
+          >
             <Button
               size="large"
               icon={<InfoCircleOutlined />}

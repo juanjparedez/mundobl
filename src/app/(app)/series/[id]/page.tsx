@@ -29,6 +29,7 @@ import { SeriesSubscribeButton } from '@/components/series/SeriesSubscribeButton
 import { SeriesSuggestionButton } from '@/components/series/SuggestionModal/SeriesSuggestionButton';
 import { SeriesUserStatusProvider } from '@/components/series/SeriesUserStatusProvider';
 import { EditSeriesFab } from './EditSeriesFab/EditSeriesFab';
+import { getSeriesUrl, getVerUrl, parseIdFromSlug } from '@/lib/slug';
 import type { TVSeries } from 'schema-dts';
 import { ReadOutlined, CommentOutlined } from '@/lib/client-icons';
 import './page.css';
@@ -48,7 +49,7 @@ export async function generateMetadata({
   params,
 }: SeriesPageProps): Promise<Metadata> {
   const { id } = await params;
-  const seriesId = parseInt(id, 10);
+  const seriesId = parseIdFromSlug(id);
   if (isNaN(seriesId)) return {};
 
   const serie = await getSeriesByIdCached(seriesId);
@@ -58,32 +59,54 @@ export async function generateMetadata({
     ContentTypeConfig[serie.type as ContentTypeValue]?.label ?? 'Serie';
   const year = serie.year ? ` (${serie.year})` : '';
   const country = serie.country?.name ?? '';
-  // Keyword-first: nombre + año + intent keywords (reseña/reparto) ANTES
-  // del qualifier "Serie BL". Mejora CTR en busquedas como "bad buddy resena".
-  const title = `${serie.title}${year} | Reseña, Reparto y Episodios - ${typeLabel} BL`;
+  const origTitle =
+    serie.originalTitle && serie.originalTitle.trim() !== serie.title.trim()
+      ? ` (${serie.originalTitle.trim()})`
+      : '';
+
+  // Keyword-first + Intent keywords (Dónde ver / Reparto / Reseña) + Título original
+  const title = `${serie.title}${origTitle}${year} | Dónde ver, Reparto y Reseña - ${typeLabel} BL | MundoBL`;
 
   const synopsis = serie.synopsis
-    ? serie.synopsis.slice(0, 160).replace(/\n/g, ' ')
-    : `${typeLabel} BL${country ? ` de ${country}` : ''}. Descubre la ficha completa, calificaciones y reparto en MundoBL.`;
+    ? `${serie.title}${origTitle}. ${serie.synopsis.slice(0, 150).replace(/\n/g, ' ')}...`
+    : `${serie.title}${origTitle}. ${typeLabel} BL${country ? ` de ${country}` : ''}${year}. Descubre dónde verla, reparto completo y reseñas en MundoBL.`;
+
+  const canonicalUrl = getSeriesUrl(serie.id, serie.title);
+
+  const keywords = [
+    serie.title,
+    serie.originalTitle,
+    `${serie.title} donde ver`,
+    `${serie.title} reparto`,
+    `${serie.title} sub espanol`,
+    `${serie.title} resena`,
+    'serie BL',
+    'drama BL',
+    'Boys Love',
+    country ? `BL ${country}` : null,
+    ...(serie.tags?.map((st) => st.tag.name) ?? []),
+    ...(serie.genres?.map((sg) => sg.genre.name) ?? []),
+  ].filter(Boolean) as string[];
 
   return {
     title,
     description: synopsis,
+    keywords,
     alternates: {
-      canonical: `/series/${serie.id}`,
+      canonical: canonicalUrl,
     },
     openGraph: {
-      title: `${serie.title}${year}`,
+      title: `${serie.title}${origTitle}${year}`,
       description: synopsis,
       type: 'video.tv_show',
-      url: `/series/${serie.id}`,
+      url: canonicalUrl,
       ...(serie.imageUrl && {
         images: [{ url: serie.imageUrl, alt: serie.title }],
       }),
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${serie.title}${year}`,
+      title: `${serie.title}${origTitle}${year}`,
       description: synopsis,
       ...(serie.imageUrl && { images: [serie.imageUrl] }),
     },
@@ -92,7 +115,7 @@ export async function generateMetadata({
 
 export default async function SeriesPage({ params }: SeriesPageProps) {
   const resolvedParams = await params;
-  const seriesId = parseInt(resolvedParams.id, 10);
+  const seriesId = parseIdFromSlug(resolvedParams.id);
 
   if (isNaN(seriesId)) {
     notFound();
@@ -226,7 +249,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
               ratingCount: Math.max(serie.ratings?.length ?? 1, 1),
             },
           }),
-          url: `https://mundobl.com.ar/series/${serie.id}`,
+          url: `https://mundobl.com.ar${getSeriesUrl(serie.id, serie.title)}`,
         }}
       />
       <div className="series-detail-page">
@@ -245,7 +268,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
           ) ? (
             <div className="series-linked-from-user-embeds">
               <Link
-                href={`/ver/${serie.id}`}
+                href={getVerUrl(serie.id, serie.title)}
                 className="series-linked-from-user-embeds__link"
               >
                 ▶ Ver episodios oficiales en el reproductor de MundoBL
@@ -255,7 +278,10 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
             serie.linkedFromUserEmbeds.length > 0 ? (
             <div className="series-linked-from-user-embeds">
               <Link
-                href={`/ver/${serie.linkedFromUserEmbeds[0].id}`}
+                href={getVerUrl(
+                  serie.linkedFromUserEmbeds[0].id,
+                  serie.linkedFromUserEmbeds[0].title
+                )}
                 className="series-linked-from-user-embeds__link"
               >
                 ▶ También disponible para ver en /ver

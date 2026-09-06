@@ -11,6 +11,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { getSeriesUrl } from '@/lib/slug';
 import { Chip } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
@@ -224,7 +225,7 @@ export function DirectorProfileClient({
           <Row gutter={[16, 16]}>
             {featuredWorks.map((entry) => (
               <Col xs={24} sm={12} md={8} key={entry.id}>
-                <Link href={`/series/${entry.id}`}>
+                <Link href={getSeriesUrl(entry.id, entry.title)}>
                   <Card
                     hoverable
                     size="small"
@@ -286,7 +287,7 @@ export function DirectorProfileClient({
           <Row gutter={[16, 16]}>
             {filmography.map((entry) => (
               <Col xs={24} sm={12} md={8} lg={6} key={entry.id}>
-                <Link href={`/series/${entry.id}`}>
+                <Link href={getSeriesUrl(entry.id, entry.title)}>
                   <Card
                     hoverable
                     size="small"
