@@ -68,6 +68,8 @@ import { getSeriesUrl } from '@/lib/slug';
 import type { SerieData, UniverseGroup, CatalogItem } from './catalogTypes';
 import { groupIntoCatalogItems } from './catalogGrouping';
 import { CatalogCarouselView } from './carousel/CatalogCarouselView/CatalogCarouselView';
+import { PresetSwitcher } from '@/components/common/PresetSwitcher/PresetSwitcher';
+import { useTheme } from '@/lib/providers/ThemeProvider';
 import { ReorderConfigDrawer } from '@/components/carousel/ReorderConfigDrawer/ReorderConfigDrawer';
 import { useReorderablePrefs } from '@/components/carousel/useReorderablePrefs';
 import { CATALOG_CAROUSEL_CATEGORIES } from './carousel/catalogCarouselCategories';
@@ -269,6 +271,25 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
     ];
     return valid.includes(raw as SortKey) ? (raw as SortKey) : 'az';
   });
+
+  const { preset } = useTheme();
+
+  useEffect(() => {
+    const handleModeChange = (e: Event) => {
+      const custom = e as CustomEvent<string>;
+      if (
+        custom.detail === 'list' ||
+        custom.detail === 'carousel' ||
+        custom.detail === 'grid'
+      ) {
+        setViewMode(custom.detail);
+      }
+    };
+    window.addEventListener('catalog-view-mode-changed', handleModeChange);
+    return () => {
+      window.removeEventListener('catalog-view-mode-changed', handleModeChange);
+    };
+  }, []);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -1042,7 +1063,11 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
               </Tag>
             )}
             {viewedIds.has(serie.id) && (
-              <Tag color="success">{t('catalogo.watchedTag')}</Tag>
+              <Tag color={preset === 'tracker' ? 'processing' : 'success'}>
+                {preset === 'tracker'
+                  ? `✓ ${t('catalogo.watchedTag')}`
+                  : t('catalogo.watchedTag')}
+              </Tag>
             )}
           </div>
 
@@ -1608,6 +1633,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
           )}
         </div>
         <div className="catalogo-toolbar-right">
+          <PresetSwitcher compact={isMobile} />
           <span className="catalogo-count">
             {filteredSeries.length === series.length
               ? interpolateMessage(t('catalogo.titlesCount'), {

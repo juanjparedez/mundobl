@@ -9,8 +9,13 @@ import {
   Button,
   Switch,
   Popconfirm,
-  Tooltip,
 } from 'antd';
+import {
+  DownOutlined,
+  UpOutlined,
+  CheckCircleFilled,
+  SettingOutlined,
+} from '@ant-design/icons';
 import type { Color } from 'antd/es/color-picker';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -22,6 +27,7 @@ import { LOCALE_LABELS, SUPPORTED_LOCALES } from '@/i18n/config';
 import { ACCENT_PRESETS } from '@/lib/theme.config';
 import { resetServiceWorker } from '@/lib/reset-recovery';
 import { NotificationsSettings } from '../NotificationsSettings/NotificationsSettings';
+import { VIEW_PRESETS, type ViewPresetKey } from '@/types/presets.types';
 import type {
   AccentPresetKey,
   ToneKey,
@@ -38,11 +44,80 @@ interface SettingsPanelProps {
   onClose: () => void;
 }
 
+interface SkinOption {
+  key: SkinKey;
+  name: string;
+  tag: string;
+  desc: string;
+  colors: [string, string, string];
+  isDark: boolean;
+}
+
+const SKIN_OPTIONS: SkinOption[] = [
+  {
+    key: 'premium',
+    name: 'Dark Obsidian',
+    tag: '👑 Premium',
+    desc: 'Negro elegante con acento dorado',
+    colors: ['#0c0a14', '#171423', '#f6b51e'],
+    isDark: true,
+  },
+  {
+    key: 'sakura',
+    name: 'Sakura & Pastel',
+    tag: '🌸 Romance',
+    desc: 'Marfil suave y rosa flor de cerezo',
+    colors: ['#faf6f8', '#ffffff', '#d85b98'],
+    isDark: false,
+  },
+  {
+    key: 'midnight',
+    name: 'Midnight AMOLED',
+    tag: '🖤 Pure OLED',
+    desc: 'Negro 100% puro y cian tenue',
+    colors: ['#000000', '#0a0a10', '#00e5ff'],
+    isDark: true,
+  },
+  {
+    key: 'journal',
+    name: 'Retro Journal',
+    tag: '📖 Editorial',
+    desc: 'Papel cálido, terracota y notas',
+    colors: ['#f5f0e6', '#fdfaf3', '#b45309'],
+    isDark: false,
+  },
+  {
+    key: 'neon',
+    name: 'Neon Bangkok',
+    tag: '🏙️ Cyber Glow',
+    desc: 'Azul nocturno profundo y fucsia',
+    colors: ['#070714', '#131330', '#e026b4'],
+    isDark: true,
+  },
+  {
+    key: 'default',
+    name: 'MundoBL Base',
+    tag: '✨ Estándar',
+    desc: 'Paleta balanceada configurable',
+    colors: ['#121218', '#201c29', '#c57bb7'],
+    isDark: true,
+  },
+];
+
+const PRESET_KEYS: ViewPresetKey[] = [
+  'cinema',
+  'tracker',
+  'encyclopedia',
+  'blind',
+];
+
 export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
   const router = useRouter();
   const {
     theme,
     setTheme,
+    preset,
+    setPreset,
     accent,
     setAccent,
     customAccent,
@@ -68,6 +143,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
   const message = useMessage();
   const [clearing, setClearing] = useState(false);
   const [resettingSw, setResettingSw] = useState(false);
+  const [advancedOpen, setAdvancedOpen] = useState(false);
   const [defaultCommentPrivate, setDefaultCommentPrivate] = useState(() => {
     if (typeof window === 'undefined') return false;
     return window.localStorage.getItem('comment-default-private') === 'true';
@@ -105,184 +181,286 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
       placement="right"
       open={open}
       onClose={onClose}
-      styles={{ wrapper: { width: 420 } }}
+      styles={{ wrapper: { width: 440 } }}
       destroyOnHidden
       className="settings-panel"
     >
-      {/* Apariencia ─────────────────────────────────── */}
+      {/* ── 1. Presets de Visualización (Modo de Consumo) ── */}
       <section className="settings-panel__section">
         <h3 className="settings-panel__section-title">
-          {t('settings.sectionAppearance')}
+          Modo de Experiencia (Presets)
         </h3>
-
-        <div className="settings-panel__field">
-          <label className="settings-panel__label">
-            {t('settings.themeLabel')}
-          </label>
-          <Segmented
-            value={theme}
-            onChange={(v) => setTheme(v as 'light' | 'dark')}
-            options={[
-              { value: 'light', label: t('settings.themeLight') },
-              { value: 'dark', label: t('settings.themeDark') },
-            ]}
-            block
-          />
+        <p className="settings-panel__hint">
+          Elegí cómo querés consumir el catálogo con un solo clic:
+        </p>
+        <div className="settings-panel__presets-grid">
+          {PRESET_KEYS.map((key) => {
+            const config = VIEW_PRESETS[key];
+            const isActive = preset === key;
+            return (
+              <button
+                key={key}
+                type="button"
+                className={`settings-panel__preset-card ${
+                  isActive ? 'settings-panel__preset-card--active' : ''
+                }`}
+                onClick={() => setPreset(key)}
+              >
+                <div className="settings-panel__preset-header">
+                  <span>{config.emoji}</span>
+                  <span>{config.nameFallback.split(' ')[0]}</span>
+                  {isActive && (
+                    <CheckCircleFilled
+                      style={{
+                        marginLeft: 'auto',
+                        color: 'var(--primary-color)',
+                      }}
+                    />
+                  )}
+                </div>
+                <div className="settings-panel__preset-desc">
+                  {config.taglineFallback}
+                </div>
+              </button>
+            );
+          })}
         </div>
+      </section>
 
-        <div className="settings-panel__field">
-          <label className="settings-panel__label">
-            {t('settings.skinLabel')}
-          </label>
-          <Segmented
-            value={skin}
-            onChange={(v) => setSkin(v as SkinKey)}
-            options={[
-              { value: 'default', label: t('settings.skinDefault') },
-              {
-                value: 'premium',
-                label: (
-                  <Tooltip
-                    title={
-                      theme === 'light'
-                        ? t('settings.skinPremiumLightDisabledHint')
-                        : ''
-                    }
-                  >
-                    <span>{t('settings.skinPremium')}</span>
-                  </Tooltip>
-                ),
-                disabled: theme === 'light',
-              },
-            ]}
-            block
-          />
+      {/* ── 2. Skins Atmosféricas Reales ── */}
+      <section className="settings-panel__section">
+        <h3 className="settings-panel__section-title">
+          Atmósfera Visual (Skins)
+        </h3>
+        <p className="settings-panel__hint">
+          Temas completos con carácter, paleta y vibras únicas:
+        </p>
+        <div className="settings-panel__skins-grid">
+          {SKIN_OPTIONS.map((opt) => {
+            const isActive = skin === opt.key;
+            return (
+              <button
+                key={opt.key}
+                type="button"
+                className={`settings-panel__skin-card ${
+                  isActive ? 'settings-panel__skin-card--active' : ''
+                }`}
+                onClick={() => setSkin(opt.key)}
+              >
+                <div className="settings-panel__skin-header">
+                  <span className="settings-panel__skin-title">{opt.name}</span>
+                  <div className="settings-panel__skin-swatches">
+                    {opt.colors.map((c, i) => (
+                      <span
+                        key={i}
+                        className="settings-panel__skin-swatch"
+                        style={{ background: c }}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <div className="settings-panel__skin-desc">{opt.desc}</div>
+              </button>
+            );
+          })}
         </div>
+      </section>
 
-        <div className="settings-panel__field">
-          <label className="settings-panel__label">
-            {t('settings.accentLabel')}
-          </label>
-          <div className="settings-panel__accent-row">
-            <div
-              className="settings-panel__accents"
-              role="radiogroup"
-              aria-label={t('settings.accentLabel')}
-            >
-              {(Object.keys(ACCENT_PRESETS) as AccentPresetKey[]).map((key) => {
-                const preset = ACCENT_PRESETS[key];
-                const isActive = !customAccent && accent === key;
-                return (
-                  <button
-                    key={key}
-                    type="button"
-                    role="radio"
-                    aria-checked={isActive}
-                    aria-label={preset.name}
-                    onClick={() => setAccent(key)}
-                    className={`settings-panel__accent${isActive ? ' settings-panel__accent--active' : ''}`}
-                    style={{ background: preset.swatch }}
-                  />
-                );
-              })}
+      {/* ── 3. Ajustes Avanzados de Afinación (Colapsable) ── */}
+      <section className="settings-panel__section">
+        <button
+          type="button"
+          className="settings-panel__advanced-toggle"
+          onClick={() => setAdvancedOpen(!advancedOpen)}
+        >
+          <span>
+            <SettingOutlined style={{ marginRight: 6 }} /> Ajustes Avanzados de
+            Afinación
+          </span>
+          {advancedOpen ? <UpOutlined /> : <DownOutlined />}
+        </button>
+
+        {advancedOpen && (
+          <div
+            style={{
+              marginTop: 12,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 14,
+            }}
+          >
+            {/* Modo Claro / Oscuro manual */}
+            <div className="settings-panel__field">
+              <label className="settings-panel__label">
+                {t('settings.themeLabel')}
+              </label>
+              <Segmented
+                value={theme}
+                onChange={(v) => setTheme(v as 'light' | 'dark')}
+                options={[
+                  { value: 'light', label: t('settings.themeLight') },
+                  { value: 'dark', label: t('settings.themeDark') },
+                ]}
+                block
+              />
             </div>
-            <ColorPicker
-              value={customAccent ?? ACCENT_PRESETS[accent].swatch}
-              onChange={(c: Color) => setCustomAccent(c.toHexString())}
-              size="small"
-              showText={false}
-              format="hex"
-              className={`settings-panel__color-picker${customAccent ? ' settings-panel__color-picker--active' : ''}`}
-            />
-            {/* Para volver al preset basta con clickear cualquier swatch
-             * (handleSetAccent limpia customAccent). No hace falta un
-             * boton extra de "Restaurar". */}
+
+            {/* Color de acento */}
+            <div className="settings-panel__field">
+              <label className="settings-panel__label">
+                {t('settings.accentLabel')}
+              </label>
+              <div className="settings-panel__accent-row">
+                <div
+                  className="settings-panel__accents"
+                  role="radiogroup"
+                  aria-label={t('settings.accentLabel')}
+                >
+                  {(Object.keys(ACCENT_PRESETS) as AccentPresetKey[]).map(
+                    (key) => {
+                      const p = ACCENT_PRESETS[key];
+                      const isActive = !customAccent && accent === key;
+                      return (
+                        <button
+                          key={key}
+                          type="button"
+                          role="radio"
+                          aria-checked={isActive}
+                          aria-label={p.name}
+                          onClick={() => setAccent(key)}
+                          className={`settings-panel__accent${
+                            isActive ? ' settings-panel__accent--active' : ''
+                          }`}
+                          style={{ background: p.swatch }}
+                        />
+                      );
+                    }
+                  )}
+                </div>
+                <ColorPicker
+                  value={customAccent ?? ACCENT_PRESETS[accent].swatch}
+                  onChange={(c: Color) => setCustomAccent(c.toHexString())}
+                  size="small"
+                  showText={false}
+                  format="hex"
+                  className={`settings-panel__color-picker${
+                    customAccent ? ' settings-panel__color-picker--active' : ''
+                  }`}
+                />
+              </div>
+            </div>
+
+            {/* Tono de contraste */}
+            <div className="settings-panel__field">
+              <label className="settings-panel__label">
+                {t('settings.toneLabel')}
+              </label>
+              <Segmented
+                value={tone}
+                onChange={(v) => setTone(v as ToneKey)}
+                options={[
+                  { value: 'default', label: t('settings.toneDefault') },
+                  { value: 'warm', label: t('settings.toneWarm') },
+                  { value: 'cool', label: t('settings.toneCool') },
+                  { value: 'contrast', label: t('settings.toneContrast') },
+                ]}
+                block
+              />
+            </div>
+
+            {/* Tipografía */}
+            <div className="settings-panel__field">
+              <label className="settings-panel__label">
+                {t('settings.fontLabel')}
+              </label>
+              <Select
+                value={font}
+                onChange={(v) => setFont(v as FontKey)}
+                className="settings-panel__select"
+                options={[
+                  { value: 'system', label: t('settings.fontSystem') },
+                  { value: 'serif', label: t('settings.fontSerif') },
+                  { value: 'mono', label: t('settings.fontMono') },
+                  { value: 'dyslexic', label: t('settings.fontDyslexic') },
+                ]}
+              />
+            </div>
+
+            {/* Escala tipográfica */}
+            <div className="settings-panel__field">
+              <label className="settings-panel__label">
+                {t('settings.scaleLabel')}
+              </label>
+              <Segmented
+                value={scale}
+                onChange={(v) => setScale(v as ScaleKey)}
+                options={[
+                  { value: 'sm', label: 'A' },
+                  { value: 'md', label: 'A' },
+                  { value: 'lg', label: 'A' },
+                  { value: 'xl', label: 'A' },
+                ]}
+                block
+                className="settings-panel__scale"
+              />
+            </div>
+
+            {/* Densidad */}
+            <div className="settings-panel__field">
+              <label className="settings-panel__label">
+                {t('settings.sectionDensity')}
+              </label>
+              <Segmented
+                value={density}
+                onChange={(v) => setDensity(v as DensityKey)}
+                options={[
+                  { value: 'compact', label: t('settings.densityCompact') },
+                  {
+                    value: 'comfortable',
+                    label: t('settings.densityComfortable'),
+                  },
+                  { value: 'spacious', label: t('settings.densitySpacious') },
+                ]}
+                block
+              />
+            </div>
+
+            {/* Accesibilidad (Motion & Data Saver) */}
+            <div className="settings-panel__field">
+              <label className="settings-panel__label">
+                {t('settings.motionLabel')}
+              </label>
+              <Segmented
+                value={motion}
+                onChange={(v) => setMotion(v as MotionKey)}
+                options={[
+                  { value: 'auto', label: t('settings.motionAuto') },
+                  { value: 'reduce', label: t('settings.motionReduce') },
+                ]}
+                block
+              />
+            </div>
+
+            <div className="settings-panel__field settings-panel__field--inline">
+              <div>
+                <label className="settings-panel__label">
+                  {t('settings.saverLabel')}
+                </label>
+                <p className="settings-panel__hint">
+                  {t('settings.saverDescription')}
+                </p>
+              </div>
+              <Switch
+                checked={saver === 'on'}
+                onChange={(v) => setSaver(v ? 'on' : 'off')}
+                aria-label={t('settings.saverLabel')}
+              />
+            </div>
           </div>
-        </div>
-
-        <div className="settings-panel__field">
-          <label className="settings-panel__label">
-            {t('settings.toneLabel')}
-          </label>
-          <Segmented
-            value={tone}
-            onChange={(v) => setTone(v as ToneKey)}
-            options={[
-              { value: 'default', label: t('settings.toneDefault') },
-              { value: 'warm', label: t('settings.toneWarm') },
-              { value: 'cool', label: t('settings.toneCool') },
-              { value: 'contrast', label: t('settings.toneContrast') },
-            ]}
-            block
-          />
-        </div>
+        )}
       </section>
 
-      {/* Tipografía ──────────────────────────────────── */}
-      <section className="settings-panel__section">
-        <h3 className="settings-panel__section-title">
-          {t('settings.sectionTypography')}
-        </h3>
-
-        <div className="settings-panel__field">
-          <label className="settings-panel__label">
-            {t('settings.fontLabel')}
-          </label>
-          <Select
-            value={font}
-            onChange={(v) => setFont(v as FontKey)}
-            className="settings-panel__select"
-            options={[
-              { value: 'system', label: t('settings.fontSystem') },
-              { value: 'serif', label: t('settings.fontSerif') },
-              { value: 'mono', label: t('settings.fontMono') },
-              { value: 'dyslexic', label: t('settings.fontDyslexic') },
-            ]}
-          />
-        </div>
-
-        <div className="settings-panel__field">
-          <label className="settings-panel__label">
-            {t('settings.scaleLabel')}
-          </label>
-          <Segmented
-            value={scale}
-            onChange={(v) => setScale(v as ScaleKey)}
-            options={[
-              { value: 'sm', label: 'A' },
-              { value: 'md', label: 'A' },
-              { value: 'lg', label: 'A' },
-              { value: 'xl', label: 'A' },
-            ]}
-            block
-            className="settings-panel__scale"
-          />
-        </div>
-      </section>
-
-      {/* Densidad ────────────────────────────────────── */}
-      <section className="settings-panel__section">
-        <h3 className="settings-panel__section-title">
-          {t('settings.sectionDensity')}
-        </h3>
-        <div className="settings-panel__field">
-          <Segmented
-            value={density}
-            onChange={(v) => setDensity(v as DensityKey)}
-            options={[
-              { value: 'compact', label: t('settings.densityCompact') },
-              {
-                value: 'comfortable',
-                label: t('settings.densityComfortable'),
-              },
-              { value: 'spacious', label: t('settings.densitySpacious') },
-            ]}
-            block
-          />
-        </div>
-      </section>
-
-      {/* Idioma ─────────────────────────────────────── */}
+      {/* ── 4. Idioma ── */}
       <section className="settings-panel__section">
         <h3 className="settings-panel__section-title">
           {t('settings.sectionLanguage')}
@@ -301,45 +479,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
         </div>
       </section>
 
-      {/* Accesibilidad ──────────────────────────────── */}
-      <section className="settings-panel__section">
-        <h3 className="settings-panel__section-title">
-          {t('settings.sectionAccessibility')}
-        </h3>
-
-        <div className="settings-panel__field">
-          <label className="settings-panel__label">
-            {t('settings.motionLabel')}
-          </label>
-          <Segmented
-            value={motion}
-            onChange={(v) => setMotion(v as MotionKey)}
-            options={[
-              { value: 'auto', label: t('settings.motionAuto') },
-              { value: 'reduce', label: t('settings.motionReduce') },
-            ]}
-            block
-          />
-        </div>
-
-        <div className="settings-panel__field settings-panel__field--inline">
-          <div>
-            <label className="settings-panel__label">
-              {t('settings.saverLabel')}
-            </label>
-            <p className="settings-panel__hint">
-              {t('settings.saverDescription')}
-            </p>
-          </div>
-          <Switch
-            checked={saver === 'on'}
-            onChange={(v) => setSaver(v ? 'on' : 'off')}
-            aria-label={t('settings.saverLabel')}
-          />
-        </div>
-      </section>
-
-      {/* Notificaciones ─────────────────────────────── */}
+      {/* ── 5. Notificaciones ── */}
       <section className="settings-panel__section">
         <h3 className="settings-panel__section-title">
           {t('settings.sectionNotifications')}
@@ -364,7 +504,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
         <NotificationsSettings />
       </section>
 
-      {/* Preferencias ──────────────────────────────── */}
+      {/* ── 6. Preferencias Comunitarias & Spoilers ── */}
       <section className="settings-panel__section">
         <h3 className="settings-panel__section-title">
           {t('settings.sectionPreferences')}
@@ -410,7 +550,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
         </div>
       </section>
 
-      {/* Datos y privacidad ─────────────────────────── */}
+      {/* ── 7. Datos y Privacidad ── */}
       <section className="settings-panel__section">
         <h3 className="settings-panel__section-title">
           {t('settings.sectionDataPrivacy')}
@@ -476,7 +616,7 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
         </div>
       </section>
 
-      {/* Reset ──────────────────────────────────────── */}
+      {/* ── 8. Reset ── */}
       <section className="settings-panel__section settings-panel__section--reset">
         <Popconfirm
           title={t('settings.resetConfirm')}

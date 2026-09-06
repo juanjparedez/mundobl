@@ -1,0 +1,65 @@
+/* ─── Skin: Neon Bangkok & Cyber Twilight ─────────────────────────────
+ * Estética urbana nocturna inspirada en las grandes producciones modernas de Tailandia/Corea.
+ * Azul medianoche profundo, contrastes en fucsia neón y cian vibrante con efectos translúcidos.
+ */
+
+html[data-skin='neon'] {
+  /* ─── Superficies (azul medianoche profundo) ─────────────────── */
+  --mb-bg: #070714;
+  --mb-bg-soft: #0d0d22;
+  --mb-panel: #131330;
+  --mb-panel-2: #1b1b42;
+  --mb-panel-3: #242456;
+  --mb-panel-strong: #2f2f6e;
+
+  /* ─── Texto ─────────────────────────────────────────────────── */
+  --mb-text: #f4f5ff;
+  --mb-text-muted: #b0b7e2;
+  --mb-text-dim: #7983be;
+  --mb-text-disabled: #4e5585;
+
+  /* ─── Bordes bioluminiscentes ───────────────────────────────── */
+  --mb-border: rgba(140, 100, 255, 0.18);
+  --mb-border-soft: rgba(140, 100, 255, 0.1);
+  --mb-border-strong: rgba(140, 100, 255, 0.32);
+
+  /* ─── Acentos (fucsia neón & cian eléctrico) ────────────────── */
+  --mb-gold: #e026b4;
+  --mb-gold-hover: #f043c7;
+  --mb-gold-active: #bd1495;
+  --mb-gold-soft: rgba(224, 38, 180, 0.15);
+  --mb-gold-soft-strong: rgba(224, 38, 180, 0.3);
+
+  --mb-purple: #9d4edd;
+  --mb-purple-soft: rgba(157, 78, 221, 0.16);
+  --mb-blue: #00f0ff;
+  --mb-blue-soft: rgba(0, 240, 255, 0.16);
+  --mb-green: #00ffaa;
+  --mb-green-soft: rgba(0, 255, 170, 0.16);
+  --mb-red: #ff0055;
+  --mb-red-soft: rgba(255, 0, 85, 0.16);
+
+  /* ─── Radii & Shadows ───────────────────────────────────────── */
+  --mb-radius-sm: 10px;
+  --mb-radius-md: 14px;
+  --mb-radius-lg: 20px;
+  --mb-radius-xl: 26px;
+
+  --mb-shadow-soft:
+    0 2px 8px rgba(0, 0, 0, 0.5), 0 10px 30px rgba(100, 40, 200, 0.2);
+  --mb-shadow-elevated:
+    0 4px 16px rgba(0, 0, 0, 0.6), 0 16px 48px rgba(140, 40, 240, 0.28);
+
+  /* ─── Mapeo de compatibilidad con variables base ─────────────── */
+  --bg-primary: var(--mb-bg);
+  --bg-secondary: var(--mb-panel);
+  --bg-card: var(--mb-panel);
+  --bg-card-hover: var(--mb-panel-2);
+  --bg-elevated: var(--mb-panel-2);
+  --border-color: var(--mb-border);
+  --border-color-secondary: var(--mb-border-soft);
+  --text-primary: var(--mb-text);
+  --text-secondary: var(--mb-text-muted);
+  --text-tertiary: var(--mb-text-dim);
+  --accent-color: var(--mb-gold);
+}
