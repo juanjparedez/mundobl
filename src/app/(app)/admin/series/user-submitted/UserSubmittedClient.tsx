@@ -3,17 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import {
-  Button,
-  Empty,
-  Modal,
-  Select,
-  Table,
-  Tag,
-  Tooltip,
-  Segmented,
-} from 'antd';
-import type { ColumnsType } from 'antd/es/table';
+import { Button, Empty, Modal, Select, Tag, Tooltip, Segmented } from 'antd';
+import { DataTable, type DataTableColumn } from '@/components/design-system';
 import {
   DeleteOutlined,
   EyeInvisibleOutlined,
@@ -206,7 +197,7 @@ export function UserSubmittedClient({ items: initial }: Props) {
     }
   }
 
-  const columns: ColumnsType<UserSubmittedRow> = [
+  const columns: DataTableColumn<UserSubmittedRow>[] = [
     {
       title: 'Serie',
       key: 'series',
@@ -433,12 +424,11 @@ export function UserSubmittedClient({ items: initial }: Props) {
       {filteredItems.length === 0 ? (
         <Empty description="No hay aportes con este filtro" />
       ) : (
-        <Table
-          scroll={{ x: 'max-content' }}
+        <DataTable
           rowKey="id"
           dataSource={filteredItems}
           columns={columns}
-          pagination={{ pageSize: 20, showSizeChanger: true }}
+          pageSize={20}
         />
       )}
 

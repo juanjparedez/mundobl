@@ -573,10 +573,22 @@ export type TranslationShape = {
     themeLight: string;
     themeDark: string;
     skinLabel: string;
+    skinHint: string;
     skinDefault: string;
+    skinDefaultDesc: string;
     skinPremium: string;
-    skinPremiumLightDisabledHint: string;
+    skinPremiumDesc: string;
+    skinSakura: string;
+    skinSakuraDesc: string;
+    skinMidnight: string;
+    skinMidnightDesc: string;
+    skinJournal: string;
+    skinJournalDesc: string;
+    skinNeon: string;
+    skinNeonDesc: string;
     accentLabel: string;
+    accentAuto: string;
+    accentAutoHint: string;
     accentResetCustom: string;
     toneLabel: string;
     toneDefault: string;
@@ -3505,11 +3517,25 @@ const es: TranslationShape = {
     themeLabel: 'Tema',
     themeLight: 'Claro',
     themeDark: 'Oscuro',
-    skinLabel: 'Estilo visual',
+    skinLabel: 'Skin (atmosfera visual)',
+    skinHint:
+      'Cambia solo la atmosfera visual: colores, bordes y sombras. No modifica tu modo claro/oscuro ni el resto de tus ajustes.',
     skinDefault: 'Predeterminado',
-    skinPremium: 'Premium',
-    skinPremiumLightDisabledHint: 'Premium solo esta disponible en modo oscuro',
+    skinDefaultDesc: 'Paleta base de MundoBL, equilibrada y neutra.',
+    skinPremium: 'Dark Obsidian',
+    skinPremiumDesc: 'Obsidiana y violeta profundo, con acabado premium.',
+    skinSakura: 'Sakura',
+    skinSakuraDesc: 'Marfil y rosa flor de cerezo; ciruela en modo oscuro.',
+    skinMidnight: 'Midnight AMOLED',
+    skinMidnightDesc: 'Contraste puro: negro real en oscuro, blanco en claro.',
+    skinJournal: 'Retro Journal',
+    skinJournalDesc: 'Papel pergamino y bronce, con aire editorial.',
+    skinNeon: 'Neon Bangkok',
+    skinNeonDesc: 'Noche electrica de ciudad: fucsia y cian.',
     accentLabel: 'Color de acento',
+    accentAuto: 'Automatico',
+    accentAutoHint:
+      'Se usa el acento que sugiere la skin activa. Elegi un color para fijar el tuyo.',
     accentResetCustom: 'Restaurar',
     toneLabel: 'Tono base',
     toneDefault: 'Predeterminado',
@@ -6553,11 +6579,25 @@ const en: TranslationShape = {
     themeLabel: 'Theme',
     themeLight: 'Light',
     themeDark: 'Dark',
-    skinLabel: 'Visual style',
+    skinLabel: 'Skin (visual atmosphere)',
+    skinHint:
+      'Only changes the visual atmosphere: colors, borders and shadows. It does not touch your light/dark mode or any other setting.',
     skinDefault: 'Default',
-    skinPremium: 'Premium',
-    skinPremiumLightDisabledHint: 'Premium is only available in dark mode',
+    skinDefaultDesc: "MundoBL's base palette, balanced and neutral.",
+    skinPremium: 'Dark Obsidian',
+    skinPremiumDesc: 'Obsidian and deep violet, with a premium finish.',
+    skinSakura: 'Sakura',
+    skinSakuraDesc: 'Ivory and cherry blossom pink; plum in dark mode.',
+    skinMidnight: 'Midnight AMOLED',
+    skinMidnightDesc: 'Pure contrast: true black in dark, white in light.',
+    skinJournal: 'Retro Journal',
+    skinJournalDesc: 'Parchment paper and bronze, with an editorial feel.',
+    skinNeon: 'Neon Bangkok',
+    skinNeonDesc: 'Electric city night: fuchsia and cyan.',
     accentLabel: 'Accent color',
+    accentAuto: 'Auto',
+    accentAutoHint:
+      'Uses the accent suggested by the active skin. Pick a color to set your own.',
     accentResetCustom: 'Reset',
     toneLabel: 'Base tone',
     toneDefault: 'Default',

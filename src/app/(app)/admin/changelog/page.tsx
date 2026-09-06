@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
-  Table,
   Button,
   Popconfirm,
   Space,
@@ -26,6 +25,7 @@ import { AdminPageHero } from '@/components/admin/AdminPageHero/AdminPageHero';
 import { AdminTableToolbar } from '@/components/admin/AdminTableToolbar/AdminTableToolbar';
 import { AdminNav } from '../AdminNav';
 import '../admin.css';
+import { DataTable } from '@/components/design-system';
 
 interface ChangelogItem {
   id: number;
@@ -479,14 +479,13 @@ export default function ChangelogAdminPage() {
           }
         />
 
-        <Table
-          scroll={{ x: 'max-content' }}
+        <DataTable
           dataSource={filteredItems}
           columns={columns}
           rowKey="id"
           loading={loading}
           size="small"
-          pagination={{ pageSize: 50, showSizeChanger: false }}
+          pageSize={50}
         />
 
         <Modal

@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
-  Table,
   Button,
   Input,
   Popconfirm,
@@ -22,6 +21,7 @@ import {
 import { useMessage } from '@/hooks/useMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { AdminTableToolbar } from '@/components/admin/AdminTableToolbar/AdminTableToolbar';
+import { DataTable } from '@/components/design-system';
 
 export interface GenreType {
   id: number;
@@ -281,7 +281,7 @@ export function GenresTab({ onGenresUpdated }: GenresTabProps) {
         }
       />
 
-      <Table
+      <DataTable
         rowSelection={{
           selectedRowKeys,
           onChange: setSelectedRowKeys,
@@ -290,13 +290,9 @@ export function GenresTab({ onGenresUpdated }: GenresTabProps) {
         dataSource={filteredGenres}
         rowKey="id"
         loading={loading}
-        pagination={{
-          pageSize: 25,
-          showSizeChanger: true,
-          pageSizeOptions: ['10', '25', '50', '100'],
-          showTotal: (total) => `${total} géneros en total`,
-        }}
-        scroll={{ x: 'max-content' }}
+        pageSize={25}
+        pageSizeOptions={['10', '25', '50', '100']}
+        showTotal={(total) => `${total} géneros en total`}
       />
 
       <Modal
@@ -342,7 +338,8 @@ export function GenresTab({ onGenresUpdated }: GenresTabProps) {
           style={{ marginBottom: 16 }}
         />
         <p style={{ marginBottom: 8, fontWeight: 500 }}>
-          Selecciona cuál de los {selectedRowKeys.length} géneros debe conservarse:
+          Selecciona cuál de los {selectedRowKeys.length} géneros debe
+          conservarse:
         </p>
         <Radio.Group
           value={mergeTarget}
