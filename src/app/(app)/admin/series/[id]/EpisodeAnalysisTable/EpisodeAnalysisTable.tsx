@@ -1,9 +1,10 @@
 'use client';
 
-import { Table, Tag, Tooltip, Typography } from 'antd';
+import { Tag, Tooltip, Typography } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import './EpisodeAnalysisTable.css';
+import { DataTable } from '@/components/design-system';
 
 const { Text } = Typography;
 
@@ -167,13 +168,14 @@ export function EpisodeAnalysisTable({
   }
 
   return (
-    <Table<EpisodeRow>
+    <DataTable<EpisodeRow>
       columns={columns}
       dataSource={data}
+      rowKey="key"
       size="small"
-      pagination={{ pageSize: 30, hideOnSinglePage: true }}
+      pageSize={30}
       className="mb-episode-table"
-      scroll={{ x: 800 }}
+      scrollX={800}
     />
   );
 }

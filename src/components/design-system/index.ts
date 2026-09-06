@@ -33,6 +33,13 @@ export type { ActionCardProps } from './ActionCard/ActionCard';
 export { MediaCard } from './MediaCard/MediaCard';
 export type { MediaCardProps } from './MediaCard/MediaCard';
 
+export { DataTable } from './DataTable/DataTable';
+export type {
+  DataTableProps,
+  DataTableColumn,
+  DataTableColumnRole,
+} from './DataTable/DataTable';
+
 export { AutoFitList } from './AutoFitList/AutoFitList';
 export type { AutoFitListProps } from './AutoFitList/AutoFitList';
 

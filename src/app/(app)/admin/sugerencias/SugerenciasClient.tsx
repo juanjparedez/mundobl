@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import {
-  Table,
   Tag,
   Button,
   Space,
@@ -27,6 +26,7 @@ import { PageTitleClient } from '@/components/common/PageTitle/PageTitleClient';
 import { formatPublicName } from '@/lib/user-display';
 import { useMessage } from '@/hooks/useMessage';
 import '../admin.css';
+import { DataTable } from '@/components/design-system';
 
 export interface SuggestionItem {
   id: number;
@@ -329,29 +329,25 @@ export function SugerenciasClient({
             </div>
           </Card>
 
-          <Table
-            scroll={{ x: 'max-content' }}
+          <DataTable
             columns={columns}
             dataSource={filtered}
             rowKey="id"
-            pagination={{ pageSize: 15 }}
-            locale={{
-              emptyText: (
-                <div style={{ padding: 24, textAlign: 'center' }}>
-                  <BulbOutlined
-                    style={{
-                      fontSize: 32,
-                      color: 'var(--text-tertiary)',
-                      marginBottom: 8,
-                    }}
-                  />
-                  <p style={{ margin: 0, color: 'var(--text-secondary)' }}>
-                    No hay sugerencias registradas con los filtros
-                    seleccionados.
-                  </p>
-                </div>
-              ),
-            }}
+            pageSize={15}
+            empty={
+              <div style={{ padding: 24, textAlign: 'center' }}>
+                <BulbOutlined
+                  style={{
+                    fontSize: 32,
+                    color: 'var(--text-tertiary)',
+                    marginBottom: 8,
+                  }}
+                />
+                <p style={{ margin: 0, color: 'var(--text-secondary)' }}>
+                  No hay sugerencias registradas con los filtros seleccionados.
+                </p>
+              </div>
+            }
           />
         </div>
       </div>

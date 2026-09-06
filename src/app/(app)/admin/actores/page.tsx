@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
-  Table,
   Button,
   Input,
   Modal,
@@ -31,6 +30,7 @@ import { AdminTableToolbar } from '@/components/admin/AdminTableToolbar/AdminTab
 import { AdminAlphabetIndex } from '@/components/admin/AdminAlphabetIndex/AdminAlphabetIndex';
 import { AdminNav } from '../AdminNav';
 import '../admin.css';
+import { DataTable } from '@/components/design-system';
 
 const { TextArea } = Input;
 const ALPHABET = '#ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -359,18 +359,13 @@ export default function ActoresAdminPage() {
           </Button>
         )}
 
-        <Table
-          scroll={{ x: 'max-content' }}
+        <DataTable
           dataSource={filteredActors}
           columns={columns}
           rowKey="id"
           loading={loading}
           rowSelection={rowSelection}
-          pagination={{
-            pageSize: 20,
-            showSizeChanger: true,
-            pageSizeOptions: ['10', '20', '50', '100'],
-          }}
+          pageSize={20}
         />
 
         <Modal

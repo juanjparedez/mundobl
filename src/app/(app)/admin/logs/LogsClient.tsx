@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import {
-  Table,
   Select,
   Input,
   DatePicker,
@@ -24,7 +23,7 @@ import {
   BugOutlined,
   BarChartOutlined,
 } from '@ant-design/icons';
-import type { ColumnsType } from 'antd/es/table';
+import { DataTable, type DataTableColumn } from '@/components/design-system';
 import { AdminNav } from '../AdminNav';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -312,7 +311,7 @@ export function LogsClient() {
     }
   };
 
-  const columns: ColumnsType<AccessLogEntry> = [
+  const columns: DataTableColumn<AccessLogEntry>[] = [
     {
       title: t('adminLogs.columnDate'),
       key: 'createdAt',
@@ -441,11 +440,11 @@ export function LogsClient() {
                 className="logs-stats__card"
                 loading={statsLoading}
               >
-                <Table
+                <DataTable
                   dataSource={stats.topEndpoints}
                   rowKey="path"
                   size="small"
-                  pagination={false}
+                  pageSize={false}
                   columns={[
                     {
                       title: t('adminLogs.columnPath'),
@@ -649,19 +648,18 @@ export function LogsClient() {
               )}
             </div>
           ) : (
-            <Table
+            <DataTable
               columns={columns}
               dataSource={logs}
               rowKey="id"
               loading={loading}
-              pagination={{
-                current: page,
-                total,
-                pageSize: 50,
-                onChange: setPage,
-                showTotal: (tot) =>
-                  interpolateMessage(t('adminLogs.showTotal'), { total: tot }),
-              }}
+              pageSize={50}
+              page={page}
+              total={total}
+              onPageChange={setPage}
+              showTotal={(tot) =>
+                interpolateMessage(t('adminLogs.showTotal'), { total: tot })
+              }
               size="small"
             />
           )}
