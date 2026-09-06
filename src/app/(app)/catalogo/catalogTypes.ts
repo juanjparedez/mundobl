@@ -20,7 +20,6 @@ export interface SerieData {
   runtimeHours?: number;
   anio: number;
   rating: number | null;
-  observaciones: string | null;
   imageUrl?: string | null;
   imagePosition?: string;
   synopsis?: string | null;

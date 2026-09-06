@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { FloatButton } from 'antd';
 import { ToolOutlined } from '@/lib/client-icons';
 import { getSeriesById } from '@/lib/database';
+import { stripPrivateNotes } from '@/lib/privacy';
 import { auth } from '@/lib/auth';
 import { SerieDetailClient } from './SerieDetailClient';
 import { ContentTypeConfig, ContentTypeValue } from '@/types/content';
@@ -62,14 +63,19 @@ export default async function SerieDetailPage({
   const session = await auth();
   // El userId se pasa al query para filtrar `viewStatus` al usuario actual
   // (evita exponer estados de otros usuarios — bug original del catalogo).
-  const serie = await getSeriesById(serieId, session?.user?.id ?? undefined);
+  const serieRaw = await getSeriesById(serieId, session?.user?.id ?? undefined);
 
-  if (!serie) {
+  if (!serieRaw) {
     notFound();
   }
 
   const role = session?.user?.role;
   const isAdminOrMod = role === 'ADMIN' || role === 'MODERATOR';
+
+  // Compuerta de notas privadas en el servidor: `SerieDetailClient` es un
+  // client component y sus props viajan en el payload RSC aunque el bloque
+  // no se renderice.
+  const serie = stripPrivateNotes(serieRaw, role === 'ADMIN');
 
   const actors = serie.actors?.map((sa) => sa.actor.name) ?? [];
   const directors = serie.directors?.map((sd) => sd.director.name) ?? [];

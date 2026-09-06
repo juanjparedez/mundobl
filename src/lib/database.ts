@@ -650,6 +650,22 @@ export async function getSeriesByUniverse(universeId: number) {
 // ============================================
 
 /**
+ * Campos de Series seguros para una tarjeta de filmografia publica.
+ *
+ * Es la lista blanca que usan las fichas de actor y director. Excluye a
+ * proposito `review`, `observations` y `notesPrivate` (notas privadas de
+ * curaduria) y todo el resto de columnas pesadas que la tarjeta no usa.
+ */
+const PUBLIC_SERIES_CARD_SELECT = {
+  id: true,
+  title: true,
+  year: true,
+  type: true,
+  imageUrl: true,
+  country: { select: { name: true, code: true } },
+} as const;
+
+/**
  * Obtener todos los actores
  */
 export async function getAllActors() {
@@ -666,17 +682,29 @@ export async function getAllActors() {
 export async function getActorById(id: number) {
   // Filtra series por origin='CURATED' y catalogScope='PERSONAL' — los
   // actores asociados a USER_EMBED no exponen sus aportes en /actores/[id].
+  //
+  // `select` explicito, no `include`: la ficha de actor es publica y su
+  // componente de render es 'use client', asi que TODO lo que traigamos
+  // viaja en el payload RSC del HTML. Con `include` se colaban `review`,
+  // `observations` y `notesPrivate` de cada serie (notas privadas de
+  // curaduria). Al agregar un campo aca, chequear que sea publicable.
   return await prisma.actor.findUnique({
     where: { id },
-    include: {
+    select: {
+      id: true,
+      name: true,
+      stageName: true,
+      birthDate: true,
+      nationality: true,
+      imageUrl: true,
+      biography: true,
+      funFacts: true,
       series: {
         where: { series: { origin: 'CURATED', catalogScope: 'PERSONAL' } },
-        include: {
-          series: {
-            include: {
-              country: true,
-            },
-          },
+        select: {
+          character: true,
+          isMain: true,
+          series: { select: PUBLIC_SERIES_CARD_SELECT },
         },
       },
       seasons: {
@@ -685,14 +713,13 @@ export async function getActorById(id: number) {
             series: { origin: 'CURATED', catalogScope: 'PERSONAL' },
           },
         },
-        include: {
+        select: {
+          character: true,
+          isMain: true,
           season: {
-            include: {
-              series: {
-                include: {
-                  country: true,
-                },
-              },
+            select: {
+              seasonNumber: true,
+              series: { select: PUBLIC_SERIES_CARD_SELECT },
             },
           },
         },
@@ -802,16 +829,27 @@ export async function getAllDirectorsWithCount() {
  * Obtener un director por ID con sus series
  */
 export async function getDirectorById(id: number) {
+  // Mismo criterio que getActorById: `select` explicito porque la ficha es
+  // publica y se renderiza en un client component.
   return await prisma.director.findUnique({
     where: { id },
-    include: {
+    select: {
+      id: true,
+      name: true,
+      nationality: true,
+      imageUrl: true,
+      biography: true,
+      aliases: true,
+      imdbUrl: true,
+      mdlUrl: true,
+      wikiUrl: true,
+      birthYear: true,
+      awards: true,
       series: {
         where: { series: { origin: 'CURATED', catalogScope: 'PERSONAL' } },
-        include: {
+        select: {
           series: {
-            include: {
-              country: true,
-            },
+            select: { ...PUBLIC_SERIES_CARD_SELECT, overallRating: true },
           },
         },
       },
@@ -841,23 +879,22 @@ export async function searchDirectorsByName(query: string) {
 export async function getTagById(id: number) {
   // Filtra series por origin='CURATED' y catalogScope='PERSONAL' — los tags
   // de USER_EMBED no exponen sus aportes en /tags/[id].
+  // `select` explicito por el mismo motivo que getActorById: /tags/[id] es
+  // publica y renderiza en un client component, asi que `include` filtraba
+  // `review`/`observations`/`notesPrivate` al payload RSC.
   return await prisma.tag.findUnique({
     where: { id },
-    include: {
+    select: {
+      id: true,
+      name: true,
+      category: true,
       series: {
         where: { series: { origin: 'CURATED', catalogScope: 'PERSONAL' } },
-        include: {
+        select: {
           series: {
-            include: {
-              country: true,
-              universe: true,
-              seasons: {
-                select: {
-                  id: true,
-                  seasonNumber: true,
-                  episodeCount: true,
-                },
-              },
+            select: {
+              ...PUBLIC_SERIES_CARD_SELECT,
+              universe: { select: { name: true } },
             },
           },
         },
