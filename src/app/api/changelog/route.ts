@@ -49,6 +49,14 @@ function parseChangelogFile(): ChangelogEntry[] {
           body: line.slice(2).trim(),
           category: currentCategory,
         });
+      } else if (
+        current &&
+        current.items.length > 0 &&
+        line.trim() &&
+        !line.startsWith('#')
+      ) {
+        const lastItem = current.items[current.items.length - 1];
+        lastItem.body += ' ' + line.trim();
       }
     }
 
