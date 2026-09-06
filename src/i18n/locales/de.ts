@@ -2838,6 +2838,32 @@ const de: TranslationShape = {
     "finishTitle": "Quiz abgeschlossen!",
     "playAgainButton": "Erneut spielen",
     "bestScoreLabel": "Ihre beste Punktzahl: {score} von {total}"
+  },
+  "quickPreview": {
+    "open": "Schnellansicht",
+    "close": "Schließen",
+    "synopsis": "Handlung",
+    "noSynopsis": "Keine Handlung vorhanden",
+    "moreInfo": "Mehr Infos",
+    "fullDetail": "Vollständige Details",
+    "watchNow": "Jetzt ansehen",
+    "genres": "Genres",
+    "tags": "Tags",
+    "cast": "Besetzung",
+    "directors": "Regie",
+    "platforms": "Plattformen",
+    "universe": "Universum",
+    "seasons": "Staffeln",
+    "episodes": "Folgen",
+    "runtime": "Laufzeit",
+    "year": "Jahr",
+    "country": "Land",
+    "type": "Typ",
+    "rating": "Bewertung",
+    "language": "Sprache",
+    "company": "Studio",
+    "character": "Rolle",
+    "hoverHint": "Mit der Maus über eine Karte fahren für mehr"
   }
 } as unknown as TranslationShape;
 

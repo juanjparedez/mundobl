@@ -13,7 +13,11 @@ import { PageTitle } from '@/components/common/PageTitle/PageTitle';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { WatchableCarousel } from '@/components/common/WatchableCarousel/WatchableCarousel';
 import type { WatchableCarouselItem } from '@/components/common/WatchableCarousel/WatchableCarousel';
-import { MediaCard } from '@/components/design-system';
+import {
+  MediaCard,
+  useQuickPreviewController,
+} from '@/components/design-system';
+import type { QuickPreviewData } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
@@ -29,6 +33,7 @@ interface NewSerie {
   imagePosition: string;
   year: number | null;
   type: string;
+  synopsis: string | null;
   createdAt: Date | string;
   country: { name: string; code: string | null } | null;
 }
@@ -103,6 +108,65 @@ export function NovedadesClient({
   const hasContent =
     newSeries.length > 0 || newSeasons.length > 0 || changelog.length > 0;
 
+  // Vista rapida de las series recien agregadas: ver de que va sin abrir
+  // la ficha es justamente lo que uno quiere hacer recorriendo novedades.
+  const previewApi = useQuickPreviewController({
+    labels: {
+      close: t('quickPreview.close'),
+      synopsis: t('quickPreview.synopsis'),
+      noSynopsis: t('quickPreview.noSynopsis'),
+      moreInfo: t('quickPreview.moreInfo'),
+    },
+  });
+
+  const buildSeriePreview = (serie: NewSerie): QuickPreviewData => ({
+    id: String(serie.id),
+    title: serie.title,
+    imageUrl: cardImageUrl(serie),
+    imagePosition: serie.imagePosition,
+    coverAspect: '16:9',
+    badges: [{ key: 'type', label: serie.type, color: 'purple' }],
+    meta: (
+      <>
+        {serie.country && (
+          <span>
+            {serie.country.code && <CountryFlag code={serie.country.code} />}{' '}
+            {serie.country.name}
+          </span>
+        )}
+        {serie.year && <span>{serie.year}</span>}
+        <span>{relativeTime(serie.createdAt, t)}</span>
+      </>
+    ),
+    synopsis: serie.synopsis,
+    facts: serie.year
+      ? [{ key: 'year', label: t('quickPreview.year'), value: serie.year }]
+      : [],
+    chipGroups: serie.country
+      ? [
+          {
+            key: 'country',
+            label: t('quickPreview.country'),
+            chips: [
+              {
+                key: `country-${serie.country.name}`,
+                label: serie.country.name,
+                href: `/catalogo?country=${encodeURIComponent(serie.country.name)}`,
+              },
+            ],
+          },
+        ]
+      : [],
+    actions: [
+      {
+        key: 'detail',
+        label: t('quickPreview.fullDetail'),
+        variant: 'primary' as const,
+        href: `/series/${serie.id}`,
+      },
+    ],
+  });
+
   return (
     <div className="novedades-page app-page">
       <PageTitle
@@ -140,6 +204,11 @@ export function NovedadesClient({
                     imageUrl={cardImageUrl(s)}
                     imageAlt={s.title}
                     unoptimizedImage={isSupabaseImageUrl(cardImageUrl(s))}
+                    preview={{
+                      api: previewApi,
+                      getData: () => buildSeriePreview(s),
+                      openLabel: t('quickPreview.open'),
+                    }}
                     title={s.title}
                     overlayTags={
                       s.country?.code ? (
@@ -283,6 +352,8 @@ export function NovedadesClient({
           )}
         </>
       )}
+
+      {previewApi.overlays}
     </div>
   );
 }

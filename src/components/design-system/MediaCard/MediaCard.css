@@ -89,6 +89,32 @@
   }
 }
 
+/* Boton de vista rapida. Mismo tamaño y lenguaje que el del catalogo
+ * (.serie-card-action-btn) para que el gesto se lea igual en todo el
+ * sitio: el ojo siempre abre el preview, nunca navega. */
+.mb-media-card__preview-btn {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  transition: var(--transition-fast);
+  font-size: 0.85rem;
+  padding: 0;
+}
+
+.mb-media-card__preview-btn:hover,
+.mb-media-card__preview-btn:focus-visible {
+  background: var(--primary-color);
+  transform: scale(1.08);
+}
+
 .mb-media-card__body {
   display: flex;
   flex-direction: column;

@@ -1,7 +1,8 @@
 'use client';
 
-import { useRef, type ReactNode } from 'react';
+import { type ReactNode } from 'react';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { useCarouselNav } from '@/hooks/useCarouselNav';
 import './CatalogCarouselRow.css';
 
 export interface CatalogCarouselRowProps {
@@ -15,9 +16,9 @@ export interface CatalogCarouselRowProps {
 }
 
 /** Una fila del carrusel de /catalogo: titulo + scroll horizontal + dos
- *  flechas. Mecanica calcada de MediaCarousel (/ver) — mismo scroll por
- *  clientWidth*0.75 — pero componente propio de catalogo, sin depender
- *  de esa forma de datos. */
+ *  flechas. La mecanica (paginado, extremos, drag con mouse) vive en
+ *  `useCarouselNav`, compartida con MediaCarousel (/ver) y
+ *  WatchableCarousel; esta fila solo aporta layout y estilo. */
 export function CatalogCarouselRow({
   title,
   icon,
@@ -25,16 +26,8 @@ export function CatalogCarouselRow({
   scrollNextLabel,
   children,
 }: CatalogCarouselRowProps) {
-  const trackRef = useRef<HTMLDivElement>(null);
-
-  const scrollByDirection = (direction: 1 | -1) => {
-    const el = trackRef.current;
-    if (!el) return;
-    el.scrollBy({
-      left: direction * el.clientWidth * 0.75,
-      behavior: 'smooth',
-    });
-  };
+  const { trackRef, canScrollPrev, canScrollNext, scrollPrev, scrollNext } =
+    useCarouselNav();
 
   return (
     <section className="catalog-carousel-row">
@@ -46,17 +39,21 @@ export function CatalogCarouselRow({
         <div className="catalog-carousel-row__nav">
           <button
             type="button"
-            className="catalog-carousel-row__nav-btn"
+            className={`catalog-carousel-row__nav-btn${canScrollPrev ? '' : ' mb-carousel-arrow--disabled'}`}
             aria-label={scrollPrevLabel}
-            onClick={() => scrollByDirection(-1)}
+            aria-disabled={!canScrollPrev}
+            disabled={!canScrollPrev}
+            onClick={scrollPrev}
           >
             <LeftOutlined />
           </button>
           <button
             type="button"
-            className="catalog-carousel-row__nav-btn"
+            className={`catalog-carousel-row__nav-btn${canScrollNext ? '' : ' mb-carousel-arrow--disabled'}`}
             aria-label={scrollNextLabel}
-            onClick={() => scrollByDirection(1)}
+            aria-disabled={!canScrollNext}
+            disabled={!canScrollNext}
+            onClick={scrollNext}
           >
             <RightOutlined />
           </button>

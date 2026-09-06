@@ -13,6 +13,7 @@ import {
   VideoCameraFilled,
   UpOutlined,
   DownOutlined,
+  EyeOutlined,
 } from '@ant-design/icons';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
@@ -32,6 +33,10 @@ interface HeroBillboardProps {
   collapseTooltip: string;
   expandTooltip: string;
   geoRestrictedLabel?: string;
+  /** Vista rapida. La sinopsis del hero se corta a 220 caracteres; sin
+   *  esto la unica forma de leerla entera era irse a la ficha. */
+  onQuickView?: () => void;
+  quickViewLabel?: string;
 }
 
 /** Hero destacado de /ver. Colapsable: en vez de desaparecer del todo,
@@ -52,6 +57,8 @@ export function HeroBillboard({
   collapseTooltip,
   expandTooltip,
   geoRestrictedLabel,
+  onQuickView,
+  quickViewLabel,
 }: HeroBillboardProps) {
   if (!featured) return null;
 
@@ -206,6 +213,17 @@ export function HeroBillboard({
               {infoButtonLabel}
             </Button>
           </Link>
+          {onQuickView && quickViewLabel && (
+            <Button
+              size="large"
+              type="text"
+              icon={<EyeOutlined />}
+              onClick={onQuickView}
+              className="hero-billboard__quickview-btn"
+            >
+              {quickViewLabel}
+            </Button>
+          )}
         </div>
       </div>
     </div>

@@ -2838,6 +2838,32 @@ const ja: TranslationShape = {
     "finishTitle": "トリビア完了！",
     "playAgainButton": "もう一度プレイ",
     "bestScoreLabel": "あなたの最高スコア: {total}問中{score}問"
+  },
+  "quickPreview": {
+    "open": "クイックビュー",
+    "close": "閉じる",
+    "synopsis": "あらすじ",
+    "noSynopsis": "あらすじは未登録です",
+    "moreInfo": "詳細を見る",
+    "fullDetail": "作品ページ",
+    "watchNow": "今すぐ見る",
+    "genres": "ジャンル",
+    "tags": "タグ",
+    "cast": "キャスト",
+    "directors": "監督",
+    "platforms": "配信先",
+    "universe": "ユニバース",
+    "seasons": "シーズン",
+    "episodes": "エピソード",
+    "runtime": "再生時間",
+    "year": "年",
+    "country": "国",
+    "type": "種別",
+    "rating": "評価",
+    "language": "言語",
+    "company": "制作会社",
+    "character": "役名",
+    "hoverHint": "カードにカーソルを合わせると詳細が表示されます"
   }
 } as unknown as TranslationShape;
 

@@ -2,6 +2,8 @@
 
 import type { CSSProperties, KeyboardEvent, ReactNode } from 'react';
 import Image from 'next/image';
+import { EyeOutlined } from '@ant-design/icons';
+import type { CardPreviewBinding } from '../QuickPreview/quickPreviewTypes';
 import './MediaCard.css';
 
 export interface MediaCardProps {
@@ -35,6 +37,12 @@ export interface MediaCardProps {
   onClick?: () => void;
   /** Aspect ratio del cover. Default 2:3 (poster). */
   aspectRatio?: '2:3' | '16:9' | '1:1';
+  /**
+   * Vista rapida. Cuando esta, la card suma el boton del ojo (abre el
+   * modal) y el hover-preview de desktop, sin que el usuario tenga que
+   * navegar al detalle para ver sinopsis, elenco o generos.
+   */
+  preview?: CardPreviewBinding;
   className?: string;
   style?: CSSProperties;
 }
@@ -61,6 +69,7 @@ export function MediaCard({
   href,
   onClick,
   aspectRatio = '2:3',
+  preview,
   className,
   style,
 }: MediaCardProps) {
@@ -113,7 +122,11 @@ export function MediaCard({
   );
 
   return (
-    <div className={classes} style={innerStyle}>
+    <div
+      className={classes}
+      style={innerStyle}
+      {...(preview?.api.previewTriggerProps(preview.getData) ?? {})}
+    >
       {href ? (
         <a href={href} className="mb-media-card__link">
           {coverAndBody}
@@ -134,7 +147,28 @@ export function MediaCard({
       {overlayTags && (
         <div className="mb-media-card__overlay-tags">{overlayTags}</div>
       )}
-      {actions && <div className="mb-media-card__actions">{actions}</div>}
+      {(actions || preview) && (
+        <div className="mb-media-card__actions">
+          {preview && (
+            <button
+              type="button"
+              className="mb-media-card__preview-btn"
+              aria-label={preview.openLabel}
+              title={preview.openLabel}
+              onClick={(event) => {
+                // La card entera es un link: sin esto el click navega al
+                // detalle, que es justo lo que el preview evita.
+                event.preventDefault();
+                event.stopPropagation();
+                preview.api.openPreview(preview.getData);
+              }}
+            >
+              <EyeOutlined />
+            </button>
+          )}
+          {actions}
+        </div>
+      )}
       {footer && <div className="mb-media-card__footer">{footer}</div>}
     </div>
   );

@@ -2838,6 +2838,32 @@ const fr: TranslationShape = {
     "finishTitle": "Quiz terminé !",
     "playAgainButton": "Rejouer",
     "bestScoreLabel": "Votre meilleur score : {score} sur {total}"
+  },
+  "quickPreview": {
+    "open": "Aperçu rapide",
+    "close": "Fermer",
+    "synopsis": "Synopsis",
+    "noSynopsis": "Aucun synopsis disponible",
+    "moreInfo": "Plus d’infos",
+    "fullDetail": "Fiche complète",
+    "watchNow": "Regarder",
+    "genres": "Genres",
+    "tags": "Tags",
+    "cast": "Casting",
+    "directors": "Réalisation",
+    "platforms": "Plateformes",
+    "universe": "Univers",
+    "seasons": "Saisons",
+    "episodes": "Épisodes",
+    "runtime": "Durée",
+    "year": "Année",
+    "country": "Pays",
+    "type": "Type",
+    "rating": "Note",
+    "language": "Langue",
+    "company": "Studio",
+    "character": "Personnage",
+    "hoverHint": "Survolez une carte pour en voir plus"
   }
 } as unknown as TranslationShape;
 

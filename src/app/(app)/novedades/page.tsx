@@ -33,6 +33,7 @@ const getNovedadesData = unstable_cache(
           imagePosition: true,
           year: true,
           type: true,
+          synopsis: true,
           createdAt: true,
           country: { select: { name: true, code: true } },
         },
