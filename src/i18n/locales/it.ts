@@ -1153,6 +1153,22 @@ const it: TranslationShape = {
     "unbanSuccess": "Ban utente rimosso",
     "banError": "Errore durante il ban dell'utente"
   },
+  "adminColaborador": {
+    "filterAllStatuses": "Tutti gli stati",
+    "filterAllCountries": "Tutti i paesi",
+    "statusVisible": "Pubblicata su /ver",
+    "statusHidden": "Nascosta da un amministratore",
+    "statusPending": "In revisione",
+    "statusRejected": "Rifiutata",
+    "statsSectionTitle": "Statistiche dei tuoi contributi",
+    "statsWatching": "In visione ora",
+    "statsWatched": "Visualizzazioni complete",
+    "statsFavorites": "Preferiti",
+    "statsComments": "Commenti",
+    "statsReviews": "Recensioni",
+    "statsSubscriptions": "Iscritti",
+    "notificationsSectionTitle": "Notifiche sui tuoi contributi"
+  },
   "adminContent": {
     "title": "Gestione Contenuti",
     "subtitle": "Gestisci video incorporabili per serie e catalogo.",
@@ -2297,6 +2313,8 @@ const it: TranslationShape = {
     "contentAddedLabel": "Contenuto",
     "reviewPublishedLabel": "Recensione",
     "commentThreadLabel": "Commento",
+    "seriesApprovedLabel": "Contributo approvato",
+    "seriesRejectedLabel": "Contributo rifiutato",
     "testLabel": "Test",
     "defaultNotificationLabel": "Avviso",
     "timeAgoRecent": "proprio ora",
