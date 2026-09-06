@@ -1,16 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import {
-  Table,
-  Button,
-  Input,
-  Modal,
-  Form,
-  Popconfirm,
-  Space,
-  Tag,
-} from 'antd';
+import { Button, Input, Modal, Form, Popconfirm, Space, Tag } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -20,6 +11,7 @@ import { AdminPageHero } from '@/components/admin/AdminPageHero/AdminPageHero';
 import { AdminTableToolbar } from '@/components/admin/AdminTableToolbar/AdminTableToolbar';
 import { AdminNav } from '../AdminNav';
 import '../admin.css';
+import { DataTable } from '@/components/design-system';
 
 interface ProductionCompanyType {
   id: number;
@@ -243,13 +235,12 @@ export default function ProductorasAdminPage() {
           onSearchClear={() => setSearchTerm('')}
         />
 
-        <Table
-          scroll={{ x: 'max-content' }}
+        <DataTable
           dataSource={filteredCompanies}
           columns={columns}
           rowKey="id"
           loading={loading}
-          pagination={{ pageSize: 20, showSizeChanger: true }}
+          pageSize={20}
         />
 
         <Modal

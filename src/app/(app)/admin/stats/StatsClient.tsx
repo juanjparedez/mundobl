@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Spin, Table, Tag, Avatar, Tooltip, Button, Space } from 'antd';
+import { Spin, Tag, Avatar, Tooltip, Button, Space } from 'antd';
 import {
   UserOutlined,
   PlayCircleOutlined,
@@ -22,6 +22,7 @@ import { interpolateMessage } from '@/lib/i18n-format';
 import { DonutChart, LineChart } from '@/components/charts';
 import '../admin.css';
 import './stats.css';
+import { DataTable } from '@/components/design-system';
 
 interface SeriesRankItem {
   seriesId: number;
@@ -414,12 +415,11 @@ export function StatsClient() {
                   <TeamOutlined />
                   {t('adminStats.activeUsers')}
                 </div>
-                <Table
-                  scroll={{ x: 'max-content' }}
+                <DataTable
                   dataSource={data.activeUsers}
                   columns={userColumns}
                   rowKey="id"
-                  pagination={false}
+                  pageSize={false}
                   size="small"
                 />
               </div>

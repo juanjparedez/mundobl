@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Button, Card, Select, Space, Table, Tag, Typography, message } from 'antd';
+import { Button, Card, Select, Space, Tag, Typography, message } from 'antd';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { AdminNav } from '../AdminNav';
 import { PageTitleClient } from '@/components/common/PageTitle/PageTitleClient';
 import '../admin.css';
+import { DataTable } from '@/components/design-system';
 
 export interface GlossarySuggestionItem {
   id: number;
@@ -24,7 +25,12 @@ export interface GlossarySuggestionItem {
   adminNotes: string | null;
   createdAt: string;
   updatedAt: string;
-  user: { id: string; name: string | null; nickname: string | null; image: string | null } | null;
+  user: {
+    id: string;
+    name: string | null;
+    nickname: string | null;
+    image: string | null;
+  } | null;
 }
 
 interface Props {
@@ -45,18 +51,27 @@ export function GlosarioSuggestionsClient({ initialSuggestions }: Props) {
         body: JSON.stringify({ status }),
       });
       if (!response.ok) throw new Error('No se pudo actualizar la sugerencia.');
-      setSuggestions((current) => current.map((item) => (item.id === id ? { ...item, status } : item)));
-      message.success(status === 'APPROVED' ? 'Término aprobado y publicado.' : 'Sugerencia rechazada.');
+      setSuggestions((current) =>
+        current.map((item) => (item.id === id ? { ...item, status } : item))
+      );
+      message.success(
+        status === 'APPROVED'
+          ? 'Término aprobado y publicado.'
+          : 'Sugerencia rechazada.'
+      );
     } catch (error: unknown) {
-      message.error(error instanceof Error ? error.message : 'Error al actualizar.');
+      message.error(
+        error instanceof Error ? error.message : 'Error al actualizar.'
+      );
     } finally {
       setUpdatingId(null);
     }
   };
 
-  const filtered = statusFilter === 'ALL'
-    ? suggestions
-    : suggestions.filter((suggestion) => suggestion.status === statusFilter);
+  const filtered =
+    statusFilter === 'ALL'
+      ? suggestions
+      : suggestions.filter((suggestion) => suggestion.status === statusFilter);
 
   return (
     <>
@@ -77,18 +92,18 @@ export function GlosarioSuggestionsClient({ initialSuggestions }: Props) {
               ]}
             />
           </Space>
-          <Table
+          <DataTable
             rowKey="id"
             dataSource={filtered}
-            scroll={{ x: 900 }}
+            scrollX={900}
             expandable={{
               rowExpandable: (item) =>
                 Boolean(
                   item.examples ||
-                    item.commonMistake ||
-                    item.sourceName ||
-                    item.sourceUrl ||
-                    item.notes
+                  item.commonMistake ||
+                  item.sourceName ||
+                  item.sourceUrl ||
+                  item.notes
                 ),
               expandedRowRender: (item) => (
                 <Space direction="vertical" size="small">
@@ -145,17 +160,43 @@ export function GlosarioSuggestionsClient({ initialSuggestions }: Props) {
                 title: 'Estado',
                 dataIndex: 'status',
                 key: 'status',
-                render: (status: string) => <Tag color={status === 'APPROVED' ? 'green' : status === 'REJECTED' ? 'red' : 'gold'}>{status}</Tag>,
+                render: (status: string) => (
+                  <Tag
+                    color={
+                      status === 'APPROVED'
+                        ? 'green'
+                        : status === 'REJECTED'
+                          ? 'red'
+                          : 'gold'
+                    }
+                  >
+                    {status}
+                  </Tag>
+                ),
               },
               {
                 title: 'Acciones',
                 key: 'actions',
-                render: (_: unknown, item: GlossarySuggestionItem) => item.status === 'PENDING' && (
-                  <Space>
-                    <Button loading={updatingId === item.id} icon={<CheckOutlined />} onClick={() => updateStatus(item.id, 'APPROVED')}>Aprobar</Button>
-                    <Button danger loading={updatingId === item.id} icon={<CloseOutlined />} onClick={() => updateStatus(item.id, 'REJECTED')}>Rechazar</Button>
-                  </Space>
-                ),
+                render: (_: unknown, item: GlossarySuggestionItem) =>
+                  item.status === 'PENDING' && (
+                    <Space>
+                      <Button
+                        loading={updatingId === item.id}
+                        icon={<CheckOutlined />}
+                        onClick={() => updateStatus(item.id, 'APPROVED')}
+                      >
+                        Aprobar
+                      </Button>
+                      <Button
+                        danger
+                        loading={updatingId === item.id}
+                        icon={<CloseOutlined />}
+                        onClick={() => updateStatus(item.id, 'REJECTED')}
+                      >
+                        Rechazar
+                      </Button>
+                    </Space>
+                  ),
               },
             ]}
           />

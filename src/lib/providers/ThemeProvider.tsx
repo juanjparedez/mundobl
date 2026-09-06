@@ -18,6 +18,7 @@ import {
   ACCENT_PRESETS,
   DEFAULT_ACCENT,
   deriveAccentColorsFromHex,
+  getSkinAccentHex,
   type AccentPresetKey,
   type AccentColors,
 } from '../theme.config';
@@ -32,7 +33,6 @@ import type {
   SaverKey,
   SkinKey,
 } from '@/types/theme.types';
-import { VIEW_PRESETS, type ViewPresetKey } from '@/types/presets.types';
 import { useLocale } from './LocaleProvider';
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -52,7 +52,6 @@ interface ThemeProviderProps {
 
 const STORAGE_KEYS = {
   theme: 'theme',
-  preset: 'theme-preset',
   accent: 'theme-accent',
   customAccent: 'theme-accent-custom',
   tone: 'theme-tone',
@@ -64,6 +63,12 @@ const STORAGE_KEYS = {
   skin: 'theme-skin',
 } as const;
 
+/** Claves de preferencias que ya no existen y se limpian al montar, para no
+ *  dejar basura en el localStorage de usuarios que vienen de versiones
+ *  anteriores. `theme-preset` era el "modo de experiencia" que reconfiguraba
+ *  vista y densidad por detras; se elimino a favor de la config granular. */
+const LEGACY_STORAGE_KEYS = ['theme-preset'] as const;
+
 const HEX6_REGEX = /^#?[0-9a-f]{6}$/i;
 
 function normalizeHex(value: string): string | null {
@@ -73,13 +78,6 @@ function normalizeHex(value: string): string | null {
     : `#${value.toLowerCase()}`;
 }
 
-const VALID_PRESETS: ViewPresetKey[] = [
-  'cinema',
-  'tracker',
-  'encyclopedia',
-  'blind',
-  'custom',
-];
 const VALID_TONES: ToneKey[] = ['default', 'warm', 'cool', 'contrast'];
 const VALID_FONTS: FontKey[] = ['system', 'serif', 'mono', 'dyslexic'];
 const VALID_SCALES: ScaleKey[] = ['sm', 'md', 'lg', 'xl'];
@@ -105,8 +103,8 @@ function pick<T extends string>(
 
 interface ThemeState {
   theme: ThemeMode;
-  preset: ViewPresetKey;
-  accent: AccentPresetKey;
+  /** `null` = automatico: se usa el acento sugerido por la skin activa. */
+  accent: AccentPresetKey | null;
   customAccent: string | null;
   tone: ToneKey;
   font: FontKey;
@@ -118,21 +116,35 @@ interface ThemeState {
   mounted: boolean;
 }
 
+/**
+ * Orden de precedencia del acento, de mayor a menor:
+ *   1. Hex custom elegido con el ColorPicker.
+ *   2. Preset de acento elegido explicitamente por el usuario.
+ *   3. Acento sugerido por la skin activa (solo si el usuario no eligio).
+ *   4. Acento por defecto de la app.
+ *
+ * La skin nunca pisa una eleccion explicita: solo completa el hueco.
+ */
 function resolveAccentColors(
-  accent: AccentPresetKey,
+  accent: AccentPresetKey | null,
   customAccent: string | null,
-  mode: ThemeMode
+  mode: ThemeMode,
+  skin: SkinKey
 ): AccentColors {
   if (customAccent) return deriveAccentColorsFromHex(customAccent);
-  return ACCENT_PRESETS[accent][mode];
+  if (accent) return ACCENT_PRESETS[accent][mode];
+  const skinAccent = getSkinAccentHex(skin, mode);
+  if (skinAccent) return deriveAccentColorsFromHex(skinAccent);
+  return ACCENT_PRESETS[DEFAULT_ACCENT][mode];
 }
 
 function applyAccentVars(
-  accent: AccentPresetKey,
+  accent: AccentPresetKey | null,
   customAccent: string | null,
-  mode: ThemeMode
+  mode: ThemeMode,
+  skin: SkinKey
 ): void {
-  const colors = resolveAccentColors(accent, customAccent, mode);
+  const colors = resolveAccentColors(accent, customAccent, mode, skin);
   const root = document.documentElement;
   root.style.setProperty('--primary-color', colors.primary);
   root.style.setProperty('--primary-color-hover', colors.hover);
@@ -151,8 +163,7 @@ function applyDataAttribute(name: string, value: string, defaultValue: string) {
 
 const DEFAULTS: Omit<ThemeState, 'mounted'> = {
   theme: 'dark',
-  preset: 'cinema',
-  accent: DEFAULT_ACCENT,
+  accent: null,
   customAccent: null,
   tone: 'default',
   font: 'system',
@@ -160,7 +171,7 @@ const DEFAULTS: Omit<ThemeState, 'mounted'> = {
   density: 'comfortable',
   motion: 'auto',
   saver: 'off',
-  skin: 'premium',
+  skin: 'default',
 };
 
 export function ThemeProvider({ children }: ThemeProviderProps) {
@@ -173,11 +184,19 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   useEffect(() => {
     const get = (key: string) => localStorage.getItem(key);
 
+    LEGACY_STORAGE_KEYS.forEach((k) => {
+      try {
+        localStorage.removeItem(k);
+      } catch {
+        /* silent */
+      }
+    });
+
     const theme: ThemeMode =
       get(STORAGE_KEYS.theme) === 'light' ? 'light' : 'dark';
     const accentRaw = get(STORAGE_KEYS.accent) as AccentPresetKey | null;
-    const accent: AccentPresetKey =
-      accentRaw && accentRaw in ACCENT_PRESETS ? accentRaw : DEFAULT_ACCENT;
+    const accent: AccentPresetKey | null =
+      accentRaw && accentRaw in ACCENT_PRESETS ? accentRaw : null;
     const customAccent = normalizeHex(get(STORAGE_KEYS.customAccent) ?? '');
 
     const tone = pick(get(STORAGE_KEYS.tone), VALID_TONES, DEFAULTS.tone);
@@ -194,42 +213,21 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       DEFAULTS.motion
     );
     const saver = pick(get(STORAGE_KEYS.saver), VALID_SAVERS, DEFAULTS.saver);
-    const preset = pick(
-      get(STORAGE_KEYS.preset),
-      VALID_PRESETS,
-      DEFAULTS.preset
-    );
-    const rawSkin = get(STORAGE_KEYS.skin);
-    const skin =
-      rawSkin === 'default'
-        ? DEFAULTS.skin
-        : pick(rawSkin, VALID_SKINS, DEFAULTS.skin);
+    const skin = pick(get(STORAGE_KEYS.skin), VALID_SKINS, DEFAULTS.skin);
 
     document.documentElement.setAttribute('data-theme', theme);
-    applyAccentVars(accent, customAccent, theme);
-    applyDataAttribute('preset', preset, DEFAULTS.preset);
+    document.documentElement.setAttribute('data-skin', skin);
+    applyAccentVars(accent, customAccent, theme, skin);
     applyDataAttribute('tone', tone, DEFAULTS.tone);
     applyDataAttribute('font', font, DEFAULTS.font);
     applyDataAttribute('scale', scale, DEFAULTS.scale);
     applyDataAttribute('density', density, DEFAULTS.density);
     applyDataAttribute('motion', motion, DEFAULTS.motion);
     applyDataAttribute('saver', saver, DEFAULTS.saver);
-    document.documentElement.setAttribute('data-skin', skin);
-
-    // Migra preferencias viejas: si la skin guardada era "default",
-    // persistimos premium para que el rediseno se aplique de forma real.
-    if (rawSkin === 'default') {
-      try {
-        localStorage.setItem(STORAGE_KEYS.skin, DEFAULTS.skin);
-      } catch {
-        /* silent */
-      }
-    }
 
     // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration: read localStorage on mount
     setState({
       theme,
-      preset,
       accent,
       customAccent,
       tone,
@@ -251,58 +249,54 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     }
   };
 
-  const toggleTheme = () => {
-    const newTheme: ThemeMode = state.theme === 'light' ? 'dark' : 'light';
-    setState((prev) => ({ ...prev, theme: newTheme }));
-    persist(STORAGE_KEYS.theme, newTheme);
-    document.documentElement.setAttribute('data-theme', newTheme);
-    applyAccentVars(state.accent, state.customAccent, newTheme);
-  };
-
-  const handleSetTheme = (newTheme: ThemeMode) => {
-    // Premium skin solo tiene paleta dark — al pasar a light forzamos
-    // 'default' para que la UI no quede con tokens incoherentes.
-    const newSkin: SkinKey =
-      newTheme === 'light' && state.skin === 'premium' ? 'default' : state.skin;
-    setState((prev) => ({ ...prev, theme: newTheme, skin: newSkin }));
-    persist(STORAGE_KEYS.theme, newTheme);
-    if (newSkin !== state.skin) {
-      persist(STORAGE_KEYS.skin, newSkin);
-      document.documentElement.setAttribute('data-skin', newSkin);
-    }
-    document.documentElement.setAttribute('data-theme', newTheme);
-    applyAccentVars(state.accent, state.customAccent, newTheme);
-  };
-
-  const handleSetAccent = (newAccent: AccentPresetKey) => {
-    if (!(newAccent in ACCENT_PRESETS)) return;
-    // Elegir un preset desactiva el custom — UI mas predecible.
-    setState((prev) => ({ ...prev, accent: newAccent, customAccent: null }));
-    persist(STORAGE_KEYS.accent, newAccent);
+  const remove = (key: string) => {
     try {
-      localStorage.removeItem(STORAGE_KEYS.customAccent);
+      localStorage.removeItem(key);
     } catch {
       /* silent */
     }
-    applyAccentVars(newAccent, null, state.theme);
+  };
+
+  const applyTheme = (newTheme: ThemeMode) => {
+    setState((prev) => ({ ...prev, theme: newTheme }));
+    persist(STORAGE_KEYS.theme, newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme);
+    applyAccentVars(state.accent, state.customAccent, newTheme, state.skin);
+  };
+
+  const toggleTheme = () => {
+    applyTheme(state.theme === 'light' ? 'dark' : 'light');
+  };
+
+  const handleSetTheme = (newTheme: ThemeMode) => {
+    applyTheme(newTheme);
+  };
+
+  const handleSetAccent = (newAccent: AccentPresetKey | null) => {
+    if (newAccent !== null && !(newAccent in ACCENT_PRESETS)) return;
+    // Elegir un acento (o volver a "automatico") desactiva el hex custom.
+    setState((prev) => ({ ...prev, accent: newAccent, customAccent: null }));
+    if (newAccent === null) {
+      remove(STORAGE_KEYS.accent);
+    } else {
+      persist(STORAGE_KEYS.accent, newAccent);
+    }
+    remove(STORAGE_KEYS.customAccent);
+    applyAccentVars(newAccent, null, state.theme, state.skin);
   };
 
   const handleSetCustomAccent = (hex: string | null) => {
     if (hex === null) {
       setState((prev) => ({ ...prev, customAccent: null }));
-      try {
-        localStorage.removeItem(STORAGE_KEYS.customAccent);
-      } catch {
-        /* silent */
-      }
-      applyAccentVars(state.accent, null, state.theme);
+      remove(STORAGE_KEYS.customAccent);
+      applyAccentVars(state.accent, null, state.theme, state.skin);
       return;
     }
     const normalized = normalizeHex(hex);
     if (!normalized) return;
     setState((prev) => ({ ...prev, customAccent: normalized }));
     persist(STORAGE_KEYS.customAccent, normalized);
-    applyAccentVars(state.accent, normalized, state.theme);
+    applyAccentVars(state.accent, normalized, state.theme, state.skin);
   };
 
   const handleSetTone = (newTone: ToneKey) => {
@@ -323,43 +317,10 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     applyDataAttribute('scale', newScale, DEFAULTS.scale);
   };
 
-  const handleSetPreset = (newPreset: ViewPresetKey) => {
-    let nextDensity = state.density;
-    if (newPreset !== 'custom') {
-      const cfg = VIEW_PRESETS[newPreset];
-      nextDensity = cfg.targetDensity;
-      if (typeof window !== 'undefined') {
-        try {
-          localStorage.setItem('catalog-view-mode', cfg.targetViewMode);
-          window.dispatchEvent(
-            new CustomEvent('catalog-view-mode-changed', {
-              detail: cfg.targetViewMode,
-            })
-          );
-        } catch {
-          /* silent */
-        }
-      }
-      applyDataAttribute('density', nextDensity, DEFAULTS.density);
-    }
-    setState((prev) => ({
-      ...prev,
-      preset: newPreset,
-      density: nextDensity,
-    }));
-    persist(STORAGE_KEYS.preset, newPreset);
-    if (newPreset !== 'custom') {
-      persist(STORAGE_KEYS.density, nextDensity);
-    }
-    applyDataAttribute('preset', newPreset, DEFAULTS.preset);
-  };
-
   const handleSetDensity = (newDensity: DensityKey) => {
-    setState((prev) => ({ ...prev, density: newDensity, preset: 'custom' }));
+    setState((prev) => ({ ...prev, density: newDensity }));
     persist(STORAGE_KEYS.density, newDensity);
-    persist(STORAGE_KEYS.preset, 'custom');
     applyDataAttribute('density', newDensity, DEFAULTS.density);
-    applyDataAttribute('preset', 'custom', DEFAULTS.preset);
   };
 
   const handleSetMotion = (newMotion: MotionKey) => {
@@ -374,39 +335,33 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     applyDataAttribute('saver', newSaver, DEFAULTS.saver);
   };
 
+  /**
+   * Cambiar de skin solo cambia la atmosfera visual: NO toca el modo
+   * claro/oscuro, la densidad, la tipografia ni ninguna otra preferencia.
+   * Lo unico que puede moverse es el acento, y solo si el usuario todavia
+   * no eligio uno propio (en ese caso se toma el sugerido por la skin).
+   */
   const handleSetSkin = (newSkin: SkinKey) => {
-    let newTheme = state.theme;
-    if (newSkin === 'sakura' || newSkin === 'journal') {
-      newTheme = 'light';
-    } else if (
-      newSkin === 'midnight' ||
-      newSkin === 'neon' ||
-      newSkin === 'premium'
-    ) {
-      newTheme = 'dark';
-    }
-    setState((prev) => ({ ...prev, skin: newSkin, theme: newTheme }));
+    setState((prev) => ({ ...prev, skin: newSkin }));
     persist(STORAGE_KEYS.skin, newSkin);
-    persist(STORAGE_KEYS.theme, newTheme);
     document.documentElement.setAttribute('data-skin', newSkin);
-    document.documentElement.setAttribute('data-theme', newTheme);
+    applyAccentVars(state.accent, state.customAccent, state.theme, newSkin);
   };
 
   const resetPreferences = () => {
-    Object.values(STORAGE_KEYS).forEach((k) => {
-      try {
-        localStorage.removeItem(k);
-      } catch {
-        /* silent */
-      }
-    });
+    Object.values(STORAGE_KEYS).forEach(remove);
     setState({ ...DEFAULTS, mounted: true });
     document.documentElement.setAttribute('data-theme', DEFAULTS.theme);
-    applyAccentVars(DEFAULTS.accent, DEFAULTS.customAccent, DEFAULTS.theme);
-    (
-      ['preset', 'tone', 'font', 'scale', 'density', 'motion', 'saver'] as const
-    ).forEach((k) => document.documentElement.removeAttribute(`data-${k}`));
     document.documentElement.setAttribute('data-skin', DEFAULTS.skin);
+    applyAccentVars(
+      DEFAULTS.accent,
+      DEFAULTS.customAccent,
+      DEFAULTS.theme,
+      DEFAULTS.skin
+    );
+    (['tone', 'font', 'scale', 'density', 'motion', 'saver'] as const).forEach(
+      (k) => document.documentElement.removeAttribute(`data-${k}`)
+    );
   };
 
   if (!state.mounted) {
@@ -416,7 +371,8 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   const accentColors = resolveAccentColors(
     state.accent,
     state.customAccent,
-    state.theme
+    state.theme,
+    state.skin
   );
   const currentTheme = buildTheme(state.theme, accentColors, state.skin);
 
@@ -439,8 +395,6 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
         theme: state.theme,
         toggleTheme,
         setTheme: handleSetTheme,
-        preset: state.preset,
-        setPreset: handleSetPreset,
         accent: state.accent,
         setAccent: handleSetAccent,
         customAccent: state.customAccent,

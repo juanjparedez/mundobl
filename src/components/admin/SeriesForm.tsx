@@ -1686,7 +1686,8 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                                 ? [
                                     {
                                       required: true,
-                                      message: 'Indica la cantidad de capítulos',
+                                      message:
+                                        'Indica la cantidad de capítulos',
                                     },
                                   ]
                                 : []

@@ -67,9 +67,9 @@
   color: var(--primary-color);
 }
 
-/* Row con presets + ColorPicker custom + reset opcional.
- * UNA sola fila: presets scrollean horizontal si no entran. ColorPicker
- * pegado a la derecha como "abrir picker libre". */
+/* Row de acentos + ColorPicker custom.
+ * UNA sola fila: los acentos scrollean horizontal si no entran. El
+ * ColorPicker queda pegado a la derecha como "elegir color libre". */
 .settings-panel__accent-row {
   display: flex;
   align-items: center;
@@ -123,6 +123,25 @@
   transform: scale(1.1);
 }
 
+/* Chip "Automatico": sin color propio: deja que la skin sugiera el acento. */
+.settings-panel__accent--auto {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px dashed var(--border-color);
+  color: var(--text-tertiary);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.settings-panel__accent--auto.settings-panel__accent--active {
+  border-style: solid;
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
 /* Escala tipográfica: tamaño visual creciente */
 .settings-panel__scale .ant-segmented-item-label {
   font-weight: 700;
@@ -147,56 +166,6 @@
   .ant-segmented-item:nth-child(4)
   .ant-segmented-item-label {
   font-size: 20px;
-}
-
-/* ─── Presets grid ─────────────────────────────────────────── */
-.settings-panel__presets-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-  margin-top: 6px;
-}
-
-.settings-panel__preset-card {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 10px 12px;
-  background: var(--mb-panel-2, rgba(255, 255, 255, 0.04));
-  border: 1px solid var(--mb-border, rgba(255, 255, 255, 0.08));
-  border-radius: var(--mb-radius-md, 12px);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: left;
-  width: 100%;
-}
-
-.settings-panel__preset-card:hover {
-  background: var(--mb-panel-3, rgba(255, 255, 255, 0.08));
-  border-color: var(--primary-color, var(--mb-gold, #f6b51e));
-  transform: translateY(-1px);
-}
-
-.settings-panel__preset-card--active {
-  border-color: var(--primary-color, var(--mb-gold, #f6b51e)) !important;
-  background: var(--mb-gold-soft, rgba(246, 181, 30, 0.12)) !important;
-  box-shadow: 0 0 0 1px var(--primary-color, var(--mb-gold, #f6b51e));
-}
-
-.settings-panel__preset-header {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 600;
-  font-size: 13px;
-  color: var(--mb-text, var(--text-primary, #ffffff));
-}
-
-.settings-panel__preset-desc {
-  font-size: 11px;
-  color: var(--mb-text-dim, var(--text-tertiary, #a9a1b8));
-  margin-top: 4px;
-  line-height: 1.3;
 }
 
 /* ─── Skins visual gallery ─────────────────────────────────── */
@@ -261,24 +230,4 @@
   font-size: 11px;
   color: var(--mb-text-dim, var(--text-tertiary, #a9a1b8));
   line-height: 1.3;
-}
-
-/* ─── Collapsible advanced section ─────────────────────────── */
-.settings-panel__advanced-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 12px 0 6px;
-  border: none;
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-.settings-panel__advanced-toggle:hover {
-  color: var(--primary-color);
 }

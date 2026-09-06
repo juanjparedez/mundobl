@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
-  Table,
   Button,
   Input,
   Drawer,
@@ -37,6 +36,7 @@ import { AdminNav } from '../AdminNav';
 import { AnuncioPreview } from './AnuncioPreview';
 import '../admin.css';
 import './anuncios.css';
+import { DataTable } from '@/components/design-system';
 
 type Tone = 'INFO' | 'SUCCESS' | 'WARNING' | 'PROMO';
 type Audience =
@@ -490,13 +490,12 @@ export function AnunciosClient() {
         onSearchClear={() => setSearchTerm('')}
       />
 
-      <Table
-        scroll={{ x: 'max-content' }}
+      <DataTable
         dataSource={filteredItems}
         columns={columns}
         rowKey="id"
         loading={loading}
-        pagination={{ pageSize: 20, showSizeChanger: true }}
+        pageSize={20}
       />
 
       <Drawer

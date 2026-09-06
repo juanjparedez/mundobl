@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
-  Table,
   Button,
   Input,
   Select,
@@ -14,7 +13,7 @@ import {
   Tooltip,
   Badge,
 } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
+import { DataTable, type DataTableColumn } from '@/components/design-system';
 import {
   SearchOutlined,
   EditOutlined,
@@ -283,7 +282,7 @@ export function SeriesMetadataTab({
     return allGenres.map((g) => ({ label: g.name, value: g.name }));
   }, [allGenres]);
 
-  const columns: ColumnsType<SeriesItem> = [
+  const columns: DataTableColumn<SeriesItem>[] = [
     {
       title: '',
       dataIndex: 'imageUrl',
@@ -591,7 +590,7 @@ export function SeriesMetadataTab({
       )}
 
       {/* Tabla principal */}
-      <Table
+      <DataTable
         rowKey="id"
         columns={columns}
         dataSource={series}
@@ -600,20 +599,16 @@ export function SeriesMetadataTab({
           selectedRowKeys,
           onChange: setSelectedRowKeys,
         }}
-        pagination={{
-          current: page,
-          pageSize,
-          total,
-          showSizeChanger: true,
-          pageSizeOptions: ['15', '25', '50', '100'],
-          onChange: (p, ps) => {
-            setPage(p);
-            setPageSize(ps);
-            loadSeries(p, filter, origin, search);
-          },
-          showTotal: (t) => `${t} series en total`,
+        pageSize={pageSize}
+        page={page}
+        total={total}
+        onPageChange={(p, ps) => {
+          setPage(p);
+          setPageSize(ps);
+          loadSeries(p, filter, origin, search);
         }}
-        scroll={{ x: 'max-content' }}
+        pageSizeOptions={['15', '25', '50', '100']}
+        showTotal={(t) => `${t} series en total`}
       />
 
       {/* Modal de acciones en lote */}

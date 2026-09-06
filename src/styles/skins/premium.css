@@ -1,0 +1,288 @@
+/* ─── Skin: Dark Obsidian ────────────────────────────────────────────
+ * Estetica premium tipo SaaS pro / plataforma de streaming. Obsidiana y
+ * violeta profundo en oscuro; marfil calido con bronce en claro.
+ *
+ * Una skin viste el modo que el usuario eligio — no lo cambia, y tampoco
+ * toca su acento: --mb-gold* sigue a --primary-color desde variables.css.
+ */
+
+html[data-skin='premium'] {
+  /* ─── Radios ────────────────────────────────────────────────── */
+  --mb-radius-sm: 10px;
+  --mb-radius-md: 14px;
+  --mb-radius-lg: 18px;
+  --mb-radius-xl: 24px;
+
+  /* ─── Acento: NO lo define la skin ───────────────────────────
+   * --mb-gold* y --accent-color viven en `variables.css` y siguen
+   * a --primary-color, que es el acento elegido por el usuario (o el
+   * sugerido por esta skin si todavia no eligio ninguno). Redefinirlos
+   * aca romperia esa precedencia. */
+
+  /* ─── Mapeo a los tokens base que usa la app ─────────────────
+   * Estos son los nombres reales de `variables.css`. La app entera
+   * hereda la paleta de la skin sin tocar una linea de JS. */
+  --bg-base: var(--mb-bg-soft);
+  --bg-layout: var(--mb-bg);
+  --bg-container: var(--mb-panel);
+  --bg-elevated: var(--mb-panel-2);
+  --bg-spotlight: var(--mb-panel-3);
+  --bg-input: var(--mb-panel);
+
+  --text-primary: var(--mb-text);
+  --text-secondary: var(--mb-text-muted);
+  --text-tertiary: var(--mb-text-dim);
+  --text-disabled: var(--mb-text-disabled);
+
+  --border-color: var(--mb-border);
+  --border-color-secondary: var(--mb-border-soft);
+
+  --border-radius-sm: var(--mb-radius-sm);
+  --border-radius-base: var(--mb-radius-md);
+  --border-radius-lg: var(--mb-radius-lg);
+  --border-radius: var(--border-radius-base);
+
+  --box-shadow-base: var(--mb-shadow-soft);
+  --box-shadow-card: var(--mb-shadow-soft);
+
+  /* Fills derivados del acento ACTIVO del usuario (--primary-color).
+   * La skin no define el acento: solo lo usa. */
+  --accent-soft: color-mix(in srgb, var(--primary-color) 14%, transparent);
+  --accent-soft-strong: color-mix(
+    in srgb,
+    var(--primary-color) 28%,
+    transparent
+  );
+}
+
+html[data-skin='premium'][data-theme='light'] {
+  /* ─── Superficies ───────────────────────────────────────────── */
+  --mb-bg: #faf8f3;
+  --mb-bg-soft: #f2ece0;
+  --mb-panel: #ffffff;
+  --mb-panel-2: #faf5ea;
+  --mb-panel-3: #f1e7d4;
+  --mb-panel-strong: #e4dac4;
+
+  /* ─── Texto ─────────────────────────────────────────────────── */
+  --mb-text: #1d1a26;
+  --mb-text-muted: #55506a;
+  --mb-text-dim: #86809c;
+  --mb-text-disabled: #b0abc0;
+
+  /* ─── Bordes ────────────────────────────────────────────────── */
+  --mb-border: rgba(90, 74, 40, 0.16);
+  --mb-border-soft: rgba(90, 74, 40, 0.09);
+  --mb-border-strong: rgba(90, 74, 40, 0.28);
+
+  /* ─── Colores semanticos ────────────────────────────────────── */
+  --mb-purple: #6d28d9;
+  --mb-purple-soft: color-mix(in srgb, #6d28d9 14%, transparent);
+  --mb-blue: #1d4ed8;
+  --mb-blue-soft: color-mix(in srgb, #1d4ed8 14%, transparent);
+  --mb-green: #047857;
+  --mb-green-soft: color-mix(in srgb, #047857 14%, transparent);
+  --mb-red: #be123c;
+  --mb-red-soft: color-mix(in srgb, #be123c 14%, transparent);
+
+  /* ─── Sombras ───────────────────────────────────────────────── */
+  --mb-shadow-soft:
+    0 1px 2px rgba(60, 50, 25, 0.06), 0 8px 24px rgba(60, 50, 25, 0.08);
+  --mb-shadow-elevated:
+    0 2px 6px rgba(60, 50, 25, 0.1), 0 14px 40px rgba(60, 50, 25, 0.13);
+}
+
+html[data-skin='premium'][data-theme='dark'] {
+  /* ─── Superficies ───────────────────────────────────────────── */
+  --mb-bg: #0c0a14;
+  --mb-bg-soft: #11101d;
+  --mb-panel: #171423;
+  --mb-panel-2: #1d1830;
+  --mb-panel-3: #251f3d;
+  --mb-panel-strong: #2c2545;
+
+  /* ─── Texto ─────────────────────────────────────────────────── */
+  --mb-text: #f5f1ff;
+  --mb-text-muted: #d2cce0;
+  --mb-text-dim: #a9a1b8;
+  --mb-text-disabled: #6b6378;
+
+  /* ─── Bordes ────────────────────────────────────────────────── */
+  --mb-border: rgba(255, 255, 255, 0.08);
+  --mb-border-soft: rgba(255, 255, 255, 0.05);
+  --mb-border-strong: rgba(255, 255, 255, 0.14);
+
+  /* ─── Colores semanticos ────────────────────────────────────── */
+  --mb-purple: #7c4dff;
+  --mb-purple-soft: color-mix(in srgb, #7c4dff 14%, transparent);
+  --mb-blue: #4f8cff;
+  --mb-blue-soft: color-mix(in srgb, #4f8cff 14%, transparent);
+  --mb-green: #48c774;
+  --mb-green-soft: color-mix(in srgb, #48c774 14%, transparent);
+  --mb-red: #ff5c5c;
+  --mb-red-soft: color-mix(in srgb, #ff5c5c 14%, transparent);
+
+  /* ─── Sombras ───────────────────────────────────────────────── */
+  --mb-shadow-soft:
+    0 1px 2px rgba(0, 0, 0, 0.25), 0 8px 24px rgba(0, 0, 0, 0.32);
+  --mb-shadow-elevated:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* ─── Tratamientos de componente ─────────────────────────────────────
+ * Solo usan tokens (--mb-*, --primary-color), asi que valen para claro
+ * y oscuro por igual. Lo que si es especifico del modo va mas abajo.
+ */
+
+html[data-skin='premium'] .app-content {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+html[data-skin='premium'] .app-sidebar {
+  background: var(--mb-bg-soft);
+  border-right: 1px solid var(--mb-border-soft);
+}
+
+html[data-skin='premium'] .ant-card,
+html[data-skin='premium'] .mb-panel-card,
+html[data-skin='premium'] .mb-stat-card {
+  background: var(--mb-panel);
+  border-color: var(--mb-border);
+  border-radius: var(--mb-radius-md);
+}
+
+html[data-skin='premium'] .ant-card-bordered:hover,
+html[data-skin='premium'] .mb-panel-card:hover {
+  border-color: var(--mb-border-strong);
+}
+
+html[data-skin='premium'] .ant-input,
+html[data-skin='premium'] .ant-input-affix-wrapper,
+html[data-skin='premium'] .ant-select-selector,
+html[data-skin='premium'] .ant-picker {
+  background: var(--mb-panel) !important;
+  border-color: var(--mb-border) !important;
+}
+
+html[data-skin='premium'] .ant-input:focus,
+html[data-skin='premium'] .ant-input-affix-wrapper-focused {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+html[data-skin='premium'] .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--primary-color) !important;
+}
+
+html[data-skin='premium'] .ant-tabs-ink-bar {
+  background: var(--primary-color) !important;
+}
+
+html[data-skin='premium'] .ant-table {
+  background: transparent;
+}
+
+html[data-skin='premium'] .ant-table-thead > tr > th {
+  background: var(--mb-panel-2) !important;
+  border-bottom-color: var(--mb-border) !important;
+  color: var(--mb-text-muted);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+html[data-skin='premium'] .ant-table-tbody > tr > td {
+  border-bottom-color: var(--mb-border-soft) !important;
+}
+
+html[data-skin='premium'] .ant-table-tbody > tr:hover > td {
+  background: var(--mb-panel-2) !important;
+}
+
+html[data-skin='premium'] .ant-tag {
+  border-radius: 6px;
+}
+
+html[data-skin='premium'] .ant-modal-content,
+html[data-skin='premium'] .ant-drawer-content {
+  background: var(--mb-panel);
+  border-radius: var(--mb-radius-lg);
+}
+
+html[data-skin='premium'] .ant-modal-header,
+html[data-skin='premium'] .ant-drawer-header {
+  background: transparent;
+  border-bottom-color: var(--mb-border-soft);
+}
+
+html[data-skin='premium'] .ant-dropdown-menu-item:hover {
+  background: var(--mb-panel-2) !important;
+}
+
+/* Item activo del sidebar: barra + fondo con el acento del usuario. */
+html[data-skin='premium'] .ant-menu-item-selected {
+  background: var(--accent-soft) !important;
+  color: var(--primary-color) !important;
+  font-weight: 600;
+  position: relative;
+  border-radius: var(--mb-radius-sm);
+}
+
+html[data-skin='premium'] .ant-menu-item-selected::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--primary-color);
+}
+
+/* ─── Especifico del modo ────────────────────────────────────────── */
+
+html[data-skin='premium'][data-theme='dark'] .ant-menu-dark.ant-menu-root,
+html[data-skin='premium'][data-theme='dark'] .app-sidebar .ant-menu {
+  background: transparent;
+}
+
+html[data-skin='premium'][data-theme='dark']
+  .ant-menu-dark
+  .ant-menu-item:hover {
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+html[data-skin='premium'][data-theme='light'] .ant-menu-item:hover {
+  background: rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Backdrop del shell: halos de acento sobre el fondo de la skin. */
+html[data-skin='premium'] body {
+  background:
+    radial-gradient(
+      ellipse at top left,
+      color-mix(in srgb, var(--mb-purple) 8%, transparent),
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse at bottom right,
+      color-mix(in srgb, var(--primary-color) 6%, transparent),
+      transparent 60%
+    ),
+    var(--mb-bg);
+}
+
+html[data-skin='premium'][data-theme='dark'] .topbar {
+  background: color-mix(in srgb, var(--mb-bg) 78%, transparent);
+  border-bottom-color: var(--mb-border-soft);
+  backdrop-filter: saturate(160%) blur(14px);
+}
+
+html[data-skin='premium'][data-theme='light'] .topbar {
+  background: color-mix(in srgb, var(--mb-panel) 82%, transparent);
+  border-bottom-color: var(--mb-border-soft);
+  backdrop-filter: saturate(140%) blur(14px);
+}

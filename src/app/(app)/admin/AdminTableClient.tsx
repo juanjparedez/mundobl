@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Button, Table, Space, Tag, Input, Select } from 'antd';
+import { Button, Space, Tag, Input, Select } from 'antd';
 import {
   EditOutlined,
   DeleteOutlined,
@@ -9,7 +9,7 @@ import {
   SearchOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
-import type { ColumnsType } from 'antd/es/table';
+import { DataTable, type DataTableColumn } from '@/components/design-system';
 import { EditSerieModal } from './EditSerieModal';
 import { useRouter } from 'next/navigation';
 import { useMessage, useModal } from '@/hooks/useMessage';
@@ -142,13 +142,14 @@ export function AdminTableClient({
     setSelectedLetter(selectedLetter === letter ? null : letter);
   };
 
-  const columns: ColumnsType<SerieData> = [
+  const columns: DataTableColumn<SerieData>[] = [
     {
       title: t('adminTable.columnTitle'),
       dataIndex: 'titulo',
       key: 'titulo',
       sorter: (a, b) => a.titulo.localeCompare(b.titulo),
       width: 300,
+      mobile: 'title',
     },
     {
       title: t('adminTable.columnCountry'),
@@ -159,6 +160,7 @@ export function AdminTableClient({
         .map((pais) => ({ text: pais, value: pais })),
       onFilter: (value, record) => record.pais === value,
       width: 120,
+      mobile: 'body',
     },
     {
       title: t('adminTable.columnType'),
@@ -181,6 +183,7 @@ export function AdminTableClient({
       ],
       onFilter: (value, record) => record.tipo === value,
       width: 100,
+      mobile: 'meta',
     },
     {
       title: t('adminTable.columnSeasons'),
@@ -188,6 +191,7 @@ export function AdminTableClient({
       key: 'temporadas',
       sorter: (a, b) => a.temporadas - b.temporadas,
       width: 120,
+      mobile: 'body',
     },
     {
       title: t('adminTable.columnEpisodes'),
@@ -195,6 +199,7 @@ export function AdminTableClient({
       key: 'episodios',
       sorter: (a, b) => a.episodios - b.episodios,
       width: 120,
+      mobile: 'body',
     },
     {
       title: t('adminTable.columnYear'),
@@ -202,6 +207,7 @@ export function AdminTableClient({
       key: 'anio',
       sorter: (a, b) => a.anio - b.anio,
       width: 100,
+      mobile: 'body',
     },
     {
       title: t('adminTable.columnStatus'),
@@ -211,12 +217,14 @@ export function AdminTableClient({
         <Tag color={estado === 'activa' ? 'green' : 'default'}>{estado}</Tag>
       ),
       width: 120,
+      mobile: 'meta',
     },
     {
       title: t('adminTable.columnActions'),
       key: 'acciones',
       width: 120,
       fixed: 'right',
+      mobile: 'actions',
       render: (_, record) => (
         <Space>
           <Button
@@ -293,21 +301,18 @@ export function AdminTableClient({
         })}
       </div>
 
-      <Table
+      <DataTable
         columns={columns}
         dataSource={filteredData}
-        pagination={{
-          pageSize: 20,
-          showSizeChanger: true,
-          pageSizeOptions: ['10', '20', '50', '100'],
-          showTotal: (total, range) =>
-            interpolateMessage(t('adminTable.paginationTotal'), {
-              from: String(range[0]),
-              to: String(range[1]),
-              total: String(total),
-            }),
-        }}
-        scroll={{ x: 1200 }}
+        rowKey="key"
+        scrollX={1200}
+        showTotal={(total, range) =>
+          interpolateMessage(t('adminTable.paginationTotal'), {
+            from: String(range[0]),
+            to: String(range[1]),
+            total: String(total),
+          })
+        }
       />
 
       <EditSerieModal

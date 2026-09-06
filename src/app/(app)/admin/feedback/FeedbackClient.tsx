@@ -7,7 +7,6 @@ import {
   Modal,
   Segmented,
   Space,
-  Table,
   Tag,
   Select,
   Spin,
@@ -20,7 +19,7 @@ import {
   BulbOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
-import type { ColumnsType } from 'antd/es/table';
+import { DataTable, type DataTableColumn } from '@/components/design-system';
 import { AdminPageHero } from '@/components/admin/AdminPageHero/AdminPageHero';
 import { AdminNav } from '../AdminNav';
 import { useMessage } from '@/hooks/useMessage';
@@ -257,7 +256,7 @@ export function FeedbackClient() {
     }
   };
 
-  const columns: ColumnsType<FeedbackCase> = [
+  const columns: DataTableColumn<FeedbackCase>[] = [
     {
       title: 'ID',
       dataIndex: 'id',
@@ -481,18 +480,16 @@ export function FeedbackClient() {
               <Spin />
             </div>
           ) : (
-            <Table
+            <DataTable
               columns={columns}
               dataSource={cases}
               rowKey="id"
-              pagination={{
-                current: page,
-                pageSize: PAGE_SIZE,
-                total,
-                onChange: setPage,
-              }}
               size="small"
-              scroll={{ x: 1200 }}
+              pageSize={PAGE_SIZE}
+              page={page}
+              total={total}
+              onPageChange={setPage}
+              scrollX={1200}
             />
           )}
         </div>

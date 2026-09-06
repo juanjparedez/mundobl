@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import {
-  Table,
   Button,
   Input,
   InputNumber,
@@ -44,6 +43,7 @@ import {
 import { ImportChannelDrawer } from './ImportChannelDrawer/ImportChannelDrawer';
 import '../admin.css';
 import './contenido.css';
+import { DataTable } from '@/components/design-system';
 
 const LANGUAGE_OPTIONS = [
   { label: 'Español', value: 'ES' },
@@ -428,13 +428,12 @@ export function ContenidoClient() {
           onSearchClear={() => setSearchTerm('')}
         />
 
-        <Table
-          scroll={{ x: 'max-content' }}
+        <DataTable
           dataSource={filteredItems}
           columns={columns}
           rowKey="id"
           loading={loading}
-          pagination={{ pageSize: 20 }}
+          pageSize={20}
         />
 
         <Modal

@@ -1,17 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  Avatar,
-  Button,
-  Empty,
-  Select,
-  Space,
-  Spin,
-  Switch,
-  Table,
-  Tag,
-} from 'antd';
+import { Avatar, Button, Empty, Select, Space, Spin, Switch, Tag } from 'antd';
 import {
   AlertOutlined,
   DashboardOutlined,
@@ -20,7 +10,12 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import { PanelCard, SectionHeader, StatCard } from '@/components/design-system';
+import {
+  DataTable,
+  PanelCard,
+  SectionHeader,
+  StatCard,
+} from '@/components/design-system';
 import { AdminNav } from '../AdminNav';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { useMessage } from '@/hooks/useMessage';
@@ -459,23 +454,20 @@ export function RuntimeControlClient() {
                     <Empty description={t('adminRuntime.noErrors')} />
                   )
                 ) : (
-                  <Table<RuntimeErrorItem>
+                  <DataTable<RuntimeErrorItem>
                     rowKey="id"
                     columns={errorColumns}
                     dataSource={errors}
                     loading={errorsLoading}
-                    pagination={{
-                      current: errorsPage,
-                      pageSize: errorsPageSize,
-                      total: errorsTotal,
-                      showSizeChanger: true,
-                      pageSizeOptions: ['10', '20', '50'],
-                      onChange: (page, pageSize) => {
-                        setErrorsPage(page);
-                        setErrorsPageSize(pageSize);
-                      },
+                    pageSize={errorsPageSize}
+                    page={errorsPage}
+                    total={errorsTotal}
+                    onPageChange={(page, pageSize) => {
+                      setErrorsPage(page);
+                      setErrorsPageSize(pageSize);
                     }}
-                    scroll={{ x: 980 }}
+                    pageSizeOptions={['10', '20', '50']}
+                    scrollX={980}
                     size="small"
                   />
                 )}

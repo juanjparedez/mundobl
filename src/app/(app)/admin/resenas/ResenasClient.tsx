@@ -1,16 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import {
-  Avatar,
-  Button,
-  Modal,
-  Popconfirm,
-  Segmented,
-  Space,
-  Table,
-  Tag,
-} from 'antd';
+import { Avatar, Button, Modal, Popconfirm, Segmented, Space, Tag } from 'antd';
 import {
   DeleteOutlined,
   ExportOutlined,
@@ -28,6 +19,7 @@ import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { LOCALE_LABELS } from '@/i18n/config';
 import '../admin.css';
+import { DataTable } from '@/components/design-system';
 
 type ViewMode = 'all' | 'PUBLISHED' | 'DRAFT' | 'HIDDEN' | 'PENDING_SERIES';
 type Status = 'PUBLISHED' | 'DRAFT' | 'HIDDEN';
@@ -469,36 +461,28 @@ export function ResenasClient() {
           />
 
           {view === 'PENDING_SERIES' ? (
-            <Table<PendingSeriesRow>
-              scroll={{ x: 'max-content' }}
+            <DataTable<PendingSeriesRow>
               columns={pendingColumns}
               dataSource={pendingSeries}
               rowKey="id"
               loading={loading}
               size="small"
-              pagination={{
-                current: page,
-                pageSize: PAGE_SIZE,
-                total,
-                showSizeChanger: false,
-                onChange: (newPage) => setPage(newPage),
-              }}
+              pageSize={PAGE_SIZE}
+              page={page}
+              total={total}
+              onPageChange={(newPage) => setPage(newPage)}
             />
           ) : (
-            <Table<ReviewRow>
-              scroll={{ x: 'max-content' }}
+            <DataTable<ReviewRow>
               columns={columns}
               dataSource={reviews}
               rowKey="id"
               loading={loading}
               size="small"
-              pagination={{
-                current: page,
-                pageSize: PAGE_SIZE,
-                total,
-                showSizeChanger: false,
-                onChange: (newPage) => setPage(newPage),
-              }}
+              pageSize={PAGE_SIZE}
+              page={page}
+              total={total}
+              onPageChange={(newPage) => setPage(newPage)}
             />
           )}
 
