@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
 import { Button, FloatButton, Spin } from 'antd';
 import {
@@ -55,7 +56,17 @@ import { SocialsWidget } from './widgets/SocialsWidget/SocialsWidget';
 import { RecentAdminActivityWidget } from '@/app/(app)/admin/widgets/RecentAdminActivityWidget/RecentAdminActivityWidget';
 import { TopCommentersWidget } from '@/app/(app)/admin/widgets/TopCommentersWidget/TopCommentersWidget';
 import { ActivityChartWidget } from '@/app/(app)/admin/widgets/ActivityChartWidget/ActivityChartWidget';
-import { WorldMapWidget } from './widgets/WorldMapWidget/WorldMapWidget';
+// Trae world-atlas (~100 KB de JSON de paises) + d3-geo + react-simple-maps.
+// Es un widget MAS entre varios en /perfil/dashboard (una pagina opt-in, no
+// la vista default de /perfil) — no vale la pena pagar ese peso en el bundle
+// para quien nunca activa este widget puntual.
+const WorldMapWidget = dynamic(
+  () =>
+    import('./widgets/WorldMapWidget/WorldMapWidget').then(
+      (m) => m.WorldMapWidget
+    ),
+  { ssr: false }
+);
 import './dashboard.css';
 
 // IDs estables de cada widget. Usados en layouts persistidos y registry.
