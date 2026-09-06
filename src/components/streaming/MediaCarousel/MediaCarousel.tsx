@@ -15,6 +15,7 @@ import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { useCarouselNav } from '@/hooks/useCarouselNav';
 import type { ListPreviewBinding } from '@/components/design-system';
 import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { getVerUrl } from '@/lib/slug';
 import './MediaCarousel.css';
 
 export interface CarouselMediaItem {
@@ -138,7 +139,7 @@ export function MediaCarousel({
                   </button>
                 )}
                 <Link
-                  href={`/ver/${item.id}`}
+                  href={getVerUrl(item.id, item.title)}
                   prefetch={false}
                   className="media-carousel__card"
                 >

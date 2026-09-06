@@ -7,6 +7,7 @@ import { Button, Empty, Input, Tag } from 'antd';
 import { LinkOutlined, RobotOutlined, SearchOutlined } from '@ant-design/icons';
 import { PageTitle } from '@/components/common/PageTitle/PageTitle';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { getSeriesUrl } from '@/lib/slug';
 import './noticias.css';
 
 interface NewsTag {
@@ -131,7 +132,10 @@ export function NoticiasListClient({
           {news.map((item) => (
             <article key={item.id} className="noticias-card">
               {item.imageUrl && (
-                <div className="noticias-card__img-wrap">
+                <Link
+                  href={`/noticias/${item.id}`}
+                  className="noticias-card__img-wrap"
+                >
                   <Image
                     src={item.imageUrl}
                     alt={item.title}
@@ -140,7 +144,7 @@ export function NoticiasListClient({
                     className="noticias-card__img"
                     unoptimized
                   />
-                </div>
+                </Link>
               )}
               <div className="noticias-card__body">
                 <div className="noticias-card__meta">
@@ -167,7 +171,14 @@ export function NoticiasListClient({
                   )}
                 </div>
 
-                <h2 className="noticias-card__title">{item.title}</h2>
+                <h2 className="noticias-card__title">
+                  <Link
+                    href={`/noticias/${item.id}`}
+                    style={{ color: 'inherit', textDecoration: 'none' }}
+                  >
+                    {item.title}
+                  </Link>
+                </h2>
 
                 <p className="noticias-card__summary">
                   {/* Mostrar preview plano (primeras 200 chars) */}
@@ -185,21 +196,32 @@ export function NoticiasListClient({
 
                 {item.relatedSeries && (
                   <Link
-                    href={`/series/${item.relatedSeries.id}`}
+                    href={getSeriesUrl(
+                      item.relatedSeries.id,
+                      item.relatedSeries.title
+                    )}
                     className="noticias-card__series-link"
                   >
                     → {item.relatedSeries.title}
                   </Link>
                 )}
 
-                <a
-                  href={item.originalUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="noticias-card__source-link"
-                >
-                  <LinkOutlined /> {t('noticiasList.viewOriginalSource')}
-                </a>
+                <div className="noticias-card__footer">
+                  <Link
+                    href={`/noticias/${item.id}`}
+                    className="noticias-card__read-more"
+                  >
+                    Leer nota completa →
+                  </Link>
+                  <a
+                    href={item.originalUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="noticias-card__source-link"
+                  >
+                    <LinkOutlined /> {item.sourceName}
+                  </a>
+                </div>
               </div>
             </article>
           ))}
