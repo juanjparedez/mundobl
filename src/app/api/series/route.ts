@@ -13,26 +13,23 @@ import {
   findOrCreateProductionCompany,
 } from '@/lib/tag-utils';
 
-// GET /api/series - Obtener todas las series del catalogo curado (excluye USER_EMBED)
+// GET /api/series - Picker de series para el admin (ver ContenidoClient.tsx,
+// unico consumidor: arma un <Select> de {value: id, label: title}).
+//
+// Antes devolvia la tabla ENTERA sin auth ni select: country/universe/
+// seasons completos + `viewStatus: true` — el estado de visualizacion de
+// TODOS los usuarios, en un endpoint que cualquiera podia pegarle sin
+// sesion. Ahora exige ADMIN/MODERATOR (como el POST de abajo) y selecciona
+// solo lo que el picker usa.
 export async function GET() {
   try {
+    const authResult = await requireRole(['ADMIN', 'MODERATOR']);
+    if (!authResult.authorized) return authResult.response;
+
     const series = await prisma.series.findMany({
       where: { origin: 'CURATED' },
-      include: {
-        country: true,
-        universe: true,
-        seasons: {
-          select: {
-            id: true,
-            seasonNumber: true,
-            episodeCount: true,
-          },
-        },
-        viewStatus: true,
-      },
-      orderBy: {
-        title: 'asc',
-      },
+      select: { id: true, title: true },
+      orderBy: { title: 'asc' },
     });
 
     return NextResponse.json(series);
