@@ -2672,7 +2672,13 @@ const de: TranslationShape = {
     "linkWiki": "Wikipedia",
     "birthYear": "geb. {year}",
     "awardsTitle": "Auszeichnungen",
-    "featuredWorksTitle": "Ausgewählte Werke"
+    "featuredWorksTitle": "Ausgewählte Werke",
+    "biographyTitle": "Biografie",
+    "filmographyTitle": "Filmografie",
+    "filmographyEmpty": "Noch keine Serien erfasst.",
+    "seriesDirected": "{n} Serien inszeniert",
+    "backToIndex": "Alle Regisseure ansehen",
+    "alsoActed": "Spielte auch mit in"
   },
   "ver": {
     "searchPlaceholder": "Serien, Studios oder offizielle Titel suchen...",
@@ -2720,7 +2726,50 @@ const de: TranslationShape = {
     "geoRestrictedBadge": "In deiner Region eingeschränkt"
   },
   "actorProfile": {
-    "funFactsTitle": "Wissenswertes"
+    "funFactsTitle": "Wissenswertes",
+    "biographyTitle": "Biografie",
+    "filmographyTitle": "Filmografie",
+    "filmographyEmpty": "Noch keine Rollen erfasst.",
+    "participations": "{n} Rollen",
+    "mainRole": "Hauptrolle",
+    "backToIndex": "Alle Schauspieler ansehen",
+    "externalLinksTitle": "Links",
+    "aliasesTitle": "Auch bekannt als",
+    "alsoDirected": "Führte auch Regie bei"
+  },
+  "companyProfile": {
+    "catalogTitle": "Produzierte Serien",
+    "catalogEmpty": "Noch keine Serien mit diesem Studio verknüpft.",
+    "seriesCount": "{n} Serien",
+    "websiteLabel": "Webseite",
+    "youtubeLabel": "YouTube-Kanal",
+    "foundedLabel": "Gegründet",
+    "countryLabel": "Land",
+    "backToIndex": "Alle Produktionsfirmen ansehen"
+  },
+  "peopleIndex": {
+    "actorsTitle": "Schauspieler",
+    "actorsSubtitle": "Die gesamte Besetzung des Katalogs, nach Anzahl der Titel sortiert.",
+    "directorsTitle": "Regisseure",
+    "directorsSubtitle": "Wer bei den Serien des Katalogs Regie führt.",
+    "companiesTitle": "Produktionsfirmen",
+    "companiesSubtitle": "Die Studios hinter den Serien des Katalogs.",
+    "searchPlaceholder": "Nach Namen suchen...",
+    "sortLabel": "Sortieren",
+    "sortCredits": "Meiste Titel",
+    "sortAZ": "A-Z",
+    "sortZA": "Z-A",
+    "nationalityAll": "Alle Nationalitäten",
+    "creditsCount": "{n} Titel",
+    "seriesCount": "{n} Serien",
+    "resultsCount": "{n} Ergebnisse",
+    "emptyTitle": "Keine Ergebnisse",
+    "emptyDescription": "Versuche einen anderen Namen oder entferne die Filter.",
+    "clearFilters": "Filter zurücksetzen",
+    "prevPage": "Zurück",
+    "nextPage": "Weiter",
+    "pageIndicator": "Seite {current} von {total}",
+    "incompleteBadge": "Unvollständiges Profil"
   },
   "glosario": {
     "heroBadge": "Kultur & Ethische Übersetzung",

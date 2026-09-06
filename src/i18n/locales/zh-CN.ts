@@ -2672,7 +2672,13 @@ const zhCN: TranslationShape = {
     "linkWiki": "维基百科",
     "birthYear": "生于 {year}",
     "awardsTitle": "奖项",
-    "featuredWorksTitle": "精选作品"
+    "featuredWorksTitle": "精选作品",
+    "biographyTitle": "简介",
+    "filmographyTitle": "执导作品",
+    "filmographyEmpty": "暂无作品记录。",
+    "seriesDirected": "执导 {n} 部",
+    "backToIndex": "查看全部导演",
+    "alsoActed": "参演作品"
   },
   "ver": {
     "searchPlaceholder": "搜索剧集、工作室或官方剧名...",
@@ -2720,7 +2726,50 @@ const zhCN: TranslationShape = {
     "geoRestrictedBadge": "在你所在地区受限"
   },
   "actorProfile": {
-    "funFactsTitle": "趣闻"
+    "funFactsTitle": "趣闻",
+    "biographyTitle": "简介",
+    "filmographyTitle": "作品",
+    "filmographyEmpty": "暂无参演记录。",
+    "participations": "{n} 部作品",
+    "mainRole": "主演",
+    "backToIndex": "查看全部演员",
+    "externalLinksTitle": "链接",
+    "aliasesTitle": "别名",
+    "alsoDirected": "执导作品"
+  },
+  "companyProfile": {
+    "catalogTitle": "制作作品",
+    "catalogEmpty": "暂无与该制作公司关联的作品。",
+    "seriesCount": "{n} 部",
+    "websiteLabel": "官方网站",
+    "youtubeLabel": "YouTube 频道",
+    "foundedLabel": "成立于",
+    "countryLabel": "国家",
+    "backToIndex": "查看全部制作公司"
+  },
+  "peopleIndex": {
+    "actorsTitle": "演员",
+    "actorsSubtitle": "目录中的全部演员，按作品数量排序。",
+    "directorsTitle": "导演",
+    "directorsSubtitle": "执导目录中剧集的导演。",
+    "companiesTitle": "制作公司",
+    "companiesSubtitle": "目录中剧集背后的制作公司。",
+    "searchPlaceholder": "按姓名搜索...",
+    "sortLabel": "排序",
+    "sortCredits": "作品最多",
+    "sortAZ": "A-Z",
+    "sortZA": "Z-A",
+    "nationalityAll": "所有国籍",
+    "creditsCount": "{n} 部作品",
+    "seriesCount": "{n} 部",
+    "resultsCount": "{n} 个结果",
+    "emptyTitle": "没有结果",
+    "emptyDescription": "换个名字试试，或清除筛选条件。",
+    "clearFilters": "清除筛选",
+    "prevPage": "上一页",
+    "nextPage": "下一页",
+    "pageIndicator": "第 {current} 页，共 {total} 页",
+    "incompleteBadge": "资料不完整"
   },
   "glosario": {
     "heroBadge": "文化与道德翻译",

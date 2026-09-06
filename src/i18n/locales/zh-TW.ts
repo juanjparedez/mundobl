@@ -2672,7 +2672,13 @@ const zhTW: TranslationShape = {
     "linkWiki": "維基百科",
     "birthYear": "生於 {year}",
     "awardsTitle": "獎項",
-    "featuredWorksTitle": "精選作品"
+    "featuredWorksTitle": "精選作品",
+    "biographyTitle": "簡介",
+    "filmographyTitle": "執導作品",
+    "filmographyEmpty": "尚無作品紀錄。",
+    "seriesDirected": "執導 {n} 部",
+    "backToIndex": "查看全部導演",
+    "alsoActed": "參演作品"
   },
   "ver": {
     "searchPlaceholder": "搜尋劇集、工作室或官方名稱...",
@@ -2720,7 +2726,50 @@ const zhTW: TranslationShape = {
     "geoRestrictedBadge": "在你所在地區受限"
   },
   "actorProfile": {
-    "funFactsTitle": "趣聞"
+    "funFactsTitle": "趣聞",
+    "biographyTitle": "簡介",
+    "filmographyTitle": "作品",
+    "filmographyEmpty": "尚無參演紀錄。",
+    "participations": "{n} 部作品",
+    "mainRole": "主演",
+    "backToIndex": "查看全部演員",
+    "externalLinksTitle": "連結",
+    "aliasesTitle": "別名",
+    "alsoDirected": "執導作品"
+  },
+  "companyProfile": {
+    "catalogTitle": "製作作品",
+    "catalogEmpty": "尚無與該製作公司關聯的作品。",
+    "seriesCount": "{n} 部",
+    "websiteLabel": "官方網站",
+    "youtubeLabel": "YouTube 頻道",
+    "foundedLabel": "成立於",
+    "countryLabel": "國家",
+    "backToIndex": "查看全部製作公司"
+  },
+  "peopleIndex": {
+    "actorsTitle": "演員",
+    "actorsSubtitle": "目錄中的全部演員，依作品數量排序。",
+    "directorsTitle": "導演",
+    "directorsSubtitle": "執導目錄中影集的導演。",
+    "companiesTitle": "製作公司",
+    "companiesSubtitle": "目錄中影集背後的製作公司。",
+    "searchPlaceholder": "依姓名搜尋...",
+    "sortLabel": "排序",
+    "sortCredits": "作品最多",
+    "sortAZ": "A-Z",
+    "sortZA": "Z-A",
+    "nationalityAll": "所有國籍",
+    "creditsCount": "{n} 部作品",
+    "seriesCount": "{n} 部",
+    "resultsCount": "{n} 個結果",
+    "emptyTitle": "沒有結果",
+    "emptyDescription": "換個名字試試，或清除篩選條件。",
+    "clearFilters": "清除篩選",
+    "prevPage": "上一頁",
+    "nextPage": "下一頁",
+    "pageIndicator": "第 {current} 頁，共 {total} 頁",
+    "incompleteBadge": "資料不完整"
   },
   "glosario": {
     "heroBadge": "文化與道德翻譯",
