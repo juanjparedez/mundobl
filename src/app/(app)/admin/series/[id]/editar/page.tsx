@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { getSeriesById } from '@/lib/database';
+import { getSeriesByIdAdmin } from '@/lib/database';
 import { SeriesForm } from '@/components/admin/SeriesForm';
 
 interface EditPageProps {
@@ -18,7 +18,7 @@ export default async function EditSeriesPage({ params }: EditPageProps) {
     notFound();
   }
 
-  const serie = await getSeriesById(seriesId);
+  const serie = await getSeriesByIdAdmin(seriesId);
 
   if (!serie) {
     notFound();
@@ -33,6 +33,7 @@ export default async function EditSeriesPage({ params }: EditPageProps) {
     type: serie.type,
     basedOn: serie.basedOn,
     format: serie.format,
+    airDays: serie.airDays,
     synopsis: serie.synopsis,
     soundtrack: serie.soundtrack,
     overallRating: serie.overallRating,

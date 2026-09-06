@@ -343,20 +343,42 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       for (const seasonData of incoming) {
         const data = {
           seasonNumber: seasonData.seasonNumber,
-          episodeCount: seasonData.episodeCount ?? null,
+          episodeCount: seasonData.episodeCount ? Number(seasonData.episodeCount) : null,
           year: seasonData.year ?? body.year ?? null,
         };
+        let seasonId: number;
         if (seasonData.id) {
           await prisma.season.update({
             where: { id: seasonData.id },
             data,
           });
+          seasonId = seasonData.id;
         } else {
           const created = await prisma.season.create({
             data: { ...data, seriesId: serieId },
             select: { id: true, seasonNumber: true },
           });
+          seasonId = created.id;
           newSeasonsForNotify.push(created);
+        }
+
+        // Auto-generación de episodios faltantes si se definió episodeCount
+        const targetEpisodeCount = seasonData.episodeCount ? Number(seasonData.episodeCount) : 0;
+        if (seasonId && targetEpisodeCount > 0) {
+          const existingEpisodes = await prisma.episode.findMany({
+            where: { seasonId },
+            select: { episodeNumber: true },
+          });
+          const existingNums = new Set(existingEpisodes.map((e) => e.episodeNumber));
+          const toCreate = [];
+          for (let i = 1; i <= targetEpisodeCount; i++) {
+            if (!existingNums.has(i)) {
+              toCreate.push({ seasonId, episodeNumber: i });
+            }
+          }
+          if (toCreate.length > 0) {
+            await prisma.episode.createMany({ data: toCreate });
+          }
         }
       }
 

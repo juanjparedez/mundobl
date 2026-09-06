@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Button, Table, Space, Tag, Input } from 'antd';
+import { Button, Table, Space, Tag, Input, Select } from 'antd';
 import {
   EditOutlined,
   DeleteOutlined,
   ExclamationCircleOutlined,
   SearchOutlined,
+  PlusOutlined,
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { EditSerieModal } from './EditSerieModal';
@@ -25,16 +26,22 @@ interface SerieData {
   anio: number;
   estado: string;
   rating: number | null;
+  generos?: string[];
 }
 
 interface AdminTableClientProps {
   data: SerieData[];
   countries: Array<{ id: number; name: string }>;
+  genres?: Array<{ id: number; name: string }>;
 }
 
 const ALPHABET = '#ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
-export function AdminTableClient({ data, countries }: AdminTableClientProps) {
+export function AdminTableClient({
+  data,
+  countries,
+  genres = [],
+}: AdminTableClientProps) {
   const message = useMessage();
   const modal = useModal();
   const router = useRouter();
@@ -42,6 +49,7 @@ export function AdminTableClient({ data, countries }: AdminTableClientProps) {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedSerieId, setSelectedSerieId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
 
   const availableLetters = useMemo(() => {
@@ -70,6 +78,10 @@ export function AdminTableClient({ data, countries }: AdminTableClientProps) {
       );
     }
 
+    if (selectedGenre) {
+      result = result.filter((s) => s.generos?.includes(selectedGenre));
+    }
+
     if (selectedLetter) {
       if (selectedLetter === '#') {
         result = result.filter((s) => !/^[A-Za-z]/.test(s.titulo));
@@ -81,7 +93,7 @@ export function AdminTableClient({ data, countries }: AdminTableClientProps) {
     }
 
     return result;
-  }, [data, searchTerm, selectedLetter]);
+  }, [data, searchTerm, selectedGenre, selectedLetter]);
 
   const handleEdit = (record: SerieData) => {
     router.push(`/admin/series/${record.key}/editar`);
@@ -234,6 +246,28 @@ export function AdminTableClient({ data, countries }: AdminTableClientProps) {
           allowClear
           className="admin-search-input"
         />
+        {genres.length > 0 && (
+          <Select
+            placeholder="Filtrar por género"
+            allowClear
+            value={selectedGenre}
+            onChange={(val) => setSelectedGenre(val ?? null)}
+            style={{ minWidth: 170 }}
+            showSearch
+            filterOption={(input, option) =>
+              (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+            }
+            options={genres.map((g) => ({ label: g.name, value: g.name }))}
+          />
+        )}
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => router.push('/admin/series/nueva')}
+          style={{ marginLeft: 'auto' }}
+        >
+          Nueva Serie
+        </Button>
         <span className="admin-result-count">
           {interpolateMessage(t('adminTable.resultCount'), {
             filtered: String(filteredData.length),
