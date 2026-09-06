@@ -8,6 +8,27 @@ Todas las versiones notables del proyecto se documentan aqui.
 > (`ChangelogItem`, `/admin/changelog`) quedo como fallback solo si este archivo
 > esta vacio.
 
+## 2026-09-06 — Feedback colaborativo, curaduría ágil, SEO semántico y experiencia de landing
+
+### Features
+
+- **Respuestas abiertas en Feedback**: el hilo de comentarios en `/feedback` ahora está abierto a toda la comunidad — cualquier usuario autenticado puede responder, dialogar sobre sugerencias y debatir propuestas de colaboración (como la de Xuxyn / Alxy) directamente con el equipo. Incluye notificaciones directas al creador de la solicitud y rate limit defensivo (20 comentarios/hora).
+- **Fusión de Géneros en Panel de Administración**: nueva herramienta en `/admin/tags` (pestaña Géneros) con selección múltiple y modal interactivo para fusionar géneros duplicados o con errores tipográficos hacia un único género destino, migrando todas las series asociadas de forma atómica y segura.
+- **Narrativa interactiva en la Landing Page**: rediseño progresivo del flujo de inicio enfocado en valor real y retención — presenta las herramientas diferenciales a medida que se hace scroll (tracker personal con timestamps, modo sin spoilers, glosario cultural con trivia interactiva, noticias de actualidad y el ecosistema abierto de fansubs y plataformas oficiales).
+- **Filtro de Género en Administración de Series**: selector con autocompletado en `/admin/series` para filtrar el catálogo rápidamente por género, sumado a un botón directo para crear nuevas series.
+- **Slugs semánticos en URLs (SEO)**: enlaces optimizados para motores de búsqueda (`/series/:id-:slug`, fichas de personas y productoras), con metadatos JSON-LD estructurados (Schema.org) y sitemap canonical para maximizar la indexación en Google.
+- **Vista Rápida (Quick Preview)**: navegación ágil en carruseles y grillas mediante un modal emergente para revisar detalles, sinopsis y episodios sin perder la posición de lectura.
+- **Módulo centralizado de correos**: infraestructura ligera (`src/lib/email.ts`) compatible con Resend (REST API directa) y simulación segura en logs para entornos de desarrollo.
+- **Medición de rendimiento y analítica**: integración de Vercel Analytics y Speed Insights para monitorear Core Web Vitals (LCP, INP, CLS) y uso real de la plataforma.
+
+### Fixes
+
+- **Curaduría de Especiales**: al dar de alta un especial en el formulario de series, se oculta la complejidad de temporadas y solo se solicita cantidad de capítulos y año, asignando temporada 1 automáticamente y guardando sin errores.
+- **Auto-generación de Episodios**: al ingresar o aumentar la cantidad de capítulos de una serie o especial, el sistema genera automáticamente todos los episodios del 1 al N en la base de datos sin requerir carga manual.
+- **Días de emisión al editar (`airDays`)**: se corrigió la pantalla de edición (`/admin/series/[id]/editar`) para que los días de emisión previamente marcados no se desmarquen al abrir el formulario.
+- **Navegación post-creación**: tras registrar una nueva serie, el panel redirige de forma directa a la ficha pública (`/series/:id-:slug`) para previsualizar el contenido al instante, invalidando cachés asociadas.
+- **Rendimiento de renderizado estático**: optimización de caché en `/catalogo` y `/series/[id]` desacoplando la consulta de sesión en el render para preservar la revalidación estática rápida.
+
 ## 2026-09-05 — Glosario Cultural: tags, recursos y logros
 
 ### Features

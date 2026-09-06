@@ -85,6 +85,12 @@ export async function POST(request: NextRequest) {
             body: line.slice(2).trim(),
             sortOrder: sortOrderCounter++,
           });
+        } else if (
+          items.length > 0 &&
+          line.trim() &&
+          !line.startsWith('#')
+        ) {
+          items[items.length - 1].body += ' ' + line.trim();
         }
       }
 
