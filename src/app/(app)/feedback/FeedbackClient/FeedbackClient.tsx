@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import {
   Tabs,
@@ -291,16 +292,35 @@ export function FeedbackClient() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ body }),
       });
-      if (!res.ok) throw new Error();
+      if (!res.ok) {
+        throw new Error(
+          await readErrorMessage(res, t('feedback.commentError'))
+        );
+      }
       const newComment: FeatureRequestComment = await res.json();
       setComments((prev) => ({
         ...prev,
         [requestId]: [...(prev[requestId] ?? []), newComment],
       }));
+      setRequests((prev) =>
+        prev.map((r) =>
+          r.id === requestId
+            ? {
+                ...r,
+                _count: {
+                  ...r._count,
+                  comments: (r._count.comments || 0) + 1,
+                },
+              }
+            : r
+        )
+      );
       setCommentTexts((prev) => ({ ...prev, [requestId]: '' }));
       message.success(t('feedback.commentSuccess'));
-    } catch {
-      message.error(t('feedback.commentError'));
+    } catch (error) {
+      message.error(
+        error instanceof Error ? error.message : t('feedback.commentError')
+      );
     } finally {
       setCommentSubmitting((prev) => {
         const next = new Set(prev);
@@ -728,10 +748,8 @@ export function FeedbackClient() {
           </div>
         </div>
 
-        {/* Hilo de comentarios: visible solo para el dueño y admins */}
-        {userId &&
-          (request.user?.id === userId || isAdmin) &&
-          renderCommentThread(request)}
+        {/* Hilo de comentarios visible para todas las solicitudes */}
+        {renderCommentThread(request)}
       </div>
     );
   };
@@ -802,7 +820,7 @@ export function FeedbackClient() {
               </p>
             )}
 
-            {session?.user && (
+            {session?.user ? (
               <div className="feedback-card__comment-input">
                 <Input.TextArea
                   rows={2}
@@ -825,6 +843,25 @@ export function FeedbackClient() {
                 >
                   {t('feedback.commentSubmit')}
                 </Button>
+              </div>
+            ) : (
+              <div
+                style={{
+                  padding: '8px 12px',
+                  background: 'var(--bg-layout)',
+                  borderRadius: 'var(--border-radius-sm)',
+                  fontSize: 12,
+                  color: 'var(--text-tertiary)',
+                  textAlign: 'center',
+                }}
+              >
+                <Link
+                  href="/api/auth/signin"
+                  style={{ color: 'var(--primary-color)', fontWeight: 500 }}
+                >
+                  Inicia sesión
+                </Link>{' '}
+                para responder a esta solicitud
               </div>
             )}
           </div>
