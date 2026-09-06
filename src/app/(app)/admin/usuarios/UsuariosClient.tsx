@@ -1,22 +1,13 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import {
-  Table,
-  Select,
-  Avatar,
-  Tag,
-  Button,
-  Popconfirm,
-  Space,
-  Input,
-} from 'antd';
+import { Select, Avatar, Tag, Button, Popconfirm, Space, Input } from 'antd';
 import {
   UserOutlined,
   StopOutlined,
   CheckCircleOutlined,
 } from '@ant-design/icons';
-import type { ColumnsType } from 'antd/es/table';
+import { DataTable, type DataTableColumn } from '@/components/design-system';
 import { AdminNav } from '../AdminNav';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -208,10 +199,11 @@ export function UsuariosClient() {
     }
   };
 
-  const userColumns: ColumnsType<UserData> = [
+  const userColumns: DataTableColumn<UserData>[] = [
     {
       title: t('adminUsers.columnUser'),
       key: 'user',
+      mobile: 'title',
       render: (_, record) => (
         <div className="usuarios-table__user">
           <Avatar
@@ -237,6 +229,7 @@ export function UsuariosClient() {
       title: t('adminUsers.columnRole'),
       key: 'role',
       width: 200,
+      mobile: 'meta',
       render: (_, record) =>
         record.role === 'ADMIN' ? (
           <Tag color={ROLE_COLORS[record.role]}>
@@ -263,6 +256,7 @@ export function UsuariosClient() {
       title: t('adminUsers.columnCreatedAt'),
       key: 'createdAt',
       width: 150,
+      mobile: 'body',
       render: (_, record) =>
         new Date(record.createdAt).toLocaleDateString('es-ES'),
     },
@@ -270,6 +264,7 @@ export function UsuariosClient() {
       title: t('adminUsers.columnActions'),
       key: 'actions',
       width: 130,
+      mobile: 'actions',
       render: (_, record) =>
         record.role !== 'ADMIN' ? (
           <Popconfirm
@@ -306,22 +301,25 @@ export function UsuariosClient() {
     },
   ];
 
-  const ipColumns: ColumnsType<BannedIpData> = [
+  const ipColumns: DataTableColumn<BannedIpData>[] = [
     {
       title: t('adminUsers.columnIp'),
       dataIndex: 'ip',
       key: 'ip',
+      mobile: 'title',
     },
     {
       title: t('adminUsers.columnReason'),
       dataIndex: 'reason',
       key: 'reason',
+      mobile: 'body',
       render: (reason: string | null) => reason || '-',
     },
     {
       title: t('adminUsers.columnDate'),
       key: 'createdAt',
       width: 150,
+      mobile: 'body',
       render: (_, record) =>
         new Date(record.createdAt).toLocaleDateString('es-ES'),
     },
@@ -329,6 +327,7 @@ export function UsuariosClient() {
       title: t('adminUsers.columnActions'),
       key: 'actions',
       width: 120,
+      mobile: 'actions',
       render: (_, record) => (
         <Button
           size="small"
@@ -393,13 +392,12 @@ export function UsuariosClient() {
         <h2 className="usuarios-section-title">
           {t('adminUsers.sectionUsers')}
         </h2>
-        <Table
-          scroll={{ x: 'max-content' }}
+        <DataTable
           columns={userColumns}
           dataSource={filteredUsers}
           rowKey="id"
           loading={loading}
-          pagination={false}
+          pageSize={false}
           size="small"
         />
 
@@ -424,12 +422,11 @@ export function UsuariosClient() {
             </Button>
           </Space.Compact>
         </div>
-        <Table
-          scroll={{ x: 'max-content' }}
+        <DataTable
           columns={ipColumns}
           dataSource={bannedIps}
           rowKey="id"
-          pagination={false}
+          pageSize={false}
           size="small"
         />
       </div>
