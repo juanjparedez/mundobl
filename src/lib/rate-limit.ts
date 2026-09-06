@@ -97,6 +97,26 @@ export function checkFeatureRequestRateLimit(
 }
 
 /**
+ * Limita creación de comentarios en feature requests: 20/hora, 100/día.
+ */
+export function checkFeatureRequestCommentRateLimit(
+  userId: string
+): Promise<RateLimitResult> {
+  return checkWindowedRateLimit(
+    (since) =>
+      prisma.featureRequestComment.count({
+        where: { userId, createdAt: { gte: since } },
+      }),
+    {
+      perHour: 20,
+      perDay: 100,
+      hourMsg: 'Demasiados comentarios en poco tiempo. Esperá un momento.',
+      dayMsg: 'Alcanzaste el máximo de comentarios por hoy.',
+    }
+  );
+}
+
+/**
  * Limita aportes de series USER_EMBED por usuario: max 5 por hora,
  * 20 por dia. Se calcula contando Series del submitter con createdAt
  * dentro de la ventana.
