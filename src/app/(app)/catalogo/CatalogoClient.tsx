@@ -41,6 +41,7 @@ import {
   InboxOutlined,
   BarsOutlined,
   SettingOutlined,
+  DashboardOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
 import { useMessage } from '@/hooks/useMessage';
@@ -1444,6 +1445,14 @@ export function CatalogoClient({
               />
             </Tooltip>
           )}
+          <Tooltip title={t('catalogoDashboard.fromClassicLink')}>
+            <Button
+              icon={<DashboardOutlined />}
+              onClick={() => router.push('/catalogo/dashboard')}
+              size={isMobile ? 'small' : 'middle'}
+              aria-label={t('catalogoDashboard.fromClassicLink')}
+            />
+          </Tooltip>
           {canEdit && (
             <Button
               type="primary"
