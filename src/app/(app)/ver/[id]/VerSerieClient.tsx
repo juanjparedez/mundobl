@@ -532,10 +532,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
             text={series.synopsis ?? undefined}
             path={`/ver/${series.id}`}
           />
-          <SeriesSubscribeButton
-            seriesId={series.id}
-            initialSubscribed={false}
-          />
+          <SeriesSubscribeButton seriesId={series.id} />
         </div>
       </header>
 

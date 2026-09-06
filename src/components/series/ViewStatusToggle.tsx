@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Progress, Tooltip, Tag, Select, Badge } from 'antd';
 import { useSession } from 'next-auth/react';
 import { WATCH_STATUS, WATCH_STATUS_COLORS } from '@/constants/series';
 import type { WatchStatusValue } from '@/constants/series';
+import { useSeriesUserStatus } from './SeriesUserStatusProvider';
 import './ViewStatusToggle.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
@@ -19,24 +20,32 @@ type AntStatusColor =
 
 interface ViewStatusToggleProps {
   seriesId: number;
-  initialStatus: WatchStatusValue;
   seasons?: Array<{
     episodes?: Array<{
-      viewStatus?: Array<{ status: string }>;
+      id: number;
     }>;
   }>;
 }
 
+// El estado inicial (serie + episodios, para el progreso) ya no llega
+// horneado desde el servidor: /series/[id] dejo de llamar `await auth()`
+// (mataba el `revalidate`), asi que se hidrata aca via
+// SeriesUserStatusProvider apenas resuelve el fetch a
+// /api/series/[id]/my-status.
 export function ViewStatusToggle({
   seriesId,
-  initialStatus,
   seasons = [],
 }: ViewStatusToggleProps) {
   const message = useMessage();
   const { t } = useLocale();
   const { data: session } = useSession();
-  const [status, setStatus] = useState<WatchStatusValue>(initialStatus);
+  const { seriesStatus, episodeStatus, loaded } = useSeriesUserStatus();
+  const [status, setStatus] = useState<WatchStatusValue>('SIN_VER');
   const [isUpdating, setIsUpdating] = useState(false);
+
+  useEffect(() => {
+    if (loaded) setStatus(seriesStatus as WatchStatusValue);
+  }, [loaded, seriesStatus]);
 
   const watchStatusLabels: Record<string, string> = {
     SIN_VER: t('viewStatusToggle.sinVer'),
@@ -55,7 +64,7 @@ export function ViewStatusToggle({
       if (season.episodes) {
         totalEpisodes += season.episodes.length;
         watchedEpisodes += season.episodes.filter(
-          (ep) => ep.viewStatus?.[0]?.status === 'VISTA'
+          (ep) => episodeStatus[ep.id] === 'VISTA'
         ).length;
       }
     });
