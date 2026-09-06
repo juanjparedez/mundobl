@@ -10,6 +10,7 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { trackEvent } from '@/lib/analytics';
 import { HoverPreviewCard } from './HoverPreviewCard';
 import { QuickPreviewModal } from './QuickPreviewModal';
 import type {
@@ -34,6 +35,9 @@ export interface QuickPreviewOptions {
   labels: QuickPreviewLabels;
   /** Permite apagar el hover-preview (ej. vista lista) sin perder el modal. */
   hoverEnabled?: boolean;
+  /** Que pagina monta el preview ('catalogo', 'ver', ...). Solo se usa
+   *  para medir si la vista rapida se usa y donde. */
+  surface?: string;
 }
 
 /** Motor de la vista rapida. Se usa directo cuando las cards se rendean en
@@ -42,6 +46,7 @@ export interface QuickPreviewOptions {
 export function useQuickPreviewController({
   labels,
   hoverEnabled = true,
+  surface,
 }: QuickPreviewOptions): QuickPreviewController {
   // Desktop con mouse. En SSR y en touch da false, asi que el
   // hover-preview simplemente no existe ahi (el modal si).
@@ -107,8 +112,13 @@ export function useQuickPreviewController({
       closeHover();
       // setState confunde una funcion con un updater — de ahi el wrapper.
       setModalFactory(() => getData);
+
+      // Se mide la apertura del modal (accion deliberada), NO el
+      // hover-preview: el hover dispararia un evento por cada card que el
+      // mouse roza y comeria la cuota gratuita sin decir nada nuevo.
+      if (surface) trackEvent('quick_preview_open', { surface });
     },
-    [closeHover]
+    [closeHover, surface]
   );
 
   const previewTriggerProps = useCallback(
