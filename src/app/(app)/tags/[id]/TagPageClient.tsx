@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
-import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import './tag-page.css';
 
 interface TagSeriesEntry {
@@ -16,6 +16,7 @@ interface TagSeriesEntry {
     year?: number | null;
     type: string;
     imageUrl?: string | null;
+    imageThumbUrl?: string | null;
     country?: { name: string; code?: string | null } | null;
     universe?: { name: string } | null;
   };
@@ -112,14 +113,14 @@ export function TagPageClient({ tag }: TagPageClientProps) {
                     size="small"
                     className="tag-page__card"
                     cover={
-                      entry.imageUrl ? (
+                      cardImageUrl(entry) ? (
                         <Image
                           alt={entry.title}
-                          src={entry.imageUrl}
+                          src={cardImageUrl(entry)!}
                           width={200}
                           height={300}
                           quality={70}
-                          unoptimized={isSupabaseImageUrl(entry.imageUrl)}
+                          unoptimized={isSupabaseImageUrl(cardImageUrl(entry))}
                           className="tag-page__card-image"
                         />
                       ) : undefined

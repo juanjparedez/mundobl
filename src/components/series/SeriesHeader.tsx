@@ -15,7 +15,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
-import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { MetadataChip } from './MetadataPrimitives/MetadataPrimitives';
 import './SeriesHeader.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -32,6 +32,7 @@ interface SeriesHeaderProps {
     basedOn?: string | null;
     format: string;
     imageUrl?: string | null;
+    imageThumbUrl?: string | null;
     synopsis?: string | null;
     overallRating?: number | null;
     country?: {
@@ -83,6 +84,10 @@ export function SeriesHeader({
   const directors = series.directors?.slice(0, 2) ?? [];
   const hasQuickCast = mainActors.length > 0 || directors.length > 0;
   const imageUrl = series.imageUrl;
+  // El poster chico del header (260x390, priority/LCP) SI se beneficia de la
+  // miniatura de card. El backdrop de fondo (100vw, mas abajo) se queda con
+  // el master: es un fondo grande, no un thumbnail.
+  const posterThumb = cardImageUrl(series);
 
   return (
     <section className="series-hero">
@@ -107,14 +112,14 @@ export function SeriesHeader({
           {imageUrl && (
             <div className="series-header__image">
               <Image
-                src={imageUrl}
+                src={posterThumb ?? imageUrl!}
                 alt={series.title}
                 width={260}
                 height={390}
                 sizes="(max-width: 640px) 110px, (max-width: 900px) 180px, 230px"
                 quality={72}
                 priority
-                unoptimized={isSupabaseImageUrl(imageUrl)}
+                unoptimized={isSupabaseImageUrl(posterThumb ?? imageUrl)}
               />
             </div>
           )}

@@ -127,6 +127,7 @@ export default async function CatalogoPage() {
       anio: serie.year || 0,
       rating: serie.overallRating,
       imageUrl: serie.imageUrl,
+      imageThumbUrl: serie.imageThumbUrl,
       imagePosition: serie.imagePosition,
       synopsis: serie.synopsis,
       visto: serie.viewStatus?.[0]?.status === 'VISTA',

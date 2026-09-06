@@ -77,6 +77,7 @@ export default async function ColaboradorEditarPage({ params }: PageProps) {
           type: series.type,
           synopsis: series.synopsis,
           imageUrl: series.imageUrl,
+          imageThumbUrl: series.imageThumbUrl,
           countryCode: series.country?.code ?? null,
           productionCompanyName: series.productionCompany?.name ?? null,
           actorNames: series.actors.map((a) => a.actor.name),

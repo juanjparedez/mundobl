@@ -13,7 +13,7 @@ import {
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
-import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import './SubscriptionsSection.css';
 
 interface SubscriptionItem {
@@ -23,6 +23,7 @@ interface SubscriptionItem {
     id: number;
     title: string;
     imageUrl: string | null;
+    imageThumbUrl?: string | null;
     imagePosition: string | null;
     year: number | null;
     type: string;
@@ -159,14 +160,16 @@ export function SubscriptionsSection() {
                   prefetch={false}
                 >
                   <div className="subscription-card__cover">
-                    {item.series.imageUrl ? (
+                    {cardImageUrl(item.series) ? (
                       <Image
-                        src={item.series.imageUrl}
+                        src={cardImageUrl(item.series)!}
                         alt=""
                         fill
                         sizes="80px"
                         quality={50}
-                        unoptimized={isSupabaseImageUrl(item.series.imageUrl)}
+                        unoptimized={isSupabaseImageUrl(
+                          cardImageUrl(item.series)
+                        )}
                         style={{
                           objectFit: 'cover',
                           objectPosition: item.series.imagePosition ?? 'center',

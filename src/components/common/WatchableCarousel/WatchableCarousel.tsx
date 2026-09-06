@@ -9,12 +9,14 @@ import {
 } from '@ant-design/icons';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
+import { cardImageUrl } from '@/lib/image-helpers';
 import './WatchableCarousel.css';
 
 export interface WatchableCarouselItem {
   id: number;
   title: string;
   imageUrl: string | null;
+  imageThumbUrl?: string | null;
   imagePosition: string | null;
   year: number | null;
   type: string;
@@ -91,14 +93,14 @@ export function WatchableCarousel({ items, title }: WatchableCarouselProps) {
             prefetch={false}
           >
             <div className="watchable-carousel__cover">
-              {item.imageUrl ? (
+              {cardImageUrl(item) ? (
                 // <img> regular en vez de next/image: las portadas de
                 // series pueden venir de cualquier CDN (YouTube thumbs,
                 // etc.) que no esta en remotePatterns. next/image fallaba
                 // silenciosamente -> "sin imagen" (bug fine_tunning_3 #3).
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
-                  src={item.imageUrl}
+                  src={cardImageUrl(item)!}
                   alt={item.title}
                   loading="lazy"
                   className="watchable-carousel__img"

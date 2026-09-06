@@ -51,6 +51,7 @@ export default async function EditSeasonPage({ params }: EditSeasonPageProps) {
     synopsis: season.synopsis,
     observations: season.observations,
     imageUrl: season.imageUrl,
+    imageThumbUrl: season.imageThumbUrl,
     actors:
       season.actors?.map((sa) => ({
         name: sa.actor.name,

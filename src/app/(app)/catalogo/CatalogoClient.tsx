@@ -51,7 +51,7 @@ import { interpolateMessage } from '@/lib/i18n-format';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { WelcomeBanner } from '@/components/common/WelcomeBanner/WelcomeBanner';
 import { EmptyState } from '@/components/design-system';
-import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { withViewTransition } from '@/lib/view-transitions';
 import type { SerieData, UniverseGroup, CatalogItem } from './catalogTypes';
 import { groupIntoCatalogItems } from './catalogGrouping';
@@ -721,15 +721,15 @@ export function CatalogoClient({
         }}
       >
         <div className="serie-card-cover">
-          {serie.imageUrl ? (
+          {cardImageUrl(serie) ? (
             <Image
-              src={serie.imageUrl}
+              src={cardImageUrl(serie)!}
               alt=""
               fill
               sizes="(max-width: 480px) 50vw, (max-width: 768px) 46vw, (max-width: 1200px) 31vw, 24vw"
               quality={55}
               fetchPriority="low"
-              unoptimized={isSupabaseImageUrl(serie.imageUrl)}
+              unoptimized={isSupabaseImageUrl(cardImageUrl(serie))}
               style={{
                 objectFit: 'cover',
                 objectPosition: serie.imagePosition || 'center',
@@ -891,15 +891,15 @@ export function CatalogoClient({
           }}
         >
           <div className="serie-card-cover">
-            {firstSerie.imageUrl ? (
+            {cardImageUrl(firstSerie) ? (
               <Image
-                src={firstSerie.imageUrl}
+                src={cardImageUrl(firstSerie)!}
                 alt=""
                 fill
                 sizes="(max-width: 480px) 50vw, (max-width: 768px) 46vw, (max-width: 1200px) 31vw, 24vw"
                 quality={55}
                 fetchPriority="low"
-                unoptimized={isSupabaseImageUrl(firstSerie.imageUrl)}
+                unoptimized={isSupabaseImageUrl(cardImageUrl(firstSerie))}
                 style={{
                   objectFit: 'cover',
                   objectPosition: firstSerie.imagePosition || 'center',
@@ -991,15 +991,15 @@ export function CatalogoClient({
         }}
       >
         <div className="serie-list-item-cover">
-          {serie.imageUrl ? (
+          {cardImageUrl(serie) ? (
             <Image
-              src={serie.imageUrl}
+              src={cardImageUrl(serie)!}
               alt=""
               fill
               sizes="48px"
               quality={50}
               fetchPriority="low"
-              unoptimized={isSupabaseImageUrl(serie.imageUrl)}
+              unoptimized={isSupabaseImageUrl(cardImageUrl(serie))}
               style={{
                 objectFit: 'cover',
                 objectPosition: serie.imagePosition || 'center',
@@ -1092,15 +1092,15 @@ export function CatalogoClient({
               }}
             >
               <div className="serie-list-item-cover">
-                {serie.imageUrl ? (
+                {cardImageUrl(serie) ? (
                   <Image
-                    src={serie.imageUrl}
+                    src={cardImageUrl(serie)!}
                     alt=""
                     fill
                     sizes="48px"
                     quality={50}
                     fetchPriority="low"
-                    unoptimized={isSupabaseImageUrl(serie.imageUrl)}
+                    unoptimized={isSupabaseImageUrl(cardImageUrl(serie))}
                     style={{
                       objectFit: 'cover',
                       objectPosition: serie.imagePosition || 'center',
