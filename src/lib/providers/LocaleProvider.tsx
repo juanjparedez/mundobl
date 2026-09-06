@@ -21,6 +21,7 @@ import {
   type TranslationKey,
   type TranslationShape,
 } from '@/i18n/messages';
+import { trackEvent } from '@/lib/analytics';
 
 interface LocaleContextType {
   locale: SupportedLocale;
@@ -98,10 +99,23 @@ export function LocaleProvider({ children }: LocaleProviderProps) {
   }, []);
 
   const setLocale = useCallback((newLocale: SupportedLocale) => {
+    // Se lee ANTES de pisarlo. Sirve para distinguir "eligio ingles
+    // saliendo del default" de "volvio al español".
+    const previous = localStorage.getItem(LOCALE_STORAGE_KEY);
+
     setLocaleState(newLocale);
     localStorage.setItem(LOCALE_STORAGE_KEY, newLocale);
     document.documentElement.lang = newLocale;
     ensureLocaleLoaded(newLocale);
+
+    // El unico dato duro para decidir si vale la pena poner los locales en
+    // la URL (rutas /en, hreflang) o no: hoy los 10 idiomas estan
+    // traducidos pero Google solo ve el español, y no hay forma de saber
+    // cuales pide la gente. Sin PII: solo dos codigos de idioma.
+    trackEvent('locale_switch', {
+      to: newLocale,
+      from: previous ?? 'default',
+    });
   }, []);
 
   const t = useCallback(

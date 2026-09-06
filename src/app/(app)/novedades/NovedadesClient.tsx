@@ -117,6 +117,7 @@ export function NovedadesClient({
       noSynopsis: t('quickPreview.noSynopsis'),
       moreInfo: t('quickPreview.moreInfo'),
     },
+    surface: 'novedades',
   });
 
   const buildSeriePreview = (serie: NewSerie): QuickPreviewData => ({
