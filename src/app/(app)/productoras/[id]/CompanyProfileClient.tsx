@@ -15,7 +15,9 @@ import {
   Chip,
   EmptyState,
   MediaCard,
+  useQuickPreviewController,
 } from '@/components/design-system';
+import type { QuickPreviewData } from '@/components/design-system';
 import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
@@ -29,6 +31,7 @@ interface CompanySeries {
   type: string;
   imageUrl?: string | null;
   imageThumbUrl?: string | null;
+  synopsis?: string | null;
   country?: { name: string; code?: string | null } | null;
 }
 
@@ -58,6 +61,75 @@ const TYPE_KEYS: Record<string, TranslationKey> = {
 
 export function CompanyProfileClient({ company }: CompanyProfileClientProps) {
   const { t } = useLocale();
+
+  // Vista rapida de cada titulo del catalogo de la productora: sinopsis y
+  // datos sin abandonar la ficha. El chip de pais salta al catalogo ya
+  // filtrado por ese pais.
+  const previewApi = useQuickPreviewController({
+    labels: {
+      close: t('quickPreview.close'),
+      synopsis: t('quickPreview.synopsis'),
+      noSynopsis: t('quickPreview.noSynopsis'),
+      moreInfo: t('quickPreview.moreInfo'),
+    },
+  });
+
+  const buildSeriesPreview = (serie: CompanySeries): QuickPreviewData => ({
+    id: String(serie.id),
+    title: serie.title,
+    imageUrl: cardImageUrl(serie),
+    coverAspect: '16:9',
+    badges: TYPE_KEYS[serie.type]
+      ? [
+          {
+            key: 'type',
+            label: t(TYPE_KEYS[serie.type]),
+            color: 'purple',
+          },
+        ]
+      : [],
+    meta: (
+      <>
+        {serie.year && <span>{serie.year}</span>}
+        {serie.country?.name && <span>{serie.country.name}</span>}
+        <span>{company.name}</span>
+      </>
+    ),
+    synopsis: serie.synopsis,
+    facts: [
+      ...(serie.year
+        ? [{ key: 'year', label: t('quickPreview.year'), value: serie.year }]
+        : []),
+      {
+        key: 'company',
+        label: t('quickPreview.company'),
+        value: company.name,
+      },
+    ],
+    chipGroups: serie.country?.name
+      ? [
+          {
+            key: 'country',
+            label: t('quickPreview.country'),
+            chips: [
+              {
+                key: `country-${serie.country.name}`,
+                label: serie.country.name,
+                href: `/catalogo?country=${encodeURIComponent(serie.country.name)}`,
+              },
+            ],
+          },
+        ]
+      : [],
+    actions: [
+      {
+        key: 'detail',
+        label: t('quickPreview.fullDetail'),
+        variant: 'primary' as const,
+        href: `/series/${serie.id}`,
+      },
+    ],
+  });
 
   const filmography = [...company.series].sort((a, b) => {
     if (a.year && b.year) return b.year - a.year;
@@ -169,6 +241,11 @@ export function CompanyProfileClient({ company }: CompanyProfileClientProps) {
                 imageUrl={cardImageUrl(s)}
                 imageAlt={s.title}
                 unoptimizedImage={isSupabaseImageUrl(cardImageUrl(s))}
+                preview={{
+                  api: previewApi,
+                  getData: () => buildSeriesPreview(s),
+                  openLabel: t('quickPreview.open'),
+                }}
                 title={s.title}
                 subtitle={
                   [s.year ? String(s.year) : null, s.country?.name]
@@ -193,6 +270,8 @@ export function CompanyProfileClient({ company }: CompanyProfileClientProps) {
           {t('companyProfile.backToIndex')}
         </Link>
       </div>
+
+      {previewApi.overlays}
     </div>
   );
 }

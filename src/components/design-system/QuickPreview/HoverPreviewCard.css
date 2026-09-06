@@ -1,0 +1,151 @@
+/* ─── Hover preview (desktop) ──────────────────────────────────────────
+ * Card expandida en portal + position: fixed. Ver el comentario del .tsx
+ * para el porque del portal.
+ * ------------------------------------------------------------------- */
+
+.mb-hp {
+  position: fixed;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--border-radius-base);
+  overflow: hidden;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  transform: scale(0.94);
+  transition:
+    opacity 0.16s ease,
+    transform 0.16s var(--ease-pop);
+  /* Mientras se mide, no debe interceptar el mouse ni verse. */
+  pointer-events: none;
+}
+
+.mb-hp--placed {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+.mb-hp__cover {
+  position: relative;
+  width: 100%;
+  background: var(--bg-spotlight);
+  overflow: hidden;
+}
+
+.mb-hp__cover--wide {
+  aspect-ratio: 16 / 9;
+}
+
+.mb-hp__cover--poster {
+  aspect-ratio: 2 / 3;
+  max-height: 260px;
+}
+
+.mb-hp__cover img,
+.mb-hp__cover-placeholder {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mb-hp__cover-placeholder {
+  background: linear-gradient(
+    135deg,
+    var(--bg-spotlight) 0%,
+    var(--bg-elevated) 100%
+  );
+}
+
+.mb-hp__cover-badges {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.mb-hp__body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: var(--spacing-sm) var(--spacing-md) var(--spacing-md);
+}
+
+.mb-hp__title {
+  margin: 0;
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--text-primary);
+}
+
+.mb-hp__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.mb-hp__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.mb-hp__action--active {
+  color: var(--warning-color);
+  border-color: var(--warning-color);
+}
+
+.mb-hp__more {
+  margin-left: auto;
+  padding-inline: 6px;
+  color: var(--primary-color);
+}
+
+.mb-hp__synopsis {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+  color: var(--text-secondary);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.mb-hp__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.mb-hp__chip {
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: 999px;
+  padding: 1px 8px;
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mb-hp {
+    transition: opacity 0.01s linear;
+    transform: none;
+  }
+
+  .mb-hp--placed {
+    transform: none;
+  }
+}

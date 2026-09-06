@@ -1,6 +1,5 @@
 'use client';
 
-import { useRef } from 'react';
 import Link from 'next/link';
 import {
   PlayCircleFilled,
@@ -9,6 +8,7 @@ import {
 } from '@ant-design/icons';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
+import { useCarouselNav } from '@/hooks/useCarouselNav';
 import { cardImageUrl } from '@/lib/image-helpers';
 import './WatchableCarousel.css';
 
@@ -38,23 +38,14 @@ interface WatchableCarouselProps {
  *  fijo y poster 2:3 chico. El usuario scrollea con el dedo / trackpad. */
 export function WatchableCarousel({ items, title }: WatchableCarouselProps) {
   const { t } = useLocale();
-  const trackRef = useRef<HTMLDivElement>(null);
-
-  if (items.length === 0) return null;
-
-  // Scrollea el track por "paginas" (75% del ancho visible) en vez de
-  // depender solo del drag/touch — misma UX que MediaCarousel. El
+  // Scroll por "paginas" (75% del ancho visible), estado de los extremos y
+  // drag con mouse — compartido con MediaCarousel y CatalogCarouselRow. El
   // scrollbar nativo se oculta via CSS (fea, gorda y desalineada con el
   // tema en algunos navegadores) y estas flechas quedan como affordance.
-  const handleScroll = (direction: 'left' | 'right') => {
-    if (!trackRef.current) return;
-    const { scrollLeft, clientWidth } = trackRef.current;
-    const amount = clientWidth * 0.75;
-    trackRef.current.scrollTo({
-      left: direction === 'left' ? scrollLeft - amount : scrollLeft + amount,
-      behavior: 'smooth',
-    });
-  };
+  const { trackRef, canScrollPrev, canScrollNext, scrollPrev, scrollNext } =
+    useCarouselNav();
+
+  if (items.length === 0) return null;
 
   return (
     <section className="watchable-carousel">
@@ -67,17 +58,21 @@ export function WatchableCarousel({ items, title }: WatchableCarouselProps) {
           <div className="watchable-carousel__nav-buttons">
             <button
               type="button"
-              className="watchable-carousel__arrow"
-              onClick={() => handleScroll('left')}
+              className={`watchable-carousel__arrow${canScrollPrev ? '' : ' mb-carousel-arrow--disabled'}`}
+              onClick={scrollPrev}
               aria-label={t('watchableCarousel.scrollPrev')}
+              aria-disabled={!canScrollPrev}
+              disabled={!canScrollPrev}
             >
               <LeftOutlined />
             </button>
             <button
               type="button"
-              className="watchable-carousel__arrow"
-              onClick={() => handleScroll('right')}
+              className={`watchable-carousel__arrow${canScrollNext ? '' : ' mb-carousel-arrow--disabled'}`}
+              onClick={scrollNext}
               aria-label={t('watchableCarousel.scrollNext')}
+              aria-disabled={!canScrollNext}
+              disabled={!canScrollNext}
             >
               <RightOutlined />
             </button>

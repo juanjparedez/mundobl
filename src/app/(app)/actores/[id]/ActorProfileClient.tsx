@@ -14,7 +14,9 @@ import {
   Chip,
   EmptyState,
   MediaCard,
+  useQuickPreviewController,
 } from '@/components/design-system';
+import type { QuickPreviewData } from '@/components/design-system';
 import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
@@ -30,6 +32,7 @@ export interface FilmographyEntry {
   imageUrl?: string | null;
   imageThumbUrl?: string | null;
   countryName?: string | null;
+  synopsis?: string | null;
   characters: string[];
   isMain: boolean;
 }
@@ -69,6 +72,85 @@ export function ActorProfileClient({
   directorId,
 }: ActorProfileClientProps) {
   const { t, locale } = useLocale();
+
+  // Vista rapida de cada titulo de la filmografia: sinopsis, personaje y
+  // pais sin tener que abrir la ficha de la serie y perder el lugar en la
+  // lista. El chip de pais lleva al catalogo ya filtrado.
+  const previewApi = useQuickPreviewController({
+    labels: {
+      close: t('quickPreview.close'),
+      synopsis: t('quickPreview.synopsis'),
+      noSynopsis: t('quickPreview.noSynopsis'),
+      moreInfo: t('quickPreview.moreInfo'),
+    },
+  });
+
+  const buildEntryPreview = (entry: FilmographyEntry): QuickPreviewData => ({
+    id: String(entry.seriesId),
+    title: entry.title,
+    imageUrl: cardImageUrl(entry),
+    coverAspect: '16:9',
+    badges: [
+      ...(TYPE_KEYS[entry.type]
+        ? [
+            {
+              key: 'type',
+              label: t(TYPE_KEYS[entry.type]),
+              color: 'purple',
+            },
+          ]
+        : []),
+      ...(entry.isMain
+        ? [
+            {
+              key: 'main',
+              label: t('actorProfile.mainRole'),
+              color: 'success',
+            },
+          ]
+        : []),
+    ],
+    meta: (
+      <>
+        {entry.year && <span>{entry.year}</span>}
+        {entry.countryName && <span>{entry.countryName}</span>}
+      </>
+    ),
+    synopsis: entry.synopsis,
+    facts:
+      entry.characters.length > 0
+        ? [
+            {
+              key: 'character',
+              label: t('quickPreview.character'),
+              value: entry.characters.join(', '),
+            },
+          ]
+        : [],
+    chipGroups: entry.countryName
+      ? [
+          {
+            key: 'country',
+            label: t('quickPreview.country'),
+            chips: [
+              {
+                key: `country-${entry.countryName}`,
+                label: entry.countryName,
+                href: `/catalogo?country=${encodeURIComponent(entry.countryName)}`,
+              },
+            ],
+          },
+        ]
+      : [],
+    actions: [
+      {
+        key: 'detail',
+        label: t('quickPreview.fullDetail'),
+        variant: 'primary' as const,
+        href: `/series/${entry.seriesId}`,
+      },
+    ],
+  });
 
   // El formato de fecha sigue al locale activo, no a un 'es-ES' fijo.
   const birthDate = actor.birthDate
@@ -223,6 +305,11 @@ export function ActorProfileClient({
                 imageUrl={cardImageUrl(entry)}
                 imageAlt={entry.title}
                 unoptimizedImage={isSupabaseImageUrl(cardImageUrl(entry))}
+                preview={{
+                  api: previewApi,
+                  getData: () => buildEntryPreview(entry),
+                  openLabel: t('quickPreview.open'),
+                }}
                 title={entry.title}
                 subtitle={
                   [entry.year ? String(entry.year) : null, entry.countryName]
@@ -259,6 +346,8 @@ export function ActorProfileClient({
           {t('actorProfile.backToIndex')}
         </Link>
       </div>
+
+      {previewApi.overlays}
     </div>
   );
 }

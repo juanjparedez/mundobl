@@ -22,9 +22,14 @@ import {
   AppstoreOutlined,
   BarsOutlined,
   SettingOutlined,
+  InfoCircleOutlined,
 } from '@ant-design/icons';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
-import { MediaCard } from '@/components/design-system';
+import {
+  MediaCard,
+  useQuickPreviewController,
+} from '@/components/design-system';
+import type { QuickPreviewData } from '@/components/design-system';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
@@ -168,6 +173,122 @@ export function VerPage({ items }: VerPageProps) {
 
   const isFiltering = Boolean(search || country || platform || onlyCurated);
 
+  // ─── Vista rapida ──────────────────────────────────────────────────
+  // Misma mecanica que en /catalogo: sinopsis, plataformas y datos sin
+  // salir de la fila. Los chips de pais y plataforma aplican el filtro de
+  // esta misma pagina, asi el preview tambien sirve para navegar.
+  const quickPreviewLabels = useMemo(
+    () => ({
+      close: t('quickPreview.close'),
+      synopsis: t('quickPreview.synopsis'),
+      noSynopsis: t('quickPreview.noSynopsis'),
+      moreInfo: t('quickPreview.moreInfo'),
+    }),
+    [t]
+  );
+
+  const buildPreview = (item: CarouselMediaItem): QuickPreviewData => ({
+    id: String(item.id),
+    title: item.title,
+    imageUrl: cardImageUrl(item),
+    coverAspect: '16:9',
+    badges: [
+      { key: 'type', label: item.type, color: 'purple' },
+      ...(item.geoRestrictedCore
+        ? [
+            {
+              key: 'geo',
+              label: t('ver.geoRestrictedBadge'),
+              color: 'warning',
+            },
+          ]
+        : []),
+    ],
+    meta: (
+      <>
+        {item.country && (
+          <span>
+            {item.country.code && <CountryFlag code={item.country.code} />}{' '}
+            {item.country.name}
+          </span>
+        )}
+        {item.year && <span>{item.year}</span>}
+        <span>
+          {t('ver.cardEpisodesBadge', { count: item.episodesWithEmbed })}
+        </span>
+      </>
+    ),
+    synopsis: item.synopsis,
+    facts: [
+      ...(item.year
+        ? [{ key: 'year', label: t('quickPreview.year'), value: item.year }]
+        : []),
+      {
+        key: 'episodes',
+        label: t('quickPreview.episodes'),
+        value: item.episodesWithEmbed,
+      },
+      ...(item.channels[0]
+        ? [
+            {
+              key: 'channel',
+              label: t('quickPreview.company'),
+              value: item.channels[0],
+            },
+          ]
+        : []),
+    ],
+    chipGroups: [
+      {
+        key: 'platforms',
+        label: t('quickPreview.platforms'),
+        chips: item.platforms.map((p) => ({
+          key: `platform-${p}`,
+          label: p,
+          onSelect: () => setPlatform(p),
+        })),
+      },
+      ...(item.country
+        ? [
+            {
+              key: 'country',
+              label: t('quickPreview.country'),
+              chips: [
+                {
+                  key: `country-${item.country.name}`,
+                  label: item.country.name,
+                  onSelect: () => setCountry(item.country?.name ?? null),
+                },
+              ],
+            },
+          ]
+        : []),
+    ],
+    actions: [
+      {
+        key: 'watch',
+        label: t('quickPreview.watchNow'),
+        icon: <PlayCircleFilled />,
+        variant: 'primary' as const,
+        href: `/ver/${item.id}`,
+      },
+      {
+        key: 'detail',
+        label: t('quickPreview.fullDetail'),
+        icon: <InfoCircleOutlined />,
+        iconOnlyOnHoverCard: true,
+        href: `/series/${item.id}`,
+      },
+    ],
+  });
+
+  const previewApi = useQuickPreviewController({ labels: quickPreviewLabels });
+  const previewBinding = {
+    api: previewApi,
+    build: buildPreview,
+    openLabel: t('quickPreview.open'),
+  };
+
   return (
     <div className="ver-content">
       {/* Hero Billboard Principal (cuando no hay filtro activo y en modo streaming) */}
@@ -187,6 +308,10 @@ export function VerPage({ items }: VerPageProps) {
           collapseTooltip={t('ver.heroCollapseTooltip')}
           expandTooltip={t('ver.heroExpandTooltip')}
           geoRestrictedLabel={t('ver.geoRestrictedBadge')}
+          quickViewLabel={t('quickPreview.open')}
+          onQuickView={() =>
+            previewApi.openPreview(() => buildPreview(featured))
+          }
         />
       )}
 
@@ -327,6 +452,7 @@ export function VerPage({ items }: VerPageProps) {
                   t('ver.cardEpisodesBadge', { count })
                 }
                 geoRestrictedLabel={t('ver.geoRestrictedBadge')}
+                preview={previewBinding}
               />
             );
           })}
@@ -373,6 +499,11 @@ export function VerPage({ items }: VerPageProps) {
                     imageAlt={item.title}
                     unoptimizedImage={isSupabaseImageUrl(cardImageUrl(item))}
                     aspectRatio="16:9"
+                    preview={{
+                      api: previewApi,
+                      getData: () => buildPreview(item),
+                      openLabel: t('quickPreview.open'),
+                    }}
                     title={
                       <>
                         {item.country?.code && (
@@ -451,6 +582,9 @@ export function VerPage({ items }: VerPageProps) {
           )}
         </div>
       )}
+
+      {/* Modal de vista rapida + hover-preview (portal). */}
+      {previewApi.overlays}
     </div>
   );
 }
