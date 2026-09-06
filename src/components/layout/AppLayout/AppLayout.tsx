@@ -1,5 +1,6 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { Layout } from 'antd';
 import { Sidebar } from '../Sidebar/Sidebar';
 import { TopBar } from '../TopBar/TopBar';
@@ -9,10 +10,24 @@ import { PrivacyBanner } from '../../common/PrivacyBanner/PrivacyBanner';
 import { StaleVersionNotifier } from '../../common/StaleVersionNotifier/StaleVersionNotifier';
 import { LiveRegion } from '../../common/LiveRegion/LiveRegion';
 import { OfflineIndicator } from '../../common/OfflineIndicator/OfflineIndicator';
-import { CommandK } from '../../common/CommandK/CommandK';
-import { HelpShortcutsModal } from '../../common/HelpShortcutsModal/HelpShortcutsModal';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import './AppLayout.css';
+
+// Ambos son overlays disparados por teclado (⌘K / ?) montados en TODA pagina
+// de la app via AppLayout — pero solo hacen falta cuando el usuario realmente
+// abre el atajo. `ssr:false` porque son puramente interactivos (sin valor de
+// SEO) y sacarlos del bundle inicial no le cambia nada al primer render.
+const CommandK = dynamic(
+  () => import('../../common/CommandK/CommandK').then((m) => m.CommandK),
+  { ssr: false }
+);
+const HelpShortcutsModal = dynamic(
+  () =>
+    import('../../common/HelpShortcutsModal/HelpShortcutsModal').then(
+      (m) => m.HelpShortcutsModal
+    ),
+  { ssr: false }
+);
 
 const { Content } = Layout;
 
