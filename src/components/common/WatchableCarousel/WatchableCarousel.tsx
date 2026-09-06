@@ -10,6 +10,7 @@ import { useLocale } from '@/lib/providers/LocaleProvider';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { useCarouselNav } from '@/hooks/useCarouselNav';
 import { cardImageUrl } from '@/lib/image-helpers';
+import { getVerUrl } from '@/lib/slug';
 import './WatchableCarousel.css';
 
 export interface WatchableCarouselItem {
@@ -83,7 +84,7 @@ export function WatchableCarousel({ items, title }: WatchableCarouselProps) {
         {items.map((item) => (
           <Link
             key={item.id}
-            href={`/ver/${item.id}`}
+            href={getVerUrl(item.id, item.title)}
             className="watchable-carousel__slide"
             prefetch={false}
           >

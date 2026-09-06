@@ -9,6 +9,7 @@ import { LeftOutlined, LockOutlined, RightOutlined } from '@ant-design/icons';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { getSeriesUrl } from '@/lib/slug';
 import {
   MetadataChip,
   MetadataChipList,
@@ -590,7 +591,7 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
             {uniqueRelatedSeries.map((item) => (
               <Link
                 key={item.id}
-                href={`/series/${item.id}`}
+                href={getSeriesUrl(item.id, item.title)}
                 className="series-info__preview-card"
               >
                 <div className="series-info__preview-cover">
@@ -661,7 +662,7 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
             {uniqueUniverseSeries.map((item) => (
               <Link
                 key={item.id}
-                href={`/series/${item.id}`}
+                href={getSeriesUrl(item.id, item.title)}
                 className="series-info__preview-card"
               >
                 <div className="series-info__preview-cover">

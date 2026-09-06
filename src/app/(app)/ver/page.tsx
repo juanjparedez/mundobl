@@ -4,6 +4,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import type { CollectionPage } from 'schema-dts';
 import { getWatchableSeries } from '@/lib/database';
 import { getAutoThumbnailUrl, type Platform } from '@/lib/embed-helpers';
+import { getVerUrl } from '@/lib/slug';
 import { VerPage } from './VerPage';
 import './ver.css';
 
@@ -116,7 +117,7 @@ export default async function VerPageRoute() {
             itemListElement: items.slice(0, 20).map((s, i) => ({
               '@type': 'ListItem',
               position: i + 1,
-              url: `https://mundobl.com.ar/ver/${s.id}`,
+              url: `https://mundobl.com.ar${getVerUrl(s.id, s.title)}`,
               name: s.title,
             })),
           },

@@ -23,6 +23,7 @@ import {
 } from '@ant-design/icons';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { getCountryFlagEmoji } from '@/lib/country-codes';
+import { getSeriesUrl } from '@/lib/slug';
 import { BarChart, DonutChart } from '@/components/charts';
 import type { PublicStats as PublicStatsResponse } from '@/lib/public-stats';
 import './public-stats.css';
@@ -443,7 +444,7 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
           items={data.rankings.topSeries.map((r) => ({
             key: r.title,
             count: r.count,
-            href: `/series/${r.seriesId}`,
+            href: getSeriesUrl(r.seriesId, r.title),
           }))}
           empty={copy.empty}
           unit={copy.timesWatched}
@@ -460,7 +461,7 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
           items={data.rankings.topFavorited.map((r) => ({
             key: r.title,
             count: r.count,
-            href: `/series/${r.seriesId}`,
+            href: getSeriesUrl(r.seriesId, r.title),
           }))}
           empty={copy.empty}
           unit={copy.timesSaved}
