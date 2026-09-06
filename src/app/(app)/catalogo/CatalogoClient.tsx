@@ -8,6 +8,7 @@ import {
   useDeferredValue,
 } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import {
   Row,
   Col,
@@ -52,6 +53,7 @@ import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { WelcomeBanner } from '@/components/common/WelcomeBanner/WelcomeBanner';
 import { EmptyState } from '@/components/design-system';
 import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { canEditCatalog } from '@/lib/auth-client';
 import { withViewTransition } from '@/lib/view-transitions';
 import type { SerieData, UniverseGroup, CatalogItem } from './catalogTypes';
 import { groupIntoCatalogItems } from './catalogGrouping';
@@ -64,7 +66,6 @@ const { Option } = Select;
 
 interface CatalogoClientProps {
   series: SerieData[];
-  userRole: string | null;
 }
 
 const PAGE_SIZE_OPTIONS = [24, 48, 96];
@@ -107,22 +108,31 @@ const getColorByType = (tipo: string) => {
 type QuickFilterValue = 'popular' | 'recent' | 'trend' | 'featured' | null;
 type SortKey = 'az' | 'za' | 'year-desc' | 'year-asc' | 'rating-desc';
 
-export function CatalogoClient({
-  series: initialSeries,
-  userRole,
-}: CatalogoClientProps) {
+export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const message = useMessage();
   const { t } = useLocale();
-  const canEdit = userRole === 'ADMIN' || userRole === 'EDITOR';
+  // Rol y viewStatus via useSession()/fetch client-side, no como prop del
+  // servidor: la pagina ya no llama `await auth()` (mataba el revalidate,
+  // ver page.tsx), asi que todo lo que dependia de la sesion se resuelve aca.
+  const { data: session } = useSession();
+  const userRole = session?.user?.role ?? null;
+  // Nota: la comparacion original decia `=== 'EDITOR'`, un rol que no existe
+  // en el enum `Role` (ADMIN/MODERATOR/COLLABORATOR/VISITOR) — quedaba muerta
+  // en runtime y solo paso desapercibida porque `userRole` era `string | null`
+  // (prop del servidor). Al pasar a useSession() (tipado) TS lo marco como
+  // comparacion imposible. Unificado con el criterio real de canEditCatalog.
+  const canEdit = canEditCatalog(userRole);
 
   const [series] = useState<SerieData[]>(initialSeries);
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
+  const [viewedIds, setViewedIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (!userRole) {
       setFavoriteIds(new Set());
+      setViewedIds(new Set());
       return;
     }
 
@@ -131,6 +141,11 @@ export function CatalogoClient({
     fetch('/api/favorites', { signal: controller.signal })
       .then((res) => (res.ok ? res.json() : []))
       .then((ids: number[]) => setFavoriteIds(new Set(ids.map(String))))
+      .catch(() => {});
+
+    fetch('/api/view-status', { signal: controller.signal })
+      .then((res) => (res.ok ? res.json() : []))
+      .then((ids: number[]) => setViewedIds(new Set(ids.map(String))))
       .catch(() => {});
 
     return () => controller.abort();
@@ -424,9 +439,9 @@ export function CatalogoClient({
     }
 
     if (selectedViewed === 'watched') {
-      filtered = filtered.filter((s) => s.visto === true);
+      filtered = filtered.filter((s) => viewedIds.has(s.id));
     } else if (selectedViewed === 'unwatched') {
-      filtered = filtered.filter((s) => !s.visto);
+      filtered = filtered.filter((s) => !viewedIds.has(s.id));
     }
 
     if (selectedFavorite === 'favorites') {
@@ -501,6 +516,7 @@ export function CatalogoClient({
     selectedActor,
     selectedPlatform,
     selectedViewed,
+    viewedIds,
     selectedFavorite,
     favoriteIds,
     selectedTags,
@@ -828,7 +844,7 @@ export function CatalogoClient({
                 {serie.genres[0]}
               </Tag>
             )}
-            {serie.visto && (
+            {viewedIds.has(serie.id) && (
               <Tag color="success">{t('catalogo.watchedTag')}</Tag>
             )}
           </div>

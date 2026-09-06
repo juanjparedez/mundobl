@@ -13,7 +13,6 @@ import { ReviewsSection } from '@/components/series/ReviewsSection/ReviewsSectio
 import { ViewStatusToggle } from '@/components/series/ViewStatusToggle';
 import { SeriesDetailClient } from '@/components/series/SeriesDetailClient';
 import { SeriesCompletenessBadge } from './SeriesCompletenessBadge/SeriesCompletenessBadge';
-import { FloatButtonPortal } from '@/components/common/FloatButtonPortal/FloatButtonPortal';
 import { SeriesContent } from '@/components/series/SeriesContent/SeriesContent';
 import {
   shouldShowSeasons,
@@ -28,15 +27,10 @@ import { ShareButton } from '@/components/common/ShareButton/ShareButton';
 import { WhereToWatch } from '@/components/common/WhereToWatch/WhereToWatch';
 import { SeriesSubscribeButton } from '@/components/series/SeriesSubscribeButton/SeriesSubscribeButton';
 import { SeriesSuggestionButton } from '@/components/series/SuggestionModal/SeriesSuggestionButton';
-import { auth } from '@/lib/auth';
-import { canEditCatalog } from '@/lib/auth-client';
+import { SeriesUserStatusProvider } from '@/components/series/SeriesUserStatusProvider';
+import { EditSeriesFab } from './EditSeriesFab/EditSeriesFab';
 import type { TVSeries } from 'schema-dts';
-import { FloatButton } from 'antd';
-import {
-  EditOutlined,
-  ReadOutlined,
-  CommentOutlined,
-} from '@/lib/client-icons';
+import { ReadOutlined, CommentOutlined } from '@/lib/client-icons';
 import './page.css';
 
 const getSeriesByIdCached = cache(getSeriesById);
@@ -104,51 +98,43 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
     notFound();
   }
 
-  const session = await auth();
-  const userId = session?.user?.id ?? null;
-
-  // El userId se pasa al query para filtrar `viewStatus` al usuario actual
-  // (sino el cache global servia los estados de otro usuario — bug del
-  // catalogo que mostraba "Visto" en series que el user nunca vio).
-  const serieRaw = await getSeriesByIdCached(seriesId, userId ?? undefined);
+  // Sin `await auth()`: el viewStatus (serie/temporadas/episodios), la
+  // suscripcion y el rol de usuario ahora se piden client-side
+  // (SeriesUserStatusProvider via /api/series/[id]/my-status, el rol via
+  // useSession() en cada componente que lo necesita) para que esta pagina
+  // no dependa de cookies — con `auth()` ahi el `revalidate` de mas abajo
+  // quedaba muerto, la ruta se volvia 100% dinamica para todos los
+  // visitantes (era, junto con /catalogo, la de mas trafico del sitio).
+  const serieRaw = await getSeriesByIdCached(seriesId);
 
   if (!serieRaw) {
     notFound();
   }
 
-  // La compuerta de notas privadas va ACA, en el servidor: `SeriesInfo` es un
-  // client component, asi que todo lo que le pasemos viaja en el payload RSC
-  // aunque no se renderice.
-  const serie = stripPrivateNotes(serieRaw, session?.user?.role === 'ADMIN');
+  // La compuerta de notas privadas va ACA, en el servidor, SIEMPRE con
+  // isAdmin=false: este HTML es estatico/cacheado por ISR y lo puede servir
+  // a cualquier visitante, admin o no, asi que nunca puede llevar horneadas
+  // las notas privadas (`review`/`observations` con `notesPrivate=true`).
+  // El admin las ve igual: SeriesInfo las pide aparte via
+  // GET /api/series/[id]/private-notes cuando useSession() dice ADMIN.
+  const serie = stripPrivateNotes(serieRaw, false);
 
   const config = getContentTypeConfig(serie.type);
   const showSeasons = shouldShowSeasons(serie.type);
 
-  // Quick counts para los chips de estado del header. Hechos en paralelo
-  // para no penalizar TTFB.
-  const [
-    reviewCount,
-    contentCount,
-    subscription,
-    favoriteCount,
-    currentlyWatchingCount,
-  ] = await Promise.all([
-    prisma.review.count({
-      where: { seriesId: serie.id, status: 'PUBLISHED' },
-    }),
-    prisma.embeddableContent.count({ where: { seriesId: serie.id } }),
-    userId
-      ? prisma.seriesSubscription.findUnique({
-          where: { userId_seriesId: { userId, seriesId: serie.id } },
-          select: { id: true },
-        })
-      : Promise.resolve(null),
-    prisma.userFavorite.count({ where: { seriesId: serie.id } }),
-    prisma.viewStatus.count({
-      where: { seriesId: serie.id, status: 'VIENDO' },
-    }),
-  ]);
-  const isSubscribed = subscription !== null;
+  // Quick counts para los chips de estado del header. Publicos (agregados,
+  // no por-usuario), asi que quedan bien en el HTML estatico/cacheado.
+  const [reviewCount, contentCount, favoriteCount, currentlyWatchingCount] =
+    await Promise.all([
+      prisma.review.count({
+        where: { seriesId: serie.id, status: 'PUBLISHED' },
+      }),
+      prisma.embeddableContent.count({ where: { seriesId: serie.id } }),
+      prisma.userFavorite.count({ where: { seriesId: serie.id } }),
+      prisma.viewStatus.count({
+        where: { seriesId: serie.id, status: 'VIENDO' },
+      }),
+    ]);
 
   const universeSeries = serie.universeId
     ? await prisma.series.findMany({
@@ -244,167 +230,122 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
         }}
       />
       <div className="series-detail-page">
-        <BackToCatalogButton />
-        <Breadcrumbs
-          items={[
-            { name: 'Inicio', href: '/' },
-            { name: 'Catálogo', href: '/catalogo' },
-            { name: serie.title },
-          ]}
-        />
-        {/* Banner cuando la serie se puede ver en /ver directamente o tiene aportes linkeados */}
-        {(serie.seasons ?? []).some((s) =>
-          (s.episodes ?? []).some((e) => !!e.embedUrl)
-        ) ? (
-          <div className="series-linked-from-user-embeds">
-            <Link
-              href={`/ver/${serie.id}`}
-              className="series-linked-from-user-embeds__link"
-            >
-              ▶ Ver episodios oficiales en el reproductor de MundoBL
-            </Link>
-          </div>
-        ) : serie.linkedFromUserEmbeds &&
-          serie.linkedFromUserEmbeds.length > 0 ? (
-          <div className="series-linked-from-user-embeds">
-            <Link
-              href={`/ver/${serie.linkedFromUserEmbeds[0].id}`}
-              className="series-linked-from-user-embeds__link"
-            >
-              ▶ También disponible para ver en /ver
-              {serie.linkedFromUserEmbeds.length > 1 &&
-                ` (${serie.linkedFromUserEmbeds.length} aportes)`}
-            </Link>
-          </div>
-        ) : null}
-        <SeriesHeader
-          series={{
-            ...serie,
-            directors: serie.directors,
-            actors: serie.actors,
-          }}
-          hasReview={reviewCount > 0}
-          hasContent={contentCount > 0}
-          favoriteCount={favoriteCount}
-          currentlyWatchingCount={currentlyWatchingCount}
-          actionsSlot={
-            <>
-              <ViewStatusToggle
-                seriesId={serie.id}
-                initialStatus={serie.viewStatus?.[0]?.status ?? 'SIN_VER'}
-                seasons={serie.seasons}
-              />
-              <div
-                className="series-quick-actions"
-                aria-label="Acciones rápidas"
+        <SeriesUserStatusProvider seriesId={serie.id}>
+          <BackToCatalogButton />
+          <Breadcrumbs
+            items={[
+              { name: 'Inicio', href: '/' },
+              { name: 'Catálogo', href: '/catalogo' },
+              { name: serie.title },
+            ]}
+          />
+          {/* Banner cuando la serie se puede ver en /ver directamente o tiene aportes linkeados */}
+          {(serie.seasons ?? []).some((s) =>
+            (s.episodes ?? []).some((e) => !!e.embedUrl)
+          ) ? (
+            <div className="series-linked-from-user-embeds">
+              <Link
+                href={`/ver/${serie.id}`}
+                className="series-linked-from-user-embeds__link"
               >
-                <ShareButton
-                  title={serie.title}
-                  text={serie.synopsis ?? undefined}
-                  path={`/series/${serie.id}`}
-                  variant="compact"
-                />
-                <SeriesSubscribeButton
-                  seriesId={serie.id}
-                  initialSubscribed={isSubscribed}
-                />
-                <SeriesSuggestionButton
-                  seriesId={serie.id}
-                  seriesTitle={serie.title}
-                />
-                <a
-                  href="#series-section-reviews"
-                  className="series-quick-actions__item"
-                  title="Reseñas"
-                  aria-label="Ir a reseñas"
+                ▶ Ver episodios oficiales en el reproductor de MundoBL
+              </Link>
+            </div>
+          ) : serie.linkedFromUserEmbeds &&
+            serie.linkedFromUserEmbeds.length > 0 ? (
+            <div className="series-linked-from-user-embeds">
+              <Link
+                href={`/ver/${serie.linkedFromUserEmbeds[0].id}`}
+                className="series-linked-from-user-embeds__link"
+              >
+                ▶ También disponible para ver en /ver
+                {serie.linkedFromUserEmbeds.length > 1 &&
+                  ` (${serie.linkedFromUserEmbeds.length} aportes)`}
+              </Link>
+            </div>
+          ) : null}
+          <SeriesHeader
+            series={{
+              ...serie,
+              directors: serie.directors,
+              actors: serie.actors,
+            }}
+            hasReview={reviewCount > 0}
+            hasContent={contentCount > 0}
+            favoriteCount={favoriteCount}
+            currentlyWatchingCount={currentlyWatchingCount}
+            actionsSlot={
+              <>
+                <ViewStatusToggle seriesId={serie.id} seasons={serie.seasons} />
+                <div
+                  className="series-quick-actions"
+                  aria-label="Acciones rápidas"
                 >
-                  <ReadOutlined />
-                </a>
-                <a
-                  href="#series-section-comments"
-                  className="series-quick-actions__item"
-                  title="Comentarios"
-                  aria-label="Ir a comentarios"
-                >
-                  <CommentOutlined />
-                </a>
-              </div>
-            </>
-          }
-        />
+                  <ShareButton
+                    title={serie.title}
+                    text={serie.synopsis ?? undefined}
+                    path={`/series/${serie.id}`}
+                    variant="compact"
+                  />
+                  <SeriesSubscribeButton seriesId={serie.id} />
+                  <SeriesSuggestionButton
+                    seriesId={serie.id}
+                    seriesTitle={serie.title}
+                  />
+                  <a
+                    href="#series-section-reviews"
+                    className="series-quick-actions__item"
+                    title="Reseñas"
+                    aria-label="Ir a reseñas"
+                  >
+                    <ReadOutlined />
+                  </a>
+                  <a
+                    href="#series-section-comments"
+                    className="series-quick-actions__item"
+                    title="Comentarios"
+                    aria-label="Ir a comentarios"
+                  >
+                    <CommentOutlined />
+                  </a>
+                </div>
+              </>
+            }
+          />
 
-        <SeriesCompletenessBadge
-          seriesId={serie.id}
-          series={serie}
-          canEdit={canEditCatalog(session?.user?.role)}
-        />
+          <SeriesCompletenessBadge seriesId={serie.id} series={serie} />
 
-        {serie.watchLinks && serie.watchLinks.length > 0 && (
-          <WhereToWatch links={serie.watchLinks} variant="hero" />
-        )}
+          {serie.watchLinks && serie.watchLinks.length > 0 && (
+            <WhereToWatch links={serie.watchLinks} variant="hero" />
+          )}
 
-        <SeriesDetailClient
-          seriesId={serie.id}
-          showSeasons={showSeasons}
-          seasonLabel={seasonLabel}
-          seasonCount={serie.seasons?.length || 0}
-          infoSection={
-            <SeriesInfo
-              series={{
-                ...serie,
-                universeSeries,
-              }}
-            />
-          }
-          contentSection={<SeriesContent seriesId={serie.id} />}
-          seasonsSection={
-            <SeasonsList
-              seasons={serie.seasons || []}
-              canEdit={canEditCatalog(session?.user?.role)}
-            />
-          }
-          ratingsSection={
-            <RatingSection
-              seriesId={serie.id}
-              existingRatings={serie.ratings || []}
-            />
-          }
-          reviewsSection={
-            <ReviewsSection
-              seriesId={serie.id}
-              seriesWatched={
-                serie.viewStatus?.[0]?.status === 'VISTA' ||
-                serie.viewStatus?.[0]?.status === 'ABANDONADA'
-              }
-            />
-          }
-          commentsSection={
-            <CommentsSection
-              seriesId={serie.id}
-              comments={serie.comments || []}
-            />
-          }
-        />
-
-        {/* Botón flotante para editar — solo admin/moderator. En user
-         * regular apuntaba a /admin/series/X/editar y devolvia 403, asi
-         * que ademas de tapar contenido (reportado por Flor en feedback
-         * #98) era un dead-end. Portalado a body: el backdrop-filter de
-         * .app-content rompia el position:fixed y lo dejaba pegado al
-         * fondo del panel en vez de flotar con el scroll. */}
-        {canEditCatalog(session?.user?.role) && (
-          <FloatButtonPortal>
-            <Link href={`/admin/series/${serie.id}/editar`} prefetch={false}>
-              <FloatButton
-                icon={<EditOutlined />}
-                type="primary"
-                className="series-edit-fab"
-                tooltip="Editar serie"
-                aria-label="Editar serie"
+          <SeriesDetailClient
+            seriesId={serie.id}
+            showSeasons={showSeasons}
+            seasonLabel={seasonLabel}
+            seasonCount={serie.seasons?.length || 0}
+            infoSection={
+              <SeriesInfo
+                series={{
+                  ...serie,
+                  universeSeries,
+                }}
               />
-            </Link>
-          </FloatButtonPortal>
-        )}
+            }
+            contentSection={<SeriesContent seriesId={serie.id} />}
+            seasonsSection={<SeasonsList seasons={serie.seasons || []} />}
+            ratingsSection={
+              <RatingSection
+                seriesId={serie.id}
+                existingRatings={serie.ratings || []}
+              />
+            }
+            reviewsSection={<ReviewsSection seriesId={serie.id} />}
+            commentsSection={<CommentsSection seriesId={serie.id} />}
+          />
+
+          <EditSeriesFab seriesId={serie.id} />
+        </SeriesUserStatusProvider>
       </div>
     </>
   );
