@@ -228,18 +228,33 @@ export async function POST(request: NextRequest) {
           });
         }
       })(),
-      // Temporadas (si es serie)
+      // Temporadas (serie, especial, anime, reality, etc.)
       (async () => {
-        if (!seasons || seasons.length === 0 || type !== 'serie') return;
+        if (!seasons || seasons.length === 0) return;
         for (const seasonData of seasons) {
-          await prisma.season.create({
+          const createdSeason = await prisma.season.create({
             data: {
               seriesId: serie.id,
-              seasonNumber: seasonData.seasonNumber,
-              episodeCount: seasonData.episodeCount,
+              seasonNumber: seasonData.seasonNumber || 1,
+              episodeCount: seasonData.episodeCount ? Number(seasonData.episodeCount) : null,
               year: seasonData.year || year,
             },
           });
+
+          // Auto-generación de capítulos si se especificó episodeCount
+          const episodeCount = seasonData.episodeCount ? Number(seasonData.episodeCount) : 0;
+          if (episodeCount > 0) {
+            const episodesToCreate = [];
+            for (let i = 1; i <= episodeCount; i++) {
+              episodesToCreate.push({
+                seasonId: createdSeason.id,
+                episodeNumber: i,
+              });
+            }
+            await prisma.episode.createMany({
+              data: episodesToCreate,
+            });
+          }
         }
       })(),
       // Tags
@@ -384,12 +399,14 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Invalidar caches de las vistas que listan series (el listado admin es
-    // dynamic pero el Router Cache del cliente sirve la lista vieja al volver
-    // por navegación soft → la serie nueva "no aparece" hasta un hard reload).
+    // Invalidar caches de las vistas que listan series y la ficha creada
     revalidatePath('/admin/series');
     revalidatePath('/catalogo');
     revalidatePath('/ver');
+    revalidatePath('/series', 'layout');
+    revalidatePath('/series/[id]', 'page');
+    revalidatePath(`/series/${serie.id}`);
+    revalidatePath(`/catalogo/${serie.id}`);
 
     return NextResponse.json(serie, { status: 201 });
   } catch (error) {

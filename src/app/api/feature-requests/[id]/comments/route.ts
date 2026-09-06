@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
+import { checkFeatureRequestCommentRateLimit } from '@/lib/rate-limit';
 
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const authResult = await requireAuth();
-    if (!authResult.authorized) return authResult.response;
-
     const { id } = await params;
     const requestId = parseInt(id);
     if (isNaN(requestId)) {
@@ -18,7 +16,7 @@ export async function GET(
 
     const featureRequest = await prisma.featureRequest.findUnique({
       where: { id: requestId },
-      select: { userId: true },
+      select: { id: true },
     });
 
     if (!featureRequest) {
@@ -26,14 +24,6 @@ export async function GET(
         { error: 'Solicitud no encontrada' },
         { status: 404 }
       );
-    }
-
-    const isOwner = featureRequest.userId === authResult.userId;
-    const isAdminOrMod =
-      authResult.role === 'ADMIN' || authResult.role === 'MODERATOR';
-
-    if (!isOwner && !isAdminOrMod) {
-      return NextResponse.json({ error: 'Sin acceso' }, { status: 403 });
     }
 
     const comments = await prisma.featureRequestComment.findMany({
@@ -76,6 +66,17 @@ export async function POST(
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
     }
 
+    const rl = await checkFeatureRequestCommentRateLimit(authResult.userId!);
+    if (!rl.ok) {
+      return NextResponse.json(
+        { error: rl.reason },
+        {
+          status: 429,
+          headers: { 'Retry-After': String(rl.retryAfterSeconds) },
+        }
+      );
+    }
+
     const body = await request.json();
     const { body: commentBody } = body as { body: string };
 
@@ -109,13 +110,8 @@ export async function POST(
       );
     }
 
-    const isOwner = featureRequest.userId === authResult.userId;
     const isAdminOrMod =
       authResult.role === 'ADMIN' || authResult.role === 'MODERATOR';
-
-    if (!isOwner && !isAdminOrMod) {
-      return NextResponse.json({ error: 'Sin acceso' }, { status: 403 });
-    }
 
     const comment = await prisma.featureRequestComment.create({
       data: {
@@ -137,15 +133,18 @@ export async function POST(
     });
 
     if (
-      isAdminOrMod &&
       featureRequest.userId &&
       featureRequest.userId !== authResult.userId!
     ) {
       const { notifyUser } = await import('@/lib/notifications');
+      const notifTitle = isAdminOrMod
+        ? `Respuesta del equipo en tu solicitud: "${featureRequest.title}"`
+        : `Nuevo comentario en tu solicitud: "${featureRequest.title}"`;
+
       await notifyUser({
         userId: featureRequest.userId,
         type: 'feature_comment',
-        title: `Nuevo comentario en tu solicitud: "${featureRequest.title}"`,
+        title: notifTitle,
         body: commentBody.trim().substring(0, 100),
         linkPath: '/feedback?tab=mis-solicitudes',
         refType: 'feature_request',
@@ -162,3 +161,4 @@ export async function POST(
     );
   }
 }
+

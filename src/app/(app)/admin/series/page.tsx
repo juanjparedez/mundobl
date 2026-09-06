@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic';
 
-import { getAllSeries, getAllCountries } from '@/lib/database';
+import { getAllSeries, getAllCountries, getAllGenres } from '@/lib/database';
 import { PageTitleClient } from '@/components/common/PageTitle/PageTitleClient';
 import { AdminNav } from '../AdminNav';
 import '../admin.css';
@@ -17,18 +17,21 @@ interface SerieData {
   anio: number;
   estado: string;
   rating: number | null;
+  generos: string[];
 }
 
 export default async function AdminPage() {
   // Obtener datos reales desde la base de datos
   // Solo lista CURATED — los aportes USER_EMBED viven en /admin/series/user-submitted.
-  const [seriesDB, countriesDB] = await Promise.all([
+  const [seriesDB, countriesDB, genresDB] = await Promise.all([
     getAllSeries({ origin: 'CURATED' }),
     getAllCountries(),
+    getAllGenres(),
   ]);
 
-  // Transformar países para el select
+  // Transformar países y géneros para los filtros
   const countries = countriesDB.map((c) => ({ id: c.id, name: c.name }));
+  const genres = genresDB.map((g) => ({ id: g.id, name: g.name }));
 
   // Transformar datos para la tabla
   const seriesData: SerieData[] = seriesDB.map((serie) => ({
@@ -44,6 +47,7 @@ export default async function AdminPage() {
         ? 'finalizada'
         : 'activa',
     rating: serie.overallRating,
+    generos: serie.genres?.map((g) => g.genre.name) || [],
   }));
 
   return (
@@ -56,7 +60,11 @@ export default async function AdminPage() {
 
         <div className="admin-content">
           <CatalogCompletenessPanel />
-          <AdminTableClient data={seriesData} countries={countries} />
+          <AdminTableClient
+            data={seriesData}
+            countries={countries}
+            genres={genres}
+          />
         </div>
       </div>
     </>
