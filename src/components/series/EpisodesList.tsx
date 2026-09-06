@@ -29,6 +29,7 @@ import { useSession } from 'next-auth/react';
 import { CommentsList } from '@/components/common/CommentsList';
 import { SpoilerGate } from '@/components/common/SpoilerGate/SpoilerGate';
 import { EpisodeNoteModal } from './EpisodeNoteModal/EpisodeNoteModal';
+import { useSeriesUserStatus } from './SeriesUserStatusProvider';
 import './EpisodesList.css';
 import { useMessage, useModal } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -71,6 +72,7 @@ export function EpisodesList({
   const message = useMessage();
   const modal = useModal();
   const { data: session } = useSession();
+  const { episodeStatus, loaded: statusLoaded } = useSeriesUserStatus();
   const [episodes, setEpisodes] = useState<Episode[]>(initialEpisodes);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEpisode, setEditingEpisode] = useState<Episode | null>(null);
@@ -85,6 +87,23 @@ export function EpisodesList({
     new Set()
   );
   const [form] = Form.useForm();
+
+  // Sembrar el viewStatus de cada episodio apenas resuelve
+  // SeriesUserStatusProvider (/series/[id] dejo de llamar `await auth()`,
+  // asi que ya no llega horneado en `initialEpisodes`). Solo corre la
+  // primera vez que `statusLoaded` pasa a true — no pisa los toggles
+  // optimistas locales que el usuario haga despues (handleToggleWatched).
+  useEffect(() => {
+    if (!statusLoaded) return;
+    setEpisodes((prev) =>
+      prev.map((ep) =>
+        episodeStatus[ep.id]
+          ? { ...ep, viewStatus: [{ status: episodeStatus[ep.id] }] }
+          : ep
+      )
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [statusLoaded]);
 
   // Al montar (con usuario logueado), cargo en bulk los IDs con nota.
   const userId = session?.user?.id;
