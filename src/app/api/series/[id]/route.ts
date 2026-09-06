@@ -10,6 +10,8 @@ import {
   findOrCreateTag,
   findOrCreateGenre,
   findOrCreateActor,
+  findOrCreateDirector,
+  findOrCreateProductionCompany,
 } from '@/lib/tag-utils';
 
 interface RouteParams {
@@ -160,12 +162,11 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     // Manejar productora (por nombre o por ID)
     let productionCompanyId = body.productionCompanyId || null;
     if (body.productionCompanyName && !productionCompanyId) {
-      const company = await prisma.productionCompany.upsert({
-        where: { name: body.productionCompanyName },
-        update: {},
-        create: { name: body.productionCompanyName },
-      });
-      productionCompanyId = company.id;
+      const company = await findOrCreateProductionCompany(
+        prisma,
+        body.productionCompanyName
+      );
+      productionCompanyId = company?.id ?? null;
     }
 
     // Manejar idioma original (por nombre o por ID)
@@ -261,11 +262,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       for (const directorData of body.directors) {
         if (!directorData.name) continue;
 
-        const director = await prisma.director.upsert({
-          where: { name: directorData.name },
-          update: {},
-          create: { name: directorData.name },
-        });
+        const director = await findOrCreateDirector(prisma, directorData.name);
+        if (!director) continue;
 
         await prisma.seriesDirector.create({
           data: {

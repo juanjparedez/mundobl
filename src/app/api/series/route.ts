@@ -9,6 +9,8 @@ import {
   findOrCreateTag,
   findOrCreateGenre,
   findOrCreateActor,
+  findOrCreateDirector,
+  findOrCreateProductionCompany,
 } from '@/lib/tag-utils';
 
 // GET /api/series - Obtener todas las series del catalogo curado (excluye USER_EMBED)
@@ -120,11 +122,7 @@ export async function POST(request: NextRequest) {
           })
         : Promise.resolve(null),
       needCompany
-        ? prisma.productionCompany.upsert({
-            where: { name: productionCompanyName },
-            update: {},
-            create: { name: productionCompanyName },
-          })
+        ? findOrCreateProductionCompany(prisma, productionCompanyName)
         : Promise.resolve(null),
       needLanguage
         ? prisma.language.upsert({
@@ -205,11 +203,11 @@ export async function POST(request: NextRequest) {
         if (!directors || directors.length === 0) return;
         for (const directorData of directors) {
           if (!directorData.name) continue;
-          const director = await prisma.director.upsert({
-            where: { name: directorData.name },
-            update: {},
-            create: { name: directorData.name },
-          });
+          const director = await findOrCreateDirector(
+            prisma,
+            directorData.name
+          );
+          if (!director) continue;
           await prisma.seriesDirector.create({
             data: { seriesId: serie.id, directorId: director.id },
           });
