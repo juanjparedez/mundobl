@@ -1,10 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { Empty, Segmented, Spin, Alert, Button, Space, Tooltip } from 'antd';
+import { Segmented, Alert, Button, Space, Tooltip } from 'antd';
 import {
   AppstoreOutlined,
   BarsOutlined,
@@ -24,42 +24,8 @@ import {
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { getCountryFlagEmoji } from '@/lib/country-codes';
 import { BarChart, DonutChart } from '@/components/charts';
+import type { PublicStats as PublicStatsResponse } from '@/lib/public-stats';
 import './public-stats.css';
-
-interface PublicStatsResponse {
-  generatedAt: string;
-  summary: {
-    totalSeries: number;
-    totalPublicComments: number;
-    totalCompletedViews: number;
-    totalCurrentlyWatching: number;
-    totalFavorites: number;
-    totalActors: number;
-    totalDirectors: number;
-    averageCommunityRating: number | null;
-    totalUserRatings: number;
-  };
-  rankings: {
-    topSeries: Array<{ seriesId: number; title: string; count: number }>;
-    topFavorited: Array<{ seriesId: number; title: string; count: number }>;
-    topActors: Array<{ actorId: number; name: string; count: number }>;
-    topDirectors: Array<{ directorId: number; name: string; count: number }>;
-    topProductionCompanies: Array<{ id: number; name: string; count: number }>;
-    topCountries: Array<{ name: string; count: number }>;
-    byType: Array<{ type: string; count: number }>;
-  };
-  catalog: {
-    byCountry: Array<{ name: string; count: number }>;
-    byType: Array<{ type: string; count: number }>;
-    byGenre: Array<{ name: string; count: number }>;
-    byYear: Array<{ year: number; count: number }>;
-  };
-  ratings?: {
-    averageCommunity: number | null;
-    total: number;
-    distribution: Array<{ score: number; count: number }>;
-  };
-}
 
 type ChartMode = 'bar' | 'list';
 
@@ -232,14 +198,20 @@ function RankingPanel({
   );
 }
 
-export function PublicStatsClient() {
+export interface PublicStatsClientProps {
+  /** Calculado en el servidor (getPublicStats(), src/lib/public-stats.ts) —
+   *  la pagina es 100% publica y agregada, sin nada personalizado por
+   *  usuario, asi que no hace falta volver a pedirla client-side. */
+  initialData: PublicStatsResponse;
+}
+
+export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
   const { locale } = useLocale();
   const router = useRouter();
   const { data: session } = useSession();
   const isAdmin = session?.user?.role === 'ADMIN';
 
-  const [data, setData] = useState<PublicStatsResponse | null>(null);
-  const [loading, setLoading] = useState(true);
+  const data = initialData;
   const [chartMode, setChartMode] = useState<ChartMode>(() => {
     if (typeof window === 'undefined') return 'bar';
     return (localStorage.getItem(CHART_MODE_KEY) as ChartMode | null) ?? 'bar';
@@ -350,42 +322,6 @@ export function PublicStatsClient() {
           },
     [locale]
   );
-
-  useEffect(() => {
-    let cancelled = false;
-    fetch('/api/stats/public')
-      .then((r) => {
-        if (!r.ok) throw new Error('Failed to load');
-        return r.json() as Promise<PublicStatsResponse>;
-      })
-      .then((payload) => {
-        if (!cancelled) setData(payload);
-      })
-      .catch(() => {
-        if (!cancelled) setData(null);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="public-stats-loading">
-        <Spin size="large" />
-        <span>{copy.loading}</span>
-      </div>
-    );
-  }
-
-  if (!data) {
-    return (
-      <Empty description={copy.empty} image={Empty.PRESENTED_IMAGE_SIMPLE} />
-    );
-  }
 
   const fmt = (n: number) => n.toLocaleString(locale);
 

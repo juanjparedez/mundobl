@@ -1,0 +1,379 @@
+import { prisma } from '@/lib/database';
+
+/**
+ * Metricas globales anonimas para /estadisticas.
+ *
+ * Extraido de `/api/stats/public` (unico consumidor ademas de la pagina:
+ * `PublicStatsClient`) para que la pagina calcule esto del lado del
+ * SERVIDOR y se renderice como contenido estatico con ISR — antes era un
+ * shell client-side que recien pedia los datos en un `useEffect` tras el
+ * mount, asi que el primer render siempre era un loader vacio en la pagina
+ * de estadisticas publicas. La ruta de API se mantiene (mismo calculo) por
+ * si algo cliente-side necesita refrescar sin recargar la pagina.
+ */
+
+interface RawNamedCountRow {
+  name: string;
+  count: bigint;
+}
+
+interface RawCompanyCountRow {
+  id: number;
+  name: string;
+  count: bigint;
+}
+
+interface RawActorCountRow {
+  id: number;
+  name: string;
+  count: bigint;
+}
+
+interface RawDirectorCountRow {
+  id: number;
+  name: string;
+  count: bigint;
+}
+
+interface RawTypeCountRow {
+  type: string;
+  count: bigint;
+}
+
+interface RawYearCountRow {
+  year: number | null;
+  count: bigint;
+}
+
+interface RawRatingDistRow {
+  score: number;
+  count: bigint;
+}
+
+export interface PublicStats {
+  generatedAt: string;
+  summary: {
+    totalSeries: number;
+    totalPublicComments: number;
+    totalCompletedViews: number;
+    totalCurrentlyWatching: number;
+    totalFavorites: number;
+    totalActors: number;
+    totalDirectors: number;
+    averageCommunityRating: number | null;
+    totalUserRatings: number;
+  };
+  rankings: {
+    topSeries: Array<{ seriesId: number; title: string; count: number }>;
+    topFavorited: Array<{ seriesId: number; title: string; count: number }>;
+    topActors: Array<{ actorId: number; name: string; count: number }>;
+    topDirectors: Array<{ directorId: number; name: string; count: number }>;
+    topProductionCompanies: Array<{
+      id: number;
+      name: string;
+      count: number;
+    }>;
+    topCountries: Array<{ name: string; count: number }>;
+    byType: Array<{ type: string; count: number }>;
+  };
+  catalog: {
+    byCountry: Array<{ name: string; count: number }>;
+    byType: Array<{ type: string; count: number }>;
+    byGenre: Array<{ name: string; count: number }>;
+    byYear: Array<{ year: number; count: number }>;
+  };
+  ratings: {
+    averageCommunity: number | null;
+    total: number;
+    distribution: Array<{ score: number; count: number }>;
+  };
+}
+
+export async function getPublicStats(): Promise<PublicStats> {
+  const [
+    totalSeries,
+    totalPublicComments,
+    totalCompletedViews,
+    totalCurrentlyWatching,
+    totalFavorites,
+    totalActors,
+    totalDirectors,
+    topSeriesRows,
+    topActorsRows,
+    topDirectorsRows,
+    topProductionCompaniesRows,
+    topCountriesRows,
+    topTypesRows,
+    topFavoritedRows,
+    ratingDistRows,
+    ratingStats,
+    // Catalog fixed stats (series count, not view count)
+    catalogByCountryRows,
+    catalogByTypeRows,
+    catalogByGenreRows,
+    catalogByYearRows,
+  ] = await Promise.all([
+    // Solo contamos series del catalogo curado (excluye USER_EMBED).
+    prisma.series.count({ where: { origin: 'CURATED' } }),
+    prisma.comment.count({ where: { isPrivate: false } }),
+    prisma.viewStatus.count({
+      where: {
+        status: 'VISTA',
+        seriesId: { not: null },
+        series: { origin: 'CURATED' },
+      },
+    }),
+    prisma.viewStatus.count({
+      where: {
+        status: 'VIENDO',
+        seriesId: { not: null },
+        series: { origin: 'CURATED' },
+      },
+    }),
+    prisma.userFavorite.count({
+      where: {
+        series: { origin: 'CURATED' },
+      },
+    }),
+    prisma.actor.count(),
+    prisma.director.count(),
+    prisma.viewStatus.groupBy({
+      by: ['seriesId'],
+      where: {
+        status: 'VISTA',
+        seriesId: { not: null },
+        series: { origin: 'CURATED' },
+      },
+      _count: { seriesId: true },
+      orderBy: { _count: { seriesId: 'desc' } },
+      take: 15,
+    }),
+    prisma.$queryRaw<RawActorCountRow[]>`
+      SELECT a.id, a.name, COUNT(*) as count
+      FROM "ViewStatus" vs
+      JOIN "SeriesActor" sa ON sa."seriesId" = vs."seriesId"
+      JOIN "Actor" a ON a.id = sa."actorId"
+      JOIN "Series" s ON s.id = vs."seriesId"
+      WHERE vs.status = 'VISTA'
+        AND vs."seriesId" IS NOT NULL
+        AND s."origin" = 'CURATED'
+      GROUP BY a.id, a.name
+      ORDER BY count DESC
+      LIMIT 15
+    `,
+    prisma.$queryRaw<RawDirectorCountRow[]>`
+      SELECT d.id, d.name, COUNT(*) as count
+      FROM "ViewStatus" vs
+      JOIN "SeriesDirector" sd ON sd."seriesId" = vs."seriesId"
+      JOIN "Director" d ON d.id = sd."directorId"
+      JOIN "Series" s ON s.id = vs."seriesId"
+      WHERE vs.status = 'VISTA'
+        AND vs."seriesId" IS NOT NULL
+        AND s."origin" = 'CURATED'
+      GROUP BY d.id, d.name
+      ORDER BY count DESC
+      LIMIT 15
+    `,
+    // Cuenta por SeriesProductionCompany (co-producciones), no por la
+    // relacion legacy 1-a-N: asi una serie con 3 productoras suma para las 3.
+    // Devuelve el id para poder linkear a /productoras/[id].
+    prisma.$queryRaw<RawCompanyCountRow[]>`
+      SELECT pc.id, pc.name, COUNT(*) as count
+      FROM "ViewStatus" vs
+      JOIN "Series" s ON s.id = vs."seriesId"
+      JOIN "SeriesProductionCompany" spc ON spc."seriesId" = s.id
+      JOIN "ProductionCompany" pc ON pc.id = spc."productionCompanyId"
+      WHERE vs.status = 'VISTA'
+        AND vs."seriesId" IS NOT NULL
+        AND s."origin" = 'CURATED'
+      GROUP BY pc.id, pc.name
+      ORDER BY count DESC
+      LIMIT 15
+    `,
+    prisma.$queryRaw<RawNamedCountRow[]>`
+      SELECT c.name, COUNT(*) as count
+      FROM "ViewStatus" vs
+      JOIN "Series" s ON s.id = vs."seriesId"
+      JOIN "Country" c ON c.id = s."countryId"
+      WHERE vs.status = 'VISTA'
+        AND vs."seriesId" IS NOT NULL
+        AND s."countryId" IS NOT NULL
+        AND s."origin" = 'CURATED'
+      GROUP BY c.name
+      ORDER BY count DESC
+    `,
+    prisma.$queryRaw<RawTypeCountRow[]>`
+      SELECT s.type, COUNT(*) as count
+      FROM "ViewStatus" vs
+      JOIN "Series" s ON s.id = vs."seriesId"
+      WHERE vs.status = 'VISTA'
+        AND vs."seriesId" IS NOT NULL
+        AND s."origin" = 'CURATED'
+      GROUP BY s.type
+      ORDER BY count DESC
+    `,
+    prisma.userFavorite.groupBy({
+      by: ['seriesId'],
+      where: {
+        series: { origin: 'CURATED' },
+      },
+      _count: { seriesId: true },
+      orderBy: { _count: { seriesId: 'desc' } },
+      take: 15,
+    }),
+    prisma.$queryRaw<RawRatingDistRow[]>`
+      SELECT score, COUNT(*) as count
+      FROM "UserRating" ur
+      JOIN "Series" s ON s.id = ur."seriesId"
+      WHERE s."origin" = 'CURATED'
+      GROUP BY score
+      ORDER BY score ASC
+    `,
+    prisma.userRating.aggregate({
+      where: {
+        series: { origin: 'CURATED' },
+      },
+      _avg: { score: true },
+      _count: { id: true },
+    }),
+    // Catalog: series per country (solo CURATED)
+    prisma.$queryRaw<RawNamedCountRow[]>`
+      SELECT c.name, COUNT(*) as count
+      FROM "Series" s
+      JOIN "Country" c ON c.id = s."countryId"
+      WHERE s."countryId" IS NOT NULL
+        AND s."origin" = 'CURATED'
+      GROUP BY c.name
+      ORDER BY count DESC
+    `,
+    // Catalog: series per type (solo CURATED)
+    prisma.$queryRaw<RawTypeCountRow[]>`
+      SELECT type, COUNT(*) as count
+      FROM "Series"
+      WHERE "origin" = 'CURATED'
+      GROUP BY type
+      ORDER BY count DESC
+    `,
+    // Catalog: series per genre (solo CURATED)
+    prisma.$queryRaw<RawNamedCountRow[]>`
+      SELECT g.name, COUNT(*) as count
+      FROM "SeriesGenre" sg
+      JOIN "Genre" g ON g.id = sg."genreId"
+      JOIN "Series" s ON s.id = sg."seriesId"
+      WHERE s."origin" = 'CURATED'
+      GROUP BY g.name
+      ORDER BY count DESC
+      LIMIT 20
+    `,
+    // Catalog: series per release year (solo CURATED)
+    prisma.$queryRaw<RawYearCountRow[]>`
+      SELECT year, COUNT(*) as count
+      FROM "Series"
+      WHERE year IS NOT NULL
+        AND "origin" = 'CURATED'
+      GROUP BY year
+      ORDER BY year DESC
+      LIMIT 20
+    `,
+  ]);
+
+  const allSeriesIdsToFetch = Array.from(
+    new Set([
+      ...topSeriesRows
+        .map((r) => r.seriesId)
+        .filter((id): id is number => id !== null),
+      ...topFavoritedRows.map((r) => r.seriesId),
+    ])
+  );
+
+  const series = await prisma.series.findMany({
+    where: { id: { in: allSeriesIdsToFetch } },
+    select: { id: true, title: true },
+  });
+
+  const seriesById = new Map(series.map((item) => [item.id, item.title]));
+
+  return {
+    generatedAt: new Date().toISOString(),
+    summary: {
+      totalSeries,
+      totalPublicComments,
+      totalCompletedViews,
+      totalCurrentlyWatching,
+      totalFavorites,
+      totalActors,
+      totalDirectors,
+      averageCommunityRating: ratingStats._avg.score
+        ? Math.round(ratingStats._avg.score * 10) / 10
+        : null,
+      totalUserRatings: ratingStats._count.id,
+    },
+    rankings: {
+      topSeries: topSeriesRows
+        .filter((row) => row.seriesId !== null)
+        .map((row) => ({
+          seriesId: row.seriesId as number,
+          title: seriesById.get(row.seriesId as number) ?? 'Sin titulo',
+          count: row._count.seriesId,
+        })),
+      topFavorited: topFavoritedRows.map((row) => ({
+        seriesId: row.seriesId,
+        title: seriesById.get(row.seriesId) ?? 'Sin titulo',
+        count: row._count.seriesId,
+      })),
+      topActors: topActorsRows.map((row) => ({
+        actorId: row.id,
+        name: row.name,
+        count: Number(row.count),
+      })),
+      topDirectors: topDirectorsRows.map((row) => ({
+        directorId: row.id,
+        name: row.name,
+        count: Number(row.count),
+      })),
+      topProductionCompanies: topProductionCompaniesRows.map((row) => ({
+        id: row.id,
+        name: row.name,
+        count: Number(row.count),
+      })),
+      topCountries: topCountriesRows.map((row) => ({
+        name: row.name,
+        count: Number(row.count),
+      })),
+      byType: topTypesRows.map((row) => ({
+        type: row.type,
+        count: Number(row.count),
+      })),
+    },
+    catalog: {
+      byCountry: catalogByCountryRows.map((r) => ({
+        name: r.name,
+        count: Number(r.count),
+      })),
+      byType: catalogByTypeRows.map((r) => ({
+        type: r.type,
+        count: Number(r.count),
+      })),
+      byGenre: catalogByGenreRows.map((r) => ({
+        name: r.name,
+        count: Number(r.count),
+      })),
+      byYear: catalogByYearRows
+        .filter((r) => r.year !== null)
+        .map((r) => ({
+          year: r.year as number,
+          count: Number(r.count),
+        })),
+    },
+    ratings: {
+      averageCommunity: ratingStats._avg.score
+        ? Math.round(ratingStats._avg.score * 10) / 10
+        : null,
+      total: ratingStats._count.id,
+      distribution: ratingDistRows.map((r) => ({
+        score: Number(r.score),
+        count: Number(r.count),
+      })),
+    },
+  };
+}
