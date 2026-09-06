@@ -1,0 +1,94 @@
+/* Tarjeta de persona/productora. Todo via tokens: sin hex hardcodeados, para
+   que tone/skin/accent sigan funcionando. */
+.person-card {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-base);
+  background: var(--bg-container);
+  color: var(--text-primary);
+  text-decoration: none;
+  transition:
+    border-color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.person-card:hover,
+.person-card:focus-visible {
+  border-color: var(--primary-color);
+  /* Solo transform/opacity en hover: son propiedades de compositor y no
+     disparan reflow, asi una card no empuja a las demas de la grilla. */
+  transform: translateY(-2px);
+  box-shadow: var(--box-shadow-card);
+}
+
+.person-card__avatar {
+  position: relative;
+  flex: 0 0 auto;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--bg-spotlight);
+  color: var(--text-tertiary);
+  font-size: 22px;
+}
+
+.person-card__avatar--circle {
+  border-radius: 50%;
+}
+
+.person-card__avatar--square {
+  border-radius: var(--border-radius-sm);
+}
+
+.person-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.person-card__name {
+  font-weight: 600;
+  line-height: 1.25;
+  /* Los nombres tailandeses romanizados son largos: cortar a 2 lineas en vez
+     de desbordar la card. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.person-card__subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.person-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+@media (max-width: 480px) {
+  .person-card {
+    padding: var(--spacing-sm);
+    gap: var(--spacing-sm);
+  }
+
+  .person-card__avatar {
+    width: 44px;
+    height: 44px;
+    font-size: 18px;
+  }
+}
