@@ -7,6 +7,7 @@ import {
   findOrCreateTag,
   findOrCreateGenre,
   findOrCreateActor,
+  findOrCreateProductionCompany,
 } from '@/lib/tag-utils';
 import {
   ALLOWED_COUNTRY_CODES,
@@ -286,12 +287,11 @@ export async function POST(request: NextRequest) {
 
   let productionCompanyId: number | null = null;
   if (data.productionCompanyName) {
-    const pc = await prisma.productionCompany.upsert({
-      where: { name: data.productionCompanyName },
-      update: {},
-      create: { name: data.productionCompanyName },
-    });
-    productionCompanyId = pc.id;
+    const pc = await findOrCreateProductionCompany(
+      prisma,
+      data.productionCompanyName
+    );
+    productionCompanyId = pc?.id ?? null;
   }
 
   let originalLanguageId: number | null = null;

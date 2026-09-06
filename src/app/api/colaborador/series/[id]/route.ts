@@ -7,6 +7,7 @@ import {
   findOrCreateTag,
   findOrCreateGenre,
   findOrCreateActor,
+  findOrCreateProductionCompany,
 } from '@/lib/tag-utils';
 
 interface RouteParams {
@@ -121,12 +122,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (body.productionCompanyName !== undefined) {
       const name = body.productionCompanyName?.trim();
       if (name) {
-        const pc = await prisma.productionCompany.upsert({
-          where: { name },
-          update: {},
-          create: { name },
-        });
-        data.productionCompanyId = pc.id;
+        const pc = await findOrCreateProductionCompany(prisma, name);
+        data.productionCompanyId = pc?.id ?? null;
       } else {
         data.productionCompanyId = null;
       }

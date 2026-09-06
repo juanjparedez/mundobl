@@ -70,6 +70,33 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
     }
 
+    // Guarda de uso, igual que actores y directores. Sin esto el borrado
+    // "funcionaba" y dejaba las series sin productora en silencio: la FK
+    // Series.productionCompanyId es opcional, asi que Postgres la pone en NULL.
+    const company = await prisma.productionCompany.findUnique({
+      where: { id: companyId },
+      include: {
+        _count: { select: { series: true, seriesLinks: true } },
+      },
+    });
+
+    if (!company) {
+      return NextResponse.json(
+        { error: 'Productora no encontrada' },
+        { status: 404 }
+      );
+    }
+
+    const usedBy = Math.max(company._count.series, company._count.seriesLinks);
+    if (usedBy > 0) {
+      return NextResponse.json(
+        {
+          error: `No se puede eliminar. Tiene ${usedBy} series asociadas`,
+        },
+        { status: 400 }
+      );
+    }
+
     await prisma.productionCompany.delete({
       where: { id: companyId },
     });
