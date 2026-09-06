@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Input,
   Button,
   Empty,
   Modal,
+  Spin,
   Switch,
   Tag,
   Tooltip,
@@ -113,6 +114,32 @@ export function CommentsList({
     if (seriesId) return `/api/series/${seriesId}/comments`;
     throw new Error(t('commentsList.errorMissingId'));
   };
+
+  // Antes esto llegaba precargado (getSeriesById traia el arbol completo de
+  // TODOS los episodios/temporadas en cada carga de /series/[id], se abriera
+  // esa fila o no). Se pide bajo demanda al montar — para episodios eso ya
+  // coincide con "el usuario expandio la fila" (EpisodesList solo monta este
+  // componente ahi), asi que ahora si es realmente lazy.
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(getApiEndpoint())
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data: CommentItemData[]) => {
+        if (!cancelled) setComments(data);
+      })
+      .catch(() => {
+        /* deja lo que hubiera en initialComments */
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [seriesId, seasonId, episodeId]);
 
   const handleSubmit = async () => {
     if (!newComment.trim()) {
@@ -319,7 +346,11 @@ export function CommentsList({
           </h4>
         </div>
 
-        {visibleComments.length === 0 ? (
+        {loading ? (
+          <div className="comments-list__loading">
+            <Spin size="small" />
+          </div>
+        ) : visibleComments.length === 0 ? (
           <Empty description={t('commentsList.emptyText')} />
         ) : (
           <div className="comments-list__feed">
