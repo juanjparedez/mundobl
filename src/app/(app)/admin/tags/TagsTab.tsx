@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
-  Table,
   Button,
   Input,
   Popconfirm,
@@ -25,6 +24,7 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { AdminTableToolbar } from '@/components/admin/AdminTableToolbar/AdminTableToolbar';
+import { DataTable } from '@/components/design-system';
 
 export interface TagType {
   id: number;
@@ -303,19 +303,15 @@ export function TagsTab({ onTagsUpdated }: TagsTabProps) {
         }
       />
 
-      <Table
+      <DataTable
         rowSelection={rowSelection}
         columns={columns}
         dataSource={filteredTags}
         rowKey="id"
         loading={loading}
-        pagination={{
-          pageSize: 25,
-          showSizeChanger: true,
-          pageSizeOptions: ['10', '25', '50', '100'],
-          showTotal: (total) => `${total} tags en total`,
-        }}
-        scroll={{ x: 'max-content' }}
+        pageSize={25}
+        pageSizeOptions={['10', '25', '50', '100']}
+        showTotal={(total) => `${total} tags en total`}
       />
 
       <Modal
