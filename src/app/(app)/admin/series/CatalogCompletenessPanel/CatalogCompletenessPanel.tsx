@@ -41,6 +41,16 @@ export async function CatalogCompletenessPanel() {
       <SectionHeader
         title="Completitud del catálogo"
         subtitle={`${total} series curadas · promedio ${average}%`}
+        actions={
+          <Link
+            href="/admin/tags?tab=series&filter=missing_tags"
+            style={{ textDecoration: 'none' }}
+          >
+            <Chip tone="accent" size="sm">
+              Asignar etiquetas →
+            </Chip>
+          </Link>
+        }
       />
 
       <div className="catalog-completeness__stats">
@@ -90,11 +100,23 @@ export async function CatalogCompletenessPanel() {
                   {s.score}%
                 </Chip>
                 <span className="catalog-completeness__missing">
-                  {s.missing.map((f) => (
-                    <Chip key={f} tone="neutral" size="sm">
-                      {FIELD_LABEL[f]}
-                    </Chip>
-                  ))}
+                  {s.missing.map((f) =>
+                    f === 'tags' ? (
+                      <Link
+                        key={f}
+                        href="/admin/tags?tab=series&filter=missing_tags"
+                        style={{ textDecoration: 'none' }}
+                      >
+                        <Chip tone="warning" size="sm">
+                          {FIELD_LABEL[f]} ↗
+                        </Chip>
+                      </Link>
+                    ) : (
+                      <Chip key={f} tone="neutral" size="sm">
+                        {FIELD_LABEL[f]}
+                      </Chip>
+                    )
+                  )}
                 </span>
               </li>
             ))}
