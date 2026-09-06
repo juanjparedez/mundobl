@@ -9,7 +9,6 @@ import {
   Button,
   Upload,
   Tag,
-  Table,
   Typography,
 } from 'antd';
 import {
@@ -22,6 +21,7 @@ import { AdminPageHero } from '@/components/admin/AdminPageHero/AdminPageHero';
 import { SeriesInfoBlocksManager } from '@/components/admin/SeriesInfoBlocksManager/SeriesInfoBlocksManager';
 import { useMessage } from '@/hooks/useMessage';
 import './collaborator-form.css';
+import { DataTable } from '@/components/design-system';
 
 const TYPE_OPTIONS = [
   { value: 'serie', label: 'Serie' },
@@ -297,10 +297,10 @@ export function CollaboratorSeriesForm({ series, seasons }: Props) {
         </div>
 
         {seasons.length > 0 && (
-          <Table
+          <DataTable
             rowKey="id"
             size="small"
-            pagination={{ pageSize: 10 }}
+            pageSize={10}
             dataSource={seasons.flatMap((s) =>
               s.episodes.map((e) => ({ ...e, seasonNumber: s.seasonNumber }))
             )}

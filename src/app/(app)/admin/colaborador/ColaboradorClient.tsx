@@ -1,16 +1,8 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import {
-  Table,
-  Tag,
-  Button,
-  Popconfirm,
-  Avatar,
-  Select,
-  DatePicker,
-} from 'antd';
-import type { ColumnsType } from 'antd/es/table';
+import { Tag, Button, Popconfirm, Avatar, Select, DatePicker } from 'antd';
+import { DataTable, type DataTableColumn } from '@/components/design-system';
 import {
   CloudUploadOutlined,
   EditOutlined,
@@ -149,7 +141,7 @@ export function ColaboradorClient({ items: initial, stats }: Props) {
     }
   }
 
-  const columns: ColumnsType<ColaboradorRow> = [
+  const columns: DataTableColumn<ColaboradorRow>[] = [
     {
       title: '',
       dataIndex: 'imageUrl',
@@ -365,12 +357,11 @@ export function ColaboradorClient({ items: initial, stats }: Props) {
               </Link>
             }
           />
-          <Table
+          <DataTable
             rowKey="id"
             columns={columns}
             dataSource={filtered}
-            pagination={{ pageSize: 20 }}
-            scroll={{ x: 'max-content' }}
+            pageSize={20}
           />
         </>
       )}
