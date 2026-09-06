@@ -140,7 +140,7 @@ export default function RootLayout({
             url: 'https://mundobl.com.ar',
             description:
               'Catálogo de series BL (Boys Love), GL (Girls Love) y doramas asiáticos.',
-            inLanguage: ['es', 'en'],
+            inLanguage: ['es'],
             potentialAction: {
               '@type': 'SearchAction',
               target: 'https://mundobl.com.ar/catalogo?q={search_term_string}',
