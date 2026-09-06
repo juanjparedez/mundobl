@@ -1,271 +1,263 @@
 'use client';
 
-import { Avatar, Card, Tag, Row, Col, Empty } from 'antd';
-import { UserOutlined, CalendarOutlined, BulbOutlined } from '@ant-design/icons';
-import Image from 'next/image';
 import Link from 'next/link';
+import Image from 'next/image';
+import {
+  UserOutlined,
+  CalendarOutlined,
+  BulbOutlined,
+  VideoCameraOutlined,
+} from '@ant-design/icons';
+import {
+  PanelCard,
+  SectionHeader,
+  Chip,
+  EmptyState,
+  MediaCard,
+} from '@/components/design-system';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
+import type { TranslationKey } from '@/i18n/messages';
 import './actor-profile.css';
 
-interface ActorData {
-  id: number;
-  name: string;
-  stageName?: string | null;
-  birthDate?: Date | string | null;
-  nationality?: string | null;
+/** Una entrada de filmografia ya deduplicada en el servidor. */
+export interface FilmographyEntry {
+  seriesId: number;
+  title: string;
+  year?: number | null;
+  type: string;
   imageUrl?: string | null;
-  biography?: string | null;
-  funFacts?: string[];
-  series: Array<{
-    character?: string | null;
-    isMain: boolean;
-    series: {
-      id: number;
-      title: string;
-      year?: number | null;
-      type: string;
-      imageUrl?: string | null;
-      country?: { name: string } | null;
-    };
-  }>;
-  seasons: Array<{
-    character?: string | null;
-    isMain: boolean;
-    season: {
-      seasonNumber: number;
-      series: {
-        id: number;
-        title: string;
-        year?: number | null;
-        type: string;
-        imageUrl?: string | null;
-        country?: { name: string } | null;
-      };
-    };
-  }>;
+  countryName?: string | null;
+  characters: string[];
+  isMain: boolean;
 }
 
-interface ActorProfileClientProps {
-  actor: ActorData;
+export interface ActorProfileClientProps {
+  actor: {
+    id: number;
+    name: string;
+    stageName?: string | null;
+    birthDate?: string | null;
+    nationality?: string | null;
+    imageUrl?: string | null;
+    biography?: string | null;
+    funFacts?: string[];
+    aliases?: string[];
+    imdbUrl?: string | null;
+    mdlUrl?: string | null;
+    wikiUrl?: string | null;
+  };
+  filmography: FilmographyEntry[];
+  /** Si esta persona tambien figura como directora, su id para cross-link. */
+  directorId?: number | null;
 }
 
-function getTypeColor(type: string): string {
-  switch (type) {
-    case 'serie':
-      return 'blue';
-    case 'pelicula':
-      return 'purple';
-    case 'corto':
-      return 'cyan';
-    case 'especial':
-      return 'orange';
-    default:
-      return 'default';
-  }
-}
+const TYPE_KEYS: Record<string, TranslationKey> = {
+  serie: 'seriesHeader.typeSerie',
+  pelicula: 'seriesHeader.typePelicula',
+  corto: 'seriesHeader.typeCorto',
+  especial: 'seriesHeader.typeEspecial',
+  anime: 'seriesHeader.typeAnime',
+  reality: 'seriesHeader.typeReality',
+};
 
-function formatDate(date: Date | string | null | undefined): string | null {
-  if (!date) return null;
-  const d = new Date(date);
-  return d.toLocaleDateString('es-ES', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-}
+export function ActorProfileClient({
+  actor,
+  filmography,
+  directorId,
+}: ActorProfileClientProps) {
+  const { t, locale } = useLocale();
 
-export function ActorProfileClient({ actor }: ActorProfileClientProps) {
-  const { t } = useLocale();
+  // El formato de fecha sigue al locale activo, no a un 'es-ES' fijo.
+  const birthDate = actor.birthDate
+    ? new Date(actor.birthDate).toLocaleDateString(locale, {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      })
+    : null;
 
-  // Build unique filmography entries from series + seasons
-  const filmographyMap = new Map<
-    number,
-    {
-      seriesId: number;
-      title: string;
-      year?: number | null;
-      type: string;
-      imageUrl?: string | null;
-      countryName?: string | null;
-      characters: string[];
-      isMain: boolean;
-    }
-  >();
+  const links = [
+    actor.imdbUrl && {
+      url: actor.imdbUrl,
+      label: t('directorProfile.linkImdb'),
+    },
+    actor.mdlUrl && { url: actor.mdlUrl, label: t('directorProfile.linkMdl') },
+    actor.wikiUrl && {
+      url: actor.wikiUrl,
+      label: t('directorProfile.linkWiki'),
+    },
+  ].filter((x): x is { url: string; label: string } => Boolean(x));
 
-  // Add series-level entries
-  actor.series.forEach((entry) => {
-    const key = entry.series.id;
-    const existing = filmographyMap.get(key);
-    if (existing) {
-      if (entry.character && !existing.characters.includes(entry.character)) {
-        existing.characters.push(entry.character);
-      }
-      if (entry.isMain) existing.isMain = true;
-    } else {
-      filmographyMap.set(key, {
-        seriesId: entry.series.id,
-        title: entry.series.title,
-        year: entry.series.year,
-        type: entry.series.type,
-        imageUrl: entry.series.imageUrl,
-        countryName: entry.series.country?.name,
-        characters: entry.character ? [entry.character] : [],
-        isMain: entry.isMain,
-      });
-    }
-  });
-
-  // Add season-level entries
-  actor.seasons.forEach((entry) => {
-    const key = entry.season.series.id;
-    const existing = filmographyMap.get(key);
-    if (existing) {
-      if (entry.character && !existing.characters.includes(entry.character)) {
-        existing.characters.push(entry.character);
-      }
-      if (entry.isMain) existing.isMain = true;
-    } else {
-      filmographyMap.set(key, {
-        seriesId: entry.season.series.id,
-        title: entry.season.series.title,
-        year: entry.season.series.year,
-        type: entry.season.series.type,
-        imageUrl: entry.season.series.imageUrl,
-        countryName: entry.season.series.country?.name,
-        characters: entry.character ? [entry.character] : [],
-        isMain: entry.isMain,
-      });
-    }
-  });
-
-  const filmography = Array.from(filmographyMap.values()).sort((a, b) => {
-    if (a.year && b.year) return b.year - a.year;
-    if (a.year) return -1;
-    if (b.year) return 1;
-    return a.title.localeCompare(b.title);
-  });
+  const aliases = actor.aliases ?? [];
+  const funFacts = actor.funFacts ?? [];
 
   return (
     <div className="actor-profile">
-      <Card>
+      <PanelCard padding="md">
         <div className="actor-profile__header">
-          {actor.imageUrl ? (
-            <Avatar
-              src={actor.imageUrl}
-              size={120}
-              className="actor-profile__avatar"
-            />
-          ) : (
-            <Avatar
-              icon={<UserOutlined />}
-              size={120}
-              className="actor-profile__avatar"
-            />
-          )}
+          <span className="actor-profile__avatar" aria-hidden="true">
+            {actor.imageUrl ? (
+              <Image
+                src={actor.imageUrl}
+                alt=""
+                fill
+                sizes="120px"
+                unoptimized={isSupabaseImageUrl(actor.imageUrl)}
+                style={{ objectFit: 'cover' }}
+              />
+            ) : (
+              <UserOutlined />
+            )}
+          </span>
+
           <div className="actor-profile__info">
             <h1 className="actor-profile__name">{actor.name}</h1>
             {actor.stageName && (
               <p className="actor-profile__stage-name">{actor.stageName}</p>
             )}
+
             <div className="actor-profile__meta">
-              {actor.nationality && <Tag color="blue">{actor.nationality}</Tag>}
-              {actor.birthDate && (
-                <Tag icon={<CalendarOutlined />}>
-                  {formatDate(actor.birthDate)}
-                </Tag>
+              {actor.nationality && (
+                <Chip size="sm" tone="info">
+                  {actor.nationality}
+                </Chip>
               )}
-              <Tag>{filmography.length} participaciones</Tag>
+              {birthDate && (
+                <Chip size="sm" tone="neutral" icon={<CalendarOutlined />}>
+                  {birthDate}
+                </Chip>
+              )}
+              <Chip size="sm" tone="neutral">
+                {interpolateMessage(t('actorProfile.participations'), {
+                  n: String(filmography.length),
+                })}
+              </Chip>
             </div>
+
+            {aliases.length > 0 && (
+              <p className="actor-profile__aliases">
+                <span className="actor-profile__label">
+                  {t('actorProfile.aliasesTitle')}:
+                </span>{' '}
+                {aliases.join(' · ')}
+              </p>
+            )}
+
+            {links.length > 0 && (
+              <nav
+                className="actor-profile__links"
+                aria-label={t('actorProfile.externalLinksTitle')}
+              >
+                {links.map((l) => (
+                  <a
+                    key={l.url}
+                    href={l.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="actor-profile__link"
+                  >
+                    {l.label}
+                  </a>
+                ))}
+              </nav>
+            )}
+
+            {directorId && (
+              <p className="actor-profile__crosslink">
+                <Link href={`/directores/${directorId}`} prefetch={false}>
+                  <VideoCameraOutlined /> {t('actorProfile.alsoDirected')}
+                </Link>
+              </p>
+            )}
           </div>
         </div>
 
         {actor.biography && (
           <div className="actor-profile__biography">
-            <h3>Biografía</h3>
+            <h2 className="actor-profile__section-title">
+              {t('actorProfile.biographyTitle')}
+            </h2>
             <p>{actor.biography}</p>
           </div>
         )}
-      </Card>
+      </PanelCard>
 
-      {actor.funFacts && actor.funFacts.length > 0 && (
-        <Card
-          title={t('actorProfile.funFactsTitle')}
-          className="actor-profile__fun-facts"
-        >
+      {funFacts.length > 0 && (
+        <PanelCard padding="md">
+          <SectionHeader as="h2" title={t('actorProfile.funFactsTitle')} />
           <ul className="actor-profile__fun-facts-list">
-            {actor.funFacts.map((fact, idx) => (
+            {funFacts.map((fact, idx) => (
               <li key={idx}>
                 <BulbOutlined className="actor-profile__fun-fact-icon" />
                 <span>{fact}</span>
               </li>
             ))}
           </ul>
-        </Card>
+        </PanelCard>
       )}
 
-      <Card
-        title={`Filmografía (${filmography.length})`}
-        className="actor-profile__filmography"
-      >
+      <PanelCard padding="md">
+        <SectionHeader
+          as="h2"
+          title={t('actorProfile.filmographyTitle')}
+          subtitle={interpolateMessage(t('actorProfile.participations'), {
+            n: String(filmography.length),
+          })}
+        />
+
         {filmography.length === 0 ? (
-          <Empty description="No hay participaciones registradas" />
+          <EmptyState
+            title={t('actorProfile.filmographyTitle')}
+            description={t('actorProfile.filmographyEmpty')}
+            fullHeight={false}
+          />
         ) : (
-          <Row gutter={[16, 16]}>
+          <div className="actor-profile__grid">
             {filmography.map((entry) => (
-              <Col xs={24} sm={12} md={8} lg={6} key={entry.seriesId}>
-                <Link href={`/series/${entry.seriesId}`}>
-                  <Card
-                    hoverable
-                    size="small"
-                    className="actor-profile__film-card"
-                    cover={
-                      entry.imageUrl ? (
-                        <Image
-                          alt={entry.title}
-                          src={entry.imageUrl}
-                          width={200}
-                          height={300}
-                          quality={70}
-                          unoptimized={isSupabaseImageUrl(entry.imageUrl)}
-                          className="actor-profile__film-image"
-                        />
-                      ) : undefined
-                    }
-                  >
-                    <Card.Meta
-                      title={entry.title}
-                      description={
-                        <div className="actor-profile__film-meta">
-                          <div className="actor-profile__film-tags">
-                            <Tag color={getTypeColor(entry.type)}>
-                              {entry.type}
-                            </Tag>
-                            {entry.year && <Tag>{entry.year}</Tag>}
-                            {entry.isMain && (
-                              <Tag color="red">Protagonista</Tag>
-                            )}
-                          </div>
-                          {entry.characters.length > 0 && (
-                            <span className="actor-profile__character">
-                              {entry.characters.join(', ')}
-                            </span>
-                          )}
-                          {entry.countryName && (
-                            <span className="actor-profile__country">
-                              {entry.countryName}
-                            </span>
-                          )}
-                        </div>
-                      }
-                    />
-                  </Card>
-                </Link>
-              </Col>
+              <MediaCard
+                key={entry.seriesId}
+                href={`/series/${entry.seriesId}`}
+                imageUrl={entry.imageUrl}
+                imageAlt={entry.title}
+                unoptimizedImage={isSupabaseImageUrl(entry.imageUrl)}
+                title={entry.title}
+                subtitle={
+                  [entry.year ? String(entry.year) : null, entry.countryName]
+                    .filter(Boolean)
+                    .join(' · ') || undefined
+                }
+                description={
+                  entry.characters.length > 0
+                    ? entry.characters.join(', ')
+                    : undefined
+                }
+                overlayTags={
+                  <>
+                    {TYPE_KEYS[entry.type] && (
+                      <Chip size="sm" tone="accent">
+                        {t(TYPE_KEYS[entry.type])}
+                      </Chip>
+                    )}
+                    {entry.isMain && (
+                      <Chip size="sm" tone="success">
+                        {t('actorProfile.mainRole')}
+                      </Chip>
+                    )}
+                  </>
+                }
+              />
             ))}
-          </Row>
+          </div>
         )}
-      </Card>
+      </PanelCard>
+
+      <div className="actor-profile__back">
+        <Link href="/actores" prefetch={false}>
+          {t('actorProfile.backToIndex')}
+        </Link>
+      </div>
     </div>
   );
 }

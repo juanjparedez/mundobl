@@ -570,6 +570,10 @@ export async function getActorById(id: number) {
       biography: true,
       funFacts: true,
       isPlaceholder: true,
+      aliases: true,
+      imdbUrl: true,
+      mdlUrl: true,
+      wikiUrl: true,
       series: {
         where: { series: { origin: 'CURATED', catalogScope: 'PERSONAL' } },
         select: {
@@ -929,6 +933,36 @@ export async function getPeopleNationalities(): Promise<string[]> {
   `
   );
   return rows.map((r) => r.nationality);
+}
+
+/**
+ * Id del director homonimo, si existe.
+ *
+ * Hay personas que actuan y dirigen (5 en el catalogo). Cada una vive en dos
+ * tablas distintas y hasta ahora sus fichas no se conocian entre si. Unificar
+ * Actor y Director en un modelo `Person` seria un cambio grande para 5 casos:
+ * alcanza con cruzar los links.
+ */
+export async function findDirectorIdByName(
+  name: string
+): Promise<number | null> {
+  const director = await prisma.director.findFirst({
+    where: { name: { equals: name, mode: 'insensitive' } },
+    select: { id: true },
+  });
+  return director?.id ?? null;
+}
+
+/** Contraparte: id del actor homonimo, para la ficha de director. */
+export async function findActorIdByName(name: string): Promise<number | null> {
+  const actor = await prisma.actor.findFirst({
+    where: {
+      name: { equals: name, mode: 'insensitive' },
+      isPlaceholder: false,
+    },
+    select: { id: true },
+  });
+  return actor?.id ?? null;
 }
 
 // ============================================
