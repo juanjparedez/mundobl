@@ -106,7 +106,23 @@ function staticPages(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 0.6,
     },
+    // Contenido informacional. Son las paginas de long-tail (busquedas del
+    // tipo "que significa seme", "donde ver BL tailandes") y estaban fuera
+    // del sitemap aunque robots.ts las deja crawlear: existian, se podian
+    // indexar, pero nunca se le ofrecieron a Google.
+    { url: `${BASE_URL}/glosario`, changeFrequency: 'weekly', priority: 0.7 },
+    {
+      url: `${BASE_URL}/plataformas`,
+      changeFrequency: 'weekly',
+      priority: 0.65,
+    },
+    { url: `${BASE_URL}/contenido`, changeFrequency: 'weekly', priority: 0.6 },
     { url: `${BASE_URL}/sitios`, changeFrequency: 'monthly', priority: 0.5 },
+    {
+      url: `${BASE_URL}/privacidad`,
+      changeFrequency: 'yearly',
+      priority: 0.3,
+    },
     { url: `${BASE_URL}/creditos`, changeFrequency: 'monthly', priority: 0.4 },
     { url: `${BASE_URL}/legal`, changeFrequency: 'yearly', priority: 0.3 },
     { url: `${BASE_URL}/feedback`, changeFrequency: 'monthly', priority: 0.3 },

@@ -9,6 +9,8 @@ import { ServiceWorkerRegistrar } from '@/components/ServiceWorkerRegistrar/Serv
 import { NavigationGuard } from '@/components/layout/NavigationGuard/NavigationGuard';
 import { JsonLd } from '@/components/seo/JsonLd';
 import type { WebSite, Organization } from 'schema-dts';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import 'flag-icons/css/flag-icons.min.css';
 import '@/styles/globals.css';
 import '@/styles/dark-mode-fixes.css';
@@ -169,6 +171,12 @@ export default function RootLayout({
             </LocaleProvider>
           </AntdRegistry>
         </SessionProvider>
+        {/* Medicion. Ambos se sirven desde el propio dominio
+         *  (/_vercel/insights, /_vercel/speed-insights), asi que pasan la
+         *  CSP de next.config.ts sin necesidad de abrir script-src a
+         *  hosts externos. Web Analytics es sin cookies y sin PII. */}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
