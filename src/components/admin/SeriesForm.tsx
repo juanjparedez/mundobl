@@ -33,6 +33,7 @@ import {
 } from '@ant-design/icons/lib/icons';
 import Link from 'next/link';
 import { shouldShowSeasons, getContentTypeConfig } from '@/types/content';
+import { getSeriesUrl } from '@/lib/slug';
 import './SeriesForm.css';
 import { useMessage, useModal } from '@/hooks/useMessage';
 import {
@@ -309,6 +310,15 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
   useEffect(() => {
     loadFormData();
     if (initialData) {
+      const initialSeasons =
+        (initialData.seasons as Array<Record<string, unknown>>) || [];
+      const effectiveSeasons =
+        initialSeasons.length > 0
+          ? initialSeasons
+          : initialData.type === 'especial'
+            ? [{ seasonNumber: 1, episodeCount: null, year: initialData.year }]
+            : [];
+
       form.setFieldsValue({
         ...initialData,
         basedOn: initialData.basedOn ? [initialData.basedOn] : [],
@@ -320,6 +330,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                 .filter(Boolean)
             : initialData.airDays
           : [],
+        seasons: effectiveSeasons,
       });
       setSelectedType(initialData.type || 'serie');
 
@@ -547,7 +558,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
       const method = mode === 'create' ? 'POST' : 'PUT';
 
       // basedOn comes as array from Select mode="tags", convert to string
-      const submitValues = {
+      const submitValues: Record<string, unknown> = {
         ...values,
         basedOn: Array.isArray(values.basedOn)
           ? values.basedOn[0] || null
@@ -558,6 +569,27 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
             ? values.airDays
             : null,
       };
+
+      // Si es especial, asegurar que seasons esté normalizado con seasonNumber 1
+      if (submitValues.type === 'especial') {
+        const rawSeasons =
+          (submitValues.seasons as Array<Record<string, unknown>>) || [];
+        if (rawSeasons.length > 0) {
+          submitValues.seasons = rawSeasons.map((s) => ({
+            ...s,
+            seasonNumber: s.seasonNumber || 1,
+            year: s.year || submitValues.year || null,
+          }));
+        } else {
+          submitValues.seasons = [
+            {
+              seasonNumber: 1,
+              episodeCount: 1,
+              year: submitValues.year || null,
+            },
+          ];
+        }
+      }
 
       // Include pending content items + info blocks in the creation request
       const bodyPayload =
@@ -600,10 +632,9 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
           : t('seriesForm.updateSuccess')
       );
 
-      // Invalidar el Router Cache del cliente para que el listado /admin/series
-      // no sirva la lista vieja (serie creada "no aparece" al volver).
-      router.refresh();
-      router.push(`/series/${savedSerie.id}`);
+      // Redirigir directamente a la ficha de la serie (previsualización directa)
+      const targetUrl = getSeriesUrl(savedSerie.id, savedSerie.title);
+      router.push(targetUrl);
     } catch (error) {
       message.error(
         error instanceof Error && error.message !== 'Error saving series'
@@ -831,7 +862,23 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                 >
                   <Select
                     size="large"
-                    onChange={(value) => setSelectedType(value)}
+                    onChange={(value) => {
+                      setSelectedType(value);
+                      if (value === 'especial') {
+                        const current = form.getFieldValue('seasons');
+                        if (!current || current.length === 0) {
+                          form.setFieldsValue({
+                            seasons: [
+                              {
+                                seasonNumber: 1,
+                                episodeCount: null,
+                                year: form.getFieldValue('year'),
+                              },
+                            ],
+                          });
+                        }
+                      }
+                    }}
                   >
                     <Option value="serie">
                       📺 {t('seriesForm.typeOption_serie')}
@@ -1554,19 +1601,29 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
             </Form.List>
           </Card>
 
-          {/* Temporadas (solo para series) */}
+          {/* Temporadas / Capítulos */}
           {showSeasons && (
             <Card
               type="inner"
-              title={`📺 ${'seasonLabel' in config ? config.seasonLabel : 'Temporadas'}`}
+              title={
+                selectedType === 'especial'
+                  ? '✨ Capítulos del Especial'
+                  : `📺 ${'seasonLabel' in config ? config.seasonLabel : 'Temporadas'}`
+              }
               style={{ marginBottom: 24 }}
             >
               <Alert
-                title={t('seriesForm.seasonAlertTitle')}
+                title={
+                  selectedType === 'especial'
+                    ? 'Información de capítulos'
+                    : t('seriesForm.seasonAlertTitle')
+                }
                 description={
-                  mode === 'edit'
-                    ? t('seriesForm.seasonAlertEdit')
-                    : t('seriesForm.seasonAlertCreate')
+                  selectedType === 'especial'
+                    ? 'Indica la cantidad de capítulos y año del especial. Se generarán automáticamente al guardar.'
+                    : mode === 'edit'
+                      ? t('seriesForm.seasonAlertEdit')
+                      : t('seriesForm.seasonAlertCreate')
                 }
                 type="info"
                 showIcon
@@ -1578,6 +1635,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                     {fields.map(({ key, name, ...restField }) => {
                       const seasonData = form.getFieldValue(['seasons', name]);
                       const hasId = seasonData?.id;
+                      const isEspecial = selectedType === 'especial';
 
                       return (
                         <div key={key} className="series-form__season-row">
@@ -1585,33 +1643,58 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                             <Input type="hidden" />
                           </Form.Item>
 
-                          <Form.Item
-                            {...restField}
-                            name={[name, 'seasonNumber']}
-                            label={t('seriesForm.fieldSeasonNumber')}
-                            rules={[
-                              {
-                                required: true,
-                                message: t('seriesForm.requiredSeasonNumber'),
-                              },
-                            ]}
-                            style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
-                          >
-                            <InputNumber
-                              placeholder="1"
-                              min={1}
-                              style={{ width: '100%' }}
-                            />
-                          </Form.Item>
+                          {isEspecial ? (
+                            <Form.Item
+                              {...restField}
+                              name={[name, 'seasonNumber']}
+                              hidden
+                              initialValue={1}
+                            >
+                              <Input type="hidden" />
+                            </Form.Item>
+                          ) : (
+                            <Form.Item
+                              {...restField}
+                              name={[name, 'seasonNumber']}
+                              label={t('seriesForm.fieldSeasonNumber')}
+                              rules={[
+                                {
+                                  required: true,
+                                  message: t('seriesForm.requiredSeasonNumber'),
+                                },
+                              ]}
+                              style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
+                            >
+                              <InputNumber
+                                placeholder="1"
+                                min={1}
+                                style={{ width: '100%' }}
+                              />
+                            </Form.Item>
+                          )}
 
                           <Form.Item
                             {...restField}
                             name={[name, 'episodeCount']}
-                            label={t('seriesForm.fieldEpisodeCount')}
+                            label={
+                              isEspecial
+                                ? 'Cantidad de capítulos'
+                                : t('seriesForm.fieldEpisodeCount')
+                            }
+                            rules={
+                              isEspecial
+                                ? [
+                                    {
+                                      required: true,
+                                      message: 'Indica la cantidad de capítulos',
+                                    },
+                                  ]
+                                : []
+                            }
                             style={{ marginBottom: 0, flex: 1, minWidth: 0 }}
                           >
                             <InputNumber
-                              placeholder="12"
+                              placeholder={isEspecial ? '1' : '12'}
                               min={1}
                               style={{ width: '100%' }}
                             />
@@ -1631,7 +1714,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                             />
                           </Form.Item>
 
-                          {mode === 'edit' && hasId && (
+                          {mode === 'edit' && hasId && !isEspecial && (
                             <Link
                               href={`/admin/seasons/${seasonData.id}/editar`}
                             >
@@ -1645,20 +1728,24 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                             </Link>
                           )}
 
-                          <MinusCircleOutlined onClick={() => remove(name)} />
+                          {!isEspecial && (
+                            <MinusCircleOutlined onClick={() => remove(name)} />
+                          )}
                         </div>
                       );
                     })}
-                    <Form.Item>
-                      <Button
-                        type="dashed"
-                        onClick={() => add()}
-                        block
-                        icon={<PlusOutlined />}
-                      >
-                        Agregar Temporada
-                      </Button>
-                    </Form.Item>
+                    {selectedType !== 'especial' && (
+                      <Form.Item>
+                        <Button
+                          type="dashed"
+                          onClick={() => add()}
+                          block
+                          icon={<PlusOutlined />}
+                        >
+                          Agregar Temporada
+                        </Button>
+                      </Form.Item>
+                    )}
                   </>
                 )}
               </Form.List>

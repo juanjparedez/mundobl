@@ -112,6 +112,16 @@ export async function getAllSeries(options?: {
           },
         },
       },
+      genres: {
+        select: {
+          genre: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+        },
+      },
     },
     orderBy: {
       title: 'asc',
@@ -978,6 +988,17 @@ export async function getAllCountries() {
   });
 
   return countries;
+}
+
+/**
+ * Obtener todos los géneros
+ */
+export async function getAllGenres() {
+  return await prisma.genre.findMany({
+    orderBy: {
+      name: 'asc',
+    },
+  });
 }
 
 // ============================================
