@@ -18,6 +18,7 @@ import {
 } from '@/components/design-system';
 import type { QuickPreviewData } from '@/components/design-system';
 import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { getSeriesUrl } from '@/lib/slug';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import type { TranslationKey } from '@/i18n/messages';
@@ -148,7 +149,7 @@ export function ActorProfileClient({
         key: 'detail',
         label: t('quickPreview.fullDetail'),
         variant: 'primary' as const,
-        href: `/series/${entry.seriesId}`,
+        href: getSeriesUrl(entry.seriesId, entry.title),
       },
     ],
   });
@@ -302,7 +303,7 @@ export function ActorProfileClient({
             {filmography.map((entry) => (
               <MediaCard
                 key={entry.seriesId}
-                href={`/series/${entry.seriesId}`}
+                href={getSeriesUrl(entry.seriesId, entry.title)}
                 imageUrl={cardImageUrl(entry)}
                 imageAlt={entry.title}
                 unoptimizedImage={isSupabaseImageUrl(cardImageUrl(entry))}
