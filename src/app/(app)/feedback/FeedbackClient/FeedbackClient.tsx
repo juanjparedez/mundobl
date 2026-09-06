@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import ReactMarkdown from 'react-markdown';
 import {
   Tabs,
   Button,
@@ -1040,7 +1041,24 @@ export function FeedbackClient() {
                             {item.category}
                           </Tag>
                         )}
-                        {item.body}
+                        <span className="changelog-entry__text">
+                          <ReactMarkdown
+                            components={{
+                              p: ({ children }) => <span>{children}</span>,
+                              a: ({ href, children }) => (
+                                <a
+                                  href={href}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  {children}
+                                </a>
+                              ),
+                            }}
+                          >
+                            {item.body}
+                          </ReactMarkdown>
+                        </span>
                       </li>
                     ))}
                   </ul>
