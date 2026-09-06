@@ -124,3 +124,103 @@ export async function findOrCreateActor(
     throw error;
   }
 }
+
+/**
+ * Igual que findOrCreateActor pero para Director.
+ *
+ * Existe porque POST /api/series hacia `prisma.director.upsert({ where: { name } })`
+ * con el nombre CRUDO: "Tsai Mi Chieh" y " Tsai Mi Chieh" entraban como dos
+ * directores distintos. Esa es la razon por la que habia duplicados de director
+ * a pesar de que ya existia /api/directors/merge.
+ */
+export async function findOrCreateDirector(
+  client: Prisma.TransactionClient,
+  rawName: string
+): Promise<{ id: number; name: string } | null> {
+  const name = rawName.trim();
+  if (!name) return null;
+
+  const existing = await client.director.findFirst({
+    where: { name: { equals: name, mode: 'insensitive' } },
+    select: { id: true, name: true },
+  });
+  if (existing) return existing;
+
+  try {
+    return await client.director.create({
+      data: { name },
+      select: { id: true, name: true },
+    });
+  } catch (error) {
+    if (
+      error &&
+      typeof error === 'object' &&
+      'code' in error &&
+      (error as { code?: string }).code === 'P2002'
+    ) {
+      return client.director.findFirst({
+        where: { name: { equals: name, mode: 'insensitive' } },
+        select: { id: true, name: true },
+      });
+    }
+    throw error;
+  }
+}
+
+/**
+ * Igual que findOrCreateActor pero para ProductionCompany.
+ *
+ * NO parte nombres con coma: eso lo hace splitProductionCompanyNames, porque
+ * decidir si "GMM, One 31" son dos productoras o una sola llamada asi es una
+ * decision del caller, no de este helper.
+ */
+export async function findOrCreateProductionCompany(
+  client: Prisma.TransactionClient,
+  rawName: string
+): Promise<{ id: number; name: string } | null> {
+  const name = rawName.trim();
+  if (!name) return null;
+
+  const existing = await client.productionCompany.findFirst({
+    where: { name: { equals: name, mode: 'insensitive' } },
+    select: { id: true, name: true },
+  });
+  if (existing) return existing;
+
+  try {
+    return await client.productionCompany.create({
+      data: { name },
+      select: { id: true, name: true },
+    });
+  } catch (error) {
+    if (
+      error &&
+      typeof error === 'object' &&
+      'code' in error &&
+      (error as { code?: string }).code === 'P2002'
+    ) {
+      return client.productionCompany.findFirst({
+        where: { name: { equals: name, mode: 'insensitive' } },
+        select: { id: true, name: true },
+      });
+    }
+    throw error;
+  }
+}
+
+/**
+ * Parte un nombre de productora que en realidad son varias co-productoras.
+ *
+ * "SETTV, SPO Entertainment, Avex Taiwan" -> 3 nombres.
+ * "GMM 25" -> 1 nombre (los numeros son parte del nombre, no un separador).
+ *
+ * Solo separa por coma: es el unico separador que aparece de forma consistente
+ * en los datos. Nombres con "&" o "x" se dejan enteros a proposito — puede ser
+ * parte del nombre real de la productora.
+ */
+export function splitProductionCompanyNames(rawName: string): string[] {
+  return rawName
+    .split(',')
+    .map((n) => n.trim())
+    .filter((n) => n.length > 0);
+}

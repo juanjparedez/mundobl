@@ -173,14 +173,62 @@ model Universe {
 // PRODUCTORAS
 // ============================================
 model ProductionCompany {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  country   String?
-  imageUrl  String?
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  /// LEGACY: pais como texto libre. Reemplazado por countryId (FK a Country).
+  /// Se conserva durante el backfill y se borra en una migracion posterior,
+  /// una vez verificado que countryId quedo bien cargado.
+  country String?
+
+  countryId Int?
+  countryRef Country? @relation(fields: [countryId], references: [id])
+
+  slug        String? @unique
+  description String?
+  websiteUrl  String?
+  youtubeUrl  String?
+  foundedYear Int?
+  imageUrl    String?
+
+  // --- Procedencia de los datos (ver PersonEnrichment / fase de poblacion) ---
+  wikidataId       String?
+  tmdbCompanyId    Int?
+  imageSource      String? // 'WIKIMEDIA' | 'TMDB' | 'MANUAL'
+  imageAttribution String?
+  imageLicense     String?
+  bioSource        String?
+  bioSourceUrl     String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  series Series[]
+  /// LEGACY: relacion 1-a-N. La real es seriesLinks (muchos-a-muchos), porque
+  /// una serie puede ser co-produccion. Se borra junto con Series.productionCompanyId.
+  series      Series[]
+  seriesLinks SeriesProductionCompany[]
+
+  @@index([countryId])
+  @@index([wikidataId])
+}
+
+/// Co-producciones: una serie puede tener N productoras y viceversa.
+/// Reemplaza a Series.productionCompanyId (1-a-N), que no podia representar
+/// casos como "SETTV, SPO Entertainment, Avex Taiwan" — que hasta ahora se
+/// guardaban como UNA sola productora con comas en el nombre.
+model SeriesProductionCompany {
+  id Int @id @default(autoincrement())
+
+  seriesId Int
+  series   Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+
+  productionCompanyId Int
+  productionCompany   ProductionCompany @relation(fields: [productionCompanyId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([seriesId, productionCompanyId])
+  @@index([productionCompanyId])
 }
 
 // ============================================
@@ -274,8 +322,13 @@ model Series {
   universe            Universe?          @relation(fields: [universeId], references: [id])
   countryId           Int?
   country             Country?           @relation(fields: [countryId], references: [id])
+  /// LEGACY: una sola productora por serie. La relacion real es
+  /// productionCompanies (muchos-a-muchos). Se borra cuando el backfill este
+  /// verificado.
   productionCompanyId Int?
   productionCompany   ProductionCompany? @relation(fields: [productionCompanyId], references: [id])
+
+  productionCompanies SeriesProductionCompany[]
   originalLanguageId  Int?
   originalLanguage    Language?          @relation("OriginalLanguage", fields: [originalLanguageId], references: [id])
 
@@ -312,6 +365,15 @@ model Series {
   @@index([productionCompanyId])
   @@index([originalLanguageId])
   @@index([featured, featuredOrder])
+  // El filtro mas repetido de la app (getAllSeries, getCatalogFilterIndex,
+  // fichas de actor/director/tag, sitemap...). El @@index([origin, visibility])
+  // de arriba NO lo cubre: no comparten prefijo.
+  @@index([catalogScope, origin])
+  // orderBy createdAt desc en la landing y /novedades — ([submittedById,
+  // createdAt]) no sirve para un sort global.
+  @@index([createdAt])
+  // orderBy title asc en todos los listados.
+  @@index([title])
 }
 
 // Bloques de informacion adicionales por serie. Cards labeladas y libres
@@ -390,6 +452,10 @@ model Episode {
   notes      EpisodeNote[]
 
   @@unique([seasonId, episodeNumber])
+  // `seasons: { some: { episodes: { some: { embedUrl: { not: null } } } } }`
+  // corre en /ver, la landing, /novedades y el sitemap — sin esto es un scan
+  // completo de Episode cada vez.
+  @@index([embedUrl])
 }
 
 // Notas privadas del usuario sobre un episodio.
@@ -444,11 +510,42 @@ model Actor {
   imageUrl    String?
   biography   String?
   funFacts    String[]  @default([]) // Datos curiosos cargados a mano por admins
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+
+  /// No es una persona: agrupa los personajes de series donde no se sabe
+  /// quien los interpreta (ver src/lib/placeholder-actor.ts). Se excluye del
+  /// indice publico, del sitemap y del buscador.
+  isPlaceholder Boolean @default(false)
+
+  // --- Simetria con Director (antes Actor no tenia ninguno de estos) ---
+  aliases      String[] @default([])
+  awards       String[] @default([])
+  imdbUrl      String?
+  mdlUrl       String?
+  wikiUrl      String?
+  instagramUrl String?
+  xUrl         String?
+
+  // --- Procedencia de los datos ---
+  /// Claves de match con las fuentes externas. Hacen idempotente al pipeline
+  /// de poblacion: si ya resolvimos esta persona, no se vuelve a buscar.
+  wikidataId   String?
+  tmdbPersonId Int?
+  /// 'WIKIMEDIA' (re-hosteable con credito) | 'TMDB' (solo via su CDN, con
+  /// credito) | 'MANUAL'. Sin esto no hay forma de cumplir las licencias.
+  imageSource      String?
+  imageAttribution String?
+  imageLicense     String?
+  bioSource        String?
+  bioSourceUrl     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   series  SeriesActor[]
   seasons SeasonActor[]
+
+  @@index([isPlaceholder])
+  @@index([wikidataId])
 }
 
 // ============================================
@@ -480,10 +577,26 @@ model Director {
   wikiUrl     String?
   birthYear   Int?
   awards      String[] @default([])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+
+  // --- Simetria con Actor ---
+  instagramUrl String?
+  xUrl         String?
+
+  // --- Procedencia de los datos (mismo criterio que Actor) ---
+  wikidataId       String?
+  tmdbPersonId     Int?
+  imageSource      String? // 'WIKIMEDIA' | 'TMDB' | 'MANUAL'
+  imageAttribution String?
+  imageLicense     String?
+  bioSource        String?
+  bioSourceUrl     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   series SeriesDirector[]
+
+  @@index([wikidataId])
 }
 
 // ============================================
@@ -495,7 +608,8 @@ model Country {
   code    String? @unique // ISO code (ej: "KR", "TH", "JP")
   flagUrl String?
 
-  series Series[]
+  series             Series[]
+  productionCompanies ProductionCompany[]
 }
 
 // ============================================
@@ -943,6 +1057,9 @@ model ViewStatus {
   @@unique([userId, seriesId])
   @@unique([userId, seasonId])
   @@unique([userId, episodeId])
+  // count({ where: { status: 'VISTA' } }) en la landing, /api/stats/public (x3)
+  // y getCollaboratorStats (x2), sobre la tabla mas grande de la base.
+  @@index([status])
   @@index([seriesId])
   @@index([seasonId])
   @@index([episodeId])
@@ -1387,4 +1504,56 @@ model NewsTag {
 
   @@unique([newsId, tagId])
   @@index([tagId])
+}
+
+// ============================================
+// ENRIQUECIMIENTO DE PERSONAS (investigacion web)
+// ============================================
+
+/// Staging del pipeline de poblacion de actores/directores/productoras.
+///
+/// El matching por nombre romanizado es RUIDOSO: la romanizacion del tailandes
+/// varia mucho y la busqueda difusa devuelve casi-coincidencias (ej. buscar
+/// "Suradej Pinnirat" en Wikidata devuelve "Suradet Piniwat", que es otra
+/// persona). Escribir eso directo en Actor/Director seria peor que dejar los
+/// campos vacios: son personas reales.
+///
+/// Por eso el script de investigacion NUNCA escribe en las tablas finales:
+/// deja candidatos aca con su confianza y la URL de la fuente, y un humano
+/// aprueba campo por campo desde el admin.
+model PersonEnrichment {
+  id Int @id @default(autoincrement())
+
+  /// 'ACTOR' | 'DIRECTOR' | 'PRODUCTION_COMPANY'
+  entityType String
+  /// Id de la fila destino en Actor / Director / ProductionCompany.
+  entityId   Int
+
+  /// 'WIKIDATA' | 'TMDB' | 'GEMINI'
+  source    String
+  sourceRef String? // Q-id de Wikidata, id de TMDB, etc.
+  sourceUrl String?
+
+  /// Payload crudo tal como lo devolvio la fuente, sin normalizar. Se guarda
+  /// para poder re-evaluar el match sin volver a pegarle a la API.
+  payload Json
+
+  /// 0..100. Alta = nombre normalizado identico + ocupacion coherente + pais
+  /// dentro de los del catalogo. Solo las altas se pueden auto-aplicar.
+  confidence Int @default(0)
+
+  /// 'PENDING' | 'APPROVED' | 'REJECTED' | 'APPLIED'
+  status String @default("PENDING")
+
+  reviewedById String?
+  reviewedAt   DateTime?
+  /// Por que se rechazo — sirve para afinar el matcher.
+  reviewNote   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([entityType, entityId, source])
+  @@index([status, confidence])
+  @@index([entityType, entityId])
 }
