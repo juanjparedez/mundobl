@@ -569,6 +569,7 @@ export async function getActorById(id: number) {
       imageUrl: true,
       biography: true,
       funFacts: true,
+      isPlaceholder: true,
       series: {
         where: { series: { origin: 'CURATED', catalogScope: 'PERSONAL' } },
         select: {
@@ -681,6 +682,239 @@ export async function getDirectorById(id: number) {
       },
     },
   });
+}
+
+// ============================================
+// INDICES PUBLICOS DE PERSONAS Y PRODUCTORAS
+// ============================================
+
+/**
+ * Listados paginados para /actores, /directores y /productoras.
+ *
+ * Van en SQL crudo a proposito: Prisma no sabe ordenar por un `_count`
+ * FILTRADO (necesitamos contar solo creditos en series CURATED+PERSONAL, para
+ * respetar la separacion con el catalogo de /ver), y ordenar por relevancia es
+ * justo lo que hace util a estos indices — alfabetico deja arriba a los 910
+ * actores de un solo credito. Asi el conteo, el orden y el limite ocurren en
+ * una sola query, sin traer la tabla entera a memoria.
+ */
+
+export type PeopleSort = 'credits' | 'az' | 'za';
+
+export interface PersonIndexRow {
+  id: number;
+  name: string;
+  stageName: string | null;
+  imageUrl: string | null;
+  nationality: string | null;
+  biography: string | null;
+  creditCount: number;
+}
+
+export interface PeopleIndexResult<T> {
+  rows: T[];
+  total: number;
+}
+
+function personOrderBy(sort: PeopleSort): Prisma.Sql {
+  switch (sort) {
+    case 'az':
+      return Prisma.sql`ORDER BY p.name ASC`;
+    case 'za':
+      return Prisma.sql`ORDER BY p.name DESC`;
+    default:
+      return Prisma.sql`ORDER BY "creditCount" DESC, p.name ASC`;
+  }
+}
+
+export async function getActorsIndex(options?: {
+  q?: string;
+  nationality?: string;
+  sort?: PeopleSort;
+  page?: number;
+  perPage?: number;
+}): Promise<PeopleIndexResult<PersonIndexRow>> {
+  const page = Math.max(1, options?.page ?? 1);
+  const perPage = Math.min(120, Math.max(1, options?.perPage ?? 48));
+  const offset = (page - 1) * perPage;
+  const q = options?.q?.trim();
+  const nationality = options?.nationality?.trim();
+
+  // El placeholder "Actor no identificado" no es una persona (ver
+  // src/lib/placeholder-actor.ts): nunca entra a los listados publicos.
+  const where = Prisma.sql`
+    WHERE p."isPlaceholder" = false
+    ${q ? Prisma.sql`AND (p.name ILIKE ${'%' + q + '%'} OR p."stageName" ILIKE ${'%' + q + '%'})` : Prisma.empty}
+    ${nationality ? Prisma.sql`AND p.nationality = ${nationality}` : Prisma.empty}
+  `;
+
+  const [rows, totalRows] = await Promise.all([
+    prisma.$queryRaw<PersonIndexRow[]>`
+      SELECT p.id, p.name, p."stageName", p."imageUrl", p.nationality,
+             p.biography,
+             (
+               COALESCE((
+                 SELECT COUNT(*) FROM "SeriesActor" sa
+                 JOIN "Series" s ON s.id = sa."seriesId"
+                 WHERE sa."actorId" = p.id
+                   AND s.origin = 'CURATED' AND s."catalogScope" = 'PERSONAL'
+               ), 0)
+               + COALESCE((
+                 SELECT COUNT(*) FROM "SeasonActor" sea
+                 JOIN "Season" se ON se.id = sea."seasonId"
+                 JOIN "Series" s2 ON s2.id = se."seriesId"
+                 WHERE sea."actorId" = p.id
+                   AND s2.origin = 'CURATED' AND s2."catalogScope" = 'PERSONAL'
+               ), 0)
+             )::int AS "creditCount"
+      FROM "Actor" p
+      ${where}
+      ${personOrderBy(options?.sort ?? 'credits')}
+      LIMIT ${perPage} OFFSET ${offset}
+    `,
+    prisma.$queryRaw<{ count: bigint }[]>`
+      SELECT COUNT(*)::bigint AS count FROM "Actor" p ${where}
+    `,
+  ]);
+
+  return { rows, total: Number(totalRows[0]?.count ?? 0) };
+}
+
+export async function getDirectorsIndex(options?: {
+  q?: string;
+  nationality?: string;
+  sort?: PeopleSort;
+  page?: number;
+  perPage?: number;
+}): Promise<PeopleIndexResult<PersonIndexRow>> {
+  const page = Math.max(1, options?.page ?? 1);
+  const perPage = Math.min(120, Math.max(1, options?.perPage ?? 48));
+  const offset = (page - 1) * perPage;
+  const q = options?.q?.trim();
+  const nationality = options?.nationality?.trim();
+
+  const where = Prisma.sql`
+    WHERE TRUE
+    ${q ? Prisma.sql`AND p.name ILIKE ${'%' + q + '%'}` : Prisma.empty}
+    ${nationality ? Prisma.sql`AND p.nationality = ${nationality}` : Prisma.empty}
+  `;
+
+  const [rows, totalRows] = await Promise.all([
+    prisma.$queryRaw<PersonIndexRow[]>`
+      SELECT p.id, p.name, NULL::text AS "stageName", p."imageUrl",
+             p.nationality, p.biography,
+             COALESCE((
+               SELECT COUNT(*) FROM "SeriesDirector" sd
+               JOIN "Series" s ON s.id = sd."seriesId"
+               WHERE sd."directorId" = p.id
+                 AND s.origin = 'CURATED' AND s."catalogScope" = 'PERSONAL'
+             ), 0)::int AS "creditCount"
+      FROM "Director" p
+      ${where}
+      ${personOrderBy(options?.sort ?? 'credits')}
+      LIMIT ${perPage} OFFSET ${offset}
+    `,
+    prisma.$queryRaw<{ count: bigint }[]>`
+      SELECT COUNT(*)::bigint AS count FROM "Director" p ${where}
+    `,
+  ]);
+
+  return { rows, total: Number(totalRows[0]?.count ?? 0) };
+}
+
+export interface CompanyIndexRow {
+  id: number;
+  name: string;
+  imageUrl: string | null;
+  description: string | null;
+  countryName: string | null;
+  seriesCount: number;
+}
+
+export async function getProductionCompaniesIndex(options?: {
+  q?: string;
+  sort?: PeopleSort;
+  page?: number;
+  perPage?: number;
+}): Promise<PeopleIndexResult<CompanyIndexRow>> {
+  const page = Math.max(1, options?.page ?? 1);
+  const perPage = Math.min(120, Math.max(1, options?.perPage ?? 48));
+  const offset = (page - 1) * perPage;
+  const q = options?.q?.trim();
+
+  const where = Prisma.sql`
+    WHERE TRUE
+    ${q ? Prisma.sql`AND p.name ILIKE ${'%' + q + '%'}` : Prisma.empty}
+  `;
+
+  // Cuenta sobre SeriesProductionCompany (co-producciones), no sobre la
+  // relacion legacy 1-a-N.
+  const orderBy =
+    options?.sort === 'az'
+      ? Prisma.sql`ORDER BY p.name ASC`
+      : options?.sort === 'za'
+        ? Prisma.sql`ORDER BY p.name DESC`
+        : Prisma.sql`ORDER BY "seriesCount" DESC, p.name ASC`;
+
+  const [rows, totalRows] = await Promise.all([
+    prisma.$queryRaw<CompanyIndexRow[]>`
+      SELECT p.id, p.name, p."imageUrl", p.description,
+             c.name AS "countryName",
+             COALESCE((
+               SELECT COUNT(*) FROM "SeriesProductionCompany" spc
+               JOIN "Series" s ON s.id = spc."seriesId"
+               WHERE spc."productionCompanyId" = p.id
+                 AND s.origin = 'CURATED' AND s."catalogScope" = 'PERSONAL'
+             ), 0)::int AS "seriesCount"
+      FROM "ProductionCompany" p
+      LEFT JOIN "Country" c ON c.id = p."countryId"
+      ${where}
+      ${orderBy}
+      LIMIT ${perPage} OFFSET ${offset}
+    `,
+    prisma.$queryRaw<{ count: bigint }[]>`
+      SELECT COUNT(*)::bigint AS count FROM "ProductionCompany" p ${where}
+    `,
+  ]);
+
+  return { rows, total: Number(totalRows[0]?.count ?? 0) };
+}
+
+/** Ficha publica de productora: datos + filmografia curada. */
+export async function getProductionCompanyById(id: number) {
+  return await prisma.productionCompany.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      imageUrl: true,
+      websiteUrl: true,
+      youtubeUrl: true,
+      foundedYear: true,
+      country: true,
+      countryRef: { select: { name: true, code: true } },
+      seriesLinks: {
+        where: {
+          series: { origin: 'CURATED', catalogScope: 'PERSONAL' },
+        },
+        select: { series: { select: PUBLIC_SERIES_CARD_SELECT } },
+      },
+    },
+  });
+}
+
+/** Nacionalidades disponibles, para el filtro de los indices. */
+export async function getPeopleNationalities(): Promise<string[]> {
+  const rows = await prisma.$queryRaw<{ nationality: string }[]>`
+    SELECT DISTINCT nationality FROM (
+      SELECT nationality FROM "Actor" WHERE nationality IS NOT NULL
+      UNION
+      SELECT nationality FROM "Director" WHERE nationality IS NOT NULL
+    ) t
+    ORDER BY nationality ASC
+  `;
+  return rows.map((r) => r.nationality);
 }
 
 // ============================================

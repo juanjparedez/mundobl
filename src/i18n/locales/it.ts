@@ -2672,7 +2672,13 @@ const it: TranslationShape = {
     "linkWiki": "Wikipedia",
     "birthYear": "n. {year}",
     "awardsTitle": "Premi",
-    "featuredWorksTitle": "Opere in evidenza"
+    "featuredWorksTitle": "Opere in evidenza",
+    "biographyTitle": "Biografia",
+    "filmographyTitle": "Filmografia",
+    "filmographyEmpty": "Nessuna serie registrata finora.",
+    "seriesDirected": "{n} serie dirette",
+    "backToIndex": "Vedi tutti i registi",
+    "alsoActed": "Ha anche recitato"
   },
   "ver": {
     "searchPlaceholder": "Cerca serie, studi o titoli ufficiali...",
@@ -2720,7 +2726,50 @@ const it: TranslationShape = {
     "geoRestrictedBadge": "Limitato nella tua regione"
   },
   "actorProfile": {
-    "funFactsTitle": "Curiosità"
+    "funFactsTitle": "Curiosità",
+    "biographyTitle": "Biografia",
+    "filmographyTitle": "Filmografia",
+    "filmographyEmpty": "Nessun ruolo registrato finora.",
+    "participations": "{n} ruoli",
+    "mainRole": "Protagonista",
+    "backToIndex": "Vedi tutti gli attori",
+    "externalLinksTitle": "Link",
+    "aliasesTitle": "Conosciuto anche come",
+    "alsoDirected": "Ha anche diretto"
+  },
+  "companyProfile": {
+    "catalogTitle": "Serie prodotte",
+    "catalogEmpty": "Nessuna serie collegata a questo studio finora.",
+    "seriesCount": "{n} serie",
+    "websiteLabel": "Sito web",
+    "youtubeLabel": "Canale YouTube",
+    "foundedLabel": "Fondata nel",
+    "countryLabel": "Paese",
+    "backToIndex": "Vedi tutti gli studi"
+  },
+  "peopleIndex": {
+    "actorsTitle": "Attori",
+    "actorsSubtitle": "Tutto il cast del catalogo, ordinato per numero di titoli.",
+    "directorsTitle": "Registi",
+    "directorsSubtitle": "Chi dirige le serie del catalogo.",
+    "companiesTitle": "Case di produzione",
+    "companiesSubtitle": "Gli studi dietro le serie del catalogo.",
+    "searchPlaceholder": "Cerca per nome...",
+    "sortLabel": "Ordina",
+    "sortCredits": "Più titoli",
+    "sortAZ": "A-Z",
+    "sortZA": "Z-A",
+    "nationalityAll": "Tutte le nazionalità",
+    "creditsCount": "{n} titoli",
+    "seriesCount": "{n} serie",
+    "resultsCount": "{n} risultati",
+    "emptyTitle": "Nessun risultato",
+    "emptyDescription": "Prova con un altro nome o rimuovi i filtri.",
+    "clearFilters": "Cancella filtri",
+    "prevPage": "Precedente",
+    "nextPage": "Successivo",
+    "pageIndicator": "Pagina {current} di {total}",
+    "incompleteBadge": "Scheda incompleta"
   },
   "glosario": {
     "heroBadge": "Cultura e Traduzione Etica",

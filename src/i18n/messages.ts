@@ -2664,6 +2664,12 @@ export type TranslationShape = {
     birthYear: string;
     awardsTitle: string;
     featuredWorksTitle: string;
+    biographyTitle: string;
+    filmographyTitle: string;
+    filmographyEmpty: string;
+    seriesDirected: string;
+    backToIndex: string;
+    alsoActed: string;
   };
   ver: {
     searchPlaceholder: string;
@@ -2712,6 +2718,49 @@ export type TranslationShape = {
   };
   actorProfile: {
     funFactsTitle: string;
+    biographyTitle: string;
+    filmographyTitle: string;
+    filmographyEmpty: string;
+    participations: string;
+    mainRole: string;
+    backToIndex: string;
+    externalLinksTitle: string;
+    aliasesTitle: string;
+    alsoDirected: string;
+  };
+  companyProfile: {
+    catalogTitle: string;
+    catalogEmpty: string;
+    seriesCount: string;
+    websiteLabel: string;
+    youtubeLabel: string;
+    foundedLabel: string;
+    countryLabel: string;
+    backToIndex: string;
+  };
+  peopleIndex: {
+    actorsTitle: string;
+    actorsSubtitle: string;
+    directorsTitle: string;
+    directorsSubtitle: string;
+    companiesTitle: string;
+    companiesSubtitle: string;
+    searchPlaceholder: string;
+    sortLabel: string;
+    sortCredits: string;
+    sortAZ: string;
+    sortZA: string;
+    nationalityAll: string;
+    creditsCount: string;
+    seriesCount: string;
+    resultsCount: string;
+    emptyTitle: string;
+    emptyDescription: string;
+    clearFilters: string;
+    prevPage: string;
+    nextPage: string;
+    pageIndicator: string;
+    incompleteBadge: string;
   };
   glosario: {
     heroBadge: string;
@@ -3293,7 +3342,8 @@ const es: TranslationShape = {
     glossaryScholarName: 'Colaborador cultural',
     glossaryScholarDesc: 'Sumar 5 términos aprobados al Glosario Cultural',
     triviaMasterName: 'Sabelotodo cultural',
-    triviaMasterDesc: 'Sacar puntaje perfecto en la trivia del Glosario Cultural',
+    triviaMasterDesc:
+      'Sacar puntaje perfecto en la trivia del Glosario Cultural',
   },
   socials: {
     title: 'Mis redes',
@@ -5579,6 +5629,12 @@ const es: TranslationShape = {
     birthYear: 'n. {year}',
     awardsTitle: 'Premios',
     featuredWorksTitle: 'Obras destacadas',
+    biographyTitle: 'Biografía',
+    filmographyTitle: 'Filmografía',
+    filmographyEmpty: 'Todavía no hay series registradas.',
+    seriesDirected: '{n} series dirigidas',
+    backToIndex: 'Ver todos los directores',
+    alsoActed: 'También actuó',
   },
   ver: {
     searchPlaceholder: 'Buscar series, productoras o títulos oficiales...',
@@ -5630,6 +5686,50 @@ const es: TranslationShape = {
   },
   actorProfile: {
     funFactsTitle: 'Datos curiosos',
+    biographyTitle: 'Biografía',
+    filmographyTitle: 'Filmografía',
+    filmographyEmpty: 'Todavía no hay participaciones registradas.',
+    participations: '{n} participaciones',
+    mainRole: 'Protagonista',
+    backToIndex: 'Ver todos los actores',
+    externalLinksTitle: 'Enlaces',
+    aliasesTitle: 'También conocido como',
+    alsoDirected: 'También dirigió',
+  },
+  companyProfile: {
+    catalogTitle: 'Series producidas',
+    catalogEmpty: 'Todavía no hay series asociadas a esta productora.',
+    seriesCount: '{n} series',
+    websiteLabel: 'Sitio web',
+    youtubeLabel: 'Canal de YouTube',
+    foundedLabel: 'Fundada en',
+    countryLabel: 'País',
+    backToIndex: 'Ver todas las productoras',
+  },
+  peopleIndex: {
+    actorsTitle: 'Actores',
+    actorsSubtitle:
+      'Todo el reparto del catálogo, ordenado por cantidad de títulos.',
+    directorsTitle: 'Directores',
+    directorsSubtitle: 'Quiénes dirigen las series del catálogo.',
+    companiesTitle: 'Productoras',
+    companiesSubtitle: 'Los estudios detrás de las series del catálogo.',
+    searchPlaceholder: 'Buscar por nombre...',
+    sortLabel: 'Ordenar',
+    sortCredits: 'Más títulos',
+    sortAZ: 'A-Z',
+    sortZA: 'Z-A',
+    nationalityAll: 'Todas las nacionalidades',
+    creditsCount: '{n} títulos',
+    seriesCount: '{n} series',
+    resultsCount: '{n} resultados',
+    emptyTitle: 'Sin resultados',
+    emptyDescription: 'Probá con otro nombre o quitá los filtros.',
+    clearFilters: 'Limpiar filtros',
+    prevPage: 'Anterior',
+    nextPage: 'Siguiente',
+    pageIndicator: 'Página {current} de {total}',
+    incompleteBadge: 'Ficha incompleta',
   },
   glosario: {
     heroBadge: 'Cultura & Traducción Ética',
@@ -8485,6 +8585,12 @@ const en: TranslationShape = {
     birthYear: 'b. {year}',
     awardsTitle: 'Awards',
     featuredWorksTitle: 'Featured works',
+    biographyTitle: 'Biography',
+    filmographyTitle: 'Filmography',
+    filmographyEmpty: 'No series recorded yet.',
+    seriesDirected: '{n} series directed',
+    backToIndex: 'Browse all directors',
+    alsoActed: 'Also acted',
   },
   ver: {
     searchPlaceholder: 'Search series, studios or official titles...',
@@ -8536,6 +8642,49 @@ const en: TranslationShape = {
   },
   actorProfile: {
     funFactsTitle: 'Fun Facts',
+    biographyTitle: 'Biography',
+    filmographyTitle: 'Filmography',
+    filmographyEmpty: 'No credits recorded yet.',
+    participations: '{n} credits',
+    mainRole: 'Lead',
+    backToIndex: 'Browse all actors',
+    externalLinksTitle: 'Links',
+    aliasesTitle: 'Also known as',
+    alsoDirected: 'Also directed',
+  },
+  companyProfile: {
+    catalogTitle: 'Produced series',
+    catalogEmpty: 'No series linked to this company yet.',
+    seriesCount: '{n} series',
+    websiteLabel: 'Website',
+    youtubeLabel: 'YouTube channel',
+    foundedLabel: 'Founded in',
+    countryLabel: 'Country',
+    backToIndex: 'Browse all companies',
+  },
+  peopleIndex: {
+    actorsTitle: 'Actors',
+    actorsSubtitle: 'The full cast of the catalog, sorted by number of titles.',
+    directorsTitle: 'Directors',
+    directorsSubtitle: 'The people directing the series in the catalog.',
+    companiesTitle: 'Production companies',
+    companiesSubtitle: 'The studios behind the series in the catalog.',
+    searchPlaceholder: 'Search by name...',
+    sortLabel: 'Sort',
+    sortCredits: 'Most titles',
+    sortAZ: 'A-Z',
+    sortZA: 'Z-A',
+    nationalityAll: 'All nationalities',
+    creditsCount: '{n} titles',
+    seriesCount: '{n} series',
+    resultsCount: '{n} results',
+    emptyTitle: 'No results',
+    emptyDescription: 'Try another name or clear the filters.',
+    clearFilters: 'Clear filters',
+    prevPage: 'Previous',
+    nextPage: 'Next',
+    pageIndicator: 'Page {current} of {total}',
+    incompleteBadge: 'Incomplete profile',
   },
   glosario: {
     heroBadge: 'Culture & Ethical Translation',
