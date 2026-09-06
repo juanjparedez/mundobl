@@ -2,8 +2,19 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getAllDirectorsWithCount, prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    // Mismo criterio que /api/actors: SeriesForm solo necesita los nombres
+    // para el AutoComplete de directores, no el shape completo con `_count`.
+    const namesOnly = request.nextUrl.searchParams.get('namesOnly') === '1';
+    if (namesOnly) {
+      const directors = await prisma.director.findMany({
+        select: { name: true },
+        orderBy: { name: 'asc' },
+      });
+      return NextResponse.json(directors);
+    }
+
     const directors = await getAllDirectorsWithCount();
     return NextResponse.json(directors);
   } catch (error) {

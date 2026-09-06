@@ -261,13 +261,14 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
         }))
       );
 
-      // Cargar actores
-      const actorsRes = await fetch('/api/actors');
+      // Cargar actores (solo nombres — el AutoComplete no necesita
+      // biografia/imagen/`_count` de cada uno de los ~1190 actores)
+      const actorsRes = await fetch('/api/actors?namesOnly=1');
       const actorsData = await actorsRes.json();
       setActors(actorsData.map((a: { name: string }) => a.name));
 
-      // Cargar directores
-      const directorsRes = await fetch('/api/directors');
+      // Cargar directores (solo nombres, mismo criterio)
+      const directorsRes = await fetch('/api/directors?namesOnly=1');
       const directorsData = await directorsRes.json();
       setDirectors(directorsData.map((d: { name: string }) => d.name));
 

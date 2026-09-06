@@ -60,7 +60,9 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
 
   const loadFormData = useCallback(async () => {
     try {
-      const actorsRes = await fetch('/api/actors');
+      // Solo nombres — el AutoComplete no necesita biografia/imagen/`_count`
+      // de cada uno de los ~1190 actores.
+      const actorsRes = await fetch('/api/actors?namesOnly=1');
       const actorsData = await actorsRes.json();
       setActors(actorsData.map((a: { name: string }) => a.name));
     } catch (error) {
