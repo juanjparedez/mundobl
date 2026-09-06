@@ -1,0 +1,133 @@
+/* ─── DataTable: modo tarjetas (mobile) ──────────────────────────────
+ * Solo tokens: la tabla hereda la skin activa y el acento del usuario.
+ */
+
+.mb-data-table {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  min-width: 0;
+}
+
+.mb-data-table__cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  min-width: 0;
+}
+
+.mb-data-table__card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: var(--spacing-md);
+  background: var(--bg-container);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-base);
+  box-shadow: var(--box-shadow-card);
+  min-width: 0;
+}
+
+/* Titulo: el dato con el que el usuario identifica la fila. */
+.mb-data-table__card-title {
+  display: block;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+/* Cuando la fila es navegable, el titulo es el area clickeable. */
+.mb-data-table__card-hit {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+.mb-data-table__card-hit:hover .mb-data-table__card-title,
+.mb-data-table__card-hit:focus-visible .mb-data-table__card-title {
+  color: var(--primary-color);
+}
+
+.mb-data-table__card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mb-data-table__card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  min-width: 0;
+}
+
+/* Etiqueta a la izquierda, valor a la derecha: legible sin scroll lateral,
+ * que es justo lo que rompia estas tablas en telefono. */
+.mb-data-table__card-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  min-width: 0;
+}
+
+.mb-data-table__card-label {
+  flex-shrink: 0;
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.mb-data-table__card-value {
+  margin: 0;
+  min-width: 0;
+  text-align: right;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.mb-data-table__card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  padding-top: 4px;
+  border-top: 1px solid var(--border-color-secondary);
+}
+
+.mb-data-table__pagination {
+  display: flex;
+  justify-content: center;
+}
+
+/* En pantallas muy chicas la fila etiqueta/valor se apila para no
+ * comprimir valores largos contra el borde. */
+@media (max-width: 480px) {
+  .mb-data-table__card-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .mb-data-table__card-value {
+    text-align: left;
+  }
+}
