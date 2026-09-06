@@ -1,6 +1,6 @@
 'use client';
 
-import type { CSSProperties, ReactNode } from 'react';
+import type { CSSProperties, KeyboardEvent, ReactNode } from 'react';
 import Image from 'next/image';
 import './MediaCard.css';
 
@@ -16,10 +16,19 @@ export interface MediaCardProps {
   title: ReactNode;
   /** Linea de meta debajo del titulo (year · country, etc). */
   subtitle?: ReactNode;
+  /** Texto mas largo debajo del subtitulo (ej. sinopsis corta). */
+  description?: ReactNode;
   /** Tags/chips a mostrar como overlay sobre la imagen (rating, etc). */
   overlayTags?: ReactNode;
-  /** Acciones en hover (favoritos, quick view). */
+  /**
+   * Acciones en hover (favoritos, quick view, borrar). Se renderizan FUERA
+   * del link/boton principal (no anidadas) para no violar HTML de contenido
+   * interactivo anidado — funcionan aunque la card entera sea clickeable.
+   */
   actions?: ReactNode;
+  /** Slot opcional debajo del body (ej. boton de CTA a lo ancho). Mismo
+   *  motivo que `actions`: vive fuera del link/boton principal. */
+  footer?: ReactNode;
   /** href si la card debe ser un link. */
   href?: string;
   /** onClick alternativo. */
@@ -45,21 +54,37 @@ export function MediaCard({
   unoptimizedImage,
   title,
   subtitle,
+  description,
   overlayTags,
   actions,
+  footer,
   href,
   onClick,
   aspectRatio = '2:3',
   className,
   style,
 }: MediaCardProps) {
-  const classes = ['mb-media-card', className ?? ''].filter(Boolean).join(' ');
+  const classes = [
+    'mb-media-card',
+    href || onClick ? 'mb-media-card--interactive' : '',
+    className ?? '',
+  ]
+    .filter(Boolean)
+    .join(' ');
   const innerStyle: CSSProperties = {
     ...style,
     ['--mb-media-aspect' as string]: ASPECT_RATIOS[aspectRatio],
   };
 
-  const content = (
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (!onClick) return;
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onClick();
+    }
+  };
+
+  const coverAndBody = (
     <>
       <div className="mb-media-card__cover">
         {imageUrl ? (
@@ -74,42 +99,43 @@ export function MediaCard({
         ) : (
           <div className="mb-media-card__cover-placeholder" />
         )}
-        {overlayTags && (
-          <div className="mb-media-card__overlay-tags">{overlayTags}</div>
-        )}
-        {actions && <div className="mb-media-card__actions">{actions}</div>}
       </div>
       <div className="mb-media-card__body">
         <span className="mb-media-card__title">{title}</span>
         {subtitle && (
           <span className="mb-media-card__subtitle">{subtitle}</span>
         )}
+        {description && (
+          <p className="mb-media-card__description">{description}</p>
+        )}
       </div>
     </>
   );
 
-  if (href) {
-    return (
-      <a href={href} className={classes} style={innerStyle}>
-        {content}
-      </a>
-    );
-  }
-  if (onClick) {
-    return (
-      <button
-        type="button"
-        className={classes}
-        style={innerStyle}
-        onClick={onClick}
-      >
-        {content}
-      </button>
-    );
-  }
   return (
     <div className={classes} style={innerStyle}>
-      {content}
+      {href ? (
+        <a href={href} className="mb-media-card__link">
+          {coverAndBody}
+        </a>
+      ) : onClick ? (
+        <div
+          className="mb-media-card__link"
+          role="button"
+          tabIndex={0}
+          onClick={onClick}
+          onKeyDown={handleKeyDown}
+        >
+          {coverAndBody}
+        </div>
+      ) : (
+        <div className="mb-media-card__link">{coverAndBody}</div>
+      )}
+      {overlayTags && (
+        <div className="mb-media-card__overlay-tags">{overlayTags}</div>
+      )}
+      {actions && <div className="mb-media-card__actions">{actions}</div>}
+      {footer && <div className="mb-media-card__footer">{footer}</div>}
     </div>
   );
 }
