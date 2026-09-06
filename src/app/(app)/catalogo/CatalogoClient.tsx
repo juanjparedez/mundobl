@@ -64,6 +64,7 @@ import type {
 import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { canEditCatalog } from '@/lib/auth-client';
 import { withViewTransition } from '@/lib/view-transitions';
+import { getSeriesUrl } from '@/lib/slug';
 import type { SerieData, UniverseGroup, CatalogItem } from './catalogTypes';
 import { groupIntoCatalogItems } from './catalogGrouping';
 import { CatalogCarouselView } from './carousel/CatalogCarouselView/CatalogCarouselView';
@@ -686,9 +687,9 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
     }
   };
 
-  const handleCardClick = (id: string) => {
+  const handleCardClick = (id: string, title?: string) => {
     rememberScroll();
-    withViewTransition(() => router.push(`/series/${id}`));
+    withViewTransition(() => router.push(getSeriesUrl(id, title)));
   };
 
   // ─── Vista rapida ──────────────────────────────────────────────────
@@ -842,7 +843,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
           label: t('quickPreview.fullDetail'),
           icon: <InfoCircleOutlined />,
           variant: 'primary' as const,
-          href: `/series/${serie.id}`,
+          href: getSeriesUrl(serie.id, serie.titulo),
         },
         {
           key: 'favorite',
@@ -930,11 +931,11 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
         tabIndex={0}
         aria-label={serie.titulo}
         {...previewTriggerProps(() => buildSeriePreviewRef.current(serie))}
-        onClick={() => handleCardClick(serie.id)}
+        onClick={() => handleCardClick(serie.id, serie.titulo)}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            handleCardClick(serie.id);
+            handleCardClick(serie.id, serie.titulo);
           }
         }}
       >
@@ -1165,7 +1166,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
               <div
                 key={serie.id}
                 className="universe-expand-entry"
-                onClick={() => handleCardClick(serie.id)}
+                onClick={() => handleCardClick(serie.id, serie.titulo)}
               >
                 <span className="universe-expand-entry-title">
                   {serie.titulo}
@@ -1203,11 +1204,11 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
         role="button"
         tabIndex={0}
         aria-label={serie.titulo}
-        onClick={() => handleCardClick(serie.id)}
+        onClick={() => handleCardClick(serie.id, serie.titulo)}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            handleCardClick(serie.id);
+            handleCardClick(serie.id, serie.titulo);
           }
         }}
       >
@@ -1304,11 +1305,11 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
               role="button"
               tabIndex={0}
               aria-label={serie.titulo}
-              onClick={() => handleCardClick(serie.id)}
+              onClick={() => handleCardClick(serie.id, serie.titulo)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  handleCardClick(serie.id);
+                  handleCardClick(serie.id, serie.titulo);
                 }
               }}
             >

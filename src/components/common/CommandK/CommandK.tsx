@@ -17,6 +17,7 @@ import {
   TagsOutlined,
 } from '@ant-design/icons';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { getSeriesUrl } from '@/lib/slug';
 import './CommandK.css';
 
 interface SearchResults {
@@ -54,7 +55,7 @@ function flatten(results: SearchResults): FlatItem[] {
       group: 'series',
       label: s.title,
       hint: [s.year, s.type].filter(Boolean).join(' · '),
-      href: `/series/${s.id}`,
+      href: getSeriesUrl(s.id, s.title),
     })
   );
   results.actors.forEach((a) =>

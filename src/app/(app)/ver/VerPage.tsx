@@ -33,6 +33,7 @@ import type { QuickPreviewData } from '@/components/design-system';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { getVerUrl, getSeriesUrl } from '@/lib/slug';
 import { HeroBillboard } from '@/components/streaming/HeroBillboard/HeroBillboard';
 import {
   MediaCarousel,
@@ -270,14 +271,14 @@ export function VerPage({ items }: VerPageProps) {
         label: t('quickPreview.watchNow'),
         icon: <PlayCircleFilled />,
         variant: 'primary' as const,
-        href: `/ver/${item.id}`,
+        href: getVerUrl(item.id, item.title),
       },
       {
         key: 'detail',
         label: t('quickPreview.fullDetail'),
         icon: <InfoCircleOutlined />,
         iconOnlyOnHoverCard: true,
-        href: `/series/${item.id}`,
+        href: getSeriesUrl(item.id, item.title),
       },
     ],
   });
@@ -497,7 +498,7 @@ export function VerPage({ items }: VerPageProps) {
                 return (
                   <MediaCard
                     key={item.id}
-                    href={`/ver/${item.id}`}
+                    href={getVerUrl(item.id, item.title)}
                     imageUrl={cardImageUrl(item)}
                     imageAlt={item.title}
                     unoptimizedImage={isSupabaseImageUrl(cardImageUrl(item))}
@@ -568,7 +569,10 @@ export function VerPage({ items }: VerPageProps) {
                       )
                     }
                     footer={
-                      <Link href={`/ver/${item.id}`} prefetch={false}>
+                      <Link
+                        href={getVerUrl(item.id, item.title)}
+                        prefetch={false}
+                      >
                         <Button
                           type="primary"
                           icon={<PlayCircleFilled />}

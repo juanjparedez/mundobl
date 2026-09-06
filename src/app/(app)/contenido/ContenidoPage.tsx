@@ -15,6 +15,7 @@ import {
 } from '@/lib/embed-helpers';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
+import { getSeriesUrl } from '@/lib/slug';
 import './contenido.css';
 
 interface EmbeddableContentItem {
@@ -226,7 +227,10 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
                         )}
                         {item.series && (
                           <Link
-                            href={`/series/${item.series.id}`}
+                            href={getSeriesUrl(
+                              item.series.id,
+                              item.series.title
+                            )}
                             className="contenido-card__series-link"
                             onClick={(e) => e.stopPropagation()}
                           >
@@ -289,7 +293,12 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
               {selectedItem.series && (
                 <div className="contenido-modal__series-ref">
                   {t('contenidoPage.modalRelatedSeries')}{' '}
-                  <Link href={`/series/${selectedItem.series.id}`}>
+                  <Link
+                    href={getSeriesUrl(
+                      selectedItem.series.id,
+                      selectedItem.series.title
+                    )}
+                  >
                     {selectedItem.series.title}
                   </Link>
                 </div>
