@@ -231,3 +231,13 @@
   border-color: #fff !important;
   color: #fff !important;
 }
+
+/* Vista rapida del destacado: terciario respecto de "Reproducir" e
+ * "Info", que son las dos acciones principales del hero. */
+.hero-billboard__quickview-btn {
+  color: #fff;
+}
+
+.hero-billboard__quickview-btn:hover {
+  color: var(--primary-color);
+}

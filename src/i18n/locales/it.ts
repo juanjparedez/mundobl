@@ -2838,6 +2838,32 @@ const it: TranslationShape = {
     "finishTitle": "Trivia completata!",
     "playAgainButton": "Gioca di nuovo",
     "bestScoreLabel": "Il tuo miglior punteggio: {score} su {total}"
+  },
+  "quickPreview": {
+    "open": "Anteprima rapida",
+    "close": "Chiudi",
+    "synopsis": "Sinossi",
+    "noSynopsis": "Nessuna sinossi disponibile",
+    "moreInfo": "Altre info",
+    "fullDetail": "Scheda completa",
+    "watchNow": "Guarda ora",
+    "genres": "Generi",
+    "tags": "Tag",
+    "cast": "Cast",
+    "directors": "Regia",
+    "platforms": "Piattaforme",
+    "universe": "Universo",
+    "seasons": "Stagioni",
+    "episodes": "Episodi",
+    "runtime": "Durata",
+    "year": "Anno",
+    "country": "Paese",
+    "type": "Tipo",
+    "rating": "Voto",
+    "language": "Lingua",
+    "company": "Studio",
+    "character": "Personaggio",
+    "hoverHint": "Passa il mouse su una card per saperne di più"
   }
 } as unknown as TranslationShape;
 

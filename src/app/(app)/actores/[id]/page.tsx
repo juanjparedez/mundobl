@@ -45,6 +45,7 @@ function buildFilmography(actor: LoadedActor): FilmographyEntry[] {
       type: string;
       imageUrl: string | null;
       imageThumbUrl: string | null;
+      synopsis: string | null;
       country: { name: string } | null;
     },
     character: string | null,
@@ -65,6 +66,7 @@ function buildFilmography(actor: LoadedActor): FilmographyEntry[] {
       type: series.type,
       imageUrl: series.imageUrl,
       imageThumbUrl: series.imageThumbUrl,
+      synopsis: series.synopsis,
       countryName: series.country?.name ?? null,
       characters: character ? [character] : [],
       isMain,
