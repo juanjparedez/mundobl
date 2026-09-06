@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { auth } from '@/lib/auth';
 import { getSeriesById } from '@/lib/database';
+import { stripPrivateNotes } from '@/lib/privacy';
 import { SerieDashboardClient } from './DashboardClient';
 
 interface PageProps {
@@ -31,8 +32,12 @@ export default async function SerieDetailDashboardPage({ params }: PageProps) {
   if (isNaN(serieId)) notFound();
 
   const session = await auth();
-  const serie = await getSeriesById(serieId, session?.user?.id ?? undefined);
-  if (!serie) notFound();
+  const serieRaw = await getSeriesById(serieId, session?.user?.id ?? undefined);
+  if (!serieRaw) notFound();
+
+  // Compuerta de notas privadas en el servidor (SerieDashboardClient es
+  // 'use client': sus props viajan en el payload RSC).
+  const serie = stripPrivateNotes(serieRaw, session?.user?.role === 'ADMIN');
 
   return (
     <>

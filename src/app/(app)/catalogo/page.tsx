@@ -126,7 +126,6 @@ export default async function CatalogoPage() {
       runtimeHours,
       anio: serie.year || 0,
       rating: serie.overallRating,
-      observaciones: serie.observations,
       imageUrl: serie.imageUrl,
       imagePosition: serie.imagePosition,
       synopsis: serie.synopsis,
