@@ -1,10 +1,61 @@
 /* ─── Skin: Sakura & Pastel Dream ────────────────────────────────────
- * Atmósfera romántica, suave y dulce inspirada en la estética floral del BL.
- * Acentos florales rosa/lavanda, superficies en marfil y sombras aterciopeladas.
+ * Atmosfera romantica y suave inspirada en la estetica floral del BL.
+ * Marfil y rosa flor de cerezo en claro; ciruela profunda en oscuro.
+ *
+ * Una skin viste el modo que el usuario eligio — no lo cambia.
  */
 
 html[data-skin='sakura'] {
-  /* ─── Superficies (marfil suave y rosa pastel) ──────────────── */
+  /* ─── Radios ────────────────────────────────────────────────── */
+  --mb-radius-sm: 10px;
+  --mb-radius-md: 16px;
+  --mb-radius-lg: 22px;
+  --mb-radius-xl: 28px;
+
+  /* ─── Acento: NO lo define la skin ───────────────────────────
+   * --mb-gold* y --accent-color viven en `variables.css` y siguen
+   * a --primary-color, que es el acento elegido por el usuario (o el
+   * sugerido por esta skin si todavia no eligio ninguno). Redefinirlos
+   * aca romperia esa precedencia. */
+
+  /* ─── Mapeo a los tokens base que usa la app ─────────────────
+   * Estos son los nombres reales de `variables.css`. La app entera
+   * hereda la paleta de la skin sin tocar una linea de JS. */
+  --bg-base: var(--mb-bg-soft);
+  --bg-layout: var(--mb-bg);
+  --bg-container: var(--mb-panel);
+  --bg-elevated: var(--mb-panel-2);
+  --bg-spotlight: var(--mb-panel-3);
+  --bg-input: var(--mb-panel);
+
+  --text-primary: var(--mb-text);
+  --text-secondary: var(--mb-text-muted);
+  --text-tertiary: var(--mb-text-dim);
+  --text-disabled: var(--mb-text-disabled);
+
+  --border-color: var(--mb-border);
+  --border-color-secondary: var(--mb-border-soft);
+
+  --border-radius-sm: var(--mb-radius-sm);
+  --border-radius-base: var(--mb-radius-md);
+  --border-radius-lg: var(--mb-radius-lg);
+  --border-radius: var(--border-radius-base);
+
+  --box-shadow-base: var(--mb-shadow-soft);
+  --box-shadow-card: var(--mb-shadow-soft);
+
+  /* Fills derivados del acento ACTIVO del usuario (--primary-color).
+   * La skin no define el acento: solo lo usa. */
+  --accent-soft: color-mix(in srgb, var(--primary-color) 14%, transparent);
+  --accent-soft-strong: color-mix(
+    in srgb,
+    var(--primary-color) 28%,
+    transparent
+  );
+}
+
+html[data-skin='sakura'][data-theme='light'] {
+  /* ─── Superficies ───────────────────────────────────────────── */
   --mb-bg: #faf6f8;
   --mb-bg-soft: #f5edf2;
   --mb-panel: #ffffff;
@@ -23,43 +74,56 @@ html[data-skin='sakura'] {
   --mb-border-soft: rgba(226, 178, 203, 0.2);
   --mb-border-strong: rgba(214, 148, 182, 0.5);
 
-  /* ─── Acentos (rosa sakura & lavanda) ───────────────────────── */
-  --mb-gold: #d85b98;
-  --mb-gold-hover: #e870aa;
-  --mb-gold-active: #c04381;
-  --mb-gold-soft: rgba(216, 91, 152, 0.12);
-  --mb-gold-soft-strong: rgba(216, 91, 152, 0.24);
-
+  /* ─── Colores semanticos ────────────────────────────────────── */
   --mb-purple: #9333ea;
-  --mb-purple-soft: rgba(147, 51, 234, 0.12);
+  --mb-purple-soft: color-mix(in srgb, #9333ea 14%, transparent);
   --mb-blue: #3b82f6;
-  --mb-blue-soft: rgba(59, 130, 246, 0.12);
+  --mb-blue-soft: color-mix(in srgb, #3b82f6 14%, transparent);
   --mb-green: #10b981;
-  --mb-green-soft: rgba(16, 185, 129, 0.12);
+  --mb-green-soft: color-mix(in srgb, #10b981 14%, transparent);
   --mb-red: #f43f5e;
-  --mb-red-soft: rgba(244, 63, 94, 0.12);
+  --mb-red-soft: color-mix(in srgb, #f43f5e 14%, transparent);
 
-  /* ─── Radii & Shadows (más suaves y redondeados) ────────────── */
-  --mb-radius-sm: 10px;
-  --mb-radius-md: 16px;
-  --mb-radius-lg: 22px;
-  --mb-radius-xl: 28px;
-
+  /* ─── Sombras ───────────────────────────────────────────────── */
   --mb-shadow-soft:
     0 2px 8px rgba(180, 120, 150, 0.08), 0 12px 32px rgba(180, 120, 150, 0.1);
   --mb-shadow-elevated:
     0 4px 16px rgba(180, 120, 150, 0.12), 0 16px 44px rgba(180, 120, 150, 0.14);
+}
 
-  /* ─── Mapeo de compatibilidad con variables base ─────────────── */
-  --bg-primary: var(--mb-bg);
-  --bg-secondary: var(--mb-panel);
-  --bg-card: var(--mb-panel);
-  --bg-card-hover: var(--mb-panel-2);
-  --bg-elevated: var(--mb-panel-2);
-  --border-color: var(--mb-border);
-  --border-color-secondary: var(--mb-border-soft);
-  --text-primary: var(--mb-text);
-  --text-secondary: var(--mb-text-muted);
-  --text-tertiary: var(--mb-text-dim);
-  --accent-color: var(--mb-gold);
+html[data-skin='sakura'][data-theme='dark'] {
+  /* ─── Superficies ───────────────────────────────────────────── */
+  --mb-bg: #17101a;
+  --mb-bg-soft: #1f1526;
+  --mb-panel: #241a2e;
+  --mb-panel-2: #2f2239;
+  --mb-panel-3: #3b2b47;
+  --mb-panel-strong: #4d3a5c;
+
+  /* ─── Texto ─────────────────────────────────────────────────── */
+  --mb-text: #fbeef5;
+  --mb-text-muted: #d3bccb;
+  --mb-text-dim: #a68ba0;
+  --mb-text-disabled: #7a6274;
+
+  /* ─── Bordes ────────────────────────────────────────────────── */
+  --mb-border: rgba(244, 143, 192, 0.16);
+  --mb-border-soft: rgba(244, 143, 192, 0.1);
+  --mb-border-strong: rgba(244, 143, 192, 0.3);
+
+  /* ─── Colores semanticos ────────────────────────────────────── */
+  --mb-purple: #c084fc;
+  --mb-purple-soft: color-mix(in srgb, #c084fc 14%, transparent);
+  --mb-blue: #7dabfb;
+  --mb-blue-soft: color-mix(in srgb, #7dabfb 14%, transparent);
+  --mb-green: #4ade80;
+  --mb-green-soft: color-mix(in srgb, #4ade80 14%, transparent);
+  --mb-red: #fb7185;
+  --mb-red-soft: color-mix(in srgb, #fb7185 14%, transparent);
+
+  /* ─── Sombras ───────────────────────────────────────────────── */
+  --mb-shadow-soft:
+    0 2px 8px rgba(0, 0, 0, 0.34), 0 12px 32px rgba(0, 0, 0, 0.4);
+  --mb-shadow-elevated:
+    0 4px 16px rgba(0, 0, 0, 0.44), 0 16px 44px rgba(0, 0, 0, 0.5);
 }
