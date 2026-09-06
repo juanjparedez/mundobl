@@ -1,0 +1,65 @@
+/* ─── Skin: Midnight AMOLED ──────────────────────────────────────────
+ * Para pantallas OLED y maratones nocturnos: negro absoluto (#000000),
+ * contraste cristalino, sin resplandores molestos y acentos neón discretos.
+ */
+
+html[data-skin='midnight'] {
+  /* ─── Superficies (negro puro 100% AMOLED) ─────────────────── */
+  --mb-bg: #000000;
+  --mb-bg-soft: #050508;
+  --mb-panel: #0a0a10;
+  --mb-panel-2: #12121c;
+  --mb-panel-3: #1a1a28;
+  --mb-panel-strong: #222234;
+
+  /* ─── Texto ─────────────────────────────────────────────────── */
+  --mb-text: #f3f5f9;
+  --mb-text-muted: #a6abb8;
+  --mb-text-dim: #6d7385;
+  --mb-text-disabled: #434856;
+
+  /* ─── Bordes ultra-delgados de bajo brillo ──────────────────── */
+  --mb-border: rgba(255, 255, 255, 0.07);
+  --mb-border-soft: rgba(255, 255, 255, 0.04);
+  --mb-border-strong: rgba(255, 255, 255, 0.13);
+
+  /* ─── Acentos (cian bioluminiscente / violeta) ──────────────── */
+  --mb-gold: #00e5ff;
+  --mb-gold-hover: #33ebff;
+  --mb-gold-active: #00b8cc;
+  --mb-gold-soft: rgba(0, 229, 255, 0.12);
+  --mb-gold-soft-strong: rgba(0, 229, 255, 0.24);
+
+  --mb-purple: #a855f7;
+  --mb-purple-soft: rgba(168, 85, 247, 0.14);
+  --mb-blue: #00e5ff;
+  --mb-blue-soft: rgba(0, 229, 255, 0.14);
+  --mb-green: #10b981;
+  --mb-green-soft: rgba(16, 185, 129, 0.14);
+  --mb-red: #ff3366;
+  --mb-red-soft: rgba(255, 51, 102, 0.14);
+
+  /* ─── Radii & Shadows ───────────────────────────────────────── */
+  --mb-radius-sm: 8px;
+  --mb-radius-md: 12px;
+  --mb-radius-lg: 16px;
+  --mb-radius-xl: 22px;
+
+  --mb-shadow-soft:
+    0 2px 4px rgba(0, 0, 0, 0.8), 0 8px 24px rgba(0, 0, 0, 0.9);
+  --mb-shadow-elevated:
+    0 4px 12px rgba(0, 0, 0, 0.9), 0 16px 40px rgba(0, 0, 0, 0.95);
+
+  /* ─── Mapeo de compatibilidad con variables base ─────────────── */
+  --bg-primary: var(--mb-bg);
+  --bg-secondary: var(--mb-panel);
+  --bg-card: var(--mb-panel);
+  --bg-card-hover: var(--mb-panel-2);
+  --bg-elevated: var(--mb-panel-2);
+  --border-color: var(--mb-border);
+  --border-color-secondary: var(--mb-border-soft);
+  --text-primary: var(--mb-text);
+  --text-secondary: var(--mb-text-muted);
+  --text-tertiary: var(--mb-text-dim);
+  --accent-color: var(--mb-gold);
+}
