@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-helpers';
 import { uploadImage } from '@/lib/supabase';
-import { processPosterImage } from '@/lib/image-processing';
+import {
+  processPosterImage,
+  processCardThumbnail,
+} from '@/lib/image-processing';
 
 export async function POST(request: NextRequest) {
   try {
@@ -71,8 +74,29 @@ export async function POST(request: NextRequest) {
       processed.contentType
     );
 
+    // Miniatura de card (600x900, misma calidad) a partir del poster ya
+    // procesado — no del archivo crudo, para no decodificar dos veces. Los 3
+    // consumidores de este endpoint (SeriesForm, SeasonForm,
+    // CollaboratorSeriesForm) suben posters, asi que siempre vale la pena.
+    // `null` en GIFs (se anima; no se procesa con sharp) — el caller cae de
+    // vuelta al poster completo, ver `imageThumbUrl ?? imageUrl` en los reads.
+    const thumb = await processCardThumbnail(
+      processed.buffer,
+      processed.contentType
+    );
+    let thumbUrl: string | null = null;
+    if (thumb) {
+      const thumbFilename = `${timestamp}_${baseName || 'image'}_card.${thumb.ext}`;
+      thumbUrl = await uploadImage(
+        thumb.buffer,
+        `${folder}/${thumbFilename}`,
+        thumb.contentType
+      );
+    }
+
     return NextResponse.json({
       url: imageUrl,
+      thumbUrl,
       filename,
       size: processed.buffer.length,
       type: processed.contentType,

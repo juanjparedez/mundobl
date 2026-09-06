@@ -7,7 +7,7 @@ import { Widget } from '@/components/dashboard';
 import { EmptyState } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
-import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import type { ProfileData } from '../../../types';
 import './CurrentlyWatchingWidget.css';
 
@@ -61,15 +61,15 @@ export function CurrentlyWatchingWidget({
               role="listitem"
             >
               <span className="mb-cw-shelf__cover">
-                {series.imageUrl ? (
+                {cardImageUrl(series) ? (
                   <Image
-                    src={series.imageUrl}
+                    src={cardImageUrl(series)!}
                     alt=""
                     width={160}
                     height={90}
                     sizes="160px"
                     quality={70}
-                    unoptimized={isSupabaseImageUrl(series.imageUrl)}
+                    unoptimized={isSupabaseImageUrl(cardImageUrl(series))}
                   />
                 ) : (
                   <span className="mb-cw-shelf__cover-placeholder">

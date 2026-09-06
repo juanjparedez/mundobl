@@ -10,6 +10,7 @@ export interface ProfileSeriesMini {
   id: number;
   title: string;
   imageUrl: string | null;
+  imageThumbUrl: string | null;
   year: number | null;
   country: { name: string } | null;
 }
@@ -31,6 +32,7 @@ export interface ProfileReview {
     id: number;
     title: string;
     imageUrl: string | null;
+    imageThumbUrl: string | null;
     year: number | null;
   } | null;
 }
@@ -78,6 +80,7 @@ export interface ProfileData {
       title: string;
       rating: number;
       imageUrl: string | null;
+      imageThumbUrl: string | null;
     }>;
     byType: Array<{ type: string; count: number }>;
     totalEpisodes: number;

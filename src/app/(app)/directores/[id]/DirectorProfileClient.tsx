@@ -10,7 +10,7 @@ import {
 } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
-import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { Chip } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
@@ -23,6 +23,7 @@ interface DirectorSeries {
   year?: number | null;
   type: string;
   imageUrl?: string | null;
+  imageThumbUrl?: string | null;
   overallRating?: number | null;
   country?: { name: string } | null;
 }
@@ -229,14 +230,14 @@ export function DirectorProfileClient({
                     size="small"
                     className="director-profile__film-card director-profile__featured-card"
                     cover={
-                      entry.imageUrl ? (
+                      cardImageUrl(entry) ? (
                         <Image
                           alt={entry.title}
-                          src={entry.imageUrl}
+                          src={cardImageUrl(entry)!}
                           width={300}
                           height={180}
                           quality={75}
-                          unoptimized={isSupabaseImageUrl(entry.imageUrl)}
+                          unoptimized={isSupabaseImageUrl(cardImageUrl(entry))}
                           className="director-profile__film-image"
                           style={{
                             objectFit: 'cover',
@@ -291,14 +292,14 @@ export function DirectorProfileClient({
                     size="small"
                     className="director-profile__film-card"
                     cover={
-                      entry.imageUrl ? (
+                      cardImageUrl(entry) ? (
                         <Image
                           alt={entry.title}
-                          src={entry.imageUrl}
+                          src={cardImageUrl(entry)!}
                           width={300}
                           height={180}
                           quality={70}
-                          unoptimized={isSupabaseImageUrl(entry.imageUrl)}
+                          unoptimized={isSupabaseImageUrl(cardImageUrl(entry))}
                           className="director-profile__film-image"
                           style={{
                             objectFit: 'cover',

@@ -21,6 +21,7 @@ export interface SerieData {
   anio: number;
   rating: number | null;
   imageUrl?: string | null;
+  imageThumbUrl?: string | null;
   imagePosition?: string;
   synopsis?: string | null;
   visto?: boolean;

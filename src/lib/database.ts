@@ -495,6 +495,7 @@ function buildSeriesFullInclude(
             id: true,
             title: true,
             imageUrl: true,
+            imageThumbUrl: true,
             imagePosition: true,
             year: true,
             type: true,
@@ -509,6 +510,7 @@ function buildSeriesFullInclude(
             id: true,
             title: true,
             imageUrl: true,
+            imageThumbUrl: true,
             imagePosition: true,
             year: true,
             type: true,
@@ -543,6 +545,7 @@ const PUBLIC_SERIES_CARD_SELECT = {
   year: true,
   type: true,
   imageUrl: true,
+  imageThumbUrl: true,
   country: { select: { name: true, code: true } },
 } as const;
 

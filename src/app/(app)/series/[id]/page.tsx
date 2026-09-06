@@ -161,6 +161,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
           id: true,
           title: true,
           imageUrl: true,
+          imageThumbUrl: true,
           imagePosition: true,
           year: true,
           type: true,

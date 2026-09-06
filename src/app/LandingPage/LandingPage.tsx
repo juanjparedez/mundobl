@@ -24,7 +24,7 @@ import { signIn, useSession } from 'next-auth/react';
 import { ROUTES } from '@/constants/navigation';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { WatchableCarousel } from '@/components/common/WatchableCarousel/WatchableCarousel';
-import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import './LandingPage.css';
 
@@ -33,6 +33,7 @@ interface LatestSeries {
   title: string;
   year: number | null;
   imageUrl: string | null;
+  imageThumbUrl?: string | null;
   country: { name: string; code: string | null } | null;
 }
 
@@ -43,13 +44,19 @@ interface FeaturedReview {
   verdict: 'RECOMMENDED' | 'MIXED' | 'SKIP' | null;
   helpfulCount: number;
   user: { name: string | null; image: string | null } | null;
-  series: { id: number; title: string; imageUrl: string | null } | null;
+  series: {
+    id: number;
+    title: string;
+    imageUrl: string | null;
+    imageThumbUrl?: string | null;
+  } | null;
 }
 
 interface WatchableLanding {
   id: number;
   title: string;
   imageUrl: string | null;
+  imageThumbUrl?: string | null;
   imagePosition: string | null;
   year: number | null;
   type: string;
@@ -357,17 +364,17 @@ export function LandingPage({ stats }: LandingPageProps) {
                 prefetch={false}
               >
                 <div className="landing__series-cover">
-                  {s.imageUrl ? (
+                  {cardImageUrl(s) ? (
                     <Image
-                      src={s.imageUrl}
+                      src={cardImageUrl(s)!}
                       alt={s.title}
                       width={180}
                       height={270}
                       sizes="(max-width: 600px) 130px, 180px"
                       quality={65}
                       unoptimized={
-                        shouldSkipOptimization(s.imageUrl) ||
-                        isSupabaseImageUrl(s.imageUrl)
+                        shouldSkipOptimization(cardImageUrl(s)) ||
+                        isSupabaseImageUrl(cardImageUrl(s))
                       }
                     />
                   ) : (
@@ -410,19 +417,21 @@ export function LandingPage({ stats }: LandingPageProps) {
             className="landing__featured-review"
             prefetch={false}
           >
-            {stats.featuredReview.series.imageUrl && (
+            {cardImageUrl(stats.featuredReview.series) && (
               <div className="landing__featured-review-cover">
                 <Image
-                  src={stats.featuredReview.series.imageUrl}
+                  src={cardImageUrl(stats.featuredReview.series)!}
                   alt={stats.featuredReview.series.title}
                   width={130}
                   height={195}
                   quality={65}
                   unoptimized={
                     shouldSkipOptimization(
-                      stats.featuredReview.series.imageUrl
+                      cardImageUrl(stats.featuredReview.series)
                     ) ||
-                    isSupabaseImageUrl(stats.featuredReview.series.imageUrl)
+                    isSupabaseImageUrl(
+                      cardImageUrl(stats.featuredReview.series)
+                    )
                   }
                 />
               </div>

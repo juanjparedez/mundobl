@@ -27,7 +27,7 @@ import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { MediaCard } from '@/components/design-system';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
-import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { HeroBillboard } from '@/components/streaming/HeroBillboard/HeroBillboard';
 import {
   MediaCarousel,
@@ -369,11 +369,9 @@ export function VerPage({ items }: VerPageProps) {
                   <MediaCard
                     key={item.id}
                     href={`/ver/${item.id}`}
-                    imageUrl={item.imageUrl}
+                    imageUrl={cardImageUrl(item)}
                     imageAlt={item.title}
-                    unoptimizedImage={
-                      item.imageUrl ? isSupabaseImageUrl(item.imageUrl) : false
-                    }
+                    unoptimizedImage={isSupabaseImageUrl(cardImageUrl(item))}
                     aspectRatio="16:9"
                     title={
                       <>
