@@ -77,6 +77,7 @@
   gap: var(--spacing-md);
   overflow-x: auto;
   scroll-behavior: smooth;
+  scroll-snap-type: x proximity;
   padding: var(--spacing-xs) var(--spacing-xs) var(--spacing-md)
     var(--spacing-xs);
   scrollbar-width: none; /* Firefox */
@@ -88,24 +89,35 @@
 }
 
 /* ─── Card de Serie ─────────────────────────────────────────────── */
-.media-carousel__card {
+/* El wrapper existe porque el boton de vista rapida no puede vivir dentro
+ * del <a> (contenido interactivo anidado). Se lleva el ancho fijo y el
+ * scroll-snap; la card ahora lo llena. */
+.media-carousel__card-wrap {
+  position: relative;
   flex: 0 0 200px;
+  scroll-snap-align: start;
+  /* El "levantar" al hover va en el wrapper y no en el <a>: si no, el
+   * boton de vista rapida (hermano del link) se quedaria quieto mientras
+   * la card sube. */
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (max-width: 768px) {
+  .media-carousel__card-wrap {
+    flex-basis: 160px;
+  }
+}
+
+.media-carousel__card {
   display: flex;
   flex-direction: column;
   gap: 8px;
   text-decoration: none;
   color: inherit;
-  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
   position: relative;
 }
 
-@media (max-width: 768px) {
-  .media-carousel__card {
-    flex: 0 0 160px;
-  }
-}
-
-.media-carousel__card:hover {
+.media-carousel__card-wrap:hover {
   transform: translateY(-5px);
 }
 
@@ -123,7 +135,7 @@
     box-shadow 0.2s ease;
 }
 
-.media-carousel__card:hover .media-carousel__poster-wrap {
+.media-carousel__card-wrap:hover .media-carousel__poster-wrap {
   border-color: var(--primary-color);
   box-shadow: 0 8px 24px rgba(var(--primary-color-rgb, 250, 173, 20), 0.25);
 }
@@ -135,7 +147,7 @@
   transition: transform 0.3s ease;
 }
 
-.media-carousel__card:hover .media-carousel__poster {
+.media-carousel__card-wrap:hover .media-carousel__poster {
   transform: scale(1.06);
 }
 
@@ -172,7 +184,7 @@
   transition: all 0.25s ease;
 }
 
-.media-carousel__card:hover .media-carousel__play-btn {
+.media-carousel__card-wrap:hover .media-carousel__play-btn {
   opacity: 1;
   transform: scale(1);
   color: var(--primary-color);
@@ -258,4 +270,51 @@
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 130px;
+}
+
+/* Boton de vista rapida. Arriba a la derecha; el tag de plataforma baja
+ * una fila (--with-preview) porque esa esquina ya era suya. Las otras tres
+ * esquinas del poster tambien estan tomadas: aviso de geobloqueo arriba a
+ * la izquierda, play y badge de episodios en el pie. */
+.media-carousel__preview-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 3;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  padding: 0;
+  cursor: pointer;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: var(--transition-fast);
+}
+
+.media-carousel__card-wrap:hover .media-carousel__preview-btn,
+.media-carousel__card-wrap:focus-within .media-carousel__preview-btn {
+  opacity: 1;
+}
+
+.media-carousel__preview-btn:hover,
+.media-carousel__preview-btn:focus-visible {
+  background: var(--primary-color);
+  transform: scale(1.08);
+}
+
+.media-carousel__poster-wrap--with-preview .media-carousel__platform-tag {
+  top: 40px;
+}
+
+/* En touch no hay hover que revele el boton: se muestra siempre. */
+@media (hover: none) {
+  .media-carousel__preview-btn {
+    opacity: 1;
+  }
 }

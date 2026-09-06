@@ -2838,6 +2838,32 @@ const th: TranslationShape = {
     "finishTitle": "เกมทายปัญหาเสร็จสมบูรณ์!",
     "playAgainButton": "เล่นอีกครั้ง",
     "bestScoreLabel": "คะแนนที่ดีที่สุดของคุณ: {score} จาก {total}"
+  },
+  "quickPreview": {
+    "open": "ดูอย่างรวดเร็ว",
+    "close": "ปิด",
+    "synopsis": "เรื่องย่อ",
+    "noSynopsis": "ยังไม่มีเรื่องย่อ",
+    "moreInfo": "ข้อมูลเพิ่มเติม",
+    "fullDetail": "รายละเอียดทั้งหมด",
+    "watchNow": "ดูเลย",
+    "genres": "แนว",
+    "tags": "แท็ก",
+    "cast": "นักแสดง",
+    "directors": "ผู้กำกับ",
+    "platforms": "แพลตฟอร์ม",
+    "universe": "จักรวาล",
+    "seasons": "ซีซัน",
+    "episodes": "ตอน",
+    "runtime": "ความยาว",
+    "year": "ปี",
+    "country": "ประเทศ",
+    "type": "ประเภท",
+    "rating": "คะแนน",
+    "language": "ภาษา",
+    "company": "ค่ายผู้ผลิต",
+    "character": "บทบาท",
+    "hoverHint": "วางเมาส์บนการ์ดเพื่อดูข้อมูลเพิ่มเติม"
   }
 } as unknown as TranslationShape;
 
