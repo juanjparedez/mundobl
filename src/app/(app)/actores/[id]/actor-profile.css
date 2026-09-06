@@ -1,68 +1,113 @@
+/* Ficha publica de actor. Sin hex: todo por tokens, para que tone/skin/accent
+   sigan aplicando. */
 .actor-profile {
-  padding: var(--spacing-md);
-  max-width: 1200px;
+  max-width: var(--content-max-width);
   margin: 0 auto;
+  padding: var(--spacing-lg) var(--spacing-md) var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
 }
 
 .actor-profile__header {
   display: flex;
-  gap: var(--spacing-md);
   align-items: flex-start;
+  gap: var(--spacing-lg);
 }
 
 .actor-profile__avatar {
-  flex-shrink: 0;
+  position: relative;
+  flex: 0 0 auto;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--bg-spotlight);
+  color: var(--text-tertiary);
+  font-size: 44px;
 }
 
 .actor-profile__info {
-  flex: 1;
   min-width: 0;
 }
 
 .actor-profile__name {
-  margin: 0 0 4px 0;
-  font-size: 1.8em;
-  font-weight: 700;
+  margin: 0;
+  font-size: 1.85rem;
+  line-height: 1.2;
   color: var(--text-primary);
 }
 
 .actor-profile__stage-name {
-  margin: 0 0 8px 0;
-  font-size: 1.1em;
+  margin: 2px 0 0;
   color: var(--text-secondary);
-  font-style: italic;
+  font-size: var(--font-size-lg);
 }
 
 .actor-profile__meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+
+.actor-profile__aliases {
+  margin: var(--spacing-sm) 0 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.actor-profile__label {
+  color: var(--text-tertiary);
+}
+
+.actor-profile__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-sm);
+}
+
+.actor-profile__link,
+.actor-profile__crosslink a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--primary-color);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+}
+
+.actor-profile__link:hover,
+.actor-profile__link:focus-visible,
+.actor-profile__crosslink a:hover,
+.actor-profile__crosslink a:focus-visible {
+  text-decoration: underline;
+}
+
+.actor-profile__crosslink {
+  margin: var(--spacing-sm) 0 0;
+}
+
+.actor-profile__section-title {
+  margin: 0 0 var(--spacing-sm);
+  font-size: var(--font-size-lg);
+  color: var(--text-primary);
 }
 
 .actor-profile__biography {
   margin-top: var(--spacing-lg);
-  padding-top: var(--spacing-lg);
-  border-top: 1px solid var(--border-color-secondary);
-}
-
-.actor-profile__biography h3 {
-  margin: 0 0 8px 0;
-  font-size: 1.1em;
-}
-
-.actor-profile__biography p {
-  margin: 0;
   color: var(--text-secondary);
-  line-height: 1.7;
-}
-
-.actor-profile__fun-facts {
-  margin-top: var(--spacing-lg);
+  line-height: var(--line-height-base);
+  white-space: pre-line;
 }
 
 .actor-profile__fun-facts-list {
   list-style: none;
-  margin: 0;
+  margin: var(--spacing-md) 0 0;
   padding: 0;
   display: flex;
   flex-direction: column;
@@ -72,72 +117,65 @@
 .actor-profile__fun-facts-list li {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
+  gap: var(--spacing-sm);
   color: var(--text-secondary);
-  line-height: 1.6;
 }
 
 .actor-profile__fun-fact-icon {
-  flex-shrink: 0;
-  margin-top: 4px;
-  color: var(--primary-color);
+  margin-top: 3px;
+  color: var(--warning-color);
 }
 
-.actor-profile__filmography {
-  margin-top: var(--spacing-lg);
+.actor-profile__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--spacing-md);
+  /* start y no stretch: una card mas alta no estira toda la fila. */
+  align-items: start;
+  margin-top: var(--spacing-md);
 }
 
-.actor-profile__film-card {
-  height: 100%;
+.actor-profile__back {
+  text-align: center;
+  font-size: var(--font-size-sm);
 }
 
-.actor-profile__film-image {
-  height: 200px;
-  object-fit: cover;
-}
-
-.actor-profile__film-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.actor-profile__film-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.actor-profile__character {
-  font-size: 13px;
+.actor-profile__back a {
   color: var(--text-secondary);
+  text-decoration: none;
 }
 
-.actor-profile__country {
-  font-size: 12px;
-  color: var(--text-tertiary);
+.actor-profile__back a:hover,
+.actor-profile__back a:focus-visible {
+  color: var(--primary-color);
+  text-decoration: underline;
 }
 
-@media (max-width: 768px) {
-  .actor-profile {
-    padding: var(--spacing-xs);
-  }
-
+@media (max-width: 600px) {
   .actor-profile__header {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    gap: var(--spacing-md);
   }
 
-  .actor-profile__name {
-    font-size: 1.4em;
-  }
-
-  .actor-profile__meta {
+  .actor-profile__meta,
+  .actor-profile__links {
     justify-content: center;
   }
 
-  .actor-profile__film-image {
-    height: 160px;
+  .actor-profile__avatar {
+    width: 96px;
+    height: 96px;
+    font-size: 36px;
+  }
+
+  .actor-profile__name {
+    font-size: 1.45rem;
+  }
+
+  .actor-profile__grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: var(--spacing-sm);
   }
 }

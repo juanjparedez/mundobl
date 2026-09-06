@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '../src/generated/prisma';
@@ -61,6 +62,61 @@ const MODELS = [
     name: 'EmbeddableContent',
     delegate: () => prisma.embeddableContent.findMany(),
   },
+  { name: 'GlossaryTerm', delegate: () => prisma.glossaryTerm.findMany() },
+  {
+    name: 'GlossaryTermTag',
+    delegate: () => prisma.glossaryTermTag.findMany(),
+  },
+  {
+    name: 'GlossarySuggestion',
+    delegate: () => prisma.glossarySuggestion.findMany(),
+  },
+  { name: 'News', delegate: () => prisma.news.findMany() },
+  { name: 'NewsTag', delegate: () => prisma.newsTag.findMany() },
+  { name: 'ChangelogItem', delegate: () => prisma.changelogItem.findMany() },
+  { name: 'Announcement', delegate: () => prisma.announcement.findMany() },
+  {
+    name: 'AnnouncementRecipient',
+    delegate: () => prisma.announcementRecipient.findMany(),
+  },
+  { name: 'Review', delegate: () => prisma.review.findMany() },
+  { name: 'ReviewVote', delegate: () => prisma.reviewVote.findMany() },
+  {
+    name: 'SeriesInfoBlock',
+    delegate: () => prisma.seriesInfoBlock.findMany(),
+  },
+  { name: 'SeriesNote', delegate: () => prisma.seriesNote.findMany() },
+  { name: 'EpisodeNote', delegate: () => prisma.episodeNote.findMany() },
+  {
+    name: 'SeriesSubscription',
+    delegate: () => prisma.seriesSubscription.findMany(),
+  },
+  {
+    name: 'SeriesSuggestion',
+    delegate: () => prisma.seriesSuggestion.findMany(),
+  },
+  {
+    name: 'FeatureRequestComment',
+    delegate: () => prisma.featureRequestComment.findMany(),
+  },
+  { name: 'CommentReport', delegate: () => prisma.commentReport.findMany() },
+  { name: 'Notification', delegate: () => prisma.notification.findMany() },
+  {
+    name: 'NotificationPrefs',
+    delegate: () => prisma.notificationPrefs.findMany(),
+  },
+  {
+    name: 'PushSubscription',
+    delegate: () => prisma.pushSubscription.findMany(),
+  },
+  {
+    name: 'UserDashboardLayout',
+    delegate: () => prisma.userDashboardLayout.findMany(),
+  },
+  {
+    name: 'EmbedPreviewCache',
+    delegate: () => prisma.embedPreviewCache.findMany(),
+  },
 ];
 
 async function main() {
@@ -74,6 +130,7 @@ async function main() {
 
   const backup: Record<string, unknown[]> = {};
   let totalRecords = 0;
+  const failed: string[] = [];
 
   for (const model of MODELS) {
     try {
@@ -83,8 +140,33 @@ async function main() {
       console.log(`  ${model.name}: ${data.length} registros`);
     } catch (error) {
       console.error(`  ${model.name}: ERROR - ${error}`);
-      backup[model.name] = [];
+      failed.push(model.name);
     }
+  }
+
+  // Un backup parcial es peor que ninguno: si te lo lleves puesto creyendo
+  // que tenes respaldo, el dia que restaures perdes esas tablas en silencio.
+  // Por eso NO se escribe archivo si algo fallo — antes se escribia igual,
+  // con [] en cada modelo, y el script reportaba "completado" (asi es como
+  // todos los backups previos quedaron vacios: faltaba dotenv y ninguna
+  // query llegaba a la base).
+  if (failed.length > 0) {
+    console.error(
+      `\nBACKUP ABORTADO: fallaron ${failed.length} de ${MODELS.length} modelos.`
+    );
+    console.error(`  Modelos con error: ${failed.join(', ')}`);
+    console.error('  No se escribio ningun archivo.');
+    process.exitCode = 1;
+    return;
+  }
+
+  if (totalRecords === 0) {
+    console.error(
+      '\nBACKUP ABORTADO: la base devolvio 0 registros en los 36 modelos.'
+    );
+    console.error('  Revisa DATABASE_URL. No se escribio ningun archivo.');
+    process.exitCode = 1;
+    return;
   }
 
   fs.writeFileSync(filePath, JSON.stringify(backup, null, 2));

@@ -10,7 +10,9 @@
 //   1. Agregar a TARGETS en `scripts/translate-locales.ts`
 //   2. Correr el script para generar `locales/{code}.ts`
 //   3. Agregar a `SUPPORTED_LOCALES` aqui + `LOCALE_LABELS`
-//   4. Importar en `messages.ts` y agregar a `MESSAGES`
+//   4. Agregar el `import()` dinamico a `LAZY_LOCALE_LOADERS` en
+//      `messages.ts` (NO a `MESSAGES` directo — esos dos son solo
+//      es/en, los unicos que van bundleados en el cliente)
 //   5. Agregar import + entry en `antdLocaleMap` de
 //      `ThemeProvider.tsx` para componentes de antd
 

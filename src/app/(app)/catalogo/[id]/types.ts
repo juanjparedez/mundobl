@@ -42,6 +42,7 @@ export interface SerieDetailData {
   type: string;
   year?: number | null;
   imageUrl?: string | null;
+  imageThumbUrl?: string | null;
   synopsis?: string | null;
   observations?: string | null;
   review?: string | null;

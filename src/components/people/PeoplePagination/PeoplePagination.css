@@ -1,0 +1,40 @@
+.people-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xl);
+  flex-wrap: wrap;
+}
+
+.people-pagination__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-base);
+  background: var(--bg-container);
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+  transition:
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.people-pagination__link:hover,
+.people-pagination__link:focus-visible {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.people-pagination__link--disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.people-pagination__indicator {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}

@@ -39,31 +39,31 @@ enum FeatureRequestPriority {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
+  id                    String    @id @default(cuid())
+  name                  String?
   // Nickname publico opcional. Si esta seteado, se usa en lugar del
   // `name` del proveedor de OAuth (que viene con apellido completo)
   // en cualquier contexto publico (comentarios, feedback, reseñas).
   // Si esta vacio, el render publico cae a "Nombre I." (inicial del
   // apellido) via formatPublicName() en src/lib/user-display.ts.
-  nickname      String?
-  email         String    @unique
-  emailVerified DateTime?
-  image         String?
-  role          Role      @default(VISITOR)
-  banned        Boolean   @default(false)
+  nickname              String?
+  email                 String    @unique
+  emailVerified         DateTime?
+  image                 String?
+  role                  Role      @default(VISITOR)
+  banned                Boolean   @default(false)
   // Redes sociales del usuario, opcional. JSON con { twitter, mal, mdl,
   // letterboxd, instagram, custom[] }. Renderizado por SocialsWidget en
   // /perfil. No-public; editable solo por el dueño via PATCH /api/user/me.
-  socials       Json?
+  socials               Json?
   // Mejor puntaje de la trivia del Glosario Cultural. Reemplaza el
   // "mejor puntaje local" de useBestScore (localStorage, por dispositivo)
   // para poder alimentar un logro server-side — ver
   // PATCH /api/user/glossary-quiz-score y GlosarioQuiz.tsx. Solo sube
   // (nunca se pisa con un puntaje menor).
   glossaryQuizBestScore Int?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 
   accounts                Account[]
   sessions                Session[]
@@ -173,14 +173,62 @@ model Universe {
 // PRODUCTORAS
 // ============================================
 model ProductionCompany {
-  id        Int      @id @default(autoincrement())
-  name      String   @unique
-  country   String?
-  imageUrl  String?
+  id   Int    @id @default(autoincrement())
+  name String @unique
+
+  /// LEGACY: pais como texto libre. Reemplazado por countryId (FK a Country).
+  /// Se conserva durante el backfill y se borra en una migracion posterior,
+  /// una vez verificado que countryId quedo bien cargado.
+  country String?
+
+  countryId  Int?
+  countryRef Country? @relation(fields: [countryId], references: [id])
+
+  slug        String? @unique
+  description String?
+  websiteUrl  String?
+  youtubeUrl  String?
+  foundedYear Int?
+  imageUrl    String?
+
+  // --- Procedencia de los datos (ver PersonEnrichment / fase de poblacion) ---
+  wikidataId       String?
+  tmdbCompanyId    Int?
+  imageSource      String? // 'WIKIMEDIA' | 'TMDB' | 'MANUAL'
+  imageAttribution String?
+  imageLicense     String?
+  bioSource        String?
+  bioSourceUrl     String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  series Series[]
+  /// LEGACY: relacion 1-a-N. La real es seriesLinks (muchos-a-muchos), porque
+  /// una serie puede ser co-produccion. Se borra junto con Series.productionCompanyId.
+  series      Series[]
+  seriesLinks SeriesProductionCompany[]
+
+  @@index([countryId])
+  @@index([wikidataId])
+}
+
+/// Co-producciones: una serie puede tener N productoras y viceversa.
+/// Reemplaza a Series.productionCompanyId (1-a-N), que no podia representar
+/// casos como "SETTV, SPO Entertainment, Avex Taiwan" — que hasta ahora se
+/// guardaban como UNA sola productora con comas en el nombre.
+model SeriesProductionCompany {
+  id Int @id @default(autoincrement())
+
+  seriesId Int
+  series   Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+
+  productionCompanyId Int
+  productionCompany   ProductionCompany @relation(fields: [productionCompanyId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([seriesId, productionCompanyId])
+  @@index([productionCompanyId])
 }
 
 // ============================================
@@ -212,72 +260,83 @@ model SeriesDubbing {
 // SERIES - Series, películas, cortos, etc.
 // ============================================
 model Series {
-  id             Int      @id @default(autoincrement())
-  title          String
-  originalTitle  String?
-  year           Int?
-  type           String // "serie", "pelicula", "corto", "especial"
-  basedOn        String? // "libro", "novela", "corto", "manga", "anime"
-  format         String   @default("regular") // "regular", "vertical"
-  imageUrl       String?
-  imagePosition  String   @default("center") // CSS background-position
-  synopsis       String? // Sinopsis de la serie
-  review         String? // Reseña personal
-  soundtrack     String? // Banda sonora
-  overallRating  Int? // Puntuación general (del Excel)
-  observations   String? // Observaciones
-  notesPrivate   Boolean  @default(false) // Si true, review/observations solo visible para ADMIN
-  isFavorite     Boolean  @default(false) // Legacy: favorito personal de Flor pre-UserFavorite (ver scripts/migrate-favorites.ts). No confundir con `featured`.
+  id                Int      @id @default(autoincrement())
+  title             String
+  originalTitle     String?
+  year              Int?
+  type              String // "serie", "pelicula", "corto", "especial"
+  basedOn           String? // "libro", "novela", "corto", "manga", "anime"
+  format            String   @default("regular") // "regular", "vertical"
+  imageUrl          String?
+  // Miniatura 600x900 generada del mismo poster (ver image-processing.ts),
+  // para contextos de card/grilla. NULL en series legacy que no pasaron por
+  // el backfill (scripts/backfill-image-thumbnails.ts) o cuyo imageUrl no es
+  // Supabase (externos ya se sirven optimizados via Vercel). Los call sites
+  // de card deben usar `imageThumbUrl ?? imageUrl`, nunca al reves.
+  imageThumbUrl     String?
+  imagePosition     String   @default("center") // CSS background-position
+  synopsis          String? // Sinopsis de la serie
+  review            String? // Reseña personal
+  soundtrack        String? // Banda sonora
+  overallRating     Int? // Puntuación general (del Excel)
+  observations      String? // Observaciones
+  notesPrivate      Boolean  @default(false) // Si true, review/observations solo visible para ADMIN
+  isFavorite        Boolean  @default(false) // Legacy: favorito personal de Flor pre-UserFavorite (ver scripts/migrate-favorites.ts). No confundir con `featured`.
   // Curaduria editorial: Flor (o cualquier ADMIN/MODERATOR) la marca desde
   // el form de alta/edicion para que aparezca en el filtro "Destacadas" de
   // /catalogo — a diferencia de isFavorite/UserFavorite (personal de cada
   // usuario), esto es visible para TODOS los visitantes del catalogo.
-  featured       Boolean  @default(false)
+  featured          Boolean  @default(false)
   // Orden manual dentro de "Destacadas" (menor = primero). Solo importa
   // cuando featured=true; con varias en 0 el filtro cae a orden alfabetico.
-  featuredOrder  Int      @default(0)
+  featuredOrder     Int      @default(0)
   // Chequeado a mano/con la YouTube Data API (regionRestriction en
   // contentDetails): true si el embed de esta serie esta bloqueado en el
   // mercado core del sitio (AR/MX/ES/CL/CO/PE/US). Usado para mostrar un
   // aviso en /ver ANTES de que el usuario haga click (evita la frustacion
   // de entrar y encontrarse "video no disponible en tu pais"). Es un
   // snapshot manual, no se re-chequea solo — YouTube puede cambiar esto.
-  geoRestrictedCore Boolean @default(false)
+  geoRestrictedCore Boolean  @default(false)
   // "PERSONAL": en el catalogo curado del admin (con review propio).
   // "WATCHABLE_ONLY": importada solo porque se puede mirar legalmente
   // (canales oficiales con embed). Aparece en /ver, no en /catalogo.
-  catalogScope   String   @default("PERSONAL")
+  catalogScope      String   @default("PERSONAL")
   // "CURATED": creada por Flor (admin) — el catalogo oficial.
   // "USER_EMBED": aportada por un user registrado desde /ver/agregar.
   // Filtros publicos por defecto excluyen USER_EMBED salvo /ver que lo
   // permite. El "link" con una CURATED se hace fusionando episodios y
   // borrando el row USER_EMBED desde /admin/series/user-submitted.
-  origin         String   @default("CURATED")
+  origin            String   @default("CURATED")
   // "VISIBLE": visible para todos en /ver (si tiene embeds).
   // "HIDDEN": ocultada post-hoc por admin. Solo ADMIN y el submitter
   // siguen viendola.
-  visibility     String   @default("VISIBLE")
-  submittedById  String?
+  visibility        String   @default("VISIBLE")
+  submittedById     String?
   // Para series USER_EMBED que el submitter declaro como "la misma serie
   // que esta otra del catalogo curado" (boton "asociar" en /ver/agregar).
   // Ambas series existen como entidades separadas; el link permite mostrar
   // badges bidireccionales en /ver y /catalogo y a admins linkear sin
   // moderar manualmente. Solo se setea en USER_EMBED → CURATED.
-  linkedSeriesId Int?
+  linkedSeriesId    Int?
   // Días de emisión en formato string / lista separada por comas ("lunes,jueves")
-  airDays        String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  airDays           String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   // Relaciones
   universeId          Int?
   universe            Universe?          @relation(fields: [universeId], references: [id])
   countryId           Int?
   country             Country?           @relation(fields: [countryId], references: [id])
+  /// LEGACY: una sola productora por serie. La relacion real es
+  /// productionCompanies (muchos-a-muchos). Se borra cuando el backfill este
+  /// verificado.
   productionCompanyId Int?
   productionCompany   ProductionCompany? @relation(fields: [productionCompanyId], references: [id])
+
+  productionCompanies SeriesProductionCompany[]
   originalLanguageId  Int?
-  originalLanguage    Language?          @relation("OriginalLanguage", fields: [originalLanguageId], references: [id])
+  originalLanguage    Language?                 @relation("OriginalLanguage", fields: [originalLanguageId], references: [id])
 
   seasons              Season[]
   actors               SeriesActor[]
@@ -312,6 +371,15 @@ model Series {
   @@index([productionCompanyId])
   @@index([originalLanguageId])
   @@index([featured, featuredOrder])
+  // El filtro mas repetido de la app (getAllSeries, getCatalogFilterIndex,
+  // fichas de actor/director/tag, sitemap...). El @@index([origin, visibility])
+  // de arriba NO lo cubre: no comparten prefijo.
+  @@index([catalogScope, origin])
+  // orderBy createdAt desc en la landing y /novedades — ([submittedById,
+  // createdAt]) no sirve para un sort global.
+  @@index([createdAt])
+  // orderBy title asc en todos los listados.
+  @@index([title])
 }
 
 // Bloques de informacion adicionales por serie. Cards labeladas y libres
@@ -337,16 +405,21 @@ model SeriesInfoBlock {
 // TEMPORADAS
 // ============================================
 model Season {
-  id           Int      @id @default(autoincrement())
-  seasonNumber Int
-  title        String?
-  episodeCount Int? // Número de capítulos
-  year         Int?
-  imageUrl     String?
-  synopsis     String?
-  observations String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id            Int      @id @default(autoincrement())
+  seasonNumber  Int
+  title         String?
+  episodeCount  Int? // Número de capítulos
+  year          Int?
+  imageUrl      String?
+  // Mismo criterio que Series.imageThumbUrl. Hoy 0 temporadas tienen imageUrl
+  // propio (usan el poster de la serie), asi que no hace falta backfill aca
+  // todavia — se agrega por consistencia con el pipeline de /api/upload, que
+  // es compartido.
+  imageThumbUrl String?
+  synopsis      String?
+  observations  String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   // Relaciones
   seriesId Int
@@ -390,6 +463,10 @@ model Episode {
   notes      EpisodeNote[]
 
   @@unique([seasonId, episodeNumber])
+  // `seasons: { some: { episodes: { some: { embedUrl: { not: null } } } } }`
+  // corre en /ver, la landing, /novedades y el sitemap — sin esto es un scan
+  // completo de Episode cada vez.
+  @@index([embedUrl])
 }
 
 // Notas privadas del usuario sobre un episodio.
@@ -444,11 +521,42 @@ model Actor {
   imageUrl    String?
   biography   String?
   funFacts    String[]  @default([]) // Datos curiosos cargados a mano por admins
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+
+  /// No es una persona: agrupa los personajes de series donde no se sabe
+  /// quien los interpreta (ver src/lib/placeholder-actor.ts). Se excluye del
+  /// indice publico, del sitemap y del buscador.
+  isPlaceholder Boolean @default(false)
+
+  // --- Simetria con Director (antes Actor no tenia ninguno de estos) ---
+  aliases      String[] @default([])
+  awards       String[] @default([])
+  imdbUrl      String?
+  mdlUrl       String?
+  wikiUrl      String?
+  instagramUrl String?
+  xUrl         String?
+
+  // --- Procedencia de los datos ---
+  /// Claves de match con las fuentes externas. Hacen idempotente al pipeline
+  /// de poblacion: si ya resolvimos esta persona, no se vuelve a buscar.
+  wikidataId       String?
+  tmdbPersonId     Int?
+  /// 'WIKIMEDIA' (re-hosteable con credito) | 'TMDB' (solo via su CDN, con
+  /// credito) | 'MANUAL'. Sin esto no hay forma de cumplir las licencias.
+  imageSource      String?
+  imageAttribution String?
+  imageLicense     String?
+  bioSource        String?
+  bioSourceUrl     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   series  SeriesActor[]
   seasons SeasonActor[]
+
+  @@index([isPlaceholder])
+  @@index([wikidataId])
 }
 
 // ============================================
@@ -480,10 +588,26 @@ model Director {
   wikiUrl     String?
   birthYear   Int?
   awards      String[] @default([])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+
+  // --- Simetria con Actor ---
+  instagramUrl String?
+  xUrl         String?
+
+  // --- Procedencia de los datos (mismo criterio que Actor) ---
+  wikidataId       String?
+  tmdbPersonId     Int?
+  imageSource      String? // 'WIKIMEDIA' | 'TMDB' | 'MANUAL'
+  imageAttribution String?
+  imageLicense     String?
+  bioSource        String?
+  bioSourceUrl     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   series SeriesDirector[]
+
+  @@index([wikidataId])
 }
 
 // ============================================
@@ -495,7 +619,8 @@ model Country {
   code    String? @unique // ISO code (ej: "KR", "TH", "JP")
   flagUrl String?
 
-  series Series[]
+  series              Series[]
+  productionCompanies ProductionCompany[]
 }
 
 // ============================================
@@ -606,27 +731,27 @@ model SeriesTag {
 // aportes de la comunidad viven en una entidad de propuestas separada para
 // que ningun borrador pueda filtrarse a las lecturas publicas.
 model GlossaryTerm {
-  id               Int      @id @default(autoincrement())
-  slug             String   @unique
-  term             String
-  transliteration  String?
-  locale           String   @default("es")
-  country          String
-  category         String
-  meaning          String
-  context          String
-  commonMistake    String?
-  examples         String?
+  id              Int       @id @default(autoincrement())
+  slug            String    @unique
+  term            String
+  transliteration String?
+  locale          String    @default("es")
+  country         String
+  category        String
+  meaning         String
+  context         String
+  commonMistake   String?
+  examples        String?
   // Atribucion opcional (de donde salio este termino/su traduccion) —
   // copiada de GlossarySuggestion al aprobar, ver
   // /api/admin/glossary-suggestions/[id]. Mostrada como "Fuente" en
   // /glosario cuando esta presente.
-  sourceName       String?
-  sourceUrl        String?
-  status           String   @default("PUBLISHED")
-  publishedAt      DateTime?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  sourceName      String?
+  sourceUrl       String?
+  status          String    @default("PUBLISHED")
+  publishedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
   tags GlossaryTermTag[]
 
@@ -759,9 +884,9 @@ model Comment {
   episode   Episode? @relation(fields: [episodeId], references: [id], onDelete: Cascade)
 
   // Hilos de respuestas
-  parentId  Int?
-  parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
-  replies   Comment[] @relation("CommentReplies")
+  parentId Int?
+  parent   Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies  Comment[] @relation("CommentReplies")
 
   reports CommentReport[]
 
@@ -794,17 +919,17 @@ model CommentReport {
 // SUGERENCIAS Y CORRECCIONES DE LA COMUNIDAD
 // ============================================
 model SeriesSuggestion {
-  id          Int      @id @default(autoincrement())
-  seriesId    Int
-  series      Series   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
-  userId      String?
-  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  type        String   // "DATO_FALTANTE", "CORRECCION_REPARTO", "DIAS_EMISION", "LINK_OFICIAL", "OTRO"
-  content     String
-  status      String   @default("PENDING") // "PENDING", "APPROVED", "DISCARDED"
-  adminNotes  String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         Int      @id @default(autoincrement())
+  seriesId   Int
+  series     Series   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  type       String // "DATO_FALTANTE", "CORRECCION_REPARTO", "DIAS_EMISION", "LINK_OFICIAL", "OTRO"
+  content    String
+  status     String   @default("PENDING") // "PENDING", "APPROVED", "DISCARDED"
+  adminNotes String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@index([seriesId])
   @@index([userId])
@@ -943,6 +1068,9 @@ model ViewStatus {
   @@unique([userId, seriesId])
   @@unique([userId, seasonId])
   @@unique([userId, episodeId])
+  // count({ where: { status: 'VISTA' } }) en la landing, /api/stats/public (x3)
+  // y getCollaboratorStats (x2), sobre la tabla mas grande de la base.
+  @@index([status])
   @@index([seriesId])
   @@index([seasonId])
   @@index([episodeId])
@@ -1311,7 +1439,7 @@ model Announcement {
   updatedAt   DateTime             @updatedAt
 
   createdById String?
-  createdBy   User?                @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  createdBy   User?   @relation(fields: [createdById], references: [id], onDelete: SetNull)
 
   // Solo se usa (y se muestra en el admin) cuando audience = SPECIFIC_USERS.
   recipients AnnouncementRecipient[]
@@ -1387,4 +1515,56 @@ model NewsTag {
 
   @@unique([newsId, tagId])
   @@index([tagId])
+}
+
+// ============================================
+// ENRIQUECIMIENTO DE PERSONAS (investigacion web)
+// ============================================
+
+/// Staging del pipeline de poblacion de actores/directores/productoras.
+///
+/// El matching por nombre romanizado es RUIDOSO: la romanizacion del tailandes
+/// varia mucho y la busqueda difusa devuelve casi-coincidencias (ej. buscar
+/// "Suradej Pinnirat" en Wikidata devuelve "Suradet Piniwat", que es otra
+/// persona). Escribir eso directo en Actor/Director seria peor que dejar los
+/// campos vacios: son personas reales.
+///
+/// Por eso el script de investigacion NUNCA escribe en las tablas finales:
+/// deja candidatos aca con su confianza y la URL de la fuente, y un humano
+/// aprueba campo por campo desde el admin.
+model PersonEnrichment {
+  id Int @id @default(autoincrement())
+
+  /// 'ACTOR' | 'DIRECTOR' | 'PRODUCTION_COMPANY'
+  entityType String
+  /// Id de la fila destino en Actor / Director / ProductionCompany.
+  entityId   Int
+
+  /// 'WIKIDATA' | 'TMDB' | 'GEMINI'
+  source    String
+  sourceRef String? // Q-id de Wikidata, id de TMDB, etc.
+  sourceUrl String?
+
+  /// Payload crudo tal como lo devolvio la fuente, sin normalizar. Se guarda
+  /// para poder re-evaluar el match sin volver a pegarle a la API.
+  payload Json
+
+  /// 0..100. Alta = nombre normalizado identico + ocupacion coherente + pais
+  /// dentro de los del catalogo. Solo las altas se pueden auto-aplicar.
+  confidence Int @default(0)
+
+  /// 'PENDING' | 'APPROVED' | 'REJECTED' | 'APPLIED'
+  status String @default("PENDING")
+
+  reviewedById String?
+  reviewedAt   DateTime?
+  /// Por que se rechazo — sirve para afinar el matcher.
+  reviewNote   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([entityType, entityId, source])
+  @@index([status, confidence])
+  @@index([entityType, entityId])
 }

@@ -7,6 +7,7 @@ import {
   findOrCreateTag,
   findOrCreateGenre,
   findOrCreateActor,
+  findOrCreateProductionCompany,
 } from '@/lib/tag-utils';
 
 interface RouteParams {
@@ -22,6 +23,7 @@ interface PatchBody {
   type?: string;
   synopsis?: string | null;
   imageUrl?: string | null;
+  imageThumbUrl?: string | null;
   countryCode?: string | null;
   productionCompanyName?: string | null;
   actorNames?: string[];
@@ -103,7 +105,16 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       data.synopsis = body.synopsis?.trim().slice(0, 2000) || null;
     }
     if (body.imageUrl !== undefined) {
-      data.imageUrl = body.imageUrl?.trim() || null;
+      const newImageUrl = body.imageUrl?.trim() || null;
+      data.imageUrl = newImageUrl;
+      // Sin poster no hay thumb; con poster, solo se pisa si el colaborador
+      // subio un archivo nuevo via /api/upload (que manda imageThumbUrl) —
+      // si no, se omite y el thumb existente sobrevive a este PATCH.
+      if (!newImageUrl) {
+        data.imageThumbUrl = null;
+      } else if (typeof body.imageThumbUrl === 'string') {
+        data.imageThumbUrl = body.imageThumbUrl.trim() || null;
+      }
     }
     if (body.countryCode !== undefined) {
       if (body.countryCode) {
@@ -121,12 +132,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (body.productionCompanyName !== undefined) {
       const name = body.productionCompanyName?.trim();
       if (name) {
-        const pc = await prisma.productionCompany.upsert({
-          where: { name },
-          update: {},
-          create: { name },
-        });
-        data.productionCompanyId = pc.id;
+        const pc = await findOrCreateProductionCompany(prisma, name);
+        data.productionCompanyId = pc?.id ?? null;
       } else {
         data.productionCompanyId = null;
       }

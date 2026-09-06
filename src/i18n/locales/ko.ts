@@ -2672,7 +2672,13 @@ const ko: TranslationShape = {
     "linkWiki": "위키백과",
     "birthYear": "출생: {year}",
     "awardsTitle": "수상",
-    "featuredWorksTitle": "주요 작품"
+    "featuredWorksTitle": "주요 작품",
+    "biographyTitle": "약력",
+    "filmographyTitle": "연출작",
+    "filmographyEmpty": "아직 등록된 작품이 없습니다.",
+    "seriesDirected": "{n}편 연출",
+    "backToIndex": "모든 감독 보기",
+    "alsoActed": "출연 작품"
   },
   "ver": {
     "searchPlaceholder": "시리즈, 스튜디오 또는 공식 제목 검색...",
@@ -2720,7 +2726,50 @@ const ko: TranslationShape = {
     "geoRestrictedBadge": "해당 지역에서 제한됨"
   },
   "actorProfile": {
-    "funFactsTitle": "재미있는 사실"
+    "funFactsTitle": "재미있는 사실",
+    "biographyTitle": "약력",
+    "filmographyTitle": "출연작",
+    "filmographyEmpty": "아직 등록된 출연작이 없습니다.",
+    "participations": "{n}편 출연",
+    "mainRole": "주연",
+    "backToIndex": "모든 배우 보기",
+    "externalLinksTitle": "링크",
+    "aliasesTitle": "다른 이름",
+    "alsoDirected": "연출 작품"
+  },
+  "companyProfile": {
+    "catalogTitle": "제작 작품",
+    "catalogEmpty": "이 제작사와 연결된 작품이 아직 없습니다.",
+    "seriesCount": "{n}편",
+    "websiteLabel": "웹사이트",
+    "youtubeLabel": "유튜브 채널",
+    "foundedLabel": "설립",
+    "countryLabel": "국가",
+    "backToIndex": "모든 제작사 보기"
+  },
+  "peopleIndex": {
+    "actorsTitle": "배우",
+    "actorsSubtitle": "카탈로그의 전체 출연진을 작품 수 순으로 정렬했습니다.",
+    "directorsTitle": "감독",
+    "directorsSubtitle": "카탈로그 작품을 연출한 사람들.",
+    "companiesTitle": "제작사",
+    "companiesSubtitle": "카탈로그 작품을 만든 스튜디오.",
+    "searchPlaceholder": "이름으로 검색...",
+    "sortLabel": "정렬",
+    "sortCredits": "작품 많은 순",
+    "sortAZ": "A-Z",
+    "sortZA": "Z-A",
+    "nationalityAll": "모든 국적",
+    "creditsCount": "{n}편",
+    "seriesCount": "{n}편",
+    "resultsCount": "{n}개 결과",
+    "emptyTitle": "결과 없음",
+    "emptyDescription": "다른 이름으로 검색하거나 필터를 해제해 보세요.",
+    "clearFilters": "필터 지우기",
+    "prevPage": "이전",
+    "nextPage": "다음",
+    "pageIndicator": "{total} 중 {current} 페이지",
+    "incompleteBadge": "정보 미완성"
   },
   "glosario": {
     "heroBadge": "문화 및 윤리적 번역",

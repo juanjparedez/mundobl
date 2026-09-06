@@ -59,6 +59,7 @@ interface SeriesFormData {
   type: string;
   synopsis: string | null;
   imageUrl: string | null;
+  imageThumbUrl: string | null;
   countryCode: string | null;
   productionCompanyName: string | null;
   actorNames: string[];
@@ -88,6 +89,11 @@ export function CollaboratorSeriesForm({ series, seasons }: Props) {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [imageUrl, setImageUrl] = useState(series.imageUrl);
+  // Miniatura de card generada junto al poster en /api/upload. Arranca en el
+  // valor existente (sin re-subir nada); solo cambia si el colaborador sube
+  // un archivo nuevo — asi no se pierde en cada guardado que no toca la
+  // imagen (ver PATCH /api/colaborador/series/[id]).
+  const [imageThumbUrl, setImageThumbUrl] = useState(series.imageThumbUrl);
 
   const totalEpisodes = seasons.reduce((acc, s) => acc + s.episodes.length, 0);
 
@@ -106,6 +112,7 @@ export function CollaboratorSeriesForm({ series, seasons }: Props) {
       }
       const data = await res.json();
       setImageUrl(data.url);
+      setImageThumbUrl(data.thumbUrl);
       message.success('Imagen subida');
     } catch (e) {
       message.error(
@@ -141,6 +148,7 @@ export function CollaboratorSeriesForm({ series, seasons }: Props) {
           type: values.type,
           synopsis: values.synopsis || null,
           imageUrl,
+          imageThumbUrl,
           countryCode: values.countryCode || null,
           productionCompanyName: values.productionCompanyName || null,
           actorNames: values.actorNames || [],

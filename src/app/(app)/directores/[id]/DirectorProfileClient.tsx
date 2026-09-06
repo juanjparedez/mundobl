@@ -10,10 +10,11 @@ import {
 } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
-import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { Chip } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
+import type { TranslationKey } from '@/i18n/messages';
 import './director-profile.css';
 
 interface DirectorSeries {
@@ -22,6 +23,7 @@ interface DirectorSeries {
   year?: number | null;
   type: string;
   imageUrl?: string | null;
+  imageThumbUrl?: string | null;
   overallRating?: number | null;
   country?: { name: string } | null;
 }
@@ -48,25 +50,25 @@ const FEATURED_TAKE = 3;
 
 interface DirectorProfileClientProps {
   director: DirectorData;
+  /** Si esta persona tambien figura como actriz/actor, su id para cross-link. */
+  actorId?: number | null;
 }
 
-function getTypeColor(type: string): string {
-  switch (type) {
-    case 'serie':
-      return 'blue';
-    case 'pelicula':
-      return 'purple';
-    case 'corto':
-      return 'cyan';
-    case 'especial':
-      return 'orange';
-    default:
-      return 'default';
-  }
-}
+/** Tipo de contenido -> clave i18n ya existente en seriesHeader. Antes esto
+ *  era un mapa a colores fijos de antd ('blue', 'purple'...), que ignoraban
+ *  los tokens y rompian los skins. */
+const TYPE_KEYS: Record<string, TranslationKey> = {
+  serie: 'seriesHeader.typeSerie',
+  pelicula: 'seriesHeader.typePelicula',
+  corto: 'seriesHeader.typeCorto',
+  especial: 'seriesHeader.typeEspecial',
+  anime: 'seriesHeader.typeAnime',
+  reality: 'seriesHeader.typeReality',
+};
 
 export function DirectorProfileClient({
   director,
+  actorId,
 }: DirectorProfileClientProps) {
   const { t } = useLocale();
   const filmography = director.series
@@ -140,7 +142,9 @@ export function DirectorProfileClient({
             )}
             <div className="director-profile__meta">
               {director.nationality && (
-                <Tag color="blue">{director.nationality}</Tag>
+                <Chip tone="info" size="sm">
+                  {director.nationality}
+                </Chip>
               )}
               {director.birthYear && (
                 <Tag icon={<CalendarOutlined />}>
@@ -149,7 +153,11 @@ export function DirectorProfileClient({
                   })}
                 </Tag>
               )}
-              <Tag>{filmography.length} series dirigidas</Tag>
+              <Chip tone="neutral" size="sm">
+                {interpolateMessage(t('directorProfile.seriesDirected'), {
+                  n: String(filmography.length),
+                })}
+              </Chip>
             </div>
             {externalLinks.length > 0 && (
               <nav
@@ -171,12 +179,20 @@ export function DirectorProfileClient({
                 ))}
               </nav>
             )}
+
+            {actorId && (
+              <p className="director-profile__crosslink">
+                <Link href={`/actores/${actorId}`} prefetch={false}>
+                  {t('directorProfile.alsoActed')}
+                </Link>
+              </p>
+            )}
           </div>
         </div>
 
         {director.biography && (
           <div className="director-profile__biography">
-            <h3>Biografía</h3>
+            <h3>{t('directorProfile.biographyTitle')}</h3>
             <p>{director.biography}</p>
           </div>
         )}
@@ -214,14 +230,14 @@ export function DirectorProfileClient({
                     size="small"
                     className="director-profile__film-card director-profile__featured-card"
                     cover={
-                      entry.imageUrl ? (
+                      cardImageUrl(entry) ? (
                         <Image
                           alt={entry.title}
-                          src={entry.imageUrl}
+                          src={cardImageUrl(entry)!}
                           width={300}
                           height={180}
                           quality={75}
-                          unoptimized={isSupabaseImageUrl(entry.imageUrl)}
+                          unoptimized={isSupabaseImageUrl(cardImageUrl(entry))}
                           className="director-profile__film-image"
                           style={{
                             objectFit: 'cover',
@@ -261,11 +277,11 @@ export function DirectorProfileClient({
       )}
 
       <Card
-        title={`Filmografía (${filmography.length})`}
+        title={`${t('directorProfile.filmographyTitle')} (${filmography.length})`}
         className="director-profile__filmography"
       >
         {filmography.length === 0 ? (
-          <Empty description="No hay series registradas" />
+          <Empty description={t('directorProfile.filmographyEmpty')} />
         ) : (
           <Row gutter={[16, 16]}>
             {filmography.map((entry) => (
@@ -276,14 +292,14 @@ export function DirectorProfileClient({
                     size="small"
                     className="director-profile__film-card"
                     cover={
-                      entry.imageUrl ? (
+                      cardImageUrl(entry) ? (
                         <Image
                           alt={entry.title}
-                          src={entry.imageUrl}
+                          src={cardImageUrl(entry)!}
                           width={300}
                           height={180}
                           quality={70}
-                          unoptimized={isSupabaseImageUrl(entry.imageUrl)}
+                          unoptimized={isSupabaseImageUrl(cardImageUrl(entry))}
                           className="director-profile__film-image"
                           style={{
                             objectFit: 'cover',
@@ -298,9 +314,11 @@ export function DirectorProfileClient({
                       title={entry.title}
                       description={
                         <div className="director-profile__film-tags">
-                          <Tag color={getTypeColor(entry.type)}>
-                            {entry.type}
-                          </Tag>
+                          {TYPE_KEYS[entry.type] && (
+                            <Chip tone="accent" size="sm">
+                              {t(TYPE_KEYS[entry.type])}
+                            </Chip>
+                          )}
                           {entry.year && <Tag>{entry.year}</Tag>}
                           {entry.country && (
                             <span className="director-profile__country">
@@ -317,6 +335,12 @@ export function DirectorProfileClient({
           </Row>
         )}
       </Card>
+
+      <div className="director-profile__back">
+        <Link href="/directores" prefetch={false}>
+          {t('directorProfile.backToIndex')}
+        </Link>
+      </div>
     </div>
   );
 }

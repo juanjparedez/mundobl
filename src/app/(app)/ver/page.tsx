@@ -33,6 +33,9 @@ export default async function VerPageRoute() {
     // episodes con embed de YouTube, derivamos img.youtube.com/vi/{id}/...
     // Cubre el caso "user-embed sin poster cargado".
     let imageUrl = s.imageUrl;
+    // El auto-thumbnail de YouTube reemplaza al poster propio cuando no hay
+    // uno cargado — en ese caso no hay miniatura nuestra que ofrecer.
+    let imageThumbUrl: string | null = s.imageThumbUrl;
     if (!imageUrl) {
       const firstWithEmbed = s.seasons
         .flatMap((season) => season.episodes)
@@ -42,6 +45,7 @@ export default async function VerPageRoute() {
           firstWithEmbed.embedPlatform as Platform,
           firstWithEmbed.embedUrl as string
         );
+        imageThumbUrl = null;
       }
     }
 
@@ -51,6 +55,7 @@ export default async function VerPageRoute() {
       year: s.year,
       type: s.type,
       imageUrl,
+      imageThumbUrl,
       synopsis: s.synopsis,
       catalogScope: s.catalogScope,
       origin: s.origin,

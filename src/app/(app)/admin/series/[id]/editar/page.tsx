@@ -62,6 +62,7 @@ export default async function EditSeriesPage({ params }: EditPageProps) {
         year: s.year,
       })) || [],
     imageUrl: serie.imageUrl,
+    imageThumbUrl: serie.imageThumbUrl,
     isFavorite: serie.isFavorite ?? false,
     featured: serie.featured ?? false,
     featuredOrder: serie.featuredOrder ?? 0,

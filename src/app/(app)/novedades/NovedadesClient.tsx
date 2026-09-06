@@ -16,7 +16,7 @@ import type { WatchableCarouselItem } from '@/components/common/WatchableCarouse
 import { MediaCard } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
-import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import type { TranslationKey } from '@/i18n/messages';
 import { LAST_SEEN_NOVEDADES_KEY } from './storage-keys';
 import './novedades.css';
@@ -25,6 +25,7 @@ interface NewSerie {
   id: number;
   title: string;
   imageUrl: string | null;
+  imageThumbUrl?: string | null;
   imagePosition: string;
   year: number | null;
   type: string;
@@ -40,6 +41,7 @@ interface NewSeason {
     id: number;
     title: string;
     imageUrl: string | null;
+    imageThumbUrl?: string | null;
     type: string;
   };
 }
@@ -135,11 +137,9 @@ export function NovedadesClient({
                   <MediaCard
                     key={s.id}
                     href={`/series/${s.id}`}
-                    imageUrl={s.imageUrl}
+                    imageUrl={cardImageUrl(s)}
                     imageAlt={s.title}
-                    unoptimizedImage={
-                      s.imageUrl ? isSupabaseImageUrl(s.imageUrl) : false
-                    }
+                    unoptimizedImage={isSupabaseImageUrl(cardImageUrl(s))}
                     title={s.title}
                     overlayTags={
                       s.country?.code ? (
@@ -174,13 +174,11 @@ export function NovedadesClient({
                   <MediaCard
                     key={season.id}
                     href={`/series/${season.series.id}`}
-                    imageUrl={season.series.imageUrl}
+                    imageUrl={cardImageUrl(season.series)}
                     imageAlt={season.series.title}
-                    unoptimizedImage={
-                      season.series.imageUrl
-                        ? isSupabaseImageUrl(season.series.imageUrl)
-                        : false
-                    }
+                    unoptimizedImage={isSupabaseImageUrl(
+                      cardImageUrl(season.series)
+                    )}
                     title={season.series.title}
                     overlayTags={
                       <span className="app-pill app-pill--info">

@@ -1,5 +1,5 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { processPosterImage } from './image-processing';
+import { processPosterImage, processCardThumbnail } from './image-processing';
 
 const BUCKET = 'images';
 
@@ -86,18 +86,33 @@ const VALID_IMAGE_TYPES = new Set([
   'image/gif',
 ]);
 
+export interface DownloadedImage {
+  url: string;
+  /**
+   * Miniatura 600x900 recien generada, o `null` si esta llamada no produjo
+   * una (URL ya en Supabase → no se re-descarga nada, ver mas abajo). `null`
+   * NO significa "sacar el thumb existente" — es "no tengo nada nuevo que
+   * ofrecer". Los callers deciden que hacer con eso (ver
+   * /api/series/route.ts y /api/series/[id]/route.ts, donde un `null` aca
+   * significa "no toques imageThumbUrl", no "borralo").
+   */
+  thumbUrl: string | null;
+}
+
 /**
- * Descarga una imagen desde una URL externa y la sube a Supabase Storage.
- * Si la URL ya es de Supabase, retorna la URL sin cambios.
+ * Descarga una imagen desde una URL externa y la sube a Supabase Storage,
+ * generando de paso la miniatura de card (mismo pipeline que /api/upload).
+ * Si la URL ya es de Supabase, retorna la URL sin cambios y `thumbUrl: null`
+ * — no hay nada que re-procesar (evita bajar el archivo de nuevo en cada
+ * guardado de un admin que no toco el poster).
  * @param url URL externa de la imagen
  * @param folder Carpeta dentro del bucket (ej: 'series', 'actors')
- * @returns URL pública de la imagen en Supabase
  */
 export async function downloadAndUploadExternalImage(
   url: string,
   folder: string
-): Promise<string> {
-  if (isSupabaseUrl(url)) return url;
+): Promise<DownloadedImage> {
+  if (isSupabaseUrl(url)) return { url, thumbUrl: null };
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15_000);
@@ -132,7 +147,23 @@ export async function downloadAndUploadExternalImage(
     const random = Math.random().toString(36).slice(2, 8);
     const path = `${folder}/${timestamp}_${random}.${processed.ext}`;
 
-    return await uploadImage(processed.buffer, path, processed.contentType);
+    const uploadedUrl = await uploadImage(
+      processed.buffer,
+      path,
+      processed.contentType
+    );
+
+    const thumb = await processCardThumbnail(
+      processed.buffer,
+      processed.contentType
+    );
+    let thumbUrl: string | null = null;
+    if (thumb) {
+      const thumbPath = `${folder}/${timestamp}_${random}_card.${thumb.ext}`;
+      thumbUrl = await uploadImage(thumb.buffer, thumbPath, thumb.contentType);
+    }
+
+    return { url: uploadedUrl, thumbUrl };
   } catch (error) {
     clearTimeout(timeout);
     throw error;
