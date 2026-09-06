@@ -6,6 +6,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
 import type { Person } from 'schema-dts';
 import { getActorById } from '@/lib/database';
+import { isPlaceholderActor } from '@/lib/placeholder-actor';
 import { ActorProfileClient } from './ActorProfileClient';
 
 interface ActorPageProps {
@@ -20,7 +21,7 @@ export async function generateMetadata({
   if (isNaN(actorId)) return {};
 
   const actor = await getActorById(actorId);
-  if (!actor) return {};
+  if (!actor || isPlaceholderActor(actor)) return {};
 
   const displayName = actor.stageName ?? actor.name;
   const seriesCount = actor.series?.length ?? 0;
@@ -61,7 +62,10 @@ export default async function ActorPage({ params }: ActorPageProps) {
 
   const actor = await getActorById(actorId);
 
-  if (!actor) {
+  // El placeholder "Actor no identificado" no es una persona: agrupa los
+  // personajes de series donde no se sabe quien los interpreta. No tiene
+  // ficha publica.
+  if (!actor || isPlaceholderActor(actor)) {
     notFound();
   }
 

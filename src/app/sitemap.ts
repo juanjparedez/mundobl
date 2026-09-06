@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { prisma } from '@/lib/database';
+import { EXCLUDE_PLACEHOLDER_ACTOR } from '@/lib/placeholder-actor';
 
 export const revalidate = 3600;
 
@@ -131,6 +132,7 @@ async function verPages(): Promise<MetadataRoute.Sitemap> {
 
 async function actoresPages(): Promise<MetadataRoute.Sitemap> {
   const actors = await prisma.actor.findMany({
+    where: EXCLUDE_PLACEHOLDER_ACTOR,
     select: { id: true, updatedAt: true },
   });
   return actors.map((a) => ({
