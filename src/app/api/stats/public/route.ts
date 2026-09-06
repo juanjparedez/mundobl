@@ -6,6 +6,12 @@ interface RawNamedCountRow {
   count: bigint;
 }
 
+interface RawCompanyCountRow {
+  id: number;
+  name: string;
+  count: bigint;
+}
+
 interface RawActorCountRow {
   id: number;
   name: string;
@@ -120,16 +126,19 @@ export async function GET() {
         ORDER BY count DESC
         LIMIT 15
       `,
-      prisma.$queryRaw<RawNamedCountRow[]>`
-        SELECT pc.name, COUNT(*) as count
+      // Cuenta por SeriesProductionCompany (co-producciones), no por la
+      // relacion legacy 1-a-N: asi una serie con 3 productoras suma para las 3.
+      // Devuelve el id para poder linkear a /productoras/[id].
+      prisma.$queryRaw<RawCompanyCountRow[]>`
+        SELECT pc.id, pc.name, COUNT(*) as count
         FROM "ViewStatus" vs
         JOIN "Series" s ON s.id = vs."seriesId"
-        JOIN "ProductionCompany" pc ON pc.id = s."productionCompanyId"
+        JOIN "SeriesProductionCompany" spc ON spc."seriesId" = s.id
+        JOIN "ProductionCompany" pc ON pc.id = spc."productionCompanyId"
         WHERE vs.status = 'VISTA'
           AND vs."seriesId" IS NOT NULL
-          AND s."productionCompanyId" IS NOT NULL
           AND s."origin" = 'CURATED'
-        GROUP BY pc.name
+        GROUP BY pc.id, pc.name
         ORDER BY count DESC
         LIMIT 15
       `,
@@ -275,6 +284,7 @@ export async function GET() {
           count: Number(row.count),
         })),
         topProductionCompanies: topProductionCompaniesRows.map((row) => ({
+          id: row.id,
           name: row.name,
           count: Number(row.count),
         })),

@@ -52,7 +52,7 @@ interface SeriesHeaderProps {
       };
     }>;
     directors?: Array<{
-      director: { name: string };
+      director: { id: number; name: string };
     }>;
     actors?: Array<{
       isMain: boolean;
@@ -244,7 +244,22 @@ export function SeriesHeader({
                       : t('seriesHeader.directorPlural')}
                   </span>
                   <span className="series-header__cast-names">
-                    {directors.map((d) => d.director.name).join(', ')}
+                    {/* Antes era texto plano: los actores linkeaban a su ficha
+                        y los directores no, aunque /directores/[id] existe. */}
+                    {directors.map((d, i) => (
+                      <span key={d.director.id}>
+                        {i > 0 && (
+                          <span className="series-header__cast-sep"> · </span>
+                        )}
+                        <Link
+                          href={`/directores/${d.director.id}`}
+                          prefetch={false}
+                          className="series-header__cast-link"
+                        >
+                          {d.director.name}
+                        </Link>
+                      </span>
+                    ))}
                   </span>
                 </div>
               )}
