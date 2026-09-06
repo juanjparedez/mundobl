@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import {
-  Table,
   Button,
   Modal,
   Form,
@@ -36,6 +35,7 @@ import { useMessage } from '@/hooks/useMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import './SeriesContentManager.css';
+import { DataTable } from '@/components/design-system';
 
 interface ContentItem {
   id: number;
@@ -319,13 +319,12 @@ export function SeriesContentManager({
         </Button>
       </div>
 
-      <Table<TableRow>
-        scroll={{ x: 'max-content' }}
+      <DataTable<TableRow>
         dataSource={isLocalMode ? (pendingItems ?? []) : items}
         columns={columns}
         rowKey={(record) => String(getRowId(record))}
         loading={loading}
-        pagination={false}
+        pageSize={false}
         size="small"
       />
 

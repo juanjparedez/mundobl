@@ -1,8 +1,13 @@
 'use client';
 
-import { useMemo, useState, type ReactNode } from 'react';
-import { Table, Pagination } from 'antd';
+import { useMemo, useState, type Key, type ReactNode } from 'react';
+import { Table, Pagination, Checkbox, Button } from 'antd';
+import { DownOutlined, RightOutlined } from '@ant-design/icons';
 import type { ColumnType, TablePaginationConfig } from 'antd/es/table';
+import type {
+  TableRowSelection,
+  ExpandableConfig,
+} from 'antd/es/table/interface';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { EmptyState } from '../EmptyState/EmptyState';
 import './DataTable.css';
@@ -40,8 +45,21 @@ export interface DataTableProps<T> {
   pageSize?: number | false;
   /** Texto del total, ya traducido. Recibe total y rango visible. */
   showTotal?: TablePaginationConfig['showTotal'];
+  /** Opciones del selector de tamanio de pagina. Default 10/20/50/100. */
+  pageSizeOptions?: string[];
+  /**
+   * Paginacion controlada (server-side). Al pasar `total`, DataTable deja
+   * de paginar localmente: asume que `dataSource` ya es la pagina actual y
+   * delega el cambio de pagina en `onPageChange`.
+   */
+  page?: number;
+  total?: number;
+  onPageChange?: (page: number, pageSize: number) => void;
   /** Ancho minimo de la tabla en escritorio. Default `'max-content'`. */
   scrollX?: number | 'max-content';
+  /** Alto maximo con scroll propio (listas largas dentro de un drawer o
+   *  modal). Aplica tanto a la tabla como a la lista de tarjetas. */
+  scrollY?: number | string;
   /**
    * Tablas de pocas columnas que ya entran en un telefono no necesitan
    * colapsar: con esto se mantiene la tabla en todos los tamanios.
@@ -49,6 +67,19 @@ export interface DataTableProps<T> {
   disableMobileCards?: boolean;
   /** Breakpoint del colapso. Default: el de tablet del proyecto (768px). */
   mobileQuery?: string;
+  /**
+   * Seleccion multiple. En escritorio se pasa tal cual a AntD; en modo
+   * tarjetas se dibuja un checkbox en la cabecera de cada tarjeta, para
+   * que flujos como "fusionar tags/generos" sigan siendo usables en
+   * telefono y no solo en escritorio.
+   */
+  rowSelection?: TableRowSelection<T>;
+  /** Fila expandible. En modo tarjetas es un toggle dentro de la tarjeta. */
+  expandable?: ExpandableConfig<T>;
+  /** aria-label del boton de expandir, ya traducido por la pagina. */
+  expandAriaLabel?: string;
+  /** Clase por fila. En modo tarjetas se aplica a la tarjeta. */
+  rowClassName?: (record: T, index: number) => string;
   onRowClick?: (record: T) => void;
   className?: string;
   /** Tamanio de los controles, alineado con la densidad de la app. */
@@ -127,20 +158,40 @@ export function DataTable<T extends object>({
   empty,
   pageSize = 20,
   showTotal,
+  pageSizeOptions = ['10', '20', '50', '100'],
+  page: controlledPage,
+  total: controlledTotal,
+  onPageChange,
   scrollX = 'max-content',
+  scrollY,
   disableMobileCards = false,
   mobileQuery = '(max-width: 768px)',
+  rowSelection,
+  expandable,
+  expandAriaLabel,
+  rowClassName,
   onRowClick,
   className,
   size,
 }: DataTableProps<T>) {
   const isMobile = useMediaQuery(mobileQuery);
   const useCards = isMobile && !disableMobileCards;
-  const [page, setPage] = useState(1);
+  const [localPage, setLocalPage] = useState(1);
+  const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
+
+  // Con `total` la paginacion la maneja la pagina (server-side); sin el,
+  // DataTable pagina la lista que recibe.
+  const isControlled = controlledTotal !== undefined;
+  const page = isControlled ? (controlledPage ?? 1) : localPage;
+  const setPage = (next: number) => {
+    if (isControlled) onPageChange?.(next, perPage);
+    else setLocalPage(next);
+  };
 
   const perPage = pageSize === false ? dataSource.length : pageSize;
+  const rowTotal = controlledTotal ?? dataSource.length;
   const pageCount =
-    perPage > 0 ? Math.max(1, Math.ceil(dataSource.length / perPage)) : 1;
+    perPage > 0 ? Math.max(1, Math.ceil(rowTotal / perPage)) : 1;
   // Al filtrar, la pagina guardada puede quedar fuera de rango: se clampea
   // al renderizar en vez de corregir el estado desde un efecto, que
   // dispararia un render en cascada.
@@ -151,8 +202,28 @@ export function DataTable<T extends object>({
     const metas: DataTableColumn<T>[] = [];
     const bodies: DataTableColumn<T>[] = [];
     const actions: DataTableColumn<T>[] = [];
+
+    // El hint `mobile` es opcional: sin el, se infiere un layout razonable
+    // (primera columna = titulo, columna de acciones al pie, resto en el
+    // cuerpo). Asi migrar una tabla no obliga a anotar cada columna, y las
+    // paginas refinan solo donde el default no alcanza.
+    let titleTaken = columns.some((col) => col.mobile === 'title');
+
     columns.forEach((col) => {
-      switch (col.mobile) {
+      let role = col.mobile;
+      if (!role) {
+        const id = String(col.key ?? col.dataIndex ?? '').toLowerCase();
+        if (/^(actions|acciones|action)$/.test(id)) {
+          role = 'actions';
+        } else if (!titleTaken) {
+          role = 'title';
+          titleTaken = true;
+        } else {
+          role = 'body';
+        }
+      }
+
+      switch (role) {
         case 'title':
           titles.push(col);
           break;
@@ -177,8 +248,15 @@ export function DataTable<T extends object>({
       : {
           pageSize,
           showSizeChanger: true,
-          pageSizeOptions: ['10', '20', '50', '100'],
+          pageSizeOptions,
           showTotal,
+          ...(isControlled
+            ? {
+                current: page,
+                total: controlledTotal,
+                onChange: onPageChange,
+              }
+            : {}),
         };
 
   if (!useCards) {
@@ -191,7 +269,10 @@ export function DataTable<T extends object>({
         loading={loading}
         size={size}
         pagination={paginationConfig}
-        scroll={{ x: scrollX }}
+        rowSelection={rowSelection}
+        expandable={expandable}
+        rowClassName={rowClassName}
+        scroll={{ x: scrollX, y: scrollY }}
         locale={empty ? { emptyText: empty } : undefined}
         onRow={
           onRowClick
@@ -210,14 +291,47 @@ export function DataTable<T extends object>({
     );
   }
 
+  // Seleccion en modo tarjetas: se replica el contrato de AntD para que la
+  // pagina no tenga que distinguir entre tarjeta y tabla.
+  const selectedKeys = (rowSelection?.selectedRowKeys ?? []).map(String);
+
+  const toggleSelection = (record: T, key: string, checked: boolean) => {
+    if (!rowSelection?.onChange) return;
+    const current = rowSelection.selectedRowKeys ?? [];
+    const nextKeys: Key[] = checked
+      ? [...current, key]
+      : current.filter((k) => String(k) !== key);
+    const nextRows = dataSource.filter((row, i) =>
+      nextKeys.map(String).includes(resolveKey(row, rowKey, i))
+    );
+    rowSelection.onChange(nextKeys, nextRows, { type: 'single' });
+  };
+
+  const toggleExpanded = (key: string, record: T) => {
+    const isOpen = expandedKeys.includes(key);
+    setExpandedKeys((prev) =>
+      isOpen ? prev.filter((k) => k !== key) : [...prev, key]
+    );
+    expandable?.onExpand?.(!isOpen, record);
+  };
+
+  // Si la paginacion es controlada, `dataSource` YA es la pagina actual.
   const visible =
-    pageSize === false
+    pageSize === false || isControlled
       ? dataSource
       : dataSource.slice((safePage - 1) * perPage, safePage * perPage);
 
   return (
     <div className={['mb-data-table', className].filter(Boolean).join(' ')}>
-      <ul className="mb-data-table__cards" aria-busy={loading}>
+      <ul
+        className="mb-data-table__cards"
+        aria-busy={loading}
+        style={
+          scrollY === undefined
+            ? undefined
+            : { maxHeight: scrollY, overflowY: 'auto' }
+        }
+      >
         {visible.map((record, index) => {
           const key = resolveKey(record, rowKey, index);
           const titleNodes = grouped.titles.map((col) =>
@@ -233,8 +347,33 @@ export function DataTable<T extends object>({
             renderCell(col, record, index)
           );
 
+          const isSelected = selectedKeys.includes(key);
+          const isExpanded = expandedKeys.includes(key);
+          const canExpand =
+            !!expandable?.expandedRowRender &&
+            (expandable.rowExpandable?.(record) ?? true);
+
           return (
-            <li key={key} className="mb-data-table__card">
+            <li
+              key={key}
+              className={[
+                'mb-data-table__card',
+                isSelected ? 'mb-data-table__card--selected' : '',
+                rowClassName?.(record, index) ?? '',
+              ]
+                .filter(Boolean)
+                .join(' ')}
+            >
+              {rowSelection && (
+                <Checkbox
+                  className="mb-data-table__card-check"
+                  checked={isSelected}
+                  {...rowSelection.getCheckboxProps?.(record)}
+                  onChange={(e) =>
+                    toggleSelection(record, key, e.target.checked)
+                  }
+                />
+              )}
               {onRowClick ? (
                 <button
                   type="button"
@@ -271,6 +410,25 @@ export function DataTable<T extends object>({
                 </dl>
               )}
 
+              {canExpand && (
+                <div className="mb-data-table__card-expand">
+                  <Button
+                    type="text"
+                    size="small"
+                    aria-expanded={isExpanded}
+                    aria-label={expandAriaLabel}
+                    icon={isExpanded ? <DownOutlined /> : <RightOutlined />}
+                    onClick={() => toggleExpanded(key, record)}
+                  />
+                </div>
+              )}
+
+              {canExpand && isExpanded && (
+                <div className="mb-data-table__card-expanded">
+                  {expandable?.expandedRowRender?.(record, index, 0, true)}
+                </div>
+              )}
+
               {actionNodes.length > 0 && (
                 <div className="mb-data-table__card-actions">{actionNodes}</div>
               )}
@@ -284,7 +442,7 @@ export function DataTable<T extends object>({
           <Pagination
             current={safePage}
             onChange={setPage}
-            total={dataSource.length}
+            total={rowTotal}
             pageSize={perPage}
             showSizeChanger={false}
             showTotal={showTotal}

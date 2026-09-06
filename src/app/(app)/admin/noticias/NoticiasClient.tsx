@@ -10,7 +10,6 @@ import {
   Segmented,
   Select,
   Space,
-  Table,
   Tag,
   Tooltip,
 } from 'antd';
@@ -28,6 +27,7 @@ import { AdminNav } from '../AdminNav';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import './noticias-admin.css';
+import { DataTable } from '@/components/design-system';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -451,20 +451,18 @@ export function NoticiasClient() {
             }
           />
 
-          <Table<NewsRow>
-            scroll={{ x: 'max-content' }}
+          <DataTable<NewsRow>
             columns={columns}
             dataSource={news}
             rowKey="id"
             loading={loading}
-            pagination={{
-              current: page,
-              pageSize: PAGE_SIZE,
-              total,
-              showTotal: (t_total) =>
-                t('newsAdmin.paginationTotal', { total: t_total }),
-              onChange: (p) => setPage(p),
-            }}
+            pageSize={PAGE_SIZE}
+            page={page}
+            total={total}
+            onPageChange={(p) => setPage(p)}
+            showTotal={(t_total) =>
+              t('newsAdmin.paginationTotal', { total: t_total })
+            }
             className="noticias-admin__table"
           />
 

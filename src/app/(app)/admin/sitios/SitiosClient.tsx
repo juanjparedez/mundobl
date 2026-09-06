@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import {
-  Table,
   Button,
   Input,
   InputNumber,
@@ -33,6 +32,7 @@ import {
 import { AdminNav } from '../AdminNav';
 import '../admin.css';
 import './sitios.css';
+import { DataTable } from '@/components/design-system';
 
 interface SiteType {
   id: number;
@@ -272,13 +272,12 @@ export function SitiosClient() {
           onSearchClear={() => setSearchTerm('')}
         />
 
-        <Table
-          scroll={{ x: 'max-content' }}
+        <DataTable
           dataSource={filteredSites}
           columns={columns}
           rowKey="id"
           loading={loading}
-          pagination={{ pageSize: 20, showSizeChanger: true }}
+          pageSize={20}
         />
 
         <Modal

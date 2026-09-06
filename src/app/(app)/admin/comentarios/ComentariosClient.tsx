@@ -10,7 +10,6 @@ import {
   Popconfirm,
   Segmented,
   Space,
-  Table,
   Tag,
 } from 'antd';
 import {
@@ -21,7 +20,7 @@ import {
   StopOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import type { ColumnsType } from 'antd/es/table';
+import { DataTable, type DataTableColumn } from '@/components/design-system';
 import { AdminPageHero } from '@/components/admin/AdminPageHero/AdminPageHero';
 import { AdminTableToolbar } from '@/components/admin/AdminTableToolbar/AdminTableToolbar';
 import { AdminNav } from '../AdminNav';
@@ -279,7 +278,7 @@ export function ComentariosClient() {
     (comment) => comment.reportCount > 0
   ).length;
 
-  const columns: ColumnsType<CommentRow> = [
+  const columns: DataTableColumn<CommentRow>[] = [
     {
       title: t('adminComments.columnUser'),
       key: 'user',
@@ -484,14 +483,17 @@ export function ComentariosClient() {
             }
           />
 
-          <Table
+          <DataTable
             className="comentarios-table"
-            scroll={{ x: 'max-content' }}
             columns={columns}
             dataSource={comments}
             rowKey="id"
             loading={loading}
             size="small"
+            pageSize={PAGE_SIZE}
+            page={page}
+            total={total}
+            onPageChange={(newPage) => setPage(newPage)}
             expandable={{
               rowExpandable: (record) => record.reports.length > 0,
               expandedRowRender: (record) => (
@@ -523,13 +525,6 @@ export function ComentariosClient() {
                   ))}
                 </ul>
               ),
-            }}
-            pagination={{
-              current: page,
-              pageSize: PAGE_SIZE,
-              total,
-              showSizeChanger: false,
-              onChange: (newPage) => setPage(newPage),
             }}
           />
 

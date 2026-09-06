@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Image from 'next/image';
-import { Drawer, Input, Button, Table, Select, Space, Tag, Alert } from 'antd';
+import { Drawer, Input, Button, Select, Space, Tag, Alert } from 'antd';
 import {
   SearchOutlined,
   DownloadOutlined,
@@ -10,7 +10,7 @@ import {
 } from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
 import { CATEGORY_OPTIONS } from '@/lib/embed-helpers';
-import type { ColumnsType } from 'antd/es/table';
+import { DataTable, type DataTableColumn } from '@/components/design-system';
 import './ImportChannelDrawer.css';
 
 const LANGUAGE_OPTIONS = [
@@ -185,7 +185,7 @@ export function ImportChannelDrawer({
     [videos, alreadyImported]
   );
 
-  const columns: ColumnsType<ChannelVideo> = [
+  const columns: DataTableColumn<ChannelVideo>[] = [
     {
       title: '',
       dataIndex: 'thumbnailUrl',
@@ -272,13 +272,13 @@ export function ImportChannelDrawer({
 
       {videos.length > 0 && (
         <>
-          <Table
+          <DataTable
             dataSource={videos}
             columns={columns}
             rowKey="videoId"
             size="small"
-            pagination={false}
-            scroll={{ y: 400 }}
+            pageSize={false}
+            scrollY={400}
             rowSelection={{
               selectedRowKeys: selectedKeys,
               onChange: (keys) => setSelectedKeys(keys as string[]),

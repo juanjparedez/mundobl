@@ -131,3 +131,41 @@
     text-align: left;
   }
 }
+
+/* ─── Seleccion multiple en tarjetas ─────────────────────────────────
+ * El checkbox flota arriba a la derecha para no empujar el titulo.
+ */
+.mb-data-table__card {
+  position: relative;
+}
+
+.mb-data-table__card-check {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+}
+
+/* Deja lugar al checkbox para que no se superponga con el titulo. */
+.mb-data-table__card:has(.mb-data-table__card-check)
+  .mb-data-table__card-title {
+  padding-right: 28px;
+}
+
+.mb-data-table__card--selected {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 1px var(--primary-color);
+}
+
+/* ─── Fila expandible en tarjetas ────────────────────────────────── */
+.mb-data-table__card-expand {
+  display: flex;
+  justify-content: center;
+}
+
+.mb-data-table__card-expanded {
+  padding-top: 8px;
+  border-top: 1px solid var(--border-color-secondary);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  overflow-x: auto;
+}

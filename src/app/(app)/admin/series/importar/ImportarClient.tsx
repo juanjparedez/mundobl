@@ -9,7 +9,6 @@ import {
   Input,
   InputNumber,
   Select,
-  Table,
   Tag,
   Typography,
   Image,
@@ -25,6 +24,7 @@ import {
   SortAscendingOutlined,
 } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
+import { DataTable } from '@/components/design-system';
 
 interface PreviewEpisode {
   episodeNumber: number | null;
@@ -529,10 +529,9 @@ export function ImportarClient({ variant = 'admin' }: ImportarClientProps) {
                   Renumerar 1..{season.episodes.length}
                 </Button>
               </Space>
-              <Table
-                scroll={{ x: 'max-content' }}
+              <DataTable
                 size="small"
-                pagination={false}
+                pageSize={false}
                 rowKey={(r) => r.videoId}
                 dataSource={season.episodes}
                 rowClassName={(r) =>
