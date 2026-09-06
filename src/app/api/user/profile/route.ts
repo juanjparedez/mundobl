@@ -35,6 +35,7 @@ interface RawTopRatedRow {
   title: string;
   avg_score: number;
   image_url: string | null;
+  image_thumb_url: string | null;
 }
 
 interface RawTypeRow {
@@ -135,6 +136,7 @@ export async function GET(request: NextRequest) {
               id: true,
               title: true,
               imageUrl: true,
+              imageThumbUrl: true,
               year: true,
               type: true,
               country: { select: { name: true } },
@@ -153,6 +155,7 @@ export async function GET(request: NextRequest) {
               id: true,
               title: true,
               imageUrl: true,
+              imageThumbUrl: true,
               year: true,
               type: true,
               country: { select: { name: true } },
@@ -181,6 +184,7 @@ export async function GET(request: NextRequest) {
               id: true,
               title: true,
               imageUrl: true,
+              imageThumbUrl: true,
               year: true,
               type: true,
               country: { select: { name: true } },
@@ -290,11 +294,12 @@ export async function GET(request: NextRequest) {
       // resto de los "top N" — el widget nunca podia mostrar mas de 5 sin
       // importar cuanto pidiera el caller).
       prisma.$queryRaw<RawTopRatedRow[]>`
-        SELECT s.id as series_id, s.title, AVG(ur.score) as avg_score, s."imageUrl" as image_url
+        SELECT s.id as series_id, s.title, AVG(ur.score) as avg_score,
+               s."imageUrl" as image_url, s."imageThumbUrl" as image_thumb_url
         FROM "UserRating" ur
         JOIN "Series" s ON s.id = ur."seriesId"
         WHERE ur."userId" = ${userId}
-        GROUP BY s.id, s.title, s."imageUrl"
+        GROUP BY s.id, s.title, s."imageUrl", s."imageThumbUrl"
         ORDER BY avg_score DESC, s.title ASC
         LIMIT ${topN}
       `,
@@ -357,6 +362,7 @@ export async function GET(request: NextRequest) {
               id: true,
               title: true,
               imageUrl: true,
+              imageThumbUrl: true,
               year: true,
             },
           },
@@ -486,6 +492,7 @@ export async function GET(request: NextRequest) {
           title: r.title,
           rating: Math.round(Number(r.avg_score) * 10) / 10,
           imageUrl: r.image_url,
+          imageThumbUrl: r.image_thumb_url,
         })),
         byType: byTypeRaw.map((r) => ({
           type: r.type,

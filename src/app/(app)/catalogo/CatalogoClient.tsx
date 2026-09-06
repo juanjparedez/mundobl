@@ -41,6 +41,7 @@ import {
   InboxOutlined,
   BarsOutlined,
   SettingOutlined,
+  DashboardOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
 import { useMessage } from '@/hooks/useMessage';
@@ -50,7 +51,7 @@ import { interpolateMessage } from '@/lib/i18n-format';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { WelcomeBanner } from '@/components/common/WelcomeBanner/WelcomeBanner';
 import { EmptyState } from '@/components/design-system';
-import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { withViewTransition } from '@/lib/view-transitions';
 import type { SerieData, UniverseGroup, CatalogItem } from './catalogTypes';
 import { groupIntoCatalogItems } from './catalogGrouping';
@@ -691,7 +692,13 @@ export function CatalogoClient({
 
   // --- Render helpers ---
 
-  const renderSingleCard = (serie: SerieData) => {
+  // Las primeras cards de la grilla son el LCP de /catalogo (la pagina de
+  // mas trafico) — antes SIEMPRE se cargaban con fetchPriority="low", asi que
+  // el elemento LCP se lazy-cargaba como cualquier otro. `priority` (que
+  // ademas desactiva el lazy-load) solo va en las primeras ~4, para no
+  // preload-ear de mas.
+  const renderSingleCard = (serie: SerieData, index = 0) => {
+    const isPriority = index < 4;
     const gradient = getGradientByType(serie.tipo);
     const isInfoExpanded = expandedItemKey === `serie-${serie.id}`;
     const actorHighlights = (serie.actors ?? []).slice(0, 3);
@@ -720,15 +727,16 @@ export function CatalogoClient({
         }}
       >
         <div className="serie-card-cover">
-          {serie.imageUrl ? (
+          {cardImageUrl(serie) ? (
             <Image
-              src={serie.imageUrl}
+              src={cardImageUrl(serie)!}
               alt=""
               fill
               sizes="(max-width: 480px) 50vw, (max-width: 768px) 46vw, (max-width: 1200px) 31vw, 24vw"
               quality={55}
-              fetchPriority="low"
-              unoptimized={isSupabaseImageUrl(serie.imageUrl)}
+              priority={isPriority}
+              fetchPriority={isPriority ? 'high' : 'low'}
+              unoptimized={isSupabaseImageUrl(cardImageUrl(serie))}
               style={{
                 objectFit: 'cover',
                 objectPosition: serie.imagePosition || 'center',
@@ -867,7 +875,8 @@ export function CatalogoClient({
     );
   };
 
-  const renderUniverseCard = (group: UniverseGroup) => {
+  const renderUniverseCard = (group: UniverseGroup, index = 0) => {
+    const isPriority = index < 4;
     const firstSerie = group.series[0];
     const isExpanded = expandedItemKey === `universe-${group.universoId}`;
     return (
@@ -890,15 +899,16 @@ export function CatalogoClient({
           }}
         >
           <div className="serie-card-cover">
-            {firstSerie.imageUrl ? (
+            {cardImageUrl(firstSerie) ? (
               <Image
-                src={firstSerie.imageUrl}
+                src={cardImageUrl(firstSerie)!}
                 alt=""
                 fill
                 sizes="(max-width: 480px) 50vw, (max-width: 768px) 46vw, (max-width: 1200px) 31vw, 24vw"
                 quality={55}
-                fetchPriority="low"
-                unoptimized={isSupabaseImageUrl(firstSerie.imageUrl)}
+                priority={isPriority}
+                fetchPriority={isPriority ? 'high' : 'low'}
+                unoptimized={isSupabaseImageUrl(cardImageUrl(firstSerie))}
                 style={{
                   objectFit: 'cover',
                   objectPosition: firstSerie.imagePosition || 'center',
@@ -990,15 +1000,15 @@ export function CatalogoClient({
         }}
       >
         <div className="serie-list-item-cover">
-          {serie.imageUrl ? (
+          {cardImageUrl(serie) ? (
             <Image
-              src={serie.imageUrl}
+              src={cardImageUrl(serie)!}
               alt=""
               fill
               sizes="48px"
               quality={50}
               fetchPriority="low"
-              unoptimized={isSupabaseImageUrl(serie.imageUrl)}
+              unoptimized={isSupabaseImageUrl(cardImageUrl(serie))}
               style={{
                 objectFit: 'cover',
                 objectPosition: serie.imagePosition || 'center',
@@ -1091,15 +1101,15 @@ export function CatalogoClient({
               }}
             >
               <div className="serie-list-item-cover">
-                {serie.imageUrl ? (
+                {cardImageUrl(serie) ? (
                   <Image
-                    src={serie.imageUrl}
+                    src={cardImageUrl(serie)!}
                     alt=""
                     fill
                     sizes="48px"
                     quality={50}
                     fetchPriority="low"
-                    unoptimized={isSupabaseImageUrl(serie.imageUrl)}
+                    unoptimized={isSupabaseImageUrl(cardImageUrl(serie))}
                     style={{
                       objectFit: 'cover',
                       objectPosition: serie.imagePosition || 'center',
@@ -1444,6 +1454,14 @@ export function CatalogoClient({
               />
             </Tooltip>
           )}
+          <Tooltip title={t('catalogoDashboard.fromClassicLink')}>
+            <Button
+              icon={<DashboardOutlined />}
+              onClick={() => router.push('/catalogo/dashboard')}
+              size={isMobile ? 'small' : 'middle'}
+              aria-label={t('catalogoDashboard.fromClassicLink')}
+            />
+          </Tooltip>
           {canEdit && (
             <Button
               type="primary"
@@ -1768,7 +1786,7 @@ export function CatalogoClient({
 
           {viewMode === 'grid' ? (
             <Row gutter={[16, 16]} className="catalogo-grid-fade">
-              {paginatedItems.map((item) => {
+              {paginatedItems.map((item, index) => {
                 if (item.type === 'universe') {
                   return (
                     <Col
@@ -1778,13 +1796,13 @@ export function CatalogoClient({
                       lg={6}
                       key={`universe-${item.universoId}`}
                     >
-                      {renderUniverseCard(item)}
+                      {renderUniverseCard(item, index)}
                     </Col>
                   );
                 }
                 return (
                   <Col xs={12} sm={12} md={8} lg={6} key={item.serie.id}>
-                    {renderSingleCard(item.serie)}
+                    {renderSingleCard(item.serie, index)}
                   </Col>
                 );
               })}

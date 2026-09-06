@@ -17,16 +17,3 @@ export const ROUTES = {
   NOVEDADES: '/novedades',
   ESTADISTICAS: '/estadisticas',
 } as const;
-
-export const NAV_ITEMS = [
-  {
-    key: 'catalogo',
-    label: 'Catálogo',
-    path: ROUTES.CATALOGO,
-  },
-  {
-    key: 'admin',
-    label: 'Administración',
-    path: ROUTES.ADMIN,
-  },
-] as const;

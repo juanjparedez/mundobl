@@ -7,7 +7,7 @@ import { Widget } from '@/components/dashboard';
 import { AutoFitList, EmptyState } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
-import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import type { ProfileData } from '../../../types';
 import './FavoritesWidget.css';
 
@@ -62,13 +62,13 @@ export function FavoritesWidget({ favorites }: FavoritesWidgetProps) {
                 title={series.title}
               >
                 <span className="mb-favorites-grid__cover">
-                  {series.imageUrl ? (
+                  {cardImageUrl(series) ? (
                     <Image
-                      src={series.imageUrl}
+                      src={cardImageUrl(series)!}
                       alt={series.title}
                       width={64}
                       height={96}
-                      unoptimized={isSupabaseImageUrl(series.imageUrl)}
+                      unoptimized={isSupabaseImageUrl(cardImageUrl(series))}
                     />
                   ) : (
                     <span className="mb-favorites-grid__cover-placeholder">

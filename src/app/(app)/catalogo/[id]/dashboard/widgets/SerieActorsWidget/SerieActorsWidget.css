@@ -28,3 +28,15 @@
   font-size: 12px;
   color: var(--text-tertiary);
 }
+
+/* El nombre ahora es un link a la ficha del actor. */
+a.mb-serie-actors-widget__name {
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+a.mb-serie-actors-widget__name:hover,
+a.mb-serie-actors-widget__name:focus-visible {
+  color: var(--primary-color);
+  text-decoration: underline;
+}

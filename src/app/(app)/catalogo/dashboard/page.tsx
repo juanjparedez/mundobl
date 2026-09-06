@@ -22,6 +22,7 @@ export default async function CatalogoDashboardPage() {
         id: true,
         title: true,
         imageUrl: true,
+        imageThumbUrl: true,
         year: true,
         country: { select: { name: true } },
       },
@@ -32,6 +33,7 @@ export default async function CatalogoDashboardPage() {
     id: s.id,
     title: s.title,
     imageUrl: s.imageUrl,
+    imageThumbUrl: s.imageThumbUrl,
     year: s.year,
     country: s.country?.name ?? null,
   }));

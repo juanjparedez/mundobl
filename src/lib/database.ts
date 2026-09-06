@@ -212,50 +212,6 @@ export async function getWatchableSeriesByIdAdmin(id: number) {
   });
 }
 
-/**
- * Pool liviano para la trivia de series de /juegos: solo los campos que
- * hacen falta para armar preguntas (país / año / protagonista / género),
- * sin campos Date (evita el gotcha de unstable_cache serializando Date a
- * string en un cache HIT — no aplica acá porque no cacheamos esto, pero
- * mantenemos el shape libre de Date de entrada para no heredar el riesgo
- * si en el futuro se agrega cache). Cada tipo de pregunta se genera en el
- * cliente solo si la serie tiene ese dato — no todas tienen protagonista
- * o género cargado.
- */
-export async function getTriviaSeriesPool() {
-  const series = await prisma.series.findMany({
-    where: {
-      visibility: 'VISIBLE',
-      origin: 'CURATED',
-      catalogScope: 'PERSONAL',
-    },
-    select: {
-      id: true,
-      title: true,
-      year: true,
-      country: { select: { name: true } },
-      actors: {
-        where: { isMain: true },
-        take: 1,
-        select: { actor: { select: { name: true } } },
-      },
-      genres: {
-        take: 1,
-        select: { genre: { select: { name: true } } },
-      },
-    },
-  });
-
-  return series.map((s) => ({
-    id: s.id,
-    title: s.title,
-    year: s.year,
-    countryName: s.country?.name ?? null,
-    mainActorName: s.actors[0]?.actor.name ?? null,
-    genreName: s.genres[0]?.genre.name ?? null,
-  }));
-}
-
 const watchableInclude = Prisma.validator<Prisma.SeriesInclude>()({
   country: true,
   universe: true,
@@ -539,6 +495,7 @@ function buildSeriesFullInclude(
             id: true,
             title: true,
             imageUrl: true,
+            imageThumbUrl: true,
             imagePosition: true,
             year: true,
             type: true,
@@ -553,6 +510,7 @@ function buildSeriesFullInclude(
             id: true,
             title: true,
             imageUrl: true,
+            imageThumbUrl: true,
             imagePosition: true,
             year: true,
             type: true,
@@ -570,95 +528,26 @@ function buildSeriesFullInclude(
   } satisfies Prisma.SeriesInclude;
 }
 
-/**
- * Buscar series por título
- */
-export async function searchSeriesByTitle(query: string) {
-  return await prisma.series.findMany({
-    where: {
-      origin: 'CURATED',
-      OR: [
-        { title: { contains: query } },
-        { originalTitle: { contains: query } },
-      ],
-    },
-    include: {
-      country: true,
-      seasons: {
-        select: {
-          id: true,
-          seasonNumber: true,
-        },
-      },
-    },
-    orderBy: {
-      title: 'asc',
-    },
-  });
-}
-
-/**
- * Filtrar series por país
- */
-export async function getSeriesByCountry(countryId: number) {
-  return await prisma.series.findMany({
-    where: { countryId, origin: 'CURATED' },
-    include: {
-      country: true,
-      seasons: true,
-    },
-    orderBy: {
-      title: 'asc',
-    },
-  });
-}
-
-/**
- * Filtrar series por tipo (serie, pelicula, corto, etc.)
- */
-export async function getSeriesByType(type: string) {
-  return await prisma.series.findMany({
-    where: { type, origin: 'CURATED' },
-    include: {
-      country: true,
-      seasons: true,
-    },
-    orderBy: {
-      title: 'asc',
-    },
-  });
-}
-
-/**
- * Obtener series de un universo
- */
-export async function getSeriesByUniverse(universeId: number) {
-  return await prisma.series.findMany({
-    where: { universeId, origin: 'CURATED' },
-    include: {
-      country: true,
-      seasons: true,
-    },
-    orderBy: {
-      year: 'asc',
-    },
-  });
-}
-
 // ============================================
 // ACTORES
 // ============================================
 
 /**
- * Obtener todos los actores
+ * Campos de Series seguros para una tarjeta de filmografia publica.
+ *
+ * Es la lista blanca que usan las fichas de actor y director. Excluye a
+ * proposito `review`, `observations` y `notesPrivate` (notas privadas de
+ * curaduria) y todo el resto de columnas pesadas que la tarjeta no usa.
  */
-export async function getAllActors() {
-  return await prisma.actor.findMany({
-    orderBy: {
-      name: 'asc',
-    },
-  });
-}
+const PUBLIC_SERIES_CARD_SELECT = {
+  id: true,
+  title: true,
+  year: true,
+  type: true,
+  imageUrl: true,
+  imageThumbUrl: true,
+  country: { select: { name: true, code: true } },
+} as const;
 
 /**
  * Obtener un actor por ID con sus series
@@ -666,17 +555,34 @@ export async function getAllActors() {
 export async function getActorById(id: number) {
   // Filtra series por origin='CURATED' y catalogScope='PERSONAL' — los
   // actores asociados a USER_EMBED no exponen sus aportes en /actores/[id].
+  //
+  // `select` explicito, no `include`: la ficha de actor es publica y su
+  // componente de render es 'use client', asi que TODO lo que traigamos
+  // viaja en el payload RSC del HTML. Con `include` se colaban `review`,
+  // `observations` y `notesPrivate` de cada serie (notas privadas de
+  // curaduria). Al agregar un campo aca, chequear que sea publicable.
   return await prisma.actor.findUnique({
     where: { id },
-    include: {
+    select: {
+      id: true,
+      name: true,
+      stageName: true,
+      birthDate: true,
+      nationality: true,
+      imageUrl: true,
+      biography: true,
+      funFacts: true,
+      isPlaceholder: true,
+      aliases: true,
+      imdbUrl: true,
+      mdlUrl: true,
+      wikiUrl: true,
       series: {
         where: { series: { origin: 'CURATED', catalogScope: 'PERSONAL' } },
-        include: {
-          series: {
-            include: {
-              country: true,
-            },
-          },
+        select: {
+          character: true,
+          isMain: true,
+          series: { select: PUBLIC_SERIES_CARD_SELECT },
         },
       },
       seasons: {
@@ -685,32 +591,17 @@ export async function getActorById(id: number) {
             series: { origin: 'CURATED', catalogScope: 'PERSONAL' },
           },
         },
-        include: {
+        select: {
+          character: true,
+          isMain: true,
           season: {
-            include: {
-              series: {
-                include: {
-                  country: true,
-                },
-              },
+            select: {
+              seasonNumber: true,
+              series: { select: PUBLIC_SERIES_CARD_SELECT },
             },
           },
         },
       },
-    },
-  });
-}
-
-/**
- * Buscar actores por nombre
- */
-export async function searchActorsByName(query: string) {
-  return await prisma.actor.findMany({
-    where: {
-      OR: [{ name: { contains: query } }, { stageName: { contains: query } }],
-    },
-    orderBy: {
-      name: 'asc',
     },
   });
 }
@@ -744,39 +635,9 @@ export async function getAllActorsWithCount() {
   });
 }
 
-/**
- * Actores con al menos un "dato curioso" cargado por un admin — pool para
- * la sección Curiosidades de Actores en /juegos. Puede venir vacío (hoy:
- * 0/1092 actores tienen funFacts) — el caller debe degradar amablemente,
- * no asumir que siempre hay contenido.
- */
-export async function getActorsWithFunFacts() {
-  return await prisma.actor.findMany({
-    where: { funFacts: { isEmpty: false } },
-    select: {
-      id: true,
-      name: true,
-      stageName: true,
-      imageUrl: true,
-      nationality: true,
-      funFacts: true,
-    },
-    orderBy: { name: 'asc' },
-  });
-}
-
 // ============================================
 // DIRECTORES
 // ============================================
-
-/**
- * Obtener todos los directores
- */
-export async function getAllDirectors() {
-  return await prisma.director.findMany({
-    orderBy: { name: 'asc' },
-  });
-}
 
 /**
  * Obtener todos los directores con conteo de series
@@ -802,16 +663,27 @@ export async function getAllDirectorsWithCount() {
  * Obtener un director por ID con sus series
  */
 export async function getDirectorById(id: number) {
+  // Mismo criterio que getActorById: `select` explicito porque la ficha es
+  // publica y se renderiza en un client component.
   return await prisma.director.findUnique({
     where: { id },
-    include: {
+    select: {
+      id: true,
+      name: true,
+      nationality: true,
+      imageUrl: true,
+      biography: true,
+      aliases: true,
+      imdbUrl: true,
+      mdlUrl: true,
+      wikiUrl: true,
+      birthYear: true,
+      awards: true,
       series: {
         where: { series: { origin: 'CURATED', catalogScope: 'PERSONAL' } },
-        include: {
+        select: {
           series: {
-            include: {
-              country: true,
-            },
+            select: { ...PUBLIC_SERIES_CARD_SELECT, overallRating: true },
           },
         },
       },
@@ -819,16 +691,281 @@ export async function getDirectorById(id: number) {
   });
 }
 
+// ============================================
+// INDICES PUBLICOS DE PERSONAS Y PRODUCTORAS
+// ============================================
+
 /**
- * Buscar directores por nombre
+ * Listados paginados para /actores, /directores y /productoras.
+ *
+ * Van en SQL crudo a proposito: Prisma no sabe ordenar por un `_count`
+ * FILTRADO (necesitamos contar solo creditos en series CURATED+PERSONAL, para
+ * respetar la separacion con el catalogo de /ver), y ordenar por relevancia es
+ * justo lo que hace util a estos indices — alfabetico deja arriba a los 910
+ * actores de un solo credito. Asi el conteo, el orden y el limite ocurren en
+ * una sola query, sin traer la tabla entera a memoria.
  */
-export async function searchDirectorsByName(query: string) {
-  return await prisma.director.findMany({
-    where: {
-      name: { contains: query },
+
+export type PeopleSort = 'credits' | 'az' | 'za';
+
+export interface PersonIndexRow {
+  id: number;
+  name: string;
+  stageName: string | null;
+  imageUrl: string | null;
+  nationality: string | null;
+  biography: string | null;
+  creditCount: number;
+}
+
+export interface PeopleIndexResult<T> {
+  rows: T[];
+  total: number;
+}
+
+function personOrderBy(sort: PeopleSort): Prisma.Sql {
+  switch (sort) {
+    case 'az':
+      return Prisma.sql`ORDER BY p.name ASC`;
+    case 'za':
+      return Prisma.sql`ORDER BY p.name DESC`;
+    default:
+      return Prisma.sql`ORDER BY "creditCount" DESC, p.name ASC`;
+  }
+}
+
+export async function getActorsIndex(options?: {
+  q?: string;
+  nationality?: string;
+  sort?: PeopleSort;
+  page?: number;
+  perPage?: number;
+}): Promise<PeopleIndexResult<PersonIndexRow>> {
+  const page = Math.max(1, options?.page ?? 1);
+  const perPage = Math.min(120, Math.max(1, options?.perPage ?? 48));
+  const offset = (page - 1) * perPage;
+  const q = options?.q?.trim();
+  const nationality = options?.nationality?.trim();
+
+  // El placeholder "Actor no identificado" no es una persona (ver
+  // src/lib/placeholder-actor.ts): nunca entra a los listados publicos.
+  const where = Prisma.sql`
+    WHERE p."isPlaceholder" = false
+    ${q ? Prisma.sql`AND (p.name ILIKE ${'%' + q + '%'} OR p."stageName" ILIKE ${'%' + q + '%'})` : Prisma.empty}
+    ${nationality ? Prisma.sql`AND p.nationality = ${nationality}` : Prisma.empty}
+  `;
+
+  const [rows, totalRows] = await Promise.all([
+    prisma.$queryRaw<PersonIndexRow[]>(
+      Prisma.sql`
+      SELECT p.id, p.name, p."stageName", p."imageUrl", p.nationality,
+             p.biography,
+             (
+               COALESCE((
+                 SELECT COUNT(*) FROM "SeriesActor" sa
+                 JOIN "Series" s ON s.id = sa."seriesId"
+                 WHERE sa."actorId" = p.id
+                   AND s.origin = 'CURATED' AND s."catalogScope" = 'PERSONAL'
+               ), 0)
+               + COALESCE((
+                 SELECT COUNT(*) FROM "SeasonActor" sea
+                 JOIN "Season" se ON se.id = sea."seasonId"
+                 JOIN "Series" s2 ON s2.id = se."seriesId"
+                 WHERE sea."actorId" = p.id
+                   AND s2.origin = 'CURATED' AND s2."catalogScope" = 'PERSONAL'
+               ), 0)
+             )::int AS "creditCount"
+      FROM "Actor" p
+      ${where}
+      ${personOrderBy(options?.sort ?? 'credits')}
+      LIMIT ${perPage} OFFSET ${offset}
+    `
+    ),
+    prisma.$queryRaw<{ count: bigint }[]>(
+      Prisma.sql`
+      SELECT COUNT(*)::bigint AS count FROM "Actor" p ${where}
+    `
+    ),
+  ]);
+
+  return { rows, total: Number(totalRows[0]?.count ?? 0) };
+}
+
+export async function getDirectorsIndex(options?: {
+  q?: string;
+  nationality?: string;
+  sort?: PeopleSort;
+  page?: number;
+  perPage?: number;
+}): Promise<PeopleIndexResult<PersonIndexRow>> {
+  const page = Math.max(1, options?.page ?? 1);
+  const perPage = Math.min(120, Math.max(1, options?.perPage ?? 48));
+  const offset = (page - 1) * perPage;
+  const q = options?.q?.trim();
+  const nationality = options?.nationality?.trim();
+
+  const where = Prisma.sql`
+    WHERE TRUE
+    ${q ? Prisma.sql`AND p.name ILIKE ${'%' + q + '%'}` : Prisma.empty}
+    ${nationality ? Prisma.sql`AND p.nationality = ${nationality}` : Prisma.empty}
+  `;
+
+  const [rows, totalRows] = await Promise.all([
+    prisma.$queryRaw<PersonIndexRow[]>(
+      Prisma.sql`
+      SELECT p.id, p.name, NULL::text AS "stageName", p."imageUrl",
+             p.nationality, p.biography,
+             COALESCE((
+               SELECT COUNT(*) FROM "SeriesDirector" sd
+               JOIN "Series" s ON s.id = sd."seriesId"
+               WHERE sd."directorId" = p.id
+                 AND s.origin = 'CURATED' AND s."catalogScope" = 'PERSONAL'
+             ), 0)::int AS "creditCount"
+      FROM "Director" p
+      ${where}
+      ${personOrderBy(options?.sort ?? 'credits')}
+      LIMIT ${perPage} OFFSET ${offset}
+    `
+    ),
+    prisma.$queryRaw<{ count: bigint }[]>(
+      Prisma.sql`
+      SELECT COUNT(*)::bigint AS count FROM "Director" p ${where}
+    `
+    ),
+  ]);
+
+  return { rows, total: Number(totalRows[0]?.count ?? 0) };
+}
+
+export interface CompanyIndexRow {
+  id: number;
+  name: string;
+  imageUrl: string | null;
+  description: string | null;
+  countryName: string | null;
+  seriesCount: number;
+}
+
+export async function getProductionCompaniesIndex(options?: {
+  q?: string;
+  sort?: PeopleSort;
+  page?: number;
+  perPage?: number;
+}): Promise<PeopleIndexResult<CompanyIndexRow>> {
+  const page = Math.max(1, options?.page ?? 1);
+  const perPage = Math.min(120, Math.max(1, options?.perPage ?? 48));
+  const offset = (page - 1) * perPage;
+  const q = options?.q?.trim();
+
+  const where = Prisma.sql`
+    WHERE TRUE
+    ${q ? Prisma.sql`AND p.name ILIKE ${'%' + q + '%'}` : Prisma.empty}
+  `;
+
+  // Cuenta sobre SeriesProductionCompany (co-producciones), no sobre la
+  // relacion legacy 1-a-N.
+  const orderBy =
+    options?.sort === 'az'
+      ? Prisma.sql`ORDER BY p.name ASC`
+      : options?.sort === 'za'
+        ? Prisma.sql`ORDER BY p.name DESC`
+        : Prisma.sql`ORDER BY "seriesCount" DESC, p.name ASC`;
+
+  const [rows, totalRows] = await Promise.all([
+    prisma.$queryRaw<CompanyIndexRow[]>(
+      Prisma.sql`
+      SELECT p.id, p.name, p."imageUrl", p.description,
+             c.name AS "countryName",
+             COALESCE((
+               SELECT COUNT(*) FROM "SeriesProductionCompany" spc
+               JOIN "Series" s ON s.id = spc."seriesId"
+               WHERE spc."productionCompanyId" = p.id
+                 AND s.origin = 'CURATED' AND s."catalogScope" = 'PERSONAL'
+             ), 0)::int AS "seriesCount"
+      FROM "ProductionCompany" p
+      LEFT JOIN "Country" c ON c.id = p."countryId"
+      ${where}
+      ${orderBy}
+      LIMIT ${perPage} OFFSET ${offset}
+    `
+    ),
+    prisma.$queryRaw<{ count: bigint }[]>(
+      Prisma.sql`
+      SELECT COUNT(*)::bigint AS count FROM "ProductionCompany" p ${where}
+    `
+    ),
+  ]);
+
+  return { rows, total: Number(totalRows[0]?.count ?? 0) };
+}
+
+/** Ficha publica de productora: datos + filmografia curada. */
+export async function getProductionCompanyById(id: number) {
+  return await prisma.productionCompany.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      imageUrl: true,
+      websiteUrl: true,
+      youtubeUrl: true,
+      foundedYear: true,
+      country: true,
+      countryRef: { select: { name: true, code: true } },
+      seriesLinks: {
+        where: {
+          series: { origin: 'CURATED', catalogScope: 'PERSONAL' },
+        },
+        select: { series: { select: PUBLIC_SERIES_CARD_SELECT } },
+      },
     },
-    orderBy: { name: 'asc' },
   });
+}
+
+/** Nacionalidades disponibles, para el filtro de los indices. */
+export async function getPeopleNationalities(): Promise<string[]> {
+  const rows = await prisma.$queryRaw<{ nationality: string }[]>(
+    Prisma.sql`
+    SELECT DISTINCT nationality FROM (
+      SELECT nationality FROM "Actor" WHERE nationality IS NOT NULL
+      UNION
+      SELECT nationality FROM "Director" WHERE nationality IS NOT NULL
+    ) t
+    ORDER BY nationality ASC
+  `
+  );
+  return rows.map((r) => r.nationality);
+}
+
+/**
+ * Id del director homonimo, si existe.
+ *
+ * Hay personas que actuan y dirigen (5 en el catalogo). Cada una vive en dos
+ * tablas distintas y hasta ahora sus fichas no se conocian entre si. Unificar
+ * Actor y Director en un modelo `Person` seria un cambio grande para 5 casos:
+ * alcanza con cruzar los links.
+ */
+export async function findDirectorIdByName(
+  name: string
+): Promise<number | null> {
+  const director = await prisma.director.findFirst({
+    where: { name: { equals: name, mode: 'insensitive' } },
+    select: { id: true },
+  });
+  return director?.id ?? null;
+}
+
+/** Contraparte: id del actor homonimo, para la ficha de director. */
+export async function findActorIdByName(name: string): Promise<number | null> {
+  const actor = await prisma.actor.findFirst({
+    where: {
+      name: { equals: name, mode: 'insensitive' },
+      isPlaceholder: false,
+    },
+    select: { id: true },
+  });
+  return actor?.id ?? null;
 }
 
 // ============================================
@@ -841,23 +978,22 @@ export async function searchDirectorsByName(query: string) {
 export async function getTagById(id: number) {
   // Filtra series por origin='CURATED' y catalogScope='PERSONAL' — los tags
   // de USER_EMBED no exponen sus aportes en /tags/[id].
+  // `select` explicito por el mismo motivo que getActorById: /tags/[id] es
+  // publica y renderiza en un client component, asi que `include` filtraba
+  // `review`/`observations`/`notesPrivate` al payload RSC.
   return await prisma.tag.findUnique({
     where: { id },
-    include: {
+    select: {
+      id: true,
+      name: true,
+      category: true,
       series: {
         where: { series: { origin: 'CURATED', catalogScope: 'PERSONAL' } },
-        include: {
+        select: {
           series: {
-            include: {
-              country: true,
-              universe: true,
-              seasons: {
-                select: {
-                  id: true,
-                  seasonNumber: true,
-                  episodeCount: true,
-                },
-              },
+            select: {
+              ...PUBLIC_SERIES_CARD_SELECT,
+              universe: { select: { name: true } },
             },
           },
         },
@@ -892,23 +1028,6 @@ export async function getAllCountries() {
   return countries;
 }
 
-/**
- * Obtener un país por ID
- */
-export async function getCountryById(id: number) {
-  return await prisma.country.findUnique({
-    where: { id },
-    include: {
-      series: {
-        where: { origin: 'CURATED', catalogScope: 'PERSONAL' },
-        include: {
-          seasons: true,
-        },
-      },
-    },
-  });
-}
-
 // ============================================
 // ESTADÍSTICAS
 // ============================================
@@ -938,70 +1057,6 @@ export async function getStats() {
     totalCountries,
     totalEpisodes,
   };
-}
-
-/**
- * Obtener series vistas vs no vistas
- */
-export async function getViewStats() {
-  const totalWatched = await prisma.viewStatus.count({
-    where: { status: 'VISTA' },
-  });
-
-  const totalUnwatched = await prisma.viewStatus.count({
-    where: { status: 'SIN_VER' },
-  });
-
-  return {
-    watched: totalWatched,
-    unwatched: totalUnwatched,
-    total: totalWatched + totalUnwatched,
-  };
-}
-
-// ============================================
-// UNIVERSOS
-// ============================================
-
-/**
- * Obtener todos los universos
- */
-export async function getAllUniverses() {
-  return await prisma.universe.findMany({
-    include: {
-      _count: {
-        select: {
-          series: {
-            where: { origin: 'CURATED', catalogScope: 'PERSONAL' },
-          },
-        },
-      },
-    },
-    orderBy: {
-      name: 'asc',
-    },
-  });
-}
-
-/**
- * Obtener un universo por ID
- */
-export async function getUniverseById(id: number) {
-  return await prisma.universe.findUnique({
-    where: { id },
-    include: {
-      series: {
-        where: { origin: 'CURATED', catalogScope: 'PERSONAL' },
-        include: {
-          country: true,
-          seasons: true,
-        },
-        orderBy: {
-          year: 'asc',
-        },
-      },
-    },
-  });
 }
 
 // ============================================

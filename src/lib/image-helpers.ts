@@ -16,3 +16,18 @@ export function isSupabaseImageUrl(url?: string | null): boolean {
     return false;
   }
 }
+
+/**
+ * Elige la imagen a mostrar en un contexto de CARD/grilla (catalogo,
+ * filmografia, carousels): prioriza la miniatura de 600x900 (ver
+ * image-processing.ts) sobre el poster completo. El master (1200x1800) queda
+ * solo para hero/detalle. `imageThumbUrl` es `null` en series legacy que
+ * todavia no pasaron por el backfill o cuyo poster es externo — en esos
+ * casos cae al poster completo, nunca al reves.
+ */
+export function cardImageUrl(entity: {
+  imageUrl?: string | null;
+  imageThumbUrl?: string | null;
+}): string | null {
+  return entity.imageThumbUrl || entity.imageUrl || null;
+}

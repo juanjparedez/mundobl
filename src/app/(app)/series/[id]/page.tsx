@@ -3,6 +3,7 @@ import { cache } from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getSeriesById, prisma } from '@/lib/database';
+import { stripPrivateNotes } from '@/lib/privacy';
 import { SeriesHeader } from '@/components/series/SeriesHeader';
 import { SeasonsList } from '@/components/series/SeasonsList';
 import { SeriesInfo } from '@/components/series/SeriesInfo';
@@ -109,11 +110,16 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
   // El userId se pasa al query para filtrar `viewStatus` al usuario actual
   // (sino el cache global servia los estados de otro usuario — bug del
   // catalogo que mostraba "Visto" en series que el user nunca vio).
-  const serie = await getSeriesByIdCached(seriesId, userId ?? undefined);
+  const serieRaw = await getSeriesByIdCached(seriesId, userId ?? undefined);
 
-  if (!serie) {
+  if (!serieRaw) {
     notFound();
   }
+
+  // La compuerta de notas privadas va ACA, en el servidor: `SeriesInfo` es un
+  // client component, asi que todo lo que le pasemos viaja en el payload RSC
+  // aunque no se renderice.
+  const serie = stripPrivateNotes(serieRaw, session?.user?.role === 'ADMIN');
 
   const config = getContentTypeConfig(serie.type);
   const showSeasons = shouldShowSeasons(serie.type);
@@ -155,6 +161,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
           id: true,
           title: true,
           imageUrl: true,
+          imageThumbUrl: true,
           imagePosition: true,
           year: true,
           type: true,

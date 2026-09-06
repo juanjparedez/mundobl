@@ -7,7 +7,7 @@ import { Widget } from '@/components/dashboard';
 import { AutoFitList, EmptyState } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
-import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import type { ProfileData } from '../../../types';
 import './TopRatedSeriesWidget.css';
 
@@ -65,13 +65,13 @@ export function TopRatedSeriesWidget({
               >
                 <span className="mb-top-rated-list__rank">{idx + 1}</span>
                 <span className="mb-top-rated-list__cover">
-                  {s.imageUrl ? (
+                  {cardImageUrl(s) ? (
                     <Image
-                      src={s.imageUrl}
+                      src={cardImageUrl(s)!}
                       alt=""
                       width={32}
                       height={44}
-                      unoptimized={isSupabaseImageUrl(s.imageUrl)}
+                      unoptimized={isSupabaseImageUrl(cardImageUrl(s))}
                     />
                   ) : (
                     <span className="mb-top-rated-list__cover-placeholder" />

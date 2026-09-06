@@ -261,13 +261,14 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
         }))
       );
 
-      // Cargar actores
-      const actorsRes = await fetch('/api/actors');
+      // Cargar actores (solo nombres — el AutoComplete no necesita
+      // biografia/imagen/`_count` de cada uno de los ~1190 actores)
+      const actorsRes = await fetch('/api/actors?namesOnly=1');
       const actorsData = await actorsRes.json();
       setActors(actorsData.map((a: { name: string }) => a.name));
 
-      // Cargar directores
-      const directorsRes = await fetch('/api/directors');
+      // Cargar directores (solo nombres, mismo criterio)
+      const directorsRes = await fetch('/api/directors?namesOnly=1');
       const directorsData = await directorsRes.json();
       setDirectors(directorsData.map((d: { name: string }) => d.name));
 
@@ -633,8 +634,9 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
 
       const data = await response.json();
 
-      // Actualizar el campo imageUrl en el formulario
-      form.setFieldsValue({ imageUrl: data.url });
+      // Actualizar el campo imageUrl en el formulario (+ la miniatura que
+      // /api/upload genero junto al poster).
+      form.setFieldsValue({ imageUrl: data.url, imageThumbUrl: data.thumbUrl });
       message.success(t('seriesForm.uploadSuccess'));
 
       return false; // Prevent default upload behavior
@@ -1224,6 +1226,14 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
               </Col>
 
               <Col xs={24}>
+                {/* Miniatura de card (600x900) generada junto al poster en
+                    /api/upload — ver image-processing.ts. Viaja pegada a
+                    imageUrl asi el backend sabe si esta guardada tiene una
+                    subida fresca o si hay que dejar la existente intacta
+                    (ver /api/series/[id]). Nunca se edita a mano. */}
+                <Form.Item name="imageThumbUrl" hidden>
+                  <Input />
+                </Form.Item>
                 <Form.Item
                   label={`🖼️ ${t('seriesForm.fieldImage')}`}
                   name="imageUrl"

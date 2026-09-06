@@ -15,7 +15,7 @@ import {
 } from '@ant-design/icons';
 import type { getSeriesById } from '@/lib/database';
 import { useLocale } from '@/lib/providers/LocaleProvider';
-import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { EpisodeAnalysisTable } from '../EpisodeAnalysisTable/EpisodeAnalysisTable';
 import { RightRail } from '../RightRail/RightRail';
 import { WorkspaceFooter } from '../WorkspaceFooter/WorkspaceFooter';
@@ -202,15 +202,15 @@ export function WorkspaceClient({ serie }: WorkspaceClientProps) {
 
       {/* Hero compacto: poster + meta + rating + acciones admin */}
       <header className="mb-workspace__hero">
-        {serie.imageUrl ? (
+        {cardImageUrl(serie) ? (
           <div className="mb-workspace__poster">
             <Image
-              src={serie.imageUrl}
+              src={cardImageUrl(serie)!}
               alt={serie.title}
               width={160}
               height={224}
               sizes="160px"
-              unoptimized={isSupabaseImageUrl(serie.imageUrl)}
+              unoptimized={isSupabaseImageUrl(cardImageUrl(serie))}
             />
           </div>
         ) : null}

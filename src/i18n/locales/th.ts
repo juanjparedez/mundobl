@@ -2672,7 +2672,13 @@ const th: TranslationShape = {
     "linkWiki": "Wikipedia",
     "birthYear": "เกิด {year}",
     "awardsTitle": "รางวัล",
-    "featuredWorksTitle": "ผลงานเด่น"
+    "featuredWorksTitle": "ผลงานเด่น",
+    "biographyTitle": "ประวัติ",
+    "filmographyTitle": "ผลงานกำกับ",
+    "filmographyEmpty": "ยังไม่มีผลงานที่บันทึกไว้",
+    "seriesDirected": "กำกับ {n} เรื่อง",
+    "backToIndex": "ดูผู้กำกับทั้งหมด",
+    "alsoActed": "ผลงานการแสดง"
   },
   "ver": {
     "searchPlaceholder": "ค้นหาซีรีส์, สตูดิโอ หรือชื่อทางการ...",
@@ -2720,7 +2726,50 @@ const th: TranslationShape = {
     "geoRestrictedBadge": "ถูกจำกัดในภูมิภาคของคุณ"
   },
   "actorProfile": {
-    "funFactsTitle": "เกร็ดน่ารู้"
+    "funFactsTitle": "เกร็ดน่ารู้",
+    "biographyTitle": "ประวัติ",
+    "filmographyTitle": "ผลงานการแสดง",
+    "filmographyEmpty": "ยังไม่มีผลงานที่บันทึกไว้",
+    "participations": "{n} เรื่อง",
+    "mainRole": "นักแสดงนำ",
+    "backToIndex": "ดูนักแสดงทั้งหมด",
+    "externalLinksTitle": "ลิงก์",
+    "aliasesTitle": "รู้จักในชื่ออื่น",
+    "alsoDirected": "ผลงานกำกับ"
+  },
+  "companyProfile": {
+    "catalogTitle": "ผลงานที่ผลิต",
+    "catalogEmpty": "ยังไม่มีซีรีส์ที่เชื่อมกับค่ายนี้",
+    "seriesCount": "{n} เรื่อง",
+    "websiteLabel": "เว็บไซต์",
+    "youtubeLabel": "ช่อง YouTube",
+    "foundedLabel": "ก่อตั้งเมื่อ",
+    "countryLabel": "ประเทศ",
+    "backToIndex": "ดูค่ายผู้ผลิตทั้งหมด"
+  },
+  "peopleIndex": {
+    "actorsTitle": "นักแสดง",
+    "actorsSubtitle": "นักแสดงทั้งหมดในแคตตาล็อก เรียงตามจำนวนผลงาน",
+    "directorsTitle": "ผู้กำกับ",
+    "directorsSubtitle": "ผู้กำกับซีรีส์ในแคตตาล็อก",
+    "companiesTitle": "ค่ายผู้ผลิต",
+    "companiesSubtitle": "สตูดิโอเบื้องหลังซีรีส์ในแคตตาล็อก",
+    "searchPlaceholder": "ค้นหาด้วยชื่อ...",
+    "sortLabel": "เรียงลำดับ",
+    "sortCredits": "ผลงานมากที่สุด",
+    "sortAZ": "A-Z",
+    "sortZA": "Z-A",
+    "nationalityAll": "ทุกสัญชาติ",
+    "creditsCount": "{n} เรื่อง",
+    "seriesCount": "{n} เรื่อง",
+    "resultsCount": "{n} รายการ",
+    "emptyTitle": "ไม่พบผลลัพธ์",
+    "emptyDescription": "ลองใช้ชื่ออื่นหรือล้างตัวกรอง",
+    "clearFilters": "ล้างตัวกรอง",
+    "prevPage": "ก่อนหน้า",
+    "nextPage": "ถัดไป",
+    "pageIndicator": "หน้า {current} จาก {total}",
+    "incompleteBadge": "ข้อมูลไม่ครบ"
   },
   "glosario": {
     "heroBadge": "การแปลที่คำนึงถึงวัฒนธรรมและจริยธรรม",

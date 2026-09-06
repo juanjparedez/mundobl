@@ -12,6 +12,9 @@ import {
   PlayCircleOutlined,
   UserOutlined,
   VideoCameraOutlined,
+  VideoCameraAddOutlined,
+  TeamOutlined,
+  BankOutlined,
   TranslationOutlined,
   CommentOutlined,
   LinkOutlined,
@@ -119,6 +122,26 @@ export function Sidebar() {
           },
         ]
       : []),
+    // Indices de personas: existian las fichas [id] pero no habia como llegar
+    // a ellas desde el menu — se descubrian solo desde una serie o el sitemap.
+    {
+      key: '/actores',
+      icon: <TeamOutlined />,
+      label: t('peopleIndex.actorsTitle'),
+      onClick: () => router.push('/actores'),
+    },
+    {
+      key: '/directores',
+      icon: <VideoCameraAddOutlined />,
+      label: t('peopleIndex.directorsTitle'),
+      onClick: () => router.push('/directores'),
+    },
+    {
+      key: '/productoras',
+      icon: <BankOutlined />,
+      label: t('peopleIndex.companiesTitle'),
+      onClick: () => router.push('/productoras'),
+    },
     {
       key: ROUTES.FEEDBACK,
       icon: <CommentOutlined />,
