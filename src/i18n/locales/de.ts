@@ -1153,6 +1153,22 @@ const de: TranslationShape = {
     "unbanSuccess": "Benutzer entsperrt",
     "banError": "Fehler beim Sperren des Benutzers"
   },
+  "adminColaborador": {
+    "filterAllStatuses": "Alle Status",
+    "filterAllCountries": "Alle Länder",
+    "statusVisible": "Veröffentlicht auf /ver",
+    "statusHidden": "Von einem Admin ausgeblendet",
+    "statusPending": "In Prüfung",
+    "statusRejected": "Abgelehnt",
+    "statsSectionTitle": "Statistiken zu deinen Beiträgen",
+    "statsWatching": "Wird gerade angesehen",
+    "statsWatched": "Vollständig angesehen",
+    "statsFavorites": "Favoriten",
+    "statsComments": "Kommentare",
+    "statsReviews": "Rezensionen",
+    "statsSubscriptions": "Abonnenten",
+    "notificationsSectionTitle": "Benachrichtigungen zu deinen Beiträgen"
+  },
   "adminContent": {
     "title": "Inhaltsverwaltung",
     "subtitle": "Einbettbare Videos für Serien und Katalog verwalten.",
@@ -2297,6 +2313,8 @@ const de: TranslationShape = {
     "contentAddedLabel": "Inhalt",
     "reviewPublishedLabel": "Rezension",
     "commentThreadLabel": "Kommentar",
+    "seriesApprovedLabel": "Beitrag genehmigt",
+    "seriesRejectedLabel": "Beitrag abgelehnt",
     "testLabel": "Test",
     "defaultNotificationLabel": "Hinweis",
     "timeAgoRecent": "gerade eben",

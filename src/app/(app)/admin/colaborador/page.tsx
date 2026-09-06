@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth';
-import { prisma } from '@/lib/database';
+import { prisma, getCollaboratorStats } from '@/lib/database';
 import { ColaboradorClient } from './ColaboradorClient';
 import './colaborador.css';
 
@@ -23,21 +23,24 @@ export default async function ColaboradorPage() {
     redirect('/catalogo');
   }
 
-  const items = await prisma.series.findMany({
-    where: { origin: 'USER_EMBED', submittedById: session.user.id },
-    include: {
-      country: true,
-      seasons: {
-        include: {
-          episodes: {
-            where: { embedUrl: { not: null } },
-            select: { id: true },
+  const [items, stats] = await Promise.all([
+    prisma.series.findMany({
+      where: { origin: 'USER_EMBED', submittedById: session.user.id },
+      include: {
+        country: true,
+        seasons: {
+          include: {
+            episodes: {
+              where: { embedUrl: { not: null } },
+              select: { id: true },
+            },
           },
         },
       },
-    },
-    orderBy: { createdAt: 'desc' },
-  });
+      orderBy: { createdAt: 'desc' },
+    }),
+    getCollaboratorStats(session.user.id),
+  ]);
 
   const rows = items.map((s) => ({
     id: s.id,
@@ -51,5 +54,5 @@ export default async function ColaboradorPage() {
     episodeCount: s.seasons.reduce((acc, sn) => acc + sn.episodes.length, 0),
   }));
 
-  return <ColaboradorClient items={rows} />;
+  return <ColaboradorClient items={rows} stats={stats} />;
 }

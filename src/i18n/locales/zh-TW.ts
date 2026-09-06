@@ -1153,6 +1153,22 @@ const zhTW: TranslationShape = {
     "unbanSuccess": "使用者已解除封鎖",
     "banError": "封鎖使用者錯誤"
   },
+  "adminColaborador": {
+    "filterAllStatuses": "所有狀態",
+    "filterAllCountries": "所有國家",
+    "statusVisible": "已發布至 /ver",
+    "statusHidden": "已被管理員隱藏",
+    "statusPending": "審核中",
+    "statusRejected": "已拒絕",
+    "statsSectionTitle": "你的投稿統計",
+    "statsWatching": "正在觀看",
+    "statsWatched": "已看完",
+    "statsFavorites": "收藏",
+    "statsComments": "留言",
+    "statsReviews": "影評",
+    "statsSubscriptions": "訂閱者",
+    "notificationsSectionTitle": "關於你投稿的通知"
+  },
   "adminContent": {
     "title": "內容管理",
     "subtitle": "管理系列和目錄的可嵌入影片。",
@@ -2297,6 +2313,8 @@ const zhTW: TranslationShape = {
     "contentAddedLabel": "內容",
     "reviewPublishedLabel": "評論",
     "commentThreadLabel": "留言",
+    "seriesApprovedLabel": "投稿已通過",
+    "seriesRejectedLabel": "投稿被拒絕",
     "testLabel": "測試",
     "defaultNotificationLabel": "通知",
     "timeAgoRecent": "剛剛",

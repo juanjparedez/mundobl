@@ -1144,6 +1144,22 @@ export type TranslationShape = {
     unbanSuccess: string;
     banError: string;
   };
+  adminColaborador: {
+    filterAllStatuses: string;
+    filterAllCountries: string;
+    statusVisible: string;
+    statusHidden: string;
+    statusPending: string;
+    statusRejected: string;
+    statsSectionTitle: string;
+    statsWatching: string;
+    statsWatched: string;
+    statsFavorites: string;
+    statsComments: string;
+    statsReviews: string;
+    statsSubscriptions: string;
+    notificationsSectionTitle: string;
+  };
   adminContent: {
     title: string;
     subtitle: string;
@@ -2288,6 +2304,8 @@ export type TranslationShape = {
     contentAddedLabel: string;
     reviewPublishedLabel: string;
     commentThreadLabel: string;
+    seriesApprovedLabel: string;
+    seriesRejectedLabel: string;
     testLabel: string;
     defaultNotificationLabel: string;
     timeAgoRecent: string;
@@ -3968,6 +3986,22 @@ const es: TranslationShape = {
     unbanSuccess: 'Usuario desbaneado',
     banError: 'Error al banear usuario',
   },
+  adminColaborador: {
+    filterAllStatuses: 'Todos los estados',
+    filterAllCountries: 'Todos los países',
+    statusVisible: 'Publicada en /ver',
+    statusHidden: 'Oculta por un admin',
+    statusPending: 'En revisión',
+    statusRejected: 'Rechazada',
+    statsSectionTitle: 'Estadísticas de tus aportes',
+    statsWatching: 'Viendo ahora',
+    statsWatched: 'Vistas completas',
+    statsFavorites: 'Favoritos',
+    statsComments: 'Comentarios',
+    statsReviews: 'Reseñas',
+    statsSubscriptions: 'Suscriptores',
+    notificationsSectionTitle: 'Notificaciones sobre tus aportes',
+  },
   adminContent: {
     title: 'Administracion de Contenido',
     subtitle: 'Gestion de videos y embeds para series y catalogo.',
@@ -5169,6 +5203,8 @@ const es: TranslationShape = {
     contentAddedLabel: 'Contenido',
     reviewPublishedLabel: 'Reseña',
     commentThreadLabel: 'Comentario',
+    seriesApprovedLabel: 'Aporte aprobado',
+    seriesRejectedLabel: 'Aporte rechazado',
     testLabel: 'Prueba',
     defaultNotificationLabel: 'Aviso',
     timeAgoRecent: 'recien',
@@ -6862,6 +6898,22 @@ const en: TranslationShape = {
     unbanSuccess: 'User unbanned',
     banError: 'Error banning user',
   },
+  adminColaborador: {
+    filterAllStatuses: 'All statuses',
+    filterAllCountries: 'All countries',
+    statusVisible: 'Published on /ver',
+    statusHidden: 'Hidden by an admin',
+    statusPending: 'Under review',
+    statusRejected: 'Rejected',
+    statsSectionTitle: 'Stats for your contributions',
+    statsWatching: 'Currently watching',
+    statsWatched: 'Completed views',
+    statsFavorites: 'Favorites',
+    statsComments: 'Comments',
+    statsReviews: 'Reviews',
+    statsSubscriptions: 'Subscribers',
+    notificationsSectionTitle: 'Notifications about your contributions',
+  },
   adminContent: {
     title: 'Content Management',
     subtitle: 'Manage embeddable videos for series and catalog.',
@@ -8060,6 +8112,8 @@ const en: TranslationShape = {
     contentAddedLabel: 'Content',
     reviewPublishedLabel: 'Review',
     commentThreadLabel: 'Comment',
+    seriesApprovedLabel: 'Contribution approved',
+    seriesRejectedLabel: 'Contribution rejected',
     testLabel: 'Test',
     defaultNotificationLabel: 'Notice',
     timeAgoRecent: 'just now',

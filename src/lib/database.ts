@@ -1005,6 +1005,76 @@ export async function getUniverseById(id: number) {
 }
 
 // ============================================
+// PANEL DE COLABORADOR (rol COLLABORATOR)
+// ============================================
+
+export interface CollaboratorStats {
+  totalWatching: number;
+  totalWatched: number;
+  totalFavorites: number;
+  totalComments: number;
+  totalReviews: number;
+  totalSubscriptions: number;
+}
+
+/**
+ * Estadisticas agregadas de los aportes de un colaborador externo
+ * (Series con origin=USER_EMBED, submittedById=userId). Mismo patron de
+ * agregacion anonima que /api/stats/public: solo counts, nunca se expone
+ * identidad de quien vio/comento/voto — ni siquiera al propio colaborador
+ * dueño del contenido.
+ */
+export async function getCollaboratorStats(
+  userId: string
+): Promise<CollaboratorStats> {
+  const series = await prisma.series.findMany({
+    where: { origin: 'USER_EMBED', submittedById: userId },
+    select: { id: true },
+  });
+  const seriesIds = series.map((s) => s.id);
+
+  if (seriesIds.length === 0) {
+    return {
+      totalWatching: 0,
+      totalWatched: 0,
+      totalFavorites: 0,
+      totalComments: 0,
+      totalReviews: 0,
+      totalSubscriptions: 0,
+    };
+  }
+
+  const [
+    totalWatching,
+    totalWatched,
+    totalFavorites,
+    totalComments,
+    totalReviews,
+    totalSubscriptions,
+  ] = await Promise.all([
+    prisma.viewStatus.count({
+      where: { seriesId: { in: seriesIds }, status: 'VIENDO' },
+    }),
+    prisma.viewStatus.count({
+      where: { seriesId: { in: seriesIds }, status: 'VISTA' },
+    }),
+    prisma.userFavorite.count({ where: { seriesId: { in: seriesIds } } }),
+    prisma.comment.count({ where: { seriesId: { in: seriesIds } } }),
+    prisma.review.count({ where: { seriesId: { in: seriesIds } } }),
+    prisma.seriesSubscription.count({ where: { seriesId: { in: seriesIds } } }),
+  ]);
+
+  return {
+    totalWatching,
+    totalWatched,
+    totalFavorites,
+    totalComments,
+    totalReviews,
+    totalSubscriptions,
+  };
+}
+
+// ============================================
 // UTILIDADES
 // ============================================
 

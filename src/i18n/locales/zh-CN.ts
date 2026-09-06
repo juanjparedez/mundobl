@@ -1153,6 +1153,22 @@ const zhCN: TranslationShape = {
     "unbanSuccess": "用户已解封",
     "banError": "封禁用户错误"
   },
+  "adminColaborador": {
+    "filterAllStatuses": "所有状态",
+    "filterAllCountries": "所有国家",
+    "statusVisible": "已发布至 /ver",
+    "statusHidden": "已被管理员隐藏",
+    "statusPending": "审核中",
+    "statusRejected": "已拒绝",
+    "statsSectionTitle": "你的投稿统计",
+    "statsWatching": "正在观看",
+    "statsWatched": "已看完",
+    "statsFavorites": "收藏",
+    "statsComments": "评论",
+    "statsReviews": "影评",
+    "statsSubscriptions": "订阅者",
+    "notificationsSectionTitle": "关于你投稿的通知"
+  },
   "adminContent": {
     "title": "内容管理",
     "subtitle": "管理剧集和目录的可嵌入视频。",
@@ -2297,6 +2313,8 @@ const zhCN: TranslationShape = {
     "contentAddedLabel": "内容",
     "reviewPublishedLabel": "评论",
     "commentThreadLabel": "评论",
+    "seriesApprovedLabel": "投稿已通过",
+    "seriesRejectedLabel": "投稿被拒绝",
     "testLabel": "测试",
     "defaultNotificationLabel": "通知",
     "timeAgoRecent": "刚刚",

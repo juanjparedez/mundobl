@@ -1153,6 +1153,22 @@ const th: TranslationShape = {
     "unbanSuccess": "ผู้ใช้ถูกเลิกแบนแล้ว",
     "banError": "เกิดข้อผิดพลาดในการแบนผู้ใช้"
   },
+  "adminColaborador": {
+    "filterAllStatuses": "สถานะทั้งหมด",
+    "filterAllCountries": "ทุกประเทศ",
+    "statusVisible": "เผยแพร่ที่ /ver",
+    "statusHidden": "ซ่อนโดยผู้ดูแลระบบ",
+    "statusPending": "อยู่ระหว่างตรวจสอบ",
+    "statusRejected": "ถูกปฏิเสธ",
+    "statsSectionTitle": "สถิติผลงานของคุณ",
+    "statsWatching": "กำลังดูอยู่",
+    "statsWatched": "ดูจบแล้ว",
+    "statsFavorites": "รายการโปรด",
+    "statsComments": "ความคิดเห็น",
+    "statsReviews": "รีวิว",
+    "statsSubscriptions": "ผู้ติดตาม",
+    "notificationsSectionTitle": "การแจ้งเตือนเกี่ยวกับผลงานของคุณ"
+  },
   "adminContent": {
     "title": "การจัดการเนื้อหา",
     "subtitle": "จัดการวิดีโอที่ฝังได้สำหรับซีรีส์และแคตตาล็อก",
@@ -2297,6 +2313,8 @@ const th: TranslationShape = {
     "contentAddedLabel": "เนื้อหา",
     "reviewPublishedLabel": "รีวิว",
     "commentThreadLabel": "ความคิดเห็น",
+    "seriesApprovedLabel": "ผลงานได้รับการอนุมัติ",
+    "seriesRejectedLabel": "ผลงานถูกปฏิเสธ",
     "testLabel": "ทดสอบ",
     "defaultNotificationLabel": "ประกาศ",
     "timeAgoRecent": "เมื่อสักครู่",

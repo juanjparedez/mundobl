@@ -1153,6 +1153,22 @@ const ko: TranslationShape = {
     "unbanSuccess": "사용자 차단 해제됨",
     "banError": "사용자 차단 오류"
   },
+  "adminColaborador": {
+    "filterAllStatuses": "모든 상태",
+    "filterAllCountries": "모든 국가",
+    "statusVisible": "/ver에 게시됨",
+    "statusHidden": "관리자가 숨김",
+    "statusPending": "검토 중",
+    "statusRejected": "거부됨",
+    "statsSectionTitle": "내 기여 통계",
+    "statsWatching": "시청 중",
+    "statsWatched": "시청 완료",
+    "statsFavorites": "즐겨찾기",
+    "statsComments": "댓글",
+    "statsReviews": "리뷰",
+    "statsSubscriptions": "구독자",
+    "notificationsSectionTitle": "내 기여에 대한 알림"
+  },
   "adminContent": {
     "title": "콘텐츠 관리",
     "subtitle": "시리즈 및 카탈로그에 포함할 수 있는 동영상 관리",
@@ -2297,6 +2313,8 @@ const ko: TranslationShape = {
     "contentAddedLabel": "콘텐츠",
     "reviewPublishedLabel": "리뷰",
     "commentThreadLabel": "댓글",
+    "seriesApprovedLabel": "기여가 승인됨",
+    "seriesRejectedLabel": "기여가 거부됨",
     "testLabel": "테스트",
     "defaultNotificationLabel": "알림",
     "timeAgoRecent": "방금 전",
