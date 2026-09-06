@@ -6,6 +6,7 @@ import {
   useEffect,
   useCallback,
   useDeferredValue,
+  useRef,
 } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
@@ -43,6 +44,7 @@ import {
   BarsOutlined,
   SettingOutlined,
   DashboardOutlined,
+  InfoCircleOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
 import { useMessage } from '@/hooks/useMessage';
@@ -51,7 +53,14 @@ import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { WelcomeBanner } from '@/components/common/WelcomeBanner/WelcomeBanner';
-import { EmptyState } from '@/components/design-system';
+import {
+  EmptyState,
+  useQuickPreviewController,
+} from '@/components/design-system';
+import type {
+  QuickPreviewChip,
+  QuickPreviewData,
+} from '@/components/design-system';
 import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { canEditCatalog } from '@/lib/auth-client';
 import { withViewTransition } from '@/lib/view-transitions';
@@ -630,8 +639,10 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
     router.replace('/catalogo');
   };
 
-  const toggleFavorite = async (serieId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
+  // `e` opcional: desde la card viene con evento (hay que frenar la
+  // propagacion para no navegar al detalle), desde el quick preview no.
+  const toggleFavorite = async (serieId: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
 
     const wasFavorite = favoriteIds.has(serieId);
     setFavoriteIds((prev) => {
@@ -680,10 +691,193 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
     withViewTransition(() => router.push(`/series/${id}`));
   };
 
-  const handleQuickView = (id: string, e: React.MouseEvent) => {
+  // ─── Vista rapida ──────────────────────────────────────────────────
+  // Antes el boton del ojo hacia exactamente lo mismo que un click en la
+  // card (router.push al detalle), asi que no habia forma de mirar la
+  // sinopsis, el elenco o los generos sin cambiar de pagina. Ahora abre un
+  // preview en el lugar, con chips que ademas aplican el filtro
+  // correspondiente sobre el catalogo.
+  const quickPreviewLabels = useMemo(
+    () => ({
+      close: t('quickPreview.close'),
+      synopsis: t('quickPreview.synopsis'),
+      noSynopsis: t('quickPreview.noSynopsis'),
+      moreInfo: t('quickPreview.moreInfo'),
+    }),
+    [t]
+  );
+
+  const applyFilterFromPreview = (apply: () => void) => {
+    apply();
+    handleFilterChange();
+  };
+
+  const buildSeriePreview = (serie: SerieData): QuickPreviewData => {
+    const fav = isFavorite(serie.id);
+    const watched = viewedIds.has(serie.id);
+
+    const chipsFrom = (
+      prefix: string,
+      values: string[] | undefined,
+      apply: (value: string) => void
+    ): QuickPreviewChip[] =>
+      (values ?? []).map((value) => ({
+        key: `${prefix}-${value}`,
+        label: value,
+        onSelect: () => applyFilterFromPreview(() => apply(value)),
+      }));
+
+    return {
+      id: serie.id,
+      title: serie.titulo,
+      imageUrl: cardImageUrl(serie),
+      imagePosition: serie.imagePosition,
+      coverAspect: '16:9',
+      badges: [
+        {
+          key: 'type',
+          label: serie.tipo.toUpperCase(),
+          color: getColorByType(serie.tipo),
+        },
+        ...(serie.rating != null && serie.rating > 0
+          ? [{ key: 'rating', label: `\u2605 ${serie.rating}`, color: 'gold' }]
+          : []),
+        ...(watched
+          ? [
+              {
+                key: 'watched',
+                label: t('catalogo.watchedTag'),
+                color: 'success',
+              },
+            ]
+          : []),
+      ],
+      meta: (
+        <>
+          <span>
+            <CountryFlag code={serie.paisCode} size="small" /> {serie.pais}
+          </span>
+          {serie.anio > 0 && <span>{serie.anio}</span>}
+          {serie.universoNombre && (
+            <span>
+              {t('quickPreview.universe')}: {serie.universoNombre}
+            </span>
+          )}
+        </>
+      ),
+      synopsis: serie.synopsis,
+      facts: [
+        ...(serie.temporadas > 0
+          ? [
+              {
+                key: 'seasons',
+                label: t('quickPreview.seasons'),
+                value: serie.temporadas,
+              },
+            ]
+          : []),
+        ...(serie.episodios > 0
+          ? [
+              {
+                key: 'episodes',
+                label: t('quickPreview.episodes'),
+                value: serie.episodios,
+              },
+            ]
+          : []),
+        ...((serie.runtimeHours ?? 0) > 0
+          ? [
+              {
+                key: 'runtime',
+                label: t('quickPreview.runtime'),
+                value: `${serie.runtimeHours}h`,
+              },
+            ]
+          : []),
+        ...(serie.originalLanguage
+          ? [
+              {
+                key: 'language',
+                label: t('quickPreview.language'),
+                value: serie.originalLanguage,
+              },
+            ]
+          : []),
+      ],
+      chipGroups: [
+        {
+          key: 'genres',
+          label: t('quickPreview.genres'),
+          chips: chipsFrom('genre', serie.genres, setSelectedGenre),
+        },
+        {
+          key: 'tags',
+          label: t('quickPreview.tags'),
+          chips: (serie.tags ?? []).map((tag) => ({
+            key: `tag-${tag.id}`,
+            label: tag.name,
+            onSelect: () =>
+              applyFilterFromPreview(() => setSelectedTags([tag.id])),
+          })),
+        },
+        {
+          key: 'cast',
+          label: t('quickPreview.cast'),
+          chips: chipsFrom('actor', serie.actors, setSelectedActor),
+        },
+        {
+          key: 'directors',
+          label: t('quickPreview.directors'),
+          chips: chipsFrom('director', serie.directors, setSelectedDirector),
+        },
+        {
+          key: 'platforms',
+          label: t('quickPreview.platforms'),
+          chips: chipsFrom('platform', serie.platforms, setSelectedPlatform),
+        },
+      ],
+      actions: [
+        {
+          key: 'detail',
+          label: t('quickPreview.fullDetail'),
+          icon: <InfoCircleOutlined />,
+          variant: 'primary' as const,
+          href: `/series/${serie.id}`,
+        },
+        {
+          key: 'favorite',
+          label: fav ? t('catalogo.removeFavorite') : t('catalogo.addFavorite'),
+          icon: fav ? <StarFilled /> : <StarOutlined />,
+          active: fav,
+          iconOnlyOnHoverCard: true,
+          onClick: () => {
+            void toggleFavorite(serie.id);
+          },
+        },
+      ],
+    };
+  };
+
+  // El preview guardado invoca esta ref, no la closure del render en que
+  // se abrio: sin esto, marcar favorito adentro del preview no daria vuelta
+  // la estrella (la data quedaria congelada en el estado viejo).
+  const buildSeriePreviewRef = useRef(buildSeriePreview);
+  buildSeriePreviewRef.current = buildSeriePreview;
+
+  const {
+    openPreview,
+    previewTriggerProps,
+    overlays: quickPreviewOverlays,
+  } = useQuickPreviewController({
+    labels: quickPreviewLabels,
+    // En vista lista las filas son angostas y densas: un hover-preview ahi
+    // tapa las filas vecinas mas de lo que ayuda.
+    hoverEnabled: viewMode !== 'list',
+  });
+
+  const handleQuickView = (serie: SerieData, e: React.MouseEvent) => {
     e.stopPropagation();
-    rememberScroll();
-    withViewTransition(() => router.push(`/series/${id}`));
+    openPreview(() => buildSeriePreviewRef.current(serie));
   };
 
   // Toggle unico: cierra cualquier otra card expandida (single o universo)
@@ -734,6 +928,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
         role="button"
         tabIndex={0}
         aria-label={serie.titulo}
+        {...previewTriggerProps(() => buildSeriePreviewRef.current(serie))}
         onClick={() => handleCardClick(serie.id)}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
@@ -777,12 +972,12 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
                   {isFavorite(serie.id) ? <StarFilled /> : <StarOutlined />}
                 </button>
               </Tooltip>
-              <Tooltip title={t('catalogo.viewDetail')}>
+              <Tooltip title={t('quickPreview.open')}>
                 <button
                   type="button"
                   className="serie-card-action-btn"
-                  aria-label={t('catalogo.viewDetail')}
-                  onClick={(e) => handleQuickView(serie.id, e)}
+                  aria-label={t('quickPreview.open')}
+                  onClick={(e) => handleQuickView(serie, e)}
                 >
                   <EyeOutlined />
                 </button>
@@ -1907,6 +2102,10 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
         resetLabel={t('catalogCarousel.resetButton')}
         dragHandleAria={t('catalogCarousel.dragHandleAria')}
       />
+
+      {/* Modal de vista rapida + hover-preview (portal). Una sola
+       *  instancia para toda la pagina. */}
+      {quickPreviewOverlays}
     </>
   );
 }

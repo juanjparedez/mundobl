@@ -1477,6 +1477,32 @@ export type TranslationShape = {
     sortRatingDesc: string;
     quickFilterFeatured: string;
   };
+  quickPreview: {
+    open: string;
+    close: string;
+    synopsis: string;
+    noSynopsis: string;
+    moreInfo: string;
+    fullDetail: string;
+    watchNow: string;
+    genres: string;
+    tags: string;
+    cast: string;
+    directors: string;
+    platforms: string;
+    universe: string;
+    seasons: string;
+    episodes: string;
+    runtime: string;
+    year: string;
+    country: string;
+    type: string;
+    rating: string;
+    language: string;
+    company: string;
+    character: string;
+    hoverHint: string;
+  };
   catalogCarousel: {
     viewToggleLabel: string;
     configureButton: string;
@@ -4380,6 +4406,32 @@ const es: TranslationShape = {
     sortYearOld: 'Más antiguo',
     sortRatingDesc: 'Mejor valorado',
     quickFilterFeatured: 'Destacadas',
+  },
+  quickPreview: {
+    open: 'Vista rápida',
+    close: 'Cerrar',
+    synopsis: 'Sinopsis',
+    noSynopsis: 'Sin sinopsis cargada',
+    moreInfo: 'Más info',
+    fullDetail: 'Ficha completa',
+    watchNow: 'Ver ahora',
+    genres: 'Géneros',
+    tags: 'Tags',
+    cast: 'Elenco',
+    directors: 'Dirección',
+    platforms: 'Plataformas',
+    universe: 'Universo',
+    seasons: 'Temporadas',
+    episodes: 'Episodios',
+    runtime: 'Duración',
+    year: 'Año',
+    country: 'País',
+    type: 'Tipo',
+    rating: 'Puntaje',
+    language: 'Idioma',
+    company: 'Productora',
+    character: 'Personaje',
+    hoverHint: 'Dejá el mouse sobre una card para ver más',
   },
   catalogCarousel: {
     viewToggleLabel: 'Vista carrusel',
@@ -7341,6 +7393,32 @@ const en: TranslationShape = {
     sortYearOld: 'Oldest first',
     sortRatingDesc: 'Best rated',
     quickFilterFeatured: 'Featured',
+  },
+  quickPreview: {
+    open: 'Quick view',
+    close: 'Close',
+    synopsis: 'Synopsis',
+    noSynopsis: 'No synopsis available',
+    moreInfo: 'More info',
+    fullDetail: 'Full details',
+    watchNow: 'Watch now',
+    genres: 'Genres',
+    tags: 'Tags',
+    cast: 'Cast',
+    directors: 'Directors',
+    platforms: 'Platforms',
+    universe: 'Universe',
+    seasons: 'Seasons',
+    episodes: 'Episodes',
+    runtime: 'Runtime',
+    year: 'Year',
+    country: 'Country',
+    type: 'Type',
+    rating: 'Rating',
+    language: 'Language',
+    company: 'Studio',
+    character: 'Character',
+    hoverHint: 'Hover a card to see more',
   },
   catalogCarousel: {
     viewToggleLabel: 'Carousel view',

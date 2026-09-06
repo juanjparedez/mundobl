@@ -2838,6 +2838,32 @@ const zhTW: TranslationShape = {
     "finishTitle": "問答遊戲完成！",
     "playAgainButton": "再玩一次",
     "bestScoreLabel": "您的最佳成績：{score} 題（共 {total} 題）"
+  },
+  "quickPreview": {
+    "open": "快速預覽",
+    "close": "關閉",
+    "synopsis": "劇情簡介",
+    "noSynopsis": "暫無簡介",
+    "moreInfo": "更多資訊",
+    "fullDetail": "完整詳情",
+    "watchNow": "立即觀看",
+    "genres": "類型",
+    "tags": "標籤",
+    "cast": "演員",
+    "directors": "導演",
+    "platforms": "播放平台",
+    "universe": "系列宇宙",
+    "seasons": "季數",
+    "episodes": "集數",
+    "runtime": "時長",
+    "year": "年份",
+    "country": "國家",
+    "type": "類別",
+    "rating": "評分",
+    "language": "語言",
+    "company": "製作公司",
+    "character": "角色",
+    "hoverHint": "將滑鼠移到卡片上可查看更多"
   }
 } as unknown as TranslationShape;
 

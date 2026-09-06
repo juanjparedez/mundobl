@@ -494,6 +494,10 @@ const PUBLIC_SERIES_CARD_SELECT = {
   type: true,
   imageUrl: true,
   imageThumbUrl: true,
+  // La sinopsis es publica (se muestra en /series/[id]) y la necesita la
+  // vista rapida de las tarjetas: sin ella el preview no diria nada que
+  // la propia tarjeta no muestre ya.
+  synopsis: true,
   country: { select: { name: true, code: true } },
 } as const;
 

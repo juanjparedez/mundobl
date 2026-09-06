@@ -1,6 +1,7 @@
 @import './variables.css';
 @import './sections.css';
 @import './skins/index.css';
+@import './carousel.css';
 
 * {
   box-sizing: border-box;
