@@ -1571,6 +1571,48 @@ export type TranslationShape = {
     featureStatsTitle: string;
     featureStatsDesc: string;
     footerCtaText: string;
+
+    trackerEyebrow: string;
+    trackerTitle: string;
+    trackerSubtitle: string;
+    trackerFeature1Title: string;
+    trackerFeature1Desc: string;
+    trackerFeature2Title: string;
+    trackerFeature2Desc: string;
+    trackerFeature3Title: string;
+    trackerFeature3Desc: string;
+    trackerCta: string;
+    trackerMockSeries: string;
+    trackerMockStatus: string;
+    trackerMockProgress: string;
+    trackerMockSpoiler: string;
+    trackerMockNoteTitle: string;
+    trackerMockNoteText: string;
+
+    glossaryEyebrow: string;
+    glossaryTitle: string;
+    glossarySubtitle: string;
+    glossaryTermOfTheDay: string;
+    glossaryQuizCardTitle: string;
+    glossaryQuizCardDesc: string;
+    glossaryQuizCardCta: string;
+    glossaryExploreCta: string;
+
+    ecosystemEyebrow: string;
+    ecosystemTitle: string;
+    ecosystemSubtitle: string;
+    ecosystemPillar1Title: string;
+    ecosystemPillar1Desc: string;
+    ecosystemPillar2Title: string;
+    ecosystemPillar2Desc: string;
+    ecosystemPillar3Title: string;
+    ecosystemPillar3Desc: string;
+    ecosystemCta: string;
+
+    newsEyebrow: string;
+    newsTitle: string;
+    newsSubtitle: string;
+    newsCta: string;
   };
   welcomeBanner: {
     title: string;
@@ -4516,6 +4558,60 @@ const es: TranslationShape = {
     featureStatsDesc:
       'Descubrí cuántas horas viste, tus géneros preferidos y tus rachas de actividad.',
     footerCtaText: 'Empezá a explorar el catálogo ahora.',
+
+    trackerEyebrow: 'Tu Espacio Personal',
+    trackerTitle: 'Llevá el control exacto de lo que ves, a tu ritmo',
+    trackerSubtitle:
+      'Tu progreso, tus notas y tus momentos favoritos en un solo lugar, sin desorden ni spoilers accidentales.',
+    trackerFeature1Title: 'Progreso episodio a episodio',
+    trackerFeature1Desc:
+      'Registrá cada capítulo visto con un click y retomá exactamente donde lo dejaste en cualquier dispositivo.',
+    trackerFeature2Title: 'Modo seguro anti-spoilers',
+    trackerFeature2Desc:
+      'Ocultá descripciones de episodios futuros y reseñas con spoilers de series que aún no terminaste.',
+    trackerFeature3Title: 'Diario y notas privadas fechadas',
+    trackerFeature3Desc:
+      'Anotá reflexiones y timestamps de tus escenas favoritas. Solo vos podés verlas.',
+    trackerCta: 'Empezar a seguir mis series',
+    trackerMockSeries: 'KinnPorsche The Series',
+    trackerMockStatus: 'Viendo',
+    trackerMockProgress: 'Episodio 7 de 14 · 50%',
+    trackerMockSpoiler: 'Filtro Anti-Spoilers activo',
+    trackerMockNoteTitle: 'Nota privada · Ep. 7 (24:15)',
+    trackerMockNoteText:
+      '«La escena en el búnker resignifica toda la dinámica entre ambos. Volver a ver.»',
+
+    glossaryEyebrow: 'Cultura & Lenguaje',
+    glossaryTitle: 'Entendé los matices detrás de cada historia',
+    glossarySubtitle:
+      'El BL asiático está lleno de códigos culturales propios: honoríficos familiares, jerga romántica y tradiciones que merecen entenderse bien.',
+    glossaryTermOfTheDay: 'Término destacado',
+    glossaryQuizCardTitle: '¿Cuánto sabés de tropos y cultura BL?',
+    glossaryQuizCardDesc:
+      'Poné a prueba tus conocimientos sobre honoríficos, dinámicas clásicas y sutilezas en un desafío rápido.',
+    glossaryQuizCardCta: 'Jugar al Mini-Quiz',
+    glossaryExploreCta: 'Explorar glosario completo',
+
+    ecosystemEyebrow: 'Comunidad Abierta',
+    ecosystemTitle: 'Una plataforma construida por y para fans',
+    ecosystemSubtitle:
+      'MundoBL no es una productora ni un sitio con publicidad abusiva. Es un ecosistema transparente para celebrar el género y apoyar a creadores y fansubs.',
+    ecosystemPillar1Title: 'Canales Oficiales Primero',
+    ecosystemPillar1Desc:
+      'Priorizamos enlaces a YouTube oficial, GagaOOLala, Viki y iQIYI para apoyar directamente a las productoras.',
+    ecosystemPillar2Title: 'Espacio de Autogestión para Fansubs',
+    ecosystemPillar2Desc:
+      'Equipos de traducción pueden subir sus enlaces, visibilizar sus créditos y compartir sus links de donación directa sin intermediarios.',
+    ecosystemPillar3Title: 'Curaduría y Moderación Colectiva',
+    ecosystemPillar3Desc:
+      'Reportá links caídos, proponé títulos faltantes y votá reseñas útiles para que la comunidad destaque lo mejor.',
+    ecosystemCta: 'Quiero colaborar con la comunidad',
+
+    newsEyebrow: 'Actualidad & Rodajes',
+    newsTitle: 'Noticias del género curadas sin relleno',
+    newsSubtitle:
+      'Enterate de nuevos rodajes, trailers oficiales, cancelaciones y adaptaciones de novelas sin clickbaits.',
+    newsCta: 'Ver todas las noticias',
   },
   welcomeBanner: {
     title: 'Bienvenido/a a MundoBL',
@@ -7503,6 +7599,60 @@ const en: TranslationShape = {
     featureStatsDesc:
       'Discover how many hours you have watched, your favorite genres and your activity streaks.',
     footerCtaText: 'Start exploring the catalog now.',
+
+    trackerEyebrow: 'Your Personal Space',
+    trackerTitle: 'Keep track of what you watch, at your own pace',
+    trackerSubtitle:
+      'Your progress, notes, and favorite moments in one place, clutter-free and spoiler-free.',
+    trackerFeature1Title: 'Episode-by-episode tracking',
+    trackerFeature1Desc:
+      'Log each watched episode with a single click and pick up right where you left off on any device.',
+    trackerFeature2Title: 'Spoiler-free safe mode',
+    trackerFeature2Desc:
+      'Hide synopsis of future episodes and spoiler reviews for series you have not completed.',
+    trackerFeature3Title: 'Private diary & timestamped notes',
+    trackerFeature3Desc:
+      'Jot down reactions and timestamps for your favorite scenes. Completely private to you.',
+    trackerCta: 'Start tracking my series',
+    trackerMockSeries: 'KinnPorsche The Series',
+    trackerMockStatus: 'Watching',
+    trackerMockProgress: 'Episode 7 of 14 · 50%',
+    trackerMockSpoiler: 'Anti-Spoiler filter active',
+    trackerMockNoteTitle: 'Private note · Ep. 7 (24:15)',
+    trackerMockNoteText:
+      '“The scene in the bunker completely shifts their dynamic. Must rewatch.”',
+
+    glossaryEyebrow: 'Culture & Language',
+    glossaryTitle: 'Understand the nuances behind every story',
+    glossarySubtitle:
+      'Asian BL is full of unique cultural codes: honorifics, romantic slang, and traditions that deserve to be understood.',
+    glossaryTermOfTheDay: 'Featured term',
+    glossaryQuizCardTitle: 'How well do you know BL culture & tropes?',
+    glossaryQuizCardDesc:
+      'Test your knowledge on honorifics, classic dynamics, and subtle tropes in a quick challenge.',
+    glossaryQuizCardCta: 'Take the Mini-Quiz',
+    glossaryExploreCta: 'Explore full glossary',
+
+    ecosystemEyebrow: 'Open Community',
+    ecosystemTitle: 'A platform built by and for fans',
+    ecosystemSubtitle:
+      'MundoBL is not a production studio or an ad-bloated site. It is a transparent ecosystem celebrating the genre and supporting creators and fansubs.',
+    ecosystemPillar1Title: 'Official Channels First',
+    ecosystemPillar1Desc:
+      'We link and prioritize official releases on YouTube, GagaOOLala, Viki, and iQIYI to support studios directly.',
+    ecosystemPillar2Title: 'Self-Service Space for Fansubs',
+    ecosystemPillar2Desc:
+      'Translation teams can manage episode links, showcase crew credits, and share direct donation links with no middlemen.',
+    ecosystemPillar3Title: 'Community Curation & Reports',
+    ecosystemPillar3Desc:
+      'Report broken links, submit missing titles, and vote on helpful reviews to keep the catalog fresh.',
+    ecosystemCta: 'Become a collaborator',
+
+    newsEyebrow: 'Current Affairs & Production',
+    newsTitle: 'Curated industry news without clickbait',
+    newsSubtitle:
+      'Stay updated on new shoots, official trailers, announcements, and novel adaptations without noise.',
+    newsCta: 'Browse all news',
   },
   welcomeBanner: {
     title: 'Welcome to MundoBL',
