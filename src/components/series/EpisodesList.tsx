@@ -50,12 +50,9 @@ interface Episode {
     status: string;
     watchedDate?: Date | null;
   }> | null;
-  comments?: Array<{
-    id: number;
-    content: string;
-    createdAt: Date;
-    updatedAt: Date;
-  }> | null;
+  // Solo el conteo (badge) — el contenido se pide bajo demanda al expandir
+  // la fila (CommentsList hace su propio fetch, ver getApiEndpoint()).
+  _count?: { comments: number };
 }
 
 interface EpisodesListProps {
@@ -470,7 +467,7 @@ export function EpisodesList({
               const isWatched =
                 episode.viewStatus?.[0]?.status === 'VISTA' || false;
               const isSelected = selectedIds.has(episode.id);
-              const commentCount = episode.comments?.length || 0;
+              const commentCount = episode._count?.comments || 0;
 
               return (
                 <div key={episode.id}>
@@ -640,7 +637,6 @@ export function EpisodesList({
                       )}
                       <CommentsList
                         episodeId={episode.id}
-                        initialComments={episode.comments || []}
                         placeholder={t('episodesList.commentsPlaceholder')}
                       />
                     </div>

@@ -377,34 +377,14 @@ function buildSeriesFullInclude(
         episodes: {
           include: {
             viewStatus: vs,
-            comments: {
-              where: { parentId: null },
-              include: {
-                user: {
-                  select: {
-                    id: true,
-                    name: true,
-                    nickname: true,
-                    image: true,
-                    role: true,
-                  },
-                },
-                replies: {
-                  include: {
-                    user: {
-                      select: {
-                        id: true,
-                        name: true,
-                        nickname: true,
-                        image: true,
-                        role: true,
-                      },
-                    },
-                  },
-                  orderBy: { createdAt: 'asc' },
-                },
-              },
-              orderBy: { createdAt: 'desc' },
+            // Solo el conteo para el badge de EpisodesList — el contenido
+            // (con replies + user de cada comentario) se pide bajo demanda
+            // via GET /api/episodes/[id]/comments cuando el usuario expande
+            // esa fila (CommentsList ya hace ese fetch). Antes esto traia
+            // el arbol completo de TODOS los episodios en cada carga de
+            // /series/[id], se expandiera algo o no.
+            _count: {
+              select: { comments: { where: { parentId: null } } },
             },
           },
           orderBy: {
@@ -412,35 +392,6 @@ function buildSeriesFullInclude(
           },
         },
         ratings: true,
-        comments: {
-          where: { parentId: null },
-          include: {
-            user: {
-              select: {
-                id: true,
-                name: true,
-                nickname: true,
-                image: true,
-                role: true,
-              },
-            },
-            replies: {
-              include: {
-                user: {
-                  select: {
-                    id: true,
-                    name: true,
-                    nickname: true,
-                    image: true,
-                    role: true,
-                  },
-                },
-              },
-              orderBy: { createdAt: 'asc' },
-            },
-          },
-          orderBy: { createdAt: 'desc' },
-        },
         viewStatus: vs,
       },
       orderBy: {
@@ -458,14 +409,11 @@ function buildSeriesFullInclude(
       },
     },
     ratings: true,
-    comments: {
-      include: {
-        user: {
-          select: { id: true, name: true, nickname: true, image: true },
-        },
-      },
-      orderBy: { createdAt: 'desc' },
-    },
+    // Removido: CommentsSection pide GET /api/series/[id]/comments por su
+    // cuenta al montar (mismo criterio que el resto). El query anterior ni
+    // siquiera filtraba parentId=null ni sanitizaba isAnonymous/isPrivate
+    // como si hace la ruta de API — mezclaba replies como si fueran
+    // comentarios de primer nivel.
     viewStatus: vs,
     tags: {
       include: {
