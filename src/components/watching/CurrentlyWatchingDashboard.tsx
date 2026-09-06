@@ -19,6 +19,7 @@ import { useMessage } from '@/hooks/useMessage';
 import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { SerieCardSkeleton } from '@/components/common/SerieCardSkeleton/SerieCardSkeleton';
 import { SeriesNoteModal } from '@/components/series/SeriesNoteModal/SeriesNoteModal';
+import { getSeriesUrl } from '@/lib/slug';
 import './CurrentlyWatchingDashboard.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
@@ -530,7 +531,7 @@ export function CurrentlyWatchingDashboard() {
               />
               <Card.Meta
                 title={
-                  <Link href={`/series/${item.series.id}`}>
+                  <Link href={getSeriesUrl(item.series.id, item.series.title)}>
                     <span className="watching-card__title">
                       {item.series.title}
                     </span>
@@ -623,7 +624,7 @@ export function CurrentlyWatchingDashboard() {
                         </Tooltip>
                       )}
                       <Link
-                        href={`/series/${item.series.id}`}
+                        href={getSeriesUrl(item.series.id, item.series.title)}
                         className="watching-card__action-link"
                       >
                         <Button type="primary" block>

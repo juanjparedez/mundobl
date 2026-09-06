@@ -26,6 +26,7 @@ import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { WatchableCarousel } from '@/components/common/WatchableCarousel/WatchableCarousel';
 import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { getSeriesUrl } from '@/lib/slug';
 import './LandingPage.css';
 
 interface LatestSeries {
@@ -359,7 +360,7 @@ export function LandingPage({ stats }: LandingPageProps) {
             {stats.latestSeries.map((s) => (
               <Link
                 key={s.id}
-                href={`/series/${s.id}`}
+                href={getSeriesUrl(s.id, s.title)}
                 className="landing__series-card"
                 prefetch={false}
               >
@@ -413,7 +414,10 @@ export function LandingPage({ stats }: LandingPageProps) {
             </h2>
           </header>
           <Link
-            href={`/series/${stats.featuredReview.series.id}`}
+            href={getSeriesUrl(
+              stats.featuredReview.series.id,
+              stats.featuredReview.series.title
+            )}
             className="landing__featured-review"
             prefetch={false}
           >

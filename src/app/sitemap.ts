@@ -5,6 +5,7 @@ import {
   isIndexablePerson,
   isIndexableCompany,
 } from '@/lib/person-completeness';
+import { getSeriesUrl, getVerUrl } from '@/lib/slug';
 
 export const revalidate = 3600;
 
@@ -132,10 +133,10 @@ function staticPages(): MetadataRoute.Sitemap {
 async function seriesPages(): Promise<MetadataRoute.Sitemap> {
   const series = await prisma.series.findMany({
     where: { catalogScope: 'PERSONAL', origin: 'CURATED' },
-    select: { id: true, updatedAt: true },
+    select: { id: true, title: true, updatedAt: true },
   });
   return series.map((s) => ({
-    url: `${BASE_URL}/series/${s.id}`,
+    url: `${BASE_URL}${getSeriesUrl(s.id, s.title)}`,
     lastModified: s.updatedAt,
     changeFrequency: 'weekly',
     priority: 0.8,
@@ -165,10 +166,10 @@ async function verPages(): Promise<MetadataRoute.Sitemap> {
         some: { episodes: { some: { embedUrl: { not: null } } } },
       },
     },
-    select: { id: true, updatedAt: true },
+    select: { id: true, title: true, updatedAt: true },
   });
   return series.map((s) => ({
-    url: `${BASE_URL}/ver/${s.id}`,
+    url: `${BASE_URL}${getVerUrl(s.id, s.title)}`,
     lastModified: s.updatedAt,
     changeFrequency: 'weekly',
     priority: 0.75,
