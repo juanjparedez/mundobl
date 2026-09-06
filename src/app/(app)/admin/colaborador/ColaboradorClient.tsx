@@ -1,22 +1,47 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { Table, Tag, Button, Popconfirm, Avatar } from 'antd';
+import {
+  Table,
+  Tag,
+  Button,
+  Popconfirm,
+  Avatar,
+  Select,
+  DatePicker,
+} from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import {
   CloudUploadOutlined,
   EditOutlined,
   DeleteOutlined,
   PlayCircleOutlined,
+  EyeOutlined,
+  CheckCircleOutlined,
+  StarOutlined,
+  CommentOutlined,
+  ReadOutlined,
+  BellOutlined,
+  BarChartOutlined,
 } from '@ant-design/icons';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { AdminPageHero } from '@/components/admin/AdminPageHero/AdminPageHero';
 import { AdminTableToolbar } from '@/components/admin/AdminTableToolbar/AdminTableToolbar';
-import { EmptyState } from '@/components/design-system';
+import {
+  EmptyState,
+  PanelCard,
+  SectionHeader,
+  StatCard,
+} from '@/components/design-system';
+import { NotificationsWidget } from '@/app/(app)/perfil/NotificationsWidget/NotificationsWidget';
 import { useMessage } from '@/hooks/useMessage';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import type { CollaboratorStats } from '@/lib/database';
 import { ColaboradorNav } from './ColaboradorNav';
 import './colaborador.css';
+
+const { RangePicker } = DatePicker;
 
 interface ColaboradorRow {
   id: number;
@@ -37,29 +62,68 @@ const VISIBILITY_COLORS: Record<string, string> = {
   REJECTED: 'red',
 };
 
-const VISIBILITY_LABELS: Record<string, string> = {
-  VISIBLE: 'Publicada en /ver',
-  HIDDEN: 'Oculta por un admin',
-  PENDING_REVIEW: 'En revision',
-  REJECTED: 'Rechazada',
-};
+// Las 4 claves de VISIBILITY_LABELS estaban hardcodeadas en español —
+// las paso por t() porque ahora tambien alimentan las opciones del
+// filtro nuevo (no tiene sentido traducir el filtro y dejar la columna
+// "Estado" de la tabla en español). El resto del panel de colaborador
+// sigue sin i18n (deuda preexistente, fuera del alcance de este cambio).
+type VisibilityFilter =
+  | 'all'
+  | 'VISIBLE'
+  | 'HIDDEN'
+  | 'PENDING_REVIEW'
+  | 'REJECTED';
 
 interface Props {
   items: ColaboradorRow[];
+  stats: CollaboratorStats;
 }
 
-export function ColaboradorClient({ items: initial }: Props) {
+export function ColaboradorClient({ items: initial, stats }: Props) {
   const router = useRouter();
   const message = useMessage();
+  const { t } = useLocale();
   const [items, setItems] = useState(initial);
   const [search, setSearch] = useState('');
+  const [visibilityFilter, setVisibilityFilter] =
+    useState<VisibilityFilter>('all');
+  const [countryFilter, setCountryFilter] = useState<string>('all');
+  const [dateRange, setDateRange] = useState<[string | null, string | null]>([
+    null,
+    null,
+  ]);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+
+  const visibilityLabels: Record<string, string> = {
+    VISIBLE: t('adminColaborador.statusVisible'),
+    HIDDEN: t('adminColaborador.statusHidden'),
+    PENDING_REVIEW: t('adminColaborador.statusPending'),
+    REJECTED: t('adminColaborador.statusRejected'),
+  };
+
+  const countries = useMemo(() => {
+    const set = new Set<string>();
+    items.forEach((i) => i.countryName && set.add(i.countryName));
+    return Array.from(set).sort();
+  }, [items]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return items;
-    return items.filter((i) => i.title.toLowerCase().includes(q));
-  }, [items, search]);
+    const [from, to] = dateRange;
+    const fromDate = from ? new Date(from) : null;
+    const toDate = to ? new Date(`${to}T23:59:59.999`) : null;
+    return items.filter((i) => {
+      if (q && !i.title.toLowerCase().includes(q)) return false;
+      if (visibilityFilter !== 'all' && i.visibility !== visibilityFilter)
+        return false;
+      if (countryFilter !== 'all' && i.countryName !== countryFilter)
+        return false;
+      const createdAt = new Date(i.createdAt);
+      if (fromDate && createdAt < fromDate) return false;
+      if (toDate && createdAt > toDate) return false;
+      return true;
+    });
+  }, [items, search, visibilityFilter, countryFilter, dateRange]);
 
   const totalEpisodes = useMemo(
     () => items.reduce((acc, i) => acc + i.episodeCount, 0),
@@ -126,7 +190,7 @@ export function ColaboradorClient({ items: initial }: Props) {
       width: 170,
       render: (v: string) => (
         <Tag color={VISIBILITY_COLORS[v] ?? 'default'}>
-          {VISIBILITY_LABELS[v] ?? v}
+          {visibilityLabels[v] ?? v}
         </Tag>
       ),
     },
@@ -187,8 +251,107 @@ export function ColaboradorClient({ items: initial }: Props) {
         />
       ) : (
         <>
+          <PanelCard
+            header={
+              <SectionHeader
+                title={t('adminColaborador.statsSectionTitle')}
+                icon={<BarChartOutlined />}
+                size="sm"
+              />
+            }
+          >
+            <div className="colaborador-stats-grid">
+              <StatCard
+                label={t('adminColaborador.statsWatching')}
+                value={stats.totalWatching}
+                icon={<EyeOutlined />}
+              />
+              <StatCard
+                label={t('adminColaborador.statsWatched')}
+                value={stats.totalWatched}
+                icon={<CheckCircleOutlined />}
+              />
+              <StatCard
+                label={t('adminColaborador.statsFavorites')}
+                value={stats.totalFavorites}
+                icon={<StarOutlined />}
+              />
+              <StatCard
+                label={t('adminColaborador.statsComments')}
+                value={stats.totalComments}
+                icon={<CommentOutlined />}
+              />
+              <StatCard
+                label={t('adminColaborador.statsReviews')}
+                value={stats.totalReviews}
+                icon={<ReadOutlined />}
+              />
+              <StatCard
+                label={t('adminColaborador.statsSubscriptions')}
+                value={stats.totalSubscriptions}
+                icon={<BellOutlined />}
+              />
+            </div>
+          </PanelCard>
+
+          <PanelCard
+            header={
+              <SectionHeader
+                title={t('adminColaborador.notificationsSectionTitle')}
+                icon={<BellOutlined />}
+                size="sm"
+              />
+            }
+          >
+            <NotificationsWidget />
+          </PanelCard>
+
           <AdminTableToolbar
-            filters={<></>}
+            filters={
+              <>
+                <Select<VisibilityFilter>
+                  value={visibilityFilter}
+                  onChange={setVisibilityFilter}
+                  style={{ minWidth: 200 }}
+                  options={[
+                    {
+                      value: 'all',
+                      label: t('adminColaborador.filterAllStatuses'),
+                    },
+                    { value: 'VISIBLE', label: visibilityLabels.VISIBLE },
+                    { value: 'HIDDEN', label: visibilityLabels.HIDDEN },
+                    {
+                      value: 'PENDING_REVIEW',
+                      label: visibilityLabels.PENDING_REVIEW,
+                    },
+                    { value: 'REJECTED', label: visibilityLabels.REJECTED },
+                  ]}
+                />
+                {countries.length > 0 && (
+                  <Select
+                    value={countryFilter}
+                    onChange={setCountryFilter}
+                    style={{ minWidth: 180 }}
+                    options={[
+                      {
+                        value: 'all',
+                        label: t('adminColaborador.filterAllCountries'),
+                      },
+                      ...countries.map((c) => ({ value: c, label: c })),
+                    ]}
+                  />
+                )}
+                <RangePicker
+                  onChange={(_, dateStrings) =>
+                    setDateRange([
+                      dateStrings[0] || null,
+                      dateStrings[1] || null,
+                    ])
+                  }
+                  allowClear
+                />
+              </>
+            }
             searchPlaceholder="Buscar por titulo..."
             searchValue={search}
             onSearchChange={setSearch}

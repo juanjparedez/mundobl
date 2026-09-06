@@ -41,6 +41,12 @@
   gap: 6px;
 }
 
+.colaborador-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--spacing-md);
+}
+
 .colaborador-form {
   background: var(--bg-container);
   border: 1px solid var(--border-color-secondary);

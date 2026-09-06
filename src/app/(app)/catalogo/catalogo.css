@@ -336,12 +336,16 @@
   transform: translateY(0);
 }
 
-/* En mobile/touch (no hay :hover), los botones overlay deben estar
- * SIEMPRE visibles. Antes el ojito "Ver detalle" y la estrella favorito
- * eran inalcanzables en mobile. Usamos hover:none para detectar touch
- * devices y dejamos visibles sin transition. */
+/* En mobile/touch (no hay :hover), los botones overlay y la metadata
+ * secundaria deben estar SIEMPRE visibles. Antes el ojito "Ver detalle"
+ * y la estrella favorito eran inalcanzables en mobile, y la metadata
+ * secundaria dependia de un :hover "pegajoso" tras un tap (comun en
+ * iOS Safari) que podia disparar el mismo salto de layout que en
+ * desktop. Usamos hover:none para detectar touch devices (cualquier
+ * ancho, no solo telefonos chicos) y dejamos todo visible sin transition. */
 @media (hover: none) {
-  .serie-card-actions {
+  .serie-card-actions,
+  .serie-card-secondary-meta {
     opacity: 1;
     transform: translateY(0);
   }
@@ -520,6 +524,13 @@
   color: var(--text-secondary);
 }
 
+/* Revelado solo con opacity/transform (compositor puro) — el espacio
+ * SIEMPRE esta reservado en el flujo (sin max-height animado) para que
+ * el hover de una card no cambie su alto real. Antes animaba
+ * max-height:0→44px, una propiedad de layout: al crecer una sola card
+ * el track flex (align-items:stretch por defecto) estiraba toda la fila
+ * del carrusel y empujaba las filas siguientes del catalogo. Mismo
+ * patron que ya usan bien MediaCarousel/WatchableCarousel. */
 .serie-card-secondary-meta {
   display: flex;
   align-items: center;
@@ -528,18 +539,14 @@
   font-size: 11px;
   color: var(--text-tertiary);
   opacity: 0;
-  max-height: 0;
-  overflow: hidden;
   transform: translateY(4px);
   transition:
     opacity 0.2s ease,
-    transform 0.2s ease,
-    max-height 0.2s ease;
+    transform 0.2s ease;
 }
 
 .serie-card:hover .serie-card-secondary-meta {
   opacity: 1;
-  max-height: 44px;
   transform: translateY(0);
 }
 
@@ -1105,7 +1112,6 @@
 
   .serie-card-secondary-meta {
     opacity: 1;
-    max-height: none;
     transform: none;
   }
 

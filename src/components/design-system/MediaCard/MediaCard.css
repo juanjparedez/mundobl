@@ -1,28 +1,46 @@
 .mb-media-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
-  text-align: left;
   background: var(--bg-container);
   border: 1px solid var(--border-color-secondary);
   border-radius: var(--border-radius-lg);
   overflow: hidden;
-  font: inherit;
-  color: inherit;
-  text-decoration: none;
-  cursor: pointer;
-  padding: 0;
   transition: var(--transition-fast);
   box-shadow: var(--box-shadow-card);
 }
 
-.mb-media-card:hover,
-.mb-media-card:focus-visible {
+.mb-media-card--interactive:hover,
+.mb-media-card--interactive:focus-within {
   transform: translateY(-2px);
   border-color: color-mix(in srgb, var(--primary-color) 36%, transparent);
 }
 
-.mb-media-card:focus-visible {
+/* Envuelve cover+body en un solo link/boton clickeable. `actions` y
+ * `footer` viven FUERA de este elemento (hermanos, mas abajo) — asi el
+ * click-through de toda la card no requiere anidar botones/links dentro
+ * de un <a>/<button>, que es HTML invalido (contenido interactivo
+ * anidado) y rompe el focus order con lectores de pantalla. */
+.mb-media-card__link {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  color: inherit;
+  text-decoration: none;
+  font: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.mb-media-card--interactive .mb-media-card__link {
+  cursor: pointer;
+}
+
+.mb-media-card__link:focus-visible {
   outline: 2px solid var(--primary-color);
   outline-offset: 2px;
 }
@@ -47,7 +65,6 @@
   display: inline-flex;
   flex-wrap: wrap;
   gap: 4px;
-  z-index: 1;
 }
 
 .mb-media-card__actions {
@@ -59,12 +76,17 @@
   gap: 4px;
   opacity: 0;
   transition: opacity var(--transition-fast);
-  z-index: 1;
 }
 
 .mb-media-card:hover .mb-media-card__actions,
-.mb-media-card:focus-visible .mb-media-card__actions {
+.mb-media-card:focus-within .mb-media-card__actions {
   opacity: 1;
+}
+
+@media (hover: none) {
+  .mb-media-card__actions {
+    opacity: 1;
+  }
 }
 
 .mb-media-card__body {
@@ -86,6 +108,21 @@
 .mb-media-card__subtitle {
   font-size: 12px;
   color: var(--text-tertiary);
+}
+
+.mb-media-card__description {
+  margin: 2px 0 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.mb-media-card__footer {
+  padding: 0 var(--spacing-md) var(--spacing-md);
 }
 
 html[data-skin='premium'][data-theme='dark'] .mb-media-card {

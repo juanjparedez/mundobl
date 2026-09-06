@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import {
@@ -25,6 +24,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
+import { MediaCard } from '@/components/design-system';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { isSupabaseImageUrl } from '@/lib/image-helpers';
@@ -366,122 +366,87 @@ export function VerPage({ items }: VerPageProps) {
               {filtered.map((item) => {
                 const isDeleting = deletingId === item.id;
                 return (
-                  <article key={item.id} className="ver-card">
-                    <Link
-                      href={`/ver/${item.id}`}
-                      className="ver-card__cover-link"
-                      prefetch={false}
-                    >
-                      <div className="ver-card__cover-wrap">
-                        {item.imageUrl ? (
-                          isSupabaseImageUrl(item.imageUrl) ? (
-                            <Image
-                              src={item.imageUrl}
-                              alt={item.title}
-                              fill
-                              sizes="(max-width: 600px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                              className="ver-card__cover-img"
-                              unoptimized
-                            />
-                          ) : (
-                            // imageUrl externa arbitraria, no whitelisteada
-                            // en next.config.ts remotePatterns.
-                            // eslint-disable-next-line @next/next/no-img-element
-                            <img
-                              src={item.imageUrl}
-                              alt={item.title}
-                              className="ver-card__cover-img"
-                              loading="lazy"
-                            />
-                          )
-                        ) : (
-                          <div className="ver-card__cover-placeholder">
-                            <span>{item.title}</span>
-                          </div>
-                        )}
-                        <div className="ver-card__cover-overlay">
-                          <PlayCircleFilled className="ver-card__play-icon" />
-                          <span className="ver-card__episodes-badge">
-                            {t('ver.cardEpisodesBadge', {
-                              count: item.episodesWithEmbed,
-                            })}
-                          </span>
-                        </div>
-                        {item.geoRestrictedCore && (
-                          <span
-                            className="ver-card__georestricted-badge"
-                            title={t('ver.geoRestrictedBadge')}
-                          >
-                            🌍 {t('ver.geoRestrictedBadge')}
-                          </span>
-                        )}
-                      </div>
-                    </Link>
-
-                    <div className="ver-card__body">
-                      <div className="ver-card__header-row">
-                        <Link
-                          href={`/ver/${item.id}`}
-                          className="ver-card__title-link"
-                          prefetch={false}
-                        >
-                          <h3 className="ver-card__title">
-                            {item.country?.code && (
-                              <CountryFlag code={item.country.code} />
-                            )}{' '}
-                            {item.title}
-                          </h3>
-                        </Link>
-                        {isAdmin && (
-                          <Popconfirm
-                            title={t('ver.deleteConfirmTitle')}
-                            description={t('ver.deleteConfirmDescription')}
-                            onConfirm={() => handleDelete(item.id)}
-                            okText={t('ver.deleteConfirmOk')}
-                            cancelText={t('ver.deleteConfirmCancel')}
-                            okButtonProps={{
-                              danger: true,
-                              loading: isDeleting,
-                            }}
-                          >
-                            <Button
-                              type="text"
-                              danger
-                              size="small"
-                              icon={<DeleteOutlined />}
-                              aria-label={t('ver.deleteAriaLabel')}
-                            />
-                          </Popconfirm>
-                        )}
-                      </div>
-
-                      <div className="ver-card__meta">
+                  <MediaCard
+                    key={item.id}
+                    href={`/ver/${item.id}`}
+                    imageUrl={item.imageUrl}
+                    imageAlt={item.title}
+                    unoptimizedImage={
+                      item.imageUrl ? isSupabaseImageUrl(item.imageUrl) : false
+                    }
+                    aspectRatio="16:9"
+                    title={
+                      <>
+                        {item.country?.code && (
+                          <CountryFlag code={item.country.code} />
+                        )}{' '}
+                        {item.title}
+                      </>
+                    }
+                    subtitle={
+                      <>
                         {item.year && <span>{item.year}</span>}
                         {item.country?.name && (
-                          <span>· {item.country.name}</span>
+                          <span> · {item.country.name}</span>
                         )}
                         {item.platforms.length > 0 && (
-                          <span>· {item.platforms.join(', ')}</span>
+                          <span> · {item.platforms.join(', ')}</span>
                         )}
-                      </div>
-
-                      {item.synopsis && (
-                        <p className="ver-card__synopsis">{item.synopsis}</p>
-                      )}
-
-                      <div className="ver-card__footer">
-                        <Link href={`/ver/${item.id}`} prefetch={false}>
+                        <span>
+                          {' '}
+                          ·{' '}
+                          {t('ver.cardEpisodesBadge', {
+                            count: item.episodesWithEmbed,
+                          })}
+                        </span>
+                      </>
+                    }
+                    description={item.synopsis}
+                    overlayTags={
+                      item.geoRestrictedCore ? (
+                        <span
+                          className="ver-card__georestricted-badge"
+                          title={t('ver.geoRestrictedBadge')}
+                        >
+                          🌍 {t('ver.geoRestrictedBadge')}
+                        </span>
+                      ) : undefined
+                    }
+                    actions={
+                      isAdmin && (
+                        <Popconfirm
+                          title={t('ver.deleteConfirmTitle')}
+                          description={t('ver.deleteConfirmDescription')}
+                          onConfirm={() => handleDelete(item.id)}
+                          okText={t('ver.deleteConfirmOk')}
+                          cancelText={t('ver.deleteConfirmCancel')}
+                          okButtonProps={{
+                            danger: true,
+                            loading: isDeleting,
+                          }}
+                        >
                           <Button
-                            type="primary"
-                            icon={<PlayCircleFilled />}
-                            block
-                          >
-                            {t('ver.cardPlayButton')}
-                          </Button>
-                        </Link>
-                      </div>
-                    </div>
-                  </article>
+                            type="text"
+                            danger
+                            size="small"
+                            icon={<DeleteOutlined />}
+                            aria-label={t('ver.deleteAriaLabel')}
+                          />
+                        </Popconfirm>
+                      )
+                    }
+                    footer={
+                      <Link href={`/ver/${item.id}`} prefetch={false}>
+                        <Button
+                          type="primary"
+                          icon={<PlayCircleFilled />}
+                          block
+                        >
+                          {t('ver.cardPlayButton')}
+                        </Button>
+                      </Link>
+                    }
+                  />
                 );
               })}
             </div>
