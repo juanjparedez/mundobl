@@ -21,6 +21,7 @@ import type { QuickPreviewData } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { getSeriesUrl } from '@/lib/slug';
 import type { TranslationKey } from '@/i18n/messages';
 import { LAST_SEEN_NOVEDADES_KEY } from './storage-keys';
 import './novedades.css';
@@ -163,7 +164,7 @@ export function NovedadesClient({
         key: 'detail',
         label: t('quickPreview.fullDetail'),
         variant: 'primary' as const,
-        href: `/series/${serie.id}`,
+        href: getSeriesUrl(serie.id, serie.title),
       },
     ],
   });
@@ -201,7 +202,7 @@ export function NovedadesClient({
                 {newSeries.map((s) => (
                   <MediaCard
                     key={s.id}
-                    href={`/series/${s.id}`}
+                    href={getSeriesUrl(s.id, s.title)}
                     imageUrl={cardImageUrl(s)}
                     imageAlt={s.title}
                     unoptimizedImage={isSupabaseImageUrl(cardImageUrl(s))}
@@ -243,7 +244,7 @@ export function NovedadesClient({
                 {newSeasons.map((season) => (
                   <MediaCard
                     key={season.id}
-                    href={`/series/${season.series.id}`}
+                    href={getSeriesUrl(season.series.id, season.series.title)}
                     imageUrl={cardImageUrl(season.series)}
                     imageAlt={season.series.title}
                     unoptimizedImage={isSupabaseImageUrl(
