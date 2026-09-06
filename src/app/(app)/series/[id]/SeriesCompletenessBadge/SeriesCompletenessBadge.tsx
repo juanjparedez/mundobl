@@ -1,9 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { CheckCircleFilled, ToolOutlined } from '@ant-design/icons';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { Chip } from '@/components/design-system';
+import { canEditCatalog } from '@/lib/auth-client';
 import {
   computeCompleteness,
   completenessTier,
@@ -14,10 +16,6 @@ import './SeriesCompletenessBadge.css';
 export interface SeriesCompletenessBadgeProps {
   seriesId: number;
   series: Parameters<typeof computeCompleteness>[0];
-  /** Solo moderador+ ve el detalle accionable (qué falta + link al
-   *  editor). Para el público es una métrica de curación interna: solo
-   *  se muestra el sello cuando la ficha está completa (señal positiva). */
-  canEdit: boolean;
 }
 
 /** Sello público de completitud de la ficha de una serie (#112, fase 1).
@@ -25,13 +23,18 @@ export interface SeriesCompletenessBadgeProps {
  *  - Público: render SOLO si la ficha está completa (tier high) — sello
  *    de confianza, no exponemos fichas pobres en cada serie.
  *  - Editor (moderador+): se muestra siempre, como link al editor con
- *    tooltip de qué campos faltan (nudge de curación accionable). */
+ *    tooltip de qué campos faltan (nudge de curación accionable).
+ *
+ *  El rol se resuelve aca via useSession() (antes llegaba como prop
+ *  `canEdit` calculada en el servidor con `await auth()`, pero
+ *  /series/[id] dejo de llamarla para no forzar render dinamico). */
 export function SeriesCompletenessBadge({
   seriesId,
   series,
-  canEdit,
 }: SeriesCompletenessBadgeProps) {
   const { t } = useLocale();
+  const { data: session } = useSession();
+  const canEdit = canEditCatalog(session?.user?.role);
   const { score, missing } = computeCompleteness(series);
   const tier = completenessTier(score);
 

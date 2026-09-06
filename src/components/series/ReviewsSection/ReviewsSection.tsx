@@ -40,6 +40,7 @@ import { useMessage } from '@/hooks/useMessage';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { SpoilerGate } from '@/components/common/SpoilerGate/SpoilerGate';
 import { SUPPORTED_LOCALES, LOCALE_LABELS } from '@/i18n/config';
+import { useSeriesUserStatus } from '../SeriesUserStatusProvider';
 import './ReviewsSection.css';
 
 const { TextArea } = Input;
@@ -78,9 +79,6 @@ export interface ReviewData {
 
 interface ReviewsSectionProps {
   seriesId: number;
-  // Si la serie ya esta VISTA o ABANDONADA, no aplicamos el gate
-  // sobre reseñas con spoilers. Default: false (asumir no vista).
-  seriesWatched?: boolean;
 }
 
 interface FormValues {
@@ -112,12 +110,17 @@ const EMPTY_FORM: FormValues = {
   castingRating: null,
 };
 
-export function ReviewsSection({
-  seriesId,
-  seriesWatched = false,
-}: ReviewsSectionProps) {
+export function ReviewsSection({ seriesId }: ReviewsSectionProps) {
   const { data: session } = useSession();
   const { locale, t } = useLocale();
+  // Si la serie ya esta VISTA o ABANDONADA, no aplicamos el gate sobre
+  // reseñas con spoilers. Antes llegaba como prop `seriesWatched` calculada
+  // en el servidor con `await auth()`; ahora via SeriesUserStatusProvider
+  // (fuera de /series/[id], p.ej. /ver/[id], no hay Provider ancestro y el
+  // context cae al default — misma semantica de "asumir no vista" que antes).
+  const { seriesStatus } = useSeriesUserStatus();
+  const seriesWatched =
+    seriesStatus === 'VISTA' || seriesStatus === 'ABANDONADA';
   const message = useMessage();
 
   const [reviews, setReviews] = useState<ReviewData[]>([]);

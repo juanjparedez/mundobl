@@ -1,6 +1,6 @@
 'use client';
 
-import { type RefObject, useRef } from 'react';
+import { type RefObject, useEffect, useRef, useState } from 'react';
 import { Descriptions, Tag } from 'antd';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -157,6 +157,41 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
   const { data: session } = useSession();
   const isAdmin = session?.user?.role === 'ADMIN';
   const canSeeNotes = !series.notesPrivate || isAdmin;
+
+  // Cuando `notesPrivate` es true, /series/[id] SIEMPRE renderiza con
+  // `review`/`observations` en null (stripPrivateNotes se llama con
+  // isAdmin=false en el servidor: el HTML es estatico/cacheado por ISR, no
+  // puede llevar horneadas notas privadas para nadie). El admin las pide
+  // aparte aca — unico caso en el que hace falta este fetch extra.
+  const [privateNotes, setPrivateNotes] = useState<{
+    review: string | null;
+    observations: string | null;
+  } | null>(null);
+
+  useEffect(() => {
+    if (!isAdmin || !series.notesPrivate) return;
+    let cancelled = false;
+    fetch(`/api/series/${series.id}/private-notes`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then(
+        (
+          data: { review: string | null; observations: string | null } | null
+        ) => {
+          if (!cancelled && data) setPrivateNotes(data);
+        }
+      )
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [isAdmin, series.notesPrivate, series.id]);
+
+  const effectiveReview = series.notesPrivate
+    ? (privateNotes?.review ?? null)
+    : series.review;
+  const effectiveObservations = series.notesPrivate
+    ? (privateNotes?.observations ?? null)
+    : series.observations;
 
   const fullSpan = isMobile ? 1 : 2;
   const relatedTrackRef = useRef<HTMLDivElement | null>(null);
@@ -494,7 +529,7 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
 
       <ReviewSpotlight seriesId={series.id} />
 
-      {series.review && canSeeNotes && (
+      {effectiveReview && canSeeNotes && (
         <div className="series-info__review">
           <h4 className="series-info__section-title">
             ⭐ {t('seriesInfo.reviewSection')}
@@ -504,11 +539,11 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
               </Tag>
             )}
           </h4>
-          <div className="series-info__review-content">{series.review}</div>
+          <div className="series-info__review-content">{effectiveReview}</div>
         </div>
       )}
 
-      {series.observations && canSeeNotes && (
+      {effectiveObservations && canSeeNotes && (
         <div className="series-info__observations">
           <h4 className="series-info__section-title">
             📝 {t('seriesInfo.observationsSection')}
@@ -519,7 +554,7 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
             )}
           </h4>
           <div className="series-info__observations-content">
-            {series.observations}
+            {effectiveObservations}
           </div>
         </div>
       )}

@@ -1,27 +1,36 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Tooltip } from 'antd';
 import { BellOutlined, BellFilled } from '@ant-design/icons';
 import { useSession, signIn } from 'next-auth/react';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { useSeriesUserStatus } from '../SeriesUserStatusProvider';
 import './SeriesSubscribeButton.css';
 
 interface SeriesSubscribeButtonProps {
   seriesId: number;
-  initialSubscribed: boolean;
 }
 
+// El estado inicial de suscripcion ya no llega como prop calculada en el
+// servidor con `await auth()` (/series/[id] dejo de llamarla): se hidrata
+// aca via SeriesUserStatusProvider. Fuera de esa pagina (p.ej. /ver/[id])
+// no hay Provider ancestro y el context cae al default `subscribed: false`
+// — misma semantica que ese caller ya usaba antes (hardcodeaba `false`).
 export function SeriesSubscribeButton({
   seriesId,
-  initialSubscribed,
 }: SeriesSubscribeButtonProps) {
   const { t } = useLocale();
   const { status } = useSession();
   const message = useMessage();
-  const [subscribed, setSubscribed] = useState(initialSubscribed);
+  const { subscribed: initialSubscribed, loaded } = useSeriesUserStatus();
+  const [subscribed, setSubscribed] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (loaded) setSubscribed(initialSubscribed);
+  }, [loaded, initialSubscribed]);
 
   if (status !== 'authenticated') {
     return (

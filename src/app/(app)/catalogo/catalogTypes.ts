@@ -24,7 +24,6 @@ export interface SerieData {
   imageThumbUrl?: string | null;
   imagePosition?: string;
   synopsis?: string | null;
-  visto?: boolean;
   /** Curaduria editorial (Flor/admin) — filtro rapido "Destacadas". */
   featured?: boolean;
   /** Orden manual dentro de "Destacadas" (menor = primero). */
