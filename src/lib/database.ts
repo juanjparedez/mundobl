@@ -749,7 +749,8 @@ export async function getActorsIndex(options?: {
   `;
 
   const [rows, totalRows] = await Promise.all([
-    prisma.$queryRaw<PersonIndexRow[]>`
+    prisma.$queryRaw<PersonIndexRow[]>(
+      Prisma.sql`
       SELECT p.id, p.name, p."stageName", p."imageUrl", p.nationality,
              p.biography,
              (
@@ -771,10 +772,13 @@ export async function getActorsIndex(options?: {
       ${where}
       ${personOrderBy(options?.sort ?? 'credits')}
       LIMIT ${perPage} OFFSET ${offset}
-    `,
-    prisma.$queryRaw<{ count: bigint }[]>`
+    `
+    ),
+    prisma.$queryRaw<{ count: bigint }[]>(
+      Prisma.sql`
       SELECT COUNT(*)::bigint AS count FROM "Actor" p ${where}
-    `,
+    `
+    ),
   ]);
 
   return { rows, total: Number(totalRows[0]?.count ?? 0) };
@@ -800,7 +804,8 @@ export async function getDirectorsIndex(options?: {
   `;
 
   const [rows, totalRows] = await Promise.all([
-    prisma.$queryRaw<PersonIndexRow[]>`
+    prisma.$queryRaw<PersonIndexRow[]>(
+      Prisma.sql`
       SELECT p.id, p.name, NULL::text AS "stageName", p."imageUrl",
              p.nationality, p.biography,
              COALESCE((
@@ -813,10 +818,13 @@ export async function getDirectorsIndex(options?: {
       ${where}
       ${personOrderBy(options?.sort ?? 'credits')}
       LIMIT ${perPage} OFFSET ${offset}
-    `,
-    prisma.$queryRaw<{ count: bigint }[]>`
+    `
+    ),
+    prisma.$queryRaw<{ count: bigint }[]>(
+      Prisma.sql`
       SELECT COUNT(*)::bigint AS count FROM "Director" p ${where}
-    `,
+    `
+    ),
   ]);
 
   return { rows, total: Number(totalRows[0]?.count ?? 0) };
@@ -857,7 +865,8 @@ export async function getProductionCompaniesIndex(options?: {
         : Prisma.sql`ORDER BY "seriesCount" DESC, p.name ASC`;
 
   const [rows, totalRows] = await Promise.all([
-    prisma.$queryRaw<CompanyIndexRow[]>`
+    prisma.$queryRaw<CompanyIndexRow[]>(
+      Prisma.sql`
       SELECT p.id, p.name, p."imageUrl", p.description,
              c.name AS "countryName",
              COALESCE((
@@ -871,10 +880,13 @@ export async function getProductionCompaniesIndex(options?: {
       ${where}
       ${orderBy}
       LIMIT ${perPage} OFFSET ${offset}
-    `,
-    prisma.$queryRaw<{ count: bigint }[]>`
+    `
+    ),
+    prisma.$queryRaw<{ count: bigint }[]>(
+      Prisma.sql`
       SELECT COUNT(*)::bigint AS count FROM "ProductionCompany" p ${where}
-    `,
+    `
+    ),
   ]);
 
   return { rows, total: Number(totalRows[0]?.count ?? 0) };
@@ -906,14 +918,16 @@ export async function getProductionCompanyById(id: number) {
 
 /** Nacionalidades disponibles, para el filtro de los indices. */
 export async function getPeopleNationalities(): Promise<string[]> {
-  const rows = await prisma.$queryRaw<{ nationality: string }[]>`
+  const rows = await prisma.$queryRaw<{ nationality: string }[]>(
+    Prisma.sql`
     SELECT DISTINCT nationality FROM (
       SELECT nationality FROM "Actor" WHERE nationality IS NOT NULL
       UNION
       SELECT nationality FROM "Director" WHERE nationality IS NOT NULL
     ) t
     ORDER BY nationality ASC
-  `;
+  `
+  );
   return rows.map((r) => r.nationality);
 }
 
