@@ -19,6 +19,26 @@
   --primary-color-active: #ad5f9f;
   --primary-color-outline: rgba(197, 123, 183, 0.26);
 
+  /* ─── Familia de acento (--mb-*) ─────────────────────────────────
+   * Alias historicos del acento, usados por el dashboard de perfil y el
+   * panel de ajustes. Se derivan SIEMPRE de --primary-color, que es el
+   * acento elegido por el usuario (o el sugerido por la skin activa si
+   * todavia no eligio ninguno).
+   *
+   * Ninguna skin debe redefinir estos tokens: una skin viste superficies,
+   * bordes, radios y sombras — el acento es del usuario.
+   */
+  --mb-gold: var(--primary-color);
+  --mb-gold-hover: var(--primary-color-hover);
+  --mb-gold-active: var(--primary-color-active);
+  --mb-gold-soft: color-mix(in srgb, var(--primary-color) 12%, transparent);
+  --mb-gold-soft-strong: color-mix(
+    in srgb,
+    var(--primary-color) 24%,
+    transparent
+  );
+  --accent-color: var(--primary-color);
+
   /* Colores de Estado */
   --success-color: #52c41a;
   --warning-color: #faad14;

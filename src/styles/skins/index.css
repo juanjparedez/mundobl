@@ -1,16 +1,31 @@
 /* ─── Skins disponibles ─────────────────────────────────────────────
- * Cada skin se declara dentro de su propio archivo y se aplica via
- * html[data-skin='<key>']. La skin 'default' no necesita archivo:
- * cae a las variables base de variables.css.
+ * Una skin es una capa ATMOSFERICA, no un tema: viste el modo claro u
+ * oscuro que el usuario ya eligio, y nunca lo cambia por su cuenta.
+ * Por eso cada skin declara sus dos variantes:
+ *
+ *   html[data-skin='<key>']                    → radios y mapeo de tokens
+ *   html[data-skin='<key>'][data-theme='light'] → paleta clara
+ *   html[data-skin='<key>'][data-theme='dark']  → paleta oscura
+ *
+ * La skin 'default' no necesita archivo: cae a las variables base de
+ * variables.css.
+ *
+ * Una skin NUNCA define el acento (--mb-gold*, --accent-color): esos
+ * tokens viven en variables.css y siguen a --primary-color, que es el
+ * acento del usuario. Lo que la skin propone como acento sugerido se
+ * declara en `SKIN_PALETTES` (src/lib/theme.config.ts) y solo se aplica
+ * si el usuario todavia no eligio uno propio.
  *
  * Para agregar una skin nueva:
- *   1. Crear `src/styles/skins/<nombre>.css` con `html[data-skin='<nombre>'] { ... }`
+ *   1. Crear `src/styles/skins/<nombre>.css` con los 3 bloques de arriba
  *   2. Importarla aca abajo
  *   3. Agregar la key a SkinKey en `src/types/theme.types.ts`
- *   4. Sumar la opcion al SettingsPanel
+ *   4. Sumar su paleta light+dark a SKIN_PALETTES en `theme.config.ts`
+ *   5. Sumarla a SKIN_ORDER en `SettingsPanel.tsx` + claves i18n en los
+ *      10 locales (`skin<Nombre>` y `skin<Nombre>Desc`)
  */
 
-@import './premium-dark.css';
+@import './premium.css';
 @import './sakura-pastel.css';
 @import './midnight-amoled.css';
 @import './retro-journal.css';
