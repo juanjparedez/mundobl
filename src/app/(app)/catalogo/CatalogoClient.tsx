@@ -870,6 +870,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
     overlays: quickPreviewOverlays,
   } = useQuickPreviewController({
     labels: quickPreviewLabels,
+    surface: 'catalogo',
     // En vista lista las filas son angostas y densas: un hover-preview ahi
     // tapa las filas vecinas mas de lo que ayuda.
     hoverEnabled: viewMode !== 'list',
