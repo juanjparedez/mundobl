@@ -282,7 +282,10 @@ export function VerPage({ items }: VerPageProps) {
     ],
   });
 
-  const previewApi = useQuickPreviewController({ labels: quickPreviewLabels });
+  const previewApi = useQuickPreviewController({
+    labels: quickPreviewLabels,
+    surface: 'ver',
+  });
   const previewBinding = {
     api: previewApi,
     build: buildPreview,
