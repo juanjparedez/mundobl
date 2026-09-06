@@ -44,7 +44,7 @@ interface PublicStatsResponse {
     topFavorited: Array<{ seriesId: number; title: string; count: number }>;
     topActors: Array<{ actorId: number; name: string; count: number }>;
     topDirectors: Array<{ directorId: number; name: string; count: number }>;
-    topProductionCompanies: Array<{ name: string; count: number }>;
+    topProductionCompanies: Array<{ id: number; name: string; count: number }>;
     topCountries: Array<{ name: string; count: number }>;
     byType: Array<{ type: string; count: number }>;
   };
@@ -579,7 +579,8 @@ export function PublicStatsClient() {
           items={data.rankings.topProductionCompanies.map((r) => ({
             key: r.name,
             count: r.count,
-            href: `/catalogo?productionCompany=${encodeURIComponent(r.name)}`,
+            // Antes iba a un filtro del catalogo porque no existia la ficha.
+            href: `/productoras/${r.id}`,
           }))}
           empty={copy.empty}
           chartMode={chartMode}
