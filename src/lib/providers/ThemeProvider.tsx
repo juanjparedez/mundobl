@@ -32,6 +32,7 @@ import type {
   SaverKey,
   SkinKey,
 } from '@/types/theme.types';
+import { VIEW_PRESETS, type ViewPresetKey } from '@/types/presets.types';
 import { useLocale } from './LocaleProvider';
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -51,6 +52,7 @@ interface ThemeProviderProps {
 
 const STORAGE_KEYS = {
   theme: 'theme',
+  preset: 'theme-preset',
   accent: 'theme-accent',
   customAccent: 'theme-accent-custom',
   tone: 'theme-tone',
@@ -71,13 +73,27 @@ function normalizeHex(value: string): string | null {
     : `#${value.toLowerCase()}`;
 }
 
+const VALID_PRESETS: ViewPresetKey[] = [
+  'cinema',
+  'tracker',
+  'encyclopedia',
+  'blind',
+  'custom',
+];
 const VALID_TONES: ToneKey[] = ['default', 'warm', 'cool', 'contrast'];
 const VALID_FONTS: FontKey[] = ['system', 'serif', 'mono', 'dyslexic'];
 const VALID_SCALES: ScaleKey[] = ['sm', 'md', 'lg', 'xl'];
 const VALID_DENSITIES: DensityKey[] = ['compact', 'comfortable', 'spacious'];
 const VALID_MOTIONS: MotionKey[] = ['auto', 'reduce'];
 const VALID_SAVERS: SaverKey[] = ['off', 'on'];
-const VALID_SKINS: SkinKey[] = ['default', 'premium'];
+const VALID_SKINS: SkinKey[] = [
+  'default',
+  'premium',
+  'sakura',
+  'midnight',
+  'journal',
+  'neon',
+];
 
 function pick<T extends string>(
   raw: string | null,
@@ -89,6 +105,7 @@ function pick<T extends string>(
 
 interface ThemeState {
   theme: ThemeMode;
+  preset: ViewPresetKey;
   accent: AccentPresetKey;
   customAccent: string | null;
   tone: ToneKey;
@@ -134,6 +151,7 @@ function applyDataAttribute(name: string, value: string, defaultValue: string) {
 
 const DEFAULTS: Omit<ThemeState, 'mounted'> = {
   theme: 'dark',
+  preset: 'cinema',
   accent: DEFAULT_ACCENT,
   customAccent: null,
   tone: 'default',
@@ -176,6 +194,11 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
       DEFAULTS.motion
     );
     const saver = pick(get(STORAGE_KEYS.saver), VALID_SAVERS, DEFAULTS.saver);
+    const preset = pick(
+      get(STORAGE_KEYS.preset),
+      VALID_PRESETS,
+      DEFAULTS.preset
+    );
     const rawSkin = get(STORAGE_KEYS.skin);
     const skin =
       rawSkin === 'default'
@@ -184,6 +207,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
     document.documentElement.setAttribute('data-theme', theme);
     applyAccentVars(accent, customAccent, theme);
+    applyDataAttribute('preset', preset, DEFAULTS.preset);
     applyDataAttribute('tone', tone, DEFAULTS.tone);
     applyDataAttribute('font', font, DEFAULTS.font);
     applyDataAttribute('scale', scale, DEFAULTS.scale);
@@ -205,6 +229,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration: read localStorage on mount
     setState({
       theme,
+      preset,
       accent,
       customAccent,
       tone,
@@ -298,10 +323,43 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     applyDataAttribute('scale', newScale, DEFAULTS.scale);
   };
 
+  const handleSetPreset = (newPreset: ViewPresetKey) => {
+    let nextDensity = state.density;
+    if (newPreset !== 'custom') {
+      const cfg = VIEW_PRESETS[newPreset];
+      nextDensity = cfg.targetDensity;
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem('catalog-view-mode', cfg.targetViewMode);
+          window.dispatchEvent(
+            new CustomEvent('catalog-view-mode-changed', {
+              detail: cfg.targetViewMode,
+            })
+          );
+        } catch {
+          /* silent */
+        }
+      }
+      applyDataAttribute('density', nextDensity, DEFAULTS.density);
+    }
+    setState((prev) => ({
+      ...prev,
+      preset: newPreset,
+      density: nextDensity,
+    }));
+    persist(STORAGE_KEYS.preset, newPreset);
+    if (newPreset !== 'custom') {
+      persist(STORAGE_KEYS.density, nextDensity);
+    }
+    applyDataAttribute('preset', newPreset, DEFAULTS.preset);
+  };
+
   const handleSetDensity = (newDensity: DensityKey) => {
-    setState((prev) => ({ ...prev, density: newDensity }));
+    setState((prev) => ({ ...prev, density: newDensity, preset: 'custom' }));
     persist(STORAGE_KEYS.density, newDensity);
+    persist(STORAGE_KEYS.preset, 'custom');
     applyDataAttribute('density', newDensity, DEFAULTS.density);
+    applyDataAttribute('preset', 'custom', DEFAULTS.preset);
   };
 
   const handleSetMotion = (newMotion: MotionKey) => {
@@ -317,9 +375,21 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   };
 
   const handleSetSkin = (newSkin: SkinKey) => {
-    setState((prev) => ({ ...prev, skin: newSkin }));
+    let newTheme = state.theme;
+    if (newSkin === 'sakura' || newSkin === 'journal') {
+      newTheme = 'light';
+    } else if (
+      newSkin === 'midnight' ||
+      newSkin === 'neon' ||
+      newSkin === 'premium'
+    ) {
+      newTheme = 'dark';
+    }
+    setState((prev) => ({ ...prev, skin: newSkin, theme: newTheme }));
     persist(STORAGE_KEYS.skin, newSkin);
+    persist(STORAGE_KEYS.theme, newTheme);
     document.documentElement.setAttribute('data-skin', newSkin);
+    document.documentElement.setAttribute('data-theme', newTheme);
   };
 
   const resetPreferences = () => {
@@ -333,9 +403,9 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     setState({ ...DEFAULTS, mounted: true });
     document.documentElement.setAttribute('data-theme', DEFAULTS.theme);
     applyAccentVars(DEFAULTS.accent, DEFAULTS.customAccent, DEFAULTS.theme);
-    (['tone', 'font', 'scale', 'density', 'motion', 'saver'] as const).forEach(
-      (k) => document.documentElement.removeAttribute(`data-${k}`)
-    );
+    (
+      ['preset', 'tone', 'font', 'scale', 'density', 'motion', 'saver'] as const
+    ).forEach((k) => document.documentElement.removeAttribute(`data-${k}`));
     document.documentElement.setAttribute('data-skin', DEFAULTS.skin);
   };
 
@@ -369,6 +439,8 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
         theme: state.theme,
         toggleTheme,
         setTheme: handleSetTheme,
+        preset: state.preset,
+        setPreset: handleSetPreset,
         accent: state.accent,
         setAccent: handleSetAccent,
         customAccent: state.customAccent,
