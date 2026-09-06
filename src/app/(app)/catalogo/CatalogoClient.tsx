@@ -692,7 +692,13 @@ export function CatalogoClient({
 
   // --- Render helpers ---
 
-  const renderSingleCard = (serie: SerieData) => {
+  // Las primeras cards de la grilla son el LCP de /catalogo (la pagina de
+  // mas trafico) — antes SIEMPRE se cargaban con fetchPriority="low", asi que
+  // el elemento LCP se lazy-cargaba como cualquier otro. `priority` (que
+  // ademas desactiva el lazy-load) solo va en las primeras ~4, para no
+  // preload-ear de mas.
+  const renderSingleCard = (serie: SerieData, index = 0) => {
+    const isPriority = index < 4;
     const gradient = getGradientByType(serie.tipo);
     const isInfoExpanded = expandedItemKey === `serie-${serie.id}`;
     const actorHighlights = (serie.actors ?? []).slice(0, 3);
@@ -728,7 +734,8 @@ export function CatalogoClient({
               fill
               sizes="(max-width: 480px) 50vw, (max-width: 768px) 46vw, (max-width: 1200px) 31vw, 24vw"
               quality={55}
-              fetchPriority="low"
+              priority={isPriority}
+              fetchPriority={isPriority ? 'high' : 'low'}
               unoptimized={isSupabaseImageUrl(cardImageUrl(serie))}
               style={{
                 objectFit: 'cover',
@@ -868,7 +875,8 @@ export function CatalogoClient({
     );
   };
 
-  const renderUniverseCard = (group: UniverseGroup) => {
+  const renderUniverseCard = (group: UniverseGroup, index = 0) => {
+    const isPriority = index < 4;
     const firstSerie = group.series[0];
     const isExpanded = expandedItemKey === `universe-${group.universoId}`;
     return (
@@ -898,7 +906,8 @@ export function CatalogoClient({
                 fill
                 sizes="(max-width: 480px) 50vw, (max-width: 768px) 46vw, (max-width: 1200px) 31vw, 24vw"
                 quality={55}
-                fetchPriority="low"
+                priority={isPriority}
+                fetchPriority={isPriority ? 'high' : 'low'}
                 unoptimized={isSupabaseImageUrl(cardImageUrl(firstSerie))}
                 style={{
                   objectFit: 'cover',
@@ -1777,7 +1786,7 @@ export function CatalogoClient({
 
           {viewMode === 'grid' ? (
             <Row gutter={[16, 16]} className="catalogo-grid-fade">
-              {paginatedItems.map((item) => {
+              {paginatedItems.map((item, index) => {
                 if (item.type === 'universe') {
                   return (
                     <Col
@@ -1787,13 +1796,13 @@ export function CatalogoClient({
                       lg={6}
                       key={`universe-${item.universoId}`}
                     >
-                      {renderUniverseCard(item)}
+                      {renderUniverseCard(item, index)}
                     </Col>
                   );
                 }
                 return (
                   <Col xs={12} sm={12} md={8} lg={6} key={item.serie.id}>
-                    {renderSingleCard(item.serie)}
+                    {renderSingleCard(item.serie, index)}
                   </Col>
                 );
               })}
