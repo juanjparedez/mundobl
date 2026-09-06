@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Input, Button, Empty, Avatar, Switch, Tag, Tooltip } from 'antd';
+import { useEffect, useState } from 'react';
+import { Input, Button, Empty, Spin, Avatar, Switch, Tag, Tooltip } from 'antd';
 import {
   CommentOutlined,
   ClockCircleOutlined,
@@ -43,12 +43,15 @@ export interface CommentData {
 
 interface CommentsSectionProps {
   seriesId: number;
-  comments: CommentData[];
+  /** Ya no se usa para precargar — la seccion pide sus propios comentarios
+   *  al montar (ver useEffect abajo). Se deja opcional por si algun caller
+   *  legacy todavia lo pasa. */
+  comments?: CommentData[];
 }
 
 export function CommentsSection({
   seriesId,
-  comments: initialComments,
+  comments: initialComments = [],
 }: CommentsSectionProps) {
   const message = useMessage();
   const { t } = useLocale();
@@ -58,6 +61,30 @@ export function CommentsSection({
     session?.user?.role === 'ADMIN' || session?.user?.role === 'MODERATOR';
 
   const [comments, setComments] = useState<CommentData[]>(initialComments);
+  // Antes esto llegaba ya resuelto desde getSeriesById — un include anidado
+  // (comments + replies + user) que ademas ni filtraba parentId=null ni
+  // sanitizaba isAnonymous/isPrivate, a diferencia de esta misma ruta de
+  // API. Se pide bajo demanda al montar la tab de comentarios, no en cada
+  // carga de /series/[id] se abra esa tab o no.
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(`/api/series/${seriesId}/comments`)
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data: CommentData[]) => {
+        if (!cancelled) setComments(data);
+      })
+      .catch(() => {
+        /* deja los comentarios que ya hubiera (vacio en el caso normal) */
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [seriesId]);
   const [newComment, setNewComment] = useState('');
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -248,7 +275,11 @@ export function CommentsSection({
 
       {/* Lista de comentarios sin wrappers pesados */}
       <div className="comments-feed">
-        {visibleComments.length === 0 ? (
+        {loading ? (
+          <div className="comments-feed__loading">
+            <Spin size="small" />
+          </div>
+        ) : visibleComments.length === 0 ? (
           <Empty
             description={t('comments.emptyText')}
             className="comments-feed__empty"
