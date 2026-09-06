@@ -212,50 +212,6 @@ export async function getWatchableSeriesByIdAdmin(id: number) {
   });
 }
 
-/**
- * Pool liviano para la trivia de series de /juegos: solo los campos que
- * hacen falta para armar preguntas (país / año / protagonista / género),
- * sin campos Date (evita el gotcha de unstable_cache serializando Date a
- * string en un cache HIT — no aplica acá porque no cacheamos esto, pero
- * mantenemos el shape libre de Date de entrada para no heredar el riesgo
- * si en el futuro se agrega cache). Cada tipo de pregunta se genera en el
- * cliente solo si la serie tiene ese dato — no todas tienen protagonista
- * o género cargado.
- */
-export async function getTriviaSeriesPool() {
-  const series = await prisma.series.findMany({
-    where: {
-      visibility: 'VISIBLE',
-      origin: 'CURATED',
-      catalogScope: 'PERSONAL',
-    },
-    select: {
-      id: true,
-      title: true,
-      year: true,
-      country: { select: { name: true } },
-      actors: {
-        where: { isMain: true },
-        take: 1,
-        select: { actor: { select: { name: true } } },
-      },
-      genres: {
-        take: 1,
-        select: { genre: { select: { name: true } } },
-      },
-    },
-  });
-
-  return series.map((s) => ({
-    id: s.id,
-    title: s.title,
-    year: s.year,
-    countryName: s.country?.name ?? null,
-    mainActorName: s.actors[0]?.actor.name ?? null,
-    genreName: s.genres[0]?.genre.name ?? null,
-  }));
-}
-
 const watchableInclude = Prisma.validator<Prisma.SeriesInclude>()({
   country: true,
   universe: true,
@@ -570,81 +526,6 @@ function buildSeriesFullInclude(
   } satisfies Prisma.SeriesInclude;
 }
 
-/**
- * Buscar series por título
- */
-export async function searchSeriesByTitle(query: string) {
-  return await prisma.series.findMany({
-    where: {
-      origin: 'CURATED',
-      OR: [
-        { title: { contains: query } },
-        { originalTitle: { contains: query } },
-      ],
-    },
-    include: {
-      country: true,
-      seasons: {
-        select: {
-          id: true,
-          seasonNumber: true,
-        },
-      },
-    },
-    orderBy: {
-      title: 'asc',
-    },
-  });
-}
-
-/**
- * Filtrar series por país
- */
-export async function getSeriesByCountry(countryId: number) {
-  return await prisma.series.findMany({
-    where: { countryId, origin: 'CURATED' },
-    include: {
-      country: true,
-      seasons: true,
-    },
-    orderBy: {
-      title: 'asc',
-    },
-  });
-}
-
-/**
- * Filtrar series por tipo (serie, pelicula, corto, etc.)
- */
-export async function getSeriesByType(type: string) {
-  return await prisma.series.findMany({
-    where: { type, origin: 'CURATED' },
-    include: {
-      country: true,
-      seasons: true,
-    },
-    orderBy: {
-      title: 'asc',
-    },
-  });
-}
-
-/**
- * Obtener series de un universo
- */
-export async function getSeriesByUniverse(universeId: number) {
-  return await prisma.series.findMany({
-    where: { universeId, origin: 'CURATED' },
-    include: {
-      country: true,
-      seasons: true,
-    },
-    orderBy: {
-      year: 'asc',
-    },
-  });
-}
-
 // ============================================
 // ACTORES
 // ============================================
@@ -664,17 +545,6 @@ const PUBLIC_SERIES_CARD_SELECT = {
   imageUrl: true,
   country: { select: { name: true, code: true } },
 } as const;
-
-/**
- * Obtener todos los actores
- */
-export async function getAllActors() {
-  return await prisma.actor.findMany({
-    orderBy: {
-      name: 'asc',
-    },
-  });
-}
 
 /**
  * Obtener un actor por ID con sus series
@@ -729,20 +599,6 @@ export async function getActorById(id: number) {
 }
 
 /**
- * Buscar actores por nombre
- */
-export async function searchActorsByName(query: string) {
-  return await prisma.actor.findMany({
-    where: {
-      OR: [{ name: { contains: query } }, { stageName: { contains: query } }],
-    },
-    orderBy: {
-      name: 'asc',
-    },
-  });
-}
-
-/**
  * Obtener todos los actores con conteo de series/temporadas
  */
 export async function getAllActorsWithCount() {
@@ -771,39 +627,9 @@ export async function getAllActorsWithCount() {
   });
 }
 
-/**
- * Actores con al menos un "dato curioso" cargado por un admin — pool para
- * la sección Curiosidades de Actores en /juegos. Puede venir vacío (hoy:
- * 0/1092 actores tienen funFacts) — el caller debe degradar amablemente,
- * no asumir que siempre hay contenido.
- */
-export async function getActorsWithFunFacts() {
-  return await prisma.actor.findMany({
-    where: { funFacts: { isEmpty: false } },
-    select: {
-      id: true,
-      name: true,
-      stageName: true,
-      imageUrl: true,
-      nationality: true,
-      funFacts: true,
-    },
-    orderBy: { name: 'asc' },
-  });
-}
-
 // ============================================
 // DIRECTORES
 // ============================================
-
-/**
- * Obtener todos los directores
- */
-export async function getAllDirectors() {
-  return await prisma.director.findMany({
-    orderBy: { name: 'asc' },
-  });
-}
 
 /**
  * Obtener todos los directores con conteo de series
@@ -854,18 +680,6 @@ export async function getDirectorById(id: number) {
         },
       },
     },
-  });
-}
-
-/**
- * Buscar directores por nombre
- */
-export async function searchDirectorsByName(query: string) {
-  return await prisma.director.findMany({
-    where: {
-      name: { contains: query },
-    },
-    orderBy: { name: 'asc' },
   });
 }
 
@@ -929,23 +743,6 @@ export async function getAllCountries() {
   return countries;
 }
 
-/**
- * Obtener un país por ID
- */
-export async function getCountryById(id: number) {
-  return await prisma.country.findUnique({
-    where: { id },
-    include: {
-      series: {
-        where: { origin: 'CURATED', catalogScope: 'PERSONAL' },
-        include: {
-          seasons: true,
-        },
-      },
-    },
-  });
-}
-
 // ============================================
 // ESTADÍSTICAS
 // ============================================
@@ -975,70 +772,6 @@ export async function getStats() {
     totalCountries,
     totalEpisodes,
   };
-}
-
-/**
- * Obtener series vistas vs no vistas
- */
-export async function getViewStats() {
-  const totalWatched = await prisma.viewStatus.count({
-    where: { status: 'VISTA' },
-  });
-
-  const totalUnwatched = await prisma.viewStatus.count({
-    where: { status: 'SIN_VER' },
-  });
-
-  return {
-    watched: totalWatched,
-    unwatched: totalUnwatched,
-    total: totalWatched + totalUnwatched,
-  };
-}
-
-// ============================================
-// UNIVERSOS
-// ============================================
-
-/**
- * Obtener todos los universos
- */
-export async function getAllUniverses() {
-  return await prisma.universe.findMany({
-    include: {
-      _count: {
-        select: {
-          series: {
-            where: { origin: 'CURATED', catalogScope: 'PERSONAL' },
-          },
-        },
-      },
-    },
-    orderBy: {
-      name: 'asc',
-    },
-  });
-}
-
-/**
- * Obtener un universo por ID
- */
-export async function getUniverseById(id: number) {
-  return await prisma.universe.findUnique({
-    where: { id },
-    include: {
-      series: {
-        where: { origin: 'CURATED', catalogScope: 'PERSONAL' },
-        include: {
-          country: true,
-          seasons: true,
-        },
-        orderBy: {
-          year: 'asc',
-        },
-      },
-    },
-  });
 }
 
 // ============================================
