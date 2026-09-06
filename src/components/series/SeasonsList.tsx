@@ -7,15 +7,16 @@ import {
   EditOutlined,
 } from '@ant-design/icons';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { EpisodesList } from './EpisodesList';
 import { CommentsList } from '@/components/common/CommentsList';
+import { useSeriesUserStatus } from './SeriesUserStatusProvider';
+import { canEditCatalog } from '@/lib/auth-client';
 import './SeasonsList.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 
 interface SeasonsListProps {
-  /** Solo ADMIN/MODERATOR pueden editar; otros roles no ven los botones. */
-  canEdit?: boolean;
   seasons: Array<{
     id: number;
     seasonNumber: number;
@@ -37,38 +38,28 @@ interface SeasonsListProps {
       category: string;
       score: number;
     }>;
-    comments?: Array<{
-      id: number;
-      content: string;
-      createdAt: Date;
-      updatedAt: Date;
-    }>;
-    viewStatus?: Array<{
-      status: string;
-      watchedDate?: Date | null;
-    }>;
     episodes?: Array<{
       id: number;
       episodeNumber: number;
       title?: string | null;
       duration?: number | null;
       synopsis?: string | null;
-      viewStatus?: Array<{
-        status: string;
-        watchedDate?: Date | null;
-      }> | null;
-      comments?: Array<{
-        id: number;
-        content: string;
-        createdAt: Date;
-        updatedAt: Date;
-      }> | null;
+      // Solo el conteo — el contenido se pide bajo demanda (ver EpisodesList).
+      _count?: { comments: number };
     }>;
   }>;
 }
 
-export function SeasonsList({ seasons, canEdit = false }: SeasonsListProps) {
+// El rol (canEdit) y el viewStatus de temporada/episodio (para el badge
+// "Visto" y el contador de progreso) se resuelven aca via useSession() y
+// SeriesUserStatusProvider — antes llegaban como props calculadas en el
+// servidor con `await auth()`, pero /series/[id] dejo de llamarla para no
+// forzar render dinamico (mataba el `revalidate`).
+export function SeasonsList({ seasons }: SeasonsListProps) {
   const { t } = useLocale();
+  const { data: session } = useSession();
+  const canEdit = canEditCatalog(session?.user?.role);
+  const { seasonStatus, episodeStatus } = useSeriesUserStatus();
   if (!seasons || seasons.length === 0) {
     return (
       <div className="seasons-empty">
@@ -86,7 +77,7 @@ export function SeasonsList({ seasons, canEdit = false }: SeasonsListProps) {
   const getEpisodeWatchProgress = (season: (typeof seasons)[0]) => {
     if (!season.episodes || season.episodes.length === 0) return null;
     const watchedCount = season.episodes.filter(
-      (ep) => ep.viewStatus?.[0]?.status === 'VISTA'
+      (ep) => episodeStatus[ep.id] === 'VISTA'
     ).length;
     const totalCount = season.episodes.length;
     return { watchedCount, totalCount };
@@ -119,7 +110,7 @@ export function SeasonsList({ seasons, canEdit = false }: SeasonsListProps) {
                 })}
               </Tag>
             )}
-            {season.viewStatus?.[0]?.status === 'VISTA' && (
+            {seasonStatus[season.id] === 'VISTA' && (
               <Tag color="success">✓ {t('seasonsList.watchedTag')}</Tag>
             )}
             {episodeProgress && episodeProgress.totalCount > 0 && (
@@ -188,7 +179,6 @@ export function SeasonsList({ seasons, canEdit = false }: SeasonsListProps) {
             </h5>
             <CommentsList
               seasonId={season.id}
-              initialComments={season.comments || []}
               placeholder="Escribe tus comentarios sobre esta temporada, arcos narrativos, desarrollo de personajes..."
             />
           </div>

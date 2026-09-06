@@ -29,22 +29,20 @@ export const metadata: Metadata = {
     description: CATALOGO_DESCRIPTION,
   },
 };
-import { auth } from '@/lib/auth';
 import { CatalogoClient } from './CatalogoClient';
 import { getCatalogFilterIndex } from '@/lib/database';
 import './catalogo.css';
 
-// Cache scoped por userId: el viewStatus de cada serie es per-user, asi
-// que no podemos compartir el cache entre todos los visitantes. Next.js
-// usa los args como parte del cache key automaticamente.
+// Sin `auth()`: el viewStatus y el rol de usuario ahora se piden del lado
+// del cliente (CatalogoClient via /api/view-status, userRole via
+// useSession()) para que esta pagina no dependa de cookies — con `auth()`
+// ahi el `revalidate` de abajo quedaba muerto, la ruta se volvia 100%
+// dinamica para todos los visitantes (esta y /series/[id] eran las de mas
+// trafico). Data 100% publica ahora, un solo cache key para todos.
 const getCatalogDataCached = unstable_cache(
-  async (userId: string | null) => {
+  async () => {
     return await Promise.all([
-      getAllSeries({
-        scope: 'PERSONAL',
-        origin: 'CURATED',
-        userId: userId ?? undefined,
-      }),
+      getAllSeries({ scope: 'PERSONAL', origin: 'CURATED' }),
       getCatalogFilterIndex(),
     ]);
   },
@@ -53,12 +51,8 @@ const getCatalogDataCached = unstable_cache(
 );
 
 export default async function CatalogoPage() {
-  const session = await auth();
-  const userRole = session?.user?.role || null;
-  const userId = session?.user?.id ?? null;
-
   // Obtener datos reales desde la base de datos
-  const [seriesDB, filterIndex] = await getCatalogDataCached(userId);
+  const [seriesDB, filterIndex] = await getCatalogDataCached();
 
   // Index seriesId -> nombres (para filtros extendidos)
   const genresBySerie = new Map<number, string[]>();
@@ -130,7 +124,6 @@ export default async function CatalogoPage() {
       imageThumbUrl: serie.imageThumbUrl,
       imagePosition: serie.imagePosition,
       synopsis: serie.synopsis,
-      visto: serie.viewStatus?.[0]?.status === 'VISTA',
       // Curaduria editorial (item featured por Flor/admin) — alimenta el
       // filtro rapido "Destacadas". No confundir con `visto`/favoritos
       // (que son por-usuario): esto es global, lo decide el editor.
@@ -187,7 +180,7 @@ export default async function CatalogoPage() {
         <Breadcrumbs
           items={[{ name: 'Inicio', href: '/' }, { name: 'Catálogo' }]}
         />
-        <CatalogoClient series={seriesData} userRole={userRole} />
+        <CatalogoClient series={seriesData} />
       </div>
     </>
   );

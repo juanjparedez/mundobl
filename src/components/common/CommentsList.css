@@ -54,6 +54,12 @@
   gap: var(--spacing-md);
 }
 
+.comments-list__loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-md) 0;
+}
+
 .comment-list-thread {
   display: flex;
   flex-direction: column;
