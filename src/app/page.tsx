@@ -23,6 +23,9 @@ async function getLandingStats() {
       latestSeries,
       featuredReview,
       watchableSeries,
+      totalGlossaryTerms,
+      featuredGlossaryTerm,
+      latestNews,
     ] = await Promise.all([
       prisma.series.count({ where: { origin: 'CURATED' } }),
       prisma.viewStatus.count({
@@ -109,6 +112,33 @@ async function getLandingStats() {
           },
         },
       }),
+      prisma.glossaryTerm.count({ where: { status: 'PUBLISHED' } }),
+      prisma.glossaryTerm.findFirst({
+        where: { status: 'PUBLISHED' },
+        orderBy: { term: 'asc' },
+        select: {
+          id: true,
+          slug: true,
+          term: true,
+          transliteration: true,
+          meaning: true,
+          category: true,
+          country: true,
+        },
+      }),
+      prisma.news.findMany({
+        where: { status: 'PUBLISHED' },
+        orderBy: { publishedAt: 'desc' },
+        take: 3,
+        select: {
+          id: true,
+          title: true,
+          summary: true,
+          imageUrl: true,
+          publishedAt: true,
+          sourceName: true,
+        },
+      }),
     ]);
 
     const formattedWatchable = watchableSeries.map((s) => {
@@ -140,6 +170,11 @@ async function getLandingStats() {
       };
     });
 
+    const formattedNews = latestNews.map((n) => ({
+      ...n,
+      publishedAt: n.publishedAt ? n.publishedAt.toISOString() : null,
+    }));
+
     return {
       totalSeries,
       totalCompletedViews,
@@ -148,6 +183,9 @@ async function getLandingStats() {
       latestSeries,
       featuredReview,
       watchableSeries: formattedWatchable,
+      totalGlossaryTerms,
+      featuredGlossaryTerm,
+      latestNews: formattedNews,
     };
   } catch {
     return {
@@ -158,6 +196,9 @@ async function getLandingStats() {
       latestSeries: [],
       featuredReview: null,
       watchableSeries: [],
+      totalGlossaryTerms: 0,
+      featuredGlossaryTerm: null,
+      latestNews: [],
     };
   }
 }

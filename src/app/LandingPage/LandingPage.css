@@ -707,6 +707,436 @@
   max-width: 480px;
 }
 
+/* ─── Narrative Sections ─── */
+.landing__narrative-section {
+  padding: 48px var(--spacing-md);
+  max-width: 1320px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.landing__section-head--start {
+  text-align: left;
+  align-items: flex-start;
+}
+
+/* Section 1: Tracker & Diary */
+.landing__tracker-inner {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: var(--spacing-xl);
+  align-items: center;
+  background: color-mix(in srgb, var(--bg-container) 85%, transparent);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  padding: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.landing__tracker-inner::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  right: -15%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--primary-color) 16%, transparent),
+    transparent 70%
+  );
+  filter: blur(50px);
+  pointer-events: none;
+}
+
+.landing__tracker-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  position: relative;
+  z-index: 1;
+}
+
+.landing__tracker-features {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-xs);
+}
+
+.landing__tracker-feature-item {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.landing__tracker-feature-icon {
+  font-size: 20px;
+  color: var(--primary-color);
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.landing__tracker-feature-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 2px 0;
+}
+
+.landing__tracker-feature-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.landing__tracker-actions {
+  margin-top: var(--spacing-xs);
+}
+
+.landing__tracker-visual {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+.landing__tracker-card {
+  width: 100%;
+  max-width: 380px;
+  background: color-mix(in srgb, var(--bg-container) 95%, #000);
+  border: 1px solid color-mix(in srgb, var(--primary-color) 35%, var(--border-color-secondary));
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.landing__tracker-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.landing__tracker-card-series {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: block;
+}
+
+.landing__tracker-card-meta {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+.landing__tracker-card-tag {
+  margin: 0;
+}
+
+.landing__tracker-card-bar {
+  width: 100%;
+  height: 6px;
+  background: var(--border-color-secondary);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.landing__tracker-card-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-color-hover));
+  border-radius: 999px;
+}
+
+.landing__tracker-card-spoiler {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: color-mix(in srgb, #faad14 12%, transparent);
+  border: 1px solid color-mix(in srgb, #faad14 30%, transparent);
+  border-radius: 8px;
+  color: #faad14;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.landing__tracker-card-note {
+  background: color-mix(in srgb, var(--bg-container) 80%, transparent);
+  border: 1px dashed var(--border-color-secondary);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.landing__tracker-card-note-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.landing__tracker-card-note-body {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+  font-style: italic;
+  line-height: 1.4;
+}
+
+/* Section 2: Cultural Glossary & Quiz */
+.landing__glossary-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+.landing__glossary-term-card {
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, #722ed1 10%, var(--bg-container)) 0%,
+    var(--bg-container) 100%
+  );
+  border: 1px solid color-mix(in srgb, #722ed1 30%, var(--border-color-secondary));
+  border-radius: var(--border-radius-lg);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
+.landing__glossary-term-tag-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.landing__glossary-term-name {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 4px 0 0 0;
+}
+
+.landing__glossary-term-translit {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  font-weight: 500;
+}
+
+.landing__glossary-term-meaning {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 4px 0 var(--spacing-xs) 0;
+  flex: 1;
+}
+
+.landing__quiz-card {
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, #fa8c16 10%, var(--bg-container)) 0%,
+    var(--bg-container) 100%
+  );
+  border: 1px solid color-mix(in srgb, #fa8c16 30%, var(--border-color-secondary));
+  border-radius: var(--border-radius-lg);
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  justify-content: center;
+}
+
+.landing__quiz-icon-wrap {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: color-mix(in srgb, #fa8c16 18%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  color: #fa8c16;
+}
+
+.landing__quiz-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.landing__quiz-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0 0 8px 0;
+  line-height: 1.5;
+  max-width: 320px;
+}
+
+/* Section 3: Curated News */
+.landing__news-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+.landing__news-card {
+  background: var(--bg-container);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.landing__news-card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--primary-color) 40%, transparent);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.landing__news-card-image-wrap {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--bg-container) 80%, #000);
+}
+
+.landing__news-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.landing__news-card:hover .landing__news-card-image {
+  transform: scale(1.04);
+}
+
+.landing__news-card-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.landing__news-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.landing__news-card-date {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.landing__news-card-source {
+  margin: 0;
+  font-size: 11px;
+}
+
+.landing__news-card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.landing__news-card-summary {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.landing__news-footer {
+  margin-top: var(--spacing-md);
+  text-align: right;
+}
+
+/* Section 4: Open Ecosystem & Collaborators */
+.landing__ecosystem-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+.landing__ecosystem-card {
+  background: color-mix(in srgb, var(--bg-container) 85%, transparent);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-lg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.landing__ecosystem-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--primary-color) 12%, transparent);
+}
+
+.landing__ecosystem-card-icon {
+  font-size: 26px;
+  color: var(--primary-color);
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--primary-color) 15%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.landing__ecosystem-card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.landing__ecosystem-card-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.landing__ecosystem-cta-wrap {
+  margin-top: var(--spacing-lg);
+  text-align: center;
+}
+
 /* ── Responsive ── */
 @media (max-width: 900px) {
   .landing__hero {
@@ -736,6 +1166,34 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
+  .landing__tracker-inner {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+    padding: 24px;
+  }
+
+  .landing__tracker-content {
+    align-items: center;
+    text-align: center;
+  }
+
+  .landing__section-head--start {
+    text-align: center;
+    align-items: center;
+  }
+
+  .landing__glossary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .landing__news-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .landing__ecosystem-grid {
+    grid-template-columns: 1fr;
+  }
+
   .landing__latest-strip {
     grid-template-columns: repeat(8, 150px);
   }
@@ -757,8 +1215,21 @@
   }
 
   .landing__features-grid,
-  .landing__novedades-grid {
+  .landing__novedades-grid,
+  .landing__news-grid {
     grid-template-columns: 1fr;
+  }
+
+  .landing__narrative-section {
+    padding: 28px var(--spacing-md);
+  }
+
+  .landing__tracker-inner {
+    padding: 18px 14px;
+  }
+
+  .landing__tracker-card {
+    max-width: 100%;
   }
 
   .landing__latest-strip {
@@ -840,13 +1311,20 @@ html[data-skin='premium'][data-theme='dark'] .landing__hero {
 html[data-skin='premium'][data-theme='dark'] .landing__feature-card,
 html[data-skin='premium'][data-theme='dark'] .landing__stat,
 html[data-skin='premium'][data-theme='dark'] .landing__series-card,
-html[data-skin='premium'][data-theme='dark'] .landing__featured-review {
+html[data-skin='premium'][data-theme='dark'] .landing__featured-review,
+html[data-skin='premium'][data-theme='dark'] .landing__tracker-inner,
+html[data-skin='premium'][data-theme='dark'] .landing__glossary-term-card,
+html[data-skin='premium'][data-theme='dark'] .landing__quiz-card,
+html[data-skin='premium'][data-theme='dark'] .landing__news-card,
+html[data-skin='premium'][data-theme='dark'] .landing__ecosystem-card {
   background: var(--mb-panel);
   border: 1px solid var(--mb-border);
   box-shadow: var(--mb-shadow-soft);
 }
 
 html[data-skin='premium'][data-theme='dark'] .landing__feature-card:hover,
-html[data-skin='premium'][data-theme='dark'] .landing__series-card:hover {
+html[data-skin='premium'][data-theme='dark'] .landing__series-card:hover,
+html[data-skin='premium'][data-theme='dark'] .landing__news-card:hover,
+html[data-skin='premium'][data-theme='dark'] .landing__ecosystem-card:hover {
   border-color: color-mix(in srgb, var(--primary-color) 40%, transparent);
 }
