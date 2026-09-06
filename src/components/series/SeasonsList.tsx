@@ -37,12 +37,6 @@ interface SeasonsListProps {
       category: string;
       score: number;
     }>;
-    comments?: Array<{
-      id: number;
-      content: string;
-      createdAt: Date;
-      updatedAt: Date;
-    }>;
     viewStatus?: Array<{
       status: string;
       watchedDate?: Date | null;
@@ -57,12 +51,8 @@ interface SeasonsListProps {
         status: string;
         watchedDate?: Date | null;
       }> | null;
-      comments?: Array<{
-        id: number;
-        content: string;
-        createdAt: Date;
-        updatedAt: Date;
-      }> | null;
+      // Solo el conteo — el contenido se pide bajo demanda (ver EpisodesList).
+      _count?: { comments: number };
     }>;
   }>;
 }
@@ -188,7 +178,6 @@ export function SeasonsList({ seasons, canEdit = false }: SeasonsListProps) {
             </h5>
             <CommentsList
               seasonId={season.id}
-              initialComments={season.comments || []}
               placeholder="Escribe tus comentarios sobre esta temporada, arcos narrativos, desarrollo de personajes..."
             />
           </div>

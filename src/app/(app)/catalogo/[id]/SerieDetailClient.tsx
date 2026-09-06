@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import {
   Descriptions,
   Tag,
@@ -91,6 +92,27 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
   const router = useRouter();
   const { data: session } = useSession();
   const canSeeNotes = !serie.notesPrivate || session?.user?.role === 'ADMIN';
+
+  // Antes venia precargado desde getSeriesById (el arbol completo de
+  // comentarios de la serie, en cada carga de esta vista admin). Se pide
+  // aparte al montar — esta vista solo muestra el contenido plano, sin
+  // replies, asi que alcanza con el mismo endpoint publico.
+  const [comments, setComments] = useState<CommentData[]>(serie.comments ?? []);
+  useEffect(() => {
+    if (!serie.id) return;
+    let cancelled = false;
+    fetch(`/api/series/${serie.id}/comments`)
+      .then((r) => (r.ok ? r.json() : []))
+      .then((data: CommentData[]) => {
+        if (!cancelled) setComments(data);
+      })
+      .catch(() => {
+        /* deja lo que hubiera */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [serie.id]);
 
   const getTypeColor = (type: string) => {
     const colorMap: Record<string, string> = {
@@ -491,13 +513,13 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
           )}
 
           {/* Comentarios */}
-          {serie.comments && serie.comments.length > 0 && (
+          {comments.length > 0 && (
             <Card
               title={t('serieDetail.commentsTitle')}
               style={{ marginBottom: '10px' }}
             >
               <List
-                dataSource={serie.comments}
+                dataSource={comments}
                 renderItem={(comment: CommentData) => (
                   <List.Item>
                     <div>{comment.content}</div>

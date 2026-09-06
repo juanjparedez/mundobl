@@ -378,12 +378,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
               }
             />
           }
-          commentsSection={
-            <CommentsSection
-              seriesId={serie.id}
-              comments={serie.comments || []}
-            />
-          }
+          commentsSection={<CommentsSection seriesId={serie.id} />}
         />
 
         {/* Botón flotante para editar — solo admin/moderator. En user
