@@ -1153,6 +1153,22 @@ const ja: TranslationShape = {
     "unbanSuccess": "ユーザーの禁止が解除されました",
     "banError": "ユーザーの禁止中にエラーが発生しました"
   },
+  "adminColaborador": {
+    "filterAllStatuses": "すべてのステータス",
+    "filterAllCountries": "すべての国",
+    "statusVisible": "/ver に公開済み",
+    "statusHidden": "管理者により非表示",
+    "statusPending": "審査中",
+    "statusRejected": "却下されました",
+    "statsSectionTitle": "あなたの投稿の統計",
+    "statsWatching": "視聴中",
+    "statsWatched": "視聴完了",
+    "statsFavorites": "お気に入り",
+    "statsComments": "コメント",
+    "statsReviews": "レビュー",
+    "statsSubscriptions": "購読者",
+    "notificationsSectionTitle": "あなたの投稿に関する通知"
+  },
   "adminContent": {
     "title": "コンテンツ管理",
     "subtitle": "シリーズとカタログの埋め込み動画を管理します。",
@@ -2297,6 +2313,8 @@ const ja: TranslationShape = {
     "contentAddedLabel": "コンテンツ",
     "reviewPublishedLabel": "レビュー",
     "commentThreadLabel": "コメント",
+    "seriesApprovedLabel": "投稿が承認されました",
+    "seriesRejectedLabel": "投稿が却下されました",
     "testLabel": "テスト",
     "defaultNotificationLabel": "通知",
     "timeAgoRecent": "たった今",

@@ -12,6 +12,8 @@ import {
   ExperimentOutlined,
   ArrowRightOutlined,
   CheckOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
 } from '@ant-design/icons';
 import './NotificationsWidget.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -56,6 +58,16 @@ export function NotificationsWidget() {
         icon: <CommentOutlined />,
         tone: 'purple',
         label: t('notificationsWidget.commentThreadLabel'),
+      },
+      series_approved: {
+        icon: <CheckCircleOutlined />,
+        tone: 'green',
+        label: t('notificationsWidget.seriesApprovedLabel'),
+      },
+      series_rejected: {
+        icon: <CloseCircleOutlined />,
+        tone: 'red',
+        label: t('notificationsWidget.seriesRejectedLabel'),
       },
       test: {
         icon: <ExperimentOutlined />,
