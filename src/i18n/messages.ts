@@ -8764,32 +8764,55 @@ const en: TranslationShape = {
   },
 };
 
-// Traducciones generadas por IA (Gemini) viven en archivos separados
-// para mantener este archivo manejable y permitir regeneracion individual
-// con `npx tsx scripts/translate-locales.ts {code}`. Si encontras una
-// frase que sonara mejor, podes editar directamente el archivo del
-// locale — la regeneracion es opcional.
-import it from './locales/it';
-import de from './locales/de';
-import fr from './locales/fr';
-import ja from './locales/ja';
-import ko from './locales/ko';
-import zhCN from './locales/zh-CN';
-import zhTW from './locales/zh-TW';
-import th from './locales/th';
-
-export const MESSAGES: Record<SupportedLocale, TranslationShape> = {
+// Traducciones generadas por IA (Gemini) viven en archivos separados para
+// mantener este archivo manejable y permitir regeneracion individual con
+// `npx tsx scripts/translate-locales.ts {code}`. Si encontras una frase que
+// sonara mejor, podes editar directamente el archivo del locale — la
+// regeneracion es opcional.
+//
+// IMPORTANTE — estos 8 locales NO se importan de forma estatica a proposito.
+// Antes se importaban todos aca y `MESSAGES` los mergeaba en un solo objeto de
+// ~1.4 MB que terminaba en el bundle de CUALQUIER visitante (verificado: el
+// chunk mas pesado del build traia strings en japones aunque el visitante
+// jamas hubiera tocado el selector de idioma). `es` y `en` se quedan
+// bundleados porque son el default y el fallback de `t()`; los otros 8 se
+// cargan bajo demanda con `loadLocaleMessages()`, que usa `import()` dinamico
+// — el consumidor es `LocaleProvider`, que ya sabe degradar a `en` mientras el
+// locale elegido termina de llegar.
+//
+// Para agregar un locale nuevo: sumarlo a `LAZY_LOCALE_LOADERS` (no a
+// `MESSAGES`) ademas de los pasos de `src/i18n/config.ts`.
+export const MESSAGES: Partial<Record<SupportedLocale, TranslationShape>> = {
   es,
   en,
-  it,
-  de,
-  fr,
-  ja,
-  ko,
-  'zh-CN': zhCN,
-  'zh-TW': zhTW,
-  th,
 };
+
+type LazyLocale = Exclude<SupportedLocale, 'es' | 'en'>;
+
+const LAZY_LOCALE_LOADERS: Record<
+  LazyLocale,
+  () => Promise<{ default: TranslationShape }>
+> = {
+  it: () => import('./locales/it'),
+  de: () => import('./locales/de'),
+  fr: () => import('./locales/fr'),
+  ja: () => import('./locales/ja'),
+  ko: () => import('./locales/ko'),
+  'zh-CN': () => import('./locales/zh-CN'),
+  'zh-TW': () => import('./locales/zh-TW'),
+  th: () => import('./locales/th'),
+};
+
+/** Devuelve las traducciones de un locale, cargandolo bajo demanda si hace
+ *  falta. `es`/`en` resuelven al toque (ya estan en memoria). */
+export async function loadLocaleMessages(
+  locale: SupportedLocale
+): Promise<TranslationShape> {
+  const bundled = MESSAGES[locale as 'es' | 'en'];
+  if (bundled) return bundled;
+  const mod = await LAZY_LOCALE_LOADERS[locale as LazyLocale]();
+  return mod.default;
+}
 
 type Join<K extends string, P extends string> = `${K}.${P}`;
 
