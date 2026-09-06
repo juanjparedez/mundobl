@@ -2838,6 +2838,32 @@ const ko: TranslationShape = {
     "finishTitle": "퀴즈 완료!",
     "playAgainButton": "다시 플레이",
     "bestScoreLabel": "최고 점수: {total}개 중 {score}개"
+  },
+  "quickPreview": {
+    "open": "빠른 보기",
+    "close": "닫기",
+    "synopsis": "줄거리",
+    "noSynopsis": "등록된 줄거리가 없습니다",
+    "moreInfo": "더 보기",
+    "fullDetail": "전체 정보",
+    "watchNow": "지금 보기",
+    "genres": "장르",
+    "tags": "태그",
+    "cast": "출연",
+    "directors": "연출",
+    "platforms": "플랫폼",
+    "universe": "유니버스",
+    "seasons": "시즌",
+    "episodes": "에피소드",
+    "runtime": "러닝타임",
+    "year": "연도",
+    "country": "국가",
+    "type": "유형",
+    "rating": "평점",
+    "language": "언어",
+    "company": "제작사",
+    "character": "배역",
+    "hoverHint": "카드에 마우스를 올리면 더 볼 수 있어요"
   }
 } as unknown as TranslationShape;
 

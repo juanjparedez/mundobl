@@ -2838,6 +2838,32 @@ const zhCN: TranslationShape = {
     "finishTitle": "问答完成！",
     "playAgainButton": "再玩一次",
     "bestScoreLabel": "您的最佳分数：{score} 分，共 {total} 分"
+  },
+  "quickPreview": {
+    "open": "快速预览",
+    "close": "关闭",
+    "synopsis": "剧情简介",
+    "noSynopsis": "暂无简介",
+    "moreInfo": "更多信息",
+    "fullDetail": "完整详情",
+    "watchNow": "立即观看",
+    "genres": "类型",
+    "tags": "标签",
+    "cast": "演员",
+    "directors": "导演",
+    "platforms": "播放平台",
+    "universe": "系列宇宙",
+    "seasons": "季数",
+    "episodes": "集数",
+    "runtime": "时长",
+    "year": "年份",
+    "country": "国家",
+    "type": "类别",
+    "rating": "评分",
+    "language": "语言",
+    "company": "制作公司",
+    "character": "角色",
+    "hoverHint": "将鼠标悬停在卡片上可查看更多"
   }
 } as unknown as TranslationShape;
 

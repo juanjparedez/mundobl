@@ -35,3 +35,23 @@ export type { MediaCardProps } from './MediaCard/MediaCard';
 
 export { AutoFitList } from './AutoFitList/AutoFitList';
 export type { AutoFitListProps } from './AutoFitList/AutoFitList';
+
+export {
+  QuickPreviewProvider,
+  useQuickPreview,
+} from './QuickPreview/QuickPreviewProvider';
+export { useQuickPreviewController } from './QuickPreview/useQuickPreviewController';
+export type { QuickPreviewController } from './QuickPreview/useQuickPreviewController';
+export { QuickPreviewModal } from './QuickPreview/QuickPreviewModal';
+export type {
+  QuickPreviewData,
+  QuickPreviewChip,
+  QuickPreviewChipGroup,
+  QuickPreviewFact,
+  QuickPreviewAction,
+  QuickPreviewLabels,
+  QuickPreviewApi,
+  PreviewFactory,
+  CardPreviewBinding,
+  ListPreviewBinding,
+} from './QuickPreview/quickPreviewTypes';

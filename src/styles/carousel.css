@@ -1,0 +1,29 @@
+/* ─── Carruseles horizontales (utilidades compartidas) ─────────────────
+ *
+ * Clases genericas que acompañan al hook `useCarouselNav`. Viven aca y no
+ * en el CSS de cada carrusel porque los tres (catalogo, /ver, watchables)
+ * necesitan exactamente la misma mecanica; el look propio de cada uno
+ * sigue en su archivo.
+ * ------------------------------------------------------------------- */
+
+/* Mientras se arrastra con el mouse hay que cortar el smooth scroll (si
+ * no, cada asignacion de scrollLeft se anima y el track "flota" detras
+ * del cursor) y la seleccion de texto. */
+.mb-carousel-track--dragging {
+  scroll-behavior: auto !important;
+  scroll-snap-type: none !important;
+  cursor: grabbing;
+  user-select: none;
+}
+
+.mb-carousel-track--dragging * {
+  cursor: grabbing !important;
+}
+
+/* Flecha en un extremo: sigue ocupando su lugar (que no salte el header)
+ * pero deja de invitar al click. */
+.mb-carousel-arrow--disabled {
+  opacity: 0.3;
+  cursor: default;
+  pointer-events: none;
+}
