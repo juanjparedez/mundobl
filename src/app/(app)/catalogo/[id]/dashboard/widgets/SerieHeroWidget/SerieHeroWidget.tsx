@@ -11,7 +11,7 @@ import { Tag } from 'antd';
 import { Widget } from '@/components/dashboard';
 import { Chip } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
-import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import type { SerieDetailData } from '../../../types';
 import './SerieHeroWidget.css';
 
@@ -35,14 +35,14 @@ export function SerieHeroWidget({ serie }: SerieHeroWidgetProps) {
   return (
     <Widget noPadding>
       <div className="mb-serie-hero-widget">
-        {serie.imageUrl ? (
+        {cardImageUrl(serie) ? (
           <div className="mb-serie-hero-widget__cover">
             <Image
-              src={serie.imageUrl}
+              src={cardImageUrl(serie)!}
               alt={serie.title}
               width={180}
               height={260}
-              unoptimized={isSupabaseImageUrl(serie.imageUrl)}
+              unoptimized={isSupabaseImageUrl(cardImageUrl(serie))}
             />
           </div>
         ) : (

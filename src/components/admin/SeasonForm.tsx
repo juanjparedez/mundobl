@@ -42,6 +42,7 @@ interface SeasonFormData {
   synopsis?: string | null;
   observations?: string | null;
   imageUrl?: string | null;
+  imageThumbUrl?: string | null;
 }
 
 interface SeasonFormProps {
@@ -112,7 +113,7 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
       }
 
       const data = await response.json();
-      form.setFieldsValue({ imageUrl: data.url });
+      form.setFieldsValue({ imageUrl: data.url, imageThumbUrl: data.thumbUrl });
       message.success(t('seasonForm.uploadSuccess'));
 
       return false;
@@ -237,6 +238,11 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
               </Col>
 
               <Col xs={24}>
+                {/* Miniatura de card generada junto al poster en /api/upload
+                    — mismo criterio que SeriesForm. */}
+                <Form.Item name="imageThumbUrl" hidden>
+                  <Input />
+                </Form.Item>
                 <Form.Item
                   label={`🖼️ ${t('seasonForm.fieldImage')}`}
                   name="imageUrl"

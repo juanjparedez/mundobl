@@ -8,7 +8,7 @@ import { useSession } from 'next-auth/react';
 import { LeftOutlined, LockOutlined, RightOutlined } from '@ant-design/icons';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
-import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import {
   MetadataChip,
   MetadataChipList,
@@ -89,6 +89,7 @@ interface SeriesInfoProps {
         id: number;
         title: string;
         imageUrl?: string | null;
+        imageThumbUrl?: string | null;
         imagePosition?: string | null;
         year?: number | null;
         type: string;
@@ -99,6 +100,7 @@ interface SeriesInfoProps {
         id: number;
         title: string;
         imageUrl?: string | null;
+        imageThumbUrl?: string | null;
         imagePosition?: string | null;
         year?: number | null;
         type: string;
@@ -112,6 +114,7 @@ interface SeriesInfoProps {
       id: number;
       title: string;
       imageUrl?: string | null;
+      imageThumbUrl?: string | null;
       imagePosition?: string | null;
       year?: number | null;
       type: string;
@@ -123,6 +126,7 @@ interface PreviewSeries {
   id: number;
   title: string;
   imageUrl?: string | null;
+  imageThumbUrl?: string | null;
   imagePosition?: string | null;
   year?: number | null;
   type: string;
@@ -555,13 +559,13 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
                 className="series-info__preview-card"
               >
                 <div className="series-info__preview-cover">
-                  {item.imageUrl ? (
+                  {cardImageUrl(item) ? (
                     <Image
-                      src={item.imageUrl}
+                      src={cardImageUrl(item)!}
                       alt={item.title}
                       fill
                       sizes="(max-width: 640px) 120px, 140px"
-                      unoptimized={isSupabaseImageUrl(item.imageUrl)}
+                      unoptimized={isSupabaseImageUrl(cardImageUrl(item))}
                       style={{
                         objectFit: 'cover',
                         objectPosition: item.imagePosition ?? 'center',
@@ -626,13 +630,13 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
                 className="series-info__preview-card"
               >
                 <div className="series-info__preview-cover">
-                  {item.imageUrl ? (
+                  {cardImageUrl(item) ? (
                     <Image
-                      src={item.imageUrl}
+                      src={cardImageUrl(item)!}
                       alt={item.title}
                       fill
                       sizes="(max-width: 640px) 120px, 140px"
-                      unoptimized={isSupabaseImageUrl(item.imageUrl)}
+                      unoptimized={isSupabaseImageUrl(cardImageUrl(item))}
                       style={{
                         objectFit: 'cover',
                         objectPosition: item.imagePosition ?? 'center',

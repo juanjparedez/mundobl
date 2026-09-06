@@ -142,6 +142,14 @@ export async function POST(request: NextRequest) {
     // a Supabase (fetch + sharp + upload, varios segundos en el peor caso)
     // se difiere a after() para NO bloquear el response del alta.
     const externalImageUrl = body.imageUrl || null;
+    // Si el poster se subio via el uploader (/api/upload), el form ya manda
+    // la miniatura junto con la URL — no hace falta esperar al after().
+    // Si el admin pego una URL externa a mano, esto viene vacio y lo llena
+    // el after() de abajo cuando la migracion termine.
+    const clientThumbUrl =
+      typeof body.imageThumbUrl === 'string' && body.imageThumbUrl.trim()
+        ? body.imageThumbUrl.trim()
+        : null;
 
     // Crear la serie
     const serie = await prisma.series.create({
@@ -153,6 +161,7 @@ export async function POST(request: NextRequest) {
         basedOn,
         format: format || 'regular',
         imageUrl: externalImageUrl,
+        imageThumbUrl: clientThumbUrl,
         imagePosition: body.imagePosition || 'center',
         synopsis,
         soundtrack,
@@ -352,10 +361,21 @@ export async function POST(request: NextRequest) {
             externalImageUrl,
             'series'
           );
-          if (migrated && migrated !== externalImageUrl) {
+          const updateData: { imageUrl?: string; imageThumbUrl?: string } = {};
+          if (migrated.url !== externalImageUrl) {
+            updateData.imageUrl = migrated.url;
+          }
+          // Solo pisa el thumb si esta llamada genero uno de verdad (URL
+          // externa real). Si ya era de Supabase (subida via /api/upload,
+          // clientThumbUrl ya seteado arriba), `migrated.thumbUrl` es null y
+          // no tocamos nada.
+          if (migrated.thumbUrl) {
+            updateData.imageThumbUrl = migrated.thumbUrl;
+          }
+          if (Object.keys(updateData).length > 0) {
             await prisma.series.update({
               where: { id: serie.id },
-              data: { imageUrl: migrated },
+              data: updateData,
             });
           }
         } catch (error) {

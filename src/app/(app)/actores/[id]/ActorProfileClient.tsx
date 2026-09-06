@@ -15,7 +15,7 @@ import {
   EmptyState,
   MediaCard,
 } from '@/components/design-system';
-import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import type { TranslationKey } from '@/i18n/messages';
@@ -28,6 +28,7 @@ export interface FilmographyEntry {
   year?: number | null;
   type: string;
   imageUrl?: string | null;
+  imageThumbUrl?: string | null;
   countryName?: string | null;
   characters: string[];
   isMain: boolean;
@@ -219,9 +220,9 @@ export function ActorProfileClient({
               <MediaCard
                 key={entry.seriesId}
                 href={`/series/${entry.seriesId}`}
-                imageUrl={entry.imageUrl}
+                imageUrl={cardImageUrl(entry)}
                 imageAlt={entry.title}
-                unoptimizedImage={isSupabaseImageUrl(entry.imageUrl)}
+                unoptimizedImage={isSupabaseImageUrl(cardImageUrl(entry))}
                 title={entry.title}
                 subtitle={
                   [entry.year ? String(entry.year) : null, entry.countryName]

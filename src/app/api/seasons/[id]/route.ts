@@ -65,6 +65,16 @@ export async function PUT(
     const body = await request.json();
     const { actors, ...seasonData } = body;
 
+    const newImageUrl = seasonData.imageUrl || null;
+    // Mismo criterio que /api/series/[id]: sin poster no hay thumb; con
+    // poster, solo lo pisamos si el form mando uno nuevo (subida via
+    // /api/upload) — si no, se omite del update y el existente sobrevive.
+    const newThumbUrl =
+      typeof seasonData.imageThumbUrl === 'string' &&
+      seasonData.imageThumbUrl.trim()
+        ? seasonData.imageThumbUrl.trim()
+        : undefined;
+
     // Actualizar temporada
     await prisma.season.update({
       where: { id: seasonId },
@@ -75,7 +85,8 @@ export async function PUT(
         year: seasonData.year || null,
         synopsis: seasonData.synopsis || null,
         observations: seasonData.observations || null,
-        imageUrl: seasonData.imageUrl || null,
+        imageUrl: newImageUrl,
+        imageThumbUrl: newImageUrl ? newThumbUrl : null,
       },
     });
 

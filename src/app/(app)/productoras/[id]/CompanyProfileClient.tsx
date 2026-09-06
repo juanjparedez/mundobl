@@ -16,7 +16,7 @@ import {
   EmptyState,
   MediaCard,
 } from '@/components/design-system';
-import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import type { TranslationKey } from '@/i18n/messages';
@@ -28,6 +28,7 @@ interface CompanySeries {
   year?: number | null;
   type: string;
   imageUrl?: string | null;
+  imageThumbUrl?: string | null;
   country?: { name: string; code?: string | null } | null;
 }
 
@@ -165,9 +166,9 @@ export function CompanyProfileClient({ company }: CompanyProfileClientProps) {
               <MediaCard
                 key={s.id}
                 href={`/series/${s.id}`}
-                imageUrl={s.imageUrl}
+                imageUrl={cardImageUrl(s)}
                 imageAlt={s.title}
-                unoptimizedImage={isSupabaseImageUrl(s.imageUrl)}
+                unoptimizedImage={isSupabaseImageUrl(cardImageUrl(s))}
                 title={s.title}
                 subtitle={
                   [s.year ? String(s.year) : null, s.country?.name]

@@ -29,6 +29,7 @@ const getNovedadesData = unstable_cache(
           id: true,
           title: true,
           imageUrl: true,
+          imageThumbUrl: true,
           imagePosition: true,
           year: true,
           type: true,
@@ -52,6 +53,7 @@ const getNovedadesData = unstable_cache(
               id: true,
               title: true,
               imageUrl: true,
+              imageThumbUrl: true,
               type: true,
             },
           },
@@ -72,6 +74,7 @@ const getNovedadesData = unstable_cache(
           id: true,
           title: true,
           imageUrl: true,
+          imageThumbUrl: true,
           imagePosition: true,
           year: true,
           type: true,
@@ -91,6 +94,9 @@ const getNovedadesData = unstable_cache(
 
     const formattedWatchable = watchableSeries.map((s) => {
       let imageUrl = s.imageUrl;
+      // El auto-thumbnail de YouTube reemplaza al poster propio cuando no hay
+      // uno cargado — en ese caso no hay miniatura nuestra que ofrecer.
+      let imageThumbUrl: string | null = s.imageThumbUrl;
       if (!imageUrl) {
         const firstWithEmbed = s.seasons
           .flatMap((season) => season.episodes)
@@ -100,12 +106,14 @@ const getNovedadesData = unstable_cache(
             firstWithEmbed.embedPlatform as Platform,
             firstWithEmbed.embedUrl as string
           );
+          imageThumbUrl = null;
         }
       }
       return {
         id: s.id,
         title: s.title,
         imageUrl,
+        imageThumbUrl,
         imagePosition: s.imagePosition,
         year: s.year,
         type: s.type,

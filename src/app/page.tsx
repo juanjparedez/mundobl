@@ -47,6 +47,7 @@ async function getLandingStats() {
           title: true,
           year: true,
           imageUrl: true,
+          imageThumbUrl: true,
           country: { select: { name: true, code: true } },
         },
       }),
@@ -66,7 +67,14 @@ async function getLandingStats() {
           verdict: true,
           helpfulCount: true,
           user: { select: { name: true, image: true } },
-          series: { select: { id: true, title: true, imageUrl: true } },
+          series: {
+            select: {
+              id: true,
+              title: true,
+              imageUrl: true,
+              imageThumbUrl: true,
+            },
+          },
         },
       }),
       // Series watchable para el carousel Netflix-like en landing
@@ -85,6 +93,7 @@ async function getLandingStats() {
           id: true,
           title: true,
           imageUrl: true,
+          imageThumbUrl: true,
           imagePosition: true,
           year: true,
           type: true,
@@ -104,6 +113,9 @@ async function getLandingStats() {
 
     const formattedWatchable = watchableSeries.map((s) => {
       let imageUrl = s.imageUrl;
+      // El auto-thumbnail de YouTube reemplaza al poster propio cuando no
+      // hay uno cargado — en ese caso no hay miniatura nuestra que ofrecer.
+      let imageThumbUrl: string | null = s.imageThumbUrl;
       if (!imageUrl) {
         const firstWithEmbed = s.seasons
           .flatMap((season) => season.episodes)
@@ -113,12 +125,14 @@ async function getLandingStats() {
             firstWithEmbed.embedPlatform as Platform,
             firstWithEmbed.embedUrl as string
           );
+          imageThumbUrl = null;
         }
       }
       return {
         id: s.id,
         title: s.title,
         imageUrl,
+        imageThumbUrl,
         imagePosition: s.imagePosition,
         year: s.year,
         type: s.type,
