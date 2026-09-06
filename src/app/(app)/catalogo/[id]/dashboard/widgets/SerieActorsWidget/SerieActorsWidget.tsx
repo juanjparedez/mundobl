@@ -8,6 +8,7 @@ import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import type { SerieDetailData } from '../../../types';
 import './SerieActorsWidget.css';
+import Link from 'next/link';
 
 export interface SerieActorsWidgetProps {
   serie: SerieDetailData;
@@ -69,7 +70,14 @@ export function SerieActorsWidget({ serie }: SerieActorsWidgetProps) {
       <ul className="mb-serie-actors-widget">
         {uniqueActors.map((actor) => (
           <li key={actor.id} className="mb-serie-actors-widget__item">
-            <span className="mb-serie-actors-widget__name">{actor.name}</span>
+            {/* Antes era texto plano, aunque /actores/[id] existe. */}
+            <Link
+              href={`/actores/${actor.id}`}
+              prefetch={false}
+              className="mb-serie-actors-widget__name"
+            >
+              {actor.name}
+            </Link>
             <span className="mb-serie-actors-widget__character">
               {actor.characters.length > 0
                 ? actor.characters.join(', ')

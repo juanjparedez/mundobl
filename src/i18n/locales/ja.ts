@@ -2672,7 +2672,13 @@ const ja: TranslationShape = {
     "linkWiki": "Wikipedia",
     "birthYear": "生年: {year}",
     "awardsTitle": "受賞歴",
-    "featuredWorksTitle": "代表作"
+    "featuredWorksTitle": "代表作",
+    "biographyTitle": "経歴",
+    "filmographyTitle": "監督作品",
+    "filmographyEmpty": "まだ作品が登録されていません。",
+    "seriesDirected": "監督作品{n}本",
+    "backToIndex": "すべての監督を見る",
+    "alsoActed": "出演作品"
   },
   "ver": {
     "searchPlaceholder": "シリーズ、スタジオ、公式タイトルを検索...",
@@ -2720,7 +2726,50 @@ const ja: TranslationShape = {
     "geoRestrictedBadge": "お住まいの地域では制限されています"
   },
   "actorProfile": {
-    "funFactsTitle": "豆知識"
+    "funFactsTitle": "豆知識",
+    "biographyTitle": "経歴",
+    "filmographyTitle": "出演作",
+    "filmographyEmpty": "まだ出演作が登録されていません。",
+    "participations": "{n}作品",
+    "mainRole": "主演",
+    "backToIndex": "すべての俳優を見る",
+    "externalLinksTitle": "リンク",
+    "aliasesTitle": "別名",
+    "alsoDirected": "監督作品"
+  },
+  "companyProfile": {
+    "catalogTitle": "製作作品",
+    "catalogEmpty": "この制作会社に紐づく作品はまだありません。",
+    "seriesCount": "{n}作品",
+    "websiteLabel": "ウェブサイト",
+    "youtubeLabel": "YouTubeチャンネル",
+    "foundedLabel": "設立",
+    "countryLabel": "国",
+    "backToIndex": "すべての制作会社を見る"
+  },
+  "peopleIndex": {
+    "actorsTitle": "俳優",
+    "actorsSubtitle": "カタログの全出演者を作品数順に表示しています。",
+    "directorsTitle": "監督",
+    "directorsSubtitle": "カタログの作品を手がける監督たち。",
+    "companiesTitle": "制作会社",
+    "companiesSubtitle": "カタログの作品を支えるスタジオ。",
+    "searchPlaceholder": "名前で検索...",
+    "sortLabel": "並び替え",
+    "sortCredits": "作品数順",
+    "sortAZ": "A-Z",
+    "sortZA": "Z-A",
+    "nationalityAll": "すべての国籍",
+    "creditsCount": "{n}作品",
+    "seriesCount": "{n}作品",
+    "resultsCount": "{n}件",
+    "emptyTitle": "結果がありません",
+    "emptyDescription": "別の名前で検索するか、フィルターを解除してください。",
+    "clearFilters": "フィルターをクリア",
+    "prevPage": "前へ",
+    "nextPage": "次へ",
+    "pageIndicator": "{total}ページ中{current}ページ",
+    "incompleteBadge": "情報が不足"
   },
   "glosario": {
     "heroBadge": "文化と倫理的な翻訳",

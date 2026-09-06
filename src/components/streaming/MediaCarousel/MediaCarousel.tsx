@@ -12,7 +12,7 @@ import {
   GlobalOutlined,
 } from '@ant-design/icons';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
-import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import './MediaCarousel.css';
 
 export interface CarouselMediaItem {
@@ -21,6 +21,7 @@ export interface CarouselMediaItem {
   year: number | null;
   type: string;
   imageUrl: string | null;
+  imageThumbUrl?: string | null;
   synopsis: string | null;
   country: { name: string; code: string | null } | null;
   episodesWithEmbed: number;
@@ -121,10 +122,10 @@ export function MediaCarousel({
                 className="media-carousel__card"
               >
                 <div className="media-carousel__poster-wrap">
-                  {item.imageUrl ? (
-                    isSupabaseImageUrl(item.imageUrl) ? (
+                  {cardImageUrl(item) ? (
+                    isSupabaseImageUrl(cardImageUrl(item)) ? (
                       <Image
-                        src={item.imageUrl}
+                        src={cardImageUrl(item)!}
                         alt={item.title}
                         fill
                         sizes="(max-width: 768px) 160px, 200px"
@@ -136,7 +137,7 @@ export function MediaCarousel({
                       // whitelisteada en next.config.ts remotePatterns.
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
-                        src={item.imageUrl}
+                        src={cardImageUrl(item)!}
                         alt={item.title}
                         className="media-carousel__poster"
                         loading="lazy"

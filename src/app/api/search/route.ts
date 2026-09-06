@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
+import { EXCLUDE_PLACEHOLDER_ACTOR } from '@/lib/placeholder-actor';
 
 const TAKE = 6;
 
@@ -34,7 +35,10 @@ export async function GET(request: NextRequest) {
     }),
     prisma.actor.findMany({
       where: {
-        OR: [{ name: insensitive }, { stageName: insensitive }],
+        AND: [
+          EXCLUDE_PLACEHOLDER_ACTOR,
+          { OR: [{ name: insensitive }, { stageName: insensitive }] },
+        ],
       },
       select: { id: true, name: true, imageUrl: true },
       orderBy: { name: 'asc' },

@@ -10,6 +10,8 @@ import {
   findOrCreateTag,
   findOrCreateGenre,
   findOrCreateActor,
+  findOrCreateDirector,
+  findOrCreateProductionCompany,
 } from '@/lib/tag-utils';
 
 interface RouteParams {
@@ -160,12 +162,11 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     // Manejar productora (por nombre o por ID)
     let productionCompanyId = body.productionCompanyId || null;
     if (body.productionCompanyName && !productionCompanyId) {
-      const company = await prisma.productionCompany.upsert({
-        where: { name: body.productionCompanyName },
-        update: {},
-        create: { name: body.productionCompanyName },
-      });
-      productionCompanyId = company.id;
+      const company = await findOrCreateProductionCompany(
+        prisma,
+        body.productionCompanyName
+      );
+      productionCompanyId = company?.id ?? null;
     }
 
     // Manejar idioma original (por nombre o por ID)
@@ -179,20 +180,39 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       originalLanguageId = language.id;
     }
 
-    // Procesar imagen externa → subir a Supabase si es URL externa
+    // Procesar imagen externa → subir a Supabase si es URL externa.
+    //
+    // `resolvedThumbUrl` empieza en `undefined` = "no toques imageThumbUrl":
+    // si el admin no cambio el poster (imageUrl llega igual a la que ya
+    // tenia, o vacio), no queremos pisar la miniatura ya generada en cada
+    // guardado de un campo cualquiera — antes de este chequeo, cualquier
+    // edicion sin tocar la imagen hubiera borrado el thumb existente.
+    // Solo dos casos lo cambian: (a) el form subio un archivo nuevo via
+    // /api/upload y mando body.imageThumbUrl, o (b) downloadAndUploadExternalImage
+    // migro una URL externa nueva y genero un thumb real. Si se saca el
+    // poster (imageUrl vacio), el thumb se saca con el — si no, una card
+    // seguiria mostrando la miniatura vieja de un poster que ya no existe.
     let resolvedImageUrl = body.imageUrl || null;
+    let resolvedThumbUrl: string | null | undefined =
+      typeof body.imageThumbUrl === 'string' && body.imageThumbUrl.trim()
+        ? body.imageThumbUrl.trim()
+        : undefined;
     if (resolvedImageUrl) {
       try {
-        resolvedImageUrl = await downloadAndUploadExternalImage(
+        const migrated = await downloadAndUploadExternalImage(
           resolvedImageUrl,
           'series'
         );
+        resolvedImageUrl = migrated.url;
+        if (migrated.thumbUrl) resolvedThumbUrl = migrated.thumbUrl;
       } catch (error) {
         console.warn(
           `No se pudo migrar imagen a Supabase, manteniendo URL original:`,
           error
         );
       }
+    } else {
+      resolvedThumbUrl = null;
     }
 
     // Actualizar la serie
@@ -206,6 +226,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         basedOn: body.basedOn || null,
         format: body.format || 'regular',
         imageUrl: resolvedImageUrl,
+        ...(resolvedThumbUrl !== undefined && {
+          imageThumbUrl: resolvedThumbUrl,
+        }),
         imagePosition: body.imagePosition || 'center',
         synopsis: body.synopsis || null,
         review: body.review || null,
@@ -261,11 +284,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       for (const directorData of body.directors) {
         if (!directorData.name) continue;
 
-        const director = await prisma.director.upsert({
-          where: { name: directorData.name },
-          update: {},
-          create: { name: directorData.name },
-        });
+        const director = await findOrCreateDirector(prisma, directorData.name);
+        if (!director) continue;
 
         await prisma.seriesDirector.create({
           data: {

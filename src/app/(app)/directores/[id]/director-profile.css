@@ -184,3 +184,40 @@
     height: 160px;
   }
 }
+
+/* Cross-link a la ficha de actor (personas que dirigen y actuan) y link de
+   vuelta al indice. Tokens, sin hex. */
+.director-profile__crosslink {
+  margin: var(--spacing-sm) 0 0;
+}
+
+.director-profile__crosslink a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--primary-color);
+  text-decoration: none;
+  font-size: var(--font-size-sm);
+}
+
+.director-profile__crosslink a:hover,
+.director-profile__crosslink a:focus-visible {
+  text-decoration: underline;
+}
+
+.director-profile__back {
+  text-align: center;
+  font-size: var(--font-size-sm);
+  margin-top: var(--spacing-lg);
+}
+
+.director-profile__back a {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.director-profile__back a:hover,
+.director-profile__back a:focus-visible {
+  color: var(--primary-color);
+  text-decoration: underline;
+}

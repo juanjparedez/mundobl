@@ -2,8 +2,22 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getAllActorsWithCount, prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    // SeriesForm/SeasonForm piden esto solo para armar la lista de nombres
+    // del AutoComplete de reparto — no necesitan biografia, funFacts, imagen
+    // ni el `_count` de cada uno de los ~1190 actores. `/admin/actores` (la
+    // tabla real) sigue pidiendo el shape completo sin el query param.
+    const namesOnly = request.nextUrl.searchParams.get('namesOnly') === '1';
+    if (namesOnly) {
+      const actors = await prisma.actor.findMany({
+        where: { isPlaceholder: false },
+        select: { name: true },
+        orderBy: { name: 'asc' },
+      });
+      return NextResponse.json(actors);
+    }
+
     const actors = await getAllActorsWithCount();
     return NextResponse.json(actors);
   } catch (error) {

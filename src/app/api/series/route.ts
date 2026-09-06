@@ -9,28 +9,27 @@ import {
   findOrCreateTag,
   findOrCreateGenre,
   findOrCreateActor,
+  findOrCreateDirector,
+  findOrCreateProductionCompany,
 } from '@/lib/tag-utils';
 
-// GET /api/series - Obtener todas las series del catalogo curado (excluye USER_EMBED)
+// GET /api/series - Picker de series para el admin (ver ContenidoClient.tsx,
+// unico consumidor: arma un <Select> de {value: id, label: title}).
+//
+// Antes devolvia la tabla ENTERA sin auth ni select: country/universe/
+// seasons completos + `viewStatus: true` — el estado de visualizacion de
+// TODOS los usuarios, en un endpoint que cualquiera podia pegarle sin
+// sesion. Ahora exige ADMIN/MODERATOR (como el POST de abajo) y selecciona
+// solo lo que el picker usa.
 export async function GET() {
   try {
+    const authResult = await requireRole(['ADMIN', 'MODERATOR']);
+    if (!authResult.authorized) return authResult.response;
+
     const series = await prisma.series.findMany({
       where: { origin: 'CURATED' },
-      include: {
-        country: true,
-        universe: true,
-        seasons: {
-          select: {
-            id: true,
-            seasonNumber: true,
-            episodeCount: true,
-          },
-        },
-        viewStatus: true,
-      },
-      orderBy: {
-        title: 'asc',
-      },
+      select: { id: true, title: true },
+      orderBy: { title: 'asc' },
     });
 
     return NextResponse.json(series);
@@ -120,11 +119,7 @@ export async function POST(request: NextRequest) {
           })
         : Promise.resolve(null),
       needCompany
-        ? prisma.productionCompany.upsert({
-            where: { name: productionCompanyName },
-            update: {},
-            create: { name: productionCompanyName },
-          })
+        ? findOrCreateProductionCompany(prisma, productionCompanyName)
         : Promise.resolve(null),
       needLanguage
         ? prisma.language.upsert({
@@ -144,6 +139,14 @@ export async function POST(request: NextRequest) {
     // a Supabase (fetch + sharp + upload, varios segundos en el peor caso)
     // se difiere a after() para NO bloquear el response del alta.
     const externalImageUrl = body.imageUrl || null;
+    // Si el poster se subio via el uploader (/api/upload), el form ya manda
+    // la miniatura junto con la URL — no hace falta esperar al after().
+    // Si el admin pego una URL externa a mano, esto viene vacio y lo llena
+    // el after() de abajo cuando la migracion termine.
+    const clientThumbUrl =
+      typeof body.imageThumbUrl === 'string' && body.imageThumbUrl.trim()
+        ? body.imageThumbUrl.trim()
+        : null;
 
     // Crear la serie
     const serie = await prisma.series.create({
@@ -155,6 +158,7 @@ export async function POST(request: NextRequest) {
         basedOn,
         format: format || 'regular',
         imageUrl: externalImageUrl,
+        imageThumbUrl: clientThumbUrl,
         imagePosition: body.imagePosition || 'center',
         synopsis,
         soundtrack,
@@ -205,11 +209,11 @@ export async function POST(request: NextRequest) {
         if (!directors || directors.length === 0) return;
         for (const directorData of directors) {
           if (!directorData.name) continue;
-          const director = await prisma.director.upsert({
-            where: { name: directorData.name },
-            update: {},
-            create: { name: directorData.name },
-          });
+          const director = await findOrCreateDirector(
+            prisma,
+            directorData.name
+          );
+          if (!director) continue;
           await prisma.seriesDirector.create({
             data: { seriesId: serie.id, directorId: director.id },
           });
@@ -354,10 +358,21 @@ export async function POST(request: NextRequest) {
             externalImageUrl,
             'series'
           );
-          if (migrated && migrated !== externalImageUrl) {
+          const updateData: { imageUrl?: string; imageThumbUrl?: string } = {};
+          if (migrated.url !== externalImageUrl) {
+            updateData.imageUrl = migrated.url;
+          }
+          // Solo pisa el thumb si esta llamada genero uno de verdad (URL
+          // externa real). Si ya era de Supabase (subida via /api/upload,
+          // clientThumbUrl ya seteado arriba), `migrated.thumbUrl` es null y
+          // no tocamos nada.
+          if (migrated.thumbUrl) {
+            updateData.imageThumbUrl = migrated.thumbUrl;
+          }
+          if (Object.keys(updateData).length > 0) {
             await prisma.series.update({
               where: { id: serie.id },
-              data: { imageUrl: migrated },
+              data: updateData,
             });
           }
         } catch (error) {

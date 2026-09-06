@@ -16,7 +16,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { useMessage } from '@/hooks/useMessage';
-import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { SerieCardSkeleton } from '@/components/common/SerieCardSkeleton/SerieCardSkeleton';
 import { SeriesNoteModal } from '@/components/series/SeriesNoteModal/SeriesNoteModal';
 import './CurrentlyWatchingDashboard.css';
@@ -34,6 +34,7 @@ interface WatchingSeriesData {
     year?: number | null;
     type: string;
     imageUrl?: string | null;
+    imageThumbUrl?: string | null;
     airDays?: string | null;
     createdAt?: Date | string;
     updatedAt?: Date | string;
@@ -496,15 +497,17 @@ export function CurrentlyWatchingDashboard() {
               className="watching-card"
               hoverable
               cover={
-                item.series.imageUrl ? (
+                cardImageUrl(item.series) ? (
                   <div className="watching-card__image">
                     <Image
-                      src={item.series.imageUrl}
+                      src={cardImageUrl(item.series)!}
                       alt={item.series.title}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
                       quality={65}
-                      unoptimized={isSupabaseImageUrl(item.series.imageUrl)}
+                      unoptimized={isSupabaseImageUrl(
+                        cardImageUrl(item.series)
+                      )}
                       className="watching-card__cover"
                     />
                   </div>

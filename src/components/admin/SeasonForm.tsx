@@ -42,6 +42,7 @@ interface SeasonFormData {
   synopsis?: string | null;
   observations?: string | null;
   imageUrl?: string | null;
+  imageThumbUrl?: string | null;
 }
 
 interface SeasonFormProps {
@@ -59,7 +60,9 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
 
   const loadFormData = useCallback(async () => {
     try {
-      const actorsRes = await fetch('/api/actors');
+      // Solo nombres — el AutoComplete no necesita biografia/imagen/`_count`
+      // de cada uno de los ~1190 actores.
+      const actorsRes = await fetch('/api/actors?namesOnly=1');
       const actorsData = await actorsRes.json();
       setActors(actorsData.map((a: { name: string }) => a.name));
     } catch (error) {
@@ -112,7 +115,7 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
       }
 
       const data = await response.json();
-      form.setFieldsValue({ imageUrl: data.url });
+      form.setFieldsValue({ imageUrl: data.url, imageThumbUrl: data.thumbUrl });
       message.success(t('seasonForm.uploadSuccess'));
 
       return false;
@@ -237,6 +240,11 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
               </Col>
 
               <Col xs={24}>
+                {/* Miniatura de card generada junto al poster en /api/upload
+                    — mismo criterio que SeriesForm. */}
+                <Form.Item name="imageThumbUrl" hidden>
+                  <Input />
+                </Form.Item>
                 <Form.Item
                   label={`🖼️ ${t('seasonForm.fieldImage')}`}
                   name="imageUrl"
