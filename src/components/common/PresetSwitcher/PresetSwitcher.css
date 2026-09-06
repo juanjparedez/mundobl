@@ -1,0 +1,69 @@
+.preset-switcher {
+  display: inline-flex;
+  align-items: center;
+  background: var(--mb-panel, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--mb-border, rgba(255, 255, 255, 0.1));
+  border-radius: var(--mb-radius-md, 14px);
+  padding: 3px;
+  gap: 2px;
+  box-shadow: var(--mb-shadow-soft, 0 2px 6px rgba(0, 0, 0, 0.15));
+  user-select: none;
+}
+
+.preset-switcher__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: calc(var(--mb-radius-md, 14px) - 3px);
+  border: none;
+  background: transparent;
+  color: var(--mb-text-dim, var(--text-secondary, #a9a1b8));
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  outline: none;
+  white-space: nowrap;
+}
+
+.preset-switcher__btn:hover {
+  color: var(--mb-text, var(--text-primary, #ffffff));
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.preset-switcher__btn--active {
+  background: var(--primary-color, var(--mb-gold, #f6b51e)) !important;
+  color: #110e1a !important;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.preset-switcher__emoji {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.preset-switcher__label {
+  line-height: 1.2;
+}
+
+.preset-switcher--compact .preset-switcher__btn {
+  padding: 5px 8px;
+}
+
+.preset-switcher__tooltip {
+  max-width: 240px;
+}
+
+.preset-switcher__tooltip-title {
+  font-weight: 600;
+  margin-bottom: 2px;
+  color: #ffffff;
+}
+
+.preset-switcher__tooltip-desc {
+  font-size: 12px;
+  opacity: 0.85;
+  line-height: 1.35;
+}
