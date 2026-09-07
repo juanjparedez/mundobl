@@ -74,6 +74,11 @@ export default async function VerPageRoute() {
         ? { id: s.linkedSeries.id, title: s.linkedSeries.title }
         : null,
       episodesWithEmbed: s.episodesWithEmbed,
+      // Cuantos de esos embeds andan de verdad en el mercado del sitio.
+      // Si es menor que episodesWithEmbed, la serie esta incompleta para
+      // el visitante (geo-bloqueo parcial, age-gate o videos caidos) y
+      // /ver lo avisa en vez de dejar que se choque con el reproductor.
+      playableEpisodes: s.playableEpisodes,
       platforms: Array.from(
         new Set(
           s.seasons.flatMap(

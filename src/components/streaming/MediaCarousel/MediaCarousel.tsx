@@ -28,6 +28,10 @@ export interface CarouselMediaItem {
   synopsis: string | null;
   country: { name: string; code: string | null } | null;
   episodesWithEmbed: number;
+  /** De esos embeds, cuantos se pueden mirar en el mercado del visitante
+   *  (ver Episode.playback y src/lib/playability.ts). Menor que
+   *  `episodesWithEmbed` = la serie esta incompleta aca. */
+  playableEpisodes?: number;
   platforms: string[];
   channels: string[];
   /** Bloqueada en el mercado core del sitio (AR/MX/ES/CL/CO/PE/US) —

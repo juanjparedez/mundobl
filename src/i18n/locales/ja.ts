@@ -2735,7 +2735,8 @@ const ja: TranslationShape = {
     "emptyDescription": "そのフィルターに一致するシリーズは見つかりませんでした。別の国またはタイトルをお試しください。",
     "cardEpisodesBadge": "{count}本の動画",
     "cardPlayButton": "再生",
-    "geoRestrictedBadge": "お住まいの地域では制限されています"
+    "geoRestrictedBadge": "お住まいの地域では制限されています",
+    "partiallyUnavailableBadge": "{total}本中{count}本が視聴可能"
   },
   "actorProfile": {
     "funFactsTitle": "豆知識",

@@ -8,6 +8,7 @@
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Prisma, PrismaClient } from '../generated/prisma';
+import { isPlayableIn } from './playability';
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
@@ -133,8 +134,13 @@ export async function getAllSeries(options?: {
  * Series mirables: las que tienen al menos un episodio con embedUrl.
  * Incluye CURATED (PERSONAL + WATCHABLE_ONLY) y USER_EMBED, pero solo
  * las que tienen visibility='VISIBLE'. Usado por /ver.
+ *
+ * `market` es el ISO-2 del visitante y solo afecta a `playableEpisodes`
+ * (cuantos embeds andan de verdad ahi). NO cambia que series se
+ * devuelven: filtrar el listado por region se decide en la vista, no
+ * aca, asi /ver puede elegir entre esconderlas o mostrarlas con aviso.
  */
-export async function getWatchableSeries() {
+export async function getWatchableSeries(market = 'AR') {
   const series = await prisma.series.findMany({
     where: {
       visibility: 'VISIBLE',
@@ -165,6 +171,8 @@ export async function getWatchableSeries() {
               embedPlatform: true,
               embedChannelName: true,
               embedUrl: true,
+              playback: true,
+              playbackBlockedMarkets: true,
             },
             orderBy: { episodeNumber: 'asc' },
           },
@@ -191,10 +199,22 @@ export async function getWatchableSeries() {
       // Si querés "X de Y disponibles", habría que cargar episodeCount aparte.
       return acc + season.episodes.length;
     }, 0);
+    // Cuantos de esos embeds se pueden mirar de verdad desde `market`.
+    // Un episodio sin sondear (UNKNOWN) cuenta como reproducible: ver
+    // isPlayableIn en src/lib/playability.ts.
+    const playableEpisodes = s.seasons.reduce(
+      (acc, season) =>
+        acc +
+        season.episodes.filter((e) =>
+          isPlayableIn(e.playback, e.playbackBlockedMarkets, market)
+        ).length,
+      0
+    );
     return {
       ...s,
       episodesWithEmbed,
       totalEpisodes,
+      playableEpisodes,
     };
   });
 }
