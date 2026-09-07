@@ -2742,7 +2742,8 @@ const zhTW: TranslationShape = {
     "cardEpisodesBadge": "{count} 部影片",
     "cardPlayButton": "播放",
     "geoRestrictedBadge": "在你所在地區受限",
-    "partiallyUnavailableBadge": "{total} 個中有 {count} 個可觀看"
+    "partiallyUnavailableBadge": "{total} 個中有 {count} 個可觀看",
+    "unavailableHereBadge": "你所在的國家/地區無法觀看"
   },
   "actorProfile": {
     "funFactsTitle": "趣聞",
