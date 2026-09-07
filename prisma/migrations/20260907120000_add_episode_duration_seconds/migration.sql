@@ -1,0 +1,11 @@
+-- Duracion real del video embebido, en segundos.
+--
+-- Sin este dato /ver no puede distinguir un capitulo de un trailer: hasta
+-- ahora "Some More" y "Long time no see" figuraban como series mirables
+-- cuando su unico episodio era el trailer oficial (43s y 69s).
+--
+-- Aditiva y sin backfill: arranca en NULL para los 1793 episodios con
+-- embed y la llena scripts/audit-ver-playability.ts al sondear. NULL se
+-- interpreta como "todavia no se sabe" y NO esconde el episodio — mismo
+-- criterio conservador que UNKNOWN en isPlayableIn().
+ALTER TABLE "Episode" ADD COLUMN "durationSeconds" INTEGER;

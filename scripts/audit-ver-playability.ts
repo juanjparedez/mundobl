@@ -193,6 +193,12 @@ async function main() {
         playback: probe.status,
         playbackBlockedMarkets: probe.blockedMarkets,
         playbackCheckedAt: new Date(),
+        // Solo la fuente `api` trae duracion. Con --source watch-page
+        // llega null y NO se escribe: un fallback sin el dato no debe
+        // pisar una duracion buena que ya sondeamos antes.
+        ...(probe.durationSeconds !== null && {
+          durationSeconds: probe.durationSeconds,
+        }),
       },
     });
   }
@@ -256,7 +262,11 @@ async function main() {
       );
     }
     console.log(
-      '  (revisar a mano: un making-of suelto es normal, una serie entera de cortos no)'
+      `  Estos episodios ya NO se publican en /ver: la duracion quedo\n` +
+        `  guardada en Episode.durationSeconds y las consultas publicas\n` +
+        `  filtran por debajo de ${MIN_EPISODE_SECONDS / 60} min (src/lib/watchable.ts).\n` +
+        `  Las series marcadas ❌ desaparecen solas por quedarse sin\n` +
+        `  episodios; su ficha queda intacta.`
     );
   }
 
