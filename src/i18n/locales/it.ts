@@ -317,6 +317,14 @@ const it: TranslationShape = {
     "commentsLoadError": "Impossibile caricare i commenti",
     "commentsEmpty": "Non hai ancora commenti",
     "commentsExport": "Scarica JSON",
+    "diarySearchPlaceholder": "Cerca nelle tue note...",
+    "diaryFilterAll": "Tutte",
+    "diaryFilterSeries": "Serie",
+    "diaryFilterEpisodes": "Episodi",
+    "diaryEmpty": "Non hai ancora scritto nessuna nota",
+    "diaryLoadError": "Impossibile caricare le tue note",
+    "diaryExport": "Scarica JSON",
+    "diaryEdited": "modificata",
     "commentsPublic": "Pubblico",
     "commentsPrivate": "Privato",
     "commentsTargetUnknown": "Nessun riferimento",
@@ -541,13 +549,14 @@ const it: TranslationShape = {
     "message": "Sei offline. Alcune funzionalità potrebbero non funzionare."
   },
   "cmdk": {
-    "placeholder": "Cerca serie, attori, registi, tag...",
+    "placeholder": "Cerca serie, attori, registi, tag, glossario...",
     "hintMinChars": "Digita almeno 2 caratteri per cercare.",
     "empty": "Nessun risultato.",
     "groupSeries": "Serie",
     "groupActors": "Attori",
     "groupDirectors": "Registi",
     "groupTags": "Tag",
+    "groupGlossary": "Glossario",
     "navigate": "Naviga",
     "select": "Seleziona",
     "close": "Chiudi"
@@ -1623,6 +1632,8 @@ const it: TranslationShape = {
     "feedbackShort": "Casi",
     "suggestions": "Suggerimenti",
     "suggestionsShort": "Sugg.",
+    "support": "Supporto collaboratori",
+    "supportShort": "Supporto",
     "info": "Info",
     "infoShort": "Info",
     "logs": "Log",
@@ -2455,6 +2466,8 @@ const it: TranslationShape = {
     "widgetMyDisputesDesc": "Contestazioni che hai aperto contro segnalazioni sui tuoi commenti.",
     "widgetMyComments": "I miei commenti",
     "widgetMyCommentsDesc": "Gestione completa dei commenti: filtri, operazioni in blocco, modifica, disputa, esportazione.",
+    "widgetMyDiary": "Il mio diario BL",
+    "widgetMyDiaryDesc": "Tutte le tue note private su serie ed episodi, in ordine cronologico.",
     "loadError": "Errore durante il caricamento del tuo profilo. Aggiorna la pagina."
   },
   "serieDashboard": {
