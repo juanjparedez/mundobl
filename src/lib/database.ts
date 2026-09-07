@@ -1239,6 +1239,155 @@ export async function getCollaboratorStats(
 }
 
 // ============================================
+// SOPORTE PRIVADO COLABORADOR <-> CURADURIA
+// ============================================
+
+// Nombre a mostrar dentro del canal privado. A diferencia del render
+// publico (formatPublicName), aca las dos partes ya saben con quien
+// hablan: se prioriza el nickname y se cae al nombre real.
+function supportDisplayName(
+  user: { name: string | null; nickname: string | null } | null
+): string | null {
+  if (!user) return null;
+  return user.nickname || user.name || null;
+}
+
+export interface SupportThreadListRow {
+  id: number;
+  subject: string;
+  status: string;
+  updatedAt: string;
+  authorName: string | null;
+  messageCount: number;
+  lastMessage: string | null;
+}
+
+const THREAD_LIST_SELECT = {
+  id: true,
+  subject: true,
+  status: true,
+  updatedAt: true,
+  user: { select: { name: true, nickname: true } },
+  _count: { select: { messages: true } },
+  // Solo el ultimo mensaje: alcanza para el preview de la bandeja y evita
+  // traer conversaciones enteras para pintar una lista.
+  messages: {
+    orderBy: { createdAt: 'desc' },
+    take: 1,
+    select: { body: true },
+  },
+} as const;
+
+function toThreadRow(thread: {
+  id: number;
+  subject: string;
+  status: string;
+  updatedAt: Date;
+  user: { name: string | null; nickname: string | null } | null;
+  _count: { messages: number };
+  messages: { body: string }[];
+}): SupportThreadListRow {
+  return {
+    id: thread.id,
+    subject: thread.subject,
+    status: thread.status,
+    updatedAt: thread.updatedAt.toISOString(),
+    authorName: supportDisplayName(thread.user),
+    messageCount: thread._count.messages,
+    lastMessage: thread.messages[0]?.body ?? null,
+  };
+}
+
+/** Consultas abiertas por un colaborador — su propia bandeja. */
+export async function getSupportThreadsForUser(
+  userId: string
+): Promise<SupportThreadListRow[]> {
+  const threads = await prisma.supportThread.findMany({
+    where: { userId },
+    orderBy: { updatedAt: 'desc' },
+    select: THREAD_LIST_SELECT,
+  });
+  return threads.map(toThreadRow);
+}
+
+/** Bandeja de curaduria: todas las consultas, las pendientes primero. */
+export async function getAllSupportThreads(): Promise<SupportThreadListRow[]> {
+  const threads = await prisma.supportThread.findMany({
+    orderBy: { updatedAt: 'desc' },
+    select: THREAD_LIST_SELECT,
+  });
+  // El orden real es por urgencia, no por fecha: lo que espera respuesta
+  // de curaduria va arriba, lo cerrado al fondo.
+  const weight: Record<string, number> = { OPEN: 0, ANSWERED: 1, CLOSED: 2 };
+  return threads
+    .map(toThreadRow)
+    .sort((a, b) => (weight[a.status] ?? 0) - (weight[b.status] ?? 0));
+}
+
+export interface SupportThreadDetailData {
+  id: number;
+  subject: string;
+  status: string;
+  createdAt: string;
+  userId: string;
+  authorName: string | null;
+  messages: {
+    id: number;
+    body: string;
+    createdAt: string;
+    fromStaff: boolean;
+    authorName: string | null;
+  }[];
+}
+
+/**
+ * Un hilo con toda su conversacion. Devuelve `null` si no existe — el
+ * control de quien puede verlo queda en la pagina, que conoce al viewer.
+ */
+export async function getSupportThreadDetail(
+  id: number
+): Promise<SupportThreadDetailData | null> {
+  const thread = await prisma.supportThread.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      subject: true,
+      status: true,
+      createdAt: true,
+      userId: true,
+      user: { select: { name: true, nickname: true } },
+      messages: {
+        orderBy: { createdAt: 'asc' },
+        select: {
+          id: true,
+          body: true,
+          createdAt: true,
+          fromStaff: true,
+          user: { select: { name: true, nickname: true } },
+        },
+      },
+    },
+  });
+  if (!thread) return null;
+
+  return {
+    id: thread.id,
+    subject: thread.subject,
+    status: thread.status,
+    createdAt: thread.createdAt.toISOString(),
+    userId: thread.userId,
+    authorName: supportDisplayName(thread.user),
+    messages: thread.messages.map((item) => ({
+      id: item.id,
+      body: item.body,
+      createdAt: item.createdAt.toISOString(),
+      fromStaff: item.fromStaff,
+      authorName: supportDisplayName(item.user),
+    })),
+  };
+}
+
+// ============================================
 // UTILIDADES
 // ============================================
 

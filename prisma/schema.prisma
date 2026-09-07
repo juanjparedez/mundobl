@@ -93,6 +93,8 @@ model User {
   glossarySuggestions     GlossarySuggestion[]
   announcements           Announcement[]
   announcementRecipients  AnnouncementRecipient[]
+  supportThreads          SupportThread[]
+  supportMessages         SupportMessage[]
 }
 
 // Persistencia de layouts del dashboard modular (drag/resize por widget).
@@ -496,15 +498,15 @@ model Episode {
   // Refrescado por scripts/audit-ver-playability.ts. NUNCA se setea a
   // mano en el importer: el importer solo crea el episodio y el audit lo
   // sondea despues, asi un solo lugar es dueño del dato.
-  playback          EpisodePlayback @default(UNKNOWN)
-  playbackCheckedAt DateTime?
+  playback               EpisodePlayback @default(UNKNOWN)
+  playbackCheckedAt      DateTime?
   // Subset de CORE_MARKETS donde el embed NO se puede reproducir. Vacio
   // cuando playback != GEO_BLOCKED. Permite que /ver filtre por el pais
   // real del visitante en vez de asumir AR.
-  playbackBlockedMarkets String[] @default([])
+  playbackBlockedMarkets String[]        @default([])
 
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relaciones
   seasonId   Int
@@ -1621,4 +1623,55 @@ model PersonEnrichment {
   @@unique([entityType, entityId, source])
   @@index([status, confidence])
   @@index([entityType, entityId])
+}
+
+// ============================================
+// SOPORTE PRIVADO COLABORADOR <-> CURADURIA
+// ============================================
+// Distinto de FeatureRequest (/feedback), que es un tablero PUBLICO de
+// bugs e ideas votables por la comunidad. Aca la conversacion es privada
+// entre un colaborador y el equipo: dudas de carga, permisos, pedidos de
+// limite, problemas con una serie propia. Nada de esto tiene por que
+// quedar expuesto en el board publico.
+model SupportThread {
+  id        Int      @id @default(autoincrement())
+  subject   String
+  // "OPEN"     — la pelota esta del lado de curaduria.
+  // "ANSWERED" — curaduria contesto, espera al colaborador.
+  // "CLOSED"   — cerrado; se puede reabrir respondiendo.
+  status    String   @default("OPEN")
+  createdAt DateTime @default(now())
+  // Se toca con cada mensaje: es el orden natural de la bandeja.
+  updatedAt DateTime @updatedAt
+
+  // Autor del hilo (el colaborador). Cascade a proposito: es una
+  // conversacion privada, no tiene sentido conservarla sin su dueño.
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  messages SupportMessage[]
+
+  @@index([status, updatedAt])
+  @@index([userId, updatedAt])
+}
+
+model SupportMessage {
+  id        Int      @id @default(autoincrement())
+  body      String
+  createdAt DateTime @default(now())
+
+  threadId Int
+  thread   SupportThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  // SetNull y no Cascade: si se borra la cuenta de quien escribio, el hilo
+  // tiene que seguir leyendose completo para la otra parte.
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // Snapshot de "quien habla" al momento de escribir. Se guarda explicito
+  // en vez de mirar user.role al renderizar porque el rol puede cambiar
+  // despues (o el usuario desaparecer) y el hilo quedaria mal atribuido.
+  fromStaff Boolean @default(false)
+
+  @@index([threadId, createdAt])
 }

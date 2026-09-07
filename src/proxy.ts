@@ -286,18 +286,21 @@ export async function proxy(request: NextRequest) {
     } else if (role === 'COLLABORATOR') {
       return NextResponse.redirect(new URL('/admin/colaborador', request.url));
     } else {
-      // Rutas de crear/editar series y seasons: Admin + Moderator. El
-      // workspace /admin/series/[id] (vista densa con tabs, analisis por
-      // episodio, reseñas vinculadas y herramientas) tambien lo permite
-      // MODERATOR — es la vista de trabajo principal para administrar el
-      // catalogo, no solo el form puntual de /editar.
-      const isEditRoute =
+      // Rutas que tambien habilita MODERATOR, no solo ADMIN: crear/editar
+      // series y seasons, el workspace /admin/series/[id] (vista densa con
+      // tabs, analisis por episodio y reseñas vinculadas — la vista de
+      // trabajo principal del catalogo) y el soporte de colaboradores.
+      const isModeratorAllowedRoute =
         pathname === '/admin/series/nueva' ||
         /^\/admin\/series\/\d+$/.test(pathname) ||
         /^\/admin\/series\/\d+\/editar$/.test(pathname) ||
-        /^\/admin\/seasons\/\d+\/editar$/.test(pathname);
+        /^\/admin\/seasons\/\d+\/editar$/.test(pathname) ||
+        // Soporte de colaboradores: el canal se penso explicitamente como
+        // "colaborador ↔ administradores/moderadores", asi que MODERATOR
+        // tiene que poder leer y contestar.
+        /^\/admin\/soporte(\/\d+)?$/.test(pathname);
 
-      if (isEditRoute) {
+      if (isModeratorAllowedRoute) {
         if (role !== 'ADMIN' && role !== 'MODERATOR') {
           return NextResponse.redirect(new URL('/catalogo', request.url));
         }
