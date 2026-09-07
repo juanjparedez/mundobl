@@ -240,20 +240,19 @@ export function parseEpisodeBadge(
     };
   }
 
-  // 6. Si no hay parte explícita en título, pero la temporada tiene estructura secuencial de 4 partes (ej: GMMTV)
-  if (totalEpisodesInSeason >= 16 && !detectedEp) {
-    const derivedChapter = Math.floor((episodeNumber - 1) / 4) + 1;
-    const derivedPart = ((episodeNumber - 1) % 4) + 1;
-    return {
-      label: `Capítulo ${derivedChapter} · Parte ${derivedPart}/4`,
-      shortLabel: `Parte ${derivedPart}/4`,
-      isExtra: false,
-      isPrivate: false,
-      chapterNumber: derivedChapter,
-      partNumber: derivedPart,
-      partTotal: 4,
-    };
-  }
+  // (Aca vivia una regla que derivaba capitulo y parte del numero de
+  //  FILA, asumiendo 4 partes por capitulo: floor((n-1)/4)+1. Se elimino
+  //  porque mentia. A un video "EP.2 [1/4]" guardado en la fila 5 le
+  //  ponia "Capitulo 5 · Parte 0", y a los extras en tailandes (detras
+  //  de camara, reacciones) les inventaba un numero de capitulo
+  //  inexistente. Ademas divide de a 4 siempre, asi que erraba tambien
+  //  con los capitulos partidos en 5.
+  //
+  //  La numeracion tiene que salir del titulo del video, que es el unico
+  //  lugar donde el dato es real. Si un titulo no la trae, se arregla en
+  //  la fuente con scripts/backfill-episode-titles.ts, que lo va a
+  //  buscar a YouTube. Sin marcador, se muestra el titulo tal cual
+  //  (regla 8) en vez de fabricar una numeracion.)
 
   // 7. Solo capítulo
   if (detectedEp) {
