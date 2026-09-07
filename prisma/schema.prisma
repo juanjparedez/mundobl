@@ -309,6 +309,12 @@ model Series {
   // permite. El "link" con una CURATED se hace fusionando episodios y
   // borrando el row USER_EMBED desde /admin/series/user-submitted.
   origin            String   @default("CURATED")
+  // Duracion total en MINUTOS, para contenido de una sola pieza (pelicula,
+  // corto). Distinta de Episode.duration, que es por capitulo: en un corto
+  // no hay temporadas ni capitulos que contar, y "3 temporadas" era lo que
+  // se mostraba igual. Que tipos la usan sale de ContentTypeConfig
+  // (src/types/content.ts, flag `hasDuration`) — no se decide aca.
+  durationMinutes   Int?
   // "VISIBLE": visible para todos en /ver (si tiene embeds).
   // "HIDDEN": ocultada post-hoc por admin. Solo ADMIN y el submitter
   // siguen viendola.

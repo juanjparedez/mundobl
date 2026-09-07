@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 import { Tag } from 'antd';
 import {
   BookOutlined,
+  ClockCircleOutlined,
   TeamOutlined,
   UserOutlined,
   BankOutlined,
@@ -19,6 +20,7 @@ import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { MetadataChip } from './MetadataPrimitives/MetadataPrimitives';
 import './SeriesHeader.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { shouldShowDuration } from '@/types/content';
 import { interpolateMessage } from '@/lib/i18n-format';
 import type { TranslationKey } from '@/i18n/messages';
 
@@ -29,6 +31,7 @@ interface SeriesHeaderProps {
     originalTitle?: string | null;
     year?: number | null;
     type: string;
+    durationMinutes?: number | null;
     basedOn?: string | null;
     format: string;
     imageUrl?: string | null;
@@ -161,6 +164,17 @@ export function SeriesHeader({
               color={getTypeColor(series.type)}
               label={getTypeLabel(series.type, t)}
             />
+
+            {/* Duracion al lado del tipo: en una peli o un corto es el dato
+                que el usuario busca, y es justo donde antes no habia nada. */}
+            {shouldShowDuration(series.type) && series.durationMinutes && (
+              <span className="series-header__meta-item">
+                <ClockCircleOutlined />{' '}
+                {interpolateMessage(t('seriesHeader.durationMinutes'), {
+                  minutes: String(series.durationMinutes),
+                })}
+              </span>
+            )}
 
             {series.format === 'vertical' && (
               <MetadataChip
