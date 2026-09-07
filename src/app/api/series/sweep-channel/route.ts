@@ -24,21 +24,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Para marcar "ya importada". El importer no guarda el playlistId de
-    // origen, asi que no hay forma de cruzar por id: se compara el
-    // titulo normalizado contra las series que ya estan. Es una ayuda
-    // visual, no un candado — el importer ya deduplica por videoId.
+    // Dos indices SEPARADOS, porque /catalogo y /ver son dos catalogos
+    // distintos y estar en uno no implica estar en el otro.
     //
-    // Se miran TODAS las series (no solo las de /ver) a proposito: si el
-    // titulo ya existe en el catalogo curado, el admin querra linkearla
-    // en vez de crear un duplicado. Esto solo lee titulos, no mezcla los
-    // dos catalogos ni cambia que se muestra en ningun lado.
-    const existing = await prisma.series.findMany({ select: { title: true } });
-    const importedTitles = new Map(
-      existing.map((s) => [titleKey(s.title), s.title] as const)
+    // Solo descarta la primera: una serie ya mirable en /ver. Las del
+    // catalogo curado sin embeds son las MEJORES candidatas — Flor ya las
+    // reseño y todavia no se pueden ver — asi que se anotan para linkear,
+    // nunca para ocultar. (Cruzarlas contra un unico indice escondia 28
+    // de 32 coincidencias en GMMTV, todas series completas de 54-64
+    // videos que era justo lo que habia que importar.)
+    const watchable = await prisma.series.findMany({
+      where: {
+        seasons: { some: { episodes: { some: { embedUrl: { not: null } } } } },
+      },
+      select: { title: true },
+    });
+    const watchableTitles = new Map(
+      watchable.map((s) => [titleKey(s.title), s.title] as const)
     );
 
-    const result = await sweepChannel(url, importedTitles);
+    const curated = await prisma.series.findMany({
+      where: { origin: 'CURATED' },
+      select: { title: true },
+    });
+    const catalogTitles = new Map(
+      curated.map((s) => [titleKey(s.title), s.title] as const)
+    );
+
+    const result = await sweepChannel(url, watchableTitles, catalogTitles);
 
     return NextResponse.json(result);
   } catch (error) {

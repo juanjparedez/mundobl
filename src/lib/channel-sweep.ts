@@ -201,7 +201,8 @@ function findImportedMatch(
 
 function classify(
   playlist: ChannelPlaylist,
-  importedTitles: Map<string, string>,
+  watchableTitles: Map<string, string>,
+  catalogTitles: Map<string, string>,
   siblingTitles: string[][],
   ownIndex: number
 ): { verdict: SweepVerdict; reason: string } {
@@ -236,11 +237,15 @@ function classify(
     };
   }
 
-  const match = findImportedMatch(playlist.title, importedTitles);
-  if (match) {
+  // "Ya importada" significa UNA sola cosa: que la serie ya se puede
+  // mirar en /ver. Se compara contra las series con embeds, NUNCA contra
+  // el catalogo curado entero — /catalogo y /ver son dos cosas distintas
+  // y estar en el primero no implica estar en el segundo.
+  const watchable = findImportedMatch(playlist.title, watchableTitles);
+  if (watchable) {
     return {
       verdict: 'ALREADY_IMPORTED',
-      reason: `Coincide con «${match}», que ya esta en la base.`,
+      reason: `Ya se puede mirar en /ver como «${watchable}».`,
     };
   }
 
@@ -248,6 +253,18 @@ function classify(
     return {
       verdict: 'TOO_SHORT',
       reason: `Solo ${playlist.itemCount} video(s); el minimo es ${MIN_EPISODES}.`,
+    };
+  }
+
+  // Estar en el catalogo curado NO descarta: es justo lo contrario, una
+  // serie que Flor ya reseño y todavia no se puede mirar es de las
+  // MEJORES candidatas. Solo se anota para que el admin sepa que al
+  // importarla conviene linkearla con la ficha que ya existe.
+  const inCatalog = findImportedMatch(playlist.title, catalogTitles);
+  if (inCatalog) {
+    return {
+      verdict: 'CANDIDATE',
+      reason: `${playlist.itemCount} videos. Ya esta en el catalogo curado como «${inCatalog}» pero todavia no se puede mirar — al importarla, linkearla con esa ficha.`,
     };
   }
 
@@ -304,14 +321,22 @@ function isSatelliteOfSibling(
  * cuesta cuota y solo tiene sentido sobre las que el admin elige. El
  * flujo es barrer → elegir → importar con el importer de siempre.
  *
- * `importedTitles` mapea `titleKey(titulo)` → titulo original de las
- * series ya cargadas. Lo arma el caller (la ruta API lo saca de la base).
- * Se guarda el titulo original para poder decirle al admin CUAL serie
- * coincidio, no solo que hubo coincidencia.
+ * Los dos indices mapean `titleKey(titulo)` → titulo original, y son
+ * DISTINTOS a proposito porque /catalogo y /ver son catalogos separados:
+ *
+ * - `watchableTitles`: series que ya tienen embeds, o sea las que ya
+ *   estan en /ver. Solo estas descartan una playlist.
+ * - `catalogTitles`: series del catalogo curado. NO descartan nada; solo
+ *   anotan el candidato para que el admin lo linkee al importarlo.
+ *
+ * Confundirlos esconde justo lo que mas queremos: una serie que Flor ya
+ * reseño pero que todavia no se puede mirar es la mejor candidata que
+ * hay, no una repetida.
  */
 export async function sweepChannel(
   channelUrl: string,
-  importedTitles: Map<string, string> = new Map()
+  watchableTitles: Map<string, string> = new Map(),
+  catalogTitles: Map<string, string> = new Map()
 ): Promise<ChannelSweepResult> {
   const { channelId, channelName, playlists } =
     await fetchYouTubeChannelPlaylists(channelUrl);
@@ -328,7 +353,13 @@ export async function sweepChannel(
   const siblingTitles = playlists.map((p) => titleTokens(p.title));
 
   const candidates: SweepCandidate[] = playlists.map((p, idx) => {
-    const { verdict, reason } = classify(p, importedTitles, siblingTitles, idx);
+    const { verdict, reason } = classify(
+      p,
+      watchableTitles,
+      catalogTitles,
+      siblingTitles,
+      idx
+    );
     return {
       playlistId: p.playlistId,
       title: p.title,
