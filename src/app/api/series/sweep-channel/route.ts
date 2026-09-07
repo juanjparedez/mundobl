@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-helpers';
-import { normalizeTitle, sweepChannel } from '@/lib/channel-sweep';
+import { sweepChannel, titleKey } from '@/lib/channel-sweep';
 import { prisma } from '@/lib/database';
 
 /**
@@ -34,8 +34,8 @@ export async function POST(request: NextRequest) {
     // en vez de crear un duplicado. Esto solo lee titulos, no mezcla los
     // dos catalogos ni cambia que se muestra en ningun lado.
     const existing = await prisma.series.findMany({ select: { title: true } });
-    const importedTitles = new Set(
-      existing.map((s) => normalizeTitle(s.title))
+    const importedTitles = new Map(
+      existing.map((s) => [titleKey(s.title), s.title] as const)
     );
 
     const result = await sweepChannel(url, importedTitles);
