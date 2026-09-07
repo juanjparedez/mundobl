@@ -2768,6 +2768,12 @@ export type TranslationShape = {
     deleteConfirmOk: string;
     deleteConfirmCancel: string;
     deleteAriaLabel: string;
+    removeConfirmTitle: string;
+    removeConfirmDescription: string;
+    removeConfirmOk: string;
+    removeAriaLabel: string;
+    removeSuccess: string;
+    removeError: string;
     heroSpotlightBadge: string;
     heroYoutubeTag: string;
     heroVimeoTag: string;
@@ -5829,6 +5835,13 @@ const es: TranslationShape = {
     deleteConfirmOk: 'Sí, eliminar',
     deleteConfirmCancel: 'Cancelar',
     deleteAriaLabel: 'Eliminar serie',
+    removeConfirmTitle: '¿Sacar esta serie de /ver?',
+    removeConfirmDescription:
+      'Se vacían los embeds de sus episodios, así deja de aparecer acá. La ficha, los episodios y el progreso de los usuarios quedan intactos.',
+    removeConfirmOk: 'Sacar de /ver',
+    removeAriaLabel: 'Sacar la serie de /ver',
+    removeSuccess: 'La serie salió de /ver. Su ficha quedó intacta.',
+    removeError: 'No se pudo sacar la serie de /ver.',
     heroSpotlightBadge: 'Serie Destacada de la Semana',
     heroYoutubeTag: 'Emisión Oficial YouTube',
     heroVimeoTag: 'Vimeo On Demand',
@@ -8880,6 +8893,13 @@ const en: TranslationShape = {
     deleteConfirmOk: 'Yes, delete',
     deleteConfirmCancel: 'Cancel',
     deleteAriaLabel: 'Delete series',
+    removeConfirmTitle: 'Remove this series from /ver?',
+    removeConfirmDescription:
+      'Its episode embeds are cleared, so it stops showing up here. The series entry, its episodes and user progress stay untouched.',
+    removeConfirmOk: 'Remove from /ver',
+    removeAriaLabel: 'Remove series from /ver',
+    removeSuccess: 'The series was removed from /ver. Its entry is intact.',
+    removeError: 'Could not remove the series from /ver.',
     heroSpotlightBadge: 'Series of the Week',
     heroYoutubeTag: 'Official YouTube Release',
     heroVimeoTag: 'Vimeo On Demand',

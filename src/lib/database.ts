@@ -242,6 +242,111 @@ export async function getWatchableSeriesByIdAdmin(id: number) {
   });
 }
 
+/** Una serie tal como la ve el panel /admin/ver. */
+export interface VerAdminRow {
+  id: number;
+  title: string;
+  year: number | null;
+  origin: string;
+  catalogScope: string;
+  visibility: string;
+  geoRestrictedCore: boolean;
+  submittedBy: string | null;
+  platforms: string[];
+  channels: string[];
+  totalEmbeds: number;
+  /** Desglose por estado del ultimo sondeo (ver Episode.playback). */
+  playbackCounts: Record<string, number>;
+  /** Episodios reproducibles en `market`. */
+  playable: number;
+  lastCheckedAt: string | null;
+}
+
+/**
+ * Todo lo que hoy esta publicado en /ver, para administrarlo.
+ *
+ * A diferencia de `/admin/series` (que filtra `origin=CURATED`) y de
+ * `/admin/series/user-submitted` (que filtra `origin=USER_EMBED`), esta
+ * vista NO filtra por origen: muestra /ver tal como lo ve el visitante,
+ * que es justo lo que faltaba para poder auditarlo. Ojo: es una vista de
+ * ADMINISTRACION del contenido embebido, no mezcla los catalogos — lo
+ * que se lista es "lo que tiene embed", nunca el catalogo curado entero.
+ *
+ * Incluye HIDDEN a proposito: si algo esta oculto, el admin tiene que
+ * poder verlo y revertirlo.
+ */
+export async function getVerAdminRows(market = 'AR'): Promise<VerAdminRow[]> {
+  const series = await prisma.series.findMany({
+    where: {
+      seasons: { some: { episodes: { some: { embedUrl: { not: null } } } } },
+    },
+    select: {
+      id: true,
+      title: true,
+      year: true,
+      origin: true,
+      catalogScope: true,
+      visibility: true,
+      geoRestrictedCore: true,
+      submittedBy: { select: { name: true, nickname: true } },
+      seasons: {
+        select: {
+          episodes: {
+            where: { embedUrl: { not: null } },
+            select: {
+              embedPlatform: true,
+              embedChannelName: true,
+              playback: true,
+              playbackBlockedMarkets: true,
+              playbackCheckedAt: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: { title: 'asc' },
+  });
+
+  return series.map((s) => {
+    const eps = s.seasons.flatMap((season) => season.episodes);
+    const playbackCounts: Record<string, number> = {};
+    let lastChecked: Date | null = null;
+    for (const e of eps) {
+      playbackCounts[e.playback] = (playbackCounts[e.playback] ?? 0) + 1;
+      if (
+        e.playbackCheckedAt &&
+        (!lastChecked || e.playbackCheckedAt > lastChecked)
+      ) {
+        lastChecked = e.playbackCheckedAt;
+      }
+    }
+    return {
+      id: s.id,
+      title: s.title,
+      year: s.year,
+      origin: s.origin,
+      catalogScope: s.catalogScope,
+      visibility: s.visibility,
+      geoRestrictedCore: s.geoRestrictedCore,
+      submittedBy: s.submittedBy?.nickname ?? s.submittedBy?.name ?? null,
+      platforms: Array.from(
+        new Set(eps.map((e) => e.embedPlatform).filter((p): p is string => !!p))
+      ),
+      channels: Array.from(
+        new Set(
+          eps.map((e) => e.embedChannelName).filter((c): c is string => !!c)
+        )
+      ),
+      totalEmbeds: eps.length,
+      playbackCounts,
+      playable: eps.filter((e) =>
+        isPlayableIn(e.playback, e.playbackBlockedMarkets, market)
+      ).length,
+      lastCheckedAt: lastChecked ? lastChecked.toISOString() : null,
+    };
+  });
+}
+
 const watchableInclude = Prisma.validator<Prisma.SeriesInclude>()({
   country: true,
   universe: true,

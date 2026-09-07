@@ -18,7 +18,7 @@ import {
   PlayCircleFilled,
   PlusOutlined,
   SearchOutlined,
-  DeleteOutlined,
+  DisconnectOutlined,
   AppstoreOutlined,
   BarsOutlined,
   SettingOutlined,
@@ -111,16 +111,23 @@ export function VerPage({ items }: VerPageProps) {
     VER_CAROUSEL_CATEGORY_IDS
   );
 
-  const handleDelete = async (id: number) => {
+  /**
+   * Saca la serie de /ver vaciando los embeds de sus episodios. NO borra
+   * la serie: la ficha, los episodios y el progreso de los usuarios
+   * quedan intactos. Para borrar de verdad esta /admin/ver.
+   */
+  const handleRemoveFromVer = async (id: number) => {
     setDeletingId(id);
     try {
-      const res = await fetch(`/api/series/${id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('delete failed');
-      message.success(t('ver.deleteSuccess'));
+      const res = await fetch(`/api/admin/ver/${id}/remove`, {
+        method: 'POST',
+      });
+      if (!res.ok) throw new Error('remove failed');
+      message.success(t('ver.removeSuccess'));
       router.refresh();
     } catch (err) {
       console.error(err);
-      message.error(t('ver.deleteError'));
+      message.error(t('ver.removeError'));
     } finally {
       setDeletingId(null);
     }
@@ -577,24 +584,28 @@ export function VerPage({ items }: VerPageProps) {
                       ) : undefined
                     }
                     actions={
+                      // El boton de borrar que habia aca llamaba a
+                      // DELETE /api/series/[id], que borra la serie ENTERA
+                      // con cascade. Sobre una serie curada eso se lleva
+                      // puesta la ficha de Flor (reseña, rating, cast) solo
+                      // para sacar un embed de /ver. Se reemplaza por la
+                      // accion acotada: vaciar los embeds. Borrar de verdad
+                      // sigue disponible en /admin/ver, con su confirmacion
+                      // y solo para aportes.
                       isAdmin && (
                         <Popconfirm
-                          title={t('ver.deleteConfirmTitle')}
-                          description={t('ver.deleteConfirmDescription')}
-                          onConfirm={() => handleDelete(item.id)}
-                          okText={t('ver.deleteConfirmOk')}
+                          title={t('ver.removeConfirmTitle')}
+                          description={t('ver.removeConfirmDescription')}
+                          onConfirm={() => handleRemoveFromVer(item.id)}
+                          okText={t('ver.removeConfirmOk')}
                           cancelText={t('ver.deleteConfirmCancel')}
-                          okButtonProps={{
-                            danger: true,
-                            loading: isDeleting,
-                          }}
+                          okButtonProps={{ loading: isDeleting }}
                         >
                           <Button
                             type="text"
-                            danger
                             size="small"
-                            icon={<DeleteOutlined />}
-                            aria-label={t('ver.deleteAriaLabel')}
+                            icon={<DisconnectOutlined />}
+                            aria-label={t('ver.removeAriaLabel')}
                           />
                         </Popconfirm>
                       )

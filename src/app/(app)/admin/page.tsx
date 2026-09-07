@@ -134,6 +134,11 @@ export default async function AdminLandingPage() {
           title: 'Barrido de canal',
         },
         {
+          href: '/admin/ver',
+          icon: '▶️',
+          title: 'Administrar /ver',
+        },
+        {
           href: '/admin/tags',
           icon: '🏷️',
           title: 'Tags',
