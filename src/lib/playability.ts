@@ -47,6 +47,34 @@ export interface PlaybackProbe {
   blockedMarkets: string[];
   /** Texto crudo devuelto por YouTube, para diagnosticar casos raros. */
   detail: string | null;
+  /**
+   * Duracion en segundos, o null si la fuente no la trae (la watch page
+   * no se parsea para esto).
+   *
+   * Sirve para detectar trailers cargados como episodios, que es un caso
+   * real y silencioso: /ver mostraba "Some More" y "Long time no see"
+   * como mirables cuando su unico "episodio" era el trailer oficial, de
+   * 43 y 69 segundos. La duracion es la señal CONFIABLE — filtrar por
+   * titulo falla en los dos sentidos: "clip" matchea dentro de "Eclipse"
+   * y un trailer en coreano se llama "예고편".
+   */
+  durationSeconds: number | null;
+}
+
+/**
+ * Por debajo de esto, un "episodio" casi seguro es un trailer, un teaser
+ * o un clip. Los BL cortos legitimos rondan los 10-15 minutos; los
+ * trailers no pasan de 2.
+ */
+export const MIN_EPISODE_SECONDS = 5 * 60;
+
+/** Parsea la duracion ISO-8601 de YouTube (PT1M9S, PT43S, PT1H2M3S). */
+export function parseIsoDuration(iso: string | undefined): number | null {
+  if (!iso) return null;
+  const m = iso.match(/^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/);
+  if (!m) return null;
+  const [, h, min, s] = m;
+  return Number(h ?? 0) * 3600 + Number(min ?? 0) * 60 + Number(s ?? 0);
 }
 
 const WATCH_PAGE_UA =
@@ -66,6 +94,7 @@ interface ApiVideoItem {
   contentDetails?: {
     regionRestriction?: { blocked?: string[]; allowed?: string[] };
     contentRating?: { ytRating?: string };
+    duration?: string;
   };
   status?: { embeddable?: boolean; privacyStatus?: string };
 }
@@ -112,8 +141,11 @@ export async function probeViaApi(
         status: 'REMOVED' as const,
         blockedMarkets: [],
         detail: 'La API no devolvio el video (borrado o privado).',
+        durationSeconds: null,
       };
     }
+
+    const durationSeconds = parseIsoDuration(item.contentDetails?.duration);
 
     // El age-gate gana sobre todo lo demas: aunque no este geo-bloqueado,
     // el embed no arranca en ningun lado.
@@ -123,6 +155,7 @@ export async function probeViaApi(
         status: 'AGE_RESTRICTED' as const,
         blockedMarkets: [],
         detail: 'ytAgeRestricted',
+        durationSeconds,
       };
     }
 
@@ -132,6 +165,7 @@ export async function probeViaApi(
         status: 'NOT_EMBEDDABLE' as const,
         blockedMarkets: [],
         detail: 'El uploader deshabilito el embed.',
+        durationSeconds,
       };
     }
 
@@ -144,10 +178,17 @@ export async function probeViaApi(
         status: 'GEO_BLOCKED' as const,
         blockedMarkets,
         detail: `Bloqueado en ${blockedMarkets.join(', ')}.`,
+        durationSeconds,
       };
     }
 
-    return { videoId, status: 'OK' as const, blockedMarkets: [], detail: null };
+    return {
+      videoId,
+      status: 'OK' as const,
+      blockedMarkets: [],
+      detail: null,
+      durationSeconds,
+    };
   });
 }
 
@@ -210,6 +251,7 @@ export async function probeViaWatchPage(
       status: 'UNKNOWN',
       blockedMarkets: [],
       detail: `Fallo de red: ${err instanceof Error ? err.message : 'desconocido'}`,
+      durationSeconds: null,
     };
   }
 
@@ -232,6 +274,7 @@ export function parseWatchPage(
       status: 'UNKNOWN',
       blockedMarkets: [],
       detail: 'No se encontro playabilityStatus en la pagina.',
+      durationSeconds: null,
     };
   }
 
@@ -244,9 +287,16 @@ export function parseWatchPage(
         status: 'NOT_EMBEDDABLE',
         blockedMarkets: [],
         detail: 'playableInEmbed=false',
+        durationSeconds: null,
       };
     }
-    return { videoId, status: 'OK', blockedMarkets: [], detail: null };
+    return {
+      videoId,
+      status: 'OK',
+      blockedMarkets: [],
+      detail: null,
+      durationSeconds: null,
+    };
   }
 
   // El `reason` corto es generico ("Video no disponible") tanto para geo
@@ -266,6 +316,7 @@ export function parseWatchPage(
       status: 'AGE_RESTRICTED',
       blockedMarkets: [],
       detail: haystack.trim() || null,
+      durationSeconds: null,
     };
   }
 
@@ -275,6 +326,7 @@ export function parseWatchPage(
       status: 'GEO_BLOCKED',
       blockedMarkets: [localMarket],
       detail: haystack.trim() || null,
+      durationSeconds: null,
     };
   }
 
@@ -285,6 +337,7 @@ export function parseWatchPage(
       status: 'REMOVED',
       blockedMarkets: [],
       detail: haystack.trim() || 'LOGIN_REQUIRED',
+      durationSeconds: null,
     };
   }
 
@@ -293,6 +346,7 @@ export function parseWatchPage(
     status: 'REMOVED',
     blockedMarkets: [],
     detail: haystack.trim() || status,
+    durationSeconds: null,
   };
 }
 
