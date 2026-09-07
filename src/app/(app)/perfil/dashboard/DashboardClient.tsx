@@ -46,6 +46,7 @@ import { TopRatedSeriesWidget } from './widgets/TopRatedSeriesWidget/TopRatedSer
 import { MyReviewsWidget } from './widgets/MyReviewsWidget/MyReviewsWidget';
 import { MyDisputesWidget } from './widgets/MyDisputesWidget/MyDisputesWidget';
 import { MyCommentsWidget } from './widgets/MyCommentsWidget/MyCommentsWidget';
+import { MyDiaryWidget } from './widgets/MyDiaryWidget/MyDiaryWidget';
 import { MyCasesWidget } from './widgets/MyCasesWidget/MyCasesWidget';
 import { DashboardNotificationsWidget } from './widgets/NotificationsWidget/DashboardNotificationsWidget';
 import { QuickAdminActionsWidget } from './widgets/QuickAdminActionsWidget/QuickAdminActionsWidget';
@@ -87,6 +88,7 @@ const WIDGET_IDS = {
   myReviews: 'profile.myReviews',
   myDisputes: 'profile.myDisputes',
   myComments: 'profile.myComments',
+  myDiary: 'profile.myDiary',
   myCases: 'profile.myCases',
   notifications: 'profile.notifications',
   quickAdmin: 'profile.quickAdmin',
@@ -122,6 +124,7 @@ const WIDGET_TO_SECTION: Record<string, string> = {
   [WIDGET_IDS.myReviews]: 'reviews',
   [WIDGET_IDS.myDisputes]: 'reviews',
   [WIDGET_IDS.myComments]: 'comments',
+  [WIDGET_IDS.myDiary]: 'watching',
   [WIDGET_IDS.myCases]: 'cases',
   [WIDGET_IDS.notifications]: 'notifications',
   [WIDGET_IDS.achievements]: 'achievements',
@@ -301,6 +304,7 @@ const USER_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.myComments, x: 0, y: 43, w: 8, h: 6, minW: 6, minH: 5 },
     { i: WIDGET_IDS.socials, x: 8, y: 41, w: 4, h: 6 },
     { i: WIDGET_IDS.profileCompleteness, x: 0, y: 49, w: 4, h: 4 },
+    { i: WIDGET_IDS.myDiary, x: 0, y: 53, w: 6, h: 6, minW: 4, minH: 4 },
   ],
   md: [
     { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 10, h: 3 },
@@ -327,6 +331,7 @@ const USER_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.worldMap, x: 0, y: 59, w: 10, h: 6 },
     { i: WIDGET_IDS.socials, x: 0, y: 65, w: 10, h: 6 },
     { i: WIDGET_IDS.profileCompleteness, x: 0, y: 71, w: 10, h: 4 },
+    { i: WIDGET_IDS.myDiary, x: 0, y: 75, w: 5, h: 6, minW: 4, minH: 4 },
   ],
   sm: [
     { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 6, h: 4 },
@@ -351,6 +356,7 @@ const USER_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.worldMap, x: 0, y: 104, w: 6, h: 6 },
     { i: WIDGET_IDS.socials, x: 0, y: 110, w: 6, h: 6 },
     { i: WIDGET_IDS.profileCompleteness, x: 0, y: 116, w: 6, h: 4 },
+    { i: WIDGET_IDS.myDiary, x: 0, y: 120, w: 6, h: 6, minW: 4, minH: 4 },
   ],
   xs: [
     { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 4, h: 5 },
@@ -375,6 +381,7 @@ const USER_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.worldMap, x: 0, y: 105, w: 4, h: 6 },
     { i: WIDGET_IDS.socials, x: 0, y: 111, w: 4, h: 6 },
     { i: WIDGET_IDS.profileCompleteness, x: 0, y: 117, w: 4, h: 4 },
+    { i: WIDGET_IDS.myDiary, x: 0, y: 121, w: 4, h: 6, minW: 4, minH: 4 },
   ],
 };
 
@@ -396,6 +403,7 @@ const BASIC_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.collections, x: 8, y: 14, w: 4, h: 5 },
     { i: WIDGET_IDS.socials, x: 0, y: 19, w: 4, h: 4 },
     { i: WIDGET_IDS.profileCompleteness, x: 0, y: 23, w: 4, h: 4 },
+    { i: WIDGET_IDS.myDiary, x: 0, y: 27, w: 6, h: 6, minW: 4, minH: 4 },
   ],
   md: [
     { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 10, h: 3 },
@@ -407,6 +415,7 @@ const BASIC_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.socials, x: 5, y: 19, w: 5, h: 4 },
     // profileCompleteness faltaba en md/sm/xs (mismo bug de arriba).
     { i: WIDGET_IDS.profileCompleteness, x: 0, y: 24, w: 5, h: 4 },
+    { i: WIDGET_IDS.myDiary, x: 0, y: 28, w: 5, h: 6, minW: 4, minH: 4 },
   ],
   sm: [
     { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 6, h: 4 },
@@ -417,6 +426,7 @@ const BASIC_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.collections, x: 0, y: 26, w: 6, h: 5 },
     { i: WIDGET_IDS.socials, x: 0, y: 31, w: 6, h: 4 },
     { i: WIDGET_IDS.profileCompleteness, x: 0, y: 35, w: 6, h: 4 },
+    { i: WIDGET_IDS.myDiary, x: 0, y: 39, w: 6, h: 6, minW: 4, minH: 4 },
   ],
   xs: [
     { i: WIDGET_IDS.statsStrip, x: 0, y: 0, w: 4, h: 5 },
@@ -427,6 +437,7 @@ const BASIC_LAYOUTS: DashboardLayouts = {
     { i: WIDGET_IDS.collections, x: 0, y: 27, w: 4, h: 5 },
     { i: WIDGET_IDS.socials, x: 0, y: 32, w: 4, h: 4 },
     { i: WIDGET_IDS.profileCompleteness, x: 0, y: 36, w: 4, h: 4 },
+    { i: WIDGET_IDS.myDiary, x: 0, y: 40, w: 4, h: 6, minW: 4, minH: 4 },
   ],
 };
 
@@ -487,6 +498,7 @@ export function DashboardClient() {
         WIDGET_IDS.currentlyWatching,
         WIDGET_IDS.myReviews,
         WIDGET_IDS.myComments,
+        WIDGET_IDS.myDiary,
         WIDGET_IDS.heatmap,
         WIDGET_IDS.collections,
         WIDGET_IDS.socials,
@@ -645,6 +657,14 @@ export function DashboardClient() {
       descriptionKey: 'profileDashboard.widgetMyCommentsDesc',
       defaultSize: { w: 12, h: 6, minW: 6, minH: 5 },
       Component: MyCommentsWidget as never,
+    });
+    WidgetRegistry.register({
+      id: WIDGET_IDS.myDiary,
+      category: 'activity',
+      labelKey: 'profileDashboard.widgetMyDiary',
+      descriptionKey: 'profileDashboard.widgetMyDiaryDesc',
+      defaultSize: { w: 6, h: 6, minW: 4, minH: 4 },
+      Component: MyDiaryWidget as never,
     });
     WidgetRegistry.register({
       id: WIDGET_IDS.myCases,
@@ -811,6 +831,7 @@ export function DashboardClient() {
     map[WIDGET_IDS.myReviews] = { recentReviews: data.recentReviews };
     map[WIDGET_IDS.myDisputes] = {};
     map[WIDGET_IDS.myComments] = {};
+    map[WIDGET_IDS.myDiary] = {};
     map[WIDGET_IDS.myCases] = {};
     map[WIDGET_IDS.notifications] = {};
     map[WIDGET_IDS.quickAdmin] = {};
