@@ -4,6 +4,10 @@ import type { WebSite } from 'schema-dts';
 import { LandingPage } from './LandingPage/LandingPage';
 import { prisma } from '@/lib/database';
 import { getAutoThumbnailUrl, type Platform } from '@/lib/embed-helpers';
+import {
+  HAS_WATCHABLE_EPISODE,
+  WATCHABLE_EPISODE_WHERE,
+} from '@/lib/watchable';
 
 export const revalidate = 300; // revalidar stats cada 5 min
 
@@ -86,9 +90,8 @@ async function getLandingStats() {
       prisma.series.findMany({
         where: {
           visibility: 'VISIBLE',
-          seasons: {
-            some: { episodes: { some: { embedUrl: { not: null } } } },
-          },
+          // Mismo criterio que /ver: con embed Y que no sea un trailer.
+          ...HAS_WATCHABLE_EPISODE,
         },
         orderBy: { createdAt: 'desc' },
         take: 12,
@@ -104,7 +107,7 @@ async function getLandingStats() {
           seasons: {
             select: {
               episodes: {
-                where: { embedUrl: { not: null } },
+                where: WATCHABLE_EPISODE_WHERE,
                 select: { embedPlatform: true, embedUrl: true },
                 take: 1,
               },

@@ -9,6 +9,11 @@ import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Prisma, PrismaClient } from '../generated/prisma';
 import { isPlayableIn } from './playability';
+import {
+  HAS_WATCHABLE_EPISODE,
+  WATCHABLE_EPISODE_WHERE,
+  isTrailerLength,
+} from './watchable';
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
@@ -144,13 +149,10 @@ export async function getWatchableSeries(market = 'AR') {
   const series = await prisma.series.findMany({
     where: {
       visibility: 'VISIBLE',
-      seasons: {
-        some: {
-          episodes: {
-            some: { embedUrl: { not: null } },
-          },
-        },
-      },
+      // Un trailer tiene embedUrl como cualquier episodio: sin el filtro
+      // de duracion, una serie cuyo unico "capitulo" es el trailer entra
+      // igual a /ver. Ver src/lib/watchable.ts.
+      ...HAS_WATCHABLE_EPISODE,
     },
     include: {
       country: true,
@@ -164,7 +166,7 @@ export async function getWatchableSeries(market = 'AR') {
           seasonNumber: true,
           title: true,
           episodes: {
-            where: { embedUrl: { not: null } },
+            where: WATCHABLE_EPISODE_WHERE,
             select: {
               id: true,
               episodeNumber: true,
@@ -255,6 +257,13 @@ export interface VerAdminRow {
   platforms: string[];
   channels: string[];
   totalEmbeds: number;
+  /**
+   * Embeds que duran menos que un capitulo: trailers, teasers, clips.
+   * Ya NO se publican en /ver (ver src/lib/watchable.ts), pero el panel
+   * los muestra para que se puedan sacar del catalogo de verdad.
+   * 0 tambien significa "ninguno sondeado todavia".
+   */
+  trailers: number;
   /** Desglose por estado del ultimo sondeo (ver Episode.playback). */
   playbackCounts: Record<string, number>;
   /** Episodios reproducibles en `market`. */
@@ -296,6 +305,7 @@ export async function getVerAdminRows(market = 'AR'): Promise<VerAdminRow[]> {
             select: {
               embedPlatform: true,
               embedChannelName: true,
+              durationSeconds: true,
               playback: true,
               playbackBlockedMarkets: true,
               playbackCheckedAt: true,
@@ -338,6 +348,7 @@ export async function getVerAdminRows(market = 'AR'): Promise<VerAdminRow[]> {
         )
       ),
       totalEmbeds: eps.length,
+      trailers: eps.filter((e) => isTrailerLength(e.durationSeconds)).length,
       playbackCounts,
       playable: eps.filter((e) =>
         isPlayableIn(e.playback, e.playbackBlockedMarkets, market)

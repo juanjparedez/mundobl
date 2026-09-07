@@ -229,6 +229,21 @@ export function VerAdminClient({ rows }: VerAdminClientProps) {
                 {PLAYBACK_META[status]?.label ?? status} {n}
               </Tag>
             ))}
+          {row.trailers > 0 && (
+            <Tooltip
+              title={
+                row.trailers === row.totalEmbeds
+                  ? 'Todos sus embeds son trailers: la serie ya no aparece en /ver. Conviene sacarla para que deje de figurar acá.'
+                  : 'Tiene trailers cargados como capítulos. Ya no se publican en /ver, pero el resto de los episodios sí.'
+              }
+            >
+              <Tag icon={<WarningOutlined />} color="gold">
+                {row.trailers === row.totalEmbeds
+                  ? 'Solo trailers'
+                  : `Trailers ${row.trailers}`}
+              </Tag>
+            </Tooltip>
+          )}
           {row.geoRestrictedCore && (
             <Tag icon={<WarningOutlined />} color="volcano">
               Geo-bloqueada
