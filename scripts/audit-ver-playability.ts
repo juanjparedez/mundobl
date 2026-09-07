@@ -30,6 +30,7 @@ loadEnvConfig(process.cwd());
 
 import {
   API_BATCH_SIZE,
+  MIN_EPISODE_SECONDS,
   PlayabilityApiError,
   probeViaApi,
   probeViaWatchPage,
@@ -211,6 +212,52 @@ async function main() {
     }
   } else {
     console.log('\nSin cambios respecto del sondeo anterior.');
+  }
+
+  // ── Trailers cargados como episodios ──────────────────────────────
+  // Distinto de la reproducibilidad: estos videos ANDAN perfecto, el
+  // problema es que no son un capitulo. Caso real: /ver mostraba "Some
+  // More" y "Long time no see" como mirables y su unico "episodio" era
+  // el trailer oficial (43s y 69s).
+  //
+  // Se mide por DURACION y no por titulo: el titulo engania en los dos
+  // sentidos — "clip" matchea dentro de "Eclipse", y un trailer coreano
+  // se llama "예고편". La duracion solo la trae la fuente `api`.
+  const shorts = episodes
+    .map((ep) => ({ ep, probe: probes.get(ep.id) }))
+    .filter(
+      (x): x is { ep: (typeof episodes)[number]; probe: PlaybackProbe } =>
+        !!x.probe &&
+        x.probe.durationSeconds !== null &&
+        x.probe.durationSeconds < MIN_EPISODE_SECONDS
+    );
+
+  if (shorts.length > 0) {
+    console.log(
+      `\n=== POSIBLES TRAILERS (${shorts.length} episodios de menos de ${MIN_EPISODE_SECONDS / 60} min) ===`
+    );
+    // Agrupado por serie: lo que importa es si a la serie le quedan
+    // capitulos de verdad o si es TODA trailers.
+    const porSerie = new Map<string, { cortos: number; total: number }>();
+    for (const ep of episodes) {
+      const key = ep.season.series.title;
+      const acc = porSerie.get(key) ?? { cortos: 0, total: 0 };
+      acc.total++;
+      porSerie.set(key, acc);
+    }
+    for (const { ep } of shorts) {
+      porSerie.get(ep.season.series.title)!.cortos++;
+    }
+    for (const [titulo, { cortos, total }] of porSerie) {
+      if (cortos === 0) continue;
+      const marca = cortos === total ? '❌ NO ES MIRABLE' : '⚠️';
+      console.log(
+        `  ${marca} ${titulo.slice(0, 40).padEnd(42)} ${cortos}/${total} episodios cortos`
+      );
+    }
+    console.log(
+      '  (revisar a mano: un making-of suelto es normal, una serie entera de cortos no)'
+    );
   }
 
   // ── Re-calculo de Series.geoRestrictedCore ────────────────────────
