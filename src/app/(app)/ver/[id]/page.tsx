@@ -5,6 +5,7 @@ import { Button } from 'antd';
 import { LeftOutlined } from '@/lib/client-icons';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
 import { JsonLd } from '@/components/seo/JsonLd';
+import { isWatchableEpisode } from '@/lib/watchable';
 import type { TVSeries } from 'schema-dts';
 import { getWatchableSeriesById } from '@/lib/database';
 import { getVerUrl, parseIdFromSlug } from '@/lib/slug';
@@ -85,20 +86,18 @@ export default async function VerSeriePage({ params }: PageProps) {
       id: s.id,
       seasonNumber: s.seasonNumber,
       title: s.title,
-      episodes: s.episodes
-        .filter((e) => e.embedUrl)
-        .map((e) => ({
-          id: e.id,
-          episodeNumber: e.episodeNumber,
-          title: e.title,
-          synopsis: e.synopsis,
-          duration: e.duration,
-          embedUrl: e.embedUrl,
-          embedPlatform: e.embedPlatform,
-          embedVideoId: e.embedVideoId,
-          embedChannelName: e.embedChannelName,
-          embedChannelUrl: e.embedChannelUrl,
-        })),
+      episodes: s.episodes.filter(isWatchableEpisode).map((e) => ({
+        id: e.id,
+        episodeNumber: e.episodeNumber,
+        title: e.title,
+        synopsis: e.synopsis,
+        duration: e.duration,
+        embedUrl: e.embedUrl,
+        embedPlatform: e.embedPlatform,
+        embedVideoId: e.embedVideoId,
+        embedChannelName: e.embedChannelName,
+        embedChannelUrl: e.embedChannelUrl,
+      })),
     }))
     .filter((s) => s.episodes.length > 0);
 

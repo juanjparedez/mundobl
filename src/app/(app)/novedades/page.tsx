@@ -2,6 +2,10 @@ import type { Metadata } from 'next';
 import { unstable_cache } from 'next/cache';
 import { prisma } from '@/lib/database';
 import { getAutoThumbnailUrl, type Platform } from '@/lib/embed-helpers';
+import {
+  HAS_WATCHABLE_EPISODE,
+  WATCHABLE_EPISODE_WHERE,
+} from '@/lib/watchable';
 import { NovedadesClient } from './NovedadesClient';
 import './novedades.css';
 
@@ -65,9 +69,8 @@ const getNovedadesData = unstable_cache(
       prisma.series.findMany({
         where: {
           visibility: 'VISIBLE',
-          seasons: {
-            some: { episodes: { some: { embedUrl: { not: null } } } },
-          },
+          // Mismo criterio que /ver: con embed Y que no sea un trailer.
+          ...HAS_WATCHABLE_EPISODE,
         },
         orderBy: { createdAt: 'desc' },
         take: 12,
@@ -83,7 +86,7 @@ const getNovedadesData = unstable_cache(
           seasons: {
             select: {
               episodes: {
-                where: { embedUrl: { not: null } },
+                where: WATCHABLE_EPISODE_WHERE,
                 select: { embedPlatform: true, embedUrl: true },
                 take: 1,
               },

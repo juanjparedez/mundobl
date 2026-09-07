@@ -468,6 +468,19 @@ model Episode {
   episodeNumber    Int
   title            String?
   duration         Int? // Duración en minutos
+  // Duracion real del video embebido, en SEGUNDOS, tal como la reporta la
+  // fuente (YouTube Data API). No se pisa con `duration`: aquel es un dato
+  // editorial en minutos, cargado a mano y casi siempre vacio.
+  //
+  // Existe para poder distinguir un capitulo de un trailer. /ver publicaba
+  // "Some More" y "Long time no see" como series mirables cuando su unico
+  // "episodio" era el trailer oficial, de 43 y 69 segundos. La duracion es
+  // la unica senal confiable: el titulo falla en los dos sentidos — "clip"
+  // matchea dentro de "Eclipse" y un trailer coreano se llama "예고편".
+  //
+  // La escribe scripts/audit-ver-playability.ts, igual que los campos de
+  // playback. El importer NUNCA la setea: un solo lugar es dueño del dato.
+  durationSeconds  Int?
   airDate          DateTime?
   synopsis         String?
   // Embed oficial del episodio (canal oficial, plataforma con TOS de embed
