@@ -155,6 +155,13 @@ export async function POST(request: NextRequest) {
         originalTitle,
         year,
         type,
+        // Solo para tipos de una sola pieza (pelicula, corto). El form ya
+        // manda null cuando el tipo no la lleva; aca se normaliza el
+        // string vacio o el undefined del payload.
+        durationMinutes:
+          body.durationMinutes === null || body.durationMinutes === undefined
+            ? null
+            : Number(body.durationMinutes) || null,
         basedOn,
         format: format || 'regular',
         imageUrl: externalImageUrl,
@@ -236,13 +243,17 @@ export async function POST(request: NextRequest) {
             data: {
               seriesId: serie.id,
               seasonNumber: seasonData.seasonNumber || 1,
-              episodeCount: seasonData.episodeCount ? Number(seasonData.episodeCount) : null,
+              episodeCount: seasonData.episodeCount
+                ? Number(seasonData.episodeCount)
+                : null,
               year: seasonData.year || year,
             },
           });
 
           // Auto-generación de capítulos si se especificó episodeCount
-          const episodeCount = seasonData.episodeCount ? Number(seasonData.episodeCount) : 0;
+          const episodeCount = seasonData.episodeCount
+            ? Number(seasonData.episodeCount)
+            : 0;
           if (episodeCount > 0) {
             const episodesToCreate = [];
             for (let i = 1; i <= episodeCount; i++) {

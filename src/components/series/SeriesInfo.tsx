@@ -20,6 +20,7 @@ import { ReviewSpotlight } from './ReviewSpotlight/ReviewSpotlight';
 import './SeriesInfo.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
+import { shouldShowSeasons, shouldShowDuration } from '@/types/content';
 
 interface SeriesInfoProps {
   series: {
@@ -28,6 +29,9 @@ interface SeriesInfoProps {
     originalTitle?: string | null;
     year?: number | null;
     type: string;
+    // Duracion total en minutos. Solo la llevan los tipos de una sola pieza
+    // (pelicula, corto) — ver ContentTypeConfig.
+    durationMinutes?: number | null;
     basedOn?: string | null;
     format: string;
     notesPrivate?: boolean;
@@ -305,13 +309,31 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
           </Descriptions.Item>
         )}
 
-        <Descriptions.Item label={t('seriesInfo.fieldSeasons')}>
-          {series.seasons?.length || 0}
-        </Descriptions.Item>
+        {/* Temporadas y episodios solo donde significan algo. En un corto o
+            una pelicula se mostraba "Temporadas: 0 / Episodios: N/A", que es
+            ruido: ahi lo que importa es la duracion. Que lleva cada tipo sale
+            de ContentTypeConfig, no de un if suelto. */}
+        {shouldShowSeasons(series.type) && (
+          <>
+            <Descriptions.Item label={t('seriesInfo.fieldSeasons')}>
+              {series.seasons?.length || 0}
+            </Descriptions.Item>
 
-        <Descriptions.Item label={t('seriesInfo.fieldEpisodes')}>
-          {totalEpisodes || t('common.na')}
-        </Descriptions.Item>
+            <Descriptions.Item label={t('seriesInfo.fieldEpisodes')}>
+              {totalEpisodes || t('common.na')}
+            </Descriptions.Item>
+          </>
+        )}
+
+        {shouldShowDuration(series.type) && (
+          <Descriptions.Item label={t('seriesInfo.fieldDuration')}>
+            {series.durationMinutes
+              ? interpolateMessage(t('seriesHeader.durationMinutes'), {
+                  minutes: String(series.durationMinutes),
+                })
+              : t('common.na')}
+          </Descriptions.Item>
+        )}
 
         {series.soundtrack && (
           <Descriptions.Item
