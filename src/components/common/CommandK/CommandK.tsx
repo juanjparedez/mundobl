@@ -15,6 +15,7 @@ import {
   UserOutlined,
   VideoCameraOutlined,
   TagsOutlined,
+  BookOutlined,
 } from '@ant-design/icons';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { getSeriesUrl } from '@/lib/slug';
@@ -30,11 +31,18 @@ interface SearchResults {
   actors: Array<{ id: number; name: string }>;
   directors: Array<{ id: number; name: string }>;
   tags: Array<{ id: number; name: string; category: string | null }>;
+  glossary: Array<{
+    id: number;
+    slug: string;
+    term: string;
+    transliteration: string | null;
+    category: string;
+  }>;
 }
 
 interface FlatItem {
   key: string;
-  group: 'series' | 'actors' | 'directors' | 'tags';
+  group: 'series' | 'actors' | 'directors' | 'tags' | 'glossary';
   label: string;
   hint?: string;
   href: string;
@@ -45,6 +53,7 @@ const EMPTY_RESULTS: SearchResults = {
   actors: [],
   directors: [],
   tags: [],
+  glossary: [],
 };
 
 function flatten(results: SearchResults): FlatItem[] {
@@ -83,6 +92,17 @@ function flatten(results: SearchResults): FlatItem[] {
       href: `/tags/${t.id}`,
     })
   );
+  results.glossary.forEach((g) =>
+    items.push({
+      key: `g:${g.id}`,
+      group: 'glossary',
+      label: g.term,
+      hint: g.transliteration ?? undefined,
+      // /glosario abre el diccionario filtrado en ese termino: no hay
+      // pagina propia por termino, asi que el slug viaja como query param.
+      href: `/glosario?term=${encodeURIComponent(g.slug)}`,
+    })
+  );
   return items;
 }
 
@@ -91,6 +111,7 @@ const GROUP_ICONS = {
   actors: <UserOutlined />,
   directors: <VideoCameraOutlined />,
   tags: <TagsOutlined />,
+  glossary: <BookOutlined />,
 };
 
 export function CommandK() {
@@ -223,10 +244,14 @@ export function CommandK() {
         return t('cmdk.groupDirectors');
       case 'tags':
         return t('cmdk.groupTags');
+      case 'glossary':
+        return t('cmdk.groupGlossary');
     }
   };
 
-  const grouped = (['series', 'actors', 'directors', 'tags'] as const)
+  const grouped = (
+    ['series', 'actors', 'directors', 'tags', 'glossary'] as const
+  )
     .map((g) => ({ group: g, items: items.filter((i) => i.group === g) }))
     .filter(({ items }) => items.length > 0);
 

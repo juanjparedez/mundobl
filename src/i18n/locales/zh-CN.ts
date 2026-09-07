@@ -317,6 +317,14 @@ const zhCN: TranslationShape = {
     "commentsLoadError": "无法加载评论",
     "commentsEmpty": "您还没有任何评论",
     "commentsExport": "下载 JSON",
+    "diarySearchPlaceholder": "搜索你的笔记...",
+    "diaryFilterAll": "全部",
+    "diaryFilterSeries": "剧集",
+    "diaryFilterEpisodes": "分集",
+    "diaryEmpty": "你还没有写过笔记",
+    "diaryLoadError": "无法加载你的笔记",
+    "diaryExport": "下载 JSON",
+    "diaryEdited": "已编辑",
     "commentsPublic": "公开",
     "commentsPrivate": "私密",
     "commentsTargetUnknown": "无参考",
@@ -541,13 +549,14 @@ const zhCN: TranslationShape = {
     "message": "您已离线。部分功能可能无法使用。"
   },
   "cmdk": {
-    "placeholder": "搜索剧集、演员、导演、标签...",
+    "placeholder": "搜索剧集、演员、导演、标签、术语表...",
     "hintMinChars": "请输入至少2个字符进行搜索。",
     "empty": "无结果。",
     "groupSeries": "剧集",
     "groupActors": "演员",
     "groupDirectors": "导演",
     "groupTags": "标签",
+    "groupGlossary": "术语表",
     "navigate": "导航",
     "select": "选择",
     "close": "关闭"
@@ -1623,6 +1632,8 @@ const zhCN: TranslationShape = {
     "feedbackShort": "案例",
     "suggestions": "建议",
     "suggestionsShort": "建议",
+    "support": "协作者支持",
+    "supportShort": "支持",
     "info": "信息",
     "infoShort": "信息",
     "logs": "日志",
@@ -2455,6 +2466,8 @@ const zhCN: TranslationShape = {
     "widgetMyDisputesDesc": "Disputas que abriste contra reportes en tus comentarios.",
     "widgetMyComments": "Mis comentarios",
     "widgetMyCommentsDesc": "Gestion completa de tus comentarios: filtros, bulk ops, edit, disputa, export.",
+    "widgetMyDiary": "我的 BL 日记",
+    "widgetMyDiaryDesc": "按时间顺序查看你为剧集和分集写下的所有私人笔记。",
     "loadError": "加载资料出错。请刷新页面。"
   },
   "serieDashboard": {

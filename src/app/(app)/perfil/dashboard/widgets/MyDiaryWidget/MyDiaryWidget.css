@@ -1,0 +1,88 @@
+.mb-my-diary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+}
+
+.mb-my-diary__filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.mb-my-diary__search {
+  flex: 1 1 180px;
+  min-width: 160px;
+}
+
+.mb-my-diary__loading,
+.mb-my-diary__empty {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-md) 0;
+}
+
+.mb-my-diary__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+/* Linea de tiempo: el borde izquierdo es lo que hace que se lea como un
+   diario y no como una tabla mas del perfil. */
+.mb-my-diary__item {
+  border-left: 2px solid var(--border-color-secondary);
+  padding-left: var(--spacing-sm);
+}
+
+.mb-my-diary__item:hover {
+  border-left-color: var(--primary-color);
+}
+
+.mb-my-diary__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.mb-my-diary__date {
+  color: var(--text-tertiary);
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+}
+
+.mb-my-diary__series {
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 22ch;
+}
+
+.mb-my-diary__series:hover {
+  color: var(--primary-color);
+}
+
+.mb-my-diary__edited {
+  color: var(--text-tertiary);
+  font-size: var(--font-size-sm);
+}
+
+.mb-my-diary__body {
+  margin: 2px 0 0;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.mb-my-diary__pagination {
+  display: flex;
+  justify-content: flex-end;
+}

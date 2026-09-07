@@ -1,7 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { Button, Card, Select, Space, Tag, Typography, message } from 'antd';
+import {
+  Button,
+  Card,
+  Input,
+  Modal,
+  Select,
+  Space,
+  Tag,
+  Typography,
+  message,
+} from 'antd';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { AdminNav } from '../AdminNav';
 import { PageTitleClient } from '@/components/common/PageTitle/PageTitleClient';
@@ -33,32 +43,89 @@ export interface GlossarySuggestionItem {
   } | null;
 }
 
-interface Props {
-  initialSuggestions: GlossarySuggestionItem[];
+export interface GlossaryTagOption {
+  id: number;
+  name: string;
+  category: string | null;
 }
 
-export function GlosarioSuggestionsClient({ initialSuggestions }: Props) {
+interface Props {
+  initialSuggestions: GlossarySuggestionItem[];
+  tags: GlossaryTagOption[];
+}
+
+// Lo que el moderador esta por resolver. Aprobar y rechazar pasan por el
+// mismo modal porque en los dos casos hay algo que escribir: tags en uno,
+// el motivo en el otro — y ese motivo le llega al autor como notificacion.
+interface ReviewDraft {
+  item: GlossarySuggestionItem;
+  action: 'APPROVED' | 'REJECTED';
+}
+
+export function GlosarioSuggestionsClient({ initialSuggestions, tags }: Props) {
   const [suggestions, setSuggestions] = useState(initialSuggestions);
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [updatingId, setUpdatingId] = useState<number | null>(null);
+  const [review, setReview] = useState<ReviewDraft | null>(null);
+  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
+  const [adminNotes, setAdminNotes] = useState('');
 
-  const updateStatus = async (id: number, status: 'APPROVED' | 'REJECTED') => {
-    setUpdatingId(id);
+  const tagOptions = tags.map((tag) => ({
+    value: tag.id,
+    label: tag.category ? `${tag.name} · ${tag.category}` : tag.name,
+  }));
+
+  const openReview = (
+    item: GlossarySuggestionItem,
+    action: 'APPROVED' | 'REJECTED'
+  ) => {
+    setReview({ item, action });
+    setSelectedTagIds([]);
+    setAdminNotes(item.adminNotes ?? '');
+  };
+
+  const closeReview = () => {
+    setReview(null);
+    setSelectedTagIds([]);
+    setAdminNotes('');
+  };
+
+  const confirmReview = async () => {
+    if (!review) return;
+    const { item, action } = review;
+    setUpdatingId(item.id);
     try {
-      const response = await fetch(`/api/admin/glossary-suggestions/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status }),
-      });
+      const response = await fetch(
+        `/api/admin/glossary-suggestions/${item.id}`,
+        {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            status: action,
+            adminNotes,
+            // Los tags solo tienen sentido si el termino se publica.
+            ...(action === 'APPROVED' ? { tagIds: selectedTagIds } : {}),
+          }),
+        }
+      );
       if (!response.ok) throw new Error('No se pudo actualizar la sugerencia.');
       setSuggestions((current) =>
-        current.map((item) => (item.id === id ? { ...item, status } : item))
+        current.map((entry) =>
+          entry.id === item.id
+            ? {
+                ...entry,
+                status: action,
+                adminNotes: adminNotes.trim() || null,
+              }
+            : entry
+        )
       );
       message.success(
-        status === 'APPROVED'
-          ? 'Término aprobado y publicado.'
-          : 'Sugerencia rechazada.'
+        action === 'APPROVED'
+          ? 'Término aprobado y publicado. Se le avisó a quien lo propuso.'
+          : 'Sugerencia rechazada. Se le avisó a quien la propuso.'
       );
+      closeReview();
     } catch (error: unknown) {
       message.error(
         error instanceof Error ? error.message : 'Error al actualizar.'
@@ -183,7 +250,7 @@ export function GlosarioSuggestionsClient({ initialSuggestions }: Props) {
                       <Button
                         loading={updatingId === item.id}
                         icon={<CheckOutlined />}
-                        onClick={() => updateStatus(item.id, 'APPROVED')}
+                        onClick={() => openReview(item, 'APPROVED')}
                       >
                         Aprobar
                       </Button>
@@ -191,7 +258,7 @@ export function GlosarioSuggestionsClient({ initialSuggestions }: Props) {
                         danger
                         loading={updatingId === item.id}
                         icon={<CloseOutlined />}
-                        onClick={() => updateStatus(item.id, 'REJECTED')}
+                        onClick={() => openReview(item, 'REJECTED')}
                       >
                         Rechazar
                       </Button>
@@ -202,6 +269,71 @@ export function GlosarioSuggestionsClient({ initialSuggestions }: Props) {
           />
         </Card>
       </main>
+
+      <Modal
+        open={review !== null}
+        title={
+          review?.action === 'APPROVED'
+            ? `Aprobar "${review.item.term}"`
+            : review
+              ? `Rechazar "${review.item.term}"`
+              : ''
+        }
+        okText={
+          review?.action === 'APPROVED' ? 'Aprobar y publicar' : 'Rechazar'
+        }
+        okButtonProps={{ danger: review?.action === 'REJECTED' }}
+        cancelText="Cancelar"
+        confirmLoading={updatingId === review?.item.id}
+        onOk={confirmReview}
+        onCancel={closeReview}
+      >
+        <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+          {review?.action === 'APPROVED' && (
+            <div>
+              <Typography.Text strong>Etiquetas del término</Typography.Text>
+              <Select
+                mode="multiple"
+                allowClear
+                style={{ width: '100%', marginTop: 8 }}
+                placeholder="Sin etiquetas"
+                value={selectedTagIds}
+                onChange={setSelectedTagIds}
+                options={tagOptions}
+                optionFilterProp="label"
+              />
+              <Typography.Text type="secondary">
+                Son las mismas etiquetas del catálogo: filtran el término en
+                /glosario.
+              </Typography.Text>
+            </div>
+          )}
+          <div>
+            <Typography.Text strong>
+              {review?.action === 'APPROVED'
+                ? 'Nota interna (opcional)'
+                : 'Motivo del rechazo'}
+            </Typography.Text>
+            <Input.TextArea
+              rows={3}
+              style={{ marginTop: 8 }}
+              value={adminNotes}
+              onChange={(e) => setAdminNotes(e.target.value)}
+              placeholder={
+                review?.action === 'APPROVED'
+                  ? 'Queda guardada en la sugerencia.'
+                  : 'Se lo mandamos a quien propuso el término.'
+              }
+            />
+            {review?.action === 'REJECTED' && (
+              <Typography.Text type="secondary">
+                Si lo dejás vacío se envía un mensaje genérico invitando a
+                proponerlo de nuevo.
+              </Typography.Text>
+            )}
+          </div>
+        </Space>
+      </Modal>
     </>
   );
 }

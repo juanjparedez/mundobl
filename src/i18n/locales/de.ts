@@ -317,6 +317,14 @@ const de: TranslationShape = {
     "commentsLoadError": "Kommentare konnten nicht geladen werden",
     "commentsEmpty": "Sie haben noch keine Kommentare",
     "commentsExport": "JSON herunterladen",
+    "diarySearchPlaceholder": "In deinen Notizen suchen...",
+    "diaryFilterAll": "Alle",
+    "diaryFilterSeries": "Serien",
+    "diaryFilterEpisodes": "Episoden",
+    "diaryEmpty": "Du hast noch keine Notizen geschrieben",
+    "diaryLoadError": "Notizen konnten nicht geladen werden",
+    "diaryExport": "JSON herunterladen",
+    "diaryEdited": "bearbeitet",
     "commentsPublic": "Öffentlich",
     "commentsPrivate": "Privat",
     "commentsTargetUnknown": "Keine Referenz",
@@ -541,13 +549,14 @@ const de: TranslationShape = {
     "message": "Sie sind offline. Einige Funktionen funktionieren möglicherweise nicht."
   },
   "cmdk": {
-    "placeholder": "Serien, Schauspieler, Regisseure, Tags suchen...",
+    "placeholder": "Serien, Schauspieler, Regisseure, Tags, Glossar suchen...",
     "hintMinChars": "Geben Sie mindestens 2 Zeichen ein, um zu suchen.",
     "empty": "Keine Ergebnisse.",
     "groupSeries": "Serien",
     "groupActors": "Schauspieler",
     "groupDirectors": "Regisseure",
     "groupTags": "Tags",
+    "groupGlossary": "Glossar",
     "navigate": "Navigieren",
     "select": "Auswählen",
     "close": "Schließen"
@@ -1623,6 +1632,8 @@ const de: TranslationShape = {
     "feedbackShort": "Fälle",
     "suggestions": "Vorschläge",
     "suggestionsShort": "Vorschl.",
+    "support": "Mitwirkenden-Support",
+    "supportShort": "Support",
     "info": "Info",
     "infoShort": "Info",
     "logs": "Protokolle",
@@ -2455,6 +2466,8 @@ const de: TranslationShape = {
     "widgetMyDisputesDesc": "Disputas que abriste contra reportes en tus comentarios.",
     "widgetMyComments": "Mis comentarios",
     "widgetMyCommentsDesc": "Gestion completa de tus comentarios: filtros, bulk ops, edit, disputa, export.",
+    "widgetMyDiary": "Mein BL-Tagebuch",
+    "widgetMyDiaryDesc": "Alle deine privaten Notizen zu Serien und Episoden, chronologisch geordnet.",
     "loadError": "Fehler beim Laden deines Profils. Aktualisiere die Seite."
   },
   "serieDashboard": {

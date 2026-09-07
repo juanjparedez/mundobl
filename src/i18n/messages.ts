@@ -308,6 +308,14 @@ export type TranslationShape = {
     commentsLoadError: string;
     commentsEmpty: string;
     commentsExport: string;
+    diarySearchPlaceholder: string;
+    diaryFilterAll: string;
+    diaryFilterSeries: string;
+    diaryFilterEpisodes: string;
+    diaryEmpty: string;
+    diaryLoadError: string;
+    diaryExport: string;
+    diaryEdited: string;
     commentsPublic: string;
     commentsPrivate: string;
     commentsTargetUnknown: string;
@@ -539,6 +547,7 @@ export type TranslationShape = {
     groupActors: string;
     groupDirectors: string;
     groupTags: string;
+    groupGlossary: string;
     navigate: string;
     select: string;
     close: string;
@@ -1682,6 +1691,8 @@ export type TranslationShape = {
     feedbackShort: string;
     suggestions: string;
     suggestionsShort: string;
+    support: string;
+    supportShort: string;
     info: string;
     infoShort: string;
     logs: string;
@@ -2514,6 +2525,8 @@ export type TranslationShape = {
     widgetMyDisputesDesc: string;
     widgetMyComments: string;
     widgetMyCommentsDesc: string;
+    widgetMyDiary: string;
+    widgetMyDiaryDesc: string;
     loadError: string;
   };
   serieDashboard: {
@@ -3239,6 +3252,14 @@ const es: TranslationShape = {
     commentsLoadError: 'No se pudieron cargar los comentarios',
     commentsEmpty: 'Todavia no tienes comentarios',
     commentsExport: 'Descargar JSON',
+    diarySearchPlaceholder: 'Buscar en tus notas...',
+    diaryFilterAll: 'Todas',
+    diaryFilterSeries: 'Series',
+    diaryFilterEpisodes: 'Capitulos',
+    diaryEmpty: 'Todavia no escribiste ninguna nota',
+    diaryLoadError: 'No se pudieron cargar tus notas',
+    diaryExport: 'Descargar JSON',
+    diaryEdited: 'editada',
     commentsPublic: 'Publico',
     commentsPrivate: 'Privado',
     commentsTargetUnknown: 'Sin referencia',
@@ -3485,13 +3506,14 @@ const es: TranslationShape = {
     message: 'Estás sin conexión. Algunas funciones pueden no funcionar.',
   },
   cmdk: {
-    placeholder: 'Buscar series, actores, directores, tags...',
+    placeholder: 'Buscar series, actores, directores, tags, glosario...',
     hintMinChars: 'Escribí al menos 2 caracteres para buscar.',
     empty: 'Sin resultados.',
     groupSeries: 'Series',
     groupActors: 'Actores',
     groupDirectors: 'Directores',
     groupTags: 'Tags',
+    groupGlossary: 'Glosario',
     navigate: 'Navegar',
     select: 'Seleccionar',
     close: 'Cerrar',
@@ -4704,6 +4726,8 @@ const es: TranslationShape = {
     feedbackShort: 'Casos',
     suggestions: 'Sugerencias',
     suggestionsShort: 'Suger.',
+    support: 'Soporte colaboradores',
+    supportShort: 'Soporte',
     info: 'Info',
     infoShort: 'Info',
     logs: 'Logs',
@@ -5573,6 +5597,9 @@ const es: TranslationShape = {
     widgetMyComments: 'Mis comentarios',
     widgetMyCommentsDesc:
       'Gestion completa de tus comentarios: filtros, bulk ops, edit, disputa, export.',
+    widgetMyDiary: 'Mi Diario BL',
+    widgetMyDiaryDesc:
+      'Todas tus notas privadas de series y capitulos, en orden cronologico.',
     loadError: 'Error al cargar tu perfil. Refresca la pagina.',
   },
   serieDashboard: {
@@ -6316,6 +6343,14 @@ const en: TranslationShape = {
     commentsLoadError: 'Could not load comments',
     commentsEmpty: 'You have no comments yet',
     commentsExport: 'Download JSON',
+    diarySearchPlaceholder: 'Search your notes...',
+    diaryFilterAll: 'All',
+    diaryFilterSeries: 'Series',
+    diaryFilterEpisodes: 'Episodes',
+    diaryEmpty: "You haven't written any notes yet",
+    diaryLoadError: 'Could not load your notes',
+    diaryExport: 'Download JSON',
+    diaryEdited: 'edited',
     commentsPublic: 'Public',
     commentsPrivate: 'Private',
     commentsTargetUnknown: 'No reference',
@@ -6556,13 +6591,14 @@ const en: TranslationShape = {
     message: "You're offline. Some features may not work.",
   },
   cmdk: {
-    placeholder: 'Search series, actors, directors, tags...',
+    placeholder: 'Search series, actors, directors, tags, glossary...',
     hintMinChars: 'Type at least 2 characters to search.',
     empty: 'No results.',
     groupSeries: 'Series',
     groupActors: 'Actors',
     groupDirectors: 'Directors',
     groupTags: 'Tags',
+    groupGlossary: 'Glossary',
     navigate: 'Navigate',
     select: 'Select',
     close: 'Close',
@@ -7768,6 +7804,8 @@ const en: TranslationShape = {
     feedbackShort: 'Cases',
     suggestions: 'Suggestions',
     suggestionsShort: 'Suggs',
+    support: 'Collaborator support',
+    supportShort: 'Support',
     info: 'Info',
     infoShort: 'Info',
     logs: 'Logs',
@@ -8633,6 +8671,9 @@ const en: TranslationShape = {
     widgetMyComments: 'My comments',
     widgetMyCommentsDesc:
       'Full comments management: filters, bulk ops, edit, dispute, export.',
+    widgetMyDiary: 'My BL Diary',
+    widgetMyDiaryDesc:
+      'Every private note you wrote on series and episodes, in chronological order.',
     loadError: 'Error loading your profile. Refresh the page.',
   },
   serieDashboard: {
