@@ -1,0 +1,42 @@
+.admin-ver {
+  padding: var(--spacing-lg);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.admin-ver__title {
+  margin: 0 0 var(--spacing-xs);
+  color: var(--text-primary);
+}
+
+.admin-ver__intro {
+  margin: 0 0 var(--spacing-md);
+  color: var(--text-secondary);
+  max-width: 70ch;
+}
+
+.admin-ver__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.admin-ver__sub {
+  color: var(--text-tertiary);
+  font-size: 0.78rem;
+}
+
+/* Aclaracion dentro del modal de confirmacion, para que se lea como nota
+   y no como parte del cuerpo del mensaje. */
+.admin-ver__note {
+  border-left: 3px solid var(--warning-color);
+  padding-left: var(--spacing-sm);
+  color: var(--text-secondary);
+}
+
+@media (max-width: 768px) {
+  .admin-ver {
+    padding: var(--spacing-md);
+  }
+}

@@ -18,6 +18,11 @@
   grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
   gap: 0;
   max-height: min(80vh, 640px);
+  /* Recorta lo que se pase del alto. Sin esto, si el hijo no logra
+     scrollear (ver min-height abajo), el contenido se dibuja FUERA de la
+     caja del modal: el fondo termina y el texto sigue, encimandose con
+     la pagina. */
+  overflow: hidden;
 }
 
 .mb-qp__cover {
@@ -50,6 +55,12 @@
   padding: var(--spacing-lg);
   overflow-y: auto;
   min-width: 0;
+  /* Imprescindible para que `overflow-y: auto` haga algo. Un item de
+     grid arranca con `min-height: auto`, o sea que se niega a achicarse
+     por debajo de su contenido: la sinopsis larga estiraba el item, el
+     scroll nunca aparecia y el texto se derramaba fuera del modal.
+     Mismo motivo por el que ya estaba `min-width: 0`. */
+  min-height: 0;
 }
 
 .mb-qp__title {
@@ -168,6 +179,8 @@
   .mb-qp__layout {
     grid-template-columns: minmax(0, 1fr);
     max-height: 82vh;
+    /* En mobile scrollea el contenedor entero (portada incluida), no el
+       cuerpo: por eso aca `auto` pisa al `hidden` de escritorio. */
     overflow-y: auto;
   }
 
