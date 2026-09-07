@@ -127,6 +127,22 @@
   font-weight: 600;
 }
 
+/* Bloqueo PARCIAL: la serie se puede empezar, pero le faltan episodios
+   en este mercado. Mismo chip que el de geo con otro color, para que se
+   lean como dos grados del mismo problema y no como cosas distintas. */
+.ver-card__partial-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(4px);
+  color: var(--text-on-overlay);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
 .ver-empty {
   padding: var(--spacing-xl) 0;
 }

@@ -288,6 +288,35 @@ Tercer `viewMode` de `CatalogoClient.tsx` (`'grid' | 'list' | 'carousel'`), eleg
   - `POST /api/series/import-playlist/confirm` (admin) → persiste tras validar uniqueness `(seasonId, episodeNumber)` en una transaccion Prisma
 - **Decision de producto sobre videos partidos** (`[1/4]`, `[2/4]`...): cada video → un Episode. Si dos parsean al mismo `episodeNumber`, la UI marca duplicados como warning bloqueante; el admin debe renumerar o eliminar antes de confirmar (boton "Renumerar 1..N" disponible). No hay campos `partNumber`/`partTotal` en `Episode` — solo se exponen como Tag informativo en el preview.
 
+### 3. Barrido de canal → playlists candidatas (IMPLEMENTADO)
+
+Paso PREVIO al importer de playlists. El importer resuelve "tengo la URL de una serie"; el barrido resuelve "de las 200 playlists de este canal oficial, cuales son series que valen la pena". Es lo que permite escalar /ver de a decenas de series en vez de una por vez.
+
+- **Ruta admin**: [/admin/series/barrido](<src/app/(app)/admin/series/barrido/>) → pegar URL de canal (o tocar uno de los atajos) → tabla de playlists clasificadas → boton "Importar" por fila que abre el importer con `?url=` ya cargado.
+- **Endpoint**: `POST /api/series/sweep-channel` (ADMIN + COLLABORATOR). Solo lee, no persiste. Devuelve 503 (no 500) cuando la API key esta vencida o ausente, que es su modo de falla mas comun.
+- **Helpers**:
+  - [fetchYouTubeChannelPlaylists](src/lib/channel-fetcher.ts) → lista todas las playlists publicas de un canal (1 unidad de cuota por pagina de 50).
+  - [src/lib/channel-sweep.ts](src/lib/channel-sweep.ts) → `sweepChannel(url, importedTitles)` clasifica cada playlist en `CANDIDATE | ALREADY_IMPORTED | NOISE | TOO_SHORT`, con el motivo en texto para que el admin pueda no creerle.
+- **Por que el filtro importa tanto como el fetch**: un canal como Dee Hup House mezcla la serie completa con `Highlights | X`, `Reaction | X`, `Next Episode | X`, `Shorts | X` y hasta una playlist POR episodio (`EP.12 | X`). Importar sin filtrar llena /ver de basura. `NOISE_PREFIXES` / `NOISE_KEYWORDS` en channel-sweep.ts son la lista negra; el minimo de videos es 4 (hay BL cortos legitimos de 4-5 episodios).
+- **Deteccion de "ya importada"**: por titulo normalizado (`normalizeTitle`), NO por playlistId — el importer no guarda el playlist de origen. La comparacion es por **contencion**, no por igualdad: los titulos de playlist arrastran el canal (`Bad Buddy Series | GMMTV`) o el titulo original pegado adelante (`แค่เพื่อนครับเพื่อน BAD BUDDY SERIES`). Se cruza contra TODAS las series (incluido el catalogo curado) porque si el titulo ya existe ahi el admin querra linkear en vez de duplicar — es solo lectura de titulos, no mezcla los catalogos.
+- **Canales precargados**: [officialChannels.ts](<src/app/(app)/admin/series/barrido/officialChannels.ts>). **Todos los handles fueron verificados uno por uno contra el titulo real del canal** — los handles "obvios" son casi siempre homonimos: `@BeOnCloud` es un canal personal indonesio, `@domundi` es "Ios 23:59", `@Strongberry` es un musico centroafricano. No agregar de memoria.
+
+---
+
+## Reproducibilidad de embeds en /ver (`Episode.playback`)
+
+El catalogo de /ver **se pudre solo**: las productoras licencian series a Viki/iQIYI y geo-bloquean lo que estaba abierto, YouTube pone age-gates, los uploaders borran videos. Medido el 2026-09-06 desde IP argentina sobre las 24 series con episodios de YouTube: **18 OK, 5 parciales, 1 rota**. El mensaje exacto de YouTube en las bloqueadas es "Quien subió este video no permitió que estuviera disponible en tu país".
+
+- **Campos** (en `Episode`): `playback` (enum `EpisodePlayback`: `UNKNOWN | OK | GEO_BLOCKED | AGE_RESTRICTED | REMOVED | NOT_EMBEDDABLE`), `playbackCheckedAt`, `playbackBlockedMarkets` (subset de `CORE_MARKETS`).
+- **Relacion con `Series.geoRestrictedCore`**: ese flag sigue existiendo y es a nivel serie; `playback` es por episodio. Una serie puede tener los primeros capitulos bloqueados y el resto no (patron real de GMMTV). El audit **recalcula** `geoRestrictedCore` a partir de los episodios, asi deja de ser un snapshot manual del import.
+- **Helper**: [src/lib/playability.ts](src/lib/playability.ts) — dos fuentes, NO intercambiables:
+  - `probeViaApi` (preferida): `videos.list` con `contentDetails,status`. Devuelve `regionRestriction`, que lista los paises bloqueados de TODO el mundo en una sola llamada por cada 50 videos. Necesita `YOUTUBE_API_KEY`.
+  - `probeViaWatchPage`: scrapea la watch page publica. Sin API key, pero **solo sabe del pais desde el que corre el proceso** — no asumir que el resto de los mercados estan bien porque dio OK.
+  - `isPlayableIn(playback, blockedMarkets, market)`: `UNKNOWN` cuenta como reproducible **a proposito** — un episodio sin sondear no se esconde de /ver, es preferible mostrar de mas a vaciar la pagina porque el audit no corrio.
+- **Script**: `npx tsx scripts/audit-ver-playability.ts` (`--dry-run`, `--limit N`, `--stale N`, `--source api|watch-page`, `--market AR`). Conviene correrlo periodicamente; sondear 1.800 episodios por API cuesta ~36 de las 10.000 unidades diarias.
+- **UI**: `getWatchableSeries(market)` devuelve `playableEpisodes`. /ver muestra el badge `ver.partiallyUnavailableBadge` ("{count} de {total} disponibles acá") cuando hay bloqueo parcial; el badge de bloqueo total (`geoRestrictedBadge`) gana sobre el parcial. El color va por `--text-on-overlay`, un token que **no** se redefine por tema: el chip tiene fondo oscuro siempre.
+- **Pendiente**: el `market` es fijo en `'AR'`. Para que respete al visitante real hay que leer el header `x-vercel-ip-country` en `/ver/page.tsx` y pasarlo a `getWatchableSeries`.
+
 ---
 
 ## Rol de colaborador externo (`COLLABORATOR`)

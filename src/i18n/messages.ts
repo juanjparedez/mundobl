@@ -2795,6 +2795,7 @@ export type TranslationShape = {
     cardEpisodesBadge: string;
     cardPlayButton: string;
     geoRestrictedBadge: string;
+    partiallyUnavailableBadge: string;
   };
   actorProfile: {
     funFactsTitle: string;
@@ -5857,6 +5858,7 @@ const es: TranslationShape = {
     cardEpisodesBadge: '{count} videos',
     cardPlayButton: 'Reproducir',
     geoRestrictedBadge: 'Restringido en tu región',
+    partiallyUnavailableBadge: '{count} de {total} disponibles acá',
   },
   actorProfile: {
     funFactsTitle: 'Datos curiosos',
@@ -8907,6 +8909,7 @@ const en: TranslationShape = {
     cardEpisodesBadge: '{count} videos',
     cardPlayButton: 'Play',
     geoRestrictedBadge: 'Restricted in your region',
+    partiallyUnavailableBadge: '{count} of {total} available here',
   },
   actorProfile: {
     funFactsTitle: 'Fun Facts',

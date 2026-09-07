@@ -437,6 +437,32 @@ model Season {
 // ============================================
 // EPISODIOS (OPCIONAL)
 // ============================================
+
+/// Resultado del ultimo sondeo de reproducibilidad del embed de un
+/// episodio (ver src/lib/playability.ts y
+/// scripts/audit-ver-playability.ts).
+///
+/// Complementa a `Series.geoRestrictedCore`, que es un snapshot MANUAL a
+/// nivel serie tomado en el import. Este es por episodio y se refresca
+/// solo: una serie puede tener los primeros capitulos bloqueados y el
+/// resto no (patron real de GMMTV, que licencia las temporadas viejas a
+/// Viki/iQIYI y deja las nuevas abiertas).
+enum EpisodePlayback {
+  /// Todavia no sondeado.
+  UNKNOWN
+  /// Reproducible y embebible.
+  OK
+  /// El uploader no lo habilito en alguno de los CORE_MARKETS.
+  GEO_BLOCKED
+  /// Age-gate de YouTube: NO se puede reproducir embebido en ningun
+  /// lado, ni con VPN — YouTube exige login en su propio dominio.
+  AGE_RESTRICTED
+  /// Borrado, privado o dado de baja por el uploader.
+  REMOVED
+  /// Existe y es publico, pero el uploader deshabilito el embed.
+  NOT_EMBEDDABLE
+}
+
 model Episode {
   id               Int       @id @default(autoincrement())
   episodeNumber    Int
@@ -452,6 +478,18 @@ model Episode {
   embedVideoId     String?
   embedChannelName String?
   embedChannelUrl  String?
+
+  // ── Reproducibilidad del embed ──────────────────────────────────────
+  // Refrescado por scripts/audit-ver-playability.ts. NUNCA se setea a
+  // mano en el importer: el importer solo crea el episodio y el audit lo
+  // sondea despues, asi un solo lugar es dueño del dato.
+  playback          EpisodePlayback @default(UNKNOWN)
+  playbackCheckedAt DateTime?
+  // Subset de CORE_MARKETS donde el embed NO se puede reproducir. Vacio
+  // cuando playback != GEO_BLOCKED. Permite que /ver filtre por el pais
+  // real del visitante en vez de asumir AR.
+  playbackBlockedMarkets String[] @default([])
+
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
@@ -467,6 +505,9 @@ model Episode {
   // corre en /ver, la landing, /novedades y el sitemap — sin esto es un scan
   // completo de Episode cada vez.
   @@index([embedUrl])
+  // El audit recorre "episodios con embed, ordenados por el sondeo mas
+  // viejo" para refrescar por tandas sin re-chequear todo cada vez.
+  @@index([playback, playbackCheckedAt])
 }
 
 // Notas privadas del usuario sobre un episodio.

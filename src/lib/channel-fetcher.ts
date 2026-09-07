@@ -208,6 +208,9 @@ interface YouTubePlaylistInfoResponse {
     };
     contentDetails?: { itemCount: number };
   }>;
+  // Presente cuando se lista playlists de un canal por paginas
+  // (fetchYouTubeChannelPlaylists); ausente al pedir una sola por id.
+  nextPageToken?: string;
 }
 
 export interface PlaylistFetchResult extends ChannelFetchResult {
@@ -216,6 +219,82 @@ export interface PlaylistFetchResult extends ChannelFetchResult {
   playlistDescription: string;
   playlistThumbnailUrl: string;
   itemCount: number;
+}
+
+/** Una playlist de un canal, sin bajar todavia sus videos. */
+export interface ChannelPlaylist {
+  playlistId: string;
+  title: string;
+  description: string;
+  thumbnailUrl: string;
+  itemCount: number;
+  playlistUrl: string;
+}
+
+/**
+ * Lista TODAS las playlists publicas de un canal.
+ *
+ * Es el primer paso del barrido (ver src/lib/channel-sweep.ts): en vez
+ * de importar una serie a la vez pegando su playlist, se enumera el
+ * canal entero y despues se filtra que vale la pena.
+ *
+ * Cuesta 1 unidad de cuota por pagina de 50 playlists.
+ */
+export async function fetchYouTubeChannelPlaylists(
+  channelUrl: string,
+  maxPages = 5
+): Promise<{
+  channelId: string;
+  channelName: string;
+  playlists: ChannelPlaylist[];
+}> {
+  const ref = parseYouTubeChannelUrl(channelUrl);
+  if (!ref) {
+    throw new Error(
+      'URL de canal de YouTube invalida. Ejemplos validos: https://youtube.com/@gmmtv, /channel/UCxxxx, /c/nombre, /user/nombre'
+    );
+  }
+  const channelId = await resolveYouTubeChannelId(ref);
+
+  const chRes = await ytFetch('channels', { part: 'snippet', id: channelId });
+  const chData: YouTubeChannelResponse = await chRes.json();
+  const channelName = chData.items?.[0]?.snippet?.title ?? ref.value;
+
+  const playlists: ChannelPlaylist[] = [];
+  let pageToken: string | undefined;
+
+  for (let page = 0; page < maxPages; page++) {
+    const params: Record<string, string> = {
+      part: 'snippet,contentDetails',
+      channelId,
+      maxResults: '50',
+    };
+    if (pageToken) params.pageToken = pageToken;
+
+    const res = await ytFetch('playlists', params);
+    const data: YouTubePlaylistInfoResponse = await res.json();
+
+    for (const item of data.items ?? []) {
+      if (!item.snippet) continue;
+      playlists.push({
+        playlistId: item.id,
+        title: item.snippet.title,
+        description: item.snippet.description,
+        thumbnailUrl:
+          item.snippet.thumbnails.high?.url ||
+          item.snippet.thumbnails.medium?.url ||
+          item.snippet.thumbnails.default?.url ||
+          '',
+        itemCount: item.contentDetails?.itemCount ?? 0,
+        playlistUrl: `https://www.youtube.com/playlist?list=${item.id}`,
+      });
+    }
+
+    pageToken = data.nextPageToken;
+    if (!pageToken) break;
+  }
+
+  return { channelId, channelName, playlists };
 }
 
 function parseYouTubePlaylistId(url: string): string | null {

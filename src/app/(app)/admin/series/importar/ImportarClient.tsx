@@ -103,12 +103,21 @@ interface ImportarClientProps {
   // la ficha reducida del colaborador, y muestra el chequeo de edad de
   // YouTube (checkAgeRestriction, calculado server-side segun el rol).
   variant?: 'admin' | 'collaborator';
+  /**
+   * Prellena el campo de URL. Lo usa el barrido de canal
+   * (/admin/series/barrido), que ya sabe que playlist eligio el admin y
+   * lo manda aca en vez de hacerselo copiar y pegar.
+   */
+  initialUrl?: string;
 }
 
-export function ImportarClient({ variant = 'admin' }: ImportarClientProps) {
+export function ImportarClient({
+  variant = 'admin',
+  initialUrl = '',
+}: ImportarClientProps) {
   const router = useRouter();
   const isCollaborator = variant === 'collaborator';
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState(initialUrl);
   const [autoTranslate, setAutoTranslate] = useState(false);
   const [scope, setScope] = useState<'WATCHABLE_ONLY' | 'PERSONAL'>(
     'WATCHABLE_ONLY'

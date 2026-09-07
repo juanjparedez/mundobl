@@ -52,6 +52,20 @@ interface VerItem extends CarouselMediaItem {
   linkedSeries: { id: number; title: string } | null;
 }
 
+/**
+ * La serie tiene embeds que no andan en este mercado, pero no esta
+ * bloqueada del todo. Se pide `playableEpisodes` definido a proposito:
+ * si el sondeo nunca corrio, el campo llega undefined y no queremos
+ * inventar un aviso sobre datos que no tenemos.
+ */
+function isPartiallyUnavailable(item: VerItem): boolean {
+  return (
+    typeof item.playableEpisodes === 'number' &&
+    item.playableEpisodes > 0 &&
+    item.playableEpisodes < item.episodesWithEmbed
+  );
+}
+
 interface VerPageProps {
   items: VerItem[];
 }
@@ -536,12 +550,29 @@ export function VerPage({ items }: VerPageProps) {
                     }
                     description={item.synopsis}
                     overlayTags={
+                      // El aviso de bloqueo total gana sobre el parcial:
+                      // si no se puede mirar nada, decir "faltan algunos"
+                      // seria enganioso.
                       item.geoRestrictedCore ? (
                         <span
                           className="ver-card__georestricted-badge"
                           title={t('ver.geoRestrictedBadge')}
                         >
                           🌍 {t('ver.geoRestrictedBadge')}
+                        </span>
+                      ) : isPartiallyUnavailable(item) ? (
+                        <span
+                          className="ver-card__partial-badge"
+                          title={t('ver.partiallyUnavailableBadge', {
+                            count: item.playableEpisodes ?? 0,
+                            total: item.episodesWithEmbed,
+                          })}
+                        >
+                          ⚠️{' '}
+                          {t('ver.partiallyUnavailableBadge', {
+                            count: item.playableEpisodes ?? 0,
+                            total: item.episodesWithEmbed,
+                          })}
                         </span>
                       ) : undefined
                     }

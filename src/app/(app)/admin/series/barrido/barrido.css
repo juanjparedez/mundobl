@@ -1,0 +1,49 @@
+.barrido {
+  padding: var(--spacing-lg);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.barrido__search {
+  display: flex;
+  width: 100%;
+  max-width: 640px;
+  margin-bottom: var(--spacing-md);
+}
+
+.barrido__presets {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-lg);
+}
+
+.barrido__preset {
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.barrido__preset:hover {
+  border-color: var(--color-primary);
+}
+
+.barrido__preset-country {
+  margin-left: 4px;
+}
+
+.barrido__alert {
+  margin-bottom: var(--spacing-md);
+}
+
+.barrido__toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--spacing-sm);
+}
+
+@media (max-width: 768px) {
+  .barrido {
+    padding: var(--spacing-md);
+  }
+}
