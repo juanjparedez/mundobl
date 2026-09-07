@@ -8,10 +8,12 @@ Todas las versiones notables del proyecto se documentan aqui.
 > (`ChangelogItem`, `/admin/changelog`) quedo como fallback solo si este archivo
 > esta vacio.
 
-## 2026-09-06 — Feedback colaborativo, curaduría ágil, SEO semántico y experiencia de landing
+## 2026-09-06 — Feedback colaborativo, curaduría ágil, SEO semántico, experiencia de landing y disponibilidad real en /ver
 
 ### Features
 
+- **Aviso de disponibilidad real en `/ver`**: las series ahora indican cuántos episodios se pueden reproducir efectivamente desde tu región. Varias series alojadas en canales oficiales están geo-bloqueadas por la productora en Latinoamérica y España (el clásico "quien subió este video no lo permitió en tu país"), a veces solo en parte de los capítulos. En vez de que te enteres al hacer click, la tarjeta lo avisa antes con un "X de Y disponibles acá". El chequeo se corre periódicamente y también detecta videos dados de baja o con restricción de edad, que no se pueden ver embebidos en ningún lado.
+- **Barrido de canales oficiales (admin)**: nueva herramienta en `/admin/series/barrido` que recorre un canal oficial completo (GMMTV, Be On Cloud, Idol Factory, Star Hunter, Dee Hup House, Domundi, Studio Wabi Sabi, Mandee, Strongberry, IdeaFirst, GagaOOLala, WeTV Thailand) y detecta qué playlists son series completas, separándolas del relleno (highlights, reacciones, shorts, OST, playlists de un solo episodio) y marcando las que ya están en el catálogo. Es el paso previo al importador y el que permite sumar series de a decenas en lugar de una por vez.
 - **Respuestas abiertas en Feedback**: el hilo de comentarios en `/feedback` ahora está abierto a toda la comunidad — cualquier usuario autenticado puede responder, dialogar sobre sugerencias y debatir propuestas de colaboración (como la de Xuxyn / Alxy) directamente con el equipo. Incluye notificaciones directas al creador de la solicitud y rate limit defensivo (20 comentarios/hora).
 - **Fusión de Géneros en Panel de Administración**: nueva herramienta en `/admin/tags` (pestaña Géneros) con selección múltiple y modal interactivo para fusionar géneros duplicados o con errores tipográficos hacia un único género destino, migrando todas las series asociadas de forma atómica y segura.
 - **Narrativa interactiva en la Landing Page**: rediseño progresivo del flujo de inicio enfocado en valor real y retención — presenta las herramientas diferenciales a medida que se hace scroll (tracker personal con timestamps, modo sin spoilers, glosario cultural con trivia interactiva, noticias de actualidad y el ecosistema abierto de fansubs y plataformas oficiales).
