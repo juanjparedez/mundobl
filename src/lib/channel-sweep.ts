@@ -110,66 +110,105 @@ export interface ChannelSweepResult {
  */
 const MIN_EPISODES = 4;
 
+/** Palabras que no aportan identidad y solo estorban la comparacion. */
+const TITLE_STOPWORDS = new Set(['the', 'series', 'official', 'ost', 'mv']);
+
 /**
- * Normaliza un titulo para comparar playlist contra serie ya cargada.
+ * Parte un titulo en palabras comparables.
  *
- * Los titulos de playlist vienen sucios ("Bad Buddy Series | GMMTV",
- * "แค่เพื่อนครับเพื่อน BAD BUDDY SERIES"), asi que se saca todo lo que no
- * sea alfanumerico y se pasa a minusculas. Es una comparacion floja a
- * proposito: sirve para AVISAR "esto ya lo tenes", no para bloquear.
+ * Compara por PALABRAS y no por caracteres a proposito. Aplastar el
+ * titulo a un solo string ("We Are" → "weare") y despues buscar por
+ * contencion obliga a poner un largo minimo para que "weare" no aparezca
+ * dentro de cualquier cosa — y ese minimo se come justo los titulos
+ * cortos, que son muchos y legitimos ("We Are", "Us", "Not Me").
+ * Comparando palabras, ["we","are"] adentro de ["we","are","คือเรารักกัน"]
+ * es un match exacto y no hace falta ningun umbral.
+ *
+ * Los alfabetos sin espacios (tailandes, coreano, japones) caen en un
+ * unico token por corrida de caracteres, que es lo que queremos: se
+ * comparan enteros contra su equivalente.
  */
-export function normalizeTitle(title: string): string {
+export function titleTokens(title: string): string[] {
   return (
     title
       .toLowerCase()
       .normalize('NFD')
       // Diacriticos latinos combinantes (NFD los separa de su letra).
       .replace(/[̀-ͯ]/g, '')
-      .replace(/\b(the\s+)?series\b/g, '')
-      .replace(/[^\p{L}\p{N}]+/gu, '')
+      .split(/[^\p{L}\p{N}]+/u)
+      .filter((tok) => tok.length > 0 && !TITLE_STOPWORDS.has(tok))
   );
 }
 
 /**
- * Largo minimo para arriesgar un match por contencion. Con menos, cosas
- * como "love" o "2gether" harian match con medio catalogo.
+ * Clave estable de una serie ya cargada, para meterla en un Set.
+ * Se expone porque el caller arma el indice con esto.
  */
-const MIN_TITLE_MATCH_LENGTH = 8;
+export function titleKey(title: string): string {
+  return titleTokens(title).join(' ');
+}
 
 /**
- * Busca el titulo de la playlist entre los de las series ya cargadas.
+ * ¿La secuencia `needle` aparece completa y contigua dentro de `haystack`?
  *
- * No alcanza con comparar por igualdad: los titulos de playlist arrastran
- * el canal ("Bad Buddy Series | GMMTV") o el titulo original pegado
- * adelante ("แค่เพื่อนครับเพื่อน BAD BUDDY SERIES"), asi que uno suele
- * CONTENER al otro en vez de ser identicos.
+ * Contigua y no salteada: ["bad","buddy"] tiene que estar pegado, para
+ * que "Bad Day, Good Buddy" no matchee con "Bad Buddy".
  */
-function findImportedMatch(
-  normalized: string,
-  importedTitles: Set<string>
-): boolean {
-  if (normalized.length < MIN_TITLE_MATCH_LENGTH) return false;
-  if (importedTitles.has(normalized)) return true;
-  for (const known of importedTitles) {
-    if (known.length < MIN_TITLE_MATCH_LENGTH) continue;
-    if (normalized.includes(known) || known.includes(normalized)) return true;
+function containsSequence(haystack: string[], needle: string[]): boolean {
+  if (needle.length === 0 || needle.length > haystack.length) return false;
+  for (let i = 0; i <= haystack.length - needle.length; i++) {
+    let hit = true;
+    for (let j = 0; j < needle.length; j++) {
+      if (haystack[i + j] !== needle[j]) {
+        hit = false;
+        break;
+      }
+    }
+    if (hit) return true;
   }
   return false;
 }
 
+/**
+ * Busca el titulo de la playlist entre las series ya cargadas y devuelve
+ * cual matcheo (no un booleano) para poder mostrarselo al admin: si el
+ * match esta mal, con ver el nombre se da cuenta al instante.
+ *
+ * No alcanza con comparar por igualdad — los titulos de playlist
+ * arrastran el canal ("Bad Buddy Series | GMMTV") o el titulo original
+ * pegado adelante ("แค่เพื่อนครับเพื่อน BAD BUDDY SERIES") — asi que se
+ * busca la secuencia de palabras de la serie DENTRO de la playlist.
+ */
+function findImportedMatch(
+  playlistTitle: string,
+  importedTitles: Map<string, string>
+): string | null {
+  const tokens = titleTokens(playlistTitle);
+  if (tokens.length === 0) return null;
+
+  for (const [key, originalTitle] of importedTitles) {
+    const known = key.split(' ');
+    // Un titulo de una sola palabra corta ("Us", "We") matchearia
+    // demasiado: para esos se exige que el titulo entero coincida.
+    if (known.length === 1 && known[0].length <= 3) {
+      if (tokens.length === 1 && tokens[0] === known[0]) return originalTitle;
+      continue;
+    }
+    if (containsSequence(tokens, known)) return originalTitle;
+  }
+  return null;
+}
+
 function classify(
   playlist: ChannelPlaylist,
-  importedTitles: Set<string>,
-  siblingTitles: string[],
+  importedTitles: Map<string, string>,
+  siblingTitles: string[][],
   ownIndex: number
 ): { verdict: SweepVerdict; reason: string } {
-  if (findImportedMatch(normalizeTitle(playlist.title), importedTitles)) {
-    return {
-      verdict: 'ALREADY_IMPORTED',
-      reason: 'Ya hay una serie con este titulo en la base.',
-    };
-  }
-
+  // El ruido se descarta ANTES de buscar coincidencias. Si no, una
+  // playlist "Highlight | Bad Buddy" cae en ALREADY_IMPORTED (porque el
+  // titulo contiene el de la serie) en vez de en NOISE, que es lo que
+  // realmente es: no es la serie ya importada, es un satelite de ella.
   const title = playlist.title.toLowerCase().trim();
 
   for (const prefix of NOISE_PREFIXES) {
@@ -194,6 +233,14 @@ function classify(
     return {
       verdict: 'NOISE',
       reason: `Parece contenido satelite de otra playlist del canal ("${satelliteOf}").`,
+    };
+  }
+
+  const match = findImportedMatch(playlist.title, importedTitles);
+  if (match) {
+    return {
+      verdict: 'ALREADY_IMPORTED',
+      reason: `Coincide con «${match}», que ya esta en la base.`,
     };
   }
 
@@ -224,21 +271,28 @@ function classify(
  */
 function isSatelliteOfSibling(
   playlist: ChannelPlaylist,
-  siblingTitles: string[],
+  siblingTitles: string[][],
   ownIndex: number
 ): string | null {
   const sepIndex = playlist.title.search(/[|｜]/);
   if (sepIndex === -1) return null;
 
-  const tail = normalizeTitle(playlist.title.slice(sepIndex + 1));
-  if (tail.length < MIN_TITLE_MATCH_LENGTH) return null;
+  const tail = titleTokens(playlist.title.slice(sepIndex + 1));
+  if (tail.length === 0) return null;
 
   for (let i = 0; i < siblingTitles.length; i++) {
     // Compararse consigo misma siempre da match.
     if (i === ownIndex) continue;
     const sibling = siblingTitles[i];
-    if (sibling.length < MIN_TITLE_MATCH_LENGTH) continue;
-    if (sibling === tail) return playlist.title.slice(sepIndex + 1).trim();
+    if (sibling.length === 0) continue;
+    // Igualdad exacta de la secuencia: lo que sigue al "|" ES otra
+    // playlist del canal, no apenas se le parece.
+    if (
+      sibling.length === tail.length &&
+      sibling.every((tok, j) => tok === tail[j])
+    ) {
+      return playlist.title.slice(sepIndex + 1).trim();
+    }
   }
   return null;
 }
@@ -250,13 +304,14 @@ function isSatelliteOfSibling(
  * cuesta cuota y solo tiene sentido sobre las que el admin elige. El
  * flujo es barrer → elegir → importar con el importer de siempre.
  *
- * `importedTitles` son titulos de series ya cargadas, YA normalizados
- * con `normalizeTitle`. Los pone el caller (la ruta API los saca de la
- * base) para marcar lo que ya esta en el catalogo.
+ * `importedTitles` mapea `titleKey(titulo)` → titulo original de las
+ * series ya cargadas. Lo arma el caller (la ruta API lo saca de la base).
+ * Se guarda el titulo original para poder decirle al admin CUAL serie
+ * coincidio, no solo que hubo coincidencia.
  */
 export async function sweepChannel(
   channelUrl: string,
-  importedTitles: Set<string> = new Set()
+  importedTitles: Map<string, string> = new Map()
 ): Promise<ChannelSweepResult> {
   const { channelId, channelName, playlists } =
     await fetchYouTubeChannelPlaylists(channelUrl);
@@ -270,7 +325,7 @@ export async function sweepChannel(
 
   // Titulos "pelados" de las playlists del propio canal, para detectar
   // satelites por comparacion cruzada (ver isSatelliteOfSibling).
-  const siblingTitles = playlists.map((p) => normalizeTitle(p.title));
+  const siblingTitles = playlists.map((p) => titleTokens(p.title));
 
   const candidates: SweepCandidate[] = playlists.map((p, idx) => {
     const { verdict, reason } = classify(p, importedTitles, siblingTitles, idx);
