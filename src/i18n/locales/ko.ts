@@ -317,6 +317,14 @@ const ko: TranslationShape = {
     "commentsLoadError": "댓글을 불러올 수 없습니다",
     "commentsEmpty": "아직 댓글이 없습니다",
     "commentsExport": "JSON 다운로드",
+    "diarySearchPlaceholder": "메모 검색...",
+    "diaryFilterAll": "전체",
+    "diaryFilterSeries": "시리즈",
+    "diaryFilterEpisodes": "에피소드",
+    "diaryEmpty": "아직 작성한 메모가 없습니다",
+    "diaryLoadError": "메모를 불러오지 못했습니다",
+    "diaryExport": "JSON 다운로드",
+    "diaryEdited": "수정됨",
     "commentsPublic": "공개",
     "commentsPrivate": "비공개",
     "commentsTargetUnknown": "참조 없음",
@@ -541,13 +549,14 @@ const ko: TranslationShape = {
     "message": "오프라인입니다. 일부 기능이 작동하지 않을 수 있습니다."
   },
   "cmdk": {
-    "placeholder": "시리즈, 배우, 감독, 태그 검색...",
+    "placeholder": "시리즈, 배우, 감독, 태그, 용어집 검색...",
     "hintMinChars": "검색하려면 2자 이상 입력하세요.",
     "empty": "결과 없음",
     "groupSeries": "시리즈",
     "groupActors": "배우",
     "groupDirectors": "감독",
     "groupTags": "태그",
+    "groupGlossary": "용어집",
     "navigate": "탐색",
     "select": "선택",
     "close": "닫기"
@@ -1623,6 +1632,8 @@ const ko: TranslationShape = {
     "feedbackShort": "사례",
     "suggestions": "추천",
     "suggestionsShort": "추천",
+    "support": "기여자 지원",
+    "supportShort": "지원",
     "info": "정보",
     "infoShort": "정보",
     "logs": "로그",
@@ -2455,6 +2466,8 @@ const ko: TranslationShape = {
     "widgetMyDisputesDesc": "댓글 신고에 대해 제기한 분쟁입니다.",
     "widgetMyComments": "내 댓글",
     "widgetMyCommentsDesc": "전체 댓글 관리: 필터, 대량 작업, 편집, 이의 제기, 내보내기.",
+    "widgetMyDiary": "나의 BL 다이어리",
+    "widgetMyDiaryDesc": "시리즈와 에피소드에 남긴 비공개 메모를 시간순으로 모아 봅니다.",
     "loadError": "프로필 로드 오류. 페이지를 새로고침하세요."
   },
   "serieDashboard": {

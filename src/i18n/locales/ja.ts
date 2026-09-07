@@ -317,6 +317,14 @@ const ja: TranslationShape = {
     "commentsLoadError": "コメントを読み込めませんでした",
     "commentsEmpty": "まだコメントはありません",
     "commentsExport": "JSONをダウンロード",
+    "diarySearchPlaceholder": "メモを検索...",
+    "diaryFilterAll": "すべて",
+    "diaryFilterSeries": "シリーズ",
+    "diaryFilterEpisodes": "エピソード",
+    "diaryEmpty": "まだメモがありません",
+    "diaryLoadError": "メモを読み込めませんでした",
+    "diaryExport": "JSONをダウンロード",
+    "diaryEdited": "編集済み",
     "commentsPublic": "公開",
     "commentsPrivate": "非公開",
     "commentsTargetUnknown": "参照なし",
@@ -541,13 +549,14 @@ const ja: TranslationShape = {
     "message": "オフラインです。一部の機能が動作しない可能性があります。"
   },
   "cmdk": {
-    "placeholder": "シリーズ、俳優、監督、タグを検索...",
+    "placeholder": "シリーズ、俳優、監督、タグ、用語集を検索...",
     "hintMinChars": "検索するには2文字以上入力してください。",
     "empty": "結果なし。",
     "groupSeries": "シリーズ",
     "groupActors": "俳優",
     "groupDirectors": "監督",
     "groupTags": "タグ",
+    "groupGlossary": "用語集",
     "navigate": "ナビゲート",
     "select": "選択",
     "close": "閉じる"
@@ -1623,6 +1632,8 @@ const ja: TranslationShape = {
     "feedbackShort": "ケース",
     "suggestions": "提案",
     "suggestionsShort": "提案",
+    "support": "コラボレーターサポート",
+    "supportShort": "サポート",
     "info": "情報",
     "infoShort": "情報",
     "logs": "ログ",
@@ -2455,6 +2466,8 @@ const ja: TranslationShape = {
     "widgetMyDisputesDesc": "あなたのコメントに関する報告に対してあなたが開始した異議申し立て。",
     "widgetMyComments": "マイコメント",
     "widgetMyCommentsDesc": "コメントの完全管理：フィルター、一括操作、編集、異議申し立て、エクスポート。",
+    "widgetMyDiary": "マイBLダイアリー",
+    "widgetMyDiaryDesc": "シリーズとエピソードに書いた非公開メモを時系列で表示します。",
     "loadError": "プロファイルの読み込み中にエラーが発生しました。ページを更新してください。"
   },
   "serieDashboard": {
