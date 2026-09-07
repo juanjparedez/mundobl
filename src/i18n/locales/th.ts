@@ -317,6 +317,14 @@ const th: TranslationShape = {
     "commentsLoadError": "ไม่สามารถโหลดความคิดเห็นได้",
     "commentsEmpty": "คุณยังไม่มีความคิดเห็น",
     "commentsExport": "ดาวน์โหลด JSON",
+    "diarySearchPlaceholder": "ค้นหาในบันทึกของคุณ...",
+    "diaryFilterAll": "ทั้งหมด",
+    "diaryFilterSeries": "ซีรีส์",
+    "diaryFilterEpisodes": "ตอน",
+    "diaryEmpty": "คุณยังไม่ได้เขียนบันทึกใด ๆ",
+    "diaryLoadError": "ไม่สามารถโหลดบันทึกของคุณได้",
+    "diaryExport": "ดาวน์โหลด JSON",
+    "diaryEdited": "แก้ไขแล้ว",
     "commentsPublic": "สาธารณะ",
     "commentsPrivate": "ส่วนตัว",
     "commentsTargetUnknown": "ไม่มีการอ้างอิง",
@@ -541,13 +549,14 @@ const th: TranslationShape = {
     "message": "คุณออฟไลน์อยู่ คุณสมบัติบางอย่างอาจไม่ทำงาน"
   },
   "cmdk": {
-    "placeholder": "ค้นหาซีรีส์, นักแสดง, ผู้กำกับ, แท็ก...",
+    "placeholder": "ค้นหาซีรีส์, นักแสดง, ผู้กำกับ, แท็ก, อภิธานศัพท์...",
     "hintMinChars": "พิมพ์อย่างน้อย 2 ตัวอักษรเพื่อค้นหา",
     "empty": "ไม่พบผลลัพธ์",
     "groupSeries": "ซีรีส์",
     "groupActors": "นักแสดง",
     "groupDirectors": "ผู้กำกับ",
     "groupTags": "แท็ก",
+    "groupGlossary": "อภิธานศัพท์",
     "navigate": "นำทาง",
     "select": "เลือก",
     "close": "ปิด"
@@ -1623,6 +1632,8 @@ const th: TranslationShape = {
     "feedbackShort": "กรณี",
     "suggestions": "ข้อเสนอแนะ",
     "suggestionsShort": "ข้อเสนอ",
+    "support": "ฝ่ายสนับสนุนผู้ร่วมสร้าง",
+    "supportShort": "สนับสนุน",
     "info": "ข้อมูล",
     "infoShort": "ข้อมูล",
     "logs": "บันทึก",
@@ -2455,6 +2466,8 @@ const th: TranslationShape = {
     "widgetMyDisputesDesc": "Disputas que abriste contra reportes en tus comentarios.",
     "widgetMyComments": "Mis comentarios",
     "widgetMyCommentsDesc": "Gestion completa de tus comentarios: filtros, bulk ops, edit, disputa, export.",
+    "widgetMyDiary": "ไดอารี่ BL ของฉัน",
+    "widgetMyDiaryDesc": "บันทึกส่วนตัวทั้งหมดของคุณเกี่ยวกับซีรีส์และตอน เรียงตามลำดับเวลา",
     "loadError": "เกิดข้อผิดพลาดในการโหลดโปรไฟล์ กรุณารีเฟรชหน้า"
   },
   "serieDashboard": {

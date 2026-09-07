@@ -317,6 +317,14 @@ const fr: TranslationShape = {
     "commentsLoadError": "Impossible de charger les commentaires",
     "commentsEmpty": "Vous n'avez pas encore de commentaires",
     "commentsExport": "Télécharger JSON",
+    "diarySearchPlaceholder": "Rechercher dans vos notes...",
+    "diaryFilterAll": "Toutes",
+    "diaryFilterSeries": "Séries",
+    "diaryFilterEpisodes": "Épisodes",
+    "diaryEmpty": "Vous n'avez encore écrit aucune note",
+    "diaryLoadError": "Impossible de charger vos notes",
+    "diaryExport": "Télécharger le JSON",
+    "diaryEdited": "modifiée",
     "commentsPublic": "Public",
     "commentsPrivate": "Privé",
     "commentsTargetUnknown": "Aucune référence",
@@ -541,13 +549,14 @@ const fr: TranslationShape = {
     "message": "Vous êtes hors ligne. Certaines fonctionnalités peuvent ne pas fonctionner."
   },
   "cmdk": {
-    "placeholder": "Rechercher séries, acteurs, réalisateurs, tags...",
+    "placeholder": "Rechercher séries, acteurs, réalisateurs, tags, glossaire...",
     "hintMinChars": "Saisissez au moins 2 caractères pour rechercher.",
     "empty": "Aucun résultat.",
     "groupSeries": "Séries",
     "groupActors": "Acteurs",
     "groupDirectors": "Réalisateurs",
     "groupTags": "Tags",
+    "groupGlossary": "Glossaire",
     "navigate": "Naviguer",
     "select": "Sélectionner",
     "close": "Fermer"
@@ -1623,6 +1632,8 @@ const fr: TranslationShape = {
     "feedbackShort": "Cas",
     "suggestions": "Suggestions",
     "suggestionsShort": "Suggs",
+    "support": "Support collaborateurs",
+    "supportShort": "Support",
     "info": "Infos",
     "infoShort": "Infos",
     "logs": "Journaux",
@@ -2455,6 +2466,8 @@ const fr: TranslationShape = {
     "widgetMyDisputesDesc": "Litiges que vous avez ouverts contre des signalements sur vos commentaires.",
     "widgetMyComments": "Mes commentaires",
     "widgetMyCommentsDesc": "Gestion complète des commentaires : filtres, opérations groupées, modification, contestation, exportation.",
+    "widgetMyDiary": "Mon journal BL",
+    "widgetMyDiaryDesc": "Toutes vos notes privées sur les séries et les épisodes, par ordre chronologique.",
     "loadError": "Erreur lors du chargement de votre profil. Actualisez la page."
   },
   "serieDashboard": {

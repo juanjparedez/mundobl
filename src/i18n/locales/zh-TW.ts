@@ -317,6 +317,14 @@ const zhTW: TranslationShape = {
     "commentsLoadError": "無法載入留言",
     "commentsEmpty": "您尚未有任何留言",
     "commentsExport": "下載 JSON",
+    "diarySearchPlaceholder": "搜尋你的筆記...",
+    "diaryFilterAll": "全部",
+    "diaryFilterSeries": "劇集",
+    "diaryFilterEpisodes": "分集",
+    "diaryEmpty": "你還沒有寫過筆記",
+    "diaryLoadError": "無法載入你的筆記",
+    "diaryExport": "下載 JSON",
+    "diaryEdited": "已編輯",
     "commentsPublic": "公開",
     "commentsPrivate": "私人",
     "commentsTargetUnknown": "無參考",
@@ -541,13 +549,14 @@ const zhTW: TranslationShape = {
     "message": "您已離線。部分功能可能無法使用。"
   },
   "cmdk": {
-    "placeholder": "搜尋劇集、演員、導演、標籤...",
+    "placeholder": "搜尋劇集、演員、導演、標籤、詞彙表...",
     "hintMinChars": "請輸入至少 2 個字元進行搜尋。",
     "empty": "沒有結果。",
     "groupSeries": "劇集",
     "groupActors": "演員",
     "groupDirectors": "導演",
     "groupTags": "標籤",
+    "groupGlossary": "詞彙表",
     "navigate": "導覽",
     "select": "選擇",
     "close": "關閉"
@@ -1623,6 +1632,8 @@ const zhTW: TranslationShape = {
     "feedbackShort": "案例",
     "suggestions": "建議",
     "suggestionsShort": "建議",
+    "support": "協作者支援",
+    "supportShort": "支援",
     "info": "資訊",
     "infoShort": "資訊",
     "logs": "日誌",
@@ -2455,6 +2466,8 @@ const zhTW: TranslationShape = {
     "widgetMyDisputesDesc": "Disputas que abriste contra reportes en tus comentarios.",
     "widgetMyComments": "Mis comentarios",
     "widgetMyCommentsDesc": "Gestion completa de tus comentarios: filtros, bulk ops, edit, disputa, export.",
+    "widgetMyDiary": "我的 BL 日記",
+    "widgetMyDiaryDesc": "依時間順序查看你為劇集與分集寫下的所有私人筆記。",
     "loadError": "載入個人檔案時發生錯誤。請重新整理頁面。"
   },
   "serieDashboard": {
