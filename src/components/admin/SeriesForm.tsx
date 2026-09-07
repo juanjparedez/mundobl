@@ -32,7 +32,11 @@ import {
   CrownOutlined,
 } from '@ant-design/icons/lib/icons';
 import Link from 'next/link';
-import { shouldShowSeasons, getContentTypeConfig } from '@/types/content';
+import {
+  shouldShowSeasons,
+  shouldShowDuration,
+  getContentTypeConfig,
+} from '@/types/content';
 import { getSeriesUrl } from '@/lib/slug';
 import './SeriesForm.css';
 import { useMessage, useModal } from '@/hooks/useMessage';
@@ -570,6 +574,13 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
             : null,
       };
 
+      // Si el tipo actual no lleva duracion, se manda null explicito: si
+      // alguien carga un corto de 20 min y despues lo pasa a serie, el
+      // campo desaparece de la UI pero el dato quedaria pegado en la base.
+      if (!shouldShowDuration(String(submitValues.type ?? ''))) {
+        submitValues.durationMinutes = null;
+      }
+
       // Si es especial, asegurar que seasons esté normalizado con seasonNumber 1
       if (submitValues.type === 'especial') {
         const rawSeasons =
@@ -737,6 +748,9 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
 
   const config = getContentTypeConfig(selectedType);
   const showSeasons = shouldShowSeasons(selectedType);
+  // Contenido de una sola pieza (pelicula, corto): no tiene temporadas que
+  // contar, tiene duracion. Que tipos entran sale de ContentTypeConfig.
+  const showDuration = shouldShowDuration(selectedType);
 
   return (
     <div className="series-form">
@@ -947,6 +961,24 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                   />
                 </Form.Item>
               </Col>
+
+              {showDuration && (
+                <Col xs={24} md={12}>
+                  <Form.Item
+                    label={t('seriesForm.fieldDurationMinutes')}
+                    name="durationMinutes"
+                  >
+                    <InputNumber
+                      placeholder="95"
+                      style={{ width: '100%' }}
+                      size="large"
+                      min={1}
+                      max={1000}
+                      addonAfter={t('seriesForm.durationMinutesUnit')}
+                    />
+                  </Form.Item>
+                </Col>
+              )}
 
               <Col xs={24} md={12}>
                 <Form.Item label={t('seriesForm.fieldUniverse')}>

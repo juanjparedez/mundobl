@@ -30,6 +30,7 @@ export type TranslationShape = {
     universe: string;
     originalTitle: string;
     formatVertical: string;
+    durationMinutes: string;
     basedOn: string;
     typeSerie: string;
     typePelicula: string;
@@ -55,6 +56,7 @@ export type TranslationShape = {
     fieldBasedOn: string;
     fieldSeasons: string;
     fieldEpisodes: string;
+    fieldDuration: string;
     fieldSoundtrack: string;
     fieldProduction: string;
     fieldLanguage: string;
@@ -1307,6 +1309,8 @@ export type TranslationShape = {
     fieldType: string;
     fieldCountry: string;
     fieldYear: string;
+    fieldDurationMinutes: string;
+    durationMinutesUnit: string;
     fieldUniverse: string;
     fieldBasedOn: string;
     fieldFormat: string;
@@ -2963,6 +2967,7 @@ const es: TranslationShape = {
     universe: 'Universo',
     originalTitle: 'Título original',
     formatVertical: 'Formato Vertical',
+    durationMinutes: '{minutes} min',
     basedOn: 'Basado en {label}',
     typeSerie: 'Serie',
     typePelicula: 'Película',
@@ -2988,6 +2993,7 @@ const es: TranslationShape = {
     fieldBasedOn: 'Basado en',
     fieldSeasons: 'Temporadas',
     fieldEpisodes: 'Episodios',
+    fieldDuration: 'Duracion',
     fieldSoundtrack: 'BSO',
     fieldProduction: 'Productora',
     fieldLanguage: 'Idioma Original',
@@ -4305,6 +4311,8 @@ const es: TranslationShape = {
     fieldType: 'Tipo',
     fieldCountry: 'Pais',
     fieldYear: 'Anio',
+    fieldDurationMinutes: 'Duracion',
+    durationMinutesUnit: 'min',
     fieldUniverse: 'Universo (opcional)',
     fieldBasedOn: 'Basada en',
     fieldFormat: 'Formato de Pantalla',
@@ -6057,6 +6065,7 @@ const en: TranslationShape = {
     universe: 'Universe',
     originalTitle: 'Original title',
     formatVertical: 'Vertical Format',
+    durationMinutes: '{minutes} min',
     basedOn: 'Based on {label}',
     typeSerie: 'Series',
     typePelicula: 'Movie',
@@ -6082,6 +6091,7 @@ const en: TranslationShape = {
     fieldBasedOn: 'Based on',
     fieldSeasons: 'Seasons',
     fieldEpisodes: 'Episodes',
+    fieldDuration: 'Duration',
     fieldSoundtrack: 'OST',
     fieldProduction: 'Production',
     fieldLanguage: 'Original Language',
@@ -7384,6 +7394,8 @@ const en: TranslationShape = {
     fieldType: 'Type',
     fieldCountry: 'Country',
     fieldYear: 'Year',
+    fieldDurationMinutes: 'Duration',
+    durationMinutesUnit: 'min',
     fieldUniverse: 'Universe (optional)',
     fieldBasedOn: 'Based on',
     fieldFormat: 'Screen Format',
