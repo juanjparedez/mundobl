@@ -139,7 +139,9 @@
   background: var(--bg-container);
   color: var(--text-primary);
   text-decoration: none;
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .glosario-resource-card:hover {
@@ -291,6 +293,31 @@
   transform: translateY(-3px);
   border-color: var(--primary-color);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+/* Termino al que se llego por deep link (?term=slug), tipicamente desde
+   Cmd+K: hay que poder ubicarlo de un vistazo despues del scroll. */
+.glosario-card--highlighted {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px var(--primary-color);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .glosario-card--highlighted {
+    animation: glosario-card-pulse 1.4s ease-out 1;
+  }
+}
+
+@keyframes glosario-card-pulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--primary-color);
+  }
+  50% {
+    box-shadow: 0 0 0 6px transparent;
+  }
+  100% {
+    box-shadow: 0 0 0 2px var(--primary-color);
+  }
 }
 
 .glosario-card__header {
