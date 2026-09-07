@@ -2742,7 +2742,8 @@ const fr: TranslationShape = {
     "cardEpisodesBadge": "{count} vidéos",
     "cardPlayButton": "Lecture",
     "geoRestrictedBadge": "Restreint dans votre région",
-    "partiallyUnavailableBadge": "{count} sur {total} disponibles ici"
+    "partiallyUnavailableBadge": "{count} sur {total} disponibles ici",
+    "unavailableHereBadge": "Non disponible dans ton pays"
   },
   "actorProfile": {
     "funFactsTitle": "Anecdotes",

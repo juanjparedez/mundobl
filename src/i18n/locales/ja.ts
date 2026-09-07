@@ -2742,7 +2742,8 @@ const ja: TranslationShape = {
     "cardEpisodesBadge": "{count}本の動画",
     "cardPlayButton": "再生",
     "geoRestrictedBadge": "お住まいの地域では制限されています",
-    "partiallyUnavailableBadge": "{total}本中{count}本が視聴可能"
+    "partiallyUnavailableBadge": "{total}本中{count}本が視聴可能",
+    "unavailableHereBadge": "お住まいの国では視聴できません"
   },
   "actorProfile": {
     "funFactsTitle": "豆知識",

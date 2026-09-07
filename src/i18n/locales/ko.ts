@@ -2742,7 +2742,8 @@ const ko: TranslationShape = {
     "cardEpisodesBadge": "{count}개 동영상",
     "cardPlayButton": "재생",
     "geoRestrictedBadge": "해당 지역에서 제한됨",
-    "partiallyUnavailableBadge": "{total}개 중 {count}개 시청 가능"
+    "partiallyUnavailableBadge": "{total}개 중 {count}개 시청 가능",
+    "unavailableHereBadge": "해당 국가에서는 시청할 수 없습니다"
   },
   "actorProfile": {
     "funFactsTitle": "재미있는 사실",
