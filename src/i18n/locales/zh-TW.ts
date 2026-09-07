@@ -2735,7 +2735,8 @@ const zhTW: TranslationShape = {
     "emptyDescription": "我們找不到符合這些篩選條件的影集。請嘗試不同的國家或標題。",
     "cardEpisodesBadge": "{count} 部影片",
     "cardPlayButton": "播放",
-    "geoRestrictedBadge": "在你所在地區受限"
+    "geoRestrictedBadge": "在你所在地區受限",
+    "partiallyUnavailableBadge": "{total} 個中有 {count} 個可觀看"
   },
   "actorProfile": {
     "funFactsTitle": "趣聞",

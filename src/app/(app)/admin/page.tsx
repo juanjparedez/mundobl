@@ -129,6 +129,11 @@ export default async function AdminLandingPage() {
           title: 'Importar serie (YouTube)',
         },
         {
+          href: '/admin/series/barrido',
+          icon: '📡',
+          title: 'Barrido de canal',
+        },
+        {
           href: '/admin/tags',
           icon: '🏷️',
           title: 'Tags',

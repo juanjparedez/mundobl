@@ -2735,7 +2735,8 @@ const th: TranslationShape = {
     "emptyDescription": "เราไม่พบซีรีส์ที่ตรงกับตัวกรองเหล่านี้ ลองเลือกประเทศหรือชื่อเรื่องอื่น",
     "cardEpisodesBadge": "{count} วิดีโอ",
     "cardPlayButton": "เล่น",
-    "geoRestrictedBadge": "ถูกจำกัดในภูมิภาคของคุณ"
+    "geoRestrictedBadge": "ถูกจำกัดในภูมิภาคของคุณ",
+    "partiallyUnavailableBadge": "รับชมได้ {count} จาก {total} รายการ"
   },
   "actorProfile": {
     "funFactsTitle": "เกร็ดน่ารู้",

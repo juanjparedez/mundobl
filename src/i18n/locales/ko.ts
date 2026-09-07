@@ -2735,7 +2735,8 @@ const ko: TranslationShape = {
     "emptyDescription": "해당 필터로는 시리즈를 찾을 수 없습니다. 다른 국가나 제목으로 시도해 보세요.",
     "cardEpisodesBadge": "{count}개 동영상",
     "cardPlayButton": "재생",
-    "geoRestrictedBadge": "해당 지역에서 제한됨"
+    "geoRestrictedBadge": "해당 지역에서 제한됨",
+    "partiallyUnavailableBadge": "{total}개 중 {count}개 시청 가능"
   },
   "actorProfile": {
     "funFactsTitle": "재미있는 사실",

@@ -2735,7 +2735,8 @@ const fr: TranslationShape = {
     "emptyDescription": "Nous n'avons pas trouvé de séries avec ces filtres. Essayez un autre pays ou titre.",
     "cardEpisodesBadge": "{count} vidéos",
     "cardPlayButton": "Lecture",
-    "geoRestrictedBadge": "Restreint dans votre région"
+    "geoRestrictedBadge": "Restreint dans votre région",
+    "partiallyUnavailableBadge": "{count} sur {total} disponibles ici"
   },
   "actorProfile": {
     "funFactsTitle": "Anecdotes",

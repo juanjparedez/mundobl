@@ -2735,7 +2735,8 @@ const zhCN: TranslationShape = {
     "emptyDescription": "我们找不到符合这些筛选条件的剧集。请尝试其他国家或标题。",
     "cardEpisodesBadge": "{count} 个视频",
     "cardPlayButton": "播放",
-    "geoRestrictedBadge": "在你所在地区受限"
+    "geoRestrictedBadge": "在你所在地区受限",
+    "partiallyUnavailableBadge": "{total} 个中有 {count} 个可观看"
   },
   "actorProfile": {
     "funFactsTitle": "趣闻",
