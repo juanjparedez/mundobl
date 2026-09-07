@@ -12,12 +12,13 @@ export async function GET(request: NextRequest) {
       actors: [],
       directors: [],
       tags: [],
+      glossary: [],
     });
   }
 
   const insensitive = { contains: query, mode: 'insensitive' as const };
 
-  const [series, actors, directors, tags] = await Promise.all([
+  const [series, actors, directors, tags, glossary] = await Promise.all([
     prisma.series.findMany({
       where: {
         origin: 'CURATED',
@@ -56,7 +57,29 @@ export async function GET(request: NextRequest) {
       orderBy: { name: 'asc' },
       take: TAKE,
     }),
+    // Glosario cultural: se busca tambien por transliteracion y significado
+    // porque el usuario rara vez sabe como se escribe el termino — llega
+    // buscando "hermano mayor" o "phi", no "P'".
+    prisma.glossaryTerm.findMany({
+      where: {
+        status: 'PUBLISHED',
+        OR: [
+          { term: insensitive },
+          { transliteration: insensitive },
+          { meaning: insensitive },
+        ],
+      },
+      select: {
+        id: true,
+        slug: true,
+        term: true,
+        transliteration: true,
+        category: true,
+      },
+      orderBy: { term: 'asc' },
+      take: TAKE,
+    }),
   ]);
 
-  return NextResponse.json({ series, actors, directors, tags });
+  return NextResponse.json({ series, actors, directors, tags, glossary });
 }

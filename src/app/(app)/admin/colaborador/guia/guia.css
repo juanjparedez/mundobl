@@ -1,0 +1,42 @@
+/* Tipografia de lectura larga para la guia — el resto del panel de
+   colaborador son tablas y formularios, que no necesitan esto. */
+.guia-lead {
+  font-size: var(--font-size-lg);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.guia-h3 {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: var(--spacing-md) 0 var(--spacing-xs);
+}
+
+.guia-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--text-secondary);
+}
+
+.guia-list code,
+.guia-note code,
+.colaborador-page p code {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-sm);
+  padding: 1px 6px;
+  font-family: monospace;
+  font-size: 0.9em;
+  color: var(--text-primary);
+}
+
+.guia-note {
+  border-left: 3px solid var(--primary-color);
+  padding-left: var(--spacing-sm);
+  color: var(--text-secondary);
+  margin: var(--spacing-sm) 0 0;
+}

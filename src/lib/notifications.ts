@@ -162,6 +162,55 @@ export async function notifyAdminsOfSuggestion(
   }
 }
 
+interface NotifySupportThreadOpts {
+  threadId: number;
+  subject: string;
+  excerpt: string;
+  authorId: string;
+  isReply?: boolean;
+}
+
+/**
+ * Avisa a curaduria (admins y moderadores) de una consulta privada de un
+ * colaborador. Se excluye al autor por si el que escribe es un admin
+ * probando el panel. No-bloqueante: un fallo no debe tumbar el envio del
+ * mensaje, que ya quedo guardado.
+ */
+export async function notifyStaffOfSupportThread(
+  opts: NotifySupportThreadOpts
+): Promise<void> {
+  try {
+    const staff = await prisma.user.findMany({
+      where: {
+        role: { in: ['ADMIN', 'MODERATOR'] },
+        id: { not: opts.authorId },
+      },
+      select: { id: true },
+    });
+    if (staff.length === 0) return;
+
+    const title = opts.isReply
+      ? `Respuesta en la consulta: "${opts.subject}"`
+      : `Consulta nueva de un colaborador: "${opts.subject}"`;
+
+    await Promise.all(
+      staff.map((member) =>
+        notifyUser({
+          userId: member.id,
+          type: 'support_thread',
+          title,
+          body: opts.excerpt,
+          linkPath: `/admin/soporte/${opts.threadId}`,
+          refType: 'support_thread',
+          refId: opts.threadId,
+        })
+      )
+    );
+  } catch {
+    /* never block the main op */
+  }
+}
+
 interface NotifyParentAuthorOpts {
   parentCommentId: number;
   currentCommentId: number;
