@@ -6,6 +6,7 @@ import {
   isIndexableCompany,
 } from '@/lib/person-completeness';
 import { getSeriesUrl, getVerUrl } from '@/lib/slug';
+import { HAS_WATCHABLE_EPISODE } from '@/lib/watchable';
 
 export const revalidate = 3600;
 
@@ -162,9 +163,10 @@ async function verPages(): Promise<MetadataRoute.Sitemap> {
   const series = await prisma.series.findMany({
     where: {
       visibility: 'VISIBLE',
-      seasons: {
-        some: { episodes: { some: { embedUrl: { not: null } } } },
-      },
+      // Mismo criterio que /ver: ofrecerle a Google una URL cuyo unico
+      // contenido es un trailer es thin content, y ademas la pagina hoy
+      // devuelve 404 (ver src/app/(app)/ver/[id]/page.tsx).
+      ...HAS_WATCHABLE_EPISODE,
     },
     select: { id: true, title: true, updatedAt: true },
   });
