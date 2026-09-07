@@ -140,6 +140,26 @@ export function GlosarioClient({ terms, resources }: GlosarioClientProps) {
   const [suggestions, setSuggestions] = useState<GlossarySuggestion[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [form] = Form.useForm<SuggestionFormValues>();
+  // Termino al que se llego por deep link (?term=slug), tipicamente desde
+  // el buscador global Cmd+K. Se resalta hasta que el usuario toca los
+  // filtros — a partir de ahi el resaltado deja de tener sentido.
+  const [highlightedSlug, setHighlightedSlug] = useState<string | null>(null);
+
+  // Deep link a un termino puntual: /glosario?term=<slug>. Va por efecto y
+  // no por estado inicial porque Cmd+K puede navegar aca estando ya en
+  // /glosario — en ese caso el componente no se remonta y solo cambia la query.
+  const requestedSlug = searchParams.get('term');
+  useEffect(() => {
+    if (!requestedSlug) return;
+    const match = terms.find((item) => item.slug === requestedSlug);
+    if (!match) return;
+    setView('dictionary');
+    setCountry('all');
+    setCategory('all');
+    setSelectedTag(null);
+    setSearch(match.term);
+    setHighlightedSlug(match.slug);
+  }, [requestedSlug, terms]);
 
   useEffect(() => {
     if (sessionStatus !== 'authenticated') return;
@@ -172,9 +192,9 @@ export function GlosarioClient({ terms, resources }: GlosarioClientProps) {
       if (!response.ok) {
         const error =
           result &&
-            typeof result === 'object' &&
-            'error' in result &&
-            typeof result.error === 'string'
+          typeof result === 'object' &&
+          'error' in result &&
+          typeof result.error === 'string'
             ? result.error
             : 'No se pudo enviar la sugerencia.';
         throw new Error(error);
@@ -211,6 +231,15 @@ export function GlosarioClient({ terms, resources }: GlosarioClientProps) {
       );
     });
   }, [terms, search, country, category, selectedTag]);
+
+  // El scroll va en un efecto aparte: recien despues del render con el
+  // filtro aplicado existe el nodo al que hay que ir.
+  useEffect(() => {
+    if (!highlightedSlug) return;
+    const node = document.getElementById(`glosario-term-${highlightedSlug}`);
+    if (!node) return;
+    node.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [highlightedSlug, filtered]);
 
   return (
     <div className="glosario-container">
@@ -257,7 +286,10 @@ export function GlosarioClient({ terms, resources }: GlosarioClientProps) {
               }
               placeholder={t('glosario.searchPlaceholder')}
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setHighlightedSlug(null);
+              }}
               allowClear
               size="large"
               className="glosario-search"
@@ -327,25 +359,25 @@ export function GlosarioClient({ terms, resources }: GlosarioClientProps) {
               description={t('glosario.resourcesEmptyDescription')}
             />
           ) : (
-          <div className="glosario-resource-grid">
-            {resources.map((resource) => (
-              <a
-                key={resource.id}
-                className="glosario-resource-card"
-                href={resource.url}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {resource.language && (
-                  <span className="glosario-resource-card__meta">
-                    <LinkOutlined /> {resource.language}
-                  </span>
-                )}
-                <h3>{resource.name}</h3>
-                {resource.description && <p>{resource.description}</p>}
-              </a>
-            ))}
-          </div>
+            <div className="glosario-resource-grid">
+              {resources.map((resource) => (
+                <a
+                  key={resource.id}
+                  className="glosario-resource-card"
+                  href={resource.url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {resource.language && (
+                    <span className="glosario-resource-card__meta">
+                      <LinkOutlined /> {resource.language}
+                    </span>
+                  )}
+                  <h3>{resource.name}</h3>
+                  {resource.description && <p>{resource.description}</p>}
+                </a>
+              ))}
+            </div>
           )}
         </section>
       ) : view === 'contribute' ? (
@@ -435,10 +467,7 @@ export function GlosarioClient({ terms, resources }: GlosarioClientProps) {
                 >
                   <Input.TextArea rows={3} />
                 </Form.Item>
-                <Form.Item
-                  label={t('glosario.fieldExamples')}
-                  name="examples"
-                >
+                <Form.Item label={t('glosario.fieldExamples')} name="examples">
                   <Input.TextArea rows={2} />
                 </Form.Item>
                 <Form.Item
@@ -512,8 +541,16 @@ export function GlosarioClient({ terms, resources }: GlosarioClientProps) {
         />
       ) : (
         <div className="glosario-grid">
-                  {filtered.map((item) => (
-                    <article key={item.id} className="glosario-card">
+          {filtered.map((item) => (
+            <article
+              key={item.id}
+              id={`glosario-term-${item.slug}`}
+              className={`glosario-card${
+                highlightedSlug === item.slug
+                  ? ' glosario-card--highlighted'
+                  : ''
+              }`}
+            >
               <div className="glosario-card__header">
                 <div className="glosario-card__term-wrap">
                   <span className="glosario-card__term">{item.term}</span>
@@ -572,7 +609,11 @@ export function GlosarioClient({ terms, resources }: GlosarioClientProps) {
                 <div className="glosario-card__source">
                   <strong>{t('glosario.sourceLabel')}</strong>{' '}
                   {item.sourceUrl ? (
-                    <a href={item.sourceUrl} target="_blank" rel="noopener noreferrer">
+                    <a
+                      href={item.sourceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       {item.sourceName || item.sourceUrl}
                     </a>
                   ) : (
