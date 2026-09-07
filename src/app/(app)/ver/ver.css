@@ -143,6 +143,22 @@
   font-weight: 600;
 }
 
+/* Bloqueo TOTAL en este mercado: no arranca un solo episodio. Tercer
+   grado de la misma escala que los dos de arriba — por eso comparte el
+   chip y solo cambia el color, que sube de warning a error. */
+.ver-card__unavailable-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(4px);
+  color: var(--error-color);
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
 .ver-empty {
   padding: var(--spacing-xl) 0;
 }
