@@ -66,6 +66,29 @@ function isPartiallyUnavailable(item: VerItem): boolean {
   );
 }
 
+/**
+ * No se puede mirar NI UN episodio desde este mercado.
+ *
+ * Es distinto de `geoRestrictedCore`: aquel es un flag por serie sobre
+ * los 7 mercados core juntos, y este es el veredicto del mercado que
+ * esta mirando. Una serie disponible en US pero bloqueada en AR tiene el
+ * flag en false y aca da true.
+ *
+ * Existia el aviso de "faltan algunos" y el de bloqueo total por flag,
+ * pero justo el peor caso se colaba por el medio: `isPartiallyUnavailable`
+ * pide `playableEpisodes > 0`, asi que una serie con 0 reproducibles y el
+ * flag apagado se mostraba como cualquier otra y no arrancaba un solo
+ * episodio. Paso de verdad con Bad Buddy, 2gether, Cherry Magic y A Tale
+ * of Thousand Stars.
+ */
+function isFullyUnavailableHere(item: VerItem): boolean {
+  return (
+    typeof item.playableEpisodes === 'number' &&
+    item.episodesWithEmbed > 0 &&
+    item.playableEpisodes === 0
+  );
+}
+
 interface VerPageProps {
   items: VerItem[];
 }
@@ -566,6 +589,13 @@ export function VerPage({ items }: VerPageProps) {
                           title={t('ver.geoRestrictedBadge')}
                         >
                           🌍 {t('ver.geoRestrictedBadge')}
+                        </span>
+                      ) : isFullyUnavailableHere(item) ? (
+                        <span
+                          className="ver-card__unavailable-badge"
+                          title={t('ver.unavailableHereBadge')}
+                        >
+                          🚫 {t('ver.unavailableHereBadge')}
                         </span>
                       ) : isPartiallyUnavailable(item) ? (
                         <span

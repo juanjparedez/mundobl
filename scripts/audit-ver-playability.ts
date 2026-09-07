@@ -34,9 +34,12 @@ import {
   PlayabilityApiError,
   probeViaApi,
   probeViaWatchPage,
+  isPlayableIn,
   type PlaybackProbe,
   type PlaybackStatus,
 } from '../src/lib/playability';
+import { CORE_MARKETS } from '../src/lib/channel-fetcher';
+import { WATCHABLE_EPISODE_WHERE } from '../src/lib/watchable';
 
 interface Options {
   dryRun: boolean;
@@ -273,18 +276,33 @@ async function main() {
   // ── Re-calculo de Series.geoRestrictedCore ────────────────────────
   // El flag es "esta serie esta bloqueada en el mercado core". Lo
   // derivamos de los episodios: si NINGUN episodio es reproducible en
-  // algun mercado core, la serie esta bloqueada para esa audiencia.
+  // ningun mercado core, la serie esta bloqueada para esa audiencia.
   // Solo se recalcula si sondeamos la serie entera, para no marcarla mal
   // por una corrida con --limit.
+  //
+  // Dos cosas que este calculo se equivocaba y apagaban el flag justo en
+  // las series peores:
+  //
+  //   1. Contaba los trailers. GMMTV bloquea los capitulos en occidente
+  //      pero deja el trailer abierto en todo el mundo, asi que "Bad
+  //      Buddy" daba 12 episodios reproducibles sobre 60 — y los 12 eran
+  //      los clips promocionales. La serie quedaba marcada como NO
+  //      restringida porque lo unico que andaba era la publicidad.
+  //   2. Miraba `playback` sin mirar `playbackBlockedMarkets`, asi que
+  //      no distinguia "bloqueado en todos lados" de "bloqueado en un
+  //      mercado y disponible en otro".
   if (!opts.dryRun && !opts.limit) {
     console.log('\n=== SERIES ===');
     for (const [seriesId, title] of touchedSeries) {
       const eps = await prisma.episode.findMany({
-        where: { season: { seriesId }, embedUrl: { not: null } },
+        // Solo capitulos de verdad: ver src/lib/watchable.ts.
+        where: { season: { seriesId }, ...WATCHABLE_EPISODE_WHERE },
         select: { playback: true, playbackBlockedMarkets: true },
       });
-      const playable = eps.filter(
-        (e) => e.playback === 'OK' || e.playback === 'UNKNOWN'
+      const playable = eps.filter((e) =>
+        CORE_MARKETS.some((m) =>
+          isPlayableIn(e.playback, e.playbackBlockedMarkets, m)
+        )
       );
       const shouldFlag = playable.length === 0 && eps.length > 0;
       const current = await prisma.series.findUnique({
@@ -300,10 +318,15 @@ async function main() {
           `  ${title.slice(0, 42).padEnd(44)} geoRestrictedCore ${current.geoRestrictedCore} → ${shouldFlag}`
         );
       }
-      const broken = eps.length - playable.length;
+      // Reportado sobre capitulos reales y contra el mercado por defecto
+      // del sondeo, que es el que ve la mayoria de los visitantes.
+      const enMercado = eps.filter((e) =>
+        isPlayableIn(e.playback, e.playbackBlockedMarkets, opts.market)
+      ).length;
+      const broken = eps.length - enMercado;
       if (broken > 0) {
         console.log(
-          `  ⚠️  ${title.slice(0, 42).padEnd(44)} ${broken}/${eps.length} episodios no reproducibles`
+          `  ${enMercado === 0 ? '❌' : '⚠️ '} ${title.slice(0, 42).padEnd(44)} ${broken}/${eps.length} capitulos no reproducibles desde ${opts.market}`
         );
       }
     }

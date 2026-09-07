@@ -2742,7 +2742,8 @@ const th: TranslationShape = {
     "cardEpisodesBadge": "{count} วิดีโอ",
     "cardPlayButton": "เล่น",
     "geoRestrictedBadge": "ถูกจำกัดในภูมิภาคของคุณ",
-    "partiallyUnavailableBadge": "รับชมได้ {count} จาก {total} รายการ"
+    "partiallyUnavailableBadge": "รับชมได้ {count} จาก {total} รายการ",
+    "unavailableHereBadge": "ไม่พร้อมให้รับชมในประเทศของคุณ"
   },
   "actorProfile": {
     "funFactsTitle": "เกร็ดน่ารู้",
