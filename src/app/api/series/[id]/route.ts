@@ -223,6 +223,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         originalTitle: body.originalTitle || null,
         year: body.year ? parseInt(body.year, 10) : null,
         type: body.type || 'serie',
+        durationMinutes: body.durationMinutes
+          ? parseInt(String(body.durationMinutes), 10) || null
+          : null,
         basedOn: body.basedOn || null,
         format: body.format || 'regular',
         imageUrl: resolvedImageUrl,
@@ -343,7 +346,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       for (const seasonData of incoming) {
         const data = {
           seasonNumber: seasonData.seasonNumber,
-          episodeCount: seasonData.episodeCount ? Number(seasonData.episodeCount) : null,
+          episodeCount: seasonData.episodeCount
+            ? Number(seasonData.episodeCount)
+            : null,
           year: seasonData.year ?? body.year ?? null,
         };
         let seasonId: number;
@@ -363,13 +368,17 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         }
 
         // Auto-generación de episodios faltantes si se definió episodeCount
-        const targetEpisodeCount = seasonData.episodeCount ? Number(seasonData.episodeCount) : 0;
+        const targetEpisodeCount = seasonData.episodeCount
+          ? Number(seasonData.episodeCount)
+          : 0;
         if (seasonId && targetEpisodeCount > 0) {
           const existingEpisodes = await prisma.episode.findMany({
             where: { seasonId },
             select: { episodeNumber: true },
           });
-          const existingNums = new Set(existingEpisodes.map((e) => e.episodeNumber));
+          const existingNums = new Set(
+            existingEpisodes.map((e) => e.episodeNumber)
+          );
           const toCreate = [];
           for (let i = 1; i <= targetEpisodeCount; i++) {
             if (!existingNums.has(i)) {

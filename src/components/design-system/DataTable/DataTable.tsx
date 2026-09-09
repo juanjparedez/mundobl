@@ -95,7 +95,16 @@ export interface DataTableProps<T> {
  * tipos (tsc se queda sin heap). Aca alcanza con validar en runtime.
  */
 function readCell(record: unknown, dataIndex: unknown): unknown {
-  if (dataIndex === undefined || dataIndex === null) return undefined;
+  // Sin `dataIndex`, AntD pasa el RECORD como primer argumento del `render`
+  // (rc-table hace `getValue(record, [])`, y un path vacio devuelve el
+  // objeto entero). Devolver `undefined` aca rompia en mobile toda columna
+  // escrita como `render: (record) => record.campo` — que es el patron
+  // usado en medio panel de admin: en escritorio anda porque renderiza la
+  // Table de AntD, y en tarjetas crasheaba con "Cannot read properties of
+  // undefined". El wrapper tiene que ser fiel al contrato de AntD.
+  if (dataIndex === undefined || dataIndex === null || dataIndex === '') {
+    return record;
+  }
   const path: unknown[] = Array.isArray(dataIndex) ? dataIndex : [dataIndex];
   let current: unknown = record;
   for (const key of path) {
@@ -126,6 +135,11 @@ function renderCell<T>(
     return out as ReactNode;
   }
   if (raw === null || raw === undefined || raw === '') return null;
+  // Sin `render`, `raw` puede ser el record entero (columna sin `dataIndex`
+  // ni `render`, que no muestra nada util). Devolver el objeto haria que
+  // React tire "Objects are not valid as a React child" — justo el tipo de
+  // crash que este arreglo viene a sacar.
+  if (typeof raw === 'object') return null;
   return raw as ReactNode;
 }
 
