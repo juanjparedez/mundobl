@@ -16,7 +16,12 @@ import {
   Tag,
 } from 'antd';
 import dayjs, { type Dayjs } from 'dayjs';
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import {
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  MailOutlined,
+} from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -64,6 +69,8 @@ interface AnnouncementType {
   startsAt: string | null;
   endsAt: string | null;
   createdAt: string;
+  emailSentAt: string | null;
+  emailSentCount: number | null;
   _count?: { recipients: number };
 }
 
@@ -357,6 +364,47 @@ export function AnunciosClient() {
     }
   };
 
+  const [emailingId, setEmailingId] = useState<number | null>(null);
+
+  // El envio por correo es la unica accion de esta pantalla que no se puede
+  // deshacer: sale de la app y llega a la casilla de alguien. Por eso pasa
+  // por Popconfirm, el backend rechaza el segundo envio con 409, y el boton
+  // queda deshabilitado una vez que salio.
+  const handleSendEmail = async (record: AnnouncementType) => {
+    setEmailingId(record.id);
+    try {
+      const res = await fetch(`/api/admin/announcements/${record.id}/email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      });
+      const data = (await res.json()) as {
+        sent?: number;
+        failed?: number;
+        recipients?: number;
+        note?: string;
+        error?: string;
+      };
+      if (!res.ok) throw new Error(data.error ?? 'No se pudo enviar.');
+
+      if (data.note) {
+        message.warning(data.note);
+      } else {
+        message.success(
+          `Enviado a ${data.sent} de ${data.recipients} destinatarios` +
+            (data.failed ? ` (${data.failed} fallaron)` : '')
+        );
+      }
+      await loadItems();
+    } catch (error: unknown) {
+      message.error(
+        error instanceof Error ? error.message : 'No se pudo enviar.'
+      );
+    } finally {
+      setEmailingId(null);
+    }
+  };
+
   const columns = [
     {
       title: t('adminAnnouncements.columnTitle'),
@@ -435,6 +483,32 @@ export function AnunciosClient() {
           >
             {!isMobile && t('adminAnnouncements.actionEdit')}
           </Button>
+          <Popconfirm
+            title="Enviar por correo"
+            description={
+              record.emailSentAt
+                ? 'Ya se envió una vez. Volver a enviarlo le repetiría el mail a quien ya lo recibió.'
+                : 'Sale a todos los que activaron los avisos por correo. No se puede deshacer.'
+            }
+            onConfirm={() => handleSendEmail(record)}
+            okText="Enviar"
+            cancelText={t('adminAnnouncements.cancel')}
+            disabled={Boolean(record.emailSentAt)}
+          >
+            <Button
+              icon={<MailOutlined />}
+              size="small"
+              loading={emailingId === record.id}
+              disabled={Boolean(record.emailSentAt)}
+              title={
+                record.emailSentAt
+                  ? `Enviado a ${record.emailSentCount ?? 0} el ${new Date(record.emailSentAt).toLocaleDateString()}`
+                  : 'Enviar este anuncio por correo'
+              }
+            >
+              {!isMobile && (record.emailSentAt ? 'Enviado' : 'Correo')}
+            </Button>
+          </Popconfirm>
           <Popconfirm
             title={t('adminAnnouncements.deleteTitle')}
             description={interpolateMessage(

@@ -1081,6 +1081,13 @@ model NotificationPrefs {
   // Por canal: in-app siempre on (es el inbox). Push se opt-in.
   pushEnabled Boolean @default(true)
 
+  // Correo. Arranca en FALSE a proposito y no se hereda de pushEnabled:
+  // aceptar notificaciones del navegador no es consentimiento para recibir
+  // mails, y tener la direccion porque el usuario entro con Google tampoco.
+  // Se activa solo desde las preferencias, o se apaga desde el link de
+  // desuscripcion de cualquier envio.
+  emailEnabled Boolean @default(false)
+
   // Por tipo de evento: si el usuario apaga uno, no recibe ni in-app
   // ni push de ese tipo. Esto le da control fino sobre el ruido.
   notifySeasonAdded     Boolean @default(true)
@@ -1499,6 +1506,12 @@ model Announcement {
   endsAt      DateTime?
   createdAt   DateTime             @default(now())
   updatedAt   DateTime             @updatedAt
+
+  // Envio por correo. Se guarda para que el panel pueda mostrar "ya salio"
+  // y para que un segundo click no le mande el mismo anuncio dos veces a
+  // la misma gente — el error mas caro posible en este canal.
+  emailSentAt    DateTime?
+  emailSentCount Int?
 
   createdById String?
   createdBy   User?   @relation(fields: [createdById], references: [id], onDelete: SetNull)
