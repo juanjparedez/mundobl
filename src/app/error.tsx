@@ -14,6 +14,12 @@ import { signOut } from 'next-auth/react';
 import { resetServiceWorker, resetClientState } from '@/lib/reset-recovery';
 import './error.css';
 
+// Todo el reporte viaja como query param hacia /feedback, asi que el stack
+// va recortado: un stack entero de produccion puede pasar los 8k y dejar la
+// URL a merced de lo que la trunque en el camino. Con este tope entran ~15
+// frames, de sobra para ubicar el origen.
+const STACK_MAX_CHARS = 1200;
+
 interface ErrorPageProps {
   error: Error & { digest?: string };
   reset: () => void;
@@ -38,6 +44,12 @@ export default function ErrorPage({ error, reset }: ErrorPageProps) {
       '',
       `Mensaje: ${error.message || 'Sin mensaje'}`,
       error.digest ? `Digest: ${error.digest}` : '',
+      // El stack es lo unico que convierte un "Cannot read properties of
+      // undefined" en un archivo y una linea. Sin el, un error de cliente
+      // (que no tiene digest, porque el digest solo existe en errores de
+      // servidor) no deja rastro en ningun lado: el boundary solo hace
+      // console.error, y esa consola esta en el telefono de quien reporta.
+      error.stack ? `\nStack:\n${error.stack.slice(0, STACK_MAX_CHARS)}` : '',
     ].filter(Boolean);
     const description = lines.join('\n');
     const params = new URLSearchParams({

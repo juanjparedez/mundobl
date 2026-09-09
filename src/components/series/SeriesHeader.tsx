@@ -16,11 +16,11 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
-import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { MetadataChip } from './MetadataPrimitives/MetadataPrimitives';
 import './SeriesHeader.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
-import { shouldShowDuration } from '@/types/content';
+import { shouldShowDuration, shouldShowEpisodes } from '@/types/content';
 import { interpolateMessage } from '@/lib/i18n-format';
 import type { TranslationKey } from '@/i18n/messages';
 
@@ -103,7 +103,7 @@ export function SeriesHeader({
             sizes="(max-width: 768px) 0px, 100vw"
             quality={70}
             fetchPriority="low"
-            unoptimized={isSupabaseImageUrl(imageUrl)}
+            unoptimized={isDirectServedImageUrl(imageUrl)}
             className="series-hero__backdrop-img"
           />
         </div>
@@ -122,7 +122,7 @@ export function SeriesHeader({
                 sizes="(max-width: 640px) 110px, (max-width: 900px) 180px, 230px"
                 quality={72}
                 priority
-                unoptimized={isSupabaseImageUrl(posterThumb ?? imageUrl)}
+                unoptimized={isDirectServedImageUrl(posterThumb ?? imageUrl)}
               />
             </div>
           )}
@@ -168,7 +168,16 @@ export function SeriesHeader({
             {/* Duracion al lado del tipo: en una peli o un corto es el dato
                 que el usuario busca, y es justo donde antes no habia nada. */}
             {shouldShowDuration(series.type) && series.durationMinutes && (
-              <span className="series-header__meta-item">
+              <span
+                className="series-header__meta-item"
+                // El chip muestra solo "45 min": el title aclara si eso es
+                // la pieza entera o cada episodio.
+                title={
+                  shouldShowEpisodes(series.type)
+                    ? t('seriesInfo.fieldDurationPerEpisode')
+                    : t('seriesInfo.fieldDuration')
+                }
+              >
                 <ClockCircleOutlined />{' '}
                 {interpolateMessage(t('seriesHeader.durationMinutes'), {
                   minutes: String(series.durationMinutes),

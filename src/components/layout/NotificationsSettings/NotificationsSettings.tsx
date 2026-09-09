@@ -25,6 +25,7 @@ import './NotificationsSettings.css';
 
 interface NotificationPrefs {
   pushEnabled: boolean;
+  emailEnabled: boolean;
   notifySeasonAdded: boolean;
   notifyContentAdded: boolean;
   notifyReviewPublished: boolean;
@@ -44,6 +45,7 @@ interface DeviceSubscription {
 
 const DEFAULT_PREFS: NotificationPrefs = {
   pushEnabled: true,
+  emailEnabled: false,
   notifySeasonAdded: true,
   notifyContentAdded: true,
   notifyReviewPublished: true,
@@ -280,6 +282,16 @@ export function NotificationsSettings() {
             aria-label="Toggle de notificaciones push"
           />
         </div>
+
+        {/* Canal aparte del push, y con su propio consentimiento: aceptar
+            avisos del navegador no autoriza a escribirle a nadie al mail. */}
+        <PrefRow
+          label="Avisos por correo"
+          desc="Anuncios de MundoBL a tu email. Apagado salvo que lo actives."
+          checked={prefs.emailEnabled}
+          loading={savingKey === 'emailEnabled'}
+          onChange={(v) => savePref('emailEnabled', v)}
+        />
 
         {subscribed && (
           <Button

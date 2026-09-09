@@ -7,7 +7,7 @@ import { Widget } from '@/components/dashboard';
 import { AutoFitList, EmptyState } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
-import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import type { ProfileData } from '../../../types';
 import './TopRatedSeriesWidget.css';
 
@@ -71,7 +71,7 @@ export function TopRatedSeriesWidget({
                       alt=""
                       width={32}
                       height={44}
-                      unoptimized={isSupabaseImageUrl(cardImageUrl(s))}
+                      unoptimized={isDirectServedImageUrl(cardImageUrl(s))}
                     />
                   ) : (
                     <span className="mb-top-rated-list__cover-placeholder" />

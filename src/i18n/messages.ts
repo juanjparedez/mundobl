@@ -57,6 +57,7 @@ export type TranslationShape = {
     fieldSeasons: string;
     fieldEpisodes: string;
     fieldDuration: string;
+    fieldDurationPerEpisode: string;
     fieldSoundtrack: string;
     fieldProduction: string;
     fieldLanguage: string;
@@ -1310,6 +1311,7 @@ export type TranslationShape = {
     fieldCountry: string;
     fieldYear: string;
     fieldDurationMinutes: string;
+    fieldDurationPerEpisode: string;
     durationMinutesUnit: string;
     fieldUniverse: string;
     fieldBasedOn: string;
@@ -2994,6 +2996,7 @@ const es: TranslationShape = {
     fieldSeasons: 'Temporadas',
     fieldEpisodes: 'Episodios',
     fieldDuration: 'Duracion',
+    fieldDurationPerEpisode: 'Duracion por episodio',
     fieldSoundtrack: 'BSO',
     fieldProduction: 'Productora',
     fieldLanguage: 'Idioma Original',
@@ -4312,6 +4315,7 @@ const es: TranslationShape = {
     fieldCountry: 'Pais',
     fieldYear: 'Anio',
     fieldDurationMinutes: 'Duracion',
+    fieldDurationPerEpisode: 'Duracion por episodio',
     durationMinutesUnit: 'min',
     fieldUniverse: 'Universo (opcional)',
     fieldBasedOn: 'Basada en',
@@ -6092,6 +6096,7 @@ const en: TranslationShape = {
     fieldSeasons: 'Seasons',
     fieldEpisodes: 'Episodes',
     fieldDuration: 'Duration',
+    fieldDurationPerEpisode: 'Duration per episode',
     fieldSoundtrack: 'OST',
     fieldProduction: 'Production',
     fieldLanguage: 'Original Language',
@@ -7395,6 +7400,7 @@ const en: TranslationShape = {
     fieldCountry: 'Country',
     fieldYear: 'Year',
     fieldDurationMinutes: 'Duration',
+    fieldDurationPerEpisode: 'Duration per episode',
     durationMinutesUnit: 'min',
     fieldUniverse: 'Universe (optional)',
     fieldBasedOn: 'Based on',

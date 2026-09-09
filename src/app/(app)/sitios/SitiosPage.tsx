@@ -9,7 +9,7 @@ import {
   UnorderedListOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
-import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { isDirectServedImageUrl } from '@/lib/image-helpers';
 import { getFaviconUrl, getDisplayHostname } from '@/lib/site-helpers';
 import {
   CATEGORY_COLORS,
@@ -142,7 +142,7 @@ export function SitiosPage({ sites }: SitiosPageProps) {
                     width={32}
                     height={32}
                     quality={75}
-                    unoptimized={isSupabaseImageUrl(site.imageUrl)}
+                    unoptimized={isDirectServedImageUrl(site.imageUrl)}
                     className="sitios-card__favicon"
                   />
                 ) : faviconUrl ? (
