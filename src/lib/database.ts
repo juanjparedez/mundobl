@@ -78,6 +78,14 @@ export async function getAllSeries(options?: {
   scope?: 'PERSONAL' | 'WATCHABLE_ONLY' | 'ALL';
   origin?: 'CURATED' | 'USER_EMBED' | 'ALL';
   userId?: string;
+  /**
+   * Omite los campos de texto largo que un LISTADO no muestra. `synopsis`
+   * NO entra: la usa el Quick Preview de /catalogo sin volver a pedir nada.
+   * Medido el 2026-09-09 sobre las 612 series del catalogo: el JSON pesa
+   * ~1 MB y `observations` son 71 kB de eso, que viajan de Supabase a
+   * Vercel en cada revalidacion sin que nadie los lea.
+   */
+  omitLongText?: boolean;
 }) {
   const scope = options?.scope ?? 'ALL';
   const origin = options?.origin ?? 'ALL';
@@ -87,6 +95,9 @@ export async function getAllSeries(options?: {
   if (origin !== 'ALL') where.origin = origin;
   return await prisma.series.findMany({
     where: Object.keys(where).length === 0 ? undefined : where,
+    ...(options?.omitLongText
+      ? { omit: { observations: true, review: true } }
+      : {}),
     include: {
       country: true,
       universe: true,

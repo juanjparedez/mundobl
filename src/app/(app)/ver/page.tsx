@@ -24,7 +24,10 @@ export const metadata: Metadata = {
   },
 };
 
-export const revalidate = 120;
+// Mismo criterio que /catalogo: getWatchableSeries trae el listado entero
+// con sus relaciones en cada revalidacion. Ver el comentario de
+// src/app/(app)/catalogo/page.tsx.
+export const revalidate = 900;
 
 export default async function VerPageRoute() {
   const series = await getWatchableSeries();
