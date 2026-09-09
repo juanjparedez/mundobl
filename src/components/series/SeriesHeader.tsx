@@ -20,7 +20,7 @@ import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { MetadataChip } from './MetadataPrimitives/MetadataPrimitives';
 import './SeriesHeader.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
-import { shouldShowDuration } from '@/types/content';
+import { shouldShowDuration, shouldShowEpisodes } from '@/types/content';
 import { interpolateMessage } from '@/lib/i18n-format';
 import type { TranslationKey } from '@/i18n/messages';
 
@@ -168,7 +168,16 @@ export function SeriesHeader({
             {/* Duracion al lado del tipo: en una peli o un corto es el dato
                 que el usuario busca, y es justo donde antes no habia nada. */}
             {shouldShowDuration(series.type) && series.durationMinutes && (
-              <span className="series-header__meta-item">
+              <span
+                className="series-header__meta-item"
+                // El chip muestra solo "45 min": el title aclara si eso es
+                // la pieza entera o cada episodio.
+                title={
+                  shouldShowEpisodes(series.type)
+                    ? t('seriesInfo.fieldDurationPerEpisode')
+                    : t('seriesInfo.fieldDuration')
+                }
+              >
                 <ClockCircleOutlined />{' '}
                 {interpolateMessage(t('seriesHeader.durationMinutes'), {
                   minutes: String(series.durationMinutes),

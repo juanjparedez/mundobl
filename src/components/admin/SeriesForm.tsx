@@ -35,6 +35,7 @@ import Link from 'next/link';
 import {
   shouldShowSeasons,
   shouldShowDuration,
+  shouldShowEpisodes,
   getContentTypeConfig,
 } from '@/types/content';
 import { getSeriesUrl } from '@/lib/slug';
@@ -965,7 +966,13 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
               {showDuration && (
                 <Col xs={24} md={12}>
                   <Form.Item
-                    label={t('seriesForm.fieldDurationMinutes')}
+                    label={
+                      // En un tipo con episodios la duracion es POR
+                      // episodio; en pelicula y corto es la total.
+                      shouldShowEpisodes(selectedType)
+                        ? t('seriesForm.fieldDurationPerEpisode')
+                        : t('seriesForm.fieldDurationMinutes')
+                    }
                     name="durationMinutes"
                   >
                     <InputNumber
