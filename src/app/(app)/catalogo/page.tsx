@@ -1,4 +1,9 @@
-export const revalidate = 120;
+// 15 minutos y no 2: cada revalidacion rehace la consulta completa del
+// catalogo (~1 MB de JSON desde Supabase, medido el 2026-09-09) y el
+// catalogo cambia unas pocas veces por semana, no cada 2 minutos. A 120s
+// esto era el principal consumidor de egress de base. Una serie nueva puede
+// tardar hasta 15 min en aparecer: es un precio barato.
+export const revalidate = 900;
 import { unstable_cache } from 'next/cache';
 
 import type { Metadata } from 'next';
@@ -42,12 +47,16 @@ import './catalogo.css';
 const getCatalogDataCached = unstable_cache(
   async () => {
     return await Promise.all([
-      getAllSeries({ scope: 'PERSONAL', origin: 'CURATED' }),
+      getAllSeries({
+        scope: 'PERSONAL',
+        origin: 'CURATED',
+        omitLongText: true,
+      }),
       getCatalogFilterIndex(),
     ]);
   },
   ['catalog-page-data-v2'],
-  { revalidate: 120 }
+  { revalidate: 900 }
 );
 
 export default async function CatalogoPage() {
