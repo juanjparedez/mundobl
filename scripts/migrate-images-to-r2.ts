@@ -30,7 +30,7 @@ loadEnvConfig(process.cwd());
  * Requiere `wrangler login` hecho y el bucket ya creado.
  */
 
-import { execFile } from 'child_process';
+import { exec } from 'child_process';
 import { promisify } from 'util';
 import { mkdir, writeFile, readFile, rm } from 'fs/promises';
 import path from 'path';
@@ -52,7 +52,16 @@ async function db(): Promise<Db> {
   return cachedDb;
 }
 
-const execFileAsync = promisify(execFile);
+const execAsync = promisify(exec);
+
+/**
+ * wrangler se invoca por SHELL y no con execFile.
+ *
+ * En este entorno `npx` resuelve al Node de Windows (es el que tiene las
+ * credenciales de wrangler y el binario de workerd correcto); el Node de
+ * Linux ni siquiera puede arrancar wrangler. Y en Windows `npx` es
+ * `npx.cmd`, que execFile no resuelve sin shell: falla con ENOENT.
+ */
 
 const BUCKET = process.env.R2_BUCKET ?? 'mundobl-images';
 /** Host publico de R2. Debe coincidir con el dominio conectado al bucket. */
@@ -140,6 +149,13 @@ async function saveProgress(done: Set<string>): Promise<void> {
 }
 
 async function copyOne(key: string, sourceUrl: string): Promise<void> {
+  // La key va dentro de un comando de shell entre comillas: si trajera una
+  // comilla o un $, se escaparia del argumento. Ninguna de las 1206 actuales
+  // lo hace, pero mejor abortar que subir a una ruta inesperada.
+  if (/["'`$\\]/.test(key)) {
+    throw new Error('key con caracteres no seguros para shell');
+  }
+
   const response = await fetch(sourceUrl);
   if (!response.ok) {
     throw new Error(`descarga fallo (${response.status})`);
@@ -150,24 +166,15 @@ async function copyOne(key: string, sourceUrl: string): Promise<void> {
   const localPath = path.join(TMP_DIR, key.replace(/[/\\]/g, '__'));
   await writeFile(localPath, buffer);
   try {
-    await execFileAsync(
-      'npx',
-      [
-        'wrangler',
-        'r2',
-        'object',
-        'put',
-        `${BUCKET}/${key}`,
-        '--file',
-        localPath,
-        '--content-type',
-        contentTypeFor(key),
-        '--cache-control',
-        CACHE_CONTROL,
-        '--remote',
-      ],
-      { maxBuffer: 10 * 1024 * 1024 }
-    );
+    const command = [
+      'npx wrangler r2 object put',
+      `"${BUCKET}/${key}"`,
+      `--file "${localPath}"`,
+      `--content-type "${contentTypeFor(key)}"`,
+      `--cache-control "${CACHE_CONTROL}"`,
+      '--remote',
+    ].join(' ');
+    await execAsync(command, { maxBuffer: 10 * 1024 * 1024 });
   } finally {
     await rm(localPath, { force: true });
   }
