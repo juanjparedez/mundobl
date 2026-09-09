@@ -1,5 +1,7 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { processPosterImage, processCardThumbnail } from './image-processing';
+import { isR2Configured, uploadToR2, deleteFromR2, r2KeyFromUrl } from './r2';
+import { isDirectServedImageUrl } from './image-helpers';
 
 const BUCKET = 'images';
 
@@ -33,6 +35,21 @@ export async function uploadImage(
   path: string,
   contentType: string
 ): Promise<string> {
+  // R2 primero: es el unico punto por el que pasan TODAS las subidas
+  // (/api/upload, /api/feedback/upload y el re-hosteo de imagenes externas),
+  // asi que cambiarlo aca alcanza para que nada nuevo vuelva a nacer en
+  // Supabase Storage — que es lo que cobra egress.
+  //
+  // El fallback a Supabase no es pereza: sin las 5 variables de R2 la subida
+  // seguiria funcionando en vez de romper el alta de series. Avisa por
+  // consola para que el desvio no pase inadvertido.
+  if (isR2Configured()) {
+    return uploadToR2(file, path, contentType);
+  }
+  console.warn(
+    '[storage] R2 sin configurar: subiendo a Supabase Storage, que cobra egress. Faltan R2_ACCOUNT_ID / R2_ACCESS_KEY_ID / R2_SECRET_ACCESS_KEY / R2_BUCKET / R2_PUBLIC_HOST.'
+  );
+
   const supabase = getSupabase();
 
   const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
@@ -54,6 +71,17 @@ export async function uploadImage(
  * @param path Ruta dentro del bucket
  */
 export async function deleteImage(path: string): Promise<void> {
+  // El path puede venir como key suelta o como URL completa. Si es una URL
+  // de R2 hay que borrar de R2: buscarla en Supabase no encontraria nada y
+  // el archivo quedaria huerfano ocupando espacio para siempre.
+  const r2Key = r2KeyFromUrl(path);
+  if (r2Key) {
+    return deleteFromR2(r2Key);
+  }
+  if (isR2Configured() && !path.includes('://')) {
+    return deleteFromR2(path);
+  }
+
   const supabase = getSupabase();
 
   const { error } = await supabase.storage.from(BUCKET).remove([path]);
@@ -100,11 +128,16 @@ export interface DownloadedImage {
 }
 
 /**
- * Descarga una imagen desde una URL externa y la sube a Supabase Storage,
- * generando de paso la miniatura de card (mismo pipeline que /api/upload).
- * Si la URL ya es de Supabase, retorna la URL sin cambios y `thumbUrl: null`
- * — no hay nada que re-procesar (evita bajar el archivo de nuevo en cada
- * guardado de un admin que no toco el poster).
+ * Descarga una imagen desde una URL externa y la re-hostea (R2 si esta
+ * configurado, si no Supabase), generando de paso la miniatura de card
+ * (mismo pipeline que /api/upload).
+ *
+ * Si la imagen YA la servimos nosotros — R2 o Supabase — devuelve la URL sin
+ * tocar y `thumbUrl: null`: no hay nada que re-procesar. El chequeo cubre
+ * los dos hosts a proposito; mirando solo Supabase, cada vez que un admin
+ * guardara una serie cuyo poster ya vive en R2 se volveria a descargar y
+ * subir con otra key, dejando un duplicado huerfano por guardado.
+ *
  * @param url URL externa de la imagen
  * @param folder Carpeta dentro del bucket (ej: 'series', 'actors')
  */
@@ -112,7 +145,7 @@ export async function downloadAndUploadExternalImage(
   url: string,
   folder: string
 ): Promise<DownloadedImage> {
-  if (isSupabaseUrl(url)) return { url, thumbUrl: null };
+  if (isDirectServedImageUrl(url)) return { url, thumbUrl: null };
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15_000);
