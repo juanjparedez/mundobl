@@ -31,6 +31,7 @@ export default async function EditSeriesPage({ params }: EditPageProps) {
     originalTitle: serie.originalTitle,
     year: serie.year,
     type: serie.type,
+    durationMinutes: serie.durationMinutes,
     basedOn: serie.basedOn,
     format: serie.format,
     airDays: serie.airDays,
