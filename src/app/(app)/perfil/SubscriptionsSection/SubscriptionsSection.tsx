@@ -13,7 +13,7 @@ import {
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
-import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import './SubscriptionsSection.css';
 
 interface SubscriptionItem {
@@ -167,7 +167,7 @@ export function SubscriptionsSection() {
                         fill
                         sizes="80px"
                         quality={50}
-                        unoptimized={isSupabaseImageUrl(
+                        unoptimized={isDirectServedImageUrl(
                           cardImageUrl(item.series)
                         )}
                         style={{

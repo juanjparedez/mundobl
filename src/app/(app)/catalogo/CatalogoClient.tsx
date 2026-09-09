@@ -61,7 +61,7 @@ import type {
   QuickPreviewChip,
   QuickPreviewData,
 } from '@/components/design-system';
-import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { canEditCatalog } from '@/lib/auth-client';
 import { withViewTransition } from '@/lib/view-transitions';
 import { getSeriesUrl } from '@/lib/slug';
@@ -949,7 +949,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
               quality={55}
               priority={isPriority}
               fetchPriority={isPriority ? 'high' : 'low'}
-              unoptimized={isSupabaseImageUrl(cardImageUrl(serie))}
+              unoptimized={isDirectServedImageUrl(cardImageUrl(serie))}
               style={{
                 objectFit: 'cover',
                 objectPosition: serie.imagePosition || 'center',
@@ -1121,7 +1121,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
                 quality={55}
                 priority={isPriority}
                 fetchPriority={isPriority ? 'high' : 'low'}
-                unoptimized={isSupabaseImageUrl(cardImageUrl(firstSerie))}
+                unoptimized={isDirectServedImageUrl(cardImageUrl(firstSerie))}
                 style={{
                   objectFit: 'cover',
                   objectPosition: firstSerie.imagePosition || 'center',
@@ -1221,7 +1221,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
               sizes="48px"
               quality={50}
               fetchPriority="low"
-              unoptimized={isSupabaseImageUrl(cardImageUrl(serie))}
+              unoptimized={isDirectServedImageUrl(cardImageUrl(serie))}
               style={{
                 objectFit: 'cover',
                 objectPosition: serie.imagePosition || 'center',
@@ -1322,7 +1322,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
                     sizes="48px"
                     quality={50}
                     fetchPriority="low"
-                    unoptimized={isSupabaseImageUrl(cardImageUrl(serie))}
+                    unoptimized={isDirectServedImageUrl(cardImageUrl(serie))}
                     style={{
                       objectFit: 'cover',
                       objectPosition: serie.imagePosition || 'center',

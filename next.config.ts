@@ -58,6 +58,11 @@ const nextConfig: NextConfig = {
     // otherwise the optimizer responds 400 INVALID_IMAGE_OPTIMIZE_REQUEST.
     qualities: [35, 50, 55, 60, 65, 70, 72, 75, 78],
     remotePatterns: [
+      // Cloudflare R2 (posters). Van con `unoptimized` — ver
+      // isDirectServedImageUrl — pero el patron queda igual como red: sin el,
+      // cualquier <Image> que se olvide del flag tira error de runtime
+      // ("hostname is not configured") en vez de degradarse.
+      { protocol: 'https', hostname: 'img.mundobl.com.ar' },
       { protocol: 'https', hostname: '*.supabase.co', pathname: '/storage/**' },
       { protocol: 'https', hostname: 'i.ytimg.com' },
       { protocol: 'https', hostname: 'img.youtube.com' },
