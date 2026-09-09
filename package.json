@@ -72,7 +72,8 @@
     "playwright": "^1.59.1",
     "prettier": "^3.8.1",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "wrangler": "^4.130.0"
   },
   "overrides": {
     "d3-color": "^3.1.0",

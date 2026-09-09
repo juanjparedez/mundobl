@@ -34,7 +34,23 @@ import { execFile } from 'child_process';
 import { promisify } from 'util';
 import { mkdir, writeFile, readFile, rm } from 'fs/promises';
 import path from 'path';
-import { prisma } from '../src/lib/database';
+
+/**
+ * Prisma se importa DINAMICAMENTE, no arriba: los `import` se hoistean y se
+ * evaluan antes que cualquier statement, asi que un import estatico correria
+ * `createPrismaClient()` antes del `loadEnvConfig()` de arriba. Sin
+ * DATABASE_URL, el Pool de pg cae a localhost y todo falla con ECONNREFUSED.
+ * Misma convencion que scripts/backfill-episode-titles.ts.
+ */
+type Db = (typeof import('../src/lib/database'))['prisma'];
+let cachedDb: Db | null = null;
+async function db(): Promise<Db> {
+  if (!cachedDb) {
+    const mod = await import('../src/lib/database');
+    cachedDb = mod.prisma;
+  }
+  return cachedDb;
+}
 
 const execFileAsync = promisify(execFile);
 
@@ -85,7 +101,8 @@ function contentTypeFor(key: string): string {
 }
 
 async function loadRows(): Promise<Row[]> {
-  return prisma.series.findMany({
+  const client = await db();
+  return client.series.findMany({
     where: {
       OR: [
         { imageUrl: { contains: 'supabase.co/storage' } },
@@ -268,7 +285,8 @@ async function runRewrite(dryRun: boolean): Promise<void> {
       }
       continue;
     }
-    await prisma.series.update({ where: { id: row.id }, data });
+    const client = await db();
+    await client.series.update({ where: { id: row.id }, data });
   }
 
   console.log(
@@ -289,11 +307,11 @@ async function main(): Promise<void> {
     console.log('Fases: copy | verify | rewrite   (con --dry-run opcional)');
     process.exitCode = 1;
   }
-  await prisma.$disconnect();
+  if (cachedDb) await cachedDb.$disconnect();
 }
 
 main().catch(async (error) => {
   console.error(error);
-  await prisma.$disconnect();
+  if (cachedDb) await cachedDb.$disconnect();
   process.exit(1);
 });
