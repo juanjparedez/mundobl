@@ -16,7 +16,7 @@ import {
   EyeOutlined,
 } from '@ant-design/icons';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
-import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { isDirectServedImageUrl } from '@/lib/image-helpers';
 import { getVerUrl, getSeriesUrl } from '@/lib/slug';
 import type { CarouselMediaItem } from '../MediaCarousel/MediaCarousel';
 import './HeroBillboard.css';
@@ -108,7 +108,7 @@ export function HeroBillboard({
       {/* Imagen de fondo / Backdrop */}
       <div className="hero-billboard__backdrop-wrap">
         {featured.imageUrl &&
-          (isSupabaseImageUrl(featured.imageUrl) ? (
+          (isDirectServedImageUrl(featured.imageUrl) ? (
             <Image
               src={featured.imageUrl}
               alt={featured.title}

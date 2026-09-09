@@ -17,7 +17,7 @@ import {
   useQuickPreviewController,
 } from '@/components/design-system';
 import type { QuickPreviewData } from '@/components/design-system';
-import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { getSeriesUrl } from '@/lib/slug';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
@@ -189,7 +189,7 @@ export function ActorProfileClient({
                 alt=""
                 fill
                 sizes="120px"
-                unoptimized={isSupabaseImageUrl(actor.imageUrl)}
+                unoptimized={isDirectServedImageUrl(actor.imageUrl)}
                 style={{ objectFit: 'cover' }}
               />
             ) : (
@@ -306,7 +306,7 @@ export function ActorProfileClient({
                 href={getSeriesUrl(entry.seriesId, entry.title)}
                 imageUrl={cardImageUrl(entry)}
                 imageAlt={entry.title}
-                unoptimizedImage={isSupabaseImageUrl(cardImageUrl(entry))}
+                unoptimizedImage={isDirectServedImageUrl(cardImageUrl(entry))}
                 preview={{
                   api: previewApi,
                   getData: () => buildEntryPreview(entry),

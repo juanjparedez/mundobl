@@ -16,7 +16,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
-import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { MetadataChip } from './MetadataPrimitives/MetadataPrimitives';
 import './SeriesHeader.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -103,7 +103,7 @@ export function SeriesHeader({
             sizes="(max-width: 768px) 0px, 100vw"
             quality={70}
             fetchPriority="low"
-            unoptimized={isSupabaseImageUrl(imageUrl)}
+            unoptimized={isDirectServedImageUrl(imageUrl)}
             className="series-hero__backdrop-img"
           />
         </div>
@@ -122,7 +122,7 @@ export function SeriesHeader({
                 sizes="(max-width: 640px) 110px, (max-width: 900px) 180px, 230px"
                 quality={72}
                 priority
-                unoptimized={isSupabaseImageUrl(posterThumb ?? imageUrl)}
+                unoptimized={isDirectServedImageUrl(posterThumb ?? imageUrl)}
               />
             </div>
           )}
