@@ -20,7 +20,11 @@ import { ReviewSpotlight } from './ReviewSpotlight/ReviewSpotlight';
 import './SeriesInfo.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
-import { shouldShowSeasons, shouldShowDuration } from '@/types/content';
+import {
+  shouldShowSeasons,
+  shouldShowDuration,
+  shouldShowEpisodes,
+} from '@/types/content';
 
 interface SeriesInfoProps {
   series: {
@@ -326,7 +330,13 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
         )}
 
         {shouldShowDuration(series.type) && (
-          <Descriptions.Item label={t('seriesInfo.fieldDuration')}>
+          <Descriptions.Item
+            label={
+              shouldShowEpisodes(series.type)
+                ? t('seriesInfo.fieldDurationPerEpisode')
+                : t('seriesInfo.fieldDuration')
+            }
+          >
             {series.durationMinutes
               ? interpolateMessage(t('seriesHeader.durationMinutes'), {
                   minutes: String(series.durationMinutes),

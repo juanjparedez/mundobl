@@ -14,15 +14,22 @@ export type ContentTypeValue = (typeof ContentType)[keyof typeof ContentType];
 
 /**
  * Configuración de campos visibles por tipo de contenido
+ *
+ * `hasDuration` cambia de significado segun `hasEpisodes`: en pelicula y
+ * corto es la duracion TOTAL de la pieza; en los tipos con episodios es la
+ * duracion POR EPISODIO. La UI elige la etiqueta mirando `hasEpisodes`, asi
+ * que no hay forma de mostrar "Duracion" a secas en una serie y que se
+ * confunda con el total.
  */
 export const ContentTypeConfig = {
   [ContentType.SERIE]: {
     label: 'Serie',
     hasSeasons: true,
     hasEpisodes: true,
-    hasDuration: false,
+    hasDuration: true,
     seasonLabel: 'Temporadas',
     episodeLabel: 'Episodios',
+    durationLabel: 'Duración por episodio (min)',
   },
   [ContentType.PELICULA]: {
     label: 'Película',
@@ -42,25 +49,28 @@ export const ContentTypeConfig = {
     label: 'Especial',
     hasSeasons: true,
     hasEpisodes: true,
-    hasDuration: false,
+    hasDuration: true,
     seasonLabel: 'Temporadas',
     episodeLabel: 'Episodios',
+    durationLabel: 'Duración por episodio (min)',
   },
   [ContentType.ANIME]: {
     label: 'Animé',
     hasSeasons: true,
     hasEpisodes: true,
-    hasDuration: false,
+    hasDuration: true,
     seasonLabel: 'Temporadas',
     episodeLabel: 'Episodios',
+    durationLabel: 'Duración por episodio (min)',
   },
   [ContentType.REALITY]: {
     label: 'Reality',
     hasSeasons: true,
     hasEpisodes: true,
-    hasDuration: false,
+    hasDuration: true,
     seasonLabel: 'Temporadas',
     episodeLabel: 'Episodios',
+    durationLabel: 'Duración por episodio (min)',
   },
 } as const;
 
