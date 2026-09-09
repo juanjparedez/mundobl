@@ -8,7 +8,7 @@ import { useSession } from 'next-auth/react';
 import { LeftOutlined, LockOutlined, RightOutlined } from '@ant-design/icons';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
-import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { getSeriesUrl } from '@/lib/slug';
 import {
   MetadataChip,
@@ -633,7 +633,7 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
                       alt={item.title}
                       fill
                       sizes="(max-width: 640px) 120px, 140px"
-                      unoptimized={isSupabaseImageUrl(cardImageUrl(item))}
+                      unoptimized={isDirectServedImageUrl(cardImageUrl(item))}
                       style={{
                         objectFit: 'cover',
                         objectPosition: item.imagePosition ?? 'center',
@@ -704,7 +704,7 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
                       alt={item.title}
                       fill
                       sizes="(max-width: 640px) 120px, 140px"
-                      unoptimized={isSupabaseImageUrl(cardImageUrl(item))}
+                      unoptimized={isDirectServedImageUrl(cardImageUrl(item))}
                       style={{
                         objectFit: 'cover',
                         objectPosition: item.imagePosition ?? 'center',

@@ -10,7 +10,7 @@ import {
 } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
-import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { getSeriesUrl } from '@/lib/slug';
 import { Chip } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -238,7 +238,7 @@ export function DirectorProfileClient({
                           width={300}
                           height={180}
                           quality={75}
-                          unoptimized={isSupabaseImageUrl(cardImageUrl(entry))}
+                          unoptimized={isDirectServedImageUrl(cardImageUrl(entry))}
                           className="director-profile__film-image"
                           style={{
                             objectFit: 'cover',
@@ -300,7 +300,7 @@ export function DirectorProfileClient({
                           width={300}
                           height={180}
                           quality={70}
-                          unoptimized={isSupabaseImageUrl(cardImageUrl(entry))}
+                          unoptimized={isDirectServedImageUrl(cardImageUrl(entry))}
                           className="director-profile__film-image"
                           style={{
                             objectFit: 'cover',

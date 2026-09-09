@@ -4,7 +4,7 @@ import { ClockCircleOutlined } from '@ant-design/icons';
 import { Widget } from '@/components/dashboard';
 import { MediaCard, EmptyState } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
-import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import './CatalogoRecentlyAddedWidget.css';
 
 export interface RecentSeriesItem {
@@ -56,7 +56,7 @@ export function CatalogoRecentlyAddedWidget({
             // Ojo: esta condicion estaba invertida (bypaseaba el
             // optimizador de Vercel para las imagenes NO-Supabase, al reves
             // del resto de la app) — corregido de paso.
-            unoptimizedImage={isSupabaseImageUrl(cardImageUrl(item))}
+            unoptimizedImage={isDirectServedImageUrl(cardImageUrl(item))}
             title={item.title}
             subtitle={
               [item.year, item.country].filter(Boolean).join(' · ') || undefined

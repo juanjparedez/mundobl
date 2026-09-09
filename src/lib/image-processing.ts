@@ -6,7 +6,7 @@ const WEBP_QUALITY = 82;
 
 // Miniatura para contextos de grilla (catalogo, filmografia de actor/director,
 // carousels): las cards renderizan el poster a ~230-380px de ancho CSS, y con
-// `unoptimized` activo (bypass del optimizador de Vercel, ver isSupabaseImageUrl)
+// `unoptimized` activo (bypass del optimizador de Vercel, ver isDirectServedImageUrl)
 // Next NO genera variantes por breakpoint — HOY todo tamaño de pantalla
 // descarga el mismo master. El thumb tiene que cubrir bien la card mas grande
 // (desktop, ~380px CSS), no el promedio.

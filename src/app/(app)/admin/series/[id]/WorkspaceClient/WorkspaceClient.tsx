@@ -15,7 +15,7 @@ import {
 } from '@ant-design/icons';
 import type { getSeriesById } from '@/lib/database';
 import { useLocale } from '@/lib/providers/LocaleProvider';
-import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { EpisodeAnalysisTable } from '../EpisodeAnalysisTable/EpisodeAnalysisTable';
 import { RightRail } from '../RightRail/RightRail';
 import { WorkspaceFooter } from '../WorkspaceFooter/WorkspaceFooter';
@@ -210,7 +210,7 @@ export function WorkspaceClient({ serie }: WorkspaceClientProps) {
               width={160}
               height={224}
               sizes="160px"
-              unoptimized={isSupabaseImageUrl(cardImageUrl(serie))}
+              unoptimized={isDirectServedImageUrl(cardImageUrl(serie))}
             />
           </div>
         ) : null}

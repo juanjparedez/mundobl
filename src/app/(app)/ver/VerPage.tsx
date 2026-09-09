@@ -32,7 +32,7 @@ import {
 import type { QuickPreviewData } from '@/components/design-system';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
-import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { getVerUrl, getSeriesUrl } from '@/lib/slug';
 import { HeroBillboard } from '@/components/streaming/HeroBillboard/HeroBillboard';
 import {
@@ -545,7 +545,7 @@ export function VerPage({ items }: VerPageProps) {
                     href={getVerUrl(item.id, item.title)}
                     imageUrl={cardImageUrl(item)}
                     imageAlt={item.title}
-                    unoptimizedImage={isSupabaseImageUrl(cardImageUrl(item))}
+                    unoptimizedImage={isDirectServedImageUrl(cardImageUrl(item))}
                     aspectRatio="16:9"
                     preview={{
                       api: previewApi,

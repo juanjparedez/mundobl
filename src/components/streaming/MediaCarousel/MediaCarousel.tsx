@@ -14,7 +14,7 @@ import {
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { useCarouselNav } from '@/hooks/useCarouselNav';
 import type { ListPreviewBinding } from '@/components/design-system';
-import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { getVerUrl } from '@/lib/slug';
 import './MediaCarousel.css';
 
@@ -155,7 +155,7 @@ export function MediaCarousel({
                     }`}
                   >
                     {cardImageUrl(item) ? (
-                      isSupabaseImageUrl(cardImageUrl(item)) ? (
+                      isDirectServedImageUrl(cardImageUrl(item)) ? (
                         <Image
                           src={cardImageUrl(item)!}
                           alt={item.title}

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { UserOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import { Chip } from '@/components/design-system';
-import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { isDirectServedImageUrl } from '@/lib/image-helpers';
 import './PersonCard.css';
 
 export interface PersonCardProps {
@@ -49,7 +49,7 @@ export function PersonCard({
             alt=""
             fill
             sizes="(max-width: 480px) 30vw, 120px"
-            unoptimized={isSupabaseImageUrl(imageUrl)}
+            unoptimized={isDirectServedImageUrl(imageUrl)}
             style={{ objectFit: 'cover' }}
           />
         ) : shape === 'circle' ? (

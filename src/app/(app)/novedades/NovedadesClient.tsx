@@ -20,7 +20,7 @@ import {
 import type { QuickPreviewData } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
-import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { getSeriesUrl } from '@/lib/slug';
 import type { TranslationKey } from '@/i18n/messages';
 import { LAST_SEEN_NOVEDADES_KEY } from './storage-keys';
@@ -205,7 +205,7 @@ export function NovedadesClient({
                     href={getSeriesUrl(s.id, s.title)}
                     imageUrl={cardImageUrl(s)}
                     imageAlt={s.title}
-                    unoptimizedImage={isSupabaseImageUrl(cardImageUrl(s))}
+                    unoptimizedImage={isDirectServedImageUrl(cardImageUrl(s))}
                     preview={{
                       api: previewApi,
                       getData: () => buildSeriePreview(s),
@@ -247,7 +247,7 @@ export function NovedadesClient({
                     href={getSeriesUrl(season.series.id, season.series.title)}
                     imageUrl={cardImageUrl(season.series)}
                     imageAlt={season.series.title}
-                    unoptimizedImage={isSupabaseImageUrl(
+                    unoptimizedImage={isDirectServedImageUrl(
                       cardImageUrl(season.series)
                     )}
                     title={season.series.title}
