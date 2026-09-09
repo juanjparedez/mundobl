@@ -43,7 +43,10 @@ interface SeriesPageProps {
 }
 
 // ISR con revalidación a demanda y fallback a 5 minutos
-export const revalidate = 300;
+// buildSeriesFullInclude trae temporadas, episodios, reparto y ratings de
+// la serie. Multiplicado por 637 fichas, revalidar cada 5 min era una
+// fuente constante de egress de base.
+export const revalidate = 900;
 
 export async function generateMetadata({
   params,

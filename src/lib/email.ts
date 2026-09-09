@@ -21,6 +21,13 @@ export interface SendEmailOptions {
   text?: string;
   from?: string;
   /**
+   * Direccion a la que responde el destinatario. Por defecto sale de
+   * EMAIL_REPLY_TO. Importa porque el remitente vive en el subdominio de
+   * envio (notificaciones@send.mundobl.com.ar), que no tiene buzon: sin
+   * esto, quien responda un anuncio le escribe al vacio.
+   */
+  replyTo?: string;
+  /**
    * URL de baja. Si viene, se manda en List-Unsubscribe + One-Click
    * (RFC 8058): Gmail y Yahoo lo piden a remitentes de volumen y mejora la
    * entrega siempre. Sin esto, la unica salida del usuario es marcar spam
@@ -49,6 +56,7 @@ export async function sendEmail({
   html,
   text,
   from = DEFAULT_FROM,
+  replyTo = process.env.EMAIL_REPLY_TO,
   unsubscribeUrl: unsubUrl,
 }: SendEmailOptions): Promise<SendEmailResult> {
   const recipients = Array.isArray(to) ? to : [to];
@@ -73,6 +81,7 @@ export async function sendEmail({
           subject,
           html,
           text: text || html.replace(/<[^>]+>/g, ''),
+          ...(replyTo ? { reply_to: replyTo } : {}),
           ...(unsubUrl
             ? {
                 headers: {
