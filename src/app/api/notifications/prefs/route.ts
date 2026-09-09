@@ -4,6 +4,7 @@ import { requireAuth } from '@/lib/auth-helpers';
 
 interface PrefsInput {
   pushEnabled?: boolean;
+  emailEnabled?: boolean;
   notifySeasonAdded?: boolean;
   notifyContentAdded?: boolean;
   notifyReviewPublished?: boolean;
@@ -28,6 +29,8 @@ function validateTime(value: unknown): string | null | 'invalid' {
 
 const DEFAULT_PREFS = {
   pushEnabled: true,
+  // Opt-in explicito: nadie recibe correo por no haber dicho que no.
+  emailEnabled: false,
   notifySeasonAdded: true,
   notifyContentAdded: true,
   notifyReviewPublished: true,
@@ -67,6 +70,8 @@ export async function PATCH(request: NextRequest) {
   const data: Record<string, unknown> = {};
   if (typeof body.pushEnabled === 'boolean')
     data.pushEnabled = body.pushEnabled;
+  if (typeof body.emailEnabled === 'boolean')
+    data.emailEnabled = body.emailEnabled;
   if (typeof body.notifySeasonAdded === 'boolean')
     data.notifySeasonAdded = body.notifySeasonAdded;
   if (typeof body.notifyContentAdded === 'boolean')
