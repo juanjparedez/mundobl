@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
-import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import './tag-page.css';
 
 interface TagSeriesEntry {
@@ -120,7 +120,7 @@ export function TagPageClient({ tag }: TagPageClientProps) {
                           width={200}
                           height={300}
                           quality={70}
-                          unoptimized={isSupabaseImageUrl(cardImageUrl(entry))}
+                          unoptimized={isDirectServedImageUrl(cardImageUrl(entry))}
                           className="tag-page__card-image"
                         />
                       ) : undefined

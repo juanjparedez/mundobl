@@ -25,7 +25,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { PageTitleClient } from '@/components/common/PageTitle/PageTitleClient';
-import { isSupabaseImageUrl } from '@/lib/image-helpers';
+import { isDirectServedImageUrl } from '@/lib/image-helpers';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import './serie-detail.css';
 
@@ -275,7 +275,7 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
                 height={400}
                 sizes="(max-width: 768px) 100vw, 800px"
                 quality={70}
-                unoptimized={isSupabaseImageUrl(serie.imageUrl)}
+                unoptimized={isDirectServedImageUrl(serie.imageUrl)}
                 className="serie-detail__cover-img"
               />
             </Card>
