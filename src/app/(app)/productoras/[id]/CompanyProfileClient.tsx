@@ -18,7 +18,7 @@ import {
   useQuickPreviewController,
 } from '@/components/design-system';
 import type { QuickPreviewData } from '@/components/design-system';
-import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import type { TranslationKey } from '@/i18n/messages';
@@ -167,7 +167,7 @@ export function CompanyProfileClient({ company }: CompanyProfileClientProps) {
                 alt=""
                 fill
                 sizes="96px"
-                unoptimized={isSupabaseImageUrl(company.imageUrl)}
+                unoptimized={isDirectServedImageUrl(company.imageUrl)}
                 style={{ objectFit: 'contain' }}
               />
             ) : (
@@ -241,7 +241,7 @@ export function CompanyProfileClient({ company }: CompanyProfileClientProps) {
                 href={`/series/${s.id}`}
                 imageUrl={cardImageUrl(s)}
                 imageAlt={s.title}
-                unoptimizedImage={isSupabaseImageUrl(cardImageUrl(s))}
+                unoptimizedImage={isDirectServedImageUrl(cardImageUrl(s))}
                 preview={{
                   api: previewApi,
                   getData: () => buildSeriesPreview(s),

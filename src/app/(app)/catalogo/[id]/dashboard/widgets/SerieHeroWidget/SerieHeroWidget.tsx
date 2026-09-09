@@ -11,7 +11,7 @@ import { Tag } from 'antd';
 import { Widget } from '@/components/dashboard';
 import { Chip } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
-import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import type { SerieDetailData } from '../../../types';
 import './SerieHeroWidget.css';
 
@@ -42,7 +42,7 @@ export function SerieHeroWidget({ serie }: SerieHeroWidgetProps) {
               alt={serie.title}
               width={180}
               height={260}
-              unoptimized={isSupabaseImageUrl(cardImageUrl(serie))}
+              unoptimized={isDirectServedImageUrl(cardImageUrl(serie))}
             />
           </div>
         ) : (

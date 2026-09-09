@@ -8,7 +8,11 @@
  *
  * Si no hay proveedor configurado, loguea en consola en desarrollo
  * sin arrojar errores bloqueantes.
+ *
+ * Incluye ademas el token de baja (HMAC) que viaja en cada envio: vive aca
+ * y no en su propio modulo porque solo tiene sentido junto al envio.
  */
+import crypto from 'crypto';
 
 export interface SendEmailOptions {
   to: string | string[];
@@ -16,6 +20,13 @@ export interface SendEmailOptions {
   html: string;
   text?: string;
   from?: string;
+  /**
+   * URL de baja. Si viene, se manda en List-Unsubscribe + One-Click
+   * (RFC 8058): Gmail y Yahoo lo piden a remitentes de volumen y mejora la
+   * entrega siempre. Sin esto, la unica salida del usuario es marcar spam
+   * — y eso si castiga la reputacion del dominio.
+   */
+  unsubscribeUrl?: string;
 }
 
 export interface SendEmailResult {
@@ -27,12 +38,18 @@ export interface SendEmailResult {
 const DEFAULT_FROM =
   process.env.EMAIL_FROM || 'MundoBL <notificaciones@mundobl.com.ar>';
 
+/** True si hay proveedor configurado y se puede enviar de verdad. */
+export function isEmailConfigured(): boolean {
+  return Boolean(process.env.RESEND_API_KEY);
+}
+
 export async function sendEmail({
   to,
   subject,
   html,
   text,
   from = DEFAULT_FROM,
+  unsubscribeUrl: unsubUrl,
 }: SendEmailOptions): Promise<SendEmailResult> {
   const recipients = Array.isArray(to) ? to : [to];
 
@@ -56,6 +73,14 @@ export async function sendEmail({
           subject,
           html,
           text: text || html.replace(/<[^>]+>/g, ''),
+          ...(unsubUrl
+            ? {
+                headers: {
+                  'List-Unsubscribe': `<${unsubUrl}>`,
+                  'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+                },
+              }
+            : {}),
         }),
       });
 
@@ -95,4 +120,32 @@ export async function sendEmail({
     success: false,
     error: 'Email provider not configured. Please set RESEND_API_KEY.',
   };
+}
+
+/**
+ * Token de baja: HMAC del userId con AUTH_SECRET.
+ *
+ * Firmado y no guardado a proposito — no hay tabla de tokens que mantener,
+ * el link no caduca (un mail viejo tiene que poder darte de baja igual) y
+ * rotando AUTH_SECRET se invalidan todos de una. Como solo apaga una
+ * preferencia, no da acceso a nada mas.
+ */
+export function unsubscribeToken(userId: string): string {
+  const secret = process.env.AUTH_SECRET ?? '';
+  return crypto
+    .createHmac('sha256', secret)
+    .update(`unsubscribe:${userId}`)
+    .digest('hex')
+    .slice(0, 32);
+}
+
+export function verifyUnsubscribeToken(userId: string, token: string): boolean {
+  const expected = unsubscribeToken(userId);
+  // timingSafeEqual explota si los largos difieren: hay que chequearlo antes.
+  if (token.length !== expected.length) return false;
+  return crypto.timingSafeEqual(Buffer.from(token), Buffer.from(expected));
+}
+
+export function unsubscribeUrl(userId: string, baseUrl: string): string {
+  return `${baseUrl}/api/email/unsubscribe?u=${encodeURIComponent(userId)}&t=${unsubscribeToken(userId)}`;
 }

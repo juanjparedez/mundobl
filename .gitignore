@@ -76,3 +76,6 @@ SESSION_HANDOFF.md
 
 # Playwright MCP artifacts
 .playwright-mcp/
+
+# Temporales de la migracion de imagenes a R2 (scripts/migrate-images-to-r2.ts)
+.r2-migration/

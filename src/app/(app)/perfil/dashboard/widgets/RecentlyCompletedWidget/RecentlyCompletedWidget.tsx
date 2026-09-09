@@ -7,7 +7,7 @@ import { Widget } from '@/components/dashboard';
 import { AutoFitList, EmptyState } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
-import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import type { ProfileData } from '../../../types';
 import './RecentlyCompletedWidget.css';
 
@@ -59,7 +59,7 @@ export function RecentlyCompletedWidget({
                         alt=""
                         width={40}
                         height={56}
-                        unoptimized={isSupabaseImageUrl(cardImageUrl(series))}
+                        unoptimized={isDirectServedImageUrl(cardImageUrl(series))}
                       />
                     ) : (
                       <span className="mb-recently-completed-widget__cover-placeholder" />

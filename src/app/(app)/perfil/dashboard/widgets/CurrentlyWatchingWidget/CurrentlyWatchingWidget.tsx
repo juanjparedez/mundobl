@@ -7,7 +7,7 @@ import { Widget } from '@/components/dashboard';
 import { EmptyState } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
-import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import type { ProfileData } from '../../../types';
 import './CurrentlyWatchingWidget.css';
 
@@ -69,7 +69,7 @@ export function CurrentlyWatchingWidget({
                     height={90}
                     sizes="160px"
                     quality={70}
-                    unoptimized={isSupabaseImageUrl(cardImageUrl(series))}
+                    unoptimized={isDirectServedImageUrl(cardImageUrl(series))}
                   />
                 ) : (
                   <span className="mb-cw-shelf__cover-placeholder">

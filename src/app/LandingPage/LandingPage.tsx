@@ -30,7 +30,7 @@ import { signIn, useSession } from 'next-auth/react';
 import { ROUTES } from '@/constants/navigation';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { WatchableCarousel } from '@/components/common/WatchableCarousel/WatchableCarousel';
-import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { getSeriesUrl } from '@/lib/slug';
 import './LandingPage.css';
@@ -658,7 +658,7 @@ export function LandingPage({ stats }: LandingPageProps) {
                       quality={65}
                       unoptimized={
                         shouldSkipOptimization(cardImageUrl(s)) ||
-                        isSupabaseImageUrl(cardImageUrl(s))
+                        isDirectServedImageUrl(cardImageUrl(s))
                       }
                     />
                   ) : (
@@ -716,7 +716,7 @@ export function LandingPage({ stats }: LandingPageProps) {
                     shouldSkipOptimization(
                       cardImageUrl(stats.featuredReview.series)
                     ) ||
-                    isSupabaseImageUrl(
+                    isDirectServedImageUrl(
                       cardImageUrl(stats.featuredReview.series)
                     )
                   }

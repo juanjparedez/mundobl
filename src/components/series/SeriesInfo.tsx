@@ -8,7 +8,7 @@ import { useSession } from 'next-auth/react';
 import { LeftOutlined, LockOutlined, RightOutlined } from '@ant-design/icons';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
-import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { getSeriesUrl } from '@/lib/slug';
 import {
   MetadataChip,
@@ -20,7 +20,11 @@ import { ReviewSpotlight } from './ReviewSpotlight/ReviewSpotlight';
 import './SeriesInfo.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
-import { shouldShowSeasons, shouldShowDuration } from '@/types/content';
+import {
+  shouldShowSeasons,
+  shouldShowDuration,
+  shouldShowEpisodes,
+} from '@/types/content';
 
 interface SeriesInfoProps {
   series: {
@@ -326,7 +330,13 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
         )}
 
         {shouldShowDuration(series.type) && (
-          <Descriptions.Item label={t('seriesInfo.fieldDuration')}>
+          <Descriptions.Item
+            label={
+              shouldShowEpisodes(series.type)
+                ? t('seriesInfo.fieldDurationPerEpisode')
+                : t('seriesInfo.fieldDuration')
+            }
+          >
             {series.durationMinutes
               ? interpolateMessage(t('seriesHeader.durationMinutes'), {
                   minutes: String(series.durationMinutes),
@@ -623,7 +633,7 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
                       alt={item.title}
                       fill
                       sizes="(max-width: 640px) 120px, 140px"
-                      unoptimized={isSupabaseImageUrl(cardImageUrl(item))}
+                      unoptimized={isDirectServedImageUrl(cardImageUrl(item))}
                       style={{
                         objectFit: 'cover',
                         objectPosition: item.imagePosition ?? 'center',
@@ -694,7 +704,7 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
                       alt={item.title}
                       fill
                       sizes="(max-width: 640px) 120px, 140px"
-                      unoptimized={isSupabaseImageUrl(cardImageUrl(item))}
+                      unoptimized={isDirectServedImageUrl(cardImageUrl(item))}
                       style={{
                         objectFit: 'cover',
                         objectPosition: item.imagePosition ?? 'center',

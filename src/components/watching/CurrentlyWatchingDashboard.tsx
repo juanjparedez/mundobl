@@ -16,7 +16,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { useMessage } from '@/hooks/useMessage';
-import { isSupabaseImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { SerieCardSkeleton } from '@/components/common/SerieCardSkeleton/SerieCardSkeleton';
 import { SeriesNoteModal } from '@/components/series/SeriesNoteModal/SeriesNoteModal';
 import { getSeriesUrl } from '@/lib/slug';
@@ -506,7 +506,7 @@ export function CurrentlyWatchingDashboard() {
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
                       quality={65}
-                      unoptimized={isSupabaseImageUrl(
+                      unoptimized={isDirectServedImageUrl(
                         cardImageUrl(item.series)
                       )}
                       className="watching-card__cover"
