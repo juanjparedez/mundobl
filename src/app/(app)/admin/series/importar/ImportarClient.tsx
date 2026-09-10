@@ -301,6 +301,7 @@ export function ImportarClient({
                 embedPlatform: e.embedPlatform,
                 embedChannelName: e.embedChannelName,
                 embedChannelUrl: e.embedChannelUrl,
+                publishedAt: e.publishedAt,
               })),
           })),
           source: {
