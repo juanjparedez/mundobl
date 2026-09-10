@@ -11,6 +11,8 @@ import {
   FacebookOutlined,
   SendOutlined,
 } from '@ant-design/icons';
+import { withUtm } from '@/lib/share-utm';
+import { trackEvent } from '@/lib/analytics';
 import './ShareButton.css';
 
 interface ShareButtonProps {
@@ -71,8 +73,9 @@ export function ShareButton({
         await navigator.share({
           title,
           text: shareText,
-          url: shareUrl,
+          url: withUtm(shareUrl, 'native'),
         });
+        trackEvent('share', { channel: 'native' });
         return;
       } catch (err) {
         if (err instanceof Error && err.name === 'AbortError') return;
@@ -83,7 +86,7 @@ export function ShareButton({
   };
 
   const handleCopy = async () => {
-    const shareUrl = getShareUrl();
+    const shareUrl = withUtm(getShareUrl(), 'copy');
     try {
       if (navigator?.clipboard?.writeText) {
         await navigator.clipboard.writeText(shareUrl);
@@ -98,6 +101,7 @@ export function ShareButton({
         document.body.removeChild(textarea);
       }
       setCopied(true);
+      trackEvent('share', { channel: 'copy' });
       message.success('¡Enlace copiado al portapapeles!');
       setTimeout(() => setCopied(false), 2500);
     } catch {
@@ -107,30 +111,39 @@ export function ShareButton({
 
   const shareUrl = getShareUrl();
   const shareText = getShareText();
+  // Lo que se muestra en el input es exactamente lo que copia el boton.
+  const copyUrl = withUtm(shareUrl, 'copy');
 
+  // Cada canal lleva su propio utm_source para poder separarlos en Vercel
+  // Analytics. Sin esto todo cae en "directo" y no se puede saber que canal
+  // trae gente — ver src/lib/share-utm.ts.
   const socialLinks = [
     {
       name: 'WhatsApp',
+      channel: 'whatsapp' as const,
       icon: <WhatsAppOutlined style={{ fontSize: 20, color: '#25D366' }} />,
-      url: `https://api.whatsapp.com/send?text=${encodeURIComponent(`${shareText} ${shareUrl}`)}`,
+      url: `https://api.whatsapp.com/send?text=${encodeURIComponent(`${shareText} ${withUtm(shareUrl, 'whatsapp')}`)}`,
       bg: 'rgba(37, 211, 102, 0.12)',
     },
     {
       name: 'Telegram',
+      channel: 'telegram' as const,
       icon: <SendOutlined style={{ fontSize: 20, color: '#229ED9' }} />,
-      url: `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`,
+      url: `https://t.me/share/url?url=${encodeURIComponent(withUtm(shareUrl, 'telegram'))}&text=${encodeURIComponent(shareText)}`,
       bg: 'rgba(34, 158, 217, 0.12)',
     },
     {
       name: 'Twitter / X',
+      channel: 'twitter' as const,
       icon: <TwitterOutlined style={{ fontSize: 20, color: '#1DA1F2' }} />,
-      url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`,
+      url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(withUtm(shareUrl, 'twitter'))}`,
       bg: 'rgba(29, 161, 242, 0.12)',
     },
     {
       name: 'Facebook',
+      channel: 'facebook' as const,
       icon: <FacebookOutlined style={{ fontSize: 20, color: '#1877F2' }} />,
-      url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`,
+      url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(withUtm(shareUrl, 'facebook'))}`,
       bg: 'rgba(24, 119, 242, 0.12)',
     },
   ];
@@ -175,6 +188,7 @@ export function ShareButton({
                 rel="noopener noreferrer"
                 className="share-modal__item"
                 style={{ background: item.bg }}
+                onClick={() => trackEvent('share', { channel: item.channel })}
               >
                 {item.icon}
                 <span>{item.name}</span>
@@ -184,7 +198,7 @@ export function ShareButton({
 
           <div className="share-modal__copy-box">
             <Input
-              value={shareUrl}
+              value={copyUrl}
               readOnly
               className="share-modal__input"
               addonAfter={
