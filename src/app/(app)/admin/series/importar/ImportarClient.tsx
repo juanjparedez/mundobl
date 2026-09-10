@@ -124,6 +124,12 @@ export function ImportarClient({
   );
   const [loading, setLoading] = useState(false);
   const [confirming, setConfirming] = useState(false);
+  // Serie del catálogo que colisiona por título. Cuando está seteada, la UI
+  // ofrece adjuntarle los episodios en vez de dejar la importación trabada.
+  const [duplicate, setDuplicate] = useState<{
+    id: number;
+    message: string;
+  } | null>(null);
   const [preview, setPreview] = useState<ImportPreview | null>(null);
 
   // Editable copy of preview values that the admin can mutate.
@@ -265,7 +271,12 @@ export function ImportarClient({
     message.success('Episodios renumerados 1..N');
   }
 
-  async function handleConfirm() {
+  /**
+   * @param targetSeriesId Si viene, los episodios se adjuntan a esa ficha del
+   * catálogo en vez de crear una serie nueva. Es la salida al 409 de duplicado:
+   * la ficha ya está curada y lo único que le falta es el reproductor.
+   */
+  async function handleConfirm(targetSeriesId?: number) {
     if (!editTitle.trim()) {
       message.warning('Falta el titulo de la serie');
       return;
@@ -308,14 +319,32 @@ export function ImportarClient({
             playlistId: preview?.source.playlistId,
             playlistUrl: preview?.source.playlistUrl,
           },
+          ...(targetSeriesId ? { targetSeriesId } : {}),
         }),
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
+        // 409 = la serie ya está en el catálogo curado. No es un callejón sin
+        // salida: casi siempre es la ficha a la que justamente le falta el
+        // reproductor, así que se ofrece adjuntar en vez de rebotar.
+        if (res.status === 409 && err.existingSeriesId && !isCollaborator) {
+          setDuplicate({
+            id: err.existingSeriesId,
+            message: err.error || 'La serie ya existe en el catálogo.',
+          });
+          return;
+        }
         throw new Error(err.error || `Error ${res.status}`);
       }
       const data = await res.json();
-      message.success(`Serie "${data.title}" creada`);
+      if (data.attached) {
+        const { created, enriched, skipped } = data.attached;
+        message.success(
+          `Adjuntado a "${data.title}": ${created} episodios nuevos, ${enriched} completados, ${skipped} sin tocar`
+        );
+      } else {
+        message.success(`Serie "${data.title}" creada`);
+      }
       router.push(
         isCollaborator
           ? `/admin/colaborador/${data.seriesId}`
@@ -657,6 +686,44 @@ export function ImportarClient({
             </div>
           ))}
 
+          {duplicate && (
+            <Alert
+              type="info"
+              showIcon
+              message="Esa serie ya está en el catálogo"
+              description={
+                <Space direction="vertical" size={8}>
+                  <span>
+                    {duplicate.message} Si es la misma serie, podés colgarle
+                    estos episodios a la ficha que ya existe: se completan los
+                    que no tengan video y no se pisa ninguno de los que ya se
+                    pueden ver.
+                  </span>
+                  <Space wrap>
+                    <Button
+                      type="primary"
+                      loading={confirming}
+                      onClick={() => handleConfirm(duplicate.id)}
+                    >
+                      Adjuntar a la ficha existente
+                    </Button>
+                    <Button
+                      onClick={() =>
+                        router.push(`/admin/series/${duplicate.id}/editar`)
+                      }
+                    >
+                      Ver la ficha
+                    </Button>
+                    <Button type="text" onClick={() => setDuplicate(null)}>
+                      Descartar
+                    </Button>
+                  </Space>
+                </Space>
+              }
+              style={{ marginBottom: 16 }}
+            />
+          )}
+
           <div className="importar-actions">
             <Button onClick={() => setPreview(null)}>Cancelar</Button>
             <Button
@@ -669,7 +736,7 @@ export function ImportarClient({
                 missingNumbers > 0 ||
                 totalEpisodes === 0
               }
-              onClick={handleConfirm}
+              onClick={() => handleConfirm()}
             >
               Confirmar e importar ({totalEpisodes} episodios)
             </Button>
