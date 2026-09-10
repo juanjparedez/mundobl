@@ -1320,6 +1320,7 @@ export type TranslationShape = {
     fieldLanguage: string;
     fieldGenres: string;
     fieldSynopsis: string;
+    fieldReview: string;
     fieldSoundtrack: string;
     fieldRating: string;
     fieldObservations: string;
@@ -4324,6 +4325,7 @@ const es: TranslationShape = {
     fieldLanguage: 'Idioma Original',
     fieldGenres: 'Genero',
     fieldSynopsis: 'Sinopsis',
+    fieldReview: 'Reseña editorial',
     fieldSoundtrack: 'Banda Sonora (BSO)',
     fieldRating: 'Puntuacion General (1-10)',
     fieldObservations: 'Observaciones',
@@ -7409,6 +7411,7 @@ const en: TranslationShape = {
     fieldLanguage: 'Original Language',
     fieldGenres: 'Genre',
     fieldSynopsis: 'Synopsis',
+    fieldReview: 'Editorial review',
     fieldSoundtrack: 'Soundtrack (OST)',
     fieldRating: 'Overall Rating (1-10)',
     fieldObservations: 'Observations',

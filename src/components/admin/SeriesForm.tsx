@@ -1222,6 +1222,17 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                 </Form.Item>
               </Col>
 
+              {/* Resena editorial (`Series.review`): la voz curatorial, que es
+                  el diferencial del sitio frente a MyDramaList. Estuvo ausente
+                  de este form aunque la clave i18n y la columna existian, asi
+                  que el PUT la pisaba con null en cada guardado. Va antes de la
+                  banda sonora para que quede pegada a la sinopsis. */}
+              <Col xs={24}>
+                <Form.Item label={t('seriesForm.fieldReview')} name="review">
+                  <TextArea rows={6} />
+                </Form.Item>
+              </Col>
+
               <Col xs={24} md={12}>
                 <Form.Item
                   label={t('seriesForm.fieldSoundtrack')}

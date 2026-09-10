@@ -1329,6 +1329,7 @@ const de: TranslationShape = {
     "fieldLanguage": "Originalsprache",
     "fieldGenres": "Genre",
     "fieldSynopsis": "Synopsis",
+    "fieldReview": "Redaktionelle Rezension",
     "fieldSoundtrack": "Soundtrack (OST)",
     "fieldRating": "Gesamtwertung (1-10)",
     "fieldObservations": "Bemerkungen",

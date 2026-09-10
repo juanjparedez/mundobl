@@ -1329,6 +1329,7 @@ const th: TranslationShape = {
     "fieldLanguage": "ภาษาต้นฉบับ",
     "fieldGenres": "แนว",
     "fieldSynopsis": "เรื่องย่อ",
+    "fieldReview": "รีวิวจากบรรณาธิการ",
     "fieldSoundtrack": "เพลงประกอบ (OST)",
     "fieldRating": "คะแนนโดยรวม (1-10)",
     "fieldObservations": "ข้อสังเกต",

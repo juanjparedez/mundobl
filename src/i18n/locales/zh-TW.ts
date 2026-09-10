@@ -1329,6 +1329,7 @@ const zhTW: TranslationShape = {
     "fieldLanguage": "原始語言",
     "fieldGenres": "類型",
     "fieldSynopsis": "劇情簡介",
+    "fieldReview": "編輯評論",
     "fieldSoundtrack": "原聲帶 (OST)",
     "fieldRating": "總體評分 (1-10)",
     "fieldObservations": "備註",
