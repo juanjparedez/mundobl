@@ -100,6 +100,8 @@ interface LandingStats {
   totalGlossaryTerms?: number;
   featuredGlossaryTerm?: FeaturedGlossaryTerm | null;
   latestNews?: LatestNewsItem[];
+  /** Series curadas agregadas en los ultimos 7 dias. COUNT real. */
+  newThisWeek?: number;
 }
 
 interface LandingPageProps {
@@ -525,7 +527,7 @@ export function LandingPage({ stats }: LandingPageProps) {
 
             <p className="landing__glossary-term-meaning">
               {stats.featuredGlossaryTerm?.meaning ||
-                'Tratamiento de respeto y cercanía hacia alguien mayor (P\') o menor (N\'). Fundamental para entender dinámicas y afecto en el BL tailandés.'}
+                "Tratamiento de respeto y cercanía hacia alguien mayor (P') o menor (N'). Fundamental para entender dinámicas y afecto en el BL tailandés."}
             </p>
 
             <div className="landing__glossary-term-action">
@@ -632,10 +634,22 @@ export function LandingPage({ stats }: LandingPageProps) {
       {stats.latestSeries.length > 0 && (
         <section className="landing__latest">
           <header className="landing__section-head">
-            <h2 className="landing__section-title">
-              {t('landing.latestSeriesTitle')}
-            </h2>
-            <Link href={ROUTES.CATALOGO} className="landing__section-link">
+            <div>
+              <h2 className="landing__section-title">
+                {t('landing.latestSeriesTitle')}
+              </h2>
+              {/* El ritmo real de carga es el motivo mas honesto para
+                  volver: son filas contadas, no una metrica inflada. Si la
+                  semana fue floja no se muestra nada en vez de rellenar. */}
+              {(stats.newThisWeek ?? 0) > 0 && (
+                <p className="landing__section-note">
+                  {t('landing.latestSeriesThisWeek', {
+                    n: stats.newThisWeek ?? 0,
+                  })}
+                </p>
+              )}
+            </div>
+            <Link href={ROUTES.NOVEDADES} className="landing__section-link">
               {t('landing.latestSeriesCta')} <ArrowRightOutlined />
             </Link>
           </header>

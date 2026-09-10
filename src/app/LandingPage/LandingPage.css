@@ -306,6 +306,16 @@
   line-height: 1.55;
 }
 
+/* Ritmo de carga real bajo el titulo de "recien agregadas". Es un dato
+   contado, no una metrica de vanidad, asi que se muestra sobrio: pesa el
+   numero, no el adorno. */
+.landing__section-note {
+  margin: 4px 0 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: 600;
+}
+
 .landing__section-link {
   display: inline-flex;
   align-items: center;
