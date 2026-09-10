@@ -208,3 +208,25 @@ export function inferSeriesTitle(cleanTitles: string[]): string | null {
 
   return null;
 }
+
+// ============================================
+// Fecha de emision (Episode.airDate)
+// ============================================
+//
+// La YouTube Data API devuelve `publishedAt` como ISO 8601 en UTC. Es la
+// mejor aproximacion disponible a la fecha de emision de un episodio: los
+// canales oficiales (GMMTV, Idol Factory, Mandee) suben cada capitulo el
+// mismo dia que sale al aire. No es exacta para catalogo historico subido
+// de golpe años despues, pero para series en emision — que es donde importa,
+// porque son las que traen a la gente de vuelta cada semana — es fiel.
+//
+// Devuelve null ante cualquier valor que no sea una fecha real, asi el
+// campo queda vacio en vez de guardar un Invalid Date.
+export function parseAirDate(
+  publishedAt: string | null | undefined
+): Date | null {
+  if (!publishedAt) return null;
+  const parsed = new Date(publishedAt);
+  if (Number.isNaN(parsed.getTime())) return null;
+  return parsed;
+}
