@@ -17,6 +17,48 @@ import type { Role } from '@/generated/prisma';
 // ROLE_REFRESH_MS en hacer efecto.
 const ROLE_REFRESH_MS = 20 * 60 * 1000;
 
+/**
+ * Correo de bienvenida, unico envio automatico que recibe una cuenta nueva.
+ *
+ * Es transaccional: sale una sola vez al crear la cuenta y lleva su propio
+ * link de baja, asi que no depende de `NotificationPrefs.emailEnabled` (que
+ * arranca en false y gobierna los envios recurrentes).
+ *
+ * Se hace `await` y no fire-and-forget a proposito: en serverless una
+ * promesa suelta se puede congelar antes de resolverse cuando termina la
+ * request. El try/catch garantiza que un fallo de Resend nunca rompa el
+ * alta — preferimos una cuenta creada sin correo que un login fallido.
+ */
+async function sendWelcomeEmail(
+  userId: string | undefined,
+  email: string | null | undefined,
+  name: string | null | undefined
+): Promise<void> {
+  if (!userId || !email) return;
+
+  try {
+    const { isEmailConfigured, sendEmail, unsubscribeUrl } =
+      await import('@/lib/email');
+    if (!isEmailConfigured()) return;
+
+    const { renderWelcomeEmail, SITE_URL } =
+      await import('@/lib/email-templates');
+
+    const unsubUrl = unsubscribeUrl(userId, SITE_URL);
+    const rendered = renderWelcomeEmail({ name, siteUrl: SITE_URL });
+
+    await sendEmail({
+      to: email,
+      subject: rendered.subject,
+      html: rendered.html,
+      text: rendered.text,
+      unsubscribeUrl: unsubUrl,
+    });
+  } catch (error) {
+    console.error('[auth] No se pudo enviar el correo de bienvenida:', error);
+  }
+}
+
 // El campo extra que guardamos en el JWT. No se tipa via module
 // augmentation de '@auth/core/jwt' — ver el comentario en
 // src/types/next-auth.d.ts sobre por que no funciona en este repo — asi
@@ -58,6 +100,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           data: { role: 'ADMIN' },
         });
       }
+
+      await sendWelcomeEmail(user.id, user.email, user.name);
     },
   },
   callbacks: {
