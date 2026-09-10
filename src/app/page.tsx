@@ -30,6 +30,7 @@ async function getLandingStats() {
       totalGlossaryTerms,
       featuredGlossaryTerm,
       latestNews,
+      newThisWeek,
     ] = await Promise.all([
       prisma.series.count({ where: { origin: 'CURATED' } }),
       prisma.viewStatus.count({
@@ -142,6 +143,20 @@ async function getLandingStats() {
           sourceName: true,
         },
       }),
+      // Cuantas series curadas entraron en los ultimos 7 dias. Es un COUNT
+      // sobre filas reales, no una metrica inflada: el catalogo viene
+      // sumando ~26 series por semana y la vidriera de "recien agregadas"
+      // no dejaba ver ese ritmo. Mismo filtro que `latestSeries` para que
+      // el numero cuente exactamente lo que la franja muestra.
+      prisma.series.count({
+        where: {
+          origin: 'CURATED',
+          catalogScope: 'PERSONAL',
+          createdAt: {
+            gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+          },
+        },
+      }),
     ]);
 
     const formattedWatchable = watchableSeries.map((s) => {
@@ -189,6 +204,7 @@ async function getLandingStats() {
       totalGlossaryTerms,
       featuredGlossaryTerm,
       latestNews: formattedNews,
+      newThisWeek,
     };
   } catch {
     return {
@@ -202,6 +218,7 @@ async function getLandingStats() {
       totalGlossaryTerms: 0,
       featuredGlossaryTerm: null,
       latestNews: [],
+      newThisWeek: 0,
     };
   }
 }

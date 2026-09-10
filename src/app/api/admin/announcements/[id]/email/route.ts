@@ -139,7 +139,7 @@ export async function POST(
       CONCURRENCY,
       async (recipient) => {
         const unsubUrl = unsubscribeUrl(recipient.id, SITE_URL);
-        const { html, text } = renderAnnouncementEmail({
+        const { subject, html, text } = renderAnnouncementEmail({
           title: announcement.title,
           body: announcement.body,
           linkUrl: announcement.linkUrl,
@@ -149,7 +149,9 @@ export async function POST(
         });
         return sendEmail({
           to: recipient.email,
-          subject: announcement.title,
+          // El asunto lo define la plantilla, no la ruta: asi vive junto al
+          // resto del texto del correo y no se desincroniza.
+          subject,
           html,
           text,
           unsubscribeUrl: unsubUrl,
