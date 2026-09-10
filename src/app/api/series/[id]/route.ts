@@ -234,7 +234,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         }),
         imagePosition: body.imagePosition || 'center',
         synopsis: body.synopsis || null,
-        review: body.review || null,
+        // Defensivo a proposito (mismo patron que `airDays` mas abajo): si el
+        // body no trae la clave, no se toca la columna. Sin esto, cualquier
+        // guardado desde un form que no registre el campo lo pisaba con null
+        // — que es exactamente como se perdio la resena editorial de las 613
+        // series del catalogo (medido 2026-09-10: 549 con nota, 0 con resena).
+        review: body.review !== undefined ? body.review || null : undefined,
         soundtrack: body.soundtrack || null,
         overallRating: body.overallRating
           ? parseInt(body.overallRating, 10)

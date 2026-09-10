@@ -1329,6 +1329,7 @@ const ja: TranslationShape = {
     "fieldLanguage": "原語",
     "fieldGenres": "ジャンル",
     "fieldSynopsis": "あらすじ",
+    "fieldReview": "編集レビュー",
     "fieldSoundtrack": "サウンドトラック (OST)",
     "fieldRating": "総合評価 (1-10)",
     "fieldObservations": "備考",
