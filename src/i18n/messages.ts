@@ -1320,6 +1320,7 @@ export type TranslationShape = {
     fieldLanguage: string;
     fieldGenres: string;
     fieldSynopsis: string;
+    fieldReview: string;
     fieldSoundtrack: string;
     fieldRating: string;
     fieldObservations: string;
@@ -1582,6 +1583,7 @@ export type TranslationShape = {
     novedadVotesDesc: string;
     latestSeriesTitle: string;
     latestSeriesCta: string;
+    latestSeriesThisWeek: string;
     reviewSpotlightEyebrow: string;
     reviewSpotlightTitle: string;
     featuresTitle: string;
@@ -4324,6 +4326,7 @@ const es: TranslationShape = {
     fieldLanguage: 'Idioma Original',
     fieldGenres: 'Genero',
     fieldSynopsis: 'Sinopsis',
+    fieldReview: 'Reseña editorial',
     fieldSoundtrack: 'Banda Sonora (BSO)',
     fieldRating: 'Puntuacion General (1-10)',
     fieldObservations: 'Observaciones',
@@ -4603,7 +4606,8 @@ const es: TranslationShape = {
     novedadVotesDesc:
       'Las reseñas más valoradas suben primero y el staff puede destacar una por serie como recomendación oficial.',
     latestSeriesTitle: 'Series recién agregadas',
-    latestSeriesCta: 'Ver catálogo',
+    latestSeriesCta: 'Ver todas las novedades',
+    latestSeriesThisWeek: '{n} series nuevas esta semana',
     reviewSpotlightEyebrow: 'De la comunidad',
     reviewSpotlightTitle: 'Una reseña que te recomendamos',
     featuresTitle: '¿Qué podés hacer?',
@@ -7409,6 +7413,7 @@ const en: TranslationShape = {
     fieldLanguage: 'Original Language',
     fieldGenres: 'Genre',
     fieldSynopsis: 'Synopsis',
+    fieldReview: 'Editorial review',
     fieldSoundtrack: 'Soundtrack (OST)',
     fieldRating: 'Overall Rating (1-10)',
     fieldObservations: 'Observations',
@@ -7687,7 +7692,8 @@ const en: TranslationShape = {
     novedadVotesDesc:
       'Top-rated reviews surface first and the staff can feature one per series as the official recommendation.',
     latestSeriesTitle: 'Recently added series',
-    latestSeriesCta: 'Browse catalog',
+    latestSeriesCta: 'See all updates',
+    latestSeriesThisWeek: '{n} new series this week',
     reviewSpotlightEyebrow: 'From the community',
     reviewSpotlightTitle: 'A review we recommend',
     featuresTitle: 'What can you do?',
