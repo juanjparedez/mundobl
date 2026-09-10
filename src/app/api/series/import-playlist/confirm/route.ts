@@ -3,6 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { checkCollaboratorImportRateLimit } from '@/lib/rate-limit';
+import { parseAirDate } from '@/lib/episode-parser';
 
 interface ConfirmEpisode {
   episodeNumber: number;
@@ -12,6 +13,9 @@ interface ConfirmEpisode {
   embedPlatform: string;
   embedChannelName: string;
   embedChannelUrl: string;
+  // ISO 8601 de la YouTube Data API. Alimenta `Episode.airDate`, que es lo
+  // que despues permite armar el calendario semanal de estrenos.
+  publishedAt?: string | null;
 }
 
 interface ConfirmSeason {
@@ -173,6 +177,7 @@ export async function POST(request: NextRequest) {
               embedVideoId: ep.videoId,
               embedChannelName: ep.embedChannelName || null,
               embedChannelUrl: ep.embedChannelUrl || null,
+              airDate: parseAirDate(ep.publishedAt),
             })),
           });
         }
