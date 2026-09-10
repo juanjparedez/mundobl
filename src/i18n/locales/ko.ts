@@ -1329,6 +1329,7 @@ const ko: TranslationShape = {
     "fieldLanguage": "원어",
     "fieldGenres": "장르",
     "fieldSynopsis": "시놉시스",
+    "fieldReview": "편집 리뷰",
     "fieldSoundtrack": "사운드트랙 (OST)",
     "fieldRating": "전체 평점 (1-10)",
     "fieldObservations": "관찰",

@@ -1329,6 +1329,7 @@ const zhCN: TranslationShape = {
     "fieldLanguage": "原始语言",
     "fieldGenres": "类型",
     "fieldSynopsis": "剧情简介",
+    "fieldReview": "编辑评论",
     "fieldSoundtrack": "原声带 (OST)",
     "fieldRating": "综合评分 (1-10)",
     "fieldObservations": "备注",
