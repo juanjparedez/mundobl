@@ -1613,6 +1613,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                             { value: 'Netflix', label: 'Netflix' },
                             { value: 'GagaOOLala', label: 'GagaOOLala' },
                             { value: 'Bilibili', label: 'Bilibili' },
+                            { value: 'Spotify', label: 'Spotify' },
                             { value: 'Otro', label: 'Otro' },
                           ]}
                         />
