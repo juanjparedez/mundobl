@@ -319,6 +319,69 @@ El catalogo de /ver **se pudre solo**: las productoras licencian series a Viki/i
 
 ---
 
+## Parrilla semanal de emision (`/estrenos`)
+
+Que serie sale cada dia de la semana. Vive en la landing como banda (entre `landing__stats` y
+`landing__novedades`) y en `/estrenos` como permalink. La banda es el producto: `/` recibe 249
+visitas/mes contra 134 de `/catalogo` y 4 de `/glosario` — una ruta nueva y profunda nace con el
+trafico del glosario.
+
+**El dato es `Series.airDays`, NO `Episode.airDate`.** Medido el 2026-09-12 en produccion:
+
+| | |
+| --- | --- |
+| Episodios con `airDate` | 1.831 de 6.933 |
+| con `airDate` en los ultimos 7 dias | **2** |
+| en los ultimos 90 dias | 41 — **las 41 de una sola serie** |
+| esa serie | id 655, `USER_EMBED` + `WATCHABLE_ONLY` |
+| Series con `airDays`, `year >= 2026`, creadas hace < 16 semanas | **38, todas `CURATED` + `PERSONAL`** |
+
+`airDate` es el `publishedAt` de YouTube: un archivo historico de subidas (2022 -> 398 episodios,
+2023 -> 315, 2024 -> 201), no un feed de estrenos. Una parrilla por fecha mostraria 2 episodios de
+un aporte de usuario y habria filtrado `USER_EMBED` al catalogo curado. **La query no toca esa
+columna**, asi que el blindaje es estructural y no hay heuristica que calibrar.
+
+- **Helper**: [getAiringSchedule()](src/lib/database.ts) — `origin='CURATED'` +
+  `catalogScope='PERSONAL'` + `visibility='VISIBLE'` explicitos. Payload podado a 9 campos
+  (~8 KB): sin `synopsis`, `review`, `seasons`, `tags` ni `genres`.
+- **Logica pura**: [src/lib/airing-schedule.ts](src/lib/airing-schedule.ts) — `AIR_DAY_MAP`,
+  `parseAirDays`, `groupByWeekday`, `getAirDayStatus`. Se extrajo de
+  `CurrentlyWatchingDashboard.tsx`, que la tenia privada y con las etiquetas en español
+  hardcodeadas dentro de un componente traducido a 10 idiomas.
+- **Componente**: [WeeklySchedule](src/components/estrenos/WeeklySchedule/WeeklySchedule.tsx) —
+  sin texto propio (recibe `labels` via `useWeeklyScheduleLabels`), reusa `MediaCard` y `Chip`
+  del design-system.
+
+**Ventana de vigencia (`AIRING_WINDOW_WEEKS = 16`)**: `airDays` nunca se apaga — una serie que
+termino en mayo sigue diciendo "jueves" para siempre, y publicar un horario falso es peor que no
+publicar nada. Flor carga la serie cuando empieza a emitirse y una temporada BL dura 10-14
+semanas. **La ventana caduca sola**: el error, cuando ocurre, es por omision (una serie muy larga
+desaparece), nunca por afirmacion falsa. Cuando moleste, el reemplazo es `Series.airingUntil
+DateTime?` (columna aditiva, override manual del admin) y `isAiringNow` gana una linea.
+
+**Lo que la parrilla NO afirma, a proposito**: numero de capitulo (derivarlo de `createdAt` +
+cadencia seria inventarlo), hora de emision (no existe el campo) ni "ya esta disponible"
+(ninguna de las 38 tiene embed).
+
+**Trampa de hidratacion**: "hoy" NO se calcula en el servidor. Con ISR y Vercel en UTC, el dia
+queda congelado en el cache y da mal para un argentino despues de las 21:00. `WeeklySchedule` usa
+`useSyncExternalStore` con `getServerSnapshot` devolviendo un centinela: el SSR renderiza lunes ->
+domingo sin marca de hoy, y el cliente rota el orden con su dia real.
+
+**Aviso de capitulo nuevo: no implementado.** No hay evento que detectar (las 38 series tienen 0
+episodios con `airDate` y 0 con `embedUrl`) ni a quien avisarle (`SeriesSubscription` tenia 0
+filas). La campanita de `/estrenos`
+([ScheduleSubscribeToggle](src/components/estrenos/ScheduleSubscribeToggle/ScheduleSubscribeToggle.tsx),
+contra el `POST|DELETE /api/series/[id]/subscribe` existente, con
+[GET /api/user/subscriptions](src/app/api/user/subscriptions/route.ts) resolviendo las N en un
+fetch) existe para que las suscripciones empiecen a acumularse. Cuando haya volumen, el cron va
+calcado de `/api/cron/playability`, con gate de calidad del dato: solo disparar si
+`max(airDate) >= hoy-2d` **y** >= 3 episodios con `airDate` **y** espaciado mediano de 6-8 dias
+(eso distingue una serie en emision de un volcado historico). Registrar el tipo nuevo en **los
+dos** mapeos `type -> flag` de `src/lib/web-push.ts` (estan duplicados).
+
+---
+
 ## Rol de colaborador externo (`COLLABORATOR`)
 
 Cuarto valor del enum `Role` (junto a `ADMIN`/`MODERATOR`/`VISITOR`), pensado para productoras/proveedores de contenido externos (ej. XUXY) que Flor evalua y aprueba a mano — **nunca autoservicio**: solo un ADMIN asigna este rol desde `/admin/usuarios` (`PUT /api/users/[id]/role`).

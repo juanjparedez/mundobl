@@ -28,6 +28,10 @@ import {
 } from '@ant-design/icons';
 import { signIn, useSession } from 'next-auth/react';
 import { ROUTES } from '@/constants/navigation';
+import { SectionHeader } from '@/components/design-system';
+import { WeeklySchedule } from '@/components/estrenos/WeeklySchedule/WeeklySchedule';
+import { useWeeklyScheduleLabels } from '@/components/estrenos/WeeklySchedule/useWeeklyScheduleLabels';
+import type { AiringScheduleRow } from '@/lib/database';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { WatchableCarousel } from '@/components/common/WatchableCarousel/WatchableCarousel';
 import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
@@ -102,6 +106,8 @@ interface LandingStats {
   latestNews?: LatestNewsItem[];
   /** Series curadas agregadas en los ultimos 7 dias. COUNT real. */
   newThisWeek?: number;
+  /** Parrilla semanal de emision (CURATED + PERSONAL, ventana de 16 semanas). */
+  airingSchedule?: AiringScheduleRow[];
 }
 
 interface LandingPageProps {
@@ -112,6 +118,7 @@ export function LandingPage({ stats }: LandingPageProps) {
   const router = useRouter();
   const { data: session } = useSession();
   const { t } = useLocale();
+  const scheduleLabels = useWeeklyScheduleLabels();
 
   const features = [
     {
@@ -332,6 +339,32 @@ export function LandingPage({ stats }: LandingPageProps) {
           </div>
         ))}
       </section>
+
+      {/* ── Parrilla semanal de emision ──
+       * Que sale cada dia de esta semana. Es lo primero con informacion
+       * perecedera que ve el visitante, y el motivo de volver: el fandom
+       * mira semanal. Si no hay series en emision, la seccion entera no
+       * se renderiza (mismo criterio que landing__watchable): un header
+       * huerfano sobre una parrilla vacia seria peor que no mostrarla. */}
+      {stats.airingSchedule && stats.airingSchedule.length > 0 && (
+        <section className="landing__estrenos">
+          <SectionHeader
+            title={t('estrenos.title')}
+            subtitle={t('estrenos.subtitle')}
+            icon={<CalendarOutlined />}
+            actions={
+              <Link href={ROUTES.ESTRENOS} className="landing__estrenos-link">
+                {t('estrenos.seeAll')} →
+              </Link>
+            }
+          />
+          <WeeklySchedule
+            rows={stats.airingSchedule}
+            labels={scheduleLabels}
+            maxPerDay={4}
+          />
+        </section>
+      )}
 
       {/* ── Novedades / Lo nuevo ── */}
       <section className="landing__novedades">

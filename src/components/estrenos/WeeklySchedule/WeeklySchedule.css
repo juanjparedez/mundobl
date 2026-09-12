@@ -1,0 +1,98 @@
+/**
+ * Parrilla semanal. Desktop: 7 columnas iguales. Mobile: tira horizontal con
+ * scroll-snap, para no apilar 7 secciones de alto completo.
+ *
+ * Cero hex: la columna de hoy sale de --primary-color, que es el accent que
+ * eligio el usuario en Settings. Si alguna vez se ve dorada fija, alguien
+ * hardcodeo un color.
+ */
+
+.weekly-schedule {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--spacing-sm);
+  align-items: start;
+}
+
+.weekly-schedule__day {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  min-width: 0;
+  padding: var(--spacing-sm);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-base);
+  background: var(--bg-elevated);
+}
+
+.weekly-schedule__day--today {
+  border-color: var(--primary-color);
+  background: color-mix(in srgb, var(--primary-color) 8%, var(--bg-elevated));
+}
+
+.weekly-schedule__day-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-xs);
+  min-height: 24px;
+}
+
+.weekly-schedule__day-name {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.weekly-schedule__day--today .weekly-schedule__day-name {
+  color: var(--text-primary);
+}
+
+.weekly-schedule__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.weekly-schedule__item {
+  min-width: 0;
+}
+
+.weekly-schedule__day-empty {
+  margin: 0;
+  padding: var(--spacing-sm) 0;
+  color: var(--text-tertiary, var(--text-secondary));
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.weekly-schedule__more {
+  padding-top: var(--spacing-xs);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+/* Mobile: tira con scroll-snap en vez de 7 bloques apilados. */
+@media (max-width: 768px) {
+  .weekly-schedule {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: var(--spacing-xs);
+  }
+
+  .weekly-schedule__day {
+    flex: 0 0 clamp(140px, 46vw, 200px);
+    scroll-snap-align: start;
+  }
+}

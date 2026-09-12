@@ -506,6 +506,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     revalidatePath('/admin/series');
     revalidatePath('/catalogo');
     revalidatePath('/ver');
+    // La parrilla de /estrenos sale de `airDays`, que se edita aca; sin esto
+    // el cambio no se ve hasta que expire el ISR de una hora.
+    revalidatePath('/estrenos');
+    revalidatePath('/');
     revalidatePath(`/series/${serieId}`);
     revalidatePath(`/catalogo/${serieId}`);
 
@@ -554,6 +558,10 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     revalidatePath('/admin/series');
     revalidatePath('/catalogo');
     revalidatePath('/ver');
+    // La parrilla de /estrenos sale de `airDays`, que se edita aca; sin esto
+    // el cambio no se ve hasta que expire el ISR de una hora.
+    revalidatePath('/estrenos');
+    revalidatePath('/');
     revalidatePath(`/series/${serieId}`);
     revalidatePath(`/catalogo/${serieId}`);
 
