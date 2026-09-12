@@ -8,6 +8,22 @@ Todas las versiones notables del proyecto se documentan aqui.
 > (`ChangelogItem`, `/admin/changelog`) quedo como fallback solo si este archivo
 > esta vacio.
 
+## 2026-09-12 — Parrilla semanal de estrenos
+
+### Qué sale esta semana
+
+- **Parrilla de emisión** en la landing y en `/estrenos`: qué serie sale cada día de la semana,
+  con el día de hoy primero y resaltado. El fandom mira semanal y hasta ahora la app no mostraba
+  en ningún lado cuándo salía un capítulo.
+- **Sale de `Series.airDays`**, el día de emisión que ya se cargaba desde el admin. No dice número
+  de capítulo, ni hora, ni "ya está disponible": no tenemos esos datos y no los inventamos.
+- **Se apaga sola**: una serie deja la parrilla cuatro meses después de cargada, así una que ya
+  terminó no sigue publicando un horario que no existe.
+- **Campanita "avisame"** por serie. Por ahora alimenta las notificaciones que ya existían; el
+  aviso automático de capítulo nuevo todavía no está.
+- Traducida a los 10 idiomas. Como efecto colateral, el semáforo de emisión de "Viendo ahora"
+  dejó de estar en español fijo y ahora también se traduce.
+
 ## 2026-09-06 — Feedback colaborativo, curaduría ágil, SEO semántico, experiencia de landing y disponibilidad real en /ver
 
 ### Features

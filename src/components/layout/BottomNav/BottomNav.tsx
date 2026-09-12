@@ -3,6 +3,7 @@
 import { startTransition, useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import {
+  CalendarOutlined,
   AppstoreOutlined,
   PlayCircleOutlined,
   SettingOutlined,
@@ -106,6 +107,12 @@ export function BottomNav() {
   //  2) accesos de cuenta (perfil/login, admin, ajustes, logout).
   // Asi mobile no pierde features que existen en desktop.
   const moreItems: NavItem[] = [
+    {
+      key: 'estrenos',
+      icon: <CalendarOutlined />,
+      label: t('estrenos.title'),
+      path: ROUTES.ESTRENOS,
+    },
     {
       key: 'ver',
       icon: <VideoCameraOutlined />,
