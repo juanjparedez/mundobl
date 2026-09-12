@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Avatar, Layout, Menu } from 'antd';
 import {
   AppstoreOutlined,
+  CalendarOutlined,
   BarChartOutlined,
   SettingOutlined,
   MenuFoldOutlined,
@@ -84,6 +85,14 @@ export function Sidebar() {
   const canAccessAdmin = isAdmin || isModerator;
 
   const menuItems = [
+    {
+      // Primero a proposito: es el unico item con informacion perecedera
+      // (que sale hoy). Enterrarlo abajo lo vuelve invisible.
+      key: ROUTES.ESTRENOS,
+      icon: <CalendarOutlined />,
+      label: t('estrenos.title'),
+      onClick: () => router.push(ROUTES.ESTRENOS),
+    },
     {
       key: ROUTES.CATALOGO,
       icon: <AppstoreOutlined />,
