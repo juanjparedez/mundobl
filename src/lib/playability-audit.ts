@@ -8,11 +8,25 @@ import { isPlayableIn } from './playability';
 const DEFAULT_STALE_DAYS = 1;
 const MAX_EPISODES_PER_RUN = 500;
 
-// Las escrituras van agrupadas en vez de un update suelto por episodio: el
-// pooler de Supabase esta en sa-east-1 y de a una cada fila paga su propio
-// round-trip. Es la misma leccion que ya habia aprendido
-// scripts/backfill-episode-airdate.ts, que el cron no habia aplicado.
-const WRITE_BATCH = 100;
+/**
+ * Cuantas escrituras se mandan en paralelo.
+ *
+ * El problema original eran 500 updates secuenciales al pooler de sa-east-1,
+ * cada uno pagando su round-trip. El primer intento de arreglo fue meterlos en
+ * una `$transaction([...])`, y estuvo mal: con el driver adapter de pg, la
+ * forma de array NO los manda en una sola ida — los ejecuta igual de a uno,
+ * solo que envueltos en una transaccion. Resultado: los mismos round-trips MAS
+ * el limite de 5s de transaccion de Prisma, que reventaba con P2028.
+ *
+ * Lo que si reduce el tiempo es el paralelismo: cada update es independiente e
+ * idempotente, asi que no necesitan atomicidad entre si. Si la corrida muere a
+ * la mitad, los episodios que quedaron sin tocar siguen vencidos y los agarra
+ * la corrida siguiente — que es exactamente el comportamiento buscado.
+ *
+ * 10 es conservador a proposito: el pooler de Supabase tiene un limite de
+ * conexiones y este cron no es lo unico que lo usa.
+ */
+const WRITE_CONCURRENCY = 10;
 
 /**
  * Presupuesto de tiempo del audit, en ms.
@@ -93,12 +107,12 @@ export async function runPlayabilityAudit(
   };
   const touchedSeries = new Set<number>();
 
-  // Updates acumulados, se descargan de a WRITE_BATCH.
-  let pendingWrites: Prisma.PrismaPromise<unknown>[] = [];
+  // Updates acumulados, se descargan en tandas paralelas.
+  const pendingWrites: Prisma.PrismaPromise<unknown>[] = [];
   const flushWrites = async () => {
-    if (pendingWrites.length === 0) return;
-    await prisma.$transaction(pendingWrites);
-    pendingWrites = [];
+    while (pendingWrites.length > 0) {
+      await Promise.all(pendingWrites.splice(0, WRITE_CONCURRENCY));
+    }
   };
 
   for (let index = 0; index < episodes.length; index += API_BATCH_SIZE) {
@@ -142,7 +156,7 @@ export async function runPlayabilityAudit(
         })
       );
 
-      if (pendingWrites.length >= WRITE_BATCH) await flushWrites();
+      if (pendingWrites.length >= WRITE_CONCURRENCY * 5) await flushWrites();
     }
   }
 
@@ -192,7 +206,7 @@ export async function runPlayabilityAudit(
         })
       );
       result.seriesRecalculated++;
-      if (pendingWrites.length >= WRITE_BATCH) await flushWrites();
+      if (pendingWrites.length >= WRITE_CONCURRENCY * 5) await flushWrites();
     }
     await flushWrites();
   }
