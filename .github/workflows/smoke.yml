@@ -1,0 +1,70 @@
+# Synthetic monitoring: corre los chequeos de humo contra el sitio publico.
+#
+# COSTO: $0. El repo es publico, asi que los minutos de Actions son gratis e
+# ilimitados. Igual hay topes puestos a proposito (timeout-minutes, concurrency,
+# retention-days) para que un cuelgue no se transforme en consumo raro.
+#
+# NO usa ningun secret. Es a proposito: el sitio es publico y los tests solo
+# leen, asi que este workflow anda aunque no haya nada configurado.
+
+name: Smoke (produccion)
+
+on:
+  schedule:
+    # Cada 6 horas. No hace falta mas: el sitio recibe ~437 visitantes/mes y
+    # cada corrida le pega ~10 requests. Subir la frecuencia solo agrega ruido.
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: 'URL a chequear (para probar un preview)'
+        required: false
+        default: 'https://mundobl.com.ar'
+
+# Si ya hay una corrida en curso, la nueva la reemplaza. Evita que un cuelgue
+# acumule corridas encimadas.
+concurrency:
+  group: smoke
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    # Los forks no tienen por que monitorear el sitio de produccion.
+    if: github.repository == 'juanjparedez/mundobl'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci --ignore-scripts
+
+      - name: Instalar Chromium
+        # Solo chromium, no los 3 browsers: baja ~115 MB en vez de ~500 MB.
+        run: npx playwright install chromium --with-deps
+
+      - name: Chequeos de humo
+        env:
+          SMOKE_BASE_URL: ${{ inputs.base_url || 'https://mundobl.com.ar' }}
+        run: npx playwright test
+
+      - name: Guardar evidencia si algo fallo
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-report
+          path: playwright-report/
+          # OJO: el repo es PUBLICO, asi que este artifact lo puede bajar
+          # cualquiera. Por eso los tests son solo-lectura y no tocan datos de
+          # usuarios: lo unico que puede quedar en el reporte son paginas
+          # publicas. Retencion corta igual.
+          retention-days: 7
