@@ -9,6 +9,7 @@ import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Prisma, PrismaClient } from '../generated/prisma';
 import { isPlayableIn } from './playability';
+import { normalizeBasedOn, type BasedOnEntry } from './based-on';
 import {
   HAS_WATCHABLE_EPISODE,
   WATCHABLE_EPISODE_WHERE,
@@ -1413,10 +1414,87 @@ export async function getCatalogBasedOnValues() {
   const results = await prisma.series.findMany({
     where: { basedOn: { not: null }, origin: 'CURATED' },
     select: { basedOn: true },
-    distinct: ['basedOn'],
     orderBy: { basedOn: 'asc' },
   });
   return results.map((result) => result.basedOn);
+}
+
+export async function resolveBasedOnValue(value: string | null | undefined) {
+  if (value === undefined || value === null) return value;
+  const normalized = normalizeBasedOn(value);
+  if (!normalized) return null;
+  const existing = await prisma.series.groupBy({
+    by: ['basedOn'],
+    where: { basedOn: { not: null } },
+    _count: { _all: true },
+  });
+  existing.sort(
+    (a, b) =>
+      b._count._all - a._count._all ||
+      (a.basedOn ?? '').localeCompare(b.basedOn ?? '')
+  );
+  const match = existing.find(
+    (entry) =>
+      normalizeBasedOn(entry.basedOn ?? '').toLowerCase() ===
+      normalized.toLowerCase()
+  );
+  return match?.basedOn ? normalizeBasedOn(match.basedOn) : normalized;
+}
+
+export async function getBasedOnDirectory() {
+  const rows = await prisma.series.findMany({
+    where: { basedOn: { not: null } },
+    select: { id: true, title: true, basedOn: true },
+    orderBy: [{ basedOn: 'asc' }, { title: 'asc' }],
+  });
+  const entries = new Map<string, BasedOnEntry>();
+  for (const row of rows) {
+    if (row.basedOn === null) continue;
+    const entry = entries.get(row.basedOn) ?? {
+      value: row.basedOn,
+      series: [],
+    };
+    entry.series.push({ id: row.id, title: row.title });
+    entries.set(row.basedOn, entry);
+  }
+  return [...entries.values()];
+}
+
+export async function changeBasedOnValue(
+  source: string,
+  target: string | null,
+  action: 'rename' | 'merge' | 'remove',
+  expectedIds: number[]
+) {
+  return prisma.$transaction(
+    async (tx) => {
+      const rows = await tx.series.findMany({
+        where: { basedOn: source },
+        select: { id: true },
+      });
+      const actual = rows.map((row) => row.id).sort((a, b) => a - b);
+      if (
+        JSON.stringify(actual) !==
+        JSON.stringify([...expectedIds].sort((a, b) => a - b))
+      )
+        throw new Error('STALE');
+      if (target !== null) {
+        const exists = await tx.series.count({ where: { basedOn: target } });
+        if (
+          (action === 'rename' && exists > 0) ||
+          (action === 'merge' && exists === 0)
+        )
+          throw new Error('TARGET');
+      }
+      const result = await tx.series.updateMany({
+        where: { id: { in: expectedIds }, basedOn: source },
+        data: { basedOn: target },
+      });
+      if (result.count !== expectedIds.length) throw new Error('STALE');
+      return result.count;
+    },
+    { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }
+  );
 }
 
 /** Serialize main-story changes per universe so concurrent edits keep one cover. */
