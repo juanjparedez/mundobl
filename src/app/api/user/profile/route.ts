@@ -125,11 +125,10 @@ export async function GET(request: NextRequest) {
       // Total comments
       prisma.comment.count({ where: { userId } }),
 
-      // Last 8 series marked VISTA, most recent first
+      // Complete watched list; the dashboard previews it and paginates the modal.
       prisma.viewStatus.findMany({
         where: { userId, status: 'VISTA', seriesId: { not: null } },
         orderBy: { updatedAt: 'desc' },
-        take: 8,
         include: {
           series: {
             select: {

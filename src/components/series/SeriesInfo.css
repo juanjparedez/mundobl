@@ -4,6 +4,21 @@
   gap: var(--spacing-lg);
 }
 
+@media (min-width: 769px) {
+  .series-info .ant-descriptions-view table {
+    table-layout: fixed;
+  }
+
+  .series-info .ant-descriptions-item-label {
+    width: 160px;
+    overflow-wrap: anywhere;
+  }
+
+  .series-info .ant-descriptions-item-content {
+    overflow-wrap: anywhere;
+  }
+}
+
 .series-info__synopsis,
 .series-info__review,
 .series-info__observations,
@@ -336,4 +351,10 @@
     font-size: 13px;
     padding: 4px 8px !important;
   }
+}
+
+.series-info__season-position {
+  display: block;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
 }

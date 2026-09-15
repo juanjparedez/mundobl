@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { prisma } from '@/lib/database';
+import { prisma, saveSeriesInUniverse } from '@/lib/database';
 import { auth } from '@/lib/auth';
 import { requireRole } from '@/lib/auth-helpers';
 import { getCountryCode } from '@/lib/country-codes';
@@ -216,50 +216,79 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
 
     // Actualizar la serie
-    const updatedSerie = await prisma.series.update({
+    const currentUniverse = await prisma.series.findUnique({
       where: { id: serieId },
-      data: {
-        title: body.title,
-        originalTitle: body.originalTitle || null,
-        year: body.year ? parseInt(body.year, 10) : null,
-        type: body.type || 'serie',
-        durationMinutes: body.durationMinutes
-          ? parseInt(String(body.durationMinutes), 10) || null
-          : null,
-        basedOn: body.basedOn || null,
-        format: body.format || 'regular',
-        imageUrl: resolvedImageUrl,
-        ...(resolvedThumbUrl !== undefined && {
-          imageThumbUrl: resolvedThumbUrl,
-        }),
-        imagePosition: body.imagePosition || 'center',
-        synopsis: body.synopsis || null,
-        // Defensivo a proposito (mismo patron que `airDays` mas abajo): si el
-        // body no trae la clave, no se toca la columna. Sin esto, cualquier
-        // guardado desde un form que no registre el campo lo pisaba con null
-        // — que es exactamente como se perdio la resena editorial de las 613
-        // series del catalogo (medido 2026-09-10: 549 con nota, 0 con resena).
-        review: body.review !== undefined ? body.review || null : undefined,
-        soundtrack: body.soundtrack || null,
-        overallRating: body.overallRating
-          ? parseInt(body.overallRating, 10)
-          : null,
-        observations: body.observations || null,
-        notesPrivate: body.notesPrivate === true,
-        featured: body.featured === true,
-        featuredOrder:
-          typeof body.featuredOrder === 'number' ? body.featuredOrder : 0,
-        airDays: body.airDays !== undefined ? body.airDays || null : undefined,
-        catalogScope:
-          body.catalogScope === 'WATCHABLE_ONLY'
-            ? 'WATCHABLE_ONLY'
-            : 'PERSONAL',
-        countryId,
-        universeId: body.universeId ? parseInt(body.universeId, 10) : null,
-        productionCompanyId,
-        originalLanguageId,
-      },
+      select: { universeId: true, isUniverseMain: true },
     });
+    const targetUniverseId =
+      body.universeId === undefined
+        ? (currentUniverse?.universeId ?? null)
+        : body.universeId
+          ? Number(body.universeId)
+          : null;
+    if (
+      targetUniverseId !== null &&
+      (!Number.isInteger(targetUniverseId) || targetUniverseId < 1)
+    ) {
+      return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
+    }
+    const isUniverseMain =
+      targetUniverseId !== null &&
+      (body.isUniverseMain === undefined
+        ? currentUniverse?.universeId === targetUniverseId &&
+          currentUniverse.isUniverseMain
+        : body.isUniverseMain === true);
+    const updatedSerie = await saveSeriesInUniverse(
+      targetUniverseId,
+      isUniverseMain,
+      (transaction) =>
+        transaction.series.update({
+          where: { id: serieId },
+          data: {
+            isUniverseMain,
+            title: body.title,
+            originalTitle: body.originalTitle || null,
+            year: body.year ? parseInt(body.year, 10) : null,
+            type: body.type || 'serie',
+            durationMinutes: body.durationMinutes
+              ? parseInt(String(body.durationMinutes), 10) || null
+              : null,
+            basedOn: body.basedOn || null,
+            format: body.format || 'regular',
+            imageUrl: resolvedImageUrl,
+            ...(resolvedThumbUrl !== undefined && {
+              imageThumbUrl: resolvedThumbUrl,
+            }),
+            imagePosition: body.imagePosition || 'center',
+            synopsis: body.synopsis || null,
+            // Defensivo a proposito (mismo patron que `airDays` mas abajo): si el
+            // body no trae la clave, no se toca la columna. Sin esto, cualquier
+            // guardado desde un form que no registre el campo lo pisaba con null
+            // — que es exactamente como se perdio la resena editorial de las 613
+            // series del catalogo (medido 2026-09-10: 549 con nota, 0 con resena).
+            review: body.review !== undefined ? body.review || null : undefined,
+            soundtrack: body.soundtrack || null,
+            overallRating: body.overallRating
+              ? parseInt(body.overallRating, 10)
+              : null,
+            observations: body.observations || null,
+            notesPrivate: body.notesPrivate === true,
+            featured: body.featured === true,
+            featuredOrder:
+              typeof body.featuredOrder === 'number' ? body.featuredOrder : 0,
+            airDays:
+              body.airDays !== undefined ? body.airDays || null : undefined,
+            catalogScope:
+              body.catalogScope === 'WATCHABLE_ONLY'
+                ? 'WATCHABLE_ONLY'
+                : 'PERSONAL',
+            countryId,
+            universeId: targetUniverseId,
+            productionCompanyId,
+            originalLanguageId,
+          },
+        })
+    );
 
     // Actualizar actores (eliminar y volver a crear)
     if (body.actors) {
@@ -505,6 +534,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     revalidatePath('/admin/series');
     revalidatePath('/catalogo');
+    revalidatePath('/series/[id]', 'page');
     revalidatePath('/ver');
     revalidatePath(`/series/${serieId}`);
     revalidatePath(`/catalogo/${serieId}`);

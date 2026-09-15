@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/database';
+import { NextRequest, NextResponse } from 'next/server';
+import { getUserSeriesStatuses } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 
 /**
@@ -10,19 +10,15 @@ import { requireAuth } from '@/lib/auth-helpers';
  * entera se volvia dinamica). Mismo patron que /api/favorites: se pide una
  * vez del lado del cliente y se cruza con la data estatica ya cacheada.
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const authResult = await requireAuth();
     if (!authResult.authorized) return authResult.response;
 
-    const rows = await prisma.viewStatus.findMany({
-      where: {
-        userId: authResult.userId,
-        status: 'VISTA',
-        seriesId: { not: null },
-      },
-      select: { seriesId: true },
-    });
+    const all = request.nextUrl.searchParams.get('all') === 'true';
+    const rows = await getUserSeriesStatuses(authResult.userId, all);
+
+    if (all) return NextResponse.json(rows);
 
     const seriesIds = rows
       .map((r) => r.seriesId)

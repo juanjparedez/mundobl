@@ -137,12 +137,16 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
 
   const [series] = useState<SerieData[]>(initialSeries);
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
+  const [watchStatuses, setWatchStatuses] = useState<Record<string, string>>(
+    {}
+  );
   const [viewedIds, setViewedIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (!userRole) {
       setFavoriteIds(new Set());
       setViewedIds(new Set());
+      setWatchStatuses({});
       return;
     }
 
@@ -153,13 +157,26 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
       .then((ids: number[]) => setFavoriteIds(new Set(ids.map(String))))
       .catch(() => {});
 
-    fetch('/api/view-status', { signal: controller.signal })
+    fetch('/api/view-status?all=true', { signal: controller.signal })
       .then((res) => (res.ok ? res.json() : []))
-      .then((ids: number[]) => setViewedIds(new Set(ids.map(String))))
+      .then((rows: Array<{ seriesId: number; status: string }>) => {
+        setViewedIds(
+          new Set(
+            rows
+              .filter((row) => row.status === 'VISTA')
+              .map((row) => String(row.seriesId))
+          )
+        );
+        setWatchStatuses(
+          Object.fromEntries(
+            rows.map((row) => [String(row.seriesId), row.status])
+          )
+        );
+      })
       .catch(() => {});
 
     return () => controller.abort();
-  }, [userRole]);
+  }, [userRole, session?.user?.id]);
 
   const isFavorite = useCallback(
     (serieId: string) => favoriteIds.has(serieId),
@@ -199,7 +216,9 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
   const [selectedPlatform, setSelectedPlatform] = useState<string | undefined>(
     searchParams.get('platform') ?? undefined
   );
-  const [selectedViewed, setSelectedViewed] = useState<string | undefined>();
+  const [selectedViewed, setSelectedViewed] = useState<string | undefined>(
+    searchParams.get('status') ?? undefined
+  );
   const [selectedFavorite, setSelectedFavorite] = useState<
     string | undefined
   >();
@@ -454,6 +473,10 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
       filtered = filtered.filter((s) => !viewedIds.has(s.id));
     }
 
+    if (selectedViewed === 'RETOMAR' || selectedViewed === 'ABANDONADA') {
+      filtered = filtered.filter((s) => watchStatuses[s.id] === selectedViewed);
+    }
+
     if (selectedFavorite === 'favorites') {
       filtered = filtered.filter((s) => favoriteIds.has(s.id));
     }
@@ -527,6 +550,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
     selectedPlatform,
     selectedViewed,
     viewedIds,
+    watchStatuses,
     selectedFavorite,
     favoriteIds,
     selectedTags,
@@ -1425,6 +1449,8 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
         >
           <Option value="watched">{t('catalogo.statusWatched')}</Option>
           <Option value="unwatched">{t('catalogo.statusUnwatched')}</Option>
+          <Option value="RETOMAR">{t('viewStatusToggle.retomar')}</Option>
+          <Option value="ABANDONADA">{t('profile.statAbandoned')}</Option>
         </Select>
       </Col>
 
