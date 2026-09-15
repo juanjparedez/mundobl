@@ -802,6 +802,15 @@ npm run type-check   # Verificar tipos TypeScript
 
 ## Feedback de Flor (2026-09-15)
 
+### Backups y QA (2026-09-15)
+
+- Integrada la corrección del cron: escrituras independientes en tandas paralelas de diez.
+- QA incluye smoke tests de lectura y anuncio de los ocho sitemaps en robots.txt.
+- Backup JSON: 62 modelos, cobertura contra schema, lectura RepeatableRead y error con exit code distinto de cero. Restaurador solo local y sobre tablas vacías; CI verifica restauración con datos sintéticos.
+- Bucket privado `mundobl-backups` creado. Secrets de Actions pendientes; el workflow diario exige la variable `BACKUPS_ENABLED=true`. Ver `docs/backups.md` antes de activarlo.
+
+### Cambios del catálogo
+
 - Perfil: Recientemente completadas muestra tres títulos y abre un modal con la lista completa, paginada de a 20. La API de perfil ya no corta ese listado a ocho registros.
 - Catálogo: Retomar y Abandonada filtran el estado del usuario autenticado. GET /api/view-status conserva su respuesta original por defecto; ?all=true devuelve pares seriesId/status. Helper getUserSeriesStatuses en database.ts.
 - Notas privadas de serie/episodio: pie flexible con separación y salto de línea; la fecha no pisa el contador.
