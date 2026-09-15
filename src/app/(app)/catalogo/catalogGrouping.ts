@@ -27,7 +27,11 @@ export function groupIntoCatalogItems(series: SerieData[]): CatalogItem[] {
   universeMap.forEach((groupSeries, universoId) => {
     if (groupSeries.length > 1) {
       const sorted = [...groupSeries].sort(
-        (a, b) => (a.anio || 0) - (b.anio || 0)
+        (a, b) =>
+          Number(Boolean(b.isUniverseMain)) -
+            Number(Boolean(a.isUniverseMain)) ||
+          (a.anio || 0) - (b.anio || 0) ||
+          a.titulo.localeCompare(b.titulo)
       );
       items.push({
         type: 'universe',
