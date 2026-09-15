@@ -1,20 +1,12 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/database';
+import { getCatalogBasedOnValues } from '@/lib/database';
+import { getBasedOnSuggestions } from '@/lib/based-on';
 
 export async function GET() {
   try {
-    const results = await prisma.series.findMany({
-      where: { basedOn: { not: null }, origin: 'CURATED' },
-      select: { basedOn: true },
-      distinct: ['basedOn'],
-      orderBy: { basedOn: 'asc' },
-    });
-
-    const values = results
-      .map((r) => r.basedOn)
-      .filter((v): v is string => v !== null);
-
-    return NextResponse.json(values);
+    return NextResponse.json(
+      getBasedOnSuggestions(await getCatalogBasedOnValues())
+    );
   } catch (error) {
     console.error('Error fetching basedOn values:', error);
     return NextResponse.json([], { status: 500 });
