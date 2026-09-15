@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from '../src/generated/prisma';
+import { PrismaClient, Prisma } from '../src/generated/prisma';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -11,116 +11,317 @@ const prisma = new PrismaClient({ adapter });
 
 // All models to backup, in order that respects foreign keys
 const MODELS = [
-  { name: 'User', delegate: () => prisma.user.findMany() },
-  { name: 'Account', delegate: () => prisma.account.findMany() },
-  { name: 'Session', delegate: () => prisma.session.findMany() },
+  {
+    name: 'User',
+    delegate: (client: Prisma.TransactionClient) => client.user.findMany(),
+  },
+  {
+    name: 'Account',
+    delegate: (client: Prisma.TransactionClient) => client.account.findMany(),
+  },
+  {
+    name: 'Session',
+    delegate: (client: Prisma.TransactionClient) => client.session.findMany(),
+  },
   {
     name: 'VerificationToken',
-    delegate: () => prisma.verificationToken.findMany(),
+    delegate: (client: Prisma.TransactionClient) =>
+      client.verificationToken.findMany(),
   },
-  { name: 'Universe', delegate: () => prisma.universe.findMany() },
+  {
+    name: 'Universe',
+    delegate: (client: Prisma.TransactionClient) => client.universe.findMany(),
+  },
   {
     name: 'ProductionCompany',
-    delegate: () => prisma.productionCompany.findMany(),
+    delegate: (client: Prisma.TransactionClient) =>
+      client.productionCompany.findMany(),
   },
-  { name: 'Language', delegate: () => prisma.language.findMany() },
-  { name: 'Country', delegate: () => prisma.country.findMany() },
-  { name: 'Genre', delegate: () => prisma.genre.findMany() },
-  { name: 'Tag', delegate: () => prisma.tag.findMany() },
-  { name: 'Series', delegate: () => prisma.series.findMany() },
-  { name: 'Season', delegate: () => prisma.season.findMany() },
-  { name: 'Episode', delegate: () => prisma.episode.findMany() },
-  { name: 'Actor', delegate: () => prisma.actor.findMany() },
-  { name: 'Director', delegate: () => prisma.director.findMany() },
-  { name: 'SeriesActor', delegate: () => prisma.seriesActor.findMany() },
-  { name: 'SeasonActor', delegate: () => prisma.seasonActor.findMany() },
-  { name: 'SeriesDirector', delegate: () => prisma.seriesDirector.findMany() },
-  { name: 'SeriesGenre', delegate: () => prisma.seriesGenre.findMany() },
-  { name: 'SeriesTag', delegate: () => prisma.seriesTag.findMany() },
-  { name: 'SeriesDubbing', delegate: () => prisma.seriesDubbing.findMany() },
-  { name: 'RelatedSeries', delegate: () => prisma.relatedSeries.findMany() },
-  { name: 'Rating', delegate: () => prisma.rating.findMany() },
-  { name: 'UserRating', delegate: () => prisma.userRating.findMany() },
-  { name: 'Comment', delegate: () => prisma.comment.findMany() },
-  { name: 'UserFavorite', delegate: () => prisma.userFavorite.findMany() },
-  { name: 'ViewStatus', delegate: () => prisma.viewStatus.findMany() },
-  { name: 'FeatureRequest', delegate: () => prisma.featureRequest.findMany() },
+  {
+    name: 'Language',
+    delegate: (client: Prisma.TransactionClient) => client.language.findMany(),
+  },
+  {
+    name: 'Country',
+    delegate: (client: Prisma.TransactionClient) => client.country.findMany(),
+  },
+  {
+    name: 'Genre',
+    delegate: (client: Prisma.TransactionClient) => client.genre.findMany(),
+  },
+  {
+    name: 'Tag',
+    delegate: (client: Prisma.TransactionClient) => client.tag.findMany(),
+  },
+  {
+    name: 'Series',
+    delegate: (client: Prisma.TransactionClient) => client.series.findMany(),
+  },
+  {
+    name: 'SeriesProductionCompany',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.seriesProductionCompany.findMany(),
+  },
+  {
+    name: 'PersonEnrichment',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.personEnrichment.findMany(),
+  },
+  {
+    name: 'SupportThread',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.supportThread.findMany(),
+  },
+  {
+    name: 'SupportMessage',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.supportMessage.findMany(),
+  },
+  {
+    name: 'Season',
+    delegate: (client: Prisma.TransactionClient) => client.season.findMany(),
+  },
+  {
+    name: 'Episode',
+    delegate: (client: Prisma.TransactionClient) => client.episode.findMany(),
+  },
+  {
+    name: 'Actor',
+    delegate: (client: Prisma.TransactionClient) => client.actor.findMany(),
+  },
+  {
+    name: 'Director',
+    delegate: (client: Prisma.TransactionClient) => client.director.findMany(),
+  },
+  {
+    name: 'SeriesActor',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.seriesActor.findMany(),
+  },
+  {
+    name: 'SeasonActor',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.seasonActor.findMany(),
+  },
+  {
+    name: 'SeriesDirector',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.seriesDirector.findMany(),
+  },
+  {
+    name: 'SeriesGenre',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.seriesGenre.findMany(),
+  },
+  {
+    name: 'SeriesTag',
+    delegate: (client: Prisma.TransactionClient) => client.seriesTag.findMany(),
+  },
+  {
+    name: 'SeriesDubbing',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.seriesDubbing.findMany(),
+  },
+  {
+    name: 'RelatedSeries',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.relatedSeries.findMany(),
+  },
+  {
+    name: 'Rating',
+    delegate: (client: Prisma.TransactionClient) => client.rating.findMany(),
+  },
+  {
+    name: 'UserRating',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.userRating.findMany(),
+  },
+  {
+    name: 'Comment',
+    delegate: (client: Prisma.TransactionClient) => client.comment.findMany(),
+  },
+  {
+    name: 'UserFavorite',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.userFavorite.findMany(),
+  },
+  {
+    name: 'ViewStatus',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.viewStatus.findMany(),
+  },
+  {
+    name: 'FeatureRequest',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.featureRequest.findMany(),
+  },
   {
     name: 'FeatureRequestImage',
-    delegate: () => prisma.featureRequestImage.findMany(),
+    delegate: (client: Prisma.TransactionClient) =>
+      client.featureRequestImage.findMany(),
   },
-  { name: 'FeatureVote', delegate: () => prisma.featureVote.findMany() },
-  { name: 'AccessLog', delegate: () => prisma.accessLog.findMany() },
-  { name: 'BannedIp', delegate: () => prisma.bannedIp.findMany() },
+  {
+    name: 'FeatureVote',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.featureVote.findMany(),
+  },
+  {
+    name: 'AccessLog',
+    delegate: (client: Prisma.TransactionClient) => client.accessLog.findMany(),
+  },
+  {
+    name: 'BannedIp',
+    delegate: (client: Prisma.TransactionClient) => client.bannedIp.findMany(),
+  },
   {
     name: 'RecommendedSite',
-    delegate: () => prisma.recommendedSite.findMany(),
+    delegate: (client: Prisma.TransactionClient) =>
+      client.recommendedSite.findMany(),
   },
-  { name: 'SuggestedSite', delegate: () => prisma.suggestedSite.findMany() },
-  { name: 'WatchLink', delegate: () => prisma.watchLink.findMany() },
+  {
+    name: 'SuggestedSite',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.suggestedSite.findMany(),
+  },
+  {
+    name: 'WatchLink',
+    delegate: (client: Prisma.TransactionClient) => client.watchLink.findMany(),
+  },
   {
     name: 'EmbeddableContent',
-    delegate: () => prisma.embeddableContent.findMany(),
+    delegate: (client: Prisma.TransactionClient) =>
+      client.embeddableContent.findMany(),
   },
-  { name: 'GlossaryTerm', delegate: () => prisma.glossaryTerm.findMany() },
+  {
+    name: 'GlossaryTerm',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.glossaryTerm.findMany(),
+  },
   {
     name: 'GlossaryTermTag',
-    delegate: () => prisma.glossaryTermTag.findMany(),
+    delegate: (client: Prisma.TransactionClient) =>
+      client.glossaryTermTag.findMany(),
   },
   {
     name: 'GlossarySuggestion',
-    delegate: () => prisma.glossarySuggestion.findMany(),
+    delegate: (client: Prisma.TransactionClient) =>
+      client.glossarySuggestion.findMany(),
   },
-  { name: 'News', delegate: () => prisma.news.findMany() },
-  { name: 'NewsTag', delegate: () => prisma.newsTag.findMany() },
-  { name: 'ChangelogItem', delegate: () => prisma.changelogItem.findMany() },
-  { name: 'Announcement', delegate: () => prisma.announcement.findMany() },
+  {
+    name: 'News',
+    delegate: (client: Prisma.TransactionClient) => client.news.findMany(),
+  },
+  {
+    name: 'NewsTag',
+    delegate: (client: Prisma.TransactionClient) => client.newsTag.findMany(),
+  },
+  {
+    name: 'ChangelogItem',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.changelogItem.findMany(),
+  },
+  {
+    name: 'Announcement',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.announcement.findMany(),
+  },
   {
     name: 'AnnouncementRecipient',
-    delegate: () => prisma.announcementRecipient.findMany(),
+    delegate: (client: Prisma.TransactionClient) =>
+      client.announcementRecipient.findMany(),
   },
-  { name: 'Review', delegate: () => prisma.review.findMany() },
-  { name: 'ReviewVote', delegate: () => prisma.reviewVote.findMany() },
+  {
+    name: 'Review',
+    delegate: (client: Prisma.TransactionClient) => client.review.findMany(),
+  },
+  {
+    name: 'ReviewVote',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.reviewVote.findMany(),
+  },
   {
     name: 'SeriesInfoBlock',
-    delegate: () => prisma.seriesInfoBlock.findMany(),
+    delegate: (client: Prisma.TransactionClient) =>
+      client.seriesInfoBlock.findMany(),
   },
-  { name: 'SeriesNote', delegate: () => prisma.seriesNote.findMany() },
-  { name: 'EpisodeNote', delegate: () => prisma.episodeNote.findMany() },
+  {
+    name: 'SeriesNote',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.seriesNote.findMany(),
+  },
+  {
+    name: 'EpisodeNote',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.episodeNote.findMany(),
+  },
   {
     name: 'SeriesSubscription',
-    delegate: () => prisma.seriesSubscription.findMany(),
+    delegate: (client: Prisma.TransactionClient) =>
+      client.seriesSubscription.findMany(),
   },
   {
     name: 'SeriesSuggestion',
-    delegate: () => prisma.seriesSuggestion.findMany(),
+    delegate: (client: Prisma.TransactionClient) =>
+      client.seriesSuggestion.findMany(),
   },
   {
     name: 'FeatureRequestComment',
-    delegate: () => prisma.featureRequestComment.findMany(),
+    delegate: (client: Prisma.TransactionClient) =>
+      client.featureRequestComment.findMany(),
   },
-  { name: 'CommentReport', delegate: () => prisma.commentReport.findMany() },
-  { name: 'Notification', delegate: () => prisma.notification.findMany() },
+  {
+    name: 'CommentReport',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.commentReport.findMany(),
+  },
+  {
+    name: 'Notification',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.notification.findMany(),
+  },
   {
     name: 'NotificationPrefs',
-    delegate: () => prisma.notificationPrefs.findMany(),
+    delegate: (client: Prisma.TransactionClient) =>
+      client.notificationPrefs.findMany(),
   },
   {
     name: 'PushSubscription',
-    delegate: () => prisma.pushSubscription.findMany(),
+    delegate: (client: Prisma.TransactionClient) =>
+      client.pushSubscription.findMany(),
   },
   {
     name: 'UserDashboardLayout',
-    delegate: () => prisma.userDashboardLayout.findMany(),
+    delegate: (client: Prisma.TransactionClient) =>
+      client.userDashboardLayout.findMany(),
   },
   {
     name: 'EmbedPreviewCache',
-    delegate: () => prisma.embedPreviewCache.findMany(),
+    delegate: (client: Prisma.TransactionClient) =>
+      client.embedPreviewCache.findMany(),
   },
 ];
 
 async function main() {
-  const backupDir = path.join(__dirname, '..', 'backups');
+  const schema = fs.readFileSync(
+    path.join(__dirname, '..', 'prisma', 'schema.prisma'),
+    'utf8'
+  );
+  const schemaModels = [...schema.matchAll(/^model (\w+)\s*\{/gm)]
+    .map((match) => match[1])
+    .sort();
+  const backupModels = MODELS.map((model) => model.name).sort();
+  if (JSON.stringify(schemaModels) !== JSON.stringify(backupModels)) {
+    throw new Error(
+      'Backup incompleto: actualizar MODELS para incluir todos los modelos del schema.'
+    );
+  }
+  if (process.argv.includes('--check-models')) {
+    console.log(`Cobertura correcta: ${schemaModels.length} modelos.`);
+    return;
+  }
+  if (!process.env.DATABASE_URL) throw new Error('Falta DATABASE_URL.');
+  const backupDir =
+    process.env.BACKUP_OUTPUT_DIR || path.join(__dirname, '..', 'backups');
   fs.mkdirSync(backupDir, { recursive: true });
 
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
@@ -130,40 +331,23 @@ async function main() {
 
   const backup: Record<string, unknown[]> = {};
   let totalRecords = 0;
-  const failed: string[] = [];
-
-  for (const model of MODELS) {
-    try {
-      const data = await model.delegate();
-      backup[model.name] = data;
-      totalRecords += data.length;
-      console.log(`  ${model.name}: ${data.length} registros`);
-    } catch (error) {
-      console.error(`  ${model.name}: ERROR - ${error}`);
-      failed.push(model.name);
+  await prisma.$transaction(
+    async (transaction) => {
+      for (const model of MODELS) {
+        const data = await model.delegate(transaction);
+        backup[model.name] = data;
+        totalRecords += data.length;
+        console.log(`  ${model.name}: ${data.length} registros`);
+      }
+    },
+    {
+      isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead,
+      timeout: 600_000,
     }
-  }
-
-  // Un backup parcial es peor que ninguno: si te lo lleves puesto creyendo
-  // que tenes respaldo, el dia que restaures perdes esas tablas en silencio.
-  // Por eso NO se escribe archivo si algo fallo — antes se escribia igual,
-  // con [] en cada modelo, y el script reportaba "completado" (asi es como
-  // todos los backups previos quedaron vacios: faltaba dotenv y ninguna
-  // query llegaba a la base).
-  if (failed.length > 0) {
-    console.error(
-      `\nBACKUP ABORTADO: fallaron ${failed.length} de ${MODELS.length} modelos.`
-    );
-    console.error(`  Modelos con error: ${failed.join(', ')}`);
-    console.error('  No se escribio ningun archivo.');
-    process.exitCode = 1;
-    return;
-  }
+  );
 
   if (totalRecords === 0) {
-    console.error(
-      '\nBACKUP ABORTADO: la base devolvio 0 registros en los 36 modelos.'
-    );
+    console.error('\nBACKUP ABORTADO: la base devolvio 0 registros.');
     console.error('  Revisa DATABASE_URL. No se escribio ningun archivo.');
     process.exitCode = 1;
     return;
@@ -197,7 +381,10 @@ async function main() {
 }
 
 main()
-  .catch(console.error)
+  .catch((error: unknown) => {
+    console.error(error);
+    process.exitCode = 1;
+  })
   .finally(async () => {
     await prisma.$disconnect();
     await pool.end();
