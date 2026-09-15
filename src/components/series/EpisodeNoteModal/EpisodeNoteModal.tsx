@@ -112,6 +112,7 @@ export function EpisodeNoteModal({
 
   return (
     <Modal
+      className="episode-note-modal"
       title={
         <span className="episode-note-modal__title">
           <LockOutlined /> {t('episodeNote.title')}
