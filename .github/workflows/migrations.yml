@@ -1,0 +1,45 @@
+name: Verify migration history
+
+on:
+  pull_request:
+    paths:
+      - 'prisma/**'
+      - 'prisma.config.ts'
+      - 'scripts/prisma-safety.ts'
+      - 'package*.json'
+      - '.github/workflows/migrations.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: mundobl
+          POSTGRES_PASSWORD: mundobl
+          POSTGRES_DB: mundobl
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U mundobl"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DIRECT_URL: postgresql://mundobl:mundobl@localhost:5432/mundobl
+      DATABASE_URL: postgresql://mundobl:mundobl@localhost:5432/mundobl
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx prisma migrate deploy
+      - run: npm run db:check

@@ -18,8 +18,29 @@
 }
 
 .episode-note-modal__meta {
-  margin: var(--spacing-sm, 12px) 0 0 0;
+  margin: var(--spacing-lg) 0 0;
   color: var(--text-secondary);
   font-size: 0.75rem;
   text-align: right;
+}
+
+.episode-note-modal .ant-modal-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
+}
+
+.episode-note-modal .ant-modal-footer .ant-btn + .ant-btn {
+  margin-inline-start: 0;
+}
+
+.episode-note-modal__title {
+  flex-wrap: wrap;
+  padding-inline-end: var(--spacing-md);
+}
+
+.episode-note-modal__label {
+  overflow-wrap: anywhere;
 }

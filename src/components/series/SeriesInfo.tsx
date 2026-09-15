@@ -27,6 +27,7 @@ import {
 } from '@/types/content';
 
 interface SeriesInfoProps {
+  showWatchLinks?: boolean;
   series: {
     id: number;
     title: string;
@@ -160,7 +161,7 @@ function getBasedOnLabel(basedOn: string): string {
   return labels[basedOn.toLowerCase()] || basedOn;
 }
 
-export function SeriesInfo({ series }: SeriesInfoProps) {
+export function SeriesInfo({ series, showWatchLinks = true }: SeriesInfoProps) {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const { t } = useLocale();
   const { data: session } = useSession();
@@ -226,6 +227,16 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
       return arr.findIndex((candidate) => candidate.id === item.id) === index;
     }
   );
+
+  const universeSeasons = (series.universeSeries ?? []).filter(
+    (item) => item.type === 'serie'
+  );
+  const currentUniverseSeason =
+    universeSeasons.findIndex((item) => item.id === series.id) + 1;
+  const universeSeasonCount =
+    series.type === 'serie' && currentUniverseSeason > 0
+      ? universeSeasons.length
+      : null;
 
   const scrollTrack = (
     trackRef: RefObject<HTMLDivElement | null>,
@@ -320,7 +331,15 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
         {shouldShowSeasons(series.type) && (
           <>
             <Descriptions.Item label={t('seriesInfo.fieldSeasons')}>
-              {series.seasons?.length || 0}
+              {universeSeasonCount ?? (series.seasons?.length || 0)}
+              {universeSeasonCount !== null && (
+                <span className="series-info__season-position">
+                  {interpolateMessage(t('seriesInfo.universeSeasonPosition'), {
+                    current: String(currentUniverseSeason),
+                    total: String(universeSeasonCount),
+                  })}
+                </span>
+              )}
             </Descriptions.Item>
 
             <Descriptions.Item label={t('seriesInfo.fieldEpisodes')}>
@@ -423,7 +442,7 @@ export function SeriesInfo({ series }: SeriesInfoProps) {
         )}
       </Descriptions>
 
-      {series.watchLinks && series.watchLinks.length > 0 && (
+      {showWatchLinks && series.watchLinks && series.watchLinks.length > 0 && (
         <div className="series-info__watch-links">
           <h4 className="series-info__section-title">
             {t('seriesInfo.whereToWatch')}

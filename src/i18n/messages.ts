@@ -55,6 +55,7 @@ export type TranslationShape = {
     fieldFormat: string;
     fieldBasedOn: string;
     fieldSeasons: string;
+    universeSeasonPosition: string;
     fieldEpisodes: string;
     fieldDuration: string;
     fieldDurationPerEpisode: string;
@@ -1314,6 +1315,8 @@ export type TranslationShape = {
     fieldDurationPerEpisode: string;
     durationMinutesUnit: string;
     fieldUniverse: string;
+    universeMain: string;
+    universeMainHelp: string;
     fieldBasedOn: string;
     fieldFormat: string;
     fieldProduction: string;
@@ -2996,6 +2999,7 @@ const es: TranslationShape = {
     fieldFormat: 'Formato',
     fieldBasedOn: 'Basado en',
     fieldSeasons: 'Temporadas',
+    universeSeasonPosition: 'Temporada {current} de {total}',
     fieldEpisodes: 'Episodios',
     fieldDuration: 'Duracion',
     fieldDurationPerEpisode: 'Duracion por episodio',
@@ -4320,6 +4324,9 @@ const es: TranslationShape = {
     fieldDurationPerEpisode: 'Duracion por episodio',
     durationMinutesUnit: 'min',
     fieldUniverse: 'Universo (opcional)',
+    universeMain: 'Historia principal y portada',
+    universeMainHelp:
+      'Al marcarla, esta serie reemplaza a la historia principal anterior del universo.',
     fieldBasedOn: 'Basada en',
     fieldFormat: 'Formato de Pantalla',
     fieldProduction: 'Productora',
@@ -6098,6 +6105,7 @@ const en: TranslationShape = {
     fieldFormat: 'Format',
     fieldBasedOn: 'Based on',
     fieldSeasons: 'Seasons',
+    universeSeasonPosition: 'Season {current} of {total}',
     fieldEpisodes: 'Episodes',
     fieldDuration: 'Duration',
     fieldDurationPerEpisode: 'Duration per episode',
@@ -7407,6 +7415,9 @@ const en: TranslationShape = {
     fieldDurationPerEpisode: 'Duration per episode',
     durationMinutesUnit: 'min',
     fieldUniverse: 'Universe (optional)',
+    universeMain: 'Main story and cover',
+    universeMainHelp:
+      'Selecting this replaces the previous main story of the universe.',
     fieldBasedOn: 'Based on',
     fieldFormat: 'Screen Format',
     fieldProduction: 'Production Company',

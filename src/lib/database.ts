@@ -1408,3 +1408,64 @@ export async function getSupportThreadDetail(
 export async function disconnect() {
   await prisma.$disconnect();
 }
+
+/** Serialize main-story changes per universe so concurrent edits keep one cover. */
+export async function saveSeriesInUniverse<T>(
+  universeId: number | null,
+  isMain: boolean,
+  save: (transaction: Prisma.TransactionClient) => Promise<T>
+): Promise<T> {
+  return prisma.$transaction(async (transaction) => {
+    if (universeId !== null) {
+      await transaction.universe.update({
+        where: { id: universeId },
+        data: { updatedAt: new Date() },
+      });
+      if (isMain) {
+        await transaction.series.updateMany({
+          where: { universeId, isUniverseMain: true },
+          data: { isUniverseMain: false },
+        });
+      }
+    }
+    return save(transaction);
+  });
+}
+
+export async function getUserSeriesStatuses(userId: string, all: boolean) {
+  return prisma.viewStatus.findMany({
+    where: {
+      userId,
+      status: all ? undefined : 'VISTA',
+      seriesId: { not: null },
+    },
+    select: { seriesId: true, status: true },
+  });
+}
+
+export async function getPublicUniverseSeries(universeId: number) {
+  return prisma.series.findMany({
+    where: {
+      universeId,
+      origin: 'CURATED',
+      catalogScope: 'PERSONAL',
+      visibility: 'VISIBLE',
+    },
+    select: {
+      id: true,
+      title: true,
+      imageUrl: true,
+      imageThumbUrl: true,
+      imagePosition: true,
+      year: true,
+      type: true,
+      isUniverseMain: true,
+    },
+    orderBy: [
+      { isUniverseMain: 'desc' },
+      { year: 'asc' },
+      { title: 'asc' },
+      { id: 'asc' },
+    ],
+  });
+}

@@ -44,6 +44,7 @@ export default async function EditSeriesPage({ params }: EditPageProps) {
     catalogScope: serie.catalogScope ?? 'PERSONAL',
     countryName: serie.country?.name,
     universeId: serie.universeId,
+    isUniverseMain: serie.isUniverseMain,
     tags: serie.tags?.map((st) => st.tag.name) || [],
     actors:
       serie.actors?.map((sa) => ({
