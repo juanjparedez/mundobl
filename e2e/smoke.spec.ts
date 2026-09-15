@@ -18,9 +18,7 @@ test('la landing carga y muestra contenido real', async ({ page }) => {
 
   // El titulo tiene que existir y no ser el fallback de error de Next.
   await expect(page).toHaveTitle(/.+/);
-  await expect(page.locator('body')).not.toContainText(
-    'Application error'
-  );
+  await expect(page.locator('body')).not.toContainText('Application error');
 
   // La franja de stats sale de COUNTs reales sobre la base. Si la query
   // fallara, la landing cae al catch y muestra ceros: eso es una falla.
@@ -28,7 +26,10 @@ test('la landing carga y muestra contenido real', async ({ page }) => {
   await expect(stats.first()).toBeVisible();
   const valores = await stats.allInnerTexts();
   const algunoNoCero = valores.some((v) => /[1-9]/.test(v));
-  expect(algunoNoCero, `stats de la landing en cero: ${valores.join(', ')}`).toBe(true);
+  expect(
+    algunoNoCero,
+    `stats de la landing en cero: ${valores.join(', ')}`
+  ).toBe(true);
 });
 
 test('el catalogo renderiza series', async ({ page }) => {
@@ -73,15 +74,31 @@ test('el sitemap que anuncia robots.txt existe', async ({ request }) => {
   const robots = await request.get('/robots.txt');
   const texto = await robots.text();
   const anunciados = [...texto.matchAll(/Sitemap:\s*(\S+)/g)].map((m) => m[1]);
-  expect(anunciados.length, 'robots.txt no anuncia ningun sitemap').toBeGreaterThan(0);
+  expect(
+    anunciados.length,
+    'robots.txt no anuncia ningun sitemap'
+  ).toBeGreaterThan(0);
 
   // TODOS tienen que resolver, no solo el primero: un shard roto es contenido
   // que Google no descubre nunca.
+  let containsPublicUrls = false;
   for (const url of anunciados) {
     const res = await request.get(url);
-    expect(res.status(), `robots.txt apunta a ${url} y da ${res.status()}`).toBe(200);
-    expect(await res.text()).toContain('mundobl.com.ar');
+    expect(
+      res.status(),
+      `robots.txt apunta a ${url} y da ${res.status()}`
+    ).toBe(200);
+    const xml = await res.text();
+    // Una sección sin publicaciones puede tener un sitemap vacío válido.
+    expect(xml).toMatch(
+      /<urlset\b[^>]*xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9"/
+    );
+    expect(xml).toContain('</urlset>');
+    containsPublicUrls ||= xml.includes('<loc>https://mundobl.com.ar/');
   }
+  expect(containsPublicUrls, 'ningún sitemap contiene URLs públicas').toBe(
+    true
+  );
 });
 
 test('robots.txt apunta al sitemap', async ({ request }) => {
