@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { prisma, saveSeriesInUniverse } from '@/lib/database';
+import {
+  prisma,
+  saveSeriesInUniverse,
+  resolveBasedOnValue,
+} from '@/lib/database';
 import { auth } from '@/lib/auth';
 import { requireRole } from '@/lib/auth-helpers';
 import { getCountryCode } from '@/lib/country-codes';
@@ -238,6 +242,13 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         ? currentUniverse?.universeId === targetUniverseId &&
           currentUniverse.isUniverseMain
         : body.isUniverseMain === true);
+    if (
+      body.basedOn !== undefined &&
+      body.basedOn !== null &&
+      typeof body.basedOn !== 'string'
+    )
+      return NextResponse.json({ error: 'Invalid basedOn' }, { status: 400 });
+    const normalizedBasedOn = await resolveBasedOnValue(body.basedOn);
     const updatedSerie = await saveSeriesInUniverse(
       targetUniverseId,
       isUniverseMain,
@@ -253,7 +264,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
             durationMinutes: body.durationMinutes
               ? parseInt(String(body.durationMinutes), 10) || null
               : null,
-            basedOn: body.basedOn || null,
+            basedOn: normalizedBasedOn,
             format: body.format || 'regular',
             imageUrl: resolvedImageUrl,
             ...(resolvedThumbUrl !== undefined && {

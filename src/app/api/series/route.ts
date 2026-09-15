@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse, after } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { prisma, saveSeriesInUniverse } from '@/lib/database';
+import {
+  prisma,
+  saveSeriesInUniverse,
+  resolveBasedOnValue,
+} from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { extractVideoId, type Platform } from '@/lib/embed-helpers';
 import { getCountryCode } from '@/lib/country-codes';
@@ -157,6 +161,13 @@ export async function POST(request: NextRequest) {
     }
     const isUniverseMain =
       targetUniverseId !== null && body.isUniverseMain === true;
+    if (
+      basedOn !== undefined &&
+      basedOn !== null &&
+      typeof basedOn !== 'string'
+    )
+      return NextResponse.json({ error: 'Invalid basedOn' }, { status: 400 });
+    const normalizedBasedOn = await resolveBasedOnValue(basedOn);
     const serie = await saveSeriesInUniverse(
       targetUniverseId,
       isUniverseMain,
@@ -176,7 +187,7 @@ export async function POST(request: NextRequest) {
               body.durationMinutes === undefined
                 ? null
                 : Number(body.durationMinutes) || null,
-            basedOn,
+            basedOn: normalizedBasedOn,
             format: format || 'regular',
             imageUrl: externalImageUrl,
             imageThumbUrl: clientThumbUrl,

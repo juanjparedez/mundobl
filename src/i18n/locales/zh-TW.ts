@@ -10,6 +10,26 @@
 import type { TranslationShape } from '../messages';
 
 const zhTW: TranslationShape = {
+  basedOnAdmin: {
+    "description": "管理原作分類及相關作品。編輯作品時可輸入新值。",
+    "search": "搜尋值",
+    "refresh": "重新整理",
+    "error": "無法載入值。",
+    "value": "精確值",
+    "series": "作品",
+    "actions": "操作",
+    "rename": "重新命名",
+    "merge": "合併",
+    "remove": "清除分類",
+    "saved": "已儲存變更。",
+    "conflict": "儲存失敗。請重新整理清單。目標值已存在時請使用合併。",
+    "confirm": "套用",
+    "cancel": "取消",
+    "source": "來源",
+    "target": "目標值",
+    "affected": "受影響的作品",
+    "removeHelp": "將清空這些作品的分類，不會刪除作品。"
+  },
   "common": {
     "language": "語言",
     "na": "不適用",

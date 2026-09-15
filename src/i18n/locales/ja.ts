@@ -10,6 +10,26 @@
 import type { TranslationShape } from '../messages';
 
 const ja: TranslationShape = {
+  basedOnAdmin: {
+    "description": "原作区分と関連作品を管理します。新しい値は作品の編集画面で入力できます。",
+    "search": "値を検索",
+    "refresh": "更新",
+    "error": "値を読み込めませんでした。",
+    "value": "正確な値",
+    "series": "作品",
+    "actions": "操作",
+    "rename": "名前を変更",
+    "merge": "統合",
+    "remove": "分類を解除",
+    "saved": "保存しました。",
+    "conflict": "保存できませんでした。一覧を更新してください。既存の値にまとめる場合は統合を選んでください。",
+    "confirm": "適用",
+    "cancel": "キャンセル",
+    "source": "変更元",
+    "target": "変更先の値",
+    "affected": "変更対象の作品",
+    "removeHelp": "これらの作品の分類を空にします。作品自体は削除されません。"
+  },
   "common": {
     "language": "言語",
     "na": "N/A",
