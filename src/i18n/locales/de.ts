@@ -10,6 +10,26 @@
 import type { TranslationShape } from '../messages';
 
 const de: TranslationShape = {
+  basedOnAdmin: {
+    "description": "Verwalte Vorlagen und zugehörige Titel. Neue Werte kannst du beim Bearbeiten eines Titels eingeben.",
+    "search": "Werte suchen",
+    "refresh": "Aktualisieren",
+    "error": "Werte konnten nicht geladen werden.",
+    "value": "Exakter Wert",
+    "series": "Titel",
+    "actions": "Aktionen",
+    "rename": "Umbenennen",
+    "merge": "Zusammenführen",
+    "remove": "Zuordnung entfernen",
+    "saved": "Änderungen gespeichert.",
+    "conflict": "Speichern fehlgeschlagen. Aktualisiere die Liste. Für ein vorhandenes Ziel verwende Zusammenführen.",
+    "confirm": "Anwenden",
+    "cancel": "Abbrechen",
+    "source": "Quelle",
+    "target": "Zielwert",
+    "affected": "Betroffene Titel",
+    "removeHelp": "Die Zuordnung dieser Titel wird geleert. Die Titel werden nicht gelöscht."
+  },
   "common": {
     "language": "Sprache",
     "na": "N/A",
