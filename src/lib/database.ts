@@ -1409,6 +1409,16 @@ export async function disconnect() {
   await prisma.$disconnect();
 }
 
+export async function getCatalogBasedOnValues() {
+  const results = await prisma.series.findMany({
+    where: { basedOn: { not: null }, origin: 'CURATED' },
+    select: { basedOn: true },
+    distinct: ['basedOn'],
+    orderBy: { basedOn: 'asc' },
+  });
+  return results.map((result) => result.basedOn);
+}
+
 /** Serialize main-story changes per universe so concurrent edits keep one cover. */
 export async function saveSeriesInUniverse<T>(
   universeId: number | null,

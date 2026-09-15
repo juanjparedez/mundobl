@@ -305,8 +305,16 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
 
       // Cargar opciones de "basado en"
       const basedOnRes = await fetch('/api/series/based-on');
-      const basedOnData = await basedOnRes.json();
-      setBasedOnOptions(basedOnData);
+      if (!basedOnRes.ok)
+        throw new Error('Failed to load based-on suggestions');
+      const basedOnData: unknown = await basedOnRes.json();
+      setBasedOnOptions(
+        Array.isArray(basedOnData)
+          ? basedOnData.filter(
+              (value): value is string => typeof value === 'string'
+            )
+          : []
+      );
     } catch (error) {
       console.error('Error loading form data:', error);
     }
@@ -1056,7 +1064,6 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                     size="large"
                     allowClear
                     maxCount={1}
-                    tokenSeparators={[',']}
                     style={{ width: '100%' }}
                     options={basedOnOptions.map((v) => ({
                       value: v,
