@@ -10,6 +10,26 @@
 import type { TranslationShape } from '../messages';
 
 const fr: TranslationShape = {
+  basedOnAdmin: {
+    "description": "Gérez les sources et les fiches associées. Saisissez une nouvelle valeur en modifiant une fiche.",
+    "search": "Rechercher une valeur",
+    "refresh": "Actualiser",
+    "error": "Impossible de charger les valeurs.",
+    "value": "Valeur exacte",
+    "series": "Fiches",
+    "actions": "Actions",
+    "rename": "Renommer",
+    "merge": "Fusionner",
+    "remove": "Retirer la catégorie",
+    "saved": "Modifications enregistrées.",
+    "conflict": "Échec. Actualisez la liste. Utilisez Fusionner pour une destination existante.",
+    "confirm": "Appliquer",
+    "cancel": "Annuler",
+    "source": "Source",
+    "target": "Valeur de destination",
+    "affected": "Fiches concernées",
+    "removeHelp": "La catégorie sera vidée sur ces fiches. Les fiches ne seront pas supprimées."
+  },
   "common": {
     "language": "Langue",
     "na": "N/A",
