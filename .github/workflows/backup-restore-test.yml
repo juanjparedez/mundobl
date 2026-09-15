@@ -1,0 +1,54 @@
+name: Verify backup restoration
+on:
+  pull_request:
+    paths:
+      - 'scripts/*backup*'
+      - 'prisma/**'
+      - 'package*.json'
+      - '.github/workflows/backup*.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/*backup*'
+      - 'prisma/**'
+      - 'package*.json'
+      - '.github/workflows/backup*.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: mundobl
+          POSTGRES_PASSWORD: mundobl
+          POSTGRES_DB: mundobl_replay
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U mundobl"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://mundobl:mundobl@127.0.0.1:5432/mundobl_replay
+      DIRECT_URL: postgresql://mundobl:mundobl@127.0.0.1:5432/mundobl_replay
+      BACKUP_TEST_SOURCE_URL: postgresql://mundobl:mundobl@127.0.0.1:5432/mundobl_replay
+      BACKUP_TEST_TARGET_URL: postgresql://mundobl:mundobl@127.0.0.1:5432/mundobl_restore
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx prisma generate
+      - run: npx prisma migrate deploy
+      - name: Crear base destino descartable
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c 'CREATE DATABASE mundobl_restore'
+      - run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: postgresql://mundobl:mundobl@127.0.0.1:5432/mundobl_restore
+          DIRECT_URL: postgresql://mundobl:mundobl@127.0.0.1:5432/mundobl_restore
+      - run: npx tsx scripts/test-backup-restore.ts
