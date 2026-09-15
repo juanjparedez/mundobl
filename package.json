@@ -13,7 +13,8 @@
     "type-check": "tsc --noEmit",
     "local:db": "bash scripts/local-db.sh",
     "local:dev": "bash scripts/local-db.sh && npm run dev",
-    "migrate:supabase": "bash scripts/migrate-supabase.sh"
+    "migrate:supabase": "node scripts/migrate-supabase.mjs",
+    "db:check": "prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --exit-code"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",

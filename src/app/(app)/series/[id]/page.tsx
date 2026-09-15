@@ -1,3 +1,4 @@
+import { getPublicUniverseSeries } from '@/lib/database';
 import type { Metadata } from 'next';
 import { cache } from 'react';
 import { notFound } from 'next/navigation';
@@ -163,23 +164,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
     ]);
 
   const universeSeries = serie.universeId
-    ? await prisma.series.findMany({
-        where: {
-          universeId: serie.universeId,
-          id: { not: serie.id },
-          origin: 'CURATED',
-        },
-        select: {
-          id: true,
-          title: true,
-          imageUrl: true,
-          imageThumbUrl: true,
-          imagePosition: true,
-          year: true,
-          type: true,
-        },
-        orderBy: [{ year: 'asc' }, { title: 'asc' }],
-      })
+    ? await getPublicUniverseSeries(serie.universeId)
     : [];
 
   const seasonLabel =
@@ -355,6 +340,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
             seasonCount={serie.seasons?.length || 0}
             infoSection={
               <SeriesInfo
+                showWatchLinks={false}
                 series={{
                   ...serie,
                   universeSeries,
