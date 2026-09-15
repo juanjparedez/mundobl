@@ -34,7 +34,8 @@ env:
 
 jobs:
   backup:
-    if: github.repository == 'juanjparedez/mundobl'
+    # Activar solo tras configurar secrets y verificar que el bucket es privado.
+    if: github.repository == 'juanjparedez/mundobl' && vars.BACKUPS_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -71,6 +72,9 @@ jobs:
 
       - name: Generar cliente Prisma
         run: npx prisma generate
+
+      - name: Verificar cobertura de todos los modelos
+        run: npx tsx scripts/backup-db.ts --check-models
 
       - name: Dump de la base
         env:
