@@ -10,6 +10,26 @@
 import type { TranslationShape } from '../messages';
 
 const zhCN: TranslationShape = {
+  basedOnAdmin: {
+    "description": "管理原作分类及相关作品。编辑作品时可输入新值。",
+    "search": "搜索值",
+    "refresh": "刷新",
+    "error": "无法加载值。",
+    "value": "精确值",
+    "series": "作品",
+    "actions": "操作",
+    "rename": "重命名",
+    "merge": "合并",
+    "remove": "清除分类",
+    "saved": "已保存更改。",
+    "conflict": "保存失败。请刷新列表。目标值已存在时请使用合并。",
+    "confirm": "应用",
+    "cancel": "取消",
+    "source": "来源",
+    "target": "目标值",
+    "affected": "受影响的作品",
+    "removeHelp": "将清空这些作品的分类，不会删除作品。"
+  },
   "common": {
     "language": "语言",
     "na": "不适用",

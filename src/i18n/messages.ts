@@ -1,6 +1,26 @@
 import type { SupportedLocale } from './config';
 
 export type TranslationShape = {
+  basedOnAdmin: {
+    description: string;
+    search: string;
+    refresh: string;
+    error: string;
+    value: string;
+    series: string;
+    actions: string;
+    rename: string;
+    merge: string;
+    remove: string;
+    saved: string;
+    conflict: string;
+    confirm: string;
+    cancel: string;
+    source: string;
+    target: string;
+    affected: string;
+    removeHelp: string;
+  };
   common: {
     language: string;
     na: string;
@@ -2945,6 +2965,29 @@ export type TranslationShape = {
 };
 
 const es: TranslationShape = {
+  basedOnAdmin: {
+    description:
+      'Gestioná los valores de Basado en y las fichas que los usan. Para crear un valor nuevo, escribilo al editar una ficha.',
+    search: 'Buscar valor',
+    refresh: 'Actualizar',
+    error: 'No se pudieron cargar los valores.',
+    value: 'Valor exacto',
+    series: 'Fichas',
+    actions: 'Acciones',
+    rename: 'Renombrar',
+    merge: 'Fusionar',
+    remove: 'Quitar clasificación',
+    saved: 'Cambios guardados.',
+    conflict:
+      'No se pudo guardar. Actualizá la lista: las fichas o el destino pueden haber cambiado. Para un destino existente, usá Fusionar.',
+    confirm: 'Aplicar',
+    cancel: 'Cancelar',
+    source: 'Origen',
+    target: 'Valor de destino',
+    affected: 'Fichas que cambiarán',
+    removeHelp:
+      'Se vaciará Basado en en estas fichas. Las fichas no se eliminan.',
+  },
   common: {
     language: 'Idioma',
     na: 'N/A',
@@ -6051,6 +6094,29 @@ const es: TranslationShape = {
 };
 
 const en: TranslationShape = {
+  basedOnAdmin: {
+    description:
+      'Manage source categories and the titles using them. Create a new value by entering it when editing a title.',
+    search: 'Search values',
+    refresh: 'Refresh',
+    error: 'Could not load values.',
+    value: 'Exact value',
+    series: 'Titles',
+    actions: 'Actions',
+    rename: 'Rename',
+    merge: 'Merge',
+    remove: 'Clear category',
+    saved: 'Changes saved.',
+    conflict:
+      'Could not save. Refresh the list: titles or the destination may have changed. Use Merge for an existing destination.',
+    confirm: 'Apply',
+    cancel: 'Cancel',
+    source: 'Source',
+    target: 'Destination value',
+    affected: 'Affected titles',
+    removeHelp:
+      'This clears the category on these titles. The titles are not deleted.',
+  },
   common: {
     language: 'Language',
     na: 'N/A',
@@ -7443,7 +7509,8 @@ const en: TranslationShape = {
     requiredType: 'Select a type',
     requiredFormat: 'Select a format',
     requiredSeasonNumber: 'Number required',
-    helpBasedOn: 'Choose one option or enter your own. Existing values are preserved.',
+    helpBasedOn:
+      'Choose one option or enter your own. Existing values are preserved.',
     helpProduction: 'Type to search or create a new production company',
     helpLanguage: 'Type to search or create a new language',
     helpGenres:

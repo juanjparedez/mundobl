@@ -10,6 +10,26 @@
 import type { TranslationShape } from '../messages';
 
 const ko: TranslationShape = {
+  basedOnAdmin: {
+    "description": "원작 분류와 해당 작품을 관리하세요. 작품 편집 화면에서 새 값을 입력할 수 있습니다.",
+    "search": "값 검색",
+    "refresh": "새로고침",
+    "error": "값을 불러오지 못했습니다.",
+    "value": "정확한 값",
+    "series": "작품",
+    "actions": "작업",
+    "rename": "이름 변경",
+    "merge": "병합",
+    "remove": "분류 해제",
+    "saved": "변경 사항을 저장했습니다.",
+    "conflict": "저장하지 못했습니다. 목록을 새로고침하세요. 기존 값으로 바꾸려면 병합을 사용하세요.",
+    "confirm": "적용",
+    "cancel": "취소",
+    "source": "원본",
+    "target": "대상 값",
+    "affected": "변경될 작품",
+    "removeHelp": "해당 작품의 분류가 비워집니다. 작품 자체는 삭제되지 않습니다."
+  },
   "common": {
     "language": "언어",
     "na": "해당 없음",

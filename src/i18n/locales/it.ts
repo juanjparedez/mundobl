@@ -10,6 +10,26 @@
 import type { TranslationShape } from '../messages';
 
 const it: TranslationShape = {
+  basedOnAdmin: {
+    "description": "Gestisci le fonti e le schede associate. Crea un valore inserendolo durante la modifica di una scheda.",
+    "search": "Cerca valore",
+    "refresh": "Aggiorna",
+    "error": "Impossibile caricare i valori.",
+    "value": "Valore esatto",
+    "series": "Schede",
+    "actions": "Azioni",
+    "rename": "Rinomina",
+    "merge": "Unisci",
+    "remove": "Rimuovi categoria",
+    "saved": "Modifiche salvate.",
+    "conflict": "Salvataggio non riuscito. Aggiorna la lista. Usa Unisci per una destinazione esistente.",
+    "confirm": "Applica",
+    "cancel": "Annulla",
+    "source": "Origine",
+    "target": "Valore di destinazione",
+    "affected": "Schede interessate",
+    "removeHelp": "La categoria verrà svuotata su queste schede. Le schede non verranno eliminate."
+  },
   "common": {
     "language": "Lingua",
     "na": "N/D",
