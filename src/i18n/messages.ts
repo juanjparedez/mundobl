@@ -4353,7 +4353,7 @@ const es: TranslationShape = {
     requiredFormat: 'Selecciona un formato',
     requiredSeasonNumber: 'Numero requerido',
     helpBasedOn:
-      'Escribe para buscar o agregar nuevos (ej: Manga, Manhwa, Novela)',
+      'Elegí una opción o escribí una propia. Los valores existentes se conservan.',
     helpProduction: 'Escribe para buscar o crear una nueva productora',
     helpLanguage: 'Escribe para buscar o crear un nuevo idioma',
     helpGenres:
@@ -4368,7 +4368,7 @@ const es: TranslationShape = {
     hintOriginalTitle: 'Titulo en idioma original',
     hintCountry: 'Selecciona un pais',
     hintUniverse: 'Pertenece a algun universo/franquicia?',
-    hintBasedOn: 'Ej: Libro, Manga, Manhwa...',
+    hintBasedOn: 'Ej.: Novela, Libro, Webtoon',
     hintProduction: 'Ej: GMMTV',
     hintLanguage: 'Ej: Tailandes',
     hintGenres: 'Agrega generos como Drama, Romance, etc.',
@@ -7443,7 +7443,7 @@ const en: TranslationShape = {
     requiredType: 'Select a type',
     requiredFormat: 'Select a format',
     requiredSeasonNumber: 'Number required',
-    helpBasedOn: 'Type to search or add new (e.g. Manga, Manhwa, Novel)',
+    helpBasedOn: 'Choose one option or enter your own. Existing values are preserved.',
     helpProduction: 'Type to search or create a new production company',
     helpLanguage: 'Type to search or create a new language',
     helpGenres:
@@ -7458,7 +7458,7 @@ const en: TranslationShape = {
     hintOriginalTitle: 'Title in original language',
     hintCountry: 'Select a country',
     hintUniverse: 'Belongs to a universe/franchise?',
-    hintBasedOn: 'E.g. Book, Manga, Manhwa...',
+    hintBasedOn: 'E.g. Novel, Book, Webtoon',
     hintProduction: 'E.g. GMMTV',
     hintLanguage: 'E.g. Thai',
     hintGenres: 'Add genres like Drama, Romance, etc.',
