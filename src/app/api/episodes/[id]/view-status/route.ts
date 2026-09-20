@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
+import { markEpisode } from '@/lib/tracking';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -38,27 +39,23 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    // Crear o actualizar el estado de visualización per-user
-    const viewStatus = await prisma.viewStatus.upsert({
-      where: {
-        userId_episodeId: {
-          userId: authResult.userId,
-          episodeId,
-        },
-      },
-      update: {
-        status,
-        watchedDate: status === 'VISTA' ? new Date() : null,
-      },
-      create: {
-        episodeId,
-        userId: authResult.userId,
-        status,
-        watchedDate: status === 'VISTA' ? new Date() : null,
-      },
-    });
+    // Marca el episodio y, si corresponde, promueve la serie a VIENDO
+    // (ver src/lib/tracking.ts). Transacción para que ambas escrituras
+    // (o ninguna) queden consistentes.
+    const result = await prisma.$transaction((tx) =>
+      markEpisode(tx, authResult.userId, episodeId, status)
+    );
 
-    return NextResponse.json(viewStatus);
+    return NextResponse.json({
+      ...result.episode,
+      series: result.series
+        ? {
+            status: result.series.status,
+            lastWatchedAt: result.series.lastWatchedAt,
+          }
+        : null,
+      allWatched: result.allWatched,
+    });
   } catch (error) {
     console.error('Error al actualizar estado de visualización:', error);
     return NextResponse.json(
