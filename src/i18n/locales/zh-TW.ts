@@ -9,7 +9,7 @@
 
 import type { TranslationShape } from '../messages';
 
-const zhTW: TranslationShape = {
+const zhTW = {
   basedOnAdmin: {
     "description": "管理原作分類及相關作品。編輯作品時可輸入新值。",
     "search": "搜尋值",
@@ -1605,7 +1605,45 @@ const zhTW: TranslationShape = {
     "featureFavoritesDesc": "建立您的最愛列表，隨時回顧您最喜歡的劇集。",
     "featureStatsTitle": "個人統計",
     "featureStatsDesc": "了解您觀看了多少小時、您最喜歡的類型和您的活動連勝紀錄。",
-    "footerCtaText": "立即開始探索目錄。"
+    "footerCtaText": "立即開始探索目錄。",
+    "trackerEyebrow": "\u4f60\u7684\u5c08\u5c6c\u7a7a\u9593",
+    "trackerTitle": "\u7167\u81ea\u5df1\u7684\u7bc0\u594f\uff0c\u8a18\u9304\u4f60\u770b\u904e\u7684\u4f5c\u54c1",
+    "trackerSubtitle": "\u9032\u5ea6\u3001\u7b46\u8a18\u548c\u559c\u6b61\u7684\u7247\u6bb5\u90fd\u5728\u540c\u4e00\u8655\uff0c\u6e05\u723d\u4e14\u6c92\u6709\u5287\u900f\u3002",
+    "trackerFeature1Title": "\u9010\u96c6\u8ffd\u5287\u8a18\u9304",
+    "trackerFeature1Desc": "\u4e00\u9375\u8a18\u9304\u6bcf\u4e00\u96c6\uff0c\u4e26\u5728\u4efb\u4f55\u88dd\u7f6e\u4e0a\u5f9e\u4e0a\u6b21\u505c\u4e0b\u7684\u5730\u65b9\u7e7c\u7e8c\u89c0\u770b\u3002",
+    "trackerFeature2Title": "\u7121\u5287\u900f\u5b89\u5168\u6a21\u5f0f",
+    "trackerFeature2Desc": "\u5c0d\u5c1a\u672a\u770b\u5b8c\u7684\u5287\u96c6\uff0c\u96b1\u85cf\u5f8c\u7e8c\u5287\u60c5\u7c21\u4ecb\u548c\u542b\u5287\u900f\u7684\u8a55\u8ad6\u3002",
+    "trackerFeature3Title": "\u79c1\u4eba\u65e5\u8a18\u8207\u6642\u9593\u6233\u7b46\u8a18",
+    "trackerFeature3Desc": "\u5beb\u4e0b\u4f60\u5c0d\u559c\u611b\u5834\u666f\u7684\u611f\u60f3\u548c\u6642\u9593\u9ede\uff0c\u5b8c\u5168\u79c1\u5bc6\u3002",
+    "trackerCta": "\u958b\u59cb\u8a18\u9304\u6211\u7684\u5287\u96c6",
+    "trackerMockSeries": "KinnPorsche The Series",
+    "trackerMockStatus": "\u89c0\u770b\u4e2d",
+    "trackerMockProgress": "\u7b2c 7 \u96c6 / \u5171 14 \u96c6 \u00b7 50%",
+    "trackerMockSpoiler": "\u9632\u5287\u900f\u7be9\u9078\u5df2\u958b\u555f",
+    "trackerMockNoteTitle": "\u79c1\u4eba\u7b46\u8a18 \u00b7 \u7b2c 7 \u96c6\uff0824:15\uff09",
+    "trackerMockNoteText": "\u300c\u5730\u5821\u90a3\u5834\u6232\u5fb9\u5e95\u6539\u8b8a\u4e86\u5169\u4eba\u7684\u95dc\u4fc2\uff0c\u4e00\u5b9a\u8981\u91cd\u770b\u3002\u300d",
+    "glossaryEyebrow": "\u6587\u5316\u8207\u8a9e\u8a00",
+    "glossaryTitle": "\u8b80\u61c2\u6bcf\u500b\u6545\u4e8b\u80cc\u5f8c\u7684\u7d30\u5fae\u4e4b\u8655",
+    "glossarySubtitle": "\u4e9e\u6d32 BL \u5145\u6eff\u7368\u7279\u7684\u6587\u5316\u7b26\u78bc\uff1a\u656c\u7a31\u3001\u6200\u611b\u4fda\u8a9e\uff0c\u4ee5\u53ca\u503c\u5f97\u4e86\u89e3\u7684\u50b3\u7d71\u3002",
+    "glossaryTermOfTheDay": "\u7cbe\u9078\u8a5e\u689d",
+    "glossaryQuizCardTitle": "\u4f60\u5c0d BL \u6587\u5316\u548c\u7d93\u5178\u5957\u8def\u4e86\u89e3\u591a\u5c11\uff1f",
+    "glossaryQuizCardDesc": "\u7528\u4e00\u500b\u7c21\u77ed\u7684\u6311\u6230\uff0c\u6e2c\u6e2c\u4f60\u5c0d\u656c\u7a31\u3001\u7d93\u5178\u95dc\u4fc2\u548c\u5fae\u5999\u5957\u8def\u7684\u4e86\u89e3\u3002",
+    "glossaryQuizCardCta": "\u4f86\u505a\u5c0f\u6e2c\u9a57",
+    "glossaryExploreCta": "\u700f\u89bd\u5b8c\u6574\u8a5e\u5f59\u8868",
+    "ecosystemEyebrow": "\u958b\u653e\u793e\u7fa4",
+    "ecosystemTitle": "\u7531\u7c89\u7d72\u6253\u9020\u3001\u70ba\u7c89\u7d72\u800c\u751f\u7684\u5e73\u53f0",
+    "ecosystemSubtitle": "MundoBL \u4e0d\u662f\u88fd\u4f5c\u516c\u53f8\uff0c\u4e5f\u4e0d\u662f\u585e\u6eff\u5ee3\u544a\u7684\u7db2\u7ad9\u3002\u5b83\u662f\u4e00\u500b\u900f\u660e\u7684\u751f\u614b\uff0c\u81f4\u529b\u65bc\u63a8\u5ee3\u9019\u500b\u984c\u6750\u4e26\u652f\u6301\u5275\u4f5c\u8005\u8207\u5b57\u5e55\u7d44\u3002",
+    "ecosystemPillar1Title": "\u5b98\u65b9\u7ba1\u9053\u512a\u5148",
+    "ecosystemPillar1Desc": "\u6211\u5011\u512a\u5148\u9023\u7d50 YouTube\u3001GagaOOLala\u3001Viki \u548c iQIYI \u7684\u5b98\u65b9\u8cc7\u6e90\uff0c\u76f4\u63a5\u652f\u6301\u88fd\u4f5c\u65b9\u3002",
+    "ecosystemPillar2Title": "\u7d66\u5b57\u5e55\u7d44\u7684\u81ea\u52a9\u7a7a\u9593",
+    "ecosystemPillar2Desc": "\u7ffb\u8b6f\u5718\u968a\u53ef\u4ee5\u7ba1\u7406\u5206\u96c6\u9023\u7d50\u3001\u5c55\u793a\u88fd\u4f5c\u540d\u55ae\uff0c\u4e26\u76f4\u63a5\u5206\u4eab\u8d0a\u52a9\u9023\u7d50\uff0c\u4e0d\u9700\u8981\u4e2d\u9593\u4eba\u3002",
+    "ecosystemPillar3Title": "\u793e\u7fa4\u5171\u5efa\u8207\u56de\u5831",
+    "ecosystemPillar3Desc": "\u56de\u5831\u5931\u6548\u9023\u7d50\u3001\u63d0\u4ea4\u7f3a\u5c11\u7684\u4f5c\u54c1\u3001\u70ba\u5be6\u7528\u8a55\u8ad6\u6295\u7968\uff0c\u8b93\u7247\u5eab\u4fdd\u6301\u65b0\u9bae\u3002",
+    "ecosystemCta": "\u6210\u70ba\u5354\u4f5c\u8005",
+    "newsEyebrow": "\u8cc7\u8a0a\u8207\u88fd\u4f5c",
+    "newsTitle": "\u7cbe\u9078\u7522\u696d\u8cc7\u8a0a\uff0c\u62d2\u7d55\u6a19\u984c\u9ee8",
+    "newsSubtitle": "\u53ca\u6642\u638c\u63e1\u65b0\u5287\u958b\u62cd\u3001\u5b98\u65b9\u9810\u544a\u3001\u516c\u544a\u8207\u5c0f\u8aaa\u6539\u7de8\uff0c\u6c92\u6709\u96dc\u97f3\u3002",
+    "newsCta": "\u67e5\u770b\u6240\u6709\u8cc7\u8a0a"
   },
   "welcomeBanner": {
     "title": "歡迎來到 MundoBL",
@@ -1624,11 +1662,28 @@ const zhTW: TranslationShape = {
     "title": "MundoBL - 劇集目錄",
     "adminModeLabel": "模式：管理員"
   },
+  "adminShortcuts": {
+    "dragAria": "\u62d6\u66f3\u4ee5\u91cd\u65b0\u6392\u5e8f\u6377\u5f91",
+    "alertWithoutReview": "{count} \u500b\u7121\u8a55\u8ad6",
+    "alertWithoutContent": "{count} \u90e8\u7121\u5167\u5bb9\u5287\u96c6",
+    "alertPendingSites": "{count} \u5247\u5f85\u8655\u7406\u5efa\u8b70",
+    "alertReported": "{count} \u500b\u88ab\u6aa2\u8209",
+    "alertHiddenReviews": "{count} \u500b\u5df2\u96b1\u85cf",
+  },
   "adminNav": {
     "ariaLabel": "管理員導覽",
     "groupCatalog": "目錄",
     "groupCommunity": "社群",
     "groupSystem": "系統",
+    "groupModeration": "\u5be9\u6838",
+    "groupTaxonomies": "\u5206\u985e",
+    "groupPublishing": "\u767c\u5e03",
+    "import": "\u532f\u5165\u5287\u96c6\uff08YouTube\uff09",
+    "importShort": "\u532f\u5165",
+    "channelSweep": "\u983b\u9053\u6383\u63cf",
+    "channelSweepShort": "\u6383\u63cf",
+    "watchHub": "\u7ba1\u7406 /ver",
+    "watchHubShort": "\u89c0\u770b",
     "series": "劇集",
     "seriesShort": "劇集",
     "userEmbed": "使用者投稿",
@@ -2418,6 +2473,7 @@ const zhTW: TranslationShape = {
   "dashboard": {
     "dragHandleAria": "拖曳小工具",
     "removeWidgetAria": "移除小工具",
+    "autofitHeight": "高度自動符合內容",
     "editLayout": "編輯版面",
     "doneEditing": "完成",
     "addWidget": "新增小工具",
@@ -2564,6 +2620,9 @@ const zhTW: TranslationShape = {
     "news": "Noticias"
   },
   "adminHero": {
+    "greeting": "你好，{name}",
+    "title": "管理面板",
+    "subtitle": "通往所有管理工具的捷徑。",
     "actionInsights": "分析",
     "actionAuditLog": "審核",
     "actionChangelog": "發行",
@@ -2929,6 +2988,6 @@ const zhTW: TranslationShape = {
     "character": "角色",
     "hoverHint": "將滑鼠移到卡片上可查看更多"
   }
-} as unknown as TranslationShape;
+} satisfies TranslationShape;
 
 export default zhTW;

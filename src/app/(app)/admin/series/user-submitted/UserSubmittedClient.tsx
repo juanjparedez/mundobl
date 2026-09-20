@@ -4,7 +4,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button, Empty, Modal, Select, Tag, Tooltip, Segmented } from 'antd';
-import { DataTable, type DataTableColumn } from '@/components/design-system';
+import {
+  DataTable,
+  PanelModal,
+  type DataTableColumn,
+} from '@/components/design-system';
 import {
   DeleteOutlined,
   EyeInvisibleOutlined,
@@ -432,14 +436,14 @@ export function UserSubmittedClient({ items: initial }: Props) {
         />
       )}
 
-      <Modal
+      <PanelModal
         title={`Linkear "${linkTarget?.title}" con catalogo`}
+        size="sm"
         open={linkTarget != null}
-        onCancel={() => setLinkTarget(null)}
+        onClose={() => setLinkTarget(null)}
         onOk={confirmLink}
         okText="Linkear"
         okButtonProps={{ disabled: !linkSelectedId }}
-        maskClosable={false}
       >
         <p style={{ color: 'var(--text-secondary)' }}>
           Busca y selecciona la serie del catálogo curado. Al confirmar, los
@@ -461,7 +465,7 @@ export function UserSubmittedClient({ items: initial }: Props) {
           options={linkOptions}
           value={linkSelectedId}
         />
-      </Modal>
+      </PanelModal>
     </div>
   );
 }
