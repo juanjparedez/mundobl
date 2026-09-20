@@ -3,3 +3,22 @@
   flex-direction: column;
   gap: var(--spacing-sm);
 }
+
+/* antd escribe el ancho del Drawer como style inline en el wrapper, asi
+ * que pisarlo desde CSS necesita !important. Preferimos eso a meter el
+ * tamaño en el JSX: la regla del proyecto es estilos en .css, y ademas
+ * asi el ancho puede depender del viewport sin JS. */
+.mb-widget-picker-drawer-root .ant-drawer-content-wrapper {
+  width: min(420px, 92vw) !important;
+}
+
+/* 600px = mobile grande (breakpoint estandar de variables.css). */
+@media (max-width: 600px) {
+  .mb-widget-picker-drawer-root .ant-drawer-content-wrapper {
+    width: 100% !important;
+  }
+}
+
+.mb-widget-picker-drawer__tag {
+  margin-inline-end: 0;
+}

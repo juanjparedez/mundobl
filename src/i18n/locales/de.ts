@@ -9,7 +9,7 @@
 
 import type { TranslationShape } from '../messages';
 
-const de: TranslationShape = {
+const de = {
   basedOnAdmin: {
     "description": "Verwalte Vorlagen und zugehörige Titel. Neue Werte kannst du beim Bearbeiten eines Titels eingeben.",
     "search": "Werte suchen",
@@ -1605,7 +1605,45 @@ const de: TranslationShape = {
     "featureFavoritesDesc": "Erstelle deine Favoritenliste, um jederzeit zu deinen Lieblingsserien zurückzukehren.",
     "featureStatsTitle": "Persönliche Statistiken",
     "featureStatsDesc": "Entdecke, wie viele Stunden du geschaut hast, deine Lieblingsgenres und deine Aktivitätssträhnen.",
-    "footerCtaText": "Beginne jetzt, den Katalog zu erkunden."
+    "footerCtaText": "Beginne jetzt, den Katalog zu erkunden.",
+    "trackerEyebrow": "Dein pers\u00f6nlicher Bereich",
+    "trackerTitle": "Behalte im Blick, was du schaust \u2013 in deinem Tempo",
+    "trackerSubtitle": "Dein Fortschritt, deine Notizen und Lieblingsmomente an einem Ort: \u00fcbersichtlich und ohne Spoiler.",
+    "trackerFeature1Title": "Verfolgung Folge f\u00fcr Folge",
+    "trackerFeature1Desc": "Halte jede gesehene Folge mit einem Klick fest und mach genau dort weiter, wo du aufgeh\u00f6rt hast \u2013 auf jedem Ger\u00e4t.",
+    "trackerFeature2Title": "Spoilerfreier Sicherheitsmodus",
+    "trackerFeature2Desc": "Blende Inhaltsangaben k\u00fcnftiger Folgen und Rezensionen mit Spoilern f\u00fcr Serien aus, die du noch nicht beendet hast.",
+    "trackerFeature3Title": "Privates Tagebuch & Notizen mit Zeitstempel",
+    "trackerFeature3Desc": "Halte Reaktionen und Zeitmarken deiner Lieblingsszenen fest. Vollst\u00e4ndig privat.",
+    "trackerCta": "Meine Serien jetzt verfolgen",
+    "trackerMockSeries": "KinnPorsche The Series",
+    "trackerMockStatus": "Am Schauen",
+    "trackerMockProgress": "Folge 7 von 14 \u00b7 50 %",
+    "trackerMockSpoiler": "Anti-Spoiler-Filter aktiv",
+    "trackerMockNoteTitle": "Private Notiz \u00b7 Folge 7 (24:15)",
+    "trackerMockNoteText": "\u201eDie Szene im Bunker ver\u00e4ndert ihre Dynamik komplett. Unbedingt nochmal ansehen.\u201c",
+    "glossaryEyebrow": "Kultur & Sprache",
+    "glossaryTitle": "Verstehe die Feinheiten hinter jeder Geschichte",
+    "glossarySubtitle": "Asiatisches BL steckt voller eigener kultureller Codes: Anreden, romantischer Slang und Traditionen, die es zu verstehen lohnt.",
+    "glossaryTermOfTheDay": "Begriff im Fokus",
+    "glossaryQuizCardTitle": "Wie gut kennst du BL-Kultur und ihre Tropes?",
+    "glossaryQuizCardDesc": "Teste in einer kurzen Challenge dein Wissen \u00fcber Anreden, klassische Dynamiken und subtile Tropes.",
+    "glossaryQuizCardCta": "Mini-Quiz starten",
+    "glossaryExploreCta": "Vollst\u00e4ndiges Glossar entdecken",
+    "ecosystemEyebrow": "Offene Community",
+    "ecosystemTitle": "Eine Plattform von Fans f\u00fcr Fans",
+    "ecosystemSubtitle": "MundoBL ist weder ein Produktionsstudio noch eine werbe\u00fcberladene Seite. Es ist ein transparentes \u00d6kosystem, das das Genre feiert und Kreative und Fansubs unterst\u00fctzt.",
+    "ecosystemPillar1Title": "Offizielle Kan\u00e4le zuerst",
+    "ecosystemPillar1Desc": "Wir verlinken und priorisieren offizielle Ver\u00f6ffentlichungen auf YouTube, GagaOOLala, Viki und iQIYI, um Studios direkt zu unterst\u00fctzen.",
+    "ecosystemPillar2Title": "Self-Service-Bereich f\u00fcr Fansubs",
+    "ecosystemPillar2Desc": "\u00dcbersetzungsteams k\u00f6nnen Folgen-Links verwalten, Crew-Credits zeigen und direkte Spendenlinks teilen \u2013 ganz ohne Zwischenh\u00e4ndler.",
+    "ecosystemPillar3Title": "Kuratierung & Meldungen aus der Community",
+    "ecosystemPillar3Desc": "Melde tote Links, reiche fehlende Titel ein und stimme \u00fcber hilfreiche Rezensionen ab, damit der Katalog aktuell bleibt.",
+    "ecosystemCta": "Mitwirkende:r werden",
+    "newsEyebrow": "Aktuelles & Produktion",
+    "newsTitle": "Kuratierte Branchennews ohne Clickbait",
+    "newsSubtitle": "Bleib auf dem Laufenden \u00fcber neue Drehs, offizielle Trailer, Ank\u00fcndigungen und Romanadaptionen \u2013 ohne Rauschen.",
+    "newsCta": "Alle Neuigkeiten ansehen"
   },
   "welcomeBanner": {
     "title": "Willkommen bei MundoBL",
@@ -1624,11 +1662,28 @@ const de: TranslationShape = {
     "title": "MundoBL - Serienkatalog",
     "adminModeLabel": "Modus: Admin"
   },
+  "adminShortcuts": {
+    "dragAria": "Zum Neuordnen der Verkn\u00fcpfungen ziehen",
+    "alertWithoutReview": "{count} ohne Rezension",
+    "alertWithoutContent": "{count} Titel ohne Inhalt",
+    "alertPendingSites": "{count} offene Vorschl\u00e4ge",
+    "alertReported": "{count} gemeldet",
+    "alertHiddenReviews": "{count} ausgeblendet",
+  },
   "adminNav": {
     "ariaLabel": "Admin-Navigation",
     "groupCatalog": "Katalog",
     "groupCommunity": "Community",
     "groupSystem": "System",
+    "groupModeration": "Moderation",
+    "groupTaxonomies": "Taxonomien",
+    "groupPublishing": "Ver\u00f6ffentlichung",
+    "import": "Serie importieren (YouTube)",
+    "importShort": "Import",
+    "channelSweep": "Kanal-Scan",
+    "channelSweepShort": "Scan",
+    "watchHub": "/ver verwalten",
+    "watchHubShort": "Ansehen",
     "series": "Serien",
     "seriesShort": "Serien",
     "userEmbed": "Beiträge",
@@ -2418,6 +2473,7 @@ const de: TranslationShape = {
   "dashboard": {
     "dragHandleAria": "Widget verschieben",
     "removeWidgetAria": "Widget entfernen",
+    "autofitHeight": "Höhe an Inhalt anpassen",
     "editLayout": "Layout bearbeiten",
     "doneEditing": "Fertig",
     "addWidget": "Widget hinzufügen",
@@ -2564,6 +2620,9 @@ const de: TranslationShape = {
     "news": "Noticias"
   },
   "adminHero": {
+    "greeting": "Hallo, {name}",
+    "title": "Administrationsbereich",
+    "subtitle": "Verknüpfungen zu allen Verwaltungswerkzeugen.",
     "actionInsights": "Einblicke",
     "actionAuditLog": "Prüfung",
     "actionChangelog": "Neuerscheinungen",
@@ -2929,6 +2988,6 @@ const de: TranslationShape = {
     "character": "Rolle",
     "hoverHint": "Mit der Maus über eine Karte fahren für mehr"
   }
-} as unknown as TranslationShape;
+} satisfies TranslationShape;
 
 export default de;

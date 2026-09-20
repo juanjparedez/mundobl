@@ -60,8 +60,11 @@ export function WidgetPickerDrawer({
       onClose={onClose}
       title={t('dashboard.pickerTitle')}
       placement="right"
-      width={420}
+      // Sin prop `width`: el ancho lo fija el CSS con min(420px, 92vw) y
+      // pasa a pantalla completa por debajo de 600px. Un 420 fijo se
+      // salia del viewport en un telefono de 375px.
       className="mb-widget-picker-drawer"
+      rootClassName="mb-widget-picker-drawer-root"
     >
       {widgets.length === 0 ? (
         <Empty description={t('dashboard.pickerEmpty')} />
@@ -83,7 +86,10 @@ export function WidgetPickerDrawer({
                 }
                 badge={
                   isAdded ? null : (
-                    <Tag color="default" style={{ marginInlineEnd: 0 }}>
+                    <Tag
+                      color="default"
+                      className="mb-widget-picker-drawer__tag"
+                    >
                       {w.category}
                     </Tag>
                   )

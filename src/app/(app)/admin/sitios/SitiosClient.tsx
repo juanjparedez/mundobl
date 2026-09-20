@@ -5,7 +5,6 @@ import {
   Button,
   Input,
   InputNumber,
-  Modal,
   Form,
   Select,
   Popconfirm,
@@ -32,7 +31,7 @@ import {
 import { AdminNav } from '../AdminNav';
 import '../admin.css';
 import './sitios.css';
-import { DataTable } from '@/components/design-system';
+import { DataTable, PanelModal } from '@/components/design-system';
 
 interface SiteType {
   id: number;
@@ -280,18 +279,18 @@ export function SitiosClient() {
           pageSize={20}
         />
 
-        <Modal
+        <PanelModal
           title={
             editingSite
               ? t('adminSites.modalEditTitle')
               : t('adminSites.modalNewTitle')
           }
+          size="md"
           open={modalOpen}
-          onCancel={handleCloseModal}
+          onClose={handleCloseModal}
           onOk={() => form.submit()}
           okText={t('adminSites.save')}
           cancelText={t('adminSites.cancel')}
-          maskClosable={false}
           forceRender
         >
           <Form form={form} layout="vertical" onFinish={handleSubmit}>
@@ -354,7 +353,7 @@ export function SitiosClient() {
               <InputNumber min={0} />
             </Form.Item>
           </Form>
-        </Modal>
+        </PanelModal>
       </div>
     </>
   );

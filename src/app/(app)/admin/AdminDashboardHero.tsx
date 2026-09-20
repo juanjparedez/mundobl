@@ -11,6 +11,7 @@ import {
 } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
 
 interface Stat {
   label: string;
@@ -42,10 +43,12 @@ export function AdminDashboardHero({
     <header className="admin-dashboard__hero">
       <div className="admin-dashboard__hero-text">
         <h1 className="admin-dashboard__hero-title">
-          {firstName ? `Hola, ${firstName}` : 'Panel de administración'}
+          {firstName
+            ? interpolateMessage(t('adminHero.greeting'), { name: firstName })
+            : t('adminHero.title')}
         </h1>
         <p className="admin-dashboard__hero-subtitle">
-          Atajos a todas las herramientas de gestión.
+          {t('adminHero.subtitle')}
         </p>
       </div>
       <div className="admin-dashboard__hero-stats">
