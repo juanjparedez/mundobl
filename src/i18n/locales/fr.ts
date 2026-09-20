@@ -9,7 +9,7 @@
 
 import type { TranslationShape } from '../messages';
 
-const fr: TranslationShape = {
+const fr = {
   basedOnAdmin: {
     "description": "Gérez les sources et les fiches associées. Saisissez une nouvelle valeur en modifiant une fiche.",
     "search": "Rechercher une valeur",
@@ -1605,7 +1605,45 @@ const fr: TranslationShape = {
     "featureFavoritesDesc": "Créez votre liste de favoris pour retrouver vos séries préférées à tout moment.",
     "featureStatsTitle": "Statistiques personnelles",
     "featureStatsDesc": "Découvrez combien d'heures vous avez regardées, vos genres préférés et vos séries d'activités.",
-    "footerCtaText": "Commencez à explorer le catalogue maintenant."
+    "footerCtaText": "Commencez à explorer le catalogue maintenant.",
+    "trackerEyebrow": "Ton espace personnel",
+    "trackerTitle": "Suis ce que tu regardes, \u00e0 ton rythme",
+    "trackerSubtitle": "Ta progression, tes notes et tes moments pr\u00e9f\u00e9r\u00e9s au m\u00eame endroit, sans fouillis ni spoilers.",
+    "trackerFeature1Title": "Suivi \u00e9pisode par \u00e9pisode",
+    "trackerFeature1Desc": "Enregistre chaque \u00e9pisode vu en un clic et reprends exactement o\u00f9 tu t\u2019\u00e9tais arr\u00eat\u00e9\u00b7e, sur n\u2019importe quel appareil.",
+    "trackerFeature2Title": "Mode s\u00fbr sans spoilers",
+    "trackerFeature2Desc": "Masque les synopsis des \u00e9pisodes \u00e0 venir et les critiques contenant des spoilers pour les s\u00e9ries que tu n\u2019as pas termin\u00e9es.",
+    "trackerFeature3Title": "Journal priv\u00e9 et notes horodat\u00e9es",
+    "trackerFeature3Desc": "Note tes r\u00e9actions et les minutages de tes sc\u00e8nes pr\u00e9f\u00e9r\u00e9es. Enti\u00e8rement priv\u00e9.",
+    "trackerCta": "Commencer \u00e0 suivre mes s\u00e9ries",
+    "trackerMockSeries": "KinnPorsche The Series",
+    "trackerMockStatus": "En cours",
+    "trackerMockProgress": "\u00c9pisode 7 sur 14 \u00b7 50 %",
+    "trackerMockSpoiler": "Filtre anti-spoilers actif",
+    "trackerMockNoteTitle": "Note priv\u00e9e \u00b7 \u00c9p. 7 (24:15)",
+    "trackerMockNoteText": "\u00ab La sc\u00e8ne du bunker change compl\u00e8tement leur dynamique. \u00c0 revoir. \u00bb",
+    "glossaryEyebrow": "Culture et langue",
+    "glossaryTitle": "Comprends les nuances derri\u00e8re chaque histoire",
+    "glossarySubtitle": "Le BL asiatique regorge de codes culturels uniques : titres honorifiques, argot romantique et traditions qui m\u00e9ritent d\u2019\u00eatre compris.",
+    "glossaryTermOfTheDay": "Terme \u00e0 la une",
+    "glossaryQuizCardTitle": "Connais-tu vraiment la culture et les tropes BL ?",
+    "glossaryQuizCardDesc": "Teste tes connaissances sur les titres honorifiques, les dynamiques classiques et les tropes subtils en un d\u00e9fi rapide.",
+    "glossaryQuizCardCta": "Faire le mini-quiz",
+    "glossaryExploreCta": "Explorer le glossaire complet",
+    "ecosystemEyebrow": "Communaut\u00e9 ouverte",
+    "ecosystemTitle": "Une plateforme faite par et pour les fans",
+    "ecosystemSubtitle": "MundoBL n\u2019est ni un studio de production ni un site satur\u00e9 de publicit\u00e9s. C\u2019est un \u00e9cosyst\u00e8me transparent qui c\u00e9l\u00e8bre le genre et soutient les cr\u00e9ateurs et les fansubs.",
+    "ecosystemPillar1Title": "Les canaux officiels d\u2019abord",
+    "ecosystemPillar1Desc": "Nous relayons et priorisons les sorties officielles sur YouTube, GagaOOLala, Viki et iQIYI afin de soutenir directement les studios.",
+    "ecosystemPillar2Title": "Espace en libre-service pour les fansubs",
+    "ecosystemPillar2Desc": "Les \u00e9quipes de traduction peuvent g\u00e9rer les liens des \u00e9pisodes, afficher les cr\u00e9dits de l\u2019\u00e9quipe et partager des liens de dons directs, sans interm\u00e9diaire.",
+    "ecosystemPillar3Title": "Curation et signalements de la communaut\u00e9",
+    "ecosystemPillar3Desc": "Signale les liens morts, propose les titres manquants et vote pour les critiques utiles afin de garder le catalogue \u00e0 jour.",
+    "ecosystemCta": "Devenir collaborateur\u00b7rice",
+    "newsEyebrow": "Actualit\u00e9 et production",
+    "newsTitle": "Une actu de l\u2019industrie tri\u00e9e sur le volet, sans clickbait",
+    "newsSubtitle": "Reste inform\u00e9\u00b7e des nouveaux tournages, bandes-annonces officielles, annonces et adaptations de romans, sans bruit inutile.",
+    "newsCta": "Voir toutes les actualit\u00e9s"
   },
   "welcomeBanner": {
     "title": "Bienvenue sur MundoBL",
@@ -1624,11 +1662,28 @@ const fr: TranslationShape = {
     "title": "MundoBL - Catalogue de séries",
     "adminModeLabel": "Mode : Admin"
   },
+  "adminShortcuts": {
+    "dragAria": "Glisser pour r\u00e9organiser les raccourcis",
+    "alertWithoutReview": "{count} sans critique",
+    "alertWithoutContent": "{count} s\u00e9ries sans contenu",
+    "alertPendingSites": "{count} suggestions en attente",
+    "alertReported": "{count} signal\u00e9s",
+    "alertHiddenReviews": "{count} masqu\u00e9es",
+  },
   "adminNav": {
     "ariaLabel": "Navigation administrateur",
     "groupCatalog": "Catalogue",
     "groupCommunity": "Communauté",
     "groupSystem": "Système",
+    "groupModeration": "Mod\u00e9ration",
+    "groupTaxonomies": "Taxonomies",
+    "groupPublishing": "Publication",
+    "import": "Importer une s\u00e9rie (YouTube)",
+    "importShort": "Importer",
+    "channelSweep": "Balayage de cha\u00eene",
+    "channelSweepShort": "Balayage",
+    "watchHub": "G\u00e9rer /ver",
+    "watchHubShort": "Voir",
     "series": "Séries",
     "seriesShort": "Séries",
     "userEmbed": "Contributions",
@@ -2418,6 +2473,7 @@ const fr: TranslationShape = {
   "dashboard": {
     "dragHandleAria": "Faire glisser le widget",
     "removeWidgetAria": "Supprimer le widget",
+    "autofitHeight": "Ajuster la hauteur au contenu",
     "editLayout": "Modifier la mise en page",
     "doneEditing": "Terminé",
     "addWidget": "Ajouter un widget",
@@ -2564,6 +2620,9 @@ const fr: TranslationShape = {
     "news": "Actualités"
   },
   "adminHero": {
+    "greeting": "Bonjour, {name}",
+    "title": "Panneau d'administration",
+    "subtitle": "Raccourcis vers tous les outils de gestion.",
     "actionInsights": "Statistiques",
     "actionAuditLog": "Audit",
     "actionChangelog": "Sorties",
@@ -2929,6 +2988,6 @@ const fr: TranslationShape = {
     "character": "Personnage",
     "hoverHint": "Survolez une carte pour en voir plus"
   }
-} as unknown as TranslationShape;
+} satisfies TranslationShape;
 
 export default fr;

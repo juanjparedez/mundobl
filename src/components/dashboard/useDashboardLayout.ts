@@ -24,6 +24,11 @@ interface UseDashboardLayoutOptions {
   persist?: boolean;
   /** Si false, no sincroniza con el server (solo localStorage). Default true. */
   syncWithServer?: boolean;
+  /** Keys de versiones anteriores de ESTE dashboard, a borrar una sola vez
+   *  al montar (localStorage + server). Se usa al bumpear la version del
+   *  layout cuando lo guardado quedo obsoleto o corrupto: sin esto, la
+   *  fila vieja queda huerfana en la DB para siempre. */
+  purgeKeys?: string[];
 }
 
 export interface UseDashboardLayoutResult {
@@ -127,7 +132,7 @@ export function useDashboardLayout(
   defaultLayouts: DashboardLayouts,
   options: UseDashboardLayoutOptions = {}
 ): UseDashboardLayoutResult {
-  const { persist = true, syncWithServer = true } = options;
+  const { persist = true, syncWithServer = true, purgeKeys } = options;
   // defaultsRef se mantiene actualizado via effect (no en render — el
   // linter prohibe mutar refs en render). Lo usa reset() para volver al
   // preset del modo vigente.
@@ -139,6 +144,18 @@ export function useDashboardLayout(
   useEffect(() => {
     defaultsRef.current = defaultLayouts;
   }, [defaultLayouts]);
+
+  // Purga de versiones anteriores. Corre una sola vez por montaje: el ref
+  // evita repetirla si cambia alguna dependencia.
+  const purgedRef = useRef(false);
+  useEffect(() => {
+    if (!persist || purgedRef.current || !purgeKeys?.length) return;
+    purgedRef.current = true;
+    for (const stale of purgeKeys) {
+      clearStorage(stale);
+      if (syncWithServer) deleteFromServer(stale);
+    }
+  }, [persist, syncWithServer, purgeKeys]);
 
   // Hidratacion: localStorage primero (sincrono), despues server (asincrono).
   // Corre cada vez que dashboardKey o defaultLayouts cambian. defaultLayouts
