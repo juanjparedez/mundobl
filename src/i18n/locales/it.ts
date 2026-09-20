@@ -9,7 +9,7 @@
 
 import type { TranslationShape } from '../messages';
 
-const it: TranslationShape = {
+const it = {
   basedOnAdmin: {
     "description": "Gestisci le fonti e le schede associate. Crea un valore inserendolo durante la modifica di una scheda.",
     "search": "Cerca valore",
@@ -1605,7 +1605,45 @@ const it: TranslationShape = {
     "featureFavoritesDesc": "Crea la tua lista dei preferiti per tornare alle tue serie più amate in qualsiasi momento.",
     "featureStatsTitle": "Statistiche personali",
     "featureStatsDesc": "Scopri quante ore hai guardato, i tuoi generi preferiti e le tue serie di attività.",
-    "footerCtaText": "Inizia subito a esplorare il catalogo."
+    "footerCtaText": "Inizia subito a esplorare il catalogo.",
+    "trackerEyebrow": "Il tuo spazio personale",
+    "trackerTitle": "Tieni traccia di ci\u00f2 che guardi, al tuo ritmo",
+    "trackerSubtitle": "I tuoi progressi, le note e i momenti preferiti in un unico posto, senza confusione e senza spoiler.",
+    "trackerFeature1Title": "Monitoraggio episodio per episodio",
+    "trackerFeature1Desc": "Registra ogni episodio visto con un clic e riprendi esattamente da dove eri rimasto, su qualsiasi dispositivo.",
+    "trackerFeature2Title": "Modalit\u00e0 sicura anti-spoiler",
+    "trackerFeature2Desc": "Nascondi le sinossi degli episodi futuri e le recensioni con spoiler per le serie che non hai ancora finito.",
+    "trackerFeature3Title": "Diario privato e note con timestamp",
+    "trackerFeature3Desc": "Annota reazioni e minutaggi delle tue scene preferite. Completamente privato.",
+    "trackerCta": "Inizia a seguire le mie serie",
+    "trackerMockSeries": "KinnPorsche The Series",
+    "trackerMockStatus": "In corso",
+    "trackerMockProgress": "Episodio 7 di 14 \u00b7 50%",
+    "trackerMockSpoiler": "Filtro anti-spoiler attivo",
+    "trackerMockNoteTitle": "Nota privata \u00b7 Ep. 7 (24:15)",
+    "trackerMockNoteText": "\u201cLa scena nel bunker ribalta completamente la loro dinamica. Da rivedere.\u201d",
+    "glossaryEyebrow": "Cultura e lingua",
+    "glossaryTitle": "Comprendi le sfumature dietro ogni storia",
+    "glossarySubtitle": "Il BL asiatico \u00e8 pieno di codici culturali unici: onorifici, slang romantico e tradizioni che meritano di essere capite.",
+    "glossaryTermOfTheDay": "Termine in evidenza",
+    "glossaryQuizCardTitle": "Quanto conosci la cultura e i tropi BL?",
+    "glossaryQuizCardDesc": "Metti alla prova le tue conoscenze su onorifici, dinamiche classiche e tropi sottili in una sfida veloce.",
+    "glossaryQuizCardCta": "Fai il mini-quiz",
+    "glossaryExploreCta": "Esplora il glossario completo",
+    "ecosystemEyebrow": "Comunit\u00e0 aperta",
+    "ecosystemTitle": "Una piattaforma costruita dai fan per i fan",
+    "ecosystemSubtitle": "MundoBL non \u00e8 uno studio di produzione n\u00e9 un sito pieno di pubblicit\u00e0. \u00c8 un ecosistema trasparente che celebra il genere e sostiene creatori e fansub.",
+    "ecosystemPillar1Title": "Prima i canali ufficiali",
+    "ecosystemPillar1Desc": "Colleghiamo e diamo priorit\u00e0 alle uscite ufficiali su YouTube, GagaOOLala, Viki e iQIYI per sostenere direttamente gli studi.",
+    "ecosystemPillar2Title": "Spazio self-service per i fansub",
+    "ecosystemPillar2Desc": "I team di traduzione possono gestire i link degli episodi, mostrare i crediti della crew e condividere link di donazione diretti, senza intermediari.",
+    "ecosystemPillar3Title": "Curatela e segnalazioni della comunit\u00e0",
+    "ecosystemPillar3Desc": "Segnala link rotti, proponi titoli mancanti e vota le recensioni utili per mantenere il catalogo aggiornato.",
+    "ecosystemCta": "Diventa collaboratore",
+    "newsEyebrow": "Attualit\u00e0 e produzione",
+    "newsTitle": "Notizie del settore selezionate, senza clickbait",
+    "newsSubtitle": "Resta aggiornato su nuove riprese, trailer ufficiali, annunci e adattamenti di romanzi, senza rumore.",
+    "newsCta": "Vedi tutte le notizie"
   },
   "welcomeBanner": {
     "title": "Benvenuto su MundoBL",
@@ -1624,11 +1662,28 @@ const it: TranslationShape = {
     "title": "MundoBL - Catalogo Serie",
     "adminModeLabel": "Modalità: Admin"
   },
+  "adminShortcuts": {
+    "dragAria": "Trascina per riordinare le scorciatoie",
+    "alertWithoutReview": "{count} senza recensione",
+    "alertWithoutContent": "{count} serie senza contenuti",
+    "alertPendingSites": "{count} suggerimenti in attesa",
+    "alertReported": "{count} segnalati",
+    "alertHiddenReviews": "{count} nascoste",
+  },
   "adminNav": {
     "ariaLabel": "Navigazione amministratore",
     "groupCatalog": "Catalogo",
     "groupCommunity": "Community",
     "groupSystem": "Sistema",
+    "groupModeration": "Moderazione",
+    "groupTaxonomies": "Tassonomie",
+    "groupPublishing": "Pubblicazione",
+    "import": "Importa serie (YouTube)",
+    "importShort": "Importa",
+    "channelSweep": "Scansione canale",
+    "channelSweepShort": "Scansione",
+    "watchHub": "Gestisci /ver",
+    "watchHubShort": "Guarda",
     "series": "Serie",
     "seriesShort": "Serie",
     "userEmbed": "Contributi",
@@ -2418,6 +2473,7 @@ const it: TranslationShape = {
   "dashboard": {
     "dragHandleAria": "Trascina widget",
     "removeWidgetAria": "Rimuovi widget",
+    "autofitHeight": "Adatta altezza al contenuto",
     "editLayout": "Modifica layout",
     "doneEditing": "Fatto",
     "addWidget": "Aggiungi widget",
@@ -2564,6 +2620,9 @@ const it: TranslationShape = {
     "news": "Notizie"
   },
   "adminHero": {
+    "greeting": "Ciao, {name}",
+    "title": "Pannello di amministrazione",
+    "subtitle": "Scorciatoie a tutti gli strumenti di gestione.",
     "actionInsights": "Approfondimenti",
     "actionAuditLog": "Verifica",
     "actionChangelog": "Uscite",
@@ -2929,6 +2988,6 @@ const it: TranslationShape = {
     "character": "Personaggio",
     "hoverHint": "Passa il mouse su una card per saperne di più"
   }
-} as unknown as TranslationShape;
+} satisfies TranslationShape;
 
 export default it;
