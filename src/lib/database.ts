@@ -1557,3 +1557,38 @@ export async function getPublicUniverseSeries(universeId: number) {
     ],
   });
 }
+
+export interface SeriesEpisodeOrder {
+  id: number;
+  seasonNumber: number;
+  episodeNumber: number;
+}
+
+/**
+ * Episodios de una serie ordenados por (seasonNumber, episodeNumber). Acepta
+ * un client de transaccion para que setProgress (T05, src/lib/tracking.ts)
+ * pueda leer dentro del mismo $transaction que sus escrituras.
+ */
+export async function getSeriesEpisodesOrdered(
+  client: PrismaClient | Prisma.TransactionClient,
+  seriesId: number
+): Promise<SeriesEpisodeOrder[]> {
+  const seasons = await client.season.findMany({
+    where: { seriesId },
+    select: {
+      seasonNumber: true,
+      episodes: { select: { id: true, episodeNumber: true } },
+    },
+    orderBy: { seasonNumber: 'asc' },
+  });
+
+  return seasons.flatMap((season) =>
+    [...season.episodes]
+      .sort((a, b) => a.episodeNumber - b.episodeNumber)
+      .map((ep) => ({
+        id: ep.id,
+        seasonNumber: season.seasonNumber,
+        episodeNumber: ep.episodeNumber,
+      }))
+  );
+}
