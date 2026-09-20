@@ -7,7 +7,7 @@ El agente que toma una tarea la pasa a `en curso` al crear la rama y a `hecha` a
 | ---- | ------------------------------------------------ | ---- | --------- | --------- | ---------- | ----- |
 | T01  | Eventos de embudo en analytics                   | 0    | pendiente |           |            |       |
 | T02  | Widget de retención en /admin/stats              | 0    | pendiente |           |            |       |
-| T03  | Marcar episodio promueve la serie a VIENDO       | 1    | pendiente |           |            | Primera de todas: destraba T05, T08, T15 |
+| T03  | Marcar episodio promueve la serie a VIENDO       | 1    | en PR     | feat/T03-episodio-promueve-serie | 2026-09-20 | Primera de todas: destraba T05, T08, T15. Backfill en dry-run confirma 12 pares; falta correr `--apply` en prod |
 | T04  | refetch() en SeriesUserStatusProvider            | 1    | pendiente |           |            |       |
 | T05  | Endpoint "hasta el episodio N"                   | 1    | pendiente |           |            |       |
 | T06  | Stepper "Voy por el episodio N" en la ficha      | 1    | pendiente |           |            |       |
