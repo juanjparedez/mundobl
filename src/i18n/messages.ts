@@ -2485,6 +2485,18 @@ export type TranslationShape = {
     ariaLabel: string;
     tooltipEpisodes: string;
   };
+  progressStepper: {
+    at: string;
+    next: string;
+    prev: string;
+    jumpTo: string;
+    error: string;
+    finishedTitle: string;
+    markComplete: string;
+    notYet: string;
+    ariaNext: string;
+    ariaPrev: string;
+  };
   spoilerFreeProvider: {
     useSpoilerFreeError: string;
   };
@@ -5605,6 +5617,18 @@ const es: TranslationShape = {
     episodesUnit: '{watched} de {total} episodios',
     ariaLabel: 'Seleccionar estado de visualización de la serie',
     tooltipEpisodes: '{watched} de {total} episodios vistos',
+  },
+  progressStepper: {
+    at: 'Voy por el {current} de {total}',
+    next: 'Vi el siguiente',
+    prev: 'Deshacer el último',
+    jumpTo: 'Saltar a un episodio',
+    error: 'No se pudo actualizar el progreso.',
+    finishedTitle: '¿Terminaste {title}?',
+    markComplete: 'Sí, la terminé',
+    notYet: 'Todavía no',
+    ariaNext: 'Marcar el siguiente episodio como visto',
+    ariaPrev: 'Desmarcar el último episodio visto',
   },
   spoilerFreeProvider: {
     useSpoilerFreeError:
@@ -8737,6 +8761,18 @@ const en: TranslationShape = {
     episodesUnit: '{watched} of {total} episodes',
     ariaLabel: 'Select series watch status',
     tooltipEpisodes: '{watched} of {total} episodes watched',
+  },
+  progressStepper: {
+    at: "I'm on {current} of {total}",
+    next: 'Mark next episode',
+    prev: 'Undo last episode',
+    jumpTo: 'Jump to an episode',
+    error: "Couldn't update progress.",
+    finishedTitle: 'Did you finish {title}?',
+    markComplete: 'Yes, I finished it',
+    notYet: 'Not yet',
+    ariaNext: 'Mark next episode as watched',
+    ariaPrev: 'Unmark last watched episode',
   },
   spoilerFreeProvider: {
     useSpoilerFreeError:
