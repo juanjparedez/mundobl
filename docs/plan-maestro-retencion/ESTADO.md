@@ -5,7 +5,7 @@ El agente que toma una tarea la pasa a `en curso` al crear la rama y a `hecha` a
 
 | ID   | Tarea                                            | Fase | Estado    | Rama / PR | Fecha      | Notas |
 | ---- | ------------------------------------------------ | ---- | --------- | --------- | ---------- | ----- |
-| T01  | Eventos de embudo en analytics                   | 0    | pendiente |           |            |       |
+| T01  | Eventos de embudo en analytics                   | 0    | en PR     | feat/T01-eventos-embudo |  2026-09-20 | Define el contrato que usan T07, T09 y T11b |
 | T02  | Widget de retención en /admin/stats              | 0    | pendiente |           |            |       |
 | T03  | Marcar episodio promueve la serie a VIENDO       | 1    | hecha     | feat/T03-episodio-promueve-serie (PR #32) | 2026-09-20 | Destrabó T05, T08, T15. Backfill `--apply` corrido en prod: 12 pares corregidos, re-check en 0 |
 | T04  | refetch() en SeriesUserStatusProvider            | 1    | pendiente |           |            |       |

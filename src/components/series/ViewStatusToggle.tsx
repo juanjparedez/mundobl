@@ -10,6 +10,7 @@ import './ViewStatusToggle.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { useMessage } from '@/hooks/useMessage';
+import { trackFunnel } from '@/lib/analytics';
 
 type AntStatusColor =
   | 'default'
@@ -88,6 +89,8 @@ export function ViewStatusToggle({
       });
 
       if (!response.ok) throw new Error(t('viewStatusToggle.errorUpdating'));
+
+      trackFunnel('series_status_set', { status: newStatus, source: 'toggle' });
 
       message.success(
         interpolateMessage(t('viewStatusToggle.statusUpdateSuccess'), {

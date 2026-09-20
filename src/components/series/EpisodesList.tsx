@@ -34,6 +34,7 @@ import './EpisodesList.css';
 import { useMessage, useModal } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
+import { trackFunnel } from '@/lib/analytics';
 
 const { TextArea } = Input;
 
@@ -269,6 +270,7 @@ export function EpisodesList({
       if (!response.ok) throw new Error();
 
       const viewStatus = await response.json();
+      trackFunnel('episode_marked', { source: 'list', status: newStatus });
 
       setEpisodes(
         episodes.map((ep) =>
@@ -312,6 +314,10 @@ export function EpisodesList({
           if (response.ok) {
             updatedCount++;
             const viewStatus = await response.json();
+            trackFunnel('episode_marked', {
+              source: 'list',
+              status: newStatus,
+            });
             setEpisodes((prev) =>
               prev.map((ep) =>
                 ep.id === id

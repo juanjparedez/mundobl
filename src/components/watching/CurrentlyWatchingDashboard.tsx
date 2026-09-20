@@ -23,6 +23,7 @@ import { getSeriesUrl } from '@/lib/slug';
 import './CurrentlyWatchingDashboard.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
+import { trackFunnel } from '@/lib/analytics';
 
 interface WatchingSeriesData {
   id: number;
@@ -313,6 +314,11 @@ export function CurrentlyWatchingDashboard() {
 
       if (!response.ok) throw new Error(t('watchingDashboard.errorRemove'));
 
+      trackFunnel('series_status_set', {
+        status: 'SIN_VER',
+        source: 'watching',
+      });
+
       setWatchingSeries((prev) =>
         prev.filter((item) => item.series.id !== seriesId)
       );
@@ -342,6 +348,8 @@ export function CurrentlyWatchingDashboard() {
 
       if (!response.ok)
         throw new Error(t('watchingDashboard.errorMarkEpisode'));
+
+      trackFunnel('episode_marked', { source: 'watching', status: 'VISTA' });
 
       message.success(
         interpolateMessage(t('watchingDashboard.episodeMarkedMessage'), {
