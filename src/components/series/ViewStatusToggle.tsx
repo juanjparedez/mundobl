@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Progress, Tooltip, Tag, Select, Badge } from 'antd';
+import { Progress, Tag, Select, Badge } from 'antd';
 import { useSession } from 'next-auth/react';
 import { WATCH_STATUS, WATCH_STATUS_COLORS } from '@/constants/series';
 import type { WatchStatusValue } from '@/constants/series';
 import { useSeriesUserStatus } from './SeriesUserStatusProvider';
+import { WatchProgressStepper } from './WatchProgressStepper/WatchProgressStepper';
 import './ViewStatusToggle.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
@@ -21,9 +22,13 @@ type AntStatusColor =
 
 interface ViewStatusToggleProps {
   seriesId: number;
+  /** Para el Popconfirm "¿Terminaste {title}?" del stepper. */
+  seriesTitle: string;
   seasons?: Array<{
+    seasonNumber: number;
     episodes?: Array<{
       id: number;
+      episodeNumber: number;
     }>;
   }>;
 }
@@ -35,6 +40,7 @@ interface ViewStatusToggleProps {
 // /api/series/[id]/my-status.
 export function ViewStatusToggle({
   seriesId,
+  seriesTitle,
   seasons = [],
 }: ViewStatusToggleProps) {
   const message = useMessage();
@@ -78,6 +84,23 @@ export function ViewStatusToggle({
   const { totalEpisodes, watchedEpisodes } = calculateProgress();
   const progressPercent =
     totalEpisodes > 0 ? Math.round((watchedEpisodes / totalEpisodes) * 100) : 0;
+
+  // Aplanado y ordenado para el stepper (T06): las temporadas ya vienen
+  // ordenadas por seasonNumber y los episodios por episodeNumber desde
+  // buildSeriesFullInclude, pero no asumimos el orden acá.
+  const orderedEpisodes = seasons
+    .flatMap((season) =>
+      (season.episodes ?? []).map((ep) => ({
+        id: ep.id,
+        seasonNumber: season.seasonNumber,
+        episodeNumber: ep.episodeNumber,
+      }))
+    )
+    .sort((a, b) =>
+      a.seasonNumber !== b.seasonNumber
+        ? a.seasonNumber - b.seasonNumber
+        : a.episodeNumber - b.episodeNumber
+    );
 
   const handleStatusChange = async (newStatus: WatchStatusValue) => {
     const previous = status;
@@ -156,27 +179,13 @@ export function ViewStatusToggle({
         aria-label={t('viewStatusToggle.ariaLabel')}
       />
 
-      {totalEpisodes > 0 && (
-        <div className="view-status-toggle__progress">
-          <Tooltip
-            title={interpolateMessage(t('viewStatusToggle.tooltipEpisodes'), {
-              watched: String(watchedEpisodes),
-              total: String(totalEpisodes),
-            })}
-          >
-            <Progress
-              percent={progressPercent}
-              size="small"
-              status={progressPercent === 100 ? 'success' : 'active'}
-              format={() =>
-                interpolateMessage(t('viewStatusToggle.episodesUnit'), {
-                  watched: String(watchedEpisodes),
-                  total: String(totalEpisodes),
-                })
-              }
-            />
-          </Tooltip>
-        </div>
+      {orderedEpisodes.length > 0 && (
+        <WatchProgressStepper
+          seriesId={seriesId}
+          seriesTitle={seriesTitle}
+          episodes={orderedEpisodes}
+          source="stepper"
+        />
       )}
     </div>
   );
