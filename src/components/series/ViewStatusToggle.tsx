@@ -40,13 +40,15 @@ export function ViewStatusToggle({
   const message = useMessage();
   const { t } = useLocale();
   const { data: session } = useSession();
-  const { seriesStatus, episodeStatus, loaded } = useSeriesUserStatus();
+  const { seriesStatus, episodeStatus, loaded, version } =
+    useSeriesUserStatus();
   const [status, setStatus] = useState<WatchStatusValue>('SIN_VER');
   const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     if (loaded) setStatus(seriesStatus as WatchStatusValue);
-  }, [loaded, seriesStatus]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- re-sembrar en cada version (refetch), no solo cuando cambia seriesStatus/loaded en si
+  }, [version]);
 
   const watchStatusLabels: Record<string, string> = {
     SIN_VER: t('viewStatusToggle.sinVer'),
