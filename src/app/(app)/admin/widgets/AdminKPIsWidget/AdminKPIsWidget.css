@@ -1,0 +1,29 @@
+/* Grilla de los 4 StatCards de KPIs.
+ *
+ * Los umbrales son container queries, no media queries: lo que importa es
+ * el ancho REAL del widget (el que el usuario le dio arrastrando en el
+ * dashboard), no el de la pagina. Un widget angosto en una pantalla
+ * grande tiene que reacomodarse igual. El contenedor lo declara
+ * Widget.css (container-name: mb-widget-body).
+ *
+ * Referencia de anchos: en lg son 12 columnas sobre ~1176px con gap 10,
+ * o sea ~88px por columna. w:4 ≈ 342px, w:6 ≈ 518px, w:8 ≈ 694px.
+ */
+.mb-admin-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+}
+
+@container mb-widget-body (max-width: 559px) {
+  .mb-admin-kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container mb-widget-body (max-width: 319px) {
+  .mb-admin-kpis {
+    grid-template-columns: 1fr;
+  }
+}

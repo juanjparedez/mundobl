@@ -1,0 +1,31 @@
+/* Formulario de edicion de serie.
+ *
+ * Eran 13 campos en una sola columna: el modal terminaba midiendo ~1500px
+ * de alto. A dos columnas los campos cortos comparten fila y solo los
+ * textos largos ocupan el ancho completo, lo que corta la altura casi a
+ * la mitad sin sacar ningun campo.
+ *
+ * El layout de campos es responsabilidad del formulario, no de
+ * PanelModal: el modal resuelve tamaño y scroll, no como se acomoda el
+ * contenido de cada pagina.
+ */
+
+/* 768px = tablet (breakpoint estandar documentado en variables.css).
+ * Por debajo, una sola columna: a dos columnas los inputs quedan
+ * demasiado angostos para escribir comodo. */
+@media (min-width: 769px) {
+  .edit-serie-modal__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--spacing-md);
+  }
+
+  .edit-serie-modal__grid > .edit-serie-modal__full {
+    grid-column: 1 / -1;
+  }
+}
+
+/* InputNumber de antd no ocupa el ancho de su celda por default. */
+.edit-serie-modal__number {
+  width: 100%;
+}

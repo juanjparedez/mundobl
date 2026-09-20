@@ -9,7 +9,7 @@
 
 import type { TranslationShape } from '../messages';
 
-const ko: TranslationShape = {
+const ko = {
   basedOnAdmin: {
     "description": "원작 분류와 해당 작품을 관리하세요. 작품 편집 화면에서 새 값을 입력할 수 있습니다.",
     "search": "값 검색",
@@ -1605,7 +1605,45 @@ const ko: TranslationShape = {
     "featureFavoritesDesc": "가장 좋아하는 시리즈를 언제든지 다시 볼 수 있도록 즐겨찾기 목록을 만드세요.",
     "featureStatsTitle": "개인 통계",
     "featureStatsDesc": "시청 시간, 좋아하는 장르, 활동 연속 기록을 확인하세요.",
-    "footerCtaText": "지금 카탈로그 탐색을 시작하세요."
+    "footerCtaText": "지금 카탈로그 탐색을 시작하세요.",
+    "trackerEyebrow": "\ub098\ub9cc\uc758 \uacf5\uac04",
+    "trackerTitle": "\ub0b4 \uc18d\ub3c4\ub300\ub85c, \ubcf8 \uc791\ud488\uc744 \uae30\ub85d\ud558\uc138\uc694",
+    "trackerSubtitle": "\uc9c4\ud589 \uc0c1\ud669\uacfc \uba54\ubaa8, \uc88b\uc544\ud558\ub294 \uc7a5\uba74\uc744 \ud55c\uacf3\uc5d0. \ubcf5\uc7a1\ud558\uc9c0 \uc54a\uace0 \uc2a4\ud3ec\uc77c\ub7ec\ub3c4 \uc5c6\uc2b5\ub2c8\ub2e4.",
+    "trackerFeature1Title": "\ud68c\ucc28\ubcc4 \uc2dc\uccad \uae30\ub85d",
+    "trackerFeature1Desc": "\ud074\ub9ad \ud55c \ubc88\uc73c\ub85c \ubcf8 \ud68c\ucc28\ub97c \uae30\ub85d\ud558\uace0, \uc5b4\ub5a4 \uae30\uae30\uc5d0\uc11c\ub4e0 \uba48\ucd98 \uc9c0\uc810\uc5d0\uc11c \uc774\uc5b4 \ubcf4\uc138\uc694.",
+    "trackerFeature2Title": "\uc2a4\ud3ec\uc77c\ub7ec \uc5c6\ub294 \uc548\uc804 \ubaa8\ub4dc",
+    "trackerFeature2Desc": "\uc544\uc9c1 \uc644\uc8fc\ud558\uc9c0 \uc54a\uc740 \uc791\ud488\uc740 \uc774\ud6c4 \ud68c\ucc28\uc758 \uc904\uac70\ub9ac\uc640 \uc2a4\ud3ec\uc77c\ub7ec\uac00 \ub2f4\uae34 \ub9ac\ubdf0\ub97c \uc228\uae41\ub2c8\ub2e4.",
+    "trackerFeature3Title": "\ube44\uacf5\uac1c \uc77c\uae30\uc640 \ud0c0\uc784\uc2a4\ud0ec\ud504 \uba54\ubaa8",
+    "trackerFeature3Desc": "\uc88b\uc544\ud558\ub294 \uc7a5\uba74\uc758 \uac10\uc0c1\uacfc \uc7ac\uc0dd \uc2dc\uc810\uc744 \ub0a8\uaca8 \ub450\uc138\uc694. \uc624\uc9c1 \ub098\ub9cc \ubcfc \uc218 \uc788\uc2b5\ub2c8\ub2e4.",
+    "trackerCta": "\ub0b4 \uc791\ud488 \uae30\ub85d \uc2dc\uc791\ud558\uae30",
+    "trackerMockSeries": "KinnPorsche The Series",
+    "trackerMockStatus": "\uc2dc\uccad \uc911",
+    "trackerMockProgress": "7\ud654 / 14\ud654 \u00b7 50%",
+    "trackerMockSpoiler": "\uc2a4\ud3ec\uc77c\ub7ec \ubc29\uc9c0 \ud544\ud130 \ucf1c\uc9d0",
+    "trackerMockNoteTitle": "\ube44\uacf5\uac1c \uba54\ubaa8 \u00b7 7\ud654 (24:15)",
+    "trackerMockNoteText": "\"\ubc99\ucee4 \uc7a5\uba74\uc5d0\uc11c \ub450 \uc0ac\ub78c\uc758 \uad00\uacc4\uac00 \uc644\uc804\ud788 \ub2ec\ub77c\uc9c4\ub2e4. \uaf2d \ub2e4\uc2dc \ubd10\uc57c\uc9c0.\"",
+    "glossaryEyebrow": "\ubb38\ud654\uc640 \uc5b8\uc5b4",
+    "glossaryTitle": "\ubaa8\ub4e0 \uc774\uc57c\uae30 \ub4a4\uc5d0 \ub2f4\uae34 \ub258\uc559\uc2a4\ub97c \uc774\ud574\ud558\uc138\uc694",
+    "glossarySubtitle": "\uc544\uc2dc\uc544 BL\uc5d0\ub294 \uace0\uc720\ud55c \ubb38\ud654\uc801 \ucf54\ub4dc\uac00 \uac00\ub4dd\ud569\ub2c8\ub2e4. \ud638\uce6d, \ub85c\ub9e8\uc2a4 \uc18d\uc5b4, \uadf8\ub9ac\uace0 \uc54c\uc544 \ub458 \ub9cc\ud55c \uc804\ud1b5\uae4c\uc9c0.",
+    "glossaryTermOfTheDay": "\uc624\ub298\uc758 \uc6a9\uc5b4",
+    "glossaryQuizCardTitle": "BL \ubb38\ud654\uc640 \ud074\ub9ac\uc170, \uc5bc\ub9c8\ub098 \uc54c\uace0 \uc788\ub098\uc694?",
+    "glossaryQuizCardDesc": "\ud638\uce6d\uacfc \uace0\uc804\uc801\uc778 \uad00\uacc4 \uad6c\ub3c4, \ubbf8\ubb18\ud55c \ud074\ub9ac\uc170\uc5d0 \ub300\ud55c \uc9c0\uc2dd\uc744 \uc9e7\uc740 \ud034\uc988\ub85c \ud655\uc778\ud574 \ubcf4\uc138\uc694.",
+    "glossaryQuizCardCta": "\ubbf8\ub2c8 \ud034\uc988 \ud480\uae30",
+    "glossaryExploreCta": "\uc804\uccb4 \uc6a9\uc5b4\uc9d1 \ubcf4\uae30",
+    "ecosystemEyebrow": "\uc5f4\ub9b0 \ucee4\ubba4\ub2c8\ud2f0",
+    "ecosystemTitle": "\ud32c\uc774 \ub9cc\ub4e4\uace0 \ud32c\uc744 \uc704\ud55c \ud50c\ub7ab\ud3fc",
+    "ecosystemSubtitle": "MundoBL\uc740 \uc81c\uc791\uc0ac\ub3c4, \uad11\uace0\ub85c \ub4a4\ub36e\uc778 \uc0ac\uc774\ud2b8\ub3c4 \uc544\ub2d9\ub2c8\ub2e4. \uc7a5\ub974\ub97c \uae30\ub150\ud558\uace0 \ucc3d\uc791\uc790\uc640 \ud32c\uc790\ub9c9\uc744 \uc9c0\uc6d0\ud558\ub294 \ud22c\uba85\ud55c \uc0dd\ud0dc\uacc4\uc785\ub2c8\ub2e4.",
+    "ecosystemPillar1Title": "\uacf5\uc2dd \ucc44\ub110 \uc6b0\uc120",
+    "ecosystemPillar1Desc": "YouTube, GagaOOLala, Viki, iQIYI\uc758 \uacf5\uc2dd \uacf5\uac1c\ubcf8\uc744 \uc6b0\uc120 \uc5f0\uacb0\ud574 \uc81c\uc791\uc0ac\ub97c \uc9c1\uc811 \uc751\uc6d0\ud569\ub2c8\ub2e4.",
+    "ecosystemPillar2Title": "\ud32c\uc790\ub9c9\uc744 \uc704\ud55c \uc140\ud504 \uc11c\ube44\uc2a4 \uacf5\uac04",
+    "ecosystemPillar2Desc": "\ubc88\uc5ed \ud300\uc740 \ud68c\ucc28 \ub9c1\ud06c\ub97c \uad00\ub9ac\ud558\uace0 \uc81c\uc791\uc9c4 \ud06c\ub808\ub527\uc744 \ubcf4\uc5ec \uc8fc\uba70, \uc911\uac1c\uc790 \uc5c6\uc774 \ud6c4\uc6d0 \ub9c1\ud06c\ub97c \uacf5\uc720\ud560 \uc218 \uc788\uc2b5\ub2c8\ub2e4.",
+    "ecosystemPillar3Title": "\ucee4\ubba4\ub2c8\ud2f0 \ud050\ub808\uc774\uc158\uacfc \uc2e0\uace0",
+    "ecosystemPillar3Desc": "\ub04a\uae34 \ub9c1\ud06c\ub97c \uc2e0\uace0\ud558\uace0 \ube60\uc9c4 \uc791\ud488\uc744 \uc81c\uc548\ud558\uace0 \uc720\uc6a9\ud55c \ub9ac\ubdf0\uc5d0 \ud22c\ud45c\ud574 \uce74\ud0c8\ub85c\uadf8\ub97c \ucd5c\uc2e0\uc73c\ub85c \uc720\uc9c0\ud558\uc138\uc694.",
+    "ecosystemCta": "\ud611\ub825\uc790 \ub418\uae30",
+    "newsEyebrow": "\uc18c\uc2dd\uacfc \uc81c\uc791",
+    "newsTitle": "\ub09a\uc2dc\uc131 \uae30\uc0ac \uc5c6\ub294 \uc5c4\uc120\ub41c \uc5c5\uacc4 \uc18c\uc2dd",
+    "newsSubtitle": "\uc0c8 \ucd2c\uc601 \uc18c\uc2dd\uacfc \uacf5\uc2dd \uc608\uace0\ud3b8, \ubc1c\ud45c, \uc18c\uc124 \uac01\uc0c9\uae4c\uc9c0 \uc7a1\uc74c \uc5c6\uc774 \ud655\uc778\ud558\uc138\uc694.",
+    "newsCta": "\ubaa8\ub4e0 \uc18c\uc2dd \ubcf4\uae30"
   },
   "welcomeBanner": {
     "title": "MundoBL에 오신 것을 환영합니다",
@@ -1624,11 +1662,28 @@ const ko: TranslationShape = {
     "title": "MundoBL - 시리즈 카탈로그",
     "adminModeLabel": "모드: 관리자"
   },
+  "adminShortcuts": {
+    "dragAria": "\ub4dc\ub798\uadf8\ud558\uc5ec \ubc14\ub85c\uac00\uae30 \uc21c\uc11c \ubcc0\uacbd",
+    "alertWithoutReview": "\ub9ac\ubdf0 \uc5c6\uc74c {count}\uac1c",
+    "alertWithoutContent": "\ucf58\ud150\uce20 \uc5c6\ub294 \uc2dc\ub9ac\uc988 {count}\uac1c",
+    "alertPendingSites": "\ub300\uae30 \uc911\uc778 \uc81c\uc548 {count}\uac1c",
+    "alertReported": "\uc2e0\uace0\ub428 {count}\uac1c",
+    "alertHiddenReviews": "\uc228\uae40 {count}\uac1c",
+  },
   "adminNav": {
     "ariaLabel": "관리자 탐색",
     "groupCatalog": "카탈로그",
     "groupCommunity": "커뮤니티",
     "groupSystem": "시스템",
+    "groupModeration": "\ubaa8\ub354\ub808\uc774\uc158",
+    "groupTaxonomies": "\ubd84\ub958",
+    "groupPublishing": "\uac8c\uc2dc",
+    "import": "\uc2dc\ub9ac\uc988 \uac00\uc838\uc624\uae30(YouTube)",
+    "importShort": "\uac00\uc838\uc624\uae30",
+    "channelSweep": "\ucc44\ub110 \uc2a4\uce94",
+    "channelSweepShort": "\uc2a4\uce94",
+    "watchHub": "/ver \uad00\ub9ac",
+    "watchHubShort": "\uc2dc\uccad",
     "series": "시리즈",
     "seriesShort": "시리즈",
     "userEmbed": "사용자 기여",
@@ -2418,6 +2473,7 @@ const ko: TranslationShape = {
   "dashboard": {
     "dragHandleAria": "위젯 드래그",
     "removeWidgetAria": "위젯 제거",
+    "autofitHeight": "콘텐츠에 높이 맞추기",
     "editLayout": "레이아웃 편집",
     "doneEditing": "완료",
     "addWidget": "위젯 추가",
@@ -2564,6 +2620,9 @@ const ko: TranslationShape = {
     "news": "뉴스"
   },
   "adminHero": {
+    "greeting": "안녕하세요, {name}님",
+    "title": "관리 패널",
+    "subtitle": "모든 관리 도구로 가는 바로가기.",
     "actionInsights": "인사이트",
     "actionAuditLog": "감사",
     "actionChangelog": "출시작",
@@ -2929,6 +2988,6 @@ const ko: TranslationShape = {
     "character": "배역",
     "hoverHint": "카드에 마우스를 올리면 더 볼 수 있어요"
   }
-} as unknown as TranslationShape;
+} satisfies TranslationShape;
 
 export default ko;

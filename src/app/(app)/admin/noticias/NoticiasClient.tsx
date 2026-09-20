@@ -5,7 +5,6 @@ import {
   Button,
   Form,
   Input,
-  Modal,
   Popconfirm,
   Segmented,
   Select,
@@ -27,7 +26,7 @@ import { AdminNav } from '../AdminNav';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import './noticias-admin.css';
-import { DataTable } from '@/components/design-system';
+import { DataTable, PanelModal } from '@/components/design-system';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -467,10 +466,11 @@ export function NoticiasClient() {
           />
 
           {/* ── Modal preview ── */}
-          <Modal
+          <PanelModal
             title={previewRow?.title ?? t('newsAdmin.previewModalTitle')}
+            size="md"
             open={!!previewRow}
-            onCancel={() => setPreviewRow(null)}
+            onClose={() => setPreviewRow(null)}
             footer={
               <Space>
                 <Tag
@@ -495,7 +495,6 @@ export function NoticiasClient() {
                 </Button>
               </Space>
             }
-            width={680}
           >
             {previewRow && (
               <div className="noticias-admin__preview">
@@ -538,20 +537,19 @@ export function NoticiasClient() {
                 )}
               </div>
             )}
-          </Modal>
+          </PanelModal>
 
           {/* ── Modal form crear/editar ── */}
-          <Modal
+          <PanelModal
             title={
               editingRow
                 ? t('newsAdmin.editNewsModalTitle', { id: editingRow.id })
                 : t('newsAdmin.newNewsModalTitle')
             }
+            size="md"
             open={isFormOpen}
-            onCancel={() => setIsFormOpen(false)}
+            onClose={() => setIsFormOpen(false)}
             footer={null}
-            width={700}
-            maskClosable={false}
             destroyOnHidden
           >
             <Form
@@ -677,16 +675,15 @@ export function NoticiasClient() {
                 </Button>
               </div>
             </Form>
-          </Modal>
+          </PanelModal>
 
           {/* ── Modal AI generator ── */}
-          <Modal
+          <PanelModal
             title={t('newsAdmin.aiGeneratorModalTitle')}
+            size="md"
             open={isAiOpen}
-            onCancel={() => setIsAiOpen(false)}
+            onClose={() => setIsAiOpen(false)}
             footer={null}
-            width={640}
-            maskClosable={false}
             destroyOnHidden
           >
             <p className="noticias-admin__ai-disclaimer">
@@ -743,7 +740,7 @@ export function NoticiasClient() {
                 </Button>
               </div>
             </Form>
-          </Modal>
+          </PanelModal>
         </div>
       </div>
     </>

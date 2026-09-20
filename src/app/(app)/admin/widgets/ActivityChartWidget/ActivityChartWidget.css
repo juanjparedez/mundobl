@@ -53,3 +53,18 @@
   justify-content: center;
   padding: var(--spacing-md);
 }
+
+/* Container queries: en un widget angosto el caption y el link al log
+ * no entran en una linea, y por debajo de cierto ancho el link sobra
+ * (el chart sigue siendo lo que importa). */
+@container mb-widget-body (max-width: 419px) {
+  .mb-activity-chart__caption-row {
+    flex-wrap: wrap;
+  }
+}
+
+@container mb-widget-body (max-width: 319px) {
+  .mb-activity-chart__log-link {
+    display: none;
+  }
+}
