@@ -24,13 +24,18 @@ export function SeriesSubscribeButton({
   const { t } = useLocale();
   const { status } = useSession();
   const message = useMessage();
-  const { subscribed: initialSubscribed, loaded } = useSeriesUserStatus();
+  const {
+    subscribed: initialSubscribed,
+    loaded,
+    version,
+  } = useSeriesUserStatus();
   const [subscribed, setSubscribed] = useState(false);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (loaded) setSubscribed(initialSubscribed);
-  }, [loaded, initialSubscribed]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- re-sembrar en cada version (refetch), no solo cuando cambia initialSubscribed/loaded en si
+  }, [version]);
 
   if (status !== 'authenticated') {
     return (
