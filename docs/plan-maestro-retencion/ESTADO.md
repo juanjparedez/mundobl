@@ -8,7 +8,7 @@ El agente que toma una tarea la pasa a `en curso` al crear la rama y a `hecha` a
 | T01  | Eventos de embudo en analytics                   | 0    | hecha     | feat/T01-eventos-embudo (PR #33) | 2026-09-20 | Define el contrato que usan T07, T09 y T11b |
 | T02  | Widget de retención en /admin/stats              | 0    | pendiente |           |            |       |
 | T03  | Marcar episodio promueve la serie a VIENDO       | 1    | hecha     | feat/T03-episodio-promueve-serie (PR #32) | 2026-09-20 | Destrabó T05, T08, T15. Backfill `--apply` corrido en prod: 12 pares corregidos, re-check en 0 |
-| T04  | refetch() en SeriesUserStatusProvider            | 1    | en PR     | feat/T04-provider-refetch |  2026-09-20 | Destraba T06 (stepper) |
+| T04  | refetch() en SeriesUserStatusProvider            | 1    | hecha     | feat/T04-provider-refetch (PR #34) | 2026-09-20 | Destraba T06 (stepper) |
 | T05  | Endpoint "hasta el episodio N"                   | 1    | pendiente |           |            |       |
 | T06  | Stepper "Voy por el episodio N" en la ficha      | 1    | pendiente |           |            |       |
 | T07  | CTA para anónimos + intención pendiente          | 1    | pendiente |           |            |       |
