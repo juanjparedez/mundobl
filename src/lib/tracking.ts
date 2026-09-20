@@ -5,8 +5,12 @@
  */
 
 import type { Prisma, PrismaClient, ViewStatus } from '../generated/prisma';
+import { getSeriesEpisodesOrdered, type SeriesEpisodeOrder } from './database';
 
 export type TrackingClient = PrismaClient | Prisma.TransactionClient;
+
+/** upToEpisodeId de otra serie, o serie/episodio inexistente. */
+export class ProgressNotFoundError extends Error {}
 
 export interface MarkEpisodeResult {
   episode: ViewStatus;
@@ -85,5 +89,141 @@ export async function markEpisode(
     episode,
     series,
     allWatched: totalEpisodes > 0 && totalEpisodes === watchedEpisodes,
+  };
+}
+
+export interface ProgressTarget {
+  upToEpisodeId?: number;
+  seasonNumber?: number;
+  episodeNumber?: number;
+}
+
+export interface ProgressOptions {
+  /** Pone en SIN_VER los episodios posteriores al objetivo; no toca la fila de serie. */
+  direction?: 'unmark';
+  /** Si tras marcar quedan todos los episodios vistos, pasa la serie a VISTA. */
+  completeIfAll?: boolean;
+}
+
+export interface ProgressResult {
+  seriesStatus: string;
+  episodeStatus: Record<number, 'VISTA' | 'SIN_VER'>;
+  watched: number;
+  total: number;
+  allWatched: boolean;
+}
+
+/**
+ * "Voy por el episodio N": marca ese episodio y todos los anteriores como
+ * VISTA (o, con direction: 'unmark', pone en SIN_VER los posteriores) y
+ * devuelve el estado completo de la serie. Usado por T06, T07, T11b y T13.
+ */
+export async function setProgress(
+  client: TrackingClient,
+  userId: string,
+  seriesId: number,
+  target: ProgressTarget,
+  options: ProgressOptions = {}
+): Promise<ProgressResult> {
+  const episodes = await getSeriesEpisodesOrdered(client, seriesId);
+  if (episodes.length === 0) {
+    throw new ProgressNotFoundError('La serie no tiene episodios');
+  }
+
+  const targetEpisode =
+    target.upToEpisodeId !== undefined
+      ? episodes.find((ep) => ep.id === target.upToEpisodeId)
+      : episodes.find(
+          (ep) =>
+            ep.seasonNumber === target.seasonNumber &&
+            ep.episodeNumber === target.episodeNumber
+        );
+
+  if (!targetEpisode) {
+    throw new ProgressNotFoundError('Episodio no encontrado en esta serie');
+  }
+
+  const targetIndex = episodes.findIndex((ep) => ep.id === targetEpisode.id);
+  const now = new Date();
+
+  if (options.direction === 'unmark') {
+    const afterIds = episodes.slice(targetIndex + 1).map((ep) => ep.id);
+    if (afterIds.length > 0) {
+      await client.viewStatus.updateMany({
+        where: { userId, episodeId: { in: afterIds } },
+        data: { status: 'SIN_VER', watchedDate: null },
+      });
+    }
+    return buildProgressResult(client, userId, seriesId, episodes);
+  }
+
+  const upToIds = episodes.slice(0, targetIndex + 1).map((ep) => ep.id);
+
+  await client.viewStatus.createMany({
+    data: upToIds.map((episodeId) => ({
+      userId,
+      episodeId,
+      status: 'VISTA',
+      watchedDate: now,
+    })),
+    skipDuplicates: true,
+  });
+  await client.viewStatus.updateMany({
+    where: { userId, episodeId: { in: upToIds }, status: 'SIN_VER' },
+    data: { status: 'VISTA', watchedDate: now },
+  });
+
+  // Misma regla de T03 para la fila de serie (VIENDO salvo que ya este
+  // VISTA/ABANDONADA a mano); allWatched se recalcula sobre toda la serie.
+  const { series, allWatched } = await markEpisode(
+    client,
+    userId,
+    targetEpisode.id,
+    'VISTA'
+  );
+
+  if (options.completeIfAll && allWatched && series?.status !== 'VISTA') {
+    await client.viewStatus.update({
+      where: { userId_seriesId: { userId, seriesId } },
+      data: { status: 'VISTA', watchedDate: now },
+    });
+  }
+
+  return buildProgressResult(client, userId, seriesId, episodes);
+}
+
+async function buildProgressResult(
+  client: TrackingClient,
+  userId: string,
+  seriesId: number,
+  episodes: SeriesEpisodeOrder[]
+): Promise<ProgressResult> {
+  const episodeIds = episodes.map((ep) => ep.id);
+  const [seriesRow, watchedRows] = await Promise.all([
+    client.viewStatus.findUnique({
+      where: { userId_seriesId: { userId, seriesId } },
+      select: { status: true },
+    }),
+    client.viewStatus.findMany({
+      where: { userId, episodeId: { in: episodeIds }, status: 'VISTA' },
+      select: { episodeId: true },
+    }),
+  ]);
+
+  const watchedIds = new Set(watchedRows.map((row) => row.episodeId));
+  const episodeStatus: Record<number, 'VISTA' | 'SIN_VER'> = {};
+  for (const id of episodeIds) {
+    episodeStatus[id] = watchedIds.has(id) ? 'VISTA' : 'SIN_VER';
+  }
+
+  const total = episodeIds.length;
+  const watched = watchedIds.size;
+
+  return {
+    seriesStatus: seriesRow?.status ?? 'SIN_VER',
+    episodeStatus,
+    watched,
+    total,
+    allWatched: total > 0 && watched === total,
   };
 }
