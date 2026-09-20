@@ -290,7 +290,11 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
             currentlyWatchingCount={currentlyWatchingCount}
             actionsSlot={
               <>
-                <ViewStatusToggle seriesId={serie.id} seasons={serie.seasons} />
+                <ViewStatusToggle
+                  seriesId={serie.id}
+                  seriesTitle={serie.title}
+                  seasons={serie.seasons}
+                />
                 <div
                   className="series-quick-actions"
                   aria-label="Acciones rápidas"

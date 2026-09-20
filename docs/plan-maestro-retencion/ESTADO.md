@@ -10,7 +10,7 @@ El agente que toma una tarea la pasa a `en curso` al crear la rama y a `hecha` a
 | T03  | Marcar episodio promueve la serie a VIENDO       | 1    | hecha     | feat/T03-episodio-promueve-serie (PR #32) | 2026-09-20 | Destrabó T05, T08, T15. Backfill `--apply` corrido en prod: 12 pares corregidos, re-check en 0 |
 | T04  | refetch() en SeriesUserStatusProvider            | 1    | hecha     | feat/T04-provider-refetch (PR #34) | 2026-09-20 | Destraba T06 (stepper) |
 | T05  | Endpoint "hasta el episodio N"                   | 1    | en PR     | feat/T05-endpoint-progreso |  2026-09-20 | Destraba T06, T07, T11a, T13. scripts/test-progress.ts sin correr (necesita Postgres local en 55433, no disponible en esta sesion) |
-| T06  | Stepper "Voy por el episodio N" en la ficha      | 1    | pendiente |           |            |       |
+| T06  | Stepper "Voy por el episodio N" en la ficha      | 1    | en PR     | feat/T06-stepper-ficha |  2026-09-20 | Rama arriba de feat/T05-endpoint-progreso (T05 aun no mergeada). No se pudo probar en vivo logueado (ver PR) |
 | T07  | CTA para anónimos + intención pendiente          | 1    | pendiente |           |            |       |
 | T08  | Botón "+1" claro en /watching                    | 1    | pendiente |           |            |       |
 | T09  | Home centrada en el tracker                      | 1    | pendiente |           |            |       |
