@@ -5,7 +5,6 @@ import {
   Button,
   Input,
   InputNumber,
-  Modal,
   Form,
   Popconfirm,
   Space,
@@ -31,7 +30,7 @@ import { AdminTableToolbar } from '@/components/admin/AdminTableToolbar/AdminTab
 import { AdminAlphabetIndex } from '@/components/admin/AdminAlphabetIndex/AdminAlphabetIndex';
 import { AdminNav } from '../AdminNav';
 import '../admin.css';
-import { DataTable } from '@/components/design-system';
+import { DataTable, PanelModal } from '@/components/design-system';
 
 const { TextArea } = Input;
 const ALPHABET = '#ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -354,19 +353,19 @@ export default function DirectoresAdminPage() {
           pageSize={20}
         />
 
-        <Modal
+        <PanelModal
           title={
             editingDirector
               ? t('adminDirectors.modalEditTitle')
               : t('adminDirectors.modalNewTitle')
           }
+          size="md"
           open={modalOpen}
-          onCancel={handleCloseModal}
+          onClose={handleCloseModal}
           forceRender
           onOk={() => form.submit()}
           okText={t('adminDirectors.save')}
           cancelText={t('adminDirectors.cancel')}
-          maskClosable={false}
         >
           <Form form={form} layout="vertical" onFinish={handleSubmit}>
             <Form.Item
@@ -463,12 +462,13 @@ export default function DirectoresAdminPage() {
               <Input placeholder={t('adminDirectors.hintWikiUrl')} />
             </Form.Item>
           </Form>
-        </Modal>
+        </PanelModal>
 
-        <Modal
+        <PanelModal
           title={t('adminDirectors.mergeModalTitle')}
+          size="sm"
           open={mergeModalOpen}
-          onCancel={() => {
+          onClose={() => {
             setMergeModalOpen(false);
             setMergeTarget(null);
           }}
@@ -505,7 +505,7 @@ export default function DirectoresAdminPage() {
             title={t('adminDirectors.mergeWarning')}
             style={{ marginTop: 16 }}
           />
-        </Modal>
+        </PanelModal>
       </div>
     </>
   );

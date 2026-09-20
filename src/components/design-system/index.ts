@@ -15,6 +15,9 @@
 export { PanelCard } from './PanelCard/PanelCard';
 export type { PanelCardProps } from './PanelCard/PanelCard';
 
+export { PanelModal } from './PanelModal/PanelModal';
+export type { PanelModalProps, PanelModalSize } from './PanelModal/PanelModal';
+
 export { SectionHeader } from './SectionHeader/SectionHeader';
 export type { SectionHeaderProps } from './SectionHeader/SectionHeader';
 

@@ -1683,11 +1683,28 @@ export type TranslationShape = {
     title: string;
     adminModeLabel: string;
   };
+  adminShortcuts: {
+    dragAria: string;
+    alertWithoutReview: string;
+    alertWithoutContent: string;
+    alertPendingSites: string;
+    alertReported: string;
+    alertHiddenReviews: string;
+  };
   adminNav: {
     ariaLabel: string;
     groupCatalog: string;
     groupCommunity: string;
     groupSystem: string;
+    groupModeration: string;
+    groupTaxonomies: string;
+    groupPublishing: string;
+    import: string;
+    importShort: string;
+    channelSweep: string;
+    channelSweepShort: string;
+    watchHub: string;
+    watchHubShort: string;
     series: string;
     seriesShort: string;
     userEmbed: string;
@@ -2477,6 +2494,7 @@ export type TranslationShape = {
   dashboard: {
     dragHandleAria: string;
     removeWidgetAria: string;
+    autofitHeight: string;
     editLayout: string;
     doneEditing: string;
     addWidget: string;
@@ -2623,6 +2641,9 @@ export type TranslationShape = {
     news: string;
   };
   adminHero: {
+    greeting: string;
+    title: string;
+    subtitle: string;
     actionInsights: string;
     actionAuditLog: string;
     actionChangelog: string;
@@ -4753,11 +4774,28 @@ const es: TranslationShape = {
     title: 'MundoBL - Catálogo de Series',
     adminModeLabel: 'Modo: Admin',
   },
+  adminShortcuts: {
+    dragAria: 'Arrastrar para reordenar atajos',
+    alertWithoutReview: '{count} sin reseña',
+    alertWithoutContent: '{count} series sin contenido',
+    alertPendingSites: '{count} sugeridos pendientes',
+    alertReported: '{count} reportados',
+    alertHiddenReviews: '{count} ocultas',
+  },
   adminNav: {
     ariaLabel: 'Navegación admin',
     groupCatalog: 'Catálogo',
     groupCommunity: 'Comunidad',
     groupSystem: 'Sistema',
+    groupModeration: 'Moderación',
+    groupTaxonomies: 'Taxonomías',
+    groupPublishing: 'Publicación',
+    import: 'Importar serie (YouTube)',
+    importShort: 'Importar',
+    channelSweep: 'Barrido de canal',
+    channelSweepShort: 'Barrido',
+    watchHub: 'Administrar /ver',
+    watchHubShort: 'Ver',
     series: 'Series',
     seriesShort: 'Series',
     userEmbed: 'Aportes',
@@ -5578,6 +5616,7 @@ const es: TranslationShape = {
   dashboard: {
     dragHandleAria: 'Arrastrar widget',
     removeWidgetAria: 'Quitar widget',
+    autofitHeight: 'Ajustar alto al contenido',
     editLayout: 'Editar layout',
     doneEditing: 'Listo',
     addWidget: 'Agregar widget',
@@ -5734,6 +5773,9 @@ const es: TranslationShape = {
     news: 'Noticias',
   },
   adminHero: {
+    greeting: 'Hola, {name}',
+    title: 'Panel de administración',
+    subtitle: 'Atajos a todas las herramientas de gestión.',
     actionInsights: 'Insights',
     actionAuditLog: 'Audit',
     actionChangelog: 'Versiones',
@@ -7867,11 +7909,28 @@ const en: TranslationShape = {
     title: 'MundoBL - Series Catalog',
     adminModeLabel: 'Mode: Admin',
   },
+  adminShortcuts: {
+    dragAria: 'Drag to reorder shortcuts',
+    alertWithoutReview: '{count} without review',
+    alertWithoutContent: '{count} series without content',
+    alertPendingSites: '{count} pending suggestions',
+    alertReported: '{count} reported',
+    alertHiddenReviews: '{count} hidden',
+  },
   adminNav: {
     ariaLabel: 'Admin navigation',
     groupCatalog: 'Catalog',
     groupCommunity: 'Community',
     groupSystem: 'System',
+    groupModeration: 'Moderation',
+    groupTaxonomies: 'Taxonomies',
+    groupPublishing: 'Publishing',
+    import: 'Import series (YouTube)',
+    importShort: 'Import',
+    channelSweep: 'Channel sweep',
+    channelSweepShort: 'Sweep',
+    watchHub: 'Manage /ver',
+    watchHubShort: 'Watch',
     series: 'Series',
     seriesShort: 'Series',
     userEmbed: 'Contributions',
@@ -8689,6 +8748,7 @@ const en: TranslationShape = {
   dashboard: {
     dragHandleAria: 'Drag widget',
     removeWidgetAria: 'Remove widget',
+    autofitHeight: 'Fit height to content',
     editLayout: 'Edit layout',
     doneEditing: 'Done',
     addWidget: 'Add widget',
@@ -8843,6 +8903,9 @@ const en: TranslationShape = {
     news: 'News',
   },
   adminHero: {
+    greeting: 'Hi, {name}',
+    title: 'Admin panel',
+    subtitle: 'Shortcuts to every management tool.',
     actionInsights: 'Insights',
     actionAuditLog: 'Audit',
     actionChangelog: 'Releases',

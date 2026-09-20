@@ -1,0 +1,218 @@
+/* Atajos de /admin: tarjetas agrupadas y reordenables.
+ *
+ * Los acentos por grupo enganchan a `data-group`, que es el id ESTABLE
+ * del registro de destinos. Antes se derivaba del titulo visible en
+ * español (`title.toLowerCase()`), asi que traducir la pagina apagaba
+ * silenciosamente todos los colores.
+ */
+
+.admin-shortcuts__section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-shortcuts__section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.admin-shortcuts__section-title::before {
+  content: '';
+  display: inline-block;
+  width: 3px;
+  height: 12px;
+  border-radius: 2px;
+  background: var(--group-accent, var(--primary-color));
+}
+
+/* Un token por grupo en vez de repetir el selector para cada propiedad:
+ * la barra del titulo, el gradiente de la tarjeta y el borde de hover
+ * leen todos el mismo --group-accent. */
+.admin-shortcuts__section[data-group='catalogo'] {
+  --group-accent: var(--primary-color);
+}
+
+.admin-shortcuts__section[data-group='moderacion'] {
+  --group-accent: var(--warning-color);
+}
+
+.admin-shortcuts__section[data-group='taxonomias'] {
+  --group-accent: var(--mb-blue, var(--info-color));
+}
+
+.admin-shortcuts__section[data-group='publicacion'] {
+  --group-accent: var(--success-color);
+}
+
+.admin-shortcuts__section[data-group='sistema'] {
+  --group-accent: var(--mb-purple, var(--primary-color));
+}
+
+.admin-shortcuts__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
+}
+
+.admin-tool-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  overflow: hidden;
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-base);
+  background: var(--bg-container);
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: var(--transition-fast, 0.15s ease);
+}
+
+/* Gradiente sutil del acento del grupo en la esquina superior izquierda.
+ * z-index -1 para quedar detras del contenido. */
+.admin-tool-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--group-accent, var(--primary-color)) 5%, transparent)
+      0%,
+    transparent 50%
+  );
+}
+
+.admin-tool-card:hover {
+  border-color: color-mix(
+    in srgb,
+    var(--group-accent, var(--primary-color)) 55%,
+    var(--border-color-secondary)
+  );
+  background: color-mix(in srgb, var(--bg-elevated) 80%, transparent);
+  box-shadow: 0 0 0 1px
+    color-mix(
+      in srgb,
+      var(--group-accent, var(--primary-color)) 20%,
+      transparent
+    );
+}
+
+.admin-tool-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin-tool-card__icon {
+  display: inline-flex;
+  font-size: 16px;
+  color: var(--group-accent, var(--primary-color));
+}
+
+.admin-tool-card__count {
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    color-mix(in srgb, var(--primary-color) 70%, white) 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--primary-color);
+}
+
+.admin-tool-card__title {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.admin-tool-card__alert {
+  margin-top: 2px;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--error-color);
+}
+
+/* En oscuro el rojo puro vibra sobre el panel: se aclara un poco. */
+[data-theme='dark'] .admin-tool-card__alert {
+  color: color-mix(in srgb, var(--error-color) 78%, white);
+}
+
+/* --- Modo edicion ------------------------------------------------- */
+
+.admin-tool-card--editing {
+  cursor: default;
+  outline: 1px dashed
+    color-mix(in srgb, var(--primary-color) 30%, transparent);
+  outline-offset: -1px;
+}
+
+.admin-tool-card--dragging {
+  z-index: 1;
+  opacity: 0.85;
+  box-shadow: var(--box-shadow-base);
+}
+
+.admin-tool-card__handle {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--border-radius-sm);
+  background: transparent;
+  color: var(--text-tertiary);
+  font-size: 14px;
+  cursor: grab;
+  /* Sin touch-action:none el navegador se queda con el gesto como scroll
+   * y la tarjeta no se deja arrastrar con el dedo. */
+  touch-action: none;
+}
+
+.admin-tool-card__handle:hover {
+  background: var(--bg-spotlight);
+  color: var(--text-primary);
+}
+
+.admin-tool-card__handle:active {
+  cursor: grabbing;
+}
+
+@media (pointer: coarse) {
+  .admin-tool-card__handle {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+}
+
+/* 600px = mobile grande (breakpoint estandar de variables.css). */
+@media (max-width: 600px) {
+  .admin-shortcuts__grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+
+  .admin-tool-card {
+    padding: 12px 14px;
+  }
+}
