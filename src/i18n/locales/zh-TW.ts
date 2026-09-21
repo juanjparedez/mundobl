@@ -273,7 +273,8 @@ const zhTW = {
     "markNextLabel": "已觀看第 {n} 集",
     "markCompleteLabel": "已看完本劇",
     "markCompleteConfirm": "標記「{title}」為已看完？",
-    "completedMessage": "您已將「{title}」標記為已看完"
+    "completedMessage": "您已將「{title}」標記為已看完",
+    "noEpisodesHint": "未載入任何集數：將一次性標記為已完成"
   },
   "appLayout": {
     "skipToContent": "跳至主要內容"
@@ -2496,6 +2497,10 @@ const zhTW = {
   },
   "progressStepper": {
     "at": "我正在看第 {current} 集，共 {total} 集",
+    "epAbbr": "集",
+    "none": "尚無",
+    "nextUp": "下一集：{label}",
+    "allWatched": "您已看完所有集數",
     "next": "標記下一集",
     "prev": "復原上一集",
     "jumpTo": "跳到某一集",
@@ -2509,9 +2514,21 @@ const zhTW = {
   "trackCta": {
     "title": "您正在追這部劇嗎？",
     "subtitle": "標記您目前觀看的集數，並從您的列表中追蹤。",
+    "subtitleNoEpisodes": "標記為已觀看，它將會進入您的歷史記錄。",
     "button": "開始追蹤",
+    "buttonNoEpisodes": "標記為已觀看",
     "applied": "一切就緒，現在正在追蹤 {title}",
     "chooseEpisode": "您看到第幾集了？"
+  },
+  "trackingPanel": {
+    "title": "我的追蹤",
+    "markWatched": "我已觀看",
+    "markUnwatched": "標記為未觀看",
+    "markedWatched": "您已將「{title}」標記為已觀看",
+    "noEpisodes": "此劇集未載入任何集數：將一次性標記為已完成。"
+  },
+  "posterPlaceholder": {
+    "noImage": "無圖片"
   },
   "spoilerFreeProvider": {
     "useSpoilerFreeError": "useSpoilerFree 必須在 SpoilerFreeProvider 內使用"

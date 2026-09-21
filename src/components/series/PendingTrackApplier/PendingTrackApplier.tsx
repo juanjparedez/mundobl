@@ -47,7 +47,11 @@ export function PendingTrackApplier({
           : await fetch(`/api/series/${seriesId}/view-status`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ status: 'VIENDO' }),
+              // Ficha sin episodios: la intencion es "ya la vi" (VISTA), no
+              // "la estoy viendo".
+              body: JSON.stringify({
+                status: pending.markWatched ? 'VISTA' : 'VIENDO',
+              }),
             });
 
         if (!response.ok) throw new Error();

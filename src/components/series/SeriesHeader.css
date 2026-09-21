@@ -269,9 +269,13 @@
 .series-header__actions {
   grid-area: actions;
   display: grid;
-  grid-template-columns: 230px minmax(0, 1fr);
-  gap: var(--spacing-sm);
+  /* La primera columna es el panel de tracking: arranca en el ancho del
+     poster y puede crecer hasta 340px para que "Ep. 12 / 24" y la linea
+     "Siguiente" nunca se trunquen. */
+  grid-template-columns: minmax(230px, 340px) minmax(0, 1fr);
+  gap: var(--spacing-md);
   margin-top: 0;
+  align-items: start;
 }
 
 .series-header__actions > * {
