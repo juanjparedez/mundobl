@@ -3053,6 +3053,36 @@ const de = {
     "finishTitle": "Quiz abgeschlossen!",
     "playAgainButton": "Erneut spielen",
     "bestScoreLabel": "Ihre beste Punktzahl: {score} von {total}"
+  },
+  "airDayStatus": {
+    "today": "Neue Episode heute",
+    "delayed1": "Gestern ausgestrahlt (1 Tag im Rückstand)",
+    "delayed2": "2 Tage im Rückstand",
+    "delayedMany": "{days} Tage im Rückstand",
+    "tagToday": "Heute",
+    "tagDelayed": "+{days}T",
+    "airDaysTooltip": "Ausstrahlungstag(e): {days} ({status})"
+  },
+  "estrenos": {
+    "title": "Was diese Woche ausgestrahlt wird",
+    "subtitle": "Basierend auf dem uns vorliegenden Ausstrahlungstag. Wir bestätigen weder Zeiten noch, dass die Episode bereits verfügbar ist.",
+    "disclaimer": "Dieser Zeitplan umfasst aktuell ausgestrahlte Serien aus dem kuratierten Katalog. Serien, die vor mehr als vier Monaten abgeschlossen wurden, fallen heraus.",
+    "seeAll": "Die ganze Woche ansehen",
+    "today": "Heute",
+    "moreCount": "+{count} weitere",
+    "emptyDay": "Nichts an diesem Tag",
+    "emptyTitle": "Keine Serien werden aktuell ausgestrahlt",
+    "emptyDescription": "Momentan hat keine Katalogserie einen Ausstrahlungstag hinterlegt. Wenn eine neue Staffel beginnt, erscheint sie hier.",
+    "emptyAction": "Zum Katalog gehen",
+    "dayMonday": "Montag",
+    "dayTuesday": "Dienstag",
+    "dayWednesday": "Mittwoch",
+    "dayThursday": "Donnerstag",
+    "dayFriday": "Freitag",
+    "daySaturday": "Samstag",
+    "daySunday": "Sonntag",
+    "subscribeTooltip": "Mich über diese Serie benachrichtigen",
+    "unsubscribeTooltip": "Benachrichtigungen stoppen"
   }
 } satisfies TranslationShape;
 
