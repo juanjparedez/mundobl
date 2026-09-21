@@ -273,7 +273,8 @@ const it = {
     "markNextLabel": "Ep. {n} visto",
     "markCompleteLabel": "Serie terminata",
     "markCompleteConfirm": "Contrassegnare \"{title}\" come terminato?",
-    "completedMessage": "Hai contrassegnato \"{title}\" come terminato"
+    "completedMessage": "Hai contrassegnato \"{title}\" come terminato",
+    "noEpisodesHint": "Nessun episodio caricato: viene segnato come completo in una volta sola"
   },
   "appLayout": {
     "skipToContent": "Salta al contenuto principale"
@@ -2496,6 +2497,10 @@ const it = {
   },
   "progressStepper": {
     "at": "Sono a {current} di {total}",
+    "epAbbr": "Ep.",
+    "none": "Ancora nessuno",
+    "nextUp": "Prossimo: {label}",
+    "allWatched": "Hai guardato tutti gli episodi",
     "next": "Segna prossimo episodio",
     "prev": "Annulla ultimo episodio",
     "jumpTo": "Vai a un episodio",
@@ -2509,9 +2514,21 @@ const it = {
   "trackCta": {
     "title": "Stai guardando?",
     "subtitle": "Segna a che episodio sei e seguilo dalla tua lista.",
+    "subtitleNoEpisodes": "Segnalo come guardato e andrà nella tua cronologia.",
     "button": "Inizia a seguire",
+    "buttonNoEpisodes": "Segna come guardato",
     "applied": "Tutto pronto, ora stai seguendo {title}",
     "chooseEpisode": "A che episodio sei?"
+  },
+  "trackingPanel": {
+    "title": "Il mio tracciamento",
+    "markWatched": "L'ho guardato",
+    "markUnwatched": "Segna come non guardato",
+    "markedWatched": "Hai segnato \"{title}\" come guardato",
+    "noEpisodes": "Questo titolo non ha episodi caricati: viene segnato come completo in una volta sola."
+  },
+  "posterPlaceholder": {
+    "noImage": "Nessuna immagine"
   },
   "spoilerFreeProvider": {
     "useSpoilerFreeError": "useSpoilerFree deve essere usato all'interno di un SpoilerFreeProvider"

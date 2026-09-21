@@ -17,6 +17,7 @@ interface ProgressRequestBody {
   seasonNumber?: unknown;
   episodeNumber?: unknown;
   direction?: unknown;
+  inclusive?: unknown;
   completeIfAll?: unknown;
 }
 
@@ -81,9 +82,16 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         { status: 400 }
       );
     }
+    if (body.inclusive !== undefined && typeof body.inclusive !== 'boolean') {
+      return NextResponse.json(
+        { error: 'inclusive debe ser boolean' },
+        { status: 400 }
+      );
+    }
 
     const options: ProgressOptions = {
       direction: body.direction === 'unmark' ? 'unmark' : undefined,
+      inclusive: body.inclusive === true,
       completeIfAll: body.completeIfAll === true,
     };
 

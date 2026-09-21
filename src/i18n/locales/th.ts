@@ -273,7 +273,8 @@ const th = {
     "markNextLabel": "ดูตอนที่ {n} แล้ว",
     "markCompleteLabel": "ดูซีรีส์จบแล้ว",
     "markCompleteConfirm": "ทำเครื่องหมาย \"{title}\" ว่าดูจบแล้วใช่หรือไม่?",
-    "completedMessage": "คุณทำเครื่องหมาย \"{title}\" ว่าดูจบแล้ว"
+    "completedMessage": "คุณทำเครื่องหมาย \"{title}\" ว่าดูจบแล้ว",
+    "noEpisodesHint": "ไม่มีตอนที่โหลด: จะถูกทำเครื่องหมายว่าเสร็จสมบูรณ์ในครั้งเดียว"
   },
   "appLayout": {
     "skipToContent": "ข้ามไปยังเนื้อหาหลัก"
@@ -2496,6 +2497,10 @@ const th = {
   },
   "progressStepper": {
     "at": "ฉันอยู่ที่ {current} จาก {total}",
+    "epAbbr": "ตอนที่",
+    "none": "ยังไม่มี",
+    "nextUp": "ถัดไป: {label}",
+    "allWatched": "คุณดูทุกตอนแล้ว",
     "next": "ทำเครื่องหมายตอนถัดไป",
     "prev": "เลิกทำตอนล่าสุด",
     "jumpTo": "ข้ามไปยังตอน",
@@ -2509,9 +2514,21 @@ const th = {
   "trackCta": {
     "title": "คุณกำลังดูเรื่องนี้อยู่หรือเปล่า?",
     "subtitle": "ทำเครื่องหมายว่าคุณดูถึงตอนไหนแล้ว และติดตามจากรายการของคุณ",
+    "subtitleNoEpisodes": "ทำเครื่องหมายว่าดูแล้วและจะถูกเพิ่มในประวัติของคุณ",
     "button": "เริ่มติดตาม",
+    "buttonNoEpisodes": "ทำเครื่องหมายว่าดูแล้ว",
     "applied": "เรียบร้อยแล้ว ตอนนี้กำลังติดตาม {title}",
     "chooseEpisode": "คุณดูถึงตอนไหนแล้ว?"
+  },
+  "trackingPanel": {
+    "title": "การติดตามของฉัน",
+    "markWatched": "ฉันดูแล้ว",
+    "markUnwatched": "ทำเครื่องหมายว่ายังไม่ได้ดู",
+    "markedWatched": "คุณทำเครื่องหมาย \"{title}\" ว่าดูแล้ว",
+    "noEpisodes": "เรื่องนี้ไม่มีตอนที่โหลด: จะถูกทำเครื่องหมายว่าเสร็จสมบูรณ์ในครั้งเดียว"
+  },
+  "posterPlaceholder": {
+    "noImage": "ไม่มีรูปภาพ"
   },
   "spoilerFreeProvider": {
     "useSpoilerFreeError": "useSpoilerFree ต้องใช้ภายใน SpoilerFreeProvider"
