@@ -2547,7 +2547,11 @@ const ja = {
     "markWatched": "視聴済み",
     "markUnwatched": "未視聴としてマーク",
     "markedWatched": "「{title}」を視聴済みとしてマークしました",
-    "noEpisodes": "このタイトルにはエピソードが読み込まれていません: 一括で完了とマークされます。"
+    "noEpisodes": "このタイトルにはエピソードが読み込まれていません: 一括で完了とマークされます。",
+    "notesTitle": "プライベートノート",
+    "episodeNote": "{code}へのメモ",
+    "seriesNote": "シリーズノート",
+    "notesHintNoEpisode": "メモを追加するには、エピソードを視聴済みにマークしてください。"
   },
   "posterPlaceholder": {
     "noImage": "画像なし"

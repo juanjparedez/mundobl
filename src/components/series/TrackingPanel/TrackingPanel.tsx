@@ -2,15 +2,25 @@
 
 import { useEffect, useState } from 'react';
 import { Select, Badge, Button } from 'antd';
-import { EyeOutlined, CheckOutlined, UndoOutlined } from '@ant-design/icons';
+import {
+  EyeOutlined,
+  CheckOutlined,
+  UndoOutlined,
+  LockOutlined,
+  FileTextFilled,
+  FileTextOutlined,
+} from '@ant-design/icons';
 import { useSession, signIn } from 'next-auth/react';
 import { WATCH_STATUS, WATCH_STATUS_COLORS } from '@/constants/series';
 import type { WatchStatusValue } from '@/constants/series';
 import { useSeriesUserStatus } from '../SeriesUserStatusProvider';
 import {
   WatchProgressStepper,
+  episodeCode,
   type WatchProgressStepperEpisode,
 } from '../WatchProgressStepper/WatchProgressStepper';
+import { EpisodeNoteModal } from '../EpisodeNoteModal/EpisodeNoteModal';
+import { SeriesNoteModal } from '../SeriesNoteModal/SeriesNoteModal';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { useMessage } from '@/hooks/useMessage';
@@ -60,7 +70,8 @@ export function TrackingPanel({
   const message = useMessage();
   const { t } = useLocale();
   const { data: session } = useSession();
-  const { seriesStatus, loaded, version, refetch } = useSeriesUserStatus();
+  const { seriesStatus, episodeStatus, loaded, version, refetch } =
+    useSeriesUserStatus();
   const [status, setStatus] = useState<WatchStatusValue>('SIN_VER');
   const [isUpdating, setIsUpdating] = useState(false);
   const [pendingEpisodeId, setPendingEpisodeId] = useState<number | null>(null);
@@ -93,6 +104,52 @@ export function TrackingPanel({
         : a.episodeNumber - b.episodeNumber
     );
   const hasEpisodes = orderedEpisodes.length > 0;
+
+  // ── Notas privadas (T29): del ultimo episodio visto y de la serie ────
+  // El "ultimo visto" sale del provider, asi que despues de un "+" en el
+  // stepper el boton pasa solo a "Nota del Ep. N+1".
+  const lastWatched = (() => {
+    let last: WatchProgressStepperEpisode | null = null;
+    for (const ep of orderedEpisodes) {
+      if (episodeStatus[ep.id] === 'VISTA') last = ep;
+    }
+    return last;
+  })();
+  const [episodesWithNotes, setEpisodesWithNotes] = useState<Set<number>>(
+    new Set()
+  );
+  const [seriesHasNote, setSeriesHasNote] = useState(false);
+  const [noteEpisode, setNoteEpisode] =
+    useState<WatchProgressStepperEpisode | null>(null);
+  const [seriesNoteOpen, setSeriesNoteOpen] = useState(false);
+  const loggedIn = !!session?.user;
+  const episodeIdsKey = orderedEpisodes.map((ep) => ep.id).join(',');
+
+  useEffect(() => {
+    if (!loggedIn) return;
+    let cancelled = false;
+    if (episodeIdsKey) {
+      fetch(`/api/episodes/notes-summary?ids=${episodeIdsKey}`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data: { episodeIds?: number[] } | null) => {
+          if (!cancelled && data?.episodeIds) {
+            setEpisodesWithNotes(new Set(data.episodeIds));
+          }
+        })
+        .catch(() => null);
+    }
+    fetch(`/api/series/notes-summary?ids=${seriesId}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: { seriesIds?: number[] } | null) => {
+        if (!cancelled && data?.seriesIds) {
+          setSeriesHasNote(data.seriesIds.includes(seriesId));
+        }
+      })
+      .catch(() => null);
+    return () => {
+      cancelled = true;
+    };
+  }, [loggedIn, seriesId, episodeIdsKey]);
 
   const postStatus = async (
     newStatus: WatchStatusValue,
@@ -257,6 +314,76 @@ export function TrackingPanel({
           </p>
         </div>
       )}
+
+      {/* Notas privadas: solo las ve el usuario. Distintas de los
+          comentarios (publicos). Van pegadas al tracking porque el momento
+          de anotar "en este capitulo se conocen" es justo despues de
+          marcarlo como visto. */}
+      <div className="tracking-panel__notes">
+        <span className="tracking-panel__notes-title">
+          <LockOutlined aria-hidden /> {t('trackingPanel.notesTitle')}
+        </span>
+        <div className="tracking-panel__notes-row">
+          {lastWatched && (
+            <Button
+              className="tracking-panel__note-btn"
+              icon={
+                episodesWithNotes.has(lastWatched.id) ? (
+                  <FileTextFilled />
+                ) : (
+                  <FileTextOutlined />
+                )
+              }
+              onClick={() => setNoteEpisode(lastWatched)}
+            >
+              {interpolateMessage(t('trackingPanel.episodeNote'), {
+                code: episodeCode(lastWatched),
+              })}
+            </Button>
+          )}
+          <Button
+            className="tracking-panel__note-btn"
+            icon={seriesHasNote ? <FileTextFilled /> : <FileTextOutlined />}
+            onClick={() => setSeriesNoteOpen(true)}
+          >
+            {t('trackingPanel.seriesNote')}
+          </Button>
+        </div>
+        {!lastWatched && hasEpisodes && (
+          <p className="tracking-panel__hint">
+            {t('trackingPanel.notesHintNoEpisode')}
+          </p>
+        )}
+      </div>
+
+      <EpisodeNoteModal
+        episodeId={noteEpisode?.id ?? null}
+        episodeLabel={
+          noteEpisode
+            ? noteEpisode.title
+              ? `${episodeCode(noteEpisode)} — ${noteEpisode.title}`
+              : episodeCode(noteEpisode)
+            : undefined
+        }
+        open={noteEpisode !== null}
+        onClose={() => setNoteEpisode(null)}
+        onNoteChange={(hasNote) => {
+          if (!noteEpisode) return;
+          setEpisodesWithNotes((prev) => {
+            const next = new Set(prev);
+            if (hasNote) next.add(noteEpisode.id);
+            else next.delete(noteEpisode.id);
+            return next;
+          });
+        }}
+      />
+      <SeriesNoteModal
+        seriesId={seriesNoteOpen ? seriesId : null}
+        seriesLabel={seriesTitle}
+        open={seriesNoteOpen}
+        onClose={() => setSeriesNoteOpen(false)}
+        onNoteChange={setSeriesHasNote}
+      />
     </section>
   );
 }
