@@ -291,7 +291,8 @@ const ko = {
     "markCompleteLabel": "시리즈 완료",
     "markCompleteConfirm": "\"{title}\"을(를) 완료로 표시하시겠습니까?",
     "completedMessage": "\"{title}\"을(를) 완료로 표시했습니다",
-    "noEpisodesHint": "에피소드 없음: 한 번에 완료로 표시됩니다."
+    "noEpisodesHint": "에피소드 없음: 한 번에 완료로 표시됩니다.",
+    "watchNow": "이어보기"
   },
   "appLayout": {
     "skipToContent": "본문으로 건너뛰기"

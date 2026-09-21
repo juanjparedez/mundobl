@@ -291,7 +291,8 @@ const zhCN = {
     "markCompleteLabel": "已看完剧集",
     "markCompleteConfirm": "标记“{title}”为已看完？",
     "completedMessage": "你已将“{title}”标记为已看完",
-    "noEpisodesHint": "未加载剧集：将一次性标记为已完成"
+    "noEpisodesHint": "未加载剧集：将一次性标记为已完成",
+    "watchNow": "继续观看"
   },
   "appLayout": {
     "skipToContent": "跳到主要内容"

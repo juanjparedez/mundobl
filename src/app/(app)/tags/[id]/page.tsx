@@ -1,4 +1,5 @@
-export const revalidate = 3600;
+// 208 paginas cuyo contenido cambia solo al re-etiquetar series.
+export const revalidate = 86400;
 
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';

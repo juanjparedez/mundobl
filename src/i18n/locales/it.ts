@@ -291,7 +291,8 @@ const it = {
     "markCompleteLabel": "Serie terminata",
     "markCompleteConfirm": "Contrassegnare \"{title}\" come terminato?",
     "completedMessage": "Hai contrassegnato \"{title}\" come terminato",
-    "noEpisodesHint": "Nessun episodio caricato: viene segnato come completo in una volta sola"
+    "noEpisodesHint": "Nessun episodio caricato: viene segnato come completo in una volta sola",
+    "watchNow": "Riprendi a guardare"
   },
   "appLayout": {
     "skipToContent": "Salta al contenuto principale"

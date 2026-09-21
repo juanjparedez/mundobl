@@ -1,4 +1,7 @@
-export const revalidate = 3600;
+// Fichas de persona/productora: cambian cuando se les carga foto o bio, o
+// cuando se les suma un credito. Nada de eso justifica regenerar ~1750
+// paginas cada hora (eso solo era ISR writes + CPU). Una semana de TTL.
+export const revalidate = 604800;
 
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';

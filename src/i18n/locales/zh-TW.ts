@@ -291,7 +291,8 @@ const zhTW = {
     "markCompleteLabel": "已看完本劇",
     "markCompleteConfirm": "標記「{title}」為已看完？",
     "completedMessage": "您已將「{title}」標記為已看完",
-    "noEpisodesHint": "未載入任何集數：將一次性標記為已完成"
+    "noEpisodesHint": "未載入任何集數：將一次性標記為已完成",
+    "watchNow": "繼續觀看"
   },
   "appLayout": {
     "skipToContent": "跳至主要內容"
