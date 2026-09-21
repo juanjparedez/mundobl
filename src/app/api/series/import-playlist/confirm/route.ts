@@ -4,6 +4,7 @@ import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { checkCollaboratorImportRateLimit } from '@/lib/rate-limit';
 import { parseAirDate } from '@/lib/episode-parser';
+import { checkOfficialYouTubeVideos } from '@/lib/official-content-guard';
 
 interface ConfirmEpisode {
   episodeNumber: number;
@@ -100,6 +101,24 @@ export async function POST(request: NextRequest) {
         }
         seen.add(ep.episodeNumber);
       }
+    }
+
+    // Politica de contenido oficial: todos los videos de la playlist tienen
+    // que pertenecer a un canal de la lista blanca (verificado contra
+    // YouTube, no contra embedChannelUrl del body). Un solo video ajeno
+    // rechaza el import entero. Ver docs/politica-contenido-oficial.md.
+    const allVideoIds = body.seasons.flatMap((s) =>
+      s.episodes.map((ep) => ep.videoId)
+    );
+    const officialCheck = await checkOfficialYouTubeVideos(allVideoIds);
+    if (!officialCheck.ok) {
+      return NextResponse.json(
+        {
+          error: officialCheck.error,
+          offenders: officialCheck.offenders.map((o) => o.videoId),
+        },
+        { status: officialCheck.status }
+      );
     }
 
     // Dedupe por título dentro del catálogo curado: re-importar la misma
