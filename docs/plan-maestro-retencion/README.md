@@ -44,7 +44,7 @@ Estado vivo de cada tarea: [ESTADO.md](ESTADO.md).
 
 ## Fases y tareas
 
-Orden de ejecución recomendado: **T03 → T01 → T04 → T05 → T06 → T07 → T02 → T08 → T09 → T10 → T12 → T11a → T11b → T14 → T15 → T16 → T17 → T18 → T13 → T19**. Las flechas de "depende de" mandan; dentro de una fase, el orden es por impacto.
+Orden de ejecución recomendado: **T03 → T01 → T04 → T05 → T06 → T07 → T08 → T06b → T08b → T26 → T02 → T09 → T10 → T12 → T11a → T11b → T14 → T15 → T16 → T17 → T18 → T13 → T19**. T06b, T08b y T26 salieron de la revisión del 2026-09-20 y van antes de seguir con lo nuevo. Las flechas de "depende de" mandan; dentro de una fase, el orden es por impacto.
 
 ### Fase 0 — Medir
 
@@ -61,8 +61,11 @@ Orden de ejecución recomendado: **T03 → T01 → T04 → T05 → T06 → T07 �
 | T04  | [`refetch()` en SeriesUserStatusProvider](tareas/T04-provider-refetch.md) | —   | S        |
 | T05  | [Endpoint "hasta el episodio N"](tareas/T05-endpoint-progreso.md)  | T03        | M        |
 | T06  | [Stepper "Voy por el episodio N" en la ficha](tareas/T06-stepper-ficha.md) | T04, T05 | M    |
+| T06b | [Panel de tracking en la ficha (corrección)](tareas/T06b-panel-tracking-ficha.md) | T06, T07 | M |
 | T07  | [CTA para anónimos + intención pendiente](tareas/T07-cta-anonimo-intencion.md) | T05, T06 | M |
 | T08  | [Botón "+1" claro en /watching](tareas/T08-watching-mas-uno.md)    | T03        | S        |
+| T08b | [/watching sin episodios + contraste (corrección)](tareas/T08b-watching-sin-episodios-y-contraste.md) | T08 | S |
+| T26  | [Póster placeholder en ficha y cards](tareas/T26-poster-placeholder.md) | —     | S        |
 | T09  | [Home centrada en el tracker](tareas/T09-home-tracker.md)          | —          | S        |
 | T10  | [Home logueado → /watching](tareas/T10-home-redirect-watching.md)  | —          | S        |
 | T11a | [Onboarding: backend](tareas/T11a-onboarding-backend.md)           | T05        | M        |
