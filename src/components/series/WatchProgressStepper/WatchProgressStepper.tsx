@@ -25,6 +25,13 @@ interface WatchProgressStepperProps {
   source: 'stepper' | 'onboarding';
   /** Reutilizable en onboarding/cards con controles mas chicos. */
   compact?: boolean;
+  /**
+   * Modo sin sesion (T07, CTA anonimo): no llama a la API ni al provider,
+   * solo mueve un numero local y lo reporta via onLocalChange. Tampoco
+   * ofrece "¿Terminaste?" — no hay estado real del servidor que confirmar.
+   */
+  localOnly?: boolean;
+  onLocalChange?: (episodeId: number | null) => void;
 }
 
 /** Ultimo episodio en VISTA (el de mayor indice, aunque haya huecos antes). */
@@ -45,6 +52,8 @@ export function WatchProgressStepper({
   episodes,
   source,
   compact = false,
+  localOnly = false,
+  onLocalChange,
 }: WatchProgressStepperProps) {
   const { t } = useLocale();
   const message = useMessage();
@@ -75,6 +84,13 @@ export function WatchProgressStepper({
     }
     const target = episodes[targetIndex];
     const unmark = targetIndex < index;
+
+    if (localOnly) {
+      setIndex(targetIndex);
+      onLocalChange?.(target.id);
+      return;
+    }
+
     const previous = index;
     setIndex(targetIndex);
     setPending(true);
@@ -160,7 +176,7 @@ export function WatchProgressStepper({
               setPicking(false);
               void goTo(value);
             }}
-            onDropdownVisibleChange={(open) => {
+            onOpenChange={(open) => {
               if (!open) setPicking(false);
             }}
           />
@@ -178,17 +194,7 @@ export function WatchProgressStepper({
           </button>
         )}
 
-        <Popconfirm
-          title={interpolateMessage(t('progressStepper.finishedTitle'), {
-            title: seriesTitle,
-          })}
-          open={finishedOpen}
-          onConfirm={() => void handleMarkComplete()}
-          onCancel={() => setFinishedOpen(false)}
-          okText={t('progressStepper.markComplete')}
-          cancelText={t('progressStepper.notYet')}
-          okButtonProps={{ loading: finishing }}
-        >
+        {localOnly ? (
           <Tooltip title={t('progressStepper.next')}>
             <button
               type="button"
@@ -200,7 +206,31 @@ export function WatchProgressStepper({
               <PlusOutlined />
             </button>
           </Tooltip>
-        </Popconfirm>
+        ) : (
+          <Popconfirm
+            title={interpolateMessage(t('progressStepper.finishedTitle'), {
+              title: seriesTitle,
+            })}
+            open={finishedOpen}
+            onConfirm={() => void handleMarkComplete()}
+            onCancel={() => setFinishedOpen(false)}
+            okText={t('progressStepper.markComplete')}
+            cancelText={t('progressStepper.notYet')}
+            okButtonProps={{ loading: finishing }}
+          >
+            <Tooltip title={t('progressStepper.next')}>
+              <button
+                type="button"
+                className="watch-progress-stepper__btn"
+                disabled={!canGoNext}
+                onClick={() => void goTo(index + 1)}
+                aria-label={t('progressStepper.ariaNext')}
+              >
+                <PlusOutlined />
+              </button>
+            </Tooltip>
+          </Popconfirm>
+        )}
       </div>
 
       {total > 0 && (
