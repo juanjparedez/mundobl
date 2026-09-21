@@ -5,6 +5,7 @@
  * a la base de datos usando Prisma.
  */
 
+import { unstable_cache } from 'next/cache';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Prisma, PrismaClient } from '../generated/prisma';
@@ -1102,7 +1103,21 @@ export async function getProductionCompanyById(id: number) {
 }
 
 /** Nacionalidades disponibles, para el filtro de los indices. */
-export async function getPeopleNationalities(): Promise<string[]> {
+/**
+ * Lista de nacionalidades para el filtro de /actores, /directores y
+ * /productoras. Esas tres rutas leen `searchParams`, asi que Next las sirve
+ * 100% dinamicas (su `export const revalidate` no aplica) y esta consulta
+ * —un DISTINCT sobre las tablas completas de Actor y Director— corria en CADA
+ * request, incluidas las de los crawlers paginando el indice. Es una lista que
+ * cambia cuando se carga una persona nueva: 24h de cache de sobra.
+ */
+export const getPeopleNationalities = unstable_cache(
+  fetchPeopleNationalities,
+  ['people-nationalities-v1'],
+  { revalidate: 86400 }
+);
+
+async function fetchPeopleNationalities(): Promise<string[]> {
   const rows = await prisma.$queryRaw<{ nationality: string }[]>(
     Prisma.sql`
     SELECT DISTINCT nationality FROM (

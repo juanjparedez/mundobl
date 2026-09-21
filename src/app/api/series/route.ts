@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse, after } from 'next/server';
-import { revalidatePath } from 'next/cache';
+import { revalidateSeries } from '@/lib/revalidate-series';
 import {
   prisma,
   saveSeriesInUniverse,
@@ -437,19 +437,8 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Invalidar caches de las vistas que listan series y la ficha creada
-    revalidatePath('/admin/series');
-    revalidatePath('/catalogo');
-    revalidatePath('/series/[id]', 'page');
-    revalidatePath('/ver');
-    // La parrilla de /estrenos sale de `airDays`, que se edita aca; sin esto
-    // el cambio no se ve hasta que expire el ISR de una hora.
-    revalidatePath('/estrenos');
-    revalidatePath('/');
-    revalidatePath('/series', 'layout');
-    revalidatePath('/series/[id]', 'page');
-    revalidatePath(`/series/${serie.id}`);
-    revalidatePath(`/catalogo/${serie.id}`);
+    // Invalidar caches de las vistas que listan series y la ficha creada.
+    revalidateSeries(serie);
 
     return NextResponse.json(serie, { status: 201 });
   } catch (error) {

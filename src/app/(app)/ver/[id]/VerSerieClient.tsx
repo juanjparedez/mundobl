@@ -34,6 +34,7 @@ import { EmbedAttribution } from '@/components/common/EmbedAttribution/EmbedAttr
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { ShareButton } from '@/components/common/ShareButton/ShareButton';
 import { SeriesSubscribeButton } from '@/components/series/SeriesSubscribeButton/SeriesSubscribeButton';
+import { TrackingPanel } from '@/components/series/TrackingPanel/TrackingPanel';
 import { RatingSection } from '@/components/series/RatingSection';
 import { ReviewsSection } from '@/components/series/ReviewsSection/ReviewsSection';
 import { useMessage } from '@/hooks/useMessage';
@@ -365,6 +366,22 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
   const hasPrev = activeIdx > 0;
   const hasNext = activeIdx < flatEpisodes.length - 1;
 
+  // Mismo shape que espera TrackingPanel (id/episodeNumber/title por
+  // temporada), separado de `seasons` para no arrastrarle los campos de
+  // embed que no necesita.
+  const trackingSeasons = useMemo(
+    () =>
+      seasons.map((s) => ({
+        seasonNumber: s.seasonNumber,
+        episodes: s.episodes.map((e) => ({
+          id: e.id,
+          episodeNumber: e.episodeNumber,
+          title: e.title,
+        })),
+      })),
+    [seasons]
+  );
+
   // Agrupación inteligente por Capítulo con miniaturas
   const { chapterGroups, extraEpisodes, privateEpisodes } = useMemo(() => {
     const map = new Map<
@@ -542,6 +559,17 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           url={active.embedUrl || ''}
           videoId={active.embedVideoId}
           title={active.title || series.title}
+        />
+      </div>
+
+      {/* Tracking: mismo mecanismo que la ficha del catalogo (ViewStatus),
+       * para que mirar una serie desde /ver la sume a "Viendo ahora" y a
+       * las estadisticas del usuario aunque sea WATCHABLE_ONLY. */}
+      <div className="ver-serie__tracking">
+        <TrackingPanel
+          seriesId={series.id}
+          seriesTitle={series.title}
+          seasons={trackingSeasons}
         />
       </div>
 

@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/database';
 
-export const revalidate = 600; // 10 minutos
+export const revalidate = 3600;
 
 const BASE_URL = 'https://mundobl.com.ar';
 

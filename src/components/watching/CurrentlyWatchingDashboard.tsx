@@ -29,7 +29,7 @@ import { useMessage } from '@/hooks/useMessage';
 import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { SerieCardSkeleton } from '@/components/common/SerieCardSkeleton/SerieCardSkeleton';
 import { SeriesNoteModal } from '@/components/series/SeriesNoteModal/SeriesNoteModal';
-import { getSeriesUrl } from '@/lib/slug';
+import { getSeriesUrl, getVerUrl } from '@/lib/slug';
 import './CurrentlyWatchingDashboard.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import type { TranslationKey } from '@/i18n/messages';
@@ -55,6 +55,7 @@ interface WatchingSeriesData {
     imageUrl?: string | null;
     imageThumbUrl?: string | null;
     airDays?: string | null;
+    hasWatchableEpisode?: boolean;
     createdAt?: Date | string;
     updatedAt?: Date | string;
     country?: {
@@ -732,6 +733,23 @@ export function CurrentlyWatchingDashboard() {
                             onClick={() => setNoteSeriesId(item.series.id)}
                           />
                         </Tooltip>
+                      )}
+                      {item.series.hasWatchableEpisode && (
+                        <Link
+                          href={getVerUrl(item.series.id, item.series.title)}
+                          className="watching-card__action-link"
+                        >
+                          {/* Resume directo en /ver: no todas las series
+                              tienen embed propio, por eso es condicional. */}
+                          <Button
+                            type="primary"
+                            ghost
+                            block
+                            icon={<PlayCircleOutlined />}
+                          >
+                            {t('watchingDashboard.watchNow')}
+                          </Button>
+                        </Link>
                       )}
                       <Link
                         href={getSeriesUrl(item.series.id, item.series.title)}

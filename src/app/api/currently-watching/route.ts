@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
+import { isWatchableEpisode } from '@/lib/watchable';
 
 // GET - Obtener las series que el usuario autenticado está viendo
 export async function GET() {
@@ -41,7 +42,24 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(currentlyWatching);
+    // Para el boton "Seguir viendo" en /watching: si la serie tiene algun
+    // episodio mirable, se puede retomar directo en /ver sin pasar por la
+    // ficha del catalogo. `series` es nullable a nivel de tipo (relacion
+    // opcional en el schema) aunque el `where` ya garantiza `seriesId` no
+    // nulo, de ahi el `!`.
+    const result = currentlyWatching
+      .filter((item) => item.series !== null)
+      .map((item) => ({
+        ...item,
+        series: {
+          ...item.series!,
+          hasWatchableEpisode: item.series!.seasons.some((season) =>
+            season.episodes.some(isWatchableEpisode)
+          ),
+        },
+      }));
+
+    return NextResponse.json(result);
   } catch (error) {
     console.error('Error fetching currently watching:', error);
     return NextResponse.json(

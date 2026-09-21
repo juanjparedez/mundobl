@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
+import { revalidateSeriesDetail } from '@/lib/revalidate-series';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { assertSeriesOwnership } from '@/lib/collaborator-guard';
@@ -177,7 +178,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     });
 
     revalidatePath('/ver');
-    revalidatePath(`/ver/${seriesId}`);
+    revalidateSeriesDetail(updated);
     revalidatePath('/admin/series/user-submitted');
 
     return NextResponse.json({ id: updated.id, title: updated.title });

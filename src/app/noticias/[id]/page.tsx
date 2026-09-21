@@ -19,7 +19,7 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-export const revalidate = 300;
+export const revalidate = 3600;
 
 function cleanText(text: string): string {
   return text.replace(/[*_`[\]#>]/g, '').trim();

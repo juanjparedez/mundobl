@@ -283,6 +283,7 @@ export type TranslationShape = {
     markCompleteConfirm: string;
     completedMessage: string;
     noEpisodesHint: string;
+    watchNow: string;
   };
   appLayout: {
     skipToContent: string;
@@ -3377,6 +3378,7 @@ const es: TranslationShape = {
     markCompleteConfirm: '¿Marcar "{title}" como terminada?',
     completedMessage: 'Marcaste "{title}" como terminada',
     noEpisodesHint: 'Sin episodios cargados: se marca completa de una vez',
+    watchNow: 'Seguir viendo',
   },
   appLayout: {
     skipToContent: 'Saltar al contenido principal',
@@ -6624,6 +6626,7 @@ const en: TranslationShape = {
     markCompleteConfirm: 'Mark "{title}" as finished?',
     completedMessage: 'You marked "{title}" as finished',
     noEpisodesHint: 'No episodes loaded: it gets marked complete in one go',
+    watchNow: 'Continue watching',
   },
   appLayout: {
     skipToContent: 'Skip to main content',

@@ -291,7 +291,8 @@ const ja = {
     "markCompleteLabel": "シリーズを完走",
     "markCompleteConfirm": "「{title}」を完走済みにしますか？",
     "completedMessage": "「{title}」を完走済みにしました",
-    "noEpisodesHint": "エピソードが読み込まれていません: 一括で完了とマークされます"
+    "noEpisodesHint": "エピソードが読み込まれていません: 一括で完了とマークされます",
+    "watchNow": "続きを見る"
   },
   "appLayout": {
     "skipToContent": "メインコンテンツにスキップ"

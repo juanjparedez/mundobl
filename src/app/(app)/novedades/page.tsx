@@ -6,10 +6,11 @@ import {
   HAS_WATCHABLE_EPISODE,
   WATCHABLE_EPISODE_WHERE,
 } from '@/lib/watchable';
+import { SERIES_LISTINGS_TAG } from '@/lib/revalidate-series';
 import { NovedadesClient } from './NovedadesClient';
 import './novedades.css';
 
-export const revalidate = 600;
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: 'Novedades',
@@ -128,7 +129,7 @@ const getNovedadesData = unstable_cache(
     return { newSeries, newSeasons, watchableSeries: formattedWatchable };
   },
   ['novedades-data-v2'],
-  { revalidate: 600 }
+  { revalidate: 3600, tags: [SERIES_LISTINGS_TAG] }
 );
 
 export default async function NovedadesPage() {

@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { prisma } from '@/lib/database';
 import { ContenidoPage } from './ContenidoPage';
 
-export const revalidate = 300;
+export const revalidate = 21600;
 
 export const metadata: Metadata = {
   title: 'Contenido BL - Videos, Trailers y Clips',
