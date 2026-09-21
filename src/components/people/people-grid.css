@@ -14,6 +14,18 @@
   align-items: start;
 }
 
+/* La grilla renderiza el indice COMPLETO (~1.240 actores) en vez de paginar
+   de a 48: asi el crawler llega a cada ficha en un hop y la pagina puede ser
+   estatica. content-visibility hace que el navegador saltee layout y paint de
+   las cards fuera del viewport, con lo cual el costo de render deja de
+   depender del largo de la lista. contain-intrinsic-size le da una altura
+   estimada a las no renderizadas para que la scrollbar no salte; `auto`
+   guarda la medida real despues del primer render. */
+.people-grid > * {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 90px;
+}
+
 .people-page__header {
   margin-bottom: var(--spacing-lg);
 }

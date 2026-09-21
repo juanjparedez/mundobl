@@ -1,17 +1,12 @@
-export const revalidate = 86400;
+// Estatica: la pagina ya no lee searchParams, asi que este revalidate vuelve
+// a aplicar de verdad. Busqueda, orden y filtro viven en el cliente.
+export const revalidate = 604800;
 
 import type { Metadata } from 'next';
 import { getActorsIndex, getPeopleNationalities } from '@/lib/database';
 import { isIndexablePerson } from '@/lib/person-completeness';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
 import { PeopleIndexShell } from './PeopleIndexShell';
-import {
-  parsePeopleSearchParams,
-  buildPeopleHref,
-  type PeopleSearchParams,
-} from '@/lib/people-index-params';
-
-const PER_PAGE = 48;
 
 export const metadata: Metadata = {
   title: 'Actores | Reparto del catálogo - MundoBL',
@@ -20,19 +15,11 @@ export const metadata: Metadata = {
   alternates: { canonical: '/actores' },
 };
 
-export default async function ActoresPage({
-  searchParams,
-}: {
-  searchParams: Promise<PeopleSearchParams>;
-}) {
-  const params = parsePeopleSearchParams(await searchParams);
-
-  const [{ rows, total }, nationalities] = await Promise.all([
-    getActorsIndex({ ...params, perPage: PER_PAGE }),
+export default async function ActoresPage() {
+  const [actors, nationalities] = await Promise.all([
+    getActorsIndex(),
     getPeopleNationalities(),
   ]);
-
-  const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
 
   return (
     <>
@@ -44,19 +31,17 @@ export default async function ActoresPage({
         subtitleKey="peopleIndex.actorsSubtitle"
         countKey="peopleIndex.creditsCount"
         current="/actores"
-        total={total}
-        page={params.page}
-        totalPages={totalPages}
-        prevHref={buildPeopleHref('/actores', params, params.page - 1)}
-        nextHref={buildPeopleHref('/actores', params, params.page + 1)}
         nationalities={nationalities}
-        items={rows.map((actor) => ({
+        items={actors.map((actor) => ({
           id: actor.id,
           href: `/actores/${actor.id}`,
           name: actor.name,
           subtitle: actor.stageName ?? actor.nationality,
           imageUrl: actor.imageUrl,
           count: actor.creditCount,
+          nationality: actor.nationality,
+          // `biography` se colapsa a un booleano ACA y no viaja al cliente:
+          // el texto largo no se muestra en el indice.
           indexable: isIndexablePerson({
             imageUrl: actor.imageUrl,
             biography: actor.biography,
