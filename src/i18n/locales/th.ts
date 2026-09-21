@@ -2502,6 +2502,13 @@ const th = {
     "ariaNext": "ทำเครื่องหมายตอนถัดไปว่าดูแล้ว",
     "ariaPrev": "เลิกทำเครื่องหมายตอนที่ดูล่าสุด"
   },
+  "trackCta": {
+    "title": "คุณกำลังดูเรื่องนี้อยู่หรือเปล่า?",
+    "subtitle": "ทำเครื่องหมายว่าคุณดูถึงตอนไหนแล้ว และติดตามจากรายการของคุณ",
+    "button": "เริ่มติดตาม",
+    "applied": "เรียบร้อยแล้ว ตอนนี้กำลังติดตาม {title}",
+    "chooseEpisode": "คุณดูถึงตอนไหนแล้ว?"
+  },
   "spoilerFreeProvider": {
     "useSpoilerFreeError": "useSpoilerFree ต้องใช้ภายใน SpoilerFreeProvider"
   },
