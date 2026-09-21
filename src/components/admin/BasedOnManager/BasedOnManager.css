@@ -1,0 +1,24 @@
+.based-on-manager {
+  display: grid;
+  gap: var(--spacing-md);
+}
+.based-on-manager__toolbar {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+.based-on-manager__target {
+  display: grid;
+  gap: var(--spacing-sm);
+}
+.based-on-manager__series {
+  max-height: 35vh;
+  overflow-y: auto;
+  padding-inline-start: var(--spacing-lg);
+}
+.based-on-manager__series li {
+  margin-block: var(--spacing-xs);
+}
+.based-on-manager__value {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

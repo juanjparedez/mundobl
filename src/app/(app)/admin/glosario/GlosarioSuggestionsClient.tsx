@@ -5,7 +5,6 @@ import {
   Button,
   Card,
   Input,
-  Modal,
   Select,
   Space,
   Tag,
@@ -16,7 +15,7 @@ import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { AdminNav } from '../AdminNav';
 import { PageTitleClient } from '@/components/common/PageTitle/PageTitleClient';
 import '../admin.css';
-import { DataTable } from '@/components/design-system';
+import { DataTable, PanelModal } from '@/components/design-system';
 
 export interface GlossarySuggestionItem {
   id: number;
@@ -270,7 +269,8 @@ export function GlosarioSuggestionsClient({ initialSuggestions, tags }: Props) {
         </Card>
       </main>
 
-      <Modal
+      <PanelModal
+        size="md"
         open={review !== null}
         title={
           review?.action === 'APPROVED'
@@ -286,7 +286,7 @@ export function GlosarioSuggestionsClient({ initialSuggestions, tags }: Props) {
         cancelText="Cancelar"
         confirmLoading={updatingId === review?.item.id}
         onOk={confirmReview}
-        onCancel={closeReview}
+        onClose={closeReview}
       >
         <Space direction="vertical" size="middle" style={{ width: '100%' }}>
           {review?.action === 'APPROVED' && (
@@ -333,7 +333,7 @@ export function GlosarioSuggestionsClient({ initialSuggestions, tags }: Props) {
             )}
           </div>
         </Space>
-      </Modal>
+      </PanelModal>
     </>
   );
 }

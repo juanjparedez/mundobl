@@ -92,11 +92,18 @@ export async function uploadToR2(
   if (!config) throw new Error('R2 no configurado');
 
   const client = getClient(config);
+  // Content-Length explicito: al firmar, aws4fetch reconstruye el Request y
+  // en el runtime de Node/Vercel el body pasa a stream (transfer-encoding
+  // chunked). S3/R2 exige la longitud y responde 411 MissingContentLength;
+  // asi fallaban todas las subidas de adjuntos de feedback (2026-09-13 y
+  // 2026-09-21 en AccessLog).
+  const body = new Uint8Array(file);
   const response = await client.fetch(endpointFor(config, key), {
     method: 'PUT',
-    body: new Uint8Array(file),
+    body,
     headers: {
       'Content-Type': contentType,
+      'Content-Length': String(body.byteLength),
       'Cache-Control': 'public, max-age=31536000, immutable',
     },
   });

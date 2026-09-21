@@ -22,6 +22,20 @@ export const DASHBOARD_COLS: Record<DashboardBreakpoint, number> = {
   xxs: 2,
 };
 
+/** Quien manda sobre la altura de un item.
+ *
+ *  'auto'   → la decide el contenido medido por Widget (default; la
+ *             AUSENCIA del campo equivale a 'auto', asi todo layout ya
+ *             persistido sin este campo sigue comportandose igual).
+ *  'manual' → la fijo el usuario arrastrando el resize handle. Se respeta
+ *             tal cual: si el contenido no entra, el body scrollea en vez
+ *             de estirar la caja.
+ *
+ *  Existe para separar dos numeros que antes estaban fusionados en `h`:
+ *  la PREFERENCIA del usuario (se persiste) y el alto que EXIGE el
+ *  contenido (override de render, no se persiste nunca). */
+export type DashboardItemHeightMode = 'auto' | 'manual';
+
 /** Item del grid: identifica que widget renderizar en que celda. */
 export interface DashboardItem {
   /** id estable del widget. Debe matchear con WidgetRegistry. */
@@ -39,6 +53,8 @@ export interface DashboardItem {
   maxH?: number;
   /** Bloquea drag/resize (incluso en modo edicion). */
   static?: boolean;
+  /** Ver DashboardItemHeightMode. Ausente ≡ 'auto'. */
+  hMode?: DashboardItemHeightMode;
 }
 
 /** Layouts por breakpoint — react-grid-layout responsive shape. */

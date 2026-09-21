@@ -1,0 +1,14 @@
+/* Preview de resena: el cuerpo es texto libre de usuario, de largo
+ * arbitrario. El alto ya lo acota PanelModal (scroll interno); aca solo
+ * resolvemos el eje horizontal, para que una URL o una palabra muy larga
+ * no fuerce scroll lateral. */
+.admin-resenas__preview-body {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-family: inherit;
+}
+
+.admin-resenas__preview-meta {
+  margin-bottom: var(--spacing-sm);
+}
