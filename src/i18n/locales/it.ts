@@ -2547,7 +2547,11 @@ const it = {
     "markWatched": "L'ho guardato",
     "markUnwatched": "Segna come non guardato",
     "markedWatched": "Hai segnato \"{title}\" come guardato",
-    "noEpisodes": "Questo titolo non ha episodi caricati: viene segnato come completo in una volta sola."
+    "noEpisodes": "Questo titolo non ha episodi caricati: viene segnato come completo in una volta sola.",
+    "notesTitle": "Note private",
+    "episodeNote": "Nota per {code}",
+    "seriesNote": "Nota serie",
+    "notesHintNoEpisode": "Segna un episodio come visto per aggiungere una nota."
   },
   "posterPlaceholder": {
     "noImage": "Nessuna immagine"
