@@ -10,6 +10,8 @@
 export interface PendingTrack {
   seriesId: number;
   upToEpisodeId: number | null;
+  /** Ficha sin episodios (corto, pelicula): al volver se marca VISTA entera. */
+  markWatched?: boolean;
   createdAt: number;
 }
 
@@ -43,6 +45,7 @@ export function readPendingTrack(): PendingTrack | null {
     return {
       seriesId: parsed.seriesId,
       upToEpisodeId: parsed.upToEpisodeId ?? null,
+      markWatched: parsed.markWatched === true,
       createdAt: parsed.createdAt,
     };
   } catch {

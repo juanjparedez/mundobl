@@ -101,6 +101,8 @@ export interface ProgressTarget {
 export interface ProgressOptions {
   /** Pone en SIN_VER los episodios posteriores al objetivo; no toca la fila de serie. */
   direction?: 'unmark';
+  /** Con 'unmark': tambien desmarca el objetivo (para volver a "ninguno visto"). */
+  inclusive?: boolean;
   /** Si tras marcar quedan todos los episodios vistos, pasa la serie a VISTA. */
   completeIfAll?: boolean;
 }
@@ -147,7 +149,9 @@ export async function setProgress(
   const now = new Date();
 
   if (options.direction === 'unmark') {
-    const afterIds = episodes.slice(targetIndex + 1).map((ep) => ep.id);
+    const afterIds = episodes
+      .slice(options.inclusive ? targetIndex : targetIndex + 1)
+      .map((ep) => ep.id);
     if (afterIds.length > 0) {
       await client.viewStatus.updateMany({
         where: { userId, episodeId: { in: afterIds } },
