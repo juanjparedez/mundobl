@@ -325,6 +325,10 @@ export type TranslationShape = {
     light: string;
     stats: string;
     runtime: string;
+    ver: string;
+    platforms: string;
+    glossary: string;
+    about: string;
   };
   profile: {
     loginRequired: string;
@@ -609,7 +613,8 @@ export type TranslationShape = {
     logout: string;
     settings: string;
     more: string;
-    ver: string;
+    watch: string;
+    profile: string;
     accentColor: string;
     theme: string;
     switchToLight: string;
@@ -3380,6 +3385,10 @@ const es: TranslationShape = {
     profile: 'Mi Perfil',
     stats: 'Estad\u00edsticas',
     runtime: 'Runtime',
+    ver: 'Ver series',
+    platforms: 'Plataformas y planes',
+    glossary: 'Glosario cultural',
+    about: 'Acerca de MundoBL',
   },
   profile: {
     loginRequired: 'Inicia sesion para ver tu perfil',
@@ -3687,7 +3696,8 @@ const es: TranslationShape = {
     logout: 'Salir',
     settings: 'Ajustes',
     more: 'Más',
-    ver: 'Ver',
+    watch: 'Ver series',
+    profile: 'Perfil',
     accentColor: 'Color',
     theme: 'Tema',
     switchToLight: 'Cambiar a modo claro',
@@ -6585,6 +6595,10 @@ const en: TranslationShape = {
     profile: 'My Profile',
     stats: 'Statistics',
     runtime: 'Runtime',
+    ver: 'Watch series',
+    platforms: 'Platforms & plans',
+    glossary: 'Cultural glossary',
+    about: 'About MundoBL',
   },
   profile: {
     loginRequired: 'Sign in to view your profile',
@@ -6886,7 +6900,8 @@ const en: TranslationShape = {
     logout: 'Sign out',
     settings: 'Settings',
     more: 'More',
-    ver: 'Watch',
+    watch: 'Watch',
+    profile: 'Profile',
     accentColor: 'Accent color',
     theme: 'Theme',
     switchToLight: 'Switch to light mode',

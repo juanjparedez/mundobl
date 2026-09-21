@@ -333,7 +333,11 @@ const zhCN = {
     "light": "浅色",
     "profile": "我的资料",
     "stats": "统计",
-    "runtime": "Runtime"
+    "runtime": "Runtime",
+    "ver": "观看剧集",
+    "platforms": "平台与方案",
+    "glossary": "文化词汇表",
+    "about": "关于 MundoBL"
   },
   "profile": {
     "loginRequired": "登录查看您的个人资料",
@@ -618,7 +622,8 @@ const zhCN = {
     "logout": "退出",
     "settings": "设置",
     "more": "更多",
-    "ver": "观看",
+    "watch": "观看",
+    "profile": "个人资料",
     "accentColor": "强调色",
     "theme": "主题",
     "switchToLight": "切换到浅色模式",

@@ -333,7 +333,11 @@ const zhTW = {
     "light": "淺色",
     "profile": "我的個人資料",
     "stats": "統計",
-    "runtime": "Runtime"
+    "runtime": "Runtime",
+    "ver": "觀看劇集",
+    "platforms": "平台與方案",
+    "glossary": "文化詞彙",
+    "about": "關於 MundoBL"
   },
   "profile": {
     "loginRequired": "登入以查看您的個人資料",
@@ -618,7 +622,8 @@ const zhTW = {
     "logout": "登出",
     "settings": "設定",
     "more": "更多",
-    "ver": "觀看",
+    "watch": "觀看",
+    "profile": "個人檔案",
     "accentColor": "強調色",
     "theme": "主題",
     "switchToLight": "切換至淺色模式",
