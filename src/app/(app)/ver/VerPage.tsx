@@ -545,7 +545,9 @@ export function VerPage({ items }: VerPageProps) {
                     href={getVerUrl(item.id, item.title)}
                     imageUrl={cardImageUrl(item)}
                     imageAlt={item.title}
-                    unoptimizedImage={isDirectServedImageUrl(cardImageUrl(item))}
+                    unoptimizedImage={isDirectServedImageUrl(
+                      cardImageUrl(item)
+                    )}
                     aspectRatio="16:9"
                     preview={{
                       api: previewApi,

@@ -9,12 +9,15 @@ export async function POST(request: NextRequest) {
     if (!authResult.authorized) return authResult.response;
 
     const body = await request.json();
-    const targetId = typeof body.targetId === 'number' ? body.targetId : parseInt(body.targetId, 10);
+    const targetId =
+      typeof body.targetId === 'number'
+        ? body.targetId
+        : parseInt(body.targetId, 10);
     const sourceIdsRaw: unknown[] = Array.isArray(body.sourceIds)
       ? body.sourceIds
       : body.sourceId !== undefined
-      ? [body.sourceId]
-      : [];
+        ? [body.sourceId]
+        : [];
 
     const sourceIds: number[] = sourceIdsRaw
       .map((id) => (typeof id === 'number' ? id : parseInt(String(id), 10)))
@@ -22,7 +25,10 @@ export async function POST(request: NextRequest) {
 
     if (isNaN(targetId) || sourceIds.length === 0) {
       return NextResponse.json(
-        { error: 'Se requieren género destino (targetId) y al menos un género origen (sourceId/sourceIds)' },
+        {
+          error:
+            'Se requieren género destino (targetId) y al menos un género origen (sourceId/sourceIds)',
+        },
         { status: 400 }
       );
     }
