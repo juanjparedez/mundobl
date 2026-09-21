@@ -9,6 +9,7 @@ import {
 import { Widget } from '@/components/dashboard';
 import { StatCard } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import './AdminKPIsWidget.css';
 
 export interface AdminKPIsWidgetProps {
   series: number;
@@ -26,15 +27,7 @@ export function AdminKPIsWidget({
   const { t } = useLocale();
   return (
     <Widget noPadding>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
-          gap: 'var(--spacing-sm)',
-          padding: 'var(--spacing-md)',
-          height: '100%',
-        }}
-      >
+      <div className="mb-admin-kpis">
         <StatCard
           label={t('adminDashboard.kpiSeries')}
           value={series}

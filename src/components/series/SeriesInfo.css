@@ -4,6 +4,32 @@
   gap: var(--spacing-lg);
 }
 
+/* antd pone display:flex + flex-wrap:nowrap por defecto en el contenido
+   de cada Descriptions.Item. Con listas de chips (genero, doblajes,
+   directores) eso las empuja mas alla del ancho de la celda; en mobile
+   la tabla no es table-layout:fixed y el `overflow-x: hidden` de mas
+   abajo terminaba recortando el ultimo chip en vez de bajarlo de linea
+   (ver docs/plan-maestro-retencion — ficha movil, genero cortado). */
+.series-info .ant-descriptions-item-content {
+  flex-wrap: wrap;
+  row-gap: var(--spacing-xs);
+}
+
+@media (min-width: 769px) {
+  .series-info .ant-descriptions-view table {
+    table-layout: fixed;
+  }
+
+  .series-info .ant-descriptions-item-label {
+    width: 160px;
+    overflow-wrap: anywhere;
+  }
+
+  .series-info .ant-descriptions-item-content {
+    overflow-wrap: anywhere;
+  }
+}
+
 .series-info__synopsis,
 .series-info__review,
 .series-info__observations,
@@ -336,4 +362,10 @@
     font-size: 13px;
     padding: 4px 8px !important;
   }
+}
+
+.series-info__season-position {
+  display: block;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
 }

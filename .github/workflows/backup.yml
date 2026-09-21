@@ -1,0 +1,140 @@
+# Backup diario de la base a Cloudflare R2.
+#
+# POR QUE NO SE GUARDA COMO ARTIFACT DE ACTIONS:
+# el repo es PUBLICO, y los artifacts de un repo publico los puede descargar
+# cualquiera. El dump tiene mails de usuarios, sesiones y tokens. Guardarlo ahi
+# seria publicar datos personales. Va a R2, que es un bucket privado.
+#
+# COSTO: $0 mientras se respeten los topes.
+#   - Actions: repo publico => minutos gratis ilimitados.
+#   - R2: 10 GB de storage y 1M de escrituras/mes en la capa gratuita.
+#     El dump pesa ~78 MB. Con RETENTION_DAYS=14 el techo es ~1.1 GB, muy
+#     por debajo de los 10 GB. Sin la limpieza, en ~4 meses se pasaria.
+#     Por eso el paso de retencion NO es opcional.
+#
+# SEGURIDAD: corre SOLO por schedule y a mano. Nunca en pull_request, asi un
+# fork hostil no puede abrir un PR que lea los secrets.
+
+name: Backup de la base
+
+on:
+  schedule:
+    - cron: '0 7 * * *' # 07:00 UTC ~ 04:00 AR
+  workflow_dispatch:
+
+concurrency:
+  group: backup
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  RETENTION_DAYS: 14
+
+jobs:
+  backup:
+    # Activar solo tras configurar secrets y verificar que el bucket es privado.
+    if: github.repository == 'juanjparedez/mundobl' && vars.BACKUPS_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Verificar que estan los secrets
+        # Falla temprano y con un mensaje claro, en vez de a mitad del dump.
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET: ${{ secrets.R2_BACKUP_BUCKET }}
+        run: |
+          faltan=""
+          for v in DATABASE_URL R2_ACCOUNT_ID R2_ACCESS_KEY_ID R2_SECRET_ACCESS_KEY R2_BUCKET; do
+            [ -z "${!v}" ] && faltan="$faltan $v"
+          done
+          if [ -n "$faltan" ]; then
+            echo "::error::Faltan secrets en el repo:$faltan"
+            echo "Cargalos en Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+          echo "Todos los secrets presentes."
+
+      - name: Instalar dependencias
+        run: npm ci --ignore-scripts
+
+      - name: Generar cliente Prisma
+        run: npx prisma generate
+
+      - name: Verificar cobertura de todos los modelos
+        run: npx tsx scripts/backup-db.ts --check-models
+
+      - name: Dump de la base
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: npx tsx scripts/backup-db.ts
+
+      - name: Comprimir
+        id: comprimir
+        run: |
+          archivo=$(ls -t backups/mundobl_*.json | head -1)
+          gzip -9 "$archivo"
+          echo "path=${archivo}.gz" >> "$GITHUB_OUTPUT"
+          echo "name=$(basename "${archivo}.gz")" >> "$GITHUB_OUTPUT"
+          ls -lh "${archivo}.gz"
+
+      - name: Subir a R2
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          ENDPOINT: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+          BUCKET: ${{ secrets.R2_BACKUP_BUCKET }}
+        run: |
+          aws s3 cp "${{ steps.comprimir.outputs.path }}" \
+            "s3://$BUCKET/db/${{ steps.comprimir.outputs.name }}" \
+            --endpoint-url "$ENDPOINT"
+
+      - name: Borrar backups viejos (tope de la capa gratuita)
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          ENDPOINT: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+          BUCKET: ${{ secrets.R2_BACKUP_BUCKET }}
+        run: |
+          corte=$(date -u -d "-${RETENTION_DAYS} days" +%Y-%m-%d)
+          echo "Borrando backups anteriores a $corte"
+          aws s3 ls "s3://$BUCKET/db/" --endpoint-url "$ENDPOINT" \
+            | while read -r fecha _ _ nombre; do
+                if [[ "$fecha" < "$corte" ]]; then
+                  echo "  borrando $nombre ($fecha)"
+                  aws s3 rm "s3://$BUCKET/db/$nombre" --endpoint-url "$ENDPOINT"
+                fi
+              done
+
+      - name: Resumen
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+          ENDPOINT: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+          BUCKET: ${{ secrets.R2_BACKUP_BUCKET }}
+        run: |
+          {
+            echo "### Backup del $(date -u +%Y-%m-%d)"
+            echo ""
+            echo "| | |"
+            echo "|---|---|"
+            echo "| Archivo | \`${{ steps.comprimir.outputs.name }}\` |"
+            echo "| Retencion | ${RETENTION_DAYS} dias |"
+            echo "| Copias en R2 | $(aws s3 ls "s3://$BUCKET/db/" --endpoint-url "$ENDPOINT" | wc -l) |"
+            echo "| Ocupado | $(aws s3 ls "s3://$BUCKET/db/" --endpoint-url "$ENDPOINT" --summarize | grep 'Total Size' | awk '{printf "%.0f MB", $3/1024/1024}') de 10 GB |"
+          } >> "$GITHUB_STEP_SUMMARY"

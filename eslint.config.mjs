@@ -5,7 +5,7 @@ import eslintPluginPrettier from 'eslint-plugin-prettier';
 
 const eslintConfig = [
   {
-    ignores: ['src/generated/**'],
+    ignores: ['src/generated/**', 'src/i18n/locales/**'],
   },
   ...nextConfig,
   ...nextTypescript,

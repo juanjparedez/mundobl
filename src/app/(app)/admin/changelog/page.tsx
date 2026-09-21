@@ -1,16 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import {
-  Button,
-  Popconfirm,
-  Space,
-  Tag,
-  Modal,
-  Form,
-  Input,
-  Select,
-} from 'antd';
+import { Button, Popconfirm, Space, Tag, Form, Input, Select } from 'antd';
 import {
   PlusOutlined,
   DeleteOutlined,
@@ -25,7 +16,7 @@ import { AdminPageHero } from '@/components/admin/AdminPageHero/AdminPageHero';
 import { AdminTableToolbar } from '@/components/admin/AdminTableToolbar/AdminTableToolbar';
 import { AdminNav } from '../AdminNav';
 import '../admin.css';
-import { DataTable } from '@/components/design-system';
+import { DataTable, PanelModal } from '@/components/design-system';
 
 interface ChangelogItem {
   id: number;
@@ -488,21 +479,21 @@ export default function ChangelogAdminPage() {
           pageSize={50}
         />
 
-        <Modal
+        <PanelModal
           title={
             editingItem
               ? t('adminChangelog.modalEditTitle')
               : t('adminChangelog.modalAddTitle')
           }
+          size="md"
           open={modalOpen}
-          onCancel={() => {
+          onClose={() => {
             setModalOpen(false);
             setEditingItem(null);
             form.resetFields();
           }}
           footer={null}
-          destroyOnClose
-          maskClosable={false}
+          destroyOnHidden
         >
           <Form
             form={form}
@@ -613,15 +604,14 @@ export default function ChangelogAdminPage() {
               </Button>
             </Space>
           </Form>
-        </Modal>
+        </PanelModal>
 
         {/* Modal de Previsualización de Changelog generado con IA */}
-        <Modal
+        <PanelModal
           title="✨ Novedades generadas con IA a partir de commits recientes"
+          size="md"
           open={autoGenOpen}
-          width={700}
-          onCancel={() => setAutoGenOpen(false)}
-          maskClosable={false}
+          onClose={() => setAutoGenOpen(false)}
           footer={[
             <Button key="cancel" onClick={() => setAutoGenOpen(false)}>
               Cancelar
@@ -638,9 +628,10 @@ export default function ChangelogAdminPage() {
           ]}
         >
           {autoGenDraft && (
-            <div
-              style={{ maxHeight: '60vh', overflowY: 'auto', paddingRight: 8 }}
-            >
+            // Sin maxHeight/overflow propio: el scroll ahora lo maneja el
+            // body de PanelModal. Un scroller anidado aca dejaba dos
+            // barras compitiendo dentro del mismo modal.
+            <div>
               <div style={{ marginBottom: 16 }}>
                 <Tag
                   color="purple"
@@ -694,7 +685,7 @@ export default function ChangelogAdminPage() {
                 )}
             </div>
           )}
-        </Modal>
+        </PanelModal>
       </div>
     </>
   );

@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse, after } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import { prisma } from '@/lib/database';
+import {
+  prisma,
+  saveSeriesInUniverse,
+  resolveBasedOnValue,
+} from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { extractVideoId, type Platform } from '@/lib/embed-helpers';
 import { getCountryCode } from '@/lib/country-codes';
@@ -65,7 +69,6 @@ export async function POST(request: NextRequest) {
       featured,
       featuredOrder,
       countryName,
-      universeId,
       actors,
       directors,
       seasons,
@@ -149,43 +152,67 @@ export async function POST(request: NextRequest) {
         : null;
 
     // Crear la serie
-    const serie = await prisma.series.create({
-      data: {
-        title,
-        originalTitle,
-        year,
-        type,
-        // Solo para tipos de una sola pieza (pelicula, corto). El form ya
-        // manda null cuando el tipo no la lleva; aca se normaliza el
-        // string vacio o el undefined del payload.
-        durationMinutes:
-          body.durationMinutes === null || body.durationMinutes === undefined
-            ? null
-            : Number(body.durationMinutes) || null,
-        basedOn,
-        format: format || 'regular',
-        imageUrl: externalImageUrl,
-        imageThumbUrl: clientThumbUrl,
-        imagePosition: body.imagePosition || 'center',
-        synopsis,
-        soundtrack,
-        overallRating,
-        observations,
-        review: review ?? null,
-        notesPrivate: notesPrivate === true,
-        featured: featured === true,
-        featuredOrder: typeof featuredOrder === 'number' ? featuredOrder : 0,
-        airDays: body.airDays || null,
-        catalogScope:
-          body.catalogScope === 'WATCHABLE_ONLY'
-            ? 'WATCHABLE_ONLY'
-            : 'PERSONAL',
-        countryId: resolvedCountryId,
-        universeId,
-        productionCompanyId: resolvedProductionCompanyId,
-        originalLanguageId: resolvedOriginalLanguageId,
-      },
-    });
+    const targetUniverseId = body.universeId ? Number(body.universeId) : null;
+    if (
+      targetUniverseId !== null &&
+      (!Number.isInteger(targetUniverseId) || targetUniverseId < 1)
+    ) {
+      return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
+    }
+    const isUniverseMain =
+      targetUniverseId !== null && body.isUniverseMain === true;
+    if (
+      basedOn !== undefined &&
+      basedOn !== null &&
+      typeof basedOn !== 'string'
+    )
+      return NextResponse.json({ error: 'Invalid basedOn' }, { status: 400 });
+    const normalizedBasedOn = await resolveBasedOnValue(basedOn);
+    const serie = await saveSeriesInUniverse(
+      targetUniverseId,
+      isUniverseMain,
+      (transaction) =>
+        transaction.series.create({
+          data: {
+            isUniverseMain,
+            title,
+            originalTitle,
+            year,
+            type,
+            // Solo para tipos de una sola pieza (pelicula, corto). El form ya
+            // manda null cuando el tipo no la lleva; aca se normaliza el
+            // string vacio o el undefined del payload.
+            durationMinutes:
+              body.durationMinutes === null ||
+              body.durationMinutes === undefined
+                ? null
+                : Number(body.durationMinutes) || null,
+            basedOn: normalizedBasedOn,
+            format: format || 'regular',
+            imageUrl: externalImageUrl,
+            imageThumbUrl: clientThumbUrl,
+            imagePosition: body.imagePosition || 'center',
+            synopsis,
+            soundtrack,
+            overallRating,
+            observations,
+            review: review ?? null,
+            notesPrivate: notesPrivate === true,
+            featured: featured === true,
+            featuredOrder:
+              typeof featuredOrder === 'number' ? featuredOrder : 0,
+            airDays: body.airDays || null,
+            catalogScope:
+              body.catalogScope === 'WATCHABLE_ONLY'
+                ? 'WATCHABLE_ONLY'
+                : 'PERSONAL',
+            countryId: resolvedCountryId,
+            universeId: targetUniverseId,
+            productionCompanyId: resolvedProductionCompanyId,
+            originalLanguageId: resolvedOriginalLanguageId,
+          },
+        })
+    );
 
     // Las entidades hijas solo dependen de serie.id y son independientes
     // entre sí (tablas distintas). Antes se creaban en ~9 cascadas
@@ -413,6 +440,7 @@ export async function POST(request: NextRequest) {
     // Invalidar caches de las vistas que listan series y la ficha creada
     revalidatePath('/admin/series');
     revalidatePath('/catalogo');
+    revalidatePath('/series/[id]', 'page');
     revalidatePath('/ver');
     // La parrilla de /estrenos sale de `airDays`, que se edita aca; sin esto
     // el cambio no se ve hasta que expire el ISR de una hora.

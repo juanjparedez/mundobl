@@ -8,12 +8,15 @@ import {
   Space,
   Avatar,
   Tag,
-  Modal,
   Spin,
   Tooltip,
   Badge,
 } from 'antd';
-import { DataTable, type DataTableColumn } from '@/components/design-system';
+import {
+  DataTable,
+  PanelModal,
+  type DataTableColumn,
+} from '@/components/design-system';
 import {
   SearchOutlined,
   EditOutlined,
@@ -612,7 +615,7 @@ export function SeriesMetadataTab({
       />
 
       {/* Modal de acciones en lote */}
-      <Modal
+      <PanelModal
         title={
           bulkModalType === 'addTags'
             ? `Agregar Tags a ${selectedRowKeys.length} series`
@@ -622,10 +625,11 @@ export function SeriesMetadataTab({
                 ? `Agregar Géneros a ${selectedRowKeys.length} series`
                 : `Quitar Géneros de ${selectedRowKeys.length} series`
         }
+        size="md"
         open={bulkModalType !== null}
         onOk={handleBulkSubmit}
         confirmLoading={bulkSubmitting}
-        onCancel={() => {
+        onClose={() => {
           setBulkModalType(null);
           setBulkValues([]);
         }}
@@ -650,7 +654,7 @@ export function SeriesMetadataTab({
           options={bulkModalType?.includes('Tags') ? tagOptions : genreOptions}
           tokenSeparators={[',']}
         />
-      </Modal>
+      </PanelModal>
     </div>
   );
 }

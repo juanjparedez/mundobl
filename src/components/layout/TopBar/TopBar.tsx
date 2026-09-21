@@ -27,35 +27,19 @@ function openCommandK() {
   }
 }
 
-/** Rutas donde la search global tiene sentido (busca series). En el resto
- *  ocultamos el boton para que el user no se confunda al teclear y obtener
- *  resultados de series desde una pagina que no es de catalogo. */
-const SEARCH_ROUTES = [
-  '/catalogo',
-  '/ver',
-  '/watching',
-  '/admin/series',
-  '/admin/actores',
-  '/admin/directores',
-  '/admin/productoras',
-  '/admin/contenido',
-  '/admin/tags',
-  '/admin/universos',
-];
-
 /** Estas rutas ya tienen su propia búsqueda local real (input funcional
  *  que filtra la lista en pantalla) — el botón del TopBar que abre el
  *  buscador global queda redundante y confuso solo en el listado exacto,
- *  no en sus sub-rutas (que no tienen búsqueda propia). */
+ *  no en sus sub-rutas (que no tienen búsqueda propia).
+ *
+ *  En cualquier otra ruta el buscador se muestra: en el celular no existe
+ *  Ctrl+K, y la ficha de una serie (la página más visitada) tiene que
+ *  permitir buscar la siguiente sin volver al catálogo. */
 const SEARCH_HIDDEN_EXACT_ROUTES = ['/catalogo', '/ver', '/admin/series'];
 
 function shouldShowSearch(pathname: string | null): boolean {
   if (!pathname) return true;
-  if (pathname === '/') return true;
-  if (SEARCH_HIDDEN_EXACT_ROUTES.includes(pathname)) return false;
-  return SEARCH_ROUTES.some(
-    (r) => pathname === r || pathname.startsWith(`${r}/`)
-  );
+  return !SEARCH_HIDDEN_EXACT_ROUTES.includes(pathname);
 }
 
 /** Rutas donde ocultamos el TopBar completo en mobile para recuperar
