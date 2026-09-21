@@ -2506,6 +2506,13 @@ const ko = {
     "ariaNext": "다음 에피소드를 시청 완료로 표시",
     "ariaPrev": "마지막으로 시청한 에피소드 표시 해제"
   },
+  "trackCta": {
+    "title": "이 작품 보고 계신가요?",
+    "subtitle": "시청 중인 에피소드를 표시하고 목록에서 팔로우하세요.",
+    "button": "시청 기록 시작",
+    "applied": "모든 준비가 완료되었습니다. 이제 {title}을(를) 추적합니다.",
+    "chooseEpisode": "몇 화를 보고 계신가요?"
+  },
   "spoilerFreeProvider": {
     "useSpoilerFreeError": "useSpoilerFree는 SpoilerFreeProvider 내에서 사용해야 합니다."
   },

@@ -2506,6 +2506,13 @@ const fr = {
     "ariaNext": "Marquer l'épisode suivant comme vu",
     "ariaPrev": "Démarquer le dernier épisode vu"
   },
+  "trackCta": {
+    "title": "Vous regardez ça ?",
+    "subtitle": "Indiquez l'épisode où vous en êtes et suivez-le depuis votre liste.",
+    "button": "Commencer le suivi",
+    "applied": "C'est parti, vous suivez maintenant {title}",
+    "chooseEpisode": "À quel épisode en êtes-vous ?"
+  },
   "spoilerFreeProvider": {
     "useSpoilerFreeError": "useSpoilerFree doit être utilisé dans un SpoilerFreeProvider"
   },
