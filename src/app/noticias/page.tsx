@@ -7,7 +7,7 @@ import type { CollectionPage } from 'schema-dts';
 import { NoticiasListClient } from './NoticiasListClient';
 import './noticias.css';
 
-export const revalidate = 120; // 2 minutos
+export const revalidate = 1800;
 
 const NOTICIAS_DESCRIPTION =
   'Últimas noticias del mundo BL y GL: estrenos, anuncios, fechas de emisión y novedades curadas para la comunidad hispanohablante.';
