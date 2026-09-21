@@ -67,14 +67,21 @@ export async function POST(request: NextRequest) {
       );
     }
     if (!VALID_COUNTRIES.has(country) || !VALID_CATEGORIES.has(category)) {
-      return NextResponse.json({ error: 'Clasificación no válida.' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Clasificación no válida.' },
+        { status: 400 }
+      );
     }
     if (sourceUrl) {
       try {
         const parsedUrl = new URL(sourceUrl);
-        if (!['http:', 'https:'].includes(parsedUrl.protocol)) throw new Error();
+        if (!['http:', 'https:'].includes(parsedUrl.protocol))
+          throw new Error();
       } catch {
-        return NextResponse.json({ error: 'URL de fuente no válida.' }, { status: 400 });
+        return NextResponse.json(
+          { error: 'URL de fuente no válida.' },
+          { status: 400 }
+        );
       }
     }
 
