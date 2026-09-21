@@ -2,7 +2,16 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { Card, Empty, Progress, Tag, Button, Tooltip, Select } from 'antd';
+import {
+  Card,
+  Empty,
+  Progress,
+  Tag,
+  Button,
+  Tooltip,
+  Select,
+  Popconfirm,
+} from 'antd';
 import {
   PlayCircleOutlined,
   ClockCircleOutlined,
@@ -339,6 +348,31 @@ export function CurrentlyWatchingDashboard() {
     label: string
   ) => {
     setMarkingEpisode(episodeId);
+
+    // Optimista: marca el episodio como VISTA en el estado local antes de
+    // la respuesta (mueve el "siguiente" de la card sin esperar al fetch).
+    const previousSeries = watchingSeries;
+    setWatchingSeries((prev) =>
+      prev.map((item) =>
+        item.series.id === seriesId
+          ? {
+              ...item,
+              series: {
+                ...item.series,
+                seasons: item.series.seasons?.map((season) => ({
+                  ...season,
+                  episodes: season.episodes?.map((ep) =>
+                    ep.id === episodeId
+                      ? { ...ep, viewStatus: [{ status: 'VISTA' }] }
+                      : ep
+                  ),
+                })),
+              },
+            }
+          : item
+      )
+    );
+
     try {
       const response = await fetch(`/api/episodes/${episodeId}/view-status`, {
         method: 'POST',
@@ -349,20 +383,67 @@ export function CurrentlyWatchingDashboard() {
       if (!response.ok)
         throw new Error(t('watchingDashboard.errorMarkEpisode'));
 
+      const data = (await response.json()) as {
+        series: { lastWatchedAt: string | null } | null;
+      };
+
       trackFunnel('episode_marked', { source: 'watching', status: 'VISTA' });
+
+      // lastWatchedAt real (T03) para que el orden "última actividad"
+      // suba esta card sin esperar un reload completo.
+      if (data.series?.lastWatchedAt !== undefined) {
+        const lastWatchedAt = data.series.lastWatchedAt;
+        setWatchingSeries((prev) =>
+          prev.map((item) =>
+            item.series.id === seriesId ? { ...item, lastWatchedAt } : item
+          )
+        );
+      }
 
       message.success(
         interpolateMessage(t('watchingDashboard.episodeMarkedMessage'), {
           ep: label,
         })
       );
-      // Reload to get updated progress
-      await loadWatchingSeries();
     } catch (error) {
+      setWatchingSeries(previousSeries);
       message.error(t('watchingDashboard.errorMarkEpisode'));
       console.error(error);
     } finally {
       setMarkingEpisode(null);
+    }
+  };
+
+  const handleMarkSeriesComplete = async (
+    seriesId: number,
+    seriesTitle: string
+  ) => {
+    const previousSeries = watchingSeries;
+    setWatchingSeries((prev) =>
+      prev.filter((item) => item.series.id !== seriesId)
+    );
+
+    try {
+      const response = await fetch(`/api/series/${seriesId}/view-status`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'VISTA' }),
+      });
+
+      if (!response.ok)
+        throw new Error(t('watchingDashboard.errorMarkEpisode'));
+
+      trackFunnel('series_status_set', { status: 'VISTA', source: 'watching' });
+
+      message.success(
+        interpolateMessage(t('watchingDashboard.completedMessage'), {
+          title: seriesTitle,
+        })
+      );
+    } catch (error) {
+      setWatchingSeries(previousSeries);
+      message.error(t('watchingDashboard.errorMarkEpisode'));
+      console.error(error);
     }
   };
 
@@ -591,6 +672,54 @@ export function CurrentlyWatchingDashboard() {
                       <span>{formatLastWatched(item.lastWatchedAt)}</span>
                     </div>
 
+                    {nextEp ? (
+                      <Button
+                        type="primary"
+                        block
+                        icon={<CheckOutlined />}
+                        loading={markingEpisode === nextEp.id}
+                        onClick={() =>
+                          void handleMarkNextEpisode(
+                            nextEp.id,
+                            item.series.id,
+                            nextEpLabel ?? ''
+                          )
+                        }
+                        className="watching-card__primary-action"
+                      >
+                        {interpolateMessage(
+                          t('watchingDashboard.markNextLabel'),
+                          { n: String(nextEp.episodeNumber) }
+                        )}
+                      </Button>
+                    ) : (
+                      totalEpisodes > 0 && (
+                        <Popconfirm
+                          title={interpolateMessage(
+                            t('watchingDashboard.markCompleteConfirm'),
+                            { title: item.series.title }
+                          )}
+                          onConfirm={() =>
+                            void handleMarkSeriesComplete(
+                              item.series.id,
+                              item.series.title
+                            )
+                          }
+                          okText={t('watchingDashboard.markCompleteLabel')}
+                          cancelText={t('progressStepper.notYet')}
+                        >
+                          <Button
+                            type="primary"
+                            block
+                            icon={<CheckOutlined />}
+                            className="watching-card__primary-action"
+                          >
+                            {t('watchingDashboard.markCompleteLabel')}
+                          </Button>
+                        </Popconfirm>
+                      )
+                    )}
+
                     <div className="watching-card__actions">
                       {session?.user && (
                         <Tooltip title={t('seriesNote.tooltipOpen')}>
@@ -608,34 +737,11 @@ export function CurrentlyWatchingDashboard() {
                           />
                         </Tooltip>
                       )}
-                      {nextEp && (
-                        <Tooltip
-                          title={interpolateMessage(
-                            t('watchingDashboard.markEpisodeTooltip'),
-                            { ep: nextEpLabel ?? '' }
-                          )}
-                        >
-                          <Button
-                            icon={<CheckOutlined />}
-                            loading={markingEpisode === nextEp.id}
-                            onClick={() =>
-                              void handleMarkNextEpisode(
-                                nextEp.id,
-                                item.series.id,
-                                nextEpLabel ?? ''
-                              )
-                            }
-                            className="watching-card__mark-btn"
-                          >
-                            {nextEpLabel}
-                          </Button>
-                        </Tooltip>
-                      )}
                       <Link
                         href={getSeriesUrl(item.series.id, item.series.title)}
                         className="watching-card__action-link"
                       >
-                        <Button type="primary" block>
+                        <Button type="default" block>
                           {progress === 100
                             ? t('watchingDashboard.detailsButton')
                             : t('watchingDashboard.continueButton')}
