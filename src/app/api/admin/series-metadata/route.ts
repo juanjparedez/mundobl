@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
+import { revalidateSeriesDetail } from '@/lib/revalidate-series';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { findOrCreateTag, findOrCreateGenre } from '@/lib/tag-utils';
@@ -297,9 +298,10 @@ export async function PATCH(request: NextRequest) {
       });
     });
 
-    // Revalidar cachés de Next.js
+    // Revalidar cachés de Next.js. Va por la URL real con slug: la ficha vive
+    // en /series/{id}-{slug} y invalidar /series/{id} a secas no tocaba nada.
+    if (updated) revalidateSeriesDetail(updated);
     revalidatePath('/catalogo');
-    revalidatePath(`/series/${seriesId}`);
     revalidatePath('/admin/tags');
 
     return NextResponse.json({

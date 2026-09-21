@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
@@ -9,14 +10,26 @@ import { isWatchableEpisode } from '@/lib/watchable';
 import type { TVSeries } from 'schema-dts';
 import { getWatchableSeriesById } from '@/lib/database';
 import { getVerUrl, parseIdFromSlug } from '@/lib/slug';
+import { SeriesUserStatusProvider } from '@/components/series/SeriesUserStatusProvider';
+import { PendingTrackApplier } from '@/components/series/PendingTrackApplier/PendingTrackApplier';
 import { VerSerieClient } from './VerSerieClient';
 import './ver-serie.css';
+
+// generateMetadata y el componente piden la misma serie. Sin memoizar eran
+// DOS consultas completas (temporadas + episodios + embeds) por render, y el
+// render se repite en cada regeneracion ISR. `cache` las colapsa en una,
+// igual que ya hace /series/[id] con getSeriesByIdCached.
+const getWatchableSeriesByIdCached = cache(getWatchableSeriesById);
 
 interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-export const revalidate = 120;
+// Igual que /series/[id]: el contenido (embeds de los episodios) solo cambia
+// cuando lo edita un admin/colaborador, y esas rutas ya invalidan esta ficha
+// por URL. A 120s, las ~650 paginas se regeneraban cada 2 minutos mientras
+// hubiera crawl — por lejos el mayor generador de ISR writes del proyecto.
+export const revalidate = 86400;
 
 export async function generateMetadata({
   params,
@@ -24,7 +37,7 @@ export async function generateMetadata({
   const { id } = await params;
   const seriesId = parseIdFromSlug(id);
   if (isNaN(seriesId)) return {};
-  const serie = await getWatchableSeriesById(seriesId);
+  const serie = await getWatchableSeriesByIdCached(seriesId);
   if (!serie) return {};
 
   const origTitle =
@@ -78,7 +91,7 @@ export default async function VerSeriePage({ params }: PageProps) {
   const seriesId = parseIdFromSlug(id);
   if (isNaN(seriesId)) notFound();
 
-  const serie = await getWatchableSeriesById(seriesId);
+  const serie = await getWatchableSeriesByIdCached(seriesId);
   if (!serie) notFound();
 
   const seasons = serie.seasons
@@ -152,44 +165,47 @@ export default async function VerSeriePage({ params }: PageProps) {
             </Button>
           </Link>
         </div>
-        <VerSerieClient
-          series={{
-            id: serie.id,
-            title: serie.title,
-            originalTitle: serie.originalTitle,
-            year: serie.year,
-            synopsis: serie.synopsis,
-            imageUrl: serie.imageUrl,
-            catalogScope: serie.catalogScope,
-            origin: serie.origin,
-            geoRestrictedCore: serie.geoRestrictedCore,
-            productionCompanyName: serie.productionCompany?.name ?? null,
-            submittedByName:
-              serie.submittedBy?.nickname ?? serie.submittedBy?.name ?? null,
-            submittedByIsCollaborator:
-              serie.submittedBy?.role === 'COLLABORATOR',
-            country: serie.country
-              ? { name: serie.country.name, code: serie.country.code }
-              : null,
-            tags: serie.tags.map((st) => st.tag.name),
-            genres: serie.genres.map((sg) => sg.genre.name),
-            directors: serie.directors.map((sd) => sd.director.name),
-            actors: serie.actors.map((sa) => ({
-              id: sa.actor.id,
-              name: sa.actor.name,
-              stageName: sa.actor.stageName,
-              imageUrl: sa.actor.imageUrl,
-            })),
-            linkedSeries: serie.linkedSeries
-              ? {
-                  id: serie.linkedSeries.id,
-                  title: serie.linkedSeries.title,
-                  imageUrl: serie.linkedSeries.imageUrl,
-                }
-              : null,
-          }}
-          seasons={seasons}
-        />
+        <SeriesUserStatusProvider seriesId={serie.id}>
+          <PendingTrackApplier seriesId={serie.id} seriesTitle={serie.title} />
+          <VerSerieClient
+            series={{
+              id: serie.id,
+              title: serie.title,
+              originalTitle: serie.originalTitle,
+              year: serie.year,
+              synopsis: serie.synopsis,
+              imageUrl: serie.imageUrl,
+              catalogScope: serie.catalogScope,
+              origin: serie.origin,
+              geoRestrictedCore: serie.geoRestrictedCore,
+              productionCompanyName: serie.productionCompany?.name ?? null,
+              submittedByName:
+                serie.submittedBy?.nickname ?? serie.submittedBy?.name ?? null,
+              submittedByIsCollaborator:
+                serie.submittedBy?.role === 'COLLABORATOR',
+              country: serie.country
+                ? { name: serie.country.name, code: serie.country.code }
+                : null,
+              tags: serie.tags.map((st) => st.tag.name),
+              genres: serie.genres.map((sg) => sg.genre.name),
+              directors: serie.directors.map((sd) => sd.director.name),
+              actors: serie.actors.map((sa) => ({
+                id: sa.actor.id,
+                name: sa.actor.name,
+                stageName: sa.actor.stageName,
+                imageUrl: sa.actor.imageUrl,
+              })),
+              linkedSeries: serie.linkedSeries
+                ? {
+                    id: serie.linkedSeries.id,
+                    title: serie.linkedSeries.title,
+                    imageUrl: serie.linkedSeries.imageUrl,
+                  }
+                : null,
+            }}
+            seasons={seasons}
+          />
+        </SeriesUserStatusProvider>
       </div>
     </>
   );
