@@ -1,3 +1,4 @@
+import { getPublicUniverseSeries } from '@/lib/database';
 import type { Metadata } from 'next';
 import { cache } from 'react';
 import { notFound } from 'next/navigation';
@@ -10,7 +11,7 @@ import { SeriesInfo } from '@/components/series/SeriesInfo';
 import { RatingSection } from '@/components/series/RatingSection';
 import { CommentsSection } from '@/components/series/CommentsSection';
 import { ReviewsSection } from '@/components/series/ReviewsSection/ReviewsSection';
-import { ViewStatusToggle } from '@/components/series/ViewStatusToggle';
+import { TrackingPanel } from '@/components/series/TrackingPanel/TrackingPanel';
 import { SeriesDetailClient } from '@/components/series/SeriesDetailClient';
 import { SeriesCompletenessBadge } from './SeriesCompletenessBadge/SeriesCompletenessBadge';
 import { SeriesContent } from '@/components/series/SeriesContent/SeriesContent';
@@ -28,6 +29,7 @@ import { WhereToWatch } from '@/components/common/WhereToWatch/WhereToWatch';
 import { SeriesSubscribeButton } from '@/components/series/SeriesSubscribeButton/SeriesSubscribeButton';
 import { SeriesSuggestionButton } from '@/components/series/SuggestionModal/SeriesSuggestionButton';
 import { SeriesUserStatusProvider } from '@/components/series/SeriesUserStatusProvider';
+import { PendingTrackApplier } from '@/components/series/PendingTrackApplier/PendingTrackApplier';
 import { EditSeriesFab } from './EditSeriesFab/EditSeriesFab';
 import { getSeriesUrl, getVerUrl, parseIdFromSlug } from '@/lib/slug';
 import type { TVSeries } from 'schema-dts';
@@ -163,23 +165,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
     ]);
 
   const universeSeries = serie.universeId
-    ? await prisma.series.findMany({
-        where: {
-          universeId: serie.universeId,
-          id: { not: serie.id },
-          origin: 'CURATED',
-        },
-        select: {
-          id: true,
-          title: true,
-          imageUrl: true,
-          imageThumbUrl: true,
-          imagePosition: true,
-          year: true,
-          type: true,
-        },
-        orderBy: [{ year: 'asc' }, { title: 'asc' }],
-      })
+    ? await getPublicUniverseSeries(serie.universeId)
     : [];
 
   const seasonLabel =
@@ -257,6 +243,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
       />
       <div className="series-detail-page">
         <SeriesUserStatusProvider seriesId={serie.id}>
+          <PendingTrackApplier seriesId={serie.id} seriesTitle={serie.title} />
           <BackToCatalogButton />
           <Breadcrumbs
             items={[
@@ -305,7 +292,11 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
             currentlyWatchingCount={currentlyWatchingCount}
             actionsSlot={
               <>
-                <ViewStatusToggle seriesId={serie.id} seasons={serie.seasons} />
+                <TrackingPanel
+                  seriesId={serie.id}
+                  seriesTitle={serie.title}
+                  seasons={serie.seasons}
+                />
                 <div
                   className="series-quick-actions"
                   aria-label="Acciones rápidas"
@@ -355,6 +346,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
             seasonCount={serie.seasons?.length || 0}
             infoSection={
               <SeriesInfo
+                showWatchLinks={false}
                 series={{
                   ...serie,
                   universeSeries,

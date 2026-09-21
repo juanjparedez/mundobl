@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import Link from 'next/link';
 import {
   DashboardEditToolbar,
   DashboardGrid,
@@ -11,6 +10,10 @@ import {
   type DashboardLayouts,
 } from '@/components/dashboard';
 import { AdminNav } from './AdminNav';
+import {
+  AdminShortcuts,
+  type AdminShortcutMetric,
+} from './AdminShortcuts/AdminShortcuts';
 import { AdminDashboardHero } from './AdminDashboardHero';
 import { AdminKPIsWidget } from './widgets/AdminKPIsWidget/AdminKPIsWidget';
 import { AdminAlertsWidget } from './widgets/AdminAlertsWidget/AdminAlertsWidget';
@@ -27,60 +30,59 @@ const WIDGET_IDS = {
   activityChart: 'admin.activityChart',
 } as const;
 
+// Constante module-level (no inline en el hook): la usa un efecto como
+// dependencia y un array nuevo en cada render lo re-dispararia.
+const PURGED_LAYOUT_KEYS = ['admin-home-v2'];
+
+// Orden por defecto: la razon dominante para entrar a /admin es "que
+// tengo pendiente" (hoy: 647 series sin resena, 204 sin contenido), asi
+// que las alertas accionables van al punto de anclaje de la lectura
+// (arriba-izquierda) y los KPIs —numeros que no piden ninguna accion—
+// quedan al lado como contexto. Despues la tendencia (chart), despues
+// auditoria (quien toco que) y al final la metrica menos accionable.
+//
+// Los `h` son solo una semilla para el primer frame: el Widget mide su
+// contenido real y el grid ajusta (ver DashboardItemHeightMode). Por eso
+// no hace falta afinarlos a mano por breakpoint como antes.
 const DEFAULT_LAYOUTS: DashboardLayouts = {
   lg: [
-    { i: WIDGET_IDS.kpis, x: 0, y: 0, w: 7, h: 3 },
-    { i: WIDGET_IDS.alerts, x: 7, y: 0, w: 5, h: 5 },
-    { i: WIDGET_IDS.activityChart, x: 0, y: 3, w: 7, h: 5 },
-    { i: WIDGET_IDS.recentActivity, x: 0, y: 8, w: 6, h: 5 },
-    { i: WIDGET_IDS.topCommenters, x: 6, y: 8, w: 6, h: 5 },
+    { i: WIDGET_IDS.alerts, x: 0, y: 0, w: 4, h: 3 },
+    { i: WIDGET_IDS.kpis, x: 4, y: 0, w: 8, h: 3 },
+    { i: WIDGET_IDS.activityChart, x: 0, y: 3, w: 8, h: 3 },
+    { i: WIDGET_IDS.recentActivity, x: 8, y: 3, w: 4, h: 3 },
+    { i: WIDGET_IDS.topCommenters, x: 0, y: 6, w: 12, h: 3 },
   ],
   md: [
-    { i: WIDGET_IDS.kpis, x: 0, y: 0, w: 10, h: 3 },
-    { i: WIDGET_IDS.alerts, x: 0, y: 3, w: 5, h: 5 },
-    { i: WIDGET_IDS.activityChart, x: 5, y: 3, w: 5, h: 5 },
-    { i: WIDGET_IDS.recentActivity, x: 0, y: 8, w: 5, h: 5 },
-    { i: WIDGET_IDS.topCommenters, x: 5, y: 8, w: 5, h: 5 },
+    { i: WIDGET_IDS.alerts, x: 0, y: 0, w: 4, h: 3 },
+    { i: WIDGET_IDS.kpis, x: 4, y: 0, w: 6, h: 3 },
+    { i: WIDGET_IDS.activityChart, x: 0, y: 3, w: 6, h: 3 },
+    { i: WIDGET_IDS.recentActivity, x: 6, y: 3, w: 4, h: 3 },
+    { i: WIDGET_IDS.topCommenters, x: 0, y: 6, w: 10, h: 3 },
   ],
   sm: [
-    { i: WIDGET_IDS.kpis, x: 0, y: 0, w: 6, h: 3 },
-    { i: WIDGET_IDS.alerts, x: 0, y: 3, w: 6, h: 5 },
-    { i: WIDGET_IDS.activityChart, x: 0, y: 8, w: 6, h: 5 },
-    { i: WIDGET_IDS.recentActivity, x: 0, y: 13, w: 6, h: 5 },
-    { i: WIDGET_IDS.topCommenters, x: 0, y: 18, w: 6, h: 5 },
+    { i: WIDGET_IDS.alerts, x: 0, y: 0, w: 6, h: 3 },
+    { i: WIDGET_IDS.kpis, x: 0, y: 3, w: 6, h: 3 },
+    { i: WIDGET_IDS.activityChart, x: 0, y: 6, w: 6, h: 3 },
+    { i: WIDGET_IDS.recentActivity, x: 0, y: 9, w: 6, h: 3 },
+    { i: WIDGET_IDS.topCommenters, x: 0, y: 12, w: 6, h: 3 },
   ],
-  // xs (<480px): KPIs como 2x2 stack necesitan h: 7 para no recortar
-  // los StatCards de la fila inferior. Chart y listas requieren h: 7
-  // tambien o el contenido de adentro se trunca con overflow hidden.
   xs: [
-    { i: WIDGET_IDS.kpis, x: 0, y: 0, w: 4, h: 7 },
-    { i: WIDGET_IDS.alerts, x: 0, y: 7, w: 4, h: 6 },
-    { i: WIDGET_IDS.activityChart, x: 0, y: 13, w: 4, h: 7 },
-    { i: WIDGET_IDS.recentActivity, x: 0, y: 20, w: 4, h: 7 },
-    { i: WIDGET_IDS.topCommenters, x: 0, y: 27, w: 4, h: 7 },
+    { i: WIDGET_IDS.alerts, x: 0, y: 0, w: 4, h: 3 },
+    { i: WIDGET_IDS.kpis, x: 0, y: 3, w: 4, h: 3 },
+    { i: WIDGET_IDS.activityChart, x: 0, y: 6, w: 4, h: 3 },
+    { i: WIDGET_IDS.recentActivity, x: 0, y: 9, w: 4, h: 3 },
+    { i: WIDGET_IDS.topCommenters, x: 0, y: 12, w: 4, h: 3 },
+  ],
+  // xxs (<480px en la practica, cols: 2). Sin entrada explicita RGL lo
+  // deriva de xs y clampea w:4 → 2, con posiciones impredecibles.
+  xxs: [
+    { i: WIDGET_IDS.alerts, x: 0, y: 0, w: 2, h: 3 },
+    { i: WIDGET_IDS.kpis, x: 0, y: 3, w: 2, h: 3 },
+    { i: WIDGET_IDS.activityChart, x: 0, y: 6, w: 2, h: 3 },
+    { i: WIDGET_IDS.recentActivity, x: 0, y: 9, w: 2, h: 3 },
+    { i: WIDGET_IDS.topCommenters, x: 0, y: 12, w: 2, h: 3 },
   ],
 };
-
-interface ToolCard {
-  href: string;
-  icon: string;
-  title: string;
-  count?: number;
-  alert?: { count: number; label: string };
-}
-
-interface ToolGroup {
-  title: string;
-  tools: ToolCard[];
-}
-
-interface HeadlineAlert {
-  key: string;
-  icon: string;
-  label: string;
-  href: string;
-  tone: 'danger' | 'warning' | 'info';
-}
 
 interface KPICounts {
   series: number;
@@ -95,8 +97,7 @@ interface KPICounts {
 
 export interface AdminHomeClientProps {
   heroStats: Array<{ label: string; value: number; icon: ReactNode }>;
-  groups: ToolGroup[];
-  headlineAlerts: HeadlineAlert[];
+  metrics: Record<string, AdminShortcutMetric | undefined>;
   kpiCounts: KPICounts;
 }
 
@@ -108,18 +109,24 @@ export interface AdminHomeClientProps {
  *  abajo + ahora dashboard real arriba. */
 export function AdminHomeClient({
   heroStats,
-  groups,
-  headlineAlerts,
+  metrics,
   kpiCounts,
 }: AdminHomeClientProps) {
   const [editing, setEditing] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
 
-  // Bump v1 → v2 (2026-05-14): xs heights updated para que KPI cards
-  // 2x2 y listas no se recorten en mobile. Sin bump, users con layout
-  // guardado en localStorage seguirian con h:4 y verian widgets cortados.
+  // Bump v2 → v3 (2026-09-20): hasta v2 el grid persistia la altura
+  // AUTOMATICA de cada widget como si fuera preferencia del usuario —
+  // react-grid-layout dispara onLayoutChange tambien cuando cambia la
+  // prop `layouts`, no solo por interaccion, asi que la primera medicion
+  // de cada carga se guardaba sola. Resultado: todo el que abrio /admin
+  // una vez tiene un layout guardado que nunca pidio, indistinguible de
+  // una personalizacion real. No hay nada rescatable que migrar, por eso
+  // se purga v2 en vez de dejar la fila huerfana en la DB.
   const { layouts, setLayouts, removeWidget, addWidget, reset, widgetIds } =
-    useDashboardLayout('admin-home-v2', DEFAULT_LAYOUTS);
+    useDashboardLayout('admin-home-v3', DEFAULT_LAYOUTS, {
+      purgeKeys: PURGED_LAYOUT_KEYS,
+    });
 
   useMemo(() => {
     WidgetRegistry.register({
@@ -127,7 +134,7 @@ export function AdminHomeClient({
       category: 'overview',
       labelKey: 'adminDashboard.widgetKPIs',
       descriptionKey: 'adminDashboard.widgetKPIsDesc',
-      defaultSize: { w: 7, h: 3, minW: 4, minH: 3 },
+      defaultSize: { w: 8, h: 3, minW: 3, minH: 2 },
       Component: AdminKPIsWidget as never,
       roles: ['ADMIN', 'MODERATOR'],
     });
@@ -136,7 +143,7 @@ export function AdminHomeClient({
       category: 'admin',
       labelKey: 'adminDashboard.widgetAlerts',
       descriptionKey: 'adminDashboard.widgetAlertsDesc',
-      defaultSize: { w: 5, h: 5, minW: 4, minH: 4 },
+      defaultSize: { w: 4, h: 3, minW: 3, minH: 2 },
       Component: AdminAlertsWidget as never,
       roles: ['ADMIN', 'MODERATOR'],
     });
@@ -145,7 +152,7 @@ export function AdminHomeClient({
       category: 'activity',
       labelKey: 'adminActivity.title',
       descriptionKey: 'adminActivity.title',
-      defaultSize: { w: 7, h: 5, minW: 4, minH: 4 },
+      defaultSize: { w: 4, h: 3, minW: 3, minH: 2 },
       Component: RecentAdminActivityWidget as never,
       roles: ['ADMIN', 'MODERATOR'],
     });
@@ -154,7 +161,7 @@ export function AdminHomeClient({
       category: 'social',
       labelKey: 'topCommenters.title',
       descriptionKey: 'topCommenters.title',
-      defaultSize: { w: 6, h: 5, minW: 4, minH: 4 },
+      defaultSize: { w: 6, h: 3, minW: 3, minH: 2 },
       Component: TopCommentersWidget as never,
       roles: ['ADMIN', 'MODERATOR'],
     });
@@ -163,7 +170,9 @@ export function AdminHomeClient({
       category: 'activity',
       labelKey: 'activityChart.title',
       descriptionKey: 'activityChart.title',
-      defaultSize: { w: 7, h: 5, minW: 4, minH: 4 },
+      // Un chart necesita ancho para ser legible: minW mas alto que el
+      // resto a proposito (con menos, los ticks del eje X se pisan).
+      defaultSize: { w: 8, h: 3, minW: 4, minH: 3 },
       Component: ActivityChartWidget as never,
       roles: ['ADMIN', 'MODERATOR'],
     });
@@ -177,7 +186,16 @@ export function AdminHomeClient({
         comments: kpiCounts.comments,
         users: kpiCounts.users,
       },
-      [WIDGET_IDS.alerts]: {},
+      // Los contadores ya vienen resueltos del server: el widget no
+      // necesita su propio fetch a /api/admin/alerts.
+      [WIDGET_IDS.alerts]: {
+        initialData: {
+          seriesWithoutReview: kpiCounts.seriesWithoutReview,
+          seriesWithoutContent: kpiCounts.seriesWithoutContent,
+          commentsReported: kpiCounts.commentsReported,
+          suggestedSitesPending: kpiCounts.suggestedSitesPending,
+        },
+      },
       [WIDGET_IDS.recentActivity]: {},
       [WIDGET_IDS.topCommenters]: {},
       [WIDGET_IDS.activityChart]: {},
@@ -201,26 +219,16 @@ export function AdminHomeClient({
           }
         />
 
-        {headlineAlerts.length > 0 && (
-          <div className="admin-dashboard__alerts">
-            {headlineAlerts.map((alert) => (
-              <Link
-                key={alert.key}
-                href={alert.href}
-                className={`admin-dashboard__alert admin-dashboard__alert--${alert.tone}`}
-              >
-                <span className="admin-dashboard__alert-icon">
-                  {alert.icon}
-                </span>
-                <span>{alert.label}</span>
-                <span className="admin-dashboard__alert-arrow">→</span>
-              </Link>
-            ))}
-          </div>
-        )}
         {/* Dashboard configurable: KPIs + Alerts + RecentActivity. El
          *  toolbar de edicion se monto dentro del hero (prop editToolbar)
-         *  para evitar quedar flotando suelto encima del grid. */}
+         *  para evitar quedar flotando suelto encima del grid.
+         *
+         *  Antes habia ademas una tira de "headline alerts" arriba del
+         *  grid que mostraba EXACTAMENTE los mismos 4 contadores que el
+         *  widget de alertas: dos superficies para el mismo dato, una
+         *  instantanea y otra con spinner. Quedo solo el widget (que se
+         *  puede mover, ocultar y redimensionar), alimentado con los
+         *  contadores que el Server Component ya calculo. */}
 
         <DashboardGrid
           layouts={layouts}
@@ -239,42 +247,12 @@ export function AdminHomeClient({
           alreadyAdded={widgetIds}
         />
 
-        {/* Tool cards de navegacion — sin tocar, mismo grupo data
-         *  que ya existía. Quedan debajo del dashboard configurable
-         *  como atajos rapidos. */}
-        {groups.map((group) => (
-          <section
-            key={group.title}
-            className="admin-dashboard__section"
-            data-group={group.title.toLowerCase()}
-          >
-            <h2 className="admin-dashboard__section-title">{group.title}</h2>
-            <div className="admin-dashboard__grid">
-              {group.tools.map((tool) => (
-                <Link
-                  key={tool.href}
-                  href={tool.href}
-                  className="admin-tool-card"
-                >
-                  <div className="admin-tool-card__head">
-                    <span className="admin-tool-card__icon">{tool.icon}</span>
-                    {tool.count !== undefined && (
-                      <span className="admin-tool-card__count">
-                        {tool.count}
-                      </span>
-                    )}
-                  </div>
-                  <div className="admin-tool-card__title">{tool.title}</div>
-                  {tool.alert && (
-                    <div className="admin-tool-card__alert">
-                      {tool.alert.count} {tool.alert.label}
-                    </div>
-                  )}
-                </Link>
-              ))}
-            </div>
-          </section>
-        ))}
+        {/* Atajos de navegacion. Los destinos salen del registro unico
+         *  (adminDestinations), el mismo que alimenta AdminNav — antes
+         *  eran dos listas paralelas que se desincronizaban. El orden de
+         *  cada grupo lo personaliza el usuario arrastrando en modo
+         *  edicion, igual que los widgets de arriba. */}
+        <AdminShortcuts metrics={metrics} editing={editing} />
       </div>
     </div>
   );

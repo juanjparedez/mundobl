@@ -1,6 +1,26 @@
 import type { SupportedLocale } from './config';
 
 export type TranslationShape = {
+  basedOnAdmin: {
+    description: string;
+    search: string;
+    refresh: string;
+    error: string;
+    value: string;
+    series: string;
+    actions: string;
+    rename: string;
+    merge: string;
+    remove: string;
+    saved: string;
+    conflict: string;
+    confirm: string;
+    cancel: string;
+    source: string;
+    target: string;
+    affected: string;
+    removeHelp: string;
+  };
   common: {
     language: string;
     na: string;
@@ -45,6 +65,11 @@ export type TranslationShape = {
     hasReview: string;
     goToContent: string;
     goToReviews: string;
+    favoritesOne: string;
+    favoritesMany: string;
+    favoritesTitle: string;
+    watchingNow: string;
+    watchingNowTitle: string;
   };
   seriesInfo: {
     fieldTitle: string;
@@ -55,6 +80,7 @@ export type TranslationShape = {
     fieldFormat: string;
     fieldBasedOn: string;
     fieldSeasons: string;
+    universeSeasonPosition: string;
     fieldEpisodes: string;
     fieldDuration: string;
     fieldDurationPerEpisode: string;
@@ -232,14 +258,31 @@ export type TranslationShape = {
     exploreCatalog: string;
     removeTitle: string;
     nextLabel: string;
-    continueButton: string;
-    detailsButton: string;
+    openSeries: string;
     editButton: string;
+    countOne: string;
+    countMany: string;
+    sortLabel: string;
+    sortLastWatched: string;
+    sortName: string;
+    sortStart: string;
+    sortNext: string;
+    airToday: string;
+    airTodayTag: string;
+    airDelayed: string;
+    airDelayedTag: string;
+    airTooltip: string;
+    markNextCode: string;
     removedMessage: string;
     errorRemove: string;
     episodeMarkedMessage: string;
     errorMarkEpisode: string;
     markEpisodeTooltip: string;
+    markNextLabel: string;
+    markCompleteLabel: string;
+    markCompleteConfirm: string;
+    completedMessage: string;
+    noEpisodesHint: string;
   };
   appLayout: {
     skipToContent: string;
@@ -282,6 +325,10 @@ export type TranslationShape = {
     light: string;
     stats: string;
     runtime: string;
+    ver: string;
+    platforms: string;
+    glossary: string;
+    about: string;
   };
   profile: {
     loginRequired: string;
@@ -566,7 +613,8 @@ export type TranslationShape = {
     logout: string;
     settings: string;
     more: string;
-    ver: string;
+    watch: string;
+    profile: string;
     accentColor: string;
     theme: string;
     switchToLight: string;
@@ -1314,6 +1362,8 @@ export type TranslationShape = {
     fieldDurationPerEpisode: string;
     durationMinutesUnit: string;
     fieldUniverse: string;
+    universeMain: string;
+    universeMainHelp: string;
     fieldBasedOn: string;
     fieldFormat: string;
     fieldProduction: string;
@@ -1660,11 +1710,28 @@ export type TranslationShape = {
     title: string;
     adminModeLabel: string;
   };
+  adminShortcuts: {
+    dragAria: string;
+    alertWithoutReview: string;
+    alertWithoutContent: string;
+    alertPendingSites: string;
+    alertReported: string;
+    alertHiddenReviews: string;
+  };
   adminNav: {
     ariaLabel: string;
     groupCatalog: string;
     groupCommunity: string;
     groupSystem: string;
+    groupModeration: string;
+    groupTaxonomies: string;
+    groupPublishing: string;
+    import: string;
+    importShort: string;
+    channelSweep: string;
+    channelSweepShort: string;
+    watchHub: string;
+    watchHubShort: string;
     series: string;
     seriesShort: string;
     userEmbed: string;
@@ -2445,6 +2512,45 @@ export type TranslationShape = {
     ariaLabel: string;
     tooltipEpisodes: string;
   };
+  progressStepper: {
+    at: string;
+    epAbbr: string;
+    none: string;
+    nextUp: string;
+    allWatched: string;
+    next: string;
+    prev: string;
+    jumpTo: string;
+    error: string;
+    finishedTitle: string;
+    markComplete: string;
+    notYet: string;
+    ariaNext: string;
+    ariaPrev: string;
+  };
+  trackCta: {
+    title: string;
+    subtitle: string;
+    subtitleNoEpisodes: string;
+    button: string;
+    buttonNoEpisodes: string;
+    applied: string;
+    chooseEpisode: string;
+  };
+  trackingPanel: {
+    title: string;
+    markWatched: string;
+    markUnwatched: string;
+    markedWatched: string;
+    noEpisodes: string;
+    notesTitle: string;
+    episodeNote: string;
+    seriesNote: string;
+    notesHintNoEpisode: string;
+  };
+  posterPlaceholder: {
+    noImage: string;
+  };
   spoilerFreeProvider: {
     useSpoilerFreeError: string;
   };
@@ -2454,6 +2560,7 @@ export type TranslationShape = {
   dashboard: {
     dragHandleAria: string;
     removeWidgetAria: string;
+    autofitHeight: string;
     editLayout: string;
     doneEditing: string;
     addWidget: string;
@@ -2600,6 +2707,9 @@ export type TranslationShape = {
     news: string;
   };
   adminHero: {
+    greeting: string;
+    title: string;
+    subtitle: string;
     actionInsights: string;
     actionAuditLog: string;
     actionChangelog: string;
@@ -2942,6 +3052,29 @@ export type TranslationShape = {
 };
 
 const es: TranslationShape = {
+  basedOnAdmin: {
+    description:
+      'Gestioná los valores de Basado en y las fichas que los usan. Para crear un valor nuevo, escribilo al editar una ficha.',
+    search: 'Buscar valor',
+    refresh: 'Actualizar',
+    error: 'No se pudieron cargar los valores.',
+    value: 'Valor exacto',
+    series: 'Fichas',
+    actions: 'Acciones',
+    rename: 'Renombrar',
+    merge: 'Fusionar',
+    remove: 'Quitar clasificación',
+    saved: 'Cambios guardados.',
+    conflict:
+      'No se pudo guardar. Actualizá la lista: las fichas o el destino pueden haber cambiado. Para un destino existente, usá Fusionar.',
+    confirm: 'Aplicar',
+    cancel: 'Cancelar',
+    source: 'Origen',
+    target: 'Valor de destino',
+    affected: 'Fichas que cambiarán',
+    removeHelp:
+      'Se vaciará Basado en en estas fichas. Las fichas no se eliminan.',
+  },
   common: {
     language: 'Idioma',
     na: 'N/A',
@@ -2986,6 +3119,11 @@ const es: TranslationShape = {
     hasReview: 'Con reseña',
     goToContent: 'Ir a contenido',
     goToReviews: 'Ir a reseñas',
+    favoritesOne: '1 favorito',
+    favoritesMany: '{n} favoritos',
+    favoritesTitle: 'Personas que la tienen en favoritos',
+    watchingNow: '{n} viendo ahora',
+    watchingNowTitle: 'Personas que la están viendo ahora',
   },
   seriesInfo: {
     fieldTitle: 'Título',
@@ -2996,6 +3134,7 @@ const es: TranslationShape = {
     fieldFormat: 'Formato',
     fieldBasedOn: 'Basado en',
     fieldSeasons: 'Temporadas',
+    universeSeasonPosition: 'Temporada {current} de {total}',
     fieldEpisodes: 'Episodios',
     fieldDuration: 'Duracion',
     fieldDurationPerEpisode: 'Duracion por episodio',
@@ -3183,14 +3322,31 @@ const es: TranslationShape = {
     exploreCatalog: 'Explorar Catálogo',
     removeTitle: 'Remover de viendo ahora',
     nextLabel: 'Siguiente',
-    continueButton: 'Continuar viendo',
-    detailsButton: 'Ver detalles',
+    openSeries: 'Ver ficha',
     editButton: 'Editar',
+    countOne: 'Viendo 1 serie',
+    countMany: 'Viendo {n} series',
+    sortLabel: 'Ordenar por:',
+    sortLastWatched: 'Última actividad',
+    sortName: 'Nombre (A-Z)',
+    sortStart: 'Fecha de estreno',
+    sortNext: 'Próxima por ver',
+    airToday: 'Hoy sale episodio',
+    airTodayTag: 'Hoy',
+    airDelayed: 'Salió hace {n} días y todavía no lo marcaste',
+    airDelayedTag: '+{n}d',
+    airTooltip: 'Se emite: {days} · {status}',
+    markNextCode: 'Vi el {code}',
     removedMessage: '"\{title}" removida de "Viendo ahora"',
     errorRemove: 'Error al remover de la lista',
     episodeMarkedMessage: 'Episodio {ep} marcado como visto',
     errorMarkEpisode: 'Error al marcar el episodio',
     markEpisodeTooltip: 'Marcar {ep} como visto',
+    markNextLabel: 'Vi el ep. {n}',
+    markCompleteLabel: 'Terminé la serie',
+    markCompleteConfirm: '¿Marcar "{title}" como terminada?',
+    completedMessage: 'Marcaste "{title}" como terminada',
+    noEpisodesHint: 'Sin episodios cargados: se marca completa de una vez',
   },
   appLayout: {
     skipToContent: 'Saltar al contenido principal',
@@ -3233,6 +3389,10 @@ const es: TranslationShape = {
     profile: 'Mi Perfil',
     stats: 'Estad\u00edsticas',
     runtime: 'Runtime',
+    ver: 'Ver series',
+    platforms: 'Plataformas y planes',
+    glossary: 'Glosario cultural',
+    about: 'Acerca de MundoBL',
   },
   profile: {
     loginRequired: 'Inicia sesion para ver tu perfil',
@@ -3540,7 +3700,8 @@ const es: TranslationShape = {
     logout: 'Salir',
     settings: 'Ajustes',
     more: 'Más',
-    ver: 'Ver',
+    watch: 'Ver series',
+    profile: 'Perfil',
     accentColor: 'Color',
     theme: 'Tema',
     switchToLight: 'Cambiar a modo claro',
@@ -4320,6 +4481,9 @@ const es: TranslationShape = {
     fieldDurationPerEpisode: 'Duracion por episodio',
     durationMinutesUnit: 'min',
     fieldUniverse: 'Universo (opcional)',
+    universeMain: 'Historia principal y portada',
+    universeMainHelp:
+      'Al marcarla, esta serie reemplaza a la historia principal anterior del universo.',
     fieldBasedOn: 'Basada en',
     fieldFormat: 'Formato de Pantalla',
     fieldProduction: 'Productora',
@@ -4346,7 +4510,7 @@ const es: TranslationShape = {
     requiredFormat: 'Selecciona un formato',
     requiredSeasonNumber: 'Numero requerido',
     helpBasedOn:
-      'Escribe para buscar o agregar nuevos (ej: Manga, Manhwa, Novela)',
+      'Elegí una opción o escribí una propia. Los valores existentes se conservan.',
     helpProduction: 'Escribe para buscar o crear una nueva productora',
     helpLanguage: 'Escribe para buscar o crear un nuevo idioma',
     helpGenres:
@@ -4361,7 +4525,7 @@ const es: TranslationShape = {
     hintOriginalTitle: 'Titulo en idioma original',
     hintCountry: 'Selecciona un pais',
     hintUniverse: 'Pertenece a algun universo/franquicia?',
-    hintBasedOn: 'Ej: Libro, Manga, Manhwa...',
+    hintBasedOn: 'Ej.: Novela, Libro, Webtoon',
     hintProduction: 'Ej: GMMTV',
     hintLanguage: 'Ej: Tailandes',
     hintGenres: 'Agrega generos como Drama, Romance, etc.',
@@ -4703,11 +4867,28 @@ const es: TranslationShape = {
     title: 'MundoBL - Catálogo de Series',
     adminModeLabel: 'Modo: Admin',
   },
+  adminShortcuts: {
+    dragAria: 'Arrastrar para reordenar atajos',
+    alertWithoutReview: '{count} sin reseña',
+    alertWithoutContent: '{count} series sin contenido',
+    alertPendingSites: '{count} sugeridos pendientes',
+    alertReported: '{count} reportados',
+    alertHiddenReviews: '{count} ocultas',
+  },
   adminNav: {
     ariaLabel: 'Navegación admin',
     groupCatalog: 'Catálogo',
     groupCommunity: 'Comunidad',
     groupSystem: 'Sistema',
+    groupModeration: 'Moderación',
+    groupTaxonomies: 'Taxonomías',
+    groupPublishing: 'Publicación',
+    import: 'Importar serie (YouTube)',
+    importShort: 'Importar',
+    channelSweep: 'Barrido de canal',
+    channelSweepShort: 'Barrido',
+    watchHub: 'Administrar /ver',
+    watchHubShort: 'Ver',
     series: 'Series',
     seriesShort: 'Series',
     userEmbed: 'Aportes',
@@ -5518,6 +5699,46 @@ const es: TranslationShape = {
     ariaLabel: 'Seleccionar estado de visualización de la serie',
     tooltipEpisodes: '{watched} de {total} episodios vistos',
   },
+  progressStepper: {
+    at: 'Voy por el {current} de {total}',
+    epAbbr: 'Ep.',
+    none: 'Ninguno todavía',
+    nextUp: 'Siguiente: {label}',
+    allWatched: 'Viste todos los episodios',
+    next: 'Vi el siguiente',
+    prev: 'Deshacer el último',
+    jumpTo: 'Saltar a un episodio',
+    error: 'No se pudo actualizar el progreso.',
+    finishedTitle: '¿Terminaste {title}?',
+    markComplete: 'Sí, la terminé',
+    notYet: 'Todavía no',
+    ariaNext: 'Marcar el siguiente episodio como visto',
+    ariaPrev: 'Desmarcar el último episodio visto',
+  },
+  trackCta: {
+    title: '¿La estás viendo?',
+    subtitle: 'Marcá por qué episodio vas y seguila desde tu lista.',
+    subtitleNoEpisodes: 'Marcala como vista y va a quedar en tu historial.',
+    button: 'Empezar a seguir',
+    buttonNoEpisodes: 'Marcarla como vista',
+    applied: 'Listo, ya estás siguiendo {title}',
+    chooseEpisode: '¿Por qué episodio vas?',
+  },
+  trackingPanel: {
+    title: 'Mi seguimiento',
+    markWatched: 'Ya la vi',
+    markUnwatched: 'Marcar como no vista',
+    markedWatched: 'Marcaste "{title}" como vista',
+    noEpisodes:
+      'Esta ficha no tiene episodios cargados: se marca completa de una vez.',
+    notesTitle: 'Notas privadas',
+    episodeNote: 'Nota del {code}',
+    seriesNote: 'Nota de la serie',
+    notesHintNoEpisode: 'Marcá un episodio como visto para anotarlo.',
+  },
+  posterPlaceholder: {
+    noImage: 'Sin imagen',
+  },
   spoilerFreeProvider: {
     useSpoilerFreeError:
       'useSpoilerFree debe usarse dentro de SpoilerFreeProvider',
@@ -5528,6 +5749,7 @@ const es: TranslationShape = {
   dashboard: {
     dragHandleAria: 'Arrastrar widget',
     removeWidgetAria: 'Quitar widget',
+    autofitHeight: 'Ajustar alto al contenido',
     editLayout: 'Editar layout',
     doneEditing: 'Listo',
     addWidget: 'Agregar widget',
@@ -5684,6 +5906,9 @@ const es: TranslationShape = {
     news: 'Noticias',
   },
   adminHero: {
+    greeting: 'Hola, {name}',
+    title: 'Panel de administración',
+    subtitle: 'Atajos a todas las herramientas de gestión.',
     actionInsights: 'Insights',
     actionAuditLog: 'Audit',
     actionChangelog: 'Versiones',
@@ -6044,6 +6269,29 @@ const es: TranslationShape = {
 };
 
 const en: TranslationShape = {
+  basedOnAdmin: {
+    description:
+      'Manage source categories and the titles using them. Create a new value by entering it when editing a title.',
+    search: 'Search values',
+    refresh: 'Refresh',
+    error: 'Could not load values.',
+    value: 'Exact value',
+    series: 'Titles',
+    actions: 'Actions',
+    rename: 'Rename',
+    merge: 'Merge',
+    remove: 'Clear category',
+    saved: 'Changes saved.',
+    conflict:
+      'Could not save. Refresh the list: titles or the destination may have changed. Use Merge for an existing destination.',
+    confirm: 'Apply',
+    cancel: 'Cancel',
+    source: 'Source',
+    target: 'Destination value',
+    affected: 'Affected titles',
+    removeHelp:
+      'This clears the category on these titles. The titles are not deleted.',
+  },
   common: {
     language: 'Language',
     na: 'N/A',
@@ -6088,6 +6336,11 @@ const en: TranslationShape = {
     hasReview: 'Has review',
     goToContent: 'Go to content',
     goToReviews: 'Go to reviews',
+    favoritesOne: '1 favorite',
+    favoritesMany: '{n} favorites',
+    favoritesTitle: 'People who have it in their favorites',
+    watchingNow: '{n} watching now',
+    watchingNowTitle: 'People watching it right now',
   },
   seriesInfo: {
     fieldTitle: 'Title',
@@ -6098,6 +6351,7 @@ const en: TranslationShape = {
     fieldFormat: 'Format',
     fieldBasedOn: 'Based on',
     fieldSeasons: 'Seasons',
+    universeSeasonPosition: 'Season {current} of {total}',
     fieldEpisodes: 'Episodes',
     fieldDuration: 'Duration',
     fieldDurationPerEpisode: 'Duration per episode',
@@ -6282,14 +6536,31 @@ const en: TranslationShape = {
     exploreCatalog: 'Explore Catalog',
     removeTitle: 'Remove from watching now',
     nextLabel: 'Next',
-    continueButton: 'Continue watching',
-    detailsButton: 'View details',
+    openSeries: 'Open series page',
     editButton: 'Edit',
+    countOne: 'Watching 1 series',
+    countMany: 'Watching {n} series',
+    sortLabel: 'Sort by:',
+    sortLastWatched: 'Last activity',
+    sortName: 'Name (A-Z)',
+    sortStart: 'Release date',
+    sortNext: 'Next up',
+    airToday: 'New episode today',
+    airTodayTag: 'Today',
+    airDelayed: 'Aired {n} days ago and you have not marked it yet',
+    airDelayedTag: '+{n}d',
+    airTooltip: 'Airs: {days} · {status}',
+    markNextCode: 'Watched {code}',
     removedMessage: '"{title}" removed from "Watching now"',
     errorRemove: 'Error removing from list',
     episodeMarkedMessage: 'Episode {ep} marked as watched',
     errorMarkEpisode: 'Error marking episode',
     markEpisodeTooltip: 'Mark {ep} as watched',
+    markNextLabel: 'Watched ep. {n}',
+    markCompleteLabel: 'Finished the series',
+    markCompleteConfirm: 'Mark "{title}" as finished?',
+    completedMessage: 'You marked "{title}" as finished',
+    noEpisodesHint: 'No episodes loaded: it gets marked complete in one go',
   },
   appLayout: {
     skipToContent: 'Skip to main content',
@@ -6332,6 +6603,10 @@ const en: TranslationShape = {
     profile: 'My Profile',
     stats: 'Statistics',
     runtime: 'Runtime',
+    ver: 'Watch series',
+    platforms: 'Platforms & plans',
+    glossary: 'Cultural glossary',
+    about: 'About MundoBL',
   },
   profile: {
     loginRequired: 'Sign in to view your profile',
@@ -6633,7 +6908,8 @@ const en: TranslationShape = {
     logout: 'Sign out',
     settings: 'Settings',
     more: 'More',
-    ver: 'Watch',
+    watch: 'Watch',
+    profile: 'Profile',
     accentColor: 'Accent color',
     theme: 'Theme',
     switchToLight: 'Switch to light mode',
@@ -7407,6 +7683,9 @@ const en: TranslationShape = {
     fieldDurationPerEpisode: 'Duration per episode',
     durationMinutesUnit: 'min',
     fieldUniverse: 'Universe (optional)',
+    universeMain: 'Main story and cover',
+    universeMainHelp:
+      'Selecting this replaces the previous main story of the universe.',
     fieldBasedOn: 'Based on',
     fieldFormat: 'Screen Format',
     fieldProduction: 'Production Company',
@@ -7432,7 +7711,8 @@ const en: TranslationShape = {
     requiredType: 'Select a type',
     requiredFormat: 'Select a format',
     requiredSeasonNumber: 'Number required',
-    helpBasedOn: 'Type to search or add new (e.g. Manga, Manhwa, Novel)',
+    helpBasedOn:
+      'Choose one option or enter your own. Existing values are preserved.',
     helpProduction: 'Type to search or create a new production company',
     helpLanguage: 'Type to search or create a new language',
     helpGenres:
@@ -7447,7 +7727,7 @@ const en: TranslationShape = {
     hintOriginalTitle: 'Title in original language',
     hintCountry: 'Select a country',
     hintUniverse: 'Belongs to a universe/franchise?',
-    hintBasedOn: 'E.g. Book, Manga, Manhwa...',
+    hintBasedOn: 'E.g. Novel, Book, Webtoon',
     hintProduction: 'E.g. GMMTV',
     hintLanguage: 'E.g. Thai',
     hintGenres: 'Add genres like Drama, Romance, etc.',
@@ -7789,11 +8069,28 @@ const en: TranslationShape = {
     title: 'MundoBL - Series Catalog',
     adminModeLabel: 'Mode: Admin',
   },
+  adminShortcuts: {
+    dragAria: 'Drag to reorder shortcuts',
+    alertWithoutReview: '{count} without review',
+    alertWithoutContent: '{count} series without content',
+    alertPendingSites: '{count} pending suggestions',
+    alertReported: '{count} reported',
+    alertHiddenReviews: '{count} hidden',
+  },
   adminNav: {
     ariaLabel: 'Admin navigation',
     groupCatalog: 'Catalog',
     groupCommunity: 'Community',
     groupSystem: 'System',
+    groupModeration: 'Moderation',
+    groupTaxonomies: 'Taxonomies',
+    groupPublishing: 'Publishing',
+    import: 'Import series (YouTube)',
+    importShort: 'Import',
+    channelSweep: 'Channel sweep',
+    channelSweepShort: 'Sweep',
+    watchHub: 'Manage /ver',
+    watchHubShort: 'Watch',
     series: 'Series',
     seriesShort: 'Series',
     userEmbed: 'Contributions',
@@ -8601,6 +8898,46 @@ const en: TranslationShape = {
     ariaLabel: 'Select series watch status',
     tooltipEpisodes: '{watched} of {total} episodes watched',
   },
+  progressStepper: {
+    at: "I'm on {current} of {total}",
+    epAbbr: 'Ep.',
+    none: 'None yet',
+    nextUp: 'Next: {label}',
+    allWatched: 'You watched every episode',
+    next: 'Mark next episode',
+    prev: 'Undo last episode',
+    jumpTo: 'Jump to an episode',
+    error: "Couldn't update progress.",
+    finishedTitle: 'Did you finish {title}?',
+    markComplete: 'Yes, I finished it',
+    notYet: 'Not yet',
+    ariaNext: 'Mark next episode as watched',
+    ariaPrev: 'Unmark last watched episode',
+  },
+  trackCta: {
+    title: 'Are you watching this?',
+    subtitle: "Mark which episode you're on and follow it from your list.",
+    subtitleNoEpisodes: 'Mark it as watched and it goes into your history.',
+    button: 'Start tracking',
+    buttonNoEpisodes: 'Mark as watched',
+    applied: "You're all set, now tracking {title}",
+    chooseEpisode: 'Which episode are you on?',
+  },
+  trackingPanel: {
+    title: 'My tracking',
+    markWatched: 'I watched it',
+    markUnwatched: 'Mark as not watched',
+    markedWatched: 'You marked "{title}" as watched',
+    noEpisodes:
+      'This title has no episodes loaded: it gets marked complete in one go.',
+    notesTitle: 'Private notes',
+    episodeNote: 'Note for {code}',
+    seriesNote: 'Series note',
+    notesHintNoEpisode: 'Mark an episode as watched to add a note.',
+  },
+  posterPlaceholder: {
+    noImage: 'No image',
+  },
   spoilerFreeProvider: {
     useSpoilerFreeError:
       'useSpoilerFree must be used within a SpoilerFreeProvider',
@@ -8611,6 +8948,7 @@ const en: TranslationShape = {
   dashboard: {
     dragHandleAria: 'Drag widget',
     removeWidgetAria: 'Remove widget',
+    autofitHeight: 'Fit height to content',
     editLayout: 'Edit layout',
     doneEditing: 'Done',
     addWidget: 'Add widget',
@@ -8765,6 +9103,9 @@ const en: TranslationShape = {
     news: 'News',
   },
   adminHero: {
+    greeting: 'Hi, {name}',
+    title: 'Admin panel',
+    subtitle: 'Shortcuts to every management tool.',
     actionInsights: 'Insights',
     actionAuditLog: 'Audit',
     actionChangelog: 'Releases',

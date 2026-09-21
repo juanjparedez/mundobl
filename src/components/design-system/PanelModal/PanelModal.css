@@ -1,0 +1,99 @@
+/* Modal del design system.
+ *
+ * Regla central: el UNICO scroller es el body. Header y footer quedan
+ * fijos, asi el titulo y los botones Guardar/Cancelar nunca se van de
+ * pantalla por mas largo que sea el contenido — que es exactamente lo
+ * que pasaba cuando cada modal crecia sin tope y scrolleaba la pagina.
+ */
+.mb-panel-modal {
+  --mb-modal-gutter: var(--spacing-lg);
+}
+
+.mb-panel-modal .ant-modal-content {
+  display: flex;
+  flex-direction: column;
+  /* Fallback para navegadores sin dvh; la linea siguiente lo pisa donde
+   * si esta soportado (dvh contempla la barra del navegador mobile). */
+  max-height: calc(100vh - 2 * var(--mb-modal-gutter));
+  max-height: calc(100dvh - 2 * var(--mb-modal-gutter));
+  padding: 0;
+  overflow: hidden;
+}
+
+.mb-panel-modal .ant-modal-header {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: 1px solid var(--border-color-secondary);
+}
+
+.mb-panel-modal .ant-modal-body {
+  /* min-height:0 es lo que habilita que un hijo flex pueda encogerse por
+   * debajo de su contenido y, recien ahi, scrollear. */
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  /* Corta el scroll-chaining: al llegar al final del modal, la rueda no
+   * se "pasa" a la pagina de atras. */
+  overscroll-behavior: contain;
+  padding: var(--spacing-md) var(--spacing-lg);
+}
+
+.mb-panel-modal .ant-modal-footer {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-top: 1px solid var(--border-color-secondary);
+  background: var(--bg-container);
+}
+
+/* Contenido que ya trae su propio scroller: evita scrollers anidados. */
+.mb-panel-modal--no-scroll .ant-modal-body {
+  overflow: visible;
+}
+
+/* 600px = mobile grande (breakpoint documentado en variables.css).
+ * Hoja a pantalla completa: sin margen no hay nada que se pueda salir
+ * del viewport, y el contenido gana todo el ancho util. */
+@media (max-width: 600px) {
+  .mb-panel-modal {
+    --mb-modal-gutter: 0px;
+  }
+
+  .mb-panel-modal .ant-modal {
+    top: 0;
+    max-width: 100vw;
+    margin: 0;
+    padding-bottom: 0;
+  }
+
+  .mb-panel-modal .ant-modal-content {
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+
+  .mb-panel-modal .ant-modal-header,
+  .mb-panel-modal .ant-modal-body,
+  .mb-panel-modal .ant-modal-footer {
+    padding-inline: var(--spacing-md);
+  }
+
+  /* Botones a mitad y mitad, con alto de tap accesible. El safe-area
+   * evita que el boton quede debajo de la barra de gestos del telefono. */
+  .mb-panel-modal .ant-modal-footer {
+    display: flex;
+    gap: var(--spacing-xs);
+    padding-bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
+  }
+
+  .mb-panel-modal .ant-modal-footer .ant-btn {
+    flex: 1;
+    min-height: 44px;
+  }
+}
+
+html[data-skin='premium'][data-theme='dark'] .mb-panel-modal .ant-modal-header,
+html[data-skin='premium'][data-theme='dark'] .mb-panel-modal .ant-modal-footer {
+  border-color: var(--mb-border-soft, var(--border-color-secondary));
+}

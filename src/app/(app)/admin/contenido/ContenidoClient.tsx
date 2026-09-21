@@ -6,7 +6,6 @@ import {
   Button,
   Input,
   InputNumber,
-  Modal,
   Form,
   Select,
   Popconfirm,
@@ -43,7 +42,7 @@ import {
 import { ImportChannelDrawer } from './ImportChannelDrawer/ImportChannelDrawer';
 import '../admin.css';
 import './contenido.css';
-import { DataTable } from '@/components/design-system';
+import { DataTable, PanelModal } from '@/components/design-system';
 
 const LANGUAGE_OPTIONS = [
   { label: 'Español', value: 'ES' },
@@ -436,19 +435,18 @@ export function ContenidoClient() {
           pageSize={20}
         />
 
-        <Modal
+        <PanelModal
           title={
             editingItem
               ? t('adminContent.modalEditTitle')
               : t('adminContent.modalNewTitle')
           }
+          size="lg"
           open={modalOpen}
-          onCancel={handleCloseModal}
+          onClose={handleCloseModal}
           onOk={() => form.submit()}
           okText={t('adminContent.save')}
           cancelText={t('adminContent.cancel')}
-          width={680}
-          maskClosable={false}
           forceRender
         >
           <Form form={form} layout="vertical" onFinish={handleSubmit}>
@@ -596,7 +594,7 @@ export function ContenidoClient() {
               </div>
             )}
           </Form>
-        </Modal>
+        </PanelModal>
 
         <ImportChannelDrawer
           open={importDrawerOpen}

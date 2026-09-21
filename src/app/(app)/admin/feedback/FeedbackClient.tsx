@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   Avatar,
   Input,
-  Modal,
   Segmented,
   Space,
   Tag,
@@ -19,7 +18,11 @@ import {
   BulbOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
-import { DataTable, type DataTableColumn } from '@/components/design-system';
+import {
+  DataTable,
+  PanelModal,
+  type DataTableColumn,
+} from '@/components/design-system';
 import { AdminPageHero } from '@/components/admin/AdminPageHero/AdminPageHero';
 import { AdminNav } from '../AdminNav';
 import { useMessage } from '@/hooks/useMessage';
@@ -498,11 +501,11 @@ export function FeedbackClient() {
       </div>
 
       {/* Detail Modal */}
-      <Modal
+      <PanelModal
+        size="md"
         open={detailCase !== null}
         title={`Caso #${detailCase?.id}`}
-        onCancel={() => setDetailCase(null)}
-        width={700}
+        onClose={() => setDetailCase(null)}
         footer={null}
       >
         {detailCase && (
@@ -602,7 +605,7 @@ export function FeedbackClient() {
             )}
           </div>
         )}
-      </Modal>
+      </PanelModal>
     </>
   );
 }

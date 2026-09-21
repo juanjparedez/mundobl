@@ -5,3 +5,10 @@ build
 dist
 *.lock
 package-lock.json
+
+# AI-generated locale dictionaries (~3k lines each, JSON-serialized with double quotes).
+# Prettier rewrites all 24k lines to single-quote style — pure noise in diffs.
+src/i18n/locales/
+
+# Auto-generated Prisma client (multi-MB files, not hand-edited)
+src/generated/

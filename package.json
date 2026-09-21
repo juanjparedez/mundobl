@@ -11,9 +11,12 @@
     "lint:fix": "eslint src/ --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
     "type-check": "tsc --noEmit",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "local:db": "bash scripts/local-db.sh",
     "local:dev": "bash scripts/local-db.sh && npm run dev",
-    "migrate:supabase": "bash scripts/migrate-supabase.sh"
+    "migrate:supabase": "node scripts/migrate-supabase.mjs",
+    "db:check": "prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --exit-code"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.1",
@@ -54,6 +57,7 @@
   },
   "devDependencies": {
     "@ant-design/nextjs-registry": "^1.3.0",
+    "@playwright/test": "^1.63.0",
     "@types/node": "^25.2.3",
     "@types/pg": "^8.16.0",
     "@types/react": "^19.2.14",

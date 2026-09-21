@@ -40,6 +40,7 @@ const PLATFORM_COLORS: Record<string, string> = {
   Bilibili: '#00a1d6',
   GagaOOLala: '#e91e63',
   Vimeo: '#1ab7ea',
+  Spotify: '#1db954',
 };
 
 function getPlatformColor(platform: string): string {

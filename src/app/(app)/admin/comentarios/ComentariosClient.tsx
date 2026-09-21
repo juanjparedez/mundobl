@@ -6,7 +6,6 @@ import {
   Button,
   Checkbox,
   Input,
-  Modal,
   Popconfirm,
   Segmented,
   Space,
@@ -20,7 +19,11 @@ import {
   StopOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { DataTable, type DataTableColumn } from '@/components/design-system';
+import {
+  DataTable,
+  PanelModal,
+  type DataTableColumn,
+} from '@/components/design-system';
 import { AdminPageHero } from '@/components/admin/AdminPageHero/AdminPageHero';
 import { AdminTableToolbar } from '@/components/admin/AdminTableToolbar/AdminTableToolbar';
 import { AdminNav } from '../AdminNav';
@@ -528,15 +531,15 @@ export function ComentariosClient() {
             }}
           />
 
-          <Modal
+          <PanelModal
             title={t('adminComments.modalEditTitle')}
+            size="md"
             open={Boolean(editingComment)}
-            onCancel={closeEditModal}
+            onClose={closeEditModal}
             onOk={handleSaveEdit}
             confirmLoading={isSavingEdit}
             okText={t('adminComments.save')}
             cancelText={t('adminComments.cancel')}
-            maskClosable={false}
           >
             <Input.TextArea
               value={editingContent}
@@ -546,7 +549,7 @@ export function ComentariosClient() {
               showCount
               placeholder={t('adminComments.modalEditPlaceholder')}
             />
-          </Modal>
+          </PanelModal>
         </div>
       </div>
     </>

@@ -109,7 +109,8 @@
   flex-shrink: 0;
 }
 
-.mb-widget__remove {
+.mb-widget__remove,
+.mb-widget__autofit {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -122,6 +123,12 @@
   cursor: pointer;
   font-size: 12px;
   transition: var(--transition-fast);
+}
+
+.mb-widget__autofit:hover {
+  background: var(--bg-spotlight);
+  color: var(--primary-color);
+  border-color: color-mix(in srgb, var(--primary-color) 30%, transparent);
 }
 
 .mb-widget__remove:hover {
@@ -165,10 +172,28 @@
  * en .mb-widget__body) para que la medicion ya lo incluya. */
 .mb-widget__measure {
   padding: var(--widget-body-padding);
+  /* EmptyState compacto dentro de un widget: --empty-padding (spacing-md)
+   * y --empty-min-height inflan la medicion de un vacio de una sola linea,
+   * dejando un cajon grande con tres palabras en el medio. Se baja por
+   * token (EmptyState.css ya los lee con fallback), no por selector de
+   * hijo, asi el componente no se entera de donde vive. */
+  --empty-padding: var(--spacing-sm);
+  --empty-min-height: 0;
 }
 
 .mb-widget__measure--flush {
   padding: 0;
+}
+
+/* Scroll interno SOLO cuando el usuario fijo la altura a mano (hMode
+ * 'manual') y el contenido realmente no entra (>8px, ver Widget.tsx).
+ * En modo auto la caja crece hasta el contenido, asi que nunca hay un
+ * widget "levemente desbordado" — que es justo lo que hacia que la
+ * version anterior de scroll interno capturara el wheel de la pagina.
+ * overscroll-behavior corta el scroll-chaining al llegar al final. */
+.mb-widget[data-overflow='true'] .mb-widget__body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 /* Fade-out inferior cuando el contenido excede la altura disponible.
@@ -206,10 +231,18 @@ html[data-skin='premium'][data-theme='dark'] .mb-widget__header {
  * Aplica con pointer:coarse (touchscreens), no afecta desktop con mouse. */
 @media (pointer: coarse) {
   .mb-widget__drag-handle,
-  .mb-widget__remove {
+  .mb-widget__remove,
+  .mb-widget__autofit {
     width: 32px;
     height: 32px;
     font-size: 16px;
+  }
+
+  /* Sin touch-action:none el navegador se queda con el gesto como scroll
+   * y el widget "no se deja arrastrar" con el dedo. Acotado al handle,
+   * que solo existe en modo edicion. */
+  .mb-widget__drag-handle {
+    touch-action: none;
   }
 
   /* Handle de resize de react-grid-layout. La libreria pone un span SE

@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, type ReactNode } from 'react';
-import type { DashboardBreakpoint } from './types';
+import type { DashboardBreakpoint, DashboardItemHeightMode } from './types';
 
 /** Metadatos que el grid expone a cada widget hijo. */
 export interface DashboardItemContextValue {
@@ -18,8 +18,14 @@ export interface DashboardItemContextValue {
    *  absurdamente chica (ej. solo el header, sin margen). */
   minH?: number;
   /** El widget reporta cuantas unidades `h` necesita para mostrar su
-   *  contenido real sin cortar — DashboardGrid ajusta el layout solo. */
+   *  contenido real sin cortar — DashboardGrid ajusta el layout solo.
+   *  En modo 'manual' el widget NO reporta (la altura la fijo el usuario). */
   onAutoHeight?: (h: number) => void;
+  /** Ver DashboardItemHeightMode. Ausente ≡ 'auto'. */
+  hMode?: DashboardItemHeightMode;
+  /** Devuelve el item a modo 'auto' (altura mandada por el contenido).
+   *  Solo se ofrece en modo edicion y solo si hMode === 'manual'. */
+  onResetHeight?: () => void;
 }
 
 const Context = createContext<DashboardItemContextValue | null>(null);

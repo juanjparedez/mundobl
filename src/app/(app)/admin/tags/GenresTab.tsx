@@ -7,7 +7,6 @@ import {
   Popconfirm,
   Space,
   Tag,
-  Modal,
   Form,
   Radio,
   Alert,
@@ -21,7 +20,7 @@ import {
 import { useMessage } from '@/hooks/useMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { AdminTableToolbar } from '@/components/admin/AdminTableToolbar/AdminTableToolbar';
-import { DataTable } from '@/components/design-system';
+import { DataTable, PanelModal } from '@/components/design-system';
 
 export interface GenreType {
   id: number;
@@ -295,11 +294,12 @@ export function GenresTab({ onGenresUpdated }: GenresTabProps) {
         showTotal={(total) => `${total} géneros en total`}
       />
 
-      <Modal
+      <PanelModal
         title="Editar Género"
+        size="sm"
         open={editModalOpen}
         onOk={() => form.submit()}
-        onCancel={() => {
+        onClose={() => {
           setEditModalOpen(false);
           setEditingGenre(null);
           form.resetFields();
@@ -316,14 +316,15 @@ export function GenresTab({ onGenresUpdated }: GenresTabProps) {
             <Input />
           </Form.Item>
         </Form>
-      </Modal>
+      </PanelModal>
 
-      <Modal
+      <PanelModal
         title="Fusionar Géneros"
+        size="sm"
         open={mergeModalOpen}
         onOk={handleMerge}
         confirmLoading={merging}
-        onCancel={() => {
+        onClose={() => {
           setMergeModalOpen(false);
           setMergeTarget(null);
         }}
@@ -357,7 +358,7 @@ export function GenresTab({ onGenresUpdated }: GenresTabProps) {
             })}
           </Space>
         </Radio.Group>
-      </Modal>
+      </PanelModal>
     </div>
   );
 }

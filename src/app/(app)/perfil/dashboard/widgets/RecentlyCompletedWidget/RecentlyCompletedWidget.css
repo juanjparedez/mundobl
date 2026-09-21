@@ -63,3 +63,9 @@
   font-size: 11px;
   color: var(--text-tertiary);
 }
+
+.mb-recently-completed-widget--full {
+  max-height: 60vh;
+  overflow-y: auto;
+  margin-bottom: var(--spacing-md);
+}

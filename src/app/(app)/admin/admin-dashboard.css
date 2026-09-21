@@ -127,235 +127,12 @@
   font-weight: 600;
 }
 
-/* Headline alerts */
-.admin-dashboard__alerts {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs, 8px);
-}
-
-.admin-dashboard__alert {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: var(--border-radius-base);
-  text-decoration: none;
-  color: var(--text-primary);
-  font-weight: 500;
-  font-size: 12px;
-  border: 1px solid transparent;
-  transition: var(--transition-fast, 0.15s ease);
-}
-
-.admin-dashboard__alert:hover {
-  transform: translateX(2px);
-}
-
-.admin-dashboard__alert--danger {
-  background: rgba(255, 77, 79, 0.12);
-  border-color: rgba(255, 77, 79, 0.4);
-}
-
-.admin-dashboard__alert--warning {
-  background: rgba(250, 173, 20, 0.12);
-  border-color: rgba(250, 173, 20, 0.4);
-}
-
-.admin-dashboard__alert--info {
-  background: color-mix(in srgb, var(--primary-color) 10%, transparent);
-  border-color: color-mix(in srgb, var(--primary-color) 35%, transparent);
-}
-
-.admin-dashboard__alert-icon {
-  font-size: 1.25em;
-}
-
-.admin-dashboard__alert-arrow {
-  margin-left: auto;
-  color: var(--text-secondary);
-  font-size: 16px;
-}
-
-/* Sections + grid */
-.admin-dashboard__section {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.admin-dashboard__section-title {
-  margin: 0;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-secondary);
-  /* Accent inline bar antes del titulo via ::before. Sin altura
-   * agregada porque es display: inline-block dentro del flow. */
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.admin-dashboard__section-title::before {
-  content: '';
-  width: 3px;
-  height: 12px;
-  background: var(--primary-color);
-  border-radius: 2px;
-  display: inline-block;
-}
-
-/* Accent diferenciado por grupo del mock — el bar antes del titulo Y
- * el gradient de las cards cambian segun la seccion. Catalogo hereda
- * el gold default; Comunidad usa blue; Sistema usa purple. */
-.admin-dashboard__section[data-group='comunidad']
-  .admin-dashboard__section-title::before {
-  background: var(--mb-blue, var(--primary-color));
-}
-
-.admin-dashboard__section[data-group='sistema']
-  .admin-dashboard__section-title::before {
-  background: var(--mb-purple, var(--primary-color));
-}
-
-/* Tool card gradient por grupo — sutil 5% del accent en la esquina sup
- * izq, sin afectar height ni padding. */
-.admin-dashboard__section[data-group='comunidad'] .admin-tool-card::before {
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--mb-blue, var(--primary-color)) 5%, transparent) 0%,
-    transparent 50%
-  );
-}
-
-.admin-dashboard__section[data-group='sistema'] .admin-tool-card::before {
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--mb-purple, var(--primary-color)) 5%, transparent)
-      0%,
-    transparent 50%
-  );
-}
-
-/* Hover border tambien por grupo: pequeño detalle pero mantiene
- * coherencia visual entre el bar del titulo y la card cuando interactua. */
-.admin-dashboard__section[data-group='comunidad'] .admin-tool-card:hover {
-  border-color: color-mix(
-    in srgb,
-    var(--mb-blue, var(--primary-color)) 50%,
-    var(--border-color-secondary)
-  );
-}
-
-.admin-dashboard__section[data-group='sistema'] .admin-tool-card:hover {
-  border-color: color-mix(
-    in srgb,
-    var(--mb-purple, var(--primary-color)) 50%,
-    var(--border-color-secondary)
-  );
-}
-
-.admin-dashboard__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 8px;
-}
-
-.admin-tool-card {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 10px 12px;
-  background: var(--bg-container);
-  border: 1px solid var(--border-color-secondary);
-  border-radius: var(--border-radius-base);
-  text-decoration: none;
-  color: var(--text-primary);
-  transition: var(--transition-fast, 0.15s ease);
-  position: relative;
-  overflow: hidden;
-}
-
-/* Gradient sutil de accent en la esquina superior izquierda — siempre
- * visible (no solo hover) para dar premium feel sin agrandar nada.
- * z-index -1 para quedar detras del contenido. */
-.admin-tool-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  border-radius: inherit;
-  background: linear-gradient(
-    135deg,
-    color-mix(in srgb, var(--primary-color) 5%, transparent) 0%,
-    transparent 50%
-  );
-  pointer-events: none;
-}
-
-.admin-tool-card:hover {
-  border-color: color-mix(
-    in srgb,
-    var(--primary-color) 55%,
-    var(--border-color-secondary)
-  );
-  background: color-mix(in srgb, var(--bg-elevated) 80%, transparent);
-  box-shadow: 0 0 0 1px
-    color-mix(in srgb, var(--primary-color) 20%, transparent);
-}
-
-.admin-tool-card__head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.admin-tool-card__icon {
-  font-size: 16px;
-  display: inline-flex;
-}
-
-.admin-tool-card__count {
-  font-size: 13px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  /* Mismo gradient gold que los KPIs del hero para coherencia. */
-  background: linear-gradient(
-    135deg,
-    var(--primary-color) 0%,
-    color-mix(in srgb, var(--primary-color) 70%, white) 100%
-  );
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: var(--primary-color);
-}
-
-.admin-tool-card__title {
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.admin-tool-card__alert {
-  font-size: 10px;
-  color: #ff8585;
-  font-weight: 500;
-  margin-top: 2px;
-}
-
-[data-theme='dark'] .admin-tool-card__alert {
-  color: #ff7a45;
-}
-
-@media (max-width: 640px) {
-  /* En mobile el grid 'text actions / stats stats' rompia el layout:
-   * los 4 botones de acciones (Insights/Audit/Versiones/Usuarios) son anchos
-   * en su columna 'auto' y comprimian la columna 'text' a un ~70px de
-   * ancho, donde el titulo "Hola, Juan" y el subtitulo de 8 palabras
-   * caian con una palabra por linea. Fix: layout vertical apilado en
-   * mobile (text encima, actions abajo a full-width, stats al final). */
+/* 768px = tablet (breakpoint estandar de variables.css). El grid
+ * 'text actions / stats stats' rompe antes de mobile: los 4 botones de
+ * acciones (Insights/Audit/Versiones/Usuarios) son anchos en su columna
+ * 'auto' y comprimen la columna 'text' a ~70px, donde el titulo y el
+ * subtitulo caen con una palabra por linea. Fix: apilado vertical. */
+@media (max-width: 768px) {
   .admin-dashboard__hero {
     grid-template-columns: 1fr;
     grid-template-areas:
@@ -381,9 +158,12 @@
     flex: 0 1 auto;
   }
 
-  /* 4 cols en 360px ahogaba a cada stat: icon 32 + value + label uppercase
-   * no caben. 2x2 da espacio y los 4 stats siguen siendo visibles arriba
-   * del fold sin scroll horizontal. */
+}
+
+/* 600px = mobile grande. 4 columnas de stats ahogaban a cada una (icon 32
+ * + value + label uppercase no entran); 2x2 les da aire y los 4 siguen
+ * arriba del fold sin scroll horizontal. */
+@media (max-width: 600px) {
   .admin-dashboard__hero-stats {
     grid-template-columns: repeat(2, 1fr);
     max-width: none;
@@ -396,13 +176,5 @@
 
   .admin-dashboard__hero-stat-value {
     font-size: 1.3em;
-  }
-
-  .admin-dashboard__grid {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  }
-
-  .admin-tool-card {
-    padding: 12px 14px;
   }
 }

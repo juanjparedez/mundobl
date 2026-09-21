@@ -5,6 +5,7 @@ import { requireRole } from '@/lib/auth-helpers';
 import { checkCollaboratorImportRateLimit } from '@/lib/rate-limit';
 import { parseAirDate } from '@/lib/episode-parser';
 import { attachEpisodesToSeries } from '@/lib/episode-attach';
+import { checkOfficialYouTubeVideos } from '@/lib/official-content-guard';
 
 interface ConfirmEpisode {
   episodeNumber: number;
@@ -109,6 +110,28 @@ export async function POST(request: NextRequest) {
         }
         seen.add(ep.episodeNumber);
       }
+    }
+
+    // Politica de contenido oficial: todos los videos de la playlist tienen
+    // que pertenecer a un canal de la lista blanca (verificado contra
+    // YouTube, no contra embedChannelUrl del body). Un solo video ajeno
+    // rechaza el import entero. Se corre ACA, antes de bifurcar entre
+    // "adjuntar a una ficha existente" y "crear serie nueva": la politica
+    // aplica a los dos caminos por igual — adjuntar a una ficha ya curada no
+    // puede ser una forma de esquivar el filtro. Ver
+    // docs/politica-contenido-oficial.md.
+    const allVideoIds = body.seasons.flatMap((s) =>
+      s.episodes.map((ep) => ep.videoId)
+    );
+    const officialCheck = await checkOfficialYouTubeVideos(allVideoIds);
+    if (!officialCheck.ok) {
+      return NextResponse.json(
+        {
+          error: officialCheck.error,
+          offenders: officialCheck.offenders.map((o) => o.videoId),
+        },
+        { status: officialCheck.status }
+      );
     }
 
     // ── Camino "adjuntar a una ficha existente" ───────────────────────

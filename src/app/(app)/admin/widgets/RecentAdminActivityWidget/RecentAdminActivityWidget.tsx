@@ -175,13 +175,7 @@ export function RecentAdminActivityWidget() {
   return (
     <Widget title={t('adminActivity.title')} icon={<TeamOutlined />} noPadding>
       {!loaded ? (
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            padding: 'var(--spacing-md)',
-          }}
-        >
+        <div className="mb-recent-activity__loading">
           <Spin size="small" />
         </div>
       ) : events.length === 0 ? (

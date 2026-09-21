@@ -124,3 +124,37 @@
   color: var(--primary-color);
   text-decoration: underline;
 }
+
+.mb-recent-activity__loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-md);
+}
+
+/* Container queries: el widget reacciona a SU propio ancho (el que le dio
+ * el usuario en el dashboard), no al breakpoint de la pagina. Referencia:
+ * en lg una columna del grid ≈ 88px, asi que w:4 ≈ 342px, w:3 ≈ 254px. */
+@container mb-widget-body (max-width: 379px) {
+  /* Path y hora dejan de competir por la misma linea. */
+  .mb-recent-activity__row:last-child {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+}
+
+@container mb-widget-body (max-width: 299px) {
+  .mb-recent-activity__item > .ant-avatar {
+    display: none;
+  }
+}
+
+/* Una ruta larga no puede ensanchar el widget: se recorta con ellipsis. */
+.mb-recent-activity__link code {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+  white-space: nowrap;
+}

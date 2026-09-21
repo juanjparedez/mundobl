@@ -27,3 +27,34 @@ export function trackEvent(name: string, props?: EventProps): void {
     // La medicion nunca puede romper la app.
   }
 }
+
+/**
+ * Eventos de embudo de activacion/retencion (ver docs/plan-maestro-retencion).
+ * Nombres y props fijos a proposito, tipados por evento: nadie escribe el
+ * nombre a mano y usar uno que no este en el catalogo no compila.
+ */
+export type FunnelEvent =
+  | 'episode_marked'
+  | 'series_status_set'
+  | 'track_cta_click'
+  | 'onboarding_step';
+
+interface FunnelEventProps {
+  episode_marked: {
+    source: 'list' | 'stepper' | 'watching' | 'onboarding';
+    status: 'VISTA' | 'SIN_VER';
+  };
+  series_status_set: {
+    status: 'VIENDO' | 'VISTA' | 'ABANDONADA' | 'RETOMAR' | 'SIN_VER';
+    source: 'toggle' | 'watching' | 'auto';
+  };
+  track_cta_click: { where: 'series_anon' | 'home' };
+  onboarding_step: { step: 1 | 2 | 3 | 'done' | 'skip' };
+}
+
+export function trackFunnel<E extends FunnelEvent>(
+  event: E,
+  props: FunnelEventProps[E]
+): void {
+  trackEvent(event, props as EventProps);
+}
