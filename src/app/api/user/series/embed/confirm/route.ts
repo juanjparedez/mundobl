@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth-helpers';
+import {
+  checkOfficialYouTubeVideos,
+  ONLY_YOUTUBE_ERROR,
+} from '@/lib/official-content-guard';
 import { prisma } from '@/lib/database';
 import { detectPlatform, extractVideoId } from '@/lib/embed-helpers';
 import { checkUserEmbedRateLimit } from '@/lib/rate-limit';
@@ -230,6 +234,21 @@ export async function POST(request: NextRequest) {
   }
   const data = parsed.data;
 
+  // Politica de contenido oficial: solo videos de canales de la lista
+  // blanca, verificados contra YouTube (el channelUrl del body no se usa
+  // para decidir). Ver docs/politica-contenido-oficial.md.
+  if (data.platform !== 'YouTube') {
+    return NextResponse.json({ error: ONLY_YOUTUBE_ERROR }, { status: 422 });
+  }
+  const officialCheck = await checkOfficialYouTubeVideos([data.videoId]);
+  if (!officialCheck.ok) {
+    return NextResponse.json(
+      { error: officialCheck.error },
+      { status: officialCheck.status }
+    );
+  }
+  const verifiedChannel = officialCheck.infos.get(data.videoId)!;
+
   // Rate limit por user.
   const rl = await checkUserEmbedRateLimit(auth.userId);
   if (!rl.ok) {
@@ -405,8 +424,8 @@ export async function POST(request: NextRequest) {
       embedUrl: data.url,
       embedPlatform: data.platform,
       embedVideoId: data.videoId,
-      embedChannelName: data.channelName,
-      embedChannelUrl: data.channelUrl,
+      embedChannelName: verifiedChannel.channelTitle || data.channelName,
+      embedChannelUrl: verifiedChannel.channelUrl || data.channelUrl,
     },
   });
 

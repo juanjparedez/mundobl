@@ -11,11 +11,13 @@ El agente que toma una tarea la pasa a `en curso` al crear la rama y a `hecha` a
 | T04  | refetch() en SeriesUserStatusProvider            | 1    | hecha     | feat/T04-provider-refetch (PR #34) | 2026-09-20 | Destraba T06 (stepper) |
 | T05  | Endpoint "hasta el episodio N"                   | 1    | hecha     | feat/T05-endpoint-progreso (PR #35) | 2026-09-20 | Destraba T06, T07, T11a, T13. scripts/test-progress.ts sin correr (necesita Postgres local en 55433) |
 | T06  | Stepper "Voy por el episodio N" en la ficha      | 1    | hecha     | feat/T06-stepper-ficha (PR #36) | 2026-09-20 | No se pudo probar en vivo logueado en la sesion que lo implemento |
-| T06b | Panel de tracking en la ficha (corrección)       | 1    | en PR     | feat/tracking-panel-experiencia | 2026-09-20 | Nuevo `TrackingPanel` reemplaza a `ViewStatusToggle`; stepper "Ep. 2 / 8" + "Siguiente"; fichas sin episodios con "Ya la vi" |
+| T06b | Panel de tracking en la ficha (corrección)       | 1    | hecha     | feat/tracking-panel-experiencia (PR #40) | 2026-09-21 | Nuevo `TrackingPanel` reemplaza a `ViewStatusToggle`; stepper "Ep. 2 / 8" + "Siguiente"; fichas sin episodios con "Ya la vi" |
 | T07  | CTA para anónimos + intención pendiente          | 1    | hecha     | feat/T07-cta-anonimo-intencion (PR #37) | 2026-09-20 | Probado en vivo (anónimo): stepper local, picker y redirect a Google OAuth confirmados; falta probar la vuelta logueado (PendingTrackApplier) |
 | T08  | Botón "+1" claro en /watching                    | 1    | hecha     | feat/T08-watching-mas-uno (PR #38) | 2026-09-20 | No se pudo probar en vivo logueado (requiere series en VIENDO reales) |
-| T08b | /watching sin episodios + contraste (corrección) | 1    | en PR     | feat/tracking-panel-experiencia | 2026-09-20 | Cards sin episodios con "Terminé la serie"; texto del botón primario según luminancia del acento (`readableTextOn`) |
-| T26  | Póster placeholder en ficha y cards              | 1    | en PR     | feat/tracking-panel-experiencia | 2026-09-20 | `PosterPlaceholder` en header y cards de /watching |
+| T08b | /watching sin episodios + contraste (corrección) | 1    | hecha     | feat/tracking-panel-experiencia (PR #40) | 2026-09-21 | Cards sin episodios con "Terminé la serie"; texto del botón primario según luminancia del acento (`readableTextOn`) |
+| T26  | Póster placeholder en ficha y cards              | 1    | hecha     | feat/tracking-panel-experiencia (PR #40) | 2026-09-21 | `PosterPlaceholder` en header y cards de /watching |
+| T27  | Política de contenido oficial + limpieza         | 0    | en PR     | feat/politica-contenido-oficial | 2026-09-21 | Lista blanca con channelId, guardia en 4 endpoints, script dry-run. El `--apply` lo corre Juan |
+| T28  | Navegación móvil con paridad de accesos          | 1    | pendiente |           | 2026-09-21 | 75 % del tráfico es móvil y no se llega a 14 de 19 secciones. Prioridad alta, ideal para el modelo local |
 | T09  | Home centrada en el tracker                      | 1    | pendiente |           |            |       |
 | T10  | Home logueado → /watching                        | 1    | pendiente |           |            |       |
 | T11a | Onboarding: backend                              | 1    | pendiente |           |            |       |
