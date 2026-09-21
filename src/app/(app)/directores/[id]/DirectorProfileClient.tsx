@@ -238,7 +238,9 @@ export function DirectorProfileClient({
                           width={300}
                           height={180}
                           quality={75}
-                          unoptimized={isDirectServedImageUrl(cardImageUrl(entry))}
+                          unoptimized={isDirectServedImageUrl(
+                            cardImageUrl(entry)
+                          )}
                           className="director-profile__film-image"
                           style={{
                             objectFit: 'cover',
@@ -300,7 +302,9 @@ export function DirectorProfileClient({
                           width={300}
                           height={180}
                           quality={70}
-                          unoptimized={isDirectServedImageUrl(cardImageUrl(entry))}
+                          unoptimized={isDirectServedImageUrl(
+                            cardImageUrl(entry)
+                          )}
                           className="director-profile__film-image"
                           style={{
                             objectFit: 'cover',

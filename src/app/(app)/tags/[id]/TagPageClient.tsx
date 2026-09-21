@@ -120,7 +120,9 @@ export function TagPageClient({ tag }: TagPageClientProps) {
                           width={200}
                           height={300}
                           quality={70}
-                          unoptimized={isDirectServedImageUrl(cardImageUrl(entry))}
+                          unoptimized={isDirectServedImageUrl(
+                            cardImageUrl(entry)
+                          )}
                           className="tag-page__card-image"
                         />
                       ) : undefined
