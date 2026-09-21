@@ -19,6 +19,17 @@ export async function GET(request: Request) {
 
   try {
     const result = await runPlayabilityAudit();
+
+    // Solo se loguea la corrida que quedo corta: es la unica que pide accion
+    // (quedo backlog sin sondear). La corrida limpia ya viaja en el body, que
+    // Vercel guarda en el log de invocacion del cron.
+    if (result.budgetExhausted) {
+      console.warn(
+        `[cron/playability] presupuesto agotado en ${result.elapsedMs}ms: ` +
+          `sondeados ${result.probed} de ${result.scanned}. El resto va en la proxima corrida.`
+      );
+    }
+
     return NextResponse.json({ ok: true, ...result });
   } catch (error) {
     console.error('[cron/playability]', error);

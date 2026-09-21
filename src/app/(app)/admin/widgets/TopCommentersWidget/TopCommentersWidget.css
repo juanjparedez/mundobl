@@ -91,3 +91,24 @@
   color: var(--text-secondary);
   font-variant-numeric: tabular-nums;
 }
+
+/* Container queries: mismo criterio que el resto de los widgets — manda
+ * el ancho real del widget, no el de la pagina. */
+@container mb-widget-body (max-width: 339px) {
+  .mb-top-commenters__item .ant-tag {
+    display: none;
+  }
+}
+
+@container mb-widget-body (max-width: 259px) {
+  .mb-top-commenters__item .ant-avatar {
+    display: none;
+  }
+}
+
+.mb-top-commenters__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

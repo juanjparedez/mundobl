@@ -18,8 +18,11 @@ import {
 } from './episode-parser';
 import { generateText, GeminiError } from './gemini';
 
-// Mapping de canales conocidos → codigo ISO de pais. Mantener corto;
-// si falta un canal el usuario lo elige a mano en el preview.
+// Mapping de canales conocidos → codigo ISO de pais.
+//
+// Tiene que cubrir por lo menos los canales de officialChannels.ts (los que
+// el barrido ofrece con un click), porque si falta uno el import obliga a
+// elegir el pais a mano en cada serie. Estaban los 6 primeros nada mas.
 const CHANNEL_COUNTRY_MAP: Record<string, string> = {
   GMMTV: 'TH',
   'GMMTV OFFICIAL': 'TH',
@@ -33,10 +36,35 @@ const CHANNEL_COUNTRY_MAP: Record<string, string> = {
   'JustUp Channel': 'TH',
   'IDEA FIRST COMPANY': 'PH',
   'Idea First Company': 'PH',
+  // Faltaban, aunque el barrido ya los ofrece precargados:
+  Domundi: 'TH',
+  DomundiTV: 'TH',
+  'Domundi TV': 'TH',
+  'Studio Wabi Sabi': 'TH',
+  Mandee: 'TH',
+  'Mandee Channel': 'TH',
+  MandeeWork: 'TH',
+  Strongberry: 'KR',
+  STRONGBERRY: 'KR',
+  GagaOOLala: 'TW',
+  'WeTV Thailand': 'TH',
 };
 
+/**
+ * Normaliza el nombre de canal antes de buscarlo en el mapping.
+ *
+ * Saca los caracteres invisibles (zero-width space y compania) porque
+ * YouTube los deja pasar en el nombre del canal y rompen el match exacto:
+ * en la base conviven "GMMTV OFFICIAL" con 51 episodios y otro
+ * "GMMTV OFFICIAL" con zero-widths al final con 1.396, que son el mismo
+ * canal y hasta ahora contaban como dos.
+ */
+function normalizeChannelName(channelName: string): string {
+  return channelName.replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+}
+
 function suggestCountryCode(channelName: string): string | null {
-  const normalized = channelName.trim();
+  const normalized = normalizeChannelName(channelName);
   if (CHANNEL_COUNTRY_MAP[normalized]) return CHANNEL_COUNTRY_MAP[normalized];
   // Match case-insensitive
   const lower = normalized.toLowerCase();

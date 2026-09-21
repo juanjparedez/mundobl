@@ -10,11 +10,11 @@ import { EmptyState } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import './ActivityChartWidget.css';
 
-interface DayPoint {
+type DayPoint = {
   date: string;
   views: number;
   actions: number;
-}
+};
 
 type Period = 'week' | 'month' | 'year';
 
@@ -52,21 +52,28 @@ export function ActivityChartWidget() {
   const hasData = series.some((d) => d.views > 0 || d.actions > 0);
 
   // En "year" el bucket es mensual (date = "YYYY-MM"), en el resto es
-  // diario (date = "YYYY-MM-DD") — parsear distinto segun granularidad.
-  const parseBucketDate = (raw: string) =>
-    period === 'year' ? new Date(`${raw}-01`) : new Date(raw);
+  // diario (date = "YYYY-MM-DD") — en ambos casos parseamos a mano como
+  // fecha LOCAL (new Date(y, m-1, d)), no via new Date(string): el
+  // constructor con un string "YYYY-MM-DD" lo interpreta como medianoche
+  // UTC, lo que corre el dia mostrado en cualquier timezone negativo
+  // (ej. Argentina, UTC-3) respecto del dia real del bucket.
+  const parseBucketDate = (raw: string) => {
+    const [y, m, d] = raw.split('-').map(Number);
+    if (!y || !m) return null;
+    return new Date(y, m - 1, d ?? 1);
+  };
 
   // Formatter del label del eje X — compacto (DD/MM, o abreviatura del
-  // mes en la vista anual).
-  const formatDateShort = (raw: string) => {
-    try {
-      const d = parseBucketDate(raw);
-      return period === 'year'
-        ? d.toLocaleDateString(locale, { month: 'short' })
-        : d.toLocaleDateString(locale, { day: '2-digit', month: '2-digit' });
-    } catch {
-      return raw;
-    }
+  // mes en la vista anual). Recibe SIEMPRE la fecha ISO cruda via
+  // xAxisTickFormatter (nunca pisa xAxisKey con el string ya formateado)
+  // para que el tooltip, que Recharts alimenta con el mismo dataKey del
+  // eje X, siga recibiendo un valor parseable.
+  const formatDateShort = (raw: string | number) => {
+    const d = parseBucketDate(String(raw));
+    if (!d || Number.isNaN(d.getTime())) return String(raw);
+    return period === 'year'
+      ? d.toLocaleDateString(locale, { month: 'short' })
+      : d.toLocaleDateString(locale, { day: '2-digit', month: '2-digit' });
   };
 
   // Label del tooltip: version completa y legible (a diferencia del tick
@@ -74,26 +81,16 @@ export function ActivityChartWidget() {
   // cada punto sin tener que adivinar el formato DD/MM.
   const formatTooltipLabel = (raw: string | number | undefined) => {
     if (raw === undefined) return '';
-    try {
-      const d = parseBucketDate(String(raw));
-      return period === 'year'
-        ? d.toLocaleDateString(locale, { month: 'long', year: 'numeric' })
-        : d.toLocaleDateString(locale, {
-            weekday: 'long',
-            day: 'numeric',
-            month: 'long',
-          });
-    } catch {
-      return String(raw);
-    }
+    const d = parseBucketDate(String(raw));
+    if (!d || Number.isNaN(d.getTime())) return String(raw);
+    return period === 'year'
+      ? d.toLocaleDateString(locale, { month: 'long', year: 'numeric' })
+      : d.toLocaleDateString(locale, {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long',
+        });
   };
-
-  // Recharts no permite formatter en XAxis directo via prop estandar,
-  // entonces transformamos los data points pre-render.
-  const formattedData = series.map((d) => ({
-    ...d,
-    dateShort: formatDateShort(d.date),
-  }));
 
   const rangeOptions = [
     { label: t('activityChart.rangeWeek'), value: 'week' as const },
@@ -162,8 +159,9 @@ export function ActivityChartWidget() {
           </div>
           <div className="mb-activity-chart__chart-wrap">
             <LineChart
-              data={formattedData}
-              xAxisKey="dateShort"
+              data={series}
+              xAxisKey="date"
+              xAxisTickFormatter={formatDateShort}
               series={[
                 { dataKey: 'views', name: t('activityChart.seriesViews') },
                 { dataKey: 'actions', name: t('activityChart.seriesActions') },

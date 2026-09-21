@@ -1,7 +1,11 @@
 'use client';
 
-import { useLayoutEffect, useRef } from 'react';
-import { CloseOutlined, HolderOutlined } from '@ant-design/icons';
+import { useLayoutEffect, useRef, useState } from 'react';
+import {
+  CloseOutlined,
+  ColumnHeightOutlined,
+  HolderOutlined,
+} from '@ant-design/icons';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { useDashboardItem } from '../DashboardItemContext';
 import type { WidgetSlotProps } from '../types';
@@ -50,13 +54,25 @@ export function Widget({
     ctx?.dragHandleClassName ?? dragHandleClassNameProp;
 
   const headerRef = useRef<HTMLElement>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
   const measureRef = useRef<HTMLDivElement>(null);
   const lastReportedH = useRef<number | null>(null);
 
-  const { onAutoHeight, rowHeight, gap, minH } = ctx ?? {};
+  const { onAutoHeight, rowHeight, gap, minH, hMode, onResetHeight } =
+    ctx ?? {};
+  const isManual = hMode === 'manual';
 
   useLayoutEffect(() => {
-    if (!onAutoHeight || !rowHeight || gap === undefined || !measureRef.current)
+    // En modo manual la altura la fijo el usuario: el widget no reporta
+    // nada (si reportara, el grid volveria a estirarlo y el resize
+    // manual seria imposible).
+    if (
+      isManual ||
+      !onAutoHeight ||
+      !rowHeight ||
+      gap === undefined ||
+      !measureRef.current
+    )
       return;
 
     const recompute = () => {
@@ -78,12 +94,34 @@ export function Widget({
     ro.observe(measureRef.current);
     if (headerRef.current) ro.observe(headerRef.current);
     return () => ro.disconnect();
-  }, [onAutoHeight, rowHeight, gap, minH]);
+  }, [isManual, onAutoHeight, rowHeight, gap, minH]);
+
+  // Desborde real = contenido sin recortar vs caja recortada. El umbral de
+  // 8px evita activar scroll por 1px de redondeo: ese fue exactamente el
+  // bug que hizo revertir el scroll interno permanente (ver Widget.css),
+  // donde cualquier widget capturaba el wheel de la pagina.
+  const [overflowing, setOverflowing] = useState(false);
+  useLayoutEffect(() => {
+    const target = measureRef.current;
+    if (!target) return;
+    const check = () => {
+      const natural = measureRef.current?.offsetHeight ?? 0;
+      const box = bodyRef.current?.clientHeight ?? 0;
+      setOverflowing(box > 0 && natural - box > 8);
+    };
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(target);
+    if (bodyRef.current) ro.observe(bodyRef.current);
+    return () => ro.disconnect();
+  }, []);
 
   return (
     <article
       className={`mb-widget${editing ? ' mb-widget--editing' : ''}${fade ? ' mb-widget--fade' : ''}`}
       role="region"
+      data-overflow={overflowing ? 'true' : undefined}
+      data-h-mode={hMode}
     >
       {(title || editing) && (
         <header ref={headerRef} className="mb-widget__header">
@@ -103,9 +141,21 @@ export function Widget({
             </span>
           )}
           {title && <h3 className="mb-widget__title">{title}</h3>}
-          {(actions || (editing && onRemove)) && (
+          {(actions ||
+            (editing && (onRemove || (isManual && onResetHeight)))) && (
             <div className="mb-widget__actions">
               {actions}
+              {editing && isManual && onResetHeight && (
+                <button
+                  type="button"
+                  className="mb-widget__autofit"
+                  onClick={onResetHeight}
+                  aria-label={t('dashboard.autofitHeight')}
+                  title={t('dashboard.autofitHeight')}
+                >
+                  <ColumnHeightOutlined aria-hidden />
+                </button>
+              )}
               {editing && onRemove && (
                 <button
                   type="button"
@@ -121,7 +171,7 @@ export function Widget({
           )}
         </header>
       )}
-      <div className="mb-widget__body">
+      <div ref={bodyRef} className="mb-widget__body">
         <div
           ref={measureRef}
           className={`mb-widget__measure${noPadding ? ' mb-widget__measure--flush' : ''}`}

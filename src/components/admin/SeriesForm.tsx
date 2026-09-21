@@ -305,8 +305,16 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
 
       // Cargar opciones de "basado en"
       const basedOnRes = await fetch('/api/series/based-on');
-      const basedOnData = await basedOnRes.json();
-      setBasedOnOptions(basedOnData);
+      if (!basedOnRes.ok)
+        throw new Error('Failed to load based-on suggestions');
+      const basedOnData: unknown = await basedOnRes.json();
+      setBasedOnOptions(
+        Array.isArray(basedOnData)
+          ? basedOnData.filter(
+              (value): value is string => typeof value === 'string'
+            )
+          : []
+      );
     } catch (error) {
       console.error('Error loading form data:', error);
     }
@@ -565,6 +573,8 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
       // basedOn comes as array from Select mode="tags", convert to string
       const submitValues: Record<string, unknown> = {
         ...values,
+        universeId: values.universeId ?? null,
+        isUniverseMain: Boolean(values.universeId && values.isUniverseMain),
         basedOn: Array.isArray(values.basedOn)
           ? values.basedOn[0] || null
           : values.basedOn || null,
@@ -798,6 +808,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
             directors: [],
             catalogScope: 'PERSONAL',
             featured: false,
+            isUniverseMain: false,
             featuredOrder: 0,
             ...(showSeasons
               ? { seasons: [{ seasonNumber: 1, episodeCount: null }] }
@@ -995,6 +1006,9 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                         placeholder={t('seriesForm.hintUniverse')}
                         size="large"
                         allowClear
+                        onChange={() =>
+                          form.setFieldValue('isUniverseMain', false)
+                        }
                         showSearch
                         filterOption={(input, option) =>
                           (option?.children as unknown as string)
@@ -1018,6 +1032,24 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                     />
                   </Space.Compact>
                 </Form.Item>
+                <Form.Item
+                  noStyle
+                  shouldUpdate={(previous, current) =>
+                    previous.universeId !== current.universeId
+                  }
+                >
+                  {({ getFieldValue }) =>
+                    getFieldValue('universeId') ? (
+                      <Form.Item
+                        name="isUniverseMain"
+                        valuePropName="checked"
+                        help={t('seriesForm.universeMainHelp')}
+                      >
+                        <Checkbox>{t('seriesForm.universeMain')}</Checkbox>
+                      </Form.Item>
+                    ) : null
+                  }
+                </Form.Item>
               </Col>
 
               <Col xs={24} md={12}>
@@ -1032,7 +1064,6 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                     size="large"
                     allowClear
                     maxCount={1}
-                    tokenSeparators={[',']}
                     style={{ width: '100%' }}
                     options={basedOnOptions.map((v) => ({
                       value: v,
@@ -1614,6 +1645,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                             { value: 'GagaOOLala', label: 'GagaOOLala' },
                             { value: 'Bilibili', label: 'Bilibili' },
                             { value: 'Spotify', label: 'Spotify' },
+                            { value: 'Doramasflix', label: 'Doramasflix' },
                             { value: 'Otro', label: 'Otro' },
                           ]}
                         />

@@ -152,7 +152,7 @@ function serializeAsTs(varName: string, obj: Record<string, unknown>): string {
 
 import type { TranslationShape } from '../messages';
 
-const ${escapeForTemplate(varName)}: TranslationShape = ${json} as unknown as TranslationShape;
+const ${escapeForTemplate(varName)} = ${json} satisfies TranslationShape;
 
 export default ${escapeForTemplate(varName)};
 `;

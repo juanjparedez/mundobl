@@ -27,17 +27,27 @@ interface AdminAlertsData {
   suggestedSitesPending: number;
 }
 
+export interface AdminAlertsWidgetProps {
+  /** Contadores ya resueltos en el server. Si se omite, el widget hace
+   *  su propio fetch (es el caso de /perfil, que es client-side). En
+   *  /admin los datos ya vienen del Server Component, asi que pasarlos
+   *  evita el spinner y el round-trip para el dato mas importante de la
+   *  pagina. */
+  initialData?: AdminAlertsData;
+}
+
 /** Alerts accionables para admins (vivia en /admin/dashboard, ahora
- *  unificado al perfil admin). Hace fetch propio a /api/admin/alerts;
- *  si el user no es admin/moderator el endpoint responde 403 y el
- *  widget queda en estado vacio (asi mismo no rompe el layout si por
- *  error se rendea en un perfil non-admin). */
-export function AdminAlertsWidget() {
+ *  unificado al perfil admin). Sin initialData hace fetch propio a
+ *  /api/admin/alerts; si el user no es admin/moderator el endpoint
+ *  responde 403 y el widget queda en estado vacio (asi no rompe el
+ *  layout si por error se rendea en un perfil non-admin). */
+export function AdminAlertsWidget({ initialData }: AdminAlertsWidgetProps) {
   const { t } = useLocale();
-  const [data, setData] = useState<AdminAlertsData | null>(null);
-  const [loaded, setLoaded] = useState(false);
+  const [data, setData] = useState<AdminAlertsData | null>(initialData ?? null);
+  const [loaded, setLoaded] = useState(Boolean(initialData));
 
   useEffect(() => {
+    if (initialData) return;
     let cancelled = false;
     fetch('/api/admin/alerts')
       .then((res) => (res.ok ? res.json() : null))
@@ -52,7 +62,7 @@ export function AdminAlertsWidget() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [initialData]);
 
   if (!loaded) {
     return (
@@ -60,14 +70,7 @@ export function AdminAlertsWidget() {
         title={t('adminDashboard.alertsTitle')}
         icon={<ExclamationCircleOutlined />}
       >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 'var(--spacing-md)',
-          }}
-        >
+        <div className="mb-admin-alerts-widget__loading">
           <Spin />
         </div>
       </Widget>
@@ -79,6 +82,7 @@ export function AdminAlertsWidget() {
     icon: React.ReactNode;
     title: string;
     count: number;
+    accent: string;
   }> = [];
 
   if (data) {
@@ -93,6 +97,7 @@ export function AdminAlertsWidget() {
           }
         ),
         count: data.seriesWithoutReview,
+        accent: 'var(--primary-color)',
       });
     }
     if (data.seriesWithoutContent > 0) {
@@ -104,6 +109,7 @@ export function AdminAlertsWidget() {
           { count: data.seriesWithoutContent }
         ),
         count: data.seriesWithoutContent,
+        accent: 'var(--warning-color)',
       });
     }
     if (data.commentsReported > 0) {
@@ -114,6 +120,7 @@ export function AdminAlertsWidget() {
           count: data.commentsReported,
         }),
         count: data.commentsReported,
+        accent: 'var(--error-color)',
       });
     }
     if (data.suggestedSitesPending > 0) {
@@ -125,6 +132,7 @@ export function AdminAlertsWidget() {
           { count: data.suggestedSitesPending }
         ),
         count: data.suggestedSitesPending,
+        accent: 'var(--warning-color)',
       });
     }
   }
@@ -163,11 +171,11 @@ export function AdminAlertsWidget() {
       >
         {alerts.map((alert) => (
           <li key={alert.title}>
-            <Link href={alert.href} style={{ textDecoration: 'none' }}>
+            <Link href={alert.href} className="mb-admin-alerts-widget__link">
               <ActionCard
                 icon={alert.icon}
                 title={alert.title}
-                accent="#faad14"
+                accent={alert.accent}
                 featured={alert.count > 5}
               />
             </Link>

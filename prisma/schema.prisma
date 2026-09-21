@@ -333,6 +333,7 @@ model Series {
 
   // Relaciones
   universeId          Int?
+  isUniverseMain      Boolean            @default(false)
   universe            Universe?          @relation(fields: [universeId], references: [id])
   countryId           Int?
   country             Country?           @relation(fields: [countryId], references: [id])

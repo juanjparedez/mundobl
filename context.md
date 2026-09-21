@@ -637,7 +637,7 @@ import {
 # Generar cliente Prisma despues de cambios al schema
 npx prisma generate
 
-# Crear migracion despues de cambios al schema
+# Crear migracion SOLO contra PostgreSQL local (DIRECT_URL local)
 npx prisma migrate dev --name descripcion_del_cambio
 
 # Aplicar migraciones en produccion (Vercel lo hace automaticamente en build)
@@ -646,8 +646,8 @@ npx prisma migrate deploy
 # Ver estado de migraciones
 npx prisma migrate status
 
-# Sincronizar schema sin migraciones (desarrollo)
-npx prisma db push
+# Verificar que la base coincide con el schema (solo lectura)
+npm run db:check
 
 # Abrir Prisma Studio (UI para explorar datos)
 npx prisma studio
@@ -853,3 +853,33 @@ npm run lint:fix     # Corregir problemas de linting
 npm run format       # Formatear con Prettier
 npm run type-check   # Verificar tipos TypeScript
 ```
+
+## Migraciones seguras y reconciliación (2026-09-15)
+
+- Se reconciliaron cambios aplicados previamente fuera del historial: SeriesNote, SeriesSuggestion, Actor.funFacts, Comment.isAnonymous/parentId, FeatureRequest.category, NotificationPrefs.notifyAdminComments y Series.airDays. La migración 20260915110000_reconcile_untracked_schema reproduce esos cambios para bases nuevas, incluyendo RLS. En producción se verificó que ya existían y se registró con migrate resolve --applied; no se ejecutó su DDL allí.
+- La causa recurrente incluía scripts/migrate-supabase.sh, que usaba db push. Ahora npm run migrate:supabase ejecuta scripts/migrate-supabase.mjs y solo aplica SQL versionado con migrate deploy. Conserva la lectura explícita de DIRECT_URL desde .env para Supabase; no usa .env.local.
+- prisma.config.ts llama a scripts/prisma-safety.ts: migrate dev/reset y db push quedan bloqueados contra hosts remotos. Generar cambios en PostgreSQL local; nunca resetear la base compartida para resolver drift.
+- .github/workflows/migrations.yml reconstruye una base vacía en cada PR que toca Prisma y ejecuta npm run db:check. Así detecta campos agregados al schema sin su migración. db:check por sí solo compara base y schema; la reconstrucción es lo que valida el historial.
+- No editar migraciones ya aplicadas ni sus checksums. Para hotfixes existentes: comparar el esquema real, crear y probar una migración que los reproduzca, y marcarla aplicada únicamente en las bases donde ya existen todos sus efectos.
+- scripts/audit-migration-history.mjs consulta el historial sin modificarlo; ignora intentos revertidos y admite diferencias de finales de línea al verificar checksums.
+
+## Feedback de Flor (2026-09-15)
+
+### Backups y QA (2026-09-15)
+
+- Integrada la corrección del cron: escrituras independientes en tandas paralelas de diez.
+- QA incluye smoke tests de lectura y anuncio de los ocho sitemaps en robots.txt.
+- Backup JSON: 62 modelos, cobertura contra schema, lectura RepeatableRead y error con exit code distinto de cero. Restaurador solo local y sobre tablas vacías; CI verifica restauración con datos sintéticos.
+- Bucket privado `mundobl-backups` creado. Secrets de Actions pendientes; el workflow diario exige la variable `BACKUPS_ENABLED=true`. Ver `docs/backups.md` antes de activarlo.
+
+### Cambios del catálogo
+
+- Perfil: Recientemente completadas muestra tres títulos y abre un modal con la lista completa, paginada de a 20. La API de perfil ya no corta ese listado a ocho registros.
+- Catálogo: Retomar y Abandonada filtran el estado del usuario autenticado. GET /api/view-status conserva su respuesta original por defecto; ?all=true devuelve pares seriesId/status. Helper getUserSeriesStatuses en database.ts.
+- Notas privadas de serie/episodio: pie flexible con separación y salto de línea; la fecha no pisa el contador.
+- Ficha pública: un solo bloque Dónde ver, etiquetas de información de 160px en escritorio. Doramasflix disponible en el formulario; Spotify ya estaba soportado como WatchLink.
+- Universo: Series.isUniverseMain identifica historia principal y portada. saveSeriesInUniverse serializa por universo y cambia la principal en una transacción; índice único parcial evita dos principales. Elegir otra principal reemplaza a la anterior; quitar universo limpia la marca. El catálogo prioriza esa serie como portada (si no hay principal visible, mantiene orden cronológico).
+- Temporadas en Información: para series dentro de un universo, se cuentan los miembros de tipo serie y se muestra la posición de la ficha. getPublicUniverseSeries excluye aportes USER_EMBED, WATCHABLE_ONLY y HIDDEN; ordena principal, año, título, id. Películas y especiales no suman temporadas. La sección de episodios mantiene las temporadas internas propias de la ficha.
+- Basado: se corrigió la interpretación del pedido: `manga` es válido; `Manga` es una variante duplicada. Las sugerencias vuelven a incluir manga usando la escritura más frecuente. GM continúa fuera de las sugerencias, pero todos los valores exactos se pueden gestionar en `/admin/tags?tab=based-on` (solo ADMIN).
+- El directorio de Basado muestra cantidades y fichas por valor exacto. Permite renombrar, fusionar con otro valor existente y quitar la clasificación (null, sin borrar fichas). Antes de aplicar muestra las fichas afectadas; una transacción Serializable verifica sus IDs y rechaza listas desactualizadas. No necesita migraciones ni una tabla adicional: los valores nuevos nacen al editar fichas.
+- POST/PUT de series reutilizan la escritura existente más frecuente sin distinguir mayúsculas ni espacios repetidos. PUT conserva basedOn cuando el payload no lo incluye. La gestión invalida catálogo y fichas. Ninguna reclasificación de producción se ejecuta como parte del despliegue.

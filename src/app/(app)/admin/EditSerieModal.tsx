@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Modal, Form, Input, Select, InputNumber, Spin } from 'antd';
+import { Form, Input, Select, InputNumber, Spin } from 'antd';
+import { PanelModal } from '@/components/design-system';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import './EditSerieModal.css';
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -102,20 +104,19 @@ export function EditSerieModal({
   };
 
   return (
-    <Modal
+    <PanelModal
       title={t('editSerieModal.title')}
       open={open}
-      onCancel={onClose}
+      onClose={onClose}
       onOk={() => form.submit()}
       confirmLoading={loading}
-      width={800}
+      size="lg"
       okText={t('editSerieModal.save')}
       cancelText={t('editSerieModal.cancel')}
       forceRender
-      // Flor reportaba perder todo lo cargado al clickear afuera por error
-      // (feedback real, no hipotetico). El modal solo cierra con Cancelar/X
-      // o al guardar — nunca por click en el mask.
-      maskClosable={false}
+      // maskClosable={false} es el DEFAULT de PanelModal, por el reporte
+      // de Flor: perdia todo lo cargado al clickear afuera por error. El
+      // modal solo cierra con Cancelar/X, con Escape, o al guardar.
     >
       <Spin spinning={fetching} size="large">
         <Form
@@ -124,149 +125,180 @@ export function EditSerieModal({
           onFinish={handleSubmit}
           autoComplete="off"
         >
-          <Form.Item
-            label={t('editSerieModal.fieldTitle')}
-            name="title"
-            rules={[
-              { required: true, message: t('editSerieModal.requiredTitle') },
-            ]}
-          >
-            <Input placeholder={t('editSerieModal.placeholderTitle')} />
-          </Form.Item>
-
-          <Form.Item
-            label={t('editSerieModal.fieldOriginalTitle')}
-            name="originalTitle"
-          >
-            <Input placeholder={t('editSerieModal.placeholderOriginalTitle')} />
-          </Form.Item>
-
-          <Form.Item label={t('editSerieModal.fieldImageUrl')} name="imageUrl">
-            <Input placeholder={t('editSerieModal.placeholderImageUrl')} />
-          </Form.Item>
-
-          <Form.Item label={t('editSerieModal.fieldYear')} name="year">
-            <InputNumber
-              placeholder={t('editSerieModal.placeholderYear')}
-              min={1900}
-              max={2100}
-              style={{ width: '100%' }}
-            />
-          </Form.Item>
-
-          <Form.Item
-            label={t('editSerieModal.fieldType')}
-            name="type"
-            rules={[
-              { required: true, message: t('editSerieModal.requiredType') },
-            ]}
-          >
-            <Select placeholder={t('editSerieModal.placeholderType')}>
-              <Option value="serie">{t('seriesHeader.typeSerie')}</Option>
-              <Option value="pelicula">{t('seriesHeader.typePelicula')}</Option>
-              <Option value="corto">{t('seriesHeader.typeCorto')}</Option>
-              <Option value="especial">{t('seriesHeader.typeEspecial')}</Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item label={t('editSerieModal.fieldCountry')} name="countryId">
-            <Select
-              placeholder={t('editSerieModal.placeholderCountry')}
-              showSearch
-              optionFilterProp="children"
-              allowClear
+          <div className="edit-serie-modal__grid">
+            <Form.Item
+              label={t('editSerieModal.fieldTitle')}
+              name="title"
+              rules={[
+                { required: true, message: t('editSerieModal.requiredTitle') },
+              ]}
             >
-              {countries.map((country) => (
-                <Option key={country.id} value={country.id}>
-                  {country.name}
+              <Input placeholder={t('editSerieModal.placeholderTitle')} />
+            </Form.Item>
+
+            <Form.Item
+              label={t('editSerieModal.fieldOriginalTitle')}
+              name="originalTitle"
+            >
+              <Input
+                placeholder={t('editSerieModal.placeholderOriginalTitle')}
+              />
+            </Form.Item>
+
+            <Form.Item
+              label={t('editSerieModal.fieldImageUrl')}
+              name="imageUrl"
+            >
+              <Input placeholder={t('editSerieModal.placeholderImageUrl')} />
+            </Form.Item>
+
+            <Form.Item label={t('editSerieModal.fieldYear')} name="year">
+              <InputNumber
+                placeholder={t('editSerieModal.placeholderYear')}
+                min={1900}
+                max={2100}
+                className="edit-serie-modal__number"
+              />
+            </Form.Item>
+
+            <Form.Item
+              label={t('editSerieModal.fieldType')}
+              name="type"
+              rules={[
+                { required: true, message: t('editSerieModal.requiredType') },
+              ]}
+            >
+              <Select placeholder={t('editSerieModal.placeholderType')}>
+                <Option value="serie">{t('seriesHeader.typeSerie')}</Option>
+                <Option value="pelicula">
+                  {t('seriesHeader.typePelicula')}
                 </Option>
-              ))}
-            </Select>
-          </Form.Item>
+                <Option value="corto">{t('seriesHeader.typeCorto')}</Option>
+                <Option value="especial">
+                  {t('seriesHeader.typeEspecial')}
+                </Option>
+              </Select>
+            </Form.Item>
 
-          <Form.Item
-            label={t('editSerieModal.fieldRating')}
-            name="overallRating"
-          >
-            <InputNumber
-              placeholder={t('editSerieModal.placeholderRating')}
-              min={1}
-              max={10}
-              style={{ width: '100%' }}
-            />
-          </Form.Item>
-
-          <Form.Item label={t('editSerieModal.fieldBasedOn')} name="basedOn">
-            <Select
-              placeholder={t('editSerieModal.placeholderBasedOn')}
-              allowClear
+            <Form.Item
+              label={t('editSerieModal.fieldCountry')}
+              name="countryId"
             >
-              <Option value="libro">{t('editSerieModal.basedOnLibro')}</Option>
-              <Option value="novela">
-                {t('editSerieModal.basedOnNovela')}
-              </Option>
-              <Option value="corto">{t('editSerieModal.basedOnCorto')}</Option>
-              <Option value="manga">{t('editSerieModal.basedOnManga')}</Option>
-              <Option value="anime">{t('editSerieModal.basedOnAnime')}</Option>
-            </Select>
-          </Form.Item>
+              <Select
+                placeholder={t('editSerieModal.placeholderCountry')}
+                showSearch
+                optionFilterProp="children"
+                allowClear
+              >
+                {countries.map((country) => (
+                  <Option key={country.id} value={country.id}>
+                    {country.name}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
 
-          <Form.Item
-            label={t('editSerieModal.fieldFormat')}
-            name="format"
-            rules={[
-              { required: true, message: t('editSerieModal.requiredFormat') },
-            ]}
-            initialValue="regular"
-          >
-            <Select>
-              <Option value="regular">
-                {t('editSerieModal.formatRegular')}
-              </Option>
-              <Option value="vertical">
-                {t('editSerieModal.formatVertical')}
-              </Option>
-            </Select>
-          </Form.Item>
+            <Form.Item
+              label={t('editSerieModal.fieldRating')}
+              name="overallRating"
+            >
+              <InputNumber
+                placeholder={t('editSerieModal.placeholderRating')}
+                min={1}
+                max={10}
+                className="edit-serie-modal__number"
+              />
+            </Form.Item>
 
-          <Form.Item label={t('editSerieModal.fieldSynopsis')} name="synopsis">
-            <TextArea
-              rows={4}
-              placeholder={t('editSerieModal.placeholderSynopsis')}
-              showCount
-              maxLength={1000}
-            />
-          </Form.Item>
+            <Form.Item label={t('editSerieModal.fieldBasedOn')} name="basedOn">
+              <Select
+                placeholder={t('editSerieModal.placeholderBasedOn')}
+                allowClear
+              >
+                <Option value="libro">
+                  {t('editSerieModal.basedOnLibro')}
+                </Option>
+                <Option value="novela">
+                  {t('editSerieModal.basedOnNovela')}
+                </Option>
+                <Option value="corto">
+                  {t('editSerieModal.basedOnCorto')}
+                </Option>
+                <Option value="manga">
+                  {t('editSerieModal.basedOnManga')}
+                </Option>
+                <Option value="anime">
+                  {t('editSerieModal.basedOnAnime')}
+                </Option>
+              </Select>
+            </Form.Item>
 
-          <Form.Item label={t('editSerieModal.fieldReview')} name="review">
-            <TextArea
-              rows={6}
-              placeholder={t('editSerieModal.placeholderReview')}
-              showCount
-              maxLength={2000}
-            />
-          </Form.Item>
+            <Form.Item
+              label={t('editSerieModal.fieldFormat')}
+              name="format"
+              rules={[
+                { required: true, message: t('editSerieModal.requiredFormat') },
+              ]}
+              initialValue="regular"
+            >
+              <Select>
+                <Option value="regular">
+                  {t('editSerieModal.formatRegular')}
+                </Option>
+                <Option value="vertical">
+                  {t('editSerieModal.formatVertical')}
+                </Option>
+              </Select>
+            </Form.Item>
 
-          <Form.Item
-            label={t('editSerieModal.fieldSoundtrack')}
-            name="soundtrack"
-          >
-            <Input placeholder={t('editSerieModal.placeholderSoundtrack')} />
-          </Form.Item>
+            <Form.Item
+              className="edit-serie-modal__full"
+              label={t('editSerieModal.fieldSynopsis')}
+              name="synopsis"
+            >
+              <TextArea
+                autoSize={{ minRows: 3, maxRows: 8 }}
+                placeholder={t('editSerieModal.placeholderSynopsis')}
+                showCount
+                maxLength={1000}
+              />
+            </Form.Item>
 
-          <Form.Item
-            label={t('editSerieModal.fieldObservations')}
-            name="observations"
-          >
-            <TextArea
-              rows={6}
-              placeholder={t('editSerieModal.placeholderObservations')}
-              showCount
-              maxLength={2000}
-            />
-          </Form.Item>
+            <Form.Item
+              className="edit-serie-modal__full"
+              label={t('editSerieModal.fieldReview')}
+              name="review"
+            >
+              <TextArea
+                autoSize={{ minRows: 4, maxRows: 10 }}
+                placeholder={t('editSerieModal.placeholderReview')}
+                showCount
+                maxLength={2000}
+              />
+            </Form.Item>
+
+            <Form.Item
+              label={t('editSerieModal.fieldSoundtrack')}
+              name="soundtrack"
+            >
+              <Input placeholder={t('editSerieModal.placeholderSoundtrack')} />
+            </Form.Item>
+
+            <Form.Item
+              className="edit-serie-modal__full"
+              label={t('editSerieModal.fieldObservations')}
+              name="observations"
+            >
+              <TextArea
+                autoSize={{ minRows: 3, maxRows: 8 }}
+                placeholder={t('editSerieModal.placeholderObservations')}
+                showCount
+                maxLength={2000}
+              />
+            </Form.Item>
+          </div>
         </Form>
       </Spin>
-    </Modal>
+    </PanelModal>
   );
 }

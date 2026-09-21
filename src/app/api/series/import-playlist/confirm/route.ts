@@ -4,6 +4,8 @@ import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { checkCollaboratorImportRateLimit } from '@/lib/rate-limit';
 import { parseAirDate } from '@/lib/episode-parser';
+import { attachEpisodesToSeries } from '@/lib/episode-attach';
+import { checkOfficialYouTubeVideos } from '@/lib/official-content-guard';
 
 interface ConfirmEpisode {
   episodeNumber: number;
@@ -38,6 +40,14 @@ interface ConfirmBody {
     playlistId?: string;
     playlistUrl?: string;
   };
+  /**
+   * Adjuntar los episodios a una serie del catalogo que ya existe, en vez de
+   * crear una serie nueva. Es la respuesta al 409 de duplicado: la ficha ya
+   * esta curada y lo unico que le falta es el reproductor.
+   *
+   * Solo ADMIN: un COLLABORATOR nunca puede escribir sobre el catalogo curado.
+   */
+  targetSeriesId?: number;
 }
 
 export async function POST(request: NextRequest) {
@@ -102,6 +112,104 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Politica de contenido oficial: todos los videos de la playlist tienen
+    // que pertenecer a un canal de la lista blanca (verificado contra
+    // YouTube, no contra embedChannelUrl del body). Un solo video ajeno
+    // rechaza el import entero. Se corre ACA, antes de bifurcar entre
+    // "adjuntar a una ficha existente" y "crear serie nueva": la politica
+    // aplica a los dos caminos por igual — adjuntar a una ficha ya curada no
+    // puede ser una forma de esquivar el filtro. Ver
+    // docs/politica-contenido-oficial.md.
+    const allVideoIds = body.seasons.flatMap((s) =>
+      s.episodes.map((ep) => ep.videoId)
+    );
+    const officialCheck = await checkOfficialYouTubeVideos(allVideoIds);
+    if (!officialCheck.ok) {
+      return NextResponse.json(
+        {
+          error: officialCheck.error,
+          offenders: officialCheck.offenders.map((o) => o.videoId),
+        },
+        { status: officialCheck.status }
+      );
+    }
+
+    // ── Camino "adjuntar a una ficha existente" ───────────────────────
+    // Es la salida al 409 de mas abajo: en vez de rebotar la importacion
+    // porque la serie ya esta en el catalogo, se le cuelgan los episodios
+    // a esa ficha. Requiere que el cliente lo pida explicitamente: nunca
+    // se fusiona solo.
+    if (body.targetSeriesId !== undefined) {
+      if (isCollaborator) {
+        return NextResponse.json(
+          {
+            error: 'Un colaborador no puede escribir sobre el catálogo curado.',
+          },
+          { status: 403 }
+        );
+      }
+
+      const targetId = Number(body.targetSeriesId);
+      if (!Number.isFinite(targetId) || targetId <= 0) {
+        return NextResponse.json(
+          { error: 'targetSeriesId inválido.' },
+          { status: 400 }
+        );
+      }
+
+      const target = await prisma.series.findUnique({
+        where: { id: targetId },
+        select: { id: true, title: true, origin: true, year: true },
+      });
+      if (!target) {
+        return NextResponse.json(
+          { error: 'La serie destino no existe.' },
+          { status: 404 }
+        );
+      }
+      if (target.origin !== 'CURATED') {
+        return NextResponse.json(
+          { error: 'La serie destino debe ser del catálogo curado.' },
+          { status: 422 }
+        );
+      }
+
+      const attached = await prisma.$transaction(
+        (tx) =>
+          attachEpisodesToSeries(
+            tx,
+            target.id,
+            body.seasons.map((season) => ({
+              seasonNumber: season.seasonNumber,
+              episodes: season.episodes.map((ep) => ({
+                episodeNumber: ep.episodeNumber,
+                title: ep.title?.trim() || null,
+                embedUrl: ep.embedUrl,
+                embedPlatform: ep.embedPlatform,
+                embedVideoId: ep.videoId,
+                embedChannelName: ep.embedChannelName || null,
+                embedChannelUrl: ep.embedChannelUrl || null,
+                airDate: parseAirDate(ep.publishedAt),
+              })),
+            })),
+            target.year
+          ),
+        // Mismo margen que el endpoint de link: una serie tailandesa parte
+        // cada capitulo en 4 videos y puede traer mas de 200 episodios.
+        { maxWait: 15000, timeout: 60000 }
+      );
+
+      revalidatePath('/admin/series');
+      revalidatePath('/catalogo');
+      revalidatePath('/ver');
+
+      return NextResponse.json({
+        seriesId: target.id,
+        title: target.title,
+        attached,
+      });
+    }
+
     // Dedupe por título dentro del catálogo curado: re-importar la misma
     // playlist (o importar algo ya existente) creaba una serie CURATED gemela.
     const existingSeries = await prisma.series.findFirst({
@@ -114,7 +222,7 @@ export async function POST(request: NextRequest) {
     if (existingSeries) {
       return NextResponse.json(
         {
-          error: `Ya existe una serie "${existingSeries.title}" en el catálogo. Editála para agregar episodios en vez de reimportar.`,
+          error: `Ya existe una serie "${existingSeries.title}" en el catálogo.`,
           existingSeriesId: existingSeries.id,
         },
         { status: 409 }

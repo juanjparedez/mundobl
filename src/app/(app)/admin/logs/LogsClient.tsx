@@ -10,7 +10,6 @@ import {
   Avatar,
   Tag,
   Space,
-  Modal,
   InputNumber,
   Statistic,
   Card,
@@ -23,7 +22,11 @@ import {
   BugOutlined,
   BarChartOutlined,
 } from '@ant-design/icons';
-import { DataTable, type DataTableColumn } from '@/components/design-system';
+import {
+  DataTable,
+  PanelModal,
+  type DataTableColumn,
+} from '@/components/design-system';
 import { AdminNav } from '../AdminNav';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -579,11 +582,12 @@ export function LogsClient() {
             </Space>
           </div>
 
-          <Modal
+          <PanelModal
             title={t('adminLogs.cleanModalTitle')}
+            size="md"
             open={cleanModalOpen}
             onOk={handleCleanOldLogs}
-            onCancel={() => setCleanModalOpen(false)}
+            onClose={() => setCleanModalOpen(false)}
             okText={t('adminLogs.cleanModalOk')}
             cancelText={t('adminLogs.cleanModalCancel')}
             okButtonProps={{ danger: true }}
@@ -606,7 +610,7 @@ export function LogsClient() {
                 })}
               </p>
             </div>
-          </Modal>
+          </PanelModal>
 
           {isMobile ? (
             <div className="logs-cards">

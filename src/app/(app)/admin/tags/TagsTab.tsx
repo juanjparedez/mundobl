@@ -7,7 +7,6 @@ import {
   Popconfirm,
   Space,
   Tag,
-  Modal,
   Form,
   Radio,
   Alert,
@@ -24,7 +23,7 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { AdminTableToolbar } from '@/components/admin/AdminTableToolbar/AdminTableToolbar';
-import { DataTable } from '@/components/design-system';
+import { DataTable, PanelModal } from '@/components/design-system';
 
 export interface TagType {
   id: number;
@@ -314,11 +313,12 @@ export function TagsTab({ onTagsUpdated }: TagsTabProps) {
         showTotal={(total) => `${total} tags en total`}
       />
 
-      <Modal
+      <PanelModal
         title={t('adminTags.modalEditTitle')}
+        size="sm"
         open={editModalOpen}
         onOk={() => form.submit()}
-        onCancel={() => {
+        onClose={() => {
           setEditModalOpen(false);
           setEditingTag(null);
           form.resetFields();
@@ -335,13 +335,14 @@ export function TagsTab({ onTagsUpdated }: TagsTabProps) {
             <Input placeholder={t('adminTags.hintName')} />
           </Form.Item>
         </Form>
-      </Modal>
+      </PanelModal>
 
-      <Modal
+      <PanelModal
         title={t('adminTags.modalMergeTitle')}
+        size="sm"
         open={mergeModalOpen}
         onOk={handleMerge}
-        onCancel={() => {
+        onClose={() => {
           setMergeModalOpen(false);
           setMergeTarget(null);
         }}
@@ -376,7 +377,7 @@ export function TagsTab({ onTagsUpdated }: TagsTabProps) {
             })}
           </Space>
         </Radio.Group>
-      </Modal>
+      </PanelModal>
     </div>
   );
 }

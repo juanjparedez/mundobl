@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { Button, Input, Modal, Form, Popconfirm, Space, Tag } from 'antd';
+import { Button, Input, Form, Popconfirm, Space, Tag } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
@@ -11,7 +11,7 @@ import { AdminPageHero } from '@/components/admin/AdminPageHero/AdminPageHero';
 import { AdminTableToolbar } from '@/components/admin/AdminTableToolbar/AdminTableToolbar';
 import { AdminNav } from '../AdminNav';
 import '../admin.css';
-import { DataTable } from '@/components/design-system';
+import { DataTable, PanelModal } from '@/components/design-system';
 
 const { TextArea } = Input;
 
@@ -256,18 +256,18 @@ export default function UniversesAdminPage() {
           pageSize={20}
         />
 
-        <Modal
+        <PanelModal
           title={
             editingUniverse
               ? t('adminUniverses.modalEditTitle')
               : t('adminUniverses.modalNewTitle')
           }
+          size="sm"
           open={modalOpen}
-          onCancel={handleCloseModal}
+          onClose={handleCloseModal}
           onOk={() => form.submit()}
           okText={t('adminUniverses.save')}
           cancelText={t('adminUniverses.cancel')}
-          maskClosable={false}
           forceRender
         >
           <Form form={form} layout="vertical" onFinish={handleSubmit}>
@@ -301,7 +301,7 @@ export default function UniversesAdminPage() {
               <Input placeholder={t('adminUniverses.hintImageUrl')} />
             </Form.Item>
           </Form>
-        </Modal>
+        </PanelModal>
       </div>
     </>
   );

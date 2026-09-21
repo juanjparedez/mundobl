@@ -9,9 +9,12 @@ import { AdminNav } from '../AdminNav';
 import { SeriesMetadataTab } from './SeriesMetadataTab';
 import { TagsTab } from './TagsTab';
 import { GenresTab } from './GenresTab';
+import { BasedOnManager } from '@/components/admin/BasedOnManager/BasedOnManager';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 import '../admin.css';
 
 export function TagsAdminClient() {
+  const { t } = useLocale();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -29,6 +32,11 @@ export function TagsAdminClient() {
   };
 
   const items = [
+    {
+      key: 'based-on',
+      label: t('seriesForm.fieldBasedOn'),
+      children: <BasedOnManager />,
+    },
     {
       key: 'series',
       label: (

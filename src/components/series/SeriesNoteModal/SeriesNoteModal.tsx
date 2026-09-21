@@ -112,6 +112,7 @@ export function SeriesNoteModal({
 
   return (
     <Modal
+      className="series-note-modal"
       title={
         <span className="series-note-modal__title">
           <LockOutlined /> {t('seriesNote.title')}

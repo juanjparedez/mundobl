@@ -18,8 +18,29 @@
 }
 
 .series-note-modal__meta {
-  margin: var(--spacing-sm, 12px) 0 0 0;
+  margin: var(--spacing-lg) 0 0;
   color: var(--text-secondary);
   font-size: 0.75rem;
   text-align: right;
+}
+
+.series-note-modal .ant-modal-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
+}
+
+.series-note-modal .ant-modal-footer .ant-btn + .ant-btn {
+  margin-inline-start: 0;
+}
+
+.series-note-modal__title {
+  flex-wrap: wrap;
+  padding-inline-end: var(--spacing-md);
+}
+
+.series-note-modal__label {
+  overflow-wrap: anywhere;
 }
