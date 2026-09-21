@@ -2547,7 +2547,11 @@ const de = {
     "markWatched": "Ich habe es gesehen",
     "markUnwatched": "Als nicht gesehen markieren",
     "markedWatched": "Du hast \"{title}\" als gesehen markiert",
-    "noEpisodes": "Dieser Titel hat keine Episoden geladen: er wird auf einmal als abgeschlossen markiert."
+    "noEpisodes": "Dieser Titel hat keine Episoden geladen: er wird auf einmal als abgeschlossen markiert.",
+    "notesTitle": "Private Notizen",
+    "episodeNote": "Notiz für {code}",
+    "seriesNote": "Seriennotiz",
+    "notesHintNoEpisode": "Markiere eine Episode als gesehen, um eine Notiz hinzuzufügen."
   },
   "posterPlaceholder": {
     "noImage": "Kein Bild"

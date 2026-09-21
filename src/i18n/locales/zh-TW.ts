@@ -2547,7 +2547,11 @@ const zhTW = {
     "markWatched": "我已觀看",
     "markUnwatched": "標記為未觀看",
     "markedWatched": "您已將「{title}」標記為已觀看",
-    "noEpisodes": "此劇集未載入任何集數：將一次性標記為已完成。"
+    "noEpisodes": "此劇集未載入任何集數：將一次性標記為已完成。",
+    "notesTitle": "私人筆記",
+    "episodeNote": "關於 {code} 的筆記",
+    "seriesNote": "劇集筆記",
+    "notesHintNoEpisode": "將劇集標記為已觀看即可新增筆記。"
   },
   "posterPlaceholder": {
     "noImage": "無圖片"

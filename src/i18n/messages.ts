@@ -2543,6 +2543,10 @@ export type TranslationShape = {
     markUnwatched: string;
     markedWatched: string;
     noEpisodes: string;
+    notesTitle: string;
+    episodeNote: string;
+    seriesNote: string;
+    notesHintNoEpisode: string;
   };
   posterPlaceholder: {
     noImage: string;
@@ -5727,6 +5731,10 @@ const es: TranslationShape = {
     markedWatched: 'Marcaste "{title}" como vista',
     noEpisodes:
       'Esta ficha no tiene episodios cargados: se marca completa de una vez.',
+    notesTitle: 'Notas privadas',
+    episodeNote: 'Nota del {code}',
+    seriesNote: 'Nota de la serie',
+    notesHintNoEpisode: 'Marcá un episodio como visto para anotarlo.',
   },
   posterPlaceholder: {
     noImage: 'Sin imagen',
@@ -8922,6 +8930,10 @@ const en: TranslationShape = {
     markedWatched: 'You marked "{title}" as watched',
     noEpisodes:
       'This title has no episodes loaded: it gets marked complete in one go.',
+    notesTitle: 'Private notes',
+    episodeNote: 'Note for {code}',
+    seriesNote: 'Series note',
+    notesHintNoEpisode: 'Mark an episode as watched to add a note.',
   },
   posterPlaceholder: {
     noImage: 'No image',

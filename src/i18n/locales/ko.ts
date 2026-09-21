@@ -2547,7 +2547,11 @@ const ko = {
     "markWatched": "시청 완료",
     "markUnwatched": "시청 완료 해제",
     "markedWatched": "\"{title}\"을(를) 시청 완료로 표시했습니다",
-    "noEpisodes": "이 작품은 에피소드가 없습니다: 한 번에 완료로 표시됩니다."
+    "noEpisodes": "이 작품은 에피소드가 없습니다: 한 번에 완료로 표시됩니다.",
+    "notesTitle": "비공개 메모",
+    "episodeNote": "{code}에 대한 메모",
+    "seriesNote": "시리즈 메모",
+    "notesHintNoEpisode": "메모를 추가하려면 에피소드를 시청 완료로 표시하세요."
   },
   "posterPlaceholder": {
     "noImage": "이미지 없음"
