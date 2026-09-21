@@ -1,17 +1,20 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Progress, Tag, Select, Badge } from 'antd';
-import { useSession } from 'next-auth/react';
+import { Select, Badge, Button } from 'antd';
+import { EyeOutlined } from '@ant-design/icons';
+import { useSession, signIn } from 'next-auth/react';
 import { WATCH_STATUS, WATCH_STATUS_COLORS } from '@/constants/series';
 import type { WatchStatusValue } from '@/constants/series';
 import { useSeriesUserStatus } from './SeriesUserStatusProvider';
 import { WatchProgressStepper } from './WatchProgressStepper/WatchProgressStepper';
+import { ActionCard } from '@/components/design-system';
 import './ViewStatusToggle.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { useMessage } from '@/hooks/useMessage';
 import { trackFunnel } from '@/lib/analytics';
+import { savePendingTrack } from '@/lib/pending-track';
 
 type AntStatusColor =
   | 'default'
@@ -46,10 +49,10 @@ export function ViewStatusToggle({
   const message = useMessage();
   const { t } = useLocale();
   const { data: session } = useSession();
-  const { seriesStatus, episodeStatus, loaded, version } =
-    useSeriesUserStatus();
+  const { seriesStatus, loaded, version } = useSeriesUserStatus();
   const [status, setStatus] = useState<WatchStatusValue>('SIN_VER');
   const [isUpdating, setIsUpdating] = useState(false);
+  const [pendingEpisodeId, setPendingEpisodeId] = useState<number | null>(null);
 
   useEffect(() => {
     if (loaded) setStatus(seriesStatus as WatchStatusValue);
@@ -63,27 +66,6 @@ export function ViewStatusToggle({
     ABANDONADA: t('viewStatusToggle.abandonada'),
     RETOMAR: t('viewStatusToggle.retomar'),
   };
-
-  // Calcular progreso de episodios vistos
-  const calculateProgress = () => {
-    let totalEpisodes = 0;
-    let watchedEpisodes = 0;
-
-    seasons.forEach((season) => {
-      if (season.episodes) {
-        totalEpisodes += season.episodes.length;
-        watchedEpisodes += season.episodes.filter(
-          (ep) => episodeStatus[ep.id] === 'VISTA'
-        ).length;
-      }
-    });
-
-    return { totalEpisodes, watchedEpisodes };
-  };
-
-  const { totalEpisodes, watchedEpisodes } = calculateProgress();
-  const progressPercent =
-    totalEpisodes > 0 ? Math.round((watchedEpisodes / totalEpisodes) * 100) : 0;
 
   // Aplanado y ordenado para el stepper (T06): las temporadas ya vienen
   // ordenadas por seasonNumber y los episodios por episodeNumber desde
@@ -131,27 +113,43 @@ export function ViewStatusToggle({
     }
   };
 
+  const handleStartTracking = () => {
+    trackFunnel('track_cta_click', { where: 'series_anon' });
+    savePendingTrack({
+      seriesId,
+      upToEpisodeId: pendingEpisodeId,
+      createdAt: Date.now(),
+    });
+    void signIn('google', { callbackUrl: window.location.pathname });
+  };
+
   if (!session?.user) {
     return (
-      <div className="view-status-toggle">
-        <Tag color={WATCH_STATUS_COLORS[status]}>
-          {watchStatusLabels[status] ?? status}
-        </Tag>
-        {totalEpisodes > 0 && (
-          <div className="view-status-toggle__progress">
-            <Progress
-              percent={progressPercent}
-              size="small"
-              status={progressPercent === 100 ? 'success' : 'active'}
-              format={() =>
-                interpolateMessage(t('viewStatusToggle.episodesUnit'), {
-                  watched: String(watchedEpisodes),
-                  total: String(totalEpisodes),
-                })
-              }
+      <div className="view-status-toggle view-status-toggle--anon">
+        <ActionCard
+          icon={<EyeOutlined />}
+          title={t('trackCta.title')}
+          description={t('trackCta.subtitle')}
+        />
+        {orderedEpisodes.length > 0 && (
+          <div className="view-status-toggle__anon-stepper">
+            <span className="view-status-toggle__anon-stepper-label">
+              {t('trackCta.chooseEpisode')}
+            </span>
+            <WatchProgressStepper
+              seriesId={seriesId}
+              seriesTitle={seriesTitle}
+              episodes={orderedEpisodes}
+              source="stepper"
+              compact
+              localOnly
+              onLocalChange={setPendingEpisodeId}
             />
           </div>
         )}
+        <Button type="primary" block onClick={handleStartTracking}>
+          {t('trackCta.button')}
+        </Button>
       </div>
     );
   }
