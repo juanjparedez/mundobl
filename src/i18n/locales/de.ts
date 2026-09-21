@@ -333,7 +333,11 @@ const de = {
     "light": "Hell",
     "profile": "Mein Profil",
     "stats": "Statistiken",
-    "runtime": "Runtime"
+    "runtime": "Runtime",
+    "ver": "Serien ansehen",
+    "platforms": "Plattformen & Abos",
+    "glossary": "Kulturelles Glossar",
+    "about": "Über MundoBL"
   },
   "profile": {
     "loginRequired": "Melden Sie sich an, um Ihr Profil anzuzeigen",
@@ -618,7 +622,8 @@ const de = {
     "logout": "Abmelden",
     "settings": "Einstellungen",
     "more": "Mehr",
-    "ver": "Ansehen",
+    "watch": "Ansehen",
+    "profile": "Profil",
     "accentColor": "Akzentfarbe",
     "theme": "Design",
     "switchToLight": "Zum hellen Modus wechseln",

@@ -333,7 +333,11 @@ const it = {
     "light": "Chiara",
     "profile": "Il mio profilo",
     "stats": "Statistiche",
-    "runtime": "Runtime"
+    "runtime": "Runtime",
+    "ver": "Guarda serie",
+    "platforms": "Piattaforme e piani",
+    "glossary": "Glossario culturale",
+    "about": "Chi siamo"
   },
   "profile": {
     "loginRequired": "Accedi per visualizzare il tuo profilo",
@@ -618,7 +622,8 @@ const it = {
     "logout": "Esci",
     "settings": "Impostazioni",
     "more": "Altro",
-    "ver": "Guarda",
+    "watch": "Guarda",
+    "profile": "Profilo",
     "accentColor": "Colore accento",
     "theme": "Tema",
     "switchToLight": "Passa alla modalità chiara",
