@@ -2497,6 +2497,13 @@ export type TranslationShape = {
     ariaNext: string;
     ariaPrev: string;
   };
+  trackCta: {
+    title: string;
+    subtitle: string;
+    button: string;
+    applied: string;
+    chooseEpisode: string;
+  };
   spoilerFreeProvider: {
     useSpoilerFreeError: string;
   };
@@ -5629,6 +5636,13 @@ const es: TranslationShape = {
     notYet: 'Todavía no',
     ariaNext: 'Marcar el siguiente episodio como visto',
     ariaPrev: 'Desmarcar el último episodio visto',
+  },
+  trackCta: {
+    title: '¿La estás viendo?',
+    subtitle: 'Marcá por qué episodio vas y seguila desde tu lista.',
+    button: 'Empezar a seguir',
+    applied: 'Listo, ya estás siguiendo {title}',
+    chooseEpisode: '¿Por qué episodio vas?',
   },
   spoilerFreeProvider: {
     useSpoilerFreeError:
@@ -8773,6 +8787,13 @@ const en: TranslationShape = {
     notYet: 'Not yet',
     ariaNext: 'Mark next episode as watched',
     ariaPrev: 'Unmark last watched episode',
+  },
+  trackCta: {
+    title: 'Are you watching this?',
+    subtitle: "Mark which episode you're on and follow it from your list.",
+    button: 'Start tracking',
+    applied: "You're all set, now tracking {title}",
+    chooseEpisode: 'Which episode are you on?',
   },
   spoilerFreeProvider: {
     useSpoilerFreeError:

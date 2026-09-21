@@ -2502,6 +2502,13 @@ const it = {
     "ariaNext": "Segna prossimo episodio come visto",
     "ariaPrev": "Deseleziona ultimo episodio visto"
   },
+  "trackCta": {
+    "title": "Stai guardando?",
+    "subtitle": "Segna a che episodio sei e seguilo dalla tua lista.",
+    "button": "Inizia a seguire",
+    "applied": "Tutto pronto, ora stai seguendo {title}",
+    "chooseEpisode": "A che episodio sei?"
+  },
   "spoilerFreeProvider": {
     "useSpoilerFreeError": "useSpoilerFree deve essere usato all'interno di un SpoilerFreeProvider"
   },
