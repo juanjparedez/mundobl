@@ -3053,6 +3053,36 @@ const zhTW = {
     "finishTitle": "問答遊戲完成！",
     "playAgainButton": "再玩一次",
     "bestScoreLabel": "您的最佳成績：{score} 題（共 {total} 題）"
+  },
+  "airDayStatus": {
+    "today": "今日新集數",
+    "delayed1": "昨日播出（落後1天）",
+    "delayed2": "落後2天",
+    "delayedMany": "落後{days}天",
+    "tagToday": "今天",
+    "tagDelayed": "+{days}天",
+    "airDaysTooltip": "播出日：{days}（{status}）"
+  },
+  "estrenos": {
+    "title": "本週播出節目",
+    "subtitle": "根據我們記錄的播出日期。我們不確認時間，也不確認劇集是否已上線。",
+    "disclaimer": "此時間表涵蓋精選目錄中目前正在播出的節目。已完結超過四個月的節目將會移除。",
+    "seeAll": "查看完整一週",
+    "today": "今天",
+    "moreCount": "還有{count}個",
+    "emptyDay": "本日無節目",
+    "emptyTitle": "目前沒有節目播出",
+    "emptyDescription": "目前沒有任何目錄劇集有記錄的播出日期。當新一季開始時，它會顯示在這裡。",
+    "emptyAction": "前往目錄",
+    "dayMonday": "星期一",
+    "dayTuesday": "星期二",
+    "dayWednesday": "星期三",
+    "dayThursday": "星期四",
+    "dayFriday": "星期五",
+    "daySaturday": "星期六",
+    "daySunday": "星期日",
+    "subscribeTooltip": "通知我此節目",
+    "unsubscribeTooltip": "停止通知我"
   }
 } satisfies TranslationShape;
 

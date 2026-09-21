@@ -3053,6 +3053,36 @@ const it = {
     "finishTitle": "Trivia completata!",
     "playAgainButton": "Gioca di nuovo",
     "bestScoreLabel": "Il tuo miglior punteggio: {score} su {total}"
+  },
+  "airDayStatus": {
+    "today": "Nuovo episodio oggi",
+    "delayed1": "Trasmesso ieri (1g indietro)",
+    "delayed2": "2 giorni indietro",
+    "delayedMany": "{days} giorni indietro",
+    "tagToday": "Oggi",
+    "tagDelayed": "+{days}g",
+    "airDaysTooltip": "Giorno/i di trasmissione: {days} ({status})"
+  },
+  "estrenos": {
+    "title": "Cosa va in onda questa settimana",
+    "subtitle": "Basato sul giorno di trasmissione che abbiamo in archivio. Non confermiamo gli orari, né che l'episodio sia già disponibile.",
+    "disclaimer": "Questo programma copre le serie attualmente in onda dal catalogo curato. Le serie terminate più di quattro mesi fa vengono rimosse.",
+    "seeAll": "Vedi la settimana completa",
+    "today": "Oggi",
+    "moreCount": "+{count} altro",
+    "emptyDay": "Niente questo giorno",
+    "emptyTitle": "Nessuna serie attualmente in onda",
+    "emptyDescription": "Al momento nessuna serie del catalogo ha un giorno di trasmissione in archivio. Quando inizia una nuova stagione, appare qui.",
+    "emptyAction": "Vai al catalogo",
+    "dayMonday": "Lunedì",
+    "dayTuesday": "Martedì",
+    "dayWednesday": "Mercoledì",
+    "dayThursday": "Giovedì",
+    "dayFriday": "Venerdì",
+    "daySaturday": "Sabato",
+    "daySunday": "Domenica",
+    "subscribeTooltip": "Notificami questo show",
+    "unsubscribeTooltip": "Smetti di notificarmi"
   }
 } satisfies TranslationShape;
 
