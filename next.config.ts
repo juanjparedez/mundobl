@@ -80,7 +80,7 @@ const nextConfig: NextConfig = {
   // iframes legítimos (YouTube embed, etc.) no llenen la consola de warnings.
   async headers() {
     // Hosts de embeds soportados (embed-helpers.ts: 8 plataformas).
-    const frameSrc = [
+    const frameSrcOrigins = [
       "'self'",
       'https://www.youtube.com',
       'https://www.youtube-nocookie.com',
@@ -94,7 +94,14 @@ const nextConfig: NextConfig = {
       'https://twitter.com',
       'https://x.com',
       'https://open.spotify.com',
-    ].join(' ');
+    ];
+    const frameSrc = frameSrcOrigins.join(' ');
+    // Mismos hosts que frame-src, pero en la sintaxis de allowlist de
+    // Permissions-Policy: 'self' (CSP) -> self (sin comillas), el resto
+    // entre comillas dobles.
+    const sensorAllowlist = frameSrcOrigins
+      .map((origin) => (origin === "'self'" ? 'self' : `"${origin}"`))
+      .join(' ');
     const isDev = process.env.NODE_ENV === 'development';
     // Next.js inyecta scripts inline de bootstrap y antd inyecta estilos inline;
     // por eso 'unsafe-inline'. 'unsafe-eval' solo en dev (Next dev usa eval en HMR).
@@ -137,8 +144,19 @@ const nextConfig: NextConfig = {
             key: 'Permissions-Policy',
             value: [
               'compute-pressure=(self "https://www.youtube-nocookie.com" "https://www.youtube.com")',
-              'accelerometer=()',
-              'gyroscope=()',
+              // EmbedPlayer.tsx pide accelerometer+gyroscope en el `allow`
+              // del iframe para TODAS las plataformas (asi lo generan los
+              // embeds oficiales, ej. YouTube). Una Permissions-Policy con
+              // allowlist vacia (`=()`) no es "silenciar el warning": es
+              // prohibir el feature a TODO el documento, y eso incluye
+              // cualquier delegacion a un iframe hijo por mas que su propio
+              // `allow` lo pida. Con eso denegado, YouTube no puede leer la
+              // rotacion del telefono via sensores y el video en pantalla
+              // completa se queda con el tamaño de antes de rotar en vez de
+              // ocupar toda la pantalla. Se delega a los mismos hosts que
+              // frame-src (ya son de confianza para el CSP).
+              `accelerometer=(${sensorAllowlist})`,
+              `gyroscope=(${sensorAllowlist})`,
               'magnetometer=()',
               'usb=()',
             ].join(', '),
