@@ -2506,6 +2506,13 @@ const ja = {
     "ariaNext": "次のエピソードを視聴済みにする",
     "ariaPrev": "最後に視聴したエピソードのマークを外す"
   },
+  "trackCta": {
+    "title": "これ見てる？",
+    "subtitle": "視聴中のエピソードをマークして、リストからフォローしよう。",
+    "button": "トラッキングを開始",
+    "applied": "設定完了、{title}をトラッキング中",
+    "chooseEpisode": "何話まで見た？"
+  },
   "spoilerFreeProvider": {
     "useSpoilerFreeError": "useSpoilerFreeはSpoilerFreeProvider内で使用する必要があります"
   },
