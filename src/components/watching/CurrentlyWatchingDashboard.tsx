@@ -32,7 +32,13 @@ import { SeriesNoteModal } from '@/components/series/SeriesNoteModal/SeriesNoteM
 import { getSeriesUrl } from '@/lib/slug';
 import './CurrentlyWatchingDashboard.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import type { TranslationKey } from '@/i18n/messages';
 import { interpolateMessage } from '@/lib/i18n-format';
+import {
+  getAirDayStatus,
+  type AirDayStatus,
+  type AirDayStatusType,
+} from '@/lib/airing-schedule';
 import { trackFunnel } from '@/lib/analytics';
 import { PosterPlaceholder } from '@/components/common/PosterPlaceholder/PosterPlaceholder';
 
@@ -71,87 +77,31 @@ interface WatchingSeriesData {
 
 type SortOption = 'lastWatched' | 'name' | 'start' | 'next';
 
-interface AirDayStatus {
-  type: 'today' | 'delayed_1' | 'delayed_2' | 'delayed_3_plus';
-  color: 'success' | 'warning' | 'error';
-  daysDiff: number;
-}
-
-const DAY_MAP: Record<string, number> = {
-  domingo: 0,
-  dom: 0,
-  sunday: 0,
-  sun: 0,
-  lunes: 1,
-  lun: 1,
-  monday: 1,
-  mon: 1,
-  martes: 2,
-  mar: 2,
-  tuesday: 2,
-  tue: 2,
-  miercoles: 3,
-  miércoles: 3,
-  mie: 3,
-  mié: 3,
-  wednesday: 3,
-  wed: 3,
-  jueves: 4,
-  jue: 4,
-  thursday: 4,
-  thu: 4,
-  viernes: 5,
-  vie: 5,
-  friday: 5,
-  fri: 5,
-  sabado: 6,
-  sábado: 6,
-  sab: 6,
-  sáb: 6,
-  saturday: 6,
-  sat: 6,
+// El semaforo de emision vive en `src/lib/airing-schedule.ts` y devuelve solo datos.
+// Color y texto se resuelven aca: el color es presentacion y el texto va por i18n.
+const AIR_STATUS_COLOR: Record<
+  AirDayStatusType,
+  'success' | 'warning' | 'error'
+> = {
+  today: 'success',
+  delayed_1: 'warning',
+  delayed_2: 'warning',
+  delayed_3_plus: 'error',
 };
 
-function getAirDayStatus(
-  airDays: string | null | undefined,
-  isFullyWatched: boolean
-): AirDayStatus | null {
-  if (!airDays || isFullyWatched) return null;
+const STATUS_KEY = {
+  today: 'airDayStatus.today',
+  delayed_1: 'airDayStatus.delayed1',
+  delayed_2: 'airDayStatus.delayed2',
+  delayed_3_plus: 'airDayStatus.delayedMany',
+} as const satisfies Record<AirDayStatusType, TranslationKey>;
 
-  const rawTokens = airDays
-    .toLowerCase()
-    .split(/[,;\s]+/)
-    .map((s) => s.trim())
-    .filter(Boolean);
-
-  const targetDays: number[] = [];
-  for (const token of rawTokens) {
-    if (token in DAY_MAP) {
-      targetDays.push(DAY_MAP[token]);
-    }
-  }
-
-  if (targetDays.length === 0) return null;
-
-  const today = new Date().getDay(); // 0 = Sunday .. 6 = Saturday
-
-  // Calcular la menor cantidad de días transcurridos desde el día de emisión más reciente
-  let minElapsed = 7;
-  for (const day of targetDays) {
-    const elapsed = (today - day + 7) % 7;
-    if (elapsed < minElapsed) {
-      minElapsed = elapsed;
-    }
-  }
-
-  // Los textos se resuelven en el componente via i18n; aca solo el dato.
-  if (minElapsed === 0) return { type: 'today', color: 'success', daysDiff: 0 };
-  if (minElapsed === 1)
-    return { type: 'delayed_1', color: 'warning', daysDiff: 1 };
-  if (minElapsed === 2)
-    return { type: 'delayed_2', color: 'warning', daysDiff: 2 };
-  return { type: 'delayed_3_plus', color: 'error', daysDiff: minElapsed };
-}
+const AIR_STATUS_DOT: Record<AirDayStatusType, string> = {
+  today: '\u{1F7E2}',
+  delayed_1: '\u{1F7E1}',
+  delayed_2: '\u{1F7E1}',
+  delayed_3_plus: '\u{1F534}',
+};
 
 /** "T1·E4": mismo formato que el stepper de la ficha. */
 function episodeCode(ep: { seasonNumber: number; episodeNumber: number }) {
@@ -162,6 +112,22 @@ export function CurrentlyWatchingDashboard() {
   const { data: session } = useSession();
   const message = useMessage();
   const { t } = useLocale();
+
+  // Etiquetas del semaforo de emision. `airing-schedule.ts` devuelve solo `type` y
+  // `daysDiff`; el texto se arma aca porque este componente esta traducido a 10 idiomas.
+  const airStatusLabel = useCallback(
+    (status: AirDayStatus) =>
+      t(STATUS_KEY[status.type], { days: status.daysDiff }),
+    [t]
+  );
+
+  const airStatusTag = useCallback(
+    (status: AirDayStatus) =>
+      status.type === 'today'
+        ? t('airDayStatus.tagToday')
+        : t('airDayStatus.tagDelayed', { days: status.daysDiff }),
+    [t]
+  );
   const [loading, setLoading] = useState(true);
   const [notAuthenticated, setNotAuthenticated] = useState(false);
   const [watchingSeries, setWatchingSeries] = useState<WatchingSeriesData[]>(
@@ -643,31 +609,18 @@ export function CurrentlyWatchingDashboard() {
                       )}
                       {airStatus && (
                         <Tooltip
-                          title={interpolateMessage(
-                            t('watchingDashboard.airTooltip'),
-                            {
-                              days: item.series.airDays ?? '',
-                              status:
-                                airStatus.daysDiff === 0
-                                  ? t('watchingDashboard.airToday')
-                                  : interpolateMessage(
-                                      t('watchingDashboard.airDelayed'),
-                                      { n: String(airStatus.daysDiff) }
-                                    ),
-                            }
-                          )}
+                          title={t('airDayStatus.airDaysTooltip', {
+                            days: item.series.airDays ?? '',
+                            status: airStatusLabel(airStatus),
+                          })}
                         >
                           <Tag
-                            color={airStatus.color}
+                            color={AIR_STATUS_COLOR[airStatus.type]}
                             className={`watching-card__air-tag watching-card__air-tag--${airStatus.type}`}
                           >
                             <CalendarOutlined />{' '}
-                            {airStatus.daysDiff === 0
-                              ? t('watchingDashboard.airTodayTag')
-                              : interpolateMessage(
-                                  t('watchingDashboard.airDelayedTag'),
-                                  { n: String(airStatus.daysDiff) }
-                                )}
+                            {AIR_STATUS_DOT[airStatus.type]}{' '}
+                            {airStatusTag(airStatus)}
                           </Tag>
                         </Tooltip>
                       )}

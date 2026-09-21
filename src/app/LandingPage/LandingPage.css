@@ -332,6 +332,26 @@
 }
 
 /* ── Novedades ── */
+/* Parrilla semanal de emision. Mismo ancho y respiro que el resto de las
+ * bandas de la landing; la grilla interna la resuelve WeeklySchedule.css. */
+.landing__estrenos {
+  padding: 24px var(--spacing-md);
+  max-width: 1320px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.landing__estrenos-link {
+  color: var(--primary-color);
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.landing__estrenos-link:hover {
+  text-decoration: underline;
+}
+
 .landing__novedades {
   padding: 24px var(--spacing-md);
   max-width: 1320px;
@@ -817,7 +837,8 @@
   width: 100%;
   max-width: 380px;
   background: color-mix(in srgb, var(--bg-container) 95%, #000);
-  border: 1px solid color-mix(in srgb, var(--primary-color) 35%, var(--border-color-secondary));
+  border: 1px solid
+    color-mix(in srgb, var(--primary-color) 35%, var(--border-color-secondary));
   border-radius: 16px;
   padding: 20px;
   box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
@@ -859,7 +880,11 @@
 
 .landing__tracker-card-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--primary-color), var(--primary-color-hover));
+  background: linear-gradient(
+    90deg,
+    var(--primary-color),
+    var(--primary-color-hover)
+  );
   border-radius: 999px;
 }
 
@@ -917,7 +942,8 @@
     color-mix(in srgb, #722ed1 10%, var(--bg-container)) 0%,
     var(--bg-container) 100%
   );
-  border: 1px solid color-mix(in srgb, #722ed1 30%, var(--border-color-secondary));
+  border: 1px solid
+    color-mix(in srgb, #722ed1 30%, var(--border-color-secondary));
   border-radius: var(--border-radius-lg);
   padding: 28px;
   display: flex;
@@ -959,7 +985,8 @@
     color-mix(in srgb, #fa8c16 10%, var(--bg-container)) 0%,
     var(--bg-container) 100%
   );
-  border: 1px solid color-mix(in srgb, #fa8c16 30%, var(--border-color-secondary));
+  border: 1px solid
+    color-mix(in srgb, #fa8c16 30%, var(--border-color-secondary));
   border-radius: var(--border-radius-lg);
   padding: 28px;
   display: flex;
@@ -1014,7 +1041,10 @@
   color: inherit;
   display: flex;
   flex-direction: column;
-  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s,
+    border-color 0.2s;
 }
 
 .landing__news-card:hover {
@@ -1107,12 +1137,15 @@
   flex-direction: column;
   gap: 10px;
   position: relative;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 }
 
 .landing__ecosystem-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--primary-color) 12%, transparent);
+  box-shadow: 0 8px 24px
+    color-mix(in srgb, var(--primary-color) 12%, transparent);
 }
 
 .landing__ecosystem-card-icon {
