@@ -1,15 +1,24 @@
 'use client';
 
-import { useEffect, useState, useTransition } from 'react';
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { Input, Select, Button } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import './PeopleFilters.css';
 
+export type PeopleSort = 'credits' | 'az' | 'za';
+
 export interface PeopleFiltersProps {
   /** Nacionalidades disponibles. Si viene vacio, no se muestra el filtro. */
   nationalities?: string[];
+  query: string;
+  onQueryChange: (value: string) => void;
+  sort: PeopleSort;
+  onSortChange: (value: PeopleSort) => void;
+  nationality?: string;
+  onNationalityChange: (value: string | undefined) => void;
+  /** Si hay algo que limpiar; decide si se muestra el boton. */
+  hasFilters: boolean;
+  onClear: () => void;
   /** Total de resultados, ya interpolado y traducido. */
   resultsLabel: string;
 }
@@ -17,65 +26,34 @@ export interface PeopleFiltersProps {
 /**
  * Filtros de los indices de personas.
  *
- * La busqueda y el orden viven en la URL (?q=&sort=&nationality=&page=) y el
- * filtrado ocurre en el servidor, no en el navegador: son 1186 actores y
- * mandarlos todos al cliente para filtrar ahi es justo el problema que tiene
- * hoy /catalogo. Ademas asi cada busqueda es un link compartible.
+ * Controlado por PeopleIndexShell, que tiene la lista completa en memoria y
+ * filtra ahi. Antes este componente empujaba ?q=&sort=&nationality=&page= al
+ * router y el filtrado ocurria en el servidor; eso hacia dinamicas las tres
+ * rutas y era el motivo de que cada visita costara un render y varias
+ * consultas. Sin round-trip tampoco hace falta el debounce que habia aca: el
+ * filtro corre sobre un array ya cargado. El shell sigue reflejando el estado
+ * en la URL con replaceState, asi que los links con ?q= siguen andando.
  */
 export function PeopleFilters({
   nationalities = [],
+  query,
+  onQueryChange,
+  sort,
+  onSortChange,
+  nationality,
+  onNationalityChange,
+  hasFilters,
+  onClear,
   resultsLabel,
 }: PeopleFiltersProps) {
   const { t } = useLocale();
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
-
-  const [term, setTerm] = useState(searchParams.get('q') ?? '');
-
-  // Si el usuario navega con atras/adelante, el input tiene que seguir a la URL.
-  useEffect(() => {
-    setTerm(searchParams.get('q') ?? '');
-  }, [searchParams]);
-
-  const push = (next: URLSearchParams) => {
-    // Cualquier cambio de filtro vuelve a la pagina 1: quedarse en la 7 con
-    // otro filtro suele dar una pagina vacia.
-    next.delete('page');
-    startTransition(() => {
-      router.push(`${pathname}?${next.toString()}`, { scroll: false });
-    });
-  };
-
-  const setParam = (key: string, value?: string) => {
-    const next = new URLSearchParams(searchParams.toString());
-    if (value) next.set(key, value);
-    else next.delete(key);
-    push(next);
-  };
-
-  // Debounce: no disparamos una query por tecla.
-  useEffect(() => {
-    const current = searchParams.get('q') ?? '';
-    if (term === current) return;
-    const id = setTimeout(() => setParam('q', term.trim() || undefined), 350);
-    return () => clearTimeout(id);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [term]);
-
-  const sort = searchParams.get('sort') ?? 'credits';
-  const nationality = searchParams.get('nationality') ?? undefined;
-  const hasFilters = Boolean(
-    searchParams.get('q') || nationality || searchParams.get('sort')
-  );
 
   return (
-    <div className="people-filters" data-pending={isPending || undefined}>
+    <div className="people-filters">
       <Input
         allowClear
-        value={term}
-        onChange={(e) => setTerm(e.target.value)}
+        value={query}
+        onChange={(e) => onQueryChange(e.target.value)}
         prefix={<SearchOutlined />}
         placeholder={t('peopleIndex.searchPlaceholder')}
         className="people-filters__search"
@@ -84,7 +62,7 @@ export function PeopleFilters({
 
       <Select
         value={sort}
-        onChange={(v) => setParam('sort', v === 'credits' ? undefined : v)}
+        onChange={onSortChange}
         aria-label={t('peopleIndex.sortLabel')}
         className="people-filters__sort"
         options={[
@@ -97,7 +75,7 @@ export function PeopleFilters({
       {nationalities.length > 0 && (
         <Select
           value={nationality}
-          onChange={(v) => setParam('nationality', v)}
+          onChange={(v) => onNationalityChange(v ?? undefined)}
           allowClear
           placeholder={t('peopleIndex.nationalityAll')}
           className="people-filters__nationality"
@@ -106,11 +84,7 @@ export function PeopleFilters({
       )}
 
       {hasFilters && (
-        <Button
-          type="link"
-          size="small"
-          onClick={() => startTransition(() => router.push(pathname))}
-        >
+        <Button type="link" size="small" onClick={onClear}>
           {t('peopleIndex.clearFilters')}
         </Button>
       )}
