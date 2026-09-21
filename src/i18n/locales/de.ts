@@ -2502,6 +2502,13 @@ const de = {
     "ariaNext": "Nächste Folge als gesehen markieren",
     "ariaPrev": "Zuletzt gesehene Folge entmarkieren"
   },
+  "trackCta": {
+    "title": "Schaust du das?",
+    "subtitle": "Markiere, bei welcher Episode du bist, und verfolge sie von deiner Liste aus.",
+    "button": "Verfolgung starten",
+    "applied": "Alles bereit, du verfolgst jetzt {title}",
+    "chooseEpisode": "Bei welcher Episode bist du?"
+  },
   "spoilerFreeProvider": {
     "useSpoilerFreeError": "useSpoilerFree muss innerhalb eines SpoilerFreeProvider verwendet werden"
   },

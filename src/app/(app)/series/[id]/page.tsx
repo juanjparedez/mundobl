@@ -29,6 +29,7 @@ import { WhereToWatch } from '@/components/common/WhereToWatch/WhereToWatch';
 import { SeriesSubscribeButton } from '@/components/series/SeriesSubscribeButton/SeriesSubscribeButton';
 import { SeriesSuggestionButton } from '@/components/series/SuggestionModal/SeriesSuggestionButton';
 import { SeriesUserStatusProvider } from '@/components/series/SeriesUserStatusProvider';
+import { PendingTrackApplier } from '@/components/series/PendingTrackApplier/PendingTrackApplier';
 import { EditSeriesFab } from './EditSeriesFab/EditSeriesFab';
 import { getSeriesUrl, getVerUrl, parseIdFromSlug } from '@/lib/slug';
 import type { TVSeries } from 'schema-dts';
@@ -242,6 +243,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
       />
       <div className="series-detail-page">
         <SeriesUserStatusProvider seriesId={serie.id}>
+          <PendingTrackApplier seriesId={serie.id} seriesTitle={serie.title} />
           <BackToCatalogButton />
           <Breadcrumbs
             items={[
