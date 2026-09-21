@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { Avatar, Button, Modal, Popconfirm, Segmented, Space, Tag } from 'antd';
+import { Avatar, Button, Popconfirm, Segmented, Space, Tag } from 'antd';
 import {
   DeleteOutlined,
   ExportOutlined,
@@ -19,7 +19,8 @@ import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { LOCALE_LABELS } from '@/i18n/config';
 import '../admin.css';
-import { DataTable } from '@/components/design-system';
+import { DataTable, PanelModal } from '@/components/design-system';
+import './ResenasClient.css';
 
 type ViewMode = 'all' | 'PUBLISHED' | 'DRAFT' | 'HIDDEN' | 'PENDING_SERIES';
 type Status = 'PUBLISHED' | 'DRAFT' | 'HIDDEN';
@@ -486,16 +487,20 @@ export function ResenasClient() {
             />
           )}
 
-          <Modal
+          <PanelModal
             title={previewing?.title}
             open={Boolean(previewing)}
-            onCancel={() => setPreviewing(null)}
+            onClose={() => setPreviewing(null)}
             footer={null}
-            width={720}
+            size="md"
+            // Preview de solo lectura: no hay nada tipeado que perder, asi
+            // que clickear afuera puede cerrar (a diferencia de los
+            // modales de edicion).
+            maskClosable
           >
             {previewing && (
               <div>
-                <div style={{ marginBottom: 12 }}>
+                <div className="admin-resenas__preview-meta">
                   {renderStatus(previewing.status)}
                   <Tag>
                     {LOCALE_LABELS[previewing.language as never] ??
@@ -505,18 +510,16 @@ export function ResenasClient() {
                     <Tag color="volcano">{t('adminReviews.spoilerTag')}</Tag>
                   )}
                 </div>
-                <pre
-                  style={{
-                    whiteSpace: 'pre-wrap',
-                    fontFamily: 'inherit',
-                    margin: 0,
-                  }}
-                >
+                {/* El cuerpo de una resena es texto libre de largo
+                 *  arbitrario: antes estiraba el modal sin limite. Ahora
+                 *  el scroller es el body de PanelModal; aca solo hay que
+                 *  evitar que una URL larga rompa el ancho. */}
+                <pre className="admin-resenas__preview-body">
                   {previewing.body}
                 </pre>
               </div>
             )}
-          </Modal>
+          </PanelModal>
         </div>
       </div>
     </>

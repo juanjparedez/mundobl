@@ -16,6 +16,7 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
+import { PosterPlaceholder } from '@/components/common/PosterPlaceholder/PosterPlaceholder';
 import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { MetadataChip } from './MetadataPrimitives/MetadataPrimitives';
 import './SeriesHeader.css';
@@ -112,10 +113,10 @@ export function SeriesHeader({
 
       <div className="series-header">
         <aside className="series-header__aside">
-          {imageUrl && (
+          {imageUrl ? (
             <div className="series-header__image">
               <Image
-                src={posterThumb ?? imageUrl!}
+                src={posterThumb ?? imageUrl}
                 alt={series.title}
                 width={260}
                 height={390}
@@ -123,6 +124,15 @@ export function SeriesHeader({
                 quality={72}
                 priority
                 unoptimized={isDirectServedImageUrl(posterThumb ?? imageUrl)}
+              />
+            </div>
+          ) : (
+            // Sin poster el grid igual reserva la columna: el placeholder
+            // ocupa el mismo lugar para que el titulo no quede corrido.
+            <div className="series-header__image series-header__image--placeholder">
+              <PosterPlaceholder
+                title={series.title}
+                typeLabel={getTypeLabel(series.type, t)}
               />
             </div>
           )}
@@ -212,10 +222,14 @@ export function SeriesHeader({
             {favoriteCount !== undefined && favoriteCount > 0 && (
               <span
                 className="series-header__community-badge"
-                title="Guardado en favoritos por la comunidad"
+                title={t('seriesHeader.favoritesTitle')}
               >
-                <HeartFilled style={{ color: '#ff4d4f' }} />
-                {favoriteCount} {favoriteCount === 1 ? 'favorito' : 'favoritos'}
+                <HeartFilled className="series-header__community-icon series-header__community-icon--fav" />
+                {favoriteCount === 1
+                  ? t('seriesHeader.favoritesOne')
+                  : interpolateMessage(t('seriesHeader.favoritesMany'), {
+                      n: String(favoriteCount),
+                    })}
               </span>
             )}
 
@@ -223,10 +237,12 @@ export function SeriesHeader({
               currentlyWatchingCount > 0 && (
                 <span
                   className="series-header__community-badge series-header__community-badge--watching"
-                  title="Usuarios mirando esta serie ahora"
+                  title={t('seriesHeader.watchingNowTitle')}
                 >
-                  <EyeOutlined style={{ color: '#1677ff' }} />
-                  {currentlyWatchingCount} viendo ahora
+                  <EyeOutlined className="series-header__community-icon series-header__community-icon--watching" />
+                  {interpolateMessage(t('seriesHeader.watchingNow'), {
+                    n: String(currentlyWatchingCount),
+                  })}
                 </span>
               )}
 

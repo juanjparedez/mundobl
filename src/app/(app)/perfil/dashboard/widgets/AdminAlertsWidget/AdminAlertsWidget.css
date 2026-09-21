@@ -6,3 +6,14 @@
   gap: var(--spacing-sm);
   padding: var(--widget-body-padding);
 }
+
+.mb-admin-alerts-widget__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-md);
+}
+
+.mb-admin-alerts-widget__link {
+  text-decoration: none;
+}

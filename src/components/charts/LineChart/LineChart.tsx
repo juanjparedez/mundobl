@@ -45,6 +45,14 @@ export interface LineChartProps<TData extends Record<string, unknown>> {
   hideYAxis?: boolean;
   /** Oculta los ticks del eje X. */
   hideXAxis?: boolean;
+  /** Formatter opcional para los ticks del eje X — permite mostrar un label
+   *  corto (ej. "20/09") sin tocar el valor crudo de `xAxisKey`, que sigue
+   *  siendo el que Recharts reenvia como `label` al tooltip. Sin esto, un
+   *  caller que quiere un tick compacto se ve forzado a pre-formatear el
+   *  propio dato y pisar `xAxisKey` con el string ya formateado — lo que
+   *  rompe el tooltip (recibe el label corto en vez del valor crudo y no
+   *  puede re-parsearlo). */
+  xAxisTickFormatter?: (value: string | number) => string;
 }
 
 /** LineChart wrapper usando tokens premium + paleta categorica. */
@@ -58,6 +66,7 @@ export function LineChart<TData extends Record<string, unknown>>({
   tooltipLabelFormatter,
   hideYAxis = false,
   hideXAxis = false,
+  xAxisTickFormatter,
 }: LineChartProps<TData>) {
   return (
     <ResponsiveContainer width="100%" height={height as number | `${number}%`}>
@@ -77,6 +86,7 @@ export function LineChart<TData extends Record<string, unknown>>({
             tickLine={false}
             axisLine={{ stroke: CHART_TOKENS.borderSecondary }}
             fontSize={11}
+            tickFormatter={xAxisTickFormatter}
           />
         )}
         {!hideYAxis && (

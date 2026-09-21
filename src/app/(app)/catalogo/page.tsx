@@ -139,6 +139,7 @@ export default async function CatalogoPage() {
       featured: serie.featured,
       featuredOrder: serie.featuredOrder,
       universoId: serie.universeId,
+      isUniverseMain: serie.isUniverseMain,
       universoNombre: serie.universe?.name || null,
       tags: serie.tags.map((st) => ({ id: st.tag.id, name: st.tag.name })),
       genres: genresBySerie.get(serie.id) ?? [],
