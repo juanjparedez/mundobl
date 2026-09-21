@@ -52,6 +52,7 @@ Orden de ejecución recomendado: **T03 → T01 → T04 → T05 → T06 → T07 �
 | --- | --------------------------------------------------------- | ---------- | -------- |
 | T01 | [Eventos de embudo en analytics](tareas/T01-eventos-embudo.md) | —     | S        |
 | T02 | [Widget de retención en /admin/stats](tareas/T02-widget-retencion.md) | — | M    |
+| T27 | Política de contenido oficial + limpieza (ver [docs/politica-contenido-oficial.md](../politica-contenido-oficial.md)) | — | M |
 
 ### Fase 1 — Activación (primer episodio marcado en menos de un minuto)
 
@@ -66,6 +67,7 @@ Orden de ejecución recomendado: **T03 → T01 → T04 → T05 → T06 → T07 �
 | T08  | [Botón "+1" claro en /watching](tareas/T08-watching-mas-uno.md)    | T03        | S        |
 | T08b | [/watching sin episodios + contraste (corrección)](tareas/T08b-watching-sin-episodios-y-contraste.md) | T08 | S |
 | T26  | [Póster placeholder en ficha y cards](tareas/T26-poster-placeholder.md) | —     | S        |
+| T28  | [Navegación móvil con paridad de accesos](tareas/T28-navegacion-mobile.md) | — | M      |
 | T09  | [Home centrada en el tracker](tareas/T09-home-tracker.md)          | —          | S        |
 | T10  | [Home logueado → /watching](tareas/T10-home-redirect-watching.md)  | —          | S        |
 | T11a | [Onboarding: backend](tareas/T11a-onboarding-backend.md)           | T05        | M        |
