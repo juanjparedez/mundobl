@@ -3053,6 +3053,36 @@ const th = {
     "finishTitle": "เกมทายปัญหาเสร็จสมบูรณ์!",
     "playAgainButton": "เล่นอีกครั้ง",
     "bestScoreLabel": "คะแนนที่ดีที่สุดของคุณ: {score} จาก {total}"
+  },
+  "airDayStatus": {
+    "today": "ตอนใหม่วันนี้",
+    "delayed1": "ออกอากาศเมื่อวาน (ช้าไป 1 วัน)",
+    "delayed2": "ช้าไป 2 วัน",
+    "delayedMany": "ช้าไป {days} วัน",
+    "tagToday": "วันนี้",
+    "tagDelayed": "+{days} วัน",
+    "airDaysTooltip": "วันออกอากาศ: {days} ({status})"
+  },
+  "estrenos": {
+    "title": "อะไรกำลังออกอากาศสัปดาห์นี้",
+    "subtitle": "อ้างอิงจากวันออกอากาศที่เรามีในระบบ เราไม่ยืนยันเวลา หรือว่าตอนนั้นออกอากาศแล้ว",
+    "disclaimer": "ตารางนี้ครอบคลุมซีรีส์ที่กำลังออกอากาศจากแคตตาล็อกที่คัดสรรมา ซีรีส์ที่จบไปแล้วนานกว่าสี่เดือนจะถูกลบออก",
+    "seeAll": "ดูตารางทั้งสัปดาห์",
+    "today": "วันนี้",
+    "moreCount": "+{count} เพิ่มเติม",
+    "emptyDay": "ไม่มีอะไรวันนี้",
+    "emptyTitle": "ไม่มีซีรีส์กำลังออกอากาศ",
+    "emptyDescription": "ตอนนี้ยังไม่มีซีรีส์ในแคตตาล็อกที่มีวันออกอากาศในระบบ เมื่อซีซันใหม่เริ่มขึ้น จะแสดงที่นี่",
+    "emptyAction": "ไปที่แคตตาล็อก",
+    "dayMonday": "วันจันทร์",
+    "dayTuesday": "วันอังคาร",
+    "dayWednesday": "วันพุธ",
+    "dayThursday": "พฤหัสบดี",
+    "dayFriday": "ศุกร์",
+    "daySaturday": "เสาร์",
+    "daySunday": "อาทิตย์",
+    "subscribeTooltip": "แจ้งเตือนฉันเกี่ยวกับรายการนี้",
+    "unsubscribeTooltip": "หยุดแจ้งเตือนฉัน"
   }
 } satisfies TranslationShape;
 
