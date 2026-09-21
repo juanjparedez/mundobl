@@ -269,7 +269,11 @@ const th = {
     "errorRemove": "เกิดข้อผิดพลาดในการนำออกจากรายการ",
     "episodeMarkedMessage": "ตอนที่ {ep} ถูกทำเครื่องหมายว่ารับชมแล้ว",
     "errorMarkEpisode": "เกิดข้อผิดพลาดในการทำเครื่องหมายตอน",
-    "markEpisodeTooltip": "ทำเครื่องหมายตอนที่ {ep} ว่ารับชมแล้ว"
+    "markEpisodeTooltip": "ทำเครื่องหมายตอนที่ {ep} ว่ารับชมแล้ว",
+    "markNextLabel": "ดูตอนที่ {n} แล้ว",
+    "markCompleteLabel": "ดูซีรีส์จบแล้ว",
+    "markCompleteConfirm": "ทำเครื่องหมาย \"{title}\" ว่าดูจบแล้วใช่หรือไม่?",
+    "completedMessage": "คุณทำเครื่องหมาย \"{title}\" ว่าดูจบแล้ว"
   },
   "appLayout": {
     "skipToContent": "ข้ามไปยังเนื้อหาหลัก"
