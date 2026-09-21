@@ -2,6 +2,8 @@
 // Fetching de videos desde canales YouTube / Vimeo
 // ============================================
 
+import { isOfficialChannelId } from './official-channels';
+
 export interface ChannelVideo {
   title: string;
   description: string;
@@ -402,6 +404,61 @@ export async function fetchAllYouTubePlaylistVideos(
 // la serie completa no le sirve a la audiencia real, sin importar cuantos
 // episodios tenga (aprendido en carne propia: se importaron 6 series BL
 // oficiales y una — Never Let Me Go — resulto bloqueada en TODO occidente).
+// ---- Verificacion de canal oficial por video ----
+
+export interface VideoChannelInfo {
+  videoId: string;
+  channelId: string;
+  channelTitle: string;
+  channelUrl: string;
+  /** true si el canal esta en la lista blanca de src/lib/official-channels.ts */
+  official: boolean;
+}
+
+/**
+ * Resuelve el canal REAL de cada video (videos.list, part=snippet) y lo
+ * compara con la lista blanca. Es la unica verificacion que vale para
+ * aceptar un embed: la URL de canal que manda el cliente puede decir
+ * cualquier cosa. Batches de 50 (limite de la API), 1 unidad de cuota
+ * por batch. Los videoIds que la API no devuelve (borrados, privados)
+ * no aparecen en el resultado: el caller decide si eso es rechazo.
+ */
+export async function verifyYouTubeVideosOfficial(
+  videoIds: string[]
+): Promise<Map<string, VideoChannelInfo>> {
+  const result = new Map<string, VideoChannelInfo>();
+  const unique = Array.from(new Set(videoIds.filter(Boolean)));
+
+  for (let i = 0; i < unique.length; i += 50) {
+    const batch = unique.slice(i, i + 50);
+    const res = await ytFetch('videos', {
+      part: 'snippet',
+      id: batch.join(','),
+      maxResults: '50',
+    });
+    const data = (await res.json()) as {
+      items?: Array<{
+        id: string;
+        snippet?: { channelId?: string; channelTitle?: string };
+      }>;
+    };
+    for (const item of data.items ?? []) {
+      const channelId = item.snippet?.channelId ?? '';
+      result.set(item.id, {
+        videoId: item.id,
+        channelId,
+        channelTitle: item.snippet?.channelTitle ?? '',
+        channelUrl: channelId
+          ? `https://www.youtube.com/channel/${channelId}`
+          : '',
+        official: isOfficialChannelId(channelId),
+      });
+    }
+  }
+
+  return result;
+}
+
 export const CORE_MARKETS = ['AR', 'MX', 'ES', 'CL', 'CO', 'PE', 'US'];
 
 export interface RegionRestrictionCheck {
