@@ -2547,7 +2547,11 @@ const zhCN = {
     "markWatched": "我已观看",
     "markUnwatched": "标记为未观看",
     "markedWatched": "您已将“{title}”标记为已观看",
-    "noEpisodes": "此剧集未加载：将一次性标记为已完成。"
+    "noEpisodes": "此剧集未加载：将一次性标记为已完成。",
+    "notesTitle": "私人笔记",
+    "episodeNote": "关于 {code} 的笔记",
+    "seriesNote": "剧集笔记",
+    "notesHintNoEpisode": "将剧集标记为已观看即可添加笔记。"
   },
   "posterPlaceholder": {
     "noImage": "无图片"
