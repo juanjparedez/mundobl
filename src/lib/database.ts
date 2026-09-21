@@ -885,8 +885,6 @@ export async function getDirectorById(id: number) {
  * una sola query, sin traer la tabla entera a memoria.
  */
 
-export type PeopleSort = 'credits' | 'az' | 'za';
-
 export interface PersonIndexRow {
   id: number;
   name: string;
@@ -895,125 +893,6 @@ export interface PersonIndexRow {
   nationality: string | null;
   biography: string | null;
   creditCount: number;
-}
-
-export interface PeopleIndexResult<T> {
-  rows: T[];
-  total: number;
-}
-
-function personOrderBy(sort: PeopleSort): Prisma.Sql {
-  switch (sort) {
-    case 'az':
-      return Prisma.sql`ORDER BY p.name ASC`;
-    case 'za':
-      return Prisma.sql`ORDER BY p.name DESC`;
-    default:
-      return Prisma.sql`ORDER BY "creditCount" DESC, p.name ASC`;
-  }
-}
-
-export async function getActorsIndex(options?: {
-  q?: string;
-  nationality?: string;
-  sort?: PeopleSort;
-  page?: number;
-  perPage?: number;
-}): Promise<PeopleIndexResult<PersonIndexRow>> {
-  const page = Math.max(1, options?.page ?? 1);
-  const perPage = Math.min(120, Math.max(1, options?.perPage ?? 48));
-  const offset = (page - 1) * perPage;
-  const q = options?.q?.trim();
-  const nationality = options?.nationality?.trim();
-
-  // El placeholder "Actor no identificado" no es una persona (ver
-  // src/lib/placeholder-actor.ts): nunca entra a los listados publicos.
-  const where = Prisma.sql`
-    WHERE p."isPlaceholder" = false
-    ${q ? Prisma.sql`AND (p.name ILIKE ${'%' + q + '%'} OR p."stageName" ILIKE ${'%' + q + '%'})` : Prisma.empty}
-    ${nationality ? Prisma.sql`AND p.nationality = ${nationality}` : Prisma.empty}
-  `;
-
-  const [rows, totalRows] = await Promise.all([
-    prisma.$queryRaw<PersonIndexRow[]>(
-      Prisma.sql`
-      SELECT p.id, p.name, p."stageName", p."imageUrl", p.nationality,
-             p.biography,
-             (
-               COALESCE((
-                 SELECT COUNT(*) FROM "SeriesActor" sa
-                 JOIN "Series" s ON s.id = sa."seriesId"
-                 WHERE sa."actorId" = p.id
-                   AND s.origin = 'CURATED' AND s."catalogScope" = 'PERSONAL'
-               ), 0)
-               + COALESCE((
-                 SELECT COUNT(*) FROM "SeasonActor" sea
-                 JOIN "Season" se ON se.id = sea."seasonId"
-                 JOIN "Series" s2 ON s2.id = se."seriesId"
-                 WHERE sea."actorId" = p.id
-                   AND s2.origin = 'CURATED' AND s2."catalogScope" = 'PERSONAL'
-               ), 0)
-             )::int AS "creditCount"
-      FROM "Actor" p
-      ${where}
-      ${personOrderBy(options?.sort ?? 'credits')}
-      LIMIT ${perPage} OFFSET ${offset}
-    `
-    ),
-    prisma.$queryRaw<{ count: bigint }[]>(
-      Prisma.sql`
-      SELECT COUNT(*)::bigint AS count FROM "Actor" p ${where}
-    `
-    ),
-  ]);
-
-  return { rows, total: Number(totalRows[0]?.count ?? 0) };
-}
-
-export async function getDirectorsIndex(options?: {
-  q?: string;
-  nationality?: string;
-  sort?: PeopleSort;
-  page?: number;
-  perPage?: number;
-}): Promise<PeopleIndexResult<PersonIndexRow>> {
-  const page = Math.max(1, options?.page ?? 1);
-  const perPage = Math.min(120, Math.max(1, options?.perPage ?? 48));
-  const offset = (page - 1) * perPage;
-  const q = options?.q?.trim();
-  const nationality = options?.nationality?.trim();
-
-  const where = Prisma.sql`
-    WHERE TRUE
-    ${q ? Prisma.sql`AND p.name ILIKE ${'%' + q + '%'}` : Prisma.empty}
-    ${nationality ? Prisma.sql`AND p.nationality = ${nationality}` : Prisma.empty}
-  `;
-
-  const [rows, totalRows] = await Promise.all([
-    prisma.$queryRaw<PersonIndexRow[]>(
-      Prisma.sql`
-      SELECT p.id, p.name, NULL::text AS "stageName", p."imageUrl",
-             p.nationality, p.biography,
-             COALESCE((
-               SELECT COUNT(*) FROM "SeriesDirector" sd
-               JOIN "Series" s ON s.id = sd."seriesId"
-               WHERE sd."directorId" = p.id
-                 AND s.origin = 'CURATED' AND s."catalogScope" = 'PERSONAL'
-             ), 0)::int AS "creditCount"
-      FROM "Director" p
-      ${where}
-      ${personOrderBy(options?.sort ?? 'credits')}
-      LIMIT ${perPage} OFFSET ${offset}
-    `
-    ),
-    prisma.$queryRaw<{ count: bigint }[]>(
-      Prisma.sql`
-      SELECT COUNT(*)::bigint AS count FROM "Director" p ${where}
-    `
-    ),
-  ]);
-
-  return { rows, total: Number(totalRows[0]?.count ?? 0) };
 }
 
 export interface CompanyIndexRow {
@@ -1025,57 +904,83 @@ export interface CompanyIndexRow {
   seriesCount: number;
 }
 
-export async function getProductionCompaniesIndex(options?: {
-  q?: string;
-  sort?: PeopleSort;
-  page?: number;
-  perPage?: number;
-}): Promise<PeopleIndexResult<CompanyIndexRow>> {
-  const page = Math.max(1, options?.page ?? 1);
-  const perPage = Math.min(120, Math.max(1, options?.perPage ?? 48));
-  const offset = (page - 1) * perPage;
-  const q = options?.q?.trim();
+// Los tres indices devuelven la tabla COMPLETA, ordenada por creditos.
+//
+// Antes recibian q/nationality/sort/page y corrian por request: la pagina
+// leia searchParams, asi que Next la servia 100% dinamica (su
+// `export const revalidate` no aplicaba) y cada visita —incluida la de cada
+// crawler paginando el indice— pagaba dos consultas, una con subconsultas
+// correlacionadas por fila y otra con el COUNT(*) del total. Ahora las
+// paginas son estaticas y filtran en el cliente (ver PeopleIndexShell), asi
+// que esto corre una vez por revalidacion en vez de una vez por visita.
 
-  const where = Prisma.sql`
-    WHERE TRUE
-    ${q ? Prisma.sql`AND p.name ILIKE ${'%' + q + '%'}` : Prisma.empty}
-  `;
-
-  // Cuenta sobre SeriesProductionCompany (co-producciones), no sobre la
-  // relacion legacy 1-a-N.
-  const orderBy =
-    options?.sort === 'az'
-      ? Prisma.sql`ORDER BY p.name ASC`
-      : options?.sort === 'za'
-        ? Prisma.sql`ORDER BY p.name DESC`
-        : Prisma.sql`ORDER BY "seriesCount" DESC, p.name ASC`;
-
-  const [rows, totalRows] = await Promise.all([
-    prisma.$queryRaw<CompanyIndexRow[]>(
-      Prisma.sql`
-      SELECT p.id, p.name, p."imageUrl", p.description,
-             c.name AS "countryName",
+/** Indice publico de actores. El placeholder "Actor no identificado" no es
+ *  una persona (ver src/lib/placeholder-actor.ts) y nunca entra. */
+export async function getActorsIndex(): Promise<PersonIndexRow[]> {
+  return await prisma.$queryRaw<PersonIndexRow[]>(
+    Prisma.sql`
+    SELECT p.id, p.name, p."stageName", p."imageUrl", p.nationality,
+           p.biography,
+           (
              COALESCE((
-               SELECT COUNT(*) FROM "SeriesProductionCompany" spc
-               JOIN "Series" s ON s.id = spc."seriesId"
-               WHERE spc."productionCompanyId" = p.id
+               SELECT COUNT(*) FROM "SeriesActor" sa
+               JOIN "Series" s ON s.id = sa."seriesId"
+               WHERE sa."actorId" = p.id
                  AND s.origin = 'CURATED' AND s."catalogScope" = 'PERSONAL'
-             ), 0)::int AS "seriesCount"
-      FROM "ProductionCompany" p
-      LEFT JOIN "Country" c ON c.id = p."countryId"
-      ${where}
-      ${orderBy}
-      LIMIT ${perPage} OFFSET ${offset}
-    `
-    ),
-    prisma.$queryRaw<{ count: bigint }[]>(
-      Prisma.sql`
-      SELECT COUNT(*)::bigint AS count FROM "ProductionCompany" p ${where}
-    `
-    ),
-  ]);
+             ), 0)
+             + COALESCE((
+               SELECT COUNT(*) FROM "SeasonActor" sea
+               JOIN "Season" se ON se.id = sea."seasonId"
+               JOIN "Series" s2 ON s2.id = se."seriesId"
+               WHERE sea."actorId" = p.id
+                 AND s2.origin = 'CURATED' AND s2."catalogScope" = 'PERSONAL'
+             ), 0)
+           )::int AS "creditCount"
+    FROM "Actor" p
+    WHERE p."isPlaceholder" = false
+    ORDER BY "creditCount" DESC, p.name ASC
+  `
+  );
+}
 
-  return { rows, total: Number(totalRows[0]?.count ?? 0) };
+/** Indice publico de directores. */
+export async function getDirectorsIndex(): Promise<PersonIndexRow[]> {
+  return await prisma.$queryRaw<PersonIndexRow[]>(
+    Prisma.sql`
+    SELECT p.id, p.name, NULL::text AS "stageName", p."imageUrl",
+           p.nationality, p.biography,
+           COALESCE((
+             SELECT COUNT(*) FROM "SeriesDirector" sd
+             JOIN "Series" s ON s.id = sd."seriesId"
+             WHERE sd."directorId" = p.id
+               AND s.origin = 'CURATED' AND s."catalogScope" = 'PERSONAL'
+           ), 0)::int AS "creditCount"
+    FROM "Director" p
+    ORDER BY "creditCount" DESC, p.name ASC
+  `
+  );
+}
+
+/** Indice publico de productoras. Cuenta sobre SeriesProductionCompany
+ *  (co-producciones), no sobre la relacion legacy 1-a-N. */
+export async function getProductionCompaniesIndex(): Promise<
+  CompanyIndexRow[]
+> {
+  return await prisma.$queryRaw<CompanyIndexRow[]>(
+    Prisma.sql`
+    SELECT p.id, p.name, p."imageUrl", p.description,
+           c.name AS "countryName",
+           COALESCE((
+             SELECT COUNT(*) FROM "SeriesProductionCompany" spc
+             JOIN "Series" s ON s.id = spc."seriesId"
+             WHERE spc."productionCompanyId" = p.id
+               AND s.origin = 'CURATED' AND s."catalogScope" = 'PERSONAL'
+           ), 0)::int AS "seriesCount"
+    FROM "ProductionCompany" p
+    LEFT JOIN "Country" c ON c.id = p."countryId"
+    ORDER BY "seriesCount" DESC, p.name ASC
+  `
+  );
 }
 
 /** Ficha publica de productora: datos + filmografia curada. */
@@ -1114,7 +1019,11 @@ export async function getProductionCompanyById(id: number) {
 export const getPeopleNationalities = unstable_cache(
   fetchPeopleNationalities,
   ['people-nationalities-v1'],
-  { revalidate: 86400 }
+  // 1 semana, igual que el `revalidate` de las paginas que la usan. Next
+  // resuelve el TTL efectivo de una ruta como el MINIMO entre el del segmento
+  // y el de los caches que consume: con 86400 aca, /actores y /directores
+  // quedaban clavadas en 1d por mas que declararan 604800.
+  { revalidate: 604800 }
 );
 
 async function fetchPeopleNationalities(): Promise<string[]> {
