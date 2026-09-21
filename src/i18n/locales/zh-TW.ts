@@ -2502,6 +2502,13 @@ const zhTW = {
     "ariaNext": "標記下一集為已看",
     "ariaPrev": "取消標記上一集為已看"
   },
+  "trackCta": {
+    "title": "您正在追這部劇嗎？",
+    "subtitle": "標記您目前觀看的集數，並從您的列表中追蹤。",
+    "button": "開始追蹤",
+    "applied": "一切就緒，現在正在追蹤 {title}",
+    "chooseEpisode": "您看到第幾集了？"
+  },
   "spoilerFreeProvider": {
     "useSpoilerFreeError": "useSpoilerFree 必須在 SpoilerFreeProvider 內使用"
   },
