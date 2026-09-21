@@ -1,41 +1,42 @@
 'use client';
 
-import { startTransition, useEffect, useState } from 'react';
+import { startTransition, useEffect, useState, type ReactNode } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import {
-  AppstoreOutlined,
-  PlayCircleOutlined,
-  SettingOutlined,
-  CommentOutlined,
   LoadingOutlined,
   LoginOutlined,
   LogoutOutlined,
-  UserOutlined,
-  GlobalOutlined,
-  BellOutlined,
-  BellFilled,
   MenuOutlined,
-  VideoCameraOutlined,
-  NotificationOutlined,
-  LinkOutlined,
-  BarChartOutlined,
+  SettingOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
-import { Badge, Drawer } from 'antd';
+import { Avatar, Badge, Drawer } from 'antd';
 import { useSession, signIn, signOut } from 'next-auth/react';
-import { ROUTES } from '@/constants/navigation';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { SettingsPanel } from '@/components/layout/SettingsPanel/SettingsPanel';
 import { useUnreadNotifications } from '@/hooks/useUnreadNotifications';
+import { useHasNovedades } from '@/hooks/useHasNovedades';
+import {
+  NAV_ITEMS,
+  canSeeNavItem,
+  isNavItemActive,
+  type NavItemDef,
+} from '../navItems';
 import './BottomNav.css';
 
-interface NavItem {
+interface NavEntry {
   key: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
   label: string;
-  path?: string;
-  onClick?: () => void;
+  active: boolean;
+  onClick: () => void;
 }
 
+/**
+ * Navegacion de movil: 4 accesos primarios + "Mas". El cajon "Mas" lista
+ * TODO lo que tiene el Sidebar de escritorio (misma fuente: navItems.ts),
+ * mas Ajustes y Cerrar sesion. En el celular no falta ninguna seccion.
+ */
 export function BottomNav() {
   const pathname = usePathname();
   const router = useRouter();
@@ -44,12 +45,7 @@ export function BottomNav() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isMoreOpen, setIsMoreOpen] = useState(false);
   const unreadCount = useUnreadNotifications();
-
-  const isAdmin = session?.user?.role === 'ADMIN';
-  const isModerator = session?.user?.role === 'MODERATOR';
-  const canAccessAdmin = isAdmin || isModerator;
-
-  const isActive = (path: string) => pathname?.startsWith(path);
+  const hasNovedades = useHasNovedades();
 
   useEffect(() => {
     startTransition(() => {
@@ -58,141 +54,104 @@ export function BottomNav() {
     });
   }, [pathname]);
 
-  const bellIcon = (
-    <Badge count={unreadCount} size="small" overflowCount={99} offset={[2, -2]}>
-      {unreadCount > 0 ? <BellFilled /> : <BellOutlined />}
-    </Badge>
+  const navContext = { loggedIn: !!session?.user, role: session?.user?.role };
+
+  const renderIcon = (item: NavItemDef): ReactNode => {
+    const Icon = item.icon;
+    if (item.key === 'perfil' && session?.user) {
+      return (
+        <Badge
+          count={unreadCount}
+          size="small"
+          overflowCount={99}
+          offset={[2, -2]}
+        >
+          <Avatar
+            src={session.user.image}
+            icon={!session.user.image ? <UserOutlined /> : undefined}
+            size={26}
+            className="bottom-nav-avatar"
+          />
+        </Badge>
+      );
+    }
+    if (item.badge === 'notifications') {
+      return (
+        <Badge
+          count={unreadCount}
+          size="small"
+          overflowCount={99}
+          offset={[2, -2]}
+        >
+          <Icon />
+        </Badge>
+      );
+    }
+    if (item.badge === 'novedades') {
+      return (
+        <Badge dot={hasNovedades} offset={[2, 2]}>
+          <Icon />
+        </Badge>
+      );
+    }
+    return <Icon />;
+  };
+
+  const toEntry = (item: NavItemDef, short: boolean): NavEntry => ({
+    key: item.key,
+    icon: renderIcon(item),
+    label: t(short && item.shortLabelKey ? item.shortLabelKey : item.labelKey),
+    active: isNavItemActive(item, pathname),
+    onClick: () => {
+      setIsMoreOpen(false);
+      router.push(item.path);
+    },
+  });
+
+  const loginEntry: NavEntry = {
+    key: 'login',
+    icon: status === 'loading' ? <LoadingOutlined /> : <LoginOutlined />,
+    label: status === 'loading' ? t('bottomNav.loading') : t('bottomNav.login'),
+    active: false,
+    onClick: () =>
+      signIn('google', {
+        callbackUrl:
+          typeof window !== 'undefined' && window.location.pathname !== '/'
+            ? window.location.pathname + window.location.search
+            : '/catalogo',
+      }),
+  };
+
+  // Barra: los 4 primarios. El slot de Perfil es "Entrar" sin sesion.
+  const primaryEntries: NavEntry[] = NAV_ITEMS.filter((i) => i.primary).map(
+    (item) =>
+      item.access === 'session' && !session?.user
+        ? loginEntry
+        : toEntry(item, true)
   );
 
-  // Material guideline: nav bar con 3-5 items. Para no apretar mas alla
-  // de eso, mostramos siempre 4 primarios + "Mas" (drawer con el resto).
-  // Hace que el bar sea consistente para todos los roles y previene
-  // labels/icons demasiado chicos cuando hay muchos items.
-  const primaryItems: NavItem[] = [
-    {
-      key: 'catalogo',
-      icon: <AppstoreOutlined />,
-      label: t('bottomNav.catalog'),
-      path: ROUTES.CATALOGO,
-    },
-    {
-      key: 'watching',
-      icon: <PlayCircleOutlined />,
-      label: t('bottomNav.watching'),
-      path: ROUTES.WATCHING,
-    },
-    {
-      key: 'feedback',
-      icon: <CommentOutlined />,
-      label: t('bottomNav.feedback'),
-      path: ROUTES.FEEDBACK,
-    },
-    ...(session
-      ? [
-          {
-            key: 'notifications',
-            icon: bellIcon,
-            label: t('notifications.label'),
-            path: '/notificaciones',
-          },
-        ]
-      : []),
-  ];
-
-  // Items que viven dentro del drawer "Mas" (5to slot del bar). Incluye:
-  //  1) acceso a las paginas publicas que no caben como primary (ver,
-  //     novedades, sitios, contenido, estadisticas) — equivalentes al
-  //     Sidebar de desktop;
-  //  2) accesos de cuenta (perfil/login, admin, ajustes, logout).
-  // Asi mobile no pierde features que existen en desktop.
-  const moreItems: NavItem[] = [
-    {
-      key: 'ver',
-      icon: <VideoCameraOutlined />,
-      label: t('bottomNav.ver'),
-      path: ROUTES.VER,
-    },
-    {
-      key: 'novedades',
-      icon: <NotificationOutlined />,
-      label: t('sidebar.novedades'),
-      path: ROUTES.NOVEDADES,
-    },
-    {
-      key: 'sitios',
-      icon: <LinkOutlined />,
-      label: t('sidebar.sites'),
-      path: '/sitios',
-    },
-    {
-      key: 'contenido',
-      icon: <PlayCircleOutlined />,
-      label: t('sidebar.content'),
-      path: '/contenido',
-    },
-    {
-      key: 'estadisticas',
-      icon: <BarChartOutlined />,
-      label: t('sidebar.stats'),
-      path: ROUTES.ESTADISTICAS,
-    },
-    ...(status === 'loading'
-      ? [
-          {
-            key: 'loading',
-            icon: <LoadingOutlined />,
-            label: t('bottomNav.loading'),
-          },
-        ]
-      : !session
-        ? [
-            {
-              key: 'login',
-              icon: <LoginOutlined />,
-              label: t('bottomNav.login'),
-              onClick: () =>
-                signIn('google', {
-                  callbackUrl:
-                    typeof window !== 'undefined' &&
-                    window.location.pathname !== '/'
-                      ? window.location.pathname + window.location.search
-                      : '/catalogo',
-                }),
-            },
-          ]
-        : [
-            {
-              key: 'profile',
-              icon: <UserOutlined />,
-              label: session.user?.name?.split(' ')[0] || t('sidebar.profile'),
-              path: ROUTES.PERFIL,
-            },
-          ]),
-    ...(canAccessAdmin
-      ? [
-          {
-            key: 'admin',
-            icon: <SettingOutlined />,
-            label: t('bottomNav.admin'),
-            path: ROUTES.ADMIN,
-          },
-        ]
-      : []),
+  // Cajon "Mas": todo lo demas, con los mismos permisos que el Sidebar.
+  const moreEntries: NavEntry[] = [
+    ...NAV_ITEMS.filter((i) => !i.primary && canSeeNavItem(i, navContext)).map(
+      (item) => toEntry(item, false)
+    ),
     {
       key: 'settings',
-      icon: <GlobalOutlined />,
+      icon: <SettingOutlined />,
       label: t('bottomNav.settings'),
+      active: false,
       onClick: () => {
         setIsMoreOpen(false);
         setIsSettingsOpen(true);
       },
     },
-    ...(session
+    ...(session?.user
       ? [
           {
             key: 'logout',
             icon: <LogoutOutlined />,
             label: t('sidebar.logout'),
+            active: false,
             onClick: () => signOut({ callbackUrl: '/' }),
           },
         ]
@@ -202,70 +161,60 @@ export function BottomNav() {
   return (
     <>
       <nav className="bottom-nav" aria-label={t('bottomNav.mainNavigation')}>
-        {primaryItems.map((item) => (
+        {primaryEntries.map((entry) => (
           <button
-            key={item.key}
-            className={`bottom-nav-item ${item.path && isActive(item.path) ? 'bottom-nav-item--active' : ''}`}
-            onClick={
-              item.onClick || (() => item.path && router.push(item.path))
-            }
-            aria-label={item.label}
-            aria-current={item.path && isActive(item.path) ? 'page' : undefined}
+            key={entry.key}
+            type="button"
+            className={`bottom-nav-item ${entry.active ? 'bottom-nav-item--active' : ''}`}
+            onClick={entry.onClick}
+            aria-label={entry.label}
+            aria-current={entry.active ? 'page' : undefined}
           >
             <span className="bottom-nav-item-icon" aria-hidden="true">
-              {item.icon}
+              {entry.icon}
             </span>
-            <span className="bottom-nav-item-label">{item.label}</span>
+            <span className="bottom-nav-item-label">{entry.label}</span>
           </button>
         ))}
         <button
+          type="button"
           className={`bottom-nav-item ${isMoreOpen ? 'bottom-nav-item--active' : ''}`}
           onClick={() => setIsMoreOpen(true)}
-          aria-label={t('bottomNav.more') || 'Más'}
+          aria-label={t('bottomNav.more')}
           aria-haspopup="dialog"
         >
           <span className="bottom-nav-item-icon" aria-hidden="true">
             <MenuOutlined />
           </span>
-          <span className="bottom-nav-item-label">
-            {t('bottomNav.more') || 'Más'}
-          </span>
+          <span className="bottom-nav-item-label">{t('bottomNav.more')}</span>
         </button>
       </nav>
 
       <Drawer
-        title={t('bottomNav.more') || 'Más'}
+        title={t('bottomNav.more')}
         placement="bottom"
-        size="default"
+        height="82vh"
         open={isMoreOpen}
         onClose={() => setIsMoreOpen(false)}
         className="bottom-nav-more-drawer"
         styles={{ body: { padding: 0 } }}
       >
         <ul className="bottom-nav-more-list">
-          {moreItems.map((item) => (
-            <li key={item.key}>
+          {moreEntries.map((entry) => (
+            <li key={entry.key}>
               <button
                 type="button"
                 className={`bottom-nav-more-item ${
-                  item.path && isActive(item.path)
-                    ? 'bottom-nav-more-item--active'
-                    : ''
+                  entry.active ? 'bottom-nav-more-item--active' : ''
                 }`}
-                onClick={() => {
-                  if (item.onClick) {
-                    item.onClick();
-                  } else if (item.path) {
-                    router.push(item.path);
-                    setIsMoreOpen(false);
-                  }
-                }}
+                onClick={entry.onClick}
+                aria-current={entry.active ? 'page' : undefined}
               >
                 <span className="bottom-nav-more-item__icon" aria-hidden="true">
-                  {item.icon}
+                  {entry.icon}
                 </span>
                 <span className="bottom-nav-more-item__label">
-                  {item.label}
+                  {entry.label}
                 </span>
               </button>
             </li>

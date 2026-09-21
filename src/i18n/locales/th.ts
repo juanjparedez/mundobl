@@ -333,7 +333,11 @@ const th = {
     "light": "สว่าง",
     "profile": "โปรไฟล์ของฉัน",
     "stats": "สถิติ",
-    "runtime": "Runtime"
+    "runtime": "Runtime",
+    "ver": "ดูซีรีส์",
+    "platforms": "แพลตฟอร์มและแผนบริการ",
+    "glossary": "อภิธานศัพท์ทางวัฒนธรรม",
+    "about": "เกี่ยวกับ MundoBL"
   },
   "profile": {
     "loginRequired": "ลงชื่อเข้าใช้เพื่อดูโปรไฟล์ของคุณ",
@@ -618,7 +622,8 @@ const th = {
     "logout": "ออกจากระบบ",
     "settings": "การตั้งค่า",
     "more": "เพิ่มเติม",
-    "ver": "ดู",
+    "watch": "ดู",
+    "profile": "โปรไฟล์",
     "accentColor": "สีเน้น",
     "theme": "ธีม",
     "switchToLight": "เปลี่ยนเป็นโหมดสว่าง",
