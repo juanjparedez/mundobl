@@ -291,7 +291,8 @@ const de = {
     "markCompleteLabel": "Serie beendet",
     "markCompleteConfirm": "„{title}“ als beendet markieren?",
     "completedMessage": "Du hast „{title}“ als beendet markiert",
-    "noEpisodesHint": "Keine Episoden geladen: wird auf einmal als abgeschlossen markiert"
+    "noEpisodesHint": "Keine Episoden geladen: wird auf einmal als abgeschlossen markiert",
+    "watchNow": "Weiterschauen"
   },
   "appLayout": {
     "skipToContent": "Zum Hauptinhalt springen"

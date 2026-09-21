@@ -176,7 +176,11 @@ export default function RootLayout({
          *  CSP de next.config.ts sin necesidad de abrir script-src a
          *  hosts externos. Web Analytics es sin cookies y sin PII. */}
         <Analytics />
-        <SpeedInsights />
+        {/* sampleRate: el plan free corta en 10.000 eventos/mes y el sitio
+         *  venia en 8.9K. Con 0.25 se manda 1 de cada 4 navegaciones: alcanza
+         *  de sobra para ver tendencias de LCP/CLS/INP y deja margen para que
+         *  crezca el trafico sin volver a chocar la cuota. */}
+        <SpeedInsights sampleRate={0.25} />
       </body>
     </html>
   );

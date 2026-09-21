@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
+import { revalidateSeriesDetail } from '@/lib/revalidate-series';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { logAction } from '@/lib/access-log';
@@ -82,7 +83,9 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
   revalidatePath('/ver');
   revalidatePath('/admin/ver');
-  revalidatePath(`/ver/${seriesId}`);
+  // Por URL real con slug (/ver/{id}-{slug}); /ver/{id} a secas no existe en
+  // el cache salvo que la serie no tenga titulo.
+  revalidateSeriesDetail(serie);
   revalidatePath('/');
 
   return NextResponse.json({

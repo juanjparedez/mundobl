@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { revalidatePath } from 'next/cache';
+import { revalidateSeries } from '@/lib/revalidate-series';
 import {
   prisma,
   saveSeriesInUniverse,
@@ -543,16 +543,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       }
     }
 
-    revalidatePath('/admin/series');
-    revalidatePath('/catalogo');
-    revalidatePath('/series/[id]', 'page');
-    revalidatePath('/ver');
-    // La parrilla de /estrenos sale de `airDays`, que se edita aca; sin esto
-    // el cambio no se ve hasta que expire el ISR de una hora.
-    revalidatePath('/estrenos');
-    revalidatePath('/');
-    revalidatePath(`/series/${serieId}`);
-    revalidatePath(`/catalogo/${serieId}`);
+    revalidateSeries(updatedSerie);
 
     return NextResponse.json(updatedSerie);
   } catch (error) {
@@ -596,15 +587,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     // Propagar el borrado a las páginas públicas cacheadas (el router.refresh()
     // del cliente solo arregla la vista admin actual).
-    revalidatePath('/admin/series');
-    revalidatePath('/catalogo');
-    revalidatePath('/ver');
-    // La parrilla de /estrenos sale de `airDays`, que se edita aca; sin esto
-    // el cambio no se ve hasta que expire el ISR de una hora.
-    revalidatePath('/estrenos');
-    revalidatePath('/');
-    revalidatePath(`/series/${serieId}`);
-    revalidatePath(`/catalogo/${serieId}`);
+    revalidateSeries(serie);
 
     return NextResponse.json({ message: 'Serie eliminada correctamente' });
   } catch (error) {

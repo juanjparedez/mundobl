@@ -3,7 +3,8 @@
 // catalogo cambia unas pocas veces por semana, no cada 2 minutos. A 120s
 // esto era el principal consumidor de egress de base. Una serie nueva puede
 // tardar hasta 15 min en aparecer: es un precio barato.
-export const revalidate = 900;
+// Se invalida on-demand en cada alta/edicion/baja de serie.
+export const revalidate = 21600;
 import { unstable_cache } from 'next/cache';
 
 import type { Metadata } from 'next';
@@ -11,6 +12,7 @@ import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
 import { JsonLd } from '@/components/seo/JsonLd';
 import type { CollectionPage } from 'schema-dts';
 import { getAllSeries } from '@/lib/database';
+import { SERIES_LISTINGS_TAG } from '@/lib/revalidate-series';
 
 const CATALOGO_DESCRIPTION =
   'Explora el catálogo completo de series BL (Boys Love), GL (Girls Love), películas y doramas asiáticos. Filtra por país, año, género y calificación.';
@@ -56,7 +58,9 @@ const getCatalogDataCached = unstable_cache(
     ]);
   },
   ['catalog-page-data-v2'],
-  { revalidate: 900 }
+  // Tageado: cada alta/edicion/baja de serie lo vacia al instante
+  // (revalidateSeriesListings), asi que el TTL puede ser largo.
+  { revalidate: 21600, tags: [SERIES_LISTINGS_TAG] }
 );
 
 export default async function CatalogoPage() {
