@@ -221,16 +221,19 @@
   align-items: center;
 }
 
+.watching-card__primary-action {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 12px;
+  font-weight: 600;
+}
+
 .watching-card__actions {
   display: flex;
   flex-wrap: wrap;
   gap: var(--spacing-xs, 8px);
-  margin-top: 12px;
+  margin-top: var(--spacing-xs, 8px);
   align-items: center;
-}
-
-.watching-card__mark-btn {
-  flex-shrink: 0;
 }
 
 @media (max-width: 768px) {

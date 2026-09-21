@@ -269,7 +269,11 @@ const de = {
     "errorRemove": "Fehler beim Entfernen aus der Liste",
     "episodeMarkedMessage": "Episode {ep} als angesehen markiert",
     "errorMarkEpisode": "Fehler beim Markieren der Episode",
-    "markEpisodeTooltip": "Episode {ep} als angesehen markieren"
+    "markEpisodeTooltip": "Episode {ep} als angesehen markieren",
+    "markNextLabel": "Gesehene Folge {n}",
+    "markCompleteLabel": "Serie beendet",
+    "markCompleteConfirm": "„{title}“ als beendet markieren?",
+    "completedMessage": "Du hast „{title}“ als beendet markiert"
   },
   "appLayout": {
     "skipToContent": "Zum Hauptinhalt springen"
