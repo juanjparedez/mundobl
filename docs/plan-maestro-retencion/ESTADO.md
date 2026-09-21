@@ -11,8 +11,11 @@ El agente que toma una tarea la pasa a `en curso` al crear la rama y a `hecha` a
 | T04  | refetch() en SeriesUserStatusProvider            | 1    | hecha     | feat/T04-provider-refetch (PR #34) | 2026-09-20 | Destraba T06 (stepper) |
 | T05  | Endpoint "hasta el episodio N"                   | 1    | hecha     | feat/T05-endpoint-progreso (PR #35) | 2026-09-20 | Destraba T06, T07, T11a, T13. scripts/test-progress.ts sin correr (necesita Postgres local en 55433) |
 | T06  | Stepper "Voy por el episodio N" en la ficha      | 1    | hecha     | feat/T06-stepper-ficha (PR #36) | 2026-09-20 | No se pudo probar en vivo logueado en la sesion que lo implemento |
+| T06b | Panel de tracking en la ficha (corrección)       | 1    | pendiente |           | 2026-09-20 | Revisión: label truncado, 98 fichas sin stepper, falta "Siguiente" |
 | T07  | CTA para anónimos + intención pendiente          | 1    | en PR     | feat/T07-cta-anonimo-intencion |  2026-09-20 | Probado en vivo (anónimo): stepper local, picker y redirect a Google OAuth confirmados; falta probar la vuelta logueado (PendingTrackApplier) |
 | T08  | Botón "+1" claro en /watching                    | 1    | en PR     | feat/T08-watching-mas-uno |  2026-09-20 | No se pudo probar en vivo logueado (requiere series en VIENDO reales) |
+| T08b | /watching sin episodios + contraste (corrección) | 1    | pendiente |           | 2026-09-20 | Revisión: cards 0/0 sin acción; texto del botón primario ilegible |
+| T26  | Póster placeholder en ficha y cards              | 1    | pendiente |           | 2026-09-20 | Revisión: 7 series sin imagen rompen el header |
 | T09  | Home centrada en el tracker                      | 1    | pendiente |           |            |       |
 | T10  | Home logueado → /watching                        | 1    | pendiente |           |            |       |
 | T11a | Onboarding: backend                              | 1    | pendiente |           |            |       |
