@@ -9,6 +9,7 @@ import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Prisma, PrismaClient } from '../generated/prisma';
 import { isPlayableIn } from './playability';
+import { airingWindowStart } from './airing-schedule';
 import { normalizeBasedOn, type BasedOnEntry } from './based-on';
 import {
   HAS_WATCHABLE_EPISODE,
@@ -231,6 +232,73 @@ export async function getWatchableSeries(market = 'AR') {
       playableEpisodes,
     };
   });
+}
+
+// ===== PARRILLA SEMANAL DE EMISION =====
+
+export interface AiringScheduleRow {
+  id: number;
+  title: string;
+  imageUrl: string | null;
+  imageThumbUrl: string | null;
+  imagePosition: string | null;
+  year: number | null;
+  type: string;
+  /** Nunca null: la query filtra `airDays: { not: null }`. */
+  airDays: string;
+  country: { name: string; code: string | null } | null;
+}
+
+/**
+ * Parrilla semanal de emision para la landing y /estrenos: que series salen cada
+ * dia de la semana.
+ *
+ * Lado del corte: CATALOGO CURADO. `origin='CURATED'` + `catalogScope='PERSONAL'`
+ * explicitos, igual que `latestSeries` de la landing y el shard 1 del sitemap.
+ * Ningun aporte USER_EMBED puede entrar aca.
+ *
+ * Por que `Series.airDays` y NO `Episode.airDate` (medido el 2026-09-12 en prod):
+ * `airDate` es el `publishedAt` de YouTube, o sea un archivo historico de subidas
+ * (2022 -> 398 episodios, 2023 -> 315, 2024 -> 201). En los ultimos 7 dias tiene 2
+ * filas y en los ultimos 90 tiene 41, TODAS de una sola serie que ademas es
+ * USER_EMBED + WATCHABLE_ONLY. Una parrilla por fecha mostraria eso y habria
+ * filtrado un aporte de usuario al catalogo curado. `airDays`, en cambio, esta
+ * cargado en las 40 series de 2026 y las 40 son CURATED + PERSONAL.
+ *
+ * La ventana de `AIRING_WINDOW_WEEKS` es lo que evita publicar un horario falso:
+ * ver el comentario de esa constante en src/lib/airing-schedule.ts.
+ *
+ * Payload podado a proposito (egress de Supabase): 9 campos, sin synopsis, review,
+ * seasons, tags ni genres. ~38 filas = ~8 KB. Sin indice nuevo: la tabla tiene ~640
+ * filas y el planner la recorre entera igual.
+ */
+export async function getAiringSchedule(): Promise<AiringScheduleRow[]> {
+  const rows = await prisma.series.findMany({
+    where: {
+      origin: 'CURATED',
+      catalogScope: 'PERSONAL',
+      visibility: 'VISIBLE',
+      airDays: { not: null },
+      year: { gte: new Date().getUTCFullYear() },
+      createdAt: { gte: airingWindowStart() },
+    },
+    select: {
+      id: true,
+      title: true,
+      imageUrl: true,
+      imageThumbUrl: true,
+      imagePosition: true,
+      year: true,
+      type: true,
+      airDays: true,
+      country: { select: { name: true, code: true } },
+    },
+    // El agrupado por dia va en memoria (groupByWeekday): airDays es un CSV de texto
+    // libre, no hay forma de ordenarlo por dia en SQL.
+    orderBy: { title: 'asc' },
+  });
+
+  return rows.map((row) => ({ ...row, airDays: row.airDays ?? '' }));
 }
 
 /**

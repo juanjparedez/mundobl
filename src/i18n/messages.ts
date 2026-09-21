@@ -3049,6 +3049,36 @@ export type TranslationShape = {
     playAgainButton: string;
     bestScoreLabel: string;
   };
+  airDayStatus: {
+    today: string;
+    delayed1: string;
+    delayed2: string;
+    delayedMany: string;
+    tagToday: string;
+    tagDelayed: string;
+    airDaysTooltip: string;
+  };
+  estrenos: {
+    title: string;
+    subtitle: string;
+    disclaimer: string;
+    seeAll: string;
+    today: string;
+    moreCount: string;
+    emptyDay: string;
+    emptyTitle: string;
+    emptyDescription: string;
+    emptyAction: string;
+    dayMonday: string;
+    dayTuesday: string;
+    dayWednesday: string;
+    dayThursday: string;
+    dayFriday: string;
+    daySaturday: string;
+    daySunday: string;
+    subscribeTooltip: string;
+    unsubscribeTooltip: string;
+  };
 };
 
 const es: TranslationShape = {
@@ -6266,6 +6296,39 @@ const es: TranslationShape = {
     playAgainButton: 'Jugar de nuevo',
     bestScoreLabel: 'Tu mejor puntaje: {score} de {total}',
   },
+  airDayStatus: {
+    today: 'Hoy toca capítulo',
+    delayed1: 'Ayer emitió (1d atrasado)',
+    delayed2: '2 días atrasado',
+    delayedMany: '{days} días atrasado',
+    tagToday: 'Hoy',
+    tagDelayed: '+{days}d',
+    airDaysTooltip: 'Día(s) de emisión: {days} ({status})',
+  },
+  estrenos: {
+    title: 'Qué sale esta semana',
+    subtitle:
+      'Según el día de emisión que tenemos cargado. No confirmamos horarios ni que el capítulo ya esté subido.',
+    disclaimer:
+      'La parrilla muestra series en emisión del catálogo curado. Si una serie terminó hace más de cuatro meses, deja de aparecer.',
+    seeAll: 'Ver la semana completa',
+    today: 'Hoy',
+    moreCount: '+{count} más',
+    emptyDay: 'Nada este día',
+    emptyTitle: 'No hay series en emisión',
+    emptyDescription:
+      'Ahora mismo no tenemos ninguna serie del catálogo con día de emisión cargado. Cuando arranque una temporada nueva, aparece acá.',
+    emptyAction: 'Ir al catálogo',
+    dayMonday: 'Lunes',
+    dayTuesday: 'Martes',
+    dayWednesday: 'Miércoles',
+    dayThursday: 'Jueves',
+    dayFriday: 'Viernes',
+    daySaturday: 'Sábado',
+    daySunday: 'Domingo',
+    subscribeTooltip: 'Avisarme de esta serie',
+    unsubscribeTooltip: 'Dejar de avisarme',
+  },
 };
 
 const en: TranslationShape = {
@@ -9461,6 +9524,39 @@ const en: TranslationShape = {
     finishTitle: 'Trivia complete!',
     playAgainButton: 'Play again',
     bestScoreLabel: 'Your best score: {score} out of {total}',
+  },
+  airDayStatus: {
+    today: 'New episode today',
+    delayed1: 'Aired yesterday (1d behind)',
+    delayed2: '2 days behind',
+    delayedMany: '{days} days behind',
+    tagToday: 'Today',
+    tagDelayed: '+{days}d',
+    airDaysTooltip: 'Airing day(s): {days} ({status})',
+  },
+  estrenos: {
+    title: "What's airing this week",
+    subtitle:
+      "Based on the airing day we have on file. We don't confirm times, or that the episode is already up.",
+    disclaimer:
+      'This schedule covers currently airing shows from the curated catalog. Shows that wrapped more than four months ago drop off.',
+    seeAll: 'See the full week',
+    today: 'Today',
+    moreCount: '+{count} more',
+    emptyDay: 'Nothing this day',
+    emptyTitle: 'No shows currently airing',
+    emptyDescription:
+      'Right now no catalog series has an airing day on file. When a new season starts, it shows up here.',
+    emptyAction: 'Go to the catalog',
+    dayMonday: 'Monday',
+    dayTuesday: 'Tuesday',
+    dayWednesday: 'Wednesday',
+    dayThursday: 'Thursday',
+    dayFriday: 'Friday',
+    daySaturday: 'Saturday',
+    daySunday: 'Sunday',
+    subscribeTooltip: 'Notify me about this show',
+    unsubscribeTooltip: 'Stop notifying me',
   },
 };
 

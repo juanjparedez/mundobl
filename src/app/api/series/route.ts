@@ -442,6 +442,10 @@ export async function POST(request: NextRequest) {
     revalidatePath('/catalogo');
     revalidatePath('/series/[id]', 'page');
     revalidatePath('/ver');
+    // La parrilla de /estrenos sale de `airDays`, que se edita aca; sin esto
+    // el cambio no se ve hasta que expire el ISR de una hora.
+    revalidatePath('/estrenos');
+    revalidatePath('/');
     revalidatePath('/series', 'layout');
     revalidatePath('/series/[id]', 'page');
     revalidatePath(`/series/${serie.id}`);

@@ -89,6 +89,8 @@ function staticPages(): MetadataRoute.Sitemap {
   return [
     { url: BASE_URL, changeFrequency: 'weekly', priority: 1 },
     { url: `${BASE_URL}/catalogo`, changeFrequency: 'daily', priority: 0.9 },
+    // Cambia semana a semana (que serie sale cada dia): daily a proposito.
+    { url: `${BASE_URL}/estrenos`, changeFrequency: 'daily', priority: 0.85 },
     { url: `${BASE_URL}/ver`, changeFrequency: 'daily', priority: 0.9 },
     { url: `${BASE_URL}/actores`, changeFrequency: 'weekly', priority: 0.7 },
     {

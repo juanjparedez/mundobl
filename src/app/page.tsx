@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { JsonLd } from '@/components/seo/JsonLd';
 import type { WebSite } from 'schema-dts';
 import { LandingPage } from './LandingPage/LandingPage';
-import { prisma } from '@/lib/database';
+import { getAiringSchedule, prisma } from '@/lib/database';
 import { getAutoThumbnailUrl, type Platform } from '@/lib/embed-helpers';
 import {
   HAS_WATCHABLE_EPISODE,
@@ -31,6 +31,7 @@ async function getLandingStats() {
       featuredGlossaryTerm,
       latestNews,
       newThisWeek,
+      airingSchedule,
     ] = await Promise.all([
       prisma.series.count({ where: { origin: 'CURATED' } }),
       prisma.viewStatus.count({
@@ -157,6 +158,9 @@ async function getLandingStats() {
           },
         },
       }),
+      // Parrilla semanal de emision. Mismo lado del corte que `latestSeries`
+      // (CURATED + PERSONAL): el helper lo filtra explicitamente.
+      getAiringSchedule(),
     ]);
 
     const formattedWatchable = watchableSeries.map((s) => {
@@ -205,6 +209,7 @@ async function getLandingStats() {
       featuredGlossaryTerm,
       latestNews: formattedNews,
       newThisWeek,
+      airingSchedule,
     };
   } catch {
     return {
@@ -219,6 +224,7 @@ async function getLandingStats() {
       featuredGlossaryTerm: null,
       latestNews: [],
       newThisWeek: 0,
+      airingSchedule: [],
     };
   }
 }
