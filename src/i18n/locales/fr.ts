@@ -3053,6 +3053,36 @@ const fr = {
     "finishTitle": "Quiz terminé !",
     "playAgainButton": "Rejouer",
     "bestScoreLabel": "Votre meilleur score : {score} sur {total}"
+  },
+  "airDayStatus": {
+    "today": "Nouvel épisode aujourd'hui",
+    "delayed1": "Diffusé hier (1j de retard)",
+    "delayed2": "2 jours de retard",
+    "delayedMany": "{days} jours de retard",
+    "tagToday": "Aujourd'hui",
+    "tagDelayed": "+{days}j",
+    "airDaysTooltip": "Jour(s) de diffusion : {days} ({status})"
+  },
+  "estrenos": {
+    "title": "Ce qui est diffusé cette semaine",
+    "subtitle": "Basé sur le jour de diffusion que nous avons en dossier. Nous ne confirmons pas les heures, ni que l'épisode est déjà disponible.",
+    "disclaimer": "Cet horaire couvre les séries actuellement diffusées du catalogue sélectionné. Les séries terminées il y a plus de quatre mois disparaissent.",
+    "seeAll": "Voir la semaine complète",
+    "today": "Aujourd'hui",
+    "moreCount": "+{count} de plus",
+    "emptyDay": "Rien ce jour-là",
+    "emptyTitle": "Aucune série en cours de diffusion",
+    "emptyDescription": "Actuellement, aucune série du catalogue n'a de jour de diffusion enregistré. Lorsqu'une nouvelle saison commence, elle apparaît ici.",
+    "emptyAction": "Aller au catalogue",
+    "dayMonday": "Lundi",
+    "dayTuesday": "Mardi",
+    "dayWednesday": "Mercredi",
+    "dayThursday": "Jeudi",
+    "dayFriday": "Vendredi",
+    "daySaturday": "Samedi",
+    "daySunday": "Dimanche",
+    "subscribeTooltip": "Me notifier pour cette série",
+    "unsubscribeTooltip": "Arrêter les notifications"
   }
 } satisfies TranslationShape;
 

@@ -3053,6 +3053,36 @@ const ja = {
     "finishTitle": "トリビア完了！",
     "playAgainButton": "もう一度プレイ",
     "bestScoreLabel": "あなたの最高スコア: {total}問中{score}問"
+  },
+  "airDayStatus": {
+    "today": "本日新エピソード",
+    "delayed1": "昨日放送（1日遅れ）",
+    "delayed2": "2日遅れ",
+    "delayedMany": "{days}日遅れ",
+    "tagToday": "今日",
+    "tagDelayed": "+{days}日",
+    "airDaysTooltip": "放送日: {days} ({status})"
+  },
+  "estrenos": {
+    "title": "今週の放送予定",
+    "subtitle": "記録されている放送日に基づいています。時間やエピソードがすでに公開されているかは確認していません。",
+    "disclaimer": "このスケジュールは、厳選されたカタログから現在放送中の番組を対象としています。4ヶ月以上前に終了した番組は表示されません。",
+    "seeAll": "週全体を見る",
+    "today": "今日",
+    "moreCount": "他{count}件",
+    "emptyDay": "この日は何もありません",
+    "emptyTitle": "現在放送中の番組はありません",
+    "emptyDescription": "現在、カタログシリーズに放送日が登録されているものはありません。新しいシーズンが始まるとここに表示されます。",
+    "emptyAction": "カタログへ",
+    "dayMonday": "月曜日",
+    "dayTuesday": "火曜日",
+    "dayWednesday": "水曜日",
+    "dayThursday": "木曜日",
+    "dayFriday": "金曜日",
+    "daySaturday": "土曜日",
+    "daySunday": "日曜日",
+    "subscribeTooltip": "この番組について通知する",
+    "unsubscribeTooltip": "通知を停止する"
   }
 } satisfies TranslationShape;
 

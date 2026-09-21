@@ -3053,6 +3053,36 @@ const zhCN = {
     "finishTitle": "问答完成！",
     "playAgainButton": "再玩一次",
     "bestScoreLabel": "您的最佳分数：{score} 分，共 {total} 分"
+  },
+  "airDayStatus": {
+    "today": "今日新剧集",
+    "delayed1": "昨日播出（落后1天）",
+    "delayed2": "落后2天",
+    "delayedMany": "落后{days}天",
+    "tagToday": "今天",
+    "tagDelayed": "+{days}天",
+    "airDaysTooltip": "播出日：{days}（{status}）"
+  },
+  "estrenos": {
+    "title": "本周播出剧集",
+    "subtitle": "根据我们记录的播出日期。我们不确认具体时间，也不确认剧集是否已上线。",
+    "disclaimer": "此时间表涵盖精选目录中当前正在播出的节目。已完结超过四个月的节目将不再显示。",
+    "seeAll": "查看完整一周",
+    "today": "今天",
+    "moreCount": "还有{count}个",
+    "emptyDay": "今日无剧集",
+    "emptyTitle": "目前无正在播出的剧集",
+    "emptyDescription": "目前没有目录剧集有播出日期记录。新一季开始时，会显示在这里。",
+    "emptyAction": "前往目录",
+    "dayMonday": "周一",
+    "dayTuesday": "周二",
+    "dayWednesday": "周三",
+    "dayThursday": "星期四",
+    "dayFriday": "星期五",
+    "daySaturday": "星期六",
+    "daySunday": "星期日",
+    "subscribeTooltip": "通知我此剧集",
+    "unsubscribeTooltip": "停止通知"
   }
 } satisfies TranslationShape;
 
