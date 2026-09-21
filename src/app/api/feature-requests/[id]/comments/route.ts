@@ -132,10 +132,7 @@ export async function POST(
       },
     });
 
-    if (
-      featureRequest.userId &&
-      featureRequest.userId !== authResult.userId!
-    ) {
+    if (featureRequest.userId && featureRequest.userId !== authResult.userId!) {
       const { notifyUser } = await import('@/lib/notifications');
       const notifTitle = isAdminOrMod
         ? `Respuesta del equipo en tu solicitud: "${featureRequest.title}"`
@@ -161,4 +158,3 @@ export async function POST(
     );
   }
 }
-

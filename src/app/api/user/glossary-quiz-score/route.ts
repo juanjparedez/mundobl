@@ -56,8 +56,14 @@ export async function PATCH(request: NextRequest) {
     select: { glossaryQuizBestScore: true },
   });
 
-  if (current && current.glossaryQuizBestScore !== null && current.glossaryQuizBestScore >= score) {
-    return NextResponse.json({ glossaryQuizBestScore: current.glossaryQuizBestScore });
+  if (
+    current &&
+    current.glossaryQuizBestScore !== null &&
+    current.glossaryQuizBestScore >= score
+  ) {
+    return NextResponse.json({
+      glossaryQuizBestScore: current.glossaryQuizBestScore,
+    });
   }
 
   const updated = await prisma.user.update({

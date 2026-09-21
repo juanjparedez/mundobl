@@ -54,8 +54,14 @@ interface CardProps {
 
 function ShortcutCard({ dest, metric, editing }: CardProps) {
   const { t } = useLocale();
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-    useSortable({ id: dest.id, disabled: !editing });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: dest.id, disabled: !editing });
 
   const style = {
     transform: CSS.Translate.toString(transform),

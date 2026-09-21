@@ -40,11 +40,11 @@ export function PlataformasClient() {
         </h1>
         <p className="plataformas-hero__subtitle">
           El ecosistema BL/GL está dividido entre varios servicios. Acá tenés
-          una guía transparente con precios de referencia, versiones sin
-          censura (Uncut), subtítulos en español y qué conviene contratar según
-          tus gustos. Los precios y la disponibilidad pueden cambiar según el
-          país, la cuenta, los impuestos y el canal de compra; comprobá siempre
-          la región antes de contratar.
+          una guía transparente con precios de referencia, versiones sin censura
+          (Uncut), subtítulos en español y qué conviene contratar según tus
+          gustos. Los precios y la disponibilidad pueden cambiar según el país,
+          la cuenta, los impuestos y el canal de compra; comprobá siempre la
+          región antes de contratar.
         </p>
 
         {/* Filtros rápidos */}
@@ -228,10 +228,10 @@ export function PlataformasClient() {
               Los K-BLs suelen estrenarse en <strong>Rakuten Viki</strong> o{' '}
               <strong>GagaOOLala</strong>. Para películas independientes de
               autor (como las de <em>Strongberry</em>), el mejor lugar es{' '}
-              revisar los canales oficiales de la productora: <strong>Vimeo On
-                Demand</strong> está en transición: permite nuevas compras hasta
-              el 21 de septiembre de 2026 y conservará las compras existentes
-              hasta el 20 de noviembre de 2026.
+              revisar los canales oficiales de la productora:{' '}
+              <strong>Vimeo On Demand</strong> está en transición: permite
+              nuevas compras hasta el 21 de septiembre de 2026 y conservará las
+              compras existentes hasta el 20 de noviembre de 2026.
             </p>
           </div>
 

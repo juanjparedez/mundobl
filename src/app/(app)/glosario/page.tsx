@@ -24,7 +24,13 @@ export default async function GlosarioPage() {
     prisma.recommendedSite.findMany({
       where: { category: RESOURCES_CATEGORY },
       orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
-      select: { id: true, name: true, url: true, description: true, language: true },
+      select: {
+        id: true,
+        name: true,
+        url: true,
+        description: true,
+        language: true,
+      },
     }),
   ]);
   const terms = rawTerms.map(({ tags, ...term }) => ({
