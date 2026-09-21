@@ -269,7 +269,11 @@ const zhCN = {
     "errorRemove": "从列表中移除时出错",
     "episodeMarkedMessage": "第{ep}集已标记为已观看",
     "errorMarkEpisode": "标记剧集时出错",
-    "markEpisodeTooltip": "标记第{ep}集为已观看"
+    "markEpisodeTooltip": "标记第{ep}集为已观看",
+    "markNextLabel": "已观看第 {n} 集",
+    "markCompleteLabel": "已看完剧集",
+    "markCompleteConfirm": "标记“{title}”为已看完？",
+    "completedMessage": "你已将“{title}”标记为已看完"
   },
   "appLayout": {
     "skipToContent": "跳到主要内容"
