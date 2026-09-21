@@ -65,6 +65,11 @@ export type TranslationShape = {
     hasReview: string;
     goToContent: string;
     goToReviews: string;
+    favoritesOne: string;
+    favoritesMany: string;
+    favoritesTitle: string;
+    watchingNow: string;
+    watchingNowTitle: string;
   };
   seriesInfo: {
     fieldTitle: string;
@@ -253,9 +258,21 @@ export type TranslationShape = {
     exploreCatalog: string;
     removeTitle: string;
     nextLabel: string;
-    continueButton: string;
-    detailsButton: string;
+    openSeries: string;
     editButton: string;
+    countOne: string;
+    countMany: string;
+    sortLabel: string;
+    sortLastWatched: string;
+    sortName: string;
+    sortStart: string;
+    sortNext: string;
+    airToday: string;
+    airTodayTag: string;
+    airDelayed: string;
+    airDelayedTag: string;
+    airTooltip: string;
+    markNextCode: string;
     removedMessage: string;
     errorRemove: string;
     episodeMarkedMessage: string;
@@ -3093,6 +3110,11 @@ const es: TranslationShape = {
     hasReview: 'Con reseña',
     goToContent: 'Ir a contenido',
     goToReviews: 'Ir a reseñas',
+    favoritesOne: '1 favorito',
+    favoritesMany: '{n} favoritos',
+    favoritesTitle: 'Personas que la tienen en favoritos',
+    watchingNow: '{n} viendo ahora',
+    watchingNowTitle: 'Personas que la están viendo ahora',
   },
   seriesInfo: {
     fieldTitle: 'Título',
@@ -3291,9 +3313,21 @@ const es: TranslationShape = {
     exploreCatalog: 'Explorar Catálogo',
     removeTitle: 'Remover de viendo ahora',
     nextLabel: 'Siguiente',
-    continueButton: 'Continuar viendo',
-    detailsButton: 'Ver detalles',
+    openSeries: 'Ver ficha',
     editButton: 'Editar',
+    countOne: 'Viendo 1 serie',
+    countMany: 'Viendo {n} series',
+    sortLabel: 'Ordenar por:',
+    sortLastWatched: 'Última actividad',
+    sortName: 'Nombre (A-Z)',
+    sortStart: 'Fecha de estreno',
+    sortNext: 'Próxima por ver',
+    airToday: 'Hoy sale episodio',
+    airTodayTag: 'Hoy',
+    airDelayed: 'Salió hace {n} días y todavía no lo marcaste',
+    airDelayedTag: '+{n}d',
+    airTooltip: 'Se emite: {days} · {status}',
+    markNextCode: 'Vi el {code}',
     removedMessage: '"\{title}" removida de "Viendo ahora"',
     errorRemove: 'Error al remover de la lista',
     episodeMarkedMessage: 'Episodio {ep} marcado como visto',
@@ -6284,6 +6318,11 @@ const en: TranslationShape = {
     hasReview: 'Has review',
     goToContent: 'Go to content',
     goToReviews: 'Go to reviews',
+    favoritesOne: '1 favorite',
+    favoritesMany: '{n} favorites',
+    favoritesTitle: 'People who have it in their favorites',
+    watchingNow: '{n} watching now',
+    watchingNowTitle: 'People watching it right now',
   },
   seriesInfo: {
     fieldTitle: 'Title',
@@ -6479,9 +6518,21 @@ const en: TranslationShape = {
     exploreCatalog: 'Explore Catalog',
     removeTitle: 'Remove from watching now',
     nextLabel: 'Next',
-    continueButton: 'Continue watching',
-    detailsButton: 'View details',
+    openSeries: 'Open series page',
     editButton: 'Edit',
+    countOne: 'Watching 1 series',
+    countMany: 'Watching {n} series',
+    sortLabel: 'Sort by:',
+    sortLastWatched: 'Last activity',
+    sortName: 'Name (A-Z)',
+    sortStart: 'Release date',
+    sortNext: 'Next up',
+    airToday: 'New episode today',
+    airTodayTag: 'Today',
+    airDelayed: 'Aired {n} days ago and you have not marked it yet',
+    airDelayedTag: '+{n}d',
+    airTooltip: 'Airs: {days} · {status}',
+    markNextCode: 'Watched {code}',
     removedMessage: '"{title}" removed from "Watching now"',
     errorRemove: 'Error removing from list',
     episodeMarkedMessage: 'Episode {ep} marked as watched',
