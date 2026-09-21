@@ -176,8 +176,8 @@
   gap: 4px;
   padding: 3px 8px;
   border-radius: 999px;
-  background: color-mix(in srgb, #ff4d4f 12%, var(--bg-spotlight));
-  border: 1px solid color-mix(in srgb, #ff4d4f 35%, transparent);
+  background: color-mix(in srgb, var(--error-color) 12%, var(--bg-spotlight));
+  border: 1px solid color-mix(in srgb, var(--error-color) 35%, transparent);
   color: var(--text-secondary);
   font-size: var(--font-size-sm);
   font-weight: 500;
@@ -185,8 +185,16 @@
 }
 
 .series-header__community-badge--watching {
-  background: color-mix(in srgb, #1677ff 12%, var(--bg-spotlight));
-  border-color: color-mix(in srgb, #1677ff 35%, transparent);
+  background: color-mix(in srgb, var(--info-color) 12%, var(--bg-spotlight));
+  border-color: color-mix(in srgb, var(--info-color) 35%, transparent);
+}
+
+.series-header__community-icon--fav {
+  color: var(--error-color);
+}
+
+.series-header__community-icon--watching {
+  color: var(--info-color);
 }
 
 /* ─── Synopsis ─────────────────────────────────────────────────────────────── */

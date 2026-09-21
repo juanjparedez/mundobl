@@ -222,10 +222,14 @@ export function SeriesHeader({
             {favoriteCount !== undefined && favoriteCount > 0 && (
               <span
                 className="series-header__community-badge"
-                title="Guardado en favoritos por la comunidad"
+                title={t('seriesHeader.favoritesTitle')}
               >
-                <HeartFilled style={{ color: '#ff4d4f' }} />
-                {favoriteCount} {favoriteCount === 1 ? 'favorito' : 'favoritos'}
+                <HeartFilled className="series-header__community-icon series-header__community-icon--fav" />
+                {favoriteCount === 1
+                  ? t('seriesHeader.favoritesOne')
+                  : interpolateMessage(t('seriesHeader.favoritesMany'), {
+                      n: String(favoriteCount),
+                    })}
               </span>
             )}
 
@@ -233,10 +237,12 @@ export function SeriesHeader({
               currentlyWatchingCount > 0 && (
                 <span
                   className="series-header__community-badge series-header__community-badge--watching"
-                  title="Usuarios mirando esta serie ahora"
+                  title={t('seriesHeader.watchingNowTitle')}
                 >
-                  <EyeOutlined style={{ color: '#1677ff' }} />
-                  {currentlyWatchingCount} viendo ahora
+                  <EyeOutlined className="series-header__community-icon series-header__community-icon--watching" />
+                  {interpolateMessage(t('seriesHeader.watchingNow'), {
+                    n: String(currentlyWatchingCount),
+                  })}
                 </span>
               )}
 
