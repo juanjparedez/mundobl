@@ -252,6 +252,28 @@ function hexToRgba(hex: string, alpha: number): string {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
+/**
+ * Color de texto legible sobre un fondo solido (botones primary, tags).
+ * antd asume texto blanco sobre colorPrimary; con acentos claros (gold,
+ * amarillo, pastel) eso da blanco sobre amarillo y no se lee. Se elige
+ * oscuro o claro segun la luminancia relativa (WCAG) del acento.
+ */
+export function readableTextOn(hex: string): string {
+  const m = hex.match(/^#?([0-9a-f]{6})$/i);
+  if (!m) return '#ffffff';
+  const n = parseInt(m[1], 16);
+  const channel = (v: number) => {
+    const c = v / 255;
+    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  };
+  const luminance =
+    0.2126 * channel((n >> 16) & 0xff) +
+    0.7152 * channel((n >> 8) & 0xff) +
+    0.0722 * channel(n & 0xff);
+  // Umbral 0.4: por encima, el blanco no llega a 4.5:1 de contraste.
+  return luminance > 0.4 ? '#1b1620' : '#ffffff';
+}
+
 import type { SkinKey } from '@/types/theme.types';
 export type { SkinKey };
 
@@ -525,6 +547,7 @@ function buildCustomSkinTheme(
         controlHeight: 36,
         controlHeightLG: 44,
         controlHeightSM: 28,
+        primaryColor: readableTextOn(primaryColor),
         defaultBg: hexToRgba(p.text, 0.04),
         defaultBorderColor: p.borderStrong,
         defaultColor: p.text,
@@ -640,6 +663,7 @@ export function buildTheme(
           controlHeight: 32,
           controlHeightLG: 40,
           controlHeightSM: 24,
+          primaryColor: readableTextOn(accent.primary),
         },
         Table: {
           headerBg: '#fafafa',
@@ -686,6 +710,7 @@ export function buildTheme(
         controlHeight: 32,
         controlHeightLG: 40,
         controlHeightSM: 24,
+        primaryColor: readableTextOn(accent.primary),
         defaultBg: 'rgba(255, 255, 255, 0.06)',
         defaultBorderColor: '#4b3f5f',
         defaultColor: 'rgba(255, 246, 252, 0.9)',

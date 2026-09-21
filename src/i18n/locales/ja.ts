@@ -273,7 +273,8 @@ const ja = {
     "markNextLabel": "エピソード{n}を視聴済み",
     "markCompleteLabel": "シリーズを完走",
     "markCompleteConfirm": "「{title}」を完走済みにしますか？",
-    "completedMessage": "「{title}」を完走済みにしました"
+    "completedMessage": "「{title}」を完走済みにしました",
+    "noEpisodesHint": "エピソードが読み込まれていません: 一括で完了とマークされます"
   },
   "appLayout": {
     "skipToContent": "メインコンテンツにスキップ"
@@ -2496,6 +2497,10 @@ const ja = {
   },
   "progressStepper": {
     "at": "現在 {total} 中 {current}",
+    "epAbbr": "話",
+    "none": "まだありません",
+    "nextUp": "次: {label}",
+    "allWatched": "全エピソードを視聴しました",
     "next": "次のエピソードをマーク",
     "prev": "前のエピソードを元に戻す",
     "jumpTo": "エピソードにジャンプ",
@@ -2509,9 +2514,21 @@ const ja = {
   "trackCta": {
     "title": "これ見てる？",
     "subtitle": "視聴中のエピソードをマークして、リストからフォローしよう。",
+    "subtitleNoEpisodes": "視聴済みとしてマークすると、履歴に追加されます。",
     "button": "トラッキングを開始",
+    "buttonNoEpisodes": "視聴済みとしてマーク",
     "applied": "設定完了、{title}をトラッキング中",
     "chooseEpisode": "何話まで見た？"
+  },
+  "trackingPanel": {
+    "title": "マイ追跡",
+    "markWatched": "視聴済み",
+    "markUnwatched": "未視聴としてマーク",
+    "markedWatched": "「{title}」を視聴済みとしてマークしました",
+    "noEpisodes": "このタイトルにはエピソードが読み込まれていません: 一括で完了とマークされます。"
+  },
+  "posterPlaceholder": {
+    "noImage": "画像なし"
   },
   "spoilerFreeProvider": {
     "useSpoilerFreeError": "useSpoilerFreeはSpoilerFreeProvider内で使用する必要があります"
