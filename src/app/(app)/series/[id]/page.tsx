@@ -11,7 +11,7 @@ import { SeriesInfo } from '@/components/series/SeriesInfo';
 import { RatingSection } from '@/components/series/RatingSection';
 import { CommentsSection } from '@/components/series/CommentsSection';
 import { ReviewsSection } from '@/components/series/ReviewsSection/ReviewsSection';
-import { ViewStatusToggle } from '@/components/series/ViewStatusToggle';
+import { TrackingPanel } from '@/components/series/TrackingPanel/TrackingPanel';
 import { SeriesDetailClient } from '@/components/series/SeriesDetailClient';
 import { SeriesCompletenessBadge } from './SeriesCompletenessBadge/SeriesCompletenessBadge';
 import { SeriesContent } from '@/components/series/SeriesContent/SeriesContent';
@@ -292,7 +292,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
             currentlyWatchingCount={currentlyWatchingCount}
             actionsSlot={
               <>
-                <ViewStatusToggle
+                <TrackingPanel
                   seriesId={serie.id}
                   seriesTitle={serie.title}
                   seasons={serie.seasons}

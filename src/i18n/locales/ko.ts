@@ -273,7 +273,8 @@ const ko = {
     "markNextLabel": "시청 완료: 에피소드 {n}",
     "markCompleteLabel": "시리즈 완료",
     "markCompleteConfirm": "\"{title}\"을(를) 완료로 표시하시겠습니까?",
-    "completedMessage": "\"{title}\"을(를) 완료로 표시했습니다"
+    "completedMessage": "\"{title}\"을(를) 완료로 표시했습니다",
+    "noEpisodesHint": "에피소드 없음: 한 번에 완료로 표시됩니다."
   },
   "appLayout": {
     "skipToContent": "본문으로 건너뛰기"
@@ -2496,6 +2497,10 @@ const ko = {
   },
   "progressStepper": {
     "at": "{total} 중 {current}",
+    "epAbbr": "화",
+    "none": "아직 없음",
+    "nextUp": "다음: {label}",
+    "allWatched": "모든 에피소드를 시청했습니다",
     "next": "다음 에피소드 표시",
     "prev": "마지막 에피소드 실행 취소",
     "jumpTo": "에피소드로 이동",
@@ -2509,9 +2514,21 @@ const ko = {
   "trackCta": {
     "title": "이 작품 보고 계신가요?",
     "subtitle": "시청 중인 에피소드를 표시하고 목록에서 팔로우하세요.",
+    "subtitleNoEpisodes": "시청 완료로 표시하면 시청 기록에 추가됩니다.",
     "button": "시청 기록 시작",
+    "buttonNoEpisodes": "시청 완료로 표시",
     "applied": "모든 준비가 완료되었습니다. 이제 {title}을(를) 추적합니다.",
     "chooseEpisode": "몇 화를 보고 계신가요?"
+  },
+  "trackingPanel": {
+    "title": "내 시청 목록",
+    "markWatched": "시청 완료",
+    "markUnwatched": "시청 완료 해제",
+    "markedWatched": "\"{title}\"을(를) 시청 완료로 표시했습니다",
+    "noEpisodes": "이 작품은 에피소드가 없습니다: 한 번에 완료로 표시됩니다."
+  },
+  "posterPlaceholder": {
+    "noImage": "이미지 없음"
   },
   "spoilerFreeProvider": {
     "useSpoilerFreeError": "useSpoilerFree는 SpoilerFreeProvider 내에서 사용해야 합니다."
