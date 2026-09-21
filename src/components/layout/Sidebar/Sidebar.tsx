@@ -2,33 +2,20 @@
 
 import { startTransition, useState, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { Avatar, Layout, Menu } from 'antd';
+import { Avatar, Badge, Layout, Menu } from 'antd';
 import {
   AppstoreOutlined,
-  CalendarOutlined,
-  BarChartOutlined,
   SettingOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  PlayCircleOutlined,
   UserOutlined,
-  VideoCameraOutlined,
-  VideoCameraAddOutlined,
-  TeamOutlined,
-  BankOutlined,
-  TranslationOutlined,
-  CommentOutlined,
-  LinkOutlined,
-  InfoCircleOutlined,
-  NotificationOutlined,
-  SafetyCertificateOutlined,
 } from '@ant-design/icons';
-import { Badge } from 'antd';
 import { useSession } from 'next-auth/react';
 import { ROUTES } from '@/constants/navigation';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { useHasNovedades } from '@/hooks/useHasNovedades';
 import { SettingsPanel } from '../SettingsPanel/SettingsPanel';
-import { LAST_SEEN_NOVEDADES_KEY } from '@/app/(app)/novedades/storage-keys';
+import { NAV_ITEMS, canSeeNavItem } from '../navItems';
 import './Sidebar.css';
 
 const { Sider } = Layout;
@@ -50,7 +37,7 @@ export function Sidebar() {
   const { t } = useLocale();
   const { data: session } = useSession();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [hasNovedades, setHasNovedades] = useState(false);
+  const hasNovedades = useHasNovedades();
 
   useEffect(() => {
     startTransition(() => {
@@ -58,164 +45,33 @@ export function Sidebar() {
     });
   }, [pathname]);
 
-  useEffect(() => {
-    let aborted = false;
-    fetch('/api/novedades/latest')
-      .then((res) => (res.ok ? res.json() : { timestamp: null }))
-      .then((data: { timestamp: number | null }) => {
-        if (aborted) return;
-        if (!data.timestamp) {
-          setHasNovedades(false);
-          return;
-        }
-        const seen = Number(
-          window.localStorage.getItem(LAST_SEEN_NOVEDADES_KEY) ?? '0'
-        );
-        setHasNovedades(data.timestamp > seen);
-      })
-      .catch(() => {});
-    return () => {
-      aborted = true;
-    };
-  }, [pathname]);
+  const role = session?.user?.role;
+  const isAdmin = role === 'ADMIN';
+  const isModerator = role === 'MODERATOR';
+  const isCollaborator = role === 'COLLABORATOR';
+  const navContext = { loggedIn: !!session?.user, role };
 
-  const isAdmin = session?.user?.role === 'ADMIN';
-  const isModerator = session?.user?.role === 'MODERATOR';
-  const isCollaborator = session?.user?.role === 'COLLABORATOR';
-  const canAccessAdmin = isAdmin || isModerator;
-
-  const menuItems = [
-    {
-      // Primero a proposito: es el unico item con informacion perecedera
-      // (que sale hoy). Enterrarlo abajo lo vuelve invisible.
-      key: ROUTES.ESTRENOS,
-      icon: <CalendarOutlined />,
-      label: t('estrenos.title'),
-      onClick: () => router.push(ROUTES.ESTRENOS),
-    },
-    {
-      key: ROUTES.CATALOGO,
-      icon: <AppstoreOutlined />,
-      label: t('sidebar.catalog'),
-      onClick: () => router.push(ROUTES.CATALOGO),
-    },
-    {
-      key: ROUTES.VER,
-      icon: <PlayCircleOutlined />,
-      label: 'Ver series',
-      onClick: () => router.push(ROUTES.VER),
-    },
-    {
-      key: ROUTES.WATCHING,
-      icon: <PlayCircleOutlined />,
-      label: t('sidebar.watching'),
-      onClick: () => router.push(ROUTES.WATCHING),
-    },
-    {
-      key: ROUTES.NOVEDADES,
-      icon: (
+  // Misma lista que la barra inferior de movil (navItems.ts): lo que se
+  // ve aca se ve alla. Los items mobileOnly ya viven en la TopBar.
+  const menuItems = NAV_ITEMS.filter(
+    (item) => !item.mobileOnly && canSeeNavItem(item, navContext)
+  ).map((item) => {
+    const Icon = item.icon;
+    const icon =
+      item.badge === 'novedades' ? (
         <Badge dot={hasNovedades} offset={[2, 2]}>
-          <NotificationOutlined />
+          <Icon />
         </Badge>
-      ),
-      label: t('sidebar.novedades'),
-      onClick: () => router.push(ROUTES.NOVEDADES),
-    },
-    ...(session?.user
-      ? [
-          {
-            key: ROUTES.PERFIL,
-            icon: <UserOutlined />,
-            label: t('sidebar.profile'),
-            onClick: () => router.push(ROUTES.PERFIL),
-          },
-        ]
-      : []),
-    // Indices de personas: existian las fichas [id] pero no habia como llegar
-    // a ellas desde el menu — se descubrian solo desde una serie o el sitemap.
-    {
-      key: '/actores',
-      icon: <TeamOutlined />,
-      label: t('peopleIndex.actorsTitle'),
-      onClick: () => router.push('/actores'),
-    },
-    {
-      key: '/directores',
-      icon: <VideoCameraAddOutlined />,
-      label: t('peopleIndex.directorsTitle'),
-      onClick: () => router.push('/directores'),
-    },
-    {
-      key: '/productoras',
-      icon: <BankOutlined />,
-      label: t('peopleIndex.companiesTitle'),
-      onClick: () => router.push('/productoras'),
-    },
-    {
-      key: ROUTES.FEEDBACK,
-      icon: <CommentOutlined />,
-      label: t('sidebar.feedback'),
-      onClick: () => router.push(ROUTES.FEEDBACK),
-    },
-    {
-      key: '/sitios',
-      icon: <LinkOutlined />,
-      label: t('sidebar.sites'),
-      onClick: () => router.push('/sitios'),
-    },
-    {
-      key: '/plataformas',
-      icon: <SafetyCertificateOutlined />,
-      label: 'Plataformas & Planes',
-      onClick: () => router.push('/plataformas'),
-    },
-    {
-      key: '/glosario',
-      icon: <TranslationOutlined />,
-      label: 'Glosario Cultural',
-      onClick: () => router.push('/glosario'),
-    },
-    {
-      key: '/contenido',
-      icon: <VideoCameraOutlined />,
-      label: t('sidebar.content'),
-      onClick: () => router.push('/contenido'),
-    },
-    {
-      key: ROUTES.ESTADISTICAS,
-      icon: <BarChartOutlined />,
-      label: t('sidebar.stats'),
-      onClick: () => router.push(ROUTES.ESTADISTICAS),
-    },
-    {
-      key: '/acerca',
-      icon: <InfoCircleOutlined />,
-      label: 'Acerca de MundoBL',
-      onClick: () => router.push('/acerca'),
-    },
-    ...(canAccessAdmin
-      ? [
-          {
-            key: ROUTES.ADMIN,
-            icon: <SettingOutlined />,
-            label: t('sidebar.administration'),
-            onClick: () => router.push(ROUTES.ADMIN),
-          },
-        ]
-      : []),
-    // Rol reducido: nunca ve "Administracion" (apunta a /admin, vetado
-    // por src/proxy.ts para COLLABORATOR) — item propio hacia su area.
-    ...(isCollaborator
-      ? [
-          {
-            key: ROUTES.ADMIN_COLABORADOR,
-            icon: <SettingOutlined />,
-            label: t('sidebar.collaboratorPanel'),
-            onClick: () => router.push(ROUTES.ADMIN_COLABORADOR),
-          },
-        ]
-      : []),
-  ];
+      ) : (
+        <Icon />
+      );
+    return {
+      key: item.path,
+      icon,
+      label: t(item.labelKey),
+      onClick: () => router.push(item.path),
+    };
+  });
 
   const selectedKey = pathname || ROUTES.CATALOGO;
 
@@ -299,6 +155,7 @@ export function Sidebar() {
           </button>
         )}
       </div>
+
       <SettingsPanel
         open={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}

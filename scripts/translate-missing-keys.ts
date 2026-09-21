@@ -183,7 +183,7 @@ function serializeAsTs(varName: string, obj: Record<string, unknown>): string {
 
 import type { TranslationShape } from '../messages';
 
-const ${varName}: TranslationShape = ${json} as unknown as TranslationShape;
+const ${varName} = ${json} satisfies TranslationShape;
 
 export default ${varName};
 `;

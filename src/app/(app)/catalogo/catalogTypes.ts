@@ -28,6 +28,7 @@ export interface SerieData {
   featured?: boolean;
   /** Orden manual dentro de "Destacadas" (menor = primero). */
   featuredOrder?: number;
+  isUniverseMain?: boolean;
   universoId?: number | null;
   universoNombre?: string | null;
   tags?: SerieTag[];

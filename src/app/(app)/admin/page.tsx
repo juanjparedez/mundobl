@@ -8,6 +8,7 @@ import {
 } from '@/lib/client-icons';
 import { prisma } from '@/lib/database';
 import { AdminHomeClient } from './AdminHomeClient';
+import type { AdminShortcutMetric } from './AdminShortcuts/AdminShortcuts';
 import './admin.css';
 import './admin-dashboard.css';
 
@@ -93,186 +94,71 @@ async function loadCounts(): Promise<DashboardCounts> {
   };
 }
 
-interface ToolCard {
-  href: string;
-  icon: string;
-  title: string;
-  count?: number;
-  alert?: { count: number; label: string };
-}
-
-interface ToolGroup {
-  title: string;
-  tools: ToolCard[];
-}
-
 export default async function AdminLandingPage() {
   const counts = await loadCounts();
 
-  const groups: ToolGroup[] = [
-    {
-      title: 'Catálogo',
-      tools: [
-        {
-          href: '/admin/series',
-          icon: '🎬',
-          title: 'Series',
-          count: counts.series,
-          alert:
-            counts.seriesWithoutReview > 0
-              ? { count: counts.seriesWithoutReview, label: 'sin reseña' }
-              : undefined,
-        },
-        {
-          href: '/admin/series/importar',
-          icon: '📥',
-          title: 'Importar serie (YouTube)',
-        },
-        {
-          href: '/admin/series/barrido',
-          icon: '📡',
-          title: 'Barrido de canal',
-        },
-        {
-          href: '/admin/ver',
-          icon: '▶️',
-          title: 'Administrar /ver',
-        },
-        {
-          href: '/admin/tags',
-          icon: '🏷️',
-          title: 'Tags',
-          count: counts.tags,
-        },
-        {
-          href: '/admin/universos',
-          icon: '🌐',
-          title: 'Universos',
-          count: counts.universes,
-        },
-        {
-          href: '/admin/actores',
-          icon: '👤',
-          title: 'Actores',
-          count: counts.actors,
-        },
-        {
-          href: '/admin/directores',
-          icon: '🎥',
-          title: 'Directores',
-          count: counts.directors,
-        },
-        {
-          href: '/admin/productoras',
-          icon: '🏛️',
-          title: 'Productoras',
-          count: counts.productionCompanies,
-        },
-        { href: '/admin/idiomas', icon: '🗣️', title: 'Idiomas' },
-      ],
+  // Solo metricas, indexadas por el id del destino. Que destinos existen,
+  // como se llaman y en que grupo viven lo decide adminDestinations —
+  // esta pagina ya no duplica el mapa de sitio ni escribe titulos.
+  const metrics: Record<string, AdminShortcutMetric | undefined> = {
+    series: {
+      count: counts.series,
+      alert:
+        counts.seriesWithoutReview > 0
+          ? {
+              count: counts.seriesWithoutReview,
+              labelKey: 'adminShortcuts.alertWithoutReview',
+            }
+          : undefined,
     },
-    {
-      title: 'Comunidad',
-      tools: [
-        {
-          href: '/admin/usuarios',
-          icon: '👥',
-          title: 'Usuarios',
-          count: counts.users,
-        },
-        {
-          href: '/admin/contenido',
-          icon: '▶️',
-          title: 'Contenido',
-          count: counts.embeddableContent,
-          alert:
-            counts.seriesWithoutContent > 0
-              ? {
-                  count: counts.seriesWithoutContent,
-                  label: 'series sin contenido',
-                }
-              : undefined,
-        },
-        {
-          href: '/admin/sitios',
-          icon: '🔗',
-          title: 'Sitios',
-          count: counts.recommendedSites,
-          alert:
-            counts.suggestedSitesPending > 0
-              ? {
-                  count: counts.suggestedSitesPending,
-                  label: 'sugeridos pendientes',
-                }
-              : undefined,
-        },
-        {
-          href: '/admin/comentarios',
-          icon: '💬',
-          title: 'Comentarios',
-          count: counts.comments,
-          alert:
-            counts.commentsReported > 0
-              ? { count: counts.commentsReported, label: 'reportados' }
-              : undefined,
-        },
-        {
-          href: '/admin/resenas',
-          icon: '📖',
-          title: 'Reseñas',
-          count: counts.reviews,
-          alert:
-            counts.reviewsHidden > 0
-              ? { count: counts.reviewsHidden, label: 'ocultas' }
-              : undefined,
-        },
-      ],
+    content: {
+      count: counts.embeddableContent,
+      alert:
+        counts.seriesWithoutContent > 0
+          ? {
+              count: counts.seriesWithoutContent,
+              labelKey: 'adminShortcuts.alertWithoutContent',
+            }
+          : undefined,
     },
-    {
-      title: 'Sistema',
-      tools: [
-        { href: '/admin/info', icon: 'ℹ️', title: 'Info del proyecto' },
-        { href: '/admin/logs', icon: '📋', title: 'Logs de acceso' },
-        {
-          href: '/admin/changelog',
-          icon: '📝',
-          title: 'Changelog',
-          count: counts.changelogItems,
-        },
-        { href: '/admin/stats', icon: '📊', title: 'Estadísticas' },
-      ],
+    sites: {
+      count: counts.recommendedSites,
+      alert:
+        counts.suggestedSitesPending > 0
+          ? {
+              count: counts.suggestedSitesPending,
+              labelKey: 'adminShortcuts.alertPendingSites',
+            }
+          : undefined,
     },
-  ];
-
-  const headlineAlerts = [
-    counts.commentsReported > 0 && {
-      key: 'reports',
-      icon: '🚩',
-      label: `${counts.commentsReported} comentarios reportados`,
-      href: '/admin/comentarios',
-      tone: 'danger' as const,
+    comments: {
+      count: counts.comments,
+      alert:
+        counts.commentsReported > 0
+          ? {
+              count: counts.commentsReported,
+              labelKey: 'adminShortcuts.alertReported',
+            }
+          : undefined,
     },
-    counts.suggestedSitesPending > 0 && {
-      key: 'pending-sites',
-      icon: '📨',
-      label: `${counts.suggestedSitesPending} sitios sugeridos esperando revisión`,
-      href: '/admin/sitios',
-      tone: 'warning' as const,
+    reviews: {
+      count: counts.reviews,
+      alert:
+        counts.reviewsHidden > 0
+          ? {
+              count: counts.reviewsHidden,
+              labelKey: 'adminShortcuts.alertHiddenReviews',
+            }
+          : undefined,
     },
-    counts.seriesWithoutReview > 0 && {
-      key: 'no-review',
-      icon: '✍️',
-      label: `${counts.seriesWithoutReview} series sin reseña`,
-      href: '/admin/resenas',
-      tone: 'info' as const,
-    },
-  ].filter(Boolean) as Array<{
-    key: string;
-    icon: string;
-    label: string;
-    href: string;
-    tone: 'danger' | 'warning' | 'info';
-  }>;
+    tags: { count: counts.tags },
+    universes: { count: counts.universes },
+    actors: { count: counts.actors },
+    directors: { count: counts.directors },
+    'production-companies': { count: counts.productionCompanies },
+    users: { count: counts.users },
+    changelog: { count: counts.changelogItems },
+  };
 
   // Hero stats: inventario del catalogo (complementario al AdminKPIsWidget,
   // que muestra actividad: series/reseñas/comentarios/usuarios). Si los
@@ -315,8 +201,7 @@ export default async function AdminLandingPage() {
     <>
       <AdminHomeClient
         heroStats={heroStats}
-        groups={groups}
-        headlineAlerts={headlineAlerts}
+        metrics={metrics}
         kpiCounts={kpiCounts}
       />
     </>

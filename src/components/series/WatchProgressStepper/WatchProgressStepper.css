@@ -1,0 +1,146 @@
+.watch-progress-stepper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  width: 100%;
+  min-width: 0;
+}
+
+.watch-progress-stepper__row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  min-width: 0;
+}
+
+.watch-progress-stepper__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  background: var(--bg-container);
+  color: var(--text-primary);
+  font-size: 16px;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.watch-progress-stepper__btn--next:not(:disabled) {
+  background: var(--mb-gold-soft);
+  border-color: color-mix(in srgb, var(--primary-color) 55%, transparent);
+  color: var(--text-primary);
+}
+
+.watch-progress-stepper__btn:hover:not(:disabled) {
+  background: var(--mb-gold-soft-strong, var(--mb-gold-soft));
+  border-color: var(--primary-color);
+}
+
+.watch-progress-stepper__btn:disabled {
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+
+.watch-progress-stepper__label {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 44px;
+  padding: 0 var(--spacing-xs);
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 4px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  border-radius: var(--border-radius-sm);
+}
+
+.watch-progress-stepper__label:hover:not(:disabled) {
+  background: var(--mb-gold-soft);
+}
+
+.watch-progress-stepper__label:disabled {
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+
+.watch-progress-stepper__label-prefix {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.watch-progress-stepper__label-current {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.watch-progress-stepper__label-total {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.watch-progress-stepper__picker {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.watch-progress-stepper__bar {
+  margin: 0;
+}
+
+.watch-progress-stepper__next {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  min-width: 0;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.watch-progress-stepper__next-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.watch-progress-stepper__next-title {
+  color: var(--text-tertiary);
+}
+
+.watch-progress-stepper__next-done {
+  color: var(--success-color);
+}
+
+.watch-progress-stepper--compact .watch-progress-stepper__btn {
+  width: 36px;
+  height: 36px;
+  font-size: 14px;
+}
+
+.watch-progress-stepper--compact .watch-progress-stepper__label {
+  height: 36px;
+}
+
+.watch-progress-stepper--compact .watch-progress-stepper__label-current {
+  font-size: 18px;
+}
+
+@media (max-width: 360px) {
+  .watch-progress-stepper__btn {
+    width: 40px;
+    height: 40px;
+  }
+}

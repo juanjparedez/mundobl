@@ -1,39 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
-import {
-  detectPlatform,
-  extractVideoId,
-  type Platform,
-} from '@/lib/embed-helpers';
-
-function resolveEmbedFields(input: {
-  embedUrl?: string | null;
-  embedPlatform?: string | null;
-  embedChannelName?: string | null;
-  embedChannelUrl?: string | null;
-}) {
-  const url = input.embedUrl?.trim() || null;
-  if (!url) {
-    return {
-      embedUrl: null,
-      embedPlatform: null,
-      embedVideoId: null,
-      embedChannelName: null,
-      embedChannelUrl: null,
-    };
-  }
-  const platform =
-    (input.embedPlatform as Platform | null) ?? detectPlatform(url);
-  const videoId = platform ? extractVideoId(platform, url) : null;
-  return {
-    embedUrl: url,
-    embedPlatform: platform,
-    embedVideoId: videoId,
-    embedChannelName: input.embedChannelName?.trim() || null,
-    embedChannelUrl: input.embedChannelUrl?.trim() || null,
-  };
-}
+// Los campos de embed se resuelven y validan contra la lista blanca de
+// canales oficiales en un solo lugar (docs/politica-contenido-oficial.md).
+import { resolveOfficialEmbedFields } from '@/lib/official-content-guard';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -97,6 +67,14 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     const body = await request.json();
 
+    const embed = await resolveOfficialEmbedFields(body);
+    if (!embed.ok) {
+      return NextResponse.json(
+        { error: embed.error },
+        { status: embed.status }
+      );
+    }
+
     const episode = await prisma.episode.update({
       where: { id: episodeId },
       data: {
@@ -105,7 +83,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         duration: body.duration || null,
         airDate: body.airDate ? new Date(body.airDate) : null,
         synopsis: body.synopsis || null,
-        ...resolveEmbedFields(body),
+        ...embed.fields,
       },
     });
 

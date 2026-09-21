@@ -155,6 +155,20 @@
   font-size: 24px;
 }
 
+/* Avatar del usuario en el slot "Perfil": mismo tamano visual que los
+ * iconos de 24px, con el contador de notificaciones encima. */
+.bottom-nav-item-icon .bottom-nav-avatar {
+  width: 26px;
+  height: 26px;
+  line-height: 26px;
+  font-size: 14px;
+}
+
+.bottom-nav-more-drawer .ant-drawer-body {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .bottom-nav-item-label {
   /* 12px (era 10px) — legible en mobile sin agrandar mucho el bar. */
   font-size: 12px;
