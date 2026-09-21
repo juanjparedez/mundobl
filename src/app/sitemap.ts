@@ -8,7 +8,10 @@ import {
 import { getSeriesUrl, getVerUrl } from '@/lib/slug';
 import { HAS_WATCHABLE_EPISODE } from '@/lib/watchable';
 
-export const revalidate = 3600;
+// 8 shards y cada uno pega a la base (los de personas/productoras con
+// subconsultas _count sobre toda la tabla). A 3600s eran 192 regeneraciones
+// caras por dia para un contenido que Google ni relee tan seguido.
+export const revalidate = 86400;
 
 const BASE_URL = 'https://mundobl.com.ar';
 

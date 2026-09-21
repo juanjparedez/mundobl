@@ -44,11 +44,16 @@ interface SeriesPageProps {
   }>;
 }
 
-// ISR con revalidación a demanda y fallback a 5 minutos
-// buildSeriesFullInclude trae temporadas, episodios, reparto y ratings de
-// la serie. Multiplicado por 637 fichas, revalidar cada 5 min era una
-// fuente constante de egress de base.
-export const revalidate = 900;
+// ISR con revalidacion a demanda (ver src/lib/revalidate-series.ts): cada
+// edicion de la serie invalida ESTA ficha al instante, asi que el TTL es
+// solo red de seguridad, no el mecanismo de frescura. Con 900s, las ~650
+// fichas se regeneraban hasta 96 veces por dia cada una mientras Googlebot
+// las crawleaba — y cada regeneracion es un ISR write + el CPU de
+// buildSeriesFullInclude (temporadas, episodios, reparto, ratings) mas los
+// counts de abajo. Era el grueso de las dos cuotas que se pasaron de largo.
+// Lo unico que queda viejo hasta 24h son los chips de conteo (reseñas,
+// favoritos, "viendo"); las reseñas y comentarios en si son client-side.
+export const revalidate = 86400;
 
 export async function generateMetadata({
   params,

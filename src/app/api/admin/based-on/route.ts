@@ -52,6 +52,10 @@ export async function PATCH(request: NextRequest) {
       expectedIds
     );
     revalidatePath('/catalogo');
+    // Unico wildcard que queda: esta operacion reescribe el campo `basedOn` de
+    // una cantidad arbitraria de series y changeBasedOnValue solo devuelve el
+    // conteo, no los ids. Invalida las ~650 fichas de golpe, pero es una accion
+    // manual y poco frecuente del admin, no algo que corra en cada request.
     revalidatePath('/series/[id]', 'page');
     revalidatePath('/admin/tags');
     return NextResponse.json({ count });

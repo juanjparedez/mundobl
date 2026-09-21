@@ -9,7 +9,9 @@ import {
   WATCHABLE_EPISODE_WHERE,
 } from '@/lib/watchable';
 
-export const revalidate = 300; // revalidar stats cada 5 min
+// Los contadores de la landing no necesitan minuto a minuto, y ademas se
+// invalida on-demand con cada cambio de serie (revalidateSeriesListings).
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
   alternates: {

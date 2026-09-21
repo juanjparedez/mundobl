@@ -10,7 +10,10 @@ export default function manifest(): MetadataRoute.Manifest {
     display: 'standalone',
     background_color: '#141414',
     theme_color: '#141414',
-    orientation: 'portrait-primary',
+    // 'any' en vez de 'portrait-primary': ese lock bloqueaba la rotacion a
+    // horizontal al poner un video en pantalla completa desde el navegador
+    // in-app (contextos standalone/PWA respetan este valor del manifest).
+    orientation: 'any',
     icons: [
       {
         src: '/icons/icon-192x192.png',
