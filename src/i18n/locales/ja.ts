@@ -269,7 +269,11 @@ const ja = {
     "errorRemove": "リストからの削除中にエラーが発生しました",
     "episodeMarkedMessage": "エピソード{ep}を視聴済みとしてマークしました",
     "errorMarkEpisode": "エピソードのマーク中にエラーが発生しました",
-    "markEpisodeTooltip": "{ep}を視聴済みとしてマーク"
+    "markEpisodeTooltip": "{ep}を視聴済みとしてマーク",
+    "markNextLabel": "エピソード{n}を視聴済み",
+    "markCompleteLabel": "シリーズを完走",
+    "markCompleteConfirm": "「{title}」を完走済みにしますか？",
+    "completedMessage": "「{title}」を完走済みにしました"
   },
   "appLayout": {
     "skipToContent": "メインコンテンツにスキップ"

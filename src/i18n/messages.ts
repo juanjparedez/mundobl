@@ -261,6 +261,10 @@ export type TranslationShape = {
     episodeMarkedMessage: string;
     errorMarkEpisode: string;
     markEpisodeTooltip: string;
+    markNextLabel: string;
+    markCompleteLabel: string;
+    markCompleteConfirm: string;
+    completedMessage: string;
   };
   appLayout: {
     skipToContent: string;
@@ -3271,6 +3275,10 @@ const es: TranslationShape = {
     episodeMarkedMessage: 'Episodio {ep} marcado como visto',
     errorMarkEpisode: 'Error al marcar el episodio',
     markEpisodeTooltip: 'Marcar {ep} como visto',
+    markNextLabel: 'Vi el ep. {n}',
+    markCompleteLabel: 'Terminé la serie',
+    markCompleteConfirm: '¿Marcar "{title}" como terminada?',
+    completedMessage: 'Marcaste "{title}" como terminada',
   },
   appLayout: {
     skipToContent: 'Saltar al contenido principal',
@@ -6430,6 +6438,10 @@ const en: TranslationShape = {
     episodeMarkedMessage: 'Episode {ep} marked as watched',
     errorMarkEpisode: 'Error marking episode',
     markEpisodeTooltip: 'Mark {ep} as watched',
+    markNextLabel: 'Watched ep. {n}',
+    markCompleteLabel: 'Finished the series',
+    markCompleteConfirm: 'Mark "{title}" as finished?',
+    completedMessage: 'You marked "{title}" as finished',
   },
   appLayout: {
     skipToContent: 'Skip to main content',

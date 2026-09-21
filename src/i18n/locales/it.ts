@@ -269,7 +269,11 @@ const it = {
     "errorRemove": "Errore durante la rimozione dalla lista",
     "episodeMarkedMessage": "Episodio {ep} segnato come visto",
     "errorMarkEpisode": "Errore nel segnare l'episodio",
-    "markEpisodeTooltip": "Segna {ep} come visto"
+    "markEpisodeTooltip": "Segna {ep} come visto",
+    "markNextLabel": "Ep. {n} visto",
+    "markCompleteLabel": "Serie terminata",
+    "markCompleteConfirm": "Contrassegnare \"{title}\" come terminato?",
+    "completedMessage": "Hai contrassegnato \"{title}\" come terminato"
   },
   "appLayout": {
     "skipToContent": "Salta al contenuto principale"

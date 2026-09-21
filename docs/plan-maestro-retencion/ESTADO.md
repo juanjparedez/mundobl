@@ -12,7 +12,7 @@ El agente que toma una tarea la pasa a `en curso` al crear la rama y a `hecha` a
 | T05  | Endpoint "hasta el episodio N"                   | 1    | hecha     | feat/T05-endpoint-progreso (PR #35) | 2026-09-20 | Destraba T06, T07, T11a, T13. scripts/test-progress.ts sin correr (necesita Postgres local en 55433) |
 | T06  | Stepper "Voy por el episodio N" en la ficha      | 1    | hecha     | feat/T06-stepper-ficha (PR #36) | 2026-09-20 | No se pudo probar en vivo logueado en la sesion que lo implemento |
 | T07  | CTA para anónimos + intención pendiente          | 1    | pendiente |           |            |       |
-| T08  | Botón "+1" claro en /watching                    | 1    | pendiente |           |            |       |
+| T08  | Botón "+1" claro en /watching                    | 1    | en PR     | feat/T08-watching-mas-uno |  2026-09-20 | No se pudo probar en vivo logueado (requiere series en VIENDO reales) |
 | T09  | Home centrada en el tracker                      | 1    | pendiente |           |            |       |
 | T10  | Home logueado → /watching                        | 1    | pendiente |           |            |       |
 | T11a | Onboarding: backend                              | 1    | pendiente |           |            |       |
