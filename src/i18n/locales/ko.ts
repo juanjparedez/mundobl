@@ -3053,6 +3053,36 @@ const ko = {
     "finishTitle": "퀴즈 완료!",
     "playAgainButton": "다시 플레이",
     "bestScoreLabel": "최고 점수: {total}개 중 {score}개"
+  },
+  "airDayStatus": {
+    "today": "오늘 새 에피소드",
+    "delayed1": "어제 방영됨 (1일 지연)",
+    "delayed2": "2일 지연",
+    "delayedMany": "{days}일 지연",
+    "tagToday": "오늘",
+    "tagDelayed": "+{days}일",
+    "airDaysTooltip": "방영일: {days} ({status})"
+  },
+  "estrenos": {
+    "title": "이번 주 방영작",
+    "subtitle": "저희가 보유한 방영일 기준입니다. 시간이나 에피소드 업로드 여부는 확인하지 않습니다.",
+    "disclaimer": "이 스케줄은 큐레이션된 카탈로그의 현재 방영작을 다룹니다. 4개월 이상 종영된 프로그램은 제외됩니다.",
+    "seeAll": "전체 주 보기",
+    "today": "오늘",
+    "moreCount": "+{count}개 더 보기",
+    "emptyDay": "이날 방영작 없음",
+    "emptyTitle": "현재 방영 중인 프로그램 없음",
+    "emptyDescription": "현재 카탈로그 시리즈 중 방영일이 등록된 작품이 없습니다. 새 시즌이 시작되면 여기에 표시됩니다.",
+    "emptyAction": "카탈로그로 이동",
+    "dayMonday": "월요일",
+    "dayTuesday": "화요일",
+    "dayWednesday": "수요일",
+    "dayThursday": "목요일",
+    "dayFriday": "금요일",
+    "daySaturday": "토요일",
+    "daySunday": "일요일",
+    "subscribeTooltip": "이 프로그램 알림 받기",
+    "unsubscribeTooltip": "알림 중지"
   }
 } satisfies TranslationShape;
 

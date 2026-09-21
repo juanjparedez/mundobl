@@ -4,6 +4,7 @@ import {
   BankOutlined,
   BarChartOutlined,
   BellOutlined,
+  CalendarOutlined,
   CommentOutlined,
   InfoCircleOutlined,
   LinkOutlined,
@@ -103,6 +104,13 @@ export const NAV_ITEMS: NavItemDef[] = [
     labelKey: 'sidebar.novedades',
     access: 'public',
     badge: 'novedades',
+  },
+  {
+    key: 'estrenos',
+    path: ROUTES.ESTRENOS,
+    icon: CalendarOutlined,
+    labelKey: 'estrenos.title',
+    access: 'public',
   },
   {
     key: 'actores',
