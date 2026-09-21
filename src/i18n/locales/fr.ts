@@ -269,7 +269,11 @@ const fr = {
     "errorRemove": "Erreur lors du retrait de la liste",
     "episodeMarkedMessage": "Épisode {ep} marqué comme vu",
     "errorMarkEpisode": "Erreur lors du marquage de l'épisode",
-    "markEpisodeTooltip": "Marquer {ep} comme vu"
+    "markEpisodeTooltip": "Marquer {ep} comme vu",
+    "markNextLabel": "Ép. {n} regardé",
+    "markCompleteLabel": "Série terminée",
+    "markCompleteConfirm": "Marquer \"{title}\" comme terminée ?",
+    "completedMessage": "Vous avez marqué \"{title}\" comme terminée"
   },
   "appLayout": {
     "skipToContent": "Passer au contenu principal"

@@ -269,7 +269,11 @@ const ko = {
     "errorRemove": "목록에서 제거하는 중 오류 발생",
     "episodeMarkedMessage": "{ep}화 시청 완료로 표시됨",
     "errorMarkEpisode": "에피소드 표시 오류",
-    "markEpisodeTooltip": "{ep}화 시청 완료로 표시"
+    "markEpisodeTooltip": "{ep}화 시청 완료로 표시",
+    "markNextLabel": "시청 완료: 에피소드 {n}",
+    "markCompleteLabel": "시리즈 완료",
+    "markCompleteConfirm": "\"{title}\"을(를) 완료로 표시하시겠습니까?",
+    "completedMessage": "\"{title}\"을(를) 완료로 표시했습니다"
   },
   "appLayout": {
     "skipToContent": "본문으로 건너뛰기"

@@ -269,7 +269,11 @@ const zhTW = {
     "errorRemove": "從列表中移除時發生錯誤",
     "episodeMarkedMessage": "第 {ep} 集已標記為已觀看",
     "errorMarkEpisode": "標記劇集時發生錯誤",
-    "markEpisodeTooltip": "將第 {ep} 集標記為已觀看"
+    "markEpisodeTooltip": "將第 {ep} 集標記為已觀看",
+    "markNextLabel": "已觀看第 {n} 集",
+    "markCompleteLabel": "已看完本劇",
+    "markCompleteConfirm": "標記「{title}」為已看完？",
+    "completedMessage": "您已將「{title}」標記為已看完"
   },
   "appLayout": {
     "skipToContent": "跳至主要內容"
