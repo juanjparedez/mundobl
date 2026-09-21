@@ -17,7 +17,7 @@ El agente que toma una tarea la pasa a `en curso` al crear la rama y a `hecha` a
 | T08b | /watching sin episodios + contraste (corrección) | 1    | hecha     | feat/tracking-panel-experiencia (PR #40) | 2026-09-21 | Cards sin episodios con "Terminé la serie"; texto del botón primario según luminancia del acento (`readableTextOn`) |
 | T26  | Póster placeholder en ficha y cards              | 1    | hecha     | feat/tracking-panel-experiencia (PR #40) | 2026-09-21 | `PosterPlaceholder` en header y cards de /watching |
 | T27  | Política de contenido oficial + limpieza         | 0    | en PR     | feat/politica-contenido-oficial | 2026-09-21 | Lista blanca con channelId, guardia en 4 endpoints, script dry-run. El `--apply` lo corre Juan |
-| T28  | Navegación móvil con paridad de accesos          | 1    | pendiente |           | 2026-09-21 | 75 % del tráfico es móvil y no se llega a 14 de 19 secciones. Prioridad alta, ideal para el modelo local |
+| T28  | Navegación móvil con paridad de accesos          | 1    | en PR     | feat/T28-navegacion-mobile | 2026-09-21 | `navItems.ts` como única fuente para Sidebar y BottomNav; barra: Catálogo · Ver series · Viendo · Perfil/Entrar · Más; cajón con las 19 secciones; buscador visible en la ficha móvil |
 | T09  | Home centrada en el tracker                      | 1    | pendiente |           |            |       |
 | T10  | Home logueado → /watching                        | 1    | pendiente |           |            |       |
 | T11a | Onboarding: backend                              | 1    | pendiente |           |            |       |

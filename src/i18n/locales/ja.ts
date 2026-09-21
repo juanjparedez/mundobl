@@ -333,7 +333,11 @@ const ja = {
     "light": "ライト",
     "profile": "マイプロフィール",
     "stats": "統計",
-    "runtime": "Runtime"
+    "runtime": "Runtime",
+    "ver": "シリーズを見る",
+    "platforms": "プラットフォームとプラン",
+    "glossary": "文化用語集",
+    "about": "MundoBLについて"
   },
   "profile": {
     "loginRequired": "プロフィールを表示するにはサインインしてください",
@@ -618,7 +622,8 @@ const ja = {
     "logout": "サインアウト",
     "settings": "設定",
     "more": "もっと見る",
-    "ver": "視聴",
+    "watch": "見る",
+    "profile": "プロフィール",
     "accentColor": "アクセントカラー",
     "theme": "テーマ",
     "switchToLight": "ライトモードに切り替える",

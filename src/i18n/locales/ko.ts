@@ -333,7 +333,11 @@ const ko = {
     "light": "라이트",
     "profile": "내 프로필",
     "stats": "통계",
-    "runtime": "Runtime"
+    "runtime": "Runtime",
+    "ver": "시리즈 보기",
+    "platforms": "플랫폼 및 요금제",
+    "glossary": "문화 용어집",
+    "about": "MundoBL 소개"
   },
   "profile": {
     "loginRequired": "프로필을 보려면 로그인하세요",
@@ -618,7 +622,8 @@ const ko = {
     "logout": "로그아웃",
     "settings": "설정",
     "more": "더 보기",
-    "ver": "시청",
+    "watch": "시청하기",
+    "profile": "프로필",
     "accentColor": "강조 색상",
     "theme": "테마",
     "switchToLight": "라이트 모드로 전환",
