@@ -189,6 +189,12 @@
   border-radius: var(--border-radius-sm);
 }
 
+.watching-card__next--hint {
+  color: var(--text-tertiary);
+  background: transparent;
+  border: 1px dashed var(--border-color-secondary);
+}
+
 .watching-card__next span {
   min-width: 0;
   overflow: hidden;

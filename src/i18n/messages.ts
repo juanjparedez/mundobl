@@ -265,6 +265,7 @@ export type TranslationShape = {
     markCompleteLabel: string;
     markCompleteConfirm: string;
     completedMessage: string;
+    noEpisodesHint: string;
   };
   appLayout: {
     skipToContent: string;
@@ -2491,6 +2492,10 @@ export type TranslationShape = {
   };
   progressStepper: {
     at: string;
+    epAbbr: string;
+    none: string;
+    nextUp: string;
+    allWatched: string;
     next: string;
     prev: string;
     jumpTo: string;
@@ -2504,9 +2509,21 @@ export type TranslationShape = {
   trackCta: {
     title: string;
     subtitle: string;
+    subtitleNoEpisodes: string;
     button: string;
+    buttonNoEpisodes: string;
     applied: string;
     chooseEpisode: string;
+  };
+  trackingPanel: {
+    title: string;
+    markWatched: string;
+    markUnwatched: string;
+    markedWatched: string;
+    noEpisodes: string;
+  };
+  posterPlaceholder: {
+    noImage: string;
   };
   spoilerFreeProvider: {
     useSpoilerFreeError: string;
@@ -3286,6 +3303,7 @@ const es: TranslationShape = {
     markCompleteLabel: 'Terminé la serie',
     markCompleteConfirm: '¿Marcar "{title}" como terminada?',
     completedMessage: 'Marcaste "{title}" como terminada',
+    noEpisodesHint: 'Sin episodios cargados: se marca completa de una vez',
   },
   appLayout: {
     skipToContent: 'Saltar al contenido principal',
@@ -5635,6 +5653,10 @@ const es: TranslationShape = {
   },
   progressStepper: {
     at: 'Voy por el {current} de {total}',
+    epAbbr: 'Ep.',
+    none: 'Ninguno todavía',
+    nextUp: 'Siguiente: {label}',
+    allWatched: 'Viste todos los episodios',
     next: 'Vi el siguiente',
     prev: 'Deshacer el último',
     jumpTo: 'Saltar a un episodio',
@@ -5648,9 +5670,22 @@ const es: TranslationShape = {
   trackCta: {
     title: '¿La estás viendo?',
     subtitle: 'Marcá por qué episodio vas y seguila desde tu lista.',
+    subtitleNoEpisodes: 'Marcala como vista y va a quedar en tu historial.',
     button: 'Empezar a seguir',
+    buttonNoEpisodes: 'Marcarla como vista',
     applied: 'Listo, ya estás siguiendo {title}',
     chooseEpisode: '¿Por qué episodio vas?',
+  },
+  trackingPanel: {
+    title: 'Mi seguimiento',
+    markWatched: 'Ya la vi',
+    markUnwatched: 'Marcar como no vista',
+    markedWatched: 'Marcaste "{title}" como vista',
+    noEpisodes:
+      'Esta ficha no tiene episodios cargados: se marca completa de una vez.',
+  },
+  posterPlaceholder: {
+    noImage: 'Sin imagen',
   },
   spoilerFreeProvider: {
     useSpoilerFreeError:
@@ -6456,6 +6491,7 @@ const en: TranslationShape = {
     markCompleteLabel: 'Finished the series',
     markCompleteConfirm: 'Mark "{title}" as finished?',
     completedMessage: 'You marked "{title}" as finished',
+    noEpisodesHint: 'No episodes loaded: it gets marked complete in one go',
   },
   appLayout: {
     skipToContent: 'Skip to main content',
@@ -8790,6 +8826,10 @@ const en: TranslationShape = {
   },
   progressStepper: {
     at: "I'm on {current} of {total}",
+    epAbbr: 'Ep.',
+    none: 'None yet',
+    nextUp: 'Next: {label}',
+    allWatched: 'You watched every episode',
     next: 'Mark next episode',
     prev: 'Undo last episode',
     jumpTo: 'Jump to an episode',
@@ -8803,9 +8843,22 @@ const en: TranslationShape = {
   trackCta: {
     title: 'Are you watching this?',
     subtitle: "Mark which episode you're on and follow it from your list.",
+    subtitleNoEpisodes: 'Mark it as watched and it goes into your history.',
     button: 'Start tracking',
+    buttonNoEpisodes: 'Mark as watched',
     applied: "You're all set, now tracking {title}",
     chooseEpisode: 'Which episode are you on?',
+  },
+  trackingPanel: {
+    title: 'My tracking',
+    markWatched: 'I watched it',
+    markUnwatched: 'Mark as not watched',
+    markedWatched: 'You marked "{title}" as watched',
+    noEpisodes:
+      'This title has no episodes loaded: it gets marked complete in one go.',
+  },
+  posterPlaceholder: {
+    noImage: 'No image',
   },
   spoilerFreeProvider: {
     useSpoilerFreeError:

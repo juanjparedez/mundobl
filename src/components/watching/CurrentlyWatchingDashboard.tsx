@@ -21,6 +21,7 @@ import {
   CalendarOutlined,
   FileTextOutlined,
   FileTextFilled,
+  InfoCircleOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -33,6 +34,7 @@ import './CurrentlyWatchingDashboard.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { trackFunnel } from '@/lib/analytics';
+import { PosterPlaceholder } from '@/components/common/PosterPlaceholder/PosterPlaceholder';
 
 interface WatchingSeriesData {
   id: number;
@@ -601,7 +603,14 @@ export function CurrentlyWatchingDashboard() {
                       className="watching-card__cover"
                     />
                   </div>
-                ) : null
+                ) : (
+                  <div className="watching-card__image">
+                    <PosterPlaceholder
+                      title={item.series.title}
+                      variant="card"
+                    />
+                  </div>
+                )
               }
             >
               <Button
@@ -649,13 +658,20 @@ export function CurrentlyWatchingDashboard() {
                       )}
                     </div>
 
-                    <Progress
-                      percent={Math.round(progress)}
-                      size="small"
-                      status={progress === 100 ? 'success' : 'active'}
-                      format={() => `${watchedEpisodes}/${totalEpisodes}`}
-                      className="watching-card__progress"
-                    />
+                    {totalEpisodes > 0 ? (
+                      <Progress
+                        percent={Math.round(progress)}
+                        size="small"
+                        status={progress === 100 ? 'success' : 'active'}
+                        format={() => `${watchedEpisodes}/${totalEpisodes}`}
+                        className="watching-card__progress"
+                      />
+                    ) : (
+                      <div className="watching-card__next watching-card__next--hint">
+                        <InfoCircleOutlined className="watching-card__icon" />
+                        <span>{t('watchingDashboard.noEpisodesHint')}</span>
+                      </div>
+                    )}
 
                     {nextEp && (
                       <div className="watching-card__next">
@@ -692,32 +708,47 @@ export function CurrentlyWatchingDashboard() {
                           { n: String(nextEp.episodeNumber) }
                         )}
                       </Button>
-                    ) : (
-                      totalEpisodes > 0 && (
-                        <Popconfirm
-                          title={interpolateMessage(
-                            t('watchingDashboard.markCompleteConfirm'),
-                            { title: item.series.title }
-                          )}
-                          onConfirm={() =>
-                            void handleMarkSeriesComplete(
-                              item.series.id,
-                              item.series.title
-                            )
-                          }
-                          okText={t('watchingDashboard.markCompleteLabel')}
-                          cancelText={t('progressStepper.notYet')}
+                    ) : totalEpisodes > 0 ? (
+                      <Popconfirm
+                        title={interpolateMessage(
+                          t('watchingDashboard.markCompleteConfirm'),
+                          { title: item.series.title }
+                        )}
+                        onConfirm={() =>
+                          void handleMarkSeriesComplete(
+                            item.series.id,
+                            item.series.title
+                          )
+                        }
+                        okText={t('watchingDashboard.markCompleteLabel')}
+                        cancelText={t('progressStepper.notYet')}
+                      >
+                        <Button
+                          type="primary"
+                          block
+                          icon={<CheckOutlined />}
+                          className="watching-card__primary-action"
                         >
-                          <Button
-                            type="primary"
-                            block
-                            icon={<CheckOutlined />}
-                            className="watching-card__primary-action"
-                          >
-                            {t('watchingDashboard.markCompleteLabel')}
-                          </Button>
-                        </Popconfirm>
-                      )
+                          {t('watchingDashboard.markCompleteLabel')}
+                        </Button>
+                      </Popconfirm>
+                    ) : (
+                      // Sin episodios cargados (cortos, peliculas): no hay
+                      // progreso que perder, se marca completa de una vez.
+                      <Button
+                        type="primary"
+                        block
+                        icon={<CheckOutlined />}
+                        className="watching-card__primary-action"
+                        onClick={() =>
+                          void handleMarkSeriesComplete(
+                            item.series.id,
+                            item.series.title
+                          )
+                        }
+                      >
+                        {t('watchingDashboard.markCompleteLabel')}
+                      </Button>
                     )}
 
                     <div className="watching-card__actions">
