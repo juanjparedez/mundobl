@@ -27,6 +27,7 @@ import {
   CalendarOutlined,
 } from '@ant-design/icons';
 import { signIn, useSession } from 'next-auth/react';
+import { trackFunnel } from '@/lib/analytics';
 import { ROUTES } from '@/constants/navigation';
 import { SectionHeader } from '@/components/design-system';
 import { WeeklySchedule } from '@/components/estrenos/WeeklySchedule/WeeklySchedule';
@@ -108,6 +109,12 @@ interface LandingStats {
   newThisWeek?: number;
   /** Parrilla semanal de emision (CURATED + PERSONAL, ventana de 16 semanas). */
   airingSchedule?: AiringScheduleRow[];
+  /** Episodios marcados como vistos en los ultimos 7 dias. */
+  episodesMarkedThisWeek?: number;
+  /** Episodios marcados como vistos, historico. Fallback de la stat semanal. */
+  episodesMarkedTotal?: number;
+  /** Usuarios no-admin con al menos una serie en VIENDO. */
+  usersFollowing?: number;
 }
 
 interface LandingPageProps {
@@ -122,6 +129,11 @@ export function LandingPage({ stats }: LandingPageProps) {
 
   const features = [
     {
+      icon: <PlayCircleOutlined />,
+      title: t('landing.featureTrackingTitle'),
+      desc: t('landing.featureTrackingDesc'),
+    },
+    {
       icon: <SearchOutlined />,
       title: t('landing.featureCatalogTitle'),
       desc: t('landing.featureCatalogDesc'),
@@ -130,11 +142,6 @@ export function LandingPage({ stats }: LandingPageProps) {
       icon: <StarOutlined />,
       title: t('landing.featureRatingsTitle'),
       desc: t('landing.featureRatingsDesc'),
-    },
-    {
-      icon: <PlayCircleOutlined />,
-      title: t('landing.featureTrackingTitle'),
-      desc: t('landing.featureTrackingDesc'),
     },
     {
       icon: <CommentOutlined />,
@@ -157,13 +164,19 @@ export function LandingPage({ stats }: LandingPageProps) {
   // funcionalidad sigue viva (helper en src/lib/gemini.ts), pero no
   // queremos promocionarla en home hasta que este pulida.
   const novedades = [
-    {
-      icon: <ReadOutlined />,
-      tag: t('landing.novedadReviewsTag'),
-      title: t('landing.novedadReviewsTitle'),
-      desc: t('landing.novedadReviewsDesc'),
-      color: 'blue' as const,
-    },
+    // La vidriera de reseñas solo sale si hay alguna publicada: promocionar
+    // una funcion vacia es justamente lo que la home venia haciendo mal.
+    ...(stats.totalReviews > 0
+      ? [
+          {
+            icon: <ReadOutlined />,
+            tag: t('landing.novedadReviewsTag'),
+            title: t('landing.novedadReviewsTitle'),
+            desc: t('landing.novedadReviewsDesc'),
+            color: 'blue' as const,
+          },
+        ]
+      : []),
     {
       icon: <EyeInvisibleOutlined />,
       tag: t('landing.novedadSpoilerTag'),
@@ -194,28 +207,58 @@ export function LandingPage({ stats }: LandingPageProps) {
     },
   ];
 
+  // La franja abre con la prueba de vida del tracker. Una semana tranquila
+  // deja el contador en cero, y un cero grande arriba de todo dice lo
+  // contrario de lo que la home quiere decir: ahi cae al historico.
+  const episodesThisWeek = stats.episodesMarkedThisWeek ?? 0;
+  const episodesStat =
+    episodesThisWeek > 0
+      ? { value: episodesThisWeek, label: t('landing.statEpisodesWeek') }
+      : {
+          value: stats.episodesMarkedTotal ?? 0,
+          label: t('landing.statEpisodesTotal'),
+        };
+
   const statItems = [
+    {
+      value: episodesStat.value,
+      label: episodesStat.label,
+      icon: <CheckCircleFilled />,
+    },
     {
       value: stats.totalSeries,
       label: t('landing.statSeries'),
       icon: <GlobalOutlined />,
     },
     {
-      value: stats.totalCompletedViews,
-      label: t('landing.statViews'),
-      icon: <PlayCircleOutlined />,
-    },
-    {
-      value: stats.totalPublicComments,
-      label: t('landing.statComments'),
-      icon: <CommentOutlined />,
-    },
-    {
-      value: stats.totalReviews,
-      label: t('landing.statReviews'),
-      icon: <ReadOutlined />,
+      value: stats.usersFollowing ?? 0,
+      label: t('landing.statUsersFollowing'),
+      icon: <TeamOutlined />,
     },
   ];
+
+  const howSteps = [
+    {
+      icon: <SearchOutlined />,
+      title: t('landing.how1Title'),
+      desc: t('landing.how1Desc'),
+    },
+    {
+      icon: <CheckCircleFilled />,
+      title: t('landing.how2Title'),
+      desc: t('landing.how2Desc'),
+    },
+    {
+      icon: <CalendarOutlined />,
+      title: t('landing.how3Title'),
+      desc: t('landing.how3Desc'),
+    },
+  ];
+
+  const handleStartTracking = () => {
+    trackFunnel('track_cta_click', { where: 'home' });
+    signIn('google', { callbackUrl: ROUTES.WATCHING });
+  };
 
   const verdictMap = {
     RECOMMENDED: { color: 'green', key: 'reviews.verdictRecommended' },
@@ -269,35 +312,35 @@ export function LandingPage({ stats }: LandingPageProps) {
           <p className="landing__description">{t('landing.description')}</p>
 
           <div className="landing__actions">
-            <Button
-              type="primary"
-              size="large"
-              icon={<SearchOutlined />}
-              onClick={() => router.push(ROUTES.CATALOGO)}
-              className="landing__cta-primary"
-            >
-              {t('landing.exploreCatalog')}
-            </Button>
-
-            {!session?.user && (
+            {session?.user ? (
               <Button
+                type="primary"
+                size="large"
+                icon={<PlayCircleOutlined />}
+                onClick={() => router.push(ROUTES.WATCHING)}
+                className="landing__cta-primary"
+              >
+                {t('landing.ctaGoWatching')}
+              </Button>
+            ) : (
+              <Button
+                type="primary"
                 size="large"
                 icon={<LoginOutlined />}
-                onClick={() =>
-                  signIn('google', { callbackUrl: ROUTES.CATALOGO })
-                }
+                onClick={handleStartTracking}
+                className="landing__cta-primary"
               >
-                {t('landing.signIn')}
+                {t('landing.ctaPrimary')}
               </Button>
             )}
 
-            {session?.user && (
-              <Link href="/perfil">
-                <Button size="large" icon={<BarChartOutlined />}>
-                  {t('landing.goToProfile')}
-                </Button>
-              </Link>
-            )}
+            <Button
+              size="large"
+              icon={<SearchOutlined />}
+              onClick={() => router.push(ROUTES.CATALOGO)}
+            >
+              {t('landing.exploreCatalog')}
+            </Button>
           </div>
         </div>
 
@@ -319,10 +362,10 @@ export function LandingPage({ stats }: LandingPageProps) {
           {/* Floating chips sobre la artwork. Chip 'AI' oculto por ahora
            * (mismo motivo que la novedad arriba). */}
           <div className="landing__floating-chip landing__floating-chip--lang">
-            <TranslationOutlined /> 10 idiomas
+            <TranslationOutlined /> {t('landing.heroChipLanguages')}
           </div>
           <div className="landing__floating-chip landing__floating-chip--reviews">
-            <ReadOutlined /> Reseñas
+            <CheckCircleFilled /> {t('landing.heroChipTracking')}
           </div>
         </div>
       </section>
@@ -338,6 +381,23 @@ export function LandingPage({ stats }: LandingPageProps) {
             <span className="landing__stat-label">{item.label}</span>
           </div>
         ))}
+      </section>
+
+      {/* ── Como funciona ──
+       * Tres pasos, antes de cualquier vidriera de contenido: el visitante
+       * que nunca uso un tracker tiene que entender que se hace aca. */}
+      <section className="landing__how">
+        <h2 className="landing__how-title">{t('landing.howTitle')}</h2>
+        <ol className="landing__how-grid">
+          {howSteps.map((step, i) => (
+            <li key={step.title} className="landing__how-step">
+              <span className="landing__how-step-number">{i + 1}</span>
+              <span className="landing__how-step-icon">{step.icon}</span>
+              <h3 className="landing__how-step-title">{step.title}</h3>
+              <p className="landing__how-step-desc">{step.desc}</p>
+            </li>
+          ))}
+        </ol>
       </section>
 
       {/* ── Parrilla semanal de emision ──

@@ -1371,3 +1371,93 @@ html[data-skin='premium'][data-theme='dark'] .landing__news-card:hover,
 html[data-skin='premium'][data-theme='dark'] .landing__ecosystem-card:hover {
   border-color: color-mix(in srgb, var(--primary-color) 40%, transparent);
 }
+
+/* ── Como funciona (T09) ───────────────────────────────────────────── */
+.landing__how {
+  padding: 48px var(--spacing-lg);
+  max-width: 1320px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.landing__how-title {
+  text-align: center;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--spacing-xl) 0;
+}
+
+.landing__how-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-md);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: how;
+}
+
+.landing__how-step {
+  position: relative;
+  background: var(--bg-container);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-base);
+  padding: var(--spacing-lg) var(--spacing-md) var(--spacing-md);
+  box-shadow: var(--box-shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.landing__how-step-number {
+  position: absolute;
+  top: calc(var(--spacing-md) * -1);
+  left: var(--spacing-md);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  /* Tinte del acento y no fondo solido: con acentos claros (gold, pastel)
+   * un solido exige elegir el texto por luminancia, que es justo lo que
+   * readableTextOn() resuelve en JS y no esta expuesto como token CSS. */
+  background: color-mix(in srgb, var(--primary-color) 16%, transparent);
+  color: var(--primary-color);
+  border: 1px solid color-mix(in srgb, var(--primary-color) 35%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+}
+
+.landing__how-step-icon {
+  font-size: 24px;
+  color: var(--primary-color);
+}
+
+.landing__how-step-title {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.landing__how-step-desc {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .landing__how-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+  }
+}
+
+html[data-skin='premium'][data-theme='dark'] .landing__how-step {
+  background: var(--mb-panel);
+  border-color: var(--mb-border);
+  box-shadow: var(--mb-shadow-soft);
+}
