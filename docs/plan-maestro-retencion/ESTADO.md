@@ -18,7 +18,7 @@ El agente que toma una tarea la pasa a `en curso` al crear la rama y a `hecha` a
 | T26  | Póster placeholder en ficha y cards              | 1    | hecha     | feat/tracking-panel-experiencia (PR #40) | 2026-09-21 | `PosterPlaceholder` en header y cards de /watching |
 | T27  | Política de contenido oficial + limpieza         | 0    | hecha     | feat/politica-contenido-oficial (PR #41) | 2026-09-21 | Lista blanca con channelId, guardia en 4 endpoints, script dry-run. El `--apply` lo corre Juan |
 | T28  | Navegación móvil con paridad de accesos          | 1    | hecha     | feat/T28-navegacion-mobile (PR #44) | 2026-09-21 | `navItems.ts` como única fuente para Sidebar y BottomNav; barra: Catálogo · Ver series · Viendo · Perfil/Entrar · Más; cajón con las 19 secciones; buscador visible en la ficha móvil |
-| T09  | Home centrada en el tracker                      | 1    | pendiente |           |            |       |
+| T09  | Home centrada en el tracker                      | 1    | hecha     | feat/T09-home-tracker | 2026-09-22 | Hero vende el tracker, franja de stats nueva (episodios de la semana, series, usuarios siguiendo), sección "Cómo funciona". Los tres stats excluyen ADMIN: con admins, "episodios esta semana" daba 107 en vez de 42 |
 | T10  | Home logueado → /watching                        | 1    | pendiente |           |            |       |
 | T11a | Onboarding: backend                              | 1    | pendiente |           |            |       |
 | T11b | Onboarding: UI de 3 pasos                        | 1    | pendiente |           |            |       |
