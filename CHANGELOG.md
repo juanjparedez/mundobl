@@ -8,6 +8,41 @@ Todas las versiones notables del proyecto se documentan aqui.
 > (`ChangelogItem`, `/admin/changelog`) quedo como fallback solo si este archivo
 > esta vacio.
 
+## 2026-09-21 — Notas privadas, navegación móvil completa y menos consumo de servidor
+
+### Features
+
+- **Notas privadas por episodio y por serie**: en la ficha, además de los comentarios públicos, ahora hay accesos directos a "Nota del T1·E4" (del último capítulo visto) y "Nota de la serie", siempre a mano sin buscarlos en otro menú.
+- **Navegación móvil con las mismas opciones que en la compu**: la barra inferior y el nuevo menú "Más" ahora llegan a todo lo que antes solo estaba en el menú de escritorio — Actores, Directores, Productoras, Plataformas, Glosario, Acerca, Perfil y Administración. Antes, desde el celular, esas secciones no existían.
+- **"Seguir viendo" en la página de reproducción**: `/ver/[serie]` ahora tiene el mismo panel de seguimiento que la ficha, y el dashboard de "Viendo ahora" suma un botón que te lleva directo a reproducir donde ibas.
+
+### Fixes
+
+- **Video embebido en pantalla completa**: al rotar el teléfono con un video de YouTube embebido, ahora sí ocupa toda la pantalla nueva (el sitio bloqueaba sin querer el sensor de rotación de los reproductores).
+- **Subida de adjuntos en Feedback**: las imágenes fallaban al subirse; ya está resuelto.
+- Los chips de género/etiquetas en la ficha ya no se cortan contra el borde en el celular.
+- Traducción completa de la parrilla semanal de estrenos: faltaban 2 claves en 8 idiomas.
+
+### Rendimiento
+
+- **Menos escrituras de caché y CPU en Vercel** (habíamos pasado el plan gratuito): las páginas de series, personas y productoras ahora se refrescan solo cuando algo cambió de verdad, no cada pocos minutos por reloj. Como efecto, editar una serie ya no regenera las 648 fichas del catálogo, solo la que cambió.
+- **Actores, Directores y Productoras vuelven a cargar al instante**: los tres índices (2.500+ fichas) son estáticos otra vez en lugar de consultar la base en cada visita.
+
+## 2026-09-20 — Plan de retención: seguir una serie es más simple, y solo contenido oficial
+
+### Features
+
+- **Seguí el progreso con un toque**: en la ficha, un stepper "Ep. N / total" para marcar o desmarcar episodios de a uno sin entrar a la lista completa. Si terminaste todos, te pregunta si querés pasar la serie a Vista.
+- **¿La estás viendo? Decíselo sin loguearte**: quien entra sin sesión ve una tarjeta con el mismo selector de episodio; elige por dónde va y, al tocar "Empezar a seguir", lo llevamos a iniciar sesión con Google — al volver, el progreso elegido se guarda solo, sin repetirlo.
+- **Panel de seguimiento unificado**: la ficha muestra el mismo bloque tenga o no episodios cargados. Para cortos, películas y especiales (98 fichas sin episodios) hay un botón directo "Ya la vi" en vez de no mostrar nada.
+- **`/watching` con acción real**: la tarjeta principal ahora es "Vi el ep. N" en lugar de solo llevarte a la ficha; si ya viste todo, "Terminé la serie" la saca de la lista. Las series sin episodios también tienen un botón para cerrarlas, y las que no tienen poster muestran un cartel prolijo en vez de romper el diseño.
+- **Solo contenido con licencia**: los embeds de episodios y los links de "dónde ver" se verifican ahora contra el canal oficial real de la productora o distribuidora (vía la API de YouTube) antes de guardarse; se limpiaron 273 embeds y 1 link que no cumplían la regla.
+
+### Fixes
+
+- Marcar un episodio como visto ahora sí mueve la serie a "Viendo" (antes se quedaba afuera de `/watching` para varios usuarios hasta marcarla manualmente).
+- **Panel de administración**: gráfico de actividad con fechas corregidas (por huso horario), mejor comportamiento al redimensionar widgets, todos los modales ahora abren a pantalla completa en el celular, y el menú de accesos directos se puede reordenar.
+
 ## 2026-09-12 — Parrilla semanal de estrenos
 
 ### Qué sale esta semana
