@@ -20,6 +20,7 @@ import { AdminNav } from '../AdminNav';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { DonutChart, LineChart } from '@/components/charts';
+import { RetentionSection } from './RetentionSection';
 import '../admin.css';
 import './stats.css';
 import { DataTable } from '@/components/design-system';
@@ -360,6 +361,9 @@ export function StatsClient() {
                   )}
                 </div>
               )}
+
+              {/* Retención (T02) */}
+              <RetentionSection />
 
               {/* Rankings */}
               <div className="stats-rankings">
