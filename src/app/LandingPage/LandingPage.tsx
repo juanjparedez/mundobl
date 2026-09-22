@@ -34,6 +34,7 @@ import { WeeklySchedule } from '@/components/estrenos/WeeklySchedule/WeeklySched
 import { useWeeklyScheduleLabels } from '@/components/estrenos/WeeklySchedule/useWeeklyScheduleLabels';
 import type { AiringScheduleRow } from '@/lib/database';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
+import { LoggedInHomeRedirect } from '@/components/common/LoggedInHomeRedirect/LoggedInHomeRedirect';
 import { WatchableCarousel } from '@/components/common/WatchableCarousel/WatchableCarousel';
 import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -281,6 +282,8 @@ export function LandingPage({ stats }: LandingPageProps) {
 
   return (
     <div className="landing">
+      <LoggedInHomeRedirect />
+
       {/* ── Hero ── */}
       <section className="landing__hero">
         <div className="landing__hero-aurora" aria-hidden="true" />
