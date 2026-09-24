@@ -25,7 +25,7 @@
 }
 
 .barrido__preset:hover {
-  border-color: var(--color-primary);
+  border-color: var(--primary-color);
 }
 
 .barrido__preset-country {
