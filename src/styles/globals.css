@@ -165,14 +165,24 @@ a {
   text-decoration: none;
 }
 
-/* Remover outline blanco de botones */
-button:focus,
-button:focus-visible,
-.ant-btn:focus,
-.ant-btn:focus-visible {
+/* Foco de los botones.
+ *
+ * Antes esto era `button:focus, button:focus-visible, .ant-btn:focus,
+ * .ant-btn:focus-visible { outline: none }` con el anillo devuelto solo a
+ * `.ant-btn:focus-visible`: es decir, ningun boton que no fuera de antd
+ * tenia foco de teclado visible en todo el sitio.
+ *
+ * Ahora se apaga solo el foco que NO es de teclado (el que deja el click),
+ * y el anillo se declara explicitamente para boton: la regla global
+ * `:focus-visible` de mas arriba no llega a los botones —antd resetea su
+ * outline con mas peso— y dejarlo librado a la cascada era justo lo que
+ * habia fallado. */
+button:focus:not(:focus-visible),
+.ant-btn:focus:not(:focus-visible) {
   outline: none;
 }
 
+button:focus-visible,
 .ant-btn:focus-visible {
   outline: 2px solid var(--primary-color);
   outline-offset: 2px;
