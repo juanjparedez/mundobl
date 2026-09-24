@@ -18,6 +18,10 @@
   --primary-color-hover: #d591c7;
   --primary-color-active: #ad5f9f;
   --primary-color-outline: rgba(197, 123, 183, 0.26);
+  /* Texto legible sobre --primary-color. Lo recalcula ThemeProvider con
+   * readableTextOn() cada vez que cambia el acento; este valor es el que
+   * corresponde al acento por defecto de arriba y cubre el render inicial. */
+  --text-on-primary: #ffffff;
 
   /* ─── Familia de acento (--mb-*) ─────────────────────────────────
    * Alias historicos del acento, usados por el dashboard de perfil y el
@@ -181,6 +185,7 @@
   --primary-color: #c98ac0;
   --primary-color-hover: #dca0d4;
   --primary-color-active: #b575ac;
+  --text-on-primary: #ffffff;
 
   --bg-base: #10101a;
   --bg-layout: #090a12;
