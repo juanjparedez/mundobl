@@ -22,7 +22,7 @@ El agente que toma una tarea la pasa a `en curso` al crear la rama y a `hecha` a
 | T10  | Home logueado → /watching                        | 1    | hecha     | feat/T10-home-redirect-watching | 2026-09-22 | Apilada sobre T09. `GET /api/user/me/summary` (lo reusan T11b y T18) + `LoggedInHomeRedirect`. `?stay=1` lee de `window.location`, no de `useSearchParams()`: ese hook saca a la home del render estático |
 | T11a | Onboarding: backend                              | 1    | pendiente |           |            |       |
 | T11b | Onboarding: UI de 3 pasos                        | 1    | pendiente |           |            |       |
-| T12  | Separar acciones admin en EpisodesList           | 1    | pendiente |           |            |       |
+| T12  | Separar acciones admin en EpisodesList           | 1    | hecha     | feat/T12-episodeslist-admin-aparte | 2026-09-24 | `EpisodesAdminToolbar` en Collapse cerrado, solo con `canEdit`. El usuario común pierde checkbox y masivos; el círculo del número pasa a 44px en móvil |
 | T13  | Tracking como invitado (localStorage)            | 1    | pendiente |           |            | Última de la fase; la más grande |
 | T14  | Preferencia de digest semanal                    | 2    | pendiente |           |            | Decisión opt-out/opt-in: ver README |
 | T15  | Cálculo del digest (lib pura)                    | 2    | pendiente |           |            |       |

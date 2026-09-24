@@ -152,6 +152,7 @@ const zhCN = {
     "selectedCount": "已选择 {n} 项",
     "colEpisode": "剧集",
     "colActions": "操作",
+    "adminTools": "编辑工具",
     "bulkWatched": "已观看",
     "bulkUnwatched": "未观看",
     "bulkDelete": "删除",

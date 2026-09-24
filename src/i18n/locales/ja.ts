@@ -152,6 +152,7 @@ const ja = {
     "selectedCount": "{n}件選択済み",
     "colEpisode": "エピソード",
     "colActions": "アクション",
+    "adminTools": "編集ツール",
     "bulkWatched": "視聴済み",
     "bulkUnwatched": "未視聴",
     "bulkDelete": "削除",

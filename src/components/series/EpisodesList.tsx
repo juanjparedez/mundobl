@@ -10,18 +10,13 @@ import {
   Button,
   Checkbox,
   Tooltip,
-  Space,
 } from 'antd';
 import {
-  PlusOutlined,
   EditOutlined,
   DeleteOutlined,
   ClockCircleOutlined,
   CommentOutlined,
-  ThunderboltOutlined,
   CheckCircleFilled,
-  EyeOutlined,
-  EyeInvisibleOutlined,
   FileTextOutlined,
   FileTextFilled,
 } from '@ant-design/icons';
@@ -29,6 +24,7 @@ import { useSession } from 'next-auth/react';
 import { CommentsList } from '@/components/common/CommentsList';
 import { SpoilerGate } from '@/components/common/SpoilerGate/SpoilerGate';
 import { EpisodeNoteModal } from './EpisodeNoteModal/EpisodeNoteModal';
+import { EpisodesAdminToolbar } from './EpisodesAdminToolbar/EpisodesAdminToolbar';
 import { useSeriesUserStatus } from './SeriesUserStatusProvider';
 import './EpisodesList.css';
 import { useMessage, useModal } from '@/hooks/useMessage';
@@ -303,6 +299,19 @@ export function EpisodesList({
     }
   };
 
+  const handleConfirmBulkDelete = () => {
+    modal.confirm({
+      title: t('episodesList.deleteBulkConfirmTitle'),
+      content: interpolateMessage(t('episodesList.deleteBulkConfirmContent'), {
+        n: String(selectedIds.size),
+      }),
+      okText: t('episodesList.confirmOk'),
+      cancelText: t('episodesList.confirmCancel'),
+      okButtonProps: { danger: true },
+      onOk: handleBulkDelete,
+    });
+  };
+
   const handleBulkToggleWatched = async (markAsWatched: boolean) => {
     const ids = Array.from(selectedIds);
     const newStatus = markAsWatched ? 'VISTA' : 'SIN_VER';
@@ -394,102 +403,28 @@ export function EpisodesList({
             n: String(episodes.length),
           })}
         </h5>
-        {canEdit && (
-          <Space>
-            <Button
-              size="small"
-              icon={<ThunderboltOutlined />}
-              onClick={handleGenerateEpisodes}
-              loading={generating}
-            >
-              {t('episodesList.generateButton')}
-            </Button>
-            <Button
-              type="dashed"
-              size="small"
-              icon={<PlusOutlined />}
-              onClick={() => handleOpenModal()}
-            >
-              {t('episodesList.addButton')}
-            </Button>
-          </Space>
-        )}
       </div>
 
       {episodes.length === 0 ? (
         <p className="episodes-list__empty">{t('episodesList.emptyText')}</p>
       ) : (
         <>
-          {/* Table header with select all and bulk actions */}
-          <div className="episodes-table__toolbar">
-            <div className="episodes-table__toolbar-left">
-              <Checkbox
-                checked={allSelected}
-                indeterminate={someSelected}
-                onChange={handleSelectAll}
-              />
-              {selectedIds.size > 0 ? (
-                <span className="episodes-table__selected-count">
-                  {interpolateMessage(t('episodesList.selectedCount'), {
-                    n: String(selectedIds.size),
-                  })}
-                </span>
-              ) : (
-                <span className="episodes-table__col-label">
-                  {t('episodesList.colEpisode')}
-                </span>
-              )}
-            </div>
-            {selectedIds.size > 0 ? (
-              <Space size="small">
-                <Tooltip title={t('episodesList.tooltipWatched')}>
-                  <Button
-                    size="small"
-                    icon={<EyeOutlined />}
-                    onClick={() => handleBulkToggleWatched(true)}
-                  >
-                    {t('episodesList.bulkWatched')}
-                  </Button>
-                </Tooltip>
-                <Tooltip title={t('episodesList.tooltipUnwatched')}>
-                  <Button
-                    size="small"
-                    icon={<EyeInvisibleOutlined />}
-                    onClick={() => handleBulkToggleWatched(false)}
-                  >
-                    {t('episodesList.bulkUnwatched')}
-                  </Button>
-                </Tooltip>
-                {canEdit && (
-                  <Button
-                    size="small"
-                    danger
-                    icon={<DeleteOutlined />}
-                    loading={bulkDeleting}
-                    onClick={() => {
-                      modal.confirm({
-                        title: t('episodesList.deleteBulkConfirmTitle'),
-                        content: interpolateMessage(
-                          t('episodesList.deleteBulkConfirmContent'),
-                          { n: String(selectedIds.size) }
-                        ),
-                        okText: t('episodesList.confirmOk'),
-                        cancelText: t('episodesList.confirmCancel'),
-                        okButtonProps: { danger: true },
-                        onOk: handleBulkDelete,
-                      });
-                    }}
-                  >
-                    {t('episodesList.bulkDelete')}
-                  </Button>
-                )}
-              </Space>
-            ) : (
-              <span className="episodes-table__col-label episodes-table__col-label--actions">
-                {t('episodesList.colActions')}
-              </span>
-            )}
-          </div>
+          {/* Curaduria: seleccion multiple, masivos y alta de episodios. Para
+           * el usuario comun la lista es solo ver / marcar / nota / comentarios. */}
+          {canEdit && (
+            <EpisodesAdminToolbar
+              allSelected={allSelected}
+              someSelected={someSelected}
+              selectedCount={selectedIds.size}
+              onSelectAll={handleSelectAll}
+              onBulkToggleWatched={handleBulkToggleWatched}
+              onBulkDelete={handleConfirmBulkDelete}
+              bulkDeleting={bulkDeleting}
+              generating={generating}
+              onGenerate={handleGenerateEpisodes}
+              onAddEpisode={() => handleOpenModal()}
+            />
+          )}
 
           {/* Episode rows */}
           <div className="episodes-table__body">
@@ -504,12 +439,14 @@ export function EpisodesList({
                   <div
                     className={`episodes-table__row${isWatched ? ' episodes-table__row--watched' : ''}${isSelected ? ' episodes-table__row--selected' : ''}`}
                   >
-                    <div className="episodes-table__cell episodes-table__cell--select">
-                      <Checkbox
-                        checked={isSelected}
-                        onChange={() => handleSelectOne(episode.id)}
-                      />
-                    </div>
+                    {canEdit && (
+                      <div className="episodes-table__cell episodes-table__cell--select">
+                        <Checkbox
+                          checked={isSelected}
+                          onChange={() => handleSelectOne(episode.id)}
+                        />
+                      </div>
+                    )}
 
                     <div
                       className="episodes-table__cell episodes-table__cell--number"
