@@ -152,6 +152,7 @@ const th = {
     "selectedCount": "เลือกแล้ว {n} รายการ",
     "colEpisode": "ตอน",
     "colActions": "การดำเนินการ",
+    "adminTools": "เครื่องมือแก้ไข",
     "bulkWatched": "ดูแล้ว",
     "bulkUnwatched": "ยังไม่ได้ดู",
     "bulkDelete": "ลบ",
