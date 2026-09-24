@@ -143,6 +143,7 @@ export type TranslationShape = {
     selectedCount: string;
     colEpisode: string;
     colActions: string;
+    adminTools: string;
     bulkWatched: string;
     bulkUnwatched: string;
     bulkDelete: string;
@@ -3264,6 +3265,7 @@ const es: TranslationShape = {
     selectedCount: '{n} seleccionado{s}',
     colEpisode: 'Episodio',
     colActions: 'Acciones',
+    adminTools: 'Herramientas de edición',
     bulkWatched: 'Vistos',
     bulkUnwatched: 'No vistos',
     bulkDelete: 'Eliminar',
@@ -6547,6 +6549,7 @@ const en: TranslationShape = {
     selectedCount: '{n} selected',
     colEpisode: 'Episode',
     colActions: 'Actions',
+    adminTools: 'Editing tools',
     bulkWatched: 'Watched',
     bulkUnwatched: 'Unwatched',
     bulkDelete: 'Delete',

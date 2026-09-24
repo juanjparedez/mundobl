@@ -152,6 +152,7 @@ const zhTW = {
     "selectedCount": "已選取 {n} 個",
     "colEpisode": "集",
     "colActions": "動作",
+    "adminTools": "編輯工具",
     "bulkWatched": "已觀看",
     "bulkUnwatched": "未觀看",
     "bulkDelete": "刪除",
