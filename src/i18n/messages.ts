@@ -1607,10 +1607,24 @@ export type TranslationShape = {
     description: string;
     goToProfile: string;
     heroBadge: string;
+    ctaPrimary: string;
+    ctaGoWatching: string;
+    heroChipTracking: string;
+    heroChipLanguages: string;
     statSeries: string;
     statViews: string;
     statComments: string;
     statReviews: string;
+    statEpisodesWeek: string;
+    statEpisodesTotal: string;
+    statUsersFollowing: string;
+    howTitle: string;
+    how1Title: string;
+    how1Desc: string;
+    how2Title: string;
+    how2Desc: string;
+    how3Title: string;
+    how3Desc: string;
     novedadesEyebrow: string;
     novedadesTitle: string;
     novedadesSubtitle: string;
@@ -4779,17 +4793,34 @@ const es: TranslationShape = {
     categoryFavorites: 'Favoritas',
   },
   landing: {
-    subtitle: 'Tu catálogo personal de series BL.',
-    exploreCatalog: 'Explorar Catálogo',
+    subtitle:
+      'Marcá por qué episodio vas, mirá qué te falta y enterate cuando sale el siguiente.',
+    exploreCatalog: 'Explorar el catálogo',
     signIn: 'Iniciar Sesión',
     description:
       'Un espacio dedicado a las series BL. Seguí lo que estás viendo, calificá tus favoritas y compartí tus opiniones.',
     goToProfile: 'Mi Perfil',
-    heroBadge: 'Reseñas · 10 idiomas',
+    heroBadge: 'Tu tracker de series BL',
+    ctaPrimary: 'Empezar a seguir mis series',
+    ctaGoWatching: 'Ir a mis series',
+    heroChipTracking: 'Marcá tu progreso',
+    heroChipLanguages: '10 idiomas',
     statSeries: 'series en catálogo',
     statViews: 'veces vistas',
     statComments: 'comentarios',
     statReviews: 'reseñas publicadas',
+    statEpisodesWeek: 'episodios marcados esta semana',
+    statEpisodesTotal: 'episodios marcados',
+    statUsersFollowing: 'siguiendo series ahora',
+    howTitle: 'Cómo funciona',
+    how1Title: 'Buscá la serie',
+    how1Desc:
+      'Está en el catálogo, con su ficha, sus temporadas y sus capítulos.',
+    how2Title: 'Marcá por qué episodio vas',
+    how2Desc: 'Un toque y queda guardado. La serie pasa sola a "viendo".',
+    how3Title: 'Volvé cuando salga el siguiente',
+    how3Desc:
+      'Tu lista te espera con lo que te falta y el día que sale cada capítulo.',
     novedadesEyebrow: 'Lo nuevo',
     novedadesTitle: 'Funciones que cambian cómo mirás',
     novedadesSubtitle:
@@ -8032,17 +8063,34 @@ const en: TranslationShape = {
     categoryFavorites: 'Favorites',
   },
   landing: {
-    subtitle: 'Your personal BL series catalog.',
-    exploreCatalog: 'Explore Catalog',
+    subtitle:
+      'Mark the episode you are on, see what is left, and know when the next one drops.',
+    exploreCatalog: 'Explore the catalog',
     signIn: 'Sign In',
     description:
       'A space dedicated to BL series. Track what you are watching, rate your favorites, and share your thoughts.',
     goToProfile: 'My Profile',
-    heroBadge: 'Reviews · 10 languages',
+    heroBadge: 'Your BL series tracker',
+    ctaPrimary: 'Start tracking my series',
+    ctaGoWatching: 'Go to my series',
+    heroChipTracking: 'Track your progress',
+    heroChipLanguages: '10 languages',
     statSeries: 'series in catalog',
     statViews: 'times watched',
     statComments: 'comments',
     statReviews: 'published reviews',
+    statEpisodesWeek: 'episodes marked this week',
+    statEpisodesTotal: 'episodes marked',
+    statUsersFollowing: 'tracking series right now',
+    howTitle: 'How it works',
+    how1Title: 'Find the series',
+    how1Desc: 'It is in the catalog, with its page, seasons and episodes.',
+    how2Title: 'Mark the episode you are on',
+    how2Desc:
+      'One tap and it is saved. The series moves to "watching" on its own.',
+    how3Title: 'Come back when the next one drops',
+    how3Desc:
+      'Your list is waiting with what is left and the day each episode airs.',
     novedadesEyebrow: "What's new",
     novedadesTitle: 'Features that change how you watch',
     novedadesSubtitle:
