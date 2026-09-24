@@ -19,6 +19,7 @@ import {
   DEFAULT_ACCENT,
   deriveAccentColorsFromHex,
   getSkinAccentHex,
+  readableTextOn,
   type AccentPresetKey,
   type AccentColors,
 } from '../theme.config';
@@ -150,6 +151,11 @@ function applyAccentVars(
   root.style.setProperty('--primary-color-hover', colors.hover);
   root.style.setProperty('--primary-color-active', colors.active);
   root.style.setProperty('--primary-color-outline', colors.outline);
+  // Texto legible sobre el acento. Existia solo dentro de la config de antd,
+  // asi que cualquier CSS que pintara un fondo con --primary-color tenia que
+  // adivinar el color del texto — y con acentos claros (gold, pastel)
+  // adivinaba mal. Expuesto como token, deja de ser un problema de cada .css.
+  root.style.setProperty('--text-on-primary', readableTextOn(colors.primary));
 }
 
 function applyDataAttribute(name: string, value: string, defaultValue: string) {

@@ -149,7 +149,7 @@
 .noticias-card__read-more {
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--color-primary, #e6005c);
+  color: var(--primary-color);
   text-decoration: none;
 }
 
@@ -167,7 +167,7 @@
 }
 
 .noticias-card__source-link:hover {
-  color: var(--color-primary, #e6005c);
+  color: var(--primary-color);
 }
 
 /* ── Load more ── */
