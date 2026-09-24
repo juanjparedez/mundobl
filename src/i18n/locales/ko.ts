@@ -152,6 +152,7 @@ const ko = {
     "selectedCount": "{n}개 선택됨",
     "colEpisode": "에피소드",
     "colActions": "작업",
+    "adminTools": "편집 도구",
     "bulkWatched": "시청함",
     "bulkUnwatched": "시청 안 함",
     "bulkDelete": "삭제",
