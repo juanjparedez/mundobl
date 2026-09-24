@@ -18,41 +18,8 @@
   padding: var(--spacing-lg) var(--spacing-md);
 }
 
-/* Toolbar: select all + bulk actions */
-.episodes-table__toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--spacing-xs) var(--spacing-sm);
-  background: var(--bg-spotlight);
-  border-radius: var(--border-radius-sm) var(--border-radius-sm) 0 0;
-  border-bottom: 1px solid var(--border-color);
-  min-height: 40px;
-}
-
-.episodes-table__toolbar-left {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-}
-
-.episodes-table__selected-count {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--primary-color);
-}
-
-.episodes-table__col-label {
-  font-size: var(--font-size-sm);
-  color: var(--text-tertiary);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.episodes-table__col-label--actions {
-  display: none;
-}
+/* La barra de seleccion multiple y acciones masivas se mudo a
+ * EpisodesAdminToolbar (T12): solo la ve quien puede editar. */
 
 /* Table body */
 .episodes-table__body {
@@ -213,10 +180,16 @@
     gap: var(--spacing-sm);
   }
 
-  .episodes-table__toolbar {
-    flex-wrap: wrap;
-    gap: var(--spacing-xs);
-    padding: var(--spacing-xs);
+  /* Marcar visto es el gesto principal de la fila y en mobile se hace con
+   * el pulgar: el circulo del numero crece al minimo tactil de 44px. */
+  .episodes-table__cell--number {
+    width: 44px;
+    min-height: 44px;
+  }
+
+  .episodes-table__ep-number {
+    width: 44px;
+    height: 44px;
   }
 
   .episodes-table__row {

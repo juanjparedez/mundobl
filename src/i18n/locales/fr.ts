@@ -152,6 +152,7 @@ const fr = {
     "selectedCount": "{n} sélectionné(s)",
     "colEpisode": "Épisode",
     "colActions": "Actions",
+    "adminTools": "Outils d'édition",
     "bulkWatched": "Vu",
     "bulkUnwatched": "Non vu",
     "bulkDelete": "Supprimer",
