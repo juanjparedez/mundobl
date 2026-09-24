@@ -34,6 +34,9 @@ async function getLandingStats() {
       latestNews,
       newThisWeek,
       airingSchedule,
+      episodesMarkedThisWeek,
+      episodesMarkedTotal,
+      usersFollowingRows,
     ] = await Promise.all([
       prisma.series.count({ where: { origin: 'CURATED' } }),
       prisma.viewStatus.count({
@@ -163,6 +166,36 @@ async function getLandingStats() {
       // Parrilla semanal de emision. Mismo lado del corte que `latestSeries`
       // (CURATED + PERSONAL): el helper lo filtra explicitamente.
       getAiringSchedule(),
+
+      // Episodios marcados en los ultimos 7 dias: la prueba de vida del
+      // tracker, que es lo que la home vende desde T09. Excluye ADMIN como
+      // toda metrica del plan — si no, la vidriera cuenta a Juan probando.
+      prisma.viewStatus.count({
+        where: {
+          status: 'VISTA',
+          episodeId: { not: null },
+          user: { role: { not: 'ADMIN' } },
+          updatedAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
+        },
+      }),
+      prisma.viewStatus.count({
+        where: {
+          status: 'VISTA',
+          episodeId: { not: null },
+          user: { role: { not: 'ADMIN' } },
+        },
+      }),
+
+      // Usuarios con al menos una serie en VIENDO. Excluye ADMIN, igual que
+      // toda metrica del plan de retencion: si no, Juan y Flor inflan el numero.
+      prisma.viewStatus.groupBy({
+        by: ['userId'],
+        where: {
+          status: 'VIENDO',
+          seriesId: { not: null },
+          user: { role: { not: 'ADMIN' } },
+        },
+      }),
     ]);
 
     const formattedWatchable = watchableSeries.map((s) => {
@@ -212,6 +245,9 @@ async function getLandingStats() {
       latestNews: formattedNews,
       newThisWeek,
       airingSchedule,
+      episodesMarkedThisWeek,
+      episodesMarkedTotal,
+      usersFollowing: usersFollowingRows.length,
     };
   } catch {
     return {
@@ -227,6 +263,9 @@ async function getLandingStats() {
       latestNews: [],
       newThisWeek: 0,
       airingSchedule: [],
+      episodesMarkedThisWeek: 0,
+      episodesMarkedTotal: 0,
+      usersFollowing: 0,
     };
   }
 }
