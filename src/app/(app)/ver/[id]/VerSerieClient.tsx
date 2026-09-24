@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -39,6 +39,7 @@ import { RatingSection } from '@/components/series/RatingSection';
 import { ReviewsSection } from '@/components/series/ReviewsSection/ReviewsSection';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { readUrlParam, writeUrlParam } from '@/lib/url-state';
 
 interface Episode {
   id: number;
@@ -304,6 +305,34 @@ function getYouTubeThumbnail(
   return `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
 }
 
+const EPISODE_PARAM = 'e';
+
+interface EpisodeRef {
+  seasonNumber: number;
+  episodeNumber: number;
+}
+
+/** `1x5` — temporada por episodio, como lo diria una persona. */
+function formatEpisodeParam(ep: EpisodeRef): string {
+  return `${ep.seasonNumber}x${ep.episodeNumber}`;
+}
+
+/**
+ * Resuelve `1x5` al indice dentro de la lista plana. Devuelve 0 si el valor
+ * no matchea: un link viejo a un episodio que ya no existe abre la serie en
+ * el primero en vez de romperse.
+ */
+function findEpisodeIndex(episodes: EpisodeRef[], raw: string): number {
+  const match = /^(\d+)x(\d+)$/.exec(raw.trim());
+  if (!match) return 0;
+  const seasonNumber = Number(match[1]);
+  const episodeNumber = Number(match[2]);
+  const idx = episodes.findIndex(
+    (e) => e.seasonNumber === seasonNumber && e.episodeNumber === episodeNumber
+  );
+  return idx === -1 ? 0 : idx;
+}
+
 export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
   const { t } = useLocale();
   const { data: session, status } = useSession();
@@ -333,6 +362,33 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
   const [filterMode, setFilterMode] = useState<'all' | 'episodes' | 'extras'>(
     'all'
   );
+
+  // El episodio activo viaja en `?e=1x5` (temporada x episodio) para que el
+  // link sea compartible y sobreviva al F5. Se resuelve DESPUES del montaje
+  // —nunca en el initializer de useState— porque el HTML prerenderizado
+  // siempre arranca en el primer episodio: leer la URL antes de hidratar
+  // daria un markup distinto al del servidor.
+  useEffect(() => {
+    const syncFromUrl = () => {
+      const raw = readUrlParam(EPISODE_PARAM);
+      setActiveIdx(raw ? findEpisodeIndex(flatEpisodes, raw) : 0);
+    };
+    syncFromUrl();
+    // Cada cambio de episodio agrega una entrada al historial, asi que
+    // "atras" y "adelante" tienen que mover el reproductor.
+    window.addEventListener('popstate', syncFromUrl);
+    return () => window.removeEventListener('popstate', syncFromUrl);
+  }, [flatEpisodes]);
+
+  const selectEpisode = (idx: number) => {
+    const target = flatEpisodes[idx];
+    if (!target) return;
+    setActiveIdx(idx);
+    // `push` y no `replace`: cambiar de episodio es una navegacion desde el
+    // punto de vista del usuario, y el boton "atras" tiene que devolverlo
+    // al que estaba viendo.
+    writeUrlParam(EPISODE_PARAM, formatEpisodeParam(target), 'push');
+  };
   const [scope, setScope] = useState(series.catalogScope);
   const [movingScope, setMovingScope] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
@@ -668,7 +724,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         <Button
           icon={<ArrowLeftOutlined />}
           disabled={!hasPrev}
-          onClick={() => setActiveIdx((i) => i - 1)}
+          onClick={() => selectEpisode(activeIdx - 1)}
         >
           {t('verSerie.previousButton')}
         </Button>
@@ -681,7 +737,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           icon={<ArrowRightOutlined />}
           iconPosition="end"
           disabled={!hasNext}
-          onClick={() => setActiveIdx((i) => i + 1)}
+          onClick={() => selectEpisode(activeIdx + 1)}
         >
           {t('verSerie.nextButton')}
         </Button>
@@ -795,7 +851,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
                     <div
                       className="ver-serie__chapter-thumb-wrap"
                       onClick={() =>
-                        !isMultiPart && setActiveIdx(items[0].flatIndex)
+                        !isMultiPart && selectEpisode(items[0].flatIndex)
                       }
                     >
                       {/* thumbnail = thumb de YouTube (whitelisteado) o fallback
@@ -854,7 +910,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
                             className={`ver-serie__part-btn${
                               isActive ? ' ver-serie__part-btn--active' : ''
                             }`}
-                            onClick={() => setActiveIdx(flatIndex)}
+                            onClick={() => selectEpisode(flatIndex)}
                           >
                             {isActive && <CheckCircleFilled />}
                             {partLabel}
@@ -888,7 +944,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
                     className={`ver-serie__extra-card${
                       isActive ? ' ver-serie__extra-card--active' : ''
                     }`}
-                    onClick={() => setActiveIdx(flatIndex)}
+                    onClick={() => selectEpisode(flatIndex)}
                   >
                     {thumb && (
                       <div className="ver-serie__extra-thumb-wrap">
