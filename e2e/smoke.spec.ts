@@ -36,7 +36,18 @@ test('el catalogo renderiza series', async ({ page }) => {
   await page.goto('/catalogo');
   const cards = page.locator('.serie-card');
   await expect(cards.first()).toBeVisible({ timeout: 15_000 });
-  expect(await cards.count()).toBeGreaterThan(5);
+
+  // `count()` es un snapshot: no reintenta. Si algo navega la pagina entre
+  // el `toBeVisible` y el `count`, cuenta 0 y el test falla con el catalogo
+  // perfectamente sano. Pasaba de verdad: en la primera visita (perfil
+  // limpio, o sea CADA corrida de Playwright) el service worker reclamaba
+  // la pagina ya cargada y ServiceWorkerRegistrar la recargaba, y la
+  // recarga caia justo en ese hueco ~1 de cada 3 veces.
+  // La recarga ya no ocurre (ver ServiceWorkerRegistrar), pero la assertion
+  // igual no deberia depender de que nada navegue: `expect.poll` reintenta.
+  await expect
+    .poll(async () => await cards.count(), { timeout: 15_000 })
+    .toBeGreaterThan(5);
 });
 
 test('/ver muestra series mirables y la ficha abre', async ({ page }) => {
