@@ -9,7 +9,7 @@
    directores) eso las empuja mas alla del ancho de la celda; en mobile
    la tabla no es table-layout:fixed y el `overflow-x: hidden` de mas
    abajo terminaba recortando el ultimo chip en vez de bajarlo de linea
-   (ver docs/plan-maestro-retencion — ficha movil, genero cortado). */
+   (reportado en la ficha movil: el chip de genero quedaba cortado). */
 .series-info .ant-descriptions-item-content {
   flex-wrap: wrap;
   row-gap: var(--spacing-xs);

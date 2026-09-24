@@ -23,7 +23,7 @@ interface ProgressRequestBody {
 
 // POST - "Voy por el episodio N": marca ese episodio y los anteriores como
 // vistos (o desmarca los posteriores con direction: 'unmark') en una sola
-// llamada. Ver docs/plan-maestro-retencion/tareas/T05-endpoint-progreso.md.
+// llamada.
 export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
     const authResult = await requireAuth();
