@@ -29,7 +29,7 @@ export function trackEvent(name: string, props?: EventProps): void {
 }
 
 /**
- * Eventos de embudo de activacion/retencion (ver docs/plan-maestro-retencion).
+ * Eventos de embudo de activacion/retencion.
  * Nombres y props fijos a proposito, tipados por evento: nadie escribe el
  * nombre a mano y usar uno que no este en el catalogo no compila.
  */
