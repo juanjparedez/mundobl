@@ -144,6 +144,11 @@ const it = {
     "reportedSuccess": "Commento segnalato. Grazie per avercelo fatto sapere.",
     "reportError": "Impossibile segnalare"
   },
+  "seriesStats": {
+    "source": "Visualizzazioni e Mi piace dei video ufficiali su YouTube, come riportato da YouTube.",
+    "views": "{n} visualizzazioni su YouTube",
+    "likes": "{n} Mi piace su YouTube"
+  },
   "episodesList": {
     "headerTitle": "Episodi ({n})",
     "generateButton": "Genera",

@@ -189,6 +189,8 @@ export async function getWatchableSeries(market = 'AR') {
               embedUrl: true,
               playback: true,
               playbackBlockedMarkets: true,
+              youtubeViewCount: true,
+              youtubeLikeCount: true,
             },
             orderBy: { episodeNumber: 'asc' },
           },
@@ -226,11 +228,22 @@ export async function getWatchableSeries(market = 'AR') {
         ).length,
       0
     );
+    // Suma de los contadores publicos de YouTube de los episodios mirables.
+    let youtubeViews = 0;
+    let youtubeLikes = 0;
+    for (const season of s.seasons) {
+      for (const e of season.episodes) {
+        youtubeViews += e.youtubeViewCount ?? 0;
+        youtubeLikes += e.youtubeLikeCount ?? 0;
+      }
+    }
     return {
       ...s,
       episodesWithEmbed,
       totalEpisodes,
       playableEpisodes,
+      youtubeViews,
+      youtubeLikes,
     };
   });
 }
