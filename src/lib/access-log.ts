@@ -1,16 +1,14 @@
 import { prisma } from '@/lib/database';
 import { isRuntimeFreezeActive } from '@/lib/runtime-freeze';
+import { runCronJob } from '@/lib/cron-runs';
 
 /**
- * Registra un page view (llamado desde el proxy/middleware)
- * Fire-and-forget: no bloquea el request
+ * Registra una visita (llamado desde el proxy). Solo ruta y hora: sin IP,
+ * sin user-agent y sin usuario, aunque haya sesion. Es lo que dice
+ * /privacidad; las visitas solo alimentan conteos (activity-by-day).
+ * Fire-and-forget: no bloquea el request.
  */
-export function logPageView(
-  path: string,
-  ip: string | null,
-  userAgent: string | null,
-  userId: string | null
-): void {
+export function logPageView(path: string): void {
   if (isRuntimeFreezeActive('logging')) return;
 
   prisma.accessLog
@@ -19,9 +17,54 @@ export function logPageView(
         action: 'PAGE_VIEW',
         path,
         method: 'GET',
+      },
+    })
+    .catch(() => {
+      // Silenciar errores de logging para no afectar el request
+    });
+}
+
+export const ABUSE_ACTION = 'ABUSE';
+export const ABUSE_RETENTION_DAYS = 7;
+export const LOG_RETENTION_DAYS = 90;
+
+/**
+ * Tope de escrituras de abuso: un scanner tira cientos de rutas por minuto y
+ * no puede convertirse en cientos de filas. Por ventana (y por instancia),
+ * cada IP se anota una sola vez y en total no mas de `maxPerWindow`.
+ */
+export function createAbuseThrottle(windowMs: number, maxPerWindow: number) {
+  const window = { startMs: 0, ips: new Set<string>() };
+  return (ip: string, nowMs: number): boolean => {
+    if (nowMs - window.startMs >= windowMs) {
+      window.startMs = nowMs;
+      window.ips.clear();
+    }
+    if (window.ips.has(ip) || window.ips.size >= maxPerWindow) return false;
+    window.ips.add(ip);
+    return true;
+  };
+}
+
+const shouldLogAbuse = createAbuseThrottle(10 * 60 * 1000, 50);
+
+/**
+ * Registra un intento de ataque con su IP, para poder bloquearla desde
+ * /admin/banned-ips. Es la unica fila con IP que guardamos y vence a los
+ * `ABUSE_RETENTION_DAYS` dias (purgeExpiredLogs). /privacidad lo dice.
+ */
+export function logAbuse(path: string, ip: string, reason: 'scanner'): void {
+  if (isRuntimeFreezeActive('logging')) return;
+  if (!shouldLogAbuse(ip, Date.now())) return;
+
+  prisma.accessLog
+    .create({
+      data: {
+        action: ABUSE_ACTION,
+        path,
+        method: 'GET',
         ip,
-        userAgent,
-        userId,
+        metadata: JSON.stringify({ reason }),
       },
     })
     .catch(() => {
@@ -189,6 +232,71 @@ export async function cleanOldLogs(daysToKeep: number = 90): Promise<number> {
   return result.count;
 }
 
+const PURGE_BATCH = 5000;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * Retencion automatica (la corre el cron diario): los intentos de ataque se
+ * borran a los `ABUSE_RETENTION_DAYS` dias y todo lo demas a los
+ * `LOG_RETENTION_DAYS`. `cleanOldLogs` queda para la limpieza a mano de
+ * /admin/logs.
+ *
+ * Borra en tandas y corta al llegar a `deadline` (ms epoch): la primera vez
+ * hay meses acumulados, y un solo DELETE podia pasarse del tiempo del cron.
+ * Lo que no entra queda para la corrida siguiente.
+ */
+export async function purgeExpiredLogs(
+  deadline: number,
+  now: Date = new Date()
+): Promise<{ deleted: number; done: boolean }> {
+  const where = {
+    OR: [
+      {
+        createdAt: {
+          lt: new Date(now.getTime() - LOG_RETENTION_DAYS * DAY_MS),
+        },
+      },
+      {
+        action: ABUSE_ACTION,
+        createdAt: {
+          lt: new Date(now.getTime() - ABUSE_RETENTION_DAYS * DAY_MS),
+        },
+      },
+    ],
+  };
+
+  let deleted = 0;
+  while (Date.now() < deadline) {
+    const rows = await prisma.accessLog.findMany({
+      where,
+      select: { id: true },
+      take: PURGE_BATCH,
+    });
+    if (rows.length === 0) return { deleted, done: true };
+
+    const { count } = await prisma.accessLog.deleteMany({
+      where: { id: { in: rows.map((row) => row.id) } },
+    });
+    deleted += count;
+    if (rows.length < PURGE_BATCH) return { deleted, done: true };
+  }
+  return { deleted, done: false };
+}
+
+/** La retencion de logs como trabajo del cron diario, con su registro. */
+export function runLogRetentionJob(deadline: number) {
+  return runCronJob(
+    'logs',
+    () => purgeExpiredLogs(deadline),
+    (result) => ({
+      trigger: 'schedule',
+      deleted: result.deleted,
+      budgetExhausted: !result.done,
+    }),
+    { trigger: 'schedule' }
+  );
+}
+
 // Patrones para identificar logs de scanners ya existentes en la DB
 const SCANNER_PATH_PATTERNS = [
   '.php',
@@ -224,11 +332,14 @@ const SCANNER_PATH_PATTERNS = [
 ];
 
 /**
- * Elimina logs existentes generados por scanners de vulnerabilidades
+ * Elimina visitas viejas generadas por scanners de vulnerabilidades (de antes
+ * de que el proxy los cortara). Solo PAGE_VIEW: las filas ABUSE tienen esas
+ * mismas rutas a proposito y se borran solas a los 7 dias.
  */
 export async function cleanScannerLogs(): Promise<number> {
   const result = await prisma.accessLog.deleteMany({
     where: {
+      action: 'PAGE_VIEW',
       OR: SCANNER_PATH_PATTERNS.map((pattern) => ({
         path: { contains: pattern },
       })),

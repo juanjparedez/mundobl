@@ -374,8 +374,8 @@ filas). La campanita de `/estrenos`
 ([ScheduleSubscribeToggle](src/components/estrenos/ScheduleSubscribeToggle/ScheduleSubscribeToggle.tsx),
 contra el `POST|DELETE /api/series/[id]/subscribe` existente, con
 [GET /api/user/subscriptions](src/app/api/user/subscriptions/route.ts) resolviendo las N en un
-fetch) existe para que las suscripciones empiecen a acumularse. Cuando haya volumen, el cron va
-calcado de `/api/cron/playability`, con gate de calidad del dato: solo disparar si
+fetch) existe para que las suscripciones empiecen a acumularse. Cuando haya volumen, va como un
+trabajo mas del cron diario (`/api/cron/daily`), con gate de calidad del dato: solo disparar si
 `max(airDate) >= hoy-2d` **y** >= 3 episodios con `airDate` **y** espaciado mediano de 6-8 dias
 (eso distingue una serie en emision de un volcado historico). Registrar el tipo nuevo en **los
 dos** mapeos `type -> flag` de `src/lib/web-push.ts` (estan duplicados).
@@ -623,7 +623,7 @@ import {
 **Modelos de sistema:**
 
 - `User`, `Account`, `Session`, `VerificationToken` - NextAuth
-- `AccessLog` - Registro de visitas y acciones
+- `AccessLog` - Visitas (solo ruta y hora, sin IP ni usuario), intentos de ataque (`ABUSE`, con IP, se borran a los 7 dias), acciones del equipo y corridas del cron. El cron diario borra el resto a los 90 dias (ver `/privacidad`)
 - `BannedIp` - IPs bloqueadas
 
 **Enums:**

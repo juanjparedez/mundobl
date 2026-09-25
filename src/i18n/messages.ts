@@ -2794,6 +2794,7 @@ export type TranslationShape = {
     cronTriggerManual: string;
     cronTriggerSchedule: string;
     cronDetail: string;
+    cronDetailLogs: string;
     cronBacklog: string;
     workflowsTitle: string;
     workflowBackup: string;
@@ -6091,9 +6092,9 @@ const es: TranslationShape = {
     healthSubtitle: 'Los crons y los servicios de los que depende la página.',
     healthRefresh: 'Actualizar',
     healthLoadError: 'No se pudo cargar la salud del sistema',
-    cronTitle: 'Cron de disponibilidad y estadísticas',
+    cronTitle: 'Cron diario',
     cronHint:
-      'Revisa todos los días qué videos se pueden ver en cada país y trae sus reproducciones de YouTube.',
+      'Corre todos los días: revisa qué videos se pueden ver en cada país, trae sus reproducciones de YouTube y borra los registros vencidos.',
     cronNext: 'Próxima corrida',
     cronRunNow: 'Correr ahora',
     cronRunNowConfirm:
@@ -6112,6 +6113,7 @@ const es: TranslationShape = {
     cronTriggerManual: 'Manual',
     cronTriggerSchedule: 'Programada',
     cronDetail: '{probed} de {scanned} revisados · {changed} cambios',
+    cronDetailLogs: 'Limpieza: {deleted} registros vencidos borrados',
     cronBacklog: 'quedaron pendientes para la próxima',
     workflowsTitle: 'GitHub Actions',
     workflowBackup: 'Backup de la base',
@@ -9410,9 +9412,9 @@ const en: TranslationShape = {
     healthSubtitle: 'Cron jobs and the services the site depends on.',
     healthRefresh: 'Refresh',
     healthLoadError: 'Could not load system health',
-    cronTitle: 'Availability and stats cron',
+    cronTitle: 'Daily cron',
     cronHint:
-      'Checks every day which videos can be played in each country and fetches their YouTube views.',
+      'Runs every day: checks which videos can be played in each country, fetches their YouTube views and deletes expired logs.',
     cronNext: 'Next run',
     cronRunNow: 'Run now',
     cronRunNowConfirm:
@@ -9431,6 +9433,7 @@ const en: TranslationShape = {
     cronTriggerManual: 'Manual',
     cronTriggerSchedule: 'Scheduled',
     cronDetail: '{probed} of {scanned} checked · {changed} changes',
+    cronDetailLogs: 'Cleanup: {deleted} expired logs deleted',
     cronBacklog: 'some left for the next run',
     workflowsTitle: 'GitHub Actions',
     workflowBackup: 'Database backup',

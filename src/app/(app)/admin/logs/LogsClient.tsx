@@ -62,11 +62,14 @@ const ACTION_COLORS: Record<string, string> = {
   CREATE: 'cyan',
   UPDATE: 'gold',
   DELETE: 'red',
+  ABUSE: 'volcano',
 };
 
 const ACTION_OPTIONS = [
   { label: 'Todas', value: '' },
   { label: 'Page View', value: 'PAGE_VIEW' },
+  // Unicas filas con IP: intentos de ataque, 7 dias (ver logAbuse).
+  { label: 'Abuse', value: 'ABUSE' },
   { label: 'Login', value: 'LOGIN' },
   { label: 'Logout', value: 'LOGOUT' },
   { label: 'Create', value: 'CREATE' },
