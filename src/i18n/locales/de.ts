@@ -1946,6 +1946,7 @@ const de = {
     "currentVersion": "Aktuelle Version: {version}",
     "deleteButton": "Löschen",
     "createButton": "Erstellen",
+    "signInToSend": "Zum Senden anmelden",
     "formTitle": "Neue Anfrage",
     "formFieldType": "Typ",
     "formFieldTitle": "Titel",
