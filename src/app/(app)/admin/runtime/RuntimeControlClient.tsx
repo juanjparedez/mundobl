@@ -20,6 +20,7 @@ import { AdminNav } from '../AdminNav';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { useMessage } from '@/hooks/useMessage';
 import '../admin.css';
+import { RuntimeHealthPanel } from './RuntimeHealthPanel';
 import './RuntimeControlClient.css';
 
 type RuntimeState = {
@@ -367,6 +368,8 @@ export function RuntimeControlClient() {
                   </div>
                 )}
               </PanelCard>
+
+              <RuntimeHealthPanel />
 
               <PanelCard
                 header={
