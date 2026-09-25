@@ -5,6 +5,7 @@ import { requireRole } from '@/lib/auth-helpers';
 import { checkCollaboratorImportRateLimit } from '@/lib/rate-limit';
 import { parseAirDate } from '@/lib/episode-parser';
 import { attachEpisodesToSeries } from '@/lib/episode-attach';
+import { notifyEpisodesAvailable } from '@/lib/notifications';
 import { checkOfficialYouTubeVideos } from '@/lib/official-content-guard';
 
 interface ConfirmEpisode {
@@ -202,6 +203,13 @@ export async function POST(request: NextRequest) {
       revalidatePath('/admin/series');
       revalidatePath('/catalogo');
       revalidatePath('/ver');
+
+      // Fuera de la transaccion: solo se avisa lo que quedo escrito.
+      await notifyEpisodesAvailable({
+        seriesId: target.id,
+        seriesTitle: target.title,
+        episodes: attached.available,
+      });
 
       return NextResponse.json({
         seriesId: target.id,

@@ -43,6 +43,9 @@ export interface AttachResult {
   skipped: number;
   /** Temporadas que hubo que crear en la serie destino. */
   seasonsCreated: number;
+  /** Los que pasaron a poder verse (creados + enriquecidos), para avisar a
+   *  quienes siguen la serie una vez confirmada la transaccion. */
+  available: Array<{ seasonNumber: number; episodeNumber: number }>;
 }
 
 export async function attachEpisodesToSeries(
@@ -56,6 +59,7 @@ export async function attachEpisodesToSeries(
     enriched: 0,
     skipped: 0,
     seasonsCreated: 0,
+    available: [],
   };
 
   for (const srcSeason of seasons) {
@@ -110,6 +114,10 @@ export async function attachEpisodesToSeries(
           },
         });
         result.created++;
+        result.available.push({
+          seasonNumber: srcSeason.seasonNumber,
+          episodeNumber: ep.episodeNumber,
+        });
         continue;
       }
 
@@ -135,6 +143,10 @@ export async function attachEpisodesToSeries(
         },
       });
       result.enriched++;
+      result.available.push({
+        seasonNumber: srcSeason.seasonNumber,
+        episodeNumber: ep.episodeNumber,
+      });
     }
 
     // El contador de la temporada queda alineado con la realidad.

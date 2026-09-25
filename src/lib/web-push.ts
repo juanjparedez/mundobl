@@ -136,7 +136,14 @@ export async function isUserAllowedToReceivePush(
   if (!prefs.pushEnabled) return false;
 
   // Mapeo type → flag.
-  if (type === 'season_added' && !prefs.notifySeasonAdded) return false;
+  // El aviso de capitulo disponible va con el mismo interruptor que "nueva
+  // temporada": quien silencio las novedades de sus series no tiene que
+  // empezar a recibir estas, que son mas frecuentes.
+  if (
+    (type === 'season_added' || type === 'episode_available') &&
+    !prefs.notifySeasonAdded
+  )
+    return false;
   if (type === 'content_added' && !prefs.notifyContentAdded) return false;
   if (type === 'review_published' && !prefs.notifyReviewPublished) return false;
   if (type === 'comment_thread' && !prefs.notifyCommentReply) return false;
@@ -164,7 +171,14 @@ export async function isUserAllowedToReceiveInApp(
     where: { userId },
   });
   if (!prefs) return true;
-  if (type === 'season_added' && !prefs.notifySeasonAdded) return false;
+  // El aviso de capitulo disponible va con el mismo interruptor que "nueva
+  // temporada": quien silencio las novedades de sus series no tiene que
+  // empezar a recibir estas, que son mas frecuentes.
+  if (
+    (type === 'season_added' || type === 'episode_available') &&
+    !prefs.notifySeasonAdded
+  )
+    return false;
   if (type === 'content_added' && !prefs.notifyContentAdded) return false;
   if (type === 'review_published' && !prefs.notifyReviewPublished) return false;
   if (type === 'comment_thread' && !prefs.notifyCommentReply) return false;
