@@ -22,6 +22,7 @@ import {
   DashboardOutlined,
 } from '@ant-design/icons';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
 import { getCountryFlagEmoji } from '@/lib/country-codes';
 import { getSeriesUrl } from '@/lib/slug';
 import { BarChart, DonutChart } from '@/components/charts';
@@ -207,7 +208,7 @@ export interface PublicStatsClientProps {
 }
 
 export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
-  const { locale } = useLocale();
+  const { locale, t } = useLocale();
   const router = useRouter();
   const { data: session } = useSession();
   const isAdmin = session?.user?.role === 'ADMIN';
@@ -434,6 +435,16 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
           </div>
         ))}
       </section>
+
+      {/* Lo del equipo va aparte y a la vista: sumarlo arriba seria mostrar
+       * como actividad de la comunidad el registro personal de la curaduria. */}
+      {data.summary.teamCompletedSeries > 0 && (
+        <p className="public-stats-team-note">
+          {interpolateMessage(t('publicStats.teamNote'), {
+            n: fmt(data.summary.teamCompletedSeries),
+          })}
+        </p>
+      )}
 
       {/* ── Community activity ── */}
       <h2 className="public-stats-section-title">{copy.sectionActivity}</h2>

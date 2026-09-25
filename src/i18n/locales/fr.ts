@@ -1802,6 +1802,9 @@ const fr = {
     "runtime": "Runtime",
     "runtimeShort": "Run"
   },
+  "publicStats": {
+    "teamNote": "Ces chiffres sont uniquement ceux de la communauté. L'équipe de curation a également regardé {n} séries du catalogue ; nous les excluons pour ne pas gonfler les chiffres."
+  },
   "adminStats": {
     "pageTitle": "Statistiques d'activité",
     "totalUsers": "Utilisateurs inscrits",

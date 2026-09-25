@@ -1797,6 +1797,9 @@ export type TranslationShape = {
     runtime: string;
     runtimeShort: string;
   };
+  publicStats: {
+    teamNote: string;
+  };
   adminStats: {
     pageTitle: string;
     totalUsers: string;
@@ -5019,6 +5022,10 @@ const es: TranslationShape = {
     usersShort: 'Usuarios',
     runtime: 'Runtime',
     runtimeShort: 'Run',
+  },
+  publicStats: {
+    teamNote:
+      'Estas cifras son sólo de la comunidad. El equipo de curaduría vio además {n} series del catálogo: no las sumamos para no inflar los números.',
   },
   adminStats: {
     pageTitle: 'Estadísticas de actividad',
@@ -8290,6 +8297,10 @@ const en: TranslationShape = {
     usersShort: 'Users',
     runtime: 'Runtime',
     runtimeShort: 'Run',
+  },
+  publicStats: {
+    teamNote:
+      'These figures are community-only. The curation team has also watched {n} catalog series; we leave them out so the numbers are not inflated.',
   },
   adminStats: {
     pageTitle: 'Activity Statistics',

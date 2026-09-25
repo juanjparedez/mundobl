@@ -1802,6 +1802,9 @@ const ja = {
     "runtime": "Runtime",
     "runtimeShort": "Run"
   },
+  "publicStats": {
+    "teamNote": "これらの数字はコミュニティのみのものです。キュレーションチームも{n}のカタログシリーズを視聴していますが、数字を水増ししないように除外しています。"
+  },
   "adminStats": {
     "pageTitle": "アクティビティ統計",
     "totalUsers": "登録ユーザー",
