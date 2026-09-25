@@ -16,6 +16,7 @@ import { useCarouselNav } from '@/hooks/useCarouselNav';
 import type { ListPreviewBinding } from '@/components/design-system';
 import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { getVerUrl } from '@/lib/slug';
+import { SeriesStats } from '@/components/common/SeriesStats/SeriesStats';
 import './MediaCarousel.css';
 
 export interface CarouselMediaItem {
@@ -32,6 +33,9 @@ export interface CarouselMediaItem {
    *  (ver Episode.playback y src/lib/playability.ts). Menor que
    *  `episodesWithEmbed` = la serie esta incompleta aca. */
   playableEpisodes?: number;
+  /** Contadores publicos de YouTube sumados (ver SeriesStats). */
+  youtubeViews?: number;
+  youtubeLikes?: number;
   platforms: string[];
   channels: string[];
   /** Bloqueada en el mercado core del sitio (AR/MX/ES/CL/CO/PE/US) —
@@ -239,6 +243,10 @@ export function MediaCarousel({
                         </span>
                       )}
                     </div>
+                    <SeriesStats
+                      views={item.youtubeViews}
+                      likes={item.youtubeLikes}
+                    />
                   </div>
                 </Link>
               </div>

@@ -144,6 +144,11 @@ const ja = {
     "reportedSuccess": "コメントを報告しました。ご協力ありがとうございます。",
     "reportError": "報告できませんでした"
   },
+  "seriesStats": {
+    "source": "YouTubeが報告した公式動画の再生回数と高評価数です。",
+    "views": "YouTubeで{n}回視聴",
+    "likes": "YouTubeで{n}件の高評価"
+  },
   "episodesList": {
     "headerTitle": "エピソード ({n})",
     "generateButton": "生成",

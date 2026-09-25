@@ -82,6 +82,8 @@ export default async function VerPageRoute() {
       // el visitante (geo-bloqueo parcial, age-gate o videos caidos) y
       // /ver lo avisa en vez de dejar que se choque con el reproductor.
       playableEpisodes: s.playableEpisodes,
+      youtubeViews: s.youtubeViews,
+      youtubeLikes: s.youtubeLikes,
       platforms: Array.from(
         new Set(
           s.seasons.flatMap(

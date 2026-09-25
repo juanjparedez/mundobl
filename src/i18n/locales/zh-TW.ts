@@ -144,6 +144,11 @@ const zhTW = {
     "reportedSuccess": "留言已檢舉。感謝您的告知。",
     "reportError": "無法檢舉"
   },
+  "seriesStats": {
+    "source": "YouTube 官方影片的觀看次數和喜歡數，由 YouTube 報告。",
+    "views": "YouTube 觀看次數：{n}",
+    "likes": "YouTube 喜歡人數：{n}"
+  },
   "episodesList": {
     "headerTitle": "集數 ({n})",
     "generateButton": "產生",
