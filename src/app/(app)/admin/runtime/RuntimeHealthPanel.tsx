@@ -159,11 +159,16 @@ export function RuntimeHealthPanel() {
       key: 'detail',
       render: (_: unknown, run: CronRun) => {
         if (!run.ok) return run.error ?? '—';
-        const detail = interpolateMessage(t('adminRuntime.cronDetail'), {
-          probed: String(run.summary.probed ?? 0),
-          scanned: String(run.summary.scanned ?? 0),
-          changed: String(run.summary.changed ?? 0),
-        });
+        const detail =
+          run.job === 'logs'
+            ? interpolateMessage(t('adminRuntime.cronDetailLogs'), {
+                deleted: String(run.summary.deleted ?? 0),
+              })
+            : interpolateMessage(t('adminRuntime.cronDetail'), {
+                probed: String(run.summary.probed ?? 0),
+                scanned: String(run.summary.scanned ?? 0),
+                changed: String(run.summary.changed ?? 0),
+              });
         return run.summary.budgetExhausted
           ? `${detail} · ${t('adminRuntime.cronBacklog')}`
           : detail;

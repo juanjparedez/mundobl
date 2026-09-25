@@ -1,7 +1,7 @@
 import { auth } from '@/lib/auth';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { logPageView } from '@/lib/access-log';
+import { logAbuse, logPageView } from '@/lib/access-log';
 import { prisma } from '@/lib/database';
 import {
   isRuntimeFreezeActive,
@@ -221,16 +221,19 @@ export async function proxy(request: NextRequest) {
     isPrefetchRequest(request) ||
     (isCrawlerUserAgent(userAgent) && !pathname.startsWith('/admin'));
 
-  // Bloquear scanners antes de cualquier procesamiento (no loguear, no gastar DB)
-  if (isScannerPath(pathname)) {
-    return new NextResponse(null, { status: 404 });
-  }
-
   // Extraer IP real del cliente (CF-Connecting-IP con Cloudflare, fallback a x-forwarded-for)
   const ip =
     request.headers.get('cf-connecting-ip') ||
     request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
     null;
+
+  // Bloquear scanners antes de cualquier procesamiento. Es el unico caso en
+  // que se anota la IP (acotado y por 7 dias, ver logAbuse), para poder
+  // bloquearla desde /admin.
+  if (isScannerPath(pathname)) {
+    if (ip) logAbuse(pathname, ip, 'scanner');
+    return new NextResponse(null, { status: 404 });
+  }
 
   // No loguear assets/PWA
   if (isAssetPath(pathname)) {
@@ -312,7 +315,7 @@ export async function proxy(request: NextRequest) {
 
     // Log page view (fire-and-forget)
     if (!skipLog) {
-      logPageView(pathname, ip, userAgent, session.user?.id || null);
+      logPageView(pathname);
     }
   } else {
     // Paginas publicas: evitar auth() cuando no hay cookie de sesion para
@@ -325,7 +328,7 @@ export async function proxy(request: NextRequest) {
         });
       }
       if (!skipLog) {
-        logPageView(pathname, ip, userAgent, session?.user?.id || null);
+        logPageView(pathname);
       }
     } else {
       const nowMs = Date.now();
@@ -339,7 +342,7 @@ export async function proxy(request: NextRequest) {
         !isRuntimeFreezeActive('anon-logging') &&
         shouldLogAnonymousPublicPath(pathname)
       ) {
-        logPageView(pathname, ip, userAgent, null);
+        logPageView(pathname);
       }
     }
   }
