@@ -1946,6 +1946,7 @@ const zhTW = {
     "currentVersion": "目前版本：{version}",
     "deleteButton": "刪除",
     "createButton": "建立",
+    "signInToSend": "登入以傳送",
     "formTitle": "新請求",
     "formFieldType": "類型",
     "formFieldTitle": "標題",

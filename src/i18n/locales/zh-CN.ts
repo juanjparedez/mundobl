@@ -1946,6 +1946,7 @@ const zhCN = {
     "currentVersion": "当前版本：{version}",
     "deleteButton": "删除",
     "createButton": "创建",
+    "signInToSend": "登录后发送",
     "formTitle": "新请求",
     "formFieldType": "类型",
     "formFieldTitle": "标题",
