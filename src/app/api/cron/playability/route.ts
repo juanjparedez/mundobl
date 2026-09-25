@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { runPlayabilityAudit } from '@/lib/playability-audit';
+import { runPlayabilityJob } from '@/lib/playability-audit';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
@@ -18,11 +18,11 @@ export async function GET(request: Request) {
   }
 
   try {
-    const result = await runPlayabilityAudit();
+    // Registra la corrida (ok o error) para /admin/runtime.
+    const result = await runPlayabilityJob('schedule');
 
-    // Solo se loguea la corrida que quedo corta: es la unica que pide accion
-    // (quedo backlog sin sondear). La corrida limpia ya viaja en el body, que
-    // Vercel guarda en el log de invocacion del cron.
+    // La corrida que quedo corta es la unica que pide accion: quedo backlog
+    // sin sondear, que va en la proxima.
     if (result.budgetExhausted) {
       console.warn(
         `[cron/playability] presupuesto agotado en ${result.elapsedMs}ms: ` +
