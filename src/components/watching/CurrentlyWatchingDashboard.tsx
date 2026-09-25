@@ -38,6 +38,7 @@ import type { TranslationKey } from '@/i18n/messages';
 import { interpolateMessage } from '@/lib/i18n-format';
 import {
   getAirDayStatus,
+  isAiringNow,
   type AirDayStatus,
   type AirDayStatusType,
 } from '@/lib/airing-schedule';
@@ -83,8 +84,9 @@ type SortOption = 'lastWatched' | 'name' | 'start' | 'next';
 // Color y texto se resuelven aca: el color es presentacion y el texto va por i18n.
 const AIR_STATUS_COLOR: Record<
   AirDayStatusType,
-  'success' | 'warning' | 'error'
+  'processing' | 'success' | 'warning' | 'error'
 > = {
+  up_to_date: 'processing',
   today: 'success',
   delayed_1: 'warning',
   delayed_2: 'warning',
@@ -92,6 +94,7 @@ const AIR_STATUS_COLOR: Record<
 };
 
 const STATUS_KEY = {
+  up_to_date: 'airDayStatus.upToDate',
   today: 'airDayStatus.today',
   delayed_1: 'airDayStatus.delayed1',
   delayed_2: 'airDayStatus.delayed2',
@@ -99,6 +102,7 @@ const STATUS_KEY = {
 } as const satisfies Record<AirDayStatusType, TranslationKey>;
 
 const AIR_STATUS_DOT: Record<AirDayStatusType, string> = {
+  up_to_date: '✅',
   today: '\u{1F7E2}',
   delayed_1: '\u{1F7E1}',
   delayed_2: '\u{1F7E1}',
@@ -124,10 +128,11 @@ export function CurrentlyWatchingDashboard() {
   );
 
   const airStatusTag = useCallback(
-    (status: AirDayStatus) =>
-      status.type === 'today'
-        ? t('airDayStatus.tagToday')
-        : t('airDayStatus.tagDelayed', { days: status.daysDiff }),
+    (status: AirDayStatus) => {
+      if (status.type === 'up_to_date') return t('airDayStatus.tagUpToDate');
+      if (status.type === 'today') return t('airDayStatus.tagToday');
+      return t('airDayStatus.tagDelayed', { days: status.daysDiff });
+    },
     [t]
   );
   const [loading, setLoading] = useState(true);
@@ -418,8 +423,8 @@ export function CurrentlyWatchingDashboard() {
             calculateProgress(a.series);
           const { totalEpisodes: totB, watchedEpisodes: watB } =
             calculateProgress(b.series);
-          const airA = getAirDayStatus(a.series.airDays, watA === totA);
-          const airB = getAirDayStatus(b.series.airDays, watB === totB);
+          const airA = getAirDayStatus(a.series, watA === totA);
+          const airB = getAirDayStatus(b.series, watB === totB);
           if (airA && !airB) return -1;
           if (!airA && airB) return 1;
 
@@ -531,10 +536,11 @@ export function CurrentlyWatchingDashboard() {
                   n: String(nextEp.episodeNumber),
                 })
             : '';
-          const airStatus = getAirDayStatus(
-            item.series.airDays,
-            isFullyWatched
-          );
+          const airStatus = getAirDayStatus(item.series, isFullyWatched);
+          // Si sigue saliendo, llegar al ultimo capitulo es estar al dia:
+          // "Terminé la serie" queda disponible, pero deja de ser la accion
+          // principal de la tarjeta.
+          const airing = isAiringNow(item.series);
 
           return (
             <Card
@@ -684,7 +690,7 @@ export function CurrentlyWatchingDashboard() {
                         cancelText={t('progressStepper.notYet')}
                       >
                         <Button
-                          type="primary"
+                          type={airing ? 'default' : 'primary'}
                           block
                           icon={<CheckOutlined />}
                           className="watching-card__primary-action"

@@ -73,6 +73,47 @@ export function airingWindowStart(now: Date = new Date()): Date {
   );
 }
 
+/** Lo minimo de una serie para saber si esta en emision. */
+export interface AiringFields {
+  airDays?: string | null;
+  year?: number | null;
+  createdAt?: Date | string | null;
+}
+
+/**
+ * La regla de "en emision", como filtro de Prisma: dias de emision cargados,
+ * del anio en curso y dentro de la ventana de `AIRING_WINDOW_WEEKS` desde su
+ * carga. La usa la parrilla de /estrenos; `isAiringNow` es la misma regla en
+ * memoria, para el tracking. Cambiar una sin la otra vuelve a separar lo que
+ * la parrilla dice de lo que el tracking hace.
+ */
+export function airingSeriesWhere(now: Date = new Date()) {
+  return {
+    airDays: { not: null },
+    year: { gte: now.getUTCFullYear() },
+    createdAt: { gte: airingWindowStart(now) },
+  };
+}
+
+/**
+ * ¿La serie sigue en emision? Con esto el tracking no confunde "estar al dia"
+ * con "terminarla": si sigue saliendo, no se ofrece marcarla como vista.
+ *
+ * Unica diferencia con `airingSeriesWhere`: un `airDays` que no se puede leer
+ * cuenta como vacio. En la parrilla da igual (esa serie no cae en ningun dia).
+ */
+export function isAiringNow(
+  series: AiringFields,
+  now: Date = new Date()
+): boolean {
+  if (parseAirDays(series.airDays).length === 0) return false;
+  if (!series.year || series.year < now.getUTCFullYear()) return false;
+  if (!series.createdAt) return false;
+  return (
+    new Date(series.createdAt).getTime() >= airingWindowStart(now).getTime()
+  );
+}
+
 /**
  * Tokeniza `Series.airDays` ("viernes, sabado") a dias de la semana ordenados y sin
  * repetir. Los tokens que no estan en `AIR_DAY_MAP` se descartan en silencio: el campo
@@ -118,6 +159,7 @@ export function groupByWeekday<T extends { airDays: string | null }>(
 }
 
 export type AirDayStatusType =
+  | 'up_to_date'
   | 'today'
   | 'delayed_1'
   | 'delayed_2'
@@ -131,20 +173,20 @@ export interface AirDayStatus {
 
 /**
  * Semaforo de emision para una serie en curso: cuantos dias pasaron desde su ultimo dia
- * de emision. Devuelve `null` si no hay dias cargados o si el usuario ya la termino.
+ * de emision. Devuelve `null` si la serie no esta en emision (misma ventana que la
+ * parrilla, ver `isAiringNow`): una serie terminada no puede decir "hoy toca capitulo".
+ * Si el usuario ya vio todo lo que hay, devuelve `up_to_date` en vez de apagarse.
  *
  * Sin etiquetas: el caller traduce `type` con sus propias claves i18n.
  */
 export function getAirDayStatus(
-  airDays: string | null | undefined,
+  series: AiringFields,
   isFullyWatched: boolean,
   now: Date = new Date()
 ): AirDayStatus | null {
-  if (isFullyWatched) return null;
+  if (!isAiringNow(series, now)) return null;
 
-  const targetDays = parseAirDays(airDays);
-  if (targetDays.length === 0) return null;
-
+  const targetDays = parseAirDays(series.airDays);
   const today = now.getDay(); // 0 = domingo .. 6 = sabado
 
   // Menor cantidad de dias transcurridos desde el dia de emision mas reciente.
@@ -154,6 +196,7 @@ export function getAirDayStatus(
     if (elapsed < minElapsed) minElapsed = elapsed;
   }
 
+  if (isFullyWatched) return { type: 'up_to_date', daysDiff: minElapsed };
   if (minElapsed === 0) return { type: 'today', daysDiff: 0 };
   if (minElapsed === 1) return { type: 'delayed_1', daysDiff: 1 };
   if (minElapsed === 2) return { type: 'delayed_2', daysDiff: 2 };

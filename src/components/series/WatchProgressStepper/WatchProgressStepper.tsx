@@ -38,6 +38,11 @@ interface WatchProgressStepperProps {
   onLocalChange?: (episodeId: number | null) => void;
   /** Linea "Siguiente: T1·E3 — titulo" debajo de la barra. */
   showNext?: boolean;
+  /**
+   * La serie sigue en emision (`isAiringNow`). Llegar al ultimo episodio
+   * cargado es estar al dia, no terminarla: no se pregunta "¿Terminaste?".
+   */
+  airing?: boolean;
 }
 
 export function episodeCode(ep: WatchProgressStepperEpisode): string {
@@ -52,6 +57,7 @@ export function WatchProgressStepper({
   localOnly = false,
   onLocalChange,
   showNext = true,
+  airing = false,
 }: WatchProgressStepperProps) {
   const { t } = useLocale();
   const message = useMessage();
@@ -114,9 +120,20 @@ export function WatchProgressStepper({
         body: JSON.stringify(body),
       });
       if (!response.ok) throw new Error();
-      const data = (await response.json()) as { allWatched: boolean };
+      const data = (await response.json()) as {
+        allWatched: boolean;
+        seriesStatus: string;
+      };
       await refetch();
-      if (!unmark && data.allWatched) setFinishedOpen(true);
+      // Si ya esta marcada como vista no hay nada que preguntar.
+      if (
+        !unmark &&
+        data.allWatched &&
+        !airing &&
+        data.seriesStatus !== 'VISTA'
+      ) {
+        setFinishedOpen(true);
+      }
     } catch {
       setIndex(previous);
       message.error(t('progressStepper.error'));
@@ -278,7 +295,9 @@ export function WatchProgressStepper({
                 aria-hidden
               />
               <span className="watch-progress-stepper__next-text">
-                {t('progressStepper.allWatched')}
+                {airing
+                  ? t('airDayStatus.upToDate')
+                  : t('progressStepper.allWatched')}
               </span>
             </>
           )}
