@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
+import { notifyEpisodesAvailable } from '@/lib/notifications';
 // Los campos de embed se resuelven y validan contra la lista blanca de
 // canales oficiales en un solo lugar (docs/politica-contenido-oficial.md).
 import { resolveOfficialEmbedFields } from '@/lib/official-content-guard';
@@ -66,7 +67,29 @@ export async function POST(request: NextRequest) {
         synopsis: body.synopsis || null,
         ...embed.fields,
       },
+      include: {
+        season: {
+          select: {
+            seasonNumber: true,
+            series: { select: { id: true, title: true } },
+          },
+        },
+      },
     });
+
+    // Nace con video: ya se puede ver, avisar a quienes siguen la serie.
+    if (episode.embedUrl) {
+      await notifyEpisodesAvailable({
+        seriesId: episode.season.series.id,
+        seriesTitle: episode.season.series.title,
+        episodes: [
+          {
+            seasonNumber: episode.season.seasonNumber,
+            episodeNumber: episode.episodeNumber,
+          },
+        ],
+      });
+    }
 
     return NextResponse.json(episode);
   } catch (error: unknown) {
