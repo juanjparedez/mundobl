@@ -1802,6 +1802,9 @@ const zhCN = {
     "runtime": "Runtime",
     "runtimeShort": "Run"
   },
+  "publicStats": {
+    "teamNote": "这些数据仅代表社区。内容管理团队还观看了 {n} 部收录剧集；我们将其排除在外，以避免数据虚高。"
+  },
   "adminStats": {
     "pageTitle": "活动统计",
     "totalUsers": "注册用户",
