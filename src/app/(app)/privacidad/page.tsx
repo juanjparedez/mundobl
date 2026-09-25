@@ -43,6 +43,12 @@ export default function PrivacidadPage() {
                 Vercel y Cloudflare guardan automáticamente por días para debug
                 y prevención de abuso. No los exponemos en /admin.
               </li>
+              <li>
+                <strong>Métricas agregadas de uso</strong> con Vercel Analytics:
+                cuántas visitas tiene cada página y cuántas veces se usa
+                compartir, la vista rápida o el cambio de idioma. Sin cookies, y
+                no le mandamos nada que te identifique.
+              </li>
             </ul>
           </section>
 
@@ -109,8 +115,8 @@ export default function PrivacidadPage() {
                 password vive en Google, no acá.
               </li>
               <li>
-                <strong>Tracking de terceros</strong>. No usamos Google
-                Analytics, Meta Pixel, Hotjar, ni similares.
+                <strong>Tracking que te siga entre sitios</strong>. No usamos
+                Google Analytics, Meta Pixel, Hotjar, ni similares.
               </li>
               <li>
                 <strong>Tu ubicación precisa</strong>. Solo el país inferido por

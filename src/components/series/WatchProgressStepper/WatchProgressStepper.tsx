@@ -13,7 +13,6 @@ import { interpolateMessage } from '@/lib/i18n-format';
 import { findFurthestWatchedIndex } from '@/lib/episode-progress';
 import { useMessage } from '@/hooks/useMessage';
 import { useSeriesUserStatus } from '../SeriesUserStatusProvider';
-import { trackFunnel } from '@/lib/analytics';
 import './WatchProgressStepper.css';
 
 export interface WatchProgressStepperEpisode {
@@ -28,8 +27,6 @@ interface WatchProgressStepperProps {
   /** Para el titulo del Popconfirm "¿Terminaste {title}?". */
   seriesTitle: string;
   episodes: WatchProgressStepperEpisode[];
-  /** Para analytics (T01). */
-  source: 'stepper' | 'onboarding';
   /** Reutilizable en onboarding/cards con controles mas chicos. */
   compact?: boolean;
   /**
@@ -51,7 +48,6 @@ export function WatchProgressStepper({
   seriesId,
   seriesTitle,
   episodes,
-  source,
   compact = false,
   localOnly = false,
   onLocalChange,
@@ -119,10 +115,6 @@ export function WatchProgressStepper({
       });
       if (!response.ok) throw new Error();
       const data = (await response.json()) as { allWatched: boolean };
-      trackFunnel('episode_marked', {
-        source,
-        status: unmark ? 'SIN_VER' : 'VISTA',
-      });
       await refetch();
       if (!unmark && data.allWatched) setFinishedOpen(true);
     } catch {
@@ -142,7 +134,6 @@ export function WatchProgressStepper({
         body: JSON.stringify({ status: 'VISTA' }),
       });
       if (!response.ok) throw new Error();
-      trackFunnel('series_status_set', { status: 'VISTA', source: 'toggle' });
       await refetch();
     } catch {
       message.error(t('progressStepper.error'));

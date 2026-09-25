@@ -6,7 +6,6 @@ import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { readPendingTrack, clearPendingTrack } from '@/lib/pending-track';
-import { trackFunnel } from '@/lib/analytics';
 import { useSeriesUserStatus } from '../SeriesUserStatusProvider';
 
 interface PendingTrackApplierProps {
@@ -61,9 +60,6 @@ export function PendingTrackApplier({
         message.success(
           interpolateMessage(t('trackCta.applied'), { title: seriesTitle })
         );
-        if (pending.upToEpisodeId) {
-          trackFunnel('episode_marked', { source: 'stepper', status: 'VISTA' });
-        }
       } catch {
         // Si falla, el usuario sigue pudiendo marcar a mano; no reintenta
         // solo ni borra la intención (se descarta sola a los 30 min).
