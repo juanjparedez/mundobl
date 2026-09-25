@@ -10,6 +10,7 @@ import {
 } from '@ant-design/icons';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
+import { findFurthestWatchedIndex } from '@/lib/episode-progress';
 import { useMessage } from '@/hooks/useMessage';
 import { useSeriesUserStatus } from '../SeriesUserStatusProvider';
 import { trackFunnel } from '@/lib/analytics';
@@ -42,18 +43,6 @@ interface WatchProgressStepperProps {
   showNext?: boolean;
 }
 
-/** Ultimo episodio en VISTA (el de mayor indice, aunque haya huecos antes). */
-function findCurrentIndex(
-  episodes: WatchProgressStepperEpisode[],
-  episodeStatus: Record<number, string>
-): number {
-  let last = -1;
-  episodes.forEach((ep, i) => {
-    if (episodeStatus[ep.id] === 'VISTA') last = i;
-  });
-  return last;
-}
-
 export function episodeCode(ep: WatchProgressStepperEpisode): string {
   return `T${ep.seasonNumber}·E${ep.episodeNumber}`;
 }
@@ -79,7 +68,12 @@ export function WatchProgressStepper({
   const [finishing, setFinishing] = useState(false);
 
   useEffect(() => {
-    setIndex(findCurrentIndex(episodes, episodeStatus));
+    setIndex(
+      findFurthestWatchedIndex(
+        episodes,
+        (ep) => episodeStatus[ep.id] === 'VISTA'
+      )
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps -- re-derivar en cada version (refetch), no solo cuando cambia episodeStatus en si
   }, [version]);
 
