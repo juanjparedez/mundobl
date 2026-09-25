@@ -1946,6 +1946,7 @@ const th = {
     "currentVersion": "เวอร์ชันปัจจุบัน: {version}",
     "deleteButton": "ลบ",
     "createButton": "สร้าง",
+    "signInToSend": "ลงชื่อเข้าใช้เพื่อส่ง",
     "formTitle": "คำขอใหม่",
     "formFieldType": "ประเภท",
     "formFieldTitle": "ชื่อเรื่อง",

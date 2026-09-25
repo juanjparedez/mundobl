@@ -1946,6 +1946,7 @@ const ko = {
     "currentVersion": "현재 버전: {version}",
     "deleteButton": "삭제",
     "createButton": "생성",
+    "signInToSend": "보내려면 로그인하세요",
     "formTitle": "새 요청",
     "formFieldType": "유형",
     "formFieldTitle": "제목",
