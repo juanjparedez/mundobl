@@ -103,3 +103,12 @@
     font-size: 1.5em;
   }
 }
+
+/* Rutas de ejemplo (.env, wp-admin): mismo tratamiento que en /novedades. */
+.privacidad-article code {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  background: color-mix(in srgb, var(--primary-color) 8%, transparent);
+  padding: 0 4px;
+  border-radius: 3px;
+  font-size: 0.9em;
+}

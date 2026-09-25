@@ -7,8 +7,8 @@ import { getRecentCronRuns } from '@/lib/cron-runs';
  * Actions). Todo sale de fuentes publicas o de la propia base: sin tokens.
  */
 
-// Mismo horario que vercel.json ("0 5 * * *"): una vez por dia, 05:00 UTC.
-const PLAYABILITY_HOUR_UTC = 5;
+// Mismo horario que vercel.json ("0 5 * * *"): el cron diario, 05:00 UTC.
+const DAILY_CRON_HOUR_UTC = 5;
 
 function nextDailyRun(hourUtc: number, now = new Date()): string {
   const next = new Date(
@@ -171,8 +171,7 @@ export async function getRuntimeHealth() {
   return {
     generatedAt: new Date().toISOString(),
     cron: {
-      job: 'playability',
-      nextRunAt: nextDailyRun(PLAYABILITY_HOUR_UTC),
+      nextRunAt: nextDailyRun(DAILY_CRON_HOUR_UTC),
       runs,
     },
     workflows,

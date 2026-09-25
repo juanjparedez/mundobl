@@ -44,6 +44,17 @@ export default function PrivacidadPage() {
                 y prevención de abuso. No los exponemos en /admin.
               </li>
               <li>
+                <strong>Visitas por página</strong>: anotamos qué página se
+                abrió y a qué hora, nada más. Sin IP, sin navegador y sin tu
+                usuario, aunque estés logueado. Las borramos a los 90 días.
+              </li>
+              <li>
+                <strong>Intentos de ataque</strong>: si una request busca
+                archivos que este sitio no tiene (como <code>.env</code> o{' '}
+                <code>wp-admin</code>), guardamos su IP y la ruta 7 días para
+                poder bloquearla. Es lo único con IP que vemos en /admin.
+              </li>
+              <li>
                 <strong>Métricas agregadas de uso</strong> con Vercel Analytics:
                 cuántas visitas tiene cada página y cuántas veces se usa
                 compartir, la vista rápida o el cambio de idioma. Sin cookies, y
