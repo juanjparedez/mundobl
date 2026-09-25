@@ -4,6 +4,7 @@ import { prisma } from './database';
 import { Prisma } from '../generated/prisma';
 import { WATCHABLE_EPISODE_WHERE } from './watchable';
 import { isPlayableIn } from './playability';
+import { recordCronRun } from './cron-runs';
 
 const DEFAULT_STALE_DAYS = 1;
 const MAX_EPISODES_PER_RUN = 500;
@@ -224,3 +225,41 @@ export async function runPlayabilityAudit(
 }
 
 export type { PlaybackProbe };
+
+/**
+ * Corre el sondeo y deja registrada la corrida (ver src/lib/cron-runs.ts),
+ * tanto la programada de Vercel como la que se fuerza desde /admin/runtime.
+ * `trigger` queda en el registro para distinguirlas en el historial.
+ */
+export async function runPlayabilityJob(
+  trigger: 'schedule' | 'manual'
+): Promise<PlayabilityAuditResult> {
+  const started = Date.now();
+  try {
+    const result = await runPlayabilityAudit();
+    await recordCronRun({
+      job: 'playability',
+      ok: true,
+      durationMs: Date.now() - started,
+      summary: {
+        trigger,
+        scanned: result.scanned,
+        probed: result.probed,
+        changed: result.changed,
+        removed: result.removed,
+        geoBlocked: result.geoBlocked,
+        budgetExhausted: result.budgetExhausted,
+      },
+    });
+    return result;
+  } catch (error) {
+    await recordCronRun({
+      job: 'playability',
+      ok: false,
+      durationMs: Date.now() - started,
+      summary: { trigger },
+      error: error instanceof Error ? error.message : String(error),
+    });
+    throw error;
+  }
+}
