@@ -1802,6 +1802,9 @@ const zhTW = {
     "runtime": "Runtime",
     "runtimeShort": "Run"
   },
+  "publicStats": {
+    "teamNote": "這些數字僅限於社群。策展團隊也觀看了 {n} 部目錄系列；我們將其排除，以免數字虛報。"
+  },
   "adminStats": {
     "pageTitle": "活動統計",
     "totalUsers": "註冊用戶",

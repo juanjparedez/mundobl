@@ -1802,6 +1802,9 @@ const ko = {
     "runtime": "Runtime",
     "runtimeShort": "Run"
   },
+  "publicStats": {
+    "teamNote": "이 수치는 커뮤니티 전용입니다. 큐레이션 팀은 {n}개의 카탈로그 시리즈도 시청했지만, 수치 부풀리기를 방지하기 위해 제외했습니다."
+  },
   "adminStats": {
     "pageTitle": "활동 통계",
     "totalUsers": "등록된 사용자",
