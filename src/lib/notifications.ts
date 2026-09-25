@@ -1,5 +1,7 @@
 import { prisma } from './database';
 import { isUserAllowedToReceiveInApp, sendPushToUser } from './web-push';
+import { getVerUrl } from './slug';
+import { formatEpisodeParam, type EpisodeRef } from './episode-param';
 
 interface CommentTarget {
   seriesId?: number;
@@ -333,6 +335,8 @@ interface NotifySeriesSubscribersOpts {
   refType?: string;
   refId?: string | number;
   excludeUserId?: string;
+  /** Adonde lleva el aviso. Default: la ficha de la serie. */
+  linkPath?: string;
 }
 
 /**
@@ -353,7 +357,7 @@ export async function notifySeriesSubscribers(
       .filter((id) => id !== opts.excludeUserId);
     if (recipients.length === 0) return;
 
-    const linkPath = `/series/${opts.seriesId}`;
+    const linkPath = opts.linkPath ?? `/series/${opts.seriesId}`;
     await Promise.all(
       recipients.map((userId) =>
         notifyUser({
@@ -370,4 +374,45 @@ export async function notifySeriesSubscribers(
   } catch {
     /* never block the main op */
   }
+}
+
+/**
+ * Aviso de capitulo disponible: a quienes siguen una serie, cuando uno o mas
+ * episodios PASAN a poder verse en MundoBL (reciben su video).
+ *
+ * Dice solo lo que sabemos: que ya esta aca. Nunca "salio el capitulo", porque
+ * la fecha real de emision no la tenemos. Habla de "videos" y no de
+ * "capitulos" a proposito: hay series que suben cada capitulo partido en 4
+ * videos, y "4 capitulos nuevos" seria mentira. Lleva al primero de los
+ * nuevos en /ver.
+ *
+ * Llamarlo DESPUES de confirmar la escritura (fuera de la transaccion): si la
+ * transaccion vuelve atras, no hay que avisar nada.
+ */
+export async function notifyEpisodesAvailable(opts: {
+  seriesId: number;
+  seriesTitle: string;
+  episodes: EpisodeRef[];
+}): Promise<void> {
+  if (opts.episodes.length === 0) return;
+
+  const ordered = [...opts.episodes].sort(
+    (a, b) =>
+      a.seasonNumber - b.seasonNumber || a.episodeNumber - b.episodeNumber
+  );
+  const first = ordered[0];
+  const last = ordered[ordered.length - 1];
+  const n = ordered.length;
+
+  await notifySeriesSubscribers({
+    seriesId: opts.seriesId,
+    type: 'episode_available',
+    title:
+      n === 1
+        ? `Hay un video nuevo de ${opts.seriesTitle} para ver en MundoBL`
+        : `Hay ${n} videos nuevos de ${opts.seriesTitle} para ver en MundoBL`,
+    linkPath: getVerUrl(opts.seriesId, opts.seriesTitle, first),
+    refType: 'episode_available',
+    refId: `${opts.seriesId}:${formatEpisodeParam(first)}-${formatEpisodeParam(last)}:${n}`,
+  });
 }
