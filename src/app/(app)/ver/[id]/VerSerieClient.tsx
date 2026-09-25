@@ -71,6 +71,8 @@ interface SeriesInfo {
   title: string;
   originalTitle: string | null;
   year: number | null;
+  /** Sigue en emision (`isAiringNow`): estar al dia no es terminarla. */
+  airing: boolean;
   synopsis: string | null;
   imageUrl: string | null;
   catalogScope: string;
@@ -603,6 +605,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           seriesId={series.id}
           seriesTitle={series.title}
           seasons={trackingSeasons}
+          airing={series.airing}
         />
       </div>
 

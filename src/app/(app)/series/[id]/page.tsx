@@ -32,6 +32,7 @@ import { SeriesUserStatusProvider } from '@/components/series/SeriesUserStatusPr
 import { PendingTrackApplier } from '@/components/series/PendingTrackApplier/PendingTrackApplier';
 import { EditSeriesFab } from './EditSeriesFab/EditSeriesFab';
 import { getSeriesUrl, getVerUrl, parseIdFromSlug } from '@/lib/slug';
+import { isAiringNow } from '@/lib/airing-schedule';
 import type { TVSeries } from 'schema-dts';
 import { ReadOutlined, CommentOutlined } from '@/lib/client-icons';
 import './page.css';
@@ -301,6 +302,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
                   seriesId={serie.id}
                   seriesTitle={serie.title}
                   seasons={serie.seasons}
+                  airing={isAiringNow(serie)}
                 />
                 <div
                   className="series-quick-actions"

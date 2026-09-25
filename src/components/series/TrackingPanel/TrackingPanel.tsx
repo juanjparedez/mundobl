@@ -6,6 +6,7 @@ import {
   EyeOutlined,
   CheckOutlined,
   UndoOutlined,
+  RedoOutlined,
   LockOutlined,
   FileTextFilled,
   FileTextOutlined,
@@ -25,6 +26,7 @@ import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { useMessage } from '@/hooks/useMessage';
 import { savePendingTrack } from '@/lib/pending-track';
+import { findFurthestWatchedIndex } from '@/lib/episode-progress';
 import './TrackingPanel.css';
 
 type AntStatusColor =
@@ -46,6 +48,8 @@ interface TrackingPanelProps {
       title?: string | null;
     }>;
   }>;
+  /** La serie sigue en emision (`isAiringNow`): ver WatchProgressStepper. */
+  airing?: boolean;
 }
 
 /**
@@ -65,6 +69,7 @@ export function TrackingPanel({
   seriesId,
   seriesTitle,
   seasons = [],
+  airing = false,
 }: TrackingPanelProps) {
   const message = useMessage();
   const { t } = useLocale();
@@ -107,13 +112,16 @@ export function TrackingPanel({
   // ── Notas privadas (T29): del ultimo episodio visto y de la serie ────
   // El "ultimo visto" sale del provider, asi que despues de un "+" en el
   // stepper el boton pasa solo a "Nota del Ep. N+1".
-  const lastWatched = (() => {
-    let last: WatchProgressStepperEpisode | null = null;
-    for (const ep of orderedEpisodes) {
-      if (episodeStatus[ep.id] === 'VISTA') last = ep;
-    }
-    return last;
-  })();
+  const furthestIndex = findFurthestWatchedIndex(
+    orderedEpisodes,
+    (ep) => episodeStatus[ep.id] === 'VISTA'
+  );
+  const lastWatched = orderedEpisodes[furthestIndex] ?? null;
+  // Marcada como vista pero con capitulos despues del ultimo visto: le
+  // llegaron capitulos nuevos (o la marco vista antes de terminarla). No se
+  // le cambia el estado solo; se le ofrece volver a seguirla de un toque.
+  const hasEpisodesAfterLast =
+    furthestIndex >= 0 && furthestIndex < orderedEpisodes.length - 1;
   const [episodesWithNotes, setEpisodesWithNotes] = useState<Set<number>>(
     new Set()
   );
@@ -267,11 +275,29 @@ export function TrackingPanel({
         aria-label={t('viewStatusToggle.ariaLabel')}
       />
 
+      {status === 'VISTA' && hasEpisodesAfterLast && (
+        <div className="tracking-panel__resume">
+          <p className="tracking-panel__hint">
+            {t('trackingPanel.episodesAfterLast')}
+          </p>
+          <Button
+            type="primary"
+            block
+            icon={<RedoOutlined />}
+            disabled={isUpdating}
+            onClick={() => void postStatus('VIENDO')}
+          >
+            {t('trackingPanel.followAgain')}
+          </Button>
+        </div>
+      )}
+
       {hasEpisodes ? (
         <WatchProgressStepper
           seriesId={seriesId}
           seriesTitle={seriesTitle}
           episodes={orderedEpisodes}
+          airing={airing}
         />
       ) : (
         <div className="tracking-panel__no-episodes">
