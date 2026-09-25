@@ -31,8 +31,10 @@ import {
   CameraOutlined,
   SearchOutlined,
   TeamOutlined,
+  LoginOutlined,
 } from '@ant-design/icons';
-import { useSession } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
+import { ROUTES } from '@/constants/navigation';
 import { PageTitle } from '@/components/common/PageTitle/PageTitle';
 import { PanelCard, Chip } from '@/components/design-system';
 import { useMessage } from '@/hooks/useMessage';
@@ -345,7 +347,9 @@ export function FeedbackClient() {
   const fileKey = (f: File) => `${f.name}|${f.size}|${f.lastModified}`;
 
   const addImageFiles = (files: File[] | FileList | null) => {
-    if (!files) return;
+    // Sin sesion no se ofrece adjuntar: la subida exige login y las imagenes
+    // no sobreviven al redirect. Cortar aca cubre pegar, soltar y elegir.
+    if (!files || !session?.user) return;
     const list = Array.from(files);
     const accepted: PendingImage[] = [];
     setPendingImages((prev) => {
@@ -420,6 +424,23 @@ export function FeedbackClient() {
     e.preventDefault();
     setIsDragging(false);
     addImageFiles(e.dataTransfer?.files ?? null);
+  };
+
+  // Sin sesion el envio fallaria con 401 y se perderia lo escrito. El
+  // formulario ya se precarga desde la URL (?type&title&description), asi que
+  // lo escrito viaja como callbackUrl: al volver del login el modal se
+  // reabre con el texto y solo falta tocar Enviar.
+  const handleSignInToSend = () => {
+    const values = form.getFieldsValue() as Record<string, unknown>;
+    const params = new URLSearchParams();
+    for (const key of ['type', 'title', 'description']) {
+      const value = values[key];
+      if (typeof value === 'string' && value.trim()) params.set(key, value);
+    }
+    const query = params.toString();
+    signIn('google', {
+      callbackUrl: query ? `${ROUTES.FEEDBACK}?${query}` : ROUTES.FEEDBACK,
+    });
   };
 
   const removePendingImage = (index: number) => {
@@ -890,15 +911,15 @@ export function FeedbackClient() {
                     n: String(filteredRequests.length),
                   })}
             </span>
-            {session?.user && (
-              <Button
-                type="primary"
-                icon={<PlusOutlined />}
-                onClick={() => setModalOpen(true)}
-              >
-                {t('feedback.newRequest')}
-              </Button>
-            )}
+            {/* Visible tambien sin sesion: el modal ofrece loguearse al
+             * enviar, conservando lo escrito (handleSignInToSend). */}
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => setModalOpen(true)}
+            >
+              {t('feedback.newRequest')}
+            </Button>
           </div>
 
           <PanelCard padding="md" className="feedback-toolbar">
@@ -1198,58 +1219,60 @@ export function FeedbackClient() {
             {/* Acciones de adjuntar: en mobile el primero abre galeria y
              * el segundo (capture) abre directamente la camara. En desktop
              * el "camera" igual abre file picker (el browser lo ignora si
-             * no hay camara). */}
-            <div className="feedback-attach-actions">
-              <Button
-                icon={<PictureOutlined />}
-                onClick={() => fileInputRef.current?.click()}
-              >
-                {t('feedback.attachImage')}
-              </Button>
-              <Button
-                icon={<CameraOutlined />}
-                onClick={() => cameraInputRef.current?.click()}
-                className="feedback-attach-actions__camera"
-              >
-                {t('feedback.takePhoto')}
-              </Button>
-              {/* file inputs ocultos: hidden attr no siempre es respetado
-               *  por mobile browsers (Android Chrome mostraba "Elegir
-               *  archivos" como label inline). Forzamos display:none +
-               *  aria-hidden para esconderlos totalmente. */}
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                multiple
-                aria-hidden="true"
-                tabIndex={-1}
-                style={{
-                  position: 'absolute',
-                  left: '-9999px',
-                  width: 1,
-                  height: 1,
-                  opacity: 0,
-                }}
-                onChange={handleFileInputChange}
-              />
-              <input
-                ref={cameraInputRef}
-                type="file"
-                accept="image/*"
-                capture="environment"
-                aria-hidden="true"
-                tabIndex={-1}
-                style={{
-                  position: 'absolute',
-                  left: '-9999px',
-                  width: 1,
-                  height: 1,
-                  opacity: 0,
-                }}
-                onChange={handleFileInputChange}
-              />
-            </div>
+             * no hay camara). Solo con sesion: ver addImageFiles. */}
+            {session?.user && (
+              <div className="feedback-attach-actions">
+                <Button
+                  icon={<PictureOutlined />}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  {t('feedback.attachImage')}
+                </Button>
+                <Button
+                  icon={<CameraOutlined />}
+                  onClick={() => cameraInputRef.current?.click()}
+                  className="feedback-attach-actions__camera"
+                >
+                  {t('feedback.takePhoto')}
+                </Button>
+                {/* file inputs ocultos: hidden attr no siempre es respetado
+                 *  por mobile browsers (Android Chrome mostraba "Elegir
+                 *  archivos" como label inline). Forzamos display:none +
+                 *  aria-hidden para esconderlos totalmente. */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  aria-hidden="true"
+                  tabIndex={-1}
+                  style={{
+                    position: 'absolute',
+                    left: '-9999px',
+                    width: 1,
+                    height: 1,
+                    opacity: 0,
+                  }}
+                  onChange={handleFileInputChange}
+                />
+                <input
+                  ref={cameraInputRef}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  aria-hidden="true"
+                  tabIndex={-1}
+                  style={{
+                    position: 'absolute',
+                    left: '-9999px',
+                    width: 1,
+                    height: 1,
+                    opacity: 0,
+                  }}
+                  onChange={handleFileInputChange}
+                />
+              </div>
+            )}
 
             {pendingImages.length > 0 && (
               <div className="feedback-pending-images">
@@ -1271,14 +1294,26 @@ export function FeedbackClient() {
               </div>
             )}
 
-            <div className="feedback-image-hint">
-              <PictureOutlined /> {t('feedback.formDescriptionHint')}
-            </div>
+            {session?.user && (
+              <div className="feedback-image-hint">
+                <PictureOutlined /> {t('feedback.formDescriptionHint')}
+              </div>
+            )}
 
             <Form.Item style={{ marginBottom: 0, textAlign: 'right' }}>
-              <Button type="primary" htmlType="submit" loading={submitting}>
-                {t('feedback.createButton')}
-              </Button>
+              {session?.user ? (
+                <Button type="primary" htmlType="submit" loading={submitting}>
+                  {t('feedback.createButton')}
+                </Button>
+              ) : (
+                <Button
+                  type="primary"
+                  icon={<LoginOutlined />}
+                  onClick={handleSignInToSend}
+                >
+                  {t('feedback.signInToSend')}
+                </Button>
+              )}
             </Form.Item>
           </Form>
 
