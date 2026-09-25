@@ -27,7 +27,6 @@ import {
   CalendarOutlined,
 } from '@ant-design/icons';
 import { signIn, useSession } from 'next-auth/react';
-import { trackFunnel } from '@/lib/analytics';
 import { ROUTES } from '@/constants/navigation';
 import { SectionHeader } from '@/components/design-system';
 import { WeeklySchedule } from '@/components/estrenos/WeeklySchedule/WeeklySchedule';
@@ -257,7 +256,6 @@ export function LandingPage({ stats }: LandingPageProps) {
   ];
 
   const handleStartTracking = () => {
-    trackFunnel('track_cta_click', { where: 'home' });
     signIn('google', { callbackUrl: ROUTES.WATCHING });
   };
 
