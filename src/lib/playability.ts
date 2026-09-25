@@ -59,6 +59,10 @@ export interface PlaybackProbe {
    * y un trailer en coreano se llama "예고편".
    */
   durationSeconds: number | null;
+  /** Contadores publicos de YouTube. Solo los trae la API: `undefined` =
+   *  la fuente no los tiene; `null` = el canal los oculta. */
+  viewCount?: number | null;
+  likeCount?: number | null;
 }
 
 /**
@@ -97,6 +101,18 @@ interface ApiVideoItem {
     duration?: string;
   };
   status?: { embeddable?: boolean; privacyStatus?: string };
+  statistics?: { viewCount?: string; likeCount?: string };
+}
+
+const INT32_MAX = 2_147_483_647;
+
+/** La API manda los contadores como string; la columna es INTEGER. */
+function parseCount(raw: string | undefined): number | null {
+  if (raw === undefined) return null;
+  const n = Number(raw);
+  return Number.isFinite(n) && n >= 0
+    ? Math.min(Math.round(n), INT32_MAX)
+    : null;
 }
 
 /**
@@ -116,7 +132,9 @@ export async function probeViaApi(
   }
 
   const url = new URL('https://www.googleapis.com/youtube/v3/videos');
-  url.searchParams.set('part', 'contentDetails,status');
+  // `statistics` viene en la misma llamada: videos.list cuesta 1 unidad de
+  // cuota sin importar cuantas partes se pidan.
+  url.searchParams.set('part', 'contentDetails,status,statistics');
   url.searchParams.set('id', videoIds.join(','));
   url.searchParams.set('key', apiKey);
 
@@ -146,6 +164,10 @@ export async function probeViaApi(
     }
 
     const durationSeconds = parseIsoDuration(item.contentDetails?.duration);
+    const counts = {
+      viewCount: parseCount(item.statistics?.viewCount),
+      likeCount: parseCount(item.statistics?.likeCount),
+    };
 
     // El age-gate gana sobre todo lo demas: aunque no este geo-bloqueado,
     // el embed no arranca en ningun lado.
@@ -156,6 +178,7 @@ export async function probeViaApi(
         blockedMarkets: [],
         detail: 'ytAgeRestricted',
         durationSeconds,
+        ...counts,
       };
     }
 
@@ -166,6 +189,7 @@ export async function probeViaApi(
         blockedMarkets: [],
         detail: 'El uploader deshabilito el embed.',
         durationSeconds,
+        ...counts,
       };
     }
 
@@ -179,6 +203,7 @@ export async function probeViaApi(
         blockedMarkets,
         detail: `Bloqueado en ${blockedMarkets.join(', ')}.`,
         durationSeconds,
+        ...counts,
       };
     }
 
@@ -188,6 +213,7 @@ export async function probeViaApi(
       blockedMarkets: [],
       detail: null,
       durationSeconds,
+      ...counts,
     };
   });
 }
