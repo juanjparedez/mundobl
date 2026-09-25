@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
+import { findNextEpisode } from '@/lib/episode-progress';
 
 interface RawCountRow {
   name: string;
@@ -411,24 +412,19 @@ export async function GET(request: NextRequest) {
 
     // Compute next episode for VIENDO entries
     const watchingWithNext = currentlyWatching.map((item) => {
-      let totalEpisodes = 0;
-      let watchedEpisodes = 0;
-      let nextEpisode: { seasonNumber: number; episodeNumber: number } | null =
-        null;
-
-      for (const season of item.series?.seasons ?? []) {
-        for (const ep of season.episodes) {
-          totalEpisodes++;
-          if (ep.viewStatus?.[0]?.status === 'VISTA') {
-            watchedEpisodes++;
-          } else if (!nextEpisode) {
-            nextEpisode = {
-              seasonNumber: season.seasonNumber,
-              episodeNumber: ep.episodeNumber,
-            };
-          }
-        }
-      }
+      const ordered = (item.series?.seasons ?? []).flatMap((season) =>
+        season.episodes.map((ep) => ({
+          seasonNumber: season.seasonNumber,
+          episodeNumber: ep.episodeNumber,
+          watched: ep.viewStatus?.[0]?.status === 'VISTA',
+        }))
+      );
+      const totalEpisodes = ordered.length;
+      const watchedEpisodes = ordered.filter((ep) => ep.watched).length;
+      const next = findNextEpisode(ordered, (ep) => ep.watched);
+      const nextEpisode = next
+        ? { seasonNumber: next.seasonNumber, episodeNumber: next.episodeNumber }
+        : null;
 
       const { seasons: _seasons, ...seriesWithoutSeasons } = item.series ?? {
         seasons: [],
