@@ -40,6 +40,11 @@ import { ReviewsSection } from '@/components/series/ReviewsSection/ReviewsSectio
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { readUrlParam, writeUrlParam } from '@/lib/url-state';
+import {
+  EPISODE_PARAM,
+  findEpisodeIndex,
+  formatEpisodeParam,
+} from '@/lib/episode-param';
 
 interface Episode {
   id: number;
@@ -303,34 +308,6 @@ function getYouTubeThumbnail(
 ): string | null {
   if (!videoId) return null;
   return `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
-}
-
-const EPISODE_PARAM = 'e';
-
-interface EpisodeRef {
-  seasonNumber: number;
-  episodeNumber: number;
-}
-
-/** `1x5` — temporada por episodio, como lo diria una persona. */
-function formatEpisodeParam(ep: EpisodeRef): string {
-  return `${ep.seasonNumber}x${ep.episodeNumber}`;
-}
-
-/**
- * Resuelve `1x5` al indice dentro de la lista plana. Devuelve 0 si el valor
- * no matchea: un link viejo a un episodio que ya no existe abre la serie en
- * el primero en vez de romperse.
- */
-function findEpisodeIndex(episodes: EpisodeRef[], raw: string): number {
-  const match = /^(\d+)x(\d+)$/.exec(raw.trim());
-  if (!match) return 0;
-  const seasonNumber = Number(match[1]);
-  const episodeNumber = Number(match[2]);
-  const idx = episodes.findIndex(
-    (e) => e.seasonNumber === seasonNumber && e.episodeNumber === episodeNumber
-  );
-  return idx === -1 ? 0 : idx;
 }
 
 export function VerSerieClient({ series, seasons }: VerSerieClientProps) {

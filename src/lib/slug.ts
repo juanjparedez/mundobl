@@ -2,6 +2,12 @@
  * Utilidades para generación y manejo de slugs amigables para SEO en URLs.
  */
 
+import {
+  EPISODE_PARAM,
+  formatEpisodeParam,
+  type EpisodeRef,
+} from './episode-param';
+
 /**
  * Convierte cualquier texto a un slug limpio para URL:
  * - Pasa a minúsculas
@@ -40,11 +46,19 @@ export function getSeriesUrl(
  * Genera la URL canónica SEO para una serie en /ver:
  * - Con título: `/ver/15-a-dog-and-a-plane`
  * - Sin título o fallback: `/ver/15`
+ * - Con episodio: `/ver/15-a-dog-and-a-plane?e=1x5`, que abre el reproductor
+ *   directo en ese capítulo.
  */
-export function getVerUrl(id: number | string, title?: string | null): string {
-  if (!title) return `/ver/${id}`;
-  const slug = slugify(title);
-  return slug ? `/ver/${id}-${slug}` : `/ver/${id}`;
+export function getVerUrl(
+  id: number | string,
+  title?: string | null,
+  episode?: EpisodeRef | null
+): string {
+  const slug = title ? slugify(title) : '';
+  const path = slug ? `/ver/${id}-${slug}` : `/ver/${id}`;
+  return episode
+    ? `${path}?${EPISODE_PARAM}=${formatEpisodeParam(episode)}`
+    : path;
 }
 
 /**
