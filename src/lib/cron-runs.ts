@@ -46,6 +46,39 @@ export async function recordCronRun(run: {
   }
 }
 
+/**
+ * Corre un trabajo del cron y deja registrada la corrida, ok o con error. Si
+ * falla, registra y relanza: quien llama decide si sigue con el proximo.
+ * `baseSummary` es lo que se guarda cuando no hay resultado (el origen).
+ */
+export async function runCronJob<T>(
+  job: string,
+  run: () => Promise<T>,
+  summarize: (result: T) => CronSummary,
+  baseSummary: CronSummary = {}
+): Promise<T> {
+  const started = Date.now();
+  try {
+    const result = await run();
+    await recordCronRun({
+      job,
+      ok: true,
+      durationMs: Date.now() - started,
+      summary: summarize(result),
+    });
+    return result;
+  } catch (error) {
+    await recordCronRun({
+      job,
+      ok: false,
+      durationMs: Date.now() - started,
+      summary: baseSummary,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    throw error;
+  }
+}
+
 interface StoredRun {
   ok?: boolean;
   durationMs?: number;
