@@ -10,6 +10,7 @@ import { isWatchableEpisode } from '@/lib/watchable';
 import type { TVSeries } from 'schema-dts';
 import { getWatchableSeriesById } from '@/lib/database';
 import { getVerUrl, parseIdFromSlug } from '@/lib/slug';
+import { isAiringNow } from '@/lib/airing-schedule';
 import { SeriesUserStatusProvider } from '@/components/series/SeriesUserStatusProvider';
 import { PendingTrackApplier } from '@/components/series/PendingTrackApplier/PendingTrackApplier';
 import { VerSerieClient } from './VerSerieClient';
@@ -173,6 +174,7 @@ export default async function VerSeriePage({ params }: PageProps) {
               title: serie.title,
               originalTitle: serie.originalTitle,
               year: serie.year,
+              airing: isAiringNow(serie),
               synopsis: serie.synopsis,
               imageUrl: serie.imageUrl,
               catalogScope: serie.catalogScope,

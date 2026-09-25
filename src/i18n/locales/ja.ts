@@ -2576,7 +2576,9 @@ const ja = {
     "notesTitle": "プライベートノート",
     "episodeNote": "{code}へのメモ",
     "seriesNote": "シリーズノート",
-    "notesHintNoEpisode": "メモを追加するには、エピソードを視聴済みにマークしてください。"
+    "notesHintNoEpisode": "メモを追加するには、エピソードを視聴済みにマークしてください。",
+    "episodesAfterLast": "最後に視聴済みとしてマークしたエピソードの後に、まだエピソードがあります。",
+    "followAgain": "もう一度フォローする"
   },
   "posterPlaceholder": {
     "noImage": "画像なし"
@@ -3137,12 +3139,14 @@ const ja = {
     "delayedMany": "{days}日遅れ",
     "tagToday": "今日",
     "tagDelayed": "+{days}日",
-    "airDaysTooltip": "放送日: {days} ({status})"
+    "airDaysTooltip": "放送日: {days} ({status})",
+    "upToDate": "最新話まで追いついています",
+    "tagUpToDate": "最新話まで"
   },
   "estrenos": {
     "title": "今週の放送予定",
     "subtitle": "記録されている放送日に基づいています。時間やエピソードがすでに公開されているかは確認していません。",
-    "disclaimer": "このスケジュールは、厳選されたカタログから現在放送中の番組を対象としています。4ヶ月以上前に終了した番組は表示されません。",
+    "disclaimer": "このスケジュールは、厳選されたカタログから現在放送中の番組を対象としています。各番組は追加してから16週間表示されます。1シーズンの放送期間より長い期間です。",
     "seeAll": "週全体を見る",
     "today": "今日",
     "moreCount": "他{count}件",
