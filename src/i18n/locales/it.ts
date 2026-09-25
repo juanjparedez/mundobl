@@ -1802,6 +1802,9 @@ const it = {
     "runtime": "Runtime",
     "runtimeShort": "Run"
   },
+  "publicStats": {
+    "teamNote": "Questi dati sono solo della community. Il team di curatori ha anche guardato {n} serie del catalogo; le abbiamo escluse per non gonfiare i numeri."
+  },
   "adminStats": {
     "pageTitle": "Statistiche attività",
     "totalUsers": "Utenti registrati",

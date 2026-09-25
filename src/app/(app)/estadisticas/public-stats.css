@@ -159,6 +159,18 @@
   background: var(--bg-spotlight);
 }
 
+/* ─── Nota: lo del equipo va aparte ────────────────────────────────── */
+.public-stats-team-note {
+  margin: 0;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-left: 3px solid var(--primary-color);
+  border-radius: var(--border-radius-sm);
+  background: var(--bg-spotlight);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: 1.5;
+}
+
 /* ─── Section divider ──────────────────────────────────────────────── */
 .public-stats-section-title {
   margin: 10px 0 0;

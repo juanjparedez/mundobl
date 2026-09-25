@@ -62,6 +62,8 @@ export interface PublicStats {
     totalDirectors: number;
     averageCommunityRating: number | null;
     totalUserRatings: number;
+    /** Series del catalogo que vio el equipo. Va aparte: ver COMMUNITY. */
+    teamCompletedSeries: number;
   };
   rankings: {
     topSeries: Array<{ seriesId: number; title: string; count: number }>;
@@ -89,6 +91,22 @@ export interface PublicStats {
   };
 }
 
+/**
+ * Toda metrica de actividad de esta pagina es SOLO de la comunidad: excluye
+ * a los usuarios ADMIN. El catalogo curado nacio como el registro personal
+ * de lo que fue viendo Flor, asi que al 2026-09-24 el equipo era el 96% de
+ * las "series vistas" (527 de 548). Mostrar eso como actividad de la
+ * comunidad es inflar, que es justo lo que la pagina promete no hacer. Lo
+ * del equipo no se esconde: sale aparte, en `teamCompletedSeries`.
+ *
+ * Los comentarios de una cuenta borrada quedan con userId null
+ * (anonimizados): son de la comunidad y se cuentan.
+ */
+const COMMUNITY = { user: { role: { not: 'ADMIN' as const } } };
+const COMMUNITY_COMMENTS = {
+  OR: [{ userId: null }, { user: { role: { not: 'ADMIN' as const } } }],
+};
+
 export async function getPublicStats(): Promise<PublicStats> {
   const [
     totalSeries,
@@ -112,15 +130,19 @@ export async function getPublicStats(): Promise<PublicStats> {
     catalogByTypeRows,
     catalogByGenreRows,
     catalogByYearRows,
+    teamSeriesRows,
   ] = await Promise.all([
     // Solo contamos series del catalogo curado (excluye USER_EMBED).
     prisma.series.count({ where: { origin: 'CURATED' } }),
-    prisma.comment.count({ where: { isPrivate: false } }),
+    prisma.comment.count({
+      where: { isPrivate: false, ...COMMUNITY_COMMENTS },
+    }),
     prisma.viewStatus.count({
       where: {
         status: 'VISTA',
         seriesId: { not: null },
         series: { origin: 'CURATED' },
+        ...COMMUNITY,
       },
     }),
     prisma.viewStatus.count({
@@ -128,11 +150,13 @@ export async function getPublicStats(): Promise<PublicStats> {
         status: 'VIENDO',
         seriesId: { not: null },
         series: { origin: 'CURATED' },
+        ...COMMUNITY,
       },
     }),
     prisma.userFavorite.count({
       where: {
         series: { origin: 'CURATED' },
+        ...COMMUNITY,
       },
     }),
     prisma.actor.count(),
@@ -143,6 +167,7 @@ export async function getPublicStats(): Promise<PublicStats> {
         status: 'VISTA',
         seriesId: { not: null },
         series: { origin: 'CURATED' },
+        ...COMMUNITY,
       },
       _count: { seriesId: true },
       orderBy: { _count: { seriesId: 'desc' } },
@@ -151,12 +176,14 @@ export async function getPublicStats(): Promise<PublicStats> {
     prisma.$queryRaw<RawActorCountRow[]>`
       SELECT a.id, a.name, COUNT(*) as count
       FROM "ViewStatus" vs
+      JOIN "User" u ON u.id = vs."userId"
       JOIN "SeriesActor" sa ON sa."seriesId" = vs."seriesId"
       JOIN "Actor" a ON a.id = sa."actorId"
       JOIN "Series" s ON s.id = vs."seriesId"
       WHERE vs.status = 'VISTA'
         AND vs."seriesId" IS NOT NULL
         AND s."origin" = 'CURATED'
+        AND u.role <> 'ADMIN'
       GROUP BY a.id, a.name
       ORDER BY count DESC
       LIMIT 15
@@ -164,12 +191,14 @@ export async function getPublicStats(): Promise<PublicStats> {
     prisma.$queryRaw<RawDirectorCountRow[]>`
       SELECT d.id, d.name, COUNT(*) as count
       FROM "ViewStatus" vs
+      JOIN "User" u ON u.id = vs."userId"
       JOIN "SeriesDirector" sd ON sd."seriesId" = vs."seriesId"
       JOIN "Director" d ON d.id = sd."directorId"
       JOIN "Series" s ON s.id = vs."seriesId"
       WHERE vs.status = 'VISTA'
         AND vs."seriesId" IS NOT NULL
         AND s."origin" = 'CURATED'
+        AND u.role <> 'ADMIN'
       GROUP BY d.id, d.name
       ORDER BY count DESC
       LIMIT 15
@@ -180,12 +209,14 @@ export async function getPublicStats(): Promise<PublicStats> {
     prisma.$queryRaw<RawCompanyCountRow[]>`
       SELECT pc.id, pc.name, COUNT(*) as count
       FROM "ViewStatus" vs
+      JOIN "User" u ON u.id = vs."userId"
       JOIN "Series" s ON s.id = vs."seriesId"
       JOIN "SeriesProductionCompany" spc ON spc."seriesId" = s.id
       JOIN "ProductionCompany" pc ON pc.id = spc."productionCompanyId"
       WHERE vs.status = 'VISTA'
         AND vs."seriesId" IS NOT NULL
         AND s."origin" = 'CURATED'
+        AND u.role <> 'ADMIN'
       GROUP BY pc.id, pc.name
       ORDER BY count DESC
       LIMIT 15
@@ -193,22 +224,26 @@ export async function getPublicStats(): Promise<PublicStats> {
     prisma.$queryRaw<RawNamedCountRow[]>`
       SELECT c.name, COUNT(*) as count
       FROM "ViewStatus" vs
+      JOIN "User" u ON u.id = vs."userId"
       JOIN "Series" s ON s.id = vs."seriesId"
       JOIN "Country" c ON c.id = s."countryId"
       WHERE vs.status = 'VISTA'
         AND vs."seriesId" IS NOT NULL
         AND s."countryId" IS NOT NULL
         AND s."origin" = 'CURATED'
+        AND u.role <> 'ADMIN'
       GROUP BY c.name
       ORDER BY count DESC
     `,
     prisma.$queryRaw<RawTypeCountRow[]>`
       SELECT s.type, COUNT(*) as count
       FROM "ViewStatus" vs
+      JOIN "User" u ON u.id = vs."userId"
       JOIN "Series" s ON s.id = vs."seriesId"
       WHERE vs.status = 'VISTA'
         AND vs."seriesId" IS NOT NULL
         AND s."origin" = 'CURATED'
+        AND u.role <> 'ADMIN'
       GROUP BY s.type
       ORDER BY count DESC
     `,
@@ -216,6 +251,7 @@ export async function getPublicStats(): Promise<PublicStats> {
       by: ['seriesId'],
       where: {
         series: { origin: 'CURATED' },
+        ...COMMUNITY,
       },
       _count: { seriesId: true },
       orderBy: { _count: { seriesId: 'desc' } },
@@ -224,14 +260,17 @@ export async function getPublicStats(): Promise<PublicStats> {
     prisma.$queryRaw<RawRatingDistRow[]>`
       SELECT score, COUNT(*) as count
       FROM "UserRating" ur
+      JOIN "User" u ON u.id = ur."userId"
       JOIN "Series" s ON s.id = ur."seriesId"
       WHERE s."origin" = 'CURATED'
+        AND u.role <> 'ADMIN'
       GROUP BY score
       ORDER BY score ASC
     `,
     prisma.userRating.aggregate({
       where: {
         series: { origin: 'CURATED' },
+        ...COMMUNITY,
       },
       _avg: { score: true },
       _count: { id: true },
@@ -275,6 +314,16 @@ export async function getPublicStats(): Promise<PublicStats> {
       ORDER BY year DESC
       LIMIT 20
     `,
+    // Lo del equipo, aparte y a la vista (ver COMMUNITY).
+    prisma.viewStatus.groupBy({
+      by: ['seriesId'],
+      where: {
+        status: 'VISTA',
+        seriesId: { not: null },
+        series: { origin: 'CURATED' },
+        user: { role: 'ADMIN' },
+      },
+    }),
   ]);
 
   const allSeriesIdsToFetch = Array.from(
@@ -307,6 +356,7 @@ export async function getPublicStats(): Promise<PublicStats> {
         ? Math.round(ratingStats._avg.score * 10) / 10
         : null,
       totalUserRatings: ratingStats._count.id,
+      teamCompletedSeries: teamSeriesRows.length,
     },
     rankings: {
       topSeries: topSeriesRows
