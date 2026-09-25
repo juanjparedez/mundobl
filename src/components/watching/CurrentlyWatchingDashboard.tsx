@@ -30,6 +30,7 @@ import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { SerieCardSkeleton } from '@/components/common/SerieCardSkeleton/SerieCardSkeleton';
 import { SeriesNoteModal } from '@/components/series/SeriesNoteModal/SeriesNoteModal';
 import { getSeriesUrl, getVerUrl } from '@/lib/slug';
+import { findNextEpisode } from '@/lib/episode-progress';
 import './CurrentlyWatchingDashboard.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import type { TranslationKey } from '@/i18n/messages';
@@ -218,19 +219,16 @@ export function CurrentlyWatchingDashboard() {
   };
 
   const getNextEpisode = (series: WatchingSeriesData['series']) => {
-    for (const season of series.seasons || []) {
-      for (const episode of season.episodes || []) {
-        if (episode.viewStatus?.[0]?.status !== 'VISTA') {
-          return {
-            id: episode.id,
-            seasonNumber: season.seasonNumber,
-            episodeNumber: episode.episodeNumber,
-            title: episode.title,
-          };
-        }
-      }
-    }
-    return null;
+    const ordered = (series.seasons || []).flatMap((season) =>
+      (season.episodes || []).map((episode) => ({
+        id: episode.id,
+        seasonNumber: season.seasonNumber,
+        episodeNumber: episode.episodeNumber,
+        title: episode.title,
+        watched: episode.viewStatus?.[0]?.status === 'VISTA',
+      }))
+    );
+    return findNextEpisode(ordered, (ep) => ep.watched);
   };
 
   const formatLastWatched = (date: Date | string | null) => {
@@ -736,7 +734,11 @@ export function CurrentlyWatchingDashboard() {
                       )}
                       {item.series.hasWatchableEpisode && (
                         <Link
-                          href={getVerUrl(item.series.id, item.series.title)}
+                          href={getVerUrl(
+                            item.series.id,
+                            item.series.title,
+                            nextEp
+                          )}
                           className="watching-card__action-link"
                         >
                           {/* Resume directo en /ver: no todas las series
