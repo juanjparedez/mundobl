@@ -919,7 +919,14 @@ export function LandingPage({ stats }: LandingPageProps) {
         </div>
 
         <div className="landing__ecosystem-cta-wrap">
-          <Link href={ROUTES.ADMIN_COLABORADOR}>
+          {/* Abre /feedback con el formulario precargado como idea. Antes iba a
+           * /admin/colaborador, que es el panel del rol COLLABORATOR que asigna
+           * un admin: a cualquier otra persona la rebotaba a /catalogo. */}
+          <Link
+            href={`${ROUTES.FEEDBACK}?type=idea&title=${encodeURIComponent(
+              t('landing.ecosystemCta')
+            )}`}
+          >
             <Button size="large" icon={<TeamOutlined />}>
               {t('landing.ecosystemCta')}
             </Button>

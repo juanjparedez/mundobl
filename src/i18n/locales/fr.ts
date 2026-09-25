@@ -1946,6 +1946,7 @@ const fr = {
     "currentVersion": "Version actuelle : {version}",
     "deleteButton": "Supprimer",
     "createButton": "Créer",
+    "signInToSend": "Connectez-vous pour l'envoyer",
     "formTitle": "Nouvelle requête",
     "formFieldType": "Type",
     "formFieldTitle": "Titre",
