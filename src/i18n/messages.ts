@@ -1817,23 +1817,6 @@ export type TranslationShape = {
     chartTotalSeries: string;
     chartCompletedByDayTitle: string;
     chartCompletedSeriesLabel: string;
-    retentionTitle: string;
-    retentionCohorts: string;
-    retentionWeek: string;
-    retentionSignups: string;
-    retentionW1: string;
-    retentionW2: string;
-    retentionW3: string;
-    retentionTrackedW0: string;
-    retentionTrackedW1: string;
-    retentionWau: string;
-    retentionVisitors: string;
-    retentionTrackers: string;
-    retentionTotalUsers: string;
-    retentionUsersTracking: string;
-    retentionTrackers7d: string;
-    retentionTrackers30d: string;
-    retentionError: string;
   };
   adminTable: {
     searchPlaceholder: string;
@@ -5040,23 +5023,6 @@ const es: TranslationShape = {
     chartTotalSeries: 'series totales',
     chartCompletedByDayTitle: 'Series completadas (ult. 30 dias)',
     chartCompletedSeriesLabel: 'Completadas',
-    retentionTitle: 'Retención',
-    retentionCohorts: 'Cohortes por semana de registro',
-    retentionWeek: 'Semana',
-    retentionSignups: 'Registros',
-    retentionW1: 'Volvieron W1',
-    retentionW2: 'Volvieron W2',
-    retentionW3: 'Volvieron W3+',
-    retentionTrackedW0: 'Marcaron W0',
-    retentionTrackedW1: 'Marcaron W1',
-    retentionWau: 'Activos por semana',
-    retentionVisitors: 'Visitantes',
-    retentionTrackers: 'Marcaron algo',
-    retentionTotalUsers: 'Usuarios (sin admins)',
-    retentionUsersTracking: 'Usaron el tracker alguna vez',
-    retentionTrackers7d: 'Marcaron algo (7 días)',
-    retentionTrackers30d: 'Marcaron algo (30 días)',
-    retentionError: 'No se pudieron cargar las métricas de retención',
   },
   adminTable: {
     searchPlaceholder: 'Buscar por título, país o tipo...',
@@ -8311,23 +8277,6 @@ const en: TranslationShape = {
     chartTotalSeries: 'total series',
     chartCompletedByDayTitle: 'Completed series (last 30 days)',
     chartCompletedSeriesLabel: 'Completed',
-    retentionTitle: 'Retention',
-    retentionCohorts: 'Cohorts by signup week',
-    retentionWeek: 'Week',
-    retentionSignups: 'Signups',
-    retentionW1: 'Returned W1',
-    retentionW2: 'Returned W2',
-    retentionW3: 'Returned W3+',
-    retentionTrackedW0: 'Tracked W0',
-    retentionTrackedW1: 'Tracked W1',
-    retentionWau: 'Weekly actives',
-    retentionVisitors: 'Visitors',
-    retentionTrackers: 'Tracked something',
-    retentionTotalUsers: 'Users (excluding admins)',
-    retentionUsersTracking: 'Ever used the tracker',
-    retentionTrackers7d: 'Tracked something (7 days)',
-    retentionTrackers30d: 'Tracked something (30 days)',
-    retentionError: 'Could not load retention metrics',
   },
   adminTable: {
     searchPlaceholder: 'Search by title, country or type...',
