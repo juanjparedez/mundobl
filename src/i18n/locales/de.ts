@@ -2576,7 +2576,9 @@ const de = {
     "notesTitle": "Private Notizen",
     "episodeNote": "Notiz für {code}",
     "seriesNote": "Seriennotiz",
-    "notesHintNoEpisode": "Markiere eine Episode als gesehen, um eine Notiz hinzuzufügen."
+    "notesHintNoEpisode": "Markiere eine Episode als gesehen, um eine Notiz hinzuzufügen.",
+    "episodesAfterLast": "Es gibt Episoden nach der letzten, die du als gesehen markiert hast.",
+    "followAgain": "Erneut folgen"
   },
   "posterPlaceholder": {
     "noImage": "Kein Bild"
@@ -3137,12 +3139,14 @@ const de = {
     "delayedMany": "{days} Tage im Rückstand",
     "tagToday": "Heute",
     "tagDelayed": "+{days}T",
-    "airDaysTooltip": "Ausstrahlungstag(e): {days} ({status})"
+    "airDaysTooltip": "Ausstrahlungstag(e): {days} ({status})",
+    "upToDate": "Du bist auf dem neuesten Stand",
+    "tagUpToDate": "Aufgeholt"
   },
   "estrenos": {
     "title": "Was diese Woche ausgestrahlt wird",
     "subtitle": "Basierend auf dem uns vorliegenden Ausstrahlungstag. Wir bestätigen weder Zeiten noch, dass die Episode bereits verfügbar ist.",
-    "disclaimer": "Dieser Zeitplan umfasst aktuell ausgestrahlte Serien aus dem kuratierten Katalog. Serien, die vor mehr als vier Monaten abgeschlossen wurden, fallen heraus.",
+    "disclaimer": "Dieser Zeitplan umfasst aktuell ausgestrahlte Serien aus dem kuratierten Katalog. Jede Serie bleibt 16 Wochen, nachdem wir sie hinzugefügt haben – länger, als eine Staffel läuft.",
     "seeAll": "Die ganze Woche ansehen",
     "today": "Heute",
     "moreCount": "+{count} weitere",

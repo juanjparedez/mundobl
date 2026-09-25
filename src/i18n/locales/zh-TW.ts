@@ -2576,7 +2576,9 @@ const zhTW = {
     "notesTitle": "私人筆記",
     "episodeNote": "關於 {code} 的筆記",
     "seriesNote": "劇集筆記",
-    "notesHintNoEpisode": "將劇集標記為已觀看即可新增筆記。"
+    "notesHintNoEpisode": "將劇集標記為已觀看即可新增筆記。",
+    "episodesAfterLast": "您上次標記為已觀看後，還有其他集數。",
+    "followAgain": "再次追蹤"
   },
   "posterPlaceholder": {
     "noImage": "無圖片"
@@ -3137,12 +3139,14 @@ const zhTW = {
     "delayedMany": "落後{days}天",
     "tagToday": "今天",
     "tagDelayed": "+{days}天",
-    "airDaysTooltip": "播出日：{days}（{status}）"
+    "airDaysTooltip": "播出日：{days}（{status}）",
+    "upToDate": "您已追到最新一集",
+    "tagUpToDate": "已追到最新"
   },
   "estrenos": {
     "title": "本週播出節目",
     "subtitle": "根據我們記錄的播出日期。我們不確認時間，也不確認劇集是否已上線。",
-    "disclaimer": "此時間表涵蓋精選目錄中目前正在播出的節目。已完結超過四個月的節目將會移除。",
+    "disclaimer": "此時間表涵蓋精選目錄中目前正在播出的節目。每部節目自我們加入起顯示16週，比一季的播出時間更長。",
     "seeAll": "查看完整一週",
     "today": "今天",
     "moreCount": "還有{count}個",

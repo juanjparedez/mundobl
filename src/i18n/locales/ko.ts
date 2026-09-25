@@ -2576,7 +2576,9 @@ const ko = {
     "notesTitle": "비공개 메모",
     "episodeNote": "{code}에 대한 메모",
     "seriesNote": "시리즈 메모",
-    "notesHintNoEpisode": "메모를 추가하려면 에피소드를 시청 완료로 표시하세요."
+    "notesHintNoEpisode": "메모를 추가하려면 에피소드를 시청 완료로 표시하세요.",
+    "episodesAfterLast": "마지막으로 시청한 에피소드 이후의 에피소드가 있습니다.",
+    "followAgain": "다시 팔로우하기"
   },
   "posterPlaceholder": {
     "noImage": "이미지 없음"
@@ -3137,12 +3139,14 @@ const ko = {
     "delayedMany": "{days}일 지연",
     "tagToday": "오늘",
     "tagDelayed": "+{days}일",
-    "airDaysTooltip": "방영일: {days} ({status})"
+    "airDaysTooltip": "방영일: {days} ({status})",
+    "upToDate": "최신화까지 시청했습니다",
+    "tagUpToDate": "최신화까지"
   },
   "estrenos": {
     "title": "이번 주 방영작",
     "subtitle": "저희가 보유한 방영일 기준입니다. 시간이나 에피소드 업로드 여부는 확인하지 않습니다.",
-    "disclaimer": "이 스케줄은 큐레이션된 카탈로그의 현재 방영작을 다룹니다. 4개월 이상 종영된 프로그램은 제외됩니다.",
+    "disclaimer": "이 스케줄은 큐레이션된 카탈로그의 현재 방영작을 다룹니다. 각 작품은 추가된 날부터 16주 동안 표시되며, 이는 한 시즌보다 긴 기간입니다.",
     "seeAll": "전체 주 보기",
     "today": "오늘",
     "moreCount": "+{count}개 더 보기",

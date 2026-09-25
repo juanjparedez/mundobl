@@ -2572,6 +2572,8 @@ export type TranslationShape = {
     episodeNote: string;
     seriesNote: string;
     notesHintNoEpisode: string;
+    episodesAfterLast: string;
+    followAgain: string;
   };
   posterPlaceholder: {
     noImage: string;
@@ -3133,6 +3135,8 @@ export type TranslationShape = {
     tagToday: string;
     tagDelayed: string;
     airDaysTooltip: string;
+    upToDate: string;
+    tagUpToDate: string;
   };
   estrenos: {
     title: string;
@@ -5871,6 +5875,9 @@ const es: TranslationShape = {
     episodeNote: 'Nota del {code}',
     seriesNote: 'Nota de la serie',
     notesHintNoEpisode: 'Marcá un episodio como visto para anotarlo.',
+    episodesAfterLast:
+      'Hay capítulos después del último que marcaste como visto.',
+    followAgain: 'Volver a seguirla',
   },
   posterPlaceholder: {
     noImage: 'Sin imagen',
@@ -6464,13 +6471,15 @@ const es: TranslationShape = {
     tagToday: 'Hoy',
     tagDelayed: '+{days}d',
     airDaysTooltip: 'Día(s) de emisión: {days} ({status})',
+    upToDate: 'Estás al día',
+    tagUpToDate: 'Al día',
   },
   estrenos: {
     title: 'Qué sale esta semana',
     subtitle:
       'Según el día de emisión que tenemos cargado. No confirmamos horarios ni que el capítulo ya esté subido.',
     disclaimer:
-      'La parrilla muestra series en emisión del catálogo curado. Si una serie terminó hace más de cuatro meses, deja de aparecer.',
+      'La parrilla muestra series en emisión del catálogo curado. Cada una aparece durante 16 semanas desde que la cargamos: más de lo que dura una temporada.',
     seeAll: 'Ver la semana completa',
     today: 'Hoy',
     moreCount: '+{count} más',
@@ -9187,6 +9196,9 @@ const en: TranslationShape = {
     episodeNote: 'Note for {code}',
     seriesNote: 'Series note',
     notesHintNoEpisode: 'Mark an episode as watched to add a note.',
+    episodesAfterLast:
+      'There are episodes after the last one you marked as watched.',
+    followAgain: 'Follow it again',
   },
   posterPlaceholder: {
     noImage: 'No image',
@@ -9777,13 +9789,15 @@ const en: TranslationShape = {
     tagToday: 'Today',
     tagDelayed: '+{days}d',
     airDaysTooltip: 'Airing day(s): {days} ({status})',
+    upToDate: "You're all caught up",
+    tagUpToDate: 'Caught up',
   },
   estrenos: {
     title: "What's airing this week",
     subtitle:
       "Based on the airing day we have on file. We don't confirm times, or that the episode is already up.",
     disclaimer:
-      'This schedule covers currently airing shows from the curated catalog. Shows that wrapped more than four months ago drop off.',
+      'This schedule covers currently airing shows from the curated catalog. Each one stays for 16 weeks after we add it, longer than a season runs.',
     seeAll: 'See the full week',
     today: 'Today',
     moreCount: '+{count} more',

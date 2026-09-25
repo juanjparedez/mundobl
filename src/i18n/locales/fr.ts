@@ -2576,7 +2576,9 @@ const fr = {
     "notesTitle": "Notes privées",
     "episodeNote": "Note pour {code}",
     "seriesNote": "Note de la série",
-    "notesHintNoEpisode": "Marquez un épisode comme vu pour ajouter une note."
+    "notesHintNoEpisode": "Marquez un épisode comme vu pour ajouter une note.",
+    "episodesAfterLast": "Il y a des épisodes après le dernier que vous avez marqué comme vu.",
+    "followAgain": "Suivre à nouveau"
   },
   "posterPlaceholder": {
     "noImage": "Aucune image"
@@ -3137,12 +3139,14 @@ const fr = {
     "delayedMany": "{days} jours de retard",
     "tagToday": "Aujourd'hui",
     "tagDelayed": "+{days}j",
-    "airDaysTooltip": "Jour(s) de diffusion : {days} ({status})"
+    "airDaysTooltip": "Jour(s) de diffusion : {days} ({status})",
+    "upToDate": "Vous êtes à jour",
+    "tagUpToDate": "À jour"
   },
   "estrenos": {
     "title": "Ce qui est diffusé cette semaine",
     "subtitle": "Basé sur le jour de diffusion que nous avons en dossier. Nous ne confirmons pas les heures, ni que l'épisode est déjà disponible.",
-    "disclaimer": "Cet horaire couvre les séries actuellement diffusées du catalogue sélectionné. Les séries terminées il y a plus de quatre mois disparaissent.",
+    "disclaimer": "Cet horaire couvre les séries actuellement diffusées du catalogue sélectionné. Chaque série y reste 16 semaines après son ajout, plus longtemps que ne dure une saison.",
     "seeAll": "Voir la semaine complète",
     "today": "Aujourd'hui",
     "moreCount": "+{count} de plus",
