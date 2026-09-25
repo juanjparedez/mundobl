@@ -135,6 +135,11 @@ export type TranslationShape = {
     reportedSuccess: string;
     reportError: string;
   };
+  seriesStats: {
+    source: string;
+    views: string;
+    likes: string;
+  };
   episodesList: {
     headerTitle: string;
     generateButton: string;
@@ -3255,6 +3260,12 @@ const es: TranslationShape = {
     cancelButton: 'Cancelar',
     reportedSuccess: 'Comentario reportado. Gracias por avisar.',
     reportError: 'No se pudo reportar',
+  },
+  seriesStats: {
+    source:
+      'Reproducciones y me gusta de los videos oficiales en YouTube, según el propio YouTube.',
+    views: '{n} reproducciones en YouTube',
+    likes: '{n} me gusta en YouTube',
   },
   episodesList: {
     headerTitle: 'Episodios ({n})',
@@ -6540,6 +6551,12 @@ const en: TranslationShape = {
     cancelButton: 'Cancel',
     reportedSuccess: 'Comment reported. Thanks for letting us know.',
     reportError: 'Could not report',
+  },
+  seriesStats: {
+    source:
+      'Views and likes of the official videos on YouTube, as reported by YouTube.',
+    views: '{n} views on YouTube',
+    likes: '{n} likes on YouTube',
   },
   episodesList: {
     headerTitle: 'Episodes ({n})',

@@ -144,6 +144,11 @@ const ko = {
     "reportedSuccess": "댓글이 신고되었습니다. 알려주셔서 감사합니다.",
     "reportError": "신고할 수 없습니다"
   },
+  "seriesStats": {
+    "source": "YouTube에서 보고된 공식 영상의 조회수 및 좋아요 수입니다.",
+    "views": "YouTube 조회수 {n}회",
+    "likes": "YouTube 좋아요 {n}개"
+  },
   "episodesList": {
     "headerTitle": "에피소드 ({n})",
     "generateButton": "생성",
