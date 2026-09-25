@@ -144,6 +144,11 @@ const de = {
     "reportedSuccess": "Kommentar gemeldet. Danke für den Hinweis.",
     "reportError": "Melden fehlgeschlagen"
   },
+  "seriesStats": {
+    "source": "Aufrufe und Likes der offiziellen Videos auf YouTube, wie von YouTube gemeldet.",
+    "views": "{n} Aufrufe auf YouTube",
+    "likes": "{n} Likes auf YouTube"
+  },
   "episodesList": {
     "headerTitle": "Episoden ({n})",
     "generateButton": "Generieren",
