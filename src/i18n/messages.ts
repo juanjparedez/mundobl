@@ -2770,6 +2770,57 @@ export type TranslationShape = {
     saveSuccess: string;
     saveError: string;
     loadError: string;
+    healthTitle: string;
+    healthSubtitle: string;
+    healthRefresh: string;
+    healthLoadError: string;
+    cronTitle: string;
+    cronHint: string;
+    cronNext: string;
+    cronRunNow: string;
+    cronRunNowConfirm: string;
+    cronRunNowDone: string;
+    cronRunNowError: string;
+    cronEmpty: string;
+    cronColDate: string;
+    cronColResult: string;
+    cronColTrigger: string;
+    cronColDuration: string;
+    cronColDetail: string;
+    cronOk: string;
+    cronFailed: string;
+    cronTriggerManual: string;
+    cronTriggerSchedule: string;
+    cronDetail: string;
+    cronBacklog: string;
+    workflowsTitle: string;
+    workflowBackup: string;
+    workflowSmoke: string;
+    runSuccess: string;
+    runFailure: string;
+    runSkipped: string;
+    runCancelled: string;
+    runInProgress: string;
+    noData: string;
+    depsTitle: string;
+    depDatabase: string;
+    depDatabaseDown: string;
+    statusOperational: string;
+    statusMinor: string;
+    statusMajor: string;
+    deployTitle: string;
+    deployEnv: string;
+    deployRegion: string;
+    deployCommit: string;
+    integrationsTitle: string;
+    integrationCron: string;
+    integrationYoutube: string;
+    integrationGemini: string;
+    integrationEmail: string;
+    integrationPush: string;
+    integrationStorage: string;
+    integrationConfigured: string;
+    integrationMissing: string;
   };
   adminActivity: {
     title: string;
@@ -6029,6 +6080,60 @@ const es: TranslationShape = {
     saveSuccess: 'Override aplicado correctamente',
     saveError: 'No se pudo aplicar el override',
     loadError: 'No se pudo cargar el estado de runtime',
+    healthTitle: 'Salud del sistema',
+    healthSubtitle: 'Los crons y los servicios de los que depende la página.',
+    healthRefresh: 'Actualizar',
+    healthLoadError: 'No se pudo cargar la salud del sistema',
+    cronTitle: 'Cron de disponibilidad y estadísticas',
+    cronHint:
+      'Revisa todos los días qué videos se pueden ver en cada país y trae sus reproducciones de YouTube.',
+    cronNext: 'Próxima corrida',
+    cronRunNow: 'Correr ahora',
+    cronRunNowConfirm:
+      'Corre el sondeo ahora, sin esperar al horario. Tarda hasta un minuto y usa cuota de la API de YouTube.',
+    cronRunNowDone: 'Listo: {probed} de {scanned} videos revisados',
+    cronRunNowError: 'El sondeo falló',
+    cronEmpty:
+      'Todavía no hay corridas registradas. Queda anotada la próxima, programada o manual.',
+    cronColDate: 'Fecha',
+    cronColResult: 'Resultado',
+    cronColTrigger: 'Origen',
+    cronColDuration: 'Duración',
+    cronColDetail: 'Detalle',
+    cronOk: 'OK',
+    cronFailed: 'Error',
+    cronTriggerManual: 'Manual',
+    cronTriggerSchedule: 'Programada',
+    cronDetail: '{probed} de {scanned} revisados · {changed} cambios',
+    cronBacklog: 'quedaron pendientes para la próxima',
+    workflowsTitle: 'GitHub Actions',
+    workflowBackup: 'Backup de la base',
+    workflowSmoke: 'Smoke test',
+    runSuccess: 'OK',
+    runFailure: 'Falló',
+    runSkipped: 'Salteado',
+    runCancelled: 'Cancelado',
+    runInProgress: 'Corriendo',
+    noData: 'Sin datos',
+    depsTitle: 'Dependencias',
+    depDatabase: 'Base de datos',
+    depDatabaseDown: 'No responde',
+    statusOperational: 'Operativo',
+    statusMinor: 'Degradado',
+    statusMajor: 'Caído',
+    deployTitle: 'Deploy actual',
+    deployEnv: 'Entorno',
+    deployRegion: 'Región',
+    deployCommit: 'Commit',
+    integrationsTitle: 'Integraciones',
+    integrationCron: 'Cron',
+    integrationYoutube: 'YouTube Data API',
+    integrationGemini: 'Gemini',
+    integrationEmail: 'Email (Resend)',
+    integrationPush: 'Push',
+    integrationStorage: 'Almacenamiento (R2)',
+    integrationConfigured: 'Configurada',
+    integrationMissing: 'Falta',
   },
   adminActivity: {
     title: 'Actividad del equipo',
@@ -9289,6 +9394,60 @@ const en: TranslationShape = {
     saveSuccess: 'Override applied',
     saveError: 'Could not apply override',
     loadError: 'Could not load runtime status',
+    healthTitle: 'System health',
+    healthSubtitle: 'Cron jobs and the services the site depends on.',
+    healthRefresh: 'Refresh',
+    healthLoadError: 'Could not load system health',
+    cronTitle: 'Availability and stats cron',
+    cronHint:
+      'Checks every day which videos can be played in each country and fetches their YouTube views.',
+    cronNext: 'Next run',
+    cronRunNow: 'Run now',
+    cronRunNowConfirm:
+      'Runs the check now, without waiting for the schedule. Takes up to a minute and uses YouTube API quota.',
+    cronRunNowDone: 'Done: {probed} of {scanned} videos checked',
+    cronRunNowError: 'The check failed',
+    cronEmpty:
+      'No runs recorded yet. The next one, scheduled or manual, will be logged.',
+    cronColDate: 'Date',
+    cronColResult: 'Result',
+    cronColTrigger: 'Trigger',
+    cronColDuration: 'Duration',
+    cronColDetail: 'Detail',
+    cronOk: 'OK',
+    cronFailed: 'Error',
+    cronTriggerManual: 'Manual',
+    cronTriggerSchedule: 'Scheduled',
+    cronDetail: '{probed} of {scanned} checked · {changed} changes',
+    cronBacklog: 'some left for the next run',
+    workflowsTitle: 'GitHub Actions',
+    workflowBackup: 'Database backup',
+    workflowSmoke: 'Smoke test',
+    runSuccess: 'OK',
+    runFailure: 'Failed',
+    runSkipped: 'Skipped',
+    runCancelled: 'Cancelled',
+    runInProgress: 'Running',
+    noData: 'No data',
+    depsTitle: 'Dependencies',
+    depDatabase: 'Database',
+    depDatabaseDown: 'Not responding',
+    statusOperational: 'Operational',
+    statusMinor: 'Degraded',
+    statusMajor: 'Down',
+    deployTitle: 'Current deploy',
+    deployEnv: 'Environment',
+    deployRegion: 'Region',
+    deployCommit: 'Commit',
+    integrationsTitle: 'Integrations',
+    integrationCron: 'Cron',
+    integrationYoutube: 'YouTube Data API',
+    integrationGemini: 'Gemini',
+    integrationEmail: 'Email (Resend)',
+    integrationPush: 'Push',
+    integrationStorage: 'Storage (R2)',
+    integrationConfigured: 'Configured',
+    integrationMissing: 'Missing',
   },
   adminActivity: {
     title: 'Team activity',
