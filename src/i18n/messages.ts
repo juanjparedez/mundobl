@@ -1941,6 +1941,7 @@ export type TranslationShape = {
     currentVersion: string;
     deleteButton: string;
     createButton: string;
+    signInToSend: string;
     formTitle: string;
     formFieldType: string;
     formFieldTitle: string;
@@ -5165,6 +5166,7 @@ const es: TranslationShape = {
     currentVersion: 'Versión actual: {version}',
     deleteButton: 'Eliminar',
     createButton: 'Crear',
+    signInToSend: 'Iniciá sesión para enviarla',
     formTitle: 'Nueva solicitud',
     formFieldType: 'Tipo',
     formFieldTitle: 'Título',
@@ -8436,6 +8438,7 @@ const en: TranslationShape = {
     currentVersion: 'Current version: {version}',
     deleteButton: 'Delete',
     createButton: 'Create',
+    signInToSend: 'Sign in to send it',
     formTitle: 'New request',
     formFieldType: 'Type',
     formFieldTitle: 'Title',

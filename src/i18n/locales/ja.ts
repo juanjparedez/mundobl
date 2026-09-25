@@ -1946,6 +1946,7 @@ const ja = {
     "currentVersion": "現在のバージョン: {version}",
     "deleteButton": "削除",
     "createButton": "作成",
+    "signInToSend": "送信するにはサインインしてください",
     "formTitle": "新しいリクエスト",
     "formFieldType": "タイプ",
     "formFieldTitle": "タイトル",
