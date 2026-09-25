@@ -9,6 +9,26 @@ import { getSeriesEpisodesOrdered, type SeriesEpisodeOrder } from './database';
 
 export type TrackingClient = PrismaClient | Prisma.TransactionClient;
 
+/**
+ * Seguir una serie te suscribe a sus avisos (capitulo disponible, nueva
+ * temporada). Solo cuando se crea la fila de la serie por PRIMERA vez: si
+ * despues el usuario apaga la campanita, marcar mas episodios no lo vuelve
+ * a suscribir. La campanita queda a la vista en la ficha y en /ver.
+ *
+ * Antes eran cosas separadas: quien marcaba episodios no recibia ni los
+ * avisos que si existian, salvo que encontrara la campanita por su cuenta.
+ */
+export async function subscribeOnFirstTrack(
+  client: TrackingClient,
+  userId: string,
+  seriesId: number
+): Promise<void> {
+  await client.seriesSubscription.createMany({
+    data: [{ userId, seriesId }],
+    skipDuplicates: true,
+  });
+}
+
 /** upToEpisodeId de otra serie, o serie/episodio inexistente. */
 export class ProgressNotFoundError extends Error {}
 
@@ -62,6 +82,7 @@ export async function markEpisode(
       update: { status: 'VIENDO', lastWatchedAt: now },
       create: { userId, seriesId, status: 'VIENDO', lastWatchedAt: now },
     });
+    if (!existingSeries) await subscribeOnFirstTrack(client, userId, seriesId);
   } else if (
     existingSeries.status === 'VIENDO' ||
     existingSeries.status === 'RETOMAR'
