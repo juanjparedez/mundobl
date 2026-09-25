@@ -20,6 +20,7 @@ import {
   CheckOutlined,
   CalendarOutlined,
   FileTextOutlined,
+  HistoryOutlined,
   FileTextFilled,
   InfoCircleOutlined,
 } from '@ant-design/icons';
@@ -602,6 +603,11 @@ export function CurrentlyWatchingDashboard() {
                 description={
                   <div className="watching-card__info">
                     <div className="watching-card__meta">
+                      {item.status === 'RETOMAR' && (
+                        <Tag color="orange" icon={<HistoryOutlined />}>
+                          {t('viewStatus.retomar')}
+                        </Tag>
+                      )}
                       {item.series.year && (
                         <Tag color="blue">{item.series.year}</Tag>
                       )}

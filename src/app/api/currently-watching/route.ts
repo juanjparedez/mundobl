@@ -3,7 +3,9 @@ import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 import { isWatchableEpisode } from '@/lib/watchable';
 
-// GET - Obtener las series que el usuario autenticado está viendo
+// GET - Obtener las series que el usuario autenticado está viendo o dejó
+// para retomar. RETOMAR también es "la voy a seguir": sin esto, marcar una
+// serie para retomar la sacaba de /watching, que es justo donde se retoma.
 export async function GET() {
   try {
     const authResult = await requireAuth();
@@ -11,7 +13,7 @@ export async function GET() {
 
     const currentlyWatching = await prisma.viewStatus.findMany({
       where: {
-        status: 'VIENDO',
+        status: { in: ['VIENDO', 'RETOMAR'] },
         seriesId: { not: null },
         userId: authResult.userId,
       },
