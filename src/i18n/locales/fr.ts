@@ -144,6 +144,11 @@ const fr = {
     "reportedSuccess": "Commentaire signalé. Merci de nous avoir informés.",
     "reportError": "Impossible de signaler"
   },
+  "seriesStats": {
+    "source": "Vues et mentions J'aime des vidéos officielles sur YouTube, telles que rapportées par YouTube.",
+    "views": "{n} vues sur YouTube",
+    "likes": "{n} mentions J'aime sur YouTube"
+  },
   "episodesList": {
     "headerTitle": "Épisodes ({n})",
     "generateButton": "Générer",

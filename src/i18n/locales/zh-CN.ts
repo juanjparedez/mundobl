@@ -144,6 +144,11 @@ const zhCN = {
     "reportedSuccess": "评论已举报。感谢您的告知。",
     "reportError": "无法举报"
   },
+  "seriesStats": {
+    "source": "YouTube官方视频的观看次数和点赞数，由YouTube报告。",
+    "views": "YouTube上{n}次观看",
+    "likes": "YouTube上{n}个赞"
+  },
   "episodesList": {
     "headerTitle": "剧集 ({n})",
     "generateButton": "生成",

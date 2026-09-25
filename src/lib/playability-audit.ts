@@ -152,6 +152,14 @@ export async function runPlayabilityAudit(
             ...(probe.durationSeconds !== null && {
               durationSeconds: probe.durationSeconds,
             }),
+            // `undefined` = el sondeo no vino de la API (no pisar lo que
+            // habia); `null` = el canal oculta el contador (se guarda).
+            ...(probe.viewCount !== undefined && {
+              youtubeViewCount: probe.viewCount,
+            }),
+            ...(probe.likeCount !== undefined && {
+              youtubeLikeCount: probe.likeCount,
+            }),
           },
         })
       );

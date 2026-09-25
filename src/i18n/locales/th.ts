@@ -144,6 +144,11 @@ const th = {
     "reportedSuccess": "รายงานความคิดเห็นแล้ว ขอบคุณที่แจ้งให้เราทราบ",
     "reportError": "ไม่สามารถรายงานได้"
   },
+  "seriesStats": {
+    "source": "ยอดดูและยอดไลก์จากวิดีโอทางการบน YouTube ตามที่ YouTube รายงาน",
+    "views": "ยอดดู {n} ครั้งบน YouTube",
+    "likes": "ยอดไลก์ {n} ครั้งบน YouTube"
+  },
   "episodesList": {
     "headerTitle": "ตอน ({n})",
     "generateButton": "สร้าง",

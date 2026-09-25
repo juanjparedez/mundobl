@@ -507,6 +507,12 @@ model Episode {
   // sondea despues, asi un solo lugar es dueño del dato.
   playback               EpisodePlayback @default(UNKNOWN)
   playbackCheckedAt      DateTime?
+  // Contadores publicos del video en YouTube (`statistics` de videos.list).
+  // Los trae el mismo sondeo de playability, sin cuota extra. Se muestran
+  // como "reproducciones en YouTube", nunca como vistas de MundoBL.
+  // NULL = sin sondear o con el contador oculto por el canal.
+  youtubeViewCount       Int?
+  youtubeLikeCount       Int?
   // Subset de CORE_MARKETS donde el embed NO se puede reproducir. Vacio
   // cuando playback != GEO_BLOCKED. Permite que /ver filtre por el pais
   // real del visitante en vez de asumir AR.
