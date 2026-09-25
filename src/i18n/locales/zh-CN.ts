@@ -2576,7 +2576,9 @@ const zhCN = {
     "notesTitle": "私人笔记",
     "episodeNote": "关于 {code} 的笔记",
     "seriesNote": "剧集笔记",
-    "notesHintNoEpisode": "将剧集标记为已观看即可添加笔记。"
+    "notesHintNoEpisode": "将剧集标记为已观看即可添加笔记。",
+    "episodesAfterLast": "您标记为已观看的剧集之后还有新剧集。",
+    "followAgain": "再次关注"
   },
   "posterPlaceholder": {
     "noImage": "无图片"
@@ -3137,12 +3139,14 @@ const zhCN = {
     "delayedMany": "落后{days}天",
     "tagToday": "今天",
     "tagDelayed": "+{days}天",
-    "airDaysTooltip": "播出日：{days}（{status}）"
+    "airDaysTooltip": "播出日：{days}（{status}）",
+    "upToDate": "您已追到最新一集",
+    "tagUpToDate": "已追到最新"
   },
   "estrenos": {
     "title": "本周播出剧集",
     "subtitle": "根据我们记录的播出日期。我们不确认具体时间，也不确认剧集是否已上线。",
-    "disclaimer": "此时间表涵盖精选目录中当前正在播出的节目。已完结超过四个月的节目将不再显示。",
+    "disclaimer": "此时间表涵盖精选目录中当前正在播出的节目。每部节目自我们添加起显示16周，比一季的播出时间更长。",
     "seeAll": "查看完整一周",
     "today": "今天",
     "moreCount": "还有{count}个",

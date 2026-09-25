@@ -66,9 +66,20 @@
   font-weight: 600;
 }
 
+/* Vista, pero con capitulos despues del ultimo visto: la invitacion a
+   volver a seguirla, sobre un fondo apenas teñido del acento. */
+.tracking-panel__resume {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm);
+  border-radius: var(--border-radius);
+  background: color-mix(in srgb, var(--primary-color) 8%, transparent);
+}
+
 /* Acciones del header: el panel ocupa la columna del poster y el resto
    (compartir, campana, etc.) va al lado. En mobile todo apilado. */
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .tracking-panel {
     padding: var(--spacing-sm) var(--spacing-md);
   }

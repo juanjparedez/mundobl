@@ -2576,7 +2576,9 @@ const it = {
     "notesTitle": "Note private",
     "episodeNote": "Nota per {code}",
     "seriesNote": "Nota serie",
-    "notesHintNoEpisode": "Segna un episodio come visto per aggiungere una nota."
+    "notesHintNoEpisode": "Segna un episodio come visto per aggiungere una nota.",
+    "episodesAfterLast": "Ci sono episodi dopo l'ultimo che hai segnato come visto.",
+    "followAgain": "Seguila di nuovo"
   },
   "posterPlaceholder": {
     "noImage": "Nessuna immagine"
@@ -3137,12 +3139,14 @@ const it = {
     "delayedMany": "{days} giorni indietro",
     "tagToday": "Oggi",
     "tagDelayed": "+{days}g",
-    "airDaysTooltip": "Giorno/i di trasmissione: {days} ({status})"
+    "airDaysTooltip": "Giorno/i di trasmissione: {days} ({status})",
+    "upToDate": "Sei al passo con tutto",
+    "tagUpToDate": "Al passo"
   },
   "estrenos": {
     "title": "Cosa va in onda questa settimana",
     "subtitle": "Basato sul giorno di trasmissione che abbiamo in archivio. Non confermiamo gli orari, né che l'episodio sia già disponibile.",
-    "disclaimer": "Questo programma copre le serie attualmente in onda dal catalogo curato. Le serie terminate più di quattro mesi fa vengono rimosse.",
+    "disclaimer": "Questo programma copre le serie attualmente in onda dal catalogo curato. Ogni serie resta per 16 settimane da quando la aggiungiamo, più di quanto duri una stagione.",
     "seeAll": "Vedi la settimana completa",
     "today": "Oggi",
     "moreCount": "+{count} altro",

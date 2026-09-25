@@ -10,7 +10,7 @@ import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Prisma, PrismaClient } from '../generated/prisma';
 import { isPlayableIn } from './playability';
-import { airingWindowStart } from './airing-schedule';
+import { airingSeriesWhere } from './airing-schedule';
 import { normalizeBasedOn, type BasedOnEntry } from './based-on';
 import {
   HAS_WATCHABLE_EPISODE,
@@ -292,9 +292,7 @@ export async function getAiringSchedule(): Promise<AiringScheduleRow[]> {
       origin: 'CURATED',
       catalogScope: 'PERSONAL',
       visibility: 'VISIBLE',
-      airDays: { not: null },
-      year: { gte: new Date().getUTCFullYear() },
-      createdAt: { gte: airingWindowStart() },
+      ...airingSeriesWhere(),
     },
     select: {
       id: true,
