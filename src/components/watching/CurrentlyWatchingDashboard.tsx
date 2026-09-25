@@ -39,7 +39,6 @@ import {
   type AirDayStatus,
   type AirDayStatusType,
 } from '@/lib/airing-schedule';
-import { trackFunnel } from '@/lib/analytics';
 import { PosterPlaceholder } from '@/components/common/PosterPlaceholder/PosterPlaceholder';
 
 interface WatchingSeriesData {
@@ -268,11 +267,6 @@ export function CurrentlyWatchingDashboard() {
 
       if (!response.ok) throw new Error(t('watchingDashboard.errorRemove'));
 
-      trackFunnel('series_status_set', {
-        status: 'SIN_VER',
-        source: 'watching',
-      });
-
       setWatchingSeries((prev) =>
         prev.filter((item) => item.series.id !== seriesId)
       );
@@ -332,8 +326,6 @@ export function CurrentlyWatchingDashboard() {
         series: { lastWatchedAt: string | null } | null;
       };
 
-      trackFunnel('episode_marked', { source: 'watching', status: 'VISTA' });
-
       // lastWatchedAt real (T03) para que el orden "última actividad"
       // suba esta card sin esperar un reload completo.
       if (data.series?.lastWatchedAt !== undefined) {
@@ -377,8 +369,6 @@ export function CurrentlyWatchingDashboard() {
 
       if (!response.ok)
         throw new Error(t('watchingDashboard.errorMarkEpisode'));
-
-      trackFunnel('series_status_set', { status: 'VISTA', source: 'watching' });
 
       message.success(
         interpolateMessage(t('watchingDashboard.completedMessage'), {
