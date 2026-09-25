@@ -24,7 +24,6 @@ import { SeriesNoteModal } from '../SeriesNoteModal/SeriesNoteModal';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { useMessage } from '@/hooks/useMessage';
-import { trackFunnel } from '@/lib/analytics';
 import { savePendingTrack } from '@/lib/pending-track';
 import './TrackingPanel.css';
 
@@ -165,7 +164,6 @@ export function TrackingPanel({
         body: JSON.stringify({ status: newStatus }),
       });
       if (!response.ok) throw new Error(t('viewStatusToggle.errorUpdating'));
-      trackFunnel('series_status_set', { status: newStatus, source: 'toggle' });
       await refetch();
       message.success(
         successMessage ??
@@ -183,7 +181,6 @@ export function TrackingPanel({
   };
 
   const handleStartTracking = () => {
-    trackFunnel('track_cta_click', { where: 'series_anon' });
     savePendingTrack({
       seriesId,
       upToEpisodeId: pendingEpisodeId,
@@ -218,7 +215,6 @@ export function TrackingPanel({
               seriesId={seriesId}
               seriesTitle={seriesTitle}
               episodes={orderedEpisodes}
-              source="stepper"
               compact
               localOnly
               showNext={false}
@@ -276,7 +272,6 @@ export function TrackingPanel({
           seriesId={seriesId}
           seriesTitle={seriesTitle}
           episodes={orderedEpisodes}
-          source="stepper"
         />
       ) : (
         <div className="tracking-panel__no-episodes">
