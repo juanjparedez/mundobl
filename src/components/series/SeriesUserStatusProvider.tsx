@@ -30,6 +30,8 @@ interface SeriesUserStatusState extends SeriesUserStatusData {
 }
 
 interface SeriesUserStatusContextValue extends SeriesUserStatusState {
+  /** La serie de este provider; null fuera de uno. */
+  seriesId: number | null;
   /** Vuelve a pedir /my-status y reemplaza el valor. No-op sin sesion. Si
    *  se llama dos veces seguidas, solo la respuesta mas reciente aplica. */
   refetch: () => Promise<void>;
@@ -46,6 +48,7 @@ const DEFAULT_STATE: SeriesUserStatusState = {
 
 const DEFAULT_CONTEXT: SeriesUserStatusContextValue = {
   ...DEFAULT_STATE,
+  seriesId: null,
   refetch: async () => {},
 };
 
@@ -127,8 +130,8 @@ export function SeriesUserStatusProvider({
   }, [sessionStatus, load]);
 
   const contextValue = useMemo(
-    () => ({ ...state, refetch: load }),
-    [state, load]
+    () => ({ ...state, seriesId, refetch: load }),
+    [state, seriesId, load]
   );
 
   return (

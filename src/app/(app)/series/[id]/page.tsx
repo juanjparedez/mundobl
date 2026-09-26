@@ -33,6 +33,7 @@ import { PendingTrackApplier } from '@/components/series/PendingTrackApplier/Pen
 import { EditSeriesFab } from './EditSeriesFab/EditSeriesFab';
 import { getSeriesUrl, getVerUrl, parseIdFromSlug } from '@/lib/slug';
 import { isAiringNow } from '@/lib/airing-schedule';
+import { countChapters } from '@/lib/episode-chapters';
 import type { TVSeries } from 'schema-dts';
 import { ReadOutlined, CommentOutlined } from '@/lib/client-icons';
 import './page.css';
@@ -179,10 +180,8 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
 
   const actors = serie.actors?.map((sa) => sa.actor.name) ?? [];
   const directors = serie.directors?.map((sd) => sd.director.name) ?? [];
-  const totalEpisodes = (serie.seasons ?? []).reduce(
-    (acc, s) => acc + (s.episodes?.length ?? 0),
-    0
-  );
+  // Capitulos, no videos: GMMTV sube cada capitulo en partes.
+  const totalEpisodes = countChapters(serie.seasons ?? []);
 
   return (
     <>
