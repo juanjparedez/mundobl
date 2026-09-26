@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 import { findNextEpisode } from '@/lib/episode-progress';
+import { groupIntoChapters } from '@/lib/episode-chapters';
 
 interface RawCountRow {
   name: string;
@@ -410,20 +411,27 @@ export async function GET(request: NextRequest) {
       streakCheck = new Date(streakCheck.getTime() - 86400000);
     }
 
-    // Compute next episode for VIENDO entries
+    // Progreso y siguiente de cada serie en VIENDO, por capitulos (ver
+    // groupIntoChapters): lo mismo que muestran la ficha y /watching.
     const watchingWithNext = currentlyWatching.map((item) => {
-      const ordered = (item.series?.seasons ?? []).flatMap((season) =>
-        season.episodes.map((ep) => ({
-          seasonNumber: season.seasonNumber,
-          episodeNumber: ep.episodeNumber,
-          watched: ep.viewStatus?.[0]?.status === 'VISTA',
-        }))
+      const { chapters } = groupIntoChapters(
+        (item.series?.seasons ?? []).flatMap((season) =>
+          season.episodes.map((ep) => ({
+            id: ep.id,
+            seasonNumber: season.seasonNumber,
+            episodeNumber: ep.episodeNumber,
+            title: ep.title,
+            watched: ep.viewStatus?.[0]?.status === 'VISTA',
+          }))
+        )
       );
-      const totalEpisodes = ordered.length;
-      const watchedEpisodes = ordered.filter((ep) => ep.watched).length;
-      const next = findNextEpisode(ordered, (ep) => ep.watched);
+      const isWatched = (chapter: (typeof chapters)[number]) =>
+        chapter.episodes.every((ep) => ep.watched);
+      const totalEpisodes = chapters.length;
+      const watchedEpisodes = chapters.filter(isWatched).length;
+      const next = findNextEpisode(chapters, isWatched);
       const nextEpisode = next
-        ? { seasonNumber: next.seasonNumber, episodeNumber: next.episodeNumber }
+        ? { seasonNumber: next.seasonNumber, episodeNumber: next.number }
         : null;
 
       const { seasons: _seasons, ...seriesWithoutSeasons } = item.series ?? {

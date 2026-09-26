@@ -11,22 +11,17 @@ import {
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { findFurthestWatchedIndex } from '@/lib/episode-progress';
+import { chapterCode, type TrackedChapter } from '@/lib/episode-chapters';
 import { useMessage } from '@/hooks/useMessage';
 import { useSeriesUserStatus } from '../SeriesUserStatusProvider';
 import './WatchProgressStepper.css';
-
-export interface WatchProgressStepperEpisode {
-  id: number;
-  seasonNumber: number;
-  episodeNumber: number;
-  title?: string | null;
-}
 
 interface WatchProgressStepperProps {
   seriesId: number;
   /** Para el titulo del Popconfirm "¿Terminaste {title}?". */
   seriesTitle: string;
-  episodes: WatchProgressStepperEpisode[];
+  /** Capitulos, no filas: un capitulo de YouTube viene en varias partes. */
+  chapters: TrackedChapter[];
   /** Reutilizable en onboarding/cards con controles mas chicos. */
   compact?: boolean;
   /**
@@ -45,14 +40,13 @@ interface WatchProgressStepperProps {
   airing?: boolean;
 }
 
-export function episodeCode(ep: WatchProgressStepperEpisode): string {
-  return `T${ep.seasonNumber}·E${ep.episodeNumber}`;
-}
+const lastEpisodeId = (chapter: TrackedChapter) =>
+  chapter.episodeIds[chapter.episodeIds.length - 1];
 
 export function WatchProgressStepper({
   seriesId,
   seriesTitle,
-  episodes,
+  chapters,
   compact = false,
   localOnly = false,
   onLocalChange,
@@ -71,29 +65,28 @@ export function WatchProgressStepper({
 
   useEffect(() => {
     setIndex(
-      findFurthestWatchedIndex(
-        episodes,
-        (ep) => episodeStatus[ep.id] === 'VISTA'
+      findFurthestWatchedIndex(chapters, (chapter) =>
+        chapter.episodeIds.every((id) => episodeStatus[id] === 'VISTA')
       )
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps -- re-derivar en cada version (refetch), no solo cuando cambia episodeStatus en si
   }, [version]);
 
-  const total = episodes.length;
+  const total = chapters.length;
   const canGoPrev = index >= 0 && !pending;
   const canGoNext = index < total - 1 && !pending;
-  const nextEpisode = index < total - 1 ? episodes[index + 1] : null;
+  const nextChapter = index < total - 1 ? chapters[index + 1] : null;
 
   const goTo = async (targetIndex: number) => {
     if (targetIndex === index || pending || targetIndex >= total) return;
     // targetIndex -1 = "no vi ninguno": desmarcar desde el primero.
     const unmark = targetIndex < index;
-    const target = unmark ? episodes[targetIndex + 1] : episodes[targetIndex];
-    if (!target) return;
 
     if (localOnly) {
       setIndex(targetIndex);
-      onLocalChange?.(targetIndex < 0 ? null : episodes[targetIndex].id);
+      onLocalChange?.(
+        targetIndex < 0 ? null : lastEpisodeId(chapters[targetIndex])
+      );
       return;
     }
 
@@ -101,19 +94,22 @@ export function WatchProgressStepper({
     setIndex(targetIndex);
     setPending(true);
     try {
-      // Desmarcar: el endpoint deja en SIN_VER los episodios POSTERIORES al
-      // objetivo, asi que para bajar a "targetIndex" se pasa ese episodio y
-      // para bajar a -1 se desmarca todo (objetivo = primero, incluido).
+      // El endpoint trabaja por fila: marca hasta la ultima parte del
+      // capitulo, o desmarca todo lo que viene despues de ella. Para volver
+      // a -1 se desmarca desde la primera fila, incluida.
       const body =
         unmark && targetIndex < 0
           ? {
-              upToEpisodeId: episodes[0].id,
+              upToEpisodeId: chapters[0].episodeIds[0],
               direction: 'unmark',
               inclusive: true,
             }
           : unmark
-            ? { upToEpisodeId: episodes[targetIndex].id, direction: 'unmark' }
-            : { upToEpisodeId: target.id };
+            ? {
+                upToEpisodeId: lastEpisodeId(chapters[targetIndex]),
+                direction: 'unmark',
+              }
+            : { upToEpisodeId: lastEpisodeId(chapters[targetIndex]) };
       const response = await fetch(`/api/series/${seriesId}/progress`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -121,17 +117,16 @@ export function WatchProgressStepper({
       });
       if (!response.ok) throw new Error();
       const data = (await response.json()) as {
-        allWatched: boolean;
+        episodeStatus: Record<number, string>;
         seriesStatus: string;
       };
       await refetch();
-      // Si ya esta marcada como vista no hay nada que preguntar.
-      if (
-        !unmark &&
-        data.allWatched &&
-        !airing &&
-        data.seriesStatus !== 'VISTA'
-      ) {
+      // El allWatched del server cuenta traileres y extras: "terminar" se
+      // mide por capitulos. Si ya esta marcada como vista, no se pregunta.
+      const finished = chapters.every((chapter) =>
+        chapter.episodeIds.every((id) => data.episodeStatus[id] === 'VISTA')
+      );
+      if (!unmark && finished && !airing && data.seriesStatus !== 'VISTA') {
         setFinishedOpen(true);
       }
     } catch {
@@ -162,9 +157,11 @@ export function WatchProgressStepper({
 
   const jumpOptions = [
     { value: -1, label: t('progressStepper.none') },
-    ...episodes.map((ep, i) => ({
+    ...chapters.map((chapter, i) => ({
       value: i,
-      label: ep.title ? `${episodeCode(ep)} — ${ep.title}` : episodeCode(ep),
+      label: chapter.title
+        ? `${chapterCode(chapter)} — ${chapter.title}`
+        : chapterCode(chapter),
     })),
   ];
 
@@ -273,17 +270,17 @@ export function WatchProgressStepper({
 
       {showNext && total > 0 && (
         <div className="watch-progress-stepper__next">
-          {nextEpisode ? (
+          {nextChapter ? (
             <>
               <PlayCircleOutlined aria-hidden />
               <span className="watch-progress-stepper__next-text">
                 {interpolateMessage(t('progressStepper.nextUp'), {
-                  label: episodeCode(nextEpisode),
+                  label: chapterCode(nextChapter),
                 })}
-                {nextEpisode.title && (
+                {nextChapter.title && (
                   <span className="watch-progress-stepper__next-title">
                     {' '}
-                    — {nextEpisode.title}
+                    — {nextChapter.title}
                   </span>
                 )}
               </span>

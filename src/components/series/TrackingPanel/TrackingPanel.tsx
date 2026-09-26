@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Select, Badge, Button } from 'antd';
 import {
   EyeOutlined,
@@ -15,11 +15,7 @@ import { useSession, signIn } from 'next-auth/react';
 import { WATCH_STATUS, WATCH_STATUS_COLORS } from '@/constants/series';
 import type { WatchStatusValue } from '@/constants/series';
 import { useSeriesUserStatus } from '../SeriesUserStatusProvider';
-import {
-  WatchProgressStepper,
-  episodeCode,
-  type WatchProgressStepperEpisode,
-} from '../WatchProgressStepper/WatchProgressStepper';
+import { WatchProgressStepper } from '../WatchProgressStepper/WatchProgressStepper';
 import { EpisodeNoteModal } from '../EpisodeNoteModal/EpisodeNoteModal';
 import { SeriesNoteModal } from '../SeriesNoteModal/SeriesNoteModal';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -27,6 +23,11 @@ import { interpolateMessage } from '@/lib/i18n-format';
 import { useMessage } from '@/hooks/useMessage';
 import { savePendingTrack } from '@/lib/pending-track';
 import { findFurthestWatchedIndex } from '@/lib/episode-progress';
+import {
+  chapterCode,
+  toTrackedChapters,
+  type TrackedChapter,
+} from '@/lib/episode-chapters';
 import './TrackingPanel.css';
 
 type AntStatusColor =
@@ -93,44 +94,43 @@ export function TrackingPanel({
     RETOMAR: t('viewStatusToggle.retomar'),
   };
 
-  const orderedEpisodes: WatchProgressStepperEpisode[] = seasons
-    .flatMap((season) =>
-      (season.episodes ?? []).map((ep) => ({
-        id: ep.id,
-        seasonNumber: season.seasonNumber,
-        episodeNumber: ep.episodeNumber,
-        title: ep.title ?? null,
-      }))
-    )
-    .sort((a, b) =>
-      a.seasonNumber !== b.seasonNumber
-        ? a.seasonNumber - b.seasonNumber
-        : a.episodeNumber - b.episodeNumber
-    );
-  const hasEpisodes = orderedEpisodes.length > 0;
-
-  // ── Notas privadas (T29): del ultimo episodio visto y de la serie ────
-  // El "ultimo visto" sale del provider, asi que despues de un "+" en el
-  // stepper el boton pasa solo a "Nota del Ep. N+1".
-  const furthestIndex = findFurthestWatchedIndex(
-    orderedEpisodes,
-    (ep) => episodeStatus[ep.id] === 'VISTA'
+  const rows = useMemo(
+    () =>
+      seasons.flatMap((season) =>
+        (season.episodes ?? []).map((ep) => ({
+          id: ep.id,
+          seasonNumber: season.seasonNumber,
+          episodeNumber: ep.episodeNumber,
+          title: ep.title ?? null,
+        }))
+      ),
+    [seasons]
   );
-  const lastWatched = orderedEpisodes[furthestIndex] ?? null;
+  // Capitulos, no filas: en YouTube un capitulo viene en varias partes.
+  const chapters = useMemo(() => toTrackedChapters(rows), [rows]);
+  const hasEpisodes = chapters.length > 0;
+
+  // ── Notas privadas (T29): del ultimo capitulo visto y de la serie ────
+  // El "ultimo visto" sale del provider, asi que despues de un "+" en el
+  // stepper el boton pasa solo a "Nota del Ep. N+1". La nota de un
+  // capitulo en partes se guarda en la primera.
+  const furthestIndex = findFurthestWatchedIndex(chapters, (chapter) =>
+    chapter.episodeIds.every((id) => episodeStatus[id] === 'VISTA')
+  );
+  const lastWatched = chapters[furthestIndex] ?? null;
   // Marcada como vista pero con capitulos despues del ultimo visto: le
   // llegaron capitulos nuevos (o la marco vista antes de terminarla). No se
   // le cambia el estado solo; se le ofrece volver a seguirla de un toque.
   const hasEpisodesAfterLast =
-    furthestIndex >= 0 && furthestIndex < orderedEpisodes.length - 1;
+    furthestIndex >= 0 && furthestIndex < chapters.length - 1;
   const [episodesWithNotes, setEpisodesWithNotes] = useState<Set<number>>(
     new Set()
   );
   const [seriesHasNote, setSeriesHasNote] = useState(false);
-  const [noteEpisode, setNoteEpisode] =
-    useState<WatchProgressStepperEpisode | null>(null);
+  const [noteChapter, setNoteChapter] = useState<TrackedChapter | null>(null);
   const [seriesNoteOpen, setSeriesNoteOpen] = useState(false);
   const loggedIn = !!session?.user;
-  const episodeIdsKey = orderedEpisodes.map((ep) => ep.id).join(',');
+  const episodeIdsKey = rows.map((ep) => ep.id).join(',');
 
   useEffect(() => {
     if (!loggedIn) return;
@@ -222,7 +222,7 @@ export function TrackingPanel({
             <WatchProgressStepper
               seriesId={seriesId}
               seriesTitle={seriesTitle}
-              episodes={orderedEpisodes}
+              chapters={chapters}
               compact
               localOnly
               showNext={false}
@@ -296,7 +296,7 @@ export function TrackingPanel({
         <WatchProgressStepper
           seriesId={seriesId}
           seriesTitle={seriesTitle}
-          episodes={orderedEpisodes}
+          chapters={chapters}
           airing={airing}
         />
       ) : (
@@ -349,16 +349,16 @@ export function TrackingPanel({
             <Button
               className="tracking-panel__note-btn"
               icon={
-                episodesWithNotes.has(lastWatched.id) ? (
+                episodesWithNotes.has(lastWatched.episodeIds[0]) ? (
                   <FileTextFilled />
                 ) : (
                   <FileTextOutlined />
                 )
               }
-              onClick={() => setNoteEpisode(lastWatched)}
+              onClick={() => setNoteChapter(lastWatched)}
             >
               {interpolateMessage(t('trackingPanel.episodeNote'), {
-                code: episodeCode(lastWatched),
+                code: chapterCode(lastWatched),
               })}
             </Button>
           )}
@@ -378,22 +378,22 @@ export function TrackingPanel({
       </div>
 
       <EpisodeNoteModal
-        episodeId={noteEpisode?.id ?? null}
+        episodeId={noteChapter?.episodeIds[0] ?? null}
         episodeLabel={
-          noteEpisode
-            ? noteEpisode.title
-              ? `${episodeCode(noteEpisode)} — ${noteEpisode.title}`
-              : episodeCode(noteEpisode)
+          noteChapter
+            ? noteChapter.title
+              ? `${chapterCode(noteChapter)} — ${noteChapter.title}`
+              : chapterCode(noteChapter)
             : undefined
         }
-        open={noteEpisode !== null}
-        onClose={() => setNoteEpisode(null)}
+        open={noteChapter !== null}
+        onClose={() => setNoteChapter(null)}
         onNoteChange={(hasNote) => {
-          if (!noteEpisode) return;
+          if (!noteChapter) return;
           setEpisodesWithNotes((prev) => {
             const next = new Set(prev);
-            if (hasNote) next.add(noteEpisode.id);
-            else next.delete(noteEpisode.id);
+            if (hasNote) next.add(noteChapter.episodeIds[0]);
+            else next.delete(noteChapter.episodeIds[0]);
             return next;
           });
         }}
