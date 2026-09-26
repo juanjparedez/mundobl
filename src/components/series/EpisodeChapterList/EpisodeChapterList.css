@@ -1,0 +1,111 @@
+.episode-chapters {
+  margin-top: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--bg-elevated);
+  border-radius: var(--border-radius-sm);
+}
+
+.episode-chapters__empty {
+  margin: 0;
+  padding: var(--spacing-lg) var(--spacing-md);
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.episode-chapters__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+}
+
+.episode-chapters__item {
+  border-bottom: 1px solid var(--border-color-secondary);
+}
+
+.episode-chapters__item:last-child {
+  border-bottom: none;
+}
+
+.episode-chapters__item--watched {
+  background: color-mix(in srgb, var(--success-color) 4%, transparent);
+}
+
+.episode-chapters__row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  min-height: 52px;
+  padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+.episode-chapters__info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.episode-chapters__title {
+  overflow: hidden;
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.episode-chapters__meta {
+  color: var(--text-tertiary);
+  font-size: var(--font-size-sm);
+}
+
+.episode-chapters__actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 2px;
+}
+
+.episode-chapters__action--active {
+  color: var(--primary-color);
+}
+
+/* Sinopsis alineada con el texto, no con el boton de visto. */
+.episode-chapters__synopsis {
+  margin: 0;
+  padding: 0 var(--spacing-sm) var(--spacing-sm) 72px;
+  color: var(--text-tertiary);
+  font-size: var(--font-size-sm);
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.episode-chapters__synopsis--clamped {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+}
+
+.episode-chapters__comments {
+  padding: 0 var(--spacing-md) var(--spacing-md) 72px;
+}
+
+.episode-chapters__extras {
+  margin: var(--spacing-sm) 0 0;
+  color: var(--text-tertiary);
+  font-size: var(--font-size-sm);
+}
+
+@media (max-width: 600px) {
+  .episode-chapters {
+    padding: var(--spacing-sm);
+  }
+
+  .episode-chapters__synopsis,
+  .episode-chapters__comments {
+    padding-left: var(--spacing-sm);
+  }
+}
