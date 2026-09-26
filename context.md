@@ -328,13 +328,13 @@ trafico del glosario.
 
 **El dato es `Series.airDays`, NO `Episode.airDate`.** Medido el 2026-09-12 en produccion:
 
-| | |
-| --- | --- |
-| Episodios con `airDate` | 1.831 de 6.933 |
-| con `airDate` en los ultimos 7 dias | **2** |
-| en los ultimos 90 dias | 41 — **las 41 de una sola serie** |
-| esa serie | id 655, `USER_EMBED` + `WATCHABLE_ONLY` |
-| Series con `airDays`, `year >= 2026`, creadas hace < 16 semanas | **38, todas `CURATED` + `PERSONAL`** |
+|                                                                 |                                         |
+| --------------------------------------------------------------- | --------------------------------------- |
+| Episodios con `airDate`                                         | 1.831 de 6.933                          |
+| con `airDate` en los ultimos 7 dias                             | **2**                                   |
+| en los ultimos 90 dias                                          | 41 — **las 41 de una sola serie**       |
+| esa serie                                                       | id 655, `USER_EMBED` + `WATCHABLE_ONLY` |
+| Series con `airDays`, `year >= 2026`, creadas hace < 16 semanas | **38, todas `CURATED` + `PERSONAL`**    |
 
 `airDate` es el `publishedAt` de YouTube: un archivo historico de subidas (2022 -> 398 episodios,
 2023 -> 315, 2024 -> 201), no un feed de estrenos. Una parrilla por fecha mostraria 2 episodios de
@@ -845,6 +845,8 @@ Items que se decidió **no** incluir en este slice:
 - **Botón atrás**: [NavigationGuard](src/components/layout/NavigationGuard/NavigationGuard.tsx) inyecta una entrada "padre" cuando se entra desde afuera y la navega con el router en `popstate` (el browser solo cambia la URL). Las rutas de detalle llevan slug: los patrones son `[^/]+`, no `\d+`.
 - **Para ver acá / para seguir**: `navItems.ts` agrupa la navegación por `section` (`watch`, `follow`, `explore`); Sidebar y el cajón "Más" usan los mismos grupos. `SerieData.watchableHere` sale de `getCatalogFilterIndex().watchableIds` (PERSONAL + CURATED + `HAS_WATCHABLE_EPISODE`): casi todo lo de /ver es WATCHABLE_ONLY y no está en el catálogo, así que el chip "Se ve acá" aparece poco y es correcto.
 - **Avisos descartables**: `DismissibleNotice` (design system) + `useDismissedNotice(id)`, un array de ids en `localStorage['mundobl.dismissedNotices']`. Mismo id en dos páginas = mismo aviso. En el servidor cuentan como cerrados.
+- **Seguimiento automático en `/ver`**: `EmbedPlayer` activa la YouTube IFrame API solo cuando recibe `onWatchProgress`. `useYouTubeWatchTime` acumula tiempo reproducido real (los saltos no cuentan), marca una parte al 80 % y avisa `ended` para avanzar únicamente a la parte siguiente del mismo capítulo. Al terminar el capítulo no reproduce otro automáticamente.
+- **Progreso sin sesión**: `localStorage['mundobl.localProgress']` guarda por serie los ids vistos con schema `{ v: 1, series }`, manejado por `src/lib/local-progress.ts`. `SeriesUserStatusProvider` expone `storage: 'account' | 'local'`; `useMarkEpisodes` y el stepper escriben localmente sin mandar al login. `LocalProgressImporter`, montado en `AppLayout`, ofrece copiarlo a la cuenta después de autenticarse y borra cada serie local solo cuando su POST termina bien.
 
 ## Comandos
 
