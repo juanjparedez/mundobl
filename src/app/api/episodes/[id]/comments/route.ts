@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, after } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 import { checkCommentRateLimit } from '@/lib/rate-limit';
@@ -200,36 +200,42 @@ export async function POST(
         const excerpt = content.trim().slice(0, 80);
         const titleLabel = `${episode.season.series.title} (T${episode.season.seasonNumber}E${episode.episodeNumber})`;
 
-        void notifyParticipantsOfNewComment({
-          currentCommentId: comment.id,
-          currentUserId: authResult.userId,
-          target: { episodeId },
-          seriesIdForLink: seriesId,
-          excerpt,
-        });
-
-        void notifyAdminsOfNewComment({
-          currentCommentId: comment.id,
-          currentUserId: authResult.userId,
-          authorName,
-          seriesId,
-          seriesTitle: titleLabel,
-          excerpt,
-          isReply: parsedParentId !== null,
-        });
-
-        if (parsedParentId) {
-          void notifyParentAuthorOfReply({
-            parentCommentId: parsedParentId,
+        after(() =>
+          notifyParticipantsOfNewComment({
             currentCommentId: comment.id,
             currentUserId: authResult.userId,
-            authorName: comment.isAnonymous
-              ? 'Un usuario anónimo'
-              : rawAuthorName,
+            target: { episodeId },
+            seriesIdForLink: seriesId,
+            excerpt,
+          })
+        );
+
+        after(() =>
+          notifyAdminsOfNewComment({
+            currentCommentId: comment.id,
+            currentUserId: authResult.userId,
+            authorName,
             seriesId,
             seriesTitle: titleLabel,
             excerpt,
-          });
+            isReply: parsedParentId !== null,
+          })
+        );
+
+        if (parsedParentId) {
+          after(() =>
+            notifyParentAuthorOfReply({
+              parentCommentId: parsedParentId,
+              currentCommentId: comment.id,
+              currentUserId: authResult.userId,
+              authorName: comment.isAnonymous
+                ? 'Un usuario anónimo'
+                : rawAuthorName,
+              seriesId,
+              seriesTitle: titleLabel,
+              excerpt,
+            })
+          );
         }
       }
     }
