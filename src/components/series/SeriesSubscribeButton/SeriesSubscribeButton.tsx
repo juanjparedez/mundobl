@@ -1,23 +1,19 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Tooltip } from 'antd';
 import { BellOutlined, BellFilled } from '@ant-design/icons';
 import { useSession, signIn } from 'next-auth/react';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { IconToggle } from '@/components/design-system';
 import { useSeriesUserStatus } from '../SeriesUserStatusProvider';
-import './SeriesSubscribeButton.css';
 
 interface SeriesSubscribeButtonProps {
   seriesId: number;
 }
 
-// El estado inicial de suscripcion ya no llega como prop calculada en el
-// servidor con `await auth()` (/series/[id] dejo de llamarla): se hidrata
-// aca via SeriesUserStatusProvider. Fuera de esa pagina (p.ej. /ver/[id])
-// no hay Provider ancestro y el context cae al default `subscribed: false`
-// — misma semantica que ese caller ya usaba antes (hardcodeaba `false`).
+// El estado de suscripcion se hidrata via SeriesUserStatusProvider, que
+// montan la ficha y /ver/[id] (ninguna de las dos llama `await auth()`).
 export function SeriesSubscribeButton({
   seriesId,
 }: SeriesSubscribeButtonProps) {
@@ -39,16 +35,15 @@ export function SeriesSubscribeButton({
 
   if (status !== 'authenticated') {
     return (
-      <Tooltip title={t('seriesSubscribeButton.signInTooltip')}>
-        <button
-          type="button"
-          className="series-quick-actions__item series-subscribe-btn"
-          onClick={() => signIn()}
-          aria-label={t('seriesSubscribeButton.subscribeAriaLabel')}
-        >
-          <BellOutlined />
-        </button>
-      </Tooltip>
+      <IconToggle
+        label={t('seriesSubscribeButton.signInTooltip')}
+        icon={<BellOutlined />}
+        onClick={() =>
+          void signIn('google', {
+            callbackUrl: window.location.pathname + window.location.search,
+          })
+        }
+      />
     );
   }
 
@@ -81,19 +76,12 @@ export function SeriesSubscribeButton({
     : t('seriesSubscribeButton.unsubscribedTooltip');
 
   return (
-    <Tooltip title={tooltip}>
-      <button
-        type="button"
-        className={`series-quick-actions__item series-subscribe-btn${
-          subscribed ? ' series-subscribe-btn--active' : ''
-        }`}
-        onClick={handleToggle}
-        disabled={loading}
-        aria-label={tooltip}
-        aria-pressed={subscribed}
-      >
-        {subscribed ? <BellFilled /> : <BellOutlined />}
-      </button>
-    </Tooltip>
+    <IconToggle
+      label={tooltip}
+      icon={subscribed ? <BellFilled /> : <BellOutlined />}
+      pressed={subscribed}
+      disabled={loading}
+      onClick={() => void handleToggle()}
+    />
   );
 }
