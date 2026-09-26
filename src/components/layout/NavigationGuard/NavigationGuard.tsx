@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 /**
  * NavigationGuard — garantiza que el boton "atras" del browser (o el
@@ -28,6 +28,7 @@ import { usePathname } from 'next/navigation';
  */
 
 const HISTORY_INJECT_KEY = '__mb_back_injected';
+const FALLBACK_ENTRY_KEY = '__mb_fallback_entry';
 const STORAGE_KEY = '__mb_first_nav_handled';
 
 interface FallbackRule {
@@ -39,12 +40,17 @@ interface FallbackRule {
 // sobre pathname. Si el match es de detalle, el fallback es la lista o
 // el "padre logico" mas util — NO necesariamente el inmediato.
 const FALLBACK_RULES: FallbackRule[] = [
-  // Detalle publico — todos al catalogo (es el "home" del catalogo)
-  { match: (p) => /^\/series\/\d+$/.test(p), fallback: '/catalogo' },
-  { match: (p) => /^\/directores\/\d+$/.test(p), fallback: '/catalogo' },
-  { match: (p) => /^\/actores\/\d+$/.test(p), fallback: '/catalogo' },
-  { match: (p) => /^\/tags\/\d+$/.test(p), fallback: '/catalogo' },
-  { match: (p) => /^\/catalogo\/\d+/.test(p), fallback: '/catalogo' },
+  // Detalle publico. Las URLs llevan slug (`/series/103-titulo`), por eso
+  // el segmento es `[^/]+` y no `\d+`.
+  { match: (p) => /^\/series\/[^/]+$/.test(p), fallback: '/catalogo' },
+  { match: (p) => /^\/catalogo\/[^/]+/.test(p), fallback: '/catalogo' },
+  { match: (p) => /^\/actores\/[^/]+$/.test(p), fallback: '/actores' },
+  { match: (p) => /^\/directores\/[^/]+$/.test(p), fallback: '/directores' },
+  {
+    match: (p) => /^\/productoras\/[^/]+$/.test(p),
+    fallback: '/productoras',
+  },
+  { match: (p) => /^\/tags\/[^/]+$/.test(p), fallback: '/catalogo' },
 
   // Noticias detalle → lista de noticias
   { match: (p) => /^\/noticias\/[^/]+$/.test(p), fallback: '/noticias' },
@@ -94,6 +100,20 @@ function getFallback(pathname: string): string | null {
 
 export function NavigationGuard() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  // Al volver a la entrada sintetica el browser solo cambia la URL: Next
+  // restaura el arbol de la pagina que teniamos abierta y la pantalla no se
+  // movia (URL en `/`, contenido del catalogo). Aca se navega de verdad.
+  useEffect(() => {
+    const onPopState = (event: PopStateEvent) => {
+      const state = event.state as Record<string, unknown> | null;
+      if (!state?.[FALLBACK_ENTRY_KEY]) return;
+      router.replace(window.location.pathname + window.location.search);
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, [router]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -135,9 +155,10 @@ export function NavigationGuard() {
     //    sin re-render porque no usamos router), luego push de la URL
     //    actual de vuelta. Resultado en history:
     //      [external, fallback (sintetico), currentUrl]
-    //    Back nativo → URL pasa a fallback → Next.js navega normal.
+    //    Back nativo → URL pasa a fallback → el listener de popstate de
+    //    arriba navega con el router.
     const currentUrl = window.location.pathname + window.location.search;
-    window.history.replaceState(null, '', fallback);
+    window.history.replaceState({ [FALLBACK_ENTRY_KEY]: true }, '', fallback);
     window.history.pushState({ [HISTORY_INJECT_KEY]: true }, '', currentUrl);
   }, [pathname]);
 

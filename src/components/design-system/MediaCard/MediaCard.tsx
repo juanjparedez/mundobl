@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import type { CSSProperties, KeyboardEvent, ReactNode } from 'react';
 import Image from 'next/image';
 import { EyeOutlined } from '@ant-design/icons';
@@ -93,10 +94,14 @@ export function MediaCard({
     }
   };
 
+  // Sin carátula (o con una URL rota) va un cartel con el título, no un
+  // recuadro vacío.
+  const [failedImageUrl, setFailedImageUrl] = useState<string | null>(null);
+
   const coverAndBody = (
     <>
       <div className="mb-media-card__cover">
-        {imageUrl ? (
+        {imageUrl && imageUrl !== failedImageUrl ? (
           <Image
             src={imageUrl}
             alt={imageAlt}
@@ -104,9 +109,14 @@ export function MediaCard({
             sizes="(max-width: 480px) 50vw, (max-width: 1200px) 31vw, 24vw"
             unoptimized={unoptimizedImage}
             style={{ objectFit: 'cover' }}
+            onError={() => setFailedImageUrl(imageUrl)}
           />
         ) : (
-          <div className="mb-media-card__cover-placeholder" />
+          <div className="mb-media-card__cover-placeholder" aria-hidden="true">
+            <span className="mb-media-card__cover-placeholder-title">
+              {imageAlt}
+            </span>
+          </div>
         )}
       </div>
       <div className="mb-media-card__body">
