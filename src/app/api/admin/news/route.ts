@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, after } from 'next/server';
 import { Prisma } from '@/generated/prisma';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { logAction } from '@/lib/access-log';
+import { notifyNewsPublished, revalidateNews } from '@/lib/news-publish';
 
 const STATUS_VALUES = [
   'DRAFT',
@@ -121,6 +122,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const publishing = statusToSet === 'PUBLISHED';
     const news = await prisma.news.create({
       data: {
         title: body.title.trim(),
@@ -129,8 +131,16 @@ export async function POST(request: NextRequest) {
         sourceName: body.sourceName.trim(),
         sourceLogo: body.sourceLogo?.trim() || null,
         imageUrl: body.imageUrl?.trim() || null,
-        publishedAt: body.publishedAt ? new Date(body.publishedAt) : null,
+        publishedAt: body.publishedAt
+          ? new Date(body.publishedAt)
+          : publishing
+            ? new Date()
+            : null,
         status: statusToSet,
+        ...(publishing && {
+          approvedById: authResult.userId,
+          approvedAt: new Date(),
+        }),
         aiGenerated: body.aiGenerated ?? true,
         florNotes: body.florNotes?.trim() || null,
         relatedSeriesId: body.relatedSeriesId ?? null,
@@ -145,6 +155,11 @@ export async function POST(request: NextRequest) {
         tags: { include: { tag: { select: { id: true, name: true } } } },
       },
     });
+
+    if (publishing) {
+      revalidateNews(news);
+      after(() => notifyNewsPublished(news));
+    }
 
     logAction('CREATE', request.nextUrl.pathname, 'POST', authResult.userId);
     return NextResponse.json({ news }, { status: 201 });
@@ -183,12 +198,24 @@ export async function PATCH(request: NextRequest) {
       tagIds?: number[];
     };
 
+    const current = await prisma.news.findUnique({
+      where: { id },
+      select: {
+        status: true,
+        publishedAt: true,
+        originalUrl: true,
+        sourceName: true,
+        relatedSeries: { select: { id: true, title: true } },
+      },
+    });
+    if (!current) {
+      return NextResponse.json({ error: 'No encontrada' }, { status: 404 });
+    }
+    const publishing =
+      body.status === 'PUBLISHED' && current.status !== 'PUBLISHED';
+
     // Guardrail: no publicar sin fuente
     if (body.status === 'PUBLISHED') {
-      const current = await prisma.news.findUnique({
-        where: { id },
-        select: { originalUrl: true, sourceName: true },
-      });
       const effectiveUrl = body.originalUrl?.trim() ?? current?.originalUrl;
       const effectiveName = body.sourceName?.trim() ?? current?.sourceName;
       if (!effectiveUrl || !effectiveName) {
@@ -225,6 +252,13 @@ export async function PATCH(request: NextRequest) {
     if (body.status && STATUS_VALUES.includes(body.status as StatusValue)) {
       updateData.status = body.status as StatusValue;
     }
+    if (publishing) {
+      updateData.approvedBy = { connect: { id: authResult.userId } };
+      updateData.approvedAt = new Date();
+      if (!current.publishedAt && body.publishedAt === undefined) {
+        updateData.publishedAt = new Date();
+      }
+    }
 
     const news = await prisma.$transaction(async (tx) => {
       if (body.tagIds !== undefined) {
@@ -246,6 +280,16 @@ export async function PATCH(request: NextRequest) {
         },
       });
     });
+
+    // Publicada antes o ahora: lo publico cambio. Si cambio de serie, la
+    // ficha vieja tambien.
+    if (current.status === 'PUBLISHED' || news.status === 'PUBLISHED') {
+      revalidateNews(news);
+      if (current.relatedSeries?.id !== news.relatedSeries?.id) {
+        revalidateNews({ ...news, relatedSeries: current.relatedSeries });
+      }
+    }
+    if (publishing) after(() => notifyNewsPublished(news));
 
     logAction('UPDATE', request.nextUrl.pathname, 'PATCH', authResult.userId);
     return NextResponse.json({ news });
@@ -269,7 +313,11 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
     }
 
-    await prisma.news.delete({ where: { id } });
+    const deleted = await prisma.news.delete({
+      where: { id },
+      include: { relatedSeries: { select: { id: true, title: true } } },
+    });
+    if (deleted.status === 'PUBLISHED') revalidateNews(deleted);
     logAction('DELETE', request.nextUrl.pathname, 'DELETE', authResult.userId);
     return NextResponse.json({ success: true });
   } catch (error) {

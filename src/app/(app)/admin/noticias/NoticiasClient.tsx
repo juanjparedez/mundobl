@@ -14,6 +14,8 @@ import {
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import {
+  CheckOutlined,
+  CloseOutlined,
   DeleteOutlined,
   EditOutlined,
   EyeOutlined,
@@ -74,7 +76,11 @@ interface FormValues {
   status: NewsStatus;
   aiGenerated: boolean;
   florNotes?: string;
+  relatedSeriesId?: number | null;
+  tagIds?: number[];
 }
+
+type Option = { value: number; label: string };
 
 interface AiPanelValues {
   url: string;
@@ -103,7 +109,11 @@ export function NoticiasClient() {
   const [news, setNews] = useState<NewsRow[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [view, setView] = useState<ViewMode>('all');
+  // Lo que llega solo (ingesta diaria) entra en REVIEW: es lo que se viene
+  // a mirar, asi que la pagina abre ahi.
+  const [view, setView] = useState<ViewMode>('REVIEW');
+  const [seriesOptions, setSeriesOptions] = useState<Option[]>([]);
+  const [tagOptions, setTagOptions] = useState<Option[]>([]);
   const [search, setSearch] = useState('');
   const [searchInput, setSearchInput] = useState('');
   const [loading, setLoading] = useState(true);
@@ -149,6 +159,27 @@ export function NoticiasClient() {
     fetchData();
   }, [fetchData]);
 
+  useEffect(() => {
+    fetch('/api/tags')
+      .then((res) => (res.ok ? res.json() : []))
+      .then((tags: Array<{ id: number; name: string }>) =>
+        setTagOptions(tags.map((tag) => ({ value: tag.id, label: tag.name })))
+      )
+      .catch(() => {});
+  }, []);
+
+  const searchSeries = (query: string) => {
+    if (query.trim().length < 2) return;
+    fetch(`/api/series/search?q=${encodeURIComponent(query)}`)
+      .then((res) => (res.ok ? res.json() : []))
+      .then((rows: Array<{ id: number; title: string }>) =>
+        setSeriesOptions(
+          rows.map((row) => ({ value: row.id, label: row.title }))
+        )
+      )
+      .catch(() => {});
+  };
+
   // ─── Status change ──────────────────────────────────────────────────────────
 
   const handleStatusChange = async (id: number, newStatus: NewsStatus) => {
@@ -164,8 +195,13 @@ export function NoticiasClient() {
       }
       message.success(t('newsAdmin.statusUpdatedSuccess'));
       setNews((prev) =>
-        prev.map((n) => (n.id === id ? { ...n, status: newStatus } : n))
+        view !== 'all' && view !== newStatus
+          ? prev.filter((n) => n.id !== id)
+          : prev.map((n) => (n.id === id ? { ...n, status: newStatus } : n))
       );
+      if (view !== 'all' && view !== newStatus) {
+        setTotal((prev) => Math.max(prev - 1, 0));
+      }
     } catch (error) {
       const msg =
         error instanceof Error
@@ -214,7 +250,14 @@ export function NoticiasClient() {
       status: row.status,
       aiGenerated: row.aiGenerated,
       florNotes: row.florNotes ?? undefined,
+      relatedSeriesId: row.relatedSeries?.id ?? null,
+      tagIds: row.tags.map((item) => item.tag.id),
     });
+    setSeriesOptions(
+      row.relatedSeries
+        ? [{ value: row.relatedSeries.id, label: row.relatedSeries.title }]
+        : []
+    );
     setIsFormOpen(true);
   };
 
@@ -230,7 +273,11 @@ export function NoticiasClient() {
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
+        body: JSON.stringify({
+          ...values,
+          relatedSeriesId: values.relatedSeriesId ?? null,
+          tagIds: values.tagIds ?? [],
+        }),
       });
       if (!res.ok) {
         const err = (await res.json()) as { error?: string };
@@ -363,6 +410,27 @@ export function NoticiasClient() {
       width: 120,
       render: (_: unknown, row: NewsRow) => (
         <Space size="small">
+          {row.status === 'REVIEW' && (
+            <>
+              <Tooltip title={t('newsAdmin.publishButton')}>
+                <Button
+                  type="primary"
+                  size="small"
+                  icon={<CheckOutlined />}
+                  aria-label={t('newsAdmin.publishButton')}
+                  onClick={() => void handleStatusChange(row.id, 'PUBLISHED')}
+                />
+              </Tooltip>
+              <Tooltip title={t('newsAdmin.discardButton')}>
+                <Button
+                  size="small"
+                  icon={<CloseOutlined />}
+                  aria-label={t('newsAdmin.discardButton')}
+                  onClick={() => void handleStatusChange(row.id, 'REJECTED')}
+                />
+              </Tooltip>
+            </>
+          )}
           <Button
             icon={<EyeOutlined />}
             size="small"
@@ -650,6 +718,35 @@ export function NoticiasClient() {
                         label,
                       })
                     )}
+                  />
+                </Form.Item>
+              </div>
+
+              <div className="noticias-admin__form-row">
+                <Form.Item
+                  label={t('newsAdmin.relatedSeriesLabel')}
+                  name="relatedSeriesId"
+                  style={{ flex: 1 }}
+                >
+                  <Select
+                    showSearch
+                    allowClear
+                    filterOption={false}
+                    onSearch={searchSeries}
+                    options={seriesOptions}
+                    placeholder={t('newsAdmin.relatedSeriesPlaceholder')}
+                  />
+                </Form.Item>
+                <Form.Item
+                  label={t('newsAdmin.tagsLabel')}
+                  name="tagIds"
+                  style={{ flex: 1 }}
+                >
+                  <Select
+                    mode="multiple"
+                    allowClear
+                    optionFilterProp="label"
+                    options={tagOptions}
                   />
                 </Form.Item>
               </div>
