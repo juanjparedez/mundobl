@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
+import { AntdStyleOrder } from '@/lib/providers/AntdStyleOrder';
 import { AntdApp } from '@/lib/providers/AntdApp';
 import { ThemeProvider } from '@/lib/providers/ThemeProvider';
 import { SessionProvider } from '@/lib/providers/SessionProvider';
@@ -162,6 +163,7 @@ export default function RootLayout({
         <NavigationGuard />
         <SessionProvider>
           <AntdRegistry>
+            <AntdStyleOrder />
             <LocaleProvider>
               <ThemeProvider>
                 <SpoilerFreeProvider>

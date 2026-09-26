@@ -1,10 +1,26 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { ROUTES } from '@/constants/navigation';
 import { getUserSummary } from '@/lib/user-summary-client';
+
+/**
+ * Solo si el documento se abrio en la home (link, marcador, URL tipeada).
+ * Llegar con "atras", recargar o volver desde otra pagina del sitio es una
+ * decision de estar en la landing: redirigir ahi te sacaba de donde ibas.
+ */
+function isFreshEntryToHome(): boolean {
+  const [nav] = performance.getEntriesByType(
+    'navigation'
+  ) as PerformanceNavigationTiming[];
+  if (!nav || nav.type !== 'navigate') return false;
+  return new URL(nav.name).pathname === window.location.pathname;
+}
+
+// Una vez por documento: volver a `/` con navegacion interna no redirige.
+let redirectChecked = false;
 
 /**
  * Para quien ya sigue series, la primera pantalla es su lista: la landing es
@@ -17,18 +33,17 @@ import { getUserSummary } from '@/lib/user-summary-client';
 export function LoggedInHomeRedirect() {
   const router = useRouter();
   const { status } = useSession();
-  const alreadyRan = useRef(false);
 
   useEffect(() => {
-    if (status !== 'authenticated' || alreadyRan.current) return;
+    if (status !== 'authenticated' || redirectChecked) return;
+    redirectChecked = true;
+    if (!isFreshEntryToHome()) return;
 
     // `?stay=1` se lee de window y no con useSearchParams(): en una pagina
     // prerenderizada ese hook obliga a un Suspense boundary y, sin el, saca
     // a la home del render estatico. Aca ya estamos en el cliente, post
     // mount, asi que location alcanza.
     if (new URLSearchParams(window.location.search).get('stay') === '1') return;
-
-    alreadyRan.current = true;
 
     let cancelled = false;
     getUserSummary().then((summary) => {

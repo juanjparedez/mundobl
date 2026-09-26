@@ -284,6 +284,8 @@ export function getEmbedInfo(
 }
 
 // ---- Auto-generación de thumbnail ----
+// mqdefault y no hqdefault: hqdefault es 4:3 con franjas negras arriba y
+// abajo, que en una carátula vertical quedan a la vista.
 
 export function getAutoThumbnailUrl(
   platform: Platform,
@@ -293,7 +295,7 @@ export function getAutoThumbnailUrl(
     case 'YouTube': {
       const videoId = getYouTubeId(url);
       return videoId
-        ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
+        ? `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`
         : null;
     }
     default:
