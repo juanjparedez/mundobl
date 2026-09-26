@@ -1,0 +1,5 @@
+.watch-date-editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}

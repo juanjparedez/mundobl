@@ -1,3 +1,6 @@
+import { getPublicWriterCredits } from '@/lib/database';
+import { WriterCredits } from '@/components/series/WriterCredits/WriterCredits';
+import { loadLocaleMessages } from '@/i18n/messages';
 import { cache } from 'react';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
@@ -39,7 +42,12 @@ export async function generateMetadata({
   const seriesId = parseIdFromSlug(id);
   if (isNaN(seriesId)) return {};
   const serie = await getWatchableSeriesByIdCached(seriesId);
-  if (!serie) return {};
+  if (
+    !serie ||
+    !serie.seasons.some((season) => season.episodes.some(isWatchableEpisode))
+  )
+    notFound();
+  const labels = (await loadLocaleMessages('es')).contentMetadata;
 
   const origTitle =
     serie.originalTitle && serie.originalTitle.trim() !== serie.title.trim()
@@ -47,28 +55,17 @@ export async function generateMetadata({
       : '';
   const yearPart = serie.year ? ` (${serie.year})` : '';
 
-  const title = `Ver ${serie.title}${origTitle}${yearPart} Online Sub Español | MundoBL`;
-  const description =
-    serie.synopsis?.slice(0, 160) ??
-    `Mirá ${serie.title}${origTitle} desde el canal oficial de su productora, en MundoBL.`;
+  const title = `${serie.title}${origTitle}${yearPart} | ${labels.watchTitle} | MundoBL`;
+  const description = `${serie.title}. ${labels.watchDescription}`;
 
   const canonicalUrl = getVerUrl(serie.id, serie.title);
 
-  const keywords = [
-    serie.title,
-    serie.originalTitle,
-    `ver ${serie.title}`,
-    `${serie.title} sub espanol`,
-    `${serie.title} capitulos completos`,
-    `${serie.title} online`,
-    'ver serie BL online',
-    'serie BL sub espanol',
-    'doramas BL',
-    serie.country?.name ? `BL ${serie.country.name}` : null,
-  ].filter(Boolean) as string[];
+  const keywords = [serie.title, serie.originalTitle].filter(
+    Boolean
+  ) as string[];
 
   return {
-    title,
+    title: { absolute: title },
     description,
     keywords,
     alternates: { canonical: canonicalUrl },
@@ -209,6 +206,7 @@ export default async function VerSeriePage({ params }: PageProps) {
             }}
             seasons={seasons}
           />
+          <WriterCredits credits={await getPublicWriterCredits(serie.id)} />
         </SeriesUserStatusProvider>
       </div>
     </>

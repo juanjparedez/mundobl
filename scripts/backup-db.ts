@@ -94,6 +94,15 @@ const MODELS = [
     delegate: (client: Prisma.TransactionClient) => client.director.findMany(),
   },
   {
+    name: 'Writer',
+    delegate: (client: Prisma.TransactionClient) => client.writer.findMany(),
+  },
+  {
+    name: 'SeriesWriter',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.seriesWriter.findMany(),
+  },
+  {
     name: 'SeriesActor',
     delegate: (client: Prisma.TransactionClient) =>
       client.seriesActor.findMany(),
@@ -149,6 +158,11 @@ const MODELS = [
     name: 'ViewStatus',
     delegate: (client: Prisma.TransactionClient) =>
       client.viewStatus.findMany(),
+  },
+  {
+    name: 'TrackingEvent',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.trackingEvent.findMany(),
   },
   {
     name: 'FeatureRequest',

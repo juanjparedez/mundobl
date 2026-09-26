@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/database';
+import { prisma, restoreTrackingBackup } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 
 /**
@@ -15,8 +15,9 @@ import { requireAuth } from '@/lib/auth-helpers';
  *     dentro del payload se ignora. Esto bloquea "soy el user 42" con
  *     un JSON modificado.
  *  2. Campos privilegiados se filtran: role, email, emailVerified,
- *     image, id, createdAt, updatedAt — todos los strip antes de
- *     insertar. role nunca puede escalarse via import.
+ *     image, id — todos los strip antes de insertar. Las notas privadas
+ *     conservan sus fechas; los campos de cuenta nunca se restauran.
+ *     role nunca puede escalarse via import.
  *  3. Validacion estricta del shape: schemaVersion debe ser 1; cada
  *     section debe ser array de objetos con tipos esperados; si algo
  *     no encaja se reporta y se skip ese item (no error fatal).
@@ -87,7 +88,14 @@ export async function POST(req: NextRequest) {
 
   let payload: unknown;
   try {
-    payload = await req.json();
+    const body = await req.text();
+    if (Buffer.byteLength(body, 'utf8') > MAX_BODY_BYTES) {
+      return NextResponse.json(
+        { error: 'Payload too large (max 5MB)' },
+        { status: 413 }
+      );
+    }
+    payload = JSON.parse(body) as unknown;
   } catch {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
   }
@@ -173,63 +181,12 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // ─── viewStatuses ─────────────────────────────────────────────────
-  {
-    const items = asArray<Record<string, unknown>>(payload.viewStatuses);
-    const toInsert: {
-      userId: string;
-      seriesId: number;
-      status: 'SIN_VER' | 'VIENDO' | 'VISTA' | 'ABANDONADA' | 'RETOMAR';
-      watchedDate: Date | null;
-    }[] = [];
-    const validStatuses = new Set([
-      'SIN_VER',
-      'VIENDO',
-      'VISTA',
-      'ABANDONADA',
-      'RETOMAR',
-    ]);
-    for (const it of items) {
-      if (!isObject(it)) continue;
-      const seriesId = asInt(it.seriesId);
-      const status = asString(it.status);
-      if (!seriesId || !status || !validStatuses.has(status)) {
-        summary.errors.push(`viewStatuses: invalid item`);
-        continue;
-      }
-      if (!seriesIds.has(seriesId)) {
-        summary.missingRefs.push({
-          section: 'viewStatuses',
-          reason: 'series-not-found',
-          ref: { seriesId },
-        });
-        continue;
-      }
-      const watchedDate = asString(it.watchedDate);
-      toInsert.push({
-        userId,
-        seriesId,
-        status: status as
-          | 'SIN_VER'
-          | 'VIENDO'
-          | 'VISTA'
-          | 'ABANDONADA'
-          | 'RETOMAR',
-        watchedDate: watchedDate ? new Date(watchedDate) : null,
-      });
-    }
-    if (!dryRun && toInsert.length > 0) {
-      const result = await prisma.viewStatus.createMany({
-        data: toInsert,
-        skipDuplicates: true,
-      });
-      summary.imported.viewStatuses = result.count;
-      summary.skipped.viewStatuses = toInsert.length - result.count;
-    } else {
-      summary.imported.viewStatuses = toInsert.length;
-      summary.skipped.viewStatuses = 0;
-    }
-  }
+  // Progress at all three levels and private notes share validation and merge semantics.
+  const tracking = await restoreTrackingBackup(userId, payload, dryRun);
+  Object.assign(summary.imported, tracking.imported);
+  Object.assign(summary.skipped, tracking.skipped);
+  summary.missingRefs.push(...tracking.missingRefs);
+  summary.errors.push(...tracking.errors);
 
   // ─── favorites ────────────────────────────────────────────────────
   {
@@ -432,5 +389,8 @@ export async function POST(req: NextRequest) {
     summary.skipped.suggestedSites = skipped;
   }
 
-  return NextResponse.json(summary, { status: 200 });
+  return NextResponse.json(summary, {
+    status: 200,
+    headers: { 'Cache-Control': 'no-store' },
+  });
 }

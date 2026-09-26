@@ -1,5 +1,7 @@
 'use client';
 
+import { getContentUrl } from '@/lib/slug';
+
 import { PlayCircleOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -56,7 +58,7 @@ export function CurrentlyWatchingWidget({
           return (
             <Link
               key={seriesId}
-              href={`/series/${series.id}`}
+              href={getContentUrl(series)}
               className="mb-cw-shelf__card"
               role="listitem"
             >

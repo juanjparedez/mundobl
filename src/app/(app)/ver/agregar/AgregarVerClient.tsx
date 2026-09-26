@@ -13,6 +13,9 @@ import {
   CloseCircleOutlined,
 } from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { unresolvedContributionNames } from '@/lib/contribution-metadata';
+import { ContributionMetadataField } from '@/components/series/ContributionMetadataField/ContributionMetadataField';
 import { validateStreamingUrl, PLATFORM_COLORS } from '@/lib/embed-helpers';
 // Importamos del modulo "-shared" porque user-embed-preview.ts trae
 // `prisma` (cache) que no compila en client bundle ("Module not found: tls"
@@ -73,6 +76,12 @@ interface FormValues {
 }
 
 export function AgregarVerClient() {
+  const { t } = useLocale();
+  const metadataLabels = {
+    search: t('contributionMetadata.search'),
+    error: t('contributionMetadata.loadError'),
+    retry: t('trackingWorkspace.retry'),
+  };
   const router = useRouter();
   const message = useMessage();
   const [form] = Form.useForm<FormValues>();
@@ -80,6 +89,7 @@ export function AgregarVerClient() {
   const [preview, setPreview] = useState<EmbedPreview | null>(null);
   const [loadingPreview, setLoadingPreview] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [unresolvedNames, setUnresolvedNames] = useState<string[] | null>(null);
 
   const validation = useMemo(() => {
     if (!url.trim()) return null;
@@ -178,6 +188,7 @@ export function AgregarVerClient() {
   async function handleSubmit(values: FormValues) {
     if (!preview) return;
     setSubmitting(true);
+    setUnresolvedNames(null);
     try {
       const res = await fetch('/api/user/series/embed/confirm', {
         method: 'POST',
@@ -219,6 +230,11 @@ export function AgregarVerClient() {
         return;
       }
       if (!res.ok) {
+        const unresolved = unresolvedContributionNames(data);
+        if (unresolved) {
+          setUnresolvedNames(unresolved);
+          return;
+        }
         message.error(data.error || 'No se pudo guardar la serie.');
         return;
       }
@@ -240,6 +256,7 @@ export function AgregarVerClient() {
 
   return (
     <div className="ver-agregar-content">
+      <Alert type="info" showIcon title={t('contributionMetadata.policy')} />
       <header className="ver-agregar-hero">
         <h1 className="ver-agregar-hero__title">
           <PlayCircleFilled /> Agregar serie embebida
@@ -519,16 +536,22 @@ export function AgregarVerClient() {
                 />
               </Form.Item>
               <Form.Item label="Productora" name="productionCompanyName">
-                <Input />
+                <ContributionMetadataField
+                  kind="productionCompanies"
+                  labels={metadataLabels}
+                />
               </Form.Item>
               <Form.Item label="Idioma original" name="originalLanguageName">
-                <Input placeholder="Tailandes, Coreano..." />
+                <ContributionMetadataField
+                  kind="languages"
+                  labels={metadataLabels}
+                />
               </Form.Item>
               <Form.Item label="Doblajes / Subs" name="dubbingLanguageNames">
-                <Select
-                  mode="tags"
-                  tokenSeparators={[',']}
-                  placeholder="Ej: Espanol, Ingles"
+                <ContributionMetadataField
+                  kind="languages"
+                  multiple
+                  labels={metadataLabels}
                 />
               </Form.Item>
             </div>
@@ -538,26 +561,26 @@ export function AgregarVerClient() {
             </Form.Item>
 
             <Form.Item label="Cast principal" name="actorNames">
-              <Select
-                mode="tags"
-                tokenSeparators={[',']}
-                placeholder="Ej: Bright Vachirawit, Win Metawin"
+              <ContributionMetadataField
+                kind="actors"
+                multiple
+                labels={metadataLabels}
               />
             </Form.Item>
 
             <div className="ver-agregar-form__grid">
               <Form.Item label="Tags" name="tagNames">
-                <Select
-                  mode="tags"
-                  tokenSeparators={[',']}
-                  placeholder="Ej: Universitarios, Slow burn"
+                <ContributionMetadataField
+                  kind="tags"
+                  multiple
+                  labels={metadataLabels}
                 />
               </Form.Item>
               <Form.Item label="Generos" name="genreNames">
-                <Select
-                  mode="tags"
-                  tokenSeparators={[',']}
-                  placeholder="Ej: Romance, Drama"
+                <ContributionMetadataField
+                  kind="genres"
+                  multiple
+                  labels={metadataLabels}
                 />
               </Form.Item>
             </div>
@@ -584,6 +607,16 @@ export function AgregarVerClient() {
               </Form.Item>
             </div>
 
+            {unresolvedNames && (
+              <Alert
+                type="error"
+                showIcon
+                title={t('contributionMetadata.unresolved').replace(
+                  '{names}',
+                  unresolvedNames.join(', ')
+                )}
+              />
+            )}
             <div className="ver-agregar-form__actions">
               <Button onClick={() => setPreview(null)} disabled={submitting}>
                 Cancelar

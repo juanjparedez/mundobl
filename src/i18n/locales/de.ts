@@ -10,6 +10,116 @@
 import type { TranslationShape } from '../messages';
 
 const de = {
+  writerProfile: {
+    indexTitle: "Drehbuchautorinnen und Drehbuchautoren",
+    indexDescription: "Personen mit Drehbuchcredits in öffentlichen Katalogwerken oder verfügbaren Videos.","role": "Drehbuchautor/in", "works": "Werke mit Nennung", "sources": "Quellen", "creditSource": "Quelle der Nennung", "empty": "Keine öffentlichen Werke mit Nennung."},
+
+
+  durationStats: {"hours": "Stunden mit bekannter Laufzeit", "missing": "{n} gesehene Videos ohne Laufzeit sind nicht enthalten."},
+
+  watchDateEditor: {
+    "title": "Sichtungsdatum korrigieren",
+    "date": "Sichtungsdatum (UTC)",
+    "unknown": "Datum unbekannt",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "error": "Datum konnte nicht geladen oder gespeichert werden.",
+    "conflict": "Der Fortschritt wurde geändert. Schließe und öffne erneut, um das aktuelle Datum zu prüfen."
+},
+
+  community: {
+    search: "Serie suchen",
+    "title": "Community",
+    "description": "Neueste öffentliche Rezensionen. Öffne einen Titel, um zu lesen, zu antworten oder deine Meinung zu teilen.",
+    "empty": "Noch keine öffentlichen Rezensionen.",
+    "read": "Lesen und diskutieren",
+    "spoilers": "Titel wegen Spoilern ausgeblendet"
+},
+  contentMetadata: {
+    "catalogTitle": "Details und Fortschritt",
+    "catalogDescription": "Katalogeintrag mit Informationen und persönlichem Fortschritt.",
+    "watchTitle": "Episoden ansehen",
+    "watchDescription": "Entdecke die auf dieser Seite verlinkten Episoden. Verfügbarkeit und Untertitel hängen von der jeweiligen Quelle ab.",
+    "collectionTitle": "BL- und GL-Serien ansehen",
+    "collectionDescription": "Entdecke BL- und GL-Serien mit verlinkten Episoden. Verfügbarkeit, Sprachen und Episodenzahl variieren je nach Quelle."
+},
+
+  trackingHistory: {
+      "title": "Verlauf",
+      "description": "Änderungen am Fortschritt, nur für dich sichtbar. Frühere Statusangaben rekonstruieren keine vergangenen Aktionen.",
+      "search": "Im Verlauf nach einer Serie suchen",
+      "empty": "Noch keine Änderungen im Verlauf",
+      "error": "Der Verlauf konnte nicht aktualisiert werden",
+      "more": "Mehr laden",
+      "refresh": "Aktualisieren",
+      "clear": "Verlauf löschen",
+      "clearConfirm": "Den gesamten Verlauf löschen? Dein Fortschritt und deine Notizen bleiben erhalten.",
+      "cancel": "Abbrechen",
+      "watchDate": "Gesehen am",
+      "previousDate": "Vorheriges Datum",
+      "unknown": "Unbekannt",
+      "season": "Staffel {n}",
+      "episode": "S{season} · E{episode}",
+      "series": "Serie",
+      "recorded": "Status erfasst",
+      "changed": "Status geändert",
+      "dateChanged": "Datum korrigiert",
+      "snapshot": "Status vor Beginn des Verlaufs"
+  },
+  contributionMetadata: {
+    search: "Vorhandene Namen suchen",
+    loadError: "Die Namen konnten nicht geladen werden.",
+    policy: "Beiträge verwenden vorhandene Schauspieler, Produktionsfirmen, Länder, Sprachen, Tags und Genres. Neue Namen müssen von Flor redaktionell hinzugefügt werden.",
+    unresolved: "Es wurden keine Änderungen gespeichert. Diese Namen fehlen oder sind mehrdeutig: {names}. Prüfe sie oder bitte Flor, sie hinzuzufügen.",
+  },
+  trackingWorkspace: {
+    "gaps": "Einige frühere Folgen sind nicht als gesehen markiert",
+    "title": "Mein Fortschritt",
+    "subtitle": "Setze deine Serien fort, erfasse Gesehenes und halte deine Gedanken fest.",
+    "settings": "Mein Profil und meine Daten",
+    "privacy": "Dein Fortschritt und deine Notizen sind privat. Veröffentlichte Kommentare sind öffentlich.",
+    "continue": "In Arbeit",
+    "diary": "Privates Tagebuch",
+    "stats": "Meine Statistiken",
+    "search": "Meine Serien durchsuchen",
+    "filter": "Nach Status filtern",
+    "all": "Alle",
+    "list": "Liste",
+    "grid": "Karten",
+    "remaining": "Wenigste verbleibende Folgen",
+    "pin": "Serie anheften",
+    "unpin": "Serie lösen",
+    "manage": "Folgen und Notizen",
+    "publicComment": "Öffentliche Diskussion",
+    "privateNote": "Private Notiz",
+    "curated": "Flors Katalog",
+    "viewing": "Inhalte zum Ansehen",
+    "progress": "{watched} von {total} Folgen gesehen",
+    "upToDate": "Du hast alle erfassten Folgen gesehen",
+    "scope": "In deinen laufenden Serien",
+    "chapters": "Gesehene Folgen",
+    "loadError": "Dein Fortschritt konnte nicht geladen werden.",
+    "retry": "Erneut versuchen",
+    "noResults": "Keine Serien passen zu diesen Filtern.",
+    "preferences": "Ansicht, Reihenfolge und angeheftete Serien werden auf diesem Gerät für dein Konto gespeichert.",
+    "season": "Staffel {n}",
+    "signIn": "Anmelden"
+},
+  backup: {
+    "viewStatuses": "Fortschritt",
+    "seriesNotes": "Private Seriennotizen",
+    "episodeNotes": "Private Episodennotizen",
+    "userRatings": "Bewertungen",
+    "favorites": "Favoriten",
+    "comments": "Kommentare",
+    "featureRequests": "Vorschläge",
+    "featureVotes": "Stimmen",
+    "suggestedSites": "Vorgeschlagene Websites",
+    "other": "Weitere Daten",
+    "skipped": "{n} übersprungen",
+    "missing": "{n} Verweise nicht gefunden; sie werden nicht importiert.",
+    "invalid": "{n} ungültige Einträge oder Abschnitte; prüfe die Datei vor dem Import."
+},
   "basedOnAdmin": {
     "description": "Verwalte Vorlagen und zugehörige Titel. Neue Werte kannst du beim Bearbeiten eines Titels eingeben.",
     "search": "Werte suchen",

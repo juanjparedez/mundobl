@@ -36,9 +36,8 @@ export interface ProfileStatsStripProps {
  *  Vive FUERA del DashboardGrid: es siempre visible y no reordenable. */
 export function ProfileStatsStrip({ stats }: ProfileStatsStripProps) {
   const { t } = useLocale();
-  const currentYear = new Date().getFullYear();
-  const yearWatched =
-    stats.completedByYear.find((y) => y.year === currentYear)?.count ?? 0;
+  const currentYear = stats.activityYear;
+  const yearWatched = stats.completedThisYear;
 
   const items: StripItem[] = [
     {
@@ -90,8 +89,12 @@ export function ProfileStatsStrip({ stats }: ProfileStatsStripProps) {
     },
     {
       icon: <ClockCircleOutlined />,
-      value: Math.round(stats.hoursWatched),
-      label: t('profileDashboard.hoursWatched'),
+      value: stats.hoursWatched,
+      label: t('durationStats.hours'),
+      hint:
+        stats.unknownDurationVideos > 0
+          ? t('durationStats.missing', { n: stats.unknownDurationVideos })
+          : undefined,
     },
     {
       icon: <FireOutlined />,
@@ -115,6 +118,9 @@ export function ProfileStatsStrip({ stats }: ProfileStatsStripProps) {
           <span className="mb-profile-stats-strip__body">
             <span className="mb-profile-stats-strip__value">{item.value}</span>
             <span className="mb-profile-stats-strip__label">{item.label}</span>
+            {item.hint && (
+              <span className="mb-profile-stats-strip__hint">{item.hint}</span>
+            )}
           </span>
         </li>
       ))}

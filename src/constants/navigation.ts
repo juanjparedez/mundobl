@@ -4,6 +4,7 @@
 
 export const ROUTES = {
   HOME: '/',
+  COMMUNITY: '/comunidad',
   CATALOGO: '/catalogo',
   ESTRENOS: '/estrenos',
   VER: '/ver',

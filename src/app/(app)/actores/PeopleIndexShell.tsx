@@ -25,6 +25,7 @@ export interface PeopleIndexItem {
   indexable: boolean;
   /** Solo para el filtro por nacionalidad; las productoras no lo usan. */
   nationality?: string | null;
+  searchTerms?: string[];
 }
 
 export interface PeopleIndexShellProps {
@@ -35,13 +36,14 @@ export interface PeopleIndexShellProps {
   /** TODAS las fichas, ya ordenadas por creditos desde el servidor. */
   items: PeopleIndexItem[];
   nationalities?: string[];
-  current: '/actores' | '/directores' | '/productoras';
+  current: '/actores' | '/directores' | '/productoras' | '/guionistas';
   avatarShape?: 'circle' | 'square';
 }
 
 const CROSSLINKS: { href: string; key: TranslationKey }[] = [
   { href: '/actores', key: 'peopleIndex.actorsTitle' },
   { href: '/directores', key: 'peopleIndex.directorsTitle' },
+  { href: '/guionistas', key: 'writerProfile.indexTitle' },
   { href: '/productoras', key: 'peopleIndex.companiesTitle' },
 ];
 
@@ -132,7 +134,12 @@ export function PeopleIndexShell({
 
   // Se normaliza una sola vez por lista, no una vez por tecla.
   const haystacks = useMemo(
-    () => items.map((i) => normalize(`${i.name} ${i.subtitle ?? ''}`)),
+    () =>
+      items.map((i) =>
+        normalize(
+          `${i.name} ${i.subtitle ?? ''} ${(i.searchTerms ?? []).join(' ')}`
+        )
+      ),
     [items]
   );
 
