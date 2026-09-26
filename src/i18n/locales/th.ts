@@ -2426,7 +2426,6 @@ const th = {
   },
   "seriesSubscribeButton": {
     "signInTooltip": "ลงชื่อเข้าใช้เพื่อสมัครรับการเปลี่ยนแปลง",
-    "subscribeAriaLabel": "สมัครสมาชิก",
     "subscribeFailedError": "สมัครสมาชิกไม่สำเร็จ",
     "subscribeSuccessMessage": "เราจะแจ้งให้คุณทราบเมื่อมีการอัปเดต",
     "unsubscribeSuccessMessage": "ยกเลิกการสมัครสมาชิกแล้ว",

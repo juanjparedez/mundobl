@@ -2426,7 +2426,6 @@ const zhTW = {
   },
   "seriesSubscribeButton": {
     "signInTooltip": "登入以訂閱變更",
-    "subscribeAriaLabel": "訂閱",
     "subscribeFailedError": "訂閱失敗",
     "subscribeSuccessMessage": "有更新時我們會通知您",
     "unsubscribeSuccessMessage": "訂閱已取消",
