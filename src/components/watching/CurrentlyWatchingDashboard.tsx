@@ -32,6 +32,7 @@ import { SerieCardSkeleton } from '@/components/common/SerieCardSkeleton/SerieCa
 import { SeriesNoteModal } from '@/components/series/SeriesNoteModal/SeriesNoteModal';
 import { getSeriesUrl, getVerUrl } from '@/lib/slug';
 import { findNextEpisode } from '@/lib/episode-progress';
+import { chapterCode, groupIntoChapters } from '@/lib/episode-chapters';
 import './CurrentlyWatchingDashboard.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import type { TranslationKey } from '@/i18n/messages';
@@ -109,9 +110,37 @@ const AIR_STATUS_DOT: Record<AirDayStatusType, string> = {
   delayed_3_plus: '\u{1F534}',
 };
 
-/** "T1·E4": mismo formato que el stepper de la ficha. */
-function episodeCode(ep: { seasonNumber: number; episodeNumber: number }) {
-  return `T${ep.seasonNumber}·E${ep.episodeNumber}`;
+const isChapterWatched = (chapter: { episodes: Array<{ watched: boolean }> }) =>
+  chapter.episodes.every((episode) => episode.watched);
+
+function buildChapters(series: WatchingSeriesData['series']) {
+  return groupIntoChapters(
+    (series.seasons ?? []).flatMap((season) =>
+      (season.episodes ?? []).map((episode) => ({
+        id: episode.id,
+        seasonNumber: season.seasonNumber,
+        episodeNumber: episode.episodeNumber,
+        title: episode.title ?? null,
+        watched: episode.viewStatus?.[0]?.status === 'VISTA',
+      }))
+    )
+  );
+}
+
+// Por objeto: el orden "siguiente" pide los capitulos de cada serie varias
+// veces por render, y un marcado optimista crea un objeto nuevo.
+const chapterCache = new WeakMap<
+  WatchingSeriesData['series'],
+  ReturnType<typeof buildChapters>
+>();
+
+function chaptersOf(series: WatchingSeriesData['series']) {
+  let cached = chapterCache.get(series);
+  if (!cached) {
+    cached = buildChapters(series);
+    chapterCache.set(series, cached);
+  }
+  return cached;
 }
 
 export function CurrentlyWatchingDashboard() {
@@ -207,33 +236,29 @@ export function CurrentlyWatchingDashboard() {
     }
   };
 
+  // Por capitulos, no por filas: un capitulo de YouTube viene en partes.
   const calculateProgress = (series: WatchingSeriesData['series']) => {
-    let totalEpisodes = 0;
-    let watchedEpisodes = 0;
-
-    series.seasons?.forEach((season) => {
-      season.episodes?.forEach((episode) => {
-        totalEpisodes++;
-        if (episode.viewStatus?.[0]?.status === 'VISTA') {
-          watchedEpisodes++;
-        }
-      });
-    });
-
-    return { totalEpisodes, watchedEpisodes };
+    const { chapters } = chaptersOf(series);
+    return {
+      totalEpisodes: chapters.length,
+      watchedEpisodes: chapters.filter(isChapterWatched).length,
+    };
   };
 
   const getNextEpisode = (series: WatchingSeriesData['series']) => {
-    const ordered = (series.seasons || []).flatMap((season) =>
-      (season.episodes || []).map((episode) => ({
-        id: episode.id,
-        seasonNumber: season.seasonNumber,
-        episodeNumber: episode.episodeNumber,
-        title: episode.title,
-        watched: episode.viewStatus?.[0]?.status === 'VISTA',
-      }))
-    );
-    return findNextEpisode(ordered, (ep) => ep.watched);
+    const { chapters, byTitle } = chaptersOf(series);
+    const next = findNextEpisode(chapters, isChapterWatched);
+    if (!next) return null;
+    const first = next.episodes[0];
+    return {
+      id: first.id,
+      seasonNumber: next.seasonNumber,
+      number: next.number,
+      // El ?e= de /ver apunta a la primera parte.
+      episodeNumber: first.episodeNumber,
+      title: byTitle ? null : first.title,
+      episodeIds: next.episodes.map((episode) => episode.id),
+    };
   };
 
   const formatLastWatched = (date: Date | string | null) => {
@@ -286,14 +311,15 @@ export function CurrentlyWatchingDashboard() {
   };
 
   const handleMarkNextEpisode = async (
-    episodeId: number,
+    episodeIds: number[],
     seriesId: number,
     label: string
   ) => {
-    setMarkingEpisode(episodeId);
+    setMarkingEpisode(episodeIds[0]);
+    const marked = new Set(episodeIds);
 
-    // Optimista: marca el episodio como VISTA en el estado local antes de
-    // la respuesta (mueve el "siguiente" de la card sin esperar al fetch).
+    // Optimista: marca el capitulo (todas sus partes) como VISTA en el estado
+    // local antes de la respuesta, asi la card pasa al siguiente sin esperar.
     const previousSeries = watchingSeries;
     setWatchingSeries((prev) =>
       prev.map((item) =>
@@ -305,7 +331,7 @@ export function CurrentlyWatchingDashboard() {
                 seasons: item.series.seasons?.map((season) => ({
                   ...season,
                   episodes: season.episodes?.map((ep) =>
-                    ep.id === episodeId
+                    marked.has(ep.id)
                       ? { ...ep, viewStatus: [{ status: 'VISTA' }] }
                       : ep
                   ),
@@ -317,29 +343,23 @@ export function CurrentlyWatchingDashboard() {
     );
 
     try {
-      const response = await fetch(`/api/episodes/${episodeId}/view-status`, {
+      const response = await fetch(`/api/series/${seriesId}/watched`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'VISTA' }),
+        body: JSON.stringify({ episodeIds, watched: true }),
       });
 
       if (!response.ok)
         throw new Error(t('watchingDashboard.errorMarkEpisode'));
 
-      const data = (await response.json()) as {
-        series: { lastWatchedAt: string | null } | null;
-      };
-
-      // lastWatchedAt real (T03) para que el orden "última actividad"
-      // suba esta card sin esperar un reload completo.
-      if (data.series?.lastWatchedAt !== undefined) {
-        const lastWatchedAt = data.series.lastWatchedAt;
-        setWatchingSeries((prev) =>
-          prev.map((item) =>
-            item.series.id === seriesId ? { ...item, lastWatchedAt } : item
-          )
-        );
-      }
+      // Marcar actualiza lastWatchedAt en el server (T03); aca se refleja
+      // para que el orden "última actividad" suba la card sin recargar.
+      const lastWatchedAt = new Date().toISOString();
+      setWatchingSeries((prev) =>
+        prev.map((item) =>
+          item.series.id === seriesId ? { ...item, lastWatchedAt } : item
+        )
+      );
 
       message.success(
         interpolateMessage(t('watchingDashboard.episodeMarkedMessage'), {
@@ -524,16 +544,16 @@ export function CurrentlyWatchingDashboard() {
             totalEpisodes > 0 ? (watchedEpisodes / totalEpisodes) * 100 : 0;
           const isFullyWatched = progress === 100 && totalEpisodes > 0;
           const nextEp = getNextEpisode(item.series);
-          const nextEpLabel = nextEp ? episodeCode(nextEp) : null;
+          const nextEpLabel = nextEp ? chapterCode(nextEp) : null;
           // Con una sola temporada "ep. 4" alcanza; con varias, "T2·E3".
           const multiSeason = (item.series.seasons?.length ?? 0) > 1;
           const markNextText = nextEp
             ? multiSeason
               ? interpolateMessage(t('watchingDashboard.markNextCode'), {
-                  code: episodeCode(nextEp),
+                  code: chapterCode(nextEp),
                 })
               : interpolateMessage(t('watchingDashboard.markNextLabel'), {
-                  n: String(nextEp.episodeNumber),
+                  n: String(nextEp.number),
                 })
             : '';
           const airStatus = getAirDayStatus(item.series, isFullyWatched);
@@ -665,7 +685,7 @@ export function CurrentlyWatchingDashboard() {
                         loading={markingEpisode === nextEp.id}
                         onClick={() =>
                           void handleMarkNextEpisode(
-                            nextEp.id,
+                            nextEp.episodeIds,
                             item.series.id,
                             nextEpLabel ?? ''
                           )

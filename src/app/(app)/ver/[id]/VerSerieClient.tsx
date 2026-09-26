@@ -33,6 +33,7 @@ import { useSession, signIn } from 'next-auth/react';
 import { EmbedPlayer } from '@/components/common/EmbedPlayer/EmbedPlayer';
 import { useSeriesUserStatus } from '@/components/series/SeriesUserStatusProvider';
 import { savePendingTrack } from '@/lib/pending-track';
+import { groupIntoChapters } from '@/lib/episode-chapters';
 import { EmbedAttribution } from '@/components/common/EmbedAttribution/EmbedAttribution';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { ShareButton } from '@/components/common/ShareButton/ShareButton';
@@ -423,62 +424,33 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
     [seasons]
   );
 
-  // Agrupación inteligente por Capítulo con miniaturas
+  // Capitulos con sus partes, extras y videos privados. Que es un capitulo
+  // lo decide groupIntoChapters: lo mismo que cuentan el seguimiento y
+  // /watching.
   const { chapterGroups, extraEpisodes, privateEpisodes } = useMemo(() => {
-    const map = new Map<
-      number,
-      Array<{
-        flatIndex: number;
-        episode: (typeof flatEpisodes)[0];
-      }>
-    >();
-
-    const extras: Array<{
-      flatIndex: number;
-      episode: (typeof flatEpisodes)[0];
-    }> = [];
-
-    const privates: Array<{
-      flatIndex: number;
-      episode: (typeof flatEpisodes)[0];
-    }> = [];
-
-    flatEpisodes.forEach((ep, index) => {
-      if (ep.parsed.isPrivate) {
-        privates.push({ flatIndex: index, episode: ep });
-        return;
-      }
-
-      if (ep.parsed.isExtra) {
-        extras.push({ flatIndex: index, episode: ep });
-        return;
-      }
-
-      const chapter = ep.parsed.chapterNumber;
-      if (!map.has(chapter)) {
-        map.set(chapter, []);
-      }
-      map.get(chapter)!.push({ flatIndex: index, episode: ep });
+    const { chapters, extras } = groupIntoChapters(
+      flatEpisodes.map((episode, flatIndex) => ({ ...episode, flatIndex }))
+    );
+    const toItem = (episode: { flatIndex: number }) => ({
+      flatIndex: episode.flatIndex,
+      episode: flatEpisodes[episode.flatIndex],
     });
 
-    const chapters = Array.from(map.entries())
-      .sort(([a], [b]) => a - b)
-      .map(([chapterNum, items]) => {
-        // Thumbnail de la primera parte del capítulo
-        const firstEp = items[0]?.episode;
-        const thumbnail =
-          getYouTubeThumbnail(firstEp?.embedVideoId) || series.imageUrl;
-        return {
-          chapterNumber: chapterNum,
-          thumbnail,
-          items,
-        };
-      });
-
     return {
-      chapterGroups: chapters,
-      extraEpisodes: extras,
-      privateEpisodes: privates,
+      chapterGroups: chapters.map((chapter) => ({
+        seasonNumber: chapter.seasonNumber,
+        chapterNumber: chapter.number,
+        thumbnail:
+          getYouTubeThumbnail(chapter.episodes[0].embedVideoId) ||
+          series.imageUrl,
+        items: chapter.episodes.map(toItem),
+      })),
+      extraEpisodes: extras
+        .filter((episode) => !episode.parsed.isPrivate)
+        .map(toItem),
+      privateEpisodes: extras
+        .filter((episode) => episode.parsed.isPrivate)
+        .map(toItem),
     };
   }, [flatEpisodes, series.imageUrl]);
 
@@ -548,7 +520,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
   }
 
   const extrasCount = extraEpisodes.length + privateEpisodes.length;
-  const mainEpisodesCount = flatEpisodes.length - extrasCount;
+  const mainEpisodesCount = chapterGroups.length;
 
   return (
     <div className="ver-serie">
@@ -888,7 +860,8 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         {/* 1. Capítulos principales con preview visual */}
         {filterMode !== 'extras' && (
           <div className="ver-serie__chapters-container">
-            {chapterGroups.map(({ chapterNumber, thumbnail, items }) => {
+            {chapterGroups.map((group) => {
+              const { seasonNumber, chapterNumber, thumbnail, items } = group;
               const isChapterActive = items.some(
                 (it) => it.flatIndex === activeIdx
               );
@@ -900,7 +873,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
 
               return (
                 <div
-                  key={`chap-${chapterNumber}`}
+                  key={`chap-${seasonNumber}-${chapterNumber}`}
                   className={`ver-serie__chapter-card${
                     isChapterActive ? ' ver-serie__chapter-card--active' : ''
                   }`}
