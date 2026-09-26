@@ -1,5 +1,7 @@
 'use client';
 
+import { getContentUrl } from '@/lib/slug';
+
 import { useState } from 'react';
 import { Button, Modal, Pagination } from 'antd';
 import { CheckCircleOutlined } from '@ant-design/icons';
@@ -31,7 +33,7 @@ export function RecentlyCompletedWidget({
       return (
         <li key={seriesId}>
           <Link
-            href={`/series/${series.id}`}
+            href={getContentUrl(series)}
             className="mb-recently-completed-widget__item"
           >
             <span className="mb-recently-completed-widget__cover">

@@ -10,6 +10,116 @@
 import type { TranslationShape } from '../messages';
 
 const zhTW = {
+  writerProfile: {
+    indexTitle: "編劇",
+    indexDescription: "公開目錄作品或可觀看作品中署名的編劇。","role": "編劇", "works": "署名作品", "sources": "來源", "creditSource": "署名來源", "empty": "暫無公開的署名作品。"},
+
+
+  durationStats: {"hours": "有時長紀錄的觀看小時數", "missing": "{n}個已看影片沒有時長，未計入。"},
+
+  watchDateEditor: {
+    "title": "更正觀看日期",
+    "date": "觀看日期（UTC）",
+    "unknown": "日期未知",
+    "save": "儲存",
+    "cancel": "取消",
+    "error": "無法載入或儲存日期。",
+    "conflict": "觀看紀錄已變更。請關閉後重新開啟以查看目前日期。"
+},
+
+  community: {
+    search: "搜尋系列",
+    "title": "社群",
+    "description": "最新公開評論。開啟作品頁面閱讀、回覆或分享你的看法。",
+    "empty": "還沒有公開評論。",
+    "read": "閱讀並討論",
+    "spoilers": "標題因劇透而隱藏"
+},
+  contentMetadata: {
+    "catalogTitle": "作品資訊與觀看紀錄",
+    "catalogDescription": "查看作品資訊並管理個人觀看紀錄的目錄頁面。",
+    "watchTitle": "可觀看的劇集",
+    "watchDescription": "探索此頁面連結的劇集。可用性和字幕取決於各個來源。",
+    "collectionTitle": "可觀看的BL和GL系列",
+    "collectionDescription": "探索提供劇集連結的BL和GL系列。可用性、語言和集數因來源而異。"
+},
+
+  trackingHistory: {
+      "title": "歷史紀錄",
+      "description": "追蹤變更僅對你可見。先前狀態無法還原過去的操作。",
+      "search": "在歷史紀錄中搜尋作品",
+      "empty": "尚無追蹤變更紀錄",
+      "error": "無法更新歷史紀錄",
+      "more": "載入更多",
+      "refresh": "重新整理",
+      "clear": "清空歷史紀錄",
+      "clearConfirm": "清空全部歷史紀錄？你的觀看進度和筆記將保留。",
+      "cancel": "取消",
+      "watchDate": "觀看日期",
+      "previousDate": "先前日期",
+      "unknown": "未知",
+      "season": "第{n}季",
+      "episode": "第{season}季 · 第{episode}集",
+      "series": "作品",
+      "recorded": "已記錄狀態",
+      "changed": "已修改狀態",
+      "dateChanged": "已更正日期",
+      "snapshot": "歷史紀錄開始前的狀態"
+  },
+  contributionMetadata: {
+    search: "搜尋既有名稱",
+    loadError: "無法載入名稱。",
+    policy: "投稿使用既有的演員、製作公司、國家、語言、標籤和類型。新名稱需要由 Flor 編輯新增。",
+    unresolved: "未儲存任何變更。以下名稱不存在或有歧義：{names}。請核對或請 Flor 新增。",
+  },
+  trackingWorkspace: {
+    "gaps": "前面還有未標記為已看的集數",
+    "title": "我的追劇紀錄",
+    "subtitle": "繼續觀看系列，記錄進度並保存你的感想。",
+    "settings": "我的資料與數據",
+    "privacy": "觀看紀錄和筆記為私人內容。你發布的留言是公開的。",
+    "continue": "進行中",
+    "diary": "私人日記",
+    "stats": "我的統計",
+    "search": "搜尋我的系列",
+    "filter": "依狀態篩選",
+    "all": "全部",
+    "list": "清單",
+    "grid": "卡片",
+    "remaining": "剩餘集數最少",
+    "pin": "置頂系列",
+    "unpin": "取消置頂",
+    "manage": "單集與筆記",
+    "publicComment": "公開討論",
+    "privateNote": "私人筆記",
+    "curated": "Flor 的目錄",
+    "viewing": "可觀看內容",
+    "progress": "已看 {watched} 集，共 {total} 集",
+    "upToDate": "你已看完所有已登記的集數",
+    "scope": "統計範圍：正在追的系列",
+    "chapters": "已看集數",
+    "loadError": "無法載入你的追劇紀錄。",
+    "retry": "重試",
+    "noResults": "沒有符合篩選條件的系列。",
+    "preferences": "檢視方式、排序和置頂系列依帳號儲存在此裝置上。",
+    "season": "第 {n} 季",
+    "signIn": "登入"
+},
+  backup: {
+    "viewStatuses": "觀看紀錄",
+    "seriesNotes": "劇集私人筆記",
+    "episodeNotes": "單集私人筆記",
+    "userRatings": "評分",
+    "favorites": "收藏",
+    "comments": "留言",
+    "featureRequests": "提案",
+    "featureVotes": "投票",
+    "suggestedSites": "推薦網站",
+    "other": "其他資料",
+    "skipped": "已略過 {n} 項",
+    "missing": "找不到 {n} 個參照對象，將不予匯入。",
+    "invalid": "有 {n} 個無效紀錄或區段，請在匯入前檢查檔案。"
+},
   "basedOnAdmin": {
     "description": "管理原作分類及相關作品。編輯作品時可輸入新值。",
     "search": "搜尋值",

@@ -5,7 +5,9 @@ import {
   setProgress,
   setEpisodesWatched,
   ProgressNotFoundError,
+  markEpisode,
 } from '../src/lib/tracking';
+import { assertLocalTestDatabase } from './assert-local-test-database';
 
 /**
  * Prueba de src/lib/tracking.ts -> setProgress (T05), contra una base local
@@ -16,10 +18,7 @@ import {
  */
 
 async function main() {
-  const url = new URL(process.env.DATABASE_URL ?? '');
-  assert.equal(url.hostname, '127.0.0.1');
-  assert.equal(url.port, '55433');
-  assert.equal(url.pathname, '/mundobl_replay');
+  assertLocalTestDatabase();
 
   const runId = Date.now();
   const user = await prisma.user.create({
@@ -70,11 +69,42 @@ async function main() {
   });
   assert.equal(vistaRows1, 3);
 
-  // 2) Repetir la misma llamada no crea duplicados ni falla.
+  // Imported dates (including unknown dates) must survive repeated progress commands.
+  const historicalDate = new Date('2021-03-04T12:00:00.000Z');
+  await prisma.viewStatus.update({
+    where: { userId_episodeId: { userId: user.id, episodeId: ep3.id } },
+    data: { watchedDate: historicalDate },
+  });
+  await prisma.viewStatus.update({
+    where: { userId_episodeId: { userId: user.id, episodeId: episodes[0].id } },
+    data: { watchedDate: null },
+  });
+  await prisma.viewStatus.update({
+    where: { userId_seriesId: { userId: user.id, seriesId: series.id } },
+    data: { lastWatchedAt: historicalDate, status: 'RETOMAR' },
+  });
+  // 2) Repetir no crea duplicados, no inventa fechas y no reanuda una serie pausada.
   const result2 = await prisma.$transaction((tx) =>
     setProgress(tx, user.id, series.id, { upToEpisodeId: ep3.id })
   );
   assert.equal(result2.watched, 3);
+  assert.equal(result2.seriesStatus, 'RETOMAR');
+  const preserved = await prisma.viewStatus.findUniqueOrThrow({
+    where: { userId_episodeId: { userId: user.id, episodeId: ep3.id } },
+  });
+  assert.equal(
+    preserved.watchedDate?.toISOString(),
+    historicalDate.toISOString()
+  );
+  const unknownDate = await prisma.$transaction((tx) =>
+    markEpisode(tx, user.id, episodes[0].id, 'VISTA')
+  );
+  assert.equal(unknownDate.episode.watchedDate, null);
+  assert.equal(unknownDate.series?.status, 'RETOMAR');
+  assert.equal(
+    unknownDate.series?.lastWatchedAt?.toISOString(),
+    historicalDate.toISOString()
+  );
   const vistaRows2 = await prisma.viewStatus.count({
     where: { userId: user.id, status: 'VISTA', episodeId: { not: null } },
   });
@@ -161,10 +191,33 @@ async function main() {
   assert.equal(subscription, 1);
 
   // 7) Repetir no duplica.
+  await prisma.viewStatus.updateMany({
+    where: { userId: viewer.id, episodeId: { in: chapterIds } },
+    data: { watchedDate: historicalDate },
+  });
+  await prisma.viewStatus.update({
+    where: { userId_seriesId: { userId: viewer.id, seriesId: series.id } },
+    data: { lastWatchedAt: historicalDate },
+  });
   const result7 = await prisma.$transaction((tx) =>
     setEpisodesWatched(tx, viewer.id, series.id, chapterIds, true)
   );
   assert.equal(result7.watched, 2);
+  const chapterDates = await prisma.viewStatus.findMany({
+    where: { userId: viewer.id, episodeId: { in: chapterIds } },
+  });
+  assert.ok(
+    chapterDates.every(
+      (row) => row.watchedDate?.toISOString() === historicalDate.toISOString()
+    )
+  );
+  const seriesDate = await prisma.viewStatus.findUniqueOrThrow({
+    where: { userId_seriesId: { userId: viewer.id, seriesId: series.id } },
+  });
+  assert.equal(
+    seriesDate.lastWatchedAt?.toISOString(),
+    historicalDate.toISOString()
+  );
 
   // 8) Desmarcar deja 0 vistos y no toca la fila de la serie.
   const result8 = await prisma.$transaction((tx) =>
@@ -172,6 +225,16 @@ async function main() {
   );
   assert.equal(result8.watched, 0);
   assert.equal(result8.seriesStatus, 'VIENDO');
+  const rewatched = await prisma.$transaction((tx) =>
+    markEpisode(tx, viewer.id, chapterIds[0], 'VISTA')
+  );
+  assert.ok(
+    rewatched.episode.watchedDate &&
+      rewatched.episode.watchedDate > historicalDate
+  );
+  await prisma.$transaction((tx) =>
+    markEpisode(tx, viewer.id, chapterIds[0], 'SIN_VER')
+  );
 
   // 9) Ids de otra serie se ignoran; si no queda ninguno -> 404.
   const foreignEpisode = await prisma.episode.findFirstOrThrow({
@@ -200,6 +263,8 @@ async function main() {
       checks: [
         'upToEpisodeId marca 1..3, serie VIENDO',
         'llamada repetida no duplica',
+        'repetir conserva fechas históricas/desconocidas y la pausa elegida',
+        'marcado de partes conserva fechas; desmarcar y volver a marcar registra una fecha nueva',
         'episodio de otra serie -> 404 (ProgressNotFoundError)',
         "direction: 'unmark' respeta 1..3 y limpia 4..8",
         'completeIfAll con el ultimo episodio -> serie VISTA',

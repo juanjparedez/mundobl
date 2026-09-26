@@ -10,6 +10,116 @@
 import type { TranslationShape } from '../messages';
 
 const it = {
+  writerProfile: {
+    indexTitle: "Sceneggiatori",
+    indexDescription: "Persone con crediti di sceneggiatura in opere pubbliche del catalogo o disponibili da vedere.","role": "Sceneggiatore", "works": "Opere accreditate", "sources": "Fonti", "creditSource": "Fonte del credito", "empty": "Nessuna opera pubblica accreditata."},
+
+
+  durationStats: {"hours": "Ore con durata registrata", "missing": "{n} video visti senza durata: non inclusi."},
+
+  watchDateEditor: {
+    "title": "Correggi la data di visione",
+    "date": "Data di visione (UTC)",
+    "unknown": "Data sconosciuta",
+    "save": "Salva",
+    "cancel": "Annulla",
+    "error": "Impossibile caricare o salvare la data.",
+    "conflict": "Il monitoraggio è cambiato. Chiudi e riapri per controllare la data attuale."
+},
+
+  community: {
+    search: "Cerca una serie",
+    "title": "Comunità",
+    "description": "Ultime recensioni pubbliche. Apri una scheda per leggere, rispondere o condividere la tua opinione.",
+    "empty": "Non ci sono ancora recensioni pubbliche.",
+    "read": "Leggi e discuti",
+    "spoilers": "Titolo nascosto per spoiler"
+},
+  contentMetadata: {
+    "catalogTitle": "Scheda e monitoraggio",
+    "catalogDescription": "Scheda del catalogo con informazioni e monitoraggio personale.",
+    "watchTitle": "Episodi da guardare",
+    "watchDescription": "Esplora gli episodi collegati da questa pagina. Disponibilità e sottotitoli dipendono dalla fonte.",
+    "collectionTitle": "Serie BL e GL da guardare",
+    "collectionDescription": "Esplora serie BL e GL con episodi collegati da guardare. Disponibilità, lingue e numero di episodi variano in base alla fonte."
+},
+
+  trackingHistory: {
+      "title": "Cronologia",
+      "description": "Modifiche al monitoraggio, visibili solo a te. Gli stati precedenti non ricostruiscono le azioni passate.",
+      "search": "Cerca una serie nella cronologia",
+      "empty": "Nessuna modifica nella cronologia",
+      "error": "Impossibile aggiornare la cronologia",
+      "more": "Carica altro",
+      "refresh": "Aggiorna",
+      "clear": "Cancella cronologia",
+      "clearConfirm": "Cancellare tutta la cronologia? I progressi e le note saranno conservati.",
+      "cancel": "Annulla",
+      "watchDate": "Data di visione",
+      "previousDate": "Data precedente",
+      "unknown": "Sconosciuta",
+      "season": "Stagione {n}",
+      "episode": "S{season} · E{episode}",
+      "series": "Serie",
+      "recorded": "Stato registrato",
+      "changed": "Stato modificato",
+      "dateChanged": "Data corretta",
+      "snapshot": "Stato precedente alla cronologia"
+  },
+  contributionMetadata: {
+    search: "Cerca un nome esistente",
+    loadError: "Impossibile caricare i nomi.",
+    policy: "I contributi usano attori, case di produzione, paesi, lingue, tag e generi esistenti. I nuovi nomi richiedono l’inserimento editoriale da parte di Flor.",
+    unresolved: "Nessuna modifica salvata. Questi nomi non esistono o sono ambigui: {names}. Controllali o chiedi a Flor di aggiungerli.",
+  },
+  trackingWorkspace: {
+    "gaps": "Alcuni capitoli precedenti non sono segnati come visti",
+    "title": "Il mio monitoraggio",
+    "subtitle": "Riprendi le serie, registra ciò che hai visto e conserva i tuoi pensieri.",
+    "settings": "Il mio profilo e i miei dati",
+    "privacy": "Il monitoraggio e le note sono privati. I commenti che pubblichi sono pubblici.",
+    "continue": "In corso",
+    "diary": "Diario privato",
+    "stats": "Le mie statistiche",
+    "search": "Cerca nelle mie serie",
+    "filter": "Filtra per stato",
+    "all": "Tutte",
+    "list": "Elenco",
+    "grid": "Schede",
+    "remaining": "Meno capitoli da vedere",
+    "pin": "Fissa serie",
+    "unpin": "Rimuovi serie fissata",
+    "manage": "Episodi e note",
+    "publicComment": "Discussione pubblica",
+    "privateNote": "Nota privata",
+    "curated": "Catalogo di Flor",
+    "viewing": "Contenuti da guardare",
+    "progress": "{watched} di {total} capitoli visti",
+    "upToDate": "Hai visto tutti i capitoli registrati",
+    "scope": "Nelle tue serie in corso",
+    "chapters": "Capitoli visti",
+    "loadError": "Impossibile caricare il monitoraggio.",
+    "retry": "Riprova",
+    "noResults": "Nessuna serie corrisponde ai filtri.",
+    "preferences": "Vista, ordine e serie fissate vengono salvati su questo dispositivo per il tuo account.",
+    "season": "Stagione {n}",
+    "signIn": "Accedi"
+},
+  backup: {
+    "viewStatuses": "Monitoraggio",
+    "seriesNotes": "Note private sulle serie",
+    "episodeNotes": "Note private sugli episodi",
+    "userRatings": "Valutazioni",
+    "favorites": "Preferiti",
+    "comments": "Commenti",
+    "featureRequests": "Proposte",
+    "featureVotes": "Voti",
+    "suggestedSites": "Siti suggeriti",
+    "other": "Altri dati",
+    "skipped": "{n} ignorati",
+    "missing": "{n} riferimenti non trovati; non saranno importati.",
+    "invalid": "{n} elementi o sezioni non validi; controlla il file prima di importarlo."
+},
   "basedOnAdmin": {
     "description": "Gestisci le fonti e le schede associate. Crea un valore inserendolo durante la modifica di una scheda.",
     "search": "Cerca valore",

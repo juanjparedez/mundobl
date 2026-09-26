@@ -9,6 +9,8 @@
 export interface ProfileSeriesMini {
   id: number;
   title: string;
+  origin: string;
+  catalogScope: string;
   imageUrl: string | null;
   imageThumbUrl: string | null;
   year: number | null;
@@ -31,6 +33,8 @@ export interface ProfileReview {
   series: {
     id: number;
     title: string;
+    origin: string;
+    catalogScope: string;
     imageUrl: string | null;
     imageThumbUrl: string | null;
     year: number | null;
@@ -59,6 +63,8 @@ export interface ProfileData {
     socials?: UserSocials | null;
   };
   stats: {
+    activityYear: number;
+    completedThisYear: number;
     watched: number;
     watching: number;
     abandoned: number;
@@ -68,6 +74,7 @@ export interface ProfileData {
     comments: number;
     reviews: number;
     hoursWatched: number;
+    unknownDurationVideos: number;
     activeDaysThisWeek: number;
     topGenres: Array<{ name: string; count: number }>;
     topCountries: Array<{ name: string; code: string | null; count: number }>;
@@ -77,6 +84,8 @@ export interface ProfileData {
     avgRating: number | null;
     topRatedSeries: Array<{
       seriesId: number;
+      origin: string;
+      catalogScope: string;
       title: string;
       rating: number;
       imageUrl: string | null;

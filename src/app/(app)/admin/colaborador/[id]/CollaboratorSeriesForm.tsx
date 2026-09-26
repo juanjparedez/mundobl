@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import {
+  Alert,
   Form,
   Input,
   InputNumber,
@@ -20,6 +21,9 @@ import Link from 'next/link';
 import { AdminPageHero } from '@/components/admin/AdminPageHero/AdminPageHero';
 import { SeriesInfoBlocksManager } from '@/components/admin/SeriesInfoBlocksManager/SeriesInfoBlocksManager';
 import { useMessage } from '@/hooks/useMessage';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { unresolvedContributionNames } from '@/lib/contribution-metadata';
+import { ContributionMetadataField } from '@/components/series/ContributionMetadataField/ContributionMetadataField';
 import './collaborator-form.css';
 import { DataTable } from '@/components/design-system';
 
@@ -84,9 +88,16 @@ interface Props {
 }
 
 export function CollaboratorSeriesForm({ series, seasons }: Props) {
+  const { t } = useLocale();
+  const metadataLabels = {
+    search: t('contributionMetadata.search'),
+    error: t('contributionMetadata.loadError'),
+    retry: t('trackingWorkspace.retry'),
+  };
   const message = useMessage();
   const [form] = Form.useForm();
   const [saving, setSaving] = useState(false);
+  const [unresolvedNames, setUnresolvedNames] = useState<string[] | null>(null);
   const [uploading, setUploading] = useState(false);
   const [imageUrl, setImageUrl] = useState(series.imageUrl);
   // Miniatura de card generada junto al poster en /api/upload. Arranca en el
@@ -137,6 +148,7 @@ export function CollaboratorSeriesForm({ series, seasons }: Props) {
     genreNames?: string[];
   }) {
     setSaving(true);
+    setUnresolvedNames(null);
     try {
       const res = await fetch(`/api/colaborador/series/${series.id}`, {
         method: 'PATCH',
@@ -158,6 +170,11 @@ export function CollaboratorSeriesForm({ series, seasons }: Props) {
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
+        const unresolved = unresolvedContributionNames(err);
+        if (unresolved) {
+          setUnresolvedNames(unresolved);
+          return;
+        }
         throw new Error(err.error || `Error ${res.status}`);
       }
       message.success('Ficha guardada');
@@ -176,6 +193,7 @@ export function CollaboratorSeriesForm({ series, seasons }: Props) {
       />
 
       <div className="colaborador-form">
+        <Alert type="info" showIcon title={t('contributionMetadata.policy')} />
         <Form
           form={form}
           layout="vertical"
@@ -245,32 +263,45 @@ export function CollaboratorSeriesForm({ series, seasons }: Props) {
               />
             </Form.Item>
             <Form.Item name="productionCompanyName" label="Productora">
-              <Input placeholder="Ej: XUXY" />
+              <ContributionMetadataField
+                kind="productionCompanies"
+                labels={metadataLabels}
+              />
             </Form.Item>
           </div>
 
-          <Form.Item
-            name="actorNames"
-            label="Actores"
-            help="Escribi un nombre y presiona Enter para agregarlo."
-          >
-            <Select
-              mode="tags"
-              tokenSeparators={[',']}
-              placeholder="Ej: Bible Wichapas"
+          <Form.Item name="actorNames" label="Actores">
+            <ContributionMetadataField
+              kind="actors"
+              multiple
+              labels={metadataLabels}
             />
           </Form.Item>
           <Form.Item name="tagNames" label="Tropes / tags">
-            <Select
-              mode="tags"
-              tokenSeparators={[',']}
-              placeholder="Ej: Enemy to lovers"
+            <ContributionMetadataField
+              kind="tags"
+              multiple
+              labels={metadataLabels}
             />
           </Form.Item>
           <Form.Item name="genreNames" label="Generos">
-            <Select mode="tags" tokenSeparators={[',']} placeholder="Ej: BL" />
+            <ContributionMetadataField
+              kind="genres"
+              multiple
+              labels={metadataLabels}
+            />
           </Form.Item>
 
+          {unresolvedNames && (
+            <Alert
+              type="error"
+              showIcon
+              title={t('contributionMetadata.unresolved').replace(
+                '{names}',
+                unresolvedNames.join(', ')
+              )}
+            />
+          )}
           <Form.Item>
             <Button
               type="primary"
@@ -324,6 +355,7 @@ export function CollaboratorSeriesForm({ series, seasons }: Props) {
       </div>
 
       <div className="colaborador-form">
+        <Alert type="info" showIcon title={t('contributionMetadata.policy')} />
         <h2 className="colaborador-form__section-title">
           Bloques de informacion adicional
         </h2>

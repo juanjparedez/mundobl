@@ -17,22 +17,45 @@ export async function GET() {
         seriesId: { not: null },
         userId: authResult.userId,
       },
-      include: {
+      select: {
+        id: true,
+        status: true,
+        lastWatchedAt: true,
         series: {
-          include: {
-            country: true,
+          // Never send editorial review/observations (which may be private)
+          // or unrelated metadata to a personal tracking screen.
+          select: {
+            id: true,
+            title: true,
+            originalTitle: true,
+            origin: true,
+            catalogScope: true,
+            year: true,
+            imageUrl: true,
+            imageThumbUrl: true,
+            airDays: true,
+            country: { select: { name: true } },
             seasons: {
-              include: {
+              select: {
+                id: true,
+                seasonNumber: true,
                 episodes: {
-                  include: {
+                  select: {
+                    id: true,
+                    episodeNumber: true,
+                    title: true,
+                    embedUrl: true,
+                    durationSeconds: true,
                     // Solo el viewStatus del usuario autenticado: sin el filtro,
                     // viewStatus[0] podía ser de otro user y corrompía el
                     // progreso/proximo episodio de cada card.
-                    viewStatus: { where: { userId: authResult.userId } },
+                    viewStatus: {
+                      where: { userId: authResult.userId },
+                      select: { status: true },
+                    },
                   },
                   orderBy: { episodeNumber: 'asc' },
                 },
-                viewStatus: { where: { userId: authResult.userId } },
               },
               orderBy: { seasonNumber: 'asc' },
             },
@@ -61,7 +84,9 @@ export async function GET() {
         },
       }));
 
-    return NextResponse.json(result);
+    return NextResponse.json(result, {
+      headers: { 'Cache-Control': 'no-store' },
+    });
   } catch (error) {
     console.error('Error fetching currently watching:', error);
     return NextResponse.json(

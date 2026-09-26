@@ -68,3 +68,16 @@ export function getVerUrl(
 export function parseIdFromSlug(param: string): number {
   return parseInt(param, 10);
 }
+
+/** Public destination follows editorial scope, independent of where a card appears. */
+export function getContentUrl(content: {
+  id: number | string;
+  title?: string | null;
+  origin: string;
+  catalogScope: string;
+}): string {
+  return content.origin === 'USER_EMBED' ||
+    content.catalogScope === 'WATCHABLE_ONLY'
+    ? getVerUrl(content.id, content.title)
+    : getSeriesUrl(content.id, content.title);
+}

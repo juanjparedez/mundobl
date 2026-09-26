@@ -9,6 +9,7 @@
 
 import { prisma } from './database';
 import type { Role } from '@/generated/prisma';
+import { canManageContribution } from './contribution-permissions';
 
 export interface OwnershipOk {
   ok: true;
@@ -41,12 +42,12 @@ export async function assertSeriesOwnership(
 
   const series = await prisma.series.findUnique({
     where: { id: seriesId },
-    select: { origin: true, submittedById: true },
+    select: { origin: true, catalogScope: true, submittedById: true },
   });
   if (!series) {
     return { ok: false, status: 404, error: 'Serie no encontrada.' };
   }
-  if (series.origin !== 'USER_EMBED' || series.submittedById !== auth.userId) {
+  if (!canManageContribution(auth, series)) {
     return {
       ok: false,
       status: 403,

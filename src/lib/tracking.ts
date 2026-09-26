@@ -4,7 +4,12 @@
  * "marcar episodio promueve la serie a VIENDO".
  */
 
-import type { Prisma, PrismaClient, ViewStatus } from '../generated/prisma';
+import type {
+  Prisma,
+  PrismaClient,
+  ViewStatus,
+  WatchStatus,
+} from '../generated/prisma';
 import { getSeriesEpisodesOrdered, type SeriesEpisodeOrder } from './database';
 
 export type TrackingClient = PrismaClient | Prisma.TransactionClient;
@@ -53,24 +58,48 @@ export async function markEpisode(
     throw new Error('Episodio no encontrado');
   }
 
-  const episode = await client.viewStatus.upsert({
-    where: { userId_episodeId: { userId, episodeId } },
-    update: { status, watchedDate: status === 'VISTA' ? new Date() : null },
-    create: {
-      userId,
-      episodeId,
-      status,
-      watchedDate: status === 'VISTA' ? new Date() : null,
-    },
-  });
-
   if (status === 'SIN_VER') {
+    const episode = await client.viewStatus.upsert({
+      where: { userId_episodeId: { userId, episodeId } },
+      update: { status, watchedDate: null },
+      create: { userId, episodeId, status, watchedDate: null },
+    });
     return { episode, series: null, allWatched: false };
   }
 
   const { seriesId } = episodeDetail.season;
   const now = new Date();
+  const changed = await markManyWatched(client, userId, [episodeId], now);
+  const episode = await client.viewStatus.findUniqueOrThrow({
+    where: { userId_episodeId: { userId, episodeId } },
+  });
+  const series =
+    changed > 0
+      ? await updateSeriesAfterWatch(client, userId, seriesId, now)
+      : await client.viewStatus.findUnique({
+          where: { userId_seriesId: { userId, seriesId } },
+        });
 
+  const [totalEpisodes, watchedEpisodes] = await Promise.all([
+    client.episode.count({ where: { season: { seriesId } } }),
+    client.viewStatus.count({
+      where: { userId, status: 'VISTA', episode: { season: { seriesId } } },
+    }),
+  ]);
+  return {
+    episode,
+    series,
+    allWatched: totalEpisodes > 0 && totalEpisodes === watchedEpisodes,
+  };
+}
+
+/** Only actual newly-watched episodes advance last activity or resume a paused series. */
+async function updateSeriesAfterWatch(
+  client: TrackingClient,
+  userId: string,
+  seriesId: number,
+  now: Date
+): Promise<ViewStatus> {
   const existingSeries = await client.viewStatus.findUnique({
     where: { userId_seriesId: { userId, seriesId } },
   });
@@ -99,18 +128,7 @@ export async function markEpisode(
     });
   }
 
-  const [totalEpisodes, watchedEpisodes] = await Promise.all([
-    client.episode.count({ where: { season: { seriesId } } }),
-    client.viewStatus.count({
-      where: { userId, status: 'VISTA', episode: { season: { seriesId } } },
-    }),
-  ]);
-
-  return {
-    episode,
-    series,
-    allWatched: totalEpisodes > 0 && totalEpisodes === watchedEpisodes,
-  };
+  return series;
 }
 
 export interface ProgressTarget {
@@ -184,25 +202,24 @@ export async function setProgress(
 
   const upToIds = episodes.slice(0, targetIndex + 1).map((ep) => ep.id);
 
-  await markManyWatched(client, userId, upToIds, now);
+  const changed = await markManyWatched(client, userId, upToIds, now);
+  if (changed > 0) await updateSeriesAfterWatch(client, userId, seriesId, now);
+  const result = await buildProgressResult(client, userId, seriesId, episodes);
 
-  // Misma regla de T03 para la fila de serie (VIENDO salvo que ya este
-  // VISTA/ABANDONADA a mano); allWatched se recalcula sobre toda la serie.
-  const { series, allWatched } = await markEpisode(
-    client,
-    userId,
-    targetEpisode.id,
-    'VISTA'
-  );
-
-  if (options.completeIfAll && allWatched && series?.status !== 'VISTA') {
-    await client.viewStatus.update({
+  if (
+    options.completeIfAll &&
+    result.allWatched &&
+    result.seriesStatus !== 'VISTA'
+  ) {
+    await client.viewStatus.upsert({
       where: { userId_seriesId: { userId, seriesId } },
-      data: { status: 'VISTA', watchedDate: now },
+      update: { status: 'VISTA', watchedDate: now },
+      create: { userId, seriesId, status: 'VISTA', watchedDate: now },
     });
+    result.seriesStatus = 'VISTA';
   }
 
-  return buildProgressResult(client, userId, seriesId, episodes);
+  return result;
 }
 
 /** Marca como vistos sin pisar la fecha de los que ya lo estaban. */
@@ -211,8 +228,8 @@ async function markManyWatched(
   userId: string,
   episodeIds: number[],
   now: Date
-): Promise<void> {
-  await client.viewStatus.createMany({
+): Promise<number> {
+  const created = await client.viewStatus.createMany({
     data: episodeIds.map((episodeId) => ({
       userId,
       episodeId,
@@ -221,10 +238,11 @@ async function markManyWatched(
     })),
     skipDuplicates: true,
   });
-  await client.viewStatus.updateMany({
-    where: { userId, episodeId: { in: episodeIds }, status: 'SIN_VER' },
+  const updated = await client.viewStatus.updateMany({
+    where: { userId, episodeId: { in: episodeIds }, status: { not: 'VISTA' } },
     data: { status: 'VISTA', watchedDate: now },
   });
+  return created.count + updated.count;
 }
 
 /**
@@ -246,8 +264,10 @@ export async function setEpisodesWatched(
   }
 
   if (watched) {
-    await markManyWatched(client, userId, ids, new Date());
-    await markEpisode(client, userId, ids[ids.length - 1], 'VISTA');
+    const now = new Date();
+    const changed = await markManyWatched(client, userId, ids, now);
+    if (changed > 0)
+      await updateSeriesAfterWatch(client, userId, seriesId, now);
   } else {
     await client.viewStatus.updateMany({
       where: { userId, episodeId: { in: ids } },
@@ -292,4 +312,33 @@ async function buildProgressResult(
     total,
     allWatched: total > 0 && watched === total,
   };
+}
+
+/** Use inside a transaction. Identical commands preserve dates, including unknown ones. */
+export async function setSeriesTrackingStatus(
+  client: Prisma.TransactionClient,
+  userId: string,
+  seriesId: number,
+  status: WatchStatus
+): Promise<ViewStatus> {
+  const now = new Date();
+  const dates = {
+    ...(status === 'VISTA' ? { watchedDate: now } : {}),
+    ...(status === 'SIN_VER' ? { watchedDate: null } : {}),
+    ...(status === 'VIENDO' ? { lastWatchedAt: now } : {}),
+  };
+  const inserted = await client.viewStatus.createMany({
+    data: [{ userId, seriesId, status, ...dates }],
+    skipDuplicates: true,
+  });
+  await client.viewStatus.updateMany({
+    where: { userId, seriesId, status: { not: status } },
+    data: { status, ...dates },
+  });
+  if (inserted.count > 0 && (status === 'VIENDO' || status === 'RETOMAR')) {
+    await subscribeOnFirstTrack(client, userId, seriesId);
+  }
+  return client.viewStatus.findUniqueOrThrow({
+    where: { userId_seriesId: { userId, seriesId } },
+  });
 }

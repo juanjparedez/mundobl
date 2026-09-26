@@ -17,7 +17,9 @@ for (const [connection, database] of [
 ]) {
   const url = new URL(connection);
   assert.ok(['localhost', '127.0.0.1'].includes(url.hostname));
-  assert.equal(url.pathname, database);
+  if (database === '/mundobl_restore') {
+    assert.match(url.pathname, /^\/mundobl_restore(?:_[a-z0-9_]+)?$/);
+  } else assert.equal(url.pathname, database);
 }
 const output = mkdtempSync(path.join(tmpdir(), 'mundobl-backup-test-'));
 const run = (script: string, database: string, args: string[] = []) =>
@@ -38,8 +40,11 @@ const run = (script: string, database: string, args: string[] = []) =>
 async function main() {
   const from = new Pool({ connectionString: source });
   const to = new Pool({ connectionString: target });
+  const userId = 'backup-fixture-' + Date.now();
+  let seriesId: number | undefined;
+  let companyId: number | undefined;
+  let writerId: number | undefined;
   try {
-    const userId = 'backup-fixture-' + Date.now();
     await from.query(
       `INSERT INTO "User" (id, email, "updatedAt") VALUES ($1, $2, now())`,
       [userId, userId + '@example.invalid']
@@ -47,10 +52,26 @@ async function main() {
     const series = await from.query<{ id: number }>(
       `INSERT INTO "Series" (title, type, "updatedAt") VALUES ('Restauración á 漢字', 'serie', now()) RETURNING id`
     );
+    seriesId = series.rows[0].id;
+    const writer = await from.query<{ id: number }>(
+      `INSERT INTO "Writer" (name, aliases, "imageAttribution", "bioSourceUrl", "updatedAt") VALUES ($1, $2, $3, $4, now()) RETURNING id`,
+      [
+        userId,
+        ['Alias á 漢字'],
+        'Atribución de prueba',
+        'https://example.invalid/bio',
+      ]
+    );
+    writerId = writer.rows[0].id;
+    await from.query(
+      `INSERT INTO "SeriesWriter" ("seriesId", "writerId", "sourceUrl") VALUES ($1, $2, $3)`,
+      [seriesId, writerId, 'https://example.invalid/credit']
+    );
     const company = await from.query<{ id: number }>(
       `INSERT INTO "ProductionCompany" (name, "updatedAt") VALUES ($1, now()) RETURNING id`,
       [userId]
     );
+    companyId = company.rows[0].id;
     await from.query(
       `INSERT INTO "SeriesProductionCompany" ("seriesId", "productionCompanyId") VALUES ($1, $2)`,
       [series.rows[0].id, company.rows[0].id]
@@ -92,10 +113,30 @@ async function main() {
       [userId]
     );
     assert.ok(inserted.rows[0].id > thread.rows[0].id);
+    const nextWriter = await to.query<{ id: number }>(
+      `INSERT INTO "Writer" (name,"updatedAt") VALUES ($1,now()) RETURNING id`,
+      [userId + '-sequence']
+    );
+    assert.ok(nextWriter.rows[0].id > writerId);
     console.log(
       `PASS: ${tables.rows.length} tablas idénticas, cuatro tablas antes omitidas con datos, secuencias y rechazo de destino ocupado.`
     );
   } finally {
+    // Remove only fixtures created by this run from the source database.
+    if (seriesId)
+      await from.query('DELETE FROM "Series" WHERE id=$1', [seriesId]);
+    if (writerId)
+      await from.query('DELETE FROM "Writer" WHERE id=$1', [writerId]);
+    if (companyId) {
+      await from.query(
+        'DELETE FROM "PersonEnrichment" WHERE "entityType"=$1 AND "entityId"=$2',
+        ['PRODUCTION_COMPANY', companyId]
+      );
+      await from.query('DELETE FROM "ProductionCompany" WHERE id=$1', [
+        companyId,
+      ]);
+    }
+    await from.query('DELETE FROM "User" WHERE id=$1', [userId]);
     await from.end();
     await to.end();
   }

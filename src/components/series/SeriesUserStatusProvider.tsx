@@ -112,12 +112,12 @@ export function SeriesUserStatusProvider({
     }));
   }, [seriesId]);
 
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
       mountedRef.current = false;
-    },
-    []
-  );
+    };
+  }, []);
 
   const load = useCallback(async () => {
     if (sessionStatus !== 'authenticated') {

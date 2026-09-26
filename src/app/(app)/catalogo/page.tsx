@@ -51,13 +51,14 @@ const getCatalogDataCached = unstable_cache(
     return await Promise.all([
       getAllSeries({
         scope: 'PERSONAL',
+        visibility: 'VISIBLE',
         origin: 'CURATED',
         omitLongText: true,
       }),
       getCatalogFilterIndex(),
     ]);
   },
-  ['catalog-page-data-v3'],
+  ['catalog-page-data-v4'],
   // Tageado: cada alta/edicion/baja de serie lo vacia al instante
   // (revalidateSeriesListings), asi que el TTL puede ser largo.
   { revalidate: 21600, tags: [SERIES_LISTINGS_TAG] }

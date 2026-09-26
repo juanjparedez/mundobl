@@ -10,6 +10,116 @@
 import type { TranslationShape } from '../messages';
 
 const zhCN = {
+  writerProfile: {
+    indexTitle: "编剧",
+    indexDescription: "公开目录作品或可观看作品中署名的编剧。","role": "编剧", "works": "署名作品", "sources": "来源", "creditSource": "署名来源", "empty": "暂无公开的署名作品。"},
+
+
+  durationStats: {"hours": "有时长记录的观看小时数", "missing": "{n}个已看视频没有时长，未计入。"},
+
+  watchDateEditor: {
+    "title": "更正观看日期",
+    "date": "观看日期（UTC）",
+    "unknown": "日期未知",
+    "save": "保存",
+    "cancel": "取消",
+    "error": "无法加载或保存日期。",
+    "conflict": "观看记录已更改。请关闭后重新打开以查看当前日期。"
+},
+
+  community: {
+    search: "搜索系列",
+    "title": "社区",
+    "description": "最新公开评论。打开作品页面阅读、回复或分享你的看法。",
+    "empty": "还没有公开评论。",
+    "read": "阅读并讨论",
+    "spoilers": "标题因剧透而隐藏"
+},
+  contentMetadata: {
+    "catalogTitle": "作品信息与观看记录",
+    "catalogDescription": "查看作品信息并管理个人观看记录的目录页面。",
+    "watchTitle": "可观看的剧集",
+    "watchDescription": "探索此页面链接的剧集。可用性和字幕取决于各个来源。",
+    "collectionTitle": "可观看的BL和GL系列",
+    "collectionDescription": "探索提供剧集链接的BL和GL系列。可用性、语言和集数因来源而异。"
+},
+
+  trackingHistory: {
+      "title": "历史记录",
+      "description": "追踪变更仅对你可见。先前状态无法还原过去的操作。",
+      "search": "在历史记录中搜索作品",
+      "empty": "暂无追踪变更记录",
+      "error": "无法更新历史记录",
+      "more": "加载更多",
+      "refresh": "刷新",
+      "clear": "清空历史记录",
+      "clearConfirm": "清空全部历史记录？你的观看进度和笔记将保留。",
+      "cancel": "取消",
+      "watchDate": "观看日期",
+      "previousDate": "先前日期",
+      "unknown": "未知",
+      "season": "第{n}季",
+      "episode": "第{season}季 · 第{episode}集",
+      "series": "作品",
+      "recorded": "已记录状态",
+      "changed": "已修改状态",
+      "dateChanged": "已更正日期",
+      "snapshot": "历史记录开始前的状态"
+  },
+  contributionMetadata: {
+    search: "搜索已有名称",
+    loadError: "无法加载名称。",
+    policy: "投稿使用已有的演员、制作公司、国家、语言、标签和类型。新名称需要由 Flor 编辑添加。",
+    unresolved: "未保存任何更改。以下名称不存在或有歧义：{names}。请核对或请 Flor 添加。",
+  },
+  trackingWorkspace: {
+    "gaps": "前面还有未标记为已看的集数",
+    "title": "我的追剧记录",
+    "subtitle": "继续观看系列，记录进度并保存你的感想。",
+    "settings": "我的资料与数据",
+    "privacy": "观看记录和笔记为私密内容。你发布的评论是公开的。",
+    "continue": "进行中",
+    "diary": "私密日记",
+    "stats": "我的统计",
+    "search": "搜索我的系列",
+    "filter": "按状态筛选",
+    "all": "全部",
+    "list": "列表",
+    "grid": "卡片",
+    "remaining": "剩余集数最少",
+    "pin": "置顶系列",
+    "unpin": "取消置顶",
+    "manage": "单集与笔记",
+    "publicComment": "公开讨论",
+    "privateNote": "私密笔记",
+    "curated": "Flor 的目录",
+    "viewing": "可观看内容",
+    "progress": "已看 {watched} 集，共 {total} 集",
+    "upToDate": "你已看完所有已登记的集数",
+    "scope": "统计范围：正在追的系列",
+    "chapters": "已看集数",
+    "loadError": "无法加载你的追剧记录。",
+    "retry": "重试",
+    "noResults": "没有符合筛选条件的系列。",
+    "preferences": "视图、排序和置顶系列按账号保存在此设备上。",
+    "season": "第 {n} 季",
+    "signIn": "登录"
+},
+  backup: {
+    "viewStatuses": "观看记录",
+    "seriesNotes": "剧集私密笔记",
+    "episodeNotes": "单集私密笔记",
+    "userRatings": "评分",
+    "favorites": "收藏",
+    "comments": "评论",
+    "featureRequests": "提案",
+    "featureVotes": "投票",
+    "suggestedSites": "推荐网站",
+    "other": "其他数据",
+    "skipped": "已跳过 {n} 项",
+    "missing": "找不到 {n} 个引用对象，将不予导入。",
+    "invalid": "有 {n} 个无效记录或部分，请在导入前检查文件。"
+},
   "basedOnAdmin": {
     "description": "管理原作分类及相关作品。编辑作品时可输入新值。",
     "search": "搜索值",

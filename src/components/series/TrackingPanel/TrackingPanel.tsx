@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Select, Badge, Button } from 'antd';
 import {
   EyeOutlined,
+  CalendarOutlined,
   CheckOutlined,
   UndoOutlined,
   RedoOutlined,
@@ -28,6 +29,7 @@ import {
   toTrackedChapters,
   type TrackedChapter,
 } from '@/lib/episode-chapters';
+import { WatchDateEditor } from '../WatchDateEditor/WatchDateEditor';
 import './TrackingPanel.css';
 
 type AntStatusColor =
@@ -77,6 +79,7 @@ export function TrackingPanel({
   const { data: session } = useSession();
   const { seriesStatus, episodeStatus, loaded, version, refetch, storage } =
     useSeriesUserStatus();
+  const [dateOpen, setDateOpen] = useState(false);
   const [status, setStatus] = useState<WatchStatusValue>('SIN_VER');
   const [isUpdating, setIsUpdating] = useState(false);
 
@@ -288,6 +291,15 @@ export function TrackingPanel({
         aria-label={t('viewStatusToggle.ariaLabel')}
       />
 
+      {status === 'VISTA' && (
+        <Button
+          icon={<CalendarOutlined />}
+          onClick={() => setDateOpen(true)}
+          disabled={isUpdating}
+        >
+          {t('watchDateEditor.title')}
+        </Button>
+      )}
       {status === 'VISTA' && hasEpisodesAfterLast && (
         <div className="tracking-panel__resume">
           <p className="tracking-panel__hint">
@@ -411,6 +423,22 @@ export function TrackingPanel({
           });
         }}
       />
+      {dateOpen && session?.user && status === 'VISTA' && (
+        <WatchDateEditor
+          key={`${session.user.id}-${seriesId}`}
+          options={[{ target: { seriesId }, label: seriesTitle }]}
+          onClose={() => setDateOpen(false)}
+          labels={{
+            title: t('watchDateEditor.title'),
+            date: t('watchDateEditor.date'),
+            unknown: t('watchDateEditor.unknown'),
+            save: t('watchDateEditor.save'),
+            cancel: t('watchDateEditor.cancel'),
+            error: t('watchDateEditor.error'),
+            conflict: t('watchDateEditor.conflict'),
+          }}
+        />
+      )}
       <SeriesNoteModal
         seriesId={seriesNoteOpen ? seriesId : null}
         seriesLabel={seriesTitle}

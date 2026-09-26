@@ -1,8 +1,12 @@
+import { completedInCurrentYear } from '@/lib/tracking-statistics';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 import { findNextEpisode } from '@/lib/episode-progress';
-import { groupIntoChapters } from '@/lib/episode-chapters';
+import {
+  groupIntoChapters,
+  countWatchedChapters,
+} from '@/lib/episode-chapters';
 
 interface RawCountRow {
   name: string;
@@ -21,7 +25,8 @@ interface RawYearRow {
 }
 
 interface RawMinutesRow {
-  total_minutes: bigint | null;
+  total_minutes: number | string | null;
+  unknown_durations: bigint;
 }
 
 interface RawDayRow {
@@ -34,6 +39,8 @@ interface RawAvgRatingRow {
 
 interface RawTopRatedRow {
   series_id: number;
+  origin: string;
+  catalog_scope: string;
   title: string;
   avg_score: number;
   image_url: string | null;
@@ -43,10 +50,6 @@ interface RawTopRatedRow {
 interface RawTypeRow {
   type: string;
   count: bigint;
-}
-
-interface RawEpisodeCountRow {
-  total: bigint;
 }
 
 // GET /api/user/profile — returns stats + recent activity for authenticated user
@@ -84,7 +87,7 @@ export async function GET(request: NextRequest) {
       avgRatingRaw,
       topRatedSeriesRaw,
       byTypeRaw,
-      totalEpisodesRaw,
+      seriesWithWatchedEpisodes,
       heatmapRaw,
       reviewsCount,
       recentReviews,
@@ -130,12 +133,17 @@ export async function GET(request: NextRequest) {
       // Complete watched list; the dashboard previews it and paginates the modal.
       prisma.viewStatus.findMany({
         where: { userId, status: 'VISTA', seriesId: { not: null } },
-        orderBy: { updatedAt: 'desc' },
+        orderBy: [
+          { watchedDate: { sort: 'desc', nulls: 'last' } },
+          { id: 'desc' },
+        ],
         include: {
           series: {
             select: {
               id: true,
               title: true,
+              origin: true,
+              catalogScope: true,
               imageUrl: true,
               imageThumbUrl: true,
               year: true,
@@ -155,6 +163,8 @@ export async function GET(request: NextRequest) {
             select: {
               id: true,
               title: true,
+              origin: true,
+              catalogScope: true,
               imageUrl: true,
               imageThumbUrl: true,
               year: true,
@@ -184,6 +194,8 @@ export async function GET(request: NextRequest) {
             select: {
               id: true,
               title: true,
+              origin: true,
+              catalogScope: true,
               imageUrl: true,
               imageThumbUrl: true,
               year: true,
@@ -196,22 +208,27 @@ export async function GET(request: NextRequest) {
 
       // Total minutes watched (sum episode durations for watched episodes)
       prisma.$queryRaw<RawMinutesRow[]>`
-        SELECT COALESCE(SUM(e.duration), 0) as total_minutes
+        SELECT COALESCE(SUM(CASE
+          WHEN e."durationSeconds" > 0 THEN e."durationSeconds" / 60.0
+          WHEN e.duration > 0 THEN e.duration
+          ELSE 0 END), 0) as total_minutes,
+          COUNT(*) FILTER (WHERE COALESCE(e."durationSeconds", 0) <= 0
+            AND COALESCE(e.duration, 0) <= 0) as unknown_durations
         FROM "ViewStatus" vs
         JOIN "Episode" e ON vs."episodeId" = e.id
         WHERE vs."userId" = ${userId}
           AND vs.status = 'VISTA'
-          AND e.duration IS NOT NULL
       `,
 
       // Distinct days with episode watches in the last 7 days
       prisma.$queryRaw<RawDayRow[]>`
-        SELECT DISTINCT DATE(vs."updatedAt") as day
+        SELECT DISTINCT DATE(vs."watchedDate") as day
         FROM "ViewStatus" vs
         WHERE vs."userId" = ${userId}
           AND vs.status = 'VISTA'
           AND vs."episodeId" IS NOT NULL
-          AND vs."updatedAt" >= NOW() - INTERVAL '7 days'
+          AND vs."watchedDate" <= NOW()
+          AND vs."watchedDate" >= NOW() - INTERVAL '7 days'
         ORDER BY day
       `,
 
@@ -295,7 +312,7 @@ export async function GET(request: NextRequest) {
       // resto de los "top N" — el widget nunca podia mostrar mas de 5 sin
       // importar cuanto pidiera el caller).
       prisma.$queryRaw<RawTopRatedRow[]>`
-        SELECT s.id as series_id, s.title, AVG(ur.score) as avg_score,
+        SELECT s.id as series_id, s.title, s.origin, s."catalogScope" as catalog_scope, AVG(ur.score) as avg_score,
                s."imageUrl" as image_url, s."imageThumbUrl" as image_thumb_url
         FROM "UserRating" ur
         JOIN "Series" s ON s.id = ur."seriesId"
@@ -317,23 +334,46 @@ export async function GET(request: NextRequest) {
         ORDER BY count DESC
       `,
 
-      // Total episodes watched
-      prisma.$queryRaw<RawEpisodeCountRow[]>`
-        SELECT COUNT(*) as total
-        FROM "ViewStatus"
-        WHERE "userId" = ${userId}
-          AND status = 'VISTA'
-          AND "episodeId" IS NOT NULL
-      `,
+      // Load every part of each tracked series, including unwatched siblings.
+      // Filtering individual rows to VISTA would make partial chapters complete.
+      prisma.series.findMany({
+        where: {
+          seasons: {
+            some: {
+              episodes: {
+                some: {
+                  viewStatus: { some: { userId, status: 'VISTA' } },
+                },
+              },
+            },
+          },
+        },
+        select: {
+          seasons: {
+            select: {
+              seasonNumber: true,
+              episodes: {
+                select: {
+                  id: true,
+                  episodeNumber: true,
+                  title: true,
+                  viewStatus: { where: { userId }, select: { status: true } },
+                },
+              },
+            },
+          },
+        },
+      }),
 
       // Daily activity last 84 days (12 weeks) for heatmap
       prisma.$queryRaw<RawDayRow[]>`
-        SELECT DISTINCT DATE(vs."updatedAt") as day
+        SELECT DISTINCT DATE(vs."watchedDate") as day
         FROM "ViewStatus" vs
         WHERE vs."userId" = ${userId}
           AND vs.status = 'VISTA'
           AND vs."episodeId" IS NOT NULL
-          AND vs."updatedAt" >= NOW() - INTERVAL '84 days'
+          AND vs."watchedDate" <= NOW()
+          AND vs."watchedDate" >= NOW() - INTERVAL '84 days'
         ORDER BY day
       `,
 
@@ -362,6 +402,8 @@ export async function GET(request: NextRequest) {
             select: {
               id: true,
               title: true,
+              origin: true,
+              catalogScope: true,
               imageUrl: true,
               imageThumbUrl: true,
               year: true,
@@ -399,7 +441,7 @@ export async function GET(request: NextRequest) {
     let longestStreak = 0;
     let currentStreak = 0;
     let streakCheck = new Date();
-    streakCheck.setHours(0, 0, 0, 0);
+    streakCheck.setUTCHours(0, 0, 0, 0);
     for (let i = 0; i < 84; i++) {
       const key = streakCheck.toISOString().slice(0, 10);
       if (heatmapSet.has(key)) {
@@ -451,6 +493,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       user,
       stats: {
+        ...completedInCurrentYear(recentlyCompleted),
         watched: statusMap['VISTA'] ?? 0,
         watching: statusMap['VIENDO'] ?? 0,
         abandoned: statusMap['ABANDONADA'] ?? 0,
@@ -458,6 +501,7 @@ export async function GET(request: NextRequest) {
         favorites: favoritesCount,
         ratings: ratingsCount,
         comments: commentsCount,
+        unknownDurationVideos: Number(hoursResult[0]?.unknown_durations ?? 0),
         hoursWatched:
           Math.round((Number(hoursResult[0]?.total_minutes ?? 0) / 60) * 10) /
           10,
@@ -492,6 +536,8 @@ export async function GET(request: NextRequest) {
         reviews: reviewsCount,
         topRatedSeries: topRatedSeriesRaw.map((r) => ({
           seriesId: r.series_id,
+          origin: r.origin,
+          catalogScope: r.catalog_scope,
           title: r.title,
           rating: Math.round(Number(r.avg_score) * 10) / 10,
           imageUrl: r.image_url,
@@ -501,7 +547,24 @@ export async function GET(request: NextRequest) {
           type: r.type,
           count: Number(r.count),
         })),
-        totalEpisodes: Number(totalEpisodesRaw[0]?.total ?? 0),
+        totalEpisodes: seriesWithWatchedEpisodes.reduce(
+          (total, series) =>
+            total +
+            countWatchedChapters(
+              series.seasons.flatMap((season) =>
+                season.episodes.map((episode) => ({
+                  id: episode.id,
+                  episodeNumber: episode.episodeNumber,
+                  title: episode.title,
+                  seasonNumber: season.seasonNumber,
+                  watched: episode.viewStatus.some(
+                    (status) => status.status === 'VISTA'
+                  ),
+                }))
+              )
+            ),
+          0
+        ),
         longestStreak,
         heatmap: heatmapDates,
         approvedGlossaryTerms: approvedGlossaryTermsCount,
@@ -509,7 +572,7 @@ export async function GET(request: NextRequest) {
       },
       recentlyCompleted: recentlyCompleted.map((r) => ({
         seriesId: r.seriesId,
-        completedAt: r.updatedAt,
+        completedAt: r.watchedDate,
         series: r.series,
       })),
       currentlyWatching: watchingWithNext,

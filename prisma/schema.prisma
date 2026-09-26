@@ -70,6 +70,7 @@ model User {
   comments                Comment[]
   userRatings             UserRating[]
   viewStatuses            ViewStatus[]
+  trackingEvents          TrackingEvent[]
   favorites               UserFavorite[]
   featureRequests         FeatureRequest[]
   featureVotes            FeatureVote[]
@@ -350,6 +351,7 @@ model Series {
   seasons              Season[]
   actors               SeriesActor[]
   directors            SeriesDirector[]
+  writers              SeriesWriter[]
   ratings              Rating[]
   userRatings          UserRating[]
   comments             Comment[]
@@ -371,6 +373,7 @@ model Series {
   linkedSeries         Series?              @relation("UserEmbedLink", fields: [linkedSeriesId], references: [id], onDelete: SetNull)
   linkedFromUserEmbeds Series[]             @relation("UserEmbedLink")
   seriesNotes          SeriesNote[]
+  trackingEvents       TrackingEvent[]
 
   @@index([origin, visibility])
   @@index([submittedById, createdAt])
@@ -439,6 +442,7 @@ model Season {
   ratings    Rating[]
   comments   Comment[]
   viewStatus ViewStatus[]
+  trackingEvents TrackingEvent[]
 
   @@unique([seriesId, seasonNumber])
 }
@@ -527,6 +531,7 @@ model Episode {
   viewStatus ViewStatus[]  @relation("EpisodeViewStatus")
   comments   Comment[]
   notes      EpisodeNote[]
+  trackingEvents TrackingEvent[]
 
   @@unique([seasonId, episodeNumber])
   // `seasons: { some: { episodes: { some: { embedUrl: { not: null } } } } }`
@@ -680,8 +685,30 @@ model Director {
 }
 
 // ============================================
-// PAÍSES
+// GUIONISTAS
 // ============================================
+model Writer {
+  id               Int      @id @default(autoincrement())
+  name             String   @unique
+  aliases          String[] @default([])
+  nationality      String?
+  biography        String?
+  imageUrl         String?
+  imageSource      String?
+  imageAttribution String?
+  imageLicense     String?
+  bioSourceUrl     String?
+  imdbUrl          String?
+  mdlUrl           String?
+  wikiUrl          String?
+  wikidataId       String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  series           SeriesWriter[]
+
+  @@index([wikidataId])
+}
+
 model Country {
   id      Int     @id @default(autoincrement())
   name    String  @unique
@@ -780,7 +807,19 @@ model SeriesDirector {
   @@index([directorId])
 }
 
-// Tags/Etiquetas por Serie
+// Guionistas por Serie
+model SeriesWriter {
+  id        Int    @id @default(autoincrement())
+  seriesId  Int
+  series    Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  writerId  Int
+  writer    Writer @relation(fields: [writerId], references: [id], onDelete: Cascade)
+  sourceUrl String?
+
+  @@unique([seriesId, writerId])
+  @@index([writerId])
+}
+
 model SeriesTag {
   id Int @id @default(autoincrement())
 
@@ -1119,6 +1158,38 @@ enum WatchStatus {
   VISTA
   ABANDONADA
   RETOMAR
+}
+
+enum TrackingEventKind {
+  RECORDED
+  STATUS_CHANGED
+  DATE_CHANGED
+  SNAPSHOT
+}
+
+// Private history of tracking changes, not a claim that every mark is a new viewing.
+model TrackingEvent {
+  id                  String            @default(uuid())
+  userId              String
+  user                User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind                TrackingEventKind
+  status              WatchStatus
+  previousStatus      WatchStatus?
+  watchedDate         DateTime?
+  previousWatchedDate DateTime?
+  recordedAt          DateTime          @default(now())
+  seriesId            Int?
+  series              Series?           @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  seasonId            Int?
+  season              Season?           @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  episodeId           Int?
+  episode             Episode?          @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+
+  @@id([userId, id])
+  @@index([userId, recordedAt, id])
+  @@index([seriesId])
+  @@index([seasonId])
+  @@index([episodeId])
 }
 
 model ViewStatus {
