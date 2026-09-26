@@ -48,11 +48,11 @@
 }
 
 .episodes-table__row--watched {
-  background: rgba(82, 196, 26, 0.04);
+  background: color-mix(in srgb, var(--success-color) 4%, transparent);
 }
 
 .episodes-table__row--watched:hover {
-  background: rgba(82, 196, 26, 0.08);
+  background: color-mix(in srgb, var(--success-color) 8%, transparent);
 }
 
 .episodes-table__row--selected {
@@ -74,28 +74,9 @@
   width: 32px;
 }
 
+/* El numero es el boton de visto (WatchedToggle). */
 .episodes-table__cell--number {
-  width: 40px;
-  cursor: pointer;
-  justify-content: center;
-}
-
-.episodes-table__ep-number {
-  font-weight: 600;
-  font-size: var(--font-size-base);
-  color: var(--text-primary);
-  width: 28px;
-  height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: var(--transition-fast);
-}
-
-.episodes-table__cell--number:hover .episodes-table__ep-number {
-  background: var(--primary-color);
-  color: #fff;
+  padding-right: var(--spacing-xs);
 }
 
 .episodes-table__cell--title {
@@ -178,18 +159,6 @@
     flex-direction: column;
     align-items: flex-start;
     gap: var(--spacing-sm);
-  }
-
-  /* Marcar visto es el gesto principal de la fila y en mobile se hace con
-   * el pulgar: el circulo del numero crece al minimo tactil de 44px. */
-  .episodes-table__cell--number {
-    width: 44px;
-    min-height: 44px;
-  }
-
-  .episodes-table__ep-number {
-    width: 44px;
-    height: 44px;
   }
 
   .episodes-table__row {
