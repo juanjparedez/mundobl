@@ -27,6 +27,7 @@ import { BackToCatalogButton } from '@/components/series/BackToCatalogButton/Bac
 import { ShareButton } from '@/components/common/ShareButton/ShareButton';
 import { WhereToWatch } from '@/components/common/WhereToWatch/WhereToWatch';
 import { SeriesSubscribeButton } from '@/components/series/SeriesSubscribeButton/SeriesSubscribeButton';
+import { FavoriteButton } from '@/components/series/FavoriteButton/FavoriteButton';
 import { SeriesSuggestionButton } from '@/components/series/SuggestionModal/SeriesSuggestionButton';
 import { SeriesUserStatusProvider } from '@/components/series/SeriesUserStatusProvider';
 import { PendingTrackApplier } from '@/components/series/PendingTrackApplier/PendingTrackApplier';
@@ -314,6 +315,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
                     variant="compact"
                   />
                   <SeriesSubscribeButton seriesId={serie.id} />
+                  <FavoriteButton />
                   <SeriesSuggestionButton
                     seriesId={serie.id}
                     seriesTitle={serie.title}
