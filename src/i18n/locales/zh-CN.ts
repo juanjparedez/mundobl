@@ -2426,7 +2426,6 @@ const zhCN = {
   },
   "seriesSubscribeButton": {
     "signInTooltip": "登录以订阅更改",
-    "subscribeAriaLabel": "订阅",
     "subscribeFailedError": "订阅失败",
     "subscribeSuccessMessage": "有更新时我们会通知您",
     "unsubscribeSuccessMessage": "订阅已取消",

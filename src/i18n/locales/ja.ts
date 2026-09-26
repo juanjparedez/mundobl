@@ -2426,7 +2426,6 @@ const ja = {
   },
   "seriesSubscribeButton": {
     "signInTooltip": "変更を購読するにはサインインしてください",
-    "subscribeAriaLabel": "購読",
     "subscribeFailedError": "購読に失敗しました",
     "subscribeSuccessMessage": "更新があった際にお知らせします",
     "unsubscribeSuccessMessage": "購読をキャンセルしました",
