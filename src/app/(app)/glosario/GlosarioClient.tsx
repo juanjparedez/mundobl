@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { SearchParamsListener } from '@/components/common/SearchParamsListener/SearchParamsListener';
 import {
   Tag,
   Input,
@@ -114,7 +114,6 @@ interface GlossarySuggestion extends SuggestionFormValues {
 export function GlosarioClient({ terms, resources }: GlosarioClientProps) {
   const { t } = useLocale();
   const { status: sessionStatus } = useSession();
-  const searchParams = useSearchParams();
 
   const [search, setSearch] = useState('');
   const [country, setCountry] =
@@ -129,14 +128,7 @@ export function GlosarioClient({ terms, resources }: GlosarioClientProps) {
     }
     return Array.from(set).sort((a, b) => a.localeCompare(b));
   }, [terms]);
-  const [view, setView] = useState<GlossaryView>(() => {
-    const requestedView = searchParams.get('view');
-    return requestedView === 'trivia' ||
-      requestedView === 'resources' ||
-      requestedView === 'contribute'
-      ? requestedView
-      : 'dictionary';
-  });
+  const [view, setView] = useState<GlossaryView>('dictionary');
   const [suggestions, setSuggestions] = useState<GlossarySuggestion[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [form] = Form.useForm<SuggestionFormValues>();
@@ -145,13 +137,22 @@ export function GlosarioClient({ terms, resources }: GlosarioClientProps) {
   // filtros — a partir de ahi el resaltado deja de tener sentido.
   const [highlightedSlug, setHighlightedSlug] = useState<string | null>(null);
 
-  // Deep link a un termino puntual: /glosario?term=<slug>. Va por efecto y
-  // no por estado inicial porque Cmd+K puede navegar aca estando ya en
-  // /glosario — en ese caso el componente no se remonta y solo cambia la query.
-  const requestedSlug = searchParams.get('term');
-  useEffect(() => {
-    if (!requestedSlug) return;
-    const match = terms.find((item) => item.slug === requestedSlug);
+  // ?view= elige la pestaña al llegar. ?term=<slug> es un deep link a un
+  // termino (tipicamente desde Cmd+K, que puede navegar aca estando ya en
+  // /glosario: por eso se escucha la query y no se lee una sola vez).
+  const handleSearchParams = (params: URLSearchParams) => {
+    const requestedView = params.get('view');
+    if (
+      requestedView === 'trivia' ||
+      requestedView === 'resources' ||
+      requestedView === 'contribute'
+    ) {
+      setView(requestedView);
+    }
+    const requestedSlug = params.get('term');
+    const match = requestedSlug
+      ? terms.find((item) => item.slug === requestedSlug)
+      : undefined;
     if (!match) return;
     setView('dictionary');
     setCountry('all');
@@ -159,7 +160,7 @@ export function GlosarioClient({ terms, resources }: GlosarioClientProps) {
     setSelectedTag(null);
     setSearch(match.term);
     setHighlightedSlug(match.slug);
-  }, [requestedSlug, terms]);
+  };
 
   useEffect(() => {
     if (sessionStatus !== 'authenticated') return;
@@ -243,6 +244,7 @@ export function GlosarioClient({ terms, resources }: GlosarioClientProps) {
 
   return (
     <div className="glosario-container">
+      <SearchParamsListener onChange={handleSearchParams} />
       {/* Hero */}
       <header className="glosario-hero">
         <div className="glosario-hero__badge">
