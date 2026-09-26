@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { runPlayabilityJob } from '@/lib/playability-audit';
 import { runLogRetentionJob } from '@/lib/access-log';
+import { runNewsIngestJob } from '@/lib/news-ingest';
 
 export const runtime = 'nodejs';
 export const maxDuration = 60;
@@ -11,9 +12,9 @@ export const maxDuration = 60;
 const DAILY_DEADLINE_MS = 52_000;
 
 /**
- * El unico cron de Vercel (vercel.json, una vez por dia). Corre los trabajos
- * en secuencia y cada uno deja su corrida en /admin/runtime. Si uno falla, el
- * siguiente corre igual: la limpieza no depende de que YouTube responda.
+ * El unico cron de Vercel (vercel.json, una vez por dia): sondeo de videos,
+ * ingesta de noticias y limpieza de logs. Cada uno deja su corrida en
+ * /admin/runtime, y si uno falla los demas corren igual.
  */
 export async function GET(request: Request) {
   const cronSecret = process.env.CRON_SECRET;
@@ -31,19 +32,27 @@ export async function GET(request: Request) {
   const startedAt = Date.now();
   const failed: string[] = [];
 
-  try {
-    const result = await runPlayabilityJob('schedule');
+  // Sondeo de videos y noticias van en paralelo: los dos esperan red, no se
+  // pisan, y asi la limpieza de logs conserva su margen.
+  const [playability, news] = await Promise.allSettled([
+    runPlayabilityJob('schedule'),
+    runNewsIngestJob(),
+  ]);
+  if (playability.status === 'rejected') {
+    console.error('[cron/daily] playability', playability.reason);
+    failed.push('playability');
+  } else if (playability.value.budgetExhausted) {
     // La corrida que quedo corta es la unica que pide accion: quedo backlog
     // sin sondear, que va en la proxima.
-    if (result.budgetExhausted) {
-      console.warn(
-        `[cron/daily] sondeo cortado en ${result.elapsedMs}ms: ` +
-          `${result.probed} de ${result.scanned}. El resto va en la proxima corrida.`
-      );
-    }
-  } catch (error) {
-    console.error('[cron/daily] playability', error);
-    failed.push('playability');
+    const result = playability.value;
+    console.warn(
+      `[cron/daily] sondeo cortado en ${result.elapsedMs}ms: ` +
+        `${result.probed} de ${result.scanned}. El resto va en la proxima corrida.`
+    );
+  }
+  if (news.status === 'rejected') {
+    console.error('[cron/daily] news', news.reason);
+    failed.push('news');
   }
 
   try {
