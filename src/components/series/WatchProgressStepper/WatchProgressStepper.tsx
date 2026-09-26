@@ -14,6 +14,7 @@ import { findFurthestWatchedIndex } from '@/lib/episode-progress';
 import { chapterCode, type TrackedChapter } from '@/lib/episode-chapters';
 import { useMessage } from '@/hooks/useMessage';
 import { useSeriesUserStatus } from '../SeriesUserStatusProvider';
+import { setLocalProgressThrough } from '@/lib/local-progress';
 import './WatchProgressStepper.css';
 
 interface WatchProgressStepperProps {
@@ -84,9 +85,18 @@ export function WatchProgressStepper({
 
     if (localOnly) {
       setIndex(targetIndex);
+      const orderedEpisodeIds = chapters.flatMap(
+        (chapter) => chapter.episodeIds
+      );
+      const lastEpisodeIndex =
+        targetIndex < 0
+          ? -1
+          : orderedEpisodeIds.indexOf(lastEpisodeId(chapters[targetIndex]));
+      setLocalProgressThrough(seriesId, orderedEpisodeIds, lastEpisodeIndex);
       onLocalChange?.(
         targetIndex < 0 ? null : lastEpisodeId(chapters[targetIndex])
       );
+      await refetch();
       return;
     }
 

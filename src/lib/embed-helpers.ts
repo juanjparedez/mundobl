@@ -220,19 +220,35 @@ export interface EmbedInfo {
   platform: Platform;
 }
 
+interface EmbedOptions {
+  jsApi?: boolean;
+  origin?: string;
+  autoplay?: boolean;
+}
+
 export function getEmbedInfo(
   platform: Platform,
   url: string,
-  videoId: string | null
+  videoId: string | null,
+  options: EmbedOptions = {}
 ): EmbedInfo {
   const resolvedId = videoId || (url ? extractVideoId(platform, url) : null);
 
   switch (platform) {
     case 'YouTube':
+      const youtubeParams = new URLSearchParams({
+        rel: '0',
+        cc_load_policy: '1',
+        hl: 'es',
+        cc_lang_pref: 'es',
+      });
+      if (options.jsApi) youtubeParams.set('enablejsapi', '1');
+      if (options.origin) youtubeParams.set('origin', options.origin);
+      if (options.autoplay) youtubeParams.set('autoplay', '1');
       return {
         type: 'iframe',
         url: resolvedId
-          ? `https://www.youtube-nocookie.com/embed/${resolvedId}?rel=0&cc_load_policy=1&hl=es&cc_lang_pref=es`
+          ? `https://www.youtube-nocookie.com/embed/${resolvedId}?${youtubeParams.toString()}`
           : null,
         originalUrl: url,
         platform,

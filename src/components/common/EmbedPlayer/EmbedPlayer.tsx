@@ -1,7 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef, useSyncExternalStore } from 'react';
 import { getEmbedInfo, type Platform } from '@/lib/embed-helpers';
+import {
+  useYouTubeWatchTime,
+  type YouTubeWatchEvent,
+} from '@/hooks/useYouTubeWatchTime';
 import { LinkOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import './EmbedPlayer.css';
 
@@ -10,6 +14,8 @@ interface EmbedPlayerProps {
   url: string;
   videoId: string | null;
   title: string;
+  autoplay?: boolean;
+  onWatchProgress?: (event: YouTubeWatchEvent) => void;
 }
 
 // lib.dom.d.ts todavia no tipa ScreenOrientation.lock (Screen Orientation
@@ -52,9 +58,23 @@ export function EmbedPlayer({
   url,
   videoId,
   title,
+  autoplay = false,
+  onWatchProgress,
 }: EmbedPlayerProps) {
   useFullscreenLandscapeLock();
-  const embed = getEmbedInfo(platform as Platform, url, videoId);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const origin = useSyncExternalStore(
+    () => () => {},
+    () => window.location.origin,
+    () => ''
+  );
+  const isTrackedYouTube = platform === 'YouTube' && !!onWatchProgress;
+  const embed = getEmbedInfo(platform as Platform, url, videoId, {
+    jsApi: isTrackedYouTube,
+    origin: isTrackedYouTube ? origin : undefined,
+    autoplay,
+  });
+  useYouTubeWatchTime(iframeRef, isTrackedYouTube && !!origin, onWatchProgress);
 
   if (embed.type === 'iframe' && embed.url) {
     const isSpotify = platform === 'Spotify';
@@ -66,6 +86,8 @@ export function EmbedPlayer({
           className={`embed-player ${isSpotify ? 'embed-player--spotify' : ''}`}
         >
           <iframe
+            key={embed.url}
+            ref={iframeRef}
             src={embed.url}
             title={title}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

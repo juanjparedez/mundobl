@@ -2408,6 +2408,14 @@ export type TranslationShape = {
     linkCopyError: string;
     previousButton: string;
     nextButton: string;
+    nextChapterButton: string;
+    autoMarkedChapter: string;
+    undoAutoMark: string;
+    subtitlesTitle: string;
+    subtitlesBody: string;
+    regionTitle: string;
+    regionBody: string;
+    whereToWatchLink: string;
     markChapter: string;
     chapterWatched: string;
     unmarkChapter: string;
@@ -2612,6 +2620,12 @@ export type TranslationShape = {
     notesHintNoEpisode: string;
     episodesAfterLast: string;
     followAgain: string;
+    localSaved: string;
+    localSignIn: string;
+    localImportOffer: string;
+    localImportButton: string;
+    localImportSuccess: string;
+    localImportError: string;
   };
   posterPlaceholder: {
     noImage: string;
@@ -5740,6 +5754,16 @@ const es: TranslationShape = {
     linkCopyError: 'No se pudo copiar el link.',
     previousButton: 'Anterior',
     nextButton: 'Siguiente',
+    nextChapterButton: 'Siguiente capítulo',
+    autoMarkedChapter: 'Marcamos el cap. {n}',
+    undoAutoMark: 'Deshacer',
+    subtitlesTitle: 'Subtítulos',
+    subtitlesBody:
+      'Se activan automáticamente si el video oficial los tiene. Podés cambiar el idioma desde [CC] en el reproductor.',
+    regionTitle: 'No se ve en tu país.',
+    regionBody:
+      'La productora limita este video por región. Consultá las opciones legales disponibles para la serie.',
+    whereToWatchLink: 'Dónde verla',
     markChapter: 'Vi el capítulo {n}',
     chapterWatched: 'Visto',
     unmarkChapter: 'Desmarcar el capítulo {n}',
@@ -5962,6 +5986,12 @@ const es: TranslationShape = {
     episodesAfterLast:
       'Hay capítulos después del último que marcaste como visto.',
     followAgain: 'Volver a seguirla',
+    localSaved: 'Guardado en este navegador.',
+    localSignIn: 'Entrá para no perderlo',
+    localImportOffer: 'Tenés progreso de {n} series en este navegador.',
+    localImportButton: 'Guardarlo en mi cuenta',
+    localImportSuccess: 'El progreso quedó guardado en tu cuenta.',
+    localImportError: 'No pudimos guardar todo el progreso local.',
   },
   posterPlaceholder: {
     noImage: 'Sin imagen',
@@ -9110,6 +9140,16 @@ const en: TranslationShape = {
     linkCopyError: 'Could not copy the link.',
     previousButton: 'Previous',
     nextButton: 'Next',
+    nextChapterButton: 'Next episode',
+    autoMarkedChapter: 'We marked episode {n}',
+    undoAutoMark: 'Undo',
+    subtitlesTitle: 'Subtitles',
+    subtitlesBody:
+      'They turn on automatically when the official video provides them. You can change the language from [CC] in the player.',
+    regionTitle: "It isn't available in your country.",
+    regionBody:
+      'The producer restricts this video by region. Check the legal options available for the series.',
+    whereToWatchLink: 'Where to watch',
     markChapter: 'I watched episode {n}',
     chapterWatched: 'Watched',
     unmarkChapter: 'Unmark episode {n}',
@@ -9330,6 +9370,12 @@ const en: TranslationShape = {
     episodesAfterLast:
       'There are episodes after the last one you marked as watched.',
     followAgain: 'Follow it again',
+    localSaved: 'Saved in this browser.',
+    localSignIn: 'Sign in so you do not lose it',
+    localImportOffer: 'You have progress for {n} series in this browser.',
+    localImportButton: 'Save it to my account',
+    localImportSuccess: 'Your progress is now saved to your account.',
+    localImportError: 'We could not save all local progress.',
   },
   posterPlaceholder: {
     noImage: 'No image',
