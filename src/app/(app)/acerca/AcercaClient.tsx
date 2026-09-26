@@ -95,10 +95,11 @@ export function AcercaClient() {
             <div className="acerca-value-box__icon">⚖️</div>
             <h3>100% Legal y Oficial</h3>
             <p>
-              No alojamos videos pirateados en servidores propios. Todas las
-              reproducciones se realizan a través de reproductores oficiales
-              autorizados (YouTube, Vimeo, Bilibili, Dailymotion), respetando
-              las vistas y la monetización de las productoras originales.
+              No subimos videos ni enlazamos re-subidas. Lo que se ve acá sale
+              de los canales oficiales de YouTube de cada productora, así las
+              vistas y la monetización quedan para quien hizo la serie. Lo que
+              no tiene fuente oficial no se ve acá: te decimos dónde verlo
+              legalmente.
             </p>
           </div>
 

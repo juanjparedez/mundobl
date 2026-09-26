@@ -13,6 +13,7 @@ Todas las versiones notables del proyecto se documentan aqui.
 ### Features
 
 - **Para ver acá y para seguir, por separado**: el menú separa lo que se mira en el sitio ("Ver series") de lo que se sigue (catálogo, viendo, perfil). En el catálogo, las series que además se ven acá llevan "▶ Se ve acá" y tienen su filtro. Un aviso, que se cierra una vez, explica por qué no todo se ve acá.
+- **La home dice lo que hay**: una sección nueva cuenta cuántas series se ven acá y cuántas se siguen, y aclara que no subimos videos ni enlazamos re-subidas. Se fue el "espacio para fansubs", que no existía, y `/acerca` deja de nombrar plataformas que ya no usamos.
 - **El seguimiento cuenta capítulos, no videos**: YouTube sube muchos capítulos en partes ([1/4]…[4/4]). Antes, ver el capítulo 1 de Baker Boys decía "Ep. 4 / 52"; ahora cuenta capítulos, y "Vi el ep. N" marca el capítulo entero. Vale para la ficha, `/ver`, `/watching` y el perfil.
 - **"Vi el capítulo N" desde el reproductor**: debajo del video en `/ver`, junto a Anterior y Siguiente. Tocarlo otra vez lo desmarca.
 - **La lista de episodios de la ficha responde**: muestra "Episodios (12)" en vez de 64 videos sueltos, con los avances y extras resumidos en una línea, y el botón de visto actualiza el panel sin recargar.
