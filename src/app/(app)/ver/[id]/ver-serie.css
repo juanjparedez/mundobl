@@ -189,13 +189,26 @@
 
 /* Link crudo copiable — igual si el embed esta geo-bloqueado, el link
  * sirve para abrirlo directo con VPN/otro navegador/la app de YouTube. */
-.ver-serie__geoblock-link-input {
-  margin-top: 8px;
-  max-width: 480px;
+.ver-serie__geoblock-link {
+  color: var(--primary-color);
+  text-decoration: underline;
 }
 
-.ver-serie__geoblock-link-input.ant-input-outlined {
-  font-size: 0.8rem;
+.ver-serie__auto-marked {
+  margin-top: calc(-1 * var(--spacing-sm));
+}
+
+.ver-serie__legal-column {
+  flex: 1;
+  min-width: 0;
+}
+
+.ver-serie__legal-column .mb-notice {
+  margin-bottom: var(--spacing-xs);
+}
+
+.ver-serie__legal-links {
+  font-size: var(--font-size-xs);
   color: var(--text-tertiary);
 }
 

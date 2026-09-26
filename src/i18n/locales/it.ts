@@ -2413,6 +2413,14 @@ const it = {
     "linkCopyError": "Impossibile copiare il link.",
     "previousButton": "Precedente",
     "nextButton": "Successivo",
+    "nextChapterButton": "Episodio successivo",
+    "autoMarkedChapter": "Episodio {n} segnato",
+    "undoAutoMark": "Annulla",
+    "subtitlesTitle": "Sottotitoli",
+    "subtitlesBody": "Si attivano automaticamente se il video ufficiale li include. Puoi cambiare lingua da [CC] nel player.",
+    "regionTitle": "Non disponibile nel tuo Paese.",
+    "regionBody": "Il produttore limita questo video in base alla regione. Controlla le opzioni legali disponibili per la serie.",
+    "whereToWatchLink": "Dove guardarla",
     "markChapter": "Ho guardato l'episodio {n}",
     "chapterWatched": "Guardato",
     "unmarkChapter": "Deseleziona episodio {n}",
@@ -2616,7 +2624,13 @@ const it = {
     "seriesNote": "Nota serie",
     "notesHintNoEpisode": "Segna un episodio come visto per aggiungere una nota.",
     "episodesAfterLast": "Ci sono episodi dopo l'ultimo che hai segnato come visto.",
-    "followAgain": "Seguila di nuovo"
+    "followAgain": "Seguila di nuovo",
+    "localSaved": "Salvato in questo browser.",
+    "localSignIn": "Accedi per non perderlo",
+    "localImportOffer": "Hai i progressi di {n} serie in questo browser.",
+    "localImportButton": "Salva nel mio account",
+    "localImportSuccess": "I progressi sono stati salvati nel tuo account.",
+    "localImportError": "Non è stato possibile salvare tutti i progressi locali."
   },
   "posterPlaceholder": {
     "noImage": "Nessuna immagine"
