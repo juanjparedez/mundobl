@@ -33,6 +33,10 @@ import { useSession } from 'next-auth/react';
 import { EmbedPlayer } from '@/components/common/EmbedPlayer/EmbedPlayer';
 import { useSeriesUserStatus } from '@/components/series/SeriesUserStatusProvider';
 import { useMarkEpisodes } from '@/hooks/useMarkEpisodes';
+import { useViewerCountry } from '@/hooks/useViewerCountry';
+import { availabilityOf, type Availability } from '@/lib/availability';
+import type { PlaybackStatus } from '@/lib/playability';
+import type { TranslationKey } from '@/i18n/messages';
 import { groupIntoChapters } from '@/lib/episode-chapters';
 import { EmbedAttribution } from '@/components/common/EmbedAttribution/EmbedAttribution';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
@@ -62,6 +66,8 @@ interface Episode {
   embedVideoId: string | null;
   embedChannelName: string | null;
   embedChannelUrl: string | null;
+  playback: PlaybackStatus;
+  playbackBlockedMarkets: string[];
 }
 
 interface Season {
@@ -104,6 +110,13 @@ interface SeriesInfo {
     imageUrl?: string | null;
   } | null;
 }
+
+const AVAILABILITY_KEY = {
+  blocked_here: 'verSerie.availabilityBlockedHere',
+  blocked_somewhere: 'verSerie.availabilityBlockedSomewhere',
+  youtube_only: 'verSerie.availabilityYoutubeOnly',
+  removed: 'verSerie.availabilityRemoved',
+} as const satisfies Record<Exclude<Availability, 'ok'>, TranslationKey>;
 
 interface VerSerieClientProps {
   series: SeriesInfo;
@@ -326,6 +339,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
   const isUserEmbed = series.origin === 'USER_EMBED';
   const { episodeStatus } = useSeriesUserStatus();
   const { setWatched, pendingKey, ready } = useMarkEpisodes();
+  const country = useViewerCountry();
   const isWatched = (episodeId: number) => episodeStatus[episodeId] === 'VISTA';
 
   const flatEpisodes = useMemo(() => {
@@ -496,6 +510,16 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
     return <Empty description={t('verSerie.noEpisodesAvailable')} />;
   }
 
+  const availability = (episode: Episode) =>
+    availabilityOf(episode.playback, episode.playbackBlockedMarkets, country);
+  const activeAvailability = availability(active);
+  const geoIssue =
+    activeAvailability === 'blocked_here' ||
+    activeAvailability === 'blocked_somewhere';
+  // Con el pais conocido manda el episodio: geoRestrictedCore (bloqueada en
+  // todos los mercados principales) solo cuenta mientras no se sabe.
+  const showGeoTip = geoIssue || (country === null && series.geoRestrictedCore);
+
   const extrasCount = extraEpisodes.length + privateEpisodes.length;
   const mainEpisodesCount = chapterGroups.length;
 
@@ -586,6 +610,26 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
       </header>
 
       {/* Reproductor grande */}
+      {activeAvailability !== 'ok' && (
+        <Alert
+          type={activeAvailability === 'blocked_somewhere' ? 'info' : 'warning'}
+          showIcon
+          className="ver-serie__availability"
+          title={t(AVAILABILITY_KEY[activeAvailability])}
+          action={
+            activeAvailability === 'youtube_only' && active.embedVideoId ? (
+              <a
+                href={`https://www.youtube.com/watch?v=${active.embedVideoId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {t('verSerie.openOnYoutube')}
+              </a>
+            ) : undefined
+          }
+        />
+      )}
+
       <div className="ver-serie__player-wrap">
         <EmbedPlayer
           platform={active.embedPlatform || 'YouTube'}
@@ -670,62 +714,60 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         </div>
       </div>
 
-      {/* Tip de bloqueo regional / VPN — encabezado mas contundente cuando
-       *  YA sabemos (geoRestrictedCore) que esta bloqueada en el mercado
-       *  core, en vez del generico "¿el video dice...?" condicional. */}
-      <div className="ver-serie__geoblock-tip">
-        <span className="ver-serie__geoblock-icon">🌍</span>
-        <div className="ver-serie__geoblock-text">
-          {series.geoRestrictedCore ? (
-            <strong>Esta serie está bloqueada en tu región.</strong>
-          ) : (
-            <strong>
-              ¿El video dice &quot;No disponible en tu país&quot;?
-            </strong>
-          )}{' '}
-          Algunas productoras limitan la emisión gratuita de YouTube si
-          vendieron la licencia exclusiva a plataformas locales. Podés verlo con
-          VPN (Tailandia, Taiwán o EE.UU.) o consultar las opciones en{' '}
-          <Link
-            href="/plataformas"
-            style={{
-              color: 'var(--primary-color)',
-              textDecoration: 'underline',
-            }}
-          >
-            Plataformas & Planes
-          </Link>
-          .
-          {active.embedUrl && (
-            <Input
-              readOnly
-              value={active.embedUrl}
-              className="ver-serie__geoblock-link-input"
-              onFocus={(e) => e.target.select()}
-              addonAfter={
-                <Button
-                  type="text"
-                  size="small"
-                  icon={
-                    linkCopied ? (
-                      <CheckOutlined
-                        style={{ color: 'var(--success-color)' }}
-                      />
-                    ) : (
-                      <CopyOutlined />
-                    )
-                  }
-                  onClick={() => handleCopyEmbedLink(active.embedUrl!)}
-                >
-                  {linkCopied
-                    ? t('verSerie.linkCopiedLabel')
-                    : t('verSerie.copyLinkButton')}
-                </Button>
-              }
-            />
-          )}
+      {/* Tip de bloqueo regional: solo cuando este video tiene un bloqueo
+       *  (el aviso de arriba ya dice cual) o, sin saber el pais, cuando la
+       *  serie esta bloqueada en todos los mercados principales. */}
+      {showGeoTip && (
+        <div className="ver-serie__geoblock-tip">
+          <span className="ver-serie__geoblock-icon">🌍</span>
+          <div className="ver-serie__geoblock-text">
+            {!geoIssue && (
+              <strong>Esta serie está bloqueada en tu región.</strong>
+            )}{' '}
+            Algunas productoras limitan la emisión gratuita de YouTube si
+            vendieron la licencia exclusiva a plataformas locales. Podés verlo
+            con VPN (Tailandia, Taiwán o EE.UU.) o consultar las opciones en{' '}
+            <Link
+              href="/plataformas"
+              style={{
+                color: 'var(--primary-color)',
+                textDecoration: 'underline',
+              }}
+            >
+              Plataformas & Planes
+            </Link>
+            .
+            {active.embedUrl && (
+              <Input
+                readOnly
+                value={active.embedUrl}
+                className="ver-serie__geoblock-link-input"
+                onFocus={(e) => e.target.select()}
+                addonAfter={
+                  <Button
+                    type="text"
+                    size="small"
+                    icon={
+                      linkCopied ? (
+                        <CheckOutlined
+                          style={{ color: 'var(--success-color)' }}
+                        />
+                      ) : (
+                        <CopyOutlined />
+                      )
+                    }
+                    onClick={() => handleCopyEmbedLink(active.embedUrl!)}
+                  >
+                    {linkCopied
+                      ? t('verSerie.linkCopiedLabel')
+                      : t('verSerie.copyLinkButton')}
+                  </Button>
+                }
+              />
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Atribución de origen */}
       <div className="ver-serie__attribution-row">
@@ -913,6 +955,11 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
                       {items.map(({ flatIndex, episode }) => {
                         const isActive = flatIndex === activeIdx;
                         const partWatched = isWatched(episode.id);
+                        const partAvailability = availability(episode);
+                        // Sin pais conocido no se marca nada: seria ruido.
+                        const partBlocked =
+                          partAvailability !== 'ok' &&
+                          partAvailability !== 'blocked_somewhere';
                         const partLabel = isMultiPart
                           ? episode.parsed.partNumber
                             ? `Parte ${episode.parsed.partNumber}/${episode.parsed.partTotal || 4}`
@@ -925,7 +972,14 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
                             type="button"
                             className={`ver-serie__part-btn${
                               isActive ? ' ver-serie__part-btn--active' : ''
-                            }${partWatched ? ' ver-serie__part-btn--watched' : ''}`}
+                            }${partWatched ? ' ver-serie__part-btn--watched' : ''}${
+                              partBlocked ? ' ver-serie__part-btn--blocked' : ''
+                            }`}
+                            title={
+                              partBlocked
+                                ? t(AVAILABILITY_KEY[partAvailability])
+                                : undefined
+                            }
                             aria-current={isActive ? 'true' : undefined}
                             onClick={() => selectEpisode(flatIndex)}
                           >

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, after } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 import { notifyUser } from '@/lib/notifications';
@@ -55,14 +55,18 @@ export async function POST(
       fr.userId !== authResult.userId &&
       VOTE_MILESTONES.includes(voteCount)
     ) {
-      void notifyUser({
-        userId: fr.userId,
-        type: 'feature_votes_milestone',
-        title: `Tu solicitud "${fr.title}" alcanzó ${voteCount} ${voteCount === 1 ? 'voto' : 'votos'}`,
-        linkPath: '/feedback',
-        refType: 'feature_votes_milestone',
-        refId: `${featureRequestId}:${voteCount}`,
-      }).catch(() => {});
+      const ownerId = fr.userId;
+      const requestTitle = fr.title;
+      after(() =>
+        notifyUser({
+          userId: ownerId,
+          type: 'feature_votes_milestone',
+          title: `Tu solicitud "${requestTitle}" alcanzó ${voteCount} ${voteCount === 1 ? 'voto' : 'votos'}`,
+          linkPath: '/feedback',
+          refType: 'feature_votes_milestone',
+          refId: `${featureRequestId}:${voteCount}`,
+        }).catch(() => {})
+      );
     }
 
     return NextResponse.json({ voted: true });
