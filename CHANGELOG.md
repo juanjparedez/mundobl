@@ -8,6 +8,51 @@ Todas las versiones notables del proyecto se documentan aqui.
 > (`ChangelogItem`, `/admin/changelog`) quedo como fallback solo si este archivo
 > esta vacio.
 
+## 2026-09-26 — Capítulos que cuentan bien, favoritos en la ficha y noticias al día
+
+### Features
+
+- **El seguimiento cuenta capítulos, no videos**: YouTube sube muchos capítulos en partes ([1/4]…[4/4]). Antes, ver el capítulo 1 de Baker Boys decía "Ep. 4 / 52"; ahora cuenta capítulos, y "Vi el ep. N" marca el capítulo entero. Vale para la ficha, `/ver`, `/watching` y el perfil.
+- **"Vi el capítulo N" desde el reproductor**: debajo del video en `/ver`, junto a Anterior y Siguiente. Tocarlo otra vez lo desmarca.
+- **La lista de episodios de la ficha responde**: muestra "Episodios (12)" en vez de 64 videos sueltos, con los avances y extras resumidos en una línea, y el botón de visto actualiza el panel sin recargar.
+- **Favoritos desde la ficha y desde `/ver`**: una estrella al lado de la campanita. Antes solo se podía desde el catálogo.
+- **`/ver` avisa antes del play**: si el video no está disponible en tu país, solo se ve en YouTube o la productora lo sacó, lo dice arriba del reproductor.
+- **Fichas sin dónde ver**: si no sabemos dónde verla legalmente, lo dice y te deja contarnos.
+- **Catálogo con filtros en la URL**: un catálogo filtrado se comparte con el link, y la búsqueda desde Google (`?q=`) funciona.
+- **Noticias que llegan solas**: el sitio junta noticias de los sitios recomendados y de los canales oficiales; alguien del equipo las revisa antes de publicarlas, y las de cada serie aparecen en su ficha.
+
+### Fixes
+
+- **El botón "atrás" del navegador**: si entrabas directo a una página, "atrás" cambiaba la URL pero la pantalla no se movía; y desde una ficha abierta por un link externo te sacaba del sitio. Además, volver al inicio con sesión ya no te manda a `/watching` a la fuerza: eso pasa solo cuando abrís el sitio.
+- **El contenido ya no se separa de la barra lateral**: en escritorio quedaba un hueco de 250px entre el menú y la página.
+- **Carátulas**: las series sin póster muestran un cartel con el título en vez de un recuadro vacío, y las miniaturas de YouTube ya no traen franjas negras.
+- **En el catálogo, el adelanto de la serie ya no se abre solo** al pasar el mouse por la grilla; se abre con "+ info". En la vista carrusel sigue igual.
+- **Las páginas llegan con contenido desde el servidor**: antes se veía una pantalla vacía hasta que cargaba todo.
+
+## 2026-09-25 — Seguir una serie te avisa, y la privacidad que prometemos
+
+### Features
+
+- **Aviso de capítulo disponible**: cuando se suben videos nuevos de una serie que seguís, te llega un aviso (y push, si lo tenés activado) que te lleva directo al primero de los nuevos.
+- **Seguir una serie te suscribe a sus avisos**: antes eran dos cosas separadas. La campanita sigue a la vista para apagarlo.
+- **"Seguir viendo" retoma donde ibas**: desde `/watching` te lleva al capítulo siguiente, no al primero. El episodio viaja en la URL (`?e=1x5`), así que se puede compartir y sobrevive al F5.
+- **Estar al día no es terminar**: si la serie todavía sale, llegar al último capítulo cargado dice "Estás al día" y la serie se queda en tu lista.
+- **Las series en "Retomar" aparecen en `/watching`**, con su etiqueta.
+- **Reproducciones y me gusta de YouTube** en las tarjetas de `/ver`.
+- **La home cuenta lo que hace el sitio**: seguir series capítulo a capítulo. Con sesión y series en curso, abrir el sitio te lleva a tu lista.
+
+### Fixes
+
+- **"Quiero colaborar" lleva a un lugar donde se puede colaborar**: el formulario de feedback, que ahora funciona sin sesión.
+- **Las estadísticas de la comunidad son de la comunidad**: se separan los números del equipo.
+- **Tu acento de color se respeta en todo el sitio**: dos variables inexistentes lo pisaban con rosa.
+- **Foco de teclado visible** otra vez en todos los botones.
+
+### Privacidad
+
+- **Las visitas no te siguen**: de cada visita guardamos solo la página y la hora; ni IP, ni navegador, ni usuario.
+- Se sacaron los eventos de embudo y el panel de retención.
+
 ## 2026-09-21 — Notas privadas, navegación móvil completa y menos consumo de servidor
 
 ### Features
@@ -165,8 +210,8 @@ Todas las versiones notables del proyecto se documentan aqui.
 - **Linkeo de aportes con el catálogo**: corregido error 500 al vincular series aportadas por usuarios con series curadas; precios de plataformas actualizados; linkeo masivo optimizado (timeout de 60s y memory mapping).
 - **Parser de capítulos en tailandés** corregido en la importación de episodios.
 - **Base de datos**: se previene el timeout del pool de conexiones en entornos serverless (conexión singleton reutilizada).
-- **Enlaces de video rotos en `/ver`**: 5 series (*Bed Friend*, *Choco Milk Shake*, *Some More*, *Long Time No See*, *Match Boy*) tenían IDs de video de YouTube inexistentes, generados sin verificar contra la API real en una carga de datos anterior. Se corrigieron con videos reales y verificados de los canales oficiales (Mandee Channel, STRONGBERRY); *Match Boy* se dio de baja al no encontrarse evidencia de que corresponda a un título real.
-- **Catálogo `/ver` ampliado con series verificadas**: se sumaron *SOTUS: The Series*, *The Eclipse*, *Only Friends* (GMMTV) y *The Middleman's Love* (Mandee), todas importadas desde playlists reales de YouTube y confirmadas video por video contra el canal oficial antes de publicarse.
+- **Enlaces de video rotos en `/ver`**: 5 series (_Bed Friend_, _Choco Milk Shake_, _Some More_, _Long Time No See_, _Match Boy_) tenían IDs de video de YouTube inexistentes, generados sin verificar contra la API real en una carga de datos anterior. Se corrigieron con videos reales y verificados de los canales oficiales (Mandee Channel, STRONGBERRY); _Match Boy_ se dio de baja al no encontrarse evidencia de que corresponda a un título real.
+- **Catálogo `/ver` ampliado con series verificadas**: se sumaron _SOTUS: The Series_, _The Eclipse_, _Only Friends_ (GMMTV) y _The Middleman's Love_ (Mandee), todas importadas desde playlists reales de YouTube y confirmadas video por video contra el canal oficial antes de publicarse.
 
 ### Infra / Housekeeping
 
@@ -176,7 +221,7 @@ Todas las versiones notables del proyecto se documentan aqui.
 
 ### Features
 
-- **Catálogo /ver ampliado y legal**: Importación de series BL oficiales completas desde YouTube (*My School President*, *A Tale of Thousand Stars*, *Vice Versa*, *Cooking Crush*, *Cupid's Last Wish*) con separación estricta de contextos (sin alterar el catálogo curado de Flor ni crear etiquetas/actores automáticos).
+- **Catálogo /ver ampliado y legal**: Importación de series BL oficiales completas desde YouTube (_My School President_, _A Tale of Thousand Stars_, _Vice Versa_, _Cooking Crush_, _Cupid's Last Wish_) con separación estricta de contextos (sin alterar el catálogo curado de Flor ni crear etiquetas/actores automáticos).
 - **Autocompletado con IA (Gemini) On-Demand por campo**: En el alta de series, Flor ahora puede solicitar asistencia de IA de forma granular sobre Sinopsis, Reparto, Directores, Géneros/Tags, Producción o Info Básica sin pisar lo completado a mano.
 - **Botón Compartir Inteligente**: Integración de Web Share API en dispositivos móviles (para enviar a WhatsApp, Instagram, Telegram en 1 toque) y modal desktop con enlaces directos y copiado rápido de URL.
 - **Skeletons de Carga Fluidos**: Nuevos esqueletos de carga accesibles (`loading.tsx`) en `/`, `/ver`, `/ver/[id]`, `/novedades` y `/feedback` para eliminar pantallas blancas y saltos de layout (CLS).
@@ -267,11 +312,10 @@ Todas las versiones notables del proyecto se documentan aqui.
 
 Cobertura parcial de los items #109 (pagina agregar serie con AI), #110 (full AI integration en creacion) y #111 (precarga IMDB/MDL/YouTube): el lado user-embed (`/ver/agregar`) esta listo; el lado admin (catalogScope=PERSONAL con AI + fetch IMDB/MDL) queda pendiente. Comentarios de progreso en las 3 features.
 
-
-
 ## 2026-05 — i18n masivo, SEO, import YouTube, paletas y nickname (deployado)
 
 ### Features
+
 - **Internacionalizacion completa**: 10 idiomas reales (es, en, it, de, fr, ja, ko, zh-CN, zh-TW, th). Antes 8 eran aliases de ingles, ahora cada uno tiene ~1500 strings traducidos via Gemini API. Selector honesto en sidebar.
 - **Auto-i18n tooling** (`scripts/audit-i18n.ts`, `scripts/auto-i18n-file.ts`, `scripts/translate-locales.ts`): scanner detecta strings hardcoded, Gemini reescribe componentes para usar `useLocale().t()`, regenera todos los locales automaticamente. 31 componentes migrados en una pasada.
 - **t(key, params)** ahora soporta interpolacion nativa (`t('paginationTotal', { total: 42 })` → "Total: 42"), antes habia que usar `interpolateMessage()` aparte.
@@ -281,27 +325,32 @@ Cobertura parcial de los items #109 (pagina agregar serie con AI), #110 (full AI
 - **Nickname publico opcional** para privacidad: cada usuario puede setear un nickname desde `/perfil`. En contextos publicos (comentarios, reseñas, feedback) se muestra el nickname o `"Nombre I."` (inicial del apellido) en vez del nombre completo de Google OAuth.
 
 ### SEO
+
 - **Sitemap segmentado** con `generateSitemaps()`: `/sitemap.xml` ahora es sitemap-index automatico, con sub-sitemaps por dominio (static, series, noticias, ver, actores, directores, tags). `lastModified` real desde DB para acelerar re-crawl.
 - **Robots fortalecido**: bloqueos por seccion (admin, api, perfil, notificaciones, watching, auth, scanners) y declara `host` canonico.
 - **JSON-LD enriquecido**: TVSeries con `numberOfSeasons`, `numberOfEpisodes`, `inLanguage`, `productionCompany`. Nuevos schemas en `/catalogo`, `/ver`, `/sitios` (CollectionPage). `WatchAction` en `/ver/[id]`. Breadcrumbs JSON-LD en todas las paginas con migas.
 - **Meta titles keyword-first** en paginas de entidad: "Bad Buddy (2021) | Reseña, Reparto y Episodios — Serie BL" en lugar de generico. Mejora CTR en queries tipo "[serie] reseña" y "[actor] filmografia".
 
 ### Auth y dominio
+
 - **Dominio canonico** ahora `mundobl.com.ar` (era `mundobl.win`). Redirect a nivel Cloudflare DNS, no en codigo.
 - **NextAuth `trustHost: true`** para que el flow OAuth funcione en local dev sin necesidad de cambiar `NEXTAUTH_URL`.
 
 ### Fixes
+
 - **antd v6 deprecations**: `Drawer.width` → `styles.wrapper.width`, `Modal.maskClosable` → `mask.closable`, `Spin.tip` → `description`, `Alert.message` → `title`. Limpieza completa de warnings.
 - **CSS Modules `:global()`**: removido de `CategoryRater.css` (Next.js 16 ya no lo tolera fuera de modulos CSS).
 - **Image quality whitelist**: `quality={60}` agregado a `images.qualities` en `next.config.ts`.
 - **Regresion seasonLabel**: la auto-migracion habia reemplazado una prop dinamica por una constante; restaurada.
 
 ### Refactor / housekeeping
+
 - 25 items de roadmap migrados de `ideas.md`/`retomar.md` (que se borraron) a la tabla `FeatureRequest` para tracking real.
 - Trim de `README.md` (de 11 KB a 1 KB) — el changelog inline ya esta en DB y la doc tecnica en `context.md`.
 - PII removida de notas: emails de admin reemplazados por roles "Flor"/"Juan" sin contacto.
 
 ### Suscripciones (deployado antes)
+
 - Suscripciones a series: boton de campana en pagina de serie permite suscribirse para recibir avisos cuando hay novedades.
 - Modelo `SeriesSubscription` con dispatch automatico de notificaciones in-app a suscriptores cuando se agregan temporadas, contenido embebido o se publica una resena.
 - Helper `notifySeriesSubscribers` no-bloqueante e idempotente reutilizable en cualquier endpoint.
@@ -312,12 +361,14 @@ Cobertura parcial de los items #109 (pagina agregar serie con AI), #110 (full AI
 - Pagina /novedades reorganizada: changelog en orden cronologico (mas reciente primero), layout mas compacto.
 
 ### Performance
+
 - Preconnect a Supabase storage en root layout (ahorra 100-200ms en primera carga de imagenes).
 - DNS-prefetch a hosts de YouTube (i.ytimg.com, img.youtube.com).
 
 ## 2026-04 — Catalogo, news, feedback y PWA (deployado)
 
 ### Features
+
 - Panel de administracion de changelog en `/admin/changelog`
 - CRUD completo de novedades desde DB (`/api/admin/changelog`)
 - Endpoint publico de changelog (`/api/changelog`) ahora prioriza DB y usa fallback a archivo
@@ -340,6 +391,7 @@ Cobertura parcial de los items #109 (pagina agregar serie con AI), #110 (full AI
 - Boton "Limpiar scanners" en la pagina de admin logs
 
 ### Fixes
+
 - Notificaciones movidas desde el acceso separado del sidebar al panel de configuracion de usuario
 - Correciones de i18n en admin/feedback para nuevas claves de navegacion y seguimiento
 - Ajustes de tipado y validaciones para soporte de comentarios en feature requests
@@ -351,6 +403,7 @@ Cobertura parcial de los items #109 (pagina agregar serie con AI), #110 (full AI
 - Fix Next.js 16: route handlers dinamicos de feedback actualizados
 
 ### Seguridad
+
 - Filtro de paths de scanners en middleware
 - Extraccion de IP real del cliente via `CF-Connecting-IP` (Cloudflare)
 - No loguear assets/PWA (icons, manifest, sw.js)
