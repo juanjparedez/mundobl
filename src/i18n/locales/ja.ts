@@ -2413,6 +2413,14 @@ const ja = {
     "linkCopyError": "リンクをコピーできませんでした。",
     "previousButton": "前へ",
     "nextButton": "次へ",
+    "nextChapterButton": "次のエピソード",
+    "autoMarkedChapter": "エピソード{n}を視聴済みにしました",
+    "undoAutoMark": "元に戻す",
+    "subtitlesTitle": "字幕",
+    "subtitlesBody": "公式動画に字幕がある場合は自動で有効になります。プレーヤーの[CC]から言語を変更できます。",
+    "regionTitle": "お住まいの国では視聴できません。",
+    "regionBody": "制作会社が地域制限を設定しています。このシリーズの正規の視聴方法をご確認ください。",
+    "whereToWatchLink": "視聴方法",
     "markChapter": "エピソード{n}を視聴済み",
     "chapterWatched": "視聴済み",
     "unmarkChapter": "エピソード{n}の視聴済みを解除",
@@ -2616,7 +2624,13 @@ const ja = {
     "seriesNote": "シリーズノート",
     "notesHintNoEpisode": "メモを追加するには、エピソードを視聴済みにマークしてください。",
     "episodesAfterLast": "最後に視聴済みとしてマークしたエピソードの後に、まだエピソードがあります。",
-    "followAgain": "もう一度フォローする"
+    "followAgain": "もう一度フォローする",
+    "localSaved": "このブラウザに保存しました。",
+    "localSignIn": "失わないようにログイン",
+    "localImportOffer": "このブラウザに{n}作品の進捗があります。",
+    "localImportButton": "アカウントに保存",
+    "localImportSuccess": "進捗をアカウントに保存しました。",
+    "localImportError": "一部のローカル進捗を保存できませんでした。"
   },
   "posterPlaceholder": {
     "noImage": "画像なし"

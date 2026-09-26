@@ -49,6 +49,11 @@ export default function PrivacidadPage() {
                 usuario, aunque estés logueado. Las borramos a los 90 días.
               </li>
               <li>
+                <strong>Progreso sin sesión</strong>: si marcás episodios sin
+                entrar, queda solo en este navegador. Al iniciar sesión podés
+                pasarlo a tu cuenta con un toque.
+              </li>
+              <li>
                 <strong>Intentos de ataque</strong>: si una request busca
                 archivos que este sitio no tiene (como <code>.env</code> o{' '}
                 <code>wp-admin</code>), guardamos su IP y la ruta 7 días para

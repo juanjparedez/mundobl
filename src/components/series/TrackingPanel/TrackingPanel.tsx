@@ -75,11 +75,10 @@ export function TrackingPanel({
   const message = useMessage();
   const { t } = useLocale();
   const { data: session } = useSession();
-  const { seriesStatus, episodeStatus, loaded, version, refetch } =
+  const { seriesStatus, episodeStatus, loaded, version, refetch, storage } =
     useSeriesUserStatus();
   const [status, setStatus] = useState<WatchStatusValue>('SIN_VER');
   const [isUpdating, setIsUpdating] = useState(false);
-  const [pendingEpisodeId, setPendingEpisodeId] = useState<number | null>(null);
 
   useEffect(() => {
     if (loaded) setStatus(seriesStatus as WatchStatusValue);
@@ -191,11 +190,13 @@ export function TrackingPanel({
   const handleStartTracking = () => {
     savePendingTrack({
       seriesId,
-      upToEpisodeId: pendingEpisodeId,
+      upToEpisodeId: null,
       markWatched: !hasEpisodes,
       createdAt: Date.now(),
     });
-    void signIn('google', { callbackUrl: window.location.pathname });
+    void signIn('google', {
+      callbackUrl: window.location.pathname + window.location.search,
+    });
   };
 
   // ── Sin sesion: CTA (T07) ────────────────────────────────────────────
@@ -209,37 +210,49 @@ export function TrackingPanel({
           <EyeOutlined aria-hidden />
           <span className="tracking-panel__title">{t('trackCta.title')}</span>
         </header>
-        <p className="tracking-panel__hint">
-          {hasEpisodes
-            ? t('trackCta.subtitle')
-            : t('trackCta.subtitleNoEpisodes')}
-        </p>
-        {hasEpisodes && (
-          <div className="tracking-panel__anon-stepper">
-            <span className="tracking-panel__label">
-              {t('trackCta.chooseEpisode')}
-            </span>
+        {hasEpisodes ? (
+          <>
+            <p className="tracking-panel__hint">{t('trackCta.subtitle')}</p>
             <WatchProgressStepper
               seriesId={seriesId}
               seriesTitle={seriesTitle}
               chapters={chapters}
-              compact
-              localOnly
-              showNext={false}
-              onLocalChange={setPendingEpisodeId}
+              localOnly={storage === 'local'}
+              airing={airing}
             />
-          </div>
+            <p className="tracking-panel__local-note">
+              {t('trackingPanel.localSaved')}{' '}
+              <button
+                type="button"
+                className="tracking-panel__login-link"
+                onClick={() =>
+                  void signIn('google', {
+                    callbackUrl:
+                      window.location.pathname + window.location.search,
+                  })
+                }
+              >
+                {t('trackingPanel.localSignIn')}
+              </button>
+            </p>
+          </>
+        ) : (
+          <>
+            <p className="tracking-panel__hint">
+              {t('trackCta.subtitleNoEpisodes')}
+            </p>
+            <Button
+              type="primary"
+              block
+              size="large"
+              icon={<CheckOutlined />}
+              onClick={handleStartTracking}
+              className="tracking-panel__cta"
+            >
+              {t('trackCta.buttonNoEpisodes')}
+            </Button>
+          </>
         )}
-        <Button
-          type="primary"
-          block
-          size="large"
-          icon={<CheckOutlined />}
-          onClick={handleStartTracking}
-          className="tracking-panel__cta"
-        >
-          {hasEpisodes ? t('trackCta.button') : t('trackCta.buttonNoEpisodes')}
-        </Button>
       </section>
     );
   }

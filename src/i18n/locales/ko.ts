@@ -2413,6 +2413,14 @@ const ko = {
     "linkCopyError": "링크를 복사할 수 없습니다.",
     "previousButton": "이전",
     "nextButton": "다음",
+    "nextChapterButton": "다음 에피소드",
+    "autoMarkedChapter": "에피소드 {n}을(를) 시청 완료로 표시했습니다",
+    "undoAutoMark": "실행 취소",
+    "subtitlesTitle": "자막",
+    "subtitlesBody": "공식 영상에서 제공하면 자동으로 켜집니다. 플레이어의 [CC]에서 언어를 변경할 수 있습니다.",
+    "regionTitle": "현재 국가에서는 볼 수 없습니다.",
+    "regionBody": "제작사가 지역별로 이 영상을 제한합니다. 이 시리즈의 합법적인 시청 옵션을 확인하세요.",
+    "whereToWatchLink": "시청 가능한 곳",
     "markChapter": "에피소드 {n} 시청 완료",
     "chapterWatched": "시청함",
     "unmarkChapter": "에피소드 {n} 시청 취소",
@@ -2616,7 +2624,13 @@ const ko = {
     "seriesNote": "시리즈 메모",
     "notesHintNoEpisode": "메모를 추가하려면 에피소드를 시청 완료로 표시하세요.",
     "episodesAfterLast": "마지막으로 시청한 에피소드 이후의 에피소드가 있습니다.",
-    "followAgain": "다시 팔로우하기"
+    "followAgain": "다시 팔로우하기",
+    "localSaved": "이 브라우저에 저장되었습니다.",
+    "localSignIn": "잃지 않으려면 로그인하세요",
+    "localImportOffer": "이 브라우저에 {n}개 시리즈의 진행 상황이 있습니다.",
+    "localImportButton": "내 계정에 저장",
+    "localImportSuccess": "진행 상황을 계정에 저장했습니다.",
+    "localImportError": "일부 로컬 진행 상황을 저장하지 못했습니다."
   },
   "posterPlaceholder": {
     "noImage": "이미지 없음"

@@ -3,16 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import {
-  Button,
-  Tag,
-  Tooltip,
-  Alert,
-  Empty,
-  Avatar,
-  Segmented,
-  Input,
-} from 'antd';
+import { Button, Tag, Tooltip, Alert, Empty, Avatar, Segmented } from 'antd';
 import {
   StarFilled,
   StarOutlined,
@@ -26,8 +17,8 @@ import {
   VideoCameraOutlined,
   ClockCircleOutlined,
   LockOutlined,
-  CopyOutlined,
   CheckOutlined,
+  InfoCircleOutlined,
 } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import { EmbedPlayer } from '@/components/common/EmbedPlayer/EmbedPlayer';
@@ -44,6 +35,7 @@ import { ShareButton } from '@/components/common/ShareButton/ShareButton';
 import { SeriesSubscribeButton } from '@/components/series/SeriesSubscribeButton/SeriesSubscribeButton';
 import { FavoriteButton } from '@/components/series/FavoriteButton/FavoriteButton';
 import { TrackingPanel } from '@/components/series/TrackingPanel/TrackingPanel';
+import { DismissibleNotice } from '@/components/design-system';
 import { RatingSection } from '@/components/series/RatingSection';
 import { ReviewsSection } from '@/components/series/ReviewsSection/ReviewsSection';
 import { useMessage } from '@/hooks/useMessage';
@@ -360,6 +352,13 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
   }, [seasons, series.title]);
 
   const [activeIdx, setActiveIdx] = useState(0);
+  const [autoplayEpisodeId, setAutoplayEpisodeId] = useState<number | null>(
+    null
+  );
+  const [autoMarked, setAutoMarked] = useState<{
+    chapterNumber: number;
+    episodeIds: number[];
+  } | null>(null);
   const [filterMode, setFilterMode] = useState<'all' | 'episodes' | 'extras'>(
     'all'
   );
@@ -381,10 +380,11 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
     return () => window.removeEventListener('popstate', syncFromUrl);
   }, [flatEpisodes]);
 
-  const selectEpisode = (idx: number) => {
+  const selectEpisode = (idx: number, autoplay = false) => {
     const target = flatEpisodes[idx];
     if (!target) return;
     setActiveIdx(idx);
+    setAutoplayEpisodeId(autoplay ? target.id : null);
     // `push` y no `replace`: cambiar de episodio es una navegacion desde el
     // punto de vista del usuario, y el boton "atras" tiene que devolverlo
     // al que estaba viendo.
@@ -392,36 +392,8 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
   };
   const [scope, setScope] = useState(series.catalogScope);
   const [movingScope, setMovingScope] = useState(false);
-  const [linkCopied, setLinkCopied] = useState(false);
-
-  // Copiar el link directo del episodio activo — pedido real de usuario:
-  // si el embed esta geo-bloqueado, el link crudo sirve igual para abrirlo
-  // manual con VPN/otro navegador. No cuesta nada exponerlo copiable.
-  const handleCopyEmbedLink = async (url: string) => {
-    try {
-      if (navigator?.clipboard?.writeText) {
-        await navigator.clipboard.writeText(url);
-      } else {
-        const textarea = document.createElement('textarea');
-        textarea.value = url;
-        textarea.style.position = 'fixed';
-        textarea.style.opacity = '0';
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-      }
-      setLinkCopied(true);
-      message.success(t('verSerie.linkCopiedSuccess'));
-      setTimeout(() => setLinkCopied(false), 2500);
-    } catch {
-      message.error(t('verSerie.linkCopyError'));
-    }
-  };
 
   const active = flatEpisodes[activeIdx];
-  const hasPrev = activeIdx > 0;
-  const hasNext = activeIdx < flatEpisodes.length - 1;
 
   // Mismo shape que espera TrackingPanel (id/episodeNumber/title por
   // temporada), separado de `seasons` para no arrastrarle los campos de
@@ -496,6 +468,46 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
     ) ?? null;
   const activeChapterWatched =
     activeChapter?.items.every((item) => isWatched(item.episode.id)) ?? false;
+
+  const mainIndexes = chapterGroups.flatMap((group) =>
+    group.items.map((item) => item.flatIndex)
+  );
+  const activeMainPosition = mainIndexes.indexOf(activeIdx);
+  const previousMainIndex =
+    activeMainPosition > 0 ? mainIndexes[activeMainPosition - 1] : null;
+  const nextMainIndex =
+    activeMainPosition >= 0 && activeMainPosition < mainIndexes.length - 1
+      ? mainIndexes[activeMainPosition + 1]
+      : null;
+  const activePartPosition =
+    activeChapter?.items.findIndex((item) => item.flatIndex === activeIdx) ??
+    -1;
+  const nextIsNewChapter =
+    nextMainIndex !== null &&
+    activeChapter !== null &&
+    activePartPosition === activeChapter.items.length - 1;
+
+  const handleWatchProgress = async (event: 'watched' | 'ended') => {
+    if (!active || !activeChapter) return;
+    if (event === 'watched' && !isWatched(active.id)) {
+      const saved = await setWatched('auto', [active.id], true);
+      if (saved) {
+        const completesChapter = activeChapter.items.every(
+          (item) => item.episode.id === active.id || isWatched(item.episode.id)
+        );
+        if (completesChapter) {
+          setAutoMarked({
+            chapterNumber: activeChapter.chapterNumber,
+            episodeIds: activeChapter.items.map((item) => item.episode.id),
+          });
+        }
+      }
+    }
+    if (event === 'ended') {
+      const nextPart = activeChapter.items[activePartPosition + 1];
+      if (nextPart) selectEpisode(nextPart.flatIndex, true);
+    }
+  };
 
   const toggleChapterWatched = () => {
     if (!activeChapter) return;
@@ -632,10 +644,17 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
 
       <div className="ver-serie__player-wrap">
         <EmbedPlayer
+          key={active.id}
           platform={active.embedPlatform || 'YouTube'}
           url={active.embedUrl || ''}
           videoId={active.embedVideoId}
           title={active.title || series.title}
+          autoplay={autoplayEpisodeId === active.id}
+          onWatchProgress={
+            (active.embedPlatform || 'YouTube') === 'YouTube'
+              ? handleWatchProgress
+              : undefined
+          }
         />
       </div>
 
@@ -644,8 +663,10 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         <Button
           className="ver-serie__nav-prev"
           icon={<ArrowLeftOutlined />}
-          disabled={!hasPrev}
-          onClick={() => selectEpisode(activeIdx - 1)}
+          disabled={previousMainIndex === null}
+          onClick={() =>
+            previousMainIndex !== null && selectEpisode(previousMainIndex)
+          }
         >
           {t('verSerie.previousButton')}
         </Button>
@@ -681,15 +702,40 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           </Button>
         )}
         <Button
+          type={nextIsNewChapter ? 'primary' : 'default'}
           className="ver-serie__nav-next"
           icon={<ArrowRightOutlined />}
           iconPlacement="end"
-          disabled={!hasNext}
-          onClick={() => selectEpisode(activeIdx + 1)}
+          disabled={nextMainIndex === null}
+          onClick={() => nextMainIndex !== null && selectEpisode(nextMainIndex)}
         >
-          {t('verSerie.nextButton')}
+          {nextIsNewChapter
+            ? t('verSerie.nextChapterButton')
+            : t('verSerie.nextButton')}
         </Button>
       </div>
+
+      {autoMarked && (
+        <Alert
+          type="success"
+          showIcon
+          className="ver-serie__auto-marked"
+          title={t('verSerie.autoMarkedChapter', {
+            n: autoMarked.chapterNumber,
+          })}
+          action={
+            <Button
+              size="small"
+              onClick={() => {
+                void setWatched('auto-undo', autoMarked.episodeIds, false);
+                setAutoMarked(null);
+              }}
+            >
+              {t('verSerie.undoAutoMark')}
+            </Button>
+          }
+        />
+      )}
 
       {/* Tracking: mismo mecanismo que la ficha del catalogo (ViewStatus),
        * para que mirar una serie desde /ver la sume a "Viendo ahora" y a
@@ -703,16 +749,14 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         />
       </div>
 
-      {/* Tip de subtítulos en español */}
-      <div className="ver-serie__subtitles-tip">
-        <span className="ver-serie__subtitles-icon">💬</span>
-        <div className="ver-serie__subtitles-text">
-          <strong>Subtítulos en español:</strong> Se solicitan automáticamente
-          si la plataforma oficial los tiene disponibles. Podés cambiar el
-          idioma o ajustar la sincronización desde el botón{' '}
-          <strong>[CC]</strong> del reproductor.
-        </div>
-      </div>
+      <DismissibleNotice
+        id="ver-subtitles"
+        icon={<span>💬</span>}
+        title={t('verSerie.subtitlesTitle')}
+        closeLabel={t('aboutContentNotice.close')}
+      >
+        {t('verSerie.subtitlesBody')}
+      </DismissibleNotice>
 
       {/* Tip de bloqueo regional: solo cuando este video tiene un bloqueo
        *  (el aviso de arriba ya dice cual) o, sin saber el pais, cuando la
@@ -721,50 +765,15 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         <div className="ver-serie__geoblock-tip">
           <span className="ver-serie__geoblock-icon">🌍</span>
           <div className="ver-serie__geoblock-text">
-            {!geoIssue && (
-              <strong>Esta serie está bloqueada en tu región.</strong>
-            )}{' '}
-            Algunas productoras limitan la emisión gratuita de YouTube si
-            vendieron la licencia exclusiva a plataformas locales. Podés verlo
-            con VPN (Tailandia, Taiwán o EE.UU.) o consultar las opciones en{' '}
+            <strong>{t('verSerie.regionTitle')}</strong>{' '}
+            {t('verSerie.regionBody')}{' '}
             <Link
-              href="/plataformas"
-              style={{
-                color: 'var(--primary-color)',
-                textDecoration: 'underline',
-              }}
+              href={isUserEmbed ? '/plataformas' : `/series/${series.id}`}
+              className="ver-serie__geoblock-link"
             >
-              Plataformas & Planes
+              {t('verSerie.whereToWatchLink')}
             </Link>
             .
-            {active.embedUrl && (
-              <Input
-                readOnly
-                value={active.embedUrl}
-                className="ver-serie__geoblock-link-input"
-                onFocus={(e) => e.target.select()}
-                addonAfter={
-                  <Button
-                    type="text"
-                    size="small"
-                    icon={
-                      linkCopied ? (
-                        <CheckOutlined
-                          style={{ color: 'var(--success-color)' }}
-                        />
-                      ) : (
-                        <CopyOutlined />
-                      )
-                    }
-                    onClick={() => handleCopyEmbedLink(active.embedUrl!)}
-                  >
-                    {linkCopied
-                      ? t('verSerie.linkCopiedLabel')
-                      : t('verSerie.copyLinkButton')}
-                  </Button>
-                }
-              />
-            )}
           </div>
         </div>
       )}
@@ -777,18 +786,20 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           channelUrl={active.embedChannelUrl}
           originalUrl={active.embedUrl}
         />
-        <Alert
-          type="info"
-          showIcon
-          title={
-            <span>
-              {t('verSerie.officialPlaybackNote')}{' '}
-              <Link href="/creditos">{t('verSerie.creditsLink')}</Link> ·{' '}
-              <Link href="/legal">{t('verSerie.legalNoticeLink')}</Link>
-            </span>
-          }
-          className="ver-serie__legal-note"
-        />
+        <div className="ver-serie__legal-column">
+          <DismissibleNotice
+            id="ver-official"
+            icon={<InfoCircleOutlined />}
+            closeLabel={t('aboutContentNotice.close')}
+            className="ver-serie__legal-note"
+          >
+            {t('verSerie.officialPlaybackNote')}
+          </DismissibleNotice>
+          <div className="ver-serie__legal-links">
+            <Link href="/creditos">{t('verSerie.creditsLink')}</Link> ·{' '}
+            <Link href="/legal">{t('verSerie.legalNoticeLink')}</Link>
+          </div>
+        </div>
       </div>
 
       {/* Sinopsis del episodio */}
@@ -952,7 +963,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
 
                     {/* Selector de partes o botón directo */}
                     <div className="ver-serie__parts-row">
-                      {items.map(({ flatIndex, episode }) => {
+                      {items.map(({ flatIndex, episode }, partIndex) => {
                         const isActive = flatIndex === activeIdx;
                         const partWatched = isWatched(episode.id);
                         const partAvailability = availability(episode);
@@ -963,7 +974,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
                         const partLabel = isMultiPart
                           ? episode.parsed.partNumber
                             ? `Parte ${episode.parsed.partNumber}/${episode.parsed.partTotal || 4}`
-                            : `Parte ${items.indexOf({ flatIndex, episode }) + 1}`
+                            : `Parte ${partIndex + 1}`
                           : `Reproducir`;
 
                         return (

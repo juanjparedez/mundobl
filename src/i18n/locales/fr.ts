@@ -2413,6 +2413,14 @@ const fr = {
     "linkCopyError": "Impossible de copier le lien.",
     "previousButton": "Précédent",
     "nextButton": "Suivant",
+    "nextChapterButton": "Épisode suivant",
+    "autoMarkedChapter": "Épisode {n} marqué",
+    "undoAutoMark": "Annuler",
+    "subtitlesTitle": "Sous-titres",
+    "subtitlesBody": "Ils s’activent automatiquement si la vidéo officielle les propose. Vous pouvez changer la langue avec [CC] dans le lecteur.",
+    "regionTitle": "Indisponible dans votre pays.",
+    "regionBody": "Le producteur limite cette vidéo selon la région. Consultez les options légales disponibles pour la série.",
+    "whereToWatchLink": "Où la regarder",
     "markChapter": "J'ai regardé l'épisode {n}",
     "chapterWatched": "Regardé",
     "unmarkChapter": "Démarquer l'épisode {n}",
@@ -2616,7 +2624,13 @@ const fr = {
     "seriesNote": "Note de la série",
     "notesHintNoEpisode": "Marquez un épisode comme vu pour ajouter une note.",
     "episodesAfterLast": "Il y a des épisodes après le dernier que vous avez marqué comme vu.",
-    "followAgain": "Suivre à nouveau"
+    "followAgain": "Suivre à nouveau",
+    "localSaved": "Enregistré dans ce navigateur.",
+    "localSignIn": "Connectez-vous pour ne pas le perdre",
+    "localImportOffer": "Vous avez la progression de {n} séries dans ce navigateur.",
+    "localImportButton": "Enregistrer dans mon compte",
+    "localImportSuccess": "Votre progression est enregistrée dans votre compte.",
+    "localImportError": "Toute la progression locale n’a pas pu être enregistrée."
   },
   "posterPlaceholder": {
     "noImage": "Aucune image"

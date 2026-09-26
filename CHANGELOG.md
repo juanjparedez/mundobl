@@ -12,6 +12,8 @@ Todas las versiones notables del proyecto se documentan aqui.
 
 ### Features
 
+- **El seguimiento en `/ver` se hace solo**: YouTube marca cada parte cuando viste el 80 %, avanza a la parte siguiente y permite deshacer. Sin sesión, el progreso queda en el navegador y se puede pasar a la cuenta al entrar.
+- **Menos ruido alrededor del reproductor**: los avisos de subtítulos y reproducción oficial se pueden cerrar; el aviso regional ya no recomienda VPN y lleva a opciones legales.
 - **Para ver acá y para seguir, por separado**: el menú separa lo que se mira en el sitio ("Ver series") de lo que se sigue (catálogo, viendo, perfil). En el catálogo, las series que además se ven acá llevan "▶ Se ve acá" y tienen su filtro. Un aviso, que se cierra una vez, explica por qué no todo se ve acá.
 - **La home dice lo que hay**: una sección nueva cuenta cuántas series se ven acá y cuántas se siguen, y aclara que no subimos videos ni enlazamos re-subidas. Se fue el "espacio para fansubs", que no existía, y `/acerca` deja de nombrar plataformas que ya no usamos.
 - **El seguimiento cuenta capítulos, no videos**: YouTube sube muchos capítulos en partes ([1/4]…[4/4]). Antes, ver el capítulo 1 de Baker Boys decía "Ep. 4 / 52"; ahora cuenta capítulos, y "Vi el ep. N" marca el capítulo entero. Vale para la ficha, `/ver`, `/watching` y el perfil.
