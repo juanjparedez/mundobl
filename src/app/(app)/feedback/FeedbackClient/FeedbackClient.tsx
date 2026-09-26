@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { SearchParamsListener } from '@/components/common/SearchParamsListener/SearchParamsListener';
 import ReactMarkdown from 'react-markdown';
 import {
   Tabs,
@@ -162,11 +162,8 @@ export function FeedbackClient() {
   const [commentSubmitting, setCommentSubmitting] = useState<Set<number>>(
     new Set()
   );
-  const searchParams = useSearchParams();
   const prefilledRef = useRef(false);
-  const [activeTab, setActiveTab] = useState<string>(
-    searchParams.get('tab') ?? 'requests'
-  );
+  const [activeTab, setActiveTab] = useState<string>('requests');
 
   const isAdmin = session?.user?.role === 'ADMIN';
   const userId = session?.user?.id;
@@ -199,11 +196,13 @@ export function FeedbackClient() {
     });
   };
 
-  useEffect(() => {
+  const handleSearchParams = (params: URLSearchParams) => {
+    const tab = params.get('tab');
+    if (tab) setActiveTab(tab);
     if (prefilledRef.current) return;
-    const type = searchParams.get('type');
-    const title = searchParams.get('title');
-    const description = searchParams.get('description');
+    const type = params.get('type');
+    const title = params.get('title');
+    const description = params.get('description');
     if (!type && !title && !description) return;
     prefilledRef.current = true;
     form.setFieldsValue({
@@ -212,7 +211,7 @@ export function FeedbackClient() {
       description: description ?? '',
     });
     setModalOpen(true);
-  }, [searchParams, form]);
+  };
 
   useEffect(() => {
     fetch('/api/changelog')
@@ -1153,6 +1152,7 @@ export function FeedbackClient() {
 
   return (
     <div className="feedback-page">
+      <SearchParamsListener onChange={handleSearchParams} />
       <PageTitle title={t('feedback.pageTitle')} />
       <Tabs items={tabItems} activeKey={activeTab} onChange={setActiveTab} />
 
