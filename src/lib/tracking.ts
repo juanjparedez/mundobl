@@ -184,19 +184,7 @@ export async function setProgress(
 
   const upToIds = episodes.slice(0, targetIndex + 1).map((ep) => ep.id);
 
-  await client.viewStatus.createMany({
-    data: upToIds.map((episodeId) => ({
-      userId,
-      episodeId,
-      status: 'VISTA',
-      watchedDate: now,
-    })),
-    skipDuplicates: true,
-  });
-  await client.viewStatus.updateMany({
-    where: { userId, episodeId: { in: upToIds }, status: 'SIN_VER' },
-    data: { status: 'VISTA', watchedDate: now },
-  });
+  await markManyWatched(client, userId, upToIds, now);
 
   // Misma regla de T03 para la fila de serie (VIENDO salvo que ya este
   // VISTA/ABANDONADA a mano); allWatched se recalcula sobre toda la serie.
@@ -211,6 +199,59 @@ export async function setProgress(
     await client.viewStatus.update({
       where: { userId_seriesId: { userId, seriesId } },
       data: { status: 'VISTA', watchedDate: now },
+    });
+  }
+
+  return buildProgressResult(client, userId, seriesId, episodes);
+}
+
+/** Marca como vistos sin pisar la fecha de los que ya lo estaban. */
+async function markManyWatched(
+  client: TrackingClient,
+  userId: string,
+  episodeIds: number[],
+  now: Date
+): Promise<void> {
+  await client.viewStatus.createMany({
+    data: episodeIds.map((episodeId) => ({
+      userId,
+      episodeId,
+      status: 'VISTA',
+      watchedDate: now,
+    })),
+    skipDuplicates: true,
+  });
+  await client.viewStatus.updateMany({
+    where: { userId, episodeId: { in: episodeIds }, status: 'SIN_VER' },
+    data: { status: 'VISTA', watchedDate: now },
+  });
+}
+
+/**
+ * Marca o desmarca episodios puntuales de una serie, como las partes de un
+ * capitulo en /ver. La fila de la serie sigue la regla de markEpisode.
+ */
+export async function setEpisodesWatched(
+  client: TrackingClient,
+  userId: string,
+  seriesId: number,
+  episodeIds: number[],
+  watched: boolean
+): Promise<ProgressResult> {
+  const episodes = await getSeriesEpisodesOrdered(client, seriesId);
+  const requested = new Set(episodeIds);
+  const ids = episodes.filter((ep) => requested.has(ep.id)).map((ep) => ep.id);
+  if (ids.length === 0) {
+    throw new ProgressNotFoundError('Episodios no encontrados en esta serie');
+  }
+
+  if (watched) {
+    await markManyWatched(client, userId, ids, new Date());
+    await markEpisode(client, userId, ids[ids.length - 1], 'VISTA');
+  } else {
+    await client.viewStatus.updateMany({
+      where: { userId, episodeId: { in: ids } },
+      data: { status: 'SIN_VER', watchedDate: null },
     });
   }
 

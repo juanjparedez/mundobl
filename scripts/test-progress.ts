@@ -1,7 +1,11 @@
 import 'dotenv/config';
 import assert from 'node:assert/strict';
 import { prisma } from '../src/lib/database';
-import { setProgress, ProgressNotFoundError } from '../src/lib/tracking';
+import {
+  setProgress,
+  setEpisodesWatched,
+  ProgressNotFoundError,
+} from '../src/lib/tracking';
 
 /**
  * Prueba de src/lib/tracking.ts -> setProgress (T05), contra una base local
@@ -133,6 +137,63 @@ async function main() {
   assert.equal(result5.allWatched, true);
   assert.equal(result5.seriesStatus, 'VISTA');
 
+  // setEpisodesWatched (1.7, las partes de un capitulo en /ver), con un
+  // usuario limpio.
+  const viewer = await prisma.user.create({
+    data: {
+      id: `progress-test-viewer-${runId}`,
+      name: 'Espectador de prueba',
+      email: `progress-test-viewer-${runId}@example.test`,
+    },
+  });
+  const chapterIds = [episodes[4].id, episodes[5].id];
+
+  // 6) Marca solo esas dos, pone la serie en VIENDO y suscribe.
+  const result6 = await prisma.$transaction((tx) =>
+    setEpisodesWatched(tx, viewer.id, series.id, chapterIds, true)
+  );
+  assert.equal(result6.watched, 2);
+  assert.equal(result6.seriesStatus, 'VIENDO');
+  assert.equal(result6.episodeStatus[episodes[3].id], 'SIN_VER');
+  const subscription = await prisma.seriesSubscription.count({
+    where: { userId: viewer.id, seriesId: series.id },
+  });
+  assert.equal(subscription, 1);
+
+  // 7) Repetir no duplica.
+  const result7 = await prisma.$transaction((tx) =>
+    setEpisodesWatched(tx, viewer.id, series.id, chapterIds, true)
+  );
+  assert.equal(result7.watched, 2);
+
+  // 8) Desmarcar deja 0 vistos y no toca la fila de la serie.
+  const result8 = await prisma.$transaction((tx) =>
+    setEpisodesWatched(tx, viewer.id, series.id, chapterIds, false)
+  );
+  assert.equal(result8.watched, 0);
+  assert.equal(result8.seriesStatus, 'VIENDO');
+
+  // 9) Ids de otra serie se ignoran; si no queda ninguno -> 404.
+  const foreignEpisode = await prisma.episode.findFirstOrThrow({
+    where: { season: { seriesId: otherSeries.id } },
+  });
+  const result9 = await prisma.$transaction((tx) =>
+    setEpisodesWatched(
+      tx,
+      viewer.id,
+      series.id,
+      [episodes[0].id, foreignEpisode.id],
+      true
+    )
+  );
+  assert.equal(result9.watched, 1);
+  await assert.rejects(
+    prisma.$transaction((tx) =>
+      setEpisodesWatched(tx, viewer.id, series.id, [foreignEpisode.id], true)
+    ),
+    ProgressNotFoundError
+  );
+
   console.log(
     JSON.stringify({
       result: 'PASS',
@@ -142,6 +203,10 @@ async function main() {
         'episodio de otra serie -> 404 (ProgressNotFoundError)',
         "direction: 'unmark' respeta 1..3 y limpia 4..8",
         'completeIfAll con el ultimo episodio -> serie VISTA',
+        'setEpisodesWatched marca solo esos, serie VIENDO y suscribe',
+        'setEpisodesWatched repetido no duplica',
+        'setEpisodesWatched desmarca sin tocar la serie',
+        'setEpisodesWatched ignora ids de otra serie; sin ninguno -> 404',
       ],
       seriesId: series.id,
       userId: user.id,
