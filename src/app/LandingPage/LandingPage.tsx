@@ -464,7 +464,7 @@ export function LandingPage({ stats }: LandingPageProps) {
         <section className="landing__watchable">
           <WatchableCarousel
             items={stats.watchableSeries}
-            title={t('novedades.watchableTitle')}
+            title={t('novedades.watchHereTitle')}
           />
         </section>
       )}

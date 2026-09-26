@@ -348,6 +348,11 @@ const ko = {
     "glossary": "문화 용어집",
     "about": "MundoBL 소개"
   },
+  "navSections": {
+    "watch": "여기서 시청",
+    "follow": "팔로우",
+    "explore": "탐색"
+  },
   "profile": {
     "loginRequired": "프로필을 보려면 로그인하세요",
     "memberSince": "회원 가입일",
@@ -581,7 +586,7 @@ const ko = {
     "newSeasonsTitle": "새 시즌",
     "seasonLabel": "시즌",
     "changelogTitle": "최근 변경 사항",
-    "watchableTitle": "시청 가능한 전체 시리즈"
+    "watchHereTitle": "여기서 시청"
   },
   "watchableCarousel": {
     "watchNow": "지금 보기",
@@ -1571,7 +1576,15 @@ const ko = {
     "sortYearNew": "최신순",
     "sortYearOld": "오래된순",
     "sortRatingDesc": "최고 평점",
-    "quickFilterFeatured": "추천"
+    "quickFilterFeatured": "추천",
+    "pageTitle": "카탈로그",
+    "pageSubtitle": "저희가 추적하는 모든 시리즈. 다른 곳에서 시청하더라도 시청 중인 에피소드를 기록하세요.",
+    "quickFiltersLabel": "빠른 필터",
+    "quickFilterWatchable": "여기서 시청",
+    "quickFilterPopular": "인기",
+    "quickFilterRecent": "최신 출시작",
+    "quickFilterTrend": "트렌딩",
+    "watchHere": "여기서 시청"
   },
   "quickPreview": {
     "open": "빠른 보기",
@@ -1721,15 +1734,20 @@ const ko = {
     "newsSubtitle": "새 촬영 소식과 공식 예고편, 발표, 소설 각색까지 잡음 없이 확인하세요.",
     "newsCta": "모든 소식 보기"
   },
-  "welcomeBanner": {
-    "title": "MundoBL에 오신 것을 환영합니다",
-    "description": "이것은 제가 시청한 BL 시리즈(현재 방영 중인 시리즈 포함)의 개인 카탈로그입니다. 시청하신 시리즈가 있다면 댓글, 감상평 또는 리뷰를 남겨주시면 감사하겠습니다.",
-    "dismiss": "확인"
-  },
   "privacyBanner": {
     "text": "이 사이트는 보안 및 개선을 위해 접속 정보를 기록합니다. 계속 탐색하시면 당사의 개인정보 처리방침에 동의하는 것으로 간주됩니다.",
     "detailsLink": "저장된 내용 및 삭제 방법 확인",
     "accept": "확인"
+  },
+  "watchHereBanner": {
+    "own": "공식 채널에서 에피소드를 여기서 시청하세요",
+    "contribution": "커뮤니티 기여로 여기서도 시청 가능",
+    "contributions": "{n}개의 커뮤니티 기여로 여기서도 시청 가능"
+  },
+  "aboutContentNotice": {
+    "title": "모든 콘텐츠를 여기서 재생할 수는 없습니다",
+    "body": "저희는 스튜디오가 공식 채널에 업로드하는 콘텐츠만 보여드리며, 많은 시리즈가 지역 제한이 있습니다. 나머지 시리즈는 합법적으로 시청할 수 있는 곳을 알려드립니다.",
+    "close": "닫기"
   },
   "announcementBanner": {
     "dismiss": "닫기"
@@ -3025,14 +3043,16 @@ const ko = {
     "categoryCommunity": "커뮤니티 기여",
     "categoryIndieVimeo": "Vimeo 및 독립",
     "resultsTitle": "검색 결과",
-    "catalogTitle": "전체 시청 목록",
     "clearFilters": "필터 지우기",
     "emptyDescription": "해당 필터로는 시리즈를 찾을 수 없습니다. 다른 국가나 제목으로 시도해 보세요.",
     "cardEpisodesBadge": "{count}개 동영상",
     "cardPlayButton": "재생",
     "geoRestrictedBadge": "해당 지역에서 제한됨",
     "partiallyUnavailableBadge": "{total}개 중 {count}개 시청 가능",
-    "unavailableHereBadge": "해당 국가에서는 시청할 수 없습니다"
+    "unavailableHereBadge": "해당 국가에서는 시청할 수 없습니다",
+    "pageTitle": "여기서 시청",
+    "pageSubtitle": "스튜디오 공식 채널의 에피소드. 무료, 계정 불필요.",
+    "allWatchableTitle": "여기서 볼 수 있는 모든 것"
   },
   "actorProfile": {
     "funFactsTitle": "재미있는 사실",

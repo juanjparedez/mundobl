@@ -507,47 +507,64 @@ export async function getCatalogFilterIndex() {
   const personalScope = {
     series: { catalogScope: 'PERSONAL', origin: 'CURATED' },
   };
-  const [genres, directors, actors, productionCompanies, languages, platforms] =
-    await Promise.all([
-      prisma.seriesGenre.findMany({
-        where: personalScope,
-        select: { seriesId: true, genre: { select: { name: true } } },
-      }),
-      prisma.seriesDirector.findMany({
-        where: personalScope,
-        select: { seriesId: true, director: { select: { name: true } } },
-      }),
-      prisma.seriesActor.findMany({
-        where: personalScope,
-        select: { seriesId: true, actor: { select: { name: true } } },
-      }),
-      prisma.series.findMany({
-        where: {
-          productionCompanyId: { not: null },
-          catalogScope: 'PERSONAL',
-          origin: 'CURATED',
-        },
-        select: {
-          id: true,
-          productionCompany: { select: { name: true } },
-        },
-      }),
-      prisma.series.findMany({
-        where: {
-          originalLanguageId: { not: null },
-          catalogScope: 'PERSONAL',
-          origin: 'CURATED',
-        },
-        select: {
-          id: true,
-          originalLanguage: { select: { name: true } },
-        },
-      }),
-      prisma.watchLink.findMany({
-        where: personalScope,
-        select: { seriesId: true, platform: true },
-      }),
-    ]);
+  const [
+    genres,
+    directors,
+    actors,
+    productionCompanies,
+    languages,
+    platforms,
+    watchable,
+  ] = await Promise.all([
+    prisma.seriesGenre.findMany({
+      where: personalScope,
+      select: { seriesId: true, genre: { select: { name: true } } },
+    }),
+    prisma.seriesDirector.findMany({
+      where: personalScope,
+      select: { seriesId: true, director: { select: { name: true } } },
+    }),
+    prisma.seriesActor.findMany({
+      where: personalScope,
+      select: { seriesId: true, actor: { select: { name: true } } },
+    }),
+    prisma.series.findMany({
+      where: {
+        productionCompanyId: { not: null },
+        catalogScope: 'PERSONAL',
+        origin: 'CURATED',
+      },
+      select: {
+        id: true,
+        productionCompany: { select: { name: true } },
+      },
+    }),
+    prisma.series.findMany({
+      where: {
+        originalLanguageId: { not: null },
+        catalogScope: 'PERSONAL',
+        origin: 'CURATED',
+      },
+      select: {
+        id: true,
+        originalLanguage: { select: { name: true } },
+      },
+    }),
+    prisma.watchLink.findMany({
+      where: personalScope,
+      select: { seriesId: true, platform: true },
+    }),
+    // Las que ademas se ven en /ver: mismo criterio que getWatchableSeries.
+    prisma.series.findMany({
+      where: {
+        catalogScope: 'PERSONAL',
+        origin: 'CURATED',
+        visibility: 'VISIBLE',
+        ...HAS_WATCHABLE_EPISODE,
+      },
+      select: { id: true },
+    }),
+  ]);
 
   return {
     genres,
@@ -556,6 +573,7 @@ export async function getCatalogFilterIndex() {
     productionCompanies,
     languages,
     platforms,
+    watchableIds: watchable.map((s) => s.id),
   };
 }
 
