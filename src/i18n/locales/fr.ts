@@ -2426,7 +2426,6 @@ const fr = {
   },
   "seriesSubscribeButton": {
     "signInTooltip": "Connectez-vous pour vous abonner aux changements",
-    "subscribeAriaLabel": "S'abonner",
     "subscribeFailedError": "abonnement-échoué",
     "subscribeSuccessMessage": "Nous vous informerons des mises à jour",
     "unsubscribeSuccessMessage": "Abonnement annulé",

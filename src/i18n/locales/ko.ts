@@ -2426,7 +2426,6 @@ const ko = {
   },
   "seriesSubscribeButton": {
     "signInTooltip": "변경 사항을 구독하려면 로그인하세요",
-    "subscribeAriaLabel": "구독",
     "subscribeFailedError": "구독 실패",
     "subscribeSuccessMessage": "업데이트가 있을 때 알려드리겠습니다",
     "unsubscribeSuccessMessage": "구독 취소됨",

@@ -46,6 +46,9 @@ export type {
 export { AutoFitList } from './AutoFitList/AutoFitList';
 export type { AutoFitListProps } from './AutoFitList/AutoFitList';
 
+export { IconToggle } from './IconToggle/IconToggle';
+export type { IconToggleProps } from './IconToggle/IconToggle';
+
 export {
   QuickPreviewProvider,
   useQuickPreview,
