@@ -348,6 +348,11 @@ const fr = {
     "glossary": "Glossaire culturel",
     "about": "À propos de MundoBL"
   },
+  "navSections": {
+    "watch": "Regarder ici",
+    "follow": "Suivre",
+    "explore": "Explorer"
+  },
   "profile": {
     "loginRequired": "Connectez-vous pour voir votre profil",
     "memberSince": "Membre depuis",
@@ -581,7 +586,7 @@ const fr = {
     "newSeasonsTitle": "Nouvelles saisons",
     "seasonLabel": "Saison",
     "changelogTitle": "Modifications récentes",
-    "watchableTitle": "Séries complètes à regarder"
+    "watchHereTitle": "Regarder ici"
   },
   "watchableCarousel": {
     "watchNow": "Regarder",
@@ -1571,7 +1576,15 @@ const fr = {
     "sortYearNew": "Les plus récents",
     "sortYearOld": "Les plus anciens",
     "sortRatingDesc": "Les mieux notés",
-    "quickFilterFeatured": "En vedette"
+    "quickFilterFeatured": "En vedette",
+    "pageTitle": "Catalogue",
+    "pageSubtitle": "Toutes les séries que nous suivons. Enregistrez l'épisode où vous en êtes, même si vous le regardez ailleurs.",
+    "quickFiltersLabel": "Filtres rapides",
+    "quickFilterWatchable": "Regarder ici",
+    "quickFilterPopular": "Populaire",
+    "quickFilterRecent": "Nouvelles sorties",
+    "quickFilterTrend": "Tendances",
+    "watchHere": "Regarder ici"
   },
   "quickPreview": {
     "open": "Aperçu rapide",
@@ -1721,15 +1734,20 @@ const fr = {
     "newsSubtitle": "Reste informé·e des nouveaux tournages, bandes-annonces officielles, annonces et adaptations de romans, sans bruit inutile.",
     "newsCta": "Voir toutes les actualités"
   },
-  "welcomeBanner": {
-    "title": "Bienvenue sur MundoBL",
-    "description": "Ceci est mon catalogue personnel de séries BL que j'ai regardées, y compris celles encore en cours de diffusion. Si vous en avez regardé, j'aimerais que vous laissiez un commentaire, une réflexion ou une critique.",
-    "dismiss": "Compris"
-  },
   "privacyBanner": {
     "text": "Ce site enregistre les informations d'accès à des fins de sécurité et d'amélioration. En continuant à naviguer, vous acceptez notre politique de confidentialité.",
     "detailsLink": "Voir ce que nous stockons et comment le supprimer",
     "accept": "Compris"
+  },
+  "watchHereBanner": {
+    "own": "Regardez les épisodes ici, depuis la chaîne officielle",
+    "contribution": "Également disponible ici, via une contribution de la communauté",
+    "contributions": "Également disponible ici, via {n} contributions de la communauté"
+  },
+  "aboutContentNotice": {
+    "title": "Tout n'est pas disponible ici",
+    "body": "Nous ne montrons que ce que les studios mettent en ligne sur leurs chaînes officielles, et de nombreuses séries sont géo-restreintes. Pour le reste, nous vous indiquons où les regarder légalement.",
+    "close": "Fermer"
   },
   "announcementBanner": {
     "dismiss": "Ignorer"
@@ -3025,14 +3043,16 @@ const fr = {
     "categoryCommunity": "Contribué par la communauté",
     "categoryIndieVimeo": "Vimeo et indépendants",
     "resultsTitle": "Résultats de recherche",
-    "catalogTitle": "Catalogue complet à regarder",
     "clearFilters": "Effacer les filtres",
     "emptyDescription": "Nous n'avons pas trouvé de séries avec ces filtres. Essayez un autre pays ou titre.",
     "cardEpisodesBadge": "{count} vidéos",
     "cardPlayButton": "Lecture",
     "geoRestrictedBadge": "Restreint dans votre région",
     "partiallyUnavailableBadge": "{count} sur {total} disponibles ici",
-    "unavailableHereBadge": "Non disponible dans ton pays"
+    "unavailableHereBadge": "Non disponible dans ton pays",
+    "pageTitle": "Regarder ici",
+    "pageSubtitle": "Épisodes des chaînes officielles des studios. Gratuit, aucun compte nécessaire.",
+    "allWatchableTitle": "Tout ce que vous pouvez regarder ici"
   },
   "actorProfile": {
     "funFactsTitle": "Anecdotes",

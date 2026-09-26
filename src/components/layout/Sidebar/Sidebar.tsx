@@ -15,7 +15,7 @@ import { ROUTES } from '@/constants/navigation';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { useHasNovedades } from '@/hooks/useHasNovedades';
 import { SettingsPanel } from '../SettingsPanel/SettingsPanel';
-import { NAV_ITEMS, canSeeNavItem } from '../navItems';
+import { NAV_ITEMS, NAV_SECTIONS, canSeeNavItem } from '../navItems';
 import './Sidebar.css';
 
 const { Sider } = Layout;
@@ -53,25 +53,33 @@ export function Sidebar() {
 
   // Misma lista que la barra inferior de movil (navItems.ts): lo que se
   // ve aca se ve alla. Los items mobileOnly ya viven en la TopBar.
-  const menuItems = NAV_ITEMS.filter(
+  const visibleItems = NAV_ITEMS.filter(
     (item) => !item.mobileOnly && canSeeNavItem(item, navContext)
-  ).map((item) => {
-    const Icon = item.icon;
-    const icon =
-      item.badge === 'novedades' ? (
-        <Badge dot={hasNovedades} offset={[2, 2]}>
-          <Icon />
-        </Badge>
-      ) : (
-        <Icon />
-      );
-    return {
-      key: item.path,
-      icon,
-      label: t(item.labelKey),
-      onClick: () => router.push(item.path),
-    };
-  });
+  );
+  const menuItems = NAV_SECTIONS.map((section) => ({
+    type: 'group' as const,
+    key: `section-${section.key}`,
+    label: t(section.labelKey),
+    children: visibleItems
+      .filter((item) => item.section === section.key)
+      .map((item) => {
+        const Icon = item.icon;
+        const icon =
+          item.badge === 'novedades' ? (
+            <Badge dot={hasNovedades} offset={[2, 2]}>
+              <Icon />
+            </Badge>
+          ) : (
+            <Icon />
+          );
+        return {
+          key: item.path,
+          icon,
+          label: t(item.labelKey),
+          onClick: () => router.push(item.path),
+        };
+      }),
+  })).filter((group) => group.children.length > 0);
 
   const selectedKey = pathname || ROUTES.CATALOGO;
 

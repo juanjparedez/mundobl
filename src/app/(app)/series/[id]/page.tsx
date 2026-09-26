@@ -2,7 +2,6 @@ import { getPublicUniverseSeries } from '@/lib/database';
 import type { Metadata } from 'next';
 import { cache } from 'react';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import { getSeriesById, prisma } from '@/lib/database';
 import { stripPrivateNotes } from '@/lib/privacy';
 import { SeriesHeader } from '@/components/series/SeriesHeader';
@@ -37,6 +36,8 @@ import { EditSeriesFab } from './EditSeriesFab/EditSeriesFab';
 import { getSeriesUrl, getVerUrl, parseIdFromSlug } from '@/lib/slug';
 import { isAiringNow } from '@/lib/airing-schedule';
 import { countChapters } from '@/lib/episode-chapters';
+import { isWatchableEpisode } from '@/lib/watchable';
+import { WatchHereBanner } from '@/components/series/WatchHereBanner/WatchHereBanner';
 import type { TVSeries } from 'schema-dts';
 import { ReadOutlined, CommentOutlined } from '@/lib/client-icons';
 import './page.css';
@@ -197,8 +198,10 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
   const directors = serie.directors?.map((sd) => sd.director.name) ?? [];
   // Capitulos, no videos: GMMTV sube cada capitulo en partes.
   const totalEpisodes = countChapters(serie.seasons ?? []);
+  // Mismo criterio que /ver/[id]: un trailer suelto no es "se ve aca" (antes
+  // la ficha lo prometia y /ver devolvia 404).
   const hasOwnEmbeds = (serie.seasons ?? []).some((s) =>
-    (s.episodes ?? []).some((e) => !!e.embedUrl)
+    (s.episodes ?? []).some(isWatchableEpisode)
   );
   // Se puede mirar en /ver (propia o por un aporte linkeado): "dónde ver"
   // vacío no puede decir que no sabemos.
@@ -279,31 +282,17 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
               { name: serie.title },
             ]}
           />
-          {/* Banner cuando la serie se puede ver en /ver directamente o tiene aportes linkeados */}
           {hasOwnEmbeds ? (
-            <div className="series-linked-from-user-embeds">
-              <Link
-                href={getVerUrl(serie.id, serie.title)}
-                className="series-linked-from-user-embeds__link"
-              >
-                ▶ Ver episodios oficiales en el reproductor de MundoBL
-              </Link>
-            </div>
+            <WatchHereBanner href={getVerUrl(serie.id, serie.title)} />
           ) : serie.linkedFromUserEmbeds &&
             serie.linkedFromUserEmbeds.length > 0 ? (
-            <div className="series-linked-from-user-embeds">
-              <Link
-                href={getVerUrl(
-                  serie.linkedFromUserEmbeds[0].id,
-                  serie.linkedFromUserEmbeds[0].title
-                )}
-                className="series-linked-from-user-embeds__link"
-              >
-                ▶ También disponible para ver en /ver
-                {serie.linkedFromUserEmbeds.length > 1 &&
-                  ` (${serie.linkedFromUserEmbeds.length} aportes)`}
-              </Link>
-            </div>
+            <WatchHereBanner
+              href={getVerUrl(
+                serie.linkedFromUserEmbeds[0].id,
+                serie.linkedFromUserEmbeds[0].title
+              )}
+              contributions={serie.linkedFromUserEmbeds.length}
+            />
           ) : null}
           <SeriesHeader
             series={{
