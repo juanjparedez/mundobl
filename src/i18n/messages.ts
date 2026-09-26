@@ -142,6 +142,9 @@ export type TranslationShape = {
   };
   episodesList: {
     headerTitle: string;
+    parts: string;
+    extrasNote: string;
+    emptyTextUser: string;
     generateButton: string;
     addButton: string;
     emptyText: string;
@@ -171,8 +174,6 @@ export type TranslationShape = {
     errorSave: string;
     errorDelete: string;
     errorBulkDelete: string;
-    errorToggleWatched: string;
-    errorBulkToggle: string;
     errorGenerate: string;
     modalEditTitle: string;
     modalNewTitle: string;
@@ -186,8 +187,6 @@ export type TranslationShape = {
     saveButton: string;
     createButton: string;
     cancelButton: string;
-    markedWatched: string;
-    markedUnwatched: string;
     episodesUnit: string;
     bulkMarkedWatched: string;
     bulkMarkedUnwatched: string;
@@ -3315,6 +3314,9 @@ const es: TranslationShape = {
   },
   episodesList: {
     headerTitle: 'Episodios ({n})',
+    parts: '{n} partes',
+    extrasNote: 'Y {n} videos más: avances y extras.',
+    emptyTextUser: 'Todavía no hay episodios cargados.',
     generateButton: 'Generar',
     addButton: 'Agregar',
     emptyText:
@@ -3346,8 +3348,6 @@ const es: TranslationShape = {
     errorSave: 'Error al guardar el episodio',
     errorDelete: 'Error al eliminar el episodio',
     errorBulkDelete: 'Error al eliminar los episodios',
-    errorToggleWatched: 'Error al actualizar el estado',
-    errorBulkToggle: 'Error al actualizar los episodios',
     errorGenerate: 'Error al generar episodios',
     modalEditTitle: 'Editar Episodio',
     modalNewTitle: 'Nuevo Episodio',
@@ -3361,8 +3361,6 @@ const es: TranslationShape = {
     saveButton: 'Guardar',
     createButton: 'Crear',
     cancelButton: 'Cancelar',
-    markedWatched: 'Episodio marcado como visto',
-    markedUnwatched: 'Episodio marcado como no visto',
     episodesUnit: '{watched}/{total} episodios',
     bulkMarkedWatched: '{n} episodio(s) marcado(s) como vistos',
     bulkMarkedUnwatched: '{n} episodio(s) marcado(s) como no vistos',
@@ -6657,6 +6655,9 @@ const en: TranslationShape = {
   },
   episodesList: {
     headerTitle: 'Episodes ({n})',
+    parts: '{n} parts',
+    extrasNote: 'Plus {n} more videos: previews and extras.',
+    emptyTextUser: 'No episodes added yet.',
     generateButton: 'Generate',
     addButton: 'Add',
     emptyText: 'No episodes recorded. Use "Generate" or "Add" to start.',
@@ -6687,8 +6688,6 @@ const en: TranslationShape = {
     errorSave: 'Error saving episode',
     errorDelete: 'Error deleting episode',
     errorBulkDelete: 'Error deleting episodes',
-    errorToggleWatched: 'Error updating status',
-    errorBulkToggle: 'Error updating episodes',
     errorGenerate: 'Error generating episodes',
     modalEditTitle: 'Edit Episode',
     modalNewTitle: 'New Episode',
@@ -6702,8 +6701,6 @@ const en: TranslationShape = {
     saveButton: 'Save',
     createButton: 'Create',
     cancelButton: 'Cancel',
-    markedWatched: 'Episode marked as watched',
-    markedUnwatched: 'Episode marked as unwatched',
     episodesUnit: '{watched}/{total} episodes',
     bulkMarkedWatched: '{n} episode(s) marked as watched',
     bulkMarkedUnwatched: '{n} episode(s) marked as unwatched',

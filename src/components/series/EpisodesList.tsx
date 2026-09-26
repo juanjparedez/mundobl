@@ -25,9 +25,11 @@ import { CommentsList } from '@/components/common/CommentsList';
 import { SpoilerGate } from '@/components/common/SpoilerGate/SpoilerGate';
 import { EpisodeNoteModal } from './EpisodeNoteModal/EpisodeNoteModal';
 import { EpisodesAdminToolbar } from './EpisodesAdminToolbar/EpisodesAdminToolbar';
+import { WatchedToggle } from './WatchedToggle/WatchedToggle';
 import { useSeriesUserStatus } from './SeriesUserStatusProvider';
 import './EpisodesList.css';
 import { useMessage, useModal } from '@/hooks/useMessage';
+import { useMarkEpisodes } from '@/hooks/useMarkEpisodes';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 
@@ -68,11 +70,10 @@ export function EpisodesList({
   const message = useMessage();
   const modal = useModal();
   const { data: session } = useSession();
-  const {
-    episodeStatus,
-    loaded: statusLoaded,
-    version: statusVersion,
-  } = useSeriesUserStatus();
+  // El visto sale del provider: el panel de seguimiento lee lo mismo, asi
+  // que marcar aca lo actualiza sin recargar.
+  const { episodeStatus } = useSeriesUserStatus();
+  const { setWatched, pendingKey, ready } = useMarkEpisodes();
   const [episodes, setEpisodes] = useState<Episode[]>(initialEpisodes);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingEpisode, setEditingEpisode] = useState<Episode | null>(null);
@@ -87,24 +88,6 @@ export function EpisodesList({
     new Set()
   );
   const [form] = Form.useForm();
-
-  // Sembrar el viewStatus de cada episodio apenas resuelve
-  // SeriesUserStatusProvider (/series/[id] dejo de llamar `await auth()`,
-  // asi que ya no llega horneado en `initialEpisodes`). Depende de
-  // `statusVersion` (no de `statusLoaded`) para volver a sembrar tras un
-  // refetch() sin pisar los toggles optimistas locales entre medio
-  // (handleToggleWatched).
-  useEffect(() => {
-    if (!statusLoaded) return;
-    setEpisodes((prev) =>
-      prev.map((ep) =>
-        episodeStatus[ep.id]
-          ? { ...ep, viewStatus: [{ status: episodeStatus[ep.id] }] }
-          : ep
-      )
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [statusVersion]);
 
   // Al montar (con usuario logueado), cargo en bulk los IDs con nota.
   const userId = session?.user?.id;
@@ -255,48 +238,6 @@ export function EpisodesList({
     }
   };
 
-  const handleToggleWatched = async (
-    episodeId: number,
-    currentlyWatched: boolean
-  ) => {
-    try {
-      const newStatus = currentlyWatched ? 'SIN_VER' : 'VISTA';
-      const response = await fetch(`/api/episodes/${episodeId}/view-status`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus }),
-      });
-
-      if (!response.ok) throw new Error();
-
-      const viewStatus = await response.json();
-
-      setEpisodes(
-        episodes.map((ep) =>
-          ep.id === episodeId
-            ? {
-                ...ep,
-                viewStatus: [
-                  {
-                    status: viewStatus.status,
-                    watchedDate: viewStatus.watchedDate,
-                  },
-                ],
-              }
-            : ep
-        )
-      );
-
-      message.success(
-        viewStatus.status === 'VISTA'
-          ? t('episodesList.markedWatched')
-          : t('episodesList.markedUnwatched')
-      );
-    } catch {
-      message.error(t('episodesList.errorToggleWatched'));
-    }
-  };
-
   const handleConfirmBulkDelete = () => {
     modal.confirm({
       title: t('episodesList.deleteBulkConfirmTitle'),
@@ -310,53 +251,20 @@ export function EpisodesList({
     });
   };
 
+  // Un solo request para toda la seleccion (antes era uno por episodio).
   const handleBulkToggleWatched = async (markAsWatched: boolean) => {
     const ids = Array.from(selectedIds);
-    const newStatus = markAsWatched ? 'VISTA' : 'SIN_VER';
-    let updatedCount = 0;
-
-    try {
-      await Promise.all(
-        ids.map(async (id) => {
-          const response = await fetch(`/api/episodes/${id}/view-status`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status: newStatus }),
-          });
-          if (response.ok) {
-            updatedCount++;
-            const viewStatus = await response.json();
-            setEpisodes((prev) =>
-              prev.map((ep) =>
-                ep.id === id
-                  ? {
-                      ...ep,
-                      viewStatus: [
-                        {
-                          status: viewStatus.status,
-                          watchedDate: viewStatus.watchedDate,
-                        },
-                      ],
-                    }
-                  : ep
-              )
-            );
-          }
-        })
-      );
-
-      setSelectedIds(new Set());
-      message.success(
-        interpolateMessage(
-          markAsWatched
-            ? t('episodesList.successBulkWatched')
-            : t('episodesList.successBulkUnwatched'),
-          { n: String(updatedCount) }
-        )
-      );
-    } catch {
-      message.error(t('episodesList.errorBulkToggle'));
-    }
+    const ok = await setWatched('bulk', ids, markAsWatched);
+    if (!ok) return;
+    setSelectedIds(new Set());
+    message.success(
+      interpolateMessage(
+        markAsWatched
+          ? t('episodesList.successBulkWatched')
+          : t('episodesList.successBulkUnwatched'),
+        { n: String(ids.length) }
+      )
+    );
   };
 
   const handleGenerateEpisodes = async () => {
@@ -423,9 +331,12 @@ export function EpisodesList({
           {/* Episode rows */}
           <div className="episodes-table__body">
             {episodes.map((episode) => {
-              const isWatched =
-                episode.viewStatus?.[0]?.status === 'VISTA' || false;
+              const isWatched = episodeStatus[episode.id] === 'VISTA';
               const isSelected = selectedIds.has(episode.id);
+              const rowKey = `row-${episode.id}`;
+              const markLabel = t('verSerie.markChapter', {
+                n: episode.episodeNumber,
+              });
               const commentCount = episode._count?.comments || 0;
 
               return (
@@ -442,13 +353,24 @@ export function EpisodesList({
                       </div>
                     )}
 
-                    <div
-                      className="episodes-table__cell episodes-table__cell--number"
-                      onClick={() => handleToggleWatched(episode.id, isWatched)}
-                    >
-                      <span className="episodes-table__ep-number">
-                        {episode.episodeNumber}
-                      </span>
+                    <div className="episodes-table__cell episodes-table__cell--number">
+                      <WatchedToggle
+                        label={String(episode.episodeNumber)}
+                        ariaLabel={markLabel}
+                        hint={
+                          isWatched
+                            ? t('verSerie.unmarkChapter', {
+                                n: episode.episodeNumber,
+                              })
+                            : markLabel
+                        }
+                        watched={isWatched}
+                        loading={pendingKey === rowKey}
+                        disabled={!ready}
+                        onToggle={() =>
+                          void setWatched(rowKey, [episode.id], !isWatched)
+                        }
+                      />
                     </div>
 
                     <div className="episodes-table__cell episodes-table__cell--title">

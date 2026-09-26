@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import assert from 'node:assert/strict';
 import {
+  countChapters,
   groupIntoChapters,
   toTrackedChapters,
 } from '../src/lib/episode-chapters';
@@ -105,6 +106,16 @@ assert.equal(tracked[0].episodeIds.length, 4);
 assert.equal(tracked[0].title, null);
 assert.equal(toTrackedChapters(titled)[1].title, 'The Interview');
 
+// 7) countChapters: cuenta capitulos si hay episodios, si no el numero de
+//    la temporada.
+assert.equal(
+  countChapters([
+    { seasonNumber: 1, episodeCount: 64, episodes: gmmtv },
+    { seasonNumber: 2, episodeCount: 10 },
+  ]),
+  12
+);
+
 console.log(
   JSON.stringify({
     result: 'PASS',
@@ -115,6 +126,7 @@ console.log(
       'titulos reales con un solo numero: no se reagrupan ni se pierden',
       'dos temporadas no se mezclan',
       'toTrackedChapters: ids de las partes, titulo solo en fichas a mano',
+      'countChapters: capitulos cargados o, si no hay, el numero de la temporada',
     ],
   })
 );

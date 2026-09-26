@@ -1,0 +1,64 @@
+.watched-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 56px;
+  min-height: 36px;
+  padding: 4px 12px 4px 6px;
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--bg-container);
+  color: var(--text-primary);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+
+.watched-toggle:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.watched-toggle__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  font-size: 12px;
+  /* El check aparece al pasar el mouse: adelanta lo que hace el click. */
+  color: transparent;
+}
+
+.watched-toggle:hover:not(:disabled) {
+  border-color: var(--success-color);
+}
+
+.watched-toggle:hover:not(:disabled) .watched-toggle__icon {
+  border-color: var(--success-color);
+  color: var(--success-color);
+}
+
+.watched-toggle--on {
+  border-color: color-mix(in srgb, var(--success-color) 50%, transparent);
+  background: color-mix(in srgb, var(--success-color) 10%, var(--bg-container));
+}
+
+.watched-toggle--on .watched-toggle__icon,
+.watched-toggle--on:hover:not(:disabled) .watched-toggle__icon {
+  border-color: var(--success-color);
+  background: var(--success-color);
+  color: var(--text-on-primary);
+}
+
+/* En pantallas tactiles se marca con el pulgar: minimo de 44px. */
+@media (max-width: 768px) {
+  .watched-toggle {
+    min-height: 44px;
+  }
+}

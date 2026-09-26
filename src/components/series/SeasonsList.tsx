@@ -9,9 +9,11 @@ import {
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { EpisodesList } from './EpisodesList';
+import { EpisodeChapterList } from './EpisodeChapterList/EpisodeChapterList';
 import { CommentsList } from '@/components/common/CommentsList';
 import { useSeriesUserStatus } from './SeriesUserStatusProvider';
 import { canEditCatalog } from '@/lib/auth-client';
+import { groupIntoChapters } from '@/lib/episode-chapters';
 import './SeasonsList.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
@@ -74,13 +76,19 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
     (a, b) => a.seasonNumber - b.seasonNumber
   );
 
+  // Por capitulos, igual que la lista y el seguimiento.
   const getEpisodeWatchProgress = (season: (typeof seasons)[0]) => {
     if (!season.episodes || season.episodes.length === 0) return null;
-    const watchedCount = season.episodes.filter(
-      (ep) => episodeStatus[ep.id] === 'VISTA'
+    const { chapters } = groupIntoChapters(
+      season.episodes.map((ep) => ({
+        ...ep,
+        seasonNumber: season.seasonNumber,
+      }))
+    );
+    const watchedCount = chapters.filter((chapter) =>
+      chapter.episodes.every((ep) => episodeStatus[ep.id] === 'VISTA')
     ).length;
-    const totalCount = season.episodes.length;
-    return { watchedCount, totalCount };
+    return { watchedCount, totalCount: chapters.length };
   };
 
   const collapseItems = sortedSeasons.map((season) => {
@@ -103,7 +111,10 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
                 {season.year}
               </Tag>
             )}
-            {season.episodeCount && (
+            {/* La cantidad cargada a mano, solo si no hay episodios: con
+                episodios manda el contador de capitulos (el importador
+                guarda aca la cantidad de videos, partes incluidas). */}
+            {season.episodeCount && !episodeProgress && (
               <Tag icon={<PlayCircleOutlined />} color="green">
                 {interpolateMessage(t('seasonsList.capsTag'), {
                   n: String(season.episodeCount),
@@ -250,12 +261,20 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
             </div>
           )}
 
-          {/* Episodios de la temporada */}
-          <EpisodesList
-            seasonId={season.id}
-            initialEpisodes={season.episodes || []}
-            canEdit={canEdit}
-          />
+          {/* Episodios de la temporada: quien cura ve cada video para
+              editarlo; el resto, los capitulos para marcarlos. */}
+          {canEdit ? (
+            <EpisodesList
+              seasonId={season.id}
+              initialEpisodes={season.episodes || []}
+              canEdit={canEdit}
+            />
+          ) : (
+            <EpisodeChapterList
+              seasonNumber={season.seasonNumber}
+              episodes={season.episodes || []}
+            />
+          )}
         </div>
       ),
     };
