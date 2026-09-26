@@ -2413,6 +2413,14 @@ const zhTW = {
     "linkCopyError": "無法複製連結。",
     "previousButton": "上一頁",
     "nextButton": "下一頁",
+    "nextChapterButton": "下一集",
+    "autoMarkedChapter": "已標記第 {n} 集",
+    "undoAutoMark": "復原",
+    "subtitlesTitle": "字幕",
+    "subtitlesBody": "若官方影片提供字幕，系統會自動開啟。你可以在播放器的 [CC] 中更改語言。",
+    "regionTitle": "你所在的國家或地區無法觀看。",
+    "regionBody": "製作方對此影片設定了地區限制。請查看本劇可用的合法觀看方式。",
+    "whereToWatchLink": "觀看平台",
     "markChapter": "我已觀看第 {n} 集",
     "chapterWatched": "已觀看",
     "unmarkChapter": "取消標記第 {n} 集",
@@ -2616,7 +2624,13 @@ const zhTW = {
     "seriesNote": "劇集筆記",
     "notesHintNoEpisode": "將劇集標記為已觀看即可新增筆記。",
     "episodesAfterLast": "您上次標記為已觀看後，還有其他集數。",
-    "followAgain": "再次追蹤"
+    "followAgain": "再次追蹤",
+    "localSaved": "已儲存在此瀏覽器中。",
+    "localSignIn": "登入以免遺失",
+    "localImportOffer": "此瀏覽器中有 {n} 部作品的觀看進度。",
+    "localImportButton": "儲存到我的帳戶",
+    "localImportSuccess": "觀看進度已儲存到你的帳戶。",
+    "localImportError": "無法儲存全部本機觀看進度。"
   },
   "posterPlaceholder": {
     "noImage": "無圖片"

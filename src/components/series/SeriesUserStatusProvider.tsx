@@ -11,6 +11,10 @@ import {
   type ReactNode,
 } from 'react';
 import { useSession } from 'next-auth/react';
+import {
+  getLocalSeriesProgress,
+  subscribeToLocalProgress,
+} from '@/lib/local-progress';
 
 export interface SeriesUserStatusData {
   seriesStatus: string;
@@ -36,6 +40,7 @@ interface SeriesUserStatusContextValue extends SeriesUserStatusState {
   /** Vuelve a pedir /my-status y reemplaza el valor. No-op sin sesion. Si
    *  se llama dos veces seguidas, solo la respuesta mas reciente aplica. */
   refetch: () => Promise<void>;
+  storage: 'account' | 'local';
 }
 
 const DEFAULT_STATE: SeriesUserStatusState = {
@@ -52,6 +57,7 @@ const DEFAULT_CONTEXT: SeriesUserStatusContextValue = {
   ...DEFAULT_STATE,
   seriesId: null,
   refetch: async () => {},
+  storage: 'local',
 };
 
 const SeriesUserStatusContext =
@@ -92,6 +98,20 @@ export function SeriesUserStatusProvider({
   const requestIdRef = useRef(0);
   const mountedRef = useRef(true);
 
+  const loadLocal = useCallback(() => {
+    const progress = getLocalSeriesProgress(seriesId);
+    const episodeStatus = Object.fromEntries(
+      progress.episodeIds.map((episodeId) => [episodeId, 'VISTA'])
+    );
+    setState((prev) => ({
+      ...DEFAULT_STATE,
+      seriesStatus: progress.episodeIds.length > 0 ? 'VIENDO' : 'SIN_VER',
+      episodeStatus,
+      loaded: true,
+      version: prev.version + 1,
+    }));
+  }, [seriesId]);
+
   useEffect(
     () => () => {
       mountedRef.current = false;
@@ -100,7 +120,10 @@ export function SeriesUserStatusProvider({
   );
 
   const load = useCallback(async () => {
-    if (sessionStatus !== 'authenticated') return;
+    if (sessionStatus !== 'authenticated') {
+      if (sessionStatus === 'unauthenticated') loadLocal();
+      return;
+    }
 
     const requestId = ++requestIdRef.current;
     try {
@@ -116,24 +139,48 @@ export function SeriesUserStatusProvider({
     } catch {
       // La hidratacion nunca puede romper la ficha.
     }
-  }, [seriesId, sessionStatus]);
+  }, [seriesId, sessionStatus, loadLocal]);
 
   useEffect(() => {
+    if (sessionStatus === 'loading') return;
     if (sessionStatus !== 'authenticated') {
       // Invalida cualquier fetch en vuelo y resetea (edge case: logout sin
       // recargar mientras se esta viendo la pagina; el mount inicial
       // anonimo ya arranca en DEFAULT_STATE).
       requestIdRef.current += 1;
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- reset al perder sesion, no un derive-on-render
-      setState(DEFAULT_STATE);
-      return;
+      const localTimeoutId = window.setTimeout(loadLocal, 0);
+      return () => window.clearTimeout(localTimeoutId);
     }
-    void load();
+    const accountTimeoutId = window.setTimeout(() => void load(), 0);
+    return () => window.clearTimeout(accountTimeoutId);
+  }, [sessionStatus, load, loadLocal]);
+
+  useEffect(() => {
+    if (sessionStatus !== 'unauthenticated') return;
+    return subscribeToLocalProgress(loadLocal);
+  }, [sessionStatus, loadLocal]);
+
+  useEffect(() => {
+    if (sessionStatus !== 'authenticated') return;
+    const reloadAccount = () => void load();
+    window.addEventListener('mundobl:account-progress-imported', reloadAccount);
+    return () =>
+      window.removeEventListener(
+        'mundobl:account-progress-imported',
+        reloadAccount
+      );
   }, [sessionStatus, load]);
 
   const contextValue = useMemo(
-    () => ({ ...state, seriesId, refetch: load }),
-    [state, seriesId, load]
+    () => ({
+      ...state,
+      seriesId,
+      refetch: load,
+      storage: (sessionStatus === 'authenticated' ? 'account' : 'local') as
+        | 'account'
+        | 'local',
+    }),
+    [state, seriesId, load, sessionStatus]
   );
 
   return (
