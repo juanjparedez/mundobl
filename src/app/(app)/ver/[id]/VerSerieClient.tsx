@@ -22,14 +22,17 @@ import {
   UserOutlined,
   BankOutlined,
   PlayCircleOutlined,
+  PlayCircleFilled,
   VideoCameraOutlined,
   ClockCircleOutlined,
   LockOutlined,
   CopyOutlined,
   CheckOutlined,
 } from '@ant-design/icons';
-import { useSession } from 'next-auth/react';
+import { useSession, signIn } from 'next-auth/react';
 import { EmbedPlayer } from '@/components/common/EmbedPlayer/EmbedPlayer';
+import { useSeriesUserStatus } from '@/components/series/SeriesUserStatusProvider';
+import { savePendingTrack } from '@/lib/pending-track';
 import { EmbedAttribution } from '@/components/common/EmbedAttribution/EmbedAttribution';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { ShareButton } from '@/components/common/ShareButton/ShareButton';
@@ -319,6 +322,9 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
   const isAuthed = status === 'authenticated';
   const isAdmin = isAuthed && session?.user?.role === 'ADMIN';
   const isUserEmbed = series.origin === 'USER_EMBED';
+  const { episodeStatus, refetch } = useSeriesUserStatus();
+  const [markingChapter, setMarkingChapter] = useState(false);
+  const isWatched = (episodeId: number) => episodeStatus[episodeId] === 'VISTA';
 
   const flatEpisodes = useMemo(() => {
     const totalCount = seasons.reduce((acc, s) => acc + s.episodes.length, 0);
@@ -495,6 +501,48 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
     }
   };
 
+  // El capitulo del video que se esta viendo, con todas sus partes. Los
+  // extras no tienen: no se marcan.
+  const activeChapter =
+    chapterGroups.find((group) =>
+      group.items.some((item) => item.flatIndex === activeIdx)
+    ) ?? null;
+  const activeChapterWatched =
+    activeChapter?.items.every((item) => isWatched(item.episode.id)) ?? false;
+
+  const toggleChapterWatched = async () => {
+    if (!activeChapter) return;
+    const episodeIds = activeChapter.items.map((item) => item.episode.id);
+
+    if (!isAuthed) {
+      savePendingTrack({
+        seriesId: series.id,
+        upToEpisodeId: null,
+        episodeIds,
+        createdAt: Date.now(),
+      });
+      void signIn('google', {
+        callbackUrl: window.location.pathname + window.location.search,
+      });
+      return;
+    }
+
+    setMarkingChapter(true);
+    try {
+      const response = await fetch(`/api/series/${series.id}/watched`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ episodeIds, watched: !activeChapterWatched }),
+      });
+      if (!response.ok) throw new Error();
+      await refetch();
+    } catch {
+      message.error(t('progressStepper.error'));
+    } finally {
+      setMarkingChapter(false);
+    }
+  };
+
   if (!active) {
     return <Empty description={t('verSerie.noEpisodesAvailable')} />;
   }
@@ -595,6 +643,58 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           videoId={active.embedVideoId}
           title={active.title || series.title}
         />
+      </div>
+
+      {/* Lo que se hace al terminar un video, pegado al reproductor. */}
+      <div className="ver-serie__nav">
+        <Button
+          className="ver-serie__nav-prev"
+          icon={<ArrowLeftOutlined />}
+          disabled={!hasPrev}
+          onClick={() => selectEpisode(activeIdx - 1)}
+        >
+          {t('verSerie.previousButton')}
+        </Button>
+        <span className="ver-serie__current-label">
+          <strong>
+            T{active.seasonNumber} · {active.parsed.label}
+          </strong>
+        </span>
+        {activeChapter && (
+          <Button
+            type={activeChapterWatched ? 'default' : 'primary'}
+            className={`ver-serie__watched-btn${
+              activeChapterWatched ? ' ver-serie__watched-btn--done' : ''
+            }`}
+            icon={
+              activeChapterWatched ? <CheckCircleFilled /> : <CheckOutlined />
+            }
+            aria-pressed={activeChapterWatched}
+            title={
+              activeChapterWatched
+                ? t('verSerie.unmarkChapter', {
+                    n: activeChapter.chapterNumber,
+                  })
+                : undefined
+            }
+            loading={markingChapter}
+            disabled={status === 'loading'}
+            onClick={() => void toggleChapterWatched()}
+          >
+            {activeChapterWatched
+              ? t('verSerie.chapterWatched')
+              : t('verSerie.markChapter', { n: activeChapter.chapterNumber })}
+          </Button>
+        )}
+        <Button
+          className="ver-serie__nav-next"
+          icon={<ArrowRightOutlined />}
+          iconPlacement="end"
+          disabled={!hasNext}
+          onClick={() => selectEpisode(activeIdx + 1)}
+        >
+          {t('verSerie.nextButton')}
+        </Button>
       </div>
 
       {/* Tracking: mismo mecanismo que la ficha del catalogo (ViewStatus),
@@ -699,30 +799,6 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         />
       </div>
 
-      {/* Controles siguiente/anterior */}
-      <div className="ver-serie__nav">
-        <Button
-          icon={<ArrowLeftOutlined />}
-          disabled={!hasPrev}
-          onClick={() => selectEpisode(activeIdx - 1)}
-        >
-          {t('verSerie.previousButton')}
-        </Button>
-        <span className="ver-serie__current-label">
-          <strong>
-            T{active.seasonNumber} · {active.parsed.label}
-          </strong>
-        </span>
-        <Button
-          icon={<ArrowRightOutlined />}
-          iconPosition="end"
-          disabled={!hasNext}
-          onClick={() => selectEpisode(activeIdx + 1)}
-        >
-          {t('verSerie.nextButton')}
-        </Button>
-      </div>
-
       {/* Sinopsis del episodio */}
       {active.synopsis && (
         <div className="ver-serie__episode-synopsis">
@@ -818,6 +894,9 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
               );
               const isMultiPart = items.length > 1;
               const firstEpisode = items[0]?.episode;
+              const isChapterWatched = items.every((item) =>
+                isWatched(item.episode.id)
+              );
 
               return (
                 <div
@@ -866,6 +945,11 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
                       <span className="ver-serie__chapter-title">
                         <PlayCircleOutlined /> Capítulo {chapterNumber}
                       </span>
+                      {isChapterWatched && (
+                        <span className="ver-serie__chapter-watched">
+                          <CheckCircleFilled /> {t('verSerie.chapterWatched')}
+                        </span>
+                      )}
                       {isMultiPart && (
                         <span className="ver-serie__chapter-parts-hint">
                           Dividido en {items.length} partes
@@ -877,6 +961,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
                     <div className="ver-serie__parts-row">
                       {items.map(({ flatIndex, episode }) => {
                         const isActive = flatIndex === activeIdx;
+                        const partWatched = isWatched(episode.id);
                         const partLabel = isMultiPart
                           ? episode.parsed.partNumber
                             ? `Parte ${episode.parsed.partNumber}/${episode.parsed.partTotal || 4}`
@@ -889,10 +974,17 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
                             type="button"
                             className={`ver-serie__part-btn${
                               isActive ? ' ver-serie__part-btn--active' : ''
-                            }`}
+                            }${partWatched ? ' ver-serie__part-btn--watched' : ''}`}
+                            aria-current={isActive ? 'true' : undefined}
                             onClick={() => selectEpisode(flatIndex)}
                           >
-                            {isActive && <CheckCircleFilled />}
+                            {partWatched ? (
+                              <CheckCircleFilled
+                                aria-label={t('verSerie.chapterWatched')}
+                              />
+                            ) : (
+                              isActive && <PlayCircleFilled />
+                            )}
                             {partLabel}
                           </button>
                         );
@@ -954,7 +1046,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
                       )}
                     </div>
                     {isActive && (
-                      <CheckCircleFilled className="ver-serie__episode-active-icon" />
+                      <PlayCircleFilled className="ver-serie__episode-active-icon" />
                     )}
                   </button>
                 );
