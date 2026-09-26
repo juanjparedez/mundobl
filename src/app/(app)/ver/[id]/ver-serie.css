@@ -67,7 +67,7 @@
 
 .ver-serie__player-wrap {
   width: 100%;
-  background: #000;
+  background: var(--media-bg);
   border-radius: var(--border-radius-lg);
   overflow: hidden;
   box-shadow: var(--box-shadow-card);
@@ -102,10 +102,16 @@
 }
 
 .ver-serie__current-label {
+  flex: 1;
   font-weight: 600;
   color: var(--text-primary);
   text-align: center;
   font-size: 0.95rem;
+}
+
+.ver-serie__watched-btn--done {
+  color: var(--success-color);
+  border-color: var(--success-color);
 }
 
 .ver-serie__episode-synopsis,
@@ -165,8 +171,8 @@
   align-items: center;
   gap: var(--spacing-sm);
   padding: 8px 14px;
-  background: color-mix(in srgb, #faad14 10%, var(--bg-elevated));
-  border: 1px solid color-mix(in srgb, #faad14 30%, transparent);
+  background: color-mix(in srgb, var(--warning-color) 10%, var(--bg-elevated));
+  border: 1px solid color-mix(in srgb, var(--warning-color) 30%, transparent);
   border-radius: var(--border-radius-base);
   font-size: 0.88rem;
   color: var(--text-secondary);
@@ -200,7 +206,7 @@
   gap: var(--spacing-md);
 }
 
-@media (max-width: 860px) {
+@media (max-width: 768px) {
   .ver-serie__info-grid {
     grid-template-columns: 1fr;
   }
@@ -298,7 +304,7 @@
   flex-shrink: 0;
   border-radius: 6px;
   overflow: hidden;
-  background: #000;
+  background: var(--media-bg);
   cursor: pointer;
 }
 
@@ -316,7 +322,11 @@
 .ver-serie__chapter-thumb-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 60%);
+  background: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--media-bg) 70%, transparent) 0%,
+    transparent 60%
+  );
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
@@ -326,23 +336,23 @@
 .ver-serie__part-count-badge {
   font-size: 0.7rem;
   font-weight: 700;
-  color: #fff;
-  background: rgba(0, 0, 0, 0.6);
+  color: var(--text-on-overlay);
+  background: color-mix(in srgb, var(--media-bg) 60%, transparent);
   padding: 1px 5px;
   border-radius: 4px;
 }
 
 .ver-serie__duration-badge {
   font-size: 0.65rem;
-  color: rgba(255, 255, 255, 0.9);
-  background: rgba(0, 0, 0, 0.6);
+  color: var(--text-on-overlay);
+  background: color-mix(in srgb, var(--media-bg) 60%, transparent);
   padding: 1px 4px;
   border-radius: 3px;
 }
 
 .ver-serie__play-icon-overlay {
   font-size: 1.2rem;
-  color: #fff;
+  color: var(--text-on-overlay);
   margin: auto;
   opacity: 0.85;
 }
@@ -406,8 +416,23 @@
 
 .ver-serie__part-btn--active {
   background: var(--primary-color);
-  color: #fff;
+  color: var(--text-on-primary);
   border-color: var(--primary-color);
+}
+
+/* Visto: el check verde alcanza; el fondo queda para el que se reproduce. */
+.ver-serie__part-btn--watched:not(.ver-serie__part-btn--active) {
+  color: var(--success-color);
+  border-color: color-mix(in srgb, var(--success-color) 40%, transparent);
+}
+
+.ver-serie__chapter-watched {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--success-color);
 }
 
 .ver-serie__extras-section {
@@ -465,7 +490,7 @@
   flex-shrink: 0;
   border-radius: 4px;
   overflow: hidden;
-  background: #000;
+  background: var(--media-bg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -545,25 +570,44 @@
 }
 
 .ver-serie__episode-active-icon {
-  color: var(--ant-color-success, #52c41a);
+  color: var(--primary-color);
   flex-shrink: 0;
 }
 
-@media (max-width: 720px) {
+@media (max-width: 600px) {
   .ver-serie__title {
     font-size: 1.4rem;
   }
 
+  /* Arriba que se esta viendo, despues el boton de visto a lo ancho y
+     abajo anterior / siguiente. */
   .ver-serie__nav {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'label label'
+      'watched watched'
+      'prev next';
   }
 
   .ver-serie__current-label {
-    order: -1;
+    grid-area: label;
+  }
+
+  .ver-serie__watched-btn {
+    grid-area: watched;
+  }
+
+  .ver-serie__nav-prev {
+    grid-area: prev;
+  }
+
+  .ver-serie__nav-next {
+    grid-area: next;
   }
 }
 
-@media (max-width: 560px) {
+@media (max-width: 480px) {
   .ver-serie-page {
     padding: var(--spacing-sm);
     border-radius: var(--border-radius-base);

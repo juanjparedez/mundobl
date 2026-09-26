@@ -2377,6 +2377,9 @@ export type TranslationShape = {
     linkCopyError: string;
     previousButton: string;
     nextButton: string;
+    markChapter: string;
+    chapterWatched: string;
+    unmarkChapter: string;
     episodeSynopsisTitle: string;
     aboutTheSeriesTitle: string;
     episodesTitle: string;
@@ -5665,6 +5668,9 @@ const es: TranslationShape = {
     linkCopyError: 'No se pudo copiar el link.',
     previousButton: 'Anterior',
     nextButton: 'Siguiente',
+    markChapter: 'Vi el capítulo {n}',
+    chapterWatched: 'Visto',
+    unmarkChapter: 'Desmarcar el capítulo {n}',
     episodeSynopsisTitle: 'Sinopsis del episodio',
     aboutTheSeriesTitle: 'Sobre la serie',
     episodesTitle: 'Episodios',
@@ -8989,6 +8995,9 @@ const en: TranslationShape = {
     linkCopyError: 'Could not copy the link.',
     previousButton: 'Previous',
     nextButton: 'Next',
+    markChapter: 'I watched episode {n}',
+    chapterWatched: 'Watched',
+    unmarkChapter: 'Unmark episode {n}',
     episodeSynopsisTitle: 'Episode synopsis',
     aboutTheSeriesTitle: 'About the series',
     episodesTitle: 'Episodes',
