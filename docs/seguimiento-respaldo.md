@@ -76,4 +76,4 @@ Con sesión iniciada, `PATCH /api/user/watch-date` recibe, por ejemplo:
 {"episodeId":123,"watchedDate":"2024-06-15","expectedDate":"2024-06-16T14:30:00.000Z"}
 ```
 
-Usar la fecha previa exacta de la exportación como expectedDate; null indica que era desconocida. watchedDate null vuelve a dejarla desconocida. Solo se corrigen marcas VISTA de tu cuenta. Un 409 indica que el registro cambió, no existe o ya no está visto: actualizar el dato antes de intentar de nuevo. No crea contenido ni modifica el progreso; queda constancia en el historial privado. Las fechas elegidas son días UTC. La interfaz de edición aún está pendiente.
+Usar la fecha previa exacta de la exportación como expectedDate; null indica que era desconocida. watchedDate null vuelve a dejarla desconocida. Solo se corrigen marcas VISTA de tu cuenta. Un 409 indica que el registro cambió, no existe o ya no está visto: actualizar el dato antes de intentar de nuevo. No crea contenido ni modifica el progreso; queda constancia en el historial privado. Las fechas elegidas son días UTC. La interfaz permite corregir fechas de series, temporadas y episodios vistos.
