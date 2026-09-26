@@ -55,7 +55,28 @@
 .mb-media-card__cover-placeholder {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, var(--bg-spotlight), var(--bg-elevated));
+  display: flex;
+  align-items: flex-end;
+  padding: var(--spacing-md) var(--spacing-sm);
+  background:
+    radial-gradient(
+      circle at 30% 20%,
+      color-mix(in srgb, var(--primary-color) 22%, transparent),
+      transparent 60%
+    ),
+    linear-gradient(160deg, var(--bg-spotlight), var(--bg-elevated));
+}
+
+.mb-media-card__cover-placeholder-title {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text-primary);
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
 }
 
 .mb-media-card__overlay-tags {

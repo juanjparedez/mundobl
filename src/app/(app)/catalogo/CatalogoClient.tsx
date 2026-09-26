@@ -900,9 +900,9 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
   } = useQuickPreviewController({
     labels: quickPreviewLabels,
     surface: 'catalogo',
-    // En vista lista las filas son angostas y densas: un hover-preview ahi
-    // tapa las filas vecinas mas de lo que ayuda.
-    hoverEnabled: viewMode !== 'list',
+    // Solo en carrusel: en grilla y lista el hover-preview tapa las cards
+    // vecinas y se abre solo al pasar el mouse. Ahi se abre con "+ info".
+    hoverEnabled: viewMode === 'carousel',
   });
 
   const handleQuickView = (serie: SerieData, e: React.MouseEvent) => {
