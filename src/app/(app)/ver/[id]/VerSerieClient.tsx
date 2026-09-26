@@ -38,6 +38,7 @@ import { EmbedAttribution } from '@/components/common/EmbedAttribution/EmbedAttr
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { ShareButton } from '@/components/common/ShareButton/ShareButton';
 import { SeriesSubscribeButton } from '@/components/series/SeriesSubscribeButton/SeriesSubscribeButton';
+import { FavoriteButton } from '@/components/series/FavoriteButton/FavoriteButton';
 import { TrackingPanel } from '@/components/series/TrackingPanel/TrackingPanel';
 import { RatingSection } from '@/components/series/RatingSection';
 import { ReviewsSection } from '@/components/series/ReviewsSection/ReviewsSection';
@@ -580,6 +581,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
             path={`/ver/${series.id}`}
           />
           <SeriesSubscribeButton seriesId={series.id} />
+          <FavoriteButton />
         </div>
       </header>
 

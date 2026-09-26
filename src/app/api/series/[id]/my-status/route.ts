@@ -4,7 +4,7 @@ import { requireAuth } from '@/lib/auth-helpers';
 
 /**
  * Estado del usuario actual sobre una serie puntual: viewStatus (serie,
- * temporadas, episodios) + suscripcion, en un solo request.
+ * temporadas, episodios), suscripcion y favorito, en un solo request.
  *
  * Por que existe: /series/[id] dejo de llamar `await auth()` en el server
  * (eso mataba el `revalidate` — la ruta de mas trafico del sitio se volvia
@@ -28,8 +28,8 @@ export async function GET(
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
     }
 
-    const [seriesVs, seasonRows, episodeRows, subscription] = await Promise.all(
-      [
+    const [seriesVs, seasonRows, episodeRows, subscription, favorite] =
+      await Promise.all([
         prisma.viewStatus.findUnique({
           where: {
             userId_seriesId: { userId: authResult.userId, seriesId },
@@ -53,8 +53,13 @@ export async function GET(
           },
           select: { id: true },
         }),
-      ]
-    );
+        prisma.userFavorite.findUnique({
+          where: {
+            userId_seriesId: { userId: authResult.userId, seriesId },
+          },
+          select: { id: true },
+        }),
+      ]);
 
     const seasonStatus: Record<number, string> = {};
     seasonRows.forEach((r) => {
@@ -71,6 +76,7 @@ export async function GET(
       seasonStatus,
       episodeStatus,
       subscribed: subscription !== null,
+      favorite: favorite !== null,
     });
   } catch (error) {
     console.error('Error fetching series my-status:', error);

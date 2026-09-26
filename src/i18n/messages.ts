@@ -2421,7 +2421,6 @@ export type TranslationShape = {
   };
   seriesSubscribeButton: {
     signInTooltip: string;
-    subscribeAriaLabel: string;
     subscribeFailedError: string;
     subscribeSuccessMessage: string;
     unsubscribeSuccessMessage: string;
@@ -5713,7 +5712,6 @@ const es: TranslationShape = {
   },
   seriesSubscribeButton: {
     signInTooltip: 'Inicia sesión para suscribirte a cambios',
-    subscribeAriaLabel: 'Suscribirse',
     subscribeFailedError: 'subscribe-failed',
     subscribeSuccessMessage: 'Te avisaremos cuando haya novedades',
     unsubscribeSuccessMessage: 'Suscripción cancelada',
@@ -9039,7 +9037,6 @@ const en: TranslationShape = {
   },
   seriesSubscribeButton: {
     signInTooltip: 'Sign in to subscribe to changes',
-    subscribeAriaLabel: 'Subscribe',
     subscribeFailedError: 'subscribe-failed',
     subscribeSuccessMessage: 'We will notify you when there are updates',
     unsubscribeSuccessMessage: 'Subscription cancelled',
