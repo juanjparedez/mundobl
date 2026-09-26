@@ -370,9 +370,11 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     );
   };
 
-  if (!state.mounted) {
-    return null;
-  }
+  // Antes de montar se dibuja con el tema por defecto: el script del <head>
+  // (app/layout.tsx) ya aplico los atributos del usuario, asi que las
+  // variables CSS salen bien desde el primer pintado; solo los tokens de
+  // antd se ajustan cuando el efecto lee las preferencias. Devolver null
+  // aca dejaba el HTML de todas las paginas vacio (Google y primer pintado).
 
   const accentColors = resolveAccentColors(
     state.accent,
