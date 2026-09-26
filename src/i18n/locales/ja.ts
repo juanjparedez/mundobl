@@ -348,6 +348,11 @@ const ja = {
     "glossary": "文化用語集",
     "about": "MundoBLについて"
   },
+  "navSections": {
+    "watch": "ここで視聴",
+    "follow": "フォロー",
+    "explore": "探す"
+  },
   "profile": {
     "loginRequired": "プロフィールを表示するにはサインインしてください",
     "memberSince": "メンバー登録日",
@@ -581,7 +586,7 @@ const ja = {
     "newSeasonsTitle": "新シーズン",
     "seasonLabel": "シーズン",
     "changelogTitle": "最近の変更",
-    "watchableTitle": "視聴可能な完全シリーズ"
+    "watchHereTitle": "ここで視聴"
   },
   "watchableCarousel": {
     "watchNow": "今すぐ視聴",
@@ -1571,7 +1576,15 @@ const ja = {
     "sortYearNew": "新しい順",
     "sortYearOld": "古い順",
     "sortRatingDesc": "評価の高い順",
-    "quickFilterFeatured": "おすすめ"
+    "quickFilterFeatured": "おすすめ",
+    "pageTitle": "カタログ",
+    "pageSubtitle": "私たちが追跡するすべてのシリーズ。他の場所で視聴していても、現在視聴中のエピソードを記録できます。",
+    "quickFiltersLabel": "クイックフィルター",
+    "quickFilterWatchable": "ここで視聴",
+    "quickFilterPopular": "人気",
+    "quickFilterRecent": "最新リリース",
+    "quickFilterTrend": "トレンド",
+    "watchHere": "ここで視聴"
   },
   "quickPreview": {
     "open": "クイックビュー",
@@ -1721,15 +1734,20 @@ const ja = {
     "newsSubtitle": "新作の撮影、公式予告編、発表、小説の映像化まで、ノイズなしで最新情報を追えます。",
     "newsCta": "ニュースをすべて見る"
   },
-  "welcomeBanner": {
-    "title": "MundoBLへようこそ",
-    "description": "これは私が視聴したBLシリーズの個人的なカタログで、現在放送中のものも含まれています。もし何か視聴されたものがあれば、コメント、感想、レビューを残していただけると嬉しいです。",
-    "dismiss": "了解"
-  },
   "privacyBanner": {
     "text": "このサイトはセキュリティと改善のためにアクセス情報を記録します。閲覧を続けることにより、当社のプライバシーポリシーに同意したものとみなされます。",
     "detailsLink": "保存内容と削除方法を見る",
     "accept": "了解"
+  },
+  "watchHereBanner": {
+    "own": "公式チャンネルでエピソードを視聴",
+    "contribution": "コミュニティ投稿でも視聴可能",
+    "contributions": "コミュニティ投稿{n}件でも視聴可能"
+  },
+  "aboutContentNotice": {
+    "title": "すべてがここで再生されるわけではありません",
+    "body": "私たちはスタジオが公式チャンネルにアップロードしたもののみを表示しており、多くのシリーズは地域制限があります。それ以外については、合法的に視聴できる場所をお知らせします。",
+    "close": "閉じる"
   },
   "announcementBanner": {
     "dismiss": "閉じる"
@@ -3025,14 +3043,16 @@ const ja = {
     "categoryCommunity": "コミュニティ提供",
     "categoryIndieVimeo": "Vimeo & インディーズ",
     "resultsTitle": "検索結果",
-    "catalogTitle": "視聴可能な全カタログ",
     "clearFilters": "フィルターをクリア",
     "emptyDescription": "そのフィルターに一致するシリーズは見つかりませんでした。別の国またはタイトルをお試しください。",
     "cardEpisodesBadge": "{count}本の動画",
     "cardPlayButton": "再生",
     "geoRestrictedBadge": "お住まいの地域では制限されています",
     "partiallyUnavailableBadge": "{total}本中{count}本が視聴可能",
-    "unavailableHereBadge": "お住まいの国では視聴できません"
+    "unavailableHereBadge": "お住まいの国では視聴できません",
+    "pageTitle": "ここで視聴",
+    "pageSubtitle": "スタジオの公式チャンネルのエピソード。無料、アカウント不要。",
+    "allWatchableTitle": "ここで見られるすべて"
   },
   "actorProfile": {
     "funFactsTitle": "豆知識",

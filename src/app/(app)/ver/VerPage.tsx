@@ -27,8 +27,10 @@ import {
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import {
   MediaCard,
+  SectionHeader,
   useQuickPreviewController,
 } from '@/components/design-system';
+import { AboutContentNotice } from '@/components/common/AboutContentNotice/AboutContentNotice';
 import type { QuickPreviewData } from '@/components/design-system';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -339,6 +341,13 @@ export function VerPage({ items }: VerPageProps) {
 
   return (
     <div className="ver-content">
+      <SectionHeader
+        as="h1"
+        size="lg"
+        title={t('ver.pageTitle')}
+        subtitle={t('ver.pageSubtitle')}
+      />
+      <AboutContentNotice />
       {/* Hero Billboard Principal (cuando no hay filtro activo y en modo streaming) */}
       {!isFiltering && viewMode === 'streaming' && featured && (
         <HeroBillboard
@@ -512,8 +521,8 @@ export function VerPage({ items }: VerPageProps) {
         <div className="ver-grid-view">
           <div className="ver-grid-view__head">
             <h2 className="ver-grid-view__title">
-              {isFiltering ? t('ver.resultsTitle') : t('ver.catalogTitle')} (
-              {filtered.length})
+              {isFiltering ? t('ver.resultsTitle') : t('ver.allWatchableTitle')}{' '}
+              ({filtered.length})
             </h2>
             {isFiltering && (
               <Button

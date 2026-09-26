@@ -12,6 +12,7 @@ Todas las versiones notables del proyecto se documentan aqui.
 
 ### Features
 
+- **Para ver acá y para seguir, por separado**: el menú separa lo que se mira en el sitio ("Ver series") de lo que se sigue (catálogo, viendo, perfil). En el catálogo, las series que además se ven acá llevan "▶ Se ve acá" y tienen su filtro. Un aviso, que se cierra una vez, explica por qué no todo se ve acá.
 - **El seguimiento cuenta capítulos, no videos**: YouTube sube muchos capítulos en partes ([1/4]…[4/4]). Antes, ver el capítulo 1 de Baker Boys decía "Ep. 4 / 52"; ahora cuenta capítulos, y "Vi el ep. N" marca el capítulo entero. Vale para la ficha, `/ver`, `/watching` y el perfil.
 - **"Vi el capítulo N" desde el reproductor**: debajo del video en `/ver`, junto a Anterior y Siguiente. Tocarlo otra vez lo desmarca.
 - **La lista de episodios de la ficha responde**: muestra "Episodios (12)" en vez de 64 videos sueltos, con los avances y extras resumidos en una línea, y el botón de visto actualiza el panel sin recargar.
@@ -23,6 +24,8 @@ Todas las versiones notables del proyecto se documentan aqui.
 
 ### Fixes
 
+- **La ficha ya no promete episodios que no hay**: una serie con solo un tráiler decía "Ver episodios oficiales" y el link daba error.
+- El filtro "Recién agregados" del catálogo filtraba por año de estreno: ahora se llama "Estrenos recientes".
 - **El botón "atrás" del navegador**: si entrabas directo a una página, "atrás" cambiaba la URL pero la pantalla no se movía; y desde una ficha abierta por un link externo te sacaba del sitio. Además, volver al inicio con sesión ya no te manda a `/watching` a la fuerza: eso pasa solo cuando abrís el sitio.
 - **El contenido ya no se separa de la barra lateral**: en escritorio quedaba un hueco de 250px entre el menú y la página.
 - **Carátulas**: las series sin póster muestran un cartel con el título en vez de un recuadro vacío, y las miniaturas de YouTube ya no traen franjas negras.

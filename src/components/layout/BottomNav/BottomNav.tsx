@@ -18,6 +18,7 @@ import { useUnreadNotifications } from '@/hooks/useUnreadNotifications';
 import { useHasNovedades } from '@/hooks/useHasNovedades';
 import {
   NAV_ITEMS,
+  NAV_SECTIONS,
   canSeeNavItem,
   isNavItemActive,
   type NavItemDef,
@@ -130,11 +131,18 @@ export function BottomNav() {
         : toEntry(item, true)
   );
 
-  // Cajon "Mas": todo lo demas, con los mismos permisos que el Sidebar.
-  const moreEntries: NavEntry[] = [
-    ...NAV_ITEMS.filter((i) => !i.primary && canSeeNavItem(i, navContext)).map(
-      (item) => toEntry(item, false)
-    ),
+  // Cajon "Mas": todo lo demas, con los mismos permisos y las mismas
+  // secciones que el Sidebar. Ajustes y salir cierran la lista, sin titulo.
+  const moreSections = NAV_SECTIONS.map((section) => ({
+    key: section.key,
+    label: t(section.labelKey),
+    entries: NAV_ITEMS.filter(
+      (i) =>
+        !i.primary && i.section === section.key && canSeeNavItem(i, navContext)
+    ).map((item) => toEntry(item, false)),
+  })).filter((section) => section.entries.length > 0);
+
+  const accountEntries: NavEntry[] = [
     {
       key: 'settings',
       icon: <SettingOutlined />,
@@ -157,6 +165,24 @@ export function BottomNav() {
         ]
       : []),
   ];
+
+  const renderMoreItem = (entry: NavEntry) => (
+    <li key={entry.key}>
+      <button
+        type="button"
+        className={`bottom-nav-more-item ${
+          entry.active ? 'bottom-nav-more-item--active' : ''
+        }`}
+        onClick={entry.onClick}
+        aria-current={entry.active ? 'page' : undefined}
+      >
+        <span className="bottom-nav-more-item__icon" aria-hidden="true">
+          {entry.icon}
+        </span>
+        <span className="bottom-nav-more-item__label">{entry.label}</span>
+      </button>
+    </li>
+  );
 
   return (
     <>
@@ -199,26 +225,16 @@ export function BottomNav() {
         className="bottom-nav-more-drawer"
         styles={{ body: { padding: 0 } }}
       >
-        <ul className="bottom-nav-more-list">
-          {moreEntries.map((entry) => (
-            <li key={entry.key}>
-              <button
-                type="button"
-                className={`bottom-nav-more-item ${
-                  entry.active ? 'bottom-nav-more-item--active' : ''
-                }`}
-                onClick={entry.onClick}
-                aria-current={entry.active ? 'page' : undefined}
-              >
-                <span className="bottom-nav-more-item__icon" aria-hidden="true">
-                  {entry.icon}
-                </span>
-                <span className="bottom-nav-more-item__label">
-                  {entry.label}
-                </span>
-              </button>
-            </li>
-          ))}
+        {moreSections.map((section) => (
+          <section key={section.key} aria-label={section.label}>
+            <h3 className="bottom-nav-more-heading">{section.label}</h3>
+            <ul className="bottom-nav-more-list">
+              {section.entries.map(renderMoreItem)}
+            </ul>
+          </section>
+        ))}
+        <ul className="bottom-nav-more-list bottom-nav-more-list--account">
+          {accountEntries.map(renderMoreItem)}
         </ul>
       </Drawer>
 

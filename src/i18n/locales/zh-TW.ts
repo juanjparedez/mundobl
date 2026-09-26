@@ -348,6 +348,11 @@ const zhTW = {
     "glossary": "文化詞彙",
     "about": "關於 MundoBL"
   },
+  "navSections": {
+    "watch": "在此觀看",
+    "follow": "追蹤",
+    "explore": "探索"
+  },
   "profile": {
     "loginRequired": "登入以查看您的個人資料",
     "memberSince": "會員起始日",
@@ -581,7 +586,7 @@ const zhTW = {
     "newSeasonsTitle": "新季度",
     "seasonLabel": "季",
     "changelogTitle": "近期變更",
-    "watchableTitle": "可觀看的完整劇集"
+    "watchHereTitle": "在此觀看"
   },
   "watchableCarousel": {
     "watchNow": "立即觀看",
@@ -1571,7 +1576,15 @@ const zhTW = {
     "sortYearNew": "最新優先",
     "sortYearOld": "最舊優先",
     "sortRatingDesc": "評價最佳",
-    "quickFilterFeatured": "精選"
+    "quickFilterFeatured": "精選",
+    "pageTitle": "目錄",
+    "pageSubtitle": "我們追蹤的所有劇集。記錄您觀看到哪一集，即使您在其他地方觀看。",
+    "quickFiltersLabel": "快速篩選",
+    "quickFilterWatchable": "在此觀看",
+    "quickFilterPopular": "熱門",
+    "quickFilterRecent": "最新發布",
+    "quickFilterTrend": "趨勢",
+    "watchHere": "在此觀看"
   },
   "quickPreview": {
     "open": "快速預覽",
@@ -1721,15 +1734,20 @@ const zhTW = {
     "newsSubtitle": "及時掌握新劇開拍、官方預告、公告與小說改編，沒有雜音。",
     "newsCta": "查看所有資訊"
   },
-  "welcomeBanner": {
-    "title": "歡迎來到 MundoBL",
-    "description": "這是我的個人BL劇集目錄，包括仍在播出的劇集。如果您看過任何一部，我很樂意您留下評論、感想或評價。",
-    "dismiss": "知道了"
-  },
   "privacyBanner": {
     "text": "本網站記錄存取資訊以用於安全和改進目的。繼續瀏覽即表示您接受我們的隱私政策。",
     "detailsLink": "查看我們儲存的內容以及如何刪除",
     "accept": "知道了"
+  },
+  "watchHereBanner": {
+    "own": "在此觀看官方頻道的劇集",
+    "contribution": "也可在此觀看，來自社群貢獻",
+    "contributions": "也可在此觀看，來自 {n} 個社群貢獻"
+  },
+  "aboutContentNotice": {
+    "title": "並非所有內容都可在此播放",
+    "body": "我們只顯示製片廠上傳到其官方頻道的內容，許多劇集都有地區限制。對於其餘內容，我們會告訴您在哪裡合法觀看。",
+    "close": "關閉"
   },
   "announcementBanner": {
     "dismiss": "關閉"
@@ -3025,14 +3043,16 @@ const zhTW = {
     "categoryCommunity": "社群貢獻",
     "categoryIndieVimeo": "Vimeo 與獨立製作",
     "resultsTitle": "搜尋結果",
-    "catalogTitle": "完整影集目錄",
     "clearFilters": "清除篩選",
     "emptyDescription": "我們找不到符合這些篩選條件的影集。請嘗試不同的國家或標題。",
     "cardEpisodesBadge": "{count} 部影片",
     "cardPlayButton": "播放",
     "geoRestrictedBadge": "在你所在地區受限",
     "partiallyUnavailableBadge": "{total} 個中有 {count} 個可觀看",
-    "unavailableHereBadge": "你所在的國家/地區無法觀看"
+    "unavailableHereBadge": "你所在的國家/地區無法觀看",
+    "pageTitle": "在此觀看",
+    "pageSubtitle": "來自製片廠官方頻道的劇集。免費，無需帳戶。",
+    "allWatchableTitle": "您可以在這裡觀看所有內容"
   },
   "actorProfile": {
     "funFactsTitle": "趣聞",
