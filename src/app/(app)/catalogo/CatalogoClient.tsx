@@ -8,7 +8,7 @@ import {
   useDeferredValue,
   useRef,
 } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import {
   Row,
@@ -54,6 +54,17 @@ import { interpolateMessage } from '@/lib/i18n-format';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { WelcomeBanner } from '@/components/common/WelcomeBanner/WelcomeBanner';
 import {
+  buildCatalogQuery,
+  DEFAULT_PAGE_SIZE,
+  PAGE_SIZE_OPTIONS,
+  parseCatalogUrl,
+  readCatalogPrefs,
+  writeCatalogPrefs,
+  type QuickFilterValue,
+  type SortKey,
+  type ViewMode,
+} from './catalogUrl';
+import {
   EmptyState,
   useQuickPreviewController,
 } from '@/components/design-system';
@@ -78,8 +89,6 @@ interface CatalogoClientProps {
   series: SerieData[];
 }
 
-const PAGE_SIZE_OPTIONS = [24, 48, 96];
-const DEFAULT_PAGE_SIZE = 48;
 const ALPHABET = '#ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const CATALOG_CAROUSEL_CATEGORY_IDS = CATALOG_CAROUSEL_CATEGORIES.map(
   (c) => c.id
@@ -115,12 +124,8 @@ const getColorByType = (tipo: string) => {
   return colorMap[tipo] || 'default';
 };
 
-type QuickFilterValue = 'popular' | 'recent' | 'trend' | 'featured' | null;
-type SortKey = 'az' | 'za' | 'year-desc' | 'year-asc' | 'rating-desc';
-
 export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const message = useMessage();
   const { t } = useLocale();
   // Rol y viewStatus via useSession()/fetch client-side, no como prop del
@@ -183,129 +188,138 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
     [favoriteIds]
   );
 
-  // Filtros (initial values may come from URL query params, so links from
-  // detail views can pre-apply a single filter — see MetadataPrimitives)
-  const initialYear = searchParams.get('year');
-  const initialYearNum = initialYear ? parseInt(initialYear, 10) : undefined;
+  // Filtros. Todo arranca en su valor por defecto y la URL (y las
+  // preferencias de localStorage) se leen recien despues de montar: leerlas
+  // al renderizar (useSearchParams) mandaba el catalogo entero a renderizarse
+  // en el cliente y el HTML llegaba vacio a Google.
   const [searchTerm, setSearchTerm] = useState('');
   const deferredSearchTerm = useDeferredValue(searchTerm);
-  const [selectedCountry, setSelectedCountry] = useState<string | undefined>(
-    searchParams.get('country') ?? undefined
-  );
-  const [selectedType, setSelectedType] = useState<string | undefined>(
-    searchParams.get('type') ?? undefined
-  );
-  const [selectedFormat, setSelectedFormat] = useState<string | undefined>(
-    searchParams.get('format') ?? undefined
-  );
-  const [selectedGenre, setSelectedGenre] = useState<string | undefined>(
-    searchParams.get('genre') ?? undefined
-  );
-  const [selectedLanguage, setSelectedLanguage] = useState<string | undefined>(
-    searchParams.get('language') ?? undefined
-  );
-  const [selectedProductionCompany, setSelectedProductionCompany] = useState<
-    string | undefined
-  >(searchParams.get('productionCompany') ?? undefined);
-  const [selectedDirector, setSelectedDirector] = useState<string | undefined>(
-    searchParams.get('director') ?? undefined
-  );
-  const [selectedActor, setSelectedActor] = useState<string | undefined>(
-    searchParams.get('actor') ?? undefined
-  );
-  const [selectedPlatform, setSelectedPlatform] = useState<string | undefined>(
-    searchParams.get('platform') ?? undefined
-  );
-  const [selectedViewed, setSelectedViewed] = useState<string | undefined>(
-    searchParams.get('status') ?? undefined
-  );
-  const [selectedFavorite, setSelectedFavorite] = useState<
-    string | undefined
-  >();
-  const initialTagParam = searchParams.get('tag');
-  const initialTagId = initialTagParam ? parseInt(initialTagParam, 10) : null;
-  const [selectedTags, setSelectedTags] = useState<number[]>(
-    initialTagId && !isNaN(initialTagId) ? [initialTagId] : []
-  );
+  const [selectedCountry, setSelectedCountry] = useState<string>();
+  const [selectedType, setSelectedType] = useState<string>();
+  const [selectedFormat, setSelectedFormat] = useState<string>();
+  const [selectedGenre, setSelectedGenre] = useState<string>();
+  const [selectedLanguage, setSelectedLanguage] = useState<string>();
+  const [selectedProductionCompany, setSelectedProductionCompany] =
+    useState<string>();
+  const [selectedDirector, setSelectedDirector] = useState<string>();
+  const [selectedActor, setSelectedActor] = useState<string>();
+  const [selectedPlatform, setSelectedPlatform] = useState<string>();
+  const [selectedViewed, setSelectedViewed] = useState<string>();
+  const [selectedFavorite, setSelectedFavorite] = useState<string>();
+  const [selectedTags, setSelectedTags] = useState<number[]>([]);
   const [minRating, setMinRating] = useState(0);
-  const [yearFrom, setYearFrom] = useState<number | undefined>(
-    initialYearNum && !isNaN(initialYearNum) ? initialYearNum : undefined
-  );
-  const [yearTo, setYearTo] = useState<number | undefined>(
-    initialYearNum && !isNaN(initialYearNum) ? initialYearNum : undefined
-  );
-  // currentPage en URL para que back desde /series/[id] vuelva a la pagina
-  // correcta. Initial read de ?page=N; cambios via router.push/replace.
-  const [currentPage, setCurrentPage] = useState(() => {
-    const raw = searchParams.get('page');
-    const n = raw ? Number(raw) : NaN;
-    return Number.isFinite(n) && n >= 1 ? n : 1;
-  });
-
-  // Sync currentPage <- URL. Cuando el usuario hace browser back/forward,
-  // backspace, o cambia la URL manualmente, searchParams se actualiza pero
-  // currentPage se quedaria con el valor anterior y el contenido no
-  // refrescaria. Este effect cierra el loop. La guarda `pageFromUrl !==
-  // currentPage` previene el doble-set tras un cambio iniciado por el
-  // propio user (Pagination onChange ya setea currentPage antes del push).
-  useEffect(() => {
-    const raw = searchParams.get('page');
-    const n = raw ? Number(raw) : NaN;
-    const pageFromUrl = Number.isFinite(n) && n >= 1 ? n : 1;
-    if (pageFromUrl !== currentPage) {
-      setCurrentPage(pageFromUrl);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
-  const [pageSize, setPageSize] = useState<number>(() => {
-    if (typeof window === 'undefined') return DEFAULT_PAGE_SIZE;
-    const raw = window.localStorage.getItem('catalog-page-size');
-    const n = raw ? Number(raw) : NaN;
-    return PAGE_SIZE_OPTIONS.includes(n) ? n : DEFAULT_PAGE_SIZE;
-  });
+  const [yearFrom, setYearFrom] = useState<number>();
+  const [yearTo, setYearTo] = useState<number>();
+  const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
+  const [selectedQuickFilter, setSelectedQuickFilter] =
+    useState<QuickFilterValue>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState<number>(DEFAULT_PAGE_SIZE);
   const [filtersVisible, setFiltersVisible] = useState(false);
-  const [viewMode, setViewMode] = useState<'grid' | 'list' | 'carousel'>(() => {
-    if (typeof window === 'undefined') return 'grid';
-    const raw = window.localStorage.getItem('catalog-view-mode');
-    if (raw === 'list') return 'list';
-    if (raw === 'carousel') return 'carousel';
-    return 'grid';
-  });
+  const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [carouselConfigOpen, setCarouselConfigOpen] = useState(false);
   const carouselPrefs = useReorderablePrefs(
     'catalog-carousel-prefs',
     CATALOG_CAROUSEL_CATEGORY_IDS
   );
-  const [sortBy, setSortBy] = useState<SortKey>(() => {
-    if (typeof window === 'undefined') return 'az';
-    const raw = window.localStorage.getItem('catalog-sort');
-    const valid: SortKey[] = [
-      'az',
-      'za',
-      'year-desc',
-      'year-asc',
-      'rating-desc',
-    ];
-    return valid.includes(raw as SortKey) ? (raw as SortKey) : 'az';
-  });
+  const [sortBy, setSortBy] = useState<SortKey>('az');
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    window.localStorage.setItem('catalog-view-mode', viewMode);
-  }, [viewMode]);
+    const prefs = readCatalogPrefs();
+    setPageSize(prefs.pageSize);
+    setViewMode(prefs.viewMode);
+    setSortBy(prefs.sortBy);
+
+    // Tambien en "atras" / "adelante": la URL manda.
+    const applyUrl = () => {
+      const filters = parseCatalogUrl(window.location.search);
+      setSearchTerm(filters.q);
+      setSelectedCountry(filters.country);
+      setSelectedType(filters.type);
+      setSelectedFormat(filters.format);
+      setSelectedGenre(filters.genre);
+      setSelectedLanguage(filters.language);
+      setSelectedProductionCompany(filters.productionCompany);
+      setSelectedDirector(filters.director);
+      setSelectedActor(filters.actor);
+      setSelectedPlatform(filters.platform);
+      setSelectedViewed(filters.status);
+      setSelectedFavorite(filters.fav);
+      setSelectedTags(filters.tags);
+      setMinRating(filters.rating);
+      setYearFrom(filters.from);
+      setYearTo(filters.to);
+      setSelectedLetter(filters.letter);
+      setSelectedQuickFilter(filters.quick);
+      setCurrentPage(filters.page);
+    };
+    applyUrl();
+    setHydrated(true);
+    window.addEventListener('popstate', applyUrl);
+    return () => window.removeEventListener('popstate', applyUrl);
+  }, []);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    window.localStorage.setItem('catalog-sort', sortBy);
-  }, [sortBy]);
+    if (!hydrated) return;
+    writeCatalogPrefs({ pageSize, viewMode, sortBy });
+  }, [hydrated, pageSize, viewMode, sortBy]);
 
+  const urlQuery = useMemo(
+    () =>
+      buildCatalogQuery({
+        q: deferredSearchTerm,
+        country: selectedCountry,
+        type: selectedType,
+        format: selectedFormat,
+        genre: selectedGenre,
+        language: selectedLanguage,
+        productionCompany: selectedProductionCompany,
+        director: selectedDirector,
+        actor: selectedActor,
+        platform: selectedPlatform,
+        status: selectedViewed,
+        fav: selectedFavorite,
+        tags: selectedTags,
+        rating: minRating,
+        from: yearFrom,
+        to: yearTo,
+        letter: selectedLetter,
+        quick: selectedQuickFilter,
+        page: currentPage,
+      }),
+    [
+      deferredSearchTerm,
+      selectedCountry,
+      selectedType,
+      selectedFormat,
+      selectedGenre,
+      selectedLanguage,
+      selectedProductionCompany,
+      selectedDirector,
+      selectedActor,
+      selectedPlatform,
+      selectedViewed,
+      selectedFavorite,
+      selectedTags,
+      minRating,
+      yearFrom,
+      yearTo,
+      selectedLetter,
+      selectedQuickFilter,
+      currentPage,
+    ]
+  );
+
+  // Filtros y busqueda van a la URL con replace (no llenan el historial por
+  // tecla); la paginacion hace push en syncPageInUrl.
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    window.localStorage.setItem('catalog-page-size', String(pageSize));
-  }, [pageSize]);
-  const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
-  const [selectedQuickFilter, setSelectedQuickFilter] =
-    useState<QuickFilterValue>(null);
+    if (!hydrated) return;
+    const next = urlQuery ? `/catalogo?${urlQuery}` : '/catalogo';
+    if (next !== window.location.pathname + window.location.search) {
+      window.history.replaceState(null, '', next);
+    }
+  }, [hydrated, urlQuery]);
   const [showAlphaIndex, setShowAlphaIndex] = useState(false);
   // sessionStorage: persiste mientras la pestaña este abierta. Sobrevive
   // F5, paginacion, filtros, navegacion a /series/X y vuelta. Se resetea
@@ -615,30 +629,21 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
   //   alphabet jump). NO genera back entry — sino cada tecla del search
   //   crearia una.
   // page=1 se omite del query string (URL limpia).
+  // La paginacion agrega una entrada al historial ("atras" vuelve a la
+  // pagina anterior). Los filtros van con replace, desde el efecto de arriba.
   const syncPageInUrl = (nextPage: number, mode: 'push' | 'replace') => {
-    if (typeof window === 'undefined') return;
-    const params = new URLSearchParams(searchParams.toString());
-    if (nextPage <= 1) {
-      params.delete('page');
-    } else {
-      params.set('page', String(nextPage));
-    }
+    if (mode !== 'push') return;
+    const params = new URLSearchParams(urlQuery);
+    if (nextPage > 1) params.set('page', String(nextPage));
+    else params.delete('page');
     const qs = params.toString();
-    const href = qs ? `/catalogo?${qs}` : '/catalogo';
-    if (mode === 'push') {
-      router.push(href, { scroll: false });
-    } else {
-      router.replace(href, { scroll: false });
-    }
+    window.history.pushState(null, '', qs ? `/catalogo?${qs}` : '/catalogo');
   };
 
   const handleFilterChange = () => {
-    // Filtros cambian "lo mostrado" pero no son una navegacion semantica
-    // — uses replace para no inflar history en cada keystroke. NO colapsa
-    // los paneles expandidos: el usuario los quiere persistentes durante
-    // la sesion (sessionStorage los mantiene).
+    // No colapsa los paneles expandidos: el usuario los quiere persistentes
+    // durante la sesion (sessionStorage los mantiene).
     setCurrentPage(1);
-    syncPageInUrl(1, 'replace');
   };
 
   const clearFilters = () => {
@@ -661,7 +666,6 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
     setYearFrom(undefined);
     setYearTo(undefined);
     setCurrentPage(1);
-    router.replace('/catalogo');
   };
 
   // `e` opcional: desde la card viene con evento (hay que frenar la
@@ -1597,6 +1601,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
         <div className="catalogo-toolbar-left">
           <Input
             placeholder={t('catalogo.searchPlaceholder')}
+            aria-label={t('catalogo.searchPlaceholder')}
             prefix={
               <SearchOutlined style={{ color: 'var(--text-tertiary)' }} />
             }
