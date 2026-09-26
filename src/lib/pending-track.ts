@@ -10,6 +10,8 @@
 export interface PendingTrack {
   seriesId: number;
   upToEpisodeId: number | null;
+  /** Episodios puntuales (el capitulo que se estaba viendo en /ver). */
+  episodeIds?: number[];
   /** Ficha sin episodios (corto, pelicula): al volver se marca VISTA entera. */
   markWatched?: boolean;
   createdAt: number;
@@ -42,9 +44,16 @@ export function readPendingTrack(): PendingTrack | null {
     }
     if (Date.now() - parsed.createdAt > MAX_AGE_MS) return null;
 
+    const episodeIds =
+      Array.isArray(parsed.episodeIds) &&
+      parsed.episodeIds.every((id) => Number.isInteger(id))
+        ? parsed.episodeIds
+        : undefined;
+
     return {
       seriesId: parsed.seriesId,
       upToEpisodeId: parsed.upToEpisodeId ?? null,
+      episodeIds,
       markWatched: parsed.markWatched === true,
       createdAt: parsed.createdAt,
     };

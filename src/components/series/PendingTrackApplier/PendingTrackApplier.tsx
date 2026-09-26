@@ -5,8 +5,36 @@ import { useSession } from 'next-auth/react';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
-import { readPendingTrack, clearPendingTrack } from '@/lib/pending-track';
+import {
+  readPendingTrack,
+  clearPendingTrack,
+  type PendingTrack,
+} from '@/lib/pending-track';
 import { useSeriesUserStatus } from '../SeriesUserStatusProvider';
+
+function pendingRequest(
+  seriesId: number,
+  pending: PendingTrack
+): { url: string; body: Record<string, unknown> } {
+  if (pending.episodeIds?.length) {
+    return {
+      url: `/api/series/${seriesId}/watched`,
+      body: { episodeIds: pending.episodeIds, watched: true },
+    };
+  }
+  if (pending.upToEpisodeId) {
+    return {
+      url: `/api/series/${seriesId}/progress`,
+      body: { upToEpisodeId: pending.upToEpisodeId },
+    };
+  }
+  // Ficha sin episodios: la intencion es "ya la vi" (VISTA), no "la estoy
+  // viendo".
+  return {
+    url: `/api/series/${seriesId}/view-status`,
+    body: { status: pending.markWatched ? 'VISTA' : 'VIENDO' },
+  };
+}
 
 interface PendingTrackApplierProps {
   seriesId: number;
@@ -37,21 +65,12 @@ export function PendingTrackApplier({
 
     const apply = async () => {
       try {
-        const response = pending.upToEpisodeId
-          ? await fetch(`/api/series/${seriesId}/progress`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ upToEpisodeId: pending.upToEpisodeId }),
-            })
-          : await fetch(`/api/series/${seriesId}/view-status`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              // Ficha sin episodios: la intencion es "ya la vi" (VISTA), no
-              // "la estoy viendo".
-              body: JSON.stringify({
-                status: pending.markWatched ? 'VISTA' : 'VIENDO',
-              }),
-            });
+        const { url, body } = pendingRequest(seriesId, pending);
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
 
         if (!response.ok) throw new Error();
 

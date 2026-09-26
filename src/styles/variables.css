@@ -68,6 +68,8 @@
      claro siempre. Usar --text-secondary aca lo vuelve ilegible en el
      tema claro. */
   --text-on-overlay: rgba(255, 255, 255, 0.88);
+  /* Fondo detras de un video o una miniatura: negro en cualquier tema. */
+  --media-bg: #000000;
 
   /* Bordes */
   --border-color: #d9d9d9;
