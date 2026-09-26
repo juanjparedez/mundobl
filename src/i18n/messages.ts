@@ -1622,7 +1622,6 @@ export type TranslationShape = {
     categoryFavorites: string;
   };
   landing: {
-    subtitle: string;
     exploreCatalog: string;
     signIn: string;
     description: string;
@@ -1647,7 +1646,6 @@ export type TranslationShape = {
     how3Title: string;
     how3Desc: string;
     novedadesEyebrow: string;
-    novedadesTitle: string;
     novedadesSubtitle: string;
     novedadAiTag: string;
     novedadAiTitle: string;
@@ -1715,11 +1713,8 @@ export type TranslationShape = {
 
     ecosystemEyebrow: string;
     ecosystemTitle: string;
-    ecosystemSubtitle: string;
     ecosystemPillar1Title: string;
     ecosystemPillar1Desc: string;
-    ecosystemPillar2Title: string;
-    ecosystemPillar2Desc: string;
     ecosystemPillar3Title: string;
     ecosystemPillar3Desc: string;
     ecosystemCta: string;
@@ -1728,6 +1723,17 @@ export type TranslationShape = {
     newsTitle: string;
     newsSubtitle: string;
     newsCta: string;
+    heroSubtitle: string;
+    novedadesFeaturesTitle: string;
+    ecosystemIntro: string;
+    ecosystemOfficialTitle: string;
+    ecosystemOfficialDesc: string;
+    offerTitle: string;
+    offerSeriesCount: string;
+    offerWatchDesc: string;
+    offerWatchCta: string;
+    offerFollowDesc: string;
+    offerNote: string;
   };
   privacyBanner: {
     text: string;
@@ -4900,8 +4906,6 @@ const es: TranslationShape = {
     categoryFavorites: 'Favoritas',
   },
   landing: {
-    subtitle:
-      'Marcá por qué episodio vas, mirá qué te falta y enterate cuando sale el siguiente.',
     exploreCatalog: 'Explorar el catálogo',
     signIn: 'Iniciar Sesión',
     description:
@@ -4929,7 +4933,6 @@ const es: TranslationShape = {
     how3Desc:
       'Tu lista te espera con lo que te falta y el día que sale cada capítulo.',
     novedadesEyebrow: 'Lo nuevo',
-    novedadesTitle: 'Funciones que cambian cómo mirás',
     novedadesSubtitle:
       'Las últimas mejoras pensadas para que disfrutes y compartas tus series como nunca.',
     novedadAiTag: 'Nuevo',
@@ -5017,14 +5020,9 @@ const es: TranslationShape = {
 
     ecosystemEyebrow: 'Comunidad Abierta',
     ecosystemTitle: 'Una plataforma construida por y para fans',
-    ecosystemSubtitle:
-      'MundoBL no es una productora ni un sitio con publicidad abusiva. Es un ecosistema transparente para celebrar el género y apoyar a creadores y fansubs.',
     ecosystemPillar1Title: 'Canales Oficiales Primero',
     ecosystemPillar1Desc:
       'Priorizamos enlaces a YouTube oficial, GagaOOLala, Viki y iQIYI para apoyar directamente a las productoras.',
-    ecosystemPillar2Title: 'Espacio de Autogestión para Fansubs',
-    ecosystemPillar2Desc:
-      'Equipos de traducción pueden subir sus enlaces, visibilizar sus créditos y compartir sus links de donación directa sin intermediarios.',
     ecosystemPillar3Title: 'Curaduría y Moderación Colectiva',
     ecosystemPillar3Desc:
       'Reportá links caídos, proponé títulos faltantes y votá reseñas útiles para que la comunidad destaque lo mejor.',
@@ -5035,6 +5033,23 @@ const es: TranslationShape = {
     newsSubtitle:
       'Enterate de nuevos rodajes, trailers oficiales, cancelaciones y adaptaciones de novelas sin clickbaits.',
     newsCta: 'Ver todas las noticias',
+    heroSubtitle:
+      'Marcá por qué episodio vas, fijate qué te falta y enterate cuando sale el siguiente.',
+    novedadesFeaturesTitle: 'Funciones que cambian cómo seguís tus series',
+    ecosystemIntro:
+      'MundoBL no es una productora ni un sitio con publicidad abusiva. Es un espacio transparente para celebrar el género y apoyar a quienes hacen las series.',
+    ecosystemOfficialTitle: 'Sin re-subidas',
+    ecosystemOfficialDesc:
+      'No subimos videos ni enlazamos re-subidas. Si no hay una fuente oficial, te decimos dónde verla legalmente.',
+    offerTitle: 'Qué vas a encontrar',
+    offerSeriesCount: '{n} series',
+    offerWatchDesc:
+      'Desde los canales oficiales de sus productoras, gratis. Algunas no se ven en todos los países: te avisamos antes del play.',
+    offerWatchCta: 'Ver series',
+    offerFollowDesc:
+      'Aunque la mires en otra plataforma, marcás por qué capítulo vas y te decimos dónde verla.',
+    offerNote:
+      'Vamos sumando series a medida que las productoras las publican. No subimos videos ni enlazamos re-subidas: lo que mirás le suma a quien hizo la serie.',
   },
   privacyBanner: {
     text: 'Guardamos algunos datos para que la app funcione (sesión, preferencias, actividad).',
@@ -8262,8 +8277,6 @@ const en: TranslationShape = {
     categoryFavorites: 'Favorites',
   },
   landing: {
-    subtitle:
-      'Mark the episode you are on, see what is left, and know when the next one drops.',
     exploreCatalog: 'Explore the catalog',
     signIn: 'Sign In',
     description:
@@ -8291,7 +8304,6 @@ const en: TranslationShape = {
     how3Desc:
       'Your list is waiting with what is left and the day each episode airs.',
     novedadesEyebrow: "What's new",
-    novedadesTitle: 'Features that change how you watch',
     novedadesSubtitle:
       'The latest improvements designed so you can enjoy and share your series like never before.',
     novedadAiTag: 'New',
@@ -8379,14 +8391,9 @@ const en: TranslationShape = {
 
     ecosystemEyebrow: 'Open Community',
     ecosystemTitle: 'A platform built by and for fans',
-    ecosystemSubtitle:
-      'MundoBL is not a production studio or an ad-bloated site. It is a transparent ecosystem celebrating the genre and supporting creators and fansubs.',
     ecosystemPillar1Title: 'Official Channels First',
     ecosystemPillar1Desc:
       'We link and prioritize official releases on YouTube, GagaOOLala, Viki, and iQIYI to support studios directly.',
-    ecosystemPillar2Title: 'Self-Service Space for Fansubs',
-    ecosystemPillar2Desc:
-      'Translation teams can manage episode links, showcase crew credits, and share direct donation links with no middlemen.',
     ecosystemPillar3Title: 'Community Curation & Reports',
     ecosystemPillar3Desc:
       'Report broken links, submit missing titles, and vote on helpful reviews to keep the catalog fresh.',
@@ -8397,6 +8404,23 @@ const en: TranslationShape = {
     newsSubtitle:
       'Stay updated on new shoots, official trailers, announcements, and novel adaptations without noise.',
     newsCta: 'Browse all news',
+    heroSubtitle:
+      "Log which episode you're on, see what's left and find out when the next one is out.",
+    novedadesFeaturesTitle: 'Features that change how you follow your series',
+    ecosystemIntro:
+      "MundoBL isn't a studio or a site full of intrusive ads. It's a transparent space to celebrate the genre and support the people who make the series.",
+    ecosystemOfficialTitle: 'No re-uploads',
+    ecosystemOfficialDesc:
+      "We don't upload videos or link to re-uploads. If there's no official source, we tell you where to watch it legally.",
+    offerTitle: "What you'll find here",
+    offerSeriesCount: '{n} series',
+    offerWatchDesc:
+      "From the studios' official channels, for free. Some aren't available in every country: we tell you before you hit play.",
+    offerWatchCta: 'Watch series',
+    offerFollowDesc:
+      "Even if you watch it on another platform, you log which episode you're on and we tell you where to watch it.",
+    offerNote:
+      "We add series as studios publish them. We don't upload videos or link to re-uploads: what you watch counts for the people who made the series.",
   },
   privacyBanner: {
     text: 'We store some data so the app works (session, preferences, activity).',
