@@ -66,6 +66,14 @@ export interface NavItemDef {
 
 export const NAV_ITEMS: NavItemDef[] = [
   {
+    key: 'community',
+    path: ROUTES.COMMUNITY,
+    icon: CommentOutlined,
+    labelKey: 'community.title',
+    access: 'public',
+    section: 'explore',
+  },
+  {
     key: 'ver',
     path: ROUTES.VER,
     icon: VideoCameraOutlined,

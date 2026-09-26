@@ -1,20 +1,12 @@
 .watching-page {
-  padding: 10px 12px;
+  padding: var(--spacing-lg);
   padding-bottom: calc(var(--bottom-nav-height, 64px) + 32px);
-  border: 1px solid var(--border-color-secondary);
-  border-radius: var(--border-radius-lg);
-  background: var(--bg-container);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--spacing-md);
 }
-
-.watching-page__title {
-  font-size: 16px;
-  margin: 0;
-  color: var(--text-primary);
-  padding: 0;
-  border: none;
-  background: none;
-  font-weight: 600;
+@media (max-width: 600px) {
+  .watching-page {
+    padding: var(--spacing-sm);
+  }
 }

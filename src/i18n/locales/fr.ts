@@ -10,6 +10,116 @@
 import type { TranslationShape } from '../messages';
 
 const fr = {
+  writerProfile: {
+    indexTitle: "Scénaristes",
+    indexDescription: "Personnes créditées au scénario dans les œuvres publiques du catalogue ou disponibles à regarder.","role": "Scénariste", "works": "Œuvres créditées", "sources": "Sources", "creditSource": "Source du crédit", "empty": "Aucune œuvre publique créditée."},
+
+
+  durationStats: {"hours": "Heures avec durée renseignée", "missing": "{n} vidéos vues sans durée : non incluses."},
+
+  watchDateEditor: {
+    "title": "Corriger la date de visionnage",
+    "date": "Date de visionnage (UTC)",
+    "unknown": "Date inconnue",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "error": "Impossible de charger ou enregistrer la date.",
+    "conflict": "Le suivi a changé. Fermez puis rouvrez pour vérifier la date actuelle."
+},
+
+  community: {
+    search: "Rechercher une série",
+    "title": "Communauté",
+    "description": "Derniers avis publics. Ouvrez une fiche pour lire, répondre ou partager votre avis.",
+    "empty": "Aucun avis public pour le moment.",
+    "read": "Lire et discuter",
+    "spoilers": "Titre masqué pour éviter les spoilers"
+},
+  contentMetadata: {
+    "catalogTitle": "Fiche et suivi",
+    "catalogDescription": "Fiche du catalogue avec informations et suivi personnel.",
+    "watchTitle": "Épisodes à regarder",
+    "watchDescription": "Découvrez les épisodes accessibles depuis cette page. La disponibilité et les sous-titres dépendent de chaque source.",
+    "collectionTitle": "Séries BL et GL à regarder",
+    "collectionDescription": "Découvrez des séries BL et GL avec des épisodes accessibles par lien. La disponibilité, les langues et le nombre d’épisodes varient selon la source."
+},
+
+  trackingHistory: {
+      "title": "Historique",
+      "description": "Modifications du suivi, visibles uniquement par toi. Les états précédents ne reconstituent pas les actions passées.",
+      "search": "Rechercher une série dans l’historique",
+      "empty": "Aucune modification dans ton historique",
+      "error": "Impossible de mettre à jour l’historique",
+      "more": "Charger plus",
+      "refresh": "Actualiser",
+      "clear": "Effacer l’historique",
+      "clearConfirm": "Effacer tout l’historique ? Ta progression et tes notes seront conservées.",
+      "cancel": "Annuler",
+      "watchDate": "Date de visionnage",
+      "previousDate": "Date précédente",
+      "unknown": "Inconnue",
+      "season": "Saison {n}",
+      "episode": "S{season} · E{episode}",
+      "series": "Série",
+      "recorded": "État enregistré",
+      "changed": "État modifié",
+      "dateChanged": "Date corrigée",
+      "snapshot": "État antérieur à l’historique"
+  },
+  contributionMetadata: {
+    search: "Rechercher un nom existant",
+    loadError: "Impossible de charger les noms.",
+    policy: "Les contributions utilisent les acteurs, sociétés de production, pays, langues, étiquettes et genres existants. Les nouveaux noms nécessitent un ajout éditorial par Flor.",
+    unresolved: "Aucune modification enregistrée. Ces noms sont absents ou ambigus : {names}. Vérifie-les ou demande à Flor de les ajouter.",
+  },
+  trackingWorkspace: {
+    "gaps": "Certains chapitres précédents ne sont pas marqués comme vus",
+    "title": "Mon suivi",
+    "subtitle": "Reprenez vos séries, notez ce que vous avez vu et gardez vos impressions.",
+    "settings": "Mon profil et mes données",
+    "privacy": "Votre suivi et vos notes sont privés. Les commentaires que vous publiez sont publics.",
+    "continue": "En cours",
+    "diary": "Journal privé",
+    "stats": "Mes statistiques",
+    "search": "Rechercher dans mes séries",
+    "filter": "Filtrer par statut",
+    "all": "Toutes",
+    "list": "Liste",
+    "grid": "Cartes",
+    "remaining": "Moins de chapitres restants",
+    "pin": "Épingler la série",
+    "unpin": "Désépingler la série",
+    "manage": "Épisodes et notes",
+    "publicComment": "Discussion publique",
+    "privateNote": "Note privée",
+    "curated": "Catalogue de Flor",
+    "viewing": "Contenu à regarder",
+    "progress": "{watched} chapitres vus sur {total}",
+    "upToDate": "Vous avez vu tous les chapitres enregistrés",
+    "scope": "Dans vos séries en cours",
+    "chapters": "Chapitres vus",
+    "loadError": "Impossible de charger votre suivi.",
+    "retry": "Réessayer",
+    "noResults": "Aucune série ne correspond à ces filtres.",
+    "preferences": "La vue, l’ordre et les séries épinglées sont enregistrés sur cet appareil pour votre compte.",
+    "season": "Saison {n}",
+    "signIn": "Se connecter"
+},
+  backup: {
+    "viewStatuses": "Suivi",
+    "seriesNotes": "Notes privées sur les séries",
+    "episodeNotes": "Notes privées sur les épisodes",
+    "userRatings": "Évaluations",
+    "favorites": "Favoris",
+    "comments": "Commentaires",
+    "featureRequests": "Propositions",
+    "featureVotes": "Votes",
+    "suggestedSites": "Sites suggérés",
+    "other": "Autres données",
+    "skipped": "{n} ignorés",
+    "missing": "{n} références introuvables ; elles ne seront pas importées.",
+    "invalid": "{n} entrées ou sections non valides ; vérifiez le fichier avant de l’importer."
+},
   "basedOnAdmin": {
     "description": "Gérez les sources et les fiches associées. Saisissez une nouvelle valeur en modifiant une fiche.",
     "search": "Rechercher une valeur",

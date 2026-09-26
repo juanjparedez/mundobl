@@ -7,7 +7,7 @@ import { requireAuth } from '@/lib/auth-helpers';
  *
  * Devuelve un JSON descargable con todos los datos personales del
  * usuario autenticado: cuenta, comments, ratings, view-status,
- * favoritos, votos, sitios sugeridos, feature requests, notificaciones.
+ * favoritos, notas privadas, votos, sitios sugeridos, feature requests, notificaciones.
  *
  * No incluye datos derivados (ratings agregados, etc.) ni datos de
  * otros usuarios.
@@ -28,6 +28,9 @@ export async function GET() {
     featureVotes,
     suggestedSites,
     notifications,
+    seriesNotes,
+    episodeNotes,
+    trackingEvents,
   ] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
@@ -50,6 +53,9 @@ export async function GET() {
     prisma.featureVote.findMany({ where: { userId } }),
     prisma.suggestedSite.findMany({ where: { userId } }),
     prisma.notification.findMany({ where: { userId } }),
+    prisma.seriesNote.findMany({ where: { userId } }),
+    prisma.episodeNote.findMany({ where: { userId } }),
+    prisma.trackingEvent.findMany({ where: { userId } }),
   ]);
 
   const payload = {
@@ -64,6 +70,9 @@ export async function GET() {
     featureVotes,
     suggestedSites,
     notifications,
+    seriesNotes,
+    episodeNotes,
+    trackingEvents,
   };
 
   return new NextResponse(JSON.stringify(payload, null, 2), {

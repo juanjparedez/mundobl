@@ -1,15 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { revalidateSeriesDetail } from '@/lib/revalidate-series';
-import { prisma } from '@/lib/database';
+import { prisma, getContributionMetadata } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { assertSeriesOwnership } from '@/lib/collaborator-guard';
-import {
-  findOrCreateTag,
-  findOrCreateGenre,
-  findOrCreateActor,
-  findOrCreateProductionCompany,
-} from '@/lib/tag-utils';
+import { contributionMetadataFailure } from '@/lib/contribution-metadata';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -117,59 +112,61 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
         data.imageThumbUrl = body.imageThumbUrl.trim() || null;
       }
     }
-    if (body.countryCode !== undefined) {
-      if (body.countryCode) {
-        // Case-insensitive: ver comentario equivalente en
-        // /api/series/import-playlist/confirm.
-        const country = await prisma.country.findFirst({
-          where: { code: { equals: body.countryCode, mode: 'insensitive' } },
-          select: { id: true },
-        });
-        data.countryId = country?.id ?? null;
-      } else {
-        data.countryId = null;
-      }
+    const metadata = await getContributionMetadata({
+      countryCode: body.countryCode,
+      productionCompanyName: body.productionCompanyName,
+      actorNames: cleanArray(body.actorNames, 12, 80),
+      tagNames: cleanArray(body.tagNames, 12, 60),
+      genreNames: cleanArray(body.genreNames, 6, 60),
+    });
+    if (!metadata.ok) {
+      return NextResponse.json(
+        contributionMetadataFailure(metadata.unresolvedNames),
+        { status: 422 }
+      );
     }
-    if (body.productionCompanyName !== undefined) {
-      const name = body.productionCompanyName?.trim();
-      if (name) {
-        const pc = await findOrCreateProductionCompany(prisma, name);
-        data.productionCompanyId = pc?.id ?? null;
-      } else {
-        data.productionCompanyId = null;
-      }
-    }
+    if (body.countryCode !== undefined)
+      data.countryId = metadata.data.countryId;
+    if (body.productionCompanyName !== undefined)
+      data.productionCompanyId = metadata.data.productionCompanyId;
 
     const updated = await prisma.$transaction(async (tx) => {
-      const series = Object.keys(data).length
-        ? await tx.series.update({ where: { id: seriesId }, data })
-        : await tx.series.findUniqueOrThrow({ where: { id: seriesId } });
+      // Recheck the boundary in the write itself: ownership may change after the guard.
+      const where = {
+        id: seriesId,
+        ...(auth.role === 'COLLABORATOR'
+          ? {
+              origin: 'USER_EMBED',
+              catalogScope: 'WATCHABLE_ONLY',
+              submittedById: auth.userId,
+            }
+          : {}),
+      };
+      // A real parent UPDATE also locks the boundary for relation-only edits.
+      const series = await tx.series.update({
+        where,
+        data: { ...data, updatedAt: new Date() },
+      });
 
       if (body.actorNames !== undefined) {
         await tx.seriesActor.deleteMany({ where: { seriesId } });
-        for (const name of cleanArray(body.actorNames, 12, 80)) {
-          const actor = await findOrCreateActor(tx, name);
-          if (!actor) continue;
+        for (const actorId of metadata.data.actorIds) {
           await tx.seriesActor.create({
-            data: { seriesId, actorId: actor.id, character: '', isMain: false },
+            data: { seriesId, actorId, character: '', isMain: false },
           });
         }
       }
       if (body.tagNames !== undefined) {
         await tx.seriesTag.deleteMany({ where: { seriesId } });
-        for (const name of cleanArray(body.tagNames, 12, 60)) {
-          const tag = await findOrCreateTag(tx, name);
-          if (!tag) continue;
-          await tx.seriesTag.create({ data: { seriesId, tagId: tag.id } });
+        for (const tagId of metadata.data.tagIds) {
+          await tx.seriesTag.create({ data: { seriesId, tagId } });
         }
       }
       if (body.genreNames !== undefined) {
         await tx.seriesGenre.deleteMany({ where: { seriesId } });
-        for (const name of cleanArray(body.genreNames, 6, 60)) {
-          const genre = await findOrCreateGenre(tx, name);
-          if (!genre) continue;
+        for (const genreId of metadata.data.genreIds) {
           await tx.seriesGenre.create({
-            data: { seriesId, genreId: genre.id },
+            data: { seriesId, genreId },
           });
         }
       }
@@ -183,6 +180,17 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json({ id: updated.id, title: updated.title });
   } catch (error) {
+    if (
+      error &&
+      typeof error === 'object' &&
+      'code' in error &&
+      error.code === 'P2025'
+    ) {
+      return NextResponse.json(
+        { error: 'No podés modificar esta serie.' },
+        { status: 403 }
+      );
+    }
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Error al guardar' },
       { status: 500 }
