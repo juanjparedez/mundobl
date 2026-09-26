@@ -29,6 +29,7 @@ import { WhereToWatch } from '@/components/common/WhereToWatch/WhereToWatch';
 import { SeriesSubscribeButton } from '@/components/series/SeriesSubscribeButton/SeriesSubscribeButton';
 import { FavoriteButton } from '@/components/series/FavoriteButton/FavoriteButton';
 import { WhereToWatchEmpty } from '@/components/series/WhereToWatchEmpty/WhereToWatchEmpty';
+import { SeriesNews } from '@/components/series/SeriesNews/SeriesNews';
 import { SeriesSuggestionButton } from '@/components/series/SuggestionModal/SeriesSuggestionButton';
 import { SeriesUserStatusProvider } from '@/components/series/SeriesUserStatusProvider';
 import { PendingTrackApplier } from '@/components/series/PendingTrackApplier/PendingTrackApplier';
@@ -161,17 +162,29 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
 
   // Quick counts para los chips de estado del header. Publicos (agregados,
   // no por-usuario), asi que quedan bien en el HTML estatico/cacheado.
-  const [reviewCount, contentCount, favoriteCount, currentlyWatchingCount] =
-    await Promise.all([
-      prisma.review.count({
-        where: { seriesId: serie.id, status: 'PUBLISHED' },
-      }),
-      prisma.embeddableContent.count({ where: { seriesId: serie.id } }),
-      prisma.userFavorite.count({ where: { seriesId: serie.id } }),
-      prisma.viewStatus.count({
-        where: { seriesId: serie.id, status: 'VIENDO' },
-      }),
-    ]);
+  const [
+    reviewCount,
+    contentCount,
+    favoriteCount,
+    currentlyWatchingCount,
+    seriesNews,
+  ] = await Promise.all([
+    prisma.review.count({
+      where: { seriesId: serie.id, status: 'PUBLISHED' },
+    }),
+    prisma.embeddableContent.count({ where: { seriesId: serie.id } }),
+    prisma.userFavorite.count({ where: { seriesId: serie.id } }),
+    prisma.viewStatus.count({
+      where: { seriesId: serie.id, status: 'VIENDO' },
+    }),
+    // Publicar una noticia revalida esta ficha (ver news-publish.ts).
+    prisma.news.findMany({
+      where: { relatedSeriesId: serie.id, status: 'PUBLISHED' },
+      orderBy: [{ publishedAt: { sort: 'desc', nulls: 'last' } }],
+      take: 3,
+      select: { id: true, title: true, sourceName: true, publishedAt: true },
+    }),
+  ]);
 
   const universeSeries = serie.universeId
     ? await getPublicUniverseSeries(serie.universeId)
@@ -365,6 +378,13 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
               />
             )
           )}
+
+          <SeriesNews
+            items={seriesNews.map((item) => ({
+              ...item,
+              publishedAt: item.publishedAt?.toISOString() ?? null,
+            }))}
+          />
 
           <SeriesDetailClient
             seriesId={serie.id}
