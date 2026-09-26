@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Button, Tooltip } from 'antd';
 import {
   CommentOutlined,
+  CalendarOutlined,
   FileTextFilled,
   FileTextOutlined,
 } from '@ant-design/icons';
@@ -16,6 +17,10 @@ import { useSeriesUserStatus } from '../SeriesUserStatusProvider';
 import { useMarkEpisodes } from '@/hooks/useMarkEpisodes';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { chapterCode, groupIntoChapters } from '@/lib/episode-chapters';
+import {
+  WatchDateEditor,
+  type WatchDateOption,
+} from '../WatchDateEditor/WatchDateEditor';
 import './EpisodeChapterList.css';
 
 interface ChapterListEpisode {
@@ -30,6 +35,7 @@ interface ChapterListEpisode {
 interface EpisodeChapterListProps {
   seasonNumber: number;
   episodes: ChapterListEpisode[];
+  actionLabels?: { comments: string; note: string };
 }
 
 /**
@@ -40,11 +46,15 @@ interface EpisodeChapterListProps {
 export function EpisodeChapterList({
   seasonNumber,
   episodes,
+  actionLabels,
 }: EpisodeChapterListProps) {
   const { t } = useLocale();
   const { data: session } = useSession();
   const { episodeStatus } = useSeriesUserStatus();
   const { setWatched, pendingKey, ready } = useMarkEpisodes();
+  const [dateOptions, setDateOptions] = useState<WatchDateOption[] | null>(
+    null
+  );
   const [expandedKey, setExpandedKey] = useState<string | null>(null);
   const [noteEpisode, setNoteEpisode] = useState<{
     id: number;
@@ -152,6 +162,26 @@ export function EpisodeChapterList({
                 </div>
 
                 <div className="episode-chapters__actions">
+                  {session?.user &&
+                    ids.some((id) => episodeStatus[id] === 'VISTA') && (
+                      <Button
+                        type="text"
+                        size="small"
+                        icon={<CalendarOutlined />}
+                        aria-label={t('watchDateEditor.title')}
+                        onClick={() =>
+                          setDateOptions(
+                            chapter.episodes
+                              .filter((ep) => episodeStatus[ep.id] === 'VISTA')
+                              .map((ep) => ({
+                                target: { episodeId: ep.id },
+                                label: `${chapterCode(chapter)} · ${chapter.episodes.indexOf(ep) + 1}/${parts}`,
+                              }))
+                          )
+                        }
+                      />
+                    )}
+
                   <Tooltip
                     title={t('episodesList.tooltipComments', { n: comments })}
                   >
@@ -160,15 +190,19 @@ export function EpisodeChapterList({
                       size="small"
                       icon={<CommentOutlined />}
                       aria-expanded={expanded}
-                      aria-label={t('episodesList.tooltipComments', {
-                        n: comments,
-                      })}
+                      aria-label={
+                        actionLabels?.comments ??
+                        t('episodesList.tooltipComments', {
+                          n: comments,
+                        })
+                      }
                       className={
                         expanded ? 'episode-chapters__action--active' : ''
                       }
                       onClick={() => setExpandedKey(expanded ? null : key)}
                     >
-                      {comments > 0 ? comments : null}
+                      {actionLabels?.comments ??
+                        (comments > 0 ? comments : null)}
                     </Button>
                   </Tooltip>
                   {session?.user && (
@@ -179,7 +213,9 @@ export function EpisodeChapterList({
                         icon={
                           hasNote ? <FileTextFilled /> : <FileTextOutlined />
                         }
-                        aria-label={t('episodeNote.tooltipOpen')}
+                        aria-label={
+                          actionLabels?.note ?? t('episodeNote.tooltipOpen')
+                        }
                         className={
                           hasNote ? 'episode-chapters__action--active' : ''
                         }
@@ -191,7 +227,9 @@ export function EpisodeChapterList({
                               : chapterCode(chapter),
                           })
                         }
-                      />
+                      >
+                        {actionLabels?.note}
+                      </Button>
                     </Tooltip>
                   )}
                 </div>
@@ -232,6 +270,22 @@ export function EpisodeChapterList({
         </p>
       )}
 
+      {session?.user && dateOptions && (
+        <WatchDateEditor
+          key={session.user.id}
+          options={dateOptions}
+          onClose={() => setDateOptions(null)}
+          labels={{
+            title: t('watchDateEditor.title'),
+            date: t('watchDateEditor.date'),
+            unknown: t('watchDateEditor.unknown'),
+            save: t('watchDateEditor.save'),
+            cancel: t('watchDateEditor.cancel'),
+            error: t('watchDateEditor.error'),
+            conflict: t('watchDateEditor.conflict'),
+          }}
+        />
+      )}
       <EpisodeNoteModal
         episodeId={noteEpisode?.id ?? null}
         episodeLabel={noteEpisode?.label}

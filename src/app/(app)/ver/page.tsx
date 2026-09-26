@@ -1,3 +1,4 @@
+import { loadLocaleMessages } from '@/i18n/messages';
 import type { Metadata } from 'next';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
 import { JsonLd } from '@/components/seo/JsonLd';
@@ -8,21 +9,21 @@ import { getVerUrl } from '@/lib/slug';
 import { VerPage } from './VerPage';
 import './ver.css';
 
-const VER_DESCRIPTION =
-  'Mirá series BL y GL completas, embebidas desde los canales oficiales de productoras como GMMTV, Be On Cloud, Idol Factory y más.';
-
-export const metadata: Metadata = {
-  title: 'Ver Series BL Completas',
-  description: VER_DESCRIPTION,
-  alternates: { canonical: '/ver' },
-  openGraph: {
-    type: 'website',
-    title: 'Ver Series BL Completas | MundoBL',
-    description: VER_DESCRIPTION,
-    url: '/ver',
-    siteName: 'MundoBL',
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const labels = (await loadLocaleMessages('es')).contentMetadata;
+  return {
+    title: labels.collectionTitle,
+    description: labels.collectionDescription,
+    alternates: { canonical: '/ver' },
+    openGraph: {
+      type: 'website',
+      title: `${labels.collectionTitle} | MundoBL`,
+      description: labels.collectionDescription,
+      url: '/ver',
+      siteName: 'MundoBL',
+    },
+  };
+}
 
 // Mismo criterio que /catalogo: getWatchableSeries trae el listado entero
 // con sus relaciones en cada revalidacion. Ver el comentario de
@@ -114,7 +115,8 @@ export default async function VerPageRoute() {
           '@context': 'https://schema.org',
           '@type': 'CollectionPage',
           name: 'Ver Series BL Completas',
-          description: VER_DESCRIPTION,
+          description: (await loadLocaleMessages('es')).contentMetadata
+            .collectionDescription,
           url: 'https://mundobl.com.ar/ver',
           isPartOf: {
             '@type': 'WebSite',

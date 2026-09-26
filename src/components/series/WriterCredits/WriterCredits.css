@@ -1,0 +1,13 @@
+.writer-credits {
+  margin-block: var(--spacing-md);
+}
+.writer-credits ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  padding: 0;
+  list-style: none;
+}
+.writer-credits a {
+  overflow-wrap: anywhere;
+}

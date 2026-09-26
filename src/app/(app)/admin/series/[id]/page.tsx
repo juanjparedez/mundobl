@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getSeriesById } from '@/lib/database';
+import { getSeriesByIdAdmin } from '@/lib/database';
 import { WorkspaceClient } from './WorkspaceClient/WorkspaceClient';
 
 interface WorkspacePageProps {
@@ -25,7 +25,7 @@ export default async function WorkspacePage({ params }: WorkspacePageProps) {
     notFound();
   }
 
-  const serie = await getSeriesById(seriesId);
+  const serie = await getSeriesByIdAdmin(seriesId);
 
   if (!serie) {
     notFound();

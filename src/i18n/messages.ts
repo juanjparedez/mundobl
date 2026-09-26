@@ -1,6 +1,117 @@
 import type { SupportedLocale } from './config';
 
 export type TranslationShape = {
+  writerProfile: {
+    indexTitle: string;
+    indexDescription: string;
+    role: string;
+    works: string;
+    sources: string;
+    creditSource: string;
+    empty: string;
+  };
+  durationStats: { hours: string; missing: string };
+  watchDateEditor: {
+    title: string;
+    date: string;
+    unknown: string;
+    save: string;
+    cancel: string;
+    error: string;
+    conflict: string;
+  };
+  community: {
+    search: string;
+    title: string;
+    description: string;
+    empty: string;
+    read: string;
+    spoilers: string;
+  };
+  contentMetadata: {
+    catalogTitle: string;
+    catalogDescription: string;
+    watchTitle: string;
+    watchDescription: string;
+    collectionTitle: string;
+    collectionDescription: string;
+  };
+  trackingHistory: {
+    title: string;
+    description: string;
+    search: string;
+    empty: string;
+    error: string;
+    more: string;
+    refresh: string;
+    clear: string;
+    clearConfirm: string;
+    cancel: string;
+    watchDate: string;
+    previousDate: string;
+    unknown: string;
+    season: string;
+    episode: string;
+    series: string;
+    recorded: string;
+    changed: string;
+    dateChanged: string;
+    snapshot: string;
+  };
+  contributionMetadata: {
+    policy: string;
+    unresolved: string;
+    search: string;
+    loadError: string;
+  };
+  trackingWorkspace: {
+    gaps: string;
+    title: string;
+    subtitle: string;
+    settings: string;
+    privacy: string;
+    continue: string;
+    diary: string;
+    stats: string;
+    search: string;
+    filter: string;
+    all: string;
+    list: string;
+    grid: string;
+    remaining: string;
+    pin: string;
+    unpin: string;
+    manage: string;
+    publicComment: string;
+    privateNote: string;
+    curated: string;
+    viewing: string;
+    progress: string;
+    upToDate: string;
+    scope: string;
+    chapters: string;
+    loadError: string;
+    retry: string;
+    noResults: string;
+    preferences: string;
+    season: string;
+    signIn: string;
+  };
+  backup: {
+    viewStatuses: string;
+    seriesNotes: string;
+    episodeNotes: string;
+    userRatings: string;
+    favorites: string;
+    comments: string;
+    featureRequests: string;
+    featureVotes: string;
+    suggestedSites: string;
+    other: string;
+    skipped: string;
+    missing: string;
+    invalid: string;
+  };
   basedOnAdmin: {
     description: string;
     search: string;
@@ -3218,6 +3329,139 @@ export type TranslationShape = {
 };
 
 const es: TranslationShape = {
+  writerProfile: {
+    indexTitle: 'Guionistas',
+    indexDescription:
+      'Personas con créditos de guion en obras públicas del catálogo o disponibles para ver.',
+    role: 'Guionista',
+    works: 'Obras acreditadas',
+    sources: 'Fuentes',
+    creditSource: 'Fuente del crédito',
+    empty: 'No hay obras públicas acreditadas.',
+  },
+
+  durationStats: {
+    hours: 'Horas con duración registrada',
+    missing: '{n} videos vistos sin duración: no incluidos.',
+  },
+
+  watchDateEditor: {
+    title: 'Corregir fecha de visionado',
+    date: 'Fecha de visionado (UTC)',
+    unknown: 'Fecha desconocida',
+    save: 'Guardar',
+    cancel: 'Cancelar',
+    error: 'No se pudo cargar o guardar la fecha.',
+    conflict:
+      'El seguimiento cambió. Cerrá y volvé a abrir para revisar la fecha actual.',
+  },
+
+  community: {
+    search: 'Buscar una serie',
+    title: 'Comunidad',
+    description:
+      'Últimas reseñas públicas. Abrí una ficha para leer, responder o compartir tu opinión.',
+    empty: 'Todavía no hay reseñas públicas.',
+    read: 'Leer y conversar',
+    spoilers: 'Título oculto por spoilers',
+  },
+
+  contentMetadata: {
+    catalogTitle: 'Ficha y seguimiento',
+    catalogDescription:
+      'Ficha del catálogo para consultar información y llevar tu seguimiento personal.',
+    watchTitle: 'Episodios para ver',
+    watchDescription:
+      'Explorá los episodios enlazados desde esta página. La disponibilidad y los subtítulos dependen de cada fuente.',
+    collectionTitle: 'Series BL y GL para ver',
+    collectionDescription:
+      'Explorá series BL y GL con episodios enlazados para ver. La disponibilidad, los idiomas y la cantidad de episodios varían según la fuente.',
+  },
+
+  trackingHistory: {
+    title: 'Historial',
+    description:
+      'Cambios de seguimiento, solo para vos. Los estados previos no reconstruyen acciones pasadas.',
+    search: 'Buscar una serie en el historial',
+    empty: 'Todavía no hay cambios en tu historial',
+    error: 'No se pudo actualizar el historial',
+    more: 'Cargar más',
+    refresh: 'Actualizar',
+    clear: 'Borrar historial',
+    clearConfirm:
+      '¿Borrar todo el historial? Tus marcas de progreso y notas se conservarán.',
+    cancel: 'Cancelar',
+    watchDate: 'Fecha de visionado',
+    previousDate: 'Fecha anterior',
+    unknown: 'Desconocida',
+    season: 'Temporada {n}',
+    episode: 'T{season} · E{episode}',
+    series: 'Serie',
+    recorded: 'Estado registrado',
+    changed: 'Estado modificado',
+    dateChanged: 'Fecha corregida',
+    snapshot: 'Estado previo al historial',
+  },
+  contributionMetadata: {
+    search: 'Buscar un nombre existente',
+    loadError: 'No se pudieron cargar los nombres.',
+    policy:
+      'Los aportes usan actores, productoras, países, idiomas, etiquetas y géneros existentes. Los nombres nuevos requieren incorporación editorial de Flor.',
+    unresolved:
+      'No se guardó ningún cambio. Estos nombres no existen o son ambiguos: {names}. Revisalos o pedí su incorporación a Flor.',
+  },
+  trackingWorkspace: {
+    gaps: 'Hay capítulos anteriores sin marcar',
+    title: 'Mi seguimiento',
+    subtitle:
+      'Retomá tus series, registrá lo que viste y guardá lo que te pasó.',
+    settings: 'Mi perfil y mis datos',
+    privacy:
+      'Tu seguimiento y tus notas son privados. Los comentarios que publiques son públicos.',
+    continue: 'En curso',
+    diary: 'Diario privado',
+    stats: 'Mis estadísticas',
+    search: 'Buscar en mis series',
+    filter: 'Filtrar por estado',
+    all: 'Todas',
+    list: 'Lista',
+    grid: 'Tarjetas',
+    remaining: 'Menos capítulos pendientes',
+    pin: 'Fijar serie',
+    unpin: 'Desfijar serie',
+    manage: 'Episodios y notas',
+    publicComment: 'Conversación pública',
+    privateNote: 'Nota privada',
+    curated: 'Catálogo de Flor',
+    viewing: 'Contenido para ver',
+    progress: '{watched} de {total} capítulos vistos',
+    upToDate: 'Viste todos los capítulos registrados',
+    scope: 'En tus series en curso',
+    chapters: 'Capítulos vistos',
+    loadError: 'No pudimos cargar tu seguimiento.',
+    retry: 'Reintentar',
+    noResults: 'No hay series con estos filtros.',
+    preferences:
+      'La vista, el orden y las series fijadas se guardan en este dispositivo para tu cuenta.',
+    season: 'Temporada {n}',
+    signIn: 'Iniciar sesión',
+  },
+  backup: {
+    viewStatuses: 'Seguimiento',
+    seriesNotes: 'Notas privadas de series',
+    episodeNotes: 'Notas privadas de episodios',
+    userRatings: 'Calificaciones',
+    favorites: 'Favoritos',
+    comments: 'Comentarios',
+    featureRequests: 'Propuestas',
+    featureVotes: 'Votos',
+    suggestedSites: 'Sitios sugeridos',
+    other: 'Otros datos',
+    skipped: '{n} omitidos',
+    missing: '{n} referencias no encontradas; no se importarán.',
+    invalid:
+      '{n} registros o secciones no válidos; revisá el archivo antes de importar.',
+  },
   basedOnAdmin: {
     description:
       'Gestioná los valores de Basado en y las fichas que los usan. Para crear un valor nuevo, escribilo al editar una ficha.',
@@ -6620,6 +6864,136 @@ const es: TranslationShape = {
 };
 
 const en: TranslationShape = {
+  writerProfile: {
+    indexTitle: 'Screenwriters',
+    indexDescription:
+      'People with writing credits in public catalog works or works available to watch.',
+    role: 'Screenwriter',
+    works: 'Credited works',
+    sources: 'Sources',
+    creditSource: 'Credit source',
+    empty: 'No credited public works.',
+  },
+
+  durationStats: {
+    hours: 'Hours with recorded duration',
+    missing: '{n} watched videos have no duration and are excluded.',
+  },
+
+  watchDateEditor: {
+    title: 'Correct watch date',
+    date: 'Watch date (UTC)',
+    unknown: 'Unknown date',
+    save: 'Save',
+    cancel: 'Cancel',
+    error: 'Could not load or save the date.',
+    conflict: 'Tracking changed. Close and reopen to review the current date.',
+  },
+
+  community: {
+    search: 'Search for a series',
+    title: 'Community',
+    description:
+      'Latest public reviews. Open a title to read, reply or share your opinion.',
+    empty: 'No public reviews yet.',
+    read: 'Read and discuss',
+    spoilers: 'Title hidden for spoilers',
+  },
+
+  contentMetadata: {
+    catalogTitle: 'Details and tracking',
+    catalogDescription: 'Catalog entry with information and personal tracking.',
+    watchTitle: 'Episodes to watch',
+    watchDescription:
+      'Explore the episodes linked from this page. Availability and subtitles depend on each source.',
+    collectionTitle: 'BL and GL series to watch',
+    collectionDescription:
+      'Explore BL and GL series with linked episodes to watch. Availability, languages and episode counts vary by source.',
+  },
+
+  trackingHistory: {
+    title: 'History',
+    description:
+      'Tracking changes, visible only to you. Previous states do not reconstruct past actions.',
+    search: 'Search history by series',
+    empty: 'No tracking changes yet',
+    error: 'Could not update history',
+    more: 'Load more',
+    refresh: 'Refresh',
+    clear: 'Clear history',
+    clearConfirm: 'Clear all history? Your progress and notes will be kept.',
+    cancel: 'Cancel',
+    watchDate: 'Watch date',
+    previousDate: 'Previous date',
+    unknown: 'Unknown',
+    season: 'Season {n}',
+    episode: 'S{season} · E{episode}',
+    series: 'Series',
+    recorded: 'State recorded',
+    changed: 'State changed',
+    dateChanged: 'Date corrected',
+    snapshot: 'State before history began',
+  },
+  contributionMetadata: {
+    search: 'Search existing names',
+    loadError: 'Names could not be loaded.',
+    policy:
+      'Contributions use existing actors, production companies, countries, languages, tags and genres. New names require editorial addition by Flor.',
+    unresolved:
+      'No changes were saved. These names are missing or ambiguous: {names}. Check them or ask Flor to add them.',
+  },
+  trackingWorkspace: {
+    gaps: 'Some earlier chapters are not marked as watched',
+    title: 'My tracking',
+    subtitle:
+      'Resume your series, record what you watched and keep your thoughts.',
+    settings: 'My profile and data',
+    privacy:
+      'Your tracking and notes are private. Comments you publish are public.',
+    continue: 'In progress',
+    diary: 'Private diary',
+    stats: 'My statistics',
+    search: 'Search my series',
+    filter: 'Filter by status',
+    all: 'All',
+    list: 'List',
+    grid: 'Cards',
+    remaining: 'Fewest chapters remaining',
+    pin: 'Pin series',
+    unpin: 'Unpin series',
+    manage: 'Episodes and notes',
+    publicComment: 'Public discussion',
+    privateNote: 'Private note',
+    curated: 'Flor’s catalog',
+    viewing: 'Content to watch',
+    progress: '{watched} of {total} chapters watched',
+    upToDate: 'You watched all recorded chapters',
+    scope: 'Across your ongoing series',
+    chapters: 'Chapters watched',
+    loadError: 'We could not load your tracking.',
+    retry: 'Retry',
+    noResults: 'No series match these filters.',
+    preferences:
+      'View, order and pinned series are saved on this device for your account.',
+    season: 'Season {n}',
+    signIn: 'Sign in',
+  },
+  backup: {
+    viewStatuses: 'Tracking',
+    seriesNotes: 'Private series notes',
+    episodeNotes: 'Private episode notes',
+    userRatings: 'Ratings',
+    favorites: 'Favorites',
+    comments: 'Comments',
+    featureRequests: 'Suggestions',
+    featureVotes: 'Votes',
+    suggestedSites: 'Suggested sites',
+    other: 'Other data',
+    skipped: '{n} skipped',
+    missing: '{n} references not found; they will not be imported.',
+    invalid:
+      '{n} invalid records or sections; review the file before importing.',
+  },
   basedOnAdmin: {
     description:
       'Manage source categories and the titles using them. Create a new value by entering it when editing a title.',

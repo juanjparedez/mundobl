@@ -20,6 +20,7 @@ async function main() {
   const quote = (name: string) => '"' + name.replaceAll('"', '""') + '"';
   try {
     await client.query('BEGIN');
+    await client.query("SELECT set_config('mundobl.restoring_tracking_history', 'on', true)");
     const tables = await client.query<{ name: string }>(
       `SELECT tablename AS name FROM pg_tables WHERE schemaname = 'public' AND tablename <> '_prisma_migrations' ORDER BY tablename`
     );

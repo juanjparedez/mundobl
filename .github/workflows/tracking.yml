@@ -1,0 +1,46 @@
+name: Tracking integration
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: mundobl
+          POSTGRES_PASSWORD: mundobl
+          POSTGRES_DB: mundobl_replay
+        ports: ['55433:5432']
+        options: >-
+          --health-cmd "pg_isready -U mundobl"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://mundobl:mundobl@127.0.0.1:55433/mundobl_replay
+      DIRECT_URL: postgresql://mundobl:mundobl@127.0.0.1:55433/mundobl_replay
+      AUTH_SECRET: integration-tests-only-not-a-production-secret
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npx prisma generate
+      - run: npx prisma migrate deploy
+      - run: npm run lint
+      - name: Regression tests against disposable PostgreSQL
+        run: |
+          set -e
+          for test in tracking-backup watching-collection profile-chapters tracking-statistics progress tracking-database tracking-history series-tracking-status community-privacy watch-date writer-credits; do
+            npx tsx "scripts/test-$test.ts"
+          done
+          node --import tsx scripts/test-private-tracking-routes.mjs
+          node --import tsx scripts/test-info-block-privacy.mjs
+          node --import tsx scripts/test-profile-watch-dates.mjs
+          node scripts/test-contribution-boundary.mjs
+      - run: npm run build

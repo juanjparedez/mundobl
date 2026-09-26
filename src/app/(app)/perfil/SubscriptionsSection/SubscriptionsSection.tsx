@@ -1,5 +1,7 @@
 'use client';
 
+import { getContentUrl } from '@/lib/slug';
+
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -22,6 +24,8 @@ interface SubscriptionItem {
   series: {
     id: number;
     title: string;
+    origin: string;
+    catalogScope: string;
     imageUrl: string | null;
     imageThumbUrl?: string | null;
     imagePosition: string | null;
@@ -155,7 +159,7 @@ export function SubscriptionsSection() {
             {filtered?.map((item) => (
               <li key={item.subscriptionId} className="subscription-card">
                 <Link
-                  href={`/series/${item.series.id}`}
+                  href={getContentUrl(item.series)}
                   className="subscription-card__link"
                   prefetch={false}
                 >

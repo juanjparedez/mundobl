@@ -1,0 +1,11 @@
+.contribution-metadata-field {
+  width: 100%;
+}
+
+.contribution-metadata-field__error {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  color: var(--text-secondary);
+}

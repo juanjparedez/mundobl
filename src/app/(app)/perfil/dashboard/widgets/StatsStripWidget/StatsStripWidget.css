@@ -70,9 +70,9 @@
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--text-tertiary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.35;
 }
 
 .mb-stats-strip-widget__config {
@@ -110,4 +110,12 @@ html[data-skin='premium'][data-theme='dark'] .mb-stats-strip-widget__item {
 html[data-skin='premium'][data-theme='dark'] .mb-stats-strip-widget__icon {
   background: var(--mb-gold-soft);
   color: var(--mb-gold);
+}
+
+.mb-stats-strip-widget__hint {
+  margin-top: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  white-space: normal;
+  overflow-wrap: anywhere;
 }

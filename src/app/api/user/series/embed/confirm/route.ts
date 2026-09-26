@@ -4,15 +4,10 @@ import {
   checkOfficialYouTubeVideos,
   ONLY_YOUTUBE_ERROR,
 } from '@/lib/official-content-guard';
-import { prisma } from '@/lib/database';
+import { prisma, getContributionMetadata } from '@/lib/database';
 import { detectPlatform, extractVideoId } from '@/lib/embed-helpers';
 import { checkUserEmbedRateLimit } from '@/lib/rate-limit';
-import {
-  findOrCreateTag,
-  findOrCreateGenre,
-  findOrCreateActor,
-  findOrCreateProductionCompany,
-} from '@/lib/tag-utils';
+import { contributionMetadataFailure } from '@/lib/contribution-metadata';
 import {
   ALLOWED_COUNTRY_CODES,
   SUPPORTED_EMBED_PLATFORMS,
@@ -185,31 +180,17 @@ function cleanArray(value: unknown, max: number, maxLen: number): string[] {
   return out;
 }
 
-const COUNTRY_NAME_BY_CODE: Record<AllowedCountryCode, string> = {
-  TH: 'Tailandia',
-  KR: 'Corea del Sur',
-  JP: 'Japon',
-  CN: 'China',
-  TW: 'Taiwan',
-  PH: 'Filipinas',
-  VN: 'Vietnam',
-  ID: 'Indonesia',
-  MY: 'Malasia',
-  HK: 'Hong Kong',
-};
-
 /**
  * POST /api/user/series/embed/confirm
  *
  * Body: EmbedConfirmInput
  * Persiste:
- *  - Series con origin='USER_EMBED', visibility='VISIBLE',
+ *  - Series con origin='USER_EMBED', visibility segun rol,
  *    catalogScope='WATCHABLE_ONLY', submittedById=session.user.id
  *  - Season 1 (por default) o el seasonNumber pasado.
  *  - Episode con embedUrl, embedPlatform, embedVideoId, embedChannelName.
- *  - Upsert de Actor/ProductionCompany/Language/Tag/Genre/Country por
- *    nombre (tablas compartidas — el filtro de origin en pages publicas
- *    se encarga de no contaminar el catalogo curado).
+ *  - Asociaciones a entidades editoriales existentes. Ninguna alta o
+ *    actualizacion de vocabulario compartido desde este flujo.
  */
 export async function POST(request: NextRequest) {
   const auth = await requireAuth();
@@ -292,36 +273,14 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Resolver entidades compartidas via upsert por nombre.
-  let countryId: number | null = null;
-  if (data.countryCode) {
-    const name = COUNTRY_NAME_BY_CODE[data.countryCode];
-    const country = await prisma.country.upsert({
-      where: { name },
-      update: { code: data.countryCode.toLowerCase() },
-      create: { name, code: data.countryCode.toLowerCase() },
-    });
-    countryId = country.id;
-  }
-
-  let productionCompanyId: number | null = null;
-  if (data.productionCompanyName) {
-    const pc = await findOrCreateProductionCompany(
-      prisma,
-      data.productionCompanyName
+  const metadata = await getContributionMetadata(data);
+  if (!metadata.ok) {
+    return NextResponse.json(
+      contributionMetadataFailure(metadata.unresolvedNames),
+      { status: 422 }
     );
-    productionCompanyId = pc?.id ?? null;
   }
-
-  let originalLanguageId: number | null = null;
-  if (data.originalLanguageName) {
-    const lang = await prisma.language.upsert({
-      where: { name: data.originalLanguageName },
-      update: {},
-      create: { name: data.originalLanguageName },
-    });
-    originalLanguageId = lang.id;
-  }
+  const { countryId, productionCompanyId, originalLanguageId } = metadata.data;
 
   // Validamos linkedSeriesId antes del create: tiene que existir + ser
   // CURATED. Si el front mando un ID invalido o de un USER_EMBED, lo
@@ -341,107 +300,81 @@ export async function POST(request: NextRequest) {
   const isAdmin = auth.role === 'ADMIN' || auth.role === 'MODERATOR';
   const visibility = isAdmin ? 'VISIBLE' : 'PENDING_REVIEW';
 
-  const newSeries = await prisma.series.create({
-    data: {
-      title: data.title,
-      originalTitle: data.originalTitle,
-      year: data.year,
-      type: data.type,
-      synopsis: data.synopsis,
-      catalogScope: 'WATCHABLE_ONLY',
-      origin: 'USER_EMBED',
-      visibility,
-      submittedById: auth.userId,
-      countryId,
-      productionCompanyId,
-      originalLanguageId,
-      linkedSeriesId: validatedLinkedSeriesId,
-    },
-  });
-
-  // Solo asociar actores/tags existentes si es usuario regular para no ensuciar el catalogo
-  if (isAdmin) {
-    // Actores
-    for (const actorName of data.actorNames) {
-      const actor = await findOrCreateActor(prisma, actorName);
-      if (!actor) continue;
-      await prisma.seriesActor.create({
-        data: {
-          seriesId: newSeries.id,
-          actorId: actor.id,
-          character: '',
-          isMain: false,
-        },
-      });
-    }
-
-    // Tags
-    for (const tagName of data.tagNames) {
-      const tag = await findOrCreateTag(prisma, tagName);
-      if (!tag) continue;
-      await prisma.seriesTag.create({
-        data: { seriesId: newSeries.id, tagId: tag.id },
-      });
-    }
-
-    // Generos
-    for (const genreName of data.genreNames) {
-      const genre = await findOrCreateGenre(prisma, genreName);
-      if (!genre) continue;
-      await prisma.seriesGenre.create({
-        data: { seriesId: newSeries.id, genreId: genre.id },
-      });
-    }
-  }
-
-  // Doblajes
-  for (const langName of data.dubbingLanguageNames) {
-    const lang = await prisma.language.upsert({
-      where: { name: langName },
-      update: {},
-      create: { name: langName },
+  const newSeries = await prisma.$transaction(async (tx) => {
+    const series = await tx.series.create({
+      data: {
+        title: data.title,
+        originalTitle: data.originalTitle,
+        year: data.year,
+        type: data.type,
+        synopsis: data.synopsis,
+        catalogScope: 'WATCHABLE_ONLY',
+        origin: 'USER_EMBED',
+        visibility,
+        submittedById: auth.userId,
+        countryId,
+        productionCompanyId,
+        originalLanguageId,
+        linkedSeriesId: validatedLinkedSeriesId,
+      },
     });
-    await prisma.seriesDubbing.create({
-      data: { seriesId: newSeries.id, languageId: lang.id },
+
+    for (const actorId of metadata.data.actorIds) {
+      await tx.seriesActor.create({
+        data: { seriesId: series.id, actorId, character: '', isMain: false },
+      });
+    }
+    for (const tagId of metadata.data.tagIds) {
+      await tx.seriesTag.create({ data: { seriesId: series.id, tagId } });
+    }
+    for (const genreId of metadata.data.genreIds) {
+      await tx.seriesGenre.create({ data: { seriesId: series.id, genreId } });
+    }
+    for (const languageId of metadata.data.dubbingLanguageIds) {
+      await tx.seriesDubbing.create({
+        data: { seriesId: series.id, languageId },
+      });
+    }
+
+    // Season + Episode
+    const season = await tx.season.create({
+      data: {
+        seriesId: series.id,
+        seasonNumber: data.seasonNumber,
+        episodeCount: 1,
+        year: data.year ?? undefined,
+      },
     });
-  }
 
-  // Season + Episode
-  const season = await prisma.season.create({
-    data: {
-      seriesId: newSeries.id,
-      seasonNumber: data.seasonNumber,
-      episodeCount: 1,
-      year: data.year ?? undefined,
-    },
-  });
+    await tx.episode.create({
+      data: {
+        seasonId: season.id,
+        episodeNumber: data.episodeNumber,
+        title: data.episodeTitle,
+        embedUrl: data.url,
+        embedPlatform: data.platform,
+        embedVideoId: data.videoId,
+        embedChannelName: verifiedChannel.channelTitle || data.channelName,
+        embedChannelUrl: verifiedChannel.channelUrl || data.channelUrl,
+      },
+    });
 
-  await prisma.episode.create({
-    data: {
-      seasonId: season.id,
-      episodeNumber: data.episodeNumber,
-      title: data.episodeTitle,
-      embedUrl: data.url,
-      embedPlatform: data.platform,
-      embedVideoId: data.videoId,
-      embedChannelName: verifiedChannel.channelTitle || data.channelName,
-      embedChannelUrl: verifiedChannel.channelUrl || data.channelUrl,
-    },
-  });
+    // Aporto = quiere verla. Marcamos automaticamente VIENDO para que
+    // aparezca en el widget "Viendo ahora" del dashboard y en /watching
+    // sin que el usuario tenga que click el toggle de estado.
+    await tx.viewStatus.upsert({
+      where: {
+        userId_seriesId: { userId: auth.userId, seriesId: series.id },
+      },
+      update: { status: 'VIENDO' },
+      create: {
+        userId: auth.userId,
+        seriesId: series.id,
+        status: 'VIENDO',
+      },
+    });
 
-  // Aporto = quiere verla. Marcamos automaticamente VIENDO para que
-  // aparezca en el widget "Viendo ahora" del dashboard y en /watching
-  // sin que el usuario tenga que click el toggle de estado.
-  await prisma.viewStatus.upsert({
-    where: {
-      userId_seriesId: { userId: auth.userId, seriesId: newSeries.id },
-    },
-    update: { status: 'VIENDO' },
-    create: {
-      userId: auth.userId,
-      seriesId: newSeries.id,
-      status: 'VIENDO',
-    },
+    return series;
   });
 
   return NextResponse.json(

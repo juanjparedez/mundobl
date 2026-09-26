@@ -38,6 +38,18 @@ interface ImportSummary {
 export function ProfileSettings() {
   const { data: session } = useSession();
   const { t } = useLocale();
+  const importLabels: Record<string, string> = {
+    viewStatuses: t('backup.viewStatuses'),
+    seriesNotes: t('backup.seriesNotes'),
+    episodeNotes: t('backup.episodeNotes'),
+    trackingEvents: t('trackingHistory.title'),
+    userRatings: t('backup.userRatings'),
+    favorites: t('backup.favorites'),
+    comments: t('backup.comments'),
+    featureRequests: t('backup.featureRequests'),
+    featureVotes: t('backup.featureVotes'),
+    suggestedSites: t('backup.suggestedSites'),
+  };
   const message = useMessage();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -547,41 +559,49 @@ export function ProfileSettings() {
             </p>
           </div>
           {importPreview && (
-            <div>
-              <p style={{ marginBottom: 6 }}>
-                <strong>{t('profile.settingsImportPreviewTitle')}</strong>
-              </p>
-              {Object.values(importPreview.imported).every((n) => n === 0) ? (
+            <div className="profile-settings-import-summary">
+              <strong>{t('profile.settingsImportPreviewTitle')}</strong>
+              {Object.values(importPreview.imported).every((n) => n === 0) && (
                 <Alert
                   type="warning"
                   message={t('profile.settingsImportNothingToImport')}
                 />
-              ) : (
-                <ul style={{ margin: 0, paddingLeft: 20, fontSize: 13 }}>
-                  {Object.entries(importPreview.imported).map(([k, v]) => (
-                    <li key={k}>
-                      <code>{k}</code>: {v}
-                      {importPreview.skipped[k] > 0 && (
-                        <span style={{ color: 'var(--text-tertiary)' }}>
-                          {' '}
-                          (+{importPreview.skipped[k]} ya existían)
+              )}
+              <ul>
+                {Object.entries(importPreview.imported)
+                  .filter(
+                    ([key, count]) =>
+                      count > 0 || importPreview.skipped[key] > 0
+                  )
+                  .map(([key, count]) => (
+                    <li key={key}>
+                      {importLabels[key] ?? t('backup.other')}: {count}
+                      {importPreview.skipped[key] > 0 && (
+                        <span className="profile-settings-import-summary__detail">
+                          {' · '}
+                          {t('backup.skipped', {
+                            n: importPreview.skipped[key],
+                          })}
                         </span>
                       )}
                     </li>
                   ))}
-                </ul>
-              )}
+              </ul>
               {importPreview.missingRefs.length > 0 && (
-                <p
-                  style={{
-                    marginTop: 8,
-                    fontSize: 12,
-                    color: 'var(--text-tertiary)',
-                  }}
-                >
-                  {importPreview.missingRefs.length} referencias no encontradas
-                  en este entorno (se saltean).
-                </p>
+                <Alert
+                  type="warning"
+                  message={t('backup.missing', {
+                    n: importPreview.missingRefs.length,
+                  })}
+                />
+              )}
+              {importPreview.errors.length > 0 && (
+                <Alert
+                  type="warning"
+                  message={t('backup.invalid', {
+                    n: importPreview.errors.length,
+                  })}
+                />
               )}
             </div>
           )}

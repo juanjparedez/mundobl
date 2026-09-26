@@ -1,0 +1,37 @@
+.community-feed {
+  padding: var(--spacing-lg);
+}
+.community-feed header {
+  margin-bottom: var(--spacing-lg);
+}
+.community-feed header p {
+  color: var(--text-secondary);
+}
+.community-feed ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: var(--spacing-md);
+  padding: 0;
+  list-style: none;
+}
+.community-feed h2 {
+  font-size: var(--font-size-lg);
+  margin-top: 0;
+  overflow-wrap: anywhere;
+}
+.community-feed p {
+  overflow-wrap: anywhere;
+}
+
+.community-feed__pagination {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-lg);
+}
+
+.community-feed__search {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}

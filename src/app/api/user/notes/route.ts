@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth-helpers';
 import { prisma } from '@/lib/database';
-import { getSeriesUrl } from '@/lib/slug';
+import { getSeriesUrl, getVerUrl } from '@/lib/slug';
 
 export interface DiaryNote {
   key: string;
@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
               body: true,
               createdAt: true,
               updatedAt: true,
-              series: { select: { id: true, title: true } },
+              series: { select: { id: true, title: true, origin: true } },
             },
           })
         : Promise.resolve([]),
@@ -69,7 +69,9 @@ export async function GET(request: NextRequest) {
                   season: {
                     select: {
                       seasonNumber: true,
-                      series: { select: { id: true, title: true } },
+                      series: {
+                        select: { id: true, title: true, origin: true },
+                      },
                     },
                   },
                 },
@@ -88,7 +90,10 @@ export async function GET(request: NextRequest) {
         updatedAt: note.updatedAt.toISOString(),
         seriesTitle: note.series.title,
         episodeLabel: null,
-        href: getSeriesUrl(note.series.id, note.series.title),
+        href:
+          note.series.origin === 'USER_EMBED'
+            ? getVerUrl(note.series.id, note.series.title)
+            : getSeriesUrl(note.series.id, note.series.title),
       })),
       ...episodeNotes.map((note) => {
         const series = note.episode.season?.series ?? null;
@@ -100,7 +105,14 @@ export async function GET(request: NextRequest) {
           updatedAt: note.updatedAt.toISOString(),
           seriesTitle: series?.title ?? '',
           episodeLabel: `T${note.episode.season?.seasonNumber ?? 1}E${note.episode.episodeNumber}`,
-          href: series ? getSeriesUrl(series.id, series.title) : '#',
+          href: series
+            ? series.origin === 'USER_EMBED'
+              ? getVerUrl(series.id, series.title, {
+                  seasonNumber: note.episode.season?.seasonNumber ?? 1,
+                  episodeNumber: note.episode.episodeNumber,
+                })
+              : getSeriesUrl(series.id, series.title)
+            : '#',
         };
       }),
     ];
@@ -118,12 +130,15 @@ export async function GET(request: NextRequest) {
 
     const start = (page - 1) * pageSize;
 
-    return NextResponse.json({
-      notes: filtered.slice(start, start + pageSize),
-      total: filtered.length,
-      page,
-      pageSize,
-    });
+    return NextResponse.json(
+      {
+        notes: filtered.slice(start, start + pageSize),
+        total: filtered.length,
+        page,
+        pageSize,
+      },
+      { headers: { 'Cache-Control': 'private, no-store' } }
+    );
   } catch (error) {
     console.error('[user/notes GET]', error);
     return NextResponse.json(

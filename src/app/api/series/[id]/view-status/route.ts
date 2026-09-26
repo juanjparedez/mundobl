@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
-import { subscribeOnFirstTrack } from '@/lib/tracking';
+import { setSeriesTrackingStatus } from '@/lib/tracking';
 
 const VALID_STATUSES = [
   'SIN_VER',
@@ -29,40 +29,9 @@ export async function POST(
       return NextResponse.json({ error: 'Estado inválido' }, { status: 400 });
     }
 
-    const updateData: Record<string, string | Date | null> = { status };
-
-    if (status === 'VISTA') {
-      updateData.watchedDate = new Date();
-    } else if (status === 'SIN_VER') {
-      updateData.watchedDate = null;
-    }
-
-    if (status === 'VIENDO') {
-      updateData.lastWatchedAt = new Date();
-    }
-
-    const existing = await prisma.viewStatus.findUnique({
-      where: { userId_seriesId: { userId: authResult.userId, seriesId } },
-      select: { id: true },
-    });
-
-    // upsert atómico: evita P2002 bajo doble-click / requests concurrentes
-    // (mismo patrón que el endpoint de episodios).
-    const viewStatus = await prisma.viewStatus.upsert({
-      where: { userId_seriesId: { userId: authResult.userId, seriesId } },
-      update: updateData,
-      create: {
-        seriesId,
-        userId: authResult.userId,
-        ...updateData,
-      },
-    });
-
-    // Empezar a seguirla (primera fila, en curso o para retomar) suscribe a
-    // sus avisos. Ver subscribeOnFirstTrack.
-    if (!existing && (status === 'VIENDO' || status === 'RETOMAR')) {
-      await subscribeOnFirstTrack(prisma, authResult.userId, seriesId);
-    }
+    const viewStatus = await prisma.$transaction((tx) =>
+      setSeriesTrackingStatus(tx, authResult.userId, seriesId, status)
+    );
 
     return NextResponse.json(viewStatus);
   } catch (error) {
