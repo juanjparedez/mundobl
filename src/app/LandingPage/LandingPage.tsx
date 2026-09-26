@@ -25,6 +25,7 @@ import {
   BookOutlined,
   TeamOutlined,
   CalendarOutlined,
+  AppstoreOutlined,
 } from '@ant-design/icons';
 import { signIn, useSession } from 'next-auth/react';
 import { ROUTES } from '@/constants/navigation';
@@ -37,6 +38,7 @@ import { LoggedInHomeRedirect } from '@/components/common/LoggedInHomeRedirect/L
 import { WatchableCarousel } from '@/components/common/WatchableCarousel/WatchableCarousel';
 import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { interpolateMessage } from '@/lib/i18n-format';
 import { getSeriesUrl } from '@/lib/slug';
 import './LandingPage.css';
 
@@ -115,6 +117,8 @@ interface LandingStats {
   episodesMarkedTotal?: number;
   /** Usuarios no-admin con al menos una serie en VIENDO. */
   usersFollowing?: number;
+  /** Series que se ven en /ver (misma condicion que esa pagina). */
+  watchableCount?: number;
 }
 
 interface LandingPageProps {
@@ -309,7 +313,7 @@ export function LandingPage({ stats }: LandingPageProps) {
             <ReadOutlined /> {t('landing.heroBadge')}
           </div>
           <h1 className="landing__title">MundoBL</h1>
-          <p className="landing__subtitle">{t('landing.subtitle')}</p>
+          <p className="landing__subtitle">{t('landing.heroSubtitle')}</p>
           <p className="landing__description">{t('landing.description')}</p>
 
           <div className="landing__actions">
@@ -384,6 +388,54 @@ export function LandingPage({ stats }: LandingPageProps) {
         ))}
       </section>
 
+      {/* ── Que vas a encontrar ──
+       * El catalogo es mucho mas grande que lo que se ve aca. Se dice con los
+       * dos numeros reales antes de cualquier vidriera. */}
+      <section className="landing__offer" aria-labelledby="landing-offer-title">
+        <h2 id="landing-offer-title" className="landing__offer-title">
+          {t('landing.offerTitle')}
+        </h2>
+        <div className="landing__offer-grid">
+          <article className="landing__offer-card landing__offer-card--watch">
+            <span className="landing__offer-icon" aria-hidden="true">
+              <PlayCircleOutlined />
+            </span>
+            <h3 className="landing__offer-card-title">
+              {t('navSections.watch')}
+            </h3>
+            <span className="landing__offer-count">
+              {interpolateMessage(t('landing.offerSeriesCount'), {
+                n: (stats.watchableCount ?? 0).toLocaleString(),
+              })}
+            </span>
+            <p className="landing__offer-desc">{t('landing.offerWatchDesc')}</p>
+            <Link href={ROUTES.VER} className="landing__offer-link">
+              {t('landing.offerWatchCta')} <ArrowRightOutlined />
+            </Link>
+          </article>
+          <article className="landing__offer-card">
+            <span className="landing__offer-icon" aria-hidden="true">
+              <AppstoreOutlined />
+            </span>
+            <h3 className="landing__offer-card-title">
+              {t('navSections.follow')}
+            </h3>
+            <span className="landing__offer-count">
+              {interpolateMessage(t('landing.offerSeriesCount'), {
+                n: stats.totalSeries.toLocaleString(),
+              })}
+            </span>
+            <p className="landing__offer-desc">
+              {t('landing.offerFollowDesc')}
+            </p>
+            <Link href={ROUTES.CATALOGO} className="landing__offer-link">
+              {t('landing.exploreCatalog')} <ArrowRightOutlined />
+            </Link>
+          </article>
+        </div>
+        <p className="landing__offer-note">{t('landing.offerNote')}</p>
+      </section>
+
       {/* ── Como funciona ──
        * Tres pasos, antes de cualquier vidriera de contenido: el visitante
        * que nunca uso un tracker tiene que entender que se hace aca. */}
@@ -434,7 +486,7 @@ export function LandingPage({ stats }: LandingPageProps) {
             ✨ {t('landing.novedadesEyebrow')}
           </span>
           <h2 className="landing__section-title">
-            {t('landing.novedadesTitle')}
+            {t('landing.novedadesFeaturesTitle')}
           </h2>
           <p className="landing__section-subtitle">
             {t('landing.novedadesSubtitle')}
@@ -874,7 +926,7 @@ export function LandingPage({ stats }: LandingPageProps) {
             {t('landing.ecosystemTitle')}
           </h2>
           <p className="landing__section-subtitle">
-            {t('landing.ecosystemSubtitle')}
+            {t('landing.ecosystemIntro')}
           </p>
         </header>
 
@@ -893,13 +945,13 @@ export function LandingPage({ stats }: LandingPageProps) {
 
           <article className="landing__ecosystem-card">
             <div className="landing__ecosystem-card-icon">
-              <HeartOutlined />
+              <SafetyCertificateOutlined />
             </div>
             <h3 className="landing__ecosystem-card-title">
-              {t('landing.ecosystemPillar2Title')}
+              {t('landing.ecosystemOfficialTitle')}
             </h3>
             <p className="landing__ecosystem-card-desc">
-              {t('landing.ecosystemPillar2Desc')}
+              {t('landing.ecosystemOfficialDesc')}
             </p>
           </article>
 

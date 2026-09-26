@@ -50,7 +50,7 @@ export async function generateMetadata({
   const title = `Ver ${serie.title}${origTitle}${yearPart} Online Sub Español | MundoBL`;
   const description =
     serie.synopsis?.slice(0, 160) ??
-    `Mirá todos los episodios de ${serie.title}${origTitle} en línea, con subtítulos en español y reproducción oficial en MundoBL.`;
+    `Mirá ${serie.title}${origTitle} desde el canal oficial de su productora, en MundoBL.`;
 
   const canonicalUrl = getVerUrl(serie.id, serie.title);
 

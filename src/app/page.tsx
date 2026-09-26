@@ -37,8 +37,12 @@ async function getLandingStats() {
       episodesMarkedThisWeek,
       episodesMarkedTotal,
       usersFollowingRows,
+      watchableCount,
     ] = await Promise.all([
-      prisma.series.count({ where: { origin: 'CURATED' } }),
+      // Lo mismo que muestra /catalogo: sin las importadas solo para mirar.
+      prisma.series.count({
+        where: { origin: 'CURATED', catalogScope: 'PERSONAL' },
+      }),
       prisma.viewStatus.count({
         where: {
           status: 'VISTA',
@@ -196,6 +200,10 @@ async function getLandingStats() {
           user: { role: { not: 'ADMIN' } },
         },
       }),
+      // Lo mismo que lista /ver.
+      prisma.series.count({
+        where: { visibility: 'VISIBLE', ...HAS_WATCHABLE_EPISODE },
+      }),
     ]);
 
     const formattedWatchable = watchableSeries.map((s) => {
@@ -248,6 +256,7 @@ async function getLandingStats() {
       episodesMarkedThisWeek,
       episodesMarkedTotal,
       usersFollowing: usersFollowingRows.length,
+      watchableCount,
     };
   } catch {
     return {
@@ -266,6 +275,7 @@ async function getLandingStats() {
       episodesMarkedThisWeek: 0,
       episodesMarkedTotal: 0,
       usersFollowing: 0,
+      watchableCount: 0,
     };
   }
 }
