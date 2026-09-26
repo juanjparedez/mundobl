@@ -28,6 +28,7 @@ import { ShareButton } from '@/components/common/ShareButton/ShareButton';
 import { WhereToWatch } from '@/components/common/WhereToWatch/WhereToWatch';
 import { SeriesSubscribeButton } from '@/components/series/SeriesSubscribeButton/SeriesSubscribeButton';
 import { FavoriteButton } from '@/components/series/FavoriteButton/FavoriteButton';
+import { WhereToWatchEmpty } from '@/components/series/WhereToWatchEmpty/WhereToWatchEmpty';
 import { SeriesSuggestionButton } from '@/components/series/SuggestionModal/SeriesSuggestionButton';
 import { SeriesUserStatusProvider } from '@/components/series/SeriesUserStatusProvider';
 import { PendingTrackApplier } from '@/components/series/PendingTrackApplier/PendingTrackApplier';
@@ -183,6 +184,13 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
   const directors = serie.directors?.map((sd) => sd.director.name) ?? [];
   // Capitulos, no videos: GMMTV sube cada capitulo en partes.
   const totalEpisodes = countChapters(serie.seasons ?? []);
+  const hasOwnEmbeds = (serie.seasons ?? []).some((s) =>
+    (s.episodes ?? []).some((e) => !!e.embedUrl)
+  );
+  // Se puede mirar en /ver (propia o por un aporte linkeado): "dónde ver"
+  // vacío no puede decir que no sabemos.
+  const canWatchHere =
+    hasOwnEmbeds || (serie.linkedFromUserEmbeds?.length ?? 0) > 0;
 
   return (
     <>
@@ -259,9 +267,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
             ]}
           />
           {/* Banner cuando la serie se puede ver en /ver directamente o tiene aportes linkeados */}
-          {(serie.seasons ?? []).some((s) =>
-            (s.episodes ?? []).some((e) => !!e.embedUrl)
-          ) ? (
+          {hasOwnEmbeds ? (
             <div className="series-linked-from-user-embeds">
               <Link
                 href={getVerUrl(serie.id, serie.title)}
@@ -343,8 +349,21 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
 
           <SeriesCompletenessBadge seriesId={serie.id} series={serie} />
 
-          {serie.watchLinks && serie.watchLinks.length > 0 && (
+          {serie.watchLinks && serie.watchLinks.length > 0 ? (
             <WhereToWatch links={serie.watchLinks} variant="hero" />
+          ) : (
+            !canWatchHere && (
+              <WhereToWatch
+                links={[]}
+                variant="hero"
+                empty={
+                  <WhereToWatchEmpty
+                    seriesId={serie.id}
+                    seriesTitle={serie.title}
+                  />
+                }
+              />
+            )
           )}
 
           <SeriesDetailClient

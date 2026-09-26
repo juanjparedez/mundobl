@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, after } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 import { auth } from '@/lib/auth';
@@ -122,14 +122,16 @@ export async function POST(
     const excerpt = content.trim().slice(0, 80);
     const typeLabel = TYPE_LABELS[suggestionType] || 'Aporte';
 
-    void notifyAdminsOfSuggestion({
-      suggestionId: suggestion.id,
-      seriesId: series.id,
-      seriesTitle: series.title,
-      authorName,
-      suggestionType: typeLabel,
-      excerpt,
-    });
+    after(() =>
+      notifyAdminsOfSuggestion({
+        suggestionId: suggestion.id,
+        seriesId: series.id,
+        seriesTitle: series.title,
+        authorName,
+        suggestionType: typeLabel,
+        excerpt,
+      })
+    );
 
     return NextResponse.json(suggestion, { status: 201 });
   } catch (error) {

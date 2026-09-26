@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Button, Modal, Select, Input, Tooltip } from 'antd';
 import { BulbOutlined, SendOutlined } from '@ant-design/icons';
 import { useSession, signIn } from 'next-auth/react';
@@ -13,17 +13,23 @@ const { Option } = Select;
 interface SeriesSuggestionButtonProps {
   seriesId: number;
   seriesTitle: string;
+  /** Tipo preseleccionado (p. ej. LINK_OFICIAL desde "dónde ver"). */
+  initialType?: string;
+  /** Disparador propio en vez de la lamparita. */
+  renderTrigger?: (open: () => void) => ReactNode;
 }
 
 export function SeriesSuggestionButton({
   seriesId,
   seriesTitle,
+  initialType = 'DATO_FALTANTE',
+  renderTrigger,
 }: SeriesSuggestionButtonProps) {
   const { data: session } = useSession();
   const message = useMessage();
 
   const [isOpen, setIsOpen] = useState(false);
-  const [type, setType] = useState('DATO_FALTANTE');
+  const [type, setType] = useState(initialType);
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -50,7 +56,7 @@ export function SeriesSuggestionButton({
         '¡Gracias por tu aporte! Los administradores revisarán los datos para enriquecer la ficha.'
       );
       setContent('');
-      setType('DATO_FALTANTE');
+      setType(initialType);
       setIsOpen(false);
     } catch (error) {
       message.error(
@@ -63,16 +69,20 @@ export function SeriesSuggestionButton({
 
   return (
     <>
-      <Tooltip title="Sugerir dato o corrección para esta serie">
-        <button
-          type="button"
-          className="series-quick-actions__item series-suggestion-btn"
-          aria-label="Sugerir dato o corrección"
-          onClick={() => setIsOpen(true)}
-        >
-          <BulbOutlined />
-        </button>
-      </Tooltip>
+      {renderTrigger ? (
+        renderTrigger(() => setIsOpen(true))
+      ) : (
+        <Tooltip title="Sugerir dato o corrección para esta serie">
+          <button
+            type="button"
+            className="series-quick-actions__item series-suggestion-btn"
+            aria-label="Sugerir dato o corrección"
+            onClick={() => setIsOpen(true)}
+          >
+            <BulbOutlined />
+          </button>
+        </Tooltip>
+      )}
 
       <Modal
         title={
