@@ -95,6 +95,7 @@ export type TranslationShape = {
     whereToWatch: string;
     whereToWatchUnknown: string;
     whereToWatchSuggest: string;
+    newsTitle: string;
     unofficial: string;
     castSection: string;
     couplebadge: string;
@@ -2220,6 +2221,11 @@ export type TranslationShape = {
     publishedAtLabel: string;
     statusLabel: string;
     privateNotesLabel: string;
+    relatedSeriesLabel: string;
+    relatedSeriesPlaceholder: string;
+    tagsLabel: string;
+    publishButton: string;
+    discardButton: string;
     privateNotesPlaceholder: string;
     saveChangesButton: string;
     createNewsButton: string;
@@ -2803,6 +2809,7 @@ export type TranslationShape = {
     cronTriggerSchedule: string;
     cronDetail: string;
     cronDetailLogs: string;
+    cronDetailNews: string;
     cronBacklog: string;
     workflowsTitle: string;
     workflowBackup: string;
@@ -3268,6 +3275,7 @@ const es: TranslationShape = {
     whereToWatch: 'Donde Ver',
     whereToWatchUnknown: 'Todavía no sabemos dónde verla legalmente.',
     whereToWatchSuggest: '¿Sabés dónde? Contanos',
+    newsTitle: 'Noticias de la serie',
     unofficial: ' (no oficial)',
     castSection: 'Reparto',
     couplebadge: 'Pareja',
@@ -5511,6 +5519,11 @@ const es: TranslationShape = {
     publishedAtLabel: 'Fecha de publicación original',
     statusLabel: 'Estado',
     privateNotesLabel: 'Notas privadas (no visibles al público)',
+    relatedSeriesLabel: 'Serie relacionada',
+    relatedSeriesPlaceholder: 'Buscá la serie',
+    tagsLabel: 'Tags',
+    publishButton: 'Publicar',
+    discardButton: 'Descartar',
     privateNotesPlaceholder: 'Notas internas…',
     saveChangesButton: 'Guardar cambios',
     createNewsButton: 'Crear noticia',
@@ -6111,7 +6124,7 @@ const es: TranslationShape = {
     healthLoadError: 'No se pudo cargar la salud del sistema',
     cronTitle: 'Cron diario',
     cronHint:
-      'Corre todos los días: revisa qué videos se pueden ver en cada país, trae sus reproducciones de YouTube y borra los registros vencidos.',
+      'Corre todos los días: revisa qué videos se pueden ver en cada país, trae sus reproducciones de YouTube, busca noticias nuevas y borra los registros vencidos.',
     cronNext: 'Próxima corrida',
     cronRunNow: 'Correr ahora',
     cronRunNowConfirm:
@@ -6131,6 +6144,7 @@ const es: TranslationShape = {
     cronTriggerSchedule: 'Programada',
     cronDetail: '{probed} de {scanned} revisados · {changed} cambios',
     cronDetailLogs: 'Limpieza: {deleted} registros vencidos borrados',
+    cronDetailNews: 'Noticias: {created} nuevas para revisar',
     cronBacklog: 'quedaron pendientes para la próxima',
     workflowsTitle: 'GitHub Actions',
     workflowBackup: 'Backup de la base',
@@ -6617,6 +6631,7 @@ const en: TranslationShape = {
     whereToWatch: 'Where to Watch',
     whereToWatchUnknown: "We don't know yet where to watch it legally.",
     whereToWatchSuggest: 'Know where? Tell us',
+    newsTitle: 'Series news',
     unofficial: ' (unofficial)',
     castSection: 'Cast',
     couplebadge: 'Couple',
@@ -8844,6 +8859,11 @@ const en: TranslationShape = {
     publishedAtLabel: 'Original publication date',
     statusLabel: 'Status',
     privateNotesLabel: 'Private notes (not visible to the public)',
+    relatedSeriesLabel: 'Related series',
+    relatedSeriesPlaceholder: 'Search the series',
+    tagsLabel: 'Tags',
+    publishButton: 'Publish',
+    discardButton: 'Discard',
     privateNotesPlaceholder: 'Internal notes…',
     saveChangesButton: 'Save changes',
     createNewsButton: 'Create news',
@@ -9440,7 +9460,7 @@ const en: TranslationShape = {
     healthLoadError: 'Could not load system health',
     cronTitle: 'Daily cron',
     cronHint:
-      'Runs every day: checks which videos can be played in each country, fetches their YouTube views and deletes expired logs.',
+      'Runs every day: checks which videos can be played in each country, fetches their YouTube views, looks for new news and deletes expired logs.',
     cronNext: 'Next run',
     cronRunNow: 'Run now',
     cronRunNowConfirm:
@@ -9460,6 +9480,7 @@ const en: TranslationShape = {
     cronTriggerSchedule: 'Scheduled',
     cronDetail: '{probed} of {scanned} checked · {changed} changes',
     cronDetailLogs: 'Cleanup: {deleted} expired logs deleted',
+    cronDetailNews: 'News: {created} new to review',
     cronBacklog: 'some left for the next run',
     workflowsTitle: 'GitHub Actions',
     workflowBackup: 'Database backup',
