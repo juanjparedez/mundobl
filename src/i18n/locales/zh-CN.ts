@@ -2413,6 +2413,14 @@ const zhCN = {
     "linkCopyError": "无法复制链接。",
     "previousButton": "上一页",
     "nextButton": "下一页",
+    "nextChapterButton": "下一集",
+    "autoMarkedChapter": "已标记第 {n} 集",
+    "undoAutoMark": "撤销",
+    "subtitlesTitle": "字幕",
+    "subtitlesBody": "如果官方视频提供字幕，将自动开启。你可以在播放器的 [CC] 中更改语言。",
+    "regionTitle": "你所在的国家/地区无法观看。",
+    "regionBody": "制作方对该视频设置了地区限制。请查看本剧可用的合法观看方式。",
+    "whereToWatchLink": "观看平台",
     "markChapter": "我已观看第 {n} 集",
     "chapterWatched": "已观看",
     "unmarkChapter": "取消标记第 {n} 集",
@@ -2616,7 +2624,13 @@ const zhCN = {
     "seriesNote": "剧集笔记",
     "notesHintNoEpisode": "将剧集标记为已观看即可添加笔记。",
     "episodesAfterLast": "您标记为已观看的剧集之后还有新剧集。",
-    "followAgain": "再次关注"
+    "followAgain": "再次关注",
+    "localSaved": "已保存在此浏览器中。",
+    "localSignIn": "登录以免丢失",
+    "localImportOffer": "此浏览器中有 {n} 部剧的观看进度。",
+    "localImportButton": "保存到我的账户",
+    "localImportSuccess": "观看进度已保存到你的账户。",
+    "localImportError": "未能保存全部本地观看进度。"
   },
   "posterPlaceholder": {
     "noImage": "无图片"

@@ -1,11 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { useSession, signIn } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { useSeriesUserStatus } from '@/components/series/SeriesUserStatusProvider';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
-import { savePendingTrack } from '@/lib/pending-track';
+import { setLocalEpisodesWatched } from '@/lib/local-progress';
 
 /**
  * Marca o desmarca episodios de la serie del provider en un solo request y
@@ -15,7 +15,7 @@ import { savePendingTrack } from '@/lib/pending-track';
  * `pendingKey` dice que boton esta esperando respuesta.
  */
 export function useMarkEpisodes() {
-  const { seriesId, refetch } = useSeriesUserStatus();
+  const { seriesId, refetch, storage } = useSeriesUserStatus();
   const { status } = useSession();
   const message = useMessage();
   const { t } = useLocale();
@@ -28,17 +28,10 @@ export function useMarkEpisodes() {
   ): Promise<boolean> => {
     if (seriesId === null || episodeIds.length === 0) return false;
 
-    if (status !== 'authenticated') {
-      savePendingTrack({
-        seriesId,
-        upToEpisodeId: null,
-        episodeIds,
-        createdAt: Date.now(),
-      });
-      void signIn('google', {
-        callbackUrl: window.location.pathname + window.location.search,
-      });
-      return false;
+    if (storage === 'local') {
+      setLocalEpisodesWatched(seriesId, episodeIds, watched);
+      await refetch();
+      return true;
     }
 
     setPendingKey(key);

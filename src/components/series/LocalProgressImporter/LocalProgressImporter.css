@@ -1,0 +1,16 @@
+.local-progress-importer {
+  position: fixed;
+  right: var(--spacing-md);
+  bottom: calc(var(--bottom-nav-height, 0px) + var(--spacing-md));
+  z-index: 1000;
+  max-width: min(520px, calc(100vw - 2 * var(--spacing-md)));
+  box-shadow: var(--box-shadow-card);
+}
+
+@media (max-width: 768px) {
+  .local-progress-importer {
+    left: var(--spacing-sm);
+    right: var(--spacing-sm);
+    bottom: calc(var(--bottom-nav-height, 64px) + var(--spacing-sm));
+  }
+}

@@ -2413,6 +2413,14 @@ const th = {
     "linkCopyError": "ไม่สามารถคัดลอกลิงก์ได้",
     "previousButton": "ก่อนหน้า",
     "nextButton": "ถัดไป",
+    "nextChapterButton": "ตอนถัดไป",
+    "autoMarkedChapter": "ทำเครื่องหมายตอนที่ {n} แล้ว",
+    "undoAutoMark": "เลิกทำ",
+    "subtitlesTitle": "คำบรรยาย",
+    "subtitlesBody": "คำบรรยายจะเปิดอัตโนมัติหากวิดีโอทางการมีให้ คุณเปลี่ยนภาษาได้จาก [CC] ในเครื่องเล่น",
+    "regionTitle": "รับชมไม่ได้ในประเทศของคุณ",
+    "regionBody": "ผู้ผลิตจำกัดวิดีโอนี้ตามภูมิภาค โปรดตรวจสอบช่องทางรับชมที่ถูกลิขสิทธิ์ของซีรีส์",
+    "whereToWatchLink": "รับชมได้ที่ไหน",
     "markChapter": "ฉันดูตอนที่ {n} แล้ว",
     "chapterWatched": "ดูแล้ว",
     "unmarkChapter": "เลิกทำเครื่องหมายตอนที่ {n}",
@@ -2616,7 +2624,13 @@ const th = {
     "seriesNote": "บันทึกซีรีส์",
     "notesHintNoEpisode": "ทำเครื่องหมายว่าดูแล้วเพื่อเพิ่มบันทึก",
     "episodesAfterLast": "มีตอนใหม่หลังจากตอนสุดท้ายที่คุณทำเครื่องหมายว่ารับชมแล้ว",
-    "followAgain": "ติดตามอีกครั้ง"
+    "followAgain": "ติดตามอีกครั้ง",
+    "localSaved": "บันทึกไว้ในเบราว์เซอร์นี้แล้ว",
+    "localSignIn": "เข้าสู่ระบบเพื่อไม่ให้ข้อมูลหาย",
+    "localImportOffer": "คุณมีความคืบหน้าของซีรีส์ {n} เรื่องในเบราว์เซอร์นี้",
+    "localImportButton": "บันทึกลงบัญชีของฉัน",
+    "localImportSuccess": "บันทึกความคืบหน้าลงบัญชีแล้ว",
+    "localImportError": "ไม่สามารถบันทึกความคืบหน้าในเครื่องทั้งหมดได้"
   },
   "posterPlaceholder": {
     "noImage": "ไม่มีรูปภาพ"
