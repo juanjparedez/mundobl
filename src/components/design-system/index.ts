@@ -46,6 +46,9 @@ export type {
 export { AutoFitList } from './AutoFitList/AutoFitList';
 export type { AutoFitListProps } from './AutoFitList/AutoFitList';
 
+export { DismissibleNotice } from './DismissibleNotice/DismissibleNotice';
+export type { DismissibleNoticeProps } from './DismissibleNotice/DismissibleNotice';
+
 export { IconToggle } from './IconToggle/IconToggle';
 export type { IconToggleProps } from './IconToggle/IconToggle';
 

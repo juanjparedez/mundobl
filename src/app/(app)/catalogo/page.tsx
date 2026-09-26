@@ -57,7 +57,7 @@ const getCatalogDataCached = unstable_cache(
       getCatalogFilterIndex(),
     ]);
   },
-  ['catalog-page-data-v2'],
+  ['catalog-page-data-v3'],
   // Tageado: cada alta/edicion/baja de serie lo vacia al instante
   // (revalidateSeriesListings), asi que el TTL puede ser largo.
   { revalidate: 21600, tags: [SERIES_LISTINGS_TAG] }
@@ -102,6 +102,8 @@ export default async function CatalogoPage() {
       languageBySerie.set(s.id, s.originalLanguage.name);
     }
   });
+
+  const watchableIds = new Set(filterIndex.watchableIds);
 
   const platformsBySerie = new Map<number, string[]>();
   filterIndex.platforms.forEach((p) => {
@@ -152,6 +154,7 @@ export default async function CatalogoPage() {
       productionCompany: productionCompanyBySerie.get(serie.id) ?? null,
       originalLanguage: languageBySerie.get(serie.id) ?? null,
       platforms: platformsBySerie.get(serie.id) ?? [],
+      watchableHere: watchableIds.has(serie.id),
       // Fecha de alta en el catalogo (no confundir con `anio`, el año de
       // estreno) — usado por la categoria "Recien agregadas" del modo
       // carrusel. `new Date(...)` en vez de `.toISOString()` directo:

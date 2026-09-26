@@ -348,6 +348,11 @@ const th = {
     "glossary": "อภิธานศัพท์ทางวัฒนธรรม",
     "about": "เกี่ยวกับ MundoBL"
   },
+  "navSections": {
+    "watch": "ดูที่นี่",
+    "follow": "ติดตาม",
+    "explore": "สำรวจ"
+  },
   "profile": {
     "loginRequired": "ลงชื่อเข้าใช้เพื่อดูโปรไฟล์ของคุณ",
     "memberSince": "เป็นสมาชิกตั้งแต่",
@@ -581,7 +586,7 @@ const th = {
     "newSeasonsTitle": "ซีซันใหม่",
     "seasonLabel": "ซีซัน",
     "changelogTitle": "การเปลี่ยนแปลงล่าสุด",
-    "watchableTitle": "ซีรีส์เต็มเรื่องที่ดูได้"
+    "watchHereTitle": "ดูที่นี่"
   },
   "watchableCarousel": {
     "watchNow": "ดูเลย",
@@ -1571,7 +1576,15 @@ const th = {
     "sortYearNew": "ใหม่สุด",
     "sortYearOld": "เก่าสุด",
     "sortRatingDesc": "คะแนนสูงสุด",
-    "quickFilterFeatured": "แนะนำ"
+    "quickFilterFeatured": "แนะนำ",
+    "pageTitle": "แคตตาล็อก",
+    "pageSubtitle": "ทุกซีรีส์ที่เราติดตาม บันทึกตอนที่คุณดูอยู่ แม้ว่าคุณจะดูที่อื่นก็ตาม",
+    "quickFiltersLabel": "ตัวกรองด่วน",
+    "quickFilterWatchable": "ดูที่นี่",
+    "quickFilterPopular": "ยอดนิยม",
+    "quickFilterRecent": "ออกใหม่ล่าสุด",
+    "quickFilterTrend": "กำลังมาแรง",
+    "watchHere": "ดูที่นี่"
   },
   "quickPreview": {
     "open": "ดูอย่างรวดเร็ว",
@@ -1721,15 +1734,20 @@ const th = {
     "newsSubtitle": "ติดตามการเปิดกล้องเรื่องใหม่ ตัวอย่างอย่างเป็นทางการ ประกาศต่าง ๆ และการดัดแปลงจากนิยาย โดยไม่มีสิ่งรบกวน",
     "newsCta": "ดูข่าวทั้งหมด"
   },
-  "welcomeBanner": {
-    "title": "ยินดีต้อนรับสู่ MundoBL",
-    "description": "นี่คือแคตตาล็อกส่วนตัวของซีรีส์ BL ที่ฉันดู รวมถึงเรื่องที่ยังออกอากาศอยู่ หากคุณเคยดูเรื่องไหน ฉันอยากให้คุณแสดงความคิดเห็น, ข้อคิดเห็น หรือรีวิว",
-    "dismiss": "รับทราบ"
-  },
   "privacyBanner": {
     "text": "เว็บไซต์นี้บันทึกข้อมูลการเข้าถึงเพื่อวัตถุประสงค์ด้านความปลอดภัยและการปรับปรุง โดยการเรียกดูต่อ คุณยอมรับนโยบายความเป็นส่วนตัวของเรา",
     "detailsLink": "ดูข้อมูลที่เราจัดเก็บและวิธีลบ",
     "accept": "รับทราบ"
+  },
+  "watchHereBanner": {
+    "own": "ดูตอนต่างๆ ได้ที่นี่ จากช่องทางการ",
+    "contribution": "ดูได้ที่นี่เช่นกัน จากการสนับสนุนของชุมชน",
+    "contributions": "ดูได้ที่นี่เช่นกัน จากการสนับสนุนของชุมชน {n} รายการ"
+  },
+  "aboutContentNotice": {
+    "title": "ไม่ใช่ทุกอย่างที่เล่นได้ที่นี่",
+    "body": "เราแสดงเฉพาะสิ่งที่สตูดิโออัปโหลดไปยังช่องทางการของพวกเขา และซีรีส์หลายเรื่องถูกจำกัดภูมิภาค สำหรับส่วนที่เหลือ เราจะบอกคุณว่าจะดูได้ที่ไหนอย่างถูกกฎหมาย",
+    "close": "ปิด"
   },
   "announcementBanner": {
     "dismiss": "ยกเลิก"
@@ -3025,14 +3043,16 @@ const th = {
     "categoryCommunity": "ร่วมให้ข้อมูลโดยชุมชน",
     "categoryIndieVimeo": "Vimeo และอิสระ",
     "resultsTitle": "ผลการค้นหา",
-    "catalogTitle": "แคตตาล็อกทั้งหมดที่รับชมได้",
     "clearFilters": "ล้างตัวกรอง",
     "emptyDescription": "เราไม่พบซีรีส์ที่ตรงกับตัวกรองเหล่านี้ ลองเลือกประเทศหรือชื่อเรื่องอื่น",
     "cardEpisodesBadge": "{count} วิดีโอ",
     "cardPlayButton": "เล่น",
     "geoRestrictedBadge": "ถูกจำกัดในภูมิภาคของคุณ",
     "partiallyUnavailableBadge": "รับชมได้ {count} จาก {total} รายการ",
-    "unavailableHereBadge": "ไม่พร้อมให้รับชมในประเทศของคุณ"
+    "unavailableHereBadge": "ไม่พร้อมให้รับชมในประเทศของคุณ",
+    "pageTitle": "ดูที่นี่",
+    "pageSubtitle": "ตอนต่างๆ จากช่องทางการของสตูดิโอ ฟรี ไม่ต้องมีบัญชี",
+    "allWatchableTitle": "ทุกสิ่งที่คุณรับชมได้ที่นี่"
   },
   "actorProfile": {
     "funFactsTitle": "เกร็ดน่ารู้",

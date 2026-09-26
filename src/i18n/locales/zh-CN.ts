@@ -348,6 +348,11 @@ const zhCN = {
     "glossary": "文化词汇表",
     "about": "关于 MundoBL"
   },
+  "navSections": {
+    "watch": "在此观看",
+    "follow": "关注",
+    "explore": "探索"
+  },
   "profile": {
     "loginRequired": "登录查看您的个人资料",
     "memberSince": "会员注册于",
@@ -581,7 +586,7 @@ const zhCN = {
     "newSeasonsTitle": "新季",
     "seasonLabel": "季",
     "changelogTitle": "最近更改",
-    "watchableTitle": "可观看的完整剧集"
+    "watchHereTitle": "在此观看"
   },
   "watchableCarousel": {
     "watchNow": "立即观看",
@@ -1571,7 +1576,15 @@ const zhCN = {
     "sortYearNew": "最新优先",
     "sortYearOld": "最旧优先",
     "sortRatingDesc": "评分最高",
-    "quickFilterFeatured": "精选"
+    "quickFilterFeatured": "精选",
+    "pageTitle": "剧集目录",
+    "pageSubtitle": "我们追踪的所有剧集。记录您观看的剧集，即使您在其他地方观看。",
+    "quickFiltersLabel": "快速筛选",
+    "quickFilterWatchable": "在此观看",
+    "quickFilterPopular": "热门",
+    "quickFilterRecent": "最新发布",
+    "quickFilterTrend": "趋势",
+    "watchHere": "在此观看"
   },
   "quickPreview": {
     "open": "快速预览",
@@ -1721,15 +1734,20 @@ const zhCN = {
     "newsSubtitle": "及时了解新剧开拍、官方预告、公告与小说改编，没有杂音。",
     "newsCta": "查看全部资讯"
   },
-  "welcomeBanner": {
-    "title": "欢迎来到 MundoBL",
-    "description": "这是我个人观看过的BL剧集目录，包括仍在播出的。如果您看过任何一部，我希望您能留下评论、感想或评价。",
-    "dismiss": "知道了"
-  },
   "privacyBanner": {
     "text": "本网站记录访问信息以用于安全和改进目的。继续浏览即表示您接受我们的隐私政策。",
     "detailsLink": "查看我们存储了什么以及如何删除它",
     "accept": "知道了"
+  },
+  "watchHereBanner": {
+    "own": "在此观看剧集，来自官方频道",
+    "contribution": "也可在此观看，来自社区贡献",
+    "contributions": "也可在此观看，来自 {n} 个社区贡献"
+  },
+  "aboutContentNotice": {
+    "title": "并非所有内容都可在此播放",
+    "body": "我们只显示工作室上传到其官方频道的内容，许多剧集都有地区限制。对于其余内容，我们会告诉您在哪里合法观看。",
+    "close": "关闭"
   },
   "announcementBanner": {
     "dismiss": "忽略"
@@ -3025,14 +3043,16 @@ const zhCN = {
     "categoryCommunity": "社区贡献",
     "categoryIndieVimeo": "Vimeo 和独立",
     "resultsTitle": "搜索结果",
-    "catalogTitle": "完整目录观看",
     "clearFilters": "清除筛选",
     "emptyDescription": "我们找不到符合这些筛选条件的剧集。请尝试其他国家或标题。",
     "cardEpisodesBadge": "{count} 个视频",
     "cardPlayButton": "播放",
     "geoRestrictedBadge": "在你所在地区受限",
     "partiallyUnavailableBadge": "{total} 个中有 {count} 个可观看",
-    "unavailableHereBadge": "你所在的国家/地区无法观看"
+    "unavailableHereBadge": "你所在的国家/地区无法观看",
+    "pageTitle": "在此观看",
+    "pageSubtitle": "来自工作室官方频道的剧集。免费，无需账户。",
+    "allWatchableTitle": "您可以在这里观看的一切"
   },
   "actorProfile": {
     "funFactsTitle": "趣闻",
