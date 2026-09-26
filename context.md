@@ -843,6 +843,8 @@ Items que se decidió **no** incluir en este slice:
 - **Rate limiting**: [src/lib/rate-limit.ts](src/lib/rate-limit.ts) — `checkCommentRateLimit`, `checkFeatureRequestRateLimit`, `checkUserEmbedRateLimit` (cuenta filas Prisma por ventana, sin tabla auxiliar).
 - **Orden de estilos antd vs. los nuestros**: con SSR, el `<style>` de antd llega en el stream después de nuestras hojas y, a igual especificidad (`:where(.css-x).ant-*`), les gana. [src/lib/providers/AntdStyleOrder.tsx](src/lib/providers/AntdStyleOrder.tsx) (adentro de `AntdRegistry`) lo mueve antes del primer `<link data-precedence>`. No usar `layer` de cssinjs: el reset `* { margin: 0; padding: 0 }` de `globals.css` sin capa pisaría todo antd.
 - **Botón atrás**: [NavigationGuard](src/components/layout/NavigationGuard/NavigationGuard.tsx) inyecta una entrada "padre" cuando se entra desde afuera y la navega con el router en `popstate` (el browser solo cambia la URL). Las rutas de detalle llevan slug: los patrones son `[^/]+`, no `\d+`.
+- **Para ver acá / para seguir**: `navItems.ts` agrupa la navegación por `section` (`watch`, `follow`, `explore`); Sidebar y el cajón "Más" usan los mismos grupos. `SerieData.watchableHere` sale de `getCatalogFilterIndex().watchableIds` (PERSONAL + CURATED + `HAS_WATCHABLE_EPISODE`): casi todo lo de /ver es WATCHABLE_ONLY y no está en el catálogo, así que el chip "Se ve acá" aparece poco y es correcto.
+- **Avisos descartables**: `DismissibleNotice` (design system) + `useDismissedNotice(id)`, un array de ids en `localStorage['mundobl.dismissedNotices']`. Mismo id en dos páginas = mismo aviso. En el servidor cuentan como cerrados.
 
 ## Comandos
 

@@ -348,6 +348,11 @@ const it = {
     "glossary": "Glossario culturale",
     "about": "Chi siamo"
   },
+  "navSections": {
+    "watch": "Guarda qui",
+    "follow": "Segui",
+    "explore": "Esplora"
+  },
   "profile": {
     "loginRequired": "Accedi per visualizzare il tuo profilo",
     "memberSince": "Membro dal",
@@ -581,7 +586,7 @@ const it = {
     "newSeasonsTitle": "Nuove stagioni",
     "seasonLabel": "Stagione",
     "changelogTitle": "Modifiche recenti",
-    "watchableTitle": "Serie complete da guardare"
+    "watchHereTitle": "Guarda qui"
   },
   "watchableCarousel": {
     "watchNow": "Guarda ora",
@@ -1571,7 +1576,15 @@ const it = {
     "sortYearNew": "Più recenti",
     "sortYearOld": "Meno recenti",
     "sortRatingDesc": "Migliori voti",
-    "quickFilterFeatured": "In evidenza"
+    "quickFilterFeatured": "In evidenza",
+    "pageTitle": "Catalogo",
+    "pageSubtitle": "Ogni serie che seguiamo. Registra a quale episodio sei, anche se lo guardi altrove.",
+    "quickFiltersLabel": "Filtri rapidi",
+    "quickFilterWatchable": "Guarda qui",
+    "quickFilterPopular": "Popolari",
+    "quickFilterRecent": "Nuove uscite",
+    "quickFilterTrend": "Di tendenza",
+    "watchHere": "Guarda qui"
   },
   "quickPreview": {
     "open": "Anteprima rapida",
@@ -1721,15 +1734,20 @@ const it = {
     "newsSubtitle": "Resta aggiornato su nuove riprese, trailer ufficiali, annunci e adattamenti di romanzi, senza rumore.",
     "newsCta": "Vedi tutte le notizie"
   },
-  "welcomeBanner": {
-    "title": "Benvenuto su MundoBL",
-    "description": "Questo è il mio catalogo personale di serie BL che ho guardato, incluse quelle ancora in onda. Se ne hai guardata qualcuna, mi piacerebbe che tu lasciassi un commento, una riflessione o una recensione.",
-    "dismiss": "Capito"
-  },
   "privacyBanner": {
     "text": "Questo sito registra le informazioni di accesso per motivi di sicurezza e miglioramento. Continuando a navigare, accetti la nostra politica sulla privacy.",
     "detailsLink": "Vedi cosa memorizziamo e come eliminarlo",
     "accept": "Capito"
+  },
+  "watchHereBanner": {
+    "own": "Guarda gli episodi qui, dal canale ufficiale",
+    "contribution": "Guardabile anche qui, in un contributo della community",
+    "contributions": "Guardabile anche qui, in {n} contributi della community"
+  },
+  "aboutContentNotice": {
+    "title": "Non tutto è riproducibile qui",
+    "body": "Mostriamo solo ciò che gli studi caricano sui loro canali ufficiali, e molte serie sono bloccate a livello regionale. Per il resto, ti diciamo dove guardarle legalmente.",
+    "close": "Chiudi"
   },
   "announcementBanner": {
     "dismiss": "Ignora"
@@ -3025,14 +3043,16 @@ const it = {
     "categoryCommunity": "Contributi della community",
     "categoryIndieVimeo": "Vimeo e indipendenti",
     "resultsTitle": "Risultati di ricerca",
-    "catalogTitle": "Catalogo completo da guardare",
     "clearFilters": "Cancella filtri",
     "emptyDescription": "Non abbiamo trovato serie con questi filtri. Prova un paese o un titolo diverso.",
     "cardEpisodesBadge": "{count} video",
     "cardPlayButton": "Riproduci",
     "geoRestrictedBadge": "Limitato nella tua regione",
     "partiallyUnavailableBadge": "{count} di {total} disponibili qui",
-    "unavailableHereBadge": "Non disponibile nel tuo paese"
+    "unavailableHereBadge": "Non disponibile nel tuo paese",
+    "pageTitle": "Guarda qui",
+    "pageSubtitle": "Episodi dai canali ufficiali degli studi. Gratis, nessun account necessario.",
+    "allWatchableTitle": "Tutto ciò che puoi guardare qui"
   },
   "actorProfile": {
     "funFactsTitle": "Curiosità",

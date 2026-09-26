@@ -34,6 +34,19 @@ import type { TranslationKey } from '@/i18n/messages';
 
 export type NavAccess = 'public' | 'session' | 'admin' | 'collaborator';
 
+/**
+ * Lo que se ve aca y lo que solo se sigue van separados: el catalogo es mucho
+ * mas grande que lo que se puede mirar en el sitio, y la navegacion no puede
+ * dar a entender lo contrario.
+ */
+export type NavSection = 'watch' | 'follow' | 'explore';
+
+export const NAV_SECTIONS: { key: NavSection; labelKey: TranslationKey }[] = [
+  { key: 'watch', labelKey: 'navSections.watch' },
+  { key: 'follow', labelKey: 'navSections.follow' },
+  { key: 'explore', labelKey: 'navSections.explore' },
+];
+
 export interface NavItemDef {
   key: string;
   path: string;
@@ -42,6 +55,7 @@ export interface NavItemDef {
   /** Rotulo corto para la barra inferior (12px, sin espacio). */
   shortLabelKey?: TranslationKey;
   access: NavAccess;
+  section: NavSection;
   /** Va en la barra inferior de movil (maximo 4 + "Mas"). */
   primary?: boolean;
   /** Punto/contador sobre el icono. */
@@ -52,21 +66,23 @@ export interface NavItemDef {
 
 export const NAV_ITEMS: NavItemDef[] = [
   {
-    key: 'catalogo',
-    path: ROUTES.CATALOGO,
-    icon: AppstoreOutlined,
-    labelKey: 'sidebar.catalog',
-    shortLabelKey: 'bottomNav.catalog',
-    access: 'public',
-    primary: true,
-  },
-  {
     key: 'ver',
     path: ROUTES.VER,
     icon: VideoCameraOutlined,
     labelKey: 'sidebar.ver',
     shortLabelKey: 'bottomNav.watch',
     access: 'public',
+    section: 'watch',
+    primary: true,
+  },
+  {
+    key: 'catalogo',
+    path: ROUTES.CATALOGO,
+    icon: AppstoreOutlined,
+    labelKey: 'sidebar.catalog',
+    shortLabelKey: 'bottomNav.catalog',
+    access: 'public',
+    section: 'follow',
     primary: true,
   },
   {
@@ -76,6 +92,7 @@ export const NAV_ITEMS: NavItemDef[] = [
     labelKey: 'sidebar.watching',
     shortLabelKey: 'bottomNav.watching',
     access: 'public',
+    section: 'follow',
     primary: true,
   },
   {
@@ -85,6 +102,7 @@ export const NAV_ITEMS: NavItemDef[] = [
     labelKey: 'sidebar.profile',
     shortLabelKey: 'bottomNav.profile',
     access: 'session',
+    section: 'follow',
     primary: true,
     badge: 'notifications',
   },
@@ -94,6 +112,7 @@ export const NAV_ITEMS: NavItemDef[] = [
     icon: BellOutlined,
     labelKey: 'notifications.label',
     access: 'session',
+    section: 'follow',
     badge: 'notifications',
     mobileOnly: true,
   },
@@ -103,6 +122,7 @@ export const NAV_ITEMS: NavItemDef[] = [
     icon: NotificationOutlined,
     labelKey: 'sidebar.novedades',
     access: 'public',
+    section: 'explore',
     badge: 'novedades',
   },
   {
@@ -111,6 +131,7 @@ export const NAV_ITEMS: NavItemDef[] = [
     icon: CalendarOutlined,
     labelKey: 'estrenos.title',
     access: 'public',
+    section: 'explore',
   },
   {
     key: 'actores',
@@ -118,6 +139,7 @@ export const NAV_ITEMS: NavItemDef[] = [
     icon: TeamOutlined,
     labelKey: 'peopleIndex.actorsTitle',
     access: 'public',
+    section: 'explore',
   },
   {
     key: 'directores',
@@ -125,6 +147,7 @@ export const NAV_ITEMS: NavItemDef[] = [
     icon: VideoCameraAddOutlined,
     labelKey: 'peopleIndex.directorsTitle',
     access: 'public',
+    section: 'explore',
   },
   {
     key: 'productoras',
@@ -132,6 +155,7 @@ export const NAV_ITEMS: NavItemDef[] = [
     icon: BankOutlined,
     labelKey: 'peopleIndex.companiesTitle',
     access: 'public',
+    section: 'explore',
   },
   {
     key: 'feedback',
@@ -139,6 +163,7 @@ export const NAV_ITEMS: NavItemDef[] = [
     icon: CommentOutlined,
     labelKey: 'sidebar.feedback',
     access: 'public',
+    section: 'explore',
   },
   {
     key: 'sitios',
@@ -146,6 +171,7 @@ export const NAV_ITEMS: NavItemDef[] = [
     icon: LinkOutlined,
     labelKey: 'sidebar.sites',
     access: 'public',
+    section: 'explore',
   },
   {
     key: 'plataformas',
@@ -153,6 +179,7 @@ export const NAV_ITEMS: NavItemDef[] = [
     icon: SafetyCertificateOutlined,
     labelKey: 'sidebar.platforms',
     access: 'public',
+    section: 'explore',
   },
   {
     key: 'glosario',
@@ -160,6 +187,7 @@ export const NAV_ITEMS: NavItemDef[] = [
     icon: TranslationOutlined,
     labelKey: 'sidebar.glossary',
     access: 'public',
+    section: 'explore',
   },
   {
     key: 'contenido',
@@ -167,6 +195,7 @@ export const NAV_ITEMS: NavItemDef[] = [
     icon: PlaySquareOutlined,
     labelKey: 'sidebar.content',
     access: 'public',
+    section: 'explore',
   },
   {
     key: 'estadisticas',
@@ -174,6 +203,7 @@ export const NAV_ITEMS: NavItemDef[] = [
     icon: BarChartOutlined,
     labelKey: 'sidebar.stats',
     access: 'public',
+    section: 'explore',
   },
   {
     key: 'acerca',
@@ -181,6 +211,7 @@ export const NAV_ITEMS: NavItemDef[] = [
     icon: InfoCircleOutlined,
     labelKey: 'sidebar.about',
     access: 'public',
+    section: 'explore',
   },
   {
     key: 'admin',
@@ -188,6 +219,7 @@ export const NAV_ITEMS: NavItemDef[] = [
     icon: SettingOutlined,
     labelKey: 'sidebar.administration',
     access: 'admin',
+    section: 'explore',
   },
   {
     key: 'colaborador',
@@ -195,6 +227,7 @@ export const NAV_ITEMS: NavItemDef[] = [
     icon: SettingOutlined,
     labelKey: 'sidebar.collaboratorPanel',
     access: 'collaborator',
+    section: 'explore',
   },
 ];
 

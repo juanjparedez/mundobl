@@ -339,6 +339,11 @@ export type TranslationShape = {
     glossary: string;
     about: string;
   };
+  navSections: {
+    watch: string;
+    follow: string;
+    explore: string;
+  };
   profile: {
     loginRequired: string;
     memberSince: string;
@@ -572,7 +577,7 @@ export type TranslationShape = {
     newSeasonsTitle: string;
     seasonLabel: string;
     changelogTitle: string;
-    watchableTitle: string;
+    watchHereTitle: string;
   };
   watchableCarousel: {
     watchNow: string;
@@ -1563,6 +1568,14 @@ export type TranslationShape = {
     sortYearOld: string;
     sortRatingDesc: string;
     quickFilterFeatured: string;
+    pageTitle: string;
+    pageSubtitle: string;
+    quickFiltersLabel: string;
+    quickFilterWatchable: string;
+    quickFilterPopular: string;
+    quickFilterRecent: string;
+    quickFilterTrend: string;
+    watchHere: string;
   };
   quickPreview: {
     open: string;
@@ -1716,15 +1729,20 @@ export type TranslationShape = {
     newsSubtitle: string;
     newsCta: string;
   };
-  welcomeBanner: {
-    title: string;
-    description: string;
-    dismiss: string;
-  };
   privacyBanner: {
     text: string;
     detailsLink: string;
     accept: string;
+  };
+  watchHereBanner: {
+    own: string;
+    contribution: string;
+    contributions: string;
+  };
+  aboutContentNotice: {
+    title: string;
+    body: string;
+    close: string;
   };
   announcementBanner: {
     dismiss: string;
@@ -3020,7 +3038,6 @@ export type TranslationShape = {
     categoryCommunity: string;
     categoryIndieVimeo: string;
     resultsTitle: string;
-    catalogTitle: string;
     clearFilters: string;
     emptyDescription: string;
     cardEpisodesBadge: string;
@@ -3028,6 +3045,9 @@ export type TranslationShape = {
     geoRestrictedBadge: string;
     partiallyUnavailableBadge: string;
     unavailableHereBadge: string;
+    pageTitle: string;
+    pageSubtitle: string;
+    allWatchableTitle: string;
   };
   actorProfile: {
     funFactsTitle: string;
@@ -3488,7 +3508,7 @@ const es: TranslationShape = {
     skipToContent: 'Saltar al contenido principal',
   },
   sidebar: {
-    catalog: 'Catalogo',
+    catalog: 'Catálogo',
     watching: 'Viendo Ahora',
     novedades: 'Novedades',
     feedback: 'Feedback',
@@ -3529,6 +3549,11 @@ const es: TranslationShape = {
     platforms: 'Plataformas y planes',
     glossary: 'Glosario cultural',
     about: 'Acerca de MundoBL',
+  },
+  navSections: {
+    watch: 'Para ver acá',
+    follow: 'Para seguir',
+    explore: 'Explorar',
   },
   profile: {
     loginRequired: 'Inicia sesion para ver tu perfil',
@@ -3786,7 +3811,7 @@ const es: TranslationShape = {
     newSeasonsTitle: 'Nuevas temporadas',
     seasonLabel: 'Temporada',
     changelogTitle: 'Cambios recientes',
-    watchableTitle: 'Series completas para ver',
+    watchHereTitle: 'Para ver acá',
   },
   watchableCarousel: {
     watchNow: 'Ver ahora',
@@ -3827,7 +3852,7 @@ const es: TranslationShape = {
   },
   bottomNav: {
     mainNavigation: 'Navegacion principal',
-    catalog: 'Catalogo',
+    catalog: 'Catálogo',
     watching: 'Viendo',
     feedback: 'Feedback',
     admin: 'Admin',
@@ -4819,6 +4844,15 @@ const es: TranslationShape = {
     sortYearOld: 'Más antiguo',
     sortRatingDesc: 'Mejor valorado',
     quickFilterFeatured: 'Destacadas',
+    pageTitle: 'Catálogo',
+    pageSubtitle:
+      'Todas las series que seguimos. Marcá por qué capítulo vas aunque la veas en otra plataforma.',
+    quickFiltersLabel: 'Filtros rápidos',
+    quickFilterWatchable: 'Para ver acá',
+    quickFilterPopular: 'Populares',
+    quickFilterRecent: 'Estrenos recientes',
+    quickFilterTrend: 'Tendencia',
+    watchHere: 'Se ve acá',
   },
   quickPreview: {
     open: 'Vista rápida',
@@ -5002,16 +5036,20 @@ const es: TranslationShape = {
       'Enterate de nuevos rodajes, trailers oficiales, cancelaciones y adaptaciones de novelas sin clickbaits.',
     newsCta: 'Ver todas las noticias',
   },
-  welcomeBanner: {
-    title: 'Bienvenido/a a MundoBL',
-    description:
-      'Este es mi catálogo personal de series BL que fui viendo, incluyendo las que aún están en emisión. Si viste alguna, me encantaría que dejes tu comentario, reflexión o reseña.',
-    dismiss: '¡Vamos!',
-  },
   privacyBanner: {
     text: 'Guardamos algunos datos para que la app funcione (sesión, preferencias, actividad).',
     detailsLink: 'Ver qué guardamos y cómo borrarlo',
     accept: 'Ok, entendido',
+  },
+  watchHereBanner: {
+    own: 'Ver los episodios acá, desde el canal oficial',
+    contribution: 'También se ve acá, en un aporte de la comunidad',
+    contributions: 'También se ve acá, en {n} aportes de la comunidad',
+  },
+  aboutContentNotice: {
+    title: 'No todo se ve acá',
+    body: 'Solo mostramos lo que las productoras suben a sus canales oficiales, y muchas series tienen restricciones por país. Para el resto, te decimos dónde verla legalmente.',
+    close: 'Cerrar aviso',
   },
   announcementBanner: {
     dismiss: 'Cerrar aviso',
@@ -6363,7 +6401,6 @@ const es: TranslationShape = {
     categoryCommunity: 'Aportadas por la comunidad',
     categoryIndieVimeo: 'Vimeo e independientes',
     resultsTitle: 'Resultados de Búsqueda',
-    catalogTitle: 'Catálogo Completo para Ver',
     clearFilters: 'Limpiar filtros',
     emptyDescription:
       'No encontramos series con esos filtros. Probá buscando por otro país o título.',
@@ -6372,6 +6409,10 @@ const es: TranslationShape = {
     geoRestrictedBadge: 'Restringido en tu región',
     partiallyUnavailableBadge: '{count} de {total} disponibles acá',
     unavailableHereBadge: 'No disponible en tu país',
+    pageTitle: 'Para ver acá',
+    pageSubtitle:
+      'Episodios desde los canales oficiales de sus productoras. Gratis, sin cuenta.',
+    allWatchableTitle: 'Todo lo que se ve acá',
   },
   actorProfile: {
     funFactsTitle: 'Datos curiosos',
@@ -6883,6 +6924,11 @@ const en: TranslationShape = {
     glossary: 'Cultural glossary',
     about: 'About MundoBL',
   },
+  navSections: {
+    watch: 'Watch here',
+    follow: 'Follow',
+    explore: 'Explore',
+  },
   profile: {
     loginRequired: 'Sign in to view your profile',
     memberSince: 'Member since',
@@ -7133,7 +7179,7 @@ const en: TranslationShape = {
     newSeasonsTitle: 'New seasons',
     seasonLabel: 'Season',
     changelogTitle: 'Recent changes',
-    watchableTitle: 'Full series to watch',
+    watchHereTitle: 'Watch here',
   },
   watchableCarousel: {
     watchNow: 'Watch now',
@@ -8160,6 +8206,15 @@ const en: TranslationShape = {
     sortYearOld: 'Oldest first',
     sortRatingDesc: 'Best rated',
     quickFilterFeatured: 'Featured',
+    pageTitle: 'Catalog',
+    pageSubtitle:
+      "Every series we track. Log which episode you're on, even if you watch it somewhere else.",
+    quickFiltersLabel: 'Quick filters',
+    quickFilterWatchable: 'Watch here',
+    quickFilterPopular: 'Popular',
+    quickFilterRecent: 'Recent releases',
+    quickFilterTrend: 'Trending',
+    watchHere: 'Watch here',
   },
   quickPreview: {
     open: 'Quick view',
@@ -8343,16 +8398,20 @@ const en: TranslationShape = {
       'Stay updated on new shoots, official trailers, announcements, and novel adaptations without noise.',
     newsCta: 'Browse all news',
   },
-  welcomeBanner: {
-    title: 'Welcome to MundoBL',
-    description:
-      'This is my personal catalog of BL series I have watched, including those still airing. If you have watched any, I would love for you to leave a comment, reflection or review.',
-    dismiss: "Let's go!",
-  },
   privacyBanner: {
     text: 'We store some data so the app works (session, preferences, activity).',
     detailsLink: 'See what we store and how to delete it',
     accept: 'Got it',
+  },
+  watchHereBanner: {
+    own: 'Watch the episodes here, from the official channel',
+    contribution: 'Also watchable here, in a community contribution',
+    contributions: 'Also watchable here, in {n} community contributions',
+  },
+  aboutContentNotice: {
+    title: 'Not everything can be watched here',
+    body: 'We only show what studios upload to their official channels, and many series are region-locked. For the rest, we tell you where to watch them legally.',
+    close: 'Dismiss',
   },
   announcementBanner: {
     dismiss: 'Dismiss',
@@ -9699,7 +9758,6 @@ const en: TranslationShape = {
     categoryCommunity: 'Community contributed',
     categoryIndieVimeo: 'Vimeo & independent',
     resultsTitle: 'Search Results',
-    catalogTitle: 'Full Catalog to Watch',
     clearFilters: 'Clear filters',
     emptyDescription:
       "We couldn't find series with those filters. Try a different country or title.",
@@ -9708,6 +9766,10 @@ const en: TranslationShape = {
     geoRestrictedBadge: 'Restricted in your region',
     partiallyUnavailableBadge: '{count} of {total} available here',
     unavailableHereBadge: 'Not available in your country',
+    pageTitle: 'Watch here',
+    pageSubtitle:
+      "Episodes from the studios' official channels. Free, no account needed.",
+    allWatchableTitle: 'Everything you can watch here',
   },
   actorProfile: {
     funFactsTitle: 'Fun Facts',

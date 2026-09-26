@@ -38,6 +38,8 @@ export interface SerieData {
   productionCompany?: string | null;
   originalLanguage?: string | null;
   platforms?: string[];
+  /** Tiene episodios que se ven en /ver (no solo "donde ver" afuera). */
+  watchableHere?: boolean;
   /** ISO string. Usado por la categoria "Recien agregadas" del modo
    *  carrusel — no relacionado con `anio` (año de estreno). */
   createdAt?: string;
