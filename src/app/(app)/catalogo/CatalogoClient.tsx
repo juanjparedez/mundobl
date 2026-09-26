@@ -7,6 +7,7 @@ import {
   useCallback,
   useDeferredValue,
   useRef,
+  type ComponentType,
 } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
@@ -40,6 +41,7 @@ import {
   ClockCircleOutlined,
   ThunderboltOutlined,
   CrownOutlined,
+  PlayCircleOutlined,
   InboxOutlined,
   BarsOutlined,
   SettingOutlined,
@@ -47,12 +49,13 @@ import {
   InfoCircleOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useMessage } from '@/hooks/useMessage';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
-import { WelcomeBanner } from '@/components/common/WelcomeBanner/WelcomeBanner';
+import { AboutContentNotice } from '@/components/common/AboutContentNotice/AboutContentNotice';
 import {
   buildCatalogQuery,
   DEFAULT_PAGE_SIZE,
@@ -66,6 +69,7 @@ import {
 } from './catalogUrl';
 import {
   EmptyState,
+  SectionHeader,
   useQuickPreviewController,
 } from '@/components/design-system';
 import type {
@@ -75,8 +79,9 @@ import type {
 import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { canEditCatalog } from '@/lib/auth-client';
 import { withViewTransition } from '@/lib/view-transitions';
-import { getSeriesUrl } from '@/lib/slug';
+import { getSeriesUrl, getVerUrl } from '@/lib/slug';
 import type { SerieData, UniverseGroup, CatalogItem } from './catalogTypes';
+import type { TranslationKey } from '@/i18n/messages';
 import { groupIntoCatalogItems } from './catalogGrouping';
 import { CatalogCarouselView } from './carousel/CatalogCarouselView/CatalogCarouselView';
 import { ReorderConfigDrawer } from '@/components/carousel/ReorderConfigDrawer/ReorderConfigDrawer';
@@ -90,6 +95,38 @@ interface CatalogoClientProps {
 }
 
 const ALPHABET = '#ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+
+const QUICK_FILTER_CHIPS: {
+  value: Exclude<QuickFilterValue, null>;
+  icon: ComponentType;
+  labelKey: TranslationKey;
+}[] = [
+  {
+    value: 'watchable',
+    icon: PlayCircleOutlined,
+    labelKey: 'catalogo.quickFilterWatchable',
+  },
+  {
+    value: 'popular',
+    icon: FireOutlined,
+    labelKey: 'catalogo.quickFilterPopular',
+  },
+  {
+    value: 'recent',
+    icon: ClockCircleOutlined,
+    labelKey: 'catalogo.quickFilterRecent',
+  },
+  {
+    value: 'trend',
+    icon: ThunderboltOutlined,
+    labelKey: 'catalogo.quickFilterTrend',
+  },
+  {
+    value: 'featured',
+    icon: CrownOutlined,
+    labelKey: 'catalogo.quickFilterFeatured',
+  },
+];
 const CATALOG_CAROUSEL_CATEGORY_IDS = CATALOG_CAROUSEL_CATEGORIES.map(
   (c) => c.id
 );
@@ -524,6 +561,10 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
       });
     }
 
+    if (selectedQuickFilter === 'watchable') {
+      filtered = filtered.filter((s) => s.watchableHere);
+    }
+
     if (selectedQuickFilter === 'popular') {
       filtered = filtered.filter((s) => (s.rating ?? 0) >= 8);
     }
@@ -866,11 +907,25 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
         },
       ],
       actions: [
+        // Si se ve aca, lo primero es poder mirarla; la ficha queda al lado.
+        ...(serie.watchableHere
+          ? [
+              {
+                key: 'watch',
+                label: t('quickPreview.watchNow'),
+                icon: <PlayCircleOutlined />,
+                variant: 'primary' as const,
+                href: getVerUrl(Number(serie.id), serie.titulo),
+              },
+            ]
+          : []),
         {
           key: 'detail',
           label: t('quickPreview.fullDetail'),
           icon: <InfoCircleOutlined />,
-          variant: 'primary' as const,
+          variant: serie.watchableHere
+            ? ('default' as const)
+            : ('primary' as const),
           href: getSeriesUrl(serie.id, serie.titulo),
         },
         {
@@ -937,6 +992,19 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
   // el elemento LCP se lazy-cargaba como cualquier otro. `priority` (que
   // ademas desactiva el lazy-load) solo va en las primeras ~4, para no
   // preload-ear de mas.
+  // Link directo al reproductor. Frena el click para que la card no abra
+  // la ficha por debajo.
+  const renderWatchHere = (serie: SerieData) =>
+    serie.watchableHere ? (
+      <Link
+        href={getVerUrl(Number(serie.id), serie.titulo)}
+        className="catalogo-watch-here"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <PlayCircleOutlined aria-hidden="true" /> {t('catalogo.watchHere')}
+      </Link>
+    ) : null;
+
   const renderSingleCard = (serie: SerieData, index = 0) => {
     const isPriority = index < 4;
     const gradient = getGradientByType(serie.tipo);
@@ -1025,6 +1093,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
             <span>
               <CountryFlag code={serie.paisCode} size="small" /> {serie.pais}
             </span>
+            {renderWatchHere(serie)}
             {serie.rating != null && serie.rating > 0 && (
               <Tag color="gold" className="catalogo-tag-flat">
                 ★ {serie.rating}
@@ -1280,6 +1349,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
                 {serie.rating}
               </Tag>
             )}
+            {renderWatchHere(serie)}
           </div>
         </div>
         <button
@@ -1595,7 +1665,13 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
 
   return (
     <>
-      <WelcomeBanner isLoggedIn={userRole !== null} />
+      <SectionHeader
+        as="h1"
+        size="lg"
+        title={t('catalogo.pageTitle')}
+        subtitle={t('catalogo.pageSubtitle')}
+      />
+      <AboutContentNotice />
       {/* Toolbar: búsqueda + acciones */}
       <div className="catalogo-toolbar">
         <div className="catalogo-toolbar-left">
@@ -1728,52 +1804,24 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
         <div
           className="catalogo-quick-filters"
           role="group"
-          aria-label="Filtros rápidos"
+          aria-label={t('catalogo.quickFiltersLabel')}
         >
-          <button
-            className={`catalogo-quick-chip${selectedQuickFilter === 'popular' ? ' catalogo-quick-chip--active' : ''}`}
-            onClick={() => {
-              setSelectedQuickFilter((prev) =>
-                prev === 'popular' ? null : 'popular'
-              );
-              handleFilterChange();
-            }}
-          >
-            <FireOutlined /> Populares
-          </button>
-          <button
-            className={`catalogo-quick-chip${selectedQuickFilter === 'recent' ? ' catalogo-quick-chip--active' : ''}`}
-            onClick={() => {
-              setSelectedQuickFilter((prev) =>
-                prev === 'recent' ? null : 'recent'
-              );
-              handleFilterChange();
-            }}
-          >
-            <ClockCircleOutlined /> Recién agregados
-          </button>
-          <button
-            className={`catalogo-quick-chip${selectedQuickFilter === 'trend' ? ' catalogo-quick-chip--active' : ''}`}
-            onClick={() => {
-              setSelectedQuickFilter((prev) =>
-                prev === 'trend' ? null : 'trend'
-              );
-              handleFilterChange();
-            }}
-          >
-            <ThunderboltOutlined /> Tendencia
-          </button>
-          <button
-            className={`catalogo-quick-chip catalogo-quick-chip--featured${selectedQuickFilter === 'featured' ? ' catalogo-quick-chip--active' : ''}`}
-            onClick={() => {
-              setSelectedQuickFilter((prev) =>
-                prev === 'featured' ? null : 'featured'
-              );
-              handleFilterChange();
-            }}
-          >
-            <CrownOutlined /> {t('catalogo.quickFilterFeatured')}
-          </button>
+          {QUICK_FILTER_CHIPS.map(({ value, icon: Icon, labelKey }) => (
+            <button
+              key={value}
+              type="button"
+              className={`catalogo-quick-chip catalogo-quick-chip--${value}${selectedQuickFilter === value ? ' catalogo-quick-chip--active' : ''}`}
+              aria-pressed={selectedQuickFilter === value}
+              onClick={() => {
+                setSelectedQuickFilter((prev) =>
+                  prev === value ? null : value
+                );
+                handleFilterChange();
+              }}
+            >
+              <Icon /> {t(labelKey)}
+            </button>
+          ))}
         </div>
       )}
 

@@ -196,6 +196,21 @@
   flex-direction: column;
 }
 
+.bottom-nav-more-heading {
+  margin: 0;
+  padding: var(--spacing-md) var(--spacing-lg) var(--spacing-xs);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+
+.bottom-nav-more-list--account {
+  margin-top: var(--spacing-sm);
+  border-top: 1px solid var(--border-color-secondary);
+}
+
 .bottom-nav-more-item {
   width: 100%;
   display: flex;

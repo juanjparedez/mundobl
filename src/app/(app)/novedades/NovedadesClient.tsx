@@ -182,7 +182,7 @@ export function NovedadesClient({
       {watchableSeries.length > 0 && (
         <WatchableCarousel
           items={watchableSeries}
-          title={t('novedades.watchableTitle')}
+          title={t('novedades.watchHereTitle')}
         />
       )}
 

@@ -8,6 +8,7 @@ export const PAGE_SIZE_OPTIONS = [24, 48, 96];
 export const DEFAULT_PAGE_SIZE = 48;
 
 export type QuickFilterValue =
+  | 'watchable'
   | 'popular'
   | 'recent'
   | 'trend'
@@ -16,7 +17,13 @@ export type QuickFilterValue =
 export type SortKey = 'az' | 'za' | 'year-desc' | 'year-asc' | 'rating-desc';
 export type ViewMode = 'grid' | 'list' | 'carousel';
 
-const QUICK_FILTERS = ['popular', 'recent', 'trend', 'featured'] as const;
+const QUICK_FILTERS = [
+  'watchable',
+  'popular',
+  'recent',
+  'trend',
+  'featured',
+] as const;
 const SORT_KEYS: SortKey[] = [
   'az',
   'za',
