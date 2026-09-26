@@ -1,12 +1,13 @@
 import type { Metadata } from 'next';
-import { CurrentlyWatchingDashboard } from '@/components/watching/CurrentlyWatchingDashboard';
+import { CurrentlyWatchingDashboard } from '@/components/watching/CurrentlyWatchingDashboard/CurrentlyWatchingDashboard';
 import './watching.css';
 
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Viendo Ahora',
-  description: 'Series BL y doramas que estás viendo actualmente.',
+  title: 'Mi seguimiento',
+  description:
+    'Tu progreso por episodio, tus notas privadas y tus series en curso.',
   robots: { index: false, follow: false },
 };
 
@@ -14,7 +15,6 @@ export default function WatchingPage() {
   return (
     <>
       <div className="watching-page">
-        <h1 className="watching-page__title">📺 Viendo Ahora</h1>
         <CurrentlyWatchingDashboard />
       </div>
     </>

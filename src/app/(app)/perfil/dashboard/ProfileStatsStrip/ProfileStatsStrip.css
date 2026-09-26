@@ -1,5 +1,5 @@
 /* Stats strip alineada al style-guide premium dark:
- * Una sola "card" horizontal con N KPIs separados por divisores
+ * Una grilla adaptable de KPIs separados por divisores
  * verticales tenues. Cada KPI es compact: icon chico + valor grande +
  * label uppercase. */
 .mb-profile-stats-strip {
@@ -7,8 +7,7 @@
   margin: 0;
   padding: 0;
   display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(0, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
   background: var(--bg-container);
   border: 1px solid var(--border-color-secondary);
   border-radius: var(--border-radius-lg);
@@ -64,39 +63,9 @@
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--text-tertiary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Mobile: pasa a grid de 4 columnas con divisores ajustados */
-@media (max-width: 900px) {
-  .mb-profile-stats-strip {
-    grid-auto-flow: row;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-  .mb-profile-stats-strip__item {
-    border-right: 1px solid var(--border-color-secondary);
-    border-bottom: 1px solid var(--border-color-secondary);
-  }
-  .mb-profile-stats-strip__item:nth-child(4n) {
-    border-right: none;
-  }
-  .mb-profile-stats-strip__item:nth-last-child(-n + 4) {
-    border-bottom: none;
-  }
-}
-
-@media (max-width: 540px) {
-  .mb-profile-stats-strip {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .mb-profile-stats-strip__item:nth-child(2n) {
-    border-right: none;
-  }
-  .mb-profile-stats-strip__item:nth-child(4n) {
-    border-right: none;
-  }
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.35;
 }
 
 html[data-skin='premium'][data-theme='dark'] .mb-profile-stats-strip {
@@ -113,4 +82,12 @@ html[data-skin='premium'][data-theme='dark'] .mb-profile-stats-strip__item {
 html[data-skin='premium'][data-theme='dark'] .mb-profile-stats-strip__icon {
   background: var(--mb-gold-soft);
   color: var(--mb-gold);
+}
+
+.mb-profile-stats-strip__hint {
+  margin-top: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  white-space: normal;
+  overflow-wrap: anywhere;
 }

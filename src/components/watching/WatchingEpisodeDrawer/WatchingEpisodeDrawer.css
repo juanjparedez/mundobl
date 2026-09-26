@@ -1,0 +1,12 @@
+.watching-episode-drawer__privacy {
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-md);
+}
+
+.watching-episode-drawer .episode-chapters__row {
+  flex-wrap: wrap;
+}
+
+.watching-episode-drawer .episode-chapters__actions {
+  flex-wrap: wrap;
+}

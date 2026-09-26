@@ -1,25 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/database';
-import { requireRole } from '@/lib/auth-helpers';
+import { prisma, getReadableSeriesInfoBlocks } from '@/lib/database';
+import { requireAuth, requireRole } from '@/lib/auth-helpers';
 import { assertSeriesOwnership } from '@/lib/collaborator-guard';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
-// GET /api/series/[id]/info-blocks — lista publica, ordenada por sortOrder.
+// GET: visible publicly; hidden blocks require editorial or contribution ownership.
 export async function GET(_req: NextRequest, { params }: RouteParams) {
   try {
     const { id } = await params;
-    const seriesId = parseInt(id, 10);
-    if (isNaN(seriesId)) {
+    const seriesId = Number(id);
+    if (!Number.isSafeInteger(seriesId) || seriesId <= 0) {
       return NextResponse.json({ error: 'ID invalido' }, { status: 400 });
     }
-    const blocks = await prisma.seriesInfoBlock.findMany({
-      where: { seriesId },
-      orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }],
+    const viewer = await requireAuth();
+    const blocks = await getReadableSeriesInfoBlocks(
+      seriesId,
+      viewer.authorized ? viewer : undefined
+    );
+    return NextResponse.json(blocks, {
+      headers: { 'Cache-Control': 'private, no-store' },
     });
-    return NextResponse.json(blocks);
   } catch (error) {
     return NextResponse.json(
       { error: error instanceof Error ? error.message : 'Error' },
