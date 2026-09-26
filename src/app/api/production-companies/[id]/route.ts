@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
+import { revalidateSeriesDetail } from '@/lib/revalidate-series';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -31,11 +33,31 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       where: { id: companyId },
       data: {
         name: body.name.trim(),
-        country: body.country || null,
+        // La ficha publica edita solo el nombre: sin `country` en el body, el
+        // pais se deja como esta en vez de borrarlo.
+        ...('country' in body && { country: body.country || null }),
+      },
+      select: {
+        id: true,
+        name: true,
+        country: true,
+        seriesLinks: {
+          select: { series: { select: { id: true, title: true } } },
+        },
       },
     });
 
-    return NextResponse.json(company);
+    // El nombre sale en la ficha de la productora, en el indice y en la ficha
+    // de cada una de sus series.
+    revalidatePath(`/productoras/${company.id}`);
+    revalidatePath('/productoras');
+    for (const link of company.seriesLinks) revalidateSeriesDetail(link.series);
+
+    return NextResponse.json({
+      id: company.id,
+      name: company.name,
+      country: company.country,
+    });
   } catch (error: unknown) {
     console.error('Error al actualizar productora:', error);
 

@@ -22,6 +22,7 @@ import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import type { TranslationKey } from '@/i18n/messages';
+import { CompanyEditButton } from './CompanyEditButton/CompanyEditButton';
 import './company-profile.css';
 
 interface CompanySeries {
@@ -177,6 +178,7 @@ export function CompanyProfileClient({ company }: CompanyProfileClientProps) {
 
           <div className="company-profile__info">
             <h1 className="company-profile__name">{company.name}</h1>
+            <CompanyEditButton companyId={company.id} name={company.name} />
             <div className="company-profile__meta">
               {company.countryName && (
                 <Chip size="sm" tone="info">
