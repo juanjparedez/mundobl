@@ -1,3 +1,4 @@
+import type { WatchDateTarget } from './watch-date';
 /**
  * Database helper functions for MundoBL
  *
@@ -12,6 +13,18 @@ import { Prisma, PrismaClient } from '../generated/prisma';
 import { isPlayableIn } from './playability';
 import { airingSeriesWhere } from './airing-schedule';
 import { normalizeBasedOn, type BasedOnEntry } from './based-on';
+import { planTrackingBackup, trackingBackupKey } from './tracking-backup';
+import {
+  planTrackingHistoryImport,
+  type TrackingHistoryPage,
+} from './tracking-history';
+import { getContentUrl } from './slug';
+import {
+  contributionNames,
+  resolveContributionMetadata,
+  type ContributionMetadataInput,
+  type ContributionMetadataKind,
+} from './contribution-metadata';
 import {
   HAS_WATCHABLE_EPISODE,
   WATCHABLE_EPISODE_WHERE,
@@ -35,6 +48,313 @@ function createPrismaClient() {
 export const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
 globalForPrisma.prisma = prisma;
+
+/** Hidden editorial blocks are readable only by an authorized editor. */
+export async function getReadableSeriesInfoBlocks(
+  seriesId: number,
+  viewer?: { userId: string; role: import('../generated/prisma').Role }
+) {
+  const editor = viewer?.role === 'ADMIN' || viewer?.role === 'MODERATOR';
+  const readable: Prisma.SeriesWhereInput = editor
+    ? {}
+    : {
+        OR: [
+          { visibility: 'VISIBLE' },
+          ...(viewer?.role === 'COLLABORATOR'
+            ? [
+                {
+                  origin: 'USER_EMBED' as const,
+                  catalogScope: 'WATCHABLE_ONLY' as const,
+                  submittedById: viewer.userId,
+                },
+              ]
+            : []),
+        ],
+      };
+  return prisma.seriesInfoBlock.findMany({
+    where: { seriesId, series: readable },
+    orderBy: [{ sortOrder: 'asc' }, { id: 'asc' }],
+  });
+}
+
+export async function searchContributionMetadata(
+  kind: ContributionMetadataKind,
+  search: string
+) {
+  const args = {
+    where: { name: { contains: search.trim(), mode: 'insensitive' as const } },
+    select: { name: true },
+    orderBy: [{ name: 'asc' as const }, { id: 'asc' as const }],
+    take: 30,
+  };
+  const queries = {
+    actors: () => prisma.actor.findMany(args),
+    tags: () => prisma.tag.findMany(args),
+    genres: () => prisma.genre.findMany(args),
+    productionCompanies: () => prisma.productionCompany.findMany(args),
+    languages: () => prisma.language.findMany(args),
+  };
+  return (await queries[kind]()).map((row) => row.name);
+}
+
+/** Read-only resolution. Unknown or ambiguous names cannot mutate shared entities. */
+export async function getContributionMetadata(
+  input: ContributionMetadataInput,
+  client: Prisma.TransactionClient = prisma
+) {
+  const whereNames = (names: (string | null | undefined)[]) => ({
+    OR: contributionNames(names).map((name) => ({
+      name: { equals: name, mode: 'insensitive' as const },
+    })),
+  });
+  const select = { id: true, name: true } as const;
+  const [countries, productionCompanies, languages, actors, tags, genres] =
+    await Promise.all([
+      input.countryCode?.trim()
+        ? client.country.findMany({
+            where: {
+              code: { equals: input.countryCode.trim(), mode: 'insensitive' },
+            },
+            select: { id: true, code: true },
+          })
+        : Promise.resolve([]),
+      client.productionCompany.findMany({
+        where: whereNames([input.productionCompanyName]),
+        select,
+      }),
+      client.language.findMany({
+        where: whereNames([
+          input.originalLanguageName,
+          ...(input.dubbingLanguageNames ?? []),
+        ]),
+        select,
+      }),
+      client.actor.findMany({
+        where: whereNames(input.actorNames ?? []),
+        select,
+      }),
+      client.tag.findMany({ where: whereNames(input.tagNames ?? []), select }),
+      client.genre.findMany({
+        where: whereNames(input.genreNames ?? []),
+        select,
+      }),
+    ]);
+  return resolveContributionMetadata(input, {
+    countries,
+    productionCompanies,
+    languages,
+    actors,
+    tags,
+    genres,
+  });
+}
+
+/** Restore only this account's tracking and private diary, without changing catalog data. */
+export async function restoreTrackingBackup(
+  userId: string,
+  payload: Record<string, unknown>,
+  dryRun: boolean
+) {
+  return prisma.$transaction(async (tx) => {
+    const [
+      series,
+      seasons,
+      episodes,
+      statuses,
+      seriesNotes,
+      episodeNotes,
+      historyIds,
+    ] = await Promise.all([
+      tx.series.findMany({ select: { id: true } }),
+      tx.season.findMany({ select: { id: true } }),
+      tx.episode.findMany({ select: { id: true } }),
+      tx.viewStatus.findMany({
+        where: { userId },
+        select: { seriesId: true, seasonId: true, episodeId: true },
+      }),
+      tx.seriesNote.findMany({
+        where: { userId },
+        select: { seriesId: true },
+      }),
+      tx.episodeNote.findMany({
+        where: { userId },
+        select: { episodeId: true },
+      }),
+      tx.trackingEvent.findMany({ where: { userId }, select: { id: true } }),
+    ]);
+    const references = {
+      seriesId: new Set(series.map((item) => item.id)),
+      seasonId: new Set(seasons.map((item) => item.id)),
+      episodeId: new Set(episodes.map((item) => item.id)),
+    };
+    const history = planTrackingHistoryImport(
+      payload.trackingEvents,
+      userId,
+      references,
+      new Set(historyIds.map((item) => item.id))
+    );
+    const plan = planTrackingBackup(payload, userId, references, {
+      viewStatuses: new Set(statuses.map(trackingBackupKey)),
+      seriesNotes: new Set(seriesNotes.map(trackingBackupKey)),
+      episodeNotes: new Set(episodeNotes.map(trackingBackupKey)),
+    });
+    const imported: Record<string, number> = {
+      viewStatuses: plan.viewStatuses.length,
+      seriesNotes: plan.seriesNotes.length,
+      episodeNotes: plan.episodeNotes.length,
+      ...(history.supplied ? { trackingEvents: history.rows.length } : {}),
+    };
+    if (!dryRun) {
+      if (history.supplied) {
+        // Replaying a history must not manufacture extra events from its state snapshot.
+        await tx.$executeRaw`SELECT set_config('mundobl.restoring_tracking_history', 'on', true)`;
+      }
+      if (plan.viewStatuses.length)
+        imported.viewStatuses = (
+          await tx.viewStatus.createMany({
+            data: plan.viewStatuses,
+            skipDuplicates: true,
+          })
+        ).count;
+      if (plan.seriesNotes.length)
+        imported.seriesNotes = (
+          await tx.seriesNote.createMany({
+            data: plan.seriesNotes,
+            skipDuplicates: true,
+          })
+        ).count;
+      if (plan.episodeNotes.length)
+        imported.episodeNotes = (
+          await tx.episodeNote.createMany({
+            data: plan.episodeNotes,
+            skipDuplicates: true,
+          })
+        ).count;
+      if (history.rows.length) {
+        imported.trackingEvents = (
+          await tx.trackingEvent.createMany({
+            data: history.rows,
+            skipDuplicates: true,
+          })
+        ).count;
+        history.skipped += history.rows.length - imported.trackingEvents;
+      }
+      // A concurrent import may already have inserted records since planning.
+      for (const section of [
+        'viewStatuses',
+        'seriesNotes',
+        'episodeNotes',
+      ] as const) {
+        plan.skipped[section] += plan[section].length - imported[section];
+      }
+    }
+    return {
+      imported,
+      skipped: {
+        ...plan.skipped,
+        ...(history.supplied ? { trackingEvents: history.skipped } : {}),
+      },
+      missingRefs: [...plan.missingRefs, ...history.missingRefs],
+      errors: [...plan.errors, ...history.errors],
+    };
+  });
+}
+
+export async function getTrackingHistory(
+  userId: string,
+  search: string,
+  cursor?: { id: string; recordedAt: Date }
+): Promise<TrackingHistoryPage> {
+  const seriesSelect = {
+    id: true,
+    title: true,
+    origin: true,
+    catalogScope: true,
+  } as const;
+  const title = { contains: search, mode: 'insensitive' as const };
+  const rows = await prisma.trackingEvent.findMany({
+    where: {
+      userId,
+      AND: [
+        ...(search
+          ? [
+              {
+                OR: [
+                  { series: { title } },
+                  { season: { series: { title } } },
+                  { episode: { season: { series: { title } } } },
+                ],
+              },
+            ]
+          : []),
+        ...(cursor
+          ? [
+              {
+                OR: [
+                  { recordedAt: { lt: cursor.recordedAt } },
+                  { recordedAt: cursor.recordedAt, id: { lt: cursor.id } },
+                ],
+              },
+            ]
+          : []),
+      ],
+    },
+    orderBy: [{ recordedAt: 'desc' }, { id: 'desc' }],
+    take: 21,
+    select: {
+      id: true,
+      kind: true,
+      status: true,
+      previousStatus: true,
+      watchedDate: true,
+      previousWatchedDate: true,
+      recordedAt: true,
+      series: { select: seriesSelect },
+      season: {
+        select: { seasonNumber: true, series: { select: seriesSelect } },
+      },
+      episode: {
+        select: {
+          episodeNumber: true,
+          season: {
+            select: { seasonNumber: true, series: { select: seriesSelect } },
+          },
+        },
+      },
+    },
+  });
+  const page = rows.slice(0, 20);
+  const last = page.at(-1);
+  return {
+    items: page.map((row) => {
+      const series =
+        row.series ?? row.season?.series ?? row.episode?.season.series;
+      if (!series) throw new Error('Tracking history has no target');
+      return {
+        id: row.id,
+        kind: row.kind,
+        status: row.status,
+        previousStatus: row.previousStatus,
+        watchedDate: row.watchedDate?.toISOString() ?? null,
+        previousWatchedDate: row.previousWatchedDate?.toISOString() ?? null,
+        recordedAt: row.recordedAt.toISOString(),
+        seriesTitle: series.title,
+        href: getContentUrl(series),
+        seasonNumber:
+          row.season?.seasonNumber ?? row.episode?.season.seasonNumber ?? null,
+        episodeNumber: row.episode?.episodeNumber ?? null,
+      };
+    }),
+    nextCursor:
+      rows.length > 20 && last
+        ? { id: last.id, recordedAt: last.recordedAt.toISOString() }
+        : null,
+  };
+}
+
+export async function clearTrackingHistory(userId: string) {
+  return prisma.trackingEvent.deleteMany({ where: { userId } });
+}
 
 // ============================================
 // GLOSARIO CULTURAL
@@ -78,6 +398,7 @@ export async function getPublishedGlossaryTerms() {
  * evitar que el cache global filtre datos de otro usuario.
  */
 export async function getAllSeries(options?: {
+  visibility?: 'VISIBLE' | 'HIDDEN';
   scope?: 'PERSONAL' | 'WATCHABLE_ONLY' | 'ALL';
   origin?: 'CURATED' | 'USER_EMBED' | 'ALL';
   userId?: string;
@@ -93,7 +414,9 @@ export async function getAllSeries(options?: {
   const scope = options?.scope ?? 'ALL';
   const origin = options?.origin ?? 'ALL';
   const userId = options?.userId;
-  const where: { catalogScope?: string; origin?: string } = {};
+  const where: { catalogScope?: string; origin?: string; visibility?: string } =
+    {};
+  if (options?.visibility) where.visibility = options.visibility;
   if (scope !== 'ALL') where.catalogScope = scope;
   if (origin !== 'ALL') where.origin = origin;
   return await prisma.series.findMany({
@@ -505,7 +828,11 @@ export async function getCatalogFilterIndex() {
   // no muestra WATCHABLE_ONLY ni USER_EMBED, asi que sus actores/generos/
   // etc. no deben aparecer como opciones de filtro.
   const personalScope = {
-    series: { catalogScope: 'PERSONAL', origin: 'CURATED' },
+    series: {
+      catalogScope: 'PERSONAL',
+      origin: 'CURATED',
+      visibility: 'VISIBLE',
+    },
   };
   const [
     genres,
@@ -533,6 +860,7 @@ export async function getCatalogFilterIndex() {
         productionCompanyId: { not: null },
         catalogScope: 'PERSONAL',
         origin: 'CURATED',
+        visibility: 'VISIBLE',
       },
       select: {
         id: true,
@@ -544,6 +872,7 @@ export async function getCatalogFilterIndex() {
         originalLanguageId: { not: null },
         catalogScope: 'PERSONAL',
         origin: 'CURATED',
+        visibility: 'VISIBLE',
       },
       select: {
         id: true,
@@ -588,7 +917,12 @@ export async function getCatalogFilterIndex() {
  */
 export async function getSeriesById(id: number, userId?: string) {
   return await prisma.series.findFirst({
-    where: { id, origin: 'CURATED' },
+    where: {
+      id,
+      origin: 'CURATED',
+      catalogScope: 'PERSONAL',
+      visibility: 'VISIBLE',
+    },
     include: buildSeriesFullInclude(userId),
   });
 }
@@ -868,8 +1202,91 @@ export async function getAllDirectorsWithCount() {
 }
 
 /**
- * Obtener un director por ID con sus series
+ * Guionista con créditos públicos, fuentes y destinos según alcance editorial.
  */
+const PUBLIC_WRITER_SERIES_WHERE: Prisma.SeriesWhereInput = {
+  visibility: 'VISIBLE',
+  OR: [{ origin: 'CURATED', catalogScope: 'PERSONAL' }, HAS_WATCHABLE_EPISODE],
+};
+
+export async function getWritersIndex() {
+  const writers = await prisma.writer.findMany({
+    where: { series: { some: { series: PUBLIC_WRITER_SERIES_WHERE } } },
+    select: {
+      id: true,
+      name: true,
+      aliases: true,
+      nationality: true,
+      imageUrl: true,
+      biography: true,
+      _count: {
+        select: { series: { where: { series: PUBLIC_WRITER_SERIES_WHERE } } },
+      },
+    },
+  });
+  return writers
+    .map(({ _count, ...writer }) => ({ ...writer, creditCount: _count.series }))
+    .sort(
+      (a, b) =>
+        b.creditCount - a.creditCount ||
+        a.name.localeCompare(b.name) ||
+        a.id - b.id
+    );
+}
+
+export async function getPublicWriterCredits(seriesId: number) {
+  return prisma.seriesWriter.findMany({
+    where: { seriesId, series: { visibility: 'VISIBLE' } },
+    orderBy: { writer: { name: 'asc' } },
+    select: { writer: { select: { id: true, name: true } } },
+  });
+}
+
+export async function getWriterById(id: number) {
+  const writer = await prisma.writer.findUnique({
+    where: { id },
+    select: {
+      id: true,
+      name: true,
+      aliases: true,
+      nationality: true,
+      biography: true,
+      imageUrl: true,
+      imageSource: true,
+      imageAttribution: true,
+      imageLicense: true,
+      bioSourceUrl: true,
+      imdbUrl: true,
+      mdlUrl: true,
+      wikiUrl: true,
+      wikidataId: true,
+      series: {
+        where: { series: PUBLIC_WRITER_SERIES_WHERE },
+        orderBy: { series: { title: 'asc' } },
+        select: {
+          sourceUrl: true,
+          series: {
+            select: {
+              ...PUBLIC_SERIES_CARD_SELECT,
+              origin: true,
+              catalogScope: true,
+            },
+          },
+        },
+      },
+    },
+  });
+  if (!writer) return null;
+  return {
+    ...writer,
+    series: writer.series.map((credit) => ({
+      ...credit,
+      href: getContentUrl(credit.series),
+    })),
+  };
+}
+
+/** Obtener un director por ID con sus series. */
 export async function getDirectorById(id: number) {
   // Mismo criterio que getActorById: `select` explicito porque la ficha es
   // publica y se renderiza en un client component.
@@ -1612,4 +2029,68 @@ export async function getSeriesEpisodesOrdered(
         episodeNumber: ep.episodeNumber,
       }))
   );
+}
+
+/** Public community discovery contains published reviews, never tracking or notes. */
+export async function getCommunityReviews(page = 1, search = '') {
+  if (!Number.isSafeInteger(page) || page < 1 || page > 71582788) {
+    throw new RangeError('Invalid community page');
+  }
+  const query = search.trim();
+  if (query.length > 100) throw new RangeError('Community query too long');
+  const rows = await prisma.review.findMany({
+    where: {
+      status: 'PUBLISHED',
+      series: {
+        visibility: 'VISIBLE',
+        ...(query
+          ? { title: { contains: query, mode: 'insensitive' as const } }
+          : {}),
+        OR: [
+          { origin: 'CURATED', catalogScope: 'PERSONAL' },
+          HAS_WATCHABLE_EPISODE,
+        ],
+      },
+    },
+    orderBy: [{ publishedAt: { sort: 'desc', nulls: 'last' } }, { id: 'desc' }],
+    take: 31,
+    skip: (page - 1) * 30,
+    select: {
+      id: true,
+      title: true,
+      hasSpoilers: true,
+      series: {
+        select: { id: true, title: true, origin: true, catalogScope: true },
+      },
+    },
+  });
+  return {
+    hasNext: rows.length > 30,
+    items: rows.slice(0, 30).map((row) => ({
+      id: row.id,
+      title: row.hasSpoilers ? null : row.title,
+      series: row.series,
+    })),
+  };
+}
+
+/** Compare-and-set protects a concurrent mark/unmark or correction from stale UI. */
+export async function correctWatchDate(
+  userId: string,
+  target: WatchDateTarget,
+  watchedDate: Date | null,
+  expectedDate: Date | null
+) {
+  const result = await prisma.viewStatus.updateMany({
+    where: { userId, ...target, status: 'VISTA', watchedDate: expectedDate },
+    data: { watchedDate },
+  });
+  return result.count === 1;
+}
+
+export async function getWatchDate(userId: string, target: WatchDateTarget) {
+  return prisma.viewStatus.findFirst({
+    where: { userId, ...target, status: 'VISTA' },
+    select: { watchedDate: true },
+  });
 }

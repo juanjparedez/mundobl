@@ -1,0 +1,34 @@
+.writer-profile {
+  display: grid;
+  gap: var(--spacing-lg);
+}
+.writer-profile__identity {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+.writer-profile__identity > div {
+  min-width: 0;
+}
+.writer-profile__identity .ant-avatar {
+  flex-shrink: 0;
+}
+.writer-profile h1,
+.writer-profile h3,
+.writer-profile a {
+  overflow-wrap: anywhere;
+}
+.writer-profile__bio {
+  white-space: pre-line;
+}
+.writer-profile__works {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--spacing-md);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+}
+.writer-profile__works .ant-tag {
+  white-space: normal;
+}

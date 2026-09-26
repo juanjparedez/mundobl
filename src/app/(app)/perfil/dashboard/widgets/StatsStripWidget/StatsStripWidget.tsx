@@ -61,6 +61,7 @@ interface StripItem {
   icon: ReactNode;
   value: number | string;
   label: string;
+  hint?: string;
 }
 
 interface StatsStripWidgetProps {
@@ -112,9 +113,8 @@ export function StatsStripWidget({ stats }: StatsStripWidgetProps) {
     persist(next);
   };
 
-  const currentYear = new Date().getFullYear();
-  const yearWatched =
-    stats.completedByYear.find((y) => y.year === currentYear)?.count ?? 0;
+  const currentYear = stats.activityYear;
+  const yearWatched = stats.completedThisYear;
 
   const allItems: StripItem[] = useMemo(
     () => [
@@ -177,8 +177,12 @@ export function StatsStripWidget({ stats }: StatsStripWidgetProps) {
       {
         key: 'hoursWatched',
         icon: <ClockCircleOutlined />,
-        value: Math.round(stats.hoursWatched),
-        label: t('profileDashboard.hoursWatched'),
+        value: stats.hoursWatched,
+        label: t('durationStats.hours'),
+        hint:
+          stats.unknownDurationVideos > 0
+            ? t('durationStats.missing', { n: stats.unknownDurationVideos })
+            : undefined,
       },
       {
         key: 'streak',
@@ -262,6 +266,11 @@ export function StatsStripWidget({ stats }: StatsStripWidgetProps) {
                 <span className="mb-stats-strip-widget__label">
                   {item.label}
                 </span>
+                {item.hint && (
+                  <span className="mb-stats-strip-widget__hint">
+                    {item.hint}
+                  </span>
+                )}
               </span>
             </li>
           ))}

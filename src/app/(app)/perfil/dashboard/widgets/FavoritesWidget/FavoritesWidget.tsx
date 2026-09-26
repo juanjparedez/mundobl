@@ -1,5 +1,7 @@
 'use client';
 
+import { getContentUrl } from '@/lib/slug';
+
 import { HeartOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -57,7 +59,7 @@ export function FavoritesWidget({ favorites }: FavoritesWidgetProps) {
           return (
             <li key={seriesId}>
               <Link
-                href={`/series/${series.id}`}
+                href={getContentUrl(series)}
                 className="mb-favorites-grid__item"
                 title={series.title}
               >

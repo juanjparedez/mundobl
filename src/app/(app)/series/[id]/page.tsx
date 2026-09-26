@@ -1,3 +1,6 @@
+import { getPublicWriterCredits } from '@/lib/database';
+import { WriterCredits } from '@/components/series/WriterCredits/WriterCredits';
+import { loadLocaleMessages } from '@/i18n/messages';
 import { getPublicUniverseSeries } from '@/lib/database';
 import type { Metadata } from 'next';
 import { cache } from 'react';
@@ -14,12 +17,7 @@ import { TrackingPanel } from '@/components/series/TrackingPanel/TrackingPanel';
 import { SeriesDetailClient } from '@/components/series/SeriesDetailClient';
 import { SeriesCompletenessBadge } from './SeriesCompletenessBadge/SeriesCompletenessBadge';
 import { SeriesContent } from '@/components/series/SeriesContent/SeriesContent';
-import {
-  shouldShowSeasons,
-  getContentTypeConfig,
-  ContentTypeConfig,
-  ContentTypeValue,
-} from '@/types/content';
+import { shouldShowSeasons, getContentTypeConfig } from '@/types/content';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
 import { BackToCatalogButton } from '@/components/series/BackToCatalogButton/BackToCatalogButton';
@@ -71,41 +69,26 @@ export async function generateMetadata({
   const serie = await getSeriesByIdCached(seriesId);
   if (!serie) return {};
 
-  const typeLabel =
-    ContentTypeConfig[serie.type as ContentTypeValue]?.label ?? 'Serie';
+  const labels = (await loadLocaleMessages('es')).contentMetadata;
   const year = serie.year ? ` (${serie.year})` : '';
-  const country = serie.country?.name ?? '';
   const origTitle =
     serie.originalTitle && serie.originalTitle.trim() !== serie.title.trim()
       ? ` (${serie.originalTitle.trim()})`
       : '';
-
-  // Keyword-first + Intent keywords (Dónde ver / Reparto / Reseña) + Título original
-  const title = `${serie.title}${origTitle}${year} | Dónde ver, Reparto y Reseña - ${typeLabel} BL | MundoBL`;
-
-  const synopsis = serie.synopsis
-    ? `${serie.title}${origTitle}. ${serie.synopsis.slice(0, 150).replace(/\n/g, ' ')}...`
-    : `${serie.title}${origTitle}. ${typeLabel} BL${country ? ` de ${country}` : ''}${year}. Descubre dónde verla, reparto completo y reseñas en MundoBL.`;
+  const title = `${serie.title}${origTitle}${year} | ${labels.catalogTitle} | MundoBL`;
+  const synopsis = `${serie.title}. ${labels.catalogDescription}`;
 
   const canonicalUrl = getSeriesUrl(serie.id, serie.title);
 
   const keywords = [
     serie.title,
     serie.originalTitle,
-    `${serie.title} donde ver`,
-    `${serie.title} reparto`,
-    `${serie.title} sub espanol`,
-    `${serie.title} resena`,
-    'serie BL',
-    'drama BL',
-    'Boys Love',
-    country ? `BL ${country}` : null,
     ...(serie.tags?.map((st) => st.tag.name) ?? []),
     ...(serie.genres?.map((sg) => sg.genre.name) ?? []),
   ].filter(Boolean) as string[];
 
   return {
-    title,
+    title: { absolute: title },
     description: synopsis,
     keywords,
     alternates: {
@@ -374,6 +357,8 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
               publishedAt: item.publishedAt?.toISOString() ?? null,
             }))}
           />
+
+          <WriterCredits credits={await getPublicWriterCredits(serie.id)} />
 
           <SeriesDetailClient
             seriesId={serie.id}

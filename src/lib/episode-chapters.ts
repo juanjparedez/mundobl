@@ -169,6 +169,17 @@ export function chapterCode(chapter: {
   return `T${chapter.seasonNumber}·E${chapter.number}`;
 }
 
+/** Count a chapter once only when every recorded part is watched.
+ * Call separately for each series so identical season/chapter numbers never merge.
+ */
+export function countWatchedChapters(
+  rows: readonly (EpisodeRow & { watched: boolean })[]
+): number {
+  return groupIntoChapters(rows).chapters.filter((chapter) =>
+    chapter.episodes.every((episode) => episode.watched)
+  ).length;
+}
+
 /**
  * Capitulos de una serie. Con episodios cargados se cuentan; si no, vale el
  * numero de la temporada (el importador guarda ahi la cantidad de videos,

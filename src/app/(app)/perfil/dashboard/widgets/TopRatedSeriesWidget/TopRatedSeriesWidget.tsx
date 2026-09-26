@@ -1,5 +1,7 @@
 'use client';
 
+import { getContentUrl } from '@/lib/slug';
+
 import { TrophyOutlined } from '@ant-design/icons';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -60,7 +62,7 @@ export function TopRatedSeriesWidget({
           return (
             <li key={s.seriesId}>
               <Link
-                href={`/series/${s.seriesId}`}
+                href={getContentUrl({ ...s, id: s.seriesId })}
                 className="mb-top-rated-list__item"
               >
                 <span className="mb-top-rated-list__rank">{idx + 1}</span>

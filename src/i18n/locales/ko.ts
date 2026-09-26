@@ -10,6 +10,116 @@
 import type { TranslationShape } from '../messages';
 
 const ko = {
+  writerProfile: {
+    indexTitle: "각본가 목록",
+    indexDescription: "공개 카탈로그 작품이나 시청 가능한 작품의 각본 참여자.","role": "각본가", "works": "참여 작품", "sources": "출처", "creditSource": "크레딧 출처", "empty": "공개된 참여 작품이 없습니다."},
+
+
+  durationStats: {"hours": "길이가 기록된 시청 시간", "missing": "길이를 알 수 없는 시청한 영상 {n}개는 제외됩니다."},
+
+  watchDateEditor: {
+    "title": "시청 날짜 수정",
+    "date": "시청 날짜 (UTC)",
+    "unknown": "날짜 모름",
+    "save": "저장",
+    "cancel": "취소",
+    "error": "날짜를 불러오거나 저장할 수 없습니다.",
+    "conflict": "시청 기록이 변경되었습니다. 닫았다가 다시 열어 현재 날짜를 확인하세요."
+},
+
+  community: {
+    search: "시리즈 검색",
+    "title": "커뮤니티",
+    "description": "최근 공개 리뷰입니다. 작품 페이지에서 읽고 답하거나 의견을 나눠 보세요.",
+    "empty": "아직 공개 리뷰가 없습니다.",
+    "read": "읽고 이야기하기",
+    "spoilers": "스포일러로 제목 숨김"
+},
+  contentMetadata: {
+    "catalogTitle": "작품 정보와 시청 기록",
+    "catalogDescription": "작품 정보를 확인하고 개인 시청 기록을 관리하는 카탈로그 페이지입니다.",
+    "watchTitle": "시청할 에피소드",
+    "watchDescription": "이 페이지에 연결된 에피소드를 살펴보세요. 시청 가능 여부와 자막은 출처에 따라 다릅니다.",
+    "collectionTitle": "시청할 BL·GL 시리즈",
+    "collectionDescription": "에피소드 링크가 있는 BL·GL 시리즈를 찾아보세요. 시청 가능 여부, 언어, 에피소드 수는 출처에 따라 다릅니다."
+},
+
+  trackingHistory: {
+      "title": "기록",
+      "description": "시청 관리 변경 사항은 나에게만 표시됩니다. 이전 상태로 과거 행동을 복원할 수는 없습니다.",
+      "search": "기록에서 작품 검색",
+      "empty": "아직 기록된 변경 사항이 없습니다",
+      "error": "기록을 업데이트할 수 없습니다",
+      "more": "더 불러오기",
+      "refresh": "새로고침",
+      "clear": "기록 삭제",
+      "clearConfirm": "모든 기록을 삭제할까요? 시청 진행 상태와 메모는 유지됩니다.",
+      "cancel": "취소",
+      "watchDate": "시청 날짜",
+      "previousDate": "이전 날짜",
+      "unknown": "알 수 없음",
+      "season": "시즌 {n}",
+      "episode": "시즌 {season} · {episode}화",
+      "series": "작품",
+      "recorded": "상태 기록됨",
+      "changed": "상태 변경됨",
+      "dateChanged": "날짜 수정됨",
+      "snapshot": "기록 시작 전 상태"
+  },
+  contributionMetadata: {
+    search: "기존 이름 검색",
+    loadError: "이름을 불러올 수 없습니다.",
+    policy: "기여 콘텐츠에는 기존 배우, 제작사, 국가, 언어, 태그 및 장르를 사용합니다. 새로운 이름은 Flor가 편집 검토 후 추가해야 합니다.",
+    unresolved: "변경 사항이 저장되지 않았습니다. 다음 이름이 없거나 모호합니다: {names}. 확인하거나 Flor에게 추가를 요청하세요.",
+  },
+  trackingWorkspace: {
+    "gaps": "이전 회차 중 시청 표시가 없는 회차가 있습니다",
+    "title": "내 시청 관리",
+    "subtitle": "시리즈를 이어 보고 시청 기록과 감상을 남기세요.",
+    "settings": "내 프로필 및 데이터",
+    "privacy": "시청 기록과 메모는 비공개입니다. 게시한 댓글은 공개됩니다.",
+    "continue": "시청 중",
+    "diary": "비공개 일기",
+    "stats": "내 통계",
+    "search": "내 시리즈 검색",
+    "filter": "상태별 필터",
+    "all": "전체",
+    "list": "목록",
+    "grid": "카드",
+    "remaining": "남은 회차 적은 순",
+    "pin": "시리즈 고정",
+    "unpin": "고정 해제",
+    "manage": "에피소드 및 메모",
+    "publicComment": "공개 토론",
+    "privateNote": "비공개 메모",
+    "curated": "Flor의 카탈로그",
+    "viewing": "시청 콘텐츠",
+    "progress": "총 {total}화 중 {watched}화 시청",
+    "upToDate": "등록된 모든 회차를 시청했습니다",
+    "scope": "현재 시청 중인 시리즈 기준",
+    "chapters": "시청한 회차",
+    "loadError": "시청 기록을 불러오지 못했습니다.",
+    "retry": "다시 시도",
+    "noResults": "필터와 일치하는 시리즈가 없습니다.",
+    "preferences": "보기 방식, 정렬 순서, 고정한 시리즈는 이 기기에 계정별로 저장됩니다.",
+    "season": "시즌 {n}",
+    "signIn": "로그인"
+},
+  backup: {
+    "viewStatuses": "시청 기록",
+    "seriesNotes": "시리즈 비공개 메모",
+    "episodeNotes": "에피소드 비공개 메모",
+    "userRatings": "평점",
+    "favorites": "즐겨찾기",
+    "comments": "댓글",
+    "featureRequests": "제안",
+    "featureVotes": "투표",
+    "suggestedSites": "추천 사이트",
+    "other": "기타 데이터",
+    "skipped": "{n}개 건너뜀",
+    "missing": "참조 대상 {n}개를 찾을 수 없어 가져오지 않습니다.",
+    "invalid": "항목 또는 섹션 {n}개가 올바르지 않습니다. 가져오기 전에 파일을 확인하세요."
+},
   "basedOnAdmin": {
     "description": "원작 분류와 해당 작품을 관리하세요. 작품 편집 화면에서 새 값을 입력할 수 있습니다.",
     "search": "값 검색",

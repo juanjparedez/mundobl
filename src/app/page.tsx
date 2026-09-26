@@ -19,6 +19,12 @@ export const metadata: Metadata = {
   },
 };
 
+const PUBLIC_CURATED_SERIES = {
+  origin: 'CURATED',
+  catalogScope: 'PERSONAL',
+  visibility: 'VISIBLE',
+} as const;
+
 async function getLandingStats() {
   try {
     const [
@@ -41,23 +47,26 @@ async function getLandingStats() {
     ] = await Promise.all([
       // Lo mismo que muestra /catalogo: sin las importadas solo para mirar.
       prisma.series.count({
-        where: { origin: 'CURATED', catalogScope: 'PERSONAL' },
+        where: PUBLIC_CURATED_SERIES,
       }),
       prisma.viewStatus.count({
         where: {
           status: 'VISTA',
           seriesId: { not: null },
-          series: { origin: 'CURATED' },
+          series: PUBLIC_CURATED_SERIES,
         },
       }),
       prisma.comment.count({ where: { isPrivate: false } }),
       // Reseñas de USER_EMBED ya se permiten (ver /api/reviews), pero esta
       // vidriera es del catalogo curado de Flor — se filtran afuera.
       prisma.review.count({
-        where: { status: 'PUBLISHED', series: { origin: 'CURATED' } },
+        where: {
+          status: 'PUBLISHED',
+          series: PUBLIC_CURATED_SERIES,
+        },
       }),
       prisma.series.findMany({
-        where: { origin: 'CURATED', catalogScope: 'PERSONAL' },
+        where: PUBLIC_CURATED_SERIES,
         orderBy: { createdAt: 'desc' },
         take: 8,
         select: {
@@ -72,7 +81,10 @@ async function getLandingStats() {
       prisma.review.findFirst({
         // Idem: el spotlight de la landing es del catalogo curado, nunca
         // de un aporte USER_EMBED (colaborador o usuario comun).
-        where: { status: 'PUBLISHED', series: { origin: 'CURATED' } },
+        where: {
+          status: 'PUBLISHED',
+          series: PUBLIC_CURATED_SERIES,
+        },
         orderBy: [
           { isFeatured: 'desc' },
           { helpfulCount: 'desc' },
@@ -160,8 +172,7 @@ async function getLandingStats() {
       // el numero cuente exactamente lo que la franja muestra.
       prisma.series.count({
         where: {
-          origin: 'CURATED',
-          catalogScope: 'PERSONAL',
+          ...PUBLIC_CURATED_SERIES,
           createdAt: {
             gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
           },
@@ -171,7 +182,9 @@ async function getLandingStats() {
       // (CURATED + PERSONAL): el helper lo filtra explicitamente.
       getAiringSchedule(),
 
-      // Episodios marcados en los ultimos 7 dias: la prueba de vida del
+      // Episodios con fecha de visionado en los ultimos 7 dias. Una edicion
+      // de preferencias o una importacion no convierte una fecha antigua
+      // o desconocida en actividad reciente. Es la prueba de vida del
       // tracker, que es lo que la home vende desde T09. Excluye ADMIN como
       // toda metrica del plan — si no, la vidriera cuenta a Juan probando.
       prisma.viewStatus.count({
@@ -179,7 +192,10 @@ async function getLandingStats() {
           status: 'VISTA',
           episodeId: { not: null },
           user: { role: { not: 'ADMIN' } },
-          updatedAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) },
+          watchedDate: {
+            gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+            lte: new Date(),
+          },
         },
       }),
       prisma.viewStatus.count({

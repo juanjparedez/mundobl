@@ -23,6 +23,8 @@ export async function GET() {
         select: {
           id: true,
           title: true,
+          origin: true,
+          catalogScope: true,
           imageUrl: true,
           imageThumbUrl: true,
           imagePosition: true,

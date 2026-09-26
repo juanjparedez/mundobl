@@ -10,6 +10,116 @@
 import type { TranslationShape } from '../messages';
 
 const ja = {
+  writerProfile: {
+    indexTitle: "脚本家一覧",
+    indexDescription: "公開カタログ作品や視聴可能な作品で脚本を担当した人々。","role": "脚本家", "works": "担当作品", "sources": "出典", "creditSource": "クレジットの出典", "empty": "公開されている担当作品はありません。"},
+
+
+  durationStats: {"hours": "再生時間が記録された視聴時間", "missing": "再生時間不明の視聴済み動画{n}本は含まれません。"},
+
+  watchDateEditor: {
+    "title": "視聴日を修正",
+    "date": "視聴日（UTC）",
+    "unknown": "日付不明",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "error": "日付を読み込めないか、保存できませんでした。",
+    "conflict": "視聴記録が変更されました。閉じて開き直し、現在の日付を確認してください。"
+},
+
+  community: {
+    search: "作品を検索",
+    "title": "コミュニティ",
+    "description": "最新の公開レビュー。作品ページでレビューを読んだり、返信したり、感想を共有できます。",
+    "empty": "公開レビューはまだありません。",
+    "read": "読んで話し合う",
+    "spoilers": "ネタバレを含むためタイトルを非表示"
+},
+  contentMetadata: {
+    "catalogTitle": "作品情報と視聴記録",
+    "catalogDescription": "作品情報の確認と個人の視聴記録に使えるカタログページです。",
+    "watchTitle": "視聴できるエピソード",
+    "watchDescription": "このページからリンクされたエピソードを探せます。視聴可否と字幕は配信元によって異なります。",
+    "collectionTitle": "視聴できるBL・GL作品",
+    "collectionDescription": "エピソードへのリンクがあるBL・GL作品を探せます。視聴可否、言語、エピソード数は配信元によって異なります。"
+},
+
+  trackingHistory: {
+      "title": "履歴",
+      "description": "視聴管理の変更は自分だけに表示されます。以前の状態から過去の操作を復元することはできません。",
+      "search": "履歴から作品を検索",
+      "empty": "履歴に変更はまだありません",
+      "error": "履歴を更新できませんでした",
+      "more": "さらに読み込む",
+      "refresh": "更新",
+      "clear": "履歴を削除",
+      "clearConfirm": "すべての履歴を削除しますか？進捗とメモは保持されます。",
+      "cancel": "キャンセル",
+      "watchDate": "視聴日",
+      "previousDate": "以前の日付",
+      "unknown": "不明",
+      "season": "シーズン{n}",
+      "episode": "シーズン{season}・第{episode}話",
+      "series": "作品",
+      "recorded": "状態を記録",
+      "changed": "状態を変更",
+      "dateChanged": "日付を修正",
+      "snapshot": "履歴開始前の状態"
+  },
+  contributionMetadata: {
+    search: "登録済みの名前を検索",
+    loadError: "名前を読み込めませんでした。",
+    policy: "投稿では既存の俳優、制作会社、国、言語、タグ、ジャンルを使用します。新しい名前はFlorによる編集上の追加が必要です。",
+    unresolved: "変更は保存されていません。次の名前は未登録または曖昧です：{names}。確認するか、Florに追加を依頼してください。",
+  },
+  trackingWorkspace: {
+    "gaps": "以前の話に未視聴の記録があります",
+    "title": "視聴管理",
+    "subtitle": "シリーズの続きを見て、視聴記録や感想を残しましょう。",
+    "settings": "プロフィールとデータ",
+    "privacy": "視聴記録とメモは非公開です。投稿したコメントは公開されます。",
+    "continue": "視聴中",
+    "diary": "非公開日記",
+    "stats": "自分の統計",
+    "search": "自分のシリーズを検索",
+    "filter": "状態で絞り込む",
+    "all": "すべて",
+    "list": "リスト",
+    "grid": "カード",
+    "remaining": "残りの話数が少ない順",
+    "pin": "シリーズを固定",
+    "unpin": "固定を解除",
+    "manage": "エピソードとメモ",
+    "publicComment": "公開ディスカッション",
+    "privateNote": "非公開メモ",
+    "curated": "Florのカタログ",
+    "viewing": "視聴用コンテンツ",
+    "progress": "全{total}話中{watched}話視聴済み",
+    "upToDate": "登録されている全話を視聴済みです",
+    "scope": "視聴中のシリーズ内",
+    "chapters": "視聴済みの話数",
+    "loadError": "視聴記録を読み込めませんでした。",
+    "retry": "再試行",
+    "noResults": "条件に一致するシリーズはありません。",
+    "preferences": "表示方法、並び順、固定したシリーズは、この端末のアカウント別に保存されます。",
+    "season": "シーズン{n}",
+    "signIn": "ログイン"
+},
+  backup: {
+    "viewStatuses": "視聴記録",
+    "seriesNotes": "シリーズの非公開メモ",
+    "episodeNotes": "エピソードの非公開メモ",
+    "userRatings": "評価",
+    "favorites": "お気に入り",
+    "comments": "コメント",
+    "featureRequests": "提案",
+    "featureVotes": "投票",
+    "suggestedSites": "おすすめサイト",
+    "other": "その他のデータ",
+    "skipped": "{n}件をスキップ",
+    "missing": "{n}件の参照先が見つからないため、インポートされません。",
+    "invalid": "{n}件の項目またはセクションが無効です。インポート前にファイルを確認してください。"
+},
   "basedOnAdmin": {
     "description": "原作区分と関連作品を管理します。新しい値は作品の編集画面で入力できます。",
     "search": "値を検索",

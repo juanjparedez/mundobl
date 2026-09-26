@@ -1,0 +1,39 @@
+.tracking-history {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+.tracking-history__description,
+.tracking-history time {
+  color: var(--text-secondary);
+}
+.tracking-history__toolbar,
+.tracking-history__heading,
+.tracking-history__state {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+  flex-wrap: wrap;
+}
+.tracking-history__toolbar .ant-input-search {
+  flex: 1;
+  min-width: 200px;
+}
+.tracking-history__heading {
+  justify-content: space-between;
+  margin-bottom: var(--spacing-sm);
+}
+.tracking-history__heading a {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+.tracking-history__list {
+  display: grid;
+  gap: var(--spacing-sm);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.tracking-history__state {
+  margin-block: var(--spacing-sm);
+}

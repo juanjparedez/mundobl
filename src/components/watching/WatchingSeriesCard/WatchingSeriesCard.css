@@ -1,0 +1,110 @@
+.watching-series-card {
+  overflow: hidden;
+  min-width: 0;
+}
+.watching-series-card__layout {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+}
+.watching-series-card__poster {
+  position: relative;
+  min-height: 230px;
+  background: var(--bg-spotlight);
+  overflow: hidden;
+}
+.watching-series-card__poster img {
+  object-fit: cover;
+}
+.watching-series-card__content {
+  padding: var(--spacing-lg);
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+.watching-series-card__heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+}
+.watching-series-card__heading h2 {
+  font-size: var(--font-size-lg);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.watching-series-card__heading h2 a {
+  color: var(--text-primary);
+}
+.watching-series-card__heading h2 a:hover {
+  color: var(--primary-color);
+}
+.watching-series-card__source {
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+}
+.watching-series-card__meta,
+.watching-series-card__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+.watching-series-card__meta {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+.watching-series-card__progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  max-width: 560px;
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+}
+.watching-series-card__date {
+  color: var(--text-secondary);
+}
+.watching-series-card__actions {
+  margin-top: auto;
+  padding-top: var(--spacing-sm);
+}
+.watching-series-card__actions .ant-btn {
+  min-height: 40px;
+  height: auto;
+  white-space: normal;
+}
+.watching-series-card__watch {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  min-height: 40px;
+}
+.watching-collection--grid .watching-series-card__layout {
+  grid-template-columns: 1fr;
+  height: 100%;
+}
+.watching-collection--grid .watching-series-card__poster {
+  min-height: 0;
+  height: 160px;
+}
+.watching-collection--grid .watching-series-card__content {
+  padding: var(--spacing-md);
+}
+.watching-collection--grid .watching-series-card__heading h2 {
+  font-size: var(--font-size-base);
+}
+@media (max-width: 600px) {
+  .watching-series-card__layout {
+    grid-template-columns: 72px minmax(0, 1fr);
+  }
+  .watching-series-card__poster {
+    min-height: 150px;
+  }
+  .watching-series-card__content {
+    padding: var(--spacing-sm);
+  }
+  .watching-series-card__actions .ant-btn {
+    flex: 1 1 100%;
+  }
+}

@@ -1,5 +1,7 @@
 'use client';
 
+import { getContentUrl } from '@/lib/slug';
+
 import { useState } from 'react';
 import { ReadOutlined, StarOutlined, DeleteOutlined } from '@ant-design/icons';
 import { Tag, Popconfirm, Button } from 'antd';
@@ -101,9 +103,10 @@ interface ReviewRowProps {
 }
 
 function ReviewRow({ review, locale, t, onDelete, busy }: ReviewRowProps) {
-  const href = review.series
-    ? `/series/${review.series.id}#series-section-reviews`
-    : '#';
+  const contentHref = review.series ? getContentUrl(review.series) : null;
+  const href = contentHref?.startsWith('/series/')
+    ? `${contentHref}#series-section-reviews`
+    : (contentHref ?? '#');
   const date = new Date(
     review.publishedAt ?? review.updatedAt
   ).toLocaleDateString(locale);

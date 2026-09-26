@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Collapse, Tag, Row, Col, Avatar, Button } from 'antd';
 import {
   CalendarOutlined,
@@ -10,6 +11,7 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { EpisodesList } from './EpisodesList';
 import { EpisodeChapterList } from './EpisodeChapterList/EpisodeChapterList';
+import { WatchDateEditor } from './WatchDateEditor/WatchDateEditor';
 import { CommentsList } from '@/components/common/CommentsList';
 import { useSeriesUserStatus } from './SeriesUserStatusProvider';
 import { canEditCatalog } from '@/lib/auth-client';
@@ -62,6 +64,8 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
   const { data: session } = useSession();
   const canEdit = canEditCatalog(session?.user?.role);
   const { seasonStatus, episodeStatus } = useSeriesUserStatus();
+  const [dateSeasonId, setDateSeasonId] = useState<number | null>(null);
+  const dateSeason = seasons.find((season) => season.id === dateSeasonId);
   if (!seasons || seasons.length === 0) {
     return (
       <div className="seasons-empty">
@@ -157,6 +161,16 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
       ),
       children: (
         <div className="season-content">
+          {session?.user && seasonStatus[season.id] === 'VISTA' && (
+            <div>
+              <Button
+                icon={<CalendarOutlined />}
+                onClick={() => setDateSeasonId(season.id)}
+              >
+                {t('watchDateEditor.title')}
+              </Button>
+            </div>
+          )}
           {season.synopsis && (
             <div className="season-content__synopsis">
               <h5 className="season-section-title">
@@ -281,11 +295,38 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
   });
 
   return (
-    <Collapse
-      defaultActiveKey={[sortedSeasons[0]?.id.toString()]}
-      className="seasons-list"
-      items={collapseItems}
-    />
+    <>
+      <Collapse
+        defaultActiveKey={[sortedSeasons[0]?.id.toString()]}
+        className="seasons-list"
+        items={collapseItems}
+      />
+      {session?.user &&
+        dateSeason &&
+        seasonStatus[dateSeason.id] === 'VISTA' && (
+          <WatchDateEditor
+            key={`${session.user.id}-${dateSeason.id}`}
+            options={[
+              {
+                target: { seasonId: dateSeason.id },
+                label: interpolateMessage(t('seasonsList.seasonLabel'), {
+                  n: String(dateSeason.seasonNumber),
+                }),
+              },
+            ]}
+            onClose={() => setDateSeasonId(null)}
+            labels={{
+              title: t('watchDateEditor.title'),
+              date: t('watchDateEditor.date'),
+              unknown: t('watchDateEditor.unknown'),
+              save: t('watchDateEditor.save'),
+              cancel: t('watchDateEditor.cancel'),
+              error: t('watchDateEditor.error'),
+              conflict: t('watchDateEditor.conflict'),
+            }}
+          />
+        )}
+    </>
   );
 }
 

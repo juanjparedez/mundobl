@@ -1,3 +1,18 @@
+.profile-settings-import-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.profile-settings-import-summary ul {
+  margin: 0;
+  padding-inline-start: var(--spacing-lg);
+}
+
+.profile-settings-import-summary__detail {
+  color: var(--text-secondary);
+}
+
 .profile-settings-section {
   display: flex;
   flex-direction: column;

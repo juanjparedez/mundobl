@@ -1,6 +1,6 @@
 # Backup y recuperación
 
-El workflow `Backup de la base` exporta los 62 modelos a JSON comprimido en R2 y conserva 14 días. El exportador lee una única instantánea consistente (`RepeatableRead`), falla si falta un modelo o una consulta y nunca publica un backup parcial. `--check-models` comprueba la cobertura sin consultar la base.
+El workflow `Backup de la base` exporta los 63 modelos a JSON comprimido en R2 y conserva 14 días. El exportador lee una única instantánea consistente (`RepeatableRead`), falla si falta un modelo o una consulta y nunca publica un backup parcial. `--check-models` comprueba la cobertura sin consultar la base.
 
 ## Activación pendiente
 
@@ -23,6 +23,6 @@ Después, crear la **variable** `BACKUPS_ENABLED` con valor `true` y ejecutar ma
 
 El restaurador exige localhost y todas las tablas vacías. Conserva las restricciones, ordena las tablas por sus dependencias y recupera las secuencias de IDs. No permite restaurar directamente sobre producción. La recuperación real requiere verificar primero los datos en esa base local y preparar un procedimiento específico para el destino.
 
-`Verify backup restoration` prueba con datos sintéticos: comparación de las 62 tablas, JSON y Unicode, las cuatro tablas antes omitidas, secuencias y rechazo de un destino ocupado. No utiliza secretos ni datos de producción.
+`Verify backup restoration` prueba con datos sintéticos: comparación de las 63 tablas, JSON y Unicode, las cuatro tablas antes omitidas, secuencias y rechazo de un destino ocupado. No utiliza secretos ni datos de producción. El restaurador desactiva la captura automática de historial solamente durante su transacción: restaura los eventos exportados sin generar otros al reponer ViewStatus.
 
 El JSON cubre los datos de la aplicación. El esquema se reconstruye con las migraciones versionadas. Los archivos de imágenes de R2/Supabase, credenciales de servicios y configuración externa no están incluidos.
