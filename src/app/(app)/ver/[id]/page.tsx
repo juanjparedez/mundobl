@@ -111,6 +111,8 @@ export default async function VerSeriePage({ params }: PageProps) {
         embedVideoId: e.embedVideoId,
         embedChannelName: e.embedChannelName,
         embedChannelUrl: e.embedChannelUrl,
+        playback: e.playback,
+        playbackBlockedMarkets: e.playbackBlockedMarkets,
       })),
     }))
     .filter((s) => s.episodes.length > 0);

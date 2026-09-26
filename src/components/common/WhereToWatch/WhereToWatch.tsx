@@ -7,6 +7,7 @@ import {
   SafetyCertificateOutlined,
 } from '@ant-design/icons';
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import './WhereToWatch.css';
 
@@ -20,6 +21,8 @@ export interface WatchLinkItem {
 interface WhereToWatchProps {
   links: WatchLinkItem[];
   variant?: 'hero' | 'inline';
+  /** Qué mostrar sin links. Sin esto, la sección no se renderiza. */
+  empty?: ReactNode;
 }
 
 const PLATFORM_COLORS: Record<string, string> = {
@@ -47,9 +50,24 @@ function getPlatformColor(platform: string): string {
   return PLATFORM_COLORS[platform] ?? 'var(--primary-color)';
 }
 
-export function WhereToWatch({ links, variant = 'hero' }: WhereToWatchProps) {
+export function WhereToWatch({
+  links,
+  variant = 'hero',
+  empty,
+}: WhereToWatchProps) {
   const { t } = useLocale();
-  if (!links || links.length === 0) return null;
+  if (!links || links.length === 0) {
+    if (!empty) return null;
+    return (
+      <section className={`where-to-watch where-to-watch--${variant}`}>
+        <h3 className="where-to-watch__title">
+          <PlayCircleOutlined className="where-to-watch__title-icon" />
+          {t('seriesInfo.whereToWatch')}
+        </h3>
+        {empty}
+      </section>
+    );
+  }
 
   const sorted = [...links].sort((a, b) => {
     if (a.official !== b.official) return a.official ? -1 : 1;

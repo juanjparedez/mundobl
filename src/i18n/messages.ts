@@ -93,6 +93,8 @@ export type TranslationShape = {
     formatVertical: string;
     formatRegular: string;
     whereToWatch: string;
+    whereToWatchUnknown: string;
+    whereToWatchSuggest: string;
     unofficial: string;
     castSection: string;
     couplebadge: string;
@@ -2379,6 +2381,11 @@ export type TranslationShape = {
     markChapter: string;
     chapterWatched: string;
     unmarkChapter: string;
+    availabilityBlockedHere: string;
+    availabilityBlockedSomewhere: string;
+    availabilityYoutubeOnly: string;
+    availabilityRemoved: string;
+    openOnYoutube: string;
     episodeSynopsisTitle: string;
     aboutTheSeriesTitle: string;
     episodesTitle: string;
@@ -3259,6 +3266,8 @@ const es: TranslationShape = {
     formatVertical: 'Vertical',
     formatRegular: 'Regular',
     whereToWatch: 'Donde Ver',
+    whereToWatchUnknown: 'Todavía no sabemos dónde verla legalmente.',
+    whereToWatchSuggest: '¿Sabés dónde? Contanos',
     unofficial: ' (no oficial)',
     castSection: 'Reparto',
     couplebadge: 'Pareja',
@@ -5668,6 +5677,12 @@ const es: TranslationShape = {
     markChapter: 'Vi el capítulo {n}',
     chapterWatched: 'Visto',
     unmarkChapter: 'Desmarcar el capítulo {n}',
+    availabilityBlockedHere: 'Este video no está disponible en tu país.',
+    availabilityBlockedSomewhere:
+      'Este video no está disponible en algunos países.',
+    availabilityYoutubeOnly: 'Este video sólo se puede ver en YouTube.',
+    availabilityRemoved: 'La productora sacó este video de YouTube.',
+    openOnYoutube: 'Abrir en YouTube',
     episodeSynopsisTitle: 'Sinopsis del episodio',
     aboutTheSeriesTitle: 'Sobre la serie',
     episodesTitle: 'Episodios',
@@ -6600,6 +6615,8 @@ const en: TranslationShape = {
     formatVertical: 'Vertical',
     formatRegular: 'Regular',
     whereToWatch: 'Where to Watch',
+    whereToWatchUnknown: "We don't know yet where to watch it legally.",
+    whereToWatchSuggest: 'Know where? Tell us',
     unofficial: ' (unofficial)',
     castSection: 'Cast',
     couplebadge: 'Couple',
@@ -8993,6 +9010,12 @@ const en: TranslationShape = {
     markChapter: 'I watched episode {n}',
     chapterWatched: 'Watched',
     unmarkChapter: 'Unmark episode {n}',
+    availabilityBlockedHere: "This video isn't available in your country.",
+    availabilityBlockedSomewhere:
+      "This video isn't available in some countries.",
+    availabilityYoutubeOnly: 'This video can only be watched on YouTube.',
+    availabilityRemoved: 'The producer took this video down from YouTube.',
+    openOnYoutube: 'Open on YouTube',
     episodeSynopsisTitle: 'Episode synopsis',
     aboutTheSeriesTitle: 'About the series',
     episodesTitle: 'Episodes',

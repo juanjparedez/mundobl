@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, after } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 import { checkCommentRateLimit } from '@/lib/rate-limit';
@@ -184,38 +184,44 @@ export async function POST(
       const excerpt = content.trim().slice(0, 80);
 
       // Notificar a los participantes del hilo
-      void notifyParticipantsOfNewComment({
-        currentCommentId: comment.id,
-        currentUserId: authResult.userId,
-        target: { seriesId },
-        seriesIdForLink: seriesId,
-        excerpt,
-      });
-
-      // Notificar a administradores y moderadores
-      void notifyAdminsOfNewComment({
-        currentCommentId: comment.id,
-        currentUserId: authResult.userId,
-        authorName,
-        seriesId,
-        seriesTitle: series?.title,
-        excerpt,
-        isReply: parsedParentId !== null,
-      });
-
-      // Si es una respuesta a otro comentario, notificar al autor del padre
-      if (parsedParentId) {
-        void notifyParentAuthorOfReply({
-          parentCommentId: parsedParentId,
+      after(() =>
+        notifyParticipantsOfNewComment({
           currentCommentId: comment.id,
           currentUserId: authResult.userId,
-          authorName: comment.isAnonymous
-            ? 'Un usuario anónimo'
-            : rawAuthorName,
+          target: { seriesId },
+          seriesIdForLink: seriesId,
+          excerpt,
+        })
+      );
+
+      // Notificar a administradores y moderadores
+      after(() =>
+        notifyAdminsOfNewComment({
+          currentCommentId: comment.id,
+          currentUserId: authResult.userId,
+          authorName,
           seriesId,
           seriesTitle: series?.title,
           excerpt,
-        });
+          isReply: parsedParentId !== null,
+        })
+      );
+
+      // Si es una respuesta a otro comentario, notificar al autor del padre
+      if (parsedParentId) {
+        after(() =>
+          notifyParentAuthorOfReply({
+            parentCommentId: parsedParentId,
+            currentCommentId: comment.id,
+            currentUserId: authResult.userId,
+            authorName: comment.isAnonymous
+              ? 'Un usuario anónimo'
+              : rawAuthorName,
+            seriesId,
+            seriesTitle: series?.title,
+            excerpt,
+          })
+        );
       }
     }
 
