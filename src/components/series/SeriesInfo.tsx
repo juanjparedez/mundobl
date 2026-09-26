@@ -20,6 +20,7 @@ import { ReviewSpotlight } from './ReviewSpotlight/ReviewSpotlight';
 import './SeriesInfo.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
+import { countChapters } from '@/lib/episode-chapters';
 import {
   shouldShowSeasons,
   shouldShowDuration,
@@ -87,6 +88,11 @@ interface SeriesInfoProps {
     seasons?: Array<{
       seasonNumber: number;
       episodeCount?: number | null;
+      episodes?: Array<{
+        id: number;
+        episodeNumber: number;
+        title?: string | null;
+      }>;
     }>;
     watchLinks?: Array<{
       id: number;
@@ -207,10 +213,7 @@ export function SeriesInfo({ series, showWatchLinks = true }: SeriesInfoProps) {
   const relatedTrackRef = useRef<HTMLDivElement | null>(null);
   const universeTrackRef = useRef<HTMLDivElement | null>(null);
 
-  const totalEpisodes = series.seasons?.reduce(
-    (sum, season) => sum + (season.episodeCount || 0),
-    0
-  );
+  const totalEpisodes = countChapters(series.seasons ?? []);
 
   const relatedSeries: PreviewSeries[] = [
     ...(series.relatedSeriesFrom?.map((r) => r.relatedSeries) ?? []),

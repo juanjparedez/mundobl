@@ -168,3 +168,26 @@ export function chapterCode(chapter: {
 }): string {
   return `T${chapter.seasonNumber}·E${chapter.number}`;
 }
+
+/**
+ * Capitulos de una serie. Con episodios cargados se cuentan; si no, vale el
+ * numero de la temporada (el importador guarda ahi la cantidad de videos,
+ * partes incluidas, asi que solo sirve cuando no hay otra cosa).
+ */
+export function countChapters(
+  seasons: ReadonlyArray<{
+    seasonNumber: number;
+    episodeCount?: number | null;
+    episodes?: ReadonlyArray<Omit<EpisodeRow, 'seasonNumber'>>;
+  }>
+): number {
+  return seasons.reduce((sum, season) => {
+    const episodes = season.episodes ?? [];
+    if (episodes.length === 0) return sum + (season.episodeCount ?? 0);
+    const rows = episodes.map((episode) => ({
+      ...episode,
+      seasonNumber: season.seasonNumber,
+    }));
+    return sum + groupIntoChapters(rows).chapters.length;
+  }, 0);
+}

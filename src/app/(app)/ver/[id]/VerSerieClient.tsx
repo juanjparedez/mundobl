@@ -29,10 +29,10 @@ import {
   CopyOutlined,
   CheckOutlined,
 } from '@ant-design/icons';
-import { useSession, signIn } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { EmbedPlayer } from '@/components/common/EmbedPlayer/EmbedPlayer';
 import { useSeriesUserStatus } from '@/components/series/SeriesUserStatusProvider';
-import { savePendingTrack } from '@/lib/pending-track';
+import { useMarkEpisodes } from '@/hooks/useMarkEpisodes';
 import { groupIntoChapters } from '@/lib/episode-chapters';
 import { EmbedAttribution } from '@/components/common/EmbedAttribution/EmbedAttribution';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
@@ -323,8 +323,8 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
   const isAuthed = status === 'authenticated';
   const isAdmin = isAuthed && session?.user?.role === 'ADMIN';
   const isUserEmbed = series.origin === 'USER_EMBED';
-  const { episodeStatus, refetch } = useSeriesUserStatus();
-  const [markingChapter, setMarkingChapter] = useState(false);
+  const { episodeStatus } = useSeriesUserStatus();
+  const { setWatched, pendingKey, ready } = useMarkEpisodes();
   const isWatched = (episodeId: number) => episodeStatus[episodeId] === 'VISTA';
 
   const flatEpisodes = useMemo(() => {
@@ -482,37 +482,13 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
   const activeChapterWatched =
     activeChapter?.items.every((item) => isWatched(item.episode.id)) ?? false;
 
-  const toggleChapterWatched = async () => {
+  const toggleChapterWatched = () => {
     if (!activeChapter) return;
-    const episodeIds = activeChapter.items.map((item) => item.episode.id);
-
-    if (!isAuthed) {
-      savePendingTrack({
-        seriesId: series.id,
-        upToEpisodeId: null,
-        episodeIds,
-        createdAt: Date.now(),
-      });
-      void signIn('google', {
-        callbackUrl: window.location.pathname + window.location.search,
-      });
-      return;
-    }
-
-    setMarkingChapter(true);
-    try {
-      const response = await fetch(`/api/series/${series.id}/watched`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ episodeIds, watched: !activeChapterWatched }),
-      });
-      if (!response.ok) throw new Error();
-      await refetch();
-    } catch {
-      message.error(t('progressStepper.error'));
-    } finally {
-      setMarkingChapter(false);
-    }
+    void setWatched(
+      'player',
+      activeChapter.items.map((item) => item.episode.id),
+      !activeChapterWatched
+    );
   };
 
   if (!active) {
@@ -649,9 +625,9 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
                   })
                 : undefined
             }
-            loading={markingChapter}
-            disabled={status === 'loading'}
-            onClick={() => void toggleChapterWatched()}
+            loading={pendingKey === 'player'}
+            disabled={!ready}
+            onClick={toggleChapterWatched}
           >
             {activeChapterWatched
               ? t('verSerie.chapterWatched')
