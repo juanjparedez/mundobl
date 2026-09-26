@@ -164,11 +164,15 @@ export function RuntimeHealthPanel() {
             ? interpolateMessage(t('adminRuntime.cronDetailLogs'), {
                 deleted: String(run.summary.deleted ?? 0),
               })
-            : interpolateMessage(t('adminRuntime.cronDetail'), {
-                probed: String(run.summary.probed ?? 0),
-                scanned: String(run.summary.scanned ?? 0),
-                changed: String(run.summary.changed ?? 0),
-              });
+            : run.job === 'news'
+              ? interpolateMessage(t('adminRuntime.cronDetailNews'), {
+                  created: String(run.summary.created ?? 0),
+                })
+              : interpolateMessage(t('adminRuntime.cronDetail'), {
+                  probed: String(run.summary.probed ?? 0),
+                  scanned: String(run.summary.scanned ?? 0),
+                  changed: String(run.summary.changed ?? 0),
+                });
         return run.summary.budgetExhausted
           ? `${detail} · ${t('adminRuntime.cronBacklog')}`
           : detail;
