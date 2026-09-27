@@ -45,5 +45,6 @@ jobs:
           node --import tsx scripts/test-library-preferences.mjs
           node --import tsx scripts/test-runtime-jobs.mjs
           node scripts/test-news-translation.mjs
+          node scripts/test-news-sources.mjs
           node scripts/test-contribution-boundary.mjs
       - run: npm run build
