@@ -89,6 +89,7 @@ export interface GeminiImageInput {
 }
 
 interface GenerateOptions {
+  signal?: AbortSignal;
   prompt: string;
   systemInstruction?: string;
   // 0 = deterministico, 1 = creativo. Default bajo para asistencia de texto.
@@ -126,12 +127,14 @@ function shouldFallback(status: number, googleStatus?: string): boolean {
 async function callOnce(
   model: string,
   apiKey: string,
-  payload: Record<string, unknown>
+  payload: Record<string, unknown>,
+  signal?: AbortSignal
 ): Promise<{ text?: string; error?: GeminiError }> {
   const res = await fetch(`${endpointFor(model)}?key=${apiKey}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
+    signal,
   });
 
   if (!res.ok) {
@@ -231,6 +234,7 @@ async function imageToInlinePart(
 }
 
 export async function generateText({
+  signal,
   prompt,
   systemInstruction,
   temperature = 0.4,
@@ -298,7 +302,8 @@ export async function generateText({
   const models = getModels();
   let lastError: GeminiError | null = null;
   for (const model of models) {
-    const { text, error } = await callOnce(model, apiKey, payload);
+    signal?.throwIfAborted();
+    const { text, error } = await callOnce(model, apiKey, payload, signal);
     if (text) return text;
     lastError = error ?? lastError;
     if (!error || !shouldFallback(error.status, error.googleStatus)) {

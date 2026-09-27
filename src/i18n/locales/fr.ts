@@ -2918,6 +2918,21 @@ const fr = {
     "actionChangelog": "Sorties",
     "actionUsers": "Utilisateurs"
   },
+  "runtimeJobs": {
+    "task": "Tâche",
+    "playability": "Vidéos et statistiques",
+    "news": "Rechercher des actualités",
+    "daily": "Traitement quotidien complet",
+    "playabilityHint": "Vérifie la disponibilité et les statistiques YouTube.",
+    "newsHint": "Recherche des actualités et les enregistre pour validation. Aucune publication automatique.",
+    "dailyHint": "Vérifie les vidéos, collecte les actualités et nettoie les journaux expirés.",
+    "review": "Examiner les actualités en attente",
+    "reviewHint": "Les propositions automatiques arrivent dans Actualités, pas dans Annonces. La publication exige une validation.",
+    "busy": "Une tâche est déjà en cours. Réessayez après sa fin.",
+    "done": "Tâche terminée. Consultez les résultats dans l’historique.",
+    "failed": "La tâche ne s’est pas terminée. Consultez l’historique avant de réessayer.",
+    "newsDetail": "Actualités : {created} nouvelles · {candidates} candidates · {sources} sources · {failed} sources en échec"
+  },
   "adminRuntime": {
     "pageTitle": "Contrôle runtime",
     "pageSubtitle": "État du freeze en direct et garde-fous de coût.",
