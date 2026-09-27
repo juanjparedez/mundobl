@@ -98,6 +98,14 @@ await page.route('**/api/**', async (route) => {
   const path = url.pathname;
   allRequests.push([route.request().method(), path]);
   let result = {};
+  // Profile is only a navigation destination in this suite, not a widget fixture.
+  if (path === '/api/user/profile') {
+    await route.fulfill({
+      status: 503,
+      json: { error: 'Test profile unavailable' },
+    });
+    return;
+  }
   if (path === '/api/auth/session')
     result = {
       user: { id: 'ui-test', name: 'Prueba', role: 'VISITOR' },
@@ -108,20 +116,22 @@ await page.route('**/api/**', async (route) => {
       dateWrite = route.request().postDataJSON();
       result = { watchedDate: dateWrite.watchedDate };
     } else result = { watchedDate: '2020-01-02T14:30:00.000Z' };
-   } else if (path === '/api/user/library') result = items;
+  } else if (path === '/api/user/library') result = items;
   else if (path === '/api/user/watching-preferences') {
     const method = route.request().method();
-    if (method === 'POST' && preferences === null) preferences = route.request().postDataJSON();
+    if (method === 'POST' && preferences === null)
+      preferences = route.request().postDataJSON();
     if (method === 'PATCH') {
       const change = route.request().postDataJSON();
       if (change.pin) {
-        preferences.pinned = preferences.pinned.filter(id => id !== change.pin.id);
+        preferences.pinned = preferences.pinned.filter(
+          (id) => id !== change.pin.id
+        );
         if (change.pin.pinned) preferences.pinned.push(change.pin.id);
-      } else preferences = {...preferences, ...change};
+      } else preferences = { ...preferences, ...change };
     }
     result = { preferences };
-  }
-  else if (path === '/api/user/tracking-history') {
+  } else if (path === '/api/user/tracking-history') {
     if (route.request().method() === 'DELETE') {
       historyCleared = true;
       result = { deleted: 2 };
@@ -140,6 +150,12 @@ await page.route('**/api/**', async (route) => {
             status: 'VISTA',
             watchedDate: null,
             previousStatus: null,
+          },
+          {
+            ...historyItem,
+            id: 'history-other-series',
+            href: '/ver/2-other-series',
+            // Same title must not collapse two different works into one group.
           },
         ],
         nextCursor: null,
@@ -246,6 +262,10 @@ try {
   const searchInput = page.getByPlaceholder('Buscar en mis series');
   await searchInput.fill('no-existe');
   await page.getByText('No hay series con estos filtros.').waitFor();
+  assert.equal(new URL(page.url()).searchParams.get('q'), 'no-existe');
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.getByText('No hay series con estos filtros.').waitFor();
+  assert.equal(await searchInput.inputValue(), 'no-existe');
   await searchInput.fill('');
   const series = page.locator('.watching-series-card').filter({
     has: page.getByRole('heading', {
@@ -366,15 +386,41 @@ try {
   await page.getByRole('tab', { name: 'Diario privado' }).click();
   await page.getByText('Una nota privada de prueba', { exact: true }).waitFor();
   await page.getByRole('tab', { name: 'Historial', exact: true }).click();
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.getByRole('tab', { name: 'Historial', exact: true }).waitFor();
+  assert.equal(
+    await page
+      .getByRole('tab', { name: 'Historial', exact: true })
+      .getAttribute('aria-selected'),
+    'true'
+  );
+  await page
+    .getByRole('link', { name: 'Mi perfil y mis datos', exact: true })
+    .click();
+  await page.waitForURL('**/perfil');
+  await page.getByRole('button', { name: 'Volver', exact: true }).click();
+  await page.waitForURL('**/watching?**');
+  await page.getByRole('tab', { name: 'Historial', exact: true }).waitFor();
+  assert.equal(new URL(page.url()).searchParams.get('tab'), 'history');
   await page.getByText('Fecha corregida', { exact: true }).waitFor();
-  await page.getByText('Fecha de visionado: 21 sept 2026', { exact: true }).waitFor();
-  await page.getByText('Fecha anterior: 20 sept 2026', { exact: true }).waitFor();
+  await page
+    .getByText('Fecha de visionado: 21 sept 2026', { exact: true })
+    .waitFor();
+  await page
+    .getByText('Fecha anterior: 20 sept 2026', { exact: true })
+    .waitFor();
   await page.getByRole('button', { name: 'Cargar más', exact: true }).click();
   await page.getByText('Estado previo al historial', { exact: true }).waitFor();
   await page
     .getByText('Fecha de visionado: Desconocida', { exact: true })
     .waitFor();
-  assert.equal(await page.locator('.tracking-history__list > li').count(), 2);
+  assert.equal(await page.locator('.tracking-history__list > li').count(), 3);
+  assert.equal(await page.locator('.tracking-history__series').count(), 2);
+  assert.equal(
+    await page.locator('.tracking-history__list').first().locator('li').count(),
+    2
+  );
+  assert.equal(new URL(page.url()).searchParams.get('tab'), 'history');
   await page.screenshot({
     path: 'test-results/watching/history.png',
     fullPage: true,

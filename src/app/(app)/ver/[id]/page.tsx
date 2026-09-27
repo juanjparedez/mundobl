@@ -4,9 +4,7 @@ import { loadLocaleMessages } from '@/i18n/messages';
 import { cache } from 'react';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
-import { Button } from 'antd';
-import { LeftOutlined } from '@/lib/client-icons';
+import { BackToCatalogButton } from '@/components/series/BackToCatalogButton/BackToCatalogButton';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { isWatchableEpisode } from '@/lib/watchable';
@@ -159,11 +157,7 @@ export default async function VerSeriePage({ params }: PageProps) {
           ]}
         />
         <div className="ver-serie-back">
-          <Link href="/ver">
-            <Button icon={<LeftOutlined />} type="link">
-              Volver al catálogo de series mirables
-            </Button>
-          </Link>
+          <BackToCatalogButton fallback="/ver" />
         </div>
         <SeriesUserStatusProvider seriesId={serie.id}>
           <PendingTrackApplier seriesId={serie.id} seriesTitle={serie.title} />
