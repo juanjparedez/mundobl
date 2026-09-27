@@ -425,6 +425,11 @@ try {
     path: 'test-results/watching/history.png',
     fullPage: true,
   });
+  assert.equal(new URL(page.url()).searchParams.get('historyPages'), '2');
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.getByText('Estado previo al historial', { exact: true }).waitFor();
+  assert.equal(await page.locator('.tracking-history__list > li').count(), 3);
+  assert.equal(await page.locator('.tracking-history__series').count(), 2);
   const stateBeforeClear = JSON.stringify(items);
   await page
     .locator('.tracking-history')
