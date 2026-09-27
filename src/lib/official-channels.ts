@@ -95,8 +95,9 @@ export const OFFICIAL_CHANNELS: OfficialChannel[] = [
   },
   {
     name: 'GagaOOLala',
-    handle: 'GagaOOLala',
-    channelId: 'UCDlQgVysoHmuRWX5RriR90Q',
+    handle: 'gagaoolalaofficial',
+    // YouTube Data API verified 2026-09-27; @GagaOOLala is an unrelated empty channel.
+    channelId: 'UCAv7YCgnRo86h7gOMMBf-GQ',
     country: '🇹🇼',
   },
   {
