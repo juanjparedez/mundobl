@@ -72,6 +72,15 @@ const it = {
     policy: "I contributi usano attori, case di produzione, paesi, lingue, tag e generi esistenti. I nuovi nomi richiedono l’inserimento editoriale da parte di Flor.",
     unresolved: "Nessuna modifica salvata. Questi nomi non esistono o sono ambigui: {names}. Controllali o chiedi a Flor di aggiungerli.",
   },
+  libraryWorkspace: {
+    backup: "Preferenze della biblioteca",
+  "title": "La mia biblioteca",
+  "scope": "In tutta la biblioteca",
+  "preferences": "Vista, ordine e titoli fissati si sincronizzano quando apri o torni a questa schermata sui tuoi dispositivi.",
+  "error": "Impossibile sincronizzare le preferenze. Riprova prima di modificarle.",
+  "saving": "Salvataggio delle preferenze…",
+  "empty": "Non hai ancora aggiunto serie al tuo monitoraggio."
+},
   trackingWorkspace: {
     "gaps": "Alcuni capitoli precedenti non sono segnati come visti",
     "title": "Il mio monitoraggio",

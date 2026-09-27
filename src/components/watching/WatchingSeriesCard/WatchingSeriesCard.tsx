@@ -23,6 +23,7 @@ import './WatchingSeriesCard.css';
 interface WatchingSeriesCardProps {
   item: WatchingItem;
   pinned: boolean;
+  pinDisabled?: boolean;
   busy: boolean;
   onPin: () => void;
   onManage: () => void;
@@ -43,6 +44,7 @@ interface WatchingSeriesCardProps {
 export function WatchingSeriesCard({
   item,
   pinned,
+  pinDisabled,
   busy,
   onPin,
   onManage,
@@ -87,6 +89,7 @@ export function WatchingSeriesCard({
               icon={pinned ? <PushpinFilled /> : <PushpinOutlined />}
               aria-label={labels.pin}
               aria-pressed={pinned}
+              disabled={pinDisabled}
               onClick={onPin}
             />
           </div>
@@ -110,16 +113,17 @@ export function WatchingSeriesCard({
             </span>
           </div>
           <div className="watching-series-card__actions">
-            {progress.next && (
-              <Button
-                type="primary"
-                icon={<CheckOutlined />}
-                disabled={busy}
-                onClick={onMark}
-              >
-                {labels.mark}
-              </Button>
-            )}
+            {progress.next &&
+              !['VISTA', 'ABANDONADA'].includes(item.status) && (
+                <Button
+                  type="primary"
+                  icon={<CheckOutlined />}
+                  disabled={busy}
+                  onClick={onMark}
+                >
+                  {labels.mark}
+                </Button>
+              )}
             <Button onClick={onManage} disabled={busy}>
               {labels.manage}
             </Button>

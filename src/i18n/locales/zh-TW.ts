@@ -72,6 +72,15 @@ const zhTW = {
     policy: "投稿使用既有的演員、製作公司、國家、語言、標籤和類型。新名稱需要由 Flor 編輯新增。",
     unresolved: "未儲存任何變更。以下名稱不存在或有歧義：{names}。請核對或請 Flor 新增。",
   },
+  libraryWorkspace: {
+    backup: "片庫偏好設定",
+  "title": "我的片庫",
+  "scope": "整個片庫",
+  "preferences": "在各裝置開啟或返回此頁面時，會同步檢視、排序和置頂作品。",
+  "error": "無法同步偏好設定。請重試後再修改。",
+  "saving": "正在儲存偏好設定…",
+  "empty": "你還沒有新增任何作品到觀看紀錄。"
+},
   trackingWorkspace: {
     "gaps": "前面還有未標記為已看的集數",
     "title": "我的追劇紀錄",

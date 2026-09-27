@@ -41,3 +41,11 @@ Antes de mergear, exigir build y controles del PR aprobados, confirmar migracion
 - Regresiones SQL de progreso, historial, importación, fechas, estadísticas, privacidad y guionistas aprobadas. Índice público comprobado con búsqueda por alias y exclusión de personas sin créditos visibles.
 - El ensayo de restauración comparó las 65 tablas; la UI se comprobó con APIs simuladas. OAuth sigue pendiente y no se declara cubierto.
 - La base compartida tiene pendientes exactamente las dos migraciones de este PR. No aplicadas al preparar el PR. El respaldo previo de esa base requiere autorización explícita para copiar datos privados al destino local; la revisión automática lo rechazó. No confundir las pruebas locales de restauración con un respaldo de producción.
+
+### Reparación de producción posterior al merge (#87)
+
+- El 2026-09-26 se reprodujeron errores de renderizado en /series/1-avi y /ver/555-bad-buddy: el despliegue consultaba tablas todavía inexistentes.
+- Con autorización explícita del usuario se guardó un respaldo completo previo en test-results/pre-merge-backup (ignorado por Git): 62 tablas existentes, 120.613 registros. JSON y cobertura de modelos validados; checksum SHA-256 guardado junto al archivo. No se ensayó la restauración de este respaldo de producción.
+- Se aplicaron únicamente 20260926192040_tracking_event_history y 20260926204755_writer_credits mediante migrate deploy. No se aplicaron cambios de la biblioteca en desarrollo.
+- migrate status confirmó las 49 migraciones aplicadas. Writer, SeriesWriter y TrackingEvent tienen RLS habilitado. Se conservaron las 5.608 marcas; se crearon 5.521 snapshots según el filtro de la migración.
+- Ambas URLs devolvieron HTTP 200 con los títulos esperados y sin los digests de error anteriores ni nuevos digests en el HTML. Esta comprobación HTTP no equivale a probar un recorrido OAuth autenticado.
