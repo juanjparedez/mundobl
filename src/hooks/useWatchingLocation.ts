@@ -17,6 +17,7 @@ export function useWatchingLocation() {
       {
         __mb_internal_back: state?.__mb_internal_back,
         __mb_back_injected: state?.__mb_back_injected,
+        __mb_watching_scroll: state?.__mb_watching_scroll,
       },
       '',
       url
