@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { Avatar, Button, Segmented, Space, Tag } from 'antd';
 import {
   CalendarOutlined,
@@ -100,6 +101,7 @@ export function ProfileDashboardHeader({
          *  Visualmente separadas de los controles del dashboard layout
          *  (mode + customize + edit). */}
         <Space size={8} wrap>
+          <Link href="/perfil/estadisticas">{t('trackingInsights.title')}</Link>
           <Button
             type="primary"
             icon={<EditOutlined />}
