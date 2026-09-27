@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Alert, Button, Input, Popconfirm, Skeleton, Tag } from 'antd';
 import { EmptyState, PanelCard } from '@/components/design-system';
 import { useWatchingLocation } from '@/hooks/useWatchingLocation';
+import { useWatchingScroll } from '@/hooks/useWatchingScroll';
 import type {
   TrackingHistoryItem,
   TrackingHistoryPage,
@@ -12,6 +13,7 @@ import type {
 import './TrackingHistory.css';
 
 interface Props {
+  userId: string;
   locale: string;
   labels: {
     description: string;
@@ -34,7 +36,7 @@ interface Props {
   };
 }
 
-export function TrackingHistory({ locale, labels }: Props) {
+export function TrackingHistory({ userId, locale, labels }: Props) {
   const [items, setItems] = useState<TrackingHistoryItem[]>([]);
   const [cursor, setCursor] = useState<TrackingHistoryPage['nextCursor']>(null);
   const location = useWatchingLocation();
@@ -43,6 +45,10 @@ export function TrackingHistory({ locale, labels }: Props) {
   const [failed, setFailed] = useState(false);
   const request = useRef<AbortController | null>(null);
   const loadedPages = useRef(1);
+  useWatchingScroll(
+    userId,
+    location.params.get('tab') === 'history' && !loading && !failed
+  );
 
   const load = useCallback(
     async (next?: TrackingHistoryPage['nextCursor']) => {

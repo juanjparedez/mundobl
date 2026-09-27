@@ -41,8 +41,9 @@ seguimiento → perfil → Volver con Historial seleccionado. Perfil usa respues
 simulada de indisponibilidad para comprobar el regreso sin depender de widgets.
 TypeScript completo sin errores; revisión de hooks y textos traducidos realizada.
 
-Pendiente: comprobar el resultado desplegado con carátulas y biblioteca reales;
-esta entrega no declara terminados los pendientes funcionales anteriores.
+Producción de #92 comprobada con carátulas y biblioteca reales a 390 px: sin
+desbordamiento, portada completa y regreso desde ficha a la pestaña Historial.
+Esta entrega no declara terminados los pendientes funcionales anteriores.
 
 ## Regreso después de cargar más historial
 
@@ -56,3 +57,17 @@ ilimitada de solicitudes desde una URL manipulada; Cargar más sigue disponible.
 Los eventos repetidos entre páginas se deduplican. La prueba UI verifica dos
 páginas, agrupación conservada y borrado posterior; no prueba un historial real
 de miles de eventos.
+
+## Posición al volver
+
+La verificación real detectó que, al volver desde una ficha abierta a unos
+1.679 px de profundidad, el historial regresaba al inicio. Se guarda la posición
+en la entrada del navegador y se restaura después de cargar los datos de
+Biblioteca o Historial. Se identifica por cuenta y URL; no almacena eventos ni
+notas privadas. Los cambios de búsqueda o pestaña no reutilizan otra posición.
+
+Prueba móvil de 390 px: recarga y seguimiento → Perfil → Volver recuperan la
+posición (tolerancia 2 px), las dos páginas y los tres eventos de prueba.
+Diario privado y formularios administrativos quedan fuera de esta restauración.
+La corrección de posición requiere desplegar #93; no se declara verificada en
+producción hasta entonces.
