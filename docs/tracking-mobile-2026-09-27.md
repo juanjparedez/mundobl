@@ -90,3 +90,20 @@ TypeScript y ESLint aprobados. No cambia persistencia, permisos ni traducciones.
 
 Pendiente: acceso directo desde un evento del historial al episodio identificado
 de forma estable, especialmente en obras con partes. Esta entrega no lo añade.
+
+## Notas y conversaciones desde el historial
+
+La siguiente entrega conecta eventos de episodio con su nota privada y su
+conversación pública, en acciones separadas. El servidor resuelve el capítulo
+con `groupIntoChapters`, igual que el panel de episodios: una segunda parte abre
+la nota/conversación de la primera parte del capítulo, sin inferir IDs a partir
+de números. Consulta las temporadas necesarias en un único lote. Eventos de
+serie/temporada y extras sin capítulo resuelto conservan el enlace a la ficha.
+
+No se publica al abrir una conversación y la nota privada no se copia al
+formulario público. Se reutilizan los editores y textos traducidos existentes.
+No incorpora reproducción ni marcado desde el evento histórico.
+
+Verificación: PostgreSQL local nativo (partes, aislamiento, historial y borrado),
+TypeScript, ESLint y prueba UI con APIs simuladas. La UI recupera la nota ya
+guardada y la conversación existente, sin publicar ni mostrar la nota en ella.
