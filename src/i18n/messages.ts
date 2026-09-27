@@ -64,6 +64,8 @@ export type TranslationShape = {
     search: string;
     loadError: string;
   };
+  libraryWorkspace: {
+    backup: string; title: string; scope: string; preferences: string; error: string; saving: string; empty: string; };
   trackingWorkspace: {
     gaps: string;
     title: string;
@@ -3410,6 +3412,15 @@ const es: TranslationShape = {
     unresolved:
       'No se guardó ningún cambio. Estos nombres no existen o son ambiguos: {names}. Revisalos o pedí su incorporación a Flor.',
   },
+  libraryWorkspace: {
+    backup: "Preferencias de biblioteca",
+  "title": "Mi biblioteca",
+  "scope": "En toda tu biblioteca",
+  "preferences": "La vista, el orden y los fijados se sincronizan al abrir esta pantalla o volver a ella en tus dispositivos.",
+  "error": "No pudimos sincronizar tus preferencias. Reintentá antes de cambiarlas.",
+  "saving": "Guardando preferencias…",
+  "empty": "Todavía no agregaste series a tu seguimiento."
+},
   trackingWorkspace: {
     gaps: 'Hay capítulos anteriores sin marcar',
     title: 'Mi seguimiento',
@@ -6942,6 +6953,15 @@ const en: TranslationShape = {
     unresolved:
       'No changes were saved. These names are missing or ambiguous: {names}. Check them or ask Flor to add them.',
   },
+  libraryWorkspace: {
+    backup: "Library preferences",
+  "title": "My library",
+  "scope": "Across your library",
+  "preferences": "View, order and pins sync when you open or return to this screen on your devices.",
+  "error": "We could not sync your preferences. Retry before changing them.",
+  "saving": "Saving preferences…",
+  "empty": "You have not added any series to your tracking yet."
+},
   trackingWorkspace: {
     gaps: 'Some earlier chapters are not marked as watched',
     title: 'My tracking',

@@ -1,4 +1,13 @@
 import type { WatchDateTarget } from './watch-date';
+import {
+  readWatchingPreferences,
+  type WatchingPreferences,
+} from './watching-collection';
+import {
+  parseInitialPreferences,
+  applyPreferenceChange,
+  type WatchingPreferenceChange,
+} from './watching-preferences';
 /**
  * Database helper functions for MundoBL
  *
@@ -29,6 +38,7 @@ import {
   HAS_WATCHABLE_EPISODE,
   WATCHABLE_EPISODE_WHERE,
   isTrailerLength,
+  isWatchableEpisode,
 } from './watchable';
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
@@ -248,14 +258,73 @@ export async function restoreTrackingBackup(
         plan.skipped[section] += plan[section].length - imported[section];
       }
     }
+    const preferenceErrors: string[] = [];
+    const preferenceMissing: {
+      section: string;
+      reason: string;
+      ref: number;
+    }[] = [];
+    let preferencesSkipped = 0;
+    const preferencesSupplied =
+      payload.watchingPreferences !== undefined &&
+      payload.watchingPreferences !== null;
+    if (preferencesSupplied) {
+      imported.watchingPreferences = 0;
+      const preferences = parseInitialPreferences(payload.watchingPreferences);
+      if (!preferences) {
+        preferenceErrors.push('watchingPreferences: invalid preferences');
+        preferencesSkipped = 1;
+      } else {
+        const existing = await tx.user.findUniqueOrThrow({
+          where: { id: userId },
+          select: { watchingPreferences: true },
+        });
+        if (existing.watchingPreferences !== null) preferencesSkipped = 1;
+        else {
+          const library = new Set(
+            [...statuses, ...plan.viewStatuses].flatMap((row) =>
+              row.seriesId == null ? [] : [row.seriesId]
+            )
+          );
+          preferences.pinned = preferences.pinned.filter((id) => {
+            if (library.has(id)) return true;
+            preferenceMissing.push({
+              section: 'watchingPreferences',
+              reason: 'series-not-in-library',
+              ref: id,
+            });
+            return false;
+          });
+          imported.watchingPreferences = dryRun
+            ? 1
+            : (
+                await tx.user.updateMany({
+                  where: {
+                    id: userId,
+                    watchingPreferences: { equals: Prisma.DbNull },
+                  },
+                  data: { watchingPreferences: { ...preferences } },
+                })
+              ).count;
+          preferencesSkipped = 1 - imported.watchingPreferences;
+        }
+      }
+    }
     return {
       imported,
       skipped: {
         ...plan.skipped,
+        ...(preferencesSupplied
+          ? { watchingPreferences: preferencesSkipped }
+          : {}),
         ...(history.supplied ? { trackingEvents: history.skipped } : {}),
       },
-      missingRefs: [...plan.missingRefs, ...history.missingRefs],
-      errors: [...plan.errors, ...history.errors],
+      missingRefs: [
+        ...plan.missingRefs,
+        ...history.missingRefs,
+        ...preferenceMissing,
+      ],
+      errors: [...plan.errors, ...history.errors, ...preferenceErrors],
     };
   });
 }
@@ -2093,4 +2162,145 @@ export async function getWatchDate(userId: string, target: WatchDateTarget) {
     where: { userId, ...target, status: 'VISTA' },
     select: { watchedDate: true },
   });
+}
+
+/** Personal library; only explicit series tracking records belong here. */
+export async function getWatchingLibrary(
+  userId: string,
+  scope: 'active' | 'all' = 'active'
+) {
+  const currentlyWatching = await prisma.viewStatus.findMany({
+    where: {
+      ...(scope === 'active'
+        ? { status: { in: ['VIENDO', 'RETOMAR'] as const } }
+        : {}),
+      seriesId: { not: null },
+      userId: userId,
+    },
+    select: {
+      id: true,
+      status: true,
+      lastWatchedAt: true,
+      series: {
+        // Never send editorial review/observations (which may be private)
+        // or unrelated metadata to a personal tracking screen.
+        select: {
+          id: true,
+          title: true,
+          originalTitle: true,
+          origin: true,
+          catalogScope: true,
+          year: true,
+          imageUrl: true,
+          imageThumbUrl: true,
+          airDays: true,
+          country: { select: { name: true } },
+          seasons: {
+            select: {
+              id: true,
+              seasonNumber: true,
+              episodes: {
+                select: {
+                  id: true,
+                  episodeNumber: true,
+                  title: true,
+                  embedUrl: true,
+                  durationSeconds: true,
+                  // Solo el viewStatus del usuario autenticado: sin el filtro,
+                  // viewStatus[0] podía ser de otro user y corrompía el
+                  // progreso/proximo episodio de cada card.
+                  viewStatus: {
+                    where: { userId: userId },
+                    select: { status: true },
+                  },
+                },
+                orderBy: { episodeNumber: 'asc' },
+              },
+            },
+            orderBy: { seasonNumber: 'asc' },
+          },
+        },
+      },
+    },
+    orderBy: {
+      lastWatchedAt: 'desc', // Ordenar por última vez vista
+    },
+  });
+
+  // Para el boton "Seguir viendo" en /watching: si la serie tiene algun
+  // episodio mirable, se puede retomar directo en /ver sin pasar por la
+  // ficha del catalogo. `series` es nullable a nivel de tipo (relacion
+  // opcional en el schema) aunque el `where` ya garantiza `seriesId` no
+  // nulo, de ahi el `!`.
+  const result = currentlyWatching
+    .filter((item) => item.series !== null)
+    .map((item) => ({
+      ...item,
+      series: {
+        ...item.series!,
+        hasWatchableEpisode: item.series!.seasons.some((season) =>
+          season.episodes.some(isWatchableEpisode)
+        ),
+      },
+    }));
+
+  return result;
+}
+
+export async function getWatchingPreferences(userId: string) {
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { id: userId },
+    select: { watchingPreferences: true },
+  });
+  return user.watchingPreferences === null
+    ? null
+    : readWatchingPreferences(user.watchingPreferences);
+}
+
+/** Field-level changes are serialized so two devices cannot erase each other's pins. */
+export async function saveWatchingPreferences(
+  userId: string,
+  input: { initial: WatchingPreferences } | { change: WatchingPreferenceChange }
+) {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await prisma.$transaction(
+        async (tx) => {
+          const user = await tx.user.findUniqueOrThrow({
+            where: { id: userId },
+            select: { watchingPreferences: true },
+          });
+          const current = readWatchingPreferences(user.watchingPreferences);
+          if ('initial' in input && user.watchingPreferences !== null)
+            return current;
+          const next =
+            'initial' in input
+              ? input.initial
+              : applyPreferenceChange(current, input.change);
+          // Only pin series already present in this account's library.
+          const owned = await tx.viewStatus.findMany({
+            where: { userId, seriesId: { in: next.pinned } },
+            select: { seriesId: true },
+          });
+          const ids = new Set(owned.map((row) => row.seriesId));
+          next.pinned = next.pinned.filter((id) => ids.has(id));
+          await tx.user.update({
+            where: { id: userId },
+            data: { watchingPreferences: { ...next } },
+            select: { id: true },
+          });
+          return next;
+        },
+        { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }
+      );
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2034' &&
+        attempt < 4
+      )
+        continue;
+      throw error;
+    }
+  }
 }
