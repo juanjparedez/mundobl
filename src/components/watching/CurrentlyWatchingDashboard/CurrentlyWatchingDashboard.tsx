@@ -19,6 +19,7 @@ import { MyDiaryWidget } from '@/app/(app)/perfil/dashboard/widgets/MyDiaryWidge
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { useMessage } from '@/hooks/useMessage';
 import { useWatchingPreferences } from '@/hooks/useWatchingPreferences';
+import { useWatchingLocation } from '@/hooks/useWatchingLocation';
 import {
   LIBRARY_STATUSES,
   selectWatchingItems,
@@ -75,8 +76,17 @@ function WatchingCollection({ userId }: { userId: string }) {
   const [busy, setBusy] = useState(false);
   const mutationLock = useRef(false);
   const request = useRef<AbortController | null>(null);
-  const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState<WatchingFilter>('active');
+  const location = useWatchingLocation();
+  const search = location.params.get('q') ?? '';
+  const setSearch = (value: string) => location.set('q', value);
+  const rawFilter = location.params.get('status');
+  const filter: WatchingFilter =
+    rawFilter === 'all' || LIBRARY_STATUSES.some((value) => value === rawFilter)
+      ? (rawFilter as WatchingFilter)
+      : 'active';
+  const setFilter = (value: WatchingFilter) => location.set('status', value);
+  const rawTab = location.params.get('tab');
+  const tab = rawTab === 'history' || rawTab === 'diary' ? rawTab : 'continue';
   const [selected, setSelected] = useState<WatchingItem | null>(null);
 
   const load = useCallback(async () => {
@@ -352,6 +362,8 @@ function WatchingCollection({ userId }: { userId: string }) {
         />
       )}
       <Tabs
+        activeKey={tab}
+        onChange={(value) => location.set('tab', value)}
         destroyOnHidden
         items={[
           {

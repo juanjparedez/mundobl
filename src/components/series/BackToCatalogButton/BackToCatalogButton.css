@@ -1,12 +1,13 @@
 .mb-back-to-catalog {
   display: inline-flex;
+  min-height: 44px;
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
   margin-bottom: 8px;
   background: transparent;
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-sm, 6px);
+  border: 1px solid var(--border-color-secondary);
+  border-radius: var(--border-radius-sm);
   color: var(--text-secondary);
   font-size: var(--font-size-sm, 13px);
   cursor: pointer;
@@ -17,7 +18,7 @@
 }
 
 .mb-back-to-catalog:hover {
-  background: var(--bg-secondary);
+  background: var(--bg-spotlight);
   color: var(--primary-color);
   border-color: var(--primary-color);
 }
