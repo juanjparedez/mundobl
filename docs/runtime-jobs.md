@@ -44,3 +44,26 @@ Pruebas adicionales: validación de lotes de traducción, IDs duplicados/faltant
 - Revisar editorialmente las 16 noticias antes de publicarlas, especialmente afirmaciones comerciales o de disponibilidad regional procedentes de las fuentes.
 - Diagnosticar o reemplazar las cuatro fuentes que fallan. El resultado parcial se muestra como degradado; no significa que el cron nunca haya corrido.
 - Completar reparto/directores y pósteres verticales específicos de Only Boo!, GAP y Secret Crush on You. Ya están disponibles en /ver con miniaturas oficiales; no se inventaron créditos ni se mezclaron con el catálogo PERSONAL.
+
+
+## Revisión editorial y fuentes — 27/09/2026
+
+Los 16 enlaces originales respondieron HTTP 200 y se contrastaron títulos y extractos. Se corrigió la atribución del artículo de opinión 4 y los títulos/resúmenes 13–16: las guías japonesas no acreditan acceso gratuito internacional; Addicted Love y The Chemistry todavía no tenían plataforma/fecha anunciadas según las propias fuentes. Las 16 propuestas conservan REVIEW. La revisión no equivale a verificar independientemente cada afirmación de los medios ni autoriza publicación automática.
+
+Only Boo! (673), GAP (674) y Secret Crush on You (675) tienen ahora dos protagonistas con sus personajes y director. Se reutilizaron las identidades existentes (incluidas las transliteraciones Sakon Wong/Golf y Natthaphong Wongkaweepairod/A); se crearon Freen y Becky mediante el helper de deduplicación. Fuentes: descripciones oficiales de GMMTV e IdolFactory en los videos zbAcWH2TF-s y pBl9uKcZFXo; fichas de distribución de Apple TV de GAP y Secret Crush on You. Solo se completaron estas tres fichas WATCHABLE_ONLY. Se sustituyeron las miniaturas de episodios por arte específico verificado visualmente en TVmaze: fichas 71988, 64662 y 56582 (GAP tiene arte cuadrado; las otras dos, vertical). Versiones previas y resultados están en test-results/editorial-inventory.json y editorial-images-uploaded.json, ignorados por Git.
+
+### Auditoría de fuentes
+
+| Fuente | Hallazgo | Tratamiento |
+| --- | --- | --- |
+| Mundo Asia | Falla de conexión | Consulta automática pausada |
+| CafeBL | Falla de conexión | Consulta automática pausada |
+| BLTai | RSS responde HTTP 403 | Consulta automática pausada; no se elude el bloqueo |
+| BLUPDATE | Perfil de Twitter sin RSS; devuelve HTML | Consulta automática pausada |
+| GagaOOLala | El ID anterior pertenecía a un canal homónimo vacío | Corregido a UCAv7YCgnRo86h7gOMMBf-GQ, @gagaoolalaofficial, contrastado con YouTube Data API |
+
+La pausa vive en news-source-policy.ts y no elimina los sitios recomendados. Nombre y motivo se registran en skippedSources en los metadatos de la tarea; el contador de fuentes cuenta las efectivamente consultadas. Para reactivar un dominio, comprobar su RSS público y retirar su entrada de esa política. Esto resuelve los intentos automáticos repetidos, no repara sitios externos. Una respuesta HTML 200 ya no se interpreta como un feed vacío exitoso. Fallos de descubrimiento quedan aislados por fuente.
+
+El prompt de traducción preserva regiones, atribución y anuncios pendientes; no garantiza por sí solo la calidad editorial. Las propuestas siguen requiriendo revisión. Prueba real dry-run: 20 fuentes consultadas, 0 fallidas, 16 candidatas, 0 nuevas; sin traducciones ni escrituras. Pruebas de regresión: pausas sin fetch, dominio impostor no pausado, HTML rechazado, RSS/Atom vacíos válidos y URL inválida aislada. Agregadas al CI.
+
+Las correcciones de datos ya se aplicaron. La política y la corrección del canal entran en producción cuando se integre esta PR. Pendiente de decisión editorial: publicar las noticias revisadas; no se publicaron automáticamente.
