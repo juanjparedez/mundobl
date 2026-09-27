@@ -1,5 +1,13 @@
 # MundoBL - Contexto del Proyecto
 
+### Estadísticas de reseñas y participación (2026-09-27)
+
+- `/estadisticas` muestra `totalPublishedReviews`: reseñas PUBLISHED de cuentas no ADMIN sobre obras públicamente accesibles. Incluye catálogo y aportes con reproducción disponible; excluye borradores y obras ocultas. Cada versión por idioma cuenta como una reseña. Reutiliza `PUBLIC_REVIEW_SERIES` de `database.ts`, compartido con `getCommunityReviews`, para mantener el mismo criterio de acceso.
+- `/admin/stats` muestra reseñas publicadas totales y con `publishedAt` en los últimos siete días, incluyendo equipo y obras ocultas al público. El endpoint de edición ya renueva `publishedAt` al publicar/guardar una reseña publicada: esta métrica representa publicaciones vigentes con esa fecha, no un historial inmutable de primeras publicaciones.
+- Usuarios activos conserva el límite de 20 cuentas no bloqueadas y amplía las acciones de los últimos 30 días: seguimiento, reseñas publicadas, comentarios públicos, calificaciones y favoritos. Usa `updatedAt` salvo favoritos (`createdAt`); no incorpora visitas anónimas ni borradores/comentarios privados.
+- ISR público reducido de seis horas a cinco minutos. El texto explica actualización al visitar tras ese intervalo y regeneración en segundo plano; no promete tiempo real ni refresco automático de una pestaña abierta. Textos nuevos en los diez idiomas.
+- `scripts/test-community-statistics.ts` pasó contra PostgreSQL temporal PGlite con las migraciones existentes: alcance público/admin, fechas, borradores, ocultar obras y actividad sin seguimiento. `scripts/test-community-statistics-ui.mjs` pasó con componentes reales y API/sesión simuladas a 1280/390 px: contadores y usuario solo reseñas, sin desbordamiento. TypeScript y ESLint de archivos modificados aprobados. Sin cambios de schema, despliegue ni consulta de cantidades de producción.
+
 **Entrega acotada del 2026-09-26:** ver [alcance integrado, validación y pendientes](docs/entrega-seguimiento-2026-09-26.md). El usuario pidió detener la expansión del plan y concentrar el trabajo existente en un PR, con merge cuando esté verificado. No reanudar automáticamente el objetivo amplio.
 
 Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-stack para gestionar, calificar y hacer seguimiento de series, peliculas, cortos y especiales.

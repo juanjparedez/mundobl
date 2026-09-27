@@ -1957,6 +1957,13 @@ const de = {
     "runtime": "Runtime",
     "runtimeShort": "Run"
   },
+  activityStats: {
+    reviews: "Veröffentlichte Rezensionen",
+    reviewsWeek: "In den letzten 7 Tagen veröffentlichte Rezensionen",
+    scope: "Rezensionen umfassen den Katalog und zugängliche Beiträge zum Ansehen. Entwürfe, versteckte Inhalte und Administratorkonten sind ausgeschlossen. Jede Sprachversion zählt separat.",
+    subtitle: "Anonyme Community-Statistiken. Daten werden bei einem Besuch nach fünf Minuten aktualisiert; dies kann einen Moment dauern.",
+    activeScope: "Bis zu 20 Nutzer mit Fortschritt, veröffentlichten Rezensionen, öffentlichen Kommentaren, Bewertungen oder Favoriten in den letzten 30 Tagen.",
+  },
   "publicStats": {
     "teamNote": "Diese Zahlen sind nur für die Community. Das Kuratorenteam hat auch {n} Katalogserien gesehen; wir lassen sie weg, damit die Zahlen nicht aufgebläht werden."
   },
