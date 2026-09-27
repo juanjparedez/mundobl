@@ -2,13 +2,12 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Button, Input, Pagination, Segmented, Spin, Tag } from 'antd';
+import { Alert, Button, Input, Pagination, Segmented, Spin, Tag } from 'antd';
 import { BookOutlined, DownloadOutlined } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import { Widget } from '@/components/dashboard';
 import { EmptyState } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
-import { useMessage } from '@/hooks/useMessage';
 import './MyDiaryWidget.css';
 
 interface DiaryNote {
@@ -41,7 +40,6 @@ type KindFilter = 'all' | 'series' | 'episode';
  */
 export function MyDiaryWidget() {
   const { t } = useLocale();
-  const message = useMessage();
   const { status } = useSession();
 
   const [notes, setNotes] = useState<DiaryNote[]>([]);
@@ -52,10 +50,12 @@ export function MyDiaryWidget() {
   const [searchDraft, setSearchDraft] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   const load = useCallback(async () => {
     if (status !== 'authenticated') return;
     setLoading(true);
+    setLoadFailed(false);
     try {
       const params = new URLSearchParams();
       params.set('page', String(page));
@@ -68,14 +68,12 @@ export function MyDiaryWidget() {
       const data = (await res.json()) as DiaryResponse;
       setNotes(data.notes);
       setTotal(data.total);
-    } catch (err) {
-      message.error(
-        err instanceof Error ? err.message : t('profile.diaryLoadError')
-      );
+    } catch {
+      setLoadFailed(true);
     } finally {
       setLoading(false);
     }
-  }, [kind, message, page, pageSize, searchQuery, status, t]);
+  }, [kind, page, pageSize, searchQuery, status, t]);
 
   useEffect(() => {
     void load();
@@ -150,7 +148,7 @@ export function MyDiaryWidget() {
             size="small"
             icon={<DownloadOutlined />}
             onClick={onExport}
-            disabled={notes.length === 0}
+            disabled={loading || loadFailed || notes.length === 0}
           >
             {t('profile.diaryExport')}
           </Button>
@@ -160,6 +158,17 @@ export function MyDiaryWidget() {
           <div className="mb-my-diary__loading">
             <Spin size="small" />
           </div>
+        ) : loadFailed ? (
+          <Alert
+            type="error"
+            showIcon
+            title={t('profile.diaryLoadError')}
+            action={
+              <Button onClick={() => void load()}>
+                {t('trackingWorkspace.retry')}
+              </Button>
+            }
+          />
         ) : notes.length === 0 ? (
           <div className="mb-my-diary__empty">
             <EmptyState

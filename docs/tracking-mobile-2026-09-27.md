@@ -69,8 +69,8 @@ notas privadas. Los cambios de búsqueda o pestaña no reutilizan otra posición
 Prueba móvil de 390 px: recarga y seguimiento → Perfil → Volver recuperan la
 posición (tolerancia 2 px), las dos páginas y los tres eventos de prueba.
 Diario privado y formularios administrativos quedan fuera de esta restauración.
-La corrección de posición requiere desplegar #93; no se declara verificada en
-producción hasta entonces.
+La corrección se desplegó con #93 y se verificó en producción, como se registra
+en la siguiente sección.
 
 ## Pulido del panel de episodios
 
@@ -88,8 +88,8 @@ corrección de fecha, nota privada y publicación explícita de comentario. La
 prueba espera a que el panel termine de adaptarse al viewport antes de medir.
 TypeScript y ESLint aprobados. No cambia persistencia, permisos ni traducciones.
 
-Pendiente: acceso directo desde un evento del historial al episodio identificado
-de forma estable, especialmente en obras con partes. Esta entrega no lo añade.
+El acceso directo desde un evento del historial al episodio identificado de
+forma estable se incorporó después, en #95 (ver siguiente sección).
 
 ## Notas y conversaciones desde el historial
 
@@ -107,3 +107,50 @@ No incorpora reproducción ni marcado desde el evento histórico.
 Verificación: PostgreSQL local nativo (partes, aislamiento, historial y borrado),
 TypeScript, ESLint y prueba UI con APIs simuladas. La UI recupera la nota ya
 guardada y la conversación existente, sin publicar ni mostrar la nota en ella.
+
+## Estado verificado después del merge de #95
+
+El 27/09/2026 se integró #95 en `main`, commit
+`e1aa722faa7b95a9c206ab64cfa49b126383484d`, con tres checks aprobados.
+Después de actualizarse producción se verificó el historial autenticado:
+
+- Los eventos de capítulos ofrecen Nota privada y Conversación pública;
+  los eventos de serie conservan su presentación sin esas acciones.
+- Ambas acciones del evento Seeing double T1 · E4 abren un modal identificado
+  con esa misma obra y capítulo. Se cerraron sin guardar ni publicar.
+- A 390 px, ambos botones miden 44 px de alto y quedan dentro del viewport.
+  El modal público mide 374 px de ancho y su formulario se abre vacío.
+- #94 también está comprobada en producción: fecha, nota y conversación del
+  panel de episodios tienen controles de 44 px dentro de la pantalla móvil.
+
+Las evidencias locales están en `test-results/tracking-historial-produccion-95.png`
+y `test-results/tracking-verificacion-pr94.md` (ignoradas por Git). La prueba real
+es de lectura; la escritura, el aislamiento y las partes se verificaron con las
+pruebas locales indicadas arriba. No equivale a probar todos los dispositivos.
+
+## Qué queda abierto en esta pasada
+
+La entrega de episodios, historial agrupado y uso móvil ya está integrada. No
+queda un despliegue pendiente de #92–#95. Antes de dar por cerrada la experiencia
+completa falta comprobar el diario privado y los estados vacíos/error en móvil,
+y recorrer el regreso desde los destinos de seguimiento que aún no tienen
+evidencia real. Registrar problemas concretos encontrados antes de ampliar funciones.
+
+Múltiples visionados, edición de importaciones con conflictos y funciones
+sociales más amplias siguen como pendientes de producto; no son requisitos
+añadidos automáticamente a esta pasada de pulido.
+
+## Diario: corrección local posterior a #95
+
+La revisión encontró que un fallo de carga terminaba mostrando el estado vacío
+tras un aviso transitorio. Ahora muestra un error persistente con Reintentar;
+la exportación queda deshabilitada mientras carga o falla para evitar descargar
+resultados anteriores como si fueran los del filtro actual. Se reutilizan textos
+existentes en los diez idiomas.
+
+En móvil, búsqueda, limpieza, filtros y exportación tienen controles de al menos
+44 px; los títulos pueden ocupar varias líneas. La prueba UI simula un 503,
+comprueba que no aparece un diario vacío ni resultados anteriores, reintenta y
+recupera la nota. Mide controles a 390 px y ejecuta el resto de regresiones de
+tracking. Prueba UI, TypeScript y ESLint aprobados. Captura inspeccionada:
+`test-results/watching/diary-mobile.png`. Cambios locales, aún sin desplegar.
