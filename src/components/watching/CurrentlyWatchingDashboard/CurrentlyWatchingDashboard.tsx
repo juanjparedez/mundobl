@@ -20,6 +20,7 @@ import { useLocale } from '@/lib/providers/LocaleProvider';
 import { useMessage } from '@/hooks/useMessage';
 import { useWatchingPreferences } from '@/hooks/useWatchingPreferences';
 import {
+  LIBRARY_STATUSES,
   selectWatchingItems,
   watchingProgress,
   type WatchingFilter,
@@ -53,7 +54,21 @@ export function CurrentlyWatchingDashboard() {
 function WatchingCollection({ userId }: { userId: string }) {
   const { t, locale } = useLocale();
   const message = useMessage();
-  const { preferences, updatePreferences } = useWatchingPreferences(userId);
+  const {
+    preferences,
+    updatePreferences,
+    ready,
+    saving,
+    failed: preferencesFailed,
+    reload: reloadPreferences,
+  } = useWatchingPreferences(userId);
+  const statusLabels: Record<string, string> = {
+    SIN_VER: t('viewStatus.sinVer'),
+    VIENDO: t('viewStatus.viendo'),
+    VISTA: t('viewStatus.vista'),
+    RETOMAR: t('viewStatus.retomar'),
+    ABANDONADA: t('viewStatus.abandonada'),
+  };
   const [items, setItems] = useState<WatchingItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
@@ -61,7 +76,7 @@ function WatchingCollection({ userId }: { userId: string }) {
   const mutationLock = useRef(false);
   const request = useRef<AbortController | null>(null);
   const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState<WatchingFilter>('all');
+  const [filter, setFilter] = useState<WatchingFilter>('active');
   const [selected, setSelected] = useState<WatchingItem | null>(null);
 
   const load = useCallback(async () => {
@@ -69,7 +84,7 @@ function WatchingCollection({ userId }: { userId: string }) {
     const controller = new AbortController();
     request.current = controller;
     try {
-      const response = await fetch('/api/currently-watching', {
+      const response = await fetch('/api/user/library', {
         signal: controller.signal,
       });
       if (!response.ok) throw new Error();
@@ -132,19 +147,19 @@ function WatchingCollection({ userId }: { userId: string }) {
         <>
           <div className="watching-workspace__stats">
             <StatCard
-              label={t('trackingWorkspace.continue')}
+              label={t('libraryWorkspace.title')}
               value={items.length}
-              hint={t('trackingWorkspace.scope')}
+              hint={t('libraryWorkspace.scope')}
             />
             <StatCard
               label={t('viewStatus.retomar')}
               value={items.filter((item) => item.status === 'RETOMAR').length}
-              hint={t('trackingWorkspace.scope')}
+              hint={t('libraryWorkspace.scope')}
             />
             <StatCard
               label={t('trackingWorkspace.chapters')}
               value={chapterCount}
-              hint={t('trackingWorkspace.scope')}
+              hint={t('libraryWorkspace.scope')}
             />
           </div>
           <div className="watching-workspace__toolbar">
@@ -160,16 +175,24 @@ function WatchingCollection({ userId }: { userId: string }) {
               aria-label={t('trackingWorkspace.filter')}
               onChange={setFilter}
               options={[
+                { value: 'active', label: t('trackingWorkspace.continue') },
                 { value: 'all', label: t('trackingWorkspace.all') },
-                { value: 'VIENDO', label: t('viewStatusToggle.viendo') },
-                { value: 'RETOMAR', label: t('viewStatus.retomar') },
+                ...LIBRARY_STATUSES.map((value) => ({
+                  value,
+                  label:
+                    statusLabels[value] +
+                    ' (' +
+                    items.filter((item) => item.status === value).length +
+                    ')',
+                })),
               ]}
             />
             <Select
+              disabled={!ready || saving}
               value={preferences.sort}
               aria-label={t('watchingDashboard.sortLabel')}
               onChange={(sort: WatchingSort) =>
-                updatePreferences({ ...preferences, sort })
+                void updatePreferences({ sort })
               }
               options={[
                 {
@@ -181,9 +204,10 @@ function WatchingCollection({ userId }: { userId: string }) {
               ]}
             />
             <Segmented
+              disabled={!ready || saving}
               value={preferences.view}
               onChange={(view: 'list' | 'grid') =>
-                updatePreferences({ ...preferences, view })
+                void updatePreferences({ view })
               }
               options={[
                 { value: 'list', label: t('trackingWorkspace.list') },
@@ -192,7 +216,11 @@ function WatchingCollection({ userId }: { userId: string }) {
             />
           </div>
           <p className="watching-workspace__hint">
-            {t('trackingWorkspace.preferences')}
+            {t(
+              saving
+                ? 'libraryWorkspace.saving'
+                : 'libraryWorkspace.preferences'
+            )}
           </p>
           {visible.length > 0 ? (
             <div
@@ -209,14 +237,10 @@ function WatchingCollection({ userId }: { userId: string }) {
                     busy={busy}
                     onManage={() => setSelected(item)}
                     onMark={() => void markNext(item)}
+                    pinDisabled={!ready || saving}
                     onPin={() =>
-                      updatePreferences({
-                        ...preferences,
-                        pinned: pinned
-                          ? preferences.pinned.filter(
-                              (id) => id !== item.series.id
-                            )
-                          : [...preferences.pinned, item.series.id],
+                      void updatePreferences({
+                        pin: { id: item.series.id, pinned: !pinned },
                       })
                     }
                     labels={{
@@ -243,11 +267,7 @@ function WatchingCollection({ userId }: { userId: string }) {
                         watched: progress.watched,
                         total: progress.total,
                       }),
-                      status: t(
-                        item.status === 'RETOMAR'
-                          ? 'viewStatus.retomar'
-                          : 'viewStatusToggle.viendo'
-                      ),
+                      status: statusLabels[item.status] ?? item.status,
                       source: t(
                         item.series.origin === 'CURATED' &&
                           item.series.catalogScope === 'PERSONAL'
@@ -271,7 +291,7 @@ function WatchingCollection({ userId }: { userId: string }) {
                 title={t(
                   items.length
                     ? 'trackingWorkspace.noResults'
-                    : 'watchingDashboard.emptyText'
+                    : 'libraryWorkspace.empty'
                 )}
                 action={
                   items.length ? (
@@ -320,12 +340,23 @@ function WatchingCollection({ userId }: { userId: string }) {
           }
         />
       )}
+      {preferencesFailed && (
+        <Alert
+          type="warning"
+          title={t('libraryWorkspace.error')}
+          action={
+            <Button onClick={() => void reloadPreferences()}>
+              {t('trackingWorkspace.retry')}
+            </Button>
+          }
+        />
+      )}
       <Tabs
         destroyOnHidden
         items={[
           {
             key: 'continue',
-            label: t('trackingWorkspace.continue'),
+            label: t('libraryWorkspace.title'),
             icon: <PlayCircleOutlined />,
             children: list,
           },

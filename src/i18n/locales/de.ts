@@ -72,6 +72,15 @@ const de = {
     policy: "Beiträge verwenden vorhandene Schauspieler, Produktionsfirmen, Länder, Sprachen, Tags und Genres. Neue Namen müssen von Flor redaktionell hinzugefügt werden.",
     unresolved: "Es wurden keine Änderungen gespeichert. Diese Namen fehlen oder sind mehrdeutig: {names}. Prüfe sie oder bitte Flor, sie hinzuzufügen.",
   },
+  libraryWorkspace: {
+    backup: "Bibliothekseinstellungen",
+  "title": "Meine Bibliothek",
+  "scope": "In deiner gesamten Bibliothek",
+  "preferences": "Ansicht, Sortierung und angeheftete Titel werden beim Öffnen oder Zurückkehren zu dieser Seite synchronisiert.",
+  "error": "Deine Einstellungen konnten nicht synchronisiert werden. Versuche es vor dem Ändern erneut.",
+  "saving": "Einstellungen werden gespeichert…",
+  "empty": "Du hast noch keine Serien zu deiner Liste hinzugefügt."
+},
   trackingWorkspace: {
     "gaps": "Einige frühere Folgen sind nicht als gesehen markiert",
     "title": "Mein Fortschritt",
