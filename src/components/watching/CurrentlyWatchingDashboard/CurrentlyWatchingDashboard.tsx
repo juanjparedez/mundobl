@@ -382,6 +382,9 @@ function WatchingCollection({ userId }: { userId: string }) {
                 userId={userId}
                 locale={locale}
                 labels={{
+                  expand: t('trackingHistory.expand'),
+                  collapse: t('trackingHistory.collapse'),
+                  loaded: t('trackingHistory.loaded'),
                   description: t('trackingHistory.description'),
                   search: t('trackingHistory.search'),
                   empty: t('trackingHistory.empty'),

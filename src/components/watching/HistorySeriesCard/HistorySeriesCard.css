@@ -1,0 +1,42 @@
+.history-series-card {
+  min-width: 0;
+}
+.history-series-card__header {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: var(--spacing-md);
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+.history-series-card__poster {
+  position: relative;
+  display: block;
+  width: 120px;
+  aspect-ratio: 2 / 3;
+  border-radius: var(--border-radius-sm);
+  overflow: hidden;
+  background: var(--bg-layout);
+}
+.history-series-card__poster img {
+  object-fit: contain;
+}
+.history-series-card__header h2 {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  overflow-wrap: anywhere;
+}
+.history-series-card__header h2 a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+.history-series-card__header p {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+.history-series-card__toggle {
+  margin-top: var(--spacing-md);
+  min-height: 44px;
+  white-space: normal;
+  height: auto;
+}

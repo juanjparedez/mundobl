@@ -154,3 +154,18 @@ comprueba que no aparece un diario vacío ni resultados anteriores, reintenta y
 recupera la nota. Mide controles a 390 px y ejecuta el resto de regresiones de
 tracking. Prueba UI, TypeScript y ESLint aprobados. Captura inspeccionada:
 `test-results/watching/diary-mobile.png`. Cambios locales, aún sin desplegar.
+
+## Cards visuales del historial
+
+- Una card por serie, con carátula 2:3 de 120 x 180 sin recorte y fallback si
+  falta o falla la imagen. La API prioriza la miniatura del catálogo.
+- Dos movimientos visibles inicialmente; el resto se despliega por serie.
+  El contador dice movimientos cargados, no promete el total de la biblioteca.
+- Conserva cronología, búsqueda, paginación global, fechas anteriores, estados,
+  notas privadas y conversaciones públicas por capítulo.
+- La expansión queda en `historyOpen` en la URL, junto a búsqueda/páginas, para
+  restaurarla al volver desde una ficha. Sin scroll interno en las cards.
+- Diez idiomas; sin migración ni escrituras de datos en producción.
+- PostgreSQL local: regresión existente de historial + selección de miniatura.
+  Chromium con fixtures: proporción de imagen, fallback, dos filas por serie,
+  expansión/contracción y ausencia de desbordes móviles. Prueba agregada a CI.

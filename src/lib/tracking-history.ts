@@ -14,6 +14,7 @@ export interface TrackingHistoryItem {
   previousWatchedDate: string | null;
   recordedAt: string;
   seriesTitle: string;
+  imageUrl?: string | null;
   href: string;
   seasonNumber: number | null;
   episodeNumber: number | null;

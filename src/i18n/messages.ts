@@ -37,6 +37,9 @@ export type TranslationShape = {
     collectionDescription: string;
   };
   trackingHistory: {
+    expand: string;
+    collapse: string;
+    loaded: string;
     title: string;
     description: string;
     search: string;
@@ -3423,6 +3426,10 @@ const es: TranslationShape = {
   },
 
   trackingHistory: {
+    expand: "Ver {count} movimientos más",
+    collapse: "Ver menos",
+    loaded: "{count} movimientos cargados",
+
     title: 'Historial',
     description:
       'Cambios de seguimiento, solo para vos. Los estados previos no reconstruyen acciones pasadas.',
@@ -7015,6 +7022,10 @@ const en: TranslationShape = {
   },
 
   trackingHistory: {
+    expand: "Show {count} more events",
+    collapse: "Show less",
+    loaded: "{count} loaded events",
+
     title: 'History',
     description:
       'Tracking changes, visible only to you. Previous states do not reconstruct past actions.',

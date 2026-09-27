@@ -1,9 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import Link from 'next/link';
 import { Alert, Button, Input, Popconfirm, Skeleton, Tag } from 'antd';
-import { EmptyState, PanelCard } from '@/components/design-system';
+import { EmptyState } from '@/components/design-system';
 import { useWatchingLocation } from '@/hooks/useWatchingLocation';
 import { useWatchingScroll } from '@/hooks/useWatchingScroll';
 import { HistoryEpisodeActions } from '../HistoryEpisodeActions/HistoryEpisodeActions';
@@ -11,12 +10,16 @@ import type {
   TrackingHistoryItem,
   TrackingHistoryPage,
 } from '@/lib/tracking-history';
+import { HistorySeriesCard } from '../HistorySeriesCard/HistorySeriesCard';
 import './TrackingHistory.css';
 
 interface Props {
   userId: string;
   locale: string;
   labels: {
+    expand: string;
+    collapse: string;
+    loaded: string;
     description: string;
     search: string;
     empty: string;
@@ -44,6 +47,9 @@ export function TrackingHistory({ userId, locale, labels }: Props) {
   const [cursor, setCursor] = useState<TrackingHistoryPage['nextCursor']>(null);
   const location = useWatchingLocation();
   const search = location.params.get('historyQ') ?? '';
+  const expandedGroups = new Set(
+    (location.params.get('historyOpen') ?? '').split(',').filter(Boolean)
+  );
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
   const request = useRef<AbortController | null>(null);
@@ -203,70 +209,74 @@ export function TrackingHistory({ userId, locale, labels }: Props) {
       ) : null}
       <div className="tracking-history__groups">
         {[...groups].map(([href, events]) => (
-          <PanelCard key={href} padding="md">
-            <h2 className="tracking-history__series">
-              <Link href={href}>{events[0].seriesTitle}</Link>
-            </h2>
-            <ol className="tracking-history__list">
-              {events.map((item) => (
-                <li key={item.id}>
-                  {item.kind !== 'SNAPSHOT' && (
-                    <div className="tracking-history__heading">
-                      <time dateTime={item.recordedAt}>
-                        {date(item.recordedAt)}
-                      </time>
-                    </div>
-                  )}
-                  <p>
-                    {item.episodeNumber !== null
-                      ? labels.episode
-                          .replace('{season}', String(item.seasonNumber))
-                          .replace('{episode}', String(item.episodeNumber))
-                      : item.seasonNumber !== null
-                        ? labels.season.replace(
-                            '{n}',
-                            String(item.seasonNumber)
-                          )
-                        : labels.series}
-                  </p>
-                  <div className="tracking-history__state">
-                    <span>{labels.kinds[item.kind]}</span>
-                    {item.previousStatus &&
-                      item.previousStatus !== item.status && (
-                        <>
-                          <Tag>{labels.statuses[item.previousStatus]}</Tag>
-                          <span aria-hidden="true">→</span>
-                        </>
-                      )}
-                    <Tag>{labels.statuses[item.status]}</Tag>
+          <HistorySeriesCard
+            key={href}
+            expanded={expandedGroups.has(href)}
+            onToggle={() => {
+              const next = new Set(expandedGroups);
+              if (next.has(href)) next.delete(href);
+              else next.add(href);
+              location.set('historyOpen', [...next].join(','));
+            }}
+            href={href}
+            title={events[0].seriesTitle}
+            imageUrl={events[0].imageUrl}
+            labels={labels}
+          >
+            {events.map((item) => (
+              <li key={item.id}>
+                {item.kind !== 'SNAPSHOT' && (
+                  <div className="tracking-history__heading">
+                    <time dateTime={item.recordedAt}>
+                      {date(item.recordedAt)}
+                    </time>
                   </div>
-                  {(item.status === 'VISTA' || item.watchedDate) && (
-                    <p>
-                      {labels.watchDate}: {watchDate(item.watchedDate)}
-                    </p>
-                  )}
-                  {item.kind === 'DATE_CHANGED' && (
-                    <p>
-                      {labels.previousDate}:{' '}
-                      {watchDate(item.previousWatchedDate)}
-                    </p>
-                  )}
-                  {item.chapterTarget && (
-                    <HistoryEpisodeActions
-                      episodeId={item.chapterTarget.episodeId}
-                      chapterLabel={`${item.seriesTitle} · ${labels.episode
+                )}
+                <p>
+                  {item.episodeNumber !== null
+                    ? labels.episode
                         .replace('{season}', String(item.seasonNumber))
-                        .replace(
-                          '{episode}',
-                          String(item.chapterTarget.chapterNumber)
-                        )}`}
-                      labels={labels}
-                    />
-                  )}
-                </li>
-              ))}
-            </ol>
-          </PanelCard>
+                        .replace('{episode}', String(item.episodeNumber))
+                    : item.seasonNumber !== null
+                      ? labels.season.replace('{n}', String(item.seasonNumber))
+                      : labels.series}
+                </p>
+                <div className="tracking-history__state">
+                  <span>{labels.kinds[item.kind]}</span>
+                  {item.previousStatus &&
+                    item.previousStatus !== item.status && (
+                      <>
+                        <Tag>{labels.statuses[item.previousStatus]}</Tag>
+                        <span aria-hidden="true">→</span>
+                      </>
+                    )}
+                  <Tag>{labels.statuses[item.status]}</Tag>
+                </div>
+                {(item.status === 'VISTA' || item.watchedDate) && (
+                  <p>
+                    {labels.watchDate}: {watchDate(item.watchedDate)}
+                  </p>
+                )}
+                {item.kind === 'DATE_CHANGED' && (
+                  <p>
+                    {labels.previousDate}: {watchDate(item.previousWatchedDate)}
+                  </p>
+                )}
+                {item.chapterTarget && (
+                  <HistoryEpisodeActions
+                    episodeId={item.chapterTarget.episodeId}
+                    chapterLabel={`${item.seriesTitle} · ${labels.episode
+                      .replace('{season}', String(item.seasonNumber))
+                      .replace(
+                        '{episode}',
+                        String(item.chapterTarget.chapterNumber)
+                      )}`}
+                    labels={labels}
+                  />
+                )}
+              </li>
+            ))}
+          </HistorySeriesCard>
         ))}
       </div>
       {cursor && (
