@@ -1,4 +1,4 @@
-export const revalidate = 21600;
+export const revalidate = 300;
 
 import type { Metadata } from 'next';
 import { getPublicStats } from '@/lib/public-stats';

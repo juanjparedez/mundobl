@@ -1957,6 +1957,13 @@ const it = {
     "runtime": "Runtime",
     "runtimeShort": "Run"
   },
+  activityStats: {
+    reviews: "Recensioni pubblicate",
+    reviewsWeek: "Recensioni pubblicate negli ultimi 7 giorni",
+    scope: "Le recensioni includono il catalogo e i contributi accessibili da guardare. Sono esclusi bozze, contenuti nascosti e account amministratori. Ogni versione linguistica conta separatamente.",
+    subtitle: "Metriche anonime della comunità. I dati si aggiornano alla visita dopo cinque minuti; l’aggiornamento può richiedere qualche istante.",
+    activeScope: "Fino a 20 utenti con attività di monitoraggio, recensioni pubblicate, commenti pubblici, valutazioni o preferiti negli ultimi 30 giorni.",
+  },
   "publicStats": {
     "teamNote": "Questi dati sono solo della community. Il team di curatori ha anche guardato {n} serie del catalogo; le abbiamo escluse per non gonfiare i numeri."
   },
