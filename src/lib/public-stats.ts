@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/database';
+import { prisma, PUBLIC_REVIEW_SERIES } from '@/lib/database';
 
 /**
  * Metricas globales anonimas para /estadisticas.
@@ -55,6 +55,7 @@ export interface PublicStats {
   summary: {
     totalSeries: number;
     totalPublicComments: number;
+    totalPublishedReviews: number;
     totalCompletedViews: number;
     totalCurrentlyWatching: number;
     totalFavorites: number;
@@ -111,6 +112,7 @@ export async function getPublicStats(): Promise<PublicStats> {
   const [
     totalSeries,
     totalPublicComments,
+    totalPublishedReviews,
     totalCompletedViews,
     totalCurrentlyWatching,
     totalFavorites,
@@ -136,6 +138,13 @@ export async function getPublicStats(): Promise<PublicStats> {
     prisma.series.count({ where: { origin: 'CURATED' } }),
     prisma.comment.count({
       where: { isPrivate: false, ...COMMUNITY_COMMENTS },
+    }),
+    prisma.review.count({
+      where: {
+        status: 'PUBLISHED',
+        series: PUBLIC_REVIEW_SERIES,
+        ...COMMUNITY,
+      },
     }),
     prisma.viewStatus.count({
       where: {
@@ -347,6 +356,7 @@ export async function getPublicStats(): Promise<PublicStats> {
     summary: {
       totalSeries,
       totalPublicComments,
+      totalPublishedReviews,
       totalCompletedViews,
       totalCurrentlyWatching,
       totalFavorites,

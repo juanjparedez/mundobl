@@ -1957,6 +1957,13 @@ const fr = {
     "runtime": "Runtime",
     "runtimeShort": "Run"
   },
+  activityStats: {
+    reviews: "Avis publiés",
+    reviewsWeek: "Avis publiés au cours des 7 derniers jours",
+    scope: "Les avis incluent le catalogue et les contributions accessibles à regarder. Les brouillons, contenus masqués et comptes administrateurs sont exclus. Chaque version linguistique compte séparément.",
+    subtitle: "Statistiques anonymes de la communauté. Les données sont actualisées lors d’une visite après cinq minutes ; cela peut prendre quelques instants.",
+    activeScope: "Jusqu’à 20 utilisateurs ayant un suivi, des avis publiés, des commentaires publics, des notes ou des favoris au cours des 30 derniers jours.",
+  },
   "publicStats": {
     "teamNote": "Ces chiffres sont uniquement ceux de la communauté. L'équipe de curation a également regardé {n} séries du catalogue ; nous les excluons pour ne pas gonfler les chiffres."
   },

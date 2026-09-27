@@ -1957,6 +1957,13 @@ const zhTW = {
     "runtime": "Runtime",
     "runtimeShort": "Run"
   },
+  activityStats: {
+    reviews: "已發布的評論文章",
+    reviewsWeek: "過去7天發布的評論文章",
+    scope: "包括目錄和可觀看的公開投稿的評論文章。不包括草稿、隱藏內容和管理員帳號。每個語言版本分別計數。",
+    subtitle: "匿名社群統計。五分鐘後再次造訪時更新資料，更新可能需要片刻。",
+    activeScope: "最多顯示20位在過去30天內有觀看紀錄、已發布評論文章、公開留言、評分或收藏活動的使用者。",
+  },
   "publicStats": {
     "teamNote": "這些數字僅限於社群。策展團隊也觀看了 {n} 部目錄系列；我們將其排除，以免數字虛報。"
   },
