@@ -71,3 +71,22 @@ posición (tolerancia 2 px), las dos páginas y los tres eventos de prueba.
 Diario privado y formularios administrativos quedan fuera de esta restauración.
 La corrección de posición requiere desplegar #93; no se declara verificada en
 producción hasta entonces.
+
+## Pulido del panel de episodios
+
+Tras el merge de #93 se verificó en producción el regreso a la misma posición
+del historial (1.678,67 px, 14 eventos y 3 grupos), con tres checks aprobados.
+
+Siguiente entrega: controles de fecha, conversación pública y nota privada con
+área táctil mínima de 44 px en móvil; acciones en una fila propia que permite
+envolver textos; títulos completos y menos padding anidado dentro del panel.
+El cierre del panel también tiene un área de 44 px. Los snapshots del historial
+ya no reservan un encabezado vacío para una fecha de registro que no se muestra.
+
+Validado a 390 px con APIs simuladas: límites y tamaños de las acciones,
+corrección de fecha, nota privada y publicación explícita de comentario. La
+prueba espera a que el panel termine de adaptarse al viewport antes de medir.
+TypeScript y ESLint aprobados. No cambia persistencia, permisos ni traducciones.
+
+Pendiente: acceso directo desde un evento del historial al episodio identificado
+de forma estable, especialmente en obras con partes. Esta entrega no lo añade.

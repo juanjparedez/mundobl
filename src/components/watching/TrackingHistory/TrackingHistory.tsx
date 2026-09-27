@@ -207,13 +207,13 @@ export function TrackingHistory({ userId, locale, labels }: Props) {
             <ol className="tracking-history__list">
               {events.map((item) => (
                 <li key={item.id}>
-                  <div className="tracking-history__heading">
-                    {item.kind !== 'SNAPSHOT' && (
+                  {item.kind !== 'SNAPSHOT' && (
+                    <div className="tracking-history__heading">
                       <time dateTime={item.recordedAt}>
                         {date(item.recordedAt)}
                       </time>
-                    )}
-                  </div>
+                    </div>
+                  )}
                   <p>
                     {item.episodeNumber !== null
                       ? labels.episode

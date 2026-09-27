@@ -312,6 +312,28 @@ try {
     .first()
     .waitFor();
   const progressBeforeDate = JSON.stringify(items);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.waitForFunction(() => {
+    const panel = document.querySelector('.watching-episode-drawer');
+    const box = panel?.getBoundingClientRect();
+    return box && box.left >= 0 && box.right <= innerWidth;
+  });
+  const chapterActions = drawer
+    .locator('.episode-chapters__item')
+    .first()
+    .locator('.episode-chapters__actions button');
+  for (const action of await chapterActions.all()) {
+    const box = await action.boundingBox();
+    assert.ok(
+      box && box.width >= 44 && box.height >= 44,
+      'Chapter actions must be comfortable touch targets'
+    );
+    assert.ok(
+      box.x >= 0 && box.x + box.width <= 390,
+      'Chapter actions stay inside the mobile viewport'
+    );
+  }
+  await page.screenshot({ path: 'test-results/watching/episodes-mobile.png' });
   await drawer
     .getByRole('button', { name: 'Corregir fecha de visionado', exact: true })
     .first()
@@ -383,6 +405,7 @@ try {
   });
   await drawer.locator('.ant-drawer-close').click();
   await drawer.waitFor({ state: 'hidden' });
+  await page.setViewportSize({ width: 1440, height: 1000 });
   await page.getByRole('tab', { name: 'Diario privado' }).click();
   await page.getByText('Una nota privada de prueba', { exact: true }).waitFor();
   await page.getByRole('tab', { name: 'Historial', exact: true }).click();
