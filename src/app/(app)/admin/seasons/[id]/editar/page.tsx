@@ -25,6 +25,8 @@ export default async function EditSeasonPage({ params }: EditSeasonPageProps) {
         select: {
           id: true,
           title: true,
+          origin: true,
+          catalogScope: true,
         },
       },
       actors: {
@@ -44,6 +46,8 @@ export default async function EditSeasonPage({ params }: EditSeasonPageProps) {
     id: season.id,
     seriesId: season.seriesId,
     seriesTitle: season.series.title,
+    seriesOrigin: season.series.origin,
+    seriesCatalogScope: season.series.catalogScope,
     seasonNumber: season.seasonNumber,
     title: season.title,
     episodeCount: season.episodeCount,
