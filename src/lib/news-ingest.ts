@@ -6,6 +6,7 @@ import { titleTokens } from './channel-sweep';
 import { runCronJob } from './cron-runs';
 import { translateNewsToSpanish } from './news-translation';
 import { isSeriesTrailer } from './news-topics';
+import { newsSourcePauseReason } from './news-source-policy';
 
 /**
  * Ingesta diaria de noticias (la corre /api/cron/daily). Todo entra en
@@ -157,8 +158,10 @@ function fromFeed(
   try {
     doc = parser.parse(xml) as FeedDoc;
   } catch {
-    return [];
+    throw new Error('Invalid news feed XML.');
   }
+  if (!doc.rss?.channel && !doc.feed)
+    throw new Error('Response is not an RSS or Atom feed.');
   const rss = toArray(doc.rss?.channel?.item).map((item): Candidate => {
     const title = stripHtml(text(item.title));
     return {
@@ -204,33 +207,51 @@ async function fromNewsSites(): Promise<{
   items: Candidate[];
   failed: number;
   sources: number;
+  skippedSources: Array<{ name: string; reason: string }>;
 }> {
   const sites = await prisma.recommendedSite.findMany({
     where: { category: { equals: 'noticias', mode: 'insensitive' } },
     select: { name: true, url: true },
   });
   let failed = 0;
+  const skippedSources: Array<{ name: string; reason: string }> = [];
+  const activeSites = sites.filter((site) => {
+    const reason = newsSourcePauseReason(site.url);
+    if (!reason) return true;
+    skippedSources.push({ name: site.name, reason });
+    return false;
+  });
   const batches = await Promise.all(
-    sites.map(async (site) => {
-      const xml = await fetchText(await discoverFeed(site.url));
-      if (!xml) {
+    activeSites.map(async (site) => {
+      try {
+        const xml = await fetchText(await discoverFeed(site.url));
+        if (!xml) {
+          failed++;
+          return [];
+        }
+        // Por nombre y dominio: la descripcion de un sitio general suele
+        // mencionar BL igual.
+        const blSource = BL_TOPIC.test(`${site.name} ${site.url}`);
+        return fromFeed(xml, site.name, blSource)
+          .filter(
+            (c) =>
+              c.title &&
+              c.originalUrl.startsWith('http') &&
+              isRecent(c, RSS_MAX_AGE_DAYS)
+          )
+          .slice(0, PER_SOURCE_LIMIT);
+      } catch {
         failed++;
         return [];
       }
-      // Por nombre y dominio: la descripcion de un sitio general suele
-      // mencionar BL igual.
-      const blSource = BL_TOPIC.test(`${site.name} ${site.url}`);
-      return fromFeed(xml, site.name, blSource)
-        .filter(
-          (c) =>
-            c.title &&
-            c.originalUrl.startsWith('http') &&
-            isRecent(c, RSS_MAX_AGE_DAYS)
-        )
-        .slice(0, PER_SOURCE_LIMIT);
     })
   );
-  return { items: batches.flat(), failed, sources: sites.length };
+  return {
+    items: batches.flat(),
+    failed,
+    sources: activeSites.length,
+    skippedSources,
+  };
 }
 
 async function fromOfficialTrailers(): Promise<{
@@ -354,6 +375,7 @@ export async function ingestNews({ dryRun = false } = {}) {
   return {
     sources: sites.sources + trailers.sources,
     failedSources: sites.failed + trailers.failed,
+    skippedSources: sites.skippedSources,
     candidates: unique.length,
     created: dryRun ? 0 : fresh.length,
     preview: fresh.map((c) => ({
@@ -372,6 +394,7 @@ export function runNewsIngestJob(trigger: 'manual' | 'schedule' = 'schedule') {
       trigger,
       sources: result.sources,
       failedSources: result.failedSources,
+      skippedSources: JSON.stringify(result.skippedSources),
       candidates: result.candidates,
       created: result.created,
     }),
