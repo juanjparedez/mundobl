@@ -31,7 +31,17 @@ export interface WatchingItem {
   };
 }
 
-export type WatchingFilter = 'all' | 'VIENDO' | 'RETOMAR';
+export const LIBRARY_STATUSES = [
+  'SIN_VER',
+  'VIENDO',
+  'VISTA',
+  'ABANDONADA',
+  'RETOMAR',
+] as const;
+export type WatchingFilter =
+  | 'all'
+  | 'active'
+  | (typeof LIBRARY_STATUSES)[number];
 export type WatchingSort = 'recent' | 'name' | 'remaining';
 export interface WatchingPreferences {
   view: 'list' | 'grid';
@@ -112,7 +122,10 @@ export function selectWatchingItems(
   return items
     .filter(
       (item) =>
-        (filter === 'all' || item.status === filter) &&
+        (filter === 'all' ||
+          (filter === 'active'
+            ? ['VIENDO', 'RETOMAR'].includes(item.status)
+            : item.status === filter)) &&
         `${item.series.title} ${item.series.originalTitle ?? ''}`
           .toLocaleLowerCase()
           .includes(query)
