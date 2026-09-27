@@ -20,6 +20,7 @@ import { useLocale } from '@/lib/providers/LocaleProvider';
 import { useMessage } from '@/hooks/useMessage';
 import { useWatchingPreferences } from '@/hooks/useWatchingPreferences';
 import { useWatchingLocation } from '@/hooks/useWatchingLocation';
+import { useWatchingScroll } from '@/hooks/useWatchingScroll';
 import {
   LIBRARY_STATUSES,
   selectWatchingItems,
@@ -87,6 +88,7 @@ function WatchingCollection({ userId }: { userId: string }) {
   const setFilter = (value: WatchingFilter) => location.set('status', value);
   const rawTab = location.params.get('tab');
   const tab = rawTab === 'history' || rawTab === 'diary' ? rawTab : 'continue';
+  useWatchingScroll(userId, tab === 'continue' && !loading && ready);
   const [selected, setSelected] = useState<WatchingItem | null>(null);
 
   const load = useCallback(async () => {
@@ -377,6 +379,7 @@ function WatchingCollection({ userId }: { userId: string }) {
             label: t('trackingHistory.title'),
             children: (
               <TrackingHistory
+                userId={userId}
                 locale={locale}
                 labels={{
                   description: t('trackingHistory.description'),
