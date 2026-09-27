@@ -1,0 +1,43 @@
+.insight-distribution {
+  min-width: 0;
+}
+.insight-distribution h2 {
+  font-size: var(--font-size-lg);
+  margin-top: 0;
+}
+.insight-distribution ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.insight-distribution li {
+  margin-block: var(--spacing-sm);
+}
+.insight-distribution .ant-btn {
+  color: var(--text-primary);
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  white-space: normal;
+  height: auto;
+  min-height: 44px;
+  text-align: start;
+}
+.insight-distribution .ant-btn span {
+  overflow-wrap: anywhere;
+}
+.insight-distribution .ant-btn strong {
+  white-space: nowrap;
+}
+.insight-distribution .ant-btn[aria-pressed='true'] {
+  background: var(--mb-gold-soft);
+  outline: 1px solid var(--primary-color);
+}
+.insight-distribution .ant-progress-track {
+  background: var(--primary-color) !important;
+}
+.insight-distribution summary {
+  cursor: pointer;
+  min-height: 44px;
+  align-content: center;
+}

@@ -62,6 +62,12 @@ const server = createServer((req, res) => {
           chapters: 2,
           minutes: 10,
           completed: false,
+          metadata: {
+            country: i < 6 ? { id: 1, name: 'Tailandia', code: 'TH' } : null,
+            genres: [{ id: 1, name: 'Romance' }],
+            type: 'serie',
+            format: 'regular',
+          },
         })),
       })
     );
@@ -93,9 +99,7 @@ try {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`http://127.0.0.1:${server.address().port}`);
   await page
-    .getByText(
-      'No pudimos cargar tus estadísticas. Podés volver a intentarlo.'
-    )
+    .getByText('No pudimos cargar tus estadísticas. Podés volver a intentarlo.')
     .waitFor();
   await page.getByRole('button', { name: 'Reintentar' }).click();
   await page.locator('.mb-tracking-insights__list li').first().waitFor();
@@ -115,6 +119,34 @@ try {
   await page.getByTitle('Últimos 7 días', { exact: true }).click();
   await page.waitForFunction(
     () => document.querySelector('.mb-stat-card__value')?.textContent === '7'
+  );
+  const countryPanel = page
+    .locator('.insight-distribution')
+    .filter({
+      has: page.getByRole('heading', { name: 'País de la obra', exact: true }),
+    });
+  await countryPanel
+    .getByRole('button')
+    .filter({ hasText: 'Tailandia' })
+    .click();
+  assert.equal(await page.locator('.mb-tracking-insights__list li').count(), 6);
+  assert.equal(
+    await countryPanel
+      .getByRole('button')
+      .filter({ hasText: 'Tailandia' })
+      .getAttribute('aria-pressed'),
+    'true'
+  );
+  assert.equal(
+    await page.locator('.mb-stat-card__value').first().innerText(),
+    '7'
+  );
+  await page
+    .getByRole('button', { name: 'Quitar filtro', exact: true })
+    .click();
+  assert.equal(
+    await page.locator('.mb-tracking-insights__list li').count(),
+    10
   );
   await page.locator('.ant-pagination-item-2').click();
   assert.equal(await page.locator('.mb-tracking-insights__list li').count(), 2);

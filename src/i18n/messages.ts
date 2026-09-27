@@ -2769,6 +2769,17 @@ export type TranslationShape = {
     pickerEmpty: string;
     pickerAlreadyAdded: string;
   };
+  insightDistribution: {
+    title: string;
+    scope: string;
+    country: string;
+    genre: string;
+    type: string;
+    format: string;
+    unknown: string;
+    more: string;
+    clear: string;
+  };
   trackingInsights: {
     title: string;
     library: string;
@@ -6325,6 +6336,17 @@ const es: TranslationShape = {
     pickerEmpty: 'No hay widgets disponibles para agregar.',
     pickerAlreadyAdded: 'Ya esta en tu dashboard',
   },
+  insightDistribution: {
+    "title": "Tu actividad en contexto",
+    "scope": "{count} obras con actividad en este período. Cada obra cuenta una vez por categoría; puede tener varios géneros, por eso sus porcentajes pueden sumar más de 100 %. Elegí una categoría para filtrar la lista de abajo.",
+    "country": "País de la obra",
+    "genre": "Género",
+    "type": "Tipo de obra",
+    "format": "Formato",
+    "unknown": "Sin dato",
+    "more": "Ver más categorías",
+    "clear": "Quitar filtro"
+},
   trackingInsights: {
     title: 'Mis estadísticas',
     library: 'Mi seguimiento',
@@ -9902,6 +9924,17 @@ const en: TranslationShape = {
     pickerEmpty: 'No widgets available to add.',
     pickerAlreadyAdded: 'Already on your dashboard',
   },
+  insightDistribution: {
+    "title": "Your activity in context",
+    "scope": "{count} works with activity in this period. Each work counts once per category; it may have multiple genres, so their percentages can exceed 100%. Select a category to filter the list below.",
+    "country": "Work’s country",
+    "genre": "Genre",
+    "type": "Work type",
+    "format": "Format",
+    "unknown": "Unknown",
+    "more": "More categories",
+    "clear": "Clear filter"
+},
   trackingInsights: {
     title: 'My statistics',
     library: 'My tracking',

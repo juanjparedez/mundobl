@@ -40,6 +40,7 @@ try {
     data: {
       title: key,
       type: 'serie',
+      format: 'vertical',
       seasons: {
         create: {
           seasonNumber: 1,
@@ -79,6 +80,12 @@ try {
     'Other account must not complete a missing sibling'
   );
   assert.equal(first.current.minutes, 10);
+  assert.deepEqual(first.rows[0].metadata, {
+    country: null,
+    genres: [],
+    type: 'serie',
+    format: 'vertical',
+  });
   assert.equal(first.current.series, 0);
   assert.equal(first.unknownDates, 1);
   assert.equal(

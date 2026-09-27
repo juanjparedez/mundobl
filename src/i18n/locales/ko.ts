@@ -2781,6 +2781,17 @@ const ko = {
     "pickerEmpty": "추가할 수 있는 위젯이 없습니다.",
     "pickerAlreadyAdded": "이미 대시보드에 있습니다"
   },
+  insightDistribution: {
+    "title": "활동 분포",
+    "scope": "이 기간에 활동이 있는 작품은 {count}개입니다. 작품은 범주별로 한 번씩 집계합니다. 여러 장르에 속할 수 있어 비율 합계가 100%를 넘을 수 있습니다. 범주를 선택하면 아래 목록이 필터링됩니다.",
+    "country": "작품의 국가",
+    "genre": "장르",
+    "type": "작품 유형",
+    "format": "형식",
+    "unknown": "정보 없음",
+    "more": "더 많은 범주",
+    "clear": "필터 해제"
+},
   trackingInsights: {
     "title": "내 통계",
     "library": "내 시청 기록",
