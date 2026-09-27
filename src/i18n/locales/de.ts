@@ -2778,6 +2778,8 @@ const de = {
     "pickerAlreadyAdded": "Bereits in deinem Dashboard"
   },
   "profileDashboard": {
+    "listCount": "Einträge pro Liste",
+    "listCountHint": "Profilübersichten. In diesem Browser gespeichert.",
     "title": "Mein Dashboard",
     "subtitle": "Passe deine Profilansicht mit verschiebbaren Widgets an.",
     "fromClassicLink": "Dashboard-Ansicht ausprobieren",

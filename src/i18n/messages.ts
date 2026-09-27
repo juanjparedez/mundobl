@@ -2767,6 +2767,8 @@ export type TranslationShape = {
     pickerAlreadyAdded: string;
   };
   profileDashboard: {
+    listCount: string;
+    listCountHint: string;
     title: string;
     subtitle: string;
     fromClassicLink: string;
@@ -6293,6 +6295,8 @@ const es: TranslationShape = {
     pickerAlreadyAdded: 'Ya esta en tu dashboard',
   },
   profileDashboard: {
+    listCount: "Elementos por lista",
+    listCountHint: "Resúmenes del perfil. Se guarda en este navegador.",
     title: 'Mi dashboard',
     subtitle: 'Personaliza tu vista de perfil con widgets reordenables.',
     fromClassicLink: 'Probar vista dashboard',
@@ -9836,6 +9840,8 @@ const en: TranslationShape = {
     pickerAlreadyAdded: 'Already on your dashboard',
   },
   profileDashboard: {
+    listCount: "Items per list",
+    listCountHint: "Profile summaries. Saved in this browser.",
     title: 'My dashboard',
     subtitle: 'Customize your profile view with reorderable widgets.',
     fromClassicLink: 'Try dashboard view',
