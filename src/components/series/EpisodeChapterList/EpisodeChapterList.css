@@ -104,6 +104,33 @@
     padding: var(--spacing-sm);
   }
 
+  .episode-chapters__row {
+    flex-wrap: wrap;
+    padding-block: var(--spacing-sm);
+  }
+
+  .episode-chapters__actions {
+    flex-basis: 100%;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+  }
+
+  .episode-chapters__actions .ant-btn {
+    min-width: 44px;
+    min-height: 44px;
+    height: auto;
+    white-space: normal;
+  }
+
+  .episode-chapters__actions .ant-btn:not(.ant-btn-icon-only) {
+    flex: 1 1 120px;
+  }
+
+  .episode-chapters__title {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
   .episode-chapters__synopsis,
   .episode-chapters__comments {
     padding-left: var(--spacing-sm);
