@@ -150,6 +150,7 @@ const zhCN = {
     "removeHelp": "将清空这些作品的分类，不会删除作品。"
   },
   "common": {
+    "goBack": "返回",
     "language": "语言",
     "na": "不适用",
     "private": "私人",

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { CurrentlyWatchingDashboard } from '@/components/watching/CurrentlyWatchingDashboard/CurrentlyWatchingDashboard';
 import './watching.css';
 
@@ -15,7 +16,9 @@ export default function WatchingPage() {
   return (
     <>
       <div className="watching-page">
-        <CurrentlyWatchingDashboard />
+        <Suspense>
+          <CurrentlyWatchingDashboard />
+        </Suspense>
       </div>
     </>
   );

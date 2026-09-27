@@ -135,6 +135,7 @@ export type TranslationShape = {
     removeHelp: string;
   };
   common: {
+    goBack: string;
     language: string;
     na: string;
     private: string;
@@ -3512,6 +3513,7 @@ const es: TranslationShape = {
       'Se vaciará Basado en en estas fichas. Las fichas no se eliminan.',
   },
   common: {
+    goBack: 'Volver',
     language: 'Idioma',
     na: 'N/A',
     private: 'Privado',
@@ -7072,6 +7074,7 @@ const en: TranslationShape = {
       'This clears the category on these titles. The titles are not deleted.',
   },
   common: {
+    goBack: 'Go back',
     language: 'Language',
     na: 'N/A',
     private: 'Private',
