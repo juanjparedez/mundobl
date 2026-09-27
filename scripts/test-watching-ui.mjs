@@ -5,6 +5,7 @@ import { mkdir } from 'node:fs/promises';
 // UI integration only: every API request is intercepted, never sent to a real account.
 const origin = 'http://localhost:3100';
 let dateWrite;
+let diaryUnavailable = false;
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage({
   viewport: { width: 1440, height: 1000 },
@@ -99,6 +100,10 @@ await page.route('**/api/**', async (route) => {
   const path = url.pathname;
   allRequests.push([route.request().method(), path]);
   let result = {};
+  if (path === '/api/user/notes' && diaryUnavailable) {
+    await route.fulfill({ status: 503, json: { error: 'Unavailable' } });
+    return;
+  }
   // Profile is only a navigation destination in this suite, not a widget fixture.
   if (path === '/api/user/profile') {
     await route.fulfill({
@@ -406,9 +411,39 @@ try {
   });
   await drawer.locator('.ant-drawer-close').click();
   await drawer.waitFor({ state: 'hidden' });
-  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.setViewportSize({ width: 390, height: 844 });
+  diaryUnavailable = true;
   await page.getByRole('tab', { name: 'Diario privado' }).click();
+  await page
+    .getByText('No se pudieron cargar tus notas', { exact: true })
+    .waitFor();
+  const diary = page.locator('.mb-my-diary');
+  assert.equal(await diary.locator('.mb-my-diary__empty').count(), 0);
+  assert.equal(await diary.locator('.mb-my-diary__list').count(), 0);
+  assert.equal(
+    await diary
+      .locator('button')
+      .filter({ has: page.locator('.anticon-download') })
+      .isDisabled(),
+    true
+  );
+  diaryUnavailable = false;
+  await diary.getByRole('button', { name: 'Reintentar', exact: true }).click();
   await page.getByText('Una nota privada de prueba', { exact: true }).waitFor();
+  for (const control of await diary
+    .locator('.mb-my-diary__filters button, .ant-segmented-item-label')
+    .all()) {
+    const bounds = await control.boundingBox();
+    assert.ok(
+      bounds &&
+        bounds.height >= 44 &&
+        bounds.x >= 0 &&
+        bounds.x + bounds.width <= 390,
+      `Diary control ${await control.getAttribute('class')} must fit mobile and have 44px touch target: ${JSON.stringify(bounds)}`
+    );
+  }
+  await page.screenshot({ path: 'test-results/watching/diary-mobile.png' });
+  await page.setViewportSize({ width: 1440, height: 1000 });
   await page.getByRole('tab', { name: 'Historial', exact: true }).click();
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.getByRole('tab', { name: 'Historial', exact: true }).waitFor();
