@@ -86,3 +86,46 @@
   display: flex;
   justify-content: flex-end;
 }
+
+@media (max-width: 600px) {
+  .mb-my-diary .mb-my-diary__filters .ant-btn,
+  .mb-my-diary__filters .ant-input-clear-icon,
+  .mb-my-diary__search .ant-input,
+  .mb-my-diary .ant-alert .ant-btn {
+    min-height: 44px;
+  }
+
+  .mb-my-diary .mb-my-diary__search .ant-input-search-btn {
+    min-width: 44px;
+    height: 44px;
+  }
+
+  .mb-my-diary__filters .ant-input-clear-icon {
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mb-my-diary .mb-my-diary__filters .ant-segmented-item-label {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mb-my-diary__search {
+    flex-basis: 100%;
+    min-width: 0;
+  }
+
+  .mb-my-diary__series {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    max-width: 100%;
+  }
+
+  .mb-my-diary__pagination {
+    flex-wrap: wrap;
+  }
+}
