@@ -150,6 +150,7 @@ const zhTW = {
     "removeHelp": "將清空這些作品的分類，不會刪除作品。"
   },
   "common": {
+    "goBack": "返回",
     "language": "語言",
     "na": "不適用",
     "private": "私人",

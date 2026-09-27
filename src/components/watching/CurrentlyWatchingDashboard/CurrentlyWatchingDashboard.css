@@ -51,8 +51,18 @@
     gap: var(--spacing-xs);
   }
   .watching-workspace__toolbar .ant-select {
-    flex: 1 1 100%;
+    flex: 1 1 140px;
     min-width: 0;
+  }
+  .watching-workspace__toolbar .ant-input-search {
+    flex-basis: 100%;
+  }
+  .watching-workspace__stats .mb-stat-card__hint {
+    display: none;
+  }
+  .watching-workspace__stats .mb-stat-card__label {
+    font-size: var(--font-size-xs);
+    letter-spacing: normal;
   }
   .watching-workspace .ant-tabs-extra-content {
     display: none;

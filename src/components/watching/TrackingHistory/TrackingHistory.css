@@ -37,3 +37,36 @@
 .tracking-history__state {
   margin-block: var(--spacing-sm);
 }
+.tracking-history__groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
+  gap: var(--spacing-md);
+  align-items: start;
+}
+.tracking-history__series {
+  margin: 0 0 var(--spacing-md);
+  font-size: var(--font-size-lg);
+  overflow-wrap: anywhere;
+}
+.tracking-history__list > li {
+  border-inline-start: 2px solid var(--border-color-secondary);
+  padding-inline-start: var(--spacing-md);
+  padding-block: var(--spacing-sm);
+  min-width: 0;
+}
+.tracking-history__list p {
+  margin-block: var(--spacing-xs);
+}
+.tracking-history__list time {
+  font-size: var(--font-size-xs);
+}
+@media (max-width: 600px) {
+  .tracking-history__toolbar .ant-input-search {
+    flex-basis: 100%;
+    min-width: 0;
+  }
+  .tracking-history__toolbar > .ant-btn {
+    flex: 1;
+    min-height: 44px;
+  }
+}
