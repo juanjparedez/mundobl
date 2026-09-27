@@ -1,96 +1,18 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/database';
+import { getWatchingLibrary } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
-import { isWatchableEpisode } from '@/lib/watchable';
 
-// GET - Obtener las series que el usuario autenticado está viendo o dejó
-// para retomar. RETOMAR también es "la voy a seguir": sin esto, marcar una
-// serie para retomar la sacaba de /watching, que es justo donde se retoma.
+// Keep the dashboard widget contract: only active series by default.
 export async function GET() {
+  const auth = await requireAuth();
+  if (!auth.authorized) return auth.response;
   try {
-    const authResult = await requireAuth();
-    if (!authResult.authorized) return authResult.response;
-
-    const currentlyWatching = await prisma.viewStatus.findMany({
-      where: {
-        status: { in: ['VIENDO', 'RETOMAR'] },
-        seriesId: { not: null },
-        userId: authResult.userId,
-      },
-      select: {
-        id: true,
-        status: true,
-        lastWatchedAt: true,
-        series: {
-          // Never send editorial review/observations (which may be private)
-          // or unrelated metadata to a personal tracking screen.
-          select: {
-            id: true,
-            title: true,
-            originalTitle: true,
-            origin: true,
-            catalogScope: true,
-            year: true,
-            imageUrl: true,
-            imageThumbUrl: true,
-            airDays: true,
-            country: { select: { name: true } },
-            seasons: {
-              select: {
-                id: true,
-                seasonNumber: true,
-                episodes: {
-                  select: {
-                    id: true,
-                    episodeNumber: true,
-                    title: true,
-                    embedUrl: true,
-                    durationSeconds: true,
-                    // Solo el viewStatus del usuario autenticado: sin el filtro,
-                    // viewStatus[0] podía ser de otro user y corrompía el
-                    // progreso/proximo episodio de cada card.
-                    viewStatus: {
-                      where: { userId: authResult.userId },
-                      select: { status: true },
-                    },
-                  },
-                  orderBy: { episodeNumber: 'asc' },
-                },
-              },
-              orderBy: { seasonNumber: 'asc' },
-            },
-          },
-        },
-      },
-      orderBy: {
-        lastWatchedAt: 'desc', // Ordenar por última vez vista
-      },
-    });
-
-    // Para el boton "Seguir viendo" en /watching: si la serie tiene algun
-    // episodio mirable, se puede retomar directo en /ver sin pasar por la
-    // ficha del catalogo. `series` es nullable a nivel de tipo (relacion
-    // opcional en el schema) aunque el `where` ya garantiza `seriesId` no
-    // nulo, de ahi el `!`.
-    const result = currentlyWatching
-      .filter((item) => item.series !== null)
-      .map((item) => ({
-        ...item,
-        series: {
-          ...item.series!,
-          hasWatchableEpisode: item.series!.seasons.some((season) =>
-            season.episodes.some(isWatchableEpisode)
-          ),
-        },
-      }));
-
-    return NextResponse.json(result, {
+    return NextResponse.json(await getWatchingLibrary(auth.userId), {
       headers: { 'Cache-Control': 'no-store' },
     });
-  } catch (error) {
-    console.error('Error fetching currently watching:', error);
+  } catch {
     return NextResponse.json(
-      { error: 'Error al obtener las series' },
+      { error: 'Unable to load tracking' },
       { status: 500 }
     );
   }

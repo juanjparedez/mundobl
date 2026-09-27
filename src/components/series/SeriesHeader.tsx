@@ -139,23 +139,24 @@ export function SeriesHeader({
         </aside>
 
         <div className="series-header__content">
-          {series.universe && (
-            <div className="series-header__universe">
-              <span className="series-header__muted">
-                {t('seriesHeader.universe')}:{' '}
-                <strong>{series.universe.name}</strong>
+          <div className="series-header__identity">
+            {series.universe && (
+              <div className="series-header__universe">
+                <span className="series-header__muted">
+                  {t('seriesHeader.universe')}:{' '}
+                  <strong>{series.universe.name}</strong>
+                </span>
+              </div>
+            )}
+
+            <h1 className="series-header__title">{series.title}</h1>
+
+            {series.originalTitle && series.originalTitle !== series.title && (
+              <span className="series-header__original-title">
+                {t('seriesHeader.originalTitle')}: {series.originalTitle}
               </span>
-            </div>
-          )}
-
-          <h1 className="series-header__title">{series.title}</h1>
-
-          {series.originalTitle && series.originalTitle !== series.title && (
-            <span className="series-header__original-title">
-              {t('seriesHeader.originalTitle')}: {series.originalTitle}
-            </span>
-          )}
-
+            )}
+          </div>
           <div className="series-header__meta">
             {series.country && (
               <MetadataChip

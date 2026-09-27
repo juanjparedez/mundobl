@@ -43,6 +43,7 @@ export function ProfileSettings() {
     seriesNotes: t('backup.seriesNotes'),
     episodeNotes: t('backup.episodeNotes'),
     trackingEvents: t('trackingHistory.title'),
+    watchingPreferences: t('libraryWorkspace.backup'),
     userRatings: t('backup.userRatings'),
     favorites: t('backup.favorites'),
     comments: t('backup.comments'),
