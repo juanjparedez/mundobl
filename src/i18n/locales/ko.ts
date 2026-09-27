@@ -45,6 +45,10 @@ const ko = {
 },
 
   trackingHistory: {
+    expand: "기록 {count}개 더 보기",
+    collapse: "접기",
+    loaded: "불러온 기록 {count}개",
+
       "title": "기록",
       "description": "시청 관리 변경 사항은 나에게만 표시됩니다. 이전 상태로 과거 행동을 복원할 수는 없습니다.",
       "search": "기록에서 작품 검색",

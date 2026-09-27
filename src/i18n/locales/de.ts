@@ -45,6 +45,10 @@ const de = {
 },
 
   trackingHistory: {
+    expand: "{count} weitere Ereignisse anzeigen",
+    collapse: "Weniger anzeigen",
+    loaded: "{count} geladene Ereignisse",
+
       "title": "Verlauf",
       "description": "Änderungen am Fortschritt, nur für dich sichtbar. Frühere Statusangaben rekonstruieren keine vergangenen Aktionen.",
       "search": "Im Verlauf nach einer Serie suchen",

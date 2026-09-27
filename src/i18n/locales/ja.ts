@@ -45,6 +45,10 @@ const ja = {
 },
 
   trackingHistory: {
+    expand: "さらに{count}件を表示",
+    collapse: "表示を減らす",
+    loaded: "{count}件の読み込み済み記録",
+
       "title": "履歴",
       "description": "視聴管理の変更は自分だけに表示されます。以前の状態から過去の操作を復元することはできません。",
       "search": "履歴から作品を検索",
