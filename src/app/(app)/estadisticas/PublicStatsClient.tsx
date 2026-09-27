@@ -332,7 +332,9 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
       <header className="public-stats-hero">
         <div className="public-stats-hero__main">
           <h1 className="public-stats-hero__title">{copy.title}</h1>
-          <p className="public-stats-hero__subtitle">{copy.subtitle}</p>
+          <p className="public-stats-hero__subtitle">
+            {t('activityStats.subtitle')}
+          </p>
         </div>
         <p className="public-stats-hero__updated">
           {copy.updatedAt}: {new Date(data.generatedAt).toLocaleString(locale)}
@@ -414,6 +416,11 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
             label: copy.cardPublicComments,
           },
           {
+            icon: <CommentOutlined />,
+            value: data.summary.totalPublishedReviews,
+            label: t('activityStats.reviews'),
+          },
+          {
             icon: <TeamOutlined />,
             value: data.summary.totalActors,
             label: copy.cardActors,
@@ -445,6 +452,8 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
           })}
         </p>
       )}
+
+      <p className="public-stats-team-note">{t('activityStats.scope')}</p>
 
       {/* ── Community activity ── */}
       <h2 className="public-stats-section-title">{copy.sectionActivity}</h2>

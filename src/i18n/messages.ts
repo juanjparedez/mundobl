@@ -1945,6 +1945,13 @@ export type TranslationShape = {
     runtime: string;
     runtimeShort: string;
   };
+  activityStats: {
+    reviews: string;
+    reviewsWeek: string;
+    scope: string;
+    subtitle: string;
+    activeScope: string;
+  };
   publicStats: {
     teamNote: string;
   };
@@ -5473,6 +5480,16 @@ const es: TranslationShape = {
     usersShort: 'Usuarios',
     runtime: 'Runtime',
     runtimeShort: 'Run',
+  },
+  activityStats: {
+    reviews: 'Reseñas publicadas',
+    reviewsWeek: 'Reseñas publicadas en los últimos 7 días',
+    scope:
+      'Las reseñas incluyen el catálogo y los aportes accesibles para ver. Se excluyen borradores, contenido oculto y cuentas administradoras. Cada versión en otro idioma cuenta por separado.',
+    subtitle:
+      'Métricas anónimas de la comunidad. Los datos se renuevan al visitar la página después de cinco minutos; la actualización puede tardar unos instantes.',
+    activeScope:
+      'Hasta 20 usuarios con seguimiento, reseñas publicadas, comentarios públicos, calificaciones o favoritos en los últimos 30 días.',
   },
   publicStats: {
     teamNote:
@@ -9064,6 +9081,16 @@ const en: TranslationShape = {
     usersShort: 'Users',
     runtime: 'Runtime',
     runtimeShort: 'Run',
+  },
+  activityStats: {
+    reviews: 'Published reviews',
+    reviewsWeek: 'Reviews published in the last 7 days',
+    scope:
+      'Reviews include the catalog and accessible watchable contributions. Drafts, hidden content and admin accounts are excluded. Each language version counts separately.',
+    subtitle:
+      'Anonymous community metrics. Data refreshes on a visit after five minutes; the update may take a moment.',
+    activeScope:
+      'Up to 20 users with tracking, published reviews, public comments, ratings or favorites in the last 30 days.',
   },
   publicStats: {
     teamNote:
