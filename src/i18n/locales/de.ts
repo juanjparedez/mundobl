@@ -2781,6 +2781,17 @@ const de = {
     "pickerEmpty": "Keine Widgets zum Hinzufügen verfügbar.",
     "pickerAlreadyAdded": "Bereits in deinem Dashboard"
   },
+  insightDistribution: {
+    "title": "Deine Aktivität im Überblick",
+    "scope": "{count} Werke mit Aktivität in diesem Zeitraum. Jedes Werk zählt einmal pro Kategorie; mehrere Genres sind möglich, daher können ihre Anteile zusammen über 100 % liegen. Wähle eine Kategorie, um die Liste unten zu filtern.",
+    "country": "Herkunftsland des Werks",
+    "genre": "Genre",
+    "type": "Art des Werks",
+    "format": "Format",
+    "unknown": "Keine Angabe",
+    "more": "Weitere Kategorien",
+    "clear": "Filter entfernen"
+},
   trackingInsights: {
     "title": "Meine Statistiken",
     "library": "Mein Verlauf",

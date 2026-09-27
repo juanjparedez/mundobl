@@ -84,3 +84,28 @@ El esquema actual no tiene país ni edad de usuario; no inferirlos del consumo.
 Pendientes explícitos: distribuciones por país/género/formato y estado de toda
 la biblioteca; panel editorial de Flor; quiz/palabra del día; audiencia de
 notificaciones. Esta entrega no cierra el plan completo de estadísticas.
+
+
+## Distribución de la actividad personal
+
+- País de la obra, género, tipo (serie/película/corto/especial) y formato
+  (horizontal/vertical), dentro del período seleccionado de estadísticas.
+- Denominador: obras únicas con actividad en ese período. Cada obra aporta
+  una vez por categoría, independientemente de sus capítulos o minutos.
+  Los géneros pueden superar 100 % al sumarse; se explica en pantalla.
+- Los datos ausentes aparecen como «Sin dato». No se infiere país del usuario.
+- Barras y cantidades accesibles; cinco categorías iniciales por panel con
+  despliegue del resto. Pulsar una categoría filtra las obras de abajo y mueve
+  el foco al resultado; permite quitar el filtro y conserva los enlaces.
+- Cambiar período reinicia filtro y paginación. Totales/comparación mantienen
+  el alcance del período completo, tal como explica el texto del filtro.
+- Metadatos seleccionados en la consulta privada existente, sin pedir el perfil
+  completo, notas o comentarios. Traducciones de controles en diez idiomas;
+  géneros usan los nombres editoriales del catálogo.
+- Regresiones: obras únicas, géneros múltiples/duplicados, datos desconocidos,
+  filtrado móvil y metadatos en la API con aislamiento entre cuentas.
+
+Quedan pendientes el estado global de toda la biblioteca, el panel editorial
+para Flor, quiz/palabra del día, audiencia de notificaciones y mediciones de
+rendimiento en producción. Esta entrega describe actividad del período, no
+la composición de toda la biblioteca.

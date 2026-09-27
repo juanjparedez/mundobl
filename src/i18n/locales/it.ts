@@ -2781,6 +2781,17 @@ const it = {
     "pickerEmpty": "Nessun widget disponibile da aggiungere.",
     "pickerAlreadyAdded": "Già nella tua dashboard"
   },
+  insightDistribution: {
+    "title": "La tua attività in contesto",
+    "scope": "{count} opere con attività nel periodo. Ogni opera conta una volta per categoria; può avere più generi, quindi le percentuali possono superare il 100%. Scegli una categoria per filtrare la lista sotto.",
+    "country": "Paese dell’opera",
+    "genre": "Genere",
+    "type": "Tipo di opera",
+    "format": "Formato",
+    "unknown": "Dato assente",
+    "more": "Altre categorie",
+    "clear": "Rimuovi filtro"
+},
   trackingInsights: {
     "title": "Le mie statistiche",
     "library": "Il mio monitoraggio",
