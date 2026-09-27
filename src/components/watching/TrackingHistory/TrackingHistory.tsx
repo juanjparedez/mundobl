@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Alert, Button, Input, Popconfirm, Skeleton, Tag } from 'antd';
 import { EmptyState, PanelCard } from '@/components/design-system';
 import { useWatchingLocation } from '@/hooks/useWatchingLocation';
+import { useWatchingScroll } from '@/hooks/useWatchingScroll';
 import type {
   TrackingHistoryItem,
   TrackingHistoryPage,
@@ -12,6 +13,7 @@ import type {
 import './TrackingHistory.css';
 
 interface Props {
+  userId: string;
   locale: string;
   labels: {
     description: string;
@@ -34,7 +36,7 @@ interface Props {
   };
 }
 
-export function TrackingHistory({ locale, labels }: Props) {
+export function TrackingHistory({ userId, locale, labels }: Props) {
   const [items, setItems] = useState<TrackingHistoryItem[]>([]);
   const [cursor, setCursor] = useState<TrackingHistoryPage['nextCursor']>(null);
   const location = useWatchingLocation();
@@ -42,6 +44,11 @@ export function TrackingHistory({ locale, labels }: Props) {
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
   const request = useRef<AbortController | null>(null);
+  const loadedPages = useRef(1);
+  useWatchingScroll(
+    userId,
+    location.params.get('tab') === 'history' && !loading && !failed
+  );
 
   const load = useCallback(
     async (next?: TrackingHistoryPage['nextCursor']) => {
@@ -51,31 +58,50 @@ export function TrackingHistory({ locale, labels }: Props) {
       setLoading(true);
       setFailed(false);
       try {
-        const query = new URLSearchParams({ q: search });
-        if (next) {
-          query.set('cursorId', next.id);
-          query.set('cursorDate', next.recordedAt);
-        }
-        const response = await fetch(`/api/user/tracking-history?${query}`, {
-          signal: controller.signal,
-        });
-        if (!response.ok) throw new Error();
-        const page: TrackingHistoryPage = await response.json();
-        if (!Array.isArray(page.items)) throw new Error();
+        const requested = Number(
+          new URLSearchParams(window.location.search).get('historyPages')
+        );
+        const pageCount =
+          !next && Number.isInteger(requested) && requested > 1
+            ? Math.min(requested, 20)
+            : 1;
+        const restored: TrackingHistoryItem[] = [];
+        let nextCursor = next ?? null;
+        let fetched = 0;
+        do {
+          const query = new URLSearchParams({ q: search });
+          if (nextCursor) {
+            query.set('cursorId', nextCursor.id);
+            query.set('cursorDate', nextCursor.recordedAt);
+          }
+          const response = await fetch(`/api/user/tracking-history?${query}`, {
+            signal: controller.signal,
+          });
+          if (!response.ok) throw new Error();
+          const page: TrackingHistoryPage = await response.json();
+          if (!Array.isArray(page.items)) throw new Error();
+          restored.push(...page.items);
+          nextCursor = page.nextCursor;
+          fetched++;
+        } while (!next && nextCursor && fetched < pageCount);
         if (!controller.signal.aborted) {
           setItems((previous) =>
             next
               ? [
                   ...new Map(
-                    [...previous, ...page.items].map((item) => [item.id, item])
+                    [...previous, ...restored].map((item) => [item.id, item])
                   ).values(),
                 ]
-              : page.items
+              : [...new Map(restored.map((item) => [item.id, item])).values()]
           );
-          setCursor(page.nextCursor);
+          setCursor(nextCursor);
+          loadedPages.current = next ? loadedPages.current + 1 : fetched;
+          return true;
         }
+        return false;
       } catch {
         if (!controller.signal.aborted) setFailed(true);
+        return false;
       } finally {
         if (!controller.signal.aborted) setLoading(false);
       }
@@ -103,6 +129,7 @@ export function TrackingHistory({ locale, labels }: Props) {
       if (!controller.signal.aborted) {
         setItems([]);
         setCursor(null);
+        location.set('historyPages', '');
       }
     } catch {
       if (!controller.signal.aborted) setFailed(true);
@@ -228,7 +255,17 @@ export function TrackingHistory({ locale, labels }: Props) {
         ))}
       </div>
       {cursor && (
-        <Button loading={loading} onClick={() => void load(cursor)}>
+        <Button
+          loading={loading}
+          onClick={async () => {
+            if (await load(cursor)) {
+              location.set(
+                'historyPages',
+                String(Math.min(loadedPages.current, 20))
+              );
+            }
+          }}
+        >
           {labels.more}
         </Button>
       )}
