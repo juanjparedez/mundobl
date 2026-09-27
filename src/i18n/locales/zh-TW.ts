@@ -45,6 +45,10 @@ const zhTW = {
 },
 
   trackingHistory: {
+    expand: "再顯示{count}筆紀錄",
+    collapse: "收起",
+    loaded: "已載入{count}筆紀錄",
+
       "title": "歷史紀錄",
       "description": "追蹤變更僅對你可見。先前狀態無法還原過去的操作。",
       "search": "在歷史紀錄中搜尋作品",

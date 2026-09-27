@@ -45,6 +45,10 @@ const zhCN = {
 },
 
   trackingHistory: {
+    expand: "再显示{count}条记录",
+    collapse: "收起",
+    loaded: "已加载{count}条记录",
+
       "title": "历史记录",
       "description": "追踪变更仅对你可见。先前状态无法还原过去的操作。",
       "search": "在历史记录中搜索作品",

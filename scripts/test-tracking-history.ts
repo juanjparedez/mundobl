@@ -29,6 +29,8 @@ async function main() {
   const series = await prisma.series.create({
     data: {
       title: key,
+      imageUrl: 'https://img.mundobl.com.ar/history-master.webp',
+      imageThumbUrl: 'https://img.mundobl.com.ar/history-thumb.webp',
       type: 'serie',
       origin: 'USER_EMBED',
       catalogScope: 'WATCHABLE_ONLY',
@@ -43,6 +45,10 @@ async function main() {
   try {
     await prisma.$transaction((tx) =>
       markEpisode(tx, userId, episodeId, 'VISTA')
+    );
+    assert.equal(
+      (await getTrackingHistory(userId, '')).items[0].imageUrl,
+      'https://img.mundobl.com.ar/history-thumb.webp'
     );
     let events = await prisma.trackingEvent.findMany({ where });
     assert.equal(events.length, 1);
