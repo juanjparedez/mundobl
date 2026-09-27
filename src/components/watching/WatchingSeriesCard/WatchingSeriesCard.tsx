@@ -67,7 +67,7 @@ export function WatchingSeriesCard({
               src={image}
               alt=""
               fill
-              sizes="(max-width: 600px) 80px, 180px"
+              sizes="(max-width: 600px) 36vw, 320px"
               unoptimized={isDirectServedImageUrl(image)}
             />
           ) : (

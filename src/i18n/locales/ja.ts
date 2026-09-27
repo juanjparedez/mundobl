@@ -150,6 +150,7 @@ const ja = {
     "removeHelp": "これらの作品の分類を空にします。作品自体は削除されません。"
   },
   "common": {
+    "goBack": "戻る",
     "language": "言語",
     "na": "N/A",
     "private": "プライベート",

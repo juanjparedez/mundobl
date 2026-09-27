@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { Alert, Button, Input, Popconfirm, Skeleton, Tag } from 'antd';
 import { EmptyState, PanelCard } from '@/components/design-system';
+import { useWatchingLocation } from '@/hooks/useWatchingLocation';
 import type {
   TrackingHistoryItem,
   TrackingHistoryPage,
@@ -36,7 +37,8 @@ interface Props {
 export function TrackingHistory({ locale, labels }: Props) {
   const [items, setItems] = useState<TrackingHistoryItem[]>([]);
   const [cursor, setCursor] = useState<TrackingHistoryPage['nextCursor']>(null);
-  const [search, setSearch] = useState('');
+  const location = useWatchingLocation();
+  const search = location.params.get('historyQ') ?? '';
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
   const request = useRef<AbortController | null>(null);
@@ -127,6 +129,16 @@ export function TrackingHistory({ locale, labels }: Props) {
         })
       : labels.unknown;
 
+  // The destination identifies the work even when two series share a title.
+  // Preserve API chronology within each group and merge subsequent pages.
+  const groups = new Map<string, TrackingHistoryItem[]>();
+  for (const item of items) {
+    const key = item.href.split(/[?#]/)[0];
+    const group = groups.get(key) ?? [];
+    group.push(item);
+    groups.set(key, group);
+  }
+
   return (
     <section className="tracking-history">
       <p className="tracking-history__description">{labels.description}</p>
@@ -136,7 +148,8 @@ export function TrackingHistory({ locale, labels }: Props) {
           maxLength={100}
           placeholder={labels.search}
           aria-label={labels.search}
-          onSearch={setSearch}
+          defaultValue={search}
+          onSearch={(value) => location.set('historyQ', value)}
         />
         <Button disabled={loading} onClick={() => void load()}>
           {labels.refresh}
@@ -158,51 +171,62 @@ export function TrackingHistory({ locale, labels }: Props) {
       ) : !failed && items.length === 0 ? (
         <EmptyState title={labels.empty} fullHeight={false} />
       ) : null}
-      <ol className="tracking-history__list">
-        {items.map((item) => (
-          <li key={item.id}>
-            <PanelCard padding="sm">
-              <div className="tracking-history__heading">
-                <Link href={item.href}>{item.seriesTitle}</Link>
-                {item.kind !== 'SNAPSHOT' && (
-                  <time dateTime={item.recordedAt}>
-                    {date(item.recordedAt)}
-                  </time>
-                )}
-              </div>
-              <p>
-                {item.episodeNumber !== null
-                  ? labels.episode
-                      .replace('{season}', String(item.seasonNumber))
-                      .replace('{episode}', String(item.episodeNumber))
-                  : item.seasonNumber !== null
-                    ? labels.season.replace('{n}', String(item.seasonNumber))
-                    : labels.series}
-              </p>
-              <div className="tracking-history__state">
-                <span>{labels.kinds[item.kind]}</span>
-                {item.previousStatus && item.previousStatus !== item.status && (
-                  <>
-                    <Tag>{labels.statuses[item.previousStatus]}</Tag>
-                    <span aria-hidden="true">→</span>
-                  </>
-                )}
-                <Tag>{labels.statuses[item.status]}</Tag>
-              </div>
-              {(item.status === 'VISTA' || item.watchedDate) && (
-                <p>
-                  {labels.watchDate}: {watchDate(item.watchedDate)}
-                </p>
-              )}
-              {item.kind === 'DATE_CHANGED' && (
-                <p>
-                  {labels.previousDate}: {watchDate(item.previousWatchedDate)}
-                </p>
-              )}
-            </PanelCard>
-          </li>
+      <div className="tracking-history__groups">
+        {[...groups].map(([href, events]) => (
+          <PanelCard key={href} padding="md">
+            <h2 className="tracking-history__series">
+              <Link href={href}>{events[0].seriesTitle}</Link>
+            </h2>
+            <ol className="tracking-history__list">
+              {events.map((item) => (
+                <li key={item.id}>
+                  <div className="tracking-history__heading">
+                    {item.kind !== 'SNAPSHOT' && (
+                      <time dateTime={item.recordedAt}>
+                        {date(item.recordedAt)}
+                      </time>
+                    )}
+                  </div>
+                  <p>
+                    {item.episodeNumber !== null
+                      ? labels.episode
+                          .replace('{season}', String(item.seasonNumber))
+                          .replace('{episode}', String(item.episodeNumber))
+                      : item.seasonNumber !== null
+                        ? labels.season.replace(
+                            '{n}',
+                            String(item.seasonNumber)
+                          )
+                        : labels.series}
+                  </p>
+                  <div className="tracking-history__state">
+                    <span>{labels.kinds[item.kind]}</span>
+                    {item.previousStatus &&
+                      item.previousStatus !== item.status && (
+                        <>
+                          <Tag>{labels.statuses[item.previousStatus]}</Tag>
+                          <span aria-hidden="true">→</span>
+                        </>
+                      )}
+                    <Tag>{labels.statuses[item.status]}</Tag>
+                  </div>
+                  {(item.status === 'VISTA' || item.watchedDate) && (
+                    <p>
+                      {labels.watchDate}: {watchDate(item.watchedDate)}
+                    </p>
+                  )}
+                  {item.kind === 'DATE_CHANGED' && (
+                    <p>
+                      {labels.previousDate}:{' '}
+                      {watchDate(item.previousWatchedDate)}
+                    </p>
+                  )}
+                </li>
+              ))}
+            </ol>
+          </PanelCard>
         ))}
-      </ol>
+      </div>
       {cursor && (
         <Button loading={loading} onClick={() => void load(cursor)}>
           {labels.more}

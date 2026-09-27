@@ -150,6 +150,7 @@ const it = {
     "removeHelp": "La categoria verrà svuotata su queste schede. Le schede non verranno eliminate."
   },
   "common": {
+    "goBack": "Indietro",
     "language": "Lingua",
     "na": "N/D",
     "private": "Privato",

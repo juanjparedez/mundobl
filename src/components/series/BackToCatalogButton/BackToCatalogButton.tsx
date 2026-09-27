@@ -3,34 +3,36 @@
 import { useRouter } from 'next/navigation';
 import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { getNavigationFallback } from '@/lib/navigation-fallback';
 import './BackToCatalogButton.css';
 
 // Marker que pone NavigationGuard al inyectar entry sintetica al history.
 // Si esta presente, sabemos que back nos lleva a un destino interno safe.
 const HISTORY_INJECT_KEY = '__mb_back_injected';
 
-export function BackToCatalogButton() {
+export function BackToCatalogButton({
+  fallback,
+}: {
+  fallback?: '/catalogo' | '/ver' | '/';
+}) {
   const router = useRouter();
   const { t } = useLocale();
 
-  // NavigationGuard global (montado en root layout) ya inyecta /catalogo
-  // en el history cuando el referrer es externo. Aca solo decidimos si
-  // invocar router.back() (que respeta el ?page=N via fix B) o
-  // router.push como fallback.
+  // Prefer the actual in-app entry; direct links use the section fallback.
   const handleClick = () => {
-    if (typeof window === 'undefined') {
-      router.push('/catalogo');
-      return;
-    }
+    const destination =
+      fallback ?? getNavigationFallback(window.location.pathname) ?? '/';
     const ref = document.referrer;
-    const sameOrigin = ref.startsWith(window.location.origin);
-    const cameFromCatalog = sameOrigin && new URL(ref).pathname === '/catalogo';
+    const sameOrigin = ref && new URL(ref).origin === window.location.origin;
     const state = window.history.state as Record<string, unknown> | null;
     const hasInjectedFallback = state?.[HISTORY_INJECT_KEY];
-    if ((cameFromCatalog || hasInjectedFallback) && window.history.length > 1) {
+    if (
+      (sameOrigin || hasInjectedFallback || state?.__mb_internal_back) &&
+      window.history.length > 1
+    ) {
       router.back();
     } else {
-      router.push('/catalogo');
+      router.replace(destination);
     }
   };
 
@@ -39,10 +41,10 @@ export function BackToCatalogButton() {
       type="button"
       className="mb-back-to-catalog"
       onClick={handleClick}
-      aria-label={t('seriesDetail.backToCatalog')}
+      aria-label={t('common.goBack')}
     >
       <ArrowLeftOutlined />
-      <span>{t('seriesDetail.backToCatalog')}</span>
+      <span>{t('common.goBack')}</span>
     </button>
   );
 }

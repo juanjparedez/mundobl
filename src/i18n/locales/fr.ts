@@ -150,6 +150,7 @@ const fr = {
     "removeHelp": "La catégorie sera vidée sur ces fiches. Les fiches ne seront pas supprimées."
   },
   "common": {
+    "goBack": "Retour",
     "language": "Langue",
     "na": "N/A",
     "private": "Privé",
