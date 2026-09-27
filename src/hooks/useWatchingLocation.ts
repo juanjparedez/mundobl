@@ -9,6 +9,7 @@ export function useWatchingLocation() {
     const url = new URL(window.location.href);
     if (value) url.searchParams.set(key, value);
     else url.searchParams.delete(key);
+    if (key === 'historyQ') url.searchParams.delete('historyPages');
     // Let Next copy its own router state and notify useSearchParams. Passing
     // __NA back would bypass its public History API integration.
     const state = window.history.state as Record<string, unknown> | null;
