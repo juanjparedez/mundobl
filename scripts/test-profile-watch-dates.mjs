@@ -34,9 +34,30 @@ try {
     ('owner', 'SIN_VER', 8, NOW(), NOW()),
     ('owner', 'VISTA', NULL, NOW(), NOW())`);
   assert.equal((await client.query(queries[0], ['owner'])).rowCount, 1);
-  assert.equal((await client.query(queries[1], ['owner'])).rowCount, 3);
+  assert.equal((await client.query(queries[1], ['owner'])).rowCount, 4);
   assert.equal((await client.query(queries[0], ['other'])).rowCount, 1);
   assert.equal((await client.query(queries[1], ['unknown'])).rowCount, 0);
+  await client.query('ALTER TABLE "ViewStatus" ADD COLUMN "seriesId" integer');
+  await client.query(`INSERT INTO "ViewStatus" ("userId", status, "seriesId", "watchedDate") VALUES
+    ('owner', 'VISTA', 101, '2020-05-01'),
+    ('owner', 'VISTA', 102, '2020-10-01'),
+    ('owner', 'VISTA', 103, '2021-01-01'),
+    ('owner', 'VISTA', 104, NULL),
+    ('owner', 'VISTA', 105, NOW() + INTERVAL '1 year'),
+    ('owner', 'VIENDO', 106, '2020-01-01'),
+    ('other', 'VISTA', 107, '2020-01-01')`);
+  const yearsQuery = source
+    .match(/prisma\.\$queryRaw<RawYearRow\[\]>`([\s\S]*?)`/)[1]
+    .replaceAll('${userId}', '$1');
+  const years = (await client.query(yearsQuery, ['owner'])).rows;
+  assert.deepEqual(
+    years.map(({ year, count }) => [year, Number(count)]),
+    [
+      [2021, 1],
+      [2020, 2],
+    ],
+    'Completion years depend on watch dates, not catalog release dates'
+  );
   await client.query(
     `CREATE TEMP TABLE "Episode" (id integer, duration integer, "durationSeconds" integer) ON COMMIT DROP`
   );

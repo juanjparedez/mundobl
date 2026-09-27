@@ -2778,6 +2778,8 @@ const ja = {
     "pickerAlreadyAdded": "すでにダッシュボードにあります"
   },
   "profileDashboard": {
+    "listCount": "リストごとの項目数",
+    "listCountHint": "プロフィールの概要。このブラウザーに保存されます。",
     "title": "マイダッシュボード",
     "subtitle": "並べ替え可能なウィジェットでプロフィール表示をカスタマイズします。",
     "fromClassicLink": "ダッシュボード表示を試す",
