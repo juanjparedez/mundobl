@@ -6,6 +6,7 @@ import { Alert, Button, Input, Popconfirm, Skeleton, Tag } from 'antd';
 import { EmptyState, PanelCard } from '@/components/design-system';
 import { useWatchingLocation } from '@/hooks/useWatchingLocation';
 import { useWatchingScroll } from '@/hooks/useWatchingScroll';
+import { HistoryEpisodeActions } from '../HistoryEpisodeActions/HistoryEpisodeActions';
 import type {
   TrackingHistoryItem,
   TrackingHistoryPage,
@@ -31,6 +32,8 @@ interface Props {
     season: string;
     episode: string;
     series: string;
+    note: string;
+    comments: string;
     kinds: Record<TrackingHistoryItem['kind'], string>;
     statuses: Record<TrackingHistoryItem['status'], string>;
   };
@@ -247,6 +250,18 @@ export function TrackingHistory({ userId, locale, labels }: Props) {
                       {labels.previousDate}:{' '}
                       {watchDate(item.previousWatchedDate)}
                     </p>
+                  )}
+                  {item.chapterTarget && (
+                    <HistoryEpisodeActions
+                      episodeId={item.chapterTarget.episodeId}
+                      chapterLabel={`${item.seriesTitle} · ${labels.episode
+                        .replace('{season}', String(item.seasonNumber))
+                        .replace(
+                          '{episode}',
+                          String(item.chapterTarget.chapterNumber)
+                        )}`}
+                      labels={labels}
+                    />
                   )}
                 </li>
               ))}

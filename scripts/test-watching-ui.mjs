@@ -88,6 +88,7 @@ const historyItem = {
   href: '/series/1-always-meet-again',
   seasonNumber: 1,
   episodeNumber: 1,
+  chapterTarget: { episodeId: 100, chapterNumber: 1 },
 };
 await page.addInitScript(() => {
   // Disable service worker registration without a rejected promise in this isolated test.
@@ -432,6 +433,48 @@ try {
   await page
     .getByText('Fecha anterior: 20 sept 2026', { exact: true })
     .waitFor();
+  const historyActions = page
+    .locator('.tracking-history .history-episode-actions')
+    .first();
+  await historyActions
+    .getByRole('button', { name: 'Nota privada', exact: true })
+    .click();
+  const historyNote = page
+    .getByRole('dialog')
+    .filter({ has: page.locator('textarea') });
+  await page.waitForFunction(
+    () =>
+      document.querySelector('.ant-modal textarea')?.value ===
+      'Una nota privada de prueba'
+  );
+  assert.equal(
+    await historyNote.locator('textarea').inputValue(),
+    'Una nota privada de prueba'
+  );
+  await page.locator('.ant-modal:visible .ant-modal-close').click();
+  await historyNote.waitFor({ state: 'hidden' });
+  await historyActions
+    .getByRole('button', { name: 'Conversación pública', exact: true })
+    .click();
+  const historyDiscussion = page
+    .getByRole('dialog')
+    .filter({ hasText: 'Always Meet Again · T1 · E1' });
+  await historyDiscussion
+    .getByText('Un comentario público de prueba', { exact: true })
+    .waitFor();
+  assert.equal(
+    (await historyDiscussion.innerText()).includes(
+      'Una nota privada de prueba'
+    ),
+    false
+  );
+  assert.equal(
+    publicComments.length,
+    1,
+    'Opening history discussion does not publish anything'
+  );
+  await page.locator('.ant-modal:visible .ant-modal-close').click();
+  await historyDiscussion.waitFor({ state: 'hidden' });
   await page.getByRole('button', { name: 'Cargar más', exact: true }).click();
   await page.getByText('Estado previo al historial', { exact: true }).waitFor();
   await page

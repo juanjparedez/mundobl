@@ -205,6 +205,26 @@ async function main() {
       { relrowsecurity: boolean }[]
     >`SELECT relrowsecurity FROM pg_class WHERE oid = 'public."TrackingEvent"'::regclass`;
     assert.equal(rls[0].relrowsecurity, true);
+    await prisma.episode.update({
+      where: { id: episodeId },
+      data: { title: 'EP.1 [1/2]' },
+    });
+    const secondPart = await prisma.episode.create({
+      data: {
+        seasonId: series.seasons[0].id,
+        episodeNumber: 2,
+        title: 'EP.1 [2/2]',
+      },
+    });
+    await prisma.$transaction((tx) =>
+      markEpisode(tx, userId, secondPart.id, 'VISTA')
+    );
+    const partHistory = await getTrackingHistory(userId, key);
+    assert.deepEqual(
+      partHistory.items.find((item) => item.episodeNumber === 2)?.chapterTarget,
+      { episodeId, chapterNumber: 1 },
+      'History for a second part opens the canonical chapter note/discussion'
+    );
     console.log(
       'PASS native PostgreSQL: tracking trigger, concurrent retries, unmark, corrected/unknown dates, rollback, private paginated history, viewing links, export/restore replay, scoped clear and RLS enabled.'
     );

@@ -1,0 +1,12 @@
+.history-episode-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+
+.history-episode-actions .ant-btn {
+  min-height: 44px;
+  height: auto;
+  white-space: normal;
+}

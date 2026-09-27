@@ -1,4 +1,5 @@
 import type { WatchDateTarget } from './watch-date';
+import { groupIntoChapters } from './episode-chapters';
 import {
   readWatchingPreferences,
   type WatchingPreferences,
@@ -384,6 +385,8 @@ export async function getTrackingHistory(
       },
       episode: {
         select: {
+          id: true,
+          seasonId: true,
           episodeNumber: true,
           season: {
             select: { seasonNumber: true, series: { select: seriesSelect } },
@@ -394,6 +397,40 @@ export async function getTrackingHistory(
   });
   const page = rows.slice(0, 20);
   const last = page.at(-1);
+  const seasonIds = [
+    ...new Set(
+      page.flatMap((row) => (row.episode ? [row.episode.seasonId] : []))
+    ),
+  ];
+  const seasons = seasonIds.length
+    ? await prisma.season.findMany({
+        where: { id: { in: seasonIds } },
+        select: {
+          seasonNumber: true,
+          episodes: { select: { id: true, episodeNumber: true, title: true } },
+        },
+      })
+    : [];
+  const chapterTargets = new Map<
+    number,
+    { episodeId: number; chapterNumber: number }
+  >();
+  for (const season of seasons) {
+    const { chapters } = groupIntoChapters(
+      season.episodes.map((episode) => ({
+        ...episode,
+        seasonNumber: season.seasonNumber,
+      }))
+    );
+    for (const chapter of chapters) {
+      for (const episode of chapter.episodes) {
+        chapterTargets.set(episode.id, {
+          episodeId: chapter.episodes[0].id,
+          chapterNumber: chapter.number,
+        });
+      }
+    }
+  }
   return {
     items: page.map((row) => {
       const series =
@@ -412,6 +449,9 @@ export async function getTrackingHistory(
         seasonNumber:
           row.season?.seasonNumber ?? row.episode?.season.seasonNumber ?? null,
         episodeNumber: row.episode?.episodeNumber ?? null,
+        chapterTarget: row.episode
+          ? (chapterTargets.get(row.episode.id) ?? null)
+          : null,
       };
     }),
     nextCursor:
