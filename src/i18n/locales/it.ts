@@ -2778,6 +2778,8 @@ const it = {
     "pickerAlreadyAdded": "Già nella tua dashboard"
   },
   "profileDashboard": {
+    "listCount": "Elementi per elenco",
+    "listCountHint": "Riepiloghi del profilo. Salvato in questo browser.",
     "title": "La mia dashboard",
     "subtitle": "Personalizza la tua vista profilo con widget riordinabili.",
     "fromClassicLink": "Prova la vista dashboard",

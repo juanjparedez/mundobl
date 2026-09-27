@@ -2778,6 +2778,8 @@ const zhCN = {
     "pickerAlreadyAdded": "已在你的仪表板中"
   },
   "profileDashboard": {
+    "listCount": "每个列表的项目数",
+    "listCountHint": "个人资料摘要。保存在此浏览器中。",
     "title": "我的仪表板",
     "subtitle": "使用可重排的小组件自定义你的资料视图。",
     "fromClassicLink": "尝试仪表板视图",

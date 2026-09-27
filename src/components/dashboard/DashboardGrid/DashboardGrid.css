@@ -4,6 +4,22 @@
   position: relative;
 }
 
+.mb-dashboard-grid__mobile-flow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.mb-dashboard-grid__mobile-flow .mb-widget {
+  height: auto;
+}
+
+.mb-dashboard-grid__mobile-flow .mb-widget__body {
+  flex: none;
+  overflow: visible;
+  overscroll-behavior: auto;
+}
+
 .mb-dashboard-grid .react-grid-item {
   transition:
     transform 200ms cubic-bezier(0.22, 1, 0.36, 1),
