@@ -45,6 +45,10 @@ const fr = {
 },
 
   trackingHistory: {
+    expand: "Afficher {count} événements de plus",
+    collapse: "Afficher moins",
+    loaded: "{count} événements chargés",
+
       "title": "Historique",
       "description": "Modifications du suivi, visibles uniquement par toi. Les états précédents ne reconstituent pas les actions passées.",
       "search": "Rechercher une série dans l’historique",
