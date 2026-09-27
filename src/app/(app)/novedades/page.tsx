@@ -33,6 +33,8 @@ const getNovedadesData = unstable_cache(
         select: {
           id: true,
           title: true,
+          origin: true,
+          catalogScope: true,
           imageUrl: true,
           imageThumbUrl: true,
           imagePosition: true,
@@ -58,6 +60,8 @@ const getNovedadesData = unstable_cache(
             select: {
               id: true,
               title: true,
+              origin: true,
+              catalogScope: true,
               imageUrl: true,
               imageThumbUrl: true,
               type: true,
@@ -78,6 +82,8 @@ const getNovedadesData = unstable_cache(
         select: {
           id: true,
           title: true,
+          origin: true,
+          catalogScope: true,
           imageUrl: true,
           imageThumbUrl: true,
           imagePosition: true,

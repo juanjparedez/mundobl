@@ -21,7 +21,7 @@ import type { QuickPreviewData } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
-import { getSeriesUrl } from '@/lib/slug';
+import { getContentUrl } from '@/lib/slug';
 import type { TranslationKey } from '@/i18n/messages';
 import { LAST_SEEN_NOVEDADES_KEY } from './storage-keys';
 import './novedades.css';
@@ -29,6 +29,8 @@ import './novedades.css';
 interface NewSerie {
   id: number;
   title: string;
+  origin: string;
+  catalogScope: string;
   imageUrl: string | null;
   imageThumbUrl?: string | null;
   imagePosition: string;
@@ -46,6 +48,8 @@ interface NewSeason {
   series: {
     id: number;
     title: string;
+    origin: string;
+    catalogScope: string;
     imageUrl: string | null;
     imageThumbUrl?: string | null;
     type: string;
@@ -164,7 +168,7 @@ export function NovedadesClient({
         key: 'detail',
         label: t('quickPreview.fullDetail'),
         variant: 'primary' as const,
-        href: getSeriesUrl(serie.id, serie.title),
+        href: getContentUrl(serie),
       },
     ],
   });
@@ -202,7 +206,7 @@ export function NovedadesClient({
                 {newSeries.map((s) => (
                   <MediaCard
                     key={s.id}
-                    href={getSeriesUrl(s.id, s.title)}
+                    href={getContentUrl(s)}
                     imageUrl={cardImageUrl(s)}
                     imageAlt={s.title}
                     unoptimizedImage={isDirectServedImageUrl(cardImageUrl(s))}
@@ -244,7 +248,7 @@ export function NovedadesClient({
                 {newSeasons.map((season) => (
                   <MediaCard
                     key={season.id}
-                    href={getSeriesUrl(season.series.id, season.series.title)}
+                    href={getContentUrl(season.series)}
                     imageUrl={cardImageUrl(season.series)}
                     imageAlt={season.series.title}
                     unoptimizedImage={isDirectServedImageUrl(
