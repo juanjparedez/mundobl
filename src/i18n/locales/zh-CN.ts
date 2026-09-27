@@ -2781,6 +2781,17 @@ const zhCN = {
     "pickerEmpty": "没有可添加的小组件。",
     "pickerAlreadyAdded": "已在你的仪表板中"
   },
+  insightDistribution: {
+    "title": "观看活动分布",
+    "scope": "此时段有活动的作品共{count}部。每部作品在每个类别中计数一次；作品可有多个类型，因此其百分比之和可能超过100%。选择类别可筛选下方列表。",
+    "country": "作品所属国家",
+    "genre": "题材",
+    "type": "作品类型",
+    "format": "画面格式",
+    "unknown": "无数据",
+    "more": "更多类别",
+    "clear": "清除筛选"
+},
   trackingInsights: {
     "title": "我的统计",
     "library": "我的观看记录",
