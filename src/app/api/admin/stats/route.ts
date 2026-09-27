@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/database';
+import {
+  prisma,
+  getPublishedReviewStats,
+  getActiveCommunityUsersWhere,
+} from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 
 // GET /api/admin/stats — admin only
@@ -13,6 +17,7 @@ export async function GET() {
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
     const [
+      reviewStats,
       totalUsers,
       currentlyWatchingCount,
       completedThisWeek,
@@ -26,6 +31,7 @@ export async function GET() {
       seriesByType,
       completedByDay,
     ] = await Promise.all([
+      getPublishedReviewStats(sevenDaysAgo),
       // Total users (not banned)
       prisma.user.count({ where: { banned: false } }),
 
@@ -97,10 +103,7 @@ export async function GET() {
 
       // Active users (at least one activity in last 30 days)
       prisma.user.findMany({
-        where: {
-          banned: false,
-          viewStatuses: { some: { updatedAt: { gte: thirtyDaysAgo } } },
-        },
+        where: getActiveCommunityUsersWhere(thirtyDaysAgo),
         select: {
           id: true,
           name: true,
@@ -172,6 +175,8 @@ export async function GET() {
 
     return NextResponse.json({
       summary: {
+        totalPublishedReviews: reviewStats.total,
+        reviewsThisWeek: reviewStats.recent,
         totalUsers,
         currentlyWatchingDistinct: currentlyWatchingCount.length,
         completedThisWeek,

@@ -2150,6 +2150,40 @@ export async function getSeriesEpisodesOrdered(
   );
 }
 
+/** Publicly accessible works shared by community discovery and review statistics. */
+export const PUBLIC_REVIEW_SERIES = {
+  visibility: 'VISIBLE',
+  OR: [{ origin: 'CURATED', catalogScope: 'PERSONAL' }, HAS_WATCHABLE_EPISODE],
+} satisfies Prisma.SeriesWhereInput;
+
+export async function getPublishedReviewStats(since?: Date) {
+  const published = { status: 'PUBLISHED' as const };
+  const [total, recent] = await Promise.all([
+    prisma.review.count({ where: published }),
+    since
+      ? prisma.review.count({
+          where: { ...published, publishedAt: { gte: since } },
+        })
+      : Promise.resolve(0),
+  ]);
+  return { total, recent };
+}
+
+export function getActiveCommunityUsersWhere(
+  since: Date
+): Prisma.UserWhereInput {
+  return {
+    banned: false,
+    OR: [
+      { viewStatuses: { some: { updatedAt: { gte: since } } } },
+      { reviews: { some: { status: 'PUBLISHED', updatedAt: { gte: since } } } },
+      { comments: { some: { isPrivate: false, updatedAt: { gte: since } } } },
+      { userRatings: { some: { updatedAt: { gte: since } } } },
+      { favorites: { some: { createdAt: { gte: since } } } },
+    ],
+  };
+}
+
 /** Public community discovery contains published reviews, never tracking or notes. */
 export async function getCommunityReviews(page = 1, search = '') {
   if (!Number.isSafeInteger(page) || page < 1 || page > 71582788) {
@@ -2161,14 +2195,10 @@ export async function getCommunityReviews(page = 1, search = '') {
     where: {
       status: 'PUBLISHED',
       series: {
-        visibility: 'VISIBLE',
+        ...PUBLIC_REVIEW_SERIES,
         ...(query
           ? { title: { contains: query, mode: 'insensitive' as const } }
           : {}),
-        OR: [
-          { origin: 'CURATED', catalogScope: 'PERSONAL' },
-          HAS_WATCHABLE_EPISODE,
-        ],
       },
     },
     orderBy: [{ publishedAt: { sort: 'desc', nulls: 'last' } }, { id: 'desc' }],
