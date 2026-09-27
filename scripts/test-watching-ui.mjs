@@ -425,6 +425,43 @@ try {
     path: 'test-results/watching/history.png',
     fullPage: true,
   });
+  assert.equal(new URL(page.url()).searchParams.get('historyPages'), '2');
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.getByText('Estado previo al historial', { exact: true }).waitFor();
+  assert.equal(await page.locator('.tracking-history__list > li').count(), 3);
+  assert.equal(await page.locator('.tracking-history__series').count(), 2);
+  await page.setViewportSize({ width: 390, height: 600 });
+  const dismissCookies = page.getByRole('button', { name: /Ok, entendido/ });
+  if (await dismissCookies.isVisible()) await dismissCookies.click();
+  await page.evaluate(() => window.scrollTo(0, 450));
+  await page.waitForFunction(
+    () => window.history.state?.__mb_watching_scroll?.y > 100
+  );
+  const historyScroll = await page.evaluate(() => window.scrollY);
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await page.getByText('Estado previo al historial', { exact: true }).waitFor();
+  await page.waitForFunction(
+    (y) => Math.abs(window.scrollY - y) < 2,
+    historyScroll
+  );
+  await page
+    .locator('.bottom-nav')
+    .getByRole('button', { name: 'Perfil', exact: true })
+    .click();
+  await page.waitForURL('**/perfil');
+  await page.getByRole('button', { name: 'Volver', exact: true }).click();
+  await page.waitForURL('**/watching?**');
+  await page.getByText('Estado previo al historial', { exact: true }).waitFor();
+  await page.waitForFunction(
+    (y) => Math.abs(window.scrollY - y) < 2,
+    historyScroll
+  );
+  assert.equal(await page.locator('.tracking-history__list > li').count(), 3);
+  await page.screenshot({
+    path: 'test-results/watching/history-return-mobile.png',
+    fullPage: true,
+  });
+  await page.setViewportSize({ width: 1440, height: 1000 });
   const stateBeforeClear = JSON.stringify(items);
   await page
     .locator('.tracking-history')
