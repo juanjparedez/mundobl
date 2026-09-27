@@ -28,6 +28,7 @@ import './SeasonForm.css';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
+import { getContentUrl } from '@/lib/slug';
 
 const { TextArea } = Input;
 
@@ -35,6 +36,8 @@ interface SeasonFormData {
   id: number;
   seriesId: number;
   seriesTitle: string;
+  seriesOrigin: string;
+  seriesCatalogScope: string;
   seasonNumber: number;
   title?: string | null;
   episodeCount?: number | null;
@@ -57,6 +60,12 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [actors, setActors] = useState<string[]>([]);
+  const seriesUrl = getContentUrl({
+    id: initialData.seriesId,
+    title: initialData.seriesTitle,
+    origin: initialData.seriesOrigin,
+    catalogScope: initialData.seriesCatalogScope,
+  });
 
   const loadFormData = useCallback(async () => {
     try {
@@ -89,7 +98,7 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
       if (!response.ok) throw new Error('Error saving season');
 
       message.success(t('seasonForm.updateSuccess'));
-      router.push(`/series/${initialData.seriesId}`);
+      router.push(seriesUrl);
     } catch (error) {
       message.error(t('seasonForm.saveError'));
       console.error(error);
@@ -135,7 +144,7 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
         title={
           <div className="series-form__header">
             <div className="series-form__header-left">
-              <Link href={`/series/${initialData.seriesId}`}>
+              <Link href={seriesUrl}>
                 <Button icon={<ArrowLeftOutlined />} type="text">
                   {interpolateMessage(t('seasonForm.backButton'), {
                     title: initialData.seriesTitle,
@@ -362,7 +371,7 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
               <Button size="large" onClick={() => router.back()}>
                 {t('seasonForm.cancelButton')}
               </Button>
-              <Link href={`/series/${initialData.seriesId}`}>
+              <Link href={seriesUrl}>
                 <Button size="large">{t('seasonForm.viewSeriesButton')}</Button>
               </Link>
             </Space>
