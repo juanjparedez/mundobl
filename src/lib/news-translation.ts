@@ -23,6 +23,9 @@ export async function translateNewsToSpanish(
       'Conservá los nombres propios y títulos de series en su forma original. No inventes hechos, opiniones ni texto que falte en un extracto truncado. ' +
       'No copies extensamente: el resumen debe ser una paráfrasis breve de hasta 450 caracteres y el título de hasta 300. ' +
       'Las reseñas deben presentarse como reseñas de la fuente, no como opiniones propias ni anuncios oficiales. ' +
+      'No conviertas títulos interrogativos o publicitarios sobre dónde ver una serie en promesas de acceso gratuito. ' +
+      'No afirmes disponibilidad mundial ni acceso sin VPN: conservá la región explícita; si falta, no generalices. ' +
+      'Atribuí las afirmaciones de disponibilidad a la fuente y conservá avisos de fecha o plataforma aún no anunciadas. ' +
       'Respondé únicamente JSON {"items":[{"id":0,"language":"es","title":"...","summary":"..."}]}, con una entrada por id recibido.',
     prompt: JSON.stringify({
       items: items.map(({ title, summary }, id) => ({ id, title, summary })),
