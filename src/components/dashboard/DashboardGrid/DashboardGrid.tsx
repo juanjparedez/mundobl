@@ -353,6 +353,14 @@ export function DashboardGrid({
     return map;
   }, [items, handleResetHeight]);
 
+  // Reading on a narrow screen uses document flow, not persisted card heights.
+  // Editing still uses RGL and never overwrites the saved desktop layout here.
+  const mobileFlow = mounted && width < 768 && !editing;
+  const mobileBreakpoint = width < 480 ? 'xxs' : 'xs';
+  const mobileItems = [
+    ...(layouts[mobileBreakpoint] ?? layouts.xs ?? layouts.sm ?? items),
+  ].sort((a, b) => a.y - b.y || a.x - b.x);
+
   return (
     <div
       ref={containerRef}
@@ -360,51 +368,68 @@ export function DashboardGrid({
         className ? ` ${className}` : ''
       }`}
     >
-      {mounted && (
-        <Responsive<DashboardBreakpoint>
-          className="layout"
-          width={width}
-          layouts={toRglLayouts(layouts, autoHeights, currentBp)}
-          breakpoints={DASHBOARD_BREAKPOINTS}
-          cols={DASHBOARD_COLS}
-          rowHeight={rowHeight}
-          margin={[gap, gap]}
-          containerPadding={[0, 0]}
-          dragConfig={{
-            enabled: editing,
-            handle: `.${DRAG_HANDLE_CLASS}`,
-          }}
-          resizeConfig={{ enabled: editing }}
-          onBreakpointChange={(bp) => setCurrentBp(bp)}
-          onResizeStop={handleResizeStop}
-          onLayoutChange={handleLayoutChange}
-        >
-          {items.map((item) => {
-            // El hMode vive por breakpoint: el que vale es el del activo.
-            const activeItem =
-              (layouts[currentBp] ?? items).find((it) => it.i === item.i) ??
-              item;
-            return (
-              <div key={item.i}>
-                <DashboardGridItem
-                  itemId={item.i}
-                  editing={editing}
-                  breakpoint={currentBp}
-                  onRemove={removeHandlers.get(item.i)}
-                  widgetProps={widgetProps?.[item.i]}
-                  rowHeight={rowHeight}
-                  gap={gap}
-                  minH={
-                    item.minH ?? WidgetRegistry.get(item.i)?.defaultSize.minH
-                  }
-                  onAutoHeight={autoHeightHandlers.get(item.i)}
-                  hMode={activeItem.hMode}
-                  onResetHeight={resetHeightHandlers.get(item.i)}
-                />
-              </div>
-            );
-          })}
-        </Responsive>
+      {mobileFlow ? (
+        <div className="mb-dashboard-grid__mobile-flow">
+          {mobileItems.map((item) => (
+            <div key={item.i}>
+              <DashboardGridItem
+                itemId={item.i}
+                editing={false}
+                breakpoint={mobileBreakpoint}
+                widgetProps={widgetProps?.[item.i]}
+                rowHeight={rowHeight}
+                gap={gap}
+              />
+            </div>
+          ))}
+        </div>
+      ) : (
+        mounted && (
+          <Responsive<DashboardBreakpoint>
+            className="layout"
+            width={width}
+            layouts={toRglLayouts(layouts, autoHeights, currentBp)}
+            breakpoints={DASHBOARD_BREAKPOINTS}
+            cols={DASHBOARD_COLS}
+            rowHeight={rowHeight}
+            margin={[gap, gap]}
+            containerPadding={[0, 0]}
+            dragConfig={{
+              enabled: editing,
+              handle: `.${DRAG_HANDLE_CLASS}`,
+            }}
+            resizeConfig={{ enabled: editing }}
+            onBreakpointChange={(bp) => setCurrentBp(bp)}
+            onResizeStop={handleResizeStop}
+            onLayoutChange={handleLayoutChange}
+          >
+            {items.map((item) => {
+              // El hMode vive por breakpoint: el que vale es el del activo.
+              const activeItem =
+                (layouts[currentBp] ?? items).find((it) => it.i === item.i) ??
+                item;
+              return (
+                <div key={item.i}>
+                  <DashboardGridItem
+                    itemId={item.i}
+                    editing={editing}
+                    breakpoint={currentBp}
+                    onRemove={removeHandlers.get(item.i)}
+                    widgetProps={widgetProps?.[item.i]}
+                    rowHeight={rowHeight}
+                    gap={gap}
+                    minH={
+                      item.minH ?? WidgetRegistry.get(item.i)?.defaultSize.minH
+                    }
+                    onAutoHeight={autoHeightHandlers.get(item.i)}
+                    hMode={activeItem.hMode}
+                    onResetHeight={resetHeightHandlers.get(item.i)}
+                  />
+                </div>
+              );
+            })}
+          </Responsive>
+        )
       )}
     </div>
   );

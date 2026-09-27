@@ -2778,6 +2778,8 @@ const fr = {
     "pickerAlreadyAdded": "Déjà sur votre tableau de bord"
   },
   "profileDashboard": {
+    "listCount": "Éléments par liste",
+    "listCountHint": "Résumés du profil. Enregistré dans ce navigateur.",
     "title": "Mon tableau de bord",
     "subtitle": "Personnalisez l'affichage de votre profil avec des widgets réorganisables.",
     "fromClassicLink": "Essayer la vue tableau de bord",

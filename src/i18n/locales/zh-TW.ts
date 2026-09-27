@@ -2778,6 +2778,8 @@ const zhTW = {
     "pickerAlreadyAdded": "已在你的儀表板中"
   },
   "profileDashboard": {
+    "listCount": "每個清單的項目數",
+    "listCountHint": "個人資料摘要。儲存在此瀏覽器中。",
     "title": "我的儀表板",
     "subtitle": "用可重新排列的小工具自訂你的個人檔案檢視。",
     "fromClassicLink": "試用儀表板檢視",
