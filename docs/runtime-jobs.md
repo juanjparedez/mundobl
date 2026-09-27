@@ -15,9 +15,9 @@ La búsqueda deja propuestas para revisión. Se muestran candidatos, fuentes con
 - Ejecución real de noticias: 23 fuentes, 4 fallidas, 12 propuestas REVIEW. Confirmadas en /admin/noticias; no publicadas.
 - Contenido solicitado agregado solo a /ver: Only Boo! (673), GAP The Series (674), Secret Crush on You (675). Los dos últimos son de Idol Factory. Canales, estado público, permiso de embed y disponibilidad en mercados principales verificados con YouTube Data API. Sin avances en las temporadas. Never Let Me Go y Wandee Goodday descartadas por bloqueo regional.
 - Pendiente editorial: reparto, directores y carátulas específicas de las incorporaciones (usan miniaturas oficiales). No se modificó el catálogo PERSONAL.
-- Hallazgo aparte: guardar una ficha WATCHABLE_ONLY desde el editor redirige a /series y muestra 404; su URL pública correcta es /ver. No se amplía este cambio con ese arreglo.
+- Hallazgo aparte: guardar una ficha WATCHABLE_ONLY desde el editor redirige a /series y muestra 404; su URL pública correcta es /ver. El cierre posterior corrige la redirección y los enlaces del editor de temporadas y de Novedades usando getContentUrl.
 
-PR #88 quedó mergeada y desplegada previamente. Respaldo completo y migración 20260926234951_watching_preferences verificados antes del merge. Esta entrega de Runtime todavía debe desplegarse.
+PR #88 quedó mergeada y desplegada previamente. Respaldo completo y migración 20260926234951_watching_preferences verificados antes del merge. Runtime se integró en la PR #89 y quedó desplegado en producción (main 48d6592).
 
 ## Noticias en español y fuentes asiáticas
 
@@ -26,3 +26,21 @@ Los extractos públicos se traducen y parafrasean con el helper existente de Gem
 La detección de avances reconoce tailandés, coreano, japonés y chino, además de inglés, y excluye avances de episodios y OST. Usa los canales oficiales ya verificados (incluidos Idol Factory, Strongberry y GagaOOLala) y los sitios de noticias configurados, como Soompi. No se agregaron sitios sin verificar ni se publica automáticamente.
 
 Pruebas adicionales: validación de lotes de traducción, IDs duplicados/faltantes, idioma declarado incorrecto, errores y detección de avances multilingües.
+
+
+## Cierre verificado el 27/09/2026
+
+- Runtime manual en producción: noticias ejecutadas sin esperar al cron. Una repetición devolvió 0 nuevas sobre 12 candidatas, sin duplicarlas.
+- Las ocho propuestas antiguas en inglés se resumieron en español, conservando fuente, fecha, enlace y estado REVIEW. No se enviaron notas privadas al proveedor de IA ni se publicaron propuestas.
+- Agregada la fuente japonesa BLドラマ情報局 (https://bl-data.com/feed/), después de comprobar su RSS. La siguiente ejecución devolvió 4 nuevas, 16 candidatas, 24 fuentes y 4 fallidas. Las cuatro nuevas quedaron en español y REVIEW: 16 propuestas en revisión en total. Noticias y anuncios son entidades distintas; las propuestas se revisan en /admin/noticias.
+- Recuperadas las 16 fichas sin imagen: 415, 439, 454, 516, 583, 584, 585, 586, 637, 655, 661, 667, 668, 670, 671 y 672. Se verificó correspondencia por título, título original, reparto o episodio. Se usaron imágenes de plataformas, distribuidoras y canales públicos; Proxy Driver, The Gaze y My Captor Was My Beloved se contrastaron con fichas de metadatos. Connecting to You Special usa la imagen de la serie principal y The Middleman's Love reutiliza la de su ficha equivalente. Varias imágenes son miniaturas promocionales, no pósteres verticales.
+- Las imágenes se guardaron con el helper existente, generando también miniatura. En este entorno se utilizó el fallback de Supabase Storage. Solo se actualizaron campos de imagen vacíos; no se modificaron avances, reseñas ni episodios. La evidencia y procedencia detallada quedaron en test-results/restored-covers*.json, ignorados por Git.
+- Borrada la rama remota codex/biblioteca-sincronizada con autorización explícita del usuario, después de comprobar que era ancestro de main.
+- Corrección del editor: guardar una ficha WATCHABLE_ONLY y guardar/volver desde su temporada ahora utiliza /ver; las fichas de catálogo conservan /series. Se reutiliza getContentUrl y se pasan origin/catalogScope desde la consulta de temporada. Sin cambios de esquema ni nuevas traducciones.
+- Validación del arreglo: TypeScript, ESLint de los archivos modificados y build de producción con PostgreSQL local aprobados. Su despliegue depende de integrar la PR de cierre.
+
+### Pendientes acotados
+
+- Revisar editorialmente las 16 noticias antes de publicarlas, especialmente afirmaciones comerciales o de disponibilidad regional procedentes de las fuentes.
+- Diagnosticar o reemplazar las cuatro fuentes que fallan. El resultado parcial se muestra como degradado; no significa que el cron nunca haya corrido.
+- Completar reparto/directores y pósteres verticales específicos de Only Boo!, GAP y Secret Crush on You. Ya están disponibles en /ver con miniaturas oficiales; no se inventaron créditos ni se mezclaron con el catálogo PERSONAL.

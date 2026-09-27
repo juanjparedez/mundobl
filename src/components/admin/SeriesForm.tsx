@@ -38,7 +38,7 @@ import {
   shouldShowEpisodes,
   getContentTypeConfig,
 } from '@/types/content';
-import { getSeriesUrl } from '@/lib/slug';
+import { getContentUrl } from '@/lib/slug';
 import './SeriesForm.css';
 import { useMessage, useModal } from '@/hooks/useMessage';
 import {
@@ -655,7 +655,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
       );
 
       // Redirigir directamente a la ficha de la serie (previsualización directa)
-      const targetUrl = getSeriesUrl(savedSerie.id, savedSerie.title);
+      const targetUrl = getContentUrl(savedSerie);
       router.push(targetUrl);
     } catch (error) {
       message.error(
