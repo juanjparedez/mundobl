@@ -288,15 +288,15 @@ export async function GET(request: NextRequest) {
 
       // Series completed per year
       prisma.$queryRaw<RawYearRow[]>`
-        SELECT s.year, COUNT(*) as count
+        SELECT EXTRACT(YEAR FROM vs."watchedDate")::integer AS year, COUNT(*) as count
         FROM "ViewStatus" vs
-        JOIN "Series" s ON vs."seriesId" = s.id
         WHERE vs."userId" = ${userId}
           AND vs.status = 'VISTA'
           AND vs."seriesId" IS NOT NULL
-          AND s.year IS NOT NULL
-        GROUP BY s.year
-        ORDER BY s.year DESC
+          AND vs."watchedDate" IS NOT NULL
+          AND vs."watchedDate" <= NOW()
+        GROUP BY EXTRACT(YEAR FROM vs."watchedDate")
+        ORDER BY year DESC
         LIMIT 10
       `,
 
@@ -365,7 +365,7 @@ export async function GET(request: NextRequest) {
         },
       }),
 
-      // Daily activity last 84 days (12 weeks) for heatmap
+      // Cover all 26 weeks displayed by HeatmapWidget.
       prisma.$queryRaw<RawDayRow[]>`
         SELECT DISTINCT DATE(vs."watchedDate") as day
         FROM "ViewStatus" vs
@@ -373,7 +373,7 @@ export async function GET(request: NextRequest) {
           AND vs.status = 'VISTA'
           AND vs."episodeId" IS NOT NULL
           AND vs."watchedDate" <= NOW()
-          AND vs."watchedDate" >= NOW() - INTERVAL '84 days'
+          AND vs."watchedDate" >= NOW() - INTERVAL '182 days'
         ORDER BY day
       `,
 

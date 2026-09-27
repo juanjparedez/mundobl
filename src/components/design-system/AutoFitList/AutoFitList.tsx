@@ -1,6 +1,13 @@
 'use client';
 
-import { Children, isValidElement, useState, type ReactNode } from 'react';
+import {
+  Children,
+  isValidElement,
+  useContext,
+  useState,
+  type ReactNode,
+} from 'react';
+import { ListCountContext } from './ListCountContext';
 import './AutoFitList.css';
 
 export interface AutoFitListProps {
@@ -33,7 +40,13 @@ export interface AutoFitListProps {
  * exactamente `collapsedCount` items (o todos, si se expande) — sin
  * medicion, sin ciclos, sin sorpresas.
  */
-export function AutoFitList({
+export function AutoFitList(props: AutoFitListProps) {
+  const globalCount = useContext(ListCountContext);
+  const count = globalCount ?? props.collapsedCount;
+  return <AutoFitListContent key={count} {...props} collapsedCount={count} />;
+}
+
+function AutoFitListContent({
   children,
   as = 'ul',
   listClassName,
@@ -43,10 +56,11 @@ export function AutoFitList({
   viewMoreLabel,
 }: AutoFitListProps) {
   const items = Children.toArray(children).filter(isValidElement);
+  const count = collapsedCount;
   const [showAll, setShowAll] = useState(false);
 
-  const hasMore = items.length > collapsedCount;
-  const shown = showAll ? items : items.slice(0, collapsedCount);
+  const hasMore = items.length > count;
+  const shown = showAll ? items : items.slice(0, count);
   const wrapClass = ['mb-autofit-list__wrap', wrapClassName]
     .filter(Boolean)
     .join(' ');
@@ -62,7 +76,8 @@ export function AutoFitList({
         <button
           type="button"
           className="mb-autofit-list__toggle"
-          onClick={() => setShowAll((v) => !v)}
+          aria-expanded={showAll}
+          onClick={() => setShowAll(!showAll)}
         >
           {showAll ? viewLessLabel : viewMoreLabel(items.length)}
         </button>

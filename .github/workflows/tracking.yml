@@ -47,4 +47,9 @@ jobs:
           node scripts/test-news-translation.mjs
           node scripts/test-news-sources.mjs
           node scripts/test-contribution-boundary.mjs
+      - name: Profile mobile regression
+        run: |
+          npx playwright install --with-deps chromium
+          node scripts/test-dashboard-mobile-flow.mjs
+          node scripts/test-profile-list-count.mjs
       - run: npm run build

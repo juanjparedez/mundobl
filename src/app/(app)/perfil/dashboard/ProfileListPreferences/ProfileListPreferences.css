@@ -1,0 +1,17 @@
+.mb-profile-list-preferences {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-block: var(--spacing-md);
+}
+
+.mb-profile-list-preferences .ant-select {
+  min-width: 80px;
+  height: 44px;
+}
+
+.mb-profile-list-preferences > span {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}

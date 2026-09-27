@@ -22,6 +22,7 @@ import {
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import type { ProfileData } from '../types';
 import { ProfileDashboardHeader } from './ProfileDashboardHeader/ProfileDashboardHeader';
+import { ProfileListPreferences } from './ProfileListPreferences/ProfileListPreferences';
 import { StatsStripWidget } from './widgets/StatsStripWidget/StatsStripWidget';
 import { ProfileCompletenessWidget } from './widgets/ProfileCompletenessWidget/ProfileCompletenessWidget';
 import { ProfileSettings } from '../ProfileSettings/ProfileSettings';
@@ -942,15 +943,17 @@ export function DashboardClient() {
         {/* StatsStripWidget se monta dentro del grid como widget removable
          *  con toggles internos para cada mini-stat (iter fine_tunning_1 #7).
          *  Antes vivia fuera del grid como ProfileStatsStrip fijo. */}
-        <DashboardGrid
-          layouts={visibleLayouts}
-          widgetProps={widgetProps}
-          editing={editing}
-          onLayoutsChange={handleLayoutsChange}
-          onRemoveWidget={removeWidget}
-          rowHeight={36}
-          gap={10}
-        />
+        <ProfileListPreferences key={data.user.id} userId={data.user.id}>
+          <DashboardGrid
+            layouts={visibleLayouts}
+            widgetProps={widgetProps}
+            editing={editing}
+            onLayoutsChange={handleLayoutsChange}
+            onRemoveWidget={removeWidget}
+            rowHeight={36}
+            gap={10}
+          />
+        </ProfileListPreferences>
 
         <WidgetPickerDrawer
           open={pickerOpen}

@@ -2778,6 +2778,8 @@ const ko = {
     "pickerAlreadyAdded": "이미 대시보드에 있습니다"
   },
   "profileDashboard": {
+    "listCount": "목록당 항목 수",
+    "listCountHint": "프로필 요약. 이 브라우저에 저장됩니다.",
     "title": "내 대시보드",
     "subtitle": "재정렬 가능한 위젯으로 프로필 보기를 맞춤 설정하세요.",
     "fromClassicLink": "대시보드 보기 시도",
