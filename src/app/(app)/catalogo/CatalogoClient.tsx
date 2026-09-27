@@ -1005,7 +1005,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
       </Link>
     ) : null;
 
-  const renderSingleCard = (serie: SerieData, index = 0) => {
+  const renderSingleCard = (serie: SerieData, index: number) => {
     const isPriority = index < 4;
     const gradient = getGradientByType(serie.tipo);
     const isInfoExpanded = expandedItemKey === `serie-${serie.id}`;
@@ -1043,7 +1043,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
               fill
               sizes="(max-width: 480px) 50vw, (max-width: 768px) 46vw, (max-width: 1200px) 31vw, 24vw"
               quality={55}
-              priority={isPriority}
+              loading={isPriority ? 'eager' : 'lazy'}
               fetchPriority={isPriority ? 'high' : 'low'}
               unoptimized={isDirectServedImageUrl(cardImageUrl(serie))}
               style={{
@@ -1185,7 +1185,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
     );
   };
 
-  const renderUniverseCard = (group: UniverseGroup, index = 0) => {
+  const renderUniverseCard = (group: UniverseGroup, index: number) => {
     const isPriority = index < 4;
     const firstSerie = group.series[0];
     const isExpanded = expandedItemKey === `universe-${group.universoId}`;
@@ -1216,7 +1216,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
                 fill
                 sizes="(max-width: 480px) 50vw, (max-width: 768px) 46vw, (max-width: 1200px) 31vw, 24vw"
                 quality={55}
-                priority={isPriority}
+                loading={isPriority ? 'eager' : 'lazy'}
                 fetchPriority={isPriority ? 'high' : 'low'}
                 unoptimized={isDirectServedImageUrl(cardImageUrl(firstSerie))}
                 style={{
