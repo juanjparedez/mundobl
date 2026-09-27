@@ -50,6 +50,8 @@ interface ActiveUser {
 
 interface StatsData {
   summary: {
+    totalPublishedReviews: number;
+    reviewsThisWeek: number;
     totalUsers: number;
     currentlyWatchingDistinct: number;
     completedThisWeek: number;
@@ -307,6 +309,18 @@ export function StatsClient() {
                   value={data.summary.commentsThisWeek}
                   label={t('adminStats.commentsThisWeek')}
                 />
+                <SummaryCard
+                  icon={<MessageOutlined />}
+                  iconClass="stats-summary-card__icon--comments"
+                  value={data.summary.totalPublishedReviews}
+                  label={t('activityStats.reviews')}
+                />
+                <SummaryCard
+                  icon={<MessageOutlined />}
+                  iconClass="stats-summary-card__icon--comments"
+                  value={data.summary.reviewsThisWeek}
+                  label={t('activityStats.reviewsWeek')}
+                />
               </div>
 
               {/* Charts: distribution by type + completed by day */}
@@ -415,6 +429,9 @@ export function StatsClient() {
                   <TeamOutlined />
                   {t('adminStats.activeUsers')}
                 </div>
+                <p className="stats-users-card__description">
+                  {t('activityStats.activeScope')}
+                </p>
                 <DataTable
                   dataSource={data.activeUsers}
                   columns={userColumns}
