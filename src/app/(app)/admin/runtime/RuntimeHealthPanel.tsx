@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { Button, Popconfirm, Spin, Tooltip } from 'antd';
+import { Button, Popconfirm, Select, Space, Spin, Tooltip } from 'antd';
 import { ReloadOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import {
   PanelCard,
@@ -17,6 +17,7 @@ import { interpolateMessage } from '@/lib/i18n-format';
 import { useMessage } from '@/hooks/useMessage';
 import type { TranslationKey } from '@/i18n/messages';
 import type { RuntimeHealth, StatusIndicator } from '@/lib/runtime-health';
+import type { RuntimeJob } from '@/lib/runtime-jobs';
 import type { CronRun } from '@/lib/cron-runs';
 import './RuntimeHealthPanel.css';
 
@@ -77,6 +78,7 @@ export function RuntimeHealthPanel() {
   const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
   const [running, setRunning] = useState(false);
+  const [job, setJob] = useState<RuntimeJob>('playability');
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -102,20 +104,20 @@ export function RuntimeHealthPanel() {
   const handleRunNow = async () => {
     setRunning(true);
     try {
-      const res = await fetch('/api/admin/runtime/cron/playability', {
+      const res = await fetch('/api/admin/runtime/run', {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ job }),
       });
+      if (res.status === 409) {
+        message.warning(t('runtimeJobs.busy'));
+        return;
+      }
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const result = (await res.json()) as { probed: number; scanned: number };
-      message.success(
-        interpolateMessage(t('adminRuntime.cronRunNowDone'), {
-          probed: String(result.probed),
-          scanned: String(result.scanned),
-        })
-      );
+      message.success(t('runtimeJobs.done'));
     } catch (error) {
       console.error('Error running playability job:', error);
-      message.error(t('adminRuntime.cronRunNowError'));
+      message.error(t('runtimeJobs.failed'));
     } finally {
       setRunning(false);
       void load();
@@ -135,8 +137,21 @@ export function RuntimeHealthPanel() {
       title: t('adminRuntime.cronColResult'),
       key: 'ok',
       render: (_: unknown, run: CronRun) => (
-        <Chip tone={run.ok ? 'success' : 'error'} size="sm">
-          {run.ok ? t('adminRuntime.cronOk') : t('adminRuntime.cronFailed')}
+        <Chip
+          tone={
+            !run.ok
+              ? 'error'
+              : Number(run.summary.failedSources ?? 0) > 0
+                ? 'warning'
+                : 'success'
+          }
+          size="sm"
+        >
+          {!run.ok
+            ? t('adminRuntime.cronFailed')
+            : Number(run.summary.failedSources ?? 0) > 0
+              ? t('adminRuntime.statusMinor')
+              : t('adminRuntime.cronOk')}
         </Chip>
       ),
     },
@@ -165,8 +180,11 @@ export function RuntimeHealthPanel() {
                 deleted: String(run.summary.deleted ?? 0),
               })
             : run.job === 'news'
-              ? interpolateMessage(t('adminRuntime.cronDetailNews'), {
+              ? interpolateMessage(t('runtimeJobs.newsDetail'), {
                   created: String(run.summary.created ?? 0),
+                  sources: String(run.summary.sources ?? 0),
+                  failed: String(run.summary.failedSources ?? 0),
+                  candidates: String(run.summary.candidates ?? 0),
                 })
               : interpolateMessage(t('adminRuntime.cronDetail'), {
                   probed: String(run.summary.probed ?? 0),
@@ -222,23 +240,38 @@ export function RuntimeHealthPanel() {
                 size="sm"
                 as="h3"
                 actions={
-                  <Popconfirm
-                    title={t('adminRuntime.cronRunNow')}
-                    description={t('adminRuntime.cronRunNowConfirm')}
-                    onConfirm={() => void handleRunNow()}
-                  >
-                    <Button
-                      type="primary"
-                      icon={<ThunderboltOutlined />}
-                      loading={running}
+                  <Space wrap>
+                    <Select<RuntimeJob>
+                      aria-label={t('runtimeJobs.task')}
+                      value={job}
+                      onChange={setJob}
+                      disabled={running}
+                      options={(['playability', 'news', 'daily'] as const).map(
+                        (value) => ({ value, label: t(`runtimeJobs.${value}`) })
+                      )}
+                    />
+                    <Popconfirm
+                      title={t('adminRuntime.cronRunNow')}
+                      description={t(`runtimeJobs.${job}Hint`)}
+                      onConfirm={() => void handleRunNow()}
                     >
-                      {t('adminRuntime.cronRunNow')}
-                    </Button>
-                  </Popconfirm>
+                      <Button
+                        type="primary"
+                        icon={<ThunderboltOutlined />}
+                        loading={running}
+                      >
+                        {t('adminRuntime.cronRunNow')}
+                      </Button>
+                    </Popconfirm>
+                  </Space>
                 }
               />
             }
           >
+            <p>
+              <a href="/admin/noticias">{t('runtimeJobs.review')}</a>
+            </p>
+            <p>{t('runtimeJobs.reviewHint')}</p>
             <p className="runtime-health__next">
               {t('adminRuntime.cronNext')}:{' '}
               <strong>{formatDate(health.cron.nextRunAt)}</strong>

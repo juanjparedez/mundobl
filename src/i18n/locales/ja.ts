@@ -2918,6 +2918,21 @@ const ja = {
     "actionChangelog": "リリース",
     "actionUsers": "ユーザー"
   },
+  "runtimeJobs": {
+    "task": "タスク",
+    "playability": "動画と統計",
+    "news": "ニュースを検索",
+    "daily": "日次処理をすべて実行",
+    "playabilityHint": "YouTubeの再生可否と統計を確認します。",
+    "newsHint": "ニュースを検索して確認待ちとして保存します。自動公開はしません。",
+    "dailyHint": "動画確認、ニュース収集、期限切れログの削除を実行します。",
+    "review": "確認待ちニュースを見る",
+    "reviewHint": "自動提案は「お知らせ」ではなく「ニュース」に保存されます。公開には確認が必要です。",
+    "busy": "タスクを実行中です。完了後に再試行してください。",
+    "done": "タスクが終了しました。履歴で結果を確認してください。",
+    "failed": "タスクが完了しませんでした。再試行前に履歴を確認してください。",
+    "newsDetail": "ニュース：新規 {created} · 候補 {candidates} · 情報源 {sources} · 失敗 {failed}"
+  },
   "adminRuntime": {
     "pageTitle": "Runtime 制御",
     "pageSubtitle": "フリーズ状態とコスト節約ガードレールを表示します。",

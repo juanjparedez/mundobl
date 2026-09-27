@@ -4,6 +4,8 @@ import { OFFICIAL_CHANNELS } from './official-channels';
 import { fetchYouTubeChannel } from './channel-fetcher';
 import { titleTokens } from './channel-sweep';
 import { runCronJob } from './cron-runs';
+import { translateNewsToSpanish } from './news-translation';
+import { isSeriesTrailer } from './news-topics';
 
 /**
  * Ingesta diaria de noticias (la corre /api/cron/daily). Todo entra en
@@ -24,8 +26,6 @@ const MAX_NEW_PER_RUN = 40;
 const EXCLUDED_CHANNELS = new Set(['WeTVThailand']);
 // El avance de una serie, no el del proximo capitulo ("EP.3") ni el de una
 // cancion ("Ost.").
-const TRAILER = /\b(official\s+)?(trailer|teaser)\b/i;
-const NOT_A_SERIES_TRAILER = /\bep\.?\s*\d|\bost\b/i;
 // Sitio dedicado a BL/GL, o nota que habla de eso. De un sitio general
 // (K-pop, cine) entra solo lo que nombra una serie del catalogo o esto.
 const BL_TOPIC = /\b(bl|gl)\b|boys'? ?love|girls'? ?love|\byaoi\b|\byuri\b/i;
@@ -261,10 +261,7 @@ async function fromOfficialTrailers(): Promise<{
             })
           )
           .filter(
-            (c) =>
-              TRAILER.test(c.title) &&
-              !NOT_A_SERIES_TRAILER.test(c.title) &&
-              isRecent(c, VIDEO_MAX_AGE_DAYS)
+            (c) => isSeriesTrailer(c.title) && isRecent(c, VIDEO_MAX_AGE_DAYS)
           )
           .slice(0, PER_SOURCE_LIMIT);
       } catch {
@@ -308,6 +305,12 @@ export async function ingestNews({ dryRun = false } = {}) {
     fromNewsSites(),
     fromOfficialTrailers(),
   ]);
+  if (
+    sites.sources + trailers.sources > 0 &&
+    sites.failed + trailers.failed === sites.sources + trailers.sources
+  ) {
+    throw new Error('No news source could be read.');
+  }
   const matchSeries = await loadSeriesMatcher();
   const candidates = [...sites.items, ...trailers.items].filter(
     (c) =>
@@ -332,16 +335,17 @@ export async function ingestNews({ dryRun = false } = {}) {
     .slice(0, MAX_NEW_PER_RUN);
 
   if (fresh.length > 0 && !dryRun) {
+    const translated = await translateNewsToSpanish(fresh);
     await prisma.news.createMany({
-      data: fresh.map((c) => ({
-        title: c.title.slice(0, 300),
-        summary: c.summary.slice(0, 600),
+      data: fresh.map((c, index) => ({
+        title: translated[index].title,
+        summary: translated[index].summary,
         originalUrl: c.originalUrl,
         sourceName: c.sourceName,
         imageUrl: c.imageUrl,
         publishedAt: c.publishedAt,
         status: 'REVIEW' as const,
-        aiGenerated: false,
+        aiGenerated: true,
         relatedSeriesId: matchSeries(c.title),
       })),
     });
@@ -360,17 +364,17 @@ export async function ingestNews({ dryRun = false } = {}) {
   };
 }
 
-export function runNewsIngestJob() {
+export function runNewsIngestJob(trigger: 'manual' | 'schedule' = 'schedule') {
   return runCronJob(
     'news',
     () => ingestNews(),
     (result) => ({
-      trigger: 'schedule',
+      trigger,
       sources: result.sources,
       failedSources: result.failedSources,
       candidates: result.candidates,
       created: result.created,
     }),
-    { trigger: 'schedule' }
+    { trigger }
   );
 }

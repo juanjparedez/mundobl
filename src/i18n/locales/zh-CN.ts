@@ -2918,6 +2918,21 @@ const zhCN = {
     "actionChangelog": "发布",
     "actionUsers": "用户"
   },
+  "runtimeJobs": {
+    "task": "任务",
+    "playability": "视频和统计",
+    "news": "查找新闻",
+    "daily": "完整每日流程",
+    "playabilityHint": "检查 YouTube 播放可用性和统计。",
+    "newsHint": "查找新闻并保存为待审核，不会自动发布。",
+    "dailyHint": "执行视频检查、新闻收集和过期日志清理。",
+    "review": "审核待处理新闻",
+    "reviewHint": "自动建议保存在新闻中，而不是公告中。发布前需要审核。",
+    "busy": "已有任务正在运行，请完成后重试。",
+    "done": "任务已结束，请在历史记录中查看结果。",
+    "failed": "任务未完成，重试前请查看历史记录。",
+    "newsDetail": "新闻：新增 {created} · 候选 {candidates} · 来源 {sources} · 失败来源 {failed}"
+  },
   "adminRuntime": {
     "pageTitle": "Runtime 控制",
     "pageSubtitle": "实时 freeze 状态与成本节省护栏。",

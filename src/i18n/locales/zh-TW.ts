@@ -2918,6 +2918,21 @@ const zhTW = {
     "actionChangelog": "發行",
     "actionUsers": "用戶"
   },
+  "runtimeJobs": {
+    "task": "工作",
+    "playability": "影片和統計",
+    "news": "尋找新聞",
+    "daily": "完整每日流程",
+    "playabilityHint": "檢查 YouTube 播放可用性和統計。",
+    "newsHint": "尋找新聞並儲存為待審核，不會自動發布。",
+    "dailyHint": "執行影片檢查、新聞收集和過期日誌清理。",
+    "review": "審核待處理新聞",
+    "reviewHint": "自動建議儲存在新聞中，而不是公告中。發布前需要審核。",
+    "busy": "已有工作正在執行，請完成後重試。",
+    "done": "工作已結束，請在歷史紀錄中查看結果。",
+    "failed": "工作未完成，重試前請查看歷史紀錄。",
+    "newsDetail": "新聞：新增 {created} · 候選 {candidates} · 來源 {sources} · 失敗來源 {failed}"
+  },
   "adminRuntime": {
     "pageTitle": "Runtime 控制",
     "pageSubtitle": "即時 freeze 狀態與成本節省護欄。",
