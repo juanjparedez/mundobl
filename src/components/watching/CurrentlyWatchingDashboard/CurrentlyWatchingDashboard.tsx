@@ -397,6 +397,8 @@ function WatchingCollection({ userId }: { userId: string }) {
                   season: t('trackingHistory.season'),
                   episode: t('trackingHistory.episode'),
                   series: t('trackingHistory.series'),
+                  note: t('trackingWorkspace.privateNote'),
+                  comments: t('trackingWorkspace.publicComment'),
                   kinds: {
                     RECORDED: t('trackingHistory.recorded'),
                     STATUS_CHANGED: t('trackingHistory.changed'),
