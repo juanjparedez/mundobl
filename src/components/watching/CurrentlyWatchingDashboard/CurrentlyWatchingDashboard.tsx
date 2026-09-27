@@ -424,7 +424,9 @@ function WatchingCollection({ userId }: { userId: string }) {
           },
         ]}
         tabBarExtraContent={
-          <Link href="/perfil">{t('trackingWorkspace.stats')}</Link>
+          <Link href="/perfil/estadisticas">
+            {t('trackingWorkspace.stats')}
+          </Link>
         }
       />
       <WatchingEpisodeDrawer

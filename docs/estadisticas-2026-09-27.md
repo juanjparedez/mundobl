@@ -58,3 +58,29 @@ Estas correcciones iniciales no equivalen a entregar las páginas nuevas.
 Quedan para entregas posteriores: página personal por períodos, panel editorial
 de Flor, quiz/palabra del día opcionales y vista previa de audiencia de avisos.
 El esquema actual no tiene país ni edad de usuario; no inferirlos del consumo.
+
+## Entrega por períodos (siguiente PR)
+
+- Nueva página privada `/perfil/estadisticas`, enlazada desde perfil y seguimiento.
+- Últimos 7/30/365 días (calendario UTC, incluye hoy en curso), comparados con
+  el bloque anterior de igual cantidad de días. No son semanas/meses calendario.
+- Capítulos completos según todas las partes registradas y fecha de la última;
+  series terminadas según su marca explícita y minutos de partes vistas con
+  duración conocida. No reconstruye ni cuenta rewatchs múltiples.
+- Actividad por serie con enlaces y paginación de diez filas, sin scroll interno.
+- Cobertura desplegable: marcas de series/videos sin fecha válida en toda la
+  biblioteca y videos del período sin duración. No se inventan fechas ni minutos.
+- API privada específica: tres operaciones Prisma, sin cargar perfil, reseñas,
+  favoritos, comentarios ni notas. Selecciona temporadas con actividad fechada
+  en los dos períodos y conserva todas las partes hermanas para contar bien.
+  El período máximo consultado es 730 días; la respuesta contiene agregados por
+  serie, no episodios. La paginación de estas filas es de presentación.
+- Diez idiomas, carga/error/reintento/vacío y controles móviles de 44px.
+- Regresión pura para fechas/partes/duraciones; prueba real de API + PostgreSQL
+  local para autenticación y aislamiento; navegador con datos ficticios para
+  error/reintento, períodos, enlaces, paginación y desbordes. Agregadas a CI.
+- Sin migraciones. No se ejecutaron escrituras en producción ni se midió LCP.
+
+Pendientes explícitos: distribuciones por país/género/formato y estado de toda
+la biblioteca; panel editorial de Flor; quiz/palabra del día; audiencia de
+notificaciones. Esta entrega no cierra el plan completo de estadísticas.
