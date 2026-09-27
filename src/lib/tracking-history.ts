@@ -17,6 +17,7 @@ export interface TrackingHistoryItem {
   href: string;
   seasonNumber: number | null;
   episodeNumber: number | null;
+  chapterTarget?: { episodeId: number; chapterNumber: number } | null;
 }
 
 export interface TrackingHistoryPage {
