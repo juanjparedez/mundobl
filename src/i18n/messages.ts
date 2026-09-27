@@ -2766,6 +2766,30 @@ export type TranslationShape = {
     pickerEmpty: string;
     pickerAlreadyAdded: string;
   };
+  trackingInsights: {
+    title: string;
+    library: string;
+    profile: string;
+    scope: string;
+    period: string;
+    days: string;
+    comparison: string;
+    previous: string;
+    chapters: string;
+    series: string;
+    minutes: string;
+    coverage: string;
+    unknownDates: string;
+    unknownDurations: string;
+    method: string;
+    bySeries: string;
+    empty: string;
+    row: string;
+    completed: string;
+    signIn: string;
+    error: string;
+    retry: string;
+  };
   profileDashboard: {
     listCount: string;
     listCountHint: string;
@@ -6293,6 +6317,34 @@ const es: TranslationShape = {
     pickerTitle: 'Agregar widget',
     pickerEmpty: 'No hay widgets disponibles para agregar.',
     pickerAlreadyAdded: 'Ya esta en tu dashboard',
+  },
+  trackingInsights: {
+    title: 'Mis estadísticas',
+    library: 'Mi seguimiento',
+    profile: 'Mi perfil',
+    scope:
+      'Solo vos podés ver estos datos. Se calculan con tus marcas actuales, no cuentan revisiones repetidas.',
+    period: 'Período',
+    days: 'Últimos {count} días',
+    comparison: 'Comparado con {start} — {end}',
+    previous: 'Anterior: {count} · Diferencia: {delta}',
+    chapters: 'Capítulos completos',
+    series: 'Series terminadas',
+    minutes: 'Minutos registrados',
+    coverage: 'Qué incluyen estos números',
+    unknownDates:
+      'Marcas de series o videos sin fecha válida en toda tu biblioteca: {count}. No entran en los períodos.',
+    unknownDurations:
+      'Videos vistos en este período sin duración conocida: {count}. No suman minutos.',
+    method:
+      'Un capítulo cuenta al completar todas sus partes registradas, en la fecha de la última. Los minutos suman las partes vistas con duración conocida, incluso de capítulos incompletos. Fechas en UTC; hoy todavía está en curso.',
+    bySeries: 'Tu actividad por serie',
+    empty: 'No hay actividad con fecha válida en este período.',
+    row: '{chapters} capítulos completos · {minutes} minutos',
+    completed: 'Terminada en este período',
+    signIn: 'Entrá a tu cuenta para ver tus estadísticas.',
+    error: 'No pudimos cargar tus estadísticas. Podés volver a intentarlo.',
+    retry: 'Reintentar',
   },
   profileDashboard: {
     listCount: "Elementos por lista",
@@ -9838,6 +9890,34 @@ const en: TranslationShape = {
     pickerTitle: 'Add widget',
     pickerEmpty: 'No widgets available to add.',
     pickerAlreadyAdded: 'Already on your dashboard',
+  },
+  trackingInsights: {
+    title: 'My statistics',
+    library: 'My tracking',
+    profile: 'My profile',
+    scope:
+      'Only you can see this data. Based on your current marks; repeated viewings are not counted.',
+    period: 'Period',
+    days: 'Last {count} days',
+    comparison: 'Compared with {start} — {end}',
+    previous: 'Previous: {count} · Difference: {delta}',
+    chapters: 'Complete chapters',
+    series: 'Completed series',
+    minutes: 'Recorded minutes',
+    coverage: 'What these numbers include',
+    unknownDates:
+      'Series or video marks without a valid date across your library: {count}. Excluded from periods.',
+    unknownDurations:
+      'Videos watched in this period without a known duration: {count}. Excluded from minutes.',
+    method:
+      'A chapter counts when all its registered parts are watched, on the last part’s date. Minutes include watched parts with known durations, even for incomplete chapters. Dates use UTC; today is still in progress.',
+    bySeries: 'Your activity by series',
+    empty: 'No activity with a valid date in this period.',
+    row: '{chapters} complete chapters · {minutes} minutes',
+    completed: 'Completed in this period',
+    signIn: 'Sign in to see your statistics.',
+    error: 'We could not load your statistics. Please try again.',
+    retry: 'Retry',
   },
   profileDashboard: {
     listCount: "Items per list",

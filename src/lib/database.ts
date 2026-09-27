@@ -1,4 +1,10 @@
 import type { WatchDateTarget } from './watch-date';
+import {
+  aggregateInsights,
+  insightsRange,
+  type InsightsPeriod,
+  type InsightSeries,
+} from './tracking-insights';
 import { groupIntoChapters } from './episode-chapters';
 import {
   readWatchingPreferences,
@@ -2343,4 +2349,100 @@ export async function saveWatchingPreferences(
       throw error;
     }
   }
+}
+
+/** Private, date-scoped statistics. Fetch all sibling parts of matching seasons,
+ * including unwatched ones; filtering the nested episodes would overcount. */
+export async function getTrackingInsights(
+  userId: string,
+  days: InsightsPeriod,
+  now = new Date()
+) {
+  const { previousStart } = insightsRange(days, now);
+  const dated = {
+    userId,
+    status: 'VISTA' as const,
+    watchedDate: { gte: previousStart, lte: now },
+  };
+  const [seasons, completions, unknownDates] = await Promise.all([
+    prisma.season.findMany({
+      where: { episodes: { some: { viewStatus: { some: dated } } } },
+      select: {
+        seasonNumber: true,
+        series: {
+          select: { id: true, title: true, origin: true, catalogScope: true },
+        },
+        episodes: {
+          select: {
+            id: true,
+            episodeNumber: true,
+            title: true,
+            duration: true,
+            durationSeconds: true,
+            viewStatus: {
+              where: { userId },
+              select: { status: true, watchedDate: true },
+            },
+          },
+        },
+      },
+    }),
+    prisma.viewStatus.findMany({
+      where: { ...dated, seriesId: { not: null } },
+      select: {
+        watchedDate: true,
+        series: {
+          select: { id: true, title: true, origin: true, catalogScope: true },
+        },
+      },
+    }),
+    prisma.viewStatus.count({
+      where: {
+        userId,
+        status: 'VISTA',
+        AND: [
+          { OR: [{ seriesId: { not: null } }, { episodeId: { not: null } }] },
+          { OR: [{ watchedDate: null }, { watchedDate: { gt: now } }] },
+        ],
+      },
+    }),
+  ]);
+  const items = new Map<number, InsightSeries>();
+  for (const season of seasons) {
+    const series = season.series;
+    const item = items.get(series.id) ?? {
+      id: series.id,
+      title: series.title,
+      href: getContentUrl(series),
+      completedDate: null,
+      episodes: [],
+    };
+    item.episodes.push(
+      ...season.episodes.map((ep) => ({
+        id: ep.id,
+        title: ep.title,
+        episodeNumber: ep.episodeNumber,
+        seasonNumber: season.seasonNumber,
+        duration: ep.duration,
+        durationSeconds: ep.durationSeconds,
+        watched: ep.viewStatus[0]?.status === 'VISTA',
+        watchedDate: ep.viewStatus[0]?.watchedDate ?? null,
+      }))
+    );
+    items.set(series.id, item);
+  }
+  for (const completion of completions) {
+    if (!completion.series) continue;
+    const series = completion.series;
+    const item = items.get(series.id) ?? {
+      id: series.id,
+      title: series.title,
+      href: getContentUrl(series),
+      completedDate: null,
+      episodes: [],
+    };
+    item.completedDate = completion.watchedDate;
+    items.set(series.id, item);
+  }
+  return { ...aggregateInsights([...items.values()], days, now), unknownDates };
 }
