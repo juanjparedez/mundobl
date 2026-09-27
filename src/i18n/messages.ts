@@ -2907,6 +2907,21 @@ export type TranslationShape = {
     actionChangelog: string;
     actionUsers: string;
   };
+  runtimeJobs: {
+    task: string;
+    playability: string;
+    news: string;
+    daily: string;
+    playabilityHint: string;
+    newsHint: string;
+    dailyHint: string;
+    review: string;
+    reviewHint: string;
+    busy: string;
+    done: string;
+    failed: string;
+    newsDetail: string;
+  };
   adminRuntime: {
     pageTitle: string;
     pageSubtitle: string;
@@ -6425,6 +6440,25 @@ const es: TranslationShape = {
     actionAuditLog: 'Audit',
     actionChangelog: 'Versiones',
     actionUsers: 'Usuarios',
+  },
+  runtimeJobs: {
+    task: 'Tarea',
+    playability: 'Videos y estadísticas',
+    news: 'Buscar noticias',
+    daily: 'Flujo diario completo',
+    playabilityHint: 'Revisa disponibilidad y estadísticas de YouTube.',
+    newsHint:
+      'Busca novedades y las guarda en Noticias para revisión. No publica automáticamente.',
+    dailyHint: 'Ejecuta videos, noticias y limpieza de registros vencidos.',
+    review: 'Revisar noticias pendientes',
+    reviewHint:
+      'Las propuestas automáticas van a Noticias, no a Anuncios. Publicarlas requiere revisión.',
+    busy: 'Ya hay una tarea en ejecución. Intentá nuevamente cuando termine.',
+    done: 'Tarea terminada. Consultá el resultado en el historial.',
+    failed:
+      'La tarea no se completó. Consultá el historial antes de reintentar.',
+    newsDetail:
+      'Noticias: {created} nuevas · {candidates} candidatas · {sources} fuentes · {failed} fuentes fallidas',
   },
   adminRuntime: {
     pageTitle: 'Control de runtime',
@@ -9946,6 +9980,24 @@ const en: TranslationShape = {
     actionAuditLog: 'Audit',
     actionChangelog: 'Releases',
     actionUsers: 'Users',
+  },
+  runtimeJobs: {
+    task: 'Task',
+    playability: 'Videos and statistics',
+    news: 'Find news',
+    daily: 'Full daily workflow',
+    playabilityHint: 'Checks YouTube availability and statistics.',
+    newsHint:
+      'Finds news and saves it for review. Does not publish automatically.',
+    dailyHint: 'Runs video checks, news collection and expired log cleanup.',
+    review: 'Review pending news',
+    reviewHint:
+      'Automatic proposals go to News, not Announcements. Publishing requires review.',
+    busy: 'A task is already running. Try again when it finishes.',
+    done: 'Task finished. See the results in the history.',
+    failed: 'The task did not complete. Check the history before retrying.',
+    newsDetail:
+      'News: {created} new · {candidates} candidates · {sources} sources · {failed} failed sources',
   },
   adminRuntime: {
     pageTitle: 'Runtime Control',
