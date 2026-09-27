@@ -2781,6 +2781,17 @@ const ja = {
     "pickerEmpty": "追加できるウィジェットはありません。",
     "pickerAlreadyAdded": "すでにダッシュボードにあります"
   },
+  insightDistribution: {
+    "title": "視聴活動の内訳",
+    "scope": "この期間に記録のある作品は{count}件です。各作品はカテゴリーごとに1回数えます。複数ジャンルがあるため割合の合計が100%を超える場合があります。カテゴリーを選ぶと下の一覧を絞り込めます。",
+    "country": "作品の国",
+    "genre": "ジャンル",
+    "type": "作品の種類",
+    "format": "形式",
+    "unknown": "不明",
+    "more": "他のカテゴリー",
+    "clear": "絞り込みを解除"
+},
   trackingInsights: {
     "title": "自分の統計",
     "library": "視聴記録",
