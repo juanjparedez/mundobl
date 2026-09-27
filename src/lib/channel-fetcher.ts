@@ -65,7 +65,8 @@ async function ytFetch(
 
   const searchParams = new URLSearchParams({ ...params, key: apiKey });
   const res = await fetch(
-    `${YT_API_BASE}/${endpoint}?${searchParams.toString()}`
+    `${YT_API_BASE}/${endpoint}?${searchParams.toString()}`,
+    { signal: AbortSignal.timeout(8000) }
   );
   if (!res.ok) {
     const err = await res.json().catch(() => null);

@@ -2918,6 +2918,21 @@ const ko = {
     "actionChangelog": "출시작",
     "actionUsers": "사용자"
   },
+  "runtimeJobs": {
+    "task": "작업",
+    "playability": "영상 및 통계",
+    "news": "뉴스 찾기",
+    "daily": "전체 일일 작업",
+    "playabilityHint": "YouTube 재생 가능 여부와 통계를 확인합니다.",
+    "newsHint": "뉴스를 찾아 검토 대기 상태로 저장합니다. 자동 게시하지 않습니다.",
+    "dailyHint": "영상 확인, 뉴스 수집, 만료된 로그 정리를 실행합니다.",
+    "review": "대기 중인 뉴스 검토",
+    "reviewHint": "자동 제안은 공지가 아닌 뉴스에 저장됩니다. 게시하려면 검토가 필요합니다.",
+    "busy": "이미 실행 중인 작업이 있습니다. 완료 후 다시 시도하세요.",
+    "done": "작업이 끝났습니다. 기록에서 결과를 확인하세요.",
+    "failed": "작업이 완료되지 않았습니다. 다시 시도하기 전에 기록을 확인하세요.",
+    "newsDetail": "뉴스: 신규 {created} · 후보 {candidates} · 출처 {sources} · 실패한 출처 {failed}"
+  },
   "adminRuntime": {
     "pageTitle": "Runtime 제어",
     "pageSubtitle": "실시간 freeze 상태와 비용 절감 가드레일.",

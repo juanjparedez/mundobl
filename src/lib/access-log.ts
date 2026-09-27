@@ -284,16 +284,19 @@ export async function purgeExpiredLogs(
 }
 
 /** La retencion de logs como trabajo del cron diario, con su registro. */
-export function runLogRetentionJob(deadline: number) {
+export function runLogRetentionJob(
+  deadline: number,
+  trigger: 'manual' | 'schedule' = 'schedule'
+) {
   return runCronJob(
     'logs',
     () => purgeExpiredLogs(deadline),
     (result) => ({
-      trigger: 'schedule',
+      trigger,
       deleted: result.deleted,
       budgetExhausted: !result.done,
     }),
-    { trigger: 'schedule' }
+    { trigger }
   );
 }
 
