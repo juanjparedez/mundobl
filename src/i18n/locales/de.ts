@@ -150,6 +150,7 @@ const de = {
     "removeHelp": "Die Zuordnung dieser Titel wird geleert. Die Titel werden nicht gelöscht."
   },
   "common": {
+    "goBack": "Zurück",
     "language": "Sprache",
     "na": "N/A",
     "private": "Privat",

@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import { getNavigationFallback } from '@/lib/navigation-fallback';
 
 /**
  * NavigationGuard — garantiza que el boton "atras" del browser (o el
@@ -31,82 +32,31 @@ const HISTORY_INJECT_KEY = '__mb_back_injected';
 const FALLBACK_ENTRY_KEY = '__mb_fallback_entry';
 const STORAGE_KEY = '__mb_first_nav_handled';
 
-interface FallbackRule {
-  match: (pathname: string) => boolean;
-  fallback: string;
-}
-
-// Map ordenado: el primer match gana. Para rutas dinamicas usar regex
-// sobre pathname. Si el match es de detalle, el fallback es la lista o
-// el "padre logico" mas util — NO necesariamente el inmediato.
-const FALLBACK_RULES: FallbackRule[] = [
-  // Detalle publico. Las URLs llevan slug (`/series/103-titulo`), por eso
-  // el segmento es `[^/]+` y no `\d+`.
-  { match: (p) => /^\/series\/[^/]+$/.test(p), fallback: '/catalogo' },
-  { match: (p) => /^\/catalogo\/[^/]+/.test(p), fallback: '/catalogo' },
-  { match: (p) => /^\/actores\/[^/]+$/.test(p), fallback: '/actores' },
-  { match: (p) => /^\/directores\/[^/]+$/.test(p), fallback: '/directores' },
-  {
-    match: (p) => /^\/productoras\/[^/]+$/.test(p),
-    fallback: '/productoras',
-  },
-  { match: (p) => /^\/tags\/[^/]+$/.test(p), fallback: '/catalogo' },
-
-  // Noticias detalle → lista de noticias
-  { match: (p) => /^\/noticias\/[^/]+$/.test(p), fallback: '/noticias' },
-
-  // /ver: agregar y detalle → lista /ver
-  { match: (p) => /^\/ver\/.+/.test(p), fallback: '/ver' },
-
-  // Admin detalle → lista admin
-  { match: (p) => /^\/admin\/series\/\d+/.test(p), fallback: '/admin/series' },
-  {
-    match: (p) => /^\/admin\/directores\/\d+/.test(p),
-    fallback: '/admin/directores',
-  },
-  {
-    match: (p) => /^\/admin\/actores\/\d+/.test(p),
-    fallback: '/admin/actores',
-  },
-  { match: (p) => /^\/admin\/tags\/\d+/.test(p), fallback: '/admin/tags' },
-  {
-    match: (p) => /^\/admin\/noticias\/.+/.test(p),
-    fallback: '/admin/noticias',
-  },
-  // Resto de admin top-level → /admin
-  {
-    match: (p) => /^\/admin\/[^/]+/.test(p) && p !== '/admin',
-    fallback: '/admin',
-  },
-
-  // Perfil y sub-rutas → /perfil home
-  { match: (p) => /^\/perfil\/.+/.test(p), fallback: '/perfil' },
-
-  // Top-level del sitio (entrada externa al home de seccion) → landing
-  // Solo aplica si el user entra directo (referrer externo).
-  { match: (p) => p === '/catalogo', fallback: '/' },
-  { match: (p) => p === '/ver', fallback: '/' },
-  { match: (p) => p === '/perfil', fallback: '/' },
-  { match: (p) => p === '/noticias', fallback: '/' },
-  { match: (p) => p === '/admin', fallback: '/' },
-];
-
-function getFallback(pathname: string): string | null {
-  for (const rule of FALLBACK_RULES) {
-    if (rule.match(pathname)) return rule.fallback;
-  }
-  return null;
-}
-
 export function NavigationGuard() {
   const pathname = usePathname();
   const router = useRouter();
+  const previous = useRef<string | null>(null);
+
+  useEffect(() => {
+    const current = window.location.pathname;
+    // A route transition in this mounted app provides stronger evidence than
+    // document.referrer, which never changes during client-side navigation.
+    if (previous.current && previous.current !== current) {
+      window.history.replaceState(
+        { ...window.history.state, __mb_internal_back: true },
+        '',
+        window.location.href
+      );
+    }
+    previous.current = current;
+  }, [pathname]);
 
   // Al volver a la entrada sintetica el browser solo cambia la URL: Next
   // restaura el arbol de la pagina que teniamos abierta y la pantalla no se
   // movia (URL en `/`, contenido del catalogo). Aca se navega de verdad.
   useEffect(() => {
     const onPopState = (event: PopStateEvent) => {
+      previous.current = window.location.pathname;
       const state = event.state as Record<string, unknown> | null;
       if (!state?.[FALLBACK_ENTRY_KEY]) return;
       router.replace(window.location.pathname + window.location.search);
@@ -145,10 +95,10 @@ export function NavigationGuard() {
     // 3. Solo inyectar si el referrer es externo o vacio. Si vino de
     //    otra pagina del sitio, el historial natural ya es util.
     const ref = document.referrer;
-    if (ref && ref.startsWith(window.location.origin)) return;
+    if (ref && new URL(ref).origin === window.location.origin) return;
 
     // 4. Mapear pathname a fallback configurado. Sin match, no tocar.
-    const fallback = getFallback(pathname);
+    const fallback = getNavigationFallback(pathname);
     if (!fallback || fallback === pathname) return;
 
     // 5. Inyectar: replace current con fallback (URL bar momentanea pero

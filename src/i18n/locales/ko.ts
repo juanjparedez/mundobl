@@ -150,6 +150,7 @@ const ko = {
     "removeHelp": "해당 작품의 분류가 비워집니다. 작품 자체는 삭제되지 않습니다."
   },
   "common": {
+    "goBack": "뒤로",
     "language": "언어",
     "na": "해당 없음",
     "private": "비공개",
