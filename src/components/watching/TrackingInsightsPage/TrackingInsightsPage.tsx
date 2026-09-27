@@ -25,7 +25,6 @@ export function TrackingInsightsPage() {
   const [filter, setFilter] = useState<{
     dimension: InsightDimension;
     key: string;
-    label: string;
   } | null>(null);
   const [page, setPage] = useState(1);
   const [result, setResult] = useState<{
@@ -204,9 +203,6 @@ export function TrackingInsightsPage() {
                           filter?.dimension === dimension ? filter.key : null
                         }
                         onSelect={(key) => {
-                          const category = categories.find(
-                            (item) => item.key === key
-                          )!;
                           setFilter(
                             filter?.dimension === dimension &&
                               filter.key === key
@@ -214,7 +210,6 @@ export function TrackingInsightsPage() {
                               : {
                                   dimension,
                                   key,
-                                  label: categoryLabel(dimension, category),
                                 }
                           );
                           setPage(1);
@@ -238,7 +233,13 @@ export function TrackingInsightsPage() {
             {filter && (
               <div className="mb-tracking-insights__filter" role="status">
                 <span>
-                  {filter.label} · {filteredRows.length}
+                  {categoryLabel(
+                    filter.dimension,
+                    insightDistribution(data.rows, filter.dimension).find(
+                      (category) => category.key === filter.key
+                    ) ?? { key: 'unknown', name: '', count: 0 }
+                  )}{' '}
+                  · {filteredRows.length}
                 </span>
                 <Button
                   onClick={() => {
