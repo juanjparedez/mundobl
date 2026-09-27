@@ -20,8 +20,8 @@ export interface CatalogCarouselViewProps {
   favoriteIds: Set<string>;
   isLoggedIn: boolean;
   orderedVisibleIds: string[];
-  renderSingleCard: (serie: SerieData) => ReactNode;
-  renderUniverseCard: (group: UniverseGroup) => ReactNode;
+  renderSingleCard: (serie: SerieData, index: number) => ReactNode;
+  renderUniverseCard: (group: UniverseGroup, index: number) => ReactNode;
   categoryLabel: (labelKey: TranslationKey) => string;
   scrollPrevLabel: string;
   scrollNextLabel: string;
@@ -72,7 +72,7 @@ export function CatalogCarouselView({
 
   return (
     <div className="catalog-carousel-view">
-      {rows.map(({ cat, items }) => {
+      {rows.map(({ cat, items }, rowIndex) => {
         const Icon = cat.icon;
         return (
           <CatalogCarouselRow
@@ -82,17 +82,23 @@ export function CatalogCarouselView({
             scrollPrevLabel={scrollPrevLabel}
             scrollNextLabel={scrollNextLabel}
           >
-            {items.map((item) =>
+            {items.map((item, itemIndex) =>
               item.type === 'universe' ? (
                 <div
                   className="catalog-carousel-row__item"
                   key={`universe-${item.universoId}`}
                 >
-                  {renderUniverseCard(item)}
+                  {renderUniverseCard(
+                    item,
+                    rowIndex === 0 ? itemIndex : itemIndex + 4
+                  )}
                 </div>
               ) : (
                 <div className="catalog-carousel-row__item" key={item.serie.id}>
-                  {renderSingleCard(item.serie)}
+                  {renderSingleCard(
+                    item.serie,
+                    rowIndex === 0 ? itemIndex : itemIndex + 4
+                  )}
                 </div>
               )
             )}

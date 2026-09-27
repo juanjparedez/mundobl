@@ -8,6 +8,34 @@ Todas las versiones notables del proyecto se documentan aqui.
 > (`ChangelogItem`, `/admin/changelog`) quedo como fallback solo si este archivo
 > esta vacio.
 
+## 2026-09-27 — Tu biblioteca, historial por serie y seguimiento más cómodo en el celu
+
+### Features
+
+- **Tu biblioteca completa en `/watching`**: buscá entre tus series sin ver, en curso, vistas, para retomar o abandonadas. Podés filtrar, ordenar, fijar series para tenerlas a mano y elegir entre lista y tarjetas.
+- **Tus preferencias te acompañan**: la vista, el orden y las series fijadas se guardan en tu cuenta y se recuperan al abrir el seguimiento o volver a esa pantalla desde otro dispositivo.
+- **Historial separado por series**: los cambios y capítulos de cada obra quedan juntos, incluso cuando cargás más resultados. Podés buscar una serie y borrar el historial sin borrar tu progreso. Las marcas anteriores a esta función se identifican como estado previo, sin inventar cuándo las registraste.
+- **Notas y conversaciones desde el historial**: cada evento de capítulo tiene accesos separados a su nota privada y su conversación pública. En capítulos divididos en partes, ambos abren el capítulo correspondiente. Abrir una conversación no publica nada ni copia tu nota privada.
+- **Tus fechas de visionado se pueden corregir**: ajustá cuándo viste una serie, temporada o episodio sin cambiar el progreso. Las fechas que no conocemos siguen figurando como desconocidas.
+- **Respaldo de tu seguimiento**: exportá tus datos e importalos con una vista previa antes de confirmar. La restauración agrega lo que falta y conserva las marcas existentes; todavía no reemplaza datos ni resuelve conflictos de edición.
+- **Comunidad a la vista**: una entrada en el menú reúne reseñas públicas, con búsqueda y cuidado de los títulos con spoilers. Tu seguimiento y tus notas siguen siendo privados.
+- **Más series para ver acá**: incorporamos Only Boo!, GAP y Secret Crush on You con videos de canales oficiales, carátulas y datos de sus protagonistas y dirección. Estas incorporaciones a `/ver` se mantienen separadas del catálogo de Flor.
+
+### Fixes
+
+- **El carrusel del catálogo prioriza las primeras imágenes**: las tarjetas de filas posteriores dejan de pedir todas sus carátulas con prioridad alta al abrir la página; se conservan las series y el orden elegido.
+- **Carátulas completas y más espacio útil en el celu**: las portadas del seguimiento conservan su proporción; el progreso y las acciones aprovechan el ancho disponible. Las tarjetas de estadísticas ocupan menos espacio.
+- **Capítulos más cómodos de manejar**: los controles de fecha, nota y conversación del panel de episodios tienen áreas táctiles más grandes y los títulos pueden verse completos.
+- **Volver al lugar donde estabas**: al regresar desde una ficha, la biblioteca y el historial conservan su pestaña y filtros. El historial también recupera las páginas cargadas y la posición; abrir una página directamente ofrece un regreso dentro de la sección.
+- **El diario distingue un error de una lista vacía**: si no puede cargar tus notas, muestra Reintentar. La descarga queda deshabilitada mientras carga o falla, y los controles son más cómodos en móvil.
+- **Estadísticas según lo que viste**: la actividad usa fechas de visionado y capítulos completos, sin contar una edición reciente como si hubieras visto la serie ese día. Las duraciones desconocidas no se inventan.
+- **Carátulas recuperadas y enlaces corregidos**: completamos imágenes que faltaban; las obras disponibles solo en `/ver` ahora abren su destino correcto desde Novedades y los editores.
+
+### Para el equipo
+
+- **Tareas manuales y programadas desde Runtime**: se puede ejecutar el flujo sin esperar al cron y consultar resultados por tarea. Las ejecuciones superpuestas se controlan para evitar trabajo duplicado.
+- **Noticias de más idiomas, propuestas en español**: se preparan resúmenes en español con enlace, fuente y fecha, incluyendo fuentes asiáticas. Quedan pendientes de revisión en Noticias; no se publican automáticamente ni aparecen en Anuncios. Las fuentes que fallan se identifican y las que no se pueden consultar se pausan.
+
 ## 2026-09-26 — Capítulos que cuentan bien, favoritos en la ficha y noticias al día
 
 ### Features
