@@ -75,6 +75,7 @@ const noteRequests = [];
 const publicComments = [];
 const allRequests = [];
 let historyCleared = false;
+let preferences = null;
 const historyItem = {
   id: 'history-1',
   kind: 'DATE_CHANGED',
@@ -107,7 +108,19 @@ await page.route('**/api/**', async (route) => {
       dateWrite = route.request().postDataJSON();
       result = { watchedDate: dateWrite.watchedDate };
     } else result = { watchedDate: '2020-01-02T14:30:00.000Z' };
-  } else if (path === '/api/currently-watching') result = items;
+   } else if (path === '/api/user/library') result = items;
+  else if (path === '/api/user/watching-preferences') {
+    const method = route.request().method();
+    if (method === 'POST' && preferences === null) preferences = route.request().postDataJSON();
+    if (method === 'PATCH') {
+      const change = route.request().postDataJSON();
+      if (change.pin) {
+        preferences.pinned = preferences.pinned.filter(id => id !== change.pin.id);
+        if (change.pin.pinned) preferences.pinned.push(change.pin.id);
+      } else preferences = {...preferences, ...change};
+    }
+    result = { preferences };
+  }
   else if (path === '/api/user/tracking-history') {
     if (route.request().method() === 'DELETE') {
       historyCleared = true;
@@ -390,7 +403,7 @@ try {
   assert.equal(historyCleared, true);
   assert.equal(JSON.stringify(items), stateBeforeClear);
   assert.equal(notes.get(100).body, 'Una nota privada de prueba');
-  await page.getByRole('tab', { name: 'En curso' }).click();
+  await page.getByRole('tab', { name: 'Mi biblioteca' }).click();
   await page.getByText('Lista', { exact: true }).click();
   await page.setViewportSize({ width: 390, height: 844 });
   await page.waitForFunction(

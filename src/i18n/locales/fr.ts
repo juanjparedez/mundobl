@@ -72,6 +72,15 @@ const fr = {
     policy: "Les contributions utilisent les acteurs, sociétés de production, pays, langues, étiquettes et genres existants. Les nouveaux noms nécessitent un ajout éditorial par Flor.",
     unresolved: "Aucune modification enregistrée. Ces noms sont absents ou ambigus : {names}. Vérifie-les ou demande à Flor de les ajouter.",
   },
+  libraryWorkspace: {
+    backup: "Préférences de la bibliothèque",
+  "title": "Ma bibliothèque",
+  "scope": "Dans toute ta bibliothèque",
+  "preferences": "La vue, le tri et les séries épinglées se synchronisent lorsque tu ouvres cet écran ou y reviens sur tes appareils.",
+  "error": "Impossible de synchroniser tes préférences. Réessaie avant de les modifier.",
+  "saving": "Enregistrement des préférences…",
+  "empty": "Tu n’as pas encore ajouté de séries à ton suivi."
+},
   trackingWorkspace: {
     "gaps": "Certains chapitres précédents ne sont pas marqués comme vus",
     "title": "Mon suivi",

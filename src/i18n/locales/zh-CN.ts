@@ -72,6 +72,15 @@ const zhCN = {
     policy: "投稿使用已有的演员、制作公司、国家、语言、标签和类型。新名称需要由 Flor 编辑添加。",
     unresolved: "未保存任何更改。以下名称不存在或有歧义：{names}。请核对或请 Flor 添加。",
   },
+  libraryWorkspace: {
+    backup: "片库偏好设置",
+  "title": "我的片库",
+  "scope": "整个片库",
+  "preferences": "在各设备上打开或返回此页面时，会同步视图、排序和置顶作品。",
+  "error": "无法同步偏好设置。请重试后再修改。",
+  "saving": "正在保存偏好设置…",
+  "empty": "你还没有添加任何作品到观看记录。"
+},
   trackingWorkspace: {
     "gaps": "前面还有未标记为已看的集数",
     "title": "我的追剧记录",
