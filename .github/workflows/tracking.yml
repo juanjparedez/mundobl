@@ -54,4 +54,5 @@ jobs:
           node scripts/test-dashboard-mobile-flow.mjs
           node scripts/test-profile-list-count.mjs
           node scripts/test-tracking-insights-ui.mjs
+          node scripts/test-history-cards.mjs
       - run: npm run build

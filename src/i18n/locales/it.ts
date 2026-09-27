@@ -45,6 +45,10 @@ const it = {
 },
 
   trackingHistory: {
+    expand: "Mostra altri {count} eventi",
+    collapse: "Mostra meno",
+    loaded: "{count} eventi caricati",
+
       "title": "Cronologia",
       "description": "Modifiche al monitoraggio, visibili solo a te. Gli stati precedenti non ricostruiscono le azioni passate.",
       "search": "Cerca una serie nella cronologia",

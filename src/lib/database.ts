@@ -1,4 +1,5 @@
 import type { WatchDateTarget } from './watch-date';
+import { cardImageUrl } from './image-helpers';
 import {
   aggregateInsights,
   insightsRange,
@@ -344,6 +345,8 @@ export async function getTrackingHistory(
   const seriesSelect = {
     id: true,
     title: true,
+    imageUrl: true,
+    imageThumbUrl: true,
     origin: true,
     catalogScope: true,
   } as const;
@@ -451,6 +454,7 @@ export async function getTrackingHistory(
         previousWatchedDate: row.previousWatchedDate?.toISOString() ?? null,
         recordedAt: row.recordedAt.toISOString(),
         seriesTitle: series.title,
+        imageUrl: cardImageUrl(series),
         href: getContentUrl(series),
         seasonNumber:
           row.season?.seasonNumber ?? row.episode?.season.seasonNumber ?? null,
