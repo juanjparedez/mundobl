@@ -8,6 +8,13 @@ import { PanelCard } from '@/components/design-system/PanelCard/PanelCard';
 import { StatCard } from '@/components/design-system/StatCard/StatCard';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import type { InsightsPeriod, TrackingInsights } from '@/lib/tracking-insights';
+import { InsightDistribution } from '../InsightDistribution/InsightDistribution';
+import {
+  insightDistribution,
+  filterInsightRows,
+  type InsightDimension,
+  type InsightCategory,
+} from '@/lib/insight-distributions';
 import './TrackingInsightsPage.css';
 
 export function TrackingInsightsPage() {
@@ -15,6 +22,10 @@ export function TrackingInsightsPage() {
   const { data: session, status } = useSession();
   const [days, setDays] = useState<InsightsPeriod>(30);
   const [attempt, setAttempt] = useState(0);
+  const [filter, setFilter] = useState<{
+    dimension: InsightDimension;
+    key: string;
+  } | null>(null);
   const [page, setPage] = useState(1);
   const [result, setResult] = useState<{
     owner: string;
@@ -55,6 +66,39 @@ export function TrackingInsightsPage() {
     setResult(null);
     setAttempt((value) => value + 1);
   };
+  const filteredRows = filterInsightRows(data?.rows ?? [], filter);
+  const categoryLabel = (
+    dimension: InsightDimension,
+    category: InsightCategory
+  ) => {
+    if (category.key === 'unknown') return t('insightDistribution.unknown');
+    if (
+      dimension === 'country' &&
+      category.code &&
+      /^[A-Z]{2}$/.test(category.code)
+    ) {
+      return (
+        new Intl.DisplayNames([locale], { type: 'region' }).of(category.code) ??
+        category.name
+      );
+    }
+    if (dimension === 'type') {
+      const labels: Record<string, string> = {
+        serie: t('seriesForm.typeOption_serie'),
+        pelicula: t('seriesForm.typeOption_pelicula'),
+        corto: t('seriesForm.typeOption_corto'),
+        especial: t('seriesForm.typeOption_especial'),
+      };
+      return labels[category.key] ?? category.name;
+    }
+    if (dimension === 'format') {
+      if (category.key === 'regular')
+        return t('seriesForm.formatOption_regular');
+      if (category.key === 'vertical')
+        return t('seriesForm.formatOption_vertical');
+    }
+    return category.name;
+  };
   return (
     <div className="mb-tracking-insights">
       <nav className="mb-tracking-insights__nav">
@@ -77,6 +121,7 @@ export function TrackingInsightsPage() {
           onChange={(value: InsightsPeriod) => {
             setDays(value);
             setPage(1);
+            setFilter(null);
             setError(false);
           }}
         />
@@ -132,14 +177,86 @@ export function TrackingInsightsPage() {
               <p>{t('trackingInsights.method')}</p>
             </details>
           </PanelCard>
+          {data.rows.length > 0 && (
+            <section>
+              <h2>{t('insightDistribution.title')}</h2>
+              <p>
+                {t('insightDistribution.scope', { count: data.rows.length })}
+              </p>
+              <div className="mb-tracking-insights__distributions">
+                {(['country', 'genre', 'type', 'format'] as const).map(
+                  (dimension) => {
+                    const categories = insightDistribution(
+                      data.rows,
+                      dimension
+                    );
+                    return (
+                      <InsightDistribution
+                        key={dimension}
+                        title={t(`insightDistribution.${dimension}`)}
+                        categories={categories}
+                        total={data.rows.length}
+                        locale={locale}
+                        more={t('insightDistribution.more')}
+                        label={(category) => categoryLabel(dimension, category)}
+                        selected={
+                          filter?.dimension === dimension ? filter.key : null
+                        }
+                        onSelect={(key) => {
+                          setFilter(
+                            filter?.dimension === dimension &&
+                              filter.key === key
+                              ? null
+                              : {
+                                  dimension,
+                                  key,
+                                }
+                          );
+                          setPage(1);
+                          requestAnimationFrame(() =>
+                            document
+                              .getElementById('tracking-insights-results')
+                              ?.focus()
+                          );
+                        }}
+                      />
+                    );
+                  }
+                )}
+              </div>
+            </section>
+          )}
           <section>
-            <h2>{t('trackingInsights.bySeries')}</h2>
+            <h2 id="tracking-insights-results" tabIndex={-1}>
+              {t('trackingInsights.bySeries')}
+            </h2>
+            {filter && (
+              <div className="mb-tracking-insights__filter" role="status">
+                <span>
+                  {categoryLabel(
+                    filter.dimension,
+                    insightDistribution(data.rows, filter.dimension).find(
+                      (category) => category.key === filter.key
+                    ) ?? { key: 'unknown', name: '', count: 0 }
+                  )}{' '}
+                  · {filteredRows.length}
+                </span>
+                <Button
+                  onClick={() => {
+                    setFilter(null);
+                    setPage(1);
+                  }}
+                >
+                  {t('insightDistribution.clear')}
+                </Button>
+              </div>
+            )}
             {!data.rows.length ? (
               <Empty description={t('trackingInsights.empty')} />
             ) : (
               <>
                 <ul className="mb-tracking-insights__list">
-                  {data.rows.slice((page - 1) * 10, page * 10).map((row) => (
+                  {filteredRows.slice((page - 1) * 10, page * 10).map((row) => (
                     <li key={row.id}>
                       <PanelCard>
                         <Link href={row.href}>{row.title}</Link>
@@ -159,7 +276,7 @@ export function TrackingInsightsPage() {
                 <Pagination
                   current={page}
                   pageSize={10}
-                  total={data.rows.length}
+                  total={filteredRows.length}
                   onChange={setPage}
                   showSizeChanger={false}
                   hideOnSinglePage

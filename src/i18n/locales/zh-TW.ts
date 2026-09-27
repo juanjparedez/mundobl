@@ -2781,6 +2781,17 @@ const zhTW = {
     "pickerEmpty": "沒有可新增的小工具。",
     "pickerAlreadyAdded": "已在你的儀表板中"
   },
+  insightDistribution: {
+    "title": "觀看活動分布",
+    "scope": "此時段有活動的作品共{count}部。每部作品在每個類別中計數一次；作品可有多個題材，因此其百分比總和可能超過100%。選擇類別可篩選下方清單。",
+    "country": "作品所屬國家",
+    "genre": "題材",
+    "type": "作品類型",
+    "format": "畫面格式",
+    "unknown": "無資料",
+    "more": "更多類別",
+    "clear": "清除篩選"
+},
   trackingInsights: {
     "title": "我的統計",
     "library": "我的觀看紀錄",

@@ -13,6 +13,14 @@ export interface InsightSeries {
   href: string;
   completedDate: Date | null;
   episodes: InsightEpisode[];
+  metadata?: InsightMetadata;
+}
+
+export interface InsightMetadata {
+  country: { id: number; name: string; code: string | null } | null;
+  genres: { id: number; name: string }[];
+  type: string;
+  format: string;
 }
 
 const DAY = 86_400_000;
@@ -50,6 +58,7 @@ export function aggregateInsights(
     chapters: number;
     minutes: number;
     completed: boolean;
+    metadata?: InsightMetadata;
   }[] = [];
   function bucket(date: Date | null) {
     if (
@@ -70,6 +79,7 @@ export function aggregateInsights(
       chapters: 0,
       minutes: 0,
       completed: false,
+      metadata: item.metadata,
     };
     const completion = bucket(item.completedDate);
     if (completion) completion.series++;

@@ -2362,6 +2362,16 @@ export async function getTrackingInsights(
   days: InsightsPeriod,
   now = new Date()
 ) {
+  const seriesSelect = {
+    id: true,
+    title: true,
+    origin: true,
+    catalogScope: true,
+    type: true,
+    format: true,
+    country: { select: { id: true, name: true, code: true } },
+    genres: { select: { genre: { select: { id: true, name: true } } } },
+  } as const;
   const { previousStart } = insightsRange(days, now);
   const dated = {
     userId,
@@ -2374,7 +2384,7 @@ export async function getTrackingInsights(
       select: {
         seasonNumber: true,
         series: {
-          select: { id: true, title: true, origin: true, catalogScope: true },
+          select: seriesSelect,
         },
         episodes: {
           select: {
@@ -2396,7 +2406,7 @@ export async function getTrackingInsights(
       select: {
         watchedDate: true,
         series: {
-          select: { id: true, title: true, origin: true, catalogScope: true },
+          select: seriesSelect,
         },
       },
     }),
@@ -2420,6 +2430,12 @@ export async function getTrackingInsights(
       href: getContentUrl(series),
       completedDate: null,
       episodes: [],
+      metadata: {
+        country: series.country,
+        genres: series.genres.map(({ genre }) => genre),
+        type: series.type,
+        format: series.format,
+      },
     };
     item.episodes.push(
       ...season.episodes.map((ep) => ({
@@ -2444,6 +2460,12 @@ export async function getTrackingInsights(
       href: getContentUrl(series),
       completedDate: null,
       episodes: [],
+      metadata: {
+        country: series.country,
+        genres: series.genres.map(({ genre }) => genre),
+        type: series.type,
+        format: series.format,
+      },
     };
     item.completedDate = completion.watchedDate;
     items.set(series.id, item);
