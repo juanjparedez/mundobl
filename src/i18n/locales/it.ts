@@ -2918,6 +2918,21 @@ const it = {
     "actionChangelog": "Uscite",
     "actionUsers": "Utenti"
   },
+  "runtimeJobs": {
+    "task": "Attività",
+    "playability": "Video e statistiche",
+    "news": "Cerca notizie",
+    "daily": "Flusso giornaliero completo",
+    "playabilityHint": "Controlla disponibilità e statistiche di YouTube.",
+    "newsHint": "Cerca notizie e le salva per la revisione. Non pubblica automaticamente.",
+    "dailyHint": "Esegue controlli video, raccolta notizie e pulizia dei registri scaduti.",
+    "review": "Rivedi le notizie in attesa",
+    "reviewHint": "Le proposte automatiche vanno in Notizie, non in Annunci. La pubblicazione richiede revisione.",
+    "busy": "Una attività è già in corso. Riprova al termine.",
+    "done": "Attività terminata. Consulta i risultati nella cronologia.",
+    "failed": "Attività non completata. Consulta la cronologia prima di riprovare.",
+    "newsDetail": "Notizie: {created} nuove · {candidates} candidate · {sources} fonti · {failed} fonti non riuscite"
+  },
   "adminRuntime": {
     "pageTitle": "Controllo runtime",
     "pageSubtitle": "Stato freeze live e guardrail di risparmio costi.",

@@ -43,5 +43,7 @@ jobs:
           node --import tsx scripts/test-info-block-privacy.mjs
           node --import tsx scripts/test-profile-watch-dates.mjs
           node --import tsx scripts/test-library-preferences.mjs
+          node --import tsx scripts/test-runtime-jobs.mjs
+          node scripts/test-news-translation.mjs
           node scripts/test-contribution-boundary.mjs
       - run: npm run build

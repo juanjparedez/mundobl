@@ -2918,6 +2918,21 @@ const de = {
     "actionChangelog": "Neuerscheinungen",
     "actionUsers": "Benutzer"
   },
+  "runtimeJobs": {
+    "task": "Aufgabe",
+    "playability": "Videos und Statistiken",
+    "news": "Nachrichten suchen",
+    "daily": "Vollständiger Tagesablauf",
+    "playabilityHint": "Prüft YouTube-Verfügbarkeit und Statistiken.",
+    "newsHint": "Sucht Nachrichten und speichert sie zur Prüfung. Keine automatische Veröffentlichung.",
+    "dailyHint": "Prüft Videos, sammelt Nachrichten und bereinigt abgelaufene Protokolle.",
+    "review": "Ausstehende Nachrichten prüfen",
+    "reviewHint": "Automatische Vorschläge stehen unter Nachrichten, nicht Ankündigungen. Veröffentlichung erfordert Prüfung.",
+    "busy": "Eine Aufgabe läuft bereits. Versuche es nach ihrem Abschluss erneut.",
+    "done": "Aufgabe beendet. Ergebnisse stehen im Verlauf.",
+    "failed": "Aufgabe nicht abgeschlossen. Prüfe vor einem neuen Versuch den Verlauf.",
+    "newsDetail": "Nachrichten: {created} neu · {candidates} Kandidaten · {sources} Quellen · {failed} fehlgeschlagene Quellen"
+  },
   "adminRuntime": {
     "pageTitle": "Runtime-Kontrolle",
     "pageSubtitle": "Live-Freeze-Status und Kosten-Spar-Guardrails.",
