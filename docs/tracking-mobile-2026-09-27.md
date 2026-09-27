@@ -43,3 +43,16 @@ TypeScript completo sin errores; revisión de hooks y textos traducidos realizad
 
 Pendiente: comprobar el resultado desplegado con carátulas y biblioteca reales;
 esta entrega no declara terminados los pendientes funcionales anteriores.
+
+## Regreso después de cargar más historial
+
+Corrección posterior al merge de #92: se conserva en la URL la cantidad de
+páginas abiertas y se recuperan al volver o recargar, mediante consultas
+autenticadas nuevas. No se guardan eventos privados en almacenamiento local.
+Cambiar la búsqueda o borrar el historial reinicia esa profundidad.
+
+La recuperación automática está limitada a 20 páginas para evitar una ráfaga
+ilimitada de solicitudes desde una URL manipulada; Cargar más sigue disponible.
+Los eventos repetidos entre páginas se deduplican. La prueba UI verifica dos
+páginas, agrupación conservada y borrado posterior; no prueba un historial real
+de miles de eventos.
