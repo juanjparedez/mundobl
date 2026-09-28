@@ -131,7 +131,7 @@ try {
   await login('other');
   await page.reload();
   await page
-    .getByRole('button', { name: 'Guardar para ver', exact: true })
+    .getByRole('button', { name: 'Agregar a pendientes', exact: true })
     .click();
   await page.getByRole('button', { name: /Guardada en pendientes/ }).waitFor();
   await page.getByRole('button', { name: 'Denunciar', exact: true }).click();

@@ -39,7 +39,10 @@ async function loadRoute(file) {
   new Function('require', 'exports', compiled)((name) => {
     if (name === '@/lib/auth-helpers') return auth;
     if (name === '@/lib/notifications')
-      return { notifyUser: async (value) => notifications.push(value) };
+      return {
+        notifyUser: async (value) => notifications.push(value),
+        notifyStaffOfCommunityReport: async () => undefined,
+      };
     return require(name.startsWith('@/') ? `../src/${name.slice(2)}.ts` : name);
   }, exports);
   return exports;
@@ -394,43 +397,33 @@ try {
       exact: true,
     })
     .waitFor();
-  await page
-    .getByRole('button', { name: 'Seguir conversación', exact: true })
-    .click();
+  // El formulario deja a quien crea la conversación siguiéndola con avisos.
+  const ownerFollow = () =>
+    prisma.communityFollow.findUnique({
+      where: { userId_topicId: { userId: key, topicId } },
+    });
   await page
     .getByRole('switch', { name: 'Avisarme de nuevas respuestas', exact: true })
     .waitFor();
-  assert.equal(
-    (
-      await prisma.communityFollow.findUnique({
-        where: { userId_topicId: { userId: key, topicId } },
-      })
-    ).notify,
-    false
-  );
-  const [followSaved] = await Promise.all([
-    page.waitForResponse(
-      (response) =>
-        response.url().endsWith(`/api/community/topics/${topicId}/follow`) &&
-        response.request().method() === 'PATCH'
-    ),
-    page
-      .getByRole('switch', {
-        name: 'Avisarme de nuevas respuestas',
-        exact: true,
-      })
-      .click(),
-  ]);
-  assert.equal(followSaved.status(), 200);
-  assert.equal(followSaved.request().postDataJSON().notify, true);
-  assert.equal(
-    (
-      await prisma.communityFollow.findUnique({
-        where: { userId_topicId: { userId: key, topicId } },
-      })
-    ).notify,
-    true
-  );
+  assert.equal((await ownerFollow()).notify, true);
+  for (const expected of [false, true]) {
+    const [followSaved] = await Promise.all([
+      page.waitForResponse(
+        (response) =>
+          response.url().endsWith(`/api/community/topics/${topicId}/follow`) &&
+          response.request().method() === 'PATCH'
+      ),
+      page
+        .getByRole('switch', {
+          name: 'Avisarme de nuevas respuestas',
+          exact: true,
+        })
+        .click(),
+    ]);
+    assert.equal(followSaved.status(), 200);
+    assert.equal(followSaved.request().postDataJSON().notify, expected);
+    assert.equal((await ownerFollow()).notify, expected);
+  }
   await login('other');
   await page.reload();
   assert.equal(
@@ -468,7 +461,7 @@ try {
   assert.equal(await prisma.communityReply.count({ where: { topicId } }), 1);
   assert.equal(notifications[0]?.userId, key);
   await page
-    .getByRole('button', { name: 'Guardar para ver', exact: true })
+    .getByRole('button', { name: 'Agregar a pendientes', exact: true })
     .click();
   await page.getByRole('button', { name: /Guardada en pendientes/ }).waitFor();
   assert.equal(

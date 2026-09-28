@@ -1,6 +1,6 @@
 import { requireAuth } from '@/lib/auth-helpers';
 import { createCommunityTopic } from '@/lib/database';
-import { parseCommunityTopic } from '@/lib/community-input';
+import { communityObject, parseCommunityTopic } from '@/lib/community-input';
 import {
   readCommunityMutation,
   communityResponse,
@@ -11,9 +11,13 @@ export async function POST(request: Request) {
   try {
     const auth = await requireAuth();
     if (!auth.authorized) return auth.response;
-    const input = parseCommunityTopic(await readCommunityMutation(request));
+    const data = communityObject(await readCommunityMutation(request));
     return communityResponse(
-      await createCommunityTopic(auth.userId, input),
+      await createCommunityTopic(
+        auth.userId,
+        parseCommunityTopic(data),
+        data.notify === true
+      ),
       201
     );
   } catch (error) {

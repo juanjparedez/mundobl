@@ -213,6 +213,40 @@ export async function notifyStaffOfSupportThread(
   }
 }
 
+/**
+ * Avisa a ADMIN/MODERATOR de una denuncia nueva en Comunidad. Sin esto la
+ * cola de /admin/comunidad solo se ve si alguien entra a mirarla.
+ */
+export async function notifyStaffOfCommunityReport(
+  reportId: string,
+  reporterId: string
+): Promise<void> {
+  try {
+    const staff = await prisma.user.findMany({
+      where: {
+        role: { in: ['ADMIN', 'MODERATOR'] },
+        banned: false,
+        id: { not: reporterId },
+      },
+      select: { id: true },
+    });
+    await Promise.all(
+      staff.map((member) =>
+        notifyUser({
+          userId: member.id,
+          type: 'community_report',
+          title: 'Denuncia nueva en Comunidad',
+          linkPath: '/admin/comunidad',
+          refType: 'community_report',
+          refId: reportId,
+        })
+      )
+    );
+  } catch (error) {
+    console.error('Community report notification failed', error);
+  }
+}
+
 interface NotifyParentAuthorOpts {
   parentCommentId: number;
   currentCommentId: number;

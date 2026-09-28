@@ -1,6 +1,7 @@
 'use client';
 import { CommunityNavigation } from '@/components/community/CommunityNavigation/CommunityNavigation';
 import { CommunityMetrics } from '@/components/community/CommunityMetrics/CommunityMetrics';
+import { TopFiveInvitation } from '@/components/community/TopFiveInvitation/TopFiveInvitation';
 import type { CommunityMetrics as Metrics } from '@/types/community';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -99,6 +100,7 @@ export function CommunityFeed({
           ))}
         </div>
       </header>
+      {!context && <TopFiveInvitation />}
       {metrics && <CommunityMetrics metrics={metrics} />}
       <nav
         className="community-feed__filters"

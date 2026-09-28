@@ -24,11 +24,7 @@ import { interpolateMessage } from '@/lib/i18n-format';
 import { useMessage } from '@/hooks/useMessage';
 import { savePendingTrack } from '@/lib/pending-track';
 import { findFurthestWatchedIndex } from '@/lib/episode-progress';
-import {
-  chapterCode,
-  toTrackedChapters,
-  type TrackedChapter,
-} from '@/lib/episode-chapters';
+import { toTrackedChapters, type TrackedChapter } from '@/lib/episode-chapters';
 import { WatchDateEditor } from '../WatchDateEditor/WatchDateEditor';
 import './TrackingPanel.css';
 
@@ -76,6 +72,11 @@ export function TrackingPanel({
 }: TrackingPanelProps) {
   const message = useMessage();
   const { t } = useLocale();
+  const chapterShort = (chapter: { seasonNumber: number; number: number }) =>
+    t('progressStepper.chapterShort', {
+      season: chapter.seasonNumber,
+      n: chapter.number,
+    });
   const { data: session } = useSession();
   const { seriesStatus, episodeStatus, loaded, version, refetch, storage } =
     useSeriesUserStatus();
@@ -383,7 +384,7 @@ export function TrackingPanel({
               onClick={() => setNoteChapter(lastWatched)}
             >
               {interpolateMessage(t('trackingPanel.episodeNote'), {
-                code: chapterCode(lastWatched),
+                code: chapterShort(lastWatched),
               })}
             </Button>
           )}
@@ -407,8 +408,8 @@ export function TrackingPanel({
         episodeLabel={
           noteChapter
             ? noteChapter.title
-              ? `${chapterCode(noteChapter)} — ${noteChapter.title}`
-              : chapterCode(noteChapter)
+              ? `${chapterShort(noteChapter)} — ${noteChapter.title}`
+              : chapterShort(noteChapter)
             : undefined
         }
         open={noteChapter !== null}

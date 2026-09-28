@@ -167,7 +167,7 @@ export function createCommunityModerationRepository(
         },
         select: { id: true },
       });
-      if (existing) return existing;
+      if (existing) return { id: existing.id, created: false };
       if (
         (await tx.communityReport.count({
           where: {
@@ -177,7 +177,7 @@ export function createCommunityModerationRepository(
         })) >= 5
       )
         throw new CommunityError(429, 'rateLimit');
-      return tx.communityReport.create({
+      const report = await tx.communityReport.create({
         data: {
           reporterId: userId,
           targetType: type,
@@ -187,6 +187,7 @@ export function createCommunityModerationRepository(
         },
         select: { id: true },
       });
+      return { id: report.id, created: true };
     });
   }
   async function getCommunityModerationQueue(
