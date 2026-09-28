@@ -1,6 +1,11 @@
 import { getCommunityUrl } from '@/lib/community-url';
+import { requireAuth } from '@/lib/auth-helpers';
 import { notFound } from 'next/navigation';
-import { getCommunityReviews, getCommunityTopics } from '@/lib/database';
+import {
+  getCommunityReviews,
+  getCommunityTopics,
+  getCommunityMetrics,
+} from '@/lib/database';
 import { COMMUNITY_KINDS } from '@/types/community';
 import { loadLocaleMessages } from '@/i18n/messages';
 import { CommunityFeed } from './CommunityFeed/CommunityFeed';
@@ -43,13 +48,18 @@ export async function generateMetadata(props: CommunityPageProps) {
 }
 export default async function CommunityPage(props: CommunityPageProps) {
   const { page, search, view } = await readPage(props);
-  const [reviews, topics] = await Promise.all([
+  const auth = await requireAuth();
+  const viewerId = auth.authorized ? auth.userId : undefined;
+  const [reviews, topics, metrics] = await Promise.all([
     view === 'all' || view === 'reviews'
-      ? getCommunityReviews(view === 'all' ? 1 : page, search)
+      ? getCommunityReviews(view === 'all' ? 1 : page, search, viewerId)
       : Promise.resolve({ items: [], hasNext: false }),
     view === 'reviews'
       ? Promise.resolve({ items: [], hasNext: false })
-      : getCommunityTopics(page, search, view),
+      : getCommunityTopics(page, search, view, viewerId),
+    view === 'all' && page === 1 && !search
+      ? getCommunityMetrics(viewerId)
+      : Promise.resolve(undefined),
   ]);
   const result = view === 'reviews' ? reviews : topics;
   if (page > 1 && result.items.length === 0) notFound();
@@ -61,6 +71,7 @@ export default async function CommunityPage(props: CommunityPageProps) {
       page={page}
       search={search}
       hasNext={result.hasNext}
+      metrics={metrics}
     />
   );
 }

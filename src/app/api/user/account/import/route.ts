@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma, restoreTrackingBackup } from '@/lib/database';
+import {
+  prisma,
+  restoreTrackingBackup,
+  restoreCommunityBackup,
+} from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 
 /**
@@ -389,6 +393,11 @@ export async function POST(req: NextRequest) {
     summary.skipped.suggestedSites = skipped;
   }
 
+  const community = await restoreCommunityBackup(userId, payload, dryRun);
+  Object.assign(summary.imported, community.imported);
+  Object.assign(summary.skipped, community.skipped);
+  summary.missingRefs.push(...community.missingRefs);
+  summary.errors.push(...community.errors);
   return NextResponse.json(summary, {
     status: 200,
     headers: { 'Cache-Control': 'no-store' },

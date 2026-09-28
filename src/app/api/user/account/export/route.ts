@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server';
-import { prisma, getWatchingPreferences } from '@/lib/database';
+import {
+  prisma,
+  getWatchingPreferences,
+  getCommunityAccountExport,
+} from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 
 /**
@@ -32,6 +36,7 @@ export async function GET() {
     episodeNotes,
     trackingEvents,
     watchingPreferences,
+    community,
   ] = await Promise.all([
     prisma.user.findUnique({
       where: { id: userId },
@@ -58,6 +63,7 @@ export async function GET() {
     prisma.episodeNote.findMany({ where: { userId } }),
     prisma.trackingEvent.findMany({ where: { userId } }),
     getWatchingPreferences(userId),
+    getCommunityAccountExport(userId),
   ]);
 
   const payload = {
@@ -76,6 +82,7 @@ export async function GET() {
     episodeNotes,
     trackingEvents,
     watchingPreferences,
+    community,
   };
 
   return new NextResponse(JSON.stringify(payload, null, 2), {

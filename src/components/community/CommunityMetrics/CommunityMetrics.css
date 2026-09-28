@@ -1,0 +1,17 @@
+.community-metrics {
+  display: grid;
+  gap: var(--spacing-md);
+  margin-block: var(--spacing-lg);
+}
+.community-metrics h2,
+.community-metrics p {
+  margin: 0;
+}
+.community-metrics p {
+  color: var(--text-secondary);
+}
+.community-metrics__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: var(--spacing-md);
+}

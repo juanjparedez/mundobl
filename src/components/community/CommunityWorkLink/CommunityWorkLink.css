@@ -1,0 +1,16 @@
+.community-work-link {
+  display: inline-flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-base);
+  color: var(--text-primary);
+  background: var(--bg-elevated);
+  text-decoration: none;
+}
+.community-work-link:hover,
+.community-work-link:focus-visible {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+}

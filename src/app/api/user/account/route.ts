@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/database';
+import { prisma, deleteAccountWithCommunity } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 
 type CommentsPolicy = 'keep' | 'anonymize' | 'delete';
@@ -83,7 +83,7 @@ export async function DELETE(request: NextRequest) {
   await prisma.commentReport.deleteMany({ where: { userId: auth.userId } });
 
   // Borrado del User dispara cascades en Account/Session de NextAuth.
-  await prisma.user.delete({ where: { id: auth.userId } });
+  await deleteAccountWithCommunity(auth.userId, policy === 'delete');
 
   return NextResponse.json({ ok: true });
 }

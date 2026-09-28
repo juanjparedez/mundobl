@@ -1,6 +1,11 @@
+import {
+  COMMUNITY_SPACE_MESSAGES,
+  type CommunitySpaceMessages,
+} from './community-space';
 import type { SupportedLocale } from './config';
 
 export type TranslationShape = {
+  communitySpace: CommunitySpaceMessages;
   writerProfile: {
     indexTitle: string;
     indexDescription: string;
@@ -3445,6 +3450,7 @@ export type TranslationShape = {
 };
 
 const es: TranslationShape = {
+  communitySpace: COMMUNITY_SPACE_MESSAGES.es,
   writerProfile: {
     indexTitle: 'Guionistas',
     indexDescription:
@@ -7121,6 +7127,7 @@ const es: TranslationShape = {
 };
 
 const en: TranslationShape = {
+  communitySpace: COMMUNITY_SPACE_MESSAGES.en,
   writerProfile: {
     indexTitle: 'Screenwriters',
     indexDescription:
