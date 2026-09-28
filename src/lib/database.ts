@@ -2896,7 +2896,15 @@ export async function getCommunityTopic(
         select: { replies: { where: publicCommunityReplyWhere(viewerId) } },
       },
       replies: {
-        where: publicCommunityReplyWhere(viewerId),
+        // Su autor sigue viendo una respuesta ocultada por moderacion, marcada.
+        where: viewerId
+          ? {
+              OR: [
+                publicCommunityReplyWhere(viewerId),
+                { userId: viewerId, moderationHidden: true },
+              ],
+            }
+          : publicCommunityReplyWhere(),
         orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
         skip: (page - 1) * 30,
         take: 31,
@@ -2948,6 +2956,7 @@ export async function getCommunityTopic(
       id: reply.id,
       body: reply.body,
       hasSpoilers: reply.hasSpoilers,
+      moderationHidden: reply.moderationHidden,
       createdAt: reply.createdAt.toISOString(),
       author: communityAuthor(reply.user),
     })),
@@ -3023,7 +3032,8 @@ async function communityWriteLimit(
 }
 export async function createCommunityTopic(
   userId: string,
-  input: CommunityTopicInput
+  input: CommunityTopicInput,
+  notifyReplies = false
 ) {
   return prisma.$transaction(async (tx) => {
     await communityWriteLimit(tx, userId, true);
@@ -3046,10 +3056,16 @@ export async function createCommunityTopic(
       }))
     )
       throw new CommunityError(400, 'invalid');
-    return tx.communityTopic.create({
+    const topic = await tx.communityTopic.create({
       data: { ...input, userId },
       select: { id: true },
     });
+    // Quien pregunta elige en el formulario si quiere enterarse de las respuestas.
+    if (notifyReplies)
+      await tx.communityFollow.create({
+        data: { userId, topicId: topic.id, notify: true },
+      });
+    return topic;
   });
 }
 export async function replyToCommunityTopic(

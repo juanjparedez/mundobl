@@ -250,7 +250,10 @@ export function parseEpisodeBadge(
     const partTotal = parseInt(partMatch[2] || '4', 10);
     const epNum = detectedEp || episodeNumber;
     return {
-      label: `Capítulo ${epNum} · Parte ${partNum}/${partTotal}`,
+      // Sin numero en el titulo, la fila no dice que capitulo es.
+      label: detectedEp
+        ? `Capítulo ${detectedEp} · Parte ${partNum}/${partTotal}`
+        : `Parte ${partNum}/${partTotal}`,
       shortLabel: `Parte ${partNum}/${partTotal}`,
       isExtra: false,
       isPrivate: false,
@@ -738,6 +741,12 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         />
       )}
 
+      {/* Conversar sobre el capitulo queda junto al reproductor: al pie de
+       *  la lista, en el celu, habia que pasar todas las partes para verlo. */}
+      <div className="ver-serie__community-link">
+        <CommunityWorkLink seriesId={series.id} episodeId={active?.id} />
+      </div>
+
       {/* Tracking: mismo mecanismo que la ficha del catalogo (ViewStatus),
        * para que mirar una serie desde /ver la sume a "Viendo ahora" y a
        * las estadisticas del usuario aunque sea WATCHABLE_ONLY. */}
@@ -866,7 +875,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
       <div className="ver-serie__episodes">
         <div className="ver-serie__episodes-header">
           <h2>
-            {t('verSerie.episodesTitle')} ({flatEpisodes.length})
+            {t('verSerie.episodesTitle')} ({mainEpisodesCount})
           </h2>
           {extrasCount > 0 && (
             <Segmented
@@ -875,13 +884,15 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
                 setFilterMode(val as 'all' | 'episodes' | 'extras')
               }
               options={[
-                { label: `Todos (${flatEpisodes.length})`, value: 'all' },
+                { label: t('verSerie.filterAll'), value: 'all' },
                 {
-                  label: `Capítulos (${mainEpisodesCount})`,
+                  label: t('verSerie.filterChapters', {
+                    n: mainEpisodesCount,
+                  }),
                   value: 'episodes',
                 },
                 {
-                  label: `Extras / Tráilers (${extrasCount})`,
+                  label: t('verSerie.filterExtras', { n: extrasCount }),
                   value: 'extras',
                 },
               ]}
@@ -948,7 +959,8 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
                   <div className="ver-serie__chapter-body">
                     <div className="ver-serie__chapter-head">
                       <span className="ver-serie__chapter-title">
-                        <PlayCircleOutlined /> Capítulo {chapterNumber}
+                        <PlayCircleOutlined />{' '}
+                        {t('verSerie.chapterTitle', { n: chapterNumber })}
                       </span>
                       {isChapterWatched && (
                         <span className="ver-serie__chapter-watched">
@@ -957,7 +969,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
                       )}
                       {isMultiPart && (
                         <span className="ver-serie__chapter-parts-hint">
-                          Dividido en {items.length} partes
+                          {t('verSerie.splitInParts', { n: items.length })}
                         </span>
                       )}
                     </div>
@@ -974,9 +986,12 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
                           partAvailability !== 'blocked_somewhere';
                         const partLabel = isMultiPart
                           ? episode.parsed.partNumber
-                            ? `Parte ${episode.parsed.partNumber}/${episode.parsed.partTotal || 4}`
-                            : `Parte ${partIndex + 1}`
-                          : `Reproducir`;
+                            ? t('verSerie.partLabel', {
+                                n: episode.parsed.partNumber,
+                                total: episode.parsed.partTotal || 4,
+                              })
+                            : t('verSerie.partNumber', { n: partIndex + 1 })
+                          : t('verSerie.play');
 
                         return (
                           <button
@@ -1018,7 +1033,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         {filterMode !== 'episodes' && extraEpisodes.length > 0 && (
           <div className="ver-serie__extras-section">
             <h3 className="ver-serie__section-subtitle">
-              <VideoCameraOutlined /> Tráilers y Material Adicional
+              <VideoCameraOutlined /> {t('verSerie.extrasTitle')}
             </h3>
             <div className="ver-serie__extras-grid">
               {extraEpisodes.map(({ flatIndex, episode }) => {
@@ -1056,7 +1071,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
                       {badge.tagColor && (
                         <Tag
                           color={badge.tagColor}
-                          style={{ alignSelf: 'flex-start' }}
+                          className="ver-serie__extra-tag"
                         >
                           {badge.badgeText}
                         </Tag>
@@ -1076,8 +1091,8 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         {privateEpisodes.length > 0 && filterMode === 'all' && (
           <div className="ver-serie__private-notice">
             <Tag color="default">
-              <LockOutlined /> {privateEpisodes.length} video(s) privados o
-              retirados en YouTube por la productora oficial
+              <LockOutlined />{' '}
+              {t('verSerie.privateVideos', { n: privateEpisodes.length })}
             </Tag>
           </div>
         )}
@@ -1086,7 +1101,6 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
       {/* Rating + reseñas: solo para USER_EMBED — para CURATED+WATCHABLE_ONLY
        * ya existe en /series/[id] via "Ver ficha completa" mas arriba, asi
        * que evitamos duplicar el mismo widget en dos paginas. */}
-      <CommunityWorkLink seriesId={series.id} episodeId={active?.id} />
       {isUserEmbed && (
         <div id="series-section-reviews" className="ver-serie__ratings-reviews">
           <RatingSection seriesId={series.id} existingRatings={[]} />

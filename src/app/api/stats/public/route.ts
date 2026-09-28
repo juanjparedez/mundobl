@@ -12,7 +12,7 @@ export async function GET() {
 
     response.headers.set(
       'Cache-Control',
-      'public, s-maxage=300, stale-while-revalidate=600'
+      'public, s-maxage=3600, stale-while-revalidate=7200'
     );
 
     return response;
