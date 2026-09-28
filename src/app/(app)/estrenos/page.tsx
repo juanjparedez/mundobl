@@ -8,7 +8,7 @@ import './estrenos.css';
 
 // La parrilla cambia cuando Flor carga o edita `airDays`, no sola. Una hora de
 // ISR alcanza, y las rutas que escriben series revalidan esta ruta a mano.
-export const revalidate = 3600;
+export const revalidate = 21600;
 
 const DESCRIPTION =
   'Qué serie BL sale cada día de la semana: parrilla de emisión de las series asiáticas que están al aire, con su día de estreno.';

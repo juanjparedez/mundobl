@@ -31,7 +31,13 @@ interface PageProps {
 // cuando lo edita un admin/colaborador, y esas rutas ya invalidan esta ficha
 // por URL. A 120s, las ~650 paginas se regeneraban cada 2 minutos mientras
 // hubiera crawl — por lejos el mayor generador de ISR writes del proyecto.
-export const revalidate = 86400;
+export const revalidate = 604800;
+// Sin generateStaticParams, Next renderiza esta ruta en cada visita aunque
+// tenga revalidate. Con la lista vacia, la primera visita la genera y las
+// siguientes salen de la cache hasta el proximo revalidate.
+export function generateStaticParams(): { id: string }[] {
+  return [];
+}
 
 export async function generateMetadata({
   params,

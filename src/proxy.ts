@@ -351,8 +351,8 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    // Todas las paginas excepto assets estaticos, API routes e internos de Next
-    '/((?!api|_next/static|_next/image|favicon.ico|images).*)',
-  ],
+  // Solo /admin. En las paginas publicas corria en cada request (sw.js,
+  // manifest e iconos incluidos) y escribia una visita por pagina: era gran
+  // parte del CPU de Vercel. Las APIs ya chequean sesion y ban por su cuenta.
+  matcher: ['/admin', '/admin/:path*'],
 };
