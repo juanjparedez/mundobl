@@ -438,6 +438,7 @@ const zhTW = {
     "likes": "YouTube 喜歡人數：{n}"
   },
   "episodesList": {
+    "chaptersTitle": "劇集 ({n})",
     "headerTitle": "集數 ({n})",
     "parts": "{n} 部分",
     "extrasNote": "另有 {n} 個影片：預告與花絮。",
@@ -502,6 +503,7 @@ const zhTW = {
     "errorGenerating": "產生錯誤"
   },
   "seasonsList": {
+    "watchedProgress": "已看 {watched}/{total} 集",
     "emptyText": "未記錄任何季度",
     "seasonLabel": "第 {n} 季",
     "capsTag": "{n} 集",
@@ -2688,6 +2690,21 @@ const zhTW = {
     "deployedAtLine": "部署時間：{date}"
   },
   "verSerie": {
+    "catalogPage": "目錄中的完整作品頁",
+    "userFallback": "使用者",
+    "collaboratorFallback": "合作者",
+    "contributedByUser": "@{name} 分享",
+    "contributedByCollaborator": "內容來自 {name}",
+    "tagMusic": "音樂",
+    "tagExtra": "花絮",
+    "tagTrailer": "預告",
+    "tagPrivate": "私人",
+    "ostNumber": "OST #{n}",
+    "extraNumber": "花絮 #{n}",
+    "trailerNumber": "預告 #{n}",
+    "trailerChapter": "預告 · 第{n}集",
+    "privateVideo": "私人影片 #{n}",
+    "seasonShort": "第{n}季",
     "chapterTitle": "第 {n} 集",
     "privateVideos": "{n} 部影片已被製作方在 YouTube 設為私人或移除",
     "play": "播放",

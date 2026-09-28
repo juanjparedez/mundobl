@@ -429,6 +429,7 @@ export type TranslationShape = {
     likes: string;
   };
   episodesList: {
+    chaptersTitle: string;
     headerTitle: string;
     parts: string;
     extrasNote: string;
@@ -493,6 +494,7 @@ export type TranslationShape = {
     errorGenerating: string;
   };
   seasonsList: {
+    watchedProgress: string;
     emptyText: string;
     seasonLabel: string;
     capsTag: string;
@@ -2683,6 +2685,21 @@ export type TranslationShape = {
     deployedAtLine: string;
   };
   verSerie: {
+    catalogPage: string;
+    userFallback: string;
+    collaboratorFallback: string;
+    contributedByUser: string;
+    contributedByCollaborator: string;
+    tagMusic: string;
+    tagExtra: string;
+    tagTrailer: string;
+    tagPrivate: string;
+    ostNumber: string;
+    extraNumber: string;
+    trailerNumber: string;
+    trailerChapter: string;
+    privateVideo: string;
+    seasonShort: string;
     chapterTitle: string;
     privateVideos: string;
     play: string;
@@ -3828,7 +3845,7 @@ const es: TranslationShape = {
     previousDate: 'Fecha anterior',
     unknown: 'Desconocida',
     season: 'Temporada {n}',
-    episode: 'T{season} · E{episode}',
+    episode: 'T{season} · cap. {episode}',
     series: 'Serie',
     recorded: 'Estado registrado',
     changed: 'Estado modificado',
@@ -3873,7 +3890,7 @@ const es: TranslationShape = {
     remaining: 'Menos capítulos pendientes',
     pin: 'Fijar serie',
     unpin: 'Desfijar serie',
-    manage: 'Episodios y notas',
+    manage: 'Capítulos y notas',
     publicComment: 'Conversación pública',
     privateNote: 'Nota privada',
     curated: 'Catálogo de Flor',
@@ -3991,8 +4008,8 @@ const es: TranslationShape = {
     fieldSeasons: 'Temporadas',
     universeSeasonPosition: 'Temporada {current} de {total}',
     fieldEpisodes: 'Episodios',
-    fieldDuration: 'Duracion',
-    fieldDurationPerEpisode: 'Duracion por episodio',
+    fieldDuration: 'Duración',
+    fieldDurationPerEpisode: 'Duración por episodio',
     fieldSoundtrack: 'BSO',
     fieldProduction: 'Productora',
     fieldLanguage: 'Idioma Original',
@@ -4028,7 +4045,7 @@ const es: TranslationShape = {
     placeholderPublic:
       'Escribe tus impresiones, opiniones o notas sobre esta serie...',
     placeholderEpisode:
-      'Escribe tus notas sobre este episodio, escenas interesantes, momentos clave...',
+      '¿Qué te pareció este capítulo? Escenas, momentos clave…',
     tooltipPrivate: 'Los comentarios privados solo son visibles para vos',
     privateLabel: 'Privado',
     savePrivateButton: 'Guardar Nota Privada',
@@ -4058,6 +4075,7 @@ const es: TranslationShape = {
     likes: '{n} me gusta en YouTube',
   },
   episodesList: {
+    chaptersTitle: 'Capítulos ({n})',
     headerTitle: 'Episodios ({n})',
     parts: '{n} partes',
     extrasNote: 'Y {n} videos más: avances y extras.',
@@ -4111,9 +4129,9 @@ const es: TranslationShape = {
     bulkMarkedUnwatched: '{n} episodio(s) marcado(s) como no vistos',
     tooltipComments: 'Comentarios ({n})',
     spoilerGateReasonEpisodeNotWatched:
-      'Este contenido puede contener spoilers. Marca el episodio como visto para revelarlo.',
+      'Puede tener spoilers. Marcá el capítulo como visto para verlo.',
     commentsPlaceholder:
-      'Escribe tus notas sobre este episodio, escenas interesantes, momentos clave...',
+      '¿Qué te pareció este capítulo? Escenas, momentos clave…',
     embedSectionTitle: '📺 Reproducción oficial (opcional)',
     embedHelpText:
       'Pegá la URL de YouTube/Vimeo del canal oficial. Solo si la plataforma permite embeber legalmente. La plataforma se detecta automaticamente.',
@@ -4127,6 +4145,7 @@ const es: TranslationShape = {
     errorGenerating: 'Error al generar',
   },
   seasonsList: {
+    watchedProgress: '{watched} de {total} vistos',
     emptyText: 'No hay temporadas registradas',
     seasonLabel: 'Temporada {n}',
     capsTag: '{n} caps',
@@ -4195,7 +4214,7 @@ const es: TranslationShape = {
     sortName: 'Nombre (A-Z)',
     sortStart: 'Fecha de estreno',
     sortNext: 'Próxima por ver',
-    airToday: 'Hoy sale episodio',
+    airToday: 'Hoy sale capítulo',
     airTodayTag: 'Hoy',
     airDelayed: 'Salió hace {n} días y todavía no lo marcaste',
     airDelayedTag: '+{n}d',
@@ -4203,14 +4222,14 @@ const es: TranslationShape = {
     markNextCode: 'Vi el {code}',
     removedMessage: '"\{title}" removida de "Viendo ahora"',
     errorRemove: 'Error al remover de la lista',
-    episodeMarkedMessage: 'Episodio {ep} marcado como visto',
-    errorMarkEpisode: 'Error al marcar el episodio',
+    episodeMarkedMessage: 'Capítulo {ep} marcado como visto',
+    errorMarkEpisode: 'No se pudo marcar el capítulo',
     markEpisodeTooltip: 'Marcar {ep} como visto',
     markNextLabel: 'Vi el ep. {n}',
     markCompleteLabel: 'Terminé la serie',
     markCompleteConfirm: '¿Marcar "{title}" como terminada?',
     completedMessage: 'Marcaste "{title}" como terminada',
-    noEpisodesHint: 'Sin episodios cargados: se marca completa de una vez',
+    noEpisodesHint: 'Sin capítulos cargados: se marca completa de una vez',
     watchNow: 'Seguir viendo',
   },
   appLayout: {
@@ -5347,8 +5366,8 @@ const es: TranslationShape = {
     fieldType: 'Tipo',
     fieldCountry: 'Pais',
     fieldYear: 'Anio',
-    fieldDurationMinutes: 'Duracion',
-    fieldDurationPerEpisode: 'Duracion por episodio',
+    fieldDurationMinutes: 'Duración',
+    fieldDurationPerEpisode: 'Duración por episodio',
     durationMinutesUnit: 'min',
     fieldUniverse: 'Universo (opcional)',
     universeMain: 'Historia principal y portada',
@@ -5760,7 +5779,7 @@ const es: TranslationShape = {
     accept: 'Ok, entendido',
   },
   watchHereBanner: {
-    own: 'Ver los episodios acá, desde el canal oficial',
+    own: 'Ver los capítulos acá, desde el canal oficial',
     contribution: 'También se ve acá, en un aporte de la comunidad',
     contributions: 'También se ve acá, en {n} aportes de la comunidad',
   },
@@ -6042,13 +6061,13 @@ const es: TranslationShape = {
   spoilerGate: {
     label: 'Contenido oculto por modo sin spoilers',
     defaultReason: 'Contenido marcado como posible spoiler.',
-    reasonEpisodeNotWatched: 'No marcaste este episodio como visto.',
+    reasonEpisodeNotWatched: 'No marcaste este capítulo como visto.',
     reasonReviewSpoilers:
       'Esta reseña tiene spoilers y no terminaste la serie.',
     reveal: 'Mostrar igual',
   },
   episodeNote: {
-    title: 'Nota privada del episodio',
+    title: 'Nota privada del capítulo',
     privateTag: 'Privado',
     hint: 'Solo vos podés ver esta nota. Ideal para anotar reacciones, escenas o momentos para volver.',
     placeholder:
@@ -6434,6 +6453,21 @@ const es: TranslationShape = {
     deployedAtLine: 'Desplegado: {date}',
   },
   verSerie: {
+    catalogPage: 'Ficha completa en catálogo',
+    userFallback: 'usuario',
+    collaboratorFallback: 'colaborador',
+    contributedByUser: 'Aporte de @{name}',
+    contributedByCollaborator: 'Contenido de {name}',
+    tagMusic: 'Música',
+    tagExtra: 'Extra',
+    tagTrailer: 'Tráiler',
+    tagPrivate: 'Privado',
+    ostNumber: 'OST #{n}',
+    extraNumber: 'Extra #{n}',
+    trailerNumber: 'Tráiler #{n}',
+    trailerChapter: 'Tráiler · cap. {n}',
+    privateVideo: 'Video privado #{n}',
+    seasonShort: 'T{n}',
     chapterTitle: 'Capítulo {n}',
     privateVideos:
       '{n} videos privados o retirados de YouTube por la productora',
@@ -6688,7 +6722,7 @@ const es: TranslationShape = {
     markUnwatched: 'Marcar como no vista',
     markedWatched: 'Marcaste "{title}" como vista',
     noEpisodes:
-      'Esta ficha no tiene episodios cargados: se marca completa de una vez.',
+      'Esta ficha no tiene capítulos cargados: se marca completa de una vez.',
     notesTitle: 'Notas privadas',
     episodeNote: 'Nota del {code}',
     seriesNote: 'Nota de la serie',
@@ -6819,9 +6853,9 @@ const es: TranslationShape = {
     topCountriesEmpty: 'Aun no hay paises registrados.',
     widgetCurrentlyWatching: 'Seguir viendo',
     widgetCurrentlyWatchingDesc: 'Series que estas viendo actualmente.',
-    currentlyWatchingEmpty: 'No estas viendo ninguna serie ahora mismo.',
-    currentlyWatchingNext: 'Proximo: T{season} E{episode}',
-    currentlyWatchingProgress: '{watched} de {total} episodios',
+    currentlyWatchingEmpty: 'No estás viendo ninguna serie ahora mismo.',
+    currentlyWatchingNext: 'Próximo: T{season} · cap. {episode}',
+    currentlyWatchingProgress: '{watched} de {total} capítulos',
     widgetTopActors: 'Actores mas vistos',
     widgetTopActorsDesc: 'Top 8 actores que mas aparecen en tu catalogo.',
     topActorsEmpty: 'Aun no hay actores registrados.',
@@ -7868,6 +7902,7 @@ const en: TranslationShape = {
     likes: '{n} likes on YouTube',
   },
   episodesList: {
+    chaptersTitle: 'Episodes ({n})',
     headerTitle: 'Episodes ({n})',
     parts: '{n} parts',
     extrasNote: 'Plus {n} more videos: previews and extras.',
@@ -7936,6 +7971,7 @@ const en: TranslationShape = {
     errorGenerating: 'Error generating',
   },
   seasonsList: {
+    watchedProgress: '{watched} of {total} watched',
     emptyText: 'No seasons recorded',
     seasonLabel: 'Season {n}',
     capsTag: '{n} eps',
@@ -10229,6 +10265,21 @@ const en: TranslationShape = {
     deployedAtLine: 'Deployed: {date}',
   },
   verSerie: {
+    catalogPage: 'Full page in the catalog',
+    userFallback: 'user',
+    collaboratorFallback: 'collaborator',
+    contributedByUser: 'Shared by @{name}',
+    contributedByCollaborator: 'Content by {name}',
+    tagMusic: 'Music',
+    tagExtra: 'Extra',
+    tagTrailer: 'Trailer',
+    tagPrivate: 'Private',
+    ostNumber: 'OST #{n}',
+    extraNumber: 'Extra #{n}',
+    trailerNumber: 'Trailer #{n}',
+    trailerChapter: 'Trailer · Ep. {n}',
+    privateVideo: 'Private video #{n}',
+    seasonShort: 'S{n}',
     chapterTitle: 'Episode {n}',
     privateVideos:
       '{n} videos made private or removed from YouTube by the studio',

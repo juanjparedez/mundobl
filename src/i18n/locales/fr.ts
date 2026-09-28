@@ -443,6 +443,7 @@ const fr = {
     "likes": "{n} mentions J'aime sur YouTube"
   },
   "episodesList": {
+    "chaptersTitle": "Épisodes ({n})",
     "headerTitle": "Épisodes ({n})",
     "parts": "{n} parties",
     "extrasNote": "Plus {n} vidéos : aperçus et extras.",
@@ -507,6 +508,7 @@ const fr = {
     "errorGenerating": "Erreur de génération"
   },
   "seasonsList": {
+    "watchedProgress": "{watched} sur {total} vus",
     "emptyText": "Aucune saison enregistrée",
     "seasonLabel": "Saison {n}",
     "capsTag": "{n} ép.",
@@ -2693,6 +2695,21 @@ const fr = {
     "deployedAtLine": "Déployé : {date}"
   },
   "verSerie": {
+    "catalogPage": "Fiche complète dans le catalogue",
+    "userFallback": "utilisateur",
+    "collaboratorFallback": "collaborateur",
+    "contributedByUser": "Partagé par @{name}",
+    "contributedByCollaborator": "Contenu de {name}",
+    "tagMusic": "Musique",
+    "tagExtra": "Bonus",
+    "tagTrailer": "Bande-annonce",
+    "tagPrivate": "Privé",
+    "ostNumber": "OST #{n}",
+    "extraNumber": "Bonus #{n}",
+    "trailerNumber": "Bande-annonce #{n}",
+    "trailerChapter": "Bande-annonce · Ép. {n}",
+    "privateVideo": "Vidéo privée #{n}",
+    "seasonShort": "S{n}",
     "chapterTitle": "Épisode {n}",
     "privateVideos": "{n} vidéos rendues privées ou retirées de YouTube par le studio",
     "play": "Lire",
