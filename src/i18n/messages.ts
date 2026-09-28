@@ -2685,6 +2685,7 @@ export type TranslationShape = {
     deployedAtLine: string;
   };
   verSerie: {
+    watchableOnlyTooltip: string;
     catalogPage: string;
     userFallback: string;
     collaboratorFallback: string;
@@ -6453,6 +6454,8 @@ const es: TranslationShape = {
     deployedAtLine: 'Desplegado: {date}',
   },
   verSerie: {
+    watchableOnlyTooltip:
+      'Todavía no está en el catálogo: la podés ver y seguir desde acá.',
     catalogPage: 'Ficha completa en catálogo',
     userFallback: 'usuario',
     collaboratorFallback: 'colaborador',
@@ -6482,7 +6485,7 @@ const es: TranslationShape = {
     noEpisodesAvailable: 'No hay episodios disponibles',
     inMyPersonalCatalogTooltip: 'También tiene ficha en el catálogo',
     inMyCatalogTag: 'En el catálogo',
-    watchableOnlyTag: 'Solo mirable',
+    watchableOnlyTag: 'Solo para ver acá',
     viewFullDetailsButton: 'Ver ficha completa',
     moveToMyCatalogButton: 'Pasar a mi catálogo',
     seriesMovedToPersonalCatalogSuccess: 'Serie movida a tu catálogo personal',
@@ -7232,7 +7235,7 @@ const es: TranslationShape = {
     heroSpotlightBadge: 'Serie Destacada de la Semana',
     heroYoutubeTag: 'Emisión Oficial YouTube',
     heroVimeoTag: 'Vimeo On Demand',
-    heroEpisodesBadge: '{count} Episodios Oficiales',
+    heroEpisodesBadge: '{count} videos oficiales',
     heroPlayButton: 'Reproducir Ahora',
     heroInfoButton: 'Ficha & Reparto',
     heroCollapseTooltip: 'Minimizar destacado',
@@ -10265,6 +10268,8 @@ const en: TranslationShape = {
     deployedAtLine: 'Deployed: {date}',
   },
   verSerie: {
+    watchableOnlyTooltip:
+      'Not in the catalog yet: you can watch and track it here.',
     catalogPage: 'Full page in the catalog',
     userFallback: 'user',
     collaboratorFallback: 'collaborator',
@@ -10294,7 +10299,7 @@ const en: TranslationShape = {
     noEpisodesAvailable: 'No episodes available',
     inMyPersonalCatalogTooltip: 'It also has a page in the catalog',
     inMyCatalogTag: 'In the catalog',
-    watchableOnlyTag: 'Watchable only',
+    watchableOnlyTag: 'Watch here only',
     viewFullDetailsButton: 'View full details',
     moveToMyCatalogButton: 'Move to my catalog',
     seriesMovedToPersonalCatalogSuccess:
@@ -11040,7 +11045,7 @@ const en: TranslationShape = {
     heroSpotlightBadge: 'Series of the Week',
     heroYoutubeTag: 'Official YouTube Release',
     heroVimeoTag: 'Vimeo On Demand',
-    heroEpisodesBadge: '{count} Official Episodes',
+    heroEpisodesBadge: '{count} official videos',
     heroPlayButton: 'Play Now',
     heroInfoButton: 'Details & Cast',
     heroCollapseTooltip: 'Minimize featured',

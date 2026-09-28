@@ -575,11 +575,13 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
               </Tag>
             </Tooltip>
           ) : (
-            <Tag icon={<StarOutlined />} color="default">
-              {t('verSerie.watchableOnlyTag')}
-            </Tag>
+            <Tooltip title={t('verSerie.watchableOnlyTooltip')}>
+              <Tag icon={<StarOutlined />} color="default">
+                {t('verSerie.watchableOnlyTag')}
+              </Tag>
+            </Tooltip>
           )}
-          {!isUserEmbed && (
+          {!isUserEmbed && scope === 'PERSONAL' && (
             <Link href={`/series/${series.id}`} prefetch={false}>
               <Button icon={<PlayCircleOutlined />}>
                 {t('verSerie.viewFullDetailsButton')}

@@ -60,6 +60,16 @@ interface VerItem extends CarouselMediaItem {
  * si el sondeo nunca corrio, el campo llega undefined y no queremos
  * inventar un aviso sobre datos que no tenemos.
  */
+/** Solo lo que esta en el catalogo tiene ficha en /series. */
+function isCatalogItem(item: CarouselMediaItem): boolean {
+  return (
+    'origin' in item &&
+    'catalogScope' in item &&
+    item.origin === 'CURATED' &&
+    item.catalogScope === 'PERSONAL'
+  );
+}
+
 function isPartiallyUnavailable(item: VerItem): boolean {
   return (
     typeof item.playableEpisodes === 'number' &&
@@ -270,11 +280,6 @@ export function VerPage({ items }: VerPageProps) {
       ...(item.year
         ? [{ key: 'year', label: t('quickPreview.year'), value: item.year }]
         : []),
-      {
-        key: 'episodes',
-        label: t('quickPreview.episodes'),
-        value: item.episodesWithEmbed,
-      },
       ...(item.channels[0]
         ? [
             {
@@ -319,13 +324,18 @@ export function VerPage({ items }: VerPageProps) {
         variant: 'primary' as const,
         href: getVerUrl(item.id, item.title),
       },
-      {
-        key: 'detail',
-        label: t('quickPreview.fullDetail'),
-        icon: <InfoCircleOutlined />,
-        iconOnlyOnHoverCard: true,
-        href: getSeriesUrl(item.id, item.title),
-      },
+      // La ficha existe solo para lo que esta en el catalogo.
+      ...(isCatalogItem(item)
+        ? [
+            {
+              key: 'detail',
+              label: t('quickPreview.fullDetail'),
+              icon: <InfoCircleOutlined />,
+              iconOnlyOnHoverCard: true,
+              href: getSeriesUrl(item.id, item.title),
+            },
+          ]
+        : []),
     ],
   });
 
