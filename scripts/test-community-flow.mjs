@@ -348,8 +348,16 @@ try {
   await modal
     .getByRole('textbox', { name: 'Tu mensaje', exact: true })
     .fill('Este borrador fue editado antes de publicarlo.');
-  await modal.getByRole('button', { name: 'Guardar', exact: true }).click();
-  await page.waitForLoadState('networkidle');
+  const [draftSaved] = await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response.url().endsWith(`/api/community/topics/${topicId}`) &&
+        response.request().method() === 'PATCH'
+    ),
+    modal.getByRole('button', { name: 'Guardar', exact: true }).click(),
+  ]);
+  assert.equal(draftSaved.status(), 200);
+  await modal.waitFor({ state: 'hidden' });
   assert.equal(
     (await prisma.communityTopic.findUnique({ where: { id: topicId } })).body,
     'Este borrador fue editado antes de publicarlo.'
@@ -400,10 +408,21 @@ try {
     ).notify,
     false
   );
-  await page
-    .getByRole('switch', { name: 'Avisarme de nuevas respuestas', exact: true })
-    .click();
-  await page.waitForLoadState('networkidle');
+  const [followSaved] = await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response.url().endsWith(`/api/community/topics/${topicId}/follow`) &&
+        response.request().method() === 'PATCH'
+    ),
+    page
+      .getByRole('switch', {
+        name: 'Avisarme de nuevas respuestas',
+        exact: true,
+      })
+      .click(),
+  ]);
+  assert.equal(followSaved.status(), 200);
+  assert.equal(followSaved.request().postDataJSON().notify, true);
   assert.equal(
     (
       await prisma.communityFollow.findUnique({
@@ -451,9 +470,7 @@ try {
   await page
     .getByRole('button', { name: 'Guardar para ver', exact: true })
     .click();
-  await page
-    .getByRole('button', { name: 'Guardada en pendientes', exact: true })
-    .waitFor();
+  await page.getByRole('button', { name: /Guardada en pendientes/ }).waitFor();
   assert.equal(
     (
       await prisma.viewStatus.findFirstOrThrow({
@@ -466,10 +483,20 @@ try {
   await page.goto(base + '/comunidad/mis-conversaciones?view=following');
   await page.getByText('Respuestas nuevas', { exact: true }).waitFor();
   await page.goto(base + `/comunidad/${topicId}`);
-  await page
-    .getByRole('button', { name: 'Marcar esta página como leída', exact: true })
-    .click();
-  await page.waitForLoadState('networkidle');
+  const [readSaved] = await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response.url().endsWith(`/api/community/topics/${topicId}/follow`) &&
+        response.request().method() === 'PATCH'
+    ),
+    page
+      .getByRole('button', {
+        name: 'Marcar esta página como leída',
+        exact: true,
+      })
+      .click(),
+  ]);
+  assert.equal(readSaved.status(), 200);
   await page.goto(base + '/comunidad/mis-conversaciones?view=following');
   assert.equal(
     await page.getByText('Respuestas nuevas', { exact: true }).count(),
