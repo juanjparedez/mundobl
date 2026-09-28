@@ -6,6 +6,7 @@ import {
   communityText,
 } from '@/lib/community-input';
 import { communityKey } from '@/lib/community-library-input';
+import { notifyStaffOfCommunityReport } from '@/lib/notifications';
 import {
   readCommunityMutation,
   communityResponse,
@@ -24,16 +25,16 @@ export async function POST(request: Request) {
       (value) => value === data.reason
     );
     if (!type || !reason) throw new CommunityError(400, 'invalid');
-    return communityResponse(
-      await reportCommunityContent(
-        auth.userId,
-        type,
-        communityKey(data.targetId),
-        reason,
-        communityText(data.detail ?? '', 0, 2000)
-      ),
-      201
+    const report = await reportCommunityContent(
+      auth.userId,
+      type,
+      communityKey(data.targetId),
+      reason,
+      communityText(data.detail ?? '', 0, 2000)
     );
+    if (report.created)
+      await notifyStaffOfCommunityReport(report.id, auth.userId);
+    return communityResponse({ id: report.id }, 201);
   } catch (error) {
     return communityFailure(error);
   }

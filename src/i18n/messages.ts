@@ -1,11 +1,116 @@
-import {
-  COMMUNITY_SPACE_MESSAGES,
-  type CommunitySpaceMessages,
-} from './community-space';
 import type { SupportedLocale } from './config';
 
 export type TranslationShape = {
-  communitySpace: CommunitySpaceMessages;
+  communitySpace: {
+    lists: string;
+    searchLists: string;
+    myLists: string;
+    newList: string;
+    listsIntro: string;
+    emptyLists: string;
+    emptyListsHint: string;
+    title: string;
+    description: string;
+    addWork: string;
+    reason: string;
+    up: string;
+    down: string;
+    remove: string;
+    save: string;
+    cancel: string;
+    edit: string;
+    preview: string;
+    private: string;
+    public: string;
+    publish: string;
+    unpublish: string;
+    publishConfirm: string;
+    deleteConfirm: string;
+    copyLink: string;
+    copied: string;
+    conflict: string;
+    saved: string;
+    topFive: string;
+    topFiveInvite: string;
+    topFiveHint: string;
+    later: string;
+    dismiss: string;
+    profile: string;
+    profileIntro: string;
+    displayName: string;
+    bio: string;
+    showAvatar: string;
+    publishProfile: string;
+    profilePreview: string;
+    blocks: string;
+    unblock: string;
+    blockHint: string;
+    emptyProfile: string;
+    emptyList: string;
+    publicEditHint: string;
+    moderated: string;
+    back: string;
+    follow: string;
+    unfollow: string;
+    notifyReplies: string;
+    mute: string;
+    followHint: string;
+    draftHint: string;
+    saveDraft: string;
+    myTopics: string;
+    own: string;
+    drafts: string;
+    following: string;
+    newReplies: string;
+    topicPublishConfirm: string;
+    markRead: string;
+    savePending: string;
+    pendingSaved: string;
+    alreadySaved: string;
+    attachRecommendation: string;
+    discussEpisode: string;
+    report: string;
+    reportSent: string;
+    block: string;
+    reportPrivacy: string;
+    reportReason: string;
+    reportDetail: string;
+    reasonSPAM: string;
+    reasonHARASSMENT: string;
+    reasonSPOILERS: string;
+    reasonOTHER: string;
+    moderation: string;
+    moderationHint: string;
+    openReports: string;
+    closedReports: string;
+    noReports: string;
+    contentUnavailable: string;
+    targetTOPIC: string;
+    targetREPLY: string;
+    targetLIST: string;
+    targetPROFILE: string;
+    actionHIDE: string;
+    actionRESTORE: string;
+    actionRESOLVE: string;
+    actionDISMISS: string;
+    audit: string;
+    actionReason: string;
+    actionReasonHint: string;
+    communitySettings: string;
+    settingsHint: string;
+    conversationsEnabled: string;
+    listsEnabled: string;
+    profilesEnabled: string;
+    promptEnabled: string;
+    publicParticipation: string;
+    metricsHint: string;
+    unansweredRequests: string;
+    helpSomeone: string;
+    paused: string;
+    importNotice: string;
+    notifyMe: string;
+    publishNote: string;
+  };
   writerProfile: {
     indexTitle: string;
     indexDescription: string;
@@ -124,7 +229,14 @@ export type TranslationShape = {
     loadError: string;
   };
   libraryWorkspace: {
-    backup: string; title: string; scope: string; preferences: string; error: string; saving: string; empty: string; };
+    backup: string;
+    title: string;
+    scope: string;
+    preferences: string;
+    error: string;
+    saving: string;
+    empty: string;
+  };
   trackingWorkspace: {
     gaps: string;
     title: string;
@@ -2571,6 +2683,16 @@ export type TranslationShape = {
     deployedAtLine: string;
   };
   verSerie: {
+    chapterTitle: string;
+    privateVideos: string;
+    play: string;
+    partNumber: string;
+    partLabel: string;
+    splitInParts: string;
+    extrasTitle: string;
+    filterExtras: string;
+    filterChapters: string;
+    filterAll: string;
     noEpisodesAvailable: string;
     inMyPersonalCatalogTooltip: string;
     inMyCatalogTag: string;
@@ -2764,6 +2886,7 @@ export type TranslationShape = {
     tooltipEpisodes: string;
   };
   progressStepper: {
+    chapterShort: string;
     at: string;
     epAbbr: string;
     none: string;
@@ -3450,7 +3573,134 @@ export type TranslationShape = {
 };
 
 const es: TranslationShape = {
-  communitySpace: COMMUNITY_SPACE_MESSAGES.es,
+  communitySpace: {
+    lists: 'Listas para descubrir',
+    searchLists: 'Buscar listas',
+    myLists: 'Mis listas',
+    newList: 'Crear una lista',
+    listsIntro:
+      'Historias elegidas por personas. Encontrá tu próxima favorita.',
+    emptyLists: 'La próxima recomendación puede ser tuya',
+    emptyListsHint:
+      'Armá una lista a tu ritmo. Solo vos la ves hasta que decidas publicarla.',
+    title: 'Nombre de la lista',
+    description: '¿Qué une estas historias?',
+    addWork: 'Agregar una obra',
+    reason: 'Por qué la recomendás (opcional)',
+    up: 'Subir',
+    down: 'Bajar',
+    remove: 'Quitar',
+    save: 'Guardar',
+    cancel: 'Cancelar',
+    edit: 'Editar',
+    preview: 'Vista previa',
+    private: 'Privada · solo vos',
+    public: 'Pública',
+    publish: 'Publicar',
+    unpublish: 'Volver a privado',
+    publishConfirm:
+      'Cualquier persona podrá verla y compartir el enlace. Podés retirarla cuando quieras.',
+    deleteConfirm: '¿Eliminar esta lista y sus recomendaciones?',
+    copyLink: 'Copiar enlace público',
+    copied: 'Enlace copiado',
+    conflict:
+      'Hay cambios más recientes. Recargá antes de guardar para no sobrescribirlos.',
+    saved: 'Cambios guardados',
+    topFive: 'Mi Top 5',
+    topFiveInvite: '¿Qué historias recomendarías para empezar?',
+    topFiveHint:
+      'Elegí hasta cinco, a tu ritmo. Se guardan en privado y vos decidís si publicarlas.',
+    later: 'Más adelante',
+    dismiss: 'No volver a mostrar',
+    profile: 'Mi espacio de comunidad',
+    profileIntro:
+      'Elegí qué mostrar. Tu historial, notas y preferencias personales siguen siendo privados.',
+    displayName: 'Nombre público',
+    bio: 'Una presentación breve',
+    showAvatar: 'Mostrar mi foto de cuenta en el perfil público',
+    publishProfile: 'Publicar mi perfil',
+    profilePreview: 'Ver mi perfil público',
+    blocks: 'Cuentas bloqueadas',
+    unblock: 'Desbloquear',
+    blockHint:
+      'El bloqueo evita interacciones entre cuentas dentro de Comunidad. Lo que publiques sigue visible sin iniciar sesión.',
+    emptyProfile: 'Todavía no hay listas publicadas',
+    emptyList: 'Agregá tu primera historia',
+    publicEditHint:
+      'Esta lista es pública. Los cambios guardados serán visibles para todos.',
+    moderated: 'Oculto por moderación',
+    back: 'Volver a las listas',
+    follow: 'Seguir conversación',
+    unfollow: 'Dejar de seguir',
+    notifyReplies: 'Avisarme de nuevas respuestas',
+    mute: 'Silenciar avisos',
+    followHint:
+      'Seguir no activa avisos. Podés activarlos, silenciarlos o dejar de seguir cuando quieras.',
+    draftHint:
+      'Guardá tu conversación en privado. Solo vos la ves hasta que decidas publicarla.',
+    saveDraft: 'Guardar borrador',
+    myTopics: 'Mis conversaciones',
+    own: 'Mis publicaciones',
+    drafts: 'Borradores',
+    following: 'Seguidas',
+    newReplies: 'Respuestas nuevas',
+    topicPublishConfirm:
+      '¿Publicar esta conversación? Cualquiera podrá leerla y compartir su enlace. Podés retirarla cuando quieras.',
+    markRead: 'Marcar esta página como leída',
+    savePending: 'Agregar a pendientes',
+    pendingSaved: 'Guardada en pendientes',
+    alreadySaved: 'Ya está en tu seguimiento',
+    attachRecommendation: 'Recomendar una obra (opcional)',
+    discussEpisode: 'Conversar sobre este capítulo',
+    report: 'Denunciar',
+    reportSent: 'Denuncia enviada para revisión.',
+    block: 'Bloquear usuario',
+    reportPrivacy:
+      'Tu identidad no se muestra a la persona denunciada. El equipo revisará el contenido público.',
+    reportReason: 'Motivo de la denuncia',
+    reportDetail: 'Detalles (opcionales)',
+    reasonSPAM: 'Spam',
+    reasonHARASSMENT: 'Acoso',
+    reasonSPOILERS: 'Spoilers sin aviso',
+    reasonOTHER: 'Otro motivo',
+    moderation: 'Moderación de comunidad',
+    moderationHint:
+      'Revisá contenido público y registrá cada decisión. Los borradores privados no están disponibles.',
+    openReports: 'Pendientes',
+    closedReports: 'Revisadas',
+    noReports: 'No hay denuncias en esta vista',
+    contentUnavailable:
+      'Contenido retirado, privado o no disponible. No se puede inspeccionar.',
+    targetTOPIC: 'Conversación',
+    targetREPLY: 'Respuesta',
+    targetLIST: 'Lista',
+    targetPROFILE: 'Perfil',
+    actionHIDE: 'Ocultar contenido',
+    actionRESTORE: 'Quitar restricción',
+    actionRESOLVE: 'Resolver',
+    actionDISMISS: 'Desestimar',
+    audit: 'Historial de decisiones',
+    actionReason: 'Motivo de la decisión',
+    actionReasonHint: 'Escribí entre 5 y 1000 caracteres.',
+    communitySettings: 'Disponibilidad de comunidad',
+    settingsHint:
+      'Pausar una función limita nuevas publicaciones. No vuelve privados los contenidos ya publicados ni impide retirarlos.',
+    conversationsEnabled: 'Conversaciones habilitadas',
+    listsEnabled: 'Listas habilitadas',
+    profilesEnabled: 'Perfiles públicos habilitados',
+    promptEnabled: 'Invitación opcional al Top 5',
+    publicParticipation: 'Participación pública',
+    metricsHint: 'Lo que se publicó en la comunidad. No cuenta visitas.',
+    unansweredRequests: 'Pedidos sin respuestas',
+    helpSomeone: 'Sumate a una conversación',
+    paused:
+      'Esta función está pausada temporalmente. Podés volver a intentarlo más adelante.',
+    importNotice:
+      'Comunidad: las listas, conversaciones y la presentación del perfil se recuperan en privado, sin reemplazar datos existentes. Las respuestas, seguimientos, bloqueos y denuncias se conservan en el archivo exportado, pero no se reactivan al importar. No se publicará contenido ni se activarán avisos.',
+    notifyMe: 'Avisarme cuando respondan',
+    publishNote:
+      'Cualquiera va a poder leerla. La podés retirar cuando quieras.',
+  },
   writerProfile: {
     indexTitle: 'Guionistas',
     indexDescription:
@@ -3493,7 +3743,7 @@ const es: TranslationShape = {
     recentReviews: 'Reseñas recientes',
     open: 'Entrar a la conversación',
     replies: 'respuestas',
-    noTopics: 'Todavía no hay conversaciones aquí',
+    noTopics: 'Todavía no hay conversaciones acá',
     noTopicsHint:
       'Contá qué estás viendo o qué te gustaría descubrir. Tu pregunta puede iniciar la próxima conversación.',
     anonymous: 'Cuenta eliminada',
@@ -3558,9 +3808,9 @@ const es: TranslationShape = {
   },
 
   trackingHistory: {
-    expand: "Ver {count} movimientos más",
-    collapse: "Ver menos",
-    loaded: "{count} movimientos cargados",
+    expand: 'Ver {count} movimientos más',
+    collapse: 'Ver menos',
+    loaded: '{count} movimientos cargados',
 
     title: 'Historial',
     description:
@@ -3594,14 +3844,16 @@ const es: TranslationShape = {
       'No se guardó ningún cambio. Estos nombres no existen o son ambiguos: {names}. Revisalos o pedí su incorporación a Flor.',
   },
   libraryWorkspace: {
-    backup: "Preferencias de biblioteca",
-  "title": "Mi biblioteca",
-  "scope": "En toda tu biblioteca",
-  "preferences": "La vista, el orden y los fijados se sincronizan al abrir esta pantalla o volver a ella en tus dispositivos.",
-  "error": "No pudimos sincronizar tus preferencias. Reintentá antes de cambiarlas.",
-  "saving": "Guardando preferencias…",
-  "empty": "Todavía no agregaste series a tu seguimiento."
-},
+    backup: 'Preferencias de biblioteca',
+    title: 'Mi biblioteca',
+    scope: 'En toda tu biblioteca',
+    preferences:
+      'La vista, el orden y los fijados se sincronizan al abrir esta pantalla o volver a ella en tus dispositivos.',
+    error:
+      'No pudimos sincronizar tus preferencias. Reintentá antes de cambiarlas.',
+    saving: 'Guardando preferencias…',
+    empty: 'Todavía no agregaste series a tu seguimiento.',
+  },
   trackingWorkspace: {
     gaps: 'Hay capítulos anteriores sin marcar',
     title: 'Mi seguimiento',
@@ -5601,7 +5853,7 @@ const es: TranslationShape = {
     scope:
       'Las reseñas incluyen el catálogo y los aportes accesibles para ver. Se excluyen borradores, contenido oculto y cuentas administradoras. Cada versión en otro idioma cuenta por separado.',
     subtitle:
-      'Métricas anónimas de la comunidad. Los datos se renuevan al visitar la página después de cinco minutos; la actualización puede tardar unos instantes.',
+      'Métricas anónimas de la comunidad. Los datos se renuevan al visitar la página después de una hora; la actualización puede tardar unos instantes.',
     activeScope:
       'Hasta 20 usuarios con seguimiento, reseñas publicadas, comentarios públicos, calificaciones o favoritos en los últimos 30 días.',
   },
@@ -6182,10 +6434,20 @@ const es: TranslationShape = {
     deployedAtLine: 'Desplegado: {date}',
   },
   verSerie: {
+    chapterTitle: 'Capítulo {n}',
+    privateVideos:
+      '{n} videos privados o retirados de YouTube por la productora',
+    play: 'Reproducir',
+    partNumber: 'Parte {n}',
+    partLabel: 'Parte {n}/{total}',
+    splitInParts: 'Dividido en {n} partes',
+    extrasTitle: 'Tráilers y material adicional',
+    filterExtras: 'Extras y tráilers ({n})',
+    filterChapters: 'Capítulos ({n})',
+    filterAll: 'Todo',
     noEpisodesAvailable: 'No hay episodios disponibles',
-    inMyPersonalCatalogTooltip:
-      'Esta serie también está en mi catálogo personal',
-    inMyCatalogTag: 'En mi catálogo',
+    inMyPersonalCatalogTooltip: 'También tiene ficha en el catálogo',
+    inMyCatalogTag: 'En el catálogo',
     watchableOnlyTag: 'Solo mirable',
     viewFullDetailsButton: 'Ver ficha completa',
     moveToMyCatalogButton: 'Pasar a mi catálogo',
@@ -6222,7 +6484,7 @@ const es: TranslationShape = {
     openOnYoutube: 'Abrir en YouTube',
     episodeSynopsisTitle: 'Sinopsis del episodio',
     aboutTheSeriesTitle: 'Sobre la serie',
-    episodesTitle: 'Episodios',
+    episodesTitle: 'Capítulos',
     seasonTitle: 'Temporada {seasonNumber}',
     episodeDefaultTitle: 'Episodio {episodeNumber}',
   },
@@ -6395,29 +6657,30 @@ const es: TranslationShape = {
     tooltipEpisodes: '{watched} de {total} episodios vistos',
   },
   progressStepper: {
+    chapterShort: 'T{season} · cap. {n}',
     at: 'Voy por el {current} de {total}',
-    epAbbr: 'Ep.',
+    epAbbr: 'Cap.',
     none: 'Ninguno todavía',
     nextUp: 'Siguiente: {label}',
-    allWatched: 'Viste todos los episodios',
+    allWatched: 'Viste todos los capítulos',
     next: 'Vi el siguiente',
     prev: 'Deshacer el último',
-    jumpTo: 'Saltar a un episodio',
+    jumpTo: 'Saltar a un capítulo',
     error: 'No se pudo actualizar el progreso.',
     finishedTitle: '¿Terminaste {title}?',
     markComplete: 'Sí, la terminé',
     notYet: 'Todavía no',
-    ariaNext: 'Marcar el siguiente episodio como visto',
-    ariaPrev: 'Desmarcar el último episodio visto',
+    ariaNext: 'Marcar el siguiente capítulo como visto',
+    ariaPrev: 'Desmarcar el último capítulo visto',
   },
   trackCta: {
     title: '¿La estás viendo?',
-    subtitle: 'Marcá por qué episodio vas y seguila desde tu lista.',
+    subtitle: 'Marcá por qué capítulo vas y seguila desde tu lista.',
     subtitleNoEpisodes: 'Marcala como vista y va a quedar en tu historial.',
     button: 'Empezar a seguir',
     buttonNoEpisodes: 'Marcarla como vista',
     applied: 'Listo, ya estás siguiendo {title}',
-    chooseEpisode: '¿Por qué episodio vas?',
+    chooseEpisode: '¿Por qué capítulo vas?',
   },
   trackingPanel: {
     title: 'Mi seguimiento',
@@ -6429,7 +6692,7 @@ const es: TranslationShape = {
     notesTitle: 'Notas privadas',
     episodeNote: 'Nota del {code}',
     seriesNote: 'Nota de la serie',
-    notesHintNoEpisode: 'Marcá un episodio como visto para anotarlo.',
+    notesHintNoEpisode: 'Marcá un capítulo como visto para anotarlo.',
     episodesAfterLast:
       'Hay capítulos después del último que marcaste como visto.',
     followAgain: 'Volver a seguirla',
@@ -6468,16 +6731,17 @@ const es: TranslationShape = {
     pickerAlreadyAdded: 'Ya esta en tu dashboard',
   },
   insightDistribution: {
-    "title": "Tu actividad en contexto",
-    "scope": "{count} obras con actividad en este período. Cada obra cuenta una vez por categoría; puede tener varios géneros, por eso sus porcentajes pueden sumar más de 100 %. Elegí una categoría para filtrar la lista de abajo.",
-    "country": "País de la obra",
-    "genre": "Género",
-    "type": "Tipo de obra",
-    "format": "Formato",
-    "unknown": "Sin dato",
-    "more": "Ver más categorías",
-    "clear": "Quitar filtro"
-},
+    title: 'Tu actividad en contexto',
+    scope:
+      '{count} obras con actividad en este período. Cada obra cuenta una vez por categoría; puede tener varios géneros, por eso sus porcentajes pueden sumar más de 100 %. Elegí una categoría para filtrar la lista de abajo.',
+    country: 'País de la obra',
+    genre: 'Género',
+    type: 'Tipo de obra',
+    format: 'Formato',
+    unknown: 'Sin dato',
+    more: 'Ver más categorías',
+    clear: 'Quitar filtro',
+  },
   trackingInsights: {
     title: 'Mis estadísticas',
     library: 'Mi seguimiento',
@@ -6507,8 +6771,8 @@ const es: TranslationShape = {
     retry: 'Reintentar',
   },
   profileDashboard: {
-    listCount: "Elementos por lista",
-    listCountHint: "Resúmenes del perfil. Se guarda en este navegador.",
+    listCount: 'Elementos por lista',
+    listCountHint: 'Resúmenes del perfil. Se guarda en este navegador.',
     title: 'Mi dashboard',
     subtitle: 'Personaliza tu vista de perfil con widgets reordenables.',
     fromClassicLink: 'Probar vista dashboard',
@@ -7127,7 +7391,133 @@ const es: TranslationShape = {
 };
 
 const en: TranslationShape = {
-  communitySpace: COMMUNITY_SPACE_MESSAGES.en,
+  communitySpace: {
+    lists: 'Lists to discover',
+    searchLists: 'Search lists',
+    myLists: 'My lists',
+    newList: 'Create a list',
+    listsIntro: 'Stories chosen by people. Find your next favorite.',
+    emptyLists: 'The next recommendation could be yours',
+    emptyListsHint:
+      'Build a list at your own pace. Only you can see it until you publish it.',
+    title: 'List name',
+    description: 'What connects these stories?',
+    addWork: 'Add a title',
+    reason: 'Why you recommend it (optional)',
+    up: 'Move up',
+    down: 'Move down',
+    remove: 'Remove',
+    save: 'Save',
+    cancel: 'Cancel',
+    edit: 'Edit',
+    preview: 'Preview',
+    private: 'Private · only you',
+    public: 'Public',
+    publish: 'Publish',
+    unpublish: 'Make private',
+    publishConfirm:
+      'Anyone will be able to view it and share the link. You can make it private anytime.',
+    deleteConfirm: 'Delete this list and its recommendations?',
+    copyLink: 'Copy public link',
+    copied: 'Link copied',
+    conflict:
+      'There are newer changes. Reload before saving to avoid overwriting them.',
+    saved: 'Changes saved',
+    topFive: 'My Top 5',
+    topFiveInvite: 'Which stories would you recommend to start with?',
+    topFiveHint:
+      'Choose up to five, at your own pace. They stay private until you decide to publish.',
+    later: 'Later',
+    dismiss: 'Don’t show again',
+    profile: 'My community space',
+    profileIntro:
+      'Choose what to show. Your history, notes and personal preferences stay private.',
+    displayName: 'Public name',
+    bio: 'A short introduction',
+    showAvatar: 'Show my account photo on my public profile',
+    publishProfile: 'Publish my profile',
+    profilePreview: 'View my public profile',
+    blocks: 'Blocked accounts',
+    unblock: 'Unblock',
+    blockHint:
+      'Blocking prevents interactions between accounts in Community. Public posts remain visible when signed out.',
+    emptyProfile: 'No published lists yet',
+    emptyList: 'Add your first story',
+    publicEditHint:
+      'This list is public. Saved changes will be visible to everyone.',
+    moderated: 'Hidden by moderation',
+    back: 'Back to lists',
+    follow: 'Follow conversation',
+    unfollow: 'Unfollow',
+    notifyReplies: 'Notify me of new replies',
+    mute: 'Mute notifications',
+    followHint:
+      'Following does not enable notifications. You can enable them, mute them or unfollow at any time.',
+    draftHint:
+      'Save your conversation privately. Only you can see it until you choose to publish.',
+    saveDraft: 'Save draft',
+    myTopics: 'My conversations',
+    own: 'My posts',
+    drafts: 'Drafts',
+    following: 'Following',
+    newReplies: 'New replies',
+    topicPublishConfirm:
+      'Publish this conversation? Anyone can read it and share its link. You can make it private again at any time.',
+    markRead: 'Mark this page as read',
+    savePending: 'Save to watch',
+    pendingSaved: 'Saved to watch',
+    alreadySaved: 'Already in your watchlist',
+    attachRecommendation: 'Recommend a work (optional)',
+    discussEpisode: 'Discuss this episode',
+    report: 'Report',
+    reportSent: 'Report submitted for review.',
+    block: 'Block user',
+    reportPrivacy:
+      'Your identity is not shown to the reported person. The team will review the public content.',
+    reportReason: 'Report reason',
+    reportDetail: 'Details (optional)',
+    reasonSPAM: 'Spam',
+    reasonHARASSMENT: 'Harassment',
+    reasonSPOILERS: 'Unmarked spoilers',
+    reasonOTHER: 'Other reason',
+    moderation: 'Community moderation',
+    moderationHint:
+      'Review public content and record each decision. Private drafts are not available.',
+    openReports: 'Pending reports',
+    closedReports: 'Reviewed reports',
+    noReports: 'No reports in this view',
+    contentUnavailable:
+      'Content withdrawn, private or unavailable. It cannot be inspected.',
+    targetTOPIC: 'Conversation',
+    targetREPLY: 'Reply',
+    targetLIST: 'List',
+    targetPROFILE: 'Profile',
+    actionHIDE: 'Hide content',
+    actionRESTORE: 'Remove restriction',
+    actionRESOLVE: 'Resolve',
+    actionDISMISS: 'Dismiss',
+    audit: 'Decision history',
+    actionReason: 'Decision reason',
+    actionReasonHint: 'Enter 5 to 1000 characters.',
+    communitySettings: 'Community availability',
+    settingsHint:
+      'Pausing a feature limits new publications. It does not make existing public content private or prevent withdrawal.',
+    conversationsEnabled: 'Conversations enabled',
+    listsEnabled: 'Lists enabled',
+    profilesEnabled: 'Public profiles enabled',
+    promptEnabled: 'Optional Top 5 invitation',
+    publicParticipation: 'Public participation',
+    metricsHint:
+      'What has been published in the community. Visits are not counted.',
+    unansweredRequests: 'Unanswered requests',
+    helpSomeone: 'Join a conversation',
+    paused: 'This feature is temporarily paused. You can try again later.',
+    importNotice:
+      'Community lists, conversations and profile text are restored privately without replacing existing data. Replies, follows, blocks and reports remain in the export file but are not restored. Nothing is published and notifications are not enabled.',
+    notifyMe: 'Notify me when someone replies',
+    publishNote:
+      'Anyone will be able to read it. You can take it down anytime.',
+  },
   writerProfile: {
     indexTitle: 'Screenwriters',
     indexDescription:
@@ -7231,9 +7621,9 @@ const en: TranslationShape = {
   },
 
   trackingHistory: {
-    expand: "Show {count} more events",
-    collapse: "Show less",
-    loaded: "{count} loaded events",
+    expand: 'Show {count} more events',
+    collapse: 'Show less',
+    loaded: '{count} loaded events',
 
     title: 'History',
     description:
@@ -7266,14 +7656,15 @@ const en: TranslationShape = {
       'No changes were saved. These names are missing or ambiguous: {names}. Check them or ask Flor to add them.',
   },
   libraryWorkspace: {
-    backup: "Library preferences",
-  "title": "My library",
-  "scope": "Across your library",
-  "preferences": "View, order and pins sync when you open or return to this screen on your devices.",
-  "error": "We could not sync your preferences. Retry before changing them.",
-  "saving": "Saving preferences…",
-  "empty": "You have not added any series to your tracking yet."
-},
+    backup: 'Library preferences',
+    title: 'My library',
+    scope: 'Across your library',
+    preferences:
+      'View, order and pins sync when you open or return to this screen on your devices.',
+    error: 'We could not sync your preferences. Retry before changing them.',
+    saving: 'Saving preferences…',
+    empty: 'You have not added any series to your tracking yet.',
+  },
   trackingWorkspace: {
     gaps: 'Some earlier chapters are not marked as watched',
     title: 'My tracking',
@@ -9258,7 +9649,7 @@ const en: TranslationShape = {
     scope:
       'Reviews include the catalog and accessible watchable contributions. Drafts, hidden content and admin accounts are excluded. Each language version counts separately.',
     subtitle:
-      'Anonymous community metrics. Data refreshes on a visit after five minutes; the update may take a moment.',
+      'Anonymous community metrics. Data refreshes on a visit after an hour; the update may take a moment.',
     activeScope:
       'Up to 20 users with tracking, published reviews, public comments, ratings or favorites in the last 30 days.',
   },
@@ -9838,9 +10229,20 @@ const en: TranslationShape = {
     deployedAtLine: 'Deployed: {date}',
   },
   verSerie: {
+    chapterTitle: 'Episode {n}',
+    privateVideos:
+      '{n} videos made private or removed from YouTube by the studio',
+    play: 'Play',
+    partNumber: 'Part {n}',
+    partLabel: 'Part {n}/{total}',
+    splitInParts: 'Split into {n} parts',
+    extrasTitle: 'Trailers and extras',
+    filterExtras: 'Extras and trailers ({n})',
+    filterChapters: 'Episodes ({n})',
+    filterAll: 'All',
     noEpisodesAvailable: 'No episodes available',
-    inMyPersonalCatalogTooltip: 'This series is also in my personal catalog',
-    inMyCatalogTag: 'In my catalog',
+    inMyPersonalCatalogTooltip: 'It also has a page in the catalog',
+    inMyCatalogTag: 'In the catalog',
     watchableOnlyTag: 'Watchable only',
     viewFullDetailsButton: 'View full details',
     moveToMyCatalogButton: 'Move to my catalog',
@@ -10049,6 +10451,7 @@ const en: TranslationShape = {
     tooltipEpisodes: '{watched} of {total} episodes watched',
   },
   progressStepper: {
+    chapterShort: 'S{season} · Ep. {n}',
     at: "I'm on {current} of {total}",
     epAbbr: 'Ep.',
     none: 'None yet',
@@ -10122,16 +10525,17 @@ const en: TranslationShape = {
     pickerAlreadyAdded: 'Already on your dashboard',
   },
   insightDistribution: {
-    "title": "Your activity in context",
-    "scope": "{count} works with activity in this period. Each work counts once per category; it may have multiple genres, so their percentages can exceed 100%. Select a category to filter the list below.",
-    "country": "Work’s country",
-    "genre": "Genre",
-    "type": "Work type",
-    "format": "Format",
-    "unknown": "Unknown",
-    "more": "More categories",
-    "clear": "Clear filter"
-},
+    title: 'Your activity in context',
+    scope:
+      '{count} works with activity in this period. Each work counts once per category; it may have multiple genres, so their percentages can exceed 100%. Select a category to filter the list below.',
+    country: 'Work’s country',
+    genre: 'Genre',
+    type: 'Work type',
+    format: 'Format',
+    unknown: 'Unknown',
+    more: 'More categories',
+    clear: 'Clear filter',
+  },
   trackingInsights: {
     title: 'My statistics',
     library: 'My tracking',
@@ -10161,8 +10565,8 @@ const en: TranslationShape = {
     retry: 'Retry',
   },
   profileDashboard: {
-    listCount: "Items per list",
-    listCountHint: "Profile summaries. Saved in this browser.",
+    listCount: 'Items per list',
+    listCountHint: 'Profile summaries. Saved in this browser.',
     title: 'My dashboard',
     subtitle: 'Customize your profile view with reorderable widgets.',
     fromClassicLink: 'Try dashboard view',
