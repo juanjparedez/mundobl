@@ -100,6 +100,13 @@ model User {
   supportMessages         SupportMessage[]
   communityTopics         CommunityTopic[]
   communityReplies        CommunityReply[]
+  communityProfile        CommunityProfile?
+  recommendationLists     RecommendationList[]
+  communityFollows        CommunityFollow[]
+  communityBlocks         CommunityBlock[] @relation("CommunityBlockAuthor")
+  communityBlockedBy      CommunityBlock[] @relation("CommunityBlockTarget")
+  communityReports        CommunityReport[]
+  communityModerationActions CommunityModerationAction[]
 }
 
 // Persistencia de layouts del dashboard modular (drag/resize por widget).
@@ -370,6 +377,8 @@ model Series {
   news                 News[]
   relatedSeriesTo      RelatedSeries[]      @relation("relatedSeries")
   communityTopics      CommunityTopic[]
+  recommendationItems RecommendationListItem[]
+  recommendedReplies CommunityReply[] @relation("CommunityReplyRecommendation")
   reviews              Review[]
   subscriptions        SeriesSubscription[]
   infoBlocks           SeriesInfoBlock[]
@@ -1793,6 +1802,8 @@ model CommunityTopic {
   body String
   hasSpoilers Boolean @default(false)
   closed Boolean @default(false)
+  visibility CommunityVisibility @default(PRIVATE)
+  moderationHidden Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userId String?
@@ -1802,6 +1813,8 @@ model CommunityTopic {
   episodeId Int?
   episode Episode? @relation(fields: [episodeId], references: [id], onDelete: Cascade)
   replies CommunityReply[]
+  follows CommunityFollow[]
+  @@index([visibility, moderationHidden, createdAt])
   @@index([kind, createdAt])
   @@index([seriesId, createdAt])
   @@index([episodeId])
@@ -1812,6 +1825,9 @@ model CommunityReply {
   id Int @id @default(autoincrement())
   body String
   hasSpoilers Boolean @default(false)
+  moderationHidden Boolean @default(false)
+  recommendedSeriesId Int?
+  recommendedSeries Series? @relation("CommunityReplyRecommendation", fields: [recommendedSeriesId], references: [id], onDelete: SetNull)
   createdAt DateTime @default(now())
   userId String?
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
@@ -1819,4 +1835,156 @@ model CommunityReply {
   topic CommunityTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
   @@index([topicId, createdAt])
   @@index([userId, createdAt])
+}
+
+enum CommunityVisibility {
+  PRIVATE
+  PUBLIC
+}
+
+enum RecommendationListKind {
+  STANDARD
+  TOP_FIVE
+}
+
+enum CommunityPromptChoice {
+  NEW
+  LATER
+  DISMISSED
+  STARTED
+}
+
+model CommunityProfile {
+  userId String @id
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  publicId String @unique @default(cuid())
+  published Boolean @default(false)
+  displayName String @default("")
+  bio String @default("")
+  showAvatar Boolean @default(false)
+  moderationHidden Boolean @default(false)
+  promptChoice CommunityPromptChoice @default(NEW)
+  promptAfter DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RecommendationList {
+  id String @id @default(cuid())
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title String
+  description String @default("")
+  kind RecommendationListKind @default(STANDARD)
+  visibility CommunityVisibility @default(PRIVATE)
+  moderationHidden Boolean @default(false)
+  revision Int @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  publishedAt DateTime?
+  items RecommendationListItem[]
+  @@index([userId, updatedAt])
+  @@index([visibility, moderationHidden, publishedAt])
+}
+
+model RecommendationListItem {
+  id String @id @default(cuid())
+  listId String
+  list RecommendationList @relation(fields: [listId], references: [id], onDelete: Cascade)
+  seriesId Int
+  series Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  position Int
+  note String @default("")
+  hasSpoilers Boolean @default(false)
+  @@unique([listId, seriesId])
+  @@unique([listId, position])
+  @@index([seriesId])
+}
+
+model CommunityFollow {
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topicId Int
+  topic CommunityTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  notify Boolean @default(false)
+  muted Boolean @default(false)
+  lastReadAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  @@id([userId, topicId])
+  @@index([topicId, notify, muted])
+}
+
+model CommunityBlock {
+  userId String
+  user User @relation("CommunityBlockAuthor", fields: [userId], references: [id], onDelete: Cascade)
+  targetId String
+  target User @relation("CommunityBlockTarget", fields: [targetId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  @@id([userId, targetId])
+  @@index([targetId])
+}
+
+enum CommunityReportTarget {
+  TOPIC
+  REPLY
+  LIST
+  PROFILE
+}
+
+enum CommunityReportReason {
+  SPAM
+  HARASSMENT
+  SPOILERS
+  OTHER
+}
+
+enum CommunityReportStatus {
+  OPEN
+  RESOLVED
+  DISMISSED
+}
+
+model CommunityReport {
+  id String @id @default(cuid())
+  reporterId String?
+  reporter User? @relation(fields: [reporterId], references: [id], onDelete: SetNull)
+  targetType CommunityReportTarget
+  targetId String
+  reason CommunityReportReason
+  detail String @default("")
+  status CommunityReportStatus @default(OPEN)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  actions CommunityModerationAction[]
+  @@unique([reporterId, targetType, targetId])
+  @@index([status, createdAt])
+  @@index([targetType, targetId])
+}
+
+enum CommunityModerationKind {
+  HIDE
+  RESTORE
+  RESOLVE
+  DISMISS
+}
+
+model CommunityModerationAction {
+  id String @id @default(cuid())
+  reportId String
+  report CommunityReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  moderatorId String?
+  moderator User? @relation(fields: [moderatorId], references: [id], onDelete: SetNull)
+  action CommunityModerationKind
+  reason String
+  createdAt DateTime @default(now())
+  @@index([reportId, createdAt])
+}
+
+model CommunitySettings {
+  id Int @id @default(1)
+  conversationsEnabled Boolean @default(true)
+  listsEnabled Boolean @default(true)
+  profilesEnabled Boolean @default(true)
+  promptEnabled Boolean @default(true)
+  updatedAt DateTime @updatedAt
 }

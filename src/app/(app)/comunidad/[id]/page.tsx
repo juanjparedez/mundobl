@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { requireAuth } from '@/lib/auth-helpers';
 import { getCommunityTopic } from '@/lib/database';
 import { CommunityThread } from './CommunityThread/CommunityThread';
 export const dynamic = 'force-dynamic';
@@ -17,7 +18,12 @@ export default async function CommunityTopicPage({
     page = Number(rawPage);
   if (!Number.isSafeInteger(topicId) || topicId > 2147483647 || page > 10000)
     notFound();
-  const topic = await getCommunityTopic(topicId, page);
+  const auth = await requireAuth();
+  const topic = await getCommunityTopic(
+    topicId,
+    page,
+    auth.authorized ? auth.userId : undefined
+  );
   if (!topic || (page > 1 && !topic.replies.length)) notFound();
   return <CommunityThread key={topic.id} topic={topic} page={page} />;
 }

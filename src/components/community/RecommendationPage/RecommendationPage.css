@@ -1,0 +1,8 @@
+.recommendation-page__status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  align-items: center;
+  margin: var(--spacing-lg) 0;
+  color: var(--text-secondary);
+}

@@ -42,6 +42,12 @@ export function parseCommunityTopic(value: unknown): CommunityTopicInput {
   const data = communityObject(value);
   const kind = COMMUNITY_KINDS.find((k) => k === data.kind);
   if (!kind) throw new CommunityError(400, 'invalid');
+  if (
+    data.visibility !== undefined &&
+    data.visibility !== 'PRIVATE' &&
+    data.visibility !== 'PUBLIC'
+  )
+    throw new CommunityError(400, 'invalid');
   const seriesId = data.seriesId == null ? null : communityId(data.seriesId);
   const episodeId = data.episodeId == null ? null : communityId(data.episodeId);
   if (
@@ -51,6 +57,7 @@ export function parseCommunityTopic(value: unknown): CommunityTopicInput {
     throw new CommunityError(400, 'invalid');
   return {
     kind,
+    visibility: data.visibility === 'PUBLIC' ? 'PUBLIC' : 'PRIVATE',
     title: communityText(data.title, 5, 140),
     body: communityText(data.body, 10, 5000),
     hasSpoilers: data.hasSpoilers === true || episodeId !== null,

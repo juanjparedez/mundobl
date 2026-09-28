@@ -1,0 +1,37 @@
+.community-moderation {
+  display: grid;
+  gap: var(--spacing-lg);
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+  color: var(--text-primary);
+}
+.community-moderation h1 {
+  font-size: clamp(26px, 4vw, 38px);
+  line-height: 1.2;
+}
+.community-moderation header p {
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+.community-moderation__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-block: var(--spacing-md);
+}
+.community-moderation__actions a[aria-current='page'] {
+  text-decoration: underline;
+  font-weight: 700;
+}
+.community-moderation__content {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.community-moderation details {
+  margin-top: var(--spacing-md);
+}
+.community-moderation summary {
+  cursor: pointer;
+}

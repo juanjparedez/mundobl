@@ -1,0 +1,11 @@
+.save-community-recommendation {
+  display: grid;
+  gap: var(--spacing-sm);
+  justify-items: start;
+  margin-top: var(--spacing-sm);
+}
+.save-community-recommendation .ant-btn {
+  white-space: normal;
+  height: auto;
+  min-height: 32px;
+}

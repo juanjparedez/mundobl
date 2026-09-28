@@ -1,4 +1,5 @@
 'use client';
+import { CommunityWorkLink } from '@/components/community/CommunityWorkLink/CommunityWorkLink';
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
@@ -1085,6 +1086,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
       {/* Rating + reseñas: solo para USER_EMBED — para CURATED+WATCHABLE_ONLY
        * ya existe en /series/[id] via "Ver ficha completa" mas arriba, asi
        * que evitamos duplicar el mismo widget en dos paginas. */}
+      <CommunityWorkLink seriesId={series.id} episodeId={active?.id} />
       {isUserEmbed && (
         <div id="series-section-reviews" className="ver-serie__ratings-reviews">
           <RatingSection seriesId={series.id} existingRatings={[]} />

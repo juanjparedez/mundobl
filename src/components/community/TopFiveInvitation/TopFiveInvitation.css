@@ -1,0 +1,47 @@
+.top-five-invitation {
+  padding: var(--spacing-md) var(--spacing-lg) 0;
+  width: 100%;
+  max-width: 1160px;
+  margin: 0 auto;
+}
+.top-five-invitation__layout {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+}
+.top-five-invitation__layout > div {
+  min-width: 0;
+}
+.top-five-invitation__layout h2 {
+  margin: 0 0 var(--spacing-xs);
+  color: var(--text-primary);
+  font-size: var(--font-size-base);
+}
+.top-five-invitation__layout p {
+  margin: 0 0 var(--spacing-md);
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.top-five-invitation__icon {
+  color: var(--primary-color);
+  font-size: 24px;
+  margin-top: var(--spacing-xs);
+}
+.top-five-invitation__actions {
+  display: flex;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+.top-five-invitation__actions .ant-btn {
+  white-space: normal;
+  height: auto;
+  min-height: 32px;
+}
+@media (max-width: 480px) {
+  .top-five-invitation {
+    padding: var(--spacing-sm);
+  }
+  .top-five-invitation__icon {
+    display: none;
+  }
+}

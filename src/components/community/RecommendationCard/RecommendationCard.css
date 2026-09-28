@@ -1,0 +1,55 @@
+.recommendation-card {
+  height: 100%;
+  overflow: hidden;
+}
+.recommendation-card__covers {
+  display: flex;
+  height: 180px;
+  gap: 3px;
+  background: color-mix(in srgb, var(--primary-color) 10%, var(--bg-container));
+  overflow: hidden;
+}
+.recommendation-card__covers > span {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  display: grid;
+  place-items: center;
+  color: var(--text-tertiary);
+  font-size: 32px;
+}
+.recommendation-card__covers img {
+  object-fit: cover;
+}
+.recommendation-card__body {
+  padding: var(--spacing-lg);
+}
+.recommendation-card__body h2 {
+  font-size: var(--font-size-lg);
+  margin: var(--spacing-md) 0;
+  overflow-wrap: anywhere;
+}
+.recommendation-card__body h2 a {
+  color: var(--text-primary);
+}
+.recommendation-card__body p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+.recommendation-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+.recommendation-card__footer {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}

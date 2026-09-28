@@ -41,6 +41,8 @@ async function main() {
   const from = new Pool({ connectionString: source });
   const to = new Pool({ connectionString: target });
   const userId = 'backup-fixture-' + Date.now();
+  const secondUserId = userId + '-moderator';
+  let settingsCreated = false;
   let seriesId: number | undefined;
   let companyId: number | undefined;
   let writerId: number | undefined;
@@ -48,6 +50,10 @@ async function main() {
     await from.query(
       `INSERT INTO "User" (id, email, "updatedAt") VALUES ($1, $2, now())`,
       [userId, userId + '@example.invalid']
+    );
+    await from.query(
+      `INSERT INTO "User" (id, email, role, "updatedAt") VALUES ($1, $2, 'ADMIN', now())`,
+      [secondUserId, secondUserId + '@example.invalid']
     );
     const series = await from.query<{ id: number }>(
       `INSERT INTO "Series" (title, type, "updatedAt") VALUES ('Restauración á 漢字', 'serie', now()) RETURNING id`
@@ -61,6 +67,39 @@ async function main() {
       `INSERT INTO "CommunityReply" ("topicId", "userId", body, "hasSpoilers") VALUES ($1, $2, 'Respuesta á 漢字', true)`,
       [topic.rows[0].id, userId]
     );
+    await from.query(
+      `INSERT INTO "CommunityProfile" ("userId", "publicId", "displayName", bio, "promptChoice", "updatedAt") VALUES ($1, $2, 'Perfil á 漢字', 'Privado', 'DISMISSED', now())`,
+      [userId, userId + '-profile']
+    );
+    await from.query(
+      `INSERT INTO "RecommendationList" (id, "userId", title, kind, "updatedAt") VALUES ($1, $2, 'Top cinco 漢字', 'TOP_FIVE', now())`,
+      [userId + '-list', userId]
+    );
+    await from.query(
+      `INSERT INTO "RecommendationListItem" (id, "listId", "seriesId", position, note, "hasSpoilers") VALUES ($1, $2, $3, 0, 'Motivo privado á', true)`,
+      [userId + '-item', userId + '-list', seriesId]
+    );
+    await from.query(
+      `INSERT INTO "CommunityFollow" ("userId", "topicId", notify, muted) VALUES ($1, $2, true, true)`,
+      [userId, topic.rows[0].id]
+    );
+    await from.query(
+      `INSERT INTO "CommunityBlock" ("userId", "targetId") VALUES ($1, $2)`,
+      [userId, secondUserId]
+    );
+    await from.query(
+      `INSERT INTO "CommunityReport" (id, "reporterId", "targetType", "targetId", reason, detail, status, "updatedAt") VALUES ($1, $2, 'TOPIC', $3, 'OTHER', 'Revisión 漢字', 'RESOLVED', now())`,
+      [userId + '-report', userId, String(topic.rows[0].id)]
+    );
+    await from.query(
+      `INSERT INTO "CommunityModerationAction" (id, "reportId", "moderatorId", action, reason) VALUES ($1, $2, $3, 'RESOLVE', 'Motivo de revisión 漢字')`,
+      [userId + '-action', userId + '-report', secondUserId]
+    );
+    settingsCreated = !!(
+      await from.query(
+        `INSERT INTO "CommunitySettings" (id, "updatedAt") VALUES (1, now()) ON CONFLICT (id) DO NOTHING RETURNING id`
+      )
+    ).rowCount;
     const writer = await from.query<{ id: number }>(
       `INSERT INTO "Writer" (name, aliases, "imageAttribution", "bioSourceUrl", "updatedAt") VALUES ($1, $2, $3, $4, now()) RETURNING id`,
       [
@@ -127,10 +166,15 @@ async function main() {
     );
     assert.ok(nextWriter.rows[0].id > writerId);
     console.log(
-      `PASS: ${tables.rows.length} tablas idénticas, cuatro tablas antes omitidas con datos, secuencias y rechazo de destino ocupado.`
+      `PASS: ${tables.rows.length} tablas idénticas, ocho modelos de comunidad con datos y relaciones, secuencias y rechazo de destino ocupado.`
     );
   } finally {
     // Remove only fixtures created by this run from the source database.
+    await from.query('DELETE FROM "CommunityReport" WHERE id=$1', [
+      userId + '-report',
+    ]);
+    if (settingsCreated)
+      await from.query('DELETE FROM "CommunitySettings" WHERE id=1');
     if (seriesId)
       await from.query('DELETE FROM "Series" WHERE id=$1', [seriesId]);
     if (writerId)
@@ -145,6 +189,7 @@ async function main() {
       ]);
     }
     await from.query('DELETE FROM "User" WHERE id=$1', [userId]);
+    await from.query('DELETE FROM "User" WHERE id=$1', [secondUserId]);
     await from.end();
     await to.end();
   }

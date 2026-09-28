@@ -1,0 +1,19 @@
+.community-follow {
+  display: grid;
+  gap: var(--spacing-sm);
+}
+.community-follow__controls,
+.community-follow__option {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+.community-follow__controls {
+  gap: var(--spacing-md);
+}
+.community-follow__hint {
+  color: var(--text-secondary);
+  margin: 0;
+  font-size: var(--font-size-sm);
+}

@@ -9,6 +9,15 @@ import { PanelCard, Chip, EmptyState } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { getContentUrl, getSeriesUrl } from '@/lib/slug';
 import type { CommunityTopicDetail } from '@/types/community';
+import { CommunityFollowControls } from '@/components/community/CommunityFollowControls/CommunityFollowControls';
+import { CommunityTopicOwnerControls } from '@/components/community/CommunityTopicOwnerControls/CommunityTopicOwnerControls';
+import { CommunitySafetyControls } from '@/components/community/CommunitySafetyControls/CommunitySafetyControls';
+import { CommunityShareLink } from '@/components/community/CommunityShareLink/CommunityShareLink';
+import {
+  CommunitySeriesPicker,
+  type CommunitySeriesOption,
+} from '@/components/community/CommunitySeriesPicker/CommunitySeriesPicker';
+import { SaveCommunityRecommendation } from '@/components/community/SaveCommunityRecommendation/SaveCommunityRecommendation';
 import './CommunityThread.css';
 
 export function CommunityThread({
@@ -23,12 +32,12 @@ export function CommunityThread({
   const router = useRouter();
   const [body, setBody] = useState('');
   const [spoilers, setSpoilers] = useState(false);
+  const [recommendation, setRecommendation] =
+    useState<CommunitySeriesOption | null>(null);
   const [revealed, setRevealed] = useState(!topic.hasSpoilers);
   const [revealedReplies, setRevealedReplies] = useState<number[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  const moderator =
-    session?.user?.role === 'ADMIN' || session?.user?.role === 'MODERATOR';
   const owner = session?.user?.id === topic.author?.id && !!session?.user?.id;
   const date = (value: string) =>
     new Intl.DateTimeFormat(locale, {
@@ -48,13 +57,18 @@ export function CommunityThread({
         }
       );
       if (!response.ok) {
+        const failure: { error?: string } = await response
+          .json()
+          .catch(() => ({}));
         setError(
           t(
-            response.status === 429
-              ? 'communityHub.rateLimit'
-              : response.status === 409
-                ? 'communityHub.closed'
-                : 'communityHub.error'
+            failure.error === 'paused'
+              ? 'communitySpace.paused'
+              : response.status === 429
+                ? 'communityHub.rateLimit'
+                : response.status === 409
+                  ? 'communityHub.closed'
+                  : 'communityHub.error'
           )
         );
         return false;
@@ -69,9 +83,16 @@ export function CommunityThread({
   }
   async function reply() {
     if (!body.trim()) return;
-    if (await mutate('POST', '/replies', { body, hasSpoilers: spoilers })) {
+    if (
+      await mutate('POST', '/replies', {
+        body,
+        hasSpoilers: spoilers,
+        recommendedSeriesId: recommendation?.id ?? null,
+      })
+    ) {
       setBody('');
       setSpoilers(false);
+      setRecommendation(null);
       const lastPage = Math.ceil((topic.replyCount + 1) / 30);
       router.push(
         `/comunidad/${topic.id}${lastPage > 1 ? `?page=${lastPage}` : ''}`
@@ -86,6 +107,13 @@ export function CommunityThread({
       <PanelCard className="community-thread__topic">
         <div className="community-thread__meta">
           <Chip>{t(`communityHub.${topic.kind}`)}</Chip>
+          <Chip>
+            {t(
+              topic.visibility === 'PRIVATE'
+                ? 'communitySpace.private'
+                : 'communitySpace.public'
+            )}
+          </Chip>
           {topic.closed && <Chip>{t('communityHub.closed')}</Chip>}
         </div>
         {topic.series && (
@@ -101,7 +129,13 @@ export function CommunityThread({
         <h1>{revealed ? topic.title : t('community.spoilers')}</h1>
         <div className="community-thread__meta">
           <Avatar size={28} src={topic.author?.image} icon={<UserOutlined />} />
-          <span>{topic.author?.name ?? t('communityHub.anonymous')}</span>
+          {topic.author?.profileId ? (
+            <Link href={`/comunidad/perfiles/${topic.author.profileId}`}>
+              {topic.author.name}
+            </Link>
+          ) : (
+            <span>{topic.author?.name ?? t('communityHub.anonymous')}</span>
+          )}
           <time dateTime={topic.createdAt}>{date(topic.createdAt)}</time>
         </div>
         {revealed ? (
@@ -112,6 +146,9 @@ export function CommunityThread({
           </Button>
         )}
         <div className="community-thread__actions">
+          {topic.visibility === 'PUBLIC' && !topic.moderationHidden && (
+            <CommunityShareLink path={`/comunidad/${topic.id}`} />
+          )}
           {topic.kind === 'REVIEW_REQUEST' && topic.series && (
             <Button
               href={`${topic.series.origin === 'CURATED' ? getSeriesUrl(topic.series.id, topic.series.title) : getContentUrl(topic.series)}?review=new#series-section-reviews`}
@@ -119,7 +156,7 @@ export function CommunityThread({
               {t('communityHub.writeReview')}
             </Button>
           )}
-          {(owner || moderator) && (
+          {owner && (
             <>
               <Button
                 disabled={busy}
@@ -147,6 +184,24 @@ export function CommunityThread({
           )}
         </div>
       </PanelCard>
+      {topic.visibility === 'PUBLIC' && !topic.moderationHidden && (
+        <CommunitySafetyControls
+          targetType="TOPIC"
+          targetId={String(topic.id)}
+          authorId={topic.author?.id}
+        />
+      )}
+      {owner && <CommunityTopicOwnerControls topic={topic} />}
+      {session?.user?.id &&
+        topic.visibility === 'PUBLIC' &&
+        !topic.moderationHidden && (
+          <CommunityFollowControls
+            key={`${topic.id}:${session.user.id}`}
+            topicId={topic.id}
+            initial={topic.follow}
+            lastReplyId={topic.replies.at(-1)?.id}
+          />
+        )}
       {revealed && (
         <section aria-label={t('communityHub.replies')}>
           <h2>
@@ -166,7 +221,15 @@ export function CommunityThread({
                       icon={<UserOutlined />}
                     />
                     <strong>
-                      {reply.author?.name ?? t('communityHub.anonymous')}
+                      {reply.author?.profileId ? (
+                        <Link
+                          href={`/comunidad/perfiles/${reply.author.profileId}`}
+                        >
+                          {reply.author.name}
+                        </Link>
+                      ) : (
+                        (reply.author?.name ?? t('communityHub.anonymous'))
+                      )}
                     </strong>
                     <time dateTime={reply.createdAt}>
                       {date(reply.createdAt)}
@@ -181,27 +244,53 @@ export function CommunityThread({
                       {t('communityHub.showSpoilers')}
                     </Button>
                   ) : (
-                    <p className="community-thread__body">{reply.body}</p>
+                    <>
+                      <p className="community-thread__body">{reply.body}</p>
+                      {reply.recommendedSeries && (
+                        <div className="community-thread__recommendation">
+                          <Link href={getContentUrl(reply.recommendedSeries)}>
+                            {reply.recommendedSeries.title}
+                          </Link>
+                          <SaveCommunityRecommendation
+                            seriesId={reply.recommendedSeries.id}
+                          />
+                        </div>
+                      )}
+                    </>
                   )}
-                  {(moderator ||
-                    (!!session?.user?.id &&
-                      session.user.id === reply.author?.id)) && (
-                    <Popconfirm
-                      title={t('communityHub.deleteConfirm')}
-                      onConfirm={async () => {
-                        if (
-                          await mutate('DELETE', `/replies?replyId=${reply.id}`)
-                        ) {
-                          router.push(`/comunidad/${topic.id}`);
-                          router.refresh();
-                        }
-                      }}
-                    >
-                      <Button danger type="text" disabled={busy}>
-                        {t('communityHub.delete')}
-                      </Button>
-                    </Popconfirm>
+                  {topic.visibility === 'PUBLIC' && !topic.moderationHidden && (
+                    <>
+                      <CommunityShareLink
+                        path={`/comunidad/${topic.id}?page=${page}#reply-${reply.id}`}
+                      />
+                      <CommunitySafetyControls
+                        targetType="REPLY"
+                        targetId={String(reply.id)}
+                        authorId={reply.author?.id}
+                      />
+                    </>
                   )}
+                  {!!session?.user?.id &&
+                    session.user.id === reply.author?.id && (
+                      <Popconfirm
+                        title={t('communityHub.deleteConfirm')}
+                        onConfirm={async () => {
+                          if (
+                            await mutate(
+                              'DELETE',
+                              `/replies?replyId=${reply.id}`
+                            )
+                          ) {
+                            router.push(`/comunidad/${topic.id}`);
+                            router.refresh();
+                          }
+                        }}
+                      >
+                        <Button danger type="text" disabled={busy}>
+                          {t('communityHub.delete')}
+                        </Button>
+                      </Popconfirm>
+                    )}
                 </PanelCard>
               </li>
             ))}
@@ -220,7 +309,16 @@ export function CommunityThread({
               )}
             </nav>
           )}
-          {topic.closed ? (
+          {topic.visibility === 'PRIVATE' || topic.moderationHidden ? (
+            <Alert
+              title={t(
+                topic.moderationHidden
+                  ? 'communitySpace.moderated'
+                  : 'communitySpace.draftHint'
+              )}
+              type="info"
+            />
+          ) : topic.closed ? (
             <Alert title={t('communityHub.closed')} type="info" />
           ) : session?.user ? (
             <PanelCard>
@@ -241,6 +339,26 @@ export function CommunityThread({
                   rows={4}
                   placeholder={t('communityHub.replyPlaceholder')}
                 />
+                <div className="community-thread__actions">
+                  <CommunitySeriesPicker
+                    label={t('communitySpace.attachRecommendation')}
+                    hint={t('communityHub.searchHint')}
+                    errorLabel={t('communityHub.error')}
+                    disabled={busy}
+                    onSelect={setRecommendation}
+                  />
+                  {recommendation && (
+                    <span>
+                      {recommendation.title}{' '}
+                      <Button
+                        disabled={busy}
+                        onClick={() => setRecommendation(null)}
+                      >
+                        {t('communitySpace.remove')}
+                      </Button>
+                    </span>
+                  )}
+                </div>
                 <div className="community-thread__actions">
                   <Switch
                     id="reply-spoilers"

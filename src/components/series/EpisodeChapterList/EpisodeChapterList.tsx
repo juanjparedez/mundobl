@@ -10,6 +10,7 @@ import {
 } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import { CommentsList } from '@/components/common/CommentsList';
+import { CommunityWorkLink } from '@/components/community/CommunityWorkLink/CommunityWorkLink';
 import { SpoilerGate } from '@/components/common/SpoilerGate/SpoilerGate';
 import { EpisodeNoteModal } from '../EpisodeNoteModal/EpisodeNoteModal';
 import { WatchedToggle } from '../WatchedToggle/WatchedToggle';
@@ -50,7 +51,7 @@ export function EpisodeChapterList({
 }: EpisodeChapterListProps) {
   const { t } = useLocale();
   const { data: session } = useSession();
-  const { episodeStatus } = useSeriesUserStatus();
+  const { episodeStatus, seriesId } = useSeriesUserStatus();
   const { setWatched, pendingKey, ready } = useMarkEpisodes();
   const [dateOptions, setDateOptions] = useState<WatchDateOption[] | null>(
     null
@@ -253,6 +254,12 @@ export function EpisodeChapterList({
 
               {expanded && (
                 <div className="episode-chapters__comments">
+                  {seriesId && (
+                    <CommunityWorkLink
+                      seriesId={seriesId}
+                      episodeId={anchor.id}
+                    />
+                  )}
                   <CommentsList
                     episodeId={anchor.id}
                     placeholder={t('episodesList.commentsPlaceholder')}

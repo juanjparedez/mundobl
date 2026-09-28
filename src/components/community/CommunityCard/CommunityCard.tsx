@@ -70,7 +70,13 @@ export function CommunityCard({
           {excerpt && <p className="community-card__excerpt">{excerpt}</p>}
           <div className="community-card__byline">
             <Avatar size={24} src={author?.image} icon={<UserOutlined />} />
-            <span>{author?.name ?? anonymous}</span>
+            {author?.profileId ? (
+              <Link href={`/comunidad/perfiles/${author.profileId}`}>
+                {author.name}
+              </Link>
+            ) : (
+              <span>{author?.name ?? anonymous}</span>
+            )}
             {date && (
               <time dateTime={date}>
                 {new Intl.DateTimeFormat(locale, {
