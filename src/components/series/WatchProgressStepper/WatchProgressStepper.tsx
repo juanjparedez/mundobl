@@ -11,7 +11,7 @@ import {
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { findFurthestWatchedIndex } from '@/lib/episode-progress';
-import { chapterCode, type TrackedChapter } from '@/lib/episode-chapters';
+import type { TrackedChapter } from '@/lib/episode-chapters';
 import { useMessage } from '@/hooks/useMessage';
 import { useSeriesUserStatus } from '../SeriesUserStatusProvider';
 import { setLocalProgressThrough } from '@/lib/local-progress';
@@ -165,13 +165,18 @@ export function WatchProgressStepper({
     }
   };
 
+  const code = (chapter: TrackedChapter) =>
+    t('progressStepper.chapterShort', {
+      season: chapter.seasonNumber,
+      n: chapter.number,
+    });
   const jumpOptions = [
     { value: -1, label: t('progressStepper.none') },
     ...chapters.map((chapter, i) => ({
       value: i,
       label: chapter.title
-        ? `${chapterCode(chapter)} — ${chapter.title}`
-        : chapterCode(chapter),
+        ? `${code(chapter)} — ${chapter.title}`
+        : code(chapter),
     })),
   ];
 
@@ -285,7 +290,7 @@ export function WatchProgressStepper({
               <PlayCircleOutlined aria-hidden />
               <span className="watch-progress-stepper__next-text">
                 {interpolateMessage(t('progressStepper.nextUp'), {
-                  label: chapterCode(nextChapter),
+                  label: code(nextChapter),
                 })}
                 {nextChapter.title && (
                   <span className="watch-progress-stepper__next-title">

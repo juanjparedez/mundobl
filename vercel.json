@@ -1,8 +1,8 @@
 {
   "git": {
     "deploymentEnabled": {
-      "codex/comunidad-conversaciones": false,
-      "codex/comunidad-pertenencia": false
+      "**": false,
+      "main": true
     }
   },
   "crons": [

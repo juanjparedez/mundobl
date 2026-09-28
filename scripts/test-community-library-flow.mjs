@@ -66,10 +66,9 @@ const bundle = await build({
     import {RecommendationPage} from './src/components/community/RecommendationPage/RecommendationPage';
     import {CommunityProfileEditor} from './src/components/community/CommunityProfileEditor/CommunityProfileEditor';
     import {PublicCommunityProfile} from './src/components/community/PublicCommunityProfile/PublicCommunityProfile';
-    import {TopFiveInvitation} from './src/components/community/TopFiveInvitation/TopFiveInvitation';
     import './src/styles/variables.css';
     const d=window.fixture;
-    createRoot(document.getElementById('root')).render(<LocaleProvider><ThemeProvider><App><TopFiveInvitation />{d.kind==='new'?<NewRecommendation/>:d.kind==='detail'?<RecommendationPage initial={d.list}/>:d.kind==='settings'?<CommunityProfileEditor initial={d.profile} initialBlocks={d.blocks}/>:d.kind==='profile'?<PublicCommunityProfile profile={d.profile}/>:<CommunityLists {...d.lists}/>}</App></ThemeProvider></LocaleProvider>);
+    createRoot(document.getElementById('root')).render(<LocaleProvider><ThemeProvider><App>{d.kind==='new'?<NewRecommendation/>:d.kind==='detail'?<RecommendationPage initial={d.list}/>:d.kind==='settings'?<CommunityProfileEditor initial={d.profile} initialBlocks={d.blocks}/>:d.kind==='profile'?<PublicCommunityProfile profile={d.profile}/>:<CommunityLists {...d.lists}/>}</App></ThemeProvider></LocaleProvider>);
   `,
   },
   bundle: true,

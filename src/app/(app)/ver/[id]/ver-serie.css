@@ -648,3 +648,7 @@
     grid-template-columns: 1fr;
   }
 }
+
+.ver-serie__extra-tag {
+  align-self: flex-start;
+}

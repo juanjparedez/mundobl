@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Alert, Button } from 'antd';
 import { HeartOutlined } from '@ant-design/icons';
 import { PanelCard } from '@/components/design-system';
@@ -15,7 +15,6 @@ export function TopFiveInvitation() {
   const { data: session, status } = useSession();
   const { t } = useLocale();
   const router = useRouter();
-  const pathname = usePathname();
   const [eligibleUser, setEligibleUser] = useState<string | null>(null);
   const { busy, error, run } = useCommunityAction();
   const userId = session?.user?.id;
@@ -36,15 +35,8 @@ export function TopFiveInvitation() {
         /* An optional invitation never interrupts the main page. */
       });
     return () => controller.abort();
-  }, [userId, status, pathname]);
-  if (
-    !userId ||
-    eligibleUser !== userId ||
-    pathname?.startsWith('/admin') ||
-    pathname?.startsWith('/comunidad/mi-espacio') ||
-    pathname?.startsWith('/comunidad/listas/')
-  )
-    return null;
+  }, [userId, status]);
+  if (!userId || eligibleUser !== userId) return null;
   async function dismiss(choice: 'LATER' | 'DISMISSED') {
     await communityFetch('/api/community/profile', 'PATCH', {
       action: 'prompt',

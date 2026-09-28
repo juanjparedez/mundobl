@@ -82,6 +82,8 @@ async function main() {
       'Otra explicación'
     );
     assert.equal(report.id, repeated.id, 'Repeated report is idempotent');
+    assert.equal(report.created, true, 'First report notifies staff');
+    assert.equal(repeated.created, false, 'Repeated report does not notify');
     await assert.rejects(getCommunityModerationQueue(owner), rejected(403));
     await assert.rejects(
       moderateCommunityReport(owner, report.id, 'HIDE', 'No soy del equipo'),

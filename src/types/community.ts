@@ -51,6 +51,7 @@ export interface CommunityReplyItem {
   id: number;
   body: string;
   hasSpoilers: boolean;
+  moderationHidden: boolean;
   createdAt: string;
   author: CommunityAuthor | null;
 }

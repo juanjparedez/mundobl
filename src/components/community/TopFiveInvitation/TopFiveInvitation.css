@@ -1,8 +1,5 @@
 .top-five-invitation {
-  padding: var(--spacing-md) var(--spacing-lg) 0;
   width: 100%;
-  max-width: 1160px;
-  margin: 0 auto;
 }
 .top-five-invitation__layout {
   display: flex;
@@ -38,9 +35,6 @@
   min-height: 32px;
 }
 @media (max-width: 480px) {
-  .top-five-invitation {
-    padding: var(--spacing-sm);
-  }
   .top-five-invitation__icon {
     display: none;
   }

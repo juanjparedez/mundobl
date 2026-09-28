@@ -6,6 +6,7 @@ import { EmptyState } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { CommunitySpace } from '../CommunitySpace/CommunitySpace';
 import { RecommendationCard } from '../RecommendationCard/RecommendationCard';
+import { TopFiveInvitation } from '../TopFiveInvitation/TopFiveInvitation';
 import type { RecommendationListSummary } from '@/types/community-library';
 import './CommunityLists.css';
 
@@ -41,6 +42,7 @@ export function CommunityLists({
         )
       }
     >
+      {!mine && <TopFiveInvitation />}
       <form
         action="/comunidad/listas"
         method="get"
