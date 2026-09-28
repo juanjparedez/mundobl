@@ -9,8 +9,18 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
-// All models to backup, in order that respects foreign keys
+// All models to back up; restore-db computes the foreign-key insertion order.
 const MODELS = [
+  {
+    name: 'CommunityTopic',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.communityTopic.findMany(),
+  },
+  {
+    name: 'CommunityReply',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.communityReply.findMany(),
+  },
   {
     name: 'User',
     delegate: (client: Prisma.TransactionClient) => client.user.findMany(),
