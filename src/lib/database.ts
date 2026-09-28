@@ -1,4 +1,8 @@
 import type { WatchDateTarget } from './watch-date';
+import { createCommunityLibraryRepository } from './community-library-repository';
+import { createCommunityModerationRepository } from './community-moderation-repository';
+import { createCommunityConversationsRepository } from './community-conversations-repository';
+import { createCommunityBackupRepository } from './community-backup-repository';
 import { CommunityError, communityExcerpt } from './community-input';
 import { formatPublicName } from './user-display';
 import type {
@@ -2188,14 +2192,34 @@ export function getActiveCommunityUsersWhere(
       { comments: { some: { isPrivate: false, updatedAt: { gte: since } } } },
       { userRatings: { some: { updatedAt: { gte: since } } } },
       { favorites: { some: { createdAt: { gte: since } } } },
-      { communityTopics: { some: { createdAt: { gte: since } } } },
-      { communityReplies: { some: { createdAt: { gte: since } } } },
+      {
+        communityTopics: {
+          some: {
+            visibility: 'PUBLIC',
+            moderationHidden: false,
+            createdAt: { gte: since },
+          },
+        },
+      },
+      {
+        communityReplies: {
+          some: {
+            moderationHidden: false,
+            topic: { visibility: 'PUBLIC', moderationHidden: false },
+            createdAt: { gte: since },
+          },
+        },
+      },
     ],
   };
 }
 
 /** Public community discovery contains published reviews, never tracking or notes. */
-export async function getCommunityReviews(page = 1, search = '') {
+export async function getCommunityReviews(
+  page = 1,
+  search = '',
+  viewerId?: string
+) {
   if (!Number.isSafeInteger(page) || page < 1 || page > 71582788) {
     throw new RangeError('Invalid community page');
   }
@@ -2204,6 +2228,7 @@ export async function getCommunityReviews(page = 1, search = '') {
   const rows = await prisma.review.findMany({
     where: {
       status: 'PUBLISHED',
+      user: communityPublicAuthorWhere(viewerId),
       series: {
         ...PUBLIC_REVIEW_SERIES,
         ...(query
@@ -2221,7 +2246,7 @@ export async function getCommunityReviews(page = 1, search = '') {
       body: true,
       publishedAt: true,
       helpfulCount: true,
-      user: { select: { id: true, name: true, nickname: true, image: true } },
+      user: { select: communityAuthorSelect },
       series: {
         select: {
           id: true,
@@ -2535,14 +2560,92 @@ export async function getTrackingInsights(
 }
 
 // Public discussion discovery. Hidden works disappear from lists and direct links.
+export const {
+  getCommunityAccountExport,
+  deleteAccountWithCommunity,
+  getRecommendationList,
+  getRecommendationLists,
+  createRecommendationList,
+  updateRecommendationList,
+  publishRecommendationList,
+  deleteRecommendationList,
+  getCommunityProfileSettings,
+  saveCommunityProfile,
+  setCommunityPrompt,
+  getPublicCommunityProfile,
+  setCommunityBlock,
+  getCommunityBlocks,
+  communityPublicAuthorWhere,
+  getCommunitySettings,
+} = createCommunityLibraryRepository(prisma, PUBLIC_REVIEW_SERIES);
+
+export const {
+  reportCommunityContent,
+  getCommunityModerationQueue,
+  moderateCommunityReport,
+  saveCommunitySettings,
+} = createCommunityModerationRepository(
+  prisma,
+  PUBLIC_REVIEW_SERIES,
+  communityPublicAuthorWhere
+);
+
+export const { restoreCommunityBackup } = createCommunityBackupRepository(
+  prisma,
+  PUBLIC_REVIEW_SERIES
+);
+
 const communityTopicWhere: Prisma.CommunityTopicWhereInput = {
+  visibility: 'PUBLIC',
+  moderationHidden: false,
   OR: [{ seriesId: null }, { series: PUBLIC_REVIEW_SERIES }],
 };
+function publicCommunityTopicWhere(
+  viewerId?: string
+): Prisma.CommunityTopicWhereInput {
+  return {
+    AND: [
+      communityTopicWhere,
+      {
+        OR: [{ userId: null }, { user: communityPublicAuthorWhere(viewerId) }],
+      },
+    ],
+  };
+}
+function publicCommunityReplyWhere(
+  viewerId?: string
+): Prisma.CommunityReplyWhereInput {
+  return {
+    moderationHidden: false,
+    OR: [{ userId: null }, { user: communityPublicAuthorWhere(viewerId) }],
+  };
+}
+export const {
+  setCommunityFollow,
+  markCommunityRead,
+  editCommunityTopic,
+  getCommunityReplyRecipients,
+  saveCommunityRecommendation,
+} = createCommunityConversationsRepository(
+  prisma,
+  PUBLIC_REVIEW_SERIES,
+  publicCommunityTopicWhere,
+  communityPublicAuthorWhere
+);
 const communityAuthorSelect = {
   id: true,
   name: true,
   nickname: true,
   image: true,
+  communityProfile: {
+    select: {
+      publicId: true,
+      displayName: true,
+      published: true,
+      moderationHidden: true,
+      showAvatar: true,
+    },
+  },
 } as const;
 const communityTopicInclude = {
   user: { select: communityAuthorSelect },
@@ -2569,16 +2672,17 @@ type CommunityRow = Prisma.CommunityTopicGetPayload<{
   include: typeof communityTopicInclude;
 }>;
 function communityAuthor(
-  user: {
-    id: string;
-    name: string | null;
-    nickname: string | null;
-    image: string | null;
-  } | null
+  user: Prisma.UserGetPayload<{ select: typeof communityAuthorSelect }> | null
 ) {
-  return user
-    ? { id: user.id, name: formatPublicName(user), image: user.image }
-    : null;
+  if (!user) return null;
+  const profile = user.communityProfile;
+  const visible = profile?.published && !profile.moderationHidden;
+  return {
+    id: user.id,
+    name: visible ? profile.displayName : formatPublicName(user),
+    image: visible && profile.showAvatar ? user.image : null,
+    profileId: visible ? profile.publicId : null,
+  };
 }
 function communityTopicCard(row: CommunityRow): CommunityTopicItem {
   return {
@@ -2612,7 +2716,9 @@ function communityTopicCard(row: CommunityRow): CommunityTopicItem {
 export async function getCommunityTopics(
   page = 1,
   search = '',
-  filter: CommunityFilter = 'all'
+  filter: CommunityFilter = 'all',
+  viewerId?: string,
+  scope?: { seriesId: number; episodeId?: number }
 ) {
   if (
     !Number.isSafeInteger(page) ||
@@ -2624,16 +2730,28 @@ export async function getCommunityTopics(
   const rows = await prisma.communityTopic.findMany({
     where: {
       AND: [
-        communityTopicWhere,
+        publicCommunityTopicWhere(viewerId),
+        scope
+          ? {
+              seriesId: scope.seriesId,
+              ...(scope.episodeId ? { episodeId: scope.episodeId } : {}),
+            }
+          : {},
         filter === 'unanswered'
-          ? { closed: false, replies: { none: {} } }
+          ? {
+              closed: false,
+              replies: { none: publicCommunityReplyWhere(viewerId) },
+            }
           : filter === 'all'
             ? {}
             : { kind: filter },
         search
           ? {
               OR: [
-                { title: { contains: search, mode: 'insensitive' } },
+                {
+                  hasSpoilers: false,
+                  title: { contains: search, mode: 'insensitive' },
+                },
                 {
                   series: { title: { contains: search, mode: 'insensitive' } },
                 },
@@ -2642,7 +2760,12 @@ export async function getCommunityTopics(
           : {},
       ],
     },
-    include: communityTopicInclude,
+    include: {
+      ...communityTopicInclude,
+      _count: {
+        select: { replies: { where: publicCommunityReplyWhere(viewerId) } },
+      },
+    },
     orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
     take: 21,
     skip: (page - 1) * 20,
@@ -2652,30 +2775,176 @@ export async function getCommunityTopics(
     hasNext: rows.length > 20,
   };
 }
+export async function getCommunityMetrics(viewerId?: string) {
+  const author = {
+    ...communityPublicAuthorWhere(viewerId),
+    role: { not: 'ADMIN' as const },
+  };
+  const topicWhere: Prisma.CommunityTopicWhereInput = {
+    AND: [
+      publicCommunityTopicWhere(viewerId),
+      { OR: [{ userId: null }, { user: author }] },
+    ],
+  };
+  const [conversations, replies, lists, unansweredRequests] = await Promise.all(
+    [
+      prisma.communityTopic.count({ where: topicWhere }),
+      prisma.communityReply.count({
+        where: {
+          moderationHidden: false,
+          topic: publicCommunityTopicWhere(viewerId),
+          OR: [{ userId: null }, { user: author }],
+        },
+      }),
+      prisma.recommendationList.count({
+        where: { visibility: 'PUBLIC', moderationHidden: false, user: author },
+      }),
+      prisma.communityTopic.count({
+        where: {
+          AND: [
+            topicWhere,
+            {
+              kind: { in: ['REVIEW_REQUEST', 'RECOMMENDATION'] },
+              closed: false,
+              replies: { none: publicCommunityReplyWhere(viewerId) },
+            },
+          ],
+        },
+      }),
+    ]
+  );
+  return { conversations, replies, lists, unansweredRequests };
+}
+
+export async function getPersonalCommunityTopics(
+  userId: string,
+  view: 'own' | 'drafts' | 'following' = 'own',
+  page = 1
+) {
+  if (!Number.isSafeInteger(page) || page < 1 || page > 10000)
+    throw new CommunityError(400, 'invalid');
+  const repliesWhere = publicCommunityReplyWhere(userId);
+  const rows = await prisma.communityTopic.findMany({
+    where:
+      view === 'following'
+        ? {
+            AND: [
+              publicCommunityTopicWhere(userId),
+              { follows: { some: { userId } } },
+            ],
+          }
+        : { userId, ...(view === 'drafts' ? { visibility: 'PRIVATE' } : {}) },
+    include: {
+      ...communityTopicInclude,
+      _count: { select: { replies: { where: repliesWhere } } },
+      replies: {
+        where: {
+          AND: [
+            repliesWhere,
+            { OR: [{ userId: null }, { userId: { not: userId } }] },
+          ],
+        },
+        orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+        take: 1,
+        select: { createdAt: true, userId: true },
+      },
+      follows: {
+        where: { userId },
+        select: { lastReadAt: true, muted: true },
+        take: 1,
+      },
+    },
+    orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+    take: 21,
+    skip: (page - 1) * 20,
+  });
+  return {
+    items: rows.slice(0, 20).map((row) => ({
+      ...communityTopicCard(row),
+      visibility: row.visibility,
+      moderationHidden: row.moderationHidden,
+      unread: !!(
+        row.follows[0] &&
+        row.replies[0] &&
+        row.replies[0].userId !== userId &&
+        row.replies[0].createdAt > row.follows[0].lastReadAt
+      ),
+      muted: row.follows[0]?.muted ?? false,
+    })),
+    hasNext: rows.length > 20,
+  };
+}
+
 export async function getCommunityTopic(
   id: number,
-  page = 1
+  page = 1,
+  viewerId?: string
 ): Promise<CommunityTopicDetail | null> {
   if (!Number.isSafeInteger(page) || page < 1 || page > 10000)
     throw new CommunityError(400, 'invalid');
   const row = await prisma.communityTopic.findFirst({
-    where: { id, ...communityTopicWhere },
+    where: {
+      id,
+      OR: [
+        publicCommunityTopicWhere(viewerId),
+        ...(viewerId ? [{ userId: viewerId }] : []),
+      ],
+    },
     include: {
       ...communityTopicInclude,
+      _count: {
+        select: { replies: { where: publicCommunityReplyWhere(viewerId) } },
+      },
       replies: {
+        where: publicCommunityReplyWhere(viewerId),
         orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
         skip: (page - 1) * 30,
         take: 31,
         include: { user: { select: communityAuthorSelect } },
       },
+      follows: {
+        where: { userId: viewerId ?? '' },
+        select: { notify: true, muted: true },
+        take: 1,
+      },
     },
   });
   if (!row) return null;
+  const recommendedIds = row.replies
+    .slice(0, 30)
+    .flatMap((reply) =>
+      reply.recommendedSeriesId ? [reply.recommendedSeriesId] : []
+    );
+  const recommendedSeries = recommendedIds.length
+    ? await prisma.series.findMany({
+        where: { id: { in: recommendedIds }, ...PUBLIC_REVIEW_SERIES },
+        select: communityTopicInclude.series.select,
+      })
+    : [];
+  const recommendations = new Map(
+    recommendedSeries.map((series) => [
+      series.id,
+      {
+        id: series.id,
+        title: series.title,
+        origin: series.origin,
+        catalogScope: series.catalogScope,
+        imageUrl: cardImageUrl(series),
+      },
+    ])
+  );
   return {
     ...communityTopicCard(row),
+    visibility: row.visibility,
+    updatedAt: row.updatedAt.toISOString(),
+    moderationHidden: row.moderationHidden,
+    follow: row.follows[0] ?? null,
     title: row.title,
     body: row.body,
     replies: row.replies.slice(0, 30).map((reply) => ({
+      recommendedSeries: reply.recommendedSeriesId
+        ? (recommendations.get(reply.recommendedSeriesId) ?? null)
+        : null,
       id: reply.id,
       body: reply.body,
       hasSpoilers: reply.hasSpoilers,
@@ -2698,6 +2967,28 @@ export async function searchCommunitySeries(search: string) {
   });
   return rows;
 }
+export async function getCommunityConversationContext(
+  seriesId: number,
+  episodeId?: number
+) {
+  const series = await prisma.series.findFirst({
+    where: { id: seriesId, ...PUBLIC_REVIEW_SERIES },
+    select: communityTopicInclude.series.select,
+  });
+  if (!series) return null;
+  const episode = episodeId
+    ? await prisma.episode.findFirst({
+        where: { id: episodeId, season: { seriesId } },
+        select: {
+          id: true,
+          episodeNumber: true,
+          season: { select: { seasonNumber: true } },
+        },
+      })
+    : null;
+  if (episodeId && !episode) return null;
+  return { series: { ...series, imageUrl: cardImageUrl(series) }, episode };
+}
 export async function getCommunityEpisodes(seriesId: number) {
   return prisma.episode.findMany({
     where: { season: { seriesId, series: PUBLIC_REVIEW_SERIES } },
@@ -2717,6 +3008,13 @@ async function communityWriteLimit(
 ) {
   // Serialize submissions from one account so concurrent requests cannot bypass the limit.
   await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${`community:${userId}`}))::text`;
+  if (
+    !(await tx.user.findFirst({
+      where: { id: userId, banned: false },
+      select: { id: true },
+    }))
+  )
+    throw new CommunityError(403, 'unavailable');
   const where = { userId, createdAt: { gte: new Date(Date.now() - 3600000) } };
   const count = topic
     ? await tx.communityTopic.count({ where })
@@ -2729,6 +3027,9 @@ export async function createCommunityTopic(
 ) {
   return prisma.$transaction(async (tx) => {
     await communityWriteLimit(tx, userId, true);
+    const config = await tx.communitySettings.findUnique({ where: { id: 1 } });
+    if (config?.conversationsEnabled === false)
+      throw new CommunityError(403, 'paused');
     if (
       input.seriesId &&
       !(await tx.series.findFirst({
@@ -2755,19 +3056,33 @@ export async function replyToCommunityTopic(
   topicId: number,
   userId: string,
   body: string,
-  hasSpoilers: boolean
+  hasSpoilers: boolean,
+  recommendedSeriesId: number | null = null
 ) {
   return prisma.$transaction(async (tx) => {
     await communityWriteLimit(tx, userId, false);
+    if (
+      (await tx.communitySettings.findUnique({ where: { id: 1 } }))
+        ?.conversationsEnabled === false
+    )
+      throw new CommunityError(403, 'paused');
     await tx.$queryRaw`SELECT id FROM "CommunityTopic" WHERE id = ${topicId} FOR UPDATE`;
     const topic = await tx.communityTopic.findFirst({
-      where: { id: topicId, ...communityTopicWhere },
+      where: { id: topicId, ...publicCommunityTopicWhere(userId) },
       select: { id: true, closed: true, userId: true },
     });
     if (!topic) throw new CommunityError(404, 'unavailable');
     if (topic.closed) throw new CommunityError(409, 'closed');
+    if (
+      recommendedSeriesId &&
+      !(await tx.series.findFirst({
+        where: { id: recommendedSeriesId, ...PUBLIC_REVIEW_SERIES },
+        select: { id: true },
+      }))
+    )
+      throw new CommunityError(404, 'unavailable');
     const reply = await tx.communityReply.create({
-      data: { topicId, userId, body, hasSpoilers },
+      data: { topicId, userId, body, hasSpoilers, recommendedSeriesId },
       select: { id: true },
     });
     return { id: reply.id, ownerId: topic.userId };
@@ -2776,10 +3091,9 @@ export async function replyToCommunityTopic(
 export async function manageCommunityTopic(
   id: number,
   userId: string,
-  moderator: boolean,
   closed?: boolean
 ) {
-  const where = { id, ...(moderator ? {} : { userId }) };
+  const where = { id, userId };
   const result =
     closed === undefined
       ? await prisma.communityTopic.deleteMany({ where })
@@ -2789,11 +3103,10 @@ export async function manageCommunityTopic(
 export async function deleteCommunityReply(
   topicId: number,
   replyId: number,
-  userId: string,
-  moderator: boolean
+  userId: string
 ) {
   const result = await prisma.communityReply.deleteMany({
-    where: { id: replyId, topicId, ...(moderator ? {} : { userId }) },
+    where: { id: replyId, topicId, userId },
   });
   if (!result.count) throw new CommunityError(404, 'unavailable');
 }

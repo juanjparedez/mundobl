@@ -13,10 +13,17 @@ export function getCommunityReviewUrl(series: {
   return `${path}#series-section-reviews`;
 }
 
-export function getCommunityUrl(page = 1, search = '', view = 'all'): string {
+export function getCommunityUrl(
+  page = 1,
+  search = '',
+  view = 'all',
+  scope?: { seriesId: number; episodeId?: number }
+): string {
   const params = new URLSearchParams();
   if (search) params.set('q', search);
   if (page > 1) params.set('page', String(page));
   if (view !== 'all') params.set('view', view);
-  return `/comunidad${params.size ? `?${params}` : ''}`;
+  if (scope?.episodeId) params.set('episodeId', String(scope.episodeId));
+  const path = scope ? `/comunidad/obras/${scope.seriesId}` : '/comunidad';
+  return `${path}${params.size ? `?${params}` : ''}`;
 }

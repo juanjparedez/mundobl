@@ -1,0 +1,5 @@
+.community-share-link {
+  display: inline-grid;
+  gap: var(--spacing-sm);
+  justify-items: start;
+}

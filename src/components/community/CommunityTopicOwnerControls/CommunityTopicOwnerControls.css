@@ -1,0 +1,9 @@
+.topic-owner-controls {
+  display: grid;
+  gap: var(--spacing-md);
+}
+.topic-owner-controls__actions {
+  display: flex;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
