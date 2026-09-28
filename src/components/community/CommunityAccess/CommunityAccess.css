@@ -1,0 +1,5 @@
+.community-access {
+  max-width: 680px;
+  margin: var(--spacing-xl) auto;
+  padding: var(--spacing-lg);
+}

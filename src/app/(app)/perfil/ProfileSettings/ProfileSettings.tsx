@@ -50,6 +50,13 @@ export function ProfileSettings() {
     featureRequests: t('backup.featureRequests'),
     featureVotes: t('backup.featureVotes'),
     suggestedSites: t('backup.suggestedSites'),
+    communityLists: t('communitySpace.myLists'),
+    communityTopics: t('communitySpace.myTopics'),
+    communityProfile: t('communitySpace.profile'),
+    communityReplies: t('communityHub.replies'),
+    communityFollows: t('communitySpace.following'),
+    communityBlocks: t('communitySpace.blocks'),
+    communityReports: t('communitySpace.report'),
   };
   const message = useMessage();
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -534,6 +541,11 @@ export function ProfileSettings() {
             type="info"
             showIcon
             message={t('profile.settingsImportSafetyNotice')}
+          />
+          <Alert
+            type="info"
+            showIcon
+            title={t('communitySpace.importNotice')}
           />
           <div>
             <p style={{ marginBottom: 4 }}>

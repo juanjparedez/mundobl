@@ -1,0 +1,6 @@
+.community-lists__search {
+  display: flex;
+  gap: var(--spacing-sm);
+  max-width: 600px;
+  margin-bottom: var(--spacing-lg);
+}

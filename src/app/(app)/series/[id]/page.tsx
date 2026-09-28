@@ -1,3 +1,4 @@
+import { CommunityWorkLink } from '@/components/community/CommunityWorkLink/CommunityWorkLink';
 import { getPublicWriterCredits } from '@/lib/database';
 import { WriterCredits } from '@/components/series/WriterCredits/WriterCredits';
 import { loadLocaleMessages } from '@/i18n/messages';
@@ -333,6 +334,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
           />
 
           <SeriesCompletenessBadge seriesId={serie.id} series={serie} />
+          <CommunityWorkLink seriesId={serie.id} />
 
           {serie.watchLinks && serie.watchLinks.length > 0 ? (
             <WhereToWatch links={serie.watchLinks} variant="hero" />

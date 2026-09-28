@@ -1,0 +1,43 @@
+.recommendation-editor {
+  display: grid;
+  gap: var(--spacing-md);
+}
+.recommendation-editor .ant-form-item {
+  margin-bottom: 0;
+}
+.recommendation-editor__heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+.recommendation-editor__heading h2 {
+  color: var(--text-primary);
+  margin: 0;
+  font-size: var(--font-size-lg);
+}
+.recommendation-editor__heading strong {
+  overflow-wrap: anywhere;
+}
+.recommendation-editor__items {
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--spacing-md);
+}
+.recommendation-editor__items label {
+  display: block;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-xs);
+}
+.recommendation-editor__spoilers {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+  margin-top: var(--spacing-sm);
+}
+.recommendation-editor__spoilers label {
+  margin: 0;
+}

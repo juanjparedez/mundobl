@@ -18,6 +18,10 @@ const identities = {
   admin: { id: `${key}-admin`, name: 'Moderación', role: 'ADMIN' },
 };
 const auth = {
+  requireRole: async (roles) =>
+    identity && roles.includes(identity.role)
+      ? { authorized: true, userId: identity.id, role: identity.role }
+      : { authorized: false, response: Response.json({}, { status: 403 }) },
   requireAuth: async () =>
     identity
       ? { authorized: true, userId: identity.id, role: identity.role }
@@ -47,6 +51,13 @@ const routes = {
   replies: await loadRoute(
     'src/app/api/community/topics/[id]/replies/route.ts'
   ),
+  follow: await loadRoute('src/app/api/community/topics/[id]/follow/route.ts'),
+  recommendations: await loadRoute(
+    'src/app/api/community/recommendations/route.ts'
+  ),
+  reports: await loadRoute('src/app/api/community/reports/route.ts'),
+  blocks: await loadRoute('src/app/api/community/blocks/route.ts'),
+  moderation: await loadRoute('src/app/api/admin/community/route.ts'),
 };
 const bundle = await build({
   stdin: {
@@ -54,11 +65,14 @@ const bundle = await build({
     import React from 'react'; import {createRoot} from 'react-dom/client';
     import {App} from 'antd';
     import {LocaleProvider} from './src/lib/providers/LocaleProvider';
+    import {ThemeProvider} from './src/lib/providers/ThemeProvider';
     import {CommunityFeed} from './src/app/(app)/comunidad/CommunityFeed/CommunityFeed';
     import {CommunityThread} from './src/app/(app)/comunidad/[id]/CommunityThread/CommunityThread';
+    import {PersonalCommunityTopics} from './src/components/community/PersonalCommunityTopics/PersonalCommunityTopics';
+    import {CommunityModeration} from './src/components/community/CommunityModeration/CommunityModeration';
     import './src/styles/variables.css';
     const data=window.fixture;
-    createRoot(document.getElementById('root')).render(<App><LocaleProvider>{data.topic ? <CommunityThread topic={data.topic} page={data.page}/> : <CommunityFeed {...data.feed}/>}</LocaleProvider></App>);
+    createRoot(document.getElementById('root')).render(<LocaleProvider><ThemeProvider><App>{data.moderation ? <CommunityModeration {...data.moderation}/> : data.personal ? <PersonalCommunityTopics {...data.personal}/> : data.topic ? <CommunityThread topic={data.topic} page={data.page}/> : <CommunityFeed {...data.feed}/>}</App></ThemeProvider></LocaleProvider>);
   `,
     resolveDir: process.cwd(),
     loader: 'tsx',
@@ -105,15 +119,26 @@ const server = createServer(async (req, res) => {
       identities[
         /fixture=(owner|other|admin)/.exec(req.headers.cookie ?? '')?.[1]
       ] ?? null;
-    const topicMatch = /^\/api\/community\/topics\/(\d+)(\/replies)?$/.exec(
-      url.pathname
-    );
+    const topicMatch =
+      /^\/api\/community\/topics\/(\d+)(\/replies|\/follow)?$/.exec(
+        url.pathname
+      );
     if (url.pathname.startsWith('/api/')) {
       const handler = topicMatch
-        ? routes[topicMatch[2] ? 'replies' : 'topic'][req.method]
-        : routes[url.pathname.endsWith('/series') ? 'series' : 'topics'][
-            req.method
-          ];
+        ? routes[topicMatch[2]?.slice(1) ?? 'topic'][req.method]
+        : url.pathname === '/api/admin/community'
+          ? routes.moderation[req.method]
+          : url.pathname === '/api/community/reports'
+            ? routes.reports[req.method]
+            : url.pathname === '/api/community/blocks'
+              ? routes.blocks[req.method]
+              : routes[
+                  url.pathname.endsWith('/recommendations')
+                    ? 'recommendations'
+                    : url.pathname.endsWith('/series')
+                      ? 'series'
+                      : 'topics'
+                ][req.method];
       const chunks = [];
       for await (const chunk of req) chunks.push(chunk);
       const body = Buffer.concat(chunks).toString();
@@ -132,9 +157,46 @@ const server = createServer(async (req, res) => {
     const match = /^\/comunidad\/(\d+)$/.exec(url.pathname);
     const page = Number(url.searchParams.get('page') ?? 1);
     const view = url.searchParams.get('view') ?? 'all';
+    const resolved = url.searchParams.get('resolved') === 'true';
+    const moderation =
+      url.pathname === '/admin/comunidad' && identity?.role === 'ADMIN'
+        ? {
+            initial: await db.getCommunityModerationQueue(
+              identity.id,
+              page,
+              resolved
+            ),
+            settings: await db.getCommunitySettings(),
+            canConfigure: true,
+            page,
+            resolved,
+          }
+        : null;
+    const personal =
+      url.pathname === '/comunidad/mis-conversaciones' && identity
+        ? {
+            ...(await db.getPersonalCommunityTopics(
+              identity.id,
+              view === 'all' ? 'own' : view,
+              page
+            )),
+            view: view === 'all' ? 'own' : view,
+            page,
+          }
+        : null;
     const search = url.searchParams.get('q') ?? '';
+    const workMatch = /^\/comunidad\/obras\/(\d+)$/.exec(url.pathname);
+    const episodeId = url.searchParams.has('episodeId')
+      ? Number(url.searchParams.get('episodeId'))
+      : undefined;
+    const workContext = workMatch
+      ? await db.getCommunityConversationContext(
+          Number(workMatch[1]),
+          episodeId
+        )
+      : null;
     const topic = match
-      ? await db.getCommunityTopic(Number(match[1]), page)
+      ? await db.getCommunityTopic(Number(match[1]), page, identity?.id)
       : null;
     if (match && !topic) {
       res.writeHead(404);
@@ -148,13 +210,24 @@ const server = createServer(async (req, res) => {
     const topics = await db.getCommunityTopics(
       page,
       search,
-      view === 'reviews' ? 'all' : view
+      personal || view === 'reviews' ? 'all' : view,
+      identity?.id,
+      workContext ? { seriesId: workContext.series.id, episodeId } : undefined
     );
     const fixture = {
       session: identity,
+      moderation,
+      personal,
       topic,
       page,
       feed: {
+        metrics:
+          !workContext && !personal && !moderation
+            ? await db.getCommunityMetrics(identity?.id)
+            : undefined,
+        context: workContext
+          ? { series: workContext.series, episodeId }
+          : undefined,
         items: reviews.items,
         topics: topics.items,
         view,
@@ -255,9 +328,50 @@ try {
   await modal
     .getByRole('textbox', { name: 'Tu mensaje', exact: true })
     .fill('Este es el inicio de una conversación sobre el capítulo.');
-  await modal.getByRole('button', { name: 'Publicar', exact: true }).click();
+  await modal
+    .getByRole('button', { name: 'Guardar borrador', exact: true })
+    .click();
   await page.waitForURL(/\/comunidad\/\d+$/);
   const topicId = Number(page.url().split('/').pop());
+  assert.equal(
+    (await prisma.communityTopic.findUnique({ where: { id: topicId } }))
+      .visibility,
+    'PRIVATE'
+  );
+  await login('other');
+  assert.equal(
+    (await api(`/api/community/topics/${topicId}`, 'GET')).status(),
+    404
+  );
+  await login('owner');
+  await page.getByRole('button', { name: 'Editar', exact: true }).click();
+  await modal
+    .getByRole('textbox', { name: 'Tu mensaje', exact: true })
+    .fill('Este borrador fue editado antes de publicarlo.');
+  await modal.getByRole('button', { name: 'Guardar', exact: true }).click();
+  await page.waitForLoadState('networkidle');
+  assert.equal(
+    (await prisma.communityTopic.findUnique({ where: { id: topicId } })).body,
+    'Este borrador fue editado antes de publicarlo.'
+  );
+  await page.getByRole('button', { name: 'Publicar', exact: true }).click();
+  await Promise.all([
+    page.waitForResponse(
+      (response) =>
+        response.url().endsWith(`/api/community/topics/${topicId}`) &&
+        response.request().method() === 'PATCH'
+    ),
+    page
+      .locator('.ant-popconfirm')
+      .getByRole('button', { name: 'Publicar', exact: true })
+      .click(),
+  ]);
+  await page.waitForLoadState('networkidle');
+  assert.equal(
+    (await prisma.communityTopic.findUnique({ where: { id: topicId } }))
+      .visibility,
+    'PUBLIC'
+  );
   assert.equal(
     (await prisma.communityTopic.findUnique({ where: { id: topicId } }))
       .episodeId,
@@ -272,6 +386,32 @@ try {
       exact: true,
     })
     .waitFor();
+  await page
+    .getByRole('button', { name: 'Seguir conversación', exact: true })
+    .click();
+  await page
+    .getByRole('switch', { name: 'Avisarme de nuevas respuestas', exact: true })
+    .waitFor();
+  assert.equal(
+    (
+      await prisma.communityFollow.findUnique({
+        where: { userId_topicId: { userId: key, topicId } },
+      })
+    ).notify,
+    false
+  );
+  await page
+    .getByRole('switch', { name: 'Avisarme de nuevas respuestas', exact: true })
+    .click();
+  await page.waitForLoadState('networkidle');
+  assert.equal(
+    (
+      await prisma.communityFollow.findUnique({
+        where: { userId_topicId: { userId: key, topicId } },
+      })
+    ).notify,
+    true
+  );
   await login('other');
   await page.reload();
   assert.equal(
@@ -284,6 +424,13 @@ try {
   await page
     .getByRole('textbox', { name: 'Responder', exact: true })
     .fill('Esta es una respuesta publicada desde el navegador.');
+  await page
+    .getByRole('combobox', {
+      name: 'Recomendar una obra (opcional)',
+      exact: true,
+    })
+    .fill(key);
+  await page.getByTitle(key, { exact: true }).last().click();
   await page.getByRole('button', { name: 'Responder', exact: true }).click();
   await page.waitForLoadState('networkidle');
   if (
@@ -301,7 +448,33 @@ try {
     .waitFor();
   assert.equal(await prisma.communityReply.count({ where: { topicId } }), 1);
   assert.equal(notifications[0]?.userId, key);
+  await page
+    .getByRole('button', { name: 'Guardar para ver', exact: true })
+    .click();
+  await page
+    .getByRole('button', { name: 'Guardada en pendientes', exact: true })
+    .waitFor();
+  assert.equal(
+    (
+      await prisma.viewStatus.findFirstOrThrow({
+        where: { userId: identities.other.id, seriesId: series.id },
+      })
+    ).status,
+    'SIN_VER'
+  );
   await login('owner');
+  await page.goto(base + '/comunidad/mis-conversaciones?view=following');
+  await page.getByText('Respuestas nuevas', { exact: true }).waitFor();
+  await page.goto(base + `/comunidad/${topicId}`);
+  await page
+    .getByRole('button', { name: 'Marcar esta página como leída', exact: true })
+    .click();
+  await page.waitForLoadState('networkidle');
+  await page.goto(base + '/comunidad/mis-conversaciones?view=following');
+  assert.equal(
+    await page.getByText('Respuestas nuevas', { exact: true }).count(),
+    0
+  );
   assert.equal(
     (
       await api(`/api/community/topics/${topicId}`, 'PATCH', { closed: true })
@@ -340,9 +513,24 @@ try {
     await modal
       .getByRole('textbox', { name: 'Tu mensaje', exact: true })
       .fill('Me gustaría conocer sus recomendaciones para este fin de semana.');
-    await modal.getByRole('button', { name: 'Publicar', exact: true }).click();
+    await modal
+      .getByRole('button', { name: 'Guardar borrador', exact: true })
+      .click();
     await page.waitForURL(/\/comunidad\/\d+$/);
     await page.getByRole('heading', { name: title, exact: true }).waitFor();
+    await page.getByRole('button', { name: 'Publicar', exact: true }).click();
+    await Promise.all([
+      page.waitForResponse(
+        (response) =>
+          /\/api\/community\/topics\/\d+$/.test(response.url()) &&
+          response.request().method() === 'PATCH'
+      ),
+      page
+        .locator('.ant-popconfirm')
+        .getByRole('button', { name: 'Publicar', exact: true })
+        .click(),
+    ]);
+    await page.waitForLoadState('networkidle');
     if (needsSeries)
       assert.match(
         await page
@@ -352,9 +540,36 @@ try {
       );
   }
   await mkdir('test-results', { recursive: true });
+  await page.goto(
+    base +
+      `/comunidad/obras/${series.id}?episodeId=${series.seasons[0].episodes[0].id}`
+  );
+  await page
+    .getByRole('button', { name: 'Conversar sobre una serie', exact: true })
+    .click();
+  await modal
+    .getByRole('textbox', { name: 'Título', exact: true })
+    .fill('Una conversación desde el capítulo');
+  await modal
+    .getByRole('textbox', { name: 'Tu mensaje', exact: true })
+    .fill('El capítulo ya viene seleccionado desde la ficha de la obra.');
+  await modal
+    .getByRole('button', { name: 'Guardar borrador', exact: true })
+    .click();
+  await page.waitForURL(/\/comunidad\/\d+$/);
+  const contextDraft = await prisma.communityTopic.findUniqueOrThrow({
+    where: { id: Number(page.url().split('/').pop()) },
+  });
+  assert.equal(contextDraft.seriesId, series.id);
+  assert.equal(contextDraft.episodeId, series.seasons[0].episodes[0].id);
+  assert.equal(contextDraft.visibility, 'PRIVATE');
   for (const width of [1280, 390]) {
     await page.setViewportSize({ width, height: 900 });
-    for (const path of ['/comunidad', `/comunidad/${topicId}`]) {
+    for (const path of [
+      '/comunidad',
+      `/comunidad/${topicId}`,
+      '/comunidad/mis-conversaciones?view=own',
+    ]) {
       await page.goto(base + path);
       assert.ok(
         await page.evaluate(
@@ -363,12 +578,111 @@ try {
         `${path} overflow at ${width}`
       );
       await page.screenshot({
-        path: `test-results/community-flow-${path === '/comunidad' ? 'feed' : 'thread'}-${width}.png`,
+        path: `test-results/community-flow-${path === '/comunidad' ? 'feed' : path.includes('mis-conversaciones') ? 'personal' : 'thread'}-${width}.png`,
         fullPage: true,
       });
     }
   }
+  await login('other');
+  await page.goto(base + `/comunidad/${topicId}`);
+  await page
+    .getByRole('button', { name: 'Denunciar', exact: true })
+    .first()
+    .click();
+  await modal
+    .getByRole('textbox', { name: 'Detalles (opcionales)', exact: true })
+    .fill('Contenido para revisión desde navegador.');
+  await modal.getByRole('button', { name: 'Denunciar', exact: true }).click();
+  await page
+    .getByText('Denuncia enviada para revisión.', { exact: true })
+    .waitFor();
+  const report = await prisma.communityReport.findFirstOrThrow({
+    where: {
+      reporterId: identities.other.id,
+      targetType: 'TOPIC',
+      targetId: String(topicId),
+    },
+  });
+  assert.equal((await api('/api/admin/community', 'GET')).status(), 403);
   await login('admin');
+  assert.equal(
+    (await api(`/api/community/topics/${contextDraft.id}`, 'GET')).status(),
+    404
+  );
+  assert.equal(
+    (await api(`/api/community/topics/${contextDraft.id}`, 'DELETE')).status(),
+    404
+  );
+  assert.equal(
+    (await api(`/api/community/topics/${topicId}`, 'DELETE')).status(),
+    404
+  );
+  await page.goto(base + '/admin/comunidad');
+  await page
+    .getByRole('button', { name: 'Ocultar contenido', exact: true })
+    .click();
+  await modal
+    .getByRole('textbox', { name: 'Motivo de la decisión', exact: true })
+    .fill('Ocultado tras revisión de la denuncia.');
+  await modal.getByRole('button', { name: 'Guardar', exact: true }).click();
+  await page
+    .getByText('No hay denuncias en esta vista', { exact: true })
+    .waitFor();
+  assert.equal(
+    (await api(`/api/community/topics/${topicId}`, 'GET')).status(),
+    404
+  );
+  await page.goto(base + '/admin/comunidad?resolved=true');
+  for (const width of [1280, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    assert.ok(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth + 1
+      )
+    );
+    await page.screenshot({
+      path: `test-results/community-moderation-${width}.png`,
+      fullPage: true,
+    });
+  }
+  await page
+    .getByRole('button', { name: 'Quitar restricción', exact: true })
+    .click();
+  await modal
+    .getByRole('textbox', { name: 'Motivo de la decisión', exact: true })
+    .fill('Restricción retirada después de revisar el caso.');
+  await modal.getByRole('button', { name: 'Guardar', exact: true }).click();
+  await modal.waitFor({ state: 'hidden' });
+  assert.equal(
+    await prisma.communityModerationAction.count({
+      where: { reportId: report.id },
+    }),
+    2
+  );
+  assert.equal(
+    (await api(`/api/community/topics/${topicId}`, 'GET')).status(),
+    200
+  );
+  await login('other');
+  await page.goto(base + `/comunidad/${topicId}`);
+  await page
+    .getByRole('button', { name: 'Bloquear usuario', exact: true })
+    .first()
+    .click();
+  await page
+    .locator('.ant-popconfirm')
+    .getByRole('button', { name: 'Bloquear usuario', exact: true })
+    .click();
+  await page.waitForURL(base + '/comunidad');
+  assert.equal(
+    (await api(`/api/community/topics/${topicId}`, 'GET')).status(),
+    404
+  );
+  await api('/api/community/blocks', 'PATCH', {
+    targetId: key,
+    blocked: false,
+  });
+  await login('owner');
   assert.equal(
     (await api(`/api/community/topics/${topicId}`, 'DELETE')).status(),
     200
@@ -393,6 +707,11 @@ try {
 } finally {
   if (browser) await browser.close();
   if (server.listening) await new Promise((resolve) => server.close(resolve));
+  await prisma.communityReport.deleteMany({
+    where: {
+      reporterId: { in: Object.values(identities).map((user) => user.id) },
+    },
+  });
   await prisma.communityTopic.deleteMany({
     where: { userId: { in: Object.values(identities).map((user) => user.id) } },
   });

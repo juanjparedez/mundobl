@@ -1,0 +1,4 @@
+.public-community-profile h2 {
+  color: var(--text-primary);
+  font-size: var(--font-size-lg);
+}

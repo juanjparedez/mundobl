@@ -11,6 +11,7 @@ import { StaleVersionNotifier } from '../../common/StaleVersionNotifier/StaleVer
 import { LiveRegion } from '../../common/LiveRegion/LiveRegion';
 import { OfflineIndicator } from '../../common/OfflineIndicator/OfflineIndicator';
 import { LocalProgressImporter } from '../../series/LocalProgressImporter/LocalProgressImporter';
+import { TopFiveInvitation } from '../../community/TopFiveInvitation/TopFiveInvitation';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import './AppLayout.css';
 
@@ -50,6 +51,7 @@ export function AppLayout({ children }: AppLayoutProps) {
           <TopBar />
           <AnnouncementDisplay />
           <Content id="main-content" role="main" className="app-content">
+            <TopFiveInvitation />
             {children}
           </Content>
         </Layout>
