@@ -17,7 +17,7 @@ import { WatchedToggle } from '../WatchedToggle/WatchedToggle';
 import { useSeriesUserStatus } from '../SeriesUserStatusProvider';
 import { useMarkEpisodes } from '@/hooks/useMarkEpisodes';
 import { useLocale } from '@/lib/providers/LocaleProvider';
-import { chapterCode, groupIntoChapters } from '@/lib/episode-chapters';
+import { groupIntoChapters } from '@/lib/episode-chapters';
 import {
   WatchDateEditor,
   type WatchDateOption,
@@ -50,6 +50,11 @@ export function EpisodeChapterList({
   actionLabels,
 }: EpisodeChapterListProps) {
   const { t } = useLocale();
+  const chapterShort = (chapter: { seasonNumber: number; number: number }) =>
+    t('progressStepper.chapterShort', {
+      season: chapter.seasonNumber,
+      n: chapter.number,
+    });
   const { data: session } = useSession();
   const { episodeStatus, seriesId } = useSeriesUserStatus();
   const { setWatched, pendingKey, ready } = useMarkEpisodes();
@@ -104,7 +109,7 @@ export function EpisodeChapterList({
   return (
     <div className="episode-chapters">
       <h5 className="season-section-title">
-        {t('episodesList.headerTitle', { n: chapters.length })}
+        {t('episodesList.chaptersTitle', { n: chapters.length })}
       </h5>
 
       <ol className="episode-chapters__list">
@@ -176,7 +181,7 @@ export function EpisodeChapterList({
                               .filter((ep) => episodeStatus[ep.id] === 'VISTA')
                               .map((ep) => ({
                                 target: { episodeId: ep.id },
-                                label: `${chapterCode(chapter)} · ${chapter.episodes.indexOf(ep) + 1}/${parts}`,
+                                label: `${chapterShort(chapter)} · ${t('verSerie.partLabel', { n: chapter.episodes.indexOf(ep) + 1, total: parts })}`,
                               }))
                           )
                         }
@@ -224,8 +229,8 @@ export function EpisodeChapterList({
                           setNoteEpisode({
                             id: anchor.id,
                             label: title
-                              ? `${chapterCode(chapter)} — ${title}`
-                              : chapterCode(chapter),
+                              ? `${chapterShort(chapter)} — ${title}`
+                              : chapterShort(chapter),
                           })
                         }
                       >

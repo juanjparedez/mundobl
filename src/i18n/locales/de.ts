@@ -443,6 +443,7 @@ const de = {
     "likes": "{n} Likes auf YouTube"
   },
   "episodesList": {
+    "chaptersTitle": "Episoden ({n})",
     "headerTitle": "Episoden ({n})",
     "parts": "{n} Teile",
     "extrasNote": "Plus {n} weitere Videos: Previews und Extras.",
@@ -507,6 +508,7 @@ const de = {
     "errorGenerating": "Fehler beim Generieren"
   },
   "seasonsList": {
+    "watchedProgress": "{watched} von {total} gesehen",
     "emptyText": "Keine Staffeln erfasst",
     "seasonLabel": "Staffel {n}",
     "capsTag": "{n} Episoden",
@@ -2693,6 +2695,21 @@ const de = {
     "deployedAtLine": "Bereitgestellt: {date}"
   },
   "verSerie": {
+    "catalogPage": "Vollständige Seite im Katalog",
+    "userFallback": "Nutzer",
+    "collaboratorFallback": "Mitwirkende",
+    "contributedByUser": "Beitrag von @{name}",
+    "contributedByCollaborator": "Inhalt von {name}",
+    "tagMusic": "Musik",
+    "tagExtra": "Extra",
+    "tagTrailer": "Trailer",
+    "tagPrivate": "Privat",
+    "ostNumber": "OST #{n}",
+    "extraNumber": "Extra #{n}",
+    "trailerNumber": "Trailer #{n}",
+    "trailerChapter": "Trailer · Ep. {n}",
+    "privateVideo": "Privates Video #{n}",
+    "seasonShort": "Staffel {n}",
     "chapterTitle": "Episode {n}",
     "privateVideos": "{n} Videos hat das Studio auf YouTube privat gestellt oder entfernt",
     "play": "Abspielen",

@@ -440,6 +440,7 @@ const ko = {
     "likes": "YouTube 좋아요 {n}개"
   },
   "episodesList": {
+    "chaptersTitle": "에피소드 ({n})",
     "headerTitle": "에피소드 ({n})",
     "parts": "{n}개 파트",
     "extrasNote": "미리보기 및 추가 영상 {n}개 더",
@@ -504,6 +505,7 @@ const ko = {
     "errorGenerating": "생성 오류"
   },
   "seasonsList": {
+    "watchedProgress": "{total}화 중 {watched}화 시청",
     "emptyText": "기록된 시즌 없음",
     "seasonLabel": "시즌 {n}",
     "capsTag": "{n}화",
@@ -2690,6 +2692,21 @@ const ko = {
     "deployedAtLine": "배포: {date}"
   },
   "verSerie": {
+    "catalogPage": "카탈로그의 작품 페이지",
+    "userFallback": "사용자",
+    "collaboratorFallback": "협력자",
+    "contributedByUser": "@{name} 님의 공유",
+    "contributedByCollaborator": "{name} 제공",
+    "tagMusic": "음악",
+    "tagExtra": "부가 영상",
+    "tagTrailer": "예고편",
+    "tagPrivate": "비공개",
+    "ostNumber": "OST #{n}",
+    "extraNumber": "부가 영상 #{n}",
+    "trailerNumber": "예고편 #{n}",
+    "trailerChapter": "예고편 · {n}화",
+    "privateVideo": "비공개 영상 #{n}",
+    "seasonShort": "시즌 {n}",
     "chapterTitle": "{n}화",
     "privateVideos": "제작사가 YouTube에서 비공개 처리하거나 삭제한 영상 {n}개",
     "play": "재생",

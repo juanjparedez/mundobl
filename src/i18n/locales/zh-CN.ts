@@ -438,6 +438,7 @@ const zhCN = {
     "likes": "YouTube上{n}个赞"
   },
   "episodesList": {
+    "chaptersTitle": "剧集 ({n})",
     "headerTitle": "剧集 ({n})",
     "parts": "{n} 部分",
     "extrasNote": "另有 {n} 个视频：预告片和花絮。",
@@ -502,6 +503,7 @@ const zhCN = {
     "errorGenerating": "生成错误"
   },
   "seasonsList": {
+    "watchedProgress": "已看 {watched}/{total} 集",
     "emptyText": "未记录任何季",
     "seasonLabel": "第 {n} 季",
     "capsTag": "{n} 集",
@@ -2688,6 +2690,21 @@ const zhCN = {
     "deployedAtLine": "部署时间：{date}"
   },
   "verSerie": {
+    "catalogPage": "目录中的完整作品页",
+    "userFallback": "用户",
+    "collaboratorFallback": "合作者",
+    "contributedByUser": "@{name} 分享",
+    "contributedByCollaborator": "内容来自 {name}",
+    "tagMusic": "音乐",
+    "tagExtra": "花絮",
+    "tagTrailer": "预告",
+    "tagPrivate": "私密",
+    "ostNumber": "OST #{n}",
+    "extraNumber": "花絮 #{n}",
+    "trailerNumber": "预告 #{n}",
+    "trailerChapter": "预告 · 第{n}集",
+    "privateVideo": "私密视频 #{n}",
+    "seasonShort": "第{n}季",
     "chapterTitle": "第 {n} 集",
     "privateVideos": "{n} 个视频已被制作方在 YouTube 设为私密或删除",
     "play": "播放",
