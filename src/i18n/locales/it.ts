@@ -442,6 +442,7 @@ const it = {
     "likes": "{n} Mi piace su YouTube"
   },
   "episodesList": {
+    "chaptersTitle": "Episodi ({n})",
     "headerTitle": "Episodi ({n})",
     "parts": "{n} parti",
     "extrasNote": "Più altri {n} video: anteprime ed extra.",
@@ -506,6 +507,7 @@ const it = {
     "errorGenerating": "Errore durante la generazione"
   },
   "seasonsList": {
+    "watchedProgress": "{watched} di {total} visti",
     "emptyText": "Nessuna stagione registrata",
     "seasonLabel": "Stagione {n}",
     "capsTag": "{n} ep",
@@ -2692,6 +2694,21 @@ const it = {
     "deployedAtLine": "Distribuito: {date}"
   },
   "verSerie": {
+    "catalogPage": "Scheda completa nel catalogo",
+    "userFallback": "utente",
+    "collaboratorFallback": "collaboratore",
+    "contributedByUser": "Condiviso da @{name}",
+    "contributedByCollaborator": "Contenuto di {name}",
+    "tagMusic": "Musica",
+    "tagExtra": "Extra",
+    "tagTrailer": "Trailer",
+    "tagPrivate": "Privato",
+    "ostNumber": "OST #{n}",
+    "extraNumber": "Extra #{n}",
+    "trailerNumber": "Trailer #{n}",
+    "trailerChapter": "Trailer · Ep. {n}",
+    "privateVideo": "Video privato #{n}",
+    "seasonShort": "S{n}",
     "chapterTitle": "Episodio {n}",
     "privateVideos": "{n} video resi privati o rimossi da YouTube dalla produzione",
     "play": "Riproduci",

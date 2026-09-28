@@ -116,35 +116,39 @@ interface VerSerieClientProps {
   seasons: Season[];
 }
 
+/** Que es cada video. El texto lo arma badgeLabel con el idioma activo. */
+export type BadgeName =
+  | { kind: 'chapter'; n: number }
+  | { kind: 'part'; chapter: number | null; part: number; total: number }
+  | { kind: 'private'; n: number }
+  | { kind: 'trailer'; chapter: number | null; n: number }
+  | { kind: 'extra'; n: number }
+  | { kind: 'ost'; n: number }
+  | { kind: 'title'; text: string };
+
 export interface ParsedBadge {
-  label: string;
-  shortLabel: string;
+  name: BadgeName;
   isExtra: boolean;
   isPrivate: boolean;
-  chapterNumber: number;
   partNumber: number | null;
   partTotal: number | null;
   tagColor?: string;
-  badgeText?: string;
+  tag?: 'private' | 'trailer' | 'extra' | 'music';
 }
 
 export function parseEpisodeBadge(
   rawTitle: string | null,
   episodeNumber: number,
-  totalEpisodesInSeason: number,
   seriesTitle?: string
 ): ParsedBadge {
-  if (!rawTitle) {
-    return {
-      label: `Episodio ${episodeNumber}`,
-      shortLabel: `E${episodeNumber}`,
-      isExtra: false,
-      isPrivate: false,
-      chapterNumber: episodeNumber,
-      partNumber: null,
-      partTotal: null,
-    };
-  }
+  const plain = {
+    isExtra: false,
+    isPrivate: false,
+    partNumber: null,
+    partTotal: null,
+  };
+  if (!rawTitle)
+    return { ...plain, name: { kind: 'chapter', n: episodeNumber } };
 
   const lower = rawTitle.toLowerCase();
 
@@ -156,15 +160,12 @@ export function parseEpisodeBadge(
     lower.includes('private')
   ) {
     return {
-      label: `Video Privado #${episodeNumber}`,
-      shortLabel: `Privado #${episodeNumber}`,
+      ...plain,
+      name: { kind: 'private', n: episodeNumber },
       isExtra: true,
       isPrivate: true,
-      chapterNumber: episodeNumber,
-      partNumber: null,
-      partTotal: null,
       tagColor: 'default',
-      badgeText: 'Privado',
+      tag: 'private',
     };
   }
 
@@ -187,19 +188,12 @@ export function parseEpisodeBadge(
     lower.includes('teaser') ||
     rawTitle.includes('ตัวอย่าง')
   ) {
-    const trailerLabel = detectedEp
-      ? `Tráiler · Ep. ${detectedEp}`
-      : `Tráiler #${episodeNumber}`;
     return {
-      label: trailerLabel,
-      shortLabel: trailerLabel,
+      ...plain,
+      name: { kind: 'trailer', chapter: detectedEp, n: episodeNumber },
       isExtra: true,
-      isPrivate: false,
-      chapterNumber: detectedEp || episodeNumber,
-      partNumber: null,
-      partTotal: null,
       tagColor: 'orange',
-      badgeText: 'Tráiler',
+      tag: 'trailer',
     };
   }
 
@@ -213,15 +207,11 @@ export function parseEpisodeBadge(
     lower.includes('recap')
   ) {
     return {
-      label: `Extra · #${detectedEp || episodeNumber}`,
-      shortLabel: `Extra #${detectedEp || episodeNumber}`,
+      ...plain,
+      name: { kind: 'extra', n: detectedEp || episodeNumber },
       isExtra: true,
-      isPrivate: false,
-      chapterNumber: detectedEp || episodeNumber,
-      partNumber: null,
-      partTotal: null,
       tagColor: 'purple',
-      badgeText: 'Extra',
+      tag: 'extra',
     };
   }
 
@@ -232,34 +222,24 @@ export function parseEpisodeBadge(
     lower.includes('music video')
   ) {
     return {
-      label: `OST · #${episodeNumber}`,
-      shortLabel: `OST #${episodeNumber}`,
+      ...plain,
+      name: { kind: 'ost', n: episodeNumber },
       isExtra: true,
-      isPrivate: false,
-      chapterNumber: episodeNumber,
-      partNumber: null,
-      partTotal: null,
       tagColor: 'cyan',
-      badgeText: 'Música',
+      tag: 'music',
     };
   }
 
   // 5. Partes explícitas de capítulos (ej: Cap. 8 [1/4])
   if (partMatch) {
-    const partNum = parseInt(partMatch[1], 10);
-    const partTotal = parseInt(partMatch[2] || '4', 10);
-    const epNum = detectedEp || episodeNumber;
+    const part = parseInt(partMatch[1], 10);
+    const total = parseInt(partMatch[2] || '4', 10);
     return {
+      ...plain,
       // Sin numero en el titulo, la fila no dice que capitulo es.
-      label: detectedEp
-        ? `Capítulo ${detectedEp} · Parte ${partNum}/${partTotal}`
-        : `Parte ${partNum}/${partTotal}`,
-      shortLabel: `Parte ${partNum}/${partTotal}`,
-      isExtra: false,
-      isPrivate: false,
-      chapterNumber: epNum,
-      partNumber: partNum,
-      partTotal: partTotal,
+      name: { kind: 'part', chapter: detectedEp, part, total },
+      partNumber: part,
+      partTotal: total,
     };
   }
 
@@ -278,17 +258,7 @@ export function parseEpisodeBadge(
   //  (regla 8) en vez de fabricar una numeracion.)
 
   // 7. Solo capítulo
-  if (detectedEp) {
-    return {
-      label: `Capítulo ${detectedEp}`,
-      shortLabel: `Capítulo ${detectedEp}`,
-      isExtra: false,
-      isPrivate: false,
-      chapterNumber: detectedEp,
-      partNumber: null,
-      partTotal: null,
-    };
-  }
+  if (detectedEp) return { ...plain, name: { kind: 'chapter', n: detectedEp } };
 
   // 8. Limpieza de títulos repetitivos con el nombre de la serie o solo tailandés
   const isAllThai = /^[\u0E00-\u0E7F\s\W\d]+$/.test(rawTitle);
@@ -296,27 +266,50 @@ export function parseEpisodeBadge(
     seriesTitle &&
     rawTitle.toLowerCase().includes(seriesTitle.toLowerCase().slice(0, 8));
 
-  if (isAllThai || isRepeatedSeriesTitle) {
-    return {
-      label: `Capítulo ${episodeNumber}`,
-      shortLabel: `Capítulo ${episodeNumber}`,
-      isExtra: false,
-      isPrivate: false,
-      chapterNumber: episodeNumber,
-      partNumber: null,
-      partTotal: null,
-    };
-  }
+  if (isAllThai || isRepeatedSeriesTitle)
+    return { ...plain, name: { kind: 'chapter', n: episodeNumber } };
 
   return {
-    label: rawTitle.length > 35 ? `${rawTitle.slice(0, 32)}...` : rawTitle,
-    shortLabel: rawTitle.length > 22 ? `${rawTitle.slice(0, 20)}...` : rawTitle,
-    isExtra: false,
-    isPrivate: false,
-    chapterNumber: episodeNumber,
-    partNumber: null,
-    partTotal: null,
+    ...plain,
+    name: {
+      kind: 'title',
+      text: rawTitle.length > 35 ? `${rawTitle.slice(0, 32)}...` : rawTitle,
+    },
   };
+}
+
+type Translate = ReturnType<typeof useLocale>['t'];
+
+const BADGE_TAG_KEY = {
+  private: 'verSerie.tagPrivate',
+  trailer: 'verSerie.tagTrailer',
+  extra: 'verSerie.tagExtra',
+  music: 'verSerie.tagMusic',
+} as const satisfies Record<NonNullable<ParsedBadge['tag']>, TranslationKey>;
+
+function badgeLabel(name: BadgeName, t: Translate): string {
+  switch (name.kind) {
+    case 'chapter':
+      return t('verSerie.chapterTitle', { n: name.n });
+    case 'part': {
+      const part = t('verSerie.partLabel', { n: name.part, total: name.total });
+      return name.chapter
+        ? `${t('verSerie.chapterTitle', { n: name.chapter })} · ${part}`
+        : part;
+    }
+    case 'private':
+      return t('verSerie.privateVideo', { n: name.n });
+    case 'trailer':
+      return name.chapter
+        ? t('verSerie.trailerChapter', { n: name.chapter })
+        : t('verSerie.trailerNumber', { n: name.n });
+    case 'extra':
+      return t('verSerie.extraNumber', { n: name.n });
+    case 'ost':
+      return t('verSerie.ostNumber', { n: name.n });
+    case 'title':
+      return name.text;
+  }
 }
 
 function getYouTubeThumbnail(
@@ -339,18 +332,12 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
   const isWatched = (episodeId: number) => episodeStatus[episodeId] === 'VISTA';
 
   const flatEpisodes = useMemo(() => {
-    const totalCount = seasons.reduce((acc, s) => acc + s.episodes.length, 0);
     return seasons.flatMap((s) =>
       s.episodes.map((e) => ({
         ...e,
         seasonId: s.id,
         seasonNumber: s.seasonNumber,
-        parsed: parseEpisodeBadge(
-          e.title,
-          e.episodeNumber,
-          totalCount,
-          series.title
-        ),
+        parsed: parseEpisodeBadge(e.title, e.episodeNumber, series.title),
       }))
     );
   }, [seasons, series.title]);
@@ -568,11 +555,17 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           {isUserEmbed ? (
             series.submittedByIsCollaborator ? (
               <Tag color="gold">
-                Contenido de {series.submittedByName ?? 'colaborador'}
+                {t('verSerie.contributedByCollaborator', {
+                  name:
+                    series.submittedByName ??
+                    t('verSerie.collaboratorFallback'),
+                })}
               </Tag>
             ) : (
               <Tag color="purple">
-                Aporte de @{series.submittedByName ?? 'usuario'}
+                {t('verSerie.contributedByUser', {
+                  name: series.submittedByName ?? t('verSerie.userFallback'),
+                })}
               </Tag>
             )
           ) : scope === 'PERSONAL' ? (
@@ -596,7 +589,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           {series.linkedSeries && (
             <Link href={`/series/${series.linkedSeries.id}`} prefetch={false}>
               <Button type="primary" ghost>
-                Ficha completa en catálogo
+                {t('verSerie.catalogPage')}
               </Button>
             </Link>
           )}
@@ -676,7 +669,8 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         </Button>
         <span className="ver-serie__current-label">
           <strong>
-            T{active.seasonNumber} · {active.parsed.label}
+            {t('verSerie.seasonShort', { n: active.seasonNumber })} ·{' '}
+            {badgeLabel(active.parsed.name, t)}
           </strong>
         </span>
         {activeChapter && (
@@ -935,14 +929,14 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={thumbnail}
-                        alt={`Capítulo ${chapterNumber}`}
+                        alt={t('verSerie.chapterTitle', { n: chapterNumber })}
                         className="ver-serie__chapter-thumb"
                         loading="lazy"
                       />
                       <div className="ver-serie__chapter-thumb-overlay">
                         {isMultiPart ? (
                           <span className="ver-serie__part-count-badge">
-                            {items.length} Partes
+                            {t('episodesList.parts', { n: items.length })}
                           </span>
                         ) : (
                           <PlayCircleOutlined className="ver-serie__play-icon-overlay" />
@@ -1056,7 +1050,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
                          * ya whitelisteado en next.config.ts remotePatterns. */}
                         <Image
                           src={thumb}
-                          alt={badge.label}
+                          alt={badgeLabel(badge.name, t)}
                           fill
                           sizes="80px"
                           className="ver-serie__extra-thumb"
@@ -1066,14 +1060,14 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
                     )}
                     <div className="ver-serie__extra-info">
                       <span className="ver-serie__extra-name">
-                        {badge.label}
+                        {badgeLabel(badge.name, t)}
                       </span>
-                      {badge.tagColor && (
+                      {badge.tag && (
                         <Tag
                           color={badge.tagColor}
                           className="ver-serie__extra-tag"
                         >
-                          {badge.badgeText}
+                          {t(BADGE_TAG_KEY[badge.tag])}
                         </Tag>
                       )}
                     </div>

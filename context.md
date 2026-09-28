@@ -5,8 +5,7 @@ Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-s
 ## Estado actual (2026-09-28)
 
 - Comunidad: conversaciones (#103) y listas, Top 5, perfiles, bloqueos y moderación (#104) están en producción con su migración aplicada. Las conversaciones se publican desde el formulario; guardar borrador es opcional y quien pregunta puede pedir aviso de respuestas.
-- Seguimiento: biblioteca, historial, diario y estadísticas en producción. Faltan múltiples visionados, conflictos al importar y revisar `/watching` y la ficha como se revisó `/ver`.
-- Pendiente conocido: las etiquetas de episodios de `/ver` (`parseEpisodeBadge`) siguen en castellano fijo.
+- Seguimiento: biblioteca, historial, diario y estadísticas en producción. En castellano, lo que sigue el avance (`/ver`, ficha, `/watching`, perfil) dice "capítulo"; admin y carga de datos siguen con "episodio". Las etiquetas muestran capítulo y parte, nunca el número de fila. Faltan múltiples visionados y conflictos al importar.
 - Registro de entregas anteriores, sin cambios: [docs/historial-contexto.md](docs/historial-contexto.md).
 
 ---
