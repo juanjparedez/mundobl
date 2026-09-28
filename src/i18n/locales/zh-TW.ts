@@ -2690,6 +2690,7 @@ const zhTW = {
     "deployedAtLine": "部署時間：{date}"
   },
   "verSerie": {
+    "watchableOnlyTooltip": "尚未收錄於目錄：可以在這裡觀看並記錄進度。",
     "catalogPage": "目錄中的完整作品頁",
     "userFallback": "使用者",
     "collaboratorFallback": "合作者",
@@ -2718,7 +2719,7 @@ const zhTW = {
     "noEpisodesAvailable": "無可用集數",
     "inMyPersonalCatalogTooltip": "目錄中也有作品頁",
     "inMyCatalogTag": "已收錄於目錄",
-    "watchableOnlyTag": "僅可觀看",
+    "watchableOnlyTag": "僅在此觀看",
     "viewFullDetailsButton": "查看完整詳情",
     "moveToMyCatalogButton": "移至我的收藏",
     "seriesMovedToPersonalCatalogSuccess": "劇集已移至您的個人收藏",
@@ -3417,7 +3418,7 @@ const zhTW = {
     "heroSpotlightBadge": "本週劇集",
     "heroYoutubeTag": "YouTube 官方發布",
     "heroVimeoTag": "Vimeo 隨選",
-    "heroEpisodesBadge": "{count} 官方劇集",
+    "heroEpisodesBadge": "{count} 部官方影片",
     "heroPlayButton": "立即播放",
     "heroInfoButton": "詳情與演員",
     "heroCollapseTooltip": "最小化精選",

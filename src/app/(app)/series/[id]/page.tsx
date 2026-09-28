@@ -5,8 +5,8 @@ import { loadLocaleMessages } from '@/i18n/messages';
 import { getPublicUniverseSeries } from '@/lib/database';
 import type { Metadata } from 'next';
 import { cache } from 'react';
-import { notFound } from 'next/navigation';
-import { getSeriesById, prisma } from '@/lib/database';
+import { notFound, redirect } from 'next/navigation';
+import { getSeriesById, getWatchOnlySeries, prisma } from '@/lib/database';
 import { stripPrivateNotes } from '@/lib/privacy';
 import { SeriesHeader } from '@/components/series/SeriesHeader';
 import { SeasonsList } from '@/components/series/SeasonsList';
@@ -131,6 +131,10 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
   const serieRaw = await getSeriesByIdCached(seriesId);
 
   if (!serieRaw) {
+    // Lo que solo se ve aca no tiene ficha de catalogo: su pagina es /ver.
+    // Redireccion temporal, porque la serie puede pasar al catalogo.
+    const watchOnly = await getWatchOnlySeries(seriesId);
+    if (watchOnly) redirect(getVerUrl(watchOnly.id, watchOnly.title));
     notFound();
   }
 
