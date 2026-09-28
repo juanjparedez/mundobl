@@ -10,7 +10,7 @@ import { SERIES_LISTINGS_TAG } from '@/lib/revalidate-series';
 import { NovedadesClient } from './NovedadesClient';
 import './novedades.css';
 
-export const revalidate = 3600;
+export const revalidate = 21600;
 
 export const metadata: Metadata = {
   title: 'Novedades',
@@ -135,7 +135,7 @@ const getNovedadesData = unstable_cache(
     return { newSeries, newSeasons, watchableSeries: formattedWatchable };
   },
   ['novedades-data-v2'],
-  { revalidate: 3600, tags: [SERIES_LISTINGS_TAG] }
+  { revalidate: 21600, tags: [SERIES_LISTINGS_TAG] }
 );
 
 export default async function NovedadesPage() {
