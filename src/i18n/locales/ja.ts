@@ -440,6 +440,7 @@ const ja = {
     "likes": "YouTubeで{n}件の高評価"
   },
   "episodesList": {
+    "chaptersTitle": "エピソード ({n})",
     "headerTitle": "エピソード ({n})",
     "parts": "{n}パート",
     "extrasNote": "その他{n}本の動画：プレビューと特典",
@@ -504,6 +505,7 @@ const ja = {
     "errorGenerating": "生成エラー"
   },
   "seasonsList": {
+    "watchedProgress": "{total}話中{watched}話視聴済み",
     "emptyText": "シーズンが記録されていません",
     "seasonLabel": "シーズン {n}",
     "capsTag": "{n}話",
@@ -2690,6 +2692,21 @@ const ja = {
     "deployedAtLine": "デプロイ: {date}"
   },
   "verSerie": {
+    "catalogPage": "カタログの作品ページ",
+    "userFallback": "ユーザー",
+    "collaboratorFallback": "協力者",
+    "contributedByUser": "@{name}さんの投稿",
+    "contributedByCollaborator": "{name}のコンテンツ",
+    "tagMusic": "音楽",
+    "tagExtra": "特典",
+    "tagTrailer": "予告編",
+    "tagPrivate": "非公開",
+    "ostNumber": "OST #{n}",
+    "extraNumber": "特典 #{n}",
+    "trailerNumber": "予告編 #{n}",
+    "trailerChapter": "予告編・第{n}話",
+    "privateVideo": "非公開動画 #{n}",
+    "seasonShort": "S{n}",
     "chapterTitle": "第{n}話",
     "privateVideos": "制作会社がYouTubeで非公開・削除した動画：{n}本",
     "play": "再生",

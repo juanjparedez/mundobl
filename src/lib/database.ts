@@ -434,7 +434,7 @@ export async function getTrackingHistory(
     : [];
   const chapterTargets = new Map<
     number,
-    { episodeId: number; chapterNumber: number }
+    { episodeId: number; chapterNumber: number; part: number; parts: number }
   >();
   for (const season of seasons) {
     const { chapters } = groupIntoChapters(
@@ -444,12 +444,14 @@ export async function getTrackingHistory(
       }))
     );
     for (const chapter of chapters) {
-      for (const episode of chapter.episodes) {
+      chapter.episodes.forEach((episode, index) => {
         chapterTargets.set(episode.id, {
           episodeId: chapter.episodes[0].id,
           chapterNumber: chapter.number,
+          part: index + 1,
+          parts: chapter.episodes.length,
         });
-      }
+      });
     }
   }
   return {

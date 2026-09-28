@@ -161,14 +161,6 @@ export function toTrackedChapters(
   }));
 }
 
-/** "T1·E4", el mismo codigo en el stepper y en /watching. */
-export function chapterCode(chapter: {
-  seasonNumber: number;
-  number: number;
-}): string {
-  return `T${chapter.seasonNumber}·E${chapter.number}`;
-}
-
 /** Count a chapter once only when every recorded part is watched.
  * Call separately for each series so identical season/chapter numbers never merge.
  */
