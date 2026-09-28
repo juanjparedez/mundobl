@@ -20,6 +20,57 @@ export type TranslationShape = {
     error: string;
     conflict: string;
   };
+  communityHub: {
+    eyebrow: string;
+    welcome: string;
+    intro: string;
+    DISCUSSION: string;
+    REVIEW_REQUEST: string;
+    RECOMMENDATION: string;
+    all: string;
+    reviews: string;
+    unanswered: string;
+    conversations: string;
+    recentReviews: string;
+    open: string;
+    replies: string;
+    noTopics: string;
+    noTopicsHint: string;
+    anonymous: string;
+    newTopic: string;
+    kind: string;
+    series: string;
+    searchSeries: string;
+    searchHint: string;
+    episode: string;
+    wholeSeries: string;
+    topicTitle: string;
+    required: string;
+    titleHint: string;
+    body: string;
+    bodyHint: string;
+    spoilers: string;
+    episodeSpoilers: string;
+    publish: string;
+    promptDISCUSSION: string;
+    promptREVIEW_REQUEST: string;
+    promptRECOMMENDATION: string;
+    closed: string;
+    close: string;
+    reopen: string;
+    delete: string;
+    deleteConfirm: string;
+    reply: string;
+    replyPlaceholder: string;
+    noReplies: string;
+    showSpoilers: string;
+    login: string;
+    writeReview: string;
+    replyNotification: string;
+    error: string;
+    rateLimit: string;
+    episodeFormat: string;
+  };
   community: {
     search: string;
     title: string;
@@ -3421,6 +3472,63 @@ const es: TranslationShape = {
       'El seguimiento cambió. Cerrá y volvé a abrir para revisar la fecha actual.',
   },
 
+  communityHub: {
+    eyebrow: 'Comunidad MundoBL',
+    welcome: 'Las historias siguen acá',
+    intro:
+      'Conversá sobre lo que estás viendo, compartí una mirada y encontrá tu próxima historia con otras personas.',
+    DISCUSSION: 'Conversar sobre una serie',
+    REVIEW_REQUEST: 'Pedir una reseña',
+    RECOMMENDATION: 'Pedir recomendaciones',
+    all: 'Todo',
+    reviews: 'Reseñas',
+    unanswered: 'Sin respuesta',
+    conversations: 'Conversaciones de la comunidad',
+    recentReviews: 'Reseñas recientes',
+    open: 'Entrar a la conversación',
+    replies: 'respuestas',
+    noTopics: 'Todavía no hay conversaciones aquí',
+    noTopicsHint:
+      'Contá qué estás viendo o qué te gustaría descubrir. Tu pregunta puede iniciar la próxima conversación.',
+    anonymous: 'Cuenta eliminada',
+    newTopic: 'Nueva conversación',
+    kind: '¿Qué querés compartir?',
+    series: 'Serie o película',
+    searchSeries: 'Buscá una obra por su nombre',
+    searchHint: 'Escribí al menos 2 letras para buscar',
+    episode: 'Capítulo (opcional)',
+    wholeSeries: 'Sobre toda la serie',
+    topicTitle: 'Título',
+    required: 'Elegí una obra',
+    titleHint: 'Usá entre 5 y 140 caracteres',
+    body: 'Tu mensaje',
+    bodyHint: 'Escribí entre 10 y 5000 caracteres',
+    spoilers: 'Contiene spoilers',
+    episodeSpoilers:
+      'Las conversaciones de capítulos se marcan con spoilers automáticamente.',
+    publish: 'Publicar',
+    promptDISCUSSION: '¿Qué te pareció esta historia?',
+    promptREVIEW_REQUEST: '¿Alguien puede reseñar esta serie?',
+    promptRECOMMENDATION: 'Busco una historia que…',
+    closed: 'Conversación cerrada',
+    close: 'Cerrar conversación',
+    reopen: 'Reabrir',
+    delete: 'Eliminar',
+    deleteConfirm:
+      '¿Eliminar esta publicación? Esta acción no se puede deshacer.',
+    reply: 'Responder',
+    replyPlaceholder: 'Compartí tu opinión o una recomendación…',
+    noReplies: 'Sé la primera persona en responder',
+    showSpoilers: 'Mostrar spoilers',
+    login: 'Iniciar sesión para participar',
+    writeReview: 'Escribir una reseña',
+    replyNotification: 'Respondieron a tu conversación',
+    error:
+      'No pudimos completar la acción. Revisá los datos e intentá de nuevo.',
+    rateLimit:
+      'Publicaste varias veces seguidas. Esperá un momento antes de continuar.',
+    episodeFormat: 'Temporada {season} · Capítulo {episode}',
+  },
   community: {
     search: 'Buscar una serie',
     title: 'Comunidad',
@@ -7039,6 +7147,61 @@ const en: TranslationShape = {
     conflict: 'Tracking changed. Close and reopen to review the current date.',
   },
 
+  communityHub: {
+    eyebrow: 'MundoBL community',
+    welcome: 'The stories continue here',
+    intro:
+      'Talk about what you are watching, share your perspective and discover your next story together.',
+    DISCUSSION: 'Discuss a series',
+    REVIEW_REQUEST: 'Request a review',
+    RECOMMENDATION: 'Ask for recommendations',
+    all: 'All',
+    reviews: 'Reviews',
+    unanswered: 'Unanswered',
+    conversations: 'Community conversations',
+    recentReviews: 'Recent reviews',
+    open: 'Join the conversation',
+    replies: 'replies',
+    noTopics: 'No conversations here yet',
+    noTopicsHint:
+      'Tell us what you are watching or hoping to discover. Your question could start the next conversation.',
+    anonymous: 'Deleted account',
+    newTopic: 'New conversation',
+    kind: 'What would you like to share?',
+    series: 'Series or movie',
+    searchSeries: 'Search for a title',
+    searchHint: 'Type at least 2 letters to search',
+    episode: 'Episode (optional)',
+    wholeSeries: 'About the whole series',
+    topicTitle: 'Title',
+    required: 'Choose a title',
+    titleHint: 'Use 5 to 140 characters',
+    body: 'Your message',
+    bodyHint: 'Write 10 to 5000 characters',
+    spoilers: 'Contains spoilers',
+    episodeSpoilers:
+      'Episode conversations are automatically marked as spoilers.',
+    publish: 'Publish',
+    promptDISCUSSION: 'What did you think of this story?',
+    promptREVIEW_REQUEST: 'Could someone review this series?',
+    promptRECOMMENDATION: 'I am looking for a story that…',
+    closed: 'Conversation closed',
+    close: 'Close conversation',
+    reopen: 'Reopen',
+    delete: 'Delete',
+    deleteConfirm: 'Delete this post? This cannot be undone.',
+    reply: 'Reply',
+    replyPlaceholder: 'Share your thoughts or a recommendation…',
+    noReplies: 'Be the first to reply',
+    showSpoilers: 'Show spoilers',
+    login: 'Sign in to participate',
+    writeReview: 'Write a review',
+    replyNotification: 'Someone replied to your conversation',
+    error: 'We could not complete the action. Check your input and try again.',
+    rateLimit:
+      'You have posted several times in a row. Please wait before continuing.',
+    episodeFormat: 'Season {season} · Episode {episode}',
+  },
   community: {
     search: 'Search for a series',
     title: 'Community',

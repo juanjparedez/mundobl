@@ -53,6 +53,14 @@ async function main() {
       `INSERT INTO "Series" (title, type, "updatedAt") VALUES ('Restauración á 漢字', 'serie', now()) RETURNING id`
     );
     seriesId = series.rows[0].id;
+    const topic = await from.query<{ id: number }>(
+      `INSERT INTO "CommunityTopic" (kind, title, body, "seriesId", "userId", "updatedAt") VALUES ('DISCUSSION', 'Conversación 漢字', 'Contenido de prueba', $1, $2, now()) RETURNING id`,
+      [seriesId, userId]
+    );
+    await from.query(
+      `INSERT INTO "CommunityReply" ("topicId", "userId", body, "hasSpoilers") VALUES ($1, $2, 'Respuesta á 漢字', true)`,
+      [topic.rows[0].id, userId]
+    );
     const writer = await from.query<{ id: number }>(
       `INSERT INTO "Writer" (name, aliases, "imageAttribution", "bioSourceUrl", "updatedAt") VALUES ($1, $2, $3, $4, now()) RETURNING id`,
       [

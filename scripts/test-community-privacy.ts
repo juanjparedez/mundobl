@@ -46,7 +46,10 @@ async function main() {
           seriesId: series.id,
           userId: user.id,
           title: `${key}-title-${kind}`,
-          body: 'Never expose the body in the discovery payload',
+          body:
+            kind === 'spoiler'
+              ? 'SECRET spoiler ending'
+              : 'A public preview. '.repeat(40),
           status: kind === 'draft' ? 'DRAFT' : 'PUBLISHED',
           hasSpoilers: kind === 'spoiler',
           publishedAt: new Date(),
@@ -72,7 +75,18 @@ async function main() {
     assert.ok(embeddedRow);
     assert.ok(getContentUrl(embeddedRow.series).startsWith('/ver/'));
     const payload = JSON.stringify(rows);
-    assert.equal(payload.includes('Never expose the body'), false);
+    assert.equal(payload.includes('SECRET spoiler ending'), false);
+    assert.equal(payload.includes(published.review.body), false);
+    assert.equal(
+      rows.find((row) => row.id === spoiler.review.id)?.excerpt,
+      null
+    );
+    assert.ok(
+      rows
+        .find((row) => row.id === published.review.id)
+        ?.excerpt?.startsWith('A public preview.')
+    );
+    assert.ok(rows.every((row) => !row.excerpt || row.excerpt.length <= 220));
     assert.equal(payload.includes(user.email), false);
     assert.equal(payload.includes(spoiler.review.title), false);
     const filtered = await getCommunityReviews(1, `${key}-PUBLIC`);

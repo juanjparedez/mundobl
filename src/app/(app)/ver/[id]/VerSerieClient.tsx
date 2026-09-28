@@ -1086,7 +1086,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
        * ya existe en /series/[id] via "Ver ficha completa" mas arriba, asi
        * que evitamos duplicar el mismo widget en dos paginas. */}
       {isUserEmbed && (
-        <div className="ver-serie__ratings-reviews">
+        <div id="series-section-reviews" className="ver-serie__ratings-reviews">
           <RatingSection seriesId={series.id} existingRatings={[]} />
           <ReviewsSection seriesId={series.id} />
         </div>

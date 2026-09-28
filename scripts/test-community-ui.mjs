@@ -22,6 +22,24 @@ const bundle = await build({
     resolveDir: process.cwd(),
     loader: 'tsx',
   },
+  plugins: [
+    {
+      name: 'framework-fixtures',
+      setup(b) {
+        b.onResolve(
+          { filter: /^(next\/navigation|next-auth\/react)$/ },
+          (args) => ({ path: args.path, namespace: 'fixture' })
+        );
+        b.onLoad({ filter: /.*/, namespace: 'fixture' }, (args) => ({
+          contents:
+            args.path === 'next/navigation'
+              ? 'export const useRouter=()=>({push(){},refresh(){}});'
+              : 'export const useSession=()=>({data:null});export const signIn=()=>{};',
+          loader: 'js',
+        }));
+      },
+    },
+  ],
   bundle: true,
   write: false,
   outdir: 'test-results/community-bundle',
@@ -55,9 +73,11 @@ const errors = [];
 page.on('pageerror', (e) => errors.push(e.message));
 try {
   await page.goto(`http://127.0.0.1:${server.address().port}`);
-  await page.getByRole('heading', { name: 'Comunidad', exact: true }).waitFor();
+  await page
+    .getByRole('heading', { name: 'Las historias siguen acá', exact: true })
+    .waitFor();
   await page.getByText('Título oculto por spoilers', { exact: true }).waitFor();
-  const links = page.locator('.community-feed li a');
+  const links = page.locator('.community-card__footer a');
   assert.equal(await links.count(), 3);
   assert.match(
     await links.nth(0).getAttribute('href'),
@@ -65,7 +85,7 @@ try {
   );
   assert.equal(
     await links.nth(1).getAttribute('href'),
-    '/ver/22-a-viewing-contribution'
+    '/ver/22-a-viewing-contribution#series-section-reviews'
   );
   assert.equal(
     await page
@@ -105,7 +125,7 @@ try {
   await page
     .getByRole('button', { name: 'Buscar una serie', exact: true })
     .click();
-  await page.waitForURL('**/comunidad?q=Una+serie');
+  await page.waitForURL('**/comunidad?view=all&q=Una+serie');
   assert.deepEqual(errors, []);
   console.log(
     'PASS: actual community component and translations, spoiler placeholder, catalog/viewing destinations, long titles and mobile/desktop widths. Synthetic content; no authenticated backend flow.'

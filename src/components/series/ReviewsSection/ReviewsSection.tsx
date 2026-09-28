@@ -189,6 +189,30 @@ export function ReviewsSection({ seriesId }: ReviewsSectionProps) {
     [reviews, myReview]
   );
 
+  // Community review requests can open the editor, preserving an existing draft.
+  useEffect(() => {
+    if (loading || !currentUserId) return;
+    const url = new URL(window.location.href);
+    if (url.searchParams.get('review') !== 'new') return;
+    const timer = window.setTimeout(() => {
+      setEditingId(myReview?.id ?? null);
+      form.setFieldsValue(
+        myReview
+          ? {
+              ...myReview,
+              translateTo: [],
+              status:
+                myReview.status === 'HIDDEN' ? 'PUBLISHED' : myReview.status,
+            }
+          : { ...EMPTY_FORM, language: locale }
+      );
+      setModalOpen(true);
+      url.searchParams.delete('review');
+      window.history.replaceState(window.history.state, '', url);
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [loading, currentUserId, myReview, form, locale]);
+
   const openNewModal = () => {
     setEditingId(null);
     form.setFieldsValue({ ...EMPTY_FORM, language: locale });

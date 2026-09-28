@@ -36,7 +36,7 @@ jobs:
       - name: Regression tests against disposable PostgreSQL
         run: |
           set -e
-          for test in tracking-backup watching-collection profile-chapters tracking-statistics tracking-insights insight-distributions progress tracking-database tracking-history series-tracking-status community-privacy community-statistics watch-date writer-credits; do
+          for test in tracking-backup watching-collection profile-chapters tracking-statistics tracking-insights insight-distributions progress tracking-database tracking-history series-tracking-status community-privacy community-statistics community-topics watch-date writer-credits; do
             npx tsx "scripts/test-$test.ts"
           done
           node --import tsx scripts/test-private-tracking-routes.mjs
@@ -56,4 +56,5 @@ jobs:
           node scripts/test-tracking-insights-ui.mjs
           node scripts/test-history-cards.mjs
           node scripts/test-community-statistics-ui.mjs
+          node --import tsx scripts/test-community-flow.mjs
       - run: npm run build
