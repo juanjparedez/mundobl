@@ -11,7 +11,7 @@ import {
 
 // Los contadores de la landing no necesitan minuto a minuto, y ademas se
 // invalida on-demand con cada cambio de serie (revalidateSeriesListings).
-export const revalidate = 3600;
+export const revalidate = 21600;
 
 export const metadata: Metadata = {
   alternates: {

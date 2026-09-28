@@ -1,5 +1,11 @@
 // 208 paginas cuyo contenido cambia solo al re-etiquetar series.
-export const revalidate = 86400;
+export const revalidate = 604800;
+// Sin generateStaticParams, Next renderiza esta ruta en cada visita aunque
+// tenga revalidate. Con la lista vacia, la primera visita la genera y las
+// siguientes salen de la cache hasta el proximo revalidate.
+export function generateStaticParams(): { id: string }[] {
+  return [];
+}
 
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';

@@ -9,7 +9,7 @@ import './glosario.css';
 // aparte. Evita duplicar un sistema de moderacion/admin para esto.
 const RESOURCES_CATEGORY = 'glosario';
 
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 export const metadata: Metadata = {
   title: 'Glosario Cultural BL & GL | Términos, Honoríficos y Traducción',

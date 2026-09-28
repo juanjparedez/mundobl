@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   alternates: { canonical: '/creditos' },
 };
 
-export const revalidate = 86400;
+export const revalidate = 604800;
 
 interface ChannelEntry {
   name: string;

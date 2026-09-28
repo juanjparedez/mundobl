@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/database';
 
-export const revalidate = 3600;
+export const revalidate = 21600;
 
 const BASE_URL = 'https://mundobl.com.ar';
 
@@ -74,7 +74,7 @@ ${items}
   return new Response(xml, {
     headers: {
       'Content-Type': 'application/rss+xml; charset=utf-8',
-      'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=1200',
+      'Cache-Control': 'public, s-maxage=21600, stale-while-revalidate=86400',
     },
   });
 }

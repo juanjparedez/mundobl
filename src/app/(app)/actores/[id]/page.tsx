@@ -2,6 +2,12 @@
 // cuando se les suma un credito. Nada de eso justifica regenerar ~1750
 // paginas cada hora (eso solo era ISR writes + CPU). Una semana de TTL.
 export const revalidate = 604800;
+// Sin generateStaticParams, Next renderiza esta ruta en cada visita aunque
+// tenga revalidate. Con la lista vacia, la primera visita la genera y las
+// siguientes salen de la cache hasta el proximo revalidate.
+export function generateStaticParams(): { id: string }[] {
+  return [];
+}
 
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';

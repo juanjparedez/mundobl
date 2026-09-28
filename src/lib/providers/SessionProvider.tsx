@@ -7,5 +7,10 @@ interface SessionProviderProps {
 }
 
 export function SessionProvider({ children }: SessionProviderProps) {
-  return <NextAuthSessionProvider>{children}</NextAuthSessionProvider>;
+  // Cada foco de pestana pedia /api/auth/session: una funcion mas por visita.
+  return (
+    <NextAuthSessionProvider refetchOnWindowFocus={false}>
+      {children}
+    </NextAuthSessionProvider>
+  );
 }
