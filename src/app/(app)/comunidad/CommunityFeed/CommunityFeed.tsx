@@ -1,4 +1,7 @@
 'use client';
+import { CommunityNavigation } from '@/components/community/CommunityNavigation/CommunityNavigation';
+import { CommunityMetrics } from '@/components/community/CommunityMetrics/CommunityMetrics';
+import type { CommunityMetrics as Metrics } from '@/types/community';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useSession, signIn } from 'next-auth/react';
@@ -30,6 +33,8 @@ export function CommunityFeed({
   page = 1,
   hasNext = false,
   search = '',
+  context,
+  metrics,
 }: {
   items: CommunityReviewItem[];
   topics?: CommunityTopicItem[];
@@ -37,16 +42,26 @@ export function CommunityFeed({
   page?: number;
   hasNext?: boolean;
   search?: string;
+  metrics?: Metrics;
+  context?: {
+    series: { id: number; title: string };
+    episodeId?: number;
+    episode?: { seasonNumber: number; episodeNumber: number };
+  };
 }) {
   const { t, locale } = useLocale();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [compose, setCompose] = useState<CommunityKind | null>(null);
+  const scope = context
+    ? { seriesId: context.series.id, episodeId: context.episodeId }
+    : undefined;
   const icons = [
     <CommentOutlined key="discussion" aria-hidden />,
     <StarOutlined key="review" aria-hidden />,
     <CompassOutlined key="recommendation" aria-hidden />,
   ];
   function start(kind: CommunityKind) {
+    if (status === 'loading') return;
     if (!session?.user) {
       void signIn('google', { callbackUrl: window.location.href });
       return;
@@ -55,11 +70,20 @@ export function CommunityFeed({
   }
   return (
     <section className="community-feed">
+      <CommunityNavigation active="conversations" />
       <header className="community-feed__hero">
         <span className="community-feed__eyebrow">
           {t('communityHub.eyebrow')}
         </span>
-        <h1>{t('communityHub.welcome')}</h1>
+        <h1>{context?.series.title ?? t('communityHub.welcome')}</h1>
+        {context?.episode && (
+          <p>
+            {t('communityHub.episodeFormat', {
+              season: context.episode.seasonNumber,
+              episode: context.episode.episodeNumber,
+            })}
+          </p>
+        )}
         <p>{t('communityHub.intro')}</p>
         <div className="community-feed__actions">
           {COMMUNITY_KINDS.map((kind, i) => (
@@ -68,30 +92,40 @@ export function CommunityFeed({
               icon={icons[i]}
               type={i === 0 ? 'primary' : 'default'}
               onClick={() => start(kind)}
+              disabled={status === 'loading'}
             >
               {t(`communityHub.${kind}`)}
             </Button>
           ))}
         </div>
       </header>
+      {metrics && <CommunityMetrics metrics={metrics} />}
       <nav
         className="community-feed__filters"
         aria-label={t('communityHub.conversations')}
       >
         {(['all', 'reviews', ...COMMUNITY_KINDS, 'unanswered'] as const).map(
-          (filter) => (
-            <Link
-              key={filter}
-              href={getCommunityUrl(1, search, filter)}
-              aria-current={filter === view ? 'page' : undefined}
-            >
-              {t(`communityHub.${filter}`)}
-            </Link>
-          )
+          (filter) =>
+            (!context || filter !== 'reviews') && (
+              <Link
+                key={filter}
+                href={getCommunityUrl(1, search, filter, scope)}
+                aria-current={filter === view ? 'page' : undefined}
+              >
+                {t(`communityHub.${filter}`)}
+              </Link>
+            )
         )}
       </nav>
-      <form className="community-feed__search" action="/comunidad" method="get">
+      <form
+        className="community-feed__search"
+        action={scope ? `/comunidad/obras/${scope.seriesId}` : '/comunidad'}
+        method="get"
+      >
         <input type="hidden" name="view" value={view} />
+        {scope?.episodeId && (
+          <input type="hidden" name="episodeId" value={scope.episodeId} />
+        )}
         <Input
           key={search}
           name="q"
@@ -106,7 +140,7 @@ export function CommunityFeed({
           aria-label={t('community.search')}
         />
       </form>
-      {(view === 'all' || view === 'reviews') && (
+      {!context && (view === 'all' || view === 'reviews') && (
         <section>
           <div className="community-feed__section-heading">
             <h2>{t('communityHub.recentReviews')}</h2>
@@ -178,12 +212,12 @@ export function CommunityFeed({
       {(page > 1 || hasNext) && (
         <nav className="community-feed__pagination">
           {page > 1 && (
-            <Link href={getCommunityUrl(page - 1, search, view)}>
+            <Link href={getCommunityUrl(page - 1, search, view, scope)}>
               {t('peopleIndex.prevPage')}
             </Link>
           )}
           {hasNext && (
-            <Link href={getCommunityUrl(page + 1, search, view)}>
+            <Link href={getCommunityUrl(page + 1, search, view, scope)}>
               {t('peopleIndex.nextPage')}
             </Link>
           )}
@@ -193,6 +227,7 @@ export function CommunityFeed({
         <CommunityComposer
           key={compose}
           kind={compose}
+          context={context}
           onClose={() => setCompose(null)}
         />
       )}

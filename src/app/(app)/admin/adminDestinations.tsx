@@ -140,6 +140,14 @@ export const ADMIN_DESTINATIONS: readonly AdminDestination[] = [
 
   // --- Moderacion ---------------------------------------------------
   {
+    id: 'community',
+    href: '/admin/comunidad',
+    groupId: 'moderacion',
+    icon: <MessageOutlined />,
+    labelKey: 'communitySpace.moderation',
+    shortKey: 'communitySpace.moderation',
+  },
+  {
     id: 'comments',
     href: '/admin/comentarios',
     groupId: 'moderacion',

@@ -1,0 +1,10 @@
+.community-safety {
+  display: grid;
+  gap: var(--spacing-sm);
+  color: var(--text-secondary);
+}
+.community-safety__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}

@@ -22,6 +22,7 @@ import {
 } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import { CommentsList } from '@/components/common/CommentsList';
+import { CommunityWorkLink } from '@/components/community/CommunityWorkLink/CommunityWorkLink';
 import { SpoilerGate } from '@/components/common/SpoilerGate/SpoilerGate';
 import { EpisodeNoteModal } from './EpisodeNoteModal/EpisodeNoteModal';
 import { EpisodesAdminToolbar } from './EpisodesAdminToolbar/EpisodesAdminToolbar';
@@ -72,7 +73,7 @@ export function EpisodesList({
   const { data: session } = useSession();
   // El visto sale del provider: el panel de seguimiento lee lo mismo, asi
   // que marcar aca lo actualiza sin recargar.
-  const { episodeStatus } = useSeriesUserStatus();
+  const { episodeStatus, seriesId } = useSeriesUserStatus();
   const { setWatched, pendingKey, ready } = useMarkEpisodes();
   const [episodes, setEpisodes] = useState<Episode[]>(initialEpisodes);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -517,6 +518,12 @@ export function EpisodesList({
                             {episode.synopsis}
                           </p>
                         </SpoilerGate>
+                      )}
+                      {seriesId && (
+                        <CommunityWorkLink
+                          seriesId={seriesId}
+                          episodeId={episode.id}
+                        />
                       )}
                       <CommentsList
                         episodeId={episode.id}

@@ -1,4 +1,5 @@
 'use client';
+import { CommunityMetrics } from '@/components/community/CommunityMetrics/CommunityMetrics';
 
 import { useCallback, useMemo, useState } from 'react';
 import Link from 'next/link';
@@ -711,6 +712,7 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
       )}
 
       {/* ── Transparency & Methodology Notice ── */}
+      {data.community && <CommunityMetrics metrics={data.community} />}
       <div className="public-stats-methodology">
         <Alert
           type="info"

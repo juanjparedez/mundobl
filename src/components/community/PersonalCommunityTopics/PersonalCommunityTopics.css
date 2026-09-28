@@ -1,0 +1,23 @@
+.personal-topics__tabs,
+.personal-topics__badges {
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+.personal-topics__tabs a[aria-current='page'] {
+  font-weight: 700;
+  text-decoration: underline;
+}
+.personal-topics__items {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--spacing-lg);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+}
+.personal-topics__items > li {
+  display: grid;
+  align-content: start;
+  gap: var(--spacing-sm);
+  min-width: 0;
+}
