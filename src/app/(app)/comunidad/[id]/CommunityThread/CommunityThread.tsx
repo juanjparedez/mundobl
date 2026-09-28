@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession, signIn } from 'next-auth/react';
-import { Alert, Avatar, Button, Input, Popconfirm, Switch } from 'antd';
+import { Alert, Avatar, Button, Input, Popconfirm, Switch, Tag } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { PanelCard, Chip, EmptyState } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -234,6 +234,9 @@ export function CommunityThread({
                     <time dateTime={reply.createdAt}>
                       {date(reply.createdAt)}
                     </time>
+                    {reply.moderationHidden && (
+                      <Tag>{t('communitySpace.moderated')}</Tag>
+                    )}
                   </div>
                   {reply.hasSpoilers && !revealedReplies.includes(reply.id) ? (
                     <Button
@@ -258,18 +261,20 @@ export function CommunityThread({
                       )}
                     </>
                   )}
-                  {topic.visibility === 'PUBLIC' && !topic.moderationHidden && (
-                    <>
-                      <CommunityShareLink
-                        path={`/comunidad/${topic.id}?page=${page}#reply-${reply.id}`}
-                      />
-                      <CommunitySafetyControls
-                        targetType="REPLY"
-                        targetId={String(reply.id)}
-                        authorId={reply.author?.id}
-                      />
-                    </>
-                  )}
+                  {topic.visibility === 'PUBLIC' &&
+                    !topic.moderationHidden &&
+                    !reply.moderationHidden && (
+                      <>
+                        <CommunityShareLink
+                          path={`/comunidad/${topic.id}?page=${page}#reply-${reply.id}`}
+                        />
+                        <CommunitySafetyControls
+                          targetType="REPLY"
+                          targetId={String(reply.id)}
+                          authorId={reply.author?.id}
+                        />
+                      </>
+                    )}
                   {!!session?.user?.id &&
                     session.user.id === reply.author?.id && (
                       <Popconfirm
