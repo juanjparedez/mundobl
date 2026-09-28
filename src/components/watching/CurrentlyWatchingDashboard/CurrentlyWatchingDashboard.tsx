@@ -131,7 +131,7 @@ function WatchingCollection({ userId }: { userId: string }) {
       });
       if (!response.ok) throw new Error();
       message.success(
-        t('watchingDashboard.episodeMarkedMessage', { ep: next.label })
+        t('watchingDashboard.episodeMarkedMessage', { ep: next.chapterNumber })
       );
       await load();
     } catch {
@@ -262,12 +262,14 @@ function WatchingCollection({ userId }: { userId: string }) {
                           : 'trackingWorkspace.pin'
                       ),
                       manage: t('trackingWorkspace.manage'),
-                      mark: t('watchingDashboard.markNextCode', {
-                        code: progress.next?.label ?? '',
-                      }),
+                      mark: progress.next
+                        ? t('verSerie.markChapter', {
+                            n: progress.next.chapterNumber,
+                          })
+                        : '',
                       watch: t('watchingDashboard.watchNow'),
                       next: progress.next
-                        ? `${t('watchingDashboard.nextLabel')}: ${progress.next.label}`
+                        ? `${t('watchingDashboard.nextLabel')}: ${t('progressStepper.chapterShort', { season: progress.next.seasonNumber, n: progress.next.chapterNumber })}`
                         : progress.total > 0
                           ? t(
                               progress.watched === progress.total
@@ -399,6 +401,7 @@ function WatchingCollection({ userId }: { userId: string }) {
                   unknown: t('trackingHistory.unknown'),
                   season: t('trackingHistory.season'),
                   episode: t('trackingHistory.episode'),
+                  part: t('verSerie.partLabel'),
                   series: t('trackingHistory.series'),
                   note: t('trackingWorkspace.privateNote'),
                   comments: t('trackingWorkspace.publicComment'),

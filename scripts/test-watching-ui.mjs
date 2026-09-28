@@ -308,7 +308,7 @@ try {
     /historia GL/
   );
   await series
-    .getByRole('button', { name: 'Episodios y notas', exact: true })
+    .getByRole('button', { name: 'Capítulos y notas', exact: true })
     .click();
   const drawer = page.getByRole('dialog').filter({
     has: page.getByRole('tab', { name: 'Temporada 1', exact: true }),
@@ -493,7 +493,7 @@ try {
     .click();
   const historyDiscussion = page
     .getByRole('dialog')
-    .filter({ hasText: 'Always Meet Again · T1 · E1' });
+    .filter({ hasText: 'Always Meet Again · T1 · cap. 1' });
   await historyDiscussion
     .getByText('Un comentario público de prueba', { exact: true })
     .waitFor();
@@ -516,7 +516,7 @@ try {
     .getByText('Fecha de visionado: Desconocida', { exact: true })
     .waitFor();
   assert.equal(await page.locator('.tracking-history__list > li').count(), 3);
-  assert.equal(await page.locator('.tracking-history__series').count(), 2);
+  assert.equal(await page.locator('.history-series-card').count(), 2);
   assert.equal(
     await page.locator('.tracking-history__list').first().locator('li').count(),
     2
@@ -530,7 +530,7 @@ try {
   await page.reload({ waitUntil: 'domcontentloaded' });
   await page.getByText('Estado previo al historial', { exact: true }).waitFor();
   assert.equal(await page.locator('.tracking-history__list > li').count(), 3);
-  assert.equal(await page.locator('.tracking-history__series').count(), 2);
+  assert.equal(await page.locator('.history-series-card').count(), 2);
   await page.setViewportSize({ width: 390, height: 600 });
   const dismissCookies = page.getByRole('button', { name: /Ok, entendido/ });
   if (await dismissCookies.isVisible()) await dismissCookies.click();

@@ -439,6 +439,7 @@ const th = {
     "likes": "ยอดไลก์ {n} ครั้งบน YouTube"
   },
   "episodesList": {
+    "chaptersTitle": "ตอน ({n})",
     "headerTitle": "ตอน ({n})",
     "parts": "{n} ส่วน",
     "extrasNote": "และอีก {n} วิดีโอ: ตัวอย่างและเบื้องหลัง",
@@ -503,6 +504,7 @@ const th = {
     "errorGenerating": "เกิดข้อผิดพลาดในการสร้าง"
   },
   "seasonsList": {
+    "watchedProgress": "ดูแล้ว {watched} จาก {total} ตอน",
     "emptyText": "ไม่มีซีซันที่บันทึกไว้",
     "seasonLabel": "ซีซันที่ {n}",
     "capsTag": "{n} ตอน",
@@ -2689,6 +2691,21 @@ const th = {
     "deployedAtLine": "ปรับใช้เมื่อ: {date}"
   },
   "verSerie": {
+    "catalogPage": "หน้าข้อมูลเต็มในแคตตาล็อก",
+    "userFallback": "ผู้ใช้",
+    "collaboratorFallback": "ผู้ร่วมงาน",
+    "contributedByUser": "แชร์โดย @{name}",
+    "contributedByCollaborator": "เนื้อหาจาก {name}",
+    "tagMusic": "เพลง",
+    "tagExtra": "คลิปพิเศษ",
+    "tagTrailer": "ตัวอย่าง",
+    "tagPrivate": "ส่วนตัว",
+    "ostNumber": "OST #{n}",
+    "extraNumber": "คลิปพิเศษ #{n}",
+    "trailerNumber": "ตัวอย่าง #{n}",
+    "trailerChapter": "ตัวอย่าง · ตอนที่ {n}",
+    "privateVideo": "วิดีโอส่วนตัว #{n}",
+    "seasonShort": "ซีซัน {n}",
     "chapterTitle": "ตอนที่ {n}",
     "privateVideos": "วิดีโอ {n} รายการถูกผู้ผลิตตั้งเป็นส่วนตัวหรือลบออกจาก YouTube",
     "play": "เล่น",

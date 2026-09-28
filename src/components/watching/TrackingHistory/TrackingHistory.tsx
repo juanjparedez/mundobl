@@ -34,12 +34,26 @@ interface Props {
     unknown: string;
     season: string;
     episode: string;
+    part: string;
     series: string;
     note: string;
     comments: string;
     kinds: Record<TrackingHistoryItem['kind'], string>;
     statuses: Record<TrackingHistoryItem['status'], string>;
   };
+}
+
+/** En un capitulo partido la fila del video no es el capitulo: se muestra capitulo y parte. */
+function eventLabel(item: TrackingHistoryItem, labels: Props['labels']) {
+  const chapter = item.chapterTarget;
+  const base = labels.episode
+    .replace('{season}', String(item.seasonNumber))
+    .replace('{episode}', String(chapter?.chapterNumber ?? item.episodeNumber));
+  if (!chapter || chapter.parts < 2) return base;
+  const part = labels.part
+    .replace('{n}', String(chapter.part))
+    .replace('{total}', String(chapter.parts));
+  return `${base} · ${part}`;
 }
 
 export function TrackingHistory({ userId, locale, labels }: Props) {
@@ -234,9 +248,7 @@ export function TrackingHistory({ userId, locale, labels }: Props) {
                 )}
                 <p>
                   {item.episodeNumber !== null
-                    ? labels.episode
-                        .replace('{season}', String(item.seasonNumber))
-                        .replace('{episode}', String(item.episodeNumber))
+                    ? eventLabel(item, labels)
                     : item.seasonNumber !== null
                       ? labels.season.replace('{n}', String(item.seasonNumber))
                       : labels.series}

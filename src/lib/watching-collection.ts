@@ -1,4 +1,4 @@
-import { groupIntoChapters, chapterCode } from './episode-chapters';
+import { groupIntoChapters } from './episode-chapters';
 import { findNextEpisode } from './episode-progress';
 import { getSeriesUrl, getVerUrl } from './slug';
 
@@ -94,7 +94,7 @@ export function watchingProgress(item: WatchingItem) {
     watched: chapters.filter(watched).length,
     next: next
       ? {
-          label: chapterCode(next),
+          chapterNumber: next.number,
           episodeIds: next.episodes
             .filter((episode) => !episode.watched)
             .map((episode) => episode.id),

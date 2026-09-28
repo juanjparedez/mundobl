@@ -228,7 +228,7 @@ async function main() {
     const partHistory = await getTrackingHistory(userId, key);
     assert.deepEqual(
       partHistory.items.find((item) => item.episodeNumber === 2)?.chapterTarget,
-      { episodeId, chapterNumber: 1 },
+      { episodeId, chapterNumber: 1, part: 2, parts: 2 },
       'History for a second part opens the canonical chapter note/discussion'
     );
     console.log(

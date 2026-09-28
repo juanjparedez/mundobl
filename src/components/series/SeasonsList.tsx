@@ -136,8 +136,11 @@ export function SeasonsList({ seasons }: SeasonsListProps) {
                     : 'default'
                 }
               >
-                📺 {episodeProgress.watchedCount}/{episodeProgress.totalCount}{' '}
-                {t('seasonsList.watchedTag').toLowerCase()}
+                📺{' '}
+                {t('seasonsList.watchedProgress', {
+                  watched: episodeProgress.watchedCount,
+                  total: episodeProgress.totalCount,
+                })}
               </Tag>
             )}
             {canEdit && (
