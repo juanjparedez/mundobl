@@ -5,8 +5,8 @@ import { loadLocaleMessages } from '@/i18n/messages';
 import { getPublicUniverseSeries } from '@/lib/database';
 import type { Metadata } from 'next';
 import { cache } from 'react';
-import { notFound } from 'next/navigation';
-import { getSeriesById, prisma } from '@/lib/database';
+import { notFound, redirect } from 'next/navigation';
+import { getSeriesById, getWatchOnlySeries, prisma } from '@/lib/database';
 import { stripPrivateNotes } from '@/lib/privacy';
 import { SeriesHeader } from '@/components/series/SeriesHeader';
 import { SeasonsList } from '@/components/series/SeasonsList';
@@ -58,7 +58,13 @@ interface SeriesPageProps {
 // counts de abajo. Era el grueso de las dos cuotas que se pasaron de largo.
 // Lo unico que queda viejo hasta 24h son los chips de conteo (reseñas,
 // favoritos, "viendo"); las reseñas y comentarios en si son client-side.
-export const revalidate = 86400;
+export const revalidate = 604800;
+// Sin generateStaticParams, Next renderiza esta ruta en cada visita aunque
+// tenga revalidate. Con la lista vacia, la primera visita la genera y las
+// siguientes salen de la cache hasta el proximo revalidate.
+export function generateStaticParams(): { id: string }[] {
+  return [];
+}
 
 export async function generateMetadata({
   params,
@@ -131,6 +137,10 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
   const serieRaw = await getSeriesByIdCached(seriesId);
 
   if (!serieRaw) {
+    // Lo que solo se ve aca no tiene ficha de catalogo: su pagina es /ver.
+    // Redireccion temporal, porque la serie puede pasar al catalogo.
+    const watchOnly = await getWatchOnlySeries(seriesId);
+    if (watchOnly) redirect(getVerUrl(watchOnly.id, watchOnly.title));
     notFound();
   }
 

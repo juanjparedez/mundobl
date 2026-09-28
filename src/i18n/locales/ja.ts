@@ -2692,6 +2692,7 @@ const ja = {
     "deployedAtLine": "デプロイ: {date}"
   },
   "verSerie": {
+    "watchableOnlyTooltip": "まだカタログにはありません。ここで視聴・記録できます。",
     "catalogPage": "カタログの作品ページ",
     "userFallback": "ユーザー",
     "collaboratorFallback": "協力者",
@@ -2720,7 +2721,7 @@ const ja = {
     "noEpisodesAvailable": "エピソードはありません",
     "inMyPersonalCatalogTooltip": "カタログにも作品ページがあります",
     "inMyCatalogTag": "カタログ掲載",
-    "watchableOnlyTag": "視聴可能のみ",
+    "watchableOnlyTag": "ここでのみ視聴可能",
     "viewFullDetailsButton": "詳細を見る",
     "moveToMyCatalogButton": "マイカタログに移動",
     "seriesMovedToPersonalCatalogSuccess": "シリーズが個人カタログに移動されました",
@@ -3419,7 +3420,7 @@ const ja = {
     "heroSpotlightBadge": "今週のシリーズ",
     "heroYoutubeTag": "公式YouTubeリリース",
     "heroVimeoTag": "Vimeoオンデマンド",
-    "heroEpisodesBadge": "公式エピソード {count} 件",
+    "heroEpisodesBadge": "公式動画 {count} 本",
     "heroPlayButton": "今すぐ再生",
     "heroInfoButton": "詳細とキャスト",
     "heroCollapseTooltip": "注目を最小化",

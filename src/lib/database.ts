@@ -1048,6 +1048,14 @@ export async function getCatalogFilterIndex() {
  * y episode) se filtran por ese usuario para que el render publico no
  * exponga el estado de otros usuarios.
  */
+/** Serie sin ficha de catalogo que igual se ve en /ver: ese es su destino. */
+export async function getWatchOnlySeries(id: number) {
+  return prisma.series.findFirst({
+    where: { id, visibility: 'VISIBLE', ...HAS_WATCHABLE_EPISODE },
+    select: { id: true, title: true },
+  });
+}
+
 export async function getSeriesById(id: number, userId?: string) {
   return await prisma.series.findFirst({
     where: {

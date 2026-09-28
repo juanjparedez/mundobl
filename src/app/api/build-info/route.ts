@@ -62,7 +62,7 @@ const INFO: BuildInfo = {
 export async function GET() {
   return NextResponse.json(INFO, {
     headers: {
-      'Cache-Control': 'public, s-maxage=600, stale-while-revalidate=1200',
+      'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
     },
   });
 }
