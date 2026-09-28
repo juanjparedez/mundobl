@@ -7,3 +7,16 @@
 .community-composer .ant-alert {
   margin-bottom: var(--spacing-md);
 }
+.community-composer__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+.community-composer__actions .ant-btn {
+  flex: 1 1 160px;
+  min-height: 44px;
+}
+.community-composer__note {
+  margin: var(--spacing-sm) 0 0;
+  font-size: var(--font-size-sm);
+}

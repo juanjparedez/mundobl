@@ -1,7 +1,16 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Alert, Button, Form, Input, Modal, Select, Switch } from 'antd';
+import {
+  Alert,
+  Button,
+  Checkbox,
+  Form,
+  Input,
+  Modal,
+  Select,
+  Switch,
+} from 'antd';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { COMMUNITY_KINDS, type CommunityKind } from '@/types/community';
 import './CommunityComposer.css';
@@ -23,6 +32,7 @@ interface FormValues {
   seriesId?: number;
   episodeId?: number;
   hasSpoilers?: boolean;
+  notify?: boolean;
 }
 export function CommunityComposer({
   kind,
@@ -43,7 +53,7 @@ export function CommunityComposer({
   const [series, setSeries] = useState<SeriesOption[]>([]);
   const [episodes, setEpisodes] = useState<EpisodeOption[]>([]);
   const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [saving, setSaving] = useState<'PUBLIC' | 'PRIVATE' | null>(null);
   const [error, setError] = useState('');
   useEffect(() => {
     if (episodeId) form.setFieldValue('hasSpoilers', true);
@@ -91,8 +101,8 @@ export function CommunityComposer({
       });
     return () => controller.abort();
   }, [seriesId, currentKind, form, t]);
-  async function saveDraft(values: FormValues) {
-    setSaving(true);
+  async function save(values: FormValues, visibility: 'PUBLIC' | 'PRIVATE') {
+    setSaving(visibility);
     setError('');
     try {
       const response = await fetch('/api/community/topics', {
@@ -100,7 +110,8 @@ export function CommunityComposer({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...values,
-          visibility: 'PRIVATE',
+          visibility,
+          notify: values.notify === true,
           seriesId: values.seriesId ?? null,
           episodeId:
             currentKind === 'DISCUSSION' ? (values.episodeId ?? null) : null,
@@ -128,7 +139,7 @@ export function CommunityComposer({
     } catch {
       setError(t('communityHub.error'));
     } finally {
-      setSaving(false);
+      setSaving(null);
     }
   }
   return (
@@ -147,12 +158,12 @@ export function CommunityComposer({
           hasSpoilers: !!context?.episodeId,
           seriesId: context?.series.id,
           episodeId: kind === 'DISCUSSION' ? context?.episodeId : undefined,
+          notify: true,
         }}
-        onFinish={saveDraft}
+        onFinish={(values) => save(values, 'PUBLIC')}
         className="community-composer"
       >
         {error && <Alert type="error" title={error} showIcon />}
-        <Alert type="info" title={t('communitySpace.draftHint')} showIcon />
         <Form.Item name="kind" label={t('communityHub.kind')}>
           <Select
             aria-label={t('communityHub.kind')}
@@ -251,9 +262,34 @@ export function CommunityComposer({
           <Switch disabled={!!episodeId} />
         </Form.Item>
         {episodeId && <p>{t('communityHub.episodeSpoilers')}</p>}
-        <Button type="primary" htmlType="submit" loading={saving} block>
-          {t('communitySpace.saveDraft')}
-        </Button>
+        <Form.Item name="notify" valuePropName="checked">
+          <Checkbox>{t('communitySpace.notifyMe')}</Checkbox>
+        </Form.Item>
+        <div className="community-composer__actions">
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={saving === 'PUBLIC'}
+            disabled={saving === 'PRIVATE'}
+          >
+            {t('communityHub.publish')}
+          </Button>
+          <Button
+            loading={saving === 'PRIVATE'}
+            disabled={saving === 'PUBLIC'}
+            onClick={() =>
+              form
+                .validateFields()
+                .then((values) => save(values, 'PRIVATE'))
+                .catch(() => undefined)
+            }
+          >
+            {t('communitySpace.saveDraft')}
+          </Button>
+        </div>
+        <p className="community-composer__note">
+          {t('communitySpace.publishNote')}
+        </p>
       </Form>
     </Modal>
   );

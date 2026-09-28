@@ -7,6 +7,14 @@ import './CommunityMetrics.css';
 export function CommunityMetrics({ metrics }: { metrics: Metrics }) {
   const { t, locale } = useLocale();
   const format = new Intl.NumberFormat(locale);
+  // Una fila de ceros no ayuda a nadie: el panel aparece con la primera actividad.
+  if (
+    !metrics.conversations &&
+    !metrics.replies &&
+    !metrics.lists &&
+    !metrics.unansweredRequests
+  )
+    return null;
   return (
     <section
       className="community-metrics"
