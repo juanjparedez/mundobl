@@ -1,0 +1,9 @@
+.community-composer {
+  padding-top: var(--spacing-md);
+}
+.community-composer p {
+  color: var(--text-secondary);
+}
+.community-composer .ant-alert {
+  margin-bottom: var(--spacing-md);
+}

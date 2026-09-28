@@ -98,6 +98,8 @@ model User {
   announcementRecipients  AnnouncementRecipient[]
   supportThreads          SupportThread[]
   supportMessages         SupportMessage[]
+  communityTopics         CommunityTopic[]
+  communityReplies        CommunityReply[]
 }
 
 // Persistencia de layouts del dashboard modular (drag/resize por widget).
@@ -367,6 +369,7 @@ model Series {
   relatedSeriesFrom    RelatedSeries[]      @relation("mainSeries")
   news                 News[]
   relatedSeriesTo      RelatedSeries[]      @relation("relatedSeries")
+  communityTopics      CommunityTopic[]
   reviews              Review[]
   subscriptions        SeriesSubscription[]
   infoBlocks           SeriesInfoBlock[]
@@ -543,6 +546,7 @@ model Episode {
   // El audit recorre "episodios con embed, ordenados por el sondeo mas
   // viejo" para refrescar por tandas sin re-chequear todo cada vez.
   @@index([playback, playbackCheckedAt])
+  communityTopics CommunityTopic[]
 }
 
 // Notas privadas del usuario sobre un episodio.
@@ -1773,4 +1777,46 @@ model SupportMessage {
   fromStaff Boolean @default(false)
 
   @@index([threadId, createdAt])
+}
+
+
+enum CommunityTopicKind {
+  DISCUSSION
+  REVIEW_REQUEST
+  RECOMMENDATION
+}
+
+model CommunityTopic {
+  id Int @id @default(autoincrement())
+  kind CommunityTopicKind
+  title String
+  body String
+  hasSpoilers Boolean @default(false)
+  closed Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId String?
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  seriesId Int?
+  series Series? @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  episodeId Int?
+  episode Episode? @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+  replies CommunityReply[]
+  @@index([kind, createdAt])
+  @@index([seriesId, createdAt])
+  @@index([episodeId])
+  @@index([userId, createdAt])
+}
+
+model CommunityReply {
+  id Int @id @default(autoincrement())
+  body String
+  hasSpoilers Boolean @default(false)
+  createdAt DateTime @default(now())
+  userId String?
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  topicId Int
+  topic CommunityTopic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  @@index([topicId, createdAt])
+  @@index([userId, createdAt])
 }
