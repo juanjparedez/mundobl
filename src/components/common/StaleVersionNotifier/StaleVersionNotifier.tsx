@@ -5,7 +5,7 @@ import { Modal, Button, Space } from 'antd';
 import { ReloadOutlined, WarningOutlined } from '@ant-design/icons';
 import './StaleVersionNotifier.css';
 
-const CHECK_INTERVAL_MS = 600_000; // Check every 10 minutes (cached at Edge)
+const CHECK_INTERVAL_MS = 1_800_000; // Cada 30 minutos (cacheado en la CDN)
 
 async function fetchBuildId(): Promise<string | null> {
   try {

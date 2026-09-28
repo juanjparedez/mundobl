@@ -58,7 +58,13 @@ interface SeriesPageProps {
 // counts de abajo. Era el grueso de las dos cuotas que se pasaron de largo.
 // Lo unico que queda viejo hasta 24h son los chips de conteo (reseñas,
 // favoritos, "viendo"); las reseñas y comentarios en si son client-side.
-export const revalidate = 86400;
+export const revalidate = 604800;
+// Sin generateStaticParams, Next renderiza esta ruta en cada visita aunque
+// tenga revalidate. Con la lista vacia, la primera visita la genera y las
+// siguientes salen de la cache hasta el proximo revalidate.
+export function generateStaticParams(): { id: string }[] {
+  return [];
+}
 
 export async function generateMetadata({
   params,
