@@ -27,9 +27,11 @@ interface FormValues {
 export function CommunityComposer({
   kind,
   onClose,
+  context,
 }: {
   kind: CommunityKind;
   onClose: () => void;
+  context?: { series: SeriesOption; episodeId?: number };
 }) {
   const { t } = useLocale();
   const router = useRouter();
@@ -73,7 +75,6 @@ export function CommunityComposer({
     };
   }, [search, t]);
   useEffect(() => {
-    form.setFieldValue('episodeId', undefined);
     setEpisodes([]);
     if (!seriesId || currentKind !== 'DISCUSSION') return;
     const controller = new AbortController();
@@ -90,7 +91,7 @@ export function CommunityComposer({
       });
     return () => controller.abort();
   }, [seriesId, currentKind, form, t]);
-  async function publish(values: FormValues) {
+  async function saveDraft(values: FormValues) {
     setSaving(true);
     setError('');
     try {
@@ -99,17 +100,23 @@ export function CommunityComposer({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...values,
+          visibility: 'PRIVATE',
           seriesId: values.seriesId ?? null,
           episodeId:
             currentKind === 'DISCUSSION' ? (values.episodeId ?? null) : null,
         }),
       });
       if (!response.ok) {
+        const failure: { error?: string } = await response
+          .json()
+          .catch(() => ({}));
         setError(
           t(
-            response.status === 429
-              ? 'communityHub.rateLimit'
-              : 'communityHub.error'
+            failure.error === 'paused'
+              ? 'communitySpace.paused'
+              : response.status === 429
+                ? 'communityHub.rateLimit'
+                : 'communityHub.error'
           )
         );
         return;
@@ -135,14 +142,21 @@ export function CommunityComposer({
       <Form
         form={form}
         layout="vertical"
-        initialValues={{ kind, hasSpoilers: false }}
-        onFinish={publish}
+        initialValues={{
+          kind,
+          hasSpoilers: !!context?.episodeId,
+          seriesId: context?.series.id,
+          episodeId: kind === 'DISCUSSION' ? context?.episodeId : undefined,
+        }}
+        onFinish={saveDraft}
         className="community-composer"
       >
         {error && <Alert type="error" title={error} showIcon />}
+        <Alert type="info" title={t('communitySpace.draftHint')} showIcon />
         <Form.Item name="kind" label={t('communityHub.kind')}>
           <Select
             aria-label={t('communityHub.kind')}
+            onChange={() => form.setFieldValue('episodeId', undefined)}
             options={COMMUNITY_KINDS.map((value) => ({
               value,
               label: t(`communityHub.${value}`),
@@ -164,10 +178,14 @@ export function CommunityComposer({
             showSearch
             filterOption={false}
             onSearch={setSearch}
+            onChange={() => form.setFieldValue('episodeId', undefined)}
             loading={loading}
             allowClear
             placeholder={t('communityHub.searchSeries')}
-            options={series.map((s) => ({ value: s.id, label: s.title }))}
+            options={[
+              ...(context ? [context.series] : []),
+              ...series.filter((s) => s.id !== context?.series.id),
+            ].map((s) => ({ value: s.id, label: s.title }))}
             notFoundContent={t('communityHub.searchHint')}
           />
         </Form.Item>
@@ -234,7 +252,7 @@ export function CommunityComposer({
         </Form.Item>
         {episodeId && <p>{t('communityHub.episodeSpoilers')}</p>}
         <Button type="primary" htmlType="submit" loading={saving} block>
-          {t('communityHub.publish')}
+          {t('communitySpace.saveDraft')}
         </Button>
       </Form>
     </Modal>

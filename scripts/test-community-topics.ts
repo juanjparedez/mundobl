@@ -60,6 +60,7 @@ async function main() {
     });
     ids.push(other.id);
     const input = {
+      visibility: 'PUBLIC',
       kind: 'DISCUSSION',
       title: 'A discussion of the ending',
       body: 'This is a synthetic community conversation.',
@@ -120,6 +121,7 @@ async function main() {
       key,
       parseCommunityTopic({
         kind: 'RECOMMENDATION',
+        visibility: 'PUBLIC',
         title: `${key} recommendations`,
         body: 'Looking for a gentle story with a happy ending.',
       })
@@ -152,20 +154,20 @@ async function main() {
       )
     );
     await assert.rejects(
-      manageCommunityTopic(topic.id, users[1], false, true),
+      manageCommunityTopic(topic.id, users[1], true),
       rejected(404)
     );
-    await manageCommunityTopic(topic.id, key, false, true);
+    await manageCommunityTopic(topic.id, key, true);
     await assert.rejects(
       replyToCommunityTopic(topic.id, users[1], 'Closed thread', false),
       rejected(409)
     );
-    await manageCommunityTopic(topic.id, key, false, false);
+    await manageCommunityTopic(topic.id, key, false);
     await assert.rejects(
-      deleteCommunityReply(topic.id, reply.id, key, false),
+      deleteCommunityReply(topic.id, reply.id, key),
       rejected(404)
     );
-    await deleteCommunityReply(topic.id, reply.id, key, true);
+    await deleteCommunityReply(topic.id, reply.id, users[1]);
     assert.equal((await getCommunityTopic(topic.id))?.replyCount, 0);
     await prisma.communityReply.createMany({
       data: Array.from({ length: 31 }, (_, i) => ({
@@ -223,7 +225,7 @@ async function main() {
     >`SELECT relname, relrowsecurity FROM pg_class WHERE relname IN ('CommunityTopic', 'CommunityReply')`;
     assert.equal(policies.length, 2);
     assert.ok(policies.every((row) => row.relrowsecurity));
-    await manageCommunityTopic(topic.id, key, true);
+    await manageCommunityTopic(topic.id, key);
     assert.equal(await getCommunityTopic(topic.id), null);
     assert.equal(
       await prisma.communityReply.count({ where: { topicId: topic.id } }),

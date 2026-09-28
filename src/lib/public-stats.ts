@@ -1,4 +1,9 @@
-import { prisma, PUBLIC_REVIEW_SERIES } from '@/lib/database';
+import {
+  prisma,
+  PUBLIC_REVIEW_SERIES,
+  getCommunityMetrics,
+} from '@/lib/database';
+import type { CommunityMetrics } from '@/types/community';
 
 /**
  * Metricas globales anonimas para /estadisticas.
@@ -51,6 +56,7 @@ interface RawRatingDistRow {
 }
 
 export interface PublicStats {
+  community: CommunityMetrics;
   generatedAt: string;
   summary: {
     totalSeries: number;
@@ -353,6 +359,7 @@ export async function getPublicStats(): Promise<PublicStats> {
 
   return {
     generatedAt: new Date().toISOString(),
+    community: await getCommunityMetrics(),
     summary: {
       totalSeries,
       totalPublicComments,
