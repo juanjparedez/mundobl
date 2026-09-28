@@ -1,5 +1,11 @@
 # MundoBL - Contexto del Proyecto
 
+### Conversaciones de Comunidad (2026-09-27)
+
+- Discusiones de series/capítulos, pedidos de reseñas y recomendaciones; respuestas, cierre/reapertura, moderación y notificaciones al autor. Feed con portadas, autores públicos, extractos sin spoilers, filtros y búsqueda. Pedidos de reseña abren el editor de la obra.
+- Tablas CommunityTopic/CommunityReply con RLS y límites concurrentes por usuario. Migración aditiva `20260927175456_community_topics`: aplicar antes del despliegue. Backup ampliado a 67 tablas y restauración ensayada localmente.
+- Alcance, pruebas y límites: [entrega de Comunidad](docs/entrega-comunidad-2026-09-27.md). Las pruebas integradas usan APIs y PostgreSQL reales con sesión de prueba; no prueban OAuth ni entrega real de notificaciones. No implica chat privado ni seguimiento de conversaciones.
+
 ### Estadísticas de reseñas y participación (2026-09-27)
 
 - `/estadisticas` muestra `totalPublishedReviews`: reseñas PUBLISHED de cuentas no ADMIN sobre obras públicamente accesibles. Incluye catálogo y aportes con reproducción disponible; excluye borradores y obras ocultas. Cada versión por idioma cuenta como una reseña. Reutiliza `PUBLIC_REVIEW_SERIES` de `database.ts`, compartido con `getCommunityReviews`, para mantener el mismo criterio de acceso.
