@@ -2695,6 +2695,7 @@ const fr = {
     "deployedAtLine": "Déployé : {date}"
   },
   "verSerie": {
+    "watchableOnlyTooltip": "Pas encore dans le catalogue : vous pouvez la regarder et la suivre ici.",
     "catalogPage": "Fiche complète dans le catalogue",
     "userFallback": "utilisateur",
     "collaboratorFallback": "collaborateur",
@@ -2723,7 +2724,7 @@ const fr = {
     "noEpisodesAvailable": "Aucun épisode disponible",
     "inMyPersonalCatalogTooltip": "A aussi une fiche dans le catalogue",
     "inMyCatalogTag": "Dans le catalogue",
-    "watchableOnlyTag": "Regardable seulement",
+    "watchableOnlyTag": "À regarder ici seulement",
     "viewFullDetailsButton": "Voir les détails complets",
     "moveToMyCatalogButton": "Ajouter à mon catalogue",
     "seriesMovedToPersonalCatalogSuccess": "Série ajoutée à votre catalogue personnel",
@@ -3422,7 +3423,7 @@ const fr = {
     "heroSpotlightBadge": "Série de la semaine",
     "heroYoutubeTag": "Sortie officielle YouTube",
     "heroVimeoTag": "Vimeo On Demand",
-    "heroEpisodesBadge": "{count} Épisodes officiels",
+    "heroEpisodesBadge": "{count} vidéos officielles",
     "heroPlayButton": "Regarder maintenant",
     "heroInfoButton": "Détails et casting",
     "heroCollapseTooltip": "Minimiser la sélection",

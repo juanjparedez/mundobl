@@ -19,7 +19,13 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-export const revalidate = 3600;
+export const revalidate = 86400;
+// Sin generateStaticParams, Next renderiza esta ruta en cada visita aunque
+// tenga revalidate. Con la lista vacia, la primera visita la genera y las
+// siguientes salen de la cache hasta el proximo revalidate.
+export function generateStaticParams(): { id: string }[] {
+  return [];
+}
 
 function cleanText(text: string): string {
   return text.replace(/[*_`[\]#>]/g, '').trim();

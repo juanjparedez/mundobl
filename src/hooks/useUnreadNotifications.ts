@@ -3,13 +3,13 @@
 import { startTransition, useCallback, useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 
-const POLL_MS = 120_000;
-const THROTTLE_MS = 45_000;
+const POLL_MS = 600_000;
+const THROTTLE_MS = 300_000;
 
 /**
- * Devuelve el conteo actual de notificaciones no leidas. Polea cada 2 min
+ * Devuelve el conteo actual de notificaciones no leidas. Polea cada 10 min
  * mientras la pestaña esta visible y refresca al volver el foco/visibilidad
- * con un throttle de 45s para no saturar Serverless Functions.
+ * con un throttle de 5 min para no gastar funciones de Vercel.
  * Si el usuario no esta autenticado retorna 0.
  */
 export function useUnreadNotifications(): number {

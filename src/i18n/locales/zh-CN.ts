@@ -2690,6 +2690,7 @@ const zhCN = {
     "deployedAtLine": "部署时间：{date}"
   },
   "verSerie": {
+    "watchableOnlyTooltip": "尚未收录于目录：可以在这里观看和记录进度。",
     "catalogPage": "目录中的完整作品页",
     "userFallback": "用户",
     "collaboratorFallback": "合作者",
@@ -2718,7 +2719,7 @@ const zhCN = {
     "noEpisodesAvailable": "无可用剧集",
     "inMyPersonalCatalogTooltip": "目录中也有作品页",
     "inMyCatalogTag": "已收录于目录",
-    "watchableOnlyTag": "仅可观看",
+    "watchableOnlyTag": "仅在此观看",
     "viewFullDetailsButton": "查看完整详情",
     "moveToMyCatalogButton": "移至我的目录",
     "seriesMovedToPersonalCatalogSuccess": "剧集已移至您的个人目录",
@@ -3417,7 +3418,7 @@ const zhCN = {
     "heroSpotlightBadge": "本周剧集",
     "heroYoutubeTag": "YouTube 官方发布",
     "heroVimeoTag": "Vimeo 点播",
-    "heroEpisodesBadge": "{count} 官方剧集",
+    "heroEpisodesBadge": "{count} 个官方视频",
     "heroPlayButton": "立即播放",
     "heroInfoButton": "详情与演员",
     "heroCollapseTooltip": "最小化精选",

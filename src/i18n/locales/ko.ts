@@ -2692,6 +2692,7 @@ const ko = {
     "deployedAtLine": "배포: {date}"
   },
   "verSerie": {
+    "watchableOnlyTooltip": "아직 카탈로그에 없어요. 여기서 보고 기록할 수 있어요.",
     "catalogPage": "카탈로그의 작품 페이지",
     "userFallback": "사용자",
     "collaboratorFallback": "협력자",
@@ -2720,7 +2721,7 @@ const ko = {
     "noEpisodesAvailable": "이용 가능한 에피소드 없음",
     "inMyPersonalCatalogTooltip": "카탈로그에도 작품 페이지가 있어요",
     "inMyCatalogTag": "카탈로그 수록",
-    "watchableOnlyTag": "시청 가능만",
+    "watchableOnlyTag": "여기서만 시청 가능",
     "viewFullDetailsButton": "전체 세부 정보 보기",
     "moveToMyCatalogButton": "내 카탈로그로 이동",
     "seriesMovedToPersonalCatalogSuccess": "시리즈가 개인 카탈로그로 이동되었습니다",
@@ -3419,7 +3420,7 @@ const ko = {
     "heroSpotlightBadge": "금주의 시리즈",
     "heroYoutubeTag": "공식 YouTube 출시",
     "heroVimeoTag": "Vimeo On Demand",
-    "heroEpisodesBadge": "{count}개의 공식 에피소드",
+    "heroEpisodesBadge": "공식 동영상 {count}개",
     "heroPlayButton": "지금 재생",
     "heroInfoButton": "상세 정보 및 출연진",
     "heroCollapseTooltip": "주요 콘텐츠 최소화",

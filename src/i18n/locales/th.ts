@@ -2691,6 +2691,7 @@ const th = {
     "deployedAtLine": "ปรับใช้เมื่อ: {date}"
   },
   "verSerie": {
+    "watchableOnlyTooltip": "ยังไม่อยู่ในแคตตาล็อก ดูและติดตามได้ที่นี่",
     "catalogPage": "หน้าข้อมูลเต็มในแคตตาล็อก",
     "userFallback": "ผู้ใช้",
     "collaboratorFallback": "ผู้ร่วมงาน",
@@ -2719,7 +2720,7 @@ const th = {
     "noEpisodesAvailable": "ไม่มีตอนให้รับชม",
     "inMyPersonalCatalogTooltip": "มีหน้าข้อมูลในแคตตาล็อกด้วย",
     "inMyCatalogTag": "อยู่ในแคตตาล็อก",
-    "watchableOnlyTag": "รับชมได้เท่านั้น",
+    "watchableOnlyTag": "ดูได้ที่นี่เท่านั้น",
     "viewFullDetailsButton": "ดูรายละเอียดทั้งหมด",
     "moveToMyCatalogButton": "ย้ายไปที่แคตตาล็อกของฉัน",
     "seriesMovedToPersonalCatalogSuccess": "ย้ายซีรีส์ไปยังแคตตาล็อกส่วนตัวของคุณแล้ว",
@@ -3418,7 +3419,7 @@ const th = {
     "heroSpotlightBadge": "ซีรีส์ประจำสัปดาห์",
     "heroYoutubeTag": "เผยแพร่ทาง YouTube อย่างเป็นทางการ",
     "heroVimeoTag": "Vimeo On Demand",
-    "heroEpisodesBadge": "{count} ตอนอย่างเป็นทางการ",
+    "heroEpisodesBadge": "{count} วิดีโออย่างเป็นทางการ",
     "heroPlayButton": "เล่นเลย",
     "heroInfoButton": "รายละเอียดและนักแสดง",
     "heroCollapseTooltip": "ย่อส่วนที่แนะนำ",

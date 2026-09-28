@@ -9,6 +9,32 @@ const BASE_URL = 'https://mundobl.com.ar';
  */
 const SITEMAP_SHARDS = [0, 1, 2, 3, 4, 5, 6, 7] as const;
 
+const BLOCKED_BOTS = [
+  'GPTBot',
+  'CCBot',
+  'ClaudeBot',
+  'anthropic-ai',
+  'Google-Extended',
+  'Applebot-Extended',
+  'Bytespider',
+  'Amazonbot',
+  'meta-externalagent',
+  'FacebookBot',
+  'cohere-ai',
+  'Diffbot',
+  'ImagesiftBot',
+  'Omgilibot',
+  'AhrefsBot',
+  'SemrushBot',
+  'MJ12bot',
+  'DotBot',
+  'DataForSeoBot',
+  'BLEXBot',
+  'PetalBot',
+  'Barkrowler',
+  'serpstatbot',
+];
+
 // Estrategia:
 // - Permitir todo el contenido publico (catalogo, series, actores,
 //   directores, tags, noticias, ver, sitios, novedades, estadisticas).
@@ -55,7 +81,18 @@ export default function robots(): MetadataRoute.Robots {
           // crawlers prueban estas convenciones)
           '/scripts',
           '/data',
+          // Comunidad por obra y perfiles: se renderizan en cada visita
+          // (dependen de quien mira) y cada ficha los enlaza.
+          '/comunidad/obras/',
+          '/comunidad/perfiles/',
         ],
+      },
+      {
+        // Crawlers de entrenamiento de IA y de herramientas SEO: no traen
+        // visitas y en septiembre de 2026 casi agotan el plan de Vercel.
+        // Los buscadores (Google, Bing, DuckDuckGo) siguen entrando.
+        userAgent: BLOCKED_BOTS,
+        disallow: '/',
       },
     ],
     sitemap: SITEMAP_SHARDS.map((id) => `${BASE_URL}/sitemap/${id}.xml`),
