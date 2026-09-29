@@ -45,6 +45,7 @@ jobs:
           node --import tsx scripts/test-tracking-insights-route.mjs
           node --import tsx scripts/test-library-preferences.mjs
           node --import tsx scripts/test-runtime-jobs.mjs
+          node scripts/test-runtime-maintenance.mjs
           node scripts/test-news-translation.mjs
           node scripts/test-news-sources.mjs
           node scripts/test-contribution-boundary.mjs
@@ -54,6 +55,7 @@ jobs:
           node scripts/test-dashboard-mobile-flow.mjs
           node scripts/test-profile-list-count.mjs
           node scripts/test-tracking-insights-ui.mjs
+          node scripts/test-runtime-maintenance-ui.mjs
           node scripts/test-history-cards.mjs
           node scripts/test-community-statistics-ui.mjs
           node --import tsx scripts/test-community-flow.mjs
