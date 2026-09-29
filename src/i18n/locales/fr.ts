@@ -10,6 +10,33 @@
 import type { TranslationShape } from '../messages';
 
 const fr = {
+  runtimeMaintenance: {
+    "title": "Maintenance",
+    "description": "Examiner les ressources et réduire la consommation future. Supprimer des déploiements ne restitue pas le quota consommé.",
+    "policy": "Déploiements de production de plus de 90 jours. Les trois déploiements les plus récents, les trois dernières versions de production prêtes et les versions avec alias actif sont conservés. Ne pas promouvoir de version pendant la suppression.",
+    "production": "Examiner la production",
+    "missing": "Intégration Vercel non configurée. Un administrateur de l’infrastructure doit l’activer.",
+    "r2ok": "Les variables R2 sont présentes. Cela ne vérifie ni les identifiants ni les anciennes images.",
+    "r2missing": "Des variables R2 manquent : les nouvelles images peuvent aller sur Supabase et consommer son quota de transfert.",
+    "scanned": "Examinés sur cette page",
+    "empty": "Aucun candidat sur cette page. Examiner les pages précédentes si disponibles.",
+    "deployment": "Déploiement",
+    "created": "Créé",
+    "action": "Action",
+    "confirm": "Supprimer ce déploiement et son URL ?",
+    "remove": "Supprimer",
+    "cancel": "Annuler",
+    "older": "Examiner les précédents",
+    "working": "Traitement…",
+    "logsHint": "Supprimer uniquement les journaux expirés : abus après 7 jours, autres après 90. Cela peut réduire la croissance de la base, sans restituer le transfert ni garantir un gain immédiat d’espace.",
+    "confirmLogs": "Supprimer les journaux au-delà de leur durée de conservation ?",
+    "purge": "Nettoyer les journaux expirés",
+    "freezeHint": "Les interrupteurs d’urgence actuels sont propres à chaque instance : ils ne garantissent pas un arrêt global sur Vercel.",
+    "error": "Opération non confirmée. Vérifier son état avant de réessayer ; elle peut avoir été partiellement appliquée.",
+    "done": "Terminé",
+    "deleted": "Supprimés",
+    "partial": "Des enregistrements restent à examiner ; vous pouvez relancer le nettoyage."
+  },
   "communitySpace": {
     "lists": "Listes à découvrir",
     "searchLists": "Rechercher des listes",

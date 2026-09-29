@@ -1,0 +1,28 @@
+.runtime-maintenance {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--spacing-md);
+}
+
+.runtime-maintenance p {
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.runtime-maintenance__review {
+  align-self: flex-start;
+}
+
+.runtime-maintenance__url {
+  overflow-wrap: anywhere;
+}
+
+.runtime-maintenance__logs {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  border-top: 1px solid var(--border-color);
+  padding-top: var(--spacing-md);
+}

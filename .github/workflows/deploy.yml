@@ -1,0 +1,41 @@
+# Deploy a producción, a mano.
+#
+# Mergear a main NO despliega (vercel.json tiene deploymentEnabled: false).
+# Cada deploy vacía la caché ISR y hace un build que lee la base, así que se
+# juntan varios merges y se despliega una vez con este botón:
+# Actions → "Deploy producción" → Run workflow.
+#
+# Secret necesario: VERCEL_TOKEN (vercel.com/account/tokens, limitado al team).
+
+name: Deploy producción
+
+on:
+  workflow_dispatch:
+
+# Nunca dos deploys encimados; si hay uno en curso, el nuevo espera.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    if: github.repository == 'juanjparedez/mundobl' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      VERCEL_ORG_ID: team_yFYHVGlmrG0FA0GNtB5iYOyJ
+      VERCEL_PROJECT_ID: prj_WqolFzpkAdYVw2NnNb0HVHzCtFR6
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          test -n "$VERCEL_TOKEN" || { echo "::error::Falta el secret VERCEL_TOKEN"; exit 1; }
+          url=$(npx --yes vercel@latest deploy --prod --yes --token="$VERCEL_TOKEN")
+          echo "Deploy listo: $url ($(git rev-parse --short HEAD))" >> "$GITHUB_STEP_SUMMARY"
