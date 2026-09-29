@@ -1,8 +1,8 @@
 # Backup y recuperación
 
-El workflow `Backup de la base` exporta los 63 modelos a JSON comprimido en R2 y conserva 14 días. El exportador lee una única instantánea consistente (`RepeatableRead`), falla si falta un modelo o una consulta y nunca publica un backup parcial. `--check-models` comprueba la cobertura sin consultar la base.
+El workflow `Backup de la base` exporta los modelos de la aplicación a JSON comprimido en R2 y conserva 14 días. Desde el 28/09/2026 está programado los domingos a las 07:00 UTC (04:00 Argentina). El exportador lee una única instantánea consistente (`RepeatableRead`), falla si falta un modelo o una consulta y nunca publica un backup parcial. `--check-models` comprueba la cobertura sin consultar la base.
 
-## Activación pendiente
+## Activación y verificación
 
 Bucket creado: `mundobl-backups`. Verificado el 15/09/2026: dominio r2.dev desactivado y sin dominios personalizados. No usar `mundobl-images`, que sirve contenido público.
 
@@ -13,7 +13,9 @@ En GitHub → Settings → Secrets and variables → Actions, cargar:
 - `R2_ACCESS_KEY_ID` y `R2_SECRET_ACCESS_KEY`: credencial R2 con lectura/escritura limitada al bucket de backups.
 - `R2_BACKUP_BUCKET`: `mundobl-backups`.
 
-Después, crear la **variable** `BACKUPS_ENABLED` con valor `true` y ejecutar manualmente el workflow. Comprobar la carga del archivo en R2 antes de confiar en la programación diaria de las 07:00 UTC. Hasta entonces el trabajo queda omitido: no hay backups automáticos activos.
+Después, crear la **variable** `BACKUPS_ENABLED` con valor `true` y ejecutar manualmente el workflow. Comprobar la carga del archivo en R2 antes de confiar en la programación semanal. Sin esa variable el trabajo queda omitido. La revisión del 28/09/2026 confirmó la configuración en Git, pero no verificó la variable remota ni la última copia exitosa: no inferir activación a partir de este documento.
+
+El indicador `No backups` de Supabase no informa sobre las copias externas de este workflow. Verificar Actions y el objeto en el bucket privado. Una frecuencia semanal permite perder aproximadamente siete días de cambios desde la última copia válida; si falla, el intervalo aumenta. Comprimir después del dump ahorra almacenamiento en R2, pero no el egress ya consumido al leer Supabase. Ver [manual de mantenimiento](manual-mantenimiento.md) para diagnóstico de cuotas y rutina de revisión.
 
 ## Ensayo de restauración
 
