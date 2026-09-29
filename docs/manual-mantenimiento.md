@@ -181,7 +181,7 @@ GROUP BY bucket_id
 ORDER BY size_mb DESC;
 ```
 
-La app usa Prisma para datos; el cliente Supabase se usa para Storage. `src/lib/supabase.ts` sube a R2 cuando están presentes las cinco variables `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_HOST`. Si faltan, cae a Supabase con un warning. Revisar también el entorno local de scripts/importaciones: puede volver a crear imágenes en Supabase aunque producción use R2.
+La app usa Prisma para datos; el cliente Supabase se usa para Storage. `src/lib/supabase.ts` sube a R2 cuando están presentes las cinco variables `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_HOST`. Si falta alguna, la subida falla con un error que las nombra: ya no cae a Supabase. Para cargar series o correr scripts desde local, el `.env` necesita las cinco.
 
 Existe `scripts/migrate-images-to-r2.ts`, con fases `copy --dry-run`, `copy`, `verify`, `rewrite --dry-run`, `rewrite`. Antes de ejecutarlo, revisar conexión destino y autenticación de Wrangler. `copy` transfiere archivos y consume egress; `rewrite` modifica URLs en la base. No ejecutar ambas fases a ciegas para ahorrar cuota.
 
