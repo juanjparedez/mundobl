@@ -1,10 +1,7 @@
-export type DeploymentEnvironment = 'preview' | 'production';
-
 export interface MaintenanceDeployment {
   id: string;
   url: string;
   created: number;
-  environment: DeploymentEnvironment;
 }
 
 export interface MaintenanceReport {

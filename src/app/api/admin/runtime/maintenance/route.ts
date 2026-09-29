@@ -17,14 +17,9 @@ const headers = { 'Cache-Control': 'private, no-store' };
 export async function GET(request: Request) {
   const auth = await requireRole(['ADMIN']);
   if (!auth.authorized) return auth.response;
-  const params = new URL(request.url).searchParams;
-  const target = params.get('target');
-  const rawUntil = params.get('until');
+  const rawUntil = new URL(request.url).searchParams.get('until');
   const until = rawUntil === null ? undefined : Number(rawUntil);
-  if (
-    (target !== 'preview' && target !== 'production') ||
-    (until !== undefined && (!Number.isSafeInteger(until) || until <= 0))
-  )
+  if (until !== undefined && (!Number.isSafeInteger(until) || until <= 0))
     return NextResponse.json(
       { error: 'invalid_request' },
       { status: 400, headers }
@@ -32,7 +27,7 @@ export async function GET(request: Request) {
   const configured = isVercelMaintenanceConfigured();
   try {
     const report = configured
-      ? await inspectDeployments(target, until)
+      ? await inspectDeployments(until)
       : { candidates: [], scanned: 0, next: null, hasMore: false };
     return NextResponse.json(
       { ...report, configured, r2Configured: isR2Configured() },

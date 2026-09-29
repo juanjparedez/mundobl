@@ -52,21 +52,26 @@ Para egress, borrar objetos o deployments no revierte transferencias ya realizad
 
 Guardar mediciones privadas sin claves ni datos de usuarios:
 
-| Fecha y zona horaria | Proveedor / organización        | Métrica                                        | Usado / límite  | Inicio / fin de período | Incremento 24 h | Acción y resultado                             |
-| -------------------- | ------------------------------- | ---------------------------------------------- | --------------- | ----------------------- | --------------- | ---------------------------------------------- |
-| 28/09/2026 23:24 ART | Supabase / devsolutions         | Database Size (SQL)                            | 104 MB / 500 MB | —                       | Pendiente       | `AccessLog` ocupa 74 MB                        |
-| 28/09/2026 23:24 ART | Supabase / devsolutions         | Storage Size (SQL)                             | 106 MB / 1 GB   | —                       | Pendiente       | 1286 objetos                                   |
-| Pendiente            | Supabase / devsolutions         | Egress, Cached Egress                          | Pendiente       | Pendiente               | Pendiente       | Gracia agotada; solo en Usage                  |
-| 28/09/2026 23:24 ART | Vercel / juanjparedezs-projects | Deployments del proyecto                       | 6               | —                       | —               | Todos recientes; nada que borrar               |
-| Pendiente            | Vercel / juanjparedezs-projects | CPU, ISR, memoria, invocaciones, transferencia | Pendiente       | Pendiente               | Pendiente       | Solo en Usage (Hobby no expone costos por API) |
+| Fecha y zona horaria | Proveedor / organización        | Métrica                                        | Usado / límite        | Inicio / fin de período | Incremento 24 h      | Acción y resultado                             |
+| -------------------- | ------------------------------- | ---------------------------------------------- | --------------------- | ----------------------- | -------------------- | ---------------------------------------------- |
+| 29/09/2026 (panel)   | Supabase / devsolutions         | Egress                                         | 1,603 / 5 GB (32 %)   | 17/09 – 17/10           | ~0,13 GB/día (prom.) | Al ritmo actual cierra el ciclo en ~4 GB       |
+| 29/09/2026 (panel)   | Supabase / devsolutions         | Cached Egress                                  | 0,042 / 5 GB (<1 %)   | 17/09 – 17/10           | —                    | Sin riesgo                                     |
+| 29/09/2026 (panel)   | Supabase / devsolutions         | Database Size                                  | 0,125 / 0,5 GB (25 %) | 17/09 – 17/10           | —                    | Por SQL: 104 MB, 74 MB son `AccessLog`         |
+| 29/09/2026 (panel)   | Supabase / devsolutions         | Storage Size                                   | 0,109 / 1 GB (11 %)   | 17/09 – 17/10           | —                    | 1286 objetos                                   |
+| 29/09/2026 (panel)   | Supabase / devsolutions         | Log Ingestion (todavía no se cobra)            | 0,527 / 1 GB (53 %)   | 17/09 – 17/10           | ~44 MB/día (prom.)   | Al ritmo actual pasa 1 GB antes del 17/10      |
+| 28/09/2026 23:24 ART | Vercel / juanjparedezs-projects | Deployments del proyecto                       | 6                     | —                       | —                    | Todos recientes; nada que borrar               |
+| Pendiente            | Vercel / juanjparedezs-projects | CPU, ISR, memoria, invocaciones, transferencia | Pendiente             | Pendiente               | Pendiente            | Solo en Usage (Hobby no expone costos por API) |
 
-Medición del 28/09/2026 (23:24 ART, unas 20 h después de #107), por SQL y API; los paneles de Usage requieren sesión y no se leyeron:
+Medición del 28–29/09/2026. Panel de Usage de Supabase (ciclo 17/09 – 17/10, día 12), más SQL y logs:
 
-- **Base**: 104 MB. `AccessLog` son 74 MB: 94.062 `PAGE_VIEW` desde el 30/06. La retención de 90 días empieza a borrarlos a partir de ahora, así que el tamaño debería estabilizarse; "Limpiar logs vencidos" hoy no libera casi nada.
-- **`PAGE_VIEW` ya no mide tráfico**: desde #107 el proxy solo corre en `/admin`, y es el proxy el que los registra. Bajó de ~600 por día a 44 en 20 h por eso, no por menos visitas. Para tráfico usar Vercel Analytics/Usage.
-- **Imágenes en Supabase**: 20 series (`imageUrl` e `imageThumbUrl`) y 12 `FeatureRequestImage.url`. Temporadas, universos, personas, productoras, noticias y sitios: 0. El resto de las series (655) ya están en R2.
-- **Vercel**: el proyecto tiene 6 deployments de producción, todos del 27–28/09. No hay candidatos para borrar; la sección de mantenimiento sirve a futuro.
-- **Falta**: Egress y Cached Egress de Supabase; CPU, ISR, invocaciones y transferencia de Vercel. Leerlos en los paneles y completar esta tabla.
+- **Ninguna métrica pasó la cuota.** El aviso de gracia queda fijo porque la gracia ya se usó (terminó el 10/09): si una métrica se pasa, Supabase puede responder 402 sin otro aviso. Spend cap activo, sin tarjeta.
+- **Log Ingestion es la más cerca del límite** y todavía no se cobra ("Upcoming"). La documentación general dice 5 GB para Free, pero el panel de esta organización muestra 1 GB: tomar el panel. En las últimas 24 h, 21.500 de 22.700 líneas son de Supavisor, el pooler: cada función de Vercel que abre una conexión Prisma deja 2–3 líneas. Las conexiones por hora bajaron de ~1000 (04–07 UTC del 28/09, antes de #107) a ~100–400 después. Menos invocaciones de funciones = menos logs.
+- **Base**: `AccessLog` son 74 MB: 94.062 `PAGE_VIEW` desde el 30/06. La retención de 90 días empieza a borrarlos ahora, así que el tamaño debería estabilizarse; "Limpiar logs vencidos" hoy no libera casi nada.
+- **`PAGE_VIEW` ya no mide tráfico**: desde #107 el proxy solo corre en `/admin`, y es el proxy el que los registra. Bajó de ~600 por día a 44 en 20 h por eso, no por menos visitas. Para tráfico usar Vercel Usage.
+- **Imágenes en Supabase**: 20 series (`imageUrl` e `imageThumbUrl`) y 12 `FeatureRequestImage.url`. Temporadas, universos, personas, productoras, noticias y sitios: 0. Las otras 655 series ya están en R2.
+- **Vercel**: 6 deployments de producción, todos del 27–28/09. No hay nada para borrar todavía.
+- **Monitoreo desde la app**: la Management API de Supabase solo da cantidad de requests, no Egress ni Log Ingestion en GB. Esos dos se leen en el panel de Usage; no hay forma de traerlos a `/admin` sin scrapear.
+- **Falta**: CPU, ISR, invocaciones y transferencia de Vercel. Leerlos en Usage y completar la tabla.
 
 Para cuotas acumulativas: `margen = límite - usado`; `días estimados = margen / incremento diario`. Usar la tasa posterior al arreglo y la misma unidad; una tasa cero o negativa por retrasos/reinicio no permite extrapolar. Dejar margen para picos y backups. Esta fórmula no reemplaza la evaluación de promedios de almacenamiento.
 
@@ -112,7 +117,7 @@ Para mantenimiento recurrente, preferir **Project → Settings → Security → 
 
 ### Controles de mantenimiento en Runtime
 
-La sección de `/admin/runtime` permite revisar previews y producción por separado, sin consultar Vercel automáticamente ni hacer polling. Cada clic revisa una página de hasta 10 deployments y ofrece seguir con los anteriores. Solo muestra candidatos con más de 30 días en preview o 90 en producción, en estado READY, ERROR o CANCELED.
+La sección de `/admin/runtime` revisa deployments de producción, sin consultar Vercel automáticamente ni hacer polling. No revisa previews: `vercel.json` solo despliega `main`, así que Git no las genera. Cada clic revisa una página de hasta 10 deployments y ofrece seguir con los anteriores. Solo muestra candidatos con más de 90 días, en estado READY, ERROR o CANCELED.
 
 Se conservan los tres deployments más recientes, las tres últimas versiones READY de producción, el destino de producción actual, la instancia que ejecuta la acción y cualquier deployment con alias asignado. Entornos personalizados y estados desconocidos quedan excluidos. El borrado es individual, muestra la URL para confirmar y vuelve a consultar proyecto, estado, fecha, versiones protegidas y alias en el servidor. No promover ni reasignar aliases mientras se elimina: Vercel no ofrece en este flujo una operación atómica de comprobar protecciones y borrar.
 

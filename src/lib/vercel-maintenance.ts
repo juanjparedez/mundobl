@@ -1,10 +1,8 @@
-import type {
-  DeploymentEnvironment,
-  MaintenanceDeployment,
-} from '@/types/runtime-maintenance';
+import type { MaintenanceDeployment } from '@/types/runtime-maintenance';
 
 const DAY = 86_400_000;
-const RETENTION = { preview: 30, production: 90 } as const;
+// Solo main despliega (vercel.json), así que no hay previews que revisar.
+const RETENTION_DAYS = 90;
 type JsonObject = Record<string, unknown>;
 
 export class MaintenanceError extends Error {
@@ -77,11 +75,8 @@ function id(row: JsonObject): string {
   return value;
 }
 
-function environment(row: JsonObject): DeploymentEnvironment | null {
-  if (row.customEnvironment) return null;
-  if (row.target === 'production') return 'production';
-  if (row.target === null || row.target === 'preview') return 'preview';
-  return null;
+function isProduction(row: JsonObject): boolean {
+  return !row.customEnvironment && row.target === 'production';
 }
 
 async function protectedIds(): Promise<Set<string>> {
@@ -114,22 +109,21 @@ function candidate(
   now: number
 ): MaintenanceDeployment | null {
   const deploymentId = id(row);
-  const target = environment(row);
   const created = row.createdAt ?? row.created;
   const state = row.readyState ?? row.state;
   if (
-    !target ||
+    !isProduction(row) ||
     protectedSet.has(deploymentId) ||
     !['READY', 'ERROR', 'CANCELED'].includes(String(state)) ||
     typeof created !== 'number' ||
     !Number.isFinite(created) ||
     created <= 0 ||
-    created >= now - RETENTION[target] * DAY ||
+    created >= now - RETENTION_DAYS * DAY ||
     typeof row.url !== 'string' ||
     !/^[a-zA-Z0-9-]+\.vercel\.app$/.test(row.url)
   )
     return null;
-  return { id: deploymentId, url: row.url, created, environment: target };
+  return { id: deploymentId, url: row.url, created };
 }
 
 async function hasAliases(deploymentId: string): Promise<boolean> {
@@ -139,16 +133,13 @@ async function hasAliases(deploymentId: string): Promise<boolean> {
   return data.aliases.length > 0;
 }
 
-export async function inspectDeployments(
-  target: DeploymentEnvironment,
-  until?: number
-) {
+export async function inspectDeployments(until?: number) {
   const { project } = config();
   const [protectedSet, page] = await Promise.all([
     protectedIds(),
     api('/v7/deployments', {
       projectId: project,
-      target,
+      target: 'production',
       limit: '10',
       ...(until ? { until: String(until) } : {}),
     }),
@@ -158,8 +149,7 @@ export async function inspectDeployments(
   // Small pages bound provider traffic; fail closed if any protection lookup fails.
   for (const row of rows) {
     const item = candidate(row, protectedSet, Date.now());
-    if (item && item.environment === target && !(await hasAliases(item.id)))
-      candidates.push(item);
+    if (item && !(await hasAliases(item.id))) candidates.push(item);
   }
   const pagination = object(page.pagination);
   const next = pagination.next;

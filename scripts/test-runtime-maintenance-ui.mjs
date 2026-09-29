@@ -71,7 +71,6 @@ const server = createServer(async (req, res) => {
                     id: 'dpl_old',
                     url: 'mundobl-old-fixture.vercel.app',
                     created: 1700000000000,
-                    environment: 'preview',
                   },
                 ],
           hasMore: !previous,
@@ -105,9 +104,9 @@ try {
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await page.goto(`http://127.0.0.1:${server.address().port}`);
-  await page.getByRole('button', { name: 'Revisar previews' }).waitFor();
+  await page.getByRole('button', { name: 'Revisar producción' }).waitFor();
   assert.equal(reads, 0, 'No automatic provider requests');
-  await page.getByRole('button', { name: 'Revisar previews' }).click();
+  await page.getByRole('button', { name: 'Revisar producción' }).click();
   await page
     .getByText('mundobl-old-fixture.vercel.app', { exact: true })
     .waitFor();
@@ -168,7 +167,7 @@ try {
     0
   );
   configured = true;
-  await page.getByRole('button', { name: 'Revisar previews' }).click();
+  await page.getByRole('button', { name: 'Revisar producción' }).click();
   await page
     .getByText('mundobl-old-fixture.vercel.app', { exact: true })
     .waitFor();

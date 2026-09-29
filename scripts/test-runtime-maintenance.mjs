@@ -13,7 +13,7 @@ const deployment = (uid, overrides = {}) => ({
   url: `${uid.toLowerCase().replace('_', '-')}.vercel.app`,
   created: old,
   state: 'READY',
-  target: 'preview',
+  target: 'production',
   ...overrides,
 });
 const mocks = {};
@@ -108,19 +108,18 @@ try {
     deployment('dpl_build', { state: 'BUILDING' }),
     deployment('dpl_custom', { customEnvironment: { slug: 'staging' } }),
     deployment('dpl_badtime', { created: 'bad' }),
+    deployment('dpl_preview', { target: 'preview' }),
   ];
   aliases.add('dpl_alias');
   assert.deepEqual(
-    (await service.inspectDeployments('preview')).candidates.map(
-      (row) => row.id
-    ),
+    (await service.inspectDeployments()).candidates.map((row) => row.id),
     ['dpl_old']
   );
   noDeletion();
 
   reset();
   next = now - 50 * 86_400_000;
-  const report = await service.inspectDeployments('preview', now - 1);
+  const report = await service.inspectDeployments(now - 1);
   assert.equal(report.next, next);
   assert.equal(report.hasMore, true);
   assert(
@@ -134,11 +133,13 @@ try {
     { projectId: 'prj_other' },
     { created: now },
     { target: 'staging' },
+    { target: 'preview' },
+    { target: null },
     { state: 'BUILDING' },
     { state: 'QUEUED' },
     { state: 'INITIALIZING' },
     { customEnvironment: { slug: 'staging' } },
-    { target: 'production', created: now - 40 * 86_400_000 },
+    { created: now - 40 * 86_400_000 },
   ]) {
     reset();
     details = { ...details, ...override };
@@ -163,20 +164,14 @@ try {
   noDeletion();
   delete process.env.VERCEL_DEPLOYMENT_ID;
   reset();
-  await service.inspectDeployments('preview');
+  await service.inspectDeployments();
   current = 'dpl_old'; // Promoted after review: deletion must recheck.
   await assert.rejects(service.deleteOldDeployment('dpl_old'));
   noDeletion();
-  for (const target of ['production', null]) {
-    reset();
-    details.target = target;
-    await service.deleteOldDeployment('dpl_old');
-    assert.equal(
-      requests.filter(([, method]) => method === 'DELETE').length,
-      1
-    );
-    assert.equal(requests.at(-1)[0].pathname, '/v13/deployments/dpl_old');
-  }
+  reset();
+  await service.deleteOldDeployment('dpl_old');
+  assert.equal(requests.filter(([, method]) => method === 'DELETE').length, 1);
+  assert.equal(requests.at(-1)[0].pathname, '/v13/deployments/dpl_old');
   reset();
   await assert.rejects(service.deleteOldDeployment('../projects/delete'));
   assert.equal(requests.length, 0);
@@ -217,10 +212,7 @@ try {
       headers: { Origin: origin },
       body: JSON.stringify(body),
     });
-  assert.equal(
-    (await route.GET(new Request('http://localhost/?target=preview'))).status,
-    403
-  );
+  assert.equal((await route.GET(new Request('http://localhost/'))).status, 403);
   assert.equal((await route.POST(post({ action: 'purgeLogs' }))).status, 403);
   assert.equal(purgeCalls, 0);
   allowed = true;
@@ -236,8 +228,7 @@ try {
     400
   );
   assert.equal(
-    (await route.GET(new Request('http://localhost/?target=preview&until=nan')))
-      .status,
+    (await route.GET(new Request('http://localhost/?until=nan'))).status,
     400
   );
   assert.equal(
@@ -269,9 +260,7 @@ try {
   assert.equal(audits.at(-1)[4], 'completed');
   assert.equal(purgeCalls, 1);
   delete process.env.MAINTENANCE_VERCEL_TOKEN;
-  const disabled = await route.GET(
-    new Request('http://localhost/?target=production')
-  );
+  const disabled = await route.GET(new Request('http://localhost/'));
   assert.equal(disabled.status, 200);
   assert.equal((await disabled.json()).configured, false);
   console.log(
