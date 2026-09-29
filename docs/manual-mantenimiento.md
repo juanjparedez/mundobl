@@ -65,15 +65,27 @@ Guardar mediciones privadas sin claves ni datos de usuarios:
 Medición del 28–29/09/2026. Panel de Usage de Supabase (ciclo 17/09 – 17/10, día 12), más SQL y logs:
 
 - **Ninguna métrica pasó la cuota.** El aviso de gracia queda fijo porque la gracia ya se usó (terminó el 10/09): si una métrica se pasa, Supabase puede responder 402 sin otro aviso. Spend cap activo, sin tarjeta.
-- **Log Ingestion es la más cerca del límite** y todavía no se cobra ("Upcoming"). La documentación general dice 5 GB para Free, pero el panel de esta organización muestra 1 GB: tomar el panel. En las últimas 24 h, 21.500 de 22.700 líneas son de Supavisor, el pooler: cada función de Vercel que abre una conexión Prisma deja 2–3 líneas. Las conexiones por hora bajaron de ~1000 (04–07 UTC del 28/09, antes de #107) a ~100–400 después. Menos invocaciones de funciones = menos logs.
+- **Log Ingestion es la más cerca del límite**, pero Supabase la empieza a cobrar recién a principios de 2027; Log Query también. El Log Query del 28/09 (844 MB) fue casi todo por consultas de diagnóstico: no repetirlas sin motivo.
+- **"Service restrictions are active" (11/09)** es del ciclo anterior. El 29/09 Storage y el sitio respondían 200: no había restricción.
+- **Log Ingestion, detalle:** La documentación general dice 5 GB para Free, pero el panel de esta organización muestra 1 GB: tomar el panel. En las últimas 24 h, 21.500 de 22.700 líneas son de Supavisor, el pooler: cada función de Vercel que abre una conexión Prisma deja 2–3 líneas. Las conexiones por hora bajaron de ~1000 (04–07 UTC del 28/09, antes de #107) a ~100–400 después. Menos invocaciones de funciones = menos logs.
 - **Base**: `AccessLog` son 74 MB: 94.062 `PAGE_VIEW` desde el 30/06. La retención de 90 días empieza a borrarlos ahora, así que el tamaño debería estabilizarse; "Limpiar logs vencidos" hoy no libera casi nada.
 - **`PAGE_VIEW` ya no mide tráfico**: desde #107 el proxy solo corre en `/admin`, y es el proxy el que los registra. Bajó de ~600 por día a 44 en 20 h por eso, no por menos visitas. Para tráfico usar Vercel Usage.
-- **Imágenes en Supabase**: 20 series (`imageUrl` e `imageThumbUrl`) y 12 `FeatureRequestImage.url`. Temporadas, universos, personas, productoras, noticias y sitios: 0. Las otras 655 series ya están en R2.
+- **Imágenes en Supabase**: 20 series (`imageUrl` e `imageThumbUrl`) y 12 `FeatureRequestImage.url`. Las 40 de series se subieron el 27/09 de madrugada (la última a las 01:30 ART). Producción tiene las cinco variables R2; el `.env` local no tiene ninguna, así que casi seguro vinieron de un entorno local apuntando a la base de producción. Antes de cargar series desde local, agregar las variables R2 al `.env`. Migrarlas con `scripts/migrate-images-to-r2.ts` (necesita esas variables). Temporadas, universos, personas, productoras, noticias y sitios: 0. Las otras 655 series ya están en R2.
 - **Vercel**: 6 deployments de producción, todos del 27–28/09. No hay nada para borrar todavía.
 - **Monitoreo desde la app**: la Management API de Supabase solo da cantidad de requests, no Egress ni Log Ingestion en GB. Esos dos se leen en el panel de Usage; no hay forma de traerlos a `/admin` sin scrapear.
 - **Falta**: CPU, ISR, invocaciones y transferencia de Vercel. Leerlos en Usage y completar la tabla.
 
 Para cuotas acumulativas: `margen = límite - usado`; `días estimados = margen / incremento diario`. Usar la tasa posterior al arreglo y la misma unidad; una tasa cero o negativa por retrasos/reinicio no permite extrapolar. Dejar margen para picos y backups. Esta fórmula no reemplaza la evaluación de promedios de almacenamiento.
+
+## Deploys
+
+Mergear a `main` no despliega: `vercel.json` tiene `git.deploymentEnabled: false`. Cada deploy hace un build que lee la base y arranca con la caché ISR vacía, así que se juntan varios merges y se despliega una vez.
+
+1. Si hay migraciones, aplicarlas antes: `npm run migrate:supabase`.
+2. GitHub → Actions → **Deploy producción** → Run workflow (rama `main`). Despliega el último commit de `main` con la CLI de Vercel.
+3. Revisar el resumen del workflow y `/api/build-info`.
+
+Requiere el secret `VERCEL_TOKEN` en GitHub (token de vercel.com/account/tokens limitado al team). Los crons de `vercel.json` siguen funcionando: se leen del deploy de producción. Rollback: Vercel → Deployments → Instant Rollback, no hace falta un deploy nuevo.
 
 ## 3. Vercel: inspección y limpieza de deployments
 
@@ -117,7 +129,7 @@ Para mantenimiento recurrente, preferir **Project → Settings → Security → 
 
 ### Controles de mantenimiento en Runtime
 
-La sección de `/admin/runtime` revisa deployments de producción, sin consultar Vercel automáticamente ni hacer polling. No revisa previews: `vercel.json` solo despliega `main`, así que Git no las genera. Cada clic revisa una página de hasta 10 deployments y ofrece seguir con los anteriores. Solo muestra candidatos con más de 90 días, en estado READY, ERROR o CANCELED.
+La sección de `/admin/runtime` revisa deployments de producción, sin consultar Vercel automáticamente ni hacer polling. No revisa previews: Git no despliega nada (ver [Deploys](#deploys)). Cada clic revisa una página de hasta 10 deployments y ofrece seguir con los anteriores. Solo muestra candidatos con más de 90 días, en estado READY, ERROR o CANCELED.
 
 Se conservan los tres deployments más recientes, las tres últimas versiones READY de producción, el destino de producción actual, la instancia que ejecuta la acción y cualquier deployment con alias asignado. Entornos personalizados y estados desconocidos quedan excluidos. El borrado es individual, muestra la URL para confirmar y vuelve a consultar proyecto, estado, fecha, versiones protegidas y alias en el servidor. No promover ni reasignar aliases mientras se elimina: Vercel no ofrece en este flujo una operación atómica de comprobar protecciones y borrar.
 
