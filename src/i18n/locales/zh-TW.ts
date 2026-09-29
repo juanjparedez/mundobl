@@ -10,6 +10,33 @@
 import type { TranslationShape } from '../messages';
 
 const zhTW = {
+  runtimeMaintenance: {
+    "title": "維護",
+    "description": "檢查資源並減少未來用量。刪除部署不會退還已消耗的配額。",
+    "policy": "超過90天的正式環境部署。保留最新的3個部署、最近3個已就緒的正式版本和所有帶有效別名的版本。刪除期間不要升級版本。",
+    "production": "檢查正式環境",
+    "missing": "尚未設定Vercel整合，需要基礎設施管理員啟用。",
+    "r2ok": "R2變數已設定，但尚未驗證憑證或舊圖片。",
+    "r2missing": "缺少R2變數：新圖片可能上傳到Supabase並消耗其流量。",
+    "scanned": "本頁已檢查",
+    "empty": "本頁沒有候選項。如有更早的頁面，請繼續檢查。",
+    "deployment": "部署",
+    "created": "建立時間",
+    "action": "操作",
+    "confirm": "刪除此部署及其URL？",
+    "remove": "刪除",
+    "cancel": "取消",
+    "older": "檢查更早部署",
+    "working": "處理中…",
+    "logsHint": "僅刪除過期日誌：濫用日誌7天，其他日誌90天。這可能減少資料庫成長，但不會退還流量或保證立即釋放磁碟空間。",
+    "confirmLogs": "刪除超過保留期限的日誌？",
+    "purge": "清理過期日誌",
+    "freezeHint": "目前的緊急開關僅針對單一實例，無法保證在Vercel上全域停止。",
+    "error": "無法確認操作。可能已部分執行，請檢查狀態後再重試。",
+    "done": "已完成",
+    "deleted": "已刪除",
+    "partial": "仍有記錄待檢查，可以再次清理。"
+  },
   "communitySpace": {
     "lists": "探索片單",
     "searchLists": "搜尋片單",

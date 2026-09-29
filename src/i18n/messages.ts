@@ -1,6 +1,33 @@
 import type { SupportedLocale } from './config';
 
 export type TranslationShape = {
+  runtimeMaintenance: {
+    title: string;
+    description: string;
+    policy: string;
+    production: string;
+    missing: string;
+    r2ok: string;
+    r2missing: string;
+    scanned: string;
+    empty: string;
+    deployment: string;
+    created: string;
+    action: string;
+    confirm: string;
+    remove: string;
+    cancel: string;
+    older: string;
+    working: string;
+    logsHint: string;
+    confirmLogs: string;
+    purge: string;
+    freezeHint: string;
+    error: string;
+    done: string;
+    deleted: string;
+    partial: string;
+  };
   communitySpace: {
     lists: string;
     searchLists: string;
@@ -3591,6 +3618,41 @@ export type TranslationShape = {
 };
 
 const es: TranslationShape = {
+  runtimeMaintenance: {
+    title: 'Mantenimiento',
+    description:
+      'Revisar recursos y reducir consumo futuro. Borrar deployments no devuelve cuota consumida.',
+    policy:
+      'Deployments de producción de más de 90 días. Se conservan los tres deployments más recientes, las tres últimas versiones de producción listas y cualquier versión con alias activo. No promover versiones mientras se elimina.',
+    production: 'Revisar producción',
+    missing:
+      'La integración de Vercel no está configurada. Un administrador de infraestructura debe habilitarla.',
+    r2ok: 'Las variables de R2 están presentes. Esto no verifica credenciales ni imágenes antiguas.',
+    r2missing:
+      'Faltan variables de R2: las nuevas imágenes pueden subirse a Supabase y consumir su transferencia.',
+    scanned: 'Revisados en esta página',
+    empty:
+      'No hay candidatos en esta página. Revisá páginas anteriores si están disponibles.',
+    deployment: 'Deployment',
+    created: 'Creado',
+    action: 'Acción',
+    confirm: '¿Eliminar este deployment y su URL?',
+    remove: 'Eliminar',
+    cancel: 'Cancelar',
+    older: 'Revisar anteriores',
+    working: 'Procesando…',
+    logsHint:
+      'Eliminar solo logs vencidos: abuso después de 7 días y el resto después de 90. Puede reducir crecimiento de la base; no devuelve transferencia ni garantiza liberar espacio inmediato.',
+    confirmLogs: '¿Eliminar los logs que superan la retención?',
+    purge: 'Limpiar logs vencidos',
+    freezeHint:
+      'Los interruptores de emergencia actuales son locales a cada instancia: no garantizan un freno global en Vercel.',
+    error:
+      'No se pudo confirmar la operación. Revisá el estado antes de reintentar; puede haberse aplicado parcialmente.',
+    done: 'Completado',
+    deleted: 'Eliminados',
+    partial: 'Quedan registros por revisar; podés repetir la limpieza.',
+  },
   communitySpace: {
     lists: 'Listas para descubrir',
     searchLists: 'Buscar listas',
@@ -7428,6 +7490,40 @@ const es: TranslationShape = {
 };
 
 const en: TranslationShape = {
+  runtimeMaintenance: {
+    title: 'Maintenance',
+    description:
+      'Review resources and reduce future usage. Deleting deployments does not restore consumed quota.',
+    policy:
+      'Production deployments older than 90 days. The three newest deployments, three latest ready production versions and all versions with active aliases are kept. Do not promote versions during deletion.',
+    production: 'Review production',
+    missing:
+      'Vercel integration is not configured. An infrastructure administrator must enable it.',
+    r2ok: 'R2 variables are present. This does not verify credentials or older images.',
+    r2missing:
+      'R2 variables are missing: new images may upload to Supabase and consume its transfer quota.',
+    scanned: 'Reviewed on this page',
+    empty: 'No candidates on this page. Review older pages when available.',
+    deployment: 'Deployment',
+    created: 'Created',
+    action: 'Action',
+    confirm: 'Delete this deployment and its URL?',
+    remove: 'Delete',
+    cancel: 'Cancel',
+    older: 'Review older',
+    working: 'Working…',
+    logsHint:
+      'Delete only expired logs: abuse after 7 days, other logs after 90. This may reduce database growth; it does not restore transfer quota or guarantee immediate disk savings.',
+    confirmLogs: 'Delete logs beyond their retention period?',
+    purge: 'Clean expired logs',
+    freezeHint:
+      'Existing emergency switches are local to each instance: they do not guarantee a global stop on Vercel.',
+    error:
+      'The operation could not be confirmed. Check its status before retrying; it may have partially completed.',
+    done: 'Completed',
+    deleted: 'Deleted',
+    partial: 'More records remain to review; you can repeat cleanup.',
+  },
   communitySpace: {
     lists: 'Lists to discover',
     searchLists: 'Search lists',

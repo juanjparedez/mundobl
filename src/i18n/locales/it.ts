@@ -10,6 +10,33 @@
 import type { TranslationShape } from '../messages';
 
 const it = {
+  runtimeMaintenance: {
+    "title": "Manutenzione",
+    "description": "Controlla le risorse e riduci i consumi futuri. Eliminare deployment non restituisce la quota consumata.",
+    "policy": "Deployment di produzione oltre 90 giorni. Si conservano i tre deployment più recenti, le tre ultime versioni di produzione pronte e tutte quelle con alias attivi. Non promuovere versioni durante la cancellazione.",
+    "production": "Controlla produzione",
+    "missing": "Integrazione Vercel non configurata. Deve abilitarla un amministratore dell’infrastruttura.",
+    "r2ok": "Le variabili R2 sono presenti. Credenziali e immagini precedenti non sono verificate.",
+    "r2missing": "Mancano variabili R2: le nuove immagini potrebbero essere caricate su Supabase e consumarne il trasferimento.",
+    "scanned": "Controllati in questa pagina",
+    "empty": "Nessun candidato in questa pagina. Controlla le pagine precedenti se disponibili.",
+    "deployment": "Deployment",
+    "created": "Creato",
+    "action": "Azione",
+    "confirm": "Eliminare questo deployment e il suo URL?",
+    "remove": "Elimina",
+    "cancel": "Annulla",
+    "older": "Controlla precedenti",
+    "working": "Elaborazione…",
+    "logsHint": "Elimina solo log scaduti: abusi dopo 7 giorni, altri dopo 90. Può ridurre la crescita del database; non restituisce trasferimento né garantisce spazio libero immediato.",
+    "confirmLogs": "Eliminare i log oltre il periodo di conservazione?",
+    "purge": "Pulisci log scaduti",
+    "freezeHint": "Gli interruttori di emergenza attuali sono locali a ogni istanza: non garantiscono un arresto globale su Vercel.",
+    "error": "Operazione non confermata. Controlla lo stato prima di riprovare: potrebbe essere stata applicata parzialmente.",
+    "done": "Completato",
+    "deleted": "Eliminati",
+    "partial": "Restano record da controllare; puoi ripetere la pulizia."
+  },
   "communitySpace": {
     "lists": "Liste da scoprire",
     "searchLists": "Cerca liste",
