@@ -1,13 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Alert, Button, Popconfirm, Space, Table } from 'antd';
+import { Alert, Button, Popconfirm, Table } from 'antd';
 import { PanelCard, SectionHeader } from '@/components/design-system';
 import type { TranslationShape } from '@/i18n/messages';
-import type {
-  DeploymentEnvironment,
-  MaintenanceReport,
-} from '@/types/runtime-maintenance';
+import type { MaintenanceReport } from '@/types/runtime-maintenance';
 import './RuntimeMaintenance.css';
 
 interface Props {
@@ -16,21 +13,18 @@ interface Props {
 
 export function RuntimeMaintenance({ labels }: Props) {
   const [report, setReport] = useState<MaintenanceReport | null>(null);
-  const [target, setTarget] = useState<DeploymentEnvironment>('preview');
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<{ text: string; error: boolean } | null>(
     null
   );
 
-  async function inspect(environment: DeploymentEnvironment, until?: number) {
+  async function inspect(until?: number) {
     setBusy(true);
     setNotice(null);
     setReport(null);
-    setTarget(environment);
     try {
-      const params = new URLSearchParams({ target: environment });
-      if (until) params.set('until', String(until));
-      const response = await fetch(`/api/admin/runtime/maintenance?${params}`, {
+      const query = until ? `?until=${until}` : '';
+      const response = await fetch(`/api/admin/runtime/maintenance${query}`, {
         cache: 'no-store',
       });
       if (!response.ok) throw new Error();
@@ -96,14 +90,13 @@ export function RuntimeMaintenance({ labels }: Props) {
     >
       <div className="runtime-maintenance">
         <p>{labels.policy}</p>
-        <Space wrap>
-          <Button disabled={busy} onClick={() => inspect('preview')}>
-            {labels.preview}
-          </Button>
-          <Button disabled={busy} onClick={() => inspect('production')}>
-            {labels.production}
-          </Button>
-        </Space>
+        <Button
+          className="runtime-maintenance__review"
+          disabled={busy}
+          onClick={() => inspect()}
+        >
+          {labels.production}
+        </Button>
         {notice && (
           <Alert
             type={notice.error ? 'error' : 'success'}
@@ -170,7 +163,7 @@ export function RuntimeMaintenance({ labels }: Props) {
             {report.hasMore && report.next !== null && (
               <Button
                 disabled={busy}
-                onClick={() => inspect(target, report.next ?? undefined)}
+                onClick={() => inspect(report.next ?? undefined)}
               >
                 {labels.older}
               </Button>

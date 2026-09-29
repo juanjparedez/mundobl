@@ -5,7 +5,6 @@ export type TranslationShape = {
     title: string;
     description: string;
     policy: string;
-    preview: string;
     production: string;
     missing: string;
     r2ok: string;
@@ -3624,8 +3623,7 @@ const es: TranslationShape = {
     description:
       'Revisar recursos y reducir consumo futuro. Borrar deployments no devuelve cuota consumida.',
     policy:
-      'Previews: más de 30 días. Producción: más de 90 días. Se conservan los tres deployments más recientes, las tres últimas versiones de producción listas y cualquier versión con alias activo. No promover versiones mientras se elimina.',
-    preview: 'Revisar previews',
+      'Deployments de producción de más de 90 días. Se conservan los tres deployments más recientes, las tres últimas versiones de producción listas y cualquier versión con alias activo. No promover versiones mientras se elimina.',
     production: 'Revisar producción',
     missing:
       'La integración de Vercel no está configurada. Un administrador de infraestructura debe habilitarla.',
@@ -7497,8 +7495,7 @@ const en: TranslationShape = {
     description:
       'Review resources and reduce future usage. Deleting deployments does not restore consumed quota.',
     policy:
-      'Previews: older than 30 days. Production: older than 90 days. The three newest deployments, three latest ready production versions and all versions with active aliases are kept. Do not promote versions during deletion.',
-    preview: 'Review previews',
+      'Production deployments older than 90 days. The three newest deployments, three latest ready production versions and all versions with active aliases are kept. Do not promote versions during deletion.',
     production: 'Review production',
     missing:
       'Vercel integration is not configured. An infrastructure administrator must enable it.',

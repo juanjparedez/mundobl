@@ -13,8 +13,7 @@ const fr = {
   runtimeMaintenance: {
     "title": "Maintenance",
     "description": "Examiner les ressources et réduire la consommation future. Supprimer des déploiements ne restitue pas le quota consommé.",
-    "policy": "Aperçus : plus de 30 jours. Production : plus de 90 jours. Les trois déploiements les plus récents, les trois dernières versions de production prêtes et les versions avec alias actif sont conservés. Ne pas promouvoir de version pendant la suppression.",
-    "preview": "Examiner les aperçus",
+    "policy": "Déploiements de production de plus de 90 jours. Les trois déploiements les plus récents, les trois dernières versions de production prêtes et les versions avec alias actif sont conservés. Ne pas promouvoir de version pendant la suppression.",
     "production": "Examiner la production",
     "missing": "Intégration Vercel non configurée. Un administrateur de l’infrastructure doit l’activer.",
     "r2ok": "Les variables R2 sont présentes. Cela ne vérifie ni les identifiants ni les anciennes images.",

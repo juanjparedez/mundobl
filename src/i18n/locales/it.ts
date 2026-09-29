@@ -13,8 +13,7 @@ const it = {
   runtimeMaintenance: {
     "title": "Manutenzione",
     "description": "Controlla le risorse e riduci i consumi futuri. Eliminare deployment non restituisce la quota consumata.",
-    "policy": "Anteprime: oltre 30 giorni. Produzione: oltre 90 giorni. Si conservano i tre deployment più recenti, le tre ultime versioni di produzione pronte e tutte quelle con alias attivi. Non promuovere versioni durante la cancellazione.",
-    "preview": "Controlla anteprime",
+    "policy": "Deployment di produzione oltre 90 giorni. Si conservano i tre deployment più recenti, le tre ultime versioni di produzione pronte e tutte quelle con alias attivi. Non promuovere versioni durante la cancellazione.",
     "production": "Controlla produzione",
     "missing": "Integrazione Vercel non configurata. Deve abilitarla un amministratore dell’infrastruttura.",
     "r2ok": "Le variabili R2 sono presenti. Credenziali e immagini precedenti non sono verificate.",

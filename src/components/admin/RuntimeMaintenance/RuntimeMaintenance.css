@@ -10,6 +10,10 @@
   margin: 0;
 }
 
+.runtime-maintenance__review {
+  align-self: flex-start;
+}
+
 .runtime-maintenance__url {
   overflow-wrap: anywhere;
 }

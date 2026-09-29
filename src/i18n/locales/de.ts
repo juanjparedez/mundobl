@@ -13,8 +13,7 @@ const de = {
   runtimeMaintenance: {
     "title": "Wartung",
     "description": "Ressourcen prüfen und künftigen Verbrauch senken. Das Löschen von Deployments erstattet kein verbrauchtes Kontingent.",
-    "policy": "Vorschauen: älter als 30 Tage. Produktion: älter als 90 Tage. Die drei neuesten Deployments, die drei letzten bereiten Produktionsversionen und alle Versionen mit aktiven Aliasen bleiben erhalten. Während des Löschens keine Version hochstufen.",
-    "preview": "Vorschauen prüfen",
+    "policy": "Produktions-Deployments älter als 90 Tage. Die drei neuesten Deployments, die drei letzten bereiten Produktionsversionen und alle Versionen mit aktiven Aliasen bleiben erhalten. Während des Löschens keine Version hochstufen.",
     "production": "Produktion prüfen",
     "missing": "Vercel-Integration nicht konfiguriert. Ein Infrastrukturadministrator muss sie aktivieren.",
     "r2ok": "R2-Variablen sind vorhanden. Zugangsdaten und ältere Bilder wurden damit nicht geprüft.",
