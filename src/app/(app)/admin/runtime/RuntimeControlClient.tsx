@@ -377,7 +377,6 @@ export function RuntimeControlClient() {
                   title: t('runtimeMaintenance.title'),
                   description: t('runtimeMaintenance.description'),
                   policy: t('runtimeMaintenance.policy'),
-                  preview: t('runtimeMaintenance.preview'),
                   production: t('runtimeMaintenance.production'),
                   missing: t('runtimeMaintenance.missing'),
                   r2ok: t('runtimeMaintenance.r2ok'),
