@@ -60,6 +60,7 @@ npm run type-check    # tsc --noEmit
 | Qué buscás | Dónde está |
 |---|---|
 | Arquitectura, stack, convenciones, integraciones externas | [`context.md`](context.md) |
+| Cuotas, alertas, limpieza de deployments y mantenimiento | [Manual de mantenimiento](docs/manual-mantenimiento.md) |
 | Historial de versiones | [`CHANGELOG.md`](CHANGELOG.md) (también en [/novedades](https://mundobl.com.ar/novedades)) |
 | Instrucciones para agentes de IA | [`CLAUDE.md`](CLAUDE.md) |
 
