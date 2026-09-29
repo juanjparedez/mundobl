@@ -21,6 +21,7 @@ import { useLocale } from '@/lib/providers/LocaleProvider';
 import { useMessage } from '@/hooks/useMessage';
 import '../admin.css';
 import { RuntimeHealthPanel } from './RuntimeHealthPanel';
+import { RuntimeMaintenance } from '@/components/admin/RuntimeMaintenance/RuntimeMaintenance';
 import './RuntimeControlClient.css';
 
 type RuntimeState = {
@@ -370,6 +371,37 @@ export function RuntimeControlClient() {
               </PanelCard>
 
               <RuntimeHealthPanel />
+
+              <RuntimeMaintenance
+                labels={{
+                  title: t('runtimeMaintenance.title'),
+                  description: t('runtimeMaintenance.description'),
+                  policy: t('runtimeMaintenance.policy'),
+                  preview: t('runtimeMaintenance.preview'),
+                  production: t('runtimeMaintenance.production'),
+                  missing: t('runtimeMaintenance.missing'),
+                  r2ok: t('runtimeMaintenance.r2ok'),
+                  r2missing: t('runtimeMaintenance.r2missing'),
+                  scanned: t('runtimeMaintenance.scanned'),
+                  empty: t('runtimeMaintenance.empty'),
+                  deployment: t('runtimeMaintenance.deployment'),
+                  created: t('runtimeMaintenance.created'),
+                  action: t('runtimeMaintenance.action'),
+                  confirm: t('runtimeMaintenance.confirm'),
+                  remove: t('runtimeMaintenance.remove'),
+                  cancel: t('runtimeMaintenance.cancel'),
+                  older: t('runtimeMaintenance.older'),
+                  working: t('runtimeMaintenance.working'),
+                  logsHint: t('runtimeMaintenance.logsHint'),
+                  confirmLogs: t('runtimeMaintenance.confirmLogs'),
+                  purge: t('runtimeMaintenance.purge'),
+                  freezeHint: t('runtimeMaintenance.freezeHint'),
+                  error: t('runtimeMaintenance.error'),
+                  done: t('runtimeMaintenance.done'),
+                  deleted: t('runtimeMaintenance.deleted'),
+                  partial: t('runtimeMaintenance.partial'),
+                }}
+              />
 
               <PanelCard
                 header={

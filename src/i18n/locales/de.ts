@@ -10,6 +10,34 @@
 import type { TranslationShape } from '../messages';
 
 const de = {
+  runtimeMaintenance: {
+    "title": "Wartung",
+    "description": "Ressourcen prüfen und künftigen Verbrauch senken. Das Löschen von Deployments erstattet kein verbrauchtes Kontingent.",
+    "policy": "Vorschauen: älter als 30 Tage. Produktion: älter als 90 Tage. Die drei neuesten Deployments, die drei letzten bereiten Produktionsversionen und alle Versionen mit aktiven Aliasen bleiben erhalten. Während des Löschens keine Version hochstufen.",
+    "preview": "Vorschauen prüfen",
+    "production": "Produktion prüfen",
+    "missing": "Vercel-Integration nicht konfiguriert. Ein Infrastrukturadministrator muss sie aktivieren.",
+    "r2ok": "R2-Variablen sind vorhanden. Zugangsdaten und ältere Bilder wurden damit nicht geprüft.",
+    "r2missing": "R2-Variablen fehlen: Neue Bilder können bei Supabase landen und dessen Transferkontingent verbrauchen.",
+    "scanned": "Auf dieser Seite geprüft",
+    "empty": "Keine Kandidaten auf dieser Seite. Falls verfügbar, ältere Seiten prüfen.",
+    "deployment": "Deployment",
+    "created": "Erstellt",
+    "action": "Aktion",
+    "confirm": "Dieses Deployment und seine URL löschen?",
+    "remove": "Löschen",
+    "cancel": "Abbrechen",
+    "older": "Ältere prüfen",
+    "working": "Wird verarbeitet…",
+    "logsHint": "Nur abgelaufene Logs löschen: Missbrauch nach 7 Tagen, andere nach 90. Das kann das Datenbankwachstum reduzieren, erstattet aber keinen Transfer und garantiert keinen sofort freien Speicher.",
+    "confirmLogs": "Logs außerhalb der Aufbewahrungsfrist löschen?",
+    "purge": "Abgelaufene Logs bereinigen",
+    "freezeHint": "Die vorhandenen Notschalter gelten pro Instanz und garantieren keinen globalen Stopp auf Vercel.",
+    "error": "Vorgang nicht bestätigt. Vor einem erneuten Versuch den Status prüfen; er könnte teilweise ausgeführt worden sein.",
+    "done": "Abgeschlossen",
+    "deleted": "Gelöscht",
+    "partial": "Weitere Datensätze müssen geprüft werden; die Bereinigung kann wiederholt werden."
+  },
   "communitySpace": {
     "lists": "Listen entdecken",
     "searchLists": "Listen suchen",

@@ -79,6 +79,34 @@ export const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
 globalForPrisma.prisma = prisma;
 
+// Maintenance audit is awaited even when normal request logging is disabled.
+export async function recordMaintenanceAction(
+  userId: string,
+  action: 'deleteDeployment' | 'purgeLogs',
+  deploymentId: string | undefined,
+  auditId?: number,
+  status: 'started' | 'completed' | 'failed' = 'started'
+): Promise<number> {
+  const metadata = JSON.stringify({ action, deploymentId, status });
+  if (auditId !== undefined) {
+    await prisma.accessLog.update({
+      where: { id: auditId },
+      data: { metadata },
+    });
+    return auditId;
+  }
+  const row = await prisma.accessLog.create({
+    data: {
+      action: 'RUNTIME_MAINTENANCE',
+      path: '/api/admin/runtime/maintenance',
+      method: 'POST',
+      userId,
+      metadata,
+    },
+  });
+  return row.id;
+}
+
 /** Hidden editorial blocks are readable only by an authorized editor. */
 export async function getReadableSeriesInfoBlocks(
   seriesId: number,
