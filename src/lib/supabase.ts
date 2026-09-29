@@ -35,35 +35,17 @@ export async function uploadImage(
   path: string,
   contentType: string
 ): Promise<string> {
-  // R2 primero: es el unico punto por el que pasan TODAS las subidas
-  // (/api/upload, /api/feedback/upload y el re-hosteo de imagenes externas),
-  // asi que cambiarlo aca alcanza para que nada nuevo vuelva a nacer en
-  // Supabase Storage — que es lo que cobra egress.
-  //
-  // El fallback a Supabase no es pereza: sin las 5 variables de R2 la subida
-  // seguiria funcionando en vez de romper el alta de series. Avisa por
-  // consola para que el desvio no pase inadvertido.
-  if (isR2Configured()) {
-    return uploadToR2(file, path, contentType);
+  // Es el unico punto por el que pasan TODAS las subidas (/api/upload,
+  // /api/feedback/upload, el re-hosteo de imagenes externas y los scripts).
+  // Sin R2 falla a proposito: antes caia a Supabase Storage, que cobra
+  // egress, y el 2026-09-27 una carga desde un .env local sin R2 dejo 40
+  // imagenes ahi sin que nadie lo notara.
+  if (!isR2Configured()) {
+    throw new Error(
+      'R2 sin configurar: no se sube a Supabase Storage. Faltan R2_ACCOUNT_ID / R2_ACCESS_KEY_ID / R2_SECRET_ACCESS_KEY / R2_BUCKET / R2_PUBLIC_HOST.'
+    );
   }
-  console.warn(
-    '[storage] R2 sin configurar: subiendo a Supabase Storage, que cobra egress. Faltan R2_ACCOUNT_ID / R2_ACCESS_KEY_ID / R2_SECRET_ACCESS_KEY / R2_BUCKET / R2_PUBLIC_HOST.'
-  );
-
-  const supabase = getSupabase();
-
-  const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
-    contentType,
-    upsert: true,
-  });
-
-  if (error) {
-    throw new Error(`Error subiendo imagen: ${error.message}`);
-  }
-
-  const { data: urlData } = supabase.storage.from(BUCKET).getPublicUrl(path);
-
-  return urlData.publicUrl;
+  return uploadToR2(file, path, contentType);
 }
 
 /**
