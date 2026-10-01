@@ -8,6 +8,13 @@ Todas las versiones notables del proyecto se documentan aqui.
 > (`ChangelogItem`, `/admin/changelog`) quedo como fallback solo si este archivo
 > esta vacio.
 
+## 2026-10-01 — Más rápido desde Latinoamérica
+
+### Fixes
+
+- **MundoBL responde más rápido**: el servidor pasó a São Paulo, al lado de la base de datos. Las páginas que se arman al momento, tu seguimiento y todo lo que hacés con la sesión iniciada ya no esperan un viaje de ida y vuelta a Estados Unidos en cada consulta.
+- **Las fichas del catálogo no se pisan**: si una ficha cambió desde que la abriste, el editor te avisa en vez de sobrescribir lo que se guardó después. Cada guardado queda registrado y un guardado a medias ya no deja una ficha incompleta.
+
 ## 2026-09-27 — Tu biblioteca, historial por serie y seguimiento más cómodo en el celu
 
 ### Features

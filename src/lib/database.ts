@@ -2111,20 +2111,31 @@ export async function saveSeriesInUniverse<T>(
   save: (transaction: Prisma.TransactionClient) => Promise<T>
 ): Promise<T> {
   return prisma.$transaction(async (transaction) => {
-    if (universeId !== null) {
-      await transaction.universe.update({
-        where: { id: universeId },
-        data: { updatedAt: new Date() },
-      });
-      if (isMain) {
-        await transaction.series.updateMany({
-          where: { universeId, isUniverseMain: true },
-          data: { isUniverseMain: false },
-        });
-      }
-    }
+    await prepareUniverseSlot(transaction, universeId, isMain);
     return save(transaction);
   });
+}
+
+/**
+ * Bloquea el universo y, si la serie pasa a ser la principal, desmarca la
+ * anterior. Va dentro de la transaccion del caller.
+ */
+export async function prepareUniverseSlot(
+  transaction: Prisma.TransactionClient,
+  universeId: number | null,
+  isMain: boolean
+): Promise<void> {
+  if (universeId === null) return;
+  await transaction.universe.update({
+    where: { id: universeId },
+    data: { updatedAt: new Date() },
+  });
+  if (isMain) {
+    await transaction.series.updateMany({
+      where: { universeId, isUniverseMain: true },
+      data: { isUniverseMain: false },
+    });
+  }
 }
 
 export async function getUserSeriesStatuses(userId: string, all: boolean) {

@@ -14,6 +14,8 @@ import { getSeriesEpisodesOrdered, type SeriesEpisodeOrder } from './database';
 
 export type TrackingClient = PrismaClient | Prisma.TransactionClient;
 
+const CURATOR_ROLES: ReadonlySet<string> = new Set(['ADMIN', 'MODERATOR']);
+
 /**
  * Seguir una serie te suscribe a sus avisos (capitulo disponible, nueva
  * temporada). Solo cuando se crea la fila de la serie por PRIMERA vez: si
@@ -28,6 +30,14 @@ export async function subscribeOnFirstTrack(
   userId: string,
   seriesId: number
 ): Promise<void> {
+  // Curaduria no: Flor marca "viendo" casi todo lo que carga y cada serie le
+  // quedaba con la campanita prendida (reporte del 27/09). Si quiere avisos de
+  // una serie, la campanita sigue a mano.
+  const user = await client.user.findUnique({
+    where: { id: userId },
+    select: { role: true },
+  });
+  if (user && CURATOR_ROLES.has(user.role)) return;
   await client.seriesSubscription.createMany({
     data: [{ userId, seriesId }],
     skipDuplicates: true,

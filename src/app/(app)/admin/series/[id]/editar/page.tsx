@@ -27,6 +27,7 @@ export default async function EditSeriesPage({ params }: EditPageProps) {
   // Transformar datos para el formulario
   const formData = {
     id: serie.id,
+    editVersion: serie.editVersion,
     title: serie.title,
     originalTitle: serie.originalTitle,
     year: serie.year,

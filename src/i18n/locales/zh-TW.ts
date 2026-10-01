@@ -1787,6 +1787,7 @@ const zhTW = {
     "createSuccess": "劇集建立成功",
     "updateSuccess": "劇集更新成功",
     "saveError": "儲存劇集時發生錯誤",
+    "editConflict": "此條目在你開啟後已被修改。請重新整理頁面，以免覆蓋這些變更。",
     "uploadSuccess": "圖片上傳成功",
     "uploadError": "圖片上傳失敗",
     "uploadingLabel": "正在上傳...",

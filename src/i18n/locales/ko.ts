@@ -1789,6 +1789,7 @@ const ko = {
     "createSuccess": "시리즈가 성공적으로 생성되었습니다",
     "updateSuccess": "시리즈가 성공적으로 업데이트되었습니다",
     "saveError": "시리즈 저장 오류",
+    "editConflict": "페이지를 연 뒤에 내용이 변경되었습니다. 변경 사항을 덮어쓰지 않도록 페이지를 새로고침하세요.",
     "uploadSuccess": "이미지가 성공적으로 업로드되었습니다",
     "uploadError": "이미지 업로드 오류",
     "uploadingLabel": "업로드 중...",

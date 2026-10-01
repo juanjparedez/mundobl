@@ -1792,6 +1792,7 @@ const de = {
     "createSuccess": "Serie erfolgreich erstellt",
     "updateSuccess": "Serie erfolgreich aktualisiert",
     "saveError": "Fehler beim Speichern der Serie",
+    "editConflict": "Diese Seite wurde geändert, seit du sie geöffnet hast. Lade die Seite neu, damit diese Änderungen nicht überschrieben werden.",
     "uploadSuccess": "Bild erfolgreich hochgeladen",
     "uploadError": "Fehler beim Hochladen des Bildes",
     "uploadingLabel": "Wird hochgeladen...",

@@ -1792,6 +1792,7 @@ const fr = {
     "createSuccess": "Série créée avec succès",
     "updateSuccess": "Série mise à jour avec succès",
     "saveError": "Erreur lors de l'enregistrement de la série",
+    "editConflict": "Cette fiche a été modifiée depuis que tu l'as ouverte. Recharge la page pour ne pas écraser ces modifications.",
     "uploadSuccess": "Image téléchargée avec succès",
     "uploadError": "Erreur lors du téléchargement de l'image",
     "uploadingLabel": "Téléchargement...",
