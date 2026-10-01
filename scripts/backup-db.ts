@@ -314,6 +314,11 @@ const MODELS = [
       client.seriesNote.findMany(),
   },
   {
+    name: 'SeriesRevision',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.seriesRevision.findMany(),
+  },
+  {
     name: 'EpisodeNote',
     delegate: (client: Prisma.TransactionClient) =>
       client.episodeNote.findMany(),
