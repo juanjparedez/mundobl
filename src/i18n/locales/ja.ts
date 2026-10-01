@@ -1789,6 +1789,7 @@ const ja = {
     "createSuccess": "シリーズが正常に作成されました",
     "updateSuccess": "シリーズが正常に更新されました",
     "saveError": "シリーズの保存中にエラーが発生しました",
+    "editConflict": "このページは開いた後に変更されています。変更を上書きしないよう、ページを再読み込みしてください。",
     "uploadSuccess": "画像が正常にアップロードされました",
     "uploadError": "画像のアップロード中にエラーが発生しました",
     "uploadingLabel": "アップロード中...",

@@ -5,6 +5,7 @@ import { prisma, getContributionMetadata } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { assertSeriesOwnership } from '@/lib/collaborator-guard';
 import { contributionMetadataFailure } from '@/lib/contribution-metadata';
+import { loadSeriesForSave, recordSeriesRevision } from '@/lib/series-save';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -142,11 +143,17 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
             }
           : {}),
       };
+      // Foto previa al guardado, antes de tocar nada. Si el UPDATE de abajo
+      // no pasa el limite de ownership, la transaccion se revierte con ella.
+      const before = await loadSeriesForSave(tx, seriesId);
       // A real parent UPDATE also locks the boundary for relation-only edits.
       const series = await tx.series.update({
         where,
-        data: { ...data, updatedAt: new Date() },
+        data: { ...data, updatedAt: new Date(), editVersion: { increment: 1 } },
       });
+      if (before) {
+        await recordSeriesRevision(tx, before, auth.userId, 'collaborator');
+      }
 
       if (body.actorNames !== undefined) {
         await tx.seriesActor.deleteMany({ where: { seriesId } });
