@@ -24,7 +24,9 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
     const updated = await prisma.series.update({
       where: { id: seriesId },
-      data: { catalogScope: newScope },
+      // Sube la version: un form abierto antes del cambio de alcance ya no
+      // puede devolverlo al valor viejo sin enterarse (ver Series.editVersion).
+      data: { catalogScope: newScope, editVersion: { increment: 1 } },
       select: { id: true, catalogScope: true },
     });
 

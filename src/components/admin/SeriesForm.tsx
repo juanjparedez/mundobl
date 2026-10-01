@@ -629,7 +629,12 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
                 ),
               }),
             }
-          : submitValues;
+          : {
+              ...submitValues,
+              // Version con la que se abrio la ficha: si alguien la guardo
+              // despues, el server responde 409 en vez de pisar sus cambios.
+              editVersion: initialData?.editVersion,
+            };
 
       const response = await fetch(url, {
         method,
@@ -641,6 +646,9 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
         // Superficie el mensaje del server (ej. 409 "Ya existe una serie ...")
         // en vez de un error genérico.
         const errData = await response.json().catch(() => null);
+        if (errData?.code === 'EDIT_CONFLICT') {
+          throw new Error(t('seriesForm.editConflict'));
+        }
         throw new Error(errData?.error || 'Error saving series');
       }
 

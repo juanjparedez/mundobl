@@ -1,22 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidateSeries } from '@/lib/revalidate-series';
-import {
-  prisma,
-  saveSeriesInUniverse,
-  resolveBasedOnValue,
-} from '@/lib/database';
+import { prisma } from '@/lib/database';
 import { auth } from '@/lib/auth';
 import { requireRole } from '@/lib/auth-helpers';
-import { getCountryCode } from '@/lib/country-codes';
 import { downloadAndUploadExternalImage } from '@/lib/supabase';
 import { notifySeriesSubscribers } from '@/lib/notifications';
 import {
-  findOrCreateTag,
-  findOrCreateGenre,
-  findOrCreateActor,
-  findOrCreateDirector,
-  findOrCreateProductionCompany,
-} from '@/lib/tag-utils';
+  EDIT_CONFLICT_CODE,
+  SeriesEditConflictError,
+  parseExpectedEditVersion,
+  saveSeriesFromForm,
+  type ResolvedSeriesImage,
+  type SeriesFormBody,
+} from '@/lib/series-save';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -129,6 +125,11 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 }
 
 // PUT - Actualizar una serie (Admin + Moderator)
+//
+// Un solo guardado atomico, con foto previa y control de version: ver
+// saveSeriesFromForm. Antes cada relacion se borraba y recreaba fila por fila
+// fuera de transaccion (~50 viajes a la base y una ficha a medias si se
+// cortaba), y una pestaña vieja pisaba sin aviso lo guardado despues.
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
     const authResult = await requireRole(['ADMIN', 'MODERATOR']);
@@ -141,7 +142,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
     }
 
-    const body = await request.json();
+    const body = (await request.json()) as SeriesFormBody;
 
     // Validación básica
     if (!body.title) {
@@ -150,408 +151,107 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         { status: 400 }
       );
     }
-
-    // Manejar país
-    let countryId = body.countryId ? parseInt(body.countryId, 10) : null;
-    if (body.countryName && !countryId) {
-      const code = getCountryCode(body.countryName);
-      const country = await prisma.country.upsert({
-        where: { name: body.countryName },
-        update: code ? { code } : {},
-        create: { name: body.countryName, ...(code ? { code } : {}) },
-      });
-      countryId = country.id;
-    }
-
-    // Manejar productora (por nombre o por ID)
-    let productionCompanyId = body.productionCompanyId || null;
-    if (body.productionCompanyName && !productionCompanyId) {
-      const company = await findOrCreateProductionCompany(
-        prisma,
-        body.productionCompanyName
-      );
-      productionCompanyId = company?.id ?? null;
-    }
-
-    // Manejar idioma original (por nombre o por ID)
-    let originalLanguageId = body.originalLanguageId || null;
-    if (body.originalLanguageName && !originalLanguageId) {
-      const language = await prisma.language.upsert({
-        where: { name: body.originalLanguageName },
-        update: {},
-        create: { name: body.originalLanguageName },
-      });
-      originalLanguageId = language.id;
-    }
-
-    // Procesar imagen externa → subir a Supabase si es URL externa.
-    //
-    // `resolvedThumbUrl` empieza en `undefined` = "no toques imageThumbUrl":
-    // si el admin no cambio el poster (imageUrl llega igual a la que ya
-    // tenia, o vacio), no queremos pisar la miniatura ya generada en cada
-    // guardado de un campo cualquiera — antes de este chequeo, cualquier
-    // edicion sin tocar la imagen hubiera borrado el thumb existente.
-    // Solo dos casos lo cambian: (a) el form subio un archivo nuevo via
-    // /api/upload y mando body.imageThumbUrl, o (b) downloadAndUploadExternalImage
-    // migro una URL externa nueva y genero un thumb real. Si se saca el
-    // poster (imageUrl vacio), el thumb se saca con el — si no, una card
-    // seguiria mostrando la miniatura vieja de un poster que ya no existe.
-    let resolvedImageUrl = body.imageUrl || null;
-    let resolvedThumbUrl: string | null | undefined =
-      typeof body.imageThumbUrl === 'string' && body.imageThumbUrl.trim()
-        ? body.imageThumbUrl.trim()
-        : undefined;
-    if (resolvedImageUrl) {
-      try {
-        const migrated = await downloadAndUploadExternalImage(
-          resolvedImageUrl,
-          'series'
-        );
-        resolvedImageUrl = migrated.url;
-        if (migrated.thumbUrl) resolvedThumbUrl = migrated.thumbUrl;
-      } catch (error) {
-        console.warn(
-          `No se pudo migrar imagen a Supabase, manteniendo URL original:`,
-          error
-        );
+    if (body.universeId) {
+      const universeId = Number(body.universeId);
+      if (!Number.isInteger(universeId) || universeId < 1) {
+        return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
       }
-    } else {
-      resolvedThumbUrl = null;
     }
-
-    // Actualizar la serie
-    const currentUniverse = await prisma.series.findUnique({
-      where: { id: serieId },
-      select: { universeId: true, isUniverseMain: true },
-    });
-    const targetUniverseId =
-      body.universeId === undefined
-        ? (currentUniverse?.universeId ?? null)
-        : body.universeId
-          ? Number(body.universeId)
-          : null;
-    if (
-      targetUniverseId !== null &&
-      (!Number.isInteger(targetUniverseId) || targetUniverseId < 1)
-    ) {
-      return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
-    }
-    const isUniverseMain =
-      targetUniverseId !== null &&
-      (body.isUniverseMain === undefined
-        ? currentUniverse?.universeId === targetUniverseId &&
-          currentUniverse.isUniverseMain
-        : body.isUniverseMain === true);
     if (
       body.basedOn !== undefined &&
       body.basedOn !== null &&
       typeof body.basedOn !== 'string'
     )
       return NextResponse.json({ error: 'Invalid basedOn' }, { status: 400 });
-    const normalizedBasedOn = await resolveBasedOnValue(body.basedOn);
-    const updatedSerie = await saveSeriesInUniverse(
-      targetUniverseId,
-      isUniverseMain,
-      (transaction) =>
-        transaction.series.update({
-          where: { id: serieId },
-          data: {
-            isUniverseMain,
-            title: body.title,
-            originalTitle: body.originalTitle || null,
-            year: body.year ? parseInt(body.year, 10) : null,
-            type: body.type || 'serie',
-            durationMinutes: body.durationMinutes
-              ? parseInt(String(body.durationMinutes), 10) || null
-              : null,
-            basedOn: normalizedBasedOn,
-            format: body.format || 'regular',
-            imageUrl: resolvedImageUrl,
-            ...(resolvedThumbUrl !== undefined && {
-              imageThumbUrl: resolvedThumbUrl,
-            }),
-            imagePosition: body.imagePosition || 'center',
-            synopsis: body.synopsis || null,
-            // Defensivo a proposito (mismo patron que `airDays` mas abajo): si el
-            // body no trae la clave, no se toca la columna. Sin esto, cualquier
-            // guardado desde un form que no registre el campo lo pisaba con null
-            // — que es exactamente como se perdio la resena editorial de las 613
-            // series del catalogo (medido 2026-09-10: 549 con nota, 0 con resena).
-            review: body.review !== undefined ? body.review || null : undefined,
-            soundtrack: body.soundtrack || null,
-            overallRating: body.overallRating
-              ? parseInt(body.overallRating, 10)
-              : null,
-            observations: body.observations || null,
-            notesPrivate: body.notesPrivate === true,
-            featured: body.featured === true,
-            featuredOrder:
-              typeof body.featuredOrder === 'number' ? body.featuredOrder : 0,
-            airDays:
-              body.airDays !== undefined ? body.airDays || null : undefined,
-            catalogScope:
-              body.catalogScope === 'WATCHABLE_ONLY'
-                ? 'WATCHABLE_ONLY'
-                : 'PERSONAL',
-            countryId,
-            universeId: targetUniverseId,
-            productionCompanyId,
-            originalLanguageId,
-          },
-        })
+    // Sin version no hay forma de saber si la pestaña esta vieja: antes de
+    // subir imagenes o crear nada, se corta aca.
+    if (parseExpectedEditVersion(body.editVersion) === null) {
+      return editConflictResponse();
+    }
+
+    const outcome = await saveSeriesFromForm(
+      serieId,
+      body,
+      await resolveImage(body),
+      authResult.userId
     );
 
-    // Actualizar actores (eliminar y volver a crear)
-    if (body.actors) {
-      await prisma.seriesActor.deleteMany({
-        where: { seriesId: serieId },
-      });
-
-      for (const actorData of body.actors) {
-        const actor = await findOrCreateActor(prisma, actorData.name ?? '');
-        if (!actor) continue;
-
-        await prisma.seriesActor.create({
-          data: {
-            seriesId: serieId,
-            actorId: actor.id,
-            character: actorData.character || '',
-            isMain: actorData.isMain || false,
-            pairingGroup: actorData.pairingGroup ?? null,
-          },
-        });
-      }
-    }
-
-    // Actualizar directores (eliminar y volver a crear)
-    if (body.directors) {
-      await prisma.seriesDirector.deleteMany({
-        where: { seriesId: serieId },
-      });
-
-      for (const directorData of body.directors) {
-        if (!directorData.name) continue;
-
-        const director = await findOrCreateDirector(prisma, directorData.name);
-        if (!director) continue;
-
-        await prisma.seriesDirector.create({
-          data: {
-            seriesId: serieId,
-            directorId: director.id,
-          },
-        });
-      }
-    }
-
-    // Actualizar doblajes
-    if (body.dubbingIds !== undefined) {
-      await prisma.seriesDubbing.deleteMany({
-        where: { seriesId: serieId },
-      });
-
-      if (body.dubbingIds && body.dubbingIds.length > 0) {
-        for (const languageId of body.dubbingIds) {
-          await prisma.seriesDubbing.create({
-            data: { seriesId: serieId, languageId },
-          });
-        }
-      }
-    }
-
-    if (body.seasons !== undefined) {
-      const incoming: Array<{
-        id?: number;
-        seasonNumber: number;
-        episodeCount?: number | null;
-        year?: number | null;
-      }> = body.seasons || [];
-
-      const existing = await prisma.season.findMany({
-        where: { seriesId: serieId },
-        select: { id: true },
-      });
-      const incomingIds = new Set(
-        incoming
-          .map((s) => s.id)
-          .filter((id): id is number => typeof id === 'number')
+    if (!outcome) {
+      return NextResponse.json(
+        { error: 'Serie no encontrada' },
+        { status: 404 }
       );
-      const toDelete = existing
-        .map((s) => s.id)
-        .filter((id) => !incomingIds.has(id));
-
-      if (toDelete.length > 0) {
-        await prisma.season.deleteMany({
-          where: { id: { in: toDelete } },
-        });
-      }
-
-      const newSeasonsForNotify: Array<{ id: number; seasonNumber: number }> =
-        [];
-      for (const seasonData of incoming) {
-        const data = {
-          seasonNumber: seasonData.seasonNumber,
-          episodeCount: seasonData.episodeCount
-            ? Number(seasonData.episodeCount)
-            : null,
-          year: seasonData.year ?? body.year ?? null,
-        };
-        let seasonId: number;
-        if (seasonData.id) {
-          await prisma.season.update({
-            where: { id: seasonData.id },
-            data,
-          });
-          seasonId = seasonData.id;
-        } else {
-          const created = await prisma.season.create({
-            data: { ...data, seriesId: serieId },
-            select: { id: true, seasonNumber: true },
-          });
-          seasonId = created.id;
-          newSeasonsForNotify.push(created);
-        }
-
-        // Auto-generación de episodios faltantes si se definió episodeCount
-        const targetEpisodeCount = seasonData.episodeCount
-          ? Number(seasonData.episodeCount)
-          : 0;
-        if (seasonId && targetEpisodeCount > 0) {
-          const existingEpisodes = await prisma.episode.findMany({
-            where: { seasonId },
-            select: { episodeNumber: true },
-          });
-          const existingNums = new Set(
-            existingEpisodes.map((e) => e.episodeNumber)
-          );
-          const toCreate = [];
-          for (let i = 1; i <= targetEpisodeCount; i++) {
-            if (!existingNums.has(i)) {
-              toCreate.push({ seasonId, episodeNumber: i });
-            }
-          }
-          if (toCreate.length > 0) {
-            await prisma.episode.createMany({ data: toCreate });
-          }
-        }
-      }
-
-      // Disparar avisos a suscriptores por cada temporada nueva.
-      if (newSeasonsForNotify.length > 0) {
-        const serieMeta = await prisma.series.findUnique({
-          where: { id: serieId },
-          select: { title: true },
-        });
-        const serieTitle = serieMeta?.title ?? 'una serie';
-        for (const s of newSeasonsForNotify) {
-          await notifySeriesSubscribers({
-            seriesId: serieId,
-            type: 'season_added',
-            title: `Nueva temporada en ${serieTitle}`,
-            body: `Se agrego la temporada ${s.seasonNumber}`,
-            refType: 'season',
-            refId: s.id,
-          });
-        }
-      }
     }
 
-    // Actualizar tags (eliminar y volver a crear)
-    if (body.tags !== undefined) {
-      await prisma.seriesTag.deleteMany({
-        where: { seriesId: serieId },
+    // Avisos fuera de la transaccion: si fallan, el guardado ya quedo.
+    for (const season of outcome.newSeasons) {
+      await notifySeriesSubscribers({
+        seriesId: serieId,
+        type: 'season_added',
+        title: `Nueva temporada en ${outcome.updated.title}`,
+        body: `Se agrego la temporada ${season.seasonNumber}`,
+        refType: 'season',
+        refId: season.id,
+        // Quien agrego la temporada no necesita que le avisen.
+        excludeUserId: authResult.userId,
       });
-
-      if (body.tags && body.tags.length > 0) {
-        for (const tagName of body.tags) {
-          const tag = await findOrCreateTag(prisma, tagName);
-          if (!tag) continue;
-
-          await prisma.seriesTag.create({
-            data: {
-              seriesId: serieId,
-              tagId: tag.id,
-            },
-          });
-        }
-      }
     }
 
-    // Actualizar géneros (eliminar y volver a crear)
-    if (body.genres !== undefined) {
-      await prisma.seriesGenre.deleteMany({
-        where: { seriesId: serieId },
-      });
+    revalidateSeries(outcome.updated);
 
-      if (body.genres && body.genres.length > 0) {
-        for (const genreName of body.genres) {
-          const genre = await findOrCreateGenre(prisma, genreName);
-          if (!genre) continue;
-
-          await prisma.seriesGenre.create({
-            data: {
-              seriesId: serieId,
-              genreId: genre.id,
-            },
-          });
-        }
-      }
-    }
-
-    // Actualizar watch links (eliminar y volver a crear)
-    if (body.watchLinks !== undefined) {
-      await prisma.watchLink.deleteMany({
-        where: { seriesId: serieId },
-      });
-
-      if (body.watchLinks && body.watchLinks.length > 0) {
-        for (const link of body.watchLinks) {
-          if (!link.platform || !link.url) continue;
-
-          await prisma.watchLink.create({
-            data: {
-              seriesId: serieId,
-              platform: link.platform,
-              url: link.url,
-              official: link.official ?? true,
-            },
-          });
-        }
-      }
-    }
-
-    // Actualizar series relacionadas (bidireccional)
-    if (body.relatedSeriesIds !== undefined) {
-      // Borrar todas las relaciones existentes (ambas direcciones)
-      await prisma.relatedSeries.deleteMany({
-        where: {
-          OR: [{ mainSeriesId: serieId }, { relatedSeriesId: serieId }],
-        },
-      });
-
-      if (body.relatedSeriesIds && body.relatedSeriesIds.length > 0) {
-        for (const relatedId of body.relatedSeriesIds) {
-          if (!relatedId || relatedId === serieId) continue;
-          await prisma.relatedSeries.createMany({
-            data: [
-              { mainSeriesId: serieId, relatedSeriesId: relatedId },
-              { mainSeriesId: relatedId, relatedSeriesId: serieId },
-            ],
-            skipDuplicates: true,
-          });
-        }
-      }
-    }
-
-    revalidateSeries(updatedSerie);
-
-    return NextResponse.json(updatedSerie);
+    return NextResponse.json(outcome.updated);
   } catch (error) {
+    if (error instanceof SeriesEditConflictError) return editConflictResponse();
     console.error('Error al actualizar serie:', error);
     return NextResponse.json(
       { error: 'Error al actualizar la serie' },
       { status: 500 }
     );
+  }
+}
+
+function editConflictResponse() {
+  return NextResponse.json(
+    {
+      error:
+        'La ficha cambió desde que la abriste. Recargá la página para no pisar esos cambios.',
+      code: EDIT_CONFLICT_CODE,
+    },
+    { status: 409 }
+  );
+}
+
+/**
+ * Procesar imagen externa → subirla si es URL externa.
+ *
+ * `thumbUrl` en `undefined` = "no toques imageThumbUrl": si el admin no cambio
+ * el poster (imageUrl llega igual a la que ya tenia, o vacio), no queremos
+ * pisar la miniatura ya generada en cada guardado de un campo cualquiera.
+ * Solo dos casos lo cambian: (a) el form subio un archivo nuevo via
+ * /api/upload y mando body.imageThumbUrl, o (b) downloadAndUploadExternalImage
+ * migro una URL externa nueva y genero un thumb real. Si se saca el poster
+ * (imageUrl vacio), el thumb se saca con el — si no, una card seguiria
+ * mostrando la miniatura vieja de un poster que ya no existe.
+ */
+async function resolveImage(body: {
+  imageUrl?: string | null;
+  imageThumbUrl?: string | null;
+}): Promise<ResolvedSeriesImage> {
+  const url = body.imageUrl || null;
+  const thumbUrl =
+    typeof body.imageThumbUrl === 'string' && body.imageThumbUrl.trim()
+      ? body.imageThumbUrl.trim()
+      : undefined;
+  if (!url) return { url: null, thumbUrl: null };
+  try {
+    const migrated = await downloadAndUploadExternalImage(url, 'series');
+    return { url: migrated.url, thumbUrl: migrated.thumbUrl ?? thumbUrl };
+  } catch (error) {
+    console.warn(
+      `No se pudo migrar imagen a Supabase, manteniendo URL original:`,
+      error
+    );
+    return { url, thumbUrl };
   }
 }
 
