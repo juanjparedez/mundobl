@@ -22,6 +22,8 @@ async function main() {
       seriesId: { not: null },
       userId: { not: null },
       status: { in: ['VIENDO', 'RETOMAR'] },
+      // Mismo criterio que subscribeOnFirstTrack: curaduria no se suscribe sola.
+      user: { role: { notIn: ['ADMIN', 'MODERATOR'] } },
     },
     select: { userId: true, seriesId: true },
   });
