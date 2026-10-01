@@ -206,12 +206,14 @@ export async function runPlayabilityAudit(
     }
 
     for (const [seriesId, counts] of bySeries) {
+      const geoRestrictedCore = counts.total > 0 && counts.playable === 0;
+      // Solo escribe si el valor cambia: un `update` incondicional movia el
+      // `updatedAt` de ~20 series por dia y hacia parecer que el cron habia
+      // editado fichas curadas (asi se sospecho de el el 30/09).
       pendingWrites.push(
-        prisma.series.update({
-          where: { id: seriesId },
-          data: {
-            geoRestrictedCore: counts.total > 0 && counts.playable === 0,
-          },
+        prisma.series.updateMany({
+          where: { id: seriesId, geoRestrictedCore: !geoRestrictedCore },
+          data: { geoRestrictedCore },
         })
       );
       result.seriesRecalculated++;
