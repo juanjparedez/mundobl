@@ -1791,6 +1791,7 @@ const it = {
     "createSuccess": "Serie creata con successo",
     "updateSuccess": "Serie aggiornata con successo",
     "saveError": "Errore nel salvataggio della serie",
+    "editConflict": "La scheda è cambiata da quando l'hai aperta. Ricarica la pagina per non sovrascrivere quelle modifiche.",
     "uploadSuccess": "Immagine caricata con successo",
     "uploadError": "Errore nel caricamento dell'immagine",
     "uploadingLabel": "Caricamento...",

@@ -1778,6 +1778,7 @@ export type TranslationShape = {
     createSuccess: string;
     updateSuccess: string;
     saveError: string;
+    editConflict: string;
     uploadSuccess: string;
     uploadError: string;
     uploadingLabel: string;
@@ -5530,6 +5531,8 @@ const es: TranslationShape = {
     createSuccess: 'Serie creada exitosamente',
     updateSuccess: 'Serie actualizada exitosamente',
     saveError: 'Error al guardar la serie',
+    editConflict:
+      'La ficha cambió desde que la abriste. Recargá la página para no pisar esos cambios.',
     uploadSuccess: 'Imagen subida exitosamente',
     uploadError: 'Error al subir la imagen',
     uploadingLabel: 'Subiendo...',
@@ -9379,6 +9382,8 @@ const en: TranslationShape = {
     createSuccess: 'Series created successfully',
     updateSuccess: 'Series updated successfully',
     saveError: 'Error saving series',
+    editConflict:
+      'This entry changed since you opened it. Reload the page so you do not overwrite those changes.',
     uploadSuccess: 'Image uploaded successfully',
     uploadError: 'Error uploading image',
     uploadingLabel: 'Uploading...',

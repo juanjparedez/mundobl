@@ -340,6 +340,12 @@ model Series {
   linkedSeriesId    Int?
   // Días de emisión en formato string / lista separada por comas ("lunes,jueves")
   airDays           String?
+  // Version de la ficha editorial. Solo la suben los guardados de un form
+  // (admin o colaborador), no el cron ni los toggles: por eso no sirve
+  // `updatedAt`, que el job de reproducibilidad toca a diario. El form manda
+  // la version con la que abrio y el server rechaza con 409 si cambio — asi
+  // una pestaña vieja ya no pisa una ficha editada despues.
+  editVersion       Int      @default(0)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
@@ -413,6 +419,25 @@ model Series {
 // "Premios", "Polemica", "Fun facts", lo que sea. Se renderizan publicamente
 // solo si tienen contenido — sin necesidad de agregar un campo nuevo al
 // schema de Series cada vez que aparece un tipo de info nuevo.
+// Foto de la ficha ANTES de cada guardado editorial: la cadena de fotos mas el
+// estado actual es el historial completo. Sin FK a Series ni a User a
+// proposito: si se borra la serie o la cuenta, la evidencia queda. Existe
+// porque el 29/09 se perdio contenido de "Poisoned chalice" (705) y no habia
+// forma de saber que tenia antes ni quien guardo.
+model SeriesRevision {
+  id          Int      @id @default(autoincrement())
+  seriesId    Int
+  // editVersion de la ficha que este guardado reemplazo.
+  editVersion Int
+  userId      String?
+  // "admin-form" | "collaborator"
+  source      String
+  snapshot    Json
+  createdAt   DateTime @default(now())
+
+  @@index([seriesId, createdAt])
+}
+
 model SeriesInfoBlock {
   id        Int      @id @default(autoincrement())
   label     String // "Basado en", "Curiosidades", "Premios", etc.

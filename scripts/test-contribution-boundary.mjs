@@ -52,6 +52,7 @@ const prisma = {
   episode: { findFirst: async () => null, create: write('episode.create') },
   season: { create: write('season.create', { id: 10 }) },
   viewStatus: { upsert: write('viewStatus.upsert') },
+  seriesRevision: { create: write('seriesRevision.create') },
   $transaction: async (fn) => {
     calls.push({ operation: 'transaction' });
     return fn(prisma);
@@ -80,7 +81,9 @@ globalThis.__contributionHarness = {
 const stubs = {
   '@/lib/database': `export const prisma = globalThis.__contributionHarness.prisma;
     export const getContributionMetadata = async input => globalThis.__contributionHarness.resolve(input, globalThis.__contributionHarness.catalog);
-    export const searchContributionMetadata = (...args) => globalThis.__contributionHarness.search(...args);`,
+    export const searchContributionMetadata = (...args) => globalThis.__contributionHarness.search(...args);
+    export const prepareUniverseSlot = async () => {};
+    export const resolveBasedOnValue = async value => value;`,
   '@/lib/auth-helpers': `import { NextResponse } from 'next/server';
     export const requireAuth = async () => globalThis.__contributionHarness.auth();
     export const requireRole = async roles => {
@@ -251,6 +254,13 @@ for (const field of [
 ])
   assert.equal(field in update.data, false);
 assert.equal(calls[0].operation, 'transaction');
+// Cada guardado deja la foto previa y sube la version de la ficha.
+const revision = calls.find(
+  (call) => call.operation === 'seriesRevision.create'
+);
+assert.equal(revision.args.data.source, 'collaborator');
+assert.equal(revision.args.data.userId, 'owner');
+assert.deepEqual(update.data.editVersion, { increment: 1 });
 assert.equal(
   calls.find((call) => call.operation === 'seriesActor.create').args.data
     .actorId,

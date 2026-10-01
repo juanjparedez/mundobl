@@ -1787,6 +1787,7 @@ const zhCN = {
     "createSuccess": "剧集创建成功",
     "updateSuccess": "剧集更新成功",
     "saveError": "保存剧集时出错",
+    "editConflict": "此条目在你打开后已被修改。请刷新页面，以免覆盖这些更改。",
     "uploadSuccess": "图片上传成功",
     "uploadError": "图片上传失败",
     "uploadingLabel": "正在上传...",
