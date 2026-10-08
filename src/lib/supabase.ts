@@ -1,7 +1,7 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { processPosterImage, processCardThumbnail } from './image-processing';
 import { isR2Configured, uploadToR2, deleteFromR2, r2KeyFromUrl } from './r2';
-import { isDirectServedImageUrl } from './image-helpers';
+import { isStoredImageUrl } from './image-helpers';
 
 const BUCKET = 'images';
 
@@ -127,7 +127,7 @@ export async function downloadAndUploadExternalImage(
   url: string,
   folder: string
 ): Promise<DownloadedImage> {
-  if (isDirectServedImageUrl(url)) return { url, thumbUrl: null };
+  if (isStoredImageUrl(url)) return { url, thumbUrl: null };
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15_000);
