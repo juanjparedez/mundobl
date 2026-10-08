@@ -1,6 +1,17 @@
 /** Host de Cloudflare R2 donde viven hoy los posters. Ver `docs`/context.md. */
 export const R2_IMAGE_HOST = 'img.mundobl.com.ar';
 
+/** Shared with next.config.ts: only these external CDNs use Vercel. */
+export const OPTIMIZED_IMAGE_HOSTS = [
+  'i.ytimg.com',
+  'img.youtube.com',
+  '*.googleusercontent.com',
+  '*.ggpht.com',
+  'avatars.githubusercontent.com',
+  'image.tmdb.org',
+  'i.vimeocdn.com',
+];
+
 /**
  * Detecta si una imagen la servimos nosotros desde un CDN propio, y por lo
  * tanto NO tiene que pasar por el optimizador de Vercel (`unoptimized`).
@@ -17,13 +28,38 @@ export const R2_IMAGE_HOST = 'img.mundobl.com.ar';
  * Esto es importante porque next/image necesita esta función en el cliente
  * y la env var puede no estar inyectada en el bundle según la config de Vercel.
  */
-export function isDirectServedImageUrl(url?: string | null): boolean {
+export function isStoredImageUrl(url?: string | null): boolean {
   if (!url) return false;
   try {
     const { hostname, pathname } = new URL(url);
     if (hostname === R2_IMAGE_HOST) return true;
     return (
       hostname.endsWith('.supabase.co') && pathname.startsWith('/storage/')
+    );
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Own storage is already compressed. Unknown external hosts (e.g. Fandom)
+ * must also load directly: sending them to /_next/image returns 400, and
+ * some reject server downloads while allowing the browser to load them.
+ * This is a display policy, NOT evidence that a URL is stored in our R2.
+ */
+export function isDirectServedImageUrl(url?: string | null): boolean {
+  if (!url) return false;
+  if (isStoredImageUrl(url)) return true;
+  try {
+    const { protocol, hostname } = new URL(url);
+    if (protocol !== 'https:' && protocol !== 'http:') return false;
+    return (
+      protocol !== 'https:' ||
+      !OPTIMIZED_IMAGE_HOSTS.some((host) =>
+        host.startsWith('*.')
+          ? hostname.endsWith(host.slice(1))
+          : hostname === host
+      )
     );
   } catch {
     return false;

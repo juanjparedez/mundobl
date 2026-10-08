@@ -1,5 +1,6 @@
 import type { NextConfig } from 'next';
 import { execSync } from 'child_process';
+import { OPTIMIZED_IMAGE_HOSTS } from './src/lib/image-helpers';
 
 // Fecha del commit que se esta buildeando, capturada en build time (con git
 // disponible en la maquina de build de Vercel) e inlineada como constante en
@@ -64,16 +65,10 @@ const nextConfig: NextConfig = {
       // ("hostname is not configured") en vez de degradarse.
       { protocol: 'https', hostname: 'img.mundobl.com.ar' },
       { protocol: 'https', hostname: '*.supabase.co', pathname: '/storage/**' },
-      { protocol: 'https', hostname: 'i.ytimg.com' },
-      { protocol: 'https', hostname: 'img.youtube.com' },
-      // Avatares de Google: no solo lh3 (lh4/lh5/lh6, etc.) + fotos de perfil.
-      { protocol: 'https', hostname: '*.googleusercontent.com' },
-      { protocol: 'https', hostname: '*.ggpht.com' },
-      { protocol: 'https', hostname: 'avatars.githubusercontent.com' },
-      // Posters/thumbnails externos que quedan como imageUrl cruda cuando el
-      // re-hosteo a Supabase falla (o se pegan a mano en el admin).
-      { protocol: 'https', hostname: 'image.tmdb.org' },
-      { protocol: 'https', hostname: 'i.vimeocdn.com' },
+      ...OPTIMIZED_IMAGE_HOSTS.map((hostname) => ({
+        protocol: 'https' as const,
+        hostname,
+      })),
     ],
   },
   // Headers globales de seguridad + ajustes de Permissions-Policy para que
