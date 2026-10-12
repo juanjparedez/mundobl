@@ -10,6 +10,43 @@
 import type { TranslationShape } from '../messages';
 
 const ja = {
+  platformGuide: {
+    badge: '公式情報源',
+    title: '配信サービスと料金',
+    intro:
+      '公式サイトで確認した価格です。国、アカウント、購入方法により異なる場合があります。',
+    all: 'すべて',
+    observed: '確認時の価格',
+    consult: '価格を確認',
+    transparency:
+      '公式サイトへのリンクです。アフィリエイト提携は未確認です。今後の協賛は明示し、作品選定には影響させません。',
+    closing: '終了予定',
+    reviewed: '確認日',
+    country: '価格の対象国',
+    argentina: 'アルゼンチン',
+    unknownCountry: '情報源で確認できず',
+    channel: '購入方法',
+    web: 'ウェブ',
+    period: '対象月数：{months}',
+    taxNote:
+      '参考価格です。税金、更新条件、最終価格を確認してください。アプリストアでは異なる場合があります。',
+    vimeoNotice:
+      'Vimeo On Demandは2026年11月20日に終了します。購入作品はそれまで視聴可能ですが、レンタルは先に期限切れとなる場合があります。ダウンロードは制作者が許可した作品のみです。',
+    unconfirmed:
+      'お住まいの国の料金は未確認です。公式サイトで料金と条件を確認してください。',
+    source: '公式情報源を見る',
+    availability:
+      '支払い前に、お住まいの国で作品、バージョン、字幕を確認してください。加入しても地域制限は解除されません。',
+    gaga: 'LGBTQ+・BL・GL作品。',
+    viki: 'アジアドラマとViki Pass。',
+    iqiyi: 'アジア作品とVIPプラン。',
+    wetv: 'ドラマ、映画、VIPプラン。',
+    youtube: '公式チャンネルと任意のチャンネルメンバーシップ。',
+    heavenly: '会員制と個別購入のBLコンテンツ。',
+    netflix: 'アルゼンチン向けの月額プラン。',
+    bilibili: 'アニメと動画。提供内容は地域によります。',
+    vimeo: '購入・レンタル済み作品について。',
+  },
   qualitySupport: {
     introLabel: "紹介",
     purposeLabel: "支援の用途",

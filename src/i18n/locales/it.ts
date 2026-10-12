@@ -10,6 +10,43 @@
 import type { TranslationShape } from '../messages';
 
 const it = {
+  platformGuide: {
+    badge: 'Fonti ufficiali',
+    title: 'Piattaforme e abbonamenti',
+    intro:
+      'Prezzi osservati sui siti ufficiali. Possono variare per paese, account e canale di acquisto.',
+    all: 'Tutte',
+    observed: 'Prezzo osservato',
+    consult: 'Consulta il prezzo',
+    transparency:
+      'Link ufficiali, senza affiliazione confermata. Eventuali sponsorizzazioni saranno indicate e non determineranno la selezione editoriale.',
+    closing: 'Chiusura annunciata',
+    reviewed: 'Fonte consultata',
+    country: 'Paese della tariffa',
+    argentina: 'Argentina',
+    unknownCountry: 'Non confermato dalla fonte',
+    channel: 'Canale di acquisto',
+    web: 'Web',
+    period: 'Mesi inclusi: {months}',
+    taxNote:
+      'Importo indicativo. Verifica tasse, rinnovo e prezzo finale. Gli app store possono mostrare un’offerta diversa.',
+    vimeoNotice:
+      'Vimeo On Demand chiude il 20/11/2026. Gli acquisti restano accessibili fino ad allora; i noleggi possono scadere prima. Download solo se consentito dal creatore.',
+    unconfirmed:
+      'Nessuna tariffa confermata per il tuo paese. Consulta prezzi e condizioni alla fonte.',
+    source: 'Vedi la fonte ufficiale',
+    availability:
+      'Prima di pagare, verifica titolo, versione e sottotitoli nel tuo paese. Un abbonamento non elimina i blocchi regionali.',
+    gaga: 'Catalogo LGBTQ+, BL e GL.',
+    viki: 'Drammi asiatici e piani Viki Pass.',
+    iqiyi: 'Serie asiatiche e opzioni VIP.',
+    wetv: 'Serie, film e opzioni VIP.',
+    youtube: 'Canali ufficiali e abbonamenti facoltativi per canale.',
+    heavenly: 'Contenuti BL con abbonamenti e acquisti singoli.',
+    netflix: 'Piani mensili pubblicati per l’Argentina.',
+    bilibili: 'Anime e video; disponibilità regionale.',
+    vimeo: 'Informazioni per acquisti e noleggi esistenti.',
+  },
   qualitySupport: {
     introLabel: "Presentazione",
     purposeLabel: "Uso dei contributi",

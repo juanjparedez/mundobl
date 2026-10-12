@@ -10,6 +10,41 @@
 import type { TranslationShape } from '../messages';
 
 const zhTW = {
+  platformGuide: {
+    badge: '官方來源',
+    title: '平台與訂閱',
+    intro: '在官方網站查看到的價格，可能因國家、帳戶和購買管道而異。',
+    all: '全部',
+    observed: '已觀察價格',
+    consult: '查詢價格',
+    transparency:
+      '連結指向官方來源，尚無已確認的聯盟合作。未來贊助將明確標示，不影響編輯選片。',
+    closing: '已宣布關閉',
+    reviewed: '查詢日期',
+    country: '價格適用國家',
+    argentina: '阿根廷',
+    unknownCountry: '來源未確認',
+    channel: '購買管道',
+    web: '網頁',
+    period: '包含月數：{months}',
+    taxNote:
+      '參考金額。訂閱前請確認稅費、續訂條件和最終價格。應用程式商店可能提供不同報價。',
+    vimeoNotice:
+      'Vimeo On Demand將於2026年11月20日關閉。已購內容可在此之前觀看；租借可能更早到期。僅創作者允許的內容可下載。',
+    unconfirmed: '尚未確認您所在國家的價格。請在官方來源查看價格和條款。',
+    source: '查看官方來源',
+    availability:
+      '付款前請確認所在國家的片名、版本和字幕。訂閱不會解除地區限制。',
+    gaga: 'LGBTQ+、BL和GL作品。',
+    viki: '亞洲影集與Viki Pass方案。',
+    iqiyi: '亞洲影集與VIP選項。',
+    wetv: '影集、電影與VIP選項。',
+    youtube: '官方頻道及可選頻道會員。',
+    heavenly: '提供會員和單獨購買的BL內容。',
+    netflix: '面向阿根廷公布的月度方案。',
+    bilibili: '動畫和影片；供應內容因地區而異。',
+    vimeo: '現有購買和租借內容說明。',
+  },
   qualitySupport: {
     introLabel: "介紹",
     purposeLabel: "支持用途",

@@ -10,6 +10,43 @@
 import type { TranslationShape } from '../messages';
 
 const ko = {
+  platformGuide: {
+    badge: '공식 출처',
+    title: '플랫폼 및 구독',
+    intro:
+      '공식 웹사이트에서 확인한 가격입니다. 국가, 계정, 구매 경로에 따라 달라질 수 있습니다.',
+    all: '전체',
+    observed: '확인된 가격',
+    consult: '가격 확인',
+    transparency:
+      '제휴가 확인되지 않은 공식 링크입니다. 향후 후원은 공개하며 편집상의 작품 선정에 영향을 주지 않습니다.',
+    closing: '종료 예정',
+    reviewed: '출처 확인일',
+    country: '요금 적용 국가',
+    argentina: '아르헨티나',
+    unknownCountry: '출처에서 확인되지 않음',
+    channel: '구매 경로',
+    web: '웹',
+    period: '포함 개월 수: {months}',
+    taxNote:
+      '참고 금액입니다. 세금, 갱신 조건, 최종 가격을 확인하세요. 앱 스토어의 요금은 다를 수 있습니다.',
+    vimeoNotice:
+      'Vimeo On Demand는 2026년 11월 20일 종료됩니다. 구매 콘텐츠는 그때까지 이용할 수 있으며 대여는 먼저 만료될 수 있습니다. 제작자가 허용한 콘텐츠만 다운로드할 수 있습니다.',
+    unconfirmed:
+      '해당 국가의 요금은 확인되지 않았습니다. 공식 출처에서 가격과 조건을 확인하세요.',
+    source: '공식 출처 보기',
+    availability:
+      '결제 전에 해당 국가의 작품, 버전, 자막을 확인하세요. 구독해도 지역 제한은 해제되지 않습니다.',
+    gaga: 'LGBTQ+, BL, GL 콘텐츠.',
+    viki: '아시아 드라마와 Viki Pass.',
+    iqiyi: '아시아 시리즈와 VIP 옵션.',
+    wetv: '시리즈, 영화, VIP 옵션.',
+    youtube: '공식 채널 및 선택적 채널 멤버십.',
+    heavenly: '멤버십과 개별 구매가 가능한 BL 콘텐츠.',
+    netflix: '아르헨티나에 공개된 월간 요금제.',
+    bilibili: '애니메이션과 동영상. 지역별로 제공 내용이 다릅니다.',
+    vimeo: '기존 구매 및 대여 안내.',
+  },
   qualitySupport: {
     introLabel: "소개",
     purposeLabel: "후원금 용도",
