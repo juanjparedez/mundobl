@@ -2,7 +2,7 @@
 
 ## Contexto y decisiones
 
-Flor reportó el 9/10 que quiere ampliar el póster de una ficha y hacer zoom, y que compartir por WhatsApp pega toda la sinopsis. La ficha y /ver pasan actualmente `synopsis` al ShareButton; la tarjeta social ya tiene una descripción breve. Reutilizaremos el botón y el visor de Ant Design.
+Flor reportó el 9/10 que quiere ampliar el póster de una ficha y hacer zoom, y que compartir por WhatsApp pega toda la sinopsis. Al iniciar este plan, la ficha y /ver pasaban `synopsis` al ShareButton; la tarjeta social ya tenía una descripción breve. La entrega reutilizó el botón y el visor de Ant Design.
 
 La captura del panel muestra 163 registros, 80 series en curso únicas y 29 completadas en la semana. No son 163 usuarios activos, ni 80 personas, ni evidencia de retención. La preocupación por haber defraudado a quienes no vuelven es una hipótesis emocional comprensible, no una conclusión demostrada. Los reportes concretos son una oportunidad de escuchar y devolver mejoras verificadas.
 
@@ -16,9 +16,9 @@ Inicialmente se postergaron los ingresos. Ante avisos reiterados de Vercel/Supab
 | --------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
 | P0        | Conservar contexto        | Documento y enlace desde context.md; separar propuestas de hechos                                                         | Documentado                                |
 | P1        | Compartir                 | Mensaje breve traducido + URL canónica/UTM; nativo, WhatsApp y copia sin sinopsis ni envío real                           | Desplegado; aceptación nativa pendiente    |
-| P1        | Ampliar póster            | Original a demanda, zoom/desplazamiento/cierre/foco; móvil y escritorio; fallo y ausencia de imagen                       | Desplegado; escritorio comprobado          |
+| P1        | Ampliar póster            | Original a demanda, zoom/desplazamiento/cierre/foco; móvil y escritorio; fallo y ausencia de imagen                       | Desplegado; escritorio y viewport móvil comprobados |
 | P1        | Patrocinio                | Administración exclusiva, mock inactivo, borrador separado de publicación, concurrencia, RLS y respaldo; desplegar oculto | Desplegado oculto; ver límites abajo       |
-| P1        | Cuotas                    | Identificar servicio, recurso, período, límite y consumo reales; ordenar ahorro por evidencia y esfuerzo                  | Diagnóstico pendiente de métricas actuales |
+| P1        | Cuotas                    | Identificar servicio, recurso, período, límite y consumo reales; ordenar ahorro por evidencia y esfuerzo                  | Diagnóstico documentado; mejoras pendientes |
 | P2        | Métricas                  | Separar equipo y usuarios, personas y obras, modificaciones y finalizaciones; documentar cobertura                        | Auditoría inicial                          |
 | P2        | Regreso                   | Revisar descubrir → seguir → registrar → retomar; elegir mejoras por obstáculos observados                                | Pendiente                                  |
 | P3        | Alianzas                  | Conservar propuesta XUXYN como oportunidad; sin contacto ni acuerdos automáticos                                          | Idea por evaluar                           |
@@ -35,6 +35,8 @@ Las mediciones históricas del 1/10 indicaban HTML/CSS pesado de Ant Design y da
 /apoyar y /admin/patrocinio. Desactivado por defecto, preview privada para ADMIN + ADMIN_EMAILS, mock sin destinos reales. Textos editoriales y medios HTTPS/transferencia configurables, guardar borrador, publicar versión y ocultar. Publicar exige contenido y medio completo. Nada de credenciales, pagos integrados, montos sugeridos, beneficios, ingresos registrados ni lista de patrocinadores. Reconocimiento futuro requiere consentimiento; no prometer anonimato del proveedor ni vincular cuentas por suposición.
 
 ## Evidencia de entrega
+
+Actualización posterior de esta misma fecha: [diagnóstico con cuotas reales y validaciones adicionales](diagnostico-consumo-2026-10-12.md). Las notas de bloqueo de acceso y prueba móvil que siguen describen el primer corte; el acceso a los paneles y el viewport móvil se resolvieron después. Permanecen pendientes la hoja nativa real y el ciclo HTTP de caché.
 
 La documentación no certifica implementación. Registrar aquí controles locales, comprobaciones en producción y límites por separado. No cerrar reportes ni enviar avisos por tener código escrito.
 

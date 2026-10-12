@@ -1,0 +1,14 @@
+.series-curation-comparison {
+  margin-top: var(--spacing-md);
+}
+.series-curation-value {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 16rem;
+  overflow: auto;
+}
+
+.series-curation-comparison .ant-table-tbody > tr.ant-table-row-selected > td {
+  background: var(--bg-spotlight);
+  color: var(--text-primary);
+}
