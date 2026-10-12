@@ -1,3 +1,4 @@
+import { checkSeriesContentAccess } from '@/lib/content-access';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
@@ -19,12 +20,21 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    const parent = await prisma.season.findUnique({
+      where: { id: Number(seasonId) },
+      select: { seriesId: true },
+    });
+    if (!parent) return new NextResponse(null, { status: 404 });
+    const blocked = await checkSeriesContentAccess(parent.seriesId);
+    if (blocked) return blocked;
     const episodes = await prisma.episode.findMany({
       where: { seasonId: parseInt(seasonId, 10) },
       orderBy: { episodeNumber: 'asc' },
     });
 
-    return NextResponse.json(episodes);
+    return NextResponse.json(episodes, {
+      headers: { 'Cache-Control': 'private, no-store' },
+    });
   } catch (error) {
     console.error('Error al obtener episodios:', error);
     return NextResponse.json(

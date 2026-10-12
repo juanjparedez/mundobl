@@ -274,6 +274,12 @@ model SeriesDubbing {
 // SERIES - Series, películas, cortos, etc.
 // ============================================
 model Series {
+  contentRating String @default("UNREVIEWED")
+  contentWarnings String[] @default([])
+  contentRatingSource String?
+  contentReviewedAt DateTime?
+  contentReviewedBy String?
+
   id                Int      @id @default(autoincrement())
   title             String
   originalTitle     String?
@@ -2023,4 +2029,12 @@ model SupportSettings {
   version Int @default(0)
   updatedBy String?
   updatedAt DateTime @updatedAt
+}
+
+// Aggregated navigation only. No visitor IDs, IPs, accounts or viewing history.
+model PilotClickDaily {
+  day DateTime @db.Date
+  placement String
+  clicks Int @default(0)
+  @@id([day, placement])
 }

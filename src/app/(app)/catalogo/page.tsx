@@ -139,7 +139,7 @@ export default async function CatalogoPage() {
       imageUrl: serie.imageUrl,
       imageThumbUrl: serie.imageThumbUrl,
       imagePosition: serie.imagePosition,
-      synopsis: serie.synopsis,
+      synopsis: serie.contentRating === 'ADULT18' ? null : serie.synopsis,
       // Curaduria editorial (item featured por Flor/admin) — alimenta el
       // filtro rapido "Destacadas". No confundir con `visto`/favoritos
       // (que son por-usuario): esto es global, lo decide el editor.

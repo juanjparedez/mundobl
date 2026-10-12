@@ -1,3 +1,4 @@
+import { checkSeriesContentAccess } from '@/lib/content-access';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
@@ -18,7 +19,7 @@ export async function GET(
     const season = await prisma.season.findUnique({
       where: { id: seasonId },
       include: {
-        series: true,
+        series: { select: { id: true, title: true } },
         actors: {
           include: {
             actor: true,
@@ -37,7 +38,11 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(season);
+    const blocked = await checkSeriesContentAccess(season.seriesId);
+    if (blocked) return blocked;
+    return NextResponse.json(season, {
+      headers: { 'Cache-Control': 'private, no-store' },
+    });
   } catch (error) {
     console.error('Error fetching season:', error);
     return NextResponse.json(

@@ -1,3 +1,5 @@
+import { MESSAGES, type TranslationShape } from '@/i18n/messages';
+import type { SupportedLocale } from '@/i18n/config';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
@@ -79,6 +81,7 @@ function ctaHtml(url?: string | null, label?: string | null): string {
 }
 
 interface LayoutInput {
+  locale?: SupportedLocale;
   preheader: string;
   heading: string;
   /** HTML ya renderizado del cuerpo. */
@@ -92,7 +95,7 @@ interface LayoutInput {
 
 function renderLayout(input: LayoutInput): string {
   const siteUrl = input.siteUrl ?? SITE_URL;
-  return `<!doctype html><html lang="es"><head><meta charset="utf-8">
+  return `<!doctype html><html lang="${input.locale ?? 'es'}"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="dark"></head>
 <body style="margin:0;padding:24px 12px;background:${BG};font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif">
@@ -232,6 +235,8 @@ export function renderAnnouncementEmail(
 // ============================================================
 
 export interface WelcomeEmailInput {
+  labels?: TranslationShape['welcomeEmail'];
+  locale?: SupportedLocale;
   /** Nombre o nickname. Si falta, se saluda sin nombre. */
   name?: string | null;
   siteUrl?: string;
@@ -246,48 +251,36 @@ export interface WelcomeEmailInput {
  */
 export function renderWelcomeEmail(input: WelcomeEmailInput = {}): EmailRender {
   const siteUrl = input.siteUrl ?? SITE_URL;
-  const saludo = input.name ? `¡Hola, ${escapeHtml(input.name)}!` : '¡Hola!';
-
-  const bodyHtml = paragraphs(
-    `${saludo} Te damos la bienvenida a MundoBL, un catálogo de series BL y GL hecho a mano, sin algoritmos y sin pirateria.`,
-    'Algunas cosas que podés hacer desde ahora:',
-    `<strong style="color:${TEXT}">Seguir lo que mirás</strong> — marcá capítulos vistos y llevá notas privadas de cada serie.`,
-    `<strong style="color:${TEXT}">Ver legal</strong> — en la sección Ver enlazamos solo canales oficiales.`,
-    `<strong style="color:${TEXT}">Aprender el vocabulario</strong> — el Glosario Cultural explica honoríficos y términos que las traducciones se comen.`,
-    'Si en algún momento no querés recibir más correos nuestros, se apaga desde tus preferencias. Por default te mandamos lo mínimo.'
-  );
-
-  const text = [
-    input.name ? `¡Hola, ${input.name}!` : '¡Hola!',
-    '',
-    'Te damos la bienvenida a MundoBL, un catálogo de series BL y GL hecho a mano, sin algoritmos y sin pirateria.',
-    '',
-    'Algunas cosas que podés hacer desde ahora:',
-    '- Seguir lo que mirás: capítulos vistos y notas privadas.',
-    '- Ver legal: en /ver enlazamos solo canales oficiales.',
-    '- El Glosario Cultural, con los honorificos y terminos que las traducciones se comen.',
-    '',
-    `Empezá por acá: ${siteUrl}/catalogo`,
-    '',
-    '---',
-    'Te llega este correo porque acabás de crear tu cuenta en MundoBL.',
-  ].join('\n');
-
+  const labels = input.labels ?? MESSAGES.es!.welcomeEmail;
+  const lines = [
+    labels.intro,
+    labels.library,
+    labels.diary,
+    labels.explore,
+    labels.consent,
+  ];
+  const heading = input.name ? labels.title + ', ' + input.name : labels.title;
   return {
-    subject: 'Te damos la bienvenida a MundoBL',
+    subject: labels.title,
     html: renderLayout({
-      preheader: 'Tu cuenta ya está lista. Esto es lo que podés hacer.',
-      heading: 'Bienvenida a MundoBL',
-      bodyHtml,
-      ctaUrl: `${siteUrl}/catalogo`,
-      ctaLabel: 'Explorar el catálogo',
-      footerHtml: transactionalFooter(
-        'Te llega este correo porque acabás de crear tu cuenta en MundoBL.',
-        siteUrl
-      ),
+      locale: input.locale,
+      preheader: labels.library,
+      heading,
+      bodyHtml: paragraphs(...lines.map(escapeHtml)),
+      ctaUrl: siteUrl + '/watching',
+      ctaLabel: labels.action,
+      footerHtml: '<p style="margin:0">' + escapeHtml(labels.reason) + '</p>',
       siteUrl,
     }),
-    text,
+    text: [
+      heading,
+      '',
+      ...lines,
+      '',
+      labels.action + ': ' + siteUrl + '/watching',
+      '',
+      labels.reason,
+    ].join('\n'),
   };
 }
 

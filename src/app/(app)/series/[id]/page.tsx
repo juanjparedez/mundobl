@@ -1,3 +1,7 @@
+import { ContentGate } from '@/components/content/ContentGate/ContentGate';
+import { ContentNotice } from '@/components/content/ContentNotice/ContentNotice';
+import { hasContentConsent } from '@/lib/content-consent';
+import { adultMetadata } from '@/lib/content-metadata';
 import { CommunityWorkLink } from '@/components/community/CommunityWorkLink/CommunityWorkLink';
 import { getPublicWriterCredits } from '@/lib/database';
 import { WriterCredits } from '@/components/series/WriterCredits/WriterCredits';
@@ -49,22 +53,9 @@ interface SeriesPageProps {
   }>;
 }
 
-// ISR con revalidacion a demanda (ver src/lib/revalidate-series.ts): cada
-// edicion de la serie invalida ESTA ficha al instante, asi que el TTL es
-// solo red de seguridad, no el mecanismo de frescura. Con 900s, las ~650
-// fichas se regeneraban hasta 96 veces por dia cada una mientras Googlebot
-// las crawleaba — y cada regeneracion es un ISR write + el CPU de
-// buildSeriesFullInclude (temporadas, episodios, reparto, ratings) mas los
-// counts de abajo. Era el grueso de las dos cuotas que se pasaron de largo.
-// Lo unico que queda viejo hasta 24h son los chips de conteo (reseñas,
-// favoritos, "viendo"); las reseñas y comentarios en si son client-side.
-export const revalidate = 604800;
-// Sin generateStaticParams, Next renderiza esta ruta en cada visita aunque
-// tenga revalidate. Con la lista vacia, la primera visita la genera y las
-// siguientes salen de la cache hasta el proximo revalidate.
-export function generateStaticParams(): { id: string }[] {
-  return [];
-}
+// Consent is request-specific, including after a previously public title is reclassified.
+// Full-page ISR cannot safely switch to reading cookies during regeneration.
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
   params,
@@ -75,6 +66,8 @@ export async function generateMetadata({
 
   const serie = await getSeriesByIdCached(seriesId);
   if (!serie) return {};
+
+  if (serie.contentRating === 'ADULT18') return adultMetadata();
 
   const labels = (await loadLocaleMessages('es')).contentMetadata;
   const year = serie.year ? ` (${serie.year})` : '';
@@ -144,6 +137,9 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
     notFound();
   }
 
+  if (serieRaw.contentRating === 'ADULT18' && !(await hasContentConsent()))
+    return <ContentGate warnings={serieRaw.contentWarnings} />;
+
   // La compuerta de notas privadas va ACA, en el servidor, SIEMPRE con
   // isAdmin=false: este HTML es estatico/cacheado por ISR y lo puede servir
   // a cualquier visitante, admin o no, asi que nunca puede llevar horneadas
@@ -204,6 +200,10 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
 
   return (
     <>
+      <ContentNotice
+        rating={serie.contentRating}
+        warnings={serie.contentWarnings}
+      />
       <JsonLd<TVSeries>
         data={{
           '@context': 'https://schema.org',

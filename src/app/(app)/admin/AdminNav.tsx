@@ -17,7 +17,9 @@ export function AdminNav() {
   const { data: session } = useSession();
   const visibleDestinations = (group: Parameters<typeof destinationsOf>[0]) =>
     destinationsOf(group).filter(
-      (d) => !d.supportOwnerOnly || session?.user?.canManageSupport
+      (d) =>
+        (!d.supportOwnerOnly || session?.user?.canManageSupport) &&
+        (!d.adminOnly || session?.user?.role === 'ADMIN')
     );
   const pathname = usePathname();
   const router = useRouter();
@@ -57,7 +59,7 @@ export function AdminNav() {
       <Drawer
         title={t('adminNav.ariaLabel')}
         placement="left"
-        width={280}
+        size={280}
         open={mobileOpen}
         onClose={() => setMobileOpen(false)}
         className="admin-nav-mobile-drawer"
