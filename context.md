@@ -4,6 +4,8 @@ Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-s
 
 ## Calidad y sostenibilidad (2026-10-12)
 
+Diagnóstico actualizado con acceso a ambos paneles: [consumo y validaciones](docs/diagnostico-consumo-2026-10-12.md). Vercel: CPU 8 h 29 min / 4 h e ISR Writes 311.224 / 200.000 en últimos 30 días; Supabase sin excesos en el ciclo 17/09–17/10. Priorizar payload del catálogo y CSS SSR antes de migrar. Visor móvil y compartir alternativo comprobados en producción; hoja nativa real y ciclo HTTP de caché de patrocinio siguen pendientes. Los períodos, límites y accionables están en el diagnóstico.
+
 Plan integral, decisiones y evidencias: [calidad y sostenibilidad](docs/plan-calidad-sostenibilidad-2026-10-12.md). Incluye reclamos de Flor, patrocinio oculto y diagnósticos de consumo/retorno. Implementación: compartir usa SeriesShareButton (texto breve y URL canónica); PosterPreview abre originales a demanda con Ant Design. /apoyar y /admin/patrocinio usan SupportSettings (borrador/snapshot, versión, RLS y backup), solo ADMIN + ADMIN_EMAILS administra; publicación desactivada por defecto, sin pagos integrados ni avisos. Desplegado en producción como f2f8ac1 (PR #113), con patrocinio oculto. Ver el documento para evidencias y validaciones aún pendientes.
 
 ## Estado actual (2026-10-01)
@@ -868,6 +870,20 @@ Items que se decidió **no** incluir en este slice:
 - **Progreso sin sesión**: `localStorage['mundobl.localProgress']` guarda por serie los ids vistos con schema `{ v: 1, series }`, manejado por `src/lib/local-progress.ts`. `SeriesUserStatusProvider` expone `storage: 'account' | 'local'`; `useMarkEpisodes` y el stepper escriben localmente sin mandar al login. `LocalProgressImporter`, montado en `AppLayout`, ofrece copiarlo a la cuenta después de autenticarse y borra cada serie local solo cuando su POST termina bien.
 - **Ficha solo para el catálogo**: `/series/[id]` sirve CURATED + PERSONAL + VISIBLE. Lo que solo se ve acá (WATCHABLE_ONLY o aporte) redirige con 307 a `/ver/[id]`, temporal porque la serie puede pasar al catálogo; si no se ve, 404. No mostrar "Ficha completa" fuera del catálogo: `getContentUrl` elige el destino.
 - **Costos en Vercel (plan Hobby, al límite en septiembre de 2026)**: Mergear a `main` no despliega (`vercel.json`: `deploymentEnabled: false`). Se juntan merges y se despliega a mano con el workflow **Deploy producción** (Actions → Run workflow, secret `VERCEL_TOKEN`); conviene evitar builds innecesarios, pero no asumir que cada deploy elimina todas las capas de caché (Vercel conserva ISR para rollback). #107 agregó `generateStaticParams` vacío en siete rutas de detalle para generar a demanda y reutilizar páginas con `revalidate`; comprobar el resultado en build y runtime, porque cookies, auth y otras dependencias pueden volver dinámica una ruta. El proxy corre solo en `/admin`. No hay Speed Insights montado. Antes de proponer un ISR corto, polling o una API por página, pensar el costo en funciones. Verificar local con `npm run build` + `npm start` contra DB local y chequear `x-nextjs-cache`; en Vercel, `X-Vercel-Cache`. Cuotas y procedimiento en el [manual de mantenimiento](docs/manual-mantenimiento.md).
+
+## Guardado de fichas y borradores (2026-10-12)
+
+La coincidencia de títulos en `/api/series?title=...` incluye CURATED de ambos
+ámbitos. El formulario de alta ofrece comparar con la ficha existente y guardar
+los campos elegidos sobre ella mediante `/api/series/[id]/curate` (ADMIN/MODERATOR).
+El guardado conserva episodios y seguimiento, une temporadas por número y enlaces
+por URL, agrega contenidos pendientes transaccionalmente y exige la editVersion
+de la comparación. `series-curation.ts` contiene la política de precedencia;
+no se convierte USER_EMBED por esta ruta.
+
+`useLocalFormDraft` conserva campos y contenidos pendientes del formulario por
+cuenta/ficha en este navegador. Recuperar una edición mantiene su versión original.
+Detalle, límites y reproducción: [docs/guardado-series-2026-10-12.md](docs/guardado-series-2026-10-12.md).
 
 ## Comandos
 
