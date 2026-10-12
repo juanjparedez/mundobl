@@ -150,8 +150,12 @@ a `127.0.0.1:55433/mundobl_replay`; jamás cargar credenciales productivas):
 `scripts/test-editorial-flow.mjs` contra el build servido localmente en puerto
 3018 (arranque manual mediante `scripts/serve-editorial-local.ps1`; secret de
 prueba explicitado por el script). El primer recorrido HTTP detectó el error
-`DYNAMIC_SERVER_USAGE` descrito arriba; se corrigió y recompiló, pendiente de
-repetir el recorrido completo. El usuario inicia manualmente el servidor porque
+`DYNAMIC_SERVER_USAGE` descrito arriba; se corrigió y recompiló. El recorrido de
+consentimiento, aislamiento, APIs e informe pasó, pero el usuario reportó un error
+de React en el servidor: la prueba ampliada detecta un fallo SSR dentro de una
+respuesta 200 del detalle clásico `/catalogo/[id]` ya aceptado. Sigue pendiente
+resolverlo; no alcanza el estado HTTP ni la recuperación del cliente para dar
+esta prueba por aprobada. El usuario inicia manualmente el servidor porque
 la revisión automática bloqueó `npm start`, incluso restringido a loopback.
 El script prepara fixtures, verifica HTML/RSC, aceptación,
 revocación, navegadores separados, invalidación tras reclasificar y APIs, y limpia

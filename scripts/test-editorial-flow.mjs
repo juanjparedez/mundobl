@@ -23,6 +23,10 @@ const errors = [];
 let series;
 const day = new Date(new Date().toISOString().slice(0, 10));
 const before = await prisma.pilotClickDaily.findMany({ where: { day } });
+function assertRendered(html, path) {
+  assert.ok(!/data-dgst="[^"]+"/.test(html), path + ' SSR error');
+  assert.ok(!/\\"digest\\":\\"[^\\]/.test(html), path + ' RSC error');
+}
 try {
   await prisma.user.create({
     data: { id: adminId, email: adminId + '@example.test', role: 'ADMIN' },
@@ -95,7 +99,7 @@ try {
   page.on('pageerror', (e) => errors.push(e.message));
   await page.route('https://**/*', (route) => route.abort());
   await page.goto(`${origin}/series/${id}`);
-  await page.getByText('Sin revisar', { exact: true }).waitFor();
+  await page.getByText('Sin revisar', { exact: true }).first().waitFor();
   assert.equal((await classify('ADULT18', 0)).status(), 200);
   assert.equal((await classify('GENERAL', 0)).status(), 409);
   assert.equal(
@@ -117,6 +121,7 @@ try {
     const response = await anon.request.get(origin + path);
     const html = await response.text();
     assert.equal(response.status(), 200, path);
+    assertRendered(html, path);
     assert.match(response.headers()['cache-control'], /no-store/, path);
     assert.ok(html.includes('Contenido para mayores de 18'), path);
     assert.ok(!html.includes(series.synopsis), path + ' must not leak in RSC');
@@ -162,6 +167,16 @@ try {
   );
   assert.ok(consent.httpOnly);
   assert.equal(consent.sameSite, 'Lax');
+  for (const path of paths) {
+    const response = await anon.request.get(origin + path);
+    const html = await response.text();
+    await writeFile(
+      `test-results/partnership/accepted-${path.replaceAll('/', '_')}.html`,
+      html
+    );
+    assert.equal(response.status(), 200, path + ' accepted');
+    assertRendered(html, path + ' accepted');
+  }
   assert.equal(
     (await anon.request.get(`${origin}/api/episodes/${episodeId}`)).status(),
     200
@@ -171,6 +186,7 @@ try {
     const response = await fresh.request.get(origin + path);
     assert.equal(response.status(), 200, path);
     const html = await response.text();
+    assertRendered(html, path + ' new browser');
     assert.ok(html.includes('Contenido para mayores de 18'), path);
     assert.ok(!html.includes(series.synopsis), path + ' shared HTML/RSC');
   }
