@@ -1824,6 +1824,25 @@ export type TranslationShape = {
     createSuccess: string;
     updateSuccess: string;
     saveError: string;
+    draftAvailable: string;
+    draftLocal: string;
+    draftRestore: string;
+    draftDiscard: string;
+    draftError: string;
+    draftSaved: string;
+    existingWatchable: string;
+    existingCatalog: string;
+    openExisting: string;
+    compareTitle: string;
+    curateSave: string;
+    compareHelp: string;
+    comparePreserve: string;
+    compareField: string;
+    compareCurrent: string;
+    compareYours: string;
+    curationAirDays: string;
+    curationPrivate: string;
+    curationDubbing: string;
     editConflict: string;
     uploadSuccess: string;
     uploadError: string;
@@ -5627,6 +5646,30 @@ const es: TranslationShape = {
     createSuccess: 'Serie creada exitosamente',
     updateSuccess: 'Serie actualizada exitosamente',
     saveError: 'Error al guardar la serie',
+    draftAvailable: 'Tenés un borrador para recuperar',
+    draftLocal:
+      'Queda en este navegador y esta cuenta. No se comparte entre dispositivos.',
+    draftRestore: 'Recuperar',
+    draftDiscard: 'Descartar borrador',
+    draftError: 'No se pudo guardar el borrador en este navegador.',
+    draftSaved: 'Borrador guardado en este navegador',
+    existingWatchable:
+      'Esta serie ya está en Ver completo. Compará tu carga para incorporarla al catálogo curado.',
+    existingCatalog:
+      'Esta serie ya existe. Compará antes de reemplazar su información.',
+    openExisting: 'Abrir ficha existente',
+    compareTitle: 'Comparar datos',
+    curateSave: 'Guardar en la ficha existente',
+    compareHelp:
+      'Elegí los campos que querés reemplazar con tu carga. Los demás conservan su valor actual.',
+    comparePreserve:
+      'Se incorporará al catálogo curado. Se conservan episodios, enlaces y seguimiento. Tus temporadas, enlaces y contenidos nuevos se agregan a los existentes.',
+    compareField: 'Campo',
+    compareCurrent: 'Ficha existente',
+    compareYours: 'Tu carga',
+    curationAirDays: 'Días de emisión',
+    curationPrivate: 'Notas privadas',
+    curationDubbing: 'Doblajes',
     editConflict:
       'La ficha cambió desde que la abriste. Recargá la página para no pisar esos cambios.',
     uploadSuccess: 'Imagen subida exitosamente',
@@ -9527,6 +9570,30 @@ const en: TranslationShape = {
     createSuccess: 'Series created successfully',
     updateSuccess: 'Series updated successfully',
     saveError: 'Error saving series',
+    draftAvailable: 'You have a draft to recover',
+    draftLocal:
+      'Stored in this browser for this account. Not shared across devices.',
+    draftRestore: 'Recover',
+    draftDiscard: 'Discard draft',
+    draftError: 'Could not save the draft in this browser.',
+    draftSaved: 'Draft saved in this browser',
+    existingWatchable:
+      'This series is already available to watch. Compare your entry to add it to the curated catalog.',
+    existingCatalog:
+      'This series already exists. Compare before replacing its information.',
+    openExisting: 'Open existing entry',
+    compareTitle: 'Compare data',
+    curateSave: 'Save to existing entry',
+    compareHelp:
+      'Choose which fields to replace with your entry. Other fields keep their current values.',
+    comparePreserve:
+      'Added to the curated catalog. Episodes, links and tracking are preserved. Your new seasons, links and content are added to existing ones.',
+    compareField: 'Field',
+    compareCurrent: 'Existing entry',
+    compareYours: 'Your entry',
+    curationAirDays: 'Airing days',
+    curationPrivate: 'Private notes',
+    curationDubbing: 'Dubbing',
     editConflict:
       'This entry changed since you opened it. Reload the page so you do not overwrite those changes.',
     uploadSuccess: 'Image uploaded successfully',

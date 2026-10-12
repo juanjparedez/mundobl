@@ -142,7 +142,15 @@ export function SeriesInfoBlocksManager({
       if (editingId === 'new') {
         onPendingBlocksChange?.([
           ...current,
-          { _tempId: ++tempIdCounter.current, label, body },
+          {
+            _tempId: (tempIdCounter.current =
+              Math.max(
+                tempIdCounter.current,
+                ...(pendingBlocks ?? []).map((block) => block._tempId)
+              ) + 1),
+            label,
+            body,
+          },
         ]);
       } else {
         onPendingBlocksChange?.(
