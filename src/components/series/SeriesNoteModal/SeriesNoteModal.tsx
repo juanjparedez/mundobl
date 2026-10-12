@@ -123,8 +123,8 @@ export function SeriesNoteModal({
       }
       open={open}
       onCancel={onClose}
-      maskClosable={false}
-      destroyOnClose
+      mask={{ closable: false }}
+      destroyOnHidden
       width={560}
       footer={[
         original && (

@@ -1,3 +1,4 @@
+import { checkSeriesContentAccess } from '@/lib/content-access';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma, getReadableSeriesInfoBlocks } from '@/lib/database';
 import { requireAuth, requireRole } from '@/lib/auth-helpers';
@@ -20,6 +21,10 @@ export async function GET(_req: NextRequest, { params }: RouteParams) {
       seriesId,
       viewer.authorized ? viewer : undefined
     );
+    if (blocks.length) {
+      const blocked = await checkSeriesContentAccess(seriesId);
+      if (blocked) return blocked;
+    }
     return NextResponse.json(blocks, {
       headers: { 'Cache-Control': 'private, no-store' },
     });

@@ -36,11 +36,12 @@ jobs:
       - name: Regression tests against disposable PostgreSQL
         run: |
           set -e
-          for test in tracking-backup watching-collection profile-chapters tracking-statistics tracking-insights insight-distributions progress tracking-database tracking-history series-tracking-status community-privacy community-statistics community-topics community-library community-moderation community-conversations community-metrics community-backup community-request watch-date writer-credits series-save series-curation; do
+          for test in tracking-backup watching-collection profile-chapters tracking-statistics tracking-insights insight-distributions progress tracking-database tracking-history series-tracking-status community-privacy community-statistics community-topics community-library community-moderation community-conversations community-metrics community-backup community-request watch-date writer-credits series-save series-curation editorial-classification; do
             npx tsx "scripts/test-$test.ts"
           done
           node --import tsx scripts/test-private-tracking-routes.mjs
           node --import tsx scripts/test-info-block-privacy.mjs
+          node --import tsx scripts/test-editorial-routes.mjs
           node --import tsx scripts/test-profile-watch-dates.mjs
           node --import tsx scripts/test-tracking-insights-route.mjs
           node --import tsx scripts/test-library-preferences.mjs
@@ -52,6 +53,7 @@ jobs:
       - name: Profile mobile regression
         run: |
           npx playwright install --with-deps chromium
+          node --import tsx scripts/test-editorial-ui.mjs
           node scripts/test-dashboard-mobile-flow.mjs
           node scripts/test-profile-list-count.mjs
           node scripts/test-tracking-insights-ui.mjs

@@ -1,4 +1,5 @@
 'use client';
+import { isGagaUrl, recordPilotClick } from '@/lib/pilot-clicks';
 
 import { useState } from 'react';
 import { Radio, Tag } from 'antd';
@@ -133,6 +134,10 @@ export function PlataformasClient() {
             )}
             <a
               href={platform.sourceUrl}
+              onClick={() => {
+                if (isGagaUrl(platform.sourceUrl))
+                  recordPilotClick('platforms');
+              }}
               target="_blank"
               rel="noopener noreferrer"
               className="plataforma-card__visit-btn"

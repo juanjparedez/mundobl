@@ -1,3 +1,7 @@
+import { TrackingPreservationError } from '@/lib/tracking-preservation';
+import { loadLocaleMessages } from '@/i18n/messages';
+import { hasContentConsent } from '@/lib/content-consent';
+import { stripPrivateNotes } from '@/lib/privacy';
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidateSeries } from '@/lib/revalidate-series';
 import { prisma } from '@/lib/database';
@@ -114,7 +118,31 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       }
     }
 
-    return NextResponse.json(serie);
+    const viewer = await auth();
+    const editor =
+      !viewer?.user?.banned &&
+      ['ADMIN', 'MODERATOR'].includes(viewer?.user?.role ?? '');
+    if (!editor && serie.visibility !== 'VISIBLE')
+      return new NextResponse(null, { status: 404 });
+    if (
+      !editor &&
+      serie.contentRating === 'ADULT18' &&
+      !(await hasContentConsent())
+    ) {
+      return NextResponse.json(
+        { error: 'CONTENT_CONSENT_REQUIRED' },
+        { status: 403, headers: { 'Cache-Control': 'private, no-store' } }
+      );
+    }
+    const result = {
+      ...stripPrivateNotes(serie, editor && viewer?.user?.role === 'ADMIN'),
+      ...(!editor
+        ? { contentReviewedBy: null, contentRatingSource: null }
+        : {}),
+    };
+    return NextResponse.json(result, {
+      headers: { 'Cache-Control': 'private, no-store' },
+    });
   } catch (error) {
     console.error('Error al obtener serie:', error);
     return NextResponse.json(
@@ -201,6 +229,14 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json(outcome.updated);
   } catch (error) {
+    if (error instanceof TrackingPreservationError)
+      return NextResponse.json(
+        {
+          error: (await loadLocaleMessages('es')).editorial.preserveTracking,
+          code: 'TRACKING_PRESERVATION_REQUIRED',
+        },
+        { status: 409 }
+      );
     if (error instanceof SeriesEditConflictError) return editConflictResponse();
     console.error('Error al actualizar serie:', error);
     return NextResponse.json(

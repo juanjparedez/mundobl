@@ -1,0 +1,6 @@
+.content-privacy {
+  color: var(--text-primary);
+}
+.content-privacy p {
+  color: var(--text-secondary);
+}

@@ -1,3 +1,7 @@
+import { ContentGate } from '@/components/content/ContentGate/ContentGate';
+import { ContentNotice } from '@/components/content/ContentNotice/ContentNotice';
+import { hasContentConsent } from '@/lib/content-consent';
+import { adultMetadata } from '@/lib/content-metadata';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { auth } from '@/lib/auth';
@@ -19,6 +23,7 @@ export async function generateMetadata({
   if (isNaN(serieId)) return {};
   const serie = await getSeriesById(serieId);
   if (!serie) return {};
+  if (serie.contentRating === 'ADULT18') return adultMetadata();
   return {
     title: `${serie.title} — Dashboard`,
     description: 'Vista dashboard personalizable de la ficha del titulo.',
@@ -34,6 +39,8 @@ export default async function SerieDetailDashboardPage({ params }: PageProps) {
   const session = await auth();
   const serieRaw = await getSeriesById(serieId, session?.user?.id ?? undefined);
   if (!serieRaw) notFound();
+  if (serieRaw.contentRating === 'ADULT18' && !(await hasContentConsent()))
+    return <ContentGate warnings={serieRaw.contentWarnings} />;
 
   // Compuerta de notas privadas en el servidor (SerieDashboardClient es
   // 'use client': sus props viajan en el payload RSC).
@@ -41,6 +48,10 @@ export default async function SerieDetailDashboardPage({ params }: PageProps) {
 
   return (
     <>
+      <ContentNotice
+        rating={serie.contentRating}
+        warnings={serie.contentWarnings}
+      />
       <SerieDashboardClient serie={serie} />
     </>
   );

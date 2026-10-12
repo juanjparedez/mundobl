@@ -1,5 +1,6 @@
 'use client';
 
+import { isGagaUrl, recordPilotClick } from '@/lib/pilot-clicks';
 import { Tag, Tooltip } from 'antd';
 import {
   PlayCircleOutlined,
@@ -111,6 +112,10 @@ export function WhereToWatch({
             >
               <a
                 href={link.url}
+                onClick={() => {
+                  if (link.official && isGagaUrl(link.url))
+                    recordPilotClick('series', link.id);
+                }}
                 target="_blank"
                 rel="noopener noreferrer nofollow"
                 className={`where-to-watch__link${link.official ? '' : ' where-to-watch__link--unofficial'}`}

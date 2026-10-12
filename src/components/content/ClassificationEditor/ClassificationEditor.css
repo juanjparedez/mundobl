@@ -1,0 +1,18 @@
+.classification-editor {
+  max-width: 48rem;
+  margin: 2rem auto;
+  padding: 1rem;
+  color: var(--text-primary);
+}
+.classification-editor p {
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+.classification-editor .ant-form {
+  margin-top: 1.5rem;
+}
+.classification-editor .ant-alert {
+  background: var(--bg-container);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}

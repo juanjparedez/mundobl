@@ -1,3 +1,4 @@
+import { checkSeriesContentAccess } from '@/lib/content-access';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
@@ -43,7 +44,11 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    return NextResponse.json(episode);
+    const blocked = await checkSeriesContentAccess(episode.season.series.id);
+    if (blocked) return blocked;
+    return NextResponse.json(episode, {
+      headers: { 'Cache-Control': 'private, no-store' },
+    });
   } catch (error) {
     console.error('Error al obtener episodio:', error);
     return NextResponse.json(

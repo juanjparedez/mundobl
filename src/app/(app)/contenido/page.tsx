@@ -15,6 +15,14 @@ export const metadata: Metadata = {
 
 export default async function Contenido() {
   const items = await prisma.embeddableContent.findMany({
+    where: {
+      OR: [
+        { seriesId: null },
+        {
+          series: { visibility: 'VISIBLE', contentRating: { not: 'ADULT18' } },
+        },
+      ],
+    },
     include: {
       series: { select: { id: true, title: true } },
     },

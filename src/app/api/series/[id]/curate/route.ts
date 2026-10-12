@@ -1,3 +1,5 @@
+import { TrackingPreservationError } from '@/lib/tracking-preservation';
+import { loadLocaleMessages } from '@/i18n/messages';
 import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-helpers';
 import { prisma } from '@/lib/database';
@@ -129,6 +131,14 @@ export async function POST(request: NextRequest, { params }: Context) {
     revalidateSeries(outcome.updated);
     return NextResponse.json(outcome.updated);
   } catch (error) {
+    if (error instanceof TrackingPreservationError)
+      return NextResponse.json(
+        {
+          error: (await loadLocaleMessages('es')).editorial.preserveTracking,
+          code: 'TRACKING_PRESERVATION_REQUIRED',
+        },
+        { status: 409 }
+      );
     if (error instanceof SeriesEditConflictError)
       return NextResponse.json({ code: 'EDIT_CONFLICT' }, { status: 409 });
     console.error('Error curating existing series:', error);
