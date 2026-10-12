@@ -1,3 +1,4 @@
+import { createSupportRepository } from './support-repository';
 import type { WatchDateTarget } from './watch-date';
 import { createCommunityLibraryRepository } from './community-library-repository';
 import { createCommunityModerationRepository } from './community-moderation-repository';
@@ -3175,3 +3176,10 @@ export async function deleteCommunityReply(
   });
   if (!result.count) throw new CommunityError(404, 'unavailable');
 }
+
+export const {
+  requireSupportOwner,
+  getSupportAdmin,
+  getSupportPublic,
+  mutateSupport,
+} = createSupportRepository(prisma);

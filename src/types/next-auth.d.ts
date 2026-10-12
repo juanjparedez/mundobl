@@ -9,6 +9,7 @@ declare module 'next-auth' {
       image?: string | null;
       role: Role;
       banned: boolean;
+      canManageSupport?: boolean;
     };
   }
 }
