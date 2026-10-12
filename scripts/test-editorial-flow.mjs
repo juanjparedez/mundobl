@@ -312,8 +312,11 @@ try {
     'test-results/partnership/welcome-preview.html',
     welcome.html
   );
-  await page.setContent(welcome.html);
-  await page.screenshot({
+  assert.deepEqual(errors, [], 'Application before standalone email preview');
+  // Do not replace the document underneath the running React application.
+  const emailPage = await anon.newPage();
+  await emailPage.setContent(welcome.html);
+  await emailPage.screenshot({
     path: 'test-results/partnership/welcome-mobile.png',
     fullPage: true,
   });

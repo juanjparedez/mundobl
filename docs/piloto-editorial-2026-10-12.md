@@ -146,8 +146,8 @@ a `127.0.0.1:55433/mundobl_replay`; jamás cargar credenciales productivas):
 - `npx tsx scripts/backup-db.ts --check-models`: los 78 modelos tienen cobertura.
 - `npm run type-check`, `npm run lint`, `npm run build` contra DB local.
 
-**Pendiente obligatorio antes de producción:** ejecutar
-`scripts/test-editorial-flow.mjs` contra el build servido localmente en puerto
+**Validación HTTP completada:** `scripts/test-editorial-flow.mjs` pasó contra
+el build de producción servido localmente en puerto
 3018 (arranque manual mediante `scripts/serve-editorial-local.ps1`; secret de
 prueba explicitado por el script). El primer recorrido HTTP detectó el error
 `DYNAMIC_SERVER_USAGE` descrito arriba; se corrigió y recompiló. La prueba ampliada
@@ -158,10 +158,11 @@ navegación y Modal en notas. El formulario editorial monta sus controles medido
 de Ant Design después de hidratar, con un esqueleto SSR estable, para evitar
 discrepancias de estilos indefinidos de Select/TextArea.
 
-El recorrido completo pasó en desarrollo, incluyendo comprobaciones de errores
-SSR y de hidratación. Falta repetirlo contra el build de producción corregido;
-no alcanza el estado HTTP ni la recuperación del cliente para dar esta prueba
-por aprobada. `EDITORIAL_DIAGNOSTIC=1` admite el encabezado no-cache de desarrollo
+El recorrido completo pasó en desarrollo y producción local, incluyendo
+comprobaciones de errores SSR, hidratación, cuatro rutas antes/después de aceptar,
+no-store, navegadores separados y revocación. No alcanza el estado HTTP ni la
+recuperación del cliente para dar esta prueba por aprobada.
+`EDITORIAL_DIAGNOSTIC=1` admite el encabezado no-cache de desarrollo
 y no sustituye la comprobación no-store del build. Las respuestas 401/403/409
 provocadas por los fixtures son esperadas. Los avisos de deprecación de pg y de
 listeners Gzip observados durante desarrollo quedan como límite de dependencias;
@@ -170,8 +171,11 @@ El usuario inicia manualmente el servidor porque
 la revisión automática bloqueó `npm start`, incluso restringido a loopback.
 El script prepara fixtures, verifica HTML/RSC, aceptación,
 revocación, navegadores separados, invalidación tras reclasificar y APIs, y limpia
-los datos al terminar. Requiere revisar además los screenshots resultantes y el
-comportamiento móvil/claro/oscuro. No considerar este punto validado por el build.
+los datos al terminar. Capturas del build corregido revisadas; la matriz visual
+en diez idiomas, móvil/escritorio y claro/oscuro pasó en el fixture de componentes.
+El correo se renderiza en una página independiente, sin enviar mensajes ni
+reemplazar el documento debajo de React. No confundir estas pruebas locales
+con validación del CDN productivo: esa comprobación queda para el despliegue.
 
 Antes de desplegar: backup, revisión de Flor, aplicar migración con el procedimiento
 del repositorio y recién después ejecutar el workflow de deploy. Un merge no
