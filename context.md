@@ -4,6 +4,8 @@ Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-s
 
 ## Calidad y sostenibilidad (2026-10-12)
 
+Diagnóstico actualizado con acceso a ambos paneles: [consumo y validaciones](docs/diagnostico-consumo-2026-10-12.md). Vercel: CPU 8 h 29 min / 4 h e ISR Writes 311.224 / 200.000 en últimos 30 días; Supabase sin excesos en el ciclo 17/09–17/10. Priorizar payload del catálogo y CSS SSR antes de migrar. Visor móvil y compartir alternativo comprobados en producción; hoja nativa real y ciclo HTTP de caché de patrocinio siguen pendientes. Los períodos, límites y accionables están en el diagnóstico.
+
 Plan integral, decisiones y evidencias: [calidad y sostenibilidad](docs/plan-calidad-sostenibilidad-2026-10-12.md). Incluye reclamos de Flor, patrocinio oculto y diagnósticos de consumo/retorno. Implementación: compartir usa SeriesShareButton (texto breve y URL canónica); PosterPreview abre originales a demanda con Ant Design. /apoyar y /admin/patrocinio usan SupportSettings (borrador/snapshot, versión, RLS y backup), solo ADMIN + ADMIN_EMAILS administra; publicación desactivada por defecto, sin pagos integrados ni avisos. Desplegado en producción como f2f8ac1 (PR #113), con patrocinio oculto. Ver el documento para evidencias y validaciones aún pendientes.
 
 ## Estado actual (2026-10-01)
