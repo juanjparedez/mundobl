@@ -1,0 +1,14 @@
+.catalogo-detail-loading {
+  padding: var(--spacing-lg);
+}
+
+.catalogo-detail-loading .catalogo-detail-loading__image,
+.catalogo-detail-loading__image .ant-skeleton-image {
+  width: 100%;
+  height: 320px;
+  border-radius: var(--border-radius-lg);
+}
+
+.catalogo-detail-loading__text {
+  margin-top: var(--spacing-lg);
+}

@@ -59,7 +59,7 @@ export function AdminNav() {
       <Drawer
         title={t('adminNav.ariaLabel')}
         placement="left"
-        width={280}
+        size={280}
         open={mobileOpen}
         onClose={() => setMobileOpen(false)}
         className="admin-nav-mobile-drawer"

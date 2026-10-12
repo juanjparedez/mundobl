@@ -24,7 +24,15 @@ let series;
 const day = new Date(new Date().toISOString().slice(0, 10));
 const before = await prisma.pilotClickDaily.findMany({ where: { day } });
 function assertRendered(html, path) {
-  assert.ok(!/data-dgst="[^"]+"/.test(html), path + ' SSR error');
+  // next/dynamic({ ssr: false }) intentionally emits a CSR boundary in development.
+  const digests = [...html.matchAll(/data-dgst="([^"]+)"/g)].map(
+    (match) => match[1]
+  );
+  assert.deepEqual(
+    digests.filter((digest) => digest !== 'BAILOUT_TO_CLIENT_SIDE_RENDERING'),
+    [],
+    path + ' SSR error'
+  );
   assert.ok(!/\\"digest\\":\\"[^\\]/.test(html), path + ' RSC error');
 }
 try {
@@ -120,9 +128,19 @@ try {
   for (const path of paths) {
     const response = await anon.request.get(origin + path);
     const html = await response.text();
+    await writeFile(
+      `test-results/partnership/gated-${path.replaceAll('/', '_')}.html`,
+      html
+    );
     assert.equal(response.status(), 200, path);
     assertRendered(html, path);
-    assert.match(response.headers()['cache-control'], /no-store/, path);
+    assert.match(
+      response.headers()['cache-control'],
+      process.env.EDITORIAL_DIAGNOSTIC === '1'
+        ? /no-cache|no-store/
+        : /no-store/,
+      path
+    );
     assert.ok(html.includes('Contenido para mayores de 18'), path);
     assert.ok(!html.includes(series.synopsis), path + ' must not leak in RSC');
     assert.ok(
@@ -265,10 +283,16 @@ try {
   );
   assert.equal(await counts(), start + 4, 'Atomic aggregate increment');
   const adminPage = await admin.newPage();
+  const hydrationErrors = [];
+  adminPage.on('console', (message) => {
+    if (/hydrated|hydration|server rendered HTML/i.test(message.text()))
+      hydrationErrors.push(message.text());
+  });
   await adminPage.goto(`${origin}/admin/series/${id}/clasificacion`);
   await adminPage
     .getByRole('heading', { name: 'Clasificación editorial' })
     .waitFor();
+  await adminPage.getByRole('combobox').first().waitFor();
   await adminPage.screenshot({
     path: 'test-results/partnership/classification-desktop.png',
     fullPage: true,
@@ -294,8 +318,9 @@ try {
     fullPage: true,
   });
   assert.deepEqual(errors, []);
+  assert.deepEqual(hydrationErrors, [], 'Editorial admin hydration');
   console.log(
-    'PASS: actual production server + PostgreSQL + browser, 4 gated routes/RSC, 5 APIs, stale cache invalidation, isolated cookies, accept/revoke, admin UI/report, atomic clicks, staff exclusion, email preview only.'
+    `PASS (${process.env.EDITORIAL_DIAGNOSTIC === '1' ? 'development diagnostic, production cache validation still required' : 'production build'}): actual server + PostgreSQL + browser, 4 gated routes/RSC, 5 APIs, stale cache invalidation, isolated cookies, accept/revoke, admin UI/report, atomic clicks, staff exclusion, email preview only.`
   );
 } finally {
   await browser.close();

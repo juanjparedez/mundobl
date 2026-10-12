@@ -1,6 +1,6 @@
 'use client';
-import { useState } from 'react';
-import { Alert, Button, Form, Input, Select } from 'antd';
+import { useState, useSyncExternalStore } from 'react';
+import { Alert, Button, Form, Input, Select, Skeleton } from 'antd';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { PanelCard } from '@/components/design-system/PanelCard/PanelCard';
 import {
@@ -19,8 +19,18 @@ interface Props {
   contentRatingSource: string | null;
   editVersion: number;
 }
+const subscribe = () => () => {};
+const clientSnapshot = () => true;
+const serverSnapshot = () => false;
 export function ClassificationEditor({ initial }: { initial: Props }) {
   const { t } = useLocale();
+  // Ant Design's measured Select/TextArea styles differ in SSR. Mount the
+  // interactive controls after hydration; the heading and placeholder stay SSR.
+  const hydrated = useSyncExternalStore(
+    subscribe,
+    clientSnapshot,
+    serverSnapshot
+  );
   const [version, setVersion] = useState(initial.editVersion);
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<'saved' | 'error' | 'conflict' | null>(
@@ -72,44 +82,48 @@ export function ClassificationEditor({ initial }: { initial: Props }) {
             title={t(`editorial.${status}`)}
           />
         )}
-        <Form
-          layout="vertical"
-          initialValues={{
-            rating: initial.contentRating,
-            warnings: initial.contentWarnings,
-            source: initial.contentRatingSource,
-          }}
-          onFinish={save}
-        >
-          <Form.Item name="rating" label={t('editorial.classification')}>
-            <Select
-              options={CONTENT_RATINGS.map((value) => ({
-                value,
-                label: t(`editorial.${value}`),
-              }))}
-            />
-          </Form.Item>
-          <Form.Item name="warnings" label={t('editorial.warnings')}>
-            <Select
-              mode="multiple"
-              options={CONTENT_WARNINGS.map((value) => ({
-                value,
-                label: t(`editorial.${value}`),
-              }))}
-            />
-          </Form.Item>
-          <Form.Item name="source" label={t('editorial.source')}>
-            <Input.TextArea maxLength={500} rows={3} />
-          </Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            loading={busy}
-            disabled={status === 'conflict'}
+        {hydrated ? (
+          <Form
+            layout="vertical"
+            initialValues={{
+              rating: initial.contentRating,
+              warnings: initial.contentWarnings,
+              source: initial.contentRatingSource,
+            }}
+            onFinish={save}
           >
-            {t('editorial.save')}
-          </Button>
-        </Form>
+            <Form.Item name="rating" label={t('editorial.classification')}>
+              <Select
+                options={CONTENT_RATINGS.map((value) => ({
+                  value,
+                  label: t(`editorial.${value}`),
+                }))}
+              />
+            </Form.Item>
+            <Form.Item name="warnings" label={t('editorial.warnings')}>
+              <Select
+                mode="multiple"
+                options={CONTENT_WARNINGS.map((value) => ({
+                  value,
+                  label: t(`editorial.${value}`),
+                }))}
+              />
+            </Form.Item>
+            <Form.Item name="source" label={t('editorial.source')}>
+              <Input.TextArea maxLength={500} rows={3} />
+            </Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={busy}
+              disabled={status === 'conflict'}
+            >
+              {t('editorial.save')}
+            </Button>
+          </Form>
+        ) : (
+          <Skeleton active paragraph={{ rows: 6 }} />
+        )}
       </PanelCard>
     </section>
   );

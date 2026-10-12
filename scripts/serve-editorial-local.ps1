@@ -9,8 +9,9 @@ $env:NEXTAUTH_URL = 'http://localhost:3018'
 $env:RESEND_API_KEY = ''
 $env:GOOGLE_CLIENT_ID = ''
 $env:GOOGLE_CLIENT_SECRET = ''
+$env:NEXT_TELEMETRY_DISABLED = '1'
 if ($Development) {
-  npm run dev -- --hostname 127.0.0.1 --port 3018
+  npx next dev --hostname 127.0.0.1 --port 3018
 } else {
   npm run start -- --hostname 127.0.0.1 --port 3018
 }

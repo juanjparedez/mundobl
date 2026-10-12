@@ -150,12 +150,23 @@ a `127.0.0.1:55433/mundobl_replay`; jamás cargar credenciales productivas):
 `scripts/test-editorial-flow.mjs` contra el build servido localmente en puerto
 3018 (arranque manual mediante `scripts/serve-editorial-local.ps1`; secret de
 prueba explicitado por el script). El primer recorrido HTTP detectó el error
-`DYNAMIC_SERVER_USAGE` descrito arriba; se corrigió y recompiló. El recorrido de
-consentimiento, aislamiento, APIs e informe pasó, pero el usuario reportó un error
-de React en el servidor: la prueba ampliada detecta un fallo SSR dentro de una
-respuesta 200 del detalle clásico `/catalogo/[id]` ya aceptado. Sigue pendiente
-resolverlo; no alcanza el estado HTTP ni la recuperación del cliente para dar
-esta prueba por aprobada. El usuario inicia manualmente el servidor porque
+`DYNAMIC_SERVER_USAGE` descrito arriba; se corrigió y recompiló. La prueba ampliada
+también encontró un fallo SSR dentro de una respuesta 200: `CatalogoDetailLoading`
+accedía a `Skeleton.Image` desde el grafo de servidor. El loading ahora es un
+componente cliente. Se actualizaron las propiedades obsoletas de Drawer en
+navegación y Modal en notas. El formulario editorial monta sus controles medidos
+de Ant Design después de hidratar, con un esqueleto SSR estable, para evitar
+discrepancias de estilos indefinidos de Select/TextArea.
+
+El recorrido completo pasó en desarrollo, incluyendo comprobaciones de errores
+SSR y de hidratación. Falta repetirlo contra el build de producción corregido;
+no alcanza el estado HTTP ni la recuperación del cliente para dar esta prueba
+por aprobada. `EDITORIAL_DIAGNOSTIC=1` admite el encabezado no-cache de desarrollo
+y no sustituye la comprobación no-store del build. Las respuestas 401/403/409
+provocadas por los fixtures son esperadas. Los avisos de deprecación de pg y de
+listeners Gzip observados durante desarrollo quedan como límite de dependencias;
+no se ocultaron ni se cambiaron sus límites para silenciarlos.
+El usuario inicia manualmente el servidor porque
 la revisión automática bloqueó `npm start`, incluso restringido a loopback.
 El script prepara fixtures, verifica HTML/RSC, aceptación,
 revocación, navegadores separados, invalidación tras reclasificar y APIs, y limpia
