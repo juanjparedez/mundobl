@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import { useLocalFormDraft } from '@/hooks/useLocalFormDraft';
+import { SeriesCurationDialog } from './SeriesCurationDialog/SeriesCurationDialog';
 import {
   Form,
   Input,
@@ -69,6 +71,7 @@ interface UniverseOption {
 }
 
 interface SeriesFormProps {
+  userId: string;
   initialData?: SeriesFormInitialData;
   mode: 'create' | 'edit';
 }
@@ -204,13 +207,25 @@ function ImagePositionSelector({
   );
 }
 
-export function SeriesForm({ initialData, mode }: SeriesFormProps) {
+export function SeriesForm({ initialData, mode, userId }: SeriesFormProps) {
   const message = useMessage();
   const modal = useModal();
   const { t } = useLocale();
   const router = useRouter();
   const [form] = Form.useForm();
+  const [editVersion, setEditVersion] = useState(initialData?.editVersion);
+  const [existingSeries, setExistingSeries] = useState<{
+    id: number;
+    title: string;
+    catalogScope: string;
+  } | null>(null);
+  const title = Form.useWatch('title', form);
+  const [comparison, setComparison] = useState<{
+    id: number;
+    values: Record<string, unknown>;
+  } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [initialized, setInitialized] = useState(false);
   const [selectedType, setSelectedType] = useState('serie');
 
   // Datos para autocompletado
@@ -245,6 +260,30 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
   const isFeatured = Form.useWatch('featured', form);
   const [isFavorite, setIsFavorite] = useState(false);
   const [aiLoadingScope, setAiLoadingScope] = useState<string | null>(null);
+
+  useEffect(() => {
+    setExistingSeries(null);
+    if (mode !== 'create' || typeof title !== 'string' || !title.trim()) return;
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
+      try {
+        const response = await fetch(
+          `/api/series?title=${encodeURIComponent(title.trim())}`,
+          { signal: controller.signal }
+        );
+        if (response.ok) {
+          const matches = await response.json();
+          setExistingSeries(matches[0] ?? null);
+        }
+      } catch {
+        /* The save endpoint still checks duplicates if lookup fails. */
+      }
+    }, 400);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [title, mode]);
 
   useEffect(() => {
     if (mode === 'edit' && initialData?.id) {
@@ -377,6 +416,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
     // Mark initial load as complete after a tick so form.isFieldsTouched() settles
     const timer = setTimeout(() => {
       initialDataLoaded.current = true;
+      setInitialized(true);
     }, 0);
     return () => clearTimeout(timer);
   }, [initialData, loadFormData, form]);
@@ -633,9 +673,13 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
               ...submitValues,
               // Version con la que se abrio la ficha: si alguien la guardo
               // despues, el server responde 409 en vez de pisar sus cambios.
-              editVersion: initialData?.editVersion,
+              editVersion,
             };
 
+      if (mode === 'create' && existingSeries) {
+        setComparison({ id: existingSeries.id, values: submitValues });
+        return;
+      }
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
@@ -646,6 +690,14 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
         // Superficie el mensaje del server (ej. 409 "Ya existe una serie ...")
         // en vez de un error genérico.
         const errData = await response.json().catch(() => null);
+        if (errData?.code === 'SERIES_EXISTS') {
+          setExistingSeries(errData.existingSeries);
+          setComparison({
+            id: errData.existingSeries.id,
+            values: submitValues,
+          });
+          return;
+        }
         if (errData?.code === 'EDIT_CONFLICT') {
           throw new Error(t('seriesForm.editConflict'));
         }
@@ -655,6 +707,7 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
       const savedSerie = await response.json();
 
       submittedSuccessfully.current = true;
+      draft.clearAfterSave();
 
       message.success(
         mode === 'create'
@@ -732,6 +785,24 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
 
   const submittedSuccessfully = useRef(false);
   const initialDataLoaded = useRef(false);
+  const allValues: Record<string, unknown> | undefined = Form.useWatch(
+    (values) => values,
+    { form, preserve: true }
+  );
+  const draft = useLocalFormDraft(
+    `mundobl.series-draft.v1:${userId}:${mode}:${initialData?.id ?? 'new'}`,
+    { values: allValues ?? {}, pendingContent, pendingInfoBlocks, editVersion }
+  );
+  const restoreDraft = () => {
+    const saved = draft.restore();
+    if (!saved) return;
+    form.setFieldsValue(saved.values);
+    setSelectedType(String(saved.values.type ?? 'serie'));
+    setPendingContent(saved.pendingContent);
+    setPendingInfoBlocks(saved.pendingInfoBlocks);
+    // Keep the original version: a recovered draft must not overwrite newer edits.
+    setEditVersion(saved.editVersion);
+  };
 
   const hasUnsavedChanges = useCallback(() => {
     if (!initialDataLoaded.current) return false;
@@ -773,6 +844,50 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
 
   return (
     <div className="series-form">
+      {comparison && (
+        <SeriesCurationDialog
+          seriesId={comparison.id}
+          incoming={comparison.values}
+          onCancel={() => setComparison(null)}
+          onSave={async (fields, version) => {
+            try {
+              const response = await fetch(
+                `/api/series/${comparison.id}/curate`,
+                {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    values: { ...comparison.values, editVersion: version },
+                    fields,
+                    contentItems: pendingContent,
+                    infoBlocks: pendingInfoBlocks,
+                  }),
+                }
+              );
+              if (!response.ok) {
+                const error = await response.json().catch(() => ({}));
+                if (error.code === 'EDIT_CONFLICT') {
+                  setComparison(null);
+                  throw new Error(t('seriesForm.editConflict'));
+                }
+                throw new Error(t('seriesForm.saveError'));
+              }
+              const saved = await response.json();
+              submittedSuccessfully.current = true;
+              draft.clearAfterSave();
+              message.success(t('seriesForm.updateSuccess'));
+              setComparison(null);
+              router.push(getContentUrl(saved));
+            } catch (error) {
+              message.error(
+                error instanceof Error
+                  ? error.message
+                  : t('seriesForm.saveError')
+              );
+            }
+          }}
+        />
+      )}
       <Card
         title={
           <div className="series-form__header">
@@ -804,8 +919,64 @@ export function SeriesForm({ initialData, mode }: SeriesFormProps) {
           </div>
         }
       >
+        {draft.available && (
+          <Alert
+            type="info"
+            showIcon
+            title={t('seriesForm.draftAvailable')}
+            description={t('seriesForm.draftLocal')}
+            action={
+              <Space>
+                <Button onClick={restoreDraft}>
+                  {t('seriesForm.draftRestore')}
+                </Button>
+                <Button onClick={draft.discard}>
+                  {t('seriesForm.draftDiscard')}
+                </Button>
+              </Space>
+            }
+          />
+        )}
+        {draft.status !== 'idle' && !draft.available && (
+          <Alert
+            type={draft.status === 'error' ? 'warning' : 'success'}
+            showIcon
+            title={t(
+              draft.status === 'error'
+                ? 'seriesForm.draftError'
+                : 'seriesForm.draftSaved'
+            )}
+          />
+        )}
+        {existingSeries && (
+          <Alert
+            type="warning"
+            showIcon
+            title={existingSeries.title}
+            description={t(
+              existingSeries.catalogScope === 'WATCHABLE_ONLY'
+                ? 'seriesForm.existingWatchable'
+                : 'seriesForm.existingCatalog'
+            )}
+            action={
+              <Space wrap>
+                <Button onClick={() => form.submit()}>
+                  {t('seriesForm.compareTitle')}
+                </Button>
+                <a
+                  href={`/admin/series/${existingSeries.id}/editar`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {t('seriesForm.openExisting')}
+                </a>
+              </Space>
+            }
+          />
+        )}
         <Form
           form={form}
+          disabled={!initialized || Boolean(draft.available)}
           layout="vertical"
           onFinish={handleSubmit}
           initialValues={{
