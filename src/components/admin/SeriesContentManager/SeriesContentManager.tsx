@@ -95,6 +95,8 @@ export function SeriesContentManager({
     title: string;
   } | null>(null);
   const [form] = Form.useForm();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   const tempIdCounter = useRef(0);
 
   const isLocalMode = !seriesId;
@@ -174,7 +176,13 @@ export function SeriesContentManager({
   const handleSubmit = async (values: Record<string, unknown>) => {
     if (isLocalMode) {
       const pendingItem: PendingContentItem = {
-        _tempId: editingPendingItem?._tempId ?? ++tempIdCounter.current,
+        _tempId:
+          editingPendingItem?._tempId ??
+          (tempIdCounter.current =
+            Math.max(
+              tempIdCounter.current,
+              ...(pendingItems ?? []).map((item) => item._tempId)
+            ) + 1),
         title: values.title as string,
         description: (values.description as string) || null,
         platform: values.platform as string,
@@ -341,9 +349,14 @@ export function SeriesContentManager({
         cancelText={t('seriesContentManager.cancelButton')}
         maskClosable={false}
         width={600}
-        forceRender
+        forceRender={mounted}
       >
-        <Form form={form} layout="vertical" onFinish={handleSubmit}>
+        <Form
+          name="series-content"
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+        >
           <Form.Item
             label={t('seriesContentManager.titleLabel')}
             name="title"
