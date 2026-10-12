@@ -117,6 +117,7 @@ try {
     const response = await anon.request.get(origin + path);
     const html = await response.text();
     assert.equal(response.status(), 200, path);
+    assert.match(response.headers()['cache-control'], /no-store/, path);
     assert.ok(html.includes('Contenido para mayores de 18'), path);
     assert.ok(!html.includes(series.synopsis), path + ' must not leak in RSC');
     assert.ok(
@@ -166,6 +167,13 @@ try {
     200
   );
   const fresh = await browser.newContext();
+  for (const path of paths) {
+    const response = await fresh.request.get(origin + path);
+    assert.equal(response.status(), 200, path);
+    const html = await response.text();
+    assert.ok(html.includes('Contenido para mayores de 18'), path);
+    assert.ok(!html.includes(series.synopsis), path + ' shared HTML/RSC');
+  }
   assert.equal(
     (await fresh.request.get(`${origin}/api/series/${id}`)).status(),
     403,
@@ -177,6 +185,11 @@ try {
     .getByRole('button', { name: 'Volver a pedir confirmación' })
     .click();
   await page.getByText('Preferencia guardada.', { exact: true }).waitFor();
+  await page.goto(`${origin}/series/${id}`);
+  await page
+    .getByRole('button', { name: 'Tengo 18 años o más y quiero continuar' })
+    .waitFor();
+  assert.ok(!(await page.content()).includes(series.synopsis));
   assert.equal(
     (await anon.request.get(`${origin}/api/series/${id}`)).status(),
     403

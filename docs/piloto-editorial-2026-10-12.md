@@ -57,6 +57,15 @@ editorial infrecuente. Hay que verificar HTTP real (HTML, RSC, navegación del
 cliente y caché del proveedor) antes del despliegue. El build por sí solo no
 demuestra aislamiento de caché.
 
+Las rutas `/series/[id]` y `/ver/[id]` ahora renderizan por solicitud, sin ISR de
+página completa. La prueba HTTP detectó `DYNAMIC_SERVER_USAGE` al reclasificar
+una ficha previamente cacheada: Next no permite comenzar a leer cookies durante
+esa regeneración. La configuración dinámica evita ese error y compartir una
+respuesta con consentimiento entre navegadores. Esto aumenta renderizados y
+consultas respecto del ISR anterior; se debe vigilar el consumo de funciones
+antes de ampliar el piloto. Los listados conservan su caché; no se incorporó
+ningún servicio pago ni polling.
+
 ## Piloto de clics
 
 `POST /api/pilot-clicks` incrementa `PilotClickDaily(day UTC, placement, clicks)`.
@@ -140,9 +149,11 @@ a `127.0.0.1:55433/mundobl_replay`; jamás cargar credenciales productivas):
 **Pendiente obligatorio antes de producción:** ejecutar
 `scripts/test-editorial-flow.mjs` contra el build servido localmente en puerto
 3018 (arranque manual mediante `scripts/serve-editorial-local.ps1`; secret de
-prueba explicitado por el script). No se ejecutó en esta sesión:
-la revisión automática bloqueó `npm start`, incluso restringido a loopback, sin
-explicar otro motivo. El script prepara fixtures, verifica HTML/RSC, aceptación,
+prueba explicitado por el script). El primer recorrido HTTP detectó el error
+`DYNAMIC_SERVER_USAGE` descrito arriba; se corrigió y recompiló, pendiente de
+repetir el recorrido completo. El usuario inicia manualmente el servidor porque
+la revisión automática bloqueó `npm start`, incluso restringido a loopback.
+El script prepara fixtures, verifica HTML/RSC, aceptación,
 revocación, navegadores separados, invalidación tras reclasificar y APIs, y limpia
 los datos al terminar. Requiere revisar además los screenshots resultantes y el
 comportamiento móvil/claro/oscuro. No considerar este punto validado por el build.
