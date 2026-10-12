@@ -34,9 +34,13 @@ const { Content } = Layout;
 
 interface AppLayoutProps {
   children: React.ReactNode;
+  supportVisible?: boolean;
 }
 
-export function AppLayout({ children }: AppLayoutProps) {
+export function AppLayout({
+  children,
+  supportVisible = false,
+}: AppLayoutProps) {
   const { t } = useLocale();
 
   return (
@@ -45,7 +49,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         <a href="#main-content" className="skip-to-content">
           {t('appLayout.skipToContent')}
         </a>
-        <Sidebar />
+        <Sidebar supportVisible={supportVisible} />
         <Layout>
           <TopBar />
           <AnnouncementDisplay />
@@ -53,7 +57,7 @@ export function AppLayout({ children }: AppLayoutProps) {
             {children}
           </Content>
         </Layout>
-        <BottomNav />
+        <BottomNav supportVisible={supportVisible} />
         <PrivacyBanner />
         <StaleVersionNotifier />
         <OfflineIndicator />

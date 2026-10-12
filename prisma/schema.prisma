@@ -2013,3 +2013,14 @@ model CommunitySettings {
   promptEnabled Boolean @default(true)
   updatedAt DateTime @updatedAt
 }
+
+// Drafts are private. Only the published snapshot may be served publicly.
+model SupportSettings {
+  id Int @id @default(1)
+  draft Json
+  published Json?
+  enabled Boolean @default(false)
+  version Int @default(0)
+  updatedBy String?
+  updatedAt DateTime @updatedAt
+}

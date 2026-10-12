@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Button, Modal, Input, message } from 'antd';
+import { Button, Modal, Input, App } from 'antd';
 import {
   ShareAltOutlined,
   CopyOutlined,
@@ -17,6 +17,7 @@ import './ShareButton.css';
 
 interface ShareButtonProps {
   title: string;
+  labels: { share: string; copied: string; copy: string; copyError: string };
   text?: string;
   url?: string;
   path?: string;
@@ -30,6 +31,7 @@ interface ShareButtonProps {
 
 export function ShareButton({
   title,
+  labels,
   text,
   url,
   path,
@@ -40,6 +42,7 @@ export function ShareButton({
   className = '',
   buttonText,
 }: ShareButtonProps) {
+  const { message } = App.useApp();
   const [modalOpen, setModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -54,12 +57,7 @@ export function ShareButton({
       : 'https://mundobl.com.ar';
   };
 
-  const getShareText = () => {
-    return (
-      text ||
-      `Mirá "${title}" en MundoBL: el catálogo de series y películas BL/GL`
-    );
-  };
+  const getShareText = () => text || title;
 
   const handleShareClick = async () => {
     const shareUrl = getShareUrl();
@@ -93,8 +91,7 @@ export function ShareButton({
       } else {
         const textarea = document.createElement('textarea');
         textarea.value = shareUrl;
-        textarea.style.position = 'fixed';
-        textarea.style.opacity = '0';
+        textarea.className = 'share-copy-fallback';
         document.body.appendChild(textarea);
         textarea.select();
         document.execCommand('copy');
@@ -102,10 +99,10 @@ export function ShareButton({
       }
       setCopied(true);
       trackEvent('share', { channel: 'copy' });
-      message.success('¡Enlace copiado al portapapeles!');
+      message.success(labels.copied);
       setTimeout(() => setCopied(false), 2500);
     } catch {
-      message.error('No se pudo copiar el enlace.');
+      message.error(labels.copyError);
     }
   };
 
@@ -121,30 +118,26 @@ export function ShareButton({
     {
       name: 'WhatsApp',
       channel: 'whatsapp' as const,
-      icon: <WhatsAppOutlined style={{ fontSize: 20, color: '#25D366' }} />,
+      icon: <WhatsAppOutlined className="share-modal__icon" />,
       url: `https://api.whatsapp.com/send?text=${encodeURIComponent(`${shareText} ${withUtm(shareUrl, 'whatsapp')}`)}`,
-      bg: 'rgba(37, 211, 102, 0.12)',
     },
     {
       name: 'Telegram',
       channel: 'telegram' as const,
-      icon: <SendOutlined style={{ fontSize: 20, color: '#229ED9' }} />,
+      icon: <SendOutlined className="share-modal__icon" />,
       url: `https://t.me/share/url?url=${encodeURIComponent(withUtm(shareUrl, 'telegram'))}&text=${encodeURIComponent(shareText)}`,
-      bg: 'rgba(34, 158, 217, 0.12)',
     },
     {
       name: 'Twitter / X',
       channel: 'twitter' as const,
-      icon: <TwitterOutlined style={{ fontSize: 20, color: '#1DA1F2' }} />,
+      icon: <TwitterOutlined className="share-modal__icon" />,
       url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(withUtm(shareUrl, 'twitter'))}`,
-      bg: 'rgba(29, 161, 242, 0.12)',
     },
     {
       name: 'Facebook',
       channel: 'facebook' as const,
-      icon: <FacebookOutlined style={{ fontSize: 20, color: '#1877F2' }} />,
+      icon: <FacebookOutlined className="share-modal__icon" />,
       url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(withUtm(shareUrl, 'facebook'))}`,
-      bg: 'rgba(24, 119, 242, 0.12)',
     },
   ];
 
@@ -157,9 +150,9 @@ export function ShareButton({
         type={type}
         ghost={ghost}
         className={`share-button ${className}`}
-        aria-label={`Compartir ${title}`}
+        aria-label={`${labels.share} ${title}`}
       >
-        {buttonText || 'Compartir'}
+        {buttonText || labels.share}
       </Button>
 
       <Modal
@@ -168,8 +161,8 @@ export function ShareButton({
         footer={null}
         title={
           <div className="share-modal__header">
-            <ShareAltOutlined style={{ color: 'var(--primary-color)' }} />
-            <span>Compartir serie</span>
+            <ShareAltOutlined className="share-modal__icon" />
+            <span>{labels.share}</span>
           </div>
         }
         centered
@@ -187,7 +180,6 @@ export function ShareButton({
                 target="_blank"
                 rel="noopener noreferrer"
                 className="share-modal__item"
-                style={{ background: item.bg }}
                 onClick={() => trackEvent('share', { channel: item.channel })}
               >
                 {item.icon}
@@ -206,7 +198,7 @@ export function ShareButton({
                   type="text"
                   icon={
                     copied ? (
-                      <CheckOutlined style={{ color: '#52c41a' }} />
+                      <CheckOutlined className="share-modal__success" />
                     ) : (
                       <CopyOutlined />
                     )
@@ -214,7 +206,7 @@ export function ShareButton({
                   onClick={handleCopy}
                   className="share-modal__copy-btn"
                 >
-                  {copied ? '¡Copiado!' : 'Copiar'}
+                  {copied ? labels.copied : labels.copy}
                 </Button>
               }
             />
