@@ -1,3 +1,4 @@
+import { isSupportOwner } from './support-input';
 import NextAuth from 'next-auth';
 import Google from 'next-auth/providers/google';
 import { PrismaAdapter } from '@auth/prisma-adapter';
@@ -161,6 +162,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.id = appToken.id;
         session.user.role = appToken.role;
         session.user.banned = appToken.banned;
+        session.user.canManageSupport = isSupportOwner(
+          session.user,
+          process.env.ADMIN_EMAILS ?? ''
+        );
       }
       return session;
     },

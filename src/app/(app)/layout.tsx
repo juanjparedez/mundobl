@@ -1,9 +1,11 @@
+import { getCachedSupport } from '@/lib/support-public';
 import { AppLayout } from '@/components/layout/AppLayout/AppLayout';
 
-export default function AppShellLayout({
+export default async function AppShellLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <AppLayout>{children}</AppLayout>;
+  const support = await getCachedSupport();
+  return <AppLayout supportVisible={!!support}>{children}</AppLayout>;
 }
