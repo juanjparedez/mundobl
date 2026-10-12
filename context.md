@@ -8,6 +8,22 @@ Diagnóstico actualizado con acceso a ambos paneles: [consumo y validaciones](do
 
 Plan integral, decisiones y evidencias: [calidad y sostenibilidad](docs/plan-calidad-sostenibilidad-2026-10-12.md). Incluye reclamos de Flor, patrocinio oculto y diagnósticos de consumo/retorno. Implementación: compartir usa SeriesShareButton (texto breve y URL canónica); PosterPreview abre originales a demanda con Ant Design. /apoyar y /admin/patrocinio usan SupportSettings (borrador/snapshot, versión, RLS y backup), solo ADMIN + ADMIN_EMAILS administra; publicación desactivada por defecto, sin pagos integrados ni avisos. Desplegado en producción como f2f8ac1 (PR #113), con patrocinio oculto. Ver el documento para evidencias y validaciones aún pendientes.
 
+## Piloto editorial en preparación (2026-10-12)
+
+Clasificación humana `UNREVIEWED | GENERAL | ADULT18` y avisos independientes,
+edición ADMIN con versión/revisión, compuertas de detalle/medios y preferencia
+revocable de 30 días en `/preferencias-contenido`. No es control parental ni
+oculta todos los títulos/portadas. `/contenido` conserva su directorio de videos.
+`PilotClickDaily` cuenta clics GagaOOLala por día UTC y sección, sin identidad ni
+historial individual; `/admin/piloto` muestra 60 días. La curaduría bloquea borrar
+temporadas/aportes que conservan seguimiento, notas o historial. Bienvenida
+actualizada; no cambia opt-in ni se enviaron correos. Nuevas cadenas en 10 locales.
+
+Estado y límites, incluidos tests HTTP pendientes por bloqueo del arranque local:
+[piloto editorial](docs/piloto-editorial-2026-10-12.md). Migración probada solo en
+DB local; no desplegada ni aplicada en producción. Propuesta comercial local, sin publicar:
+`test-results/partnership/propuesta-gagaoolala-borrador-2026-10-12.md` (sin versionar).
+
 ## Estado actual (2026-10-01)
 
 - Guardado de series (#110): el form de edicion guarda en UNA transaccion y por diferencias ([saveSeriesFromForm](src/lib/series-save.ts)): sin cambios no reescribe filas, y si algo falla no se aplica nada. `Series.editVersion` la sube solo un guardado de form (admin, colaborador) o el cambio de alcance; el form manda la version con la que abrio y el server responde 409 `EDIT_CONFLICT` si cambio (pestaña vieja). Sin version tambien es 409. Antes de cada guardado queda una foto JSON completa en `SeriesRevision` (quien, cuando, version reemplazada; sin FK a proposito: sobrevive al borrado de la serie). Motivo: el 29/09 se perdio contenido de "Poisoned chalice" (705) sin forma de saber que habia ni quien guardo. El cron de reproducibilidad ya no toca `updatedAt` si `geoRestrictedCore` no cambia. Migracion `20260930120000_series_revisions` aplicada en produccion el 01/10.

@@ -15,11 +15,14 @@ const compiled = ts.transpileModule(
 const route = {};
 new Function('require', 'exports', compiled)((name) => {
   if (name === '@/lib/database') return database;
-  if (name === '@/lib/auth-helpers') return {
-    requireAuth: async () => viewer
-      ? { authorized: true, ...viewer }
-      : { authorized: false },
-  };
+  // This suite isolates existing block ownership; adult/media access has its own SQL route suite.
+  if (name === '@/lib/content-access')
+    return { checkSeriesContentAccess: async () => null };
+  if (name === '@/lib/auth-helpers')
+    return {
+      requireAuth: async () =>
+        viewer ? { authorized: true, ...viewer } : { authorized: false },
+    };
   if (name === '@/lib/collaborator-guard') return {};
   return require(name);
 }, route);
@@ -36,43 +39,77 @@ async function read(id, identity) {
   return response.json();
 }
 try {
-  await prisma.user.create({ data: { id: key, email: `${key}@example.invalid` } });
+  await prisma.user.create({
+    data: { id: key, email: `${key}@example.invalid` },
+  });
   for (const origin of ['CURATED', 'USER_EMBED']) {
-    const series = await prisma.series.create({ data: {
-      title: key, type: 'serie', origin, visibility: 'HIDDEN',
-      catalogScope: origin === 'CURATED' ? 'PERSONAL' : 'WATCHABLE_ONLY',
-      submittedById: key,
-      infoBlocks: { create: [
-        { label: 'Second', body: 'Hidden editorial text', sortOrder: 2 },
-        { label: 'First', body: 'Hidden editorial text', sortOrder: 1 },
-      ] },
-    } });
+    const series = await prisma.series.create({
+      data: {
+        title: key,
+        type: 'serie',
+        origin,
+        visibility: 'HIDDEN',
+        catalogScope: origin === 'CURATED' ? 'PERSONAL' : 'WATCHABLE_ONLY',
+        submittedById: key,
+        infoBlocks: {
+          create: [
+            { label: 'Second', body: 'Hidden editorial text', sortOrder: 2 },
+            { label: 'First', body: 'Hidden editorial text', sortOrder: 1 },
+          ],
+        },
+      },
+    });
     ids.push(series.id);
-    for (const identity of [undefined, { userId: key, role: 'USER' },
-      { userId: 'another', role: 'COLLABORATOR' }]) {
+    for (const identity of [
+      undefined,
+      { userId: key, role: 'USER' },
+      { userId: 'another', role: 'COLLABORATOR' },
+    ]) {
       assert.deepEqual(await read(series.id, identity), []);
     }
     const owner = { userId: key, role: 'COLLABORATOR' };
-    assert.equal((await read(series.id, owner)).length, origin === 'USER_EMBED' ? 2 : 0);
+    assert.equal(
+      (await read(series.id, owner)).length,
+      origin === 'USER_EMBED' ? 2 : 0
+    );
     for (const role of ['ADMIN', 'MODERATOR']) {
-      assert.deepEqual((await read(series.id, { userId: key, role })).map(b => b.label), ['First', 'Second']);
+      assert.deepEqual(
+        (await read(series.id, { userId: key, role })).map((b) => b.label),
+        ['First', 'Second']
+      );
     }
     if (origin === 'USER_EMBED') {
-      await prisma.series.update({ where: { id: series.id }, data: { catalogScope: 'PERSONAL' } });
+      await prisma.series.update({
+        where: { id: series.id },
+        data: { catalogScope: 'PERSONAL' },
+      });
       assert.deepEqual(await read(series.id, owner), []);
     }
-    await prisma.series.update({ where: { id: series.id }, data: { visibility: 'VISIBLE' } });
+    await prisma.series.update({
+      where: { id: series.id },
+      data: { visibility: 'VISIBLE' },
+    });
     assert.equal((await read(series.id)).length, 2);
-    await prisma.series.update({ where: { id: series.id }, data: { visibility: 'HIDDEN' } });
+    await prisma.series.update({
+      where: { id: series.id },
+      data: { visibility: 'HIDDEN' },
+    });
     assert.deepEqual(await read(series.id), []);
   }
   assert.deepEqual(await read(2147483647), []);
   for (const id of ['0', '-1', '1junk', '1.5']) {
-    assert.equal((await route.GET(new Request('http://localhost'), {
-      params: Promise.resolve({ id }),
-    })).status, 400);
+    assert.equal(
+      (
+        await route.GET(new Request('http://localhost'), {
+          params: Promise.resolve({ id }),
+        })
+      ).status,
+      400
+    );
   }
-  console.log('Info-block privacy: real handler + SQL passed. Session resolution simulated.');
+  console.log(
+    'Info-block privacy: real handler + SQL passed. Session resolution simulated.'
+  );
 } finally {
   await prisma.series.deleteMany({ where: { id: { in: ids } } });
   await prisma.user.deleteMany({ where: { id: key } });

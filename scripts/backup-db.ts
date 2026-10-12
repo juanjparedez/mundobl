@@ -12,6 +12,11 @@ const prisma = new PrismaClient({ adapter });
 // All models to back up; restore-db computes the foreign-key insertion order.
 const MODELS = [
   {
+    name: 'PilotClickDaily',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.pilotClickDaily.findMany(),
+  },
+  {
     name: 'SupportSettings',
     delegate: (client: Prisma.TransactionClient) =>
       client.supportSettings.findMany(),

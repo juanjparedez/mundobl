@@ -10,6 +10,50 @@
 import type { TranslationShape } from '../messages';
 
 const it = {
+  welcomeEmail: {
+  "title": "Ti diamo il benvenuto su MundoBL",
+  "intro": "Un catalogo di serie BL, GL e altri drama asiatici curato da persone.",
+  "library": "Organizza la tua biblioteca, segna episodi e parti e modifica stati e date di visione.",
+  "diary": "Consulta la cronologia, scrivi note private nel diario ed esporta un backup dal profilo.",
+  "explore": "Trova piattaforme ufficiali, recensioni, conversazioni e un glossario culturale. La disponibilità dipende dalla piattaforma e dalla regione.",
+  "consent": "Gli annunci via email richiedono la tua attivazione nelle preferenze. Creare un account non ti iscrive alle campagne.",
+  "action": "Apri la mia biblioteca",
+  "reason": "Ricevi questa email perché hai appena creato il tuo account MundoBL."
+},
+  editorial: {
+    preserveTracking: "Questa operazione richiede la riconciliazione del monitoraggio o della classificazione editoriale. Nessun dato è stato eliminato.",
+    "adultTitle": "Contenuti per maggiorenni",
+    "adultNotice": "Conferma di avere almeno 18 anni per aprire questa pagina. Ricordiamo la scelta per 30 giorni in questo browser.",
+    "scopeNotice": "L’avviso riguarda le opere classificate dal team. Titoli e locandine restano visibili; le opere non esaminate non sono considerate adatte a tutti.",
+    "accept": "Ho almeno 18 anni e voglio continuare",
+    "hide": "Chiedi di nuovo conferma",
+    "back": "Torna al catalogo",
+    "preferences": "Preferenze sui contenuti",
+    "error": "Salvataggio non riuscito. Riprova.",
+    "saved": "Preferenza salvata.",
+    "conflict": "La scheda è cambiata. Ricarica per confrontarla prima di salvare.",
+    "classification": "Classificazione editoriale",
+    "authority": "La redazione ha l’ultima parola. Le importazioni non cambiano la decisione. Classifichiamo i contenuti, mai l’orientamento dei personaggi.",
+    "warnings": "Avvisi sui contenuti",
+    "source": "Fonte o criterio editoriale",
+    "save": "Salva classificazione",
+    "UNREVIEWED": "Da esaminare",
+    "GENERAL": "Nessuna restrizione 18+ identificata",
+    "ADULT18": "Maggiori di 18 anni",
+    "SEX": "Contenuti sessuali",
+    "NUDITY": "Nudità",
+    "VIOLENCE": "Violenza",
+    "ABUSE": "Abuso",
+    "SELF_HARM": "Autolesionismo",
+    "pilot": "Progetto pilota GagaOOLala",
+    "pilotNotice": "Clic registrati negli ultimi 60 giorni (UTC), non persone uniche né abbonamenti. Il team autenticato è escluso; blocchi, ripetizioni e bot possono alterare i totali.",
+    "day": "Giorno (UTC)",
+    "series": "Schede",
+    "platforms": "Guida alle piattaforme",
+    "clicks": "Clic",
+    "privacy": "Contiamo i clic giornalieri per sezione, senza account, IP o cronologia di visione. La preferenza 18+ usa un cookie firmato per 30 giorni e non verifica l’identità."
+},
+
   platformGuide: {
     badge: 'Fonti ufficiali',
     title: 'Piattaforme e abbonamenti',

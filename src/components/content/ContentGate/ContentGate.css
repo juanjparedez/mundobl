@@ -1,0 +1,32 @@
+.content-gate {
+  max-width: 48rem;
+  margin: 3rem auto;
+  padding: 1rem;
+  color: var(--text-primary);
+}
+.content-gate p {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-block: var(--spacing-md);
+}
+.content-gate .ant-alert {
+  background: var(--bg-container);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+.content-gate__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.content-gate__actions .ant-btn {
+  max-width: 100%;
+  height: auto;
+  min-height: 2.5rem;
+  white-space: normal;
+}
+.content-gate__actions .ant-btn > span {
+  white-space: normal;
+}

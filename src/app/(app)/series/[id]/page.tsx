@@ -1,3 +1,7 @@
+import { ContentGate } from '@/components/content/ContentGate/ContentGate';
+import { ContentNotice } from '@/components/content/ContentNotice/ContentNotice';
+import { hasContentConsent } from '@/lib/content-consent';
+import { adultMetadata } from '@/lib/content-metadata';
 import { CommunityWorkLink } from '@/components/community/CommunityWorkLink/CommunityWorkLink';
 import { getPublicWriterCredits } from '@/lib/database';
 import { WriterCredits } from '@/components/series/WriterCredits/WriterCredits';
@@ -76,6 +80,8 @@ export async function generateMetadata({
   const serie = await getSeriesByIdCached(seriesId);
   if (!serie) return {};
 
+  if (serie.contentRating === 'ADULT18') return adultMetadata();
+
   const labels = (await loadLocaleMessages('es')).contentMetadata;
   const year = serie.year ? ` (${serie.year})` : '';
   const origTitle =
@@ -144,6 +150,9 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
     notFound();
   }
 
+  if (serieRaw.contentRating === 'ADULT18' && !(await hasContentConsent()))
+    return <ContentGate warnings={serieRaw.contentWarnings} />;
+
   // La compuerta de notas privadas va ACA, en el servidor, SIEMPRE con
   // isAdmin=false: este HTML es estatico/cacheado por ISR y lo puede servir
   // a cualquier visitante, admin o no, asi que nunca puede llevar horneadas
@@ -204,6 +213,10 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
 
   return (
     <>
+      <ContentNotice
+        rating={serie.contentRating}
+        warnings={serie.contentWarnings}
+      />
       <JsonLd<TVSeries>
         data={{
           '@context': 'https://schema.org',

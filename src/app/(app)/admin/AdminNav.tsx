@@ -17,7 +17,9 @@ export function AdminNav() {
   const { data: session } = useSession();
   const visibleDestinations = (group: Parameters<typeof destinationsOf>[0]) =>
     destinationsOf(group).filter(
-      (d) => !d.supportOwnerOnly || session?.user?.canManageSupport
+      (d) =>
+        (!d.supportOwnerOnly || session?.user?.canManageSupport) &&
+        (!d.adminOnly || session?.user?.role === 'ADMIN')
     );
   const pathname = usePathname();
   const router = useRouter();

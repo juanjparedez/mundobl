@@ -1,3 +1,7 @@
+import { ContentGate } from '@/components/content/ContentGate/ContentGate';
+import { ContentNotice } from '@/components/content/ContentNotice/ContentNotice';
+import { hasContentConsent } from '@/lib/content-consent';
+import { adultMetadata } from '@/lib/content-metadata';
 import { getPublicWriterCredits } from '@/lib/database';
 import { WriterCredits } from '@/components/series/WriterCredits/WriterCredits';
 import { loadLocaleMessages } from '@/i18n/messages';
@@ -51,6 +55,7 @@ export async function generateMetadata({
     !serie.seasons.some((season) => season.episodes.some(isWatchableEpisode))
   )
     notFound();
+  if (serie.contentRating === 'ADULT18') return adultMetadata();
   const labels = (await loadLocaleMessages('es')).contentMetadata;
 
   const origTitle =
@@ -96,6 +101,9 @@ export default async function VerSeriePage({ params }: PageProps) {
   const serie = await getWatchableSeriesByIdCached(seriesId);
   if (!serie) notFound();
 
+  if (serie.contentRating === 'ADULT18' && !(await hasContentConsent()))
+    return <ContentGate warnings={serie.contentWarnings} />;
+
   const seasons = serie.seasons
     .map((s) => ({
       id: s.id,
@@ -126,6 +134,10 @@ export default async function VerSeriePage({ params }: PageProps) {
 
   return (
     <>
+      <ContentNotice
+        rating={serie.contentRating}
+        warnings={serie.contentWarnings}
+      />
       <JsonLd<TVSeries>
         data={{
           '@context': 'https://schema.org',

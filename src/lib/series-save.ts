@@ -1,4 +1,5 @@
 import { Prisma } from '@/generated/prisma';
+import { assertTrackingCanBeRemoved } from './tracking-preservation';
 import { prepareUniverseSlot, prisma, resolveBasedOnValue } from './database';
 import { getCountryCode } from './country-codes';
 import { findOrCreateProductionCompany } from './tag-utils';
@@ -475,6 +476,7 @@ async function syncSeasons(
     .map((season) => season.id)
     .filter((seasonId) => !incomingIds.has(seasonId));
   if (toDelete.length > 0) {
+    await assertTrackingCanBeRemoved(tx, seriesId, toDelete);
     await tx.season.deleteMany({ where: { id: { in: toDelete } } });
   }
 

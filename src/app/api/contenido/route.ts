@@ -1,3 +1,5 @@
+import { auth } from '@/lib/auth';
+import { hasContentConsent } from '@/lib/content-consent';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
@@ -13,8 +15,28 @@ export async function GET(request: NextRequest) {
     const seriesIdParam = searchParams.get('seriesId');
     const seriesId = seriesIdParam ? Number(seriesIdParam) : undefined;
 
+    const session = await auth();
+    const editor =
+      !session?.user?.banned &&
+      ['ADMIN', 'MODERATOR'].includes(session?.user?.role ?? '');
+    const allowAdult = editor || (await hasContentConsent());
     const items = await prisma.embeddableContent.findMany({
       where: {
+        ...(!editor
+          ? {
+              OR: [
+                { seriesId: null },
+                {
+                  series: {
+                    visibility: 'VISIBLE',
+                    ...(!allowAdult
+                      ? { contentRating: { not: 'ADULT18' } }
+                      : {}),
+                  },
+                },
+              ],
+            }
+          : {}),
         ...(platform ? { platform } : {}),
         ...(category ? { category } : {}),
         ...(featured === 'true' ? { featured: true } : {}),
@@ -26,7 +48,9 @@ export async function GET(request: NextRequest) {
       orderBy: [{ sortOrder: 'asc' }, { createdAt: 'desc' }],
     });
 
-    return NextResponse.json(items);
+    return NextResponse.json(items, {
+      headers: { 'Cache-Control': 'private, no-store' },
+    });
   } catch (error) {
     console.error('Error fetching embeddable content:', error);
     return NextResponse.json(

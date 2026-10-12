@@ -1,3 +1,4 @@
+import { ContentPrivacy } from '@/components/content/ContentPrivacy/ContentPrivacy';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
@@ -203,6 +204,7 @@ export default function PrivacidadPage() {
               derechos de autor.
             </p>
           </section>
+          <ContentPrivacy />
         </article>
       </div>
     </>
