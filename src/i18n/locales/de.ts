@@ -10,6 +10,43 @@
 import type { TranslationShape } from '../messages';
 
 const de = {
+  platformGuide: {
+    badge: 'Offizielle Quellen',
+    title: 'Plattformen und Abos',
+    intro:
+      'Auf offiziellen Websites beobachtete Preise. Sie können je nach Land, Konto und Kaufkanal abweichen.',
+    all: 'Alle',
+    observed: 'Beobachteter Preis',
+    consult: 'Preis prüfen',
+    transparency:
+      'Offizielle Links ohne bestätigte Affiliate-Partnerschaft. Künftiges Sponsoring wird gekennzeichnet und bestimmt nicht die redaktionelle Auswahl.',
+    closing: 'Schließung angekündigt',
+    reviewed: 'Quelle geprüft',
+    country: 'Land des Preises',
+    argentina: 'Argentinien',
+    unknownCountry: 'Von der Quelle nicht bestätigt',
+    channel: 'Kaufkanal',
+    web: 'Web',
+    period: 'Enthaltene Monate: {months}',
+    taxNote:
+      'Richtwert. Steuern, Verlängerung und Endpreis vor Abschluss prüfen. App-Stores können andere Angebote zeigen.',
+    vimeoNotice:
+      'Vimeo On Demand schließt am 20.11.2026. Käufe bleiben bis dahin zugänglich; Leihfristen können früher enden. Downloads nur mit Erlaubnis des Urhebers.',
+    unconfirmed:
+      'Kein Preis für dein Land bestätigt. Preise und Bedingungen an der Quelle prüfen.',
+    source: 'Offizielle Quelle ansehen',
+    availability:
+      'Vor dem Kauf Titel, Fassung und Untertitel für dein Land prüfen. Ein Abo hebt regionale Sperren nicht auf.',
+    gaga: 'LGBTQ+-, BL- und GL-Katalog.',
+    viki: 'Asiatische Dramen und Viki-Pass-Abos.',
+    iqiyi: 'Asiatische Serien und VIP-Angebote.',
+    wetv: 'Serien, Filme und VIP-Angebote.',
+    youtube: 'Offizielle Kanäle und optionale Kanalmitgliedschaften.',
+    heavenly: 'BL-Inhalte mit Abos und Einzelkäufen.',
+    netflix: 'Für Argentinien veröffentlichte Monatsabos.',
+    bilibili: 'Anime und Videos; regional unterschiedliches Angebot.',
+    vimeo: 'Informationen zu bestehenden Käufen und Ausleihen.',
+  },
   qualitySupport: {
     introLabel: "Einleitung",
     purposeLabel: "Verwendung der Beiträge",

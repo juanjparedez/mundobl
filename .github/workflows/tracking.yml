@@ -57,6 +57,7 @@ jobs:
           node scripts/test-tracking-insights-ui.mjs
           node scripts/test-runtime-maintenance-ui.mjs
           node scripts/test-history-cards.mjs
+          node scripts/test-platform-guide.mjs
           node scripts/test-community-statistics-ui.mjs
           node --import tsx scripts/test-community-flow.mjs
           node --import tsx scripts/test-community-library-flow.mjs

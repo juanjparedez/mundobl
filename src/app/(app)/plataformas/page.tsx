@@ -6,7 +6,7 @@ import './plataformas.css';
 export const metadata: Metadata = {
   title: 'Comparador de Plataformas de Streaming BL y Planes | MundoBL',
   description:
-    'Guía comparativa oficial de plataformas para ver series BL: GagaOOLala, Rakuten Viki, YouTube Oficial, iQIYI, WeTV y Vimeo. Planes, precios, versiones sin censura y subtítulos en español.',
+    'Guía de plataformas para ver BL con precios de referencia, fecha de consulta, alcance regional y enlaces a fuentes oficiales. Verificá las condiciones antes de contratar.',
   alternates: {
     canonical: '/plataformas',
   },
