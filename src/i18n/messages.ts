@@ -1,6 +1,37 @@
 import type { SupportedLocale } from './config';
 
 export type TranslationShape = {
+  platformGuide: {
+    badge: string;
+    title: string;
+    intro: string;
+    all: string;
+    observed: string;
+    consult: string;
+    transparency: string;
+    closing: string;
+    reviewed: string;
+    country: string;
+    argentina: string;
+    unknownCountry: string;
+    channel: string;
+    web: string;
+    period: string;
+    taxNote: string;
+    vimeoNotice: string;
+    unconfirmed: string;
+    source: string;
+    availability: string;
+    gaga: string;
+    viki: string;
+    iqiyi: string;
+    wetv: string;
+    youtube: string;
+    heavenly: string;
+    netflix: string;
+    bilibili: string;
+    vimeo: string;
+  };
   qualitySupport: {
     introLabel: string;
     purposeLabel: string;
@@ -3684,6 +3715,44 @@ export type TranslationShape = {
 };
 
 const es: TranslationShape = {
+  platformGuide: {
+    badge: 'Fuentes oficiales',
+    title: 'Plataformas y suscripciones',
+    intro:
+      'Precios observados en las webs oficiales. Pueden variar según país, cuenta y canal de compra.',
+    all: 'Todas',
+    observed: 'Precio observado',
+    consult: 'Consultar precio',
+    transparency:
+      'Enlaces a fuentes oficiales, sin afiliación confirmada. Cualquier patrocinio futuro se identificará y no decidirá la curaduría.',
+    closing: 'Cierre anunciado',
+    reviewed: 'Fuente consultada',
+    country: 'País de la tarifa',
+    argentina: 'Argentina',
+    unknownCountry: 'No confirmado por la fuente',
+    channel: 'Canal consultado',
+    web: 'Web',
+    period: 'Meses incluidos: {months}',
+    taxNote:
+      'Importe de referencia. Confirmá impuestos, renovación y precio final antes de contratar. Las tiendas de apps pueden mostrar otra oferta.',
+    vimeoNotice:
+      'Vimeo On Demand cierra el 20/11/2026. Las compras estarán disponibles hasta esa fecha; los alquileres pueden vencer antes. Solo se pueden descargar los títulos cuyo creador lo permita.',
+    unconfirmed:
+      'No confirmamos una tarifa para tu país. Consultá el precio y las condiciones en la fuente oficial.',
+    source: 'Consultar fuente oficial',
+    availability:
+      'Antes de pagar, comprobá el título, la versión y los subtítulos en tu país. Una suscripción no elimina las restricciones regionales.',
+    gaga: 'Catálogo LGBTQ+, BL y GL.',
+    viki: 'Dramas asiáticos y planes Viki Pass.',
+    iqiyi: 'Series asiáticas y opciones VIP.',
+    wetv: 'Series, películas y opciones VIP.',
+    youtube: 'Canales oficiales y membresías opcionales por canal.',
+    heavenly: 'Contenido BL con membresías y compras individuales.',
+    netflix: 'Planes mensuales publicados para Argentina.',
+    bilibili: 'Anime y videos; oferta sujeta a la región.',
+    vimeo: 'Información para quienes compraron o alquilaron contenido.',
+  },
+
   qualitySupport: {
     introLabel: 'Presentación',
     purposeLabel: 'Destino de los aportes',
@@ -7632,6 +7701,44 @@ const es: TranslationShape = {
 };
 
 const en: TranslationShape = {
+  platformGuide: {
+    badge: 'Official sources',
+    title: 'Platforms and subscriptions',
+    intro:
+      'Prices observed on official websites. They may vary by country, account and purchase channel.',
+    all: 'All',
+    observed: 'Observed price',
+    consult: 'Check price',
+    transparency:
+      'Links to official sources, with no confirmed affiliation. Any future sponsorship will be disclosed and will not determine editorial curation.',
+    closing: 'Closure announced',
+    reviewed: 'Source checked',
+    country: 'Price country',
+    argentina: 'Argentina',
+    unknownCountry: 'Not confirmed by the source',
+    channel: 'Purchase channel',
+    web: 'Web',
+    period: 'Months included: {months}',
+    taxNote:
+      'Reference amount. Check taxes, renewal and the final price before subscribing. App stores may show a different offer.',
+    vimeoNotice:
+      'Vimeo On Demand closes on November 20, 2026. Purchases remain accessible until then; rentals may expire earlier. Downloads are available only when the creator allows them.',
+    unconfirmed:
+      'We have not confirmed a price for your country. Check prices and terms at the official source.',
+    source: 'View official source',
+    availability:
+      'Before paying, check the title, version and subtitles in your country. A subscription does not remove regional restrictions.',
+    gaga: 'LGBTQ+, BL and GL catalogue.',
+    viki: 'Asian dramas and Viki Pass plans.',
+    iqiyi: 'Asian series and VIP options.',
+    wetv: 'Series, films and VIP options.',
+    youtube: 'Official channels and optional channel memberships.',
+    heavenly: 'BL content with memberships and individual purchases.',
+    netflix: 'Monthly plans published for Argentina.',
+    bilibili: 'Anime and videos; availability varies by region.',
+    vimeo: 'Information for existing purchases and rentals.',
+  },
+
   qualitySupport: {
     introLabel: 'Introduction',
     purposeLabel: 'Use of contributions',

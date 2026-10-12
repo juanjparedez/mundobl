@@ -10,6 +10,43 @@
 import type { TranslationShape } from '../messages';
 
 const fr = {
+  platformGuide: {
+    badge: 'Sources officielles',
+    title: 'Plateformes et abonnements',
+    intro:
+      'Prix observés sur les sites officiels. Ils peuvent varier selon le pays, le compte et le canal d’achat.',
+    all: 'Toutes',
+    observed: 'Prix observé',
+    consult: 'Consulter le prix',
+    transparency:
+      'Liens officiels, sans affiliation confirmée. Tout futur parrainage sera signalé et ne déterminera pas la sélection éditoriale.',
+    closing: 'Fermeture annoncée',
+    reviewed: 'Source consultée',
+    country: 'Pays du tarif',
+    argentina: 'Argentine',
+    unknownCountry: 'Non confirmé par la source',
+    channel: 'Canal d’achat',
+    web: 'Web',
+    period: 'Mois inclus : {months}',
+    taxNote:
+      'Montant indicatif. Vérifiez les taxes, le renouvellement et le prix final. Les boutiques d’applications peuvent proposer une autre offre.',
+    vimeoNotice:
+      'Vimeo On Demand ferme le 20/11/2026. Les achats restent accessibles jusque-là ; les locations peuvent expirer avant. Le téléchargement dépend de l’autorisation du créateur.',
+    unconfirmed:
+      'Aucun tarif confirmé pour votre pays. Consultez les prix et conditions à la source.',
+    source: 'Voir la source officielle',
+    availability:
+      'Avant de payer, vérifiez le titre, la version et les sous-titres dans votre pays. Un abonnement ne lève pas les restrictions régionales.',
+    gaga: 'Catalogue LGBTQ+, BL et GL.',
+    viki: 'Dramas asiatiques et offres Viki Pass.',
+    iqiyi: 'Séries asiatiques et options VIP.',
+    wetv: 'Séries, films et options VIP.',
+    youtube: 'Chaînes officielles et abonnements facultatifs par chaîne.',
+    heavenly: 'Contenu BL avec abonnements et achats individuels.',
+    netflix: 'Offres mensuelles publiées pour l’Argentine.',
+    bilibili: 'Anime et vidéos ; disponibilité selon la région.',
+    vimeo: 'Informations pour les achats et locations existants.',
+  },
   qualitySupport: {
     introLabel: "Présentation",
     purposeLabel: "Utilisation des contributions",
