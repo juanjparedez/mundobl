@@ -1,6 +1,52 @@
 import type { SupportedLocale } from './config';
 
 export type TranslationShape = {
+  qualitySupport: {
+    introLabel: string;
+    purposeLabel: string;
+    thanksLabel: string;
+    zoomIn: string;
+    zoomOut: string;
+    close: string;
+    message: string;
+    share: string;
+    copied: string;
+    copy: string;
+    copyError: string;
+    openImage: string;
+    imageError: string;
+    support: string;
+    admin: string;
+    intro: string;
+    purpose: string;
+    thanks: string;
+    voluntary: string;
+    demo: string;
+    save: string;
+    publish: string;
+    hide: string;
+    preview: string;
+    add: string;
+    remove: string;
+    up: string;
+    down: string;
+    label: string;
+    url: string;
+    alias: string;
+    holder: string;
+    bank: string;
+    currency: string;
+    link: string;
+    transfer: string;
+    enabled: string;
+    saved: string;
+    error: string;
+    conflict: string;
+    hidden: string;
+    live: string;
+    reload: string;
+    instructions: string;
+  };
   runtimeMaintenance: {
     title: string;
     description: string;
@@ -3619,6 +3665,56 @@ export type TranslationShape = {
 };
 
 const es: TranslationShape = {
+  qualitySupport: {
+    introLabel: 'Presentación',
+    purposeLabel: 'Destino de los aportes',
+    thanksLabel: 'Agradecimiento',
+    zoomIn: 'Acercar',
+    zoomOut: 'Alejar',
+    close: 'Cerrar',
+    message:
+      'Te comparto “{title}”, que pienso que te puede interesar. Encontrala en MundoBL.',
+    share: 'Compartir',
+    copied: 'Enlace copiado',
+    copy: 'Copiar enlace',
+    copyError: 'No se pudo copiar el enlace.',
+    openImage: 'Ampliar imagen',
+    imageError: 'No se pudo cargar la imagen original.',
+    support: 'Apoyar MundoBL',
+    admin: 'Patrocinio',
+    intro: 'Un espacio para compartir lo que nos gusta',
+    purpose: 'Los aportes ayudan a sostener la infraestructura de MundoBL.',
+    thanks: 'Gracias por acompañarnos.',
+    voluntary:
+      'Disfrutar del sitio, aportar información o dejar palabras de apoyo también tiene valor. Aportar dinero no es obligatorio.',
+    demo: 'Vista previa de demostración. Los medios de ejemplo no aceptan aportes.',
+    save: 'Guardar borrador',
+    publish: 'Publicar / Actualizar publicación',
+    hide: 'Ocultar página',
+    preview: 'Vista previa',
+    add: 'Agregar medio',
+    remove: 'Eliminar',
+    up: 'Subir',
+    down: 'Bajar',
+    label: 'Nombre',
+    url: 'Enlace HTTPS',
+    alias: 'Alias',
+    holder: 'Titular',
+    bank: 'Entidad',
+    currency: 'Moneda',
+    link: 'Enlace externo',
+    transfer: 'Transferencia',
+    enabled: 'Habilitado',
+    saved: 'Guardado',
+    error: 'No se pudo completar. Revisá los campos y volvé a intentar.',
+    conflict:
+      'Otra persona modificó la configuración. Recargá antes de continuar.',
+    hidden: 'Oculta al público',
+    live: 'Publicada',
+    reload: 'Recargar',
+    instructions:
+      'Completá la presentación, el destino de los aportes y al menos un medio real habilitado. Guardá el borrador y revisá la vista previa antes de publicar. Los cambios no afectan lo publicado hasta actualizar la publicación.',
+  },
   runtimeMaintenance: {
     title: 'Mantenimiento',
     description:
@@ -7493,6 +7589,55 @@ const es: TranslationShape = {
 };
 
 const en: TranslationShape = {
+  qualitySupport: {
+    introLabel: 'Introduction',
+    purposeLabel: 'Use of contributions',
+    thanksLabel: 'Thank-you message',
+    zoomIn: 'Zoom in',
+    zoomOut: 'Zoom out',
+    close: 'Close',
+    message:
+      'I’m sharing “{title}”, which I think you might enjoy. Find it on MundoBL.',
+    share: 'Share',
+    copied: 'Link copied',
+    copy: 'Copy link',
+    copyError: 'Could not copy the link.',
+    openImage: 'Enlarge image',
+    imageError: 'The original image could not be loaded.',
+    support: 'Support MundoBL',
+    admin: 'Sponsorship',
+    intro: 'A space to share what we enjoy',
+    purpose: 'Contributions help sustain MundoBL infrastructure.',
+    thanks: 'Thank you for being here.',
+    voluntary:
+      'Enjoying the site, contributing information or leaving kind words also matters. Financial contributions are optional.',
+    demo: 'Demo preview. Example methods do not accept contributions.',
+    save: 'Save draft',
+    publish: 'Publish / Update publication',
+    hide: 'Hide page',
+    preview: 'Preview',
+    add: 'Add method',
+    remove: 'Remove',
+    up: 'Move up',
+    down: 'Move down',
+    label: 'Name',
+    url: 'HTTPS link',
+    alias: 'Account alias',
+    holder: 'Account holder',
+    bank: 'Institution',
+    currency: 'Currency',
+    link: 'External link',
+    transfer: 'Bank transfer',
+    enabled: 'Enabled',
+    saved: 'Saved',
+    error: 'Could not complete. Check the fields and try again.',
+    conflict: 'Someone else changed these settings. Reload before continuing.',
+    hidden: 'Hidden from public',
+    live: 'Published',
+    reload: 'Reload',
+    instructions:
+      'Complete the introduction, purpose and at least one real enabled method. Save the draft and review the preview before publishing. Changes do not affect the published version until you update it.',
+  },
   runtimeMaintenance: {
     title: 'Maintenance',
     description:

@@ -2,6 +2,10 @@
 
 Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-stack para gestionar, calificar y hacer seguimiento de series, peliculas, cortos y especiales.
 
+## Calidad y sostenibilidad (2026-10-12)
+
+Plan integral, decisiones y evidencias: [calidad y sostenibilidad](docs/plan-calidad-sostenibilidad-2026-10-12.md). Incluye reclamos de Flor, patrocinio oculto y diagnósticos de consumo/retorno. Implementación: compartir usa SeriesShareButton (texto breve y URL canónica); PosterPreview abre originales a demanda con Ant Design. /apoyar y /admin/patrocinio usan SupportSettings (borrador/snapshot, versión, RLS y backup), solo ADMIN + ADMIN_EMAILS administra; publicación desactivada por defecto, sin pagos integrados ni avisos. Ver el documento para validación local y estado de producción.
+
 ## Estado actual (2026-10-01)
 
 - Guardado de series (#110): el form de edicion guarda en UNA transaccion y por diferencias ([saveSeriesFromForm](src/lib/series-save.ts)): sin cambios no reescribe filas, y si algo falla no se aplica nada. `Series.editVersion` la sube solo un guardado de form (admin, colaborador) o el cambio de alcance; el form manda la version con la que abrio y el server responde 409 `EDIT_CONFLICT` si cambio (pestaña vieja). Sin version tambien es 409. Antes de cada guardado queda una foto JSON completa en `SeriesRevision` (quien, cuando, version reemplazada; sin FK a proposito: sobrevive al borrado de la serie). Motivo: el 29/09 se perdio contenido de "Poisoned chalice" (705) sin forma de saber que habia ni quien guardo. El cron de reproducibilidad ya no toca `updatedAt` si `geoRestrictedCore` no cambia. Migracion `20260930120000_series_revisions` aplicada en produccion el 01/10.

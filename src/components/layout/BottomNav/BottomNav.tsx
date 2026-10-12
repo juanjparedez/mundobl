@@ -38,7 +38,11 @@ interface NavEntry {
  * TODO lo que tiene el Sidebar de escritorio (misma fuente: navItems.ts),
  * mas Ajustes y Cerrar sesion. En el celular no falta ninguna seccion.
  */
-export function BottomNav() {
+export function BottomNav({
+  supportVisible = false,
+}: {
+  supportVisible?: boolean;
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const { t } = useLocale();
@@ -55,7 +59,11 @@ export function BottomNav() {
     });
   }, [pathname]);
 
-  const navContext = { loggedIn: !!session?.user, role: session?.user?.role };
+  const navContext = {
+    supportVisible,
+    loggedIn: !!session?.user,
+    role: session?.user?.role,
+  };
 
   const renderIcon = (item: NavItemDef): ReactNode => {
     const Icon = item.icon;

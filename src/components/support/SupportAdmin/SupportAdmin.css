@@ -1,0 +1,26 @@
+.support-admin {
+  display: grid;
+  gap: 20px;
+  max-width: 1000px;
+  margin: auto;
+  padding: 24px;
+}
+.support-admin__fields {
+  border: 0;
+  padding: 0;
+  min-width: 0;
+}
+.support-admin__field {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.support-admin__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 16px 0;
+}
+.support-admin .mb-panel-card {
+  margin-bottom: 16px;
+}
