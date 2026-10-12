@@ -4,7 +4,7 @@ Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-s
 
 ## Calidad y sostenibilidad (2026-10-12)
 
-Plan integral, decisiones y evidencias: [calidad y sostenibilidad](docs/plan-calidad-sostenibilidad-2026-10-12.md). Incluye reclamos de Flor, patrocinio oculto y diagnósticos de consumo/retorno. Implementación: compartir usa SeriesShareButton (texto breve y URL canónica); PosterPreview abre originales a demanda con Ant Design. /apoyar y /admin/patrocinio usan SupportSettings (borrador/snapshot, versión, RLS y backup), solo ADMIN + ADMIN_EMAILS administra; publicación desactivada por defecto, sin pagos integrados ni avisos. Ver el documento para validación local y estado de producción.
+Plan integral, decisiones y evidencias: [calidad y sostenibilidad](docs/plan-calidad-sostenibilidad-2026-10-12.md). Incluye reclamos de Flor, patrocinio oculto y diagnósticos de consumo/retorno. Implementación: compartir usa SeriesShareButton (texto breve y URL canónica); PosterPreview abre originales a demanda con Ant Design. /apoyar y /admin/patrocinio usan SupportSettings (borrador/snapshot, versión, RLS y backup), solo ADMIN + ADMIN_EMAILS administra; publicación desactivada por defecto, sin pagos integrados ni avisos. Desplegado en producción como f2f8ac1 (PR #113), con patrocinio oculto. Ver el documento para evidencias y validaciones aún pendientes.
 
 ## Estado actual (2026-10-01)
 
@@ -35,7 +35,7 @@ Plan integral, decisiones y evidencias: [calidad y sostenibilidad](docs/plan-cal
 
 | Servicio           | Detalle                                                                                                                            |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
-| **Hosting**        | Vercel (deploy automatico desde GitHub)                                                                                            |
+| **Hosting**        | Vercel (deploy manual con GitHub Actions)                                                                                            |
 | **Base de datos**  | Supabase PostgreSQL (sa-east-1, Sao Paulo)                                                                                         |
 | **Almacenamiento** | Supabase Storage (bucket `images`)                                                                                                 |
 | **Auth**           | NextAuth.js (Google OAuth)                                                                                                         |
