@@ -1,0 +1,25 @@
+.support-page {
+  display: grid;
+  gap: 24px;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+  color: var(--text-primary);
+}
+.support-page__text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  margin-bottom: 16px;
+}
+.support-page__methods {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+}
+.support-page dd {
+  margin: 0 0 12px;
+  overflow-wrap: anywhere;
+}
+.support-page dt {
+  color: var(--text-secondary);
+}

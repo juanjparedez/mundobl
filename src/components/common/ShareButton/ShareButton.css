@@ -67,3 +67,18 @@
   gap: 4px;
   font-weight: 500;
 }
+
+.share-modal__item {
+  background: var(--bg-elevated);
+}
+.share-modal__icon {
+  font-size: 20px;
+  color: var(--primary-color);
+}
+.share-modal__success {
+  color: var(--success-color);
+}
+.share-copy-fallback {
+  position: fixed;
+  opacity: 0;
+}

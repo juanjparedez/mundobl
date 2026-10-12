@@ -222,6 +222,14 @@ export const NAV_ITEMS: NavItemDef[] = [
     section: 'explore',
   },
   {
+    key: 'support',
+    path: '/apoyar',
+    icon: BankOutlined,
+    labelKey: 'qualitySupport.support',
+    access: 'public',
+    section: 'explore',
+  },
+  {
     key: 'admin',
     path: ROUTES.ADMIN,
     icon: SettingOutlined,
@@ -240,11 +248,13 @@ export const NAV_ITEMS: NavItemDef[] = [
 ];
 
 export interface NavContext {
+  supportVisible?: boolean;
   loggedIn: boolean;
   role: string | null | undefined;
 }
 
 export function canSeeNavItem(item: NavItemDef, ctx: NavContext): boolean {
+  if (item.key === 'support' && !ctx.supportVisible) return false;
   switch (item.access) {
     case 'public':
       return true;

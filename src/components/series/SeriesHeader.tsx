@@ -14,6 +14,7 @@ import {
   EyeOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
+import { PosterPreview } from '@/components/common/PosterPreview/PosterPreview';
 import Link from 'next/link';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { PosterPlaceholder } from '@/components/common/PosterPlaceholder/PosterPlaceholder';
@@ -115,16 +116,28 @@ export function SeriesHeader({
         <aside className="series-header__aside">
           {imageUrl ? (
             <div className="series-header__image">
-              <Image
-                src={posterThumb ?? imageUrl}
+              <PosterPreview
+                src={imageUrl}
                 alt={series.title}
-                width={260}
-                height={390}
-                sizes="(max-width: 640px) 110px, (max-width: 900px) 180px, 230px"
-                quality={72}
-                priority
-                unoptimized={isDirectServedImageUrl(posterThumb ?? imageUrl)}
-              />
+                openLabel={t('qualitySupport.openImage')}
+                errorLabel={t('qualitySupport.imageError')}
+                controls={{
+                  zoomIn: t('qualitySupport.zoomIn'),
+                  zoomOut: t('qualitySupport.zoomOut'),
+                  close: t('qualitySupport.close'),
+                }}
+              >
+                <Image
+                  src={posterThumb ?? imageUrl}
+                  alt={series.title}
+                  width={260}
+                  height={390}
+                  sizes="(max-width: 640px) 110px, (max-width: 900px) 180px, 230px"
+                  quality={72}
+                  priority
+                  unoptimized={isDirectServedImageUrl(posterThumb ?? imageUrl)}
+                />
+              </PosterPreview>
             </div>
           ) : (
             // Sin poster el grid igual reserva la columna: el placeholder

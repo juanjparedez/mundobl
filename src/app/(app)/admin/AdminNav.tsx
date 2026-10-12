@@ -1,6 +1,7 @@
 'use client';
 
 import { Fragment, useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { usePathname, useRouter } from 'next/navigation';
 import { Drawer } from 'antd';
 import {
@@ -13,6 +14,11 @@ import './admin-nav.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 
 export function AdminNav() {
+  const { data: session } = useSession();
+  const visibleDestinations = (group: Parameters<typeof destinationsOf>[0]) =>
+    destinationsOf(group).filter(
+      (d) => !d.supportOwnerOnly || session?.user?.canManageSupport
+    );
   const pathname = usePathname();
   const router = useRouter();
   const { t } = useLocale();
@@ -63,7 +69,7 @@ export function AdminNav() {
               {t(group.titleKey)}
             </h4>
             <ul className="admin-nav-mobile-group__list">
-              {destinationsOf(group.id).map((dest) => (
+              {visibleDestinations(group.id).map((dest) => (
                 <li key={dest.id}>
                   <button
                     type="button"
@@ -99,7 +105,7 @@ export function AdminNav() {
               // asi traducir la nav no rompe los acentos por grupo del CSS.
               data-group={group.id}
             >
-              {destinationsOf(group.id).map((dest) => (
+              {visibleDestinations(group.id).map((dest) => (
                 <button
                   key={dest.id}
                   type="button"

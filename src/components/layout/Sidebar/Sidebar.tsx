@@ -20,7 +20,11 @@ import './Sidebar.css';
 
 const { Sider } = Layout;
 
-export function Sidebar() {
+export function Sidebar({
+  supportVisible = false,
+}: {
+  supportVisible?: boolean;
+}) {
   const [collapsed, setCollapsed] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('sidebar-collapsed') === 'true';
@@ -49,7 +53,7 @@ export function Sidebar() {
   const isAdmin = role === 'ADMIN';
   const isModerator = role === 'MODERATOR';
   const isCollaborator = role === 'COLLABORATOR';
-  const navContext = { loggedIn: !!session?.user, role };
+  const navContext = { supportVisible, loggedIn: !!session?.user, role };
 
   // Misma lista que la barra inferior de movil (navItems.ts): lo que se
   // ve aca se ve alla. Los items mobileOnly ya viven en la TopBar.

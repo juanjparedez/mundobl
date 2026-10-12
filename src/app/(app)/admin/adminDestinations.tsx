@@ -54,6 +54,7 @@ export interface AdminGroup {
 }
 
 export interface AdminDestination {
+  supportOwnerOnly?: boolean;
   /** id estable — clave de orden persistido. Independiente del href. */
   id: string;
   href: string;
@@ -86,6 +87,16 @@ export const ADMIN_GROUPS: readonly AdminGroup[] = [
 ];
 
 export const ADMIN_DESTINATIONS: readonly AdminDestination[] = [
+  {
+    id: 'patrocinio',
+    href: '/admin/patrocinio',
+    groupId: 'sistema',
+    icon: <BankOutlined />,
+    labelKey: 'qualitySupport.admin',
+    shortKey: 'qualitySupport.admin',
+    inShortcuts: false,
+    supportOwnerOnly: true,
+  },
   // --- Catalogo -----------------------------------------------------
   {
     id: 'series',

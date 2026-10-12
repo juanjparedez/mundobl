@@ -22,7 +22,7 @@ import { shouldShowSeasons, getContentTypeConfig } from '@/types/content';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
 import { BackToCatalogButton } from '@/components/series/BackToCatalogButton/BackToCatalogButton';
-import { ShareButton } from '@/components/common/ShareButton/ShareButton';
+import { SeriesShareButton } from '@/components/common/SeriesShareButton/SeriesShareButton';
 import { WhereToWatch } from '@/components/common/WhereToWatch/WhereToWatch';
 import { SeriesSubscribeButton } from '@/components/series/SeriesSubscribeButton/SeriesSubscribeButton';
 import { FavoriteButton } from '@/components/series/FavoriteButton/FavoriteButton';
@@ -310,11 +310,9 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
                   className="series-quick-actions"
                   aria-label="Acciones rápidas"
                 >
-                  <ShareButton
+                  <SeriesShareButton
                     title={serie.title}
-                    text={serie.synopsis ?? undefined}
-                    path={`/series/${serie.id}`}
-                    variant="compact"
+                    path={getSeriesUrl(serie.id, serie.title)}
                   />
                   <SeriesSubscribeButton seriesId={serie.id} />
                   <FavoriteButton />

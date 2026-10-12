@@ -43,6 +43,7 @@ async function main() {
   const userId = 'backup-fixture-' + Date.now();
   const secondUserId = userId + '-moderator';
   let settingsCreated = false;
+  let supportCreated = false;
   let seriesId: number | undefined;
   let companyId: number | undefined;
   let writerId: number | undefined;
@@ -135,6 +136,26 @@ async function main() {
       `INSERT INTO "SupportMessage" (body, "threadId", "userId") VALUES ('Mensaje privado de prueba', $1, $2)`,
       [thread.rows[0].id, userId]
     );
+    supportCreated = !!(
+      await from.query(
+        `INSERT INTO "SupportSettings" (id, draft, published, enabled, version, "updatedBy", "updatedAt") VALUES (1, $1, $2, false, 3, $3, now()) ON CONFLICT (id) DO NOTHING RETURNING id`,
+        [
+          {
+            intro: 'Borrador privado',
+            purpose: 'Infra',
+            thanks: 'Gracias',
+            methods: [],
+          },
+          {
+            intro: 'Publicado anterior',
+            purpose: 'Infra',
+            thanks: 'Gracias',
+            methods: [],
+          },
+          secondUserId,
+        ]
+      )
+    ).rowCount;
     run('scripts/backup-db.ts', source);
     const file = path.join(
       output,
@@ -173,6 +194,8 @@ async function main() {
     await from.query('DELETE FROM "CommunityReport" WHERE id=$1', [
       userId + '-report',
     ]);
+    if (supportCreated)
+      await from.query('DELETE FROM "SupportSettings" WHERE id=1');
     if (settingsCreated)
       await from.query('DELETE FROM "CommunitySettings" WHERE id=1');
     if (seriesId)
