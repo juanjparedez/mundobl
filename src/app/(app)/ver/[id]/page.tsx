@@ -1,3 +1,7 @@
+import { ContentGate } from '@/components/content/ContentGate/ContentGate';
+import { ContentNotice } from '@/components/content/ContentNotice/ContentNotice';
+import { hasContentConsent } from '@/lib/content-consent';
+import { adultMetadata } from '@/lib/content-metadata';
 import { getPublicWriterCredits } from '@/lib/database';
 import { WriterCredits } from '@/components/series/WriterCredits/WriterCredits';
 import { loadLocaleMessages } from '@/i18n/messages';
@@ -27,17 +31,9 @@ interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-// Igual que /series/[id]: el contenido (embeds de los episodios) solo cambia
-// cuando lo edita un admin/colaborador, y esas rutas ya invalidan esta ficha
-// por URL. A 120s, las ~650 paginas se regeneraban cada 2 minutos mientras
-// hubiera crawl — por lejos el mayor generador de ISR writes del proyecto.
-export const revalidate = 604800;
-// Sin generateStaticParams, Next renderiza esta ruta en cada visita aunque
-// tenga revalidate. Con la lista vacia, la primera visita la genera y las
-// siguientes salen de la cache hasta el proximo revalidate.
-export function generateStaticParams(): { id: string }[] {
-  return [];
-}
+// Consent is request-specific, including after a previously public title is reclassified.
+// Full-page ISR cannot safely switch to reading cookies during regeneration.
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({
   params,
@@ -51,6 +47,7 @@ export async function generateMetadata({
     !serie.seasons.some((season) => season.episodes.some(isWatchableEpisode))
   )
     notFound();
+  if (serie.contentRating === 'ADULT18') return adultMetadata();
   const labels = (await loadLocaleMessages('es')).contentMetadata;
 
   const origTitle =
@@ -96,6 +93,9 @@ export default async function VerSeriePage({ params }: PageProps) {
   const serie = await getWatchableSeriesByIdCached(seriesId);
   if (!serie) notFound();
 
+  if (serie.contentRating === 'ADULT18' && !(await hasContentConsent()))
+    return <ContentGate warnings={serie.contentWarnings} />;
+
   const seasons = serie.seasons
     .map((s) => ({
       id: s.id,
@@ -126,6 +126,10 @@ export default async function VerSeriePage({ params }: PageProps) {
 
   return (
     <>
+      <ContentNotice
+        rating={serie.contentRating}
+        warnings={serie.contentWarnings}
+      />
       <JsonLd<TVSeries>
         data={{
           '@context': 'https://schema.org',

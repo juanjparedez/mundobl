@@ -54,6 +54,7 @@ export interface AdminGroup {
 }
 
 export interface AdminDestination {
+  adminOnly?: boolean;
   supportOwnerOnly?: boolean;
   /** id estable — clave de orden persistido. Independiente del href. */
   id: string;
@@ -105,6 +106,16 @@ export const ADMIN_DESTINATIONS: readonly AdminDestination[] = [
     icon: <AppstoreOutlined />,
     labelKey: 'adminNav.series',
     shortKey: 'adminNav.seriesShort',
+  },
+  {
+    id: 'pilot',
+    href: '/admin/piloto',
+    groupId: 'sistema',
+    icon: <BarChartOutlined />,
+    labelKey: 'editorial.pilot',
+    shortKey: 'editorial.pilotNotice',
+    adminOnly: true,
+    inShortcuts: false,
   },
   {
     id: 'import',

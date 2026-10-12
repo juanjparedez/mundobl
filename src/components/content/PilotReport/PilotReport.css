@@ -1,0 +1,9 @@
+.pilot-report {
+  max-width: 60rem;
+  margin: 2rem auto;
+  padding: 1rem;
+}
+.pilot-report p {
+  color: var(--text-secondary);
+  line-height: 1.7;
+}

@@ -1,3 +1,4 @@
+import { ClassificationLink } from '@/components/content/ClassificationLink/ClassificationLink';
 import { notFound, redirect } from 'next/navigation';
 import { auth } from '@/lib/auth';
 import { getSeriesByIdAdmin } from '@/lib/database';
@@ -92,6 +93,7 @@ export default async function EditSeriesPage({ params }: EditPageProps) {
 
   return (
     <>
+      {session.user.role === 'ADMIN' && <ClassificationLink id={serie.id} />}
       <SeriesForm mode="edit" initialData={formData} userId={session.user.id} />
     </>
   );

@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { logAction } from '@/lib/access-log';
+import {
+  assertTrackingCanBeRemoved,
+  TrackingPreservationError,
+} from '@/lib/tracking-preservation';
+import { loadLocaleMessages } from '@/i18n/messages';
 
 interface RouteContext {
   params: Promise<{ id: string }>;
@@ -110,6 +115,17 @@ export async function POST(request: NextRequest, context: RouteContext) {
 
     const result = await prisma.$transaction(
       async (tx) => {
+        await assertTrackingCanBeRemoved(tx, userEmbedId);
+        // A reviewed source requires a human reconciliation, never silent deletion.
+        const classification = await tx.series.findUniqueOrThrow({
+          where: { id: userEmbedId },
+          select: { contentRating: true, contentReviewedAt: true },
+        });
+        if (
+          classification.contentRating !== 'UNREVIEWED' ||
+          classification.contentReviewedAt !== null
+        )
+          throw new TrackingPreservationError();
         let moved = 0;
         let skipped = 0;
 
@@ -208,6 +224,14 @@ export async function POST(request: NextRequest, context: RouteContext) {
       skippedEpisodeCount: result.skipped,
     });
   } catch (error) {
+    if (error instanceof TrackingPreservationError)
+      return NextResponse.json(
+        {
+          error: (await loadLocaleMessages('es')).editorial.preserveTracking,
+          code: 'TRACKING_PRESERVATION_REQUIRED',
+        },
+        { status: 409 }
+      );
     console.error('Error al linkear serie:', error);
     return NextResponse.json(
       {

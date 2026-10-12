@@ -61,7 +61,7 @@ export default async function VerPageRoute() {
       type: s.type,
       imageUrl,
       imageThumbUrl,
-      synopsis: s.synopsis,
+      synopsis: s.contentRating === 'ADULT18' ? null : s.synopsis,
       catalogScope: s.catalogScope,
       origin: s.origin,
       // Aviso "puede estar bloqueada en tu region" ANTES de que hagan

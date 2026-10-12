@@ -1,3 +1,7 @@
+import { ContentGate } from '@/components/content/ContentGate/ContentGate';
+import { ContentNotice } from '@/components/content/ContentNotice/ContentNotice';
+import { hasContentConsent } from '@/lib/content-consent';
+import { adultMetadata } from '@/lib/content-metadata';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
@@ -25,6 +29,7 @@ export async function generateMetadata({
   const serie = await getSeriesById(serieId);
   if (!serie) return {};
 
+  if (serie.contentRating === 'ADULT18') return adultMetadata();
   const typeLabel =
     ContentTypeConfig[serie.type as ContentTypeValue]?.label ?? 'Serie';
   const year = serie.year ? ` (${serie.year})` : '';
@@ -69,6 +74,9 @@ export default async function SerieDetailPage({
     notFound();
   }
 
+  if (serieRaw.contentRating === 'ADULT18' && !(await hasContentConsent()))
+    return <ContentGate warnings={serieRaw.contentWarnings} />;
+
   const role = session?.user?.role;
   const isAdminOrMod = role === 'ADMIN' || role === 'MODERATOR';
 
@@ -83,6 +91,10 @@ export default async function SerieDetailPage({
 
   return (
     <>
+      <ContentNotice
+        rating={serie.contentRating}
+        warnings={serie.contentWarnings}
+      />
       <JsonLd<TVSeries>
         data={{
           '@context': 'https://schema.org',

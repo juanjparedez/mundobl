@@ -17,6 +17,8 @@
 /** Campos sensibles + su flag. Deliberadamente laxo para aceptar cualquier
  *  shape de serie hidratada (page, dashboard, admin) sin acoplarse a Prisma. */
 export interface PrivateNotesFields {
+  contentReviewedBy?: string | null;
+  contentRatingSource?: string | null;
   review?: string | null;
   observations?: string | null;
   notesPrivate?: boolean | null;
@@ -33,8 +35,13 @@ export function stripPrivateNotes<T extends PrivateNotesFields>(
   serie: T,
   isAdmin: boolean
 ): T {
-  if (isAdmin || !serie.notesPrivate) return serie;
-  return { ...serie, review: null, observations: null };
+  if (isAdmin) return serie;
+  return {
+    ...serie,
+    ...('contentReviewedBy' in serie ? { contentReviewedBy: null } : {}),
+    ...('contentRatingSource' in serie ? { contentRatingSource: null } : {}),
+    ...(serie.notesPrivate ? { review: null, observations: null } : {}),
+  };
 }
 
 /** Variante para listados. Mismo criterio, aplicado item por item. */

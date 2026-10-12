@@ -10,6 +10,50 @@
 import type { TranslationShape } from '../messages';
 
 const de = {
+  welcomeEmail: {
+  "title": "Willkommen bei MundoBL",
+  "intro": "Ein von Menschen kuratierter Katalog mit BL-, GL- und anderen asiatischen Dramas.",
+  "library": "Organisiere deine Bibliothek, markiere Folgen und Teile und passe Sehstatus und Sehdaten an.",
+  "diary": "Sieh deinen Verlauf an, schreibe private Tagebuchnotizen und exportiere eine Sicherung aus deinem Profil.",
+  "explore": "Finde offizielle Plattformen, Rezensionen, Gespräche und ein Kulturglossar. Die Verfügbarkeit hängt von Plattform und Region ab.",
+  "consent": "E-Mail-Ankündigungen musst du in den Einstellungen aktivieren. Ein neues Konto meldet dich nicht für Kampagnen an.",
+  "action": "Meine Bibliothek öffnen",
+  "reason": "Du erhältst diese E-Mail, weil du gerade dein MundoBL-Konto erstellt hast."
+},
+  editorial: {
+    preserveTracking: "Dieser Vorgang erfordert einen Abgleich des Sehfortschritts oder der redaktionellen Einstufung. Es wurden keine Daten gelöscht.",
+    "adultTitle": "Inhalte ab 18 Jahren",
+    "adultNotice": "Bestätige, dass du mindestens 18 bist. Deine Auswahl bleibt 30 Tage in diesem Browser gespeichert.",
+    "scopeNotice": "Der Hinweis gilt für redaktionell eingestufte Werke. Titel und Poster bleiben sichtbar; ungeprüfte Werke gelten nicht als für alle Altersgruppen geeignet.",
+    "accept": "Ich bin mindestens 18 und möchte fortfahren",
+    "hide": "Erneut um Bestätigung bitten",
+    "back": "Zurück zum Katalog",
+    "preferences": "Inhaltseinstellungen",
+    "error": "Speichern fehlgeschlagen. Bitte erneut versuchen.",
+    "saved": "Einstellung gespeichert.",
+    "conflict": "Der Eintrag wurde geändert. Lade die Seite zum Vergleich vor dem Speichern neu.",
+    "classification": "Redaktionelle Einstufung",
+    "authority": "Die Redaktion entscheidet. Importe ändern diese Entscheidung nicht. Wir bewerten Inhalte, niemals die Orientierung der Figuren.",
+    "warnings": "Inhaltshinweise",
+    "source": "Quelle oder redaktionelle Begründung",
+    "save": "Einstufung speichern",
+    "UNREVIEWED": "Ungeprüft",
+    "GENERAL": "Keine Beschränkung ab 18 festgestellt",
+    "ADULT18": "Ab 18 Jahren",
+    "SEX": "Sexuelle Inhalte",
+    "NUDITY": "Nacktheit",
+    "VIOLENCE": "Gewalt",
+    "ABUSE": "Missbrauch",
+    "SELF_HARM": "Selbstverletzung",
+    "pilot": "GagaOOLala-Pilotprojekt",
+    "pilotNotice": "Erfasste Klicks der letzten 60 Tage (UTC), keine einzelnen Personen oder Abos. Angemeldete Teammitglieder sind ausgeschlossen; Blockierungen, Wiederholungen und Bots können die Werte beeinflussen.",
+    "day": "Tag (UTC)",
+    "series": "Serienseiten",
+    "platforms": "Plattformübersicht",
+    "clicks": "Klicks",
+    "privacy": "Das Pilotprojekt zählt tägliche Klicks je Bereich ohne Konten, IP-Adressen oder Sehverlauf. Die 18+-Einstellung nutzt 30 Tage lang ein signiertes Cookie und prüft keine Identität."
+},
+
   platformGuide: {
     badge: 'Offizielle Quellen',
     title: 'Plattformen und Abos',

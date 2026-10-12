@@ -10,6 +10,50 @@
 import type { TranslationShape } from '../messages';
 
 const zhCN = {
+  welcomeEmail: {
+  "title": "欢迎来到 MundoBL",
+  "intro": "由人工精选的 BL、GL 及其他亚洲剧集目录。",
+  "library": "整理片库，标记已看的集数和分段，并调整观看状态和日期。",
+  "diary": "查看历史记录，在日记中写下私人笔记，并从个人资料导出备份。",
+  "explore": "查找官方平台、评论、讨论和文化词汇表。可观看内容因平台和地区而异。",
+  "consent": "只有在偏好设置中开启后才会收到公告邮件。创建账户不会自动订阅推广邮件。",
+  "action": "打开我的片库",
+  "reason": "您刚刚创建了 MundoBL 账户，因此收到这封邮件。"
+},
+  editorial: {
+    preserveTracking: "此操作需要协调观看记录或编辑分级。未删除任何数据。",
+    "adultTitle": "18岁以上内容",
+    "adultNotice": "请确认你已满18岁以打开此页面。此浏览器会记住你的选择30天。",
+    "scopeNotice": "此提示适用于编辑团队已分类的作品。标题和海报仍可见，未审核作品不视为适合所有年龄。",
+    "accept": "我已满18岁并希望继续",
+    "hide": "重新要求确认",
+    "back": "返回目录",
+    "preferences": "内容偏好",
+    "error": "保存失败，请重试。",
+    "saved": "偏好已保存。",
+    "conflict": "条目已更改，请刷新比较后再保存。",
+    "classification": "编辑分级",
+    "authority": "编辑团队拥有最终决定权，导入程序不能更改。我们按内容分级，而非角色的性取向。",
+    "warnings": "内容提示",
+    "source": "来源或编辑依据",
+    "save": "保存分级",
+    "UNREVIEWED": "未审核",
+    "GENERAL": "未发现18岁以上限制",
+    "ADULT18": "18岁以上",
+    "SEX": "性内容",
+    "NUDITY": "裸露",
+    "VIOLENCE": "暴力",
+    "ABUSE": "虐待",
+    "SELF_HARM": "自伤",
+    "pilot": "GagaOOLala试点",
+    "pilotNotice": "最近60天（UTC）的点击数，不代表独立用户或订阅。已登录的工作人员不计入；拦截、重复点击和机器人可能影响总数。",
+    "day": "日期（UTC）",
+    "series": "作品页面",
+    "platforms": "平台指南",
+    "clicks": "点击",
+    "privacy": "仅按日期和栏目统计点击，不保存账户、IP或观看历史。18岁以上偏好用签名Cookie保存30天，不核验身份。"
+},
+
   platformGuide: {
     badge: '官方来源',
     title: '平台与订阅',

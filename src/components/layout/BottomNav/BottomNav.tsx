@@ -227,7 +227,7 @@ export function BottomNav({
       <Drawer
         title={t('bottomNav.more')}
         placement="bottom"
-        height="82vh"
+        size="82vh"
         open={isMoreOpen}
         onClose={() => setIsMoreOpen(false)}
         className="bottom-nav-more-drawer"
