@@ -25,14 +25,20 @@ import {
 // TODOS los usuarios, en un endpoint que cualquiera podia pegarle sin
 // sesion. Ahora exige ADMIN/MODERATOR (como el POST de abajo) y selecciona
 // solo lo que el picker usa.
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const authResult = await requireRole(['ADMIN', 'MODERATOR']);
     if (!authResult.authorized) return authResult.response;
 
+    const title = request.nextUrl.searchParams.get('title')?.trim();
     const series = await prisma.series.findMany({
-      where: { origin: 'CURATED' },
-      select: { id: true, title: true },
+      where: {
+        origin: 'CURATED',
+        ...(title
+          ? { title: { equals: title, mode: 'insensitive' as const } }
+          : {}),
+      },
+      select: { id: true, title: true, catalogScope: true },
       orderBy: { title: 'asc' },
     });
 
@@ -92,13 +98,15 @@ export async function POST(request: NextRequest) {
           origin: 'CURATED',
           title: { equals: title.trim(), mode: 'insensitive' },
         },
-        select: { id: true, title: true },
+        select: { id: true, title: true, catalogScope: true },
       });
       if (existing) {
         return NextResponse.json(
           {
             error: `Ya existe una serie "${existing.title}" en el catálogo`,
             existingSeriesId: existing.id,
+            code: 'SERIES_EXISTS',
+            existingSeries: existing,
           },
           { status: 409 }
         );

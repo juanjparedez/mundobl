@@ -537,7 +537,8 @@ export async function saveSeriesFromForm(
   seriesId: number,
   body: SeriesFormBody,
   image: ResolvedSeriesImage,
-  userId: string | null
+  userId: string | null,
+  append?: (tx: Prisma.TransactionClient) => Promise<void>
 ): Promise<SeriesFormSaveResult> {
   const expectedEditVersion = parseExpectedEditVersion(body.editVersion);
   if (expectedEditVersion === null) throw new SeriesEditConflictError();
@@ -702,6 +703,7 @@ export async function saveSeriesFromForm(
       const updated = await tx.series.findUniqueOrThrow({
         where: { id: seriesId },
       });
+      await append?.(tx);
       return { updated, newSeasons };
     },
     // Margen para series con muchas temporadas: el default de 5 s quedaba

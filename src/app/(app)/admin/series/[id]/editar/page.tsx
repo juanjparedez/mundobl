@@ -1,4 +1,5 @@
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
+import { auth } from '@/lib/auth';
 import { getSeriesByIdAdmin } from '@/lib/database';
 import { SeriesForm } from '@/components/admin/SeriesForm';
 
@@ -11,6 +12,8 @@ interface EditPageProps {
 export const dynamic = 'force-dynamic';
 
 export default async function EditSeriesPage({ params }: EditPageProps) {
+  const session = await auth();
+  if (!session?.user?.id) redirect('/');
   const resolvedParams = await params;
   const seriesId = parseInt(resolvedParams.id, 10);
 
@@ -89,7 +92,7 @@ export default async function EditSeriesPage({ params }: EditPageProps) {
 
   return (
     <>
-      <SeriesForm mode="edit" initialData={formData} />
+      <SeriesForm mode="edit" initialData={formData} userId={session.user.id} />
     </>
   );
 }
