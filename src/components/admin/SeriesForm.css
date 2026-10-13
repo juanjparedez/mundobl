@@ -211,8 +211,8 @@
   }
 
   .series-form__season-row .ant-form-item {
-    flex: 1 1 calc(33% - 8px) !important;
-    min-width: 80px !important;
+    flex: 1 1 100% !important;
+    min-width: 0 !important;
   }
 
   /* Action buttons full width */
@@ -290,4 +290,26 @@
   background-color: var(--bg-elevated);
   background-size: cover;
   overflow: hidden;
+}
+
+@media (max-width: 600px) {
+  .series-form .ant-form-item-label > label {
+    font-size: var(--font-size-base);
+  }
+  .series-form .ant-input,
+  .series-form .ant-input-number-input,
+  .series-form .ant-select {
+    font-size: 16px;
+  }
+  .series-form .ant-card-head-title {
+    white-space: normal;
+  }
+  .series-form .ant-btn {
+    min-height: 44px;
+    height: auto;
+    white-space: normal;
+  }
+  .series-form .image-position-picker-row {
+    flex-wrap: wrap;
+  }
 }

@@ -167,9 +167,10 @@ export function HoverPreviewCard({
           </Button>
         </div>
 
-        {data.synopsis?.trim() && (
-          <p className="mb-hp__synopsis">{data.synopsis}</p>
-        )}
+        {data.synopsisContent ??
+          (data.synopsis?.trim() && (
+            <p className="mb-hp__synopsis">{data.synopsis}</p>
+          ))}
 
         {data.chipGroups?.[0]?.chips.length ? (
           <div className="mb-hp__chips">

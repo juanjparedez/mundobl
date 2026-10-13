@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Alert, Modal, Table } from 'antd';
+import { Alert, Checkbox, Modal, Spin } from 'antd';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import {
   CURATION_FIELDS,
@@ -50,6 +50,7 @@ export function SeriesCurationDialog({
         return response.json();
       })
       .then((data) => {
+        if (controller.signal.aborted) return;
         setSnapshot(data);
         // Blank/default values do not get precedence without an explicit choice.
         setSelected(
@@ -86,12 +87,17 @@ export function SeriesCurationDialog({
   return (
     <Modal
       open
+      className="series-curation-dialog"
       title={t('seriesForm.compareTitle')}
       width={960}
       onCancel={onCancel}
       okText={t('seriesForm.curateSave')}
       cancelText={t('seriesForm.cancelButton')}
       confirmLoading={saving}
+      closable={!saving}
+      mask={{ closable: !saving }}
+      keyboard={!saving}
+      cancelButtonProps={{ disabled: saving }}
       okButtonProps={{ disabled: !snapshot || error }}
       onOk={async () => {
         if (!snapshot) return;
@@ -110,39 +116,58 @@ export function SeriesCurationDialog({
         description={t('seriesForm.comparePreserve')}
       />
       {error && <Alert type="error" title={t('seriesForm.saveError')} />}
-      <Table
-        className="series-curation-comparison"
-        pagination={false}
-        loading={!snapshot && !error}
-        dataSource={rows}
-        rowSelection={{
-          selectedRowKeys: selected,
-          onChange: (keys) => setSelected(keys as CurationField[]),
-        }}
-        columns={[
-          {
-            title: t('seriesForm.compareField'),
-            dataIndex: 'label',
-            width: '20%',
-          },
-          {
-            title: t('seriesForm.compareCurrent'),
-            dataIndex: 'current',
-            width: '40%',
-            render: (value) => (
-              <div className="series-curation-value">{display(value)}</div>
-            ),
-          },
-          {
-            title: t('seriesForm.compareYours'),
-            dataIndex: 'next',
-            width: '40%',
-            render: (value) => (
-              <div className="series-curation-value">{display(value)}</div>
-            ),
-          },
-        ]}
-      />
+      <Spin spinning={!snapshot && !error}>
+        <div className="series-curation-comparison">
+          <Checkbox
+            disabled={!snapshot || saving || error}
+            checked={
+              rows.length > 0 && rows.every((row) => selected.includes(row.key))
+            }
+            indeterminate={
+              rows.some((row) => selected.includes(row.key)) &&
+              !rows.every((row) => selected.includes(row.key))
+            }
+            onChange={(event) =>
+              setSelected(
+                event.target.checked ? rows.map((row) => row.key) : []
+              )
+            }
+          >
+            {t('seriesForm.compareSelectAll')}
+          </Checkbox>
+          {rows.map((row) => (
+            <section
+              className="series-curation-field"
+              key={row.key}
+              data-selected={selected.includes(row.key)}
+            >
+              <Checkbox
+                checked={selected.includes(row.key)}
+                disabled={!snapshot || saving || error}
+                onChange={(event) =>
+                  setSelected((fields) =>
+                    event.target.checked
+                      ? [...fields, row.key]
+                      : fields.filter((field) => field !== row.key)
+                  )
+                }
+              >
+                {row.label}
+              </Checkbox>
+              <dl className="series-curation-values">
+                <div>
+                  <dt>{t('seriesForm.compareCurrent')}</dt>
+                  <dd>{display(row.current)}</dd>
+                </div>
+                <div>
+                  <dt>{t('seriesForm.compareYours')}</dt>
+                  <dd>{display(row.next)}</dd>
+                </div>
+              </dl>
+            </section>
+          ))}
+        </div>
+      </Spin>
     </Modal>
   );
 }

@@ -37,6 +37,7 @@ jobs:
         run: |
           set -e
           npx tsx scripts/test-build-metadata.ts
+          npx tsx scripts/test-catalog-payload.ts
           npx tsx scripts/test-latest-novedades.ts
           npx tsx scripts/test-navigation.ts
           npx tsx scripts/audit-locale-coverage.ts
@@ -76,6 +77,7 @@ jobs:
           GOOGLE_CLIENT_ID: local-test-client
           GOOGLE_CLIENT_SECRET: local-test-secret
           SERIES_FORM_TEST_BASE_URL: http://127.0.0.1:3223
+          TEST_ISR: 'true'
         run: |
           npm run start -- --hostname 127.0.0.1 --port 3223 > /tmp/community-next.log 2>&1 &
           server_pid=$!
@@ -86,3 +88,4 @@ jobs:
           done
           node --import tsx scripts/test-community-app.mjs || { cat /tmp/community-next.log; exit 1; }
           node scripts/test-series-curation-ui.mjs || { cat /tmp/community-next.log; exit 1; }
+          node scripts/test-catalog-preview-ui.mjs || { cat /tmp/community-next.log; exit 1; }

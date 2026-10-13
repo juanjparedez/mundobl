@@ -1931,6 +1931,7 @@ const ko = {
     "openExisting": "기존 작품 정보 열기",
     "compareTitle": "데이터 비교",
     "curateSave": "기존 작품 정보에 저장",
+    "compareSelectAll": "모든 변경 사항 선택",
     "compareHelp": "입력 내용으로 바꿀 항목을 선택하세요. 나머지는 현재 값을 유지해요.",
     "comparePreserve": "큐레이션 카탈로그에 추가해요. 에피소드, 링크, 시청 기록은 유지돼요. 새 시즌, 링크, 콘텐츠는 추가돼요.",
     "compareField": "항목",
@@ -2054,6 +2055,7 @@ const ko = {
     "watchHere": "여기서 시청"
   },
   "quickPreview": {
+    "loadError": "줄거리를 불러오지 못했습니다.",
     "open": "빠른 보기",
     "close": "닫기",
     "synopsis": "줄거리",

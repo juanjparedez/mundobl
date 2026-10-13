@@ -1,0 +1,15 @@
+.catalog-synopsis {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.catalog-synopsis p {
+  margin: 0;
+}
+.mb-hp .catalog-synopsis > p {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

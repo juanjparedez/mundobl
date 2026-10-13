@@ -8,6 +8,13 @@ Todas las versiones notables del proyecto se documentan aqui.
 > (`ChangelogItem`, `/admin/changelog`) quedo como fallback solo si este archivo
 > esta vacio.
 
+## 2026-10-13 — Catálogo más liviano y comparación cómoda en el celu
+
+### Fixes
+
+- **Comparar una serie existente desde el celu**: los datos de la ficha y los de tu carga aparecen uno debajo del otro, con selección clara y botones amplios. Se mantienen legibles en modo oscuro y se conservan episodios, enlaces y seguimiento al guardar.
+- **Menos datos al abrir el catálogo**: la sinopsis se carga al abrir la vista rápida y las etiquetas compartidas viajan una sola vez. Los filtros, la búsqueda y las distintas vistas siguen disponibles; si falla la sinopsis, podés reintentar.
+
 ## 2026-10-12 — Navegación por secciones y mejoras para explorar y compartir
 
 ### Features
