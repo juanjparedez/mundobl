@@ -794,7 +794,11 @@ const ko = {
   "navSections": {
     "watch": "여기서 시청",
     "follow": "팔로우",
-    "explore": "탐색"
+    "explore": "탐색",
+    "people": "인물 및 제작사",
+    "community": "커뮤니티",
+    "help": "도움말 및 프로젝트",
+    "manage": "관리"
   },
   "profile": {
     "loginRequired": "프로필을 보려면 로그인하세요",
@@ -2946,7 +2950,7 @@ const ko = {
     "pageSubtitle": "Boys Love 및 Girls Love 세계의 최신 뉴스를 커뮤니티를 위해 선별했습니다.",
     "searchPlaceholder": "뉴스 검색...",
     "searchButton": "검색",
-    "searchResultsLabel": "<strong>\"{activeSearch}\"</strong> 검색 결과 · {total}개 뉴스",
+    "searchResultsLabel": "“{activeSearch}” 검색 결과: {total}개",
     "emptyDescription": "아직 뉴스가 없습니다",
     "aiBadge": "AI",
     "viewOriginalSource": "원본 소스 보기",

@@ -1,8 +1,10 @@
 'use client';
 
 import { startTransition, useState, useEffect } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
-import { Avatar, Badge, Layout, Menu } from 'antd';
+import { usePathname } from 'next/navigation';
+import { Avatar, Badge, Drawer, Layout, Menu } from 'antd';
+import Link from 'next/link';
+import { NavigationSections } from '../NavigationSections/NavigationSections';
 import {
   AppstoreOutlined,
   SettingOutlined,
@@ -11,11 +13,15 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
-import { ROUTES } from '@/constants/navigation';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { useHasNovedades } from '@/hooks/useHasNovedades';
 import { SettingsPanel } from '../SettingsPanel/SettingsPanel';
-import { NAV_ITEMS, NAV_SECTIONS, canSeeNavItem } from '../navItems';
+import {
+  NAV_ITEMS,
+  NAV_SECTIONS,
+  canSeeNavItem,
+  isNavItemActive,
+} from '../navItems';
 import './Sidebar.css';
 
 const { Sider } = Layout;
@@ -25,19 +31,26 @@ export function Sidebar({
 }: {
   supportVisible?: boolean;
 }) {
-  const [collapsed, setCollapsed] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('sidebar-collapsed') === 'true';
-    }
-    return false;
-  });
-
+  const [collapsed, setCollapsed] = useState(false);
   useEffect(() => {
-    localStorage.setItem('sidebar-collapsed', String(collapsed));
-  }, [collapsed]);
+    try {
+      const saved = localStorage.getItem('sidebar-collapsed') === 'true';
+      startTransition(() => setCollapsed(saved));
+    } catch {
+      /* Storage is optional. */
+    }
+  }, []);
+  const changeCollapsed = (value: boolean) => {
+    setCollapsed(value);
+    try {
+      localStorage.setItem('sidebar-collapsed', String(value));
+    } catch {
+      /* Keep the preference for this render session. */
+    }
+  };
 
   const pathname = usePathname();
-  const router = useRouter();
+  const [openSection, setOpenSection] = useState<string | null>(null);
   const { t } = useLocale();
   const { data: session } = useSession();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -46,6 +59,7 @@ export function Sidebar({
   useEffect(() => {
     startTransition(() => {
       setIsSettingsOpen(false);
+      setOpenSection(null);
     });
   }, [pathname]);
 
@@ -60,50 +74,94 @@ export function Sidebar({
   const visibleItems = NAV_ITEMS.filter(
     (item) => !item.mobileOnly && canSeeNavItem(item, navContext)
   );
-  const menuItems = NAV_SECTIONS.map((section) => ({
-    type: 'group' as const,
-    key: `section-${section.key}`,
+  const renderIcon = (item: (typeof NAV_ITEMS)[number]) => {
+    const Icon = item.icon;
+    return item.badge === 'novedades' ? (
+      <Badge dot={hasNovedades} offset={[2, 2]}>
+        <Icon />
+      </Badge>
+    ) : (
+      <Icon />
+    );
+  };
+  const sections = NAV_SECTIONS.map((section) => ({
+    key: section.key,
     label: t(section.labelKey),
-    children: visibleItems
-      .filter((item) => item.section === section.key)
-      .map((item) => {
-        const Icon = item.icon;
-        const icon =
-          item.badge === 'novedades' ? (
-            <Badge dot={hasNovedades} offset={[2, 2]}>
-              <Icon />
-            </Badge>
-          ) : (
+    entries: visibleItems
+      .filter((item) => item.section === section.key && !item.primary)
+      .map((item) => ({
+        key: item.key,
+        path: item.path,
+        label: t(item.labelKey),
+        icon: renderIcon(item),
+        active: isNavItemActive(item, pathname),
+      })),
+  })).filter((section) => section.entries.length > 0);
+  const menuItems = [
+    ...visibleItems
+      .filter((item) => item.primary)
+      .map((item) => ({
+        key: item.path,
+        icon: renderIcon(item),
+        label: (
+          <Link
+            href={item.path}
+            prefetch={false}
+            aria-current={isNavItemActive(item, pathname) ? 'page' : undefined}
+          >
+            {t(item.labelKey)}
+          </Link>
+        ),
+      })),
+    { type: 'divider' as const },
+    ...sections.map((section) => {
+      const Icon = NAV_SECTIONS.find(
+        (definition) => definition.key === section.key
+      )!.icon;
+      return {
+        key: section.key,
+        title: section.label,
+        icon: (
+          <Badge
+            dot={
+              hasNovedades &&
+              section.entries.some((entry) => entry.key === 'novedades')
+            }
+          >
             <Icon />
-          );
-        return {
-          key: item.path,
-          icon,
-          label: t(item.labelKey),
-          onClick: () => router.push(item.path),
-        };
-      }),
-  })).filter((group) => group.children.length > 0);
-
-  const selectedKey = pathname || ROUTES.CATALOGO;
+          </Badge>
+        ),
+        label: <span aria-haspopup="dialog">{section.label}</span>,
+        onClick: () => setOpenSection(section.key),
+      };
+    }),
+  ];
+  const activeItem = visibleItems.find((item) =>
+    isNavItemActive(item, pathname)
+  );
+  const selectedKey = activeItem
+    ? activeItem.primary
+      ? activeItem.path
+      : activeItem.section
+    : '';
 
   return (
     <Sider
       collapsible
       collapsed={collapsed}
-      onCollapse={setCollapsed}
+      onCollapse={changeCollapsed}
       className="app-sidebar"
       width={250}
       trigger={null}
     >
       <div className="sidebar-header">
         <div className="sidebar-logo">
-          <AppstoreOutlined style={{ fontSize: '22px' }} />
+          <AppstoreOutlined className="sidebar-logo-icon" />
           {!collapsed && <span className="sidebar-logo-text">MundoBL</span>}
         </div>
         <button
           className="sidebar-collapse-btn"
-          onClick={() => setCollapsed(!collapsed)}
+          onClick={() => changeCollapsed(!collapsed)}
           aria-label={
             collapsed ? t('sidebar.expandMenu') : t('sidebar.collapseMenu')
           }
@@ -114,6 +172,22 @@ export function Sidebar({
 
       <Menu mode="inline" selectedKeys={[selectedKey]} items={menuItems} />
 
+      <Drawer
+        title={t('bottomNav.mainNavigation')}
+        placement="left"
+        size={380}
+        open={openSection !== null}
+        onClose={() => setOpenSection(null)}
+        destroyOnHidden
+        className="navigation-drawer"
+      >
+        <NavigationSections
+          key={openSection}
+          sections={sections}
+          initialSection={openSection ?? undefined}
+          onNavigate={() => setOpenSection(null)}
+        />
+      </Drawer>
       <div className="sidebar-footer">
         {session?.user ? (
           <button

@@ -1,6 +1,9 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { updateNavigationUrl } from '@/lib/navigation-history';
+import { useHistoryScroll } from '@/hooks/useHistoryScroll';
+
+import { startTransition, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -118,6 +121,39 @@ export function VerPage({ items }: VerPageProps) {
   const [platform, setPlatform] = useState<string | null>(null);
   const [onlyCurated, setOnlyCurated] = useState(false);
   const [viewMode, setViewMode] = useState<'streaming' | 'grid'>('streaming');
+  const [filtersReady, setFiltersReady] = useState(false);
+  useEffect(() => {
+    const restore = () => {
+      if (window.location.pathname !== '/ver') return;
+      const params = new URLSearchParams(window.location.search);
+      startTransition(() => {
+        setSearch(params.get('q') ?? '');
+        setCountry(params.get('country'));
+        setPlatform(params.get('platform'));
+        setOnlyCurated(params.get('curated') === '1');
+        setViewMode(params.get('view') === 'grid' ? 'grid' : 'streaming');
+        setFiltersReady(true);
+      });
+    };
+    restore();
+    window.addEventListener('popstate', restore);
+    return () => window.removeEventListener('popstate', restore);
+  }, []);
+  const filterQuery = new URLSearchParams();
+  if (search) filterQuery.set('q', search);
+  if (country) filterQuery.set('country', country);
+  if (platform) filterQuery.set('platform', platform);
+  if (onlyCurated) filterQuery.set('curated', '1');
+  if (viewMode === 'grid') filterQuery.set('view', 'grid');
+  const query = filterQuery.toString();
+  useEffect(() => {
+    if (!filtersReady || window.location.pathname !== '/ver') return;
+    const next = query ? '/ver?' + query : '/ver';
+    if (next !== window.location.pathname + window.location.search) {
+      updateNavigationUrl(next + window.location.hash);
+    }
+  }, [filtersReady, query]);
+  useHistoryScroll(filtersReady, query);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [carouselConfigOpen, setCarouselConfigOpen] = useState(false);
 

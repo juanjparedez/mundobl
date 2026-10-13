@@ -6,6 +6,7 @@ import {
   BellOutlined,
   CalendarOutlined,
   CommentOutlined,
+  EditOutlined,
   InfoCircleOutlined,
   LinkOutlined,
   NotificationOutlined,
@@ -39,12 +40,31 @@ export type NavAccess = 'public' | 'session' | 'admin' | 'collaborator';
  * mas grande que lo que se puede mirar en el sitio, y la navegacion no puede
  * dar a entender lo contrario.
  */
-export type NavSection = 'watch' | 'follow' | 'explore';
+export type NavSection =
+  | 'watch'
+  | 'follow'
+  | 'explore'
+  | 'people'
+  | 'community'
+  | 'help'
+  | 'manage';
 
-export const NAV_SECTIONS: { key: NavSection; labelKey: TranslationKey }[] = [
-  { key: 'watch', labelKey: 'navSections.watch' },
-  { key: 'follow', labelKey: 'navSections.follow' },
-  { key: 'explore', labelKey: 'navSections.explore' },
+export const NAV_SECTIONS: {
+  key: NavSection;
+  labelKey: TranslationKey;
+  icon: ComponentType;
+}[] = [
+  { key: 'watch', labelKey: 'navSections.watch', icon: VideoCameraOutlined },
+  { key: 'follow', labelKey: 'navSections.follow', icon: PlayCircleOutlined },
+  { key: 'explore', labelKey: 'navSections.explore', icon: AppstoreOutlined },
+  { key: 'people', labelKey: 'navSections.people', icon: TeamOutlined },
+  {
+    key: 'community',
+    labelKey: 'navSections.community',
+    icon: CommentOutlined,
+  },
+  { key: 'help', labelKey: 'navSections.help', icon: InfoCircleOutlined },
+  { key: 'manage', labelKey: 'navSections.manage', icon: SettingOutlined },
 ];
 
 export interface NavItemDef {
@@ -71,7 +91,7 @@ export const NAV_ITEMS: NavItemDef[] = [
     icon: CommentOutlined,
     labelKey: 'community.title',
     access: 'public',
-    section: 'explore',
+    section: 'community',
   },
   {
     key: 'ver',
@@ -147,7 +167,7 @@ export const NAV_ITEMS: NavItemDef[] = [
     icon: TeamOutlined,
     labelKey: 'peopleIndex.actorsTitle',
     access: 'public',
-    section: 'explore',
+    section: 'people',
   },
   {
     key: 'directores',
@@ -155,7 +175,15 @@ export const NAV_ITEMS: NavItemDef[] = [
     icon: VideoCameraAddOutlined,
     labelKey: 'peopleIndex.directorsTitle',
     access: 'public',
-    section: 'explore',
+    section: 'people',
+  },
+  {
+    key: 'guionistas',
+    path: '/guionistas',
+    icon: EditOutlined,
+    labelKey: 'writerProfile.indexTitle',
+    access: 'public',
+    section: 'people',
   },
   {
     key: 'productoras',
@@ -163,7 +191,7 @@ export const NAV_ITEMS: NavItemDef[] = [
     icon: BankOutlined,
     labelKey: 'peopleIndex.companiesTitle',
     access: 'public',
-    section: 'explore',
+    section: 'people',
   },
   {
     key: 'feedback',
@@ -171,7 +199,7 @@ export const NAV_ITEMS: NavItemDef[] = [
     icon: CommentOutlined,
     labelKey: 'sidebar.feedback',
     access: 'public',
-    section: 'explore',
+    section: 'community',
   },
   {
     key: 'sitios',
@@ -203,7 +231,7 @@ export const NAV_ITEMS: NavItemDef[] = [
     icon: PlaySquareOutlined,
     labelKey: 'sidebar.content',
     access: 'public',
-    section: 'explore',
+    section: 'watch',
   },
   {
     key: 'estadisticas',
@@ -219,7 +247,7 @@ export const NAV_ITEMS: NavItemDef[] = [
     icon: InfoCircleOutlined,
     labelKey: 'sidebar.about',
     access: 'public',
-    section: 'explore',
+    section: 'help',
   },
   {
     key: 'support',
@@ -227,7 +255,7 @@ export const NAV_ITEMS: NavItemDef[] = [
     icon: BankOutlined,
     labelKey: 'qualitySupport.support',
     access: 'public',
-    section: 'explore',
+    section: 'help',
   },
   {
     key: 'admin',
@@ -235,7 +263,7 @@ export const NAV_ITEMS: NavItemDef[] = [
     icon: SettingOutlined,
     labelKey: 'sidebar.administration',
     access: 'admin',
-    section: 'explore',
+    section: 'manage',
   },
   {
     key: 'colaborador',
@@ -243,7 +271,7 @@ export const NAV_ITEMS: NavItemDef[] = [
     icon: SettingOutlined,
     labelKey: 'sidebar.collaboratorPanel',
     access: 'collaborator',
-    section: 'explore',
+    section: 'manage',
   },
 ];
 
@@ -270,5 +298,9 @@ export function canSeeNavItem(item: NavItemDef, ctx: NavContext): boolean {
 /** Activo si la ruta actual es la del item o una sub-ruta. */
 export function isNavItemActive(item: NavItemDef, pathname: string | null) {
   if (!pathname) return false;
-  return pathname === item.path || pathname.startsWith(`${item.path}/`);
+  return (
+    pathname === item.path ||
+    pathname.startsWith(`${item.path}/`) ||
+    (item.key === 'catalogo' && pathname.startsWith('/series/'))
+  );
 }
