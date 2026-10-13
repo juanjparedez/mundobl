@@ -1,5 +1,7 @@
 'use client';
 
+import { useBackNavigation } from '@/hooks/useBackNavigation';
+
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
@@ -66,6 +68,8 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
     origin: initialData.seriesOrigin,
     catalogScope: initialData.seriesCatalogScope,
   });
+
+  const goBack = useBackNavigation(seriesUrl);
 
   const loadFormData = useCallback(async () => {
     try {
@@ -157,7 +161,7 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
                 })}
               </span>
             </div>
-            <Button icon={<CloseOutlined />} onClick={() => router.back()}>
+            <Button icon={<CloseOutlined />} onClick={() => goBack()}>
               {t('seasonForm.cancelButton')}
             </Button>
           </div>
@@ -368,7 +372,7 @@ export function SeasonForm({ initialData }: SeasonFormProps) {
               >
                 {t('seasonForm.saveButton')}
               </Button>
-              <Button size="large" onClick={() => router.back()}>
+              <Button size="large" onClick={() => goBack()}>
                 {t('seasonForm.cancelButton')}
               </Button>
               <Link href={seriesUrl}>
