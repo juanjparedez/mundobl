@@ -1,5 +1,8 @@
 'use client';
 
+import { useHistoryScroll } from '@/hooks/useHistoryScroll';
+import { updateNavigationUrl } from '@/lib/navigation-history';
+
 import {
   useState,
   useMemo,
@@ -305,7 +308,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
   const urlQuery = useMemo(
     () =>
       buildCatalogQuery({
-        q: deferredSearchTerm,
+        q: searchTerm,
         country: selectedCountry,
         type: selectedType,
         format: selectedFormat,
@@ -326,7 +329,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
         page: currentPage,
       }),
     [
-      deferredSearchTerm,
+      searchTerm,
       selectedCountry,
       selectedType,
       selectedFormat,
@@ -351,12 +354,13 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
   // Filtros y busqueda van a la URL con replace (no llenan el historial por
   // tecla); la paginacion hace push en syncPageInUrl.
   useEffect(() => {
-    if (!hydrated) return;
+    if (!hydrated || window.location.pathname !== '/catalogo') return;
     const next = urlQuery ? `/catalogo?${urlQuery}` : '/catalogo';
     if (next !== window.location.pathname + window.location.search) {
-      window.history.replaceState(null, '', next);
+      updateNavigationUrl(next);
     }
   }, [hydrated, urlQuery]);
+  useHistoryScroll(hydrated, urlQuery);
   const [showAlphaIndex, setShowAlphaIndex] = useState(false);
   // sessionStorage: persiste mientras la pestaña este abierta. Sobrevive
   // F5, paginacion, filtros, navegacion a /series/X y vuelta. Se resetea
@@ -368,22 +372,6 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
   // expansion de universo.
   const [expandedItemKey, setExpandedItemKey] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    try {
-      const raw = window.sessionStorage.getItem('catalog-scroll-y');
-      if (!raw) return;
-      const y = Number(raw);
-      window.sessionStorage.removeItem('catalog-scroll-y');
-      if (Number.isFinite(y) && y > 0) {
-        window.requestAnimationFrame(() => {
-          window.scrollTo({ top: y, behavior: 'auto' });
-        });
-      }
-    } catch {
-      /* ignore */
-    }
-  }, []);
   const isMobile = useMediaQuery('(max-width: 768px)');
 
   const countries = useMemo(() => {
@@ -678,7 +666,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
     if (nextPage > 1) params.set('page', String(nextPage));
     else params.delete('page');
     const qs = params.toString();
-    window.history.pushState(null, '', qs ? `/catalogo?${qs}` : '/catalogo');
+    updateNavigationUrl(qs ? `/catalogo?${qs}` : '/catalogo', 'push');
   };
 
   const handleFilterChange = () => {
@@ -747,17 +735,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
     }
   };
 
-  const rememberScroll = () => {
-    if (typeof window === 'undefined') return;
-    try {
-      window.sessionStorage.setItem('catalog-scroll-y', String(window.scrollY));
-    } catch {
-      /* ignore */
-    }
-  };
-
   const handleCardClick = (id: string, title?: string) => {
-    rememberScroll();
     withViewTransition(() => router.push(getSeriesUrl(id, title)));
   };
 

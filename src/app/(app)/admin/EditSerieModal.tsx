@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { startTransition, useState, useEffect, useCallback } from 'react';
 import { Form, Input, Select, InputNumber, Spin } from 'antd';
 import { PanelModal } from '@/components/design-system';
 import { useMessage } from '@/hooks/useMessage';
@@ -27,6 +27,10 @@ export function EditSerieModal({
 }: EditSerieModalProps) {
   const message = useMessage();
   const [form] = Form.useForm();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    startTransition(() => setMounted(true));
+  }, []);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
   const { t } = useLocale();
@@ -113,7 +117,7 @@ export function EditSerieModal({
       size="lg"
       okText={t('editSerieModal.save')}
       cancelText={t('editSerieModal.cancel')}
-      forceRender
+      forceRender={mounted}
       // maskClosable={false} es el DEFAULT de PanelModal, por el reporte
       // de Flor: perdia todo lo cargado al clickear afuera por error. El
       // modal solo cierra con Cancelar/X, con Escape, o al guardar.

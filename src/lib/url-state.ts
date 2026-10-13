@@ -12,6 +12,8 @@
  * Todas las funciones son no-op en el servidor.
  */
 
+import { updateNavigationUrl } from './navigation-history';
+
 export function readUrlParam(key: string): string | null {
   if (typeof window === 'undefined') return null;
   try {
@@ -42,11 +44,7 @@ export function writeUrlParam(
       url.searchParams.set(key, value);
     }
     const next = `${url.pathname}${url.search}${url.hash}`;
-    if (mode === 'push') {
-      window.history.pushState(null, '', next);
-    } else {
-      window.history.replaceState(null, '', next);
-    }
+    updateNavigationUrl(next, mode);
   } catch {
     // Un historial bloqueado no puede romper la navegacion de la pagina.
   }

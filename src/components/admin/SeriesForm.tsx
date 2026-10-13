@@ -1,5 +1,7 @@
 'use client';
 
+import { useBackNavigation } from '@/hooks/useBackNavigation';
+
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useLocalFormDraft } from '@/hooks/useLocalFormDraft';
@@ -212,6 +214,7 @@ export function SeriesForm({ initialData, mode, userId }: SeriesFormProps) {
   const modal = useModal();
   const { t } = useLocale();
   const router = useRouter();
+  const goBack = useBackNavigation('/admin/series');
   const [form] = Form.useForm();
   const [editVersion, setEditVersion] = useState(initialData?.editVersion);
   const [existingSeries, setExistingSeries] = useState<{
@@ -829,12 +832,12 @@ export function SeriesForm({ initialData, mode, userId }: SeriesFormProps) {
         okText: t('seriesForm.unsavedOk'),
         cancelText: t('seriesForm.unsavedCancel'),
         okButtonProps: { danger: true },
-        onOk: () => router.back(),
+        onOk: () => goBack(),
       });
     } else {
-      router.back();
+      goBack();
     }
-  }, [hasUnsavedChanges, router, modal, t]);
+  }, [hasUnsavedChanges, goBack, modal, t]);
 
   const config = getContentTypeConfig(selectedType);
   const showSeasons = shouldShowSeasons(selectedType);

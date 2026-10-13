@@ -777,6 +777,10 @@ export type TranslationShape = {
     watch: string;
     follow: string;
     explore: string;
+    people: string;
+    community: string;
+    help: string;
+    manage: string;
   };
   profile: {
     loginRequired: string;
@@ -4431,7 +4435,7 @@ const es: TranslationShape = {
     addButton: 'Agregar',
     emptyText:
       'No hay episodios registrados. Usa "Generar" o "Agregar" para comenzar.',
-    selectedCount: '{n} seleccionado{s}',
+    selectedCount: 'Selección: {n}',
     colEpisode: 'Episodio',
     colActions: 'Acciones',
     adminTools: 'Herramientas de edición',
@@ -4629,6 +4633,10 @@ const es: TranslationShape = {
     watch: 'Para ver acá',
     follow: 'Para seguir',
     explore: 'Explorar',
+    people: 'Personas y productoras',
+    community: 'Comunidad',
+    help: 'Ayuda y proyecto',
+    manage: 'Administración',
   },
   profile: {
     loginRequired: 'Inicia sesion para ver tu perfil',
@@ -6913,8 +6921,7 @@ const es: TranslationShape = {
       'Las últimas novedades del mundo Boys Love y Girls Love, curadas para la comunidad.',
     searchPlaceholder: 'Buscar noticias…',
     searchButton: 'Buscar',
-    searchResultsLabel:
-      'Resultados para <strong>&quot;{activeSearch}&quot;</strong> · {total} {total, plural, one {noticia} other {noticias}}',
+    searchResultsLabel: 'Resultados para «{activeSearch}»: {total}',
     emptyDescription: 'No hay noticias todavía',
     aiBadge: 'IA',
     viewOriginalSource: 'Ver fuente original',
@@ -8658,6 +8665,10 @@ const en: TranslationShape = {
     watch: 'Watch here',
     follow: 'Follow',
     explore: 'Explore',
+    people: 'People & studios',
+    community: 'Community',
+    help: 'Help & project',
+    manage: 'Administration',
   },
   profile: {
     loginRequired: 'Sign in to view your profile',
@@ -10930,8 +10941,7 @@ const en: TranslationShape = {
       'The latest news from the Boys Love and Girls Love world, curated for the community.',
     searchPlaceholder: 'Search news…',
     searchButton: 'Search',
-    searchResultsLabel:
-      'Results for <strong>&quot;{activeSearch}&quot;</strong> · {total} {total, plural, one {news item} other {news items}}',
+    searchResultsLabel: 'Results for “{activeSearch}”: {total}',
     emptyDescription: 'No news yet',
     aiBadge: 'AI',
     viewOriginalSource: 'View original source',

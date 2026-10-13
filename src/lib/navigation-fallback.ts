@@ -13,6 +13,7 @@ const FALLBACK_RULES: FallbackRule[] = [
   { match: (p) => /^\/catalogo\/[^/]+/.test(p), fallback: '/catalogo' },
   { match: (p) => /^\/actores\/[^/]+$/.test(p), fallback: '/actores' },
   { match: (p) => /^\/directores\/[^/]+$/.test(p), fallback: '/directores' },
+  { match: (p) => /^\/guionistas\/[^/]+$/.test(p), fallback: '/guionistas' },
   {
     match: (p) => /^\/productoras\/[^/]+$/.test(p),
     fallback: '/productoras',
@@ -59,8 +60,15 @@ const FALLBACK_RULES: FallbackRule[] = [
 ];
 
 export function getNavigationFallback(pathname: string): string | null {
+  // Nested community/editorial routes need their nearest useful section.
+  if (/^\/comunidad\/listas\/.+/.test(pathname)) return '/comunidad/listas';
+  if (/^\/comunidad\/.+/.test(pathname)) return '/comunidad';
+  if (/^\/admin\/colaborador\/.+/.test(pathname)) return '/admin/colaborador';
+  if (pathname === '/admin/colaborador') return '/ver';
+  if (/^\/admin\/series\/.+/.test(pathname)) return '/admin/series';
+  if (/^\/(paises|universos)\/.+/.test(pathname)) return '/catalogo';
   for (const rule of FALLBACK_RULES) {
     if (rule.match(pathname)) return rule.fallback;
   }
-  return null;
+  return pathname === '/' ? null : '/';
 }

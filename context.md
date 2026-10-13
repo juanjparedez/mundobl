@@ -2,6 +2,44 @@
 
 Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-stack para gestionar, calificar y hacer seguimiento de series, peliculas, cortos y especiales.
 
+## Navegación y traducciones (2026-10-12)
+
+- Sidebar: conserva los accesos principales y abre cajones por sección. Actores,
+  directores, guionistas y productoras comparten «Personas y productoras»; comunidad
+  y ayuda tienen grupos propios. Mobile conserva sus cuatro accesos + Más.
+  `navItems.ts` mantiene los 21 destinos previos y sus permisos, y suma el acceso
+  al directorio existente de guionistas; `NavigationSections`
+  renderiza enlaces reales, grupos desplegables y el resumen de sus destinos.
+  Patrocinio sigue condicionado a su visibilidad publicada.
+- Admin: los cinco grupos de `adminDestinations.tsx` abren el mismo componente de
+  navegación en desktop y mobile. Se respetan restricciones de rol y propietario
+  de patrocinio; la selección de una ruta anidada usa el destino más específico.
+- Retorno: `useBackNavigation` centraliza el botón público y cancelaciones de
+  formularios. `navigation-history.ts` conserva metadatos propios al actualizar
+  filtros sin pasar las claves privadas de Next a su integración History API.
+  Comunidad, creación de series y colaborador tienen fallbacks propios. Se
+  conserva el hash en la entrada directa de `NavigationGuard`.
+- Catálogo: la URL usa la búsqueda actual (no su valor diferido, que podía borrar
+  la búsqueda durante la hidratación). `/ver` conserva búsqueda, país, plataforma,
+  selección de curadas y vista en query params. `useHistoryScroll` guarda posición
+  por entrada y URL en catálogo y `/ver`, reemplazando el scroll global del catálogo.
+- i18n: `npx tsx scripts/audit-locale-coverage.ts` verifica 3.479 claves por idioma,
+  claves faltantes/extra y consistencia de variables en los 10 diccionarios. Se
+  corrigieron variables sin valores y el texto de búsqueda de noticias que usaba
+  HTML/ICU, formatos que `t()` no interpreta. Una clave obsoleta vacía
+  (`reviews.aiComingSoon`) permanece vacía deliberadamente en todos los idiomas.
+  Esto **no significa cobertura completa de la interfaz**: `audit-i18n.ts`
+  detectó 298 posibles textos fijos en 49 archivos (heurística con falsos positivos),
+  incluyendo aportes, ajustes de notificaciones y suscripciones además de admin.
+  La calidad lingüística de las traducciones generadas sigue requiriendo revisión.
+- Verificación reproducible: `npx tsx scripts/test-navigation.ts` cubre destinos,
+  roles, agrupación, marcas de historial y fallbacks. `scripts/test-navigation-ui.mjs`
+  requiere servidor local en 3018 y `DATABASE_URL` apuntando exclusivamente a
+  `127.0.0.1:55433/mundobl_replay`; crea y limpia sus fixtures. Cubre búsqueda,
+  página, scroll, recarga, atrás/adelante, acceso directo, `/ver`, cajones públicos
+  a 320/390/768 px y administración desktop/mobile. Sin cambios de schema.
+
+
 ## Calidad y sostenibilidad (2026-10-12)
 
 Diagnóstico actualizado con acceso a ambos paneles: [consumo y validaciones](docs/diagnostico-consumo-2026-10-12.md). Vercel: CPU 8 h 29 min / 4 h e ISR Writes 311.224 / 200.000 en últimos 30 días; Supabase sin excesos en el ciclo 17/09–17/10. Priorizar payload del catálogo y CSS SSR antes de migrar. Visor móvil y compartir alternativo comprobados en producción; hoja nativa real y ciclo HTTP de caché de patrocinio siguen pendientes. Los períodos, límites y accionables están en el diagnóstico.
@@ -880,7 +918,7 @@ Items que se decidió **no** incluir en este slice:
 - **Rate limiting**: [src/lib/rate-limit.ts](src/lib/rate-limit.ts) — `checkCommentRateLimit`, `checkFeatureRequestRateLimit`, `checkUserEmbedRateLimit` (cuenta filas Prisma por ventana, sin tabla auxiliar).
 - **Orden de estilos antd vs. los nuestros**: con SSR, el `<style>` de antd llega en el stream después de nuestras hojas y, a igual especificidad (`:where(.css-x).ant-*`), les gana. [src/lib/providers/AntdStyleOrder.tsx](src/lib/providers/AntdStyleOrder.tsx) (adentro de `AntdRegistry`) lo mueve antes del primer `<link data-precedence>`. No usar `layer` de cssinjs: el reset `* { margin: 0; padding: 0 }` de `globals.css` sin capa pisaría todo antd.
 - **Botón atrás**: [NavigationGuard](src/components/layout/NavigationGuard/NavigationGuard.tsx) inyecta una entrada "padre" cuando se entra desde afuera y la navega con el router en `popstate` (el browser solo cambia la URL). Las rutas de detalle llevan slug: los patrones son `[^/]+`, no `\d+`.
-- **Para ver acá / para seguir**: `navItems.ts` agrupa la navegación por `section` (`watch`, `follow`, `explore`); Sidebar y el cajón "Más" usan los mismos grupos. `SerieData.watchableHere` sale de `getCatalogFilterIndex().watchableIds` (PERSONAL + CURATED + `HAS_WATCHABLE_EPISODE`): casi todo lo de /ver es WATCHABLE_ONLY y no está en el catálogo, así que el chip "Se ve acá" aparece poco y es correcto.
+- **Para ver acá / para seguir**: `navItems.ts` agrupa la navegación por `section` (`watch`, `follow`, `explore`, `people`, `community`, `help`, `manage`); Sidebar y el cajón "Más" usan los mismos grupos. `SerieData.watchableHere` sale de `getCatalogFilterIndex().watchableIds` (PERSONAL + CURATED + `HAS_WATCHABLE_EPISODE`): casi todo lo de /ver es WATCHABLE_ONLY y no está en el catálogo, así que el chip "Se ve acá" aparece poco y es correcto.
 - **Avisos descartables**: `DismissibleNotice` (design system) + `useDismissedNotice(id)`, un array de ids en `localStorage['mundobl.dismissedNotices']`. Mismo id en dos páginas = mismo aviso. En el servidor cuentan como cerrados.
 - **Seguimiento automático en `/ver`**: `EmbedPlayer` activa la YouTube IFrame API solo cuando recibe `onWatchProgress`. `useYouTubeWatchTime` acumula tiempo reproducido real (los saltos no cuentan), marca una parte al 80 % y avisa `ended` para avanzar únicamente a la parte siguiente del mismo capítulo. Al terminar el capítulo no reproduce otro automáticamente.
 - **Progreso sin sesión**: `localStorage['mundobl.localProgress']` guarda por serie los ids vistos con schema `{ v: 1, series }`, manejado por `src/lib/local-progress.ts`. `SeriesUserStatusProvider` expone `storage: 'account' | 'local'`; `useMarkEpisodes` y el stepper escriben localmente sin mandar al login. `LocalProgressImporter`, montado en `AppLayout`, ofrece copiarlo a la cuenta después de autenticarse y borra cada serie local solo cuando su POST termina bien.
