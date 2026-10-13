@@ -12,7 +12,7 @@ Todas las versiones notables del proyecto se documentan aqui.
 
 ### Features
 
-- **Menú organizado por secciones**: los accesos se agrupan en paneles desplegables, también desde «Más» en el celu. Actores, directores, guionistas y productoras están juntos en «Personas y productoras»; comunidad y ayuda tienen sus propios grupos. Se conservan las funciones y los accesos según tu cuenta.
+- **Menú organizado por secciones**: los grupos se expanden dentro del mismo menú, con sus enlaces debajo. En el celu están en «Más». Actores, directores, guionistas y productoras están juntos en «Personas y productoras»; los accesos con un solo destino abren directamente su sección. Se conservan las funciones y los accesos según tu cuenta.
 - **Pósters para mirar de cerca**: tocá la portada de una ficha para abrir la imagen original, ampliarla y recorrer sus detalles desde el celu o la compu.
 - **Compartir una serie es más claro**: el botón prepara un mensaje breve con el enlace a su ficha; si tu navegador no permite compartir directamente, podés copiar el enlace.
 - **Plataformas con información comprobable**: la guía distingue precios consultados de tarifas por confirmar, muestra fuente, fecha y país cuando corresponde, y enlaza la información oficial. La disponibilidad y los subtítulos pueden variar según tu región.

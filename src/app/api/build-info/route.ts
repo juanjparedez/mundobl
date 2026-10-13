@@ -31,12 +31,8 @@ function getBuildId(): string {
   }
 }
 
-// Fecha del commit deployado — inlineada en build time por next.config.ts
-// (BUILD_COMMIT_DATE, via `git log -1 --format=%cI`, con git disponible en
-// la maquina de build). Probamos antes con el mtime de .next/BUILD_ID en
-// runtime y en Vercel devolvia una fecha fija sin relacion con el deploy
-// real (la capa de cache/build reproducible lo pisa) — por eso se saca del
-// commit en vez del filesystem.
+// Fecha del commit inyectada por Actions durante el build (o Git en local).
+// Sin metadatos se usa la fecha de compilaci�n, nunca el mtime del filesystem.
 function getBuildTime(): string | null {
   return process.env.BUILD_COMMIT_DATE ?? null;
 }

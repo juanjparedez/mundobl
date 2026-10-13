@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { LAST_SEEN_NOVEDADES_KEY } from '@/app/(app)/novedades/storage-keys';
+import { readLatestNovedades } from '@/lib/latest-novedades';
 
 /**
  * true si hay novedades publicadas despues de la ultima vez que el usuario
@@ -15,11 +16,10 @@ export function useHasNovedades(): boolean {
 
   useEffect(() => {
     let aborted = false;
-    fetch('/api/novedades/latest')
-      .then((res) => (res.ok ? res.json() : { timestamp: null }))
-      .then((data: { timestamp: number | null }) => {
+    readLatestNovedades()
+      .then((timestamp) => {
         if (aborted) return;
-        if (!data.timestamp) {
+        if (!timestamp) {
           setHasNovedades(false);
           return;
         }
@@ -31,7 +31,7 @@ export function useHasNovedades(): boolean {
         } catch {
           seen = 0;
         }
-        setHasNovedades(data.timestamp > seen);
+        setHasNovedades(timestamp > seen);
       })
       .catch(() => {});
     return () => {

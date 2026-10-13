@@ -91,9 +91,14 @@
   font-size: 22px;
 }
 
-.app-sidebar:not(.ant-layout-sider-collapsed) .ant-menu-item {
+.app-sidebar:not(.ant-layout-sider-collapsed) .ant-menu-item,
+.app-sidebar:not(.ant-layout-sider-collapsed) .ant-menu-submenu-title {
   height: auto;
   min-height: 44px;
+}
+
+.app-sidebar .ant-menu-sub {
+  padding: 0;
 }
 
 .app-sidebar:not(.ant-layout-sider-collapsed) .ant-menu-title-content {

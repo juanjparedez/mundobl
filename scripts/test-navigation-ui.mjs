@@ -108,15 +108,24 @@ try {
     .locator('.app-sidebar')
     .getByText('Personas y productoras', { exact: true })
     .click();
-  const dialog = page.getByRole('dialog');
-  for (const href of ['/actores', '/directores', '/productoras'])
-    await expect(dialog.locator(`a[href="${href}"]`)).toBeVisible();
+  const sidebar = page.locator('.app-sidebar');
+  await expect(page.getByRole('dialog')).not.toBeVisible();
+  for (const href of ['/actores', '/directores', '/guionistas', '/productoras'])
+    await expect(sidebar.locator(`a[href="${href}"]`)).toBeVisible();
+  await sidebar.locator('a[href="/actores"]').click({ trial: true });
   await page.screenshot({
     animations: 'disabled',
-    path: 'test-results/navigation/desktop-drawer.png',
+    path: 'test-results/navigation/desktop-inline.png',
   });
-  await page.keyboard.press('Escape');
-  await expect(dialog).not.toBeVisible();
+  await sidebar.getByText('Personas y productoras', { exact: true }).click();
+  await expect(sidebar.locator('a[href="/actores"]')).not.toBeVisible();
+  await sidebar.getByRole('button', { name: 'Colapsar menu' }).click();
+  await sidebar
+    .locator('.ant-menu-item')
+    .filter({ hasText: 'Personas y productoras' })
+    .click();
+  await expect(sidebar.locator('a[href="/actores"]')).toBeVisible();
+  await expect(page.getByRole('dialog')).not.toBeVisible();
   await page.goto(
     base + '/ver?q=' + encodeURIComponent(run) + '&view=grid&curated=1',
     { waitUntil: 'networkidle' }
@@ -165,7 +174,12 @@ try {
     await drawer
       .getByRole('button', { name: /Personas y productoras/ })
       .click();
-    for (const href of ['/actores', '/directores', '/productoras'])
+    for (const href of [
+      '/actores',
+      '/directores',
+      '/guionistas',
+      '/productoras',
+    ])
       await expect(drawer.locator(`a[href="${href}"]`)).toBeVisible();
     assert(
       await page.evaluate(
@@ -211,22 +225,22 @@ try {
     waitUntil: 'networkidle',
     timeout: 120000,
   });
-  const buttons = page.locator('.admin-nav button');
+  const buttons = page.locator('.admin-nav').getByRole('button');
   assert((await buttons.count()) > 0);
   for (let i = 0; i < (await buttons.count()); i++) {
-    await buttons.nth(i).click();
-    await expect(page.getByRole('dialog').locator('a').first()).toBeVisible();
-    await page.keyboard.press('Escape');
+    if ((await buttons.nth(i).getAttribute('aria-expanded')) !== 'true') {
+      await buttons.nth(i).click();
+    }
+    await expect(page.getByRole('dialog')).not.toBeVisible();
   }
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.locator('.admin-nav-mobile-trigger').click();
-  await expect(page.getByRole('dialog').locator('a').first()).toBeVisible();
+  await expect(page.locator('.admin-nav a').first()).toBeVisible();
+  await expect(page.getByRole('dialog')).not.toBeVisible();
   await page.screenshot({
     animations: 'disabled',
     path: 'test-results/navigation/admin-mobile.png',
   });
-  await page.keyboard.press('Escape');
-  console.log('Admin group drawers desktop and mobile passed');
+  console.log('Admin inline groups desktop and mobile passed');
   assert.deepEqual(errors, []);
   await context.close();
 } finally {

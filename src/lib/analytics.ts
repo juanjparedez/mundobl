@@ -17,10 +17,10 @@ type EventProps = Record<string, string | number | boolean | null>;
  * Ademas hay un limite de eventos en la capa gratuita, asi que cada evento
  * nuevo tiene que justificar su costo: si no cambia una decision, no va.
  *
- * `track` de Vercel ya es no-op fuera de produccion y fuera de Vercel, asi
- * que en dev y en local esto no manda nada.
+ * Desactivado por defecto. La misma bandera controla el script de pageviews.
  */
 export function trackEvent(name: string, props?: EventProps): void {
+  if (process.env.NEXT_PUBLIC_VERCEL_ANALYTICS_ENABLED !== 'true') return;
   try {
     track(name, props);
   } catch {

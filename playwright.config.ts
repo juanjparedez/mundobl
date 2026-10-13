@@ -12,7 +12,8 @@ import { defineConfig, devices } from '@playwright/test';
  * aparte, corriendo contra una base descartable en CI. Este archivo es solo
  * la capa de "¿la app publica funciona?".
  */
-const baseURL = process.env.SMOKE_BASE_URL ?? 'https://mundobl.com.ar';
+// Desarrollo local por defecto. Producción requiere una URL explícita.
+const baseURL = process.env.SMOKE_BASE_URL ?? 'http://localhost:3018';
 
 export default defineConfig({
   testDir: './e2e',
@@ -26,7 +27,9 @@ export default defineConfig({
   // paralelo a un sitio con 437 visitantes/mes.
   workers: 1,
   fullyParallel: false,
-  reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : [['list']],
+  reporter: process.env.CI
+    ? [['list'], ['html', { open: 'never' }]]
+    : [['list']],
   use: {
     baseURL,
     // Solo guardamos evidencia cuando algo falla: los artifacts de un repo
@@ -38,7 +41,5 @@ export default defineConfig({
     userAgent:
       'Mozilla/5.0 (compatible; MundoBL-SmokeTest/1.0; +https://mundobl.com.ar)',
   },
-  projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-  ],
+  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
 });
