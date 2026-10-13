@@ -107,7 +107,8 @@ export function NavigationGuard() {
     //      [external, fallback (sintetico), currentUrl]
     //    Back nativo → URL pasa a fallback → el listener de popstate de
     //    arriba navega con el router.
-    const currentUrl = window.location.pathname + window.location.search;
+    const currentUrl =
+      window.location.pathname + window.location.search + window.location.hash;
     window.history.replaceState({ [FALLBACK_ENTRY_KEY]: true }, '', fallback);
     window.history.pushState({ [HISTORY_INJECT_KEY]: true }, '', currentUrl);
   }, [pathname]);

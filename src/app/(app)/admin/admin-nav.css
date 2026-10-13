@@ -1,227 +1,50 @@
-/* Admin nav: una sola row horizontal de chips agrupados visualmente
- * por gap (sin titulos visibles ni separadores). Compacto, sin
- * agregar altura sobre la version anterior. El grouping queda en
- * codigo (role="group" + aria-label) para accessibility pero no se
- * renderea titulo a nivel visual — el mock muestra la nav como
- * pills sutiles, no como buckets categorizados. */
-
 .admin-nav {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 4px;
+  gap: var(--spacing-sm);
   margin-bottom: var(--spacing-md);
-  padding: 6px 8px;
+}
+
+.admin-nav__item,
+.admin-nav-mobile-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  min-height: 44px;
+  padding: var(--spacing-sm) var(--spacing-md);
   background: var(--bg-elevated);
   border: 1px solid var(--border-color-secondary);
-  border-radius: var(--border-radius-md);
-}
-
-.admin-nav__group {
-  display: inline-flex;
-  gap: 4px;
-  flex-wrap: wrap;
-}
-
-/* Gap visual entre grupos: 14px horizontal en lugar de separator
- * vertical (mas limpio, no agrega line). aria-hidden span permite
- * spacing sin afectar el DOM semantico. */
-.admin-nav__group-gap {
-  display: inline-block;
-  width: 10px;
-  height: 1px;
-  flex-shrink: 0;
-}
-
-.admin-nav__item {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: var(--transition-fast);
-  white-space: nowrap;
-  line-height: 1.2;
-}
-
-.admin-nav__item:hover {
-  background: color-mix(in srgb, var(--primary-color) 8%, transparent);
+  border-radius: var(--border-radius-base);
   color: var(--text-primary);
-  border-color: color-mix(in srgb, var(--primary-color) 20%, transparent);
+  font: inherit;
+  cursor: pointer;
 }
 
-/* Active state sutil — accent bg + accent text + accent border (no
- * background solido feo de !important). */
-.admin-nav__item--active {
-  background: color-mix(in srgb, var(--primary-color) 14%, transparent);
+.admin-nav__item:hover,
+.admin-nav__item[data-active='true'],
+.admin-nav-mobile-trigger:hover {
+  background: var(--bg-spotlight);
   color: var(--primary-color);
-  border-color: color-mix(in srgb, var(--primary-color) 40%, transparent);
-  font-weight: 600;
 }
 
-.admin-nav__item--active:hover {
-  background: color-mix(in srgb, var(--primary-color) 18%, transparent);
+.admin-nav__item:focus-visible,
+.admin-nav-mobile-trigger:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
 }
 
-/* Por grupo: items del grupo "community" usan blue, "system" purple
- * (coherente con la differentiation que ya aplico al main /admin).
- * Solo cuando estan active — hover los mantiene gold default para no
- * ser confuso. */
-.admin-nav__group[data-group='community'] .admin-nav__item--active {
-  background: color-mix(
-    in srgb,
-    var(--mb-blue, var(--primary-color)) 14%,
-    transparent
-  );
-  color: var(--mb-blue, var(--primary-color));
-  border-color: color-mix(
-    in srgb,
-    var(--mb-blue, var(--primary-color)) 40%,
-    transparent
-  );
-}
-
-.admin-nav__group[data-group='system'] .admin-nav__item--active {
-  background: color-mix(
-    in srgb,
-    var(--mb-purple, var(--primary-color)) 14%,
-    transparent
-  );
-  color: var(--mb-purple, var(--primary-color));
-  border-color: color-mix(
-    in srgb,
-    var(--mb-purple, var(--primary-color)) 40%,
-    transparent
-  );
-}
-
-.admin-nav__icon {
-  font-size: 13px;
-  display: inline-flex;
-}
-
-/* Short labels hidden on desktop */
-.admin-nav__label-short {
-  display: none;
-}
-
-/* En mobile la nav horizontal se reemplaza por un Drawer accesible
- * desde un trigger compact (ver .admin-nav-mobile-trigger). */
 .admin-nav-mobile-trigger {
   display: none;
+  width: 100%;
+  margin-bottom: var(--spacing-md);
 }
 
 @media (max-width: 768px) {
-  /* Ocultar la nav horizontal con scroll. La accion va al Drawer. */
   .admin-nav {
     display: none;
   }
-
   .admin-nav-mobile-trigger {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    width: 100%;
-    padding: 10px 14px;
-    background: var(--bg-elevated);
-    border: 1px solid var(--border-color-secondary);
-    border-radius: var(--border-radius-base);
-    color: var(--text-primary);
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    text-align: left;
-    transition: background-color 0.15s ease;
-    -webkit-tap-highlight-color: transparent;
   }
-
-  .admin-nav-mobile-trigger:hover,
-  .admin-nav-mobile-trigger:focus-visible {
-    background: var(--bg-spotlight);
-  }
-
-  .admin-nav-mobile-trigger__icon {
-    font-size: 18px;
-    color: var(--text-secondary);
-  }
-
-  .admin-nav-mobile-trigger__label {
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .admin-nav-mobile-trigger__chevron {
-    font-size: 12px;
-    color: var(--text-tertiary);
-  }
-}
-
-/* Drawer mobile: items grandes, agrupados con header */
-.admin-nav-mobile-group + .admin-nav-mobile-group {
-  border-top: 1px solid var(--border-color-secondary);
-}
-
-.admin-nav-mobile-group__title {
-  margin: 0;
-  padding: 16px 16px 8px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-}
-
-.admin-nav-mobile-group__list {
-  list-style: none;
-  margin: 0;
-  padding: 0 0 8px 0;
-}
-
-.admin-nav-mobile-item {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 12px 16px;
-  border: none;
-  background: transparent;
-  color: var(--text-primary);
-  cursor: pointer;
-  font-size: 15px;
-  text-align: left;
-  transition: background-color 0.15s ease;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.admin-nav-mobile-item:hover,
-.admin-nav-mobile-item:focus-visible {
-  background: var(--bg-spotlight);
-}
-
-.admin-nav-mobile-item--active {
-  color: var(--primary-color);
-  background: color-mix(in srgb, var(--primary-color) 10%, transparent);
-  border-left: 3px solid var(--primary-color);
-  padding-left: 13px; /* compensar el border */
-}
-
-.admin-nav-mobile-item__icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  width: 22px;
-}
-
-.admin-nav-mobile-item__label {
-  flex: 1;
-  font-weight: 500;
 }

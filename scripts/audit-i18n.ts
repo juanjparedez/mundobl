@@ -13,6 +13,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { tmpdir } from 'node:os';
 
 interface Finding {
   file: string;
@@ -51,22 +52,41 @@ const PATTERNS: Array<{
   // antd Modal/Drawer/Card title
   { name: 'title=', regex: /\btitle\s*=\s*["']([^"']+)["']/g },
   // message.success/error/warning/info('...')
-  { name: 'message.*()', regex: /\bmessage\.(?:success|error|warning|info)\s*\(\s*["']([^"']+)["']/g },
+  {
+    name: 'message.*()',
+    regex: /\bmessage\.(?:success|error|warning|info)\s*\(\s*["']([^"']+)["']/g,
+  },
   // notification.*('...')
-  { name: 'notification.*()', regex: /\bnotification\.(?:success|error|warning|info)\s*\(\s*\{\s*[^}]*?(?:message|description)\s*:\s*["']([^"']+)["']/g },
+  {
+    name: 'notification.*()',
+    regex:
+      /\bnotification\.(?:success|error|warning|info)\s*\(\s*\{\s*[^}]*?(?:message|description)\s*:\s*["']([^"']+)["']/g,
+  },
   // throw new Error('...')
-  { name: 'throw Error', regex: /\bthrow\s+new\s+Error\s*\(\s*["']([^"']+)["']/g },
+  {
+    name: 'throw Error',
+    regex: /\bthrow\s+new\s+Error\s*\(\s*["']([^"']+)["']/g,
+  },
   // antd Form rule message: '...'
-  { name: 'Form rule message', regex: /\bmessage\s*:\s*["']([A-ZÁÉÍÓÚÑ][^"']{2,})["']/g },
+  {
+    name: 'Form rule message',
+    regex: /\bmessage\s*:\s*["']([A-ZÁÉÍÓÚÑ][^"']{2,})["']/g,
+  },
   // Tag / Tooltip text content - <Tag>Texto</Tag> or <Tooltip title="Texto">
-  { name: 'Tooltip title=', regex: /<Tooltip\s+[^>]*title\s*=\s*["']([^"']+)["']/g },
+  {
+    name: 'Tooltip title=',
+    regex: /<Tooltip\s+[^>]*title\s*=\s*["']([^"']+)["']/g,
+  },
   // confirm() / alert() texts - rare but exist
   { name: 'confirm()', regex: /\bconfirm\s*\(\s*["']([^"']+)["']/g },
   // okText/cancelText/closeText/etc on antd
   { name: 'okText=', regex: /\bokText\s*=\s*["']([^"']+)["']/g },
   { name: 'cancelText=', regex: /\bcancelText\s*=\s*["']([^"']+)["']/g },
   // Popconfirm title
-  { name: 'Popconfirm title', regex: /<Popconfirm[^>]*\stitle\s*=\s*["']([^"']+)["']/g },
+  {
+    name: 'Popconfirm title',
+    regex: /<Popconfirm[^>]*\stitle\s*=\s*["']([^"']+)["']/g,
+  },
   // label= en Form.Item / Checkbox / Radio
   { name: 'label=', regex: /\blabel\s*=\s*["']([^"']+)["']/g },
   // description= en Empty / Result / etc
@@ -96,7 +116,10 @@ function scanFile(filePath: string): void {
       if (/^\s*\/\//.test(lineContent)) continue;
 
       // Skip if it looks like t(...) call result
-      const surrounding = content.slice(Math.max(0, m.index - 20), m.index + m[0].length + 20);
+      const surrounding = content.slice(
+        Math.max(0, m.index - 20),
+        m.index + m[0].length + 20
+      );
       if (/t\(['"][^'"]+['"]\)/.test(surrounding)) {
         // It's likely already a t() call: skip
         continue;
@@ -137,7 +160,7 @@ for (const f of findings) {
 // Group by directory for high-level view
 const byDir = new Map<string, number>();
 for (const [file, items] of byFile) {
-  const dir = file.replace(/\/[^/]+$/, '');
+  const dir = path.dirname(file);
   byDir.set(dir, (byDir.get(dir) || 0) + items.length);
 }
 
@@ -146,7 +169,9 @@ console.log(`Total findings: ${findings.length}`);
 console.log(`Files affected: ${byFile.size}\n`);
 
 console.log('=== By directory (top 20) ===');
-const sortedDirs = [...byDir.entries()].sort((a, b) => b[1] - a[1]).slice(0, 20);
+const sortedDirs = [...byDir.entries()]
+  .sort((a, b) => b[1] - a[1])
+  .slice(0, 20);
 for (const [dir, count] of sortedDirs) {
   console.log(`  ${count.toString().padStart(4)} | ${dir}`);
 }
@@ -162,12 +187,25 @@ for (const [pattern, count] of sortedPatterns) {
 }
 
 console.log('\n=== Files with most findings (top 30) ===');
-const sortedFiles = [...byFile.entries()].sort((a, b) => b[1].length - a[1].length).slice(0, 30);
+const sortedFiles = [...byFile.entries()]
+  .sort((a, b) => b[1].length - a[1].length)
+  .slice(0, 30);
 for (const [file, items] of sortedFiles) {
   console.log(`  ${items.length.toString().padStart(3)} | ${file}`);
 }
 
 // Write detailed JSON for fix-up tooling
-const outPath = '/tmp/i18n-audit.json';
-fs.writeFileSync(outPath, JSON.stringify({ findings, byFile: Object.fromEntries(byFile), byPattern: Object.fromEntries(byPattern) }, null, 2));
+const outPath = path.join(tmpdir(), 'mundobl-i18n-audit.json');
+fs.writeFileSync(
+  outPath,
+  JSON.stringify(
+    {
+      findings,
+      byFile: Object.fromEntries(byFile),
+      byPattern: Object.fromEntries(byPattern),
+    },
+    null,
+    2
+  )
+);
 console.log(`\nDetailed report: ${outPath}`);

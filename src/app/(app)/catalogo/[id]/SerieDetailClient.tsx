@@ -18,11 +18,10 @@ import {
   VideoCameraOutlined,
   StarOutlined,
   UserOutlined,
-  ArrowLeftOutlined,
   AppstoreOutlined,
 } from '@ant-design/icons';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+import { BackToCatalogButton } from '@/components/series/BackToCatalogButton/BackToCatalogButton';
 import { useSession } from 'next-auth/react';
 import { PageTitleClient } from '@/components/common/PageTitle/PageTitleClient';
 import { isDirectServedImageUrl } from '@/lib/image-helpers';
@@ -89,7 +88,6 @@ interface SerieDetailProps {
 
 export function SerieDetailClient({ serie }: SerieDetailProps) {
   const { t } = useLocale();
-  const router = useRouter();
   const { data: session } = useSession();
   const canSeeNotes = !serie.notesPrivate || session?.user?.role === 'ADMIN';
 
@@ -194,19 +192,7 @@ export function SerieDetailClient({ serie }: SerieDetailProps) {
           flexWrap: 'wrap',
         }}
       >
-        <a
-          onClick={() => router.back()}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px',
-            cursor: 'pointer',
-            color: 'var(--primary-color)',
-          }}
-        >
-          <ArrowLeftOutlined />
-          {t('serieDetail.backToCatalog')}
-        </a>
+        <BackToCatalogButton fallback="/catalogo" />
         {serie.id && (
           <a
             href={`/catalogo/${serie.id}/dashboard`}

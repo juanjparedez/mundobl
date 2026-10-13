@@ -23,6 +23,7 @@ import {
   isNavItemActive,
   type NavItemDef,
 } from '../navItems';
+import { NavigationSections } from '../NavigationSections/NavigationSections';
 import './BottomNav.css';
 
 interface NavEntry {
@@ -147,7 +148,7 @@ export function BottomNav({
     entries: NAV_ITEMS.filter(
       (i) =>
         !i.primary && i.section === section.key && canSeeNavItem(i, navContext)
-    ).map((item) => toEntry(item, false)),
+    ).map((item) => ({ ...toEntry(item, false), path: item.path })),
   })).filter((section) => section.entries.length > 0);
 
   const accountEntries: NavEntry[] = [
@@ -212,10 +213,11 @@ export function BottomNav({
         ))}
         <button
           type="button"
-          className={`bottom-nav-item ${isMoreOpen ? 'bottom-nav-item--active' : ''}`}
+          className={`bottom-nav-item ${isMoreOpen || moreSections.some((section) => section.entries.some((entry) => entry.active)) ? 'bottom-nav-item--active' : ''}`}
           onClick={() => setIsMoreOpen(true)}
           aria-label={t('bottomNav.more')}
           aria-haspopup="dialog"
+          aria-expanded={isMoreOpen}
         >
           <span className="bottom-nav-item-icon" aria-hidden="true">
             <MenuOutlined />
@@ -227,20 +229,16 @@ export function BottomNav({
       <Drawer
         title={t('bottomNav.more')}
         placement="bottom"
-        size="82vh"
+        size="82dvh"
         open={isMoreOpen}
         onClose={() => setIsMoreOpen(false)}
-        className="bottom-nav-more-drawer"
-        styles={{ body: { padding: 0 } }}
+        className="bottom-nav-more-drawer navigation-drawer"
+        destroyOnHidden
       >
-        {moreSections.map((section) => (
-          <section key={section.key} aria-label={section.label}>
-            <h3 className="bottom-nav-more-heading">{section.label}</h3>
-            <ul className="bottom-nav-more-list">
-              {section.entries.map(renderMoreItem)}
-            </ul>
-          </section>
-        ))}
+        <NavigationSections
+          sections={moreSections}
+          onNavigate={() => setIsMoreOpen(false)}
+        />
         <ul className="bottom-nav-more-list bottom-nav-more-list--account">
           {accountEntries.map(renderMoreItem)}
         </ul>

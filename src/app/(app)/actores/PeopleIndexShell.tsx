@@ -1,5 +1,7 @@
 'use client';
 
+import { updateNavigationUrl } from '@/lib/navigation-history';
+
 import { startTransition, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { SectionHeader, EmptyState } from '@/components/design-system';
@@ -125,11 +127,7 @@ export function PeopleIndexShell({
     const qs = sp.toString();
     // replaceState y no router.replace: no queremos re-render del servidor ni
     // ensuciar el historial con una entrada por tecla.
-    window.history.replaceState(
-      null,
-      '',
-      qs ? `?${qs}` : window.location.pathname
-    );
+    updateNavigationUrl(qs ? `?${qs}` : window.location.pathname);
   }, [query, sort, nationality, hydrated]);
 
   // Se normaliza una sola vez por lista, no una vez por tecla.
