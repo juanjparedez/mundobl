@@ -8,6 +8,33 @@ Todas las versiones notables del proyecto se documentan aqui.
 > (`ChangelogItem`, `/admin/changelog`) quedo como fallback solo si este archivo
 > esta vacio.
 
+## 2026-10-12 — Navegación por secciones y mejoras para explorar y compartir
+
+### Features
+
+- **Menú organizado por secciones**: los accesos se agrupan en paneles desplegables, también desde «Más» en el celu. Actores, directores, guionistas y productoras están juntos en «Personas y productoras»; comunidad y ayuda tienen sus propios grupos. Se conservan las funciones y los accesos según tu cuenta.
+- **Pósters para mirar de cerca**: tocá la portada de una ficha para abrir la imagen original, ampliarla y recorrer sus detalles desde el celu o la compu.
+- **Compartir una serie es más claro**: el botón prepara un mensaje breve con el enlace a su ficha; si tu navegador no permite compartir directamente, podés copiar el enlace.
+- **Plataformas con información comprobable**: la guía distingue precios consultados de tarifas por confirmar, muestra fuente, fecha y país cuando corresponde, y enlaza la información oficial. La disponibilidad y los subtítulos pueden variar según tu región.
+- **Preferencias de contenido**: las fichas pueden indicar su clasificación editorial y avisos de contenido. Podés habilitar el acceso a detalles y medios marcados +18 desde «Preferencias de contenido» y revocar esa elección. No es un control parental: los títulos y las portadas pueden seguir visibles, y las obras sin revisar se identifican como tales.
+
+### Fixes
+
+- **Volver sin perder el recorrido**: el catálogo conserva búsqueda, filtros, página y posición al regresar de una ficha. «Ver series» también conserva su búsqueda, filtros y vista; abrir un enlace directamente ofrece un regreso dentro del sitio.
+- **Traducciones más consistentes**: los nuevos grupos del menú están en los diez idiomas. Corregimos textos de selección y búsquedas que podían mostrar variables sin completar o formato sin interpretar.
+- **Tu seguimiento se protege al editar el catálogo**: se bloquean los cambios que borrarían temporadas o aportes con progreso, notas o historial asociados, para que el equipo pueda revisarlos antes de continuar.
+
+### Para el equipo
+
+- **Recuperar el trabajo sin guardar**: las altas y ediciones conservan borradores por cuenta y ficha en el mismo navegador. Si un guardado falla, el borrador sigue disponible; al guardar una edición recuperada se comprueba si la ficha cambió mientras tanto.
+- **Sumar al catálogo una obra que ya estaba en «Ver series»**: el alta avisa si existe, permite comparar los datos y elegir qué conservar en la misma ficha, manteniendo capítulos, enlaces y seguimiento. No fusiona automáticamente registros duplicados.
+
+## 2026-10-08 — Carátulas externas que vuelven a cargar
+
+### Fixes
+
+- **Carátulas de fuentes externas recuperadas**: corregimos el error que impedía mostrar algunas imágenes, como las de Fandom. Cuando no se pueden copiar a nuestro almacenamiento, se muestran desde su fuente original si sigue disponible.
+
 ## 2026-10-01 — Más rápido desde Latinoamérica
 
 ### Fixes
