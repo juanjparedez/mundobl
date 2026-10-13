@@ -1,9 +1,4 @@
-// 15 minutos y no 2: cada revalidacion rehace la consulta completa del
-// catalogo (~1 MB de JSON desde Supabase, medido el 2026-09-09) y el
-// catalogo cambia unas pocas veces por semana, no cada 2 minutos. A 120s
-// esto era el principal consumidor de egress de base. Una serie nueva puede
-// tardar hasta 15 min en aparecer: es un precio barato.
-// Se invalida on-demand en cada alta/edicion/baja de serie.
+// Six-hour safety TTL; edits invalidate the catalog on demand.
 export const revalidate = 21600;
 import { unstable_cache } from 'next/cache';
 
@@ -11,7 +6,7 @@ import type { Metadata } from 'next';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
 import { JsonLd } from '@/components/seo/JsonLd';
 import type { CollectionPage } from 'schema-dts';
-import { getAllSeries } from '@/lib/database';
+import { getCatalogSeries } from '@/lib/database';
 import { SERIES_LISTINGS_TAG } from '@/lib/revalidate-series';
 
 const CATALOGO_DESCRIPTION =
@@ -37,6 +32,7 @@ export const metadata: Metadata = {
   },
 };
 import { CatalogoClient } from './CatalogoClient';
+import { packCatalog } from './catalogTransport';
 import { getCatalogFilterIndex } from '@/lib/database';
 import './catalogo.css';
 
@@ -48,17 +44,9 @@ import './catalogo.css';
 // trafico). Data 100% publica ahora, un solo cache key para todos.
 const getCatalogDataCached = unstable_cache(
   async () => {
-    return await Promise.all([
-      getAllSeries({
-        scope: 'PERSONAL',
-        visibility: 'VISIBLE',
-        origin: 'CURATED',
-        omitLongText: true,
-      }),
-      getCatalogFilterIndex(),
-    ]);
+    return await Promise.all([getCatalogSeries(), getCatalogFilterIndex()]);
   },
-  ['catalog-page-data-v4'],
+  ['catalog-page-data-v5'],
   // Tageado: cada alta/edicion/baja de serie lo vacia al instante
   // (revalidateSeriesListings), asi que el TTL puede ser largo.
   { revalidate: 21600, tags: [SERIES_LISTINGS_TAG] }
@@ -139,7 +127,6 @@ export default async function CatalogoPage() {
       imageUrl: serie.imageUrl,
       imageThumbUrl: serie.imageThumbUrl,
       imagePosition: serie.imagePosition,
-      synopsis: serie.contentRating === 'ADULT18' ? null : serie.synopsis,
       // Curaduria editorial (item featured por Flor/admin) — alimenta el
       // filtro rapido "Destacadas". No confundir con `visto`/favoritos
       // (que son por-usuario): esto es global, lo decide el editor.
@@ -198,7 +185,7 @@ export default async function CatalogoPage() {
         <Breadcrumbs
           items={[{ name: 'Inicio', href: '/' }, { name: 'Catálogo' }]}
         />
-        <CatalogoClient series={seriesData} />
+        <CatalogoClient payload={packCatalog(seriesData)} />
       </div>
     </>
   );

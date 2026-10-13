@@ -1934,6 +1934,7 @@ const de = {
     "openExisting": "Vorhandenen Eintrag öffnen",
     "compareTitle": "Daten vergleichen",
     "curateSave": "Im vorhandenen Eintrag speichern",
+    "compareSelectAll": "Alle Änderungen auswählen",
     "compareHelp": "Wähle die Felder, die du durch deine Eingabe ersetzen möchtest. Andere behalten ihren aktuellen Wert.",
     "comparePreserve": "Die Serie wird in den kuratierten Katalog aufgenommen. Folgen, Links und Fortschritt bleiben erhalten. Neue Staffeln, Links und Inhalte werden ergänzt.",
     "compareField": "Feld",
@@ -2057,6 +2058,7 @@ const de = {
     "watchHere": "Hier ansehen"
   },
   "quickPreview": {
+    "loadError": "Die Inhaltsangabe konnte nicht geladen werden.",
     "open": "Schnellansicht",
     "close": "Schließen",
     "synopsis": "Handlung",

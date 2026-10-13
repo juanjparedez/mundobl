@@ -2,6 +2,39 @@
 
 Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-stack para gestionar, calificar y hacer seguimiento de series, peliculas, cortos y especiales.
 
+## Catálogo liviano y curaduría móvil (2026-10-13)
+
+- Lote solicitado y probado localmente; el propietario luego autorizó una sola
+  MR y un solo deploy una vez finalizada la verificación.
+- `getCatalogSeries` proyecta sólo los campos públicos usados por las tarjetas:
+  omite sinopsis, reseñas, notas privadas y relaciones completas innecesarias.
+  `catalogTransport` envía cada etiqueta una vez y reconstruye el mismo shape
+  para conservar búsqueda, filtros, universo, favoritos y vistas.
+- Sinopsis a demanda: `/api/series/[id]/preview`, GET estático con TTL de seis
+  horas; `revalidateSeriesDetail` lo invalida al editar. Sólo CURATED + PERSONAL
+  + VISIBLE; ADULT18 devuelve null, nunca evita la compuerta del detalle.
+  Hover y modal comparten petición y caché de texto público por 60 segundos,
+  limitada a 50 entradas. Errores se pueden reintentar y no se cachean en cliente.
+- Comparación al crear una serie ya capturada: campos en bloques seleccionables,
+  valores apilados a menos de 600 px y lado a lado en escritorio, sin celdas
+  comprimidas ni scroll dentro de cada texto. Selección individual y conjunta,
+  botones de 44 px, temas mediante tokens. Temporadas del formulario apiladas
+  en móvil. Los tokens de Table cubren selección/hover/expansión también.
+- Pruebas: build, TypeScript, lint (ocho advertencias previas), 3.481 claves
+  consistentes en diez locales; curaduría real en PostgreSQL local y navegador
+  a 320/390/768/1280, claro/oscuro. Se conservan IDs de episodios/enlaces,
+  revisiones, borrador y rechazo de versiones antiguas.
+- `test-catalog-preview-ui.mjs`: límites públicos, +18, ID inválido, carga sólo
+  al abrir, reutilización, HIT ISR (`TEST_ISR=true`) e invalidación después de
+  guardar una curaduría. `test-catalog-payload.ts`: roundtrip de todos los datos
+  de filtros y caché concurrente/expirada/error. Fixture sintético de 700 títulos:
+  JSON 1.017.233 → 183.447 bytes; gzip 13.788 → 5.800. No son cifras de cuota.
+- Línea de base pública antes de esta entrega (13/10, 04:30 ART, HIT): catálogo
+  2.048.270 bytes HTML descomprimido, 405.332 de CSS inline. La extracción del
+  CSS SSR permanece pendiente. No se aumentaron TTL ni se desactivaron tareas
+  funcionales. El ahorro real de CPU/ISR requiere comparar ventanas equivalentes
+  después del deploy; no se deduce del porcentaje del fixture.
+
 ## Flujo local y corrección de navegación (2026-10-12)
 
 - Por instrucción del propietario: desarrollar y validar localmente, agrupar las

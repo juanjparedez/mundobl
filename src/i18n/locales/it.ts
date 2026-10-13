@@ -1933,6 +1933,7 @@ const it = {
     "openExisting": "Apri scheda esistente",
     "compareTitle": "Confronta dati",
     "curateSave": "Salva nella scheda esistente",
+    "compareSelectAll": "Seleziona tutte le modifiche",
     "compareHelp": "Scegli i campi da sostituire con i tuoi dati. Gli altri conservano il valore attuale.",
     "comparePreserve": "La serie entra nel catalogo curato. Episodi, link e progressi vengono conservati. Nuove stagioni, link e contenuti vengono aggiunti.",
     "compareField": "Campo",
@@ -2056,6 +2057,7 @@ const it = {
     "watchHere": "Guarda qui"
   },
   "quickPreview": {
+    "loadError": "Impossibile caricare la sinossi.",
     "open": "Anteprima rapida",
     "close": "Chiudi",
     "synopsis": "Sinossi",

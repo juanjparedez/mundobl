@@ -447,8 +447,13 @@ try {
     })
     .fill(key);
   await page.getByTitle(key, { exact: true }).last().click();
-  await page.getByRole('button', { name: 'Responder', exact: true }).click();
-  await page.waitForLoadState('networkidle');
+  // This fixture's router uses location.assign, including for the same URL.
+  // Subscribe before submitting: the old document can be network-idle and its
+  // textarea still contain the reply while the replacement document is loading.
+  await Promise.all([
+    page.waitForEvent('load'),
+    page.getByRole('button', { name: 'Responder', exact: true }).click(),
+  ]);
   if (
     await page
       .getByRole('button', { name: 'Mostrar spoilers', exact: true })

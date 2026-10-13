@@ -1934,6 +1934,7 @@ const fr = {
     "openExisting": "Ouvrir la fiche existante",
     "compareTitle": "Comparer les données",
     "curateSave": "Enregistrer dans la fiche existante",
+    "compareSelectAll": "Sélectionner toutes les modifications",
     "compareHelp": "Choisis les champs à remplacer par ta saisie. Les autres gardent leur valeur actuelle.",
     "comparePreserve": "La série rejoint le catalogue éditorial. Épisodes, liens et suivi sont conservés. Les nouvelles saisons, liens et contenus sont ajoutés.",
     "compareField": "Champ",
@@ -2057,6 +2058,7 @@ const fr = {
     "watchHere": "Regarder ici"
   },
   "quickPreview": {
+    "loadError": "Impossible de charger le synopsis.",
     "open": "Aperçu rapide",
     "close": "Fermer",
     "synopsis": "Synopsis",

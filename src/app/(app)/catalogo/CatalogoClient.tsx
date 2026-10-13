@@ -91,10 +91,13 @@ import { ReorderConfigDrawer } from '@/components/carousel/ReorderConfigDrawer/R
 import { useReorderablePrefs } from '@/components/carousel/useReorderablePrefs';
 import { CATALOG_CAROUSEL_CATEGORIES } from './carousel/catalogCarouselCategories';
 
+import { unpackCatalog, type CatalogPayload } from './catalogTransport';
+import { CatalogSynopsis } from '@/components/series/CatalogSynopsis/CatalogSynopsis';
+
 const { Option } = Select;
 
 interface CatalogoClientProps {
-  series: SerieData[];
+  payload: CatalogPayload;
 }
 
 const ALPHABET = '#ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -164,7 +167,7 @@ const getColorByType = (tipo: string) => {
   return colorMap[tipo] || 'default';
 };
 
-export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
+export function CatalogoClient({ payload }: CatalogoClientProps) {
   const router = useRouter();
   const message = useMessage();
   const { t } = useLocale();
@@ -180,7 +183,7 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
   // comparacion imposible. Unificado con el criterio real de canEditCatalog.
   const canEdit = canEditCatalog(userRole);
 
-  const [series] = useState<SerieData[]>(initialSeries);
+  const series = useMemo(() => unpackCatalog(payload), [payload]);
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
   const [watchStatuses, setWatchStatuses] = useState<Record<string, string>>(
     {}
@@ -813,7 +816,18 @@ export function CatalogoClient({ series: initialSeries }: CatalogoClientProps) {
           )}
         </>
       ),
-      synopsis: serie.synopsis,
+      synopsisContent: (
+        <CatalogSynopsis
+          key={serie.id}
+          seriesId={serie.id}
+          labels={{
+            empty: t('quickPreview.noSynopsis'),
+            loading: t('bottomNav.loading'),
+            error: t('quickPreview.loadError'),
+            retry: t('trackingWorkspace.retry'),
+          }}
+        />
+      ),
       facts: [
         ...(serie.temporadas > 0
           ? [

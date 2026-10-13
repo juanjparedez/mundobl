@@ -1931,6 +1931,7 @@ const ja = {
     "openExisting": "既存の作品情報を開く",
     "compareTitle": "データを比較",
     "curateSave": "既存の作品情報に保存",
+    "compareSelectAll": "すべての変更を選択",
     "compareHelp": "入力内容で置き換える項目を選んでください。他の項目は現在の値を保持します。",
     "comparePreserve": "編集カタログに追加します。エピソード、リンク、視聴記録は保持されます。新しいシーズン、リンク、コンテンツは追加されます。",
     "compareField": "項目",
@@ -2054,6 +2055,7 @@ const ja = {
     "watchHere": "ここで視聴"
   },
   "quickPreview": {
+    "loadError": "あらすじを読み込めませんでした。",
     "open": "クイックビュー",
     "close": "閉じる",
     "synopsis": "あらすじ",

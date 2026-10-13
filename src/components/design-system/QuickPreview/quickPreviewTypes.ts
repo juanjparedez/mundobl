@@ -56,6 +56,8 @@ export interface QuickPreviewData {
   /** Linea de meta bajo el titulo, ya armada y traducida por el caller. */
   meta?: ReactNode;
   synopsis?: string | null;
+  /** Optional on-demand content, mounted only while the preview is open. */
+  synopsisContent?: ReactNode;
   facts?: QuickPreviewFact[];
   chipGroups?: QuickPreviewChipGroup[];
   actions?: QuickPreviewAction[];
