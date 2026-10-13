@@ -87,6 +87,21 @@
   white-space: nowrap;
 }
 
+.sidebar-logo-icon {
+  font-size: 22px;
+}
+
+.app-sidebar:not(.ant-layout-sider-collapsed) .ant-menu-item {
+  height: auto;
+  min-height: 44px;
+}
+
+.app-sidebar:not(.ant-layout-sider-collapsed) .ant-menu-title-content {
+  white-space: normal;
+  line-height: 1.35;
+  padding-block: var(--spacing-sm);
+}
+
 .sidebar-collapse-btn {
   display: flex;
   align-items: center;

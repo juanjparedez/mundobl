@@ -790,7 +790,11 @@ const zhTW = {
   "navSections": {
     "watch": "在此觀看",
     "follow": "追蹤",
-    "explore": "探索"
+    "explore": "探索",
+    "people": "人物與製作公司",
+    "community": "社群",
+    "help": "說明與專案",
+    "manage": "管理"
   },
   "profile": {
     "loginRequired": "登入以查看您的個人資料",
@@ -2942,7 +2946,7 @@ const zhTW = {
     "pageSubtitle": "為社群精選的 Boys Love 和 Girls Love 世界最新消息。",
     "searchPlaceholder": "搜尋新聞…",
     "searchButton": "搜尋",
-    "searchResultsLabel": "「<strong>{activeSearch}</strong>」的搜尋結果 · 共 {total} 則新聞",
+    "searchResultsLabel": "「{activeSearch}」的搜尋結果：{total} 筆",
     "emptyDescription": "暫無新聞",
     "aiBadge": "AI",
     "viewOriginalSource": "查看原始來源",

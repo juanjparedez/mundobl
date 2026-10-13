@@ -797,7 +797,11 @@ const fr = {
   "navSections": {
     "watch": "Regarder ici",
     "follow": "Suivre",
-    "explore": "Explorer"
+    "explore": "Explorer",
+    "people": "Personnes et sociétés de production",
+    "community": "Communauté",
+    "help": "Aide et projet",
+    "manage": "Administration"
   },
   "profile": {
     "loginRequired": "Connectez-vous pour voir votre profil",
@@ -2949,7 +2953,7 @@ const fr = {
     "pageSubtitle": "Les dernières actualités du monde Boys Love et Girls Love, sélectionnées pour la communauté.",
     "searchPlaceholder": "Rechercher des actualités…",
     "searchButton": "Rechercher",
-    "searchResultsLabel": "Résultats pour <strong>&quot;{activeSearch}&quot;</strong> · {total} {total, plural, one {actualité} other {actualités}}",
+    "searchResultsLabel": "Résultats pour « {activeSearch} » : {total}",
     "emptyDescription": "Aucune actualité pour l'instant",
     "aiBadge": "IA",
     "viewOriginalSource": "Voir la source originale",

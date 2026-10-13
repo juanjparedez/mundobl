@@ -794,7 +794,11 @@ const ja = {
   "navSections": {
     "watch": "ここで視聴",
     "follow": "フォロー",
-    "explore": "探す"
+    "explore": "探す",
+    "people": "人物・制作会社",
+    "community": "コミュニティ",
+    "help": "ヘルプ・プロジェクト",
+    "manage": "管理"
   },
   "profile": {
     "loginRequired": "プロフィールを表示するにはサインインしてください",
@@ -879,7 +883,7 @@ const ja = {
     "statsModeLabel": "表示",
     "statsModeBasic": "基本",
     "statsModeAdvanced": "詳細",
-    "statsTopNLabel": "上位 {n}",
+    "statsTopNLabel": "上位 N",
     "statsTopN5": "5",
     "statsTopN10": "10",
     "statsTopN25": "25",
@@ -2029,7 +2033,7 @@ const ja = {
     "hideInfo": "情報を隠す",
     "infoSeasons": "シーズン",
     "infoEpisodes": "エピソード",
-    "infoRuntime": "約{count}時間",
+    "infoRuntime": "おおよその時間",
     "infoActors": "俳優",
     "infoNoActors": "俳優が読み込まれていません",
     "infoUnknown": "不明",
@@ -2946,7 +2950,7 @@ const ja = {
     "pageSubtitle": "ボーイズラブとガールズラブの世界からの最新ニュースをコミュニティのために厳選しました。",
     "searchPlaceholder": "ニュースを検索…",
     "searchButton": "検索",
-    "searchResultsLabel": "<strong>「{activeSearch}」</strong>の検索結果 · {total} 件のニュース",
+    "searchResultsLabel": "「{activeSearch}」の検索結果：{total}件",
     "emptyDescription": "まだニュースはありません",
     "aiBadge": "AI",
     "viewOriginalSource": "元のソースを見る",
