@@ -551,6 +551,54 @@ export async function getPublishedGlossaryTerms() {
 // SERIES
 // ============================================
 
+/** Public catalog projection: never fetch biographies, private notes or synopsis for every card. */
+export async function getCatalogSeries() {
+  return prisma.series.findMany({
+    where: {
+      catalogScope: 'PERSONAL',
+      origin: 'CURATED',
+      visibility: 'VISIBLE',
+    },
+    select: {
+      id: true,
+      title: true,
+      type: true,
+      format: true,
+      year: true,
+      overallRating: true,
+      imageUrl: true,
+      imageThumbUrl: true,
+      imagePosition: true,
+      featured: true,
+      featuredOrder: true,
+      universeId: true,
+      isUniverseMain: true,
+      createdAt: true,
+      country: { select: { name: true, code: true } },
+      universe: { select: { name: true } },
+      seasons: { select: { episodeCount: true } },
+      tags: { select: { tag: { select: { id: true, name: true } } } },
+    },
+    orderBy: { title: 'asc' },
+  });
+}
+
+/** Same public boundary as the catalog; adult synopsis remains behind its detail gate. */
+export async function getCatalogSynopsis(id: number) {
+  const series = await prisma.series.findFirst({
+    where: {
+      id,
+      catalogScope: 'PERSONAL',
+      origin: 'CURATED',
+      visibility: 'VISIBLE',
+    },
+    select: { synopsis: true, contentRating: true },
+  });
+  return series
+    ? { synopsis: series.contentRating === 'ADULT18' ? null : series.synopsis }
+    : null;
+}
+
 /**
  * Obtener todas las series con información básica.
  *

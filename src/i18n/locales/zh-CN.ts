@@ -1927,6 +1927,7 @@ const zhCN = {
     "openExisting": "打开现有条目",
     "compareTitle": "比较数据",
     "curateSave": "保存到现有条目",
+    "compareSelectAll": "选择所有更改",
     "compareHelp": "选择要用你的输入替换的字段。其他字段保留当前值。",
     "comparePreserve": "将加入精选目录。剧集、链接和观看记录会保留。新的季、链接和内容会添加到现有条目。",
     "compareField": "字段",
@@ -2050,6 +2051,7 @@ const zhCN = {
     "watchHere": "在此观看"
   },
   "quickPreview": {
+    "loadError": "无法加载剧情简介。",
     "open": "快速预览",
     "close": "关闭",
     "synopsis": "剧情简介",

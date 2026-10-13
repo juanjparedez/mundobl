@@ -1,14 +1,75 @@
+.series-curation-dialog .ant-modal-title {
+  padding-inline-end: var(--spacing-lg);
+}
 .series-curation-comparison {
   margin-top: var(--spacing-md);
+  display: grid;
+  gap: var(--spacing-md);
+  min-width: 0;
 }
-.series-curation-value {
+.series-curation-field {
+  min-width: 0;
+  padding: var(--spacing-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-base);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+}
+.series-curation-field[data-selected='true'] {
+  border-color: var(--primary-color);
+  background: var(--bg-spotlight);
+}
+.series-curation-comparison .ant-checkbox-wrapper {
+  min-height: 44px;
+  align-items: center;
+  color: var(--text-primary);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+}
+.series-curation-values {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-md);
+  margin: var(--spacing-sm) 0 0;
+}
+.series-curation-values > div {
+  min-width: 0;
+}
+.series-curation-values dt {
+  margin-bottom: var(--spacing-xs);
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+.series-curation-values dd {
+  margin: 0;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
-  max-height: 16rem;
-  overflow: auto;
+  line-height: 1.6;
 }
-
-.series-curation-comparison .ant-table-tbody > tr.ant-table-row-selected > td {
-  background: var(--bg-spotlight);
-  color: var(--text-primary);
+@media (max-width: 600px) {
+  .series-curation-dialog {
+    top: var(--spacing-sm);
+    padding-bottom: var(--spacing-sm);
+  }
+  .series-curation-dialog .ant-modal-container {
+    padding: var(--spacing-md);
+  }
+  .series-curation-values {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .series-curation-values > div + div {
+    padding-top: var(--spacing-sm);
+    border-top: 1px solid var(--border-color);
+  }
+  .series-curation-dialog .ant-modal-footer {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: var(--spacing-sm);
+  }
+  .series-curation-dialog .ant-modal-footer .ant-btn {
+    margin: 0;
+    min-height: 44px;
+    height: auto;
+    white-space: normal;
+  }
 }
