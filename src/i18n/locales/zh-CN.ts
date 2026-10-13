@@ -790,7 +790,11 @@ const zhCN = {
   "navSections": {
     "watch": "在此观看",
     "follow": "关注",
-    "explore": "探索"
+    "explore": "探索",
+    "people": "人物与制作公司",
+    "community": "社区",
+    "help": "帮助与项目",
+    "manage": "管理"
   },
   "profile": {
     "loginRequired": "登录查看您的个人资料",
@@ -2942,7 +2946,7 @@ const zhCN = {
     "pageSubtitle": "精选的最新 Boys Love 和 Girls Love 世界新闻，专为社区打造。",
     "searchPlaceholder": "搜索新闻…",
     "searchButton": "搜索",
-    "searchResultsLabel": "<strong>“{activeSearch}”</strong> 的搜索结果 · 共 {total} 条新闻",
+    "searchResultsLabel": "“{activeSearch}”的搜索结果：{total} 条",
     "emptyDescription": "暂无新闻",
     "aiBadge": "AI",
     "viewOriginalSource": "查看原始来源",

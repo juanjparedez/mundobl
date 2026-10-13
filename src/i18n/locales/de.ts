@@ -797,7 +797,11 @@ const de = {
   "navSections": {
     "watch": "Hier ansehen",
     "follow": "Folgen",
-    "explore": "Entdecken"
+    "explore": "Entdecken",
+    "people": "Personen & Produktionsfirmen",
+    "community": "Community",
+    "help": "Hilfe & Projekt",
+    "manage": "Verwaltung"
   },
   "profile": {
     "loginRequired": "Melden Sie sich an, um Ihr Profil anzuzeigen",
@@ -2949,7 +2953,7 @@ const de = {
     "pageSubtitle": "Die neuesten Nachrichten aus der Boys Love und Girls Love Welt, kuratiert für die Community.",
     "searchPlaceholder": "Nachrichten suchen…",
     "searchButton": "Suchen",
-    "searchResultsLabel": "Ergebnisse für <strong>„{activeSearch}“</strong> · {total} {total, plural, one {Nachricht} other {Nachrichten}}",
+    "searchResultsLabel": "Ergebnisse für „{activeSearch}“: {total}",
     "emptyDescription": "Noch keine Nachrichten",
     "aiBadge": "KI",
     "viewOriginalSource": "Originalquelle ansehen",

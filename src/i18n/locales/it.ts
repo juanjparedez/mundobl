@@ -796,7 +796,11 @@ const it = {
   "navSections": {
     "watch": "Guarda qui",
     "follow": "Segui",
-    "explore": "Esplora"
+    "explore": "Esplora",
+    "people": "Persone e case di produzione",
+    "community": "Comunità",
+    "help": "Aiuto e progetto",
+    "manage": "Amministrazione"
   },
   "profile": {
     "loginRequired": "Accedi per visualizzare il tuo profilo",
@@ -881,7 +885,7 @@ const it = {
     "statsModeLabel": "Visualizza",
     "statsModeBasic": "Base",
     "statsModeAdvanced": "Avanzate",
-    "statsTopNLabel": "Top {n}",
+    "statsTopNLabel": "Top N",
     "statsTopN5": "5",
     "statsTopN10": "10",
     "statsTopN25": "25",
@@ -2948,7 +2952,7 @@ const it = {
     "pageSubtitle": "Le ultime notizie dal mondo Boys Love e Girls Love, curate per la community.",
     "searchPlaceholder": "Cerca notizie…",
     "searchButton": "Cerca",
-    "searchResultsLabel": "Risultati per <strong>&quot;{activeSearch}&quot;</strong> · {total} {total, plural, one {notizia} other {notizie}}",
+    "searchResultsLabel": "Risultati per «{activeSearch}»: {total}",
     "emptyDescription": "Nessuna notizia ancora",
     "aiBadge": "AI",
     "viewOriginalSource": "Visualizza fonte originale",

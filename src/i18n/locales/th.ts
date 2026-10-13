@@ -792,7 +792,11 @@ const th = {
   "navSections": {
     "watch": "ดูที่นี่",
     "follow": "ติดตาม",
-    "explore": "สำรวจ"
+    "explore": "สำรวจ",
+    "people": "บุคคลและบริษัทผู้ผลิต",
+    "community": "ชุมชน",
+    "help": "ความช่วยเหลือและโครงการ",
+    "manage": "การจัดการ"
   },
   "profile": {
     "loginRequired": "ลงชื่อเข้าใช้เพื่อดูโปรไฟล์ของคุณ",
@@ -2027,7 +2031,7 @@ const th = {
     "hideInfo": "ซ่อนข้อมูล",
     "infoSeasons": "ซีซัน",
     "infoEpisodes": "ตอน",
-    "infoRuntime": "ประมาณ {count} ชั่วโมง",
+    "infoRuntime": "ชั่วโมงโดยประมาณ",
     "infoActors": "นักแสดง",
     "infoNoActors": "ไม่มีนักแสดง",
     "infoUnknown": "ไม่ทราบ",
@@ -2944,7 +2948,7 @@ const th = {
     "pageSubtitle": "ข่าวสารล่าสุดจากโลก Boys Love และ Girls Love คัดสรรมาเพื่อชุมชน",
     "searchPlaceholder": "ค้นหาข่าว...",
     "searchButton": "ค้นหา",
-    "searchResultsLabel": "ผลลัพธ์สำหรับ <strong>&quot;{activeSearch}&quot;</strong> · {total} {total, plural, one {ข่าว} other {ข่าว}}",
+    "searchResultsLabel": "ผลการค้นหาสำหรับ “{activeSearch}”: {total}",
     "emptyDescription": "ยังไม่มีข่าว",
     "aiBadge": "AI",
     "viewOriginalSource": "ดูแหล่งที่มาต้นฉบับ",
