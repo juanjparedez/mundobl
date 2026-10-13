@@ -377,7 +377,11 @@ try {
       .getByRole('button', { name: 'Publicar', exact: true })
       .click(),
   ]);
-  await page.waitForLoadState('networkidle');
+  // Publishing reloads this same URL in the fixture router. The previous
+  // document can already be network-idle while that navigation is pending.
+  await page
+    .getByRole('button', { name: 'Volver a privado', exact: true })
+    .waitFor();
   assert.equal(
     (await prisma.communityTopic.findUnique({ where: { id: topicId } }))
       .visibility,
@@ -550,7 +554,9 @@ try {
         .getByRole('button', { name: 'Publicar', exact: true })
         .click(),
     ]);
-    await page.waitForLoadState('networkidle');
+    await page
+      .getByRole('button', { name: 'Volver a privado', exact: true })
+      .waitFor();
     if (needsSeries)
       assert.match(
         await page
