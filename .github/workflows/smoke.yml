@@ -1,8 +1,7 @@
 # Synthetic monitoring: corre los chequeos de humo contra el sitio publico.
 #
-# COSTO: $0. El repo es publico, asi que los minutos de Actions son gratis e
-# ilimitados. Igual hay topes puestos a proposito (timeout-minutes, concurrency,
-# retention-days) para que un cuelgue no se transforme en consumo raro.
+# Las pruebas contra producción generan solicitudes y consumo en Vercel.
+# Ejecutar manualmente al publicar un lote; durante desarrollo usar localhost.
 #
 # NO usa ningun secret. Es a proposito: el sitio es publico y los tests solo
 # leen, asi que este workflow anda aunque no haya nada configurado.
@@ -10,14 +9,10 @@
 name: Smoke (produccion)
 
 on:
-  schedule:
-    # Cada 6 horas. No hace falta mas: el sitio recibe ~437 visitantes/mes y
-    # cada corrida le pega ~10 requests. Subir la frecuencia solo agrega ruido.
-    - cron: '0 */6 * * *'
   workflow_dispatch:
     inputs:
       base_url:
-        description: 'URL a chequear (para probar un preview)'
+        description: 'URL a chequear manualmente después de una entrega'
         required: false
         default: 'https://mundobl.com.ar'
 
