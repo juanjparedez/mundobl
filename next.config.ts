@@ -1,32 +1,15 @@
 import type { NextConfig } from 'next';
-import { execSync } from 'child_process';
+import { getBuildMetadata } from './src/lib/build-metadata';
 import { OPTIMIZED_IMAGE_HOSTS } from './src/lib/image-helpers';
 
-// Fecha del commit que se esta buildeando, capturada en build time (con git
-// disponible en la maquina de build de Vercel) e inlineada como constante en
-// el bundle. NO usar fs.statSync(mtime) sobre archivos generados en runtime
-// para esto — se probo y el mtime de .next/BUILD_ID en Vercel no refleja la
-// hora real del deploy (la capa de cache/build reproducible lo pisa a una
-// fecha fija sin relacion con el deploy real, ej. "19 oct 2018"). El commit
-// date via git es determinista y no depende de como Vercel maneje mtimes.
-function getGitCommitDate(): string {
-  try {
-    return execSync('git log -1 --format=%cI').toString().trim();
-  } catch {
-    return new Date().toISOString();
-  }
-}
+// Actions pasa SHA y fecha al build remoto, donde no hay .git.
+// En desarrollo se usa Git local; sin metadatos queda un fallback silencioso.
+const buildMetadata = getBuildMetadata();
 
 const nextConfig: NextConfig = {
-  generateBuildId: () => {
-    try {
-      return execSync('git rev-parse --short HEAD').toString().trim();
-    } catch {
-      return Date.now().toString(36);
-    }
-  },
+  generateBuildId: () => buildMetadata.buildId,
   env: {
-    BUILD_COMMIT_DATE: getGitCommitDate(),
+    BUILD_COMMIT_DATE: buildMetadata.commitDate,
   },
   reactStrictMode: true,
   // /api/changelog lee CHANGELOG.md con fs en runtime (es la fuente de verdad

@@ -172,11 +172,10 @@ export default function RootLayout({
             </LocaleProvider>
           </AntdRegistry>
         </SessionProvider>
-        {/* Medicion. Ambos se sirven desde el propio dominio
-         *  (/_vercel/insights, /_vercel/speed-insights), asi que pasan la
-         *  CSP de next.config.ts sin necesidad de abrir script-src a
-         *  hosts externos. Web Analytics es sin cookies y sin PII. */}
-        <Analytics />
+        {/* Medición opcional; desactivada salvo habilitación explícita. */}
+        {process.env.NEXT_PUBLIC_VERCEL_ANALYTICS_ENABLED === 'true' && (
+          <Analytics />
+        )}
       </body>
     </html>
   );

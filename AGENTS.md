@@ -4,6 +4,9 @@
 
 ## Reglas Obligatorias
 
+- Trabajar y validar localmente; agrupar cambios. No hacer push, abrir PR, merge ni deploy sin una nueva instruccion explicita del usuario para publicar ese lote.
+- No agregar trailers de coautoria ni atribuciones de asistentes en commits o PRs. Usar la identidad Git del propietario configurada en el repositorio; comprobar el mensaje final antes de publicar.
+
 - Seguir principios SOLID y DRY
 - TypeScript estricto: no usar `any`
 - Estilos en archivos `.css` separados (NO CSS-in-JS)

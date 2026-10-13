@@ -2,9 +2,8 @@
 
 import { startTransition, useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { Avatar, Badge, Drawer, Layout, Menu } from 'antd';
+import { Avatar, Badge, Layout, Menu } from 'antd';
 import Link from 'next/link';
-import { NavigationSections } from '../NavigationSections/NavigationSections';
 import {
   AppstoreOutlined,
   SettingOutlined,
@@ -50,7 +49,7 @@ export function Sidebar({
   };
 
   const pathname = usePathname();
-  const [openSection, setOpenSection] = useState<string | null>(null);
+  const [openSections, setOpenSections] = useState<string[]>([]);
   const { t } = useLocale();
   const { data: session } = useSession();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -59,7 +58,12 @@ export function Sidebar({
   useEffect(() => {
     startTransition(() => {
       setIsSettingsOpen(false);
-      setOpenSection(null);
+      const active = NAV_ITEMS.find((item) => isNavItemActive(item, pathname));
+      if (active && !active.primary) {
+        setOpenSections((current) => [
+          ...new Set([...current, active.section]),
+        ]);
+      }
     });
   }, [pathname]);
 
@@ -115,6 +119,20 @@ export function Sidebar({
       })),
     { type: 'divider' as const },
     ...sections.map((section) => {
+      const links = section.entries.map((entry) => ({
+        key: entry.path,
+        icon: entry.icon,
+        label: (
+          <Link
+            href={entry.path}
+            prefetch={false}
+            aria-current={entry.active ? 'page' : undefined}
+          >
+            {entry.label}
+          </Link>
+        ),
+      }));
+      if (links.length === 1) return links[0];
       const Icon = NAV_SECTIONS.find(
         (definition) => definition.key === section.key
       )!.icon;
@@ -131,19 +149,24 @@ export function Sidebar({
             <Icon />
           </Badge>
         ),
-        label: <span aria-haspopup="dialog">{section.label}</span>,
-        onClick: () => setOpenSection(section.key),
+        label: section.label,
+        ...(collapsed
+          ? {
+              onClick: () => {
+                changeCollapsed(false);
+                setOpenSections((current) => [
+                  ...new Set([...current, section.key]),
+                ]);
+              },
+            }
+          : { children: links }),
       };
     }),
   ];
   const activeItem = visibleItems.find((item) =>
     isNavItemActive(item, pathname)
   );
-  const selectedKey = activeItem
-    ? activeItem.primary
-      ? activeItem.path
-      : activeItem.section
-    : '';
+  const selectedKey = activeItem?.path ?? '';
 
   return (
     <Sider
@@ -170,24 +193,13 @@ export function Sidebar({
         </button>
       </div>
 
-      <Menu mode="inline" selectedKeys={[selectedKey]} items={menuItems} />
-
-      <Drawer
-        title={t('bottomNav.mainNavigation')}
-        placement="left"
-        size={380}
-        open={openSection !== null}
-        onClose={() => setOpenSection(null)}
-        destroyOnHidden
-        className="navigation-drawer"
-      >
-        <NavigationSections
-          key={openSection}
-          sections={sections}
-          initialSection={openSection ?? undefined}
-          onNavigate={() => setOpenSection(null)}
-        />
-      </Drawer>
+      <Menu
+        mode="inline"
+        selectedKeys={[selectedKey]}
+        openKeys={collapsed ? [] : openSections}
+        onOpenChange={setOpenSections}
+        items={menuItems}
+      />
       <div className="sidebar-footer">
         {session?.user ? (
           <button

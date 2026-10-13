@@ -2,6 +2,46 @@
 
 Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-stack para gestionar, calificar y hacer seguimiento de series, peliculas, cortos y especiales.
 
+## Flujo local y corrección de navegación (2026-10-12)
+
+- Por instrucción del propietario: desarrollar y validar localmente, agrupar las
+  mejoras y esperar una nueva indicación explícita antes de push/PR/merge/deploy.
+  El propietario autorizó reunir este lote en una sola MR y un solo deploy.
+- `vercel.json` ya desactiva despliegues Git de todas las ramas. Producción se
+  despliega únicamente al ejecutar manualmente `deploy.yml`; los checks de PR
+  usan runners GitHub con PostgreSQL descartable, no previews de Vercel.
+- Smoke de producción pausado en GitHub (`disabled_manually`). La copia local
+  elimina el cron de seis horas y conserva ejecución manual. Playwright apunta
+  a `localhost:3018` por defecto; producción exige `SMOKE_BASE_URL` explícito.
+- Analytics pasa a ser opt-in mediante `NEXT_PUBLIC_VERCEL_ANALYTICS_ENABLED=true`:
+  sin esa bandera no se monta el script ni se envían eventos propios. Este cambio
+  sólo afectará producción después de una entrega autorizada. Se mantienen las
+  tareas funcionales del cron y los backups; no se promete ahorro de CPU/ISR por
+  quitar Analytics, que tiene su propia cuota.
+- Corrección local del diseño rechazado: grupos inline en Sidebar y AdminNav;
+  al expandir aparecen los destinos en el mismo menú. Un grupo con un destino
+  es un enlace directo. Mobile mantiene una sola superficie en «Más», con grupos
+  compactos, sin resúmenes repetidos ni paneles adicionales.
+- Verificación local: build, TypeScript, lint y auditoría de los diez idiomas
+  aprobados. Navegador contra Next dev/PostgreSQL local: retorno, filtros, scroll,
+  grupos inline, sidebar colapsado, móvil 320/390/768 y admin aprobados. El servidor
+  dev se detuvo para compilar; la revisión automática bloqueó después `next start`
+  sin motivo específico, por lo que no quedó una vista local persistente encendida.
+- No agregar coautorías. Se limpiaron 187 mensajes del historial publicado y el
+  tag, preservando árboles, identidades, fechas y topología de los 757 commits.
+  Los SHA históricos anteriores ya no identifican la línea vigente; referencias
+  antiguas de PR y cachés de GitHub pueden seguir accesibles. Respaldo sólo local.
+- Build remoto: Actions pasa `MUNDOBL_BUILD_SHA` y `MUNDOBL_BUILD_COMMIT_DATE`.
+  El build ID usa los primeros 12 caracteres del SHA. Sin `.git` no se ejecuta
+  Git; en local se conserva fallback silencioso. Pruebas cubren CI sin Git,
+  metadata del proveedor y checkout ausente/roto.
+- `useHasNovedades` comparte petición en curso y timestamp público por 60 segundos,
+  conservando la lectura de la marca personal en cada navegación. Pruebas de
+  concurrencia, expiración y reintento después de error. No comparte datos privados.
+- Esto reduce consultas redundantes y telemetría opcional, pero no certifica
+  resolver las cuotas acumuladas de CPU/ISR. La reducción del payload del catálogo
+  y CSS SSR del diagnóstico sigue pendiente; requiere medición comparativa propia.
+
 ## Navegación y traducciones (2026-10-12)
 
 - Sidebar: conserva los accesos principales y abre cajones por sección. Actores,
