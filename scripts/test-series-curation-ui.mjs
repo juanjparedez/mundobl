@@ -115,6 +115,64 @@ try {
     dialog.getByText('Sinopsis curada por Flor', { exact: true })
   ).toBeVisible();
   mkdirSync('test-results/series-curation', { recursive: true });
+  for (const mode of ['dark', 'light']) {
+    if (mode === 'light') {
+      await dialog
+        .getByRole('button', { name: 'Cancelar', exact: true })
+        .click();
+      await page.evaluate(() => localStorage.setItem('theme', 'light'));
+      await page.reload();
+      await page
+        .getByRole('button', { name: 'Recuperar', exact: true })
+        .click();
+      await page
+        .getByRole('button', { name: 'Comparar datos', exact: true })
+        .click();
+    }
+    await expect(page.locator('html')).toHaveAttribute('data-theme', mode);
+    for (const width of [320, 390, 768, 1280]) {
+      await page.setViewportSize({ width, height: 900 });
+      const synopsis = dialog
+        .locator('.series-curation-field')
+        .filter({ hasText: 'Sinopsis importada' });
+      await expect(synopsis).toBeVisible();
+      const choice = synopsis.getByRole('checkbox');
+      await expect(choice).toBeChecked();
+      await choice.uncheck();
+      await choice.check();
+      await synopsis.hover();
+      assert(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth
+        ),
+        `overflow ${mode} ${width}`
+      );
+      const measurements = await synopsis.evaluate((el) => {
+        const style = getComputedStyle(el);
+        const values = [...el.querySelectorAll('dd')].map((node) =>
+          node.getBoundingClientRect().toJSON()
+        );
+        return { bg: style.backgroundColor, color: style.color, values };
+      });
+      if (mode === 'dark')
+        assert.notEqual(measurements.bg, 'rgb(255, 255, 255)');
+      if (width < 600)
+        assert(
+          measurements.values[1].top > measurements.values[0].bottom,
+          'mobile values must stack'
+        );
+      else
+        assert.equal(
+          measurements.values[1].top,
+          measurements.values[0].top,
+          'desktop compares side by side'
+        );
+      await dialog.screenshot({
+        path: `test-results/series-curation/${mode}-${width}.png`,
+        animations: 'disabled',
+      });
+    }
+  }
   await dialog.screenshot({
     path: 'test-results/series-curation/comparison.png',
   });

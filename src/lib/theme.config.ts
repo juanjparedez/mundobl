@@ -582,6 +582,9 @@ function buildCustomSkinTheme(
         borderRadiusLG: p.radius + 4,
       },
       Table: {
+        rowSelectedBg: 'var(--bg-spotlight)',
+        rowSelectedHoverBg: 'var(--bg-spotlight)',
+        rowExpandedBg: 'var(--bg-elevated)',
         headerBg: p.panel2,
         rowHoverBg: p.panel3,
         colorBgContainer: p.panel,
@@ -666,6 +669,9 @@ export function buildTheme(
           primaryColor: readableTextOn(accent.primary),
         },
         Table: {
+          rowSelectedBg: 'var(--bg-spotlight)',
+          rowSelectedHoverBg: 'var(--bg-spotlight)',
+          rowExpandedBg: 'var(--bg-elevated)',
           headerBg: '#fafafa',
           rowHoverBg: '#f5f5f5',
         },
@@ -744,6 +750,9 @@ export function buildTheme(
         colorBorderSecondary: '#32293f',
       },
       Table: {
+        rowSelectedBg: 'var(--bg-spotlight)',
+        rowSelectedHoverBg: 'var(--bg-spotlight)',
+        rowExpandedBg: 'var(--bg-elevated)',
         headerBg: '#2a2437',
         rowHoverBg: '#2f283d',
         colorBgContainer: '#201c29',

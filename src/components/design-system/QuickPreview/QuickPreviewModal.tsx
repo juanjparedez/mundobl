@@ -183,9 +183,11 @@ export function QuickPreviewModal({
 
           <div className="mb-qp__synopsis">
             <h3 className="mb-qp__section-label">{labels.synopsis}</h3>
-            <p className="mb-qp__synopsis-text">
-              {data.synopsis?.trim() ? data.synopsis : labels.noSynopsis}
-            </p>
+            {data.synopsisContent ?? (
+              <p className="mb-qp__synopsis-text">
+                {data.synopsis?.trim() ? data.synopsis : labels.noSynopsis}
+              </p>
+            )}
           </div>
 
           {data.facts && data.facts.length > 0 && (

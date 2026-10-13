@@ -36,6 +36,7 @@ export function revalidateSeriesDetail(serie: {
 }): void {
   revalidatePath(getSeriesUrl(serie.id, serie.title));
   revalidatePath(`/series/${serie.id}`);
+  revalidatePath(`/api/series/${serie.id}/preview`);
   revalidatePath(getVerUrl(serie.id, serie.title));
   revalidatePath(`/ver/${serie.id}`);
 }

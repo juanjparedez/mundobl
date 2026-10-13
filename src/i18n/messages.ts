@@ -1913,6 +1913,7 @@ export type TranslationShape = {
     openExisting: string;
     compareTitle: string;
     curateSave: string;
+    compareSelectAll: string;
     compareHelp: string;
     comparePreserve: string;
     compareField: string;
@@ -2036,6 +2037,7 @@ export type TranslationShape = {
     watchHere: string;
   };
   quickPreview: {
+    loadError: string;
     open: string;
     close: string;
     synopsis: string;
@@ -5836,6 +5838,7 @@ const es: TranslationShape = {
     openExisting: 'Abrir ficha existente',
     compareTitle: 'Comparar datos',
     curateSave: 'Guardar en la ficha existente',
+    compareSelectAll: 'Seleccionar todos los cambios',
     compareHelp:
       'Elegí los campos que querés reemplazar con tu carga. Los demás conservan su valor actual.',
     comparePreserve:
@@ -5964,6 +5967,7 @@ const es: TranslationShape = {
     watchHere: 'Se ve acá',
   },
   quickPreview: {
+    loadError: 'No pudimos cargar la sinopsis.',
     open: 'Vista rápida',
     close: 'Cerrar',
     synopsis: 'Sinopsis',
@@ -9856,6 +9860,7 @@ const en: TranslationShape = {
     openExisting: 'Open existing entry',
     compareTitle: 'Compare data',
     curateSave: 'Save to existing entry',
+    compareSelectAll: 'Select all changes',
     compareHelp:
       'Choose which fields to replace with your entry. Other fields keep their current values.',
     comparePreserve:
@@ -9984,6 +9989,7 @@ const en: TranslationShape = {
     watchHere: 'Watch here',
   },
   quickPreview: {
+    loadError: 'We could not load the synopsis.',
     open: 'Quick view',
     close: 'Close',
     synopsis: 'Synopsis',

@@ -1927,6 +1927,7 @@ const zhTW = {
     "openExisting": "開啟現有條目",
     "compareTitle": "比較資料",
     "curateSave": "儲存到現有條目",
+    "compareSelectAll": "選取所有變更",
     "compareHelp": "選擇要用你的輸入取代的欄位。其他欄位保留目前值。",
     "comparePreserve": "將加入精選目錄。集數、連結及觀看紀錄會保留。新的季、連結和內容會新增至現有條目。",
     "compareField": "欄位",
@@ -2050,6 +2051,7 @@ const zhTW = {
     "watchHere": "在此觀看"
   },
   "quickPreview": {
+    "loadError": "無法載入劇情簡介。",
     "open": "快速預覽",
     "close": "關閉",
     "synopsis": "劇情簡介",
