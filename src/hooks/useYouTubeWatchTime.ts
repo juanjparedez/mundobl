@@ -6,6 +6,11 @@ import {
   YOUTUBE_PLAYER_STATE,
   type YouTubePlayer,
 } from '@/lib/youtube-iframe-api';
+import {
+  clearEpisodePlaybackPosition,
+  getEpisodePlaybackPosition,
+  setEpisodePlaybackPosition,
+} from '@/lib/local-progress';
 
 export interface WatchSample {
   position: number;
@@ -47,7 +52,8 @@ export type YouTubeWatchEvent = 'watched' | 'ended';
 export function useYouTubeWatchTime(
   iframeRef: RefObject<HTMLIFrameElement | null>,
   enabled: boolean,
-  onProgress?: (event: YouTubeWatchEvent) => void
+  onProgress?: (event: YouTubeWatchEvent) => void,
+  episodeId?: number
 ): void {
   const onProgressRef = useRef(onProgress);
   useEffect(() => {
@@ -71,18 +77,31 @@ export function useYouTubeWatchTime(
     const sample = () => {
       if (!player) return;
       const duration = player.getDuration();
+      const position = player.getCurrentTime();
+      const playing = player.getPlayerState() === YOUTUBE_PLAYER_STATE.PLAYING;
       accumulator = accumulateWatchTime(accumulator, {
-        position: player.getCurrentTime(),
+        position,
         sampledAt: Date.now(),
         playbackRate: player.getPlaybackRate(),
-        playing: player.getPlayerState() === YOUTUBE_PLAYER_STATE.PLAYING,
+        playing,
       });
+      if (
+        episodeId !== undefined &&
+        playing &&
+        !reportedWatched &&
+        duration > 0 &&
+        position > 10 &&
+        position < duration - 15
+      ) {
+        setEpisodePlaybackPosition(episodeId, position);
+      }
       if (
         !reportedWatched &&
         duration > 0 &&
         accumulator.watchedSeconds / duration >= 0.8
       ) {
         reportedWatched = true;
+        if (episodeId !== undefined) clearEpisodePlaybackPosition(episodeId);
         onProgressRef.current?.('watched');
       }
     };
@@ -93,12 +112,25 @@ export function useYouTubeWatchTime(
         player = new YT.Player(iframe, {
           events: {
             onReady: () => {
+              if (episodeId !== undefined && player?.seekTo) {
+                const savedPos = getEpisodePlaybackPosition(episodeId);
+                const duration = player.getDuration();
+                if (
+                  savedPos > 10 &&
+                  (duration <= 0 || savedPos < duration - 15)
+                ) {
+                  player.seekTo(savedPos, true);
+                }
+              }
               intervalId = setInterval(sample, 2000);
             },
             onStateChange: ({ data }) => {
               sample();
               if (data === YOUTUBE_PLAYER_STATE.ENDED && !reportedEnded) {
                 reportedEnded = true;
+                if (episodeId !== undefined) {
+                  clearEpisodePlaybackPosition(episodeId);
+                }
                 if (!reportedWatched) {
                   reportedWatched = true;
                   onProgressRef.current?.('watched');
@@ -119,5 +151,5 @@ export function useYouTubeWatchTime(
       if (intervalId) clearInterval(intervalId);
       player?.destroy();
     };
-  }, [enabled, iframeRef]);
+  }, [enabled, iframeRef, episodeId]);
 }

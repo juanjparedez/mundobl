@@ -25,6 +25,7 @@ import { useMessage } from '@/hooks/useMessage';
 import { savePendingTrack } from '@/lib/pending-track';
 import { findFurthestWatchedIndex } from '@/lib/episode-progress';
 import { toTrackedChapters, type TrackedChapter } from '@/lib/episode-chapters';
+import { shouldShowEpisodes } from '@/types/content';
 import { WatchDateEditor } from '../WatchDateEditor/WatchDateEditor';
 import './TrackingPanel.css';
 
@@ -39,6 +40,8 @@ interface TrackingPanelProps {
   seriesId: number;
   /** Para el Popconfirm "¿Terminaste {title}?" y el mensaje post-login. */
   seriesTitle: string;
+  /** Tipo de obra ('serie', 'corto', 'pelicula', etc.) para no reclamar capitulos en cortos/peliculas. */
+  seriesType?: string;
   seasons?: Array<{
     seasonNumber: number;
     episodes?: Array<{
@@ -67,6 +70,7 @@ interface TrackingPanelProps {
 export function TrackingPanel({
   seriesId,
   seriesTitle,
+  seriesType = 'serie',
   seasons = [],
   airing = false,
 }: TrackingPanelProps) {
@@ -356,9 +360,11 @@ export function TrackingPanel({
               {t('trackingPanel.markWatched')}
             </Button>
           )}
-          <p className="tracking-panel__hint">
-            {t('trackingPanel.noEpisodes')}
-          </p>
+          {shouldShowEpisodes(seriesType) && (
+            <p className="tracking-panel__hint">
+              {t('trackingPanel.noEpisodes')}
+            </p>
+          )}
         </div>
       )}
 

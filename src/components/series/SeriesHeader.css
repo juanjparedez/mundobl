@@ -290,26 +290,24 @@
   border-color: color-mix(in srgb, var(--primary-color) 40%, transparent);
 }
 
+/* En desktop (> 1000px, breakpoint ya usado en este archivo), el hero pasa a
+ * 3 columnas: [Poster 220px] [Info central 1fr] [Seguimiento + acciones 360px].
+ * Asi el TrackingPanel nunca se estira a 1200px ni genera botones de 600px. */
 @media (min-width: 1001px) {
-  .series-header__actions .tracking-panel {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  .series-header {
+    grid-template-columns: 220px minmax(0, 1fr) 360px;
+    grid-template-areas: 'aside content actions';
     align-items: start;
-    column-gap: var(--spacing-lg);
   }
-  .series-header__actions .tracking-panel > * {
-    grid-column: 1;
-    min-width: 0;
+  .series-header__image {
+    width: 220px;
   }
-  .series-header__actions .tracking-panel__header {
-    grid-column: 1 / -1;
+  .series-header__actions {
+    position: sticky;
+    top: calc(var(--header-height) + var(--spacing-sm));
   }
-  .series-header__actions .tracking-panel__notes {
-    grid-column: 2;
-    grid-row: 2 / span 5;
-    border-top: 0;
-    border-left: 1px solid var(--border-color-secondary);
-    padding: 0 0 0 var(--spacing-lg);
+  .series-header__actions .series-quick-actions {
+    justify-content: center;
   }
 }
 

@@ -48,6 +48,14 @@ const CHANNEL_COUNTRY_MAP: Record<string, string> = {
   STRONGBERRY: 'KR',
   GagaOOLala: 'TW',
   'WeTV Thailand': 'TH',
+  CHANGE2561: 'TH',
+  'MFlow Entertainment': 'TH',
+  'Kongthup Production': 'TH',
+  "Kongthup's Channel": 'TH',
+  'COPY A BANGKOK': 'TH',
+  '9NAA Channel': 'TH',
+  Ch3Thailand: 'TH',
+  'MeMindY Official': 'TH',
 };
 
 /**

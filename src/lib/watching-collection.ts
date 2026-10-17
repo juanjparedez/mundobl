@@ -2,6 +2,12 @@ import { groupIntoChapters } from './episode-chapters';
 import { findNextEpisode } from './episode-progress';
 import { getSeriesUrl, getVerUrl } from './slug';
 
+export interface WatchingWatchLink {
+  id: number;
+  platform: string;
+  url: string;
+}
+
 export interface WatchingItem {
   id: number;
   status: string;
@@ -17,10 +23,15 @@ export interface WatchingItem {
     imageThumbUrl?: string | null;
     airDays?: string | null;
     hasWatchableEpisode: boolean;
+    /** Si la serie curada se reproduce a traves de un aporte USER_EMBED vinculado. */
+    watchableTarget?: { id: number; title: string } | null;
+    /** Enlaces oficiales ("Donde ver") para saltar a Viki, GagaOOLala, iQIYI, etc. */
+    watchLinks?: WatchingWatchLink[];
     country?: { name: string } | null;
     seasons: Array<{
       id: number;
       seasonNumber: number;
+      episodeCount?: number | null;
       episodes: Array<{
         id: number;
         episodeNumber: number;
@@ -89,8 +100,14 @@ export function watchingProgress(item: WatchingItem) {
   const watched = (chapter: (typeof chapters)[number]) =>
     chapter.episodes.every((episode) => episode.watched);
   const next = findNextEpisode(chapters, watched);
+  // Si una ficha curada historica tiene season.episodeCount pero 0 filas en
+  // Episode todavia, mostramos igual el total real declarado por curaduria.
+  const declaredTotal = item.series.seasons.reduce(
+    (sum, s) => sum + (s.episodeCount ?? 0),
+    0
+  );
   return {
-    total: chapters.length,
+    total: chapters.length > 0 ? chapters.length : declaredTotal,
     watched: chapters.filter(watched).length,
     next: next
       ? {

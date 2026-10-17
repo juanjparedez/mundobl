@@ -14,6 +14,7 @@ interface EmbedPlayerProps {
   url: string;
   videoId: string | null;
   title: string;
+  episodeId?: number;
   autoplay?: boolean;
   onWatchProgress?: (event: YouTubeWatchEvent) => void;
 }
@@ -58,6 +59,7 @@ export function EmbedPlayer({
   url,
   videoId,
   title,
+  episodeId,
   autoplay = false,
   onWatchProgress,
 }: EmbedPlayerProps) {
@@ -74,7 +76,12 @@ export function EmbedPlayer({
     origin: isTrackedYouTube ? origin : undefined,
     autoplay,
   });
-  useYouTubeWatchTime(iframeRef, isTrackedYouTube && !!origin, onWatchProgress);
+  useYouTubeWatchTime(
+    iframeRef,
+    isTrackedYouTube && !!origin,
+    onWatchProgress,
+    episodeId
+  );
 
   if (embed.type === 'iframe' && embed.url) {
     const isSpotify = platform === 'Spotify';

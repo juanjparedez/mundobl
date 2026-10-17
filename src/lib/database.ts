@@ -2429,10 +2429,34 @@ export async function getWatchingLibrary(
           imageThumbUrl: true,
           airDays: true,
           country: { select: { name: true } },
+          watchLinks: {
+            where: { official: true },
+            select: { id: true, platform: true, url: true },
+            orderBy: { id: 'asc' },
+          },
+          linkedFromUserEmbeds: {
+            where: { visibility: 'VISIBLE' },
+            select: {
+              id: true,
+              title: true,
+              seasons: {
+                select: {
+                  episodes: {
+                    select: {
+                      embedUrl: true,
+                      durationSeconds: true,
+                    },
+                  },
+                },
+              },
+            },
+            take: 1,
+          },
           seasons: {
             select: {
               id: true,
               seasonNumber: true,
+              episodeCount: true,
               episodes: {
                 select: {
                   id: true,
@@ -2462,21 +2486,33 @@ export async function getWatchingLibrary(
   });
 
   // Para el boton "Seguir viendo" en /watching: si la serie tiene algun
-  // episodio mirable, se puede retomar directo en /ver sin pasar por la
-  // ficha del catalogo. `series` es nullable a nivel de tipo (relacion
-  // opcional en el schema) aunque el `where` ya garantiza `seriesId` no
-  // nulo, de ahi el `!`.
+  // episodio mirable (propio o via un aporte USER_EMBED vinculado), se puede
+  // retomar directo en /ver sin pasar por la ficha del catalogo.
   const result = currentlyWatching
     .filter((item) => item.series !== null)
-    .map((item) => ({
-      ...item,
-      series: {
-        ...item.series!,
-        hasWatchableEpisode: item.series!.seasons.some((season) =>
+    .map((item) => {
+      const s = item.series!;
+      const ownWatchable = s.seasons.some((season) =>
+        season.episodes.some(isWatchableEpisode)
+      );
+      const linked = s.linkedFromUserEmbeds?.[0];
+      const linkedWatchable =
+        linked?.seasons.some((season) =>
           season.episodes.some(isWatchableEpisode)
-        ),
-      },
-    }));
+        ) ?? false;
+      const { linkedFromUserEmbeds: _unused, ...restSeries } = s;
+      return {
+        ...item,
+        series: {
+          ...restSeries,
+          hasWatchableEpisode: ownWatchable || linkedWatchable,
+          watchableTarget:
+            !ownWatchable && linkedWatchable && linked
+              ? { id: linked.id, title: linked.title }
+              : null,
+        },
+      };
+    });
 
   return result;
 }

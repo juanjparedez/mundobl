@@ -106,6 +106,48 @@ export const OFFICIAL_CHANNELS: OfficialChannel[] = [
     channelId: 'UCWY3HiAc_WwJRLS3IO79NmQ',
     country: '🇹🇭',
   },
+  {
+    name: 'CHANGE2561',
+    handle: 'CHANGE2561',
+    channelId: 'UCISGtaTLXAEliMLp1VJZsSg',
+    country: '🇹🇭',
+  },
+  {
+    name: 'MFlow Entertainment',
+    handle: 'mflowentertainment2019',
+    channelId: 'UCvMb_oSnpYLzCRAKPn1VuSg',
+    country: '🇹🇭',
+  },
+  {
+    name: 'Kongthup Production',
+    handle: 'kongthupsproduction',
+    channelId: 'UC7In87_3Y2Ja1b8kl-3uXUA',
+    country: '🇹🇭',
+  },
+  {
+    name: 'COPY A BANGKOK',
+    handle: 'COPYABANGKOK',
+    channelId: 'UCYrSFDofKo-ilpv7lBore0Q',
+    country: '🇹🇭',
+  },
+  {
+    name: '9NAA Channel',
+    handle: '9NAAChannelOfficial',
+    channelId: 'UC_YnaKLx445NmaSYCet3HZg',
+    country: '🇹🇭',
+  },
+  {
+    name: 'Ch3Thailand',
+    handle: 'Ch3Thailand',
+    channelId: 'UC48h7Dst_hX82HxOf3xJw_w',
+    country: '🇹🇭',
+  },
+  {
+    name: 'MeMindY Official',
+    handle: 'MeMindYOfficial',
+    channelId: 'UC400oGKKf-GMgVBfmO9F7bg',
+    country: '🇹🇭',
+  },
 ];
 
 /** URL canonica del canal, para links y para el barrido. */
