@@ -86,9 +86,10 @@
   color: var(--text-secondary);
 }
 
-/* Widget angosto (3-4 stats por fila ya quedan apretados): baja a 2
- * columnas para que el numero + label sigan siendo legibles. */
-@container mb-widget-body (max-width: 480px) {
+/* Widget angosto: con 4 por fila cada stat necesita ~170px; por debajo de
+ * eso baja a 2 columnas para que el numero + label sigan siendo legibles.
+ * (Con el corte en 480px, un widget de 516px dejaba el texto en 62px.) */
+@container mb-widget-body (max-width: 720px) {
   .mb-stats-strip-widget__list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

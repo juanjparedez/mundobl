@@ -1,6 +1,6 @@
 .glosario-container {
   padding: var(--spacing-lg) var(--spacing-md);
-  max-width: 1200px;
+  max-width: var(--content-max-width);
   margin: 0 auto;
   display: flex;
   flex-direction: column;

@@ -3,26 +3,19 @@ import { ContentNotice } from '@/components/content/ContentNotice/ContentNotice'
 import { hasContentConsent } from '@/lib/content-consent';
 import { getPublicWriterCredits } from '@/lib/database';
 import { WriterCredits } from '@/components/series/WriterCredits/WriterCredits';
-import { cache } from 'react';
 import { notFound, redirect } from 'next/navigation';
 import { BackToCatalogButton } from '@/components/series/BackToCatalogButton/BackToCatalogButton';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { isWatchableEpisode } from '@/lib/watchable';
 import type { TVSeries } from 'schema-dts';
-import { getWatchableSeriesById } from '@/lib/database';
+import { getWatchableSeriesByIdCached } from '@/lib/detail-loaders';
 import { getAdultVariantUrl, getVerUrl } from '@/lib/slug';
 import { isAiringNow } from '@/lib/airing-schedule';
 import { SeriesUserStatusProvider } from '@/components/series/SeriesUserStatusProvider';
 import { PendingTrackApplier } from '@/components/series/PendingTrackApplier/PendingTrackApplier';
 import { VerSerieClient } from '../VerSerieClient';
 import './VerSerieView.css';
-
-// generateMetadata y el componente piden la misma serie. Sin memoizar eran
-// DOS consultas completas (temporadas + episodios + embeds) por render, y el
-// render se repite en cada regeneracion ISR. `cache` las colapsa en una,
-// igual que ya hace /series/[id] con getSeriesByIdCached.
-export const getWatchableSeriesByIdCached = cache(getWatchableSeriesById);
 
 interface VerSerieViewProps {
   seriesId: number;

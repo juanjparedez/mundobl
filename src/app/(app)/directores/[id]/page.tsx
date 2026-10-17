@@ -14,7 +14,8 @@ import { notFound } from 'next/navigation';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
 import type { Person } from 'schema-dts';
-import { getDirectorById, findActorIdByName } from '@/lib/database';
+import { findActorIdByName } from '@/lib/database';
+import { loadDirector } from '@/lib/detail-loaders';
 import { isIndexablePerson } from '@/lib/person-completeness';
 import { DirectorProfileClient } from './DirectorProfileClient';
 
@@ -26,10 +27,7 @@ export async function generateMetadata({
   params,
 }: DirectorPageProps): Promise<Metadata> {
   const { id } = await params;
-  const directorId = parseInt(id, 10);
-  if (isNaN(directorId)) return {};
-
-  const director = await getDirectorById(directorId);
+  const director = await loadDirector(id);
   if (!director) return {};
 
   const seriesCount = director.series?.length ?? 0;
@@ -71,17 +69,8 @@ export async function generateMetadata({
 
 export default async function DirectorPage({ params }: DirectorPageProps) {
   const { id } = await params;
-  const directorId = parseInt(id, 10);
-
-  if (isNaN(directorId)) {
-    notFound();
-  }
-
-  const director = await getDirectorById(directorId);
-
-  if (!director) {
-    notFound();
-  }
+  const director = await loadDirector(id);
+  if (!director) notFound();
 
   // Hay personas que dirigen y actuan: cruzamos las dos fichas.
   const actorId = await findActorIdByName(director.name);

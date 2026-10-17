@@ -5,9 +5,9 @@ import { CommunityWorkLink } from '@/components/community/CommunityWorkLink/Comm
 import { getPublicWriterCredits } from '@/lib/database';
 import { WriterCredits } from '@/components/series/WriterCredits/WriterCredits';
 import { getPublicUniverseSeries } from '@/lib/database';
-import { cache } from 'react';
 import { notFound, redirect } from 'next/navigation';
-import { getSeriesById, getWatchOnlySeries, prisma } from '@/lib/database';
+import { prisma } from '@/lib/database';
+import { getSeriesByIdCached } from '@/lib/detail-loaders';
 import { stripPrivateNotes } from '@/lib/privacy';
 import { SeriesHeader } from '@/components/series/SeriesHeader';
 import { SeasonsList } from '@/components/series/SeasonsList';
@@ -42,8 +42,6 @@ import type { TVSeries } from 'schema-dts';
 import { ReadOutlined, CommentOutlined } from '@/lib/client-icons';
 import './SeriesDetailView.css';
 
-export const getSeriesByIdCached = cache(getSeriesById);
-
 interface SeriesDetailViewProps {
   seriesId: number;
   /** true en /series/[id]/adultos, la unica variante que lee la cookie. */
@@ -67,13 +65,8 @@ export async function SeriesDetailView({
   // visitantes (era, junto con /catalogo, la de mas trafico del sitio).
   const serieRaw = await getSeriesByIdCached(seriesId);
 
-  if (!serieRaw) {
-    // Lo que solo se ve aca no tiene ficha de catalogo: su pagina es /ver.
-    // Redireccion temporal, porque la serie puede pasar al catalogo.
-    const watchOnly = await getWatchOnlySeries(seriesId);
-    if (watchOnly) redirect(getVerUrl(watchOnly.id, watchOnly.title));
-    notFound();
-  }
+  // El 404 y la redireccion a /ver ya los resolvio el layout.
+  if (!serieRaw) notFound();
 
   // La ficha comun es ISR y no puede leer cookies. Los +18 se resuelven en
   // la variante /adultos, que es dinamica: solo esos titulos pagan funcion.

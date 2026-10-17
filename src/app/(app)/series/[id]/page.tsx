@@ -2,10 +2,8 @@ import { adultMetadata } from '@/lib/content-metadata';
 import { loadLocaleMessages } from '@/i18n/messages';
 import type { Metadata } from 'next';
 import { getSeriesUrl, parseIdFromSlug } from '@/lib/slug';
-import {
-  SeriesDetailView,
-  getSeriesByIdCached,
-} from './SeriesDetailView/SeriesDetailView';
+import { getSeriesByIdCached } from '@/lib/detail-loaders';
+import { SeriesDetailView } from './SeriesDetailView/SeriesDetailView';
 
 interface SeriesPageProps {
   params: Promise<{

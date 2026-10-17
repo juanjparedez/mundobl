@@ -1,5 +1,5 @@
 .estrenos-page {
-  max-width: 1320px;
+  max-width: var(--content-max-width);
   margin: 0 auto;
   padding: var(--spacing-md);
   width: 100%;

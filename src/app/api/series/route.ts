@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse, after } from 'next/server';
 import { revalidateSeries } from '@/lib/revalidate-series';
+import { dedupeActorRows, type ActorRow } from '@/lib/series-relations';
 import {
   prisma,
   saveSeriesInUniverse,
@@ -232,49 +233,53 @@ export async function POST(request: NextRequest) {
       // Actores
       (async () => {
         if (!actors || actors.length === 0) return;
-        // Mismo actor y personaje dos veces (o dos grafias del mismo nombre)
-        // violaban el unique y dejaban la serie creada a medias.
-        const seen = new Set<string>();
+        const rows: ActorRow[] = [];
         for (const actorData of actors) {
           const actor = await findOrCreateActor(prisma, actorData.name ?? '');
           if (!actor) continue;
-          const key = `${actor.id}|${actorData.character || ''}`;
-          if (seen.has(key)) continue;
-          seen.add(key);
-          await prisma.seriesActor.create({
-            data: {
-              seriesId: serie.id,
-              actorId: actor.id,
-              character: actorData.character || '',
-              isMain: actorData.isMain || false,
-              pairingGroup: actorData.pairingGroup ?? null,
-            },
+          rows.push({
+            actorId: actor.id,
+            character: actorData.character || '',
+            isMain: actorData.isMain || false,
+            pairingGroup: actorData.pairingGroup ?? null,
           });
         }
+        // Mismo actor y personaje dos veces (o dos grafias del mismo nombre)
+        // violaban el unique y dejaban la serie creada a medias.
+        const unique = dedupeActorRows(rows);
+        if (unique.length === 0) return;
+        await prisma.seriesActor.createMany({
+          data: unique.map((row) => ({ ...row, seriesId: serie.id })),
+        });
       })(),
       // Directores
       (async () => {
         if (!directors || directors.length === 0) return;
+        const ids = new Set<number>();
         for (const directorData of directors) {
           if (!directorData.name) continue;
           const director = await findOrCreateDirector(
             prisma,
             directorData.name
           );
-          if (!director) continue;
-          await prisma.seriesDirector.create({
-            data: { seriesId: serie.id, directorId: director.id },
-          });
+          if (director) ids.add(director.id);
         }
+        await prisma.seriesDirector.createMany({
+          data: [...ids].map((directorId) => ({
+            seriesId: serie.id,
+            directorId,
+          })),
+        });
       })(),
       // Doblajes
       (async () => {
         if (!dubbingIds || dubbingIds.length === 0) return;
-        for (const languageId of dubbingIds) {
-          await prisma.seriesDubbing.create({
-            data: { seriesId: serie.id, languageId },
-          });
-        }
+        await prisma.seriesDubbing.createMany({
+          data: [...new Set<number>(dubbingIds)].map((languageId) => ({
+            seriesId: serie.id,
+            languageId,
+          })),
+        });
       })(),
       // Temporadas (serie, especial, anime, reality, etc.)
       (async () => {
@@ -312,24 +317,26 @@ export async function POST(request: NextRequest) {
       // Tags
       (async () => {
         if (!tags || tags.length === 0) return;
+        const ids = new Set<number>();
         for (const tagName of tags) {
           const tag = await findOrCreateTag(prisma, tagName);
-          if (!tag) continue;
-          await prisma.seriesTag.create({
-            data: { seriesId: serie.id, tagId: tag.id },
-          });
+          if (tag) ids.add(tag.id);
         }
+        await prisma.seriesTag.createMany({
+          data: [...ids].map((tagId) => ({ seriesId: serie.id, tagId })),
+        });
       })(),
       // Géneros
       (async () => {
         if (!genres || genres.length === 0) return;
+        const ids = new Set<number>();
         for (const genreName of genres) {
           const genre = await findOrCreateGenre(prisma, genreName);
-          if (!genre) continue;
-          await prisma.seriesGenre.create({
-            data: { seriesId: serie.id, genreId: genre.id },
-          });
+          if (genre) ids.add(genre.id);
         }
+        await prisma.seriesGenre.createMany({
+          data: [...ids].map((genreId) => ({ seriesId: serie.id, genreId })),
+        });
       })(),
       // Watch links
       (async () => {
