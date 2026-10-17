@@ -1,6 +1,7 @@
 .series-detail-page {
   position: relative;
   isolation: isolate;
+  container: series-page / inline-size;
   max-width: 1280px;
   margin: 0 auto;
   padding: var(--spacing-md) var(--spacing-lg);

@@ -40,9 +40,9 @@
 }
 .watching-collection {
   display: grid;
-  /* En desktop (>= 769px) la vista Lista usa 2 columnas balanceadas para
-   * evitar tarjetas de 1500px con el 65% derecho vacio. */
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  /* 2 columnas solo si el espacio real (no el viewport: la barra lateral
+   * come ~300px) da para tarjetas de 440px; si no, una sola. */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr));
   gap: var(--spacing-md);
   align-items: stretch;
 }
@@ -55,9 +55,6 @@
   min-width: 0;
 }
 @media (max-width: 768px) {
-  .watching-collection {
-    grid-template-columns: minmax(0, 1fr);
-  }
   .watching-workspace__toolbar .ant-input-search {
     max-width: none;
   }

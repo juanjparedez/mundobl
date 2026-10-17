@@ -1,17 +1,20 @@
 .watching-series-card {
+  /* La tarjeta se adapta a SU ancho, no al de la pantalla: la misma
+   * tarjeta vive en 1 o 2 columnas, con o sin barra lateral. */
+  container: watching-card / inline-size;
   overflow: hidden;
   min-width: 0;
   height: 100%;
 }
 .watching-series-card__layout {
   display: grid;
-  grid-template-columns: 136px minmax(0, 1fr);
+  grid-template-columns: clamp(96px, 28%, 140px) minmax(0, 1fr);
   height: 100%;
 }
 .watching-series-card__poster {
   position: relative;
   aspect-ratio: 2 / 3;
-  align-self: stretch;
+  align-self: start;
   background: var(--bg-spotlight);
   overflow: hidden;
 }
@@ -151,6 +154,14 @@
 }
 .watching-collection--grid .watching-series-card__heading h2 {
   font-size: var(--font-size-base);
+}
+@container watching-card (max-width: 420px) {
+  .watching-series-card__content {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  .watching-series-card__heading h2 {
+    font-size: var(--font-size-base);
+  }
 }
 @media (max-width: 600px) {
   .watching-series-card__layout,
