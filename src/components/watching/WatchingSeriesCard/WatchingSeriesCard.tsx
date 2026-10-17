@@ -55,10 +55,6 @@ export function WatchingSeriesCard({
 }: WatchingSeriesCardProps) {
   const progress = watchingProgress(item);
   const image = cardImageUrl(item.series);
-  const watchTarget = item.series.watchableTarget ?? {
-    id: item.series.id,
-    title: item.series.title,
-  };
   const externalLinks = (item.series.watchLinks ?? []).slice(0, 2);
 
   return (
@@ -140,8 +136,8 @@ export function WatchingSeriesCard({
             {item.series.hasWatchableEpisode && (
               <Link
                 href={getVerUrl(
-                  watchTarget.id,
-                  watchTarget.title,
+                  item.series.id,
+                  item.series.title,
                   progress.next
                 )}
                 className="watching-series-card__watch"

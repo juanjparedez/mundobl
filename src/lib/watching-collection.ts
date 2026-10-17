@@ -23,8 +23,6 @@ export interface WatchingItem {
     imageThumbUrl?: string | null;
     airDays?: string | null;
     hasWatchableEpisode: boolean;
-    /** Si la serie curada se reproduce a traves de un aporte USER_EMBED vinculado. */
-    watchableTarget?: { id: number; title: string } | null;
     /** Enlaces oficiales ("Donde ver") para saltar a Viki, GagaOOLala, iQIYI, etc. */
     watchLinks?: WatchingWatchLink[];
     country?: { name: string } | null;

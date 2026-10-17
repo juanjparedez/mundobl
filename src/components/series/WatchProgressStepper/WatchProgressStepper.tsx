@@ -241,14 +241,16 @@ export function WatchProgressStepper({
               disabled={pending || total === 0}
               aria-label={longLabel}
             >
-              <span className="watch-progress-stepper__label-prefix">
-                {t('progressStepper.epAbbr')}
-              </span>
-              <span className="watch-progress-stepper__label-current">
-                {displayNumber}
-              </span>
-              <span className="watch-progress-stepper__label-total">
-                / {total}
+              <span className="watch-progress-stepper__label-text">
+                <span className="watch-progress-stepper__label-prefix">
+                  {t('progressStepper.epAbbr')}
+                </span>
+                <span className="watch-progress-stepper__label-current">
+                  {displayNumber}
+                </span>
+                <span className="watch-progress-stepper__label-total">
+                  / {total}
+                </span>
               </span>
             </button>
           </Tooltip>
