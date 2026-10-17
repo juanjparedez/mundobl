@@ -5,7 +5,7 @@ loadEnvConfig(process.cwd());
 /**
  * Genera las filas faltantes de Episode (1..episodeCount) para todas las
  * temporadas del catalogo curado que tienen `episodeCount > 0` pero no tienen
- * episodios creados en la tabla Episode (tipico de series importadas desde el
+ * ningun episodio creado en la tabla Episode (tipico de series importadas desde el
  * Excel original antes de que series-save.ts los generara al guardar).
  *
  * Idempotente: usa createMany con skipDuplicates y nunca modifica ni borra
@@ -50,6 +50,10 @@ async function main() {
   for (const season of seasons) {
     const target = season.episodeCount ?? 0;
     if (target <= 0 || target > 500) continue;
+    // Solo temporadas sin ningun capitulo: si ya tiene filas, la numeracion
+    // puede ser propia (aportes con saltos) y completar huecos crearia
+    // capitulos fantasma sin video en /ver.
+    if (season.episodes.length > 0) continue;
 
     const existingNums = new Set(season.episodes.map((e) => e.episodeNumber));
     const missingForSeason: number[] = [];
