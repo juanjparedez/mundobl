@@ -98,7 +98,11 @@ const nextConfig: NextConfig = {
       `frame-src ${frameSrc}`,
       "frame-ancestors 'self'",
       "base-uri 'self'",
-      "form-action 'self'",
+      // La pagina generica /api/auth/signin postea un form a
+      // /api/auth/signin/google, que responde 302 a Google. Chrome chequea
+      // form-action en cada salto del redirect, asi que sin este host el
+      // login desde ahi queda bloqueado.
+      "form-action 'self' https://accounts.google.com",
       "object-src 'none'",
       'upgrade-insecure-requests',
     ].join('; ');
