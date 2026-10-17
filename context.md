@@ -130,7 +130,7 @@ historial individual; `/admin/piloto` muestra 60 días. La curaduría bloquea bo
 temporadas/aportes que conservan seguimiento, notas o historial. Bienvenida
 actualizada; no cambia opt-in ni se enviaron correos. Nuevas cadenas en 10 locales.
 
-Estado y límites, incluidos tests HTTP completados y costo del render por solicitud:
+Estado y límites, incluidos tests HTTP completados y fichas +18 en la variante dinámica /adultos:
 [piloto editorial](docs/piloto-editorial-2026-10-12.md). Migración probada solo en
 DB local; no desplegada ni aplicada en producción. Propuesta comercial local, sin publicar:
 `test-results/partnership/propuesta-gagaoolala-borrador-2026-10-12.md` (sin versionar).
