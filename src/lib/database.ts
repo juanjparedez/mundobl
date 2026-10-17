@@ -21,6 +21,7 @@ import {
 } from './tracking-insights';
 import { groupIntoChapters } from './episode-chapters';
 import {
+  mergeLinkedAportes,
   readWatchingPreferences,
   type WatchingPreferences,
 } from './watching-collection';
@@ -2229,6 +2230,7 @@ export interface SeriesEpisodeOrder {
   id: number;
   seasonNumber: number;
   episodeNumber: number;
+  title: string | null;
 }
 
 /**
@@ -2244,7 +2246,7 @@ export async function getSeriesEpisodesOrdered(
     where: { seriesId },
     select: {
       seasonNumber: true,
-      episodes: { select: { id: true, episodeNumber: true } },
+      episodes: { select: { id: true, episodeNumber: true, title: true } },
     },
     orderBy: { seasonNumber: 'asc' },
   });
@@ -2256,6 +2258,7 @@ export async function getSeriesEpisodesOrdered(
         id: ep.id,
         seasonNumber: season.seasonNumber,
         episodeNumber: ep.episodeNumber,
+        title: ep.title,
       }))
   );
 }
@@ -2424,6 +2427,7 @@ export async function getWatchingLibrary(
           originalTitle: true,
           origin: true,
           catalogScope: true,
+          linkedSeriesId: true,
           year: true,
           imageUrl: true,
           imageThumbUrl: true,
@@ -2469,10 +2473,9 @@ export async function getWatchingLibrary(
 
   // Para el boton "Seguir viendo" en /watching: si la serie tiene algun
   // episodio mirable propio, se puede retomar directo en /ver sin pasar por
-  // la ficha. NO se manda a un aporte USER_EMBED vinculado: el progreso se
-  // guarda en la serie que se mira, asi que la tarjeta de la ficha curada
-  // nunca avanzaria y el aporte apareceria como otra tarjeta. Sin video
-  // propio, la tarjeta ofrece los links oficiales de "Donde ver".
+  // la ficha. Una ficha curada sin video propio abre su aporte vinculado
+  // solo si los dos estan en la lista (mergeLinkedAportes); si no, la
+  // tarjeta ofrece los links oficiales de "Donde ver".
   // `series` es nullable a nivel de tipo aunque el `where` garantiza
   // `seriesId` no nulo, de ahi el `!`.
   const result = currentlyWatching
@@ -2487,7 +2490,7 @@ export async function getWatchingLibrary(
       },
     }));
 
-  return result;
+  return mergeLinkedAportes(result);
 }
 
 export async function getWatchingPreferences(userId: string) {

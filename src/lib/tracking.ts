@@ -11,6 +11,7 @@ import type {
   WatchStatus,
 } from '../generated/prisma';
 import { getSeriesEpisodesOrdered, type SeriesEpisodeOrder } from './database';
+import { linkedEpisodesToSync, pairLinkedChapters } from './linked-progress';
 
 export type TrackingClient = PrismaClient | Prisma.TransactionClient;
 
@@ -74,12 +75,16 @@ export async function markEpisode(
       update: { status, watchedDate: null },
       create: { userId, episodeId, status, watchedDate: null },
     });
+    await syncLinkedSeries(client, userId, episodeDetail.season.seriesId, [
+      episodeId,
+    ]);
     return { episode, series: null, allWatched: false };
   }
 
   const { seriesId } = episodeDetail.season;
   const now = new Date();
   const changed = await markManyWatched(client, userId, [episodeId], now);
+  await syncLinkedSeries(client, userId, seriesId, [episodeId], now);
   const episode = await client.viewStatus.findUniqueOrThrow({
     where: { userId_episodeId: { userId, episodeId } },
   });
@@ -206,6 +211,7 @@ export async function setProgress(
         where: { userId, episodeId: { in: afterIds } },
         data: { status: 'SIN_VER', watchedDate: null },
       });
+      await syncLinkedSeries(client, userId, seriesId, afterIds);
     }
     return buildProgressResult(client, userId, seriesId, episodes);
   }
@@ -214,6 +220,7 @@ export async function setProgress(
 
   const changed = await markManyWatched(client, userId, upToIds, now);
   if (changed > 0) await updateSeriesAfterWatch(client, userId, seriesId, now);
+  await syncLinkedSeries(client, userId, seriesId, upToIds, now);
   const result = await buildProgressResult(client, userId, seriesId, episodes);
 
   if (
@@ -278,14 +285,103 @@ export async function setEpisodesWatched(
     const changed = await markManyWatched(client, userId, ids, now);
     if (changed > 0)
       await updateSeriesAfterWatch(client, userId, seriesId, now);
+    await syncLinkedSeries(client, userId, seriesId, ids, now);
   } else {
     await client.viewStatus.updateMany({
       where: { userId, episodeId: { in: ids } },
       data: { status: 'SIN_VER', watchedDate: null },
     });
+    await syncLinkedSeries(client, userId, seriesId, ids);
   }
 
   return buildProgressResult(client, userId, seriesId, episodes);
+}
+
+/**
+ * Copia lo que se marco o desmarco a la otra punta de un vinculo aporte ->
+ * ficha curada (ver linked-progress.ts), en los dos sentidos: la ficha
+ * ofrece mirar en el aporte, y el progreso tiene que ser uno solo. Con
+ * `now` se marco; sin `now`, se desmarco. Escribe directo, sin volver a
+ * pasar por aca, asi que no rebota.
+ */
+async function syncLinkedSeries(
+  client: TrackingClient,
+  userId: string,
+  seriesId: number,
+  touchedIds: number[],
+  now?: Date
+): Promise<void> {
+  if (touchedIds.length === 0) return;
+  const series = await client.series.findUnique({
+    where: { id: seriesId },
+    select: {
+      origin: true,
+      visibility: true,
+      linkedSeriesId: true,
+      linkedFromUserEmbeds: {
+        where: { origin: 'USER_EMBED', visibility: 'VISIBLE' },
+        select: { id: true },
+      },
+    },
+  });
+  if (!series) return;
+
+  const links =
+    series.origin === 'USER_EMBED'
+      ? series.linkedSeriesId !== null && series.visibility === 'VISIBLE'
+        ? [{ aporteId: seriesId, curatedId: series.linkedSeriesId }]
+        : []
+      : series.linkedFromUserEmbeds.map((aporte) => ({
+          aporteId: aporte.id,
+          curatedId: seriesId,
+        }));
+  const side = series.origin === 'USER_EMBED' ? 'aporte' : 'curated';
+  const touched = new Set(touchedIds);
+
+  for (const { aporteId, curatedId } of links) {
+    const [aporteEpisodes, curatedEpisodes] = await Promise.all([
+      getSeriesEpisodesOrdered(client, aporteId),
+      getSeriesEpisodesOrdered(client, curatedId),
+    ]);
+    const pairs = pairLinkedChapters(aporteEpisodes, curatedEpisodes);
+    if (!pairs) continue;
+
+    const watchedRows = now
+      ? await client.viewStatus.findMany({
+          where: {
+            userId,
+            status: 'VISTA',
+            episodeId: {
+              in: (side === 'aporte' ? aporteEpisodes : curatedEpisodes).map(
+                (episode) => episode.id
+              ),
+            },
+          },
+          select: { episodeId: true },
+        })
+      : [];
+    const targetIds = linkedEpisodesToSync(
+      pairs,
+      side,
+      touched,
+      new Set(watchedRows.flatMap((row) => row.episodeId ?? [])),
+      now !== undefined
+    );
+    if (targetIds.length === 0) continue;
+
+    if (now) {
+      const changed = await markManyWatched(client, userId, targetIds, now);
+      // Solo la ficha pasa a VIENDO: el aporte es por donde se mira, y una
+      // fila propia lo duplicaria en /watching y suscribiria a sus avisos.
+      if (changed > 0 && side === 'aporte')
+        await updateSeriesAfterWatch(client, userId, curatedId, now);
+    } else {
+      await client.viewStatus.updateMany({
+        where: { userId, episodeId: { in: targetIds } },
+        data: { status: 'SIN_VER', watchedDate: null },
+      });
+    }
+  }
 }
 
 async function buildProgressResult(

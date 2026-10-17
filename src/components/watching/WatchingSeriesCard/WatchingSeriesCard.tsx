@@ -135,11 +135,19 @@ export function WatchingSeriesCard({
             </Button>
             {item.series.hasWatchableEpisode && (
               <Link
-                href={getVerUrl(
-                  item.series.id,
-                  item.series.title,
-                  progress.next
-                )}
+                href={
+                  item.series.watchTarget
+                    ? getVerUrl(
+                        item.series.watchTarget.id,
+                        item.series.watchTarget.title,
+                        item.series.watchTarget.episode
+                      )
+                    : getVerUrl(
+                        item.series.id,
+                        item.series.title,
+                        progress.next
+                      )
+                }
                 className="watching-series-card__watch"
               >
                 <PlayCircleOutlined /> {labels.watch}
