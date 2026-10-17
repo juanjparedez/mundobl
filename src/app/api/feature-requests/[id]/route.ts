@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
-import { notifyUser } from '@/lib/notifications';
+import { notifyFeatureRequestStatus } from '@/lib/notifications';
 
 export async function PUT(
   request: NextRequest,
@@ -63,14 +63,11 @@ export async function PUT(
       status !== previous.status &&
       previous.userId !== authResult.userId
     ) {
-      await notifyUser({
+      await notifyFeatureRequestStatus({
         userId: previous.userId,
-        type: 'feature_status',
-        title: `Cambio en tu solicitud: "${previous.title}"`,
-        body: `El estado pasó a "${status}".`,
-        linkPath: '/feedback',
-        refType: 'feature_request',
-        refId: parseInt(id),
+        requestId: updated.id,
+        requestTitle: previous.title,
+        status: updated.status,
       }).catch(() => {
         /* never block the main op */
       });

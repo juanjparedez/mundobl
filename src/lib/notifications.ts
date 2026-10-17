@@ -2,6 +2,9 @@ import { prisma } from './database';
 import { isUserAllowedToReceiveInApp, sendPushToUser } from './web-push';
 import { getVerUrl } from './slug';
 import { formatEpisodeParam, type EpisodeRef } from './episode-param';
+import { interpolateMessage } from './i18n-format';
+import { loadLocaleMessages, type TranslationShape } from '@/i18n/messages';
+import type { FeatureRequestStatus } from '@/generated/prisma';
 
 interface CommentTarget {
   seriesId?: number;
@@ -359,6 +362,43 @@ export async function notifyUser(input: NotificationInput): Promise<void> {
     type: input.type,
     tag: input.refType && refIdStr ? `${input.refType}-${refIdStr}` : undefined,
   }).catch(() => undefined);
+}
+
+// Mismas etiquetas que muestra /feedback.
+const FEATURE_STATUS_LABEL_KEYS: Record<
+  FeatureRequestStatus,
+  keyof TranslationShape['feedback']
+> = {
+  OPEN: 'statusPendiente',
+  IN_PROGRESS: 'statusEnProgreso',
+  COMPLETED: 'statusCompletado',
+  REJECTED: 'statusDescartado',
+};
+
+/**
+ * Avisa al autor de una solicitud de /feedback que cambio su estado. Se
+ * guarda en español, como el resto de los avisos.
+ */
+export async function notifyFeatureRequestStatus(opts: {
+  userId: string;
+  requestId: number;
+  requestTitle: string;
+  status: FeatureRequestStatus;
+}): Promise<void> {
+  const { feedback } = await loadLocaleMessages('es');
+  await notifyUser({
+    userId: opts.userId,
+    type: 'feature_status',
+    title: interpolateMessage(feedback.statusNotificationTitle, {
+      title: opts.requestTitle,
+    }),
+    body: interpolateMessage(feedback.statusNotificationBody, {
+      status: feedback[FEATURE_STATUS_LABEL_KEYS[opts.status]],
+    }),
+    linkPath: '/feedback',
+    refType: 'feature_request',
+    refId: opts.requestId,
+  });
 }
 
 interface NotifySeriesSubscribersOpts {

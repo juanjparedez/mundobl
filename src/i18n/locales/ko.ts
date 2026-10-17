@@ -2452,6 +2452,8 @@ const ko = {
     "statusEnProgreso": "진행 중",
     "statusCompletado": "완료됨",
     "statusDescartado": "폐기됨",
+    "statusNotificationTitle": "요청 업데이트: \"{title}\"",
+    "statusNotificationBody": "상태가 \"{status}\"(으)로 바뀌었습니다.",
     "typeBug": "버그",
     "typeFeature": "기능",
     "typeIdea": "아이디어",
