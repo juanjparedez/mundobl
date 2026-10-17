@@ -1,6 +1,6 @@
 .acerca-page {
   padding: var(--spacing-lg) var(--spacing-md);
-  max-width: 1080px;
+  max-width: var(--content-max-width);
   margin: 0 auto;
 }
 

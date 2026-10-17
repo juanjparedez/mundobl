@@ -40,6 +40,7 @@ import {
 import { unstable_cache } from 'next/cache';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
+import { withSerialTransactions } from './serial-transactions';
 import { Prisma, PrismaClient } from '../generated/prisma';
 import { isPlayableIn } from './playability';
 import { airingSeriesWhere } from './airing-schedule';
@@ -73,7 +74,7 @@ function createPrismaClient() {
     idleTimeoutMillis: 10000,
     connectionTimeoutMillis: 10000,
   });
-  const adapter = new PrismaPg(pool);
+  const adapter = withSerialTransactions(new PrismaPg(pool));
   return new PrismaClient({ adapter });
 }
 

@@ -31,10 +31,10 @@ export const metadata: Metadata = {
     description: CATALOGO_DESCRIPTION,
   },
 };
-import { CatalogoClient } from './CatalogoClient';
-import { packCatalog } from './catalogTransport';
+import { CatalogoClient } from '../CatalogoClient';
+import { packCatalog } from '../catalogTransport';
 import { getCatalogFilterIndex } from '@/lib/database';
-import './catalogo.css';
+import '../catalogo.css';
 
 // Sin `auth()`: el viewStatus y el rol de usuario ahora se piden del lado
 // del cliente (CatalogoClient via /api/view-status, userRole via

@@ -1,5 +1,5 @@
 .noticias-page {
-  max-width: 1100px;
+  max-width: var(--content-max-width);
   margin: 0 auto;
   padding: 12px 8px;
 }
@@ -30,7 +30,7 @@
 /* ── Grid ── */
 .noticias-list__grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 26rem), 1fr));
   gap: 8px;
 }
 
@@ -179,10 +179,6 @@
 
 /* ── Responsive ── */
 @media (max-width: 700px) {
-  .noticias-list__grid {
-    grid-template-columns: 1fr;
-  }
-
   .noticias-page {
     padding: 8px 6px;
   }

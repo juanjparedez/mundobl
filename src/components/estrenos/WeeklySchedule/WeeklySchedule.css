@@ -1,6 +1,9 @@
 /**
- * Parrilla semanal. Desktop: 7 columnas iguales. Mobile: tira horizontal con
- * scroll-snap, para no apilar 7 secciones de alto completo.
+ * Parrilla semanal. Desktop: tantos dias por fila como entren con un ancho
+ * legible (los 7 en una fila si hay lugar). Con 7 columnas fijas, a 1100px
+ * con la barra lateral cada dia quedaba en ~100px y las sinopsis en 47px.
+ * Mobile: tira horizontal con scroll-snap, para no apilar 7 secciones de
+ * alto completo.
  *
  * Cero hex: la columna de hoy sale de --primary-color, que es el accent que
  * eligio el usuario en Settings. Si alguna vez se ve dorada fija, alguien
@@ -9,7 +12,7 @@
 
 .weekly-schedule {
   display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11rem), 1fr));
   gap: var(--spacing-sm);
   align-items: start;
 }

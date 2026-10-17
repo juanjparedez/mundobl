@@ -61,6 +61,11 @@ export function getVerUrl(
     : path;
 }
 
+/** Variante dinamica de una ficha +18 (`/series/15-x/adultos`): la unica que lee la cookie de consentimiento. */
+export function getAdultVariantUrl(url: string): string {
+  return `${url}/adultos`;
+}
+
 /**
  * Extrae el ID numérico de un parámetro que puede ser "15" o "15-a-dog-and-a-plane".
  * `parseInt("15-slug", 10)` devuelve 15 de manera nativa y segura.

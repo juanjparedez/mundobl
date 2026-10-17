@@ -14,8 +14,8 @@ import { notFound } from 'next/navigation';
 import type { Person } from 'schema-dts';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
-import { getActorById, findDirectorIdByName } from '@/lib/database';
-import { isPlaceholderActor } from '@/lib/placeholder-actor';
+import { findDirectorIdByName } from '@/lib/database';
+import { loadPublicActor } from '@/lib/detail-loaders';
 import { isIndexablePerson } from '@/lib/person-completeness';
 import {
   ActorProfileClient,
@@ -26,17 +26,7 @@ interface ActorPageProps {
   params: Promise<{ id: string }>;
 }
 
-async function loadActor(id: string) {
-  const actorId = Number.parseInt(id, 10);
-  if (Number.isNaN(actorId)) return null;
-  const actor = await getActorById(actorId);
-  // El placeholder "Actor no identificado" agrupa personajes sin interprete
-  // conocido: no es una persona y no tiene ficha publica.
-  if (!actor || isPlaceholderActor(actor)) return null;
-  return actor;
-}
-
-type LoadedActor = NonNullable<Awaited<ReturnType<typeof loadActor>>>;
+type LoadedActor = NonNullable<Awaited<ReturnType<typeof loadPublicActor>>>;
 
 /**
  * Une los creditos a nivel serie y a nivel temporada en una sola entrada por
@@ -97,7 +87,7 @@ export async function generateMetadata({
   params,
 }: ActorPageProps): Promise<Metadata> {
   const { id } = await params;
-  const actor = await loadActor(id);
+  const actor = await loadPublicActor(id);
   if (!actor) return {};
 
   const displayName = actor.stageName ?? actor.name;
@@ -138,7 +128,7 @@ export async function generateMetadata({
 
 export default async function ActorPage({ params }: ActorPageProps) {
   const { id } = await params;
-  const actor = await loadActor(id);
+  const actor = await loadPublicActor(id);
   if (!actor) notFound();
 
   const filmography = buildFilmography(actor);

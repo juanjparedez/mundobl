@@ -1,5 +1,5 @@
 .community-thread {
-  max-width: 860px;
+  max-width: var(--reading-max-width);
   margin: 0 auto;
   padding: var(--spacing-lg);
   display: flex;

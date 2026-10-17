@@ -1,39 +1,26 @@
-import { ContentGate } from '@/components/content/ContentGate/ContentGate';
-import { ContentNotice } from '@/components/content/ContentNotice/ContentNotice';
-import { hasContentConsent } from '@/lib/content-consent';
 import { adultMetadata } from '@/lib/content-metadata';
-import { getPublicWriterCredits } from '@/lib/database';
-import { WriterCredits } from '@/components/series/WriterCredits/WriterCredits';
 import { loadLocaleMessages } from '@/i18n/messages';
-import { cache } from 'react';
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { BackToCatalogButton } from '@/components/series/BackToCatalogButton/BackToCatalogButton';
-import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
-import { JsonLd } from '@/components/seo/JsonLd';
-import { isWatchableEpisode } from '@/lib/watchable';
-import type { TVSeries } from 'schema-dts';
-import { getWatchableSeriesById } from '@/lib/database';
 import { getVerUrl, parseIdFromSlug } from '@/lib/slug';
-import { isAiringNow } from '@/lib/airing-schedule';
-import { SeriesUserStatusProvider } from '@/components/series/SeriesUserStatusProvider';
-import { PendingTrackApplier } from '@/components/series/PendingTrackApplier/PendingTrackApplier';
-import { VerSerieClient } from './VerSerieClient';
-import './ver-serie.css';
-
-// generateMetadata y el componente piden la misma serie. Sin memoizar eran
-// DOS consultas completas (temporadas + episodios + embeds) por render, y el
-// render se repite en cada regeneracion ISR. `cache` las colapsa en una,
-// igual que ya hace /series/[id] con getSeriesByIdCached.
-const getWatchableSeriesByIdCached = cache(getWatchableSeriesById);
+import { getWatchableSeriesByIdCached } from '@/lib/detail-loaders';
+import { VerSerieView } from './VerSerieView/VerSerieView';
 
 interface PageProps {
   params: Promise<{ id: string }>;
 }
 
-// Consent is request-specific, including after a previously public title is reclassified.
-// Full-page ISR cannot safely switch to reading cookies during regeneration.
-export const dynamic = 'force-dynamic';
+// Igual que /series/[id]: el contenido (embeds de los episodios) solo cambia
+// cuando lo edita un admin/colaborador, y esas rutas ya invalidan esta ficha
+// por URL. A 120s, las ~650 paginas se regeneraban cada 2 minutos mientras
+// hubiera crawl — por lejos el mayor generador de ISR writes del proyecto.
+// Los titulos +18 no se renderizan aca: redirigen a ./adultos, que es dinamica.
+export const revalidate = 604800;
+// Sin generateStaticParams, Next renderiza esta ruta en cada visita aunque
+// tenga revalidate. Con la lista vacia, la primera visita la genera y las
+// siguientes salen de la cache hasta el proximo revalidate.
+export function generateStaticParams(): { id: string }[] {
+  return [];
+}
 
 export async function generateMetadata({
   params,
@@ -42,11 +29,8 @@ export async function generateMetadata({
   const seriesId = parseIdFromSlug(id);
   if (isNaN(seriesId)) return {};
   const serie = await getWatchableSeriesByIdCached(seriesId);
-  if (
-    !serie ||
-    !serie.seasons.some((season) => season.episodes.some(isWatchableEpisode))
-  )
-    notFound();
+  // Que exista y tenga algo para ver ya lo chequeo el layout.
+  if (!serie) return {};
   if (serie.contentRating === 'ADULT18') return adultMetadata();
   const labels = (await loadLocaleMessages('es')).contentMetadata;
 
@@ -87,132 +71,5 @@ export async function generateMetadata({
 
 export default async function VerSeriePage({ params }: PageProps) {
   const { id } = await params;
-  const seriesId = parseIdFromSlug(id);
-  if (isNaN(seriesId)) notFound();
-
-  const serie = await getWatchableSeriesByIdCached(seriesId);
-  if (!serie) notFound();
-
-  if (serie.contentRating === 'ADULT18' && !(await hasContentConsent()))
-    return <ContentGate warnings={serie.contentWarnings} />;
-
-  const seasons = serie.seasons
-    .map((s) => ({
-      id: s.id,
-      seasonNumber: s.seasonNumber,
-      title: s.title,
-      episodes: s.episodes.filter(isWatchableEpisode).map((e) => ({
-        id: e.id,
-        episodeNumber: e.episodeNumber,
-        title: e.title,
-        synopsis: e.synopsis,
-        duration: e.duration,
-        embedUrl: e.embedUrl,
-        embedPlatform: e.embedPlatform,
-        embedVideoId: e.embedVideoId,
-        embedChannelName: e.embedChannelName,
-        embedChannelUrl: e.embedChannelUrl,
-        playback: e.playback,
-        playbackBlockedMarkets: e.playbackBlockedMarkets,
-      })),
-    }))
-    .filter((s) => s.episodes.length > 0);
-
-  if (seasons.length === 0) {
-    notFound();
-  }
-
-  const totalEpisodes = seasons.reduce((acc, s) => acc + s.episodes.length, 0);
-
-  return (
-    <>
-      <ContentNotice
-        rating={serie.contentRating}
-        warnings={serie.contentWarnings}
-      />
-      <JsonLd<TVSeries>
-        data={{
-          '@context': 'https://schema.org',
-          '@type': 'TVSeries',
-          name: serie.title,
-          ...(serie.originalTitle && { alternateName: serie.originalTitle }),
-          ...(serie.synopsis && { description: serie.synopsis }),
-          ...(serie.imageUrl && { image: serie.imageUrl }),
-          ...(serie.year && { datePublished: String(serie.year) }),
-          ...(serie.country?.name && {
-            countryOfOrigin: {
-              '@type': 'Country',
-              name: serie.country.name,
-            },
-          }),
-          ...(serie.genres &&
-            serie.genres.length > 0 && {
-              genre: serie.genres.map((sg) => sg.genre.name),
-            }),
-          numberOfSeasons: seasons.length,
-          numberOfEpisodes: totalEpisodes,
-          potentialAction: {
-            '@type': 'WatchAction',
-            target: `https://mundobl.com.ar${getVerUrl(serie.id, serie.title)}`,
-          },
-          url: `https://mundobl.com.ar${getVerUrl(serie.id, serie.title)}`,
-        }}
-      />
-      <div className="ver-serie-page">
-        <Breadcrumbs
-          items={[
-            { name: 'Inicio', href: '/' },
-            { name: 'Ver', href: '/ver' },
-            { name: serie.title },
-          ]}
-        />
-        <div className="ver-serie-back">
-          <BackToCatalogButton fallback="/ver" />
-        </div>
-        <SeriesUserStatusProvider seriesId={serie.id}>
-          <PendingTrackApplier seriesId={serie.id} seriesTitle={serie.title} />
-          <VerSerieClient
-            series={{
-              id: serie.id,
-              title: serie.title,
-              originalTitle: serie.originalTitle,
-              year: serie.year,
-              airing: isAiringNow(serie),
-              synopsis: serie.synopsis,
-              imageUrl: serie.imageUrl,
-              catalogScope: serie.catalogScope,
-              origin: serie.origin,
-              geoRestrictedCore: serie.geoRestrictedCore,
-              productionCompanyName: serie.productionCompany?.name ?? null,
-              submittedByName:
-                serie.submittedBy?.nickname ?? serie.submittedBy?.name ?? null,
-              submittedByIsCollaborator:
-                serie.submittedBy?.role === 'COLLABORATOR',
-              country: serie.country
-                ? { name: serie.country.name, code: serie.country.code }
-                : null,
-              tags: serie.tags.map((st) => st.tag.name),
-              genres: serie.genres.map((sg) => sg.genre.name),
-              directors: serie.directors.map((sd) => sd.director.name),
-              actors: serie.actors.map((sa) => ({
-                id: sa.actor.id,
-                name: sa.actor.name,
-                stageName: sa.actor.stageName,
-                imageUrl: sa.actor.imageUrl,
-              })),
-              linkedSeries: serie.linkedSeries
-                ? {
-                    id: serie.linkedSeries.id,
-                    title: serie.linkedSeries.title,
-                    imageUrl: serie.linkedSeries.imageUrl,
-                  }
-                : null,
-            }}
-            seasons={seasons}
-          />
-          <WriterCredits credits={await getPublicWriterCredits(serie.id)} />
-        </SeriesUserStatusProvider>
-      </div>
-    </>
-  );
+  return <VerSerieView seriesId={parseIdFromSlug(id)} />;
 }

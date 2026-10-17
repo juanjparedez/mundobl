@@ -1165,7 +1165,7 @@ export function FeedbackClient() {
           setPendingImages([]);
         }}
         footer={null}
-        maskClosable={false}
+        mask={{ closable: false }}
         className="feedback-modal"
         width="min(560px, 100vw - 32px)"
       >

@@ -30,7 +30,7 @@ export function ModalSurface({ announcement, onDismiss }: ModalSurfaceProps) {
       centered
       className="announcement-modal"
       closable={announcement.dismissible}
-      maskClosable={announcement.dismissible}
+      mask={{ closable: announcement.dismissible }}
       keyboard={announcement.dismissible}
     >
       <AnnouncementContent
