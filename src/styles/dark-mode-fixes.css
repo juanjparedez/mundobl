@@ -56,6 +56,18 @@
   color: var(--info-color);
 }
 
+/* --- Alert success/warning: sin esto antd deja fondo claro con texto
+ * claro del tema oscuro y no se lee. ───────────────────────────────── */
+[data-theme='dark'] .ant-alert-success {
+  background-color: color-mix(in srgb, var(--success-color) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--success-color) 25%, transparent);
+}
+
+[data-theme='dark'] .ant-alert-warning {
+  background-color: color-mix(in srgb, var(--warning-color) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--warning-color) 25%, transparent);
+}
+
 /* --- Button variants (default/dashed/text — no son tokens AntD) ──── */
 [data-theme='dark'] .ant-btn {
   box-shadow: none;

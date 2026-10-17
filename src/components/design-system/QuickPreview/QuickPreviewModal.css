@@ -3,7 +3,7 @@
  * desktop (portada + datos), una sola apilada en mobile.
  * ------------------------------------------------------------------- */
 
-.mb-qp .ant-modal-content {
+.mb-qp .ant-modal-container {
   padding: 0;
   overflow: hidden;
   border-radius: var(--border-radius-lg);

@@ -347,7 +347,7 @@
  * botonera attach hace que cada boton ocupe min 44px de altura para
  * tap-target accesible. */
 @media (max-width: 720px) {
-  .feedback-modal .ant-modal-content {
+  .feedback-modal .ant-modal-container {
     padding: var(--spacing-md);
   }
 
