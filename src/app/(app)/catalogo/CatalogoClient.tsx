@@ -515,7 +515,11 @@ export function CatalogoClient({ payload }: CatalogoClientProps) {
       filtered = filtered.filter((s) => !viewedIds.has(s.id));
     }
 
-    if (selectedViewed === 'RETOMAR' || selectedViewed === 'ABANDONADA') {
+    if (
+      selectedViewed === 'VIENDO' ||
+      selectedViewed === 'RETOMAR' ||
+      selectedViewed === 'ABANDONADA'
+    ) {
       filtered = filtered.filter((s) => watchStatuses[s.id] === selectedViewed);
     }
 
@@ -1130,9 +1134,13 @@ export function CatalogoClient({ payload }: CatalogoClientProps) {
                 {serie.genres[0]}
               </Tag>
             )}
-            {viewedIds.has(serie.id) && (
+            {viewedIds.has(serie.id) ? (
               <Tag color="success">{t('catalogo.watchedTag')}</Tag>
-            )}
+            ) : watchStatuses[serie.id] === 'VIENDO' ? (
+              <Tag color="processing">{t('viewStatusToggle.viendo')}</Tag>
+            ) : watchStatuses[serie.id] === 'RETOMAR' ? (
+              <Tag color="warning">{t('viewStatusToggle.retomar')}</Tag>
+            ) : null}
           </div>
 
           {hasExpandableInfo && (
@@ -1513,6 +1521,7 @@ export function CatalogoClient({ payload }: CatalogoClientProps) {
           }}
           allowClear
         >
+          <Option value="VIENDO">{t('viewStatusToggle.viendo')}</Option>
           <Option value="watched">{t('catalogo.statusWatched')}</Option>
           <Option value="unwatched">{t('catalogo.statusUnwatched')}</Option>
           <Option value="RETOMAR">{t('viewStatusToggle.retomar')}</Option>

@@ -3,6 +3,8 @@
   flex-direction: column;
   gap: var(--spacing-md);
   width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
   min-width: 0;
 }
 .watching-workspace__privacy,
@@ -20,6 +22,7 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: var(--spacing-md);
+  max-width: 840px;
 }
 .watching-workspace__toolbar {
   display: flex;
@@ -28,23 +31,33 @@
   gap: var(--spacing-sm);
 }
 .watching-workspace__toolbar .ant-input-search {
-  flex: 1 1 240px;
+  flex: 1 1 260px;
+  max-width: 440px;
+  margin-right: auto;
 }
 .watching-workspace__toolbar .ant-select {
   min-width: 175px;
 }
 .watching-collection {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  /* 2 columnas solo si el espacio real (no el viewport: la barra lateral
+   * come ~300px) da para tarjetas de 440px; si no, una sola. */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr));
   gap: var(--spacing-md);
+  align-items: stretch;
 }
 .watching-collection--grid {
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
   align-items: stretch;
 }
 .watching-workspace .ant-tabs-content,
 .watching-workspace .ant-tabs-tabpane {
   min-width: 0;
+}
+@media (max-width: 768px) {
+  .watching-workspace__toolbar .ant-input-search {
+    max-width: none;
+  }
 }
 @media (max-width: 600px) {
   .watching-workspace__stats {

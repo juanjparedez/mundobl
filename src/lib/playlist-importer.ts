@@ -48,6 +48,26 @@ const CHANNEL_COUNTRY_MAP: Record<string, string> = {
   STRONGBERRY: 'KR',
   GagaOOLala: 'TW',
   'WeTV Thailand': 'TH',
+  CHANGE2561: 'TH',
+  'MFlow Entertainment': 'TH',
+  'Kongthup Production': 'TH',
+  "Kongthup's Channel": 'TH',
+  'COPY A BANGKOK': 'TH',
+  '9NAA Channel': 'TH',
+  Ch3Thailand: 'TH',
+  'MeMindY Official': 'TH',
+  // Productoras/cadenas tailandesas. Los canales de plataformas (iQIYI, WeTV,
+  // Viu) no van: suben series de varios paises y el canal no dice el origen.
+  'Kantana Group': 'TH',
+  oneD: 'TH',
+  // Titulos tal como los devuelve la YouTube API (snippet.channelTitle).
+  'nooto.(ノオト)': 'JP',
+  'Lovememory 러브메모리': 'KR',
+  'QueerDeep 퀴어딥': 'KR',
+  'VBL Series': 'TW',
+  'VinCentiments [OFFICIAL]': 'PH',
+  'Windsor Creatives Production': 'PH',
+  'O2 PRODUCTION': 'VN',
 };
 
 /**

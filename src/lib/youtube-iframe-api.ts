@@ -10,6 +10,7 @@ export interface YouTubePlayer {
   getDuration(): number;
   getPlaybackRate(): number;
   getPlayerState(): number;
+  seekTo?(seconds: number, allowSeekAhead: boolean): void;
 }
 
 interface YouTubePlayerEvent {

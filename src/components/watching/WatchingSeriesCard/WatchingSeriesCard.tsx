@@ -8,10 +8,12 @@ import {
   PushpinOutlined,
   PushpinFilled,
   PlayCircleOutlined,
+  LinkOutlined,
 } from '@ant-design/icons';
 import { PanelCard } from '@/components/design-system';
 import { PosterPlaceholder } from '@/components/common/PosterPlaceholder/PosterPlaceholder';
 import { cardImageUrl, isDirectServedImageUrl } from '@/lib/image-helpers';
+import { isGagaUrl, recordPilotClick } from '@/lib/pilot-clicks';
 import { getVerUrl } from '@/lib/slug';
 import {
   watchingDetailsUrl,
@@ -53,6 +55,8 @@ export function WatchingSeriesCard({
 }: WatchingSeriesCardProps) {
   const progress = watchingProgress(item);
   const image = cardImageUrl(item.series);
+  const externalLinks = (item.series.watchLinks ?? []).slice(0, 2);
+
   return (
     <PanelCard className="watching-series-card" padding="none">
       <article className="watching-series-card__layout">
@@ -67,7 +71,7 @@ export function WatchingSeriesCard({
               src={image}
               alt=""
               fill
-              sizes="(max-width: 600px) 36vw, 320px"
+              sizes="(max-width: 600px) 36vw, 240px"
               unoptimized={isDirectServedImageUrl(image)}
             />
           ) : (
@@ -99,7 +103,12 @@ export function WatchingSeriesCard({
             {item.series.country && <span>{item.series.country.name}</span>}
           </div>
           <div className="watching-series-card__progress">
-            <span>{labels.progress}</span>
+            <div className="watching-series-card__progress-row">
+              <span>{labels.progress}</span>
+              <span className="watching-series-card__date">
+                {labels.lastActivity}
+              </span>
+            </div>
             {progress.total > 0 && (
               <Progress
                 percent={Math.round((progress.watched / progress.total) * 100)}
@@ -108,9 +117,6 @@ export function WatchingSeriesCard({
               />
             )}
             <strong>{labels.next}</strong>
-            <span className="watching-series-card__date">
-              {labels.lastActivity}
-            </span>
           </div>
           <div className="watching-series-card__actions">
             {progress.next &&
@@ -129,16 +135,41 @@ export function WatchingSeriesCard({
             </Button>
             {item.series.hasWatchableEpisode && (
               <Link
-                href={getVerUrl(
-                  item.series.id,
-                  item.series.title,
-                  progress.next
-                )}
+                href={
+                  item.series.watchTarget
+                    ? getVerUrl(
+                        item.series.watchTarget.id,
+                        item.series.watchTarget.title,
+                        item.series.watchTarget.episode
+                      )
+                    : getVerUrl(
+                        item.series.id,
+                        item.series.title,
+                        progress.next
+                      )
+                }
                 className="watching-series-card__watch"
               >
                 <PlayCircleOutlined /> {labels.watch}
               </Link>
             )}
+            {!item.series.hasWatchableEpisode &&
+              externalLinks.map((link) => (
+                <a
+                  key={link.id}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer nofollow"
+                  className="watching-series-card__platform-link"
+                  onClick={() => {
+                    if (isGagaUrl(link.url)) {
+                      recordPilotClick('series', link.id);
+                    }
+                  }}
+                >
+                  {link.platform} <LinkOutlined aria-hidden />
+                </a>
+              ))}
           </div>
         </div>
       </article>

@@ -1,6 +1,14 @@
 import { groupIntoChapters } from './episode-chapters';
+import type { EpisodeRef } from './episode-param';
 import { findNextEpisode } from './episode-progress';
+import { pairLinkedChapters } from './linked-progress';
 import { getSeriesUrl, getVerUrl } from './slug';
+
+export interface WatchingWatchLink {
+  id: number;
+  platform: string;
+  url: string;
+}
 
 export interface WatchingItem {
   id: number;
@@ -17,10 +25,17 @@ export interface WatchingItem {
     imageThumbUrl?: string | null;
     airDays?: string | null;
     hasWatchableEpisode: boolean;
+    /** Aporte USER_EMBED -> ficha curada a la que esta vinculado. */
+    linkedSeriesId?: number | null;
+    /** Donde abre Ver si no es la propia serie: el aporte vinculado. */
+    watchTarget?: { id: number; title: string; episode: EpisodeRef | null };
+    /** Enlaces oficiales ("Donde ver") para saltar a Viki, GagaOOLala, iQIYI, etc. */
+    watchLinks?: WatchingWatchLink[];
     country?: { name: string } | null;
     seasons: Array<{
       id: number;
       seasonNumber: number;
+      episodeCount?: number | null;
       episodes: Array<{
         id: number;
         episodeNumber: number;
@@ -76,21 +91,29 @@ export function readWatchingPreferences(value: unknown): WatchingPreferences {
   };
 }
 
-export function watchingProgress(item: WatchingItem) {
-  const { chapters } = groupIntoChapters(
-    item.series.seasons.flatMap((season) =>
-      season.episodes.map((episode) => ({
-        ...episode,
-        seasonNumber: season.seasonNumber,
-        watched: episode.viewStatus?.[0]?.status === 'VISTA',
-      }))
-    )
+function chapterRows(series: WatchingItem['series']) {
+  return series.seasons.flatMap((season) =>
+    season.episodes.map((episode) => ({
+      ...episode,
+      seasonNumber: season.seasonNumber,
+      watched: episode.viewStatus?.[0]?.status === 'VISTA',
+    }))
   );
+}
+
+export function watchingProgress(item: Pick<WatchingItem, 'series'>) {
+  const { chapters } = groupIntoChapters(chapterRows(item.series));
   const watched = (chapter: (typeof chapters)[number]) =>
     chapter.episodes.every((episode) => episode.watched);
   const next = findNextEpisode(chapters, watched);
+  // Si una ficha curada historica tiene season.episodeCount pero 0 filas en
+  // Episode todavia, mostramos igual el total real declarado por curaduria.
+  const declaredTotal = item.series.seasons.reduce(
+    (sum, s) => sum + (s.episodeCount ?? 0),
+    0
+  );
   return {
-    total: chapters.length,
+    total: chapters.length > 0 ? chapters.length : declaredTotal,
     watched: chapters.filter(watched).length,
     next: next
       ? {
@@ -103,6 +126,52 @@ export function watchingProgress(item: WatchingItem) {
         }
       : null,
   };
+}
+
+/**
+ * Un aporte vinculado y su ficha curada son la misma serie, y el progreso se
+ * copia entre los dos (tracking.ts). Si estan los dos, queda la tarjeta de
+ * la ficha y su Ver abre el aporte en el capitulo que sigue.
+ */
+export function mergeLinkedAportes<T extends Pick<WatchingItem, 'series'>>(
+  items: T[]
+): T[] {
+  const byId = new Map(items.map((item) => [item.series.id, item]));
+  const targets = new Map<number, WatchingItem['series']['watchTarget']>();
+  for (const item of items) {
+    const curatedId = item.series.linkedSeriesId;
+    if (item.series.origin !== 'USER_EMBED' || curatedId == null) continue;
+    const curated = byId.get(curatedId);
+    if (
+      !curated ||
+      targets.has(curatedId) ||
+      !item.series.hasWatchableEpisode ||
+      !pairLinkedChapters(chapterRows(item.series), chapterRows(curated.series))
+    )
+      continue;
+    const next = watchingProgress(item).next;
+    targets.set(curatedId, {
+      id: item.series.id,
+      title: item.series.title,
+      episode: next
+        ? { seasonNumber: next.seasonNumber, episodeNumber: next.episodeNumber }
+        : null,
+    });
+  }
+  const mergedAportes = new Set(
+    [...targets.values()].flatMap((target) => (target ? [target.id] : []))
+  );
+  return items
+    .filter((item) => !mergedAportes.has(item.series.id))
+    .map((item) => {
+      const watchTarget = targets.get(item.series.id);
+      return watchTarget
+        ? {
+            ...item,
+            series: { ...item.series, hasWatchableEpisode: true, watchTarget },
+          }
+        : item;
+    });
 }
 
 /** A viewing-only contribution must not link to a catalog detail that returns 404. */

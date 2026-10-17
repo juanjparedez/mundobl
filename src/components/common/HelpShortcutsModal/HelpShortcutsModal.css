@@ -1,4 +1,4 @@
-.help-modal .ant-modal-content {
+.help-modal .ant-modal-container {
   background: var(--bg-elevated);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-lg);

@@ -57,13 +57,21 @@
   background: transparent;
   color: var(--text-primary);
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: center;
-  gap: 4px;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
   cursor: pointer;
   border-radius: var(--border-radius-sm);
+}
+
+/* Los tres textos alinean por linea de base entre si; el boton centra el
+ * bloque. Con baseline directo en el boton de 44px el numero quedaba
+ * pegado arriba, lejos del centro de los botones - y +. */
+.watch-progress-stepper__label-text {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
 }
 
 .watch-progress-stepper__label:hover:not(:disabled) {

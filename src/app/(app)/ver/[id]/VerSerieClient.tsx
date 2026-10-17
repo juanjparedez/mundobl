@@ -644,6 +644,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
       <div className="ver-serie__player-wrap">
         <EmbedPlayer
           key={active.id}
+          episodeId={active.id}
           platform={active.embedPlatform || 'YouTube'}
           url={active.embedUrl || ''}
           videoId={active.embedVideoId}
