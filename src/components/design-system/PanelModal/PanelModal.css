@@ -9,7 +9,7 @@
   --mb-modal-gutter: var(--spacing-lg);
 }
 
-.mb-panel-modal .ant-modal-content {
+.mb-panel-modal .ant-modal-container {
   display: flex;
   flex-direction: column;
   /* Fallback para navegadores sin dvh; la linea siguiente lo pisa donde
@@ -67,7 +67,7 @@
     padding-bottom: 0;
   }
 
-  .mb-panel-modal .ant-modal-content {
+  .mb-panel-modal .ant-modal-container {
     height: 100dvh;
     max-height: 100dvh;
     border-radius: 0;
