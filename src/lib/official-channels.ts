@@ -148,6 +148,51 @@ export const OFFICIAL_CHANNELS: OfficialChannel[] = [
     channelId: 'UC400oGKKf-GMgVBfmO9F7bg',
     country: '🇹🇭',
   },
+  // Canales de plataformas y cadenas, verificados con la YouTube Data API
+  // el 2026-10-17. Suben capitulos completos y tambien mucho trailer: el
+  // filtro por duracion (isWatchableEpisode) decide que se publica en /ver.
+  {
+    name: 'iQIYI Thailand',
+    handle: 'iQIYIThailand',
+    channelId: 'UCYDyGdodMhIuJ7WGmn0Bn3w',
+    country: '🇹🇭',
+  },
+  {
+    name: 'iQIYI Philippines',
+    handle: 'iQIYIPhilippines',
+    channelId: 'UC0HGAvtBGdvD9fKG_hH-uqA',
+    country: '🇵🇭',
+  },
+  {
+    name: 'WeTV English',
+    handle: 'WeTVEnglish',
+    channelId: 'UCiu3bj4rR8KOYcUA4KNkOAA',
+    country: '🌐',
+  },
+  {
+    name: 'WeTV Original',
+    handle: 'WeTVOriginals',
+    channelId: 'UC2BcehPYbxnKz9Cv1dgwbnA',
+    country: '🇹🇭',
+  },
+  {
+    name: 'Viu Thailand',
+    handle: 'ViuThailand',
+    channelId: 'UCPdXHv7DKjHqYK7ZOBbNNZQ',
+    country: '🇹🇭',
+  },
+  {
+    name: 'oneD',
+    handle: 'OneD',
+    channelId: 'UCynXinvsAFixo13cYIrSsTQ',
+    country: '🇹🇭',
+  },
+  {
+    name: 'Kantana Group',
+    handle: 'KantanaGroup',
+    channelId: 'UCzLFg18wMvDjlONRxLWblLQ',
+    country: '🇹🇭',
+  },
 ];
 
 /** URL canonica del canal, para links y para el barrido. */

@@ -56,6 +56,10 @@ const CHANNEL_COUNTRY_MAP: Record<string, string> = {
   '9NAA Channel': 'TH',
   Ch3Thailand: 'TH',
   'MeMindY Official': 'TH',
+  // Productoras/cadenas tailandesas. Los canales de plataformas (iQIYI, WeTV,
+  // Viu) no van: suben series de varios paises y el canal no dice el origen.
+  'Kantana Group': 'TH',
+  oneD: 'TH',
 };
 
 /**
