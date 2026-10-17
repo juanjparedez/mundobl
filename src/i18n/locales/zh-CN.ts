@@ -2448,6 +2448,8 @@ const zhCN = {
     "statusEnProgreso": "进行中",
     "statusCompletado": "已完成",
     "statusDescartado": "已废弃",
+    "statusNotificationTitle": "你的请求有更新：“{title}”",
+    "statusNotificationBody": "状态已变更为“{status}”。",
     "typeBug": "错误",
     "typeFeature": "功能",
     "typeIdea": "想法",

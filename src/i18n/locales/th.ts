@@ -2450,6 +2450,8 @@ const th = {
     "statusEnProgreso": "กำลังดำเนินการ",
     "statusCompletado": "เสร็จสมบูรณ์",
     "statusDescartado": "ถูกยกเลิก",
+    "statusNotificationTitle": "คำขอของคุณมีความคืบหน้า: \"{title}\"",
+    "statusNotificationBody": "สถานะเปลี่ยนเป็น \"{status}\" แล้ว",
     "typeBug": "ข้อผิดพลาด",
     "typeFeature": "คุณสมบัติ",
     "typeIdea": "แนวคิด",

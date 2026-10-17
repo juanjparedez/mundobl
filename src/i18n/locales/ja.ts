@@ -2452,6 +2452,8 @@ const ja = {
     "statusEnProgreso": "進行中",
     "statusCompletado": "完了",
     "statusDescartado": "破棄済み",
+    "statusNotificationTitle": "リクエストの更新：「{title}」",
+    "statusNotificationBody": "ステータスが「{status}」になりました。",
     "typeBug": "バグ",
     "typeFeature": "機能",
     "typeIdea": "アイデア",

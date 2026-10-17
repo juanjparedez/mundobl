@@ -2455,6 +2455,8 @@ const de = {
     "statusEnProgreso": "In Bearbeitung",
     "statusCompletado": "Abgeschlossen",
     "statusDescartado": "Verworfen",
+    "statusNotificationTitle": "Neuigkeiten zu deiner Anfrage: \"{title}\"",
+    "statusNotificationBody": "Der Status ist jetzt \"{status}\".",
     "typeBug": "Bug",
     "typeFeature": "Feature",
     "typeIdea": "Idee",
