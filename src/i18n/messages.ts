@@ -2438,6 +2438,8 @@ export type TranslationShape = {
     statusEnProgreso: string;
     statusCompletado: string;
     statusDescartado: string;
+    statusNotificationTitle: string;
+    statusNotificationBody: string;
     typeBug: string;
     typeFeature: string;
     typeIdea: string;
@@ -6407,6 +6409,8 @@ const es: TranslationShape = {
     statusEnProgreso: 'En progreso',
     statusCompletado: 'Completado',
     statusDescartado: 'Descartado',
+    statusNotificationTitle: 'Cambio en tu solicitud: "{title}"',
+    statusNotificationBody: 'El estado pasó a "{status}".',
     typeBug: 'Bug',
     typeFeature: 'Feature',
     typeIdea: 'Idea',
@@ -10429,6 +10433,8 @@ const en: TranslationShape = {
     statusEnProgreso: 'In progress',
     statusCompletado: 'Completed',
     statusDescartado: 'Discarded',
+    statusNotificationTitle: 'Update on your request: "{title}"',
+    statusNotificationBody: 'Its status changed to "{status}".',
     typeBug: 'Bug',
     typeFeature: 'Feature',
     typeIdea: 'Idea',

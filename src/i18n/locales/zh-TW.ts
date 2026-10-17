@@ -2448,6 +2448,8 @@ const zhTW = {
     "statusEnProgreso": "進行中",
     "statusCompletado": "已完成",
     "statusDescartado": "已捨棄",
+    "statusNotificationTitle": "你的請求有更新：「{title}」",
+    "statusNotificationBody": "狀態已變更為「{status}」。",
     "typeBug": "錯誤",
     "typeFeature": "功能",
     "typeIdea": "想法",
