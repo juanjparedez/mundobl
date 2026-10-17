@@ -193,6 +193,51 @@ export const OFFICIAL_CHANNELS: OfficialChannel[] = [
     channelId: 'UCzLFg18wMvDjlONRxLWblLQ',
     country: '🇹🇭',
   },
+  // Productoras BL de otros paises, verificadas con la YouTube Data API el
+  // 2026-10-17. Algunos videos son solo para miembros: el audit de
+  // reproducibilidad los deja fuera de /ver.
+  {
+    name: 'nooto.',
+    handle: 'nooto-bl',
+    channelId: 'UCj095JNSzIzdU23JsZqcwpQ',
+    country: '🇯🇵',
+  },
+  {
+    name: 'Lovememory',
+    handle: 'Lovememory19',
+    channelId: 'UCkRJH5bxKnuceyYwDYq7tfA',
+    country: '🇰🇷',
+  },
+  {
+    name: 'QueerDeep',
+    handle: 'QueerDeep',
+    channelId: 'UCl-XGaFaNDf4-hde6ANt2NQ',
+    country: '🇰🇷',
+  },
+  {
+    name: 'VBL Series',
+    handle: 'variety_between_love',
+    channelId: 'UCr4hDMvqSzlj9jtUe2XT48Q',
+    country: '🇹🇼',
+  },
+  {
+    name: 'VinCentiments',
+    handle: 'VinCentiments',
+    channelId: 'UCRykDJSZXAYnRVkDFbUP0nA',
+    country: '🇵🇭',
+  },
+  {
+    name: 'Windsor Creatives',
+    handle: 'WindsorCreativesProduction',
+    channelId: 'UCapdm6cbc9Eq9UOQ1ix0tZQ',
+    country: '🇵🇭',
+  },
+  {
+    name: 'O2 Production',
+    handle: 'O2Production',
+    channelId: 'UCANpnA0w8e5vTHiGgdbrgsg',
+    country: '🇻🇳',
+  },
 ];
 
 /** URL canonica del canal, para links y para el barrido. */

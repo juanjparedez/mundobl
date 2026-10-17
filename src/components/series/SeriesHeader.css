@@ -293,29 +293,39 @@
   border-color: color-mix(in srgb, var(--primary-color) 40%, transparent);
 }
 
-/* Ancho medio: el panel de seguimiento aprovecha el ancho completo en dos
- * columnas (estado y capitulo | notas) en vez de estirar los controles. */
+/* Ancho medio: estado | progreso lado a lado (son las dos acciones
+ * principales) y las notas abajo, en una fila liviana a todo el ancho. Antes
+ * las notas ocupaban media columna y dejaban filas vacias debajo. */
 @container series-page (min-width: 700px) and (max-width: 1079px) {
   .series-header__actions .tracking-panel {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    column-gap: var(--spacing-lg);
+    gap: var(--spacing-md) var(--spacing-lg);
     align-items: start;
   }
   .series-header__actions .tracking-panel > * {
-    grid-column: 1;
+    grid-column: 1 / -1;
     min-width: 0;
   }
-  .series-header__actions .tracking-panel__header {
-    grid-column: 1 / -1;
+  .series-header__actions .tracking-panel > .tracking-panel__select {
+    grid-column: 1;
+  }
+  .series-header__actions .tracking-panel > .watch-progress-stepper {
+    grid-column: 2;
+    grid-row: 2;
   }
   .series-header__actions .tracking-panel__notes {
-    grid-column: 2;
-    grid-row: 2 / span 4;
-    padding: 0 0 0 var(--spacing-lg);
-    border-top: 0;
-    border-left: 1px dashed
-      color-mix(in srgb, var(--border-color-secondary) 80%, transparent);
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-sm) var(--spacing-md);
+  }
+  .series-header__actions .tracking-panel__notes-row {
+    flex: 1 1 auto;
+    justify-content: flex-end;
+  }
+  .series-header__actions .tracking-panel__note-btn {
+    flex: 0 1 auto;
   }
 }
 

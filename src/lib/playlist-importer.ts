@@ -60,6 +60,14 @@ const CHANNEL_COUNTRY_MAP: Record<string, string> = {
   // Viu) no van: suben series de varios paises y el canal no dice el origen.
   'Kantana Group': 'TH',
   oneD: 'TH',
+  // Titulos tal como los devuelve la YouTube API (snippet.channelTitle).
+  'nooto.(ノオト)': 'JP',
+  'Lovememory 러브메모리': 'KR',
+  'QueerDeep 퀴어딥': 'KR',
+  'VBL Series': 'TW',
+  'VinCentiments [OFFICIAL]': 'PH',
+  'Windsor Creatives Production': 'PH',
+  'O2 PRODUCTION': 'VN',
 };
 
 /**
