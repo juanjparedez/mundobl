@@ -1,27 +1,29 @@
 .watching-series-card {
   overflow: hidden;
   min-width: 0;
+  height: 100%;
 }
 .watching-series-card__layout {
   display: grid;
-  grid-template-columns: 180px minmax(0, 1fr);
+  grid-template-columns: 136px minmax(0, 1fr);
+  height: 100%;
 }
 .watching-series-card__poster {
   position: relative;
   aspect-ratio: 2 / 3;
-  align-self: start;
+  align-self: stretch;
   background: var(--bg-spotlight);
   overflow: hidden;
 }
 .watching-series-card__poster img {
-  object-fit: contain;
+  object-fit: cover;
 }
 .watching-series-card__content {
-  padding: var(--spacing-lg);
+  padding: var(--spacing-md) var(--spacing-lg);
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-xs);
 }
 .watching-series-card__heading {
   display: flex;
@@ -32,6 +34,7 @@
 .watching-series-card__heading h2 {
   font-size: var(--font-size-lg);
   margin: 0;
+  line-height: 1.25;
   overflow-wrap: anywhere;
 }
 .watching-series-card__heading > div {
@@ -39,8 +42,8 @@
 }
 .watching-series-card__heading .ant-btn {
   flex-shrink: 0;
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 40px;
+  min-height: 40px;
 }
 .watching-series-card__heading h2 a {
   color: var(--text-primary);
@@ -57,7 +60,7 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-xs);
 }
 .watching-series-card__meta {
   color: var(--text-secondary);
@@ -66,20 +69,28 @@
 .watching-series-card__progress {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs);
-  max-width: 560px;
+  gap: 4px;
+  width: 100%;
   color: var(--text-primary);
   font-size: var(--font-size-sm);
 }
+.watching-series-card__progress-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+}
 .watching-series-card__date {
   color: var(--text-secondary);
+  font-size: var(--font-size-xs);
 }
 .watching-series-card__actions {
   margin-top: auto;
   padding-top: var(--spacing-sm);
 }
 .watching-series-card__actions .ant-btn {
-  min-height: 44px;
+  min-height: 38px;
   height: auto;
   white-space: normal;
 }
@@ -87,7 +98,44 @@
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-xs);
-  min-height: 40px;
+  padding: 6px 12px;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid color-mix(in srgb, var(--primary-color) 45%, transparent);
+  background: var(--mb-gold-soft);
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-decoration: none;
+  min-height: 38px;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+.watching-series-card__watch:hover {
+  background: var(--mb-gold-soft-strong);
+  border-color: var(--primary-color);
+  color: var(--text-primary);
+}
+.watching-series-card__platform-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  text-decoration: none;
+  min-height: 32px;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+.watching-series-card__platform-link:hover {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
 }
 .watching-collection--grid .watching-series-card__layout {
   grid-template-columns: 1fr;
@@ -95,8 +143,8 @@
 }
 .watching-collection--grid .watching-series-card__poster {
   min-height: 0;
-  height: 240px;
-  aspect-ratio: auto;
+  width: 100%;
+  aspect-ratio: 2 / 3;
 }
 .watching-collection--grid .watching-series-card__content {
   padding: var(--spacing-md);
@@ -134,6 +182,8 @@
     position: absolute;
     top: 0;
     right: 0;
+    min-width: 44px;
+    min-height: 44px;
   }
   .watching-series-card__meta {
     grid-column: 2;
@@ -151,10 +201,13 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .watching-series-card__actions .ant-btn {
+    min-height: 44px;
     padding-inline: var(--spacing-sm);
   }
   .watching-series-card__actions > :only-child,
   .watching-series-card__watch {
     grid-column: 1 / -1;
+    justify-content: center;
+    min-height: 44px;
   }
 }
