@@ -1,5 +1,5 @@
 .privacidad-page {
-  max-width: 800px;
+  max-width: var(--reading-max-width);
   margin: 0 auto;
   padding: var(--spacing-md);
 }

@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { FloatButton } from 'antd';
 import { ToolOutlined } from '@/lib/client-icons';
 import { getSeriesById } from '@/lib/database';
+import { getSeriesByIdCached } from '@/lib/detail-loaders';
 import { stripPrivateNotes } from '@/lib/privacy';
 import { auth } from '@/lib/auth';
 import { SerieDetailClient } from './SerieDetailClient';
@@ -26,7 +27,7 @@ export async function generateMetadata({
   const serieId = parseInt(id, 10);
   if (isNaN(serieId)) return {};
 
-  const serie = await getSeriesById(serieId);
+  const serie = await getSeriesByIdCached(serieId);
   if (!serie) return {};
 
   if (serie.contentRating === 'ADULT18') return adultMetadata();

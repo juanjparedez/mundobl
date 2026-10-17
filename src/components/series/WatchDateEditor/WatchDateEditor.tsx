@@ -88,7 +88,7 @@ export function WatchDateEditor({
       okButtonProps={{ disabled: loading || !!error }}
       cancelButtonProps={{ disabled: saving }}
       closable={!saving}
-      maskClosable={!saving}
+      mask={{ closable: !saving }}
       keyboard={!saving}
     >
       <div className="watch-date-editor">

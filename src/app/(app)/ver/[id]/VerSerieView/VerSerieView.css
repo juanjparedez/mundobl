@@ -8,6 +8,7 @@
   border: 1px solid var(--border-color-secondary);
   border-radius: var(--border-radius-lg);
   background: color-mix(in srgb, var(--bg-container) 84%, transparent);
+  container: ver-serie / inline-size;
 }
 
 .ver-serie-back {
@@ -67,10 +68,19 @@
 
 .ver-serie__player-wrap {
   width: 100%;
+  margin-inline: auto;
   background: var(--media-bg);
   border-radius: var(--border-radius-lg);
   overflow: hidden;
   box-shadow: var(--box-shadow-card);
+}
+
+/* En desktop el video entra entero en pantalla, sin importar cuan ancha sea.
+ * Mobile no cambia: ahi manda el ancho y la pantalla completa. */
+@media (min-width: 769px) {
+  .ver-serie__player-wrap {
+    max-width: var(--player-max-width);
+  }
 }
 
 .ver-serie__player-wrap .embed-player {
@@ -215,13 +225,15 @@
 /* ─── Info Grid & Cast ────────────────────────────────────────────────── */
 .ver-serie__info-grid {
   display: grid;
-  grid-template-columns: 1fr 340px;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--spacing-md);
 }
 
-@media (max-width: 768px) {
+/* Por el ancho de la pagina, no de la ventana: con la barra lateral, a
+ * 1100px la columna de info quedaba en ~400px al lado del reparto. */
+@container ver-serie (min-width: 900px) {
   .ver-serie__info-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr) 340px;
   }
 }
 

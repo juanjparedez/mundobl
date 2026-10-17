@@ -232,7 +232,7 @@ export function ImportChannelDrawer({
       open={open}
       onClose={handleClose}
       styles={{ wrapper: { width: 720 } }}
-      maskClosable={false}
+      mask={{ closable: false }}
       destroyOnClose
     >
       <div className="import-channel__url-row">

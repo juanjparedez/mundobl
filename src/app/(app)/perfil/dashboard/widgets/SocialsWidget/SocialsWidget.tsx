@@ -215,7 +215,7 @@ export function SocialsWidget({ socials: initialSocials }: SocialsWidgetProps) {
           void handleSave();
         }}
         confirmLoading={saving}
-        maskClosable={false}
+        mask={{ closable: false }}
         okText={t('socials.saveButton')}
         cancelText={t('socials.cancelButton')}
       >

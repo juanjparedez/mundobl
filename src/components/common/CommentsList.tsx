@@ -284,7 +284,7 @@ export function CommentsList({
       okText={t('commentsList.reportButton')}
       cancelText={t('commentsList.cancelButton')}
       okButtonProps={{ danger: true, loading: reportSubmitting }}
-      maskClosable={false}
+      mask={{ closable: false }}
       destroyOnHidden
     >
       <p style={{ color: 'var(--text-secondary)', marginTop: 0 }}>

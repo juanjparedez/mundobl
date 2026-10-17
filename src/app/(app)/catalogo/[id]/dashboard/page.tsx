@@ -6,6 +6,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { auth } from '@/lib/auth';
 import { getSeriesById } from '@/lib/database';
+import { getSeriesByIdCached } from '@/lib/detail-loaders';
 import { stripPrivateNotes } from '@/lib/privacy';
 import { SerieDashboardClient } from './DashboardClient';
 
@@ -21,7 +22,7 @@ export async function generateMetadata({
   const { id } = await params;
   const serieId = parseInt(id, 10);
   if (isNaN(serieId)) return {};
-  const serie = await getSeriesById(serieId);
+  const serie = await getSeriesByIdCached(serieId);
   if (!serie) return {};
   if (serie.contentRating === 'ADULT18') return adultMetadata();
   return {

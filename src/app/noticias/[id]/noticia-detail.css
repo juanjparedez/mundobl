@@ -1,5 +1,5 @@
 .noticia-detail {
-  max-width: 860px;
+  max-width: var(--reading-max-width);
   margin: 0 auto;
   padding: 16px 12px 48px;
 }

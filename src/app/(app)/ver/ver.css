@@ -1,6 +1,6 @@
 .ver-page {
   width: 100%;
-  max-width: var(--content-max-width-wide);
+  max-width: var(--content-max-width);
   margin: 0 auto;
 }
 

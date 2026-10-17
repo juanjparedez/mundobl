@@ -2114,7 +2114,7 @@ export function SeriesForm({ initialData, mode, userId }: SeriesFormProps) {
           setNewUniverseDescription('');
         }}
         confirmLoading={creatingUniverse}
-        maskClosable={false}
+        mask={{ closable: false }}
         okText={t('seriesForm.universeCreateButton')}
         cancelText={t('seriesForm.universeCancelButton')}
         okButtonProps={{ disabled: !newUniverseName.trim() }}

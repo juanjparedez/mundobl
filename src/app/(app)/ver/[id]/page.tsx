@@ -1,13 +1,9 @@
 import { adultMetadata } from '@/lib/content-metadata';
 import { loadLocaleMessages } from '@/i18n/messages';
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import { isWatchableEpisode } from '@/lib/watchable';
 import { getVerUrl, parseIdFromSlug } from '@/lib/slug';
-import {
-  VerSerieView,
-  getWatchableSeriesByIdCached,
-} from './VerSerieView/VerSerieView';
+import { getWatchableSeriesByIdCached } from '@/lib/detail-loaders';
+import { VerSerieView } from './VerSerieView/VerSerieView';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -33,11 +29,8 @@ export async function generateMetadata({
   const seriesId = parseIdFromSlug(id);
   if (isNaN(seriesId)) return {};
   const serie = await getWatchableSeriesByIdCached(seriesId);
-  if (
-    !serie ||
-    !serie.seasons.some((season) => season.episodes.some(isWatchableEpisode))
-  )
-    notFound();
+  // Que exista y tenga algo para ver ya lo chequeo el layout.
+  if (!serie) return {};
   if (serie.contentRating === 'ADULT18') return adultMetadata();
   const labels = (await loadLocaleMessages('es')).contentMetadata;
 
