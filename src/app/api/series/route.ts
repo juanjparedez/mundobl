@@ -232,9 +232,15 @@ export async function POST(request: NextRequest) {
       // Actores
       (async () => {
         if (!actors || actors.length === 0) return;
+        // Mismo actor y personaje dos veces (o dos grafias del mismo nombre)
+        // violaban el unique y dejaban la serie creada a medias.
+        const seen = new Set<string>();
         for (const actorData of actors) {
           const actor = await findOrCreateActor(prisma, actorData.name ?? '');
           if (!actor) continue;
+          const key = `${actor.id}|${actorData.character || ''}`;
+          if (seen.has(key)) continue;
+          seen.add(key);
           await prisma.seriesActor.create({
             data: {
               seriesId: serie.id,

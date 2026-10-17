@@ -106,6 +106,138 @@ export const OFFICIAL_CHANNELS: OfficialChannel[] = [
     channelId: 'UCWY3HiAc_WwJRLS3IO79NmQ',
     country: '🇹🇭',
   },
+  {
+    name: 'CHANGE2561',
+    handle: 'CHANGE2561',
+    channelId: 'UCISGtaTLXAEliMLp1VJZsSg',
+    country: '🇹🇭',
+  },
+  {
+    name: 'MFlow Entertainment',
+    handle: 'mflowentertainment2019',
+    channelId: 'UCvMb_oSnpYLzCRAKPn1VuSg',
+    country: '🇹🇭',
+  },
+  {
+    name: 'Kongthup Production',
+    handle: 'kongthupsproduction',
+    channelId: 'UC7In87_3Y2Ja1b8kl-3uXUA',
+    country: '🇹🇭',
+  },
+  {
+    name: 'COPY A BANGKOK',
+    handle: 'COPYABANGKOK',
+    channelId: 'UCYrSFDofKo-ilpv7lBore0Q',
+    country: '🇹🇭',
+  },
+  {
+    name: '9NAA Channel',
+    handle: '9NAAChannelOfficial',
+    channelId: 'UC_YnaKLx445NmaSYCet3HZg',
+    country: '🇹🇭',
+  },
+  {
+    name: 'Ch3Thailand',
+    handle: 'Ch3Thailand',
+    channelId: 'UC48h7Dst_hX82HxOf3xJw_w',
+    country: '🇹🇭',
+  },
+  {
+    name: 'MeMindY Official',
+    handle: 'MeMindYOfficial',
+    channelId: 'UC400oGKKf-GMgVBfmO9F7bg',
+    country: '🇹🇭',
+  },
+  // Canales de plataformas y cadenas, verificados con la YouTube Data API
+  // el 2026-10-17. Suben capitulos completos y tambien mucho trailer: el
+  // filtro por duracion (isWatchableEpisode) decide que se publica en /ver.
+  {
+    name: 'iQIYI Thailand',
+    handle: 'iQIYIThailand',
+    channelId: 'UCYDyGdodMhIuJ7WGmn0Bn3w',
+    country: '🇹🇭',
+  },
+  {
+    name: 'iQIYI Philippines',
+    handle: 'iQIYIPhilippines',
+    channelId: 'UC0HGAvtBGdvD9fKG_hH-uqA',
+    country: '🇵🇭',
+  },
+  {
+    name: 'WeTV English',
+    handle: 'WeTVEnglish',
+    channelId: 'UCiu3bj4rR8KOYcUA4KNkOAA',
+    country: '🌐',
+  },
+  {
+    name: 'WeTV Original',
+    handle: 'WeTVOriginals',
+    channelId: 'UC2BcehPYbxnKz9Cv1dgwbnA',
+    country: '🇹🇭',
+  },
+  {
+    name: 'Viu Thailand',
+    handle: 'ViuThailand',
+    channelId: 'UCPdXHv7DKjHqYK7ZOBbNNZQ',
+    country: '🇹🇭',
+  },
+  {
+    name: 'oneD',
+    handle: 'OneD',
+    channelId: 'UCynXinvsAFixo13cYIrSsTQ',
+    country: '🇹🇭',
+  },
+  {
+    name: 'Kantana Group',
+    handle: 'KantanaGroup',
+    channelId: 'UCzLFg18wMvDjlONRxLWblLQ',
+    country: '🇹🇭',
+  },
+  // Productoras BL de otros paises, verificadas con la YouTube Data API el
+  // 2026-10-17. Algunos videos son solo para miembros: el audit de
+  // reproducibilidad los deja fuera de /ver.
+  {
+    name: 'nooto.',
+    handle: 'nooto-bl',
+    channelId: 'UCj095JNSzIzdU23JsZqcwpQ',
+    country: '🇯🇵',
+  },
+  {
+    name: 'Lovememory',
+    handle: 'Lovememory19',
+    channelId: 'UCkRJH5bxKnuceyYwDYq7tfA',
+    country: '🇰🇷',
+  },
+  {
+    name: 'QueerDeep',
+    handle: 'QueerDeep',
+    channelId: 'UCl-XGaFaNDf4-hde6ANt2NQ',
+    country: '🇰🇷',
+  },
+  {
+    name: 'VBL Series',
+    handle: 'variety_between_love',
+    channelId: 'UCr4hDMvqSzlj9jtUe2XT48Q',
+    country: '🇹🇼',
+  },
+  {
+    name: 'VinCentiments',
+    handle: 'VinCentiments',
+    channelId: 'UCRykDJSZXAYnRVkDFbUP0nA',
+    country: '🇵🇭',
+  },
+  {
+    name: 'Windsor Creatives',
+    handle: 'WindsorCreativesProduction',
+    channelId: 'UCapdm6cbc9Eq9UOQ1ix0tZQ',
+    country: '🇵🇭',
+  },
+  {
+    name: 'O2 Production',
+    handle: 'O2Production',
+    channelId: 'UCANpnA0w8e5vTHiGgdbrgsg',
+    country: '🇻🇳',
+  },
 ];
 
 /** URL canonica del canal, para links y para el barrido. */

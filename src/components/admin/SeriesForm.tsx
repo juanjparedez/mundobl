@@ -953,6 +953,7 @@ export function SeriesForm({ initialData, mode, userId }: SeriesFormProps) {
         )}
         {existingSeries && (
           <Alert
+            className="series-form-existing"
             type="warning"
             showIcon
             title={existingSeries.title}

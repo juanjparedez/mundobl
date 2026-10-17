@@ -108,3 +108,42 @@ export function subscribeToLocalProgress(onChange: () => void): () => void {
   window.addEventListener('storage', listener);
   return () => window.removeEventListener('storage', listener);
 }
+
+const PLAYBACK_POS_KEY = 'mundobl.episodePlaybackSeconds';
+
+export function getEpisodePlaybackPosition(episodeId: number): number {
+  if (typeof window === 'undefined') return 0;
+  try {
+    const raw = JSON.parse(
+      window.localStorage.getItem(PLAYBACK_POS_KEY) ?? '{}'
+    ) as Record<string, number>;
+    const sec = raw[String(episodeId)];
+    return typeof sec === 'number' && Number.isFinite(sec) && sec > 0 ? sec : 0;
+  } catch {
+    return 0;
+  }
+}
+
+export function setEpisodePlaybackPosition(
+  episodeId: number,
+  seconds: number
+): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const raw = JSON.parse(
+      window.localStorage.getItem(PLAYBACK_POS_KEY) ?? '{}'
+    ) as Record<string, number>;
+    if (seconds <= 5) {
+      delete raw[String(episodeId)];
+    } else {
+      raw[String(episodeId)] = Math.floor(seconds);
+    }
+    window.localStorage.setItem(PLAYBACK_POS_KEY, JSON.stringify(raw));
+  } catch {
+    // Ignore quota errors
+  }
+}
+
+export function clearEpisodePlaybackPosition(episodeId: number): void {
+  setEpisodePlaybackPosition(episodeId, 0);
+}

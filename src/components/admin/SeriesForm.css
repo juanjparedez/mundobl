@@ -313,3 +313,26 @@
     flex-wrap: wrap;
   }
 }
+
+/* Aviso de serie existente: en pantallas angostas la accion ocupaba todo el
+ * ancho y el texto quedaba en una columna de una letra por linea. */
+.series-form-existing {
+  margin-bottom: var(--spacing-md);
+}
+.series-form-existing .ant-alert-title,
+.series-form-existing .ant-alert-description {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .series-form-existing {
+    flex-wrap: wrap;
+  }
+  .series-form-existing .ant-alert-section {
+    flex: 1 1 calc(100% - 40px);
+    min-width: 0;
+  }
+  .series-form-existing .ant-alert-actions {
+    flex: 1 1 100%;
+    margin-inline-start: 0;
+  }
+}

@@ -1,7 +1,10 @@
 .series-detail-page {
   position: relative;
   isolation: isolate;
-  padding: 10px 12px;
+  container: series-page / inline-size;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--spacing-md) var(--spacing-lg);
   /* padding-bottom extra: el FloatButton "Editar serie" es fixed
    * bottom-right (~24px del viewport). Sin este colchon, al scrollear
    * al final de la pagina el FAB tapa el ultimo card (ej. empty state
@@ -250,4 +253,13 @@
     bottom: calc(var(--bottom-nav-height) + 16px) !important;
     right: 16px !important;
   }
+}
+
+.series-detail-meta-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin: var(--spacing-sm) 0 var(--spacing-md);
 }

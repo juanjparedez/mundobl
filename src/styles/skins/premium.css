@@ -206,7 +206,7 @@ html[data-skin='premium'] .ant-tag {
   border-radius: 6px;
 }
 
-html[data-skin='premium'] .ant-modal-content,
+html[data-skin='premium'] .ant-modal-container,
 html[data-skin='premium'] .ant-drawer-content {
   background: var(--mb-panel);
   border-radius: var(--mb-radius-lg);

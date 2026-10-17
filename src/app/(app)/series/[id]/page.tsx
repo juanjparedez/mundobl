@@ -303,6 +303,7 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
                 <TrackingPanel
                   seriesId={serie.id}
                   seriesTitle={serie.title}
+                  seriesType={serie.type}
                   seasons={serie.seasons}
                   airing={isAiringNow(serie)}
                 />
@@ -341,8 +342,10 @@ export default async function SeriesPage({ params }: SeriesPageProps) {
             }
           />
 
-          <SeriesCompletenessBadge seriesId={serie.id} series={serie} />
-          <CommunityWorkLink seriesId={serie.id} />
+          <div className="series-detail-meta-bar">
+            <SeriesCompletenessBadge seriesId={serie.id} series={serie} />
+            <CommunityWorkLink seriesId={serie.id} />
+          </div>
 
           {serie.watchLinks && serie.watchLinks.length > 0 ? (
             <WhereToWatch links={serie.watchLinks} variant="hero" />

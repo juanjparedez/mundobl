@@ -21,6 +21,7 @@ import {
 } from './tracking-insights';
 import { groupIntoChapters } from './episode-chapters';
 import {
+  mergeLinkedAportes,
   readWatchingPreferences,
   type WatchingPreferences,
 } from './watching-collection';
@@ -2229,6 +2230,7 @@ export interface SeriesEpisodeOrder {
   id: number;
   seasonNumber: number;
   episodeNumber: number;
+  title: string | null;
 }
 
 /**
@@ -2244,7 +2246,7 @@ export async function getSeriesEpisodesOrdered(
     where: { seriesId },
     select: {
       seasonNumber: true,
-      episodes: { select: { id: true, episodeNumber: true } },
+      episodes: { select: { id: true, episodeNumber: true, title: true } },
     },
     orderBy: { seasonNumber: 'asc' },
   });
@@ -2256,6 +2258,7 @@ export async function getSeriesEpisodesOrdered(
         id: ep.id,
         seasonNumber: season.seasonNumber,
         episodeNumber: ep.episodeNumber,
+        title: ep.title,
       }))
   );
 }
@@ -2424,15 +2427,22 @@ export async function getWatchingLibrary(
           originalTitle: true,
           origin: true,
           catalogScope: true,
+          linkedSeriesId: true,
           year: true,
           imageUrl: true,
           imageThumbUrl: true,
           airDays: true,
           country: { select: { name: true } },
+          watchLinks: {
+            where: { official: true },
+            select: { id: true, platform: true, url: true },
+            orderBy: { id: 'asc' },
+          },
           seasons: {
             select: {
               id: true,
               seasonNumber: true,
+              episodeCount: true,
               episodes: {
                 select: {
                   id: true,
@@ -2462,10 +2472,12 @@ export async function getWatchingLibrary(
   });
 
   // Para el boton "Seguir viendo" en /watching: si la serie tiene algun
-  // episodio mirable, se puede retomar directo en /ver sin pasar por la
-  // ficha del catalogo. `series` es nullable a nivel de tipo (relacion
-  // opcional en el schema) aunque el `where` ya garantiza `seriesId` no
-  // nulo, de ahi el `!`.
+  // episodio mirable propio, se puede retomar directo en /ver sin pasar por
+  // la ficha. Una ficha curada sin video propio abre su aporte vinculado
+  // solo si los dos estan en la lista (mergeLinkedAportes); si no, la
+  // tarjeta ofrece los links oficiales de "Donde ver".
+  // `series` es nullable a nivel de tipo aunque el `where` garantiza
+  // `seriesId` no nulo, de ahi el `!`.
   const result = currentlyWatching
     .filter((item) => item.series !== null)
     .map((item) => ({
@@ -2478,7 +2490,7 @@ export async function getWatchingLibrary(
       },
     }));
 
-  return result;
+  return mergeLinkedAportes(result);
 }
 
 export async function getWatchingPreferences(userId: string) {
