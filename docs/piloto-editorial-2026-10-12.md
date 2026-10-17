@@ -57,14 +57,14 @@ editorial infrecuente. Hay que verificar HTTP real (HTML, RSC, navegación del
 cliente y caché del proveedor) antes del despliegue. El build por sí solo no
 demuestra aislamiento de caché.
 
-Las rutas `/series/[id]` y `/ver/[id]` ahora renderizan por solicitud, sin ISR de
-página completa. La prueba HTTP detectó `DYNAMIC_SERVER_USAGE` al reclasificar
-una ficha previamente cacheada: Next no permite comenzar a leer cookies durante
-esa regeneración. La configuración dinámica evita ese error y compartir una
-respuesta con consentimiento entre navegadores. Esto aumenta renderizados y
-consultas respecto del ISR anterior; se debe vigilar el consumo de funciones
-antes de ampliar el piloto. Los listados conservan su caché; no se incorporó
-ningún servicio pago ni polling.
+Las rutas `/series/[id]` y `/ver/[id]` volvieron a ISR el 2026-10-17: con
+`force-dynamic` cada visita era una función y Vercel avisó otra vez del límite.
+La ficha cacheada no lee cookies. Si el título es ADULT18, redirige a
+`/series/[id]/adultos` o `/ver/[id]/adultos`, que son dinámicas y muestran la
+compuerta o el contenido según la cookie. Así se evita el `DYNAMIC_SERVER_USAGE`
+al reclasificar y nunca se comparte una respuesta con consentimiento. La variante
+dinámica de un título que no es ADULT18 redirige a la ficha común. Los listados
+conservan su caché; no se incorporó ningún servicio pago ni polling.
 
 ## Piloto de clics
 

@@ -539,7 +539,7 @@ export function MyCommentsWidget() {
         }}
         onOk={() => void saveEdit()}
         okButtonProps={{ loading: savingEdit }}
-        maskClosable={false}
+        mask={{ closable: false }}
       >
         <Input.TextArea
           rows={5}
@@ -562,7 +562,7 @@ export function MyCommentsWidget() {
         }}
         onOk={() => void submitDispute()}
         okButtonProps={{ loading: submittingDispute }}
-        maskClosable={false}
+        mask={{ closable: false }}
       >
         <Input.TextArea
           rows={5}

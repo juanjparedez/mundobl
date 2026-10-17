@@ -2,6 +2,13 @@
 
 Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-stack para gestionar, calificar y hacer seguimiento de series, peliculas, cortos y especiales.
 
+## Anchos, 404 y transacciones (2026-10-17)
+
+- **Anchos:** las páginas no tienen tope fijo en px. `--content-max-width` es `none` y cada página lo usa. El texto de lectura corrida (legales, notas, formularios) usa `--reading-max-width` (110ch). Las grillas se acomodan con `auto-fill`/`auto-fit` o con `@container`, no con `@media` del viewport: la barra lateral hace que el ancho real sea menor que la ventana. El reproductor de `/ver/[id]` usa `--player-max-width` para que el video entre en el alto de la pantalla.
+- **404:** cada `[id]` con `loading.tsx` chequea la existencia en su `layout.tsx` (`src/lib/detail-loaders.ts`, memoizado con `cache`). Desde la página, `notFound()` llegaba con el esqueleto ya enviado y salía 200. Los `loading.tsx` de `/ver` y `/catalogo` viven en `(index)/` para no envolver a sus `[id]`.
+- **Fichas +18:** `/series/[id]` y `/ver/[id]` son ISR. Un título ADULT18 redirige a `/adultos`, la única variante que lee la cookie.
+- **Transacciones:** `src/lib/serial-transactions.ts` encola las consultas de cada transacción. Prisma lanza en paralelo las subconsultas de un `include` sobre la única conexión de la transacción, y pg@9 va a fallar con eso.
+
 ## Catálogo liviano y curaduría móvil (2026-10-13)
 
 - Lote solicitado y probado localmente; el propietario luego autorizó una sola
@@ -130,7 +137,7 @@ historial individual; `/admin/piloto` muestra 60 días. La curaduría bloquea bo
 temporadas/aportes que conservan seguimiento, notas o historial. Bienvenida
 actualizada; no cambia opt-in ni se enviaron correos. Nuevas cadenas en 10 locales.
 
-Estado y límites, incluidos tests HTTP completados y costo del render por solicitud:
+Estado y límites, incluidos tests HTTP completados y fichas +18 en la variante dinámica /adultos:
 [piloto editorial](docs/piloto-editorial-2026-10-12.md). Migración probada solo en
 DB local; no desplegada ni aplicada en producción. Propuesta comercial local, sin publicar:
 `test-results/partnership/propuesta-gagaoolala-borrador-2026-10-12.md` (sin versionar).

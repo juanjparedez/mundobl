@@ -119,11 +119,18 @@ try {
     ).status(),
     401
   );
+  // /series y /ver son ISR: un +18 solo redirige a su variante /adultos, sin
+  // contenido. La compuerta y el no-store viven en /adultos.
+  for (const path of [`/series/${id}`, `/ver/${id}`]) {
+    const html = await (await anon.request.get(origin + path)).text();
+    assert.ok(html.includes('/adultos'), path + ' redirects to /adultos');
+    assert.ok(!html.includes(series.synopsis), path + ' must not leak in ISR');
+  }
   const paths = [
-    `/series/${id}`,
+    `/series/${id}/adultos`,
     `/catalogo/${id}`,
     `/catalogo/${id}/dashboard`,
-    `/ver/${id}`,
+    `/ver/${id}/adultos`,
   ];
   for (const path of paths) {
     const response = await anon.request.get(origin + path);

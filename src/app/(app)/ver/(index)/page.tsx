@@ -6,8 +6,8 @@ import type { CollectionPage } from 'schema-dts';
 import { getWatchableSeries } from '@/lib/database';
 import { getAutoThumbnailUrl, type Platform } from '@/lib/embed-helpers';
 import { getVerUrl } from '@/lib/slug';
-import { VerPage } from './VerPage';
-import './ver.css';
+import { VerPage } from '../VerPage';
+import '../ver.css';
 
 export async function generateMetadata(): Promise<Metadata> {
   const labels = (await loadLocaleMessages('es')).contentMetadata;
@@ -27,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 // Mismo criterio que /catalogo: getWatchableSeries trae el listado entero
 // con sus relaciones en cada revalidacion. Ver el comentario de
-// src/app/(app)/catalogo/page.tsx.
+// src/app/(app)/catalogo/(index)/page.tsx.
 export const revalidate = 21600;
 
 export default async function VerPageRoute() {

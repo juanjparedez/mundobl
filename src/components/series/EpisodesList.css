@@ -1,4 +1,5 @@
 .episodes-list {
+  container: episodes-list / inline-size;
   margin-top: var(--spacing-md);
   padding: var(--spacing-md);
   background: var(--bg-elevated);
@@ -154,7 +155,11 @@
   .episodes-list {
     padding: var(--spacing-sm);
   }
+}
 
+/* Compacto segun el ancho de la lista, no de la ventana: en tablet o con la
+ * barra lateral la lista puede quedar en ~400px y el titulo en 80px. */
+@container episodes-list (max-width: 600px) {
   .episodes-list__header {
     flex-direction: column;
     align-items: flex-start;

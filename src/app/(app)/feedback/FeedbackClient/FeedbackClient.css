@@ -1,6 +1,6 @@
 .feedback-page {
   padding: 0;
-  max-width: 1280px;
+  max-width: var(--content-max-width);
   margin: 0 auto;
   display: flex;
   flex-direction: column;

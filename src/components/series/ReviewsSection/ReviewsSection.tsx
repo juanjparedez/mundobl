@@ -650,7 +650,7 @@ export function ReviewsSection({ seriesId }: ReviewsSectionProps) {
         okText={t('reviews.save')}
         cancelText={t('reviews.cancel')}
         width={720}
-        maskClosable={false}
+        mask={{ closable: false }}
       >
         <Form form={form} layout="vertical" initialValues={EMPTY_FORM}>
           <Form.Item

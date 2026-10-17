@@ -1,0 +1,132 @@
+.page-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  width: 100%;
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: var(--spacing-md);
+}
+
+.page-skeleton__hero,
+.page-skeleton__player,
+.page-skeleton__poster,
+.page-skeleton__pill,
+.page-skeleton__chip,
+.page-skeleton__line {
+  background: var(--bg-spotlight);
+  border-radius: var(--border-radius-sm);
+  animation: page-skeleton-pulse 1.4s ease-in-out infinite;
+}
+
+.page-skeleton__hero {
+  height: clamp(12rem, 30vh, 20rem);
+  border-radius: var(--border-radius-lg);
+}
+
+.page-skeleton__player {
+  width: 100%;
+  margin-inline: auto;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--border-radius-lg);
+}
+
+.page-skeleton__pill {
+  width: 10rem;
+  max-width: 60%;
+  height: 2rem;
+}
+
+.page-skeleton__chip {
+  width: 5rem;
+  height: 1.75rem;
+}
+
+.page-skeleton__line {
+  height: 1rem;
+}
+
+.page-skeleton__line:first-child {
+  width: 60%;
+  height: 1.25rem;
+}
+
+.page-skeleton__line:last-child:not(:first-child) {
+  width: 40%;
+}
+
+.page-skeleton__card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+}
+
+.page-skeleton__stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.page-skeleton__row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+}
+
+.page-skeleton__row--start {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.page-skeleton__heading {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.page-skeleton__heading .page-skeleton__line {
+  width: min(25rem, 60%);
+}
+
+.page-skeleton__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 12.5rem), 1fr));
+  gap: var(--spacing-md);
+}
+
+.page-skeleton__tile {
+  padding: 0 0 var(--spacing-md);
+  overflow: hidden;
+}
+
+.page-skeleton__tile .page-skeleton__line {
+  margin-inline: var(--spacing-md);
+}
+
+.page-skeleton__poster {
+  aspect-ratio: var(--poster-aspect-ratio);
+  border-radius: 0;
+}
+
+@media (min-width: 769px) {
+  .page-skeleton__player {
+    max-width: var(--player-max-width);
+  }
+}
+
+@keyframes page-skeleton-pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-skeleton * {
+    animation: none;
+  }
+}

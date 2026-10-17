@@ -161,11 +161,19 @@
   --header-height: 64px;
   --sidebar-width: 250px;
   --sidebar-collapsed-width: 80px;
-  --content-max-width: 1200px;
-  /* Paginas tipo hub (ej. /ver: carruseles + grilla) se benefician de mas
-   * ancho que una pagina de lectura estandar. Unico consumidor: /ver
-   * (verificado) — subir este valor no afecta ninguna otra pagina. */
-  --content-max-width-wide: 1800px;
+  /* Las paginas usan todo el ancho que les deja la barra lateral. Con topes
+   * fijos en px, en pantallas grandes quedaba media pantalla vacia, y cada
+   * pagina tenia el suyo. Las grillas internas se acomodan solas
+   * (auto-fill/auto-fit o container queries). */
+  --content-max-width: none;
+  /* Lo que se lee de corrido (legales, notas, formularios): en ch, para que
+   * acompañe al tamaño de letra y no a la pantalla. */
+  --reading-max-width: 110ch;
+  /* El video entra entero en la pantalla, sea cual sea su alto: el ancho del
+   * reproductor sale del alto disponible, no de un valor fijo. */
+  --player-max-width: calc(
+    (100dvh - var(--header-height) - var(--spacing-lg) * 2) * 16 / 9
+  );
   /* Proporcion unica para posters/miniaturas de series (grilla y carrusel).
    * 16:9 evita recortar las miniaturas de YouTube (nativamente 16:9) que
    * se usan como fallback cuando la serie no tiene imageUrl propio. */

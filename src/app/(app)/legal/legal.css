@@ -1,6 +1,6 @@
 .legal-page {
   padding: var(--spacing-md);
-  max-width: 800px;
+  max-width: var(--reading-max-width);
   margin: 0 auto;
 }
 

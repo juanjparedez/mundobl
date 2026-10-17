@@ -17,7 +17,7 @@
   /* Top mas pequeno (40px en vez de 80px) — el AppLayout ya da su
    * propia respiracion arriba. La pagina se ve mas densa sin perder aire. */
   padding: 24px var(--spacing-md) 28px;
-  max-width: 1320px;
+  max-width: var(--content-max-width);
   margin: 0 auto;
   width: 100%;
   position: relative;
@@ -238,7 +238,7 @@
   background: color-mix(in srgb, var(--bg-container) 88%, transparent);
   border: 1px solid var(--border-color-secondary);
   border-radius: var(--border-radius-lg);
-  max-width: 1320px;
+  max-width: var(--content-max-width);
   margin: 0 auto;
   width: calc(100% - var(--spacing-lg) * 2);
 }
@@ -336,7 +336,7 @@
  * bandas de la landing; la grilla interna la resuelve WeeklySchedule.css. */
 .landing__estrenos {
   padding: 24px var(--spacing-md);
-  max-width: 1320px;
+  max-width: var(--content-max-width);
   margin: 0 auto;
   width: 100%;
 }
@@ -354,7 +354,7 @@
 
 .landing__novedades {
   padding: 24px var(--spacing-md);
-  max-width: 1320px;
+  max-width: var(--content-max-width);
   margin: 0 auto;
   width: 100%;
 }
@@ -459,7 +459,7 @@
 /* ── Latest series teaser ── */
 .landing__latest {
   padding: 24px var(--spacing-md) 32px;
-  max-width: 1320px;
+  max-width: var(--content-max-width);
   margin: 0 auto;
   width: 100%;
 }
@@ -552,7 +552,7 @@
 /* ── Featured review spotlight ── */
 .landing__review-spotlight {
   padding: 24px var(--spacing-md) 32px;
-  max-width: 1320px;
+  max-width: var(--content-max-width);
   margin: 0 auto;
   width: 100%;
 }
@@ -660,7 +660,7 @@
 /* ── Features ── */
 .landing__features {
   padding: 64px var(--spacing-lg);
-  max-width: 1320px;
+  max-width: var(--content-max-width);
   margin: 0 auto;
   width: 100%;
 }
@@ -740,7 +740,7 @@
 /* ─── Narrative Sections ─── */
 .landing__narrative-section {
   padding: 48px var(--spacing-md);
-  max-width: 1320px;
+  max-width: var(--content-max-width);
   margin: 0 auto;
   width: 100%;
 }
@@ -1472,7 +1472,7 @@ html[data-skin='premium'][data-theme='dark'] .landing__offer-card--watch {
 
 .landing__how {
   padding: 48px var(--spacing-lg);
-  max-width: 1320px;
+  max-width: var(--content-max-width);
   margin: 0 auto;
   width: 100%;
 }
