@@ -2455,6 +2455,8 @@ const fr = {
     "statusEnProgreso": "En cours",
     "statusCompletado": "Terminé",
     "statusDescartado": "Rejeté",
+    "statusNotificationTitle": "Mise à jour de votre demande : \"{title}\"",
+    "statusNotificationBody": "Le statut est passé à \"{status}\".",
     "typeBug": "Bug",
     "typeFeature": "Fonctionnalité",
     "typeIdea": "Idée",

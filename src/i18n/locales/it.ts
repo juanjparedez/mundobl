@@ -2454,6 +2454,8 @@ const it = {
     "statusEnProgreso": "In corso",
     "statusCompletado": "Completato",
     "statusDescartado": "Scartato",
+    "statusNotificationTitle": "Aggiornamento sulla tua richiesta: \"{title}\"",
+    "statusNotificationBody": "Lo stato è passato a \"{status}\".",
     "typeBug": "Bug",
     "typeFeature": "Funzionalità",
     "typeIdea": "Idea",
