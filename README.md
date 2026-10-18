@@ -1,72 +1,82 @@
+# MundoBL — mundobl.com.ar
+
 <div align="center">
-
-<img src="public/images/landing.png" alt="MundoBL" width="360" />
-
-# MundoBL
-
-**Catálogo curado de series asiáticas BL/GL** (Boys' Love / Girls' Love) y otros géneros —
-descubrí, calificá y seguí series tailandesas, coreanas, japonesas y más.
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?logo=typescript)](https://www.typescriptlang.org)
 [![Prisma](https://img.shields.io/badge/Prisma-7-2D3748?logo=prisma)](https://www.prisma.io)
-[![i18n](https://img.shields.io/badge/i18n-10%20idiomas-informational)](context.md)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?logo=postgresql)](https://www.postgresql.org)
+[![i18n](https://img.shields.io/badge/i18n-10%20idiomas-informational)](docs/ai-context/context.md)
 
-**[mundobl.com.ar](https://mundobl.com.ar)**
+**Plataforma de catalogación, curaduría y streaming oficial de contenido audiovisual asiático (BL/GL).**  
+*Curated catalog, tracking, and official streaming hub for Asian BL/GL series and films.*
+
+🌐 **Live:** [mundobl.com.ar](https://mundobl.com.ar)
 
 </div>
 
 ---
 
-## Qué es MundoBL
+## 🇪🇸 Español
 
-Un catálogo personal de series asiáticas curado a mano, con calificación por categorías,
-seguimiento de progreso, reseñas de la comunidad y un modo "Ver" que reúne contenido
-embebido de canales oficiales de YouTube/Vimeo — todo pensado para quien recién arranca
-con el género tanto como para quien ya vive en él.
+### Qué es
+MundoBL es una plataforma full-stack para descubrir, calificar y organizar producciones asiáticas (series, películas, cortos y especiales). Integra curaduría editorial colaborativa, streaming legal embebido de canales oficiales con detección de geobloqueo, glosario cultural y comunidad con logros en tiempo real.
 
-## Features
+### Arquitectura y decisiones técnicas
+- **Stack:** Next.js 16 (App Router), React 19, TypeScript estricto (0 `any`), Prisma 7, PostgreSQL (Supabase / local Docker).
+- **Modelo de datos robusto:** 78 modelos relacionales, 56 migraciones versionadas y control de concurrencia optimista (`editVersion`) con auditoría de revisiones (`SeriesRevision`).
+- **Eficiencia e ISR en Vercel:** Revalidación bajo demanda (ISR) en fichas públicas, compuerta estricta para contenido adulto (`/adultos`), reducción de payload de catálogo (1 MB → 180 KB en transporte) y extracción de sinopsis bajo demanda para cuidar cuotas de CPU/ISR.
+- **Internacionalización profunda:** 10 idiomas completos (`es`, `en`, `it`, `de`, `fr`, `ja`, `ko`, `zh-CN`, `zh-TW`, `th`) con auditoría estricta de paridad de claves.
+- **Resiliencia operativa:** Workflows de GitHub Actions para backups periódicos en R2 con prueba de restauración automatizada en base descartable (`backup-restore-test.yml`), migraciones auditadas y despliegue manual controlado.
 
-- 📚 **Catálogo curado** — fichas completas por serie/temporada/episodio, con reparto,
-  productoras, universos compartidos y calificación por categorías (trama, casting,
-  química, BSO, y más).
-- ▶️ **`/ver`** — un Streaming Hub con contenido embebido de canales oficiales
-  (YouTube/Vimeo/Bilibili/Dailymotion), con detección de bloqueo regional.
-- 🌏 **Glosario Cultural** — honoríficos, tropes y jerga BL/GL explicados, con trivia y
-  contribuciones moderadas de la comunidad.
-- 🤝 **Colaboradores externos** — productoras y proveedores de contenido pueden cargar y
-  gestionar su propio catálogo sin tocar la curaduría principal.
-- 💬 **Comunidad** — reseñas, comentarios, favoritos, notas privadas y un sistema de
-  logros derivado de tu actividad real.
-- 🌐 **10 idiomas** — es, en, it, de, fr, ja, ko, zh-CN, zh-TW, th.
+### Capturas
+| Catálogo y filtros | Ficha y evaluación multicriterio |
+|:---:|:---:|
+| ![Catálogo](docs/screenshots/catalogo.png) | ![Ficha](docs/screenshots/ficha-serie.png) |
+| **Streaming Hub (`/ver`)** | **Curaduría y administración** |
+| ![Streaming Hub](docs/screenshots/streaming-hub.png) | ![Admin](docs/screenshots/admin-curaduria.png) |
 
-## Quick start
+### Equipo y escala (octubre 2026)
+- **Desarrollo e ingeniería:** Juan Paredez
+- **Product Owner & Curaduría:** Flor
+- **Métricas:** ~763 títulos catalogados, ~174 usuarios registrados.
+
+---
+
+## 🇬🇧 English
+
+### Overview
+MundoBL is a production full-stack platform to discover, track, rate, and stream Asian audiovisual productions (BL/GL series, movies, and specials). It combines collaborative editorial curation, legal embedded streaming with geo-restriction detection, cultural glossaries, and community features.
+
+### Architecture & Technical Decisions
+- **Stack:** Next.js 16 (App Router), React 19, strict TypeScript (0 `any`), Prisma 7, PostgreSQL.
+- **Relational Domain:** 78 Prisma models, 56 migrations, optimistic locking (`editVersion`), and full snapshot auditing (`SeriesRevision`) on edits.
+- **ISR & Edge Cost Optimization:** On-demand Incremental Static Regeneration, dynamic gating for 18+ content, catalog payload compression (1 MB → 180 KB), and on-demand synopsis caching to stay strictly within serverless execution limits.
+- **Deep i18n:** Full support for 10 locales with automated key parity enforcement.
+- **Reliability Engineering:** Automated backups with end-to-end restore verification in isolated CI databases, audited migration workflows, and manual deployment gates.
+
+---
+
+## Quick Start (Desarrollo local)
 
 ```bash
+# Instalar dependencias
 npm install
-npm run local:dev    # levanta Postgres local (Docker) + corre migraciones + npm run dev
-# o, si ya tenés la DB local arriba:
-npm run dev           # http://localhost:3000
+
+# Levantar PostgreSQL local (Docker) + aplicar migraciones + dev server
+npm run local:dev
+
+# O con base de datos ya levantada:
+npm run dev
+
+# Verificaciones de calidad
+npm run check          # type-check + lint
+npm run build          # compilación de producción
 ```
 
-```bash
-npm run build         # build de producción
-npm run lint:fix      # eslint + fix
-npm run type-check    # tsc --noEmit
-```
+## Documentación del proyecto
 
-## Documentación
-
-| Qué buscás | Dónde está |
-|---|---|
-| Arquitectura, stack, convenciones, integraciones externas | [`context.md`](context.md) |
-| Cuotas, alertas, limpieza de deployments y mantenimiento | [Manual de mantenimiento](docs/manual-mantenimiento.md) |
-| Historial de versiones | [`CHANGELOG.md`](CHANGELOG.md) (también en [/novedades](https://mundobl.com.ar/novedades)) |
-| Instrucciones para agentes de IA | [`CLAUDE.md`](CLAUDE.md) |
-
-## Equipo
-
-| Rol | |
-|---|---|
-| Desarrollador | Juan |
-| Product Owner / Curaduría | Flor |
+- [Manual de mantenimiento y operaciones](docs/manual-mantenimiento.md)
+- [Historial de cambios](CHANGELOG.md)
+- [Contexto de ingeniería para agentes de IA](docs/ai-context/context.md)
+- [Instrucciones de agente](CLAUDE.md)
