@@ -22,7 +22,7 @@ export interface ScheduleSubscribeToggleProps {
  *
  * Hoy las suscripciones solo alimentan la notificacion in-app y el push que ya
  * existen; el aviso automatico de capitulo nuevo todavia no esta cableado (ver
- * context.md). Por eso el texto dice "avisarme de esta serie" y no promete
+ * docs/ai-context/context.md). Por eso el texto dice "avisarme de esta serie" y no promete
  * un aviso semanal que no mandamos.
  */
 export function ScheduleSubscribeToggle({

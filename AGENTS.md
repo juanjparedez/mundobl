@@ -1,6 +1,6 @@
 # MundoBL - Instrucciones para IA
 
-**Contexto completo del proyecto:** Lee `context.md` antes de hacer cualquier cambio.
+**Contexto completo del proyecto:** Lee `docs/ai-context/context.md` antes de hacer cualquier cambio.
 
 ## Reglas Obligatorias
 

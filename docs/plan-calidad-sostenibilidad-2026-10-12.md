@@ -14,7 +14,7 @@ Inicialmente se postergaron los ingresos. Ante avisos reiterados de Vercel/Supab
 
 | Prioridad | Acción                    | Resultado y verificación                                                                                                  | Estado                                     |
 | --------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
-| P0        | Conservar contexto        | Documento y enlace desde context.md; separar propuestas de hechos                                                         | Documentado                                |
+| P0        | Conservar contexto        | Documento y enlace desde ai-context; separar propuestas de hechos                                                         | Documentado                                |
 | P1        | Compartir                 | Mensaje breve traducido + URL canónica/UTM; nativo, WhatsApp y copia sin sinopsis ni envío real                           | Desplegado; aceptación nativa pendiente    |
 | P1        | Ampliar póster            | Original a demanda, zoom/desplazamiento/cierre/foco; móvil y escritorio; fallo y ausencia de imagen                       | Desplegado; escritorio y viewport móvil comprobados |
 | P1        | Patrocinio                | Administración exclusiva, mock inactivo, borrador separado de publicación, concurrencia, RLS y respaldo; desplegar oculto | Desplegado oculto; ver límites abajo       |

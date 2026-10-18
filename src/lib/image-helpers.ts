@@ -1,4 +1,4 @@
-/** Host de Cloudflare R2 donde viven hoy los posters. Ver `docs`/context.md. */
+/** Host de Cloudflare R2 donde viven hoy los posters. Ver docs/ai-context/context.md. */
 export const R2_IMAGE_HOST = 'img.mundobl.com.ar';
 
 /** Shared with next.config.ts: only these external CDNs use Vercel. */

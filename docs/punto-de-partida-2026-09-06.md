@@ -71,7 +71,7 @@ Es el bloque con mejor relación valor/esfuerzo: son horas, no días, porque el 
 2. **`NotificationPrefs.emailEnabled` solo se lee en el anuncio masivo.** Cualquier transaccional
    nuevo tiene que respetarlo. Ojo: default `false`, así que hoy hay 0 usuarios opt-in.
 3. **Aviso de capítulo nuevo.** Bloqueado por falta de dato, no de esfuerzo — ver la sección
-   "Parrilla semanal de emisión" de `context.md` para el diseño y el gate de calidad.
+   "Parrilla semanal de emisión" de `docs/ai-context/context.md` para el diseño y el gate de calidad.
 4. **Un solo cron** (`/api/cron/playability`). No hay digest ni recordatorio.
 5. **0 de 613 series con reseña editorial.** El bug de guardado que las borraba está arreglado
    (2026-09-10); ahora es trabajo de contenido, no de código.

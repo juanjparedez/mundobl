@@ -210,7 +210,7 @@ Comprimir en GitHub después de extraer la base reduce el tamaño guardado en R2
 
 El cron de aplicación `/api/cron/daily` es independiente del backup semanal: ejecuta tareas de contenido y limpieza. Revisar su última corrida desde Runtime/admin y logs; no invocarlo repetidamente como comprobación de salud. Ver [tareas de runtime](runtime-jobs.md).
 
-Las migraciones de Prisma también son independientes del indicador de migraciones del panel Supabase. Revisar `npx prisma migrate status` y `npm run db:check` con la conexión correcta. Crear migraciones solo contra PostgreSQL local; aplicar cambios aprobados con `npm run migrate:supabase`, según [context.md](../context.md). Nunca usar reset o db push contra producción para mantenimiento.
+Las migraciones de Prisma también son independientes del indicador de migraciones del panel Supabase. Revisar `npx prisma migrate status` y `npm run db:check` con la conexión correcta. Crear migraciones solo contra PostgreSQL local; aplicar cambios aprobados con `npm run migrate:supabase`, según [context.md](ai-context/context.md). Nunca usar reset o db push contra producción para mantenimiento.
 
 ## 7. Rutina y recuperación
 
