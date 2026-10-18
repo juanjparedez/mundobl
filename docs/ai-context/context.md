@@ -122,9 +122,9 @@ Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-s
 
 ## Calidad y sostenibilidad (2026-10-12)
 
-Diagnóstico actualizado con acceso a ambos paneles: [consumo y validaciones](docs/diagnostico-consumo-2026-10-12.md). Vercel: CPU 8 h 29 min / 4 h e ISR Writes 311.224 / 200.000 en últimos 30 días; Supabase sin excesos en el ciclo 17/09–17/10. Priorizar payload del catálogo y CSS SSR antes de migrar. Visor móvil y compartir alternativo comprobados en producción; hoja nativa real y ciclo HTTP de caché de patrocinio siguen pendientes. Los períodos, límites y accionables están en el diagnóstico.
+Diagnóstico actualizado con acceso a ambos paneles: [consumo y validaciones](../diagnostico-consumo-2026-10-12.md). Vercel: CPU 8 h 29 min / 4 h e ISR Writes 311.224 / 200.000 en últimos 30 días; Supabase sin excesos en el ciclo 17/09–17/10. Priorizar payload del catálogo y CSS SSR antes de migrar. Visor móvil y compartir alternativo comprobados en producción; hoja nativa real y ciclo HTTP de caché de patrocinio siguen pendientes. Los períodos, límites y accionables están en el diagnóstico.
 
-Plan integral, decisiones y evidencias: [calidad y sostenibilidad](docs/plan-calidad-sostenibilidad-2026-10-12.md). Incluye reclamos de Flor, patrocinio oculto y diagnósticos de consumo/retorno. Implementación: compartir usa SeriesShareButton (texto breve y URL canónica); PosterPreview abre originales a demanda con Ant Design. /apoyar y /admin/patrocinio usan SupportSettings (borrador/snapshot, versión, RLS y backup), solo ADMIN + ADMIN_EMAILS administra; publicación desactivada por defecto, sin pagos integrados ni avisos. Desplegado en producción como f2f8ac1 (PR #113), con patrocinio oculto. Ver el documento para evidencias y validaciones aún pendientes.
+Plan integral, decisiones y evidencias: [calidad y sostenibilidad](../plan-calidad-sostenibilidad-2026-10-12.md). Incluye reclamos de Flor, patrocinio oculto y diagnósticos de consumo/retorno. Implementación: compartir usa SeriesShareButton (texto breve y URL canónica); PosterPreview abre originales a demanda con Ant Design. /apoyar y /admin/patrocinio usan SupportSettings (borrador/snapshot, versión, RLS y backup), solo ADMIN + ADMIN_EMAILS administra; publicación desactivada por defecto, sin pagos integrados ni avisos. Desplegado en producción como f2f8ac1 (PR #113), con patrocinio oculto. Ver el documento para evidencias y validaciones aún pendientes.
 
 ## Piloto editorial en preparación (2026-10-12)
 
@@ -138,21 +138,21 @@ temporadas/aportes que conservan seguimiento, notas o historial. Bienvenida
 actualizada; no cambia opt-in ni se enviaron correos. Nuevas cadenas en 10 locales.
 
 Estado y límites, incluidos tests HTTP completados y fichas +18 en la variante dinámica /adultos:
-[piloto editorial](docs/piloto-editorial-2026-10-12.md). Migración probada solo en
+[piloto editorial](../piloto-editorial-2026-10-12.md). Migración probada solo en
 DB local; no desplegada ni aplicada en producción. Propuesta comercial local, sin publicar:
 `test-results/partnership/propuesta-gagaoolala-borrador-2026-10-12.md` (sin versionar).
 
 ## Estado actual (2026-10-01)
 
-- Guardado de series (#110): el form de edicion guarda en UNA transaccion y por diferencias ([saveSeriesFromForm](src/lib/series-save.ts)): sin cambios no reescribe filas, y si algo falla no se aplica nada. `Series.editVersion` la sube solo un guardado de form (admin, colaborador) o el cambio de alcance; el form manda la version con la que abrio y el server responde 409 `EDIT_CONFLICT` si cambio (pestaña vieja). Sin version tambien es 409. Antes de cada guardado queda una foto JSON completa en `SeriesRevision` (quien, cuando, version reemplazada; sin FK a proposito: sobrevive al borrado de la serie). Motivo: el 29/09 se perdio contenido de "Poisoned chalice" (705) sin forma de saber que habia ni quien guardo. El cron de reproducibilidad ya no toca `updatedAt` si `geoRestrictedCore` no cambia. Migracion `20260930120000_series_revisions` aplicada en produccion el 01/10.
+- Guardado de series (#110): el form de edicion guarda en UNA transaccion y por diferencias ([saveSeriesFromForm](../../src/lib/series-save.ts)): sin cambios no reescribe filas, y si algo falla no se aplica nada. `Series.editVersion` la sube solo un guardado de form (admin, colaborador) o el cambio de alcance; el form manda la version con la que abrio y el server responde 409 `EDIT_CONFLICT` si cambio (pestaña vieja). Sin version tambien es 409. Antes de cada guardado queda una foto JSON completa en `SeriesRevision` (quien, cuando, version reemplazada; sin FK a proposito: sobrevive al borrado de la serie). Motivo: el 29/09 se perdio contenido de "Poisoned chalice" (705) sin forma de saber que habia ni quien guardo. El cron de reproducibilidad ya no toca `updatedAt` si `geoRestrictedCore` no cambia. Migracion `20260930120000_series_revisions` aplicada en produccion el 01/10.
 - Region: funciones en `gru1` (São Paulo, `vercel.json`), al lado de la base (sa-east-1). Antes corrian en `iad1` y cada consulta cruzaba el continente (~130 ms; un guardado de serie eran 6-8 s). En Hobby la cuota es en horas y GB-h, no en dolares: la region no cambia el costo y la memoria provisionada baja porque la instancia espera menos I/O. Si se pasa a Pro, `gru1` cuesta 1,7x por unidad.
-- Avisos: ADMIN y MODERATOR no quedan suscriptos solos al marcar "viendo" ([subscribeOnFirstTrack](src/lib/tracking.ts)), ni el backfill los suscribe; el aviso de temporada nueva no le llega a quien la agrego. Reporte de Flor del 27/09.
+- Avisos: ADMIN y MODERATOR no quedan suscriptos solos al marcar "viendo" ([subscribeOnFirstTrack](../../src/lib/tracking.ts)), ni el backfill los suscribe; el aviso de temporada nueva no le llega a quien la agrego. Reporte de Flor del 27/09.
 - Pendiente medido (01/10, HTML sin comprimir): el CSS inline de Ant Design (SSR de cssinjs) pesa en todas las paginas: ficha 288 KB de 510 KB, `/ver/[id]` 221 KB de 383 KB, `/estrenos` 163 KB de 311 KB, `/catalogo` 405 KB. Extraerlo a CSS estatico cacheable es la mejora de carga mas grande que queda. `/catalogo` ademas manda 1,3 MB de datos (sinopsis 290 KB, etiquetas como objetos 139 KB): sinopsis a demanda en la vista rapida y diccionario de etiquetas.
-- Runtime: sección de mantenimiento ADMIN con inspección paginada y borrado individual de deployments de producción de más de 90 días (no hay previews: Git no despliega), protecciones recalculadas antes de borrar, auditoría en AccessLog, limpieza de logs vencidos y diagnóstico de variables R2. Integración Vercel server-only mediante `MAINTENANCE_VERCEL_TOKEN`, `MAINTENANCE_VERCEL_PROJECT_ID`, `MAINTENANCE_VERCEL_TEAM_ID`; sin ellas no se habilita. Los overrides de emergencia existentes son por instancia, no un freno global. Procedimiento y límites en el [manual](docs/manual-mantenimiento.md).
-- Operación: [manual de mantenimiento](docs/manual-mantenimiento.md) con interpretación de cuotas, limpieza de deployments y backups. #107 comprobada en producción (`6b815cf`), con HIT de caché en `/ver/676` y `/series/1`. Supabase Free con gracia agotada (terminó el 10/09) pero ninguna métrica pasada al 29/09: Egress 32 %, Log Ingestion 53 % (todavía no se cobra; la genera sobre todo Supavisor por conexiones Prisma), DB 25 %, Storage 11 %. 20 series y 12 imágenes de pedidos siguen en Supabase. Métricas de Vercel pendientes (solo en el panel). `PAGE_VIEW` ya no mide tráfico: el proxy que lo registra corre solo en `/admin`. No asumir 16 CPU-h como cuota de Vercel Hobby: la documentación indica 4 CPU-h incluidas.
+- Runtime: sección de mantenimiento ADMIN con inspección paginada y borrado individual de deployments de producción de más de 90 días (no hay previews: Git no despliega), protecciones recalculadas antes de borrar, auditoría en AccessLog, limpieza de logs vencidos y diagnóstico de variables R2. Integración Vercel server-only mediante `MAINTENANCE_VERCEL_TOKEN`, `MAINTENANCE_VERCEL_PROJECT_ID`, `MAINTENANCE_VERCEL_TEAM_ID`; sin ellas no se habilita. Los overrides de emergencia existentes son por instancia, no un freno global. Procedimiento y límites en el [manual](../manual-mantenimiento.md).
+- Operación: [manual de mantenimiento](../manual-mantenimiento.md) con interpretación de cuotas, limpieza de deployments y backups. #107 comprobada en producción (`6b815cf`), con HIT de caché en `/ver/676` y `/series/1`. Supabase Free con gracia agotada (terminó el 10/09) pero ninguna métrica pasada al 29/09: Egress 32 %, Log Ingestion 53 % (todavía no se cobra; la genera sobre todo Supavisor por conexiones Prisma), DB 25 %, Storage 11 %. 20 series y 12 imágenes de pedidos siguen en Supabase. Métricas de Vercel pendientes (solo en el panel). `PAGE_VIEW` ya no mide tráfico: el proxy que lo registra corre solo en `/admin`. No asumir 16 CPU-h como cuota de Vercel Hobby: la documentación indica 4 CPU-h incluidas.
 - Comunidad: conversaciones (#103) y listas, Top 5, perfiles, bloqueos y moderación (#104) están en producción con su migración aplicada. Las conversaciones se publican desde el formulario; guardar borrador es opcional y quien pregunta puede pedir aviso de respuestas.
 - Seguimiento: biblioteca, historial, diario y estadísticas en producción. En castellano, lo que sigue el avance (`/ver`, ficha, `/watching`, perfil) dice "capítulo"; admin y carga de datos siguen con "episodio". Las etiquetas muestran capítulo y parte, nunca el número de fila. Faltan múltiples visionados y conflictos al importar.
-- Registro de entregas anteriores, sin cambios: [docs/historial-contexto.md](docs/historial-contexto.md).
+- Registro de entregas anteriores, sin cambios: [historial-contexto.md](historial-contexto.md).
 
 ---
 
@@ -211,7 +211,7 @@ PROJECT_SUPABASE_URL
 
 > **Limpiar del `.env` local**: las vars `DEV_AUTH_BYPASS`, `DEV_AUTH_ROLE`, `DEV_AUTH_USER_ID` no las lee ningun archivo en `src/`. Son dead config (auditado 2026-05-09). Si en el futuro se reintroduce un bypass de auth dev, debe ir guardado tras `process.env.NODE_ENV !== 'production'`.
 
-**Asistente IA del proyecto:** **Gemini** (no Claude/Anthropic). El helper esta en [src/lib/gemini.ts](src/lib/gemini.ts) y la env var es `GEMINI_API_KEY`. Cualquier feature de IA debe usar este helper, no integrar otro proveedor.
+**Asistente IA del proyecto:** **Gemini** (no Claude/Anthropic). El helper esta en [src/lib/gemini.ts](../../src/lib/gemini.ts) y la env var es `GEMINI_API_KEY`. Cualquier feature de IA debe usar este helper, no integrar otro proveedor.
 
 ---
 
@@ -220,7 +220,7 @@ PROJECT_SUPABASE_URL
 ### YouTube Data API v3
 
 - **Env**: `YOUTUBE_API_KEY` (configurada). Cuota gratuita: 10k unidades/dia.
-- **Helper**: [src/lib/channel-fetcher.ts](src/lib/channel-fetcher.ts) → `fetchYouTubeChannel(url, pageToken?)`
+- **Helper**: [src/lib/channel-fetcher.ts](../../src/lib/channel-fetcher.ts) → `fetchYouTubeChannel(url, pageToken?)`
   - Acepta URLs de canal: `/channel/UCxxx`, `/@handle`, `/c/customname`, `/user/username`
   - Usa el endpoint `playlistItems` sobre la playlist `uploads` del canal
   - Pagina con `nextPageToken`, 50 videos por pagina
@@ -233,7 +233,7 @@ PROJECT_SUPABASE_URL
 ### Vimeo API
 
 - **Env**: `VIMEO_CLIENT_ID`, `VIMEO_ACCESS_TOKEN` (configuradas).
-- **Helper**: [src/lib/channel-fetcher.ts](src/lib/channel-fetcher.ts) → `fetchVimeoChannel(url, pageToken?)`
+- **Helper**: [src/lib/channel-fetcher.ts](../../src/lib/channel-fetcher.ts) → `fetchVimeoChannel(url, pageToken?)`
   - Acepta URLs de usuario/canal: `/channels/name`, `/username`
   - Usa el endpoint `users/{userId}/videos`, 25 videos por pagina, ordenado por fecha
   - Misma forma de retorno (`ChannelVideo[]`) que YouTube → flujo unificado
@@ -243,19 +243,19 @@ PROJECT_SUPABASE_URL
 - **10 locales soportados con traduccion completa**: `es`, `en`, `it`, `de`, `fr`, `ja`, `ko`, `zh-CN`, `zh-TW`, `th`. Default: `es`.
 - Storage: `localStorage['app-locale']` (client-side). El toggle es client-side, las URLs NO cambian por locale.
 - **Estructura**:
-  - [src/i18n/config.ts](src/i18n/config.ts): SUPPORTED_LOCALES, LOCALE_LABELS, isSupportedLocale
-  - [src/i18n/messages.ts](src/i18n/messages.ts): TranslationShape (tipo), bloques `es` y `en` inline (~1500 lineas cada uno), MESSAGES record que importa los otros 8 desde `locales/`
+  - [src/i18n/config.ts](../../src/i18n/config.ts): SUPPORTED_LOCALES, LOCALE_LABELS, isSupportedLocale
+  - [src/i18n/messages.ts](../../src/i18n/messages.ts): TranslationShape (tipo), bloques `es` y `en` inline (~1500 lineas cada uno), MESSAGES record que importa los otros 8 desde `locales/`
   - `src/i18n/locales/{code}.ts`: traducciones generadas por IA (Gemini), una por locale. Editables a mano si una frase suena mal.
-- **Helper**: [src/lib/providers/LocaleProvider.tsx](src/lib/providers/LocaleProvider.tsx) → `useLocale()` retorna `{ locale, setLocale, t(key) }`. `t` falla a `en` si la clave no existe en el locale activo, y a la propia clave si tampoco existe en `en`.
-- **antd locales**: [src/lib/providers/ThemeProvider.tsx](src/lib/providers/ThemeProvider.tsx) mapea cada locale al pack de antd (`antd/locale/xx_YY`) para DatePicker, Calendar, etc.
+- **Helper**: [src/lib/providers/LocaleProvider.tsx](../../src/lib/providers/LocaleProvider.tsx) → `useLocale()` retorna `{ locale, setLocale, t(key) }`. `t` falla a `en` si la clave no existe en el locale activo, y a la propia clave si tampoco existe en `en`.
+- **antd locales**: [src/lib/providers/ThemeProvider.tsx](../../src/lib/providers/ThemeProvider.tsx) mapea cada locale al pack de antd (`antd/locale/xx_YY`) para DatePicker, Calendar, etc.
 - **Para regenerar un locale via IA**: `npx tsx scripts/translate-locales.ts {code}` (usa `MESSAGES.en` como source de verdad, batchea en groups de 40 strings, escribe el archivo). Free tier de Gemini suficiente.
-- **Para agregar un locale nuevo**: ver header de [config.ts](src/i18n/config.ts).
+- **Para agregar un locale nuevo**: ver header de [config.ts](../../src/i18n/config.ts).
 
 ### Google Gemini API (asistente IA)
 
 - **Env**: `GEMINI_API_KEY` (configurada en Vercel; **no** en `.env` local). Free tier: 15 RPM / 1500 RPD compartido por key.
 - **Modelo**: cadena con fallback automatico. Default: `gemini-2.5-flash` → `gemini-flash-latest` → `gemini-2.5-flash-lite`. Override via env `GEMINI_MODELS` (csv).
-- **Helper**: [src/lib/gemini.ts](src/lib/gemini.ts) → `generateText({prompt, systemInstruction, temperature?, maxOutputTokens?, thinkingBudget?})`
+- **Helper**: [src/lib/gemini.ts](../../src/lib/gemini.ts) → `generateText({prompt, systemInstruction, temperature?, maxOutputTokens?, thinkingBudget?})`
   - `thinkingBudget: 0` desactiva "thinking tokens" (recomendado para tareas cortas)
   - Tira `GeminiError` con `status` HTTP + `googleStatus` simbolico (RESOURCE_EXHAUSTED, PERMISSION_DENIED, etc.)
   - Fallback automatico ante 429/404/5xx; errores definitivos (400, prompt invalido) frenan
@@ -266,7 +266,7 @@ PROJECT_SUPABASE_URL
   - `POST /api/reviews` — asistencia inline
 - **Casos de uso futuros**: traduccion de sinopsis al español al importar series, normalizacion de titulos parseados de YouTube, deteccion de pais/año desde metadata de canal.
 
-### Embed helpers ([src/lib/embed-helpers.ts](src/lib/embed-helpers.ts))
+### Embed helpers ([src/lib/embed-helpers.ts](../../src/lib/embed-helpers.ts))
 
 Soporta 8 plataformas para reproducir/parsear:
 
@@ -276,7 +276,7 @@ Soporta 8 plataformas para reproducir/parsear:
 
 ### Supabase Storage
 
-- **Helper**: [src/lib/supabase.ts](src/lib/supabase.ts)
+- **Helper**: [src/lib/supabase.ts](../../src/lib/supabase.ts)
 - Bucket: `images`. Funciones: `uploadImage`, `deleteImage`, `downloadAndUploadImage` (re-hostea imagen desde URL externa)
 - Usa la **service role key** y SOLO para Storage. La app NUNCA consulta tablas via el cliente Supabase (`supabase.from(...)`) — todo el acceso a DB es via Prisma.
 
@@ -284,11 +284,11 @@ Soporta 8 plataformas para reproducir/parsear:
 
 - **Todas las tablas del schema `public` tienen RLS habilitado** (deny-by-default para el rol `anon`). Sin esto, la anon/publishable key (PUBLICA, `NEXT_PUBLIC_...`) permitiria leer/escribir tablas via la REST API de Supabase (PostgREST), salteando la app.
 - **No rompe la app**: Prisma conecta con el rol postgres (conexion directa `DATABASE_URL`), que **bypassea RLS**. Storage usa la service key (RLS aparte).
-- ⚠️ **RLS no lo maneja Prisma**: las tablas nuevas de futuras migraciones NO heredan RLS. Tras cada `prisma migrate` correr [scripts/enable-rls.ts](scripts/enable-rls.ts) (`--apply`) para re-habilitarlo en las nuevas.
+- ⚠️ **RLS no lo maneja Prisma**: las tablas nuevas de futuras migraciones NO heredan RLS. Tras cada `prisma migrate` correr [scripts/enable-rls.ts](../../scripts/enable-rls.ts) (`--apply`) para re-habilitarlo en las nuevas.
 
 ### NextAuth (Google OAuth)
 
-- [src/lib/auth.ts](src/lib/auth.ts), [src/lib/auth-helpers.ts](src/lib/auth-helpers.ts)
+- [src/lib/auth.ts](../../src/lib/auth.ts), [src/lib/auth-helpers.ts](../../src/lib/auth-helpers.ts)
 - `requireAuth()`, `requireRole(['ADMIN' | 'MODERATOR' | 'USER'])` para proteger endpoints
 - Roles via `User.role` (enum `Role`); admin se puede sembrar via `ADMIN_EMAILS`
 - **Authorized Redirect URIs** que tienen que estar registrados en Google Cloud Console (cliente OAuth):
@@ -299,31 +299,31 @@ Soporta 8 plataformas para reproducir/parsear:
 ### Display name publico (privacidad)
 
 - `User.nickname String?` (migracion `20260509064748_add_user_nickname`).
-- Helper [src/lib/user-display.ts](src/lib/user-display.ts) → `formatPublicName({name, nickname})` y `getInitials(...)`. Usar en TODO contexto donde otros usuarios ven el nombre (comentarios, feedback, reseñas). El sidebar/menu propio puede seguir mostrando `session.user.name` directo (uno se ve a si mismo con apellido completo).
+- Helper [src/lib/user-display.ts](../../src/lib/user-display.ts) → `formatPublicName({name, nickname})` y `getInitials(...)`. Usar en TODO contexto donde otros usuarios ven el nombre (comentarios, feedback, reseñas). El sidebar/menu propio puede seguir mostrando `session.user.name` directo (uno se ve a si mismo con apellido completo).
 - Fallback cuando no hay nickname: `"Nombre I."` (inicial del apellido). Si el usuario solo tiene un nombre: se muestra tal cual.
 - API: `PATCH /api/user/me` body `{nickname: string | null}` para que el usuario edite su propio nickname.
-- UI: input en [/perfil → ProfileSettings](src/app/perfil/ProfileSettings/ProfileSettings.tsx) (primer card del grid).
+- UI: input en [/perfil → ProfileSettings](../../src/app/perfil/ProfileSettings/ProfileSettings.tsx) (primer card del grid).
 - **Importante para futuras queries**: cualquier `prisma.user.findX` o `select: { user: ... }` que vaya a renderizar publicamente debe incluir `nickname: true` ademas de `name: true`.
 
 ### Tags (matching sin duplicados)
 
 - `Tag.name` es `@unique` pero el indice de Postgres es case/espacios-sensible, asi que "Enemy to Lovers" vs "enemy to lovers" eran filas distintas.
-- Helpers en [src/lib/tag-utils.ts](src/lib/tag-utils.ts): `findOrCreateTag(client, rawName, category='trope')`, `findOrCreateGenre(client, rawName)` y `findOrCreateActor(client, rawName)`. Hacen `trim` + `findFirst({ name: { equals, mode: 'insensitive' } })` y solo crean si no existe (maneja carrera P2002). Aceptan el cliente Prisma o un `Prisma.TransactionClient`.
-- **Usar siempre estos helpers** al persistir tags/generos/actores desde nombre (nunca `X.upsert({ where: { name } })` a pelo). Aplicados en [POST /api/series](src/app/api/series/route.ts), [PATCH /api/series/[id]](src/app/api/series/[id]/route.ts), [POST /api/user/series/embed/confirm](src/app/api/user/series/embed/confirm/route.ts) y (actores) [PATCH /api/seasons/[id]](src/app/api/seasons/[id]/route.ts). `POST /api/tags` rechaza duplicados case-insensitive.
+- Helpers en [src/lib/tag-utils.ts](../../src/lib/tag-utils.ts): `findOrCreateTag(client, rawName, category='trope')`, `findOrCreateGenre(client, rawName)` y `findOrCreateActor(client, rawName)`. Hacen `trim` + `findFirst({ name: { equals, mode: 'insensitive' } })` y solo crean si no existe (maneja carrera P2002). Aceptan el cliente Prisma o un `Prisma.TransactionClient`.
+- **Usar siempre estos helpers** al persistir tags/generos/actores desde nombre (nunca `X.upsert({ where: { name } })` a pelo). Aplicados en [POST /api/series](../../src/app/api/series/route.ts), [PATCH /api/series/[id]](../../src/app/api/series/[id]/route.ts), [POST /api/user/series/embed/confirm](../../src/app/api/user/series/embed/confirm/route.ts) y (actores) [PATCH /api/seasons/[id]](../../src/app/api/seasons/[id]/route.ts). `POST /api/tags` rechaza duplicados case-insensitive.
 - **Limpieza de duplicados existentes**: `scripts/merge-duplicate-tags.ts` y `scripts/merge-duplicate-actors.ts` (dry-run por defecto, `--apply` fusiona; reusan la logica de `/api/tags/merge` y `/api/actors/merge`). Corridos 2026-07-21: 6 tags + 5 actores fusionados (espacios al inicio/final).
 - Tablas compartidas que aun usan `upsert({ where: { name } })` exacto (ProductionCompany, Language): mismo bug latente; replicar `findOrCreate*` + script de merge si aparecen duplicados.
 
 ### Bloques de informacion adicional (crear + editar)
 
-- [SeriesInfoBlocksManager](src/components/admin/SeriesInfoBlocksManager/SeriesInfoBlocksManager.tsx) soporta 2 modos: **edicion** (prop `seriesId`, persiste via API en vivo) y **creacion** (props `pendingBlocks`/`onPendingBlocksChange`, en memoria). En creacion, [SeriesForm](src/components/admin/SeriesForm.tsx) adjunta `infoBlocks` al payload de `POST /api/series`, que los persiste como `SeriesInfoBlock`. Mismo patron que `SeriesContentManager` (`contentItems`).
+- [SeriesInfoBlocksManager](../../src/components/admin/SeriesInfoBlocksManager/SeriesInfoBlocksManager.tsx) soporta 2 modos: **edicion** (prop `seriesId`, persiste via API en vivo) y **creacion** (props `pendingBlocks`/`onPendingBlocksChange`, en memoria). En creacion, [SeriesForm](../../src/components/admin/SeriesForm.tsx) adjunta `infoBlocks` al payload de `POST /api/series`, que los persiste como `SeriesInfoBlock`. Mismo patron que `SeriesContentManager` (`contentItems`).
 
 ### Web Push (notificaciones)
 
-- Paquete `web-push`. Suscripciones en `PushSubscription` model. Server actions en [src/lib/push-server.ts](src/lib/push-server.ts) (si existe).
+- Paquete `web-push`. Suscripciones en `PushSubscription` model. Server actions en [src/lib/push-server.ts](../../src/lib/push-server.ts) (si existe).
 
 ### SEO (JSON-LD + Breadcrumbs + sitemap segmentado + robots)
 
-**JSON-LD** ([src/components/seo/JsonLd.tsx](src/components/seo/JsonLd.tsx) helper):
+**JSON-LD** ([src/components/seo/JsonLd.tsx](../../src/components/seo/JsonLd.tsx) helper):
 
 - Layout/home: `WebSite` + `Organization`
 - `/series/[id]` y `/catalogo/[id]`: `TVSeries` con name, alternateName, description, image, datePublished, countryOfOrigin, inLanguage, productionCompany, numberOfSeasons, numberOfEpisodes, actor, director, genre, keywords, aggregateRating
@@ -335,8 +335,8 @@ Soporta 8 plataformas para reproducir/parsear:
 
 **Robots y Sitemap**:
 
-- [src/app/robots.ts](src/app/robots.ts): permite contenido publico, bloquea admin/api/perfil/notificaciones/watching/auth/scanners. Apunta a `/sitemap.xml`.
-- [src/app/sitemap.ts](src/app/sitemap.ts): usa `generateSitemaps()` para segmentar en 7 sub-sitemaps:
+- [src/app/robots.ts](../../src/app/robots.ts): permite contenido publico, bloquea admin/api/perfil/notificaciones/watching/auth/scanners. Apunta a `/sitemap.xml`.
+- [src/app/sitemap.ts](../../src/app/sitemap.ts): usa `generateSitemaps()` para segmentar en 7 sub-sitemaps:
   - `/sitemap/0.xml` static (home, /catalogo, /ver, /noticias, /novedades, /sitios, /creditos, /legal, /feedback, /estadisticas)
   - `/sitemap/1.xml` series — solo `catalogScope: 'PERSONAL'` (las del catalogo curado)
   - `/sitemap/2.xml` noticias — solo `status: 'PUBLISHED'`
@@ -371,7 +371,7 @@ Matriz publica:
 
 **Campos de embed en `Episode`:** `embedUrl`, `embedPlatform`, `embedVideoId`, `embedChannelName`, `embedChannelUrl`.
 
-**Helpers en [src/lib/database.ts](src/lib/database.ts):**
+**Helpers en [src/lib/database.ts](../../src/lib/database.ts):**
 
 - `getAllSeries({ scope, origin })` — `scope: PERSONAL|WATCHABLE_ONLY|ALL`, `origin: CURATED|USER_EMBED|ALL`.
 - `getWatchableSeries()` — filtra `visibility=VISIBLE` + episodios con `embedUrl` (cualquier origin).
@@ -386,17 +386,17 @@ Matriz publica:
 
 ### Aporte de series por users (flow USER_EMBED)
 
-Cualquier user registrado puede agregar series embebidas via `/ver/agregar`. UI cliente: [src/app/ver/agregar/AgregarVerClient.tsx](src/app/ver/agregar/AgregarVerClient.tsx).
+Cualquier user registrado puede agregar series embebidas via `/ver/agregar`. UI cliente: [src/app/ver/agregar/AgregarVerClient.tsx](../../src/app/ver/agregar/AgregarVerClient.tsx).
 
-**Endpoints (en [src/app/api/user/series/embed/](src/app/api/user/series/embed/)):**
+**Endpoints (en [src/app/api/user/series/embed/](../../src/app/api/user/series/embed/)):**
 
-- `POST /api/user/series/embed/preview` — body `{ url }`. Llama `buildEmbedPreview(url)` en [src/lib/user-embed-preview.ts](src/lib/user-embed-preview.ts), que combina oEmbed (YouTube/Vimeo/Dailymotion) o scrape og: (Bilibili) con Gemini ([src/lib/gemini.ts](src/lib/gemini.ts)) para autopoblar metadata. Devuelve `EmbedPreview` con `confidence: high|medium|low`. No persiste. Dedupe global por `Episode.embedUrl` (409 con `existingSeriesId`).
-- `POST /api/user/series/embed/confirm` — persiste `Series` con `origin=USER_EMBED`, `visibility=VISIBLE`, `catalogScope=WATCHABLE_ONLY`, `submittedById=session.user.id` + `Season` + `Episode`. Upsert silencioso de tablas compartidas (`Actor/ProductionCompany/Tag/Language/Genre/Country` por nombre). Rate limit ([src/lib/rate-limit.ts](src/lib/rate-limit.ts)): max 5/h y 20/dia por user (429 + `Retry-After`).
+- `POST /api/user/series/embed/preview` — body `{ url }`. Llama `buildEmbedPreview(url)` en [src/lib/user-embed-preview.ts](../../src/lib/user-embed-preview.ts), que combina oEmbed (YouTube/Vimeo/Dailymotion) o scrape og: (Bilibili) con Gemini ([src/lib/gemini.ts](../../src/lib/gemini.ts)) para autopoblar metadata. Devuelve `EmbedPreview` con `confidence: high|medium|low`. No persiste. Dedupe global por `Episode.embedUrl` (409 con `existingSeriesId`).
+- `POST /api/user/series/embed/confirm` — persiste `Series` con `origin=USER_EMBED`, `visibility=VISIBLE`, `catalogScope=WATCHABLE_ONLY`, `submittedById=session.user.id` + `Season` + `Episode`. Upsert silencioso de tablas compartidas (`Actor/ProductionCompany/Tag/Language/Genre/Country` por nombre). Rate limit ([src/lib/rate-limit.ts](../../src/lib/rate-limit.ts)): max 5/h y 20/dia por user (429 + `Retry-After`).
 - Plataformas soportadas: YouTube, Vimeo, Bilibili, Dailymotion. Otras → 422.
 
 ### Panel admin `/admin/series/user-submitted`
 
-Lista de aportes USER_EMBED con acciones de moderacion ([src/app/admin/series/user-submitted/](src/app/admin/series/user-submitted/)):
+Lista de aportes USER_EMBED con acciones de moderacion ([src/app/admin/series/user-submitted/](../../src/app/admin/series/user-submitted/)):
 
 - `POST /api/admin/user-series/[id]/visibility` — toggle VISIBLE/HIDDEN (HIDDEN saca del listing publico, admin sigue accediendo).
 - `DELETE /api/admin/user-series/[id]` — borra el aporte (cascade limpia Episodes/tags/etc.).
@@ -408,9 +408,9 @@ Lista de aportes USER_EMBED con acciones de moderacion ([src/app/admin/series/us
 
 Tercer `viewMode` de `CatalogoClient.tsx` (`'grid' | 'list' | 'carousel'`), elegible por el usuario vía toggle en la toolbar — el default sigue siendo `'grid'`. Filas por categoría curada a mano (no una por cada género/país/plataforma), reordenables y ocultables por el usuario vía drag-and-drop (`@dnd-kit`), persistido en `localStorage`. **No reusa** `MediaCarousel`/`StreamingHub` de `/ver` (forma de datos distinta — `SerieData` vs `CarouselMediaItem`) ni se integra con `/catalogo/dashboard` (ese es un dashboard de estadísticas con el sistema de widgets pesado, sin relación).
 
-- **Tipos compartidos**: [src/app/(app)/catalogo/catalogTypes.ts](<src/app/(app)/catalogo/catalogTypes.ts>) (`SerieData`, `CatalogItem`, etc. — antes vivían inline en `CatalogoClient.tsx`).
-- **Agrupación por universo**: [src/app/(app)/catalogo/catalogGrouping.ts](<src/app/(app)/catalogo/catalogGrouping.ts>) → `groupIntoCatalogItems()`, compartida entre la grilla clásica y la categoría "Sagas y universos" del carrusel.
-- **Pool de categorías**: [src/app/(app)/catalogo/carousel/catalogCarouselCategories.ts](<src/app/(app)/catalogo/carousel/catalogCarouselCategories.ts>) — array fijo en código (`CarouselCategoryDef[]`: id, label i18n, filtro, sort opcional). Países curados (Tailandia/Corea/Japón) elegidos por distribución real del catálogo, no adivinados.
+- **Tipos compartidos**: [src/app/(app)/catalogo/catalogTypes.ts](<../../src/app/(app)/catalogo/catalogTypes.ts>) (`SerieData`, `CatalogItem`, etc. — antes vivían inline en `CatalogoClient.tsx`).
+- **Agrupación por universo**: [src/app/(app)/catalogo/catalogGrouping.ts](<../../src/app/(app)/catalogo/catalogGrouping.ts>) → `groupIntoCatalogItems()`, compartida entre la grilla clásica y la categoría "Sagas y universos" del carrusel.
+- **Pool de categorías**: [src/app/(app)/catalogo/carousel/catalogCarouselCategories.ts](<../../src/app/(app)/catalogo/carousel/catalogCarouselCategories.ts>) — array fijo en código (`CarouselCategoryDef[]`: id, label i18n, filtro, sort opcional). Países curados (Tailandia/Corea/Japón) elegidos por distribución real del catálogo, no adivinados.
 - **Persistencia**: `localStorage['catalog-carousel-prefs']` = `{ order: string[]; hidden: string[] }`, manejado por `useCarouselPrefs.ts` — se reconcilia contra el pool actual en cada lectura (ids viejos se descartan, ids nuevos se agregan al final), así un storage vacío/corrupto/desactualizado siempre converge a un estado válido.
 - **Componentes**: `CatalogCarouselView` (orquestador), `CatalogCarouselRow` (una fila, scroll horizontal calcado de `MediaCarousel.css`), `CarouselConfigDrawer` (drawer de reorder/hide, mismo patrón que `CustomizeDrawer` de `/perfil` + drag handles de `@dnd-kit/sortable`). Las cards individuales reusan `renderSingleCard`/`renderUniverseCard` de `CatalogoClient.tsx` (pasadas como render-prop) en vez de reconstruir esa lógica.
 
@@ -420,9 +420,9 @@ Tercer `viewMode` de `CatalogoClient.tsx` (`'grid' | 'list' | 'carousel'`), eleg
 
 ### 1. Import de canal a `EmbeddableContent` (existente)
 
-- **Ruta admin**: [/admin/contenido](src/app/admin/contenido/)
+- **Ruta admin**: [/admin/contenido](../../src/app/admin/contenido/)
 - **Endpoint**: `POST /api/contenido/import-channel`
-- **Drawer**: [src/app/admin/contenido/ImportChannelDrawer/](src/app/admin/contenido/ImportChannelDrawer)
+- **Drawer**: [src/app/admin/contenido/ImportChannelDrawer/](../../src/app/admin/contenido/ImportChannelDrawer)
 - **Caso de uso**: importar trailers/OSTs/clips/entrevistas sueltas de un canal de YouTube/Vimeo
 - **Destino**: tabla `EmbeddableContent` (no se asocia automaticamente a una `Series`)
 - Workflow: pegar URL de canal → preview de videos → seleccionar y categorizar → guardar
@@ -430,11 +430,11 @@ Tercer `viewMode` de `CatalogoClient.tsx` (`'grid' | 'list' | 'carousel'`), eleg
 ### 2. Import de playlist → Series + Episodes (IMPLEMENTADO)
 
 - **Caso de uso**: pegar una playlist de YouTube de una serie completa (ej. GMMTV) y crear `Series` (default scope `WATCHABLE_ONLY`) + `Season` + `Episode[]` con todos los `embed*` poblados.
-- **Ruta admin**: [/admin/series/importar](src/app/admin/series/importar/) → form para pegar URL + scope + opcional traduccion ES via Gemini → preview editable (titulo, año, pais sugerido por canal, sinopsis, tabla de episodios con renumerar/eliminar) → boton confirmar.
+- **Ruta admin**: [/admin/series/importar](../../src/app/admin/series/importar/) → form para pegar URL + scope + opcional traduccion ES via Gemini → preview editable (titulo, año, pais sugerido por canal, sinopsis, tabla de episodios con renumerar/eliminar) → boton confirmar.
 - **Helpers**:
-  - [src/lib/channel-fetcher.ts](src/lib/channel-fetcher.ts) → `fetchYouTubePlaylist(url, pageToken?)` + `fetchAllYouTubePlaylistVideos(url, maxPages=10)`
-  - [src/lib/episode-parser.ts](src/lib/episode-parser.ts) → `parseEpisodeTitle(title)` extrae `seasonNumber`, `episodeNumber`, `partNumber/partTotal` (para videos partidos como `[1/4]`), `cleanTitle` sin marcadores. Cubre `EP.X`, `Episode X`, `S1E12`, `1x01`, `Capitulo X`, `E01`. `inferSeriesTitle(cleanTitles[])` deduce el nombre por prefijo comun.
-  - [src/lib/playlist-importer.ts](src/lib/playlist-importer.ts) → `buildImportPreview({url, autoTranslate, catalogScope, maxPages})` orquesta fetch + parse + traduccion + agrupacion por temporada + deteccion de duplicados/missing. Incluye mapping de canales → pais ISO (GMMTV→TH, BeOnCloud→TH, IdeaFirstCompany→PH, etc.).
+  - [src/lib/channel-fetcher.ts](../../src/lib/channel-fetcher.ts) → `fetchYouTubePlaylist(url, pageToken?)` + `fetchAllYouTubePlaylistVideos(url, maxPages=10)`
+  - [src/lib/episode-parser.ts](../../src/lib/episode-parser.ts) → `parseEpisodeTitle(title)` extrae `seasonNumber`, `episodeNumber`, `partNumber/partTotal` (para videos partidos como `[1/4]`), `cleanTitle` sin marcadores. Cubre `EP.X`, `Episode X`, `S1E12`, `1x01`, `Capitulo X`, `E01`. `inferSeriesTitle(cleanTitles[])` deduce el nombre por prefijo comun.
+  - [src/lib/playlist-importer.ts](../../src/lib/playlist-importer.ts) → `buildImportPreview({url, autoTranslate, catalogScope, maxPages})` orquesta fetch + parse + traduccion + agrupacion por temporada + deteccion de duplicados/missing. Incluye mapping de canales → pais ISO (GMMTV→TH, BeOnCloud→TH, IdeaFirstCompany→PH, etc.).
 - **Endpoints**:
   - `POST /api/series/import-playlist` (admin) → devuelve `ImportPreview` sin escribir DB
   - `POST /api/series/import-playlist/confirm` (admin) → persiste tras validar uniqueness `(seasonId, episodeNumber)` en una transaccion Prisma
@@ -444,14 +444,14 @@ Tercer `viewMode` de `CatalogoClient.tsx` (`'grid' | 'list' | 'carousel'`), eleg
 
 Paso PREVIO al importer de playlists. El importer resuelve "tengo la URL de una serie"; el barrido resuelve "de las 200 playlists de este canal oficial, cuales son series que valen la pena". Es lo que permite escalar /ver de a decenas de series en vez de una por vez.
 
-- **Ruta admin**: [/admin/series/barrido](<src/app/(app)/admin/series/barrido/>) → pegar URL de canal (o tocar uno de los atajos) → tabla de playlists clasificadas → boton "Importar" por fila que abre el importer con `?url=` ya cargado.
+- **Ruta admin**: [/admin/series/barrido](<../../src/app/(app)/admin/series/barrido/>) → pegar URL de canal (o tocar uno de los atajos) → tabla de playlists clasificadas → boton "Importar" por fila que abre el importer con `?url=` ya cargado.
 - **Endpoint**: `POST /api/series/sweep-channel` (ADMIN + COLLABORATOR). Solo lee, no persiste. Devuelve 503 (no 500) cuando la API key esta vencida o ausente, que es su modo de falla mas comun.
 - **Helpers**:
-  - [fetchYouTubeChannelPlaylists](src/lib/channel-fetcher.ts) → lista todas las playlists publicas de un canal (1 unidad de cuota por pagina de 50).
-  - [src/lib/channel-sweep.ts](src/lib/channel-sweep.ts) → `sweepChannel(url, importedTitles)` clasifica cada playlist en `CANDIDATE | ALREADY_IMPORTED | NOISE | TOO_SHORT`, con el motivo en texto para que el admin pueda no creerle.
+  - [fetchYouTubeChannelPlaylists](../../src/lib/channel-fetcher.ts) → lista todas las playlists publicas de un canal (1 unidad de cuota por pagina de 50).
+  - [src/lib/channel-sweep.ts](../../src/lib/channel-sweep.ts) → `sweepChannel(url, importedTitles)` clasifica cada playlist en `CANDIDATE | ALREADY_IMPORTED | NOISE | TOO_SHORT`, con el motivo en texto para que el admin pueda no creerle.
 - **Por que el filtro importa tanto como el fetch**: un canal como Dee Hup House mezcla la serie completa con `Highlights | X`, `Reaction | X`, `Next Episode | X`, `Shorts | X` y hasta una playlist POR episodio (`EP.12 | X`). Importar sin filtrar llena /ver de basura. `NOISE_PREFIXES` / `NOISE_KEYWORDS` en channel-sweep.ts son la lista negra; el minimo de videos es 4 (hay BL cortos legitimos de 4-5 episodios).
 - **Deteccion de "ya importada"**: por titulo normalizado (`normalizeTitle`), NO por playlistId — el importer no guarda el playlist de origen. La comparacion es por **contencion**, no por igualdad: los titulos de playlist arrastran el canal (`Bad Buddy Series | GMMTV`) o el titulo original pegado adelante (`แค่เพื่อนครับเพื่อน BAD BUDDY SERIES`). Se cruza contra TODAS las series (incluido el catalogo curado) porque si el titulo ya existe ahi el admin querra linkear en vez de duplicar — es solo lectura de titulos, no mezcla los catalogos.
-- **Canales precargados**: [officialChannels.ts](<src/app/(app)/admin/series/barrido/officialChannels.ts>). **Todos los handles fueron verificados uno por uno contra el titulo real del canal** — los handles "obvios" son casi siempre homonimos: `@BeOnCloud` es un canal personal indonesio, `@domundi` es "Ios 23:59", `@Strongberry` es un musico centroafricano. No agregar de memoria.
+- **Canales precargados**: [officialChannels.ts](<../../src/app/(app)/admin/series/barrido/officialChannels.ts>). **Todos los handles fueron verificados uno por uno contra el titulo real del canal** — los handles "obvios" son casi siempre homonimos: `@BeOnCloud` es un canal personal indonesio, `@domundi` es "Ios 23:59", `@Strongberry` es un musico centroafricano. No agregar de memoria.
 
 ---
 
@@ -461,7 +461,7 @@ El catalogo de /ver **se pudre solo**: las productoras licencian series a Viki/i
 
 - **Campos** (en `Episode`): `playback` (enum `EpisodePlayback`: `UNKNOWN | OK | GEO_BLOCKED | AGE_RESTRICTED | REMOVED | NOT_EMBEDDABLE`), `playbackCheckedAt`, `playbackBlockedMarkets` (subset de `CORE_MARKETS`).
 - **Relacion con `Series.geoRestrictedCore`**: ese flag sigue existiendo y es a nivel serie; `playback` es por episodio. Una serie puede tener los primeros capitulos bloqueados y el resto no (patron real de GMMTV). El audit **recalcula** `geoRestrictedCore` a partir de los episodios, asi deja de ser un snapshot manual del import.
-- **Helper**: [src/lib/playability.ts](src/lib/playability.ts) — dos fuentes, NO intercambiables:
+- **Helper**: [src/lib/playability.ts](../../src/lib/playability.ts) — dos fuentes, NO intercambiables:
   - `probeViaApi` (preferida): `videos.list` con `contentDetails,status`. Devuelve `regionRestriction`, que lista los paises bloqueados de TODO el mundo en una sola llamada por cada 50 videos. Necesita `YOUTUBE_API_KEY`.
   - `probeViaWatchPage`: scrapea la watch page publica. Sin API key, pero **solo sabe del pais desde el que corre el proceso** — no asumir que el resto de los mercados estan bien porque dio OK.
   - `isPlayableIn(playback, blockedMarkets, market)`: `UNKNOWN` cuenta como reproducible **a proposito** — un episodio sin sondear no se esconde de /ver, es preferible mostrar de mas a vaciar la pagina porque el audit no corrio.
@@ -493,14 +493,14 @@ trafico del glosario.
 un aporte de usuario y habria filtrado `USER_EMBED` al catalogo curado. **La query no toca esa
 columna**, asi que el blindaje es estructural y no hay heuristica que calibrar.
 
-- **Helper**: [getAiringSchedule()](src/lib/database.ts) — `origin='CURATED'` +
+- **Helper**: [getAiringSchedule()](../../src/lib/database.ts) — `origin='CURATED'` +
   `catalogScope='PERSONAL'` + `visibility='VISIBLE'` explicitos. Payload podado a 9 campos
   (~8 KB): sin `synopsis`, `review`, `seasons`, `tags` ni `genres`.
-- **Logica pura**: [src/lib/airing-schedule.ts](src/lib/airing-schedule.ts) — `AIR_DAY_MAP`,
+- **Logica pura**: [src/lib/airing-schedule.ts](../../src/lib/airing-schedule.ts) — `AIR_DAY_MAP`,
   `parseAirDays`, `groupByWeekday`, `getAirDayStatus`. Se extrajo de
   `CurrentlyWatchingDashboard.tsx`, que la tenia privada y con las etiquetas en español
   hardcodeadas dentro de un componente traducido a 10 idiomas.
-- **Componente**: [WeeklySchedule](src/components/estrenos/WeeklySchedule/WeeklySchedule.tsx) —
+- **Componente**: [WeeklySchedule](../../src/components/estrenos/WeeklySchedule/WeeklySchedule.tsx) —
   sin texto propio (recibe `labels` via `useWeeklyScheduleLabels`), reusa `MediaCard` y `Chip`
   del design-system.
 
@@ -523,9 +523,9 @@ domingo sin marca de hoy, y el cliente rota el orden con su dia real.
 **Aviso de capitulo nuevo: no implementado.** No hay evento que detectar (las 38 series tienen 0
 episodios con `airDate` y 0 con `embedUrl`) ni a quien avisarle (`SeriesSubscription` tenia 0
 filas). La campanita de `/estrenos`
-([ScheduleSubscribeToggle](src/components/estrenos/ScheduleSubscribeToggle/ScheduleSubscribeToggle.tsx),
+([ScheduleSubscribeToggle](../../src/components/estrenos/ScheduleSubscribeToggle/ScheduleSubscribeToggle.tsx),
 contra el `POST|DELETE /api/series/[id]/subscribe` existente, con
-[GET /api/user/subscriptions](src/app/api/user/subscriptions/route.ts) resolviendo las N en un
+[GET /api/user/subscriptions](../../src/app/api/user/subscriptions/route.ts) resolviendo las N en un
 fetch) existe para que las suscripciones empiecen a acumularse. Cuando haya volumen, va como un
 trabajo mas del cron diario (`/api/cron/daily`), con gate de calidad del dato: solo disparar si
 `max(airDate) >= hoy-2d` **y** >= 3 episodios con `airDate` **y** espaciado mediano de 6-8 dias
@@ -538,17 +538,17 @@ dos** mapeos `type -> flag` de `src/lib/web-push.ts` (estan duplicados).
 
 Cuarto valor del enum `Role` (junto a `ADMIN`/`MODERATOR`/`VISITOR`), pensado para productoras/proveedores de contenido externos (ej. XUXY) que Flor evalua y aprueba a mano — **nunca autoservicio**: solo un ADMIN asigna este rol desde `/admin/usuarios` (`PUT /api/users/[id]/role`).
 
-- **Acceso**: admin reducido en `/admin/colaborador/**`, gateado en [src/proxy.ts](src/proxy.ts) — un COLLABORATOR no puede entrar a ningun otro `/admin/*` (redirect a `/catalogo`); si intenta, cae directo a `/admin/colaborador`. El resto de `/admin` sigue exactamente igual que antes (ADMIN/MODERATOR).
-- **3 vistas** en [src/app/(app)/admin/colaborador/](<src/app/(app)/admin/colaborador/>):
+- **Acceso**: admin reducido en `/admin/colaborador/**`, gateado en [src/proxy.ts](../../src/proxy.ts) — un COLLABORATOR no puede entrar a ningun otro `/admin/*` (redirect a `/catalogo`); si intenta, cae directo a `/admin/colaborador`. El resto de `/admin` sigue exactamente igual que antes (ADMIN/MODERATOR).
+- **3 vistas** en [src/app/(app)/admin/colaborador/](<../../src/app/(app)/admin/colaborador/>):
   - `/admin/colaborador` — listado de series propias (`ColaboradorClient.tsx`), filtra `origin=USER_EMBED, submittedById=self`.
-  - `/admin/colaborador/importar` — reusa [ImportarClient](src/app/admin/series/importar/ImportarClient.tsx) (`variant="collaborator"`): mismo flujo de playlist de YouTube que el importer de ADMIN, **pura YouTube Data API, sin Gemini** salvo que el propio colaborador tilde "traducir sinopsis" (una llamada por serie, no por video — no consume cuota relevante de `GEMINI_API_KEY`).
-  - `/admin/colaborador/[id]` — ficha reducida (`CollaboratorSeriesForm.tsx`): titulo/sinopsis/poster/pais/productora/actores/tags/generos + [SeriesInfoBlocksManager](src/components/admin/SeriesInfoBlocksManager/SeriesInfoBlocksManager.tsx) embebido (mismo componente que usa ADMIN) + tabla de episodios (solo lectura, con link a "importar mas"). **No** expone campos curatoriales (`featured`, `review`, `overallRating`, `notesPrivate`, universo, series relacionadas — esos siguen 100% ADMIN-only).
+  - `/admin/colaborador/importar` — reusa [ImportarClient](../../src/app/admin/series/importar/ImportarClient.tsx) (`variant="collaborator"`): mismo flujo de playlist de YouTube que el importer de ADMIN, **pura YouTube Data API, sin Gemini** salvo que el propio colaborador tilde "traducir sinopsis" (una llamada por serie, no por video — no consume cuota relevante de `GEMINI_API_KEY`).
+  - `/admin/colaborador/[id]` — ficha reducida (`CollaboratorSeriesForm.tsx`): titulo/sinopsis/poster/pais/productora/actores/tags/generos + [SeriesInfoBlocksManager](../../src/components/admin/SeriesInfoBlocksManager/SeriesInfoBlocksManager.tsx) embebido (mismo componente que usa ADMIN) + tabla de episodios (solo lectura, con link a "importar mas"). **No** expone campos curatoriales (`featured`, `review`, `overallRating`, `notesPrivate`, universo, series relacionadas — esos siguen 100% ADMIN-only).
 - **Endpoints propios**: `POST /api/series/import-playlist(/confirm)` aceptan `COLLABORATOR` ademas de `ADMIN` y fuerzan server-side `origin=USER_EMBED`, `catalogScope=WATCHABLE_ONLY`, `submittedById=session.user.id` (ignoran lo que mande el body); `PATCH /api/colaborador/series/[id]` (ficha reducida). `DELETE /api/admin/user-series/[id]` y los 3 endpoints de `info-blocks` (`/api/series/[id]/info-blocks`, `/api/series/info-blocks/[id]`, `/api/series/[id]/info-blocks/reorder`) tambien aceptan `COLLABORATOR` sobre su propio aporte.
-- **Ownership guard reusable**: [src/lib/collaborator-guard.ts](src/lib/collaborator-guard.ts) → `assertSeriesOwnership(seriesId, auth)` / `assertInfoBlockOwnership(blockId, auth)`. ADMIN/MODERATOR pasan siempre (mismo comportamiento pre-COLLABORATOR); COLLABORATOR solo si `origin=USER_EMBED && submittedById === auth.userId`. Usar en cualquier endpoint nuevo que un colaborador pueda tocar, siempre despues de `requireRole([...])`.
-- **Rate limit propio**: [checkCollaboratorImportRateLimit](src/lib/rate-limit.ts) — 200 series/dia (vs. 5/hora + 20/dia de `checkUserEmbedRateLimit` para aportes casuales de usuarios comunes), pensado para onboarding masivo de un catalogo completo en pocas sesiones.
-- **Chequeo de edad de YouTube** (defensa extra, no reemplaza la vetting manual del rol): [checkYouTubeAgeRestriction](src/lib/channel-fetcher.ts) — batchea `videos.list?part=contentDetails` de a 50 ids, lee `contentRating.ytRating === 'ytAgeRestricted'`. Solo se activa (`checkAgeRestriction: true`) para el importer de COLLABORATOR. Los videos marcados aparecen con warning y **des-tildados por defecto** en el preview (columna "Incluir" en `ImportarClient`, solo visible si hay al menos un episodio marcado) — el colaborador puede volver a tildarlos.
+- **Ownership guard reusable**: [src/lib/collaborator-guard.ts](../../src/lib/collaborator-guard.ts) → `assertSeriesOwnership(seriesId, auth)` / `assertInfoBlockOwnership(blockId, auth)`. ADMIN/MODERATOR pasan siempre (mismo comportamiento pre-COLLABORATOR); COLLABORATOR solo si `origin=USER_EMBED && submittedById === auth.userId`. Usar en cualquier endpoint nuevo que un colaborador pueda tocar, siempre despues de `requireRole([...])`.
+- **Rate limit propio**: [checkCollaboratorImportRateLimit](../../src/lib/rate-limit.ts) — 200 series/dia (vs. 5/hora + 20/dia de `checkUserEmbedRateLimit` para aportes casuales de usuarios comunes), pensado para onboarding masivo de un catalogo completo en pocas sesiones.
+- **Chequeo de edad de YouTube** (defensa extra, no reemplaza la vetting manual del rol): [checkYouTubeAgeRestriction](../../src/lib/channel-fetcher.ts) — batchea `videos.list?part=contentDetails` de a 50 ids, lee `contentRating.ytRating === 'ytAgeRestricted'`. Solo se activa (`checkAgeRestriction: true`) para el importer de COLLABORATOR. Los videos marcados aparecen con warning y **des-tildados por defecto** en el preview (columna "Incluir" en `ImportarClient`, solo visible si hay al menos un episodio marcado) — el colaborador puede volver a tildarlos.
 - **Publicacion**: inmediata (`visibility` default `VISIBLE`, igual que el resto de `Series.create` sin override explicito) — a diferencia de `/ver/agregar` para usuarios comunes, que arranca en `PENDING_REVIEW` si el submitter no es ADMIN/MODERATOR (ver `POST /api/user/series/embed/confirm`). La distincion es deliberada: COLLABORATOR ya paso por vetting humano al recibir el rol, un VISITOR anonimo no. Moderacion post-hoc sigue disponible en `/admin/series/user-submitted` (hide/delete/link) para AMBOS casos — ese panel ahora tambien muestra un tag "Colaborador" junto al nombre cuando el submitter tiene el rol.
-- **Reseñas y suscripcion habilitadas en USER_EMBED** (antes solo reseñas estaban bloqueadas con 422): decision de Flor al construir este feature — "mientras no afecte al catalogo curado". Las vidrieras publicas que agregaban reseñas SIN filtrar `origin` (spotlight + contador de la landing en [src/app/page.tsx](src/app/page.tsx)) se corrigieron para excluir `USER_EMBED`. La UI de rating+reseñas se agrego a `/ver/[id]` ([VerSerieClient.tsx](<src/app/(app)/ver/[id]/VerSerieClient.tsx>)), condicionada a `isUserEmbed` (para CURATED+WATCHABLE_ONLY ya existe en `/series/[id]` via "Ver ficha completa", no se duplica). Favoritos y "marcar visto" ya funcionaban sobre USER_EMBED desde antes — no fue necesario tocarlos.
+- **Reseñas y suscripcion habilitadas en USER_EMBED** (antes solo reseñas estaban bloqueadas con 422): decision de Flor al construir este feature — "mientras no afecte al catalogo curado". Las vidrieras publicas que agregaban reseñas SIN filtrar `origin` (spotlight + contador de la landing en [src/app/page.tsx](../../src/app/page.tsx)) se corrigieron para excluir `USER_EMBED`. La UI de rating+reseñas se agrego a `/ver/[id]` ([VerSerieClient.tsx](<../../src/app/(app)/ver/[id]/VerSerieClient.tsx>)), condicionada a `isUserEmbed` (para CURATED+WATCHABLE_ONLY ya existe en `/series/[id]` via "Ver ficha completa", no se duplica). Favoritos y "marcar visto" ya funcionaban sobre USER_EMBED desde antes — no fue necesario tocarlos.
 - **Sidebar**: item propio "Mi panel de colaborador" (`sidebar.collaboratorPanel`, i18n a 10 locales) visible solo para `role=COLLABORATOR`, en vez del item "Administracion" (que sigue sin mostrarse a este rol). Label de rol (`adminUsers.roleCollaborator`) tambien i18n'd — es el unico string nuevo de este feature que paso por los 10 locales: **el resto de `/admin/colaborador/**`queda hardcodeado en español**, mismo criterio que el resto de`/admin/\*` (`ImportarClient`, `UserSubmittedClient`, `SeriesForm`, etc. — ninguno usa `useLocale()`; el admin es una herramienta interna de Flor, no contenido público).
 - **Upload de imagenes**: `POST /api/upload` ahora acepta `COLLABORATOR` ademas de `ADMIN`/`MODERATOR` (mismo endpoint, sin distincion de carpeta).
 
@@ -857,17 +857,17 @@ Las skins son una dimension visual ortogonal a `theme` (light/dark), `tone` (def
 
 | Skin      | Archivo                                                                | Cuando aplica                                                                                                                                                                                                                              |
 | --------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `default` | (sin archivo)                                                          | Default — usa tokens base de [variables.css](src/styles/variables.css)                                                                                                                                                                     |
-| `premium` | [src/styles/skins/premium-dark.css](src/styles/skins/premium-dark.css) | Solo cuando `data-theme='dark'`. Paleta premium dark (`#090911`/`#11101d`/`#171423`/`#211b32`), bordes sutiles `rgba(255,255,255,0.06–0.14)`, sombras soft, radii 14/18. Expone tambien `--mb-*` para componentes nuevos del design-system |
+| `default` | (sin archivo)                                                          | Default — usa tokens base de [variables.css](../../src/styles/variables.css)                                                                                                                                                                     |
+| `premium` | [src/styles/skins/premium-dark.css](../../src/styles/skins/premium-dark.css) | Solo cuando `data-theme='dark'`. Paleta premium dark (`#090911`/`#11101d`/`#171423`/`#211b32`), bordes sutiles `rgba(255,255,255,0.06–0.14)`, sombras soft, radii 14/18. Expone tambien `--mb-*` para componentes nuevos del design-system |
 
 **Como agregar una skin nueva:**
 
 1. Crear `src/styles/skins/<nombre>.css` con `html[data-skin='<nombre>'] { ... }`
-2. Importarla en [src/styles/skins/index.css](src/styles/skins/index.css)
-3. Agregar la key a `SkinKey` en [src/types/theme.types.ts](src/types/theme.types.ts)
-4. Sumar la opcion al toggle en [src/components/layout/SettingsPanel/SettingsPanel.tsx](src/components/layout/SettingsPanel/SettingsPanel.tsx)
+2. Importarla en [src/styles/skins/index.css](../../src/styles/skins/index.css)
+3. Agregar la key a `SkinKey` en [src/types/theme.types.ts](../../src/types/theme.types.ts)
+4. Sumar la opcion al toggle en [src/components/layout/SettingsPanel/SettingsPanel.tsx](../../src/components/layout/SettingsPanel/SettingsPanel.tsx)
 5. Agregar las claves i18n `settings.skinDefault`/`<nombre>` en `messages.ts` y los 10 locales
-6. Si la skin requiere tokens distintos en AntD ConfigProvider (Layout, Modal, Tooltip), extender `buildTheme(mode, accent, skin)` en [src/lib/theme.config.ts](src/lib/theme.config.ts)
+6. Si la skin requiere tokens distintos en AntD ConfigProvider (Layout, Modal, Tooltip), extender `buildTheme(mode, accent, skin)` en [src/lib/theme.config.ts](../../src/lib/theme.config.ts)
 
 **ATENCION sobre el accent dorado de la skin premium:** NO esta hardcodeado. El "dorado" sale del accent que el usuario eligio en Settings (en este caso, probablemente `amber`). Si se elige otro accent, la skin sigue siendo coherente — los items selected/focus/primary toman el accent del usuario via `--primary-color`. Cualquier hex tone-of-brand hardcodeado en componentes nuevos rompe esto: usar siempre tokens.
 
@@ -875,7 +875,7 @@ Las skins son una dimension visual ortogonal a `theme` (light/dark), `tone` (def
 
 ## Design system primitivos
 
-[src/components/design-system/](src/components/design-system/) — primitivos sin texto hardcodeado (cada componente recibe el texto via props/children traducidos por la pagina).
+[src/components/design-system/](../../src/components/design-system/) — primitivos sin texto hardcodeado (cada componente recibe el texto via props/children traducidos por la pagina).
 
 | Componente      | Cuando usar                                                                                                                      |
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -900,7 +900,7 @@ Cada vista premium se monta como un grid responsive de **widgets reordenables y 
 - `react-grid-layout@2.x` (~80kb gzipped). API v2 sin `WidthProvider` — usa el hook `useContainerWidth`.
 - Persistencia: localStorage como cache + DB (model `UserDashboardLayout`) como source of truth cross-device.
 
-**Arquitectura:** [src/components/dashboard/](src/components/dashboard/)
+**Arquitectura:** [src/components/dashboard/](../../src/components/dashboard/)
 
 - `DashboardGrid` — wrapper de `Responsive` de react-grid-layout. Recibe `layouts` por breakpoint (lg/md/sm/xs/xxs), `widgetProps` por id, flag `editing`, callbacks `onLayoutsChange` + `onRemoveWidget`.
 - `Widget` — panel premium con header (icono + title + actions), drag handle (visible solo en editing) y remove btn. Si vive en un grid, lee meta via `DashboardItemContext`; si no, acepta props.
@@ -920,7 +920,7 @@ Cada vista premium se monta como un grid responsive de **widgets reordenables y 
 
 **Convencion `fade` en Widgets:** los widgets cuyo contenido puede exceder la altura del cell del grid pasan `fade={true}` al `<Widget>` para activar un degradado fade-out abajo. Reemplaza el `overflow: auto` previo (scrollbar interno feo). Casos: listas largas (RecentlyCompleted, CurrentlyWatching, Notifications, MyCases, TopActors, etc.) y MyCommentsWidget que sí mantiene scroll interno explícitamente porque su lista paginada no se presta al fade.
 
-**Layout footer del dashboard de perfil:** abajo del grid se renderizan `ProfileSettings` + `SubscriptionsSection` + `ClientVersionInfo` como bloque fijo (no son widgets reordenables — son singletons que se esperan en una posicion estable). Ver `mb-perfil-dashboard__footer*` en [dashboard.css](src/app/perfil/dashboard/dashboard.css).
+**Layout footer del dashboard de perfil:** abajo del grid se renderizan `ProfileSettings` + `SubscriptionsSection` + `ClientVersionInfo` como bloque fijo (no son widgets reordenables — son singletons que se esperan en una posicion estable). Ver `mb-perfil-dashboard__footer*` en [dashboard.css](../../src/app/perfil/dashboard/dashboard.css).
 
 **Como agregar una vista dashboard nueva:**
 
@@ -930,7 +930,7 @@ Cada vista premium se monta como un grid responsive de **widgets reordenables y 
 4. Agregar las i18n keys del dashboard (`<vista>Dashboard.*`) al shape de `messages.ts` y los 10 locales.
 5. Agregar un link "Ver dashboard" desde la vista clasica.
 
-**Persistencia DB:** [src/app/api/user/dashboards/[key]/route.ts](src/app/api/user/dashboards/[key]/route.ts) — GET/PUT/DELETE. Scoped por `session.user.id`. El hook `useDashboardLayout` hace write-through automatico cuando el usuario esta autenticado.
+**Persistencia DB:** [src/app/api/user/dashboards/[key]/route.ts](../../src/app/api/user/dashboards/[key]/route.ts) — GET/PUT/DELETE. Scoped por `session.user.id`. El hook `useDashboardLayout` hace write-through automatico cuando el usuario esta autenticado.
 
 ### Agregar una integracion externa (API de terceros)
 
@@ -953,7 +953,7 @@ Cada vista premium se monta como un grid responsive de **widgets reordenables y 
 
 ### Triage 2026-05-13
 
-Triage completo del backlog (`FeatureRequest`) categorizado por area funcional + scoring `effort/impact` para identificar quick wins. Detalle en [docs/backlog-triage-2026-05-13.md](docs/backlog-triage-2026-05-13.md).
+Triage completo del backlog (`FeatureRequest`) categorizado por area funcional + scoring `effort/impact` para identificar quick wins. Detalle en [docs/backlog-triage-2026-05-13.md](../backlog-triage-2026-05-13.md).
 
 - **Persistencia de categoria**: prefijo en `FeatureRequest.description` con forma `[cat:X][effort:Y][impact:Z]` (sin migracion; idempotente; reversible).
 - **Categorias** (10): noticias, directores, ai, catalogo, perfil, admin, i18n, seo, cleanup, infra.
@@ -968,8 +968,8 @@ Triage completo del backlog (`FeatureRequest`) categorizado por area funcional +
 
 1. **Audit + creates de items** (Item 1): `scripts/audit-2026-05-13.ts`.
 2. **Triage script + report** (Item 2): `scripts/triage-backlog-2026-05-13.ts` + `docs/backlog-triage-2026-05-13.md`.
-3. **Score de completitud de series** (admin/editor): [src/lib/series-completeness.ts](src/lib/series-completeness.ts) — helper puro `computeCompleteness(series) → { score, missing }`. UI: `CompletenessCard` en `/admin/series/[id]` + widget `SeriesIncompletasWidget` en `/perfil` (solo rol admin, diferido).
-4. **Director links basicos**: campos `Director.aliases`, `imdbUrl`, `mdlUrl`, `wikiUrl` (migracion `add_director_aliases_and_external_links`). Render en [src/app/directores/[id]/DirectorProfileClient.tsx](src/app/directores/[id]/DirectorProfileClient.tsx) como fila de iconos + Chip list de aliases.
+3. **Score de completitud de series** (admin/editor): [src/lib/series-completeness.ts](../../src/lib/series-completeness.ts) — helper puro `computeCompleteness(series) → { score, missing }`. UI: `CompletenessCard` en `/admin/series/[id]` + widget `SeriesIncompletasWidget` en `/perfil` (solo rol admin, diferido).
+4. **Director links basicos**: campos `Director.aliases`, `imdbUrl`, `mdlUrl`, `wikiUrl` (migracion `add_director_aliases_and_external_links`). Render en [src/app/directores/[id]/DirectorProfileClient.tsx](../../src/app/directores/[id]/DirectorProfileClient.tsx) como fila de iconos + Chip list de aliases.
 
 ### Slice 2 (2026-05-13) — Director rico fase 2 (commit 0c726b9)
 
@@ -989,21 +989,21 @@ Items que se decidió **no** incluir en este slice:
 
 - **Imágenes externas sin re-hostear (08/10/2026)**: `isDirectServedImageUrl` también sirve directamente hosts que no están en `OPTIMIZED_IMAGE_HOSTS` (lista compartida con `next.config.ts`). Evita el 400 de `/_next/image` cuando falla la copia a R2; caso real: Fandom en `/series/717-decoding-you`, que permite cargar en el navegador pero rechaza la descarga del servidor. `isStoredImageUrl` identifica exclusivamente R2/Supabase para decidir si hay que re-hostear; no usar la política de visualización para saltear subidas. Regresión: `npx tsx scripts/test-image-delivery.ts`.
 
-- **Íconos de antd en Server Components**: importar de `@ant-design/icons` en un Server Component ROMPE el build (`createContext is not a function`): su barrel corre `createContext` sin `'use client'` y el entorno RSC no tiene `createContext`. Regla: en Server Components (page.tsx/layout/loading sin `'use client'`), importar íconos desde [src/lib/client-icons.ts](src/lib/client-icons.ts) (re-export `'use client'`). Los Client Components pueden importar de `@ant-design/icons` directo. Mismo motivo por el que el `App` de antd se usa vía [src/lib/providers/AntdApp.tsx](src/lib/providers/AntdApp.tsx), no importado en el layout server. `next.config.ts` NO debe poner `antd`/`@ant-design/icons` en `transpilePackages` (anula el barrel-optimization y reintroduce el crash); se usa `experimental.optimizePackageImports` en su lugar.
-- **Headers de seguridad**: [next.config.ts](next.config.ts) `headers()` define CSP completa + `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `HSTS`. `img-src` es amplio (`'self' data: blob: https:`) a propósito: cargamos favicons externos (Google S2 via `getFaviconUrl`) y URLs de imagen legacy; restringirlo por host rompe logos/favicons (ej. /sitios). `frame-src` SÍ es lista blanca de los embeds soportados (clickjacking) — al sumar una plataforma de embed nueva, agregar su host ahí. `form-action` incluye `https://accounts.google.com`: la página genérica `/api/auth/signin` (adonde el proxy manda a quien entra a `/admin` sin sesión) postea un form que termina en un 302 a Google, y Chrome chequea `form-action` en cada salto; sin ese host el login desde ahí se bloquea. Un proveedor OAuth nuevo necesita su host ahí también. `images.remotePatterns` (para next/image optimizado) es independiente y sí es por-host.
+- **Íconos de antd en Server Components**: importar de `@ant-design/icons` en un Server Component ROMPE el build (`createContext is not a function`): su barrel corre `createContext` sin `'use client'` y el entorno RSC no tiene `createContext`. Regla: en Server Components (page.tsx/layout/loading sin `'use client'`), importar íconos desde [src/lib/client-icons.ts](../../src/lib/client-icons.ts) (re-export `'use client'`). Los Client Components pueden importar de `@ant-design/icons` directo. Mismo motivo por el que el `App` de antd se usa vía [src/lib/providers/AntdApp.tsx](../../src/lib/providers/AntdApp.tsx), no importado en el layout server. `next.config.ts` NO debe poner `antd`/`@ant-design/icons` en `transpilePackages` (anula el barrel-optimization y reintroduce el crash); se usa `experimental.optimizePackageImports` en su lugar.
+- **Headers de seguridad**: [next.config.ts](../../next.config.ts) `headers()` define CSP completa + `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `HSTS`. `img-src` es amplio (`'self' data: blob: https:`) a propósito: cargamos favicons externos (Google S2 via `getFaviconUrl`) y URLs de imagen legacy; restringirlo por host rompe logos/favicons (ej. /sitios). `frame-src` SÍ es lista blanca de los embeds soportados (clickjacking) — al sumar una plataforma de embed nueva, agregar su host ahí. `form-action` incluye `https://accounts.google.com`: la página genérica `/api/auth/signin` (adonde el proxy manda a quien entra a `/admin` sin sesión) postea un form que termina en un 302 a Google, y Chrome chequea `form-action` en cada salto; sin ese host el login desde ahí se bloquea. Un proveedor OAuth nuevo necesita su host ahí también. `images.remotePatterns` (para next/image optimizado) es independiente y sí es por-host.
 - **RLS (Supabase)**: toda tabla nueva del schema `public` debe recibir `ALTER TABLE "X" ENABLE ROW LEVEL SECURITY` en su migración (Prisma usa el rol owner que bypassa RLS; sin esto la anon key expone la tabla vía PostgREST). Patrón en `prisma/migrations/*_enable_rls*`.
-- **Ban en API**: `requireAuth`/`requireRole` ([src/lib/auth-helpers.ts](src/lib/auth-helpers.ts)) chequean `banned` → 403. El middleware (`proxy.ts`) no cubre `/api` (su matcher lo excluye).
-- **Storage de imagenes**: todo pasa por `uploadImage()` en [src/lib/supabase.ts](src/lib/supabase.ts) — es el unico punto de subida (`/api/upload`, `/api/feedback/upload` y el re-hosteo de imagenes externas). Sube solo a **Cloudflare R2**; sin las 5 vars `R2_*` la subida falla (desde 2026-09-29; antes caia a Supabase Storage, que cobra egress). Supabase Storage queda para leer y borrar imagenes viejas. `downloadAndUploadExternalImage` no re-procesa una URL que ya servimos nosotros — chequea los DOS hosts, si no cada guardado de una serie duplicaria el poster.
+- **Ban en API**: `requireAuth`/`requireRole` ([src/lib/auth-helpers.ts](../../src/lib/auth-helpers.ts)) chequean `banned` → 403. El middleware (`proxy.ts`) no cubre `/api` (su matcher lo excluye).
+- **Storage de imagenes**: todo pasa por `uploadImage()` en [src/lib/supabase.ts](../../src/lib/supabase.ts) — es el unico punto de subida (`/api/upload`, `/api/feedback/upload` y el re-hosteo de imagenes externas). Sube solo a **Cloudflare R2**; sin las 5 vars `R2_*` la subida falla (desde 2026-09-29; antes caia a Supabase Storage, que cobra egress). Supabase Storage queda para leer y borrar imagenes viejas. `downloadAndUploadExternalImage` no re-procesa una URL que ya servimos nosotros — chequea los DOS hosts, si no cada guardado de una serie duplicaria el poster.
 - **Convención `unoptimized` en `<Image>`**: `unoptimized={isDirectServedImageUrl(url)}` (R2/Supabase y hosts externos no admitidos se sirven directo; solo los CDNs de OPTIMIZED_IMAGE_HOSTS van al optimizador). NO invertir con `!`. Desde 2026-09-09 los posters viven en Cloudflare R2 (`img.mundobl.com.ar`), no en Supabase Storage: R2 no cobra egress y ya sale por el CDN de Cloudflare con `cache-control: immutable` a un año, asi que pasarlo por el optimizador de Vercel solo gastaria cuota. El helper cubre los dos hosts porque los archivos de Supabase quedaron como respaldo.
-- **Rate limiting**: [src/lib/rate-limit.ts](src/lib/rate-limit.ts) — `checkCommentRateLimit`, `checkFeatureRequestRateLimit`, `checkUserEmbedRateLimit` (cuenta filas Prisma por ventana, sin tabla auxiliar).
-- **Orden de estilos antd vs. los nuestros**: con SSR, el `<style>` de antd llega en el stream después de nuestras hojas y, a igual especificidad (`:where(.css-x).ant-*`), les gana. [src/lib/providers/AntdStyleOrder.tsx](src/lib/providers/AntdStyleOrder.tsx) (adentro de `AntdRegistry`) lo mueve antes del primer `<link data-precedence>`. No usar `layer` de cssinjs: el reset `* { margin: 0; padding: 0 }` de `globals.css` sin capa pisaría todo antd.
-- **Botón atrás**: [NavigationGuard](src/components/layout/NavigationGuard/NavigationGuard.tsx) inyecta una entrada "padre" cuando se entra desde afuera y la navega con el router en `popstate` (el browser solo cambia la URL). Las rutas de detalle llevan slug: los patrones son `[^/]+`, no `\d+`.
+- **Rate limiting**: [src/lib/rate-limit.ts](../../src/lib/rate-limit.ts) — `checkCommentRateLimit`, `checkFeatureRequestRateLimit`, `checkUserEmbedRateLimit` (cuenta filas Prisma por ventana, sin tabla auxiliar).
+- **Orden de estilos antd vs. los nuestros**: con SSR, el `<style>` de antd llega en el stream después de nuestras hojas y, a igual especificidad (`:where(.css-x).ant-*`), les gana. [src/lib/providers/AntdStyleOrder.tsx](../../src/lib/providers/AntdStyleOrder.tsx) (adentro de `AntdRegistry`) lo mueve antes del primer `<link data-precedence>`. No usar `layer` de cssinjs: el reset `* { margin: 0; padding: 0 }` de `globals.css` sin capa pisaría todo antd.
+- **Botón atrás**: [NavigationGuard](../../src/components/layout/NavigationGuard/NavigationGuard.tsx) inyecta una entrada "padre" cuando se entra desde afuera y la navega con el router en `popstate` (el browser solo cambia la URL). Las rutas de detalle llevan slug: los patrones son `[^/]+`, no `\d+`.
 - **Para ver acá / para seguir**: `navItems.ts` agrupa la navegación por `section` (`watch`, `follow`, `explore`, `people`, `community`, `help`, `manage`); Sidebar y el cajón "Más" usan los mismos grupos. `SerieData.watchableHere` sale de `getCatalogFilterIndex().watchableIds` (PERSONAL + CURATED + `HAS_WATCHABLE_EPISODE`): casi todo lo de /ver es WATCHABLE_ONLY y no está en el catálogo, así que el chip "Se ve acá" aparece poco y es correcto.
 - **Avisos descartables**: `DismissibleNotice` (design system) + `useDismissedNotice(id)`, un array de ids en `localStorage['mundobl.dismissedNotices']`. Mismo id en dos páginas = mismo aviso. En el servidor cuentan como cerrados.
 - **Seguimiento automático en `/ver`**: `EmbedPlayer` activa la YouTube IFrame API solo cuando recibe `onWatchProgress`. `useYouTubeWatchTime` acumula tiempo reproducido real (los saltos no cuentan), marca una parte al 80 % y avisa `ended` para avanzar únicamente a la parte siguiente del mismo capítulo. Al terminar el capítulo no reproduce otro automáticamente.
 - **Progreso sin sesión**: `localStorage['mundobl.localProgress']` guarda por serie los ids vistos con schema `{ v: 1, series }`, manejado por `src/lib/local-progress.ts`. `SeriesUserStatusProvider` expone `storage: 'account' | 'local'`; `useMarkEpisodes` y el stepper escriben localmente sin mandar al login. `LocalProgressImporter`, montado en `AppLayout`, ofrece copiarlo a la cuenta después de autenticarse y borra cada serie local solo cuando su POST termina bien.
 - **Ficha solo para el catálogo**: `/series/[id]` sirve CURATED + PERSONAL + VISIBLE. Lo que solo se ve acá (WATCHABLE_ONLY o aporte) redirige con 307 a `/ver/[id]`, temporal porque la serie puede pasar al catálogo; si no se ve, 404. No mostrar "Ficha completa" fuera del catálogo: `getContentUrl` elige el destino.
-- **Costos en Vercel (plan Hobby, al límite en septiembre de 2026)**: Mergear a `main` no despliega (`vercel.json`: `deploymentEnabled: false`). Se juntan merges y se despliega a mano con el workflow **Deploy producción** (Actions → Run workflow, secret `VERCEL_TOKEN`); conviene evitar builds innecesarios, pero no asumir que cada deploy elimina todas las capas de caché (Vercel conserva ISR para rollback). #107 agregó `generateStaticParams` vacío en siete rutas de detalle para generar a demanda y reutilizar páginas con `revalidate`; comprobar el resultado en build y runtime, porque cookies, auth y otras dependencias pueden volver dinámica una ruta. El proxy corre solo en `/admin`. No hay Speed Insights montado. Antes de proponer un ISR corto, polling o una API por página, pensar el costo en funciones. Verificar local con `npm run build` + `npm start` contra DB local y chequear `x-nextjs-cache`; en Vercel, `X-Vercel-Cache`. Cuotas y procedimiento en el [manual de mantenimiento](docs/manual-mantenimiento.md).
+- **Costos en Vercel (plan Hobby, al límite en septiembre de 2026)**: Mergear a `main` no despliega (`vercel.json`: `deploymentEnabled: false`). Se juntan merges y se despliega a mano con el workflow **Deploy producción** (Actions → Run workflow, secret `VERCEL_TOKEN`); conviene evitar builds innecesarios, pero no asumir que cada deploy elimina todas las capas de caché (Vercel conserva ISR para rollback). #107 agregó `generateStaticParams` vacío en siete rutas de detalle para generar a demanda y reutilizar páginas con `revalidate`; comprobar el resultado en build y runtime, porque cookies, auth y otras dependencias pueden volver dinámica una ruta. El proxy corre solo en `/admin`. No hay Speed Insights montado. Antes de proponer un ISR corto, polling o una API por página, pensar el costo en funciones. Verificar local con `npm run build` + `npm start` contra DB local y chequear `x-nextjs-cache`; en Vercel, `X-Vercel-Cache`. Cuotas y procedimiento en el [manual de mantenimiento](../manual-mantenimiento.md).
 
 ## Guardado de fichas y borradores (2026-10-12)
 
@@ -1017,7 +1017,7 @@ no se convierte USER_EMBED por esta ruta.
 
 `useLocalFormDraft` conserva campos y contenidos pendientes del formulario por
 cuenta/ficha en este navegador. Recuperar una edición mantiene su versión original.
-Detalle, límites y reproducción: [docs/guardado-series-2026-10-12.md](docs/guardado-series-2026-10-12.md).
+Detalle, límites y reproducción: [docs/guardado-series-2026-10-12.md](../guardado-series-2026-10-12.md).
 
 ## Comandos
 

@@ -30,7 +30,7 @@ import type { TranslationKey } from '@/i18n/messages';
  * Prohibido duplicar esta lista en un componente.
  *
  * Solo lo importan componentes cliente (los iconos de antd no se pueden
- * importar desde Server Components, ver context.md).
+ * importar desde Server Components, ver docs/ai-context/context.md).
  */
 
 export type NavAccess = 'public' | 'session' | 'admin' | 'collaborator';

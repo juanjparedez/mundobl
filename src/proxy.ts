@@ -278,7 +278,7 @@ export async function proxy(request: NextRequest) {
     // de contenido a quienes un ADMIN les asigno el rol COLLABORATOR desde
     // /admin/usuarios). Solo pueden entrar a /admin/colaborador/**, nunca
     // al resto de /admin (catalogo curado, usuarios, etc.) — ver
-    // context.md "Rol de colaborador externo".
+    // docs/ai-context/context.md "Rol de colaborador externo".
     const isCollaboratorRoute = pathname.startsWith('/admin/colaborador');
 
     if (isCollaboratorRoute) {

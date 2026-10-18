@@ -110,7 +110,7 @@ Revisión de código, no auditoría de producción ni verificación funcional co
 - `src/app/api/user/account/export/route.ts`: exporta ViewStatus, pero no consulta EpisodeNote ni SeriesNote. La portabilidad completa del diario está pendiente.
 - `src/app/api/user/series/embed/confirm/route.ts` y `src/lib/tag-utils.ts`: aportes pueden crear entidades compartidas por nombre. Separar origin/catalogScope en los listados no demuestra control exclusivo de la taxonomía editorial.
 - No se encontró un modelo específico de guionistas en el schema inspeccionado. Diseñar créditos y migración antes de prometer navegación por guion.
-- `context.md` describe separación de ámbitos, colaboradores, dashboards configurables y progreso local. Contiene secciones históricas con diferencias entre sí: validar cada implementación contra el código actual.
+- `docs/ai-context/context.md` describe separación de ámbitos, colaboradores, dashboards configurables y progreso local. Contiene secciones históricas con diferencias entre sí: validar cada implementación contra el código actual.
 - `docs/politica-contenido-oficial.md` define las fuentes admitidas para ampliar contenido. Este plan no cambia esa política.
 
 ## Orden de trabajo y evidencia de aceptación
