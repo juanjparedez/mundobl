@@ -3772,6 +3772,16 @@ const zhCN = {
     "daySunday": "星期日",
     "subscribeTooltip": "通知我此剧集",
     "unsubscribeTooltip": "停止通知"
+  },
+  recommendations: {
+    "similarTitle": "喜欢这部的话",
+    "similarSubtitle": "主题、演员或类型相近的剧集",
+    "forYouTitle": "为你推荐",
+    "forYouSubtitle": "根据你在追、看过和收藏的剧集推荐",
+    "popularTitle": "MundoBL 上最多人追的剧",
+    "popularSubtitle": "当你开始追剧或看完剧集后，这里会显示为你挑选的推荐",
+    "similarTo": "与《{title}》相似",
+    "seeSimilar": "查看相似剧集"
   }
 } satisfies TranslationShape;
 

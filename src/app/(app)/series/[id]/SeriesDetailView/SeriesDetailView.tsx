@@ -4,7 +4,7 @@ import { hasContentConsent } from '@/lib/content-consent';
 import { CommunityWorkLink } from '@/components/community/CommunityWorkLink/CommunityWorkLink';
 import { getPublicWriterCredits } from '@/lib/database';
 import { WriterCredits } from '@/components/series/WriterCredits/WriterCredits';
-import { getPublicUniverseSeries } from '@/lib/database';
+import { getPublicUniverseSeries, getSimilarSeries } from '@/lib/database';
 import { notFound, redirect } from 'next/navigation';
 import { prisma } from '@/lib/database';
 import { getSeriesByIdCached } from '@/lib/detail-loaders';
@@ -29,6 +29,7 @@ import { SeriesSubscribeButton } from '@/components/series/SeriesSubscribeButton
 import { FavoriteButton } from '@/components/series/FavoriteButton/FavoriteButton';
 import { WhereToWatchEmpty } from '@/components/series/WhereToWatchEmpty/WhereToWatchEmpty';
 import { SeriesNews } from '@/components/series/SeriesNews/SeriesNews';
+import { SimilarSeries } from '@/components/series/SimilarSeries/SimilarSeries';
 import { SeriesSuggestionButton } from '@/components/series/SuggestionModal/SeriesSuggestionButton';
 import { SeriesUserStatusProvider } from '@/components/series/SeriesUserStatusProvider';
 import { PendingTrackApplier } from '@/components/series/PendingTrackApplier/PendingTrackApplier';
@@ -98,6 +99,7 @@ export async function SeriesDetailView({
     favoriteCount,
     currentlyWatchingCount,
     seriesNews,
+    similarSeries,
   ] = await Promise.all([
     prisma.review.count({
       where: { seriesId: serie.id, status: 'PUBLISHED' },
@@ -114,6 +116,8 @@ export async function SeriesDetailView({
       take: 3,
       select: { id: true, title: true, sourceName: true, publishedAt: true },
     }),
+    // Publico y sin datos del usuario: entra en el HTML de ISR.
+    getSimilarSeries(serie.id),
   ]);
 
   const universeSeries = serie.universeId
@@ -245,6 +249,7 @@ export async function SeriesDetailView({
                   seriesType={serie.type}
                   seasons={serie.seasons}
                   airing={isAiringNow(serie)}
+                  hasSimilar={similarSeries.length > 0}
                 />
                 <div
                   className="series-quick-actions"
@@ -337,6 +342,8 @@ export async function SeriesDetailView({
             reviewsSection={<ReviewsSection seriesId={serie.id} />}
             commentsSection={<CommentsSection seriesId={serie.id} />}
           />
+
+          <SimilarSeries series={similarSeries} />
 
           <EditSeriesFab seriesId={serie.id} />
         </SeriesUserStatusProvider>

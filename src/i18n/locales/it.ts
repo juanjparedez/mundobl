@@ -3778,6 +3778,16 @@ const it = {
     "daySunday": "Domenica",
     "subscribeTooltip": "Notificami questo show",
     "unsubscribeTooltip": "Smetti di notificarmi"
+  },
+  recommendations: {
+    "similarTitle": "Se ti è piaciuta questa",
+    "similarSubtitle": "Serie con temi, cast o generi in comune",
+    "forYouTitle": "Per te",
+    "forYouSubtitle": "In base a ciò che segui, hai visto e hai segnato come preferito",
+    "popularTitle": "Le più seguite su MundoBL",
+    "popularSubtitle": "Quando seguirai o finirai delle serie, qui vedrai suggerimenti pensati per te",
+    "similarTo": "Simile a {title}",
+    "seeSimilar": "Vedi serie simili"
   }
 } satisfies TranslationShape;
 

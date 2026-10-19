@@ -2,6 +2,13 @@
 
 Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-stack para gestionar, calificar y hacer seguimiento de series, peliculas, cortos y especiales.
 
+## Recomendaciones (2026-10-19)
+
+- `src/lib/recommendations.ts` puntúa por tags, géneros y actores compartidos (actor 3, tag 2, género 1, divididos por log2 de cuántas candidatas tienen ese rasgo). Hace falta un actor o dos rasgos en común; un género suelto no alcanza.
+- Ficha: `getSimilarSeries` ("Si te gustó esta") se hornea en el HTML de ISR. Excluye la propia serie, su universo (ya se muestra aparte), +18 y todo lo que no sea catálogo curado público. Puede quedar vieja hasta el próximo revalidate de la ficha.
+- `/watching`: `GET /api/user/recommendations` arma "Para vos" con lo visto, viendo, retomar y favoritas, sin nada que ya esté en la biblioteca. Sin semillas o sin parecidas cae a lo más seguido del sitio.
+- Prueba: `scripts/test-recommendations.ts` contra `mundobl_replay` local. Sin cambios de schema.
+
 ## Anchos, 404 y transacciones (2026-10-17)
 
 - **Anchos:** las páginas no tienen tope fijo en px. `--content-max-width` es `none` y cada página lo usa. El texto de lectura corrida (legales, notas, formularios) usa `--reading-max-width` (110ch). Las grillas se acomodan con `auto-fill`/`auto-fit` o con `@container`, no con `@media` del viewport: la barra lateral hace que el ancho real sea menor que la ventana. El reproductor de `/ver/[id]` usa `--player-max-width` para que el video entre en el alto de la pantalla.

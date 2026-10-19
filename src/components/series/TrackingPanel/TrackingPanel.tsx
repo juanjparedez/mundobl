@@ -11,6 +11,7 @@ import {
   LockOutlined,
   FileTextFilled,
   FileTextOutlined,
+  BulbOutlined,
 } from '@ant-design/icons';
 import { useSession, signIn } from 'next-auth/react';
 import { WATCH_STATUS, WATCH_STATUS_COLORS } from '@/constants/series';
@@ -27,6 +28,7 @@ import { findFurthestWatchedIndex } from '@/lib/episode-progress';
 import { toTrackedChapters, type TrackedChapter } from '@/lib/episode-chapters';
 import { shouldShowEpisodes } from '@/types/content';
 import { WatchDateEditor } from '../WatchDateEditor/WatchDateEditor';
+import { SIMILAR_SERIES_ANCHOR } from '../SimilarSeries/SimilarSeries';
 import './TrackingPanel.css';
 
 type AntStatusColor =
@@ -52,6 +54,8 @@ interface TrackingPanelProps {
   }>;
   /** La serie sigue en emision (`isAiringNow`): ver WatchProgressStepper. */
   airing?: boolean;
+  /** La ficha muestra "Si te gusto esta": al terminarla se ofrece el salto. */
+  hasSimilar?: boolean;
 }
 
 /**
@@ -73,6 +77,7 @@ export function TrackingPanel({
   seriesType = 'serie',
   seasons = [],
   airing = false,
+  hasSimilar = false,
 }: TrackingPanelProps) {
   const message = useMessage();
   const { t } = useLocale();
@@ -304,6 +309,14 @@ export function TrackingPanel({
         >
           {t('watchDateEditor.title')}
         </Button>
+      )}
+      {status === 'VISTA' && hasSimilar && (
+        <a
+          href={`#${SIMILAR_SERIES_ANCHOR}`}
+          className="tracking-panel__next-link"
+        >
+          <BulbOutlined aria-hidden /> {t('recommendations.seeSimilar')}
+        </a>
       )}
       {status === 'VISTA' && hasEpisodesAfterLast && (
         <div className="tracking-panel__resume">

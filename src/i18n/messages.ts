@@ -3763,6 +3763,16 @@ export type TranslationShape = {
     subscribeTooltip: string;
     unsubscribeTooltip: string;
   };
+  recommendations: {
+    similarTitle: string;
+    similarSubtitle: string;
+    forYouTitle: string;
+    forYouSubtitle: string;
+    popularTitle: string;
+    popularSubtitle: string;
+    similarTo: string;
+    seeSimilar: string;
+  };
 };
 
 const es: TranslationShape = {
@@ -7812,6 +7822,17 @@ const es: TranslationShape = {
     subscribeTooltip: 'Avisarme de esta serie',
     unsubscribeTooltip: 'Dejar de avisarme',
   },
+  recommendations: {
+    similarTitle: 'Si te gustó esta',
+    similarSubtitle: 'Series con temas, elenco o géneros en común',
+    forYouTitle: 'Para vos',
+    forYouSubtitle: 'Según lo que seguís, viste y marcaste como favorita',
+    popularTitle: 'Lo más seguido en MundoBL',
+    popularSubtitle:
+      'Cuando sigas o termines series, acá vas a ver sugerencias pensadas para vos',
+    similarTo: 'Parecida a {title}',
+    seeSimilar: 'Ver series parecidas',
+  },
 };
 
 const en: TranslationShape = {
@@ -11829,6 +11850,18 @@ const en: TranslationShape = {
     daySunday: 'Sunday',
     subscribeTooltip: 'Notify me about this show',
     unsubscribeTooltip: 'Stop notifying me',
+  },
+  recommendations: {
+    similarTitle: 'If you liked this',
+    similarSubtitle: 'Series with shared themes, cast or genres',
+    forYouTitle: 'For you',
+    forYouSubtitle:
+      'Based on what you follow, have watched and marked as favorite',
+    popularTitle: 'Most followed on MundoBL',
+    popularSubtitle:
+      'Once you follow or finish series, suggestions picked for you will show up here',
+    similarTo: 'Similar to {title}',
+    seeSimilar: 'See similar series',
   },
 };
 

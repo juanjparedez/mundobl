@@ -14,6 +14,13 @@ import type {
 } from '@/types/community';
 import { cardImageUrl } from './image-helpers';
 import {
+  scoreRecommendations,
+  type RecommendationFeatures,
+  type RecommendationSeed,
+  type RecommendedSeriesCard,
+  type UserRecommendations,
+} from './recommendations';
+import {
   aggregateInsights,
   insightsRange,
   type InsightsPeriod,
@@ -3244,3 +3251,273 @@ export const {
   getSupportPublic,
   mutateSupport,
 } = createSupportRepository(prisma);
+
+// ============================================
+// RECOMENDACIONES ("Si te gusto esta" / "Para vos")
+// ============================================
+
+/** Solo el catalogo curado publico, y nunca +18: una recomendacion no puede
+ *  ser la puerta de entrada a una ficha con compuerta. */
+const RECOMMENDABLE_SERIES_WHERE = {
+  origin: 'CURATED',
+  catalogScope: 'PERSONAL',
+  visibility: 'VISIBLE',
+  contentRating: { not: 'ADULT18' },
+} as const satisfies Prisma.SeriesWhereInput;
+
+const RECOMMENDATION_FEATURES_SELECT = {
+  tags: { select: { tagId: true } },
+  genres: { select: { genreId: true } },
+  actors: { select: { actorId: true } },
+} as const;
+
+interface RecommendationFeatureRows {
+  tags: { tagId: number }[];
+  genres: { genreId: number }[];
+  actors: { actorId: number }[];
+}
+
+function toRecommendationFeatures(
+  row: RecommendationFeatureRows
+): RecommendationFeatures {
+  return {
+    tagIds: [...new Set(row.tags.map((t) => t.tagId))],
+    genreIds: [...new Set(row.genres.map((g) => g.genreId))],
+    // Un actor puede figurar dos veces (dos personajes).
+    actorIds: [...new Set(row.actors.map((a) => a.actorId))],
+  };
+}
+
+/**
+ * Candidatas que comparten al menos un tag o actor con las semillas. Los
+ * generos solo suman puntaje: filtrar por genero traeria casi todo el
+ * catalogo para cada consulta.
+ */
+async function recommendFromSeeds(
+  seeds: RecommendationSeed[],
+  excludeIds: number[],
+  limit: number,
+  extraWhere: Prisma.SeriesWhereInput = {}
+): Promise<RecommendedSeriesCard[]> {
+  const tagIds = [...new Set(seeds.flatMap((s) => s.tagIds))];
+  const actorIds = [...new Set(seeds.flatMap((s) => s.actorIds))];
+  if (tagIds.length === 0 && actorIds.length === 0) return [];
+
+  const candidates = await prisma.series.findMany({
+    where: {
+      AND: [
+        RECOMMENDABLE_SERIES_WHERE,
+        extraWhere,
+        { id: { notIn: excludeIds } },
+        {
+          OR: [
+            ...(tagIds.length
+              ? [{ tags: { some: { tagId: { in: tagIds } } } }]
+              : []),
+            ...(actorIds.length
+              ? [{ actors: { some: { actorId: { in: actorIds } } } }]
+              : []),
+          ],
+        },
+      ],
+    },
+    select: {
+      id: true,
+      title: true,
+      year: true,
+      type: true,
+      imageUrl: true,
+      imageThumbUrl: true,
+      overallRating: true,
+      country: { select: { name: true } },
+      ...RECOMMENDATION_FEATURES_SELECT,
+    },
+  });
+
+  return scoreRecommendations(
+    seeds,
+    candidates.map((row) => ({ ...row, ...toRecommendationFeatures(row) })),
+    limit
+  ).map(({ candidate, becauseOf }) => ({
+    id: candidate.id,
+    title: candidate.title,
+    year: candidate.year,
+    type: candidate.type,
+    imageUrl: candidate.imageUrl,
+    imageThumbUrl: candidate.imageThumbUrl,
+    countryName: candidate.country?.name ?? null,
+    becauseOf,
+  }));
+}
+
+/**
+ * "Si te gusto esta": parecidas por tags, generos y elenco. Excluye la
+ * propia serie y su universo (la ficha ya lo muestra aparte). Es publico:
+ * la ficha es ISR y lo hornea en el HTML.
+ */
+export async function getSimilarSeries(
+  seriesId: number,
+  limit = 8
+): Promise<RecommendedSeriesCard[]> {
+  const source = await prisma.series.findUnique({
+    where: { id: seriesId },
+    select: {
+      id: true,
+      title: true,
+      universeId: true,
+      ...RECOMMENDATION_FEATURES_SELECT,
+    },
+  });
+  if (!source) return [];
+  const results = await recommendFromSeeds(
+    [
+      {
+        id: source.id,
+        title: source.title,
+        weight: 1,
+        ...toRecommendationFeatures(source),
+      },
+    ],
+    [source.id],
+    limit,
+    source.universeId
+      ? {
+          OR: [
+            { universeId: null },
+            { universeId: { not: source.universeId } },
+          ],
+        }
+      : {}
+  );
+  // Una sola semilla: el "porque" es la propia ficha y no aporta.
+  return results.map((card) => ({ ...card, becauseOf: null }));
+}
+
+/** Cuanto pesa cada estado de la biblioteca como semilla. */
+const SEED_WEIGHTS: Partial<Record<string, number>> = {
+  VISTA: 1,
+  VIENDO: 1,
+  RETOMAR: 0.75,
+};
+const FAVORITE_SEED_BONUS = 1;
+const MAX_RECOMMENDATION_SEEDS = 40;
+
+/**
+ * "Para vos" en /watching: parecidas a lo que el usuario vio, sigue o
+ * marco favorito, sin nada que ya tenga en la biblioteca (ni abandonadas).
+ * Sin semillas, o sin parecidas, cae a lo mas seguido del sitio.
+ */
+export async function getRecommendationsForUser(
+  userId: string,
+  limit = 12
+): Promise<UserRecommendations> {
+  const [statuses, favorites] = await Promise.all([
+    prisma.viewStatus.findMany({
+      where: { userId, seriesId: { not: null } },
+      select: { seriesId: true, status: true, updatedAt: true },
+      orderBy: { updatedAt: 'desc' },
+    }),
+    prisma.userFavorite.findMany({
+      where: { userId },
+      select: { seriesId: true },
+    }),
+  ]);
+
+  const favoriteIds = new Set(favorites.map((f) => f.seriesId));
+  const excludeIds = new Set<number>(favoriteIds);
+  const seedWeights = new Map<number, number>();
+  for (const row of statuses) {
+    if (row.seriesId === null) continue;
+    excludeIds.add(row.seriesId);
+    const weight = SEED_WEIGHTS[row.status];
+    if (weight && seedWeights.size < MAX_RECOMMENDATION_SEEDS) {
+      seedWeights.set(row.seriesId, weight);
+    }
+  }
+  for (const id of favoriteIds) {
+    if (seedWeights.size >= MAX_RECOMMENDATION_SEEDS && !seedWeights.has(id))
+      continue;
+    seedWeights.set(id, (seedWeights.get(id) ?? 0) + FAVORITE_SEED_BONUS);
+  }
+
+  if (seedWeights.size > 0) {
+    // Un aporte USER_EMBED cuenta como la ficha curada a la que apunta.
+    const seedRows = await prisma.series.findMany({
+      where: { id: { in: [...seedWeights.keys()] } },
+      select: {
+        id: true,
+        title: true,
+        linkedSeriesId: true,
+        ...RECOMMENDATION_FEATURES_SELECT,
+      },
+    });
+    for (const row of seedRows) {
+      if (row.linkedSeriesId) excludeIds.add(row.linkedSeriesId);
+    }
+    const seeds = seedRows.map((row) => ({
+      id: row.id,
+      title: row.title,
+      weight: seedWeights.get(row.id) ?? 1,
+      ...toRecommendationFeatures(row),
+    }));
+    const personal = await recommendFromSeeds(seeds, [...excludeIds], limit);
+    if (personal.length > 0) return { kind: 'personal', series: personal };
+  }
+
+  return {
+    kind: 'popular',
+    series: await getPopularSeries([...excludeIds], limit),
+  };
+}
+
+/** Lo que mas gente sigue o termino. */
+async function getPopularSeries(
+  excludeIds: number[],
+  limit: number
+): Promise<RecommendedSeriesCard[]> {
+  const counts = await prisma.viewStatus.groupBy({
+    by: ['seriesId'],
+    where: {
+      status: { in: ['VIENDO', 'VISTA'] },
+      seriesId: { not: null, notIn: excludeIds },
+      series: RECOMMENDABLE_SERIES_WHERE,
+    },
+    _count: { _all: true },
+    orderBy: { _count: { seriesId: 'desc' } },
+    take: limit,
+  });
+  const ids = counts
+    .map((row) => row.seriesId)
+    .filter((id): id is number => id !== null);
+  if (ids.length === 0) return [];
+  const rows = await prisma.series.findMany({
+    where: { id: { in: ids } },
+    select: {
+      id: true,
+      title: true,
+      year: true,
+      type: true,
+      imageUrl: true,
+      imageThumbUrl: true,
+      country: { select: { name: true } },
+    },
+  });
+  const byId = new Map(rows.map((row) => [row.id, row]));
+  return ids.flatMap((id) => {
+    const row = byId.get(id);
+    return row
+      ? [
+          {
+            id: row.id,
+            title: row.title,
+            year: row.year,
+            type: row.type,
+            imageUrl: row.imageUrl,
+            imageThumbUrl: row.imageThumbUrl,
+            countryName: row.country?.name ?? null,
+            becauseOf: null,
+          },
+        ]
+      : [];
+  });
+}

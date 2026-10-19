@@ -1,0 +1,18 @@
+.recommended-series {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  /* Las fichas se ven en 320 px: el ancla no puede quedar bajo el header. */
+  scroll-margin-top: var(--spacing-xl);
+}
+
+.recommended-series__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(130px, 100%), 1fr));
+  gap: var(--spacing-md);
+  /* start y no stretch: una card mas alta no estira toda la fila. */
+  align-items: start;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

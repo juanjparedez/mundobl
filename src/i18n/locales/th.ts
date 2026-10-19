@@ -3774,6 +3774,16 @@ const th = {
     "daySunday": "อาทิตย์",
     "subscribeTooltip": "แจ้งเตือนฉันเกี่ยวกับรายการนี้",
     "unsubscribeTooltip": "หยุดแจ้งเตือนฉัน"
+  },
+  recommendations: {
+    "similarTitle": "ถ้าชอบเรื่องนี้",
+    "similarSubtitle": "ซีรีส์ที่มีธีม นักแสดง หรือแนวคล้ายกัน",
+    "forYouTitle": "สำหรับคุณ",
+    "forYouSubtitle": "อ้างอิงจากเรื่องที่คุณกำลังดู ดูจบแล้ว และกดถูกใจ",
+    "popularTitle": "ยอดนิยมใน MundoBL",
+    "popularSubtitle": "เมื่อคุณติดตามหรือดูซีรีส์จบ คำแนะนำสำหรับคุณจะแสดงที่นี่",
+    "similarTo": "คล้ายกับ {title}",
+    "seeSimilar": "ดูซีรีส์ที่คล้ายกัน"
   }
 } satisfies TranslationShape;
 

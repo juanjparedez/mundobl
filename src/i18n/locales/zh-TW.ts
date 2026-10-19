@@ -3772,6 +3772,16 @@ const zhTW = {
     "daySunday": "星期日",
     "subscribeTooltip": "通知我此節目",
     "unsubscribeTooltip": "停止通知我"
+  },
+  recommendations: {
+    "similarTitle": "喜歡這部的話",
+    "similarSubtitle": "主題、演員或類型相近的劇集",
+    "forYouTitle": "為你推薦",
+    "forYouSubtitle": "根據你在追、看過和收藏的劇集推薦",
+    "popularTitle": "MundoBL 上最多人追的劇",
+    "popularSubtitle": "當你開始追劇或看完劇集後，這裡會顯示為你挑選的推薦",
+    "similarTo": "與《{title}》相似",
+    "seeSimilar": "查看相似劇集"
   }
 } satisfies TranslationShape;
 
