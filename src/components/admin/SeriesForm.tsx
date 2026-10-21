@@ -924,12 +924,13 @@ export function SeriesForm({ initialData, mode, userId }: SeriesFormProps) {
       >
         {draft.available && (
           <Alert
+            className="series-form-alert"
             type="info"
             showIcon
             title={t('seriesForm.draftAvailable')}
             description={t('seriesForm.draftLocal')}
             action={
-              <Space>
+              <Space wrap>
                 <Button onClick={restoreDraft}>
                   {t('seriesForm.draftRestore')}
                 </Button>
@@ -953,7 +954,7 @@ export function SeriesForm({ initialData, mode, userId }: SeriesFormProps) {
         )}
         {existingSeries && (
           <Alert
-            className="series-form-existing"
+            className="series-form-alert"
             type="warning"
             showIcon
             title={existingSeries.title}
