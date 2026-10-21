@@ -82,6 +82,20 @@
   text-decoration: underline;
 }
 
+/* Terminada: el salto a "Si te gusto esta", al pie de la ficha. */
+.tracking-panel__next-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  min-height: 44px;
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.tracking-panel__next-link:hover {
+  text-decoration: underline;
+}
+
 /* Vista, pero con capitulos despues del ultimo visto: la invitacion a
    volver a seguirla, sobre un fondo apenas teñido del acento. */
 .tracking-panel__resume {

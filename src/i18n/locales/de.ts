@@ -3779,6 +3779,16 @@ const de = {
     "daySunday": "Sonntag",
     "subscribeTooltip": "Mich über diese Serie benachrichtigen",
     "unsubscribeTooltip": "Benachrichtigungen stoppen"
+  },
+  recommendations: {
+    "similarTitle": "Wenn dir das gefallen hat",
+    "similarSubtitle": "Serien mit gemeinsamen Themen, Besetzung oder Genres",
+    "forYouTitle": "Für dich",
+    "forYouSubtitle": "Basierend auf dem, was du verfolgst, gesehen und favorisiert hast",
+    "popularTitle": "Am meisten verfolgt auf MundoBL",
+    "popularSubtitle": "Sobald du Serien verfolgst oder beendest, erscheinen hier Vorschläge für dich",
+    "similarTo": "Ähnlich wie {title}",
+    "seeSimilar": "Ähnliche Serien ansehen"
   }
 } satisfies TranslationShape;
 

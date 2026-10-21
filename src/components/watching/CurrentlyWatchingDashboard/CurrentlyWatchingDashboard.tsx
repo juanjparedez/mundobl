@@ -32,6 +32,7 @@ import {
 import { WatchingSeriesCard } from '../WatchingSeriesCard/WatchingSeriesCard';
 import { WatchingEpisodeDrawer } from '../WatchingEpisodeDrawer/WatchingEpisodeDrawer';
 import { TrackingHistory } from '../TrackingHistory/TrackingHistory';
+import { RecommendedForYou } from '../RecommendedForYou/RecommendedForYou';
 import './CurrentlyWatchingDashboard.css';
 
 export function CurrentlyWatchingDashboard() {
@@ -145,6 +146,12 @@ function WatchingCollection({ userId }: { userId: string }) {
   const visible = useMemo(
     () => selectWatchingItems(items, search, filter, preferences),
     [items, search, filter, preferences]
+  );
+  // Cambia al empezar/terminar/abandonar una serie: las sugerencias se piden
+  // de nuevo y no ofrecen lo que el usuario acaba de agregar.
+  const libraryKey = useMemo(
+    () => items.map((item) => `${item.series.id}:${item.status}`).join(','),
+    [items]
   );
   const chapterCount = useMemo(
     () =>
@@ -326,6 +333,7 @@ function WatchingCollection({ userId }: { userId: string }) {
               />
             )
           )}
+          {!failed && <RecommendedForYou refreshKey={libraryKey} />}
         </>
       )}
     </div>

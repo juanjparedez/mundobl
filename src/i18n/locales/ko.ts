@@ -3776,6 +3776,16 @@ const ko = {
     "daySunday": "일요일",
     "subscribeTooltip": "이 프로그램 알림 받기",
     "unsubscribeTooltip": "알림 중지"
+  },
+  recommendations: {
+    "similarTitle": "이 작품이 좋았다면",
+    "similarSubtitle": "주제, 출연진 또는 장르가 비슷한 작품",
+    "forYouTitle": "추천 작품",
+    "forYouSubtitle": "시청 중, 시청 완료, 즐겨찾기한 작품을 바탕으로 골랐어요",
+    "popularTitle": "MundoBL에서 가장 많이 보는 작품",
+    "popularSubtitle": "작품을 시청 중이거나 완료로 표시하면 여기에서 맞춤 추천을 볼 수 있어요",
+    "similarTo": "{title}와(과) 비슷한 작품",
+    "seeSimilar": "비슷한 작품 보기"
   }
 } satisfies TranslationShape;
 

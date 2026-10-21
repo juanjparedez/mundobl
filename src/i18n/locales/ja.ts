@@ -3776,6 +3776,16 @@ const ja = {
     "daySunday": "日曜日",
     "subscribeTooltip": "この番組について通知する",
     "unsubscribeTooltip": "通知を停止する"
+  },
+  recommendations: {
+    "similarTitle": "この作品が好きなら",
+    "similarSubtitle": "テーマ・キャスト・ジャンルが共通する作品",
+    "forYouTitle": "あなたへのおすすめ",
+    "forYouSubtitle": "視聴中・視聴済み・お気に入りの作品をもとに選んでいます",
+    "popularTitle": "MundoBLで人気の作品",
+    "popularSubtitle": "作品を視聴中や視聴済みにすると、ここにあなた向けのおすすめが表示されます",
+    "similarTo": "{title}に似た作品",
+    "seeSimilar": "似た作品を見る"
   }
 } satisfies TranslationShape;
 
