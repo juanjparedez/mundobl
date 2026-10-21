@@ -188,6 +188,20 @@ button:focus-visible,
   outline-offset: 2px;
 }
 
+/* Alert con botones: el texto pide un ancho mínimo y, si no entra al lado
+ * de los botones, los botones bajan a su propia línea. Antes, en mobile, los
+ * botones se quedaban con el ancho y el texto salía de a una letra por renglón.
+ * El 2.5rem es el lugar del ícono, para que el texto nunca baje solo. */
+.ant-alert:has(> .ant-alert-actions) {
+  flex-wrap: wrap;
+  row-gap: var(--spacing-sm);
+}
+
+.ant-alert:has(> .ant-alert-actions) > .ant-alert-section {
+  flex: 1 1 min(18rem, calc(100% - 2.5rem));
+  overflow-wrap: anywhere;
+}
+
 /* Scroll personalizado */
 ::-webkit-scrollbar {
   width: 8px;
