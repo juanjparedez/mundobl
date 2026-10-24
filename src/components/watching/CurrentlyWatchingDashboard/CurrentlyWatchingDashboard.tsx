@@ -22,6 +22,7 @@ import { useWatchingPreferences } from '@/hooks/useWatchingPreferences';
 import { useWatchingLocation } from '@/hooks/useWatchingLocation';
 import { useWatchingScroll } from '@/hooks/useWatchingScroll';
 import { isAiringNow } from '@/lib/airing-schedule';
+import { crossedMilestone } from '@/lib/episode-progress';
 import {
   LIBRARY_STATUSES,
   selectWatchingItems,
@@ -122,7 +123,8 @@ function WatchingCollection({ userId }: { userId: string }) {
   }, [load]);
 
   const markNext = async (item: WatchingItem) => {
-    const next = watchingProgress(item).next;
+    const progress = watchingProgress(item);
+    const next = progress.next;
     if (!next || mutationLock.current) return;
     mutationLock.current = true;
     setBusy(true);
@@ -133,8 +135,21 @@ function WatchingCollection({ userId }: { userId: string }) {
         body: JSON.stringify({ episodeIds: next.episodeIds, watched: true }),
       });
       if (!response.ok) throw new Error();
+      // El siguiente va despues del mas avanzado: se avanza hasta el inclusive.
+      const milestone = crossedMilestone(
+        next.position,
+        next.position + 1,
+        progress.total
+      );
       message.success(
-        t('watchingDashboard.episodeMarkedMessage', { ep: next.chapterNumber })
+        milestone !== null
+          ? t('progressStepper.milestone', {
+              percent: milestone,
+              title: item.series.title,
+            })
+          : t('watchingDashboard.episodeMarkedMessage', {
+              ep: next.chapterNumber,
+            })
       );
       await load();
     } catch {

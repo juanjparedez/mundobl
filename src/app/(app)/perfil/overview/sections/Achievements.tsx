@@ -45,7 +45,7 @@ interface Achievement {
 /** Numero total de achievements definidos. Util para el contador
  *  unlocked/total que aparece en el header del widget (sin necesidad
  *  de instanciar todas las traducciones). */
-export const ACHIEVEMENTS_TOTAL = 15;
+export const ACHIEVEMENTS_TOTAL = 18;
 
 /** Cuenta cuantos achievements estan unlocked con un set de stats dado.
  *  Espejo de la logica `current >= goal` del array interno — se exporta
@@ -54,7 +54,10 @@ export const ACHIEVEMENTS_TOTAL = 15;
 export function countUnlockedAchievements(stats: ProfileData['stats']): number {
   const goals: { current: number; goal: number }[] = [
     { current: stats.watched, goal: 1 }, // first-step
+    { current: stats.watched, goal: 3 }, // on-a-roll
+    { current: stats.watched, goal: 5 }, // hooked
     { current: stats.watched, goal: 10 }, // starter
+    { current: stats.watched, goal: 25 }, // devotee
     { current: stats.watched, goal: 50 }, // explorer
     { current: stats.watched, goal: 100 }, // completionist
     { current: stats.reviews, goal: 1 }, // first-review
@@ -90,6 +93,24 @@ export function OverviewAchievements({ stats }: Props) {
       tone: 'green',
     },
     {
+      key: 'on-a-roll',
+      icon: <CheckCircleFilled />,
+      name: t('achievements.onARollName'),
+      description: t('achievements.onARollDesc'),
+      current: stats.watched,
+      goal: 3,
+      tone: 'green',
+    },
+    {
+      key: 'hooked',
+      icon: <FireFilled />,
+      name: t('achievements.hookedName'),
+      description: t('achievements.hookedDesc'),
+      current: stats.watched,
+      goal: 5,
+      tone: 'green',
+    },
+    {
       key: 'starter',
       icon: <CompassFilled />,
       name: t('achievements.starterName'),
@@ -97,6 +118,15 @@ export function OverviewAchievements({ stats }: Props) {
       current: stats.watched,
       goal: 10,
       tone: 'green',
+    },
+    {
+      key: 'devotee',
+      icon: <HeartFilled />,
+      name: t('achievements.devoteeName'),
+      description: t('achievements.devoteeDesc'),
+      current: stats.watched,
+      goal: 25,
+      tone: 'purple',
     },
     {
       key: 'explorer',

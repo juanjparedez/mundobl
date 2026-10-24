@@ -121,6 +121,8 @@ export function watchingProgress(item: Pick<WatchingItem, 'series'>) {
     watched: chapters.filter(watched).length,
     next: next
       ? {
+          /** Posicion en toda la serie (no por temporada), desde 0. */
+          position: chapters.indexOf(next),
           chapterNumber: next.number,
           episodeIds: next.episodes
             .filter((episode) => !episode.watched)

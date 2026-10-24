@@ -1009,7 +1009,13 @@ const zhTW = {
     "glossaryScholarName": "文化貢獻者",
     "glossaryScholarDesc": "獲准通過 5 個文化詞彙表詞條",
     "triviaMasterName": "文化通",
-    "triviaMasterDesc": "在文化詞彙問答中獲得滿分"
+    "triviaMasterDesc": "在文化詞彙問答中獲得滿分",
+    "onARollName": "漸入佳境",
+    "onARollDesc": "看完 3 部劇",
+    "hookedName": "上頭了",
+    "hookedDesc": "看完 5 部劇",
+    "devoteeName": "忠實粉絲",
+    "devoteeDesc": "看完 25 部劇"
   },
   "socials": {
     "title": "我的社群",
@@ -3107,7 +3113,8 @@ const zhTW = {
     "markComplete": "是的，我已看完",
     "notYet": "還沒",
     "ariaNext": "標記下一集為已看",
-    "ariaPrev": "取消標記上一集為已看"
+    "ariaPrev": "取消標記上一集為已看",
+    "milestone": "《{title}》已看完 {percent}%！"
   },
   "trackCta": {
     "title": "您正在追這部劇嗎？",
