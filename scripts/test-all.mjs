@@ -84,6 +84,7 @@ const trackingTests = [
   'series-save',
   'series-curation',
   'editorial-classification',
+  'onboarding',
 ];
 // [script, usa --import tsx]
 const routeTests = [
