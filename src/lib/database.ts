@@ -2426,6 +2426,7 @@ export async function getWatchingLibrary(
       id: true,
       status: true,
       lastWatchedAt: true,
+      updatedAt: true,
       series: {
         // Never send editorial review/observations (which may be private)
         // or unrelated metadata to a personal tracking screen.
@@ -2440,6 +2441,8 @@ export async function getWatchingLibrary(
           imageUrl: true,
           imageThumbUrl: true,
           airDays: true,
+          // isAiringNow lo necesita: sin el, una serie en emision ofrece "terminarla".
+          createdAt: true,
           country: { select: { name: true } },
           watchLinks: {
             where: { official: true },

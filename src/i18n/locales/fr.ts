@@ -436,7 +436,11 @@ const fr = {
     "noResults": "Aucune série ne correspond à ces filtres.",
     "preferences": "La vue, l’ordre et les séries épinglées sont enregistrés sur cet appareil pour votre compte.",
     "season": "Saison {n}",
-    "signIn": "Se connecter"
+    "signIn": "Se connecter",
+    "markFinished": "Marquer comme terminée",
+    "staleTitle": "Aucune activité depuis {days} jours. Vous la regardez toujours ?",
+    "stalePause": "La mettre en pause",
+    "staleDrop": "L'abandonner"
 },
   backup: {
     "viewStatuses": "Suivi",

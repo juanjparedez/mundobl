@@ -435,7 +435,11 @@ const it = {
     "noResults": "Nessuna serie corrisponde ai filtri.",
     "preferences": "Vista, ordine e serie fissate vengono salvati su questo dispositivo per il tuo account.",
     "season": "Stagione {n}",
-    "signIn": "Accedi"
+    "signIn": "Accedi",
+    "markFinished": "Segna come finita",
+    "staleTitle": "Nessuna attività da {days} giorni. La stai ancora guardando?",
+    "stalePause": "Mettila in pausa",
+    "staleDrop": "Abbandonala"
 },
   backup: {
     "viewStatuses": "Monitoraggio",

@@ -14,6 +14,8 @@ export interface WatchingItem {
   id: number;
   status: string;
   lastWatchedAt: string | null;
+  /** Ultimo cambio de la fila de la serie (estado o actividad). */
+  updatedAt?: Date | string;
   series: {
     id: number;
     title: string;
@@ -24,6 +26,8 @@ export interface WatchingItem {
     imageUrl?: string | null;
     imageThumbUrl?: string | null;
     airDays?: string | null;
+    // Date en el server, string ya serializado en el cliente.
+    createdAt?: Date | string | null;
     hasWatchableEpisode: boolean;
     /** Aporte USER_EMBED -> ficha curada a la que esta vinculado. */
     linkedSeriesId?: number | null;
@@ -126,6 +130,26 @@ export function watchingProgress(item: Pick<WatchingItem, 'series'>) {
         }
       : null,
   };
+}
+
+/** Dias sin actividad a partir de los cuales se pregunta "¿La seguis viendo?". */
+export const STALE_WATCHING_DAYS = 30;
+
+/** Dias sin actividad de una serie en "Viendo"; null si no corresponde preguntar. */
+export function staleWatchingDays(
+  item: Pick<WatchingItem, 'status' | 'updatedAt'> & {
+    lastWatchedAt: Date | string | null;
+  },
+  now: Date = new Date()
+): number | null {
+  if (item.status !== 'VIENDO') return null;
+  const last = Math.max(
+    new Date(item.updatedAt ?? 0).getTime() || 0,
+    new Date(item.lastWatchedAt ?? 0).getTime() || 0
+  );
+  if (!last) return null;
+  const days = Math.floor((now.getTime() - last) / 86_400_000);
+  return days >= STALE_WATCHING_DAYS ? days : null;
 }
 
 /**
