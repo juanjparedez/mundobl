@@ -2313,14 +2313,17 @@ const th = {
     "recentHint": "สิ่งที่ชุมชนทำในช่วงไม่กี่วันที่ผ่านมา เรานับเฉพาะบัญชีของชุมชน (ไม่รวมทีมงาน) และไม่แสดงว่าใครทำอะไร",
     "activeMembers": "สมาชิกที่ใช้งาน (30 วัน)",
     "newMembers": "สมาชิกใหม่ (30 วัน)",
-    "completedRecently": "ซีรีส์ที่ดูจบ (7 วัน)",
+    "completedRecently": "ซีรีส์ที่ดูจบ (30 วัน)",
     "commentsRecently": "ความคิดเห็นสาธารณะ (7 วัน)",
     "ratingsRecently": "การให้คะแนน (7 วัน)",
     "watchingNow": "กำลังดูอยู่ตอนนี้",
     "watchingUnit": "กำลังดู",
-    "completedByDay": "ซีรีส์ที่ดูจบต่อวัน (30 วัน)",
-    "completedSeriesLabel": "ดูจบ",
-    "allTimeTitle": "ยอดรวมทั้งหมดของชุมชน"
+    "allTimeTitle": "ยอดรวมทั้งหมดของชุมชน",
+    "totalMembers": "สมาชิกชุมชน",
+    "trackingMembers": "ติดตามความคืบหน้าบน MundoBL",
+    "episodesRecently": "ตอนที่ดูแล้ว (7 วัน)",
+    "episodesByDay": "ตอนที่ดูต่อวัน (30 วัน)",
+    "episodesLabel": "ตอน"
   },
   "adminStats": {
     "pageTitle": "สถิติกิจกรรม",

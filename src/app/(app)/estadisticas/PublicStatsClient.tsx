@@ -422,6 +422,16 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
         tiles={[
           {
             icon: <TeamOutlined />,
+            value: data.recent.totalMembers,
+            label: t('publicStats.totalMembers'),
+          },
+          {
+            icon: <EyeOutlined />,
+            value: data.recent.trackingMembers,
+            label: t('publicStats.trackingMembers'),
+          },
+          {
+            icon: <TeamOutlined />,
             value: data.recent.activeMembers,
             label: t('publicStats.activeMembers'),
           },
@@ -429,6 +439,11 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
             icon: <UserAddOutlined />,
             value: data.recent.newMembers,
             label: t('publicStats.newMembers'),
+          },
+          {
+            icon: <PlayCircleOutlined />,
+            value: data.recent.episodesSeenRecently,
+            label: t('publicStats.episodesRecently'),
           },
           {
             icon: <CheckCircleOutlined />,
@@ -466,17 +481,17 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
         <section className="app-panel">
           <header className="app-panel__header">
             <h3 className="app-panel__title">
-              <LineChartOutlined /> {t('publicStats.completedByDay')}
+              <LineChartOutlined /> {t('publicStats.episodesByDay')}
             </h3>
           </header>
           <div className="app-panel__body">
             <LineChart
-              data={data.recent.completedByDay}
+              data={data.recent.episodesByDay}
               xAxisKey="day"
               series={[
                 {
                   dataKey: 'count',
-                  name: t('publicStats.completedSeriesLabel'),
+                  name: t('publicStats.episodesLabel'),
                 },
               ]}
               height={220}

@@ -2315,14 +2315,17 @@ const ko = {
     "recentHint": "최근 며칠간 커뮤니티의 활동입니다. 커뮤니티 계정만 집계하며(팀 제외), 누가 무엇을 했는지는 표시하지 않습니다.",
     "activeMembers": "활동 회원 (30일)",
     "newMembers": "신규 회원 (30일)",
-    "completedRecently": "완료한 시리즈 (7일)",
+    "completedRecently": "완주한 시리즈 (30일)",
     "commentsRecently": "공개 댓글 (7일)",
     "ratingsRecently": "평점 (7일)",
     "watchingNow": "지금 시청 중",
     "watchingUnit": "명 시청 중",
-    "completedByDay": "일별 완료 시리즈 (30일)",
-    "completedSeriesLabel": "완료",
-    "allTimeTitle": "커뮤니티 누적 합계"
+    "allTimeTitle": "커뮤니티 누적 합계",
+    "totalMembers": "커뮤니티 회원",
+    "trackingMembers": "MundoBL에서 시청 기록 중",
+    "episodesRecently": "시청한 에피소드 (7일)",
+    "episodesByDay": "일별 시청 에피소드 (30일)",
+    "episodesLabel": "에피소드"
   },
   "adminStats": {
     "pageTitle": "활동 통계",

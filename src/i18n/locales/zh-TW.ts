@@ -2311,14 +2311,17 @@ const zhTW = {
     "recentHint": "社群最近幾天的動態。只統計社群帳號（不含團隊），也不會顯示誰做了什麼。",
     "activeMembers": "活躍成員（30 天）",
     "newMembers": "新成員（30 天）",
-    "completedRecently": "看完的劇集（7 天）",
+    "completedRecently": "看完的劇集（30 天）",
     "commentsRecently": "公開留言（7 天）",
     "ratingsRecently": "評分（7 天）",
     "watchingNow": "正在觀看",
     "watchingUnit": "人在看",
-    "completedByDay": "每日看完的劇集（30 天）",
-    "completedSeriesLabel": "看完",
-    "allTimeTitle": "社群歷史總計"
+    "allTimeTitle": "社群歷史總計",
+    "totalMembers": "社群成員",
+    "trackingMembers": "在 MundoBL 記錄觀看進度",
+    "episodesRecently": "看過的集數（7 天）",
+    "episodesByDay": "每日看過的集數（30 天）",
+    "episodesLabel": "集數"
   },
   "adminStats": {
     "pageTitle": "活動統計",

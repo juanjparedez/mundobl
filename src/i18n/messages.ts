@@ -2306,8 +2306,11 @@ export type TranslationShape = {
     ratingsRecently: string;
     watchingNow: string;
     watchingUnit: string;
-    completedByDay: string;
-    completedSeriesLabel: string;
+    totalMembers: string;
+    trackingMembers: string;
+    episodesRecently: string;
+    episodesByDay: string;
+    episodesLabel: string;
     allTimeTitle: string;
   };
   adminStats: {
@@ -6293,14 +6296,17 @@ const es: TranslationShape = {
       'Lo que la comunidad hizo en los últimos días. Sólo contamos cuentas de la comunidad (sin el equipo) y nunca mostramos quién hizo qué.',
     activeMembers: 'Miembros activos (30 días)',
     newMembers: 'Miembros nuevos (30 días)',
-    completedRecently: 'Series completadas (7 días)',
+    completedRecently: 'Series terminadas (30 días)',
     commentsRecently: 'Comentarios públicos (7 días)',
     ratingsRecently: 'Calificaciones (7 días)',
     watchingNow: 'Lo que se está viendo ahora',
     watchingUnit: 'viendo',
-    completedByDay: 'Series completadas por día (30 días)',
-    completedSeriesLabel: 'Completadas',
     allTimeTitle: 'Totales históricos de la comunidad',
+    totalMembers: 'Miembros de la comunidad',
+    trackingMembers: 'Siguen su progreso en MundoBL',
+    episodesRecently: 'Episodios vistos (7 días)',
+    episodesByDay: 'Episodios vistos por día (30 días)',
+    episodesLabel: 'Episodios',
   },
   adminStats: {
     pageTitle: 'Estadísticas de actividad',
@@ -10341,14 +10347,17 @@ const en: TranslationShape = {
       'What the community did in the last few days. Only community accounts count (not the team), and we never show who did what.',
     activeMembers: 'Active members (30 days)',
     newMembers: 'New members (30 days)',
-    completedRecently: 'Series completed (7 days)',
+    completedRecently: 'Series finished (30 days)',
     commentsRecently: 'Public comments (7 days)',
     ratingsRecently: 'Ratings (7 days)',
     watchingNow: 'Being watched right now',
     watchingUnit: 'watching',
-    completedByDay: 'Series completed per day (30 days)',
-    completedSeriesLabel: 'Completed',
     allTimeTitle: 'Community all-time totals',
+    totalMembers: 'Community members',
+    trackingMembers: 'Track their progress on MundoBL',
+    episodesRecently: 'Episodes watched (7 days)',
+    episodesByDay: 'Episodes watched per day (30 days)',
+    episodesLabel: 'Episodes',
   },
   adminStats: {
     pageTitle: 'Activity Statistics',

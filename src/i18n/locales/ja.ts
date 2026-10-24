@@ -2315,14 +2315,17 @@ const ja = {
     "recentHint": "ここ数日のコミュニティの動きです。コミュニティのアカウントのみを集計し（チームは除外）、誰が何をしたかは表示しません。",
     "activeMembers": "アクティブメンバー（30日）",
     "newMembers": "新規メンバー（30日）",
-    "completedRecently": "完走したシリーズ（7日）",
+    "completedRecently": "完走したシリーズ（30日）",
     "commentsRecently": "公開コメント（7日）",
     "ratingsRecently": "評価（7日）",
     "watchingNow": "いま視聴中",
     "watchingUnit": "人が視聴中",
-    "completedByDay": "1日ごとの完走シリーズ（30日）",
-    "completedSeriesLabel": "完走",
-    "allTimeTitle": "コミュニティの累計"
+    "allTimeTitle": "コミュニティの累計",
+    "totalMembers": "コミュニティメンバー",
+    "trackingMembers": "MundoBLで視聴記録をつけている人",
+    "episodesRecently": "視聴したエピソード（7日）",
+    "episodesByDay": "1日ごとの視聴エピソード（30日）",
+    "episodesLabel": "エピソード"
   },
   "adminStats": {
     "pageTitle": "アクティビティ統計",

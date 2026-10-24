@@ -66,13 +66,22 @@ export interface RecentCommunityActivity {
   shortWindowDays: number;
   /** Ventana larga: miembros activos y grafico diario (dias). */
   longWindowDays: number;
+  /** Cuentas de la comunidad (sin ADMIN ni baneadas). */
+  totalMembers: number;
+  /** Cuentas que siguen su progreso (al menos una serie/episodio marcado). */
+  trackingMembers: number;
   activeMembers: number;
   newMembers: number;
+  /** Episodios marcados como vistos en la ventana corta. */
+  episodesSeenRecently: number;
+  /** Series terminadas en la ventana larga (en 7 dias casi siempre es 0). */
   completedRecently: number;
   publicCommentsRecently: number;
   ratingsRecently: number;
   watchingNow: Array<{ seriesId: number; title: string; count: number }>;
-  completedByDay: Array<{ day: string; count: number }>;
+  /** Episodios vistos por dia: es donde esta la actividad real de la
+   *  comunidad (se marcan muchos mas episodios que series terminadas). */
+  episodesByDay: Array<{ day: string; count: number }>;
 }
 
 export interface PublicStats {
@@ -131,6 +140,7 @@ export interface PublicStats {
  * (anonimizados): son de la comunidad y se cuentan.
  */
 const COMMUNITY = { user: { role: { not: 'ADMIN' as const } } };
+const COMMUNITY_MEMBER = { banned: false, role: { not: 'ADMIN' as const } };
 const COMMUNITY_COMMENTS = {
   OR: [{ userId: null }, { user: { role: { not: 'ADMIN' as const } } }],
 };
@@ -153,14 +163,24 @@ async function getRecentCommunityActivity(
   const longSince = new Date(now.getTime() - LONG_WINDOW_DAYS * DAY_MS);
 
   const [
+    totalMembers,
+    trackingMembers,
     activeMembers,
     newMembers,
+    episodesSeenRecently,
     completedRecently,
     publicCommentsRecently,
     ratingsRecently,
     watchingRows,
-    completedByDayRows,
+    episodesByDayRows,
   ] = await Promise.all([
+    prisma.user.count({ where: COMMUNITY_MEMBER }),
+    prisma.user.count({
+      where: {
+        ...COMMUNITY_MEMBER,
+        viewStatuses: { some: { status: { not: 'SIN_VER' } } },
+      },
+    }),
     prisma.user.count({
       where: {
         AND: [
@@ -170,17 +190,21 @@ async function getRecentCommunityActivity(
       },
     }),
     prisma.user.count({
+      where: { ...COMMUNITY_MEMBER, createdAt: { gte: longSince } },
+    }),
+    prisma.viewStatus.count({
       where: {
-        banned: false,
-        role: { not: 'ADMIN' },
-        createdAt: { gte: longSince },
+        status: 'VISTA',
+        episodeId: { not: null },
+        updatedAt: { gte: shortSince },
+        ...COMMUNITY,
       },
     }),
     prisma.viewStatus.count({
       where: {
         status: 'VISTA',
         seriesId: { not: null },
-        updatedAt: { gte: shortSince },
+        updatedAt: { gte: longSince },
         ...COMMUNITY,
       },
     }),
@@ -211,7 +235,7 @@ async function getRecentCommunityActivity(
       FROM "ViewStatus" vs
       JOIN "User" u ON u.id = vs."userId"
       WHERE vs.status = 'VISTA'
-        AND vs."seriesId" IS NOT NULL
+        AND vs."episodeId" IS NOT NULL
         AND vs."updatedAt" >= ${longSince}
         AND u.role <> 'ADMIN'
       GROUP BY day
@@ -230,12 +254,12 @@ async function getRecentCommunityActivity(
 
   // Dias sin actividad van en 0: un grafico con huecos sugiere datos rotos.
   const countByDay = new Map(
-    completedByDayRows.map((r) => [
+    episodesByDayRows.map((r) => [
       r.day.toISOString().slice(0, 10),
       Number(r.count),
     ])
   );
-  const completedByDay = Array.from({ length: LONG_WINDOW_DAYS }, (_, i) => {
+  const episodesByDay = Array.from({ length: LONG_WINDOW_DAYS }, (_, i) => {
     const day = new Date(now.getTime() - (LONG_WINDOW_DAYS - 1 - i) * DAY_MS)
       .toISOString()
       .slice(0, 10);
@@ -245,8 +269,11 @@ async function getRecentCommunityActivity(
   return {
     shortWindowDays: SHORT_WINDOW_DAYS,
     longWindowDays: LONG_WINDOW_DAYS,
+    totalMembers,
+    trackingMembers,
     activeMembers,
     newMembers,
+    episodesSeenRecently,
     completedRecently,
     publicCommentsRecently,
     ratingsRecently,
@@ -257,7 +284,7 @@ async function getRecentCommunityActivity(
         title: titleById.get(row.seriesId as number) ?? 'Sin titulo',
         count: row._count.seriesId,
       })),
-    completedByDay,
+    episodesByDay,
   };
 }
 

@@ -2311,14 +2311,17 @@ const zhCN = {
     "recentHint": "社区最近几天的动态。只统计社区账户（不含团队），也不会显示谁做了什么。",
     "activeMembers": "活跃成员（30 天）",
     "newMembers": "新成员（30 天）",
-    "completedRecently": "看完的剧集（7 天）",
+    "completedRecently": "看完的剧集（30 天）",
     "commentsRecently": "公开评论（7 天）",
     "ratingsRecently": "评分（7 天）",
     "watchingNow": "正在观看",
     "watchingUnit": "人在看",
-    "completedByDay": "每日看完的剧集（30 天）",
-    "completedSeriesLabel": "看完",
-    "allTimeTitle": "社区历史总计"
+    "allTimeTitle": "社区历史总计",
+    "totalMembers": "社区成员",
+    "trackingMembers": "在 MundoBL 记录观看进度",
+    "episodesRecently": "看过的集数（7 天）",
+    "episodesByDay": "每日看过的集数（30 天）",
+    "episodesLabel": "集数"
   },
   "adminStats": {
     "pageTitle": "活动统计",

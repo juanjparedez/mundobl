@@ -2318,14 +2318,17 @@ const de = {
     "recentHint": "Was die Community in den letzten Tagen gemacht hat. Wir zählen nur Community-Konten (ohne das Team) und zeigen nie, wer was gemacht hat.",
     "activeMembers": "Aktive Mitglieder (30 Tage)",
     "newMembers": "Neue Mitglieder (30 Tage)",
-    "completedRecently": "Abgeschlossene Serien (7 Tage)",
+    "completedRecently": "Beendete Serien (30 Tage)",
     "commentsRecently": "Öffentliche Kommentare (7 Tage)",
     "ratingsRecently": "Bewertungen (7 Tage)",
     "watchingNow": "Wird gerade geschaut",
     "watchingUnit": "schauen",
-    "completedByDay": "Abgeschlossene Serien pro Tag (30 Tage)",
-    "completedSeriesLabel": "Abgeschlossen",
-    "allTimeTitle": "Community-Gesamtwerte"
+    "allTimeTitle": "Community-Gesamtwerte",
+    "totalMembers": "Community-Mitglieder",
+    "trackingMembers": "Verfolgen ihren Fortschritt auf MundoBL",
+    "episodesRecently": "Gesehene Folgen (7 Tage)",
+    "episodesByDay": "Gesehene Folgen pro Tag (30 Tage)",
+    "episodesLabel": "Folgen"
   },
   "adminStats": {
     "pageTitle": "Aktivitätsstatistiken",
