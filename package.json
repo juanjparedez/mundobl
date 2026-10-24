@@ -37,7 +37,7 @@
     "d3-scale": "^4.0.2",
     "fast-xml-parser": "^5.11.1",
     "flag-icons": "^7.5.0",
-    "next": "^16.2.11",
+    "next": "^16.4.2",
     "next-auth": "^5.0.0-beta.30",
     "pg": "^8.22.0",
     "prisma": "^7.10.1",
@@ -51,7 +51,7 @@
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",
     "schema-dts": "^1.1.5",
-    "sharp": "^0.35.3",
+    "sharp": "^0.35.5",
     "unified": "^11.0.5",
     "web-push": "^3.6.7",
     "world-atlas": "^2.0.2"
@@ -83,7 +83,7 @@
   },
   "overrides": {
     "d3-color": "^3.1.0",
-    "sharp": "^0.35.3"
+    "sharp": "^0.35.5"
   },
   "allowScripts": {
     "@prisma/engines@7.9.0": true,
