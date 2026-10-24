@@ -3827,6 +3827,21 @@ const it = {
     "popularSubtitle": "Quando seguirai o finirai delle serie, qui vedrai suggerimenti pensati per te",
     "similarTo": "Simile a {title}",
     "seeSimilar": "Vedi serie simili"
+  },
+  onboarding: {
+    title: "Cosa stai guardando adesso?",
+    subtitle: "Scegli fino a {n} serie in onda e l'episodio a cui sei arrivato. Finiscono nella tua lista e ti avvisiamo quando ci sono novità.",
+    limit: "Puoi scegliere fino a {n} serie",
+    picked: "Scelta",
+    episodeLabel: "Episodio a cui sei arrivato",
+    justStarting: "Ho appena iniziato",
+    episodeOption: "Sono all’episodio {n}",
+    seasonEpisodeOption: "S{season} · sono all’episodio {n}",
+    follow: "Segui ({n})",
+    skip: "Non ora",
+    saved: "Fatto, sono nella tua lista",
+    error: "Impossibile salvare. Riprova.",
+    browseCatalog: "Non c’è? Cercala nel catalogo",
   }
 } satisfies TranslationShape;
 

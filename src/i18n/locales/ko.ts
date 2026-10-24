@@ -3825,6 +3825,21 @@ const ko = {
     "popularSubtitle": "작품을 시청 중이거나 완료로 표시하면 여기에서 맞춤 추천을 볼 수 있어요",
     "similarTo": "{title}와(과) 비슷한 작품",
     "seeSimilar": "비슷한 작품 보기"
+  },
+  onboarding: {
+    title: "지금 뭘 보고 있나요?",
+    subtitle: "방영 중인 작품을 최대 {n}개까지 고르고 보고 있는 회차를 선택하세요. 내 목록에 추가되고 새 소식이 있으면 알려드려요.",
+    limit: "최대 {n}개까지 고를 수 있어요",
+    picked: "선택됨",
+    episodeLabel: "보고 있는 회차",
+    justStarting: "이제 시작해요",
+    episodeOption: "{n}화까지 봤어요",
+    seasonEpisodeOption: "시즌 {season} · {n}화까지",
+    follow: "팔로우 ({n})",
+    skip: "나중에",
+    saved: "완료! 내 목록에 추가했어요",
+    error: "저장하지 못했어요. 다시 시도해 주세요.",
+    browseCatalog: "없나요? 카탈로그에서 찾아보세요",
   }
 } satisfies TranslationShape;
 

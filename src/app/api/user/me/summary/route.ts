@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/database';
+import { prisma, recordUserActiveDay } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 
 /**
@@ -7,7 +7,12 @@ import { requireAuth } from '@/lib/auth-helpers';
  *
  * Existe para que la home (ISR, sin `auth()` en el server) pueda decidir en
  * cliente si mandar al usuario a /watching sin traerse la lista entera.
- * Lo reusan T11b (onboarding) y T18 (push tras el primer episodio).
+ * Lo reusan el modal del primer ingreso (FirstVisitOnboarding) y T18 (push
+ * tras el primer episodio).
+ *
+ * Tambien anota el dia como activo (UserActiveDay): es el unico request que
+ * hace cada carga de pagina de un usuario logueado, y el cliente lo cachea 5
+ * minutos, asi que la escritura extra es a lo sumo una cada 5 minutos.
  */
 export async function GET() {
   try {
@@ -16,7 +21,7 @@ export async function GET() {
 
     const userId = authResult.userId;
 
-    const [viendoCount, trackedSeriesRows, trackedViaEpisodeRows] =
+    const [viendoCount, trackedSeriesRows, trackedViaEpisodeRows, user] =
       await Promise.all([
         prisma.viewStatus.count({
           where: { userId, seriesId: { not: null }, status: 'VIENDO' },
@@ -38,6 +43,12 @@ export async function GET() {
             episode: { select: { season: { select: { seriesId: true } } } },
           },
         }),
+        prisma.user.findUnique({
+          where: { id: userId },
+          select: { onboardingCompletedAt: true },
+        }),
+        // Es una medicion: si falla, el resumen igual tiene que salir.
+        recordUserActiveDay(userId).catch(() => undefined),
       ]);
 
     const trackedSeriesIds = new Set<number>();
@@ -51,8 +62,7 @@ export async function GET() {
     return NextResponse.json({
       viendoCount,
       trackedSeriesCount: trackedSeriesIds.size,
-      // Lo llena T11a; hasta entonces el contrato ya esta en su lugar.
-      onboardingCompletedAt: null,
+      onboardingCompletedAt: user?.onboardingCompletedAt?.toISOString() ?? null,
     });
   } catch (error) {
     console.error('Error fetching user summary:', error);

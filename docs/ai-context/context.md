@@ -2,6 +2,13 @@
 
 Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-stack para gestionar, calificar y hacer seguimiento de series, peliculas, cortos y especiales.
 
+## Primer ingreso y días activos (2026-10-24)
+
+- Datos que lo motivan (prod, 24/10): 57% de las cuentas VISITOR nunca hizo nada tras registrarse (72% en octubre); 72 de 79 que alguna vez siguieron una serie lo hicieron en su primera hora.
+- `FirstVisitOnboarding` (layout raíz): a quien entra logueado sin nada seguido le pregunta "¿Qué estás viendo ahora?" con hasta 5 series al aire (`getOnboardingSeries`: mismo corte que la parrilla, sin +18, las más seguidas primero) y por qué capítulo de la última temporada va. `POST /api/user/onboarding` las deja en VIENDO (eso suscribe a avisos) y marca el progreso. Guardar, "Ahora no" o cerrar setean `User.onboardingCompletedAt`: se muestra una sola vez. No aparece en `/admin`, legales ni si hay un pending-track del login.
+- `UserActiveDay` (userId, día UTC): `GET /api/user/me/summary` anota el día; el cliente cachea el resumen 5 minutos. Es la única forma de medir retorno: las PAGE_VIEW se anonimizan y la sesión es JWT. Retención = filas por usuario a lo largo de los días.
+- Migración `20261024060000_onboarding_active_days` (con RLS). Pruebas: `scripts/test-onboarding.ts` y `scripts/test-onboarding-ui.mjs` contra `mundobl_replay` local.
+
 ## Recomendaciones (2026-10-19)
 
 - `src/lib/recommendations.ts` puntúa por tags, géneros y actores compartidos (actor 3, tag 2, género 1, divididos por log2 de cuántas candidatas tienen ese rasgo). Hace falta un actor o dos rasgos en común; un género suelto no alcanza.

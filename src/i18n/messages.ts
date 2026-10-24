@@ -3812,6 +3812,21 @@ export type TranslationShape = {
     similarTo: string;
     seeSimilar: string;
   };
+  onboarding: {
+    title: string;
+    subtitle: string;
+    limit: string;
+    picked: string;
+    episodeLabel: string;
+    justStarting: string;
+    episodeOption: string;
+    seasonEpisodeOption: string;
+    follow: string;
+    skip: string;
+    saved: string;
+    error: string;
+    browseCatalog: string;
+  };
 };
 
 const es: TranslationShape = {
@@ -7914,6 +7929,22 @@ const es: TranslationShape = {
     similarTo: 'Parecida a {title}',
     seeSimilar: 'Ver series parecidas',
   },
+  onboarding: {
+    title: '¿Qué estás viendo ahora?',
+    subtitle:
+      'Elegí hasta {n} series que están saliendo y por qué capítulo vas. Te quedan en tu lista y te avisamos cuando haya novedades.',
+    limit: 'Podés elegir hasta {n} series',
+    picked: 'Elegida',
+    episodeLabel: 'Por qué capítulo vas',
+    justStarting: 'Recién empiezo',
+    episodeOption: 'Voy por el {n}',
+    seasonEpisodeOption: 'T{season} · voy por el {n}',
+    follow: 'Seguir ({n})',
+    skip: 'Ahora no',
+    saved: 'Listo, ya están en tu lista',
+    error: 'No se pudo guardar. Probá de nuevo.',
+    browseCatalog: '¿No está? Buscala en el catálogo',
+  },
 };
 
 const en: TranslationShape = {
@@ -11986,6 +12017,22 @@ const en: TranslationShape = {
       'Once you follow or finish series, suggestions picked for you will show up here',
     similarTo: 'Similar to {title}',
     seeSimilar: 'See similar series',
+  },
+  onboarding: {
+    title: 'What are you watching right now?',
+    subtitle:
+      "Pick up to {n} airing shows and the episode you're on. They'll go to your list and we'll let you know when there's something new.",
+    limit: 'You can pick up to {n} shows',
+    picked: 'Picked',
+    episodeLabel: "Episode you're on",
+    justStarting: 'Just starting',
+    episodeOption: 'On episode {n}',
+    seasonEpisodeOption: 'S{season} · on episode {n}',
+    follow: 'Follow ({n})',
+    skip: 'Not now',
+    saved: "Done, they're in your list",
+    error: "Couldn't save. Please try again.",
+    browseCatalog: 'Not here? Find it in the catalog',
   },
 };
 
