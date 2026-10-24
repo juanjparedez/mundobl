@@ -26,6 +26,7 @@ export const WATCH_STATUS = {
   VISTA: 'VISTA',
   ABANDONADA: 'ABANDONADA',
   RETOMAR: 'RETOMAR',
+  QUIERO_VER: 'QUIERO_VER',
 } as const;
 
 export type WatchStatusValue = (typeof WATCH_STATUS)[keyof typeof WATCH_STATUS];
@@ -35,7 +36,8 @@ export const WATCH_STATUS_LABELS: Record<WatchStatusValue, string> = {
   [WATCH_STATUS.VIENDO]: 'Viendo ahora',
   [WATCH_STATUS.VISTA]: 'Vista',
   [WATCH_STATUS.ABANDONADA]: 'Abandonada',
-  [WATCH_STATUS.RETOMAR]: 'Retomar',
+  [WATCH_STATUS.RETOMAR]: 'En pausa',
+  [WATCH_STATUS.QUIERO_VER]: 'Quiero verla',
 };
 
 export const WATCH_STATUS_COLORS: Record<WatchStatusValue, string> = {
@@ -44,4 +46,5 @@ export const WATCH_STATUS_COLORS: Record<WatchStatusValue, string> = {
   [WATCH_STATUS.VISTA]: 'success',
   [WATCH_STATUS.ABANDONADA]: 'error',
   [WATCH_STATUS.RETOMAR]: 'warning',
+  [WATCH_STATUS.QUIERO_VER]: 'default',
 };

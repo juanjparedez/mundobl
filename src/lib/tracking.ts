@@ -120,7 +120,12 @@ async function updateSeriesAfterWatch(
   });
 
   let series: ViewStatus;
-  if (!existingSeries || existingSeries.status === 'SIN_VER') {
+  // QUIERO_VER: estaba en la lista para ver y empezo a verla.
+  if (
+    !existingSeries ||
+    existingSeries.status === 'SIN_VER' ||
+    existingSeries.status === 'QUIERO_VER'
+  ) {
     series = await client.viewStatus.upsert({
       where: { userId_seriesId: { userId, seriesId } },
       update: { status: 'VIENDO', lastWatchedAt: now },
@@ -441,7 +446,11 @@ export async function setSeriesTrackingStatus(
     where: { userId, seriesId, status: { not: status } },
     data: { status, ...dates },
   });
-  if (inserted.count > 0 && (status === 'VIENDO' || status === 'RETOMAR')) {
+  // Quien la anota para ver tambien quiere enterarse cuando salga.
+  if (
+    inserted.count > 0 &&
+    (status === 'VIENDO' || status === 'RETOMAR' || status === 'QUIERO_VER')
+  ) {
     await subscribeOnFirstTrack(client, userId, seriesId);
   }
   return client.viewStatus.findUniqueOrThrow({

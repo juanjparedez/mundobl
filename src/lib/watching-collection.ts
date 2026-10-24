@@ -56,6 +56,7 @@ export const LIBRARY_STATUSES = [
   'VISTA',
   'ABANDONADA',
   'RETOMAR',
+  'QUIERO_VER',
 ] as const;
 export type WatchingFilter =
   | 'all'

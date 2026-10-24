@@ -22,6 +22,11 @@ const MODELS = [
       client.watchLinkClickDaily.findMany(),
   },
   {
+    name: 'SeriesActivityDaily',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.seriesActivityDaily.findMany(),
+  },
+  {
     name: 'UserActiveDay',
     delegate: (client: Prisma.TransactionClient) =>
       client.userActiveDay.findMany(),

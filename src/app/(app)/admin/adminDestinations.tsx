@@ -108,6 +108,15 @@ export const ADMIN_DESTINATIONS: readonly AdminDestination[] = [
     shortKey: 'adminNav.seriesShort',
   },
   {
+    id: 'producer-report',
+    href: '/admin/informe-productoras',
+    groupId: 'sistema',
+    icon: <RadarChartOutlined />,
+    labelKey: 'producerReport.title',
+    shortKey: 'producerReport.short',
+    adminOnly: true,
+  },
+  {
     id: 'pilot',
     href: '/admin/piloto',
     groupId: 'sistema',

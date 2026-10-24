@@ -1,49 +1,45 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Select, Badge, Button } from 'antd';
+import { Button, Dropdown, Popconfirm, type MenuProps } from 'antd';
 import {
   EyeOutlined,
   CalendarOutlined,
   CheckOutlined,
-  UndoOutlined,
   RedoOutlined,
   LockOutlined,
   FileTextFilled,
   FileTextOutlined,
   BulbOutlined,
+  MoreOutlined,
+  PlayCircleOutlined,
+  BookOutlined,
+  PauseCircleOutlined,
+  StopOutlined,
+  CloseCircleOutlined,
 } from '@ant-design/icons';
 import { useSession, signIn } from 'next-auth/react';
-import { WATCH_STATUS, WATCH_STATUS_COLORS } from '@/constants/series';
 import type { WatchStatusValue } from '@/constants/series';
 import { useSeriesUserStatus } from '../SeriesUserStatusProvider';
 import { WatchProgressStepper } from '../WatchProgressStepper/WatchProgressStepper';
 import { EpisodeNoteModal } from '../EpisodeNoteModal/EpisodeNoteModal';
 import { SeriesNoteModal } from '../SeriesNoteModal/SeriesNoteModal';
+import { SignupNudge } from '../SignupNudge/SignupNudge';
 import { useLocale } from '@/lib/providers/LocaleProvider';
-import { interpolateMessage } from '@/lib/i18n-format';
 import { useMessage } from '@/hooks/useMessage';
-import { savePendingTrack } from '@/lib/pending-track';
+import { useDismissedNotice } from '@/hooks/useDismissedNotice';
 import { findFurthestWatchedIndex } from '@/lib/episode-progress';
 import { toTrackedChapters, type TrackedChapter } from '@/lib/episode-chapters';
-import { shouldShowEpisodes } from '@/types/content';
+import { setLocalProgressThrough } from '@/lib/local-progress';
+import { saveSeriesStatus } from '@/lib/series-status-client';
 import { WatchDateEditor } from '../WatchDateEditor/WatchDateEditor';
 import { SIMILAR_SERIES_ANCHOR } from '../SimilarSeries/SimilarSeries';
 import './TrackingPanel.css';
 
-type AntStatusColor =
-  | 'default'
-  | 'processing'
-  | 'success'
-  | 'error'
-  | 'warning';
-
 interface TrackingPanelProps {
   seriesId: number;
-  /** Para el Popconfirm "¿Terminaste {title}?" y el mensaje post-login. */
+  /** Para el "¿Terminaste {title}?" y los mensajes de confirmacion. */
   seriesTitle: string;
-  /** Tipo de obra ('serie', 'corto', 'pelicula', etc.) para no reclamar capitulos en cortos/peliculas. */
-  seriesType?: string;
   seasons?: Array<{
     seasonNumber: number;
     episodes?: Array<{
@@ -58,15 +54,19 @@ interface TrackingPanelProps {
   hasSimilar?: boolean;
 }
 
+/** Aviso de cuenta: una sola vez por navegador, despues de usar el panel. */
+const SIGNUP_NUDGE_ID = 'tracking-signup-nudge';
+/** Capitulos marcados sin cuenta antes de explicar para que sirve una. */
+const SIGNUP_NUDGE_CHAPTERS = 2;
+
 /**
- * Bloque de tracking de la ficha: estado de la serie + progreso por
- * episodio. Es el mismo componente, en el mismo lugar y con el mismo
- * ancho, tenga o no episodios cargados la ficha y haya o no sesion.
+ * "Mi seguimiento": el mismo panel en la ficha y en /ver, con o sin cuenta.
  *
- * Con episodios: Select de estado + stepper "Ep. 2 / 8" + "Siguiente".
- * Sin episodios (cortos, peliculas, fichas incompletas): Select + boton
- * "Ya la vi", porque ahi la unidad de tracking es la serie entera.
- * Sin sesion: CTA que guarda la intencion y manda al login (T07).
+ * Un solo progreso por serie, medido en capitulos. El estado sale de ese
+ * progreso (el primer capitulo la pone en Viendo, el ultimo ofrece Vista,
+ * como hace el servidor en tracking.ts); a mano solo se elige la intencion:
+ * Quiero verla, En pausa, Abandonada. Sin cuenta todo funciona igual y se
+ * guarda en este navegador (local-progress.ts); el pie dice donde.
  *
  * Todo lo que depende del usuario se hidrata en cliente via
  * SeriesUserStatusProvider: la ficha es ISR y no llama auth().
@@ -74,39 +74,35 @@ interface TrackingPanelProps {
 export function TrackingPanel({
   seriesId,
   seriesTitle,
-  seriesType = 'serie',
   seasons = [],
   airing = false,
   hasSimilar = false,
 }: TrackingPanelProps) {
   const message = useMessage();
   const { t } = useLocale();
-  const chapterShort = (chapter: { seasonNumber: number; number: number }) =>
-    t('progressStepper.chapterShort', {
-      season: chapter.seasonNumber,
-      n: chapter.number,
-    });
   const { data: session } = useSession();
   const { seriesStatus, episodeStatus, loaded, version, refetch, storage } =
     useSeriesUserStatus();
-  const [dateOpen, setDateOpen] = useState(false);
+  const signupNudge = useDismissedNotice(SIGNUP_NUDGE_ID);
   const [status, setStatus] = useState<WatchStatusValue>('SIN_VER');
   const [isUpdating, setIsUpdating] = useState(false);
-  // Paso a "Viendo" sin ningun capitulo marcado: se abre el selector de
-  // capitulo. Si no, la serie queda en la lista con progreso 0 para siempre.
-  const [askEpisode, setAskEpisode] = useState(false);
+  const [dateOpen, setDateOpen] = useState(false);
+  // "La estoy viendo" sin capitulos marcados: abre el selector de capitulo
+  // en vez de dejar la serie en la lista con progreso 0 para siempre.
+  const [choosingEpisode, setChoosingEpisode] = useState(false);
 
   useEffect(() => {
     if (loaded) setStatus(seriesStatus as WatchStatusValue);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- re-sembrar en cada version (refetch), no solo cuando cambia seriesStatus/loaded en si
   }, [version]);
 
-  const watchStatusLabels: Record<string, string> = {
+  const statusLabels: Record<WatchStatusValue, string> = {
     SIN_VER: t('viewStatusToggle.sinVer'),
     VIENDO: t('viewStatusToggle.viendo'),
     VISTA: t('viewStatusToggle.vista'),
     ABANDONADA: t('viewStatusToggle.abandonada'),
     RETOMAR: t('viewStatusToggle.retomar'),
+    QUIERO_VER: t('viewStatusToggle.quieroVer'),
   };
 
   const rows = useMemo(
@@ -124,34 +120,96 @@ export function TrackingPanel({
   // Capitulos, no filas: en YouTube un capitulo viene en varias partes.
   const chapters = useMemo(() => toTrackedChapters(rows), [rows]);
   const hasEpisodes = chapters.length > 0;
+  const loggedIn = !!session?.user;
+  const local = storage === 'local';
 
-  // ── Notas privadas (T29): del ultimo capitulo visto y de la serie ────
-  // El "ultimo visto" sale del provider, asi que despues de un "+" en el
-  // stepper el boton pasa solo a "Nota del Ep. N+1". La nota de un
-  // capitulo en partes se guarda en la primera.
   const furthestIndex = findFurthestWatchedIndex(chapters, (chapter) =>
     chapter.episodeIds.every((id) => episodeStatus[id] === 'VISTA')
   );
+  const watchedChapters = furthestIndex + 1;
+  const hasProgress = watchedChapters > 0;
   const lastWatched = chapters[furthestIndex] ?? null;
-  // Marcada como vista pero con capitulos despues del ultimo visto: le
-  // llegaron capitulos nuevos (o la marco vista antes de terminarla). No se
-  // le cambia el estado solo; se le ofrece volver a seguirla de un toque.
+  // Vista pero con capitulos despues del ultimo visto: le llegaron
+  // capitulos nuevos (o la marco vista antes de terminarla). No se le cambia
+  // el estado solo; se le ofrece volver a seguirla de un toque.
   const hasEpisodesAfterLast =
     furthestIndex >= 0 && furthestIndex < chapters.length - 1;
-  // Todos los capitulos vistos pero la serie sigue en curso (marcados uno
-  // por uno, o el final salio despues): se ofrece cerrarla de un toque.
+  // Todos los capitulos vistos pero la serie sigue en curso: se ofrece
+  // cerrarla de un toque.
   const canFinish =
     hasEpisodes &&
     !airing &&
     furthestIndex === chapters.length - 1 &&
     (status === 'VIENDO' || status === 'RETOMAR');
+  const manualIntent =
+    status === 'QUIERO_VER' ||
+    status === 'RETOMAR' ||
+    status === 'ABANDONADA' ||
+    status === 'VISTA';
+
+  const saveStatus = async (next: WatchStatusValue, success?: string) => {
+    const previous = status;
+    setStatus(next);
+    setIsUpdating(true);
+    try {
+      await saveSeriesStatus(seriesId, next, storage);
+      await refetch();
+      message.success(
+        success ??
+          t('viewStatusToggle.statusUpdateSuccess', {
+            label: statusLabels[next],
+          })
+      );
+    } catch {
+      setStatus(previous);
+      message.error(t('viewStatusToggle.errorUpdate'));
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  /** "Ya la vi toda": todos los capitulos + Vista, en un paso. */
+  const markAllWatched = async () => {
+    if (!hasEpisodes) {
+      await saveStatus(
+        'VISTA',
+        t('trackingPanel.markedWatched', { title: seriesTitle })
+      );
+      return;
+    }
+    const lastChapter = chapters[chapters.length - 1];
+    const lastId = lastChapter.episodeIds[lastChapter.episodeIds.length - 1];
+    setIsUpdating(true);
+    try {
+      if (local) {
+        const ordered = chapters.flatMap((chapter) => chapter.episodeIds);
+        setLocalProgressThrough(seriesId, ordered, ordered.length - 1);
+        await saveSeriesStatus(seriesId, 'VISTA', 'local');
+      } else {
+        const response = await fetch(`/api/series/${seriesId}/progress`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ upToEpisodeId: lastId }),
+        });
+        if (!response.ok) throw new Error();
+        await saveSeriesStatus(seriesId, 'VISTA', 'account');
+      }
+      await refetch();
+      message.success(t('trackingPanel.markedWatched', { title: seriesTitle }));
+    } catch {
+      message.error(t('viewStatusToggle.errorUpdate'));
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  // ── Notas privadas (T29), solo con cuenta ──────────────────────────
   const [episodesWithNotes, setEpisodesWithNotes] = useState<Set<number>>(
     new Set()
   );
   const [seriesHasNote, setSeriesHasNote] = useState(false);
   const [noteChapter, setNoteChapter] = useState<TrackedChapter | null>(null);
   const [seriesNoteOpen, setSeriesNoteOpen] = useState(false);
-  const loggedIn = !!session?.user;
   const episodeIdsKey = rows.map((ep) => ep.id).join(',');
 
   useEffect(() => {
@@ -180,155 +238,212 @@ export function TrackingPanel({
     };
   }, [loggedIn, seriesId, episodeIdsKey]);
 
-  const postStatus = async (
-    newStatus: WatchStatusValue,
-    successMessage?: string
-  ) => {
-    const previous = status;
-    setStatus(newStatus);
-    setIsUpdating(true);
-    try {
-      const response = await fetch(`/api/series/${seriesId}/view-status`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: newStatus }),
-      });
-      if (!response.ok) throw new Error(t('viewStatusToggle.errorUpdating'));
-      await refetch();
-      setAskEpisode(newStatus === 'VIENDO' && hasEpisodes && furthestIndex < 0);
-      message.success(
-        successMessage ??
-          interpolateMessage(t('viewStatusToggle.statusUpdateSuccess'), {
-            label: watchStatusLabels[newStatus] ?? newStatus,
-          })
+  const chapterShort = (chapter: { seasonNumber: number; number: number }) =>
+    t('progressStepper.chapterShort', {
+      season: chapter.seasonNumber,
+      n: chapter.number,
+    });
+
+  // Una frase que dice donde esta: lo primero que se lee del panel.
+  const summary =
+    status === 'VISTA'
+      ? t('tracking.summaryFinished')
+      : status === 'QUIERO_VER'
+        ? t('tracking.summaryWantToWatch')
+        : status === 'ABANDONADA'
+          ? t('tracking.summaryDropped')
+          : status === 'RETOMAR'
+            ? hasProgress
+              ? t('tracking.summaryPausedAt', {
+                  current: watchedChapters,
+                  total: chapters.length,
+                })
+              : t('tracking.summaryPaused')
+            : hasProgress
+              ? t('tracking.summaryAt', {
+                  current: watchedChapters,
+                  total: chapters.length,
+                })
+              : hasEpisodes
+                ? t('tracking.summaryEmpty')
+                : t('tracking.summaryEmptyNoEpisodes');
+
+  const menuItems: MenuProps['items'] = [
+    status !== 'QUIERO_VER' && !hasProgress
+      ? {
+          key: 'QUIERO_VER',
+          icon: <BookOutlined />,
+          label: t('tracking.wantToWatch'),
+        }
+      : null,
+    status !== 'VISTA'
+      ? {
+          key: 'ALL',
+          icon: <CheckOutlined />,
+          label: hasEpisodes
+            ? t('tracking.markAllWatched')
+            : t('trackingPanel.markWatched'),
+        }
+      : null,
+    hasProgress && status !== 'RETOMAR' && status !== 'VISTA'
+      ? {
+          key: 'RETOMAR',
+          icon: <PauseCircleOutlined />,
+          label: t('tracking.pause'),
+        }
+      : null,
+    status !== 'ABANDONADA'
+      ? {
+          key: 'ABANDONADA',
+          icon: <StopOutlined />,
+          label: t('tracking.drop'),
+        }
+      : null,
+    manualIntent
+      ? {
+          key: 'CLEAR',
+          icon: <CloseCircleOutlined />,
+          label: t('tracking.clearIntent', { label: statusLabels[status] }),
+        }
+      : null,
+  ].filter((item) => item !== null);
+
+  const onMenu: MenuProps['onClick'] = ({ key }) => {
+    if (key === 'ALL') void markAllWatched();
+    else if (key === 'CLEAR')
+      void saveStatus(
+        hasProgress ? 'VIENDO' : 'SIN_VER',
+        t('tracking.intentCleared')
       );
-    } catch (error) {
-      setStatus(previous);
-      message.error(t('viewStatusToggle.errorUpdate'));
-      console.error(error);
-    } finally {
-      setIsUpdating(false);
-    }
+    else void saveStatus(key as WatchStatusValue);
   };
 
-  const handleStartTracking = () => {
-    savePendingTrack({
-      seriesId,
-      upToEpisodeId: null,
-      markWatched: !hasEpisodes,
-      createdAt: Date.now(),
-    });
+  const signInHere = () =>
     void signIn('google', {
       callbackUrl: window.location.pathname + window.location.search,
     });
-  };
 
-  // ── Sin sesion: CTA (T07) ────────────────────────────────────────────
-  if (!session?.user) {
-    return (
-      <section
-        className="tracking-panel tracking-panel--anon"
-        aria-label={t('trackCta.title')}
-      >
-        <header className="tracking-panel__header">
-          <EyeOutlined aria-hidden />
-          <span className="tracking-panel__title">{t('trackCta.title')}</span>
-        </header>
-        {hasEpisodes ? (
-          <>
-            <p className="tracking-panel__hint">{t('trackCta.subtitle')}</p>
-            <WatchProgressStepper
-              seriesId={seriesId}
-              seriesTitle={seriesTitle}
-              chapters={chapters}
-              localOnly={storage === 'local'}
-              airing={airing}
-            />
-            <p className="tracking-panel__local-note">
-              {t('trackingPanel.localSaved')}{' '}
-              <button
-                type="button"
-                className="tracking-panel__login-link"
-                onClick={() =>
-                  void signIn('google', {
-                    callbackUrl:
-                      window.location.pathname + window.location.search,
-                  })
-                }
-              >
-                {t('trackingPanel.localSignIn')}
-              </button>
-            </p>
-          </>
-        ) : (
-          <>
-            <p className="tracking-panel__hint">
-              {t('trackCta.subtitleNoEpisodes')}
-            </p>
-            <Button
-              type="primary"
-              block
-              size="large"
-              icon={<CheckOutlined />}
-              onClick={handleStartTracking}
-              className="tracking-panel__cta"
-            >
-              {t('trackCta.buttonNoEpisodes')}
-            </Button>
-          </>
-        )}
-      </section>
-    );
-  }
-
-  // ── Con sesion ──────────────────────────────────────────────────────
-  const statusOptions = Object.values(WATCH_STATUS).map((value) => ({
-    value,
-    label: (
-      <span className="tracking-panel__option">
-        <Badge status={WATCH_STATUS_COLORS[value] as AntStatusColor} />
-        {watchStatusLabels[value] ?? value}
-      </span>
-    ),
-  }));
+  const showStepper =
+    hasEpisodes &&
+    (hasProgress ||
+      choosingEpisode ||
+      status === 'VIENDO' ||
+      status === 'RETOMAR');
+  const showStartButtons =
+    !showStepper && status !== 'VISTA' && status !== 'ABANDONADA';
+  const showSignupNudge =
+    local &&
+    !signupNudge.dismissed &&
+    (watchedChapters >= SIGNUP_NUDGE_CHAPTERS ||
+      status === 'QUIERO_VER' ||
+      status === 'VISTA');
 
   return (
     <section className="tracking-panel" aria-label={t('trackingPanel.title')}>
       <header className="tracking-panel__header">
-        <EyeOutlined aria-hidden />
-        <span className="tracking-panel__title">
-          {t('trackingPanel.title')}
+        <span className="tracking-panel__heading">
+          <EyeOutlined aria-hidden />
+          <span className="tracking-panel__title">
+            {t('trackingPanel.title')}
+          </span>
         </span>
+        <Dropdown
+          menu={{ items: menuItems, onClick: onMenu }}
+          trigger={['click']}
+          disabled={isUpdating || !loaded}
+        >
+          <Button
+            type="text"
+            size="small"
+            icon={<MoreOutlined />}
+            aria-label={t('tracking.moreOptions')}
+            className="tracking-panel__more"
+          />
+        </Dropdown>
       </header>
 
-      <Select
-        value={status}
-        onChange={(value: WatchStatusValue) => void postStatus(value)}
-        loading={isUpdating}
-        disabled={isUpdating}
-        options={statusOptions}
-        className={`tracking-panel__select tracking-panel__select--${status.toLowerCase()}`}
-        size="large"
-        aria-label={t('viewStatusToggle.ariaLabel')}
-      />
+      <p className="tracking-panel__summary" aria-live="polite">
+        {summary}
+      </p>
 
-      {status === 'VISTA' && (
-        <Button
-          icon={<CalendarOutlined />}
-          onClick={() => setDateOpen(true)}
-          disabled={isUpdating}
-        >
-          {t('watchDateEditor.title')}
-        </Button>
+      {showStartButtons && (
+        <div className="tracking-panel__start">
+          {hasEpisodes ? (
+            <Button
+              type="primary"
+              size="large"
+              icon={<PlayCircleOutlined />}
+              disabled={isUpdating || !loaded}
+              onClick={() => setChoosingEpisode(true)}
+              className="tracking-panel__cta"
+            >
+              {t('tracking.startWatching')}
+            </Button>
+          ) : (
+            <Button
+              type="primary"
+              size="large"
+              icon={<CheckOutlined />}
+              disabled={isUpdating || !loaded}
+              onClick={() => void markAllWatched()}
+              className="tracking-panel__cta"
+            >
+              {t('trackingPanel.markWatched')}
+            </Button>
+          )}
+          <Button
+            size="large"
+            icon={
+              status === 'QUIERO_VER' ? <CheckOutlined /> : <BookOutlined />
+            }
+            disabled={isUpdating || !loaded}
+            aria-pressed={status === 'QUIERO_VER'}
+            onClick={() =>
+              void saveStatus(
+                status === 'QUIERO_VER' ? 'SIN_VER' : 'QUIERO_VER'
+              )
+            }
+            className="tracking-panel__cta"
+          >
+            {status === 'QUIERO_VER'
+              ? t('tracking.inWantList')
+              : t('tracking.wantToWatch')}
+          </Button>
+        </div>
       )}
-      {status === 'VISTA' && hasSimilar && (
-        <a
-          href={`#${SIMILAR_SERIES_ANCHOR}`}
-          className="tracking-panel__next-link"
-        >
-          <BulbOutlined aria-hidden /> {t('recommendations.seeSimilar')}
-        </a>
+
+      {choosingEpisode && !hasProgress && (
+        <p className="tracking-panel__hint">{t('trackCta.chooseEpisode')}</p>
       )}
+
+      {showStepper && (
+        <WatchProgressStepper
+          seriesId={seriesId}
+          seriesTitle={seriesTitle}
+          chapters={chapters}
+          airing={airing}
+          localOnly={local}
+          openPicker={choosingEpisode && !hasProgress}
+        />
+      )}
+
+      {canFinish && (
+        <div className="tracking-panel__resume">
+          <p className="tracking-panel__hint">
+            {t('progressStepper.finishedTitle', { title: seriesTitle })}
+          </p>
+          <Button
+            type="primary"
+            block
+            icon={<CheckOutlined />}
+            disabled={isUpdating}
+            onClick={() => void saveStatus('VISTA')}
+          >
+            {t('progressStepper.markComplete')}
+          </Button>
+        </div>
+      )}
+
       {status === 'VISTA' && hasEpisodesAfterLast && (
         <div className="tracking-panel__resume">
           <p className="tracking-panel__hint">
@@ -339,145 +454,144 @@ export function TrackingPanel({
             block
             icon={<RedoOutlined />}
             disabled={isUpdating}
-            onClick={() => void postStatus('VIENDO')}
+            onClick={() => void saveStatus('VIENDO')}
           >
             {t('trackingPanel.followAgain')}
           </Button>
         </div>
       )}
 
-      {canFinish && (
-        <div className="tracking-panel__resume">
-          <p className="tracking-panel__hint">
-            {interpolateMessage(t('progressStepper.finishedTitle'), {
-              title: seriesTitle,
-            })}
-          </p>
-          <Button
-            type="primary"
-            block
-            icon={<CheckOutlined />}
-            disabled={isUpdating}
-            onClick={() => void postStatus('VISTA')}
-          >
-            {t('progressStepper.markComplete')}
-          </Button>
+      {status === 'VISTA' && (
+        <div className="tracking-panel__finished">
+          {!local && (
+            <Button
+              icon={<CalendarOutlined />}
+              onClick={() => setDateOpen(true)}
+              disabled={isUpdating}
+            >
+              {t('watchDateEditor.title')}
+            </Button>
+          )}
+          {hasSimilar && (
+            <a
+              href={`#${SIMILAR_SERIES_ANCHOR}`}
+              className="tracking-panel__next-link"
+            >
+              <BulbOutlined aria-hidden /> {t('recommendations.seeSimilar')}
+            </a>
+          )}
+          {!hasEpisodes && (
+            <Popconfirm
+              title={t('tracking.unwatchConfirm')}
+              onConfirm={() => void saveStatus('SIN_VER')}
+              okText={t('trackingPanel.markUnwatched')}
+              cancelText={t('progressStepper.notYet')}
+            >
+              <Button type="link" size="small" disabled={isUpdating}>
+                {t('trackingPanel.markUnwatched')}
+              </Button>
+            </Popconfirm>
+          )}
         </div>
       )}
 
-      {askEpisode && furthestIndex < 0 && (
-        <p className="tracking-panel__hint">{t('trackCta.chooseEpisode')}</p>
+      {showSignupNudge && (
+        <SignupNudge
+          title={t('tracking.signupTitle')}
+          body={t('tracking.signupBody')}
+          action={t('tracking.signupAction')}
+          dismiss={t('tracking.signupDismiss')}
+          onAction={signInHere}
+          onDismiss={signupNudge.dismiss}
+        />
       )}
 
-      {hasEpisodes ? (
-        <WatchProgressStepper
-          seriesId={seriesId}
-          seriesTitle={seriesTitle}
-          chapters={chapters}
-          airing={airing}
-          openPicker={askEpisode && furthestIndex < 0}
-        />
+      {local ? (
+        <p className="tracking-panel__local-note">
+          {t('tracking.localFooter')}{' '}
+          <button
+            type="button"
+            className="tracking-panel__login-link"
+            onClick={signInHere}
+          >
+            {t('tracking.localFooterAction')}
+          </button>
+        </p>
       ) : (
-        <div className="tracking-panel__no-episodes">
-          {status === 'VISTA' ? (
+        /* Notas privadas: solo las ve el usuario. Distintas de los
+           comentarios (publicos). Van pegadas al tracking porque el momento
+           de anotar "en este capitulo se conocen" es justo despues de
+           marcarlo como visto. */
+        <div className="tracking-panel__notes">
+          <span className="tracking-panel__notes-title">
+            <LockOutlined aria-hidden /> {t('trackingPanel.notesTitle')}
+          </span>
+          <div className="tracking-panel__notes-row">
+            {lastWatched && (
+              <Button
+                className="tracking-panel__note-btn"
+                icon={
+                  episodesWithNotes.has(lastWatched.episodeIds[0]) ? (
+                    <FileTextFilled />
+                  ) : (
+                    <FileTextOutlined />
+                  )
+                }
+                onClick={() => setNoteChapter(lastWatched)}
+              >
+                {t('trackingPanel.episodeNote', {
+                  code: chapterShort(lastWatched),
+                })}
+              </Button>
+            )}
             <Button
-              block
-              size="large"
-              icon={<UndoOutlined />}
-              disabled={isUpdating}
-              onClick={() => void postStatus('SIN_VER')}
+              className="tracking-panel__note-btn"
+              icon={seriesHasNote ? <FileTextFilled /> : <FileTextOutlined />}
+              onClick={() => setSeriesNoteOpen(true)}
             >
-              {t('trackingPanel.markUnwatched')}
+              {t('trackingPanel.seriesNote')}
             </Button>
-          ) : (
-            <Button
-              type="primary"
-              block
-              size="large"
-              icon={<CheckOutlined />}
-              disabled={isUpdating}
-              onClick={() =>
-                void postStatus(
-                  'VISTA',
-                  interpolateMessage(t('trackingPanel.markedWatched'), {
-                    title: seriesTitle,
-                  })
-                )
-              }
-            >
-              {t('trackingPanel.markWatched')}
-            </Button>
-          )}
-          {shouldShowEpisodes(seriesType) && (
+          </div>
+          {!lastWatched && hasEpisodes && (
             <p className="tracking-panel__hint">
-              {t('trackingPanel.noEpisodes')}
+              {t('trackingPanel.notesHintNoEpisode')}
             </p>
           )}
         </div>
       )}
 
-      {/* Notas privadas: solo las ve el usuario. Distintas de los
-          comentarios (publicos). Van pegadas al tracking porque el momento
-          de anotar "en este capitulo se conocen" es justo despues de
-          marcarlo como visto. */}
-      <div className="tracking-panel__notes">
-        <span className="tracking-panel__notes-title">
-          <LockOutlined aria-hidden /> {t('trackingPanel.notesTitle')}
-        </span>
-        <div className="tracking-panel__notes-row">
-          {lastWatched && (
-            <Button
-              className="tracking-panel__note-btn"
-              icon={
-                episodesWithNotes.has(lastWatched.episodeIds[0]) ? (
-                  <FileTextFilled />
-                ) : (
-                  <FileTextOutlined />
-                )
-              }
-              onClick={() => setNoteChapter(lastWatched)}
-            >
-              {interpolateMessage(t('trackingPanel.episodeNote'), {
-                code: chapterShort(lastWatched),
-              })}
-            </Button>
-          )}
-          <Button
-            className="tracking-panel__note-btn"
-            icon={seriesHasNote ? <FileTextFilled /> : <FileTextOutlined />}
-            onClick={() => setSeriesNoteOpen(true)}
-          >
-            {t('trackingPanel.seriesNote')}
-          </Button>
-        </div>
-        {!lastWatched && hasEpisodes && (
-          <p className="tracking-panel__hint">
-            {t('trackingPanel.notesHintNoEpisode')}
-          </p>
-        )}
-      </div>
-
-      <EpisodeNoteModal
-        episodeId={noteChapter?.episodeIds[0] ?? null}
-        episodeLabel={
-          noteChapter
-            ? noteChapter.title
-              ? `${chapterShort(noteChapter)} — ${noteChapter.title}`
-              : chapterShort(noteChapter)
-            : undefined
-        }
-        open={noteChapter !== null}
-        onClose={() => setNoteChapter(null)}
-        onNoteChange={(hasNote) => {
-          if (!noteChapter) return;
-          setEpisodesWithNotes((prev) => {
-            const next = new Set(prev);
-            if (hasNote) next.add(noteChapter.episodeIds[0]);
-            else next.delete(noteChapter.episodeIds[0]);
-            return next;
-          });
-        }}
-      />
+      {loggedIn && (
+        <>
+          <EpisodeNoteModal
+            episodeId={noteChapter?.episodeIds[0] ?? null}
+            episodeLabel={
+              noteChapter
+                ? noteChapter.title
+                  ? `${chapterShort(noteChapter)} — ${noteChapter.title}`
+                  : chapterShort(noteChapter)
+                : undefined
+            }
+            open={noteChapter !== null}
+            onClose={() => setNoteChapter(null)}
+            onNoteChange={(hasNote) => {
+              if (!noteChapter) return;
+              setEpisodesWithNotes((prev) => {
+                const next = new Set(prev);
+                if (hasNote) next.add(noteChapter.episodeIds[0]);
+                else next.delete(noteChapter.episodeIds[0]);
+                return next;
+              });
+            }}
+          />
+          <SeriesNoteModal
+            seriesId={seriesNoteOpen ? seriesId : null}
+            seriesLabel={seriesTitle}
+            open={seriesNoteOpen}
+            onClose={() => setSeriesNoteOpen(false)}
+            onNoteChange={setSeriesHasNote}
+          />
+        </>
+      )}
       {dateOpen && session?.user && status === 'VISTA' && (
         <WatchDateEditor
           key={`${session.user.id}-${seriesId}`}
@@ -494,13 +608,6 @@ export function TrackingPanel({
           }}
         />
       )}
-      <SeriesNoteModal
-        seriesId={seriesNoteOpen ? seriesId : null}
-        seriesLabel={seriesTitle}
-        open={seriesNoteOpen}
-        onClose={() => setSeriesNoteOpen(false)}
-        onNoteChange={setSeriesHasNote}
-      />
     </section>
   );
 }

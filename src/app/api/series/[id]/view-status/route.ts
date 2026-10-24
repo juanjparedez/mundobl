@@ -2,15 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 import { setSeriesTrackingStatus } from '@/lib/tracking';
+import { WATCH_STATUS, type WatchStatusValue } from '@/constants/series';
 
-const VALID_STATUSES = [
-  'SIN_VER',
-  'VIENDO',
-  'VISTA',
-  'ABANDONADA',
-  'RETOMAR',
-] as const;
-type WatchStatusInput = (typeof VALID_STATUSES)[number];
+const VALID_STATUSES: readonly string[] = Object.values(WATCH_STATUS);
+type WatchStatusInput = WatchStatusValue;
 
 export async function POST(
   request: NextRequest,

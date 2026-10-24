@@ -38,6 +38,9 @@ import { getVerUrl } from '@/lib/slug';
 import { SeriesSubscribeButton } from '@/components/series/SeriesSubscribeButton/SeriesSubscribeButton';
 import { FavoriteButton } from '@/components/series/FavoriteButton/FavoriteButton';
 import { TrackingPanel } from '@/components/series/TrackingPanel/TrackingPanel';
+import { WatchedToggle } from '@/components/series/WatchedToggle/WatchedToggle';
+import { ActivityPulse } from '@/components/series/ActivityPulse/ActivityPulse';
+import { recordSeriesActivity } from '@/lib/activity-beacon';
 import { DismissibleNotice } from '@/components/design-system';
 import { RatingSection } from '@/components/series/RatingSection';
 import { ReviewsSection } from '@/components/series/ReviewsSection/ReviewsSection';
@@ -484,6 +487,8 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
 
   const handleWatchProgress = async (event: 'watched' | 'ended') => {
     if (!active || !activeChapter) return;
+    // Reproducido de verdad (80 % del video, sin saltos): actividad anonima.
+    if (event === 'watched') recordSeriesActivity(series.id, 'view', active.id);
     if (event === 'watched' && !isWatched(active.id)) {
       const saved = await setWatched('auto', [active.id], true);
       if (saved) {
@@ -623,6 +628,19 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         </div>
       </header>
 
+      {/* Quien llega desde Google no sabe que aca se mira gratis y sin
+       *  cuenta: se dice una vez, arriba del reproductor. */}
+      {status === 'unauthenticated' && (
+        <DismissibleNotice
+          id="ver-free-no-account"
+          icon={<PlayCircleOutlined />}
+          title={t('tracking.freeNoAccountTitle')}
+          closeLabel={t('aboutContentNotice.close')}
+        >
+          {t('tracking.freeNoAccountBody')}
+        </DismissibleNotice>
+      )}
+
       {/* Reproductor grande */}
       {activeAvailability !== 'ok' && (
         <Alert
@@ -661,7 +679,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           title={active.title || series.title}
           autoplay={autoplayEpisodeId === active.id}
           onWatchProgress={
-            (active.embedPlatform || 'YouTube') === 'YouTube'
+            ['YouTube', 'Vimeo'].includes(active.embedPlatform || 'YouTube')
               ? handleWatchProgress
               : undefined
           }
@@ -777,6 +795,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
        *  la lista, en el celu, habia que pasar todas las partes para verlo. */}
       <div className="ver-serie__community-link">
         <CommunityWorkLink seriesId={series.id} episodeId={active?.id} />
+        <ActivityPulse seriesId={series.id} />
       </div>
 
       {/* Tracking: mismo mecanismo que la ficha del catalogo (ViewStatus),
@@ -1008,11 +1027,35 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
                         <PlayCircleOutlined />{' '}
                         {t('verSerie.chapterTitle', { n: chapterNumber })}
                       </span>
-                      {isChapterWatched && (
-                        <span className="ver-serie__chapter-watched">
-                          <CheckCircleFilled /> {t('verSerie.chapterWatched')}
-                        </span>
-                      )}
+                      {/* Un toque, sin reproducir: para lo que se vio en
+                       *  otro lado. Mismo estado que el boton del reproductor. */}
+                      <WatchedToggle
+                        label={
+                          isChapterWatched
+                            ? t('verSerie.chapterWatched')
+                            : t('tracking.markChapterShort')
+                        }
+                        ariaLabel={t('verSerie.markChapter', {
+                          n: chapterNumber,
+                        })}
+                        hint={
+                          isChapterWatched
+                            ? t('verSerie.unmarkChapter', { n: chapterNumber })
+                            : t('verSerie.markChapter', { n: chapterNumber })
+                        }
+                        watched={isChapterWatched}
+                        loading={
+                          pendingKey === `card-${seasonNumber}-${chapterNumber}`
+                        }
+                        disabled={!ready}
+                        onToggle={() =>
+                          void setWatched(
+                            `card-${seasonNumber}-${chapterNumber}`,
+                            items.map((item) => item.episode.id),
+                            !isChapterWatched
+                          )
+                        }
+                      />
                       {isMultiPart && (
                         <span className="ver-serie__chapter-parts-hint">
                           {t('verSerie.splitInParts', { n: items.length })}

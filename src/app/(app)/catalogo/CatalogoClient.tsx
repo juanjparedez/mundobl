@@ -54,6 +54,16 @@ import {
 import Image from 'next/image';
 import Link from 'next/link';
 import { useMessage } from '@/hooks/useMessage';
+import {
+  QuickStatusButton,
+  type QuickStatusAction,
+} from '@/components/series/QuickStatusButton/QuickStatusButton';
+import {
+  listLocalProgress,
+  localSeriesStatus,
+  subscribeToLocalProgress,
+} from '@/lib/local-progress';
+import { saveSeriesStatus } from '@/lib/series-status-client';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
@@ -192,10 +202,24 @@ export function CatalogoClient({ payload }: CatalogoClientProps) {
 
   useEffect(() => {
     if (!userRole) {
+      // Sin cuenta, el estado vive en este navegador (local-progress.ts).
       setFavoriteIds(new Set());
-      setViewedIds(new Set());
-      setWatchStatuses({});
-      return;
+      const loadLocal = () => {
+        const statuses = Object.fromEntries(
+          listLocalProgress().map(({ seriesId, progress }) => [
+            String(seriesId),
+            localSeriesStatus(progress),
+          ])
+        );
+        setWatchStatuses(statuses);
+        setViewedIds(
+          new Set(
+            Object.keys(statuses).filter((id) => statuses[id] === 'VISTA')
+          )
+        );
+      };
+      loadLocal();
+      return subscribeToLocalProgress(loadLocal);
     }
 
     const controller = new AbortController();
@@ -518,7 +542,8 @@ export function CatalogoClient({ payload }: CatalogoClientProps) {
     if (
       selectedViewed === 'VIENDO' ||
       selectedViewed === 'RETOMAR' ||
-      selectedViewed === 'ABANDONADA'
+      selectedViewed === 'ABANDONADA' ||
+      selectedViewed === 'QUIERO_VER'
     ) {
       filtered = filtered.filter((s) => watchStatuses[s.id] === selectedViewed);
     }
@@ -741,6 +766,70 @@ export function CatalogoClient({ payload }: CatalogoClientProps) {
       message.error(t('catalogo.favoriteError'));
     }
   };
+
+  // Menu rapido de la tarjeta: con cuenta o en este navegador, igual.
+  const handleQuickStatus = async (
+    serie: SerieData,
+    action: QuickStatusAction
+  ) => {
+    if (action === 'WATCHING') {
+      handleCardClick(serie.id, serie.titulo);
+      return;
+    }
+    const previous = watchStatuses[serie.id];
+    const next = action === 'CLEAR' ? 'SIN_VER' : action;
+    const applyLocally = (status: string | undefined) => {
+      setWatchStatuses((prev) => {
+        const copy = { ...prev };
+        if (status === undefined || status === 'SIN_VER') delete copy[serie.id];
+        else copy[serie.id] = status;
+        return copy;
+      });
+      setViewedIds((prev) => {
+        const copy = new Set(prev);
+        if (status === 'VISTA') copy.add(serie.id);
+        else copy.delete(serie.id);
+        return copy;
+      });
+    };
+    applyLocally(next);
+    try {
+      await saveSeriesStatus(
+        Number(serie.id),
+        next,
+        userRole ? 'account' : 'local'
+      );
+      message.success(
+        action === 'CLEAR'
+          ? t('tracking.intentCleared')
+          : t('tracking.quickSaved', {
+              title: serie.titulo,
+              label:
+                action === 'VISTA'
+                  ? t('viewStatusToggle.vista')
+                  : t('viewStatusToggle.quieroVer'),
+            })
+      );
+    } catch {
+      applyLocally(previous);
+      message.error(t('viewStatusToggle.errorUpdate'));
+    }
+  };
+
+  const renderQuickStatus = (serie: SerieData, className: string) => (
+    <QuickStatusButton
+      status={watchStatuses[serie.id]}
+      className={className}
+      onAction={(action) => void handleQuickStatus(serie, action)}
+      labels={{
+        trigger: t('tracking.quickTrigger'),
+        wantToWatch: t('tracking.wantToWatch'),
+        watching: t('tracking.quickWatching'),
+        watched: t('tracking.quickWatched'),
+        clear: t('tracking.quickClear'),
+      }}
+    />
+  );
 
   const handleCardClick = (id: string, title?: string) => {
     withViewTransition(() => router.push(getSeriesUrl(id, title)));
@@ -1076,6 +1165,7 @@ export function CatalogoClient({ payload }: CatalogoClientProps) {
                   <EyeOutlined />
                 </button>
               </Tooltip>
+              {renderQuickStatus(serie, 'serie-card-action-btn')}
             </div>
             {/* Sin titulo acá: antes se repetia (overlay sobre la imagen +
              * .serie-card-title abajo), tapando la portada con un bloque de
@@ -1140,6 +1230,8 @@ export function CatalogoClient({ payload }: CatalogoClientProps) {
               <Tag color="processing">{t('viewStatusToggle.viendo')}</Tag>
             ) : watchStatuses[serie.id] === 'RETOMAR' ? (
               <Tag color="warning">{t('viewStatusToggle.retomar')}</Tag>
+            ) : watchStatuses[serie.id] === 'QUIERO_VER' ? (
+              <Tag color="purple">{t('viewStatusToggle.quieroVer')}</Tag>
             ) : null}
           </div>
 
@@ -1361,6 +1453,7 @@ export function CatalogoClient({ payload }: CatalogoClientProps) {
         >
           {isFavorite(serie.id) ? <StarFilled /> : <StarOutlined />}
         </button>
+        {renderQuickStatus(serie, 'serie-list-item-fav')}
       </div>
     );
   };
@@ -1521,6 +1614,7 @@ export function CatalogoClient({ payload }: CatalogoClientProps) {
           }}
           allowClear
         >
+          <Option value="QUIERO_VER">{t('tracking.filterWantList')}</Option>
           <Option value="VIENDO">{t('viewStatusToggle.viendo')}</Option>
           <Option value="watched">{t('catalogo.statusWatched')}</Option>
           <Option value="unwatched">{t('catalogo.statusUnwatched')}</Option>

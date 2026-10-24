@@ -1,0 +1,26 @@
+.activity-opt-out {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background: var(--bg-container);
+}
+
+.activity-opt-out .ant-switch {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.activity-opt-out__label {
+  margin: 0;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.activity-opt-out__hint {
+  margin: var(--spacing-xs) 0 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}

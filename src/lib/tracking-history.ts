@@ -37,6 +37,7 @@ const statuses: readonly string[] = [
   'VISTA',
   'RETOMAR',
   'ABANDONADA',
+  'QUIERO_VER',
 ];
 const kinds: readonly string[] = [
   'RECORDED',

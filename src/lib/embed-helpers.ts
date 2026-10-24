@@ -272,6 +272,8 @@ export function getEmbedInfo(
     case 'Vimeo':
       const vimeoSource = parseEpisodeSource(url);
       const vimeoParams = new URLSearchParams({ dnt: '1' });
+      // Habilita el protocolo postMessage para useVimeoWatchTime.
+      if (options.jsApi) vimeoParams.set('api', '1');
       if (vimeoSource?.privacyHash)
         vimeoParams.set('h', vimeoSource.privacyHash);
       if (options.autoplay) vimeoParams.set('autoplay', '1');

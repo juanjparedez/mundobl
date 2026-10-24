@@ -1081,6 +1081,17 @@ no se convierte USER_EMBED por esta ruta.
 cuenta/ficha en este navegador. Recuperar una edición mantiene su versión original.
 Detalle, límites y reproducción: [docs/guardado-series-2026-10-12.md](../guardado-series-2026-10-12.md).
 
+## Seguimiento unificado y actividad anónima (2026-10-24)
+
+- Un solo panel "Mi seguimiento" ([TrackingPanel](../../src/components/series/TrackingPanel/TrackingPanel.tsx)) con y sin cuenta. El estado sale del progreso (capítulos, vía `updateSeriesAfterWatch`): SIN_VER/QUIERO_VER/RETOMAR pasan a VIENDO al marcar; VISTA y ABANDONADA se respetan. A mano solo se eligen intenciones: QUIERO_VER (nuevo valor del enum), RETOMAR (se muestra "En pausa"), ABANDONADA y VISTA.
+- Sin cuenta todo vive en `localStorage` (`mundobl.localProgress` v2, con `intent`; v1 se sigue leyendo) en [local-progress.ts](../../src/lib/local-progress.ts). Al iniciar sesión [LocalProgressImporter](../../src/components/series/LocalProgressImporter/LocalProgressImporter.tsx) lo pasa solo a la cuenta (`POST /api/user/local-progress`): unión de capítulos y la intención solo si la cuenta no tenía estado. Nunca pisa la cuenta.
+- `/watching` sin cuenta muestra [LocalWatchingList](../../src/components/watching/LocalWatchingList/LocalWatchingList.tsx) y la home "Seguir viendo" ([ContinueWatchingRow](../../src/components/watching/ContinueWatchingRow/ContinueWatchingRow.tsx)); los datos públicos salen de `GET /api/series/summaries` (cacheado por CDN). El catálogo tiene acción rápida por tarjeta (QuickStatusButton) y filtro "Quiero verla".
+- /ver: YouTube y Vimeo registran solos al 80% (`useVimeoWatchTime`); cada tarjeta de capítulo tiene su check.
+- Actividad anónima: `SeriesActivityDaily` (día, serie, kind view|chapter|want|finish, source account|browser, país del edge, count). Sin usuario, IP ni cookie. No cuentan GPC/DNT, el opt-out de /privacidad (`mundobl.activityOptOut`), ADMIN/MODERATOR/COLLABORATOR ni series no visibles. El contador público ("N capítulos vistos esta semana") exige mínimo 5 y se pide por API (las fichas son ISR de una semana).
+- Ranking: quien no publicó su perfil aparece con un alias generado ([community-alias.ts](../../src/lib/community-alias.ts)): dos listas de 24 sustantivos por idioma (`communityAlias.firstWords/secondWords`, separadas por `|`) y una plantilla. Semilla: `CommunityProfile.aliasSeed` o hash del userId. Se cambia con `POST /api/community/alias` (cada 10 min).
+- `/admin/informe-productoras` ([producer-report.ts](../../src/lib/producer-report.ts)): cuentas, activas, capítulos con/sin cuenta, por serie, canal oficial y país, y clics a plataformas, con resumen copiable.
+- Tests: `scripts/test-tracking-redesign.ts` y `scripts/test-activity-routes.mjs`.
+
 ## Comandos
 
 ```bash

@@ -498,6 +498,7 @@ export async function GET(request: NextRequest) {
         watching: statusMap['VIENDO'] ?? 0,
         abandoned: statusMap['ABANDONADA'] ?? 0,
         toRewatch: statusMap['RETOMAR'] ?? 0,
+        wantToWatch: statusMap['QUIERO_VER'] ?? 0,
         favorites: favoritesCount,
         ratings: ratingsCount,
         comments: commentsCount,

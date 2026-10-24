@@ -2,6 +2,7 @@ import { ContentPrivacy } from '@/components/content/ContentPrivacy/ContentPriva
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
+import { ActivityOptOutToggle } from '@/components/common/ActivityOptOutToggle/ActivityOptOutToggle';
 import './privacidad.css';
 
 export const metadata: Metadata = {
@@ -50,9 +51,20 @@ export default function PrivacidadPage() {
                 usuario, aunque estés logueado. Las borramos a los 90 días.
               </li>
               <li>
-                <strong>Progreso sin sesión</strong>: si marcás episodios sin
-                entrar, queda solo en este navegador. Al iniciar sesión podés
-                pasarlo a tu cuenta con un toque.
+                <strong>Progreso sin sesión</strong>: si marcás episodios o
+                “Quiero verla” sin entrar, queda solo en este navegador. Al
+                iniciar sesión pasa solo a tu cuenta, sin pisar lo que ya
+                tenías.
+              </li>
+              <li>
+                <strong>Actividad anónima por serie</strong>: cuando ves un
+                capítulo, lo marcás o agregás una serie a tu lista, sumamos uno
+                a un contador por serie y por día (con o sin cuenta, y el país
+                que informa Cloudflare). No se guarda quién fue: ni usuario, ni
+                IP, ni cookie. Sirve para mostrar “N capítulos vistos esta
+                semana” y para pedirles series a las plataformas con números
+                reales. Podés apagarlo abajo; si tu navegador manda Global
+                Privacy Control o Do Not Track, ya no contamos nada.
               </li>
               <li>
                 <strong>Intentos de ataque</strong>: si una request busca
@@ -137,8 +149,8 @@ export default function PrivacidadPage() {
               </li>
               <li>
                 <strong>Tu ubicación precisa</strong>. Solo el país inferido por
-                Vercel/Cloudflare a partir de la IP, y nunca lo persistimos en
-                DB.
+                Vercel/Cloudflare a partir de la IP, y solo dentro de los
+                contadores anónimos por serie: nunca junto a tu usuario.
               </li>
               <li>
                 <strong>El contenido de los videos</strong> que mirás. Todo lo
@@ -152,6 +164,7 @@ export default function PrivacidadPage() {
 
           <section className="privacidad-actions">
             <h2>Tus controles</h2>
+            <ActivityOptOutToggle />
             <p>Todo accesible desde tu perfil:</p>
             <ul className="privacidad-actions__list">
               <li>
