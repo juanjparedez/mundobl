@@ -2,7 +2,11 @@
   position: relative;
   padding: 12px var(--spacing-lg);
   border-bottom: 1px solid var(--border-color-secondary);
-  background: color-mix(in srgb, var(--tone-color, var(--info-color)) 8%, var(--bg-elevated));
+  background: color-mix(
+    in srgb,
+    var(--tone-color, var(--info-color)) 8%,
+    var(--bg-elevated)
+  );
 }
 
 .banner-surface--info {

@@ -59,21 +59,13 @@
 
 .quiz-engine__option--correct {
   border-color: var(--success-color);
-  background: color-mix(
-    in srgb,
-    var(--success-color) 12%,
-    var(--bg-elevated)
-  );
+  background: color-mix(in srgb, var(--success-color) 12%, var(--bg-elevated));
   color: var(--success-color);
 }
 
 .quiz-engine__option--incorrect {
   border-color: var(--error-color);
-  background: color-mix(
-    in srgb,
-    var(--error-color) 12%,
-    var(--bg-elevated)
-  );
+  background: color-mix(in srgb, var(--error-color) 12%, var(--bg-elevated));
   color: var(--error-color);
 }
 

@@ -1,0 +1,4 @@
+#!/bin/sh
+# Instalado por `npm install` (scripts/install-git-hooks.mjs).
+# Push a main: corre npm run test:all completo. Otras ramas: --fast.
+exec node scripts/pre-push.mjs "$@"

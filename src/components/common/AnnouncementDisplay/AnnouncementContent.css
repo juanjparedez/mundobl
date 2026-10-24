@@ -121,8 +121,7 @@
 }
 
 .announcement-content__code {
-  font-family:
-    'SF Mono', 'Menlo', 'Consolas', 'Courier New', monospace;
+  font-family: 'SF Mono', 'Menlo', 'Consolas', 'Courier New', monospace;
   font-size: 12px;
   background: var(--bg-spotlight);
   border-radius: 4px;
