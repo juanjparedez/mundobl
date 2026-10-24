@@ -92,6 +92,9 @@ export function TrackingPanel({
   const [dateOpen, setDateOpen] = useState(false);
   const [status, setStatus] = useState<WatchStatusValue>('SIN_VER');
   const [isUpdating, setIsUpdating] = useState(false);
+  // Paso a "Viendo" sin ningun capitulo marcado: se abre el selector de
+  // capitulo. Si no, la serie queda en la lista con progreso 0 para siempre.
+  const [askEpisode, setAskEpisode] = useState(false);
 
   useEffect(() => {
     if (loaded) setStatus(seriesStatus as WatchStatusValue);
@@ -135,6 +138,13 @@ export function TrackingPanel({
   // le cambia el estado solo; se le ofrece volver a seguirla de un toque.
   const hasEpisodesAfterLast =
     furthestIndex >= 0 && furthestIndex < chapters.length - 1;
+  // Todos los capitulos vistos pero la serie sigue en curso (marcados uno
+  // por uno, o el final salio despues): se ofrece cerrarla de un toque.
+  const canFinish =
+    hasEpisodes &&
+    !airing &&
+    furthestIndex === chapters.length - 1 &&
+    (status === 'VIENDO' || status === 'RETOMAR');
   const [episodesWithNotes, setEpisodesWithNotes] = useState<Set<number>>(
     new Set()
   );
@@ -185,6 +195,7 @@ export function TrackingPanel({
       });
       if (!response.ok) throw new Error(t('viewStatusToggle.errorUpdating'));
       await refetch();
+      setAskEpisode(newStatus === 'VIENDO' && hasEpisodes && furthestIndex < 0);
       message.success(
         successMessage ??
           interpolateMessage(t('viewStatusToggle.statusUpdateSuccess'), {
@@ -335,12 +346,36 @@ export function TrackingPanel({
         </div>
       )}
 
+      {canFinish && (
+        <div className="tracking-panel__resume">
+          <p className="tracking-panel__hint">
+            {interpolateMessage(t('progressStepper.finishedTitle'), {
+              title: seriesTitle,
+            })}
+          </p>
+          <Button
+            type="primary"
+            block
+            icon={<CheckOutlined />}
+            disabled={isUpdating}
+            onClick={() => void postStatus('VISTA')}
+          >
+            {t('progressStepper.markComplete')}
+          </Button>
+        </div>
+      )}
+
+      {askEpisode && furthestIndex < 0 && (
+        <p className="tracking-panel__hint">{t('trackCta.chooseEpisode')}</p>
+      )}
+
       {hasEpisodes ? (
         <WatchProgressStepper
           seriesId={seriesId}
           seriesTitle={seriesTitle}
           chapters={chapters}
           airing={airing}
+          openPicker={askEpisode && furthestIndex < 0}
         />
       ) : (
         <div className="tracking-panel__no-episodes">

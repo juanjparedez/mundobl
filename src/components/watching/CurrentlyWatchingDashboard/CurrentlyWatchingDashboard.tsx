@@ -21,9 +21,11 @@ import { useMessage } from '@/hooks/useMessage';
 import { useWatchingPreferences } from '@/hooks/useWatchingPreferences';
 import { useWatchingLocation } from '@/hooks/useWatchingLocation';
 import { useWatchingScroll } from '@/hooks/useWatchingScroll';
+import { isAiringNow } from '@/lib/airing-schedule';
 import {
   LIBRARY_STATUSES,
   selectWatchingItems,
+  staleWatchingDays,
   watchingProgress,
   type WatchingFilter,
   type WatchingItem,
@@ -143,6 +145,37 @@ function WatchingCollection({ userId }: { userId: string }) {
     }
   };
 
+  const setSeriesStatus = async (
+    item: WatchingItem,
+    next: 'VISTA' | 'RETOMAR' | 'ABANDONADA'
+  ) => {
+    if (mutationLock.current) return;
+    mutationLock.current = true;
+    setBusy(true);
+    try {
+      const response = await fetch(
+        `/api/series/${item.series.id}/view-status`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status: next }),
+        }
+      );
+      if (!response.ok) throw new Error();
+      message.success(
+        t('viewStatusToggle.statusUpdateSuccess', {
+          label: statusLabels[next],
+        })
+      );
+      await load();
+    } catch {
+      message.error(t('viewStatusToggle.errorUpdate'));
+    } finally {
+      mutationLock.current = false;
+      setBusy(false);
+    }
+  };
+
   const visible = useMemo(
     () => selectWatchingItems(items, search, filter, preferences),
     [items, search, filter, preferences]
@@ -248,6 +281,12 @@ function WatchingCollection({ userId }: { userId: string }) {
               {visible.map((item) => {
                 const progress = watchingProgress(item);
                 const pinned = preferences.pinned.includes(item.series.id);
+                const staleDays = staleWatchingDays(item);
+                const canFinish =
+                  ['VIENDO', 'RETOMAR'].includes(item.status) &&
+                  progress.total > 0 &&
+                  progress.watched === progress.total &&
+                  !isAiringNow(item.series);
                 return (
                   <WatchingSeriesCard
                     key={item.series.id}
@@ -256,6 +295,11 @@ function WatchingCollection({ userId }: { userId: string }) {
                     busy={busy}
                     onManage={() => setSelected(item)}
                     onMark={() => void markNext(item)}
+                    canFinish={canFinish}
+                    onFinish={() => void setSeriesStatus(item, 'VISTA')}
+                    staleDays={staleDays}
+                    onPause={() => void setSeriesStatus(item, 'RETOMAR')}
+                    onDrop={() => void setSeriesStatus(item, 'ABANDONADA')}
                     pinDisabled={!ready || saving}
                     onPin={() =>
                       void updatePreferences({
@@ -301,6 +345,12 @@ function WatchingCollection({ userId }: { userId: string }) {
                             { year: 'numeric', month: 'short', day: 'numeric' }
                           )
                         : t('common.neverWatched'),
+                      finish: t('trackingWorkspace.markFinished'),
+                      stale: t('trackingWorkspace.staleTitle', {
+                        days: staleDays ?? 0,
+                      }),
+                      pause: t('trackingWorkspace.stalePause'),
+                      drop: t('trackingWorkspace.staleDrop'),
                     }}
                   />
                 );

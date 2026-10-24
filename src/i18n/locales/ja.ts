@@ -433,7 +433,11 @@ const ja = {
     "noResults": "条件に一致するシリーズはありません。",
     "preferences": "表示方法、並び順、固定したシリーズは、この端末のアカウント別に保存されます。",
     "season": "シーズン{n}",
-    "signIn": "ログイン"
+    "signIn": "ログイン",
+    "markFinished": "視聴完了にする",
+    "staleTitle": "{days}日間アクティビティがありません。まだ視聴中ですか？",
+    "stalePause": "一時停止する",
+    "staleDrop": "視聴をやめる"
 },
   backup: {
     "viewStatuses": "視聴記録",

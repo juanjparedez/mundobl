@@ -436,7 +436,11 @@ const de = {
     "noResults": "Keine Serien passen zu diesen Filtern.",
     "preferences": "Ansicht, Reihenfolge und angeheftete Serien werden auf diesem Gerät für dein Konto gespeichert.",
     "season": "Staffel {n}",
-    "signIn": "Anmelden"
+    "signIn": "Anmelden",
+    "markFinished": "Als beendet markieren",
+    "staleTitle": "Seit {days} Tagen keine Aktivität. Schaust du noch?",
+    "stalePause": "Pausieren",
+    "staleDrop": "Nicht weiterschauen"
 },
   backup: {
     "viewStatuses": "Fortschritt",

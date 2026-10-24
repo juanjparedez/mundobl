@@ -429,7 +429,11 @@ const zhTW = {
     "noResults": "沒有符合篩選條件的系列。",
     "preferences": "檢視方式、排序和置頂系列依帳號儲存在此裝置上。",
     "season": "第 {n} 季",
-    "signIn": "登入"
+    "signIn": "登入",
+    "markFinished": "標記為已看完",
+    "staleTitle": "已有 {days} 天沒有動態。還在看嗎？",
+    "stalePause": "暫停",
+    "staleDrop": "棄劇"
 },
   backup: {
     "viewStatuses": "觀看紀錄",

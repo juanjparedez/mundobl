@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Button, Progress, Tag } from 'antd';
 import {
   CheckOutlined,
+  CheckCircleOutlined,
   PushpinOutlined,
   PushpinFilled,
   PlayCircleOutlined,
@@ -30,6 +31,13 @@ interface WatchingSeriesCardProps {
   onPin: () => void;
   onManage: () => void;
   onMark: () => void;
+  /** Todos los capitulos vistos y la serie ya no sale: ofrece cerrarla. */
+  canFinish?: boolean;
+  onFinish?: () => void;
+  /** Dias sin actividad en "Viendo" (ver staleWatchingDays); null = no preguntar. */
+  staleDays?: number | null;
+  onPause?: () => void;
+  onDrop?: () => void;
   labels: {
     pin: string;
     manage: string;
@@ -40,6 +48,10 @@ interface WatchingSeriesCardProps {
     status: string;
     source: string;
     lastActivity: string;
+    finish: string;
+    stale: string;
+    pause: string;
+    drop: string;
   };
 }
 
@@ -51,6 +63,11 @@ export function WatchingSeriesCard({
   onPin,
   onManage,
   onMark,
+  canFinish = false,
+  onFinish,
+  staleDays = null,
+  onPause,
+  onDrop,
   labels,
 }: WatchingSeriesCardProps) {
   const progress = watchingProgress(item);
@@ -118,7 +135,30 @@ export function WatchingSeriesCard({
             )}
             <strong>{labels.next}</strong>
           </div>
+          {staleDays !== null && (
+            <div className="watching-series-card__stale" role="status">
+              <span>{labels.stale}</span>
+              <div className="watching-series-card__stale-actions">
+                <Button size="small" disabled={busy} onClick={onPause}>
+                  {labels.pause}
+                </Button>
+                <Button size="small" disabled={busy} onClick={onDrop}>
+                  {labels.drop}
+                </Button>
+              </div>
+            </div>
+          )}
           <div className="watching-series-card__actions">
+            {canFinish && (
+              <Button
+                type="primary"
+                icon={<CheckCircleOutlined />}
+                disabled={busy}
+                onClick={onFinish}
+              >
+                {labels.finish}
+              </Button>
+            )}
             {progress.next &&
               !['VISTA', 'ABANDONADA'].includes(item.status) && (
                 <Button

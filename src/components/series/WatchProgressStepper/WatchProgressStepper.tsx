@@ -39,6 +39,8 @@ interface WatchProgressStepperProps {
    * cargado es estar al dia, no terminarla: no se pregunta "¿Terminaste?".
    */
   airing?: boolean;
+  /** Abre el selector de capitulo (al pasar a "Viendo" sin progreso). */
+  openPicker?: boolean;
 }
 
 const lastEpisodeId = (chapter: TrackedChapter) =>
@@ -53,6 +55,7 @@ export function WatchProgressStepper({
   onLocalChange,
   showNext = true,
   airing = false,
+  openPicker = false,
 }: WatchProgressStepperProps) {
   const { t } = useLocale();
   const message = useMessage();
@@ -72,6 +75,10 @@ export function WatchProgressStepper({
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps -- re-derivar en cada version (refetch), no solo cuando cambia episodeStatus en si
   }, [version]);
+
+  useEffect(() => {
+    if (openPicker) setPicking(true);
+  }, [openPicker]);
 
   const total = chapters.length;
   const canGoPrev = index >= 0 && !pending;

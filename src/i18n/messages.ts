@@ -416,6 +416,10 @@ export type TranslationShape = {
     preferences: string;
     season: string;
     signIn: string;
+    markFinished: string;
+    staleTitle: string;
+    stalePause: string;
+    staleDrop: string;
   };
   backup: {
     viewStatuses: string;
@@ -4271,6 +4275,10 @@ const es: TranslationShape = {
       'La vista, el orden y las series fijadas se guardan en este dispositivo para tu cuenta.',
     season: 'Temporada {n}',
     signIn: 'Iniciar sesión',
+    markFinished: 'Marcar como terminada',
+    staleTitle: 'Sin actividad hace {days} días. ¿La seguís viendo?',
+    stalePause: 'Pausarla',
+    staleDrop: 'Abandonarla',
   },
   backup: {
     viewStatuses: 'Seguimiento',
@@ -8321,6 +8329,10 @@ const en: TranslationShape = {
       'View, order and pinned series are saved on this device for your account.',
     season: 'Season {n}',
     signIn: 'Sign in',
+    markFinished: 'Mark as finished',
+    staleTitle: 'No activity for {days} days. Still watching?',
+    stalePause: 'Pause it',
+    staleDrop: 'Drop it',
   },
   backup: {
     viewStatuses: 'Tracking',

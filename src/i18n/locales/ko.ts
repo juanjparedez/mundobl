@@ -433,7 +433,11 @@ const ko = {
     "noResults": "필터와 일치하는 시리즈가 없습니다.",
     "preferences": "보기 방식, 정렬 순서, 고정한 시리즈는 이 기기에 계정별로 저장됩니다.",
     "season": "시즌 {n}",
-    "signIn": "로그인"
+    "signIn": "로그인",
+    "markFinished": "다 본 것으로 표시",
+    "staleTitle": "{days}일 동안 활동이 없습니다. 아직 보고 계신가요?",
+    "stalePause": "일시 중지",
+    "staleDrop": "하차하기"
 },
   backup: {
     "viewStatuses": "시청 기록",

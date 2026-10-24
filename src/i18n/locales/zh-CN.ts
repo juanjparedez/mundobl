@@ -429,7 +429,11 @@ const zhCN = {
     "noResults": "没有符合筛选条件的系列。",
     "preferences": "视图、排序和置顶系列按账号保存在此设备上。",
     "season": "第 {n} 季",
-    "signIn": "登录"
+    "signIn": "登录",
+    "markFinished": "标记为已看完",
+    "staleTitle": "已有 {days} 天没有动态。还在看吗？",
+    "stalePause": "暂停",
+    "staleDrop": "弃剧"
 },
   backup: {
     "viewStatuses": "观看记录",
