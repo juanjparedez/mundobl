@@ -8,6 +8,60 @@ Todas las versiones notables del proyecto se documentan aqui.
 > (`ChangelogItem`, `/admin/changelog`) quedo como fallback solo si este archivo
 > esta vacio.
 
+## 2026-10-24 — Estadísticas vivas, ranking del mes y empujones para terminar series
+
+### Features
+
+- **Estadísticas de la comunidad al día**: `/estadisticas` suma una sección de actividad reciente con miembros activos y nuevos, cuánta gente sigue su progreso, capítulos vistos en la semana, lo que se está viendo ahora y un gráfico diario de capítulos vistos. Son datos agregados y anónimos, y la página se actualiza cada 15 minutos.
+- **Ranking mensual de la comunidad**: el top 10 de capítulos vistos en los últimos 30 días. Es anónimo: solo aparece el nombre de quien publicó su perfil de comunidad. Con la sesión iniciada ves en qué puesto vas este mes. El equipo no participa.
+- **¿Por qué capítulo vas?**: al pasar una serie a «Viendo» sin progreso, la ficha te pregunta el capítulo para que tu seguimiento arranque bien.
+- **Terminar una serie es un toque**: si ya viste todos los capítulos, la ficha y Mi seguimiento ofrecen marcarla como terminada, aunque los hayas marcado uno por uno.
+- **¿La seguís viendo?**: después de 30 días sin actividad en una serie en «Viendo», Mi seguimiento te propone pausarla o abandonarla para que tu biblioteca refleje lo que estás mirando de verdad.
+- **Hitos de avance**: al cruzar el 25, 50 y 75 % de una serie te avisamos cuánto llevás. Las series de menos de 4 capítulos no festejan.
+- **Logros más cercanos**: nuevos logros por terminar 3, 5 y 25 series.
+
+### Fixes
+
+- **«Series más vistas» dice lo que cuenta**: el ranking de `/estadisticas` cuenta series terminadas y ahora el título lo aclara.
+
+## 2026-10-21 — Recomendaciones para seguir mirando
+
+### Features
+
+- **Si te gustó esta**: al pie de cada ficha aparecen series parecidas por etiquetas, géneros y elenco. No incluye títulos +18 ni obras del mismo universo.
+- **Para vos en Mi seguimiento**: sugerencias a partir de lo que viste, lo que estás viendo y tus favoritas. Si todavía no tenés biblioteca, te mostramos lo más seguido del sitio.
+- **Después de terminar una serie**: al marcarla como vista, el panel te ofrece saltar a las parecidas.
+
+### Fixes
+
+- **Avisos con botones legibles en el celu**: el texto de avisos como el de borrador recuperado ya no se comprime hasta desaparecer; si no entra, los botones pasan abajo.
+
+## 2026-10-17 — Seguimiento más claro, fichas más rápidas y más canales oficiales
+
+### Features
+
+- **`/ver` retoma donde quedaste**: al volver a un capítulo de YouTube, el video sigue desde el segundo en el que lo dejaste en ese navegador.
+- **Mi seguimiento más útil**: tarjetas compactas en dos columnas cuando entran, botón Ver también para series que se miran desde un aporte vinculado y enlaces oficiales de «Dónde ver» cuando no hay video para mirar acá.
+- **Filtro «Viendo» en el catálogo**: encontrá rápido las series que estás siguiendo.
+- **Fichas mejor armadas**: en la compu, la portada, los datos y tu seguimiento se ordenan en columnas según el ancho real de la ficha. Cortos y películas ya no piden capítulos, y el progreso usa la cantidad de episodios declarada cuando falta el detalle.
+- **21 canales oficiales nuevos**: CHANGE2561, MFlow, Kongthup, COPY A BANGKOK, 9NAA, Ch3Thailand, MeMindY, iQIYI Thailand, iQIYI Philippines, WeTV English, WeTV Original, Viu Thailand, oneD, Kantana Group, nooto, Lovememory, QueerDeep, VBL Series, VinCentiments, Windsor Creatives y O2 Production.
+
+### Fixes
+
+- **El progreso de un aporte vinculado avanza la ficha**: si mirás una serie desde un aporte vinculado, los capítulos se marcan también en la ficha curada y la serie no aparece repetida en Mi seguimiento.
+- **Panel de seguimiento más liviano**: estado y progreso en la misma fila, notas debajo y el contador de capítulos centrado entre los botones.
+- **Fichas que cargan rápido otra vez**: las fichas de `/series` y `/ver` vuelven a servirse desde caché. Los títulos +18 pasan por una página aparte que muestra la compuerta o el contenido según tu elección.
+- **Páginas inexistentes devuelven 404 de verdad**: las fichas de series, actores, directores y catálogo que no existen ya no responden como si existieran, algo que importa para buscadores.
+- **Páginas a todo el ancho**: se quitaron los topes fijos; estrenos, noticias, capítulos y perfil se acomodan al espacio disponible y el texto corrido mantiene un ancho cómodo de lectura.
+- **Ventanas con el botón Guardar a la vista**: tras la actualización de Ant Design, algunos modales dejaban el pie fuera de la pantalla. Además, el aviso de serie existente apila sus botones en el celu y las alertas se leen bien en modo oscuro.
+- **Ingreso desde `/admin` sin bloqueos**: la política de seguridad del sitio ya no corta el inicio de sesión con Google desde esa pantalla.
+- **Avisos de feedback legibles**: cuando cambia el estado de tu pedido, el aviso dice «Completado» o «En progreso» en tu idioma, no el código interno.
+
+### Para el equipo
+
+- **Altas de series sin quedar a medias**: actores, directores, etiquetas, géneros o doblajes repetidos ya no rompen el guardado dejando una ficha incompleta.
+- **Documentación renovada**: README bilingüe, `CASE_STUDY.md` con las decisiones de arquitectura y el contexto para agentes movido a `docs/ai-context/`.
+
 ## 2026-10-13 — Catálogo más liviano y comparación cómoda en el celu
 
 ### Fixes
