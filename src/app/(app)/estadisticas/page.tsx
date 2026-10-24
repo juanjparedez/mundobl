@@ -1,4 +1,4 @@
-export const revalidate = 3600;
+export const revalidate = 900;
 
 import type { Metadata } from 'next';
 import { getPublicStats } from '@/lib/public-stats';
@@ -16,8 +16,9 @@ export const metadata: Metadata = {
 // render siempre era un loader vacio en una pagina de datos 100% publicos y
 // agregados (nada personalizado por usuario). Ahora el server component
 // calcula las stats una sola vez (getPublicStats(), compartido con la ruta
-// de API) y la pagina se sirve como HTML estatico con ISR de una hora:
-// cada regeneracion corre consultas agregadas y cuenta en el plan de Vercel.
+// de API) y la pagina se sirve como HTML estatico con ISR de 15 minutos:
+// con una hora la seccion de actividad reciente se veia congelada; cada
+// regeneracion corre consultas agregadas y cuenta en el plan de Vercel.
 export default async function EstadisticasPage() {
   const initialData = await getPublicStats();
 

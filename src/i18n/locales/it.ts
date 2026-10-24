@@ -2308,11 +2308,23 @@ const it = {
     reviews: "Recensioni pubblicate",
     reviewsWeek: "Recensioni pubblicate negli ultimi 7 giorni",
     scope: "Le recensioni includono il catalogo e i contributi accessibili da guardare. Sono esclusi bozze, contenuti nascosti e account amministratori. Ogni versione linguistica conta separatamente.",
-    subtitle: "Metriche anonime della comunità. I dati si aggiornano alla visita dopo un’ora; l’aggiornamento può richiedere qualche istante.",
+    subtitle: "Metriche anonime della comunità. I dati si aggiornano alla visita dopo 15 minuti; l’aggiornamento può richiedere qualche istante.",
     activeScope: "Fino a 20 utenti con attività di monitoraggio, recensioni pubblicate, commenti pubblici, valutazioni o preferiti negli ultimi 30 giorni.",
   },
   "publicStats": {
-    "teamNote": "Questi dati sono solo della community. Il team di curatori ha anche guardato {n} serie del catalogo; le abbiamo escluse per non gonfiare i numeri."
+    "teamNote": "Questi dati sono solo della community. Il team di curatori ha anche guardato {n} serie del catalogo; le abbiamo escluse per non gonfiare i numeri.",
+    "recentTitle": "Attività recente",
+    "recentHint": "Cosa ha fatto la community negli ultimi giorni. Contiamo solo gli account della community (senza il team) e non mostriamo mai chi ha fatto cosa.",
+    "activeMembers": "Membri attivi (30 giorni)",
+    "newMembers": "Nuovi membri (30 giorni)",
+    "completedRecently": "Serie completate (7 giorni)",
+    "commentsRecently": "Commenti pubblici (7 giorni)",
+    "ratingsRecently": "Valutazioni (7 giorni)",
+    "watchingNow": "In visione adesso",
+    "watchingUnit": "in visione",
+    "completedByDay": "Serie completate al giorno (30 giorni)",
+    "completedSeriesLabel": "Completate",
+    "allTimeTitle": "Totali storici della community"
   },
   "adminStats": {
     "pageTitle": "Statistiche attività",

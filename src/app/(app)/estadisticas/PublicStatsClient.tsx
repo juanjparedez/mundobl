@@ -19,6 +19,9 @@ import {
   StarOutlined,
   PlayCircleOutlined,
   SettingOutlined,
+  CheckCircleOutlined,
+  UserAddOutlined,
+  LineChartOutlined,
   SafetyCertificateOutlined,
   DashboardOutlined,
 } from '@ant-design/icons';
@@ -26,7 +29,7 @@ import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { getCountryFlagEmoji } from '@/lib/country-codes';
 import { getSeriesUrl } from '@/lib/slug';
-import { BarChart, DonutChart } from '@/components/charts';
+import { BarChart, DonutChart, LineChart } from '@/components/charts';
 import type { PublicStats as PublicStatsResponse } from '@/lib/public-stats';
 import './public-stats.css';
 
@@ -123,6 +126,37 @@ function RankingList({
         </li>
       ))}
     </ol>
+  );
+}
+
+interface KpiTile {
+  icon: React.ReactNode;
+  value: number | string;
+  label: string;
+  isFormatted?: boolean;
+}
+
+function KpiTiles({
+  tiles,
+  formatNumber,
+}: {
+  tiles: KpiTile[];
+  formatNumber: (n: number) => string;
+}) {
+  return (
+    <section className="public-stats-summary">
+      {tiles.map((kpi) => (
+        <div key={kpi.label} className="public-stats-kpi">
+          <span className="public-stats-kpi__icon" aria-hidden>
+            {kpi.icon}
+          </span>
+          <span className="public-stats-kpi__value">
+            {kpi.isFormatted ? kpi.value : formatNumber(kpi.value as number)}
+          </span>
+          <span className="public-stats-kpi__label">{kpi.label}</span>
+        </div>
+      ))}
+    </section>
   );
 }
 
@@ -244,7 +278,6 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
             loading: 'Loading stats…',
             empty: 'No data yet',
             updatedAt: 'Updated',
-            sectionActivity: 'Community activity',
             sectionCatalog: 'Catalog breakdown',
             sectionRatings: 'Community ratings distribution',
             cardSeries: 'Series in catalog',
@@ -287,7 +320,6 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
             loading: 'Cargando estadísticas…',
             empty: 'Sin datos todavía',
             updatedAt: 'Actualizado',
-            sectionActivity: 'Actividad de la comunidad',
             sectionCatalog: 'Desglose del catálogo',
             sectionRatings: 'Distribución de calificaciones de la comunidad',
             cardSeries: 'Series en catálogo',
@@ -380,9 +412,88 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
         </div>
       )}
 
-      {/* ── KPI summary tiles ── */}
-      <section className="public-stats-summary">
-        {[
+      {/* ── Actividad reciente: lo que se mueve dia a dia ── */}
+      <h2 className="public-stats-section-title">
+        {t('publicStats.recentTitle')}
+      </h2>
+      <p className="public-stats-team-note">{t('publicStats.recentHint')}</p>
+      <KpiTiles
+        formatNumber={fmt}
+        tiles={[
+          {
+            icon: <TeamOutlined />,
+            value: data.recent.activeMembers,
+            label: t('publicStats.activeMembers'),
+          },
+          {
+            icon: <UserAddOutlined />,
+            value: data.recent.newMembers,
+            label: t('publicStats.newMembers'),
+          },
+          {
+            icon: <CheckCircleOutlined />,
+            value: data.recent.completedRecently,
+            label: t('publicStats.completedRecently'),
+          },
+          {
+            icon: <CommentOutlined />,
+            value: data.recent.publicCommentsRecently,
+            label: t('publicStats.commentsRecently'),
+          },
+          {
+            icon: <StarOutlined />,
+            value: data.recent.ratingsRecently,
+            label: t('publicStats.ratingsRecently'),
+          },
+        ]}
+      />
+      <div className="app-page__row app-page__row--2">
+        <RankingPanel
+          title={t('publicStats.watchingNow')}
+          icon={<PlayCircleOutlined />}
+          items={data.recent.watchingNow.map((r) => ({
+            key: r.title,
+            count: r.count,
+            href: getSeriesUrl(r.seriesId, r.title),
+          }))}
+          empty={copy.empty}
+          unit={t('publicStats.watchingUnit')}
+          chartMode={chartMode}
+          onChartModeChange={persistChartMode}
+          formatNumber={fmt}
+          onNavigate={handleNavigate}
+        />
+        <section className="app-panel">
+          <header className="app-panel__header">
+            <h3 className="app-panel__title">
+              <LineChartOutlined /> {t('publicStats.completedByDay')}
+            </h3>
+          </header>
+          <div className="app-panel__body">
+            <LineChart
+              data={data.recent.completedByDay}
+              xAxisKey="day"
+              series={[
+                {
+                  dataKey: 'count',
+                  name: t('publicStats.completedSeriesLabel'),
+                },
+              ]}
+              height={220}
+              smooth
+              xAxisTickFormatter={(value) => String(value).slice(5)}
+            />
+          </div>
+        </section>
+      </div>
+
+      {/* ── KPI summary tiles (historicos) ── */}
+      <h2 className="public-stats-section-title">
+        {t('publicStats.allTimeTitle')}
+      </h2>
+      <KpiTiles
+        formatNumber={fmt}
+        tiles={[
           {
             icon: <AppstoreOutlined />,
             value: data.summary.totalSeries,
@@ -431,18 +542,8 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
             value: data.summary.totalDirectors,
             label: copy.cardDirectors,
           },
-        ].map((kpi) => (
-          <div key={kpi.label} className="public-stats-kpi">
-            <span className="public-stats-kpi__icon" aria-hidden>
-              {kpi.icon}
-            </span>
-            <span className="public-stats-kpi__value">
-              {kpi.isFormatted ? kpi.value : fmt(kpi.value as number)}
-            </span>
-            <span className="public-stats-kpi__label">{kpi.label}</span>
-          </div>
-        ))}
-      </section>
+        ]}
+      />
 
       {/* Lo del equipo va aparte y a la vista: sumarlo arriba seria mostrar
        * como actividad de la comunidad el registro personal de la curaduria. */}
@@ -456,8 +557,7 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
 
       <p className="public-stats-team-note">{t('activityStats.scope')}</p>
 
-      {/* ── Community activity ── */}
-      <h2 className="public-stats-section-title">{copy.sectionActivity}</h2>
+      {/* ── Community rankings (historicos) ── */}
       <div className="app-page__row app-page__row--2">
         <RankingPanel
           title={copy.topSeries}
