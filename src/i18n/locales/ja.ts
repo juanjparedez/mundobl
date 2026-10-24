@@ -747,7 +747,12 @@ const ja = {
     "markCompleteConfirm": "「{title}」を完走済みにしますか？",
     "completedMessage": "「{title}」を完走済みにしました",
     "noEpisodesHint": "エピソードが読み込まれていません: 一括で完了とマークされます",
-    "watchNow": "続きを見る"
+    "watchNow": "続きを見る",
+    "recapTitle": "直近30日間",
+    "recapSummary": "{chapters}話 · {hours}時間 · 完走{finished}作品",
+    "recapPrevious": "その前の30日間：{chapters}話",
+    "recapTop": "一番見た作品：{title}",
+    "recapLink": "自分の統計を見る"
   },
   "appLayout": {
     "skipToContent": "メインコンテンツにスキップ"
@@ -2335,7 +2340,15 @@ const ja = {
     "trackingMembers": "MundoBLで視聴記録をつけている人",
     "episodesRecently": "視聴したエピソード（7日）",
     "episodesByDay": "1日ごとの視聴エピソード（30日）",
-    "episodesLabel": "エピソード"
+    "episodesLabel": "エピソード",
+    "monthlyRanking": "今月のランキング：視聴エピソード数",
+    "anonymousWatcher": "匿名メンバー {n}",
+    "rankingUnit": "話",
+    "rankingPosition": "今月は{ranked}人中{rank}位、{count}話視聴しました。",
+    "rankingEmpty": "今月視聴したエピソードを記録するとランキングに参加できます。",
+    "rankingStaff": "運営チームはランキングに含まれません。",
+    "rankingPrivacy": "ランキングは匿名です。コミュニティプロフィールを公開した場合のみ名前が表示されます。",
+    "rankingPrivacyLink": "マイスペース"
   },
   "adminStats": {
     "pageTitle": "アクティビティ統計",

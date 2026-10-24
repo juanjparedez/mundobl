@@ -730,6 +730,11 @@ export type TranslationShape = {
     completedMessage: string;
     noEpisodesHint: string;
     watchNow: string;
+    recapTitle: string;
+    recapSummary: string;
+    recapPrevious: string;
+    recapTop: string;
+    recapLink: string;
   };
   appLayout: {
     skipToContent: string;
@@ -2322,6 +2327,14 @@ export type TranslationShape = {
     episodesByDay: string;
     episodesLabel: string;
     allTimeTitle: string;
+    monthlyRanking: string;
+    anonymousWatcher: string;
+    rankingUnit: string;
+    rankingPosition: string;
+    rankingEmpty: string;
+    rankingStaff: string;
+    rankingPrivacy: string;
+    rankingPrivacyLink: string;
   };
   adminStats: {
     pageTitle: string;
@@ -4626,6 +4639,12 @@ const es: TranslationShape = {
     completedMessage: 'Marcaste "{title}" como terminada',
     noEpisodesHint: 'Sin capítulos cargados: se marca completa de una vez',
     watchNow: 'Seguir viendo',
+    recapTitle: 'Tus últimos 30 días',
+    recapSummary:
+      '{chapters} capítulos · {hours} h · {finished} series terminadas',
+    recapPrevious: 'Los 30 días anteriores: {chapters} capítulos',
+    recapTop: 'Lo que más viste: {title}',
+    recapLink: 'Ver mis estadísticas',
   },
   appLayout: {
     skipToContent: 'Saltar al contenido principal',
@@ -6328,6 +6347,15 @@ const es: TranslationShape = {
     episodesRecently: 'Episodios vistos (7 días)',
     episodesByDay: 'Episodios vistos por día (30 días)',
     episodesLabel: 'Episodios',
+    monthlyRanking: 'Ranking del mes: capítulos vistos',
+    anonymousWatcher: 'Miembro anónimo {n}',
+    rankingUnit: 'cap.',
+    rankingPosition: 'Este mes vas #{rank} de {ranked} con {count} capítulos.',
+    rankingEmpty: 'Marcá capítulos vistos este mes para entrar al ranking.',
+    rankingStaff: 'El equipo no entra en el ranking.',
+    rankingPrivacy:
+      'El ranking es anónimo. Solo se ve tu nombre si publicás tu perfil de comunidad.',
+    rankingPrivacyLink: 'Mi espacio',
   },
   adminStats: {
     pageTitle: 'Estadísticas de actividad',
@@ -8700,6 +8728,12 @@ const en: TranslationShape = {
     completedMessage: 'You marked "{title}" as finished',
     noEpisodesHint: 'No episodes loaded: it gets marked complete in one go',
     watchNow: 'Continue watching',
+    recapTitle: 'Your last 30 days',
+    recapSummary:
+      '{chapters} episodes · {hours} h · {finished} series finished',
+    recapPrevious: 'The 30 days before: {chapters} episodes',
+    recapTop: 'What you watched most: {title}',
+    recapLink: 'See my stats',
   },
   appLayout: {
     skipToContent: 'Skip to main content',
@@ -10390,6 +10424,16 @@ const en: TranslationShape = {
     episodesRecently: 'Episodes watched (7 days)',
     episodesByDay: 'Episodes watched per day (30 days)',
     episodesLabel: 'Episodes',
+    monthlyRanking: 'Monthly ranking: episodes watched',
+    anonymousWatcher: 'Anonymous member {n}',
+    rankingUnit: 'eps.',
+    rankingPosition:
+      "This month you're #{rank} of {ranked} with {count} episodes.",
+    rankingEmpty: 'Mark episodes as watched this month to join the ranking.',
+    rankingStaff: "The team isn't part of the ranking.",
+    rankingPrivacy:
+      'The ranking is anonymous. Your name only shows if you publish your community profile.',
+    rankingPrivacyLink: 'My space',
   },
   adminStats: {
     pageTitle: 'Activity Statistics',

@@ -743,7 +743,12 @@ const zhTW = {
     "markCompleteConfirm": "標記「{title}」為已看完？",
     "completedMessage": "您已將「{title}」標記為已看完",
     "noEpisodesHint": "未載入任何集數：將一次性標記為已完成",
-    "watchNow": "繼續觀看"
+    "watchNow": "繼續觀看",
+    "recapTitle": "你最近 30 天",
+    "recapSummary": "{chapters} 集 · {hours} 小時 · 看完 {finished} 部",
+    "recapPrevious": "之前 30 天：{chapters} 集",
+    "recapTop": "看得最多：{title}",
+    "recapLink": "查看我的統計"
   },
   "appLayout": {
     "skipToContent": "跳至主要內容"
@@ -2331,7 +2336,15 @@ const zhTW = {
     "trackingMembers": "在 MundoBL 記錄觀看進度",
     "episodesRecently": "看過的集數（7 天）",
     "episodesByDay": "每日看過的集數（30 天）",
-    "episodesLabel": "集數"
+    "episodesLabel": "集數",
+    "monthlyRanking": "本月排行：觀看集數",
+    "anonymousWatcher": "匿名成員 {n}",
+    "rankingUnit": "集",
+    "rankingPosition": "本月你在 {ranked} 人中排第 {rank}，看了 {count} 集。",
+    "rankingEmpty": "本月標記已看的劇集即可進入排行。",
+    "rankingStaff": "團隊成員不參與排行。",
+    "rankingPrivacy": "排行是匿名的。只有公開社群資料後才會顯示你的名字。",
+    "rankingPrivacyLink": "我的空間"
   },
   "adminStats": {
     "pageTitle": "活動統計",

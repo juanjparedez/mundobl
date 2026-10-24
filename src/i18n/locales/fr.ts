@@ -750,7 +750,12 @@ const fr = {
     "markCompleteConfirm": "Marquer \"{title}\" comme terminée ?",
     "completedMessage": "Vous avez marqué \"{title}\" comme terminée",
     "noEpisodesHint": "Aucun épisode chargé : il est marqué comme terminé en une seule fois",
-    "watchNow": "Reprendre le visionnage"
+    "watchNow": "Reprendre le visionnage",
+    "recapTitle": "Vos 30 derniers jours",
+    "recapSummary": "{chapters} épisodes · {hours} h · {finished} séries terminées",
+    "recapPrevious": "Les 30 jours précédents : {chapters} épisodes",
+    "recapTop": "Ce que vous avez le plus regardé : {title}",
+    "recapLink": "Voir mes statistiques"
   },
   "appLayout": {
     "skipToContent": "Passer au contenu principal"
@@ -2338,7 +2343,15 @@ const fr = {
     "trackingMembers": "Suivent leur progression sur MundoBL",
     "episodesRecently": "Épisodes vus (7 jours)",
     "episodesByDay": "Épisodes vus par jour (30 jours)",
-    "episodesLabel": "Épisodes"
+    "episodesLabel": "Épisodes",
+    "monthlyRanking": "Classement du mois : épisodes vus",
+    "anonymousWatcher": "Membre anonyme {n}",
+    "rankingUnit": "ép.",
+    "rankingPosition": "Ce mois-ci, vous êtes #{rank} sur {ranked} avec {count} épisodes.",
+    "rankingEmpty": "Marquez des épisodes vus ce mois-ci pour entrer dans le classement.",
+    "rankingStaff": "L'équipe ne participe pas au classement.",
+    "rankingPrivacy": "Le classement est anonyme. Votre nom n'apparaît que si vous publiez votre profil communautaire.",
+    "rankingPrivacyLink": "Mon espace"
   },
   "adminStats": {
     "pageTitle": "Statistiques d'activité",

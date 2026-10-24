@@ -24,6 +24,7 @@ import {
   LineChartOutlined,
   SafetyCertificateOutlined,
   DashboardOutlined,
+  TrophyOutlined,
 } from '@ant-design/icons';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
@@ -31,6 +32,7 @@ import { getCountryFlagEmoji } from '@/lib/country-codes';
 import { getSeriesUrl } from '@/lib/slug';
 import { BarChart, DonutChart, LineChart } from '@/components/charts';
 import type { PublicStats as PublicStatsResponse } from '@/lib/public-stats';
+import { OwnRankingPosition } from '@/components/community/OwnRankingPosition/OwnRankingPosition';
 import './public-stats.css';
 
 type ChartMode = 'bar' | 'list';
@@ -172,6 +174,7 @@ interface RankingPanelProps {
   onNavigate?: (href: string) => void;
   adminActionHref?: string;
   adminActionLabel?: string;
+  footer?: React.ReactNode;
 }
 
 function RankingPanel({
@@ -186,6 +189,7 @@ function RankingPanel({
   onNavigate,
   adminActionHref,
   adminActionLabel,
+  footer,
 }: RankingPanelProps) {
   return (
     <section className="app-panel">
@@ -230,6 +234,7 @@ function RankingPanel({
             formatNumber={formatNumber}
           />
         )}
+        {footer}
       </div>
     </section>
   );
@@ -501,6 +506,40 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
           </div>
         </section>
       </div>
+
+      <RankingPanel
+        title={t('publicStats.monthlyRanking')}
+        icon={<TrophyOutlined />}
+        // Etiqueta anonima numerada: el grafico usa la etiqueta como eje y
+        // "Miembro anonimo" repetido se pisaria en una sola barra.
+        items={data.recent.topWatchers.map((entry, index) => ({
+          key:
+            entry.name ?? t('publicStats.anonymousWatcher', { n: index + 1 }),
+          count: entry.count,
+          href: entry.profileId
+            ? `/comunidad/perfiles/${entry.profileId}`
+            : undefined,
+        }))}
+        empty={copy.empty}
+        unit={t('publicStats.rankingUnit')}
+        chartMode={chartMode}
+        onChartModeChange={persistChartMode}
+        formatNumber={fmt}
+        onNavigate={handleNavigate}
+        footer={
+          <OwnRankingPosition
+            enabled={!!session?.user}
+            labels={{
+              position: (rank, ranked, count) =>
+                t('publicStats.rankingPosition', { rank, ranked, count }),
+              empty: t('publicStats.rankingEmpty'),
+              staff: t('publicStats.rankingStaff'),
+              privacy: t('publicStats.rankingPrivacy'),
+              privacyLink: t('publicStats.rankingPrivacyLink'),
+            }}
+          />
+        }
+      />
 
       {/* ── KPI summary tiles (historicos) ── */}
       <h2 className="public-stats-section-title">

@@ -5,6 +5,7 @@ import {
   getActiveCommunityUsersWhere,
 } from '@/lib/database';
 import type { CommunityMetrics } from '@/types/community';
+import { getMonthlyRanking, type RankingEntry } from '@/lib/community-ranking';
 
 /**
  * Metricas globales anonimas para /estadisticas.
@@ -82,6 +83,8 @@ export interface RecentCommunityActivity {
   /** Episodios vistos por dia: es donde esta la actividad real de la
    *  comunidad (se marcan muchos mas episodios que series terminadas). */
   episodesByDay: Array<{ day: string; count: number }>;
+  /** Ranking anonimo de capitulos vistos en la ventana larga (community-ranking.ts). */
+  topWatchers: RankingEntry[];
 }
 
 export interface PublicStats {
@@ -173,6 +176,7 @@ async function getRecentCommunityActivity(
     ratingsRecently,
     watchingRows,
     episodesByDayRows,
+    topWatchers,
   ] = await Promise.all([
     prisma.user.count({ where: COMMUNITY_MEMBER }),
     prisma.user.count({
@@ -241,6 +245,7 @@ async function getRecentCommunityActivity(
       GROUP BY day
       ORDER BY day ASC
     `,
+    getMonthlyRanking(now),
   ]);
 
   const watchingIds = watchingRows
@@ -285,6 +290,7 @@ async function getRecentCommunityActivity(
         count: row._count.seriesId,
       })),
     episodesByDay,
+    topWatchers,
   };
 }
 
