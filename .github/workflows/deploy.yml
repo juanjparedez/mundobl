@@ -38,7 +38,9 @@ jobs:
         run: |
           test -n "$VERCEL_TOKEN" || { echo "::error::Falta el secret VERCEL_TOKEN"; exit 1; }
           commit_date=$(git show -s --format=%cI "$GITHUB_SHA")
-          url=$(npx --yes vercel@latest deploy --prod --yes --token="$VERCEL_TOKEN" \
+          # CLI pineado (no @latest): este paso tiene VERCEL_TOKEN y un release
+          # comprometido de npm se lo llevaria. Subir la version a mano.
+          url=$(npx --yes vercel@62.7.0 deploy --prod --yes --token="$VERCEL_TOKEN" \
             --build-env "MUNDOBL_BUILD_SHA=$GITHUB_SHA" \
             --build-env "MUNDOBL_BUILD_COMMIT_DATE=$commit_date")
           echo "Deploy listo: $url ($(git rev-parse --short HEAD))" >> "$GITHUB_STEP_SUMMARY"
