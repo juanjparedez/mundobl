@@ -36,6 +36,7 @@ import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { SeriesShareButton } from '@/components/common/SeriesShareButton/SeriesShareButton';
 import { getVerUrl } from '@/lib/slug';
 import { SeriesSubscribeButton } from '@/components/series/SeriesSubscribeButton/SeriesSubscribeButton';
+import { AiringAlertCta } from '@/components/series/AiringAlertCta/AiringAlertCta';
 import { FavoriteButton } from '@/components/series/FavoriteButton/FavoriteButton';
 import { TrackingPanel } from '@/components/series/TrackingPanel/TrackingPanel';
 import { WatchedToggle } from '@/components/series/WatchedToggle/WatchedToggle';
@@ -82,6 +83,8 @@ interface SeriesInfo {
   year: number | null;
   /** Sigue en emision (`isAiringNow`): estar al dia no es terminarla. */
   airing: boolean;
+  /** Dias de emision si sigue saliendo (0 = domingo); vacio si no. */
+  airWeekdays: number[];
   synopsis: string | null;
   imageUrl: string | null;
   catalogScope: string;
@@ -797,6 +800,8 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         <CommunityWorkLink seriesId={series.id} episodeId={active?.id} />
         <ActivityPulse seriesId={series.id} />
       </div>
+
+      <AiringAlertCta seriesId={series.id} airWeekdays={series.airWeekdays} />
 
       {/* Tracking: mismo mecanismo que la ficha del catalogo (ViewStatus),
        * para que mirar una serie desde /ver la sume a "Viendo ahora" y a

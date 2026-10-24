@@ -88,6 +88,7 @@ const trackingTests = [
   'editorial-classification',
   'onboarding',
   'tracking-redesign',
+  'airing-alerts',
 ];
 // [script, usa --import tsx]
 const routeTests = [

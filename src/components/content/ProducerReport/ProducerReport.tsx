@@ -120,6 +120,27 @@ export function ProducerReport({ report }: { report: Report }) {
         <p className="producer-report__note">{t('producerReport.privacy')}</p>
       </PanelCard>
 
+      {/* Interno, no va en el texto copiable: es para saber si el aviso de
+          estreno convierte, no un numero para una productora. */}
+      <PanelCard>
+        <h2>{t('airingAlert.funnelTitle')}</h2>
+        <div className="producer-report__stats">
+          <StatCard
+            label={t('airingAlert.funnelOffers')}
+            value={number(report.alerts.offers)}
+          />
+          <StatCard
+            label={t('airingAlert.funnelClicks')}
+            value={number(report.alerts.clicks)}
+          />
+          <StatCard
+            label={t('airingAlert.funnelActivated')}
+            value={number(report.alerts.activated)}
+          />
+        </div>
+        <p className="producer-report__note">{t('airingAlert.funnelHint')}</p>
+      </PanelCard>
+
       <PanelCard>
         <h2>{t('producerReport.bySeries')}</h2>
         <Table

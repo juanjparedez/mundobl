@@ -136,11 +136,13 @@ export async function isUserAllowedToReceivePush(
   if (!prefs.pushEnabled) return false;
 
   // Mapeo type → flag.
-  // El aviso de capitulo disponible va con el mismo interruptor que "nueva
-  // temporada": quien silencio las novedades de sus series no tiene que
-  // empezar a recibir estas, que son mas frecuentes.
+  // El aviso de capitulo disponible y el de dia de estreno van con el mismo
+  // interruptor que "nueva temporada": quien silencio las novedades de sus
+  // series no tiene que empezar a recibir estas, que son mas frecuentes.
   if (
-    (type === 'season_added' || type === 'episode_available') &&
+    (type === 'season_added' ||
+      type === 'episode_available' ||
+      type === 'air_day') &&
     !prefs.notifySeasonAdded
   )
     return false;
@@ -171,11 +173,13 @@ export async function isUserAllowedToReceiveInApp(
     where: { userId },
   });
   if (!prefs) return true;
-  // El aviso de capitulo disponible va con el mismo interruptor que "nueva
-  // temporada": quien silencio las novedades de sus series no tiene que
-  // empezar a recibir estas, que son mas frecuentes.
+  // El aviso de capitulo disponible y el de dia de estreno van con el mismo
+  // interruptor que "nueva temporada": quien silencio las novedades de sus
+  // series no tiene que empezar a recibir estas, que son mas frecuentes.
   if (
-    (type === 'season_added' || type === 'episode_available') &&
+    (type === 'season_added' ||
+      type === 'episode_available' ||
+      type === 'air_day') &&
     !prefs.notifySeasonAdded
   )
     return false;

@@ -3941,6 +3941,32 @@ export type TranslationShape = {
     platform: string;
     clicks: string;
   };
+  airingAlert: {
+    schedule: string;
+    body: string;
+    action: string;
+    loginHint: string;
+    done: string;
+    emailOffer: string;
+    emailAction: string;
+    emailSkip: string;
+    emailDone: string;
+    error: string;
+    notificationTitle: string;
+    notificationBody: string;
+    digestSubject: string;
+    digestIntro: string;
+    digestAiring: string;
+    digestWatching: string;
+    digestAction: string;
+    digestReason: string;
+    digestUnsubscribe: string;
+    funnelTitle: string;
+    funnelOffers: string;
+    funnelClicks: string;
+    funnelActivated: string;
+    funnelHint: string;
+  };
 };
 
 const es: TranslationShape = {
@@ -8196,6 +8222,34 @@ const es: TranslationShape = {
     platform: 'Plataforma',
     clicks: 'Clics',
   },
+  airingAlert: {
+    schedule: 'Estrena: {days}',
+    body: 'Te avisamos el día de estreno para que no te pierdas el capítulo nuevo.',
+    action: 'Avisame cuando salga el próximo capítulo',
+    loginHint: 'Entrás con Google. No publicamos nada.',
+    done: 'Listo: te avisamos cada {days}.',
+    emailOffer:
+      '¿También por mail? Un resumen los lunes con lo que sale esa semana. Te das de baja con un clic.',
+    emailAction: 'Sí, por mail también',
+    emailSkip: 'Ahora no',
+    emailDone: 'Listo, te llega los lunes.',
+    error: 'No se pudo activar el aviso. Probá de nuevo.',
+    notificationTitle: 'Hoy sale capítulo de {title}',
+    notificationBody: 'Es su día de estreno. En la ficha ves dónde mirarlo.',
+    digestSubject: 'Tus series de esta semana',
+    digestIntro: 'Esto es lo que sale y lo que tenés a medio ver.',
+    digestAiring: 'Salen esta semana',
+    digestWatching: 'Seguís viendo',
+    digestAction: 'Abrir mis series',
+    digestReason: 'Te llega porque activaste el resumen por mail en MundoBL.',
+    digestUnsubscribe: 'Darme de baja',
+    funnelTitle: 'Avisos de estreno',
+    funnelOffers: 'Botón mostrado',
+    funnelClicks: 'Tocado',
+    funnelActivated: 'Aviso activado',
+    funnelHint:
+      'Cuántas veces se mostró el botón "Avisame" en series en emisión, cuántas se tocó y cuántas terminó en aviso activado (con el login incluido). Anónimo y sin el equipo.',
+  },
 };
 
 const en: TranslationShape = {
@@ -12418,6 +12472,36 @@ const en: TranslationShape = {
     unknownCountry: 'Unknown',
     platform: 'Platform',
     clicks: 'Clicks',
+  },
+  airingAlert: {
+    schedule: 'Airs: {days}',
+    body: "We'll let you know on release day so you don't miss the new episode.",
+    action: 'Notify me when the next episode is out',
+    loginHint: 'You sign in with Google. We never post anything.',
+    done: "Done: we'll remind you every {days}.",
+    emailOffer:
+      "By email too? A Monday digest with what's airing that week. Unsubscribe in one click.",
+    emailAction: 'Yes, by email too',
+    emailSkip: 'Not now',
+    emailDone: 'Done, it arrives on Mondays.',
+    error: "Couldn't turn on the alert. Please try again.",
+    notificationTitle: 'New episode of {title} today',
+    notificationBody:
+      "It's release day. The series page shows where to watch it.",
+    digestSubject: 'Your series this week',
+    digestIntro: "Here's what's airing and what you're halfway through.",
+    digestAiring: 'Airing this week',
+    digestWatching: 'Still watching',
+    digestAction: 'Open my series',
+    digestReason:
+      'You get this because you turned on the email digest on MundoBL.',
+    digestUnsubscribe: 'Unsubscribe',
+    funnelTitle: 'Release alerts',
+    funnelOffers: 'Button shown',
+    funnelClicks: 'Tapped',
+    funnelActivated: 'Alert turned on',
+    funnelHint:
+      'How many times the "Notify me" button was shown on airing series, how many times it was tapped and how many ended with an alert turned on (sign-in included). Anonymous, staff excluded.',
   },
 };
 

@@ -1195,9 +1195,13 @@ model NotificationPrefs {
   // Correo. Arranca en FALSE a proposito y no se hereda de pushEnabled:
   // aceptar notificaciones del navegador no es consentimiento para recibir
   // mails, y tener la direccion porque el usuario entro con Google tampoco.
-  // Se activa solo desde las preferencias, o se apaga desde el link de
-  // desuscripcion de cualquier envio.
+  // Se activa solo desde las preferencias o desde la oferta explicita que
+  // sigue a "Avisame cuando salga" (AiringAlertCta), y se apaga desde el
+  // link de desuscripcion de cualquier envio.
   emailEnabled Boolean @default(false)
+  // Ultimo resumen semanal enviado (cron de alertas, los lunes). Se reclama
+  // ANTES de mandar para que dos corridas no le escriban dos veces a nadie.
+  digestSentAt DateTime?
 
   // Por tipo de evento: si el usuario apaga uno, no recibe ni in-app
   // ni push de ese tipo. Esto le da control fino sobre el ruido.

@@ -11,7 +11,7 @@ import { isWatchableEpisode } from '@/lib/watchable';
 import type { TVSeries } from 'schema-dts';
 import { getWatchableSeriesByIdCached } from '@/lib/detail-loaders';
 import { getAdultVariantUrl, getVerUrl } from '@/lib/slug';
-import { isAiringNow } from '@/lib/airing-schedule';
+import { isAiringNow, parseAirDays } from '@/lib/airing-schedule';
 import { SeriesUserStatusProvider } from '@/components/series/SeriesUserStatusProvider';
 import { PendingTrackApplier } from '@/components/series/PendingTrackApplier/PendingTrackApplier';
 import { VerSerieClient } from '../VerSerieClient';
@@ -125,6 +125,9 @@ export async function VerSerieView({
               originalTitle: serie.originalTitle,
               year: serie.year,
               airing: isAiringNow(serie),
+              airWeekdays: isAiringNow(serie)
+                ? parseAirDays(serie.airDays)
+                : [],
               synopsis: serie.synopsis,
               imageUrl: serie.imageUrl,
               catalogScope: serie.catalogScope,

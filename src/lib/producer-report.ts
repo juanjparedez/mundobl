@@ -190,6 +190,11 @@ export async function getProducerReport(
       wants: kind('want'),
       finishes: kind('finish'),
     },
+    alerts: {
+      offers: kind('alert_offer'),
+      clicks: kind('alert_click'),
+      activated: kind('alert_on'),
+    },
     series: seriesRows.map((row) => ({
       seriesId: row.seriesId,
       title: row.title,
