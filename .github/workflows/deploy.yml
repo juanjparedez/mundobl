@@ -30,7 +30,7 @@ jobs:
       VERCEL_PROJECT_ID: prj_WqolFzpkAdYVw2NnNb0HVHzCtFR6
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Deploy
         env:
