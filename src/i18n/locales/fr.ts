@@ -3828,6 +3828,21 @@ const fr = {
     "popularSubtitle": "Quand vous suivrez ou terminerez des séries, des suggestions pour vous apparaîtront ici",
     "similarTo": "Similaire à {title}",
     "seeSimilar": "Voir des séries similaires"
+  },
+  onboarding: {
+    title: "Qu’est-ce que tu regardes en ce moment ?",
+    subtitle: "Choisis jusqu’à {n} séries en cours de diffusion et l’épisode où tu en es. Elles vont dans ta liste et on te prévient quand il y a du nouveau.",
+    limit: "Tu peux choisir jusqu’à {n} séries",
+    picked: "Choisie",
+    episodeLabel: "Épisode où tu en es",
+    justStarting: "Je commence",
+    episodeOption: "J’en suis à l’épisode {n}",
+    seasonEpisodeOption: "S{season} · épisode {n}",
+    follow: "Suivre ({n})",
+    skip: "Pas maintenant",
+    saved: "C’est fait, elles sont dans ta liste",
+    error: "Impossible d’enregistrer. Réessaie.",
+    browseCatalog: "Elle n’y est pas ? Cherche-la dans le catalogue",
   }
 } satisfies TranslationShape;
 

@@ -3825,6 +3825,21 @@ const ja = {
     "popularSubtitle": "作品を視聴中や視聴済みにすると、ここにあなた向けのおすすめが表示されます",
     "similarTo": "{title}に似た作品",
     "seeSimilar": "似た作品を見る"
+  },
+  onboarding: {
+    title: "今なにを見ていますか？",
+    subtitle: "放送中の作品を最大{n}本と、今見ている話数を選んでください。リストに追加され、新しい情報があればお知らせします。",
+    limit: "最大{n}本まで選べます",
+    picked: "選択済み",
+    episodeLabel: "今見ている話数",
+    justStarting: "これから見る",
+    episodeOption: "第{n}話まで",
+    seasonEpisodeOption: "シーズン{season}・第{n}話まで",
+    follow: "フォローする（{n}）",
+    skip: "今はしない",
+    saved: "完了！リストに追加しました",
+    error: "保存できませんでした。もう一度お試しください。",
+    browseCatalog: "見つからない？カタログで探す",
   }
 } satisfies TranslationShape;
 

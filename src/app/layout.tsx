@@ -8,6 +8,7 @@ import { LocaleProvider } from '@/lib/providers/LocaleProvider';
 import { SpoilerFreeProvider } from '@/lib/providers/SpoilerFreeProvider';
 import { ServiceWorkerRegistrar } from '@/components/ServiceWorkerRegistrar/ServiceWorkerRegistrar';
 import { NavigationGuard } from '@/components/layout/NavigationGuard/NavigationGuard';
+import { FirstVisitOnboarding } from '@/components/common/FirstVisitOnboarding/FirstVisitOnboarding';
 import { JsonLd } from '@/components/seo/JsonLd';
 import type { WebSite, Organization } from 'schema-dts';
 import { Analytics } from '@vercel/analytics/next';
@@ -166,7 +167,10 @@ export default function RootLayout({
             <LocaleProvider>
               <ThemeProvider>
                 <SpoilerFreeProvider>
-                  <AntdApp>{children}</AntdApp>
+                  <AntdApp>
+                    {children}
+                    <FirstVisitOnboarding />
+                  </AntdApp>
                 </SpoilerFreeProvider>
               </ThemeProvider>
             </LocaleProvider>

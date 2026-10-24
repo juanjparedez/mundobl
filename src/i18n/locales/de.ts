@@ -3828,6 +3828,21 @@ const de = {
     "popularSubtitle": "Sobald du Serien verfolgst oder beendest, erscheinen hier Vorschläge für dich",
     "similarTo": "Ähnlich wie {title}",
     "seeSimilar": "Ähnliche Serien ansehen"
+  },
+  onboarding: {
+    title: "Was schaust du gerade?",
+    subtitle: "Wähle bis zu {n} laufende Serien und die Folge, bei der du bist. Sie landen in deiner Liste und wir sagen dir Bescheid, wenn es Neues gibt.",
+    limit: "Du kannst bis zu {n} Serien wählen",
+    picked: "Ausgewählt",
+    episodeLabel: "Folge, bei der du bist",
+    justStarting: "Fange gerade an",
+    episodeOption: "Bei Folge {n}",
+    seasonEpisodeOption: "S{season} · bei Folge {n}",
+    follow: "Folgen ({n})",
+    skip: "Jetzt nicht",
+    saved: "Fertig, sie sind in deiner Liste",
+    error: "Speichern fehlgeschlagen. Bitte versuch es erneut.",
+    browseCatalog: "Nicht dabei? Such sie im Katalog",
   }
 } satisfies TranslationShape;
 

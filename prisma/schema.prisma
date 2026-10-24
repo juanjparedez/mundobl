@@ -64,6 +64,9 @@ model User {
   // PATCH /api/user/glossary-quiz-score y GlosarioQuiz.tsx. Solo sube
   // (nunca se pisa con un puntaje menor).
   glossaryQuizBestScore Int?
+  // Cuando cerro (o salteo) el "que estas viendo?" del primer ingreso. Null =
+  // todavia no se le mostro. Ver FirstVisitOnboarding.
+  onboardingCompletedAt DateTime?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
 
@@ -107,6 +110,21 @@ model User {
   communityBlockedBy      CommunityBlock[] @relation("CommunityBlockTarget")
   communityReports        CommunityReport[]
   communityModerationActions CommunityModerationAction[]
+  activeDays              UserActiveDay[]
+}
+
+// Un dia en que el usuario logueado abrio el sitio. Existe para medir
+// retencion: las PAGE_VIEW de AccessLog se anonimizan y la sesion es JWT, asi
+// que no habia forma de saber si alguien volvio sin hacer nada. Una fila por
+// usuario y dia (UTC), escrita a lo sumo una vez cada pocos minutos desde
+// GET /api/user/me/summary.
+model UserActiveDay {
+  userId String
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  day    DateTime @db.Date
+
+  @@id([userId, day])
+  @@index([day])
 }
 
 // Persistencia de layouts del dashboard modular (drag/resize por widget).

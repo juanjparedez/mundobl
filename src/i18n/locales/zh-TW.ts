@@ -3821,6 +3821,21 @@ const zhTW = {
     "popularSubtitle": "當你開始追劇或看完劇集後，這裡會顯示為你挑選的推薦",
     "similarTo": "與《{title}》相似",
     "seeSimilar": "查看相似劇集"
+  },
+  onboarding: {
+    title: "你現在在看什麼？",
+    subtitle: "選擇最多 {n} 部正在播出的劇，以及你看到第幾集。它們會加入你的清單，有新動態時我們會通知你。",
+    limit: "最多可以選擇 {n} 部",
+    picked: "已選擇",
+    episodeLabel: "看到第幾集",
+    justStarting: "剛開始看",
+    episodeOption: "看到第 {n} 集",
+    seasonEpisodeOption: "第 {season} 季 · 看到第 {n} 集",
+    follow: "追劇（{n}）",
+    skip: "之後再說",
+    saved: "完成，已加入你的清單",
+    error: "儲存失敗，請再試一次。",
+    browseCatalog: "沒找到？到目錄裡搜尋",
   }
 } satisfies TranslationShape;
 

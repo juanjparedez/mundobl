@@ -855,6 +855,98 @@ export async function getAiringSchedule(): Promise<AiringScheduleRow[]> {
   return rows.map((row) => ({ ...row, airDays: row.airDays ?? '' }));
 }
 
+// ===== PRIMER INGRESO Y DIAS ACTIVOS =====
+
+export interface OnboardingSeriesRow {
+  id: number;
+  title: string;
+  imageUrl: string | null;
+  imageThumbUrl: string | null;
+  year: number | null;
+  countryName: string | null;
+  /** Ultima temporada cargada: el "voy por el capitulo N" se elige ahi. */
+  latestSeason: { seasonNumber: number; episodeCount: number } | null;
+}
+
+const ONBOARDING_SERIES_LIMIT = 12;
+
+/**
+ * Series al aire para el "que estas viendo?" del primer ingreso, las mas
+ * seguidas primero. Mismo corte que la parrilla (getAiringSchedule) mas sin
+ * +18: el modal aparece en cualquier pagina, sin la compuerta de /adultos.
+ */
+function onboardingSeriesWhere() {
+  return {
+    origin: 'CURATED',
+    catalogScope: 'PERSONAL',
+    visibility: 'VISIBLE',
+    contentRating: { not: 'ADULT18' },
+    ...airingSeriesWhere(),
+  } satisfies Prisma.SeriesWhereInput;
+}
+
+export async function getOnboardingSeries(): Promise<OnboardingSeriesRow[]> {
+  const rows = await prisma.series.findMany({
+    where: onboardingSeriesWhere(),
+    select: {
+      id: true,
+      title: true,
+      imageUrl: true,
+      imageThumbUrl: true,
+      year: true,
+      country: { select: { name: true } },
+      seasons: {
+        select: { seasonNumber: true, _count: { select: { episodes: true } } },
+        orderBy: { seasonNumber: 'desc' },
+        take: 1,
+      },
+    },
+    orderBy: [{ subscriptions: { _count: 'desc' } }, { title: 'asc' }],
+    take: ONBOARDING_SERIES_LIMIT,
+  });
+
+  return rows.map((row) => {
+    const [season] = row.seasons;
+    return {
+      id: row.id,
+      title: row.title,
+      imageUrl: row.imageUrl,
+      imageThumbUrl: row.imageThumbUrl,
+      year: row.year,
+      countryName: row.country?.name ?? null,
+      latestSeason: season
+        ? {
+            seasonNumber: season.seasonNumber,
+            episodeCount: season._count.episodes,
+          }
+        : null,
+    };
+  });
+}
+
+/** De `ids`, las que siguen siendo elegibles para el modal del primer ingreso. */
+export async function filterOnboardingSeriesIds(
+  ids: number[]
+): Promise<number[]> {
+  const rows = await prisma.series.findMany({
+    where: { ...onboardingSeriesWhere(), id: { in: ids } },
+    select: { id: true },
+  });
+  return rows.map((row) => row.id);
+}
+
+/** Marca hoy (UTC) como dia activo del usuario. Idempotente. */
+export async function recordUserActiveDay(userId: string): Promise<void> {
+  const now = new Date();
+  const day = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
+  );
+  await prisma.userActiveDay.createMany({
+    data: [{ userId, day }],
+    skipDuplicates: true,
+  });
+}
+
 /**
  * Detalle para /ver/[id]: serie con todas las temporadas y episodios
  * embebidos. Solo retorna si visibility='VISIBLE' (admin/owner ven HIDDEN

@@ -1,0 +1,48 @@
+.first-visit-onboarding {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.first-visit-onboarding__intro.ant-typography {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.first-visit-onboarding__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(130px, 100%), 1fr));
+  gap: var(--spacing-md);
+  align-items: start;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.first-visit-onboarding__card--picked {
+  border-color: var(--primary-color);
+  outline: 2px solid var(--primary-color);
+  outline-offset: -1px;
+}
+
+.first-visit-onboarding__check {
+  font-size: var(--font-size-lg);
+  color: var(--primary-color);
+  background: var(--bg-container);
+  border-radius: 50%;
+}
+
+.first-visit-onboarding__episode {
+  width: 100%;
+}
+
+.first-visit-onboarding__browse {
+  align-self: flex-start;
+}
+
+.first-visit-onboarding__footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+}
