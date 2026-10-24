@@ -2,6 +2,11 @@
 
 Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-stack para gestionar, calificar y hacer seguimiento de series, peliculas, cortos y especiales.
 
+## Portada integral, probador de temas en vivo y página de inicio opt-in (2026-10-24)
+
+- `src/lib/start-page-preference.ts` y `LoggedInHomeRedirect`: abrir `/` estando logueado ya no cierra ni redirige automáticamente la portada salvo que el usuario elija otra página de inicio (`mb-start-page`: `landing` por defecto, `watching`, `catalogo`, `ver` o `estrenos`) desde Ajustes (`SettingsPanel`) o desde el selector inline en el propio Hero de la portada. `getUserSummary()` se sigue invocando en segundo plano para registrar `UserActiveDay`. El logo de MundoBL en `Sidebar` y el menú de usuario en `TopBar` enlazan a `/?stay=1`.
+- `LandingPage`: Hero sin pared de login (accesos directos a `/catalogo`, `/ver` y `/watching`, más comparativa «Sin cuenta vs. Con tu cuenta gratis con Google en 1 click» para visitantes), banda de estadísticas conectada a `/estadisticas`, mapa interactivo de 6 pilares clicables (`/ver`, `/catalogo`, `/watching`, `/estrenos`, `/comunidad`, `/estadisticas`), probador en vivo de temas (Oscuro/Claro, 6 skins, colores de acento, tonos, modo sin spoilers y 10 idiomas) y tarjeta del tracker actualizada con el cierre del círculo (valoración 1–10 y veredicto). Cero hex hardcodeados en `LandingPage.css` y cobertura en los 10 locales (3.741 claves).
+
 ## Pruebas completas en Docker local (2026-10-24, lote sin publicar)
 
 - El propietario pidió evitar pruebas remotas automáticas y usar su equipo. `npm run test:docker` construye Node 22/Chromium y ejecuta la misma suite de 67 pasos junto a PostgreSQL 16 descartable en `compose.test.yml`.

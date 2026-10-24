@@ -3,7 +3,10 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { ROUTES } from '@/constants/navigation';
+import {
+  getStartPagePreference,
+  resolveStartPageRoute,
+} from '@/lib/start-page-preference';
 import { getUserSummary } from '@/lib/user-summary-client';
 
 /**
@@ -23,12 +26,15 @@ function isFreshEntryToHome(): boolean {
 let redirectChecked = false;
 
 /**
- * Para quien ya sigue series, la primera pantalla es su lista: la landing es
- * para anonimos (T10).
+ * Redireccion opt-in al abrir `/` para usuarios registrados.
  *
- * Sin UI y montado dentro de la landing porque `src/app/page.tsx` es ISR y no
- * puede llamar `auth()` — la decision se toma necesariamente en cliente.
- * Anonimo no dispara ningun request.
+ * Por defecto el usuario ve la portada (`landing`) para que nunca se cierre
+ * sola sin haberlo pedido. Si en Ajustes o en la propia portada elige abrir
+ * directo en `/watching`, `/catalogo`, `/ver` o `/estrenos`, se respeta esa
+ * preferencia en entradas frescas a `/` (salvo `?stay=1`).
+ *
+ * Igual dispara `getUserSummary()` en segundo plano para registrar el dia
+ * activo (`UserActiveDay`).
  */
 export function LoggedInHomeRedirect() {
   const router = useRouter();
@@ -37,6 +43,10 @@ export function LoggedInHomeRedirect() {
   useEffect(() => {
     if (status !== 'authenticated' || redirectChecked) return;
     redirectChecked = true;
+
+    // Registra el dia activo aunque el usuario elija quedarse en la portada.
+    void getUserSummary();
+
     if (!isFreshEntryToHome()) return;
 
     // `?stay=1` se lee de window y no con useSearchParams(): en una pagina
@@ -45,17 +55,10 @@ export function LoggedInHomeRedirect() {
     // mount, asi que location alcanza.
     if (new URLSearchParams(window.location.search).get('stay') === '1') return;
 
-    let cancelled = false;
-    getUserSummary().then((summary) => {
-      if (cancelled || !summary) return;
-      // Sin series en curso no hay lista que mostrar: se queda en la landing,
-      // que con T09 ya ofrece "Ir a mis series".
-      if (summary.viendoCount > 0) router.replace(ROUTES.WATCHING);
-    });
-
-    return () => {
-      cancelled = true;
-    };
+    const targetRoute = resolveStartPageRoute(getStartPagePreference());
+    if (targetRoute) {
+      router.replace(targetRoute);
+    }
   }, [status, router]);
 
   return null;

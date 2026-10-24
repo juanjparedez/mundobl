@@ -11,6 +11,7 @@ import {
   LogoutOutlined,
   GlobalOutlined,
   SafetyOutlined,
+  HomeOutlined,
 } from '@ant-design/icons';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -65,6 +66,12 @@ export function TopBar() {
           icon: <UserOutlined />,
           label: t('sidebar.profile'),
           onClick: () => router.push(ROUTES.PERFIL),
+        },
+        {
+          key: 'landing',
+          icon: <HomeOutlined />,
+          label: t('settings.startPageLanding'),
+          onClick: () => router.push('/?stay=1'),
         },
         {
           key: 'settings',
