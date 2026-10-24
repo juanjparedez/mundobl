@@ -10,6 +10,22 @@
 import type { TranslationShape } from '../messages';
 
 const zhTW = {
+  playerRecovery: {
+    cancel: '取消',
+    title: "影片沒有顯示？",
+    description: "請嘗試重新載入播放器。如果仍為空白，請檢查本機資料或重設播放。",
+    review: "檢查本機資料",
+    retry: "重新載入播放器",
+    reset: "重設播放",
+    resetConfirm: "清除此網站的快取，重設其本機安裝並重新載入本頁。保留登入狀態、偏好設定和已儲存的觀看進度。",
+    online: "瀏覽器回報已連線，但這不代表已確認可以存取平台。",
+    offline: "瀏覽器處於離線狀態。請重新連線後再重設播放。",
+    localActive: "存在MundoBL的本機資料。這是正常現象，並不表示發生錯誤。",
+    localEmpty: "找不到網站快取或本機安裝。",
+    reviewFailed: "無法檢查本機資料。請再試一次。",
+    resetFailed: "無法完成重設。請再試一次或在平台上開啟影片。",
+    platformNotice: "此檢查不驗證影片的存取權限。地區限制、會員要求和影片下架由平台決定，無法透過重設解決。",
+  },
   episodeSource: {
     followOn: "在 {platform} 追蹤 {channelName}",
     officialHint: "僅接受來自經驗證的官方來源且允許在此播放的作品。",

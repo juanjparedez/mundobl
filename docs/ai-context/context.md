@@ -2,6 +2,16 @@
 
 Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-stack para gestionar, calificar y hacer seguimiento de series, peliculas, cortos y especiales.
 
+## Recuperación del reproductor (2026-10-24)
+
+- El propietario confirmó que el video vacío de Chrome volvió a funcionar al resetear el Service Worker desde Ajustes; en incógnito ya funcionaba. Esto vincula el incidente con el estado local, pero no identifica qué entrada o versión lo produjo.
+- `/ver/[id]` ofrece «¿No se ve el video?»: recargar solo el reproductor, revisar conexión/datos locales y reiniciar cachés/SW con confirmación. El reinicio conserva cookies, localStorage y sessionStorage, incluyendo preferencias y progreso guardado. Hay errores visibles y tiempo límite para evitar un indicador de carga infinito. No hay consultas de disponibilidad, telemetría ni escrituras de seguimiento desde esta ayuda.
+- `public/sw.js` v9 deja pasar frames y medios sin intervenir; el fallback offline se limita a navegaciones de documentos del mismo origen. La activación elimina solo cachés antiguas de MundoBL. Es una corrección preventiva de una regla demasiado amplia, no una reproducción certificada de la causa original.
+- `scripts/test-player-recovery.mjs` prueba reglas del SW, migración de cachés y componentes reales en un perfil aislado: revisión, recarga del iframe, cancelación, reset/recarga preservando sesión/preferencias/progreso, errores y desconexión. El proveedor de video está simulado en esa prueba. Diez locales completos; la ayuda se comprobó también en la ficha local con Vimeo real.
+- Blossom Campus es un problema independiente: el diagnóstico anónimo de sus seis videos pide membresía Gold de STRONGBERRY aunque la API indique público/embebible. No cambiar ese diagnóstico por «resuelto» al limpiar cachés. Su corrección de disponibilidad queda pendiente y no se modificaron datos de producción en este lote.
+- Validación: `npm run test:fast` aprobado (ocho advertencias anteriores), build optimizado con DB local aprobado, auditoría de 3.566 claves en diez locales y regresión de recuperación aprobadas. La confirmación y el panel caben a 320/390/1280 px. Ficha compilada de prueba: `http://localhost:3018/ver/815-yu-and-rachel` (ID de la copia local).
+- El propietario autorizó explícitamente publicar este lote el 24/10. Entrega por PR con CI completo y un solo deploy manual; verificar después el SHA servido, `sw.js` v9 y la ayuda en una ficha real. Sin migración ni cambios de datos del catálogo.
+
 ## Publicación autorizada del lote de 16 títulos (2026-10-24)
 
 - El propietario autorizó explícitamente publicar código y los 16 títulos si pasaban una verificación nueva. A las 13:36 ART (16:36 UTC), los 114 videos YouTube y el video Vimeo dieron OK en ambas verificaciones. El límite 429 del ensayo anterior ya no impidió esa comprobación.

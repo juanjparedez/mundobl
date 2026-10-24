@@ -104,6 +104,7 @@ const routeTests = [
   ['test-contribution-boundary.mjs', false],
 ];
 const uiTests = [
+  ['test-player-recovery.mjs', false],
   ['test-editorial-ui.mjs', true],
   ['test-dashboard-mobile-flow.mjs', false],
   ['test-profile-list-count.mjs', false],

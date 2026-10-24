@@ -1,6 +1,6 @@
-const SHELL_CACHE = 'mundobl-shell-v8';
-const IMAGE_CACHE = 'mundobl-img-v8';
-const REMOTE_IMAGE_CACHE = 'mundobl-remote-img-v8';
+const SHELL_CACHE = 'mundobl-shell-v9';
+const IMAGE_CACHE = 'mundobl-img-v9';
+const REMOTE_IMAGE_CACHE = 'mundobl-remote-img-v9';
 const IMAGE_CACHE_MAX_ENTRIES = 250;
 const REMOTE_IMAGE_CACHE_MAX_ENTRIES = 500;
 
@@ -24,7 +24,9 @@ self.addEventListener('activate', (event) => {
       .keys()
       .then((keys) =>
         Promise.all(
-          keys.filter((k) => !KEEP.has(k)).map((k) => caches.delete(k))
+          keys
+            .filter((k) => k.startsWith('mundobl-') && !KEEP.has(k))
+            .map((k) => caches.delete(k))
         )
       )
       .then(() => self.clients.claim())
@@ -75,11 +77,28 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Navegaciones: network-first con fallback al shell
+  // Los frames y medios deben llegar directamente al proveedor. Nunca
+  // reemplazar un reproductor por el shell de MundoBL si falla su red.
+  if (
+    ['iframe', 'frame', 'embed', 'object', 'video', 'audio'].includes(
+      request.destination
+    )
+  )
+    return;
+
+  // Solo las páginas principales de MundoBL tienen fallback offline.
   if (request.mode === 'navigate') {
+    if (
+      url.origin !== self.location.origin ||
+      request.destination !== 'document'
+    )
+      return;
     event.respondWith(
       fetch(request).catch(() =>
-        caches.match('/').then((r) => r ?? Response.error())
+        caches
+          .open(SHELL_CACHE)
+          .then((cache) => cache.match('/'))
+          .then((r) => r ?? Response.error())
       )
     );
     return;
@@ -109,6 +128,7 @@ self.addEventListener('fetch', (event) => {
   // Las cacheamos cache-first para no agotar la cuota de transformaciones
   // de Vercel ni el egress del free tier de Supabase.
   if (
+    request.destination === 'image' &&
     url.hostname.endsWith('.supabase.co') &&
     url.pathname.startsWith('/storage/')
   ) {
@@ -202,7 +222,10 @@ self.addEventListener('notificationclick', (event) => {
           if (clientUrl.origin === target.origin) {
             await client.focus();
             // Solo navegamos si la URL difiere (evita reload innecesario).
-            if (clientUrl.pathname + clientUrl.search !== target.pathname + target.search) {
+            if (
+              clientUrl.pathname + clientUrl.search !==
+              target.pathname + target.search
+            ) {
               if ('navigate' in client) {
                 await client.navigate(target.toString());
               }

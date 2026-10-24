@@ -4,28 +4,71 @@
  *  - Cache local con assets corruptos.
  *  - Sesión inconsistente.
  *
- * Todos son client-only y silenciosos: cualquier error se ignora
- * porque su único propósito es desatascar al usuario, no fallar más.
+ * Client-only. Los helpers de caché/SW devuelven false si fallan para que
+ * las interfaces de recuperación puedan informar un resultado incompleto.
  */
 
-export async function clearAllCaches(): Promise<void> {
-  if (typeof window === 'undefined' || !('caches' in window)) return;
+async function withRecoveryTimeout<T>(operation: Promise<T>): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
   try {
-    const keys = await caches.keys();
-    await Promise.all(keys.map((k) => caches.delete(k)));
-  } catch {
-    /* ignore */
+    return await Promise.race([
+      operation,
+      new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(new Error('Recovery timed out')), 5000);
+      }),
+    ]);
+  } finally {
+    clearTimeout(timer);
   }
 }
 
-export async function unregisterAllServiceWorkers(): Promise<void> {
-  if (typeof navigator === 'undefined' || !('serviceWorker' in navigator))
-    return;
+export interface PlaybackEnvironment {
+  online: boolean;
+  hasLocalData: boolean;
+}
+
+/** Solo inspecciona el estado local; no certifica disponibilidad del video. */
+export async function inspectPlaybackEnvironment(): Promise<PlaybackEnvironment> {
+  const [keys, registrations] = await withRecoveryTimeout(
+    Promise.all([
+      'caches' in window ? caches.keys() : Promise.resolve([]),
+      'serviceWorker' in navigator
+        ? navigator.serviceWorker.getRegistrations()
+        : Promise.resolve([]),
+    ])
+  );
+  return {
+    online: navigator.onLine,
+    hasLocalData: keys.length > 0 || registrations.length > 0,
+  };
+}
+
+export async function clearAllCaches(): Promise<boolean> {
+  if (typeof window === 'undefined' || !('caches' in window)) return true;
   try {
-    const regs = await navigator.serviceWorker.getRegistrations();
-    await Promise.all(regs.map((r) => r.unregister()));
+    await withRecoveryTimeout(
+      caches
+        .keys()
+        .then((keys) => Promise.all(keys.map((k) => caches.delete(k))))
+    );
+    return true;
   } catch {
-    /* ignore */
+    return false;
+  }
+}
+
+export async function unregisterAllServiceWorkers(): Promise<boolean> {
+  if (typeof navigator === 'undefined' || !('serviceWorker' in navigator))
+    return true;
+  try {
+    await withRecoveryTimeout(
+      navigator.serviceWorker
+        .getRegistrations()
+        .then((regs) => Promise.all(regs.map((r) => r.unregister())))
+    );
+    return true;
+  } catch {
+    return false;
   }
 }
 
@@ -52,12 +95,13 @@ export function clearLocalStorage(): void {
  * Útil cuando el SW está sirviendo HTML/JS viejo y la app está rota.
  * Recarga la página si reload=true (por defecto).
  */
-export async function resetServiceWorker(reload = true): Promise<void> {
-  await unregisterAllServiceWorkers();
-  await clearAllCaches();
+export async function resetServiceWorker(reload = true): Promise<boolean> {
+  const unregistered = await unregisterAllServiceWorkers();
+  const cleared = await clearAllCaches();
   if (reload && typeof window !== 'undefined') {
     window.location.reload();
   }
+  return unregistered && cleared;
 }
 
 /**

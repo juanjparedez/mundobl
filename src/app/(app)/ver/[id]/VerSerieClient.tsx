@@ -23,6 +23,7 @@ import {
 } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import { EmbedPlayer } from '@/components/common/EmbedPlayer/EmbedPlayer';
+import { PlayerRecovery } from '@/components/common/PlayerRecovery/PlayerRecovery';
 import { useSeriesUserStatus } from '@/components/series/SeriesUserStatusProvider';
 import { useMarkEpisodes } from '@/hooks/useMarkEpisodes';
 import { useViewerCountry } from '@/hooks/useViewerCountry';
@@ -344,6 +345,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
   }, [seasons, series.title]);
 
   const [activeIdx, setActiveIdx] = useState(0);
+  const [playerAttempt, setPlayerAttempt] = useState(0);
   const [autoplayEpisodeId, setAutoplayEpisodeId] = useState<number | null>(
     null
   );
@@ -651,7 +653,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           openLabel={t('episodeSource.openOn', {
             platform: active.embedPlatform || 'YouTube',
           })}
-          key={active.id}
+          key={`${active.id}:${playerAttempt}`}
           episodeId={active.id}
           platform={active.embedPlatform || 'YouTube'}
           url={active.embedUrl || ''}
@@ -663,6 +665,31 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
               ? handleWatchProgress
               : undefined
           }
+        />
+        <PlayerRecovery
+          key={active.id}
+          url={active.embedUrl || ''}
+          onRetry={() => setPlayerAttempt((attempt) => attempt + 1)}
+          labels={{
+            title: t('playerRecovery.title'),
+            description: t('playerRecovery.description'),
+            review: t('playerRecovery.review'),
+            retry: t('playerRecovery.retry'),
+            reset: t('playerRecovery.reset'),
+            resetConfirm: t('playerRecovery.resetConfirm'),
+            confirm: t('playerRecovery.reset'),
+            cancel: t('playerRecovery.cancel'),
+            online: t('playerRecovery.online'),
+            offline: t('playerRecovery.offline'),
+            localActive: t('playerRecovery.localActive'),
+            localEmpty: t('playerRecovery.localEmpty'),
+            reviewFailed: t('playerRecovery.reviewFailed'),
+            resetFailed: t('playerRecovery.resetFailed'),
+            platformNotice: t('playerRecovery.platformNotice'),
+            open: t('episodeSource.openOn', {
+              platform: active.embedPlatform || 'YouTube',
+            }),
+          }}
         />
       </div>
 

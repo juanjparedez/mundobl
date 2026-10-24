@@ -1,0 +1,31 @@
+.player-recovery {
+  margin-top: var(--spacing-sm);
+}
+
+.player-recovery__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  color: var(--text-secondary);
+}
+
+.player-recovery__content p {
+  margin: 0;
+}
+
+.player-recovery__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+.player-recovery__actions .ant-btn {
+  height: auto;
+  min-height: 44px;
+  white-space: normal;
+}
+
+.player-recovery__results {
+  margin: 0;
+  padding-inline-start: var(--spacing-lg);
+}

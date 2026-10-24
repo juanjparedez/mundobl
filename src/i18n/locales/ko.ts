@@ -10,6 +10,22 @@
 import type { TranslationShape } from '../messages';
 
 const ko = {
+  playerRecovery: {
+    cancel: '취소',
+    title: "동영상이 표시되지 않나요?",
+    description: "플레이어를 새로고침해 보세요. 계속 비어 있다면 로컬 데이터를 확인하거나 재생을 초기화하세요.",
+    review: "로컬 데이터 확인",
+    retry: "플레이어 새로고침",
+    reset: "재생 초기화",
+    resetConfirm: "이 사이트의 캐시를 지우고 로컬 설치를 초기화한 뒤 이 페이지를 새로고침합니다. 로그인 상태, 설정 및 저장된 시청 진행 상황은 유지됩니다.",
+    online: "브라우저가 연결된 상태로 보고하지만 플랫폼 접속 여부를 확인한 것은 아닙니다.",
+    offline: "브라우저가 오프라인입니다. 다시 연결한 후 재생을 초기화하세요.",
+    localActive: "MundoBL의 로컬 데이터가 있습니다. 정상적인 상태이며 오류를 의미하지 않습니다.",
+    localEmpty: "사이트의 캐시나 로컬 설치를 찾지 못했습니다.",
+    reviewFailed: "로컬 데이터를 확인하지 못했습니다. 다시 시도할 수 있습니다.",
+    resetFailed: "초기화를 완료하지 못했습니다. 다시 시도하거나 플랫폼에서 동영상을 여세요.",
+    platformNotice: "이 확인으로 동영상 접근 가능 여부를 판단할 수는 없습니다. 국가 제한, 멤버십 및 삭제된 동영상은 플랫폼에 따라 결정되며 초기화로 해결되지 않습니다.",
+  },
   episodeSource: {
     followOn: "{platform}에서 {channelName} 팔로우",
     officialHint: "여기에서 재생을 허용하는 검증된 공식 출처의 작품만 허용합니다.",

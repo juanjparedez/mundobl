@@ -1,6 +1,22 @@
 import type { SupportedLocale } from './config';
 
 export type TranslationShape = {
+  playerRecovery: {
+    cancel: string;
+    title: string;
+    description: string;
+    review: string;
+    retry: string;
+    reset: string;
+    resetConfirm: string;
+    online: string;
+    offline: string;
+    localActive: string;
+    localEmpty: string;
+    reviewFailed: string;
+    resetFailed: string;
+    platformNotice: string;
+  };
   episodeSource: {
     followOn: string;
     officialHint: string;
@@ -3841,6 +3857,31 @@ export type TranslationShape = {
 };
 
 const es: TranslationShape = {
+  playerRecovery: {
+    cancel: 'Cancelar',
+    title: '¿No se ve el video?',
+    description:
+      'Probá recargar el reproductor. Si sigue vacío, revisá los datos locales o reiniciá la reproducción.',
+    review: 'Revisar datos locales',
+    retry: 'Recargar reproductor',
+    reset: 'Reiniciar reproducción',
+    resetConfirm:
+      'Limpia la caché de este sitio, reinicia su funcionamiento local y recarga esta ficha. Conserva tu sesión, preferencias y progreso guardado.',
+    online:
+      'El navegador informa que hay conexión; esto no comprueba el acceso a la plataforma.',
+    offline:
+      'El navegador está sin conexión. Reconectate antes de reiniciar la reproducción.',
+    localActive:
+      'Hay datos locales de MundoBL. Su presencia es normal y no indica un error.',
+    localEmpty: 'No se encontraron cachés ni una instalación local del sitio.',
+    reviewFailed:
+      'No se pudieron revisar los datos locales. Podés volver a intentarlo.',
+    resetFailed:
+      'No se pudo completar el reinicio. Probá de nuevo o abrí el video en la plataforma.',
+    platformNotice:
+      'Esta revisión no verifica el acceso al video. Las restricciones por país, membresía o videos retirados dependen de la plataforma y no se resuelven con un reinicio.',
+  },
+
   episodeSource: {
     followOn: 'Seguir a {channelName} en {platform}',
     officialHint:
@@ -7973,6 +8014,29 @@ const es: TranslationShape = {
 };
 
 const en: TranslationShape = {
+  playerRecovery: {
+    cancel: 'Cancel',
+    title: 'Video not showing?',
+    description:
+      'Try reloading the player. If it stays blank, check local data or reset playback.',
+    review: 'Check local data',
+    retry: 'Reload player',
+    reset: 'Reset playback',
+    resetConfirm:
+      'Clears this site’s cache, resets its local installation and reloads this page. Keeps your session, preferences and saved progress.',
+    online:
+      'The browser reports a connection; this does not check access to the platform.',
+    offline: 'The browser is offline. Reconnect before resetting playback.',
+    localActive:
+      'MundoBL has local data. This is normal and does not indicate an error.',
+    localEmpty: 'No caches or local site installation were found.',
+    reviewFailed: 'Local data could not be checked. You can try again.',
+    resetFailed:
+      'The reset could not be completed. Try again or open the video on the platform.',
+    platformNotice:
+      'This check does not verify video access. Country restrictions, memberships and removed videos depend on the platform and cannot be fixed by resetting.',
+  },
+
   episodeSource: {
     followOn: 'Follow {channelName} on {platform}',
     officialHint:

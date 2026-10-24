@@ -10,6 +10,22 @@
 import type { TranslationShape } from '../messages';
 
 const zhCN = {
+  playerRecovery: {
+    cancel: '取消',
+    title: "视频没有显示？",
+    description: "请尝试重新加载播放器。如果仍为空白，请检查本地数据或重置播放。",
+    review: "检查本地数据",
+    retry: "重新加载播放器",
+    reset: "重置播放",
+    resetConfirm: "清除此网站的缓存，重置其本地安装并重新加载本页。保留登录状态、偏好设置和已保存的观看进度。",
+    online: "浏览器报告已连接网络，但这并不代表已确认可以访问平台。",
+    offline: "浏览器处于离线状态。请重新联网后再重置播放。",
+    localActive: "存在MundoBL的本地数据。这是正常现象，并不表示出错。",
+    localEmpty: "未找到网站缓存或本地安装。",
+    reviewFailed: "无法检查本地数据。请重试。",
+    resetFailed: "未能完成重置。请重试或在平台上打开视频。",
+    platformNotice: "此检查不验证视频的访问权限。地区限制、会员要求和视频下架由平台决定，无法通过重置解决。",
+  },
   episodeSource: {
     followOn: "在 {platform} 关注 {channelName}",
     officialHint: "仅接受来自经验证的官方来源且允许在此播放的作品。",

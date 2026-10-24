@@ -10,6 +10,22 @@
 import type { TranslationShape } from '../messages';
 
 const de = {
+  playerRecovery: {
+    cancel: 'Abbrechen',
+    title: "Video wird nicht angezeigt?",
+    description: "Lade den Player neu. Bleibt er leer, prüfe die lokalen Daten oder setze die Wiedergabe zurück.",
+    review: "Lokale Daten prüfen",
+    retry: "Player neu laden",
+    reset: "Wiedergabe zurücksetzen",
+    resetConfirm: "Leert den Cache dieser Website, setzt ihre lokale Installation zurück und lädt diese Seite neu. Sitzung, Einstellungen und gespeicherter Fortschritt bleiben erhalten.",
+    online: "Der Browser meldet eine Verbindung; der Zugriff auf die Plattform wird damit nicht geprüft.",
+    offline: "Der Browser ist offline. Stelle die Verbindung wieder her, bevor du die Wiedergabe zurücksetzt.",
+    localActive: "Lokale Daten von MundoBL sind vorhanden. Das ist normal und kein Hinweis auf einen Fehler.",
+    localEmpty: "Keine Caches oder lokale Installation der Website gefunden.",
+    reviewFailed: "Die lokalen Daten konnten nicht geprüft werden. Versuche es erneut.",
+    resetFailed: "Das Zurücksetzen konnte nicht abgeschlossen werden. Versuche es erneut oder öffne das Video auf der Plattform.",
+    platformNotice: "Diese Prüfung bestätigt keinen Videozugriff. Ländersperren, Mitgliedschaften und entfernte Videos hängen von der Plattform ab und lassen sich durch Zurücksetzen nicht beheben.",
+  },
   episodeSource: {
     followOn: "{channelName} auf {platform} folgen",
     officialHint: "Wir akzeptieren nur Werke aus verifizierten offiziellen Quellen, die eine Wiedergabe hier erlauben.",

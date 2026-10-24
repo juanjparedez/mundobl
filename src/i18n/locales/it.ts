@@ -10,6 +10,22 @@
 import type { TranslationShape } from '../messages';
 
 const it = {
+  playerRecovery: {
+    cancel: 'Annulla',
+    title: "Il video non si vede?",
+    description: "Prova a ricaricare il lettore. Se resta vuoto, controlla i dati locali o ripristina la riproduzione.",
+    review: "Controlla i dati locali",
+    retry: "Ricarica lettore",
+    reset: "Ripristina riproduzione",
+    resetConfirm: "Svuota la cache del sito, ripristina la sua installazione locale e ricarica questa pagina. Conserva sessione, preferenze e progressi salvati.",
+    online: "Il browser segnala una connessione; questo non verifica l’accesso alla piattaforma.",
+    offline: "Il browser è offline. Riconnettiti prima di ripristinare la riproduzione.",
+    localActive: "Sono presenti dati locali di MundoBL. È normale e non indica un errore.",
+    localEmpty: "Non sono state trovate cache o installazioni locali del sito.",
+    reviewFailed: "Impossibile controllare i dati locali. Puoi riprovare.",
+    resetFailed: "Impossibile completare il ripristino. Riprova o apri il video sulla piattaforma.",
+    platformNotice: "Questo controllo non verifica l’accesso al video. Restrizioni geografiche, abbonamenti e video rimossi dipendono dalla piattaforma e non si risolvono con un ripristino.",
+  },
   episodeSource: {
     followOn: "Segui {channelName} su {platform}",
     officialHint: "Accettiamo solo opere da fonti ufficiali verificate che ne consentono la riproduzione qui.",
