@@ -750,7 +750,12 @@ const de = {
     "markCompleteConfirm": "„{title}“ als beendet markieren?",
     "completedMessage": "Du hast „{title}“ als beendet markiert",
     "noEpisodesHint": "Keine Episoden geladen: wird auf einmal als abgeschlossen markiert",
-    "watchNow": "Weiterschauen"
+    "watchNow": "Weiterschauen",
+    "recapTitle": "Deine letzten 30 Tage",
+    "recapSummary": "{chapters} Folgen · {hours} Std. · {finished} Serien beendet",
+    "recapPrevious": "Die 30 Tage davor: {chapters} Folgen",
+    "recapTop": "Am meisten gesehen: {title}",
+    "recapLink": "Meine Statistiken ansehen"
   },
   "appLayout": {
     "skipToContent": "Zum Hauptinhalt springen"

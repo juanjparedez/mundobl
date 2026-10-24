@@ -749,7 +749,12 @@ const it = {
     "markCompleteConfirm": "Contrassegnare \"{title}\" come terminato?",
     "completedMessage": "Hai contrassegnato \"{title}\" come terminato",
     "noEpisodesHint": "Nessun episodio caricato: viene segnato come completo in una volta sola",
-    "watchNow": "Riprendi a guardare"
+    "watchNow": "Riprendi a guardare",
+    "recapTitle": "I tuoi ultimi 30 giorni",
+    "recapSummary": "{chapters} episodi · {hours} h · {finished} serie finite",
+    "recapPrevious": "I 30 giorni precedenti: {chapters} episodi",
+    "recapTop": "Ciò che hai guardato di più: {title}",
+    "recapLink": "Vedi le mie statistiche"
   },
   "appLayout": {
     "skipToContent": "Salta al contenuto principale"

@@ -745,7 +745,12 @@ const th = {
     "markCompleteConfirm": "ทำเครื่องหมาย \"{title}\" ว่าดูจบแล้วใช่หรือไม่?",
     "completedMessage": "คุณทำเครื่องหมาย \"{title}\" ว่าดูจบแล้ว",
     "noEpisodesHint": "ไม่มีตอนที่โหลด: จะถูกทำเครื่องหมายว่าเสร็จสมบูรณ์ในครั้งเดียว",
-    "watchNow": "ดูต่อ"
+    "watchNow": "ดูต่อ",
+    "recapTitle": "30 วันที่ผ่านมา",
+    "recapSummary": "{chapters} ตอน · {hours} ชม. · ดูจบ {finished} เรื่อง",
+    "recapPrevious": "30 วันก่อนหน้า: {chapters} ตอน",
+    "recapTop": "ที่ดูมากที่สุด: {title}",
+    "recapLink": "ดูสถิติของฉัน"
   },
   "appLayout": {
     "skipToContent": "ข้ามไปยังเนื้อหาหลัก"

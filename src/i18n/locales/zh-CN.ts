@@ -743,7 +743,12 @@ const zhCN = {
     "markCompleteConfirm": "标记“{title}”为已看完？",
     "completedMessage": "你已将“{title}”标记为已看完",
     "noEpisodesHint": "未加载剧集：将一次性标记为已完成",
-    "watchNow": "继续观看"
+    "watchNow": "继续观看",
+    "recapTitle": "你最近 30 天",
+    "recapSummary": "{chapters} 集 · {hours} 小时 · 看完 {finished} 部",
+    "recapPrevious": "之前 30 天：{chapters} 集",
+    "recapTop": "看得最多：{title}",
+    "recapLink": "查看我的统计"
   },
   "appLayout": {
     "skipToContent": "跳到主要内容"

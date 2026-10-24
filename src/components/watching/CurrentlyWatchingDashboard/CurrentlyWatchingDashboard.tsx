@@ -36,6 +36,7 @@ import { WatchingSeriesCard } from '../WatchingSeriesCard/WatchingSeriesCard';
 import { WatchingEpisodeDrawer } from '../WatchingEpisodeDrawer/WatchingEpisodeDrawer';
 import { TrackingHistory } from '../TrackingHistory/TrackingHistory';
 import { RecommendedForYou } from '../RecommendedForYou/RecommendedForYou';
+import { MonthlyRecap } from '../MonthlyRecap/MonthlyRecap';
 import './CurrentlyWatchingDashboard.css';
 
 export function CurrentlyWatchingDashboard() {
@@ -212,6 +213,23 @@ function WatchingCollection({ userId }: { userId: string }) {
         <Skeleton active />
       ) : (
         <>
+          <MonthlyRecap
+            labels={{
+              title: t('watchingDashboard.recapTitle'),
+              summary: (chapters, hours, finished) =>
+                t('watchingDashboard.recapSummary', {
+                  chapters,
+                  hours,
+                  finished,
+                }),
+              previous: (chapters) =>
+                t('watchingDashboard.recapPrevious', { chapters }),
+              top: (title) => t('watchingDashboard.recapTop', { title }),
+              rank: (rank, ranked, count) =>
+                t('publicStats.rankingPosition', { rank, ranked, count }),
+              link: t('watchingDashboard.recapLink'),
+            }}
+          />
           <div className="watching-workspace__stats">
             <StatCard
               label={t('libraryWorkspace.title')}
