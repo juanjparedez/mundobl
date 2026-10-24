@@ -13,7 +13,19 @@
 // Privacy Control, Do Not Track o el interruptor de /privacidad, y el
 // servidor descarta igual lo que llegue con Sec-GPC.
 
-export const ACTIVITY_KINDS = ['view', 'chapter', 'want', 'finish'] as const;
+//
+// Los tres `alert_*` son el embudo del aviso de estreno (AiringAlertCta): se
+// mostro el boton, se toco, y termino en aviso activado (con login incluido).
+// No se muestran en el sitio; solo en el informe del admin.
+export const ACTIVITY_KINDS = [
+  'view',
+  'chapter',
+  'want',
+  'finish',
+  'alert_offer',
+  'alert_click',
+  'alert_on',
+] as const;
 export type ActivityKind = (typeof ACTIVITY_KINDS)[number];
 export type ActivitySource = 'account' | 'browser';
 

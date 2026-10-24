@@ -18,6 +18,8 @@ export interface ProducerReport {
   /** Capitulos por origen: con cuenta o sin cuenta (navegador). */
   chaptersBySource: { account: number; browser: number };
   totals: ActivityTotals;
+  /** Embudo del aviso de estreno: boton mostrado, tocado y aviso activado. */
+  alerts: { offers: number; clicks: number; activated: number };
   series: Array<
     ActivityTotals & {
       seriesId: number;

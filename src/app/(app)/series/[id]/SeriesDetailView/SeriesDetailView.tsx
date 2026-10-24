@@ -35,7 +35,8 @@ import { SeriesUserStatusProvider } from '@/components/series/SeriesUserStatusPr
 import { PendingTrackApplier } from '@/components/series/PendingTrackApplier/PendingTrackApplier';
 import { EditSeriesFab } from '../EditSeriesFab/EditSeriesFab';
 import { getAdultVariantUrl, getSeriesUrl, getVerUrl } from '@/lib/slug';
-import { isAiringNow } from '@/lib/airing-schedule';
+import { isAiringNow, parseAirDays } from '@/lib/airing-schedule';
+import { AiringAlertCta } from '@/components/series/AiringAlertCta/AiringAlertCta';
 import { countChapters } from '@/lib/episode-chapters';
 import { isWatchableEpisode } from '@/lib/watchable';
 import { WatchHereBanner } from '@/components/series/WatchHereBanner/WatchHereBanner';
@@ -141,6 +142,8 @@ export async function SeriesDetailView({
   // vacío no puede decir que no sabemos.
   const canWatchHere =
     hasOwnEmbeds || (serie.linkedFromUserEmbeds?.length ?? 0) > 0;
+  const airing = isAiringNow(serie);
+  const airWeekdays = airing ? parseAirDays(serie.airDays) : [];
 
   return (
     <>
@@ -248,7 +251,7 @@ export async function SeriesDetailView({
                   seriesId={serie.id}
                   seriesTitle={serie.title}
                   seasons={serie.seasons}
-                  airing={isAiringNow(serie)}
+                  airing={airing}
                   hasSimilar={similarSeries.length > 0}
                 />
                 <div
@@ -291,6 +294,8 @@ export async function SeriesDetailView({
             <CommunityWorkLink seriesId={serie.id} />
             <ActivityPulse seriesId={serie.id} />
           </div>
+
+          <AiringAlertCta seriesId={serie.id} airWeekdays={airWeekdays} />
 
           {serie.watchLinks && serie.watchLinks.length > 0 ? (
             <WhereToWatch links={serie.watchLinks} variant="hero" />

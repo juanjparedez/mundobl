@@ -3,6 +3,7 @@ import { requireRole } from '@/lib/auth-helpers';
 import { prisma } from '@/lib/database';
 import { isEmailConfigured, sendEmail, unsubscribeUrl } from '@/lib/email';
 import { renderAnnouncementEmail } from '@/lib/email-templates';
+import { mapWithConcurrency } from '@/lib/concurrency';
 
 // 80 envios secuenciales a ~500ms cada uno se pasan del limite default de
 // una lambda. Con concurrencia acotada entra sobrado, y el tope alto queda
@@ -46,26 +47,6 @@ async function resolveRecipients(announcement: {
       : emailOptIn;
 
   return prisma.user.findMany({ where, select: { id: true, email: true } });
-}
-
-/** Corre las tareas de a `limit` para no atropellar el rate limit de Resend. */
-async function mapWithConcurrency<T, R>(
-  items: T[],
-  limit: number,
-  task: (item: T) => Promise<R>
-): Promise<R[]> {
-  const results: R[] = new Array(items.length);
-  let cursor = 0;
-  const workers = Array.from({ length: Math.min(limit, items.length) }, () =>
-    (async () => {
-      while (cursor < items.length) {
-        const index = cursor++;
-        results[index] = await task(items[index]);
-      }
-    })()
-  );
-  await Promise.all(workers);
-  return results;
 }
 
 export async function POST(

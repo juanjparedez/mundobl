@@ -47,6 +47,14 @@ Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-s
 - `UserActiveDay` (userId, día UTC): `GET /api/user/me/summary` anota el día; el cliente cachea el resumen 5 minutos. Es la única forma de medir retorno: las PAGE_VIEW se anonimizan y la sesión es JWT. Retención = filas por usuario a lo largo de los días.
 - Migración `20261024060000_onboarding_active_days` (con RLS). Pruebas: `scripts/test-onboarding.ts` y `scripts/test-onboarding-ui.mjs` contra `mundobl_replay` local.
 
+## Aviso de estreno y resumen semanal (2026-10-24)
+
+- Por qué: 54 cuentas seguían 53 series y nunca salió un aviso, porque `notifyEpisodesAvailable` depende de que un episodio reciba su video. El día de estreno sí se sabe (`Series.airDays`).
+- `AiringAlertCta` (ficha y `/ver`, solo con `isAiringNow`): "Avisame cuando salga el próximo capítulo". Anónimo: guarda la intención (`src/lib/pending-alert.ts`, sessionStorage 30 min) y va a Google; al volver se suscribe solo. Después ofrece una vez el mail (setea `emailEnabled`, opt-in explícito). Si ya sigue la serie, no aparece.
+- Embudo: kinds `alert_offer` / `alert_click` / `alert_on` en `SeriesActivityDaily` (anónimo, respeta GPC/DNT y el opt-out, sin equipo). Se ve en `/admin/informe-productoras`, fuera del texto copiable.
+- `/api/cron/alerts` (Vercel, 12:00 UTC = 09:00 AR / 19:00 TH), `src/lib/airing-alerts.ts`: todos los días `air_day` ("Hoy sale capítulo de X", in-app + push, mismo interruptor que `notifySeasonAdded`, refId `serie:fecha`, no repite aunque esté leído). Los lunes, resumen por mail a `emailEnabled` (sin equipo): series seguidas al aire con sus días + hasta 5 en VIENDO; si no hay nada, no sale. `NotificationPrefs.digestSentAt` se reclama antes de enviar (dos corridas no duplican; un fallo de Resend no se reintenta esa semana). Textos en español: el idioma no se guarda en la cuenta.
+- Migración `20261024200000_airing_alerts` (columna + amplía el CHECK de kind). Va DESPUÉS de `20261024190000_tracking_redesign`. Pruebas: `scripts/test-airing-alerts.ts` y `scripts/test-airing-alert-ui.mjs`.
+
 ## Recomendaciones (2026-10-19)
 
 - `src/lib/recommendations.ts` puntúa por tags, géneros y actores compartidos (actor 3, tag 2, género 1, divididos por log2 de cuántas candidatas tienen ese rasgo). Hace falta un actor o dos rasgos en común; un género suelto no alcanza.
@@ -71,9 +79,9 @@ Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-s
   para conservar búsqueda, filtros, universo, favoritos y vistas.
 - Sinopsis a demanda: `/api/series/[id]/preview`, GET estático con TTL de seis
   horas; `revalidateSeriesDetail` lo invalida al editar. Sólo CURATED + PERSONAL
-  + VISIBLE; ADULT18 devuelve null, nunca evita la compuerta del detalle.
-  Hover y modal comparten petición y caché de texto público por 60 segundos,
-  limitada a 50 entradas. Errores se pueden reintentar y no se cachean en cliente.
+  - VISIBLE; ADULT18 devuelve null, nunca evita la compuerta del detalle.
+    Hover y modal comparten petición y caché de texto público por 60 segundos,
+    limitada a 50 entradas. Errores se pueden reintentar y no se cachean en cliente.
 - Comparación al crear una serie ya capturada: campos en bloques seleccionables,
   valores apilados a menos de 600 px y lado a lado en escritorio, sin celdas
   comprimidas ni scroll dentro de cada texto. Selección individual y conjunta,
@@ -176,7 +184,6 @@ Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-s
   página, scroll, recarga, atrás/adelante, acceso directo, `/ver`, cajones públicos
   a 320/390/768 px y administración desktop/mobile. Sin cambios de schema.
 
-
 ## Calidad y sostenibilidad (2026-10-12)
 
 Diagnóstico actualizado con acceso a ambos paneles: [consumo y validaciones](../diagnostico-consumo-2026-10-12.md). Vercel: CPU 8 h 29 min / 4 h e ISR Writes 311.224 / 200.000 en últimos 30 días; Supabase sin excesos en el ciclo 17/09–17/10. Priorizar payload del catálogo y CSS SSR antes de migrar. Visor móvil y compartir alternativo comprobados en producción; hoja nativa real y ciclo HTTP de caché de patrocinio siguen pendientes. Los períodos, límites y accionables están en el diagnóstico.
@@ -233,7 +240,7 @@ DB local; no desplegada ni aplicada en producción. Propuesta comercial local, s
 
 | Servicio           | Detalle                                                                                                                            |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
-| **Hosting**        | Vercel (deploy manual con GitHub Actions)                                                                                            |
+| **Hosting**        | Vercel (deploy manual con GitHub Actions)                                                                                          |
 | **Base de datos**  | Supabase PostgreSQL (sa-east-1, Sao Paulo)                                                                                         |
 | **Almacenamiento** | Supabase Storage (bucket `images`)                                                                                                 |
 | **Auth**           | NextAuth.js (Google OAuth)                                                                                                         |
@@ -917,9 +924,9 @@ Las skins son una dimension visual ortogonal a `theme` (light/dark), `tone` (def
 
 **Skins disponibles:**
 
-| Skin      | Archivo                                                                | Cuando aplica                                                                                                                                                                                                                              |
-| --------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `default` | (sin archivo)                                                          | Default — usa tokens base de [variables.css](../../src/styles/variables.css)                                                                                                                                                                     |
+| Skin      | Archivo                                                                      | Cuando aplica                                                                                                                                                                                                                              |
+| --------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `default` | (sin archivo)                                                                | Default — usa tokens base de [variables.css](../../src/styles/variables.css)                                                                                                                                                               |
 | `premium` | [src/styles/skins/premium-dark.css](../../src/styles/skins/premium-dark.css) | Solo cuando `data-theme='dark'`. Paleta premium dark (`#090911`/`#11101d`/`#171423`/`#211b32`), bordes sutiles `rgba(255,255,255,0.06–0.14)`, sombras soft, radii 14/18. Expone tambien `--mb-*` para componentes nuevos del design-system |
 
 **Como agregar una skin nueva:**

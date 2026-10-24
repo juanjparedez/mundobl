@@ -477,3 +477,103 @@ export function renderContributionReviewedEmail(
     text,
   };
 }
+
+// ============================================================
+// 6. Resumen semanal de tus series (MASIVO)
+// ============================================================
+
+export interface WeeklyDigestItem {
+  title: string;
+  url: string;
+  /** "Viernes y Sábado" para las que salen esta semana; vacio para el resto. */
+  detail?: string;
+}
+
+export interface WeeklyDigestEmailInput {
+  labels: TranslationShape['airingAlert'];
+  locale?: SupportedLocale;
+  /** Series seguidas que estrenan esta semana. */
+  airing: WeeklyDigestItem[];
+  /** Series en "Viendo" que no estan en la lista de arriba. */
+  watching: WeeklyDigestItem[];
+  unsubscribeUrl: string;
+  siteUrl?: string;
+}
+
+/**
+ * Sale los lunes (cron de alertas) solo a quien activo el correo. Dice dias
+ * de estreno, que es lo que sabemos por `Series.airDays`; nunca "ya esta el
+ * capitulo", porque eso no lo sabemos.
+ */
+export function renderWeeklyDigestEmail(
+  input: WeeklyDigestEmailInput
+): EmailRender {
+  const siteUrl = input.siteUrl ?? SITE_URL;
+  const { labels } = input;
+
+  const list = (items: WeeklyDigestItem[]) =>
+    `<ul style="margin:8px 0 0;padding-left:20px">${items
+      .map(
+        (item) =>
+          `<li style="margin:6px 0"><a href="${escapeHtml(item.url)}" style="color:${TEXT};font-weight:600">${escapeHtml(item.title)}</a>${
+            item.detail
+              ? ` <span style="color:${MUTED}">· ${escapeHtml(item.detail)}</span>`
+              : ''
+          }</li>`
+      )
+      .join('')}</ul>`;
+
+  const section = (heading: string, items: WeeklyDigestItem[]) =>
+    items.length === 0
+      ? ''
+      : `<p style="margin:18px 0 0;color:${MUTED};font-size:14px;text-transform:uppercase;letter-spacing:.4px">${escapeHtml(heading)}</p>${list(items)}`;
+
+  const textSection = (heading: string, items: WeeklyDigestItem[]) =>
+    items.length === 0
+      ? []
+      : [
+          '',
+          heading,
+          ...items.map(
+            (item) =>
+              `- ${item.title}${item.detail ? ` (${item.detail})` : ''}: ${item.url}`
+          ),
+        ];
+
+  const footerHtml = `<p style="margin:0 0 8px">${escapeHtml(labels.digestReason)}</p>
+      <p style="margin:0">
+        <a href="${escapeHtml(input.unsubscribeUrl)}" style="color:${MUTED};text-decoration:underline">${escapeHtml(labels.digestUnsubscribe)}</a>
+        &nbsp;·&nbsp;
+        <a href="${escapeHtml(siteUrl)}" style="color:${MUTED};text-decoration:underline">MundoBL</a>
+      </p>`;
+
+  return {
+    subject: labels.digestSubject,
+    html: renderLayout({
+      locale: input.locale,
+      preheader: labels.digestIntro,
+      heading: labels.digestSubject,
+      bodyHtml:
+        paragraphs(escapeHtml(labels.digestIntro)) +
+        section(labels.digestAiring, input.airing) +
+        section(labels.digestWatching, input.watching),
+      ctaUrl: siteUrl + '/watching',
+      ctaLabel: labels.digestAction,
+      footerHtml,
+      siteUrl,
+    }),
+    text: [
+      labels.digestSubject,
+      '',
+      labels.digestIntro,
+      ...textSection(labels.digestAiring, input.airing),
+      ...textSection(labels.digestWatching, input.watching),
+      '',
+      `${labels.digestAction}: ${siteUrl}/watching`,
+      '',
+      '---',
+      labels.digestReason,
+      `${labels.digestUnsubscribe}: ${input.unsubscribeUrl}`,
+    ].join('\n'),
+  };
+}
