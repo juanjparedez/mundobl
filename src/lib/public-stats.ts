@@ -86,8 +86,9 @@ export interface RecentCommunityActivity {
   episodesByDay: Array<{ day: string; count: number }>;
   /** Ranking anonimo de capitulos vistos en la ventana larga (community-ranking.ts). */
   topWatchers: RankingEntry[];
-  /** Capitulos vistos sin cuenta en la ventana corta (SeriesActivityDaily). */
-  browserChaptersRecently: number;
+  /** Capitulos vistos sin cuenta en la ventana corta (SeriesActivityDaily).
+   *  Opcional: una pagina o respuesta cacheada de antes no lo trae. */
+  browserChaptersRecently?: number;
 }
 
 export interface PublicStats {

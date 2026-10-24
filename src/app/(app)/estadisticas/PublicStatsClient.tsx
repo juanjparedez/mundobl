@@ -458,7 +458,7 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
           },
           {
             icon: <GlobalOutlined />,
-            value: data.recent.browserChaptersRecently,
+            value: data.recent.browserChaptersRecently ?? 0,
             label: t('publicStats.browserChaptersRecently'),
           },
           {

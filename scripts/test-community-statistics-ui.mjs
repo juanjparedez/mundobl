@@ -18,7 +18,7 @@ const bundle = await build({
         summary:{totalSeries:10,totalPublicComments:0,totalPublishedReviews:3,totalCompletedViews:0,totalCurrentlyWatching:0,totalFavorites:0,totalActors:0,totalDirectors:0,averageCommunityRating:null,totalUserRatings:0,teamCompletedSeries:0},
         rankings:{topSeries:[],topFavorited:[],topActors:[],topDirectors:[],topProductionCompanies:[],topCountries:[],byType:[]},
         catalog:{byCountry:[],byType:[],byGenre:[],byYear:[]}, ratings:{averageCommunity:null,total:0,distribution:[]},
-        recent:{shortWindowDays:7,longWindowDays:30,totalMembers:40,trackingMembers:20,activeMembers:12,newMembers:4,episodesSeenRecently:9,completedRecently:2,publicCommentsRecently:1,ratingsRecently:3,
+        recent:{shortWindowDays:7,longWindowDays:30,totalMembers:40,trackingMembers:20,activeMembers:12,newMembers:4,episodesSeenRecently:9,browserChaptersRecently:6,completedRecently:2,publicCommentsRecently:1,ratingsRecently:3,
           watchingNow:[{seriesId:1,title:'Serie sintetica',count:5}],
           episodesByDay:[{day:'2026-09-26',count:0},{day:'2026-09-27',count:2}],
           topWatchers:[{rank:1,count:12,name:'Perfil publico',profileId:'p1'},{rank:2,count:4,name:null,profileId:null}]}
