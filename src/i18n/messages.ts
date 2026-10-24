@@ -730,6 +730,11 @@ export type TranslationShape = {
     completedMessage: string;
     noEpisodesHint: string;
     watchNow: string;
+    recapTitle: string;
+    recapSummary: string;
+    recapPrevious: string;
+    recapTop: string;
+    recapLink: string;
   };
   appLayout: {
     skipToContent: string;
@@ -4634,6 +4639,12 @@ const es: TranslationShape = {
     completedMessage: 'Marcaste "{title}" como terminada',
     noEpisodesHint: 'Sin capítulos cargados: se marca completa de una vez',
     watchNow: 'Seguir viendo',
+    recapTitle: 'Tus últimos 30 días',
+    recapSummary:
+      '{chapters} capítulos · {hours} h · {finished} series terminadas',
+    recapPrevious: 'Los 30 días anteriores: {chapters} capítulos',
+    recapTop: 'Lo que más viste: {title}',
+    recapLink: 'Ver mis estadísticas',
   },
   appLayout: {
     skipToContent: 'Saltar al contenido principal',
@@ -8717,6 +8728,12 @@ const en: TranslationShape = {
     completedMessage: 'You marked "{title}" as finished',
     noEpisodesHint: 'No episodes loaded: it gets marked complete in one go',
     watchNow: 'Continue watching',
+    recapTitle: 'Your last 30 days',
+    recapSummary:
+      '{chapters} episodes · {hours} h · {finished} series finished',
+    recapPrevious: 'The 30 days before: {chapters} episodes',
+    recapTop: 'What you watched most: {title}',
+    recapLink: 'See my stats',
   },
   appLayout: {
     skipToContent: 'Skip to main content',

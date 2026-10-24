@@ -747,7 +747,12 @@ const ja = {
     "markCompleteConfirm": "「{title}」を完走済みにしますか？",
     "completedMessage": "「{title}」を完走済みにしました",
     "noEpisodesHint": "エピソードが読み込まれていません: 一括で完了とマークされます",
-    "watchNow": "続きを見る"
+    "watchNow": "続きを見る",
+    "recapTitle": "直近30日間",
+    "recapSummary": "{chapters}話 · {hours}時間 · 完走{finished}作品",
+    "recapPrevious": "その前の30日間：{chapters}話",
+    "recapTop": "一番見た作品：{title}",
+    "recapLink": "自分の統計を見る"
   },
   "appLayout": {
     "skipToContent": "メインコンテンツにスキップ"

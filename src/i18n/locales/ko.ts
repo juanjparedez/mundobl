@@ -747,7 +747,12 @@ const ko = {
     "markCompleteConfirm": "\"{title}\"을(를) 완료로 표시하시겠습니까?",
     "completedMessage": "\"{title}\"을(를) 완료로 표시했습니다",
     "noEpisodesHint": "에피소드 없음: 한 번에 완료로 표시됩니다.",
-    "watchNow": "이어보기"
+    "watchNow": "이어보기",
+    "recapTitle": "최근 30일",
+    "recapSummary": "{chapters}화 · {hours}시간 · 완주 {finished}편",
+    "recapPrevious": "이전 30일: {chapters}화",
+    "recapTop": "가장 많이 본 작품: {title}",
+    "recapLink": "내 통계 보기"
   },
   "appLayout": {
     "skipToContent": "본문으로 건너뛰기"
