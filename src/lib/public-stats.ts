@@ -2,6 +2,7 @@ import {
   prisma,
   PUBLIC_REVIEW_SERIES,
   getCommunityMetrics,
+  getActiveCommunityUsersWhere,
 } from '@/lib/database';
 import type { CommunityMetrics } from '@/types/community';
 
@@ -55,8 +56,37 @@ interface RawRatingDistRow {
   count: bigint;
 }
 
+interface RawDayCountRow {
+  day: Date;
+  count: bigint;
+}
+
+export interface RecentCommunityActivity {
+  /** Ventana de "recientes" para los contadores cortos (dias). */
+  shortWindowDays: number;
+  /** Ventana larga: miembros activos y grafico diario (dias). */
+  longWindowDays: number;
+  /** Cuentas de la comunidad (sin ADMIN ni baneadas). */
+  totalMembers: number;
+  /** Cuentas que siguen su progreso (al menos una serie/episodio marcado). */
+  trackingMembers: number;
+  activeMembers: number;
+  newMembers: number;
+  /** Episodios marcados como vistos en la ventana corta. */
+  episodesSeenRecently: number;
+  /** Series terminadas en la ventana larga (en 7 dias casi siempre es 0). */
+  completedRecently: number;
+  publicCommentsRecently: number;
+  ratingsRecently: number;
+  watchingNow: Array<{ seriesId: number; title: string; count: number }>;
+  /** Episodios vistos por dia: es donde esta la actividad real de la
+   *  comunidad (se marcan muchos mas episodios que series terminadas). */
+  episodesByDay: Array<{ day: string; count: number }>;
+}
+
 export interface PublicStats {
   community: CommunityMetrics;
+  recent: RecentCommunityActivity;
   generatedAt: string;
   summary: {
     totalSeries: number;
@@ -110,11 +140,156 @@ export interface PublicStats {
  * (anonimizados): son de la comunidad y se cuentan.
  */
 const COMMUNITY = { user: { role: { not: 'ADMIN' as const } } };
+const COMMUNITY_MEMBER = { banned: false, role: { not: 'ADMIN' as const } };
 const COMMUNITY_COMMENTS = {
   OR: [{ userId: null }, { user: { role: { not: 'ADMIN' as const } } }],
 };
 
+const SHORT_WINDOW_DAYS = 7;
+const LONG_WINDOW_DAYS = 30;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/**
+ * Actividad RECIENTE de la comunidad (mismas fuentes que /admin/stats, pero
+ * solo agregados anonimos y sin cuentas ADMIN, igual que el resto de la
+ * pagina). Sin esto /estadisticas solo mostraba totales historicos que casi
+ * no se mueven de un dia a otro y parecia una pagina congelada, mientras
+ * admin mostraba bien la actividad de la semana y del mes.
+ */
+async function getRecentCommunityActivity(
+  now: Date
+): Promise<RecentCommunityActivity> {
+  const shortSince = new Date(now.getTime() - SHORT_WINDOW_DAYS * DAY_MS);
+  const longSince = new Date(now.getTime() - LONG_WINDOW_DAYS * DAY_MS);
+
+  const [
+    totalMembers,
+    trackingMembers,
+    activeMembers,
+    newMembers,
+    episodesSeenRecently,
+    completedRecently,
+    publicCommentsRecently,
+    ratingsRecently,
+    watchingRows,
+    episodesByDayRows,
+  ] = await Promise.all([
+    prisma.user.count({ where: COMMUNITY_MEMBER }),
+    prisma.user.count({
+      where: {
+        ...COMMUNITY_MEMBER,
+        viewStatuses: { some: { status: { not: 'SIN_VER' } } },
+      },
+    }),
+    prisma.user.count({
+      where: {
+        AND: [
+          getActiveCommunityUsersWhere(longSince),
+          { role: { not: 'ADMIN' } },
+        ],
+      },
+    }),
+    prisma.user.count({
+      where: { ...COMMUNITY_MEMBER, createdAt: { gte: longSince } },
+    }),
+    prisma.viewStatus.count({
+      where: {
+        status: 'VISTA',
+        episodeId: { not: null },
+        updatedAt: { gte: shortSince },
+        ...COMMUNITY,
+      },
+    }),
+    prisma.viewStatus.count({
+      where: {
+        status: 'VISTA',
+        seriesId: { not: null },
+        updatedAt: { gte: longSince },
+        ...COMMUNITY,
+      },
+    }),
+    prisma.comment.count({
+      where: {
+        isPrivate: false,
+        createdAt: { gte: shortSince },
+        ...COMMUNITY_COMMENTS,
+      },
+    }),
+    prisma.userRating.count({
+      where: { updatedAt: { gte: shortSince }, ...COMMUNITY },
+    }),
+    prisma.viewStatus.groupBy({
+      by: ['seriesId'],
+      where: {
+        status: 'VIENDO',
+        seriesId: { not: null },
+        series: { origin: 'CURATED' },
+        ...COMMUNITY,
+      },
+      _count: { seriesId: true },
+      orderBy: { _count: { seriesId: 'desc' } },
+      take: 10,
+    }),
+    prisma.$queryRaw<RawDayCountRow[]>`
+      SELECT date_trunc('day', vs."updatedAt") AS day, COUNT(*) AS count
+      FROM "ViewStatus" vs
+      JOIN "User" u ON u.id = vs."userId"
+      WHERE vs.status = 'VISTA'
+        AND vs."episodeId" IS NOT NULL
+        AND vs."updatedAt" >= ${longSince}
+        AND u.role <> 'ADMIN'
+      GROUP BY day
+      ORDER BY day ASC
+    `,
+  ]);
+
+  const watchingIds = watchingRows
+    .map((r) => r.seriesId)
+    .filter((id): id is number => id !== null);
+  const titles = await prisma.series.findMany({
+    where: { id: { in: watchingIds } },
+    select: { id: true, title: true },
+  });
+  const titleById = new Map(titles.map((item) => [item.id, item.title]));
+
+  // Dias sin actividad van en 0: un grafico con huecos sugiere datos rotos.
+  const countByDay = new Map(
+    episodesByDayRows.map((r) => [
+      r.day.toISOString().slice(0, 10),
+      Number(r.count),
+    ])
+  );
+  const episodesByDay = Array.from({ length: LONG_WINDOW_DAYS }, (_, i) => {
+    const day = new Date(now.getTime() - (LONG_WINDOW_DAYS - 1 - i) * DAY_MS)
+      .toISOString()
+      .slice(0, 10);
+    return { day, count: countByDay.get(day) ?? 0 };
+  });
+
+  return {
+    shortWindowDays: SHORT_WINDOW_DAYS,
+    longWindowDays: LONG_WINDOW_DAYS,
+    totalMembers,
+    trackingMembers,
+    activeMembers,
+    newMembers,
+    episodesSeenRecently,
+    completedRecently,
+    publicCommentsRecently,
+    ratingsRecently,
+    watchingNow: watchingRows
+      .filter((row) => row.seriesId !== null)
+      .map((row) => ({
+        seriesId: row.seriesId as number,
+        title: titleById.get(row.seriesId as number) ?? 'Sin titulo',
+        count: row._count.seriesId,
+      })),
+    episodesByDay,
+  };
+}
+
 export async function getPublicStats(): Promise<PublicStats> {
+  const now = new Date();
   const [
     totalSeries,
     totalPublicComments,
@@ -357,9 +532,15 @@ export async function getPublicStats(): Promise<PublicStats> {
 
   const seriesById = new Map(series.map((item) => [item.id, item.title]));
 
+  const [community, recent] = await Promise.all([
+    getCommunityMetrics(),
+    getRecentCommunityActivity(now),
+  ]);
+
   return {
-    generatedAt: new Date().toISOString(),
-    community: await getCommunityMetrics(),
+    generatedAt: now.toISOString(),
+    community,
+    recent,
     summary: {
       totalSeries,
       totalPublicComments,

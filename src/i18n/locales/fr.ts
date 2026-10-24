@@ -2313,11 +2313,26 @@ const fr = {
     reviews: "Avis publiés",
     reviewsWeek: "Avis publiés au cours des 7 derniers jours",
     scope: "Les avis incluent le catalogue et les contributions accessibles à regarder. Les brouillons, contenus masqués et comptes administrateurs sont exclus. Chaque version linguistique compte séparément.",
-    subtitle: "Statistiques anonymes de la communauté. Les données sont actualisées lors d’une visite après une heure ; cela peut prendre quelques instants.",
+    subtitle: "Statistiques anonymes de la communauté. Les données sont actualisées lors d’une visite après 15 minutes ; cela peut prendre quelques instants.",
     activeScope: "Jusqu’à 20 utilisateurs ayant un suivi, des avis publiés, des commentaires publics, des notes ou des favoris au cours des 30 derniers jours.",
   },
   "publicStats": {
-    "teamNote": "Ces chiffres sont uniquement ceux de la communauté. L'équipe de curation a également regardé {n} séries du catalogue ; nous les excluons pour ne pas gonfler les chiffres."
+    "teamNote": "Ces chiffres sont uniquement ceux de la communauté. L'équipe de curation a également regardé {n} séries du catalogue ; nous les excluons pour ne pas gonfler les chiffres.",
+    "recentTitle": "Activité récente",
+    "recentHint": "Ce que la communauté a fait ces derniers jours. Nous ne comptons que les comptes de la communauté (sans l’équipe) et ne montrons jamais qui a fait quoi.",
+    "activeMembers": "Membres actifs (30 jours)",
+    "newMembers": "Nouveaux membres (30 jours)",
+    "completedRecently": "Séries terminées (30 jours)",
+    "commentsRecently": "Commentaires publics (7 jours)",
+    "ratingsRecently": "Notes (7 jours)",
+    "watchingNow": "En cours de visionnage",
+    "watchingUnit": "en cours",
+    "allTimeTitle": "Totaux historiques de la communauté",
+    "totalMembers": "Membres de la communauté",
+    "trackingMembers": "Suivent leur progression sur MundoBL",
+    "episodesRecently": "Épisodes vus (7 jours)",
+    "episodesByDay": "Épisodes vus par jour (30 jours)",
+    "episodesLabel": "Épisodes"
   },
   "adminStats": {
     "pageTitle": "Statistiques d'activité",

@@ -2310,11 +2310,26 @@ const ko = {
     reviews: "게시된 리뷰",
     reviewsWeek: "최근 7일간 게시된 리뷰",
     scope: "카탈로그와 시청 가능한 공개 기여 콘텐츠의 리뷰를 포함합니다. 초안, 숨겨진 콘텐츠, 관리자 계정은 제외됩니다. 언어별 버전은 각각 집계됩니다.",
-    subtitle: "익명 커뮤니티 통계입니다. 1시간이 지난 후 방문하면 데이터가 갱신되며, 잠시 시간이 걸릴 수 있습니다.",
+    subtitle: "익명 커뮤니티 통계입니다. 15분이 지난 후 방문하면 데이터가 갱신되며, 잠시 시간이 걸릴 수 있습니다.",
     activeScope: "최근 30일간 시청 기록, 게시된 리뷰, 공개 댓글, 평점 또는 즐겨찾기 활동이 있는 사용자 최대 20명입니다.",
   },
   "publicStats": {
-    "teamNote": "이 수치는 커뮤니티 전용입니다. 큐레이션 팀은 {n}개의 카탈로그 시리즈도 시청했지만, 수치 부풀리기를 방지하기 위해 제외했습니다."
+    "teamNote": "이 수치는 커뮤니티 전용입니다. 큐레이션 팀은 {n}개의 카탈로그 시리즈도 시청했지만, 수치 부풀리기를 방지하기 위해 제외했습니다.",
+    "recentTitle": "최근 활동",
+    "recentHint": "최근 며칠간 커뮤니티의 활동입니다. 커뮤니티 계정만 집계하며(팀 제외), 누가 무엇을 했는지는 표시하지 않습니다.",
+    "activeMembers": "활동 회원 (30일)",
+    "newMembers": "신규 회원 (30일)",
+    "completedRecently": "완주한 시리즈 (30일)",
+    "commentsRecently": "공개 댓글 (7일)",
+    "ratingsRecently": "평점 (7일)",
+    "watchingNow": "지금 시청 중",
+    "watchingUnit": "명 시청 중",
+    "allTimeTitle": "커뮤니티 누적 합계",
+    "totalMembers": "커뮤니티 회원",
+    "trackingMembers": "MundoBL에서 시청 기록 중",
+    "episodesRecently": "시청한 에피소드 (7일)",
+    "episodesByDay": "일별 시청 에피소드 (30일)",
+    "episodesLabel": "에피소드"
   },
   "adminStats": {
     "pageTitle": "활동 통계",

@@ -17,7 +17,10 @@ const bundle = await build({
         generatedAt:'2026-09-27T12:00:00Z',
         summary:{totalSeries:10,totalPublicComments:0,totalPublishedReviews:3,totalCompletedViews:0,totalCurrentlyWatching:0,totalFavorites:0,totalActors:0,totalDirectors:0,averageCommunityRating:null,totalUserRatings:0,teamCompletedSeries:0},
         rankings:{topSeries:[],topFavorited:[],topActors:[],topDirectors:[],topProductionCompanies:[],topCountries:[],byType:[]},
-        catalog:{byCountry:[],byType:[],byGenre:[],byYear:[]}, ratings:{averageCommunity:null,total:0,distribution:[]}
+        catalog:{byCountry:[],byType:[],byGenre:[],byYear:[]}, ratings:{averageCommunity:null,total:0,distribution:[]},
+        recent:{shortWindowDays:7,longWindowDays:30,totalMembers:40,trackingMembers:20,activeMembers:12,newMembers:4,episodesSeenRecently:9,completedRecently:2,publicCommentsRecently:1,ratingsRecently:3,
+          watchingNow:[{seriesId:1,title:'Serie sintetica',count:5}],
+          episodesByDay:[{day:'2026-09-26',count:0},{day:'2026-09-27',count:2}]}
       };
       createRoot(document.getElementById('root')).render(<LocaleProvider>{location.pathname==='/admin' ? <StatsClient/> : <PublicStatsClient initialData={data}/>}</LocaleProvider>);
     `,
@@ -133,6 +136,17 @@ try {
           .waitFor();
       } else {
         await page.getByText(/Los datos se renuevan/).waitFor();
+        await page.getByText('Actividad reciente', { exact: true }).waitFor();
+        assert.match(
+          await cards
+            .filter({
+              has: page.getByText('Miembros activos (30 días)', {
+                exact: true,
+              }),
+            })
+            .innerText(),
+          /12/
+        );
       }
       assert.ok(
         await page.evaluate(

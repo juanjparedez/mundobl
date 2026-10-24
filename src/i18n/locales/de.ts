@@ -2313,11 +2313,26 @@ const de = {
     reviews: "Veröffentlichte Rezensionen",
     reviewsWeek: "In den letzten 7 Tagen veröffentlichte Rezensionen",
     scope: "Rezensionen umfassen den Katalog und zugängliche Beiträge zum Ansehen. Entwürfe, versteckte Inhalte und Administratorkonten sind ausgeschlossen. Jede Sprachversion zählt separat.",
-    subtitle: "Anonyme Community-Statistiken. Daten werden bei einem Besuch nach einer Stunde aktualisiert; dies kann einen Moment dauern.",
+    subtitle: "Anonyme Community-Statistiken. Daten werden bei einem Besuch nach 15 Minuten aktualisiert; dies kann einen Moment dauern.",
     activeScope: "Bis zu 20 Nutzer mit Fortschritt, veröffentlichten Rezensionen, öffentlichen Kommentaren, Bewertungen oder Favoriten in den letzten 30 Tagen.",
   },
   "publicStats": {
-    "teamNote": "Diese Zahlen sind nur für die Community. Das Kuratorenteam hat auch {n} Katalogserien gesehen; wir lassen sie weg, damit die Zahlen nicht aufgebläht werden."
+    "teamNote": "Diese Zahlen sind nur für die Community. Das Kuratorenteam hat auch {n} Katalogserien gesehen; wir lassen sie weg, damit die Zahlen nicht aufgebläht werden.",
+    "recentTitle": "Aktuelle Aktivität",
+    "recentHint": "Was die Community in den letzten Tagen gemacht hat. Wir zählen nur Community-Konten (ohne das Team) und zeigen nie, wer was gemacht hat.",
+    "activeMembers": "Aktive Mitglieder (30 Tage)",
+    "newMembers": "Neue Mitglieder (30 Tage)",
+    "completedRecently": "Beendete Serien (30 Tage)",
+    "commentsRecently": "Öffentliche Kommentare (7 Tage)",
+    "ratingsRecently": "Bewertungen (7 Tage)",
+    "watchingNow": "Wird gerade geschaut",
+    "watchingUnit": "schauen",
+    "allTimeTitle": "Community-Gesamtwerte",
+    "totalMembers": "Community-Mitglieder",
+    "trackingMembers": "Verfolgen ihren Fortschritt auf MundoBL",
+    "episodesRecently": "Gesehene Folgen (7 Tage)",
+    "episodesByDay": "Gesehene Folgen pro Tag (30 Tage)",
+    "episodesLabel": "Folgen"
   },
   "adminStats": {
     "pageTitle": "Aktivitätsstatistiken",

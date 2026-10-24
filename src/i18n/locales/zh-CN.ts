@@ -2306,11 +2306,26 @@ const zhCN = {
     reviews: "已发布的评论文章",
     reviewsWeek: "过去7天发布的评论文章",
     scope: "包括目录和可观看的公开投稿的评论文章。不包括草稿、隐藏内容和管理员账号。每个语言版本单独计数。",
-    subtitle: "匿名社区统计。一小时后再次访问时更新数据，更新可能需要片刻。",
+    subtitle: "匿名社区统计。15 分钟后再次访问时更新数据，更新可能需要片刻。",
     activeScope: "最多显示20位在过去30天内有观看记录、已发布评论文章、公开留言、评分或收藏活动的用户。",
   },
   "publicStats": {
-    "teamNote": "这些数据仅代表社区。内容管理团队还观看了 {n} 部收录剧集；我们将其排除在外，以避免数据虚高。"
+    "teamNote": "这些数据仅代表社区。内容管理团队还观看了 {n} 部收录剧集；我们将其排除在外，以避免数据虚高。",
+    "recentTitle": "近期动态",
+    "recentHint": "社区最近几天的动态。只统计社区账户（不含团队），也不会显示谁做了什么。",
+    "activeMembers": "活跃成员（30 天）",
+    "newMembers": "新成员（30 天）",
+    "completedRecently": "看完的剧集（30 天）",
+    "commentsRecently": "公开评论（7 天）",
+    "ratingsRecently": "评分（7 天）",
+    "watchingNow": "正在观看",
+    "watchingUnit": "人在看",
+    "allTimeTitle": "社区历史总计",
+    "totalMembers": "社区成员",
+    "trackingMembers": "在 MundoBL 记录观看进度",
+    "episodesRecently": "看过的集数（7 天）",
+    "episodesByDay": "每日看过的集数（30 天）",
+    "episodesLabel": "集数"
   },
   "adminStats": {
     "pageTitle": "活动统计",

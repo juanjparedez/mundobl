@@ -2301,6 +2301,21 @@ export type TranslationShape = {
   };
   publicStats: {
     teamNote: string;
+    recentTitle: string;
+    recentHint: string;
+    activeMembers: string;
+    newMembers: string;
+    completedRecently: string;
+    commentsRecently: string;
+    ratingsRecently: string;
+    watchingNow: string;
+    watchingUnit: string;
+    totalMembers: string;
+    trackingMembers: string;
+    episodesRecently: string;
+    episodesByDay: string;
+    episodesLabel: string;
+    allTimeTitle: string;
   };
   adminStats: {
     pageTitle: string;
@@ -6277,13 +6292,29 @@ const es: TranslationShape = {
     scope:
       'Las reseñas incluyen el catálogo y los aportes accesibles para ver. Se excluyen borradores, contenido oculto y cuentas administradoras. Cada versión en otro idioma cuenta por separado.',
     subtitle:
-      'Métricas anónimas de la comunidad. Los datos se renuevan al visitar la página después de una hora; la actualización puede tardar unos instantes.',
+      'Métricas anónimas de la comunidad. Los datos se renuevan al visitar la página después de 15 minutos; la actualización puede tardar unos instantes.',
     activeScope:
       'Hasta 20 usuarios con seguimiento, reseñas publicadas, comentarios públicos, calificaciones o favoritos en los últimos 30 días.',
   },
   publicStats: {
     teamNote:
       'Estas cifras son sólo de la comunidad. El equipo de curaduría vio además {n} series del catálogo: no las sumamos para no inflar los números.',
+    recentTitle: 'Actividad reciente',
+    recentHint:
+      'Lo que la comunidad hizo en los últimos días. Sólo contamos cuentas de la comunidad (sin el equipo) y nunca mostramos quién hizo qué.',
+    activeMembers: 'Miembros activos (30 días)',
+    newMembers: 'Miembros nuevos (30 días)',
+    completedRecently: 'Series terminadas (30 días)',
+    commentsRecently: 'Comentarios públicos (7 días)',
+    ratingsRecently: 'Calificaciones (7 días)',
+    watchingNow: 'Lo que se está viendo ahora',
+    watchingUnit: 'viendo',
+    allTimeTitle: 'Totales históricos de la comunidad',
+    totalMembers: 'Miembros de la comunidad',
+    trackingMembers: 'Siguen su progreso en MundoBL',
+    episodesRecently: 'Episodios vistos (7 días)',
+    episodesByDay: 'Episodios vistos por día (30 días)',
+    episodesLabel: 'Episodios',
   },
   adminStats: {
     pageTitle: 'Estadísticas de actividad',
@@ -10316,13 +10347,29 @@ const en: TranslationShape = {
     scope:
       'Reviews include the catalog and accessible watchable contributions. Drafts, hidden content and admin accounts are excluded. Each language version counts separately.',
     subtitle:
-      'Anonymous community metrics. Data refreshes on a visit after an hour; the update may take a moment.',
+      'Anonymous community metrics. Data refreshes on a visit after 15 minutes; the update may take a moment.',
     activeScope:
       'Up to 20 users with tracking, published reviews, public comments, ratings or favorites in the last 30 days.',
   },
   publicStats: {
     teamNote:
       'These figures are community-only. The curation team has also watched {n} catalog series; we leave them out so the numbers are not inflated.',
+    recentTitle: 'Recent activity',
+    recentHint:
+      'What the community did in the last few days. Only community accounts count (not the team), and we never show who did what.',
+    activeMembers: 'Active members (30 days)',
+    newMembers: 'New members (30 days)',
+    completedRecently: 'Series finished (30 days)',
+    commentsRecently: 'Public comments (7 days)',
+    ratingsRecently: 'Ratings (7 days)',
+    watchingNow: 'Being watched right now',
+    watchingUnit: 'watching',
+    allTimeTitle: 'Community all-time totals',
+    totalMembers: 'Community members',
+    trackingMembers: 'Track their progress on MundoBL',
+    episodesRecently: 'Episodes watched (7 days)',
+    episodesByDay: 'Episodes watched per day (30 days)',
+    episodesLabel: 'Episodes',
   },
   adminStats: {
     pageTitle: 'Activity Statistics',
