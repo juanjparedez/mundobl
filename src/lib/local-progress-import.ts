@@ -91,12 +91,7 @@ export async function importLocalProgress(
           }
         }
         if (item.intent && (!current || current.status === 'SIN_VER')) {
-          await setSeriesTrackingStatus(
-            tx,
-            userId,
-            item.seriesId,
-            item.intent
-          );
+          await setSeriesTrackingStatus(tx, userId, item.seriesId, item.intent);
         }
       });
       imported.push(item.seriesId);
