@@ -1,0 +1,2 @@
+# Hooks de git: sh de Git for Windows rompe con CRLF.
+.githooks/* text eol=lf

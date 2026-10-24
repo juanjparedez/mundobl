@@ -88,7 +88,11 @@
   pointer-events: none;
   background: linear-gradient(
     135deg,
-    color-mix(in srgb, var(--group-accent, var(--primary-color)) 5%, transparent)
+    color-mix(
+        in srgb,
+        var(--group-accent, var(--primary-color)) 5%,
+        transparent
+      )
       0%,
     transparent 50%
   );
@@ -157,8 +161,7 @@
 
 .admin-tool-card--editing {
   cursor: default;
-  outline: 1px dashed
-    color-mix(in srgb, var(--primary-color) 30%, transparent);
+  outline: 1px dashed color-mix(in srgb, var(--primary-color) 30%, transparent);
   outline-offset: -1px;
 }
 

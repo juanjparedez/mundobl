@@ -1,7 +1,16 @@
 name: Tracking integration
 on:
   pull_request:
+    # Cambios solo de texto no tocan codigo: no hace falta la corrida de ~15 min.
+    paths-ignore:
+      - '**/*.md'
+      - 'docs/**'
+      - 'market/**'
   workflow_dispatch:
+# Un push nuevo al mismo PR cancela la corrida anterior.
+concurrency:
+  group: tracking-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
@@ -30,62 +39,12 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci --ignore-scripts
-      - run: npx prisma generate
-      - run: npx prisma migrate deploy
-      - run: npm run lint
-      - name: Regression tests against disposable PostgreSQL
-        run: |
-          set -e
-          npx tsx scripts/test-build-metadata.ts
-          npx tsx scripts/test-catalog-payload.ts
-          npx tsx scripts/test-latest-novedades.ts
-          npx tsx scripts/test-navigation.ts
-          npx tsx scripts/audit-locale-coverage.ts
-          for test in tracking-backup watching-collection profile-chapters tracking-statistics tracking-insights insight-distributions progress tracking-database tracking-history series-tracking-status community-privacy community-statistics community-topics community-library community-moderation community-conversations community-metrics community-backup community-request watch-date writer-credits series-save series-curation editorial-classification; do
-            npx tsx "scripts/test-$test.ts"
-          done
-          node --import tsx scripts/test-private-tracking-routes.mjs
-          node --import tsx scripts/test-info-block-privacy.mjs
-          node --import tsx scripts/test-editorial-routes.mjs
-          node --import tsx scripts/test-profile-watch-dates.mjs
-          node --import tsx scripts/test-tracking-insights-route.mjs
-          node --import tsx scripts/test-library-preferences.mjs
-          node --import tsx scripts/test-runtime-jobs.mjs
-          node scripts/test-runtime-maintenance.mjs
-          node scripts/test-news-translation.mjs
-          node scripts/test-news-sources.mjs
-          node scripts/test-contribution-boundary.mjs
-      - name: Profile mobile regression
-        run: |
-          npx playwright install --with-deps chromium
-          node --import tsx scripts/test-editorial-ui.mjs
-          node scripts/test-dashboard-mobile-flow.mjs
-          node scripts/test-profile-list-count.mjs
-          node scripts/test-tracking-insights-ui.mjs
-          node scripts/test-runtime-maintenance-ui.mjs
-          node scripts/test-history-cards.mjs
-          node scripts/test-platform-guide.mjs
-          node scripts/test-community-statistics-ui.mjs
-          node --import tsx scripts/test-community-flow.mjs
-          node --import tsx scripts/test-community-library-flow.mjs
-      - run: npm run build
-      - name: Community against the production Next server
+      # Misma lista que corre local: npm run test:all (scripts/test-all.mjs).
+      # Incluye tipos, lint, prettier, migraciones, backup/restore, regresiones,
+      # UI con Playwright, build y la app contra el servidor de produccion.
+      - run: node scripts/test-all.mjs
         env:
-          AUTH_SECRET: community-full-app-test-only
-          AUTH_URL: http://127.0.0.1:3223
-          NEXTAUTH_URL: http://127.0.0.1:3223
-          GOOGLE_CLIENT_ID: local-test-client
-          GOOGLE_CLIENT_SECRET: local-test-secret
-          SERIES_FORM_TEST_BASE_URL: http://127.0.0.1:3223
-          TEST_ISR: 'true'
-        run: |
-          npm run start -- --hostname 127.0.0.1 --port 3223 > /tmp/community-next.log 2>&1 &
-          server_pid=$!
-          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
-          for attempt in $(seq 1 30); do
-            if curl --silent --fail http://127.0.0.1:3223/api/auth/session > /dev/null; then break; fi
-            sleep 1
-          done
-          node --import tsx scripts/test-community-app.mjs || { cat /tmp/community-next.log; exit 1; }
-          node scripts/test-series-curation-ui.mjs || { cat /tmp/community-next.log; exit 1; }
-          node scripts/test-catalog-preview-ui.mjs || { cat /tmp/community-next.log; exit 1; }
+          MUNDOBL_TEST_DB: external
+      - name: Logs del servidor si algo fallo
+        if: failure()
+        run: cat test-results/test-all/next-start.log 2>/dev/null || true
