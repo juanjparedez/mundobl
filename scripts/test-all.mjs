@@ -57,6 +57,7 @@ const tsxTests = [
   'catalog-payload',
   'latest-novedades',
   'navigation',
+  'outbound-links',
 ];
 const trackingTests = [
   'tracking-backup',

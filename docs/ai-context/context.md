@@ -65,6 +65,11 @@ Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-s
   sólo afectará producción después de una entrega autorizada. Se mantienen las
   tareas funcionales del cron y los backups; no se promete ahorro de CPU/ISR por
   quitar Analytics, que tiene su propia cuota.
+- 24/10/2026: ese opt-in dejó Analytics apagado en producción desde el deploy
+  del 13/10 (la bandera nunca se cargó). Se creó
+  `NEXT_PUBLIC_VERCEL_ANALYTICS_ENABLED=true` en Vercel (solo Production); al ser
+  `NEXT_PUBLIC_`, rige desde el siguiente build. Los eventos custom (`trackEvent`)
+  requieren plan Pro: en Hobby solo cuentan las pageviews.
 - Corrección local del diseño rechazado: grupos inline en Sidebar y AdminNav;
   al expandir aparecen los destinos en el mismo menú. Un grupo con un destino
   es un enlace directo. Mobile mantiene una sola superficie en «Más», con grupos
@@ -139,6 +144,11 @@ Clasificación humana `UNREVIEWED | GENERAL | ADULT18` y avisos independientes,
 edición ADMIN con versión/revisión, compuertas de detalle/medios y preferencia
 revocable de 30 días en `/preferencias-contenido`. No es control parental ni
 oculta todos los títulos/portadas. `/contenido` conserva su directorio de videos.
+`WatchLinkClickDaily` cuenta todos los clics de "Dónde ver" por día UTC, link y
+superficie (`series`/`info`/`watching`), sin identidad y excluyendo al equipo
+(`src/lib/outbound-links.ts`, `/api/watch-link-clicks`). Es el número para hablar
+con productoras. Los links oficiales salen con UTM `utm_source=mundobl` y mandan
+el origen como referrer (los no oficiales siguen con `noreferrer`).
 `PilotClickDaily` cuenta clics GagaOOLala por día UTC y sección, sin identidad ni
 historial individual; `/admin/piloto` muestra 60 días. La curaduría bloquea borrar
 temporadas/aportes que conservan seguimiento, notas o historial. Bienvenida

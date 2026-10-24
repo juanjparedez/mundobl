@@ -15,6 +15,11 @@ import { PanelCard } from '@/components/design-system';
 import { PosterPlaceholder } from '@/components/common/PosterPlaceholder/PosterPlaceholder';
 import { cardImageUrl, isDirectServedImageUrl } from '@/lib/image-helpers';
 import { isGagaUrl, recordPilotClick } from '@/lib/pilot-clicks';
+import {
+  outboundRel,
+  recordWatchLinkClick,
+  withOutboundUtm,
+} from '@/lib/outbound-links';
 import { getVerUrl } from '@/lib/slug';
 import {
   watchingDetailsUrl,
@@ -197,11 +202,13 @@ export function WatchingSeriesCard({
               externalLinks.map((link) => (
                 <a
                   key={link.id}
-                  href={link.url}
+                  // La consulta ya trae solo links oficiales.
+                  href={withOutboundUtm(link.url, true)}
                   target="_blank"
-                  rel="noopener noreferrer nofollow"
+                  rel={outboundRel(true)}
                   className="watching-series-card__platform-link"
                   onClick={() => {
+                    recordWatchLinkClick(link.id, 'watching');
                     if (isGagaUrl(link.url)) {
                       recordPilotClick('series', link.id);
                     }

@@ -1418,7 +1418,23 @@ model WatchLink {
   seriesId Int
   series   Series @relation(fields: [seriesId], references: [id], onDelete: Cascade)
 
+  clicks WatchLinkClickDaily[]
+
   @@index([seriesId])
+}
+
+// Clics salientes agregados por dia, link y superficie. Sin visitantes, IPs,
+// cuentas ni historial: solo sirve para decir "enviamos N personas a tu
+// plataforma oficial" sin exponer a nadie.
+model WatchLinkClickDaily {
+  day         DateTime  @db.Date
+  watchLinkId Int
+  watchLink   WatchLink @relation(fields: [watchLinkId], references: [id], onDelete: Cascade)
+  surface     String // 'series' | 'info' | 'watching'
+  clicks      Int       @default(0)
+
+  @@id([day, watchLinkId, surface])
+  @@index([watchLinkId])
 }
 
 // ============================================
