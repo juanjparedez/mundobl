@@ -1016,7 +1016,13 @@ const fr = {
     "glossaryScholarName": "Collaborateur culturel",
     "glossaryScholarDesc": "Faire approuver 5 termes dans le Glossaire Culturel",
     "triviaMasterName": "Érudit culturel",
-    "triviaMasterDesc": "Obtenir un score parfait au quiz du Glossaire Culturel"
+    "triviaMasterDesc": "Obtenir un score parfait au quiz du Glossaire Culturel",
+    "onARollName": "Sur une lancée",
+    "onARollDesc": "Terminer 3 séries",
+    "hookedName": "Accro",
+    "hookedDesc": "Terminer 5 séries",
+    "devoteeName": "Grand fan",
+    "devoteeDesc": "Terminer 25 séries"
   },
   "socials": {
     "title": "Mes réseaux sociaux",
@@ -3129,7 +3135,8 @@ const fr = {
     "markComplete": "Oui, je l'ai terminé",
     "notYet": "Pas encore",
     "ariaNext": "Marquer l'épisode suivant comme vu",
-    "ariaPrev": "Démarquer le dernier épisode vu"
+    "ariaPrev": "Démarquer le dernier épisode vu",
+    "milestone": "Vous avez déjà vu {percent} % de {title} !"
   },
   "trackCta": {
     "title": "Vous regardez ça ?",

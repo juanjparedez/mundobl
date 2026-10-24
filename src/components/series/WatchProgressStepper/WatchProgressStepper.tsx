@@ -10,7 +10,10 @@ import {
 } from '@ant-design/icons';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
-import { findFurthestWatchedIndex } from '@/lib/episode-progress';
+import {
+  crossedMilestone,
+  findFurthestWatchedIndex,
+} from '@/lib/episode-progress';
 import type { TrackedChapter } from '@/lib/episode-chapters';
 import { useMessage } from '@/hooks/useMessage';
 import { useSeriesUserStatus } from '../SeriesUserStatusProvider';
@@ -145,6 +148,20 @@ export function WatchProgressStepper({
       );
       if (!unmark && finished && !airing && data.seriesStatus !== 'VISTA') {
         setFinishedOpen(true);
+      } else {
+        const milestone = crossedMilestone(
+          previous + 1,
+          targetIndex + 1,
+          total
+        );
+        if (milestone !== null) {
+          message.success(
+            interpolateMessage(t('progressStepper.milestone'), {
+              percent: milestone,
+              title: seriesTitle,
+            })
+          );
+        }
       }
     } catch {
       setIndex(previous);

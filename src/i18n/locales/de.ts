@@ -1016,7 +1016,13 @@ const de = {
     "glossaryScholarName": "Kultureller Mitwirkender",
     "glossaryScholarDesc": "5 Begriffe im Kulturglossar genehmigt bekommen",
     "triviaMasterName": "Kultur-Allwissender",
-    "triviaMasterDesc": "Perfekte Punktzahl im Kulturglossar-Quiz erreichen"
+    "triviaMasterDesc": "Perfekte Punktzahl im Kulturglossar-Quiz erreichen",
+    "onARollName": "Im Flow",
+    "onARollDesc": "Schließe 3 Serien ab",
+    "hookedName": "Angefixt",
+    "hookedDesc": "Schließe 5 Serien ab",
+    "devoteeName": "Hingebungsvoll",
+    "devoteeDesc": "Schließe 25 Serien ab"
   },
   "socials": {
     "title": "Meine sozialen Medien",
@@ -3129,7 +3135,8 @@ const de = {
     "markComplete": "Ja, ich habe es beendet",
     "notYet": "Noch nicht",
     "ariaNext": "Nächste Folge als gesehen markieren",
-    "ariaPrev": "Zuletzt gesehene Folge entmarkieren"
+    "ariaPrev": "Zuletzt gesehene Folge entmarkieren",
+    "milestone": "Du hast schon {percent}% von {title} gesehen!"
   },
   "trackCta": {
     "title": "Schaust du das?",

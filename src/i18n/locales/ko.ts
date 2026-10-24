@@ -1013,7 +1013,13 @@ const ko = {
     "glossaryScholarName": "문화 기여자",
     "glossaryScholarDesc": "문화 용어집에 용어 5개 승인받기",
     "triviaMasterName": "문화 만물박사",
-    "triviaMasterDesc": "문화 용어집 퀴즈에서 만점 받기"
+    "triviaMasterDesc": "문화 용어집 퀴즈에서 만점 받기",
+    "onARollName": "순항 중",
+    "onARollDesc": "시리즈 3편 완주",
+    "hookedName": "푹 빠짐",
+    "hookedDesc": "시리즈 5편 완주",
+    "devoteeName": "찐팬",
+    "devoteeDesc": "시리즈 25편 완주"
   },
   "socials": {
     "title": "내 소셜",
@@ -3126,7 +3132,8 @@ const ko = {
     "markComplete": "네, 다 봤어요",
     "notYet": "아직이요",
     "ariaNext": "다음 에피소드를 시청 완료로 표시",
-    "ariaPrev": "마지막으로 시청한 에피소드 표시 해제"
+    "ariaPrev": "마지막으로 시청한 에피소드 표시 해제",
+    "milestone": "{title}의 {percent}%를 봤어요!"
   },
   "trackCta": {
     "title": "이 작품 보고 계신가요?",

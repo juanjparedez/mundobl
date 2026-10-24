@@ -996,6 +996,12 @@ export type TranslationShape = {
     glossaryScholarDesc: string;
     triviaMasterName: string;
     triviaMasterDesc: string;
+    onARollName: string;
+    onARollDesc: string;
+    hookedName: string;
+    hookedDesc: string;
+    devoteeName: string;
+    devoteeDesc: string;
   };
   socials: {
     title: string;
@@ -3113,6 +3119,7 @@ export type TranslationShape = {
     notYet: string;
     ariaNext: string;
     ariaPrev: string;
+    milestone: string;
   };
   trackCta: {
     title: string;
@@ -4905,6 +4912,12 @@ const es: TranslationShape = {
     triviaMasterName: 'Sabelotodo cultural',
     triviaMasterDesc:
       'Sacar puntaje perfecto en la trivia del Glosario Cultural',
+    onARollName: 'En racha',
+    onARollDesc: 'Terminar 3 series',
+    hookedName: 'Enganche total',
+    hookedDesc: 'Terminar 5 series',
+    devoteeName: 'Fan de corazón',
+    devoteeDesc: 'Terminar 25 series',
   },
   socials: {
     title: 'Mis redes',
@@ -7145,6 +7158,7 @@ const es: TranslationShape = {
     notYet: 'Todavía no',
     ariaNext: 'Marcar el siguiente capítulo como visto',
     ariaPrev: 'Desmarcar el último capítulo visto',
+    milestone: '¡Ya viste el {percent}% de {title}!',
   },
   trackCta: {
     title: '¿La estás viendo?',
@@ -8967,6 +8981,12 @@ const en: TranslationShape = {
     glossaryScholarDesc: 'Get 5 terms approved in the Cultural Glossary',
     triviaMasterName: 'Cultural know-it-all',
     triviaMasterDesc: 'Get a perfect score on the Cultural Glossary trivia',
+    onARollName: 'On a roll',
+    onARollDesc: 'Finish 3 series',
+    hookedName: 'Hooked',
+    hookedDesc: 'Finish 5 series',
+    devoteeName: 'Devotee',
+    devoteeDesc: 'Finish 25 series',
   },
   socials: {
     title: 'My socials',
@@ -11198,6 +11218,7 @@ const en: TranslationShape = {
     notYet: 'Not yet',
     ariaNext: 'Mark next episode as watched',
     ariaPrev: 'Unmark last watched episode',
+    milestone: "You're {percent}% through {title}!",
   },
   trackCta: {
     title: 'Are you watching this?',

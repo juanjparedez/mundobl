@@ -1009,7 +1009,13 @@ const zhCN = {
     "glossaryScholarName": "文化贡献者",
     "glossaryScholarDesc": "获批5个文化词汇表词条",
     "triviaMasterName": "文化通",
-    "triviaMasterDesc": "在文化词汇问答中获得满分"
+    "triviaMasterDesc": "在文化词汇问答中获得满分",
+    "onARollName": "渐入佳境",
+    "onARollDesc": "看完 3 部剧",
+    "hookedName": "上头了",
+    "hookedDesc": "看完 5 部剧",
+    "devoteeName": "忠实粉丝",
+    "devoteeDesc": "看完 25 部剧"
   },
   "socials": {
     "title": "我的社交账号",
@@ -3122,7 +3128,8 @@ const zhCN = {
     "markComplete": "是的，我已看完",
     "notYet": "还没有",
     "ariaNext": "标记下一集为已看",
-    "ariaPrev": "取消标记上一集"
+    "ariaPrev": "取消标记上一集",
+    "milestone": "《{title}》已看完 {percent}%！"
   },
   "trackCta": {
     "title": "你在看这部剧吗？",

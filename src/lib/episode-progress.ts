@@ -30,3 +30,24 @@ export function findNextEpisode<T>(
 ): T | null {
   return ordered[findFurthestWatchedIndex(ordered, isWatched) + 1] ?? null;
 }
+
+/** Hitos de avance que se festejan; el 100% ya tiene su "¿Terminaste?". */
+export const PROGRESS_MILESTONES = [25, 50, 75] as const;
+
+/**
+ * El hito mas alto que se cruzo al pasar de `before` a `after` capitulos
+ * vistos sobre `total`, o `null` si no se cruzo ninguno (o se retrocedio).
+ * Series muy cortas no festejan: con menos de 4 capitulos cada paso es un hito.
+ */
+export function crossedMilestone(
+  before: number,
+  after: number,
+  total: number
+): number | null {
+  if (total < 4 || after <= before) return null;
+  const crossed = PROGRESS_MILESTONES.filter(
+    (milestone) =>
+      (before / total) * 100 < milestone && (after / total) * 100 >= milestone
+  );
+  return crossed.length ? crossed[crossed.length - 1] : null;
+}

@@ -1015,7 +1015,13 @@ const it = {
     "glossaryScholarName": "Collaboratore culturale",
     "glossaryScholarDesc": "Ottieni l'approvazione di 5 termini nel Glossario Culturale",
     "triviaMasterName": "Tuttologo culturale",
-    "triviaMasterDesc": "Ottieni un punteggio perfetto nel quiz del Glossario Culturale"
+    "triviaMasterDesc": "Ottieni un punteggio perfetto nel quiz del Glossario Culturale",
+    "onARollName": "In vena",
+    "onARollDesc": "Finisci 3 serie",
+    "hookedName": "Che passione",
+    "hookedDesc": "Finisci 5 serie",
+    "devoteeName": "Super fan",
+    "devoteeDesc": "Finisci 25 serie"
   },
   "socials": {
     "title": "I miei social",
@@ -3128,7 +3134,8 @@ const it = {
     "markComplete": "Sì, l'ho finito",
     "notYet": "Non ancora",
     "ariaNext": "Segna prossimo episodio come visto",
-    "ariaPrev": "Deseleziona ultimo episodio visto"
+    "ariaPrev": "Deseleziona ultimo episodio visto",
+    "milestone": "Hai già visto il {percent}% di {title}!"
   },
   "trackCta": {
     "title": "Stai guardando?",

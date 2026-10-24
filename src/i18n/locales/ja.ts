@@ -1013,7 +1013,13 @@ const ja = {
     "glossaryScholarName": "文化コラボレーター",
     "glossaryScholarDesc": "文化用語集に用語を5つ承認してもらう",
     "triviaMasterName": "文化博士",
-    "triviaMasterDesc": "文化用語集クイズで満点を取る"
+    "triviaMasterDesc": "文化用語集クイズで満点を取る",
+    "onARollName": "波に乗ってる",
+    "onARollDesc": "3作品を見終える",
+    "hookedName": "ハマり中",
+    "hookedDesc": "5作品を見終える",
+    "devoteeName": "熱心なファン",
+    "devoteeDesc": "25作品を見終える"
   },
   "socials": {
     "title": "マイソーシャル",
@@ -3126,7 +3132,8 @@ const ja = {
     "markComplete": "はい、見終えました",
     "notYet": "まだです",
     "ariaNext": "次のエピソードを視聴済みにする",
-    "ariaPrev": "最後に視聴したエピソードのマークを外す"
+    "ariaPrev": "最後に視聴したエピソードのマークを外す",
+    "milestone": "{title}を{percent}%まで視聴しました！"
   },
   "trackCta": {
     "title": "これ見てる？",

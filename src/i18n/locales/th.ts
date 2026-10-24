@@ -1011,7 +1011,13 @@ const th = {
     "glossaryScholarName": "ผู้ร่วมสร้างวัฒนธรรม",
     "glossaryScholarDesc": "ได้รับการอนุมัติคำศัพท์ 5 คำในคลังศัพท์วัฒนธรรม",
     "triviaMasterName": "ผู้รอบรู้วัฒนธรรม",
-    "triviaMasterDesc": "ทำคะแนนเต็มในเกมทายคำศัพท์วัฒนธรรม"
+    "triviaMasterDesc": "ทำคะแนนเต็มในเกมทายคำศัพท์วัฒนธรรม",
+    "onARollName": "กำลังมาแรง",
+    "onARollDesc": "ดูจบ 3 เรื่อง",
+    "hookedName": "ติดงอมแงม",
+    "hookedDesc": "ดูจบ 5 เรื่อง",
+    "devoteeName": "แฟนพันธุ์แท้",
+    "devoteeDesc": "ดูจบ 25 เรื่อง"
   },
   "socials": {
     "title": "โซเชียลของฉัน",
@@ -3124,7 +3130,8 @@ const th = {
     "markComplete": "ใช่ ฉันดูจบแล้ว",
     "notYet": "ยังไม่จบ",
     "ariaNext": "ทำเครื่องหมายตอนถัดไปว่าดูแล้ว",
-    "ariaPrev": "เลิกทำเครื่องหมายตอนที่ดูล่าสุด"
+    "ariaPrev": "เลิกทำเครื่องหมายตอนที่ดูล่าสุด",
+    "milestone": "ดู {title} ไปแล้ว {percent}%!"
   },
   "trackCta": {
     "title": "คุณกำลังดูเรื่องนี้อยู่หรือเปล่า?",
