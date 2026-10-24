@@ -5,6 +5,12 @@ import { Prisma } from '../generated/prisma';
 import { WATCHABLE_EPISODE_WHERE } from './watchable';
 import { isPlayableIn } from './playability';
 import { runCronJob } from './cron-runs';
+import { parseEpisodeSource } from './episode-platforms';
+import { probeExternalEpisode } from './external-episode-source';
+import {
+  revalidateSeriesDetail,
+  revalidateSeriesListings,
+} from './revalidate-series';
 
 const DEFAULT_STALE_DAYS = 1;
 const MAX_EPISODES_PER_RUN = 500;
@@ -59,7 +65,7 @@ export interface PlayabilityAuditResult {
 }
 
 /**
- * Audita los embeds de YouTube vencidos y actualiza su estado de reproduccion.
+ * Audita fuentes oficiales vencidas y actualiza su estado de reproduccion.
  *
  * El limite protege la ejecucion del cron y deja que las siguientes corridas
  * alcancen el resto del catalogo ordenando siempre por el sondeo mas antiguo.
@@ -68,7 +74,6 @@ export async function runPlayabilityAudit(
   staleDays = DEFAULT_STALE_DAYS
 ): Promise<PlayabilityAuditResult> {
   const apiKey = process.env.YOUTUBE_API_KEY;
-  if (!apiKey) throw new Error('Falta YOUTUBE_API_KEY.');
 
   const startedAt = Date.now();
   const deadline = startedAt + TIME_BUDGET_MS;
@@ -78,7 +83,9 @@ export async function runPlayabilityAudit(
     where: {
       embedUrl: { not: null },
       embedVideoId: { not: null },
-      embedPlatform: 'YouTube',
+      embedPlatform: {
+        in: [...(apiKey ? ['YouTube'] : []), 'Vimeo', 'Dailymotion'],
+      },
       OR: [
         { playbackCheckedAt: null },
         { playbackCheckedAt: { lt: staleBefore } },
@@ -87,8 +94,12 @@ export async function runPlayabilityAudit(
     select: {
       id: true,
       embedVideoId: true,
+      embedPlatform: true,
+      embedUrl: true,
       playback: true,
-      season: { select: { series: { select: { id: true } } } },
+      durationSeconds: true,
+      playbackBlockedMarkets: true,
+      season: { select: { series: { select: { id: true, title: true } } } },
     },
     orderBy: [{ playbackCheckedAt: { sort: 'asc', nulls: 'first' } }],
     take: MAX_EPISODES_PER_RUN,
@@ -107,6 +118,7 @@ export async function runPlayabilityAudit(
     seriesRecalculated: 0,
   };
   const touchedSeries = new Set<number>();
+  const changedSeries = new Map<number, { id: number; title: string }>();
 
   // Updates acumulados, se descargan en tandas paralelas.
   const pendingWrites: Prisma.PrismaPromise<unknown>[] = [];
@@ -126,18 +138,74 @@ export async function runPlayabilityAudit(
     }
 
     const batch = episodes.slice(index, index + API_BATCH_SIZE);
-    const probes = await probeViaApi(
-      batch.map((episode) => episode.embedVideoId!),
-      apiKey
+    const probes = new Map<number, PlaybackProbe>();
+    const youtube = batch.filter(
+      (episode) => episode.embedPlatform === 'YouTube'
     );
+    if (apiKey && youtube.length) {
+      const results = await probeViaApi(
+        youtube.map((episode) => episode.embedVideoId!),
+        apiKey
+      );
+      results.forEach((probe, i) => probes.set(youtube[i].id, probe));
+    }
+    const external = batch.filter(
+      (episode) => episode.embedPlatform !== 'YouTube'
+    );
+    for (let offset = 0; offset < external.length; offset += 3) {
+      // Reserve up to two bounded provider requests per source before the
+      // function deadline; remaining episodes stay stale for the next run.
+      if (Date.now() + 20_000 >= deadline) {
+        result.budgetExhausted = true;
+        break;
+      }
+      await Promise.all(
+        external.slice(offset, offset + 3).map(async (episode) => {
+          const source = parseEpisodeSource(episode.embedUrl ?? '');
+          const probe: PlaybackProbe =
+            source &&
+            source.platform === episode.embedPlatform &&
+            source.videoId === episode.embedVideoId
+              ? await probeExternalEpisode(source)
+              : {
+                  videoId: episode.embedVideoId!,
+                  status: 'NOT_EMBEDDABLE',
+                  blockedMarkets: [],
+                  durationSeconds: null,
+                  detail: 'unsupported',
+                };
+          probes.set(episode.id, probe);
+        })
+      );
+    }
 
-    for (const [batchIndex, probe] of probes.entries()) {
-      const episode = batch[batchIndex];
-      if (!episode) continue;
+    for (const episode of batch) {
+      const probe = probes.get(episode.id);
+      if (!probe) continue;
 
       result.probed++;
+      if (probe.status === 'UNKNOWN') {
+        // A timeout, expired token or missing player configuration is not a
+        // successful playback check. Preserve both availability and markets.
+        pendingWrites.push(
+          prisma.episode.update({
+            where: { id: episode.id },
+            data: { playbackCheckedAt: new Date() },
+          })
+        );
+        continue;
+      }
       touchedSeries.add(episode.season.series.id);
-      if (probe.status !== episode.playback) result.changed++;
+      if (
+        probe.status !== episode.playback ||
+        (probe.durationSeconds !== null &&
+          probe.durationSeconds !== episode.durationSeconds) ||
+        [...probe.blockedMarkets].sort().join(',') !==
+          [...episode.playbackBlockedMarkets].sort().join(',')
+      ) {
+        result.changed++;
+        changedSeries.set(episode.season.series.id, episode.season.series);
+      }
       if (probe.status === 'REMOVED') result.removed++;
       if (probe.status === 'GEO_BLOCKED') result.geoBlocked++;
       if (probe.status === 'AGE_RESTRICTED') result.ageRestricted++;
@@ -222,6 +290,10 @@ export async function runPlayabilityAudit(
     await flushWrites();
   }
 
+  if (changedSeries.size) {
+    for (const series of changedSeries.values()) revalidateSeriesDetail(series);
+    revalidateSeriesListings();
+  }
   result.elapsedMs = Date.now() - startedAt;
   return result;
 }

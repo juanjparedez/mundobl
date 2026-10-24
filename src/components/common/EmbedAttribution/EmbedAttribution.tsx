@@ -4,13 +4,13 @@ import Link from 'next/link';
 import { LinkOutlined, YoutubeOutlined } from '@ant-design/icons';
 import './EmbedAttribution.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
-import { interpolateMessage } from '@/lib/i18n-format';
 
 interface EmbedAttributionProps {
   platform: string | null;
   channelName?: string | null;
   channelUrl?: string | null;
   originalUrl?: string | null;
+  channelActionLabel?: string;
 }
 
 const PLATFORM_ICON: Record<string, React.ReactNode> = {
@@ -26,6 +26,7 @@ export function EmbedAttribution({
   channelName,
   channelUrl,
   originalUrl,
+  channelActionLabel,
 }: EmbedAttributionProps) {
   const { t } = useLocale();
   if (!platform && !channelName) return null;
@@ -53,20 +54,15 @@ export function EmbedAttribution({
           <span>{platform}</span>
         </span>
       )}
-      {/* Suscribirse es un concepto de YouTube — no tiene equivalente
-       * directo en el resto de las plataformas soportadas (Vimeo, etc.),
-       * asi que el CTA queda acotado a ese caso. */}
-      {platform === 'YouTube' && channelUrl && channelName && (
+      {channelActionLabel && channelUrl && channelName && (
         <Link
           href={channelUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="embed-attribution__subscribe"
         >
-          <YoutubeOutlined />
-          {interpolateMessage(t('embedAttribution.subscribeButton'), {
-            channelName,
-          })}
+          {PLATFORM_ICON[platform ?? ''] ?? <LinkOutlined />}
+          {channelActionLabel}
         </Link>
       )}
       {originalUrl && (

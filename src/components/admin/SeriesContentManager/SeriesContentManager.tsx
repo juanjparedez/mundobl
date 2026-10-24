@@ -474,6 +474,9 @@ export function SeriesContentManager({
           {previewData && (
             <div className="series-content-manager__preview">
               <EmbedPlayer
+                openLabel={t('episodeSource.openOn', {
+                  platform: previewData.platform,
+                })}
                 platform={previewData.platform}
                 url={previewData.url}
                 videoId={previewData.videoId}

@@ -1,6 +1,17 @@
 import type { SupportedLocale } from './config';
 
 export type TranslationShape = {
+  episodeSource: {
+    followOn: string;
+    officialHint: string;
+    unsupported: string;
+    unverified: string;
+    unavailable: string;
+    notPlayable: string;
+    tooShort: string;
+    playerSetup: string;
+    openOn: string;
+  };
   welcomeEmail: {
     title: string;
     intro: string;
@@ -2954,7 +2965,7 @@ export type TranslationShape = {
     unmarkChapter: string;
     availabilityBlockedHere: string;
     availabilityBlockedSomewhere: string;
-    availabilityYoutubeOnly: string;
+    availabilityPlatformOnly: string;
     availabilityRemoved: string;
     openOnYoutube: string;
     episodeSynopsisTitle: string;
@@ -3830,6 +3841,18 @@ export type TranslationShape = {
 };
 
 const es: TranslationShape = {
+  episodeSource: {
+    followOn: 'Seguir a {channelName} en {platform}',
+    officialHint:
+      'Solo aceptamos obras de fuentes oficiales verificadas que permiten reproducirse aquí.',
+    unsupported: 'Pegá un video oficial de YouTube, Vimeo o Dailymotion.',
+    unverified: 'Esta obra todavía no tiene una fuente oficial verificada.',
+    unavailable: 'No pudimos verificar el video. Intentá nuevamente más tarde.',
+    notPlayable: 'Este video no está disponible para reproducir aquí.',
+    tooShort: 'El video es demasiado corto para publicarse como episodio.',
+    playerSetup: 'Dailymotion todavía no está habilitado en este sitio.',
+    openOn: 'Abrir en {platform}',
+  },
   welcomeEmail: {
     title: 'Te damos la bienvenida a MundoBL',
     intro:
@@ -6998,7 +7021,7 @@ const es: TranslationShape = {
     undoAutoMark: 'Deshacer',
     subtitlesTitle: 'Subtítulos',
     subtitlesBody:
-      'Se activan automáticamente si el video oficial los tiene. Podés cambiar el idioma desde [CC] en el reproductor.',
+      'Si el video tiene subtítulos, podés elegirlos desde los controles del reproductor.',
     regionTitle: 'No se ve en tu país.',
     regionBody:
       'La productora limita este video por región. Consultá las opciones legales disponibles para la serie.',
@@ -7009,8 +7032,9 @@ const es: TranslationShape = {
     availabilityBlockedHere: 'Este video no está disponible en tu país.',
     availabilityBlockedSomewhere:
       'Este video no está disponible en algunos países.',
-    availabilityYoutubeOnly: 'Este video sólo se puede ver en YouTube.',
-    availabilityRemoved: 'La productora sacó este video de YouTube.',
+    availabilityPlatformOnly:
+      'No se puede reproducir aquí. Consultá su disponibilidad en {platform}.',
+    availabilityRemoved: 'La productora sacó este video de {platform}.',
     openOnYoutube: 'Abrir en YouTube',
     episodeSynopsisTitle: 'Sinopsis del episodio',
     aboutTheSeriesTitle: 'Sobre la serie',
@@ -7054,13 +7078,14 @@ const es: TranslationShape = {
     clearFiltersButton: 'Limpiar filtros',
   },
   seriesSubscribeButton: {
-    signInTooltip: 'Inicia sesión para suscribirte a cambios',
+    signInTooltip: 'Iniciá sesión para recibir avisos de MundoBL',
     subscribeFailedError: 'subscribe-failed',
-    subscribeSuccessMessage: 'Te avisaremos cuando haya novedades',
-    unsubscribeSuccessMessage: 'Suscripción cancelada',
-    updateSubscriptionErrorMessage: 'No pudimos actualizar la suscripción',
-    subscribedTooltip: 'Suscrito: cancelar avisos de esta serie',
-    unsubscribedTooltip: 'Suscribirse para recibir avisos de cambios',
+    subscribeSuccessMessage: 'Te avisaremos en MundoBL cuando haya novedades',
+    unsubscribeSuccessMessage: 'Avisos de MundoBL desactivados',
+    updateSubscriptionErrorMessage:
+      'No pudimos actualizar los avisos de MundoBL',
+    subscribedTooltip: 'Desactivar avisos de esta serie en MundoBL',
+    unsubscribedTooltip: 'Recibir avisos de esta serie en MundoBL',
   },
   adminInfo: {
     teamMemberJuanName: 'Juan',
@@ -7948,6 +7973,18 @@ const es: TranslationShape = {
 };
 
 const en: TranslationShape = {
+  episodeSource: {
+    followOn: 'Follow {channelName} on {platform}',
+    officialHint:
+      'We only accept works from verified official sources that allow playback here.',
+    unsupported: 'Paste an official YouTube, Vimeo or Dailymotion video.',
+    unverified: 'This work does not yet have a verified official source.',
+    unavailable: 'We could not verify the video. Please try again later.',
+    notPlayable: 'This video is not available to play here.',
+    tooShort: 'The video is too short to publish as an episode.',
+    playerSetup: 'Dailymotion is not enabled on this site yet.',
+    openOn: 'Open on {platform}',
+  },
   welcomeEmail: {
     title: 'Welcome to MundoBL',
     intro: 'A catalog of BL, GL and other Asian dramas curated by people.',
@@ -11092,7 +11129,7 @@ const en: TranslationShape = {
     undoAutoMark: 'Undo',
     subtitlesTitle: 'Subtitles',
     subtitlesBody:
-      'They turn on automatically when the official video provides them. You can change the language from [CC] in the player.',
+      'If subtitles are available, choose them in the player controls.',
     regionTitle: "It isn't available in your country.",
     regionBody:
       'The producer restricts this video by region. Check the legal options available for the series.',
@@ -11103,8 +11140,9 @@ const en: TranslationShape = {
     availabilityBlockedHere: "This video isn't available in your country.",
     availabilityBlockedSomewhere:
       "This video isn't available in some countries.",
-    availabilityYoutubeOnly: 'This video can only be watched on YouTube.',
-    availabilityRemoved: 'The producer took this video down from YouTube.',
+    availabilityPlatformOnly:
+      'This video cannot play here. Check availability on {platform}.',
+    availabilityRemoved: 'The producer took this video down from {platform}.',
     openOnYoutube: 'Open on YouTube',
     episodeSynopsisTitle: 'Episode synopsis',
     aboutTheSeriesTitle: 'About the series',
@@ -11148,13 +11186,13 @@ const en: TranslationShape = {
     clearFiltersButton: 'Clear filters',
   },
   seriesSubscribeButton: {
-    signInTooltip: 'Sign in to subscribe to changes',
+    signInTooltip: 'Sign in to receive MundoBL notifications',
     subscribeFailedError: 'subscribe-failed',
-    subscribeSuccessMessage: 'We will notify you when there are updates',
-    unsubscribeSuccessMessage: 'Subscription cancelled',
-    updateSubscriptionErrorMessage: 'We could not update the subscription',
-    subscribedTooltip: 'Subscribed: cancel notifications for this series',
-    unsubscribedTooltip: 'Subscribe to receive change notifications',
+    subscribeSuccessMessage: 'MundoBL will notify you about updates',
+    unsubscribeSuccessMessage: 'MundoBL notifications turned off',
+    updateSubscriptionErrorMessage: 'Could not update MundoBL notifications',
+    subscribedTooltip: 'Turn off MundoBL notifications for this title',
+    unsubscribedTooltip: 'Receive MundoBL notifications for this title',
   },
   adminInfo: {
     teamMemberJuanName: 'Juan',

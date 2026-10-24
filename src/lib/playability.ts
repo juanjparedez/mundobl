@@ -267,7 +267,17 @@ export async function probeViaWatchPage(
         'Accept-Language': 'es-AR,es;q=0.9',
       },
       cache: 'no-store',
+      signal: AbortSignal.timeout(10_000),
     });
+    if (!res.ok || new URL(res.url).hostname !== 'www.youtube.com') {
+      return {
+        videoId,
+        status: 'UNKNOWN',
+        blockedMarkets: [],
+        detail: `Watch page HTTP ${res.status}; no se pudo comprobar reproduccion.`,
+        durationSeconds: null,
+      };
+    }
     html = await res.text();
   } catch (err) {
     // Un fallo de red no es informacion sobre el video: no pisar el

@@ -90,12 +90,16 @@ const stubs = {
       const auth = await requireAuth();
       return roles.includes(auth.role) ? auth : { authorized: false, response: NextResponse.json({}, { status: 403 }) };
     };`,
-  '@/lib/revalidate-series': 'export const revalidateSeriesDetail = () => {};',
+  '@/lib/revalidate-series':
+    'export const revalidateSeriesDetail = () => {}; export const revalidateSeries = () => {};',
   'next/cache': 'export const revalidatePath = () => {};',
   '@/lib/rate-limit':
     'export const checkUserEmbedRateLimit = async () => ({ ok: true });',
-  '@/lib/official-content-guard': `export const ONLY_YOUTUBE_ERROR = 'YouTube only';
-    export const checkOfficialYouTubeVideos = async ids => ({ ok: true, infos: new Map(ids.map(id => [id, { channelTitle: 'Verified', channelUrl: 'https://www.youtube.com/@official' }])) });`,
+  '@/lib/official-content-guard': `export const resolveOfficialEmbedFields = async input => ({ ok: true, fields: {
+    embedUrl: input.embedUrl, embedPlatform: 'YouTube', embedVideoId: 'abcdefghijk',
+    embedChannelName: 'Verified', embedChannelUrl: 'https://www.youtube.com/@official',
+    durationSeconds: 600, playback: 'OK', playbackBlockedMarkets: [], playbackCheckedAt: new Date()
+  } });`,
   '@/lib/user-embed-preview': `export const ALLOWED_COUNTRY_CODES = ['TH']; export const SUPPORTED_EMBED_PLATFORMS = ['YouTube'];`,
 };
 const built = await build({

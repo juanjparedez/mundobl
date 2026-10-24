@@ -68,6 +68,12 @@ const CHANNEL_COUNTRY_MAP: Record<string, string> = {
   'VinCentiments [OFFICIAL]': 'PH',
   'Windsor Creatives Production': 'PH',
   'O2 PRODUCTION': 'VN',
+  'GND STUDIO': 'KR',
+  'Rookie Thailand': 'TH',
+  'WAYUFILM PRODUCTION': 'TH',
+  '석필름 SUKFILM': 'KR',
+  Sukfilm: 'KR',
+  'Mind Trio': 'TH',
 };
 
 /**

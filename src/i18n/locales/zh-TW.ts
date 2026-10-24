@@ -10,6 +10,17 @@
 import type { TranslationShape } from '../messages';
 
 const zhTW = {
+  episodeSource: {
+    followOn: "在 {platform} 追蹤 {channelName}",
+    officialHint: "僅接受來自經驗證的官方來源且允許在此播放的作品。",
+    "unsupported": "請貼上 YouTube、Vimeo 或 Dailymotion 的官方影片連結。",
+    "unverified": "此作品尚無經過驗證的官方來源。",
+    "unavailable": "無法驗證影片，請稍後重試。",
+    "notPlayable": "此影片無法在這裡播放。",
+    "tooShort": "影片太短，無法作為劇集發布。",
+    "playerSetup": "本站尚未啟用 Dailymotion。",
+    "openOn": "在 {platform} 開啟"
+  },
   welcomeEmail: {
   "title": "歡迎來到 MundoBL",
   "intro": "由人工精選的 BL、GL 及其他亞洲劇集目錄。",
@@ -2955,7 +2966,7 @@ const zhTW = {
     "autoMarkedChapter": "已標記第 {n} 集",
     "undoAutoMark": "復原",
     "subtitlesTitle": "字幕",
-    "subtitlesBody": "若官方影片提供字幕，系統會自動開啟。你可以在播放器的 [CC] 中更改語言。",
+    "subtitlesBody": "如果有字幕，可以在播放器控制項中選擇。",
     "regionTitle": "你所在的國家或地區無法觀看。",
     "regionBody": "製作方對此影片設定了地區限制。請查看本劇可用的合法觀看方式。",
     "whereToWatchLink": "觀看平台",
@@ -2964,8 +2975,8 @@ const zhTW = {
     "unmarkChapter": "取消標記第 {n} 集",
     "availabilityBlockedHere": "此影片在您的國家/地區無法觀看。",
     "availabilityBlockedSomewhere": "此影片在部分國家/地區無法觀看。",
-    "availabilityYoutubeOnly": "此影片只能在 YouTube 上觀看。",
-    "availabilityRemoved": "製作方已將此影片從 YouTube 下架。",
+    "availabilityPlatformOnly": "無法在此處播放。請前往 {platform} 查看是否可觀看。",
+    "availabilityRemoved": "製作方已將此影片從 {platform} 下架。",
     "openOnYoutube": "在 YouTube 上開啟",
     "episodeSynopsisTitle": "劇集概要",
     "aboutTheSeriesTitle": "關於劇集",
@@ -3008,13 +3019,13 @@ const zhTW = {
     "clearFiltersButton": "清除篩選條件"
   },
   "seriesSubscribeButton": {
-    "signInTooltip": "登入以訂閱變更",
+    "signInTooltip": "登入以接收 MundoBL 通知",
     "subscribeFailedError": "訂閱失敗",
-    "subscribeSuccessMessage": "有更新時我們會通知您",
-    "unsubscribeSuccessMessage": "訂閱已取消",
-    "updateSubscriptionErrorMessage": "我們無法更新訂閱",
-    "subscribedTooltip": "已訂閱：取消此劇集的通知",
-    "unsubscribedTooltip": "訂閱以接收變更通知"
+    "subscribeSuccessMessage": "MundoBL 將通知你最新動態",
+    "unsubscribeSuccessMessage": "已關閉 MundoBL 通知",
+    "updateSubscriptionErrorMessage": "無法更新 MundoBL 通知",
+    "subscribedTooltip": "關閉此作品的 MundoBL 通知",
+    "unsubscribedTooltip": "接收此作品的 MundoBL 通知"
   },
   "adminInfo": {
     "teamMemberJuanName": "Juan",

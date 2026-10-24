@@ -6,7 +6,7 @@ import {
   useYouTubeWatchTime,
   type YouTubeWatchEvent,
 } from '@/hooks/useYouTubeWatchTime';
-import { LinkOutlined, VideoCameraOutlined } from '@ant-design/icons';
+import { LinkOutlined } from '@ant-design/icons';
 import './EmbedPlayer.css';
 
 interface EmbedPlayerProps {
@@ -14,6 +14,7 @@ interface EmbedPlayerProps {
   url: string;
   videoId: string | null;
   title: string;
+  openLabel: string;
   episodeId?: number;
   autoplay?: boolean;
   onWatchProgress?: (event: YouTubeWatchEvent) => void;
@@ -59,6 +60,7 @@ export function EmbedPlayer({
   url,
   videoId,
   title,
+  openLabel,
   episodeId,
   autoplay = false,
   onWatchProgress,
@@ -85,7 +87,6 @@ export function EmbedPlayer({
 
   if (embed.type === 'iframe' && embed.url) {
     const isSpotify = platform === 'Spotify';
-    const isVimeo = platform === 'Vimeo';
 
     return (
       <div className="embed-player-container">
@@ -104,22 +105,15 @@ export function EmbedPlayer({
           />
         </div>
 
-        {isVimeo && (
+        {(platform === 'Vimeo' || platform === 'Dailymotion') && (
           <div className="embed-player__vimeo-tip">
-            <span className="embed-player__vimeo-tip-text">
-              <VideoCameraOutlined /> ¿El video tiene bloqueo de privacidad o es
-              de <strong>Vimeo On Demand</strong>?
-            </span>
             <a
-              href={
-                url ||
-                (videoId ? `https://vimeo.com/${videoId}` : 'https://vimeo.com')
-              }
+              href={url}
               target="_blank"
               rel="noopener noreferrer"
               className="embed-player__vimeo-btn"
             >
-              Abrir en Vimeo Oficial <LinkOutlined />
+              {openLabel} <LinkOutlined />
             </a>
           </div>
         )}
@@ -137,7 +131,7 @@ export function EmbedPlayer({
       <span className="embed-player__link-card-platform">{platform}</span>
       <span className="embed-player__link-card-title">{title}</span>
       <span className="embed-player__link-card-cta">
-        Ver en {platform} <LinkOutlined />
+        {openLabel} <LinkOutlined />
       </span>
     </a>
   );

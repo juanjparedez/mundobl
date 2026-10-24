@@ -1,5 +1,7 @@
 'use client';
 
+import { getEpisodeSourceErrorKey } from '@/lib/episode-platforms';
+
 import { useState, useMemo, useEffect } from 'react';
 import {
   Tag,
@@ -172,7 +174,12 @@ export function EpisodesList({
         body: JSON.stringify({ ...values, seasonId }),
       });
 
-      if (!response.ok) throw new Error();
+      if (!response.ok) {
+        const body: { errorKey?: unknown } = await response.json();
+        const key = getEpisodeSourceErrorKey(body.errorKey);
+        message.error(key ? t(key) : t('episodesList.errorSave'));
+        return;
+      }
 
       const savedEpisode = await response.json();
 

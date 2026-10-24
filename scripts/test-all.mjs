@@ -58,6 +58,7 @@ const tsxTests = [
   'latest-novedades',
   'navigation',
   'outbound-links',
+  'external-episode-source',
 ];
 const trackingTests = [
   'tracking-backup',
@@ -83,11 +84,13 @@ const trackingTests = [
   'writer-credits',
   'series-save',
   'series-curation',
+  'watch-content-batch',
   'editorial-classification',
   'onboarding',
 ];
 // [script, usa --import tsx]
 const routeTests = [
+  ['test-platform-audit.mjs', true],
   ['test-private-tracking-routes.mjs', true],
   ['test-info-block-privacy.mjs', true],
   ['test-editorial-routes.mjs', true],

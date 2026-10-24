@@ -6,6 +6,7 @@ import { notifyEpisodesAvailable } from '@/lib/notifications';
 // Los campos de embed se resuelven y validan contra la lista blanca de
 // canales oficiales en un solo lugar (docs/politica-contenido-oficial.md).
 import { resolveOfficialEmbedFields } from '@/lib/official-content-guard';
+import { revalidateSeries } from '@/lib/revalidate-series';
 
 // GET - Obtener episodios de una temporada
 export async function GET(request: NextRequest) {
@@ -62,7 +63,7 @@ export async function POST(request: NextRequest) {
     const embed = await resolveOfficialEmbedFields(body);
     if (!embed.ok) {
       return NextResponse.json(
-        { error: embed.error },
+        { error: embed.error, errorKey: embed.errorKey },
         { status: embed.status }
       );
     }
@@ -87,6 +88,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    revalidateSeries(episode.season.series);
     // Nace con video: ya se puede ver, avisar a quienes siguen la serie.
     if (episode.embedUrl) {
       await notifyEpisodesAvailable({

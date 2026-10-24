@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Tag, Spin, Empty, Card } from 'antd';
 import { PlayCircleOutlined } from '@ant-design/icons';
 import { EmbedPlayer } from '@/components/common/EmbedPlayer/EmbedPlayer';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 import {
   CATEGORY_LABELS,
   PLATFORM_COLORS,
@@ -45,6 +46,7 @@ const CATEGORY_ORDER = [
 ];
 
 export function SeriesContent({ seriesId }: SeriesContentProps) {
+  const { t } = useLocale();
   const [items, setItems] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -103,6 +105,9 @@ export function SeriesContent({ seriesId }: SeriesContentProps) {
       {selectedItem && (
         <div className="series-content__player">
           <EmbedPlayer
+            openLabel={t('episodeSource.openOn', {
+              platform: selectedItem.platform,
+            })}
             platform={selectedItem.platform}
             url={selectedItem.url}
             videoId={selectedItem.videoId}

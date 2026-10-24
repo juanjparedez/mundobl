@@ -1,6 +1,11 @@
 // ============================================
 // Utilidad compartida para embeds de plataformas
 // ============================================
+import {
+  dailymotionPlayerId,
+  parseEpisodeSource,
+  parsePublicVideoUrl,
+} from './episode-platforms';
 
 export type Platform =
   | 'YouTube'
@@ -63,10 +68,8 @@ export const PLATFORM_COLORS: Record<string, string> = {
 // ---- Extractores de ID por plataforma ----
 
 export function getYouTubeId(url: string): string | null {
-  const match = url.match(
-    /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|shorts\/))([a-zA-Z0-9_-]{11})/
-  );
-  return match ? match[1] : null;
+  const source = parseEpisodeSource(url);
+  return source?.platform === 'YouTube' ? source.videoId : null;
 }
 
 export function getBilibiliId(url: string): string | null {
@@ -75,17 +78,13 @@ export function getBilibiliId(url: string): string | null {
 }
 
 export function getVimeoId(url: string): string | null {
-  const match = url.match(
-    /(?:vimeo\.com\/(?:.*\/videos\/|.*\/channels\/[^/]+\/|video\/|event\/)?|player\.vimeo\.com\/video\/)(\d+)/
-  );
-  return match ? match[1] : null;
+  const source = parseEpisodeSource(url);
+  return source?.platform === 'Vimeo' ? source.videoId : null;
 }
 
 export function getDailymotionId(url: string): string | null {
-  const match = url.match(
-    /dailymotion\.com\/(?:video|embed\/video)\/([a-zA-Z0-9]+)/
-  );
-  return match ? match[1] : null;
+  const source = parseEpisodeSource(url);
+  return source?.platform === 'Dailymotion' ? source.videoId : null;
 }
 
 export function getTikTokId(url: string): string | null {
@@ -103,14 +102,27 @@ export function getSpotifyId(url: string): { type: string; id: string } | null {
 // ---- Detección automática de plataforma desde URL ----
 
 export function detectPlatform(url: string): Platform | null {
-  if (/youtu\.be|youtube\.com/.test(url)) return 'YouTube';
-  if (/bilibili\.com/.test(url)) return 'Bilibili';
-  if (/vimeo\.com/.test(url)) return 'Vimeo';
-  if (/dailymotion\.com/.test(url)) return 'Dailymotion';
-  if (/tiktok\.com/.test(url)) return 'TikTok';
-  if (/instagram\.com/.test(url)) return 'Instagram';
-  if (/twitter\.com|x\.com/.test(url)) return 'Twitter';
-  if (/spotify\.com/.test(url)) return 'Spotify';
+  const parsed = parsePublicVideoUrl(url);
+  if (!parsed) return null;
+  const host = parsed.hostname.replace(/^www\./, '');
+  const hosts: Record<string, Platform> = {
+    'youtube.com': 'YouTube',
+    'm.youtube.com': 'YouTube',
+    'youtu.be': 'YouTube',
+    'youtube-nocookie.com': 'YouTube',
+    'bilibili.com': 'Bilibili',
+    'vimeo.com': 'Vimeo',
+    'player.vimeo.com': 'Vimeo',
+    'dailymotion.com': 'Dailymotion',
+    'geo.dailymotion.com': 'Dailymotion',
+    'dai.ly': 'Dailymotion',
+    'tiktok.com': 'TikTok',
+    'instagram.com': 'Instagram',
+    'twitter.com': 'Twitter',
+    'x.com': 'Twitter',
+    'open.spotify.com': 'Spotify',
+  };
+  if (hosts[host]) return hosts[host];
   return null;
 }
 
@@ -145,7 +157,7 @@ export interface StreamingValidationResult {
 }
 
 /**
- * Valida de forma estricta si una URL es una fuente legal permitida para /ver (YouTube, Vimeo, Bilibili, Dailymotion).
+ * Validates supported episode URLs. Official authorship is checked on the server.
  */
 export function validateStreamingUrl(url: string): StreamingValidationResult {
   const trimmed = (url || '').trim();
@@ -180,15 +192,10 @@ export function validateStreamingUrl(url: string): StreamingValidationResult {
       platform: null,
       videoId: null,
       error:
-        'Plataforma no soportada. Solo aceptamos fuentes oficiales de YouTube, Vimeo, Dailymotion y Bilibili.',
+        'Plataforma no soportada. Solo aceptamos fuentes oficiales de YouTube, Vimeo y Dailymotion.',
     };
   }
-  const allowedPlatforms: Platform[] = [
-    'YouTube',
-    'Vimeo',
-    'Bilibili',
-    'Dailymotion',
-  ];
+  const allowedPlatforms: Platform[] = ['YouTube', 'Vimeo', 'Dailymotion'];
   if (!allowedPlatforms.includes(platform)) {
     return {
       valid: false,
@@ -263,18 +270,28 @@ export function getEmbedInfo(
         platform,
       };
     case 'Vimeo':
+      const vimeoSource = parseEpisodeSource(url);
+      const vimeoParams = new URLSearchParams({ dnt: '1' });
+      if (vimeoSource?.privacyHash)
+        vimeoParams.set('h', vimeoSource.privacyHash);
+      if (options.autoplay) vimeoParams.set('autoplay', '1');
       return {
         type: 'iframe',
-        url: resolvedId ? `https://player.vimeo.com/video/${resolvedId}` : null,
+        url:
+          resolvedId && /^\d+$/.test(resolvedId)
+            ? `https://player.vimeo.com/video/${resolvedId}?${vimeoParams}`
+            : null,
         originalUrl: url,
         platform,
       };
     case 'Dailymotion':
+      const playerId = dailymotionPlayerId();
       return {
         type: 'iframe',
-        url: resolvedId
-          ? `https://www.dailymotion.com/embed/video/${resolvedId}`
-          : null,
+        url:
+          resolvedId && /^[a-z\d]+$/i.test(resolvedId) && playerId
+            ? `https://geo.dailymotion.com/player/${playerId}.html?video=${resolvedId}${options.autoplay ? '&autoplay=1' : ''}`
+            : null,
         originalUrl: url,
         platform,
       };

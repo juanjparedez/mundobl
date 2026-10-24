@@ -1,0 +1,25 @@
+{
+  "id": "ver-2026-10-24-vimeo",
+  "verifiedAt": "2026-10-24",
+  "series": [
+    {
+      "title": "Yu and Rachel",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "tw",
+      "year": 2014,
+      "channelId": "7732934",
+      "playlistUrl": "https://vimeo.com/129009162",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "129009162",
+          "publishedAt": "2015-05-27T16:27:04+00:00",
+          "sourceTitle": "他好嗎？Yu and Rachel"
+        }
+      ]
+    }
+  ]
+}

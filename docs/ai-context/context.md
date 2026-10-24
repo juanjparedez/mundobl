@@ -2,6 +2,34 @@
 
 Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-stack para gestionar, calificar y hacer seguimiento de series, peliculas, cortos y especiales.
 
+## Publicación autorizada del lote de 16 títulos (2026-10-24)
+
+- El propietario autorizó explícitamente publicar código y los 16 títulos si pasaban una verificación nueva. A las 13:36 ART (16:36 UTC), los 114 videos YouTube y el video Vimeo dieron OK en ambas verificaciones. El límite 429 del ensayo anterior ya no impidió esa comprobación.
+- Producción tiene `YOUTUBE_API_KEY` y `VIMEO_ACCESS_TOKEN` configuradas; se verificó su existencia sin revelar valores. Dailymotion continúa sin activar.
+- `scripts/publish-ver-content-batch.ts` es un ejecutor separado de la receta local: solo admite el proyecto Supabase de MundoBL, simula con transacción READ ONLY, exige evidencia completa de menos de una hora y --apply con un plan previamente revisado. Verifica hashes de manifiesto/evidencia/estado previo, vuelve a consultar APIs, conserva respaldo acotado en `backups/ver-release-*` y aplica en una transacción serializable. Si cambió una ficha desde la simulación, aborta. Los respaldos nunca se publican en Git ni en artifacts.
+- Flujo de entrega: PR con CI completo aprobado, aplicación del plan de datos, merge y un solo workflow manual Deploy producción. Confirmar luego el SHA servido, los 16 detalles, 43 títulos en `/ver` y reproducción de Vimeo. No hay migración de schema.
+
+## Ampliación de plataformas preparada localmente (2026-10-24, ensayo previo)
+
+- El propietario pidió más YouTube y otras plataformas; detuvo la publicación inicial. La autorización nueva y su comprobación están documentadas arriba.
+- Nuevo lote adicional: 7 temporadas YouTube / 63 capítulos, seleccionadas y comprobadas con API + página anónima. Con las ocho iniciales: 15 títulos / 107 capítulos / 114 videos. Manifiesto `scripts/data/ver-content-youtube-expanded-2026-10-24.json`.
+- Vimeo: `Yu and Rachel` (Taiwán, 2014, corto, 733 s), video 129009162 del propietario 7732934 (WU ZI-EN); autoría contrastada con Iris Prize. API disponible/público/embebible, oEmbed público y reproducción en Chrome comprobados. Manifiesto separado `ver-content-vimeo-2026-10-24.json`.
+- `episode-platforms.ts` valida host e ID y normaliza URLs. `external-episode-source.ts` consulta endpoints fijos, verifica propietario/obra en `official-video-publishers.ts`, duración y acceso público. Preview, confirmación y administración comparten `resolveOfficialEmbedFields`; no se confía en datos de canal enviados por el cliente. El audit incluye las nuevas plataformas.
+- Vimeo reutiliza `VIMEO_ACCESS_TOKEN` (solo servidor). Dailymotion usa `NEXT_PUBLIC_DAILYMOTION_PLAYER_ID` (público; requiere build para cliente): iframe `geo.dailymotion.com/player/{id}.html?video=...` y oEmbed con `player`. Sin ID ni obras oficiales verificadas permanece sin activar. La cuenta del propietario x6gs386 muestra Medios/Análisis/Ganancias, sin Embeds/Players; su handle no reemplaza un Player ID. No se cambió plan ni cuenta.
+- Terminología: suscribirse al canal en YouTube; seguir al autor/canal en Vimeo/Dailymotion; avisos de MundoBL para la campanita propia. Los me gusta/reproducciones de YouTube se filtran por proveedor; enlaces, avisos y miniaturas respetan el proveedor. Diez locales con claves e interpolaciones comprobadas. El progreso manual sigue disponible; la detección automática de tiempo visto sigue siendo exclusiva de YouTube.
+- Ensayo local: 785 fichas / 43 en `/ver`, frente a 777/27 iniciales. Lote completo: 16 títulos / 108 capítulos / 115 videos. Ocho fichas enriquecidas y ocho altas WATCHABLE_ONLY. Build, test:fast (ocho warnings previos), regresiones de importación/fuentes/aportes/audit y listado/detalles aprobados. En Chrome se comprobó Vimeo dentro de la ficha, avance del reproductor, progreso manual, filtro Vimeo y Suscribite en YouTube.
+- YouTube devolvió HTTP 429 al repetir la verificación anónima después del dry-run exitoso (08:01 UTC). Se detuvieron las consultas; para terminar el ensayo de los ocho adicionales se usó evidencia positiva guardada a las 07:43 UTC, de menos de una hora, más API y Vimeo consultados nuevamente. No se eludió el límite. Antes de publicar, repetir la comprobación en vivo cuando el proveedor lo permita; la receta normal sigue abortando ante UNKNOWN. Detalles en `docs/ampliacion-ver-2026-10-24.md`.
+- Estado: implementación local terminada; Dailymotion pendiente de configuración y obras. La receta solo admite bases locales de ensayo. Sin migración de schema ni escrituras en producción; no push/PR/merge/deploy.
+
+## Ampliación de /ver preparada localmente (2026-10-24)
+
+- Diagnóstico de solo lectura: 777 fichas, 27 títulos elegibles en `/ver`; la clave local de YouTube funciona. Faltaba incorporar episodios y reconocer más canales, no construir otro reproductor.
+- Cinco fuentes agregadas a `official-channels.ts`: GND STUDIO, Rookie Thailand, Mind Trio, Sukfilm y Wayufilm Production, verificadas por ID. País sugerido agregado al importador; el barrido hereda los canales de la lista compartida.
+- `scripts/data/ver-content-2026-10-24.json` selecciona 8 títulos / 44 capítulos / 51 videos: cinco fichas existentes se enriquecen y tres altas quedan WATCHABLE_ONLY. `scripts/import-ver-content-batch.ts` simula por defecto, admite `--apply` solo en DB local, revalida canal, duración, mercados y página anónima. `watch-content-batch.ts` conserva IDs/seguimiento, registra revisión, incrementa editVersion, rechaza conflictos y no duplica al repetir.
+- Hallazgo: The Star devuelve público/embebible en la API pero exige membresía en la página. Se excluyó del lote; la doble comprobación queda obligatoria para esta receta. No se modificó el comportamiento del importador web ni del cron de auditoría.
+- Copia local: `/ver` pasa de 27 a 35 títulos. Regresiones de datos, controles estáticos y build local aprobados. No hay migración ni nuevas cadenas de interfaz. No se escribió producción ni se publicó código.
+- Fuentes, comandos, alcance y pendientes de publicación: [ampliación de /ver](../ampliacion-ver-2026-10-24.md).
+
 ## Primer ingreso y días activos (2026-10-24)
 
 - Datos que lo motivan (prod, 24/10): 57% de las cuentas VISITOR nunca hizo nada tras registrarse (72% en octubre); 72 de 79 que alguna vez siguieron una serie lo hicieron en su primera hora.

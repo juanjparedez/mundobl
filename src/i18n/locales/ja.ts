@@ -10,6 +10,17 @@
 import type { TranslationShape } from '../messages';
 
 const ja = {
+  episodeSource: {
+    followOn: "{platform}で{channelName}をフォロー",
+    officialHint: "ここでの再生が許可された、確認済みの公式配信元の作品のみを受け付けます。",
+    "unsupported": "YouTube、Vimeo、Dailymotionの公式動画を貼り付けてください。",
+    "unverified": "この作品の公式配信元はまだ確認されていません。",
+    "unavailable": "動画を確認できませんでした。後でもう一度お試しください。",
+    "notPlayable": "この動画はここでは再生できません。",
+    "tooShort": "エピソードとして公開するには動画が短すぎます。",
+    "playerSetup": "このサイトではDailymotionはまだ有効になっていません。",
+    "openOn": "{platform}で開く"
+  },
   welcomeEmail: {
   "title": "MundoBLへようこそ",
   "intro": "人の手で選んだBL・GL作品やアジアドラマのカタログです。",
@@ -2959,7 +2970,7 @@ const ja = {
     "autoMarkedChapter": "エピソード{n}を視聴済みにしました",
     "undoAutoMark": "元に戻す",
     "subtitlesTitle": "字幕",
-    "subtitlesBody": "公式動画に字幕がある場合は自動で有効になります。プレーヤーの[CC]から言語を変更できます。",
+    "subtitlesBody": "字幕がある場合は、プレーヤーの操作メニューから選べます。",
     "regionTitle": "お住まいの国では視聴できません。",
     "regionBody": "制作会社が地域制限を設定しています。このシリーズの正規の視聴方法をご確認ください。",
     "whereToWatchLink": "視聴方法",
@@ -2968,8 +2979,8 @@ const ja = {
     "unmarkChapter": "エピソード{n}の視聴済みを解除",
     "availabilityBlockedHere": "この動画はお住まいの国では視聴できません。",
     "availabilityBlockedSomewhere": "この動画は一部の国では視聴できません。",
-    "availabilityYoutubeOnly": "この動画はYouTubeでのみ視聴できます。",
-    "availabilityRemoved": "プロデューサーがこの動画をYouTubeから削除しました。",
+    "availabilityPlatformOnly": "ここでは再生できません。{platform}で視聴できるか確認してください。",
+    "availabilityRemoved": "プロデューサーがこの動画を{platform}から削除しました。",
     "openOnYoutube": "YouTubeで開く",
     "episodeSynopsisTitle": "エピソードのあらすじ",
     "aboutTheSeriesTitle": "シリーズについて",
@@ -3012,13 +3023,13 @@ const ja = {
     "clearFiltersButton": "フィルターをクリア"
   },
   "seriesSubscribeButton": {
-    "signInTooltip": "変更を購読するにはサインインしてください",
+    "signInTooltip": "ログインしてMundoBLの通知を受け取る",
     "subscribeFailedError": "購読に失敗しました",
-    "subscribeSuccessMessage": "更新があった際にお知らせします",
-    "unsubscribeSuccessMessage": "購読をキャンセルしました",
-    "updateSubscriptionErrorMessage": "購読を更新できませんでした",
-    "subscribedTooltip": "購読済み: このシリーズの通知をキャンセル",
-    "unsubscribedTooltip": "変更通知を受け取るために購読する"
+    "subscribeSuccessMessage": "MundoBLから更新をお知らせします",
+    "unsubscribeSuccessMessage": "MundoBLの通知をオフにしました",
+    "updateSubscriptionErrorMessage": "MundoBLの通知を更新できませんでした",
+    "subscribedTooltip": "この作品のMundoBL通知をオフにする",
+    "unsubscribedTooltip": "この作品のMundoBL通知を受け取る"
   },
   "adminInfo": {
     "teamMemberJuanName": "フアン",

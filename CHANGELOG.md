@@ -8,6 +8,18 @@ Todas las versiones notables del proyecto se documentan aqui.
 > (`ChangelogItem`, `/admin/changelog`) quedo como fallback solo si este archivo
 > esta vacio.
 
+## 2026-10-24 — Más títulos para ver y reproducción desde Vimeo
+
+### Features
+
+- **16 títulos más para ver**: 15 series y miniseries de canales oficiales de YouTube y el corto taiwanés *Yu and Rachel*, publicado por su director en Vimeo. El lote suma 108 capítulos y 115 videos contando las partes.
+- **Vimeo dentro de MundoBL**: reproducción en la ficha, atribución al autor y filtro por plataforma. Las nuevas fuentes se comprueban antes de admitirlas.
+
+### Fixes
+
+- **Acciones claras por plataforma**: «Suscribirse» en YouTube, «Seguir» en Vimeo y avisos propios de MundoBL diferenciados. Los me gusta de YouTube no se mezclan con otras plataformas.
+- **Disponibilidad y miniaturas**: los avisos y enlaces usan la plataforma del video; los fallos temporales de verificación conservan el último estado conocido.
+
 ## 2026-10-24 — Estadísticas vivas, ranking del mes y empujones para terminar series
 
 ### Features

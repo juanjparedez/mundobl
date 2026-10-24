@@ -1,0 +1,587 @@
+{
+  "id": "ver-2026-10-24-youtube-expanded",
+  "verifiedAt": "2026-10-24",
+  "series": [
+    {
+      "title": "Love Bill",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "vn",
+      "year": 2022,
+      "channelId": "UCANpnA0w8e5vTHiGgdbrgsg",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLf_mCRbXsMcC7jQEdA8AMdcTDgE3Qy3Y4",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "DaXjgkvzSM0",
+          "publishedAt": "2022-10-29T12:00:09Z",
+          "sourceTitle": "Lời Hứa Mùa Hạ - Love Bill | Tập 1 [EngSub]"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "bICbm-1FvVc",
+          "publishedAt": "2022-11-05T12:00:07Z",
+          "sourceTitle": "Lời Hứa Mùa Hạ - Love Bill | Tập 2 [EngSub]"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "MRT-dPgN2lw",
+          "publishedAt": "2023-01-15T14:13:20Z",
+          "sourceTitle": "Lời Hứa Mùa Hạ - Love Bill | Tập 3 [Không Giới Hạn Độ Tuổi]"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "WL0syRx86f8",
+          "publishedAt": "2022-11-19T12:00:09Z",
+          "sourceTitle": "Lời Hứa Mùa Hạ - Love Bill | Tập 4 [EngSub]"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "8btDZ8fWEEk",
+          "publishedAt": "2022-11-26T12:00:10Z",
+          "sourceTitle": "Lời Hứa Mùa Hạ - Love Bill | Tập 5 [EngSub]"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "JIdsZLBp30A",
+          "publishedAt": "2022-12-03T12:00:09Z",
+          "sourceTitle": "Lời Hứa Mùa Hạ - Love Bill | Tập 6 [EngSub]"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 1,
+          "videoId": "i31z0EW3VkM",
+          "publishedAt": "2022-12-10T12:00:09Z",
+          "sourceTitle": "Lời Hứa Mùa Hạ - Love Bill | Tập 7 [EngSub]"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 1,
+          "videoId": "fQQjmnem4Ds",
+          "publishedAt": "2022-12-24T14:32:00Z",
+          "sourceTitle": "Lời Hứa Mùa Hạ - Love Bill | Tập 8 [EngSub]"
+        },
+        {
+          "chapter": 9,
+          "part": 1,
+          "parts": 1,
+          "videoId": "BzOW0IbrbLI",
+          "publishedAt": "2022-12-31T12:00:07Z",
+          "sourceTitle": "Lời Hứa Mùa Hạ - Love Bill | Tập 9 [EngSub]"
+        },
+        {
+          "chapter": 10,
+          "part": 1,
+          "parts": 1,
+          "videoId": "vc9ADR6VOH0",
+          "publishedAt": "2023-01-10T12:00:11Z",
+          "sourceTitle": "Lời Hứa Mùa Hạ - Love Bill | Tập 10 [EngSub]"
+        }
+      ]
+    },
+    {
+      "title": "Mr. Cinderella",
+      "targetSeriesId": 592,
+      "expectedTitle": "Mr. Cinderella",
+      "countryCode": "vn",
+      "year": 2021,
+      "channelId": "UCANpnA0w8e5vTHiGgdbrgsg",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLf_mCRbXsMcCPpxxvxy4pnROsc3Szv4y1",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "ze--SW56-do",
+          "publishedAt": "2021-11-28T12:00:12Z",
+          "sourceTitle": "Chàng Lọ Lem - Mr Cinderella ss1 | Tập 1 [EngSub]"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "ZEtYSRaN3y8",
+          "publishedAt": "2021-12-05T12:00:18Z",
+          "sourceTitle": "Chàng Lọ Lem - Mr Cinderella ss1 | Tập 2 [EngSub]"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "ezBqVQ0yZKU",
+          "publishedAt": "2021-12-12T12:00:12Z",
+          "sourceTitle": "Chàng Lọ Lem - Mr Cinderella ss1 | Tập 3 [EngSub]"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "fVUMG7BY1kE",
+          "publishedAt": "2021-12-19T12:00:11Z",
+          "sourceTitle": "Chàng Lọ Lem - Mr Cinderella ss1 | Tập 4 [EngSub]"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "VDTO6ltFic0",
+          "publishedAt": "2021-12-26T12:00:14Z",
+          "sourceTitle": "Chàng Lọ Lem - Mr Cinderella ss1 | Tập 5 [EngSub]"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "quKo1bhTxos",
+          "publishedAt": "2022-01-02T12:00:11Z",
+          "sourceTitle": "Chàng Lọ Lem - Mr Cinderella ss1 | Tập 6 [EngSub]"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 1,
+          "videoId": "plIfEOove8M",
+          "publishedAt": "2022-01-09T12:00:13Z",
+          "sourceTitle": "Chàng Lọ Lem - Mr Cinderella ss1 | Tập 7 [EngSub]"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 1,
+          "videoId": "NFp6j3nPfDI",
+          "publishedAt": "2022-01-16T12:00:14Z",
+          "sourceTitle": "Chàng Lọ Lem - Mr Cinderella ss1 | Tập 8 [EngSub]"
+        }
+      ]
+    },
+    {
+      "title": "Mr. Cinderella 2",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "vn",
+      "year": 2023,
+      "channelId": "UCANpnA0w8e5vTHiGgdbrgsg",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLf_mCRbXsMcARjHGfL3C-VpVA6LLMy8GJ",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "3FADaJIg7mQ",
+          "publishedAt": "2023-09-23T12:00:08Z",
+          "sourceTitle": "Chàng Lọ Lem - Mr Cinderella ss2 | Tập 1 [EngSub]"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "E-ZSLNF8424",
+          "publishedAt": "2023-09-30T12:00:07Z",
+          "sourceTitle": "Chàng Lọ Lem - Mr Cinderella ss2 | Tập 2 [EngSub]"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "Njj7yf2sq8Q",
+          "publishedAt": "2023-10-07T12:00:08Z",
+          "sourceTitle": "Chàng Lọ Lem - Mr Cinderella ss2 | Tập 3 [EngSub]"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "q_k4UHw8Zfw",
+          "publishedAt": "2023-10-14T12:00:08Z",
+          "sourceTitle": "Chàng Lọ Lem - Mr Cinderella ss2 | Tập 4 [EngSub]"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "UUcdod7CaFg",
+          "publishedAt": "2023-10-21T12:00:11Z",
+          "sourceTitle": "Chàng Lọ Lem - Mr Cinderella ss2 | Tập 5 [EngSub]"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "_zk361cgR9A",
+          "publishedAt": "2023-10-28T12:00:29Z",
+          "sourceTitle": "Chàng Lọ Lem - Mr Cinderella ss2 | Tập 6 [EngSub]"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 1,
+          "videoId": "ZwyK-1cq7VI",
+          "publishedAt": "2023-11-04T12:00:11Z",
+          "sourceTitle": "Chàng Lọ Lem - Mr Cinderella ss2 | Tập 7 [EngSub]"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 1,
+          "videoId": "ieDixDGsiro",
+          "publishedAt": "2023-11-11T12:00:10Z",
+          "sourceTitle": "Chàng Lọ Lem - Mr Cinderella ss2 | Tập 8 [EngSub]"
+        }
+      ]
+    },
+    {
+      "title": "Be Your Star",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "vn",
+      "year": 2024,
+      "channelId": "UCANpnA0w8e5vTHiGgdbrgsg",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLf_mCRbXsMcD7ZiXyP-p32dloep4Y--jW",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "MgJ92Y5I90M",
+          "publishedAt": "2024-03-23T12:00:07Z",
+          "sourceTitle": "Mùa Sao Đầu Tiên - Be your Star I Tập 1 [EngSub]"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "_C2HNDv84C8",
+          "publishedAt": "2024-03-30T12:00:07Z",
+          "sourceTitle": "Mùa Sao Đầu Tiên - Be your Star I Tập 2 [EngSub]"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "_Rq8qtSd8VQ",
+          "publishedAt": "2024-04-06T12:00:07Z",
+          "sourceTitle": "Mùa Sao Đầu Tiên - Be your Star I Tập 3 [EngSub]"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "qRnVFxNVi0U",
+          "publishedAt": "2024-04-13T12:00:07Z",
+          "sourceTitle": "Mùa Sao Đầu Tiên - Be your Star I Tập 4 [EngSub]"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "UMGLMgUvnRA",
+          "publishedAt": "2024-04-20T12:00:29Z",
+          "sourceTitle": "Mùa Sao Đầu Tiên - Be your Star I Tập 5 [EngSub]"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "NFIALC2GLCc",
+          "publishedAt": "2024-04-27T12:00:07Z",
+          "sourceTitle": "Mùa Sao Đầu Tiên - Be your Star I Tập 6 [EngSub]"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 1,
+          "videoId": "Y1boOgiOML0",
+          "publishedAt": "2024-05-04T12:00:06Z",
+          "sourceTitle": "Mùa Sao Đầu Tiên - Be your Star I Tập 7 [EngSub]"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 1,
+          "videoId": "upKPxPXQ0Wg",
+          "publishedAt": "2024-05-11T12:00:08Z",
+          "sourceTitle": "Mùa Sao Đầu Tiên - Be your Star I Tập 8 [EngSub]"
+        },
+        {
+          "chapter": 9,
+          "part": 1,
+          "parts": 1,
+          "videoId": "mV43tas6-rI",
+          "publishedAt": "2024-05-18T12:00:06Z",
+          "sourceTitle": "Mùa Sao Đầu Tiên - Be your Star I Tập 9 [EngSub]"
+        },
+        {
+          "chapter": 10,
+          "part": 1,
+          "parts": 1,
+          "videoId": "bL_DtlqFl-k",
+          "publishedAt": "2024-05-25T12:00:07Z",
+          "sourceTitle": "Mùa Sao Đầu Tiên - Be your Star I Tập 10 [EngSub]"
+        },
+        {
+          "chapter": 11,
+          "part": 1,
+          "parts": 1,
+          "videoId": "xnV4MPUXjdY",
+          "publishedAt": "2024-06-01T12:00:07Z",
+          "sourceTitle": "Mùa Sao Đầu Tiên - Be your Star I Tập 11 [EngSub]"
+        },
+        {
+          "chapter": 12,
+          "part": 1,
+          "parts": 1,
+          "videoId": "mzkkqZQyXUA",
+          "publishedAt": "2024-06-26T12:00:06Z",
+          "sourceTitle": "Mùa Sao Đầu Tiên - Be your Star I Tập 12 [EngSub]"
+        },
+        {
+          "chapter": 13,
+          "part": 1,
+          "parts": 1,
+          "videoId": "f9EODhEodPQ",
+          "publishedAt": "2024-06-29T12:00:06Z",
+          "sourceTitle": "Mùa Sao Đầu Tiên - Be your Star I Tập 13 [EngSub]"
+        },
+        {
+          "chapter": 14,
+          "part": 1,
+          "parts": 1,
+          "videoId": "XzT__ypcGyQ",
+          "publishedAt": "2024-07-03T12:00:07Z",
+          "sourceTitle": "Mùa Sao Đầu Tiên - Be your Star I Tập 14 [EngSub]"
+        },
+        {
+          "chapter": 15,
+          "part": 1,
+          "parts": 1,
+          "videoId": "mRHwJrJblfU",
+          "publishedAt": "2024-07-06T12:00:07Z",
+          "sourceTitle": "Mùa Sao Đầu Tiên - Be your Star I Tập 15 [EngSub]"
+        },
+        {
+          "chapter": 16,
+          "part": 1,
+          "parts": 1,
+          "videoId": "9AEHySBxNP8",
+          "publishedAt": "2024-07-17T09:58:54Z",
+          "sourceTitle": "Mùa Sao Đầu Tiên - Be your Star I Tập 16 [EngSub]"
+        },
+        {
+          "chapter": 17,
+          "part": 1,
+          "parts": 1,
+          "videoId": "lI-LRuDLQw4",
+          "publishedAt": "2024-07-27T12:00:07Z",
+          "sourceTitle": "Mùa Sao Đầu Tiên - Be your Star I Tập 17 [EngSub]"
+        },
+        {
+          "chapter": 18,
+          "part": 1,
+          "parts": 1,
+          "videoId": "TDlNSdsvNJQ",
+          "publishedAt": "2024-07-29T12:00:07Z",
+          "sourceTitle": "Mùa Sao Đầu Tiên - Be your Star I Tập 18 [EngSub]"
+        },
+        {
+          "chapter": 19,
+          "part": 1,
+          "parts": 1,
+          "videoId": "xGmUtt5fYqU",
+          "publishedAt": "2024-08-03T12:00:06Z",
+          "sourceTitle": "Mùa Sao Đầu Tiên - Be your Star I Tập 19 [EngSub]"
+        },
+        {
+          "chapter": 20,
+          "part": 1,
+          "parts": 1,
+          "videoId": "LhVonhYMKCQ",
+          "publishedAt": "2024-08-10T15:30:27Z",
+          "sourceTitle": "Mùa Sao Đầu Tiên - Be your Star I Tập 20 [EngSub]"
+        }
+      ]
+    },
+    {
+      "title": "VIAN",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "vn",
+      "year": 2023,
+      "channelId": "UCANpnA0w8e5vTHiGgdbrgsg",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLf_mCRbXsMcDHxWRsYBlB63R9gyHjlLOg",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "BLfrrMUW328",
+          "publishedAt": "2023-05-06T12:00:10Z",
+          "sourceTitle": "VIAN THE SERIES - Tập 1  I  Nguyễn Bá Vinh - Mai Vũ Luân - Đức Duy - Cao Trang [O2 Production]"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "s5X6lmuRi_g",
+          "publishedAt": "2023-05-13T12:00:06Z",
+          "sourceTitle": "VIAN THE SERIES - Tập 2  I  Meoww... cho xin miếng đi  [O2 PRODUCTION]"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "MxBJemzMFY0",
+          "publishedAt": "2023-05-20T12:00:08Z",
+          "sourceTitle": "VIAN THE SERIES - Tập 3  I  Con Mèo này dơ quá đi [O2 PRODUCTION]"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "4-KWXjojUuE",
+          "publishedAt": "2023-05-27T12:00:11Z",
+          "sourceTitle": "VIAN THE SERIES - Tập 4 I Đền cho cậu như vậy được chưa? [O2 PRODUCTION]"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "s7P7GDRuNco",
+          "publishedAt": "2023-06-03T12:00:09Z",
+          "sourceTitle": "VIAN THE SERIES - Tập 5 I Khi Mèo nhỏ ghen tuông [O2 PRODUCTION]"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "0VhWqae4_rA",
+          "publishedAt": "2023-06-10T13:00:10Z",
+          "sourceTitle": "VIAN THE SERIES - Tập 6 I Nhân sinh đừng bỏ lỡ  [O2 PRODUCTION]"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 1,
+          "videoId": "bl-etz-Sm_g",
+          "publishedAt": "2023-06-17T12:00:07Z",
+          "sourceTitle": "VIAN THE SERIES - Tập 7 I Mèo nhỏ và quà dâu tây  [O2 PRODUCTION]"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 1,
+          "videoId": "FXJgA5TMZy8",
+          "publishedAt": "2023-06-24T12:00:09Z",
+          "sourceTitle": "VIAN THE SERIES - Tập 8 I Giáng sinh, bếp lửa và Mèo con [O2 PRODUCTION]"
+        },
+        {
+          "chapter": 9,
+          "part": 1,
+          "parts": 1,
+          "videoId": "Xl0hO-93a6w",
+          "publishedAt": "2023-07-01T12:00:09Z",
+          "sourceTitle": "VIAN THE SERIES - Tập 9 I Bị làm sao vậy? [O2 PRODUCTION]"
+        },
+        {
+          "chapter": 10,
+          "part": 1,
+          "parts": 1,
+          "videoId": "OE22cmTa2PY",
+          "publishedAt": "2023-07-08T12:00:08Z",
+          "sourceTitle": "VIAN THE SERIES - Tập 10 I Giọt nước tràn ly [O2 PRODUCTION]"
+        },
+        {
+          "chapter": 11,
+          "part": 1,
+          "parts": 1,
+          "videoId": "Avbwc-hF1bg",
+          "publishedAt": "2023-07-15T12:00:11Z",
+          "sourceTitle": "VIAN THE SERIES - Tập 11 I Khi bé học nói, khi lớn học lắng nghe, khi trưởng thành học thấu hiểu"
+        },
+        {
+          "chapter": 12,
+          "part": 1,
+          "parts": 1,
+          "videoId": "1p4fiicBj8c",
+          "publishedAt": "2023-07-22T12:00:07Z",
+          "sourceTitle": "VIAN THE SERIES  -  Tập 12 (Tập cuối)  I  Vì Chúng ta là Một Gia Đình"
+        }
+      ]
+    },
+    {
+      "title": "Happy Ending",
+      "targetSeriesId": 233,
+      "expectedTitle": "Happy ending",
+      "countryCode": "kr",
+      "year": 2024,
+      "channelId": "UCB86p_-7ueY4yQwDLBXxCgw",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLNd7BhdAz80rN54T7XyJTBt4vVKnuVW8I",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "F3764w00Xyc",
+          "publishedAt": "2024-01-25T09:00:12Z",
+          "sourceTitle": "그해 여름, 우리 | EP.1 Happy Ending [DRAMA] 해피엔딩"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "FO06e6wIoBQ",
+          "publishedAt": "2024-02-01T09:00:11Z",
+          "sourceTitle": "네 마음이 궁금해 | EP.2 Happy Ending [DRAMA] 해피엔딩"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "IFYdzg-SLBw",
+          "publishedAt": "2024-02-08T09:00:08Z",
+          "sourceTitle": "네게 전하지 못한 말 | EP.3 Happy Ending [DRAMA] 해피엔딩"
+        }
+      ]
+    },
+    {
+      "title": "A First Love Story",
+      "targetSeriesId": 16,
+      "expectedTitle": "A first love story",
+      "countryCode": "kr",
+      "year": 2021,
+      "channelId": "UCB86p_-7ueY4yQwDLBXxCgw",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLNd7BhdAz80qx0EV8aSUIovI41EOuKhNq",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "D3ES2V0XVzw",
+          "publishedAt": "2021-09-07T10:29:05Z",
+          "sourceTitle": "형은 왜 지금 그런 얘길 해? | EP.1 A First Love Story [DRAMA] 퍼스트 러브 스토리"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "AW7EmnjDepk",
+          "publishedAt": "2021-09-21T10:00:18Z",
+          "sourceTitle": "너를 좋아하게 된 이유 | EP.2 A First Love Story [DRAMA] 퍼스트 러브 스토리"
+        }
+      ]
+    }
+  ]
+}

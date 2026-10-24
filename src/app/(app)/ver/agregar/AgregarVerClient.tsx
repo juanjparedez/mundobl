@@ -16,6 +16,7 @@ import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { unresolvedContributionNames } from '@/lib/contribution-metadata';
 import { ContributionMetadataField } from '@/components/series/ContributionMetadataField/ContributionMetadataField';
+import { getEpisodeSourceErrorKey } from '@/lib/episode-platforms';
 import { validateStreamingUrl, PLATFORM_COLORS } from '@/lib/embed-helpers';
 // Importamos del modulo "-shared" porque user-embed-preview.ts trae
 // `prisma` (cache) que no compila en client bundle ("Module not found: tls"
@@ -138,7 +139,7 @@ export function AgregarVerClient() {
     }
     const val = validateStreamingUrl(trimmed);
     if (!val.valid) {
-      message.error(val.error ?? 'URL inválida o plataforma no soportada.');
+      message.error(t('episodeSource.unsupported'));
       return;
     }
     setLoadingPreview(true);
@@ -155,7 +156,10 @@ export function AgregarVerClient() {
         return;
       }
       if (!res.ok) {
-        message.error(data.error || 'No se pudo cargar la preview.');
+        const key = getEpisodeSourceErrorKey(data.errorKey);
+        message.error(
+          key ? t(key) : data.error || t('episodeSource.unavailable')
+        );
         return;
       }
       const p = data as EmbedPreview;
@@ -235,7 +239,10 @@ export function AgregarVerClient() {
           setUnresolvedNames(unresolved);
           return;
         }
-        message.error(data.error || 'No se pudo guardar la serie.');
+        const key = getEpisodeSourceErrorKey(data.errorKey);
+        message.error(
+          key ? t(key) : data.error || t('episodeSource.unavailable')
+        );
         return;
       }
       if (data.pendingReview) {
@@ -262,9 +269,7 @@ export function AgregarVerClient() {
           <PlayCircleFilled /> Agregar serie embebida
         </h1>
         <p className="ver-agregar-hero__subtitle">
-          Pegá la URL de un canal oficial (YouTube, Vimeo, Bilibili,
-          Dailymotion) y la IA autocompleta el resto. Aparece en /ver al
-          instante.
+          {t('episodeSource.unsupported')}
         </p>
       </header>
 
@@ -274,9 +279,7 @@ export function AgregarVerClient() {
         message="Solo plataformas con embed legal"
         description={
           <span>
-            Aceptamos URLs de canales oficiales que permiten incrustación
-            (YouTube, Vimeo, Bilibili, Dailymotion). Si la productora no aprueba
-            el embed, el contenido no podrá reproducirse acá.{' '}
+            {t('episodeSource.officialHint')}{' '}
             <Link href="/legal">Ver aviso completo</Link>.
           </span>
         }
@@ -327,7 +330,7 @@ export function AgregarVerClient() {
                 color: 'var(--ant-color-error, #ff4d4f)',
               }}
             >
-              ⚠️ {validation.error}
+              ⚠️ {t('episodeSource.unsupported')}
             </span>
           )}
         </div>

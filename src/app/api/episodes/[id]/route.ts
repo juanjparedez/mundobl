@@ -6,6 +6,7 @@ import { notifyEpisodesAvailable } from '@/lib/notifications';
 // Los campos de embed se resuelven y validan contra la lista blanca de
 // canales oficiales en un solo lugar (docs/politica-contenido-oficial.md).
 import { resolveOfficialEmbedFields } from '@/lib/official-content-guard';
+import { revalidateSeries } from '@/lib/revalidate-series';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -76,7 +77,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const embed = await resolveOfficialEmbedFields(body);
     if (!embed.ok) {
       return NextResponse.json(
-        { error: embed.error },
+        { error: embed.error, errorKey: embed.errorKey },
         { status: embed.status }
       );
     }
@@ -106,6 +107,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       },
     });
 
+    revalidateSeries(episode.season.series);
     // Recien ahora se puede ver: avisar a quienes siguen la serie.
     if (!before?.embedUrl && episode.embedUrl) {
       await notifyEpisodesAvailable({

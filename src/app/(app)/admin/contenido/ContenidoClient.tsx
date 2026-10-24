@@ -586,6 +586,9 @@ export function ContenidoClient() {
             {previewData && (
               <div className="contenido-admin__preview">
                 <EmbedPlayer
+                  openLabel={t('episodeSource.openOn', {
+                    platform: previewData.platform,
+                  })}
                   platform={previewData.platform}
                   url={previewData.url}
                   videoId={previewData.videoId}

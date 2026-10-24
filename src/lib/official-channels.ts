@@ -238,6 +238,38 @@ export const OFFICIAL_CHANNELS: OfficialChannel[] = [
     channelId: 'UCANpnA0w8e5vTHiGgdbrgsg',
     country: '🇻🇳',
   },
+  // Identidad y episodios contrastados con canales oficiales y YouTube Data
+  // API el 2026-10-24. Evidencia: docs/ampliacion-ver-2026-10-24.md.
+  {
+    name: 'GND STUDIO',
+    handle: 'studio_gnd',
+    channelId: 'UCMtOvsAU8M6Qu1-KwnURUfQ',
+    country: '🇰🇷',
+  },
+  {
+    name: 'Rookie Thailand',
+    handle: 'rookiethailand',
+    channelId: 'UCEwLwkklgJiE1lrwUsEk9nA',
+    country: '🇹🇭',
+  },
+  {
+    name: 'Wayufilm Production',
+    handle: 'wayufilm',
+    channelId: 'UCxbc63usV8rbF-fVY9J9HKQ',
+    country: '🇹🇭',
+  },
+  {
+    name: 'Sukfilm',
+    handle: 'sukfilm274',
+    channelId: 'UC749ed-Qfdk64DyyKpoItEg',
+    country: '🇰🇷',
+  },
+  {
+    name: 'Mind Trio',
+    handle: 'mindtrio',
+    channelId: 'UC71MEdCI6-LS3pXHr2K8Bkw',
+    country: '🇹🇭',
+  },
 ];
 
 /** URL canonica del canal, para links y para el barrido. */

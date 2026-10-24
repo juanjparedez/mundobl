@@ -10,6 +10,17 @@
 import type { TranslationShape } from '../messages';
 
 const it = {
+  episodeSource: {
+    followOn: "Segui {channelName} su {platform}",
+    officialHint: "Accettiamo solo opere da fonti ufficiali verificate che ne consentono la riproduzione qui.",
+    "unsupported": "Incolla un video ufficiale di YouTube, Vimeo o Dailymotion.",
+    "unverified": "Quest’opera non ha ancora una fonte ufficiale verificata.",
+    "unavailable": "Non è stato possibile verificare il video. Riprova più tardi.",
+    "notPlayable": "Questo video non è disponibile per la riproduzione qui.",
+    "tooShort": "Il video è troppo breve per essere pubblicato come episodio.",
+    "playerSetup": "Dailymotion non è ancora abilitato su questo sito.",
+    "openOn": "Apri su {platform}"
+  },
   welcomeEmail: {
   "title": "Ti diamo il benvenuto su MundoBL",
   "intro": "Un catalogo di serie BL, GL e altri drama asiatici curato da persone.",
@@ -2961,7 +2972,7 @@ const it = {
     "autoMarkedChapter": "Episodio {n} segnato",
     "undoAutoMark": "Annulla",
     "subtitlesTitle": "Sottotitoli",
-    "subtitlesBody": "Si attivano automaticamente se il video ufficiale li include. Puoi cambiare lingua da [CC] nel player.",
+    "subtitlesBody": "Se sono disponibili sottotitoli, puoi sceglierli nei controlli del lettore.",
     "regionTitle": "Non disponibile nel tuo Paese.",
     "regionBody": "Il produttore limita questo video in base alla regione. Controlla le opzioni legali disponibili per la serie.",
     "whereToWatchLink": "Dove guardarla",
@@ -2970,8 +2981,8 @@ const it = {
     "unmarkChapter": "Deseleziona episodio {n}",
     "availabilityBlockedHere": "Questo video non è disponibile nel tuo paese.",
     "availabilityBlockedSomewhere": "Questo video non è disponibile in alcuni paesi.",
-    "availabilityYoutubeOnly": "Questo video può essere guardato solo su YouTube.",
-    "availabilityRemoved": "Il produttore ha rimosso questo video da YouTube.",
+    "availabilityPlatformOnly": "Questo video non può essere riprodotto qui. Verifica la disponibilità su {platform}.",
+    "availabilityRemoved": "Il produttore ha rimosso questo video da {platform}.",
     "openOnYoutube": "Apri su YouTube",
     "episodeSynopsisTitle": "Sinossi episodio",
     "aboutTheSeriesTitle": "Informazioni sulla serie",
@@ -3014,13 +3025,13 @@ const it = {
     "clearFiltersButton": "Cancella filtri"
   },
   "seriesSubscribeButton": {
-    "signInTooltip": "Accedi per iscriverti alle modifiche",
+    "signInTooltip": "Accedi per ricevere notifiche da MundoBL",
     "subscribeFailedError": "iscrizione-fallita",
-    "subscribeSuccessMessage": "Ti avviseremo quando ci saranno aggiornamenti",
-    "unsubscribeSuccessMessage": "Iscrizione annullata",
-    "updateSubscriptionErrorMessage": "Non è stato possibile aggiornare l'iscrizione",
-    "subscribedTooltip": "Iscritto: annulla le notifiche per questa serie",
-    "unsubscribedTooltip": "Iscriviti per ricevere notifiche di modifiche"
+    "subscribeSuccessMessage": "MundoBL ti avviserà delle novità",
+    "unsubscribeSuccessMessage": "Notifiche di MundoBL disattivate",
+    "updateSubscriptionErrorMessage": "Impossibile aggiornare le notifiche di MundoBL",
+    "subscribedTooltip": "Disattiva le notifiche di MundoBL per questo titolo",
+    "unsubscribedTooltip": "Ricevi notifiche di MundoBL per questo titolo"
   },
   "adminInfo": {
     "teamMemberJuanName": "Juan",

@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth-helpers';
 import { prisma } from '@/lib/database';
 import { buildEmbedPreview, EmbedPreviewError } from '@/lib/user-embed-preview';
-import { validateStreamingUrl } from '@/lib/embed-helpers';
+import { parseEpisodeSource } from '@/lib/episode-platforms';
+import { episodeSourceFailure } from '@/lib/official-content-guard';
 
 /**
  * POST /api/user/series/embed/preview
@@ -29,17 +30,23 @@ export async function POST(request: NextRequest) {
   }
 
   const url = (body?.url ?? '').trim();
-  const validation = validateStreamingUrl(url);
-  if (!validation.valid) {
+  const source = parseEpisodeSource(url);
+  if (!source) {
+    const failure = episodeSourceFailure('unsupported');
     return NextResponse.json(
-      { error: validation.error ?? 'URL invalida o plataforma no soportada.' },
+      { error: failure.error, errorKey: failure.errorKey },
       { status: 422 }
     );
   }
 
   // Dedupe global por embedUrl: si ya existe, redirigir al detalle.
   const existing = await prisma.episode.findFirst({
-    where: { embedUrl: url },
+    where: {
+      OR: [
+        { embedUrl: source.url },
+        { embedPlatform: source.platform, embedVideoId: source.videoId },
+      ],
+    },
     select: { season: { select: { seriesId: true } } },
   });
   if (existing) {
@@ -53,11 +60,14 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const preview = await buildEmbedPreview(url);
+    const preview = await buildEmbedPreview(source.url);
     return NextResponse.json(preview);
   } catch (err) {
     if (err instanceof EmbedPreviewError) {
-      return NextResponse.json({ error: err.message }, { status: err.status });
+      return NextResponse.json(
+        { error: err.message, errorKey: err.errorKey },
+        { status: err.status }
+      );
     }
     console.error('Error en /embed/preview:', err);
     return NextResponse.json(

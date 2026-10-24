@@ -10,6 +10,17 @@
 import type { TranslationShape } from '../messages';
 
 const ko = {
+  episodeSource: {
+    followOn: "{platform}에서 {channelName} 팔로우",
+    officialHint: "여기에서 재생을 허용하는 검증된 공식 출처의 작품만 허용합니다.",
+    "unsupported": "YouTube, Vimeo 또는 Dailymotion의 공식 동영상을 붙여 넣으세요.",
+    "unverified": "이 작품의 공식 배포 출처가 아직 확인되지 않았습니다.",
+    "unavailable": "동영상을 확인할 수 없습니다. 나중에 다시 시도해 주세요.",
+    "notPlayable": "이 동영상은 여기에서 재생할 수 없습니다.",
+    "tooShort": "에피소드로 게시하기에는 동영상이 너무 짧습니다.",
+    "playerSetup": "이 사이트에서는 Dailymotion이 아직 활성화되지 않았습니다.",
+    "openOn": "{platform}에서 열기"
+  },
   welcomeEmail: {
   "title": "MundoBL에 오신 것을 환영합니다",
   "intro": "사람이 직접 큐레이션하는 BL, GL 및 아시아 드라마 카탈로그입니다.",
@@ -2959,7 +2970,7 @@ const ko = {
     "autoMarkedChapter": "에피소드 {n}을(를) 시청 완료로 표시했습니다",
     "undoAutoMark": "실행 취소",
     "subtitlesTitle": "자막",
-    "subtitlesBody": "공식 영상에서 제공하면 자동으로 켜집니다. 플레이어의 [CC]에서 언어를 변경할 수 있습니다.",
+    "subtitlesBody": "자막이 있으면 플레이어 설정에서 선택할 수 있어요.",
     "regionTitle": "현재 국가에서는 볼 수 없습니다.",
     "regionBody": "제작사가 지역별로 이 영상을 제한합니다. 이 시리즈의 합법적인 시청 옵션을 확인하세요.",
     "whereToWatchLink": "시청 가능한 곳",
@@ -2968,8 +2979,8 @@ const ko = {
     "unmarkChapter": "에피소드 {n} 시청 취소",
     "availabilityBlockedHere": "이 동영상은 해당 국가에서 시청할 수 없습니다.",
     "availabilityBlockedSomewhere": "이 동영상은 일부 국가에서 시청할 수 없습니다.",
-    "availabilityYoutubeOnly": "이 동영상은 YouTube에서만 시청할 수 있습니다.",
-    "availabilityRemoved": "제작자가 이 동영상을 YouTube에서 내렸습니다.",
+    "availabilityPlatformOnly": "여기에서는 재생할 수 없어요. {platform}에서 시청 가능한지 확인하세요.",
+    "availabilityRemoved": "제작자가 이 동영상을 {platform}에서 내렸습니다.",
     "openOnYoutube": "YouTube에서 열기",
     "episodeSynopsisTitle": "에피소드 줄거리",
     "aboutTheSeriesTitle": "시리즈 정보",
@@ -3012,13 +3023,13 @@ const ko = {
     "clearFiltersButton": "필터 지우기"
   },
   "seriesSubscribeButton": {
-    "signInTooltip": "변경 사항을 구독하려면 로그인하세요",
+    "signInTooltip": "로그인하고 MundoBL 알림 받기",
     "subscribeFailedError": "구독 실패",
-    "subscribeSuccessMessage": "업데이트가 있을 때 알려드리겠습니다",
-    "unsubscribeSuccessMessage": "구독 취소됨",
-    "updateSubscriptionErrorMessage": "구독을 업데이트할 수 없습니다",
-    "subscribedTooltip": "구독 중: 이 시리즈 알림 취소",
-    "unsubscribedTooltip": "변경 알림을 받으려면 구독하세요"
+    "subscribeSuccessMessage": "MundoBL에서 새 소식을 알려드릴게요",
+    "unsubscribeSuccessMessage": "MundoBL 알림을 껐어요",
+    "updateSubscriptionErrorMessage": "MundoBL 알림을 변경하지 못했어요",
+    "subscribedTooltip": "이 작품의 MundoBL 알림 끄기",
+    "unsubscribedTooltip": "이 작품의 MundoBL 알림 받기"
   },
   "adminInfo": {
     "teamMemberJuanName": "후안",

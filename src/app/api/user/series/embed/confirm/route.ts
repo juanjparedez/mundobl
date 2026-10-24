@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth-helpers';
-import {
-  checkOfficialYouTubeVideos,
-  ONLY_YOUTUBE_ERROR,
-} from '@/lib/official-content-guard';
+import { resolveOfficialEmbedFields } from '@/lib/official-content-guard';
+import { revalidateSeries } from '@/lib/revalidate-series';
 import { prisma, getContributionMetadata } from '@/lib/database';
 import { detectPlatform, extractVideoId } from '@/lib/embed-helpers';
 import { checkUserEmbedRateLimit } from '@/lib/rate-limit';
@@ -215,20 +213,15 @@ export async function POST(request: NextRequest) {
   }
   const data = parsed.data;
 
-  // Politica de contenido oficial: solo videos de canales de la lista
-  // blanca, verificados contra YouTube (el channelUrl del body no se usa
-  // para decidir). Ver docs/politica-contenido-oficial.md.
-  if (data.platform !== 'YouTube') {
-    return NextResponse.json({ error: ONLY_YOUTUBE_ERROR }, { status: 422 });
-  }
-  const officialCheck = await checkOfficialYouTubeVideos([data.videoId]);
-  if (!officialCheck.ok) {
+  // Resolve identity and availability on the server, never from the submitted
+  // channel name. Preview metadata can have changed since the form opened.
+  const verified = await resolveOfficialEmbedFields({ embedUrl: data.url });
+  if (!verified.ok) {
     return NextResponse.json(
-      { error: officialCheck.error },
-      { status: officialCheck.status }
+      { error: verified.error, errorKey: verified.errorKey },
+      { status: verified.status }
     );
   }
-  const verifiedChannel = officialCheck.infos.get(data.videoId)!;
 
   // Rate limit por user.
   const rl = await checkUserEmbedRateLimit(auth.userId);
@@ -241,7 +234,15 @@ export async function POST(request: NextRequest) {
 
   // Dedupe global por embedUrl.
   const dupByUrl = await prisma.episode.findFirst({
-    where: { embedUrl: data.url },
+    where: {
+      OR: [
+        { embedUrl: verified.fields.embedUrl },
+        {
+          embedPlatform: verified.fields.embedPlatform,
+          embedVideoId: verified.fields.embedVideoId,
+        },
+      ],
+    },
     select: { season: { select: { seriesId: true } } },
   });
   if (dupByUrl) {
@@ -351,11 +352,7 @@ export async function POST(request: NextRequest) {
         seasonId: season.id,
         episodeNumber: data.episodeNumber,
         title: data.episodeTitle,
-        embedUrl: data.url,
-        embedPlatform: data.platform,
-        embedVideoId: data.videoId,
-        embedChannelName: verifiedChannel.channelTitle || data.channelName,
-        embedChannelUrl: verifiedChannel.channelUrl || data.channelUrl,
+        ...verified.fields,
       },
     });
 
@@ -377,6 +374,7 @@ export async function POST(request: NextRequest) {
     return series;
   });
 
+  revalidateSeries(newSeries);
   return NextResponse.json(
     { seriesId: newSeries.id, pendingReview: !isAdmin },
     { status: 201 }

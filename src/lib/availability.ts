@@ -5,7 +5,7 @@ export type Availability =
   | 'ok'
   | 'blocked_here'
   | 'blocked_somewhere'
-  | 'youtube_only'
+  | 'platform_only'
   | 'removed';
 
 /**
@@ -27,7 +27,7 @@ export function availabilityOf(
       return 'removed';
     case 'AGE_RESTRICTED':
     case 'NOT_EMBEDDABLE':
-      return 'youtube_only';
+      return 'platform_only';
     case 'GEO_BLOCKED':
       if (!country || blockedMarkets.length === 0) return 'blocked_somewhere';
       return blockedMarkets.includes(country) ? 'blocked_here' : 'ok';

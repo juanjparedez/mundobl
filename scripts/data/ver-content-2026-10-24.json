@@ -1,0 +1,502 @@
+{
+  "id": "ver-2026-10-24",
+  "verifiedAt": "2026-10-24",
+  "series": [
+    {
+      "title": "My Damn Business",
+      "targetSeriesId": 611,
+      "expectedTitle": "My damn business",
+      "countryCode": "kr",
+      "year": 2024,
+      "channelId": "UCMtOvsAU8M6Qu1-KwnURUfQ",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PL-UjFgW8TJEcVMXRV63uoHXg7rXv7mwll",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "z0Bxm32oZoY",
+          "publishedAt": "2024-10-05T09:00:57Z",
+          "sourceTitle": "[SUB] 망한 회사에 두 남자｜[마이 댐 비즈니스 Ep.1]"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "5YSmmHaESKw",
+          "publishedAt": "2024-10-12T09:00:05Z",
+          "sourceTitle": "[SUB] 늦은 시간 회사에 단둘이..｜[마이 댐 비즈니스 Ep.2]"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "vAwmJMiuHBo",
+          "publishedAt": "2024-10-19T09:00:49Z",
+          "sourceTitle": "[SUB] 퇴근 후 술을 마시는 이유｜[마이 댐 비즈니스 Ep.3]"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "a18Au93brLU",
+          "publishedAt": "2024-10-26T09:00:00Z",
+          "sourceTitle": "[SUB] 관계의 재설정이 필요해｜[마이 댐 비즈니스 Ep.4]"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "W6uhe6bL1xw",
+          "publishedAt": "2024-11-02T09:00:28Z",
+          "sourceTitle": "[SUB] 단둘이 보낸 하룻밤｜[마이 댐 비즈니스 Ep.5]"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "Vajq6uucBMk",
+          "publishedAt": "2024-11-09T09:00:35Z",
+          "sourceTitle": "[SUB] 과거의 남자와 함께｜[마이 댐 비즈니스 Ep.6]"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 1,
+          "videoId": "hChlOC_OTFk",
+          "publishedAt": "2024-11-16T09:00:45Z",
+          "sourceTitle": "[SUB] 남자친구와 마지막 출근｜[마이 댐 비즈니스 Ep.7 : FINAL]"
+        }
+      ]
+    },
+    {
+      "title": "The Best Story",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "th",
+      "year": 2021,
+      "channelId": "UCEwLwkklgJiE1lrwUsEk9nA",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLUTllkCvL25gr75IzPcKrHtH57UmCoQTG",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 2,
+          "videoId": "2k2kWYYJOHo",
+          "publishedAt": "2021-07-09T15:00:05Z",
+          "sourceTitle": "ครั้งหนึ่งที่รัก The Best Story EP.1 (Part 1/2)"
+        },
+        {
+          "chapter": 1,
+          "part": 2,
+          "parts": 2,
+          "videoId": "iBByL34dOWg",
+          "publishedAt": "2021-07-09T15:00:31Z",
+          "sourceTitle": "ครั้งหนึ่งที่รัก The Best Story EP.1 (Part 2/2)"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 2,
+          "videoId": "zKByTu0wiyQ",
+          "publishedAt": "2021-07-16T15:00:26Z",
+          "sourceTitle": "ครั้งหนึ่งที่รัก The Best Story EP.2 (Part1/2)"
+        },
+        {
+          "chapter": 2,
+          "part": 2,
+          "parts": 2,
+          "videoId": "Le1TII4qp8U",
+          "publishedAt": "2021-07-16T15:00:11Z",
+          "sourceTitle": "ครั้งหนึ่งที่รัก The Best Story EP.2 (Part2/2)"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 2,
+          "videoId": "Ou_jzZsafEA",
+          "publishedAt": "2021-07-23T15:00:20Z",
+          "sourceTitle": "ครั้งหนึ่งที่รัก The Best Story EP.3 (Part 1/2) ตอนจบ"
+        },
+        {
+          "chapter": 3,
+          "part": 2,
+          "parts": 2,
+          "videoId": "kHNgM9OfDuY",
+          "publishedAt": "2021-07-23T15:00:31Z",
+          "sourceTitle": "ครั้งหนึ่งที่รัก The Best Story EP.3 (Part 2/2) ตอนจบ"
+        }
+      ]
+    },
+    {
+      "title": "21 Days Theory",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "th",
+      "year": 2022,
+      "channelId": "UCEwLwkklgJiE1lrwUsEk9nA",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLUTllkCvL25jAHOPCJo_TphtVWkWcyfR3",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 2,
+          "videoId": "kk7SEEXZtL4",
+          "publishedAt": "2022-08-07T13:00:18Z",
+          "sourceTitle": "21 วัน มีฉันมีเธอ | 21 Days Theory EP.1 (Part1/2)"
+        },
+        {
+          "chapter": 1,
+          "part": 2,
+          "parts": 2,
+          "videoId": "RFkPVlx8Epg",
+          "publishedAt": "2022-08-07T13:00:12Z",
+          "sourceTitle": "21 วัน มีฉันมีเธอ | 21 Days Theory EP.1 (Part2/2)"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 2,
+          "videoId": "dlb3ZuFhezA",
+          "publishedAt": "2022-08-14T13:00:18Z",
+          "sourceTitle": "21 วัน มีฉันมีเธอ | 21 Days Theory EP.2 (Part 1/2)"
+        },
+        {
+          "chapter": 2,
+          "part": 2,
+          "parts": 2,
+          "videoId": "QhTi_-Cefpc",
+          "publishedAt": "2022-08-14T13:00:12Z",
+          "sourceTitle": "21 วัน มีฉันมีเธอ | 21 Days Theory EP.2 (Part 2/2)"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 2,
+          "videoId": "GoPll9RWcUc",
+          "publishedAt": "2022-08-21T13:00:12Z",
+          "sourceTitle": "21 วัน มีฉันมีเธอ | 21 Days Theory EP.3 (Part 1/2)"
+        },
+        {
+          "chapter": 3,
+          "part": 2,
+          "parts": 2,
+          "videoId": "oF1NJcS3b4E",
+          "publishedAt": "2022-08-21T13:20:10Z",
+          "sourceTitle": "21 วัน มีฉันมีเธอ | 21 Days Theory EP.3 (Part 2/2)"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 2,
+          "videoId": "oAwUkwER7TI",
+          "publishedAt": "2022-08-28T13:00:11Z",
+          "sourceTitle": "21 วัน มีฉันมีเธอ | 21 Days Theory Final EP (Part 1/2)"
+        },
+        {
+          "chapter": 4,
+          "part": 2,
+          "parts": 2,
+          "videoId": "NwTUBg4YKxk",
+          "publishedAt": "2022-08-28T13:26:14Z",
+          "sourceTitle": "21 วัน มีฉันมีเธอ | 21 Days Theory Final EP (Part 2/2)"
+        }
+      ]
+    },
+    {
+      "title": "On Cloud Nine",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "th",
+      "year": 2022,
+      "channelId": "UC71MEdCI6-LS3pXHr2K8Bkw",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLHWvrNIJL6cWZ-doJDFK2VMshJFRfvz5H",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "BQji_fjqlhA",
+          "publishedAt": "2022-08-06T12:00:14Z",
+          "sourceTitle": "On Cloud Nine EP1 [Eng Sub]"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "BT8srQJz2eA",
+          "publishedAt": "2022-08-13T12:00:12Z",
+          "sourceTitle": "On Cloud Nine EP2 [Eng Sub]"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "4xkKoIveUqw",
+          "publishedAt": "2022-08-20T12:00:14Z",
+          "sourceTitle": "On Cloud Nine EP3 [Eng Sub]"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "BTgZ3NN0SoU",
+          "publishedAt": "2022-08-27T12:00:13Z",
+          "sourceTitle": "On Cloud Nine EP4 [Eng Sub]"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "c8M6egecODQ",
+          "publishedAt": "2022-09-03T12:00:13Z",
+          "sourceTitle": "On Cloud Nine EP5 [Eng Sub]"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "FDdGL7TCH-c",
+          "publishedAt": "2022-09-10T13:00:11Z",
+          "sourceTitle": "On Cloud Nine EP.6[Final]"
+        }
+      ]
+    },
+    {
+      "title": "Blue boys",
+      "targetSeriesId": 76,
+      "expectedTitle": "Blue boys",
+      "countryCode": "kr",
+      "year": 2024,
+      "channelId": "UC749ed-Qfdk64DyyKpoItEg",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLYfaogVGCvwTczUW4K1YELu_cWQfUQ21a",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "r5fHpOghDvU",
+          "publishedAt": "2024-04-15T13:24:55Z",
+          "sourceTitle": "[SUB] 석필름 BL K-drama \"Blue Boys\" EP1. 안아줘"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "JdNjOztnqds",
+          "publishedAt": "2024-04-24T16:10:44Z",
+          "sourceTitle": "[SUB] 석필름 BL K-drama \"Blue Boys\" EP2. 더많이"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "C1CjQEv6iJs",
+          "publishedAt": "2024-05-04T13:50:16Z",
+          "sourceTitle": "[SUB] 석필름 BL K-drama \"Blue Boys\" EP3. 부족해"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "L1HSmW2RXpQ",
+          "publishedAt": "2024-05-11T14:53:40Z",
+          "sourceTitle": "[SUB] 석필름 BL K-drama \"Blue Boys\" EP4.네사랑"
+        }
+      ]
+    },
+    {
+      "title": "Blue boys 2",
+      "targetSeriesId": 77,
+      "expectedTitle": "Blue boys 2",
+      "countryCode": "kr",
+      "year": 2024,
+      "channelId": "UC749ed-Qfdk64DyyKpoItEg",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLYfaogVGCvwTczUW4K1YELu_cWQfUQ21a",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "d9mCFfBHEHY",
+          "publishedAt": "2024-06-18T14:38:01Z",
+          "sourceTitle": "[SUB] 석필름 BL K-drama \"Blue Boys\" EP5. 미안해"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "y-5obf3_q_8",
+          "publishedAt": "2024-06-24T08:01:29Z",
+          "sourceTitle": "[SUB] 석필름 BL K-drama \"Blue Boys\" EP6. 새친구"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "pKB2vEMSGxc",
+          "publishedAt": "2024-06-29T04:10:12Z",
+          "sourceTitle": "[SUB] 석필름 BL K-drama \"Blue boys\" EP7. 느껴봐"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "8shY7vS0Umk",
+          "publishedAt": "2024-07-05T15:36:23Z",
+          "sourceTitle": "[SUB] 석필름 BL \"Blue Boys\" EP8.FINAL 캐나다"
+        }
+      ]
+    },
+    {
+      "title": "Love In Protocol",
+      "targetSeriesId": 502,
+      "expectedTitle": "Love in protocol",
+      "countryCode": "kr",
+      "year": 2026,
+      "channelId": "UCMtOvsAU8M6Qu1-KwnURUfQ",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PL-UjFgW8TJEfcBaYLr8jyN_Dn00ScQ6CW",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "9rBxAake4kE",
+          "publishedAt": "2026-01-17T03:00:10Z",
+          "sourceTitle": "\"그런 눈으로 보지 마\" | 러브 인 프로토콜(Love In Protocol) Ep.1"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "524N8DowXlI",
+          "publishedAt": "2026-01-24T03:00:05Z",
+          "sourceTitle": "\"아직도 제가 애 같아요?\" | 러브 인 프로토콜(Love In Protocol) Ep.2"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "6yteLsUhREo",
+          "publishedAt": "2026-01-31T03:00:19Z",
+          "sourceTitle": "\"선생님, 죄책감 안 가져도 돼요\" | 러브 인 프로토콜(Love In Protocol) Ep.3"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "6vslGPDfG-k",
+          "publishedAt": "2026-02-07T03:00:06Z",
+          "sourceTitle": "\"그래서 이렇게 다 커서 왔잖아요\" | 러브 인 프로토콜(Love In Protocol) Ep.4 : FINAL"
+        }
+      ]
+    },
+    {
+      "title": "First Note of Love",
+      "targetSeriesId": 198,
+      "expectedTitle": "First note of love",
+      "countryCode": "tw",
+      "year": 2024,
+      "channelId": "UCAv7YCgnRo86h7gOMMBf-GQ",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PL-NRJVNnoKievO009xKPNKIM93g2Z3GGY",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "RvQMGmHGOo4",
+          "publishedAt": "2024-08-12T12:00:06Z",
+          "sourceTitle": "[SUB] GagaOOLala Original BL \"First Note of Love\" EP1 - Magnet"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "0Y7F9m7-Flk",
+          "publishedAt": "2025-10-17T16:00:06Z",
+          "sourceTitle": "[SUB] GagaOOLala Original BL \"First Note of Love\" EP2 - A Has-Been Singer"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "aqEkbBLU5pk",
+          "publishedAt": "2025-10-18T16:00:06Z",
+          "sourceTitle": "[SUB] GagaOOLala Original BL \"First Note of Love\" EP3 - The Main Vocalist"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "oceerCp05zQ",
+          "publishedAt": "2025-10-19T16:00:06Z",
+          "sourceTitle": "[SUB] GagaOOLala Original BL \"First Note of Love\" EP4 - Let's make music together!"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "JWUjJ6e2juk",
+          "publishedAt": "2025-10-20T16:00:06Z",
+          "sourceTitle": "[SUB] GagaOOLala Original BL \"First Note of Love\" EP5 - Ideal Partner"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "2UqLyNUKxUM",
+          "publishedAt": "2025-10-23T17:14:00Z",
+          "sourceTitle": "[SUB] GagaOOLala Original BL \"First Note of Love\" EP6 - Unfinished Concert"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 1,
+          "videoId": "SRwivhHQz2U",
+          "publishedAt": "2025-10-23T17:14:00Z",
+          "sourceTitle": "[SUB] GagaOOLala Original BL \"First Note of Love\" EP7 － Are you willing to trust me?"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 1,
+          "videoId": "wrxCa7vYvso",
+          "publishedAt": "2025-10-27T08:30:06Z",
+          "sourceTitle": "[SUB] GagaOOLala Original BL \"First Note of Love\" EP8 － Before becoming lovers..."
+        },
+        {
+          "chapter": 9,
+          "part": 1,
+          "parts": 1,
+          "videoId": "-DQDKPRQPuI",
+          "publishedAt": "2025-10-27T09:00:06Z",
+          "sourceTitle": "[SUB] GagaOOLala Original BL \"First Note of Love\" EP9 － Let's Separate and Love Again"
+        },
+        {
+          "chapter": 10,
+          "part": 1,
+          "parts": 1,
+          "videoId": "Rb86AcXjYBQ",
+          "publishedAt": "2025-10-27T09:30:06Z",
+          "sourceTitle": "[SUB] GagaOOLala Original BL \"First Note of Love\" EP10 － The Last and First Note"
+        },
+        {
+          "chapter": 11,
+          "part": 1,
+          "parts": 1,
+          "videoId": "XSsv9RzarK8",
+          "publishedAt": "2025-10-27T10:00:06Z",
+          "sourceTitle": "[SUB] GagaOOLala Original BL \"First Note of Love\" EP11 － No More Fears"
+        },
+        {
+          "chapter": 12,
+          "part": 1,
+          "parts": 1,
+          "videoId": "6UhfTgqbY5E",
+          "publishedAt": "2025-10-27T16:00:06Z",
+          "sourceTitle": "[SUB] GagaOOLala Original BL \"First Note of Love\" EP12 － First Note of Love"
+        }
+      ]
+    }
+  ]
+}

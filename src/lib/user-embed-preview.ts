@@ -9,7 +9,12 @@
  * (types + constants sin deps Node).
  */
 
-import { detectPlatform, extractVideoId } from './embed-helpers';
+import { getEmbedInfo } from './embed-helpers';
+import { parseEpisodeSource } from './episode-platforms';
+import {
+  episodeSourceFailure,
+  resolveOfficialEmbedFields,
+} from './official-content-guard';
 import { generateText, GeminiError, stripJsonFences } from './gemini';
 import { prisma } from './database';
 import {
@@ -104,117 +109,50 @@ async function fetchOEmbed(
   }
 }
 
-async function scrapeOpenGraph(
-  pageUrl: string,
-  warnings: string[]
-): Promise<OEmbedData> {
-  try {
-    const res = await fetch(pageUrl, {
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (compatible; MundoBL/1.0; +https://mundobl.com)',
-      },
-      cache: 'no-store',
-    });
-    if (!res.ok) {
-      warnings.push(`No se pudo cargar la pagina (${res.status}).`);
-      return EMPTY_OEMBED;
-    }
-    const html = await res.text();
-    const title = readMeta(html, 'og:title');
-    const description = readMeta(html, 'og:description');
-    const thumbnailUrl = readMeta(html, 'og:image');
-    const channelName = readMeta(html, 'og:site_name');
-    return {
-      rawTitle: title,
-      channelName,
-      channelUrl: null,
-      thumbnailUrl,
-      description,
-    };
-  } catch (err) {
-    warnings.push(
-      `Falla al scrape de pagina: ${err instanceof Error ? err.message : 'desconocido'}.`
-    );
-    return EMPTY_OEMBED;
-  }
-}
-
-function readMeta(html: string, property: string): string | null {
-  // Soporta <meta property="og:foo" content="bar"> en ambos ordenes.
-  const escaped = property.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const r1 = new RegExp(
-    `<meta[^>]+property=["']${escaped}["'][^>]+content=["']([^"']+)["']`,
-    'i'
-  );
-  const r2 = new RegExp(
-    `<meta[^>]+content=["']([^"']+)["'][^>]+property=["']${escaped}["']`,
-    'i'
-  );
-  const m = html.match(r1) ?? html.match(r2);
-  return m ? m[1] : null;
-}
-
 async function loadSource(
   url: string,
   warnings: string[]
 ): Promise<EmbedPreviewSource | { error: string }> {
-  const platform = detectPlatform(url);
-  if (!platform) {
-    return { error: 'No se pudo detectar la plataforma de la URL.' };
+  const parsed = parseEpisodeSource(url);
+  if (!parsed) {
+    const failure = episodeSourceFailure('unsupported');
+    throw new EmbedPreviewError(
+      failure.error,
+      failure.status,
+      failure.errorKey
+    );
   }
-  if (!SUPPORTED_EMBED_PLATFORMS.includes(platform as EmbedPlatform)) {
+  const verified = await resolveOfficialEmbedFields({ embedUrl: parsed.url });
+  if (!verified.ok) {
+    throw new EmbedPreviewError(
+      verified.error,
+      verified.status,
+      verified.errorKey
+    );
+  }
+  const embed = getEmbedInfo(parsed.platform, parsed.url, parsed.videoId);
+  if (verified.source) {
     return {
-      error: `Plataforma "${platform}" no esta soportada para /ver. Aceptamos: ${SUPPORTED_EMBED_PLATFORMS.join(', ')}.`,
+      platform: parsed.platform,
+      videoId: parsed.videoId,
+      embedUrl: embed.url ?? parsed.url,
+      thumbnailUrl: verified.source.thumbnailUrl,
+      channelName: verified.source.channelName,
+      channelUrl: verified.source.channelUrl,
+      rawTitle: verified.source.title,
     };
   }
-  const embedPlatform = platform as EmbedPlatform;
-  const videoId = extractVideoId(platform, url);
-  if (!videoId) {
-    return { error: 'No se pudo extraer el ID del video desde la URL.' };
-  }
-
-  let oembed: OEmbedData = EMPTY_OEMBED;
-  let embedUrl = url;
-  switch (embedPlatform) {
-    case 'YouTube': {
-      embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}`;
-      oembed = await fetchOEmbed(
-        `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`,
-        warnings
-      );
-      break;
-    }
-    case 'Vimeo': {
-      embedUrl = `https://player.vimeo.com/video/${videoId}`;
-      oembed = await fetchOEmbed(
-        `https://vimeo.com/api/oembed.json?url=${encodeURIComponent(url)}`,
-        warnings
-      );
-      break;
-    }
-    case 'Dailymotion': {
-      embedUrl = `https://www.dailymotion.com/embed/video/${videoId}`;
-      oembed = await fetchOEmbed(
-        `https://www.dailymotion.com/services/oembed?url=${encodeURIComponent(url)}&format=json`,
-        warnings
-      );
-      break;
-    }
-    case 'Bilibili': {
-      embedUrl = `https://player.bilibili.com/player.html?bvid=${videoId}&page=1`;
-      oembed = await scrapeOpenGraph(url, warnings);
-      break;
-    }
-  }
-
+  const oembed = await fetchOEmbed(
+    `https://www.youtube.com/oembed?url=${encodeURIComponent(parsed.url)}&format=json`,
+    warnings
+  );
   return {
-    platform: embedPlatform,
-    videoId,
-    embedUrl,
+    platform: parsed.platform,
+    videoId: parsed.videoId,
+    embedUrl: embed.url ?? parsed.url,
     thumbnailUrl: oembed.thumbnailUrl,
-    channelName: oembed.channelName,
-    channelUrl: oembed.channelUrl,
+    channelName: verified.fields.embedChannelName,
+    channelUrl: verified.fields.embedChannelUrl,
     rawTitle: oembed.rawTitle,
   };
 }
@@ -516,14 +454,7 @@ export async function buildEmbedPreview(url: string): Promise<EmbedPreview> {
     // Cache failure es no-fatal — seguimos al call de Gemini.
   }
 
-  // Bilibili scrape ya pobla description en og:description. YouTube oEmbed
-  // no incluye descripcion; queda null y Gemini trabaja sin ella.
-  let description: string | null = null;
-  if (source.platform === 'Bilibili') {
-    description = null;
-  }
-
-  const suggested = await suggestWithGemini(source, description, warnings);
+  const suggested = await suggestWithGemini(source, null, warnings);
 
   // Cache write — solo si el call no fallback'eo a "Sin titulo" (señal
   // de que Gemini se cayo o devolvio JSON invalido). Tampoco cachear si
@@ -558,7 +489,11 @@ export async function buildEmbedPreview(url: string): Promise<EmbedPreview> {
 
 export class EmbedPreviewError extends Error {
   status: number;
-  constructor(message: string, status = 400) {
+  constructor(
+    message: string,
+    status = 400,
+    readonly errorKey?: string
+  ) {
     super(message);
     this.name = 'EmbedPreviewError';
     this.status = status;

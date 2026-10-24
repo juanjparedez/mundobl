@@ -775,6 +775,7 @@ export async function getWatchableSeries(market = 'AR') {
     let youtubeLikes = 0;
     for (const season of s.seasons) {
       for (const e of season.episodes) {
+        if (e.embedPlatform !== 'YouTube') continue;
         youtubeViews += e.youtubeViewCount ?? 0;
         youtubeLikes += e.youtubeLikeCount ?? 0;
       }

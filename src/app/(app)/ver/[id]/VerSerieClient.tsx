@@ -108,7 +108,7 @@ interface SeriesInfo {
 const AVAILABILITY_KEY = {
   blocked_here: 'verSerie.availabilityBlockedHere',
   blocked_somewhere: 'verSerie.availabilityBlockedSomewhere',
-  youtube_only: 'verSerie.availabilityYoutubeOnly',
+  platform_only: 'verSerie.availabilityPlatformOnly',
   removed: 'verSerie.availabilityRemoved',
 } as const satisfies Record<Exclude<Availability, 'ok'>, TranslationKey>;
 
@@ -420,8 +420,9 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         seasonNumber: chapter.seasonNumber,
         chapterNumber: chapter.number,
         thumbnail:
-          getYouTubeThumbnail(chapter.episodes[0].embedVideoId) ||
-          series.imageUrl,
+          (chapter.episodes[0].embedPlatform === 'YouTube'
+            ? getYouTubeThumbnail(chapter.episodes[0].embedVideoId)
+            : null) || series.imageUrl,
         items: chapter.episodes.map(toItem),
       })),
       extraEpisodes: extras
@@ -626,15 +627,19 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           type={activeAvailability === 'blocked_somewhere' ? 'info' : 'warning'}
           showIcon
           className="ver-serie__availability"
-          title={t(AVAILABILITY_KEY[activeAvailability])}
+          title={t(AVAILABILITY_KEY[activeAvailability], {
+            platform: active.embedPlatform || 'YouTube',
+          })}
           action={
-            activeAvailability === 'youtube_only' && active.embedVideoId ? (
+            activeAvailability === 'platform_only' && active.embedUrl ? (
               <a
-                href={`https://www.youtube.com/watch?v=${active.embedVideoId}`}
+                href={active.embedUrl}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {t('verSerie.openOnYoutube')}
+                {t('episodeSource.openOn', {
+                  platform: active.embedPlatform || 'YouTube',
+                })}
               </a>
             ) : undefined
           }
@@ -643,6 +648,9 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
 
       <div className="ver-serie__player-wrap">
         <EmbedPlayer
+          openLabel={t('episodeSource.openOn', {
+            platform: active.embedPlatform || 'YouTube',
+          })}
           key={active.id}
           episodeId={active.id}
           platform={active.embedPlatform || 'YouTube'}
@@ -788,6 +796,20 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
       {/* Atribución de origen */}
       <div className="ver-serie__attribution-row">
         <EmbedAttribution
+          channelActionLabel={
+            active.embedChannelName
+              ? active.embedPlatform === 'YouTube'
+                ? t('embedAttribution.subscribeButton', {
+                    channelName: active.embedChannelName,
+                  })
+                : ['Vimeo', 'Dailymotion'].includes(active.embedPlatform ?? '')
+                  ? t('episodeSource.followOn', {
+                      channelName: active.embedChannelName,
+                      platform: active.embedPlatform!,
+                    })
+                  : undefined
+              : undefined
+          }
           platform={active.embedPlatform}
           channelName={active.embedChannelName}
           channelUrl={active.embedChannelUrl}
@@ -1001,7 +1023,10 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
                             }`}
                             title={
                               partBlocked
-                                ? t(AVAILABILITY_KEY[partAvailability])
+                                ? t(AVAILABILITY_KEY[partAvailability], {
+                                    platform:
+                                      episode.embedPlatform || 'YouTube',
+                                  })
                                 : undefined
                             }
                             aria-current={isActive ? 'true' : undefined}
@@ -1036,7 +1061,10 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
               {extraEpisodes.map(({ flatIndex, episode }) => {
                 const isActive = flatIndex === activeIdx;
                 const badge = episode.parsed;
-                const thumb = getYouTubeThumbnail(episode.embedVideoId);
+                const thumb =
+                  episode.embedPlatform === 'YouTube'
+                    ? getYouTubeThumbnail(episode.embedVideoId)
+                    : null;
 
                 return (
                   <button

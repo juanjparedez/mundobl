@@ -10,14 +10,12 @@
  * usa desde rutas API (server).
  */
 
-export type EmbedPlatform = 'YouTube' | 'Vimeo' | 'Bilibili' | 'Dailymotion';
+import { EPISODE_PLATFORMS, type EpisodePlatform } from './episode-platforms';
 
-export const SUPPORTED_EMBED_PLATFORMS: EmbedPlatform[] = [
-  'YouTube',
-  'Vimeo',
-  'Bilibili',
-  'Dailymotion',
-];
+export type EmbedPlatform = EpisodePlatform;
+
+export const SUPPORTED_EMBED_PLATFORMS: readonly EmbedPlatform[] =
+  EPISODE_PLATFORMS;
 
 /**
  * Paises permitidos. Coincide con el set hardcoded de ImportarClient para

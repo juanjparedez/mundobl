@@ -258,6 +258,9 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
           {selectedItem && (
             <div className="contenido-modal">
               <EmbedPlayer
+                openLabel={t('episodeSource.openOn', {
+                  platform: selectedItem.platform,
+                })}
                 platform={selectedItem.platform}
                 url={selectedItem.url}
                 videoId={selectedItem.videoId}

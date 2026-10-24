@@ -2,10 +2,9 @@
  * Guardia unica para todo lo que escribe un embed de episodio.
  *
  * Regla (docs/politica-contenido-oficial.md): un episodio solo se embebe
- * si el video pertenece a un canal de la lista blanca. Se verifica contra
- * la YouTube Data API (canal real del video), nunca contra lo que manda el
- * cliente. Si la API no esta disponible, se rechaza: sin verificacion no
- * hay embed.
+ * si el video pertenece a una fuente oficial verificada. Se consulta la
+ * API del proveedor (YouTube, Vimeo o Dailymotion); el propietario real y
+ * la disponibilidad no se toman del cliente. Sin verificacion no hay embed.
  *
  * Usada por: /api/user/series/embed/confirm (aportes de usuarios),
  * /api/series/import-playlist/confirm (importador), /api/episodes y
@@ -16,7 +15,32 @@ import {
   type VideoChannelInfo,
 } from './channel-fetcher';
 import { UNOFFICIAL_CHANNEL_ERROR } from './official-channels';
-import { detectPlatform, extractVideoId, type Platform } from './embed-helpers';
+import { parseEpisodeSource } from './episode-platforms';
+import {
+  EpisodeSourceError,
+  verifyExternalEpisode,
+  type ExternalEpisodeInfo,
+  type EpisodeSourceErrorCode,
+} from './external-episode-source';
+import { MESSAGES } from '../i18n/messages';
+import {
+  MIN_EPISODE_SECONDS,
+  probeViaApi,
+  type PlaybackProbe,
+  type PlaybackStatus,
+} from './playability';
+
+export function episodeSourceFailure(
+  code: EpisodeSourceErrorCode,
+  status: 422 | 503 = 422
+) {
+  return {
+    ok: false as const,
+    status,
+    error: MESSAGES.es!.episodeSource[code],
+    errorKey: `episodeSource.${code}` as const,
+  };
+}
 
 export const ONLY_YOUTUBE_ERROR =
   'Por ahora solo se aceptan episodios publicados en el canal oficial de YouTube de la productora o distribuidora.';
@@ -95,11 +119,17 @@ export interface EmbedFields {
   embedVideoId: string | null;
   embedChannelName: string | null;
   embedChannelUrl: string | null;
+  durationSeconds: number | null;
+  playback: PlaybackStatus;
+  playbackBlockedMarkets: string[];
+  playbackCheckedAt: Date | null;
+  youtubeViewCount: number | null;
+  youtubeLikeCount: number | null;
 }
 
 export type ResolvedEmbed =
-  | { ok: true; fields: EmbedFields }
-  | { ok: false; status: 422 | 503; error: string };
+  | { ok: true; fields: EmbedFields; source?: ExternalEpisodeInfo }
+  | { ok: false; status: 422 | 503; error: string; errorKey?: string };
 
 /**
  * Resuelve los campos de embed de un episodio a partir de la URL y los
@@ -120,33 +150,82 @@ export async function resolveOfficialEmbedFields(input: {
         embedVideoId: null,
         embedChannelName: null,
         embedChannelUrl: null,
+        durationSeconds: null,
+        playback: 'UNKNOWN',
+        playbackBlockedMarkets: [],
+        playbackCheckedAt: null,
+        youtubeViewCount: null,
+        youtubeLikeCount: null,
       },
     };
   }
 
-  const platform =
-    (input.embedPlatform as Platform | null) ?? detectPlatform(url);
-  if (platform !== 'YouTube') {
-    return { ok: false, status: 422, error: ONLY_YOUTUBE_ERROR };
+  const parsed = parseEpisodeSource(url);
+  if (
+    !parsed ||
+    (input.embedPlatform && input.embedPlatform !== parsed.platform)
+  ) {
+    return episodeSourceFailure('unsupported');
   }
-
-  const videoId = extractVideoId(platform, url);
-  if (!videoId) {
-    return { ok: false, status: 422, error: 'URL de YouTube inválida.' };
+  const { platform, videoId } = parsed;
+  if (platform !== 'YouTube') {
+    try {
+      const source = await verifyExternalEpisode(parsed);
+      return {
+        ok: true,
+        source,
+        fields: {
+          embedUrl: parsed.url,
+          embedPlatform: platform,
+          embedVideoId: videoId,
+          embedChannelName: source.channelName,
+          embedChannelUrl: source.channelUrl,
+          durationSeconds: source.probe.durationSeconds,
+          playback: source.probe.status,
+          playbackBlockedMarkets: source.probe.blockedMarkets,
+          playbackCheckedAt: new Date(),
+          youtubeViewCount: null,
+          youtubeLikeCount: null,
+        },
+      };
+    } catch (error) {
+      return error instanceof EpisodeSourceError
+        ? episodeSourceFailure(error.code, error.status)
+        : episodeSourceFailure('unavailable', 503);
+    }
   }
 
   const check = await checkOfficialYouTubeVideos([videoId]);
   if (!check.ok) return { ok: false, status: check.status, error: check.error };
 
   const info = check.infos.get(videoId)!;
+  let probe: PlaybackProbe;
+  try {
+    const key = process.env.YOUTUBE_API_KEY;
+    if (!key) return episodeSourceFailure('unavailable', 503);
+    [probe] = await probeViaApi([videoId], key);
+  } catch {
+    return episodeSourceFailure('unavailable', 503);
+  }
+  if (probe.status !== 'OK') return episodeSourceFailure('notPlayable');
+  if (probe.durationSeconds === null)
+    return episodeSourceFailure('unavailable', 503);
+  if (probe.durationSeconds < MIN_EPISODE_SECONDS)
+    return episodeSourceFailure('tooShort');
   return {
     ok: true,
     fields: {
-      embedUrl: url,
+      embedUrl: parsed.url,
       embedPlatform: platform,
       embedVideoId: videoId,
       embedChannelName: info.channelTitle || null,
       embedChannelUrl: info.channelUrl || null,
+      durationSeconds: probe.durationSeconds,
+      playback: probe.status,
+      playbackBlockedMarkets: probe.blockedMarkets,
+      playbackCheckedAt: new Date(),
+      youtubeViewCount: probe.viewCount ?? null,
+      youtubeLikeCount: probe.likeCount ?? null,
     },
   };
 }

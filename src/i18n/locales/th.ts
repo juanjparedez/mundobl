@@ -10,6 +10,17 @@
 import type { TranslationShape } from '../messages';
 
 const th = {
+  episodeSource: {
+    followOn: "ติดตาม {channelName} บน {platform}",
+    officialHint: "เรารับเฉพาะผลงานจากแหล่งทางการที่ตรวจสอบแล้วและอนุญาตให้เล่นที่นี่เท่านั้น",
+    "unsupported": "วางลิงก์วิดีโออย่างเป็นทางการจาก YouTube, Vimeo หรือ Dailymotion",
+    "unverified": "ผลงานนี้ยังไม่มีแหล่งเผยแพร่อย่างเป็นทางการที่ผ่านการตรวจสอบ",
+    "unavailable": "ตรวจสอบวิดีโอไม่ได้ โปรดลองอีกครั้งในภายหลัง",
+    "notPlayable": "วิดีโอนี้ไม่สามารถเล่นที่นี่ได้",
+    "tooShort": "วิดีโอสั้นเกินไปที่จะเผยแพร่เป็นตอน",
+    "playerSetup": "เว็บไซต์นี้ยังไม่ได้เปิดใช้งาน Dailymotion",
+    "openOn": "เปิดใน {platform}"
+  },
   welcomeEmail: {
   "title": "ยินดีต้อนรับสู่ MundoBL",
   "intro": "แคตตาล็อกซีรีส์ BL, GL และซีรีส์เอเชียอื่น ๆ ที่คัดสรรโดยทีมงาน",
@@ -2957,7 +2968,7 @@ const th = {
     "autoMarkedChapter": "ทำเครื่องหมายตอนที่ {n} แล้ว",
     "undoAutoMark": "เลิกทำ",
     "subtitlesTitle": "คำบรรยาย",
-    "subtitlesBody": "คำบรรยายจะเปิดอัตโนมัติหากวิดีโอทางการมีให้ คุณเปลี่ยนภาษาได้จาก [CC] ในเครื่องเล่น",
+    "subtitlesBody": "หากมีคำบรรยาย คุณสามารถเลือกได้จากส่วนควบคุมของเครื่องเล่น",
     "regionTitle": "รับชมไม่ได้ในประเทศของคุณ",
     "regionBody": "ผู้ผลิตจำกัดวิดีโอนี้ตามภูมิภาค โปรดตรวจสอบช่องทางรับชมที่ถูกลิขสิทธิ์ของซีรีส์",
     "whereToWatchLink": "รับชมได้ที่ไหน",
@@ -2966,8 +2977,8 @@ const th = {
     "unmarkChapter": "เลิกทำเครื่องหมายตอนที่ {n}",
     "availabilityBlockedHere": "วิดีโอนี้ไม่พร้อมใช้งานในประเทศของคุณ",
     "availabilityBlockedSomewhere": "วิดีโอนี้ไม่พร้อมใช้งานในบางประเทศ",
-    "availabilityYoutubeOnly": "วิดีโอนี้สามารถรับชมได้บน YouTube เท่านั้น",
-    "availabilityRemoved": "ผู้ผลิตได้นำวิดีโอนี้ออกจาก YouTube แล้ว",
+    "availabilityPlatformOnly": "ไม่สามารถเล่นวิดีโอที่นี่ได้ โปรดตรวจสอบการรับชมบน {platform}",
+    "availabilityRemoved": "ผู้ผลิตได้นำวิดีโอนี้ออกจาก {platform} แล้ว",
     "openOnYoutube": "เปิดบน YouTube",
     "episodeSynopsisTitle": "เรื่องย่อตอน",
     "aboutTheSeriesTitle": "เกี่ยวกับซีรีส์",
@@ -3010,13 +3021,13 @@ const th = {
     "clearFiltersButton": "ล้างตัวกรอง"
   },
   "seriesSubscribeButton": {
-    "signInTooltip": "ลงชื่อเข้าใช้เพื่อสมัครรับการเปลี่ยนแปลง",
+    "signInTooltip": "เข้าสู่ระบบเพื่อรับการแจ้งเตือนจาก MundoBL",
     "subscribeFailedError": "สมัครสมาชิกไม่สำเร็จ",
-    "subscribeSuccessMessage": "เราจะแจ้งให้คุณทราบเมื่อมีการอัปเดต",
-    "unsubscribeSuccessMessage": "ยกเลิกการสมัครสมาชิกแล้ว",
-    "updateSubscriptionErrorMessage": "เราไม่สามารถอัปเดตการสมัครสมาชิกได้",
-    "subscribedTooltip": "สมัครแล้ว: ยกเลิกการแจ้งเตือนสำหรับซีรีส์นี้",
-    "unsubscribedTooltip": "สมัครเพื่อรับการแจ้งเตือนการเปลี่ยนแปลง"
+    "subscribeSuccessMessage": "MundoBL จะแจ้งให้ทราบเมื่อมีอัปเดต",
+    "unsubscribeSuccessMessage": "ปิดการแจ้งเตือนจาก MundoBL แล้ว",
+    "updateSubscriptionErrorMessage": "ไม่สามารถอัปเดตการแจ้งเตือนจาก MundoBL ได้",
+    "subscribedTooltip": "ปิดการแจ้งเตือนจาก MundoBL สำหรับเรื่องนี้",
+    "unsubscribedTooltip": "รับการแจ้งเตือนจาก MundoBL สำหรับเรื่องนี้"
   },
   "adminInfo": {
     "teamMemberJuanName": "ฮวน",
