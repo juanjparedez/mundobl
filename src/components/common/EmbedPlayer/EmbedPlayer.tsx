@@ -6,6 +6,7 @@ import {
   useYouTubeWatchTime,
   type YouTubeWatchEvent,
 } from '@/hooks/useYouTubeWatchTime';
+import { useVimeoWatchTime } from '@/hooks/useVimeoWatchTime';
 import { LinkOutlined } from '@ant-design/icons';
 import './EmbedPlayer.css';
 
@@ -73,8 +74,9 @@ export function EmbedPlayer({
     () => ''
   );
   const isTrackedYouTube = platform === 'YouTube' && !!onWatchProgress;
+  const isTrackedVimeo = platform === 'Vimeo' && !!onWatchProgress;
   const embed = getEmbedInfo(platform as Platform, url, videoId, {
-    jsApi: isTrackedYouTube,
+    jsApi: isTrackedYouTube || isTrackedVimeo,
     origin: isTrackedYouTube ? origin : undefined,
     autoplay,
   });
@@ -84,6 +86,7 @@ export function EmbedPlayer({
     onWatchProgress,
     episodeId
   );
+  useVimeoWatchTime(iframeRef, isTrackedVimeo, onWatchProgress, episodeId);
 
   if (embed.type === 'iframe' && embed.url) {
     const isSpotify = platform === 'Spotify';

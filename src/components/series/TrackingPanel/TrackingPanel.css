@@ -15,6 +15,13 @@
 .tracking-panel__header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-xs);
+}
+
+.tracking-panel__heading {
+  display: inline-flex;
+  align-items: center;
   gap: var(--spacing-xs);
   color: var(--primary-color);
   font-size: var(--font-size-xs);
@@ -27,12 +34,31 @@
   color: var(--text-secondary);
 }
 
-.tracking-panel__select {
-  width: 100%;
+/* El menu de intenciones: 44px de area tactil aunque el icono sea chico. */
+.tracking-panel__more.ant-btn {
+  min-width: 44px;
+  min-height: 44px;
+  color: var(--text-secondary);
 }
 
-.tracking-panel__option {
-  display: inline-flex;
+/* La frase de estado: lo primero que se lee del panel. */
+.tracking-panel__summary {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.tracking-panel__start {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--spacing-xs);
+}
+
+.tracking-panel__finished {
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--spacing-xs);
 }
@@ -47,18 +73,6 @@
 .tracking-panel__label {
   font-size: var(--font-size-sm);
   color: var(--text-secondary);
-}
-
-.tracking-panel__no-episodes {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
-}
-
-.tracking-panel__anon-stepper {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-xs);
 }
 
 .tracking-panel__cta {

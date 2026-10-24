@@ -714,6 +714,7 @@ export type TranslationShape = {
     errorSaving: string;
   };
   viewStatus: {
+    quieroVer: string;
     sinVer: string;
     viendo: string;
     vista: string;
@@ -2338,6 +2339,7 @@ export type TranslationShape = {
     activeScope: string;
   };
   publicStats: {
+    browserChaptersRecently: string;
     teamNote: string;
     recentTitle: string;
     recentHint: string;
@@ -3131,6 +3133,7 @@ export type TranslationShape = {
     colorThemeLabel: string;
   };
   viewStatusToggle: {
+    quieroVer: string;
     sinVer: string;
     viendo: string;
     vista: string;
@@ -3162,11 +3165,6 @@ export type TranslationShape = {
     milestone: string;
   };
   trackCta: {
-    title: string;
-    subtitle: string;
-    subtitleNoEpisodes: string;
-    button: string;
-    buttonNoEpisodes: string;
     applied: string;
     chooseEpisode: string;
   };
@@ -3175,19 +3173,15 @@ export type TranslationShape = {
     markWatched: string;
     markUnwatched: string;
     markedWatched: string;
-    noEpisodes: string;
     notesTitle: string;
     episodeNote: string;
     seriesNote: string;
     notesHintNoEpisode: string;
     episodesAfterLast: string;
     followAgain: string;
-    localSaved: string;
-    localSignIn: string;
     localImportOffer: string;
     localImportButton: string;
     localImportSuccess: string;
-    localImportError: string;
   };
   posterPlaceholder: {
     noImage: string;
@@ -3853,6 +3847,99 @@ export type TranslationShape = {
     saved: string;
     error: string;
     browseCatalog: string;
+  };
+  tracking: {
+    summaryFinished: string;
+    summaryWantToWatch: string;
+    summaryDropped: string;
+    summaryPausedAt: string;
+    summaryPaused: string;
+    summaryAt: string;
+    summaryEmpty: string;
+    summaryEmptyNoEpisodes: string;
+    wantToWatch: string;
+    inWantList: string;
+    startWatching: string;
+    markAllWatched: string;
+    pause: string;
+    drop: string;
+    clearIntent: string;
+    intentCleared: string;
+    moreOptions: string;
+    unwatchConfirm: string;
+    signupTitle: string;
+    signupBody: string;
+    signupAction: string;
+    signupDismiss: string;
+    localFooter: string;
+    localFooterAction: string;
+    freeNoAccountTitle: string;
+    freeNoAccountBody: string;
+    markChapterShort: string;
+    activityThisWeek: string;
+    quickSaved: string;
+    quickTrigger: string;
+    quickWatching: string;
+    quickWatched: string;
+    quickClear: string;
+    filterWantList: string;
+  };
+  localLibrary: {
+    title: string;
+    intro: string;
+    emptyTitle: string;
+    emptyBody: string;
+    loadFailed: string;
+    progress: string;
+    watchChapter: string;
+    seeAll: string;
+  };
+  activityPrivacy: {
+    toggleLabel: string;
+    countedHint: string;
+    notCountedHint: string;
+    browserSignal: string;
+  };
+  communityAlias: {
+    appearsAs: string;
+    change: string;
+    cooldown: string;
+    firstWords: string;
+    secondWords: string;
+    template: string;
+  };
+  producerReport: {
+    title: string;
+    short: string;
+    intro: string;
+    window: string;
+    copy: string;
+    copied: string;
+    copyFailed: string;
+    copyHeader: string;
+    copyAccounts: string;
+    copyChapters: string;
+    copySeries: string;
+    accounts: string;
+    activeAccounts: string;
+    chapters: string;
+    chaptersHint: string;
+    views: string;
+    wants: string;
+    finishes: string;
+    trackers: string;
+    privacy: string;
+    bySeries: string;
+    byChannel: string;
+    byCountry: string;
+    outbound: string;
+    series: string;
+    channel: string;
+    seriesCount: string;
+    country: string;
+    unknownCountry: string;
+    platform: string;
+    clicks: string;
   };
 };
 
@@ -4675,11 +4762,12 @@ const es: TranslationShape = {
     errorSaving: 'Error al guardar',
   },
   viewStatus: {
+    quieroVer: 'Quiero verla',
     sinVer: 'Sin ver',
     viendo: 'Viendo ahora',
     vista: 'Vista',
     abandonada: 'Abandonada',
-    retomar: 'Retomar',
+    retomar: 'En pausa',
     ariaLabel: 'Estado de visualización',
     tooltipEpisodes: '{watched} de {total} episodios vistos',
     episodesUnit: '{watched}/{total} episodios',
@@ -4786,7 +4874,7 @@ const es: TranslationShape = {
     statWatched: 'Vistas',
     statWatching: 'Viendo',
     statAbandoned: 'Abandonadas',
-    statToRewatch: 'Retomar',
+    statToRewatch: 'En pausa',
     statFavorites: 'Favoritos',
     statRatings: 'Ratings',
     statComments: 'Comentarios',
@@ -6310,7 +6398,7 @@ const es: TranslationShape = {
     accept: 'Ok, entendido',
   },
   watchHereBanner: {
-    own: 'Ver los capítulos acá, desde el canal oficial',
+    own: 'Ver los capítulos acá, gratis y sin cuenta, desde el canal oficial',
     contribution: 'También se ve acá, en un aporte de la comunidad',
     contributions: 'También se ve acá, en {n} aportes de la comunidad',
   },
@@ -6408,6 +6496,7 @@ const es: TranslationShape = {
       'Hasta 20 usuarios con seguimiento, reseñas publicadas, comentarios públicos, calificaciones o favoritos en los últimos 30 días.',
   },
   publicStats: {
+    browserChaptersRecently: 'Capítulos vistos sin cuenta (7 días)',
     teamNote:
       'Estas cifras son sólo de la comunidad. El equipo de curaduría vio además {n} series del catálogo: no las sumamos para no inflar los números.',
     recentTitle: 'Actividad reciente',
@@ -7239,11 +7328,12 @@ const es: TranslationShape = {
     colorThemeLabel: 'Tema de color',
   },
   viewStatusToggle: {
+    quieroVer: 'Quiero verla',
     sinVer: 'Sin ver',
     viendo: 'Viendo',
     vista: 'Vista',
     abandonada: 'Abandonada',
-    retomar: 'Retomar',
+    retomar: 'En pausa',
     errorUpdating: 'Error al actualizar',
     statusUpdateSuccess: 'Estado actualizado a: {label}',
     errorUpdate: 'Error al actualizar el estado de la serie.',
@@ -7270,11 +7360,6 @@ const es: TranslationShape = {
     milestone: '¡Ya viste el {percent}% de {title}!',
   },
   trackCta: {
-    title: '¿La estás viendo?',
-    subtitle: 'Marcá por qué capítulo vas y seguila desde tu lista.',
-    subtitleNoEpisodes: 'Marcala como vista y va a quedar en tu historial.',
-    button: 'Empezar a seguir',
-    buttonNoEpisodes: 'Marcarla como vista',
     applied: 'Listo, ya estás siguiendo {title}',
     chooseEpisode: '¿Por qué capítulo vas?',
   },
@@ -7283,8 +7368,6 @@ const es: TranslationShape = {
     markWatched: 'Ya la vi',
     markUnwatched: 'Marcar como no vista',
     markedWatched: 'Marcaste "{title}" como vista',
-    noEpisodes:
-      'Esta ficha no tiene capítulos cargados: se marca completa de una vez.',
     notesTitle: 'Notas privadas',
     episodeNote: 'Nota del {code}',
     seriesNote: 'Nota de la serie',
@@ -7292,12 +7375,10 @@ const es: TranslationShape = {
     episodesAfterLast:
       'Hay capítulos después del último que marcaste como visto.',
     followAgain: 'Volver a seguirla',
-    localSaved: 'Guardado en este navegador.',
-    localSignIn: 'Entrá para no perderlo',
-    localImportOffer: 'Tenés progreso de {n} series en este navegador.',
-    localImportButton: 'Guardarlo en mi cuenta',
-    localImportSuccess: 'El progreso quedó guardado en tu cuenta.',
-    localImportError: 'No pudimos guardar todo el progreso local.',
+    localImportOffer:
+      'No pudimos pasar {n} series a tu cuenta. Siguen en este navegador.',
+    localImportButton: 'Reintentar',
+    localImportSuccess: 'Pasamos {n} series de este navegador a tu cuenta.',
   },
   posterPlaceholder: {
     noImage: 'Sin imagen',
@@ -8010,6 +8091,110 @@ const es: TranslationShape = {
     saved: 'Listo, ya están en tu lista',
     error: 'No se pudo guardar. Probá de nuevo.',
     browseCatalog: '¿No está? Buscala en el catálogo',
+  },
+  tracking: {
+    summaryFinished: 'La terminaste.',
+    summaryWantToWatch: 'Está en tu lista para ver.',
+    summaryDropped: 'La dejaste.',
+    summaryPausedAt: 'En pausa: viste {current} de {total} capítulos.',
+    summaryPaused: 'En pausa.',
+    summaryAt: 'Viste {current} de {total} capítulos.',
+    summaryEmpty: 'Todavía no marcaste capítulos.',
+    summaryEmptyNoEpisodes: '¿La viste? Marcala y queda en tu historial.',
+    wantToWatch: 'Quiero verla',
+    inWantList: 'En mi lista',
+    startWatching: 'La estoy viendo',
+    markAllWatched: 'Ya la vi toda',
+    pause: 'Ponerla en pausa',
+    drop: 'La dejé',
+    clearIntent: 'Quitar «{label}»',
+    intentCleared: 'Listo, lo quitamos.',
+    moreOptions: 'Más opciones',
+    unwatchConfirm: '¿Desmarcar como vista?',
+    signupTitle: 'Esto vive solo en este navegador',
+    signupBody:
+      'Con una cuenta gratis lo tenés en el celu y en la compu, y no se pierde si borrás los datos del navegador. Además, cada cuenta suma cuando les pedimos series a las plataformas.',
+    signupAction: 'Guardarlo en una cuenta',
+    signupDismiss: 'Ahora no',
+    localFooter: 'Se guarda en este navegador.',
+    localFooterAction: 'Entrá para tenerlo en todos lados',
+    freeNoAccountTitle: 'Se ve gratis y sin cuenta',
+    freeNoAccountBody:
+      'Los capítulos vienen de canales oficiales. Tu progreso queda en este navegador; si entrás, se guarda en tu cuenta.',
+    markChapterShort: 'Marcar',
+    activityThisWeek: '{n} capítulos vistos esta semana',
+    quickSaved: '«{title}»: {label}',
+    quickTrigger: 'Agregar a mi lista',
+    quickWatching: 'La estoy viendo…',
+    quickWatched: 'Ya la vi',
+    quickClear: 'Quitar de mi lista',
+    filterWantList: 'Quiero verla',
+  },
+  localLibrary: {
+    title: 'Lo que seguís',
+    intro: 'Guardado en este navegador, sin cuenta.',
+    emptyTitle: 'Todavía no seguís ninguna serie',
+    emptyBody:
+      'Marcá capítulos o tocá «Quiero verla» en cualquier serie y aparece acá. No hace falta cuenta.',
+    loadFailed: 'No pudimos cargar algunas series. Tu progreso sigue guardado.',
+    progress: '{watched} de {total} capítulos',
+    watchChapter: 'Ver {code}',
+    seeAll: 'Ver todo',
+  },
+  activityPrivacy: {
+    toggleLabel: 'Sumar mi actividad a los contadores anónimos',
+    countedHint:
+      'Activado: cada capítulo que ves suma uno a su serie, sin decir quién fue.',
+    notCountedHint: 'Apagado en este navegador: no sumamos nada.',
+    browserSignal:
+      'Tu navegador pide no ser medido (Global Privacy Control o Do Not Track): no contamos nada.',
+  },
+  communityAlias: {
+    appearsAs: 'En el ranking aparecés como «{alias}».',
+    change: 'Cambiar',
+    cooldown: 'Podés cambiarlo de nuevo en unos minutos.',
+    firstWords:
+      'Luna|Estrella|Brisa|Lluvia|Nube|Ola|Flor|Llama|Sombra|Chispa|Pluma|Perla|Rosa|Niebla|Aurora|Marea|Hoja|Nieve|Brasa|Seda|Gema|Vela|Melodía|Canción',
+    secondWords:
+      'Septiembre|Abril|Medianoche|Verano|Otoño|Invierno|Primavera|Tokio|Bangkok|Seúl|Taipéi|Shanghái|Cristal|Jade|Miel|Lavanda|Canela|Coral|Marfil|Ámbar|Cerezo|Bambú|Loto|Sakura',
+    template: '{first} de {second}',
+  },
+  producerReport: {
+    title: 'Informe para productoras',
+    short: 'Números anónimos para pedir series',
+    intro:
+      'Actividad agregada y anónima, lista para mostrar a productoras y plataformas.',
+    window: '{days} días',
+    copy: 'Copiar resumen',
+    copied: 'Resumen copiado',
+    copyFailed: 'No se pudo copiar',
+    copyHeader: 'MundoBL: últimos {days} días ({from} a {to})',
+    copyAccounts:
+      '{accounts} cuentas registradas, {active} activas en el período',
+    copyChapters: '{chapters} capítulos vistos ({browser} sin cuenta)',
+    copySeries:
+      '- {title}: {chapters} capítulos vistos, {trackers} cuentas la siguen',
+    accounts: 'Cuentas registradas',
+    activeAccounts: 'Cuentas activas',
+    chapters: 'Capítulos vistos',
+    chaptersHint: '{account} con cuenta · {browser} sin cuenta',
+    views: 'Reproducciones',
+    wants: 'Quiero verla',
+    finishes: 'Terminadas',
+    trackers: 'Cuentas que la siguen',
+    privacy:
+      'Sin datos personales: contadores por día, sin usuario, IP ni cookie. El equipo no suma.',
+    bySeries: 'Por serie',
+    byChannel: 'Por canal oficial',
+    byCountry: 'Por país',
+    outbound: 'Clics a plataformas',
+    series: 'Serie',
+    channel: 'Canal',
+    seriesCount: 'Series',
+    country: 'País',
+    unknownCountry: 'Sin dato',
+    platform: 'Plataforma',
+    clicks: 'Clics',
   },
 };
 
@@ -8817,11 +9002,12 @@ const en: TranslationShape = {
     errorSaving: 'Error saving',
   },
   viewStatus: {
+    quieroVer: 'Want to watch',
     sinVer: 'Not watched',
     viendo: 'Watching now',
     vista: 'Watched',
     abandonada: 'Abandoned',
-    retomar: 'Resume',
+    retomar: 'Paused',
     ariaLabel: 'View status',
     tooltipEpisodes: '{watched} of {total} episodes watched',
     episodesUnit: '{watched}/{total} episodes',
@@ -8928,7 +9114,7 @@ const en: TranslationShape = {
     statWatched: 'Watched',
     statWatching: 'Watching',
     statAbandoned: 'Abandoned',
-    statToRewatch: 'To rewatch',
+    statToRewatch: 'Paused',
     statFavorites: 'Favorites',
     statRatings: 'Ratings',
     statComments: 'Comments',
@@ -10440,7 +10626,7 @@ const en: TranslationShape = {
     accept: 'Got it',
   },
   watchHereBanner: {
-    own: 'Watch the episodes here, from the official channel',
+    own: 'Watch the episodes here, free and with no account, from the official channel',
     contribution: 'Also watchable here, in a community contribution',
     contributions: 'Also watchable here, in {n} community contributions',
   },
@@ -10538,6 +10724,7 @@ const en: TranslationShape = {
       'Up to 20 users with tracking, published reviews, public comments, ratings or favorites in the last 30 days.',
   },
   publicStats: {
+    browserChaptersRecently: 'Episodes watched without an account (7 days)',
     teamNote:
       'These figures are community-only. The curation team has also watched {n} catalog series; we leave them out so the numbers are not inflated.',
     recentTitle: 'Recent activity',
@@ -11367,11 +11554,12 @@ const en: TranslationShape = {
     colorThemeLabel: 'Color theme',
   },
   viewStatusToggle: {
+    quieroVer: 'Want to watch',
     sinVer: 'Not watched',
     viendo: 'Watching',
     vista: 'Watched',
     abandonada: 'Abandoned',
-    retomar: 'Resume',
+    retomar: 'Paused',
     errorUpdating: 'Error updating',
     statusUpdateSuccess: 'Status updated to: {label}',
     errorUpdate: 'Error updating series status.',
@@ -11398,11 +11586,6 @@ const en: TranslationShape = {
     milestone: "You're {percent}% through {title}!",
   },
   trackCta: {
-    title: 'Are you watching this?',
-    subtitle: "Mark which episode you're on and follow it from your list.",
-    subtitleNoEpisodes: 'Mark it as watched and it goes into your history.',
-    button: 'Start tracking',
-    buttonNoEpisodes: 'Mark as watched',
     applied: "You're all set, now tracking {title}",
     chooseEpisode: 'Which episode are you on?',
   },
@@ -11411,8 +11594,6 @@ const en: TranslationShape = {
     markWatched: 'I watched it',
     markUnwatched: 'Mark as not watched',
     markedWatched: 'You marked "{title}" as watched',
-    noEpisodes:
-      'This title has no episodes loaded: it gets marked complete in one go.',
     notesTitle: 'Private notes',
     episodeNote: 'Note for {code}',
     seriesNote: 'Series note',
@@ -11420,12 +11601,10 @@ const en: TranslationShape = {
     episodesAfterLast:
       'There are episodes after the last one you marked as watched.',
     followAgain: 'Follow it again',
-    localSaved: 'Saved in this browser.',
-    localSignIn: 'Sign in so you do not lose it',
-    localImportOffer: 'You have progress for {n} series in this browser.',
-    localImportButton: 'Save it to my account',
-    localImportSuccess: 'Your progress is now saved to your account.',
-    localImportError: 'We could not save all local progress.',
+    localImportOffer:
+      "We couldn't move {n} series to your account. They're still in this browser.",
+    localImportButton: 'Try again',
+    localImportSuccess: 'Moved {n} series from this browser to your account.',
   },
   posterPlaceholder: {
     noImage: 'No image',
@@ -12135,6 +12314,110 @@ const en: TranslationShape = {
     saved: "Done, they're in your list",
     error: "Couldn't save. Please try again.",
     browseCatalog: 'Not here? Find it in the catalog',
+  },
+  tracking: {
+    summaryFinished: 'You finished it.',
+    summaryWantToWatch: "It's on your watch list.",
+    summaryDropped: 'You dropped it.',
+    summaryPausedAt: "Paused: you've watched {current} of {total} episodes.",
+    summaryPaused: 'Paused.',
+    summaryAt: "You've watched {current} of {total} episodes.",
+    summaryEmpty: "You haven't marked any episodes yet.",
+    summaryEmptyNoEpisodes: 'Seen it? Mark it and it stays in your history.',
+    wantToWatch: 'Want to watch',
+    inWantList: 'On my list',
+    startWatching: "I'm watching it",
+    markAllWatched: "I've seen it all",
+    pause: 'Pause it',
+    drop: 'I dropped it',
+    clearIntent: 'Remove “{label}”',
+    intentCleared: 'Done, removed.',
+    moreOptions: 'More options',
+    unwatchConfirm: 'Unmark as watched?',
+    signupTitle: 'This only lives in this browser',
+    signupBody:
+      'With a free account you have it on your phone and your computer, and it is not lost if you clear your browser data. Every account also counts when we ask platforms for series.',
+    signupAction: 'Save it to an account',
+    signupDismiss: 'Not now',
+    localFooter: 'Saved in this browser.',
+    localFooterAction: 'Sign in to keep it everywhere',
+    freeNoAccountTitle: 'Free to watch, no account needed',
+    freeNoAccountBody:
+      'Episodes come from official channels. Your progress stays in this browser; if you sign in, it is saved to your account.',
+    markChapterShort: 'Mark',
+    activityThisWeek: '{n} episodes watched this week',
+    quickSaved: '“{title}”: {label}',
+    quickTrigger: 'Add to my list',
+    quickWatching: "I'm watching it…",
+    quickWatched: "I've seen it",
+    quickClear: 'Remove from my list',
+    filterWantList: 'Want to watch',
+  },
+  localLibrary: {
+    title: "What you're following",
+    intro: 'Saved in this browser, no account.',
+    emptyTitle: "You're not following any series yet",
+    emptyBody:
+      'Mark episodes or tap “Want to watch” on any series and it shows up here. No account needed.',
+    loadFailed: "We couldn't load some series. Your progress is still saved.",
+    progress: '{watched} of {total} episodes',
+    watchChapter: 'Watch {code}',
+    seeAll: 'See all',
+  },
+  activityPrivacy: {
+    toggleLabel: 'Add my activity to the anonymous counters',
+    countedHint:
+      'On: each episode you watch adds one to its series, without saying who it was.',
+    notCountedHint: 'Off in this browser: we count nothing.',
+    browserSignal:
+      'Your browser asks not to be measured (Global Privacy Control or Do Not Track): we count nothing.',
+  },
+  communityAlias: {
+    appearsAs: 'In the ranking you appear as “{alias}”.',
+    change: 'Change',
+    cooldown: 'You can change it again in a few minutes.',
+    firstWords:
+      'Moon|Star|Breeze|Rain|Cloud|Wave|Flower|Flame|Shadow|Spark|Feather|Pearl|Rose|Mist|Dawn|Tide|Leaf|Snow|Ember|Silk|Gem|Candle|Melody|Song',
+    secondWords:
+      'September|April|Midnight|Summer|Autumn|Winter|Spring|Tokyo|Bangkok|Seoul|Taipei|Shanghai|Crystal|Jade|Honey|Lavender|Cinnamon|Coral|Ivory|Amber|Cherry|Bamboo|Lotus|Sakura',
+    template: '{second} {first}',
+  },
+  producerReport: {
+    title: 'Report for producers',
+    short: 'Anonymous numbers to request series',
+    intro:
+      'Aggregated, anonymous activity, ready to show producers and platforms.',
+    window: '{days} days',
+    copy: 'Copy summary',
+    copied: 'Summary copied',
+    copyFailed: "Couldn't copy",
+    copyHeader: 'MundoBL: last {days} days ({from} to {to})',
+    copyAccounts:
+      '{accounts} registered accounts, {active} active in the period',
+    copyChapters: '{chapters} episodes watched ({browser} without an account)',
+    copySeries:
+      '- {title}: {chapters} episodes watched, {trackers} accounts follow it',
+    accounts: 'Registered accounts',
+    activeAccounts: 'Active accounts',
+    chapters: 'Episodes watched',
+    chaptersHint: '{account} with an account · {browser} without',
+    views: 'Plays',
+    wants: 'Want to watch',
+    finishes: 'Finished',
+    trackers: 'Accounts following',
+    privacy:
+      'No personal data: daily counters, with no user, IP or cookie. The team is not counted.',
+    bySeries: 'By series',
+    byChannel: 'By official channel',
+    byCountry: 'By country',
+    outbound: 'Clicks to platforms',
+    series: 'Series',
+    channel: 'Channel',
+    seriesCount: 'Series',
+    country: 'Country',
+    unknownCountry: 'Unknown',
+    platform: 'Platform',
+    clicks: 'Clicks',
   },
 };
 

@@ -1,0 +1,7 @@
+.quick-status {
+  display: inline-flex;
+}
+
+.quick-status__btn--active {
+  color: var(--success-color);
+}

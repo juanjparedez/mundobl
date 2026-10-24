@@ -39,6 +39,7 @@ import { isAiringNow } from '@/lib/airing-schedule';
 import { countChapters } from '@/lib/episode-chapters';
 import { isWatchableEpisode } from '@/lib/watchable';
 import { WatchHereBanner } from '@/components/series/WatchHereBanner/WatchHereBanner';
+import { ActivityPulse } from '@/components/series/ActivityPulse/ActivityPulse';
 import type { TVSeries } from 'schema-dts';
 import { ReadOutlined, CommentOutlined } from '@/lib/client-icons';
 import './SeriesDetailView.css';
@@ -246,7 +247,6 @@ export async function SeriesDetailView({
                 <TrackingPanel
                   seriesId={serie.id}
                   seriesTitle={serie.title}
-                  seriesType={serie.type}
                   seasons={serie.seasons}
                   airing={isAiringNow(serie)}
                   hasSimilar={similarSeries.length > 0}
@@ -289,6 +289,7 @@ export async function SeriesDetailView({
           <div className="series-detail-meta-bar">
             <SeriesCompletenessBadge seriesId={serie.id} series={serie} />
             <CommunityWorkLink seriesId={serie.id} />
+            <ActivityPulse seriesId={serie.id} />
           </div>
 
           {serie.watchLinks && serie.watchLinks.length > 0 ? (

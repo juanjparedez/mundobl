@@ -13,6 +13,7 @@ import {
 import { useSession } from 'next-auth/react';
 import {
   getLocalSeriesProgress,
+  localSeriesStatus,
   subscribeToLocalProgress,
 } from '@/lib/local-progress';
 
@@ -105,7 +106,7 @@ export function SeriesUserStatusProvider({
     );
     setState((prev) => ({
       ...DEFAULT_STATE,
-      seriesStatus: progress.episodeIds.length > 0 ? 'VIENDO' : 'SIN_VER',
+      seriesStatus: localSeriesStatus(progress),
       episodeStatus,
       loaded: true,
       version: prev.version + 1,

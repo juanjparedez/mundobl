@@ -1,73 +1,89 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useSession } from 'next-auth/react';
 import { Alert, Button } from 'antd';
 import { CloudUploadOutlined } from '@ant-design/icons';
-import { useSession } from 'next-auth/react';
+import { useLocale } from '@/lib/providers/LocaleProvider';
+import { useMessage } from '@/hooks/useMessage';
 import {
   clearLocalSeriesProgress,
   listLocalProgress,
 } from '@/lib/local-progress';
-import { useLocale } from '@/lib/providers/LocaleProvider';
-import { useMessage } from '@/hooks/useMessage';
 import './LocalProgressImporter.css';
 
+/**
+ * Al iniciar sesion, lo que se siguio sin cuenta en este navegador pasa solo
+ * a la cuenta: crear una cuenta es justamente para no perderlo. Nunca pisa
+ * lo que la cuenta ya tenia (ver local-progress-import.ts). Si algo falla,
+ * queda en el navegador y se ofrece reintentar.
+ */
 export function LocalProgressImporter() {
   const { status } = useSession();
   const { t } = useLocale();
   const message = useMessage();
-  const [count, setCount] = useState(0);
+  const [failedCount, setFailedCount] = useState(0);
   const [importing, setImporting] = useState(false);
+  const attempted = useRef(false);
 
-  useEffect(() => {
-    if (status === 'authenticated') setCount(listLocalProgress().length);
-  }, [status]);
-
-  if (status !== 'authenticated' || count === 0) return null;
-
-  const handleImport = async () => {
-    setImporting(true);
+  const runImport = useCallback(async () => {
     const pending = listLocalProgress();
-    let imported = 0;
+    if (pending.length === 0) return;
+    setImporting(true);
     try {
-      for (const { seriesId, progress } of pending) {
-        const response = await fetch(`/api/series/${seriesId}/watched`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
+      const response = await fetch('/api/user/local-progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: pending.map(({ seriesId, progress }) => ({
+            seriesId,
             episodeIds: progress.episodeIds,
-            watched: true,
-          }),
-        });
-        if (!response.ok) continue;
-        clearLocalSeriesProgress(seriesId);
-        imported += 1;
-      }
-      setCount(listLocalProgress().length);
-      if (imported > 0) {
+            ...(progress.intent ? { intent: progress.intent } : {}),
+          })),
+        }),
+      });
+      if (!response.ok) throw new Error();
+      const { imported, failed } = (await response.json()) as {
+        imported: number[];
+        failed: number[];
+      };
+      for (const seriesId of imported) clearLocalSeriesProgress(seriesId);
+      setFailedCount(failed.length);
+      if (imported.length > 0) {
         window.dispatchEvent(new Event('mundobl:account-progress-imported'));
-        message.success(t('trackingPanel.localImportSuccess'));
+        message.success(
+          t('trackingPanel.localImportSuccess', { n: imported.length })
+        );
       }
-      if (imported !== pending.length) {
-        message.error(t('trackingPanel.localImportError'));
-      }
+    } catch {
+      setFailedCount(listLocalProgress().length);
     } finally {
       setImporting(false);
     }
-  };
+  }, [message, t]);
+
+  useEffect(() => {
+    if (status !== 'authenticated' || attempted.current) return;
+    attempted.current = true;
+    void runImport();
+  }, [status, runImport]);
+
+  if (status !== 'authenticated' || failedCount === 0) return null;
 
   return (
     <Alert
       className="local-progress-importer"
-      type="info"
+      type="warning"
       showIcon
-      title={t('trackingPanel.localImportOffer', { n: count })}
+      closable
+      onClose={() => setFailedCount(0)}
+      title={t('trackingPanel.localImportOffer', { n: failedCount })}
       action={
         <Button
           type="primary"
           icon={<CloudUploadOutlined />}
           loading={importing}
-          onClick={() => void handleImport()}
+          onClick={() => void runImport()}
         >
           {t('trackingPanel.localImportButton')}
         </Button>

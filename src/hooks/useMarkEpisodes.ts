@@ -6,11 +6,12 @@ import { useSeriesUserStatus } from '@/components/series/SeriesUserStatusProvide
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { setLocalEpisodesWatched } from '@/lib/local-progress';
+import { recordSeriesActivity } from '@/lib/activity-beacon';
 
 /**
  * Marca o desmarca episodios de la serie del provider en un solo request y
- * refresca a todos los que lo leen (panel, listas). Sin sesion guarda la
- * intencion y manda al login: PendingTrackApplier la aplica al volver.
+ * refresca a todos los que lo leen (panel, listas). Sin sesion se guarda en
+ * este navegador (local-progress.ts), con las mismas reglas.
  *
  * `pendingKey` dice que boton esta esperando respuesta.
  */
@@ -30,6 +31,7 @@ export function useMarkEpisodes() {
 
     if (storage === 'local') {
       setLocalEpisodesWatched(seriesId, episodeIds, watched);
+      if (watched) recordSeriesActivity(seriesId, 'chapter', episodeIds[0]);
       await refetch();
       return true;
     }
@@ -42,6 +44,7 @@ export function useMarkEpisodes() {
         body: JSON.stringify({ episodeIds, watched }),
       });
       if (!response.ok) throw new Error();
+      if (watched) recordSeriesActivity(seriesId, 'chapter', episodeIds[0]);
       await refetch();
       return true;
     } catch {

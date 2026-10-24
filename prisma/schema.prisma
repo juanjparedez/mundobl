@@ -418,6 +418,7 @@ model Series {
   linkedFromUserEmbeds Series[]             @relation("UserEmbedLink")
   seriesNotes          SeriesNote[]
   trackingEvents       TrackingEvent[]
+  activityDaily        SeriesActivityDaily[]
 
   @@index([origin, visibility])
   @@index([submittedById, createdAt])
@@ -1221,7 +1222,8 @@ enum WatchStatus {
   VIENDO
   VISTA
   ABANDONADA
-  RETOMAR
+  RETOMAR // En la interfaz: "En pausa"
+  QUIERO_VER // En la lista para ver; marcar un capitulo la pasa a VIENDO
 }
 
 enum TrackingEventKind {
@@ -1930,6 +1932,10 @@ model CommunityProfile {
   moderationHidden Boolean @default(false)
   promptChoice CommunityPromptChoice @default(NEW)
   promptAfter DateTime?
+  // Alias publico de quien no publica su nombre (ranking, actividad). Sin
+  // semilla propia se deriva del userId con un hash: ver community-alias.ts.
+  aliasSeed Int?
+  aliasUpdatedAt DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -2066,6 +2072,22 @@ model SupportSettings {
 }
 
 // Aggregated navigation only. No visitor IDs, IPs, accounts or viewing history.
+// Actividad anonima agregada por dia UTC, serie, tipo, origen y pais: sin
+// usuario, IP ni cookie. Es lo que muestra que el sitio se usa aunque la
+// mayoria mire sin cuenta. Ver src/lib/series-activity.ts.
+model SeriesActivityDaily {
+  day      DateTime @db.Date
+  seriesId Int
+  series   Series   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  kind     String // 'view' | 'chapter' | 'want' | 'finish'
+  source   String // 'account' | 'browser'
+  country  String   @default("") // ISO-3166 alfa-2 del edge, '' si no se sabe
+  count    Int      @default(0)
+
+  @@id([day, seriesId, kind, source, country])
+  @@index([seriesId, day])
+}
+
 model PilotClickDaily {
   day DateTime @db.Date
   placement String

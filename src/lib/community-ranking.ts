@@ -1,4 +1,10 @@
 import { prisma } from '@/lib/database';
+import {
+  aliasParts,
+  aliasSeedFor,
+  distinctAliasParts,
+  type AliasParts,
+} from '@/lib/community-alias';
 
 /**
  * Ranking mensual de la comunidad: capitulos marcados como vistos en los
@@ -9,7 +15,9 @@ import { prisma } from '@/lib/database';
  * Privacidad: Mi seguimiento le promete al usuario que su tracking es
  * privado. Por eso el ranking publico es anonimo y solo muestra el nombre de
  * quien publico su perfil de comunidad (CommunityProfile.published, el
- * opt-in que ya existe). Cada usuario ve su propia posicion aparte.
+ * opt-in que ya existe). El resto aparece con un alias generado
+ * (community-alias.ts), nunca con su nombre. Cada usuario ve su propia
+ * posicion aparte.
  *
  * Fuera del ranking: ADMIN, MODERATOR (el equipo) y cuentas baneadas.
  */
@@ -22,6 +30,8 @@ export interface RankingEntry {
   /** Solo con perfil de comunidad publicado; si no, null (anonimo). */
   name: string | null;
   profileId: string | null;
+  /** Alias para mostrar cuando no hay nombre; unico dentro del ranking. */
+  alias: AliasParts | null;
 }
 
 export interface OwnRankingPosition {
@@ -31,6 +41,9 @@ export interface OwnRankingPosition {
   /** Cuantas personas de la comunidad entran en el ranking del mes. */
   ranked: number;
   windowDays: number;
+  /** Como aparece en el ranking si no publico su perfil. */
+  alias: AliasParts;
+  published: boolean;
 }
 
 interface RankedRow {
@@ -67,33 +80,55 @@ export async function getMonthlyRanking(
 ): Promise<RankingEntry[]> {
   const top = (await rankedRows(windowStart(now))).slice(0, RANKING_SIZE);
   const profiles = await prisma.communityProfile.findMany({
-    where: {
-      userId: { in: top.map((row) => row.userId) },
+    where: { userId: { in: top.map((row) => row.userId) } },
+    select: {
+      userId: true,
+      publicId: true,
+      displayName: true,
       published: true,
-      moderationHidden: false,
+      moderationHidden: true,
+      aliasSeed: true,
     },
-    select: { userId: true, publicId: true, displayName: true },
   });
   const byUser = new Map(profiles.map((p) => [p.userId, p]));
-  return top.map((row) => {
+  const named = top.map((row) => {
     const profile = byUser.get(row.userId);
-    const name = profile?.displayName.trim() || null;
-    return {
-      rank: Number(row.rank),
-      count: Number(row.count),
-      name: profile && name ? name : null,
-      profileId: profile && name ? profile.publicId : null,
-    };
+    const name = profile?.displayName.trim();
+    return profile?.published && !profile.moderationHidden && name
+      ? { name, profileId: profile.publicId }
+      : null;
   });
+  const anonymous = top.filter((_, i) => !named[i]);
+  const aliases = distinctAliasParts(
+    anonymous.map((row) =>
+      aliasSeedFor(row.userId, byUser.get(row.userId)?.aliasSeed)
+    )
+  );
+  let nextAlias = 0;
+  return top.map((row, i) => ({
+    rank: Number(row.rank),
+    count: Number(row.count),
+    name: named[i]?.name ?? null,
+    profileId: named[i]?.profileId ?? null,
+    alias: named[i] ? null : aliases[nextAlias++],
+  }));
 }
 
 export async function getOwnRankingPosition(
   userId: string,
   now: Date = new Date()
 ): Promise<OwnRankingPosition> {
-  const rows = await rankedRows(windowStart(now));
+  const [rows, profile] = await Promise.all([
+    rankedRows(windowStart(now)),
+    prisma.communityProfile.findUnique({
+      where: { userId },
+      select: { aliasSeed: true, published: true },
+    }),
+  ]);
   const own = rows.find((row) => row.userId === userId);
   return {
+    alias: aliasParts(aliasSeedFor(userId, profile?.aliasSeed)),
+    published: profile?.published ?? false,
     rank: own ? Number(own.rank) : null,
     count: own ? Number(own.count) : 0,
     ranked: rows.length,

@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { signIn, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { Alert, Button, Input, Segmented, Select, Skeleton, Tabs } from 'antd';
 import {
@@ -37,23 +37,14 @@ import { WatchingEpisodeDrawer } from '../WatchingEpisodeDrawer/WatchingEpisodeD
 import { TrackingHistory } from '../TrackingHistory/TrackingHistory';
 import { RecommendedForYou } from '../RecommendedForYou/RecommendedForYou';
 import { MonthlyRecap } from '../MonthlyRecap/MonthlyRecap';
+import { LocalWatchingList } from '../LocalWatchingList/LocalWatchingList';
 import './CurrentlyWatchingDashboard.css';
 
 export function CurrentlyWatchingDashboard() {
   const { data: session, status } = useSession();
-  const { t } = useLocale();
   if (status === 'loading') return <Skeleton active />;
-  if (!session?.user?.id)
-    return (
-      <EmptyState
-        title={t('watchingDashboard.loginPrompt')}
-        action={
-          <Button type="primary" onClick={() => void signIn()}>
-            {t('trackingWorkspace.signIn')}
-          </Button>
-        }
-      />
-    );
+  // Sin cuenta tambien hay seguimiento: el de este navegador.
+  if (!session?.user?.id) return <LocalWatchingList />;
   // Changing accounts remounts the workspace before any private data can be shown.
   return <WatchingCollection key={session.user.id} userId={session.user.id} />;
 }
@@ -75,6 +66,7 @@ function WatchingCollection({ userId }: { userId: string }) {
     VISTA: t('viewStatus.vista'),
     RETOMAR: t('viewStatus.retomar'),
     ABANDONADA: t('viewStatus.abandonada'),
+    QUIERO_VER: t('viewStatus.quieroVer'),
   };
   const [items, setItems] = useState<WatchingItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -508,6 +500,7 @@ function WatchingCollection({ userId }: { userId: string }) {
                     VIENDO: t('viewStatus.viendo'),
                     RETOMAR: t('viewStatus.retomar'),
                     ABANDONADA: t('viewStatus.abandonada'),
+                    QUIERO_VER: t('viewStatus.quieroVer'),
                   },
                 }}
               />

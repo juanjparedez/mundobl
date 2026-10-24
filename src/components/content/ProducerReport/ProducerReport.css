@@ -1,0 +1,49 @@
+.producer-report {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.producer-report h1,
+.producer-report h2 {
+  margin: 0 0 var(--spacing-sm);
+  color: var(--text-primary);
+}
+
+.producer-report__header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.producer-report__header p {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.producer-report__controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.producer-report__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+}
+
+.producer-report__note {
+  margin: var(--spacing-sm) 0 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.producer-report__row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: var(--spacing-md);
+}

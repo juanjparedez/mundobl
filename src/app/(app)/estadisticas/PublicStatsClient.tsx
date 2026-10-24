@@ -33,6 +33,7 @@ import { getSeriesUrl } from '@/lib/slug';
 import { BarChart, DonutChart, LineChart } from '@/components/charts';
 import type { PublicStats as PublicStatsResponse } from '@/lib/public-stats';
 import { OwnRankingPosition } from '@/components/community/OwnRankingPosition/OwnRankingPosition';
+import { formatAlias } from '@/lib/community-alias';
 import './public-stats.css';
 
 type ChartMode = 'bar' | 'list';
@@ -254,6 +255,11 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
   const isAdmin = session?.user?.role === 'ADMIN';
 
   const data = initialData;
+  const aliasWords = {
+    first: t('communityAlias.firstWords'),
+    second: t('communityAlias.secondWords'),
+    template: t('communityAlias.template'),
+  };
   const [chartMode, setChartMode] = useState<ChartMode>(() => {
     if (typeof window === 'undefined') return 'bar';
     return (localStorage.getItem(CHART_MODE_KEY) as ChartMode | null) ?? 'bar';
@@ -451,6 +457,11 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
             label: t('publicStats.episodesRecently'),
           },
           {
+            icon: <GlobalOutlined />,
+            value: data.recent.browserChaptersRecently ?? 0,
+            label: t('publicStats.browserChaptersRecently'),
+          },
+          {
             icon: <CheckCircleOutlined />,
             value: data.recent.completedRecently,
             label: t('publicStats.completedRecently'),
@@ -510,11 +521,15 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
       <RankingPanel
         title={t('publicStats.monthlyRanking')}
         icon={<TrophyOutlined />}
-        // Etiqueta anonima numerada: el grafico usa la etiqueta como eje y
-        // "Miembro anonimo" repetido se pisaria en una sola barra.
+        // Sin perfil publicado se muestra el alias generado (unico en la
+        // lista: el grafico usa la etiqueta como eje). El numerado queda
+        // para paginas cacheadas de antes del alias.
         items={data.recent.topWatchers.map((entry, index) => ({
           key:
-            entry.name ?? t('publicStats.anonymousWatcher', { n: index + 1 }),
+            entry.name ??
+            (entry.alias
+              ? formatAlias(entry.alias, aliasWords)
+              : t('publicStats.anonymousWatcher', { n: index + 1 })),
           count: entry.count,
           href: entry.profileId
             ? `/comunidad/perfiles/${entry.profileId}`
@@ -536,7 +551,11 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
               staff: t('publicStats.rankingStaff'),
               privacy: t('publicStats.rankingPrivacy'),
               privacyLink: t('publicStats.rankingPrivacyLink'),
+              appearsAs: (alias) => t('communityAlias.appearsAs', { alias }),
+              changeAlias: t('communityAlias.change'),
+              changeAliasLater: t('communityAlias.cooldown'),
             }}
+            formatAlias={(parts) => formatAlias(parts, aliasWords)}
           />
         }
       />

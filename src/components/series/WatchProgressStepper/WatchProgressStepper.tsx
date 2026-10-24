@@ -17,7 +17,12 @@ import {
 import type { TrackedChapter } from '@/lib/episode-chapters';
 import { useMessage } from '@/hooks/useMessage';
 import { useSeriesUserStatus } from '../SeriesUserStatusProvider';
-import { setLocalProgressThrough } from '@/lib/local-progress';
+import {
+  getLocalSeriesProgress,
+  setLocalProgressThrough,
+} from '@/lib/local-progress';
+import { recordSeriesActivity } from '@/lib/activity-beacon';
+import { saveSeriesStatus } from '@/lib/series-status-client';
 import './WatchProgressStepper.css';
 
 interface WatchProgressStepperProps {
@@ -29,9 +34,9 @@ interface WatchProgressStepperProps {
   /** Reutilizable en onboarding/cards con controles mas chicos. */
   compact?: boolean;
   /**
-   * Modo sin sesion (T07, CTA anonimo): no llama a la API ni al provider,
-   * solo mueve un numero local y lo reporta via onLocalChange. Tampoco
-   * ofrece "¿Terminaste?" — no hay estado real del servidor que confirmar.
+   * Modo sin sesion: guarda en este navegador (local-progress.ts) en vez de
+   * llamar a la API, y lo reporta via onLocalChange. Ofrece "¿Terminaste?"
+   * igual que con cuenta: Vista tambien se guarda localmente.
    */
   localOnly?: boolean;
   onLocalChange?: (episodeId: number | null) => void;
@@ -88,10 +93,31 @@ export function WatchProgressStepper({
   const canGoNext = index < total - 1 && !pending;
   const nextChapter = index < total - 1 ? chapters[index + 1] : null;
 
+  const announceProgress = (previous: number, targetIndex: number) => {
+    const milestone = crossedMilestone(previous + 1, targetIndex + 1, total);
+    if (milestone !== null) {
+      message.success(
+        interpolateMessage(t('progressStepper.milestone'), {
+          percent: milestone,
+          title: seriesTitle,
+        })
+      );
+    }
+  };
+
   const goTo = async (targetIndex: number) => {
     if (targetIndex === index || pending || targetIndex >= total) return;
     // targetIndex -1 = "no vi ninguno": desmarcar desde el primero.
     const unmark = targetIndex < index;
+    // Solo el "+" cuenta como capitulo visto en la actividad: saltar con el
+    // selector es cargar historia, no ver algo ahora.
+    if (targetIndex === index + 1) {
+      recordSeriesActivity(
+        seriesId,
+        'chapter',
+        lastEpisodeId(chapters[targetIndex])
+      );
+    }
 
     if (localOnly) {
       setIndex(targetIndex);
@@ -107,6 +133,17 @@ export function WatchProgressStepper({
         targetIndex < 0 ? null : lastEpisodeId(chapters[targetIndex])
       );
       await refetch();
+      const finished = targetIndex === total - 1;
+      if (
+        !unmark &&
+        finished &&
+        !airing &&
+        getLocalSeriesProgress(seriesId).intent !== 'VISTA'
+      ) {
+        setFinishedOpen(true);
+      } else if (!unmark) {
+        announceProgress(index, targetIndex);
+      }
       return;
     }
 
@@ -149,19 +186,7 @@ export function WatchProgressStepper({
       if (!unmark && finished && !airing && data.seriesStatus !== 'VISTA') {
         setFinishedOpen(true);
       } else {
-        const milestone = crossedMilestone(
-          previous + 1,
-          targetIndex + 1,
-          total
-        );
-        if (milestone !== null) {
-          message.success(
-            interpolateMessage(t('progressStepper.milestone'), {
-              percent: milestone,
-              title: seriesTitle,
-            })
-          );
-        }
+        announceProgress(previous, targetIndex);
       }
     } catch {
       setIndex(previous);
@@ -174,12 +199,11 @@ export function WatchProgressStepper({
   const handleMarkComplete = async () => {
     setFinishing(true);
     try {
-      const response = await fetch(`/api/series/${seriesId}/view-status`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'VISTA' }),
-      });
-      if (!response.ok) throw new Error();
+      await saveSeriesStatus(
+        seriesId,
+        'VISTA',
+        localOnly ? 'local' : 'account'
+      );
       await refetch();
     } catch {
       message.error(t('progressStepper.error'));
@@ -280,23 +304,19 @@ export function WatchProgressStepper({
           </Tooltip>
         )}
 
-        {localOnly ? (
-          nextButton
-        ) : (
-          <Popconfirm
-            title={interpolateMessage(t('progressStepper.finishedTitle'), {
-              title: seriesTitle,
-            })}
-            open={finishedOpen}
-            onConfirm={() => void handleMarkComplete()}
-            onCancel={() => setFinishedOpen(false)}
-            okText={t('progressStepper.markComplete')}
-            cancelText={t('progressStepper.notYet')}
-            okButtonProps={{ loading: finishing }}
-          >
-            {nextButton}
-          </Popconfirm>
-        )}
+        <Popconfirm
+          title={interpolateMessage(t('progressStepper.finishedTitle'), {
+            title: seriesTitle,
+          })}
+          open={finishedOpen}
+          onConfirm={() => void handleMarkComplete()}
+          onCancel={() => setFinishedOpen(false)}
+          okText={t('progressStepper.markComplete')}
+          cancelText={t('progressStepper.notYet')}
+          okButtonProps={{ loading: finishing }}
+        >
+          {nextButton}
+        </Popconfirm>
       </div>
 
       {total > 0 && (

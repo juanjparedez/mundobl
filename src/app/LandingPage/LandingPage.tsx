@@ -40,6 +40,7 @@ import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { getSeriesUrl } from '@/lib/slug';
+import { ContinueWatchingRow } from '@/components/watching/ContinueWatchingRow/ContinueWatchingRow';
 import './LandingPage.css';
 
 interface LatestSeries {
@@ -374,6 +375,9 @@ export function LandingPage({ stats }: LandingPageProps) {
           </div>
         </div>
       </section>
+
+      {/* Sin cuenta: lo que se dejo a mitad en este navegador. */}
+      <ContinueWatchingRow />
 
       {/* ── Stats band ── */}
       <section className="landing__stats">
