@@ -77,7 +77,12 @@
   align-items: center;
   gap: var(--spacing-sm);
   color: var(--text-primary);
+  text-decoration: none;
   transition: var(--transition-base);
+}
+
+.sidebar-logo:hover {
+  color: var(--primary-color);
 }
 
 .sidebar-logo-text {

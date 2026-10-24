@@ -1,16 +1,15 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Button, Tag } from 'antd';
+import { Button, Segmented, Select, Switch, Tag } from 'antd';
 import {
   SearchOutlined,
   LoginOutlined,
   StarOutlined,
-  CommentOutlined,
   BarChartOutlined,
-  HeartOutlined,
   PlayCircleOutlined,
   GlobalOutlined,
   ReadOutlined,
@@ -26,6 +25,9 @@ import {
   TeamOutlined,
   CalendarOutlined,
   AppstoreOutlined,
+  SettingOutlined,
+  BgColorsOutlined,
+  VideoCameraOutlined,
 } from '@ant-design/icons';
 import { signIn, useSession } from 'next-auth/react';
 import { ROUTES } from '@/constants/navigation';
@@ -36,10 +38,23 @@ import type { AiringScheduleRow } from '@/lib/database';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { LoggedInHomeRedirect } from '@/components/common/LoggedInHomeRedirect/LoggedInHomeRedirect';
 import { WatchableCarousel } from '@/components/common/WatchableCarousel/WatchableCarousel';
+import { SettingsPanel } from '@/components/layout/SettingsPanel/SettingsPanel';
 import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
+import { LOCALE_LABELS, SUPPORTED_LOCALES } from '@/i18n/config';
+import type { TranslationKey } from '@/i18n/messages';
 import { useLocale } from '@/lib/providers/LocaleProvider';
+import { useSpoilerFree } from '@/lib/providers/SpoilerFreeProvider';
+import { useTheme } from '@/lib/providers/ThemeProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { getSeriesUrl } from '@/lib/slug';
+import {
+  START_PAGE_CHANGED_EVENT,
+  getStartPagePreference,
+  setStartPagePreference,
+  type StartPageOption,
+} from '@/lib/start-page-preference';
+import { ACCENT_PRESETS, getSkinSwatches } from '@/lib/theme.config';
+import type { AccentPresetKey, SkinKey, ToneKey } from '@/types/theme.types';
 import { ContinueWatchingRow } from '@/components/watching/ContinueWatchingRow/ContinueWatchingRow';
 import './LandingPage.css';
 
@@ -126,95 +141,73 @@ interface LandingPageProps {
   stats: LandingStats;
 }
 
+const SKIN_OPTIONS: {
+  key: SkinKey;
+  nameKey: TranslationKey;
+  descKey: TranslationKey;
+}[] = [
+  {
+    key: 'default',
+    nameKey: 'settings.skinDefault',
+    descKey: 'settings.skinDefaultDesc',
+  },
+  {
+    key: 'premium',
+    nameKey: 'settings.skinPremium',
+    descKey: 'settings.skinPremiumDesc',
+  },
+  {
+    key: 'sakura',
+    nameKey: 'settings.skinSakura',
+    descKey: 'settings.skinSakuraDesc',
+  },
+  {
+    key: 'midnight',
+    nameKey: 'settings.skinMidnight',
+    descKey: 'settings.skinMidnightDesc',
+  },
+  {
+    key: 'journal',
+    nameKey: 'settings.skinJournal',
+    descKey: 'settings.skinJournalDesc',
+  },
+  {
+    key: 'neon',
+    nameKey: 'settings.skinNeon',
+    descKey: 'settings.skinNeonDesc',
+  },
+];
+
 export function LandingPage({ stats }: LandingPageProps) {
   const router = useRouter();
   const { data: session } = useSession();
-  const { t } = useLocale();
+  const { locale, setLocale, t } = useLocale();
+  const {
+    theme,
+    setTheme,
+    skin,
+    setSkin,
+    accent,
+    setAccent,
+    customAccent,
+    tone,
+    setTone,
+  } = useTheme();
+  const { enabled: spoilerFree, setEnabled: setSpoilerFree } = useSpoilerFree();
   const scheduleLabels = useWeeklyScheduleLabels();
 
-  const features = [
-    {
-      icon: <PlayCircleOutlined />,
-      title: t('landing.featureTrackingTitle'),
-      desc: t('landing.featureTrackingDesc'),
-    },
-    {
-      icon: <SearchOutlined />,
-      title: t('landing.featureCatalogTitle'),
-      desc: t('landing.featureCatalogDesc'),
-    },
-    {
-      icon: <StarOutlined />,
-      title: t('landing.featureRatingsTitle'),
-      desc: t('landing.featureRatingsDesc'),
-    },
-    {
-      icon: <CommentOutlined />,
-      title: t('landing.featureCommentsTitle'),
-      desc: t('landing.featureCommentsDesc'),
-    },
-    {
-      icon: <HeartOutlined />,
-      title: t('landing.featureFavoritesTitle'),
-      desc: t('landing.featureFavoritesDesc'),
-    },
-    {
-      icon: <BarChartOutlined />,
-      title: t('landing.featureStatsTitle'),
-      desc: t('landing.featureStatsDesc'),
-    },
-  ];
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [startPage, setStartPage] = useState<StartPageOption>(() =>
+    getStartPagePreference()
+  );
 
-  // Novedad de "Asistente IA" oculta de la landing por ahora — la
-  // funcionalidad sigue viva (helper en src/lib/gemini.ts), pero no
-  // queremos promocionarla en home hasta que este pulida.
-  const novedades = [
-    // La vidriera de reseñas solo sale si hay alguna publicada: promocionar
-    // una funcion vacia es justamente lo que la home venia haciendo mal.
-    ...(stats.totalReviews > 0
-      ? [
-          {
-            icon: <ReadOutlined />,
-            tag: t('landing.novedadReviewsTag'),
-            title: t('landing.novedadReviewsTitle'),
-            desc: t('landing.novedadReviewsDesc'),
-            color: 'blue' as const,
-          },
-        ]
-      : []),
-    {
-      icon: <EyeInvisibleOutlined />,
-      tag: t('landing.novedadSpoilerTag'),
-      title: t('landing.novedadSpoilerTitle'),
-      desc: t('landing.novedadSpoilerDesc'),
-      color: 'magenta' as const,
-    },
-    {
-      icon: <FileTextOutlined />,
-      tag: t('landing.novedadNotesTag'),
-      title: t('landing.novedadNotesTitle'),
-      desc: t('landing.novedadNotesDesc'),
-      color: 'cyan' as const,
-    },
-    {
-      icon: <TranslationOutlined />,
-      tag: t('landing.novedadI18nTag'),
-      title: t('landing.novedadI18nTitle'),
-      desc: t('landing.novedadI18nDesc'),
-      color: 'purple' as const,
-    },
-    {
-      icon: <LikeOutlined />,
-      tag: t('landing.novedadVotesTag'),
-      title: t('landing.novedadVotesTitle'),
-      desc: t('landing.novedadVotesDesc'),
-      color: 'green' as const,
-    },
-  ];
+  useEffect(() => {
+    const syncStartPage = () => setStartPage(getStartPagePreference());
+    window.addEventListener(START_PAGE_CHANGED_EVENT, syncStartPage);
+    return () =>
+      window.removeEventListener(START_PAGE_CHANGED_EVENT, syncStartPage);
+  }, []);
 
-  // La franja abre con la prueba de vida del tracker. Una semana tranquila
-  // deja el contador en cero, y un cero grande arriba de todo dice lo
-  // contrario de lo que la home quiere decir: ahi cae al historico.
   const episodesThisWeek = stats.episodesMarkedThisWeek ?? 0;
   const episodesStat =
     episodesThisWeek > 0
@@ -236,31 +229,91 @@ export function LandingPage({ stats }: LandingPageProps) {
       icon: <GlobalOutlined />,
     },
     {
+      value: stats.watchableCount ?? 0,
+      label: t('landing.statWatchable'),
+      icon: <VideoCameraOutlined />,
+    },
+    {
       value: stats.usersFollowing ?? 0,
       label: t('landing.statUsersFollowing'),
       icon: <TeamOutlined />,
     },
   ];
 
-  const howSteps = [
+  const pillars = [
     {
-      icon: <SearchOutlined />,
-      title: t('landing.how1Title'),
-      desc: t('landing.how1Desc'),
+      key: 'watch',
+      href: ROUTES.VER,
+      icon: <VideoCameraOutlined />,
+      badge: t('landing.pillarWatchBadge'),
+      title: t('navSections.watch'),
+      count: interpolateMessage(t('landing.offerSeriesCount'), {
+        n: (stats.watchableCount ?? 0).toLocaleString(),
+      }),
+      desc: t('landing.offerWatchDesc'),
+      cta: t('landing.offerWatchCta'),
+      highlight: true,
     },
     {
-      icon: <CheckCircleFilled />,
-      title: t('landing.how2Title'),
-      desc: t('landing.how2Desc'),
+      key: 'catalog',
+      href: ROUTES.CATALOGO,
+      icon: <AppstoreOutlined />,
+      badge: t('landing.pillarCatalogBadge'),
+      title: t('navSections.follow'),
+      count: interpolateMessage(t('landing.offerSeriesCount'), {
+        n: stats.totalSeries.toLocaleString(),
+      }),
+      desc: t('landing.offerFollowDesc'),
+      cta: t('landing.exploreCatalog'),
+      highlight: false,
     },
     {
+      key: 'track',
+      href: ROUTES.WATCHING,
+      icon: <PlayCircleOutlined />,
+      badge: t('landing.pillarTrackBadge'),
+      title: t('landing.pillarTrackTitle'),
+      count: null,
+      desc: t('landing.pillarTrackDesc'),
+      cta: t('landing.pillarTrackCta'),
+      highlight: false,
+    },
+    {
+      key: 'schedule',
+      href: ROUTES.ESTRENOS,
       icon: <CalendarOutlined />,
-      title: t('landing.how3Title'),
-      desc: t('landing.how3Desc'),
+      badge: t('landing.pillarScheduleBadge'),
+      title: t('landing.pillarScheduleTitle'),
+      count: null,
+      desc: t('landing.pillarScheduleDesc'),
+      cta: t('landing.pillarScheduleCta'),
+      highlight: false,
+    },
+    {
+      key: 'review',
+      href: ROUTES.COMMUNITY,
+      icon: <StarOutlined />,
+      badge: t('landing.pillarReviewBadge'),
+      title: t('landing.pillarReviewTitle'),
+      count: null,
+      desc: t('landing.pillarReviewDesc'),
+      cta: t('landing.pillarReviewCta'),
+      highlight: false,
+    },
+    {
+      key: 'stats',
+      href: ROUTES.ESTADISTICAS,
+      icon: <BarChartOutlined />,
+      badge: t('landing.pillarStatsBadge'),
+      title: t('landing.pillarStatsTitle'),
+      count: null,
+      desc: t('landing.pillarStatsDesc'),
+      cta: t('landing.pillarStatsCta'),
+      highlight: false,
     },
   ];
 
-  const handleStartTracking = () => {
+  const handleGoogleSignIn = () => {
     signIn('google', { callbackUrl: ROUTES.WATCHING });
   };
 
@@ -282,6 +335,8 @@ export function LandingPage({ stats }: LandingPageProps) {
     if (url.startsWith('/')) return false;
     return true;
   };
+
+  const accentIsAuto = !customAccent && accent === null;
 
   return (
     <div className="landing">
@@ -332,22 +387,125 @@ export function LandingPage({ stats }: LandingPageProps) {
               <Button
                 type="primary"
                 size="large"
-                icon={<LoginOutlined />}
-                onClick={handleStartTracking}
+                icon={<SearchOutlined />}
+                onClick={() => router.push(ROUTES.CATALOGO)}
                 className="landing__cta-primary"
               >
-                {t('landing.ctaPrimary')}
+                {t('landing.exploreCatalog')}
               </Button>
             )}
 
             <Button
               size="large"
-              icon={<SearchOutlined />}
-              onClick={() => router.push(ROUTES.CATALOGO)}
+              icon={<VideoCameraOutlined />}
+              onClick={() => router.push(ROUTES.VER)}
             >
-              {t('landing.exploreCatalog')}
+              {t('landing.offerWatchCta')}
+              {(stats.watchableCount ?? 0) > 0
+                ? ` (${(stats.watchableCount ?? 0).toLocaleString()})`
+                : ''}
             </Button>
+
+            {session?.user ? (
+              <Button
+                size="large"
+                icon={<SearchOutlined />}
+                onClick={() => router.push(ROUTES.CATALOGO)}
+              >
+                {t('landing.exploreCatalog')}
+              </Button>
+            ) : (
+              <Button
+                size="large"
+                icon={<PlayCircleOutlined />}
+                onClick={() => router.push(ROUTES.WATCHING)}
+              >
+                {t('landing.ctaPrimary')}
+              </Button>
+            )}
           </div>
+
+          {/* Sin cuenta vs Con cuenta / Preferencia de inicio si ya inició sesión */}
+          {session?.user ? (
+            <div className="landing__start-pref">
+              <div className="landing__start-pref-row">
+                <Tag color="success" className="landing__start-pref-tag">
+                  {t('landing.loggedInBadge')}
+                </Tag>
+                <label
+                  htmlFor="landing-start-page-select"
+                  className="landing__start-pref-label"
+                >
+                  {t('landing.startPageInlineLabel')}
+                </label>
+                <Select
+                  id="landing-start-page-select"
+                  size="small"
+                  value={startPage}
+                  onChange={(value: StartPageOption) => {
+                    setStartPage(value);
+                    setStartPagePreference(value);
+                  }}
+                  className="landing__start-pref-select"
+                  options={[
+                    {
+                      value: 'landing',
+                      label: t('settings.startPageLanding'),
+                    },
+                    {
+                      value: 'watching',
+                      label: t('settings.startPageWatching'),
+                    },
+                    {
+                      value: 'catalogo',
+                      label: t('settings.startPageCatalogo'),
+                    },
+                    { value: 'ver', label: t('settings.startPageVer') },
+                    {
+                      value: 'estrenos',
+                      label: t('settings.startPageEstrenos'),
+                    },
+                  ]}
+                  aria-label={t('landing.startPageInlineLabel')}
+                />
+              </div>
+              <p className="landing__start-pref-hint">
+                {t('landing.startPageInlineHint')}
+              </p>
+            </div>
+          ) : (
+            <div className="landing__auth-card">
+              <div className="landing__auth-cols">
+                <div className="landing__auth-col">
+                  <span className="landing__auth-col-title">
+                    <CheckCircleFilled className="landing__auth-icon" />{' '}
+                    {t('landing.authNoAccountTitle')}
+                  </span>
+                  <p className="landing__auth-col-desc">
+                    {t('landing.authNoAccountDesc')}
+                  </p>
+                </div>
+                <div className="landing__auth-col">
+                  <span className="landing__auth-col-title">
+                    <SafetyCertificateOutlined className="landing__auth-icon" />{' '}
+                    {t('landing.authWithAccountTitle')}
+                  </span>
+                  <p className="landing__auth-col-desc">
+                    {t('landing.authWithAccountDesc')}
+                  </p>
+                </div>
+              </div>
+              <div className="landing__auth-action">
+                <Button
+                  size="middle"
+                  icon={<LoginOutlined />}
+                  onClick={handleGoogleSignIn}
+                >
+                  {t('landing.authSignInGoogle')}
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
 
         <div
@@ -365,8 +523,6 @@ export function LandingPage({ stats }: LandingPageProps) {
           />
           <div className="landing__hero-glow" />
 
-          {/* Floating chips sobre la artwork. Chip 'AI' oculto por ahora
-           * (mismo motivo que la novedad arriba). */}
           <div className="landing__floating-chip landing__floating-chip--lang">
             <TranslationOutlined /> {t('landing.heroChipLanguages')}
           </div>
@@ -379,90 +535,252 @@ export function LandingPage({ stats }: LandingPageProps) {
       {/* Sin cuenta: lo que se dejo a mitad en este navegador. */}
       <ContinueWatchingRow />
 
-      {/* ── Stats band ── */}
+      {/* ── Stats band + enlace a /estadisticas ── */}
       <section className="landing__stats">
-        {statItems.map((item) => (
-          <div key={item.label} className="landing__stat">
-            <span className="landing__stat-icon">{item.icon}</span>
-            <span className="landing__stat-value">
-              {item.value.toLocaleString()}
-            </span>
-            <span className="landing__stat-label">{item.label}</span>
-          </div>
-        ))}
+        <div className="landing__stats-items">
+          {statItems.map((item) => (
+            <div key={item.label} className="landing__stat">
+              <span className="landing__stat-icon">{item.icon}</span>
+              <span className="landing__stat-value">
+                {item.value.toLocaleString()}
+              </span>
+              <span className="landing__stat-label">{item.label}</span>
+            </div>
+          ))}
+        </div>
+        <Link href={ROUTES.ESTADISTICAS} className="landing__stats-cta">
+          <BarChartOutlined /> {t('landing.statsExploreCta')}
+        </Link>
       </section>
 
-      {/* ── Que vas a encontrar ──
-       * El catalogo es mucho mas grande que lo que se ve aca. Se dice con los
-       * dos numeros reales antes de cualquier vidriera. */}
+      {/* ── Mapa interactivo: Todo lo que podés hacer en MundoBL ── */}
       <section className="landing__offer" aria-labelledby="landing-offer-title">
         <h2 id="landing-offer-title" className="landing__offer-title">
           {t('landing.offerTitle')}
         </h2>
-        <div className="landing__offer-grid">
-          <article className="landing__offer-card landing__offer-card--watch">
-            <span className="landing__offer-icon" aria-hidden="true">
-              <PlayCircleOutlined />
-            </span>
-            <h3 className="landing__offer-card-title">
-              {t('navSections.watch')}
-            </h3>
-            <span className="landing__offer-count">
-              {interpolateMessage(t('landing.offerSeriesCount'), {
-                n: (stats.watchableCount ?? 0).toLocaleString(),
-              })}
-            </span>
-            <p className="landing__offer-desc">{t('landing.offerWatchDesc')}</p>
-            <Link href={ROUTES.VER} className="landing__offer-link">
-              {t('landing.offerWatchCta')} <ArrowRightOutlined />
+        <div className="landing__pillars-grid">
+          {pillars.map((pillar) => (
+            <Link
+              key={pillar.key}
+              href={pillar.href}
+              className={`landing__offer-card${
+                pillar.highlight ? ' landing__offer-card--watch' : ''
+              }`}
+            >
+              <div className="landing__offer-card-top">
+                <span className="landing__offer-icon" aria-hidden="true">
+                  {pillar.icon}
+                </span>
+                <Tag
+                  color={pillar.highlight ? 'magenta' : 'default'}
+                  className="landing__offer-badge"
+                >
+                  {pillar.badge}
+                </Tag>
+              </div>
+              <h3 className="landing__offer-card-title">{pillar.title}</h3>
+              {pillar.count && (
+                <span className="landing__offer-count">{pillar.count}</span>
+              )}
+              <p className="landing__offer-desc">{pillar.desc}</p>
+              <span className="landing__offer-link">
+                {pillar.cta} <ArrowRightOutlined />
+              </span>
             </Link>
-          </article>
-          <article className="landing__offer-card">
-            <span className="landing__offer-icon" aria-hidden="true">
-              <AppstoreOutlined />
-            </span>
-            <h3 className="landing__offer-card-title">
-              {t('navSections.follow')}
-            </h3>
-            <span className="landing__offer-count">
-              {interpolateMessage(t('landing.offerSeriesCount'), {
-                n: stats.totalSeries.toLocaleString(),
-              })}
-            </span>
-            <p className="landing__offer-desc">
-              {t('landing.offerFollowDesc')}
-            </p>
-            <Link href={ROUTES.CATALOGO} className="landing__offer-link">
-              {t('landing.exploreCatalog')} <ArrowRightOutlined />
-            </Link>
-          </article>
+          ))}
         </div>
         <p className="landing__offer-note">{t('landing.offerNote')}</p>
       </section>
 
-      {/* ── Como funciona ──
-       * Tres pasos, antes de cualquier vidriera de contenido: el visitante
-       * que nunca uso un tracker tiene que entender que se hace aca. */}
-      <section className="landing__how">
-        <h2 className="landing__how-title">{t('landing.howTitle')}</h2>
-        <ol className="landing__how-grid">
-          {howSteps.map((step, i) => (
-            <li key={step.title} className="landing__how-step">
-              <span className="landing__how-step-number">{i + 1}</span>
-              <span className="landing__how-step-icon">{step.icon}</span>
-              <h3 className="landing__how-step-title">{step.title}</h3>
-              <p className="landing__how-step-desc">{step.desc}</p>
-            </li>
-          ))}
-        </ol>
+      {/* ── Probador en vivo: Temas, Skins, Colores y Modo Sin Spoilers ── */}
+      <section className="landing__narrative-section landing__personalize">
+        <div className="landing__personalize-card">
+          <header className="landing__section-head landing__section-head--start">
+            <span className="landing__section-eyebrow">
+              <BgColorsOutlined /> {t('landing.personalizeEyebrow')}
+            </span>
+            <h2 className="landing__section-title">
+              {t('landing.personalizeTitle')}
+            </h2>
+            <p className="landing__section-subtitle">
+              {t('landing.personalizeSubtitle')}
+            </p>
+          </header>
+
+          <div className="landing__personalize-controls">
+            {/* Fila 1: Tema Claro/Oscuro + Modo sin spoilers + Idioma */}
+            <div className="landing__personalize-top-row">
+              <div className="landing__personalize-group">
+                <span className="landing__personalize-label">
+                  {t('settings.themeLabel')}
+                </span>
+                <Segmented
+                  value={theme}
+                  onChange={(v) => setTheme(v as 'light' | 'dark')}
+                  options={[
+                    { value: 'light', label: t('settings.themeLight') },
+                    { value: 'dark', label: t('settings.themeDark') },
+                  ]}
+                />
+              </div>
+
+              <div className="landing__personalize-group">
+                <span className="landing__personalize-label">
+                  {t('settings.toneLabel')}
+                </span>
+                <Segmented
+                  value={tone}
+                  onChange={(v) => setTone(v as ToneKey)}
+                  options={[
+                    { value: 'default', label: t('settings.toneDefault') },
+                    { value: 'warm', label: t('settings.toneWarm') },
+                    { value: 'cool', label: t('settings.toneCool') },
+                    { value: 'contrast', label: t('settings.toneContrast') },
+                  ]}
+                />
+              </div>
+
+              <div className="landing__personalize-group">
+                <span className="landing__personalize-label">
+                  {t('settings.spoilerFreeLabel')}
+                </span>
+                <div className="landing__personalize-switch-row">
+                  <Switch
+                    checked={spoilerFree}
+                    onChange={setSpoilerFree}
+                    aria-label={t('settings.spoilerFreeLabel')}
+                  />
+                  <span className="landing__personalize-switch-text">
+                    {t('landing.novedadSpoilerTag')}
+                  </span>
+                </div>
+              </div>
+
+              <div className="landing__personalize-group">
+                <span className="landing__personalize-label">
+                  {t('settings.sectionLanguage')}
+                </span>
+                <Select
+                  size="middle"
+                  value={locale}
+                  onChange={setLocale}
+                  className="landing__personalize-lang-select"
+                  options={SUPPORTED_LOCALES.map((code) => ({
+                    value: code,
+                    label: LOCALE_LABELS[code],
+                  }))}
+                  aria-label={t('common.language')}
+                />
+              </div>
+            </div>
+
+            {/* Fila 2: Galería de 6 Skins en vivo */}
+            <div className="landing__personalize-group">
+              <span className="landing__personalize-label">
+                {t('settings.skinLabel')}
+              </span>
+              <div
+                className="landing__skins-grid"
+                role="radiogroup"
+                aria-label={t('settings.skinLabel')}
+              >
+                {SKIN_OPTIONS.map((opt) => {
+                  const isActive = skin === opt.key;
+                  const swatches = getSkinSwatches(opt.key, theme);
+                  return (
+                    <button
+                      key={opt.key}
+                      type="button"
+                      role="radio"
+                      aria-checked={isActive}
+                      className={`landing__skin-btn${
+                        isActive ? ' landing__skin-btn--active' : ''
+                      }`}
+                      onClick={() => setSkin(opt.key)}
+                    >
+                      <div className="landing__skin-btn-head">
+                        <span className="landing__skin-btn-name">
+                          {t(opt.nameKey)}
+                        </span>
+                        <span className="landing__skin-swatches">
+                          {swatches.map((colorHex, idx) => (
+                            <span
+                              key={idx}
+                              className="landing__skin-swatch"
+                              style={{ background: colorHex }}
+                            />
+                          ))}
+                        </span>
+                      </div>
+                      <span className="landing__skin-btn-desc">
+                        {t(opt.descKey)}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Fila 3: Colores de acento + Botón para abrir todos los ajustes */}
+            <div className="landing__personalize-bottom-row">
+              <div className="landing__personalize-group">
+                <span className="landing__personalize-label">
+                  {t('settings.accentLabel')}
+                </span>
+                <div
+                  className="landing__accent-list"
+                  role="radiogroup"
+                  aria-label={t('settings.accentLabel')}
+                >
+                  <button
+                    type="button"
+                    role="radio"
+                    aria-checked={accentIsAuto}
+                    title={t('settings.accentAuto')}
+                    aria-label={t('settings.accentAuto')}
+                    onClick={() => setAccent(null)}
+                    className={`landing__accent-dot landing__accent-dot--auto${
+                      accentIsAuto ? ' landing__accent-dot--active' : ''
+                    }`}
+                  >
+                    A
+                  </button>
+                  {(Object.keys(ACCENT_PRESETS) as AccentPresetKey[]).map(
+                    (key) => {
+                      const preset = ACCENT_PRESETS[key];
+                      const isActive = !customAccent && accent === key;
+                      return (
+                        <button
+                          key={key}
+                          type="button"
+                          role="radio"
+                          aria-checked={isActive}
+                          title={preset.name}
+                          aria-label={preset.name}
+                          onClick={() => setAccent(key)}
+                          className={`landing__accent-dot${
+                            isActive ? ' landing__accent-dot--active' : ''
+                          }`}
+                          style={{ background: preset.swatch }}
+                        />
+                      );
+                    }
+                  )}
+                </div>
+              </div>
+
+              <Button
+                icon={<SettingOutlined />}
+                onClick={() => setSettingsOpen(true)}
+              >
+                {t('landing.personalizeOpenAll')}
+              </Button>
+            </div>
+          </div>
+        </div>
       </section>
 
-      {/* ── Parrilla semanal de emision ──
-       * Que sale cada dia de esta semana. Es lo primero con informacion
-       * perecedera que ve el visitante, y el motivo de volver: el fandom
-       * mira semanal. Si no hay series en emision, la seccion entera no
-       * se renderiza (mismo criterio que landing__watchable): un header
-       * huerfano sobre una parrilla vacia seria peor que no mostrarla. */}
+      {/* ── Parrilla semanal de emision ── */}
       {stats.airingSchedule && stats.airingSchedule.length > 0 && (
         <section className="landing__estrenos">
           <SectionHeader
@@ -483,39 +801,7 @@ export function LandingPage({ stats }: LandingPageProps) {
         </section>
       )}
 
-      {/* ── Novedades / Lo nuevo ── */}
-      <section className="landing__novedades">
-        <header className="landing__section-head">
-          <span className="landing__section-eyebrow">
-            ✨ {t('landing.novedadesEyebrow')}
-          </span>
-          <h2 className="landing__section-title">
-            {t('landing.novedadesFeaturesTitle')}
-          </h2>
-          <p className="landing__section-subtitle">
-            {t('landing.novedadesSubtitle')}
-          </p>
-        </header>
-        <div className="landing__novedades-grid">
-          {novedades.map((item) => (
-            <article
-              key={item.title}
-              className={`landing__novedad landing__novedad--${item.color}`}
-            >
-              <div className="landing__novedad-icon">{item.icon}</div>
-              <Tag color={item.color} className="landing__novedad-tag">
-                {item.tag}
-              </Tag>
-              <h3 className="landing__novedad-title">{item.title}</h3>
-              <p className="landing__novedad-desc">{item.desc}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      {/* ── Watchable series carousel ── (item 17 fine_tunning_1)
-       * Anuncia la feature "Ver series completas" como un carousel
-       * Netflix-like en la landing. Solo aparece si hay items. */}
+      {/* ── Watchable series carousel ── */}
       {stats.watchableSeries && stats.watchableSeries.length > 0 && (
         <section className="landing__watchable">
           <WatchableCarousel
@@ -525,7 +811,7 @@ export function LandingPage({ stats }: LandingPageProps) {
         </section>
       )}
 
-      {/* ── Personal Tracker & Diary (Section 1: Retención & Diario) ── */}
+      {/* ── Personal Tracker, Diary & Feedback Loop ── */}
       <section className="landing__narrative-section landing__tracker">
         <div className="landing__tracker-inner">
           <div className="landing__tracker-content">
@@ -583,6 +869,20 @@ export function LandingPage({ stats }: LandingPageProps) {
                   </p>
                 </div>
               </div>
+
+              <div className="landing__tracker-feature-item">
+                <div className="landing__tracker-feature-icon">
+                  <StarOutlined />
+                </div>
+                <div>
+                  <h3 className="landing__tracker-feature-title">
+                    {t('landing.trackerFeature4Title')}
+                  </h3>
+                  <p className="landing__tracker-feature-desc">
+                    {t('landing.trackerFeature4Desc')}
+                  </p>
+                </div>
+              </div>
             </div>
 
             <div className="landing__tracker-actions">
@@ -590,7 +890,7 @@ export function LandingPage({ stats }: LandingPageProps) {
                 type="primary"
                 size="large"
                 icon={<PlayCircleOutlined />}
-                onClick={() => router.push(ROUTES.CATALOGO)}
+                onClick={() => router.push(ROUTES.WATCHING)}
               >
                 {t('landing.trackerCta')}
               </Button>
@@ -634,151 +934,15 @@ export function LandingPage({ stats }: LandingPageProps) {
                   {t('landing.trackerMockNoteText')}
                 </p>
               </div>
+
+              <div className="landing__tracker-card-rating">
+                <StarOutlined />
+                <span>{t('landing.trackerMockRatingLabel')}</span>
+              </div>
             </div>
           </div>
         </div>
       </section>
-
-      {/* ── Cultural Glossary & Quiz (Section 2: Glosario & Trivia) ── */}
-      <section className="landing__narrative-section landing__glossary">
-        <header className="landing__section-head">
-          <span className="landing__section-eyebrow">
-            📖 {t('landing.glossaryEyebrow')}
-          </span>
-          <h2 className="landing__section-title">
-            {t('landing.glossaryTitle')}
-          </h2>
-          <p className="landing__section-subtitle">
-            {t('landing.glossarySubtitle')}
-          </p>
-        </header>
-
-        <div className="landing__glossary-grid">
-          {/* Card 1: Featured Cultural Term */}
-          <div className="landing__glossary-term-card">
-            <div className="landing__glossary-term-tag-row">
-              <Tag color="purple" className="landing__glossary-eyebrow-tag">
-                {t('landing.glossaryTermOfTheDay')}
-              </Tag>
-              {stats.featuredGlossaryTerm?.category && (
-                <Tag color="blue">{stats.featuredGlossaryTerm.category}</Tag>
-              )}
-            </div>
-
-            <h3 className="landing__glossary-term-name">
-              {stats.featuredGlossaryTerm?.term || 'Phi / Nong (พี่ / น้อง)'}
-            </h3>
-
-            {stats.featuredGlossaryTerm?.transliteration && (
-              <span className="landing__glossary-term-translit">
-                ({stats.featuredGlossaryTerm.transliteration})
-              </span>
-            )}
-
-            <p className="landing__glossary-term-meaning">
-              {stats.featuredGlossaryTerm?.meaning ||
-                "Tratamiento de respeto y cercanía hacia alguien mayor (P') o menor (N'). Fundamental para entender dinámicas y afecto en el BL tailandés."}
-            </p>
-
-            <div className="landing__glossary-term-action">
-              <Link href="/glosario">
-                <Button icon={<BookOutlined />}>
-                  {t('landing.glossaryExploreCta')}{' '}
-                  {stats.totalGlossaryTerms && stats.totalGlossaryTerms > 0
-                    ? `(${stats.totalGlossaryTerms})`
-                    : ''}
-                </Button>
-              </Link>
-            </div>
-          </div>
-
-          {/* Card 2: Mini-Quiz Challenge */}
-          <div className="landing__quiz-card">
-            <div className="landing__quiz-icon-wrap">
-              <TrophyOutlined className="landing__quiz-trophy" />
-            </div>
-            <h3 className="landing__quiz-title">
-              {t('landing.glossaryQuizCardTitle')}
-            </h3>
-            <p className="landing__quiz-desc">
-              {t('landing.glossaryQuizCardDesc')}
-            </p>
-            <div className="landing__quiz-action">
-              <Link href="/glosario?view=trivia">
-                <Button type="primary" size="large" icon={<TrophyOutlined />}>
-                  {t('landing.glossaryQuizCardCta')}
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Curated Industry News (Section 3: Noticias sin clickbait) ── */}
-      {stats.latestNews && stats.latestNews.length > 0 && (
-        <section className="landing__narrative-section landing__news">
-          <header className="landing__section-head">
-            <span className="landing__section-eyebrow">
-              📰 {t('landing.newsEyebrow')}
-            </span>
-            <h2 className="landing__section-title">{t('landing.newsTitle')}</h2>
-            <p className="landing__section-subtitle">
-              {t('landing.newsSubtitle')}
-            </p>
-          </header>
-
-          <div className="landing__news-grid">
-            {stats.latestNews.map((item) => (
-              <Link
-                key={item.id}
-                href={`/noticias/${item.id}`}
-                className="landing__news-card"
-              >
-                {item.imageUrl && (
-                  <div className="landing__news-card-image-wrap">
-                    <Image
-                      src={item.imageUrl}
-                      alt={item.title}
-                      width={380}
-                      height={190}
-                      className="landing__news-card-image"
-                      quality={70}
-                      unoptimized={shouldSkipOptimization(item.imageUrl)}
-                    />
-                  </div>
-                )}
-                <div className="landing__news-card-body">
-                  <div className="landing__news-card-meta">
-                    {item.publishedAt && (
-                      <span className="landing__news-card-date">
-                        <CalendarOutlined />{' '}
-                        {new Date(item.publishedAt).toLocaleDateString()}
-                      </span>
-                    )}
-                    {item.sourceName && (
-                      <Tag className="landing__news-card-source">
-                        {item.sourceName}
-                      </Tag>
-                    )}
-                  </div>
-                  <h3 className="landing__news-card-title">{item.title}</h3>
-                  {item.summary && (
-                    <p className="landing__news-card-summary">
-                      {truncate(item.summary, 120)}
-                    </p>
-                  )}
-                </div>
-              </Link>
-            ))}
-          </div>
-
-          <div className="landing__news-footer">
-            <Link href="/noticias" className="landing__section-link">
-              {t('landing.newsCta')} <ArrowRightOutlined />
-            </Link>
-          </div>
-        </section>
-      )}
 
       {/* ── Latest series teaser ── */}
       {stats.latestSeries.length > 0 && (
@@ -788,9 +952,6 @@ export function LandingPage({ stats }: LandingPageProps) {
               <h2 className="landing__section-title">
                 {t('landing.latestSeriesTitle')}
               </h2>
-              {/* El ritmo real de carga es el motivo mas honesto para
-                  volver: son filas contadas, no una metrica inflada. Si la
-                  semana fue floja no se muestra nada en vez de rellenar. */}
               {(stats.newThisWeek ?? 0) > 0 && (
                 <p className="landing__section-note">
                   {t('landing.latestSeriesThisWeek', {
@@ -848,6 +1009,79 @@ export function LandingPage({ stats }: LandingPageProps) {
           </div>
         </section>
       )}
+
+      {/* ── Cultural Glossary & Quiz ── */}
+      <section className="landing__narrative-section landing__glossary">
+        <header className="landing__section-head">
+          <span className="landing__section-eyebrow">
+            📖 {t('landing.glossaryEyebrow')}
+          </span>
+          <h2 className="landing__section-title">
+            {t('landing.glossaryTitle')}
+          </h2>
+          <p className="landing__section-subtitle">
+            {t('landing.glossarySubtitle')}
+          </p>
+        </header>
+
+        <div className="landing__glossary-grid">
+          <div className="landing__glossary-term-card">
+            <div className="landing__glossary-term-tag-row">
+              <Tag color="purple" className="landing__glossary-eyebrow-tag">
+                {t('landing.glossaryTermOfTheDay')}
+              </Tag>
+              {stats.featuredGlossaryTerm?.category && (
+                <Tag color="blue">{stats.featuredGlossaryTerm.category}</Tag>
+              )}
+            </div>
+
+            <h3 className="landing__glossary-term-name">
+              {stats.featuredGlossaryTerm?.term || 'Phi / Nong (พี่ / น้อง)'}
+            </h3>
+
+            {stats.featuredGlossaryTerm?.transliteration && (
+              <span className="landing__glossary-term-translit">
+                ({stats.featuredGlossaryTerm.transliteration})
+              </span>
+            )}
+
+            <p className="landing__glossary-term-meaning">
+              {stats.featuredGlossaryTerm?.meaning ||
+                "Tratamiento de respeto y cercanía hacia alguien mayor (P') o menor (N'). Fundamental para entender dinámicas y afecto en el BL tailandés."}
+            </p>
+
+            <div className="landing__glossary-term-action">
+              <Link href="/glosario">
+                <Button icon={<BookOutlined />}>
+                  {t('landing.glossaryExploreCta')}{' '}
+                  {stats.totalGlossaryTerms && stats.totalGlossaryTerms > 0
+                    ? `(${stats.totalGlossaryTerms})`
+                    : ''}
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          <div className="landing__quiz-card">
+            <div className="landing__quiz-icon-wrap">
+              <TrophyOutlined className="landing__quiz-trophy" />
+            </div>
+            <h3 className="landing__quiz-title">
+              {t('landing.glossaryQuizCardTitle')}
+            </h3>
+            <p className="landing__quiz-desc">
+              {t('landing.glossaryQuizCardDesc')}
+            </p>
+            <div className="landing__quiz-action">
+              <Link href="/glosario?view=trivia">
+                <Button type="primary" size="large" icon={<TrophyOutlined />}>
+                  {t('landing.glossaryQuizCardCta')}
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ── Featured review ── */}
       {stats.featuredReview && stats.featuredReview.series && (
@@ -920,7 +1154,73 @@ export function LandingPage({ stats }: LandingPageProps) {
         </section>
       )}
 
-      {/* ── Open Ecosystem & Collaborators (Section 4: Comunidad & Transparencia) ── */}
+      {/* ── Curated Industry News ── */}
+      {stats.latestNews && stats.latestNews.length > 0 && (
+        <section className="landing__narrative-section landing__news">
+          <header className="landing__section-head">
+            <span className="landing__section-eyebrow">
+              📰 {t('landing.newsEyebrow')}
+            </span>
+            <h2 className="landing__section-title">{t('landing.newsTitle')}</h2>
+            <p className="landing__section-subtitle">
+              {t('landing.newsSubtitle')}
+            </p>
+          </header>
+
+          <div className="landing__news-grid">
+            {stats.latestNews.map((item) => (
+              <Link
+                key={item.id}
+                href={`/noticias/${item.id}`}
+                className="landing__news-card"
+              >
+                {item.imageUrl && (
+                  <div className="landing__news-card-image-wrap">
+                    <Image
+                      src={item.imageUrl}
+                      alt={item.title}
+                      width={380}
+                      height={190}
+                      className="landing__news-card-image"
+                      quality={70}
+                      unoptimized={shouldSkipOptimization(item.imageUrl)}
+                    />
+                  </div>
+                )}
+                <div className="landing__news-card-body">
+                  <div className="landing__news-card-meta">
+                    {item.publishedAt && (
+                      <span className="landing__news-card-date">
+                        <CalendarOutlined />{' '}
+                        {new Date(item.publishedAt).toLocaleDateString()}
+                      </span>
+                    )}
+                    {item.sourceName && (
+                      <Tag className="landing__news-card-source">
+                        {item.sourceName}
+                      </Tag>
+                    )}
+                  </div>
+                  <h3 className="landing__news-card-title">{item.title}</h3>
+                  {item.summary && (
+                    <p className="landing__news-card-summary">
+                      {truncate(item.summary, 120)}
+                    </p>
+                  )}
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          <div className="landing__news-footer">
+            <Link href="/noticias" className="landing__section-link">
+              {t('landing.newsCta')} <ArrowRightOutlined />
+            </Link>
+          </div>
+        </section>
+      )}
+
+      {/* ── Open Ecosystem & Collaborators ── */}
       <section className="landing__narrative-section landing__ecosystem">
         <header className="landing__section-head">
           <span className="landing__section-eyebrow">
@@ -973,9 +1273,6 @@ export function LandingPage({ stats }: LandingPageProps) {
         </div>
 
         <div className="landing__ecosystem-cta-wrap">
-          {/* Abre /feedback con el formulario precargado como idea. Antes iba a
-           * /admin/colaborador, que es el panel del rol COLLABORATOR que asigna
-           * un admin: a cualquier otra persona la rebotaba a /catalogo. */}
           <Link
             href={`${ROUTES.FEEDBACK}?type=idea&title=${encodeURIComponent(
               t('landing.ecosystemCta')
@@ -988,34 +1285,32 @@ export function LandingPage({ stats }: LandingPageProps) {
         </div>
       </section>
 
-      {/* ── Features ── */}
-      <section className="landing__features">
-        <h2 className="landing__features-title">
-          {t('landing.featuresTitle')}
-        </h2>
-        <div className="landing__features-grid">
-          {features.map((f) => (
-            <div key={f.title} className="landing__feature-card">
-              <span className="landing__feature-icon">{f.icon}</span>
-              <h3 className="landing__feature-title">{f.title}</h3>
-              <p className="landing__feature-desc">{f.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
       {/* ── Footer CTA ── */}
       <section className="landing__footer-cta">
         <p className="landing__footer-cta-text">{t('landing.footerCtaText')}</p>
-        <Button
-          type="primary"
-          size="large"
-          icon={<SearchOutlined />}
-          onClick={() => router.push(ROUTES.CATALOGO)}
-        >
-          {t('landing.exploreCatalog')}
-        </Button>
+        <div className="landing__footer-cta-actions">
+          <Button
+            type="primary"
+            size="large"
+            icon={<SearchOutlined />}
+            onClick={() => router.push(ROUTES.CATALOGO)}
+          >
+            {t('landing.exploreCatalog')}
+          </Button>
+          <Button
+            size="large"
+            icon={<VideoCameraOutlined />}
+            onClick={() => router.push(ROUTES.VER)}
+          >
+            {t('landing.offerWatchCta')}
+          </Button>
+        </div>
       </section>
+
+      <SettingsPanel
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+      />
     </div>
   );
 }

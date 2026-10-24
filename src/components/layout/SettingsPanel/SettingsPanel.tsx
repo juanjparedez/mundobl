@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ColorPicker,
   Drawer,
@@ -20,6 +20,13 @@ import { useMessage } from '@/hooks/useMessage';
 import { LOCALE_LABELS, SUPPORTED_LOCALES } from '@/i18n/config';
 import { ACCENT_PRESETS, getSkinSwatches } from '@/lib/theme.config';
 import { resetServiceWorker } from '@/lib/reset-recovery';
+import {
+  DEFAULT_START_PAGE,
+  START_PAGE_CHANGED_EVENT,
+  getStartPagePreference,
+  setStartPagePreference,
+  type StartPageOption,
+} from '@/lib/start-page-preference';
 import type { TranslationKey } from '@/i18n/messages';
 import { NotificationsSettings } from '../NotificationsSettings/NotificationsSettings';
 import type {
@@ -111,6 +118,16 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
     if (typeof window === 'undefined') return false;
     return window.localStorage.getItem('comment-default-private') === 'true';
   });
+  const [startPage, setStartPage] = useState<StartPageOption>(() =>
+    getStartPagePreference()
+  );
+
+  useEffect(() => {
+    const syncStartPage = () => setStartPage(getStartPagePreference());
+    window.addEventListener(START_PAGE_CHANGED_EVENT, syncStartPage);
+    return () =>
+      window.removeEventListener(START_PAGE_CHANGED_EVENT, syncStartPage);
+  }, []);
 
   const handleClearCaches = async () => {
     setClearing(true);
@@ -449,6 +466,29 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
           {t('settings.sectionPreferences')}
         </h3>
 
+        <div className="settings-panel__field">
+          <label className="settings-panel__label">
+            {t('settings.startPageLabel')}
+          </label>
+          <p className="settings-panel__hint">{t('settings.startPageHint')}</p>
+          <Select
+            value={startPage}
+            onChange={(value: StartPageOption) => {
+              setStartPage(value);
+              setStartPagePreference(value);
+            }}
+            className="settings-panel__select"
+            options={[
+              { value: 'landing', label: t('settings.startPageLanding') },
+              { value: 'watching', label: t('settings.startPageWatching') },
+              { value: 'catalogo', label: t('settings.startPageCatalogo') },
+              { value: 'ver', label: t('settings.startPageVer') },
+              { value: 'estrenos', label: t('settings.startPageEstrenos') },
+            ]}
+            aria-label={t('settings.startPageLabel')}
+          />
+        </div>
+
         <div className="settings-panel__field settings-panel__field--inline">
           <div>
             <label className="settings-panel__label">
@@ -559,7 +599,11 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
       <section className="settings-panel__section settings-panel__section--reset">
         <Popconfirm
           title={t('settings.resetConfirm')}
-          onConfirm={resetPreferences}
+          onConfirm={() => {
+            resetPreferences();
+            setStartPage(DEFAULT_START_PAGE);
+            setStartPagePreference(DEFAULT_START_PAGE);
+          }}
           okText="OK"
           cancelText={t('settings.closeButton')}
         >

@@ -1232,6 +1232,13 @@ export type TranslationShape = {
     defaultCommentPrivateHint: string;
     spoilerFreeLabel: string;
     spoilerFreeHint: string;
+    startPageLabel: string;
+    startPageHint: string;
+    startPageLanding: string;
+    startPageWatching: string;
+    startPageCatalogo: string;
+    startPageVer: string;
+    startPageEstrenos: string;
   };
   adminComments: {
     title: string;
@@ -2271,6 +2278,41 @@ export type TranslationShape = {
     offerWatchCta: string;
     offerFollowDesc: string;
     offerNote: string;
+    statWatchable: string;
+    statsExploreCta: string;
+    authNoAccountTitle: string;
+    authNoAccountDesc: string;
+    authWithAccountTitle: string;
+    authWithAccountDesc: string;
+    authSignInGoogle: string;
+    loggedInBadge: string;
+    startPageInlineLabel: string;
+    startPageInlineHint: string;
+    pillarWatchBadge: string;
+    pillarCatalogBadge: string;
+    pillarTrackBadge: string;
+    pillarTrackTitle: string;
+    pillarTrackDesc: string;
+    pillarTrackCta: string;
+    pillarScheduleBadge: string;
+    pillarScheduleTitle: string;
+    pillarScheduleDesc: string;
+    pillarScheduleCta: string;
+    pillarReviewBadge: string;
+    pillarReviewTitle: string;
+    pillarReviewDesc: string;
+    pillarReviewCta: string;
+    pillarStatsBadge: string;
+    pillarStatsTitle: string;
+    pillarStatsDesc: string;
+    pillarStatsCta: string;
+    personalizeEyebrow: string;
+    personalizeTitle: string;
+    personalizeSubtitle: string;
+    personalizeOpenAll: string;
+    trackerFeature4Title: string;
+    trackerFeature4Desc: string;
+    trackerMockRatingLabel: string;
   };
   privacyBanner: {
     text: string;
@@ -5382,6 +5424,14 @@ const es: TranslationShape = {
     spoilerFreeLabel: 'Modo sin spoilers',
     spoilerFreeHint:
       'Oculta sinopsis de episodios no vistos y reseñas marcadas con spoilers de series que no terminaste.',
+    startPageLabel: 'Página de inicio al abrir MundoBL',
+    startPageHint:
+      'Elegí qué página querés ver cuando entrás a la dirección principal del sitio con tu cuenta iniciada.',
+    startPageLanding: 'Portada de presentación (por defecto)',
+    startPageWatching: 'Mis series en curso (/watching)',
+    startPageCatalogo: 'Catálogo completo (/catalogo)',
+    startPageVer: 'Ver series gratis acá (/ver)',
+    startPageEstrenos: 'Calendario de estrenos (/estrenos)',
   },
   adminComments: {
     title: 'Comentarios publicos',
@@ -6348,10 +6398,10 @@ const es: TranslationShape = {
     exploreCatalog: 'Explorar el catálogo',
     signIn: 'Iniciar Sesión',
     description:
-      'Un espacio dedicado a las series BL. Seguí lo que estás viendo, calificá tus favoritas y compartí tus opiniones.',
+      'Mirás capítulos completos gratis desde canales oficiales, llevás al día por qué capítulo vas, calificás tus favoritas y compartís reseñas sin spoilers.',
     goToProfile: 'Mi Perfil',
-    heroBadge: 'Tu tracker de series BL',
-    ctaPrimary: 'Empezar a seguir mis series',
+    heroBadge: 'Catálogo · Streaming oficial · Seguimiento y Comunidad',
+    ctaPrimary: 'Ir a mi seguimiento',
     ctaGoWatching: 'Ir a mis series',
     heroChipTracking: 'Marcá tu progreso',
     heroChipLanguages: '10 idiomas',
@@ -6473,22 +6523,67 @@ const es: TranslationShape = {
       'Enterate de nuevos rodajes, trailers oficiales, cancelaciones y adaptaciones de novelas sin clickbaits.',
     newsCta: 'Ver todas las noticias',
     heroSubtitle:
-      'Marcá por qué episodio vas, fijate qué te falta y enterate cuando sale el siguiente.',
+      'Mirás series completas gratis de canales oficiales, marcás por qué capítulo vas y opinás en comunidad.',
     novedadesFeaturesTitle: 'Funciones que cambian cómo seguís tus series',
     ecosystemIntro:
       'MundoBL no es una productora ni un sitio con publicidad abusiva. Es un espacio transparente para celebrar el género y apoyar a quienes hacen las series.',
     ecosystemOfficialTitle: 'Sin re-subidas',
     ecosystemOfficialDesc:
       'No subimos videos ni enlazamos re-subidas. Si no hay una fuente oficial, te decimos dónde verla legalmente.',
-    offerTitle: 'Qué vas a encontrar',
+    offerTitle: 'Todo lo que podés hacer en MundoBL',
     offerSeriesCount: '{n} series',
     offerWatchDesc:
-      'Desde los canales oficiales de sus productoras, gratis. Algunas no se ven en todos los países: te avisamos antes del play.',
-    offerWatchCta: 'Ver series',
+      'Capítulos completos desde los canales oficiales de sus productoras, gratis y sin cuenta. Si hay bloqueo por país, te avisamos antes del play.',
+    offerWatchCta: 'Ver series gratis acá',
     offerFollowDesc:
-      'Aunque la mires en otra plataforma, marcás por qué capítulo vas y te decimos dónde verla.',
+      'Explorá fichas por país, año, tags/tropes, actores y universo, con enlaces legales a dónde ver cada serie.',
     offerNote:
       'Vamos sumando series a medida que las productoras las publican. No subimos videos ni enlazamos re-subidas: lo que mirás le suma a quien hizo la serie.',
+    statWatchable: 'series para ver gratis acá',
+    statsExploreCta: 'Ver estadísticas abiertas de la comunidad →',
+    authNoAccountTitle: 'Sin cuenta',
+    authNoAccountDesc:
+      'Mirás series gratis en /ver, explorás el catálogo y estrenos, y marcás capítulos en este navegador.',
+    authWithAccountTitle: 'Con tu cuenta gratis (Google en 1 click)',
+    authWithAccountDesc:
+      'Sincronizás entre celular y PC, guardás notas privadas en tu diario, puntuás del 1 al 10, reseñás y recibís avisos de estreno.',
+    authSignInGoogle: 'Iniciar sesión con Google',
+    loggedInBadge: 'Sesión activa',
+    startPageInlineLabel: 'Al abrir MundoBL mostrar:',
+    startPageInlineHint:
+      'La portada no se cierra sola a menos que elijas abrir directo otra sección.',
+    pillarWatchBadge: 'Gratis · Sin cuenta',
+    pillarCatalogBadge: 'Catálogo curado',
+    pillarTrackBadge: 'En tu navegador o cuenta',
+    pillarTrackTitle: 'Seguir tu progreso y diario',
+    pillarTrackDesc:
+      'Marcá por qué capítulo vas con un toque, activá el modo seguro anti-spoilers y guardá notas privadas con minuto exacto.',
+    pillarTrackCta: 'Abrir mi seguimiento',
+    pillarScheduleBadge: 'En emisión',
+    pillarScheduleTitle: 'Calendario semanal de estrenos',
+    pillarScheduleDesc:
+      'Consultá qué series estrenan capítulo cada día de la semana y activá avisos para no perderte el siguiente.',
+    pillarScheduleCta: 'Ver calendario semanal',
+    pillarReviewBadge: 'Comunidad sin spoilers',
+    pillarReviewTitle: 'Puntuar, reseñar y comentar',
+    pillarReviewDesc:
+      'Dejá tu puntaje rápido de 1 a 10 o en 9 categorías, comentá cada capítulo al terminarlo y publicá reseñas con veredicto.',
+    pillarReviewCta: 'Ir a Comunidad',
+    pillarStatsBadge: 'Datos abiertos',
+    pillarStatsTitle: 'Glosario cultural y estadísticas',
+    pillarStatsDesc:
+      'Aprendé términos culturales BL con mini-quiz y sumá tu actividad anónima en estadísticas públicas para pedir más series oficiales.',
+    pillarStatsCta: 'Ver estadísticas públicas',
+    personalizeEyebrow: 'A tu medida',
+    personalizeTitle:
+      'Probá en vivo los temas, skins, colores y el modo sin spoilers',
+    personalizeSubtitle:
+      'Personalizá cómo se ve y se siente MundoBL ahora mismo: alterná entre modo oscuro o claro, 6 atmósferas visuales (skins), colores de acento y 10 idiomas.',
+    personalizeOpenAll: 'Abrir todos los ajustes visuales y tipográficos',
+    trackerFeature4Title: 'Cerrá el círculo al terminar cada serie o capítulo',
+    trackerFeature4Desc:
+      'Al marcar un capítulo o completar una serie, puntuá del 1 al 10, dejá tu reseña con veredicto y sumá al pulso de la comunidad.',
+    trackerMockRatingLabel: 'Tu valoración: ★ 9/10 · Recomendada',
   },
   privacyBanner: {
     text: 'Guardamos algunos datos para que la app funcione (sesión, preferencias, actividad).',
@@ -9680,6 +9775,14 @@ const en: TranslationShape = {
     spoilerFreeLabel: 'Spoiler-free mode',
     spoilerFreeHint:
       'Hide synopses of episodes you have not watched and reviews flagged with spoilers for series you have not finished.',
+    startPageLabel: 'Start page when opening MundoBL',
+    startPageHint:
+      'Choose which page to open when visiting the main site URL while signed in.',
+    startPageLanding: 'Landing / Overview page (default)',
+    startPageWatching: 'Currently watching (/watching)',
+    startPageCatalogo: 'Full catalog (/catalogo)',
+    startPageVer: 'Watch free series here (/ver)',
+    startPageEstrenos: 'Airing calendar (/estrenos)',
   },
   adminComments: {
     title: 'Public comments',
@@ -10640,10 +10743,10 @@ const en: TranslationShape = {
     exploreCatalog: 'Explore the catalog',
     signIn: 'Sign In',
     description:
-      'A space dedicated to BL series. Track what you are watching, rate your favorites, and share your thoughts.',
+      'Watch full episodes for free from official channels, track which episode you are on, rate your favorites, and share spoiler-free reviews.',
     goToProfile: 'My Profile',
-    heroBadge: 'Your BL series tracker',
-    ctaPrimary: 'Start tracking my series',
+    heroBadge: 'Catalog · Official Streaming · Tracking & Community',
+    ctaPrimary: 'Go to my tracker',
     ctaGoWatching: 'Go to my series',
     heroChipTracking: 'Track your progress',
     heroChipLanguages: '10 languages',
@@ -10765,22 +10868,67 @@ const en: TranslationShape = {
       'Stay updated on new shoots, official trailers, announcements, and novel adaptations without noise.',
     newsCta: 'Browse all news',
     heroSubtitle:
-      "Log which episode you're on, see what's left and find out when the next one is out.",
+      'Watch full series for free from official channels, track which episode you are on, and share your thoughts with the community.',
     novedadesFeaturesTitle: 'Features that change how you follow your series',
     ecosystemIntro:
       "MundoBL isn't a studio or a site full of intrusive ads. It's a transparent space to celebrate the genre and support the people who make the series.",
     ecosystemOfficialTitle: 'No re-uploads',
     ecosystemOfficialDesc:
       "We don't upload videos or link to re-uploads. If there's no official source, we tell you where to watch it legally.",
-    offerTitle: "What you'll find here",
+    offerTitle: 'Everything you can do on MundoBL',
     offerSeriesCount: '{n} series',
     offerWatchDesc:
-      "From the studios' official channels, for free. Some aren't available in every country: we tell you before you hit play.",
-    offerWatchCta: 'Watch series',
+      "Full episodes from studios' official channels, free and with no account needed. If region-locked, we warn you before you hit play.",
+    offerWatchCta: 'Watch free series here',
     offerFollowDesc:
-      "Even if you watch it on another platform, you log which episode you're on and we tell you where to watch it.",
+      'Browse series by country, year, tags/tropes, cast and universe, with legal links to where to watch each title.',
     offerNote:
       "We add series as studios publish them. We don't upload videos or link to re-uploads: what you watch counts for the people who made the series.",
+    statWatchable: 'series to watch free here',
+    statsExploreCta: 'View open community statistics →',
+    authNoAccountTitle: 'No account needed',
+    authNoAccountDesc:
+      'Watch free series in /ver, browse the catalog and airing schedule, and mark episodes right in this browser.',
+    authWithAccountTitle: 'With your free account (1-click Google)',
+    authWithAccountDesc:
+      'Sync across phone and PC, keep private diary notes, rate 1–10, publish reviews, and get premiere alerts.',
+    authSignInGoogle: 'Sign in with Google',
+    loggedInBadge: 'Signed in',
+    startPageInlineLabel: 'When opening MundoBL show:',
+    startPageInlineHint:
+      'The landing page stays open unless you choose to jump straight to another section.',
+    pillarWatchBadge: 'Free · No account',
+    pillarCatalogBadge: 'Curated catalog',
+    pillarTrackBadge: 'In browser or account',
+    pillarTrackTitle: 'Track your progress & diary',
+    pillarTrackDesc:
+      'Mark which episode you are on with one tap, enable spoiler-free safe mode, and save private timestamped notes.',
+    pillarTrackCta: 'Open my tracker',
+    pillarScheduleBadge: 'Airing now',
+    pillarScheduleTitle: 'Weekly airing schedule',
+    pillarScheduleDesc:
+      'See which series drop new episodes each day of the week and enable alerts so you never miss the next one.',
+    pillarScheduleCta: 'View weekly calendar',
+    pillarReviewBadge: 'Spoiler-free community',
+    pillarReviewTitle: 'Rate, review & comment',
+    pillarReviewDesc:
+      'Give a quick 1–10 score or rate across 9 categories, comment after each episode, and publish reviews with verdicts.',
+    pillarReviewCta: 'Go to Community',
+    pillarStatsBadge: 'Open metrics',
+    pillarStatsTitle: 'Cultural glossary & statistics',
+    pillarStatsDesc:
+      'Learn BL cultural terms with our mini-quiz and add your anonymous activity to public metrics to help request official series.',
+    pillarStatsCta: 'View public statistics',
+    personalizeEyebrow: 'Make it yours',
+    personalizeTitle:
+      'Try themes, skins, accent colors & spoiler-free mode live',
+    personalizeSubtitle:
+      'Customize how MundoBL looks and feels right now: switch between dark or light mode, 6 visual skins, accent colors, and 10 languages.',
+    personalizeOpenAll: 'Open all visual & typography settings',
+    trackerFeature4Title: 'Close the loop after every episode or series',
+    trackerFeature4Desc:
+      'When you mark an episode or finish a series, rate 1–10, leave your review with a verdict, and contribute to community rankings.',
+    trackerMockRatingLabel: 'Your rating: ★ 9/10 · Recommended',
   },
   privacyBanner: {
     text: 'We store some data so the app works (session, preferences, activity).',

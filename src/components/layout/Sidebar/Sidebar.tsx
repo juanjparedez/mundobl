@@ -178,10 +178,10 @@ export function Sidebar({
       trigger={null}
     >
       <div className="sidebar-header">
-        <div className="sidebar-logo">
+        <Link href="/?stay=1" className="sidebar-logo" prefetch={false}>
           <AppstoreOutlined className="sidebar-logo-icon" />
           {!collapsed && <span className="sidebar-logo-text">MundoBL</span>}
-        </div>
+        </Link>
         <button
           className="sidebar-collapse-btn"
           onClick={() => changeCollapsed(!collapsed)}
