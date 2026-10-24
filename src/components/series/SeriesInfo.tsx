@@ -22,6 +22,11 @@ import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { countChapters } from '@/lib/episode-chapters';
 import {
+  outboundRel,
+  recordWatchLinkClick,
+  withOutboundUtm,
+} from '@/lib/outbound-links';
+import {
   shouldShowSeasons,
   shouldShowDuration,
   shouldShowEpisodes,
@@ -458,9 +463,10 @@ export function SeriesInfo({ series, showWatchLinks = true }: SeriesInfoProps) {
               return (
                 <div key={link.id} className="series-info__watch-link">
                   <a
-                    href={link.url}
+                    href={withOutboundUtm(link.url, link.official)}
+                    onClick={() => recordWatchLinkClick(link.id, 'info')}
                     target="_blank"
-                    rel="noopener noreferrer nofollow"
+                    rel={outboundRel(link.official)}
                     className="series-info__watch-link-btn"
                   >
                     <Tag color={link.official ? 'green' : 'default'}>

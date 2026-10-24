@@ -1,6 +1,11 @@
 'use client';
 
 import { isGagaUrl, recordPilotClick } from '@/lib/pilot-clicks';
+import {
+  outboundRel,
+  recordWatchLinkClick,
+  withOutboundUtm,
+} from '@/lib/outbound-links';
 import { Tag, Tooltip } from 'antd';
 import {
   PlayCircleOutlined,
@@ -111,13 +116,14 @@ export function WhereToWatch({
               placement="top"
             >
               <a
-                href={link.url}
+                href={withOutboundUtm(link.url, link.official)}
                 onClick={() => {
+                  recordWatchLinkClick(link.id, 'series');
                   if (link.official && isGagaUrl(link.url))
                     recordPilotClick('series', link.id);
                 }}
                 target="_blank"
-                rel="noopener noreferrer nofollow"
+                rel={outboundRel(link.official)}
                 className={`where-to-watch__link${link.official ? '' : ' where-to-watch__link--unofficial'}`}
                 style={{
                   ['--platform-color' as string]: getPlatformColor(
