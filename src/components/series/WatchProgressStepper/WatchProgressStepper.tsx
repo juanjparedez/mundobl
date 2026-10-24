@@ -49,6 +49,8 @@ interface WatchProgressStepperProps {
   airing?: boolean;
   /** Abre el selector de capitulo (al pasar a "Viendo" sin progreso). */
   openPicker?: boolean;
+  /** Callback cuando el usuario avanza un capitulo con exito. */
+  onChapterAdvanced?: (chapter: TrackedChapter) => void;
 }
 
 const lastEpisodeId = (chapter: TrackedChapter) =>
@@ -64,6 +66,7 @@ export function WatchProgressStepper({
   showNext = true,
   airing = false,
   openPicker = false,
+  onChapterAdvanced,
 }: WatchProgressStepperProps) {
   const { t } = useLocale();
   const message = useMessage();
@@ -143,6 +146,9 @@ export function WatchProgressStepper({
         setFinishedOpen(true);
       } else if (!unmark) {
         announceProgress(index, targetIndex);
+        if (targetIndex >= 0) {
+          onChapterAdvanced?.(chapters[targetIndex]);
+        }
       }
       return;
     }
@@ -187,6 +193,9 @@ export function WatchProgressStepper({
         setFinishedOpen(true);
       } else {
         announceProgress(previous, targetIndex);
+        if (!unmark && targetIndex >= 0) {
+          onChapterAdvanced?.(chapters[targetIndex]);
+        }
       }
     } catch {
       setIndex(previous);

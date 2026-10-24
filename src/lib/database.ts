@@ -1128,6 +1128,9 @@ const watchableInclude = Prisma.validator<Prisma.SeriesInclude>()({
   genres: {
     select: { genre: { select: { id: true, name: true } } },
   },
+  ratings: {
+    select: { category: true, score: true },
+  },
 });
 
 /**

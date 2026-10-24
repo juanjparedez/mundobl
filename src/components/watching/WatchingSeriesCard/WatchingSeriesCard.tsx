@@ -6,10 +6,12 @@ import { Button, Progress, Tag } from 'antd';
 import {
   CheckOutlined,
   CheckCircleOutlined,
+  EditOutlined,
   PushpinOutlined,
   PushpinFilled,
   PlayCircleOutlined,
   LinkOutlined,
+  StarOutlined,
 } from '@ant-design/icons';
 import { PanelCard } from '@/components/design-system';
 import { PosterPlaceholder } from '@/components/common/PosterPlaceholder/PosterPlaceholder';
@@ -57,6 +59,8 @@ interface WatchingSeriesCardProps {
     stale: string;
     pause: string;
     drop: string;
+    rateSeries?: string;
+    reviewSeries?: string;
   };
 }
 
@@ -175,6 +179,22 @@ export function WatchingSeriesCard({
                   {labels.mark}
                 </Button>
               )}
+            {item.status === 'VISTA' && labels.rateSeries && (
+              <Link
+                href={`${watchingDetailsUrl(item)}#series-section-ratings`}
+                className="watching-series-card__platform-link"
+              >
+                <StarOutlined aria-hidden /> {labels.rateSeries}
+              </Link>
+            )}
+            {item.status === 'VISTA' && labels.reviewSeries && (
+              <Link
+                href={`${watchingDetailsUrl(item)}?review=new#series-section-reviews`}
+                className="watching-series-card__platform-link"
+              >
+                <EditOutlined aria-hidden /> {labels.reviewSeries}
+              </Link>
+            )}
             <Button onClick={onManage} disabled={busy}>
               {labels.manage}
             </Button>

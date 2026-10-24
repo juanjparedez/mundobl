@@ -6,9 +6,11 @@ import Link from 'next/link';
 import { Alert, Button, Input, Segmented, Select, Skeleton, Tabs } from 'antd';
 import {
   BookOutlined,
+  EditOutlined,
   LockOutlined,
   PlayCircleOutlined,
   ReloadOutlined,
+  StarOutlined,
 } from '@ant-design/icons';
 import {
   EmptyState,
@@ -27,10 +29,11 @@ import {
   LIBRARY_STATUSES,
   selectWatchingItems,
   staleWatchingDays,
+  watchingDetailsUrl,
   watchingProgress,
   type WatchingFilter,
-  type WatchingItem,
   type WatchingSort,
+  type WatchingItem,
 } from '@/lib/watching-collection';
 import { WatchingSeriesCard } from '../WatchingSeriesCard/WatchingSeriesCard';
 import { WatchingEpisodeDrawer } from '../WatchingEpisodeDrawer/WatchingEpisodeDrawer';
@@ -87,6 +90,7 @@ function WatchingCollection({ userId }: { userId: string }) {
   const tab = rawTab === 'history' || rawTab === 'diary' ? rawTab : 'continue';
   useWatchingScroll(userId, tab === 'continue' && !loading && ready);
   const [selected, setSelected] = useState<WatchingItem | null>(null);
+  const [justFinished, setJustFinished] = useState<WatchingItem | null>(null);
 
   const load = useCallback(async () => {
     request.current?.abort();
@@ -175,6 +179,9 @@ function WatchingCollection({ userId }: { userId: string }) {
           label: statusLabels[next],
         })
       );
+      if (next === 'VISTA') {
+        setJustFinished(item);
+      }
       await load();
     } catch {
       message.error(t('viewStatusToggle.errorUpdate'));
@@ -299,6 +306,36 @@ function WatchingCollection({ userId }: { userId: string }) {
                 : 'libraryWorkspace.preferences'
             )}
           </p>
+          {justFinished && (
+            <Alert
+              type="success"
+              showIcon
+              closable
+              onClose={() => setJustFinished(null)}
+              title={t('postViewing.finishedBannerTitle', {
+                title: justFinished.series.title,
+              })}
+              description={t('postViewing.finishSubtitle')}
+              action={
+                <div className="watching-workspace__finished-actions">
+                  <Link
+                    href={`${watchingDetailsUrl(justFinished)}#series-section-ratings`}
+                  >
+                    <Button size="small" icon={<StarOutlined />}>
+                      {t('postViewing.finishedRateAction')}
+                    </Button>
+                  </Link>
+                  <Link
+                    href={`${watchingDetailsUrl(justFinished)}?review=new#series-section-reviews`}
+                  >
+                    <Button size="small" type="primary" icon={<EditOutlined />}>
+                      {t('postViewing.finishedReviewAction')}
+                    </Button>
+                  </Link>
+                </div>
+              }
+            />
+          )}
           {visible.length > 0 ? (
             <div
               className={`watching-collection watching-collection--${preferences.view}`}
@@ -376,6 +413,8 @@ function WatchingCollection({ userId }: { userId: string }) {
                       }),
                       pause: t('trackingWorkspace.stalePause'),
                       drop: t('trackingWorkspace.staleDrop'),
+                      rateSeries: t('postViewing.finishedRateAction'),
+                      reviewSeries: t('postViewing.finishedReviewAction'),
                     }}
                   />
                 );

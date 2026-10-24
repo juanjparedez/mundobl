@@ -26,7 +26,8 @@ npm run dev          # Desarrollo
 npm run build        # Build producción
 npm run lint:fix     # Lint + fix
 npm run format       # Prettier
-npm run test:all     # Todo lo de CI, local (Docker). Ver docs/pruebas-locales.md
+npm run test:docker  # Suite completa en Compose aislado. Ver docs/pruebas-locales.md
+npm run test:all     # Alternativa nativa (dependencias del host + PostgreSQL local)
 npm run test:fast    # Solo tipos, lint y prettier
 ```
 

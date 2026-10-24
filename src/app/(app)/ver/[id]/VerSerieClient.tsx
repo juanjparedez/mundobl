@@ -20,6 +20,9 @@ import {
   LockOutlined,
   CheckOutlined,
   InfoCircleOutlined,
+  CommentOutlined,
+  FileTextOutlined,
+  EditOutlined,
 } from '@ant-design/icons';
 import { useSession } from 'next-auth/react';
 import { EmbedPlayer } from '@/components/common/EmbedPlayer/EmbedPlayer';
@@ -45,6 +48,9 @@ import { recordSeriesActivity } from '@/lib/activity-beacon';
 import { DismissibleNotice } from '@/components/design-system';
 import { RatingSection } from '@/components/series/RatingSection';
 import { ReviewsSection } from '@/components/series/ReviewsSection/ReviewsSection';
+import { CommentsSection } from '@/components/series/CommentsSection';
+import { CommentsList } from '@/components/common/CommentsList';
+import { EpisodeNoteModal } from '@/components/series/EpisodeNoteModal/EpisodeNoteModal';
 import { useMessage } from '@/hooks/useMessage';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { readUrlParam, writeUrlParam } from '@/lib/url-state';
@@ -110,6 +116,10 @@ interface SeriesInfo {
     title: string;
     imageUrl?: string | null;
   } | null;
+  ratings?: Array<{
+    category: string;
+    score: number;
+  }>;
 }
 
 const AVAILABILITY_KEY = {
@@ -362,6 +372,11 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
   const [filterMode, setFilterMode] = useState<'all' | 'episodes' | 'extras'>(
     'all'
   );
+  const [showChapterComments, setShowChapterComments] = useState(false);
+  const [noteModalOpen, setNoteModalOpen] = useState(false);
+  const [justMarkedChapter, setJustMarkedChapter] = useState<number | null>(
+    null
+  );
 
   // El episodio activo viaja en `?e=1x5` (temporada x episodio) para que el
   // link sea compartible y sobreviva al F5. Se resuelve DESPUES del montaje
@@ -514,12 +529,27 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
 
   const toggleChapterWatched = () => {
     if (!activeChapter) return;
+    const markingWatched = !activeChapterWatched;
     void setWatched(
       'player',
       activeChapter.items.map((item) => item.episode.id),
-      !activeChapterWatched
+      markingWatched
     );
+    if (markingWatched) {
+      setJustMarkedChapter(activeChapter.chapterNumber);
+    } else {
+      setJustMarkedChapter(null);
+    }
   };
+
+  const activeChapterCode = activeChapter
+    ? t('progressStepper.chapterShort', {
+        season: activeChapter.seasonNumber,
+        n: activeChapter.chapterNumber,
+      })
+    : null;
+  const activeChapterFirstEpisodeId =
+    activeChapter?.items[0]?.episode.id ?? active?.id ?? null;
 
   if (!active) {
     return <Empty description={t('verSerie.noEpisodesAvailable')} />;
@@ -798,8 +828,118 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
        *  la lista, en el celu, habia que pasar todas las partes para verlo. */}
       <div className="ver-serie__community-link">
         <CommunityWorkLink seriesId={series.id} episodeId={active?.id} />
+        {activeChapterCode && (
+          <Button
+            size="small"
+            type={showChapterComments ? 'primary' : 'default'}
+            icon={<CommentOutlined />}
+            aria-expanded={showChapterComments}
+            onClick={() => setShowChapterComments((prev) => !prev)}
+          >
+            {t('postViewing.chapterCommentAction', {
+              code: activeChapterCode,
+            })}
+          </Button>
+        )}
+        {isAuthed && activeChapterCode && (
+          <Button
+            size="small"
+            icon={<FileTextOutlined />}
+            onClick={() => setNoteModalOpen(true)}
+          >
+            {t('postViewing.chapterNoteAction', {
+              code: activeChapterCode,
+            })}
+          </Button>
+        )}
+        <div className="ver-serie__section-jumps">
+          <a href="#series-section-ratings" className="ver-serie__jump-pill">
+            <StarOutlined aria-hidden /> {t('postViewing.jumpToRatings')}
+          </a>
+          <a href="#series-section-reviews" className="ver-serie__jump-pill">
+            <EditOutlined aria-hidden /> {t('postViewing.jumpToReviews')}
+          </a>
+          <a href="#series-section-comments" className="ver-serie__jump-pill">
+            <CommentOutlined aria-hidden /> {t('postViewing.jumpToComments')}
+          </a>
+        </div>
         <ActivityPulse seriesId={series.id} />
       </div>
+
+      {activeChapter &&
+        activeChapterCode &&
+        (justMarkedChapter === activeChapter.chapterNumber ||
+          autoMarked?.chapterNumber === activeChapter.chapterNumber) &&
+        !showChapterComments && (
+          <div className="ver-serie__post-chapter-bar">
+            <span className="ver-serie__post-chapter-title">
+              {t('postViewing.chapterPromptTitle', {
+                code: activeChapterCode,
+              })}
+            </span>
+            <div className="ver-serie__post-chapter-actions">
+              <Button
+                size="small"
+                type="primary"
+                icon={<CommentOutlined />}
+                onClick={() => {
+                  setShowChapterComments(true);
+                  setJustMarkedChapter(null);
+                }}
+              >
+                {t('postViewing.chapterCommentAction', {
+                  code: activeChapterCode,
+                })}
+              </Button>
+              {isAuthed && (
+                <Button
+                  size="small"
+                  icon={<FileTextOutlined />}
+                  onClick={() => {
+                    setNoteModalOpen(true);
+                    setJustMarkedChapter(null);
+                  }}
+                >
+                  {t('postViewing.chapterNoteAction', {
+                    code: activeChapterCode,
+                  })}
+                </Button>
+              )}
+              <Button
+                size="small"
+                type="text"
+                onClick={() => setJustMarkedChapter(null)}
+              >
+                {t('postViewing.dismiss')}
+              </Button>
+            </div>
+          </div>
+        )}
+
+      {showChapterComments && activeChapterFirstEpisodeId && (
+        <div className="ver-serie__chapter-comments">
+          <div className="ver-serie__chapter-comments-head">
+            <h3>
+              {t('postViewing.chapterCommentsTitle', {
+                code: activeChapterCode ?? '',
+              })}
+            </h3>
+            <Button
+              size="small"
+              type="text"
+              onClick={() => setShowChapterComments(false)}
+            >
+              {t('postViewing.dismiss')}
+            </Button>
+          </div>
+          <CommentsList
+            key={`ep-comments-${activeChapterFirstEpisodeId}`}
+            episodeId={activeChapterFirstEpisodeId}
+            compact
+            placeholder={t('episodesList.commentsPlaceholder')}
+          />
+        </div>
+      )}
 
       <AiringAlertCta seriesId={series.id} airWeekdays={series.airWeekdays} />
 
@@ -1198,14 +1338,32 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         )}
       </div>
 
-      {/* Rating + reseñas: solo para USER_EMBED — para CURATED+WATCHABLE_ONLY
-       * ya existe en /series/[id] via "Ver ficha completa" mas arriba, asi
-       * que evitamos duplicar el mismo widget en dos paginas. */}
-      {isUserEmbed && (
-        <div id="series-section-reviews" className="ver-serie__ratings-reviews">
-          <RatingSection seriesId={series.id} existingRatings={[]} />
+      {/* Valoraciones, reseñas y comentarios de la serie para TODAS las obras en /ver */}
+      <div className="ver-serie__ratings-reviews">
+        <h2 className="ver-serie__community-heading">
+          {t('postViewing.communitySectionTitle')}
+        </h2>
+        <div id="series-section-ratings">
+          <RatingSection
+            seriesId={series.id}
+            existingRatings={series.ratings ?? []}
+          />
+        </div>
+        <div id="series-section-reviews">
           <ReviewsSection seriesId={series.id} />
         </div>
+        <div id="series-section-comments">
+          <CommentsSection seriesId={series.id} />
+        </div>
+      </div>
+
+      {isAuthed && (
+        <EpisodeNoteModal
+          episodeId={noteModalOpen ? activeChapterFirstEpisodeId : null}
+          episodeLabel={activeChapterCode ?? undefined}
+          open={noteModalOpen}
+          onClose={() => setNoteModalOpen(false)}
+        />
       )}
     </div>
   );

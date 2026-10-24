@@ -127,12 +127,53 @@ export function RatingSection({
     fetchUserRatings();
   }, [fetchUserRatings]);
 
+  useEffect(() => {
+    const onExternalUpdate = (event: Event) => {
+      const detail = (event as CustomEvent<{ seriesId?: number }>).detail;
+      if (detail?.seriesId && detail.seriesId !== seriesId) return;
+      void fetchUserRatings();
+    };
+    window.addEventListener('mundobl:user-rating-updated', onExternalUpdate);
+    return () =>
+      window.removeEventListener(
+        'mundobl:user-rating-updated',
+        onExternalUpdate
+      );
+  }, [seriesId, fetchUserRatings]);
+
   const handleRatingChange = (category: string, value: number) => {
     setRatings((prev) => ({ ...prev, [category]: value }));
   };
 
   const handleUserRatingChange = (category: string, value: number) => {
     setUserRatings((prev) => ({ ...prev, [category]: value }));
+  };
+
+  const handleQuickGeneralRatingChange = async (value: number) => {
+    const nextRatings = { ...userRatings, general: value };
+    setUserRatings(nextRatings);
+    setIsSavingUserRating(true);
+    try {
+      const response = await fetch(`/api/series/${seriesId}/user-ratings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ratings: { general: value } }),
+      });
+
+      if (!response.ok) throw new Error(t('ratingSection.errorSaving'));
+      message.success(t('postViewing.savedScore'));
+      await fetchUserRatings();
+      window.dispatchEvent(
+        new CustomEvent('mundobl:user-rating-updated', {
+          detail: { seriesId, score: value },
+        })
+      );
+    } catch (error) {
+      message.error(t('ratingSection.errorUser'));
+      console.error(error);
+    } finally {
+      setIsSavingUserRating(false);
+    }
   };
 
   const handleSave = async () => {
@@ -166,6 +207,11 @@ export function RatingSection({
       if (!response.ok) throw new Error(t('ratingSection.errorSaving'));
       message.success(t('ratingSection.successUser'));
       fetchUserRatings();
+      window.dispatchEvent(
+        new CustomEvent('mundobl:user-rating-updated', {
+          detail: { seriesId },
+        })
+      );
     } catch (error) {
       message.error(t('ratingSection.errorUser'));
       console.error(error);
@@ -255,10 +301,30 @@ export function RatingSection({
       {/* Rating del usuario (cualquier logueado) */}
       {session?.user ? (
         <section className="rating-block">
-          <header className="rating-block__header">
+          <div className="rating-block__quick">
+            <div className="rating-block__quick-meta">
+              <h4 className="rating-block__title">
+                {t('postViewing.quickScoreTitle')}
+              </h4>
+              <p className="rating-block__hint">
+                {t('postViewing.quickScoreHint')}
+              </p>
+            </div>
+            <div className="rating-block__quick-rater">
+              <CategoryRater
+                label={t('postViewing.yourScore')}
+                icon={<StarFilled />}
+                value={userRatings.general || 0}
+                onChange={(v) => void handleQuickGeneralRatingChange(v)}
+                tone="gold"
+              />
+            </div>
+          </div>
+
+          <header className="rating-block__header rating-block__header--sub">
             <div>
               <h4 className="rating-block__title">
-                {t('ratingSection.userTitle')}
+                {t('postViewing.detailedCategoriesTitle')}
               </h4>
               <p className="rating-block__hint">
                 {t('ratingSection.userHint')}

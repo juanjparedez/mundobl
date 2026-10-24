@@ -157,6 +157,7 @@ export async function VerSerieView({
                     imageUrl: serie.linkedSeries.imageUrl,
                   }
                 : null,
+              ratings: serie.ratings,
             }}
             seasons={seasons}
           />

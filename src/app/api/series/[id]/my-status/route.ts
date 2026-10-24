@@ -28,38 +28,53 @@ export async function GET(
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
     }
 
-    const [seriesVs, seasonRows, episodeRows, subscription, favorite] =
-      await Promise.all([
-        prisma.viewStatus.findUnique({
-          where: {
-            userId_seriesId: { userId: authResult.userId, seriesId },
-          },
-          select: { status: true },
-        }),
-        prisma.viewStatus.findMany({
-          where: { userId: authResult.userId, season: { seriesId } },
-          select: { seasonId: true, status: true },
-        }),
-        prisma.viewStatus.findMany({
-          where: {
-            userId: authResult.userId,
-            episode: { season: { seriesId } },
-          },
-          select: { episodeId: true, status: true },
-        }),
-        prisma.seriesSubscription.findUnique({
-          where: {
-            userId_seriesId: { userId: authResult.userId, seriesId },
-          },
-          select: { id: true },
-        }),
-        prisma.userFavorite.findUnique({
-          where: {
-            userId_seriesId: { userId: authResult.userId, seriesId },
-          },
-          select: { id: true },
-        }),
-      ]);
+    const [
+      seriesVs,
+      seasonRows,
+      episodeRows,
+      subscription,
+      favorite,
+      userRatings,
+      userReview,
+    ] = await Promise.all([
+      prisma.viewStatus.findUnique({
+        where: {
+          userId_seriesId: { userId: authResult.userId, seriesId },
+        },
+        select: { status: true },
+      }),
+      prisma.viewStatus.findMany({
+        where: { userId: authResult.userId, season: { seriesId } },
+        select: { seasonId: true, status: true },
+      }),
+      prisma.viewStatus.findMany({
+        where: {
+          userId: authResult.userId,
+          episode: { season: { seriesId } },
+        },
+        select: { episodeId: true, status: true },
+      }),
+      prisma.seriesSubscription.findUnique({
+        where: {
+          userId_seriesId: { userId: authResult.userId, seriesId },
+        },
+        select: { id: true },
+      }),
+      prisma.userFavorite.findUnique({
+        where: {
+          userId_seriesId: { userId: authResult.userId, seriesId },
+        },
+        select: { id: true },
+      }),
+      prisma.userRating.findMany({
+        where: { userId: authResult.userId, seriesId },
+        select: { category: true, score: true },
+      }),
+      prisma.review.findFirst({
+        where: { userId: authResult.userId, seriesId },
+        select: { id: true },
+      }),
+    ]);
 
     const seasonStatus: Record<number, string> = {};
     seasonRows.forEach((r) => {
@@ -71,12 +86,26 @@ export async function GET(
       if (r.episodeId !== null) episodeStatus[r.episodeId] = r.status;
     });
 
+    const generalRating = userRatings.find((r) => r.category === 'general');
+    const userRating =
+      generalRating !== undefined
+        ? generalRating.score
+        : userRatings.length > 0
+          ? Math.round(
+              (userRatings.reduce((acc, r) => acc + r.score, 0) /
+                userRatings.length) *
+                10
+            ) / 10
+          : null;
+
     return NextResponse.json({
       seriesStatus: seriesVs?.status ?? 'SIN_VER',
       seasonStatus,
       episodeStatus,
       subscribed: subscription !== null,
       favorite: favorite !== null,
+      userRating,
+      hasReview: userReview !== null,
     });
   } catch (error) {
     console.error('Error fetching series my-status:', error);

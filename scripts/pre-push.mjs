@@ -3,8 +3,8 @@
 // Git pasa por stdin una linea por ref: <local ref> <local sha> <remote ref> <remote sha>.
 // Si alguna va a refs/heads/main, corre la verificacion completa sobre
 // exactamente lo que se publica: el arbol tiene que estar limpio y HEAD tiene
-// que ser el commit que se empuja. Para el resto de las ramas alcanza --fast,
-// porque el PR igual pasa por CI.
+// que ser el commit que se empuja. El lote completo se prueba con Compose;
+// las otras ramas pasan --fast. El CI remoto es manual.
 //
 // Saltear en una emergencia: git push --no-verify (queda bajo tu responsabilidad).
 
@@ -45,12 +45,12 @@ if (toMain) {
     );
     process.exit(1);
   }
-  console.log('pre-push: push a main, corriendo npm run test:all completo.');
+  console.log('pre-push: push a main, corriendo npm run test:docker completo.');
 }
 
 const result = spawnSync(
   process.execPath,
-  ['scripts/test-all.mjs', ...(toMain ? [] : ['--fast'])],
+  toMain ? ['scripts/test-docker.mjs'] : ['scripts/test-all.mjs', '--fast'],
   { stdio: 'inherit' }
 );
 process.exit(result.status ?? 1);

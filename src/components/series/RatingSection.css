@@ -78,6 +78,29 @@
   flex-wrap: wrap;
 }
 
+.rating-block__header--sub {
+  margin-top: var(--spacing-md, 16px);
+  padding-top: var(--spacing-md, 16px);
+  border-top: 1px solid var(--border-color, rgba(128, 128, 128, 0.12));
+}
+
+.rating-block__quick {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md, 16px);
+}
+
+.rating-block__quick-meta {
+  flex: 1 1 240px;
+}
+
+.rating-block__quick-rater {
+  flex: 1 1 260px;
+  max-width: 360px;
+}
+
 .rating-block__title {
   margin: 0;
   font-size: 1.05em;

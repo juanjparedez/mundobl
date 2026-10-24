@@ -10,6 +10,43 @@
 import type { TranslationShape } from '../messages';
 
 const th = {
+  postViewing: {
+    quickScoreTitle: 'ให้คะแนนด่วน (1–10)',
+    quickScoreHint:
+      'เลือกคะแนนรวมหรือให้คะแนนแยกตามหมวดหมู่ด้านล่าง',
+    detailedCategoriesTitle: 'การให้คะแนนแบบละเอียดตามหมวดหมู่',
+    finishTitle: 'คุณคิดอย่างไรกับซีรีส์เรื่องนี้?',
+    finishSubtitle:
+      'คะแนนและรีวิวของคุณช่วยให้ชุมชนเลือกเรื่องที่จะดูต่อไปได้ง่ายขึ้น',
+    yourScore: 'คะแนนของคุณ',
+    rateQuick: 'ให้คะแนน (1–10)',
+    rateByCategories: 'ให้คะแนนตามหมวดหมู่',
+    writeReview: 'เขียนรีวิว',
+    editReview: 'ดูหรือแก้ไขรีวิวของคุณ',
+    savedScore: 'บันทึกคะแนนแล้ว',
+    loginToSave: 'เข้าสู่ระบบเพื่อบันทึกคะแนนและรีวิวไว้ในบัญชีของคุณ',
+    chapterPromptTitle: 'คิดอย่างไรกับ {code}?',
+    chapterCommentAction: 'แสดงความคิดเห็น {code}',
+    chapterCommentsTitle: 'ความคิดเห็นเกี่ยวกับ {code}',
+    chapterNoteAction: 'โน้ตส่วนตัวสำหรับ {code}',
+    dismiss: 'ซ่อน',
+    finishedBannerTitle: 'คุณดู {title} จบแล้ว!',
+    finishedRateAction: 'ให้คะแนนซีรีส์',
+    finishedReviewAction: 'เขียนรีวิว',
+    communitySectionTitle: 'คะแนน รีวิว และความคิดเห็น',
+    jumpToRatings: 'ให้คะแนน',
+    jumpToReviews: 'รีวิว',
+    jumpToComments: 'ความคิดเห็น',
+    statsAttractorTitle: 'ทุกตอนและทุกคะแนนมีความหมาย',
+    statsAttractorBody:
+      'ติดตามซีรีส์ของคุณ ให้คะแนนเรื่องที่ดูจบ และเขียนรีวิว: สถิตินิรนามช่วยให้เราขอซีรีส์ถูกลิขสิทธิ์ในภูมิภาคของเราได้มากขึ้น',
+    statsAttractorTrackCta: 'ไปที่การติดตามของฉัน',
+    statsAttractorWatchCta: 'ดูซีรีส์ฟรี',
+    statsAttractorCommunityCta: 'รีวิวและชุมชน',
+    statsTopRatedTitle: 'ซีรีส์คะแนนสูงสุดจากชุมชน',
+    statsTopRatedUnit: 'คะแนน',
+    statsRecentReviews: 'รีวิวที่เผยแพร่ (30 วัน)',
+  },
   playerRecovery: {
     cancel: 'ยกเลิก',
     title: "วิดีโอไม่แสดงใช่ไหม?",

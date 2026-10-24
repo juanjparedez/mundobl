@@ -54,6 +54,11 @@
 .watching-workspace .ant-tabs-tabpane {
   min-width: 0;
 }
+.watching-workspace__finished-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
 @media (max-width: 768px) {
   .watching-workspace__toolbar .ant-input-search {
     max-width: none;
