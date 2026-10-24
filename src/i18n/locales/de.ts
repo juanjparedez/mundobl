@@ -2338,7 +2338,15 @@ const de = {
     "trackingMembers": "Verfolgen ihren Fortschritt auf MundoBL",
     "episodesRecently": "Gesehene Folgen (7 Tage)",
     "episodesByDay": "Gesehene Folgen pro Tag (30 Tage)",
-    "episodesLabel": "Folgen"
+    "episodesLabel": "Folgen",
+    "monthlyRanking": "Monatsranking: gesehene Folgen",
+    "anonymousWatcher": "Anonymes Mitglied {n}",
+    "rankingUnit": "Folgen",
+    "rankingPosition": "Diesen Monat bist du #{rank} von {ranked} mit {count} Folgen.",
+    "rankingEmpty": "Markiere diesen Monat gesehene Folgen, um ins Ranking zu kommen.",
+    "rankingStaff": "Das Team ist nicht Teil des Rankings.",
+    "rankingPrivacy": "Das Ranking ist anonym. Dein Name erscheint nur, wenn du dein Community-Profil veröffentlichst.",
+    "rankingPrivacyLink": "Mein Bereich"
   },
   "adminStats": {
     "pageTitle": "Aktivitätsstatistiken",

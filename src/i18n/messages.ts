@@ -2322,6 +2322,14 @@ export type TranslationShape = {
     episodesByDay: string;
     episodesLabel: string;
     allTimeTitle: string;
+    monthlyRanking: string;
+    anonymousWatcher: string;
+    rankingUnit: string;
+    rankingPosition: string;
+    rankingEmpty: string;
+    rankingStaff: string;
+    rankingPrivacy: string;
+    rankingPrivacyLink: string;
   };
   adminStats: {
     pageTitle: string;
@@ -6328,6 +6336,15 @@ const es: TranslationShape = {
     episodesRecently: 'Episodios vistos (7 días)',
     episodesByDay: 'Episodios vistos por día (30 días)',
     episodesLabel: 'Episodios',
+    monthlyRanking: 'Ranking del mes: capítulos vistos',
+    anonymousWatcher: 'Miembro anónimo {n}',
+    rankingUnit: 'cap.',
+    rankingPosition: 'Este mes vas #{rank} de {ranked} con {count} capítulos.',
+    rankingEmpty: 'Marcá capítulos vistos este mes para entrar al ranking.',
+    rankingStaff: 'El equipo no entra en el ranking.',
+    rankingPrivacy:
+      'El ranking es anónimo. Solo se ve tu nombre si publicás tu perfil de comunidad.',
+    rankingPrivacyLink: 'Mi espacio',
   },
   adminStats: {
     pageTitle: 'Estadísticas de actividad',
@@ -10390,6 +10407,16 @@ const en: TranslationShape = {
     episodesRecently: 'Episodes watched (7 days)',
     episodesByDay: 'Episodes watched per day (30 days)',
     episodesLabel: 'Episodes',
+    monthlyRanking: 'Monthly ranking: episodes watched',
+    anonymousWatcher: 'Anonymous member {n}',
+    rankingUnit: 'eps.',
+    rankingPosition:
+      "This month you're #{rank} of {ranked} with {count} episodes.",
+    rankingEmpty: 'Mark episodes as watched this month to join the ranking.',
+    rankingStaff: "The team isn't part of the ranking.",
+    rankingPrivacy:
+      'The ranking is anonymous. Your name only shows if you publish your community profile.',
+    rankingPrivacyLink: 'My space',
   },
   adminStats: {
     pageTitle: 'Activity Statistics',

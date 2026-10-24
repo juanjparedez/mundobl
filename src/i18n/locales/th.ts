@@ -2333,7 +2333,15 @@ const th = {
     "trackingMembers": "ติดตามความคืบหน้าบน MundoBL",
     "episodesRecently": "ตอนที่ดูแล้ว (7 วัน)",
     "episodesByDay": "ตอนที่ดูต่อวัน (30 วัน)",
-    "episodesLabel": "ตอน"
+    "episodesLabel": "ตอน",
+    "monthlyRanking": "อันดับประจำเดือน: ตอนที่ดู",
+    "anonymousWatcher": "สมาชิกนิรนาม {n}",
+    "rankingUnit": "ตอน",
+    "rankingPosition": "เดือนนี้คุณอยู่อันดับ {rank} จาก {ranked} ด้วย {count} ตอน",
+    "rankingEmpty": "ทำเครื่องหมายตอนที่ดูในเดือนนี้เพื่อเข้าร่วมอันดับ",
+    "rankingStaff": "ทีมงานไม่ถูกนับในอันดับ",
+    "rankingPrivacy": "อันดับเป็นแบบนิรนาม ชื่อของคุณจะแสดงเฉพาะเมื่อคุณเผยแพร่โปรไฟล์ชุมชน",
+    "rankingPrivacyLink": "พื้นที่ของฉัน"
   },
   "adminStats": {
     "pageTitle": "สถิติกิจกรรม",

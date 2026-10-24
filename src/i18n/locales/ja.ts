@@ -2335,7 +2335,15 @@ const ja = {
     "trackingMembers": "MundoBLで視聴記録をつけている人",
     "episodesRecently": "視聴したエピソード（7日）",
     "episodesByDay": "1日ごとの視聴エピソード（30日）",
-    "episodesLabel": "エピソード"
+    "episodesLabel": "エピソード",
+    "monthlyRanking": "今月のランキング：視聴エピソード数",
+    "anonymousWatcher": "匿名メンバー {n}",
+    "rankingUnit": "話",
+    "rankingPosition": "今月は{ranked}人中{rank}位、{count}話視聴しました。",
+    "rankingEmpty": "今月視聴したエピソードを記録するとランキングに参加できます。",
+    "rankingStaff": "運営チームはランキングに含まれません。",
+    "rankingPrivacy": "ランキングは匿名です。コミュニティプロフィールを公開した場合のみ名前が表示されます。",
+    "rankingPrivacyLink": "マイスペース"
   },
   "adminStats": {
     "pageTitle": "アクティビティ統計",
