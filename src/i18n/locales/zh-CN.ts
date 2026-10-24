@@ -2331,7 +2331,15 @@ const zhCN = {
     "trackingMembers": "在 MundoBL 记录观看进度",
     "episodesRecently": "看过的集数（7 天）",
     "episodesByDay": "每日看过的集数（30 天）",
-    "episodesLabel": "集数"
+    "episodesLabel": "集数",
+    "monthlyRanking": "本月排行：观看集数",
+    "anonymousWatcher": "匿名成员 {n}",
+    "rankingUnit": "集",
+    "rankingPosition": "本月你在 {ranked} 人中排第 {rank}，看了 {count} 集。",
+    "rankingEmpty": "本月标记已看的剧集即可进入排行。",
+    "rankingStaff": "团队成员不参与排行。",
+    "rankingPrivacy": "排行是匿名的。只有公开社区资料后才会显示你的名字。",
+    "rankingPrivacyLink": "我的空间"
   },
   "adminStats": {
     "pageTitle": "活动统计",

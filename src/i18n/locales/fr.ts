@@ -2338,7 +2338,15 @@ const fr = {
     "trackingMembers": "Suivent leur progression sur MundoBL",
     "episodesRecently": "Épisodes vus (7 jours)",
     "episodesByDay": "Épisodes vus par jour (30 jours)",
-    "episodesLabel": "Épisodes"
+    "episodesLabel": "Épisodes",
+    "monthlyRanking": "Classement du mois : épisodes vus",
+    "anonymousWatcher": "Membre anonyme {n}",
+    "rankingUnit": "ép.",
+    "rankingPosition": "Ce mois-ci, vous êtes #{rank} sur {ranked} avec {count} épisodes.",
+    "rankingEmpty": "Marquez des épisodes vus ce mois-ci pour entrer dans le classement.",
+    "rankingStaff": "L'équipe ne participe pas au classement.",
+    "rankingPrivacy": "Le classement est anonyme. Votre nom n'apparaît que si vous publiez votre profil communautaire.",
+    "rankingPrivacyLink": "Mon espace"
   },
   "adminStats": {
     "pageTitle": "Statistiques d'activité",

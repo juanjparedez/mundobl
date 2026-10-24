@@ -1,0 +1,22 @@
+.own-ranking-position {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-sm);
+}
+
+.own-ranking-position__mine {
+  margin: 0;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.own-ranking-position__mine .anticon {
+  color: var(--primary-color);
+}
+
+.own-ranking-position__privacy {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+}

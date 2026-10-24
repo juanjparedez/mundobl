@@ -2335,7 +2335,15 @@ const ko = {
     "trackingMembers": "MundoBL에서 시청 기록 중",
     "episodesRecently": "시청한 에피소드 (7일)",
     "episodesByDay": "일별 시청 에피소드 (30일)",
-    "episodesLabel": "에피소드"
+    "episodesLabel": "에피소드",
+    "monthlyRanking": "이달의 랭킹: 시청한 에피소드",
+    "anonymousWatcher": "익명 회원 {n}",
+    "rankingUnit": "화",
+    "rankingPosition": "이번 달 {ranked}명 중 {rank}위, {count}화를 봤어요.",
+    "rankingEmpty": "이번 달 본 에피소드를 표시하면 랭킹에 참여할 수 있어요.",
+    "rankingStaff": "운영팀은 랭킹에 포함되지 않습니다.",
+    "rankingPrivacy": "랭킹은 익명입니다. 커뮤니티 프로필을 공개한 경우에만 이름이 표시됩니다.",
+    "rankingPrivacyLink": "내 공간"
   },
   "adminStats": {
     "pageTitle": "활동 통계",
