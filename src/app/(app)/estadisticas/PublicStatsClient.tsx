@@ -476,8 +476,44 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
             value: data.recent.ratingsRecently,
             label: t('publicStats.ratingsRecently'),
           },
+          {
+            icon: <CommentOutlined />,
+            value: data.recent.reviewsRecently ?? 0,
+            label: t('postViewing.statsRecentReviews'),
+          },
         ]}
       />
+
+      {/* ── Banner atractor: participar suma en las metricas ── */}
+      <section className="public-stats-attractor">
+        <div className="public-stats-attractor__text">
+          <h3 className="public-stats-attractor__title">
+            <TrophyOutlined aria-hidden />{' '}
+            {t('postViewing.statsAttractorTitle')}
+          </h3>
+          <p className="public-stats-attractor__body">
+            {t('postViewing.statsAttractorBody')}
+          </p>
+        </div>
+        <div className="public-stats-attractor__actions">
+          <Link href="/watching">
+            <Button type="primary" icon={<PlayCircleOutlined />}>
+              {t('postViewing.statsAttractorTrackCta')}
+            </Button>
+          </Link>
+          <Link href="/ver">
+            <Button icon={<VideoCameraOutlined />}>
+              {t('postViewing.statsAttractorWatchCta')}
+            </Button>
+          </Link>
+          <Link href="/comunidad">
+            <Button icon={<CommentOutlined />}>
+              {t('postViewing.statsAttractorCommunityCta')}
+            </Button>
+          </Link>
+        </div>
+      </section>
+
       <div className="app-page__row app-page__row--2">
         <RankingPanel
           title={t('publicStats.watchingNow')}
@@ -485,7 +521,7 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
           items={data.recent.watchingNow.map((r) => ({
             key: r.title,
             count: r.count,
-            href: getSeriesUrl(r.seriesId, r.title),
+            href: r.href ?? getSeriesUrl(r.seriesId, r.title),
           }))}
           empty={copy.empty}
           unit={t('publicStats.watchingUnit')}
@@ -638,7 +674,7 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
           items={data.rankings.topSeries.map((r) => ({
             key: r.title,
             count: r.count,
-            href: getSeriesUrl(r.seriesId, r.title),
+            href: r.href ?? getSeriesUrl(r.seriesId, r.title),
           }))}
           empty={copy.empty}
           unit={copy.timesWatched}
@@ -655,7 +691,7 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
           items={data.rankings.topFavorited.map((r) => ({
             key: r.title,
             count: r.count,
-            href: getSeriesUrl(r.seriesId, r.title),
+            href: r.href ?? getSeriesUrl(r.seriesId, r.title),
           }))}
           empty={copy.empty}
           unit={copy.timesSaved}
@@ -665,6 +701,24 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
           onNavigate={handleNavigate}
         />
       </div>
+
+      {data.rankings.topRated && data.rankings.topRated.length > 0 && (
+        <RankingPanel
+          title={t('postViewing.statsTopRatedTitle')}
+          icon={<StarOutlined />}
+          items={data.rankings.topRated.map((r) => ({
+            key: r.title,
+            count: r.avgScore,
+            href: r.href ?? getSeriesUrl(r.seriesId, r.title),
+          }))}
+          empty={copy.empty}
+          unit={t('postViewing.statsTopRatedUnit')}
+          chartMode={chartMode}
+          onChartModeChange={persistChartMode}
+          formatNumber={fmt}
+          onNavigate={handleNavigate}
+        />
+      )}
 
       <div className="app-page__row app-page__row--2">
         <RankingPanel

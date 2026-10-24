@@ -1,66 +1,92 @@
-# Correr todas las pruebas local (`npm run test:all`)
+# Pruebas locales con Docker Compose
 
-Un solo comando corre lo mismo que CI: `.github/workflows/tracking.yml` llama a
-`scripts/test-all.mjs`, así que la lista de pruebas es una sola y no se puede
-desincronizar.
+```bash
+npm run test:docker
+```
 
-## Qué corre
+Ejecuta la suite completa en contenedores locales: Node 22, PostgreSQL 16 y
+Chromium. Usa `scripts/test-all.mjs`, la misma lista de verificaciones que el
+workflow remoto opcional. No requiere instalar PostgreSQL ni Chromium en Windows.
 
-1. `prisma generate`, `tsc --noEmit`, `eslint src/`, `prettier --check` sobre `src/`.
-2. Postgres 16 descartable en Docker (`127.0.0.1:55433/mundobl_replay`, en memoria).
-3. `prisma migrate deploy` + `db:check` (el historial de migraciones coincide con el schema).
-4. Regresiones `scripts/test-*.ts` y de rutas `.mjs`, auditoría de locales.
-5. Backup/restore contra una segunda base `mundobl_restore`.
-6. Pruebas de UI con Playwright (Chromium).
-7. `next build` y las pruebas contra `next start` en `127.0.0.1:3223`.
+## Preparar la máquina
 
-Tarda más o menos lo mismo que CI (10 a 15 minutos). `npm run test:fast` corre solo
-el paso 1 (alrededor de un minuto).
+1. Instalar Node 22 y Git para ejecutar el comando y los hooks.
+2. Tener Docker con el plugin Compose disponible. En Windows se detecta Docker
+   Desktop o, si no está en PATH, Docker en la distribución WSL predeterminada.
+3. Ejecutar `npm install` para desarrollo. También activa el hook pre-push.
+   Si las dependencias ya están instaladas, `node scripts/install-git-hooks.mjs`
+   activa el hook sin reinstalarlas.
+4. Ejecutar `npm run test:docker`. Para revisar solamente la configuración:
+   `npm run test:docker -- --config`.
 
-Nunca usa `.env`: las claves de `.env*` se vacían para los procesos de prueba, así el
-build y el servidor de prueba no tocan producción.
+La primera ejecución descarga imágenes, dependencias npm y Chromium; puede tardar
+más que las siguientes. Docker conserva esas capas. Cambiar código reconstruye
+la capa de fuentes, sin reinstalar dependencias mientras no cambien el lockfile,
+`package.json`, `.npmrc` o las instrucciones anteriores del Dockerfile.
 
-## Preparar la máquina (Windows, una vez)
+## Aislamiento y recursos
 
-1. Node 22 y Git for Windows.
-2. Docker Desktop, abierto antes de correr las pruebas.
-3. En el repo: `npm install`. Además de instalar dependencias, activa el hook de git
-   (`git config core.hooksPath .githooks`).
-4. `npm run test:all`. La primera vez baja la imagen `postgres:16-alpine` y Chromium.
+- `compose.test.yml` es independiente del Compose de desarrollo. PostgreSQL usa
+  memoria temporal y se descarta al terminar; no hay volúmenes de datos persistentes.
+- Los dos contenedores comparten una red interna, sin salida a Internet durante
+  las pruebas. No se publica ningún puerto en Windows ni se conecta a Supabase,
+  Vercel, YouTube u otros servicios reales. Solo construir la imagen necesita red.
+- `.dockerignore` incluye únicamente fuentes y configuración de prueba. No entran
+  `.env*`, `.git`, backups, reportes privados ni `node_modules` del equipo.
+  Compose usa un archivo de entorno vacío y credenciales ficticias de prueba.
+- No se monta el directorio del proyecto dentro del contenedor. El único montaje
+  escribe logs en `test-results/compose/`.
+- El comando elimina sus contenedores y su red al finalizar, incluso si falla una
+  prueba. Las imágenes quedan cacheadas. Una interrupción forzada del proceso o
+  un apagado puede impedir la limpieza: comprobar que no sigue una corrida antes
+  de quitar `test-results/compose/running.lock` y volver a ejecutar.
 
-Si falla un paso, el mensaje dice cómo retomar sin repetir todo:
-`npm run test:all -- --from=<paso>`. `npm run test:all -- --list` muestra los pasos.
+El trabajo consume CPU, RAM y disco de esta máquina. No consume las cuotas del
+sitio en producción. El tiempo depende del equipo y de si las capas están cacheadas.
 
-Sin Docker: levantar cualquier Postgres en `127.0.0.1:55433` con la base
-`mundobl_replay` vacía y correr con `MUNDOBL_TEST_DB=external` y `DATABASE_URL`
-apuntando ahí (ver [seguimiento-pruebas-locales.md](seguimiento-pruebas-locales.md)).
+## Qué verifica
 
-## Hook pre-push
+1. Prisma, TypeScript, ESLint y formato.
+2. Migraciones e igualdad entre el historial y el schema.
+3. Regresiones de datos y rutas con datos sintéticos.
+4. Backup y restauración en otra base descartable.
+5. Diez locales y componentes reales en Chromium.
+6. Build de producción y pruebas contra `next start` dentro del contenedor.
 
-- Push a `main`: corre `test:all` completo sobre exactamente lo que se publica. Si hay
-  cambios sin commitear o HEAD no es el commit que se empuja, corta antes de probar.
-- Push a otra rama: corre `test:fast`. El PR igual pasa por CI.
-- `git push --no-verify` lo saltea. Es una salida de emergencia, no un atajo: un push
-  así a `main` puede romper `main` como pasó con #130.
+El restore de las 80 tablas comprueba el mecanismo completo con datos de prueba;
+no descarga ni restaura una copia de la base real.
 
-## Mergear local a main
+Para iterar rápido: `npm run test:fast`. El modo nativo anterior sigue disponible
+con `npm run test:all` y requiere las dependencias del host; no tiene el aislamiento
+de red de Compose. Admite `-- --list` y `-- --from=<paso>`. Consultar
+[seguimiento-pruebas-locales.md](seguimiento-pruebas-locales.md) para una base local
+externa. El comando Compose siempre ejecuta la suite completa.
 
-Es válido para un proyecto de una persona si el hook es la puerta real. Lo que se pierde:
+## Pruebas automáticas antes de publicar
 
-- El registro en GitHub de que la versión publicada pasó CI (el check verde del PR).
-- La corrida en una máquina limpia: un archivo sin trackear o un `node_modules` viejo
-  puede hacer pasar local algo que en limpio falla. El hook exige árbol limpio para
-  archivos trackeados, pero no detecta archivos nuevos sin `git add`.
-- Las ramas de Claude en la nube no tienen el hook (instalan con `--ignore-scripts`);
-  lo que llega por PR sigue necesitando CI verde antes de mergear.
+- Push a `main`: el hook ejecuta `test:docker` completo. Exige que HEAD sea el
+  commit que se publica y que no haya cambios pendientes en archivos trackeados.
+- Push a otra rama: ejecuta `test:fast`.
+- El hook debe estar instalado en cada clon. No se ejecuta al usar el botón de
+  merge de GitHub ni en un agente remoto que lo omita. Esas entregas necesitan una
+  validación explícita de la revisión que se publicará.
+- El contexto Docker usa el árbol de trabajo: antes de publicar hay que incluir
+  los archivos nuevos necesarios en Git; el hook no detecta los nuevos sin `git add`.
+- `git push --no-verify` omite el hook: no usarlo para evitar una prueba fallida.
 
-## Costos
+`tracking.yml` queda con `workflow_dispatch`: una comprobación remota limpia solo
+cuando se solicite. Este cambio surte efecto en GitHub al publicar el lote que lo
+contiene. No genera previews ni deploys.
 
-- Vercel: `vercel.json` tiene `git.deploymentEnabled: false`, así que ningún push
-  (ni a `main` ni a ramas) despliega. No hay previews. Lo que consume cuota es el
-  tráfico en producción (CPU de funciones, escrituras ISR) y cada deploy manual. Mergear
-  local no cambia eso; agrupar deploys sí.
-- GitHub Actions: el repo es público, los minutos son gratis. `tracking.yml` ahora
-  saltea cambios solo de docs/markdown y cancela corridas viejas del mismo PR.
-  `migrations.yml` y `backup-restore-test.yml` se eliminaron porque `test:all` ya
-  cubre `db:check` y el backup/restore.
+## Cuotas de las plataformas
+
+- **Supabase:** las regresiones usan PostgreSQL descartable, tanto localmente como
+  en Actions. No gastan recursos de la base de producción.
+- **GitHub Actions:** este repositorio es público; los runners estándar no cobran
+  minutos. Artifacts y cachés tienen sus propios límites. Se deja el workflow
+  manual para evitar trabajo remoto automático que el propietario no desea.
+- **Vercel:** `vercel.json` desactiva deploys Git. Solo se publica con el workflow
+  manual autorizado; cada deploy y el tráfico real tienen sus propios recursos.
+  Mover pruebas a Docker no elimina el consumo de esos despliegues.
+
+Fuente: [facturación de GitHub Actions](https://docs.github.com/en/billing/concepts/product-billing/github-actions).

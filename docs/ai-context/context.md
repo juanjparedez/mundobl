@@ -2,6 +2,15 @@
 
 Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-stack para gestionar, calificar y hacer seguimiento de series, peliculas, cortos y especiales.
 
+## Pruebas completas en Docker local (2026-10-24, lote sin publicar)
+
+- El propietario pidió evitar pruebas remotas automáticas y usar su equipo. `npm run test:docker` construye Node 22/Chromium y ejecuta la misma suite de 67 pasos junto a PostgreSQL 16 descartable en `compose.test.yml`.
+- La ejecución tiene red interna sin salida a Internet y sin puertos del host. La base vive en tmpfs; solo se monta `test-results/compose` para logs. El contexto de build usa una lista permitida en `.dockerignore`, sin `.env*`, `.git`, backups ni dependencias del host. Las descargas ocurren al construir la imagen y se cachean.
+- Windows detecta Docker nativo o Docker en la distribución WSL predeterminada. En este equipo se reutilizó el motor existente de Ubuntu-20.04 y se instaló el plugin oficial Compose v5.6.1 verificando su checksum. No requiere Docker Desktop adicional.
+- El hook pre-push usa la suite Compose al publicar `main` y la suite rápida para otras ramas. `tracking.yml` queda manual (`workflow_dispatch`) en este lote local; GitHub mantiene su configuración anterior hasta publicarlo con una instrucción nueva. El deploy de Vercel sigue siendo manual.
+- Las regresiones anteriores de Actions usaban PostgreSQL efímero, no Supabase. El repositorio público usa runners estándar sin costo de minutos; cachés/artifacts y los despliegues tienen cuotas independientes. La preferencia local se aplica aunque esas regresiones no gastaran la cuota de tráfico del sitio.
+- Validación local aprobada: 67 pasos en 10m57s, incluidas las 80 tablas restauradas, Chromium, build y pruebas contra la app compilada. El launcher salió con código 0 y eliminó contenedores/red; se conservaron imagen cacheada y logs. Inspección de Docker confirmó red interna, cero puertos publicados y solo el montaje de logs. Ocho advertencias de lint anteriores, sin errores. Comandos y límites del hook: [pruebas-locales.md](../pruebas-locales.md).
+
 ## Recuperación del reproductor (2026-10-24)
 
 - El propietario confirmó que el video vacío de Chrome volvió a funcionar al resetear el Service Worker desde Ajustes; en incógnito ya funcionaba. Esto vincula el incidente con el estado local, pero no identifica qué entrada o versión lo produjo.
@@ -10,7 +19,8 @@ Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-s
 - `scripts/test-player-recovery.mjs` prueba reglas del SW, migración de cachés y componentes reales en un perfil aislado: revisión, recarga del iframe, cancelación, reset/recarga preservando sesión/preferencias/progreso, errores y desconexión. El proveedor de video está simulado en esa prueba. Diez locales completos; la ayuda se comprobó también en la ficha local con Vimeo real.
 - Blossom Campus es un problema independiente: el diagnóstico anónimo de sus seis videos pide membresía Gold de STRONGBERRY aunque la API indique público/embebible. No cambiar ese diagnóstico por «resuelto» al limpiar cachés. Su corrección de disponibilidad queda pendiente y no se modificaron datos de producción en este lote.
 - Validación: `npm run test:fast` aprobado (ocho advertencias anteriores), build optimizado con DB local aprobado, auditoría de 3.566 claves en diez locales y regresión de recuperación aprobadas. La confirmación y el panel caben a 320/390/1280 px. Ficha compilada de prueba: `http://localhost:3018/ver/815-yu-and-rachel` (ID de la copia local).
-- El propietario autorizó explícitamente publicar este lote el 24/10. Entrega por PR con CI completo y un solo deploy manual; verificar después el SHA servido, `sw.js` v9 y la ayuda en una ficha real. Sin migración ni cambios de datos del catálogo.
+- Publicado con autorización del propietario: PR #141, commit `29c5dd31db45f2c129ddd453b212c845d8149753`. Los 67 pasos de CI pasaron en 10m16s; un solo deploy manual quedó READY. Producción sirve ese SHA y el `sw.js` v9 coincide con el archivo publicado; ayuda presente en Vimeo y YouTube. Sin migración ni cambios de datos del catálogo.
+- Comprobación posterior en Chrome: las acciones están publicadas y el reinicio conserva la sesión. Un iframe volvió a quedar vacío en la pestaña inspeccionada incluso tras el reinicio; no dar por demostrada la eliminación completa del incidente ni atribuir una causa nueva sin evidencia. Las regresiones aisladas del componente y SW pasaron.
 
 ## Publicación autorizada del lote de 16 títulos (2026-10-24)
 
@@ -1097,6 +1107,7 @@ Detalle, límites y reproducción: [docs/guardado-series-2026-10-12.md](../guard
 - Actividad anónima: `SeriesActivityDaily` (día, serie, kind view|chapter|want|finish, source account|browser, país del edge, count). Sin usuario, IP ni cookie. No cuentan GPC/DNT, el opt-out de /privacidad (`mundobl.activityOptOut`), ADMIN/MODERATOR/COLLABORATOR ni series no visibles. El contador público ("N capítulos vistos esta semana") exige mínimo 5 y se pide por API (las fichas son ISR de una semana).
 - Ranking: quien no publicó su perfil aparece con un alias generado ([community-alias.ts](../../src/lib/community-alias.ts)): dos listas de 24 sustantivos por idioma (`communityAlias.firstWords/secondWords`, separadas por `|`) y una plantilla. Semilla: `CommunityProfile.aliasSeed` o hash del userId. Se cambia con `POST /api/community/alias` (cada 10 min).
 - `/admin/informe-productoras` ([producer-report.ts](../../src/lib/producer-report.ts)): cuentas, activas, capítulos con/sin cuenta, por serie, canal oficial y país, y clics a plataformas, con resumen copiable.
+- Cierre del círculo post-capítulo y post-serie: `GET /api/series/[id]/my-status` hidrata `userRating` (`category: 'general'` o promedio de categorías) y `hasReview`. En estado `VISTA`, `TrackingPanel` muestra [PostFinishPrompt](../../src/components/series/PostFinishPrompt/PostFinishPrompt.tsx) con puntaje rápido 1–10, favorito, apertura directa del modal de reseñas (`mundobl:open-review-modal`) y enlace al desglose por categorías; `RatingSection` combina puntaje rápido (`general`) arriba y las 9 categorías debajo, sincronizados vía `mundobl:user-rating-updated`. `/ver/[id]` habilita valoraciones, reseñas, comentarios de serie y comentarios/notas del capítulo activo para todas las obras visibles. `/estadisticas` suma el ranking `topRated`, reseñas recientes y banner atractor con links `getContentUrl`.
 - Tests: `scripts/test-tracking-redesign.ts` y `scripts/test-activity-routes.mjs`.
 
 ## Comandos

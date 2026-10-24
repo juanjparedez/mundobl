@@ -10,6 +10,44 @@
 import type { TranslationShape } from '../messages';
 
 const ja = {
+  postViewing: {
+    quickScoreTitle: 'クイックスコア (1–10)',
+    quickScoreHint:
+      '総合スコアを選ぶか、下のカテゴリ別評価を入力してください。',
+    detailedCategoriesTitle: 'カテゴリ別の詳細評価',
+    finishTitle: 'このシリーズはいかがでしたか？',
+    finishSubtitle:
+      'あなたの評価やレビューは、コミュニティが次に観る作品を選ぶ参考になります。',
+    yourScore: 'あなたのスコア',
+    rateQuick: '評価する (1–10)',
+    rateByCategories: 'カテゴリ別に評価',
+    writeReview: 'レビューを書く',
+    editReview: 'レビューを表示・編集',
+    savedScore: 'スコアを保存しました',
+    loginToSave:
+      'ログインすると評価とレビューをアカウントに保存できます。',
+    chapterPromptTitle: '{code}の感想は？',
+    chapterCommentAction: '{code}にコメント',
+    chapterCommentsTitle: '{code}のコメント',
+    chapterNoteAction: '{code}の非公開メモ',
+    dismiss: '閉じる',
+    finishedBannerTitle: '「{title}」を完走しました！',
+    finishedRateAction: '作品を評価',
+    finishedReviewAction: 'レビューを書く',
+    communitySectionTitle: '評価・レビュー・コメント',
+    jumpToRatings: '評価',
+    jumpToReviews: 'レビュー',
+    jumpToComments: 'コメント',
+    statsAttractorTitle: '1話ごとの視聴と評価が力になります',
+    statsAttractorBody:
+      '視聴記録をつけ、完走した作品を評価・レビューしてください。匿名の統計データは公式配信の拡大リクエストに役立てられます。',
+    statsAttractorTrackCta: '視聴管理へ',
+    statsAttractorWatchCta: '無料配信を見る',
+    statsAttractorCommunityCta: 'レビューとコミュニティ',
+    statsTopRatedTitle: 'コミュニティ高評価シリーズ',
+    statsTopRatedUnit: '点',
+    statsRecentReviews: '公開レビュー (30日)',
+  },
   playerRecovery: {
     cancel: 'キャンセル',
     title: "動画が表示されませんか？",

@@ -1,0 +1,15 @@
+FROM node:22-bookworm
+
+WORKDIR /workspace
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Esta capa se reutiliza mientras package-lock.json no cambie.
+COPY package.json package-lock.json .npmrc ./
+RUN npm ci --ignore-scripts && npx playwright install --with-deps chromium
+
+# El contexto usa una allowlist: no incluye .env, .git, backups ni node_modules.
+COPY . .
+RUN DATABASE_URL=postgresql://mundobl:mundobl@127.0.0.1:55433/mundobl_replay \
+    DIRECT_URL=postgresql://mundobl:mundobl@127.0.0.1:55433/mundobl_replay \
+    npx prisma generate
+CMD ["node", "scripts/test-all.mjs"]

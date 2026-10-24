@@ -121,6 +121,48 @@
   background: color-mix(in srgb, var(--primary-color) 8%, transparent);
 }
 
+.tracking-panel__chapter-prompt {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius);
+  background: color-mix(in srgb, var(--primary-color) 10%, var(--bg-elevated));
+  border: 1px solid color-mix(in srgb, var(--primary-color) 28%, transparent);
+}
+
+.tracking-panel__chapter-prompt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-xs);
+}
+
+.tracking-panel__chapter-prompt-title {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.tracking-panel__chapter-prompt-close {
+  border: 0;
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  padding: 2px 4px;
+  line-height: 1;
+}
+
+.tracking-panel__chapter-prompt-close:hover {
+  color: var(--text-primary);
+}
+
+.tracking-panel__chapter-prompt-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
 /* Acciones del header: el panel ocupa la columna del poster y el resto
    (compartir, campana, etc.) va al lado. En mobile todo apilado. */
 @media (max-width: 600px) {

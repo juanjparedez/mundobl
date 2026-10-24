@@ -7,6 +7,7 @@ import {
 import type { CommunityMetrics } from '@/types/community';
 import { getMonthlyRanking, type RankingEntry } from '@/lib/community-ranking';
 import { getSiteChapterActivity } from '@/lib/series-activity-stats';
+import { getContentUrl } from '@/lib/slug';
 
 /**
  * Metricas globales anonimas para /estadisticas.
@@ -63,6 +64,12 @@ interface RawDayCountRow {
   count: bigint;
 }
 
+interface RawTopRatedRow {
+  seriesId: number;
+  avgScore: number;
+  voterCount: bigint;
+}
+
 export interface RecentCommunityActivity {
   /** Ventana de "recientes" para los contadores cortos (dias). */
   shortWindowDays: number;
@@ -80,7 +87,13 @@ export interface RecentCommunityActivity {
   completedRecently: number;
   publicCommentsRecently: number;
   ratingsRecently: number;
-  watchingNow: Array<{ seriesId: number; title: string; count: number }>;
+  reviewsRecently?: number;
+  watchingNow: Array<{
+    seriesId: number;
+    title: string;
+    href?: string;
+    count: number;
+  }>;
   /** Episodios vistos por dia: es donde esta la actividad real de la
    *  comunidad (se marcan muchos mas episodios que series terminadas). */
   episodesByDay: Array<{ day: string; count: number }>;
@@ -110,8 +123,25 @@ export interface PublicStats {
     teamCompletedSeries: number;
   };
   rankings: {
-    topSeries: Array<{ seriesId: number; title: string; count: number }>;
-    topFavorited: Array<{ seriesId: number; title: string; count: number }>;
+    topSeries: Array<{
+      seriesId: number;
+      title: string;
+      href?: string;
+      count: number;
+    }>;
+    topFavorited: Array<{
+      seriesId: number;
+      title: string;
+      href?: string;
+      count: number;
+    }>;
+    topRated?: Array<{
+      seriesId: number;
+      title: string;
+      href?: string;
+      avgScore: number;
+      voterCount: number;
+    }>;
     topActors: Array<{ actorId: number; name: string; count: number }>;
     topDirectors: Array<{ directorId: number; name: string; count: number }>;
     topProductionCompanies: Array<{
@@ -178,6 +208,7 @@ async function getRecentCommunityActivity(
     completedRecently,
     publicCommentsRecently,
     ratingsRecently,
+    reviewsRecently,
     watchingRows,
     episodesByDayRows,
     topWatchers,
@@ -227,12 +258,20 @@ async function getRecentCommunityActivity(
     prisma.userRating.count({
       where: { updatedAt: { gte: shortSince }, ...COMMUNITY },
     }),
+    prisma.review.count({
+      where: {
+        status: 'PUBLISHED',
+        createdAt: { gte: longSince },
+        series: PUBLIC_REVIEW_SERIES,
+        ...COMMUNITY,
+      },
+    }),
     prisma.viewStatus.groupBy({
       by: ['seriesId'],
       where: {
         status: 'VIENDO',
         seriesId: { not: null },
-        series: { origin: 'CURATED' },
+        series: { visibility: 'VISIBLE' },
         ...COMMUNITY,
       },
       _count: { seriesId: true },
@@ -259,9 +298,9 @@ async function getRecentCommunityActivity(
     .filter((id): id is number => id !== null);
   const titles = await prisma.series.findMany({
     where: { id: { in: watchingIds } },
-    select: { id: true, title: true },
+    select: { id: true, title: true, origin: true, catalogScope: true },
   });
-  const titleById = new Map(titles.map((item) => [item.id, item.title]));
+  const seriesMetaById = new Map(titles.map((item) => [item.id, item]));
 
   // Dias sin actividad van en 0: un grafico con huecos sugiere datos rotos.
   const countByDay = new Map(
@@ -288,13 +327,18 @@ async function getRecentCommunityActivity(
     completedRecently,
     publicCommentsRecently,
     ratingsRecently,
+    reviewsRecently,
     watchingNow: watchingRows
       .filter((row) => row.seriesId !== null)
-      .map((row) => ({
-        seriesId: row.seriesId as number,
-        title: titleById.get(row.seriesId as number) ?? 'Sin titulo',
-        count: row._count.seriesId,
-      })),
+      .map((row) => {
+        const meta = seriesMetaById.get(row.seriesId as number);
+        return {
+          seriesId: row.seriesId as number,
+          title: meta?.title ?? 'Sin titulo',
+          href: meta ? getContentUrl(meta) : undefined,
+          count: row._count.seriesId,
+        };
+      }),
     episodesByDay,
     topWatchers,
     browserChaptersRecently: siteActivity.browser,
@@ -319,6 +363,7 @@ export async function getPublicStats(): Promise<PublicStats> {
     topCountriesRows,
     topTypesRows,
     topFavoritedRows,
+    topRatedRows,
     ratingDistRows,
     ratingStats,
     // Catalog fixed stats (series count, not view count)
@@ -460,6 +505,20 @@ export async function getPublicStats(): Promise<PublicStats> {
       orderBy: { _count: { seriesId: 'desc' } },
       take: 15,
     }),
+    prisma.$queryRaw<RawTopRatedRow[]>`
+      SELECT
+        ur."seriesId" AS "seriesId",
+        ROUND(AVG(ur.score)::numeric, 1)::float8 AS "avgScore",
+        COUNT(DISTINCT ur."userId") AS "voterCount"
+      FROM "UserRating" ur
+      JOIN "User" u ON u.id = ur."userId"
+      JOIN "Series" s ON s.id = ur."seriesId"
+      WHERE s."visibility" = 'VISIBLE'
+        AND u.role <> 'ADMIN'
+      GROUP BY ur."seriesId"
+      ORDER BY "avgScore" DESC, "voterCount" DESC
+      LIMIT 15
+    `,
     prisma.$queryRaw<RawRatingDistRow[]>`
       SELECT score, COUNT(*) as count
       FROM "UserRating" ur
@@ -535,15 +594,16 @@ export async function getPublicStats(): Promise<PublicStats> {
         .map((r) => r.seriesId)
         .filter((id): id is number => id !== null),
       ...topFavoritedRows.map((r) => r.seriesId),
+      ...topRatedRows.map((r) => r.seriesId),
     ])
   );
 
   const series = await prisma.series.findMany({
     where: { id: { in: allSeriesIdsToFetch } },
-    select: { id: true, title: true },
+    select: { id: true, title: true, origin: true, catalogScope: true },
   });
 
-  const seriesById = new Map(series.map((item) => [item.id, item.title]));
+  const seriesById = new Map(series.map((item) => [item.id, item]));
 
   const [community, recent] = await Promise.all([
     getCommunityMetrics(),
@@ -572,16 +632,34 @@ export async function getPublicStats(): Promise<PublicStats> {
     rankings: {
       topSeries: topSeriesRows
         .filter((row) => row.seriesId !== null)
-        .map((row) => ({
-          seriesId: row.seriesId as number,
-          title: seriesById.get(row.seriesId as number) ?? 'Sin titulo',
+        .map((row) => {
+          const meta = seriesById.get(row.seriesId as number);
+          return {
+            seriesId: row.seriesId as number,
+            title: meta?.title ?? 'Sin titulo',
+            href: meta ? getContentUrl(meta) : undefined,
+            count: row._count.seriesId,
+          };
+        }),
+      topFavorited: topFavoritedRows.map((row) => {
+        const meta = seriesById.get(row.seriesId);
+        return {
+          seriesId: row.seriesId,
+          title: meta?.title ?? 'Sin titulo',
+          href: meta ? getContentUrl(meta) : undefined,
           count: row._count.seriesId,
-        })),
-      topFavorited: topFavoritedRows.map((row) => ({
-        seriesId: row.seriesId,
-        title: seriesById.get(row.seriesId) ?? 'Sin titulo',
-        count: row._count.seriesId,
-      })),
+        };
+      }),
+      topRated: topRatedRows.map((row) => {
+        const meta = seriesById.get(row.seriesId);
+        return {
+          seriesId: row.seriesId,
+          title: meta?.title ?? 'Sin titulo',
+          href: meta ? getContentUrl(meta) : undefined,
+          avgScore: Number(row.avgScore),
+          voterCount: Number(row.voterCount),
+        };
+      }),
       topActors: topActorsRows.map((row) => ({
         actorId: row.id,
         name: row.name,

@@ -1,6 +1,40 @@
 import type { SupportedLocale } from './config';
 
 export type TranslationShape = {
+  postViewing: {
+    quickScoreTitle: string;
+    quickScoreHint: string;
+    detailedCategoriesTitle: string;
+    finishTitle: string;
+    finishSubtitle: string;
+    yourScore: string;
+    rateQuick: string;
+    rateByCategories: string;
+    writeReview: string;
+    editReview: string;
+    savedScore: string;
+    loginToSave: string;
+    chapterPromptTitle: string;
+    chapterCommentAction: string;
+    chapterCommentsTitle: string;
+    chapterNoteAction: string;
+    dismiss: string;
+    finishedBannerTitle: string;
+    finishedRateAction: string;
+    finishedReviewAction: string;
+    communitySectionTitle: string;
+    jumpToRatings: string;
+    jumpToReviews: string;
+    jumpToComments: string;
+    statsAttractorTitle: string;
+    statsAttractorBody: string;
+    statsAttractorTrackCta: string;
+    statsAttractorWatchCta: string;
+    statsAttractorCommunityCta: string;
+    statsTopRatedTitle: string;
+    statsTopRatedUnit: string;
+    statsRecentReviews: string;
+  };
   playerRecovery: {
     cancel: string;
     title: string;
@@ -3970,6 +4004,44 @@ export type TranslationShape = {
 };
 
 const es: TranslationShape = {
+  postViewing: {
+    quickScoreTitle: 'Puntaje rápido (1–10)',
+    quickScoreHint:
+      'Elegí un puntaje general o detallá categoría por categoría más abajo.',
+    detailedCategoriesTitle: 'Valoración detallada por categoría',
+    finishTitle: '¿Qué te pareció la serie?',
+    finishSubtitle:
+      'Tu valoración y reseña ayudan a la comunidad a elegir qué ver después.',
+    yourScore: 'Tu puntaje',
+    rateQuick: 'Puntuar (1–10)',
+    rateByCategories: 'Detallar por categoría',
+    writeReview: 'Escribir reseña',
+    editReview: 'Ver o editar tu reseña',
+    savedScore: 'Puntaje guardado',
+    loginToSave:
+      'Iniciá sesión para guardar tu valoración y reseña en tu cuenta.',
+    chapterPromptTitle: '¿Qué te dejó el {code}?',
+    chapterCommentAction: 'Comentar {code}',
+    chapterCommentsTitle: 'Comentarios de {code}',
+    chapterNoteAction: 'Nota privada de {code}',
+    dismiss: 'Ocultar',
+    finishedBannerTitle: '¡Terminaste {title}!',
+    finishedRateAction: 'Puntuar serie',
+    finishedReviewAction: 'Dejar reseña',
+    communitySectionTitle: 'Valoraciones, reseñas y comentarios',
+    jumpToRatings: 'Valorar',
+    jumpToReviews: 'Reseñas',
+    jumpToComments: 'Comentarios',
+    statsAttractorTitle: 'Cada capítulo y valoración suma',
+    statsAttractorBody:
+      'Seguí tus series, puntuá lo que terminás y dejá tu reseña: las métricas anónimas nos ayudan a pedir más series oficiales en nuestra región.',
+    statsAttractorTrackCta: 'Ir a Mi seguimiento',
+    statsAttractorWatchCta: 'Ver series gratis',
+    statsAttractorCommunityCta: 'Reseñas y comunidad',
+    statsTopRatedTitle: 'Series mejor valoradas por la comunidad',
+    statsTopRatedUnit: 'pts',
+    statsRecentReviews: 'Reseñas publicadas (30d)',
+  },
   playerRecovery: {
     cancel: 'Cancelar',
     title: '¿No se ve el video?',
@@ -8253,6 +8325,42 @@ const es: TranslationShape = {
 };
 
 const en: TranslationShape = {
+  postViewing: {
+    quickScoreTitle: 'Quick score (1–10)',
+    quickScoreHint: 'Pick an overall score or rate category by category below.',
+    detailedCategoriesTitle: 'Detailed rating by category',
+    finishTitle: 'What did you think of the series?',
+    finishSubtitle:
+      'Your rating and review help the community choose what to watch next.',
+    yourScore: 'Your score',
+    rateQuick: 'Rate (1–10)',
+    rateByCategories: 'Rate by category',
+    writeReview: 'Write a review',
+    editReview: 'View or edit your review',
+    savedScore: 'Score saved',
+    loginToSave: 'Sign in to save your rating and review to your account.',
+    chapterPromptTitle: 'Thoughts on {code}?',
+    chapterCommentAction: 'Comment on {code}',
+    chapterCommentsTitle: 'Comments on {code}',
+    chapterNoteAction: 'Private note for {code}',
+    dismiss: 'Dismiss',
+    finishedBannerTitle: 'You finished {title}!',
+    finishedRateAction: 'Rate series',
+    finishedReviewAction: 'Leave a review',
+    communitySectionTitle: 'Ratings, reviews, and comments',
+    jumpToRatings: 'Rate',
+    jumpToReviews: 'Reviews',
+    jumpToComments: 'Comments',
+    statsAttractorTitle: 'Every chapter and rating counts',
+    statsAttractorBody:
+      'Track your series, rate what you finish, and leave a review: anonymous metrics help us request more official series in our region.',
+    statsAttractorTrackCta: 'Go to My tracking',
+    statsAttractorWatchCta: 'Watch free series',
+    statsAttractorCommunityCta: 'Reviews & community',
+    statsTopRatedTitle: 'Highest-rated series by the community',
+    statsTopRatedUnit: 'pts',
+    statsRecentReviews: 'Published reviews (30d)',
+  },
   playerRecovery: {
     cancel: 'Cancel',
     title: 'Video not showing?',

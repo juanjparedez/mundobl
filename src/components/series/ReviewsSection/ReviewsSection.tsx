@@ -118,7 +118,7 @@ export function ReviewsSection({ seriesId }: ReviewsSectionProps) {
   // en el servidor con `await auth()`; ahora via SeriesUserStatusProvider
   // (fuera de /series/[id], p.ej. /ver/[id], no hay Provider ancestro y el
   // context cae al default — misma semantica de "asumir no vista" que antes).
-  const { seriesStatus } = useSeriesUserStatus();
+  const { seriesStatus, refetch: refetchUserStatus } = useSeriesUserStatus();
   const seriesWatched =
     seriesStatus === 'VISTA' || seriesStatus === 'ABANDONADA';
   const message = useMessage();
@@ -189,29 +189,45 @@ export function ReviewsSection({ seriesId }: ReviewsSectionProps) {
     [reviews, myReview]
   );
 
+  const openCurrentOrNewModal = useCallback(() => {
+    setEditingId(myReview?.id ?? null);
+    form.setFieldsValue(
+      myReview
+        ? {
+            ...myReview,
+            translateTo: [],
+            status:
+              myReview.status === 'HIDDEN' ? 'PUBLISHED' : myReview.status,
+          }
+        : { ...EMPTY_FORM, language: locale }
+    );
+    setModalOpen(true);
+  }, [myReview, form, locale]);
+
   // Community review requests can open the editor, preserving an existing draft.
   useEffect(() => {
     if (loading || !currentUserId) return;
     const url = new URL(window.location.href);
     if (url.searchParams.get('review') !== 'new') return;
     const timer = window.setTimeout(() => {
-      setEditingId(myReview?.id ?? null);
-      form.setFieldsValue(
-        myReview
-          ? {
-              ...myReview,
-              translateTo: [],
-              status:
-                myReview.status === 'HIDDEN' ? 'PUBLISHED' : myReview.status,
-            }
-          : { ...EMPTY_FORM, language: locale }
-      );
-      setModalOpen(true);
+      openCurrentOrNewModal();
       url.searchParams.delete('review');
       window.history.replaceState(window.history.state, '', url);
     }, 0);
     return () => window.clearTimeout(timer);
-  }, [loading, currentUserId, myReview, form, locale]);
+  }, [loading, currentUserId, openCurrentOrNewModal]);
+
+  useEffect(() => {
+    const onOpenModal = (event: Event) => {
+      const detail = (event as CustomEvent<{ seriesId?: number }>).detail;
+      if (detail?.seriesId && detail.seriesId !== seriesId) return;
+      if (!currentUserId) return;
+      openCurrentOrNewModal();
+    };
+    window.addEventListener('mundobl:open-review-modal', onOpenModal);
+    return () =>
+      window.removeEventListener('mundobl:open-review-modal', onOpenModal);
+  }, [seriesId, currentUserId, openCurrentOrNewModal]);
 
   const openNewModal = () => {
     setEditingId(null);
@@ -417,6 +433,7 @@ export function ReviewsSection({ seriesId }: ReviewsSectionProps) {
       }
       closeModal();
       await fetchReviews();
+      void refetchUserStatus();
     } catch (error) {
       console.error(error);
       if (error instanceof Error && error.message !== 'Error') {
@@ -435,6 +452,7 @@ export function ReviewsSection({ seriesId }: ReviewsSectionProps) {
       if (!res.ok) throw new Error('Error');
       message.success(t('reviews.deleteSuccess'));
       setReviews((prev) => prev.filter((r) => r.id !== id));
+      void refetchUserStatus();
     } catch (error) {
       console.error(error);
       message.error(t('reviews.deleteError'));

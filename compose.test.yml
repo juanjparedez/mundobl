@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:16-alpine
+    command: ['postgres', '-p', '55433']
+    environment:
+      POSTGRES_USER: mundobl
+      POSTGRES_PASSWORD: mundobl
+      POSTGRES_DB: mundobl_replay
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -h 127.0.0.1 -p 55433 -U mundobl -d mundobl_replay',
+        ]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+    networks: [isolated]
+
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    depends_on:
+      db:
+        condition: service_healthy
+    # Mantiene las guardas localhost:55433 de las pruebas sin abrir puertos
+    # del host ni compartir la base de desarrollo.
+    network_mode: 'service:db'
+    shm_size: 2gb
+    environment:
+      CI: 'true'
+      MUNDOBL_TEST_DB: external
+      MUNDOBL_TEST_CONTAINER: '1'
+      DATABASE_URL: postgresql://mundobl:mundobl@127.0.0.1:55433/mundobl_replay
+      DIRECT_URL: postgresql://mundobl:mundobl@127.0.0.1:55433/mundobl_replay
+      AUTH_SECRET: local-container-tests-only
+      NEXT_TELEMETRY_DISABLED: '1'
+    volumes:
+      - ./test-results/compose:/workspace/test-results/test-all
+
+networks:
+  isolated:
+    internal: true

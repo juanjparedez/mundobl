@@ -23,6 +23,8 @@ export interface SeriesUserStatusData {
   episodeStatus: Record<number, string>;
   subscribed: boolean;
   favorite: boolean;
+  userRating: number | null;
+  hasReview: boolean;
 }
 
 interface SeriesUserStatusState extends SeriesUserStatusData {
@@ -50,6 +52,8 @@ const DEFAULT_STATE: SeriesUserStatusState = {
   episodeStatus: {},
   subscribed: false,
   favorite: false,
+  userRating: null,
+  hasReview: false,
   loaded: false,
   version: 0,
 };

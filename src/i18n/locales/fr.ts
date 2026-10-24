@@ -10,6 +10,44 @@
 import type { TranslationShape } from '../messages';
 
 const fr = {
+  postViewing: {
+    quickScoreTitle: 'Note rapide (1–10)',
+    quickScoreHint:
+      'Choisissez une note globale ou détaillez catégorie par catégorie ci-dessous.',
+    detailedCategoriesTitle: 'Note détaillée par catégorie',
+    finishTitle: 'Qu’avez-vous pensé de la série ?',
+    finishSubtitle:
+      'Votre note et votre critique aident la communauté à choisir quoi regarder ensuite.',
+    yourScore: 'Votre note',
+    rateQuick: 'Noter (1–10)',
+    rateByCategories: 'Noter par catégorie',
+    writeReview: 'Écrire une critique',
+    editReview: 'Voir ou modifier votre critique',
+    savedScore: 'Note enregistrée',
+    loginToSave:
+      'Connectez-vous pour enregistrer votre note et votre critique sur votre compte.',
+    chapterPromptTitle: 'Vos impressions sur {code} ?',
+    chapterCommentAction: 'Commenter {code}',
+    chapterCommentsTitle: 'Commentaires sur {code}',
+    chapterNoteAction: 'Note privée pour {code}',
+    dismiss: 'Masquer',
+    finishedBannerTitle: 'Vous avez terminé {title} !',
+    finishedRateAction: 'Noter la série',
+    finishedReviewAction: 'Laisser une critique',
+    communitySectionTitle: 'Notes, critiques et commentaires',
+    jumpToRatings: 'Noter',
+    jumpToReviews: 'Critiques',
+    jumpToComments: 'Commentaires',
+    statsAttractorTitle: 'Chaque épisode et chaque note comptent',
+    statsAttractorBody:
+      'Suivez vos séries, notez ce que vous terminez et laissez une critique : les statistiques anonymes nous aident à demander plus de séries officielles dans notre région.',
+    statsAttractorTrackCta: 'Aller à Mon suivi',
+    statsAttractorWatchCta: 'Voir des séries gratuites',
+    statsAttractorCommunityCta: 'Critiques et communauté',
+    statsTopRatedTitle: 'Séries les mieux notées par la communauté',
+    statsTopRatedUnit: 'pts',
+    statsRecentReviews: 'Critiques publiées (30j)',
+  },
   playerRecovery: {
     cancel: 'Annuler',
     title: "La vidéo ne s’affiche pas ?",

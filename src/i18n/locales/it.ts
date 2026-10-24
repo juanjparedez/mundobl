@@ -10,6 +10,44 @@
 import type { TranslationShape } from '../messages';
 
 const it = {
+  postViewing: {
+    quickScoreTitle: 'Voto rapido (1–10)',
+    quickScoreHint:
+      'Scegli un voto complessivo o valuta categoria per categoria qui sotto.',
+    detailedCategoriesTitle: 'Valutazione dettagliata per categoria',
+    finishTitle: 'Cosa ne pensi della serie?',
+    finishSubtitle:
+      'Il tuo voto e la tua recensione aiutano la community a scegliere cosa guardare dopo.',
+    yourScore: 'Il tuo voto',
+    rateQuick: 'Vota (1–10)',
+    rateByCategories: 'Valuta per categoria',
+    writeReview: 'Scrivi una recensione',
+    editReview: 'Vedi o modifica la tua recensione',
+    savedScore: 'Voto salvato',
+    loginToSave:
+      'Accedi per salvare il tuo voto e la tua recensione nel tuo account.',
+    chapterPromptTitle: 'Impressioni su {code}?',
+    chapterCommentAction: 'Commenta {code}',
+    chapterCommentsTitle: 'Commenti su {code}',
+    chapterNoteAction: 'Nota privata per {code}',
+    dismiss: 'Nascondi',
+    finishedBannerTitle: 'Hai finito {title}!',
+    finishedRateAction: 'Vota la serie',
+    finishedReviewAction: 'Lascia una recensione',
+    communitySectionTitle: 'Valutazioni, recensioni e commenti',
+    jumpToRatings: 'Vota',
+    jumpToReviews: 'Recensioni',
+    jumpToComments: 'Commenti',
+    statsAttractorTitle: 'Ogni episodio e valutazione conta',
+    statsAttractorBody:
+      'Segui le tue serie, vota quelle che finisci e lascia una recensione: le metriche anonime ci aiutano a richiedere più serie ufficiali nella nostra regione.',
+    statsAttractorTrackCta: 'Vai ai miei progressi',
+    statsAttractorWatchCta: 'Guarda serie gratis',
+    statsAttractorCommunityCta: 'Recensioni e community',
+    statsTopRatedTitle: 'Serie più votate dalla community',
+    statsTopRatedUnit: 'pt',
+    statsRecentReviews: 'Recensioni pubblicate (30g)',
+  },
   playerRecovery: {
     cancel: 'Annulla',
     title: "Il video non si vede?",

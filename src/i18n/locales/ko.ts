@@ -10,6 +10,43 @@
 import type { TranslationShape } from '../messages';
 
 const ko = {
+  postViewing: {
+    quickScoreTitle: '빠른 평점 (1–10)',
+    quickScoreHint:
+      '전체 점수를 선택하거나 아래에서 항목별로 자세히 평가해 보세요.',
+    detailedCategoriesTitle: '항목별 상세 평가',
+    finishTitle: '이 작품은 어떠셨나요?',
+    finishSubtitle:
+      '회원님의 평점과 리뷰는 커뮤니티가 다음 작품을 고르는 데 큰 도움이 됩니다.',
+    yourScore: '내 평점',
+    rateQuick: '평가하기 (1–10)',
+    rateByCategories: '항목별 평가',
+    writeReview: '리뷰 작성',
+    editReview: '내 리뷰 보기·수정',
+    savedScore: '평점이 저장되었습니다',
+    loginToSave: '로그인하여 평점과 리뷰를 계정에 저장하세요.',
+    chapterPromptTitle: '{code} 어떠셨나요?',
+    chapterCommentAction: '{code} 댓글 쓰기',
+    chapterCommentsTitle: '{code} 댓글',
+    chapterNoteAction: '{code} 비공개 메모',
+    dismiss: '닫기',
+    finishedBannerTitle: '{title} 정주행 완료!',
+    finishedRateAction: '작품 평가',
+    finishedReviewAction: '리뷰 남기기',
+    communitySectionTitle: '평점, 리뷰 및 댓글',
+    jumpToRatings: '평가',
+    jumpToReviews: '리뷰',
+    jumpToComments: '댓글',
+    statsAttractorTitle: '모든 회차 기록과 평점이 큰 힘이 됩니다',
+    statsAttractorBody:
+      '시청 중인 작품을 기록하고 완주한 작품에 평점과 리뷰를 남겨 주세요. 익명 통계는 공식 작품 확대를 요청하는 데 도움이 됩니다.',
+    statsAttractorTrackCta: '내 시청 기록으로',
+    statsAttractorWatchCta: '무료 시리즈 보기',
+    statsAttractorCommunityCta: '리뷰 및 커뮤니티',
+    statsTopRatedTitle: '커뮤니티 최고 평점 시리즈',
+    statsTopRatedUnit: '점',
+    statsRecentReviews: '게시된 리뷰 (30일)',
+  },
   playerRecovery: {
     cancel: '취소',
     title: "동영상이 표시되지 않나요?",

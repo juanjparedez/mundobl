@@ -197,7 +197,9 @@ const uiSteps = [
       [
         PLAYWRIGHT,
         'install',
-        ...(process.env.CI ? ['--with-deps'] : []),
+        ...(process.env.CI && process.env.MUNDOBL_TEST_CONTAINER !== '1'
+          ? ['--with-deps']
+          : []),
         'chromium',
       ],
     ],

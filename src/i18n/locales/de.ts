@@ -10,6 +10,44 @@
 import type { TranslationShape } from '../messages';
 
 const de = {
+  postViewing: {
+    quickScoreTitle: 'Schnellbewertung (1–10)',
+    quickScoreHint:
+      'Wähle eine Gesamtbewertung oder bewerte unten Kategorie für Kategorie.',
+    detailedCategoriesTitle: 'Detaillierte Bewertung nach Kategorie',
+    finishTitle: 'Wie hat dir die Serie gefallen?',
+    finishSubtitle:
+      'Deine Bewertung und Rezension helfen der Community bei der nächsten Auswahl.',
+    yourScore: 'Deine Wertung',
+    rateQuick: 'Bewerten (1–10)',
+    rateByCategories: 'Nach Kategorien bewerten',
+    writeReview: 'Rezension schreiben',
+    editReview: 'Rezension ansehen oder bearbeiten',
+    savedScore: 'Bewertung gespeichert',
+    loginToSave:
+      'Melde dich an, um deine Bewertung und Rezension in deinem Konto zu speichern.',
+    chapterPromptTitle: 'Gedanken zu {code}?',
+    chapterCommentAction: '{code} kommentieren',
+    chapterCommentsTitle: 'Kommentare zu {code}',
+    chapterNoteAction: 'Private Notiz zu {code}',
+    dismiss: 'Ausblenden',
+    finishedBannerTitle: 'Du hast {title} beendet!',
+    finishedRateAction: 'Serie bewerten',
+    finishedReviewAction: 'Rezension schreiben',
+    communitySectionTitle: 'Bewertungen, Rezensionen und Kommentare',
+    jumpToRatings: 'Bewerten',
+    jumpToReviews: 'Rezensionen',
+    jumpToComments: 'Kommentare',
+    statsAttractorTitle: 'Jede Folge und Bewertung zählt',
+    statsAttractorBody:
+      'Verfolge deine Serien, bewerte abgeschlossene Werke und schreibe eine Rezension: Anonyme Kennzahlen helfen uns, mehr offizielle Serien für unsere Region anzufragen.',
+    statsAttractorTrackCta: 'Zu meiner Verfolgung',
+    statsAttractorWatchCta: 'Kostenlos ansehen',
+    statsAttractorCommunityCta: 'Rezensionen & Community',
+    statsTopRatedTitle: 'Am besten bewertete Serien der Community',
+    statsTopRatedUnit: 'Pkt.',
+    statsRecentReviews: 'Veröffentlichte Rezensionen (30T)',
+  },
   playerRecovery: {
     cancel: 'Abbrechen',
     title: "Video wird nicht angezeigt?",

@@ -1,15 +1,11 @@
 name: Tracking integration
 on:
-  pull_request:
-    # Cambios solo de texto no tocan codigo: no hace falta la corrida de ~15 min.
-    paths-ignore:
-      - '**/*.md'
-      - 'docs/**'
-      - 'market/**'
+  # Las pruebas habituales corren localmente con npm run test:docker.
+  # Actions queda como comprobación limpia opcional, solo a pedido.
   workflow_dispatch:
-# Un push nuevo al mismo PR cancela la corrida anterior.
+# Una ejecución manual nueva de la misma rama reemplaza la anterior.
 concurrency:
-  group: tracking-${{ github.event.pull_request.number || github.ref }}
+  group: tracking-${{ github.ref }}
   cancel-in-progress: true
 permissions:
   contents: read

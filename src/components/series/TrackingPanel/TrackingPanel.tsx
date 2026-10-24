@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { Button, Dropdown, Popconfirm, type MenuProps } from 'antd';
+import { Button, Dropdown, Modal, Popconfirm, type MenuProps } from 'antd';
 import {
   EyeOutlined,
   CalendarOutlined,
@@ -17,6 +17,8 @@ import {
   PauseCircleOutlined,
   StopOutlined,
   CloseCircleOutlined,
+  CommentOutlined,
+  CloseOutlined,
 } from '@ant-design/icons';
 import { useSession, signIn } from 'next-auth/react';
 import type { WatchStatusValue } from '@/constants/series';
@@ -24,6 +26,8 @@ import { useSeriesUserStatus } from '../SeriesUserStatusProvider';
 import { WatchProgressStepper } from '../WatchProgressStepper/WatchProgressStepper';
 import { EpisodeNoteModal } from '../EpisodeNoteModal/EpisodeNoteModal';
 import { SeriesNoteModal } from '../SeriesNoteModal/SeriesNoteModal';
+import { PostFinishPrompt } from '../PostFinishPrompt/PostFinishPrompt';
+import { CommentsList } from '@/components/common/CommentsList';
 import { SignupNudge } from '../SignupNudge/SignupNudge';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { useMessage } from '@/hooks/useMessage';
@@ -210,6 +214,12 @@ export function TrackingPanel({
   const [seriesHasNote, setSeriesHasNote] = useState(false);
   const [noteChapter, setNoteChapter] = useState<TrackedChapter | null>(null);
   const [seriesNoteOpen, setSeriesNoteOpen] = useState(false);
+  const [recentChapter, setRecentChapter] = useState<TrackedChapter | null>(
+    null
+  );
+  const [commentChapter, setCommentChapter] = useState<TrackedChapter | null>(
+    null
+  );
   const episodeIdsKey = rows.map((ep) => ep.id).join(',');
 
   useEffect(() => {
@@ -424,7 +434,61 @@ export function TrackingPanel({
           airing={airing}
           localOnly={local}
           openPicker={choosingEpisode && !hasProgress}
+          onChapterAdvanced={(chapter) => setRecentChapter(chapter)}
         />
+      )}
+
+      {recentChapter && status !== 'VISTA' && (
+        <div className="tracking-panel__chapter-prompt">
+          <div className="tracking-panel__chapter-prompt-header">
+            <span className="tracking-panel__chapter-prompt-title">
+              {t('postViewing.chapterPromptTitle', {
+                code: chapterShort(recentChapter),
+              })}
+            </span>
+            <button
+              type="button"
+              className="tracking-panel__chapter-prompt-close"
+              onClick={() => setRecentChapter(null)}
+              aria-label={t('postViewing.dismiss')}
+            >
+              <CloseOutlined />
+            </button>
+          </div>
+          <div className="tracking-panel__chapter-prompt-actions">
+            <Button
+              size="small"
+              type="primary"
+              icon={<CommentOutlined />}
+              onClick={() => {
+                setCommentChapter(recentChapter);
+                setRecentChapter(null);
+              }}
+            >
+              {t('postViewing.chapterCommentAction', {
+                code: chapterShort(recentChapter),
+              })}
+            </Button>
+            {!local && (
+              <Button
+                size="small"
+                icon={<FileTextOutlined />}
+                onClick={() => {
+                  setNoteChapter(recentChapter);
+                  setRecentChapter(null);
+                }}
+              >
+                {t('postViewing.chapterNoteAction', {
+                  code: chapterShort(recentChapter),
+                })}
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
+
+      {status === 'VISTA' && (
+        <PostFinishPrompt seriesId={seriesId} local={local} />
       )}
 
       {canFinish && (
@@ -528,21 +592,32 @@ export function TrackingPanel({
           </span>
           <div className="tracking-panel__notes-row">
             {lastWatched && (
-              <Button
-                className="tracking-panel__note-btn"
-                icon={
-                  episodesWithNotes.has(lastWatched.episodeIds[0]) ? (
-                    <FileTextFilled />
-                  ) : (
-                    <FileTextOutlined />
-                  )
-                }
-                onClick={() => setNoteChapter(lastWatched)}
-              >
-                {t('trackingPanel.episodeNote', {
-                  code: chapterShort(lastWatched),
-                })}
-              </Button>
+              <>
+                <Button
+                  className="tracking-panel__note-btn"
+                  icon={<CommentOutlined />}
+                  onClick={() => setCommentChapter(lastWatched)}
+                >
+                  {t('postViewing.chapterCommentAction', {
+                    code: chapterShort(lastWatched),
+                  })}
+                </Button>
+                <Button
+                  className="tracking-panel__note-btn"
+                  icon={
+                    episodesWithNotes.has(lastWatched.episodeIds[0]) ? (
+                      <FileTextFilled />
+                    ) : (
+                      <FileTextOutlined />
+                    )
+                  }
+                  onClick={() => setNoteChapter(lastWatched)}
+                >
+                  {t('trackingPanel.episodeNote', {
+                    code: chapterShort(lastWatched),
+                  })}
+                </Button>
+              </>
             )}
             <Button
               className="tracking-panel__note-btn"
@@ -608,6 +683,28 @@ export function TrackingPanel({
           }}
         />
       )}
+      <Modal
+        title={
+          commentChapter
+            ? t('postViewing.chapterCommentsTitle', {
+                code: chapterShort(commentChapter),
+              })
+            : ''
+        }
+        open={commentChapter !== null}
+        onCancel={() => setCommentChapter(null)}
+        footer={null}
+        destroyOnHidden
+        width={640}
+      >
+        {commentChapter && (
+          <CommentsList
+            episodeId={commentChapter.episodeIds[0]}
+            compact
+            placeholder={t('episodesList.commentsPlaceholder')}
+          />
+        )}
+      </Modal>
     </section>
   );
 }
