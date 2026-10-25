@@ -7,6 +7,8 @@ import {
   verContentBatch,
 } from './data/ver-content-batch';
 import {
+  expectedPlaybackOf,
+  expectedWatchPage,
   importWatchContentBatch,
   watchBatchVideoUrl,
 } from '../src/lib/watch-content-batch';
@@ -64,6 +66,7 @@ async function main() {
     );
   const batch = verContentBatch(batchName);
   const expected = VER_BATCHES[batchName].videos;
+  const expectedPlayback = expectedPlaybackOf(batch);
   const manifestHash = sha(JSON.stringify(batch));
   const allIds = batch.series.flatMap((series) =>
     series.episodes.map((ep) => ep.videoId)
@@ -75,11 +78,17 @@ async function main() {
     evidence.api.length !== expected ||
     new Set(evidence.watchPages.map((p) => p.videoId)).size !== expected ||
     new Set(evidence.api.map((p) => p.videoId)).size !== expected ||
-    allIds.some(
-      (id) =>
-        evidence.watchPages.find((p) => p.videoId === id)?.status !== 'OK' ||
-        evidence.api.find((p) => p.videoId === id)?.status !== 'OK'
-    )
+    allIds.some((id) => {
+      // OK unless the manifest declares age-restricted/non-embeddable/geo.
+      const expected = expectedPlayback.get(id) ?? 'OK';
+      const api = evidence.api.find((p) => p.videoId === id);
+      return (
+        !api ||
+        api.status !== expected ||
+        evidence.watchPages.find((p) => p.videoId === id)?.status !==
+          expectedWatchPage(expected, api)
+      );
+    })
   ) {
     throw new Error('Evidence must cover every selected video successfully.');
   }

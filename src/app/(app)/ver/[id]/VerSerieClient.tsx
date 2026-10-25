@@ -24,7 +24,7 @@ import {
   FileTextOutlined,
   EditOutlined,
 } from '@ant-design/icons';
-import { useSession } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import { EmbedPlayer } from '@/components/common/EmbedPlayer/EmbedPlayer';
 import { PlayerRecovery } from '@/components/common/PlayerRecovery/PlayerRecovery';
 import { useSeriesUserStatus } from '@/components/series/SeriesUserStatusProvider';
@@ -126,6 +126,7 @@ const AVAILABILITY_KEY = {
   blocked_here: 'verSerie.availabilityBlockedHere',
   blocked_somewhere: 'verSerie.availabilityBlockedSomewhere',
   platform_only: 'verSerie.availabilityPlatformOnly',
+  age_restricted: 'verSerie.availabilityAgeRestricted',
   removed: 'verSerie.availabilityRemoved',
 } as const satisfies Record<Exclude<Availability, 'ok'>, TranslationKey>;
 
@@ -558,6 +559,9 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
   const availability = (episode: Episode) =>
     availabilityOf(episode.playback, episode.playbackBlockedMarkets, country);
   const activeAvailability = availability(active);
+  // El link a un capitulo +18 de YouTube es solo para usuarios logueados, y
+  // su iframe tampoco se muestra: no reproduce y deja el link a la vista.
+  const ageGated = activeAvailability === 'age_restricted';
   const geoIssue =
     activeAvailability === 'blocked_here' ||
     activeAvailability === 'blocked_somewhere';
@@ -681,11 +685,25 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           type={activeAvailability === 'blocked_somewhere' ? 'info' : 'warning'}
           showIcon
           className="ver-serie__availability"
-          title={t(AVAILABILITY_KEY[activeAvailability], {
-            platform: active.embedPlatform || 'YouTube',
-          })}
+          title={t(
+            ageGated && !isAuthed
+              ? 'verSerie.availabilityAgeRestrictedSignIn'
+              : AVAILABILITY_KEY[activeAvailability],
+            { platform: active.embedPlatform || 'YouTube' }
+          )}
           action={
-            activeAvailability === 'platform_only' && active.embedUrl ? (
+            ageGated && !isAuthed ? (
+              <Button
+                size="small"
+                type="primary"
+                onClick={() =>
+                  signIn('google', { callbackUrl: window.location.href })
+                }
+              >
+                {t('verSerie.signInToWatch')}
+              </Button>
+            ) : (activeAvailability === 'platform_only' || ageGated) &&
+              active.embedUrl ? (
               <a
                 href={active.embedUrl}
                 target="_blank"
@@ -700,50 +718,52 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         />
       )}
 
-      <div className="ver-serie__player-wrap">
-        <EmbedPlayer
-          openLabel={t('episodeSource.openOn', {
-            platform: active.embedPlatform || 'YouTube',
-          })}
-          key={`${active.id}:${playerAttempt}`}
-          episodeId={active.id}
-          platform={active.embedPlatform || 'YouTube'}
-          url={active.embedUrl || ''}
-          videoId={active.embedVideoId}
-          title={active.title || series.title}
-          autoplay={autoplayEpisodeId === active.id}
-          onWatchProgress={
-            ['YouTube', 'Vimeo'].includes(active.embedPlatform || 'YouTube')
-              ? handleWatchProgress
-              : undefined
-          }
-        />
-        <PlayerRecovery
-          key={active.id}
-          url={active.embedUrl || ''}
-          onRetry={() => setPlayerAttempt((attempt) => attempt + 1)}
-          labels={{
-            title: t('playerRecovery.title'),
-            description: t('playerRecovery.description'),
-            review: t('playerRecovery.review'),
-            retry: t('playerRecovery.retry'),
-            reset: t('playerRecovery.reset'),
-            resetConfirm: t('playerRecovery.resetConfirm'),
-            confirm: t('playerRecovery.reset'),
-            cancel: t('playerRecovery.cancel'),
-            online: t('playerRecovery.online'),
-            offline: t('playerRecovery.offline'),
-            localActive: t('playerRecovery.localActive'),
-            localEmpty: t('playerRecovery.localEmpty'),
-            reviewFailed: t('playerRecovery.reviewFailed'),
-            resetFailed: t('playerRecovery.resetFailed'),
-            platformNotice: t('playerRecovery.platformNotice'),
-            open: t('episodeSource.openOn', {
+      {!ageGated && (
+        <div className="ver-serie__player-wrap">
+          <EmbedPlayer
+            openLabel={t('episodeSource.openOn', {
               platform: active.embedPlatform || 'YouTube',
-            }),
-          }}
-        />
-      </div>
+            })}
+            key={`${active.id}:${playerAttempt}`}
+            episodeId={active.id}
+            platform={active.embedPlatform || 'YouTube'}
+            url={active.embedUrl || ''}
+            videoId={active.embedVideoId}
+            title={active.title || series.title}
+            autoplay={autoplayEpisodeId === active.id}
+            onWatchProgress={
+              ['YouTube', 'Vimeo'].includes(active.embedPlatform || 'YouTube')
+                ? handleWatchProgress
+                : undefined
+            }
+          />
+          <PlayerRecovery
+            key={active.id}
+            url={active.embedUrl || ''}
+            onRetry={() => setPlayerAttempt((attempt) => attempt + 1)}
+            labels={{
+              title: t('playerRecovery.title'),
+              description: t('playerRecovery.description'),
+              review: t('playerRecovery.review'),
+              retry: t('playerRecovery.retry'),
+              reset: t('playerRecovery.reset'),
+              resetConfirm: t('playerRecovery.resetConfirm'),
+              confirm: t('playerRecovery.reset'),
+              cancel: t('playerRecovery.cancel'),
+              online: t('playerRecovery.online'),
+              offline: t('playerRecovery.offline'),
+              localActive: t('playerRecovery.localActive'),
+              localEmpty: t('playerRecovery.localEmpty'),
+              reviewFailed: t('playerRecovery.reviewFailed'),
+              resetFailed: t('playerRecovery.resetFailed'),
+              platformNotice: t('playerRecovery.platformNotice'),
+              open: t('episodeSource.openOn', {
+                platform: active.embedPlatform || 'YouTube',
+              }),
+            }}
+          />
+        </div>
+      )}
 
       {/* Lo que se hace al terminar un video, pegado al reproductor. */}
       <div className="ver-serie__nav">
@@ -1005,7 +1025,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           platform={active.embedPlatform}
           channelName={active.embedChannelName}
           channelUrl={active.embedChannelUrl}
-          originalUrl={active.embedUrl}
+          originalUrl={ageGated && !isAuthed ? null : active.embedUrl}
         />
         <div className="ver-serie__legal-column">
           <DismissibleNotice

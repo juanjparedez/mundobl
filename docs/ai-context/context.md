@@ -2,6 +2,14 @@
 
 Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-stack para gestionar, calificar y hacer seguimiento de series, peliculas, cortos y especiales.
 
+## Segundo lote de /ver: 24 títulos, +18 y partes (2026-10-25)
+
+- Criterio del propietario: no descartar contenido oficial por formato, inserción, edad, género, emisión o dato dudoso; incluir y avisar. Afuera solo miembros, videos ocultos por el canal y lo no oficial.
+- `ver-content-2026-10-25-b.json`: 24 títulos / 188 capítulos / 455 videos (Oxin, IdeaFirst, Windsor, Ticket2Me, RAP, Regal, nooto, iQIYI PH). Canales nuevos: Ticket2Me, RAP Production, Regal Entertainment.
+- `WatchBatchEpisode.playback` declara `AGE_RESTRICTED`/`NOT_EMBEDDABLE`/`GEO_BLOCKED`; API y página anónima deben coincidir. En `/ver` (`availabilityOf` → `age_restricted`) el +18 no monta iframe: link a YouTube solo con sesión, botón de login sin ella. Nunca +18 automático en MundoBL.
+- Partes sobre temporadas cargadas a mano: la fila de cada capítulo queda como parte 1 (mismo ID) y `ViewStatus` se copia a las partes nuevas. Los capítulos sin publicar de una serie al aire reciben título numerado para no quedar como extras. El ensayo pide páginas de a una cada 2 s.
+- Local: 791 → 810 fichas, `/ver` 57 → 81. Pendiente: Craving You necesita el minuto donde empieza el EP2. Detalle: [segundo lote](../ampliacion-ver-2026-10-25.md#segundo-lote-2026-10-25-b).
+
 ## Ampliación de /ver: 14 títulos de PH, JP, VN, TW y CN (2026-10-25)
 
 - `scripts/data/ver-content-2026-10-25.json`: 14 títulos / 125 capítulos / 125 videos, sin partes. Once fichas existentes completan su temporada 1 y tres altas `WATCHABLE_ONLY` (Marahuyo Project, Unknown, Stay With Me). Primeras series filipinas, japonesas y chinas en `/ver`.

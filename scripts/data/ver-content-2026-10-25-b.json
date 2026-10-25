@@ -1,0 +1,3937 @@
+{
+  "id": "ver-2026-10-25-b",
+  "verifiedAt": "2026-10-25",
+  "series": [
+    {
+      "title": "My Day",
+      "targetSeriesId": 612,
+      "expectedTitle": "My day",
+      "countryCode": "ph",
+      "year": 2020,
+      "channelId": "UC3mvG0KIKHT7MsaWMjB3dDw",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLcQaxIPsTWdPw7qFtUfJKRNueYqeY10DX",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 4,
+          "videoId": "-aDw8apphUE",
+          "publishedAt": "2020-08-08T13:00:12Z",
+          "sourceTitle": "MY DAY The Series [with Sub] | Ep. 1 [1/4]"
+        },
+        {
+          "chapter": 1,
+          "part": 2,
+          "parts": 4,
+          "videoId": "ixdP--kJMEE",
+          "publishedAt": "2020-08-08T13:15:26Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] Episode 1 [2/4]"
+        },
+        {
+          "chapter": 1,
+          "part": 3,
+          "parts": 4,
+          "videoId": "25vRSNOIF3s",
+          "publishedAt": "2020-08-08T13:30:12Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] Episode 1 [3/4]"
+        },
+        {
+          "chapter": 1,
+          "part": 4,
+          "parts": 4,
+          "videoId": "UdN8dX4f8Qc",
+          "publishedAt": "2020-08-08T13:45:24Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] Episode 1 [4/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 4,
+          "videoId": "kA8dwGnfTbQ",
+          "publishedAt": "2020-08-15T13:00:13Z",
+          "sourceTitle": "MY DAY The Series | [w/subs] Episode 2 [1/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 2,
+          "parts": 4,
+          "videoId": "wpnwpGxzUg8",
+          "publishedAt": "2020-08-15T13:16:25Z",
+          "sourceTitle": "MY DAY The Series | [w/subs] Episode 2 [2/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 3,
+          "parts": 4,
+          "videoId": "vmaKZDr3VY0",
+          "publishedAt": "2020-08-15T13:31:05Z",
+          "sourceTitle": "MY DAY The Series | [w/subs] Episode 2 [3/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 4,
+          "parts": 4,
+          "videoId": "Y8lnrGFpc9Y",
+          "publishedAt": "2020-08-15T13:42:54Z",
+          "sourceTitle": "MY DAY The Series | [w/subs] Episode 2 [4/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 4,
+          "videoId": "FKrhZYxSWH8",
+          "publishedAt": "2020-08-22T13:00:14Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 3 [1/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 2,
+          "parts": 4,
+          "videoId": "cXo8MuDIef4",
+          "publishedAt": "2020-08-22T13:13:37Z",
+          "sourceTitle": "MY DAY The Series ]w/Subs] | Episode 3 [2/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 3,
+          "parts": 4,
+          "videoId": "qXEeQwwAOtw",
+          "publishedAt": "2020-08-22T13:29:55Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 3 [3/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 4,
+          "parts": 4,
+          "videoId": "GEmX8d602OY",
+          "publishedAt": "2020-08-22T13:44:22Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 3 [4/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 4,
+          "videoId": "IGM0g_BY3UQ",
+          "publishedAt": "2020-08-29T13:00:12Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 4 [1/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 2,
+          "parts": 4,
+          "videoId": "n_yoYX1aAeo",
+          "publishedAt": "2020-08-29T13:14:44Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 4 [2/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 3,
+          "parts": 4,
+          "videoId": "_vfB7wG7HrU",
+          "publishedAt": "2020-08-29T13:30:53Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 4 [3/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 4,
+          "parts": 4,
+          "videoId": "UaBQtJMxO6Y",
+          "publishedAt": "2020-08-29T13:43:22Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 4 [4/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 4,
+          "videoId": "GmV4k3hU_eU",
+          "publishedAt": "2020-09-05T13:00:11Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 5 [1/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 2,
+          "parts": 4,
+          "videoId": "Ir4Hh1hjZls",
+          "publishedAt": "2020-09-05T13:16:35Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 5 [2/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 3,
+          "parts": 4,
+          "videoId": "Y00RN43D-A8",
+          "publishedAt": "2020-09-05T13:29:28Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 5 [3/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 4,
+          "parts": 4,
+          "videoId": "cuy7__dDIvM",
+          "publishedAt": "2020-09-05T13:43:02Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 5 [4/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 4,
+          "videoId": "cm5YqNk0a3U",
+          "publishedAt": "2020-09-12T13:00:10Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 6 [1/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 2,
+          "parts": 4,
+          "videoId": "N9JwGKvrEPg",
+          "publishedAt": "2020-09-12T13:13:55Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 6 [2/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 3,
+          "parts": 4,
+          "videoId": "udVhFgZveko",
+          "publishedAt": "2020-09-12T13:29:14Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 6 [3/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 4,
+          "parts": 4,
+          "videoId": "tur9ubvl4Nw",
+          "publishedAt": "2020-09-12T13:45:23Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 6 [4/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 4,
+          "videoId": "5anAD7mkGH4",
+          "publishedAt": "2020-09-19T13:00:12Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 7 [1/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 2,
+          "parts": 4,
+          "videoId": "kJYR2jb7nnc",
+          "publishedAt": "2020-09-19T13:16:35Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 7 [2/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 3,
+          "parts": 4,
+          "videoId": "yKby4TB6Zy4",
+          "publishedAt": "2020-09-19T13:29:47Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 7 [3/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 4,
+          "parts": 4,
+          "videoId": "C5TsV_eoaZU",
+          "publishedAt": "2020-09-19T13:41:41Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 7 [4/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 4,
+          "videoId": "0Lgcd9-MQE8",
+          "publishedAt": "2020-09-26T13:00:13Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 8 [1/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 2,
+          "parts": 4,
+          "videoId": "VhaS_w0RJSo",
+          "publishedAt": "2020-09-26T13:17:42Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 8 [2/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 3,
+          "parts": 4,
+          "videoId": "gom81_al0u0",
+          "publishedAt": "2020-09-26T13:32:10Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 8 [3/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 4,
+          "parts": 4,
+          "videoId": "7KyFFV2MRY8",
+          "publishedAt": "2020-09-26T13:47:00Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 8 [4/4]",
+          "playback": "AGE_RESTRICTED"
+        },
+        {
+          "chapter": 9,
+          "part": 1,
+          "parts": 4,
+          "videoId": "SuCeSMky3Mo",
+          "publishedAt": "2020-10-03T13:00:12Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 9 [1/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 2,
+          "parts": 4,
+          "videoId": "tdpgYI2GhD8",
+          "publishedAt": "2020-10-03T13:13:45Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 9 [2/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 3,
+          "parts": 4,
+          "videoId": "sknho9SuKJo",
+          "publishedAt": "2020-10-03T13:30:27Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 9 [3/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 4,
+          "parts": 4,
+          "videoId": "yQbGPhdUFvo",
+          "publishedAt": "2020-10-03T13:44:51Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 9 [4/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 1,
+          "parts": 4,
+          "videoId": "Db_Mxe4MgRA",
+          "publishedAt": "2020-10-10T13:00:12Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 10 [1/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 2,
+          "parts": 4,
+          "videoId": "UoG22mQ_0Ns",
+          "publishedAt": "2020-10-10T13:14:41Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 10 [2/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 3,
+          "parts": 4,
+          "videoId": "s4DaNwr9I6g",
+          "publishedAt": "2020-10-10T13:31:23Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 10 [3/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 4,
+          "parts": 4,
+          "videoId": "YxU1x63A1nU",
+          "publishedAt": "2020-10-10T13:45:13Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 10 [4/4]"
+        },
+        {
+          "chapter": 11,
+          "part": 1,
+          "parts": 4,
+          "videoId": "0srhtNrRRG8",
+          "publishedAt": "2020-10-24T13:00:12Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 11 [1/4]",
+          "playback": "AGE_RESTRICTED"
+        },
+        {
+          "chapter": 11,
+          "part": 2,
+          "parts": 4,
+          "videoId": "G7aCW48X_o8",
+          "publishedAt": "2020-10-24T13:18:25Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 11 [2/4]"
+        },
+        {
+          "chapter": 11,
+          "part": 3,
+          "parts": 4,
+          "videoId": "jx4j3tZqTc4",
+          "publishedAt": "2020-10-24T13:32:09Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 11 [3/4]"
+        },
+        {
+          "chapter": 11,
+          "part": 4,
+          "parts": 4,
+          "videoId": "ConWFjAfKgU",
+          "publishedAt": "2020-10-24T13:50:35Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Episode 11 [4/4]"
+        },
+        {
+          "chapter": 12,
+          "part": 1,
+          "parts": 4,
+          "videoId": "MKaRTvvOvNs",
+          "publishedAt": "2020-10-31T13:00:11Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Final Episode 12 [1/4]"
+        },
+        {
+          "chapter": 12,
+          "part": 2,
+          "parts": 4,
+          "videoId": "QPIEdkyT41M",
+          "publishedAt": "2020-10-31T13:24:54Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Final Episode 12 [2/4]"
+        },
+        {
+          "chapter": 12,
+          "part": 3,
+          "parts": 4,
+          "videoId": "T_YJO0N2y8k",
+          "publishedAt": "2020-10-31T13:49:36Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Final Episode 12 [3/4]"
+        },
+        {
+          "chapter": 12,
+          "part": 4,
+          "parts": 4,
+          "videoId": "OtCTt3mXPRA",
+          "publishedAt": "2020-10-31T14:11:30Z",
+          "sourceTitle": "MY DAY The Series [w/Subs] | Final Episode 12 {4/4]"
+        }
+      ]
+    },
+    {
+      "title": "Boys' Lockdown",
+      "targetSeriesId": 86,
+      "expectedTitle": "Boys' lockdown",
+      "countryCode": "ph",
+      "year": 2020,
+      "channelId": "UCEUc7aPMQLNvvVqRvW3Pbxg",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLKlzJNg2JLr-jToK9Kamwvu_zptdUVB5W",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 2,
+          "videoId": "q-epxsCY8jE",
+          "publishedAt": "2020-10-18T12:00:12Z",
+          "sourceTitle": "#BoysLockdown Episode 1 | Ali King and Alec Kevin | Part 1 of 2 [INTL SUBS]"
+        },
+        {
+          "chapter": 1,
+          "part": 2,
+          "parts": 2,
+          "videoId": "Adg4LnB2Ru8",
+          "publishedAt": "2020-10-18T12:15:11Z",
+          "sourceTitle": "#BoysLockdown Episode 1 | Ali King and Alec Kevin | Part 2 of 2 [INTL SUBS]"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 2,
+          "videoId": "ejtAtVn0uR4",
+          "publishedAt": "2020-10-25T12:00:11Z",
+          "sourceTitle": "#BoysLockdown Episode 2 | Ali King and Alec Kevin | Part 1 of 2 [INTL SUBS]"
+        },
+        {
+          "chapter": 2,
+          "part": 2,
+          "parts": 2,
+          "videoId": "FjNlnvdyXMo",
+          "publishedAt": "2020-10-25T12:15:11Z",
+          "sourceTitle": "#BoysLockdown Episode 2 | Ali King and Alec Kevin | Part 2 of 2 [INTL SUBS]"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 2,
+          "videoId": "n2IgvI9mwAs",
+          "publishedAt": "2020-11-01T12:00:12Z",
+          "sourceTitle": "#BoysLockdown Episode 3 | Ali King and Alec Kevin | Part 1 of 2 [INTL SUBS]"
+        },
+        {
+          "chapter": 3,
+          "part": 2,
+          "parts": 2,
+          "videoId": "i9yMGbsSlDc",
+          "publishedAt": "2020-11-01T12:19:49Z",
+          "sourceTitle": "#BoysLockdown Episode 3 | Ali King and Alec Kevin | Part 2 of 2 [INTL SUBS]"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 2,
+          "videoId": "ZmVhKm9LZfg",
+          "publishedAt": "2020-11-08T12:00:11Z",
+          "sourceTitle": "#BoysLockdown Episode 4 | Ali King and Alec Kevin | Part 1 of 2 [INTL SUBS]"
+        },
+        {
+          "chapter": 4,
+          "part": 2,
+          "parts": 2,
+          "videoId": "6hB3iffz610",
+          "publishedAt": "2020-11-08T12:15:10Z",
+          "sourceTitle": "#BoysLockdown Episode 4 | Ali King and Alec Kevin | Part 2 of 2 [INTL SUBS]"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 2,
+          "videoId": "ldSsOHVM0A8",
+          "publishedAt": "2020-11-22T12:00:12Z",
+          "sourceTitle": "#BoysLockdown Episode 5 | Ali King and Alec Kevin | Part 1 of 2 [INTL SUBS]"
+        },
+        {
+          "chapter": 5,
+          "part": 2,
+          "parts": 2,
+          "videoId": "AiSfKZLWoAM",
+          "publishedAt": "2020-11-22T12:15:24Z",
+          "sourceTitle": "#BoysLockdown Episode 5 | Ali King and Alec Kevin | Part 2 of 2 [INTL SUBS]"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 2,
+          "videoId": "jGgaSvVCuIM",
+          "publishedAt": "2020-11-29T12:00:17Z",
+          "sourceTitle": "#BoysLockdown Episode 6 – Finale | Ali King and Alec Kevin | Part 1 of 2 [INTL SUBS]"
+        },
+        {
+          "chapter": 6,
+          "part": 2,
+          "parts": 2,
+          "videoId": "c5BPdz612VA",
+          "publishedAt": "2020-11-29T12:15:10Z",
+          "sourceTitle": "#BoysLockdown Episode 6 – Finale | Ali King and Alec Kevin | Part 2 of 2 [INTL SUBS]"
+        }
+      ]
+    },
+    {
+      "title": "He's Mine",
+      "targetSeriesId": 241,
+      "expectedTitle": "He´s mine",
+      "countryCode": "ph",
+      "year": 2022,
+      "channelId": "UCW-3ixU-hvGhSyR_ZPKckCg",
+      "playlistUrl": "https://www.youtube.com/channel/UCW-3ixU-hvGhSyR_ZPKckCg",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "uXn-I2bbzxk",
+          "publishedAt": "2021-11-26T12:00:12Z",
+          "sourceTitle": "He's Mine - Pilot Episode (First Episode) | New Filipino BL Series | Eng, Spanish, Portuguese Subs"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "gV5_gwAK5tQ",
+          "publishedAt": "2021-12-03T12:00:12Z",
+          "sourceTitle": "He's Mine - Episode 2 | Pinoy BL Series | English Spanish Portuguese Subs"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "_Anp6bATITQ",
+          "publishedAt": "2021-12-10T12:00:11Z",
+          "sourceTitle": "He's Mine - Episode 3 | Pinoy BL Series [ English, Spanish, Portuguese Subs ]"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "jWBkG_63xdM",
+          "publishedAt": "2021-12-17T12:00:14Z",
+          "sourceTitle": "He's Mine Episode 4 | Pinoy BL Series [ English Spanish Portuguese Subs ]"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "bkMJCZQzYTc",
+          "publishedAt": "2021-12-24T12:01:04Z",
+          "sourceTitle": "He's Mine Episode 5 | Pinoy BL Series [ English Spanish Portuguese Subs ]"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "5Ma-CLgcY7k",
+          "publishedAt": "2022-01-09T15:08:08Z",
+          "sourceTitle": "He's Mine Episode 6 | Pinoy BL Series [ English Spanish Portuguese Subs ]"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 1,
+          "videoId": "bg6RgrwWGwQ",
+          "publishedAt": "2022-01-14T12:00:14Z",
+          "sourceTitle": "He's Mine Episode 7 | Pinoy BL Series [ English Spanish Portuguese Subs ]",
+          "playback": "NOT_EMBEDDABLE"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 1,
+          "videoId": "pnFO4CYQnwQ",
+          "publishedAt": "2022-02-04T12:00:13Z",
+          "sourceTitle": "He's Mine - Episode 8 | Pinoy BL Series | English Spanish Portuguese Subs"
+        },
+        {
+          "chapter": 9,
+          "part": 1,
+          "parts": 1,
+          "videoId": "3lQsn0XOArI",
+          "publishedAt": "2022-02-11T13:00:13Z",
+          "sourceTitle": "He's Mine - Episode 9 | Pinoy BL Series ( English, Spanish Portuguese Subtitles )"
+        },
+        {
+          "chapter": 10,
+          "part": 1,
+          "parts": 1,
+          "videoId": "znHWLQrsdeA",
+          "publishedAt": "2022-02-27T12:00:11Z",
+          "sourceTitle": "He's Mine Finale Episode 10 | Pinoy BL Series | English Spanish Portuguese Subtitles",
+          "playback": "NOT_EMBEDDABLE"
+        }
+      ]
+    },
+    {
+      "title": "Sugar Games",
+      "targetSeriesId": 523,
+      "expectedTitle": "Sugar games",
+      "countryCode": "ph",
+      "year": 2026,
+      "channelId": "UC3mvG0KIKHT7MsaWMjB3dDw",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLFungMMd7Enk",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "df9qC2vQ1Hg",
+          "publishedAt": "2026-08-08T12:30:29Z",
+          "sourceTitle": "Sugar Games | Episode 1"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "CJ_QWYZrBSQ",
+          "publishedAt": "2026-08-15T12:30:38Z",
+          "sourceTitle": "Sugar Games | Episode 2",
+          "playback": "AGE_RESTRICTED"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "Uft92ce85MQ",
+          "publishedAt": "2026-08-22T12:30:22Z",
+          "sourceTitle": "Sugar Games | Episode 3"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "c_onOET642o",
+          "publishedAt": "2026-08-29T12:30:36Z",
+          "sourceTitle": "Sugar Games | Episode 4",
+          "playback": "AGE_RESTRICTED"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "DE5ubpvXnrc",
+          "publishedAt": "2026-09-05T12:30:06Z",
+          "sourceTitle": "Sugar Games | Episode 5"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "NnVvOmndWSU",
+          "publishedAt": "2026-09-12T12:30:17Z",
+          "sourceTitle": "Sugar Games | Episode 6"
+        }
+      ]
+    },
+    {
+      "title": "Sereno",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "ph",
+      "year": 2025,
+      "channelId": "UC3mvG0KIKHT7MsaWMjB3dDw",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLcQaxIPsTWdOdHERhq5DyEKas3feZWfhN",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 4,
+          "videoId": "pp4mguzk-Bk",
+          "publishedAt": "2025-12-06T12:00:07Z",
+          "sourceTitle": "SERENO | BL Series | EP.1 [1/4]"
+        },
+        {
+          "chapter": 1,
+          "part": 2,
+          "parts": 4,
+          "videoId": "ZKLfmFHR2kU",
+          "publishedAt": "2025-12-06T12:15:23Z",
+          "sourceTitle": "SERENO | BL Series | EP.1 [2/4]"
+        },
+        {
+          "chapter": 1,
+          "part": 3,
+          "parts": 4,
+          "videoId": "2RGi8Ev6gbg",
+          "publishedAt": "2025-12-06T12:28:12Z",
+          "sourceTitle": "SERENO | BL Series | EP.1 [3/4]"
+        },
+        {
+          "chapter": 1,
+          "part": 4,
+          "parts": 4,
+          "videoId": "VPjEPWwjxKQ",
+          "publishedAt": "2025-12-06T12:41:27Z",
+          "sourceTitle": "SERENO | BL Series | EP.1 [4/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 4,
+          "videoId": "gJ7lfquqEPE",
+          "publishedAt": "2025-12-13T12:00:08Z",
+          "sourceTitle": "SERENO | BL Series | EP.2 [1/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 2,
+          "parts": 4,
+          "videoId": "gFJVuy6E4WA",
+          "publishedAt": "2025-12-13T12:17:47Z",
+          "sourceTitle": "SERENO | BL Series | EP.2 [2/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 3,
+          "parts": 4,
+          "videoId": "IZ_DTzty6Og",
+          "publishedAt": "2025-12-13T12:31:41Z",
+          "sourceTitle": "SERENO | BL Series | EP.2 [3/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 4,
+          "parts": 4,
+          "videoId": "ulBL3BuygAY",
+          "publishedAt": "2025-12-13T12:46:12Z",
+          "sourceTitle": "SERENO | BL Series | EP.2 [4/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 4,
+          "videoId": "U6dvZRAiTP4",
+          "publishedAt": "2025-12-20T12:00:08Z",
+          "sourceTitle": "SERENO | BL Series | EP.3 [1/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 2,
+          "parts": 4,
+          "videoId": "J6G9k9CuLKI",
+          "publishedAt": "2025-12-20T12:20:26Z",
+          "sourceTitle": "SERENO | BL Series | EP.3 [2/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 3,
+          "parts": 4,
+          "videoId": "v9VRPeVc4u0",
+          "publishedAt": "2025-12-20T12:37:21Z",
+          "sourceTitle": "SERENO | BL Series | EP.3 [3/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 4,
+          "parts": 4,
+          "videoId": "Mmt8BXzgXFw",
+          "publishedAt": "2025-12-20T12:54:23Z",
+          "sourceTitle": "SERENO | BL Series | EP.3 [4/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 4,
+          "videoId": "WdcE8F__ZM0",
+          "publishedAt": "2025-12-27T12:00:07Z",
+          "sourceTitle": "SERENO | BL Series | EP.4 [1/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 2,
+          "parts": 4,
+          "videoId": "aMsiLCknnfk",
+          "publishedAt": "2025-12-27T12:17:56Z",
+          "sourceTitle": "SERENO | BL Series | EP.4 [2/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 3,
+          "parts": 4,
+          "videoId": "P7x5idu9G2s",
+          "publishedAt": "2025-12-27T12:34:47Z",
+          "sourceTitle": "SERENO | BL Series | EP.4 [3/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 4,
+          "parts": 4,
+          "videoId": "pbvJrNcuk_s",
+          "publishedAt": "2025-12-27T12:47:28Z",
+          "sourceTitle": "SERENO | BL Series | EP.4 [4/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 4,
+          "videoId": "xyyq0lE4jao",
+          "publishedAt": "2026-01-03T12:00:07Z",
+          "sourceTitle": "SERENO | Ep.5 [1/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 2,
+          "parts": 4,
+          "videoId": "Q0jpqCbslFg",
+          "publishedAt": "2026-01-03T12:20:13Z",
+          "sourceTitle": "SERENO | Ep.5 [2/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 3,
+          "parts": 4,
+          "videoId": "7fMSa06DHQ0",
+          "publishedAt": "2026-01-03T12:34:38Z",
+          "sourceTitle": "SERENO | Ep.5 [3/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 4,
+          "parts": 4,
+          "videoId": "ffHcWaDKUYE",
+          "publishedAt": "2026-01-03T12:48:28Z",
+          "sourceTitle": "SERENO | Ep.5 [4/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 4,
+          "videoId": "VntDkdUzHMs",
+          "publishedAt": "2026-01-10T12:00:07Z",
+          "sourceTitle": "SERENO | Ep.6 [1/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 2,
+          "parts": 4,
+          "videoId": "d9mAJjvjjZs",
+          "publishedAt": "2026-01-10T12:25:14Z",
+          "sourceTitle": "SERENO | Ep.6 [2/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 3,
+          "parts": 4,
+          "videoId": "jcaiizEftuM",
+          "publishedAt": "2026-01-10T12:44:07Z",
+          "sourceTitle": "SERENO | Ep.6 [3/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 4,
+          "parts": 4,
+          "videoId": "Wo5CeOtemCE",
+          "publishedAt": "2026-01-10T12:58:04Z",
+          "sourceTitle": "SERENO | Ep.6 [4/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 4,
+          "videoId": "1yaZU8SrZfc",
+          "publishedAt": "2026-01-17T12:00:07Z",
+          "sourceTitle": "SERENO | Ep.7 [1/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 2,
+          "parts": 4,
+          "videoId": "JkVb81evwJ0",
+          "publishedAt": "2026-01-17T12:21:06Z",
+          "sourceTitle": "SERENO | Ep.7 [2/4]",
+          "playback": "AGE_RESTRICTED"
+        },
+        {
+          "chapter": 7,
+          "part": 3,
+          "parts": 4,
+          "videoId": "PvWVV2g4fYw",
+          "publishedAt": "2026-01-17T12:39:41Z",
+          "sourceTitle": "SERENO | Ep.7 [3/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 4,
+          "parts": 4,
+          "videoId": "QJx3lGoCudA",
+          "publishedAt": "2026-01-17T12:52:52Z",
+          "sourceTitle": "SERENO | Ep.7 [4/4]",
+          "playback": "AGE_RESTRICTED"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 4,
+          "videoId": "VgP122mwLy4",
+          "publishedAt": "2026-01-24T12:00:07Z",
+          "sourceTitle": "SERENO | Ep.8 [1/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 2,
+          "parts": 4,
+          "videoId": "B6mBGGszc3I",
+          "publishedAt": "2026-01-24T12:23:16Z",
+          "sourceTitle": "SERENO | Ep.8 [2/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 3,
+          "parts": 4,
+          "videoId": "gETd2NemXdw",
+          "publishedAt": "2026-01-24T12:35:09Z",
+          "sourceTitle": "SERENO | Ep.8 [3/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 4,
+          "parts": 4,
+          "videoId": "MNfbNPieDDs",
+          "publishedAt": "2026-01-24T12:54:19Z",
+          "sourceTitle": "SERENO | Ep.8 [4/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 1,
+          "parts": 4,
+          "videoId": "K-4q_F-4dtE",
+          "publishedAt": "2026-01-31T12:00:07Z",
+          "sourceTitle": "SERENO | Ep. 9 [1/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 2,
+          "parts": 4,
+          "videoId": "0ImK-j_zano",
+          "publishedAt": "2026-01-31T12:19:46Z",
+          "sourceTitle": "SERENO | Ep. 9 [2/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 3,
+          "parts": 4,
+          "videoId": "K2Z9lMEQFc4",
+          "publishedAt": "2026-01-31T12:37:10Z",
+          "sourceTitle": "SERENO | Ep. 9 [3/4]",
+          "playback": "AGE_RESTRICTED"
+        },
+        {
+          "chapter": 9,
+          "part": 4,
+          "parts": 4,
+          "videoId": "f5FB-mlV3Qc",
+          "publishedAt": "2026-01-31T12:53:19Z",
+          "sourceTitle": "SERENO | Ep. 9 [4/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 1,
+          "parts": 4,
+          "videoId": "kUrayzGZ8EY",
+          "publishedAt": "2026-02-07T12:00:07Z",
+          "sourceTitle": "SERENO | Ep. 10 [1/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 2,
+          "parts": 4,
+          "videoId": "2sEmRxrZjk0",
+          "publishedAt": "2026-02-07T12:17:42Z",
+          "sourceTitle": "SERENO | Ep. 10 [2/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 3,
+          "parts": 4,
+          "videoId": "1Wu33nILuY0",
+          "publishedAt": "2026-02-07T12:34:53Z",
+          "sourceTitle": "SERENO | Ep. 10 [3/4]",
+          "playback": "AGE_RESTRICTED"
+        },
+        {
+          "chapter": 10,
+          "part": 4,
+          "parts": 4,
+          "videoId": "kmDrA7IAWJc",
+          "publishedAt": "2026-02-07T12:48:36Z",
+          "sourceTitle": "SERENO | Ep. 10 [4/4]"
+        }
+      ]
+    },
+    {
+      "title": "Hermoso",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "ph",
+      "year": 2025,
+      "channelId": "UC3mvG0KIKHT7MsaWMjB3dDw",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLcQaxIPsTWdP_1uuhVXkVaaxr5TmueZtn",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 4,
+          "videoId": "1fDF5wRnTQo",
+          "publishedAt": "2025-06-28T12:00:07Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.1 [1/4]"
+        },
+        {
+          "chapter": 1,
+          "part": 2,
+          "parts": 4,
+          "videoId": "2WSbxsAZaBI",
+          "publishedAt": "2025-06-28T12:19:38Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.1 [2/4]"
+        },
+        {
+          "chapter": 1,
+          "part": 3,
+          "parts": 4,
+          "videoId": "yN95SmKWcEA",
+          "publishedAt": "2025-06-28T12:33:51Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.1 [3/4]"
+        },
+        {
+          "chapter": 1,
+          "part": 4,
+          "parts": 4,
+          "videoId": "rT27bOsGrkk",
+          "publishedAt": "2025-06-28T12:47:53Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.1 [4/4]",
+          "playback": "AGE_RESTRICTED"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 4,
+          "videoId": "KCJEz76MpyQ",
+          "publishedAt": "2025-07-05T12:00:07Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.2 [1/4]",
+          "playback": "AGE_RESTRICTED"
+        },
+        {
+          "chapter": 2,
+          "part": 2,
+          "parts": 4,
+          "videoId": "U0xckB3ryyY",
+          "publishedAt": "2025-07-05T12:21:41Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.2 [2/4]",
+          "playback": "AGE_RESTRICTED"
+        },
+        {
+          "chapter": 2,
+          "part": 3,
+          "parts": 4,
+          "videoId": "fYNI6g8tgrU",
+          "publishedAt": "2025-07-05T12:34:18Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.2 [3/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 4,
+          "parts": 4,
+          "videoId": "ulrTLSk9sGk",
+          "publishedAt": "2025-07-05T12:47:58Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.2 [4/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 4,
+          "videoId": "hvfHkCudPU8",
+          "publishedAt": "2025-07-12T12:00:07Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.3 [1/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 2,
+          "parts": 4,
+          "videoId": "WxZ2R8sQLYs",
+          "publishedAt": "2025-07-12T12:19:11Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.3 [2/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 3,
+          "parts": 4,
+          "videoId": "-B8qpvMedX0",
+          "publishedAt": "2025-07-12T12:33:06Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.3 [3/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 4,
+          "parts": 4,
+          "videoId": "VUxOPBjC6k4",
+          "publishedAt": "2025-07-12T12:46:56Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.3 [4/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 4,
+          "videoId": "spKmh4eIXYE",
+          "publishedAt": "2025-07-19T12:00:07Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.4 [1/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 2,
+          "parts": 4,
+          "videoId": "QiVbhAyNUzI",
+          "publishedAt": "2025-07-19T12:18:59Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.4 [2/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 3,
+          "parts": 4,
+          "videoId": "2ADFxrVOmuU",
+          "publishedAt": "2025-07-19T12:33:56Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.4 [3/4]",
+          "playback": "AGE_RESTRICTED"
+        },
+        {
+          "chapter": 4,
+          "part": 4,
+          "parts": 4,
+          "videoId": "1o7yLr2WHGw",
+          "publishedAt": "2025-07-19T12:50:33Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.4 [4/4]",
+          "playback": "AGE_RESTRICTED"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 4,
+          "videoId": "CjvHg-Wa7Rs",
+          "publishedAt": "2025-07-26T12:00:07Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.5 [1/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 2,
+          "parts": 4,
+          "videoId": "y2YrxiPGt14",
+          "publishedAt": "2025-07-26T12:19:53Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.5 [2/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 3,
+          "parts": 4,
+          "videoId": "2KMDioPgzfY",
+          "publishedAt": "2025-07-26T12:34:13Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.5 [3/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 4,
+          "parts": 4,
+          "videoId": "ZQKXLvIRra0",
+          "publishedAt": "2025-07-26T12:48:21Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.5 [4/4]",
+          "playback": "AGE_RESTRICTED"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 4,
+          "videoId": "I3_uFCSKcic",
+          "publishedAt": "2025-08-02T12:00:07Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.6 [1/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 2,
+          "parts": 4,
+          "videoId": "EW6_hfvZdcM",
+          "publishedAt": "2025-08-02T12:18:41Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.6 [2/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 3,
+          "parts": 4,
+          "videoId": "pYdeZvyFxhs",
+          "publishedAt": "2025-08-02T12:32:57Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.6 [3/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 4,
+          "parts": 4,
+          "videoId": "MmxYwjzrB-o",
+          "publishedAt": "2025-08-02T12:46:51Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.6 [4/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 4,
+          "videoId": "-QKnIEUdRnA",
+          "publishedAt": "2025-08-09T12:00:07Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.7 [1/4]",
+          "playback": "AGE_RESTRICTED"
+        },
+        {
+          "chapter": 7,
+          "part": 2,
+          "parts": 4,
+          "videoId": "tYIfap7TRF0",
+          "publishedAt": "2025-08-09T12:17:59Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.7 [2/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 3,
+          "parts": 4,
+          "videoId": "yPL9GnS8zhY",
+          "publishedAt": "2025-08-09T12:33:09Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.7 [3/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 4,
+          "parts": 4,
+          "videoId": "annMeBPIpD8",
+          "publishedAt": "2025-08-09T12:47:39Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.7 [4/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 4,
+          "videoId": "Cn2tXYX4VA8",
+          "publishedAt": "2025-08-16T12:00:07Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.8 [1/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 2,
+          "parts": 4,
+          "videoId": "gCvs0_eU4FI",
+          "publishedAt": "2025-08-16T12:18:32Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.8 [2/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 3,
+          "parts": 4,
+          "videoId": "Ny8ank-IjZw",
+          "publishedAt": "2025-08-16T12:32:21Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.8 [3/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 4,
+          "parts": 4,
+          "videoId": "JJ1froJHGlg",
+          "publishedAt": "2025-08-16T12:46:23Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.8 [4/4]",
+          "playback": "AGE_RESTRICTED"
+        },
+        {
+          "chapter": 9,
+          "part": 1,
+          "parts": 4,
+          "videoId": "Zs8aose7f0Q",
+          "publishedAt": "2025-08-23T12:00:07Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.9 [1/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 2,
+          "parts": 4,
+          "videoId": "WCOm6erBdNo",
+          "publishedAt": "2025-08-23T12:20:16Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.9 [2/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 3,
+          "parts": 4,
+          "videoId": "4jxVH1B9FRc",
+          "publishedAt": "2025-08-23T12:32:33Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.9 [3/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 4,
+          "parts": 4,
+          "videoId": "fqvCJ9GzaQI",
+          "publishedAt": "2025-08-23T12:44:01Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.9 [4/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 1,
+          "parts": 4,
+          "videoId": "dfU0qbeewLk",
+          "publishedAt": "2025-08-30T12:00:07Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.10 [1/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 2,
+          "parts": 4,
+          "videoId": "XFcM9_yc0ko",
+          "publishedAt": "2025-08-30T12:26:36Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.10 [2/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 3,
+          "parts": 4,
+          "videoId": "O-J9fueLYFI",
+          "publishedAt": "2025-08-30T12:49:28Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.10 [3/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 4,
+          "parts": 4,
+          "videoId": "M7tLS3xvwsg",
+          "publishedAt": "2025-08-30T13:04:21Z",
+          "sourceTitle": "HERMOSO | BL Series | EP.10 [4/4]"
+        }
+      ]
+    },
+    {
+      "title": "Hermoso 2",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "ph",
+      "year": 2026,
+      "channelId": "UC3mvG0KIKHT7MsaWMjB3dDw",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLcQaxIPsTWdNIYHcBRfjlLX46Pm4vZt-z",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "ONpt2lKjDMY",
+          "publishedAt": "2026-03-28T12:00:06Z",
+          "sourceTitle": "Hermoso 2 | Limited Series [Episode 1]"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "toKF95Fdok0",
+          "publishedAt": "2026-03-29T12:00:00Z",
+          "sourceTitle": "Hermoso 2 | Limited Series [Episode 2]"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "KKrGSr3gDB8",
+          "publishedAt": "2026-04-14T00:01:48Z",
+          "sourceTitle": "Hermoso 2 | Limited Series [Episode 3]"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "9XKolVMEirk",
+          "publishedAt": "2026-04-05T12:00:12Z",
+          "sourceTitle": "Hermoso 2 | Limited Series [Episode 4]"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "LqD1ZcYWptY",
+          "publishedAt": "2026-04-14T06:05:28Z",
+          "sourceTitle": "Hermoso 2 | Limited Series [Episode 5]"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "7uE5MKqXDQA",
+          "publishedAt": "2026-04-13T15:48:07Z",
+          "sourceTitle": "Hermoso 2 | Limited Series [Episode 6]"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 1,
+          "videoId": "3k6_gsIVqYg",
+          "publishedAt": "2026-04-18T12:00:05Z",
+          "sourceTitle": "Hermoso 2 | Limited Series [Episode 7]"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 1,
+          "videoId": "lbLe1TJ7t6M",
+          "publishedAt": "2026-04-19T12:01:22Z",
+          "sourceTitle": "Hermoso 2 | Limited Series [Episode 8]"
+        },
+        {
+          "chapter": 9,
+          "part": 1,
+          "parts": 1,
+          "videoId": "jBw_rQPP68Q",
+          "publishedAt": "2026-04-25T12:01:13Z",
+          "sourceTitle": "Hermoso 2 | Limited Series [Episode 9]"
+        },
+        {
+          "chapter": 10,
+          "part": 1,
+          "parts": 1,
+          "videoId": "L-qmRsyB1o4",
+          "publishedAt": "2026-04-26T12:15:51Z",
+          "sourceTitle": "Hermoso 2 | Limited Series [Episode 10]"
+        },
+        {
+          "chapter": 11,
+          "part": 1,
+          "parts": 1,
+          "videoId": "uE4bLhOtxHU",
+          "publishedAt": "2026-05-02T12:01:43Z",
+          "sourceTitle": "Hermoso 2 | Limited Series [Episode 11]"
+        },
+        {
+          "chapter": 12,
+          "part": 1,
+          "parts": 1,
+          "videoId": "Pt0_ReDwZDg",
+          "publishedAt": "2026-05-03T12:00:45Z",
+          "sourceTitle": "Hermoso 2 | Limited Series [Episode 12]"
+        },
+        {
+          "chapter": 13,
+          "part": 1,
+          "parts": 1,
+          "videoId": "Fe3UVD6WT_I",
+          "publishedAt": "2026-05-09T12:00:33Z",
+          "sourceTitle": "Hermoso 2 | Limited Series [Episode 13]",
+          "playback": "AGE_RESTRICTED"
+        }
+      ]
+    },
+    {
+      "title": "The Boyfriend Express",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "ph",
+      "year": 2026,
+      "channelId": "UC3mvG0KIKHT7MsaWMjB3dDw",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLcQaxIPsTWdPA6h1Iq3SKa84Y-lhvhVW7",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 4,
+          "videoId": "sj5bmUxMKAg",
+          "publishedAt": "2026-05-02T12:30:07Z",
+          "sourceTitle": "The Boyfriend Express | Episode 1 [1/4]"
+        },
+        {
+          "chapter": 1,
+          "part": 2,
+          "parts": 4,
+          "videoId": "btrrD1zVJcs",
+          "publishedAt": "2026-05-02T12:45:07Z",
+          "sourceTitle": "The Boyfriend Express | Episode 1 [2/4]"
+        },
+        {
+          "chapter": 1,
+          "part": 3,
+          "parts": 4,
+          "videoId": "G3t27ZXrl1I",
+          "publishedAt": "2026-05-02T13:00:06Z",
+          "sourceTitle": "The Boyfriend Express | Episode 1 [3/4]"
+        },
+        {
+          "chapter": 1,
+          "part": 4,
+          "parts": 4,
+          "videoId": "RxR_sLV81ds",
+          "publishedAt": "2026-05-02T13:15:07Z",
+          "sourceTitle": "The Boyfriend Express | Episode 1 [4/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 4,
+          "videoId": "UU3oppMn_S0",
+          "publishedAt": "2026-05-09T12:30:07Z",
+          "sourceTitle": "The Boyfriend Express | Episode 2 [1/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 2,
+          "parts": 4,
+          "videoId": "nqXbNmaDIxc",
+          "publishedAt": "2026-05-09T12:45:06Z",
+          "sourceTitle": "The Boyfriend Express | Episode 2 [2/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 3,
+          "parts": 4,
+          "videoId": "AIrQE2Jx9Go",
+          "publishedAt": "2026-05-09T13:00:07Z",
+          "sourceTitle": "The Boyfriend Express | Episode 2 [3/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 4,
+          "parts": 4,
+          "videoId": "bxOS1mJND3o",
+          "publishedAt": "2026-05-09T13:30:06Z",
+          "sourceTitle": "The Boyfriend Express | Episode 2 [4/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 4,
+          "videoId": "6bcM_G5DaIU",
+          "publishedAt": "2026-05-16T12:30:06Z",
+          "sourceTitle": "The Boyfriend Express | Episode 3 [1/4]",
+          "playback": "AGE_RESTRICTED"
+        },
+        {
+          "chapter": 3,
+          "part": 2,
+          "parts": 4,
+          "videoId": "30fItn2b3r4",
+          "publishedAt": "2026-05-16T12:45:07Z",
+          "sourceTitle": "The Boyfriend Express | Episode 3 [2/4]",
+          "playback": "AGE_RESTRICTED"
+        },
+        {
+          "chapter": 3,
+          "part": 3,
+          "parts": 4,
+          "videoId": "tB0AGPbujpA",
+          "publishedAt": "2026-05-16T13:00:07Z",
+          "sourceTitle": "The Boyfriend Express | Episode 3 [3/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 4,
+          "parts": 4,
+          "videoId": "q57vnN5kg34",
+          "publishedAt": "2026-05-16T13:15:06Z",
+          "sourceTitle": "The Boyfriend Express | Episode 3 [4/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 4,
+          "videoId": "hVgGnr6zszQ",
+          "publishedAt": "2026-05-23T12:30:21Z",
+          "sourceTitle": "The Boyfriend Express | Episode 4 [1/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 2,
+          "parts": 4,
+          "videoId": "hpKQ8pIxtdk",
+          "publishedAt": "2026-05-23T12:45:07Z",
+          "sourceTitle": "The Boyfriend Express | Episode 4 [2/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 3,
+          "parts": 4,
+          "videoId": "7X-l0fnEwLs",
+          "publishedAt": "2026-05-23T13:00:06Z",
+          "sourceTitle": "The Boyfriend Express | Episode 4 [3/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 4,
+          "parts": 4,
+          "videoId": "x1cUQhr8mUM",
+          "publishedAt": "2026-05-23T13:15:07Z",
+          "sourceTitle": "The Boyfriend Express | Episode 4 [4/4]",
+          "playback": "AGE_RESTRICTED"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 4,
+          "videoId": "DlFZO4LU2CQ",
+          "publishedAt": "2026-05-30T12:30:06Z",
+          "sourceTitle": "The Boyfriend Express | Episode 5 [1/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 2,
+          "parts": 4,
+          "videoId": "Qqui26z5ssQ",
+          "publishedAt": "2026-05-30T12:45:06Z",
+          "sourceTitle": "The Boyfriend Express | Episode 5 [2/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 3,
+          "parts": 4,
+          "videoId": "Y3w5nYrazdk",
+          "publishedAt": "2026-05-30T13:00:07Z",
+          "sourceTitle": "The Boyfriend Express | Episode 5 [3/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 4,
+          "parts": 4,
+          "videoId": "gMKqz-NpRgA",
+          "publishedAt": "2026-05-30T13:15:07Z",
+          "sourceTitle": "The Boyfriend Express | Episode 5 [4/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 4,
+          "videoId": "0Xg3997qVzk",
+          "publishedAt": "2026-06-06T12:30:06Z",
+          "sourceTitle": "The Boyfriend Express | Episode 6 [1/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 2,
+          "parts": 4,
+          "videoId": "HH8HVL0gtCo",
+          "publishedAt": "2026-06-06T12:45:16Z",
+          "sourceTitle": "The Boyfriend Express | Episode 6 [2/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 3,
+          "parts": 4,
+          "videoId": "Pi0UdjcG-0Y",
+          "publishedAt": "2026-06-06T13:15:06Z",
+          "sourceTitle": "The Boyfriend Express | Episode 6 [3/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 4,
+          "parts": 4,
+          "videoId": "RL7a25VrgVU",
+          "publishedAt": "2026-06-06T13:15:06Z",
+          "sourceTitle": "The Boyfriend Express | Episode 6 [4/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 4,
+          "videoId": "rfpAEN2ZdYc",
+          "publishedAt": "2026-06-13T12:30:06Z",
+          "sourceTitle": "The Boyfriend Express |Episode 7 [1/4]",
+          "playback": "AGE_RESTRICTED"
+        },
+        {
+          "chapter": 7,
+          "part": 2,
+          "parts": 4,
+          "videoId": "2YJmEWfkpos",
+          "publishedAt": "2026-06-13T12:45:06Z",
+          "sourceTitle": "The Boyfriend Express |Episode 7 [2/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 3,
+          "parts": 4,
+          "videoId": "RIBWPBHp8Y0",
+          "publishedAt": "2026-06-13T13:00:06Z",
+          "sourceTitle": "The Boyfriend Express |Episode 7 [3/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 4,
+          "parts": 4,
+          "videoId": "TU0_Bx7ZKW0",
+          "publishedAt": "2026-06-13T13:15:06Z",
+          "sourceTitle": "The Boyfriend Express | Episode 7 [4/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 4,
+          "videoId": "zZgvB3DacZI",
+          "publishedAt": "2026-06-20T12:30:06Z",
+          "sourceTitle": "The Boyfriend Express | Episode 8 [1/4]",
+          "playback": "AGE_RESTRICTED"
+        },
+        {
+          "chapter": 8,
+          "part": 2,
+          "parts": 4,
+          "videoId": "Q29qU247gy8",
+          "publishedAt": "2026-06-20T12:45:06Z",
+          "sourceTitle": "The Boyfriend Express | Episode 8 [2/4]",
+          "playback": "AGE_RESTRICTED"
+        },
+        {
+          "chapter": 8,
+          "part": 3,
+          "parts": 4,
+          "videoId": "ebsMXKxscy8",
+          "publishedAt": "2026-06-20T13:00:06Z",
+          "sourceTitle": "The Boyfriend Express | Episode 8 [3/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 4,
+          "parts": 4,
+          "videoId": "XgaebBzg2tQ",
+          "publishedAt": "2026-06-20T13:15:07Z",
+          "sourceTitle": "The Boyfriend Express | Episode 8 [4/4]",
+          "playback": "AGE_RESTRICTED"
+        },
+        {
+          "chapter": 9,
+          "part": 1,
+          "parts": 4,
+          "videoId": "SJzz7kQF2bE",
+          "publishedAt": "2026-06-27T12:30:06Z",
+          "sourceTitle": "The Boyfriend Express | Episode 9 [1/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 2,
+          "parts": 4,
+          "videoId": "z0XKC1B0oZU",
+          "publishedAt": "2026-06-27T12:45:06Z",
+          "sourceTitle": "The Boyfriend Express | Episode 9 [2/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 3,
+          "parts": 4,
+          "videoId": "-3cKzqicfY0",
+          "publishedAt": "2026-06-27T13:00:06Z",
+          "sourceTitle": "The Boyfriend Express | Episode 9 [3/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 4,
+          "parts": 4,
+          "videoId": "hQwWAC89e8E",
+          "publishedAt": "2026-06-27T13:15:06Z",
+          "sourceTitle": "The Boyfriend Express | Episode 9 [4/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 1,
+          "parts": 4,
+          "videoId": "u2KyMBDIzBI",
+          "publishedAt": "2026-07-04T12:30:06Z",
+          "sourceTitle": "The Boyfriend Express | Episode 10 [1/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 2,
+          "parts": 4,
+          "videoId": "u02ZsrKTBnY",
+          "publishedAt": "2026-07-04T13:00:06Z",
+          "sourceTitle": "The Boyfriend Express | Episode 10 [2/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 3,
+          "parts": 4,
+          "videoId": "2ZbxSZTtL8I",
+          "publishedAt": "2026-07-04T12:45:06Z",
+          "sourceTitle": "The Boyfriend Express | Episode 10 [3/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 4,
+          "parts": 4,
+          "videoId": "DJwcGqJu19Q",
+          "publishedAt": "2026-07-04T13:15:06Z",
+          "sourceTitle": "The Boyfriend Express | Episode 10 [4/4]"
+        }
+      ]
+    },
+    {
+      "title": "Our Story",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "ph",
+      "year": 2023,
+      "channelId": "UC3mvG0KIKHT7MsaWMjB3dDw",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLcQaxIPsTWdPtMLQJIb60GdoYb0CGC6NY",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "yxbTeEgFYIA",
+          "publishedAt": "2026-05-04T00:11:06Z",
+          "sourceTitle": "Our Story (Full Version) Episode 1"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 4,
+          "videoId": "1nHExzmZbLA",
+          "publishedAt": "2023-09-16T12:30:11Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 2 [1/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 2,
+          "parts": 4,
+          "videoId": "aIS56Ju8qFs",
+          "publishedAt": "2023-09-16T12:50:21Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 2 [2/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 3,
+          "parts": 4,
+          "videoId": "gKfulGHl-f0",
+          "publishedAt": "2023-09-16T13:05:10Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 2 [3/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 4,
+          "parts": 4,
+          "videoId": "_vqa63qxGaI",
+          "publishedAt": "2023-09-16T13:22:25Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 2 [4/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 4,
+          "videoId": "QEBtV2dmmNk",
+          "publishedAt": "2023-09-23T12:30:09Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 3 [1/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 2,
+          "parts": 4,
+          "videoId": "aqxX6vXv0d8",
+          "publishedAt": "2023-09-23T12:51:29Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 3 [2/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 3,
+          "parts": 4,
+          "videoId": "EyCw-a6VQco",
+          "publishedAt": "2023-09-23T13:08:11Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 3 [3/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 4,
+          "parts": 4,
+          "videoId": "rVx5tbHhprQ",
+          "publishedAt": "2023-09-23T13:25:27Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 3 [4/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 4,
+          "videoId": "-raIl8cmQHU",
+          "publishedAt": "2023-09-30T12:30:13Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 4 [1/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 2,
+          "parts": 4,
+          "videoId": "vx_qSzCil4A",
+          "publishedAt": "2023-09-30T12:51:22Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 4 [2/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 3,
+          "parts": 4,
+          "videoId": "k_tMNKOOrqg",
+          "publishedAt": "2023-09-30T13:10:13Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 4 [3/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 4,
+          "parts": 4,
+          "videoId": "Din7Kn1cXk0",
+          "publishedAt": "2023-09-30T13:25:27Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 4 [4/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 4,
+          "videoId": "6-y2dAki2dE",
+          "publishedAt": "2023-10-07T12:30:09Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 5 [1/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 2,
+          "parts": 4,
+          "videoId": "NiHcm6oSSGc",
+          "publishedAt": "2023-10-07T12:50:23Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 5 [2/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 3,
+          "parts": 4,
+          "videoId": "2z6Y9miwUmo",
+          "publishedAt": "2023-10-07T13:06:23Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 5 [3/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 4,
+          "parts": 4,
+          "videoId": "2PNyrXKnFLs",
+          "publishedAt": "2023-10-07T13:20:24Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 5 [4/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 4,
+          "videoId": "q-ykUB9GmAw",
+          "publishedAt": "2023-10-14T12:30:09Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 6 [1/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 2,
+          "parts": 4,
+          "videoId": "JjakkD2UeiU",
+          "publishedAt": "2023-10-14T12:52:20Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 6 [2/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 3,
+          "parts": 4,
+          "videoId": "kUgjqQQqJpQ",
+          "publishedAt": "2023-10-14T13:10:09Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 6 [3/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 4,
+          "parts": 4,
+          "videoId": "_OKUfFwWG2U",
+          "publishedAt": "2023-10-14T13:16:09Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 6 [4/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 4,
+          "videoId": "dPYGW80J-sg",
+          "publishedAt": "2023-10-21T12:30:13Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 7 [1/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 2,
+          "parts": 4,
+          "videoId": "SUkW2Pny9b4",
+          "publishedAt": "2023-10-21T12:53:28Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 7 [2/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 3,
+          "parts": 4,
+          "videoId": "sZAT-0OFa0w",
+          "publishedAt": "2023-10-21T13:10:20Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 7 [3/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 4,
+          "parts": 4,
+          "videoId": "vQuNjvSK08Q",
+          "publishedAt": "2023-10-21T13:30:08Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 7 [4/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 4,
+          "videoId": "o20ak5vBnfU",
+          "publishedAt": "2023-10-28T12:30:10Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 8 [1/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 2,
+          "parts": 4,
+          "videoId": "9vMkq4Y2NUE",
+          "publishedAt": "2023-10-28T12:52:29Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 8 [2/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 3,
+          "parts": 4,
+          "videoId": "gxCWym5UyYM",
+          "publishedAt": "2023-10-28T13:08:27Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 8 [3/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 4,
+          "parts": 4,
+          "videoId": "k3Bx81kRoAQ",
+          "publishedAt": "2023-10-28T13:27:52Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 8 [4/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 1,
+          "parts": 4,
+          "videoId": "d7A3b66zPNs",
+          "publishedAt": "2023-11-04T12:30:07Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 9 [1/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 2,
+          "parts": 4,
+          "videoId": "8KjVkLBdE1o",
+          "publishedAt": "2023-11-04T12:56:51Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 9 [2/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 3,
+          "parts": 4,
+          "videoId": "f1lCTKDNPig",
+          "publishedAt": "2023-11-04T13:18:00Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 9 [3/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 4,
+          "parts": 4,
+          "videoId": "M4HEjjY3hog",
+          "publishedAt": "2023-11-04T13:35:24Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 9 [4/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 1,
+          "parts": 4,
+          "videoId": "St69fL_RdlE",
+          "publishedAt": "2023-11-11T12:30:11Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 10 [1/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 2,
+          "parts": 4,
+          "videoId": "BMQMidTNueA",
+          "publishedAt": "2023-11-11T12:49:23Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 10 [2/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 3,
+          "parts": 4,
+          "videoId": "Nd3OaClm6jA",
+          "publishedAt": "2023-11-11T13:10:12Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 10 [3/4]",
+          "playback": "AGE_RESTRICTED"
+        },
+        {
+          "chapter": 10,
+          "part": 4,
+          "parts": 4,
+          "videoId": "J6AVy2_wHJc",
+          "publishedAt": "2023-11-11T13:27:28Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 10 [4/4]"
+        },
+        {
+          "chapter": 11,
+          "part": 1,
+          "parts": 4,
+          "videoId": "SsoTPumQMIM",
+          "publishedAt": "2023-11-18T12:30:12Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 11 [1/4]"
+        },
+        {
+          "chapter": 11,
+          "part": 2,
+          "parts": 4,
+          "videoId": "kAsyckP6uIc",
+          "publishedAt": "2023-11-18T12:59:09Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 11 [2/4]"
+        },
+        {
+          "chapter": 11,
+          "part": 3,
+          "parts": 4,
+          "videoId": "WPiW16P33-Y",
+          "publishedAt": "2023-11-18T13:15:28Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 11 [3/4]"
+        },
+        {
+          "chapter": 11,
+          "part": 4,
+          "parts": 4,
+          "videoId": "cwQxkmpReqg",
+          "publishedAt": "2023-11-18T13:38:11Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 11 [4/4]"
+        },
+        {
+          "chapter": 12,
+          "part": 1,
+          "parts": 4,
+          "videoId": "pk2sxo5VxJw",
+          "publishedAt": "2023-11-25T12:30:10Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 12 [1/4]"
+        },
+        {
+          "chapter": 12,
+          "part": 2,
+          "parts": 4,
+          "videoId": "xINkjktmx1A",
+          "publishedAt": "2023-11-25T12:49:30Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 12 [2/4]"
+        },
+        {
+          "chapter": 12,
+          "part": 3,
+          "parts": 4,
+          "videoId": "v06jjUvgUpM",
+          "publishedAt": "2023-11-25T13:03:25Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 12 [3/4]"
+        },
+        {
+          "chapter": 12,
+          "part": 4,
+          "parts": 4,
+          "videoId": "eeA7joXursw",
+          "publishedAt": "2023-11-25T13:19:19Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 12 [4/4]"
+        },
+        {
+          "chapter": 13,
+          "part": 1,
+          "parts": 4,
+          "videoId": "evsiV_Vists",
+          "publishedAt": "2023-12-02T12:30:09Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 13 [1/4]"
+        },
+        {
+          "chapter": 13,
+          "part": 2,
+          "parts": 4,
+          "videoId": "rxDXjrlSxl0",
+          "publishedAt": "2023-12-02T12:53:11Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 13 [2/4]"
+        },
+        {
+          "chapter": 13,
+          "part": 3,
+          "parts": 4,
+          "videoId": "GHRLIYaS29w",
+          "publishedAt": "2023-12-02T13:18:19Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 13 [3/4]"
+        },
+        {
+          "chapter": 13,
+          "part": 4,
+          "parts": 4,
+          "videoId": "jl5pDxgrzCA",
+          "publishedAt": "2023-12-02T13:30:52Z",
+          "sourceTitle": "OUR STORY THE SERIES | Episode 13 [4/4]"
+        }
+      ]
+    },
+    {
+      "title": "Rainbow Prince",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "ph",
+      "year": 2022,
+      "channelId": "UC3mvG0KIKHT7MsaWMjB3dDw",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLcQaxIPsTWdNBzpos-Wp6r5IN-6sNCiHP",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 4,
+          "videoId": "ZfM6CRUOtx4",
+          "publishedAt": "2022-01-15T12:00:14Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.1 [1/4]"
+        },
+        {
+          "chapter": 1,
+          "part": 2,
+          "parts": 4,
+          "videoId": "QPZ1LLAt0co",
+          "publishedAt": "2022-01-15T12:17:48Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.1 [2/4]"
+        },
+        {
+          "chapter": 1,
+          "part": 3,
+          "parts": 4,
+          "videoId": "_awCK-WRBLs",
+          "publishedAt": "2022-04-20T01:17:35Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP. 1 [3/4]"
+        },
+        {
+          "chapter": 1,
+          "part": 4,
+          "parts": 4,
+          "videoId": "RQ-6rj6luxk",
+          "publishedAt": "2022-04-20T01:17:01Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP. 1 [4/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 4,
+          "videoId": "FriMMZHA2bQ",
+          "publishedAt": "2022-01-22T12:00:11Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.2 [1/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 2,
+          "parts": 4,
+          "videoId": "5BDFvstcQ4Y",
+          "publishedAt": "2022-01-22T12:14:19Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.2 [2/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 3,
+          "parts": 4,
+          "videoId": "7lzi-rbLcE8",
+          "publishedAt": "2022-04-20T01:17:35Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP. 2 [3/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 4,
+          "parts": 4,
+          "videoId": "dARf1n1TsZs",
+          "publishedAt": "2022-04-20T01:17:36Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP. 2 [4/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 4,
+          "videoId": "fkU4SqeWrlw",
+          "publishedAt": "2022-01-29T12:00:14Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.3 [1/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 2,
+          "parts": 4,
+          "videoId": "FmtyLNf9J8Q",
+          "publishedAt": "2022-04-20T01:17:35Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.3 [2/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 3,
+          "parts": 4,
+          "videoId": "43iyZ7oiPjU",
+          "publishedAt": "2022-01-29T12:32:42Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.3 [3/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 4,
+          "parts": 4,
+          "videoId": "qjviwweo0oM",
+          "publishedAt": "2022-01-29T12:45:24Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.3 [4/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 4,
+          "videoId": "PQI0lGD4a5I",
+          "publishedAt": "2022-02-05T12:00:13Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.4 [1/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 2,
+          "parts": 4,
+          "videoId": "EbjGINMZOu0",
+          "publishedAt": "2022-02-05T12:16:10Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.4 [2/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 3,
+          "parts": 4,
+          "videoId": "YAIysMzcbMU",
+          "publishedAt": "2022-02-05T12:29:17Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.4 [3/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 4,
+          "parts": 4,
+          "videoId": "daQqfibTpww",
+          "publishedAt": "2022-02-05T12:44:35Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.4 [4/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 4,
+          "videoId": "CmpA-zzJiKk",
+          "publishedAt": "2022-02-12T12:00:09Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.5 1[/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 2,
+          "parts": 4,
+          "videoId": "U2cp5OdWSNQ",
+          "publishedAt": "2022-02-12T12:17:24Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.5 [2/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 3,
+          "parts": 4,
+          "videoId": "JvBpBYb3xk4",
+          "publishedAt": "2022-02-12T12:34:25Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.5 [3/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 4,
+          "parts": 4,
+          "videoId": "y1PTFy4qCfI",
+          "publishedAt": "2022-04-20T01:17:35Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.5 [4/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 4,
+          "videoId": "4CkdYH9zabk",
+          "publishedAt": "2022-02-19T12:00:14Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.6 [1/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 2,
+          "parts": 4,
+          "videoId": "GJQ_16kwab4",
+          "publishedAt": "2022-02-19T12:22:08Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.6 [2/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 3,
+          "parts": 4,
+          "videoId": "7nnp7fB_XtY",
+          "publishedAt": "2022-02-19T12:37:25Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.6 [3/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 4,
+          "parts": 4,
+          "videoId": "xgdagon4Ekw",
+          "publishedAt": "2022-02-19T12:52:41Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.6 [4/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 4,
+          "videoId": "ueaPHKxwXCM",
+          "publishedAt": "2022-02-26T12:00:09Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.7 [1/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 2,
+          "parts": 4,
+          "videoId": "genlHhZmbSY",
+          "publishedAt": "2022-02-26T12:21:29Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.7 [2/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 3,
+          "parts": 4,
+          "videoId": "0o9Ow_acSrc",
+          "publishedAt": "2022-04-20T01:17:35Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.7 [3/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 4,
+          "parts": 4,
+          "videoId": "irXRKeTGdas",
+          "publishedAt": "2022-02-26T12:49:38Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.7 [4/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 4,
+          "videoId": "svypq_LM_Vw",
+          "publishedAt": "2022-03-05T12:00:15Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.8 [1/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 2,
+          "parts": 4,
+          "videoId": "iL2uolS1Rgg",
+          "publishedAt": "2022-03-05T12:32:09Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.8 [2/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 3,
+          "parts": 4,
+          "videoId": "RQmSR0es980",
+          "publishedAt": "2022-03-05T12:47:58Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP. 8 [3/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 4,
+          "parts": 4,
+          "videoId": "VUkLZ_Bsyyk",
+          "publishedAt": "2022-03-05T13:03:11Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP. 8 [4/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 1,
+          "parts": 4,
+          "videoId": "vTk1AQKx464",
+          "publishedAt": "2022-03-12T12:00:12Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.9 [1/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 2,
+          "parts": 4,
+          "videoId": "urdCT4km4sk",
+          "publishedAt": "2022-03-12T12:12:31Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.9 [2/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 3,
+          "parts": 4,
+          "videoId": "hbrj9Z0bje0",
+          "publishedAt": "2022-03-12T12:27:51Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.9 [3/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 4,
+          "parts": 4,
+          "videoId": "w3I5BaxdAwY",
+          "publishedAt": "2022-03-12T12:49:14Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.9 [4/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 1,
+          "parts": 4,
+          "videoId": "rc2vfw-F2eI",
+          "publishedAt": "2022-03-19T12:00:11Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.10 [1/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 2,
+          "parts": 4,
+          "videoId": "28hHj1H3mpE",
+          "publishedAt": "2022-03-19T12:20:18Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP.10 [2/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 3,
+          "parts": 4,
+          "videoId": "0vggTLBb1b4",
+          "publishedAt": "2022-04-20T01:17:35Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP. 10 [3/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 4,
+          "parts": 4,
+          "videoId": "Yi76px2sBqc",
+          "publishedAt": "2022-04-20T01:17:35Z",
+          "sourceTitle": "RAINBOW PRINCE SERIES | EP. 10 [4/4]"
+        }
+      ]
+    },
+    {
+      "title": "My Story",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "ph",
+      "year": 2023,
+      "channelId": "UC3mvG0KIKHT7MsaWMjB3dDw",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLcQaxIPsTWdM6aLblyPNHCV-yOLINFJpN",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 4,
+          "videoId": "x110NaM0j_g",
+          "publishedAt": "2023-04-15T12:30:12Z",
+          "sourceTitle": "My Story The Series | EP.1 [1/4]"
+        },
+        {
+          "chapter": 1,
+          "part": 2,
+          "parts": 4,
+          "videoId": "sgK-5IhmCCw",
+          "publishedAt": "2023-04-15T12:53:06Z",
+          "sourceTitle": "My Story the Series | EP.1 [2/4]"
+        },
+        {
+          "chapter": 1,
+          "part": 3,
+          "parts": 4,
+          "videoId": "SZ44kFIu32o",
+          "publishedAt": "2023-04-15T13:11:00Z",
+          "sourceTitle": "My Story The Series | EP.1 [3/4]"
+        },
+        {
+          "chapter": 1,
+          "part": 4,
+          "parts": 4,
+          "videoId": "Cdg6b1ouuFU",
+          "publishedAt": "2023-04-15T13:25:32Z",
+          "sourceTitle": "My Story The Series | EP.1 [4/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 4,
+          "videoId": "NeEF5fba8xY",
+          "publishedAt": "2023-04-22T12:30:09Z",
+          "sourceTitle": "My Story the Series | EP.2 [1/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 2,
+          "parts": 4,
+          "videoId": "ovTPNLkMhRc",
+          "publishedAt": "2023-04-22T12:47:21Z",
+          "sourceTitle": "My Story the Series | EP.2 [2/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 3,
+          "parts": 4,
+          "videoId": "7MMEi72dOnE",
+          "publishedAt": "2023-04-22T13:02:43Z",
+          "sourceTitle": "My Story the Series | EP.2 [3/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 4,
+          "parts": 4,
+          "videoId": "J0jAag7AVDg",
+          "publishedAt": "2023-04-22T13:18:39Z",
+          "sourceTitle": "My Story the Series | EP.2 [4/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 4,
+          "videoId": "i28kOlc92zI",
+          "publishedAt": "2023-04-29T12:30:09Z",
+          "sourceTitle": "My Story the Series | EP.3 [1/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 2,
+          "parts": 4,
+          "videoId": "DAibvavn3e4",
+          "publishedAt": "2023-04-29T12:44:59Z",
+          "sourceTitle": "My Story the Series | EP.3 [2/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 3,
+          "parts": 4,
+          "videoId": "JKCsLyXkWhU",
+          "publishedAt": "2023-04-29T13:00:02Z",
+          "sourceTitle": "My Story the Series | EP.3 [3/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 4,
+          "parts": 4,
+          "videoId": "BrKSZ1JObxo",
+          "publishedAt": "2023-04-29T13:15:27Z",
+          "sourceTitle": "My Story the Series | EP.3 [4/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 4,
+          "videoId": "m9LCFuwySMM",
+          "publishedAt": "2023-05-06T12:30:10Z",
+          "sourceTitle": "My Story the Series | EP.4 [1/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 2,
+          "parts": 4,
+          "videoId": "-y9CyVGkbT4",
+          "publishedAt": "2023-05-06T12:44:33Z",
+          "sourceTitle": "My Story the Series | EP.4 [2/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 3,
+          "parts": 4,
+          "videoId": "IZ4asRRNDY8",
+          "publishedAt": "2023-05-06T13:01:03Z",
+          "sourceTitle": "My Story the Series | EP.4 [3/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 4,
+          "parts": 4,
+          "videoId": "SbNkrXedqVU",
+          "publishedAt": "2023-05-06T13:14:10Z",
+          "sourceTitle": "My Story the Series | EP.4 [4/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 4,
+          "videoId": "Ikm9AkImwlQ",
+          "publishedAt": "2023-05-13T12:30:11Z",
+          "sourceTitle": "My Story the Series | EP.5 [1/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 2,
+          "parts": 4,
+          "videoId": "N_5V9p7bqvY",
+          "publishedAt": "2023-05-13T12:48:52Z",
+          "sourceTitle": "My Story the Series | EP.5 [2/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 3,
+          "parts": 4,
+          "videoId": "nnAAqo4ir1s",
+          "publishedAt": "2023-05-13T13:04:12Z",
+          "sourceTitle": "My Story the Series | EP.5 [3/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 4,
+          "parts": 4,
+          "videoId": "HNg8i8k7C3A",
+          "publishedAt": "2023-05-13T13:25:12Z",
+          "sourceTitle": "My Story the Series | EP.5 [4/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 4,
+          "videoId": "gaJFTor7xsg",
+          "publishedAt": "2023-05-20T12:30:10Z",
+          "sourceTitle": "My Story the Series | EP.6 [1/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 2,
+          "parts": 4,
+          "videoId": "gheAb0kjNCY",
+          "publishedAt": "2023-05-20T12:52:29Z",
+          "sourceTitle": "My Story the Series | EP.6 [2/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 3,
+          "parts": 4,
+          "videoId": "BV_btR2gweU",
+          "publishedAt": "2023-05-20T13:11:29Z",
+          "sourceTitle": "My Story the Series | EP.6 [3/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 4,
+          "parts": 4,
+          "videoId": "UZA4LdZ33P4",
+          "publishedAt": "2023-05-20T13:33:20Z",
+          "sourceTitle": "My Story the Series | EP.6 [4/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 4,
+          "videoId": "4Curi_Y_eE4",
+          "publishedAt": "2023-05-27T12:30:12Z",
+          "sourceTitle": "My Story the Series | EP.7 [1/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 2,
+          "parts": 4,
+          "videoId": "v-lY_vijMF8",
+          "publishedAt": "2023-05-27T12:54:09Z",
+          "sourceTitle": "My Story the Series | EP.7 [2/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 3,
+          "parts": 4,
+          "videoId": "KSj6Uvemdzg",
+          "publishedAt": "2023-05-27T13:13:28Z",
+          "sourceTitle": "My Story the Series | EP.7 [3/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 4,
+          "parts": 4,
+          "videoId": "v472DRzGD50",
+          "publishedAt": "2023-05-27T13:32:10Z",
+          "sourceTitle": "My Story the Series | EP.7 [4/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 4,
+          "videoId": "b7SfSPaD7L0",
+          "publishedAt": "2023-06-03T12:30:09Z",
+          "sourceTitle": "My Story the Series | EP.8 [1/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 2,
+          "parts": 4,
+          "videoId": "tkwCWOLVco8",
+          "publishedAt": "2023-06-03T12:53:22Z",
+          "sourceTitle": "My Story the Series | EP.8 [2/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 3,
+          "parts": 4,
+          "videoId": "iUi2KY-0-hA",
+          "publishedAt": "2023-06-03T13:13:10Z",
+          "sourceTitle": "My Story the Series | EP.8 [3/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 4,
+          "parts": 4,
+          "videoId": "6woy4SsyK_o",
+          "publishedAt": "2023-06-03T13:35:11Z",
+          "sourceTitle": "My Story the Series | EP.8 [4/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 1,
+          "parts": 4,
+          "videoId": "gn5NcwbM9HA",
+          "publishedAt": "2023-06-10T12:30:07Z",
+          "sourceTitle": "My Story the Series | EP.9 [1/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 2,
+          "parts": 4,
+          "videoId": "vNhy6FuIwWY",
+          "publishedAt": "2023-06-10T12:50:28Z",
+          "sourceTitle": "My Story the Series | EP.9 [2/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 3,
+          "parts": 4,
+          "videoId": "LGe9OnONbCY",
+          "publishedAt": "2023-06-10T13:09:17Z",
+          "sourceTitle": "My Story the Series | EP.9 [3/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 4,
+          "parts": 4,
+          "videoId": "_74PR9tQgR8",
+          "publishedAt": "2023-06-10T13:28:11Z",
+          "sourceTitle": "My Story the Series | EP.9 [4/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 1,
+          "parts": 4,
+          "videoId": "8INjSHFYbrw",
+          "publishedAt": "2023-06-17T12:30:10Z",
+          "sourceTitle": "My Story the Series | EP.10 [1/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 2,
+          "parts": 4,
+          "videoId": "QA-bT_8OYCU",
+          "publishedAt": "2023-06-17T12:51:09Z",
+          "sourceTitle": "My Story the Series | EP.10 [2/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 3,
+          "parts": 4,
+          "videoId": "yZx1IukhIPE",
+          "publishedAt": "2023-06-17T13:06:24Z",
+          "sourceTitle": "My Story the Series | EP.10 [3/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 4,
+          "parts": 4,
+          "videoId": "j4SeGY3RIoI",
+          "publishedAt": "2023-06-17T13:25:28Z",
+          "sourceTitle": "My Story the Series | EP.10 [4/4]"
+        }
+      ]
+    },
+    {
+      "title": "Sashes and Hearts",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "ph",
+      "year": 2025,
+      "channelId": "UC3mvG0KIKHT7MsaWMjB3dDw",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLcQaxIPsTWdN8c6czpNNhuciPMIkpAIH6",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 4,
+          "videoId": "5J_bRUJ7kz4",
+          "publishedAt": "2025-02-22T12:00:07Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 1 [1/4]"
+        },
+        {
+          "chapter": 1,
+          "part": 2,
+          "parts": 4,
+          "videoId": "m_HhbIsJceQ",
+          "publishedAt": "2025-02-22T12:20:03Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 1 [2/4]"
+        },
+        {
+          "chapter": 1,
+          "part": 3,
+          "parts": 4,
+          "videoId": "_MKQMI2E41w",
+          "publishedAt": "2025-02-22T12:36:03Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 1 [3/4]"
+        },
+        {
+          "chapter": 1,
+          "part": 4,
+          "parts": 4,
+          "videoId": "pCSIZNcAjJA",
+          "publishedAt": "2025-02-22T12:50:29Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 1 [4/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 4,
+          "videoId": "eYVYwOPxeA0",
+          "publishedAt": "2025-03-01T12:00:07Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 2 [1/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 2,
+          "parts": 4,
+          "videoId": "_14kqQUZBRM",
+          "publishedAt": "2025-03-01T12:19:40Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 2 [2/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 3,
+          "parts": 4,
+          "videoId": "RaDOO2YL64o",
+          "publishedAt": "2025-03-01T12:32:36Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 2 [3/4]"
+        },
+        {
+          "chapter": 2,
+          "part": 4,
+          "parts": 4,
+          "videoId": "mrdpnWEQnnY",
+          "publishedAt": "2025-03-01T12:49:06Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 2 [4/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 4,
+          "videoId": "s32tVoETvh4",
+          "publishedAt": "2025-03-08T12:00:07Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 3 [1/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 2,
+          "parts": 4,
+          "videoId": "c5cpTyLml20",
+          "publishedAt": "2025-03-08T12:17:52Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 3 [2/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 3,
+          "parts": 4,
+          "videoId": "y5_KatPOxY4",
+          "publishedAt": "2025-03-08T12:32:10Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 3 [3/4]"
+        },
+        {
+          "chapter": 3,
+          "part": 4,
+          "parts": 4,
+          "videoId": "rJNmLEyhF-I",
+          "publishedAt": "2025-03-08T12:45:37Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 3 [4/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 4,
+          "videoId": "6CoB7VaAZqE",
+          "publishedAt": "2025-03-15T12:00:07Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 4 [1/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 2,
+          "parts": 4,
+          "videoId": "58KYlkujDQ0",
+          "publishedAt": "2025-03-15T12:19:16Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 4 [2/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 3,
+          "parts": 4,
+          "videoId": "eT09xLSrtUo",
+          "publishedAt": "2025-03-15T12:32:58Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 4 [3/4]"
+        },
+        {
+          "chapter": 4,
+          "part": 4,
+          "parts": 4,
+          "videoId": "W54fOD5ypo4",
+          "publishedAt": "2025-03-15T12:47:23Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 4 [4/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 4,
+          "videoId": "W9qM5U3M6jQ",
+          "publishedAt": "2025-03-22T12:00:07Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 5 [1/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 2,
+          "parts": 4,
+          "videoId": "3AkPJIJ7J6o",
+          "publishedAt": "2025-03-22T12:18:38Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 5 [2/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 3,
+          "parts": 4,
+          "videoId": "Mw4s4Ur9Uf8",
+          "publishedAt": "2025-03-22T12:32:36Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 5 [3/4]"
+        },
+        {
+          "chapter": 5,
+          "part": 4,
+          "parts": 4,
+          "videoId": "llLJYubkXbk",
+          "publishedAt": "2025-03-22T12:45:09Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 5 [4/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 4,
+          "videoId": "4VVsZ_vDJ3I",
+          "publishedAt": "2025-03-29T12:00:08Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 6 [1/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 2,
+          "parts": 4,
+          "videoId": "8Kgc-WlBKHw",
+          "publishedAt": "2025-03-29T12:17:53Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 6 [2/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 3,
+          "parts": 4,
+          "videoId": "4EzPSGey1Mk",
+          "publishedAt": "2025-03-29T12:31:41Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 6 [3/4]"
+        },
+        {
+          "chapter": 6,
+          "part": 4,
+          "parts": 4,
+          "videoId": "kKLGik27cYU",
+          "publishedAt": "2025-03-29T12:44:54Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 6 [4/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 4,
+          "videoId": "xcRwzEUFkxA",
+          "publishedAt": "2025-04-05T12:00:22Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 7 [1/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 2,
+          "parts": 4,
+          "videoId": "-ayIMJrz29A",
+          "publishedAt": "2025-04-05T12:15:33Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 7 [2/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 3,
+          "parts": 4,
+          "videoId": "bR21YQdwLjI",
+          "publishedAt": "2025-04-05T12:30:11Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 7 [3/4]"
+        },
+        {
+          "chapter": 7,
+          "part": 4,
+          "parts": 4,
+          "videoId": "k62LdBWVlOo",
+          "publishedAt": "2025-04-05T12:45:18Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 7 [4/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 4,
+          "videoId": "tjb6520mTtY",
+          "publishedAt": "2025-04-12T12:00:07Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 8 [1/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 2,
+          "parts": 4,
+          "videoId": "bvPzpmMWoNM",
+          "publishedAt": "2025-04-12T12:18:34Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 8 [2/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 3,
+          "parts": 4,
+          "videoId": "ynS3oxvKirQ",
+          "publishedAt": "2025-04-12T12:30:56Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 8 [3/4]"
+        },
+        {
+          "chapter": 8,
+          "part": 4,
+          "parts": 4,
+          "videoId": "5BvXsPim9XA",
+          "publishedAt": "2025-04-12T12:44:33Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 8 [4/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 1,
+          "parts": 4,
+          "videoId": "zL079Dr7Eow",
+          "publishedAt": "2025-04-19T12:00:07Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 9 [1/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 2,
+          "parts": 4,
+          "videoId": "DtlA9rc2hJk",
+          "publishedAt": "2025-04-19T12:18:43Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 9 [2/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 3,
+          "parts": 4,
+          "videoId": "hw8sNpFzDms",
+          "publishedAt": "2025-04-19T12:34:59Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 9 [3/4]"
+        },
+        {
+          "chapter": 9,
+          "part": 4,
+          "parts": 4,
+          "videoId": "bsDq0layS_w",
+          "publishedAt": "2025-04-19T12:49:01Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 9 [4/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 1,
+          "parts": 4,
+          "videoId": "gv0Hsq8KNYE",
+          "publishedAt": "2025-04-26T12:00:07Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 10 [1/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 2,
+          "parts": 4,
+          "videoId": "HPz2KLbxqXk",
+          "publishedAt": "2025-04-26T12:17:44Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 10 [2/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 3,
+          "parts": 4,
+          "videoId": "Ihj048mW33M",
+          "publishedAt": "2025-04-26T12:33:28Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 10 [3/4]"
+        },
+        {
+          "chapter": 10,
+          "part": 4,
+          "parts": 4,
+          "videoId": "kgM2uWfd1JM",
+          "publishedAt": "2025-04-26T12:50:06Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 10 [4/4]"
+        },
+        {
+          "chapter": 11,
+          "part": 1,
+          "parts": 4,
+          "videoId": "AZGo8xBlmCc",
+          "publishedAt": "2025-05-03T12:00:07Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 11 [1/4]"
+        },
+        {
+          "chapter": 11,
+          "part": 2,
+          "parts": 4,
+          "videoId": "leobyiCD14Q",
+          "publishedAt": "2025-05-03T12:18:26Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 11 [2/4]"
+        },
+        {
+          "chapter": 11,
+          "part": 3,
+          "parts": 4,
+          "videoId": "p3dTt528yfo",
+          "publishedAt": "2025-05-03T12:31:52Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 11 [3/4]"
+        },
+        {
+          "chapter": 11,
+          "part": 4,
+          "parts": 4,
+          "videoId": "bIW6ZiPYvpU",
+          "publishedAt": "2025-05-03T12:43:37Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 11 [4/4]"
+        },
+        {
+          "chapter": 12,
+          "part": 1,
+          "parts": 4,
+          "videoId": "16RURW62-2M",
+          "publishedAt": "2025-05-10T12:00:07Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 12 [1/4]"
+        },
+        {
+          "chapter": 12,
+          "part": 2,
+          "parts": 4,
+          "videoId": "Wnx3Kmb9uVk",
+          "publishedAt": "2025-05-10T12:17:14Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 12 [2/4]"
+        },
+        {
+          "chapter": 12,
+          "part": 3,
+          "parts": 4,
+          "videoId": "-LDFQ0uqjUY",
+          "publishedAt": "2025-05-10T12:30:33Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 12 [3/4]"
+        },
+        {
+          "chapter": 12,
+          "part": 4,
+          "parts": 4,
+          "videoId": "gy4fbGHaw9U",
+          "publishedAt": "2025-05-10T12:42:03Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 12 [4/4]"
+        },
+        {
+          "chapter": 13,
+          "part": 1,
+          "parts": 4,
+          "videoId": "bAmgufL307g",
+          "publishedAt": "2025-05-17T12:00:07Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 13 [1/4]"
+        },
+        {
+          "chapter": 13,
+          "part": 2,
+          "parts": 4,
+          "videoId": "bHmkjakKrxo",
+          "publishedAt": "2025-05-17T12:18:58Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 13 [2/4]"
+        },
+        {
+          "chapter": 13,
+          "part": 3,
+          "parts": 4,
+          "videoId": "Xp_xIhXKC4k",
+          "publishedAt": "2025-05-17T12:32:56Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 13 [3/4]"
+        },
+        {
+          "chapter": 13,
+          "part": 4,
+          "parts": 4,
+          "videoId": "TBZZydPCZIQ",
+          "publishedAt": "2025-05-17T12:48:38Z",
+          "sourceTitle": "Sashes and Hearts | BL SERIES | EP. 13 [4/4]"
+        }
+      ]
+    },
+    {
+      "title": "Jake & Vince",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "ph",
+      "year": 2025,
+      "channelId": "UCapdm6cbc9Eq9UOQ1ix0tZQ",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLDoj2wJ4_7Kl8qocxUkJiZlXV6tUgbnO6",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "MY14j-c5E0E",
+          "publishedAt": "2025-05-28T10:00:28Z",
+          "sourceTitle": "JAKE & VINCE: The Series | BL Episode 1"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "rJl9Nl0Ak38",
+          "publishedAt": "2025-05-28T10:30:06Z",
+          "sourceTitle": "JAKE & VINCE: The Series | BL Episode 2"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "1NCx7uRQ-_I",
+          "publishedAt": "2025-05-29T05:55:21Z",
+          "sourceTitle": "JAKE & VINCE: The Series | BL Episode 3"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "debCSODwUVI",
+          "publishedAt": "2025-06-12T10:21:35Z",
+          "sourceTitle": "JAKE & VINCE: The Series | BL Episode 4"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "FZH1n0AL6ek",
+          "publishedAt": "2025-06-14T10:39:11Z",
+          "sourceTitle": "JAKE & VINCE: The Series | BL Episode 5"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "y76lKZzupac",
+          "publishedAt": "2025-06-19T10:12:22Z",
+          "sourceTitle": "JAKE & VINCE: The Series | BL Episode 6"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 1,
+          "videoId": "bsMLZ_m3mCM",
+          "publishedAt": "2025-06-21T10:41:11Z",
+          "sourceTitle": "JAKE & VINCE: The Series | BL Episode 7"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 1,
+          "videoId": "LREP5Qp70As",
+          "publishedAt": "2025-06-27T09:59:10Z",
+          "sourceTitle": "JAKE & VINCE: The Series | BL Episode 8"
+        },
+        {
+          "chapter": 9,
+          "part": 1,
+          "parts": 1,
+          "videoId": "ZNj-q5FyeH8",
+          "publishedAt": "2025-06-28T10:00:06Z",
+          "sourceTitle": "JAKE & VINCE: The Series | BL Episode 9"
+        }
+      ]
+    },
+    {
+      "title": "Haunted Hearts",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "ph",
+      "year": 2024,
+      "channelId": "UC69I8egELqWywoX5wrh2KxQ",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PL7SneaZWMW0pKKXwXHp9rjxF-KSh9m5Cp",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "_-7G4RTaHLY",
+          "publishedAt": "2024-11-02T11:00:07Z",
+          "sourceTitle": "HAUNTED HEARTS | Episode 01 FULL [ENG SUB]  | Regal Entertainment Inc."
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "GyqvF7QPckY",
+          "publishedAt": "2024-11-09T11:00:07Z",
+          "sourceTitle": "HAUNTED HEARTS | Episode 02 FULL [ENG SUB]  | Regal Entertainment Inc."
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "6GyepQJzdXM",
+          "publishedAt": "2024-11-16T11:00:07Z",
+          "sourceTitle": "HAUNTED HEARTS | Episode 03 FULL [ENG SUB]  | Regal Entertainment Inc."
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "4NwOluELBQA",
+          "publishedAt": "2024-11-23T11:00:07Z",
+          "sourceTitle": "HAUNTED HEARTS | Episode 04 FULL [ENG SUB]  | Regal Entertainment Inc."
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "-rwKhlI2U0Y",
+          "publishedAt": "2024-11-30T11:00:07Z",
+          "sourceTitle": "HAUNTED HEARTS | Episode 05 FULL [ENG SUB]  | Regal Entertainment Inc."
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "TQiJphN7T2g",
+          "publishedAt": "2024-12-07T11:00:05Z",
+          "sourceTitle": "HAUNTED HEARTS | Episode 06 FULL [ENG SUB]  | Regal Entertainment Inc."
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 1,
+          "videoId": "x4_Eg6wiDjw",
+          "publishedAt": "2024-12-14T11:00:06Z",
+          "sourceTitle": "HAUNTED HEARTS | Episode 07 FULL [ENG SUB]  | Regal Entertainment Inc."
+        }
+      ]
+    },
+    {
+      "title": "Pearl Next Door",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "ph",
+      "year": 2020,
+      "channelId": "UCyAqWxV1z4QTC8n-wRQN_mQ",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLEr9FH7oPOQ5-G5qcbW-vTFYZgURm_vma",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "paloSIbSQR0",
+          "publishedAt": "2020-10-23T13:00:12Z",
+          "sourceTitle": "Pearl Next Door | Episode 1: The One | [ENG SUB]"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "ai8s7bwhAQk",
+          "publishedAt": "2020-10-30T13:00:10Z",
+          "sourceTitle": "Pearl Next Door | Episode 2: Theory of X and Constant | [ENG SUB]"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "sKnSuM5NYWs",
+          "publishedAt": "2020-11-14T13:00:13Z",
+          "sourceTitle": "Pearl Next Door | Episode 3: The Better Choice | [ENG SUB]"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "VXcQpiAOcYo",
+          "publishedAt": "2020-11-21T13:00:13Z",
+          "sourceTitle": "Pearl Next Door | Episode 4: Say It Like You Mean It | [ENG SUB]"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "84I8JPUZ3DQ",
+          "publishedAt": "2020-11-28T13:15:13Z",
+          "sourceTitle": "Pearl Next Door | Episode 5: All is Fair in Love and War | [ENG SUB]"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "Q7xv-_wt7O8",
+          "publishedAt": "2020-12-26T13:00:12Z",
+          "sourceTitle": "Pearl Next Door | Episode 6: Sagittarius Season | [ENG SUB]"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 1,
+          "videoId": "s8aX-G5ibso",
+          "publishedAt": "2021-01-02T13:00:13Z",
+          "sourceTitle": "Pearl Next Door | Episode 7: Love is a Verb | [ENG SUB]"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 1,
+          "videoId": "EykZUCoCtyU",
+          "publishedAt": "2021-01-09T13:00:11Z",
+          "sourceTitle": "Pearl Next Door | Episode 8: The Right One | [ENG SUB]"
+        }
+      ]
+    },
+    {
+      "title": "The Sexth Sense",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "ph",
+      "year": 2021,
+      "channelId": "UCyAqWxV1z4QTC8n-wRQN_mQ",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLEr9FH7oPOQ5S5SbQ3DwSp3A4Emz2LcIC",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "JdS0zyDmJEk",
+          "publishedAt": "2021-04-10T16:00:15Z",
+          "sourceTitle": "The Sexth Sense | Episode 1 | Pandemic Sex (or Lack Thereof)"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "D4LKetbxjU0",
+          "publishedAt": "2021-04-17T16:30:30Z",
+          "sourceTitle": "The Sexth Sense | Episode 2 | FUBUs and Friends with Benefits"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "05lVAtqt6DA",
+          "publishedAt": "2021-04-24T16:00:14Z",
+          "sourceTitle": "The Sexth Sense | Episode 3 | Kinks"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "1MvBHsOefog",
+          "publishedAt": "2021-05-01T14:00:15Z",
+          "sourceTitle": "The Sexth Sense | Episode 4 | Sex with your Ex"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "bNmQ4qgsuxs",
+          "publishedAt": "2021-05-08T17:17:58Z",
+          "sourceTitle": "The Sexth Sense | Episode 5 | Rebound Sex"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "JaqbzSVCbQ0",
+          "publishedAt": "2021-05-15T17:18:30Z",
+          "sourceTitle": "The Sexth Sense | Episode 6 | Orgasm"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 1,
+          "videoId": "Cg0EWfKJTjs",
+          "publishedAt": "2021-05-29T16:35:14Z",
+          "sourceTitle": "The Sexth Sense | Episode 7 | Open Relationships"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 1,
+          "videoId": "Ekso0gHQKzQ",
+          "publishedAt": "2021-06-05T16:40:57Z",
+          "sourceTitle": "The Sexth Sense | Episode 8 | Forbidden Love"
+        },
+        {
+          "chapter": 9,
+          "part": 1,
+          "parts": 1,
+          "videoId": "GTtgliUCMhc",
+          "publishedAt": "2021-06-19T17:24:14Z",
+          "sourceTitle": "The Sexth Sense | Episode 9 | Sexual Awakening"
+        }
+      ]
+    },
+    {
+      "title": "Sky Valley",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "ph",
+      "year": 2026,
+      "channelId": "UC3mvG0KIKHT7MsaWMjB3dDw",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLcQaxIPsTWdPBdvbmW1aZ0_4pnGBf24Ya",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "fA7V93UpZVo",
+          "publishedAt": "2026-05-04T15:11:31Z",
+          "sourceTitle": "SKY VALLEY | Episode 1 [Full Version]"
+        }
+      ]
+    },
+    {
+      "title": "夜勤明けのキスは突然に",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "jp",
+      "year": 2026,
+      "channelId": "UCj095JNSzIzdU23JsZqcwpQ",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLmz1FNoG1zYGbJ0pakOWhVB5feDna-VZi",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "DayMqT07icQ",
+          "publishedAt": "2026-06-27T10:00:18Z",
+          "sourceTitle": "【BL】夜勤明けのキスは突然に【第1話】"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "qIGPY7XMjVA",
+          "publishedAt": "2026-07-04T10:00:12Z",
+          "sourceTitle": "【BL】夜勤明けのキスは突然に【第2話】"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "gl9-c2E4HTA",
+          "publishedAt": "2026-07-11T10:00:02Z",
+          "sourceTitle": "【BL】夜勤明けのキスは突然に【第3話】"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "9aIrY7IXCqo",
+          "publishedAt": "2026-07-18T11:00:34Z",
+          "sourceTitle": "【BL】夜勤明けのキスは突然に【第4話】"
+        }
+      ]
+    },
+    {
+      "title": "俺がコイツに恋するなんて！ 地味経理はときどきホスト！？",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "jp",
+      "year": 2025,
+      "channelId": "UCj095JNSzIzdU23JsZqcwpQ",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLmz1FNoG1zYHIcw7Oyjl3vk8u35ZUNr4W",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "TAw1VmZSXvE",
+          "publishedAt": "2025-11-01T12:00:57Z",
+          "sourceTitle": "【BL】俺がコイツに恋するなんて！ - 地味経理はときどきホスト！？-【前編】"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "F7KPRTxQ8r4",
+          "publishedAt": "2025-11-02T10:00:31Z",
+          "sourceTitle": "【BL】俺がコイツに恋するなんて！ - 地味経理はときどきホスト！？-【後編】"
+        }
+      ]
+    },
+    {
+      "title": "俺がコイツに恋するなんて！ 地味経理はときどきホスト！？ 2",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "jp",
+      "year": 2026,
+      "channelId": "UCj095JNSzIzdU23JsZqcwpQ",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLmz1FNoG1zYF7zhucdaaCvjMcjLSjDKBr",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "6zVQDtrgV9g",
+          "publishedAt": "2026-05-16T10:00:20Z",
+          "sourceTitle": "【BL】俺がコイツに恋するなんて！ - 地味経理はときどきホスト！？-season2【第1話】"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "ZR63Ec2dOXg",
+          "publishedAt": "2026-05-23T10:00:40Z",
+          "sourceTitle": "【BL】俺がコイツに恋するなんて！ - 地味経理はときどきホスト！？-season2【第2話】"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "gCMgqQEW9f8",
+          "publishedAt": "2026-05-30T10:00:25Z",
+          "sourceTitle": "【BL】俺がコイツに恋するなんて！ - 地味経理はときどきホスト！？-season2【第3話】"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "OxzhhZSle74",
+          "publishedAt": "2026-06-06T10:00:05Z",
+          "sourceTitle": "【BL】俺がコイツに恋するなんて！ - 地味経理はときどきホスト！？-season2【第4話】"
+        }
+      ]
+    },
+    {
+      "title": "ヤンチャ君とボクのクリームソーダな恋",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "jp",
+      "year": 2025,
+      "channelId": "UCj095JNSzIzdU23JsZqcwpQ",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLmz1FNoG1zYE5rzMaKk3a7rbszwAYkZOd",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "CxMvYKrdbDQ",
+          "publishedAt": "2025-10-21T10:00:19Z",
+          "sourceTitle": "【BL】ヤンチャ君とボクのクリームソーダな恋 【前編】"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "oEuvUn5qyQ8",
+          "publishedAt": "2025-10-21T10:01:22Z",
+          "sourceTitle": "【BL】ヤンチャ君とボクのクリームソーダな恋 【後編】"
+        }
+      ]
+    },
+    {
+      "title": "The Kidnapper Was My Loved One",
+      "targetSeriesId": 670,
+      "expectedTitle": "The kidnapper was my loved one",
+      "countryCode": "jp",
+      "year": 2026,
+      "channelId": "UCj095JNSzIzdU23JsZqcwpQ",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLWoHTrG6-3us",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "ddjgvBggdQc",
+          "publishedAt": "2026-09-12T10:03:11Z",
+          "sourceTitle": "【BL】監禁犯は、私の最愛の人でした【第1話】"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "3VnegAVYvrc",
+          "publishedAt": "2026-09-19T12:35:22Z",
+          "sourceTitle": "【BL】監禁犯は、私の最愛の人でした【第2話】"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "hLmhFmJoLrI",
+          "publishedAt": "2026-09-26T10:00:20Z",
+          "sourceTitle": "【BL】監禁犯は、私の最愛の人でした【第3話】"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "-2U2loh5zYs",
+          "publishedAt": "2026-10-03T10:00:33Z",
+          "sourceTitle": "【BL】監禁犯は、私の最愛の人でした【第4話】"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "eFZiL5vDalk",
+          "publishedAt": "2026-10-10T10:00:18Z",
+          "sourceTitle": "【BL】監禁犯は、私の最愛の人でした【第5話】"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "OpBdsvVyfdE",
+          "publishedAt": "2026-10-17T10:00:12Z",
+          "sourceTitle": "【BL】監禁犯は、私の最愛の人でした【第6話】"
+        }
+      ]
+    },
+    {
+      "title": "その瞬間、恋だった",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "jp",
+      "year": 2026,
+      "channelId": "UCj095JNSzIzdU23JsZqcwpQ",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLWn9OZo7txyo",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "xVXQvA8tWZ0",
+          "publishedAt": "2026-08-08T10:00:31Z",
+          "sourceTitle": "【GL】その瞬間、恋だった【第1話】"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "zfxgIwKbJn4",
+          "publishedAt": "2026-08-15T10:00:03Z",
+          "sourceTitle": "【GL】その瞬間、恋だった【第2話】"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "N5LmJ5v5LwE",
+          "publishedAt": "2026-08-22T10:00:30Z",
+          "sourceTitle": "【GL】その瞬間、恋だった【第3話】"
+        }
+      ]
+    },
+    {
+      "title": "The Director Who Buys Me Dinner",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "kr",
+      "year": 2022,
+      "channelId": "UC0HGAvtBGdvD9fKG_hH-uqA",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLCKf_nJnQuO8",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "o9OQDarKs-4",
+          "publishedAt": "2026-09-12T12:00:07Z",
+          "sourceTitle": "【FULL】EP01 | 😽The Director Who Buys Me Dinner | iQIYI Philippines"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "jdprpsIvDk0",
+          "publishedAt": "2026-09-13T12:00:06Z",
+          "sourceTitle": "【FULL】EP02 | 😽The Director Who Buys Me Dinner | iQIYI Philippines"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "ZSaD2IOTi6Q",
+          "publishedAt": "2026-09-14T12:00:22Z",
+          "sourceTitle": "【FULL】EP03 | 😽The Director Who Buys Me Dinner | iQIYI Philippines"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "yhggZ5jl2rM",
+          "publishedAt": "2026-09-14T12:30:07Z",
+          "sourceTitle": "【FULL】EP04 | 😽The Director Who Buys Me Dinner | iQIYI Philippines"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "yZG-_xR3wPw",
+          "publishedAt": "2026-09-15T12:00:06Z",
+          "sourceTitle": "【FULL】EP05 | 😽The Director Who Buys Me Dinner | iQIYI Philippines"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "U3-15mhZGvE",
+          "publishedAt": "2026-09-15T12:30:07Z",
+          "sourceTitle": "【FULL】EP06 | 😽The Director Who Buys Me Dinner | iQIYI Philippines"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 1,
+          "videoId": "Xrjwh2Xj4w8",
+          "publishedAt": "2026-09-16T12:00:12Z",
+          "sourceTitle": "【FULL】EP07 | 😽The Director Who Buys Me Dinner | iQIYI Philippines"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 1,
+          "videoId": "d9y2aWsKaBA",
+          "publishedAt": "2026-09-16T12:30:36Z",
+          "sourceTitle": "【FULL】EP08 | 😽The Director Who Buys Me Dinner | iQIYI Philippines"
+        },
+        {
+          "chapter": 9,
+          "part": 1,
+          "parts": 1,
+          "videoId": "emOVC-g5qDM",
+          "publishedAt": "2026-09-18T12:30:18Z",
+          "sourceTitle": "【FULL】EP09 | 😽The Director Who Buys Me Dinner | iQIYI Philippines"
+        },
+        {
+          "chapter": 10,
+          "part": 1,
+          "parts": 1,
+          "videoId": "2H_CWt3vBS0",
+          "publishedAt": "2026-09-19T12:30:01Z",
+          "sourceTitle": "【FULL】EP10 | 😽The Director Who Buys Me Dinner | iQIYI Philippines"
+        }
+      ]
+    }
+  ]
+}

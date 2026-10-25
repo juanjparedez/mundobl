@@ -9,9 +9,14 @@ import {
   type PlaybackProbe,
 } from '../src/lib/playability';
 import {
+  expectedPlaybackOf,
+  expectedWatchPage,
   importWatchContentBatch,
   watchBatchVideoUrl,
 } from '../src/lib/watch-content-batch';
+
+// One page at a time, spaced: a burst of ~160 pages got HTTP 429 (2026-10-25).
+const PAGE_DELAY_MS = 2000;
 import { parseEpisodeSource } from '../src/lib/episode-platforms';
 import { verifyExternalEpisode } from '../src/lib/external-episode-source';
 
@@ -53,12 +58,11 @@ async function main() {
   // Require the anonymous watch page too; UNKNOWN is not proof of access.
   // This local tool runs in AR. API checks above cover all core markets.
   const watchPages: PlaybackProbe[] = [];
-  for (let i = 0; i < ids.length; i += 3) {
-    watchPages.push(
-      ...(await Promise.all(
-        ids.slice(i, i + 3).map((id) => probeViaWatchPage(id, 'AR'))
-      ))
-    );
+  for (const id of ids) {
+    if (watchPages.length) {
+      await new Promise((resolve) => setTimeout(resolve, PAGE_DELAY_MS));
+    }
+    watchPages.push(await probeViaWatchPage(id, 'AR'));
     // Stop on an outage/rate limit; repeating requests cannot verify access.
     if (watchPages.some((probe) => probe.status === 'UNKNOWN')) break;
   }
@@ -98,7 +102,16 @@ async function main() {
     'test-results/ver-expansion/playback-verification.json',
     verification
   );
-  const unavailable = watchPages.filter((probe) => probe.status !== 'OK');
+  // Age-restricted/non-embeddable/geo-blocked only when the manifest says so.
+  const expected = expectedPlaybackOf(batch);
+  const unavailable = watchPages.filter(
+    (probe) =>
+      probe.status !==
+      expectedWatchPage(
+        expected.get(probe.videoId) ?? 'OK',
+        probes.get(probe.videoId) ?? probe
+      )
+  );
   if (unavailable.length) {
     throw new Error(
       `Anonymous playback could not be verified (${unavailable.length} failed; ${watchPages.length} checked): ${unavailable
