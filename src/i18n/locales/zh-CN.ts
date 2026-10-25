@@ -3176,7 +3176,8 @@ const zhCN = {
     "seasonTitle": "第 {seasonNumber} 季",
     "episodeDefaultTitle": "第 {episodeNumber} 集",
     "like": "点赞",
-    "liked": "已点赞"
+    "liked": "已点赞",
+    "likedAs": "已作为 {alias} 点赞"
   },
   "shareButton": {
     "shareError": "无法分享",
@@ -4093,6 +4094,14 @@ const zhCN = {
     firstWords: "月|星|风|雨|云|浪|花|焰|影|星火|羽|珠|蔷薇|雾|晨曦|潮|叶|雪|灯|丝|宝石|烛|旋律|歌",
     secondWords: "九月|四月|午夜|夏|秋|冬|春|东京|曼谷|首尔|台北|上海|水晶|翡翠|蜂蜜|薰衣草|肉桂|珊瑚|象牙|琥珀|樱桃|竹林|莲|樱花",
     template: "{second}之{first}",
+    optInLabel: "使用匿名别名参与社区互动",
+    optInHintOn:
+      "已开启：你的点赞和互动将与“{alias}”关联。零个人隐私数据，绝不透露你的 Google 账号或 IP。",
+    optInHintOff:
+      "已关闭（默认）：你的访问仅计入服务器匿名汇总指标，不绑定任何别名。",
+    yourAlias: "你的专属别名：",
+    visitorBadge: "当前浏览器",
+    accountBadge: "你的账号",
   },
   producerReport: {
     title: "片方报告",

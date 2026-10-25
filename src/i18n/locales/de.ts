@@ -3186,7 +3186,8 @@ const de = {
     "seasonTitle": "Staffel {seasonNumber}",
     "episodeDefaultTitle": "Episode {episodeNumber}",
     "like": "Gefällt mir",
-    "liked": "Gefällt dir"
+    "liked": "Gefällt dir",
+    "likedAs": "Like registriert als {alias}"
   },
   "shareButton": {
     "shareError": "Konnte nicht teilen",
@@ -4103,6 +4104,14 @@ const de = {
     firstWords: "Mond|Stern|Brise|Regen|Wolke|Welle|Blume|Flamme|Schatten|Funke|Feder|Perle|Rose|Nebel|Morgenrot|Flut|Blatt|Schnee|Glut|Seide|Juwel|Kerze|Melodie|Lied",
     secondWords: "September|April|Mitternacht|Sommer|Herbst|Winter|Frühling|Tokio|Bangkok|Seoul|Taipeh|Shanghai|Kristall|Jade|Honig|Lavendel|Zimt|Korallen|Elfenbein|Bernstein|Kirschblüten|Bambus|Lotus|Sakura",
     template: "{second}-{first}",
+    optInLabel: "Mit pseudonymem Alias an der Community teilnehmen",
+    optInHintOn:
+      "Aktiv: Deine Likes und Aktivitäten werden mit «{alias}» verknüpft. Keine personenbezogenen Daten, wir teilen weder dein Google-Konto noch deine IP.",
+    optInHintOff:
+      "Deaktiviert (Standard): Deine Aktivität fließt nur in aggregierte Serverzähler ohne Pseudonym.",
+    yourAlias: "Dein pseudonymer Alias:",
+    visitorBadge: "Aktueller Browser",
+    accountBadge: "Dein Konto",
   },
   producerReport: {
     title: "Bericht für Produktionsfirmen",

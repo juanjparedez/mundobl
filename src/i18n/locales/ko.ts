@@ -3182,7 +3182,8 @@ const ko = {
     "seasonTitle": "{seasonNumber} 시즌",
     "episodeDefaultTitle": "{episodeNumber} 에피소드",
     "like": "좋아요",
-    "liked": "좋아요 완료"
+    "liked": "좋아요 완료",
+    "likedAs": "{alias}(으)로 좋아요 완료"
   },
   "shareButton": {
     "shareError": "공유할 수 없음",
@@ -4099,6 +4100,14 @@ const ko = {
     firstWords: "달|별|바람|비|구름|파도|꽃|불꽃|그림자|불씨|깃털|진주|장미|안개|새벽|물결|잎새|눈|등불|비단|보석|촛불|선율|노래",
     secondWords: "9월|4월|한밤|여름|가을|겨울|봄|도쿄|방콕|서울|타이베이|상하이|수정|비취|꿀|라벤더|시나몬|산호|상아|호박|체리|대나무|연꽃|벚꽃",
     template: "{second}의 {first}",
+    optInLabel: "가명 닉네임으로 커뮤니티에 참여하기",
+    optInHintOn:
+      "활성화됨: 좋아요 및 활동이 «{alias}» 닉네임과 연결됩니다. 개인정보는 수집되지 않으며 Google 계정이나 IP는 절대 공개되지 않습니다.",
+    optInHintOff:
+      "비활성화됨 (기본값): 활동이 닉네임 없이 서버 집계 카운터에만 반영됩니다.",
+    yourAlias: "나의 가명 닉네임:",
+    visitorBadge: "현재 브라우저",
+    accountBadge: "내 계정",
   },
   producerReport: {
     title: "제작사용 리포트",

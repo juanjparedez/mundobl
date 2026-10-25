@@ -73,3 +73,64 @@ export function formatAlias(
     .replace('{first}', pick(words.first, parts.first))
     .replace('{second}', pick(words.second, parts.second));
 }
+
+export const VISITOR_ALIAS_SEED_KEY = 'mundobl.visitor_alias_seed';
+export const COMMUNITY_OPT_IN_KEY = 'mundobl.community_opt_in';
+
+/** Obtiene la semilla del visitante desde localStorage, o genera una determinista */
+export function getVisitorAliasSeed(): number {
+  if (typeof window === 'undefined') return 0;
+  try {
+    const raw = window.localStorage.getItem(VISITOR_ALIAS_SEED_KEY);
+    if (raw !== null) {
+      const parsed = parseInt(raw, 10);
+      if (Number.isSafeInteger(parsed)) return parsed;
+    }
+    const seed = Math.floor(Math.random() * ALIAS_COMBINATIONS);
+    window.localStorage.setItem(VISITOR_ALIAS_SEED_KEY, String(seed));
+    return seed;
+  } catch {
+    return 0;
+  }
+}
+
+/** Obtiene las partes del alias del visitante */
+export function getVisitorAliasParts(): AliasParts {
+  return aliasParts(getVisitorAliasSeed());
+}
+
+/** Cambia el alias del visitante generando una semilla nueva */
+export function rerollVisitorAliasSeed(): AliasParts {
+  if (typeof window === 'undefined') return { first: 0, second: 0 };
+  try {
+    const current = getVisitorAliasSeed();
+    const next = nextAliasSeed(current);
+    window.localStorage.setItem(VISITOR_ALIAS_SEED_KEY, String(next));
+    window.dispatchEvent(new StorageEvent('storage'));
+    return aliasParts(next);
+  } catch {
+    return { first: 0, second: 0 };
+  }
+}
+
+/** Consulta si el usuario/visitante aceptó participar en la comunidad bajo su Alias */
+export function isCommunityOptedIn(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    return window.localStorage.getItem(COMMUNITY_OPT_IN_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+/** Activa o desactiva la participación comunitaria por Alias */
+export function setCommunityOptIn(optIn: boolean): void {
+  if (typeof window === 'undefined') return;
+  try {
+    if (optIn) window.localStorage.setItem(COMMUNITY_OPT_IN_KEY, '1');
+    else window.localStorage.removeItem(COMMUNITY_OPT_IN_KEY);
+    window.dispatchEvent(new StorageEvent('storage'));
+  } catch {
+    /* ignore */
+  }
+}

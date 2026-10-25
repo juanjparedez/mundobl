@@ -3166,6 +3166,7 @@ export type TranslationShape = {
     episodeDefaultTitle: string;
     like: string;
     liked: string;
+    likedAs: string;
   };
   shareButton: {
     shareError: string;
@@ -4082,6 +4083,12 @@ export type TranslationShape = {
     firstWords: string;
     secondWords: string;
     template: string;
+    optInLabel: string;
+    optInHintOn: string;
+    optInHintOff: string;
+    yourAlias: string;
+    visitorBadge: string;
+    accountBadge: string;
   };
   producerReport: {
     title: string;
@@ -7577,6 +7584,7 @@ const es: TranslationShape = {
     episodeDefaultTitle: 'Episodio {episodeNumber}',
     like: 'Me gusta',
     liked: 'Te gusta',
+    likedAs: 'Me gusta registrado como {alias}',
   },
   shareButton: {
     shareError: 'No se pudo compartir',
@@ -8564,6 +8572,14 @@ const es: TranslationShape = {
     secondWords:
       'Septiembre|Abril|Medianoche|Verano|Otoño|Invierno|Primavera|Tokio|Bangkok|Seúl|Taipéi|Shanghái|Cristal|Jade|Miel|Lavanda|Canela|Coral|Marfil|Ámbar|Cerezo|Bambú|Loto|Sakura',
     template: '{first} de {second}',
+    optInLabel: 'Participar en la comunidad con mi Alias seudónimo',
+    optInHintOn:
+      'Activado: tus Me gusta y participaciones se asocian a «{alias}». Cero datos personales, no revelamos tu cuenta de Google ni tu IP.',
+    optInHintOff:
+      'Desactivado (por defecto): tu actividad solo suma a contadores de servidores sin asociarse a ningún seudónimo.',
+    yourAlias: 'Tu alias seudónimo:',
+    visitorBadge: 'Navegador actual',
+    accountBadge: 'Tu cuenta',
   },
   producerReport: {
     title: 'Informe para productoras',
@@ -12039,6 +12055,7 @@ const en: TranslationShape = {
     episodeDefaultTitle: 'Episode {episodeNumber}',
     like: 'Like',
     liked: 'Liked',
+    likedAs: 'Like registered as {alias}',
   },
   shareButton: {
     shareError: 'Could not share',
@@ -13020,6 +13037,14 @@ const en: TranslationShape = {
     secondWords:
       'September|April|Midnight|Summer|Autumn|Winter|Spring|Tokyo|Bangkok|Seoul|Taipei|Shanghai|Crystal|Jade|Honey|Lavender|Cinnamon|Coral|Ivory|Amber|Cherry|Bamboo|Lotus|Sakura',
     template: '{second} {first}',
+    optInLabel: 'Participate in the community with my pseudonymous Alias',
+    optInHintOn:
+      'Active: your likes and participation are linked to "{alias}". Zero personal data, we never reveal your Google account or IP.',
+    optInHintOff:
+      'Off (default): your activity only adds to server counters without being linked to any pseudonym.',
+    yourAlias: 'Your pseudonymous alias:',
+    visitorBadge: 'Current browser',
+    accountBadge: 'Your account',
   },
   producerReport: {
     title: 'Report for producers',

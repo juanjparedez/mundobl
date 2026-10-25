@@ -3186,7 +3186,8 @@ const fr = {
     "seasonTitle": "Saison {seasonNumber}",
     "episodeDefaultTitle": "Épisode {episodeNumber}",
     "like": "J'aime",
-    "liked": "Aimé"
+    "liked": "Aimé",
+    "likedAs": "J'aime enregistré en tant que {alias}"
   },
   "shareButton": {
     "shareError": "Impossible de partager",
@@ -4103,6 +4104,14 @@ const fr = {
     firstWords: "Lune|Étoile|Brise|Pluie|Nuage|Vague|Fleur|Flamme|Ombre|Étincelle|Plume|Perle|Rose|Brume|Aurore|Marée|Feuille|Neige|Braise|Soie|Gemme|Bougie|Mélodie|Chanson",
     secondWords: "Septembre|Mai|Minuit|Juillet|Novembre|Décembre|Printemps|Tokyo|Bangkok|Séoul|Taipei|Shanghai|Cristal|Jade|Miel|Lavande|Cannelle|Corail|Velours|Rubis|Cerisier|Bambou|Lotus|Sakura",
     template: "{first} de {second}",
+    optInLabel: "Participer à la communauté avec mon alias pseudonyme",
+    optInHintOn:
+      "Activé : vos J’aime et participations sont associés à « {alias} ». Zéro donnée personnelle, nous ne révélons jamais votre compte Google ni votre IP.",
+    optInHintOff:
+      "Désactivé (par défaut) : votre activité alimente uniquement les compteurs serveurs agrégés sans aucun pseudonyme.",
+    yourAlias: "Votre alias pseudonyme :",
+    visitorBadge: "Navigateur actuel",
+    accountBadge: "Votre compte",
   },
   producerReport: {
     title: "Rapport pour les producteurs",
