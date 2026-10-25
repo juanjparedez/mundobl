@@ -63,6 +63,7 @@ export async function getProducerReport(
     channelRows,
     countryRows,
     outboundRows,
+    trafficRows,
   ] = await Promise.all([
     prisma.user.count({
       where: { banned: false, role: { notIn: ['ADMIN', 'MODERATOR'] } },
@@ -165,6 +166,12 @@ export async function getProducerReport(
       ORDER BY clicks DESC
       LIMIT 20
     `,
+    prisma.siteTrafficDaily.groupBy({
+      by: ['section'],
+      where: { day: { gte: from } },
+      _sum: { count: true },
+      orderBy: { _sum: { count: 'desc' } },
+    }),
   ]);
 
   const sum = (rows: Array<{ _sum: { count: number | null } }>) =>
@@ -189,6 +196,10 @@ export async function getProducerReport(
       chapters: kind('chapter'),
       wants: kind('want'),
       finishes: kind('finish'),
+      openVer: kind('open_ver'),
+      playStarts: kind('play_start'),
+      outboundClicks: kind('outbound_click'),
+      likes: kind('like'),
     },
     alerts: {
       offers: kind('alert_offer'),
@@ -214,6 +225,10 @@ export async function getProducerReport(
     outbound: outboundRows.map((row) => ({
       platform: row.platform,
       clicks: Number(row.clicks),
+    })),
+    trafficBySection: trafficRows.map((row) => ({
+      section: row.section,
+      views: row._sum.count ?? 0,
     })),
   };
 }

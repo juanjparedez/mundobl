@@ -2102,13 +2102,27 @@ model SeriesActivityDaily {
   day      DateTime @db.Date
   seriesId Int
   series   Series   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
-  kind     String // 'view' | 'chapter' | 'want' | 'finish'
+  kind     String // 'view' | 'chapter' | 'want' | 'finish' | 'alert_offer' | 'alert_click' | 'alert_on' | 'open_ver' | 'play_start' | 'outbound_click' | 'like'
   source   String // 'account' | 'browser'
   country  String   @default("") // ISO-3166 alfa-2 del edge, '' si no se sabe
   count    Int      @default(0)
 
   @@id([day, seriesId, kind, source, country])
   @@index([seriesId, day])
+}
+
+// Conteo diario agregado de secciones y flujos para dimensionamiento de infra.
+// Cero IPs, cero usuarios, cero cookies de rastreo.
+model SiteTrafficDaily {
+  day     DateTime @db.Date
+  section String // 'home' | 'catalogo' | 'ver' | 'ver_player' | 'series_detail' | 'estrenos' | 'comunidad' | 'estadisticas' | 'perfil' | 'otros'
+  flow    String   @default("direct") // 'direct' | 'internal' | 'referral' | 'share'
+  source  String // 'account' | 'browser'
+  country String   @default("") // ISO-3166 alfa-2 del edge (Vercel IP Country)
+  count   Int      @default(0)
+
+  @@id([day, section, flow, source, country])
+  @@index([section, day])
 }
 
 model PilotClickDaily {

@@ -41,10 +41,13 @@ import { getVerUrl } from '@/lib/slug';
 import { SeriesSubscribeButton } from '@/components/series/SeriesSubscribeButton/SeriesSubscribeButton';
 import { AiringAlertCta } from '@/components/series/AiringAlertCta/AiringAlertCta';
 import { FavoriteButton } from '@/components/series/FavoriteButton/FavoriteButton';
+import { SeriesLikeButton } from '@/components/series/SeriesLikeButton/SeriesLikeButton';
 import { TrackingPanel } from '@/components/series/TrackingPanel/TrackingPanel';
 import { WatchedToggle } from '@/components/series/WatchedToggle/WatchedToggle';
 import { ActivityPulse } from '@/components/series/ActivityPulse/ActivityPulse';
 import { recordSeriesActivity } from '@/lib/activity-beacon';
+import { outboundRel, withOutboundUtm } from '@/lib/outbound-links';
+import type { YouTubeWatchEvent } from '@/hooks/useYouTubeWatchTime';
 import { DismissibleNotice } from '@/components/design-system';
 import { RatingSection } from '@/components/series/RatingSection';
 import { ReviewsSection } from '@/components/series/ReviewsSection/ReviewsSection';
@@ -504,8 +507,16 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
     activeChapter !== null &&
     activePartPosition === activeChapter.items.length - 1;
 
-  const handleWatchProgress = async (event: 'watched' | 'ended') => {
+  useEffect(() => {
+    recordSeriesActivity(series.id, 'open_ver');
+  }, [series.id]);
+
+  const handleWatchProgress = async (event: YouTubeWatchEvent) => {
     if (!active || !activeChapter) return;
+    if (event === 'play_start') {
+      recordSeriesActivity(series.id, 'play_start', active.id);
+      return;
+    }
     // Reproducido de verdad (80 % del video, sin saltos): actividad anonima.
     if (event === 'watched') recordSeriesActivity(series.id, 'view', active.id);
     if (event === 'watched' && !isWatched(active.id)) {
@@ -663,6 +674,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           />
           <SeriesSubscribeButton seriesId={series.id} />
           <FavoriteButton />
+          <SeriesLikeButton seriesId={series.id} />
         </div>
       </header>
 
@@ -705,9 +717,15 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
             ) : (activeAvailability === 'platform_only' || ageGated) &&
               active.embedUrl ? (
               <a
-                href={active.embedUrl}
+                href={withOutboundUtm(active.embedUrl, true, {
+                  medium: 'embed_player',
+                  campaign: 'watch_episode',
+                })}
                 target="_blank"
-                rel="noopener noreferrer"
+                rel={outboundRel(true)}
+                onClick={() =>
+                  recordSeriesActivity(series.id, 'outbound_click', active.id)
+                }
               >
                 {t('episodeSource.openOn', {
                   platform: active.embedPlatform || 'YouTube',
@@ -726,6 +744,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
             })}
             key={`${active.id}:${playerAttempt}`}
             episodeId={active.id}
+            seriesId={series.id}
             platform={active.embedPlatform || 'YouTube'}
             url={active.embedUrl || ''}
             videoId={active.embedVideoId}
@@ -1008,6 +1027,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
       {/* Atribución de origen */}
       <div className="ver-serie__attribution-row">
         <EmbedAttribution
+          seriesId={series.id}
           channelActionLabel={
             active.embedChannelName
               ? active.embedPlatform === 'YouTube'

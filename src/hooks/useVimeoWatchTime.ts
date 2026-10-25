@@ -52,6 +52,7 @@ export function useVimeoWatchTime(
     if (!enabled || !iframe || !onProgressRef.current) return;
 
     let accumulator: WatchAccumulator = { watchedSeconds: 0, lastSample: null };
+    let reportedStarted = false;
     let reportedWatched = false;
     let reportedEnded = false;
     let restored = false;
@@ -88,6 +89,10 @@ export function useVimeoWatchTime(
       // Una pausa (o volver a darle play) corta la cuenta: el tiempo parado
       // entre dos muestras no es tiempo visto.
       if (message.event === 'play' || message.event === 'pause') {
+        if (message.event === 'play' && !reportedStarted) {
+          reportedStarted = true;
+          onProgressRef.current?.('play_start');
+        }
         accumulator = { ...accumulator, lastSample: null };
         return;
       }

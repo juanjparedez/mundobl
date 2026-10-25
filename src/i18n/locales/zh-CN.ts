@@ -3174,7 +3174,9 @@ const zhCN = {
     "aboutTheSeriesTitle": "关于剧集",
     "episodesTitle": "剧集",
     "seasonTitle": "第 {seasonNumber} 季",
-    "episodeDefaultTitle": "第 {episodeNumber} 集"
+    "episodeDefaultTitle": "第 {episodeNumber} 集",
+    "like": "点赞",
+    "liked": "已点赞"
   },
   "shareButton": {
     "shareError": "无法分享",
@@ -4124,6 +4126,18 @@ const zhCN = {
     unknownCountry: "未知",
     platform: "平台",
     clicks: "点击",
+    verFunnelTitle: "/ver 播放转化漏斗",
+    verFunnelHint:
+      "第一方运营指标：访问 /ver、开始播放、完成观看（80%）、点赞以及跳转至官方频道的点击量。",
+    openVer: "访问 /ver",
+    playStarts: "开始播放",
+    likes: "MundoBL 点赞",
+    outboundClicks: "跳转频道点击",
+    trafficSectionTitle: "各板块流量（容量评估）",
+    trafficSection: "板块",
+    trafficViews: "访问量",
+    copyVerFunnel:
+      "MundoBL /ver: {openVer} 次访问，{playStarts} 次开始播放，{views} 次完成观看，{likes} 次点赞，{outboundClicks} 次跳转至官方频道。",
   },
   "airingAlert": {
     "schedule": "播出：{days}",

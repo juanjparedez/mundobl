@@ -25,6 +25,10 @@ export const ACTIVITY_KINDS = [
   'alert_offer',
   'alert_click',
   'alert_on',
+  'open_ver',
+  'play_start',
+  'outbound_click',
+  'like',
 ] as const;
 export type ActivityKind = (typeof ACTIVITY_KINDS)[number];
 export type ActivitySource = 'account' | 'browser';

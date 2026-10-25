@@ -23,6 +23,16 @@ assert.equal(outboundRel(true).includes('noreferrer'), false);
 assert.equal(outboundRel(false).includes('noreferrer'), true);
 assert.ok(outboundRel(true).includes('noopener'));
 
+const customTagged = new URL(
+  withOutboundUtm('https://www.youtube.com/@GMMTV', true, {
+    medium: 'embed_player',
+    campaign: 'channel_subscribe',
+  })
+);
+assert.equal(customTagged.searchParams.get('utm_source'), 'mundobl');
+assert.equal(customTagged.searchParams.get('utm_medium'), 'embed_player');
+assert.equal(customTagged.searchParams.get('utm_campaign'), 'channel_subscribe');
+
 console.log(
   'Outbound links: UTM only on official https links, existing UTMs kept, rel by officiality passed.'
 );

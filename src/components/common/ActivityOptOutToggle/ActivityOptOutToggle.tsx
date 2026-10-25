@@ -10,11 +10,16 @@ import {
 } from '@/lib/activity-beacon';
 import './ActivityOptOutToggle.css';
 
-type OptOutState = 'counted' | 'optedOut' | 'browserSignal';
+interface OptOutState {
+  counted: boolean;
+  browserSignal: boolean;
+}
 
 function readState(): OptOutState {
-  if (browserPrivacySignal()) return 'browserSignal';
-  return storedActivityOptOut() ? 'optedOut' : 'counted';
+  return {
+    counted: !storedActivityOptOut(),
+    browserSignal: browserPrivacySignal(),
+  };
 }
 
 function subscribe(onChange: () => void): () => void {
@@ -32,8 +37,7 @@ export function ActivityOptOutToggle() {
   return (
     <div className="activity-opt-out">
       <Switch
-        checked={state === 'counted'}
-        disabled={state === 'browserSignal'}
+        checked={state.counted}
         onChange={(counted) => {
           setActivityOptOut(!counted);
           window.dispatchEvent(new StorageEvent('storage'));
@@ -45,11 +49,9 @@ export function ActivityOptOutToggle() {
           {t('activityPrivacy.toggleLabel')}
         </p>
         <p id="activity-opt-out-hint" className="activity-opt-out__hint">
-          {state === 'browserSignal'
-            ? t('activityPrivacy.browserSignal')
-            : state === 'counted'
-              ? t('activityPrivacy.countedHint')
-              : t('activityPrivacy.notCountedHint')}
+          {!state.counted
+            ? t('activityPrivacy.notCountedHint')
+            : t('activityPrivacy.countedHint')}
         </p>
       </div>
     </div>

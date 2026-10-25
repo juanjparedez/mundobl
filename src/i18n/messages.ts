@@ -3164,6 +3164,8 @@ export type TranslationShape = {
     episodesTitle: string;
     seasonTitle: string;
     episodeDefaultTitle: string;
+    like: string;
+    liked: string;
   };
   shareButton: {
     shareError: string;
@@ -4113,6 +4115,16 @@ export type TranslationShape = {
     unknownCountry: string;
     platform: string;
     clicks: string;
+    verFunnelTitle: string;
+    verFunnelHint: string;
+    openVer: string;
+    playStarts: string;
+    likes: string;
+    outboundClicks: string;
+    trafficSectionTitle: string;
+    trafficSection: string;
+    trafficViews: string;
+    copyVerFunnel: string;
   };
   airingAlert: {
     schedule: string;
@@ -7563,6 +7575,8 @@ const es: TranslationShape = {
     episodesTitle: 'Capítulos',
     seasonTitle: 'Temporada {seasonNumber}',
     episodeDefaultTitle: 'Episodio {episodeNumber}',
+    like: 'Me gusta',
+    liked: 'Te gusta',
   },
   shareButton: {
     shareError: 'No se pudo compartir',
@@ -8587,6 +8601,18 @@ const es: TranslationShape = {
     unknownCountry: 'Sin dato',
     platform: 'Plataforma',
     clicks: 'Clics',
+    verFunnelTitle: 'Embudo de reproducción en /ver',
+    verFunnelHint:
+      'Medición operativa de primera parte: entradas a /ver, inicios de reproducción, vistas completadas (80%), Me gusta y clics derivados al canal oficial.',
+    openVer: 'Entradas a /ver',
+    playStarts: 'Inicios de video',
+    likes: 'Me gusta en MundoBL',
+    outboundClicks: 'Clics a canales',
+    trafficSectionTitle: 'Tráfico por sección (dimensionamiento)',
+    trafficSection: 'Sección',
+    trafficViews: 'Visitas',
+    copyVerFunnel:
+      'MundoBL /ver: {openVer} entradas, {playStarts} inicios de reproducción, {views} capítulos completados, {likes} Me gusta y {outboundClicks} clics derivados al canal oficial.',
   },
   airingAlert: {
     schedule: 'Estrena: {days}',
@@ -12011,6 +12037,8 @@ const en: TranslationShape = {
     episodesTitle: 'Episodes',
     seasonTitle: 'Season {seasonNumber}',
     episodeDefaultTitle: 'Episode {episodeNumber}',
+    like: 'Like',
+    liked: 'Liked',
   },
   shareButton: {
     shareError: 'Could not share',
@@ -13029,6 +13057,18 @@ const en: TranslationShape = {
     unknownCountry: 'Unknown',
     platform: 'Platform',
     clicks: 'Clicks',
+    verFunnelTitle: 'Playback funnel in /ver',
+    verFunnelHint:
+      'First-party operational measurement: entries to /ver, playback starts, completed views (80%), likes, and outbound clicks to official channels.',
+    openVer: 'Entries to /ver',
+    playStarts: 'Playback starts',
+    likes: 'Likes on MundoBL',
+    outboundClicks: 'Clicks to channels',
+    trafficSectionTitle: 'Traffic by section (sizing)',
+    trafficSection: 'Section',
+    trafficViews: 'Visits',
+    copyVerFunnel:
+      'MundoBL /ver: {openVer} entries, {playStarts} playback starts, {views} completed episodes, {likes} likes, and {outboundClicks} outbound clicks to official channels.',
   },
   airingAlert: {
     schedule: 'Airs: {days}',

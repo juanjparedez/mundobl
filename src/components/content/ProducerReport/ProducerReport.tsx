@@ -37,6 +37,19 @@ export function ProducerReport({ report }: { report: Report }) {
       chapters: number(report.totals.chapters),
       browser: number(report.chaptersBySource.browser),
     }),
+    ...((report.totals.openVer ?? 0) > 0 ||
+    (report.totals.playStarts ?? 0) > 0 ||
+    (report.totals.outboundClicks ?? 0) > 0
+      ? [
+          t('producerReport.copyVerFunnel', {
+            openVer: number(report.totals.openVer ?? 0),
+            playStarts: number(report.totals.playStarts ?? 0),
+            views: number(report.totals.views),
+            likes: number(report.totals.likes ?? 0),
+            outboundClicks: number(report.totals.outboundClicks ?? 0),
+          }),
+        ]
+      : []),
     ...report.series.slice(0, 10).map((row) =>
       t('producerReport.copySeries', {
         title: row.title,
@@ -118,6 +131,35 @@ export function ProducerReport({ report }: { report: Report }) {
           />
         </div>
         <p className="producer-report__note">{t('producerReport.privacy')}</p>
+      </PanelCard>
+
+      <PanelCard>
+        <h2>{t('producerReport.verFunnelTitle')}</h2>
+        <div className="producer-report__stats">
+          <StatCard
+            label={t('producerReport.openVer')}
+            value={number(report.totals.openVer ?? 0)}
+          />
+          <StatCard
+            label={t('producerReport.playStarts')}
+            value={number(report.totals.playStarts ?? 0)}
+          />
+          <StatCard
+            label={t('producerReport.views')}
+            value={number(report.totals.views)}
+          />
+          <StatCard
+            label={t('producerReport.likes')}
+            value={number(report.totals.likes ?? 0)}
+          />
+          <StatCard
+            label={t('producerReport.outboundClicks')}
+            value={number(report.totals.outboundClicks ?? 0)}
+          />
+        </div>
+        <p className="producer-report__note">
+          {t('producerReport.verFunnelHint')}
+        </p>
       </PanelCard>
 
       {/* Interno, no va en el texto copiable: es para saber si el aviso de
@@ -222,6 +264,25 @@ export function ProducerReport({ report }: { report: Report }) {
               {
                 title: t('producerReport.clicks'),
                 dataIndex: 'clicks',
+                render: number,
+              },
+            ]}
+          />
+        </PanelCard>
+        <PanelCard>
+          <h2>{t('producerReport.trafficSectionTitle')}</h2>
+          <Table
+            dataSource={report.trafficBySection ?? []}
+            rowKey="section"
+            pagination={false}
+            columns={[
+              {
+                title: t('producerReport.trafficSection'),
+                dataIndex: 'section',
+              },
+              {
+                title: t('producerReport.trafficViews'),
+                dataIndex: 'views',
                 render: number,
               },
             ]}

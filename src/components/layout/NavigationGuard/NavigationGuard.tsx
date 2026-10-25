@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { getNavigationFallback } from '@/lib/navigation-fallback';
+import { recordPathTraffic } from '@/lib/activity-beacon';
 
 /**
  * NavigationGuard — garantiza que el boton "atras" del browser (o el
@@ -39,15 +40,19 @@ export function NavigationGuard() {
 
   useEffect(() => {
     const current = window.location.pathname;
+    const isInternalNav = Boolean(
+      previous.current && previous.current !== current
+    );
     // A route transition in this mounted app provides stronger evidence than
     // document.referrer, which never changes during client-side navigation.
-    if (previous.current && previous.current !== current) {
+    if (isInternalNav) {
       window.history.replaceState(
         { ...window.history.state, __mb_internal_back: true },
         '',
         window.location.href
       );
     }
+    recordPathTraffic(current, isInternalNav ? 'internal' : 'direct');
     previous.current = current;
   }, [pathname]);
 

@@ -7,6 +7,10 @@ export interface ActivityTotals {
   chapters: number;
   wants: number;
   finishes: number;
+  openVer?: number;
+  playStarts?: number;
+  outboundClicks?: number;
+  likes?: number;
 }
 
 export interface ProducerReport {
@@ -31,6 +35,7 @@ export interface ProducerReport {
   channels: Array<ActivityTotals & { channel: string; series: number }>;
   countries: Array<{ country: string; chapters: number }>;
   outbound: Array<{ platform: string; clicks: number }>;
+  trafficBySection?: Array<{ section: string; views: number }>;
 }
 
 export function isProducerReportWindow(
