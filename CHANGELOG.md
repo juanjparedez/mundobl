@@ -8,10 +8,11 @@ Todas las versiones notables del proyecto se documentan aqui.
 > (`ChangelogItem`, `/admin/changelog`) quedo como fallback solo si este archivo
 > esta vacio.
 
-## 2026-10-25 — Seguimiento sin cuenta, avisos de estreno, perfil en pestañas y 48 logros
+## 2026-10-25 — 14 series más para ver, seguimiento sin cuenta, avisos de estreno, perfil en pestañas y 48 logros
 
 ### Features
 
+- **14 series más para ver**: 125 capítulos de Filipinas, Japón, Vietnam, Taiwán y China, gratis y completos en los canales oficiales de sus productoras y plataformas. Por primera vez hay series filipinas, japonesas y chinas en `/ver`.
 - **Mi seguimiento, con o sin cuenta**: un solo panel para todo lo que estás viendo. Sin cuenta queda guardado en tu navegador y pasa solo a tu cuenta cuando entrás, sin pisar nada. Sumamos «Quiero verla» y «En pausa», y «Seguir viendo» en la portada.
 - **Avisame cuando salga el próximo capítulo**: en las series al aire, la ficha y `/ver` ofrecen un aviso el día de estreno. Si querés, también por mail.
 - **Resumen semanal por mail**: los lunes, quien lo activó recibe sus series al aire con sus días de estreno y lo que tiene en «Viendo». Si no hay nada, no llega nada.

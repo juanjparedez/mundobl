@@ -8,6 +8,13 @@ import {
 import type { VideoChannelInfo } from '../src/lib/channel-fetcher';
 import type { PlaybackProbe } from '../src/lib/playability';
 import { groupIntoChapters } from '../src/lib/episode-chapters';
+import { isOfficialChannelId } from '../src/lib/official-channels';
+import {
+  VER_BATCHES,
+  verBatchArg,
+  verContentBatch,
+  type VerBatchName,
+} from './data/ver-content-batch';
 
 async function main() {
   const url = new URL(process.env.DATABASE_URL ?? '');
@@ -16,6 +23,20 @@ async function main() {
   assert.ok(
     ['/mundobl_replay', '/mundobl_ver_expansion'].includes(url.pathname)
   );
+  // Releases pick one batch explicitly and verify exactly its declared videos.
+  assert.throws(() => verBatchArg([]), /--batch=/);
+  assert.throws(() => verBatchArg(['--batch=2020-01-01']), /--batch=/);
+  for (const name of Object.keys(VER_BATCHES) as VerBatchName[]) {
+    assert.equal(verBatchArg([`--batch=${name}`]), name);
+    const { series } = verContentBatch(name);
+    const videos = series.flatMap((s) => s.episodes.map((e) => e.videoId));
+    assert.equal(videos.length, VER_BATCHES[name].videos);
+    assert.equal(new Set(videos).size, videos.length);
+    for (const s of series.filter(
+      (s) => (s.platform ?? 'YouTube') === 'YouTube'
+    ))
+      assert.ok(isOfficialChannelId(s.channelId), s.title);
+  }
   const ids = ['testvideo01', 'testvideo02', 'testvideo03'];
   const channelId = 'UCMtOvsAU8M6Qu1-KwnURUfQ';
   const channels = new Map<string, VideoChannelInfo>(
@@ -241,7 +262,7 @@ async function main() {
   }
   assert.equal(await prisma.series.count(), before);
   console.log(
-    'Watch batch: dry-run, exact identity, chapters/parts, tracking IDs, revision, idempotency, blocked/short/foreign rejection and rollback OK.'
+    'Watch batch: manifests/--batch, dry-run, exact identity, chapters/parts, tracking IDs, revision, idempotency, blocked/short/foreign rejection and rollback OK.'
   );
 }
 main()

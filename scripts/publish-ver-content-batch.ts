@@ -1,7 +1,11 @@
 /** Explicit production release for this curated batch. Dry-run by default. */
 import { createHash } from 'node:crypto';
 import { readFileSync, mkdirSync, writeFileSync } from 'node:fs';
-import { verContentBatch } from './data/ver-content-batch';
+import {
+  VER_BATCHES,
+  verBatchArg,
+  verContentBatch,
+} from './data/ver-content-batch';
 import {
   importWatchContentBatch,
   watchBatchVideoUrl,
@@ -31,11 +35,13 @@ async function main() {
     args.some(
       (arg) =>
         arg !== '--apply' &&
+        !arg.startsWith('--batch=') &&
         !arg.startsWith('--evidence=') &&
         !arg.startsWith('--plan=')
     )
   )
     throw new Error('Unknown argument');
+  const batchName = verBatchArg(args);
   const evidencePath = args
     .find((arg) => arg.startsWith('--evidence='))
     ?.slice(11);
@@ -56,18 +62,19 @@ async function main() {
     throw new Error(
       'Fresh successful verification from the last hour is required.'
     );
-  const batch = verContentBatch();
+  const batch = verContentBatch(batchName);
+  const expected = VER_BATCHES[batchName].videos;
   const manifestHash = sha(JSON.stringify(batch));
   const allIds = batch.series.flatMap((series) =>
     series.episodes.map((ep) => ep.videoId)
   );
   if (
-    allIds.length !== 115 ||
-    new Set(allIds).size !== 115 ||
-    evidence.watchPages.length !== 115 ||
-    evidence.api.length !== 115 ||
-    new Set(evidence.watchPages.map((p) => p.videoId)).size !== 115 ||
-    new Set(evidence.api.map((p) => p.videoId)).size !== 115 ||
+    allIds.length !== expected ||
+    new Set(allIds).size !== expected ||
+    evidence.watchPages.length !== expected ||
+    evidence.api.length !== expected ||
+    new Set(evidence.watchPages.map((p) => p.videoId)).size !== expected ||
+    new Set(evidence.api.map((p) => p.videoId)).size !== expected ||
     allIds.some(
       (id) =>
         evidence.watchPages.find((p) => p.videoId === id)?.status !== 'OK' ||

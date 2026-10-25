@@ -270,6 +270,62 @@ export const OFFICIAL_CHANNELS: OfficialChannel[] = [
     channelId: 'UC71MEdCI6-LS3pXHr2K8Bkw',
     country: '🇹🇭',
   },
+  // Handle e ID contrastados con la YouTube Data API el 2026-10-25.
+  // Evidencia: docs/ampliacion-ver-2026-10-25.md.
+  {
+    name: 'Black Sheep',
+    handle: 'blacksheepph',
+    channelId: 'UCtI55bOVfu43CatriKvqF_w',
+    country: '🇵🇭',
+  },
+  {
+    name: 'ANIMA Studios',
+    handle: 'animastudiosph',
+    channelId: 'UCtoEQCndXx-v7FemDigT17g',
+    country: '🇵🇭',
+  },
+  {
+    name: 'Oxin Films',
+    handle: 'oxinfilms',
+    channelId: 'UC3mvG0KIKHT7MsaWMjB3dDw',
+    country: '🇵🇭',
+  },
+  {
+    name: 'RL Studio',
+    handle: 'rlstudiovn',
+    channelId: 'UC0WWgNgyUc5Y85_DesZXTYw',
+    country: '🇻🇳',
+  },
+  {
+    name: 'MOI Studio',
+    handle: 'moistudio21',
+    channelId: 'UCiZQMLN9MRhE0MYqHJFVwXA',
+    country: '🇻🇳',
+  },
+  {
+    name: 'Vũ Luân Entertainment',
+    handle: 'vuluanentertainment',
+    channelId: 'UCENtpQFw4dhnGn3TFVzJauA',
+    country: '🇻🇳',
+  },
+  {
+    name: 'GTV Drama',
+    handle: 'gtv-drama',
+    channelId: 'UCZ2EoLNz4EzAnAIKCGhiRzQ',
+    country: '🇹🇼',
+  },
+  {
+    name: 'YOUKU English',
+    handle: 'youkuenglish',
+    channelId: 'UCI70JGG0hJS306Q-hGWfB7Q',
+    country: '🌐',
+  },
+  {
+    name: 'Huace Croton TV English',
+    handle: 'huacetvenglish',
+    channelId: 'UCcLEMsxL1UYqz_CI8Y6Wrvg',
+    country: '🇨🇳',
+  },
 ];
 
 /** URL canonica del canal, para links y para el barrido. */
