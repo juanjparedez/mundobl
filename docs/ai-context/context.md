@@ -2,6 +2,21 @@
 
 Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-stack para gestionar, calificar y hacer seguimiento de series, peliculas, cortos y especiales.
 
+## Optimización Mobile UX/UI y Entorno Docker (2026-10-25)
+
+- **Mejoras Mobile UX/UI:**
+  - Shell y ergonomía: variables `--safe-bottom` y `--bottom-nav-total-height` integrando safe-area en iOS/Android; buscador flexible en `TopBar` mobile y tap targets de 44px; botones flotantes respetando la elevación del `BottomNav`.
+  - Catálogo y `/ver`: índice A-Z y chips rápidos con `scroll-snap` horizontal táctil en 1 línea; tap targets de tarjetas a 38px; grilla de `/ver` en 2 columnas compactas (155px) en `<= 600px`; botones de preview táctiles a 36px y ocultamiento de flechas de mouse.
+  - Reproductor y ficha: player sticky en `/ver/[id]` debajo del header; botones de Parte agrandados a 40px/48px; en `/series/[id]` el `TrackingPanel` se ordenó visualmente debajo del póster antes del reparto y la sinopsis; listas de capítulos compactadas en mobile.
+  - Perfil (`/perfil`): header en grilla de 2 filas con avatar de 48px y atajo rápido a Ajustes; pestañas con desplazamiento horizontal táctil; Heatmap de 26 semanas con scroll horizontal; tooltip del WorldMap estático sin tapar mapas; medallas de logros en 3 columnas proporcionales; suscripciones con scroll interno.
+  - Portada y Mi biblioteca: banner hero en 16:9 y selectores de acento de 36px; corrección del padding superior de títulos en `WatchingSeriesCard` (+44px de área útil).
+- **Entorno Docker:**
+  - En el host Windows no está instalado Docker Desktop nativo. La suite Compose (`npm run test:docker` y el hook `pre-push` a `main`) se ejecuta automáticamente mediante el daemon Docker provisto dentro de la distribución WSL (Ubuntu) del equipo, utilizando el plugin oficial Compose v5.6.1.
+- **Validación y ramas:**
+  - Validación completa en contenedor: 71 pasos en 12m24s aprobados.
+  - Push directo a `origin/main` (commit `912a2c0f`).
+  - Limpieza de ramas: eliminadas todas las ramas locales y remotas obsoletas (`claude/*`, `codex/*`, `feat/*`), quedando únicamente `main` sincronizado.
+
 ## Segundo lote de /ver: 24 títulos, +18 y partes (2026-10-25)
 
 - Criterio del propietario: no descartar contenido oficial por formato, inserción, edad, género, emisión o dato dudoso; incluir y avisar. Afuera solo miembros, videos ocultos por el canal y lo no oficial.
