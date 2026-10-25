@@ -108,6 +108,12 @@
   .mb-media-card__actions {
     opacity: 1;
   }
+
+  .mb-media-card__preview-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
 }
 
 /* Boton de vista rapida. Mismo tamaño y lenguaje que el del catalogo

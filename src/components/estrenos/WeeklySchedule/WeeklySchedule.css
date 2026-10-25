@@ -95,7 +95,7 @@
   }
 
   .weekly-schedule__day {
-    flex: 0 0 clamp(140px, 46vw, 200px);
+    flex: 0 0 clamp(200px, 68vw, 260px);
     scroll-snap-align: start;
   }
 }

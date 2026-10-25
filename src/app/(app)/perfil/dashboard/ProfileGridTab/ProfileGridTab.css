@@ -3,7 +3,7 @@
 @media (max-width: 900px) {
   .mb-profile-grid-tab__fab.ant-float-btn,
   .mb-profile-grid-tab__fab.ant-float-btn-group {
-    inset-block-end: calc(var(--bottom-nav-height) + 16px) !important;
+    inset-block-end: calc(var(--bottom-nav-total-height) + 16px) !important;
     inset-inline-end: 16px !important;
   }
 }

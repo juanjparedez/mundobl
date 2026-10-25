@@ -6,6 +6,18 @@
   padding: var(--widget-body-padding);
 }
 
+@media (max-width: 600px) {
+  .mb-world-map {
+    min-height: 160px;
+    padding: var(--spacing-xs);
+  }
+
+  .mb-world-map__tooltip {
+    position: static;
+    margin-bottom: var(--spacing-xs);
+  }
+}
+
 .mb-world-map svg {
   display: block;
   width: 100%;

@@ -49,6 +49,16 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: var(--spacing-sm);
+  max-height: 480px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+@media (max-width: 600px) {
+  .subscriptions-list {
+    grid-template-columns: 1fr;
+    max-height: 380px;
+  }
 }
 
 .subscription-card {

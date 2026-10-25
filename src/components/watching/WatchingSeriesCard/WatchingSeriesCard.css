@@ -187,7 +187,8 @@
   .watching-series-card__heading {
     grid-column: 2;
     position: relative;
-    padding-top: 44px;
+    padding-inline-end: 48px;
+    min-height: 44px;
   }
   .watching-series-card__heading .ant-btn {
     position: absolute;

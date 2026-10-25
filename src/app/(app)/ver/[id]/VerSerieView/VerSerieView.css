@@ -76,10 +76,19 @@
 }
 
 /* En desktop el video entra entero en pantalla, sin importar cuan ancha sea.
- * Mobile no cambia: ahi manda el ancho y la pantalla completa. */
+ * Mobile: ancho completo; opcional sticky debajo del header para no perder reproducción. */
 @media (min-width: 769px) {
   .ver-serie__player-wrap {
     max-width: var(--player-max-width);
+  }
+}
+
+@media (max-width: 768px) {
+  .ver-serie__player-wrap {
+    position: sticky;
+    top: var(--header-height);
+    z-index: 20;
+    border-radius: 0 0 var(--border-radius-base) var(--border-radius-base);
   }
 }
 
@@ -419,13 +428,16 @@
 }
 
 .ver-serie__part-btn {
-  padding: 4px 10px;
+  padding: 8px 14px;
+  min-height: 40px;
+  min-width: 48px;
+  justify-content: center;
   border-radius: 6px;
   background: var(--bg-container);
   border: 1px solid var(--border-color-secondary);
   color: var(--text-secondary);
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 600;
   display: inline-flex;
   align-items: center;

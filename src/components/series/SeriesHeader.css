@@ -361,7 +361,7 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   .series-hero {
     border-radius: var(--border-radius);
   }
@@ -378,9 +378,11 @@
   .series-header__identity {
     grid-area: identity;
     align-self: center;
+    order: 1;
   }
   .series-header__aside {
     align-self: start;
+    order: 1;
   }
   .series-header__title {
     font-size: clamp(1.35rem, 5vw, 1.8rem);
@@ -388,23 +390,29 @@
   .series-header__original-title {
     font-size: var(--font-size-sm);
   }
-  .series-header__meta,
-  .series-header__quick-cast,
-  .series-header__tags,
-  .series-header__synopsis,
-  .series-header__actions {
+  .series-header__meta {
+    order: 2;
     grid-column: 1 / -1;
+    gap: var(--spacing-xs);
   }
   .series-header__actions {
+    order: 3;
     grid-area: auto;
     grid-column: 1 / -1;
   }
-  .series-header__meta,
-  .series-header__tags {
-    gap: var(--spacing-xs);
+  .series-header__synopsis {
+    order: 4;
+    grid-column: 1 / -1;
   }
   .series-header__quick-cast {
+    order: 5;
+    grid-column: 1 / -1;
     padding: var(--spacing-sm);
+  }
+  .series-header__tags {
+    order: 6;
+    grid-column: 1 / -1;
+    gap: var(--spacing-xs);
   }
   .series-header__cast-row {
     align-items: start;

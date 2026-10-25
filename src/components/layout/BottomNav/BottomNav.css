@@ -8,7 +8,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: var(--bottom-nav-height);
+  height: var(--bottom-nav-total-height);
   background: var(--bg-elevated);
   border-top: 1px solid var(--border-color-secondary);
   /* Sutil sombra para separar de contenido scrolleado debajo */
@@ -16,7 +16,7 @@
   z-index: 1000;
   align-items: stretch;
   /* Soporte para safe area de iOS (notch / home indicator) */
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-bottom: var(--safe-bottom);
 }
 
 .bottom-nav-preferences {
@@ -24,7 +24,7 @@
   position: fixed;
   left: 0;
   right: 0;
-  bottom: var(--bottom-nav-height);
+  bottom: var(--bottom-nav-total-height);
   z-index: 1000;
   padding: var(--spacing-sm);
   background: color-mix(in srgb, var(--bg-elevated) 92%, transparent);

@@ -105,7 +105,8 @@
 
 @media (max-width: 600px) {
   .ver-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 155px), 1fr));
+    gap: var(--spacing-sm);
   }
 }
 

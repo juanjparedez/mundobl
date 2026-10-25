@@ -26,6 +26,17 @@
   gap: var(--spacing-sm);
 }
 
+@media (max-width: 600px) {
+  .mb-achievements-board__patches {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-xs);
+  }
+
+  .mb-achievements-board__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .mb-achievements-board__filter {
   align-self: flex-start;
 }

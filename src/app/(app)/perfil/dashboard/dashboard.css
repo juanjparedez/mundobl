@@ -31,9 +31,33 @@
 }
 
 /* Pestañas: barra con scroll horizontal en pantallas chicas (antd), sin
- * margen extra arriba del contenido. */
+ * margen extra arriba del contenido y con touch suave. */
 .mb-perfil-dashboard__tabs > .ant-tabs-nav {
   margin-bottom: var(--spacing-md);
+}
+
+@media (max-width: 768px) {
+  .mb-perfil-dashboard__tabs > .ant-tabs-nav {
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .mb-perfil-dashboard__tabs .ant-tabs-nav-wrap {
+    overflow-x: auto !important;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+  }
+
+  .mb-perfil-dashboard__tabs .ant-tabs-nav-wrap::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mb-perfil-dashboard__tabs .ant-tabs-tab {
+    padding: 8px 12px !important;
+    font-size: var(--font-size-sm);
+    scroll-snap-align: start;
+    min-height: 40px;
+  }
 }
 
 .mb-perfil-dashboard__stack {

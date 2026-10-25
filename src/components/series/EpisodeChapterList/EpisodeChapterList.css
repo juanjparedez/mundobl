@@ -105,25 +105,20 @@
   }
 
   .episode-chapters__row {
-    flex-wrap: wrap;
-    padding-block: var(--spacing-sm);
-  }
-
-  .episode-chapters__actions {
-    flex-basis: 100%;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    padding-block: var(--spacing-xs);
     gap: var(--spacing-xs);
   }
 
-  .episode-chapters__actions .ant-btn {
-    min-width: 44px;
-    min-height: 44px;
-    height: auto;
-    white-space: normal;
+  .episode-chapters__actions {
+    flex-shrink: 0;
+    gap: 4px;
   }
 
-  .episode-chapters__actions .ant-btn:not(.ant-btn-icon-only) {
-    flex: 1 1 120px;
+  .episode-chapters__actions .ant-btn {
+    min-width: 40px;
+    min-height: 40px;
+    height: 40px;
   }
 
   .episode-chapters__title {

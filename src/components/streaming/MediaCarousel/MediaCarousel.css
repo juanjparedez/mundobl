@@ -45,6 +45,12 @@
   gap: 6px;
 }
 
+@media (hover: none) and (max-width: 768px) {
+  .media-carousel__nav-buttons {
+    display: none;
+  }
+}
+
 .media-carousel__arrow {
   background: var(--bg-elevated);
   border: 1px solid var(--border-color);
@@ -312,9 +318,12 @@
   top: 40px;
 }
 
-/* En touch no hay hover que revele el boton: se muestra siempre. */
+/* En touch no hay hover que revele el boton: se muestra siempre con tap target mejorado. */
 @media (hover: none) {
   .media-carousel__preview-btn {
     opacity: 1;
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
   }
 }

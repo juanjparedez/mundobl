@@ -181,6 +181,10 @@
   /* 64px — Material guideline: bar height 56-72px para nav con icon+label.
    * Subimos de 56 a 64 para que el icono 24px + label 12px respiren. */
   --bottom-nav-height: 64px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --bottom-nav-total-height: calc(
+    var(--bottom-nav-height) + var(--safe-bottom)
+  );
 
   /* Transiciones */
   --transition-base: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);

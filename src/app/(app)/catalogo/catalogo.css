@@ -687,10 +687,10 @@
   justify-content: center;
 }
 
-/* Espejo arriba: separa del toolbar y de la grilla, sin background extra */
-.catalogo-pagination--top {
-  margin-top: 0;
-  margin-bottom: 8px;
+@media (max-width: 600px) {
+  .catalogo-pagination--top {
+    display: none;
+  }
 }
 
 /* ==========================================
@@ -842,14 +842,50 @@
   }
 
   .catalogo-alpha-index {
-    gap: 3px;
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 4px;
     margin-bottom: var(--spacing-sm);
+    padding-bottom: 4px;
+  }
+
+  .catalogo-alpha-index::-webkit-scrollbar {
+    display: none;
   }
 
   .catalogo-alpha-btn {
-    width: 28px;
-    height: 28px;
-    font-size: 12px;
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    font-size: 13px;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+  }
+
+  .catalogo-quick-filters {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 6px;
+    padding-bottom: 4px;
+  }
+
+  .catalogo-quick-filters::-webkit-scrollbar {
+    display: none;
+  }
+
+  .catalogo-quick-chip {
+    min-height: 36px;
+    padding: 6px 12px;
+    flex-shrink: 0;
+    scroll-snap-align: start;
   }
 
   .catalogo-toolbar-right {
@@ -1126,9 +1162,9 @@
   }
 
   .serie-card-action-btn {
-    width: 32px;
-    height: 32px;
-    font-size: 14px;
+    width: 38px !important;
+    height: 38px !important;
+    font-size: 16px;
   }
 
   .universe-expand-entry {

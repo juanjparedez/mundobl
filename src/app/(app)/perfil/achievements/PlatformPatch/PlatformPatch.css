@@ -50,6 +50,30 @@
   box-shadow: var(--box-shadow-base);
 }
 
+@media (max-width: 600px) {
+  .mb-platform-patch {
+    padding: var(--spacing-xs);
+  }
+
+  .mb-platform-patch__badge {
+    width: 48px;
+    height: 48px;
+  }
+
+  .mb-platform-patch__badge svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .mb-platform-patch__platform {
+    font-size: 11px;
+  }
+
+  .mb-platform-patch__tier {
+    font-size: 10px;
+  }
+}
+
 .mb-platform-patch__badge::after {
   content: '';
   position: absolute;

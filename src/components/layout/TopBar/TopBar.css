@@ -144,8 +144,9 @@
     gap: var(--spacing-xs);
   }
 
-  .app-topbar__search-text {
-    display: none;
+  .app-topbar .mb-back-to-catalog {
+    min-height: 44px;
+    min-width: 44px;
   }
 
   .app-topbar__search-kbd {
@@ -153,10 +154,25 @@
   }
 
   .app-topbar__search {
-    flex: 0 1 auto;
-    width: 36px;
-    padding: 0;
-    justify-content: center;
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 240px;
+    height: 40px;
+    padding: 0 var(--spacing-sm);
+    justify-content: flex-start;
+  }
+
+  .app-topbar__search-text {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: var(--font-size-xs);
+  }
+
+  .app-topbar__icon-btn {
+    width: 44px;
+    height: 44px;
   }
 
   /* En mobile ocultamos items que ya viven en BottomNav (notifications,
@@ -174,7 +190,8 @@
   }
 
   .app-topbar__admin-pill {
-    width: 28px;
+    width: 32px;
+    height: 32px;
     padding: 0;
     justify-content: center;
   }

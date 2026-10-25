@@ -210,13 +210,21 @@
     padding: 6px;
     overflow-x: auto;
     flex-wrap: nowrap;
-    scrollbar-width: thin;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .series-detail-sections__nav::-webkit-scrollbar {
+    display: none;
   }
 
   .series-detail-sections__link {
     white-space: nowrap;
-    font-size: 12px;
-    padding: 6px 8px;
+    font-size: 13px;
+    min-height: 38px;
+    padding: 8px 12px;
+    scroll-snap-align: start;
   }
 
   .series-detail-section {
@@ -250,7 +258,7 @@
   /* FloatButton sobre el BottomNav. Scopeado por la clase del FAB
    * (no por .series-detail-page) porque ahora se portala a body. */
   .ant-float-btn.series-edit-fab {
-    bottom: calc(var(--bottom-nav-height) + 16px) !important;
+    bottom: calc(var(--bottom-nav-total-height) + 16px) !important;
     right: 16px !important;
   }
 }
