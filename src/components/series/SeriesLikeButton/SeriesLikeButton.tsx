@@ -5,6 +5,7 @@ import { HeartFilled, HeartOutlined } from '@ant-design/icons';
 import { IconToggle } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { recordSeriesActivity } from '@/lib/activity-beacon';
+import { useCommunityAlias } from '@/hooks/useCommunityAlias';
 import './SeriesLikeButton.css';
 
 const LIKES_STORAGE_KEY = 'mundobl.likes';
@@ -47,6 +48,7 @@ interface SeriesLikeButtonProps {
  */
 export function SeriesLikeButton({ seriesId }: SeriesLikeButtonProps) {
   const { t } = useLocale();
+  const { aliasName, optedIn } = useCommunityAlias();
   const liked = useSyncExternalStore(
     subscribe,
     () => getStoredLikes().includes(seriesId),
@@ -69,11 +71,22 @@ export function SeriesLikeButton({ seriesId }: SeriesLikeButtonProps) {
   return (
     <div className="series-like-btn">
       <IconToggle
-        label={liked ? t('verSerie.liked') : t('verSerie.like')}
+        label={
+          liked
+            ? optedIn
+              ? t('verSerie.likedAs', { alias: aliasName })
+              : t('verSerie.liked')
+            : t('verSerie.like')
+        }
         icon={liked ? <HeartFilled /> : <HeartOutlined />}
         pressed={liked}
         onClick={handleClick}
       />
+      {optedIn && liked && (
+        <span className="series-like-btn__hint">
+          {t('verSerie.likedAs', { alias: aliasName })}
+        </span>
+      )}
     </div>
   );
 }

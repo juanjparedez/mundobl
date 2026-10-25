@@ -3185,7 +3185,8 @@ const it = {
     "seasonTitle": "Stagione {seasonNumber}",
     "episodeDefaultTitle": "Episodio {episodeNumber}",
     "like": "Mi piace",
-    "liked": "Ti piace"
+    "liked": "Ti piace",
+    "likedAs": "Mi piace registrato come {alias}"
   },
   "shareButton": {
     "shareError": "Impossibile condividere",
@@ -4102,6 +4103,14 @@ const it = {
     firstWords: "Luna|Stella|Brezza|Pioggia|Nuvola|Onda|Fiore|Fiamma|Ombra|Scintilla|Piuma|Perla|Rosa|Nebbia|Aurora|Marea|Foglia|Neve|Brace|Seta|Gemma|Candela|Melodia|Canzone",
     secondWords: "Settembre|Maggio|Mezzanotte|Luglio|Ottobre|Dicembre|Primavera|Tokyo|Bangkok|Seul|Taipei|Shanghai|Cristallo|Giada|Miele|Lavanda|Cannella|Corallo|Velluto|Rubino|Ciliegio|Bambù|Loto|Sakura",
     template: "{first} di {second}",
+    optInLabel: "Partecipa alla community con il tuo alias pseudonimo",
+    optInHintOn:
+      "Attivo: i tuoi Mi piace e le tue attività sono associati a «{alias}». Zero dati personali, non mostriamo mai il tuo account Google né il tuo IP.",
+    optInHintOff:
+      "Disattivato (predefinito): la tua attività contribuisce solo ai contatori aggregati dei server senza alcun alias.",
+    yourAlias: "Il tuo alias pseudonimo:",
+    visitorBadge: "Browser attuale",
+    accountBadge: "Il tuo account",
   },
   producerReport: {
     title: "Report per i produttori",

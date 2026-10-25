@@ -3183,7 +3183,8 @@ const ja = {
     "seasonTitle": "シーズン {seasonNumber}",
     "episodeDefaultTitle": "エピソード {episodeNumber}",
     "like": "いいね",
-    "liked": "いいね済み"
+    "liked": "いいね済み",
+    "likedAs": "{alias} としていいねしました"
   },
   "shareButton": {
     "shareError": "共有できませんでした",
@@ -4100,6 +4101,14 @@ const ja = {
     firstWords: "月|星|風|雨|雲|波|花|炎|影|火花|羽|真珠|薔薇|霧|暁|潮|葉|雪|灯|絹|宝石|蝋燭|旋律|歌",
     secondWords: "九月|四月|真夜中|夏|秋|冬|春|東京|バンコク|ソウル|台北|上海|水晶|翡翠|蜂蜜|ラベンダー|シナモン|珊瑚|象牙|琥珀|桜桃|竹林|蓮|桜",
     template: "{second}の{first}",
+    optInLabel: "匿名エイリアスでコミュニティに参加する",
+    optInHintOn:
+      "有効：いいねや参加活動が「{alias}」に関連付けられます。個人情報は一切不要で、GoogleアカウントやIPは公開されません。",
+    optInHintOff:
+      "無効（初期設定）：活動はエイリアスなしでサーバー全体の統計カウントにのみ加算されます。",
+    yourAlias: "あなたの匿名エイリアス：",
+    visitorBadge: "現在のブラウザ",
+    accountBadge: "あなたのアカウント",
   },
   producerReport: {
     title: "制作会社向けレポート",

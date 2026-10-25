@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
 import { ActivityOptOutToggle } from '@/components/common/ActivityOptOutToggle/ActivityOptOutToggle';
+import { CommunityAliasOptIn } from '@/components/common/CommunityAliasOptIn/CommunityAliasOptIn';
 import './privacidad.css';
 
 export const metadata: Metadata = {
@@ -166,6 +167,7 @@ export default function PrivacidadPage() {
           <section className="privacidad-actions">
             <h2>Tus controles</h2>
             <ActivityOptOutToggle />
+            <CommunityAliasOptIn />
             <p>Todo accesible desde tu perfil:</p>
             <ul className="privacidad-actions__list">
               <li>
