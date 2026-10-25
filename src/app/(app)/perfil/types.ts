@@ -97,6 +97,19 @@ export interface ProfileData {
     heatmap: string[];
     approvedGlossaryTerms: number;
     glossaryQuizBestScore: number | null;
+    countriesWatched: number;
+    genresWatched: number;
+    activeDays: number;
+    longestStreakEver: number;
+    publishedReviews: number;
+    helpfulVotesReceived: number;
+    featuredReviews: number;
+    communityTopics: number;
+    communityReplies: number;
+    publicLists: number;
+    sharedSeries: number;
+    approvedSuggestions: number;
+    completedByPlatform: Array<{ platform: string; count: number }>;
   };
   recentlyCompleted: Array<{
     seriesId: number;

@@ -111,6 +111,7 @@ model User {
   communityReports        CommunityReport[]
   communityModerationActions CommunityModerationAction[]
   activeDays              UserActiveDay[]
+  seriesShares            SeriesShare[]
 }
 
 // Un dia en que el usuario logueado abrio el sitio. Existe para medir
@@ -125,6 +126,23 @@ model UserActiveDay {
 
   @@id([userId, day])
   @@index([day])
+}
+
+// Primera vez que el usuario compartio una serie (boton Compartir de la ficha
+// o de /ver). Una fila por usuario y serie: alimenta los logros de compartir
+// ("compartiste N series distintas"), asi repetir el boton no suma. Solo se
+// escribe cuando el share se completo (share nativo resuelto, link copiado o
+// red elegida); no guarda destinatarios ni texto.
+model SeriesShare {
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  seriesId  Int
+  series    Series   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  channel   String // 'native' | 'copy' | 'whatsapp' | 'telegram' | 'twitter' | 'facebook'
+  createdAt DateTime @default(now())
+
+  @@id([userId, seriesId])
+  @@index([seriesId])
 }
 
 // Persistencia de layouts del dashboard modular (drag/resize por widget).
@@ -419,6 +437,7 @@ model Series {
   seriesNotes          SeriesNote[]
   trackingEvents       TrackingEvent[]
   activityDaily        SeriesActivityDaily[]
+  shares               SeriesShare[]
 
   @@index([origin, visibility])
   @@index([submittedById, createdAt])

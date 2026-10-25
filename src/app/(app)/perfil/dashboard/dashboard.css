@@ -30,36 +30,50 @@
   color: var(--text-secondary);
 }
 
-.mb-perfil-dashboard__footer {
+/* Pestañas: barra con scroll horizontal en pantallas chicas (antd), sin
+ * margen extra arriba del contenido. */
+.mb-perfil-dashboard__tabs > .ant-tabs-nav {
+  margin-bottom: var(--spacing-md);
+}
+
+.mb-perfil-dashboard__stack {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
-  margin-top: var(--spacing-sm);
-  padding-top: var(--spacing-md);
-  border-top: 1px solid var(--border-color-secondary);
+  gap: var(--spacing-lg);
 }
 
-/* El style-guide muestra el footer Settings como grid de cards horizontales chicas
- * (Apariencia, Sesion, Privacidad, Datos, Suscripciones, Build info).
- * Pasamos a auto-fit con minmax 280px — entran 3-4 en desktop, 2 en
- * tablet, 1 en mobile. Mas denso que el 2-col fijo anterior. */
-.mb-perfil-dashboard__footer-grid {
+.mb-perfil-dashboard__section-title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.mb-perfil-dashboard__hint {
+  margin: var(--spacing-sm) 0 0;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+/* Ajustes: tarjetas en auto-fit (3-4 en desktop, 1 en mobile). */
+.mb-perfil-dashboard__settings-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
   gap: 12px;
+  align-items: start;
 }
 
-.mb-perfil-dashboard__footer-panel {
+.mb-perfil-dashboard__panel {
   background: var(--bg-container);
   border: 1px solid var(--border-color-secondary);
   border-radius: var(--border-radius-lg);
   padding: 14px;
   position: relative;
   isolation: isolate;
-  min-height: 0;
+  min-width: 0;
 }
 
-.mb-perfil-dashboard__footer-panel::before {
+.mb-perfil-dashboard__panel::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -71,20 +85,4 @@
     transparent 48%
   );
   pointer-events: none;
-}
-
-@media (max-width: 900px) {
-  .mb-perfil-dashboard__footer-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  /* FAB de edicion de layout: subirlo arriba del BottomNav para que no
-   * quede tapado en mobile (mismo patron que el FAB de /series). El
-   * className aplica tanto al boton unico (.ant-float-btn) como al
-   * grupo expandido (.ant-float-btn-group). */
-  .mb-perfil-dashboard__fab.ant-float-btn,
-  .mb-perfil-dashboard__fab.ant-float-btn-group {
-    inset-block-end: calc(var(--bottom-nav-height) + 16px) !important;
-    inset-inline-end: 16px !important;
-  }
 }

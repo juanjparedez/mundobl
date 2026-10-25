@@ -89,6 +89,7 @@ const trackingTests = [
   'onboarding',
   'tracking-redesign',
   'airing-alerts',
+  'achievements',
 ];
 // [script, usa --import tsx]
 const routeTests = [
@@ -123,6 +124,7 @@ const appTests = [
   ['test-community-app.mjs', true],
   ['test-series-curation-ui.mjs', false],
   ['test-catalog-preview-ui.mjs', false],
+  ['test-profile-app.mjs', true],
 ];
 
 const node = (script, withTsx) => [

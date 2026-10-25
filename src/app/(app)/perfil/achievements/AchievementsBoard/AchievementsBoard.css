@@ -1,0 +1,64 @@
+.mb-achievements-board {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.mb-achievements-board__summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.mb-achievements-board__summary-text {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.mb-achievements-board__patches {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: var(--spacing-sm);
+}
+
+.mb-achievements-board__filter {
+  align-self: flex-start;
+}
+
+.mb-achievements-board__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.mb-achievements-board__group-title {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.mb-achievements-board__grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: var(--spacing-xs);
+}
+
+/* En el tablero hay lugar: textos un poco mas grandes que en el widget. */
+.mb-achievements-board__grid .overview-achievements__name {
+  font-size: var(--font-size-base);
+}
+
+.mb-achievements-board__grid .overview-achievements__desc {
+  font-size: var(--font-size-sm);
+}

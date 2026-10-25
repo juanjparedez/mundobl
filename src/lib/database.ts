@@ -27,6 +27,7 @@ import {
   type InsightSeries,
 } from './tracking-insights';
 import { groupIntoChapters } from './episode-chapters';
+import { PATCH_PLATFORMS } from './platform-patches';
 import {
   mergeLinkedAportes,
   readWatchingPreferences,
@@ -3619,4 +3620,143 @@ async function getPopularSeries(
         ]
       : [];
   });
+}
+
+// ============================================
+// LOGROS DEL PERFIL
+// ============================================
+
+export const SHARE_CHANNELS = [
+  'native',
+  'copy',
+  'whatsapp',
+  'telegram',
+  'twitter',
+  'facebook',
+] as const;
+export type ShareChannel = (typeof SHARE_CHANNELS)[number];
+
+/** Anota la primera vez que el usuario compartio una serie. Repetir el boton
+ *  no suma: la fila es unica por usuario y serie. Devuelve false si la serie
+ *  no existe. */
+export async function recordSeriesShare(
+  userId: string,
+  seriesId: number,
+  channel: ShareChannel
+): Promise<boolean> {
+  const exists = await prisma.series.findUnique({
+    where: { id: seriesId },
+    select: { id: true },
+  });
+  if (!exists) return false;
+  await prisma.seriesShare.createMany({
+    data: [{ userId, seriesId, channel }],
+    skipDuplicates: true,
+  });
+  return true;
+}
+
+export interface AchievementCounts {
+  activeDays: number;
+  /** Racha mas larga de dias seguidos marcando capitulos, de toda la vida
+   *  (el longestStreak del perfil mira solo las ultimas 12 semanas, y un
+   *  logro no puede perderse por el paso del tiempo). */
+  longestStreakEver: number;
+  publishedReviews: number;
+  helpfulVotesReceived: number;
+  featuredReviews: number;
+  communityTopics: number;
+  communityReplies: number;
+  publicLists: number;
+  sharedSeries: number;
+  approvedSuggestions: number;
+  completedByPlatform: Array<{ platform: string; count: number }>;
+}
+
+/** Contadores que solo usan los logros (el resto sale de las estadisticas del
+ *  perfil). Cuenta solo lo que otros pueden ver o lo que se aprobo: borradores,
+ *  reseñas ocultas y contenido moderado no suman. */
+export async function getAchievementCounts(
+  userId: string
+): Promise<AchievementCounts> {
+  const [
+    activeDays,
+    reviews,
+    featuredReviews,
+    communityTopics,
+    communityReplies,
+    publicLists,
+    sharedSeries,
+    approvedSuggestions,
+    platformRows,
+    streakRows,
+  ] = await Promise.all([
+    prisma.userActiveDay.count({ where: { userId } }),
+    prisma.review.aggregate({
+      where: { userId, status: 'PUBLISHED' },
+      _count: { _all: true },
+      _sum: { helpfulCount: true },
+    }),
+    prisma.review.count({
+      where: { userId, status: 'PUBLISHED', isFeatured: true },
+    }),
+    prisma.communityTopic.count({
+      where: { userId, moderationHidden: false },
+    }),
+    prisma.communityReply.count({
+      where: { userId, moderationHidden: false },
+    }),
+    prisma.recommendationList.count({
+      where: {
+        userId,
+        visibility: 'PUBLIC',
+        moderationHidden: false,
+        items: { some: {} },
+      },
+    }),
+    prisma.seriesShare.count({ where: { userId } }),
+    prisma.seriesSuggestion.count({ where: { userId, status: 'APPROVED' } }),
+    prisma.$queryRaw<Array<{ platform: string; count: bigint }>>`
+      SELECT wl.platform, COUNT(DISTINCT vs."seriesId") AS count
+      FROM "ViewStatus" vs
+      JOIN "WatchLink" wl ON wl."seriesId" = vs."seriesId"
+      WHERE vs."userId" = ${userId}
+        AND vs.status = 'VISTA'
+        AND wl.official = true
+        AND wl.platform = ANY(${PATCH_PLATFORMS})
+      GROUP BY wl.platform
+    `,
+    prisma.$queryRaw<Array<{ longest: bigint | null }>>`
+      WITH days AS (
+        SELECT DISTINCT DATE(vs."watchedDate") AS day
+        FROM "ViewStatus" vs
+        WHERE vs."userId" = ${userId}
+          AND vs.status = 'VISTA'
+          AND vs."episodeId" IS NOT NULL
+          AND vs."watchedDate" <= NOW()
+      ),
+      runs AS (
+        SELECT day - (ROW_NUMBER() OVER (ORDER BY day))::int AS run
+        FROM days
+      )
+      SELECT MAX(length) AS longest
+      FROM (SELECT COUNT(*) AS length FROM runs GROUP BY run) AS lengths
+    `,
+  ]);
+  return {
+    activeDays,
+    longestStreakEver: Number(streakRows[0]?.longest ?? 0),
+    publishedReviews: reviews._count._all,
+    helpfulVotesReceived: reviews._sum.helpfulCount ?? 0,
+    featuredReviews,
+    communityTopics,
+    communityReplies,
+    publicLists,
+    sharedSeries,
+    approvedSuggestions,
+    completedByPlatform: platformRows.map((row) => ({
+      platform: row.platform,
+      count: Number(row.count),
+    })),
+  };
 }

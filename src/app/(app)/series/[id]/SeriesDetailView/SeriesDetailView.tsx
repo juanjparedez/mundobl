@@ -259,6 +259,7 @@ export async function SeriesDetailView({
                   aria-label="Acciones rápidas"
                 >
                   <SeriesShareButton
+                    seriesId={serie.id}
                     title={serie.title}
                     path={getSeriesUrl(serie.id, serie.title)}
                   />

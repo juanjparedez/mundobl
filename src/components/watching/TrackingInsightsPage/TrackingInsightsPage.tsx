@@ -17,7 +17,13 @@ import {
 } from '@/lib/insight-distributions';
 import './TrackingInsightsPage.css';
 
-export function TrackingInsightsPage() {
+export function TrackingInsightsPage({
+  embedded = false,
+}: {
+  /** Dentro de la pestaña Estadisticas del perfil: sin navegacion propia,
+   *  sin padding de pagina y con h2 en vez de h1. */
+  embedded?: boolean;
+} = {}) {
   const { t, locale } = useLocale();
   const { data: session, status } = useSession();
   const [days, setDays] = useState<InsightsPeriod>(30);
@@ -100,13 +106,21 @@ export function TrackingInsightsPage() {
     return category.name;
   };
   return (
-    <div className="mb-tracking-insights">
-      <nav className="mb-tracking-insights__nav">
-        <Link href="/watching">{t('trackingInsights.library')}</Link>
-        <Link href="/perfil">{t('trackingInsights.profile')}</Link>
-      </nav>
+    <div
+      className={`mb-tracking-insights${embedded ? ' mb-tracking-insights--embedded' : ''}`}
+    >
+      {!embedded && (
+        <nav className="mb-tracking-insights__nav">
+          <Link href="/watching">{t('trackingInsights.library')}</Link>
+          <Link href="/perfil">{t('trackingInsights.profile')}</Link>
+        </nav>
+      )}
       <header>
-        <h1>{t('trackingInsights.title')}</h1>
+        {embedded ? (
+          <h2>{t('trackingInsights.title')}</h2>
+        ) : (
+          <h1>{t('trackingInsights.title')}</h1>
+        )}
         <p>{t('trackingInsights.scope')}</p>
       </header>
       <label className="mb-tracking-insights__period">

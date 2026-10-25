@@ -77,7 +77,7 @@ export function MonthlyRecap({ labels }: MonthlyRecapProps) {
           </Link>
         </p>
       )}
-      <Link href="/perfil/estadisticas" className="monthly-recap__link">
+      <Link href="/perfil?tab=estadisticas" className="monthly-recap__link">
         {labels.link}
       </Link>
     </PanelCard>

@@ -653,6 +653,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
             </Link>
           )}
           <SeriesShareButton
+            seriesId={series.id}
             title={series.title}
             path={getVerUrl(series.id, series.title)}
           />

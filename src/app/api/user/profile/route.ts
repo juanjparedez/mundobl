@@ -1,6 +1,6 @@
 import { completedInCurrentYear } from '@/lib/tracking-statistics';
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/database';
+import { getAchievementCounts, prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 import { findNextEpisode } from '@/lib/episode-progress';
 import {
@@ -92,6 +92,7 @@ export async function GET(request: NextRequest) {
       reviewsCount,
       recentReviews,
       approvedGlossaryTermsCount,
+      achievementCounts,
     ] = await Promise.all([
       // Basic user info
       prisma.user.findUnique({
@@ -417,6 +418,10 @@ export async function GET(request: NextRequest) {
       prisma.glossarySuggestion.count({
         where: { userId, status: 'APPROVED' },
       }),
+
+      // Resto de contadores de logros (reseñas publicadas, comunidad,
+      // compartidos, aportes, parches de plataforma).
+      getAchievementCounts(userId),
     ]);
 
     if (!user) {
@@ -570,6 +575,10 @@ export async function GET(request: NextRequest) {
         heatmap: heatmapDates,
         approvedGlossaryTerms: approvedGlossaryTermsCount,
         glossaryQuizBestScore: user?.glossaryQuizBestScore ?? null,
+        // Antes del slice(topN): los logros cuentan todos los paises/generos.
+        countriesWatched: topCountriesRaw.length,
+        genresWatched: topGenresRaw.length,
+        ...achievementCounts,
       },
       recentlyCompleted: recentlyCompleted.map((r) => ({
         seriesId: r.seriesId,

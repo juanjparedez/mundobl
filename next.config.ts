@@ -158,8 +158,8 @@ const nextConfig: NextConfig = {
   },
   // Redirects permanentes 301: rutas absorbidas por consolidaciones del
   // dashboard. /admin/dashboard y /perfil/dashboard ambas apuntan ahora
-  // a /perfil que renderea el DashboardClient con layouts fijos por rol
-  // y customizacion via CustomizeDrawer.
+  // a /perfil, que ahora va en pestañas. /perfil/estadisticas paso a ser la
+  // pestaña Estadisticas (no permanente: el destino depende de ?tab=).
   async redirects() {
     return [
       {
@@ -171,6 +171,11 @@ const nextConfig: NextConfig = {
         source: '/perfil/dashboard',
         destination: '/perfil',
         permanent: true,
+      },
+      {
+        source: '/perfil/estadisticas',
+        destination: '/perfil?tab=estadisticas',
+        permanent: false,
       },
     ];
   },

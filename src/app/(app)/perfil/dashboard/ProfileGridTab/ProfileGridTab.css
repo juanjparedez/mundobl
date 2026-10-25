@@ -1,0 +1,9 @@
+/* FAB de edicion de layout: arriba del BottomNav en mobile para que no
+ * quede tapado. Aplica al boton unico y al grupo expandido. */
+@media (max-width: 900px) {
+  .mb-profile-grid-tab__fab.ant-float-btn,
+  .mb-profile-grid-tab__fab.ant-float-btn-group {
+    inset-block-end: calc(var(--bottom-nav-height) + 16px) !important;
+    inset-inline-end: 16px !important;
+  }
+}

@@ -2,6 +2,12 @@
 
 Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-stack para gestionar, calificar y hacer seguimiento de series, peliculas, cortos y especiales.
 
+## Perfil en pestañas y logros ampliados (2026-10-25)
+
+- `/perfil` va en pestañas (`?tab=`): Resumen, Estadísticas (incluye lo que era `/perfil/estadisticas`, que ahora redirige), Logros, Actividad, Ajustes y Admin (solo staff). Cada pestaña con grilla (`ProfileGridTab`) conserva mover/agrandar/quitar/sumar paneles con su propio layout `profile-<rol>-tab-<tab>-v1`. Se quitaron el selector Básica/Avanzada y el CustomizeDrawer; los layouts viejos quedan sin uso.
+- Logros: definición única en `src/lib/achievements.ts` (48) + parches de plataforma en `src/lib/platform-patches.ts` (6 plataformas oficiales × bronce/plata/oro por series terminadas con `WatchLink.official`). Arte propio, sin logos. Solo cuentan datos registrados: reseñas publicadas, votos "útil" recibidos, comunidad no moderada, listas públicas con ítems, sugerencias aprobadas, `UserActiveDay` y racha histórica.
+- Compartir: `SeriesShare` (una fila por usuario y serie, migración `20261025020000_series_shares`), escrita por `POST /api/user/shares` cuando el share se completa. Cuenta desde el deploy. Pruebas: `test-achievements.ts` y `test-profile-app.mjs`.
+
 ## Portada integral, probador de temas en vivo y página de inicio opt-in (2026-10-24)
 
 - `src/lib/start-page-preference.ts` y `LoggedInHomeRedirect`: abrir `/` estando logueado ya no cierra ni redirige automáticamente la portada salvo que el usuario elija otra página de inicio (`mb-start-page`: `landing` por defecto, `watching`, `catalogo`, `ver` o `estrenos`) desde Ajustes (`SettingsPanel`) o desde el selector inline en el propio Hero de la portada. `getUserSummary()` se sigue invocando en segundo plano para registrar `UserActiveDay`. El logo de MundoBL en `Sidebar` y el menú de usuario en `TopBar` enlazan a `/?stay=1`.
