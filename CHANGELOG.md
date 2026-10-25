@@ -8,6 +8,24 @@ Todas las versiones notables del proyecto se documentan aqui.
 > (`ChangelogItem`, `/admin/changelog`) quedo como fallback solo si este archivo
 > esta vacio.
 
+## 2026-10-25 — Seguimiento sin cuenta, avisos de estreno, perfil en pestañas y 48 logros
+
+### Features
+
+- **Mi seguimiento, con o sin cuenta**: un solo panel para todo lo que estás viendo. Sin cuenta queda guardado en tu navegador y pasa solo a tu cuenta cuando entrás, sin pisar nada. Sumamos «Quiero verla» y «En pausa», y «Seguir viendo» en la portada.
+- **Avisame cuando salga el próximo capítulo**: en las series al aire, la ficha y `/ver` ofrecen un aviso el día de estreno. Si querés, también por mail.
+- **Resumen semanal por mail**: los lunes, quien lo activó recibe sus series al aire con sus días de estreno y lo que tiene en «Viendo». Si no hay nada, no llega nada.
+- **Valorá y reseñá al terminar**: al marcar una serie como vista, la ficha te ofrece puntaje rápido del 1 al 10, favorito y reseña. En `/ver` ahora también podés valorar, reseñar y comentar cada capítulo.
+- **Más estadísticas públicas**: `/estadisticas` suma las series mejor valoradas y las reseñas recientes.
+- **Portada renovada**: accesos directos a ver, catálogo y seguimiento sin pedir login, un mapa de lo que podés hacer en MundoBL y un probador en vivo de temas, colores e idiomas. Desde Ajustes elegís con qué página arranca la app.
+- **Perfil en pestañas**: Resumen, Estadísticas, Logros, Actividad y Ajustes, cada una con sus paneles editables.
+- **48 logros y parches de plataforma**: logros por reseñas, votos útiles, comunidad, listas, sugerencias aprobadas, días activos y compartir, más parches de bronce, plata y oro por terminar series en YouTube, Viki, iQIYI, GagaOOLala, WeTV y Netflix.
+
+### Fixes
+
+- **Ranking con alias**: el ranking mensual muestra alias generados en vez de «Miembro anónimo N».
+- **Privacidad de la actividad**: los contadores por serie son anónimos (sin usuario, IP ni cookie), respetan GPC/DNT y se pueden desactivar desde `/privacidad`.
+
 ## 2026-10-24 — Más títulos para ver y reproducción desde Vimeo
 
 ### Features
