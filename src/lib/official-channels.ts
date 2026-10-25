@@ -326,6 +326,24 @@ export const OFFICIAL_CHANNELS: OfficialChannel[] = [
     channelId: 'UCcLEMsxL1UYqz_CI8Y6Wrvg',
     country: '🇨🇳',
   },
+  {
+    name: 'Ticket2Me',
+    handle: 'ticket2me',
+    channelId: 'UCEUc7aPMQLNvvVqRvW3Pbxg',
+    country: '🇵🇭',
+  },
+  {
+    name: 'RAP Production',
+    handle: 'rapproduction2020',
+    channelId: 'UCW-3ixU-hvGhSyR_ZPKckCg',
+    country: '🇵🇭',
+  },
+  {
+    name: 'Regal Entertainment',
+    handle: 'regalentertainmentinc',
+    channelId: 'UC69I8egELqWywoX5wrh2KxQ',
+    country: '🇵🇭',
+  },
 ];
 
 /** URL canonica del canal, para links y para el barrido. */

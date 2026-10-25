@@ -3154,6 +3154,9 @@ export type TranslationShape = {
     availabilityBlockedHere: string;
     availabilityBlockedSomewhere: string;
     availabilityPlatformOnly: string;
+    availabilityAgeRestricted: string;
+    availabilityAgeRestrictedSignIn: string;
+    signInToWatch: string;
     availabilityRemoved: string;
     openOnYoutube: string;
     episodeSynopsisTitle: string;
@@ -7547,7 +7550,12 @@ const es: TranslationShape = {
     availabilityBlockedSomewhere:
       'Este video no está disponible en algunos países.',
     availabilityPlatformOnly:
-      'No se puede reproducir aquí. Consultá su disponibilidad en {platform}.',
+      'No se puede reproducir acá. Miralo en {platform} y seguí tu avance desde MundoBL.',
+    availabilityAgeRestricted:
+      '{platform} restringe este capítulo por edad: se ve allá con una cuenta mayor de 18. Tu avance lo seguís acá.',
+    availabilityAgeRestrictedSignIn:
+      '{platform} restringe este capítulo por edad. Iniciá sesión para ver el enlace; tu avance lo seguís acá.',
+    signInToWatch: 'Iniciar sesión',
     availabilityRemoved: 'La productora sacó este video de {platform}.',
     openOnYoutube: 'Abrir en YouTube',
     episodeSynopsisTitle: 'Sinopsis del episodio',
@@ -11990,7 +11998,12 @@ const en: TranslationShape = {
     availabilityBlockedSomewhere:
       "This video isn't available in some countries.",
     availabilityPlatformOnly:
-      'This video cannot play here. Check availability on {platform}.',
+      "This video can't play here. Watch it on {platform} and keep tracking your progress on MundoBL.",
+    availabilityAgeRestricted:
+      '{platform} age-restricts this episode: watch it there with an 18+ account. Your progress stays here.',
+    availabilityAgeRestrictedSignIn:
+      '{platform} age-restricts this episode. Sign in to see the link; your progress stays here.',
+    signInToWatch: 'Sign in',
     availabilityRemoved: 'The producer took this video down from {platform}.',
     openOnYoutube: 'Open on YouTube',
     episodeSynopsisTitle: 'Episode synopsis',

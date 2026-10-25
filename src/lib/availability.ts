@@ -6,6 +6,8 @@ export type Availability =
   | 'blocked_here'
   | 'blocked_somewhere'
   | 'platform_only'
+  // YouTube no lo reproduce fuera de su sitio: cuenta mayor de 18 allá.
+  | 'age_restricted'
   | 'removed';
 
 /**
@@ -26,6 +28,7 @@ export function availabilityOf(
     case 'REMOVED':
       return 'removed';
     case 'AGE_RESTRICTED':
+      return 'age_restricted';
     case 'NOT_EMBEDDABLE':
       return 'platform_only';
     case 'GEO_BLOCKED':

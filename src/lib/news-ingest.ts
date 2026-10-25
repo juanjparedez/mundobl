@@ -33,6 +33,8 @@ const EXCLUDED_CHANNELS = new Set([
   'gtv-drama',
   'youkuenglish',
   'huacetvenglish',
+  'ticket2me',
+  'regalentertainmentinc',
 ]);
 // El avance de una serie, no el del proximo capitulo ("EP.3") ni el de una
 // cancion ("Ost.").

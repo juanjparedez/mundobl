@@ -125,6 +125,7 @@ const appTests = [
   ['test-series-curation-ui.mjs', false],
   ['test-catalog-preview-ui.mjs', false],
   ['test-profile-app.mjs', true],
+  ['test-ver-availability-app.mjs', true],
 ];
 
 const node = (script, withTsx) => [

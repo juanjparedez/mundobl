@@ -83,13 +83,18 @@ async function main() {
             seasons: {
               create: {
                 seasonNumber: 1,
-                episodes: { create: { episodeNumber: 1 } },
+                // Chapter 2 is not published yet (a series still airing).
+                episodes: {
+                  create: [{ episodeNumber: 1 }, { episodeNumber: 2 }],
+                },
               },
             },
           },
           include: { seasons: { include: { episodes: true } } },
         });
-        const episodeId = existing.seasons[0].episodes[0].id;
+        const episodeId = existing.seasons[0].episodes.find(
+          (e) => e.episodeNumber === 1
+        )!.id;
         const watched = await tx.viewStatus.create({
           data: { episodeId, status: 'VISTA' },
         });
@@ -184,6 +189,16 @@ async function main() {
         assert.equal(chapters.chapters.length, 1);
         assert.equal(chapters.chapters[0].episodes.length, 2);
         assert.equal(chapters.extras.length, 0);
+        // The unpublished chapter stays a chapter, not an extra.
+        const airing = groupIntoChapters(
+          (
+            await tx.episode.findMany({
+              where: { season: { seriesId: existing.id } },
+            })
+          ).map((e) => ({ ...e, seasonNumber: 1 }))
+        );
+        assert.equal(airing.chapters.length, 2);
+        assert.equal(airing.extras.length, 0);
         const again = await importWatchContentBatch(
           tx,
           batch,
@@ -241,6 +256,149 @@ async function main() {
           () => validateWatchContentBatch(batch, channels, probes, new Map()),
           /playable/
         );
+        // Partes sobre capitulos cargados a mano: la fila de cada capitulo
+        // queda como parte 1 y lo visto se copia a la otra parte.
+        const manual = await tx.series.create({
+          data: {
+            title: `${title} manual`,
+            type: 'serie',
+            countryId: country.id,
+            seasons: {
+              create: {
+                seasonNumber: 1,
+                episodes: {
+                  create: [1, 2, 3].map((episodeNumber) => ({ episodeNumber })),
+                },
+              },
+            },
+          },
+          include: { seasons: { include: { episodes: true } } },
+        });
+        const [row1, row2, row3] = [...manual.seasons[0].episodes].sort(
+          (a, b) => a.episodeNumber - b.episodeNumber
+        );
+        await tx.viewStatus.create({
+          data: { episodeId: row2.id, status: 'VISTA' },
+        });
+        const partIds = [
+          'testpart001',
+          'testpart002',
+          'testpart003',
+          'testpart004',
+        ];
+        const ageId = partIds[3];
+        const partChannels = new Map(
+          partIds.map((videoId) => [
+            videoId,
+            { ...channels.get(ids[0])!, videoId },
+          ])
+        );
+        const partProbes = new Map<string, PlaybackProbe>(
+          partIds.map((videoId) => [
+            videoId,
+            {
+              ...probes.get(ids[0])!,
+              videoId,
+              status: videoId === ageId ? 'AGE_RESTRICTED' : 'OK',
+            },
+          ])
+        );
+        const remapBatch: WatchContentBatch = {
+          id: 'test-watch-batch-remap',
+          verifiedAt: '2026-10-25',
+          series: [
+            {
+              ...entry,
+              title: manual.title,
+              targetSeriesId: manual.id,
+              expectedTitle: manual.title,
+              episodes: partIds.map((videoId, i) => ({
+                ...entry.episodes[0],
+                videoId,
+                chapter: Math.floor(i / 2) + 1,
+                part: (i % 2) + 1,
+                parts: 2,
+                ...(videoId === ageId
+                  ? { playback: 'AGE_RESTRICTED' as const }
+                  : {}),
+              })),
+            },
+          ],
+        };
+        // Age-restricted only when declared, and never members-only.
+        const undeclared = structuredClone(remapBatch);
+        delete undeclared.series[0].episodes[3].playback;
+        assert.throws(
+          () =>
+            validateWatchContentBatch(
+              undeclared,
+              partChannels,
+              partProbes,
+              partProbes
+            ),
+          /playable/
+        );
+        const members = new Map(partProbes);
+        members.set(ageId, { ...partProbes.get(ageId)!, status: 'REMOVED' });
+        assert.throws(
+          () =>
+            validateWatchContentBatch(
+              remapBatch,
+              partChannels,
+              partProbes,
+              members
+            ),
+          /playable/
+        );
+        await importWatchContentBatch(
+          tx,
+          remapBatch,
+          partChannels,
+          partProbes,
+          partProbes,
+          true
+        );
+        const remapped = await tx.episode.findMany({
+          where: { seasonId: manual.seasons[0].id },
+          orderBy: { episodeNumber: 'asc' },
+        });
+        assert.deepEqual(
+          remapped.map((e) => e.episodeNumber),
+          [1, 2, 3, 4, 5]
+        );
+        assert.deepEqual(
+          [remapped[0].id, remapped[2].id, remapped[4].id],
+          [row1.id, row2.id, row3.id]
+        );
+        assert.equal(remapped[4].embedVideoId, null);
+        assert.equal(remapped[3].playback, 'AGE_RESTRICTED');
+        const remapChapters = groupIntoChapters(
+          remapped.map((e) => ({ ...e, seasonNumber: 1 }))
+        );
+        assert.deepEqual(
+          remapChapters.chapters.map((c) => c.episodes.length),
+          [2, 2, 1]
+        );
+        assert.equal(remapChapters.extras.length, 0);
+        assert.equal(
+          await tx.viewStatus.count({
+            where: { episodeId: { in: [row2.id, remapped[3].id] } },
+          }),
+          2
+        );
+        assert.equal(
+          await tx.viewStatus.count({ where: { episodeId: remapped[1].id } }),
+          0
+        );
+        const remapAgain = await importWatchContentBatch(
+          tx,
+          remapBatch,
+          partChannels,
+          partProbes,
+          partProbes,
+          true
+        );
+        assert.equal(remapAgain[0].addedVideos, 0);
         await tx.episode.update({
           where: { id: episodeId },
           data: {
@@ -262,7 +420,7 @@ async function main() {
   }
   assert.equal(await prisma.series.count(), before);
   console.log(
-    'Watch batch: manifests/--batch, dry-run, exact identity, chapters/parts, tracking IDs, revision, idempotency, blocked/short/foreign rejection and rollback OK.'
+    'Watch batch: manifests/--batch, declared age-restricted, parts onto manual chapters, dry-run, exact identity, chapters/parts, tracking IDs, revision, idempotency, blocked/short/foreign rejection and rollback OK.'
   );
 }
 main()

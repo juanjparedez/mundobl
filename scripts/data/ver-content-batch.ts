@@ -2,7 +2,25 @@ import initial from './ver-content-2026-10-24.json';
 import expanded from './ver-content-youtube-expanded-2026-10-24.json';
 import vimeo from './ver-content-vimeo-2026-10-24.json';
 import more from './ver-content-2026-10-25.json';
-import type { WatchContentBatch } from '../../src/lib/watch-content-batch';
+import moreB from './ver-content-2026-10-25-b.json';
+import type {
+  WatchBatchPlayback,
+  WatchContentBatch,
+} from '../../src/lib/watch-content-batch';
+
+const PLAYBACK: readonly WatchBatchPlayback[] = [
+  'AGE_RESTRICTED',
+  'NOT_EMBEDDABLE',
+  'GEO_BLOCKED',
+];
+
+/** The JSON stores playback as text: only the declared states are accepted. */
+function playbackOf(value: unknown): WatchBatchPlayback | undefined {
+  if (value === undefined) return undefined;
+  const found = PLAYBACK.find((p) => p === value);
+  if (!found) throw new Error(`Unknown playback: ${String(value)}`);
+  return found;
+}
 
 /** Each release verifies and applies only its own videos. */
 export const VER_BATCHES = {
@@ -28,6 +46,20 @@ export const VER_BATCHES = {
       id: more.id,
       verifiedAt: more.verifiedAt,
       series: more.series,
+    }),
+  },
+  '2026-10-25-b': {
+    videos: 455,
+    build: (): WatchContentBatch => ({
+      id: moreB.id,
+      verifiedAt: moreB.verifiedAt,
+      series: moreB.series.map((series) => ({
+        ...series,
+        episodes: series.episodes.map((ep) => ({
+          ...ep,
+          playback: playbackOf('playback' in ep ? ep.playback : undefined),
+        })),
+      })),
     }),
   },
 } as const;
