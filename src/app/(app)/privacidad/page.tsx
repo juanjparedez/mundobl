@@ -57,14 +57,15 @@ export default function PrivacidadPage() {
                 tenías.
               </li>
               <li>
-                <strong>Actividad anónima por serie</strong>: cuando ves un
-                capítulo, lo marcás o agregás una serie a tu lista, sumamos uno
-                a un contador por serie y por día (con o sin cuenta, y el país
-                que informa Cloudflare). No se guarda quién fue: ni usuario, ni
-                IP, ni cookie. Sirve para mostrar “N capítulos vistos esta
-                semana” y para pedirles series a las plataformas con números
-                reales. Podés apagarlo abajo; si tu navegador manda Global
-                Privacy Control o Do Not Track, ya no contamos nada.
+                <strong>Actividad anónima y dimensionamiento operativo:</strong>{' '}
+                cuando navegás por las secciones del sitio, abrís una serie,
+                iniciás un capítulo, le das Me gusta o tocás el canal oficial,
+                sumamos uno a contadores diarios agregados (con o sin cuenta, y
+                el país del edge). No se guarda quién fue: ni usuario, ni IP, ni
+                cookie. Sirve para entender el dimensionamiento técnico de la
+                infraestructura, qué secciones se usan y hablar con productoras
+                con números reales. No vendemos datos ni hacemos rastreo
+                publicitario. Podés apagarlo abajo cuando quieras.
               </li>
               <li>
                 <strong>Intentos de ataque</strong>: si una request busca

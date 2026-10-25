@@ -8,6 +8,8 @@ import {
 } from '@/hooks/useYouTubeWatchTime';
 import { useVimeoWatchTime } from '@/hooks/useVimeoWatchTime';
 import { LinkOutlined } from '@ant-design/icons';
+import { outboundRel, withOutboundUtm } from '@/lib/outbound-links';
+import { recordSeriesActivity } from '@/lib/activity-beacon';
 import './EmbedPlayer.css';
 
 interface EmbedPlayerProps {
@@ -17,7 +19,9 @@ interface EmbedPlayerProps {
   title: string;
   openLabel: string;
   episodeId?: number;
+  seriesId?: number;
   autoplay?: boolean;
+  official?: boolean;
   onWatchProgress?: (event: YouTubeWatchEvent) => void;
 }
 
@@ -63,7 +67,9 @@ export function EmbedPlayer({
   title,
   openLabel,
   episodeId,
+  seriesId,
   autoplay = false,
+  official = true,
   onWatchProgress,
 }: EmbedPlayerProps) {
   useFullscreenLandscapeLock();
@@ -111,9 +117,16 @@ export function EmbedPlayer({
         {(platform === 'Vimeo' || platform === 'Dailymotion') && (
           <div className="embed-player__vimeo-tip">
             <a
-              href={url}
+              href={withOutboundUtm(url, official, {
+                medium: 'embed_player',
+                campaign: 'vimeo_tip',
+              })}
               target="_blank"
-              rel="noopener noreferrer"
+              rel={outboundRel(official)}
+              onClick={() => {
+                if (seriesId)
+                  recordSeriesActivity(seriesId, 'outbound_click', 'vimeo_tip');
+              }}
               className="embed-player__vimeo-btn"
             >
               {openLabel} <LinkOutlined />
@@ -126,9 +139,16 @@ export function EmbedPlayer({
 
   return (
     <a
-      href={url}
+      href={withOutboundUtm(url, official, {
+        medium: 'embed_player',
+        campaign: 'link_card',
+      })}
       target="_blank"
-      rel="noopener noreferrer nofollow"
+      rel={outboundRel(official)}
+      onClick={() => {
+        if (seriesId)
+          recordSeriesActivity(seriesId, 'outbound_click', 'link_card');
+      }}
       className="embed-player__link-card"
     >
       <span className="embed-player__link-card-platform">{platform}</span>

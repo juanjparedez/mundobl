@@ -3174,7 +3174,9 @@ const zhTW = {
     "aboutTheSeriesTitle": "關於劇集",
     "episodesTitle": "劇集",
     "seasonTitle": "第 {seasonNumber} 季",
-    "episodeDefaultTitle": "第 {episodeNumber} 集"
+    "episodeDefaultTitle": "第 {episodeNumber} 集",
+    "like": "讚",
+    "liked": "已說讚"
   },
   "shareButton": {
     "shareError": "無法分享",
@@ -4124,6 +4126,18 @@ const zhTW = {
     unknownCountry: "未知",
     platform: "平台",
     clicks: "點擊",
+    verFunnelTitle: "/ver 播放轉換漏斗",
+    verFunnelHint:
+      "第一方營運指標：造訪 /ver、開始播放、完成觀看（80%）、按讚以及導向官方頻道的點擊數。",
+    openVer: "造訪 /ver",
+    playStarts: "開始播放",
+    likes: "MundoBL 按讚",
+    outboundClicks: "導向頻道點擊",
+    trafficSectionTitle: "各板塊流量（容量評估）",
+    trafficSection: "板塊",
+    trafficViews: "訪問量",
+    copyVerFunnel:
+      "MundoBL /ver: {openVer} 次訪問，{playStarts} 次開始播放，{views} 次完成觀看，{likes} 次按讚，{outboundClicks} 次導向官方頻道。",
   },
   "airingAlert": {
     "schedule": "播出：{days}",

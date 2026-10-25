@@ -3184,7 +3184,9 @@ const fr = {
     "aboutTheSeriesTitle": "À propos de la série",
     "episodesTitle": "Épisodes",
     "seasonTitle": "Saison {seasonNumber}",
-    "episodeDefaultTitle": "Épisode {episodeNumber}"
+    "episodeDefaultTitle": "Épisode {episodeNumber}",
+    "like": "J'aime",
+    "liked": "Aimé"
   },
   "shareButton": {
     "shareError": "Impossible de partager",
@@ -4134,6 +4136,18 @@ const fr = {
     unknownCountry: "Inconnu",
     platform: "Plateforme",
     clicks: "Clics",
+    verFunnelTitle: "Entonnoir de lecture dans /ver",
+    verFunnelHint:
+      "Mesure opérationnelle de première partie : entrées dans /ver, débuts de lecture, vues complètes (80%), mentions J'aime et clics vers les chaînes officielles.",
+    openVer: "Entrées dans /ver",
+    playStarts: "Débuts de lecture",
+    likes: "J'aime sur MundoBL",
+    outboundClicks: "Clics vers les chaînes",
+    trafficSectionTitle: "Trafic par section (dimensionnement)",
+    trafficSection: "Section",
+    trafficViews: "Visites",
+    copyVerFunnel:
+      "MundoBL /ver : {openVer} entrées, {playStarts} débuts de lecture, {views} épisodes terminés, {likes} J'aime et {outboundClicks} clics dérivés vers la chaîne officielle.",
   },
   "airingAlert": {
     "schedule": "Diffusion : {days}",

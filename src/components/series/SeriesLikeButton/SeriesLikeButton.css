@@ -1,0 +1,9 @@
+.series-like-btn {
+  display: inline-flex;
+  align-items: center;
+}
+
+.series-like-btn .mb-icon-toggle--on {
+  color: var(--error-color);
+  border-color: var(--error-color);
+}

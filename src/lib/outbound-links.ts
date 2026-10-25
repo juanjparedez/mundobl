@@ -21,20 +21,29 @@ const UTM_SOURCE = 'mundobl';
 const UTM_MEDIUM = 'referral';
 const UTM_CAMPAIGN = 'where_to_watch';
 
+export interface OutboundUtmOptions {
+  medium?: string;
+  campaign?: string;
+}
+
 /**
  * Agrega UTM de MundoBL a un link oficial. No pisa UTMs existentes, no toca
  * links no oficiales ni URLs que no sean https; ante cualquier error devuelve
  * la entrada intacta: medir nunca puede romper el link.
  */
-export function withOutboundUtm(url: string, official: boolean): string {
+export function withOutboundUtm(
+  url: string,
+  official: boolean,
+  options?: OutboundUtmOptions
+): string {
   if (!official) return url;
   try {
     const parsed = new URL(url);
     if (parsed.protocol !== 'https:') return url;
     if (parsed.searchParams.has('utm_source')) return url;
     parsed.searchParams.set('utm_source', UTM_SOURCE);
-    parsed.searchParams.set('utm_medium', UTM_MEDIUM);
-    parsed.searchParams.set('utm_campaign', UTM_CAMPAIGN);
+    parsed.searchParams.set('utm_medium', options?.medium ?? UTM_MEDIUM);
+    parsed.searchParams.set('utm_campaign', options?.campaign ?? UTM_CAMPAIGN);
     return parsed.toString();
   } catch {
     return url;

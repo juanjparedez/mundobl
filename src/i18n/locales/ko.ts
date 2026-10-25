@@ -3180,7 +3180,9 @@ const ko = {
     "aboutTheSeriesTitle": "시리즈 정보",
     "episodesTitle": "에피소드",
     "seasonTitle": "{seasonNumber} 시즌",
-    "episodeDefaultTitle": "{episodeNumber} 에피소드"
+    "episodeDefaultTitle": "{episodeNumber} 에피소드",
+    "like": "좋아요",
+    "liked": "좋아요 완료"
   },
   "shareButton": {
     "shareError": "공유할 수 없음",
@@ -4130,6 +4132,18 @@ const ko = {
     unknownCountry: "알 수 없음",
     platform: "플랫폼",
     clicks: "클릭",
+    verFunnelTitle: "/ver 재생 퍼널",
+    verFunnelHint:
+      "자체 운영 통계: /ver 접속, 재생 시작, 시청 완료(80%), 좋아요 및 공식 채널 유입 클릭.",
+    openVer: "/ver 접속",
+    playStarts: "재생 시작",
+    likes: "MundoBL 좋아요",
+    outboundClicks: "채널 클릭",
+    trafficSectionTitle: "섹션별 트래픽 (인프라 규모 분석)",
+    trafficSection: "섹션",
+    trafficViews: "방문수",
+    copyVerFunnel:
+      "MundoBL /ver: {openVer} 접속, {playStarts} 재생 시작, {views} 시청 완료, {likes} 좋아요, {outboundClicks} 공식 채널 유입 클릭。",
   },
   "airingAlert": {
     "schedule": "방영: {days}",

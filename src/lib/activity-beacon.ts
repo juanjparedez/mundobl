@@ -1,6 +1,11 @@
 'use client';
 
 import { ACTIVITY_OPT_OUT_KEY, type ActivityKind } from '@/lib/series-activity';
+import {
+  sectionFromPath,
+  type TrafficFlow,
+  type TrafficSection,
+} from '@/lib/site-traffic';
 
 /** La marca propia de /privacidad ("no contar mi actividad"). */
 export function storedActivityOptOut(): boolean {
@@ -38,6 +43,43 @@ export function setActivityOptOut(optOut: boolean): void {
 const recent = new Map<string, number>();
 const DEDUPE_MS = 10 * 60 * 1000;
 
+const recentSections = new Map<string, number>();
+const SECTION_DEDUPE_MS = 5 * 60 * 1000;
+
+/**
+ * Registra una visita agregada a una sección del sitio para dimensionamiento
+ * operativo de infraestructura. Deduplicado en memoria por 5 minutos.
+ */
+export function recordSiteTraffic(
+  section: TrafficSection,
+  flow: TrafficFlow = 'direct'
+): void {
+  try {
+    if (storedActivityOptOut()) return;
+    const key = `${section}:${flow}`;
+    const now = Date.now();
+    if (now - (recentSections.get(key) ?? 0) < SECTION_DEDUPE_MS) return;
+    recentSections.set(key, now);
+    void fetch('/api/traffic', {
+      method: 'POST',
+      keepalive: true,
+      referrerPolicy: 'no-referrer',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ section, flow }),
+    }).catch(() => undefined);
+  } catch {
+    /* La medicion nunca rompe la pagina. */
+  }
+}
+
+/** Helper que deduce la sección a partir de la ruta del navegador. */
+export function recordPathTraffic(
+  pathname: string,
+  flow: TrafficFlow = 'internal'
+): void {
+  recordSiteTraffic(sectionFromPath(pathname), flow);
+}
+
 /**
  * Suma uno al contador anonimo de la serie. Nunca bloquea ni rompe nada:
  * medir es lo ultimo que importa.
@@ -48,7 +90,7 @@ export function recordSeriesActivity(
   dedupeKey: string | number = ''
 ): void {
   try {
-    if (activityOptedOut()) return;
+    if (storedActivityOptOut()) return;
     const key = `${seriesId}:${kind}:${dedupeKey}`;
     const now = Date.now();
     if (now - (recent.get(key) ?? 0) < DEDUPE_MS) return;

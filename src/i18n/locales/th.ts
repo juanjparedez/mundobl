@@ -3178,7 +3178,9 @@ const th = {
     "aboutTheSeriesTitle": "เกี่ยวกับซีรีส์",
     "episodesTitle": "ตอน",
     "seasonTitle": "ซีซันที่ {seasonNumber}",
-    "episodeDefaultTitle": "ตอนที่ {episodeNumber}"
+    "episodeDefaultTitle": "ตอนที่ {episodeNumber}",
+    "like": "ถูกใจ",
+    "liked": "ถูกใจแล้ว"
   },
   "shareButton": {
     "shareError": "ไม่สามารถแชร์ได้",
@@ -4128,6 +4130,18 @@ const th = {
     unknownCountry: "ไม่ทราบ",
     platform: "แพลตฟอร์ม",
     clicks: "คลิก",
+    verFunnelTitle: "Funnel การเล่นใน /ver",
+    verFunnelHint:
+      "การวัดผลทางเทคนิคโดยตรง: การเข้าสู่ /ver, การเริ่มเล่น, การดูจบ (80%), การถูกใจ และการคลิกไปยังช่องทางการ",
+    openVer: "เข้าสู่ /ver",
+    playStarts: "เริ่มเล่นวิดีโอ",
+    likes: "ถูกใจบน MundoBL",
+    outboundClicks: "คลิกไปที่ช่อง",
+    trafficSectionTitle: "ปริมาณการใช้งานตามส่วน (การกำหนดขนาด)",
+    trafficSection: "ส่วน",
+    trafficViews: "การเข้าชม",
+    copyVerFunnel:
+      "MundoBL /ver: {openVer} การเข้าชม, {playStarts} เริ่มเล่น, {views} ตอนที่ดูจบ, {likes} ถูกใจ และ {outboundClicks} คลิกไปยังช่องทางการ",
   },
   "airingAlert": {
     "schedule": "ออกอากาศ: {days}",

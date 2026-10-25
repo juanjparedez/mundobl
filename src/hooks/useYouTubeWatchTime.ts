@@ -47,7 +47,7 @@ export function accumulateWatchTime(
   };
 }
 
-export type YouTubeWatchEvent = 'watched' | 'ended';
+export type YouTubeWatchEvent = 'watched' | 'ended' | 'play_start';
 
 export function useYouTubeWatchTime(
   iframeRef: RefObject<HTMLIFrameElement | null>,
@@ -71,6 +71,7 @@ export function useYouTubeWatchTime(
       watchedSeconds: 0,
       lastSample: null,
     };
+    let reportedStarted = false;
     let reportedWatched = false;
     let reportedEnded = false;
 
@@ -126,6 +127,10 @@ export function useYouTubeWatchTime(
             },
             onStateChange: ({ data }) => {
               sample();
+              if (data === YOUTUBE_PLAYER_STATE.PLAYING && !reportedStarted) {
+                reportedStarted = true;
+                onProgressRef.current?.('play_start');
+              }
               if (data === YOUTUBE_PLAYER_STATE.ENDED && !reportedEnded) {
                 reportedEnded = true;
                 if (episodeId !== undefined) {

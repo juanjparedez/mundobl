@@ -3181,7 +3181,9 @@ const ja = {
     "aboutTheSeriesTitle": "シリーズについて",
     "episodesTitle": "エピソード",
     "seasonTitle": "シーズン {seasonNumber}",
-    "episodeDefaultTitle": "エピソード {episodeNumber}"
+    "episodeDefaultTitle": "エピソード {episodeNumber}",
+    "like": "いいね",
+    "liked": "いいね済み"
   },
   "shareButton": {
     "shareError": "共有できませんでした",
@@ -4131,6 +4133,18 @@ const ja = {
     unknownCountry: "不明",
     platform: "プラットフォーム",
     clicks: "クリック",
+    verFunnelTitle: "/ver 再生ファネル",
+    verFunnelHint:
+      "ファーストパーティ運用計測：/verへのアクセス、再生開始、視聴完了（80%）、いいね、公式チャンネルへのクリック。",
+    openVer: "/ver へのアクセス",
+    playStarts: "再生開始",
+    likes: "MundoBLでのいいね",
+    outboundClicks: "チャンネルへのクリック",
+    trafficSectionTitle: "セクション別トラフィック（負荷サイジング）",
+    trafficSection: "セクション",
+    trafficViews: "訪問数",
+    copyVerFunnel:
+      "MundoBL /ver: {openVer} アクセス, {playStarts} 再生開始, {views} 視聴完了, {likes} いいね, {outboundClicks} 公式チャンネルへの誘導クリック。",
   },
   "airingAlert": {
     "schedule": "放送日：{days}",

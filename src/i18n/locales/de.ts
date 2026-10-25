@@ -3184,7 +3184,9 @@ const de = {
     "aboutTheSeriesTitle": "Über die Serie",
     "episodesTitle": "Episoden",
     "seasonTitle": "Staffel {seasonNumber}",
-    "episodeDefaultTitle": "Episode {episodeNumber}"
+    "episodeDefaultTitle": "Episode {episodeNumber}",
+    "like": "Gefällt mir",
+    "liked": "Gefällt dir"
   },
   "shareButton": {
     "shareError": "Konnte nicht teilen",
@@ -4134,6 +4136,18 @@ const de = {
     unknownCountry: "Unbekannt",
     platform: "Plattform",
     clicks: "Klicks",
+    verFunnelTitle: "Wiedergabe-Funnel in /ver",
+    verFunnelHint:
+      "First-Party-Betriebsmessung: Aufrufe von /ver, Wiedergabestarts, abgeschlossene Aufrufe (80%), Likes und Klicks auf offizielle Kanäle.",
+    openVer: "Aufrufe von /ver",
+    playStarts: "Wiedergabestarts",
+    likes: "Likes auf MundoBL",
+    outboundClicks: "Klicks auf Kanäle",
+    trafficSectionTitle: "Traffic nach Bereich (Dimensionierung)",
+    trafficSection: "Bereich",
+    trafficViews: "Aufrufe",
+    copyVerFunnel:
+      "MundoBL /ver: {openVer} Aufrufe, {playStarts} Wiedergabestarts, {views} abgeschlossene Folgen, {likes} Likes und {outboundClicks} weitergeleitete Klicks zum offiziellen Kanal.",
   },
   "airingAlert": {
     "schedule": "Läuft: {days}",
