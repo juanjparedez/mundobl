@@ -1,0 +1,1160 @@
+{
+  "id": "ver-2026-10-25",
+  "verifiedAt": "2026-10-25",
+  "series": [
+    {
+      "title": "Hello Stranger",
+      "targetSeriesId": 247,
+      "expectedTitle": "Hello stranger",
+      "countryCode": "ph",
+      "year": 2020,
+      "channelId": "UCtI55bOVfu43CatriKvqF_w",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLbzwe1iIa9XY",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "YasPlmnnMpQ",
+          "publishedAt": "2020-06-24T12:30:12Z",
+          "sourceTitle": "Hello Stranger FULL Episode 1 | Tony Labrusca, JC Alcantara & Vivoree | Hello Stranger Series"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "874uuvQd56U",
+          "publishedAt": "2020-07-01T12:30:11Z",
+          "sourceTitle": "Hello Stranger FULL Episode 2 | Tony Labrusca, JC Alcantara & Vivoree | Hello Stranger Series"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "nu1btM4ouRU",
+          "publishedAt": "2020-07-08T12:30:12Z",
+          "sourceTitle": "Hello Stranger FULL Episode 3 | Tony Labrusca, JC Alcantara & Vivoree | Hello Stranger Series"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "V640Mztt5YY",
+          "publishedAt": "2020-07-15T12:30:11Z",
+          "sourceTitle": "Hello Stranger FULL Episode 4 | Tony Labrusca, JC Alcantara & Vivoree | Hello Stranger Series"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "FxAEUElsG3g",
+          "publishedAt": "2020-07-22T12:30:11Z",
+          "sourceTitle": "Hello Stranger FULL Episode 5 | Tony Labrusca, JC Alcantara & Vivoree | Hello Stranger Series"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "j7K-uJ-vCZA",
+          "publishedAt": "2020-07-29T12:30:13Z",
+          "sourceTitle": "Hello Stranger FULL Episode 6 | Tony Labrusca, JC Alcantara & Vivoree | Hello Stranger Series"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 1,
+          "videoId": "PL0jxOFRNqY",
+          "publishedAt": "2020-08-05T12:30:12Z",
+          "sourceTitle": "Hello Stranger FULL Episode 7 | Tony Labrusca, JC Alcantara & Vivoree | Hello Stranger Series"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 1,
+          "videoId": "3bSzrddvdjY",
+          "publishedAt": "2020-08-19T12:30:11Z",
+          "sourceTitle": "Hello Stranger FULL Episode 8 | Tony Labrusca, JC Alcantara & Vivoree | Hello Stranger Series"
+        }
+      ]
+    },
+    {
+      "title": "Like in the Movies",
+      "targetSeriesId": 376,
+      "expectedTitle": "Like in the movies",
+      "countryCode": "ph",
+      "year": 2020,
+      "channelId": "UCtoEQCndXx-v7FemDigT17g",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLMPz9QG8YAxJXvznmCorwY7N5ausnteMN",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "sSnSMJzRvrU",
+          "publishedAt": "2020-09-25T12:00:36Z",
+          "sourceTitle": "#GayaSaPelikula (Like In The Movies) | Episode 01 FULL | ANIMA [ENG SUB]"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "mE2GA-LQLpk",
+          "publishedAt": "2020-10-02T12:00:17Z",
+          "sourceTitle": "#GayaSaPelikula (Like In The Movies) | Episode 02 | FULL | ANIMA [ENG SUB]"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "y6LMpYYmyCw",
+          "publishedAt": "2020-10-09T12:00:11Z",
+          "sourceTitle": "#GayaSaPelikula (Like In The Movies) | Episode 03 | FULL | ANIMA [ENG SUB]"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "rQoT0eCA7t8",
+          "publishedAt": "2020-10-16T12:00:21Z",
+          "sourceTitle": "#GayaSaPelikula (Like In The Movies) | Episode 04 | FULL | ANIMA [ENG SUB]"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "Cqw1YXAbyc4",
+          "publishedAt": "2020-10-23T12:00:07Z",
+          "sourceTitle": "#GayaSaPelikula (Like In The Movies) | Episode 05 | FULL | ANIMA [ENG SUB]"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "VKXyTZt7XgE",
+          "publishedAt": "2020-10-30T12:00:12Z",
+          "sourceTitle": "#GayaSaPelikula (Like In The Movies) Episode 06 FULL [ENG SUB]"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 1,
+          "videoId": "7LVpSVakaeo",
+          "publishedAt": "2020-11-06T12:00:12Z",
+          "sourceTitle": "#GayaSaPelikula (Like In The Movies)|  Episode 07 | FULL | ANIMA Studios [ENG SUB]"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 1,
+          "videoId": "OH9a3k2Itdg",
+          "publishedAt": "2020-11-20T12:00:10Z",
+          "sourceTitle": "#GayaSaPelikula (Like In The Movies) | Episode 8 | FULL | ANIMA [ENG SUB]"
+        }
+      ]
+    },
+    {
+      "title": "Marahuyo Project",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "ph",
+      "year": 2024,
+      "channelId": "UCtoEQCndXx-v7FemDigT17g",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLMPz9QG8YAxIjGoPfHFugXYAbumaqC0Cj",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "3qBTb0MBzG0",
+          "publishedAt": "2024-06-24T12:00:09Z",
+          "sourceTitle": "Marahuyo Project (Amihan) | Episode 01 FULL | ANIMA Studios"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "l7065Ew7Jb0",
+          "publishedAt": "2024-06-24T12:30:08Z",
+          "sourceTitle": "Marahuyo Project (Dios Buhawi) | Episode 02 FULL | ANIMA Studios"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "hB1YstqIOPQ",
+          "publishedAt": "2024-06-26T12:00:08Z",
+          "sourceTitle": "Marahuyo Project (Sidapa At Bulan) | Episode 03 FULL | ANIMA Studios"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "wvHwSRWjlXY",
+          "publishedAt": "2024-06-26T12:30:08Z",
+          "sourceTitle": "Marahuyo Project (Santelmo) | Episode 04 FULL | ANIMA Studios"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "7-vYm12UWaA",
+          "publishedAt": "2024-06-28T12:00:07Z",
+          "sourceTitle": "Marahuyo Project (Hunyango) | Episode 05 FULL | ANIMA Studios"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "-l8078SFMGQ",
+          "publishedAt": "2024-06-28T12:30:08Z",
+          "sourceTitle": "Marahuyo Project (Sirena) | Episode 06 FULL | ANIMA Studios"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 1,
+          "videoId": "WL_h7MpWKns",
+          "publishedAt": "2024-06-30T12:00:07Z",
+          "sourceTitle": "Marahuyo Project (Aswang) | Episode 07 FULL | ANIMA Studios"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 1,
+          "videoId": "G2tiYRgBbeA",
+          "publishedAt": "2024-06-30T12:40:08Z",
+          "sourceTitle": "Marahuyo Project (Babaylan) | Episode 08 FULL | ANIMA Studios"
+        }
+      ]
+    },
+    {
+      "title": "My Brother-in-Law Is My Favorite Novelist!?",
+      "targetSeriesId": 293,
+      "expectedTitle": "My brother in law is my favorite novelist!?",
+      "countryCode": "jp",
+      "year": 2026,
+      "channelId": "UCj095JNSzIzdU23JsZqcwpQ",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLmz1FNoG1zYHVHiX7zTnjlixJi5YmDE4R",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "5rDr99DNMhw",
+          "publishedAt": "2026-02-28T10:00:09Z",
+          "sourceTitle": "【BL】義理の兄は推し小説家!? 〜小悪魔弟×拗らせチェリー〜 【第1話】"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "9tgE0kv_PC8",
+          "publishedAt": "2026-03-07T10:00:24Z",
+          "sourceTitle": "【BL】義理の兄は推し小説家!? 〜小悪魔弟×拗らせチェリー〜 【第2話】"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "mKgxKHRssFY",
+          "publishedAt": "2026-03-14T10:01:17Z",
+          "sourceTitle": "【BL】義理の兄は推し小説家!? 〜小悪魔弟×拗らせチェリー〜 【第3話】"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "Ho5WRA4cisc",
+          "publishedAt": "2026-03-21T10:00:25Z",
+          "sourceTitle": "【BL】義理の兄は推し小説家!? 〜小悪魔弟×拗らせチェリー〜 【第4話】"
+        }
+      ]
+    },
+    {
+      "title": "My Teacher Spoils Me: Lemon Candy, Love’s Flavor",
+      "targetSeriesId": 341,
+      "expectedTitle": "My teacher spoils me - Lemon candy, love’s flavor",
+      "countryCode": "jp",
+      "year": 2025,
+      "channelId": "UCj095JNSzIzdU23JsZqcwpQ",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLmz1FNoG1zYFTUtbc-L4AOhmudPjnYa-b",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "eCPg9yoc1js",
+          "publishedAt": "2025-12-06T10:01:12Z",
+          "sourceTitle": "【BL】センセイはオレに甘すぎる〜レモンキャンディは恋の味〜【前編】"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "v26kr7zolDk",
+          "publishedAt": "2025-12-07T10:01:35Z",
+          "sourceTitle": "【BL】センセイはオレに甘すぎる〜レモンキャンディは恋の味〜【後編】"
+        }
+      ]
+    },
+    {
+      "title": "Active Boys",
+      "targetSeriesId": 25,
+      "expectedTitle": "Active boys",
+      "countryCode": "vn",
+      "year": 2018,
+      "channelId": "UCANpnA0w8e5vTHiGgdbrgsg",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLf_mCRbXsMcDAps5Bg4MT78oGQVW23JVj",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "YC2GmPksQFQ",
+          "publishedAt": "2018-07-20T13:00:05Z",
+          "sourceTitle": "NHỮNG CHÀNG TRAI NĂNG ĐỘNG (ACTIVEBOYS) - TẬP 1 | PHIM ĐAM MỸ HỌC ĐƯỜNG | O2 PRODUCTION"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "x06gD1CTak0",
+          "publishedAt": "2018-07-27T13:32:58Z",
+          "sourceTitle": "NHỮNG CHÀNG TRAI NĂNG ĐỘNG (ACTIVEBOYS) - TẬP 2 | PHIM ĐAM MỸ HỌC ĐƯỜNG | O2 PRODUCTION"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "8uWpUeyHcws",
+          "publishedAt": "2018-08-04T12:26:40Z",
+          "sourceTitle": "NHỮNG CHÀNG TRAI NĂNG ĐỘNG (ACTIVEBOYS)- TẬP 3 | PHIM ĐAM MỸ HỌC ĐƯỜNG | O2 PRODUCTION"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "ItrON5tiNJE",
+          "publishedAt": "2018-08-10T12:00:03Z",
+          "sourceTitle": "NHỮNG CHÀNG TRAI NĂNG ĐỘNG (ACTIVEBOYS) - TẬP 4 | PHIM ĐAM MỸ HỌC ĐƯỜNG | O2 PRODUCTION"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "9LVXPNuyLmU",
+          "publishedAt": "2018-08-19T16:51:43Z",
+          "sourceTitle": "NHỮNG CHÀNG TRAI NĂNG ĐỘNG (ACTIVEBOYS) - TẬP 5 | PHIM ĐAM MỸ HỌC ĐƯỜNG | O2 PRODUCTION"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "MrbywbDalOw",
+          "publishedAt": "2018-08-24T12:00:01Z",
+          "sourceTitle": "NHỮNG CHÀNG TRAI NĂNG ĐỘNG (ACTIVEBOYS) - TẬP 6 | PHIM ĐAM MỸ HỌC ĐƯỜNG | O2 PRODUCTION"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 1,
+          "videoId": "iqMD6vNV-BI",
+          "publishedAt": "2018-09-04T14:51:55Z",
+          "sourceTitle": "NHỮNG CHÀNG TRAI NĂNG ĐỘNG (ACTIVEBOYS) - TẬP 7 | PHIM ĐAM MỸ HỌC ĐƯỜNG | O2 PRODUCTION"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 1,
+          "videoId": "aU0XkMgiry4",
+          "publishedAt": "2018-09-09T03:30:04Z",
+          "sourceTitle": "NHỮNG CHÀNG TRAI NĂNG ĐỘNG (ACTIVEBOYS) - TẬP 8 | PHIM ĐAM MỸ HỌC ĐƯỜNG | O2 PRODUCTION"
+        },
+        {
+          "chapter": 9,
+          "part": 1,
+          "parts": 1,
+          "videoId": "Fdzn3tAES3E",
+          "publishedAt": "2018-09-12T13:25:59Z",
+          "sourceTitle": "NHỮNG CHÀNG TRAI NĂNG ĐỘNG (ACTIVEBOYS) - TẬP 9 | PHIM ĐAM MỸ HỌC ĐƯỜNG | O2 PRODUCTION"
+        },
+        {
+          "chapter": 10,
+          "part": 1,
+          "parts": 1,
+          "videoId": "dVIlGZ3XdNw",
+          "publishedAt": "2018-09-15T12:00:10Z",
+          "sourceTitle": "NHỮNG CHÀNG TRAI NĂNG ĐỘNG (ACTIVEBOYS) - TẬP 10 | PHIM ĐAM MỸ HỌC ĐƯỜNG | O2 PRODUCTION"
+        },
+        {
+          "chapter": 11,
+          "part": 1,
+          "parts": 1,
+          "videoId": "08_pzjUcDus",
+          "publishedAt": "2018-09-27T05:45:30Z",
+          "sourceTitle": "NHỮNG CHÀNG TRAI NĂNG ĐỘNG (ACTIVEBOYS) - TẬP 11 | PHIM ĐAM MỸ HỌC ĐƯỜNG | O2 PRODUCTION"
+        },
+        {
+          "chapter": 12,
+          "part": 1,
+          "parts": 1,
+          "videoId": "CFsW4I-7nFA",
+          "publishedAt": "2018-10-12T12:00:00Z",
+          "sourceTitle": "NHỮNG CHÀNG TRAI NĂNG ĐỘNG (ACTIVEBOYS) - TẬP 12 | PHIM ĐAM MỸ HỌC ĐƯỜNG | O2 PRODUCTION"
+        }
+      ]
+    },
+    {
+      "title": "Fight for Love",
+      "targetSeriesId": 194,
+      "expectedTitle": "Fight for love",
+      "countryCode": "vn",
+      "year": 2025,
+      "channelId": "UC0WWgNgyUc5Y85_DesZXTYw",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PL8vHP9TU8ecUXxx_O2-YW-_7kvJjtr4bx",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "9SqdvCLGP0c",
+          "publishedAt": "2025-02-07T12:00:07Z",
+          "sourceTitle": "[Eng Sub EP.1]  VÌ YÊU MÀ CHIẾN | FIGHT FOR LOVE | PHIM BOYS LOVE VIỆT NAM"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "BccHx6f6uG4",
+          "publishedAt": "2025-02-14T12:00:08Z",
+          "sourceTitle": "[Eng Sub EP.2] VÌ YÊU MÀ CHIẾN | FIGHT FOR LOVE | PHIM BOYS LOVE VIỆT NAM"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "l0fbklYEb0s",
+          "publishedAt": "2025-02-21T12:00:07Z",
+          "sourceTitle": "[Eng Sub EP.3] VÌ YÊU MÀ CHIẾN | FIGHT FOR LOVE | PHIM BOYS LOVE VIỆT NAM"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "U7QQPYUy8jw",
+          "publishedAt": "2025-02-28T12:00:07Z",
+          "sourceTitle": "[Eng Sub EP.4] VÌ YÊU MÀ CHIẾN | FIGHT FOR LOVE | PHIM BOYS LOVE VIỆT NAM"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "DLrHZgFd9Kk",
+          "publishedAt": "2025-03-07T12:00:07Z",
+          "sourceTitle": "[Eng Sub EP.5] VÌ YÊU MÀ CHIẾN | FIGHT FOR LOVE | PHIM BOYS LOVE VIỆT NAM"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "UiL_XwGFZb0",
+          "publishedAt": "2025-03-14T12:00:07Z",
+          "sourceTitle": "[Eng Sub EP.6] VÌ YÊU MÀ CHIẾN | FIGHT FOR LOVE | PHIM BOYS LOVE VIỆT NAM"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 1,
+          "videoId": "n3TfIu7AEfM",
+          "publishedAt": "2025-03-21T12:00:08Z",
+          "sourceTitle": "[Eng Sub Final Ep] VÌ YÊU MÀ CHIẾN | FIGHT FOR LOVE | PHIM BOYS LOVE VIỆT NAM"
+        }
+      ]
+    },
+    {
+      "title": "Stupid Boys, Stupid Love",
+      "targetSeriesId": 188,
+      "expectedTitle": "Stupid boys, stupid love",
+      "countryCode": "vn",
+      "year": 2021,
+      "channelId": "UC0WWgNgyUc5Y85_DesZXTYw",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PL8vHP9TU8ecVk0I4KTWuV1PF73uYTWlC1",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "ItsH_0ZojY0",
+          "publishedAt": "2021-05-20T13:00:16Z",
+          "sourceTitle": "[Eng Sub] STUPID BOYS STUPID LOVE |  THÍCH THÌ NHÍCH - YÊU ĐI SỢ GÌ |  EP.1"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "vwxoqlEodAw",
+          "publishedAt": "2021-05-27T12:00:14Z",
+          "sourceTitle": "[Eng Sub] STUPID BOYS STUPID LOVE |  THÍCH THÌ NHÍCH - YÊU ĐI SỢ GÌ |  EP.2"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "jSxTth0C9SI",
+          "publishedAt": "2021-06-07T12:00:12Z",
+          "sourceTitle": "[Eng Sub] STUPID BOYS STUPID LOVE |  THÍCH THÌ NHÍCH - YÊU ĐI SỢ GÌ |  EP.3"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "47er6KTEa8A",
+          "publishedAt": "2021-06-26T12:00:02Z",
+          "sourceTitle": "[Eng Sub] The Last Episode of STUPID BOYS STUPID LOVE | THÍCH THÌ NHÍCH - YÊU ĐI SỢ GÌ"
+        }
+      ]
+    },
+    {
+      "title": "My Sweet Brother-in-Law",
+      "targetSeriesId": 653,
+      "expectedTitle": "My sweet brother in law",
+      "countryCode": "vn",
+      "year": 2025,
+      "channelId": "UCiZQMLN9MRhE0MYqHJFVwXA",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLW77Fj3pF6azYFNYpQv8Q-L2m5yOjWW0l",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "gUj4aBYE3-0",
+          "publishedAt": "2025-05-27T14:00:06Z",
+          "sourceTitle": "[Eng Sub EP.1] VỤNG TRỘM VỚI ANH RỂ | MY SWEET BROTHER IN LAW | BOYS LOVE VIETNAM"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "bp9drw_9j6o",
+          "publishedAt": "2025-06-03T14:00:06Z",
+          "sourceTitle": "[EngSub EP.2] VỤNG TRỘM VỚI ANH RỂ | MY SWEET BROTHER IN LAW | PHIM BOYS LOVE VIETNAM"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "7VHIuwqTjR0",
+          "publishedAt": "2025-06-10T14:00:26Z",
+          "sourceTitle": "[EngSub EP.3] VỤNG TRỘM VỚI ANH RỂ | MY SWEET BROTHER IN LAW | PHIM BOYS LOVE VIETNAM"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "9WT39K6mqQI",
+          "publishedAt": "2025-06-17T14:00:06Z",
+          "sourceTitle": "[EngSub EP.4] VỤNG TRỘM VỚI ANH RỂ | MY SWEET BROTHER IN LAW | PHIM BOYS LOVE VIETNAM"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "RtUE_27Fdpk",
+          "publishedAt": "2025-06-24T14:00:06Z",
+          "sourceTitle": "[EngSub EP.5] VỤNG TRỘM VỚI ANH RỂ | MY SWEET BROTHER IN LAW | PHIM BOYS LOVE VIETNAM"
+        }
+      ]
+    },
+    {
+      "title": "Hot Brother Next Door",
+      "targetSeriesId": 269,
+      "expectedTitle": "Hot brother next door",
+      "countryCode": "vn",
+      "year": 2025,
+      "channelId": "UCiZQMLN9MRhE0MYqHJFVwXA",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLW77Fj3pF6axAbuORoLZSEPE0ljnT0BrN",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "YZgIYpt4At8",
+          "publishedAt": "2025-09-16T14:00:06Z",
+          "sourceTitle": "[Engsub EP.1] HÀ NỘI, ANH YÊU \"ANH\" | HOT BROTHER NEXT DOOR | BOYS LOVE VIETNAM"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "Owr_lSORo8k",
+          "publishedAt": "2025-09-23T14:00:06Z",
+          "sourceTitle": "[Engsub EP.2] HÀ NỘI, ANH YÊU \"ANH\" | HOT BROTHER NEXT DOOR | BOYS LOVE VIETNAM"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "_SceiiOVeyA",
+          "publishedAt": "2025-09-30T14:00:06Z",
+          "sourceTitle": "[Engsub EP.3] HÀ NỘI, ANH YÊU \"ANH\" | HOT BROTHER NEXT DOOR | BOYS LOVE VIETNAM"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "XHPz5cOkjrY",
+          "publishedAt": "2025-10-07T14:00:06Z",
+          "sourceTitle": "[Engsub EP.4] HÀ NỘI, ANH YÊU \"ANH\" | HOT BROTHER NEXT DOOR | BOYS LOVE VIETNAM"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "O7fgyt-zxck",
+          "publishedAt": "2025-10-14T14:00:06Z",
+          "sourceTitle": "[Engsub EP.5] HÀ NỘI, ANH YÊU \"ANH\" | HOT BROTHER NEXT DOOR | BOYS LOVE VIETNAM"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "V3Kt03qRpGk",
+          "publishedAt": "2025-10-21T14:00:06Z",
+          "sourceTitle": "[Engsub EP.6] HÀ NỘI, ANH YÊU \"ANH\" | HOT BROTHER NEXT DOOR | BOYS LOVE VIETNAM"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 1,
+          "videoId": "87c5b9H2qdA",
+          "publishedAt": "2025-10-28T14:00:06Z",
+          "sourceTitle": "[Engsub EP.7] HÀ NỘI, ANH YÊU \"ANH\" | HOT BROTHER NEXT DOOR | BOYS LOVE VIETNAM"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 1,
+          "videoId": "m5p3Gve7oro",
+          "publishedAt": "2025-11-04T14:00:06Z",
+          "sourceTitle": "[Engsub EP.8] HÀ NỘI, ANH YÊU \"ANH\" | HOT BROTHER NEXT DOOR | BOYS LOVE VIETNAM"
+        },
+        {
+          "chapter": 9,
+          "part": 1,
+          "parts": 1,
+          "videoId": "l5VpBdWz9I8",
+          "publishedAt": "2025-11-11T14:00:06Z",
+          "sourceTitle": "[Engsub EP.9] HÀ NỘI, ANH YÊU \"ANH\" | HOT BROTHER NEXT DOOR | BOYS LOVE VIETNAM"
+        },
+        {
+          "chapter": 10,
+          "part": 1,
+          "parts": 1,
+          "videoId": "LYV5O7A3Xoc",
+          "publishedAt": "2025-11-18T14:00:06Z",
+          "sourceTitle": "[Engsub EP.10] HÀ NỘI, ANH YÊU \"ANH\" | HOT BROTHER NEXT DOOR | BOYS LOVE VIETNAM"
+        }
+      ]
+    },
+    {
+      "title": "Happiness Flies Away",
+      "targetSeriesId": 232,
+      "expectedTitle": "Happiness Flies Away",
+      "countryCode": "vn",
+      "year": 2020,
+      "channelId": "UCENtpQFw4dhnGn3TFVzJauA",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLfnQxeTD8yucdxgmcH6W8XIG4mPhAhPw2",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "eVvcriCCK_U",
+          "publishedAt": "2020-10-29T14:30:10Z",
+          "sourceTitle": "HẠNH PHÚC XA BAY - TẬP 1 | WEBDRAMA - Phim Tâm Lý Tình Cảm Đam Mỹ Việt Nam Hot Nhất"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "McpbG4lvziI",
+          "publishedAt": "2020-11-05T13:00:13Z",
+          "sourceTitle": "HẠNH PHÚC XA BAY -  TẬP 2 | WEBDRAMA - Phim Tâm Lý Tình Cảm Đam Mỹ Hot 2020"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "eB7UlhI5LkA",
+          "publishedAt": "2020-11-12T13:00:10Z",
+          "sourceTitle": "HẠNH PHÚC XA BAY - TẬP 3  WEBDRAMA | Phim Tâm Lý Tình Cảm Đam Mỹ Hot 2020"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "WZrUXGyu5fQ",
+          "publishedAt": "2020-11-19T13:00:11Z",
+          "sourceTitle": "HẠNH PHÚC XA BAY - TẬP 4  WEBDRAMA | Phim Tâm Lý Tình Cảm Đam Mỹ Hot 2020"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "AtdqRym7x1U",
+          "publishedAt": "2020-11-26T13:00:18Z",
+          "sourceTitle": "HẠNH PHÚC XA BAY - TẬP 5 WEBDRAMA | Phim Tâm Lý Tình Cảm Đam Mỹ Hot 2020"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "SWaky-it0zE",
+          "publishedAt": "2020-12-03T13:00:31Z",
+          "sourceTitle": "HẠNH PHÚC XA BAY - TẬP 6 WEBDRAMA | Phim Tâm Lý Tình Cảm Đam Mỹ Việt Nam Hot Nhất"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 1,
+          "videoId": "KmXs8eIJXAs",
+          "publishedAt": "2020-12-10T13:00:12Z",
+          "sourceTitle": "HẠNH PHÚC XA BAY - TẬP 7 WEBDRAMA | Phim Tâm Lý Tình Cảm Đam Mỹ Việt Nam Hot Nhất"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 1,
+          "videoId": "DbtzxhMNEu8",
+          "publishedAt": "2020-12-17T13:00:12Z",
+          "sourceTitle": "HẠNH PHÚC XA BAY - TẬP 8 WEBDRAMA | Phim Tâm Lý Tình Cảm Đam Mỹ Hot Nhất"
+        }
+      ]
+    },
+    {
+      "title": "Kiseki: Dear to Me",
+      "targetSeriesId": 330,
+      "expectedTitle": "Kiseki: Dear to me",
+      "countryCode": "tw",
+      "year": 2023,
+      "channelId": "UCZ2EoLNz4EzAnAIKCGhiRzQ",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLk2gvyPpHLRe8inr346RI_w_3fskmlW83",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "cVc9ectGoBw",
+          "publishedAt": "2023-08-22T11:00:09Z",
+          "sourceTitle": "♥︎𝐁𝐋♥︎《奇蹟 Kiseki：Dear to me》EP01｜徐愷⋰林毓桐⋰陳柏文⋰姜典⋰宋偉恩⋰亮哲⋰謝承均 [MULTI SUB]｜GTV DRAMA 八大劇樂部"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "0PioJ862GHs",
+          "publishedAt": "2024-02-23T02:32:31Z",
+          "sourceTitle": "♥︎𝐁𝐋♥︎《奇蹟 Kiseki：Dear to me》EP02｜徐愷⋰林毓桐⋰陳柏文⋰姜典⋰宋偉恩⋰亮哲⋰謝承均 [MULTI SUB]｜GTV DRAMA 八大劇樂部"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "JmvFTkjM1kI",
+          "publishedAt": "2024-02-29T16:00:13Z",
+          "sourceTitle": "♥︎𝐁𝐋♥︎《奇蹟 Kiseki：Dear to me》EP03｜徐愷⋰林毓桐⋰陳柏文⋰姜典⋰宋偉恩⋰亮哲⋰謝承均 [MULTI SUB]｜GTV DRAMA 八大劇樂部"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "Blewi-oHmGc",
+          "publishedAt": "2024-03-05T16:00:14Z",
+          "sourceTitle": "♥︎𝐁𝐋♥︎《奇蹟 Kiseki：Dear to me》EP04｜徐愷⋰林毓桐⋰陳柏文⋰姜典⋰宋偉恩⋰亮哲⋰謝承均 [MULTI SUB]｜GTV DRAMA 八大劇樂部"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "mLpwv7icQg4",
+          "publishedAt": "2024-03-12T16:00:36Z",
+          "sourceTitle": "♥︎𝐁𝐋♥︎《奇蹟 Kiseki：Dear to me》EP05｜徐愷⋰林毓桐⋰陳柏文⋰姜典⋰宋偉恩⋰亮哲⋰謝承均 [MULTI SUB]｜GTV DRAMA 八大劇樂部"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "S-07DenpXF8",
+          "publishedAt": "2024-03-19T16:00:29Z",
+          "sourceTitle": "♥︎𝐁𝐋♥︎《奇蹟 Kiseki：Dear to me》EP06｜徐愷⋰林毓桐⋰陳柏文⋰姜典⋰宋偉恩⋰亮哲⋰謝承均 [MULTI SUB]｜GTV DRAMA 八大劇樂部"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 1,
+          "videoId": "6rkI9n6YmqA",
+          "publishedAt": "2024-03-26T16:00:05Z",
+          "sourceTitle": "♥︎𝐁𝐋♥︎《奇蹟 Kiseki：Dear to me》EP07｜徐愷⋰林毓桐⋰陳柏文⋰姜典⋰宋偉恩⋰亮哲⋰謝承均 [MULTI SUB]｜GTV DRAMA 八大劇樂部"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 1,
+          "videoId": "l23KBA1mvXM",
+          "publishedAt": "2024-04-03T16:00:39Z",
+          "sourceTitle": "♥︎𝐁𝐋♥︎《奇蹟 Kiseki：Dear to me》EP08｜徐愷⋰林毓桐⋰陳柏文⋰姜典⋰宋偉恩⋰亮哲⋰謝承均⋰黃雋智 [MULTI SUB]｜GTV DRAMA 八大劇樂部"
+        },
+        {
+          "chapter": 9,
+          "part": 1,
+          "parts": 1,
+          "videoId": "qjgscVTGUv0",
+          "publishedAt": "2024-04-10T16:00:40Z",
+          "sourceTitle": "♥︎𝐁𝐋♥︎《奇蹟 Kiseki：Dear to me》EP09｜徐愷⋰林毓桐⋰陳柏文⋰姜典⋰宋偉恩⋰亮哲⋰謝承均⋰楊烈⋰安俊朋 [MULTI SUB]｜GTV DRAMA 八大劇樂部"
+        },
+        {
+          "chapter": 10,
+          "part": 1,
+          "parts": 1,
+          "videoId": "TFW1-VNXp_Q",
+          "publishedAt": "2024-04-17T16:00:32Z",
+          "sourceTitle": "♥︎𝐁𝐋♥︎《奇蹟 Kiseki：Dear to me》EP10｜徐愷⋰林毓桐⋰陳柏文⋰姜典⋰宋偉恩⋰亮哲⋰謝承均⋰安俊朋 [MULTI SUB]｜GTV DRAMA 八大劇樂部"
+        },
+        {
+          "chapter": 11,
+          "part": 1,
+          "parts": 1,
+          "videoId": "nvUQ9gZprHQ",
+          "publishedAt": "2024-04-24T16:00:46Z",
+          "sourceTitle": "♥︎𝐁𝐋♥︎《奇蹟 Kiseki：Dear to me》EP11｜徐愷⋰林毓桐⋰陳柏文⋰姜典⋰宋偉恩⋰亮哲⋰謝承均 [MULTI SUB]｜GTV DRAMA 八大劇樂部"
+        },
+        {
+          "chapter": 12,
+          "part": 1,
+          "parts": 1,
+          "videoId": "ZHGv4Lsc4BI",
+          "publishedAt": "2024-04-30T16:00:33Z",
+          "sourceTitle": "♥︎𝐁𝐋♥︎《奇蹟 Kiseki：Dear to me》EP12｜徐愷⋰林毓桐⋰陳柏文⋰姜典⋰宋偉恩⋰亮哲⋰謝承均 [MULTI SUB]｜GTV DRAMA 八大劇樂部"
+        },
+        {
+          "chapter": 13,
+          "part": 1,
+          "parts": 1,
+          "videoId": "GfNkQ1dQ5K4",
+          "publishedAt": "2024-05-07T16:00:19Z",
+          "sourceTitle": "♥︎𝐁𝐋♥︎《奇蹟 Kiseki：Dear to me》EP13(FINALE)｜徐愷⋰林毓桐⋰陳柏文⋰姜典⋰宋偉恩⋰亮哲⋰謝承均 [MULTI SUB]｜GTV DRAMA 八大劇樂部"
+        }
+      ]
+    },
+    {
+      "title": "Unknown",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "tw",
+      "year": 2024,
+      "channelId": "UCI70JGG0hJS306Q-hGWfB7Q",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLIPiKkS-FpK8QOw3QjsxMNGBG0qev28Q5",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "MhEDKXvj000",
+          "publishedAt": "2024-02-28T21:27:12Z",
+          "sourceTitle": "[Unknown] EP01 | When Your Adopted Brother Has a Crush on You | Chris Chiu/Xuan | YOUKU"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "21J1FvmVEmU",
+          "publishedAt": "2024-02-28T06:16:03Z",
+          "sourceTitle": "[Unknown] EP02 | When Your Adopted Brother Has a Crush on You | Chris Chiu/Xuan | YOUKU"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "xPe-13OMXJk",
+          "publishedAt": "2024-03-04T12:00:10Z",
+          "sourceTitle": "[Unknown] EP03 | When Your Adopted Brother Has a Crush on You | Chris Chiu/Xuan | YOUKU"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "bhD2GcBS7wY",
+          "publishedAt": "2024-03-11T12:00:06Z",
+          "sourceTitle": "[Unknown] EP04 | When Your Adopted Brother Has a Crush on You | Chris Chiu/Xuan | YOUKU"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "UCDhDfWuJNc",
+          "publishedAt": "2024-03-18T12:00:06Z",
+          "sourceTitle": "[Unknown] EP05 | When Your Adopted Brother Has a Crush on You | Chris Chiu/Xuan | YOUKU"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "Hh_DXtna29c",
+          "publishedAt": "2024-03-25T12:00:06Z",
+          "sourceTitle": "[Unknown] EP06 | When Your Adopted Brother Has a Crush on You | Chris Chiu/Xuan | YOUKU"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 1,
+          "videoId": "0e3brXnxnIc",
+          "publishedAt": "2024-04-01T12:00:06Z",
+          "sourceTitle": "[Unknown] EP07 | When Your Adopted Brother Has a Crush on You | Chris Chiu/Xuan | YOUKU"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 1,
+          "videoId": "NYwsNFR-uT0",
+          "publishedAt": "2024-04-08T12:00:06Z",
+          "sourceTitle": "[Unknown] EP08 | When Your Adopted Brother Has a Crush on You | Chris Chiu/Xuan | YOUKU"
+        },
+        {
+          "chapter": 9,
+          "part": 1,
+          "parts": 1,
+          "videoId": "aBIe88jyyNY",
+          "publishedAt": "2024-04-15T14:35:16Z",
+          "sourceTitle": "[Unknown] EP09 | When Your Adopted Brother Has a Crush on You | Chris Chiu/Xuan | YOUKU"
+        },
+        {
+          "chapter": 10,
+          "part": 1,
+          "parts": 1,
+          "videoId": "d4cjv841N5U",
+          "publishedAt": "2024-04-22T12:00:07Z",
+          "sourceTitle": "[Unknown] EP10 | When Your Adopted Brother Has a Crush on You | Chris Chiu/Xuan | YOUKU"
+        },
+        {
+          "chapter": 11,
+          "part": 1,
+          "parts": 1,
+          "videoId": "dHy5icT8wOA",
+          "publishedAt": "2024-04-29T12:00:06Z",
+          "sourceTitle": "[Unknown] EP11 | When Your Adopted Brother Has a Crush on You | Chris Chiu/Xuan | YOUKU"
+        },
+        {
+          "chapter": 12,
+          "part": 1,
+          "parts": 1,
+          "videoId": "0cqoMvD9b-4",
+          "publishedAt": "2024-05-06T12:00:26Z",
+          "sourceTitle": "[Unknown] EP12 | When Your Adopted Brother Has a Crush on You | Chris Chiu/Xuan | YOUKU"
+        }
+      ]
+    },
+    {
+      "title": "Stay With Me",
+      "targetSeriesId": null,
+      "expectedTitle": null,
+      "countryCode": "cn",
+      "year": 2023,
+      "channelId": "UCcLEMsxL1UYqz_CI8Y6Wrvg",
+      "playlistUrl": "https://www.youtube.com/playlist?list=PLiL-CuIBxVwOwR2UR1BLsJZdkQgTgysS1",
+      "episodes": [
+        {
+          "chapter": 1,
+          "part": 1,
+          "parts": 1,
+          "videoId": "YwXpGh5Vzgg",
+          "publishedAt": "2025-07-28T10:00:50Z",
+          "sourceTitle": "[BL] Stay With Me EP01 | Starring: Xu Bin, Zhang Jiongmin | ENG SUB"
+        },
+        {
+          "chapter": 2,
+          "part": 1,
+          "parts": 1,
+          "videoId": "pIXCVdwFfgw",
+          "publishedAt": "2025-07-28T10:15:05Z",
+          "sourceTitle": "[BL] Stay With Me EP02 | Starring: Xu Bin, Zhang Jiongmin | ENG SUB"
+        },
+        {
+          "chapter": 3,
+          "part": 1,
+          "parts": 1,
+          "videoId": "gA0COWIahz0",
+          "publishedAt": "2025-07-29T10:01:09Z",
+          "sourceTitle": "[BL] Stay With Me EP03 | Starring: Xu Bin, Zhang Jiongmin | ENG SUB"
+        },
+        {
+          "chapter": 4,
+          "part": 1,
+          "parts": 1,
+          "videoId": "HR0X01LHdGA",
+          "publishedAt": "2025-07-30T10:00:34Z",
+          "sourceTitle": "[BL] Stay With Me EP04 | Starring: Xu Bin, Zhang Jiongmin | ENG SUB"
+        },
+        {
+          "chapter": 5,
+          "part": 1,
+          "parts": 1,
+          "videoId": "4FO6SkQapWU",
+          "publishedAt": "2025-07-31T10:00:13Z",
+          "sourceTitle": "[BL] Stay With Me EP05 | Starring: Xu Bin, Zhang Jiongmin | ENG SUB"
+        },
+        {
+          "chapter": 6,
+          "part": 1,
+          "parts": 1,
+          "videoId": "cHFDBb4vFvw",
+          "publishedAt": "2025-08-01T10:01:07Z",
+          "sourceTitle": "[BL] Stay With Me EP06 | Starring: Xu Bin, Zhang Jiongmin | ENG SUB"
+        },
+        {
+          "chapter": 7,
+          "part": 1,
+          "parts": 1,
+          "videoId": "lgqe30OL8Yc",
+          "publishedAt": "2025-08-02T10:00:59Z",
+          "sourceTitle": "[BL] Stay With Me EP07 | Starring: Xu Bin, Zhang Jiongmin | ENG SUB"
+        },
+        {
+          "chapter": 8,
+          "part": 1,
+          "parts": 1,
+          "videoId": "cWLUolxIimU",
+          "publishedAt": "2025-08-04T10:00:53Z",
+          "sourceTitle": "[BL] Stay With Me EP08 | Starring: Xu Bin, Zhang Jiongmin | ENG SUB"
+        },
+        {
+          "chapter": 9,
+          "part": 1,
+          "parts": 1,
+          "videoId": "4-mTRcHY5Cc",
+          "publishedAt": "2025-08-05T10:00:13Z",
+          "sourceTitle": "[BL] Stay With Me EP09 | Starring: Xu Bin, Zhang Jiongmin | ENG SUB"
+        },
+        {
+          "chapter": 10,
+          "part": 1,
+          "parts": 1,
+          "videoId": "62rBkz2KUhU",
+          "publishedAt": "2025-08-06T10:00:19Z",
+          "sourceTitle": "[BL] Stay With Me EP10 | Starring: Xu Bin, Zhang Jiongmin | ENG SUB"
+        },
+        {
+          "chapter": 11,
+          "part": 1,
+          "parts": 1,
+          "videoId": "Q1lXyNh35WA",
+          "publishedAt": "2025-08-07T10:00:59Z",
+          "sourceTitle": "[BL] Stay With Me EP11 | Starring: Xu Bin, Zhang Jiongmin | ENG SUB"
+        },
+        {
+          "chapter": 12,
+          "part": 1,
+          "parts": 1,
+          "videoId": "Y_qU1k-IHpE",
+          "publishedAt": "2025-08-08T10:01:05Z",
+          "sourceTitle": "[BL] Stay With Me EP12 | Starring: Xu Bin, Zhang Jiongmin | ENG SUB"
+        },
+        {
+          "chapter": 13,
+          "part": 1,
+          "parts": 1,
+          "videoId": "625tG-HsmEo",
+          "publishedAt": "2025-08-09T10:00:09Z",
+          "sourceTitle": "[BL] Stay With Me EP13 | Starring: Xu Bin, Zhang Jiongmin | ENG SUB"
+        },
+        {
+          "chapter": 14,
+          "part": 1,
+          "parts": 1,
+          "videoId": "8-aYKB1t3OA",
+          "publishedAt": "2025-08-10T10:00:13Z",
+          "sourceTitle": "[BL] Stay With Me EP14 | Starring: Xu Bin, Zhang Jiongmin | ENG SUB"
+        },
+        {
+          "chapter": 15,
+          "part": 1,
+          "parts": 1,
+          "videoId": "0yH-JTuLEuk",
+          "publishedAt": "2025-08-11T10:00:02Z",
+          "sourceTitle": "[BL] Stay With Me EP15 | Starring: Xu Bin, Zhang Jiongmin | ENG SUB"
+        },
+        {
+          "chapter": 16,
+          "part": 1,
+          "parts": 1,
+          "videoId": "YD4gLrMucq0",
+          "publishedAt": "2025-08-12T10:01:03Z",
+          "sourceTitle": "[BL] Stay With Me EP16 | Starring: Xu Bin, Zhang Jiongmin | ENG SUB"
+        },
+        {
+          "chapter": 17,
+          "part": 1,
+          "parts": 1,
+          "videoId": "jTLbdq-6Bno",
+          "publishedAt": "2025-08-13T10:01:13Z",
+          "sourceTitle": "[BL] Stay With Me EP17 | Starring: Xu Bin, Zhang Jiongmin | ENG SUB"
+        },
+        {
+          "chapter": 18,
+          "part": 1,
+          "parts": 1,
+          "videoId": "noge_3uCWpA",
+          "publishedAt": "2025-08-14T10:01:28Z",
+          "sourceTitle": "[BL] Stay With Me EP18 | Starring: Xu Bin, Zhang Jiongmin | ENG SUB"
+        },
+        {
+          "chapter": 19,
+          "part": 1,
+          "parts": 1,
+          "videoId": "P1AnsrmSD6A",
+          "publishedAt": "2025-08-15T10:00:38Z",
+          "sourceTitle": "[BL] Stay With Me EP19 | Starring: Xu Bin, Zhang Jiongmin | ENG SUB"
+        },
+        {
+          "chapter": 20,
+          "part": 1,
+          "parts": 1,
+          "videoId": "3vdaKeXIPPQ",
+          "publishedAt": "2025-08-16T10:00:06Z",
+          "sourceTitle": "[BL] Stay With Me EP20 | Starring: Xu Bin, Zhang Jiongmin | ENG SUB"
+        },
+        {
+          "chapter": 21,
+          "part": 1,
+          "parts": 1,
+          "videoId": "p04DbTOO1-s",
+          "publishedAt": "2025-08-17T10:01:17Z",
+          "sourceTitle": "[BL] Stay With Me EP21 | Starring: Xu Bin, Zhang Jiongmin | ENG SUB"
+        },
+        {
+          "chapter": 22,
+          "part": 1,
+          "parts": 1,
+          "videoId": "I5Qs9cYjT7w",
+          "publishedAt": "2025-08-18T10:00:36Z",
+          "sourceTitle": "[BL] Stay With Me EP22 | Starring: Xu Bin, Zhang Jiongmin | ENG SUB"
+        },
+        {
+          "chapter": 23,
+          "part": 1,
+          "parts": 1,
+          "videoId": "OxIOtRXgL1o",
+          "publishedAt": "2025-08-19T10:00:42Z",
+          "sourceTitle": "[BL] Stay With Me EP23 | Starring: Xu Bin, Zhang Jiongmin | ENG SUB"
+        },
+        {
+          "chapter": 24,
+          "part": 1,
+          "parts": 1,
+          "videoId": "wnviRVC9Mfo",
+          "publishedAt": "2025-08-20T10:01:40Z",
+          "sourceTitle": "[BL] Stay With Me EP24 | Starring: Xu Bin, Zhang Jiongmin | ENG SUB"
+        }
+      ]
+    }
+  ]
+}

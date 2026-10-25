@@ -2,6 +2,13 @@
 
 Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-stack para gestionar, calificar y hacer seguimiento de series, peliculas, cortos y especiales.
 
+## Ampliación de /ver: 14 títulos de PH, JP, VN, TW y CN (2026-10-25)
+
+- `scripts/data/ver-content-2026-10-25.json`: 14 títulos / 125 capítulos / 125 videos, sin partes. Once fichas existentes completan su temporada 1 y tres altas `WATCHABLE_ONLY` (Marahuyo Project, Unknown, Stay With Me). Primeras series filipinas, japonesas y chinas en `/ver`.
+- Nueve canales nuevos en `official-channels.ts`: Black Sheep, ANIMA Studios, Oxin Films (sin títulos en el lote), RL Studio, MOI Studio, Vũ Luân Entertainment, GTV Drama, YOUKU English y Huace Croton TV English. Los de catálogo general están en `EXCLUDED_CHANNELS` de `news-ingest.ts`. Lovememory, ya en la lista, no existe más en YouTube.
+- `ver-content-batch.ts` registra cada lote con su conteo exacto; `--batch=` es obligatorio en `import-ver-content-batch.ts` y `publish-ver-content-batch.ts`. Cada entrega verifica solo sus videos.
+- La página anónima detectó 19 videos solo para miembros que la API daba públicos (Oxin, Windsor); se excluyeron sus títulos. YouTube respondió 429 al repetir; el ensayo local usó la evidencia de menos de una hora. Local: 788 → 791 fichas, `/ver` 43 → 57, repetir es no-op. Sin migración ni cadenas nuevas. Detalle y exclusiones: [ampliación del 25/10](../ampliacion-ver-2026-10-25.md).
+
 ## Perfil en pestañas y logros ampliados (2026-10-25)
 
 - `/perfil` va en pestañas (`?tab=`): Resumen, Estadísticas (incluye lo que era `/perfil/estadisticas`, que ahora redirige), Logros, Actividad, Ajustes y Admin (solo staff). Cada pestaña con grilla (`ProfileGridTab`) conserva mover/agrandar/quitar/sumar paneles con su propio layout `profile-<rol>-tab-<tab>-v1`. Se quitaron el selector Básica/Avanzada y el CustomizeDrawer; los layouts viejos quedan sin uso.

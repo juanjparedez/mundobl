@@ -1,7 +1,7 @@
 /** Local-only rehearsal. No production switch, notifications or external writes. */
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { parse } from 'dotenv';
-import { verContentBatch } from './data/ver-content-batch';
+import { verBatchArg, verContentBatch } from './data/ver-content-batch';
 import { verifyYouTubeVideosOfficial } from '../src/lib/channel-fetcher';
 import {
   probeViaApi,
@@ -15,8 +15,6 @@ import {
 import { parseEpisodeSource } from '../src/lib/episode-platforms';
 import { verifyExternalEpisode } from '../src/lib/external-episode-source';
 
-const batch = verContentBatch();
-
 async function main() {
   // Check BEFORE importing database.ts. Never fall back to .env's remote DB.
   const url = new URL(process.env.DATABASE_URL ?? '');
@@ -28,8 +26,9 @@ async function main() {
     throw new Error('Only the local expansion/replay database is allowed.');
   }
   const args = process.argv.slice(2);
-  if (args.some((arg) => arg !== '--apply'))
+  if (args.some((arg) => arg !== '--apply' && !arg.startsWith('--batch=')))
     throw new Error('Unknown argument');
+  const batch = verContentBatch(verBatchArg(args));
   if (!process.env.YOUTUBE_API_KEY) {
     process.env.YOUTUBE_API_KEY = parse(readFileSync('.env')).YOUTUBE_API_KEY;
   }

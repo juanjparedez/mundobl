@@ -23,8 +23,17 @@ const RSS_MAX_AGE_DAYS = 7;
 const VIDEO_MAX_AGE_DAYS = 3;
 const PER_SOURCE_LIMIT = 5;
 const MAX_NEW_PER_RUN = 40;
-// Sus avances son dramas chinos doblados, no BL.
-const EXCLUDED_CHANNELS = new Set(['WeTVThailand']);
+// Sus avances son dramas chinos doblados, o catalogo general (cine, musica),
+// no BL. Son oficiales para episodios, pero no fuente de noticias BL.
+const EXCLUDED_CHANNELS = new Set([
+  'WeTVThailand',
+  'blacksheepph',
+  'animastudiosph',
+  'vuluanentertainment',
+  'gtv-drama',
+  'youkuenglish',
+  'huacetvenglish',
+]);
 // El avance de una serie, no el del proximo capitulo ("EP.3") ni el de una
 // cancion ("Ost.").
 // Sitio dedicado a BL/GL, o nota que habla de eso. De un sitio general
