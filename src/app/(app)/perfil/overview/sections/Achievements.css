@@ -45,33 +45,39 @@
   font-size: 16px;
 }
 
-.overview-achievements__item--gold .overview-achievements__icon {
-  background: color-mix(in srgb, var(--primary-color) 22%, transparent);
-  color: var(--primary-color);
+/* Tonos via tokens (siguen el accent y el tema). El tablero de la pestaña
+ * Logros usa las mismas variables. */
+.overview-achievements__item--gold {
+  --achievement-tone: var(--primary-color);
 }
 
-.overview-achievements__item--purple .overview-achievements__icon {
-  background: color-mix(in srgb, #7c4dff 22%, transparent);
-  color: #a18bff;
+.overview-achievements__item--purple {
+  --achievement-tone: color-mix(
+    in srgb,
+    var(--primary-color) 45%,
+    var(--info-color)
+  );
 }
 
-.overview-achievements__item--red .overview-achievements__icon {
-  background: color-mix(in srgb, #ff5c5c 22%, transparent);
-  color: #ff8585;
+.overview-achievements__item--red {
+  --achievement-tone: var(--error-color);
 }
 
-.overview-achievements__item--blue .overview-achievements__icon {
-  background: color-mix(in srgb, #4f8cff 22%, transparent);
-  color: #6da3ff;
+.overview-achievements__item--blue {
+  --achievement-tone: var(--info-color);
 }
 
-.overview-achievements__item--green .overview-achievements__icon {
-  background: color-mix(in srgb, #48c774 22%, transparent);
-  color: #58d484;
+.overview-achievements__item--green {
+  --achievement-tone: var(--success-color);
+}
+
+.overview-achievements__icon {
+  background: color-mix(in srgb, var(--achievement-tone) 22%, transparent);
+  color: var(--achievement-tone);
 }
 
 .overview-achievements__item--locked .overview-achievements__icon {
-  background: rgba(255, 255, 255, 0.04);
+  background: color-mix(in srgb, var(--text-tertiary) 12%, transparent);
   color: var(--text-tertiary);
 }
 
@@ -108,7 +114,7 @@
 
 .overview-achievements__item:not(.overview-achievements__item--locked)
   .overview-achievements__progress-text {
-  color: #58d484;
+  color: var(--success-color);
 }
 
 .overview-achievements__desc {
@@ -119,7 +125,7 @@
 .overview-achievements__bar-track {
   margin-top: 3px;
   height: 3px;
-  background: rgba(255, 255, 255, 0.06);
+  background: color-mix(in srgb, var(--text-tertiary) 18%, transparent);
   border-radius: 999px;
   overflow: hidden;
 }
@@ -132,6 +138,15 @@
     color-mix(in srgb, var(--primary-color) 50%, transparent)
   );
   border-radius: 999px;
+}
+
+.overview-achievements__board-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--widget-body-padding);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
 }
 
 /* Container query: el widget reacciona a su propio ancho (no al del

@@ -1,0 +1,97 @@
+.mb-platform-patch {
+  --patch-tone: var(--text-tertiary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: var(--spacing-sm);
+  text-align: center;
+  border-radius: var(--border-radius-base);
+  background: var(--bg-spotlight);
+  min-width: 0;
+}
+
+.mb-platform-patch--bronze {
+  --patch-tone: color-mix(
+    in srgb,
+    var(--warning-color) 55%,
+    var(--error-color)
+  );
+}
+
+.mb-platform-patch--silver {
+  --patch-tone: color-mix(
+    in srgb,
+    var(--text-secondary) 85%,
+    var(--info-color)
+  );
+}
+
+.mb-platform-patch--gold {
+  --patch-tone: var(--warning-color);
+}
+
+/* Parche: circulo con "costura" punteada interior y anillo del nivel. */
+.mb-platform-patch__badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: var(--spacing-xs);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 35% 30%,
+    color-mix(in srgb, var(--patch-tone) 38%, var(--bg-elevated)),
+    color-mix(in srgb, var(--patch-tone) 14%, var(--bg-container))
+  );
+  border: 3px solid var(--patch-tone);
+  box-shadow: var(--box-shadow-base);
+}
+
+.mb-platform-patch__badge::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  border: 1.5px dashed color-mix(in srgb, var(--patch-tone) 70%, transparent);
+}
+
+.mb-platform-patch__initials {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--text-primary);
+}
+
+.mb-platform-patch--none .mb-platform-patch__badge {
+  background: transparent;
+  border-style: dashed;
+  box-shadow: none;
+  opacity: 0.7;
+}
+
+.mb-platform-patch--none .mb-platform-patch__initials {
+  color: var(--text-tertiary);
+}
+
+.mb-platform-patch__name {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.mb-platform-patch__tier {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--patch-tone);
+}
+
+.mb-platform-patch__meta {
+  font-size: var(--font-size-xs);
+  color: var(--text-tertiary);
+}

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { Button, Progress } from 'antd';
 import { CheckCircleOutlined, EditOutlined } from '@ant-design/icons';
 import { Widget } from '@/components/dashboard';
@@ -12,26 +13,23 @@ import './ProfileCompletenessWidget.css';
 export interface ProfileCompletenessWidgetProps {
   user: ProfileData['user'];
   stats: ProfileData['stats'];
+  /** Pestaña Ajustes del perfil. */
+  settingsHref: string;
 }
 
 const TONE = { low: 'error', mid: 'warning', high: 'success' } as const;
 
 /** Widget de completitud del perfil (#112 fase 3). Reusa la métrica pura
  *  profile-completeness.ts. Sin i18n nuevo: reusa completeness.* y
- *  profileDashboard.editProfile (ya en los 10 locales). El CTA hace
- *  scroll al bloque de settings (mismo target que "Editar perfil"). */
+ *  profileDashboard.editProfile (ya en los 10 locales). El CTA lleva a la
+ *  pestaña Ajustes (mismo destino que "Editar perfil"). */
 export function ProfileCompletenessWidget({
   user,
   stats,
+  settingsHref,
 }: ProfileCompletenessWidgetProps) {
   const { t } = useLocale();
   const { score, tier } = computeProfileCompleteness({ user, stats });
-
-  const goToSettings = () => {
-    document
-      .getElementById('mb-profile-settings')
-      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
 
   return (
     <Widget title={t('completeness.title')} icon={<CheckCircleOutlined />}>
@@ -55,14 +53,11 @@ export function ProfileCompletenessWidget({
           }
         />
         {score < 100 && (
-          <Button
-            size="small"
-            icon={<EditOutlined />}
-            onClick={goToSettings}
-            className="mb-profile-completeness__cta"
-          >
-            {t('profileDashboard.editProfile')}
-          </Button>
+          <Link href={settingsHref} className="mb-profile-completeness__cta">
+            <Button size="small" icon={<EditOutlined />}>
+              {t('profileDashboard.editProfile')}
+            </Button>
+          </Link>
         )}
       </div>
     </Widget>

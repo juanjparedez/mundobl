@@ -15,6 +15,14 @@ import { withUtm } from '@/lib/share-utm';
 import { trackEvent } from '@/lib/analytics';
 import './ShareButton.css';
 
+export type ShareButtonChannel =
+  | 'native'
+  | 'copy'
+  | 'whatsapp'
+  | 'telegram'
+  | 'twitter'
+  | 'facebook';
+
 interface ShareButtonProps {
   title: string;
   labels: { share: string; copied: string; copy: string; copyError: string };
@@ -27,6 +35,8 @@ interface ShareButtonProps {
   ghost?: boolean;
   className?: string;
   buttonText?: string;
+  /** Se llama cuando el share se completo (no al abrir el modal). */
+  onShared?: (channel: ShareButtonChannel) => void;
 }
 
 export function ShareButton({
@@ -41,6 +51,7 @@ export function ShareButton({
   ghost = false,
   className = '',
   buttonText,
+  onShared,
 }: ShareButtonProps) {
   const { message } = App.useApp();
   const [modalOpen, setModalOpen] = useState(false);
@@ -74,6 +85,7 @@ export function ShareButton({
           url: withUtm(shareUrl, 'native'),
         });
         trackEvent('share', { channel: 'native' });
+        onShared?.('native');
         return;
       } catch (err) {
         if (err instanceof Error && err.name === 'AbortError') return;
@@ -99,6 +111,7 @@ export function ShareButton({
       }
       setCopied(true);
       trackEvent('share', { channel: 'copy' });
+      onShared?.('copy');
       message.success(labels.copied);
       setTimeout(() => setCopied(false), 2500);
     } catch {
@@ -180,7 +193,10 @@ export function ShareButton({
                 target="_blank"
                 rel="noopener noreferrer"
                 className="share-modal__item"
-                onClick={() => trackEvent('share', { channel: item.channel })}
+                onClick={() => {
+                  trackEvent('share', { channel: item.channel });
+                  onShared?.(item.channel);
+                }}
               >
                 {item.icon}
                 <span>{item.name}</span>

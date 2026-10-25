@@ -6,6 +6,12 @@
   margin: 0 auto;
   padding: var(--spacing-lg);
 }
+.mb-tracking-insights--embedded {
+  padding: 0;
+}
+.mb-tracking-insights--embedded h2 {
+  margin: 0;
+}
 .mb-tracking-insights__nav {
   display: flex;
   flex-wrap: wrap;

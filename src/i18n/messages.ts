@@ -1069,6 +1069,100 @@ export type TranslationShape = {
     hookedDesc: string;
     devoteeName: string;
     devoteeDesc: string;
+    legendName: string;
+    legendDesc: string;
+    episodes50Name: string;
+    episodes50Desc: string;
+    episodes250Name: string;
+    episodes250Desc: string;
+    episodes1000Name: string;
+    episodes1000Desc: string;
+    hours10Name: string;
+    hours10Desc: string;
+    hours500Name: string;
+    hours500Desc: string;
+    countries3Name: string;
+    countries3Desc: string;
+    countries6Name: string;
+    countries6Desc: string;
+    genres10Name: string;
+    genres10Desc: string;
+    streak3Name: string;
+    streak3Desc: string;
+    activeDays7Name: string;
+    activeDays7Desc: string;
+    activeDays30Name: string;
+    activeDays30Desc: string;
+    activeDays100Name: string;
+    activeDays100Desc: string;
+    firstRatingName: string;
+    firstRatingDesc: string;
+    ratings100Name: string;
+    ratings100Desc: string;
+    reviews5Name: string;
+    reviews5Desc: string;
+    reviews25Name: string;
+    reviews25Desc: string;
+    helpful10Name: string;
+    helpful10Desc: string;
+    helpful50Name: string;
+    helpful50Desc: string;
+    featuredReviewName: string;
+    featuredReviewDesc: string;
+    firstCommentName: string;
+    firstCommentDesc: string;
+    comments10Name: string;
+    comments10Desc: string;
+    firstTopicName: string;
+    firstTopicDesc: string;
+    replies10Name: string;
+    replies10Desc: string;
+    publicListName: string;
+    publicListDesc: string;
+    firstShareName: string;
+    firstShareDesc: string;
+    shares5Name: string;
+    shares5Desc: string;
+    shares20Name: string;
+    shares20Desc: string;
+    firstSuggestionName: string;
+    firstSuggestionDesc: string;
+    suggestions5Name: string;
+    suggestions5Desc: string;
+    categoryWatching: string;
+    categoryHabits: string;
+    categoryOpinions: string;
+    categoryCommunity: string;
+    categorySharing: string;
+    categoryContributions: string;
+    boardSummary: string;
+    boardHint: string;
+    filterAll: string;
+    filterUnlocked: string;
+    filterPending: string;
+    emptyFilter: string;
+    patchesTitle: string;
+    patchesHint: string;
+    patchBronze: string;
+    patchSilver: string;
+    patchGold: string;
+    patchNone: string;
+    patchCompleted: string;
+    patchNext: string;
+    patchMax: string;
+    viewAll: string;
+  };
+  profileTabs: {
+    label: string;
+    summary: string;
+    stats: string;
+    achievements: string;
+    activity: string;
+    settings: string;
+    admin: string;
+    statsAllTime: string;
+    layoutHint: string;
+    listsTitle: string;
   };
   socials: {
     title: string;
@@ -5242,8 +5336,105 @@ const es: TranslationShape = {
     onARollDesc: 'Terminar 3 series',
     hookedName: 'Enganche total',
     hookedDesc: 'Terminar 5 series',
-    devoteeName: 'Fan de corazón',
+    devoteeName: 'Devoción',
     devoteeDesc: 'Terminar 25 series',
+    legendName: 'Leyenda',
+    legendDesc: 'Terminar 250 series',
+    episodes50Name: 'Cincuenta capítulos',
+    episodes50Desc: 'Marcar 50 capítulos como vistos',
+    episodes250Name: 'Maratón largo',
+    episodes250Desc: 'Marcar 250 capítulos como vistos',
+    episodes1000Name: 'Mil capítulos',
+    episodes1000Desc: 'Marcar 1000 capítulos como vistos',
+    hours10Name: 'Primeras horas',
+    hours10Desc: 'Acumular 10 horas vistas',
+    hours500Name: 'Quinientas horas',
+    hours500Desc: 'Acumular 500 horas vistas',
+    countries3Name: 'Pasaporte',
+    countries3Desc: 'Terminar series de 3 países',
+    countries6Name: 'Vuelta al mapa',
+    countries6Desc: 'Terminar series de 6 países',
+    genres10Name: 'Paladar amplio',
+    genres10Desc: 'Terminar series de 10 géneros distintos',
+    streak3Name: 'Tres al hilo',
+    streak3Desc: 'Marcar capítulos 3 días seguidos',
+    activeDays7Name: 'Visita frecuente',
+    activeDays7Desc: 'Entrar a MundoBL 7 días distintos',
+    activeDays30Name: 'De la casa',
+    activeDays30Desc: 'Entrar a MundoBL 30 días distintos',
+    activeDays100Name: 'Cien días',
+    activeDays100Desc: 'Entrar a MundoBL 100 días distintos',
+    firstRatingName: 'Primera nota',
+    firstRatingDesc: 'Valorar tu primera serie',
+    ratings100Name: 'Jurado',
+    ratings100Desc: 'Valorar 100 series',
+    reviews5Name: 'Pluma activa',
+    reviews5Desc: 'Publicar 5 reseñas',
+    reviews25Name: 'Columna propia',
+    reviews25Desc: 'Publicar 25 reseñas',
+    helpful10Name: 'Reseña útil',
+    helpful10Desc: 'Recibir 10 votos de "útil" en tus reseñas',
+    helpful50Name: 'Voz de referencia',
+    helpful50Desc: 'Recibir 50 votos de "útil" en tus reseñas',
+    featuredReviewName: 'Destacada',
+    featuredReviewDesc: 'Que una reseña tuya quede destacada',
+    firstCommentName: 'Primera palabra',
+    firstCommentDesc: 'Publicar tu primer comentario',
+    comments10Name: 'Conversación',
+    comments10Desc: 'Publicar 10 comentarios',
+    firstTopicName: 'Abrir el debate',
+    firstTopicDesc: 'Crear tu primer tema en la comunidad',
+    replies10Name: 'Buena compañía',
+    replies10Desc: 'Responder 10 veces en la comunidad',
+    publicListName: 'Curaduría',
+    publicListDesc: 'Publicar una lista de recomendaciones',
+    firstShareName: 'Pasala',
+    firstShareDesc: 'Compartir una serie',
+    shares5Name: 'Boca a boca',
+    shares5Desc: 'Compartir 5 series distintas',
+    shares20Name: 'Embajada BL',
+    shares20Desc: 'Compartir 20 series distintas',
+    firstSuggestionName: 'Ojo atento',
+    firstSuggestionDesc: 'Que aprueben tu primera sugerencia a una ficha',
+    suggestions5Name: 'Mano en el catálogo',
+    suggestions5Desc: 'Que aprueben 5 sugerencias a fichas',
+    categoryWatching: 'Ver series',
+    categoryHabits: 'Constancia',
+    categoryOpinions: 'Opiniones',
+    categoryCommunity: 'Comunidad',
+    categorySharing: 'Compartir',
+    categoryContributions: 'Aportes',
+    boardSummary: '{unlocked} de {total} logros obtenidos',
+    boardHint:
+      'Todo sale de lo que hacés en MundoBL: series y capítulos marcados, opiniones publicadas, comunidad y aportes aprobados.',
+    filterAll: 'Todos',
+    filterUnlocked: 'Obtenidos',
+    filterPending: 'Pendientes',
+    emptyFilter: 'No hay logros en este filtro.',
+    patchesTitle: 'Parches de plataforma',
+    patchesHint:
+      'Se ganan terminando series que tienen link oficial en cada plataforma: bronce con 1, plata con 5 y oro con 15. El diseño es nuestro, no el logo de la plataforma.',
+    patchBronze: 'Bronce',
+    patchSilver: 'Plata',
+    patchGold: 'Oro',
+    patchNone: 'Sin parche',
+    patchCompleted: '{count} terminadas',
+    patchNext: 'Siguiente nivel: {goal}',
+    patchMax: 'Nivel máximo',
+    viewAll: 'Ver todos los logros',
+  },
+  profileTabs: {
+    label: 'Secciones del perfil',
+    summary: 'Resumen',
+    stats: 'Estadísticas',
+    achievements: 'Logros',
+    activity: 'Actividad',
+    settings: 'Ajustes',
+    admin: 'Admin',
+    statsAllTime: 'Todo tu historial',
+    layoutHint:
+      'Podés mover, agrandar, quitar y sumar paneles en cada pestaña con el botón de diseño.',
+    listsTitle: 'Listas del perfil',
   },
   socials: {
     title: 'Mis redes',
@@ -9596,6 +9787,103 @@ const en: TranslationShape = {
     hookedDesc: 'Finish 5 series',
     devoteeName: 'Devotee',
     devoteeDesc: 'Finish 25 series',
+    legendName: 'Legend',
+    legendDesc: 'Finish 250 series',
+    episodes50Name: 'Fifty episodes',
+    episodes50Desc: 'Mark 50 episodes as watched',
+    episodes250Name: 'Long marathon',
+    episodes250Desc: 'Mark 250 episodes as watched',
+    episodes1000Name: 'A thousand episodes',
+    episodes1000Desc: 'Mark 1000 episodes as watched',
+    hours10Name: 'First hours',
+    hours10Desc: 'Reach 10 hours watched',
+    hours500Name: 'Five hundred hours',
+    hours500Desc: 'Reach 500 hours watched',
+    countries3Name: 'Passport',
+    countries3Desc: 'Finish series from 3 countries',
+    countries6Name: 'Around the map',
+    countries6Desc: 'Finish series from 6 countries',
+    genres10Name: 'Wide palate',
+    genres10Desc: 'Finish series from 10 different genres',
+    streak3Name: 'Three in a row',
+    streak3Desc: 'Mark episodes 3 days in a row',
+    activeDays7Name: 'Regular visitor',
+    activeDays7Desc: 'Visit MundoBL on 7 different days',
+    activeDays30Name: 'One of the family',
+    activeDays30Desc: 'Visit MundoBL on 30 different days',
+    activeDays100Name: 'One hundred days',
+    activeDays100Desc: 'Visit MundoBL on 100 different days',
+    firstRatingName: 'First score',
+    firstRatingDesc: 'Rate your first series',
+    ratings100Name: 'Jury',
+    ratings100Desc: 'Rate 100 series',
+    reviews5Name: 'Active pen',
+    reviews5Desc: 'Publish 5 reviews',
+    reviews25Name: 'Your own column',
+    reviews25Desc: 'Publish 25 reviews',
+    helpful10Name: 'Helpful review',
+    helpful10Desc: 'Get 10 "helpful" votes on your reviews',
+    helpful50Name: 'Go-to voice',
+    helpful50Desc: 'Get 50 "helpful" votes on your reviews',
+    featuredReviewName: 'Featured',
+    featuredReviewDesc: 'Have one of your reviews featured',
+    firstCommentName: 'First word',
+    firstCommentDesc: 'Post your first comment',
+    comments10Name: 'Conversation',
+    comments10Desc: 'Post 10 comments',
+    firstTopicName: 'Start the talk',
+    firstTopicDesc: 'Create your first community topic',
+    replies10Name: 'Good company',
+    replies10Desc: 'Reply 10 times in the community',
+    publicListName: 'Curator',
+    publicListDesc: 'Publish a recommendation list',
+    firstShareName: 'Pass it on',
+    firstShareDesc: 'Share a series',
+    shares5Name: 'Word of mouth',
+    shares5Desc: 'Share 5 different series',
+    shares20Name: 'BL ambassador',
+    shares20Desc: 'Share 20 different series',
+    firstSuggestionName: 'Sharp eye',
+    firstSuggestionDesc: 'Get your first series suggestion approved',
+    suggestions5Name: 'Catalog helper',
+    suggestions5Desc: 'Get 5 series suggestions approved',
+    categoryWatching: 'Watching',
+    categoryHabits: 'Consistency',
+    categoryOpinions: 'Opinions',
+    categoryCommunity: 'Community',
+    categorySharing: 'Sharing',
+    categoryContributions: 'Contributions',
+    boardSummary: '{unlocked} of {total} achievements unlocked',
+    boardHint:
+      'Everything comes from what you do on MundoBL: series and episodes you mark, published opinions, community and approved contributions.',
+    filterAll: 'All',
+    filterUnlocked: 'Unlocked',
+    filterPending: 'In progress',
+    emptyFilter: 'No achievements in this filter.',
+    patchesTitle: 'Platform patches',
+    patchesHint:
+      'Earn them by finishing series with an official link on each platform: bronze at 1, silver at 5 and gold at 15. The design is ours, not the platform logo.',
+    patchBronze: 'Bronze',
+    patchSilver: 'Silver',
+    patchGold: 'Gold',
+    patchNone: 'No patch yet',
+    patchCompleted: '{count} finished',
+    patchNext: 'Next level: {goal}',
+    patchMax: 'Top level',
+    viewAll: 'See all achievements',
+  },
+  profileTabs: {
+    label: 'Profile sections',
+    summary: 'Overview',
+    stats: 'Statistics',
+    achievements: 'Achievements',
+    activity: 'Activity',
+    settings: 'Settings',
+    admin: 'Admin',
+    statsAllTime: 'Your whole history',
+    layoutHint:
+      'You can move, resize, remove and add panels on each tab with the layout button.',
+    listsTitle: 'Profile lists',
   },
   socials: {
     title: 'My socials',

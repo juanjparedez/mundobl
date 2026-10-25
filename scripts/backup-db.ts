@@ -32,6 +32,11 @@ const MODELS = [
       client.userActiveDay.findMany(),
   },
   {
+    name: 'SeriesShare',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.seriesShare.findMany(),
+  },
+  {
     name: 'SupportSettings',
     delegate: (client: Prisma.TransactionClient) =>
       client.supportSettings.findMany(),
