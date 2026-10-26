@@ -8,6 +8,20 @@ Todas las versiones notables del proyecto se documentan aqui.
 > (`ChangelogItem`, `/admin/changelog`) quedo como fallback solo si este archivo
 > esta vacio.
 
+## 2026-10-25 — Arquitectura de privacidad en dos niveles, alias seudónimos comunitarios y pulso de streaming en /estadisticas
+
+### Features
+
+- **Pulso de streaming y reproductor en `/estadisticas`**: Nuevo panel visual agregado que transparenta en tiempo real el consumo legal en la plataforma. Muestra reproducciones iniciadas, vistas completas (≥80% de duración), tasa de retención, likes comunitarios en el reproductor y visitas derivadas a canales oficiales de productoras, con gráfico de tendencia en 30 días y top de series más reproducidas.
+- **Participación comunitaria y alias seudónimos opt-in (Nivel 2)**: Participación comunitaria voluntaria mediante seudónimos poéticos generados en dos palabras. Tanto visitantes en su navegador como usuarios con cuenta pueden participar, votar Me gusta y sumarse al pulso de la comunidad sin exponer nombres reales, correos ni datos de OAuth.
+- **Centro de control en `/privacidad`**: Nuevo panel en «Tus controles» para activar o desactivar la participación por Alias, ver el seudónimo actual asignado por el navegador o cuenta, y re-sortear el alias cuando se desee con enfriamiento preventivo.
+- **Telemetría operativa de primera parte (Nivel 1)**: Conteo diario y anónimo de secciones y embudo de reproducción en `/ver` para dimensionar servidores y respaldar negociaciones de contenido oficial con productoras, con cero registro de direcciones IP, cero cookies de rastreo y respeto irrestricto de opt-out.
+
+### Fixes
+
+- **Me gusta en `/ver` con contexto de alias**: Al dar Me gusta a una serie en el reproductor con el Nivel 2 activo, el botón brinda confirmación visual indicando el seudónimo bajo el cual se registró la interacción.
+- **Transparencia y derechos de autor**: Se incorporan notas informativas explícitas en `/estadisticas` y `/privacidad` detallando que todas las reproducciones provienen de integraciones legales oficiales (YouTube, Vimeo, Dailymotion), protegiendo la autoría y la privacidad de la comunidad.
+
 ## 2026-10-25 — 38 series más para ver, seguimiento sin cuenta, avisos de estreno, perfil en pestañas y 48 logros
 
 ### Features
@@ -31,7 +45,7 @@ Todas las versiones notables del proyecto se documentan aqui.
 
 ### Features
 
-- **16 títulos más para ver**: 15 series y miniseries de canales oficiales de YouTube y el corto taiwanés *Yu and Rachel*, publicado por su director en Vimeo. El lote suma 108 capítulos y 115 videos contando las partes.
+- **16 títulos más para ver**: 15 series y miniseries de canales oficiales de YouTube y el corto taiwanés _Yu and Rachel_, publicado por su director en Vimeo. El lote suma 108 capítulos y 115 videos contando las partes.
 - **Vimeo dentro de MundoBL**: reproducción en la ficha, atribución al autor y filtro por plataforma. Las nuevas fuentes se comprueban antes de admitirlas.
 
 ### Fixes
