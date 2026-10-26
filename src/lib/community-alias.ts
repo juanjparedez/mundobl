@@ -77,18 +77,34 @@ export function formatAlias(
 export const VISITOR_ALIAS_SEED_KEY = 'mundobl.visitor_alias_seed';
 export const COMMUNITY_OPT_IN_KEY = 'mundobl.community_opt_in';
 
-/** Obtiene la semilla del visitante desde localStorage, o genera una determinista */
+let cachedSeedRaw: string | null = null;
+let cachedSeed: number = 0;
+
+/** Obtiene la semilla del visitante desde localStorage (devuelve siempre un number primitivo estable) */
 export function getVisitorAliasSeed(): number {
   if (typeof window === 'undefined') return 0;
   try {
     const raw = window.localStorage.getItem(VISITOR_ALIAS_SEED_KEY);
     if (raw !== null) {
+      if (raw === cachedSeedRaw) return cachedSeed;
       const parsed = parseInt(raw, 10);
-      if (Number.isSafeInteger(parsed)) return parsed;
+      if (Number.isSafeInteger(parsed)) {
+        cachedSeedRaw = raw;
+        cachedSeed = parsed;
+        return cachedSeed;
+      }
     }
-    const seed = Math.floor(Math.random() * ALIAS_COMBINATIONS);
-    window.localStorage.setItem(VISITOR_ALIAS_SEED_KEY, String(seed));
-    return seed;
+    if (cachedSeed === 0) {
+      const seed = Math.floor(Math.random() * ALIAS_COMBINATIONS);
+      cachedSeed = seed;
+      cachedSeedRaw = String(seed);
+      try {
+        window.localStorage.setItem(VISITOR_ALIAS_SEED_KEY, cachedSeedRaw);
+      } catch {
+        /* ignore */
+      }
+    }
+    return cachedSeed;
   } catch {
     return 0;
   }
@@ -105,7 +121,9 @@ export function rerollVisitorAliasSeed(): AliasParts {
   try {
     const current = getVisitorAliasSeed();
     const next = nextAliasSeed(current);
-    window.localStorage.setItem(VISITOR_ALIAS_SEED_KEY, String(next));
+    cachedSeed = next;
+    cachedSeedRaw = String(next);
+    window.localStorage.setItem(VISITOR_ALIAS_SEED_KEY, cachedSeedRaw);
     window.dispatchEvent(new StorageEvent('storage'));
     return aliasParts(next);
   } catch {
