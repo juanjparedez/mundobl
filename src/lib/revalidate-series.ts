@@ -70,3 +70,52 @@ export function revalidateSeries(serie: {
   revalidateSeriesDetail(serie);
   revalidateSeriesListings();
 }
+
+/**
+ * Invalida las fichas públicas de todas las series que pertenecen a un universo.
+ * Se invoca cuando una serie entra, sale o se actualiza dentro de un universo,
+ * para que los carruseles "Más contenido de este universo" de las series
+ * hermanas reflejen los cambios sin esperar al vencimiento del TTL de ISR.
+ */
+export async function revalidateUniverse(
+  universeId: number | null | undefined
+): Promise<void> {
+  if (!universeId) return;
+  try {
+    const { prisma } = await import('./database');
+    const seriesInUniverse = await prisma.series.findMany({
+      where: { universeId },
+      select: { id: true, title: true },
+    });
+    for (const item of seriesInUniverse) {
+      revalidateSeriesDetail(item);
+    }
+  } catch (error) {
+    console.error('Error al revalidar universo:', error);
+  }
+}
+
+/**
+ * Invalida las fichas de series relacionadas bidireccionalmente.
+ */
+export async function revalidateRelatedSeries(
+  seriesIds: readonly number[]
+): Promise<void> {
+  if (!seriesIds.length) return;
+  try {
+    const { prisma } = await import('./database');
+    const uniqueIds = [
+      ...new Set(seriesIds.filter((id) => Number.isInteger(id) && id > 0)),
+    ];
+    if (!uniqueIds.length) return;
+    const series = await prisma.series.findMany({
+      where: { id: { in: uniqueIds } },
+      select: { id: true, title: true },
+    });
+    for (const item of series) {
+      revalidateSeriesDetail(item);
+    }
+  } catch (error) {
+    console.error('Error al revalidar series relacionadas:', error);
+  }
+}

@@ -242,7 +242,9 @@ export function SeriesInfo({ series, showWatchLinks = true }: SeriesInfoProps) {
   const currentUniverseSeason =
     universeSeasons.findIndex((item) => item.id === series.id) + 1;
   const universeSeasonCount =
-    series.type === 'serie' && currentUniverseSeason > 0
+    series.type === 'serie' &&
+    currentUniverseSeason > 0 &&
+    universeSeasons.length > 1
       ? universeSeasons.length
       : null;
 
