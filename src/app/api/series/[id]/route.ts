@@ -3,7 +3,11 @@ import { loadLocaleMessages } from '@/i18n/messages';
 import { hasContentConsent } from '@/lib/content-consent';
 import { stripPrivateNotes } from '@/lib/privacy';
 import { NextRequest, NextResponse } from 'next/server';
-import { revalidateSeries } from '@/lib/revalidate-series';
+import {
+  revalidateRelatedSeries,
+  revalidateSeries,
+  revalidateUniverse,
+} from '@/lib/revalidate-series';
 import { prisma } from '@/lib/database';
 import { auth } from '@/lib/auth';
 import { requireRole } from '@/lib/auth-helpers';
@@ -227,6 +231,27 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     revalidateSeries(outcome.updated);
 
+    const universesToRevalidate = new Set<number>();
+    if (outcome.previousUniverseId) {
+      universesToRevalidate.add(outcome.previousUniverseId);
+    }
+    if (outcome.updated.universeId) {
+      universesToRevalidate.add(outcome.updated.universeId);
+    }
+    for (const uId of universesToRevalidate) {
+      await revalidateUniverse(uId);
+    }
+
+    const relatedToRevalidate = new Set<number>([
+      ...(outcome.previousRelatedSeriesIds ?? []),
+      ...((body.relatedSeriesIds as unknown[] | undefined)
+        ?.map(Number)
+        .filter((n) => Number.isInteger(n) && n > 0) ?? []),
+    ]);
+    if (relatedToRevalidate.size > 0) {
+      await revalidateRelatedSeries([...relatedToRevalidate]);
+    }
+
     return NextResponse.json(outcome.updated);
   } catch (error) {
     if (error instanceof TrackingPreservationError)
@@ -307,6 +332,13 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     // Verificar que la serie existe
     const serie = await prisma.series.findUnique({
       where: { id: serieId },
+      select: {
+        id: true,
+        title: true,
+        universeId: true,
+        relatedSeriesFrom: { select: { relatedSeriesId: true } },
+        relatedSeriesTo: { select: { mainSeriesId: true } },
+      },
     });
 
     if (!serie) {
@@ -324,6 +356,16 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     // Propagar el borrado a las páginas públicas cacheadas (el router.refresh()
     // del cliente solo arregla la vista admin actual).
     revalidateSeries(serie);
+    if (serie.universeId) {
+      await revalidateUniverse(serie.universeId);
+    }
+    const relatedIds = [
+      ...serie.relatedSeriesFrom.map((r) => r.relatedSeriesId),
+      ...serie.relatedSeriesTo.map((r) => r.mainSeriesId),
+    ];
+    if (relatedIds.length > 0) {
+      await revalidateRelatedSeries(relatedIds);
+    }
 
     return NextResponse.json({ message: 'Serie eliminada correctamente' });
   } catch (error) {

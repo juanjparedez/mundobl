@@ -15,7 +15,7 @@ import {
   CURATION_FIELDS,
   type CurationField,
 } from '@/lib/series-curation-fields';
-import { revalidateSeries } from '@/lib/revalidate-series';
+import { revalidateSeries, revalidateUniverse } from '@/lib/revalidate-series';
 import { extractVideoId, type Platform } from '@/lib/embed-helpers';
 import type { PendingContentItem } from '@/components/admin/SeriesContentManager/SeriesContentManager';
 import type { PendingInfoBlock } from '@/components/admin/SeriesInfoBlocksManager/SeriesInfoBlocksManager';
@@ -129,6 +129,18 @@ export async function POST(request: NextRequest, { params }: Context) {
     );
     if (!outcome) return NextResponse.json({}, { status: 404 });
     revalidateSeries(outcome.updated);
+
+    const universesToRevalidate = new Set<number>();
+    if (outcome.previousUniverseId) {
+      universesToRevalidate.add(outcome.previousUniverseId);
+    }
+    if (outcome.updated.universeId) {
+      universesToRevalidate.add(outcome.updated.universeId);
+    }
+    for (const uId of universesToRevalidate) {
+      await revalidateUniverse(uId);
+    }
+
     return NextResponse.json(outcome.updated);
   } catch (error) {
     if (error instanceof TrackingPreservationError)

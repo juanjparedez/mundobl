@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse, after } from 'next/server';
-import { revalidateSeries } from '@/lib/revalidate-series';
+import {
+  revalidateRelatedSeries,
+  revalidateSeries,
+  revalidateUniverse,
+} from '@/lib/revalidate-series';
 import { dedupeActorRows, type ActorRow } from '@/lib/series-relations';
 import {
   prisma,
@@ -460,6 +464,19 @@ export async function POST(request: NextRequest) {
 
     // Invalidar caches de las vistas que listan series y la ficha creada.
     revalidateSeries(serie);
+
+    if (serie.universeId) {
+      await revalidateUniverse(serie.universeId);
+    }
+
+    if (
+      Array.isArray(body.relatedSeriesIds) &&
+      body.relatedSeriesIds.length > 0
+    ) {
+      await revalidateRelatedSeries(
+        body.relatedSeriesIds.map(Number).filter(Number.isInteger)
+      );
+    }
 
     return NextResponse.json(serie, { status: 201 });
   } catch (error) {

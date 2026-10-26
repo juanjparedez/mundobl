@@ -406,6 +406,8 @@ export interface ResolvedSeriesImage {
 export type SeriesFormSaveResult = {
   updated: Prisma.SeriesGetPayload<object>;
   newSeasons: Array<{ id: number; seasonNumber: number }>;
+  previousUniverseId?: number | null;
+  previousRelatedSeriesIds?: number[];
 } | null;
 
 const toInt = (value: unknown): number | null => {
@@ -634,6 +636,12 @@ export async function saveSeriesFromForm(
         throw new SeriesEditConflictError();
       }
 
+      const previousUniverseId = current.universeId;
+      const previousRelatedSeriesIds = [
+        ...current.relatedSeriesFrom.map((r) => r.relatedSeriesId),
+        ...current.relatedSeriesTo.map((r) => r.mainSeriesId),
+      ];
+
       const targetUniverseId =
         requestedUniverseId === undefined
           ? current.universeId
@@ -706,7 +714,12 @@ export async function saveSeriesFromForm(
         where: { id: seriesId },
       });
       await append?.(tx);
-      return { updated, newSeasons };
+      return {
+        updated,
+        newSeasons,
+        previousUniverseId,
+        previousRelatedSeriesIds,
+      };
     },
     // Margen para series con muchas temporadas: el default de 5 s quedaba
     // justo cuando las funciones corrian en iad1, lejos de la base (sa-east-1).

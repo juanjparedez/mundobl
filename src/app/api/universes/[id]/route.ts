@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
+import { revalidateUniverse } from '@/lib/revalidate-series';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -79,6 +80,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         imageUrl: body.imageUrl || null,
       },
     });
+
+    await revalidateUniverse(universeId);
 
     return NextResponse.json(universe);
   } catch (error: unknown) {
