@@ -44,9 +44,27 @@
 }
 
 .legal-article a {
-  color: var(--ant-primary-color, #1677ff);
+  color: var(--primary-color);
 }
 
 .legal-article a:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .legal-page {
+    padding: var(--spacing-sm);
+  }
+
+  .legal-article {
+    padding: var(--spacing-sm);
+  }
+
+  .legal-article h1 {
+    font-size: 1.4rem;
+  }
+
+  .legal-article ul {
+    padding-left: var(--spacing-md);
+  }
 }

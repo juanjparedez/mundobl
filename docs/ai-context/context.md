@@ -2,6 +2,30 @@
 
 Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-stack para gestionar, calificar y hacer seguimiento de series, peliculas, cortos y especiales.
 
+## Optimización Mobile UX/UI - Fase 2: Cobertura Integral del Sitio (2026-10-26)
+
+- **Comunidad (`/comunidad/*`)**:
+  - `CommunityFeed`: feed responsive a `<= 600px` con padding optimizado, filtro de categorías con snap horizontal deslizable (`scroll-snap-type: x mandatory`), buscador táctil y botones de paginación/acciones en columna táctil de 44px.
+  - `CommunityCard` y `RecommendationCard`: diseño adaptativo en `<= 600px` con póster proporcional de 72px/104px y recorte fluido de sinopsis para evitar saltos de línea irregulares.
+  - `CommunityThread`: cabecera y cuerpo de hilo sin desbordes, espaciado táctil en respuestas y textarea con font-size de 16px para prevenir zoom automático indeseado en iOS Safari.
+  - `CommunityNavigation`: barra de navegación comunitaria transformada en pill strip deslizable horizontal sin scrollbar visible.
+  - `CommunityComposer`, `CommunitySpace`, `RecommendationContents`, `PersonalCommunityTopics`: layouts responsivos adaptados a 1 columna o filas elásticas, evitando solapamiento de badges o truncamiento de texto.
+- **Noticias & Glosario (`/noticias`, `/noticias/[id]`)**:
+  - Eliminación total de valores hexadecimales hardcodeados (`#888`, `#333`, `#ede9fe`, `#38bdf8`, etc.), migrando a tokens del sistema dinámico (`--text-secondary`, `--primary-color`, `color-mix`, etc.).
+  - Portada de noticias en aspect ratio 16:9 (`56.25%`), lectura limpia con márgenes ajustados a mano alzada y botones de llamada a la acción ("Leer original", "Ver serie") a 44px de alto.
+- **Personas, Entidades & Plataformas (`/actores`, `/directores`, `/guionistas`, `/productoras`, `/plataformas`, `/tags/[id]`)**:
+  - `people-grid`: en `<= 600px` se reemplaza la columna única gigante por una grilla compacta de 2 columnas (155px mínimo) para navegar ágilmente más de 1.200 perfiles sin scroll interminable.
+  - `PersonCard`: avatar táctil de 38px, títulos en 2 líneas y tap target mínimo de 52px.
+  - `PeopleFilters`: buscador al 100% y selectores de orden/nacionalidad repartidos al 50% en fila dual simétrica.
+  - Fichas individuales (`director-profile`, `WriterProfile`, `company-profile`, `tag-page`): headers centrados con avatars proporcionados (80px), filmografía en grilla de posters compactos y saneamiento de tokens.
+  - `plataformas`: tarjetas de suscripción adaptadas a pantalla móvil completa con cajas de planes en grilla 2x2 y botón de visita de 44px.
+- **Notificaciones, Modales Globales & Páginas Estáticas**:
+  - `notificaciones`: toolbar responsive en columna, eliminación de hex (#1677ff, #13c2c2, #faad14, #722ed1) y botones táctiles.
+  - `SettingsPanel`: drawer a 100vw en pantallas `<= 600px` con padding inferior adaptado a safe-area (`env(safe-area-inset-bottom)`), selector de acentos táctil de 28px y skins en grilla de 1 columna.
+  - `CommandK` y `HelpShortcutsModal`: modal responsivo que se ajusta a `100vw - 16px`, altura táctil de 44px por ítem de resultado, input a 16px para evitar auto-zoom y ocultamiento de atajos físicos irrelevantes en mobile.
+  - `creditos` y `legal`: saneamiento de hex a `--primary-color` y diseño de lectura adaptable.
+  - `FeedbackClient`: botón de carga táctil a 40px y corrección de color a token `--text-on-primary`.
+
 ## Optimización Mobile UX/UI y Entorno Docker (2026-10-25)
 
 - **Mejoras Mobile UX/UI:**

@@ -107,7 +107,7 @@
 }
 
 .director-profile__featured-icon {
-  color: var(--ant-color-warning, #faad14);
+  color: var(--color-warning, var(--ant-color-warning, gold));
   margin-right: 4px;
 }
 
@@ -182,6 +182,26 @@
 
   .director-profile__film-image {
     height: 160px;
+  }
+}
+
+@media (max-width: 600px) {
+  .director-profile {
+    padding: var(--spacing-sm);
+  }
+
+  .director-profile__avatar .ant-avatar {
+    width: 80px !important;
+    height: 80px !important;
+    line-height: 80px !important;
+  }
+
+  .director-profile__links {
+    justify-content: center;
+  }
+
+  .director-profile__film-image {
+    height: 140px;
   }
 }
 

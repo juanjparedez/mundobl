@@ -32,6 +32,9 @@ export async function POST(request: NextRequest) {
   // Sin GET: crawlers y prefetch nunca cuentan.
   if (request.headers.get('origin') !== request.nextUrl.origin)
     return new NextResponse(null, { status: 403 });
+  // Global Privacy Control: no se cuenta aunque el cliente lo haya mandado.
+  if (request.headers.get('sec-gpc') === '1')
+    return new NextResponse(null, { status: 204, headers: noStore });
 
   const body: unknown = await request.json().catch(() => null);
   if (!body || typeof body !== 'object')

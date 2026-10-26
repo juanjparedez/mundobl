@@ -161,3 +161,34 @@
   color: var(--text-secondary);
   line-height: 1.5;
 }
+
+@media (max-width: 600px) {
+  .plataformas-page {
+    padding: var(--spacing-md) var(--spacing-sm);
+  }
+  .plataformas-container {
+    gap: var(--spacing-lg);
+  }
+  .plataformas-hero__title {
+    font-size: 1.5rem;
+  }
+  .plataformas-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  .plataforma-card {
+    padding: var(--spacing-md);
+    gap: var(--spacing-sm);
+  }
+  .plataforma-card__name {
+    font-size: 1.2rem;
+  }
+  .plataforma-card__plans-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-xs);
+  }
+  .plataforma-card__visit-btn {
+    min-height: 44px;
+    width: 100%;
+  }
+}

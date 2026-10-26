@@ -16,3 +16,28 @@
   border-color: var(--primary-color);
   background: color-mix(in srgb, var(--primary-color) 10%, var(--bg-container));
 }
+
+@media (max-width: 600px) {
+  .community-navigation {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: 4px;
+    gap: var(--spacing-xs);
+  }
+  .community-navigation::-webkit-scrollbar {
+    display: none;
+  }
+  .community-navigation a {
+    scroll-snap-align: start;
+    white-space: nowrap;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    font-size: 0.88rem;
+  }
+}

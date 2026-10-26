@@ -20,3 +20,12 @@
   margin: var(--spacing-sm) 0 0;
   font-size: var(--font-size-sm);
 }
+
+@media (max-width: 600px) {
+  .community-composer textarea.ant-input {
+    font-size: 16px;
+  }
+  .community-composer__actions .ant-btn {
+    flex: 1 1 100%;
+  }
+}

@@ -32,3 +32,23 @@
 .writer-profile__works .ant-tag {
   white-space: normal;
 }
+
+@media (max-width: 600px) {
+  .writer-profile {
+    gap: var(--spacing-md);
+  }
+  .writer-profile__identity {
+    flex-direction: column;
+    text-align: center;
+    gap: var(--spacing-sm);
+  }
+  .writer-profile__identity .ant-avatar {
+    width: 80px !important;
+    height: 80px !important;
+    line-height: 80px !important;
+  }
+  .writer-profile__works {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+}

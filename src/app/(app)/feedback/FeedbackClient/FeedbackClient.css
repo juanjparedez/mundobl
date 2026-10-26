@@ -332,7 +332,7 @@
 
 .feedback-pending-image__remove .anticon {
   font-size: 10px;
-  color: white;
+  color: var(--text-on-primary);
 }
 
 .feedback-image-hint {
@@ -488,4 +488,17 @@
   flex-direction: column;
   gap: var(--spacing-xs);
   align-items: flex-end;
+}
+
+@media (max-width: 600px) {
+  .feedback-page {
+    gap: var(--spacing-sm);
+  }
+  .feedback-page__header {
+    padding: 8px 10px;
+  }
+  .feedback-card__comment-input .ant-btn {
+    width: 100%;
+    min-height: 40px;
+  }
 }

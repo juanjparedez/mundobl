@@ -97,9 +97,15 @@
 }
 
 @media (max-width: 600px) {
+  .company-profile {
+    padding: var(--spacing-sm);
+  }
+
   .company-profile__header {
     flex-direction: column;
-    gap: var(--spacing-md);
+    align-items: center;
+    text-align: center;
+    gap: var(--spacing-sm);
   }
 
   .company-profile__logo {
@@ -112,8 +118,13 @@
     font-size: 1.4rem;
   }
 
+  .company-profile__meta,
+  .company-profile__links {
+    justify-content: center;
+  }
+
   .company-profile__grid {
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-    gap: var(--spacing-sm);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--spacing-xs);
   }
 }

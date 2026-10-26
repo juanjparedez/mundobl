@@ -191,13 +191,13 @@
 
 .settings-panel__skin-card:hover {
   background: var(--mb-panel-3, rgba(255, 255, 255, 0.08));
-  border-color: var(--primary-color, var(--mb-gold, #f6b51e));
+  border-color: var(--primary-color, var(--mb-gold, gold));
   transform: translateY(-1px);
 }
 
 .settings-panel__skin-card--active {
-  border-color: var(--primary-color, var(--mb-gold, #f6b51e)) !important;
-  box-shadow: 0 0 0 1px var(--primary-color, var(--mb-gold, #f6b51e));
+  border-color: var(--primary-color, var(--mb-gold, gold)) !important;
+  box-shadow: 0 0 0 1px var(--primary-color, var(--mb-gold, gold));
 }
 
 .settings-panel__skin-header {
@@ -211,7 +211,7 @@
 .settings-panel__skin-title {
   font-size: 13px;
   font-weight: 600;
-  color: var(--mb-text, var(--text-primary, #ffffff));
+  color: var(--mb-text, var(--text-primary));
 }
 
 .settings-panel__skin-swatches {
@@ -228,6 +228,34 @@
 
 .settings-panel__skin-desc {
   font-size: 11px;
-  color: var(--mb-text-dim, var(--text-tertiary, #a9a1b8));
+  color: var(--mb-text-dim, var(--text-tertiary));
   line-height: 1.3;
+}
+
+@media (max-width: 600px) {
+  .settings-panel .ant-drawer-content-wrapper {
+    width: 100vw !important;
+    max-width: 100vw !important;
+  }
+
+  .settings-panel .ant-drawer-body {
+    padding: var(--spacing-sm) var(--spacing-sm)
+      calc(
+        var(--spacing-lg) + var(--safe-bottom, env(safe-area-inset-bottom, 0px))
+      );
+  }
+
+  .settings-panel__accent {
+    width: 28px;
+    height: 28px;
+  }
+
+  .settings-panel__accent-row {
+    gap: 10px;
+  }
+
+  .settings-panel__skins-grid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
 }

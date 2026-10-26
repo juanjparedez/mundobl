@@ -29,13 +29,25 @@
 }
 
 @media (max-width: 600px) {
+  .people-filters {
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-md);
+  }
+
   .people-filters__search {
     flex-basis: 100%;
     max-width: none;
   }
 
+  .people-filters__sort,
+  .people-filters__nationality {
+    flex: 1 1 calc(50% - var(--spacing-xs));
+    min-width: 0;
+  }
+
   .people-filters__count {
     margin-left: 0;
     flex-basis: 100%;
+    font-size: 0.8rem;
   }
 }

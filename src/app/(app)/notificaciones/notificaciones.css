@@ -91,20 +91,20 @@
 }
 
 .notificaciones-item__icon--blue {
-  background: color-mix(in srgb, #1677ff 18%, transparent);
-  color: #1677ff;
+  background: color-mix(in srgb, var(--primary-color) 18%, transparent);
+  color: var(--primary-color);
 }
 .notificaciones-item__icon--cyan {
-  background: color-mix(in srgb, #13c2c2 18%, transparent);
-  color: #13c2c2;
+  background: color-mix(in srgb, var(--color-success, teal) 18%, transparent);
+  color: var(--color-success, teal);
 }
 .notificaciones-item__icon--gold {
-  background: color-mix(in srgb, #faad14 18%, transparent);
-  color: #faad14;
+  background: color-mix(in srgb, var(--color-warning, gold) 18%, transparent);
+  color: var(--color-warning, gold);
 }
 .notificaciones-item__icon--purple {
-  background: color-mix(in srgb, #722ed1 18%, transparent);
-  color: #722ed1;
+  background: color-mix(in srgb, var(--primary-color) 35%, transparent);
+  color: var(--primary-color);
 }
 
 .notificaciones-item__type-tag {
@@ -174,4 +174,46 @@
 .notificaciones-empty-icon {
   font-size: 64px;
   color: var(--text-tertiary);
+}
+
+@media (max-width: 600px) {
+  .notificaciones-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-sm);
+  }
+
+  .notificaciones-toolbar__actions {
+    width: 100%;
+  }
+
+  .notificaciones-toolbar__actions .ant-btn {
+    flex: 1 1 auto;
+    min-height: 40px;
+  }
+
+  .notificaciones-item__link {
+    padding: var(--spacing-sm);
+    gap: var(--spacing-xs);
+  }
+
+  .notificaciones-item__icon {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .notificaciones-item__title {
+    font-size: 0.95rem;
+  }
+
+  .notificaciones-item__body {
+    font-size: 0.85rem;
+  }
+
+  .notificaciones-item__actions .ant-btn {
+    min-height: 38px;
+    min-width: 38px;
+  }
 }

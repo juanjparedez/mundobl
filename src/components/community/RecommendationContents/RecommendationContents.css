@@ -50,15 +50,28 @@
   overflow-wrap: anywhere;
   line-height: 1.7;
 }
-@media (max-width: 480px) {
-  .recommendation-contents__row {
-    flex-wrap: wrap;
+@media (max-width: 600px) {
+  .recommendation-contents {
+    gap: var(--spacing-sm);
   }
-  .recommendation-contents__body {
-    flex-basis: calc(100% - 130px);
+  .recommendation-contents__row {
+    gap: var(--spacing-sm);
+  }
+  .recommendation-contents__rank {
+    font-size: 18px;
+    min-width: 18px;
+    padding-top: var(--spacing-xs);
   }
   .recommendation-contents__cover {
-    width: 60px;
-    height: 90px;
+    width: 64px;
+    height: 94px;
+  }
+  .recommendation-contents__body h2 {
+    font-size: 1rem;
+    margin: 0 0 var(--spacing-xs);
+  }
+  .recommendation-contents__body p {
+    font-size: 0.9rem;
+    line-height: 1.55;
   }
 }

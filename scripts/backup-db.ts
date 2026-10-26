@@ -27,6 +27,11 @@ const MODELS = [
       client.seriesActivityDaily.findMany(),
   },
   {
+    name: 'SiteTrafficDaily',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.siteTrafficDaily.findMany(),
+  },
+  {
     name: 'UserActiveDay',
     delegate: (client: Prisma.TransactionClient) =>
       client.userActiveDay.findMany(),

@@ -53,3 +53,20 @@
   color: var(--text-secondary);
   font-size: var(--font-size-sm);
 }
+
+@media (max-width: 600px) {
+  .recommendation-card__covers {
+    height: 120px;
+  }
+  .recommendation-card__body {
+    padding: var(--spacing-sm);
+  }
+  .recommendation-card__body h2 {
+    font-size: 1rem;
+    margin: var(--spacing-xs) 0;
+  }
+  .recommendation-card__footer {
+    font-size: 0.8rem;
+    margin-top: var(--spacing-xs);
+  }
+}

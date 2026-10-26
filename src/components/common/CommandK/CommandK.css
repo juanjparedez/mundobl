@@ -107,3 +107,26 @@
   font-size: 11px;
   margin-right: 2px;
 }
+
+@media (max-width: 600px) {
+  .cmdk-modal .ant-modal {
+    max-width: calc(100vw - 16px) !important;
+    margin: 8px auto !important;
+    top: 8px !important;
+  }
+
+  .cmdk-input.ant-input-affix-wrapper-lg {
+    font-size: 16px;
+    padding: var(--spacing-sm);
+  }
+
+  .cmdk-item {
+    min-height: 44px;
+    padding: 8px var(--spacing-sm);
+    align-items: center;
+  }
+
+  .cmdk-footer {
+    display: none;
+  }
+}

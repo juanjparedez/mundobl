@@ -21,3 +21,30 @@
   gap: var(--spacing-sm);
   min-width: 0;
 }
+
+@media (max-width: 600px) {
+  .personal-topics__tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+    gap: var(--spacing-sm);
+  }
+  .personal-topics__tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .personal-topics__tabs a {
+    scroll-snap-align: start;
+    white-space: nowrap;
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+  }
+  .personal-topics__items {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+}

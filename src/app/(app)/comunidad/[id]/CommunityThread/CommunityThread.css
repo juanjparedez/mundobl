@@ -60,8 +60,35 @@
   height: auto;
   min-height: 32px;
 }
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .community-thread {
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm);
+    gap: var(--spacing-md);
+  }
+  .community-thread h1 {
+    font-size: 1.45rem;
+    line-height: 1.25;
+  }
+  .community-thread__meta {
+    gap: 6px;
+    font-size: 0.8rem;
+  }
+  .community-thread__body {
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+  .community-thread__actions {
+    gap: var(--spacing-xs);
+    margin-top: var(--spacing-sm);
+  }
+  .community-thread__actions .ant-btn {
+    min-height: 40px;
+  }
+  .community-thread form textarea.ant-input {
+    font-size: 16px;
+  }
+  .community-thread form .ant-btn {
+    min-height: 44px;
+    width: 100%;
   }
 }

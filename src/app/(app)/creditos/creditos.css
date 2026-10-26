@@ -77,10 +77,29 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--ant-primary-color, #1677ff);
+  color: var(--primary-color);
   font-size: 0.9rem;
 }
 
 .creditos-card__link:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 600px) {
+  .creditos-page {
+    padding: var(--spacing-sm);
+  }
+
+  .creditos-hero h1 {
+    font-size: 1.5rem;
+  }
+
+  .creditos-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+
+  .creditos-card__link {
+    min-height: 40px;
+  }
 }

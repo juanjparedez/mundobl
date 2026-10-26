@@ -75,3 +75,17 @@
     height: 160px;
   }
 }
+
+@media (max-width: 600px) {
+  .tag-page {
+    padding: var(--spacing-sm);
+  }
+
+  .tag-page__header {
+    gap: var(--spacing-xs);
+  }
+
+  .tag-page__card-image {
+    height: 140px;
+  }
+}

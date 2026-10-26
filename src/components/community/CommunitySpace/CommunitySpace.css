@@ -60,9 +60,28 @@
 }
 @media (max-width: 600px) {
   .community-space {
-    padding: var(--spacing-md);
+    padding: var(--spacing-sm);
   }
   .community-space__header {
     align-items: stretch;
+    margin-bottom: var(--spacing-md);
+    gap: var(--spacing-sm);
+  }
+  .community-space__header h1 {
+    font-size: 1.5rem;
+  }
+  .community-space__actions {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+  .community-space__actions .ant-btn {
+    min-height: 44px;
+    width: 100%;
+  }
+  .community-space__grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+    margin: var(--spacing-md) 0;
   }
 }

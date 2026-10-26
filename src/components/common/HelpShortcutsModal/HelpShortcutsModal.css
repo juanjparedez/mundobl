@@ -84,3 +84,17 @@
   border-radius: 4px;
   font-size: 0.85em;
 }
+
+@media (max-width: 600px) {
+  .help-modal .ant-modal {
+    max-width: calc(100vw - 16px) !important;
+    margin: 8px auto !important;
+  }
+  .help-modal__shortcut-row {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+  .help-modal__shortcut-desc {
+    font-size: 0.82rem;
+  }
+}
