@@ -6,8 +6,14 @@ import {
 } from '@/lib/database';
 import type { CommunityMetrics } from '@/types/community';
 import { getMonthlyRanking, type RankingEntry } from '@/lib/community-ranking';
-import { getSiteChapterActivity } from '@/lib/series-activity-stats';
+import {
+  getSiteChapterActivity,
+  getPublicWatchStats,
+  type WatchSectionStats,
+} from '@/lib/series-activity-stats';
 import { getContentUrl } from '@/lib/slug';
+
+export type { WatchSectionStats };
 
 /**
  * Metricas globales anonimas para /estadisticas.
@@ -107,6 +113,7 @@ export interface RecentCommunityActivity {
 export interface PublicStats {
   community: CommunityMetrics;
   recent: RecentCommunityActivity;
+  watch: WatchSectionStats;
   generatedAt: string;
   summary: {
     totalSeries: number;
@@ -605,15 +612,17 @@ export async function getPublicStats(): Promise<PublicStats> {
 
   const seriesById = new Map(series.map((item) => [item.id, item]));
 
-  const [community, recent] = await Promise.all([
+  const [community, recent, watch] = await Promise.all([
     getCommunityMetrics(),
     getRecentCommunityActivity(now),
+    getPublicWatchStats(LONG_WINDOW_DAYS, now),
   ]);
 
   return {
     generatedAt: now.toISOString(),
     community,
     recent,
+    watch,
     summary: {
       totalSeries,
       totalPublicComments,

@@ -2556,6 +2556,28 @@ const fr = {
     "rankingPrivacy": "Le classement est anonyme. Votre nom n'apparaît que si vous publiez votre profil communautaire.",
     "rankingPrivacyLink": "Mon espace"
   },
+  "publicWatchStats": {
+    "sectionTitle": "Activité de streaming et du lecteur (/ver)",
+    "sectionSubtitle": "Métriques agrégées en temps réel des lecteurs officiels et légaux. Zéro suivi IP et 100 % anonyme.",
+    "playStarts": "Lectures démarrées",
+    "completedPlays": "Vues complètes (≥80 %)",
+    "completionRate": "Taux de rétention",
+    "completionRateHint": "Public ayant regardé au moins 80 % de l’épisode",
+    "communityLikes": "J’aime communautaires",
+    "outboundClicks": "Visites aux producteurs",
+    "outboundClicksHint": "Clics redirigés vers les chaînes et sites officiels",
+    "playerVisits": "Ouvertures du lecteur",
+    "dailyTrendTitle": "Évolution des lectures (30 jours)",
+    "startsLabel": "Démarrées",
+    "completionsLabel": "Complètes (≥80 %)",
+    "topSeriesTitle": "Séries les plus regardées dans le lecteur",
+    "topSeriesEmpty": "Aucune lecture enregistrée pour le moment",
+    "startsUnit": "départs",
+    "completionsUnit": "vues complètes",
+    "transparencyBadge": "Transparence et confidentialité",
+    "transparencyNote": "Toutes les lectures sont légales et diffusées via des intégrations officielles (YouTube, Vimeo, Dailymotion). Nous n’enregistrons aucune adresse IP, cookie tiers ni profil utilisateur. L’opt-out et l’alias pseudonyme sont respectés.",
+    "privacyLinkText": "Configurer la confidentialité et l’alias"
+  },
   "adminStats": {
     "pageTitle": "Statistiques d'activité",
     "totalUsers": "Utilisateurs inscrits",

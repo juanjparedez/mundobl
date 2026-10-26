@@ -2550,6 +2550,28 @@ const th = {
     "rankingPrivacy": "อันดับเป็นแบบนิรนาม ชื่อของคุณจะแสดงเฉพาะเมื่อคุณเผยแพร่โปรไฟล์ชุมชน",
     "rankingPrivacyLink": "พื้นที่ของฉัน"
   },
+  "publicWatchStats": {
+    "sectionTitle": "สถิติการสตรีมและเครื่องเล่นวิดีโอ (/ver)",
+    "sectionSubtitle": "ข้อมูลเชิงสถิติรวมแบบเรียลไทม์จากวิดีโอทางการที่ถูกลิขสิทธิ์ ไม่มีการติดตาม IP และนิรนาม 100%",
+    "playStarts": "เริ่มเล่นวิดีโอ",
+    "completedPlays": "รับชมจบ (≥80%)",
+    "completionRate": "อัตราการรับชมจบ",
+    "completionRateHint": "ผู้ชมที่รับชมอย่างน้อย 80% ของตอน",
+    "communityLikes": "ถูกใจจากชุมชน",
+    "outboundClicks": "เข้าชมช่องผู้ผลิตอย่างเป็นทางการ",
+    "outboundClicksHint": "จำนวนคลิกไปยังช่องทางการและเว็บไซต์ของผู้ผลิต",
+    "playerVisits": "การเปิดเครื่องเล่นวิดีโอ",
+    "dailyTrendTitle": "แนวโน้มการเล่นวิดีโอ (30 วันล่าสุด)",
+    "startsLabel": "เริ่มเล่น",
+    "completionsLabel": "รับชมจบ (≥80%)",
+    "topSeriesTitle": "ซีรีส์ยอดนิยมในเครื่องเล่น",
+    "topSeriesEmpty": "ยังไม่มีประวัติการเล่น",
+    "startsUnit": "ครั้ง",
+    "completionsUnit": "ครั้ง",
+    "transparencyBadge": "ความโปร่งใสและความเป็นส่วนตัว",
+    "transparencyNote": "การเล่นทั้งหมดเป็นไปตามลิขสิทธิ์ผ่านระบบเล่นวิดีโออย่างเป็นทางการ (YouTube, Vimeo, Dailymotion) เราไม่บันทึก IP หรือคุกกี้ติดตาม และเคารพการตั้งค่าความเป็นส่วนตัวของคุณ",
+    "privacyLinkText": "ตั้งค่าความเป็นส่วนตัวและนามแฝง"
+  },
   "adminStats": {
     "pageTitle": "สถิติกิจกรรม",
     "totalUsers": "ผู้ใช้ที่ลงทะเบียน",

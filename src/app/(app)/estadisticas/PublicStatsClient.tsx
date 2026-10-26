@@ -31,6 +31,7 @@ import { interpolateMessage } from '@/lib/i18n-format';
 import { getCountryFlagEmoji } from '@/lib/country-codes';
 import { getSeriesUrl } from '@/lib/slug';
 import { BarChart, DonutChart, LineChart } from '@/components/charts';
+import { WatchStatsPanel } from '@/components/streaming/WatchStatsPanel/WatchStatsPanel';
 import type { PublicStats as PublicStatsResponse } from '@/lib/public-stats';
 import { OwnRankingPosition } from '@/components/community/OwnRankingPosition/OwnRankingPosition';
 import { formatAlias } from '@/lib/community-alias';
@@ -513,6 +514,36 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
           </Link>
         </div>
       </section>
+
+      {/* ── Pulso del reproductor legal y streaming (/ver) ── */}
+      {data.watch && (
+        <WatchStatsPanel
+          stats={data.watch}
+          formatNumber={fmt}
+          labels={{
+            sectionTitle: t('publicWatchStats.sectionTitle'),
+            sectionSubtitle: t('publicWatchStats.sectionSubtitle'),
+            playStarts: t('publicWatchStats.playStarts'),
+            completedPlays: t('publicWatchStats.completedPlays'),
+            completionRate: t('publicWatchStats.completionRate'),
+            completionRateHint: t('publicWatchStats.completionRateHint'),
+            communityLikes: t('publicWatchStats.communityLikes'),
+            outboundClicks: t('publicWatchStats.outboundClicks'),
+            outboundClicksHint: t('publicWatchStats.outboundClicksHint'),
+            playerVisits: t('publicWatchStats.playerVisits'),
+            dailyTrendTitle: t('publicWatchStats.dailyTrendTitle'),
+            startsLabel: t('publicWatchStats.startsLabel'),
+            completionsLabel: t('publicWatchStats.completionsLabel'),
+            topSeriesTitle: t('publicWatchStats.topSeriesTitle'),
+            topSeriesEmpty: t('publicWatchStats.topSeriesEmpty'),
+            startsUnit: t('publicWatchStats.startsUnit'),
+            completionsUnit: t('publicWatchStats.completionsUnit'),
+            transparencyBadge: t('publicWatchStats.transparencyBadge'),
+            transparencyNote: t('publicWatchStats.transparencyNote'),
+            privacyLinkText: t('publicWatchStats.privacyLinkText'),
+          }}
+        />
+      )}
 
       <div className="app-page__row app-page__row--2">
         <RankingPanel

@@ -2552,6 +2552,28 @@ const ko = {
     "rankingPrivacy": "랭킹은 익명입니다. 커뮤니티 프로필을 공개한 경우에만 이름이 표시됩니다.",
     "rankingPrivacyLink": "내 공간"
   },
+  "publicWatchStats": {
+    "sectionTitle": "스트리밍 및 플레이어 활동 (/ver)",
+    "sectionSubtitle": "공식 합법 임베드 플레이어의 실시간 집계 지표입니다. IP 추적 없이 100% 익명으로 집계됩니다.",
+    "playStarts": "재생 시작 횟수",
+    "completedPlays": "시청 완료 횟수 (80% 이상)",
+    "completionRate": "시청 완료율",
+    "completionRateHint": "에피소드의 80% 이상을 시청한 비율",
+    "communityLikes": "커뮤니티 좋아요",
+    "outboundClicks": "제작사 공식 채널 방문",
+    "outboundClicksHint": "공식 채널 및 웹사이트로의 이동 클릭",
+    "playerVisits": "플레이어 열람 횟수",
+    "dailyTrendTitle": "재생 추이 (최근 30일)",
+    "startsLabel": "시작됨",
+    "completionsLabel": "완료됨 (≥80%)",
+    "topSeriesTitle": "플레이어 인기 시리즈",
+    "topSeriesEmpty": "아직 기록된 재생 기록이 없습니다",
+    "startsUnit": "회 시작",
+    "completionsUnit": "회 완료",
+    "transparencyBadge": "투명성 및 개인정보 보호",
+    "transparencyNote": "모든 재생은 공식 임베드(YouTube, Vimeo, Dailymotion)를 통한 합법적 스트리밍입니다. IP 주소나 추적 쿠키, 개인 프로필은 수집되지 않으며 /privacidad 설정과 가명 닉네임을 존중합니다.",
+    "privacyLinkText": "개인정보 및 가명 설정"
+  },
   "adminStats": {
     "pageTitle": "활동 통계",
     "totalUsers": "등록된 사용자",

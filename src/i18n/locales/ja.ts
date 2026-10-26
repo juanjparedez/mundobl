@@ -2553,6 +2553,28 @@ const ja = {
     "rankingPrivacy": "ランキングは匿名です。コミュニティプロフィールを公開した場合のみ名前が表示されます。",
     "rankingPrivacyLink": "マイスペース"
   },
+  "publicWatchStats": {
+    "sectionTitle": "ストリーミング＆プレイヤーのアクティビティ (/ver)",
+    "sectionSubtitle": "公式な埋め込みプレイヤーからのリアルタイム集計指標。IP追跡なし、完全匿名。",
+    "playStarts": "再生開始数",
+    "completedPlays": "視聴完了数 (80%以上)",
+    "completionRate": "視聴維持率",
+    "completionRateHint": "エピソードの80%以上を視聴した割合",
+    "communityLikes": "コミュニティいいね",
+    "outboundClicks": "公式チャンネルへの訪問",
+    "outboundClicksHint": "公式チャンネルや制作会社サイトへのクリック数",
+    "playerVisits": "プレイヤー表示回数",
+    "dailyTrendTitle": "再生トレンド（過去30日間）",
+    "startsLabel": "開始",
+    "completionsLabel": "完了 (80%以上)",
+    "topSeriesTitle": "プレイヤーで最も再生された作品",
+    "topSeriesEmpty": "まだ再生記録がありません",
+    "startsUnit": "回開始",
+    "completionsUnit": "回完了",
+    "transparencyBadge": "運用の透明性とプライバシー",
+    "transparencyNote": "すべての再生は公式な埋め込み（YouTube、Vimeo、Dailymotion）を通じて合法的におこなわれます。IPアドレス、サードパーティCookie、個人プロファイルは記録されません。オプトアウトや匿名エイリアスを尊重します。",
+    "privacyLinkText": "プライバシーとエイリアスの設定"
+  },
   "adminStats": {
     "pageTitle": "アクティビティ統計",
     "totalUsers": "登録ユーザー",

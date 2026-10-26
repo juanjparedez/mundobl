@@ -2555,6 +2555,28 @@ const it = {
     "rankingPrivacy": "La classifica è anonima. Il tuo nome appare solo se pubblichi il tuo profilo della community.",
     "rankingPrivacyLink": "Il mio spazio"
   },
+  "publicWatchStats": {
+    "sectionTitle": "Attività di streaming e del player (/ver)",
+    "sectionSubtitle": "Metriche aggregate in tempo reale da lettori ufficiali e legali. Nessun tracciamento IP e 100% anonimo.",
+    "playStarts": "Riproduzioni avviate",
+    "completedPlays": "Visualizzazioni complete (≥80%)",
+    "completionRate": "Tasso di completamento",
+    "completionRateHint": "Pubblico che ha guardato almeno l’80% dell’episodio",
+    "communityLikes": "Mi piace della community",
+    "outboundClicks": "Visite ai produttori",
+    "outboundClicksHint": "Reindirizzamenti ai canali e siti ufficiali",
+    "playerVisits": "Aperture del player",
+    "dailyTrendTitle": "Andamento delle riproduzioni (30 giorni)",
+    "startsLabel": "Avviate",
+    "completionsLabel": "Completate (≥80%)",
+    "topSeriesTitle": "Serie più viste nel player",
+    "topSeriesEmpty": "Nessuna riproduzione ancora registrata",
+    "startsUnit": "avvii",
+    "completionsUnit": "complete",
+    "transparencyBadge": "Trasparenza e Privacy Operativa",
+    "transparencyNote": "Tutte le riproduzioni sono legali e trasmesse tramite incorporamenti ufficiali (YouTube, Vimeo, Dailymotion). Non salviamo indirizzi IP, cookie terzi o profili utente. L’opt-out e l’alias pseudonimo sono rispettati.",
+    "privacyLinkText": "Configura privacy e alias"
+  },
   "adminStats": {
     "pageTitle": "Statistiche attività",
     "totalUsers": "Utenti registrati",

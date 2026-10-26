@@ -2546,6 +2546,28 @@ const zhCN = {
     "rankingPrivacy": "排行是匿名的。只有公开社区资料后才会显示你的名字。",
     "rankingPrivacyLink": "我的空间"
   },
+  "publicWatchStats": {
+    "sectionTitle": "流媒体与播放器活动 (/ver)",
+    "sectionSubtitle": "来自官方合法嵌入播放器的实时聚合指标。完全匿名，绝不记录任何 IP 地址。",
+    "playStarts": "开始播放次数",
+    "completedPlays": "完整观看次数 (≥80%)",
+    "completionRate": "完播留存率",
+    "completionRateHint": "观看了单集至少 80% 内容的观众比例",
+    "communityLikes": "社区点赞",
+    "outboundClicks": "访问官方制作方",
+    "outboundClicksHint": "导向官方频道与网站的点击量",
+    "playerVisits": "播放器访问量",
+    "dailyTrendTitle": "播放趋势（最近 30 天）",
+    "startsLabel": "开始播放",
+    "completionsLabel": "完整观看 (≥80%)",
+    "topSeriesTitle": "播放器最热门剧集",
+    "topSeriesEmpty": "暂无播放记录",
+    "startsUnit": "次播放",
+    "completionsUnit": "次完播",
+    "transparencyBadge": "透明度与运行隐私",
+    "transparencyNote": "所有播放均为通过官方嵌入组件（YouTube、Vimeo、Dailymotion）进行的合法流媒体播放。我们绝不记录 IP 地址、第三方 Cookie 或用户个人信息。严格遵循隐私设置与匿名代号。",
+    "privacyLinkText": "配置隐私与匿名代号"
+  },
   "adminStats": {
     "pageTitle": "活动统计",
     "totalUsers": "注册用户",
