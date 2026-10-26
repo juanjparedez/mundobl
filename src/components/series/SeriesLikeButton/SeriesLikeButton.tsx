@@ -1,6 +1,6 @@
 'use client';
 
-import { useSyncExternalStore } from 'react';
+import { useCallback, useSyncExternalStore } from 'react';
 import { HeartFilled, HeartOutlined } from '@ant-design/icons';
 import { IconToggle } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -10,22 +10,34 @@ import './SeriesLikeButton.css';
 
 const LIKES_STORAGE_KEY = 'mundobl.likes';
 
+let cachedLikesRaw: string | null = null;
+let cachedLikes: number[] = [];
+
 function getStoredLikes(): number[] {
+  if (typeof window === 'undefined') return [];
   try {
     const raw = window.localStorage.getItem(LIKES_STORAGE_KEY);
-    if (!raw) return [];
+    if (raw === cachedLikesRaw) return cachedLikes;
+    cachedLikesRaw = raw;
+    if (!raw) {
+      cachedLikes = [];
+      return cachedLikes;
+    }
     const parsed: unknown = JSON.parse(raw);
-    return Array.isArray(parsed)
+    cachedLikes = Array.isArray(parsed)
       ? parsed.filter((n): n is number => typeof n === 'number')
       : [];
+    return cachedLikes;
   } catch {
-    return [];
+    return cachedLikes;
   }
 }
 
 function setStoredLikes(likes: number[]): void {
   try {
-    window.localStorage.setItem(LIKES_STORAGE_KEY, JSON.stringify(likes));
+    cachedLikes = likes;
+    cachedLikesRaw = JSON.stringify(likes);
+    window.localStorage.setItem(LIKES_STORAGE_KEY, cachedLikesRaw);
     window.dispatchEvent(new StorageEvent('storage'));
   } catch {
     /* ignore */
@@ -49,11 +61,11 @@ interface SeriesLikeButtonProps {
 export function SeriesLikeButton({ seriesId }: SeriesLikeButtonProps) {
   const { t } = useLocale();
   const { aliasName, optedIn } = useCommunityAlias();
-  const liked = useSyncExternalStore(
-    subscribe,
+  const getLiked = useCallback(
     () => getStoredLikes().includes(seriesId),
-    () => false
+    [seriesId]
   );
+  const liked = useSyncExternalStore(subscribe, getLiked, () => false);
 
   const handleClick = () => {
     const next = !liked;

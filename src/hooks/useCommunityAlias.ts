@@ -1,11 +1,18 @@
 'use client';
 
-import { useCallback, useEffect, useState, useSyncExternalStore } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+} from 'react';
 import { useSession } from 'next-auth/react';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import {
+  aliasParts,
   formatAlias,
-  getVisitorAliasParts,
+  getVisitorAliasSeed,
   isCommunityOptedIn,
   rerollVisitorAliasSeed,
   setCommunityOptIn as saveCommunityOptIn,
@@ -17,6 +24,9 @@ function subscribeStorage(callback: () => void): () => void {
   window.addEventListener('storage', callback);
   return () => window.removeEventListener('storage', callback);
 }
+
+const getServerSeed = () => 0;
+const getServerOptIn = () => false;
 
 export interface UseCommunityAliasResult {
   alias: AliasParts;
@@ -39,19 +49,21 @@ export function useCommunityAlias(): UseCommunityAliasResult {
 
   const isLoggedIn = status === 'authenticated' && Boolean(session?.user?.id);
 
-  // Opt-in sincronizado via localStorage
+  // Opt-in sincronizado via localStorage (boolean primitivo)
   const optedIn = useSyncExternalStore(
     subscribeStorage,
-    () => isCommunityOptedIn(),
-    () => false
+    isCommunityOptedIn,
+    getServerOptIn
   );
 
-  // Semilla de visitante
-  const visitorAlias = useSyncExternalStore(
+  // Semilla de visitante (number primitivo: Object.is(a, b) === true cuando no cambia)
+  const visitorSeed = useSyncExternalStore(
     subscribeStorage,
-    () => getVisitorAliasParts(),
-    () => ({ first: 0, second: 0 })
+    getVisitorAliasSeed,
+    getServerSeed
   );
+
+  const visitorAlias = useMemo(() => aliasParts(visitorSeed), [visitorSeed]);
 
   // Alias de cuenta si está logueado
   const [accountAlias, setAccountAlias] = useState<AliasParts | null>(null);
@@ -72,11 +84,15 @@ export function useCommunityAlias(): UseCommunityAliasResult {
 
   const activeParts = isLoggedIn && accountAlias ? accountAlias : visitorAlias;
 
-  const aliasName = formatAlias(activeParts, {
-    first: t('communityAlias.firstWords'),
-    second: t('communityAlias.secondWords'),
-    template: t('communityAlias.template'),
-  });
+  const aliasName = useMemo(
+    () =>
+      formatAlias(activeParts, {
+        first: t('communityAlias.firstWords'),
+        second: t('communityAlias.secondWords'),
+        template: t('communityAlias.template'),
+      }),
+    [activeParts, t]
+  );
 
   const setOptIn = useCallback((nextOptIn: boolean) => {
     saveCommunityOptIn(nextOptIn);
