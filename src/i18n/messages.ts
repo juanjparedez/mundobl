@@ -2535,6 +2535,28 @@ export type TranslationShape = {
     rankingPrivacy: string;
     rankingPrivacyLink: string;
   };
+  publicWatchStats: {
+    sectionTitle: string;
+    sectionSubtitle: string;
+    playStarts: string;
+    completedPlays: string;
+    completionRate: string;
+    completionRateHint: string;
+    communityLikes: string;
+    outboundClicks: string;
+    outboundClicksHint: string;
+    playerVisits: string;
+    dailyTrendTitle: string;
+    startsLabel: string;
+    completionsLabel: string;
+    topSeriesTitle: string;
+    topSeriesEmpty: string;
+    startsUnit: string;
+    completionsUnit: string;
+    transparencyBadge: string;
+    transparencyNote: string;
+    privacyLinkText: string;
+  };
   adminStats: {
     pageTitle: string;
     totalUsers: string;
@@ -6930,6 +6952,30 @@ const es: TranslationShape = {
     rankingPrivacy:
       'El ranking es anónimo. Solo se ve tu nombre si publicás tu perfil de comunidad.',
     rankingPrivacyLink: 'Mi espacio',
+  },
+  publicWatchStats: {
+    sectionTitle: 'Pulso de streaming y reproductor (/ver)',
+    sectionSubtitle:
+      'Métricas agregadas en tiempo real de reproducciones legales en reproductores oficiales. Cero rastreo de IP y 100% anónimo.',
+    playStarts: 'Reproducciones iniciadas',
+    completedPlays: 'Vistas completas (≥80%)',
+    completionRate: 'Tasa de retención',
+    completionRateHint: 'Audiencia que completó al menos el 80% del episodio',
+    communityLikes: 'Me gusta comunitarios',
+    outboundClicks: 'Visitas a productoras',
+    outboundClicksHint: 'Clics derivados a canales y sitios oficiales',
+    playerVisits: 'Aperturas del reproductor',
+    dailyTrendTitle: 'Evolución de reproducciones (30 días)',
+    startsLabel: 'Iniciadas',
+    completionsLabel: 'Completadas (≥80%)',
+    topSeriesTitle: 'Series más vistas en el reproductor',
+    topSeriesEmpty: 'Sin reproducciones registradas todavía',
+    startsUnit: 'inicios',
+    completionsUnit: 'completadas',
+    transparencyBadge: 'Transparencia y Privacidad Operativa',
+    transparencyNote:
+      'Todas las reproducciones son legales y se reproducen mediante embeds oficiales (YouTube, Vimeo, Dailymotion). No registramos direcciones IP, cookies de terceros ni perfiles de usuario. Respetamos el opt-out en /privacidad y el alias seudónimo si fue activado.',
+    privacyLinkText: 'Configurar privacidad y alias',
   },
   adminStats: {
     pageTitle: 'Estadísticas de actividad',
@@ -11401,6 +11447,30 @@ const en: TranslationShape = {
     rankingPrivacy:
       'The ranking is anonymous. Your name only shows if you publish your community profile.',
     rankingPrivacyLink: 'My space',
+  },
+  publicWatchStats: {
+    sectionTitle: 'Streaming & Legal Player Pulse (/ver)',
+    sectionSubtitle:
+      'Real-time aggregated metrics from official legal embeds. Zero IP tracking and 100% anonymous.',
+    playStarts: 'Playbacks started',
+    completedPlays: 'Completed views (≥80%)',
+    completionRate: 'Retention rate',
+    completionRateHint: 'Audience that completed at least 80% of the episode',
+    communityLikes: 'Community likes',
+    outboundClicks: 'Producer visits',
+    outboundClicksHint: 'Referral clicks to official channels and websites',
+    playerVisits: 'Player opens',
+    dailyTrendTitle: 'Playback trends (30 days)',
+    startsLabel: 'Started',
+    completionsLabel: 'Completed (≥80%)',
+    topSeriesTitle: 'Most watched series in the player',
+    topSeriesEmpty: 'No playbacks recorded yet',
+    startsUnit: 'starts',
+    completionsUnit: 'completed',
+    transparencyBadge: 'Transparency & Operational Privacy',
+    transparencyNote:
+      'All playbacks are legal and streamed via official embeds (YouTube, Vimeo, Dailymotion). We never log IP addresses, third-party cookies, or personal profiles. We honor opt-out settings and pseudonymous aliases configured in /privacidad.',
+    privacyLinkText: 'Configure privacy & alias',
   },
   adminStats: {
     pageTitle: 'Activity Statistics',

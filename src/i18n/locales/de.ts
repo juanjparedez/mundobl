@@ -2556,6 +2556,28 @@ const de = {
     "rankingPrivacy": "Das Ranking ist anonym. Dein Name erscheint nur, wenn du dein Community-Profil veröffentlichst.",
     "rankingPrivacyLink": "Mein Bereich"
   },
+  "publicWatchStats": {
+    "sectionTitle": "Streaming- & Player-Aktivität (/ver)",
+    "sectionSubtitle": "Echtzeit-aggregierte Metriken von offiziellen legalen Video-Embeds. Kein IP-Tracking und 100 % anonym.",
+    "playStarts": "Wiedergaben gestartet",
+    "completedPlays": "Vollständige Aufrufe (≥80 %)",
+    "completionRate": "Abschlussrate",
+    "completionRateHint": "Zuschauer, die mindestens 80 % der Episode gesehen haben",
+    "communityLikes": "Community-Gefällt-mir",
+    "outboundClicks": "Besuche bei Produzenten",
+    "outboundClicksHint": "Weiterleitungen zu offiziellen Kanälen und Websites",
+    "playerVisits": "Player-Aufrufe",
+    "dailyTrendTitle": "Wiedergabeverlauf (30 Tage)",
+    "startsLabel": "Gestartet",
+    "completionsLabel": "Abgeschlossen (≥80 %)",
+    "topSeriesTitle": "Meistgesehene Serien im Player",
+    "topSeriesEmpty": "Noch keine Wiedergaben erfasst",
+    "startsUnit": "Starts",
+    "completionsUnit": "vollständig",
+    "transparencyBadge": "Transparenz & Datenschutz",
+    "transparencyNote": "Alle Wiedergaben sind legal und erfolgen über offizielle Einbettungen (YouTube, Vimeo, Dailymotion). Wir speichern keine IP-Adressen, Tracking-Cookies oder Nutzerprofile. Opt-Out und Pseudonym-Alias werden unter /privacidad respektiert.",
+    "privacyLinkText": "Datenschutz & Alias konfigurieren"
+  },
   "adminStats": {
     "pageTitle": "Aktivitätsstatistiken",
     "totalUsers": "Registrierte Benutzer",

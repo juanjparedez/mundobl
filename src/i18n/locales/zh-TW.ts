@@ -2546,6 +2546,28 @@ const zhTW = {
     "rankingPrivacy": "排行是匿名的。只有公開社群資料後才會顯示你的名字。",
     "rankingPrivacyLink": "我的空間"
   },
+  "publicWatchStats": {
+    "sectionTitle": "串流與播放器動態 (/ver)",
+    "sectionSubtitle": "來自官方合法嵌入播放器的即時聚合指標。完全匿名，絕不記錄任何 IP 位址。",
+    "playStarts": "開始播放次數",
+    "completedPlays": "完整觀看次數 (≥80%)",
+    "completionRate": "完播留存率",
+    "completionRateHint": "觀看單集至少 80% 內容的觀眾比例",
+    "communityLikes": "社群點讚",
+    "outboundClicks": "造訪官方製作方",
+    "outboundClicksHint": "導向官方頻道與網站的點擊次數",
+    "playerVisits": "播放器造訪量",
+    "dailyTrendTitle": "播放趨勢（過去 30 天）",
+    "startsLabel": "開始播放",
+    "completionsLabel": "完整觀看 (≥80%)",
+    "topSeriesTitle": "播放器最熱門影集",
+    "topSeriesEmpty": "尚無播放紀錄",
+    "startsUnit": "次播放",
+    "completionsUnit": "次完播",
+    "transparencyBadge": "透明度與運作隱私",
+    "transparencyNote": "所有播放皆為透過官方嵌入播放器（YouTube、Vimeo、Dailymotion）進行的合法串流。我們絕不記錄 IP 位址、第三方 Cookie 或個人設定檔。嚴格尊重隱私設定與匿名代號。",
+    "privacyLinkText": "設定隱私與匿名代號"
+  },
   "adminStats": {
     "pageTitle": "活動統計",
     "totalUsers": "註冊用戶",
