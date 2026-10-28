@@ -113,7 +113,7 @@ Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-s
 - `scripts/data/ver-content-2026-10-24.json` selecciona 8 títulos / 44 capítulos / 51 videos: cinco fichas existentes se enriquecen y tres altas quedan WATCHABLE_ONLY. `scripts/import-ver-content-batch.ts` simula por defecto, admite `--apply` solo en DB local, revalida canal, duración, mercados y página anónima. `watch-content-batch.ts` conserva IDs/seguimiento, registra revisión, incrementa editVersion, rechaza conflictos y no duplica al repetir.
 - Hallazgo: The Star devuelve público/embebible en la API pero exige membresía en la página. Se excluyó del lote; la doble comprobación queda obligatoria para esta receta. No se modificó el comportamiento del importador web ni del cron de auditoría.
 - Copia local: `/ver` pasa de 27 a 35 títulos. Regresiones de datos, controles estáticos y build local aprobados. No hay migración ni nuevas cadenas de interfaz. No se escribió producción ni se publicó código.
-- Fuentes, comandos, alcance y pendientes de publicación: [ampliación de /ver](../ampliacion-ver-2026-10-24.md).
+- Fuentes, comandos y alcance: [ampliación de /ver](../ampliacion-ver-2026-10-24.md). Publicado en producción el 24/10.
 
 ## Primer ingreso y días activos (2026-10-24)
 
@@ -261,11 +261,9 @@ Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-s
 
 ## Calidad y sostenibilidad (2026-10-12)
 
-Diagnóstico actualizado con acceso a ambos paneles: [consumo y validaciones](../diagnostico-consumo-2026-10-12.md). Vercel: CPU 8 h 29 min / 4 h e ISR Writes 311.224 / 200.000 en últimos 30 días; Supabase sin excesos en el ciclo 17/09–17/10. Priorizar payload del catálogo y CSS SSR antes de migrar. Visor móvil y compartir alternativo comprobados en producción; hoja nativa real y ciclo HTTP de caché de patrocinio siguen pendientes. Los períodos, límites y accionables están en el diagnóstico.
+Compartir usa SeriesShareButton (texto breve y URL canónica); PosterPreview abre originales a demanda con Ant Design. /apoyar y /admin/patrocinio usan SupportSettings (borrador/snapshot, versión, RLS y backup), solo ADMIN + ADMIN_EMAILS administra; publicación desactivada por defecto, sin pagos integrados ni avisos. Desplegado como f2f8ac1 (PR #113), con patrocinio oculto. Diagnóstico de cuotas del 12/10: Vercel excedía CPU (8 h 29 min / 4 h) e ISR Writes (311.224 / 200.000); Supabase sin excesos. Lo que sigue abierto está en [pendientes](../pendientes.md).
 
-Plan integral, decisiones y evidencias: [calidad y sostenibilidad](../plan-calidad-sostenibilidad-2026-10-12.md). Incluye reclamos de Flor, patrocinio oculto y diagnósticos de consumo/retorno. Implementación: compartir usa SeriesShareButton (texto breve y URL canónica); PosterPreview abre originales a demanda con Ant Design. /apoyar y /admin/patrocinio usan SupportSettings (borrador/snapshot, versión, RLS y backup), solo ADMIN + ADMIN_EMAILS administra; publicación desactivada por defecto, sin pagos integrados ni avisos. Desplegado en producción como f2f8ac1 (PR #113), con patrocinio oculto. Ver el documento para evidencias y validaciones aún pendientes.
-
-## Piloto editorial en preparación (2026-10-12)
+## Piloto editorial (2026-10-12)
 
 Clasificación humana `UNREVIEWED | GENERAL | ADULT18` y avisos independientes,
 edición ADMIN con versión/revisión, compuertas de detalle/medios y preferencia
@@ -282,9 +280,8 @@ temporadas/aportes que conservan seguimiento, notas o historial. Bienvenida
 actualizada; no cambia opt-in ni se enviaron correos. Nuevas cadenas en 10 locales.
 
 Estado y límites, incluidos tests HTTP completados y fichas +18 en la variante dinámica /adultos:
-[piloto editorial](../piloto-editorial-2026-10-12.md). Migración probada solo en
-DB local; no desplegada ni aplicada en producción. Propuesta comercial local, sin publicar:
-`test-results/partnership/propuesta-gagaoolala-borrador-2026-10-12.md` (sin versionar).
+[piloto editorial](../piloto-editorial-2026-10-12.md). Migración
+`20261012205349_editorial_maturity_pilot_clicks` aplicada en producción el 12/10.
 
 ## Estado actual (2026-10-01)
 
@@ -296,7 +293,7 @@ DB local; no desplegada ni aplicada en producción. Propuesta comercial local, s
 - Operación: [manual de mantenimiento](../manual-mantenimiento.md) con interpretación de cuotas, limpieza de deployments y backups. #107 comprobada en producción (`6b815cf`), con HIT de caché en `/ver/676` y `/series/1`. Supabase Free con gracia agotada (terminó el 10/09) pero ninguna métrica pasada al 29/09: Egress 32 %, Log Ingestion 53 % (todavía no se cobra; la genera sobre todo Supavisor por conexiones Prisma), DB 25 %, Storage 11 %. 20 series y 12 imágenes de pedidos siguen en Supabase. Métricas de Vercel pendientes (solo en el panel). `PAGE_VIEW` ya no mide tráfico: el proxy que lo registra corre solo en `/admin`. No asumir 16 CPU-h como cuota de Vercel Hobby: la documentación indica 4 CPU-h incluidas.
 - Comunidad: conversaciones (#103) y listas, Top 5, perfiles, bloqueos y moderación (#104) están en producción con su migración aplicada. Las conversaciones se publican desde el formulario; guardar borrador es opcional y quien pregunta puede pedir aviso de respuestas.
 - Seguimiento: biblioteca, historial, diario y estadísticas en producción. En castellano, lo que sigue el avance (`/ver`, ficha, `/watching`, perfil) dice "capítulo"; admin y carga de datos siguen con "episodio". Las etiquetas muestran capítulo y parte, nunca el número de fila. Faltan múltiples visionados y conflictos al importar.
-- Registro de entregas anteriores, sin cambios: [historial-contexto.md](historial-contexto.md).
+- Pendientes verificados contra el código: [pendientes.md](../pendientes.md). La historia de entregas está en `CHANGELOG.md`.
 
 ---
 
@@ -664,17 +661,7 @@ queda congelado en el cache y da mal para un argentino despues de las 21:00. `We
 `useSyncExternalStore` con `getServerSnapshot` devolviendo un centinela: el SSR renderiza lunes ->
 domingo sin marca de hoy, y el cliente rota el orden con su dia real.
 
-**Aviso de capitulo nuevo: no implementado.** No hay evento que detectar (las 38 series tienen 0
-episodios con `airDate` y 0 con `embedUrl`) ni a quien avisarle (`SeriesSubscription` tenia 0
-filas). La campanita de `/estrenos`
-([ScheduleSubscribeToggle](../../src/components/estrenos/ScheduleSubscribeToggle/ScheduleSubscribeToggle.tsx),
-contra el `POST|DELETE /api/series/[id]/subscribe` existente, con
-[GET /api/user/subscriptions](../../src/app/api/user/subscriptions/route.ts) resolviendo las N en un
-fetch) existe para que las suscripciones empiecen a acumularse. Cuando haya volumen, va como un
-trabajo mas del cron diario (`/api/cron/daily`), con gate de calidad del dato: solo disparar si
-`max(airDate) >= hoy-2d` **y** >= 3 episodios con `airDate` **y** espaciado mediano de 6-8 dias
-(eso distingue una serie en emision de un volcado historico). Registrar el tipo nuevo en **los
-dos** mapeos `type -> flag` de `src/lib/web-push.ts` (estan duplicados).
+**Aviso de capitulo nuevo**: implementado el 2026-10-24 como aviso `air_day` a partir de `Series.airDays` (no de `airDate` por episodio), en `/api/cron/alerts`. Ver "Aviso de estreno y resumen semanal" arriba.
 
 ---
 
@@ -1095,37 +1082,10 @@ Cada vista premium se monta como un grid responsive de **widgets reordenables y 
 
 ## Backlog (FeatureRequest)
 
-### Triage 2026-05-13
+El backlog vive en la tabla `FeatureRequest` (`/feedback`, `/admin/feedback`), no en docs. Al 2026-10-28: 1 OPEN, 1 IN_PROGRESS, 151 COMPLETED. Lo que el código todavía no tiene está en [pendientes.md](../pendientes.md).
 
-Triage completo del backlog (`FeatureRequest`) categorizado por area funcional + scoring `effort/impact` para identificar quick wins. Detalle en [docs/backlog-triage-2026-05-13.md](../backlog-triage-2026-05-13.md).
-
-- **Persistencia de categoria**: prefijo en `FeatureRequest.description` con forma `[cat:X][effort:Y][impact:Z]` (sin migracion; idempotente; reversible).
-- **Categorias** (10): noticias, directores, ai, catalogo, perfil, admin, i18n, seo, cleanup, infra.
-- **Effort**: S ≤2h, M ≤6h, L 1-2 dias, XL ≥3 dias. **Impact**: H/M/L. **Quick win** = `(S∧H) ∨ (S∧M) ∨ (M∧H)`.
-- **Scripts**:
-  - `npx tsx scripts/triage-backlog-2026-05-13.ts` — dry-run que infiere y muestra tabla por categoria.
-  - `npx tsx scripts/triage-backlog-2026-05-13.ts --apply` — escribe prefijos.
-  - `npx tsx scripts/triage-backlog-2026-05-13.ts --report` — regenera el .md.
-  - `npx tsx scripts/audit-2026-05-13.ts [--apply]` — audit comments en items con cobertura parcial (#109/#110/#111) + creates de items del slice 1.
-
-### Slice 1 (2026-05-13) — quick wins (4 items, ~8h)
-
-1. **Audit + creates de items** (Item 1): `scripts/audit-2026-05-13.ts`.
-2. **Triage script + report** (Item 2): `scripts/triage-backlog-2026-05-13.ts` + `docs/backlog-triage-2026-05-13.md`.
-3. **Score de completitud de series** (admin/editor): [src/lib/series-completeness.ts](../../src/lib/series-completeness.ts) — helper puro `computeCompleteness(series) → { score, missing }`. UI: `CompletenessCard` en `/admin/series/[id]` + widget `SeriesIncompletasWidget` en `/perfil` (solo rol admin, diferido).
-4. **Director links basicos**: campos `Director.aliases`, `imdbUrl`, `mdlUrl`, `wikiUrl` (migracion `add_director_aliases_and_external_links`). Render en [src/app/directores/[id]/DirectorProfileClient.tsx](../../src/app/directores/[id]/DirectorProfileClient.tsx) como fila de iconos + Chip list de aliases.
-
-### Slice 2 (2026-05-13) — Director rico fase 2 (commit 0c726b9)
-
-1. **Schema:** `Director.birthYear Int?` + `Director.awards String[] @default([])`. Migracion `add_director_birth_year_and_awards`.
-2. **Admin** (`/admin/directores`): `InputNumber` (range 1900..año actual) para birthYear + `Select mode="tags"` con separador `;` para awards.
-3. **Publico** (`/directores/[id]`): chip de año (`n. 1985`) + seccion "Premios" con trofeo + lista. Nueva seccion **"Obras destacadas"** entre el header y la filmografia: auto-derivada del top 3 series por `overallRating` (solo si ≥2 series tienen rating; no inventa data). Cards con borde gold + tag de rating.
-4. **JSON-LD:** suma `birthDate` (año) + `award` (lista) al schema Person.
-
-Items que se decidió **no** incluir en este slice:
-
-- Tags sensibles → reformulado como **policy doc editorial** (no codigo), va a `docs/`.
-- IMDB/MDL precarga, UserList/Collection, Command palette, Push UI, Achievements → roadmap.
+- `Series` tiene score de completitud: [src/lib/series-completeness.ts](../../src/lib/series-completeness.ts) (`computeCompleteness(series) → { score, missing }`), con `CompletenessCard` en `/admin/series/[id]`.
+- `Director` tiene `aliases`, `imdbUrl`, `mdlUrl`, `wikiUrl`, `birthYear` y `awards`; la ficha pública muestra "Obras destacadas" solo si ≥2 series tienen rating.
 
 ---
 
@@ -1161,7 +1121,9 @@ no se convierte USER_EMBED por esta ruta.
 
 `useLocalFormDraft` conserva campos y contenidos pendientes del formulario por
 cuenta/ficha en este navegador. Recuperar una edición mantiene su versión original.
-Detalle, límites y reproducción: [docs/guardado-series-2026-10-12.md](../guardado-series-2026-10-12.md).
+Es un respaldo de este navegador, no sincronización entre equipos. Pruebas:
+`scripts/test-series-curation.ts`, `scripts/test-series-save.ts` y
+`scripts/test-series-curation-ui.mjs`.
 
 ## Seguimiento unificado y actividad anónima (2026-10-24)
 

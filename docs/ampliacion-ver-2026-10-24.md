@@ -1,4 +1,6 @@
-# Ampliación local de /ver — 24/10/2026
+# Ampliación de /ver — 24/10/2026
+
+> Publicado en producción el 24/10/2026 (16 títulos, 115 videos). Las secciones de ensayo local quedan como registro de cómo se verificó.
 
 ## Entrega autorizada
 
@@ -95,4 +97,4 @@ Evidencia en `test-results/ver-expansion/`: `expanded-rehearsal-applied.json`, `
 - Primer lote en navegador: ocho detalles 200, The Best Story avanza de parte 1/2 a 2/2; revisión a 1280 y 390 px sin desborde horizontal. Ampliación: reproducción real del corto de Vimeo dentro de MundoBL local y atribución a su director. No se afirma haber reproducido completos todos los videos.
 - Regresión de proveedores: identidad de URL/propietario, duración, privacidad, oEmbed, errores temporales, configuración Dailymotion, limpieza de contadores al resolver un embed y permisos de aportes. Dailymotion usa fixtures, no una cuenta configurada.
 
-**Nada publicado:** no se escribió producción ni se hizo push, PR, merge o deploy. El propietario detuvo la autorización anterior. La receta local no tiene interruptor remoto: una entrega autorizada debe preparar el ejecutor de producción, repetir las verificaciones, conservar respaldo y versiones, configurar Vimeo y revalidar `/ver`, sus 16 detalles y las fichas existentes. Los nuevos IDs se toman del resultado de esa ejecución, no de los IDs asignados en esta prueba local.
+**Al momento del ensayo** no se había escrito producción; la publicación se hizo después con `publish-ver-content-batch.ts` (ver arriba). La receta local no tiene interruptor remoto: una entrega autorizada debe preparar el ejecutor de producción, repetir las verificaciones, conservar respaldo y versiones, configurar Vimeo y revalidar `/ver`, sus 16 detalles y las fichas existentes. Los nuevos IDs se toman del resultado de esa ejecución, no de los IDs asignados en esta prueba local.
