@@ -64,8 +64,10 @@ try {
   await client.query(
     `INSERT INTO "Episode" VALUES (1,30,NULL),(2,999,3600),(3,NULL,NULL),(4,0,0),(5,-2,-3),(6,20,NULL),(7,999,NULL),(8,999,NULL)`
   );
-  const minutesQuery = source
-    .match(/prisma\.\$queryRaw<RawMinutesRow\[\]>`([\s\S]*?)`/)[1]
+  // Las horas viven en getWatchedTime (database.ts), que comparten el
+  // perfil y los logros.
+  const minutesQuery = readFileSync('src/lib/database.ts', 'utf8')
+    .match(/function getWatchedTime\([\s\S]*?>`([\s\S]*?)`/)[1]
     .replaceAll('${userId}', '$1');
   const minutes = (await client.query(minutesQuery, ['owner'])).rows[0];
   assert.equal(

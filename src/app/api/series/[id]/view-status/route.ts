@@ -3,6 +3,8 @@ import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 import { setSeriesTrackingStatus } from '@/lib/tracking';
 import { WATCH_STATUS, type WatchStatusValue } from '@/constants/series';
+import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
+import { WATCHING_METRICS } from '@/lib/achievements';
 
 const VALID_STATUSES: readonly string[] = Object.values(WATCH_STATUS);
 type WatchStatusInput = WatchStatusValue;
@@ -28,6 +30,7 @@ export async function POST(
       setSeriesTrackingStatus(tx, authResult.userId, seriesId, status)
     );
 
+    awardAchievementsAfterResponse(authResult.userId, WATCHING_METRICS);
     return NextResponse.json(viewStatus);
   } catch (error) {
     console.error('Error updating view status:', error);

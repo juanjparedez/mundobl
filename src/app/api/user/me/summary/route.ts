@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma, recordUserActiveDay } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
+import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
 
 /**
  * Resumen minimo del estado de tracking del usuario actual.
@@ -48,7 +49,13 @@ export async function GET() {
           select: { onboardingCompletedAt: true },
         }),
         // Es una medicion: si falla, el resumen igual tiene que salir.
-        recordUserActiveDay(userId).catch(() => undefined),
+        recordUserActiveDay(userId).then(
+          (firstVisitToday) => {
+            if (firstVisitToday)
+              awardAchievementsAfterResponse(userId, ['activeDays']);
+          },
+          () => undefined
+        ),
       ]);
 
     const trackedSeriesIds = new Set<number>();

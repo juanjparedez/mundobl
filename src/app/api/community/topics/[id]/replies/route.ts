@@ -17,6 +17,7 @@ import {
 } from '@/lib/community-response';
 import { notifyUser } from '@/lib/notifications';
 import { loadLocaleMessages } from '@/i18n/messages';
+import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
 type Context = { params: Promise<{ id: string }> };
 
 export async function POST(request: Request, context: Context) {
@@ -58,6 +59,7 @@ export async function POST(request: Request, context: Context) {
     } catch (error) {
       console.error('Community recipient lookup failed', error);
     }
+    awardAchievementsAfterResponse(auth.userId, ['communityReplies']);
     return communityResponse({ id: reply.id }, 201);
   } catch (error) {
     return communityFailure(error);

@@ -1151,6 +1151,10 @@ export type TranslationShape = {
     patchNext: string;
     patchMax: string;
     viewAll: string;
+    unlockedOn: string;
+    unlockedNotificationTitle: string;
+    unlockedNotificationTitleMany: string;
+    patchUnlockedLabel: string;
   };
   profileTabs: {
     label: string;
@@ -5262,7 +5266,7 @@ const es: TranslationShape = {
     settingsResetDataButton: 'Borrar mi historial y stats',
     settingsResetDataConfirmTitle: '¿Borrar todo tu historial de seguimiento?',
     settingsResetDataConfirmDescription:
-      'Se elimina lo que viste, tus calificaciones, favoritos y notas privadas. Tu cuenta y comentarios públicos NO se tocan. Los gráficos de tu perfil vuelven a cero. No se puede deshacer.',
+      'Se elimina lo que viste, tus calificaciones, favoritos y notas privadas. Tu cuenta y comentarios públicos NO se tocan. Los gráficos de tu perfil y los logros de ver, calificar y favoritos vuelven a cero. No se puede deshacer.',
     settingsResetDataSuccess: 'Historial y estadísticas borrados',
     settingsResetDataError: 'Error al borrar el historial',
     settingsPrivacyTitle: 'Privacidad y datos',
@@ -5466,6 +5470,10 @@ const es: TranslationShape = {
     patchNext: 'Siguiente nivel: {goal}',
     patchMax: 'Nivel máximo',
     viewAll: 'Ver todos los logros',
+    unlockedOn: 'Obtenido el {date}',
+    unlockedNotificationTitle: 'Logro obtenido: {name}',
+    unlockedNotificationTitleMany: 'Obtuviste {count} logros',
+    patchUnlockedLabel: 'Parche {platform} ({tier})',
   },
   profileTabs: {
     label: 'Secciones del perfil',
@@ -9767,7 +9775,7 @@ const en: TranslationShape = {
     settingsResetDataButton: 'Reset my history & stats',
     settingsResetDataConfirmTitle: 'Reset your entire watch history?',
     settingsResetDataConfirmDescription:
-      "This deletes what you've watched, your ratings, favorites and private notes. Your account and public comments are NOT touched. Charts on your profile go back to zero. This can't be undone.",
+      "This deletes what you've watched, your ratings, favorites and private notes. Your account and public comments are NOT touched. Your profile charts and your watching, rating and favorite achievements go back to zero. This can't be undone.",
     settingsResetDataSuccess: 'History and stats reset',
     settingsResetDataError: 'Error resetting your history',
     settingsPrivacyTitle: 'Privacy & data',
@@ -9967,6 +9975,10 @@ const en: TranslationShape = {
     patchNext: 'Next level: {goal}',
     patchMax: 'Top level',
     viewAll: 'See all achievements',
+    unlockedOn: 'Unlocked on {date}',
+    unlockedNotificationTitle: 'Achievement unlocked: {name}',
+    unlockedNotificationTitleMany: 'You unlocked {count} achievements',
+    patchUnlockedLabel: '{platform} patch ({tier})',
   },
   profileTabs: {
     label: 'Profile sections',

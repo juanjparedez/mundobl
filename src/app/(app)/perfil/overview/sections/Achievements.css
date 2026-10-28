@@ -122,6 +122,11 @@
   color: var(--text-tertiary);
 }
 
+.overview-achievements__date {
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
 .overview-achievements__bar-track {
   margin-top: 3px;
   height: 3px;

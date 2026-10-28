@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 import { markEpisode } from '@/lib/tracking';
+import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
+import { WATCHING_METRICS } from '@/lib/achievements';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -46,6 +48,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       markEpisode(tx, authResult.userId, episodeId, status)
     );
 
+    awardAchievementsAfterResponse(authResult.userId, WATCHING_METRICS);
     return NextResponse.json({
       ...result.episode,
       series: result.series

@@ -7,6 +7,8 @@ import {
   type ProgressTarget,
   type ProgressOptions,
 } from '@/lib/tracking';
+import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
+import { WATCHING_METRICS } from '@/lib/achievements';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -99,6 +101,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       setProgress(tx, authResult.userId, seriesId, target, options)
     );
 
+    awardAchievementsAfterResponse(authResult.userId, WATCHING_METRICS);
     return NextResponse.json(result);
   } catch (error) {
     if (error instanceof ProgressNotFoundError) {

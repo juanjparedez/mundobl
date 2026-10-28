@@ -8,6 +8,13 @@ Todas las versiones notables del proyecto se documentan aqui.
 > (`ChangelogItem`, `/admin/changelog`) quedo como fallback solo si este archivo
 > esta vacio.
 
+## 2026-10-28 — Logros guardados con fecha
+
+### Features
+
+- **Los logros se guardan**: cada logro y nivel de parche queda registrado con la fecha en que lo obtuviste, y se ve en la pestaña Logros. Un logro obtenido no se pierde aunque después baje el número (por ejemplo, si borrás una reseña).
+- **Aviso al obtener un logro**: llega a tus notificaciones en el momento en que lo conseguís. Los que ya tenías quedan guardados con la fecha de hoy, sin aviso.
+
 ## 2026-10-25 — Arquitectura de privacidad en dos niveles, alias seudónimos comunitarios y pulso de streaming en /estadisticas
 
 ### Features

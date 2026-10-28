@@ -1,12 +1,17 @@
 import { completedInCurrentYear } from '@/lib/tracking-statistics';
 import { NextRequest, NextResponse } from 'next/server';
-import { getAchievementCounts, prisma } from '@/lib/database';
+import {
+  countUserWatchedChapters,
+  getWatchedTime,
+  prisma,
+} from '@/lib/database';
+import {
+  getAchievementCounts,
+  syncAchievementUnlocks,
+} from '@/lib/achievement-store';
 import { requireAuth } from '@/lib/auth-helpers';
 import { findNextEpisode } from '@/lib/episode-progress';
-import {
-  groupIntoChapters,
-  countWatchedChapters,
-} from '@/lib/episode-chapters';
+import { groupIntoChapters } from '@/lib/episode-chapters';
 
 interface RawCountRow {
   name: string;
@@ -22,11 +27,6 @@ interface RawCountryRow {
 interface RawYearRow {
   year: number | null;
   count: bigint;
-}
-
-interface RawMinutesRow {
-  total_minutes: number | string | null;
-  unknown_durations: bigint;
 }
 
 interface RawDayRow {
@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
       recentlyCompleted,
       currentlyWatching,
       favorites,
-      hoursResult,
+      watchedTime,
       weeklyActivity,
       topGenresRaw,
       topCountriesRaw,
@@ -87,7 +87,7 @@ export async function GET(request: NextRequest) {
       avgRatingRaw,
       topRatedSeriesRaw,
       byTypeRaw,
-      seriesWithWatchedEpisodes,
+      totalEpisodes,
       heatmapRaw,
       reviewsCount,
       recentReviews,
@@ -207,19 +207,8 @@ export async function GET(request: NextRequest) {
         },
       }),
 
-      // Total minutes watched (sum episode durations for watched episodes)
-      prisma.$queryRaw<RawMinutesRow[]>`
-        SELECT COALESCE(SUM(CASE
-          WHEN e."durationSeconds" > 0 THEN e."durationSeconds" / 60.0
-          WHEN e.duration > 0 THEN e.duration
-          ELSE 0 END), 0) as total_minutes,
-          COUNT(*) FILTER (WHERE COALESCE(e."durationSeconds", 0) <= 0
-            AND COALESCE(e.duration, 0) <= 0) as unknown_durations
-        FROM "ViewStatus" vs
-        JOIN "Episode" e ON vs."episodeId" = e.id
-        WHERE vs."userId" = ${userId}
-          AND vs.status = 'VISTA'
-      `,
+      // Horas vistas (suma de duraciones de los capitulos marcados)
+      getWatchedTime(userId),
 
       // Distinct days with episode watches in the last 7 days
       prisma.$queryRaw<RawDayRow[]>`
@@ -335,36 +324,8 @@ export async function GET(request: NextRequest) {
         ORDER BY count DESC
       `,
 
-      // Load every part of each tracked series, including unwatched siblings.
-      // Filtering individual rows to VISTA would make partial chapters complete.
-      prisma.series.findMany({
-        where: {
-          seasons: {
-            some: {
-              episodes: {
-                some: {
-                  viewStatus: { some: { userId, status: 'VISTA' } },
-                },
-              },
-            },
-          },
-        },
-        select: {
-          seasons: {
-            select: {
-              seasonNumber: true,
-              episodes: {
-                select: {
-                  id: true,
-                  episodeNumber: true,
-                  title: true,
-                  viewStatus: { where: { userId }, select: { status: true } },
-                },
-              },
-            },
-          },
-        },
-      }),
+      // Capitulos vistos, agrupados como en la ficha.
+      countUserWatchedChapters(userId),
 
       // Cover all 26 weeks displayed by HeatmapWidget.
       prisma.$queryRaw<RawDayRow[]>`
@@ -495,91 +456,76 @@ export async function GET(request: NextRequest) {
       };
     });
 
+    const stats = {
+      ...completedInCurrentYear(recentlyCompleted),
+      watched: statusMap['VISTA'] ?? 0,
+      watching: statusMap['VIENDO'] ?? 0,
+      abandoned: statusMap['ABANDONADA'] ?? 0,
+      toRewatch: statusMap['RETOMAR'] ?? 0,
+      wantToWatch: statusMap['QUIERO_VER'] ?? 0,
+      favorites: favoritesCount,
+      ratings: ratingsCount,
+      comments: commentsCount,
+      ...watchedTime,
+      activeDaysThisWeek: weeklyActivity.length,
+      topGenres: topGenresRaw.slice(0, topN).map((g) => ({
+        name: g.name,
+        count: Number(g.count),
+      })),
+      topCountries: topCountriesRaw.slice(0, topN).map((c) => ({
+        name: c.name,
+        code: c.code,
+        count: Number(c.count),
+      })),
+      topActors: topActorsRaw.slice(0, topN).map((actor) => ({
+        name: actor.name,
+        count: Number(actor.count),
+      })),
+      topProductionCompanies: topProductionCompaniesRaw
+        .slice(0, topN)
+        .map((company) => ({
+          name: company.name,
+          count: Number(company.count),
+        })),
+      completedByYear: completedByYearRaw.map((y) => ({
+        year: y.year,
+        count: Number(y.count),
+      })),
+      avgRating:
+        avgRatingRaw[0]?.avg_rating != null
+          ? Math.round(parseFloat(avgRatingRaw[0].avg_rating) * 10) / 10
+          : null,
+      reviews: reviewsCount,
+      topRatedSeries: topRatedSeriesRaw.map((r) => ({
+        seriesId: r.series_id,
+        origin: r.origin,
+        catalogScope: r.catalog_scope,
+        title: r.title,
+        rating: Math.round(Number(r.avg_score) * 10) / 10,
+        imageUrl: r.image_url,
+        imageThumbUrl: r.image_thumb_url,
+      })),
+      byType: byTypeRaw.map((r) => ({
+        type: r.type,
+        count: Number(r.count),
+      })),
+      totalEpisodes,
+      longestStreak,
+      heatmap: heatmapDates,
+      approvedGlossaryTerms: approvedGlossaryTermsCount,
+      glossaryQuizBestScore: user?.glossaryQuizBestScore ?? null,
+      // Antes del slice(topN): los logros cuentan todos los paises/generos.
+      countriesWatched: topCountriesRaw.length,
+      genresWatched: topGenresRaw.length,
+      ...achievementCounts,
+    };
+    // Guarda lo que se cumpla y no se haya otorgado al momento de la accion
+    // (por ejemplo, horas que suben porque se cargaron duraciones).
+    const achievementUnlocks = await syncAchievementUnlocks(userId, stats);
+
     return NextResponse.json({
       user,
-      stats: {
-        ...completedInCurrentYear(recentlyCompleted),
-        watched: statusMap['VISTA'] ?? 0,
-        watching: statusMap['VIENDO'] ?? 0,
-        abandoned: statusMap['ABANDONADA'] ?? 0,
-        toRewatch: statusMap['RETOMAR'] ?? 0,
-        wantToWatch: statusMap['QUIERO_VER'] ?? 0,
-        favorites: favoritesCount,
-        ratings: ratingsCount,
-        comments: commentsCount,
-        unknownDurationVideos: Number(hoursResult[0]?.unknown_durations ?? 0),
-        hoursWatched:
-          Math.round((Number(hoursResult[0]?.total_minutes ?? 0) / 60) * 10) /
-          10,
-        activeDaysThisWeek: weeklyActivity.length,
-        topGenres: topGenresRaw.slice(0, topN).map((g) => ({
-          name: g.name,
-          count: Number(g.count),
-        })),
-        topCountries: topCountriesRaw.slice(0, topN).map((c) => ({
-          name: c.name,
-          code: c.code,
-          count: Number(c.count),
-        })),
-        topActors: topActorsRaw.slice(0, topN).map((actor) => ({
-          name: actor.name,
-          count: Number(actor.count),
-        })),
-        topProductionCompanies: topProductionCompaniesRaw
-          .slice(0, topN)
-          .map((company) => ({
-            name: company.name,
-            count: Number(company.count),
-          })),
-        completedByYear: completedByYearRaw.map((y) => ({
-          year: y.year,
-          count: Number(y.count),
-        })),
-        avgRating:
-          avgRatingRaw[0]?.avg_rating != null
-            ? Math.round(parseFloat(avgRatingRaw[0].avg_rating) * 10) / 10
-            : null,
-        reviews: reviewsCount,
-        topRatedSeries: topRatedSeriesRaw.map((r) => ({
-          seriesId: r.series_id,
-          origin: r.origin,
-          catalogScope: r.catalog_scope,
-          title: r.title,
-          rating: Math.round(Number(r.avg_score) * 10) / 10,
-          imageUrl: r.image_url,
-          imageThumbUrl: r.image_thumb_url,
-        })),
-        byType: byTypeRaw.map((r) => ({
-          type: r.type,
-          count: Number(r.count),
-        })),
-        totalEpisodes: seriesWithWatchedEpisodes.reduce(
-          (total, series) =>
-            total +
-            countWatchedChapters(
-              series.seasons.flatMap((season) =>
-                season.episodes.map((episode) => ({
-                  id: episode.id,
-                  episodeNumber: episode.episodeNumber,
-                  title: episode.title,
-                  seasonNumber: season.seasonNumber,
-                  watched: episode.viewStatus.some(
-                    (status) => status.status === 'VISTA'
-                  ),
-                }))
-              )
-            ),
-          0
-        ),
-        longestStreak,
-        heatmap: heatmapDates,
-        approvedGlossaryTerms: approvedGlossaryTermsCount,
-        glossaryQuizBestScore: user?.glossaryQuizBestScore ?? null,
-        // Antes del slice(topN): los logros cuentan todos los paises/generos.
-        countriesWatched: topCountriesRaw.length,
-        genresWatched: topGenresRaw.length,
-        ...achievementCounts,
-      },
+      stats: { ...stats, achievementUnlocks },
       recentlyCompleted: recentlyCompleted.map((r) => ({
         seriesId: r.seriesId,
         completedAt: r.watchedDate,

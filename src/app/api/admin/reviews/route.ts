@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
 import { Prisma } from '@/generated/prisma';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
@@ -87,7 +88,7 @@ export async function PATCH(request: NextRequest) {
     if (typeof body.isFeatured === 'boolean') {
       const target = await prisma.review.findUnique({
         where: { id },
-        select: { id: true, seriesId: true, language: true },
+        select: { id: true, seriesId: true, language: true, userId: true },
       });
       if (!target) {
         return NextResponse.json(
@@ -114,6 +115,8 @@ export async function PATCH(request: NextRequest) {
         });
       });
 
+      // Destacar le da el logro al autor, no al moderador.
+      awardAchievementsAfterResponse(target.userId, ['featuredReviews']);
       logAction('UPDATE', request.nextUrl.pathname, 'PATCH', authResult.userId);
       return NextResponse.json({ success: true, review: updated });
     }
@@ -160,6 +163,12 @@ export async function PATCH(request: NextRequest) {
       });
     }
 
+    // Publicar suma reseña y sus votos "util" al autor.
+    awardAchievementsAfterResponse(previous.userId, [
+      'publishedReviews',
+      'helpfulVotes',
+      'featuredReviews',
+    ]);
     logAction('UPDATE', request.nextUrl.pathname, 'PATCH', authResult.userId);
     return NextResponse.json({ success: true, review: updated });
   } catch (error) {
