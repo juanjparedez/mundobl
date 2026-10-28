@@ -1194,18 +1194,18 @@ const fr = {
     "listsTitle": "Listes du profil",
   },
   "socials": {
-    "title": "Mes réseaux sociaux",
-    "emptyTitle": "Aucun réseau social configuré",
-    "emptyHint": "Ajoutez vos identifiants de réseaux sociaux pour que les autres utilisateurs puissent vous trouver.",
+    "title": "Mes profils",
+    "emptyTitle": "Aucun profil configuré",
+    "emptyHint": "Ajoutez votre identifiant Letterboxd, MyAnimeList ou MyDramaList pour que les autres utilisateurs puissent vous trouver.",
     "emptyCta": "Configurer",
-    "editTitle": "Mes identifiants de réseaux sociaux",
-    "editHint": "Saisissez uniquement l'identifiant (pas l'URL complète). Laissez vide pour supprimer un réseau.",
-    "editTooltip": "Modifier les réseaux sociaux",
+    "editTitle": "Mes profils",
+    "editHint": "Saisissez uniquement l'identifiant (pas l'URL complète). Laissez vide pour supprimer un profil.",
+    "editTooltip": "Modifier les profils",
     "handlePlaceholder": "votre_identifiant",
     "saveButton": "Enregistrer",
     "cancelButton": "Annuler",
-    "saveSuccess": "Réseaux sociaux mis à jour",
-    "saveError": "Impossible d'enregistrer vos réseaux sociaux"
+    "saveSuccess": "Profils mis à jour",
+    "saveError": "Impossible d'enregistrer vos profils"
   },
   "novedades": {
     "title": "Quoi de neuf",
@@ -3221,7 +3221,6 @@ const fr = {
     "copyLinkError": "Impossible de copier le lien",
     "copyLink": "Copier le lien",
     "whatsapp": "WhatsApp",
-    "twitter": "X / Twitter",
     "shareOption": "Partager...",
     "share": "Partager"
   },

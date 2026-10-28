@@ -25,11 +25,6 @@ export const metadata: Metadata = {
     url: '/catalogo',
     siteName: 'MundoBL',
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Catálogo de Series BL y GL | MundoBL',
-    description: CATALOGO_DESCRIPTION,
-  },
 };
 import { CatalogoClient } from '../CatalogoClient';
 import { packCatalog } from '../catalogTransport';

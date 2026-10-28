@@ -32,6 +32,6 @@ COMPLETED y 9 REJECTED.
 - **Noticias**: 126 propuestas en estado REVIEW en `/admin/noticias` esperando revisión editorial.
 - **Reseñas editoriales**: 2 series con `review` cargada.
 - **/ver**: Craving You necesita el minuto donde empieza el EP2 para partir el video; Blossom Campus pide membresía en STRONGBERRY; VBL Series bloqueadas. Detalle en [ampliacion-ver-2026-10-25.md](ampliacion-ver-2026-10-25.md).
-- **Fuentes de noticias pausadas**: Mundo Asia, CafeBL, BLTai y BLUPDATE (`news-source-policy.ts`).
+- **Fuentes de noticias pausadas**: Mundo Asia, CafeBL y BLTai (`news-source-policy.ts`).
 - **Pruebas manuales nunca hechas**: hoja nativa de compartir en un teléfono real y ciclo HTTP de caché al publicar/ocultar patrocinio. El error de hidratación React #418 visto el 12/10 no se investigó.
 - **Patrocinio**: `/apoyar` sigue oculto; falta configurar los medios (cuentas Cafecito/Ko-fi).

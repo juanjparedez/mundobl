@@ -44,14 +44,6 @@
 
 /* Tonos por plataforma. Tokens via color-mix con --primary-color como
  * fallback — no hardcodeo hex; respeta tema/accent del usuario. */
-.mb-socials__link--twitter .mb-socials__icon {
-  background: color-mix(in srgb, #1da1f2 18%, transparent);
-  color: #1da1f2;
-}
-.mb-socials__link--instagram .mb-socials__icon {
-  background: color-mix(in srgb, #e1306c 18%, transparent);
-  color: #e1306c;
-}
 .mb-socials__link--letterboxd .mb-socials__icon {
   background: color-mix(in srgb, #00d735 18%, transparent);
   color: #00d735;

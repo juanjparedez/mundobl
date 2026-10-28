@@ -12,9 +12,6 @@ export type Platform =
   | 'Bilibili'
   | 'Vimeo'
   | 'Dailymotion'
-  | 'TikTok'
-  | 'Instagram'
-  | 'Twitter'
   | 'Spotify';
 
 export const PLATFORM_OPTIONS: { label: string; value: Platform }[] = [
@@ -22,9 +19,6 @@ export const PLATFORM_OPTIONS: { label: string; value: Platform }[] = [
   { label: 'Bilibili', value: 'Bilibili' },
   { label: 'Vimeo', value: 'Vimeo' },
   { label: 'Dailymotion', value: 'Dailymotion' },
-  { label: 'TikTok', value: 'TikTok' },
-  { label: 'Instagram', value: 'Instagram' },
-  { label: 'Twitter / X', value: 'Twitter' },
   { label: 'Spotify', value: 'Spotify' },
 ];
 
@@ -59,9 +53,6 @@ export const PLATFORM_COLORS: Record<string, string> = {
   Bilibili: 'blue',
   Vimeo: 'cyan',
   Dailymotion: 'orange',
-  TikTok: 'geekblue',
-  Instagram: 'purple',
-  Twitter: 'default',
   Spotify: 'green',
 };
 
@@ -85,11 +76,6 @@ export function getVimeoId(url: string): string | null {
 export function getDailymotionId(url: string): string | null {
   const source = parseEpisodeSource(url);
   return source?.platform === 'Dailymotion' ? source.videoId : null;
-}
-
-export function getTikTokId(url: string): string | null {
-  const match = url.match(/tiktok\.com\/@[^/]+\/video\/(\d+)/);
-  return match ? match[1] : null;
 }
 
 export function getSpotifyId(url: string): { type: string; id: string } | null {
@@ -116,10 +102,6 @@ export function detectPlatform(url: string): Platform | null {
     'dailymotion.com': 'Dailymotion',
     'geo.dailymotion.com': 'Dailymotion',
     'dai.ly': 'Dailymotion',
-    'tiktok.com': 'TikTok',
-    'instagram.com': 'Instagram',
-    'twitter.com': 'Twitter',
-    'x.com': 'Twitter',
     'open.spotify.com': 'Spotify',
   };
   if (hosts[host]) return hosts[host];
@@ -138,8 +120,6 @@ export function extractVideoId(platform: Platform, url: string): string | null {
       return getVimeoId(url);
     case 'Dailymotion':
       return getDailymotionId(url);
-    case 'TikTok':
-      return getTikTokId(url);
     case 'Spotify': {
       const s = getSpotifyId(url);
       return s ? `${s.type}/${s.id}` : null;
@@ -218,7 +198,7 @@ export function validateStreamingUrl(url: string): StreamingValidationResult {
 
 // ---- Información de embed ----
 
-export type EmbedType = 'iframe' | 'social-embed' | 'unsupported';
+export type EmbedType = 'iframe' | 'unsupported';
 
 export interface EmbedInfo {
   type: EmbedType;
@@ -301,15 +281,6 @@ export function getEmbedInfo(
       return {
         type: 'iframe',
         url: resolvedId ? `https://open.spotify.com/embed/${resolvedId}` : null,
-        originalUrl: url,
-        platform,
-      };
-    case 'TikTok':
-    case 'Instagram':
-    case 'Twitter':
-      return {
-        type: 'social-embed',
-        url: null,
         originalUrl: url,
         platform,
       };

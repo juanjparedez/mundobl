@@ -4,10 +4,8 @@ import { useEffect, useState } from 'react';
 import { Button, Input, Modal, Tooltip } from 'antd';
 import {
   EditOutlined,
-  InstagramOutlined,
   LinkOutlined,
   PlayCircleOutlined,
-  TwitterOutlined,
   YoutubeOutlined,
 } from '@ant-design/icons';
 import { Widget } from '@/components/dashboard';
@@ -30,22 +28,6 @@ interface SocialEntry {
 }
 
 const SOCIAL_DEFS: SocialEntry[] = [
-  {
-    key: 'twitter',
-    label: 'Twitter / X',
-    icon: <TwitterOutlined />,
-    buildUrl: (h) =>
-      h.startsWith('http') ? h : `https://x.com/${h.replace(/^@/, '')}`,
-    tone: 'twitter',
-  },
-  {
-    key: 'instagram',
-    label: 'Instagram',
-    icon: <InstagramOutlined />,
-    buildUrl: (h) =>
-      h.startsWith('http') ? h : `https://instagram.com/${h.replace(/^@/, '')}`,
-    tone: 'instagram',
-  },
   {
     key: 'letterboxd',
     label: 'Letterboxd',
@@ -84,7 +66,7 @@ export interface SocialsWidgetProps {
   socials?: UserSocials | null;
 }
 
-/** Widget "Mis redes" del mock my-profile.png. Lista de handles del user
+/** Widget "Mis perfiles" del mock my-profile.png. Lista de handles del user
  *  con icono + click va al perfil publico de cada plataforma. Si el
  *  user no configuro ninguna red, empty state con CTA "Agregar". Edicion
  *  inline via Modal con 5 inputs (uno por plataforma) — PATCH a

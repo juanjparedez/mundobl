@@ -3,8 +3,6 @@ const PAUSED_FEEDS: Record<string, string> = {
   'mundoasia.es': 'Connection failed during source audit.',
   'cafebl.com': 'Connection failed during source audit.',
   'bltai.com': 'RSS responds HTTP 403; requires publisher access.',
-  'twitter.com': 'Social profile has no public RSS feed.',
-  'x.com': 'Social profile has no public RSS feed.',
 };
 
 export function newsSourcePauseReason(url: string): string | null {

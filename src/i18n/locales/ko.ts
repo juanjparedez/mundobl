@@ -1190,18 +1190,18 @@ const ko = {
     "listsTitle": "프로필 목록",
   },
   "socials": {
-    "title": "내 소셜",
-    "emptyTitle": "설정된 소셜 없음",
-    "emptyHint": "다른 사용자가 회원님을 찾을 수 있도록 소셜 핸들을 추가하세요.",
+    "title": "내 프로필",
+    "emptyTitle": "설정된 프로필 없음",
+    "emptyHint": "다른 사용자가 회원님을 찾을 수 있도록 Letterboxd, MyAnimeList 또는 MyDramaList 사용자 이름을 추가하세요.",
     "emptyCta": "설정하기",
-    "editTitle": "내 소셜 핸들",
-    "editHint": "핸들만 입력하세요 (전체 URL 아님). 네트워크를 제거하려면 비워두세요.",
-    "editTooltip": "소셜 편집",
+    "editTitle": "내 프로필",
+    "editHint": "사용자 이름만 입력하세요 (전체 URL 아님). 프로필을 제거하려면 비워두세요.",
+    "editTooltip": "프로필 편집",
     "handlePlaceholder": "회원님의_핸들",
     "saveButton": "저장",
     "cancelButton": "취소",
-    "saveSuccess": "소셜 업데이트됨",
-    "saveError": "소셜을 저장할 수 없습니다"
+    "saveSuccess": "프로필 업데이트됨",
+    "saveError": "프로필을 저장할 수 없습니다"
   },
   "novedades": {
     "title": "새로운 소식",
@@ -3217,7 +3217,6 @@ const ko = {
     "copyLinkError": "링크를 복사할 수 없음",
     "copyLink": "링크 복사",
     "whatsapp": "WhatsApp",
-    "twitter": "X / Twitter",
     "shareOption": "공유...",
     "share": "공유"
   },

@@ -1193,18 +1193,18 @@ const it = {
     "listsTitle": "Liste del profilo",
   },
   "socials": {
-    "title": "I miei social",
-    "emptyTitle": "Nessun social configurato",
-    "emptyHint": "Aggiungi i tuoi handle social così gli altri utenti possono trovarti.",
+    "title": "I miei profili",
+    "emptyTitle": "Nessun profilo configurato",
+    "emptyHint": "Aggiungi il tuo nome utente di Letterboxd, MyAnimeList o MyDramaList così gli altri utenti possono trovarti.",
     "emptyCta": "Configura",
-    "editTitle": "I miei handle social",
-    "editHint": "Inserisci solo l'handle (non l'URL completo). Lascia vuoto per rimuovere un network.",
-    "editTooltip": "Modifica social",
+    "editTitle": "I miei profili",
+    "editHint": "Inserisci solo il nome utente (non l'URL completo). Lascia vuoto per rimuovere un profilo.",
+    "editTooltip": "Modifica profili",
     "handlePlaceholder": "il_tuo_handle",
     "saveButton": "Salva",
     "cancelButton": "Annulla",
-    "saveSuccess": "Social aggiornati",
-    "saveError": "Impossibile salvare i tuoi social"
+    "saveSuccess": "Profili aggiornati",
+    "saveError": "Impossibile salvare i tuoi profili"
   },
   "novedades": {
     "title": "Novità",
@@ -3220,7 +3220,6 @@ const it = {
     "copyLinkError": "Impossibile copiare il link",
     "copyLink": "Copia link",
     "whatsapp": "WhatsApp",
-    "twitter": "X / Twitter",
     "shareOption": "Condividi...",
     "share": "Condividi"
   },

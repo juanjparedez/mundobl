@@ -1188,18 +1188,18 @@ const th = {
     "listsTitle": "รายการในโปรไฟล์",
   },
   "socials": {
-    "title": "โซเชียลของฉัน",
-    "emptyTitle": "ยังไม่ได้ตั้งค่าโซเชียล",
-    "emptyHint": "เพิ่มบัญชีโซเชียลของคุณเพื่อให้ผู้ใช้คนอื่นค้นหาคุณได้",
+    "title": "โปรไฟล์ของฉัน",
+    "emptyTitle": "ยังไม่ได้ตั้งค่าโปรไฟล์",
+    "emptyHint": "เพิ่มชื่อผู้ใช้ Letterboxd, MyAnimeList หรือ MyDramaList ของคุณเพื่อให้ผู้ใช้คนอื่นค้นหาคุณได้",
     "emptyCta": "ตั้งค่า",
-    "editTitle": "บัญชีโซเชียลของฉัน",
-    "editHint": "ป้อนแค่ชื่อผู้ใช้ (ไม่ใช่ URL เต็ม) เว้นว่างไว้เพื่อลบเครือข่าย",
-    "editTooltip": "แก้ไขโซเชียล",
+    "editTitle": "โปรไฟล์ของฉัน",
+    "editHint": "ป้อนแค่ชื่อผู้ใช้ (ไม่ใช่ URL เต็ม) เว้นว่างไว้เพื่อลบโปรไฟล์",
+    "editTooltip": "แก้ไขโปรไฟล์",
     "handlePlaceholder": "ชื่อผู้ใช้ของคุณ",
     "saveButton": "บันทึก",
     "cancelButton": "ยกเลิก",
-    "saveSuccess": "อัปเดตโซเชียลแล้ว",
-    "saveError": "ไม่สามารถบันทึกโซเชียลของคุณได้"
+    "saveSuccess": "อัปเดตโปรไฟล์แล้ว",
+    "saveError": "ไม่สามารถบันทึกโปรไฟล์ของคุณได้"
   },
   "novedades": {
     "title": "มีอะไรใหม่",
@@ -3215,7 +3215,6 @@ const th = {
     "copyLinkError": "ไม่สามารถคัดลอกลิงก์ได้",
     "copyLink": "คัดลอกลิงก์",
     "whatsapp": "WhatsApp",
-    "twitter": "X / Twitter",
     "shareOption": "แชร์...",
     "share": "แชร์"
   },
