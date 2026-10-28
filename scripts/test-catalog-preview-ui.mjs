@@ -89,7 +89,7 @@ try {
   await page.goto(`${base}/catalogo?q=${encodeURIComponent(title + '0')}`, {
     timeout: 120000,
   });
-  const card = page.locator('.serie-card').filter({ hasText: title + '0' });
+  const card = page.locator('.catalogo-card').filter({ hasText: title + '0' });
   await expect(card).toBeVisible({ timeout: 60000 });
   assert.equal(previewRequests.length, 0, 'listing must not fetch previews');
   const open = card.getByRole('button', { name: 'Vista rápida', exact: true });

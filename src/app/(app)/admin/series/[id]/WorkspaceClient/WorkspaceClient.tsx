@@ -28,6 +28,8 @@ type WorkspaceSerie = NonNullable<Awaited<ReturnType<typeof getSeriesById>>>;
 
 export interface WorkspaceClientProps {
   serie: WorkspaceSerie;
+  /** Reseñas publicadas, las mismas que cuenta la ficha publica. */
+  reviewCount: number;
 }
 
 /** Workspace admin del catalogo (mock style-guide/catalogo.png).
@@ -35,7 +37,7 @@ export interface WorkspaceClientProps {
  *  en commits siguientes. La vista publica de la serie sigue siendo
  *  /catalogo/[id] con SerieDetailClient — esta es la vista de
  *  administracion densa. */
-export function WorkspaceClient({ serie }: WorkspaceClientProps) {
+export function WorkspaceClient({ serie, reviewCount }: WorkspaceClientProps) {
   const { t } = useLocale();
   const { data: session } = useSession();
   const [activeTab, setActiveTab] = useState('overview');
@@ -45,7 +47,6 @@ export function WorkspaceClient({ serie }: WorkspaceClientProps) {
     (acc, s) => acc + (s.episodes?.length ?? 0),
     0
   );
-  const reviewCount = 0; // TODO: cargar reviews count cuando este endpoint
   const ratingValue = serie.overallRating
     ? Math.round((serie.overallRating / 10) * 50) / 10
     : null;

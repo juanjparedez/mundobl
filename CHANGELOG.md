@@ -8,6 +8,16 @@ Todas las versiones notables del proyecto se documentan aqui.
 > (`ChangelogItem`, `/admin/changelog`) quedo como fallback solo si este archivo
 > esta vacio.
 
+## 2026-10-28 — Correos de soporte y aportes, /ver según tu país y catálogo con la card común
+
+### Fixes
+
+- **Correos que faltaban**: cuando curaduría responde una consulta de soporte, o revisa un término del glosario o una corrección a una ficha, además del aviso en el sitio llega un correo. Las correcciones a fichas también avisan en el sitio, que antes no avisaban.
+- **`/ver` según tu país**: los avisos de «faltan capítulos» y «no se ve desde tu país» usan el país real de quien mira. Antes se calculaban siempre para Argentina.
+- **Pestañas del glosario en la URL**: cada pestaña de `/glosario` queda en la dirección (`?view=`): se puede compartir, sobrevive al recargar y «atrás» vuelve a la anterior.
+- **Catálogo con la card común**: las cards de `/catalogo` (series y universos) son la misma card que `/ver` y el resto del sitio.
+- **Reseñas en el workspace admin**: la ficha de administración muestra la cantidad real de reseñas publicadas.
+
 ## 2026-10-25 — Arquitectura de privacidad en dos niveles, alias seudónimos comunitarios y pulso de streaming en /estadisticas
 
 ### Features

@@ -62,7 +62,7 @@
   display: none;
 }
 
-/* Cada card reusa .serie-card (catalogo.css) via renderSingleCard/
+/* Cada card es una MediaCard (catalogo.css) via renderSingleCard/
  * renderUniverseCard — esta clase solo le da el ancho fijo + scroll-snap
  * que necesita para vivir en una fila horizontal en vez de una grilla. */
 .catalog-carousel-row__item {

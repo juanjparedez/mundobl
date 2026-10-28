@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth-helpers';
 import { prisma } from '@/lib/database';
 import { notifyUser, notifyStaffOfSupportThread } from '@/lib/notifications';
+import { renderSupportReplyEmail, SITE_URL } from '@/lib/email-templates';
+import { sendTransactionalEmailToUser } from '@/lib/transactional-email';
 
 const BODY_MAX = 4000;
 
@@ -85,18 +87,28 @@ export async function POST(
 
     if (staff) {
       // Al colaborador le avisamos siempre que curaduria contesta — es el
-      // punto de todo el canal.
+      // punto de todo el canal. In-app y por mail: quien abrio la consulta
+      // puede no volver al sitio hasta enterarse de que hay respuesta.
+      const linkPath = `/admin/colaborador/soporte/${thread.id}`;
       await notifyUser({
         userId: thread.userId,
         type: 'support_reply',
         title: `Respondimos tu consulta: "${thread.subject}"`,
         body: message.slice(0, 160),
-        linkPath: `/admin/colaborador/soporte/${thread.id}`,
+        linkPath,
         refType: 'support_thread',
         refId: thread.id,
       }).catch(() => {
         /* never block the main op */
       });
+      await sendTransactionalEmailToUser(
+        thread.userId,
+        renderSupportReplyEmail({
+          threadSubject: thread.subject,
+          excerpt: message.slice(0, 600),
+          threadUrl: SITE_URL + linkPath,
+        })
+      );
     } else {
       await notifyStaffOfSupportThread({
         threadId: thread.id,

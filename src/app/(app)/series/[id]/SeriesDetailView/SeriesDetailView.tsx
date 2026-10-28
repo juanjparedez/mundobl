@@ -2,7 +2,7 @@ import { ContentGate } from '@/components/content/ContentGate/ContentGate';
 import { ContentNotice } from '@/components/content/ContentNotice/ContentNotice';
 import { hasContentConsent } from '@/lib/content-consent';
 import { CommunityWorkLink } from '@/components/community/CommunityWorkLink/CommunityWorkLink';
-import { getPublicWriterCredits } from '@/lib/database';
+import { countPublishedReviews, getPublicWriterCredits } from '@/lib/database';
 import { WriterCredits } from '@/components/series/WriterCredits/WriterCredits';
 import { getPublicUniverseSeries, getSimilarSeries } from '@/lib/database';
 import { notFound, redirect } from 'next/navigation';
@@ -103,9 +103,7 @@ export async function SeriesDetailView({
     seriesNews,
     similarSeries,
   ] = await Promise.all([
-    prisma.review.count({
-      where: { seriesId: serie.id, status: 'PUBLISHED' },
-    }),
+    countPublishedReviews(serie.id),
     prisma.embeddableContent.count({ where: { seriesId: serie.id } }),
     prisma.userFavorite.count({ where: { seriesId: serie.id } }),
     prisma.viewStatus.count({

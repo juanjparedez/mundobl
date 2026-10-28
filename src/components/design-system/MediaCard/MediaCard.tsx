@@ -15,6 +15,13 @@ export interface MediaCardProps {
   /** Si la imagen viene de Supabase Storage o equivalente, evita Next/Image
    *  optimizado (que requiere remotePatterns configurados). */
   unoptimizedImage?: boolean;
+  /** Card arriba del pliegue (candidata a LCP): carga eager y con
+   *  prioridad alta. El resto queda lazy. */
+  imagePriority?: boolean;
+  /** object-position de la portada (encuadre elegido por curaduria). */
+  imagePosition?: string | null;
+  /** Calidad de Next/Image. Las grillas largas la bajan para pesar menos. */
+  imageQuality?: number;
   /** Titulo principal — lo provee la pagina ya traducido cuando corresponda. */
   title: ReactNode;
   /** Linea de meta debajo del titulo (year · country, etc). */
@@ -61,6 +68,9 @@ export function MediaCard({
   imageUrl,
   imageAlt,
   unoptimizedImage,
+  imagePriority,
+  imagePosition,
+  imageQuality,
   title,
   subtitle,
   description,
@@ -108,7 +118,13 @@ export function MediaCard({
             fill
             sizes="(max-width: 480px) 50vw, (max-width: 1200px) 31vw, 24vw"
             unoptimized={unoptimizedImage}
-            style={{ objectFit: 'cover' }}
+            quality={imageQuality}
+            loading={imagePriority ? 'eager' : 'lazy'}
+            fetchPriority={imagePriority ? 'high' : 'auto'}
+            style={{
+              objectFit: 'cover',
+              objectPosition: imagePosition || 'center',
+            }}
             onError={() => setFailedImageUrl(imageUrl)}
           />
         ) : (

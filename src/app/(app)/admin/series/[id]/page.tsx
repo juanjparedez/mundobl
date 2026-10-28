@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getSeriesByIdAdmin } from '@/lib/database';
+import { countPublishedReviews, getSeriesByIdAdmin } from '@/lib/database';
 import { WorkspaceClient } from './WorkspaceClient/WorkspaceClient';
 
 interface WorkspacePageProps {
@@ -25,7 +25,10 @@ export default async function WorkspacePage({ params }: WorkspacePageProps) {
     notFound();
   }
 
-  const serie = await getSeriesByIdAdmin(seriesId);
+  const [serie, reviewCount] = await Promise.all([
+    getSeriesByIdAdmin(seriesId),
+    countPublishedReviews(seriesId),
+  ]);
 
   if (!serie) {
     notFound();
@@ -33,7 +36,7 @@ export default async function WorkspacePage({ params }: WorkspacePageProps) {
 
   return (
     <>
-      <WorkspaceClient serie={serie} />
+      <WorkspaceClient serie={serie} reviewCount={reviewCount} />
     </>
   );
 }

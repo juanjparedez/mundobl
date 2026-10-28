@@ -78,11 +78,12 @@ export default async function VerPageRoute() {
         ? { id: s.linkedSeries.id, title: s.linkedSeries.title }
         : null,
       episodesWithEmbed: s.episodesWithEmbed,
-      // Cuantos de esos embeds andan de verdad en el mercado del sitio.
-      // Si es menor que episodesWithEmbed, la serie esta incompleta para
-      // el visitante (geo-bloqueo parcial, age-gate o videos caidos) y
-      // /ver lo avisa en vez de dejar que se choque con el reproductor.
-      playableEpisodes: s.playableEpisodes,
+      // Bloqueos por mercado. VerPage cuenta los reproducibles con el pais
+      // real del visitante: si son menos que episodesWithEmbed, la serie
+      // esta incompleta ahi (geo-bloqueo parcial, age-gate o videos
+      // caidos) y /ver lo avisa en vez de dejar que se choque con el
+      // reproductor.
+      playability: s.playability,
       youtubeViews: s.youtubeViews,
       youtubeLikes: s.youtubeLikes,
       platforms: Array.from(
