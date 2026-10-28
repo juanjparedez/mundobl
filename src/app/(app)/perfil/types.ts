@@ -6,6 +6,8 @@
  * clientes consumieran el mismo endpoint sin duplicar el contrato.
  */
 
+import type { AchievementUnlocks } from '@/lib/achievements';
+
 export interface ProfileSeriesMini {
   id: number;
   title: string;
@@ -41,12 +43,10 @@ export interface ProfileReview {
   } | null;
 }
 
-/** Handles de redes sociales del usuario. Solo se persisten en User.socials
+/** Handles del usuario en sitios de seguimiento (Letterboxd, MAL, MDL). Solo se persisten en User.socials
  *  (Json field) los keys que el usuario completo — el resto undefined o
  *  null significa "no configurado". Renderizado por SocialsWidget. */
 export interface UserSocials {
-  twitter?: string | null;
-  instagram?: string | null;
   letterboxd?: string | null;
   mal?: string | null;
   mdl?: string | null;
@@ -110,6 +110,8 @@ export interface ProfileData {
     sharedSeries: number;
     approvedSuggestions: number;
     completedByPlatform: Array<{ platform: string; count: number }>;
+    /** Logros guardados: key → fecha ISO en que se obtuvo. */
+    achievementUnlocks: AchievementUnlocks;
   };
   recentlyCompleted: Array<{
     seriesId: number;

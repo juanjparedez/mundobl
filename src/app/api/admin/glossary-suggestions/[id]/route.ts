@@ -7,6 +7,7 @@ import {
   SITE_URL,
 } from '@/lib/email-templates';
 import { sendTransactionalEmailToUser } from '@/lib/transactional-email';
+import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
 
 function makeSlug(term: string, id: number): string {
   const normalized = term
@@ -173,6 +174,10 @@ export async function PATCH(
         })
       );
     }
+
+    // Aprobar le da el logro a quien sugirio, no al moderador.
+    if (suggestion.userId)
+      awardAchievementsAfterResponse(suggestion.userId, ['glossaryTerms']);
 
     return NextResponse.json(updated);
   } catch (error) {

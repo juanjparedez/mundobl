@@ -6,6 +6,8 @@ import {
   OnboardingInputError,
   parseOnboardingPicks,
 } from '@/lib/onboarding';
+import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
+import { WATCHING_METRICS } from '@/lib/achievements';
 
 // GET - Series al aire para elegir en el "que estas viendo?" del primer ingreso.
 export async function GET() {
@@ -34,6 +36,7 @@ export async function POST(request: NextRequest) {
     const picks = parseOnboardingPicks(body.picks ?? []);
     const result = await completeOnboarding(authResult.userId, picks);
 
+    awardAchievementsAfterResponse(authResult.userId, WATCHING_METRICS);
     return NextResponse.json(result);
   } catch (error) {
     if (error instanceof OnboardingInputError) {

@@ -3,17 +3,12 @@ import { Prisma } from '@/generated/prisma';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 
-// Plataformas soportadas en el JSON User.socials. Para agregar mas
-// (Threads, Bluesky, etc) sumar la key aca y al SocialsWidget. Cada
+// Plataformas soportadas en el JSON User.socials: sitios de seguimiento
+// de series, nunca redes sociales. Para agregar uno sumar la key aca y
+// al SocialsWidget. Cada
 // valor es el handle/username (sin URL completa) — el SocialsWidget
 // renderea la URL via su helper buildSocialUrl.
-const SOCIAL_KEYS = [
-  'twitter',
-  'instagram',
-  'letterboxd',
-  'mal',
-  'mdl',
-] as const;
+const SOCIAL_KEYS = ['letterboxd', 'mal', 'mdl'] as const;
 type SocialKey = (typeof SOCIAL_KEYS)[number];
 type SocialsPayload = Partial<Record<SocialKey, string | null>>;
 

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
+import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
 
 export async function POST(
   request: NextRequest,
@@ -34,6 +35,7 @@ export async function POST(
     await prisma.userFavorite.create({
       data: { userId: authResult.userId, seriesId },
     });
+    awardAchievementsAfterResponse(authResult.userId, ['favorites']);
     return NextResponse.json({ isFavorite: true, seriesId });
   } catch (error) {
     console.error('Error updating favorite status:', error);

@@ -1151,6 +1151,10 @@ export type TranslationShape = {
     patchNext: string;
     patchMax: string;
     viewAll: string;
+    unlockedOn: string;
+    unlockedNotificationTitle: string;
+    unlockedNotificationTitleMany: string;
+    patchUnlockedLabel: string;
   };
   profileTabs: {
     label: string;
@@ -3196,7 +3200,6 @@ export type TranslationShape = {
     copyLinkError: string;
     copyLink: string;
     whatsapp: string;
-    twitter: string;
     shareOption: string;
     share: string;
   };
@@ -5262,7 +5265,7 @@ const es: TranslationShape = {
     settingsResetDataButton: 'Borrar mi historial y stats',
     settingsResetDataConfirmTitle: '¿Borrar todo tu historial de seguimiento?',
     settingsResetDataConfirmDescription:
-      'Se elimina lo que viste, tus calificaciones, favoritos y notas privadas. Tu cuenta y comentarios públicos NO se tocan. Los gráficos de tu perfil vuelven a cero. No se puede deshacer.',
+      'Se elimina lo que viste, tus calificaciones, favoritos y notas privadas. Tu cuenta y comentarios públicos NO se tocan. Los gráficos de tu perfil y los logros de ver, calificar y favoritos vuelven a cero. No se puede deshacer.',
     settingsResetDataSuccess: 'Historial y estadísticas borrados',
     settingsResetDataError: 'Error al borrar el historial',
     settingsPrivacyTitle: 'Privacidad y datos',
@@ -5466,6 +5469,10 @@ const es: TranslationShape = {
     patchNext: 'Siguiente nivel: {goal}',
     patchMax: 'Nivel máximo',
     viewAll: 'Ver todos los logros',
+    unlockedOn: 'Obtenido el {date}',
+    unlockedNotificationTitle: 'Logro obtenido: {name}',
+    unlockedNotificationTitleMany: 'Obtuviste {count} logros',
+    patchUnlockedLabel: 'Parche {platform} ({tier})',
   },
   profileTabs: {
     label: 'Secciones del perfil',
@@ -5481,20 +5488,20 @@ const es: TranslationShape = {
     listsTitle: 'Listas del perfil',
   },
   socials: {
-    title: 'Mis redes',
-    emptyTitle: 'Sin redes configuradas',
+    title: 'Mis perfiles',
+    emptyTitle: 'Sin perfiles configurados',
     emptyHint:
-      'Agregá tus handles de redes sociales para que otros usuarios puedan encontrarte.',
+      'Agregá tu usuario de Letterboxd, MyAnimeList o MyDramaList para que otros usuarios puedan encontrarte.',
     emptyCta: 'Configurar',
-    editTitle: 'Mis redes sociales',
+    editTitle: 'Mis perfiles',
     editHint:
-      'Ingresá solo el handle (sin URL completa). Dejá vacío para quitar una red.',
-    editTooltip: 'Editar redes',
+      'Ingresá solo el usuario (sin URL completa). Dejá vacío para quitar un perfil.',
+    editTooltip: 'Editar perfiles',
     handlePlaceholder: 'tu_usuario',
     saveButton: 'Guardar',
     cancelButton: 'Cancelar',
-    saveSuccess: 'Redes actualizadas',
-    saveError: 'No se pudieron guardar tus redes',
+    saveSuccess: 'Perfiles actualizados',
+    saveError: 'No se pudieron guardar tus perfiles',
   },
   novedades: {
     title: 'Novedades',
@@ -7638,7 +7645,6 @@ const es: TranslationShape = {
     copyLinkError: 'No se pudo copiar el link',
     copyLink: 'Copiar link',
     whatsapp: 'WhatsApp',
-    twitter: 'X / Twitter',
     shareOption: 'Compartir...',
     share: 'Compartir',
   },
@@ -9767,7 +9773,7 @@ const en: TranslationShape = {
     settingsResetDataButton: 'Reset my history & stats',
     settingsResetDataConfirmTitle: 'Reset your entire watch history?',
     settingsResetDataConfirmDescription:
-      "This deletes what you've watched, your ratings, favorites and private notes. Your account and public comments are NOT touched. Charts on your profile go back to zero. This can't be undone.",
+      "This deletes what you've watched, your ratings, favorites and private notes. Your account and public comments are NOT touched. Your profile charts and your watching, rating and favorite achievements go back to zero. This can't be undone.",
     settingsResetDataSuccess: 'History and stats reset',
     settingsResetDataError: 'Error resetting your history',
     settingsPrivacyTitle: 'Privacy & data',
@@ -9967,6 +9973,10 @@ const en: TranslationShape = {
     patchNext: 'Next level: {goal}',
     patchMax: 'Top level',
     viewAll: 'See all achievements',
+    unlockedOn: 'Unlocked on {date}',
+    unlockedNotificationTitle: 'Achievement unlocked: {name}',
+    unlockedNotificationTitleMany: 'You unlocked {count} achievements',
+    patchUnlockedLabel: '{platform} patch ({tier})',
   },
   profileTabs: {
     label: 'Profile sections',
@@ -9982,19 +9992,20 @@ const en: TranslationShape = {
     listsTitle: 'Profile lists',
   },
   socials: {
-    title: 'My socials',
-    emptyTitle: 'No socials configured',
-    emptyHint: 'Add your social handles so other users can find you.',
+    title: 'My profiles',
+    emptyTitle: 'No profiles configured',
+    emptyHint:
+      'Add your Letterboxd, MyAnimeList or MyDramaList username so other users can find you.',
     emptyCta: 'Set up',
-    editTitle: 'My social handles',
+    editTitle: 'My profiles',
     editHint:
-      'Enter just the handle (not the full URL). Leave empty to remove a network.',
-    editTooltip: 'Edit socials',
+      'Enter just the username (not the full URL). Leave empty to remove a profile.',
+    editTooltip: 'Edit profiles',
     handlePlaceholder: 'your_handle',
     saveButton: 'Save',
     cancelButton: 'Cancel',
-    saveSuccess: 'Socials updated',
-    saveError: 'Could not save your socials',
+    saveSuccess: 'Profiles updated',
+    saveError: 'Could not save your profiles',
   },
   novedades: {
     title: "What's new",
@@ -12133,7 +12144,6 @@ const en: TranslationShape = {
     copyLinkError: 'Could not copy link',
     copyLink: 'Copy link',
     whatsapp: 'WhatsApp',
-    twitter: 'X / Twitter',
     shareOption: 'Share...',
     share: 'Share',
   },

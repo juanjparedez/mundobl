@@ -9,6 +9,7 @@ import {
   SITE_URL,
 } from '@/lib/email-templates';
 import { sendTransactionalEmailToUser } from '@/lib/transactional-email';
+import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
 
 export async function PATCH(
   request: NextRequest,
@@ -93,6 +94,9 @@ export async function PATCH(
       );
     }
 
+    // Aprobar le da el logro a quien sugirio, no al moderador.
+    if (updated.userId)
+      awardAchievementsAfterResponse(updated.userId, ['approvedSuggestions']);
     logAction('UPDATE', request.nextUrl.pathname, 'PATCH', auth.userId);
     return NextResponse.json(updated);
   } catch (error) {

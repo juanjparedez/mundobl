@@ -52,8 +52,8 @@ model User {
   image                 String?
   role                  Role      @default(VISITOR)
   banned                Boolean   @default(false)
-  // Redes sociales del usuario, opcional. JSON con { twitter, mal, mdl,
-  // letterboxd, instagram, custom[] }. Renderizado por SocialsWidget en
+  // Perfiles del usuario en sitios de seguimiento, opcional. JSON con
+  // { letterboxd, mal, mdl }. Renderizado por SocialsWidget en
   // /perfil. No-public; editable solo por el dueño via PATCH /api/user/me.
   socials               Json?
   // Private library display preferences, synchronized across devices.
@@ -112,6 +112,7 @@ model User {
   communityModerationActions CommunityModerationAction[]
   activeDays              UserActiveDay[]
   seriesShares            SeriesShare[]
+  achievements            UserAchievement[]
 }
 
 // Un dia en que el usuario logueado abrio el sitio. Existe para medir
@@ -138,11 +139,28 @@ model SeriesShare {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   seriesId  Int
   series    Series   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
-  channel   String // 'native' | 'copy' | 'whatsapp' | 'telegram' | 'twitter' | 'facebook'
+  channel   String // 'native' | 'copy' | 'whatsapp' | 'telegram'
   createdAt DateTime @default(now())
 
   @@id([userId, seriesId])
   @@index([seriesId])
+}
+
+// Logro obtenido por un usuario (src/lib/achievements.ts). Una fila por logro:
+// una vez obtenido queda, aunque despues baje el numero que lo dio (por
+// ejemplo, si se borra una reseña). La key es la del logro o
+// `patch:<plataforma>:<nivel>` para los parches; es texto y no enum para que
+// sumar un logro no requiera migracion. Se otorga al momento de la accion
+// (src/lib/achievement-store.ts). Las filas del backfill inicial tienen la
+// fecha del deploy: antes no se guardaba cuando se obtenia cada logro.
+model UserAchievement {
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  key        String
+  unlockedAt DateTime @default(now())
+
+  @@id([userId, key])
+  @@index([key])
 }
 
 // Persistencia de layouts del dashboard modular (drag/resize por widget).
@@ -691,8 +709,6 @@ model Actor {
   imdbUrl      String?
   mdlUrl       String?
   wikiUrl      String?
-  instagramUrl String?
-  xUrl         String?
 
   // --- Procedencia de los datos ---
   /// Claves de match con las fuentes externas. Hacen idempotente al pipeline
@@ -748,8 +764,6 @@ model Director {
   awards      String[] @default([])
 
   // --- Simetria con Actor ---
-  instagramUrl String?
-  xUrl         String?
 
   // --- Procedencia de los datos (mismo criterio que Actor) ---
   wikidataId       String?
@@ -1487,7 +1501,7 @@ model EmbeddableContent {
   id           Int      @id @default(autoincrement())
   title        String
   description  String?
-  platform     String // "YouTube", "Bilibili", "Vimeo", "Dailymotion", "TikTok", "Instagram", "Twitter", "Spotify"
+  platform     String // "YouTube", "Bilibili", "Vimeo", "Dailymotion", "Spotify"
   url          String
   videoId      String? // ID extraído automáticamente
   category     String   @default("other") // "trailer", "ost", "interview", "clip", "behind_scenes", "live", "other"

@@ -60,12 +60,6 @@ export async function generateMetadata({
       url: canonicalUrl,
       ...(serie.imageUrl && { images: [{ url: serie.imageUrl }] }),
     },
-    twitter: {
-      card: 'summary_large_image',
-      title,
-      description,
-      ...(serie.imageUrl && { images: [serie.imageUrl] }),
-    },
   };
 }
 

@@ -17,9 +17,9 @@ function load(path, mocks = {}) {
   return exports;
 }
 const policy = load('src/lib/news-source-policy.ts');
-assert(policy.newsSourcePauseReason('https://www.twitter.com/BLUPDATE2022'));
+assert(policy.newsSourcePauseReason('https://www.bltai.com/'));
 assert.equal(
-  policy.newsSourcePauseReason('https://twitter.com.example.org/'),
+  policy.newsSourcePauseReason('https://bltai.com.example.org/'),
   null
 );
 let sites = [];
@@ -52,7 +52,7 @@ const { ingestNews } = load('src/lib/news-ingest.ts', {
   './news-topics': { isSeriesTrailer: () => true },
 });
 try {
-  sites = [{ name: 'BLUPDATE', url: 'https://twitter.com/BLUPDATE2022' }];
+  sites = [{ name: 'BLTai', url: 'https://bltai.com/' }];
   let r = await ingestNews({ dryRun: true });
   assert.equal(fetched, 0);
   assert.equal(r.skippedSources.length, 1);

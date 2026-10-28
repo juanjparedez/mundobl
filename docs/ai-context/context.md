@@ -60,6 +60,7 @@ Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-s
 
 - `/perfil` va en pestañas (`?tab=`): Resumen, Estadísticas (incluye lo que era `/perfil/estadisticas`, que ahora redirige), Logros, Actividad, Ajustes y Admin (solo staff). Cada pestaña con grilla (`ProfileGridTab`) conserva mover/agrandar/quitar/sumar paneles con su propio layout `profile-<rol>-tab-<tab>-v1`. Se quitaron el selector Básica/Avanzada y el CustomizeDrawer; los layouts viejos quedan sin uso.
 - Logros: definición única en `src/lib/achievements.ts` (48) + parches de plataforma en `src/lib/platform-patches.ts` (6 plataformas oficiales × bronce/plata/oro por series terminadas con `WatchLink.official`). Arte propio, sin logos. Solo cuentan datos registrados: reseñas publicadas, votos "útil" recibidos, comunidad no moderada, listas públicas con ítems, sugerencias aprobadas, `UserActiveDay` y racha histórica.
+- Logros guardados (2026-10-28): `UserAchievement` (usuario, key, `unlockedAt`; key `patch:<plataforma>:<nivel>` para parches). Se otorgan al momento de la accion con `awardAchievementsAfterResponse(userId, metricas)` de `src/lib/achievement-store.ts` (solo recalcula esas metricas; si aprueba un moderador, se le otorga al autor). El perfil sincroniza todo con sus estadisticas y lee lo guardado: un logro obtenido no se pierde si baja el numero. Aviso solo in-app (`achievement_unlocked`). "Reiniciar datos" borra los de seguimiento y parches. Backfill: `scripts/backfill-achievements.ts`, lo corre `npm run migrate:supabase` al aplicar `20261028040000_user_achievements` (filas con fecha del deploy). Toda accion nueva que mueva una metrica tiene que llamar a `awardAchievementsAfterResponse`.
 - Compartir: `SeriesShare` (una fila por usuario y serie, migración `20261025020000_series_shares`), escrita por `POST /api/user/shares` cuando el share se completa. Cuenta desde el deploy. Pruebas: `test-achievements.ts` y `test-profile-app.mjs`.
 
 ## Portada integral, probador de temas en vivo y página de inicio opt-in (2026-10-24)
@@ -409,9 +410,9 @@ PROJECT_SUPABASE_URL
 
 ### Embed helpers ([src/lib/embed-helpers.ts](../../src/lib/embed-helpers.ts))
 
-Soporta 8 plataformas para reproducir/parsear:
+Soporta 5 plataformas para reproducir/parsear:
 
-- **YouTube**, **Vimeo**, **Bilibili**, **Dailymotion**, **TikTok**, **Instagram**, **Twitter/X**, **Spotify**
+- **YouTube**, **Vimeo**, **Bilibili**, **Dailymotion**, **Spotify**. Nada de redes sociales (Twitter/X, Instagram, Facebook, TikTok, Reddit): ni embeds, ni botones de compartir, ni metadata `twitter:`.
 - `getYouTubeId`, `getVimeoId`, `getBilibiliId`, `detectPlatform(url)`, `buildEmbedSrc(url)`, `getThumbnailUrl(url)`
 - Constantes: `PLATFORM_OPTIONS`, `CATEGORY_OPTIONS`, `PLATFORM_COLORS`
 

@@ -57,7 +57,7 @@ const nextConfig: NextConfig = {
   // Headers globales de seguridad + ajustes de Permissions-Policy para que
   // iframes legítimos (YouTube embed, etc.) no llenen la consola de warnings.
   async headers() {
-    // Hosts de embeds soportados (embed-helpers.ts: 8 plataformas).
+    // Hosts de embeds soportados (embed-helpers.ts: 5 plataformas).
     const frameSrcOrigins = [
       "'self'",
       'https://www.youtube.com',
@@ -66,11 +66,6 @@ const nextConfig: NextConfig = {
       'https://player.bilibili.com',
       'https://www.dailymotion.com',
       'https://geo.dailymotion.com',
-      'https://www.tiktok.com',
-      'https://www.instagram.com',
-      'https://platform.twitter.com',
-      'https://twitter.com',
-      'https://x.com',
       'https://open.spotify.com',
     ];
     const frameSrc = frameSrcOrigins.join(' ');

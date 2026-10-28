@@ -7,21 +7,13 @@ import {
   CopyOutlined,
   CheckOutlined,
   WhatsAppOutlined,
-  TwitterOutlined,
-  FacebookOutlined,
   SendOutlined,
 } from '@ant-design/icons';
 import { withUtm } from '@/lib/share-utm';
 import { trackEvent } from '@/lib/analytics';
 import './ShareButton.css';
 
-export type ShareButtonChannel =
-  | 'native'
-  | 'copy'
-  | 'whatsapp'
-  | 'telegram'
-  | 'twitter'
-  | 'facebook';
+export type ShareButtonChannel = 'native' | 'copy' | 'whatsapp' | 'telegram';
 
 interface ShareButtonProps {
   title: string;
@@ -139,18 +131,6 @@ export function ShareButton({
       channel: 'telegram' as const,
       icon: <SendOutlined className="share-modal__icon" />,
       url: `https://t.me/share/url?url=${encodeURIComponent(withUtm(shareUrl, 'telegram'))}&text=${encodeURIComponent(shareText)}`,
-    },
-    {
-      name: 'Twitter / X',
-      channel: 'twitter' as const,
-      icon: <TwitterOutlined className="share-modal__icon" />,
-      url: `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(withUtm(shareUrl, 'twitter'))}`,
-    },
-    {
-      name: 'Facebook',
-      channel: 'facebook' as const,
-      icon: <FacebookOutlined className="share-modal__icon" />,
-      url: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(withUtm(shareUrl, 'facebook'))}`,
     },
   ];
 

@@ -26,8 +26,7 @@ import {
   type InsightsPeriod,
   type InsightSeries,
 } from './tracking-insights';
-import { groupIntoChapters } from './episode-chapters';
-import { PATCH_PLATFORMS } from './platform-patches';
+import { countWatchedChapters, groupIntoChapters } from './episode-chapters';
 import {
   mergeLinkedAportes,
   readWatchingPreferences,
@@ -931,16 +930,18 @@ export async function filterOnboardingSeriesIds(
   return rows.map((row) => row.id);
 }
 
-/** Marca hoy (UTC) como dia activo del usuario. Idempotente. */
-export async function recordUserActiveDay(userId: string): Promise<void> {
+/** Marca hoy (UTC) como dia activo del usuario. Idempotente: devuelve true
+ *  solo la primera vez del dia. */
+export async function recordUserActiveDay(userId: string): Promise<boolean> {
   const now = new Date();
   const day = new Date(
     Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
   );
-  await prisma.userActiveDay.createMany({
+  const { count } = await prisma.userActiveDay.createMany({
     data: [{ userId, day }],
     skipDuplicates: true,
   });
+  return count > 0;
 }
 
 /**
@@ -3630,8 +3631,6 @@ export const SHARE_CHANNELS = [
   'copy',
   'whatsapp',
   'telegram',
-  'twitter',
-  'facebook',
 ] as const;
 export type ShareChannel = (typeof SHARE_CHANNELS)[number];
 
@@ -3655,107 +3654,80 @@ export async function recordSeriesShare(
   return true;
 }
 
-export interface AchievementCounts {
-  activeDays: number;
-  /** Racha mas larga de dias seguidos marcando capitulos, de toda la vida
-   *  (el longestStreak del perfil mira solo las ultimas 12 semanas, y un
-   *  logro no puede perderse por el paso del tiempo). */
-  longestStreakEver: number;
-  publishedReviews: number;
-  helpfulVotesReceived: number;
-  featuredReviews: number;
-  communityTopics: number;
-  communityReplies: number;
-  publicLists: number;
-  sharedSeries: number;
-  approvedSuggestions: number;
-  completedByPlatform: Array<{ platform: string; count: number }>;
+/** Minutos vistos (suma de duraciones de los capitulos marcados) y cuantos
+ *  de esos capitulos no tienen duracion cargada. */
+export async function getWatchedTime(
+  userId: string
+): Promise<{ hoursWatched: number; unknownDurationVideos: number }> {
+  const rows = await prisma.$queryRaw<
+    Array<{ total_minutes: number | string | null; unknown_durations: bigint }>
+  >`
+    SELECT COALESCE(SUM(CASE
+      WHEN e."durationSeconds" > 0 THEN e."durationSeconds" / 60.0
+      WHEN e.duration > 0 THEN e.duration
+      ELSE 0 END), 0) as total_minutes,
+      COUNT(*) FILTER (WHERE COALESCE(e."durationSeconds", 0) <= 0
+        AND COALESCE(e.duration, 0) <= 0) as unknown_durations
+    FROM "ViewStatus" vs
+    JOIN "Episode" e ON vs."episodeId" = e.id
+    WHERE vs."userId" = ${userId}
+      AND vs.status = 'VISTA'
+  `;
+  return {
+    hoursWatched:
+      Math.round((Number(rows[0]?.total_minutes ?? 0) / 60) * 10) / 10,
+    unknownDurationVideos: Number(rows[0]?.unknown_durations ?? 0),
+  };
 }
 
-/** Contadores que solo usan los logros (el resto sale de las estadisticas del
- *  perfil). Cuenta solo lo que otros pueden ver o lo que se aprobo: borradores,
- *  reseñas ocultas y contenido moderado no suman. */
-export async function getAchievementCounts(
+/** Capitulos vistos en todas las series, agrupados como los muestra la
+ *  ficha (groupIntoChapters). Carga todas las partes de cada serie, incluso
+ *  las no vistas: filtrar filas a VISTA haria completos capitulos parciales. */
+export async function countUserWatchedChapters(
   userId: string
-): Promise<AchievementCounts> {
-  const [
-    activeDays,
-    reviews,
-    featuredReviews,
-    communityTopics,
-    communityReplies,
-    publicLists,
-    sharedSeries,
-    approvedSuggestions,
-    platformRows,
-    streakRows,
-  ] = await Promise.all([
-    prisma.userActiveDay.count({ where: { userId } }),
-    prisma.review.aggregate({
-      where: { userId, status: 'PUBLISHED' },
-      _count: { _all: true },
-      _sum: { helpfulCount: true },
-    }),
-    prisma.review.count({
-      where: { userId, status: 'PUBLISHED', isFeatured: true },
-    }),
-    prisma.communityTopic.count({
-      where: { userId, moderationHidden: false },
-    }),
-    prisma.communityReply.count({
-      where: { userId, moderationHidden: false },
-    }),
-    prisma.recommendationList.count({
-      where: {
-        userId,
-        visibility: 'PUBLIC',
-        moderationHidden: false,
-        items: { some: {} },
+): Promise<number> {
+  const series = await prisma.series.findMany({
+    where: {
+      seasons: {
+        some: {
+          episodes: {
+            some: { viewStatus: { some: { userId, status: 'VISTA' } } },
+          },
+        },
       },
-    }),
-    prisma.seriesShare.count({ where: { userId } }),
-    prisma.seriesSuggestion.count({ where: { userId, status: 'APPROVED' } }),
-    prisma.$queryRaw<Array<{ platform: string; count: bigint }>>`
-      SELECT wl.platform, COUNT(DISTINCT vs."seriesId") AS count
-      FROM "ViewStatus" vs
-      JOIN "WatchLink" wl ON wl."seriesId" = vs."seriesId"
-      WHERE vs."userId" = ${userId}
-        AND vs.status = 'VISTA'
-        AND wl.official = true
-        AND wl.platform = ANY(${PATCH_PLATFORMS})
-      GROUP BY wl.platform
-    `,
-    prisma.$queryRaw<Array<{ longest: bigint | null }>>`
-      WITH days AS (
-        SELECT DISTINCT DATE(vs."watchedDate") AS day
-        FROM "ViewStatus" vs
-        WHERE vs."userId" = ${userId}
-          AND vs.status = 'VISTA'
-          AND vs."episodeId" IS NOT NULL
-          AND vs."watchedDate" <= NOW()
+    },
+    select: {
+      seasons: {
+        select: {
+          seasonNumber: true,
+          episodes: {
+            select: {
+              id: true,
+              episodeNumber: true,
+              title: true,
+              viewStatus: { where: { userId }, select: { status: true } },
+            },
+          },
+        },
+      },
+    },
+  });
+  return series.reduce(
+    (total, item) =>
+      total +
+      countWatchedChapters(
+        item.seasons.flatMap((season) =>
+          season.episodes.map((episode) => ({
+            id: episode.id,
+            episodeNumber: episode.episodeNumber,
+            title: episode.title,
+            seasonNumber: season.seasonNumber,
+            watched: episode.viewStatus.some(
+              (status) => status.status === 'VISTA'
+            ),
+          }))
+        )
       ),
-      runs AS (
-        SELECT day - (ROW_NUMBER() OVER (ORDER BY day))::int AS run
-        FROM days
-      )
-      SELECT MAX(length) AS longest
-      FROM (SELECT COUNT(*) AS length FROM runs GROUP BY run) AS lengths
-    `,
-  ]);
-  return {
-    activeDays,
-    longestStreakEver: Number(streakRows[0]?.longest ?? 0),
-    publishedReviews: reviews._count._all,
-    helpfulVotesReceived: reviews._sum.helpfulCount ?? 0,
-    featuredReviews,
-    communityTopics,
-    communityReplies,
-    publicLists,
-    sharedSeries,
-    approvedSuggestions,
-    completedByPlatform: platformRows.map((row) => ({
-      platform: row.platform,
-      count: Number(row.count),
-    })),
-  };
+    0
+  );
 }

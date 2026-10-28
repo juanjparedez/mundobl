@@ -1,4 +1,5 @@
 import { requireAuth } from '@/lib/auth-helpers';
+import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
 import {
   createRecommendationList,
   getRecommendationLists,
@@ -44,14 +45,13 @@ export async function POST(request: Request) {
       data.kind !== 'TOP_FIVE'
     )
       throw new CommunityError(400, 'invalid');
-    return communityResponse(
-      await createRecommendationList(
-        auth.userId,
-        parseRecommendationList(data),
-        data.kind ?? 'STANDARD'
-      ),
-      201
+    const list = await createRecommendationList(
+      auth.userId,
+      parseRecommendationList(data),
+      data.kind ?? 'STANDARD'
     );
+    awardAchievementsAfterResponse(auth.userId, ['publicLists']);
+    return communityResponse(list, 201);
   } catch (error) {
     return communityFailure(error);
   }

@@ -12,13 +12,7 @@
 // separar "alguien tecleo el dominio" de "alguien lo recomendo". Incluye a
 // proposito el boton de copiar, que probablemente sea el canal real.
 
-export type ShareChannel =
-  | 'whatsapp'
-  | 'telegram'
-  | 'twitter'
-  | 'facebook'
-  | 'native'
-  | 'copy';
+export type ShareChannel = 'whatsapp' | 'telegram' | 'native' | 'copy';
 
 const CAMPAIGN = 'share_button';
 const MEDIUM = 'share';

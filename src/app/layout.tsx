@@ -63,13 +63,6 @@ export const metadata: Metadata = {
       },
     ],
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'MundoBL - Catálogo de Series BL',
-    description:
-      'Catálogo de series BL. Reseñas, calificaciones y seguimiento.',
-    images: ['/images/og-image.png'],
-  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',

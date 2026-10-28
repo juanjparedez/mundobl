@@ -6,6 +6,7 @@ import { auth } from '@/lib/auth';
 import { generateText, GeminiError } from '@/lib/gemini';
 import { isSupportedLocale, LOCALE_LABELS } from '@/i18n/config';
 import { notifySeriesSubscribers } from '@/lib/notifications';
+import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
 
 const TITLE_MAX = 160;
 const BODY_MAX = 20000;
@@ -344,6 +345,10 @@ Idioma origen: ${sourceLabel}. Idioma destino: ${targetLabel}.`,
       }
     }
 
+    awardAchievementsAfterResponse(authResult.userId, [
+      'publishedReviews',
+      'helpfulVotes',
+    ]);
     return NextResponse.json({ ...review, translations, translationErrors });
   } catch (error) {
     console.error('Error saving review:', error);

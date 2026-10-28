@@ -5,6 +5,8 @@ import {
   restoreCommunityBackup,
 } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
+import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
+import { ACHIEVEMENT_METRICS } from '@/lib/achievements';
 
 /**
  * POST /api/user/account/import?dryRun=true|false
@@ -398,6 +400,7 @@ export async function POST(req: NextRequest) {
   Object.assign(summary.skipped, community.skipped);
   summary.missingRefs.push(...community.missingRefs);
   summary.errors.push(...community.errors);
+  if (!dryRun) awardAchievementsAfterResponse(userId, ACHIEVEMENT_METRICS);
   return NextResponse.json(summary, {
     status: 200,
     headers: { 'Cache-Control': 'no-store' },
