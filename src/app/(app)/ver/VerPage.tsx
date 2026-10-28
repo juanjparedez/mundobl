@@ -36,6 +36,8 @@ import {
 import { AboutContentNotice } from '@/components/common/AboutContentNotice/AboutContentNotice';
 import type { QuickPreviewData } from '@/components/design-system';
 import { useMessage } from '@/hooks/useMessage';
+import { useViewerCountry } from '@/hooks/useViewerCountry';
+import { playableCountIn, type PlayabilitySummary } from '@/lib/availability';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import { getVerUrl, getSeriesUrl } from '@/lib/slug';
@@ -56,6 +58,11 @@ interface VerItem extends CarouselMediaItem {
   createdAt?: string;
   linkedSeries: { id: number; title: string } | null;
 }
+
+/** Lo que manda el servidor: sin el conteo, que depende del visitante. */
+type VerSourceItem = Omit<VerItem, 'playableEpisodes'> & {
+  playability: PlayabilitySummary;
+};
 
 /**
  * La serie tiene embeds que no andan en este mercado, pero no esta
@@ -105,10 +112,26 @@ function isFullyUnavailableHere(item: VerItem): boolean {
 }
 
 interface VerPageProps {
-  items: VerItem[];
+  items: VerSourceItem[];
 }
 
-export function VerPage({ items }: VerPageProps) {
+export function VerPage({ items: sourceItems }: VerPageProps) {
+  // Los avisos de "faltan capitulos" o "no se ve desde tu pais" usan el
+  // pais real del visitante. Hasta saberlo solo cuentan los bloqueos que
+  // valen en todos lados.
+  const viewerCountry = useViewerCountry();
+  const items = useMemo<VerItem[]>(
+    () =>
+      sourceItems.map(({ playability, ...item }) => ({
+        ...item,
+        playableEpisodes: playableCountIn(
+          item.episodesWithEmbed,
+          playability,
+          viewerCountry
+        ),
+      })),
+    [sourceItems, viewerCountry]
+  );
   const { data: session, status } = useSession();
   const isAuthenticated = status === 'authenticated';
   const isAdmin = session?.user?.role === 'ADMIN';

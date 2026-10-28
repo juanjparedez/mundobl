@@ -49,7 +49,7 @@ import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { withSerialTransactions } from './serial-transactions';
 import { Prisma, PrismaClient } from '../generated/prisma';
-import { isPlayableIn } from './playability';
+import { playableCountIn, summarizePlayability } from './availability';
 import { airingSeriesWhere } from './airing-schedule';
 import { normalizeBasedOn, type BasedOnEntry } from './based-on';
 import { planTrackingBackup, trackingBackupKey } from './tracking-backup';
@@ -696,12 +696,12 @@ export async function getAllSeries(options?: {
  * Incluye CURATED (PERSONAL + WATCHABLE_ONLY) y USER_EMBED, pero solo
  * las que tienen visibility='VISIBLE'. Usado por /ver.
  *
- * `market` es el ISO-2 del visitante y solo afecta a `playableEpisodes`
- * (cuantos embeds andan de verdad ahi). NO cambia que series se
- * devuelven: filtrar el listado por region se decide en la vista, no
- * aca, asi /ver puede elegir entre esconderlas o mostrarlas con aviso.
+ * No depende del pais del visitante: /ver es ISR y el HTML es el mismo
+ * para todos. `playability` resume los bloqueos por mercado y el cliente
+ * cuenta los reproducibles con el pais real (`playableCountIn`). Filtrar
+ * el listado por region tampoco se decide aca, sino en la vista.
  */
-export async function getWatchableSeries(market = 'AR') {
+export async function getWatchableSeries() {
   const series = await prisma.series.findMany({
     where: {
       visibility: 'VISIBLE',
@@ -759,16 +759,10 @@ export async function getWatchableSeries(market = 'AR') {
       // Si querés "X de Y disponibles", habría que cargar episodeCount aparte.
       return acc + season.episodes.length;
     }, 0);
-    // Cuantos de esos embeds se pueden mirar de verdad desde `market`.
     // Un episodio sin sondear (UNKNOWN) cuenta como reproducible: ver
     // isPlayableIn en src/lib/playability.ts.
-    const playableEpisodes = s.seasons.reduce(
-      (acc, season) =>
-        acc +
-        season.episodes.filter((e) =>
-          isPlayableIn(e.playback, e.playbackBlockedMarkets, market)
-        ).length,
-      0
+    const playability = summarizePlayability(
+      s.seasons.flatMap((season) => season.episodes)
     );
     // Suma de los contadores publicos de YouTube de los episodios mirables.
     let youtubeViews = 0;
@@ -784,7 +778,7 @@ export async function getWatchableSeries(market = 'AR') {
       ...s,
       episodesWithEmbed,
       totalEpisodes,
-      playableEpisodes,
+      playability,
       youtubeViews,
       youtubeLikes,
     };
@@ -995,7 +989,7 @@ export interface VerAdminRow {
   trailers: number;
   /** Desglose por estado del ultimo sondeo (ver Episode.playback). */
   playbackCounts: Record<string, number>;
-  /** Episodios reproducibles en `market`. */
+  /** Episodios reproducibles desde el pais de quien mira el panel. */
   playable: number;
   lastCheckedAt: string | null;
 }
@@ -1013,7 +1007,9 @@ export interface VerAdminRow {
  * Incluye HIDDEN a proposito: si algo esta oculto, el admin tiene que
  * poder verlo y revertirlo.
  */
-export async function getVerAdminRows(market = 'AR'): Promise<VerAdminRow[]> {
+export async function getVerAdminRows(
+  market: string | null
+): Promise<VerAdminRow[]> {
   const series = await prisma.series.findMany({
     where: {
       seasons: { some: { episodes: { some: { embedUrl: { not: null } } } } },
@@ -1079,9 +1075,7 @@ export async function getVerAdminRows(market = 'AR'): Promise<VerAdminRow[]> {
       totalEmbeds: eps.length,
       trailers: eps.filter((e) => isTrailerLength(e.durationSeconds)).length,
       playbackCounts,
-      playable: eps.filter((e) =>
-        isPlayableIn(e.playback, e.playbackBlockedMarkets, market)
-      ).length,
+      playable: playableCountIn(eps.length, summarizePlayability(eps), market),
       lastCheckedAt: lastChecked ? lastChecked.toISOString() : null,
     };
   });
@@ -1257,6 +1251,11 @@ export async function getSeriesById(id: number, userId?: string) {
  * que el admin pueda ver el estado de todos los usuarios). Usar solo
  * desde rutas /admin que ya validaron sesion ADMIN/MODERATOR.
  */
+/** Reseñas publicadas de una serie: las que se ven en su ficha. */
+export async function countPublishedReviews(seriesId: number) {
+  return prisma.review.count({ where: { seriesId, status: 'PUBLISHED' } });
+}
+
 export async function getSeriesByIdAdmin(id: number) {
   return await prisma.series.findUnique({
     where: { id },

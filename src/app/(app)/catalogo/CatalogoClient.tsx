@@ -32,7 +32,6 @@ import {
   PlusOutlined,
   StarOutlined,
   StarFilled,
-  EyeOutlined,
   DownOutlined,
   UpOutlined,
   AppstoreOutlined,
@@ -82,6 +81,7 @@ import {
 } from './catalogUrl';
 import {
   EmptyState,
+  MediaCard,
   SectionHeader,
   useQuickPreviewController,
 } from '@/components/design-system';
@@ -1033,36 +1033,24 @@ export function CatalogoClient({ payload }: CatalogoClientProps) {
   const buildSeriePreviewRef = useRef(buildSeriePreview);
   buildSeriePreviewRef.current = buildSeriePreview;
 
-  const {
-    openPreview,
-    previewTriggerProps,
-    overlays: quickPreviewOverlays,
-  } = useQuickPreviewController({
+  const quickPreviewApi = useQuickPreviewController({
     labels: quickPreviewLabels,
     surface: 'catalogo',
     // Solo en carrusel: en grilla y lista el hover-preview tapa las cards
     // vecinas y se abre solo al pasar el mouse. Ahi se abre con "+ info".
     hoverEnabled: viewMode === 'carousel',
   });
-
-  const handleQuickView = (serie: SerieData, e: React.MouseEvent) => {
-    e.stopPropagation();
-    openPreview(() => buildSeriePreviewRef.current(serie));
-  };
+  const { overlays: quickPreviewOverlays } = quickPreviewApi;
 
   // Toggle unico: cierra cualquier otra card expandida (single o universo)
   // y abre la nueva. Re-click sobre la misma cierra.
-  const toggleExpandedItem = (key: string, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const toggleExpandedItem = (key: string) => {
     setExpandedItemKey((prev) => (prev === key ? null : key));
   };
 
   const toggleUniverse = (universoId: number, e: React.MouseEvent) => {
-    toggleExpandedItem(`universe-${universoId}`, e);
-  };
-
-  const toggleCardInfo = (serieId: string, e: React.MouseEvent) => {
-    toggleExpandedItem(`serie-${serieId}`, e);
+    e.stopPropagation();
+    toggleExpandedItem(`universe-${universoId}`);
   };
 
   const yearOptions = Array.from(
@@ -1090,9 +1078,11 @@ export function CatalogoClient({ payload }: CatalogoClientProps) {
       </Link>
     ) : null;
 
+  // Misma card que el resto del sitio (MediaCard). Lo propio del catalogo
+  // va en sus slots: favorito y estado rapido en `actions`, la meta en
+  // `subtitle`/`description` y lo clickeable aparte (link al reproductor,
+  // "+ info") en `footer`, fuera del boton de la card.
   const renderSingleCard = (serie: SerieData, index: number) => {
-    const isPriority = index < 4;
-    const gradient = getGradientByType(serie.tipo);
     const isInfoExpanded = expandedItemKey === `serie-${serie.id}`;
     const actorHighlights = (serie.actors ?? []).slice(0, 3);
     const hasSeasonInfo = serie.temporadas > 0;
@@ -1101,118 +1091,73 @@ export function CatalogoClient({ payload }: CatalogoClientProps) {
     const hasActorInfo = actorHighlights.length > 0;
     const hasExpandableInfo =
       hasSeasonInfo || hasEpisodeInfo || hasRuntimeInfo || hasActorInfo;
+    const imageUrl = cardImageUrl(serie);
 
     const favLabel = isFavorite(serie.id)
       ? t('catalogo.removeFavorite')
       : t('catalogo.addFavorite');
     return (
-      <div
-        className={`serie-card serie-card--${serie.tipo}`}
-        role="button"
-        tabIndex={0}
-        aria-label={serie.titulo}
-        {...previewTriggerProps(() => buildSeriePreviewRef.current(serie))}
+      <MediaCard
+        className="catalogo-card"
+        aspectRatio="16:9"
+        imageUrl={imageUrl}
+        imageAlt={serie.titulo}
+        unoptimizedImage={isDirectServedImageUrl(imageUrl)}
+        imagePriority={index < 4}
+        imagePosition={serie.imagePosition}
+        imageQuality={55}
         onClick={() => handleCardClick(serie.id, serie.titulo)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            handleCardClick(serie.id, serie.titulo);
-          }
+        preview={{
+          api: quickPreviewApi,
+          getData: () => buildSeriePreviewRef.current(serie),
+          openLabel: t('quickPreview.open'),
         }}
-      >
-        <div className="serie-card-cover">
-          {cardImageUrl(serie) ? (
-            <Image
-              src={cardImageUrl(serie)!}
-              alt=""
-              fill
-              sizes="(max-width: 480px) 50vw, (max-width: 768px) 46vw, (max-width: 1200px) 31vw, 24vw"
-              quality={55}
-              loading={isPriority ? 'eager' : 'lazy'}
-              fetchPriority={isPriority ? 'high' : 'low'}
-              unoptimized={isDirectServedImageUrl(cardImageUrl(serie))}
-              style={{
-                objectFit: 'cover',
-                objectPosition: serie.imagePosition || 'center',
-              }}
-            />
-          ) : (
-            <div
-              className="serie-card-gradient-overlay"
-              style={{ background: gradient }}
-            />
-          )}
-          <div className="serie-card-gradient-overlay">
-            <div className="serie-card-actions">
-              <Tooltip title={favLabel}>
-                <button
-                  type="button"
-                  className={`serie-card-action-btn ${isFavorite(serie.id) ? 'favorite-active' : ''}`}
-                  aria-label={favLabel}
-                  aria-pressed={isFavorite(serie.id)}
-                  onClick={(e) => toggleFavorite(serie.id, e)}
-                >
-                  {isFavorite(serie.id) ? <StarFilled /> : <StarOutlined />}
-                </button>
-              </Tooltip>
-              <Tooltip title={t('quickPreview.open')}>
-                <button
-                  type="button"
-                  className="serie-card-action-btn"
-                  aria-label={t('quickPreview.open')}
-                  onClick={(e) => handleQuickView(serie, e)}
-                >
-                  <EyeOutlined />
-                </button>
-              </Tooltip>
-              {renderQuickStatus(serie, 'serie-card-action-btn')}
-            </div>
-            {/* Sin titulo acá: antes se repetia (overlay sobre la imagen +
-             * .serie-card-title abajo), tapando la portada con un bloque de
-             * texto+gradiente permanente y duplicando el nombre. El titulo
-             * vive una sola vez, en el body (linea de abajo). */}
-          </div>
-        </div>
-        <div className="serie-card-body">
-          <div className="serie-card-title">{serie.titulo}</div>
-          <div className="serie-card-primary-meta">
+        actions={
+          <>
+            <Tooltip title={favLabel}>
+              <button
+                type="button"
+                className={`catalogo-card-action${isFavorite(serie.id) ? ' catalogo-card-action--favorite' : ''}`}
+                aria-label={favLabel}
+                aria-pressed={isFavorite(serie.id)}
+                onClick={(e) => toggleFavorite(serie.id, e)}
+              >
+                {isFavorite(serie.id) ? <StarFilled /> : <StarOutlined />}
+              </button>
+            </Tooltip>
+            {renderQuickStatus(serie, 'catalogo-card-action')}
+          </>
+        }
+        title={serie.titulo}
+        subtitle={
+          <span className="catalogo-card-meta">
             <span>
               <CountryFlag code={serie.paisCode} size="small" /> {serie.pais}
             </span>
-            {renderWatchHere(serie)}
             {serie.rating != null && serie.rating > 0 && (
               <Tag color="gold" className="catalogo-tag-flat">
                 ★ {serie.rating}
               </Tag>
             )}
-          </div>
-          <div className="serie-card-secondary-meta">
+          </span>
+        }
+        description={
+          <span className="catalogo-card-tags">
             <Tag
               color={getColorByType(serie.tipo)}
               className="catalogo-tag-flat"
             >
               {serie.tipo.toUpperCase()}
             </Tag>
-            {serie.anio > 0 && (
-              <>
-                <span className="serie-card-dot" />
-                <span>{serie.anio}</span>
-              </>
-            )}
+            {serie.anio > 0 && <span>{serie.anio}</span>}
             {serie.temporadas > 0 && (
-              <>
-                <span className="serie-card-dot" />
-                <span>
-                  {serie.temporadas}T
-                  {serie.episodios > 0 && ` ${serie.episodios}E`}
-                </span>
-              </>
+              <span>
+                {serie.temporadas}T
+                {serie.episodios > 0 && ` ${serie.episodios}E`}
+              </span>
             )}
             {(serie.runtimeHours ?? 0) > 0 && (
-              <>
-                <span className="serie-card-dot" />
-                <span>{serie.runtimeHours}h</span>
-              </>
+              <span>{serie.runtimeHours}h</span>
             )}
             {serie.platforms && serie.platforms.length > 0 && (
               <Tag color="cyan" className="catalogo-tag-flat">
@@ -1233,104 +1178,80 @@ export function CatalogoClient({ payload }: CatalogoClientProps) {
             ) : watchStatuses[serie.id] === 'QUIERO_VER' ? (
               <Tag color="purple">{t('viewStatusToggle.quieroVer')}</Tag>
             ) : null}
-          </div>
-
-          {hasExpandableInfo && (
-            <button
-              className={`serie-card-more-info-btn${isInfoExpanded ? ' serie-card-more-info-btn--active' : ''}`}
-              onClick={(e) => toggleCardInfo(serie.id, e)}
-            >
-              {isInfoExpanded ? t('catalogo.hideInfo') : t('catalogo.moreInfo')}
-            </button>
-          )}
-
-          {hasExpandableInfo && isInfoExpanded && (
-            <div className="serie-card-info-panel">
-              {hasSeasonInfo && (
-                <div className="serie-card-info-line">
-                  <span>{t('catalogo.infoSeasons')}</span>
-                  <strong>{serie.temporadas}</strong>
-                </div>
-              )}
-              {hasEpisodeInfo && (
-                <div className="serie-card-info-line">
-                  <span>{t('catalogo.infoEpisodes')}</span>
-                  <strong>{serie.episodios}</strong>
-                </div>
-              )}
-              {hasRuntimeInfo && (
-                <div className="serie-card-info-line">
-                  <span>{t('catalogo.infoRuntime')}</span>
-                  <strong>{serie.runtimeHours}h</strong>
-                </div>
-              )}
-              {hasActorInfo && (
-                <div className="serie-card-info-line serie-card-info-line--stacked">
-                  <span>{t('catalogo.infoActors')}</span>
-                  <strong>{actorHighlights.join(', ')}</strong>
+          </span>
+        }
+        footer={
+          (serie.watchableHere || hasExpandableInfo) && (
+            <div className="catalogo-card-footer">
+              <div className="catalogo-card-footer-row">
+                {hasExpandableInfo && (
+                  <button
+                    type="button"
+                    className={`catalogo-card-more${isInfoExpanded ? ' catalogo-card-more--active' : ''}`}
+                    aria-expanded={isInfoExpanded}
+                    onClick={() => toggleExpandedItem(`serie-${serie.id}`)}
+                  >
+                    {isInfoExpanded
+                      ? t('catalogo.hideInfo')
+                      : t('catalogo.moreInfo')}
+                  </button>
+                )}
+                {renderWatchHere(serie)}
+              </div>
+              {hasExpandableInfo && isInfoExpanded && (
+                <div className="catalogo-card-info">
+                  {hasSeasonInfo && (
+                    <div className="catalogo-card-info-line">
+                      <span>{t('catalogo.infoSeasons')}</span>
+                      <strong>{serie.temporadas}</strong>
+                    </div>
+                  )}
+                  {hasEpisodeInfo && (
+                    <div className="catalogo-card-info-line">
+                      <span>{t('catalogo.infoEpisodes')}</span>
+                      <strong>{serie.episodios}</strong>
+                    </div>
+                  )}
+                  {hasRuntimeInfo && (
+                    <div className="catalogo-card-info-line">
+                      <span>{t('catalogo.infoRuntime')}</span>
+                      <strong>{serie.runtimeHours}h</strong>
+                    </div>
+                  )}
+                  {hasActorInfo && (
+                    <div className="catalogo-card-info-line catalogo-card-info-line--stacked">
+                      <span>{t('catalogo.infoActors')}</span>
+                      <strong>{actorHighlights.join(', ')}</strong>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
-          )}
-        </div>
-      </div>
+          )
+        }
+      />
     );
   };
 
   const renderUniverseCard = (group: UniverseGroup, index: number) => {
-    const isPriority = index < 4;
     const firstSerie = group.series[0];
     const isExpanded = expandedItemKey === `universe-${group.universoId}`;
+    const imageUrl = cardImageUrl(firstSerie);
     return (
       <div className="universe-card-wrapper">
-        <div
-          className="serie-card serie-card--universe"
-          role="button"
-          tabIndex={0}
-          aria-label={group.universoNombre}
-          aria-expanded={isExpanded}
-          onClick={(e) => toggleUniverse(group.universoId, e)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              toggleUniverse(
-                group.universoId,
-                e as unknown as React.MouseEvent
-              );
-            }
-          }}
-        >
-          <div className="serie-card-cover">
-            {cardImageUrl(firstSerie) ? (
-              <Image
-                src={cardImageUrl(firstSerie)!}
-                alt=""
-                fill
-                sizes="(max-width: 480px) 50vw, (max-width: 768px) 46vw, (max-width: 1200px) 31vw, 24vw"
-                quality={55}
-                loading={isPriority ? 'eager' : 'lazy'}
-                fetchPriority={isPriority ? 'high' : 'low'}
-                unoptimized={isDirectServedImageUrl(cardImageUrl(firstSerie))}
-                style={{
-                  objectFit: 'cover',
-                  objectPosition: firstSerie.imagePosition || 'center',
-                }}
-              />
-            ) : (
-              <div
-                className="serie-card-gradient-overlay"
-                style={{
-                  background:
-                    'linear-gradient(135deg, rgba(82, 73, 200, 0.8) 0%, rgba(130, 87, 229, 0.9) 100%)',
-                }}
-              />
-            )}
-            <div className="serie-card-gradient-overlay">
-              <div className="serie-title-overlay">{group.universoNombre}</div>
-            </div>
-          </div>
-          <div className="serie-card-body">
-            <div className="serie-card-tags">
+        <MediaCard
+          className="catalogo-card"
+          aspectRatio="16:9"
+          imageUrl={imageUrl}
+          imageAlt={group.universoNombre}
+          unoptimizedImage={isDirectServedImageUrl(imageUrl)}
+          imagePriority={index < 4}
+          imagePosition={firstSerie.imagePosition}
+          imageQuality={55}
+          onClick={() => toggleExpandedItem(`universe-${group.universoId}`)}
+          title={group.universoNombre}
+          subtitle={
+            <span className="catalogo-card-meta">
               {firstSerie.paisCode && (
                 <CountryFlag code={firstSerie.paisCode} size="small" />
               )}
@@ -1340,15 +1261,15 @@ export function CatalogoClient({ payload }: CatalogoClientProps) {
                   n: String(group.series.length),
                 })}
               </Tag>
-            </div>
-            <div className="serie-card-info">
-              <span>
-                {isExpanded ? <UpOutlined /> : <DownOutlined />}{' '}
-                {t('catalogo.universeExpand')}
-              </span>
-            </div>
-          </div>
-        </div>
+            </span>
+          }
+          description={
+            <span className="catalogo-card-tags">
+              {isExpanded ? <UpOutlined /> : <DownOutlined />}{' '}
+              {t('catalogo.universeExpand')}
+            </span>
+          }
+        />
         {isExpanded && (
           <div className="universe-expand-panel">
             {group.series.map((serie) => (

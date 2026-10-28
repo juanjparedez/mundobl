@@ -59,6 +59,7 @@ const tsxTests = [
   'navigation',
   'outbound-links',
   'external-episode-source',
+  'playability-summary',
 ];
 const trackingTests = [
   'tracking-backup',

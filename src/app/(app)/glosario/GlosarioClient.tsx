@@ -27,6 +27,7 @@ import { useLocale } from '@/lib/providers/LocaleProvider';
 import { EmptyState } from '@/components/design-system/EmptyState/EmptyState';
 import type { GlossaryTerm } from '@/data/cultural-glossary';
 import type { TranslationKey } from '@/i18n/messages';
+import { updateNavigationUrl } from '@/lib/navigation-history';
 import { GlosarioQuiz } from './GlosarioQuiz/GlosarioQuiz';
 import './glosario.css';
 
@@ -92,6 +93,17 @@ interface GlosarioClientProps {
 
 type GlossaryView = 'dictionary' | 'trivia' | 'resources' | 'contribute';
 
+const GLOSSARY_VIEWS: readonly GlossaryView[] = [
+  'dictionary',
+  'trivia',
+  'resources',
+  'contribute',
+];
+
+function parseGlossaryView(value: string | null): GlossaryView {
+  return GLOSSARY_VIEWS.find((view) => view === value) ?? 'dictionary';
+}
+
 interface SuggestionFormValues {
   term: string;
   transliteration?: string;
@@ -140,15 +152,10 @@ export function GlosarioClient({ terms, resources }: GlosarioClientProps) {
   // ?view= elige la pestaña al llegar. ?term=<slug> es un deep link a un
   // termino (tipicamente desde Cmd+K, que puede navegar aca estando ya en
   // /glosario: por eso se escucha la query y no se lee una sola vez).
+  // Sin ?view= es el diccionario: asi "atras" despues de cambiar de pestaña
+  // vuelve a la anterior.
   const handleSearchParams = (params: URLSearchParams) => {
-    const requestedView = params.get('view');
-    if (
-      requestedView === 'trivia' ||
-      requestedView === 'resources' ||
-      requestedView === 'contribute'
-    ) {
-      setView(requestedView);
-    }
+    setView(parseGlossaryView(params.get('view')));
     const requestedSlug = params.get('term');
     const match = requestedSlug
       ? terms.find((item) => item.slug === requestedSlug)
@@ -160,6 +167,18 @@ export function GlosarioClient({ terms, resources }: GlosarioClientProps) {
     setSelectedTag(null);
     setSearch(match.term);
     setHighlightedSlug(match.slug);
+  };
+
+  // Cada pestaña es una entrada del historial: se puede compartir, sobrevive
+  // al reload y "atras" vuelve a la anterior. El ?term= se descarta porque
+  // apunta a un termino del diccionario, no a la pestaña nueva.
+  const changeView = (next: GlossaryView) => {
+    setView(next);
+    const url = new URL(window.location.href);
+    url.searchParams.delete('term');
+    if (next === 'dictionary') url.searchParams.delete('view');
+    else url.searchParams.set('view', next);
+    updateNavigationUrl(`${url.pathname}${url.search}${url.hash}`, 'push');
   };
 
   useEffect(() => {
@@ -255,7 +274,7 @@ export function GlosarioClient({ terms, resources }: GlosarioClientProps) {
 
         <Segmented
           value={view}
-          onChange={(v) => setView(v as GlossaryView)}
+          onChange={(v) => changeView(parseGlossaryView(String(v)))}
           options={[
             {
               label: t('glosario.viewDictionary'),

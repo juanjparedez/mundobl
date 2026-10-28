@@ -21,7 +21,7 @@ import rehypeStringify from 'rehype-stringify';
  * 2. Dos tipos de correo, con pies distintos:
  *    - MASIVO (anuncios): exige opt-in (`NotificationPrefs.emailEnabled`) y
  *      lleva link de baja + header List-Unsubscribe.
- *    - TRANSACCIONAL (bienvenida, acceso, respuesta de soporte): responde a
+ *    - TRANSACCIONAL (bienvenida, respuesta de soporte, aporte revisado): responde a
  *      algo que la persona hizo recien, asi que no se condiciona al opt-in
  *      y no lleva baja — dar de baja el mail que contesta tu propia consulta
  *      no tiene sentido. Sí dice por que llega.
@@ -243,7 +243,7 @@ export interface WelcomeEmailInput {
 }
 
 /**
- * Se dispara al crear la cuenta. Hay un hook listo para engancharlo en
+ * Se dispara al crear la cuenta, desde
  * `events.createUser` de src/lib/auth.ts.
  *
  * Redaccion sin genero a proposito ("te damos la bienvenida" y no
@@ -285,65 +285,7 @@ export function renderWelcomeEmail(input: WelcomeEmailInput = {}): EmailRender {
 }
 
 // ============================================================
-// 3. Enlace de acceso / magic link (TRANSACCIONAL)
-// ============================================================
-
-export interface SignInLinkEmailInput {
-  url: string;
-  /** Minutos de validez del enlace. Debe coincidir con el proveedor. */
-  expiresInMinutes: number;
-  siteUrl?: string;
-}
-
-/**
- * Para cuando se agregue el proveedor de email a NextAuth (login sin
- * contraseña). Hoy no hay flujo que la dispare.
- *
- * El enlace va tambien como texto plano visible: muchos clientes rompen los
- * enlaces largos, y si el boton falla la persona tiene que poder copiarlo.
- */
-export function renderSignInLinkEmail(
-  input: SignInLinkEmailInput
-): EmailRender {
-  const siteUrl = input.siteUrl ?? SITE_URL;
-  const bodyHtml = paragraphs(
-    'Tocá el botón para entrar a tu cuenta. No hace falta contraseña.',
-    `El enlace vence en ${input.expiresInMinutes} minutos y sirve una sola vez.`,
-    `<span style="color:${MUTED};font-size:14px">Si no pediste entrar, ignorá este correo: sin tocar el enlace no pasa nada.</span>`,
-    `<span style="color:${MUTED};font-size:13px;word-break:break-all">Si el botón no funciona, copiá esta dirección:<br>${escapeHtml(input.url)}</span>`
-  );
-
-  const text = [
-    'Entrá a MundoBL',
-    '',
-    'Abrí este enlace para entrar a tu cuenta. No hace falta contraseña.',
-    '',
-    input.url,
-    '',
-    `Vence en ${input.expiresInMinutes} minutos y sirve una sola vez.`,
-    'Si no pediste entrar, ignorá este correo.',
-  ].join('\n');
-
-  return {
-    subject: 'Tu enlace para entrar a MundoBL',
-    html: renderLayout({
-      preheader: `Vence en ${input.expiresInMinutes} minutos y sirve una sola vez.`,
-      heading: 'Entrá a MundoBL',
-      bodyHtml,
-      ctaUrl: input.url,
-      ctaLabel: 'Entrar a mi cuenta',
-      footerHtml: transactionalFooter(
-        'Te llega este correo porque alguien pidió entrar con esta dirección.',
-        siteUrl
-      ),
-      siteUrl,
-    }),
-    text,
-  };
-}
-
-// ============================================================
-// 4. Respuesta de soporte (TRANSACCIONAL)
+// 3. Respuesta de soporte (TRANSACCIONAL)
 // ============================================================
 
 export interface SupportReplyEmailInput {
@@ -356,8 +298,8 @@ export interface SupportReplyEmailInput {
 }
 
 /**
- * Espeja la notificacion in-app que ya dispara
- * POST /api/soporte/[id] cuando curaduria responde. El colaborador abrio
+ * La manda POST /api/soporte/[id] junto con la notificacion in-app cuando
+ * curaduria responde. El colaborador abrio
  * el hilo: no se condiciona al opt-in.
  */
 export function renderSupportReplyEmail(
@@ -400,7 +342,7 @@ export function renderSupportReplyEmail(
 }
 
 // ============================================================
-// 5. Aporte revisado (TRANSACCIONAL)
+// 4. Aporte revisado (TRANSACCIONAL)
 // ============================================================
 
 export interface ContributionReviewedEmailInput {
@@ -414,8 +356,9 @@ export interface ContributionReviewedEmailInput {
 }
 
 /**
- * Espeja el aviso in-app de PATCH /api/admin/glossary-suggestions/[id] y
- * sirve igual para aportes de colaborador. Un aporte que queda en el limbo
+ * La mandan, junto con el aviso in-app, PATCH
+ * /api/admin/glossary-suggestions/[id] (terminos del glosario) y PATCH
+ * /api/admin/suggestions/[id] (correcciones a una ficha). Un aporte que queda en el limbo
  * es la forma mas rapida de perder a quien colabora.
  */
 export function renderContributionReviewedEmail(
@@ -479,7 +422,7 @@ export function renderContributionReviewedEmail(
 }
 
 // ============================================================
-// 6. Resumen semanal de tus series (MASIVO)
+// 5. Resumen semanal de tus series (MASIVO)
 // ============================================================
 
 export interface WeeklyDigestItem {

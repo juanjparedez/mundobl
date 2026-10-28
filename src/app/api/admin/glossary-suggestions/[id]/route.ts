@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-helpers';
 import { prisma } from '@/lib/database';
 import { notifyUser } from '@/lib/notifications';
+import {
+  renderContributionReviewedEmail,
+  SITE_URL,
+} from '@/lib/email-templates';
+import { sendTransactionalEmailToUser } from '@/lib/transactional-email';
 import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
 
 function makeSlug(term: string, id: number): string {
@@ -140,6 +145,9 @@ export async function PATCH(
       suggestion.userId !== authResult.userId
     ) {
       const approved = status === 'APPROVED';
+      const linkPath = approved
+        ? `/glosario?term=${encodeURIComponent(slug)}`
+        : '/glosario?view=contribute';
       await notifyUser({
         userId: suggestion.userId,
         type: 'glossary_suggestion_status',
@@ -150,14 +158,21 @@ export async function PATCH(
           ? 'Ya esta en el glosario cultural, con tu aporte adentro. Gracias.'
           : updated.adminNotes ||
             'Por ahora no la sumamos al glosario. Podes proponerla de nuevo con mas contexto.',
-        linkPath: approved
-          ? `/glosario?term=${encodeURIComponent(slug)}`
-          : '/glosario?view=contribute',
+        linkPath,
         refType: 'glossary_suggestion',
         refId: id,
       }).catch(() => {
         /* never block the main op */
       });
+      await sendTransactionalEmailToUser(
+        suggestion.userId,
+        renderContributionReviewedEmail({
+          itemName: suggestion.term,
+          approved,
+          note: updated.adminNotes,
+          url: SITE_URL + linkPath,
+        })
+      );
     }
 
     // Aprobar le da el logro a quien sugirio, no al moderador.
