@@ -409,9 +409,9 @@ PROJECT_SUPABASE_URL
 
 ### Embed helpers ([src/lib/embed-helpers.ts](../../src/lib/embed-helpers.ts))
 
-Soporta 8 plataformas para reproducir/parsear:
+Soporta 5 plataformas para reproducir/parsear:
 
-- **YouTube**, **Vimeo**, **Bilibili**, **Dailymotion**, **TikTok**, **Instagram**, **Twitter/X**, **Spotify**
+- **YouTube**, **Vimeo**, **Bilibili**, **Dailymotion**, **Spotify**. Nada de redes sociales (Twitter/X, Instagram, Facebook, TikTok, Reddit): ni embeds, ni botones de compartir, ni metadata `twitter:`.
 - `getYouTubeId`, `getVimeoId`, `getBilibiliId`, `detectPlatform(url)`, `buildEmbedSrc(url)`, `getThumbnailUrl(url)`
 - Constantes: `PLATFORM_OPTIONS`, `CATEGORY_OPTIONS`, `PLATFORM_COLORS`
 

@@ -75,12 +75,6 @@ export async function generateMetadata({
         images: [{ url: serie.imageUrl, alt: serie.title }],
       }),
     },
-    twitter: {
-      card: 'summary_large_image',
-      title: `${serie.title}${origTitle}${year}`,
-      description: synopsis,
-      ...(serie.imageUrl && { images: [serie.imageUrl] }),
-    },
   };
 }
 

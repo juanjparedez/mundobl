@@ -1187,18 +1187,18 @@ const ja = {
     "listsTitle": "プロフィールのリスト",
   },
   "socials": {
-    "title": "マイソーシャル",
-    "emptyTitle": "ソーシャルが設定されていません",
-    "emptyHint": "他のユーザーが見つけられるように、ソーシャルアカウントを追加してください。",
+    "title": "マイプロフィール",
+    "emptyTitle": "プロフィールが設定されていません",
+    "emptyHint": "他のユーザーが見つけられるように、Letterboxd、MyAnimeList、MyDramaList のユーザー名を追加してください。",
     "emptyCta": "設定",
-    "editTitle": "マイソーシャルアカウント",
-    "editHint": "ハンドル名のみを入力してください（完全なURLは不要です）。ネットワークを削除するには空欄にしてください。",
-    "editTooltip": "ソーシャルを編集",
+    "editTitle": "マイプロフィール",
+    "editHint": "ユーザー名のみを入力してください（完全なURLは不要です）。プロフィールを削除するには空欄にしてください。",
+    "editTooltip": "プロフィールを編集",
     "handlePlaceholder": "あなたのハンドル名",
     "saveButton": "保存",
     "cancelButton": "キャンセル",
-    "saveSuccess": "ソーシャルを更新しました",
-    "saveError": "ソーシャルを保存できませんでした"
+    "saveSuccess": "プロフィールを更新しました",
+    "saveError": "プロフィールを保存できませんでした"
   },
   "novedades": {
     "title": "新着情報",
@@ -3214,7 +3214,6 @@ const ja = {
     "copyLinkError": "リンクをコピーできませんでした",
     "copyLink": "リンクをコピー",
     "whatsapp": "WhatsApp",
-    "twitter": "X / Twitter",
     "shareOption": "共有...",
     "share": "共有"
   },

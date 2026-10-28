@@ -1180,18 +1180,18 @@ const zhTW = {
     "listsTitle": "個人檔案列表",
   },
   "socials": {
-    "title": "我的社群",
-    "emptyTitle": "未設定社群帳號",
-    "emptyHint": "新增您的社群帳號，讓其他使用者可以找到您。",
+    "title": "我的個人檔案",
+    "emptyTitle": "未設定個人檔案",
+    "emptyHint": "新增您的 Letterboxd、MyAnimeList 或 MyDramaList 使用者名稱，讓其他使用者可以找到您。",
     "emptyCta": "設定",
-    "editTitle": "我的社群帳號",
-    "editHint": "只需輸入帳號（而非完整網址）。留空以移除網路。",
-    "editTooltip": "編輯社群帳號",
+    "editTitle": "我的個人檔案",
+    "editHint": "只需輸入使用者名稱（而非完整網址）。留空以移除個人檔案。",
+    "editTooltip": "編輯個人檔案",
     "handlePlaceholder": "您的帳號",
     "saveButton": "儲存",
     "cancelButton": "取消",
-    "saveSuccess": "社群帳號已更新",
-    "saveError": "無法儲存您的社群帳號"
+    "saveSuccess": "個人檔案已更新",
+    "saveError": "無法儲存您的個人檔案"
   },
   "novedades": {
     "title": "最新消息",
@@ -3207,7 +3207,6 @@ const zhTW = {
     "copyLinkError": "無法複製連結",
     "copyLink": "複製連結",
     "whatsapp": "WhatsApp",
-    "twitter": "X / Twitter",
     "shareOption": "分享...",
     "share": "分享"
   },

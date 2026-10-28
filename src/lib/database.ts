@@ -3631,8 +3631,6 @@ export const SHARE_CHANNELS = [
   'copy',
   'whatsapp',
   'telegram',
-  'twitter',
-  'facebook',
 ] as const;
 export type ShareChannel = (typeof SHARE_CHANNELS)[number];
 

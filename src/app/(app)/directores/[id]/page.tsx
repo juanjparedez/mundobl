@@ -58,12 +58,6 @@ export async function generateMetadata({
         images: [{ url: director.imageUrl, alt: director.name }],
       }),
     },
-    twitter: {
-      card: 'summary',
-      title: director.name,
-      description,
-      ...(director.imageUrl && { images: [director.imageUrl] }),
-    },
   };
 }
 

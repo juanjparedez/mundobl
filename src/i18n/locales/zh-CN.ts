@@ -1180,18 +1180,18 @@ const zhCN = {
     "listsTitle": "个人资料列表",
   },
   "socials": {
-    "title": "我的社交账号",
-    "emptyTitle": "未配置社交账号",
-    "emptyHint": "添加您的社交账号，以便其他用户找到您。",
+    "title": "我的资料",
+    "emptyTitle": "未配置资料",
+    "emptyHint": "添加您的 Letterboxd、MyAnimeList 或 MyDramaList 用户名，以便其他用户找到您。",
     "emptyCta": "设置",
-    "editTitle": "我的社交账号",
-    "editHint": "仅输入账号（而非完整网址）。留空以移除某个网络。",
-    "editTooltip": "编辑社交账号",
+    "editTitle": "我的资料",
+    "editHint": "仅输入用户名（而非完整网址）。留空以移除某个资料。",
+    "editTooltip": "编辑资料",
     "handlePlaceholder": "您的账号",
     "saveButton": "保存",
     "cancelButton": "取消",
-    "saveSuccess": "社交账号已更新",
-    "saveError": "无法保存您的社交账号"
+    "saveSuccess": "资料已更新",
+    "saveError": "无法保存您的资料"
   },
   "novedades": {
     "title": "最新动态",
@@ -3207,7 +3207,6 @@ const zhCN = {
     "copyLinkError": "无法复制链接",
     "copyLink": "复制链接",
     "whatsapp": "WhatsApp",
-    "twitter": "X / Twitter",
     "shareOption": "分享...",
     "share": "分享"
   },

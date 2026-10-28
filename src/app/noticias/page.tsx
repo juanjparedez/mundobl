@@ -23,11 +23,6 @@ export const metadata: Metadata = {
     url: '/noticias',
     siteName: 'MundoBL',
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Noticias BL/GL | MundoBL',
-    description: NOTICIAS_DESCRIPTION,
-  },
 };
 
 export default async function NoticiasPage() {
