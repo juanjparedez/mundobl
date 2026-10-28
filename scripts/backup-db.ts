@@ -42,6 +42,11 @@ const MODELS = [
       client.seriesShare.findMany(),
   },
   {
+    name: 'UserAchievement',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.userAchievement.findMany(),
+  },
+  {
     name: 'SupportSettings',
     delegate: (client: Prisma.TransactionClient) =>
       client.supportSettings.findMany(),

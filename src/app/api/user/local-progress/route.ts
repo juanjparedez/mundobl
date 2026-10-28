@@ -4,6 +4,8 @@ import {
   importLocalProgress,
   parseLocalImport,
 } from '@/lib/local-progress-import';
+import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
+import { WATCHING_METRICS } from '@/lib/achievements';
 
 const headers = { 'Cache-Control': 'private, no-store' };
 
@@ -20,6 +22,7 @@ export async function POST(request: NextRequest) {
     );
   try {
     const result = await importLocalProgress(auth.userId, items);
+    awardAchievementsAfterResponse(auth.userId, WATCHING_METRICS);
     return NextResponse.json(result, { headers });
   } catch (error) {
     console.error('Error al importar progreso local:', error);

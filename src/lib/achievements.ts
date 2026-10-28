@@ -4,14 +4,20 @@
 // recibieron, comunidad, series compartidas y aportes aprobados.
 //
 // Es un modulo puro (sin React ni Prisma) para que lo usen el endpoint del
-// perfil, los widgets y las pruebas con la misma definicion.
+// perfil, los widgets, el guardado (achievement-store.ts) y las pruebas con
+// la misma definicion. Lo obtenido se guarda en UserAchievement: un logro
+// obtenido queda aunque despues baje su numero.
 
 import type { TranslationShape } from '@/i18n/messages';
 import {
   PLATFORM_PATCH_TIERS_TOTAL,
   evaluatePlatformPatches,
+  patchAchievementKey,
+  type AchievementUnlocks,
   type PlatformPatchProgress,
 } from './platform-patches';
+
+export type { AchievementUnlocks } from './platform-patches';
 
 /** Cada logro tiene `achievements.<key>Name` y `achievements.<key>Desc`. */
 export type AchievementKey =
@@ -21,27 +27,45 @@ export type AchievementKey =
       : never
     : never;
 
-export type AchievementMetric =
-  | 'seriesCompleted'
-  | 'episodes'
-  | 'hours'
-  | 'countries'
-  | 'genres'
-  | 'streak'
-  | 'activeDays'
-  | 'ratings'
-  | 'publishedReviews'
-  | 'helpfulVotes'
-  | 'featuredReviews'
-  | 'favorites'
-  | 'comments'
-  | 'communityTopics'
-  | 'communityReplies'
-  | 'publicLists'
-  | 'sharedSeries'
-  | 'approvedSuggestions'
-  | 'glossaryTerms'
-  | 'triviaScore';
+export const ACHIEVEMENT_METRICS = [
+  'seriesCompleted',
+  'episodes',
+  'hours',
+  'countries',
+  'genres',
+  'streak',
+  'activeDays',
+  'ratings',
+  'publishedReviews',
+  'helpfulVotes',
+  'featuredReviews',
+  'favorites',
+  'comments',
+  'communityTopics',
+  'communityReplies',
+  'publicLists',
+  'sharedSeries',
+  'approvedSuggestions',
+  'glossaryTerms',
+  'triviaScore',
+] as const;
+
+export type AchievementMetric = (typeof ACHIEVEMENT_METRICS)[number];
+
+/** Lo que mueve marcar capitulos o series: tambien recalcula los parches
+ *  de plataforma (dependen de las series terminadas). */
+export const WATCHING_METRICS: readonly AchievementMetric[] = [
+  'seriesCompleted',
+  'episodes',
+  'hours',
+  'countries',
+  'genres',
+  'streak',
+];
+
+export type AchievementMetricValues = Partial<
+  Record<AchievementMetric, number>
+>;
 
 export type AchievementCategory =
   | 'watching'
@@ -112,6 +136,8 @@ export interface AchievementStats {
   approvedGlossaryTerms: number;
   glossaryQuizBestScore: number | null;
   completedByPlatform: Array<{ platform: string; count: number }>;
+  /** Logros guardados (key → fecha ISO en que se obtuvo). */
+  achievementUnlocks: AchievementUnlocks;
 }
 
 // Cantidad de preguntas de la trivia del Glosario Cultural. Debe coincidir
@@ -523,7 +549,7 @@ export const ACHIEVEMENTS: readonly AchievementDefinition[] = [
 ];
 
 export function achievementMetricValue(
-  stats: AchievementStats,
+  stats: Omit<AchievementStats, 'achievementUnlocks'>,
   metric: AchievementMetric
 ): number {
   switch (metric) {
@@ -570,9 +596,43 @@ export function achievementMetricValue(
   }
 }
 
+export function achievementMetricValues(
+  stats: Omit<AchievementStats, 'achievementUnlocks'>
+): Required<AchievementMetricValues> {
+  return Object.fromEntries(
+    ACHIEVEMENT_METRICS.map((metric) => [
+      metric,
+      achievementMetricValue(stats, metric),
+    ])
+  ) as Required<AchievementMetricValues>;
+}
+
+/** Keys que hoy se cumplen con estos numeros, para guardar en
+ *  UserAchievement. Solo mira las metricas presentes en `values`; los
+ *  parches solo si vienen `completedByPlatform`. */
+export function achievementKeysMet(
+  values: AchievementMetricValues,
+  completedByPlatform?: ReadonlyArray<{ platform: string; count: number }>
+): string[] {
+  const keys: string[] = ACHIEVEMENTS.filter((definition) => {
+    const value = values[definition.metric];
+    return value !== undefined && value >= definition.goal;
+  }).map((definition) => definition.key);
+  if (completedByPlatform) {
+    for (const patch of evaluatePlatformPatches(completedByPlatform)) {
+      for (const tier of patch.tiersReached) {
+        keys.push(patchAchievementKey(patch.key, tier));
+      }
+    }
+  }
+  return keys;
+}
+
 export interface AchievementProgress extends AchievementDefinition {
   current: number;
   unlocked: boolean;
+  /** Fecha ISO en que se obtuvo, o null si esta pendiente. */
+  unlockedAt: string | null;
 }
 
 export function evaluateAchievements(
@@ -580,18 +640,27 @@ export function evaluateAchievements(
 ): AchievementProgress[] {
   return ACHIEVEMENTS.map((definition) => {
     const current = achievementMetricValue(stats, definition.metric);
-    return { ...definition, current, unlocked: current >= definition.goal };
+    const unlockedAt = stats.achievementUnlocks[definition.key] ?? null;
+    return {
+      ...definition,
+      current,
+      unlocked: unlockedAt !== null || current >= definition.goal,
+      unlockedAt,
+    };
   });
 }
 
-/** Obtenidos primero; los pendientes, de mas cerca a mas lejos de la meta. */
+/** Obtenidos primero (el mas reciente arriba); los pendientes, de mas cerca
+ *  a mas lejos de la meta. */
 export function sortAchievementsForDisplay(
   items: AchievementProgress[]
 ): AchievementProgress[] {
   const ratio = (item: AchievementProgress) =>
     Math.min(1, item.current / item.goal);
   return [
-    ...items.filter((item) => item.unlocked),
+    ...items
+      .filter((item) => item.unlocked)
+      .sort((a, b) => (b.unlockedAt ?? '').localeCompare(a.unlockedAt ?? '')),
     ...items
       .filter((item) => !item.unlocked)
       .sort((a, b) => ratio(b) - ratio(a)),
@@ -612,7 +681,10 @@ export function summarizeAchievements(
   stats: AchievementStats
 ): AchievementSummary {
   const items = evaluateAchievements(stats);
-  const patches = evaluatePlatformPatches(stats.completedByPlatform);
+  const patches = evaluatePlatformPatches(
+    stats.completedByPlatform,
+    stats.achievementUnlocks
+  );
   return {
     items,
     patches,

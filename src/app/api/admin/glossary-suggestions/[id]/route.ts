@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-helpers';
 import { prisma } from '@/lib/database';
 import { notifyUser } from '@/lib/notifications';
+import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
 
 function makeSlug(term: string, id: number): string {
   const normalized = term
@@ -158,6 +159,10 @@ export async function PATCH(
         /* never block the main op */
       });
     }
+
+    // Aprobar le da el logro a quien sugirio, no al moderador.
+    if (suggestion.userId)
+      awardAchievementsAfterResponse(suggestion.userId, ['glossaryTerms']);
 
     return NextResponse.json(updated);
   } catch (error) {

@@ -1,4 +1,5 @@
 import { requireAuth } from '@/lib/auth-helpers';
+import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
 import {
   getRecommendationList,
   updateRecommendationList,
@@ -43,24 +44,25 @@ export async function PATCH(request: Request, context: Context) {
     const id = communityKey((await context.params).id);
     const data = communityObject(await readCommunityMutation(request));
     const revision = communityId(data.revision);
-    if (data.action === 'visibility')
-      return communityResponse(
-        await publishRecommendationList(
-          auth.userId,
-          id,
-          revision,
-          communityBoolean(data.published)
-        )
-      );
-    if (data.action !== 'edit') throw new CommunityError(400, 'invalid');
-    return communityResponse(
-      await updateRecommendationList(
-        auth.userId,
-        id,
-        revision,
-        parseRecommendationList(data)
-      )
-    );
+    if (data.action !== 'visibility' && data.action !== 'edit')
+      throw new CommunityError(400, 'invalid');
+    const list =
+      data.action === 'visibility'
+        ? await publishRecommendationList(
+            auth.userId,
+            id,
+            revision,
+            communityBoolean(data.published)
+          )
+        : await updateRecommendationList(
+            auth.userId,
+            id,
+            revision,
+            parseRecommendationList(data)
+          );
+    // Publicar la lista o sumarle la primera serie cuenta para el logro.
+    awardAchievementsAfterResponse(auth.userId, ['publicLists']);
+    return communityResponse(list);
   } catch (error) {
     return communityFailure(error);
   }

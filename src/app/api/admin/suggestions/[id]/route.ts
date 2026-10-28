@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-helpers';
 import { prisma } from '@/lib/database';
 import { logAction } from '@/lib/access-log';
+import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
 
 export async function PATCH(
   request: NextRequest,
@@ -33,6 +34,9 @@ export async function PATCH(
       },
     });
 
+    // Aprobar le da el logro a quien sugirio, no al moderador.
+    if (updated.userId)
+      awardAchievementsAfterResponse(updated.userId, ['approvedSuggestions']);
     logAction('UPDATE', request.nextUrl.pathname, 'PATCH', auth.userId);
     return NextResponse.json(updated);
   } catch (error) {

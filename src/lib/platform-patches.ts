@@ -36,18 +36,31 @@ export const PATCH_TIERS: readonly { tier: PatchTier; goal: number }[] = [
   { tier: 'gold', goal: 15 },
 ];
 
+/** Logros guardados en UserAchievement: key → fecha ISO en que se obtuvo. */
+export type AchievementUnlocks = Readonly<Record<string, string>>;
+
+/** Key de UserAchievement para un nivel de parche. */
+export function patchAchievementKey(patchKey: string, tier: PatchTier): string {
+  return `patch:${patchKey}:${tier}`;
+}
+
 export interface PlatformPatchProgress extends PlatformPatchDefinition {
   completed: number;
   /** Nivel alcanzado, o null si todavia no tiene ninguno. */
   tier: PatchTier | null;
   /** Meta del siguiente nivel, o null si ya tiene oro. */
   nextGoal: number | null;
-  /** Niveles obtenidos (0 a 3): cada uno cuenta como un logro. */
+  /** Niveles que cumple hoy por cantidad (lo que se guarda al otorgar). */
+  tiersReached: PatchTier[];
+  /** Niveles obtenidos (0 a 3), guardados o cumplidos hoy: cada uno cuenta
+   *  como un logro. */
   tiersUnlocked: number;
 }
 
+/** Un nivel guardado queda aunque baje la cantidad de series. */
 export function evaluatePlatformPatches(
-  completedByPlatform: ReadonlyArray<{ platform: string; count: number }>
+  completedByPlatform: ReadonlyArray<{ platform: string; count: number }>,
+  unlocks: AchievementUnlocks = {}
 ): PlatformPatchProgress[] {
   const counts = new Map(
     completedByPlatform.map((row) => [row.platform, row.count])
@@ -55,13 +68,19 @@ export function evaluatePlatformPatches(
   return PLATFORM_PATCHES.map((patch) => {
     const completed = counts.get(patch.platform) ?? 0;
     const reached = PATCH_TIERS.filter((t) => completed >= t.goal);
-    const next = PATCH_TIERS.find((t) => completed < t.goal);
+    const unlocked = PATCH_TIERS.filter(
+      (t) =>
+        completed >= t.goal ||
+        unlocks[patchAchievementKey(patch.key, t.tier)] !== undefined
+    );
+    const next = PATCH_TIERS.find((t) => !unlocked.includes(t));
     return {
       ...patch,
       completed,
-      tier: reached.at(-1)?.tier ?? null,
+      tier: unlocked.at(-1)?.tier ?? null,
       nextGoal: next?.goal ?? null,
-      tiersUnlocked: reached.length,
+      tiersReached: reached.map((t) => t.tier),
+      tiersUnlocked: unlocked.length,
     };
   });
 }

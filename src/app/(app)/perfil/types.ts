@@ -6,6 +6,8 @@
  * clientes consumieran el mismo endpoint sin duplicar el contrato.
  */
 
+import type { AchievementUnlocks } from '@/lib/achievements';
+
 export interface ProfileSeriesMini {
   id: number;
   title: string;
@@ -110,6 +112,8 @@ export interface ProfileData {
     sharedSeries: number;
     approvedSuggestions: number;
     completedByPlatform: Array<{ platform: string; count: number }>;
+    /** Logros guardados: key → fecha ISO en que se obtuvo. */
+    achievementUnlocks: AchievementUnlocks;
   };
   recentlyCompleted: Array<{
     seriesId: number;

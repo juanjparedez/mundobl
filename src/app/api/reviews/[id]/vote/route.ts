@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 
@@ -114,6 +115,8 @@ export async function POST(
       select: { helpfulCount: true, unhelpfulCount: true },
     });
 
+    // El voto "util" cuenta para el autor de la reseña.
+    awardAchievementsAfterResponse(review.userId, ['helpfulVotes']);
     return NextResponse.json({
       success: true,
       myVote: result.vote,

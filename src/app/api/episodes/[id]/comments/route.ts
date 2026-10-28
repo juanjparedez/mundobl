@@ -9,6 +9,7 @@ import {
   notifyParentAuthorOfReply,
 } from '@/lib/notifications';
 import { formatPublicName } from '@/lib/user-display';
+import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
 
 export async function GET(
   request: NextRequest,
@@ -240,6 +241,7 @@ export async function POST(
       }
     }
 
+    awardAchievementsAfterResponse(authResult.userId, ['comments']);
     return NextResponse.json(comment, { status: 201 });
   } catch (error) {
     console.error('Error creating episode comment:', error);

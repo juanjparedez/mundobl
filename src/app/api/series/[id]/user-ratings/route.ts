@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
+import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -107,6 +108,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       )
     );
 
+    awardAchievementsAfterResponse(authResult.userId, ['ratings']);
     return NextResponse.json({ success: true, ratings: savedRatings });
   } catch (error) {
     console.error('Error saving user ratings:', error);

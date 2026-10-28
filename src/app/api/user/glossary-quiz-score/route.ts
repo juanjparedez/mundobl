@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
+import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
 
 const MAX_SCORE = 1000; // guardrail generoso — la trivia hoy no llega ni cerca
 
@@ -72,5 +73,6 @@ export async function PATCH(request: NextRequest) {
     select: { glossaryQuizBestScore: true },
   });
 
+  awardAchievementsAfterResponse(authResult.userId, ['triviaScore']);
   return NextResponse.json(updated);
 }

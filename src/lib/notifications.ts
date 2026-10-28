@@ -301,6 +301,8 @@ export interface NotificationInput {
   linkPath?: string;
   refType?: string;
   refId?: string | number;
+  /** false: solo el inbox, sin Web Push. Default true. */
+  push?: boolean;
 }
 
 /**
@@ -352,6 +354,8 @@ export async function notifyUser(input: NotificationInput): Promise<void> {
       refId: refIdStr ?? null,
     },
   });
+
+  if (input.push === false) return;
 
   // Web Push: respeta preferencias internas (push enabled, quiet hours,
   // tipo de evento) y borra suscripciones expiradas automaticamente.

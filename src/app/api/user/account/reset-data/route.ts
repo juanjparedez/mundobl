@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
+import { trackingAchievementsWhere } from '@/lib/achievement-store';
 
 /**
  * POST /api/user/account/reset-data
@@ -12,6 +13,7 @@ import { requireAuth } from '@/lib/auth-helpers';
  *   - UserRating: calificaciones propias por serie/temporada.
  *   - UserFavorite: series marcadas como favoritas.
  *   - EpisodeNote / SeriesNote: notas privadas.
+ *   - Los logros que salen de eso (ver trackingAchievementsWhere).
  *
  * No requiere confirmacion por email (a diferencia de DELETE /account)
  * porque no es tan catastrofico como borrar la cuenta: el usuario sigue
@@ -28,6 +30,7 @@ export async function POST() {
     episodeNote,
     seriesNote,
     trackingEvent,
+    userAchievement,
   ] = await prisma.$transaction([
     prisma.viewStatus.deleteMany({ where: { userId: auth.userId } }),
     prisma.userRating.deleteMany({ where: { userId: auth.userId } }),
@@ -35,6 +38,9 @@ export async function POST() {
     prisma.episodeNote.deleteMany({ where: { userId: auth.userId } }),
     prisma.seriesNote.deleteMany({ where: { userId: auth.userId } }),
     prisma.trackingEvent.deleteMany({ where: { userId: auth.userId } }),
+    prisma.userAchievement.deleteMany({
+      where: trackingAchievementsWhere(auth.userId),
+    }),
   ]);
 
   return NextResponse.json({
@@ -46,6 +52,7 @@ export async function POST() {
       episodeNote: episodeNote.count,
       seriesNote: seriesNote.count,
       trackingEvent: trackingEvent.count,
+      userAchievement: userAchievement.count,
     },
   });
 }

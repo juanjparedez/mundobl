@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth-helpers';
 import { correctWatchDate, getWatchDate } from '@/lib/database';
 import { parseWatchDateEdit } from '@/lib/watch-date';
+import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
 
 const headers = { 'Cache-Control': 'private, no-store' };
 export async function PATCH(request: Request) {
@@ -34,6 +35,7 @@ export async function PATCH(request: Request) {
         { code: 'STALE_OR_UNWATCHED' },
         { status: 409, headers }
       );
+    awardAchievementsAfterResponse(auth.userId, ['streak']);
     return NextResponse.json({ watchedDate: edit.watchedDate }, { headers });
   } catch {
     return NextResponse.json(

@@ -5,6 +5,7 @@ import {
   recordSeriesShare,
   type ShareChannel,
 } from '@/lib/database';
+import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
 
 /**
  * POST /api/user/shares
@@ -43,5 +44,6 @@ export async function POST(request: NextRequest) {
   if (!recorded) {
     return NextResponse.json({ error: 'Serie inexistente.' }, { status: 404 });
   }
+  awardAchievementsAfterResponse(authResult.userId, ['sharedSeries']);
   return NextResponse.json({ ok: true });
 }

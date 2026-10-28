@@ -112,6 +112,7 @@ model User {
   communityModerationActions CommunityModerationAction[]
   activeDays              UserActiveDay[]
   seriesShares            SeriesShare[]
+  achievements            UserAchievement[]
 }
 
 // Un dia en que el usuario logueado abrio el sitio. Existe para medir
@@ -143,6 +144,23 @@ model SeriesShare {
 
   @@id([userId, seriesId])
   @@index([seriesId])
+}
+
+// Logro obtenido por un usuario (src/lib/achievements.ts). Una fila por logro:
+// una vez obtenido queda, aunque despues baje el numero que lo dio (por
+// ejemplo, si se borra una reseña). La key es la del logro o
+// `patch:<plataforma>:<nivel>` para los parches; es texto y no enum para que
+// sumar un logro no requiera migracion. Se otorga al momento de la accion
+// (src/lib/achievement-store.ts). Las filas del backfill inicial tienen la
+// fecha del deploy: antes no se guardaba cuando se obtenia cada logro.
+model UserAchievement {
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  key        String
+  unlockedAt DateTime @default(now())
+
+  @@id([userId, key])
+  @@index([key])
 }
 
 // Persistencia de layouts del dashboard modular (drag/resize por widget).

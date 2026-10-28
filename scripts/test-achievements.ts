@@ -1,12 +1,16 @@
 import assert from 'node:assert/strict';
+import { prisma, recordSeriesShare } from '../src/lib/database';
 import {
-  prisma,
+  awardAchievements,
+  awardAllAchievements,
   getAchievementCounts,
-  recordSeriesShare,
-} from '../src/lib/database';
+  getAchievementUnlocks,
+  trackingAchievementsWhere,
+} from '../src/lib/achievement-store';
 import {
   ACHIEVEMENTS,
   ACHIEVEMENT_CATEGORIES,
+  achievementKeysMet,
   summarizeAchievements,
   sortAchievementsForDisplay,
   type AchievementStats,
@@ -43,6 +47,7 @@ const EMPTY: AchievementStats = {
   approvedGlossaryTerms: 0,
   glossaryQuizBestScore: null,
   completedByPlatform: [],
+  achievementUnlocks: {},
 };
 
 function definitionCases() {
@@ -111,6 +116,42 @@ function definitionCases() {
   assert.equal(gaga.tier, 'bronze');
   assert.equal(gaga.nextGoal, 5);
   assert.ok(!patches.some((p) => p.platform === 'Doramasflix'));
+
+  // Guardado: lo obtenido queda aunque baje el numero.
+  const kept = summarizeAchievements({
+    ...EMPTY,
+    watched: 1,
+    achievementUnlocks: {
+      hooked: '2026-10-01T00:00:00.000Z',
+      firstStep: '2026-09-01T00:00:00.000Z',
+      'patch:viki:silver': '2026-10-02T00:00:00.000Z',
+    },
+  });
+  const hooked = kept.items.find((i) => i.key === 'hooked')!;
+  assert.equal(hooked.unlocked, true, 'stored unlock survives a lower count');
+  assert.equal(hooked.current, 1, 'progress stays live');
+  assert.equal(hooked.unlockedAt, '2026-10-01T00:00:00.000Z');
+  const viki = kept.patches.find((p) => p.key === 'viki')!;
+  assert.equal(viki.tier, 'silver');
+  assert.equal(viki.tiersUnlocked, 1, 'only the stored tier, bronze not met');
+  assert.equal(viki.nextGoal, 1);
+  assert.equal(kept.unlocked, 3);
+  const keptOrder = sortAchievementsForDisplay(kept.items);
+  assert.deepEqual(
+    keptOrder.slice(0, 2).map((i) => i.key),
+    ['hooked', 'firstStep'],
+    'most recent unlock first'
+  );
+
+  // Solo las metricas presentes; parches solo si vienen.
+  assert.deepEqual(achievementKeysMet({ comments: 10 }), [
+    'firstComment',
+    'comments10',
+  ]);
+  assert.deepEqual(
+    achievementKeysMet({}, [{ platform: 'YouTube', count: 5 }]),
+    ['patch:youtube:bronze', 'patch:youtube:silver']
+  );
 }
 
 async function main() {
@@ -307,6 +348,70 @@ async function main() {
       where: { userId_seriesId: { userId, seriesId: a.id } },
     });
     assert.equal(share.channel, 'copy', 'first share wins, repeats ignored');
+
+    // Backfill: guarda todo lo que ya cumple, sin avisar.
+    const backfilled = await awardAllAchievements(userId, { notify: false });
+    assert.deepEqual(backfilled.sort(), [
+      'featuredReview',
+      'firstReview',
+      'firstShare',
+      'firstStep',
+      'firstSuggestion',
+      'firstTopic',
+      'patch:viki:bronze',
+      'patch:youtube:bronze',
+      'publicList',
+      'streak3',
+    ]);
+    assert.equal(
+      await prisma.notification.count({ where: { userId } }),
+      0,
+      'backfill does not notify'
+    );
+    assert.deepEqual(
+      await awardAllAchievements(userId),
+      [],
+      'idempotent: nothing new the second time'
+    );
+
+    // Al momento de la accion: solo la metrica tocada, y avisa una vez.
+    await prisma.comment.create({
+      data: { userId, seriesId: a.id, content: 'Primer comentario' },
+    });
+    assert.deepEqual(await awardAchievements(userId, ['comments']), [
+      'firstComment',
+    ]);
+    assert.deepEqual(await awardAchievements(userId, ['comments']), []);
+    const notices = await prisma.notification.findMany({ where: { userId } });
+    assert.equal(notices.length, 1);
+    assert.equal(notices[0].type, 'achievement_unlocked');
+    assert.equal(
+      notices[0].title,
+      `Logro obtenido: ${MESSAGES.es!.achievements.firstCommentName}`
+    );
+    assert.equal(notices[0].linkPath, '/perfil?tab=logros');
+
+    // Una vez obtenido queda: borrar la reseña no lo saca.
+    await prisma.review.deleteMany({ where: { userId } });
+    await awardAllAchievements(userId);
+    const unlocks = await getAchievementUnlocks(userId);
+    assert.ok(unlocks.firstReview, 'kept after the review was deleted');
+    assert.ok(unlocks.featuredReview);
+
+    // Reiniciar datos borra los logros de seguimiento y parches, no el resto.
+    await prisma.userAchievement.deleteMany({
+      where: trackingAchievementsWhere(userId),
+    });
+    const afterReset = Object.keys(await getAchievementUnlocks(userId)).sort();
+    assert.deepEqual(afterReset, [
+      'featuredReview',
+      'firstComment',
+      'firstReview',
+      'firstShare',
+      'firstSuggestion',
+      'firstTopic',
+      'publicList',
+    ]);
     console.log('achievements: ok');
   } finally {
     await prisma.user.deleteMany({
