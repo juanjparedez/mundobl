@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
-import { extractVideoId, type Platform } from '@/lib/embed-helpers';
+import {
+  extractVideoId,
+  resolveContentCategory,
+  type Platform,
+} from '@/lib/embed-helpers';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -41,7 +45,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         platform: body.platform,
         url: body.url.trim(),
         videoId,
-        category: body.category || 'other',
+        category: resolveContentCategory(body.url.trim(), body.category),
         language: body.language || null,
         thumbnailUrl: body.thumbnailUrl?.trim() || null,
         channelName: body.channelName?.trim() || null,

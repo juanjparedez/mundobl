@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
-import { extractVideoId, type Platform } from '@/lib/embed-helpers';
+import {
+  extractVideoId,
+  resolveContentCategory,
+  type Platform,
+} from '@/lib/embed-helpers';
 import { notifySeriesSubscribers } from '@/lib/notifications';
 
 interface BulkItem {
@@ -54,7 +58,7 @@ export async function POST(request: NextRequest) {
         thumbnailUrl: item.thumbnailUrl?.trim() || null,
         channelName: item.channelName?.trim() || null,
         channelUrl: item.channelUrl?.trim() || null,
-        category: category || 'other',
+        category: resolveContentCategory(item.url, category),
         language: language || null,
         seriesId: seriesId ? Number(seriesId) : null,
         official: true,

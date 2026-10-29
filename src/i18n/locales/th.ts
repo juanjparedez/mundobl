@@ -74,6 +74,19 @@ const th = {
     "playerSetup": "เว็บไซต์นี้ยังไม่ได้เปิดใช้งาน Dailymotion",
     "openOn": "เปิดใน {platform}"
   },
+  contentCategory: {
+    trailer: "ตัวอย่าง",
+    clip: "คลิป",
+    behindScenes: "เบื้องหลัง",
+    ost: "OST / เพลง",
+    interview: "สัมภาษณ์",
+    live: "ไลฟ์",
+    serie: "ซีรีส์เต็มเรื่อง",
+    pelicula: "ภาพยนตร์",
+    corto: "หนังสั้น",
+    playlist: "เพลย์ลิสต์",
+    other: "อื่น ๆ",
+  },
   welcomeEmail: {
   "title": "ยินดีต้อนรับสู่ MundoBL",
   "intro": "แคตตาล็อกซีรีส์ BL, GL และซีรีส์เอเชียอื่น ๆ ที่คัดสรรโดยทีมงาน",

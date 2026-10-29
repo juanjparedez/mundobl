@@ -75,6 +75,19 @@ const fr = {
     "playerSetup": "Dailymotion n’est pas encore activé sur ce site.",
     "openOn": "Ouvrir sur {platform}"
   },
+  contentCategory: {
+    trailer: "Bande-annonce",
+    clip: "Extrait",
+    behindScenes: "Coulisses",
+    ost: "OST / Musique",
+    interview: "Interview",
+    live: "En direct",
+    serie: "Série complète",
+    pelicula: "Film",
+    corto: "Court métrage",
+    playlist: "Playlist",
+    other: "Autre",
+  },
   welcomeEmail: {
   "title": "Bienvenue sur MundoBL",
   "intro": "Un catalogue de séries BL, GL et autres dramas asiatiques sélectionnés par une équipe humaine.",

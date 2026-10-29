@@ -23,12 +23,13 @@ import {
 import { EmbedPlayer } from '@/components/common/EmbedPlayer/EmbedPlayer';
 import {
   PLATFORM_OPTIONS,
-  CATEGORY_OPTIONS,
-  CATEGORY_LABELS,
   PLATFORM_COLORS,
   detectPlatform,
   extractVideoId,
   getAutoThumbnailUrl,
+  getCategoryLabel,
+  getCategoryOptions,
+  resolveContentCategory,
   type Platform,
 } from '@/lib/embed-helpers';
 import { useMessage } from '@/hooks/useMessage';
@@ -131,6 +132,10 @@ export function SeriesContentManager({
       const autoThumb = getAutoThumbnailUrl(platform as Platform, url);
       if (autoThumb) form.setFieldValue('thumbnailUrl', autoThumb);
     }
+    form.setFieldValue(
+      'category',
+      resolveContentCategory(url, form.getFieldValue('category'))
+    );
   };
 
   const handlePreview = () => {
@@ -187,7 +192,10 @@ export function SeriesContentManager({
         description: (values.description as string) || null,
         platform: values.platform as string,
         url: values.url as string,
-        category: (values.category as string) || 'trailer',
+        category: resolveContentCategory(
+          values.url as string,
+          (values.category as string) || 'trailer'
+        ),
         thumbnailUrl: (values.thumbnailUrl as string) || null,
         channelName: (values.channelName as string) || null,
         official: (values.official as boolean) ?? true,
@@ -282,9 +290,7 @@ export function SeriesContentManager({
     {
       title: t('seriesContentManager.categoryColumn'),
       key: 'category',
-      render: (r: TableRow) => (
-        <Tag>{CATEGORY_LABELS[r.category] ?? r.category}</Tag>
-      ),
+      render: (r: TableRow) => <Tag>{getCategoryLabel(r.category, t)}</Tag>,
       responsive: ['md' as const],
     },
     {
@@ -408,7 +414,7 @@ export function SeriesContentManager({
             name="category"
             initialValue="trailer"
           >
-            <Select options={CATEGORY_OPTIONS} />
+            <Select options={getCategoryOptions(t)} />
           </Form.Item>
 
           <Form.Item

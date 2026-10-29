@@ -6,6 +6,7 @@ import {
   parseEpisodeSource,
   parsePublicVideoUrl,
 } from './episode-platforms';
+import type { TranslationKey } from '@/i18n/messages';
 
 export type Platform =
   | 'YouTube'
@@ -22,31 +23,76 @@ export const PLATFORM_OPTIONS: { label: string; value: Platform }[] = [
   { label: 'Spotify', value: 'Spotify' },
 ];
 
-export const CATEGORY_OPTIONS: { label: string; value: string }[] = [
-  { label: 'Tráiler', value: 'trailer' },
-  { label: 'OST / Música', value: 'ost' },
-  { label: 'Entrevista', value: 'interview' },
-  { label: 'Clip', value: 'clip' },
-  { label: 'Behind the scenes', value: 'behind_scenes' },
-  { label: 'En vivo', value: 'live' },
-  { label: 'Serie completa', value: 'serie' },
-  { label: 'Película', value: 'pelicula' },
-  { label: 'Corto', value: 'corto' },
-  { label: 'Otro', value: 'other' },
-];
+// Orden de display: se usa tanto en los selects como para agrupar en la
+// seccion "Contenido" de cada serie.
+export const CONTENT_CATEGORIES = [
+  'trailer',
+  'clip',
+  'behind_scenes',
+  'ost',
+  'interview',
+  'live',
+  'serie',
+  'pelicula',
+  'corto',
+  'playlist',
+  'other',
+] as const;
 
-export const CATEGORY_LABELS: Record<string, string> = {
-  trailer: 'Tráiler',
-  ost: 'OST / Música',
-  interview: 'Entrevista',
-  clip: 'Clip',
-  behind_scenes: 'Behind the scenes',
-  live: 'En vivo',
-  serie: 'Serie completa',
-  pelicula: 'Película',
-  corto: 'Corto',
-  other: 'Otro',
+export type ContentCategory = (typeof CONTENT_CATEGORIES)[number];
+
+const CATEGORY_LABEL_KEYS: Record<ContentCategory, TranslationKey> = {
+  trailer: 'contentCategory.trailer',
+  clip: 'contentCategory.clip',
+  behind_scenes: 'contentCategory.behindScenes',
+  ost: 'contentCategory.ost',
+  interview: 'contentCategory.interview',
+  live: 'contentCategory.live',
+  serie: 'contentCategory.serie',
+  pelicula: 'contentCategory.pelicula',
+  corto: 'contentCategory.corto',
+  playlist: 'contentCategory.playlist',
+  other: 'contentCategory.other',
 };
+
+function isContentCategory(value: string): value is ContentCategory {
+  return (CONTENT_CATEGORIES as readonly string[]).includes(value);
+}
+
+type Translate = (key: TranslationKey) => string;
+
+/** Label traducido; categorias legacy desconocidas se muestran tal cual. */
+export function getCategoryLabel(category: string, t: Translate): string {
+  return isContentCategory(category)
+    ? t(CATEGORY_LABEL_KEYS[category])
+    : category;
+}
+
+export function getCategoryOptions(
+  t: Translate
+): { label: string; value: ContentCategory }[] {
+  return CONTENT_CATEGORIES.map((value) => ({
+    label: t(CATEGORY_LABEL_KEYS[value]),
+    value,
+  }));
+}
+
+export function getCategoryRank(category: string): number {
+  const index = (CONTENT_CATEGORIES as readonly string[]).indexOf(category);
+  return index === -1 ? CONTENT_CATEGORIES.length : index;
+}
+
+/**
+ * Una URL de playlist de YouTube nunca es un video suelto (trailer, clip...):
+ * se guarda siempre como 'playlist' para que se agrupe y se muestre bien.
+ */
+export function resolveContentCategory(
+  url: string,
+  category: string | null | undefined
+): string {
+  if (getYouTubePlaylistId(url)) return 'playlist';
+  return category || 'other';
+}
 
 export const PLATFORM_COLORS: Record<string, string> = {
   YouTube: 'red',
@@ -61,6 +107,29 @@ export const PLATFORM_COLORS: Record<string, string> = {
 export function getYouTubeId(url: string): string | null {
   const source = parseEpisodeSource(url);
   return source?.platform === 'YouTube' ? source.videoId : null;
+}
+
+const YOUTUBE_HOSTS = new Set([
+  'youtube.com',
+  'www.youtube.com',
+  'm.youtube.com',
+  'youtube-nocookie.com',
+  'www.youtube-nocookie.com',
+]);
+
+/**
+ * ID de una playlist de YouTube, solo cuando la URL apunta a la playlist en
+ * si (/playlist?list=..., /embed/videoseries?list=...). Un video abierto
+ * desde una playlist (watch?v=...&list=...) sigue siendo ese video.
+ */
+export function getYouTubePlaylistId(url: string): string | null {
+  if (getYouTubeId(url)) return null;
+  const parsed = parsePublicVideoUrl(url);
+  if (!parsed || !YOUTUBE_HOSTS.has(parsed.hostname.toLowerCase())) {
+    return null;
+  }
+  const list = parsed.searchParams.get('list');
+  return list && /^[\w-]{10,64}$/.test(list) ? list : null;
 }
 
 export function getBilibiliId(url: string): string | null {
@@ -232,11 +301,15 @@ export function getEmbedInfo(
       if (options.jsApi) youtubeParams.set('enablejsapi', '1');
       if (options.origin) youtubeParams.set('origin', options.origin);
       if (options.autoplay) youtubeParams.set('autoplay', '1');
+      const playlistId = resolvedId ? null : getYouTubePlaylistId(url);
+      if (playlistId) youtubeParams.set('list', playlistId);
       return {
         type: 'iframe',
         url: resolvedId
           ? `https://www.youtube-nocookie.com/embed/${resolvedId}?${youtubeParams.toString()}`
-          : null,
+          : playlistId
+            ? `https://www.youtube-nocookie.com/embed/videoseries?${youtubeParams.toString()}`
+            : null,
         originalUrl: url,
         platform,
       };

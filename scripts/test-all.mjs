@@ -60,6 +60,7 @@ const tsxTests = [
   'outbound-links',
   'external-episode-source',
   'playability-summary',
+  'embed-playlist',
 ];
 const trackingTests = [
   'tracking-backup',

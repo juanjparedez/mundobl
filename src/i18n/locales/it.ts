@@ -75,6 +75,19 @@ const it = {
     "playerSetup": "Dailymotion non è ancora abilitato su questo sito.",
     "openOn": "Apri su {platform}"
   },
+  contentCategory: {
+    trailer: "Trailer",
+    clip: "Clip",
+    behindScenes: "Dietro le quinte",
+    ost: "OST / Musica",
+    interview: "Intervista",
+    live: "Dal vivo",
+    serie: "Serie completa",
+    pelicula: "Film",
+    corto: "Cortometraggio",
+    playlist: "Playlist",
+    other: "Altro",
+  },
   welcomeEmail: {
   "title": "Ti diamo il benvenuto su MundoBL",
   "intro": "Un catalogo di serie BL, GL e altri drama asiatici curato da persone.",

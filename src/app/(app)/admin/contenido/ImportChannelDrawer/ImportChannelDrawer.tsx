@@ -9,7 +9,8 @@ import {
   LoadingOutlined,
 } from '@ant-design/icons';
 import { useMessage } from '@/hooks/useMessage';
-import { CATEGORY_OPTIONS } from '@/lib/embed-helpers';
+import { getCategoryOptions } from '@/lib/embed-helpers';
+import { useLocale } from '@/lib/providers/LocaleProvider';
 import { DataTable, type DataTableColumn } from '@/components/design-system';
 import './ImportChannelDrawer.css';
 
@@ -53,6 +54,7 @@ export function ImportChannelDrawer({
   onImportComplete,
   seriesOptions,
 }: ImportChannelDrawerProps) {
+  const { t } = useLocale();
   const message = useMessage();
   const [channelUrl, setChannelUrl] = useState('');
   const [videos, setVideos] = useState<ChannelVideo[]>([]);
@@ -305,7 +307,7 @@ export function ImportChannelDrawer({
             </span>
             <Select
               placeholder="Categoría"
-              options={CATEGORY_OPTIONS}
+              options={getCategoryOptions(t)}
               value={importCategory}
               onChange={setImportCategory}
               style={{ width: 160 }}
