@@ -32,8 +32,9 @@ import { AdminNav } from '../AdminNav';
 import { EmbedPlayer } from '@/components/common/EmbedPlayer/EmbedPlayer';
 import {
   PLATFORM_OPTIONS,
-  CATEGORY_OPTIONS,
-  CATEGORY_LABELS,
+  getCategoryLabel,
+  getCategoryOptions,
+  resolveContentCategory,
   detectPlatform,
   extractVideoId,
   getAutoThumbnailUrl,
@@ -138,6 +139,10 @@ export function ContenidoClient() {
         form.setFieldValue('thumbnailUrl', autoThumb);
       }
     }
+    form.setFieldValue(
+      'category',
+      resolveContentCategory(url, form.getFieldValue('category'))
+    );
   };
 
   const handlePreview = () => {
@@ -315,7 +320,7 @@ export function ContenidoClient() {
       title: t('adminContent.columnCategory'),
       key: 'category',
       render: (r: EmbeddableContentItem) => (
-        <Tag>{CATEGORY_LABELS[r.category] || r.category}</Tag>
+        <Tag>{getCategoryLabel(r.category, t)}</Tag>
       ),
       responsive: ['md' as const],
     },
@@ -495,7 +500,7 @@ export function ContenidoClient() {
               name="category"
               initialValue="other"
             >
-              <Select options={CATEGORY_OPTIONS} />
+              <Select options={getCategoryOptions(t)} />
             </Form.Item>
 
             <Form.Item

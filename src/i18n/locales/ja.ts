@@ -75,6 +75,19 @@ const ja = {
     "playerSetup": "このサイトではDailymotionはまだ有効になっていません。",
     "openOn": "{platform}で開く"
   },
+  contentCategory: {
+    trailer: "予告編",
+    clip: "クリップ",
+    behindScenes: "メイキング",
+    ost: "OST / 音楽",
+    interview: "インタビュー",
+    live: "ライブ",
+    serie: "シリーズ全編",
+    pelicula: "映画",
+    corto: "短編",
+    playlist: "再生リスト",
+    other: "その他",
+  },
   welcomeEmail: {
   "title": "MundoBLへようこそ",
   "intro": "人の手で選んだBL・GL作品やアジアドラマのカタログです。",

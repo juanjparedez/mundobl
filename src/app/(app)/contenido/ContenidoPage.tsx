@@ -9,8 +9,8 @@ import { ContentDisclaimer } from '@/components/common/ContentDisclaimer/Content
 import { EmbedPlayer } from '@/components/common/EmbedPlayer/EmbedPlayer';
 import {
   PLATFORM_OPTIONS,
-  CATEGORY_OPTIONS,
-  CATEGORY_LABELS,
+  getCategoryLabel,
+  getCategoryOptions,
   PLATFORM_COLORS,
 } from '@/lib/embed-helpers';
 import { useLocale } from '@/lib/providers/LocaleProvider';
@@ -115,7 +115,7 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
             />
             <Select
               placeholder={t('contenidoPage.filterCategory')}
-              options={CATEGORY_OPTIONS}
+              options={getCategoryOptions(t)}
               allowClear
               style={{ width: 180 }}
               onChange={(val: string | undefined) =>
@@ -198,9 +198,7 @@ export function ContenidoPage({ items }: ContenidoPageProps) {
                           >
                             {item.platform}
                           </Tag>
-                          <Tag>
-                            {CATEGORY_LABELS[item.category] || item.category}
-                          </Tag>
+                          <Tag>{getCategoryLabel(item.category, t)}</Tag>
                           {item.language && <Tag>{item.language}</Tag>}
                           {!item.official && (
                             <Tag color="orange">

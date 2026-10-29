@@ -74,6 +74,19 @@ const ko = {
     "playerSetup": "이 사이트에서는 Dailymotion이 아직 활성화되지 않았습니다.",
     "openOn": "{platform}에서 열기"
   },
+  contentCategory: {
+    trailer: "예고편",
+    clip: "클립",
+    behindScenes: "비하인드",
+    ost: "OST / 음악",
+    interview: "인터뷰",
+    live: "라이브",
+    serie: "전체 시리즈",
+    pelicula: "영화",
+    corto: "단편",
+    playlist: "재생목록",
+    other: "기타",
+  },
   welcomeEmail: {
   "title": "MundoBL에 오신 것을 환영합니다",
   "intro": "사람이 직접 큐레이션하는 BL, GL 및 아시아 드라마 카탈로그입니다.",

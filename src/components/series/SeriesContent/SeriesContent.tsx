@@ -7,8 +7,9 @@ import { PlayCircleOutlined } from '@ant-design/icons';
 import { EmbedPlayer } from '@/components/common/EmbedPlayer/EmbedPlayer';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import {
-  CATEGORY_LABELS,
   PLATFORM_COLORS,
+  getCategoryLabel,
+  getCategoryRank,
   type Platform,
 } from '@/lib/embed-helpers';
 import './SeriesContent.css';
@@ -30,20 +31,6 @@ interface ContentItem {
 interface SeriesContentProps {
   seriesId: number;
 }
-
-// Category sort order for consistent display
-const CATEGORY_ORDER = [
-  'trailer',
-  'clip',
-  'behind_scenes',
-  'ost',
-  'interview',
-  'live',
-  'serie',
-  'pelicula',
-  'corto',
-  'other',
-];
 
 export function SeriesContent({ seriesId }: SeriesContentProps) {
   const { t } = useLocale();
@@ -84,18 +71,16 @@ export function SeriesContent({ seriesId }: SeriesContentProps) {
     );
   }
 
-  // Group by category, sorted by CATEGORY_ORDER
+  // Group by category, in display order
   const grouped = items.reduce<Record<string, ContentItem[]>>((acc, item) => {
     if (!acc[item.category]) acc[item.category] = [];
     acc[item.category].push(item);
     return acc;
   }, {});
 
-  const sortedCategories = Object.keys(grouped).sort((a, b) => {
-    const ai = CATEGORY_ORDER.indexOf(a);
-    const bi = CATEGORY_ORDER.indexOf(b);
-    return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
-  });
+  const sortedCategories = Object.keys(grouped).sort(
+    (a, b) => getCategoryRank(a) - getCategoryRank(b)
+  );
 
   const selectedItem = items.find((i) => i.id === selectedId) ?? null;
 
@@ -131,7 +116,7 @@ export function SeriesContent({ seriesId }: SeriesContentProps) {
         {sortedCategories.map((category) => (
           <div key={category} className="series-content__group">
             <h3 className="series-content__group-title">
-              {CATEGORY_LABELS[category] ?? category}
+              {getCategoryLabel(category, t)}
             </h3>
             <div className="series-content__grid">
               {grouped[category].map((item) => (

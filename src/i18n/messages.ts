@@ -62,6 +62,19 @@ export type TranslationShape = {
     playerSetup: string;
     openOn: string;
   };
+  contentCategory: {
+    trailer: string;
+    clip: string;
+    behindScenes: string;
+    ost: string;
+    interview: string;
+    live: string;
+    serie: string;
+    pelicula: string;
+    corto: string;
+    playlist: string;
+    other: string;
+  };
   welcomeEmail: {
     title: string;
     intro: string;
@@ -4261,6 +4274,19 @@ const es: TranslationShape = {
     tooShort: 'El video es demasiado corto para publicarse como episodio.',
     playerSetup: 'Dailymotion todavía no está habilitado en este sitio.',
     openOn: 'Abrir en {platform}',
+  },
+  contentCategory: {
+    trailer: 'Tráiler',
+    clip: 'Clip',
+    behindScenes: 'Behind the scenes',
+    ost: 'OST / Música',
+    interview: 'Entrevista',
+    live: 'En vivo',
+    serie: 'Serie completa',
+    pelicula: 'Película',
+    corto: 'Corto',
+    playlist: 'Lista de reproducción',
+    other: 'Otro',
   },
   welcomeEmail: {
     title: 'Te damos la bienvenida a MundoBL',
@@ -8783,6 +8809,19 @@ const en: TranslationShape = {
     tooShort: 'The video is too short to publish as an episode.',
     playerSetup: 'Dailymotion is not enabled on this site yet.',
     openOn: 'Open on {platform}',
+  },
+  contentCategory: {
+    trailer: 'Trailer',
+    clip: 'Clip',
+    behindScenes: 'Behind the scenes',
+    ost: 'OST / Music',
+    interview: 'Interview',
+    live: 'Live',
+    serie: 'Full series',
+    pelicula: 'Movie',
+    corto: 'Short film',
+    playlist: 'Playlist',
+    other: 'Other',
   },
   welcomeEmail: {
     title: 'Welcome to MundoBL',

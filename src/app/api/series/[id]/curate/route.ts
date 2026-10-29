@@ -16,7 +16,11 @@ import {
   type CurationField,
 } from '@/lib/series-curation-fields';
 import { revalidateSeries, revalidateUniverse } from '@/lib/revalidate-series';
-import { extractVideoId, type Platform } from '@/lib/embed-helpers';
+import {
+  extractVideoId,
+  resolveContentCategory,
+  type Platform,
+} from '@/lib/embed-helpers';
 import type { PendingContentItem } from '@/components/admin/SeriesContentManager/SeriesContentManager';
 import type { PendingInfoBlock } from '@/components/admin/SeriesInfoBlocksManager/SeriesInfoBlocksManager';
 
@@ -102,7 +106,7 @@ export async function POST(request: NextRequest, { params }: Context) {
                 item.url.trim()
               ),
               description: item.description || null,
-              category: item.category || 'other',
+              category: resolveContentCategory(item.url.trim(), item.category),
               thumbnailUrl: item.thumbnailUrl || null,
               channelName: item.channelName || null,
               official: item.official ?? true,

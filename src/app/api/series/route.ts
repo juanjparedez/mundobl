@@ -11,7 +11,11 @@ import {
   resolveBasedOnValue,
 } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
-import { extractVideoId, type Platform } from '@/lib/embed-helpers';
+import {
+  extractVideoId,
+  resolveContentCategory,
+  type Platform,
+} from '@/lib/embed-helpers';
 import { getCountryCode } from '@/lib/country-codes';
 import { downloadAndUploadExternalImage } from '@/lib/supabase';
 import {
@@ -393,7 +397,10 @@ export async function POST(request: NextRequest) {
                 platform: item.platform,
                 url: item.url.trim(),
                 videoId: videoId || null,
-                category: item.category || 'other',
+                category: resolveContentCategory(
+                  item.url.trim(),
+                  item.category
+                ),
                 thumbnailUrl: item.thumbnailUrl?.trim() || null,
                 channelName: item.channelName?.trim() || null,
                 official: item.official ?? true,

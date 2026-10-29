@@ -72,6 +72,19 @@ const zhCN = {
     "playerSetup": "本站尚未启用 Dailymotion。",
     "openOn": "在 {platform} 打开"
   },
+  contentCategory: {
+    trailer: "预告片",
+    clip: "片段",
+    behindScenes: "幕后花絮",
+    ost: "原声 / 音乐",
+    interview: "访谈",
+    live: "直播",
+    serie: "完整剧集",
+    pelicula: "电影",
+    corto: "短片",
+    playlist: "播放列表",
+    other: "其他",
+  },
   welcomeEmail: {
   "title": "欢迎来到 MundoBL",
   "intro": "由人工精选的 BL、GL 及其他亚洲剧集目录。",
