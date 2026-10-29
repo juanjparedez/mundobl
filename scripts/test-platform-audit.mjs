@@ -73,7 +73,7 @@ const mocks = {
       status: source.platform === 'Vimeo' ? 'OK' : 'UNKNOWN',
       blockedMarkets: [],
       durationSeconds: source.platform === 'Vimeo' ? 733 : null,
-      detail: source.platform === 'Vimeo' ? null : 'playerSetup',
+      detail: source.platform === 'Vimeo' ? null : 'unavailable',
     }),
   },
   './revalidate-series': {

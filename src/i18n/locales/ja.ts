@@ -72,7 +72,6 @@ const ja = {
     "unavailable": "動画を確認できませんでした。後でもう一度お試しください。",
     "notPlayable": "この動画はここでは再生できません。",
     "tooShort": "エピソードとして公開するには動画が短すぎます。",
-    "playerSetup": "このサイトではDailymotionはまだ有効になっていません。",
     "openOn": "{platform}で開く"
   },
   contentCategory: {

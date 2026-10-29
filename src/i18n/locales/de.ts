@@ -72,7 +72,6 @@ const de = {
     "unavailable": "Das Video konnte nicht überprüft werden. Versuche es später erneut.",
     "notPlayable": "Dieses Video kann hier nicht abgespielt werden.",
     "tooShort": "Das Video ist zu kurz, um als Folge veröffentlicht zu werden.",
-    "playerSetup": "Dailymotion ist auf dieser Website noch nicht aktiviert.",
     "openOn": "Auf {platform} öffnen"
   },
   contentCategory: {

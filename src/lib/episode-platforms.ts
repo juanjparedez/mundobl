@@ -7,7 +7,6 @@ const SOURCE_ERROR_KEYS = [
   'episodeSource.unavailable',
   'episodeSource.notPlayable',
   'episodeSource.tooShort',
-  'episodeSource.playerSetup',
 ] as const;
 
 export function getEpisodeSourceErrorKey(
@@ -113,4 +112,20 @@ export function parseEpisodeSource(value: string): EpisodeSource | null {
 export function dailymotionPlayerId(): string | null {
   const id = process.env.NEXT_PUBLIC_DAILYMOTION_PLAYER_ID;
   return id && /^[a-z\d]{6,32}$/i.test(id) ? id : null;
+}
+
+/**
+ * Iframe de un video de Dailymotion. Con Player ID propio usa el reproductor
+ * nuevo; sin el, el embed clasico, que reproduce cualquier video publico.
+ * Una cuenta de Creator Studio no puede crear players (revisado 2026-10-29),
+ * y el player es del sitio que embebe, no de la productora.
+ */
+export function dailymotionEmbedUrl(
+  videoId: string,
+  autoplay = false,
+  playerId: string | null = dailymotionPlayerId()
+): string {
+  return playerId
+    ? `https://geo.dailymotion.com/player/${playerId}.html?video=${videoId}${autoplay ? '&autoplay=1' : ''}`
+    : `https://www.dailymotion.com/embed/video/${videoId}${autoplay ? '?autoplay=1' : ''}`;
 }

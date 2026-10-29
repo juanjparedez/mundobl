@@ -7,12 +7,31 @@ import {
   getYouTubePlaylistId,
   resolveContentCategory,
 } from '../src/lib/embed-helpers';
+import { dailymotionEmbedUrl } from '../src/lib/episode-platforms';
 import type { TranslationKey } from '../src/i18n/messages';
 
 const PLAYLIST =
   'https://www.youtube.com/playlist?list=PLHEh98tE475ETfe_jjYvQWiPseN4yo7eR';
 const VIDEO_IN_PLAYLIST =
   'https://www.youtube.com/watch?v=Tsf3XDVkXYg&list=PLKYFzHcwIrVQ&index=4';
+
+// Dailymotion sin Player ID cae al embed clasico (sirve para cualquier video
+// publico); con ID usa el reproductor nuevo.
+const dailymotionEmbed = getEmbedInfo(
+  'Dailymotion',
+  'https://www.dailymotion.com/video/xabc123',
+  null
+);
+assert.equal(dailymotionEmbed.type, 'iframe');
+if (!process.env.NEXT_PUBLIC_DAILYMOTION_PLAYER_ID)
+  assert.equal(
+    dailymotionEmbed.url,
+    'https://www.dailymotion.com/embed/video/xabc123'
+  );
+assert.equal(
+  dailymotionEmbedUrl('xabc123', true, 'xplayer1'),
+  'https://geo.dailymotion.com/player/xplayer1.html?video=xabc123&autoplay=1'
+);
 
 // Una playlist pura se reconoce; un video abierto desde una playlist no.
 assert.equal(

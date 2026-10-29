@@ -177,16 +177,24 @@ async function main() {
     const url = new URL(input.toString());
     if (url.hostname === 'api.dailymotion.com')
       return Response.json(dmMetadata);
-    assert.equal(url.searchParams.get('player'), 'fixture1');
+    const player = url.searchParams.get('player');
     return Response.json({
       type: 'video',
-      html: '<iframe src="https://geo.dailymotion.com/player/fixture1.html?video=xabc123"></iframe>',
+      html: player
+        ? `<iframe src="https://geo.dailymotion.com/player/${player}.html?video=xabc123"></iframe>`
+        : '<iframe src="https://www.dailymotion.com/embed/video/xabc123"></iframe>',
     });
   };
-  await assert.rejects(
-    verifyExternalEpisode(dm, { fetcher: dmFetcher, playerId: '' }),
-    (error: unknown) =>
-      error instanceof EpisodeSourceError && error.code === 'playerSetup'
+  // Sin Player ID (cuenta de Creator Studio) vale el embed clasico.
+  assert.equal(
+    (
+      await verifyExternalEpisode(dm, {
+        fetcher: dmFetcher,
+        playerId: '',
+        publishers,
+      })
+    ).probe.status,
+    'OK'
   );
   const dmOptions = { fetcher: dmFetcher, playerId: 'fixture1', publishers };
   assert.equal((await verifyExternalEpisode(dm, dmOptions)).probe.status, 'OK');
