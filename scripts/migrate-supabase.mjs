@@ -65,7 +65,12 @@ if (status !== 0) {
   process.exitCode = status;
 } else {
   const applied = await appliedSince(startedAt);
-  for (const step of DATA_STEPS.filter((s) => applied.has(s.migration))) {
+  const steps = DATA_STEPS.filter((s) => applied.has(s.migration));
+  // Los scripts usan el cliente Prisma: si se hizo pull sin regenerarlo, el
+  // modelo nuevo no existe (prisma.userAchievement undefined, 2026-10-29).
+  if (steps.length > 0)
+    process.exitCode = run(['node_modules/prisma/build/index.js', 'generate']);
+  for (const step of process.exitCode ? [] : steps) {
     console.log(`\n${step.migration}: corriendo ${step.script}`);
     const stepStatus = run([
       'node_modules/tsx/dist/cli.mjs',
