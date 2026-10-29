@@ -69,7 +69,6 @@ const zhCN = {
     "unavailable": "无法验证视频，请稍后重试。",
     "notPlayable": "此视频无法在这里播放。",
     "tooShort": "视频太短，无法作为剧集发布。",
-    "playerSetup": "本站尚未启用 Dailymotion。",
     "openOn": "在 {platform} 打开"
   },
   contentCategory: {

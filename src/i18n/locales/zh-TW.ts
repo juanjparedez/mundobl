@@ -69,7 +69,6 @@ const zhTW = {
     "unavailable": "無法驗證影片，請稍後重試。",
     "notPlayable": "此影片無法在這裡播放。",
     "tooShort": "影片太短，無法作為劇集發布。",
-    "playerSetup": "本站尚未啟用 Dailymotion。",
     "openOn": "在 {platform} 開啟"
   },
   contentCategory: {

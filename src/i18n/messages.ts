@@ -59,7 +59,6 @@ export type TranslationShape = {
     unavailable: string;
     notPlayable: string;
     tooShort: string;
-    playerSetup: string;
     openOn: string;
   };
   contentCategory: {
@@ -4272,7 +4271,6 @@ const es: TranslationShape = {
     unavailable: 'No pudimos verificar el video. Intentá nuevamente más tarde.',
     notPlayable: 'Este video no está disponible para reproducir aquí.',
     tooShort: 'El video es demasiado corto para publicarse como episodio.',
-    playerSetup: 'Dailymotion todavía no está habilitado en este sitio.',
     openOn: 'Abrir en {platform}',
   },
   contentCategory: {
@@ -8807,7 +8805,6 @@ const en: TranslationShape = {
     unavailable: 'We could not verify the video. Please try again later.',
     notPlayable: 'This video is not available to play here.',
     tooShort: 'The video is too short to publish as an episode.',
-    playerSetup: 'Dailymotion is not enabled on this site yet.',
     openOn: 'Open on {platform}',
   },
   contentCategory: {

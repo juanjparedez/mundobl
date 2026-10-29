@@ -72,7 +72,6 @@ const fr = {
     "unavailable": "Impossible de vérifier la vidéo. Réessayez plus tard.",
     "notPlayable": "Cette vidéo ne peut pas être lue ici.",
     "tooShort": "La vidéo est trop courte pour être publiée comme épisode.",
-    "playerSetup": "Dailymotion n’est pas encore activé sur ce site.",
     "openOn": "Ouvrir sur {platform}"
   },
   contentCategory: {

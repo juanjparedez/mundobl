@@ -12,8 +12,7 @@ export type EpisodeSourceErrorCode =
   | 'unverified'
   | 'unavailable'
   | 'notPlayable'
-  | 'tooShort'
-  | 'playerSetup';
+  | 'tooShort';
 
 export class EpisodeSourceError extends Error {
   constructor(
@@ -138,9 +137,10 @@ export async function verifyExternalEpisode(
       throw new EpisodeSourceError('notPlayable');
     }
   } else if (source.platform === 'Dailymotion') {
-    const playerId = dependencies.playerId ?? dailymotionPlayerId();
-    if (!playerId || !/^[a-z\d]{6,32}$/i.test(playerId))
-      throw new EpisodeSourceError('playerSetup', 503);
+    const playerId =
+      dependencies.playerId === undefined
+        ? dailymotionPlayerId()
+        : dependencies.playerId || null;
     const url = new URL(`https://api.dailymotion.com/video/${source.videoId}`);
     url.searchParams.set(
       'fields',
@@ -175,13 +175,17 @@ export async function verifyExternalEpisode(
     }
     const oembed = new URL('https://www.dailymotion.com/services/oembed');
     oembed.searchParams.set('url', source.url);
-    oembed.searchParams.set('player', playerId);
+    if (playerId) oembed.searchParams.set('player', playerId);
     oembed.searchParams.set('format', 'json');
     const publicData = await readJson(oembed, fetcher);
     const html = text(publicData.html);
     if (
       publicData.type !== 'video' ||
-      !html?.includes(`geo.dailymotion.com/player/${playerId}.html`)
+      !html?.includes(
+        playerId
+          ? `geo.dailymotion.com/player/${playerId}.html`
+          : `dailymotion.com/embed/video/${source.videoId}`
+      )
     ) {
       throw new EpisodeSourceError('notPlayable');
     }

@@ -2,7 +2,7 @@
 // Utilidad compartida para embeds de plataformas
 // ============================================
 import {
-  dailymotionPlayerId,
+  dailymotionEmbedUrl,
   parseEpisodeSource,
   parsePublicVideoUrl,
 } from './episode-platforms';
@@ -340,12 +340,11 @@ export function getEmbedInfo(
         platform,
       };
     case 'Dailymotion':
-      const playerId = dailymotionPlayerId();
       return {
         type: 'iframe',
         url:
-          resolvedId && /^[a-z\d]+$/i.test(resolvedId) && playerId
-            ? `https://geo.dailymotion.com/player/${playerId}.html?video=${resolvedId}${options.autoplay ? '&autoplay=1' : ''}`
+          resolvedId && /^[a-z\d]+$/i.test(resolvedId)
+            ? dailymotionEmbedUrl(resolvedId, options.autoplay)
             : null,
         originalUrl: url,
         platform,

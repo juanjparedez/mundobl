@@ -71,7 +71,6 @@ const ko = {
     "unavailable": "동영상을 확인할 수 없습니다. 나중에 다시 시도해 주세요.",
     "notPlayable": "이 동영상은 여기에서 재생할 수 없습니다.",
     "tooShort": "에피소드로 게시하기에는 동영상이 너무 짧습니다.",
-    "playerSetup": "이 사이트에서는 Dailymotion이 아직 활성화되지 않았습니다.",
     "openOn": "{platform}에서 열기"
   },
   contentCategory: {

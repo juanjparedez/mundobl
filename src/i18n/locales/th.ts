@@ -71,7 +71,6 @@ const th = {
     "unavailable": "ตรวจสอบวิดีโอไม่ได้ โปรดลองอีกครั้งในภายหลัง",
     "notPlayable": "วิดีโอนี้ไม่สามารถเล่นที่นี่ได้",
     "tooShort": "วิดีโอสั้นเกินไปที่จะเผยแพร่เป็นตอน",
-    "playerSetup": "เว็บไซต์นี้ยังไม่ได้เปิดใช้งาน Dailymotion",
     "openOn": "เปิดใน {platform}"
   },
   contentCategory: {
