@@ -1,4 +1,4 @@
-import { FAVORITE_MEMBER } from './statistics-scope';
+import { COMMUNITY_MEMBER, FAVORITE_MEMBER } from './statistics-scope';
 import { createSupportRepository } from './support-repository';
 import type { WatchDateTarget } from './watch-date';
 import { createCommunityLibraryRepository } from './community-library-repository';
@@ -2997,7 +2997,7 @@ export async function getCommunityTopics(
 export async function getCommunityMetrics(viewerId?: string) {
   const author = {
     ...communityPublicAuthorWhere(viewerId),
-    role: { not: 'ADMIN' as const },
+    ...COMMUNITY_MEMBER,
   };
   const topicWhere: Prisma.CommunityTopicWhereInput = {
     AND: [
@@ -3011,7 +3011,7 @@ export async function getCommunityMetrics(viewerId?: string) {
       prisma.communityReply.count({
         where: {
           moderationHidden: false,
-          topic: publicCommunityTopicWhere(viewerId),
+          topic: topicWhere,
           OR: [{ userId: null }, { user: author }],
         },
       }),

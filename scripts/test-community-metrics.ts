@@ -84,6 +84,14 @@ async function main() {
         { title: key, userId: users[2], visibility: 'PUBLIC' },
       ],
     });
+    // Moderators and collaborators follow the same public staff policy as tracking.
+    for (const role of ['MODERATOR', 'COLLABORATOR'] as const) {
+      await prisma.user.update({ where: { id: users[1] }, data: { role } });
+      const current = await getCommunityMetrics();
+      assert.equal(current.lists, before.lists + 1);
+      assert.equal(current.conversations, before.conversations + 4);
+      assert.equal(current.replies, before.replies + 2);
+    }
     const expected = {
       conversations: before.conversations + 4,
       replies: before.replies + 2,
