@@ -2,6 +2,16 @@
 
 Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-stack para gestionar, calificar y hacer seguimiento de series, peliculas, cortos y especiales.
 
+## Estadísticas públicas reconciliadas (2026-10-31)
+
+- Rama `codex/fix-estadisticas-integrales`, commits por tema. Tras pedir trabajo local inicialmente, el propietario autorizó explícitamente merge y deploy al terminar la validación.
+- `statistics-scope.ts` unifica comunidad (sin ADMIN/MODERATOR/COLLABORATOR ni cuentas bloqueadas), obras accesibles y catálogo visible. Por decisión explícita, favoritos de ficha y ranking excluyen al equipo. El toggle invalida solo la obra afectada y estadísticas; la ficha se refresca al guardar.
+- Seguimiento histórico, rankings y desgloses comparten alcance. `community-chapter-statistics.ts` cuenta capítulos completos (todas las partes), compartido con el ranking mensual; usa watchedDate y solo cae a updatedAt si falta. Votos: uno por cuenta/obra, general o promedio de categorías. Actores incluyen créditos de temporada sin duplicados ni placeholders.
+- Streaming usa `play_start`/`view`, nunca `chapter`; ranking por inicios, aperturas solo `open_ver`, cociente sin recorte a 100%. `chapter` histórico son acciones de marcado (parte/lote posible), así se etiqueta la cifra sin cuenta. No reconstruir sesiones ni capítulos exactos desde esos agregados anónimos.
+- Revisión ampliada: los DELETE directos de series, temporadas, episodios y aportes ahora usan `deleteUntrackedContent` para rechazar cascadas que borrarían seguimiento/notas (409); conservan el borrado de contenido sin seguimiento y la invalidación de cachés. Regresión HTTP contra Next compilado.
+- Fragmentos SQL: construir la consulta completa con `Prisma.sql` antes de `$queryRaw`, porque el cliente compartido puede provenir de otro bundle y no reconocer instancias Sql ajenas.
+- Ventanas UTC, ISR de 15 minutos conservado, metodología en diez idiomas. Sin migración ni modificación de datos remotos. Detalles y validación: [auditoría](../auditoria-estadisticas-2026-10-31.md).
+
 ## Optimización Mobile UX/UI - Fase 2: Cobertura Integral del Sitio (2026-10-26)
 
 - **Comunidad (`/comunidad/*`)**:
