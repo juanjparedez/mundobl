@@ -37,6 +37,22 @@ createRoot(document.getElementById('root')).render(<LocaleProvider><ThemeProvide
     resolveDir: process.cwd(),
     loader: 'tsx',
   },
+  plugins: [
+    {
+      name: 'isolated-next-navigation',
+      setup(build) {
+        build.onResolve({ filter: /^next\/navigation$/ }, () => ({
+          path: 'navigation',
+          namespace: 'fixture',
+        }));
+        build.onLoad({ filter: /.*/, namespace: 'fixture' }, () => ({
+          contents:
+            'export const useRouter=()=>({refresh(){window.reportRefreshes=(window.reportRefreshes||0)+1}});',
+          loader: 'js',
+        }));
+      },
+    },
+  ],
   bundle: true,
   write: false,
   outdir: out,
@@ -140,6 +156,8 @@ try {
   });
   await page.getByRole('button', { name: 'report', exact: true }).click();
   await page.getByRole('heading', { name: 'Piloto GagaOOLala' }).waitFor();
+  await page.getByRole('button', { name: 'Actualizar', exact: true }).click();
+  assert.equal(await page.evaluate(() => window.reportRefreshes), 1);
   await page.screenshot({
     path: resolve(out, 'report-desktop.png'),
     fullPage: true,
