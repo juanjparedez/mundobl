@@ -1,3 +1,4 @@
+import { getPublicFavoriteCount } from '@/lib/database';
 import { ContentGate } from '@/components/content/ContentGate/ContentGate';
 import { ContentNotice } from '@/components/content/ContentNotice/ContentNotice';
 import { hasContentConsent } from '@/lib/content-consent';
@@ -105,7 +106,7 @@ export async function SeriesDetailView({
   ] = await Promise.all([
     countPublishedReviews(serie.id),
     prisma.embeddableContent.count({ where: { seriesId: serie.id } }),
-    prisma.userFavorite.count({ where: { seriesId: serie.id } }),
+    getPublicFavoriteCount(serie.id),
     prisma.viewStatus.count({
       where: { seriesId: serie.id, status: 'VIENDO' },
     }),

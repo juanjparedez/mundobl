@@ -1,3 +1,4 @@
+import { FAVORITE_MEMBER } from './statistics-scope';
 import { createSupportRepository } from './support-repository';
 import type { WatchDateTarget } from './watch-date';
 import { createCommunityLibraryRepository } from './community-library-repository';
@@ -3730,4 +3731,11 @@ export async function countUserWatchedChapters(
       ),
     0
   );
+}
+
+/** Public favorites exclude staff and banned accounts, like the public ranking. */
+export async function getPublicFavoriteCount(seriesId: number) {
+  return prisma.userFavorite.count({
+    where: { seriesId, user: FAVORITE_MEMBER },
+  });
 }

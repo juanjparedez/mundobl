@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
@@ -20,6 +21,12 @@ export async function POST(
       );
     }
 
+    const invalidate = () => {
+      revalidatePath('/series/[id]', 'page');
+      revalidatePath('/estadisticas');
+      revalidatePath('/api/stats/public');
+    };
+
     // Toggle: si existe → eliminar, si no → crear
     const existing = await prisma.userFavorite.findUnique({
       where: { userId_seriesId: { userId: authResult.userId, seriesId } },
@@ -29,6 +36,7 @@ export async function POST(
       await prisma.userFavorite.delete({
         where: { userId_seriesId: { userId: authResult.userId, seriesId } },
       });
+      invalidate();
       return NextResponse.json({ isFavorite: false, seriesId });
     }
 
@@ -36,6 +44,7 @@ export async function POST(
       data: { userId: authResult.userId, seriesId },
     });
     awardAchievementsAfterResponse(authResult.userId, ['favorites']);
+    invalidate();
     return NextResponse.json({ isFavorite: true, seriesId });
   } catch (error) {
     console.error('Error updating favorite status:', error);
