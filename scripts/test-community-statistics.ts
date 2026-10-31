@@ -115,10 +115,10 @@ async function main() {
     });
 
     // Public: published accessible reviews, including watchable contributions and old reviews.
-    // Banned accounts follow the existing community stats policy (only ADMIN excluded).
+    // Staff and banned accounts are consistently excluded from public statistics.
     assert.equal(
       (await getPublicStats()).summary.totalPublishedReviews - publicBefore,
-      4
+      3
     );
     const admin = await getPublishedReviewStats(since);
     assert.equal(admin.total - adminBefore.total, 7);
@@ -154,7 +154,7 @@ async function main() {
     });
     assert.equal(
       (await getPublicStats()).summary.totalPublishedReviews - publicBefore,
-      3
+      2
     );
     await prisma.review.updateMany({
       where: { userId: `${key}-embed` },
@@ -162,7 +162,7 @@ async function main() {
     });
     assert.equal(
       (await getPublicStats()).summary.totalPublishedReviews - publicBefore,
-      2
+      1
     );
     console.log(
       'PASS: review counts, visibility, drafts, admin scope, recent window and activity-only users'

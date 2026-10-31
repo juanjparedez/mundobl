@@ -1,4 +1,15 @@
 import {
+  COMMUNITY,
+  COMMUNITY_MEMBER,
+  PUBLIC_STATS_SERIES,
+  PUBLIC_CATALOG_SERIES,
+  COMMUNITY_SQL,
+  PUBLIC_SERIES_SQL,
+  COMMUNITY_RATINGS_SQL,
+  statsWindowStart,
+} from './statistics-scope';
+import { getCommunityChapterCompletions } from './community-chapter-statistics';
+import {
   prisma,
   PUBLIC_REVIEW_SERIES,
   getCommunityMetrics,
@@ -65,11 +76,6 @@ interface RawRatingDistRow {
   count: bigint;
 }
 
-interface RawDayCountRow {
-  day: Date;
-  count: bigint;
-}
-
 interface RawTopRatedRow {
   seriesId: number;
   avgScore: number;
@@ -105,7 +111,7 @@ export interface RecentCommunityActivity {
   episodesByDay: Array<{ day: string; count: number }>;
   /** Ranking anonimo de capitulos vistos en la ventana larga (community-ranking.ts). */
   topWatchers: RankingEntry[];
-  /** Capitulos vistos sin cuenta en la ventana corta (SeriesActivityDaily).
+  /** Acciones de marcado sin cuenta en la ventana corta (SeriesActivityDaily).
    *  Opcional: una pagina o respuesta cacheada de antes no lo trae. */
   browserChaptersRecently?: number;
 }
@@ -174,7 +180,7 @@ export interface PublicStats {
 
 /**
  * Toda metrica de actividad de esta pagina es SOLO de la comunidad: excluye
- * a los usuarios ADMIN. El catalogo curado nacio como el registro personal
+ * al equipo (ADMIN, MODERATOR, COLLABORATOR) y cuentas baneadas. El catalogo curado nacio como el registro personal
  * de lo que fue viendo Flor, asi que al 2026-09-24 el equipo era el 96% de
  * las "series vistas" (527 de 548). Mostrar eso como actividad de la
  * comunidad es inflar, que es justo lo que la pagina promete no hacer. Lo
@@ -183,10 +189,17 @@ export interface PublicStats {
  * Los comentarios de una cuenta borrada quedan con userId null
  * (anonimizados): son de la comunidad y se cuentan.
  */
-const COMMUNITY = { user: { role: { not: 'ADMIN' as const } } };
-const COMMUNITY_MEMBER = { banned: false, role: { not: 'ADMIN' as const } };
 const COMMUNITY_COMMENTS = {
-  OR: [{ userId: null }, { user: { role: { not: 'ADMIN' as const } } }],
+  OR: [{ userId: null }, COMMUNITY],
+  AND: [
+    {
+      OR: [
+        { series: PUBLIC_STATS_SERIES },
+        { season: { series: PUBLIC_STATS_SERIES } },
+        { episode: { season: { series: PUBLIC_STATS_SERIES } } },
+      ],
+    },
+  ],
 };
 
 const SHORT_WINDOW_DAYS = 7;
@@ -203,21 +216,21 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 async function getRecentCommunityActivity(
   now: Date
 ): Promise<RecentCommunityActivity> {
-  const shortSince = new Date(now.getTime() - SHORT_WINDOW_DAYS * DAY_MS);
-  const longSince = new Date(now.getTime() - LONG_WINDOW_DAYS * DAY_MS);
+  const shortSince = statsWindowStart(SHORT_WINDOW_DAYS, now);
+  const longSince = statsWindowStart(LONG_WINDOW_DAYS, now);
+  const completionsPromise = getCommunityChapterCompletions(longSince, now);
 
   const [
     totalMembers,
     trackingMembers,
     activeMembers,
     newMembers,
-    episodesSeenRecently,
     completedRecently,
     publicCommentsRecently,
     ratingsRecently,
     reviewsRecently,
     watchingRows,
-    episodesByDayRows,
+    chapterCompletions,
     topWatchers,
     siteActivity,
   ] = await Promise.all([
@@ -230,10 +243,7 @@ async function getRecentCommunityActivity(
     }),
     prisma.user.count({
       where: {
-        AND: [
-          getActiveCommunityUsersWhere(longSince),
-          { role: { not: 'ADMIN' } },
-        ],
+        AND: [getActiveCommunityUsersWhere(longSince), COMMUNITY_MEMBER],
       },
     }),
     prisma.user.count({
@@ -242,16 +252,12 @@ async function getRecentCommunityActivity(
     prisma.viewStatus.count({
       where: {
         status: 'VISTA',
-        episodeId: { not: null },
-        updatedAt: { gte: shortSince },
-        ...COMMUNITY,
-      },
-    }),
-    prisma.viewStatus.count({
-      where: {
-        status: 'VISTA',
         seriesId: { not: null },
-        updatedAt: { gte: longSince },
+        series: PUBLIC_STATS_SERIES,
+        OR: [
+          { watchedDate: { gte: longSince, lte: now } },
+          { watchedDate: null, updatedAt: { gte: longSince, lte: now } },
+        ],
         ...COMMUNITY,
       },
     }),
@@ -262,13 +268,14 @@ async function getRecentCommunityActivity(
         ...COMMUNITY_COMMENTS,
       },
     }),
-    prisma.userRating.count({
-      where: { updatedAt: { gte: shortSince }, ...COMMUNITY },
-    }),
+    prisma.$queryRaw<Array<{ count: bigint }>>`
+      WITH votes AS (${COMMUNITY_RATINGS_SQL})
+      SELECT COUNT(*) AS count FROM votes WHERE "updatedAt" >= ${shortSince} AND "updatedAt" <= ${now}
+    `.then((rows) => Number(rows[0].count)),
     prisma.review.count({
       where: {
         status: 'PUBLISHED',
-        createdAt: { gte: longSince },
+        publishedAt: { gte: longSince, lte: now },
         series: PUBLIC_REVIEW_SERIES,
         ...COMMUNITY,
       },
@@ -278,25 +285,15 @@ async function getRecentCommunityActivity(
       where: {
         status: 'VIENDO',
         seriesId: { not: null },
-        series: { visibility: 'VISIBLE' },
+        series: PUBLIC_STATS_SERIES,
         ...COMMUNITY,
       },
       _count: { seriesId: true },
-      orderBy: { _count: { seriesId: 'desc' } },
+      orderBy: [{ _count: { seriesId: 'desc' } }, { seriesId: 'asc' }],
       take: 10,
     }),
-    prisma.$queryRaw<RawDayCountRow[]>`
-      SELECT date_trunc('day', vs."updatedAt") AS day, COUNT(*) AS count
-      FROM "ViewStatus" vs
-      JOIN "User" u ON u.id = vs."userId"
-      WHERE vs.status = 'VISTA'
-        AND vs."episodeId" IS NOT NULL
-        AND vs."updatedAt" >= ${longSince}
-        AND u.role <> 'ADMIN'
-      GROUP BY day
-      ORDER BY day ASC
-    `,
-    getMonthlyRanking(now),
+    completionsPromise,
+    completionsPromise.then((rows) => getMonthlyRanking(now, rows)),
     getSiteChapterActivity(SHORT_WINDOW_DAYS, now),
   ]);
 
@@ -310,12 +307,11 @@ async function getRecentCommunityActivity(
   const seriesMetaById = new Map(titles.map((item) => [item.id, item]));
 
   // Dias sin actividad van en 0: un grafico con huecos sugiere datos rotos.
-  const countByDay = new Map(
-    episodesByDayRows.map((r) => [
-      r.day.toISOString().slice(0, 10),
-      Number(r.count),
-    ])
-  );
+  const countByDay = new Map<string, number>();
+  for (const { date } of chapterCompletions) {
+    const day = date.toISOString().slice(0, 10);
+    countByDay.set(day, (countByDay.get(day) ?? 0) + 1);
+  }
   const episodesByDay = Array.from({ length: LONG_WINDOW_DAYS }, (_, i) => {
     const day = new Date(now.getTime() - (LONG_WINDOW_DAYS - 1 - i) * DAY_MS)
       .toISOString()
@@ -330,8 +326,10 @@ async function getRecentCommunityActivity(
     trackingMembers,
     activeMembers,
     newMembers,
-    episodesSeenRecently,
     completedRecently,
+    episodesSeenRecently: chapterCompletions.filter(
+      ({ date }) => date >= shortSince
+    ).length,
     publicCommentsRecently,
     ratingsRecently,
     reviewsRecently,
@@ -381,7 +379,7 @@ export async function getPublicStats(): Promise<PublicStats> {
     teamSeriesRows,
   ] = await Promise.all([
     // Solo contamos series del catalogo curado (excluye USER_EMBED).
-    prisma.series.count({ where: { origin: 'CURATED' } }),
+    prisma.series.count({ where: PUBLIC_CATALOG_SERIES }),
     prisma.comment.count({
       where: { isPrivate: false, ...COMMUNITY_COMMENTS },
     }),
@@ -396,7 +394,7 @@ export async function getPublicStats(): Promise<PublicStats> {
       where: {
         status: 'VISTA',
         seriesId: { not: null },
-        series: { origin: 'CURATED' },
+        series: PUBLIC_STATS_SERIES,
         ...COMMUNITY,
       },
     }),
@@ -404,43 +402,59 @@ export async function getPublicStats(): Promise<PublicStats> {
       where: {
         status: 'VIENDO',
         seriesId: { not: null },
-        series: { origin: 'CURATED' },
+        series: PUBLIC_STATS_SERIES,
         ...COMMUNITY,
       },
     }),
     prisma.userFavorite.count({
       where: {
-        series: { origin: 'CURATED' },
+        series: PUBLIC_STATS_SERIES,
         ...COMMUNITY,
       },
     }),
-    prisma.actor.count(),
-    prisma.director.count(),
+    prisma.actor.count({
+      where: {
+        isPlaceholder: false,
+        OR: [
+          { series: { some: { series: PUBLIC_CATALOG_SERIES } } },
+          { seasons: { some: { season: { series: PUBLIC_CATALOG_SERIES } } } },
+        ],
+      },
+    }),
+    prisma.director.count({
+      where: { series: { some: { series: PUBLIC_CATALOG_SERIES } } },
+    }),
     prisma.viewStatus.groupBy({
       by: ['seriesId'],
       where: {
         status: 'VISTA',
         seriesId: { not: null },
-        series: { origin: 'CURATED' },
+        series: PUBLIC_STATS_SERIES,
         ...COMMUNITY,
       },
       _count: { seriesId: true },
-      orderBy: { _count: { seriesId: 'desc' } },
+      orderBy: [{ _count: { seriesId: 'desc' } }, { seriesId: 'asc' }],
       take: 15,
     }),
     prisma.$queryRaw<RawActorCountRow[]>`
       SELECT a.id, a.name, COUNT(*) as count
       FROM "ViewStatus" vs
       JOIN "User" u ON u.id = vs."userId"
-      JOIN "SeriesActor" sa ON sa."seriesId" = vs."seriesId"
+      JOIN (
+        SELECT "seriesId", "actorId" FROM "SeriesActor"
+        UNION
+        SELECT season."seriesId", sa."actorId" FROM "SeasonActor" sa
+        JOIN "Season" season ON season.id = sa."seasonId"
+      ) sa ON sa."seriesId" = vs."seriesId"
       JOIN "Actor" a ON a.id = sa."actorId"
       JOIN "Series" s ON s.id = vs."seriesId"
       WHERE vs.status = 'VISTA'
         AND vs."seriesId" IS NOT NULL
-        AND s."origin" = 'CURATED'
-        AND u.role <> 'ADMIN'
+        AND ${PUBLIC_SERIES_SQL}
+        AND ${COMMUNITY_SQL}
+        AND a."isPlaceholder" = false
       GROUP BY a.id, a.name
-      ORDER BY count DESC
+      ORDER BY count DESC, name ASC
       LIMIT 15
     `,
     prisma.$queryRaw<RawDirectorCountRow[]>`
@@ -452,10 +466,10 @@ export async function getPublicStats(): Promise<PublicStats> {
       JOIN "Series" s ON s.id = vs."seriesId"
       WHERE vs.status = 'VISTA'
         AND vs."seriesId" IS NOT NULL
-        AND s."origin" = 'CURATED'
-        AND u.role <> 'ADMIN'
+        AND ${PUBLIC_SERIES_SQL}
+        AND ${COMMUNITY_SQL}
       GROUP BY d.id, d.name
-      ORDER BY count DESC
+      ORDER BY count DESC, name ASC
       LIMIT 15
     `,
     // Cuenta por SeriesProductionCompany (co-producciones), no por la
@@ -470,10 +484,10 @@ export async function getPublicStats(): Promise<PublicStats> {
       JOIN "ProductionCompany" pc ON pc.id = spc."productionCompanyId"
       WHERE vs.status = 'VISTA'
         AND vs."seriesId" IS NOT NULL
-        AND s."origin" = 'CURATED'
-        AND u.role <> 'ADMIN'
+        AND ${PUBLIC_SERIES_SQL}
+        AND ${COMMUNITY_SQL}
       GROUP BY pc.id, pc.name
-      ORDER BY count DESC
+      ORDER BY count DESC, name ASC
       LIMIT 15
     `,
     prisma.$queryRaw<RawNamedCountRow[]>`
@@ -485,8 +499,8 @@ export async function getPublicStats(): Promise<PublicStats> {
       WHERE vs.status = 'VISTA'
         AND vs."seriesId" IS NOT NULL
         AND s."countryId" IS NOT NULL
-        AND s."origin" = 'CURATED'
-        AND u.role <> 'ADMIN'
+        AND ${PUBLIC_SERIES_SQL}
+        AND ${COMMUNITY_SQL}
       GROUP BY c.name
       ORDER BY count DESC
     `,
@@ -497,60 +511,43 @@ export async function getPublicStats(): Promise<PublicStats> {
       JOIN "Series" s ON s.id = vs."seriesId"
       WHERE vs.status = 'VISTA'
         AND vs."seriesId" IS NOT NULL
-        AND s."origin" = 'CURATED'
-        AND u.role <> 'ADMIN'
+        AND ${PUBLIC_SERIES_SQL}
+        AND ${COMMUNITY_SQL}
       GROUP BY s.type
       ORDER BY count DESC
     `,
     prisma.userFavorite.groupBy({
       by: ['seriesId'],
       where: {
-        series: { origin: 'CURATED' },
+        series: PUBLIC_STATS_SERIES,
         ...COMMUNITY,
       },
       _count: { seriesId: true },
-      orderBy: { _count: { seriesId: 'desc' } },
+      orderBy: [{ _count: { seriesId: 'desc' } }, { seriesId: 'asc' }],
       take: 15,
     }),
     prisma.$queryRaw<RawTopRatedRow[]>`
-      SELECT
-        ur."seriesId" AS "seriesId",
-        ROUND(AVG(ur.score)::numeric, 1)::float8 AS "avgScore",
-        COUNT(DISTINCT ur."userId") AS "voterCount"
-      FROM "UserRating" ur
-      JOIN "User" u ON u.id = ur."userId"
-      JOIN "Series" s ON s.id = ur."seriesId"
-      WHERE s."visibility" = 'VISIBLE'
-        AND u.role <> 'ADMIN'
-      GROUP BY ur."seriesId"
-      ORDER BY "avgScore" DESC, "voterCount" DESC
-      LIMIT 15
+      WITH votes AS (${COMMUNITY_RATINGS_SQL})
+      SELECT "seriesId", ROUND(AVG(score)::numeric, 1)::float8 AS "avgScore", COUNT(*) AS "voterCount"
+      FROM votes GROUP BY "seriesId"
+      ORDER BY "avgScore" DESC, "voterCount" DESC, "seriesId" ASC LIMIT 15
     `,
     prisma.$queryRaw<RawRatingDistRow[]>`
-      SELECT score, COUNT(*) as count
-      FROM "UserRating" ur
-      JOIN "User" u ON u.id = ur."userId"
-      JOIN "Series" s ON s.id = ur."seriesId"
-      WHERE s."origin" = 'CURATED'
-        AND u.role <> 'ADMIN'
-      GROUP BY score
-      ORDER BY score ASC
+      WITH votes AS (${COMMUNITY_RATINGS_SQL})
+      SELECT ROUND(score)::int AS score, COUNT(*) AS count
+      FROM votes GROUP BY ROUND(score) ORDER BY score ASC
     `,
-    prisma.userRating.aggregate({
-      where: {
-        series: { origin: 'CURATED' },
-        ...COMMUNITY,
-      },
-      _avg: { score: true },
-      _count: { id: true },
-    }),
+    prisma.$queryRaw<Array<{ average: number | null; total: bigint }>>`
+      WITH votes AS (${COMMUNITY_RATINGS_SQL})
+      SELECT AVG(score)::float8 AS average, COUNT(*) AS total FROM votes
+    `,
     // Catalog: series per country (solo CURATED)
     prisma.$queryRaw<RawNamedCountRow[]>`
       SELECT c.name, COUNT(*) as count
       FROM "Series" s
       JOIN "Country" c ON c.id = s."countryId"
       WHERE s."countryId" IS NOT NULL
-        AND s."origin" = 'CURATED'
+        AND s.visibility = 'VISIBLE' AND s.origin = 'CURATED' AND s."catalogScope" = 'PERSONAL'
       GROUP BY c.name
       ORDER BY count DESC
     `,
@@ -558,7 +555,7 @@ export async function getPublicStats(): Promise<PublicStats> {
     prisma.$queryRaw<RawTypeCountRow[]>`
       SELECT type, COUNT(*) as count
       FROM "Series"
-      WHERE "origin" = 'CURATED'
+      WHERE visibility = 'VISIBLE' AND origin = 'CURATED' AND "catalogScope" = 'PERSONAL'
       GROUP BY type
       ORDER BY count DESC
     `,
@@ -568,7 +565,7 @@ export async function getPublicStats(): Promise<PublicStats> {
       FROM "SeriesGenre" sg
       JOIN "Genre" g ON g.id = sg."genreId"
       JOIN "Series" s ON s.id = sg."seriesId"
-      WHERE s."origin" = 'CURATED'
+      WHERE s.visibility = 'VISIBLE' AND s.origin = 'CURATED' AND s."catalogScope" = 'PERSONAL'
       GROUP BY g.name
       ORDER BY count DESC
       LIMIT 20
@@ -578,7 +575,7 @@ export async function getPublicStats(): Promise<PublicStats> {
       SELECT year, COUNT(*) as count
       FROM "Series"
       WHERE year IS NOT NULL
-        AND "origin" = 'CURATED'
+        AND visibility = 'VISIBLE' AND origin = 'CURATED' AND "catalogScope" = 'PERSONAL'
       GROUP BY year
       ORDER BY year DESC
       LIMIT 20
@@ -589,8 +586,11 @@ export async function getPublicStats(): Promise<PublicStats> {
       where: {
         status: 'VISTA',
         seriesId: { not: null },
-        series: { origin: 'CURATED' },
-        user: { role: 'ADMIN' },
+        series: PUBLIC_CATALOG_SERIES,
+        user: {
+          banned: false,
+          role: { in: ['ADMIN', 'MODERATOR', 'COLLABORATOR'] },
+        },
       },
     }),
   ]);
@@ -632,10 +632,10 @@ export async function getPublicStats(): Promise<PublicStats> {
       totalFavorites,
       totalActors,
       totalDirectors,
-      averageCommunityRating: ratingStats._avg.score
-        ? Math.round(ratingStats._avg.score * 10) / 10
+      averageCommunityRating: ratingStats[0].average
+        ? Math.round(ratingStats[0].average * 10) / 10
         : null,
-      totalUserRatings: ratingStats._count.id,
+      totalUserRatings: Number(ratingStats[0].total),
       teamCompletedSeries: teamSeriesRows.length,
     },
     rankings: {
@@ -714,10 +714,10 @@ export async function getPublicStats(): Promise<PublicStats> {
         })),
     },
     ratings: {
-      averageCommunity: ratingStats._avg.score
-        ? Math.round(ratingStats._avg.score * 10) / 10
+      averageCommunity: ratingStats[0].average
+        ? Math.round(ratingStats[0].average * 10) / 10
         : null,
-      total: ratingStats._count.id,
+      total: Number(ratingStats[0].total),
       distribution: ratingDistRows.map((r) => ({
         score: Number(r.score),
         count: Number(r.count),

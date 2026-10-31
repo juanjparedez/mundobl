@@ -1,3 +1,5 @@
+import { getCommunityChapterCompletions } from './community-chapter-statistics';
+import { statsWindowStart } from './statistics-scope';
 import { prisma } from '@/lib/database';
 import {
   aliasParts,
@@ -53,32 +55,41 @@ interface RankedRow {
 }
 
 function windowStart(now: Date): Date {
-  return new Date(now.getTime() - RANKING_WINDOW_DAYS * 24 * 60 * 60 * 1000);
+  return statsWindowStart(RANKING_WINDOW_DAYS, now);
 }
 
 // RANK() deja huecos en los empates (1, 1, 3): dos personas con el mismo
 // numero comparten puesto, y nadie queda "detras" de alguien que vio igual.
-async function rankedRows(since: Date): Promise<RankedRow[]> {
-  return prisma.$queryRaw<RankedRow[]>`
-    SELECT vs."userId" AS "userId",
-           COUNT(*) AS count,
-           RANK() OVER (ORDER BY COUNT(*) DESC) AS rank
-    FROM "ViewStatus" vs
-    JOIN "User" u ON u.id = vs."userId"
-    WHERE vs.status = 'VISTA'
-      AND vs."episodeId" IS NOT NULL
-      AND vs."updatedAt" >= ${since}
-      AND u.role NOT IN ('ADMIN', 'MODERATOR')
-      AND u.banned = false
-    GROUP BY vs."userId"
-    ORDER BY count DESC, vs."userId" ASC
-  `;
+type Completions = Awaited<ReturnType<typeof getCommunityChapterCompletions>>;
+async function rankedRows(
+  since: Date,
+  now: Date,
+  completions?: Completions
+): Promise<RankedRow[]> {
+  const counts = new Map<string, number>();
+  for (const { userId } of completions ??
+    (await getCommunityChapterCompletions(since, now))) {
+    counts.set(userId, (counts.get(userId) ?? 0) + 1);
+  }
+  let rank = 0;
+  let previous = -1;
+  return [...counts]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .map(([userId, count], index) => {
+      if (count !== previous) rank = index + 1;
+      previous = count;
+      return { userId, count: BigInt(count), rank: BigInt(rank) };
+    });
 }
 
 export async function getMonthlyRanking(
-  now: Date = new Date()
+  now: Date = new Date(),
+  completions?: Completions
 ): Promise<RankingEntry[]> {
-  const top = (await rankedRows(windowStart(now))).slice(0, RANKING_SIZE);
+  const top = (await rankedRows(windowStart(now), now, completions)).slice(
+    0,
+    RANKING_SIZE
+  );
   const profiles = await prisma.communityProfile.findMany({
     where: { userId: { in: top.map((row) => row.userId) } },
     select: {
@@ -119,7 +130,7 @@ export async function getOwnRankingPosition(
   now: Date = new Date()
 ): Promise<OwnRankingPosition> {
   const [rows, profile] = await Promise.all([
-    rankedRows(windowStart(now)),
+    rankedRows(windowStart(now), now),
     prisma.communityProfile.findUnique({
       where: { userId },
       select: { aliasSeed: true, published: true },
