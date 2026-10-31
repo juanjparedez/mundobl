@@ -124,6 +124,7 @@ const uiTests = [
   ['test-community-library-flow.mjs', true],
 ];
 const appTests = [
+  ['test-public-statistics-app.mjs', true],
   ['test-community-app.mjs', true],
   ['test-series-curation-ui.mjs', false],
   ['test-catalog-preview-ui.mjs', false],

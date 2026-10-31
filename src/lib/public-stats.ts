@@ -1,3 +1,7 @@
+// Build complete SQL objects before calling the shared client: Next bundles can
+// contain different Sql constructors, so client tagged templates cannot flatten
+// fragments created by another bundle. Prisma.sql here shares the fragment runtime.
+import { Prisma } from '../generated/prisma';
 import {
   COMMUNITY,
   COMMUNITY_MEMBER,
@@ -268,10 +272,14 @@ async function getRecentCommunityActivity(
         ...COMMUNITY_COMMENTS,
       },
     }),
-    prisma.$queryRaw<Array<{ count: bigint }>>`
+    prisma
+      .$queryRaw<Array<{ count: bigint }>>(
+        Prisma.sql`
       WITH votes AS (${COMMUNITY_RATINGS_SQL})
       SELECT COUNT(*) AS count FROM votes WHERE "updatedAt" >= ${shortSince} AND "updatedAt" <= ${now}
-    `.then((rows) => Number(rows[0].count)),
+    `
+      )
+      .then((rows) => Number(rows[0].count)),
     prisma.review.count({
       where: {
         status: 'PUBLISHED',
@@ -436,7 +444,7 @@ export async function getPublicStats(): Promise<PublicStats> {
       orderBy: [{ _count: { seriesId: 'desc' } }, { seriesId: 'asc' }],
       take: 15,
     }),
-    prisma.$queryRaw<RawActorCountRow[]>`
+    prisma.$queryRaw<RawActorCountRow[]>(Prisma.sql`
       SELECT a.id, a.name, COUNT(*) as count
       FROM "ViewStatus" vs
       JOIN "User" u ON u.id = vs."userId"
@@ -456,8 +464,8 @@ export async function getPublicStats(): Promise<PublicStats> {
       GROUP BY a.id, a.name
       ORDER BY count DESC, name ASC
       LIMIT 15
-    `,
-    prisma.$queryRaw<RawDirectorCountRow[]>`
+    `),
+    prisma.$queryRaw<RawDirectorCountRow[]>(Prisma.sql`
       SELECT d.id, d.name, COUNT(*) as count
       FROM "ViewStatus" vs
       JOIN "User" u ON u.id = vs."userId"
@@ -471,11 +479,11 @@ export async function getPublicStats(): Promise<PublicStats> {
       GROUP BY d.id, d.name
       ORDER BY count DESC, name ASC
       LIMIT 15
-    `,
+    `),
     // Cuenta por SeriesProductionCompany (co-producciones), no por la
     // relacion legacy 1-a-N: asi una serie con 3 productoras suma para las 3.
     // Devuelve el id para poder linkear a /productoras/[id].
-    prisma.$queryRaw<RawCompanyCountRow[]>`
+    prisma.$queryRaw<RawCompanyCountRow[]>(Prisma.sql`
       SELECT pc.id, pc.name, COUNT(*) as count
       FROM "ViewStatus" vs
       JOIN "User" u ON u.id = vs."userId"
@@ -489,8 +497,8 @@ export async function getPublicStats(): Promise<PublicStats> {
       GROUP BY pc.id, pc.name
       ORDER BY count DESC, name ASC
       LIMIT 15
-    `,
-    prisma.$queryRaw<RawNamedCountRow[]>`
+    `),
+    prisma.$queryRaw<RawNamedCountRow[]>(Prisma.sql`
       SELECT c.name, COUNT(*) as count
       FROM "ViewStatus" vs
       JOIN "User" u ON u.id = vs."userId"
@@ -503,8 +511,8 @@ export async function getPublicStats(): Promise<PublicStats> {
         AND ${COMMUNITY_SQL}
       GROUP BY c.name
       ORDER BY count DESC
-    `,
-    prisma.$queryRaw<RawTypeCountRow[]>`
+    `),
+    prisma.$queryRaw<RawTypeCountRow[]>(Prisma.sql`
       SELECT s.type, COUNT(*) as count
       FROM "ViewStatus" vs
       JOIN "User" u ON u.id = vs."userId"
@@ -515,7 +523,7 @@ export async function getPublicStats(): Promise<PublicStats> {
         AND ${COMMUNITY_SQL}
       GROUP BY s.type
       ORDER BY count DESC
-    `,
+    `),
     prisma.userFavorite.groupBy({
       by: ['seriesId'],
       where: {
@@ -526,23 +534,25 @@ export async function getPublicStats(): Promise<PublicStats> {
       orderBy: [{ _count: { seriesId: 'desc' } }, { seriesId: 'asc' }],
       take: 15,
     }),
-    prisma.$queryRaw<RawTopRatedRow[]>`
+    prisma.$queryRaw<RawTopRatedRow[]>(Prisma.sql`
       WITH votes AS (${COMMUNITY_RATINGS_SQL})
       SELECT "seriesId", ROUND(AVG(score)::numeric, 1)::float8 AS "avgScore", COUNT(*) AS "voterCount"
       FROM votes GROUP BY "seriesId"
       ORDER BY "avgScore" DESC, "voterCount" DESC, "seriesId" ASC LIMIT 15
-    `,
-    prisma.$queryRaw<RawRatingDistRow[]>`
+    `),
+    prisma.$queryRaw<RawRatingDistRow[]>(Prisma.sql`
       WITH votes AS (${COMMUNITY_RATINGS_SQL})
       SELECT ROUND(score)::int AS score, COUNT(*) AS count
       FROM votes GROUP BY ROUND(score) ORDER BY score ASC
-    `,
-    prisma.$queryRaw<Array<{ average: number | null; total: bigint }>>`
+    `),
+    prisma.$queryRaw<
+      Array<{ average: number | null; total: bigint }>
+    >(Prisma.sql`
       WITH votes AS (${COMMUNITY_RATINGS_SQL})
       SELECT AVG(score)::float8 AS average, COUNT(*) AS total FROM votes
-    `,
+    `),
     // Catalog: series per country (solo CURATED)
-    prisma.$queryRaw<RawNamedCountRow[]>`
+    prisma.$queryRaw<RawNamedCountRow[]>(Prisma.sql`
       SELECT c.name, COUNT(*) as count
       FROM "Series" s
       JOIN "Country" c ON c.id = s."countryId"
@@ -550,17 +560,17 @@ export async function getPublicStats(): Promise<PublicStats> {
         AND s.visibility = 'VISIBLE' AND s.origin = 'CURATED' AND s."catalogScope" = 'PERSONAL'
       GROUP BY c.name
       ORDER BY count DESC
-    `,
+    `),
     // Catalog: series per type (solo CURATED)
-    prisma.$queryRaw<RawTypeCountRow[]>`
+    prisma.$queryRaw<RawTypeCountRow[]>(Prisma.sql`
       SELECT type, COUNT(*) as count
       FROM "Series"
       WHERE visibility = 'VISIBLE' AND origin = 'CURATED' AND "catalogScope" = 'PERSONAL'
       GROUP BY type
       ORDER BY count DESC
-    `,
+    `),
     // Catalog: series per genre (solo CURATED)
-    prisma.$queryRaw<RawNamedCountRow[]>`
+    prisma.$queryRaw<RawNamedCountRow[]>(Prisma.sql`
       SELECT g.name, COUNT(*) as count
       FROM "SeriesGenre" sg
       JOIN "Genre" g ON g.id = sg."genreId"
@@ -569,9 +579,9 @@ export async function getPublicStats(): Promise<PublicStats> {
       GROUP BY g.name
       ORDER BY count DESC
       LIMIT 20
-    `,
+    `),
     // Catalog: series per release year (solo CURATED)
-    prisma.$queryRaw<RawYearCountRow[]>`
+    prisma.$queryRaw<RawYearCountRow[]>(Prisma.sql`
       SELECT year, COUNT(*) as count
       FROM "Series"
       WHERE year IS NOT NULL
@@ -579,7 +589,7 @@ export async function getPublicStats(): Promise<PublicStats> {
       GROUP BY year
       ORDER BY year DESC
       LIMIT 20
-    `,
+    `),
     // Lo del equipo, aparte y a la vista (ver COMMUNITY).
     prisma.viewStatus.groupBy({
       by: ['seriesId'],
