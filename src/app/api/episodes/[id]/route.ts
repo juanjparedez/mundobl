@@ -1,3 +1,6 @@
+import { TrackingPreservationError } from '@/lib/tracking-preservation';
+import { deleteUntrackedContent } from '@/lib/database';
+import { trackingPreservationResponse } from '@/lib/tracking-preservation-response';
 import { checkSeriesContentAccess } from '@/lib/content-access';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
@@ -158,12 +161,15 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
     }
 
-    await prisma.episode.delete({
-      where: { id: episodeId },
+    const changedSeries = await deleteUntrackedContent({
+      episodeId: episodeId,
     });
+    revalidateSeries(changedSeries);
 
     return NextResponse.json({ message: 'Episodio eliminado correctamente' });
   } catch (error) {
+    if (error instanceof TrackingPreservationError)
+      return trackingPreservationResponse();
     console.error('Error al eliminar episodio:', error);
     return NextResponse.json(
       { error: 'Error al eliminar el episodio' },

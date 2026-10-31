@@ -1,3 +1,7 @@
+import { deleteUntrackedContent } from '@/lib/database';
+import { TrackingPreservationError } from '@/lib/tracking-preservation';
+import { trackingPreservationResponse } from '@/lib/tracking-preservation-response';
+import { revalidateSeries } from '@/lib/revalidate-series';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
@@ -58,7 +62,14 @@ export async function DELETE(request: NextRequest, context: RouteContext) {
     );
   }
 
-  await prisma.series.delete({ where: { id: seriesId } });
+  try {
+    const changedSeries = await deleteUntrackedContent({ seriesId });
+    revalidateSeries(changedSeries);
+  } catch (error) {
+    if (error instanceof TrackingPreservationError)
+      return trackingPreservationResponse();
+    throw error;
+  }
   logAction('DELETE', request.nextUrl.pathname, 'DELETE', auth.userId);
 
   return NextResponse.json({

@@ -1,3 +1,7 @@
+import {
+  assertTrackingCanBeRemoved,
+  assertEpisodeTrackingCanBeRemoved,
+} from './tracking-preservation';
 import { COMMUNITY_MEMBER, FAVORITE_MEMBER } from './statistics-scope';
 import { createSupportRepository } from './support-repository';
 import type { WatchDateTarget } from './watch-date';
@@ -3737,5 +3741,38 @@ export async function countUserWatchedChapters(
 export async function getPublicFavoriteCount(seriesId: number) {
   return prisma.userFavorite.count({
     where: { seriesId, user: FAVORITE_MEMBER },
+  });
+}
+
+/** Delete only content with no private tracking, under the same locks as curation. */
+export async function deleteUntrackedContent(
+  target: { seriesId: number } | { seasonId: number } | { episodeId: number }
+) {
+  return prisma.$transaction(async (tx) => {
+    if ('seriesId' in target) {
+      await assertTrackingCanBeRemoved(tx, target.seriesId);
+      return tx.series.delete({
+        where: { id: target.seriesId },
+        select: { id: true, title: true },
+      });
+    }
+    if ('seasonId' in target) {
+      const season = await tx.season.findUniqueOrThrow({
+        where: { id: target.seasonId },
+        select: { series: { select: { id: true, title: true } } },
+      });
+      await assertTrackingCanBeRemoved(tx, season.series.id, [target.seasonId]);
+      await tx.season.delete({ where: { id: target.seasonId } });
+      return season.series;
+    }
+    const episode = await tx.episode.findUniqueOrThrow({
+      where: { id: target.episodeId },
+      select: {
+        season: { select: { series: { select: { id: true, title: true } } } },
+      },
+    });
+    await assertEpisodeTrackingCanBeRemoved(tx, target.episodeId);
+    await tx.episode.delete({ where: { id: target.episodeId } });
+    return episode.season.series;
   });
 }

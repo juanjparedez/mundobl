@@ -1,3 +1,7 @@
+import { revalidateSeries } from '@/lib/revalidate-series';
+import { TrackingPreservationError } from '@/lib/tracking-preservation';
+import { deleteUntrackedContent } from '@/lib/database';
+import { trackingPreservationResponse } from '@/lib/tracking-preservation-response';
 import { checkSeriesContentAccess } from '@/lib/content-access';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
@@ -156,12 +160,13 @@ export async function DELETE(
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
     }
 
-    await prisma.season.delete({
-      where: { id: seasonId },
-    });
+    const changedSeries = await deleteUntrackedContent({ seasonId: seasonId });
+    revalidateSeries(changedSeries);
 
     return NextResponse.json({ message: 'Temporada eliminada' });
   } catch (error) {
+    if (error instanceof TrackingPreservationError)
+      return trackingPreservationResponse();
     console.error('Error deleting season:', error);
     return NextResponse.json(
       { error: 'Error al eliminar temporada' },

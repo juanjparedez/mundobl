@@ -1,3 +1,5 @@
+import { deleteUntrackedContent } from '@/lib/database';
+import { trackingPreservationResponse } from '@/lib/tracking-preservation-response';
 import { TrackingPreservationError } from '@/lib/tracking-preservation';
 import { loadLocaleMessages } from '@/i18n/messages';
 import { hasContentConsent } from '@/lib/content-consent';
@@ -349,9 +351,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     }
 
     // Eliminar la serie (cascade eliminará relaciones)
-    await prisma.series.delete({
-      where: { id: serieId },
-    });
+    await deleteUntrackedContent({ seriesId: serieId });
 
     // Propagar el borrado a las páginas públicas cacheadas (el router.refresh()
     // del cliente solo arregla la vista admin actual).
@@ -369,6 +369,8 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json({ message: 'Serie eliminada correctamente' });
   } catch (error) {
+    if (error instanceof TrackingPreservationError)
+      return trackingPreservationResponse();
     console.error('Error al eliminar serie:', error);
     return NextResponse.json(
       { error: 'Error al eliminar la serie' },
