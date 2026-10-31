@@ -31,6 +31,7 @@ function load(path) {
   );
   return exports;
 }
+mocks['@/lib/request-origin'] = load('src/lib/request-origin.ts');
 const service = load('src/lib/vercel-maintenance.ts');
 let requests;
 let aliases;
