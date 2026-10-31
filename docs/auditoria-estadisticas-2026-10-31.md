@@ -41,3 +41,13 @@ La prueba contra Next compilado comprueba los cuatro endpoints, rechaza usuarios
 ## Límites
 
 No se consultó la base de producción ni se alteraron registros históricos. La página pública se inspeccionó en lectura; el diagnóstico de las causas se verificó contra el código y fixtures locales. Los agregados anónimos no permiten reconstruir identidades, sesiones, partes o lotes antiguos. La corrección no promete que cualquier plataforma emita telemetría ni que los totales de seguimiento coincidan con los del reproductor: miden acciones distintas.
+
+## Ampliación: reportes administrativos
+
+El propietario identificó `/admin/stats`, `/admin/informe-productoras` y `/admin/piloto` antes del despliegue. El primer lote pasó las 74 etapas del hook en 13m51s y se publicó en main; se pospuso el deploy para integrar esta ampliación y la auditoría de dependencias solicitada después.
+
+- Admin: consultas frescas con `private, no-store`, comunidad y obras públicas como en estadísticas públicas, un voto por persona/obra, fecha vista (registro solo si falta), 30 días UTC completos y cuenta de series en la tabla de usuarios sin sumar episodios. Los errores tienen reintento; no se interpreta una respuesta 500 como datos.
+- Productoras: límites inferior y superior por día UTC, COLLABORATOR excluido de cuentas, actividad pública y streaming con el mismo alcance que `/estadisticas`. Consultas SQL compuestas antes de pasar al cliente Prisma. Las marcaciones se presentan como acciones, las finalizaciones como videos, los seguidores como estado actual. Se explican los topes de tablas y la atribución al canal con más videos, que no demuestra qué canal recibió cada reproducción histórica.
+- Piloto: lectura dinámica de los últimos 60 días UTC, sin fechas futuras ni ubicaciones desconocidas. Los clics del equipo y de cuentas bloqueadas ya se excluían al registrar; no son datos de ejemplo. La interfaz aclara el alcance y la limitación de clics repetidos de 30 segundos.
+- Los tres reportes muestran fecha de consulta y actualización manual. Las dos páginas de servidor ya eran dinámicas; la falta de movimiento no demuestra por sí sola un caché o datos estáticos.
+- Regresiones ampliadas: conciliación admin/público, ventanas productoras 30/90 días, modificaciones visibles en lecturas nuevas, rutas compiladas autenticadas, exclusión/incremento real del piloto y UI 390/1280 con fallo/reintento.

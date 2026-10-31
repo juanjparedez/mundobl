@@ -10,6 +10,16 @@
 import type { TranslationShape } from '../messages';
 
 const zhTW = {
+  reportStatus: {
+    error: "無法載入報告，請重試。",
+    generated: "查詢時間：",
+    adminScope: "公開作品的社群活動，不含團隊和遭封鎖帳戶。觀看日期依UTC計算，缺漏時使用記錄日期。",
+    producerScope: "依UTC日期統計事件，並非獨立人數。標記可能代表分段或批次操作。完成指影片達80%或播放結束。追蹤數為目前狀態。表格最多30部作品/頻道及20個國家/平台；作品歸入影片最多的頻道。",
+    pilotScope: "最近60個UTC日記錄的點擊，不是造訪或轉換。排除團隊與遭封鎖帳戶。瀏覽器限制30秒內的重複點擊。",
+    markings: "觀看標記操作",
+    copyMarkings: "{chapters}次觀看標記操作（{browser}次未登入）",
+    copySeries: "- {title}：{chapters}次標記操作，{trackers}個帳戶追蹤",
+  },
   postViewing: {
     quickScoreTitle: '快速評分 (1–10)',
     quickScoreHint: '選擇一個整體評分，或在下方按類別詳細評分。',

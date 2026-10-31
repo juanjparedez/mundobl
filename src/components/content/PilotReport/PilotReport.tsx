@@ -1,4 +1,5 @@
 'use client';
+import { ReportStatus } from '@/components/content/ReportStatus/ReportStatus';
 import { Table } from 'antd';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { PanelCard } from '@/components/design-system/PanelCard/PanelCard';
@@ -8,13 +9,25 @@ interface Row {
   placement: string;
   clicks: number;
 }
-export function PilotReport({ rows }: { rows: Row[] }) {
+export function PilotReport({
+  rows,
+  generatedAt,
+}: {
+  rows: Row[];
+  generatedAt?: string;
+}) {
   const { t } = useLocale();
   return (
     <section className="pilot-report">
       <PanelCard>
         <h1>{t('editorial.pilot')}</h1>
         <p>{t('editorial.pilotNotice')}</p>
+        <ReportStatus
+          generatedAt={generatedAt}
+          generatedLabel={t('reportStatus.generated')}
+          refreshLabel={t('trackingHistory.refresh')}
+          scope={t('reportStatus.pilotScope')}
+        />
         <p>{t('editorial.privacy')}</p>
         <Table
           dataSource={rows}

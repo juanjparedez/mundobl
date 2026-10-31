@@ -1,0 +1,9 @@
+.report-status {
+  margin-block: var(--spacing-md);
+}
+.report-status__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-sm);
+}

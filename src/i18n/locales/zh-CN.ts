@@ -10,6 +10,16 @@
 import type { TranslationShape } from '../messages';
 
 const zhCN = {
+  reportStatus: {
+    error: "无法加载报告，请重试。",
+    generated: "查询时间：",
+    adminScope: "公开作品的社区活动，不含团队和被封禁账户。观看日期按UTC计算，缺失时使用记录日期。",
+    producerScope: "按UTC日期统计事件，并非独立人数。标记可能代表分段或批量操作。完成指视频达到80%或播放结束。关注数为当前状态。表格最多30部作品/频道和20个国家/平台；作品归入视频最多的频道。",
+    pilotScope: "最近60个UTC日记录的点击，不是访问或转化。排除团队和被封禁账户。浏览器限制30秒内的重复点击。",
+    markings: "观看标记操作",
+    copyMarkings: "{chapters}次观看标记操作（{browser}次未登录）",
+    copySeries: "- {title}：{chapters}次标记操作，{trackers}个账户关注",
+  },
   postViewing: {
     quickScoreTitle: '快速评分 (1–10)',
     quickScoreHint: '选择一个总体评分，或在下方按类别详细评分。',

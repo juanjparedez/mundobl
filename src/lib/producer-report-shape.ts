@@ -14,6 +14,7 @@ export interface ActivityTotals {
 }
 
 export interface ProducerReport {
+  generatedAt?: string;
   days: ProducerReportWindow;
   from: string;
   to: string;

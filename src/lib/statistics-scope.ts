@@ -45,3 +45,34 @@ export const COMMUNITY_RATINGS_SQL = Prisma.sql`
   WHERE ${PUBLIC_SERIES_SQL} AND ${COMMUNITY_SQL}
   GROUP BY ur."seriesId", ur."userId"
 `;
+
+export const COMMUNITY_COMMENTS = {
+  OR: [{ userId: null }, COMMUNITY],
+  AND: [
+    {
+      OR: [
+        { series: PUBLIC_STATS_SERIES },
+        { season: { series: PUBLIC_STATS_SERIES } },
+        { episode: { season: { series: PUBLIC_STATS_SERIES } } },
+      ],
+    },
+  ],
+};
+
+/** Player metrics share this population in public and administrative reports. */
+export const PUBLIC_WATCH_SERIES = {
+  visibility: 'VISIBLE',
+  ...HAS_WATCHABLE_EPISODE,
+} satisfies Prisma.SeriesWhereInput;
+export const WATCH_ACTIVITY_KINDS = [
+  'open_ver',
+  'play_start',
+  'view',
+  'like',
+  'outbound_click',
+];
+export const WATCHABLE_SERIES_SQL = Prisma.sql`EXISTS (
+  SELECT 1 FROM "Season" season JOIN "Episode" e ON e."seasonId" = season.id
+  WHERE season."seriesId" = s.id AND e."embedUrl" IS NOT NULL
+    AND (e."durationSeconds" IS NULL OR e."durationSeconds" >= ${MIN_EPISODE_SECONDS})
+)`;

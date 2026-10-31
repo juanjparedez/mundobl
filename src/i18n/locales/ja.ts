@@ -10,6 +10,16 @@
 import type { TranslationShape } from '../messages';
 
 const ja = {
+  reportStatus: {
+    error: "レポートを読み込めませんでした。再試行してください。",
+    generated: "取得日時：",
+    adminScope: "公開作品のコミュニティ活動。スタッフと停止アカウントを除外。視聴日はUTC、不明なら記録日を使用。",
+    producerScope: "UTC日別のイベントであり、実人数ではありません。マーク操作は分割動画や一括操作を含みます。完了は動画の80%到達または終了。フォロワーは現在の状態。表は最大30作品・チャンネル、20か国・プラットフォーム。作品は動画数が最多のチャンネルに集計。",
+    pilotScope: "直近60 UTC日の記録クリック数。訪問数や成約数ではありません。スタッフと停止アカウントは除外。ブラウザーは30秒間の連続クリックを制限します。",
+    markings: "視聴マーク操作",
+    copyMarkings: "視聴マーク操作{chapters}件（アカウントなし{browser}件）",
+    copySeries: "- {title}：視聴マーク操作{chapters}件、フォロー中{trackers}アカウント",
+  },
   postViewing: {
     quickScoreTitle: 'クイックスコア (1–10)',
     quickScoreHint:

@@ -12,6 +12,8 @@ const bundle = await build({
       import { LocaleProvider } from './src/lib/providers/LocaleProvider';
       import { PublicStatsClient } from './src/app/(app)/estadisticas/PublicStatsClient';
       import { FavoriteButton } from './src/components/series/FavoriteButton/FavoriteButton';
+      import { ProducerReport } from './src/components/content/ProducerReport/ProducerReport';
+      import { PilotReport } from './src/components/content/PilotReport/PilotReport';
       import { StatsClient } from './src/app/(app)/admin/stats/StatsClient';
       import './src/styles/variables.css';
       const data = {
@@ -25,7 +27,8 @@ const bundle = await build({
           episodesByDay:[{day:'2026-09-26',count:0},{day:'2026-09-27',count:2}],
           topWatchers:[{rank:1,count:12,name:'Perfil publico',profileId:'p1'},{rank:2,count:4,name:null,profileId:null}]}
       };
-      createRoot(document.getElementById('root')).render(<LocaleProvider>{location.pathname==='/favorite' ? <FavoriteButton/> : location.pathname==='/admin' ? <StatsClient/> : <PublicStatsClient initialData={data}/>}</LocaleProvider>);
+      const report = {generatedAt:'2026-10-31T12:00:00Z', days:30,from:'2026-10-02',to:'2026-10-31',accounts:2,activeAccounts:1,chaptersBySource:{account:1,browser:2},totals:{chapters:3,views:2,wants:0,finishes:0,playStarts:3},alerts:{offers:0,clicks:0,activated:0},series:[],channels:[],countries:[],outbound:[]};
+      createRoot(document.getElementById('root')).render(<LocaleProvider>{location.pathname==='/producer' ? <ProducerReport report={report}/> : location.pathname==='/pilot' ? <PilotReport generatedAt={report.generatedAt} rows={[]}/> : location.pathname==='/favorite' ? <FavoriteButton/> : location.pathname==='/admin' ? <StatsClient/> : <PublicStatsClient initialData={data}/>}</LocaleProvider>);
     `,
     resolveDir: process.cwd(),
     loader: 'tsx',
@@ -86,36 +89,41 @@ const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage({ locale: 'es-AR' });
 const errors = [];
 page.on('pageerror', (e) => errors.push(e.message));
+let failStats = false;
+let statsReads = 0;
 await page.route('**/api/admin/stats', (route) =>
-  route.fulfill({
-    json: {
-      summary: {
-        totalUsers: 1,
-        currentlyWatchingDistinct: 0,
-        completedThisWeek: 0,
-        commentsThisWeek: 0,
-        totalPublishedReviews: 3,
-        reviewsThisWeek: 1,
-      },
-      rankings: {
-        watching: [],
-        completed: [],
-        favorited: [],
-        commented: [],
-        rated: [],
-      },
-      activeUsers: [
-        {
-          id: 'synthetic',
-          name: 'Solo reseñas',
-          email: 'synthetic@example.invalid',
-          role: 'VISITOR',
-          image: null,
-          _count: { viewStatuses: 0 },
+  failStats
+    ? route.fulfill({ status: 500, json: { error: 'fixture' } })
+    : route.fulfill({
+        json: {
+          generatedAt: new Date().toISOString(),
+          summary: {
+            totalUsers: ++statsReads,
+            currentlyWatchingDistinct: 0,
+            completedThisWeek: 0,
+            commentsThisWeek: 0,
+            totalPublishedReviews: 3,
+            reviewsThisWeek: 1,
+          },
+          rankings: {
+            watching: [],
+            completed: [],
+            favorited: [],
+            commented: [],
+            rated: [],
+          },
+          activeUsers: [
+            {
+              id: 'synthetic',
+              name: 'Solo reseñas',
+              email: 'synthetic@example.invalid',
+              role: 'VISITOR',
+              image: null,
+              _count: { viewStatuses: 0 },
+            },
+          ],
         },
-      ],
-    },
-  })
+      })
 );
 try {
   await mkdir('test-results', { recursive: true });
@@ -183,6 +191,34 @@ try {
         path: `test-results/community-stats-${path.slice(1)}-${width}.png`,
         fullPage: true,
       });
+    }
+  }
+  failStats = true;
+  await page.getByRole('button', { name: 'Actualizar', exact: true }).click();
+  await page
+    .getByRole('alert')
+    .filter({ hasText: 'No se pudo cargar el informe' })
+    .waitFor();
+  failStats = false;
+  const readsBefore = statsReads;
+  await page.getByRole('button', { name: 'Actualizar', exact: true }).click();
+  await page.waitForFunction(() => !document.querySelector('.ant-alert'));
+  assert.equal(statsReads, readsBefore + 1);
+  for (const width of [1280, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const path of ['/producer', '/pilot']) {
+      await page.goto(`http://127.0.0.1:${server.address().port}${path}`);
+      await page.getByText('Consultado:', { exact: false }).waitFor();
+      await page
+        .getByRole('button', { name: 'Actualizar', exact: true })
+        .click();
+      await page.waitForFunction(() => window.favoriteRefreshes === 1);
+      assert.ok(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= innerWidth + 1
+        ),
+        `${path} overflow at ${width}`
+      );
     }
   }
   await page.route('**/api/series/1/favorite', (route) =>

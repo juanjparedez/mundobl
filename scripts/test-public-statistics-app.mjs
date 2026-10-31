@@ -10,6 +10,10 @@ assert.equal(process.env.AUTH_SECRET, 'community-full-app-test-only');
 const key = `public-stats-app-${Date.now()}`;
 const users = [key, `${key}-other`, `${key}-admin`];
 let series;
+const pilotDay = new Date(new Date().toISOString().slice(0, 10));
+const pilotBefore = await prisma.pilotClickDaily.findUnique({
+  where: { day_placement: { day: pilotDay, placement: 'platforms' } },
+});
 try {
   // Warm authentication first: the shared Prisma client can originate in a
   // different webpack bundle. Native SQL tests alone cannot catch this case.
@@ -129,6 +133,65 @@ try {
       roleCheckedAt: 0,
     },
   });
+  const adminHeaders = { cookie: `authjs.session-token=${adminJwt}` };
+  const adminStats = await fetch(base + '/api/admin/stats', {
+    headers: adminHeaders,
+  });
+  assert.equal(adminStats.status, 200);
+  assert.match(adminStats.headers.get('cache-control'), /private, no-store/);
+  const administrative = await adminStats.json();
+  assert.equal(
+    administrative.rankings.favorited.find((row) => row.seriesId === series.id)
+      ?.count,
+    1
+  );
+  assert.equal(administrative.distribution.completedByDay.length, 30);
+  const forbiddenStats = await fetch(base + '/api/admin/stats', {
+    headers: { cookie: `authjs.session-token=${jwt}` },
+  });
+  assert.equal(forbiddenStats.status, 403);
+  for (const path of [
+    '/admin/stats',
+    '/admin/informe-productoras?dias=30',
+    '/admin/informe-productoras?dias=90',
+    '/admin/piloto',
+  ]) {
+    const response = await fetch(base + path, { headers: adminHeaders });
+    assert.equal(response.status, 200, path);
+    if (path !== '/admin/stats')
+      assert.match(await response.text(), /Consultado:/, path);
+  }
+  const pilotClick = (token) =>
+    fetch(base + '/api/pilot-clicks', {
+      method: 'POST',
+      headers: {
+        cookie: `authjs.session-token=${token}`,
+        origin: base,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ placement: 'platforms' }),
+    });
+  const pilotCount = async () =>
+    (
+      await prisma.pilotClickDaily.findUnique({
+        where: { day_placement: { day: pilotDay, placement: 'platforms' } },
+      })
+    )?.clicks ?? 0;
+  assert.equal((await pilotClick(adminJwt)).status, 204);
+  assert.equal(
+    await pilotCount(),
+    pilotBefore?.clicks ?? 0,
+    'Staff pilot clicks must not inflate the report'
+  );
+  assert.equal((await pilotClick(jwt)).status, 204);
+  assert.equal(
+    await pilotCount(),
+    (pilotBefore?.clicks ?? 0) + 1,
+    'Community click must reach the live aggregate'
+  );
+  console.log(
+    'PASS: compiled admin statistics, producer report 30/90 days, pilot report, private cache and real pilot click exclusion/increment'
+  );
   const remove = (path, token = adminJwt) =>
     fetch(base + path, {
       method: 'DELETE',
@@ -185,6 +248,15 @@ try {
     'PASS: compiled public statistics API and page, bundled SQL, playback reconciliation, community favorites and actual ISR invalidation'
   );
 } finally {
+  if (pilotBefore)
+    await prisma.pilotClickDaily.update({
+      where: { day_placement: { day: pilotDay, placement: 'platforms' } },
+      data: { clicks: pilotBefore.clicks },
+    });
+  else
+    await prisma.pilotClickDaily.deleteMany({
+      where: { day: pilotDay, placement: 'platforms' },
+    });
   if (series) await prisma.series.delete({ where: { id: series.id } });
   await prisma.user.deleteMany({ where: { id: { in: users } } });
   await prisma.$disconnect();

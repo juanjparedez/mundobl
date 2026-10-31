@@ -4,6 +4,7 @@
 import { Prisma } from '../generated/prisma';
 import {
   COMMUNITY,
+  COMMUNITY_COMMENTS,
   COMMUNITY_MEMBER,
   PUBLIC_STATS_SERIES,
   PUBLIC_CATALOG_SERIES,
@@ -193,18 +194,6 @@ export interface PublicStats {
  * Los comentarios de una cuenta borrada quedan con userId null
  * (anonimizados): son de la comunidad y se cuentan.
  */
-const COMMUNITY_COMMENTS = {
-  OR: [{ userId: null }, COMMUNITY],
-  AND: [
-    {
-      OR: [
-        { series: PUBLIC_STATS_SERIES },
-        { season: { series: PUBLIC_STATS_SERIES } },
-        { episode: { season: { series: PUBLIC_STATS_SERIES } } },
-      ],
-    },
-  ],
-};
 
 const SHORT_WINDOW_DAYS = 7;
 const LONG_WINDOW_DAYS = 30;

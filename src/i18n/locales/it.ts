@@ -10,6 +10,16 @@
 import type { TranslationShape } from '../messages';
 
 const it = {
+  reportStatus: {
+    error: "Impossibile caricare il rapporto. Riprova.",
+    generated: "Consultato:",
+    adminScope: "Attività della comunità su opere pubbliche; esclusi staff e account bloccati. Date di visione UTC; se assenti, data di registrazione.",
+    producerScope: "Eventi per giorno UTC, non persone uniche. Le marcature possono essere parti o lotti. Completamenti: video all’80% o terminati. Follower: stato attuale. Tabelle: fino a 30 serie/canali e 20 paesi/piattaforme; ogni opera è attribuita al canale con più video.",
+    pilotScope: "Clic registrati negli ultimi 60 giorni UTC, non visite o conversioni. Esclusi staff e account bloccati. Il browser limita i clic ripetuti per 30 secondi.",
+    markings: "Azioni di marcatura",
+    copyMarkings: "{chapters} azioni di marcatura ({browser} senza account)",
+    copySeries: "- {title}: {chapters} azioni di marcatura, {trackers} account seguono",
+  },
   postViewing: {
     quickScoreTitle: 'Voto rapido (1–10)',
     quickScoreHint:

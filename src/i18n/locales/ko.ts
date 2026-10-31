@@ -10,6 +10,16 @@
 import type { TranslationShape } from '../messages';
 
 const ko = {
+  reportStatus: {
+    error: "보고서를 불러오지 못했습니다. 다시 시도하세요.",
+    generated: "조회 시각:",
+    adminScope: "공개 작품의 커뮤니티 활동입니다. 운영팀과 차단 계정은 제외합니다. 시청일은 UTC이며 없으면 기록일을 사용합니다.",
+    producerScope: "UTC 일별 이벤트이며 고유 인원수가 아닙니다. 표시 작업은 분할 영상이나 일괄 작업일 수 있습니다. 완료는 영상 80% 도달 또는 종료입니다. 팔로워는 현재 상태입니다. 최대 30개 작품/채널과 20개 국가/플랫폼을 표시하며 작품은 영상이 가장 많은 채널에 집계합니다.",
+    pilotScope: "최근 UTC 60일의 기록된 클릭이며 방문이나 전환이 아닙니다. 운영팀과 차단 계정은 제외됩니다. 브라우저는 30초 동안 반복 클릭을 제한합니다.",
+    markings: "시청 표시 작업",
+    copyMarkings: "시청 표시 작업 {chapters}회(비로그인 {browser}회)",
+    copySeries: "- {title}: 시청 표시 {chapters}회, 팔로우 계정 {trackers}개",
+  },
   postViewing: {
     quickScoreTitle: '빠른 평점 (1–10)',
     quickScoreHint:

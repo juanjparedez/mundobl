@@ -10,6 +10,16 @@
 import type { TranslationShape } from '../messages';
 
 const fr = {
+  reportStatus: {
+    error: "Impossible de charger le rapport. Réessayez.",
+    generated: "Consulté :",
+    adminScope: "Activité de la communauté sur les œuvres publiques ; équipe et comptes bloqués exclus. Dates de visionnage UTC ; à défaut, date d’enregistrement.",
+    producerScope: "Événements par jour UTC, pas des personnes uniques. Les marquages peuvent être des parties ou des lots. Finalisations : vidéos à 80% ou terminées. Abonnés : état actuel. Tableaux : jusqu’à 30 séries/chaînes et 20 pays/plateformes ; chaque œuvre est attribuée à la chaîne ayant le plus de vidéos.",
+    pilotScope: "Clics enregistrés sur les 60 derniers jours UTC, pas des visites ni des conversions. Équipe et comptes bloqués exclus. Le navigateur limite les clics répétés pendant 30 secondes.",
+    markings: "Actions de marquage",
+    copyMarkings: "{chapters} actions de marquage ({browser} sans compte)",
+    copySeries: "- {title} : {chapters} actions de marquage, {trackers} comptes suivent",
+  },
   postViewing: {
     quickScoreTitle: 'Note rapide (1–10)',
     quickScoreHint:

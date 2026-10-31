@@ -1168,3 +1168,7 @@ npm run type-check   # Verificar tipos TypeScript
 - .github/workflows/migrations.yml reconstruye una base vacía en cada PR que toca Prisma y ejecuta npm run db:check. Así detecta campos agregados al schema sin su migración. db:check por sí solo compara base y schema; la reconstrucción es lo que valida el historial.
 - No editar migraciones ya aplicadas ni sus checksums. Para hotfixes existentes: comparar el esquema real, crear y probar una migración que los reproduzca, y marcarla aplicada únicamente en las bases donde ya existen todos sus efectos.
 - scripts/audit-migration-history.mjs consulta el historial sin modificarlo; ignora intentos revertidos y admite diferencias de finales de línea al verificar checksums.
+
+## Reportes administrativos y auditoría solicitada (2026-10-31)
+
+El usuario amplió el lote a `/admin/stats`, `/admin/informe-productoras` y `/admin/piloto`, y pidió revisión/actualización de dependencias antes del deploy ya autorizado. Admin comparte `statistics-scope.ts`, devuelve `private, no-store`, cuenta votos por persona y series sin sumar episodios; usa fechas vistas. Productoras delimita días UTC, comparte población del reproductor público y etiqueta eventos sin prometer capítulos/personas. Piloto consulta 60 días UTC y explica exclusión de equipo y deduplicación de 30 segundos. `ReportStatus` ofrece fecha de consulta y actualización manual en los tres. Las pruebas de consistencia, app compilada y UI cubren los reportes. Ver `docs/auditoria-estadisticas-2026-10-31.md`.

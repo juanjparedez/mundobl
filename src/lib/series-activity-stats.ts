@@ -1,4 +1,4 @@
-import { PUBLIC_STATS_SERIES } from './statistics-scope';
+import { PUBLIC_STATS_SERIES, PUBLIC_WATCH_SERIES } from './statistics-scope';
 import { HAS_WATCHABLE_EPISODE } from './watchable';
 import { prisma } from '@/lib/database';
 import {
@@ -100,7 +100,7 @@ export async function getPublicWatchStats(
   const from = daysAgo(windowDays - 1, now);
   const where = {
     day: { gte: from, lte: utcDay(now) },
-    series: { visibility: 'VISIBLE' as const, ...HAS_WATCHABLE_EPISODE },
+    series: PUBLIC_WATCH_SERIES,
   };
 
   const [kindRows, dailyRows, topSeriesRows] = await Promise.all([

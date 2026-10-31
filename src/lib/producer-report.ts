@@ -1,3 +1,14 @@
+import { MIN_EPISODE_SECONDS } from '@/lib/playability';
+import { Prisma } from '@/generated/prisma';
+import {
+  COMMUNITY_MEMBER,
+  COMMUNITY_SQL,
+  PUBLIC_STATS_SERIES,
+  PUBLIC_WATCH_SERIES,
+  PUBLIC_SERIES_SQL,
+  WATCHABLE_SERIES_SQL,
+  WATCH_ACTIVITY_KINDS,
+} from '@/lib/statistics-scope';
 import { prisma } from '@/lib/database';
 import { utcDay } from '@/lib/series-activity';
 import type {
@@ -10,7 +21,7 @@ import type {
  * Informe para productoras y plataformas: cuanta gente ve que, con numeros
  * agregados y anonimos (SeriesActivityDaily, UserActiveDay,
  * WatchLinkClickDaily). Nada de aca identifica a nadie; el equipo
- * (ADMIN/MODERATOR) no suma en los contadores de actividad.
+ * (ADMIN/MODERATOR/COLLABORATOR) no suma en los contadores de actividad.
  */
 const DAY_MS = 24 * 60 * 60 * 1000;
 const TOP_SERIES = 30;
@@ -53,6 +64,17 @@ export async function getProducerReport(
 ): Promise<ProducerReport> {
   const to = utcDay(now);
   const from = new Date(to.getTime() - (days - 1) * DAY_MS);
+  const day = { gte: from, lte: to };
+  const activityWhere = {
+    day,
+    OR: [
+      { kind: { in: WATCH_ACTIVITY_KINDS }, series: PUBLIC_WATCH_SERIES },
+      { kind: { notIn: WATCH_ACTIVITY_KINDS }, series: PUBLIC_STATS_SERIES },
+    ],
+  };
+  const activitySql = Prisma.sql`a.day >= ${from} AND a.day <= ${to}
+    AND ${PUBLIC_SERIES_SQL}
+    AND (a.kind NOT IN (${Prisma.join(WATCH_ACTIVITY_KINDS)}) OR ${WATCHABLE_SERIES_SQL})`;
 
   const [
     accounts,
@@ -66,27 +88,27 @@ export async function getProducerReport(
     trafficRows,
   ] = await Promise.all([
     prisma.user.count({
-      where: { banned: false, role: { notIn: ['ADMIN', 'MODERATOR'] } },
+      where: COMMUNITY_MEMBER,
     }),
     prisma.userActiveDay.groupBy({
       by: ['userId'],
       where: {
-        day: { gte: from },
-        user: { banned: false, role: { notIn: ['ADMIN', 'MODERATOR'] } },
+        day,
+        user: COMMUNITY_MEMBER,
       },
     }),
     prisma.seriesActivityDaily.groupBy({
       by: ['source'],
-      where: { kind: 'chapter', day: { gte: from } },
+      where: { ...activityWhere, kind: 'chapter' },
       _sum: { count: true },
     }),
     prisma.seriesActivityDaily.groupBy({
       by: ['kind'],
-      where: { day: { gte: from } },
+      where: activityWhere,
       _sum: { count: true },
     }),
     // El canal de una serie es el que mas episodios embebidos le aporta.
-    prisma.$queryRaw<SeriesRow[]>`
+    prisma.$queryRaw<SeriesRow[]>(Prisma.sql`
       WITH activity AS (
         SELECT a."seriesId",
                SUM(a.count) FILTER (WHERE a.kind = 'view') AS views,
@@ -94,14 +116,16 @@ export async function getProducerReport(
                SUM(a.count) FILTER (WHERE a.kind = 'want') AS wants,
                SUM(a.count) FILTER (WHERE a.kind = 'finish') AS finishes
         FROM "SeriesActivityDaily" a
-        WHERE a.day >= ${from}
+        JOIN "Series" s ON s.id = a."seriesId"
+        WHERE ${activitySql} AND a.kind IN ('view', 'chapter', 'want', 'finish')
         GROUP BY a."seriesId"
       ),
       channel AS (
         SELECT DISTINCT ON (se."seriesId") se."seriesId", e."embedChannelName" AS channel
         FROM "Episode" e
         JOIN "Season" se ON se.id = e."seasonId"
-        WHERE e."embedChannelName" IS NOT NULL
+        WHERE e."embedChannelName" IS NOT NULL AND e."embedUrl" IS NOT NULL
+          AND (e."durationSeconds" IS NULL OR e."durationSeconds" >= ${MIN_EPISODE_SECONDS})
         GROUP BY se."seriesId", e."embedChannelName"
         ORDER BY se."seriesId", COUNT(*) DESC, e."embedChannelName"
       ),
@@ -111,8 +135,7 @@ export async function getProducerReport(
         JOIN "User" u ON u.id = vs."userId"
         WHERE vs."seriesId" IS NOT NULL
           AND vs.status <> 'SIN_VER'
-          AND u.role NOT IN ('ADMIN', 'MODERATOR')
-          AND u.banned = false
+          AND ${COMMUNITY_SQL}
         GROUP BY vs."seriesId"
       )
       SELECT s.id AS "seriesId", s.title, c.channel,
@@ -127,13 +150,14 @@ export async function getProducerReport(
       LEFT JOIN trackers t ON t."seriesId" = s.id
       ORDER BY COALESCE(a.chapters, 0) + COALESCE(a.views, 0) DESC, s.id
       LIMIT ${TOP_SERIES}
-    `,
-    prisma.$queryRaw<ChannelRow[]>`
+    `),
+    prisma.$queryRaw<ChannelRow[]>(Prisma.sql`
       WITH channel AS (
         SELECT DISTINCT ON (se."seriesId") se."seriesId", e."embedChannelName" AS channel
         FROM "Episode" e
         JOIN "Season" se ON se.id = e."seasonId"
-        WHERE e."embedChannelName" IS NOT NULL
+        WHERE e."embedChannelName" IS NOT NULL AND e."embedUrl" IS NOT NULL
+          AND (e."durationSeconds" IS NULL OR e."durationSeconds" >= ${MIN_EPISODE_SECONDS})
         GROUP BY se."seriesId", e."embedChannelName"
         ORDER BY se."seriesId", COUNT(*) DESC, e."embedChannelName"
       )
@@ -144,31 +168,33 @@ export async function getProducerReport(
              COALESCE(SUM(a.count) FILTER (WHERE a.kind = 'want'), 0) AS wants,
              COALESCE(SUM(a.count) FILTER (WHERE a.kind = 'finish'), 0) AS finishes
       FROM "SeriesActivityDaily" a
+        JOIN "Series" s ON s.id = a."seriesId"
       JOIN channel c ON c."seriesId" = a."seriesId"
-      WHERE a.day >= ${from}
+      WHERE ${activitySql} AND a.kind IN ('view', 'chapter', 'want', 'finish')
       GROUP BY c.channel
       ORDER BY chapters DESC, views DESC, c.channel
       LIMIT 30
-    `,
+    `),
     prisma.seriesActivityDaily.groupBy({
       by: ['country'],
-      where: { kind: 'chapter', day: { gte: from } },
+      where: { ...activityWhere, kind: 'chapter' },
       _sum: { count: true },
       orderBy: { _sum: { count: 'desc' } },
       take: 20,
     }),
-    prisma.$queryRaw<Array<{ platform: string; clicks: bigint }>>`
+    prisma.$queryRaw<Array<{ platform: string; clicks: bigint }>>(Prisma.sql`
       SELECT w.platform, SUM(c.clicks) AS clicks
       FROM "WatchLinkClickDaily" c
       JOIN "WatchLink" w ON w.id = c."watchLinkId"
-      WHERE c.day >= ${from}
+      JOIN "Series" s ON s.id = w."seriesId"
+      WHERE c.day >= ${from} AND c.day <= ${to} AND ${PUBLIC_SERIES_SQL}
       GROUP BY w.platform
       ORDER BY clicks DESC
       LIMIT 20
-    `,
+    `),
     prisma.siteTrafficDaily.groupBy({
       by: ['section'],
-      where: { day: { gte: from } },
+      where: { day },
       _sum: { count: true },
       orderBy: { _sum: { count: 'desc' } },
     }),
@@ -182,6 +208,7 @@ export async function getProducerReport(
     sum(sourceRows.filter((row) => row.source === name));
 
   return {
+    generatedAt: now.toISOString(),
     days,
     from: from.toISOString().slice(0, 10),
     to: to.toISOString().slice(0, 10),

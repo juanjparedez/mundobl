@@ -1,3 +1,6 @@
+import { getAdminStatistics } from '../src/lib/admin-statistics';
+import { getProducerReport } from '../src/lib/producer-report';
+import { getPilotReport } from '../src/lib/pilot-report';
 import assert from 'node:assert/strict';
 import { prisma, getPublicFavoriteCount } from '../src/lib/database';
 import { getPublicStats } from '../src/lib/public-stats';
@@ -16,6 +19,9 @@ async function main() {
   const actorIds: number[] = [];
   const users = ['one', 'two', 'admin', 'moderator', 'collaborator', 'banned'];
   const before = await getPublicStats();
+  const adminBefore = await getAdminStatistics(now);
+  const producerBefore = await getProducerReport(30, now);
+  const producer90Before = await getProducerReport(90, now);
   const watchBefore = await getPublicWatchStats(30, now);
   try {
     for (const name of users) {
@@ -207,6 +213,84 @@ async function main() {
         },
       });
     }
+    const admin = await getAdminStatistics(now);
+    assert.equal(admin.summary.totalUsers - adminBefore.summary.totalUsers, 2);
+    assert.equal(
+      admin.summary.completedThisWeek - adminBefore.summary.completedThisWeek,
+      4
+    );
+    assert.equal(
+      admin.rankings.favorited.find((row) => row.seriesId === ids[0])?.count,
+      2
+    );
+    assert.equal(
+      admin.rankings.rated.find((row) => row.seriesId === ids[0])?.count,
+      2
+    );
+    assert.equal(
+      admin.rankings.rated.find((row) => row.seriesId === ids[0])?.avgScore,
+      6
+    );
+    assert.equal(
+      admin.activeUsers.find((row) => row.id === `${key}-one`)?._count
+        .viewStatuses,
+      2
+    );
+    assert.equal(
+      admin.activeUsers.filter((row) => row.id.startsWith(key)).length,
+      2
+    );
+    assert.equal(admin.distribution.completedByDay.length, 30);
+    assert.equal(
+      admin.distribution.completedByDay.reduce((n, row) => n + row.count, 0) -
+        adminBefore.distribution.completedByDay.reduce(
+          (n, row) => n + row.count,
+          0
+        ),
+      4
+    );
+    const producer = await getProducerReport(30, now);
+    assert.equal(producer.accounts - producerBefore.accounts, 2);
+    assert.equal(
+      producer.totals.playStarts! - producerBefore.totals.playStarts!,
+      3
+    );
+    assert.equal(producer.totals.views - producerBefore.totals.views, 3);
+    assert.equal(producer.totals.chapters - producerBefore.totals.chapters, 79);
+    assert.equal(
+      producer.chaptersBySource.browser -
+        producerBefore.chaptersBySource.browser,
+      79
+    );
+    assert.equal(
+      producer.series.find((row) => row.seriesId === ids[0])?.trackers,
+      2
+    );
+    assert.ok(
+      !producer.series.some((row) => [ids[2], ids[3]].includes(row.seriesId))
+    );
+    assert.equal(
+      (await getProducerReport(90, now)).totals.playStarts! -
+        producer90Before.totals.playStarts!,
+      1002
+    );
+    // Editing an old completion must change the current read without inflating recent totals.
+    await prisma.viewStatus.updateMany({
+      where: { userId: `${key}-one`, seriesId: ids[0] },
+      data: { watchedDate: new Date('2020-01-01') },
+    });
+    assert.equal(
+      (await getAdminStatistics(now)).summary.completedThisWeek,
+      admin.summary.completedThisWeek - 1
+    );
+    await prisma.viewStatus.updateMany({
+      where: { userId: `${key}-one`, seriesId: ids[0] },
+      data: { watchedDate: now },
+    });
+    const pilot = await getPilotReport(now);
+    assert.ok(
+      pilot.rows.every((row) => row.day <= today.toISOString().slice(0, 10))
+    );
     const stats = await getPublicStats();
     assert.equal(stats.summary.totalSeries - before.summary.totalSeries, 1);
     assert.equal(
@@ -315,7 +399,7 @@ async function main() {
       'Never hide incompatible events by clamping to 100%'
     );
     console.log(
-      'PASS: public totals, favorites, staff/visibility scope, votes, chapter parts, ranking and streaming use consistent sources'
+      'PASS: admin reports, 30/90-day producer windows, live reads, public totals, favorites, staff/visibility scope, votes, chapter parts, ranking and streaming use consistent sources'
     );
   } finally {
     await prisma.series.deleteMany({ where: { id: { in: ids } } });

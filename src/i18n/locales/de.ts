@@ -10,6 +10,16 @@
 import type { TranslationShape } from '../messages';
 
 const de = {
+  reportStatus: {
+    error: "Der Bericht konnte nicht geladen werden. Bitte erneut versuchen.",
+    generated: "Abgerufen:",
+    adminScope: "Community-Aktivität bei öffentlichen Werken; Team und gesperrte Konten ausgeschlossen. Sehdaten in UTC; falls unbekannt, Erfassungsdatum.",
+    producerScope: "Ereignisse pro UTC-Tag, keine eindeutigen Personen. Markierungen können Teile oder Stapel sein. Abschlüsse: Videos bei 80% oder am Ende. Follower: aktueller Stand. Tabellen: bis zu 30 Serien/Kanäle und 20 Länder/Plattformen; jedes Werk zählt zum Kanal mit den meisten Videos.",
+    pilotScope: "Erfasste Klicks der letzten 60 UTC-Tage, keine Besuche oder Conversions. Team und gesperrte Konten ausgeschlossen. Der Browser begrenzt wiederholte Klicks für 30 Sekunden.",
+    markings: "Markierungsaktionen",
+    copyMarkings: "{chapters} Markierungsaktionen ({browser} ohne Konto)",
+    copySeries: "- {title}: {chapters} Markierungsaktionen, {trackers} folgende Konten",
+  },
   postViewing: {
     quickScoreTitle: 'Schnellbewertung (1–10)',
     quickScoreHint:

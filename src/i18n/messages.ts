@@ -1,6 +1,16 @@
 import type { SupportedLocale } from './config';
 
 export type TranslationShape = {
+  reportStatus: {
+    error: string;
+    generated: string;
+    adminScope: string;
+    producerScope: string;
+    pilotScope: string;
+    markings: string;
+    copyMarkings: string;
+    copySeries: string;
+  };
   postViewing: {
     quickScoreTitle: string;
     quickScoreHint: string;
@@ -4200,6 +4210,20 @@ export type TranslationShape = {
 };
 
 const es: TranslationShape = {
+  reportStatus: {
+    error: 'No se pudo cargar el informe. Reintentá la consulta.',
+    generated: 'Consultado:',
+    adminScope:
+      'Actividad de la comunidad y obras públicas; equipo y cuentas bloqueadas excluidos. Fechas de visualización en UTC; sin fecha, se usa la de registro.',
+    producerScope:
+      'Eventos en días UTC, no personas únicas. Las marcaciones pueden ser partes o lotes. Las finalizaciones son videos al 80% o al terminar. Seguidores: estado actual. Tablas: hasta 30 series/canales y 20 países/plataformas; cada obra se atribuye al canal con más videos.',
+    pilotScope:
+      'Clics registrados de los últimos 60 días UTC, no visitas ni conversiones. El equipo y las cuentas bloqueadas no suman. El navegador limita clics repetidos durante 30 segundos.',
+    markings: 'Acciones de marcado',
+    copyMarkings: '{chapters} acciones de marcado ({browser} sin cuenta)',
+    copySeries:
+      '- {title}: {chapters} acciones de marcado, {trackers} cuentas la siguen',
+  },
   postViewing: {
     quickScoreTitle: 'Puntaje rápido (1–10)',
     quickScoreHint:
@@ -8741,6 +8765,21 @@ const es: TranslationShape = {
 };
 
 const en: TranslationShape = {
+  reportStatus: {
+    error: 'The report could not be loaded. Retry the request.',
+    generated: 'Fetched:',
+    adminScope:
+      'Community activity on public works; staff and banned accounts excluded. Watch dates use UTC; recording date is used if missing.',
+    producerScope:
+      'Events by UTC day, not unique people. Marks may represent parts or batches. Completions are videos reaching 80% or ending. Followers: current status. Tables: up to 30 series/channels and 20 countries/platforms; each work is attributed to its largest video channel.',
+    pilotScope:
+      'Recorded clicks over the last 60 UTC days, not visits or conversions. Staff and banned accounts are excluded. The browser limits repeated clicks for 30 seconds.',
+    markings: 'Watch-mark actions',
+    copyMarkings:
+      '{chapters} watch-mark actions ({browser} without an account)',
+    copySeries:
+      '- {title}: {chapters} watch-mark actions, {trackers} following accounts',
+  },
   postViewing: {
     quickScoreTitle: 'Quick score (1–10)',
     quickScoreHint: 'Pick an overall score or rate category by category below.',

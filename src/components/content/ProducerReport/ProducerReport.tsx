@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Button, Segmented, Table } from 'antd';
 import { CopyOutlined } from '@ant-design/icons';
+import { ReportStatus } from '@/components/content/ReportStatus/ReportStatus';
 import { PanelCard, StatCard } from '@/components/design-system';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { useMessage } from '@/hooks/useMessage';
@@ -33,7 +34,7 @@ export function ProducerReport({ report }: { report: Report }) {
       accounts: number(report.accounts),
       active: number(report.activeAccounts),
     }),
-    t('producerReport.copyChapters', {
+    t('reportStatus.copyMarkings', {
       chapters: number(report.totals.chapters),
       browser: number(report.chaptersBySource.browser),
     }),
@@ -41,17 +42,18 @@ export function ProducerReport({ report }: { report: Report }) {
     (report.totals.playStarts ?? 0) > 0 ||
     (report.totals.outboundClicks ?? 0) > 0
       ? [
-          t('producerReport.copyVerFunnel', {
-            openVer: number(report.totals.openVer ?? 0),
-            playStarts: number(report.totals.playStarts ?? 0),
-            views: number(report.totals.views),
-            likes: number(report.totals.likes ?? 0),
-            outboundClicks: number(report.totals.outboundClicks ?? 0),
-          }),
+          [
+            `${t('producerReport.openVer')}: ${number(report.totals.openVer ?? 0)}`,
+            `${t('producerReport.playStarts')}: ${number(report.totals.playStarts ?? 0)}`,
+            `${t('publicWatchStats.completedPlays')}: ${number(report.totals.views)}`,
+            `${t('producerReport.likes')}: ${number(report.totals.likes ?? 0)}`,
+            `${t('producerReport.outboundClicks')}: ${number(report.totals.outboundClicks ?? 0)}`,
+          ].join(' · '),
         ]
       : []),
+    t('reportStatus.producerScope'),
     ...report.series.slice(0, 10).map((row) =>
-      t('producerReport.copySeries', {
+      t('reportStatus.copySeries', {
         title: row.title,
         chapters: number(row.chapters),
         trackers: number(row.trackers),
@@ -70,11 +72,15 @@ export function ProducerReport({ report }: { report: Report }) {
 
   const activityColumns = [
     {
-      title: t('producerReport.chapters'),
+      title: t('reportStatus.markings'),
       dataIndex: 'chapters',
       render: number,
     },
-    { title: t('producerReport.views'), dataIndex: 'views', render: number },
+    {
+      title: t('publicWatchStats.completedPlays'),
+      dataIndex: 'views',
+      render: number,
+    },
     { title: t('producerReport.wants'), dataIndex: 'wants', render: number },
     {
       title: t('producerReport.finishes'),
@@ -108,6 +114,12 @@ export function ProducerReport({ report }: { report: Report }) {
             </Button>
           </div>
         </div>
+        <ReportStatus
+          generatedAt={report.generatedAt}
+          generatedLabel={t('reportStatus.generated')}
+          refreshLabel={t('trackingHistory.refresh')}
+          scope={t('reportStatus.producerScope')}
+        />
         <div className="producer-report__stats">
           <StatCard
             label={t('producerReport.accounts')}
@@ -118,7 +130,7 @@ export function ProducerReport({ report }: { report: Report }) {
             value={number(report.activeAccounts)}
           />
           <StatCard
-            label={t('producerReport.chapters')}
+            label={t('reportStatus.markings')}
             value={number(report.totals.chapters)}
             hint={t('producerReport.chaptersHint', {
               account: number(report.chaptersBySource.account),
@@ -145,7 +157,7 @@ export function ProducerReport({ report }: { report: Report }) {
             value={number(report.totals.playStarts ?? 0)}
           />
           <StatCard
-            label={t('producerReport.views')}
+            label={t('publicWatchStats.completedPlays')}
             value={number(report.totals.views)}
           />
           <StatCard
@@ -246,7 +258,7 @@ export function ProducerReport({ report }: { report: Report }) {
                   country || t('producerReport.unknownCountry'),
               },
               {
-                title: t('producerReport.chapters'),
+                title: t('reportStatus.markings'),
                 dataIndex: 'chapters',
                 render: number,
               },

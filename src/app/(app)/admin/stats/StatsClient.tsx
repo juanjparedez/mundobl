@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Spin, Tag, Avatar, Tooltip, Button, Space } from 'antd';
+import { useCallback, useEffect, useState } from 'react';
+import { Alert, Spin, Tag, Avatar, Tooltip, Button, Space } from 'antd';
 import {
   UserOutlined,
   PlayCircleOutlined,
@@ -22,6 +22,7 @@ import { interpolateMessage } from '@/lib/i18n-format';
 import { DonutChart, LineChart } from '@/components/charts';
 import '../admin.css';
 import './stats.css';
+import { ReportStatus } from '@/components/content/ReportStatus/ReportStatus';
 import { DataTable } from '@/components/design-system';
 
 interface SeriesRankItem {
@@ -49,6 +50,7 @@ interface ActiveUser {
 }
 
 interface StatsData {
+  generatedAt?: string;
   summary: {
     totalPublishedReviews: number;
     reviewsThisWeek: number;
@@ -206,13 +208,30 @@ export function StatsClient() {
   const [loading, setLoading] = useState(true);
   const { t } = useLocale();
 
-  useEffect(() => {
-    fetch('/api/admin/stats')
-      .then((r) => r.json())
-      .then(setData)
-      .catch(console.error)
-      .finally(() => setLoading(false));
+  const [error, setError] = useState(false);
+  const load = useCallback(async () => {
+    setLoading(true);
+    setError(false);
+    try {
+      const response = await fetch('/api/admin/stats', { cache: 'no-store' });
+      if (!response.ok) throw new Error(`Stats: ${response.status}`);
+      const result: StatsData = await response.json();
+      if (
+        !result.summary ||
+        !result.rankings ||
+        !Array.isArray(result.activeUsers)
+      )
+        throw new Error('Invalid statistics');
+      setData(result);
+    } catch {
+      setError(true);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+  useEffect(() => {
+    void load();
+  }, [load]);
 
   const userColumns = [
     {
@@ -277,6 +296,17 @@ export function StatsClient() {
       <div className="admin-page-wrapper">
         <AdminNav />
         <div className="stats-page">
+          <ReportStatus
+            generatedAt={data?.generatedAt}
+            generatedLabel={t('reportStatus.generated')}
+            refreshLabel={t('trackingHistory.refresh')}
+            scope={t('reportStatus.adminScope')}
+            loading={loading}
+            onRefresh={() => void load()}
+          />
+          {error && (
+            <Alert type="error" title={t('reportStatus.error')} showIcon />
+          )}
           {loading ? (
             <div className="stats-loading">
               <Spin size="large" />
