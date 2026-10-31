@@ -51,3 +51,7 @@ El propietario identificó `/admin/stats`, `/admin/informe-productoras` y `/admi
 - Piloto: lectura dinámica de los últimos 60 días UTC, sin fechas futuras ni ubicaciones desconocidas. Los clics del equipo y de cuentas bloqueadas ya se excluían al registrar; no son datos de ejemplo. La interfaz aclara el alcance y la limitación de clics repetidos de 30 segundos.
 - Los tres reportes muestran fecha de consulta y actualización manual. Las dos páginas de servidor ya eran dinámicas; la falta de movimiento no demuestra por sí sola un caché o datos estáticos.
 - Regresiones ampliadas: conciliación admin/público, ventanas productoras 30/90 días, modificaciones visibles en lecturas nuevas, rutas compiladas autenticadas, exclusión/incremento real del piloto y UI 390/1280 con fallo/reintento.
+
+### Origen de las solicitudes de medición
+
+La regresión HTTP compilada encontró 403 en el piloto al acceder por 127.0.0.1: NextURL normaliza ese host a localhost. Las rutas de comunidad ya contemplaban esa diferencia. `request-origin.ts` centraliza el criterio (Host real y protocolo; sin confiar en x-forwarded-host) para actividad, tráfico, clics, consentimiento y mutaciones administrativas que repetían la comparación defectuosa. Las rutas que exigían Origin siguen exigiéndolo; comunidad conserva su política anterior para solicitudes sin Origin. Se rechazan origen externo, protocolo diferente, origen inválido y Sec-Fetch-Site cross-site. Este fallo se reprodujo localmente; no se presenta como causa demostrada de todos los valores bajos de producción.

@@ -1,3 +1,4 @@
+import { isSameOriginRequest } from '@/lib/request-origin';
 import { NextRequest, NextResponse } from 'next/server';
 import {
   CONTENT_COOKIE,
@@ -6,7 +7,7 @@ import {
 } from '@/lib/content-consent';
 
 export async function POST(request: NextRequest) {
-  if (request.headers.get('origin') !== request.nextUrl.origin)
+  if (!isSameOriginRequest(request))
     return new NextResponse(null, { status: 403 });
   const body: unknown = await request.json().catch(() => null);
   if (

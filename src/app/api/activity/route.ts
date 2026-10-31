@@ -1,3 +1,4 @@
+import { isSameOriginRequest } from '@/lib/request-origin';
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/database';
@@ -30,7 +31,7 @@ function overLimit(ip: string, now: number): boolean {
 /** Suma uno a la actividad anonima de una serie (ver series-activity.ts). */
 export async function POST(request: NextRequest) {
   // Sin GET: crawlers y prefetch nunca cuentan.
-  if (request.headers.get('origin') !== request.nextUrl.origin)
+  if (!isSameOriginRequest(request))
     return new NextResponse(null, { status: 403 });
   // Global Privacy Control: no se cuenta aunque el cliente lo haya mandado.
   if (request.headers.get('sec-gpc') === '1')

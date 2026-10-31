@@ -1,3 +1,4 @@
+import { isSameOriginRequest } from '@/lib/request-origin';
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { requireRole } from '@/lib/auth-helpers';
@@ -11,7 +12,7 @@ export async function PATCH(
 ) {
   const auth = await requireRole(['ADMIN']);
   if (!auth.authorized) return auth.response;
-  if (request.headers.get('origin') !== request.nextUrl.origin)
+  if (!isSameOriginRequest(request))
     return new NextResponse(null, { status: 403 });
   const id = Number((await context.params).id);
   if (!Number.isSafeInteger(id) || id < 1)

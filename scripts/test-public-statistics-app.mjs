@@ -161,12 +161,12 @@ try {
     if (path !== '/admin/stats')
       assert.match(await response.text(), /Consultado:/, path);
   }
-  const pilotClick = (token) =>
+  const pilotClick = (token, origin = base) =>
     fetch(base + '/api/pilot-clicks', {
       method: 'POST',
       headers: {
         cookie: `authjs.session-token=${token}`,
-        origin: base,
+        origin,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ placement: 'platforms' }),
@@ -177,6 +177,8 @@ try {
         where: { day_placement: { day: pilotDay, placement: 'platforms' } },
       })
     )?.clicks ?? 0;
+  assert.equal((await pilotClick(jwt, 'https://attacker.invalid')).status, 403);
+  assert.equal(await pilotCount(), pilotBefore?.clicks ?? 0);
   assert.equal((await pilotClick(adminJwt)).status, 204);
   assert.equal(
     await pilotCount(),

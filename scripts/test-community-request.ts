@@ -1,3 +1,4 @@
+import { isSameOriginRequest } from '../src/lib/request-origin';
 import assert from 'node:assert/strict';
 import { NextRequest } from 'next/server';
 import {
@@ -15,6 +16,29 @@ async function main() {
       headers: { 'content-type': 'application/json', ...headers },
       body,
     });
+  assert.equal(isSameOriginRequest(request('{}')), false);
+  assert.equal(isSameOriginRequest(request('{}'), false), true);
+  assert.equal(
+    isSameOriginRequest(request('{}', { origin: 'https://mundobl.example' })),
+    true
+  );
+  for (const origin of [
+    'null',
+    'https://mundobl.example/path',
+    'http://mundobl.example',
+    'https://attacker.example',
+  ]) {
+    assert.equal(isSameOriginRequest(request('{}', { origin })), false, origin);
+  }
+  assert.equal(
+    isSameOriginRequest(
+      new NextRequest('http://127.0.0.1:3223/api/activity', {
+        method: 'POST',
+        headers: { host: '127.0.0.1:3223', origin: 'http://127.0.0.1:3223' },
+      })
+    ),
+    true
+  );
   assert.deepEqual(
     await readCommunityMutation(
       request('{"title":"Lista"}', { origin: 'https://mundobl.example' })

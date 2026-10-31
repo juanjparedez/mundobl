@@ -1,25 +1,9 @@
+import { isSameOriginRequest } from './request-origin';
 import { NextResponse } from 'next/server';
 import { CommunityError } from './community-input';
 
 export function assertCommunityOrigin(request: Request): void {
-  const origin = request.headers.get('origin');
-  const url = new URL(request.url);
-  // NextURL normalizes loopback hosts to "localhost". Host retains the browser's
-  // actual authority; browsers cannot forge it or Origin in a credentialed POST.
-  const host = request.headers.get('host') ?? url.host;
-  let matches = !origin;
-  if (origin) {
-    try {
-      const source = new URL(origin);
-      matches =
-        source.origin === origin &&
-        source.protocol === url.protocol &&
-        source.host.toLowerCase() === host.toLowerCase();
-    } catch {
-      matches = false;
-    }
-  }
-  if (request.headers.get('sec-fetch-site') === 'cross-site' || !matches)
+  if (!isSameOriginRequest(request, false))
     throw new CommunityError(403, 'unavailable');
 }
 

@@ -1,3 +1,4 @@
+import { isSameOriginRequest } from '@/lib/request-origin';
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/database';
@@ -8,7 +9,7 @@ import {
 
 export async function POST(request: NextRequest) {
   // No GET tracking: crawlers and prefetches must never count as clicks.
-  if (request.headers.get('origin') !== request.nextUrl.origin)
+  if (!isSameOriginRequest(request))
     return new NextResponse(null, { status: 403 });
   const body: unknown = await request.json().catch(() => null);
   if (!body || typeof body !== 'object')

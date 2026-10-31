@@ -1,3 +1,4 @@
+import { isSameOriginRequest } from '@/lib/request-origin';
 import { NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-helpers';
 import { isR2Configured } from '@/lib/r2';
@@ -41,7 +42,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const auth = await requireRole(['ADMIN']);
   if (!auth.authorized) return auth.response;
-  if (request.headers.get('origin') !== new URL(request.url).origin)
+  if (!isSameOriginRequest(request))
     return NextResponse.json(
       { error: 'invalid_origin' },
       { status: 403, headers }
