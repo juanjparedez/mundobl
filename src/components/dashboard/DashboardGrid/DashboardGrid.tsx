@@ -385,7 +385,7 @@ export function DashboardGrid({
         </div>
       ) : (
         mounted && (
-          <Responsive<DashboardBreakpoint>
+          <Responsive
             className="layout"
             width={width}
             layouts={toRglLayouts(layouts, autoHeights, currentBp)}
@@ -399,7 +399,12 @@ export function DashboardGrid({
               handle: `.${DRAG_HANDLE_CLASS}`,
             }}
             resizeConfig={{ enabled: editing }}
-            onBreakpointChange={(bp) => setCurrentBp(bp)}
+            onBreakpointChange={(bp) => {
+              const known = (
+                Object.keys(DASHBOARD_BREAKPOINTS) as DashboardBreakpoint[]
+              ).find((key) => key === bp);
+              if (known) setCurrentBp(known);
+            }}
             onResizeStop={handleResizeStop}
             onLayoutChange={handleLayoutChange}
           >
