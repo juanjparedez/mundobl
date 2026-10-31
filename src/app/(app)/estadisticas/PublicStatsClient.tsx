@@ -81,6 +81,7 @@ function RankingBarChart({
       xAxisKey="label"
       series={[{ dataKey: 'count', name: 'Total' }]}
       horizontal
+      allowDecimals={!items.every((item) => Number.isInteger(item.count))}
       multicolor
       height={height}
       onBarClick={(item) => {
@@ -695,6 +696,7 @@ export function PublicStatsClient({ initialData }: PublicStatsClientProps) {
         </p>
       )}
 
+      <p className="public-stats-team-note">{t('publicStats.metricScope')}</p>
       <p className="public-stats-team-note">{t('activityStats.scope')}</p>
 
       {/* ── Community rankings (historicos) ── */}

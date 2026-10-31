@@ -38,6 +38,7 @@ export interface BarChartProps<TData extends Record<string, unknown>> {
   multicolor?: boolean;
   tooltipFormatter?: ChartTooltipFormatter;
   tooltipLabelFormatter?: ChartTooltipLabelFormatter;
+  allowDecimals?: boolean;
   hideYAxis?: boolean;
   hideXAxis?: boolean;
   onBarClick?: (item: TData) => void;
@@ -52,6 +53,7 @@ export function BarChart<TData extends Record<string, unknown>>({
   multicolor = false,
   tooltipFormatter,
   tooltipLabelFormatter,
+  allowDecimals = true,
   hideYAxis = false,
   hideXAxis = false,
   onBarClick,
@@ -73,6 +75,7 @@ export function BarChart<TData extends Record<string, unknown>>({
           (horizontal ? (
             <XAxis
               type="number"
+              allowDecimals={allowDecimals}
               stroke={CHART_TOKENS.textTertiary}
               tickLine={false}
               axisLine={false}
@@ -100,6 +103,7 @@ export function BarChart<TData extends Record<string, unknown>>({
             />
           ) : (
             <YAxis
+              allowDecimals={allowDecimals}
               stroke={CHART_TOKENS.textTertiary}
               tickLine={false}
               axisLine={false}

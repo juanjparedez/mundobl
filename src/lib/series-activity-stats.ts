@@ -1,3 +1,5 @@
+import { PUBLIC_STATS_SERIES } from './statistics-scope';
+import { HAS_WATCHABLE_EPISODE } from './watchable';
 import { prisma } from '@/lib/database';
 import {
   PUBLIC_ACTIVITY_MINIMUM,
@@ -23,8 +25,8 @@ export interface WatchSectionStats {
     playStarts: number;
     /** Reproducciones completadas o que alcanzaron el 80% */
     completedPlays: number;
-    /** Tasa de retención/finalización (completedPlays / playStarts * 100), redondeada */
-    completionRate: number;
+    /** Quotient of unlinked events; null when unavailable or inconsistent. */
+    completionRate: number | null;
     /** Me gusta comunitarios agregados */
     communityLikes: number;
     /** Clics salientes a productoras y canales oficiales */
@@ -66,14 +68,18 @@ export async function getPublicSeriesActivity(
   return chapters >= PUBLIC_ACTIVITY_MINIMUM ? chapters : null;
 }
 
-/** Capitulos vistos en todo el sitio en los ultimos `days` dias. */
+/** Legacy watch-marking events: a batch or an automatic part may be one event, not one chapter. */
 export async function getSiteChapterActivity(
   days: number,
   now: Date = new Date()
 ): Promise<{ total: number; browser: number }> {
   const rows = await prisma.seriesActivityDaily.groupBy({
     by: ['source'],
-    where: { kind: 'chapter', day: { gte: daysAgo(days - 1, now) } },
+    where: {
+      kind: 'chapter',
+      day: { gte: daysAgo(days - 1, now), lte: utcDay(now) },
+      series: PUBLIC_STATS_SERIES,
+    },
     _sum: { count: true },
   });
   const bySource = new Map(
@@ -92,42 +98,37 @@ export async function getPublicWatchStats(
   now: Date = new Date()
 ): Promise<WatchSectionStats> {
   const from = daysAgo(windowDays - 1, now);
+  const where = {
+    day: { gte: from, lte: utcDay(now) },
+    series: { visibility: 'VISIBLE' as const, ...HAS_WATCHABLE_EPISODE },
+  };
 
-  const [kindRows, dailyRows, topSeriesRows, siteTrafficRows] =
-    await Promise.all([
-      prisma.seriesActivityDaily.groupBy({
-        by: ['kind'],
-        where: { day: { gte: from } },
-        _sum: { count: true },
-      }),
-      prisma.seriesActivityDaily.groupBy({
-        by: ['day', 'kind'],
-        where: {
-          day: { gte: from },
-          kind: { in: ['play_start', 'chapter'] },
-        },
-        _sum: { count: true },
-        orderBy: { day: 'asc' },
-      }),
-      prisma.seriesActivityDaily.groupBy({
-        by: ['seriesId'],
-        where: {
-          day: { gte: from },
-          kind: { in: ['play_start', 'chapter'] },
-        },
-        _sum: { count: true },
-        orderBy: { _sum: { count: 'desc' } },
-        take: 10,
-      }),
-      prisma.siteTrafficDaily.groupBy({
-        by: ['section'],
-        where: {
-          day: { gte: from },
-          section: { in: ['ver', 'ver_player'] },
-        },
-        _sum: { count: true },
-      }),
-    ]);
+  const [kindRows, dailyRows, topSeriesRows] = await Promise.all([
+    prisma.seriesActivityDaily.groupBy({
+      by: ['kind'],
+      where,
+      _sum: { count: true },
+    }),
+    prisma.seriesActivityDaily.groupBy({
+      by: ['day', 'kind'],
+      where: {
+        ...where,
+        kind: { in: ['play_start', 'view'] },
+      },
+      _sum: { count: true },
+      orderBy: { day: 'asc' },
+    }),
+    prisma.seriesActivityDaily.groupBy({
+      by: ['seriesId'],
+      where: {
+        ...where,
+        kind: 'play_start',
+      },
+      _sum: { count: true },
+      orderBy: { _sum: { count: 'desc' } },
+      take: 10,
+    }),
+  ]);
 
   const kindSum = (kindName: string) => {
     const row = kindRows.find((r) => r.kind === kindName);
@@ -135,20 +136,16 @@ export async function getPublicWatchStats(
   };
 
   const playStarts = kindSum('play_start');
-  const completedPlays = kindSum('chapter');
+  const completedPlays = kindSum('view');
   const communityLikes = kindSum('like');
   const outboundClicks = kindSum('outbound_click');
-  const openVerFromActivity = kindSum('open_ver');
-  const trafficVer = siteTrafficRows.reduce(
-    (acc, r) => acc + (r._sum.count ?? 0),
-    0
-  );
-  const playerVisits = Math.max(openVerFromActivity, trafficVer);
-
+  const playerVisits = kindSum('open_ver');
+  // Anonymous daily events are not matched sessions. A missing start or a
+  // midnight boundary can make the quotient unavailable; never clamp it.
   const completionRate =
-    playStarts > 0
-      ? Math.min(100, Math.round((completedPlays / playStarts) * 100))
-      : 0;
+    playStarts > 0 && completedPlays <= playStarts
+      ? Math.round((completedPlays / playStarts) * 100)
+      : null;
 
   const startsByDay = new Map<string, number>();
   const completionsByDay = new Map<string, number>();
@@ -158,7 +155,7 @@ export async function getPublicWatchStats(
     const count = r._sum.count ?? 0;
     if (r.kind === 'play_start') {
       startsByDay.set(d, (startsByDay.get(d) ?? 0) + count);
-    } else if (r.kind === 'chapter') {
+    } else if (r.kind === 'view') {
       completionsByDay.set(d, (completionsByDay.get(d) ?? 0) + count);
     }
   }
@@ -178,7 +175,11 @@ export async function getPublicWatchStats(
   const seriesList =
     seriesIds.length > 0
       ? await prisma.series.findMany({
-          where: { id: { in: seriesIds }, visibility: { not: 'ARCHIVED' } },
+          where: {
+            id: { in: seriesIds },
+            visibility: 'VISIBLE',
+            ...HAS_WATCHABLE_EPISODE,
+          },
           select: { id: true, title: true },
         })
       : [];
@@ -189,9 +190,9 @@ export async function getPublicWatchStats(
       ? await prisma.seriesActivityDaily.groupBy({
           by: ['seriesId', 'kind'],
           where: {
-            day: { gte: from },
+            ...where,
             seriesId: { in: seriesIds },
-            kind: { in: ['play_start', 'chapter'] },
+            kind: { in: ['play_start', 'view'] },
           },
           _sum: { count: true },
         })
@@ -206,7 +207,7 @@ export async function getPublicWatchStats(
     .map((id) => {
       const meta = seriesMap.get(id);
       const starts = breakdownMap.get(`${id}:play_start`) ?? 0;
-      const completions = breakdownMap.get(`${id}:chapter`) ?? 0;
+      const completions = breakdownMap.get(`${id}:view`) ?? 0;
       return {
         seriesId: id,
         title: meta?.title ?? `Serie #${id}`,
@@ -215,7 +216,7 @@ export async function getPublicWatchStats(
         completions,
       };
     })
-    .filter((s) => s.starts > 0 || s.completions > 0)
+    .filter((s) => seriesMap.has(s.seriesId) && s.starts > 0)
     .slice(0, 8);
 
   return {

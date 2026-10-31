@@ -75,6 +75,7 @@ const trackingTests = [
   'series-tracking-status',
   'community-privacy',
   'community-statistics',
+  'public-statistics-consistency',
   'community-topics',
   'community-library',
   'community-moderation',

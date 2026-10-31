@@ -15,6 +15,7 @@ const bundle = await build({
       import './src/styles/variables.css';
       const data = {
         generatedAt:'2026-09-27T12:00:00Z',
+        watch:{windowDays:30,totals:{playStarts:3,completedPlays:1,completionRate:null,communityLikes:0,outboundClicks:0,playerVisits:2},playsByDay:[{day:'2026-09-27',starts:3,completions:1}],topSeries:[{seriesId:1,title:'Player fixture',href:'/ver/1',starts:3,completions:1}]},
         summary:{totalSeries:10,totalPublicComments:0,totalPublishedReviews:3,totalCompletedViews:0,totalCurrentlyWatching:0,totalFavorites:0,totalActors:0,totalDirectors:0,averageCommunityRating:null,totalUserRatings:0,teamCompletedSeries:0},
         rankings:{topSeries:[],topFavorited:[],topActors:[],topDirectors:[],topProductionCompanies:[],topCountries:[],byType:[]},
         catalog:{byCountry:[],byType:[],byGenre:[],byYear:[]}, ratings:{averageCommunity:null,total:0,distribution:[]},
@@ -137,6 +138,20 @@ try {
           .waitFor();
       } else {
         await page.getByText(/Los datos se renuevan/).waitFor();
+        await page.getByText('Player fixture', { exact: true }).waitFor();
+        assert.match(
+          await page.locator('.watch-stats-panel__top-counts').innerText(),
+          /3 inicios/
+        );
+        assert.match(
+          await page
+            .locator('.mb-stat-card')
+            .filter({
+              has: page.getByText('Finalizaciones / inicios', { exact: true }),
+            })
+            .innerText(),
+          /—/
+        );
         await page.getByText('Actividad reciente', { exact: true }).waitFor();
         await page
           .getByText('Ranking del mes: capítulos vistos', { exact: true })

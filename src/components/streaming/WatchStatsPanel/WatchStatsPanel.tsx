@@ -78,7 +78,9 @@ export function WatchStatsPanel({
         />
         <StatCard
           label={labels.completionRate}
-          value={`${totals.completionRate}%`}
+          value={
+            totals.completionRate === null ? '—' : `${totals.completionRate}%`
+          }
           icon={<RiseOutlined />}
         />
         <StatCard

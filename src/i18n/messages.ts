@@ -2525,6 +2525,7 @@ export type TranslationShape = {
     activeScope: string;
   };
   publicStats: {
+    metricScope: string;
     browserChaptersRecently: string;
     teamNote: string;
     recentTitle: string;
@@ -6955,7 +6956,9 @@ const es: TranslationShape = {
       'Hasta 20 usuarios con seguimiento, reseñas publicadas, comentarios públicos, calificaciones o favoritos en los últimos 30 días.',
   },
   publicStats: {
-    browserChaptersRecently: 'Capítulos vistos sin cuenta (7 días)',
+    metricScope:
+      'Seguimiento y favoritos: cuentas sin bloqueo, excluyendo administradores, moderadores y colaboradores; incluye catálogo y obras accesibles en /ver. Un capítulo cuenta al completar todas sus partes. Cada persona aporta un voto por obra: nota general o promedio de categorías. Los períodos usan días UTC. Las series completadas son estados actuales, no reproducciones.',
+    browserChaptersRecently: 'Marcaciones sin cuenta (7 días)',
     teamNote:
       'Estas cifras son sólo de la comunidad. El equipo de curaduría vio además {n} series del catálogo: no las sumamos para no inflar los números.',
     recentTitle: 'Actividad reciente',
@@ -6987,25 +6990,26 @@ const es: TranslationShape = {
   publicWatchStats: {
     sectionTitle: 'Pulso de streaming y reproductor (/ver)',
     sectionSubtitle:
-      'Métricas agregadas en tiempo real de reproducciones legales en reproductores oficiales. Cero rastreo de IP y 100% anónimo.',
+      'Últimos 30 días UTC. Eventos del reproductor, separados del seguimiento manual. Actualización cada 15 minutos al visitar.',
     playStarts: 'Reproducciones iniciadas',
-    completedPlays: 'Vistas completas (≥80%)',
-    completionRate: 'Tasa de retención',
-    completionRateHint: 'Audiencia que completó al menos el 80% del episodio',
+    completedPlays: 'Finalizaciones registradas',
+    completionRate: 'Finalizaciones / inicios',
+    completionRateHint:
+      'Videos que llegaron al 80% o al final; incluye partes.',
     communityLikes: 'Me gusta comunitarios',
     outboundClicks: 'Visitas a productoras',
     outboundClicksHint: 'Clics derivados a canales y sitios oficiales',
     playerVisits: 'Aperturas del reproductor',
     dailyTrendTitle: 'Evolución de reproducciones (30 días)',
     startsLabel: 'Iniciadas',
-    completionsLabel: 'Completadas (≥80%)',
-    topSeriesTitle: 'Series más vistas en el reproductor',
+    completionsLabel: 'Finalizaciones',
+    topSeriesTitle: 'Series con más inicios en el reproductor',
     topSeriesEmpty: 'Sin reproducciones registradas todavía',
     startsUnit: 'inicios',
     completionsUnit: 'completadas',
     transparencyBadge: 'Transparencia y Privacidad Operativa',
     transparencyNote:
-      'Todas las reproducciones son legales y se reproducen mediante embeds oficiales (YouTube, Vimeo, Dailymotion). No registramos direcciones IP, cookies de terceros ni perfiles de usuario. Respetamos el opt-out en /privacidad y el alias seudónimo si fue activado.',
+      'YouTube y Vimeo notifican inicios y finalizaciones; otras plataformas pueden no hacerlo. No son personas únicas ni sesiones vinculadas. «—» indica que el cociente no se puede calcular de forma consistente. Se excluye al equipo. Aperturas, me gusta y clics son eventos, no visitas externas confirmadas.',
     privacyLinkText: 'Configurar privacidad y alias',
   },
   adminStats: {
@@ -11465,7 +11469,9 @@ const en: TranslationShape = {
       'Up to 20 users with tracking, published reviews, public comments, ratings or favorites in the last 30 days.',
   },
   publicStats: {
-    browserChaptersRecently: 'Episodes watched without an account (7 days)',
+    metricScope:
+      'Tracking and favorites: non-banned accounts, excluding admins, moderators and collaborators; includes the catalog and accessible /ver works. Chapters count when all parts are complete. Each person has one vote per work: general score or category average. Periods use UTC days. Completed series are current tracking states, not plays.',
+    browserChaptersRecently: 'Guest watch-marking actions (7 days)',
     teamNote:
       'These figures are community-only. The curation team has also watched {n} catalog series; we leave them out so the numbers are not inflated.',
     recentTitle: 'Recent activity',
@@ -11498,25 +11504,25 @@ const en: TranslationShape = {
   publicWatchStats: {
     sectionTitle: 'Streaming & Legal Player Pulse (/ver)',
     sectionSubtitle:
-      'Real-time aggregated metrics from official legal embeds. Zero IP tracking and 100% anonymous.',
+      'Last 30 UTC days. Player events are separate from manual tracking. Refreshed on visits after 15 minutes.',
     playStarts: 'Playbacks started',
-    completedPlays: 'Completed views (≥80%)',
-    completionRate: 'Retention rate',
-    completionRateHint: 'Audience that completed at least 80% of the episode',
+    completedPlays: 'Recorded finishes',
+    completionRate: 'Finishes / starts',
+    completionRateHint: 'Videos reaching 80% or the end; includes parts.',
     communityLikes: 'Community likes',
     outboundClicks: 'Producer visits',
     outboundClicksHint: 'Referral clicks to official channels and websites',
     playerVisits: 'Player opens',
     dailyTrendTitle: 'Playback trends (30 days)',
     startsLabel: 'Started',
-    completionsLabel: 'Completed (≥80%)',
-    topSeriesTitle: 'Most watched series in the player',
+    completionsLabel: 'Finishes',
+    topSeriesTitle: 'Series with the most player starts',
     topSeriesEmpty: 'No playbacks recorded yet',
     startsUnit: 'starts',
     completionsUnit: 'completed',
     transparencyBadge: 'Transparency & Operational Privacy',
     transparencyNote:
-      'All playbacks are legal and streamed via official embeds (YouTube, Vimeo, Dailymotion). We never log IP addresses, third-party cookies, or personal profiles. We honor opt-out settings and pseudonymous aliases configured in /privacidad.',
+      'YouTube and Vimeo report starts and finishes; other platforms may not. These are not unique people or linked sessions. “—” means a consistent ratio is unavailable. Staff are excluded. Opens, likes and clicks are events, not confirmed external visits.',
     privacyLinkText: 'Configure privacy & alias',
   },
   adminStats: {
