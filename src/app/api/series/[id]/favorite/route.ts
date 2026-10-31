@@ -1,4 +1,5 @@
 import { revalidatePath } from 'next/cache';
+import { revalidateSeriesDetail } from '@/lib/revalidate-series';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
@@ -21,8 +22,12 @@ export async function POST(
       );
     }
 
-    const invalidate = () => {
-      revalidatePath('/series/[id]', 'page');
+    const invalidate = async () => {
+      const series = await prisma.series.findUnique({
+        where: { id: seriesId },
+        select: { id: true, title: true },
+      });
+      if (series) revalidateSeriesDetail(series);
       revalidatePath('/estadisticas');
       revalidatePath('/api/stats/public');
     };
@@ -36,7 +41,7 @@ export async function POST(
       await prisma.userFavorite.delete({
         where: { userId_seriesId: { userId: authResult.userId, seriesId } },
       });
-      invalidate();
+      await invalidate();
       return NextResponse.json({ isFavorite: false, seriesId });
     }
 
@@ -44,7 +49,7 @@ export async function POST(
       data: { userId: authResult.userId, seriesId },
     });
     awardAchievementsAfterResponse(authResult.userId, ['favorites']);
-    invalidate();
+    await invalidate();
     return NextResponse.json({ isFavorite: true, seriesId });
   } catch (error) {
     console.error('Error updating favorite status:', error);

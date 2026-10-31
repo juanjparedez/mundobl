@@ -11,6 +11,7 @@ const bundle = await build({
       import { createRoot } from 'react-dom/client';
       import { LocaleProvider } from './src/lib/providers/LocaleProvider';
       import { PublicStatsClient } from './src/app/(app)/estadisticas/PublicStatsClient';
+      import { FavoriteButton } from './src/components/series/FavoriteButton/FavoriteButton';
       import { StatsClient } from './src/app/(app)/admin/stats/StatsClient';
       import './src/styles/variables.css';
       const data = {
@@ -24,7 +25,7 @@ const bundle = await build({
           episodesByDay:[{day:'2026-09-26',count:0},{day:'2026-09-27',count:2}],
           topWatchers:[{rank:1,count:12,name:'Perfil publico',profileId:'p1'},{rank:2,count:4,name:null,profileId:null}]}
       };
-      createRoot(document.getElementById('root')).render(<LocaleProvider>{location.pathname==='/admin' ? <StatsClient/> : <PublicStatsClient initialData={data}/>}</LocaleProvider>);
+      createRoot(document.getElementById('root')).render(<LocaleProvider>{location.pathname==='/favorite' ? <FavoriteButton/> : location.pathname==='/admin' ? <StatsClient/> : <PublicStatsClient initialData={data}/>}</LocaleProvider>);
     `,
     resolveDir: process.cwd(),
     loader: 'tsx',
@@ -34,16 +35,21 @@ const bundle = await build({
       name: 'framework-fixtures',
       setup(b) {
         b.onResolve(
-          { filter: /^(next\/navigation|next-auth\/react)$|\/AdminNav$/ },
+          {
+            filter:
+              /^(next\/navigation|next-auth\/react)$|\/AdminNav$|\/SeriesUserStatusProvider$/,
+          },
           (args) => ({ path: args.path, namespace: 'fixture' })
         );
         b.onLoad({ filter: /.*/, namespace: 'fixture' }, (args) => ({
           contents:
             args.path === 'next/navigation'
-              ? 'export const useRouter=()=>({push(){}}); export const usePathname=()=>"/estadisticas";'
+              ? 'export const useRouter=()=>({push(){},refresh(){window.favoriteRefreshes=(window.favoriteRefreshes||0)+1}}); export const usePathname=()=>"/estadisticas";'
               : args.path === 'next-auth/react'
-                ? 'export const useSession=()=>({data:null,status:"unauthenticated"});'
-                : 'export const AdminNav=()=>null;',
+                ? 'export const useSession=()=>({data:null,status:location.pathname==="/favorite"?"authenticated":"unauthenticated"}); export const signIn=()=>{};'
+                : args.path.endsWith('/SeriesUserStatusProvider')
+                  ? 'export const useSeriesUserStatus=()=>({seriesId:1,favorite:false,loaded:true,version:0,refetch:async()=>{}});'
+                  : 'export const AdminNav=()=>null;',
           loader: 'js',
         }));
       },
@@ -179,6 +185,12 @@ try {
       });
     }
   }
+  await page.route('**/api/series/1/favorite', (route) =>
+    route.fulfill({ json: { isFavorite: true } })
+  );
+  await page.goto(`http://127.0.0.1:${server.address().port}/favorite`);
+  await page.getByRole('button').click();
+  await page.waitForFunction(() => window.favoriteRefreshes === 1);
   assert.deepEqual(errors, []);
   console.log(
     'PASS: public/admin review cards, review-only user, desktop/mobile without overflow'

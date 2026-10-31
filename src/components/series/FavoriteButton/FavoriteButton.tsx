@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { StarFilled, StarOutlined } from '@ant-design/icons';
 import { useSession, signIn } from 'next-auth/react';
 import { IconToggle } from '@/components/design-system';
@@ -14,6 +15,7 @@ import { useSeriesUserStatus } from '../SeriesUserStatusProvider';
  */
 export function FavoriteButton() {
   const { t } = useLocale();
+  const router = useRouter();
   const { status } = useSession();
   const message = useMessage();
   const {
@@ -21,6 +23,7 @@ export function FavoriteButton() {
     favorite: initialFavorite,
     loaded,
     version,
+    refetch,
   } = useSeriesUserStatus();
   const [favorite, setFavorite] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -51,6 +54,8 @@ export function FavoriteButton() {
       // El endpoint alterna: su respuesta es la verdad.
       const data = (await response.json()) as { isFavorite: boolean };
       setFavorite(data.isFavorite);
+      await refetch();
+      router.refresh();
     } catch {
       setFavorite(!next);
       message.error(t('catalogo.favoriteError'));
