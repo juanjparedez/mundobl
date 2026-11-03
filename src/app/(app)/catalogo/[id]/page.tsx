@@ -15,6 +15,7 @@ import { SerieDetailClient } from './SerieDetailClient';
 import { ContentTypeConfig, ContentTypeValue } from '@/types/content';
 import { JsonLd } from '@/components/seo/JsonLd';
 import type { TVSeries } from 'schema-dts';
+import { getSeriesUrl } from '@/lib/slug';
 
 interface SerieDetailPageProps {
   params: Promise<{ id: string }>;
@@ -43,12 +44,12 @@ export async function generateMetadata({
     title: `${serie.title}${year} | Reseña, Reparto y Episodios - ${typeLabel} BL`,
     description: synopsis,
     alternates: {
-      canonical: `/series/${serie.id}`,
+      canonical: getSeriesUrl(serie.id, serie.title),
     },
     openGraph: {
       title: `${serie.title}${year}`,
       description: synopsis,
-      url: `/series/${serie.id}`,
+      url: getSeriesUrl(serie.id, serie.title),
       ...(serie.imageUrl && {
         images: [{ url: serie.imageUrl, alt: serie.title }],
       }),
@@ -127,7 +128,7 @@ export default async function SerieDetailPage({
               ratingCount: Math.max(serie.ratings?.length ?? 1, 1),
             },
           }),
-          url: `https://mundobl.com.ar/series/${serie.id}`,
+          url: `https://mundobl.com.ar${getSeriesUrl(serie.id, serie.title)}`,
         }}
       />
       <SerieDetailClient serie={serie} />

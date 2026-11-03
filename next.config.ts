@@ -1,3 +1,5 @@
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import type { NextConfig } from 'next';
 import { getBuildMetadata } from './src/lib/build-metadata';
 import { OPTIMIZED_IMAGE_HOSTS } from './src/lib/image-helpers';
@@ -6,10 +8,25 @@ import { OPTIMIZED_IMAGE_HOSTS } from './src/lib/image-helpers';
 // En desarrollo se usa Git local; sin metadatos queda un fallback silencioso.
 const buildMetadata = getBuildMetadata();
 
+// Version de public/antd.css (scripts/generate-antd-css.ts) para el `?v=` de
+// AntdStaticStyles: cambia solo si cambia la hoja, asi se puede cachear como
+// inmutable. Sin el archivo (lint/tipos sin build) cae al buildId.
+function getAntdCssVersion(): string {
+  try {
+    return createHash('sha1')
+      .update(readFileSync('public/antd.css'))
+      .digest('hex')
+      .slice(0, 12);
+  } catch {
+    return buildMetadata.buildId;
+  }
+}
+
 const nextConfig: NextConfig = {
   generateBuildId: () => buildMetadata.buildId,
   env: {
     BUILD_COMMIT_DATE: buildMetadata.commitDate,
+    NEXT_PUBLIC_ANTD_CSS_VERSION: getAntdCssVersion(),
   },
   reactStrictMode: true,
   // /api/changelog lee CHANGELOG.md con fs en runtime (es la fuente de verdad
@@ -137,6 +154,16 @@ const nextConfig: NextConfig = {
               'magnetometer=()',
               'usb=()',
             ].join(', '),
+          },
+        ],
+      },
+      {
+        // Versionada por contenido via `?v=` (ver AntdStaticStyles).
+        source: '/antd.css',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
           },
         ],
       },

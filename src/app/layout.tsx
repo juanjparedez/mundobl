@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from 'next';
-import { AntdRegistry } from '@ant-design/nextjs-registry';
-import { AntdStyleOrder } from '@/lib/providers/AntdStyleOrder';
 import { AntdApp } from '@/lib/providers/AntdApp';
+import { AntdStaticStyles } from '@/lib/providers/AntdStaticStyles';
 import { ThemeProvider } from '@/lib/providers/ThemeProvider';
 import { SessionProvider } from '@/lib/providers/SessionProvider';
 import { LocaleProvider } from '@/lib/providers/LocaleProvider';
@@ -155,19 +154,17 @@ export default function RootLayout({
         <ServiceWorkerRegistrar />
         <NavigationGuard />
         <SessionProvider>
-          <AntdRegistry>
-            <AntdStyleOrder />
-            <LocaleProvider>
-              <ThemeProvider>
-                <SpoilerFreeProvider>
-                  <AntdApp>
-                    {children}
-                    <FirstVisitOnboarding />
-                  </AntdApp>
-                </SpoilerFreeProvider>
-              </ThemeProvider>
-            </LocaleProvider>
-          </AntdRegistry>
+          <AntdStaticStyles />
+          <LocaleProvider>
+            <ThemeProvider>
+              <SpoilerFreeProvider>
+                <AntdApp>
+                  {children}
+                  <FirstVisitOnboarding />
+                </AntdApp>
+              </SpoilerFreeProvider>
+            </ThemeProvider>
+          </LocaleProvider>
         </SessionProvider>
         {/* Medición opcional; desactivada salvo habilitación explícita. */}
         {process.env.NEXT_PUBLIC_VERCEL_ANALYTICS_ENABLED === 'true' && (

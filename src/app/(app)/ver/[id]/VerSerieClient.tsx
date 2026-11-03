@@ -37,7 +37,7 @@ import { groupIntoChapters } from '@/lib/episode-chapters';
 import { EmbedAttribution } from '@/components/common/EmbedAttribution/EmbedAttribution';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { SeriesShareButton } from '@/components/common/SeriesShareButton/SeriesShareButton';
-import { getVerUrl } from '@/lib/slug';
+import { getVerUrl, getSeriesUrl } from '@/lib/slug';
 import { SeriesSubscribeButton } from '@/components/series/SeriesSubscribeButton/SeriesSubscribeButton';
 import { AiringAlertCta } from '@/components/series/AiringAlertCta/AiringAlertCta';
 import { FavoriteButton } from '@/components/series/FavoriteButton/FavoriteButton';
@@ -639,14 +639,20 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
             </Tooltip>
           )}
           {!isUserEmbed && scope === 'PERSONAL' && (
-            <Link href={`/series/${series.id}`} prefetch={false}>
+            <Link href={getSeriesUrl(series.id, series.title)} prefetch={false}>
               <Button icon={<PlayCircleOutlined />}>
                 {t('verSerie.viewFullDetailsButton')}
               </Button>
             </Link>
           )}
           {series.linkedSeries && (
-            <Link href={`/series/${series.linkedSeries.id}`} prefetch={false}>
+            <Link
+              href={getSeriesUrl(
+                series.linkedSeries.id,
+                series.linkedSeries.title
+              )}
+              prefetch={false}
+            >
               <Button type="primary" ghost>
                 {t('verSerie.catalogPage')}
               </Button>
@@ -1014,7 +1020,12 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
             <strong>{t('verSerie.regionTitle')}</strong>{' '}
             {t('verSerie.regionBody')}{' '}
             <Link
-              href={isUserEmbed ? '/plataformas' : `/series/${series.id}`}
+              href={
+                isUserEmbed
+                  ? '/plataformas'
+                  : getSeriesUrl(series.id, series.title)
+              }
+              prefetch={false}
               className="ver-serie__geoblock-link"
             >
               {t('verSerie.whereToWatchLink')}

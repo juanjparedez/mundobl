@@ -30,6 +30,7 @@ import { CatalogoClient } from '../CatalogoClient';
 import { packCatalog } from '../catalogTransport';
 import { getCatalogFilterIndex } from '@/lib/database';
 import '../catalogo.css';
+import { getSeriesUrl } from '@/lib/slug';
 
 // Sin `auth()`: el viewStatus y el rol de usuario ahora se piden del lado
 // del cliente (CatalogoClient via /api/view-status, userRole via
@@ -170,7 +171,7 @@ export default async function CatalogoPage() {
             itemListElement: seriesData.slice(0, 20).map((s, i) => ({
               '@type': 'ListItem',
               position: i + 1,
-              url: `https://mundobl.com.ar/series/${s.id}`,
+              url: `https://mundobl.com.ar${getSeriesUrl(s.id, s.titulo)}`,
               name: s.titulo,
             })),
           },

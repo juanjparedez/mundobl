@@ -8,6 +8,7 @@ import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
 import { isDirectServedImageUrl, cardImageUrl } from '@/lib/image-helpers';
 import './tag-page.css';
+import { getSeriesUrl } from '@/lib/slug';
 
 interface TagSeriesEntry {
   series: {
@@ -107,7 +108,7 @@ export function TagPageClient({ tag }: TagPageClientProps) {
           <Row gutter={[16, 16]}>
             {series.map((entry) => (
               <Col xs={24} sm={12} md={8} lg={6} key={entry.id}>
-                <Link href={`/series/${entry.id}`}>
+                <Link href={getSeriesUrl(entry.id, entry.title)}>
                   <Card
                     hoverable
                     size="small"
