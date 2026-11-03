@@ -14,14 +14,13 @@ import zhCN from 'antd/locale/zh_CN';
 import zhTW from 'antd/locale/zh_TW';
 import thTH from 'antd/locale/th_TH';
 import {
+  buildDefaultTheme,
   buildTheme,
+  isDefaultThemeSelection,
   ACCENT_PRESETS,
-  DEFAULT_ACCENT,
-  deriveAccentColorsFromHex,
-  getSkinAccentHex,
   readableTextOn,
+  resolveAccentColors,
   type AccentPresetKey,
-  type AccentColors,
 } from '../theme.config';
 import type {
   ThemeMode,
@@ -115,28 +114,6 @@ interface ThemeState {
   saver: SaverKey;
   skin: SkinKey;
   mounted: boolean;
-}
-
-/**
- * Orden de precedencia del acento, de mayor a menor:
- *   1. Hex custom elegido con el ColorPicker.
- *   2. Preset de acento elegido explicitamente por el usuario.
- *   3. Acento sugerido por la skin activa (solo si el usuario no eligio).
- *   4. Acento por defecto de la app.
- *
- * La skin nunca pisa una eleccion explicita: solo completa el hueco.
- */
-function resolveAccentColors(
-  accent: AccentPresetKey | null,
-  customAccent: string | null,
-  mode: ThemeMode,
-  skin: SkinKey
-): AccentColors {
-  if (customAccent) return deriveAccentColorsFromHex(customAccent);
-  if (accent) return ACCENT_PRESETS[accent][mode];
-  const skinAccent = getSkinAccentHex(skin, mode);
-  if (skinAccent) return deriveAccentColorsFromHex(skinAccent);
-  return ACCENT_PRESETS[DEFAULT_ACCENT][mode];
 }
 
 function applyAccentVars(
@@ -382,7 +359,16 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     state.theme,
     state.skin
   );
-  const currentTheme = buildTheme(state.theme, accentColors, state.skin);
+  // El tema por defecto tiene que salir identico al de public/antd.css
+  // (scripts/generate-antd-css.ts), key de variables CSS incluida.
+  const currentTheme = isDefaultThemeSelection(
+    state.theme,
+    state.skin,
+    state.accent,
+    state.customAccent
+  )
+    ? buildDefaultTheme()
+    : buildTheme(state.theme, accentColors, state.skin);
 
   const antdLocaleMap: Record<string, Locale> = {
     es: esES,

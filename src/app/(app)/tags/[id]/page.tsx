@@ -14,6 +14,7 @@ import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
 import type { CollectionPage } from 'schema-dts';
 import { getTagById } from '@/lib/database';
 import { TagPageClient } from './TagPageClient';
+import { getSeriesUrl } from '@/lib/slug';
 
 interface TagPageProps {
   params: Promise<{ id: string }>;
@@ -82,7 +83,7 @@ export default async function TagPage({ params }: TagPageProps) {
             itemListElement: tag.series.slice(0, 20).map((s, i) => ({
               '@type': 'ListItem',
               position: i + 1,
-              url: `https://mundobl.com.ar/series/${s.series.id}`,
+              url: `https://mundobl.com.ar${getSeriesUrl(s.series.id, s.series.title)}`,
               name: s.series.title,
             })),
           },

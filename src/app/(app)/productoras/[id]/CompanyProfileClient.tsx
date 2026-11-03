@@ -24,6 +24,7 @@ import { interpolateMessage } from '@/lib/i18n-format';
 import type { TranslationKey } from '@/i18n/messages';
 import { CompanyEditButton } from './CompanyEditButton/CompanyEditButton';
 import './company-profile.css';
+import { getSeriesUrl } from '@/lib/slug';
 
 interface CompanySeries {
   id: number;
@@ -128,7 +129,7 @@ export function CompanyProfileClient({ company }: CompanyProfileClientProps) {
         key: 'detail',
         label: t('quickPreview.fullDetail'),
         variant: 'primary' as const,
-        href: `/series/${serie.id}`,
+        href: getSeriesUrl(serie.id, serie.title),
       },
     ],
   });
@@ -240,7 +241,7 @@ export function CompanyProfileClient({ company }: CompanyProfileClientProps) {
             {filmography.map((s) => (
               <MediaCard
                 key={s.id}
-                href={`/series/${s.id}`}
+                href={getSeriesUrl(s.id, s.title)}
                 imageUrl={cardImageUrl(s)}
                 imageAlt={s.title}
                 unoptimizedImage={isDirectServedImageUrl(cardImageUrl(s))}

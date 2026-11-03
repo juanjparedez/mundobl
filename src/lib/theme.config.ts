@@ -771,3 +771,62 @@ export function buildTheme(
     },
   };
 }
+
+/**
+ * Orden de precedencia del acento, de mayor a menor:
+ *   1. Hex custom elegido con el ColorPicker.
+ *   2. Preset de acento elegido explicitamente por el usuario.
+ *   3. Acento sugerido por la skin activa (solo si el usuario no eligio).
+ *   4. Acento por defecto de la app.
+ *
+ * La skin nunca pisa una eleccion explicita: solo completa el hueco.
+ */
+export function resolveAccentColors(
+  accent: AccentPresetKey | null,
+  customAccent: string | null,
+  mode: 'light' | 'dark',
+  skin: SkinKey
+): AccentColors {
+  if (customAccent) return deriveAccentColorsFromHex(customAccent);
+  if (accent) return ACCENT_PRESETS[accent][mode];
+  const skinAccent = getSkinAccentHex(skin, mode);
+  if (skinAccent) return deriveAccentColorsFromHex(skinAccent);
+  return ACCENT_PRESETS[DEFAULT_ACCENT][mode];
+}
+
+/**
+ * Tema de antd con el que sale renderizado TODO el HTML del servidor: modo
+ * oscuro, skin y acento por defecto (ThemeProvider aplica las preferencias del
+ * usuario recien al montar). scripts/generate-antd-css.tsx extrae la hoja
+ * estatica de antd con este mismo tema; si no coincidieran, el hash de las
+ * clases `css-*` del HTML no matchearia el de la hoja.
+ */
+export function buildDefaultTheme(): ThemeConfig {
+  return {
+    ...buildTheme(
+      'dark',
+      resolveAccentColors(null, null, 'dark', 'default'),
+      'default'
+    ),
+    // antd define los tokens como variables CSS bajo `.css-var-<key>`. Sin
+    // key fija la saca de useId, que en la hoja estatica da otra cosa que en
+    // el HTML: los botones salian sin color hasta hidratar. Solo el tema por
+    // defecto la fija; los demas usan la automatica y antd los inyecta en el
+    // cliente sin pisarse con la hoja.
+    cssVar: { key: DEFAULT_THEME_CSS_VAR_KEY },
+  };
+}
+
+const DEFAULT_THEME_CSS_VAR_KEY = 'mb-default';
+
+/** El usuario no cambio modo, skin ni acento: se usa buildDefaultTheme. */
+export function isDefaultThemeSelection(
+  mode: 'light' | 'dark',
+  skin: SkinKey,
+  accent: AccentPresetKey | null,
+  customAccent: string | null
+): boolean {
+  return (
+    mode === 'dark' && skin === 'default' && accent === null && !customAccent
+  );
+}

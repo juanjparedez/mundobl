@@ -5,6 +5,7 @@ import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
 import { getAiringSchedule } from '@/lib/database';
 import { EstrenosClient } from './EstrenosClient';
 import './estrenos.css';
+import { getSeriesUrl } from '@/lib/slug';
 
 // La parrilla cambia cuando Flor carga o edita `airDays`, no sola. Una hora de
 // ISR alcanza, y las rutas que escriben series revalidan esta ruta a mano.
@@ -42,7 +43,7 @@ export default async function EstrenosPage() {
             itemListElement: rows.slice(0, 30).map((s, i) => ({
               '@type': 'ListItem',
               position: i + 1,
-              url: `https://mundobl.com.ar/series/${s.id}`,
+              url: `https://mundobl.com.ar${getSeriesUrl(s.id, s.title)}`,
               name: s.title,
             })),
           },

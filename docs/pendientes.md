@@ -11,14 +11,13 @@ COMPLETED y 9 REJECTED.
 
 ## Código
 
-| Ítem                                        | Evidencia                                                                                                                                   |
-| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| CSS SSR de Ant Design inline en cada página | `AntdRegistry` en `src/app/layout.tsx`, sin extracción a CSS estático. Medido el 13/10: 405 KB de CSS inline en `/catalogo`.                |
-| Glosario sin comentarios, votos ni vistas   | `GlossaryTerm` no tiene `viewCount` ni relación con `Comment`/ratings. Prioridad baja por tráfico.                                          |
-| Guionistas sin editor                       | Existen `Writer`/`SeriesWriter` y la ficha pública, pero no hay pantalla admin ni API para cargar créditos.                                 |
-| Múltiples visionados (rewatch)              | `ViewStatus` guarda un estado por entidad; no hay modelo de vueltas.                                                                        |
-| Importación que corrija datos existentes    | `api/user/account/import` es solo merge: no reemplaza marcas ni resuelve conflictos. Tampoco hay importación por título, CSV o texto libre. |
-| Resumen anual ("tu año")                    | Existe el resumen mensual (`MonthlyRecap`); el anual no.                                                                                    |
+| Ítem                                      | Evidencia                                                                                                                                   |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Glosario sin comentarios, votos ni vistas | `GlossaryTerm` no tiene `viewCount` ni relación con `Comment`/ratings. Prioridad baja por tráfico.                                          |
+| Guionistas sin editor                     | Existen `Writer`/`SeriesWriter` y la ficha pública, pero no hay pantalla admin ni API para cargar créditos.                                 |
+| Múltiples visionados (rewatch)            | `ViewStatus` guarda un estado por entidad; no hay modelo de vueltas.                                                                        |
+| Importación que corrija datos existentes  | `api/user/account/import` es solo merge: no reemplaza marcas ni resuelve conflictos. Tampoco hay importación por título, CSV o texto libre. |
+| Resumen anual ("tu año")                  | Existe el resumen mensual (`MonthlyRecap`); el anual no.                                                                                    |
 
 ## Contenido y operación (no es código)
 
