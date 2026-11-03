@@ -1,0 +1,63 @@
+# Produccion en servidor propio. Uso: deploy/deploy.sh (ver deploy/README.md).
+# El .env vive en la raiz del repo clonado en el servidor y NUNCA se commitea.
+name: mundobl
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      args:
+        MUNDOBL_BUILD_SHA: ${MUNDOBL_BUILD_SHA:-}
+        MUNDOBL_BUILD_COMMIT_DATE: ${MUNDOBL_BUILD_COMMIT_DATE:-}
+      secrets:
+        - env
+    env_file: ../.env
+    environment:
+      # Fuera de Vercel, Auth.js necesita confiar en el Host que pasa Caddy.
+      AUTH_TRUST_HOST: 'true'
+    restart: unless-stopped
+    expose:
+      - '3000'
+
+  caddy:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - app
+
+  # Reemplaza a los crons de vercel.json (mismos horarios, UTC).
+  cron:
+    image: alpine:3.22
+    restart: unless-stopped
+    env_file: ../.env
+    command:
+      - sh
+      - -c
+      - |
+        apk add --no-cache curl >/dev/null
+        # crond no pasa el entorno a los jobs: el secreto se expande al
+        # escribir la crontab.
+        {
+          echo "0 5 * * * curl -fsS -m 120 -H 'Authorization: Bearer $${CRON_SECRET}' http://app:3000/api/cron/daily"
+          echo "0 12 * * * curl -fsS -m 120 -H 'Authorization: Bearer $${CRON_SECRET}' http://app:3000/api/cron/alerts"
+        } > /etc/crontabs/root
+        exec crond -f -l 6
+    depends_on:
+      - app
+
+secrets:
+  env:
+    file: ../.env
+
+volumes:
+  caddy-data:
+  caddy-config:

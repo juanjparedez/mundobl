@@ -23,6 +23,12 @@ function getAntdCssVersion(): string {
 }
 
 const nextConfig: NextConfig = {
+  // Servidor propio (deploy/README.md): `next start` necesita todo
+  // node_modules; standalone deja un server.js con solo lo que se usa, que es
+  // lo que copia el Dockerfile. En Vercel no se activa.
+  ...(process.env.MUNDOBL_STANDALONE === '1' && {
+    output: 'standalone' as const,
+  }),
   generateBuildId: () => buildMetadata.buildId,
   env: {
     BUILD_COMMIT_DATE: buildMetadata.commitDate,

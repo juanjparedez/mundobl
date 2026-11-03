@@ -3,6 +3,8 @@
 !package-lock.json
 !.npmrc
 !Dockerfile.test
+!Dockerfile
+!CHANGELOG.md
 !.dockerignore
 !scripts/
 !scripts/**

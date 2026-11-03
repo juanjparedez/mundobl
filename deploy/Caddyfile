@@ -1,0 +1,9 @@
+# HTTPS automatico (Let's Encrypt) apenas el DNS apunta a este servidor.
+mundobl.com.ar {
+	encode zstd gzip
+	reverse_proxy app:3000
+}
+
+www.mundobl.com.ar {
+	redir https://mundobl.com.ar{uri} permanent
+}
