@@ -7,7 +7,7 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import {
   PrismaClient,
   type FeatureRequestPriority,
-} from '../src/generated/prisma';
+} from '@prisma/client';
 
 /**
  * Triage + ranking ROI del backlog — 2026-07-21.

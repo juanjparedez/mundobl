@@ -6,7 +6,7 @@ import {
   PrismaClient,
   type FeatureRequestStatus,
   type FeatureRequestPriority,
-} from '../src/generated/prisma';
+} from '@prisma/client';
 
 /**
  * Audit del backlog 2026-05-13:

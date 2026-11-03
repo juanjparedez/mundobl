@@ -8,7 +8,7 @@
  * El registro es global por aplicacion (singleton). Si una pagina necesita
  * widgets locales que no quiere exponer al picker, puede usar `hidden: true`.
  */
-import type { Role } from '@/generated/prisma';
+import type { Role } from '@prisma/client';
 import type { WidgetCategory, WidgetDefinition, WidgetMode } from '../types';
 
 class WidgetRegistryImpl {

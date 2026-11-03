@@ -1,4 +1,62 @@
-import sharp from 'sharp';
+import { getCloudflareContext } from '@opennextjs/cloudflare';
+
+/**
+ * Dos motores segun donde corre la app:
+ * - Node (Vercel, local, scripts): sharp.
+ * - Cloudflare Workers: sharp es nativo y no carga en workerd; se usa el
+ *   binding IMAGES (Cloudflare Images, `images` en wrangler.jsonc). Solo se
+ *   usa al subir posters o capturas, asi que entra holgado en el cupo
+ *   gratuito de transformaciones.
+ */
+const IS_WORKERD =
+  typeof navigator !== 'undefined' &&
+  navigator.userAgent === 'Cloudflare-Workers';
+
+interface ResizeSpec {
+  width: number;
+  height: number;
+  quality: number;
+  /** Corregir la orientacion EXIF (fotos de celular). */
+  autoOrient: boolean;
+}
+
+/** Lo que usamos del binding IMAGES de Cloudflare. */
+interface CloudflareImagesBinding {
+  input(stream: ReadableStream<Uint8Array>): {
+    transform(options: { width: number; height: number; fit: 'scale-down' }): {
+      output(options: { format: 'image/webp'; quality: number }): Promise<{
+        response(): Response;
+      }>;
+    };
+  };
+}
+
+async function resizeToWebp(input: Buffer, spec: ResizeSpec): Promise<Buffer> {
+  if (IS_WORKERD) {
+    const { env } = await getCloudflareContext({ async: true });
+    const images = (env as unknown as { IMAGES: CloudflareImagesBinding })
+      .IMAGES;
+    // Cloudflare Images aplica la orientacion EXIF por defecto.
+    const result = await images
+      .input(new Blob([new Uint8Array(input)]).stream())
+      .transform({ width: spec.width, height: spec.height, fit: 'scale-down' })
+      .output({ format: 'image/webp', quality: spec.quality });
+    return Buffer.from(await result.response().arrayBuffer());
+  }
+
+  const { default: sharp } = await import('sharp');
+  const pipeline = sharp(input, { failOn: 'none' });
+  if (spec.autoOrient) pipeline.rotate();
+  return pipeline
+    .resize({
+      width: spec.width,
+      height: spec.height,
+      fit: 'inside',
+      withoutEnlargement: true,
+    })
+    .webp({ quality: spec.quality, effort: 4 })
+    .toBuffer();
+}
 
 const POSTER_MAX_WIDTH = 1200;
 const POSTER_MAX_HEIGHT = 1800;
@@ -41,16 +99,12 @@ export async function processPosterImage(
     return { buffer: input, contentType: 'image/gif', ext: 'gif' };
   }
 
-  const buffer = await sharp(input, { failOn: 'none' })
-    .rotate()
-    .resize({
-      width: POSTER_MAX_WIDTH,
-      height: POSTER_MAX_HEIGHT,
-      fit: 'inside',
-      withoutEnlargement: true,
-    })
-    .webp({ quality: WEBP_QUALITY, effort: 4 })
-    .toBuffer();
+  const buffer = await resizeToWebp(input, {
+    width: POSTER_MAX_WIDTH,
+    height: POSTER_MAX_HEIGHT,
+    quality: WEBP_QUALITY,
+    autoOrient: true,
+  });
 
   return { buffer, contentType: 'image/webp', ext: 'webp' };
 }
@@ -69,15 +123,12 @@ export async function processCardThumbnail(
 ): Promise<ProcessedImage | null> {
   if (posterContentType === 'image/gif') return null;
 
-  const buffer = await sharp(posterBuffer, { failOn: 'none' })
-    .resize({
-      width: CARD_MAX_WIDTH,
-      height: CARD_MAX_HEIGHT,
-      fit: 'inside',
-      withoutEnlargement: true,
-    })
-    .webp({ quality: CARD_WEBP_QUALITY, effort: 4 })
-    .toBuffer();
+  const buffer = await resizeToWebp(posterBuffer, {
+    width: CARD_MAX_WIDTH,
+    height: CARD_MAX_HEIGHT,
+    quality: CARD_WEBP_QUALITY,
+    autoOrient: false,
+  });
 
   return { buffer, contentType: 'image/webp', ext: 'webp' };
 }

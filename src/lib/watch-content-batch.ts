@@ -1,4 +1,4 @@
-import type { Prisma } from '@/generated/prisma';
+import type { Prisma } from '@prisma/client';
 import type { VideoChannelInfo } from './channel-fetcher';
 import { isOfficialChannelId } from './official-channels';
 import { MIN_EPISODE_SECONDS, type PlaybackProbe } from './playability';

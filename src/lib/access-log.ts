@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/database';
 import { isRuntimeFreezeActive } from '@/lib/runtime-freeze';
 import { runCronJob } from '@/lib/cron-runs';
+import { runAfterResponse } from '@/lib/after-response';
 
 /**
  * Registra una visita (llamado desde el proxy). Solo ruta y hora: sin IP,
@@ -8,10 +9,10 @@ import { runCronJob } from '@/lib/cron-runs';
  * /privacidad; las visitas solo alimentan conteos (activity-by-day).
  * Fire-and-forget: no bloquea el request.
  */
-export function logPageView(path: string): void {
-  if (isRuntimeFreezeActive('logging')) return;
+export function logPageView(path: string): Promise<unknown> {
+  if (isRuntimeFreezeActive('logging')) return Promise.resolve();
 
-  prisma.accessLog
+  return prisma.accessLog
     .create({
       data: {
         action: 'PAGE_VIEW',
@@ -53,11 +54,15 @@ const shouldLogAbuse = createAbuseThrottle(10 * 60 * 1000, 50);
  * /admin/banned-ips. Es la unica fila con IP que guardamos y vence a los
  * `ABUSE_RETENTION_DAYS` dias (purgeExpiredLogs). /privacidad lo dice.
  */
-export function logAbuse(path: string, ip: string, reason: 'scanner'): void {
-  if (isRuntimeFreezeActive('logging')) return;
-  if (!shouldLogAbuse(ip, Date.now())) return;
+export function logAbuse(
+  path: string,
+  ip: string,
+  reason: 'scanner'
+): Promise<unknown> {
+  if (isRuntimeFreezeActive('logging')) return Promise.resolve();
+  if (!shouldLogAbuse(ip, Date.now())) return Promise.resolve();
 
-  prisma.accessLog
+  return prisma.accessLog
     .create({
       data: {
         action: ABUSE_ACTION,
@@ -74,7 +79,7 @@ export function logAbuse(path: string, ip: string, reason: 'scanner'): void {
 
 /**
  * Registra una accion de API (llamado desde API routes)
- * Fire-and-forget: no bloquea el request
+ * No bloquea el request: la escritura va despues de responder.
  */
 export function logAction(
   action: string,
@@ -84,20 +89,22 @@ export function logAction(
   metadata?: string
 ): void {
   if (isRuntimeFreezeActive('logging')) return;
+  writeActionLog(action, path, method, userId, metadata);
+}
 
-  prisma.accessLog
-    .create({
-      data: {
-        action,
-        path,
-        method,
-        userId,
-        metadata,
-      },
-    })
-    .catch(() => {
-      // Silenciar errores de logging
-    });
+/** Escribe la fila despues de responder; un fallo nunca afecta el request. */
+function writeActionLog(
+  action: string,
+  path: string,
+  method: string,
+  userId: string | null,
+  metadata?: string
+): void {
+  runAfterResponse(() =>
+    prisma.accessLog
+      .create({ data: { action, path, method, userId, metadata } })
+      .catch(() => undefined)
+  );
 }
 
 /**
@@ -111,19 +118,7 @@ export function logCriticalAction(
   userId: string | null,
   metadata?: string
 ): void {
-  prisma.accessLog
-    .create({
-      data: {
-        action,
-        path,
-        method,
-        userId,
-        metadata,
-      },
-    })
-    .catch(() => {
-      // Silenciar errores criticos de logging para no afectar request
-    });
+  writeActionLog(action, path, method, userId, metadata);
 }
 
 interface LogFilters {

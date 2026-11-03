@@ -3,7 +3,7 @@ import NextAuth from 'next-auth';
 import Google from 'next-auth/providers/google';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '@/lib/database';
-import type { Role } from '@/generated/prisma';
+import type { Role } from '@prisma/client';
 
 // Cuanto confiar en el role/banned "horneado" en el JWT antes de
 // re-consultar la DB. Sin esto, PrismaAdapter fuerza estrategia de sesion

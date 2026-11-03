@@ -1,11 +1,15 @@
-# Deploy a producción, a mano.
+# Deploy a producción (Cloudflare Workers), a mano.
 #
-# Mergear a main NO despliega (vercel.json tiene deploymentEnabled: false).
-# Cada deploy vacía la caché ISR y hace un build que lee la base, así que se
-# juntan varios merges y se despliega una vez con este botón:
-# Actions → "Deploy producción" → Run workflow.
+# Mergear a main NO despliega. Se juntan varios merges y se despliega una vez
+# con este botón: Actions → "Deploy producción" → Run workflow.
+# Guia completa: docs/deploy-cloudflare.md.
 #
-# Secret necesario: VERCEL_TOKEN (vercel.com/account/tokens, limitado al team).
+# Secrets necesarios (Settings → Secrets and variables → Actions):
+# - CLOUDFLARE_API_TOKEN: token con el template "Edit Cloudflare Workers".
+# - CLOUDFLARE_ACCOUNT_ID: el Account ID del dashboard de Cloudflare.
+# - MUNDOBL_ENV: el .env de producción completo (KEY=valor por línea). El
+#   build lo necesita (prerender contra la base, NEXT_PUBLIC_*) y el Worker
+#   lo recibe como secrets en el mismo deploy, así nunca quedan desfasados.
 
 name: Deploy producción
 
@@ -24,23 +28,50 @@ jobs:
   deploy:
     if: github.repository == 'juanjparedez/mundobl' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-    env:
-      VERCEL_ORG_ID: team_yFYHVGlmrG0FA0GNtB5iYOyJ
-      VERCEL_PROJECT_ID: prj_WqolFzpkAdYVw2NnNb0HVHzCtFR6
+    timeout-minutes: 30
 
     steps:
       - uses: actions/checkout@v6
+        with:
+          # El generador de changelog con IA usa los ultimos 30 commits.
+          fetch-depth: 30
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Cargar el entorno de producción
+        env:
+          MUNDOBL_ENV: ${{ secrets.MUNDOBL_ENV }}
+        run: |
+          test -n "$MUNDOBL_ENV" || { echo "::error::Falta el secret MUNDOBL_ENV"; exit 1; }
+          umask 077
+          # Fuera del repo a proposito: un .env* en la raiz OpenNext lo
+          # copiaria dentro del codigo del Worker. Al build le llega como
+          # variables de proceso y al Worker como secrets.
+          printf '%s\n' "$MUNDOBL_ENV" > "$RUNNER_TEMP/production.env"
+          node scripts/env-to-secrets-json.mjs "$RUNNER_TEMP/production.env" > "$RUNNER_TEMP/worker-secrets.json"
+
+      - name: Build
+        run: |
+          export MUNDOBL_BUILD_SHA="$GITHUB_SHA"
+          export MUNDOBL_BUILD_COMMIT_DATE="$(git show -s --format=%cI "$GITHUB_SHA")"
+          node --env-file="$RUNNER_TEMP/production.env" \
+            node_modules/@opennextjs/cloudflare/dist/cli/index.js build
 
       - name: Deploy
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
-          test -n "$VERCEL_TOKEN" || { echo "::error::Falta el secret VERCEL_TOKEN"; exit 1; }
-          commit_date=$(git show -s --format=%cI "$GITHUB_SHA")
-          # CLI pineado (no @latest): este paso tiene VERCEL_TOKEN y un release
-          # comprometido de npm se lo llevaria. Subir la version a mano.
-          url=$(npx --yes vercel@62.7.0 deploy --prod --yes --token="$VERCEL_TOKEN" \
-            --build-env "MUNDOBL_BUILD_SHA=$GITHUB_SHA" \
-            --build-env "MUNDOBL_BUILD_COMMIT_DATE=$commit_date")
-          echo "Deploy listo: $url ($(git rev-parse --short HEAD))" >> "$GITHUB_STEP_SUMMARY"
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo "::error::Falta el secret CLOUDFLARE_API_TOKEN"; exit 1; }
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo "::error::Falta el secret CLOUDFLARE_ACCOUNT_ID"; exit 1; }
+          npx opennextjs-cloudflare deploy --secrets-file="$RUNNER_TEMP/worker-secrets.json"
+          echo "Deploy listo: $(git rev-parse --short HEAD)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Borrar el entorno
+        if: always()
+        run: rm -f "$RUNNER_TEMP/production.env" "$RUNNER_TEMP/worker-secrets.json"

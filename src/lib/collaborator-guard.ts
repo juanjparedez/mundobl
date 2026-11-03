@@ -8,7 +8,7 @@
 // ese chequeo — usar siempre despues de `requireRole(['ADMIN', 'COLLABORATOR'])`.
 
 import { prisma } from './database';
-import type { Role } from '@/generated/prisma';
+import type { Role } from '@prisma/client';
 import { canManageContribution } from './contribution-permissions';
 
 export interface OwnershipOk {

@@ -1,4 +1,4 @@
-import type { Role } from '@/generated/prisma';
+import type { Role } from '@prisma/client';
 
 export function canManageContribution(
   auth: { role: Role; userId: string },

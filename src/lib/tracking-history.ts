@@ -1,8 +1,4 @@
-import type {
-  Prisma,
-  TrackingEventKind,
-  WatchStatus,
-} from '../generated/prisma';
+import type { Prisma, TrackingEventKind, WatchStatus } from '@prisma/client';
 import { dateValue, type TrackingBackupReferences } from './tracking-backup';
 
 export interface TrackingHistoryItem {

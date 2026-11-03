@@ -1,23 +1,15 @@
 import { NextResponse } from 'next/server';
-import { execSync } from 'child_process';
 import { requireRole } from '@/lib/auth-helpers';
 import { generateText } from '@/lib/gemini';
+import { getBuildRecentCommits } from '@/lib/build-info';
 
 export async function POST() {
   const auth = await requireRole(['ADMIN']);
   if (!auth.authorized) return auth.response;
 
   try {
-    // Obtener los últimos 30 commits
-    let gitLog = '';
-    try {
-      gitLog = execSync('git log -n 30 --pretty=format:"%h %s"', {
-        encoding: 'utf-8',
-        timeout: 5000,
-      });
-    } catch {
-      gitLog = '';
-    }
+    // Ultimos 30 commits, tomados al buildear (en runtime no hay .git).
+    const gitLog = getBuildRecentCommits();
 
     if (!gitLog.trim()) {
       return NextResponse.json(

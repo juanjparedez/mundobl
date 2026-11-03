@@ -20,7 +20,7 @@
 import 'dotenv/config';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from '../src/generated/prisma';
+import { PrismaClient } from '@prisma/client';
 
 const TARGET_IDS = [153, 154, 155];
 const APPLY = process.argv.includes('--apply');

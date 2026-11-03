@@ -1,4 +1,4 @@
-import { Prisma } from '@/generated/prisma';
+import { Prisma } from '@prisma/client';
 import { assertTrackingCanBeRemoved } from './tracking-preservation';
 import { prepareUniverseSlot, prisma, resolveBasedOnValue } from './database';
 import { getCountryCode } from './country-codes';

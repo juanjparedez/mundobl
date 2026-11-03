@@ -21,7 +21,7 @@
  * empieza a morder recien con datos reales.
  */
 
-import { Prisma } from '../generated/prisma';
+import { Prisma } from '@prisma/client';
 import { MIN_EPISODE_SECONDS } from './playability';
 
 /**

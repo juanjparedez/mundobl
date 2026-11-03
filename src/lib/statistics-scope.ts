@@ -1,4 +1,4 @@
-import { Prisma } from '../generated/prisma';
+import { Prisma } from '@prisma/client';
 import { HAS_WATCHABLE_EPISODE } from './watchable';
 import { MIN_EPISODE_SECONDS } from './playability';
 

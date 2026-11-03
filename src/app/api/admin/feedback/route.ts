@@ -3,7 +3,7 @@ import { requireRole } from '@/lib/auth-helpers';
 import { prisma } from '@/lib/database';
 import { notifyFeatureRequestStatus } from '@/lib/notifications';
 import { logAction } from '@/lib/access-log';
-import { Prisma } from '@/generated/prisma';
+import { Prisma } from '@prisma/client';
 
 export const runtime = 'nodejs';
 

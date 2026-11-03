@@ -50,6 +50,7 @@ next-env.d.ts
 # cloudflare
 .open-next/
 .wrangler/
+.dev.vars*
 
 # data
 /data/

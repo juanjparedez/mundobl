@@ -1,4 +1,4 @@
-import type { Prisma, PrismaClient } from '@/generated/prisma';
+import type { Prisma, PrismaClient } from '@prisma/client';
 import { CommunityError, parseCommunityTopic } from './community-input';
 import {
   parseRecommendationList,

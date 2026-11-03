@@ -7,7 +7,6 @@
 //
 // Un logro guardado no se borra: si baja el numero que lo dio, queda.
 
-import { after } from 'next/server';
 import { loadLocaleMessages } from '@/i18n/messages';
 import {
   ACHIEVEMENTS,
@@ -26,9 +25,10 @@ import {
   type PatchTier,
 } from './platform-patches';
 import { countUserWatchedChapters, getWatchedTime, prisma } from './database';
-import type { Prisma } from '../generated/prisma';
+import type { Prisma } from '@prisma/client';
 import { interpolateMessage } from './i18n-format';
 import { notifyUser } from './notifications';
+import { runAfterResponse } from './after-response';
 
 type PlatformCompletions = Array<{ platform: string; count: number }>;
 
@@ -408,14 +408,10 @@ export function awardAchievementsAfterResponse(
   userId: string,
   metrics: readonly AchievementMetric[]
 ): void {
-  const award = () =>
+  runAfterResponse(() =>
     awardAchievements(userId, metrics).then(
       () => undefined,
       (error: unknown) => console.error('Error al otorgar logros:', error)
-    );
-  try {
-    after(award);
-  } catch {
-    void award();
-  }
+    )
+  );
 }

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
-import { PrismaClient } from '../src/generated/prisma';
+import { PrismaClient } from '@prisma/client';
 import { createSupportRepository } from '../src/lib/support-repository';
 import {
   EMPTY_SUPPORT,
