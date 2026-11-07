@@ -53,7 +53,7 @@ import { unstable_cache } from 'next/cache';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { withSerialTransactions } from './serial-transactions';
-import { Prisma, PrismaClient } from '../generated/prisma';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { playableCountIn, summarizePlayability } from './availability';
 import { airingSeriesWhere } from './airing-schedule';
 import { normalizeBasedOn, type BasedOnEntry } from './based-on';
@@ -78,6 +78,10 @@ import {
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
+const IS_WORKERD =
+  typeof navigator !== 'undefined' &&
+  navigator.userAgent === 'Cloudflare-Workers';
+
 function createPrismaClient() {
   const connectionString = process.env.DATABASE_URL;
   const pool = new Pool({
@@ -85,6 +89,11 @@ function createPrismaClient() {
     max: 5,
     idleTimeoutMillis: 10000,
     connectionTimeoutMillis: 10000,
+    // En Cloudflare Workers una conexion abierta en un request no se puede
+    // usar desde otro ("Cannot perform I/O on behalf of a different
+    // request"): cada conexion se usa una vez y se cierra. El pooling real lo
+    // hace el pooler de Supabase (Supavisor). En Node se reutilizan.
+    ...(IS_WORKERD && { maxUses: 1 }),
   });
   const adapter = withSerialTransactions(new PrismaPg(pool));
   return new PrismaClient({ adapter });
@@ -125,7 +134,7 @@ export async function recordMaintenanceAction(
 /** Hidden editorial blocks are readable only by an authorized editor. */
 export async function getReadableSeriesInfoBlocks(
   seriesId: number,
-  viewer?: { userId: string; role: import('../generated/prisma').Role }
+  viewer?: { userId: string; role: import('@prisma/client').Role }
 ) {
   const editor = viewer?.role === 'ADMIN' || viewer?.role === 'MODERATOR';
   const readable: Prisma.SeriesWhereInput = editor
@@ -3775,4 +3784,31 @@ export async function deleteUntrackedContent(
     await tx.episode.delete({ where: { id: target.episodeId } });
     return episode.season.series;
   });
+}
+
+// ============================================
+// BAN POR IP (layout de /admin)
+// ============================================
+
+const BANNED_IP_CACHE_TTL_MS = 30 * 60 * 1000;
+const bannedIpCache = new Map<string, { banned: boolean; expiresAt: number }>();
+
+/**
+ * Si la IP esta en BannedIp. Cachea 30 min por instancia (como hacia el
+ * proxy) y, si la base no responde, deja pasar: nunca bloquea por un timeout.
+ */
+export async function isIpBanned(ip: string): Promise<boolean> {
+  const cached = bannedIpCache.get(ip);
+  if (cached && cached.expiresAt > Date.now()) return cached.banned;
+  try {
+    const banned =
+      (await prisma.bannedIp.findUnique({ where: { ip } })) !== null;
+    bannedIpCache.set(ip, {
+      banned,
+      expiresAt: Date.now() + BANNED_IP_CACHE_TTL_MS,
+    });
+    return banned;
+  } catch {
+    return false;
+  }
 }

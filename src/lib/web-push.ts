@@ -1,5 +1,6 @@
 import webpush from 'web-push';
 import { prisma } from './database';
+import { runAfterResponse } from './after-response';
 
 const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
 const VAPID_PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY;
@@ -89,13 +90,15 @@ export async function sendPushToUser(
           { TTL: 60 * 60 * 24 } // 1 dia
         );
         delivered += 1;
-        // No bloqueamos en el update — fire and forget.
-        prisma.pushSubscription
-          .update({
-            where: { id: sub.id },
-            data: { lastUsedAt: new Date() },
-          })
-          .catch(() => undefined);
+        // No bloqueamos en el update: va despues de responder.
+        runAfterResponse(() =>
+          prisma.pushSubscription
+            .update({
+              where: { id: sub.id },
+              data: { lastUsedAt: new Date() },
+            })
+            .catch(() => undefined)
+        );
       } catch (err: unknown) {
         const status =
           err && typeof err === 'object' && 'statusCode' in err

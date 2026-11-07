@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/database';
 import { edgeCountry, isActivityKind, utcDay } from '@/lib/series-activity';
+import { viewerCountryFromHeaders } from '@/lib/viewer-country';
 
 const noStore = { 'Cache-Control': 'no-store' };
 
@@ -74,7 +75,7 @@ export async function POST(request: NextRequest) {
       kind,
       // El origen lo decide la sesion, no el cliente.
       source: session?.user ? 'account' : 'browser',
-      country: edgeCountry(request.headers.get('x-vercel-ip-country')),
+      country: edgeCountry(viewerCountryFromHeaders(request.headers)),
     };
     await prisma.seriesActivityDaily.upsert({
       where: { day_seriesId_kind_source_country: key },

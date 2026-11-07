@@ -1,4 +1,4 @@
-import type { Prisma } from '../generated/prisma';
+import type { Prisma } from '@prisma/client';
 
 type TargetField = 'seriesId' | 'seasonId' | 'episodeId';
 type Section = 'viewStatuses' | 'seriesNotes' | 'episodeNotes';

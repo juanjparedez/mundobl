@@ -1,4 +1,4 @@
-import { Prisma } from '@/generated/prisma';
+import { Prisma } from '@prisma/client';
 
 /**
  * Adjunta episodios embebidos a una serie que YA existe, en vez de crear una

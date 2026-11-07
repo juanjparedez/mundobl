@@ -1,5 +1,5 @@
 import { MIN_EPISODE_SECONDS } from '@/lib/playability';
-import { Prisma } from '@/generated/prisma';
+import { Prisma } from '@prisma/client';
 import {
   COMMUNITY_MEMBER,
   COMMUNITY_SQL,

@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from '../src/generated/prisma';
+import { PrismaClient } from '@prisma/client';
 import { CULTURAL_GLOSSARY } from '../src/data/cultural-glossary';
 
 function makeSlug(value: string, index: number): string {

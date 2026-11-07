@@ -1,0 +1,64 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Ver docs/deploy-cloudflare.md.
+  "name": "mundobl",
+  "main": "cloudflare/worker.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS",
+  },
+  // Tope de CPU por request (no cuenta la espera a la base). El cron diario
+  // es lo mas pesado; 30 s (el default) puede quedar corto.
+  "limits": {
+    "cpu_ms": 60000,
+  },
+  // Los mismos horarios (UTC) que tenia vercel.json; cloudflare/worker.ts
+  // mapea cada uno a su ruta /api/cron/*.
+  "triggers": {
+    "crons": ["0 5 * * *", "0 12 * * *"],
+  },
+  // La base esta en Sao Paulo y una pagina hace varias consultas: Smart
+  // Placement corre el Worker cerca de la base si eso responde mas rapido.
+  "placement": {
+    "mode": "smart",
+  },
+  "observability": {
+    "enabled": true,
+  },
+  "services": [
+    {
+      // OpenNext se llama a si mismo para revalidar (open-next.config.ts).
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "mundobl",
+    },
+  ],
+  "r2_buckets": [
+    {
+      // Cache ISR. Se crea una vez: npx wrangler r2 bucket create mundobl-opennext-cache
+      "binding": "NEXT_INC_CACHE_R2_BUCKET",
+      "bucket_name": "mundobl-opennext-cache",
+    },
+  ],
+  "durable_objects": {
+    "bindings": [
+      { "name": "NEXT_CACHE_DO_QUEUE", "class_name": "DOQueueHandler" },
+      {
+        "name": "NEXT_TAG_CACHE_DO_SHARDED",
+        "class_name": "DOShardedTagCache",
+      },
+    ],
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache"],
+    },
+  ],
+  // Resize de posters y miniaturas al subir (src/lib/image-processing.ts):
+  // sharp es nativo y no corre en Workers.
+  "images": {
+    "binding": "IMAGES",
+  },
+}

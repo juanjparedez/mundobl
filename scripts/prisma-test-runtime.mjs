@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from '../src/generated/prisma/index.js';
+import { PrismaClient } from '@prisma/client';
 
 // PGlite has one backend. Keep its tests on one connection; do not change the app pool.
 const url = new URL(process.env.DATABASE_URL ?? '');

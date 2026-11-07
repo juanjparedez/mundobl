@@ -22,20 +22,39 @@ function getAntdCssVersion(): string {
   }
 }
 
+function readOptionalFile(path: string): string {
+  try {
+    return readFileSync(path, 'utf-8');
+  } catch {
+    return '';
+  }
+}
+
+function readPackageVersion(): string {
+  const pkg = JSON.parse(readOptionalFile('package.json') || '{}') as {
+    version?: string;
+  };
+  return pkg.version ?? '0.0.0';
+}
+
 const nextConfig: NextConfig = {
   generateBuildId: () => buildMetadata.buildId,
+  // En Cloudflare Workers no hay filesystem en runtime: lo que antes se leia
+  // con fs (BUILD_ID, package.json, CHANGELOG.md, git log) viaja inlineado.
   env: {
     BUILD_COMMIT_DATE: buildMetadata.commitDate,
+    MUNDOBL_BUILD_ID: buildMetadata.buildId,
+    MUNDOBL_PACKAGE_VERSION: readPackageVersion(),
+    MUNDOBL_CHANGELOG_MD: readOptionalFile('CHANGELOG.md'),
+    MUNDOBL_RECENT_COMMITS: buildMetadata.recentCommits,
     NEXT_PUBLIC_ANTD_CSS_VERSION: getAntdCssVersion(),
   },
   reactStrictMode: true,
-  // /api/changelog lee CHANGELOG.md con fs en runtime (es la fuente de verdad
-  // del changelog publico). Con `next start` el archivo esta en cwd, pero si
-  // algun dia se pasa a output standalone/serverless este include garantiza
-  // que el .md entre al bundle de esa ruta.
-  outputFileTracingIncludes: {
-    '/api/changelog': ['./CHANGELOG.md'],
-  },
+  // Cloudflare (OpenNext): el cliente de Prisma tiene que quedar como paquete
+  // externo para que OpenNext lo cambie por su variante de workerd, que
+  // importa el WASM del query compiler en vez de compilarlo en runtime
+  // (prohibido en Workers). Ver open-next.config.ts.
+  serverExternalPackages: ['@prisma/client', '.prisma/client'],
   // Reescribe `import { X } from 'antd'` / `'@ant-design/icons'` a imports
   // por-componente (antd/es/x, icons/es/icons/X). Cada módulo de icono va vía
   // AntdIcon (que tiene 'use client') → boundary client. Sin esto, el BARREL de
@@ -51,6 +70,12 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: false,
   },
   images: {
+    // En Cloudflare el optimizador de next/image usa Cloudflare Images, que
+    // en el plan gratis corta en 5.000 transformaciones unicas por mes (cada
+    // ancho de cada miniatura cuenta) y despues la imagen falla. Las
+    // miniaturas externas (YouTube, TMDB, avatares) se sirven directo y los
+    // posters ya vienen optimizados de R2 (ver image-processing.ts).
+    unoptimized: true,
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 2592000,
     deviceSizes: [360, 480, 640, 768, 1024, 1280, 1536],

@@ -4,7 +4,7 @@ import type {
   CommunityReportTarget,
   CommunityReportReason,
   CommunityModerationKind,
-} from '@/generated/prisma';
+} from '@prisma/client';
 import { CommunityError, communityId, communityText } from './community-input';
 
 /** Moderation can inspect reported public content, never an author's private drafts. */

@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import 'dotenv/config';
 import { prisma } from '../src/lib/database';
-import type { Prisma } from '../src/generated/prisma';
+import type { Prisma } from '@prisma/client';
 
 /**
  * Deja las visitas ya guardadas como las nuevas: solo ruta y hora. Borra IP,

@@ -7,7 +7,7 @@ import { useLocale } from '@/lib/providers/LocaleProvider';
 import { ActionCard } from '@/components/design-system';
 import { WidgetRegistry } from '../WidgetRegistry/WidgetRegistry';
 import type { WidgetCategory, WidgetMode } from '../types';
-import type { Role } from '@/generated/prisma';
+import type { Role } from '@prisma/client';
 import './WidgetPickerDrawer.css';
 
 export interface WidgetPickerDrawerProps {

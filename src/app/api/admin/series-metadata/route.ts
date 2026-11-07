@@ -4,7 +4,7 @@ import { revalidateSeriesDetail } from '@/lib/revalidate-series';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { findOrCreateTag, findOrCreateGenre } from '@/lib/tag-utils';
-import { Prisma } from '@/generated/prisma';
+import { Prisma } from '@prisma/client';
 
 // GET - Listar series con sus tags y géneros con filtros de auditoría
 export async function GET(request: NextRequest) {

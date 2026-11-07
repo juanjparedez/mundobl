@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
-import type { Role } from '@/generated/prisma';
+import type { Role } from '@prisma/client';
 
 const ALLOWED_ROLES: Role[] = ['VISITOR', 'MODERATOR', 'COLLABORATOR'];
 

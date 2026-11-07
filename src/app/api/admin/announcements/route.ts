@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-helpers';
 import { prisma } from '@/lib/database';
 import { logAction } from '@/lib/access-log';
-import type { Prisma } from '@/generated/prisma';
+import type { Prisma } from '@prisma/client';
 
 // GET /api/admin/announcements — lista todos (admin)
 export async function GET() {

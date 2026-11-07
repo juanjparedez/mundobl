@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-helpers';
 import { prisma } from '@/lib/database';
 import { logAction } from '@/lib/access-log';
-import type { Announcement, Prisma } from '@/generated/prisma';
+import type { Announcement, Prisma } from '@prisma/client';
 
 interface AnnouncementInput {
   title?: string;

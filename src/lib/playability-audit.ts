@@ -1,7 +1,7 @@
 import { API_BATCH_SIZE, probeViaApi, type PlaybackProbe } from './playability';
 import { CORE_MARKETS } from './channel-fetcher';
 import { prisma } from './database';
-import { Prisma } from '../generated/prisma';
+import { Prisma } from '@prisma/client';
 import { WATCHABLE_EPISODE_WHERE } from './watchable';
 import { isPlayableIn } from './playability';
 import { runCronJob } from './cron-runs';

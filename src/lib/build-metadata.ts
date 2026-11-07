@@ -33,5 +33,10 @@ export function getBuildMetadata(
       date && Number.isFinite(Date.parse(date))
         ? date
         : new Date().toISOString(),
+    // Para el generador de changelog con IA (/api/admin/changelog/auto-generate):
+    // en runtime no hay .git (Vercel ni Cloudflare).
+    recentCommits:
+      env.MUNDOBL_RECENT_COMMITS ||
+      readGit(['log', '-n', '30', '--pretty=format:%h %s']),
   };
 }

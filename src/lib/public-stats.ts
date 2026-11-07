@@ -1,7 +1,7 @@
 // Build complete SQL objects before calling the shared client: Next bundles can
 // contain different Sql constructors, so client tagged templates cannot flatten
 // fragments created by another bundle. Prisma.sql here shares the fragment runtime.
-import { Prisma } from '../generated/prisma';
+import { Prisma } from '@prisma/client';
 import {
   COMMUNITY,
   COMMUNITY_COMMENTS,

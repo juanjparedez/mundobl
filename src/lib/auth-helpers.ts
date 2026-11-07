@@ -1,6 +1,6 @@
 import { auth } from '@/lib/auth';
 import { NextResponse } from 'next/server';
-import type { Role } from '@/generated/prisma';
+import type { Role } from '@prisma/client';
 
 interface AuthSuccess {
   authorized: true;

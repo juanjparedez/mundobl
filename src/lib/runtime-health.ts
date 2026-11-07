@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/database';
 import { getRecentCronRuns } from '@/lib/cron-runs';
+import { getBuildInfo, getBuildRecentCommits } from './build-info';
 
 /**
  * Salud del sistema para /admin/runtime: los crons y las dependencias de las
@@ -7,7 +8,7 @@ import { getRecentCronRuns } from '@/lib/cron-runs';
  * Actions). Todo sale de fuentes publicas o de la propia base: sin tokens.
  */
 
-// Mismo horario que vercel.json ("0 5 * * *"): el cron diario, 05:00 UTC.
+// Mismo horario que wrangler.jsonc ("0 5 * * *"): el cron diario, 05:00 UTC.
 const DAILY_CRON_HOUR_UTC = 5;
 
 function nextDailyRun(hourUtc: number, now = new Date()): string {
@@ -32,11 +33,10 @@ const INDICATORS: readonly StatusIndicator[] = [
   'critical',
 ];
 
-// Paginas de estado oficiales. Las tres usan Statuspage, que publica
+// Paginas de estado oficiales (base y hosting). Las dos usan Statuspage, que publica
 // /api/v2/status.json sin autenticacion.
 const STATUS_PAGES = [
   { name: 'Supabase', url: 'https://status.supabase.com' },
-  { name: 'Vercel', url: 'https://www.vercel-status.com' },
   { name: 'Cloudflare', url: 'https://www.cloudflarestatus.com' },
 ] as const;
 
@@ -126,12 +126,20 @@ async function checkWorkflow(workflow: (typeof GITHUB_WORKFLOWS)[number]) {
 }
 
 function getDeployment() {
+  // VERCEL_* solo existe en Vercel; en Cloudflare la identidad del build
+  // viene inlineada por next.config.ts (ver build-info.ts).
+  const { buildId, env } = getBuildInfo();
+  const headCommit = getBuildRecentCommits().split('\n')[0] ?? '';
   return {
-    env: process.env.VERCEL_ENV ?? 'local',
+    env:
+      process.env.VERCEL_ENV ?? (env === 'production' ? 'production' : 'local'),
     region: process.env.VERCEL_REGION ?? null,
-    commitSha: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ?? null,
+    commitSha:
+      process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ??
+      (buildId === 'dev' ? null : buildId.slice(0, 7)),
     commitMessage:
-      process.env.VERCEL_GIT_COMMIT_MESSAGE?.split('\n')[0] ?? null,
+      process.env.VERCEL_GIT_COMMIT_MESSAGE?.split('\n')[0] ??
+      (headCommit.replace(/^\S+\s/, '') || null),
     branch: process.env.VERCEL_GIT_COMMIT_REF ?? null,
   };
 }

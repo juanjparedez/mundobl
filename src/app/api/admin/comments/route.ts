@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Prisma } from '@/generated/prisma';
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { logAction } from '@/lib/access-log';

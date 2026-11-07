@@ -1,5 +1,5 @@
 import type { ComponentType, ReactNode } from 'react';
-import type { Role } from '@/generated/prisma';
+import type { Role } from '@prisma/client';
 import type { TranslationKey } from '@/i18n/messages';
 
 /** Breakpoints estandar usados por DashboardGrid (matchea react-grid-layout). */

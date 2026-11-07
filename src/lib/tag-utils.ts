@@ -1,4 +1,4 @@
-import { Prisma } from '@/generated/prisma';
+import { Prisma } from '@prisma/client';
 
 /**
  * Busca un tag existente de forma insensible a mayúsculas y espacios, y solo

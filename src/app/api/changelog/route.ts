@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
 import { prisma } from '@/lib/database';
+import { getBuildInfo } from '@/lib/build-info';
+import { getBundledChangelog } from '@/lib/changelog-markdown';
 
 // Cada item del changelog tiene texto + categoria opcional ("Features",
 // "Fixes", "Performance", "SEO", "Seguridad"...). La categoria viene de
@@ -18,62 +18,6 @@ interface ChangelogEntry {
   // ej: "Pagina de contenido" en lugar de "137c773"). Si es null usar version.
   label?: string | null;
   items: ChangelogItemEntry[];
-}
-
-function parseChangelogFile(): ChangelogEntry[] {
-  try {
-    const filePath = path.join(process.cwd(), 'CHANGELOG.md');
-    const content = fs.readFileSync(filePath, 'utf-8');
-    const entries: ChangelogEntry[] = [];
-    let current: ChangelogEntry | null = null;
-    // Categoria activa para items que sigan a un `### CategoryName` header.
-    let currentCategory: string | null = null;
-
-    for (const line of content.split('\n')) {
-      const versionMatch = line.match(/^## (.+)$/);
-      if (versionMatch) {
-        if (current) entries.push(current);
-        current = { version: versionMatch[1].trim(), items: [] };
-        currentCategory = null; // resetear categoria entre versiones
-        continue;
-      }
-
-      const categoryMatch = line.match(/^### (.+)$/);
-      if (categoryMatch) {
-        currentCategory = categoryMatch[1].trim();
-        continue;
-      }
-
-      if (current && line.startsWith('- ')) {
-        current.items.push({
-          body: line.slice(2).trim(),
-          category: currentCategory,
-        });
-      } else if (
-        current &&
-        current.items.length > 0 &&
-        line.trim() &&
-        !line.startsWith('#')
-      ) {
-        const lastItem = current.items[current.items.length - 1];
-        lastItem.body += ' ' + line.trim();
-      }
-    }
-
-    if (current) entries.push(current);
-    return entries;
-  } catch {
-    return [];
-  }
-}
-
-function getBuildId(): string {
-  try {
-    const buildIdPath = path.join(process.cwd(), '.next', 'BUILD_ID');
-    return fs.readFileSync(buildIdPath, 'utf-8').trim();
-  } catch {
-    return 'unknown';
-  }
 }
 
 // Fallback: reconstruye el changelog desde la DB (`ChangelogItem`, editable
@@ -136,12 +80,12 @@ async function parseChangelogFromDb(): Promise<ChangelogEntry[]> {
 }
 
 export async function GET() {
-  const buildId = getBuildId();
+  const { buildId } = getBuildInfo();
 
-  // CHANGELOG.md es la fuente de verdad: se lee del repo en cada deploy, asi
+  // CHANGELOG.md es la fuente de verdad: entra al bundle en cada deploy, asi
   // que actualizar el archivo (y deployar) alcanza para publicar novedades.
   // La DB queda como fallback solo si el archivo esta vacio o ausente.
-  let entries = parseChangelogFile();
+  let entries: ChangelogEntry[] = getBundledChangelog();
   if (entries.length === 0) {
     entries = await parseChangelogFromDb();
   }

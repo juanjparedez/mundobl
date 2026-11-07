@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { requireRole } from '@/lib/auth-helpers';
 import { prisma } from '@/lib/database';
 import { logAction } from '@/lib/access-log';
-import fs from 'fs';
-import path from 'path';
+import { getBundledChangelog } from '@/lib/changelog-markdown';
 
 // GET /api/admin/changelog — lista todos los items (admin/mod)
 export async function GET() {
@@ -50,45 +49,14 @@ export async function POST(request: NextRequest) {
 
     // Importacion desde CHANGELOG.md
     if (importFromFile) {
-      const filePath = path.join(process.cwd(), 'CHANGELOG.md');
-      const content = fs.readFileSync(filePath, 'utf-8');
-
-      interface ParsedEntry {
-        version: string;
-        category: string | null;
-        body: string;
-        sortOrder: number;
-      }
-
-      const items: ParsedEntry[] = [];
-      let currentVersion: string | null = null;
-      let currentCategory: string | null = null;
-      let sortOrderCounter = 0;
-
-      for (const line of content.split('\n')) {
-        const versionMatch = line.match(/^## (.+)$/);
-        if (versionMatch) {
-          currentVersion = versionMatch[1].trim();
-          currentCategory = null;
-          sortOrderCounter = 0;
-          continue;
-        }
-        const categoryMatch = line.match(/^### (.+)$/);
-        if (categoryMatch) {
-          currentCategory = categoryMatch[1].trim();
-          continue;
-        }
-        if (currentVersion && line.startsWith('- ')) {
-          items.push({
-            version: currentVersion,
-            category: currentCategory,
-            body: line.slice(2).trim(),
-            sortOrder: sortOrderCounter++,
-          });
-        } else if (items.length > 0 && line.trim() && !line.startsWith('#')) {
-          items[items.length - 1].body += ' ' + line.trim();
-        }
-      }
+      const items = getBundledChangelog().flatMap((entry) =>
+        entry.items.map((item, index) => ({
+          version: entry.version,
+          category: item.category,
+          body: item.body,
+          sortOrder: index,
+        }))
+      );
 
       // Borrar items existentes e insertar los del archivo
       await prisma.changelogItem.deleteMany();

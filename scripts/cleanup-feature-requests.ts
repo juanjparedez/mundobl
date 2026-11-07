@@ -18,7 +18,7 @@ import {
   PrismaClient,
   type FeatureRequestStatus,
   type FeatureRequestPriority,
-} from '../src/generated/prisma';
+} from '@prisma/client';
 
 interface StatusUpdate {
   id: number;

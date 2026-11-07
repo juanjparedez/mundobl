@@ -4,7 +4,7 @@ import { getVerUrl } from './slug';
 import { formatEpisodeParam, type EpisodeRef } from './episode-param';
 import { interpolateMessage } from './i18n-format';
 import { loadLocaleMessages, type TranslationShape } from '@/i18n/messages';
-import type { FeatureRequestStatus } from '@/generated/prisma';
+import type { FeatureRequestStatus } from '@prisma/client';
 
 interface CommentTarget {
   seriesId?: number;

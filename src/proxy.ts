@@ -1,75 +1,34 @@
-import { auth } from '@/lib/auth';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { logAbuse, logPageView } from '@/lib/access-log';
-import { prisma } from '@/lib/database';
+import { getToken } from 'next-auth/jwt';
+import type { Role } from '@prisma/client';
 import {
-  isRuntimeFreezeActive,
-  registerRuntimePressureHit,
-} from '@/lib/runtime-freeze';
+  ADMIN_GATE_IP_HEADER,
+  ADMIN_GATE_KEY_HEADER,
+  ADMIN_GATE_LOG_HEADER,
+  ADMIN_GATE_PATH_HEADER,
+  SCANNER_HIT_ROUTE,
+} from '@/lib/admin-gate-headers';
+
+/**
+ * Proxy de /admin, sin base de datos.
+ *
+ * Antes importaba Prisma (ban por IP, log de visitas) y `auth()` (que arrastra
+ * el adapter de Prisma). En Cloudflare Workers el proxy se empaqueta aparte y
+ * eso duplicaba el cliente de Prisma: ~2 MB comprimidos de los 10 MB que
+ * admite un Worker. Ahora:
+ * - La sesion se lee del JWT firmado (`getToken`, la misma cookie que
+ *   `auth()`); el rol y el ban viajan en el token (ver callbacks.jwt en
+ *   src/lib/auth.ts, que los refresca contra la base).
+ * - El ban por IP y el log de visita los hace el layout de /admin
+ *   (src/app/(app)/admin/layout.tsx) con los datos que este proxy le pasa en
+ *   headers.
+ */
 
 const BOT_UA_PATTERN =
   /bot|crawler|spider|slurp|bingpreview|google web preview|facebookexternalhit|whatsapp|telegrambot|discordbot/i;
 
-const BANNED_IP_CACHE_TTL_MS = 30 * 60 * 1000;
-const ANON_LOG_SAMPLE_HIGH = normalizeSampleRate(
-  process.env.PUBLIC_PAGE_LOG_SAMPLE_HIGH,
-  0.05
-);
-const ANON_LOG_SAMPLE_LOW = normalizeSampleRate(
-  process.env.PUBLIC_PAGE_LOG_SAMPLE_LOW,
-  0.01
-);
-const DISABLE_ANON_LOGGING = normalizeBoolean(
-  process.env.PUBLIC_ANON_LOG_DISABLED,
-  true
-);
-const ANON_LOG_GUARD_ENABLED = normalizeBoolean(
-  process.env.PUBLIC_ANON_LOG_GUARD_ENABLED,
-  true
-);
-const ANON_LOG_GUARD_WINDOW_MS = normalizePositiveInt(
-  process.env.PUBLIC_ANON_LOG_GUARD_WINDOW_MS,
-  60_000
-);
-const ANON_LOG_GUARD_HIT_THRESHOLD = normalizePositiveInt(
-  process.env.PUBLIC_ANON_LOG_GUARD_HIT_THRESHOLD,
-  800
-);
-const ANON_LOG_GUARD_COOLDOWN_MS = normalizePositiveInt(
-  process.env.PUBLIC_ANON_LOG_GUARD_COOLDOWN_MS,
-  15 * 60_000
-);
-
-const HIGH_SIGNAL_PUBLIC_PATHS = new Set([
-  '/',
-  '/catalogo',
-  '/ver',
-  '/noticias',
-  '/novedades',
-  '/contenido',
-]);
-
-type BannedIpCacheRecord = {
-  banned: boolean;
-  expiresAt: number;
-};
-
-const bannedIpCache = new Map<string, BannedIpCacheRecord>();
-
-type AnonymousLogGuardState = {
-  windowStartMs: number;
-  hitsInWindow: number;
-  disabledUntilMs: number;
-};
-
-const anonymousLogGuard: AnonymousLogGuardState = {
-  windowStartMs: Date.now(),
-  hitsInWindow: 0,
-  disabledUntilMs: 0,
-};
-
-// Patrones de paths que solo buscan scanners de vulnerabilidades
+// Paths que solo buscan scanners de vulnerabilidades.
 const SCANNER_PATTERNS = [
   /\.php/i,
   /\/wp-/i,
@@ -101,258 +60,97 @@ const SCANNER_PATTERNS = [
   /\/\.well-known\/security\.txt/i,
 ];
 
-// Paths de assets/PWA que no necesitan logging
-const ASSET_PATTERNS = [
-  /^\/icons\//,
-  /^\/manifest\.webmanifest$/,
-  /^\/sw\.js$/,
-  /^\/robots\.txt$/,
-  /^\/sitemap/,
-];
-
-function isScannerPath(pathname: string): boolean {
-  return SCANNER_PATTERNS.some((pattern) => pattern.test(pathname));
+interface AdminToken {
+  role?: Role;
+  banned?: boolean;
 }
 
-function isAssetPath(pathname: string): boolean {
-  return ASSET_PATTERNS.some((pattern) => pattern.test(pathname));
-}
-
-function isPrefetchRequest(request: NextRequest): boolean {
-  const purpose = request.headers.get('purpose');
-  const nextPrefetch = request.headers.get('next-router-prefetch');
-  return purpose === 'prefetch' || nextPrefetch === '1';
-}
-
-function hasSessionCookie(request: NextRequest): boolean {
-  // NextAuth/Auth.js puede usar cualquiera de estas cookies segun entorno.
+/** CF-Connecting-IP con Cloudflare; x-forwarded-for como respaldo. */
+function getClientIp(request: NextRequest): string {
   return (
-    request.cookies.has('authjs.session-token') ||
-    request.cookies.has('__Secure-authjs.session-token') ||
-    request.cookies.has('next-auth.session-token') ||
-    request.cookies.has('__Secure-next-auth.session-token')
+    request.headers.get('cf-connecting-ip') ||
+    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    ''
   );
 }
 
-function isCrawlerUserAgent(userAgent: string | null): boolean {
-  return userAgent ? BOT_UA_PATTERN.test(userAgent) : false;
+function isPrefetchRequest(request: NextRequest): boolean {
+  return (
+    request.headers.get('purpose') === 'prefetch' ||
+    request.headers.get('next-router-prefetch') === '1'
+  );
 }
 
-function normalizeSampleRate(
-  raw: string | undefined,
-  fallback: number
-): number {
-  if (!raw) return fallback;
-  const parsed = Number(raw);
-  if (Number.isNaN(parsed)) return fallback;
-  return Math.max(0, Math.min(1, parsed));
+/** Rutas de /admin que tambien habilita MODERATOR, no solo ADMIN. */
+function isModeratorAllowedRoute(pathname: string): boolean {
+  return (
+    pathname === '/admin/series/nueva' ||
+    /^\/admin\/series\/\d+$/.test(pathname) ||
+    /^\/admin\/series\/\d+\/editar$/.test(pathname) ||
+    /^\/admin\/seasons\/\d+\/editar$/.test(pathname) ||
+    // Soporte de colaboradores: canal colaborador <-> admins/moderadores.
+    /^\/admin\/soporte(\/\d+)?$/.test(pathname)
+  );
 }
 
-function normalizePositiveInt(
-  raw: string | undefined,
-  fallback: number
-): number {
-  if (!raw) return fallback;
-  const parsed = Number(raw);
-  if (!Number.isFinite(parsed)) return fallback;
-  const rounded = Math.floor(parsed);
-  return rounded > 0 ? rounded : fallback;
-}
-
-function normalizeBoolean(raw: string | undefined, fallback: boolean): boolean {
-  if (!raw) return fallback;
-  const normalized = raw.trim().toLowerCase();
-  if (normalized === '1' || normalized === 'true' || normalized === 'yes') {
-    return true;
+/** A donde mandar a este rol, o null si puede ver la ruta. */
+function redirectForRole(pathname: string, role: Role | undefined) {
+  // Admin reducido para colaboradores externos: solo /admin/colaborador/**
+  // (docs/ai-context/context.md "Rol de colaborador externo").
+  if (pathname.startsWith('/admin/colaborador')) {
+    return role === 'ADMIN' || role === 'COLLABORATOR' ? null : '/catalogo';
   }
-  if (normalized === '0' || normalized === 'false' || normalized === 'no') {
-    return false;
+  if (role === 'COLLABORATOR') return '/admin/colaborador';
+  if (isModeratorAllowedRoute(pathname)) {
+    return role === 'ADMIN' || role === 'MODERATOR' ? null : '/catalogo';
   }
-  return fallback;
-}
-
-function shouldLogAnonymousPublicPath(pathname: string): boolean {
-  const sampleRate = HIGH_SIGNAL_PUBLIC_PATHS.has(pathname)
-    ? ANON_LOG_SAMPLE_HIGH
-    : ANON_LOG_SAMPLE_LOW;
-  return Math.random() < sampleRate;
-}
-
-function isAnonymousLoggingGuardActive(nowMs: number): boolean {
-  return anonymousLogGuard.disabledUntilMs > nowMs;
-}
-
-function registerAnonymousPublicHit(nowMs: number): void {
-  if (!ANON_LOG_GUARD_ENABLED) return;
-
-  if (nowMs - anonymousLogGuard.windowStartMs >= ANON_LOG_GUARD_WINDOW_MS) {
-    anonymousLogGuard.windowStartMs = nowMs;
-    anonymousLogGuard.hitsInWindow = 0;
-  }
-
-  anonymousLogGuard.hitsInWindow += 1;
-
-  if (anonymousLogGuard.hitsInWindow >= ANON_LOG_GUARD_HIT_THRESHOLD) {
-    anonymousLogGuard.disabledUntilMs = nowMs + ANON_LOG_GUARD_COOLDOWN_MS;
-  }
-}
-
-function getCachedBannedIp(ip: string): boolean | null {
-  const cached = bannedIpCache.get(ip);
-  if (!cached) return null;
-  if (cached.expiresAt < Date.now()) {
-    bannedIpCache.delete(ip);
-    return null;
-  }
-  return cached.banned;
-}
-
-function setCachedBannedIp(ip: string, banned: boolean): void {
-  bannedIpCache.set(ip, {
-    banned,
-    expiresAt: Date.now() + BANNED_IP_CACHE_TTL_MS,
-  });
+  return role === 'ADMIN' ? null : '/catalogo';
 }
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const userAgent = request.headers.get('user-agent') || null;
-  const skipLog =
-    isPrefetchRequest(request) ||
-    (isCrawlerUserAgent(userAgent) && !pathname.startsWith('/admin'));
 
-  // Extraer IP real del cliente (CF-Connecting-IP con Cloudflare, fallback a x-forwarded-for)
-  const ip =
-    request.headers.get('cf-connecting-ip') ||
-    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-    null;
-
-  // Bloquear scanners antes de cualquier procesamiento. Es el unico caso en
-  // que se anota la IP (acotado y por 7 dias, ver logAbuse), para poder
-  // bloquearla desde /admin.
-  if (isScannerPath(pathname)) {
-    if (ip) logAbuse(pathname, ip, 'scanner');
-    return new NextResponse(null, { status: 404 });
+  // El 404 y el registro del intento (con su IP, para poder bloquearla
+  // desde /admin) los resuelve una ruta interna: el proxy no toca la base.
+  if (SCANNER_PATTERNS.some((pattern) => pattern.test(pathname))) {
+    const headers = new Headers(request.headers);
+    headers.set(ADMIN_GATE_PATH_HEADER, pathname);
+    headers.set(ADMIN_GATE_IP_HEADER, getClientIp(request));
+    headers.set(ADMIN_GATE_KEY_HEADER, process.env.AUTH_SECRET ?? '');
+    return NextResponse.rewrite(new URL(SCANNER_HIT_ROUTE, request.url), {
+      request: { headers },
+    });
   }
 
-  // No loguear assets/PWA
-  if (isAssetPath(pathname)) {
-    return NextResponse.next();
+  const token = (await getToken({
+    req: request,
+    secret: process.env.AUTH_SECRET,
+    secureCookie: request.nextUrl.protocol === 'https:',
+  })) as AdminToken | null;
+
+  if (!token) {
+    return NextResponse.redirect(new URL('/api/auth/signin', request.url));
+  }
+  if (token.banned) {
+    return new NextResponse(null, { status: 403 });
   }
 
-  // Check IP ban (cached in memory)
-  if (ip) {
-    const cached = getCachedBannedIp(ip);
-    if (cached === true) {
-      return new NextResponse('Acceso denegado', { status: 403 });
-    }
-    if (cached === null) {
-      try {
-        const bannedIp = await prisma.bannedIp.findUnique({ where: { ip } });
-        const isBanned = bannedIp != null;
-        setCachedBannedIp(ip, isBanned);
-        if (isBanned) {
-          return new NextResponse('Acceso denegado', { status: 403 });
-        }
-      } catch {
-        // En caso de timeout de DB, no bloquear al usuario
-      }
-    }
-  }
+  const target = redirectForRole(pathname, token.role);
+  if (target) return NextResponse.redirect(new URL(target, request.url));
 
-  if (pathname.startsWith('/admin')) {
-    const session = await auth();
+  // Datos para el layout de /admin (ban por IP y log de visita).
+  const ip = getClientIp(request);
+  const userAgent = request.headers.get('user-agent') ?? '';
+  const shouldLog =
+    !isPrefetchRequest(request) && !BOT_UA_PATTERN.test(userAgent);
 
-    if (!session) {
-      return NextResponse.redirect(new URL('/api/auth/signin', request.url));
-    }
-
-    // Check user ban
-    if (session.user?.banned) {
-      return new NextResponse('Tu cuenta ha sido suspendida', { status: 403 });
-    }
-
-    const role = session.user?.role;
-
-    // Admin reducido para colaboradores externos (productoras/proveedores
-    // de contenido a quienes un ADMIN les asigno el rol COLLABORATOR desde
-    // /admin/usuarios). Solo pueden entrar a /admin/colaborador/**, nunca
-    // al resto de /admin (catalogo curado, usuarios, etc.) — ver
-    // docs/ai-context/context.md "Rol de colaborador externo".
-    const isCollaboratorRoute = pathname.startsWith('/admin/colaborador');
-
-    if (isCollaboratorRoute) {
-      if (role !== 'ADMIN' && role !== 'COLLABORATOR') {
-        return NextResponse.redirect(new URL('/catalogo', request.url));
-      }
-      // Un COLLABORATOR nunca debe caer al resto de /admin mas abajo.
-    } else if (role === 'COLLABORATOR') {
-      return NextResponse.redirect(new URL('/admin/colaborador', request.url));
-    } else {
-      // Rutas que tambien habilita MODERATOR, no solo ADMIN: crear/editar
-      // series y seasons, el workspace /admin/series/[id] (vista densa con
-      // tabs, analisis por episodio y reseñas vinculadas — la vista de
-      // trabajo principal del catalogo) y el soporte de colaboradores.
-      const isModeratorAllowedRoute =
-        pathname === '/admin/series/nueva' ||
-        /^\/admin\/series\/\d+$/.test(pathname) ||
-        /^\/admin\/series\/\d+\/editar$/.test(pathname) ||
-        /^\/admin\/seasons\/\d+\/editar$/.test(pathname) ||
-        // Soporte de colaboradores: el canal se penso explicitamente como
-        // "colaborador ↔ administradores/moderadores", asi que MODERATOR
-        // tiene que poder leer y contestar.
-        /^\/admin\/soporte(\/\d+)?$/.test(pathname);
-
-      if (isModeratorAllowedRoute) {
-        if (role !== 'ADMIN' && role !== 'MODERATOR') {
-          return NextResponse.redirect(new URL('/catalogo', request.url));
-        }
-      } else if (role !== 'ADMIN') {
-        // Resto de /admin/* (listados, CRUD entidades, usuarios): solo Admin
-        return NextResponse.redirect(new URL('/catalogo', request.url));
-      }
-    }
-
-    // Log page view (fire-and-forget)
-    if (!skipLog) {
-      logPageView(pathname);
-    }
-  } else {
-    // Paginas publicas: evitar auth() cuando no hay cookie de sesion para
-    // bajar CPU en trafico anonimo (principal consumidor en Vercel).
-    if (hasSessionCookie(request)) {
-      const session = await auth();
-      if (session?.user?.banned) {
-        return new NextResponse('Tu cuenta ha sido suspendida', {
-          status: 403,
-        });
-      }
-      if (!skipLog) {
-        logPageView(pathname);
-      }
-    } else {
-      const nowMs = Date.now();
-      registerRuntimePressureHit();
-      registerAnonymousPublicHit(nowMs);
-      const anonLoggingEnabledByGuard = !isAnonymousLoggingGuardActive(nowMs);
-      if (
-        !skipLog &&
-        !DISABLE_ANON_LOGGING &&
-        anonLoggingEnabledByGuard &&
-        !isRuntimeFreezeActive('anon-logging') &&
-        shouldLogAnonymousPublicPath(pathname)
-      ) {
-        logPageView(pathname);
-      }
-    }
-  }
-
-  return NextResponse.next();
+  const headers = new Headers(request.headers);
+  headers.set(ADMIN_GATE_PATH_HEADER, pathname);
+  headers.set(ADMIN_GATE_IP_HEADER, ip);
+  headers.set(ADMIN_GATE_LOG_HEADER, shouldLog ? '1' : '0');
+  return NextResponse.next({ request: { headers } });
 }
 
 export const config = {
-  // Solo /admin. En las paginas publicas corria en cada request (sw.js,
-  // manifest e iconos incluidos) y escribia una visita por pagina: era gran
-  // parte del CPU de Vercel. Las APIs ya chequean sesion y ban por su cuenta.
   matcher: ['/admin', '/admin/:path*'],
 };

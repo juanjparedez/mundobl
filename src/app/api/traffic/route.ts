@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/database';
 import { edgeCountry, utcDay } from '@/lib/series-activity';
+import { viewerCountryFromHeaders } from '@/lib/viewer-country';
 import {
   isTrafficFlow,
   isTrafficSection,
@@ -70,7 +71,7 @@ export async function POST(request: NextRequest) {
       section: section as TrafficSection,
       flow: flow as TrafficFlow,
       source: session?.user ? 'account' : 'browser',
-      country: edgeCountry(request.headers.get('x-vercel-ip-country')),
+      country: edgeCountry(viewerCountryFromHeaders(request.headers)),
     };
 
     await prisma.siteTrafficDaily.upsert({

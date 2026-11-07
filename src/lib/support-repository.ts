@@ -1,4 +1,4 @@
-import { Prisma, type PrismaClient } from '@/generated/prisma';
+import { Prisma, type PrismaClient } from '@prisma/client';
 import {
   EMPTY_SUPPORT,
   isSupportOwner,

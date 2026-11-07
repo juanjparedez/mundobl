@@ -9,7 +9,7 @@ import type {
   PrismaClient,
   ViewStatus,
   WatchStatus,
-} from '../generated/prisma';
+} from '@prisma/client';
 import { getSeriesEpisodesOrdered, type SeriesEpisodeOrder } from './database';
 import { linkedEpisodesToSync, pairLinkedChapters } from './linked-progress';
 

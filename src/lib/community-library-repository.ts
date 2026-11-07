@@ -2,7 +2,7 @@ import type {
   Prisma,
   PrismaClient,
   RecommendationListKind,
-} from '@/generated/prisma';
+} from '@prisma/client';
 import { CommunityError, communityExcerpt } from './community-input';
 import type {
   CommunityProfileInput,

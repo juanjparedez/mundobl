@@ -1,6 +1,6 @@
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from '../src/generated/prisma';
+import { PrismaClient } from '@prisma/client';
 import { getCountryCode } from '../src/lib/country-codes';
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
