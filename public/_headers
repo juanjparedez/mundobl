@@ -1,0 +1,20 @@
+# Headers de los archivos estaticos (Cloudflare Workers static assets).
+# https://developers.cloudflare.com/workers/static-assets/headers
+# https://opennext.js.org/cloudflare/caching#static-assets-caching
+#
+# Por defecto Cloudflare manda `max-age=0, must-revalidate`: el navegador
+# vuelve a preguntar por cada JS/CSS en cada pagina. Estos llevan hash o
+# version en el nombre, asi que nunca cambian y se pueden guardar un año.
+# Los headers de next.config.ts NO se aplican aca: los estaticos no pasan por
+# Next.
+
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Versionado por contenido via `?v=` (AntdStaticStyles).
+/antd.css
+  Cache-Control: public, max-age=31536000, immutable
+
+# Iconos y favicons: cambian casi nunca; un dia de cache y despues revalida.
+/icons/*
+  Cache-Control: public, max-age=86400, must-revalidate
