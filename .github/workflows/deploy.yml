@@ -7,9 +7,11 @@
 # Secrets necesarios (Settings → Secrets and variables → Actions):
 # - CLOUDFLARE_API_TOKEN: token con el template "Edit Cloudflare Workers".
 # - CLOUDFLARE_ACCOUNT_ID: el Account ID del dashboard de Cloudflare.
-# - MUNDOBL_ENV: el .env de producción completo (KEY=valor por línea). El
-#   build lo necesita (prerender contra la base, NEXT_PUBLIC_*) y el Worker
-#   lo recibe como secrets en el mismo deploy, así nunca quedan desfasados.
+# - Las variables de la app (DATABASE_URL, AUTH_SECRET, GOOGLE_CLIENT_ID...):
+#   cada una como secret suelto, o todas juntas en MUNDOBL_ENV (un .env
+#   completo), o una mezcla; los sueltos ganan. El build las necesita
+#   (prerender contra la base, NEXT_PUBLIC_*) y el Worker las recibe como
+#   secrets en el mismo deploy, así nunca quedan desfasados.
 
 name: Deploy producción
 
@@ -46,21 +48,18 @@ jobs:
       - name: Cargar el entorno de producción
         env:
           MUNDOBL_ENV: ${{ secrets.MUNDOBL_ENV }}
-        run: |
-          test -n "$MUNDOBL_ENV" || { echo "::error::Falta el secret MUNDOBL_ENV"; exit 1; }
-          umask 077
-          # Fuera del repo a proposito: un .env* en la raiz OpenNext lo
-          # copiaria dentro del codigo del Worker. Al build le llega como
-          # variables de proceso y al Worker como secrets.
-          printf '%s\n' "$MUNDOBL_ENV" > "$RUNNER_TEMP/production.env"
-          node scripts/env-to-secrets-json.mjs "$RUNNER_TEMP/production.env" > "$RUNNER_TEMP/worker-secrets.json"
+          ALL_SECRETS: ${{ toJSON(secrets) }}
+        # Fuera del repo a proposito: un .env* en la raiz OpenNext lo copiaria
+        # dentro del codigo del Worker. Al build le llega como variables de
+        # proceso y al Worker como secrets.
+        run: node scripts/prepare-production-env.mjs "$RUNNER_TEMP/build-env.json" "$RUNNER_TEMP/worker-secrets.json"
 
       - name: Build
         run: |
           export MUNDOBL_BUILD_SHA="$GITHUB_SHA"
           export MUNDOBL_BUILD_COMMIT_DATE="$(git show -s --format=%cI "$GITHUB_SHA")"
-          node --env-file="$RUNNER_TEMP/production.env" \
-            node_modules/@opennextjs/cloudflare/dist/cli/index.js build
+          node scripts/run-with-env.mjs "$RUNNER_TEMP/build-env.json" \
+            node node_modules/@opennextjs/cloudflare/dist/cli/index.js build
 
       - name: Deploy
         env:
@@ -74,4 +73,4 @@ jobs:
 
       - name: Borrar el entorno
         if: always()
-        run: rm -f "$RUNNER_TEMP/production.env" "$RUNNER_TEMP/worker-secrets.json"
+        run: rm -f "$RUNNER_TEMP/build-env.json" "$RUNNER_TEMP/worker-secrets.json"
