@@ -92,7 +92,9 @@ function createPrismaClient() {
     // En Cloudflare Workers una conexion abierta en un request no se puede
     // usar desde otro ("Cannot perform I/O on behalf of a different
     // request"): cada conexion se usa una vez y se cierra. El pooling real lo
-    // hace el pooler de Supabase (Supavisor). En Node se reutilizan.
+    // hace Hyperdrive (DATABASE_URL apunta a el, ver cloudflare/worker.ts), o
+    // el pooler de Supabase si el deploy no lo pudo activar. En Node se
+    // reutilizan.
     ...(IS_WORKERD && { maxUses: 1 }),
   });
   const adapter = withSerialTransactions(new PrismaPg(pool));

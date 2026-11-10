@@ -11,6 +11,9 @@ import { default as openNextHandler } from '../.open-next/worker.js';
 
 interface WorkerEnv {
   CRON_SECRET?: string;
+  DATABASE_URL?: string;
+  /** Lo agrega el deploy (scripts/ensure-hyperdrive.mjs) si se pudo crear. */
+  HYPERDRIVE?: { connectionString: string };
 }
 
 interface ScheduledController {
@@ -41,8 +44,22 @@ const CRON_ROUTES: Record<string, string> = {
 
 const SITE_ORIGIN = 'https://mundobl.com.ar';
 
+/**
+ * Con Hyperdrive, la app usa su connection string en vez de DATABASE_URL.
+ * OpenNext copia las variables string del env a process.env en cada request,
+ * asi que pisar DATABASE_URL en el env que recibe es la forma de que Prisma
+ * (src/lib/database.ts) la tome sin saber nada de Cloudflare. Sin el binding
+ * queda todo igual que antes.
+ */
+function withHyperdrive(env: WorkerEnv): WorkerEnv {
+  const connectionString = env.HYPERDRIVE?.connectionString;
+  return connectionString ? { ...env, DATABASE_URL: connectionString } : env;
+}
+
 export default {
-  fetch: handler.fetch,
+  fetch(request: Request, env: WorkerEnv, ctx: ExecutionContext) {
+    return handler.fetch(request, withHyperdrive(env), ctx);
+  },
 
   async scheduled(
     controller: ScheduledController,
@@ -58,7 +75,7 @@ export default {
     const request = new Request(new URL(path, SITE_ORIGIN), {
       headers: { authorization: `Bearer ${env.CRON_SECRET ?? ''}` },
     });
-    const response = await handler.fetch(request, env, ctx);
+    const response = await handler.fetch(request, withHyperdrive(env), ctx);
     const body = await response.text();
     if (!response.ok) {
       // Tirar marca la ejecucion como fallida en el dashboard de Cloudflare.

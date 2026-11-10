@@ -91,6 +91,14 @@ jobs:
         # proceso y al Worker como secrets.
         run: node scripts/prepare-production-env.mjs "$RUNNER_TEMP/build-env.json" "$RUNNER_TEMP/worker-secrets.json"
 
+      # Pool de conexiones a la base, incluido en Workers Paid. Si el token no
+      # tiene permiso, sigue sin Hyperdrive (ver el script).
+      - name: Hyperdrive
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: node scripts/ensure-hyperdrive.mjs "$RUNNER_TEMP/build-env.json"
+
       - name: Build
         run: |
           export MUNDOBL_BUILD_SHA="$GITHUB_SHA"
