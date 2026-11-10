@@ -92,7 +92,9 @@ function createPrismaClient() {
     // En Cloudflare Workers una conexion abierta en un request no se puede
     // usar desde otro ("Cannot perform I/O on behalf of a different
     // request"): cada conexion se usa una vez y se cierra. El pooling real lo
-    // hace el pooler de Supabase (Supavisor). En Node se reutilizan.
+    // hace Hyperdrive (DATABASE_URL apunta a el, ver cloudflare/worker.ts), o
+    // el pooler de Supabase si el deploy no lo pudo activar. En Node se
+    // reutilizan.
     ...(IS_WORKERD && { maxUses: 1 }),
   });
   const adapter = withSerialTransactions(new PrismaPg(pool));
@@ -102,34 +104,6 @@ function createPrismaClient() {
 export const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
 globalForPrisma.prisma = prisma;
-
-// Maintenance audit is awaited even when normal request logging is disabled.
-export async function recordMaintenanceAction(
-  userId: string,
-  action: 'deleteDeployment' | 'purgeLogs',
-  deploymentId: string | undefined,
-  auditId?: number,
-  status: 'started' | 'completed' | 'failed' = 'started'
-): Promise<number> {
-  const metadata = JSON.stringify({ action, deploymentId, status });
-  if (auditId !== undefined) {
-    await prisma.accessLog.update({
-      where: { id: auditId },
-      data: { metadata },
-    });
-    return auditId;
-  }
-  const row = await prisma.accessLog.create({
-    data: {
-      action: 'RUNTIME_MAINTENANCE',
-      path: '/api/admin/runtime/maintenance',
-      method: 'POST',
-      userId,
-      metadata,
-    },
-  });
-  return row.id;
-}
 
 /** Hidden editorial blocks are readable only by an authorized editor. */
 export async function getReadableSeriesInfoBlocks(

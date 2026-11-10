@@ -13,6 +13,16 @@ cuenta.
 - Durable Objects (cola de revalidación y tag cache).
 - R2 aparte: 10 GB y 1 millón de escrituras por mes gratis. El cache ISR vive
   en el bucket `mundobl-opennext-cache`, que el primer deploy crea solo.
+- Hyperdrive (pool de conexiones a Supabase): sin costo extra.
+- Rate limiting del Worker (`ratelimits` en `wrangler.jsonc`): sin costo por
+  uso.
+- Logs del Worker: desde el 1/12/2026 se cobran por GB; el plan incluye
+  50 GB de ingesta y 10 GB-mes de almacenamiento. MundoBL usa una fracción.
+- Requests a archivos estáticos (`/_next/static`, íconos): gratis e
+  ilimitados.
+
+**No activar** "Workers Cache" (`"cache": { "enabled": true }`): hace que
+también se cobren como request los archivos estáticos, que hoy son gratis.
 
 ## Piezas
 
@@ -24,6 +34,8 @@ cuenta.
 | `.github/workflows/deploy.yml`       | Botón **Deploy producción**: build, secrets y deploy.                                                                           |
 | `scripts/prepare-production-env.mjs` | Junta `MUNDOBL_ENV` y los secrets sueltos del repo, valida lo obligatorio y arma el entorno del build y los secrets del Worker. |
 | `scripts/run-with-env.mjs`           | Corre el build con ese entorno.                                                                                                 |
+| `scripts/ensure-hyperdrive.mjs`      | Busca o crea el Hyperdrive `mundobl-db` y agrega el binding al deploy. Sin permiso en el token, sigue sin Hyperdrive.           |
+| `public/_headers`                    | Cache larga de los estáticos con hash (`/_next/static`, `antd.css`).                                                            |
 
 ## Configuración inicial (una sola vez)
 
@@ -68,15 +80,94 @@ cuenta.
    obligatorio, el deploy lo dice antes de buildear. Después borrar
    `produccion.env` de la compu.
 
+## Hyperdrive (pool de conexiones)
+
+Sin Hyperdrive, cada consulta abría una conexión nueva a Supabase en San
+Pablo (TCP, TLS y login: varios viajes antes de la consulta). Con Hyperdrive
+el Worker se conecta a un pool que Cloudflare mantiene abierto. El deploy lo
+crea solo (`scripts/ensure-hyperdrive.mjs`) con la caché de consultas
+**apagada**: Hyperdrive no invalida la caché al escribir, y MundoBL tiene que
+mostrar enseguida lo que el usuario acaba de marcar.
+
+Solo hace falta que el token del deploy tenga permiso (una vez):
+
+1. Cloudflare → ícono de perfil (arriba a la derecha) → **Profile** → **API
+   Tokens**.
+2. En el token que usa GitHub (el de "Edit Cloudflare Workers"), los tres
+   puntos → **Edit**.
+3. **Permissions** → **+ Add more** → `Account` · `Hyperdrive` · `Edit`.
+4. **Continue to summary** → **Update token**. El valor del token no cambia:
+   no hay que tocar el secret de GitHub.
+
+El resumen de cada deploy (Actions → la ejecución → Summary) dice
+"✅ Hyperdrive activo" o por qué no se activó. Si no se activa, el sitio
+anda igual que antes, conectando directo.
+
+## Estadísticas (Cloudflare Web Analytics)
+
+Gratis, sin cookies, y cuenta solo navegadores reales (los bots que no
+ejecutan JavaScript no suman). Se configura una vez:
+
+1. Cloudflare → **Analytics & Logs** → **Web Analytics** → **Add a site**.
+2. Hostname: `mundobl.com.ar` → **Done**.
+3. Si pregunta cómo instalarlo, elegir **Enable with JS Snippet
+   installation** (no la automática: contaría doble).
+4. Del snippet que muestra, copiar solo el valor de `"token"` (una cadena
+   de letras y números).
+5. GitHub → repo → Settings → Secrets and variables → Actions → **New
+   repository secret** → nombre `NEXT_PUBLIC_CF_WEB_ANALYTICS_TOKEN`, valor
+   el token.
+6. Correr **Deploy producción**. Los datos aparecen en Web Analytics a los
+   pocos minutos.
+
+## Seguridad y bots (panel de Cloudflare, una vez)
+
+El Worker ya corta antes de Next los paths de scanners (`/wp-login.php`,
+`/.env`...) y limita las escrituras a `/api` a 120 por minuto por IP. Esto
+del panel los frena **antes** del Worker, así ni cuentan como request. Todo
+es gratis. Entrar a Cloudflare → `mundobl.com.ar`:
+
+1. **Scanners.** Security → **Security rules** → **Create rule** → **Custom
+   rules**. Nombre `Scanners`. **Edit expression** y pegar:
+
+   ```txt
+   (lower(http.request.uri.path) contains ".php" or starts_with(lower(http.request.uri.path), "/wp-") or lower(http.request.uri.path) contains "/.env" or lower(http.request.uri.path) contains "/.git" or starts_with(lower(http.request.uri.path), "/cgi-bin") or lower(http.request.uri.path) contains "phpmyadmin" or lower(http.request.uri.path) contains "xmlrpc") and not starts_with(http.request.uri.path, "/admin")
+   ```
+
+   Action: **Block** → **Deploy**. (`/admin` queda afuera a propósito: ahí la
+   app guarda la IP para poder banearla.)
+
+2. **Bots de IA.** Security → **Settings** → filtro **Bot traffic** → **Block
+   AI bots** → "Block on all pages". Google, Bing y los buscadores no se
+   tocan.
+3. **Bot Fight Mode.** En la misma pantalla, **Bot fight mode** → On.
+   Desafía bots automatizados; los verificados (Googlebot, Bingbot) pasan.
+   Ojo: puede frenar el workflow **Smoke (produccion)** porque corre desde
+   un datacenter. Si el smoke falla con 403, es esto.
+4. **HTTPS siempre.** SSL/TLS → **Edge Certificates** → **Always Use HTTPS**
+   → On.
+
+## Alertas de costo
+
+Workers Paid no tiene tope de gasto: si algo se dispara, se cobra. Para
+enterarse antes:
+
+1. Cloudflare → **Manage Account** → **Notifications** → **Add**.
+2. Buscar **Usage Based Billing** → **Select**.
+3. Producto: Workers requests. Umbral: `8000000` (el plan incluye 10
+   millones). Email: el tuyo → **Save**.
+4. Repetir con Workers CPU time, umbral `25000000` (incluye 30 millones de
+   ms).
+
 ## Deploy
 
 Actions → **Deploy producción** → Run workflow (rama `main`). Tarda unos
 10 minutos. Si falta un secret o una variable obligatoria, el workflow lo dice
 en rojo antes de deployar.
 
-El primer deploy queda en `https://mundobl.<tu-subdominio>.workers.dev`
-(Cloudflare → Workers & Pages → mundobl). Ahí se puede probar todo menos el
-login con Google, que solo acepta `mundobl.com.ar`.
+El Worker solo responde en `mundobl.com.ar` (`workers_dev: false` en
+`wrangler.jsonc`). Para probar antes de publicar, usar `npm run cf:preview`
+en local. El login con Google solo acepta `mundobl.com.ar`.
 
 ## Pasar el dominio (una sola vez)
 

@@ -5,6 +5,11 @@
   "main": "cloudflare/worker.ts",
   "compatibility_date": "2026-10-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  // El sitio vive solo en mundobl.com.ar: sin copia publica en
+  // mundobl.<cuenta>.workers.dev ni URLs de preview (contenido duplicado
+  // para Google y una puerta mas para bots). `wrangler dev` sigue andando.
+  "workers_dev": false,
+  "preview_urls": false,
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS",
@@ -54,6 +59,16 @@
     {
       "tag": "v1",
       "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache"],
+    },
+  ],
+  // Tope de escrituras a /api por IP (cloudflare/worker.ts). Incluido en el
+  // plan, sin costo por uso. 120 por minuto alcanza para marcar capitulos
+  // seguidos; un script de spam se corta antes de tocar la base.
+  "ratelimits": [
+    {
+      "name": "RATE_LIMITER",
+      "namespace_id": "1001",
+      "simple": { "limit": 120, "period": 60 },
     },
   ],
   // Resize de posters y miniaturas al subir (src/lib/image-processing.ts):

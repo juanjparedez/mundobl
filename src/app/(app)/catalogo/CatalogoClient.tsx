@@ -1035,7 +1035,6 @@ export function CatalogoClient({ payload }: CatalogoClientProps) {
 
   const quickPreviewApi = useQuickPreviewController({
     labels: quickPreviewLabels,
-    surface: 'catalogo',
     // Solo en carrusel: en grilla y lista el hover-preview tapa las cards
     // vecinas y se abre solo al pasar el mouse. Ahi se abre con "+ info".
     hoverEnabled: viewMode === 'carousel',

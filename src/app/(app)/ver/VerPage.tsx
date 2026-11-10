@@ -400,7 +400,6 @@ export function VerPage({ items: sourceItems }: VerPageProps) {
 
   const previewApi = useQuickPreviewController({
     labels: quickPreviewLabels,
-    surface: 'ver',
   });
   const previewBinding = {
     api: previewApi,

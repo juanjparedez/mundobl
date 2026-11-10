@@ -74,7 +74,6 @@ export function CompanyProfileClient({ company }: CompanyProfileClientProps) {
       noSynopsis: t('quickPreview.noSynopsis'),
       moreInfo: t('quickPreview.moreInfo'),
     },
-    surface: 'productoras',
   });
 
   const buildSeriesPreview = (serie: CompanySeries): QuickPreviewData => ({

@@ -9,6 +9,7 @@ import {
   ADMIN_GATE_PATH_HEADER,
   SCANNER_HIT_ROUTE,
 } from '@/lib/admin-gate-headers';
+import { isScannerPath } from '@/lib/scanner-paths';
 
 /**
  * Proxy de /admin, sin base de datos.
@@ -27,38 +28,6 @@ import {
 
 const BOT_UA_PATTERN =
   /bot|crawler|spider|slurp|bingpreview|google web preview|facebookexternalhit|whatsapp|telegrambot|discordbot/i;
-
-// Paths que solo buscan scanners de vulnerabilidades.
-const SCANNER_PATTERNS = [
-  /\.php/i,
-  /\/wp-/i,
-  /\/wordpress/i,
-  /\/\.env/i,
-  /\/\.git/i,
-  /\/\.aws/i,
-  /\/\.docker/i,
-  /\/cgi-bin/i,
-  /\/phpmyadmin/i,
-  /\/myadmin/i,
-  /\/mysql/i,
-  /\/adminer/i,
-  /\/phpinfo/i,
-  /\/xmlrpc/i,
-  /\/config\.(json|yml|yaml|xml|bak|old)/i,
-  /\/backup/i,
-  /\/debug/i,
-  /\/shell/i,
-  /\/eval/i,
-  /\/exec/i,
-  /\/cmd/i,
-  /\/console/i,
-  /\/actuator/i,
-  /\/api\/v1\/pods/i,
-  /\/solr/i,
-  /\/struts/i,
-  /\/jenkins/i,
-  /\/\.well-known\/security\.txt/i,
-];
 
 interface AdminToken {
   role?: Role;
@@ -112,7 +81,7 @@ export async function proxy(request: NextRequest) {
 
   // El 404 y el registro del intento (con su IP, para poder bloquearla
   // desde /admin) los resuelve una ruta interna: el proxy no toca la base.
-  if (SCANNER_PATTERNS.some((pattern) => pattern.test(pathname))) {
+  if (isScannerPath(pathname)) {
     const headers = new Headers(request.headers);
     headers.set(ADMIN_GATE_PATH_HEADER, pathname);
     headers.set(ADMIN_GATE_IP_HEADER, getClientIp(request));

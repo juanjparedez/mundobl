@@ -84,7 +84,6 @@ export function ActorProfileClient({
       noSynopsis: t('quickPreview.noSynopsis'),
       moreInfo: t('quickPreview.moreInfo'),
     },
-    surface: 'actores',
   });
 
   const buildEntryPreview = (entry: FilmographyEntry): QuickPreviewData => ({

@@ -1,7 +1,5 @@
 const SHELL_CACHE = 'mundobl-shell-v9';
-const IMAGE_CACHE = 'mundobl-img-v9';
 const REMOTE_IMAGE_CACHE = 'mundobl-remote-img-v9';
-const IMAGE_CACHE_MAX_ENTRIES = 250;
 const REMOTE_IMAGE_CACHE_MAX_ENTRIES = 500;
 
 const PRECACHE_URLS = [
@@ -18,7 +16,9 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
-  const KEEP = new Set([SHELL_CACHE, IMAGE_CACHE, REMOTE_IMAGE_CACHE]);
+  // Lo que no esta aca se borra: incluye mundobl-img-v9, la cache de
+  // /_next/image, que ya no existe (en Cloudflare las imagenes van directo).
+  const KEEP = new Set([SHELL_CACHE, REMOTE_IMAGE_CACHE]);
   event.waitUntil(
     caches
       .keys()
@@ -104,29 +104,9 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Imágenes optimizadas por Next.js: cache-first
-  if (
-    url.origin === self.location.origin &&
-    url.pathname.startsWith('/_next/image')
-  ) {
-    // Defensivo: si la query es inválida (ej. q=0 cacheado en una versión
-    // anterior), saltamos cache y dejamos que el server responda en limpio.
-    const q = url.searchParams.get('q');
-    const qNum = q === null ? null : Number(q);
-    if (qNum !== null && (Number.isNaN(qNum) || qNum < 1 || qNum > 100)) {
-      return;
-    }
-    event.respondWith(
-      cacheFirst(request, IMAGE_CACHE, {
-        maxEntries: IMAGE_CACHE_MAX_ENTRIES,
-      })
-    );
-    return;
-  }
-
   // Imágenes remotas servidas directo desde Supabase Storage (cross-origin)
-  // Las cacheamos cache-first para no agotar la cuota de transformaciones
-  // de Vercel ni el egress del free tier de Supabase.
+  // Las cacheamos cache-first para no gastar el egress del free tier de
+  // Supabase (los posters nuevos van a R2, que no cobra egress).
   if (
     request.destination === 'image' &&
     url.hostname.endsWith('.supabase.co') &&

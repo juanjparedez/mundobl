@@ -8,9 +8,17 @@
  */
 // Generado por `opennextjs-cloudflare build`.
 import { default as openNextHandler } from '../.open-next/worker.js';
+import { isScannerPath } from '../src/lib/scanner-paths';
 
 interface WorkerEnv {
   CRON_SECRET?: string;
+  DATABASE_URL?: string;
+  /** Lo agrega el deploy (scripts/ensure-hyperdrive.mjs) si se pudo crear. */
+  HYPERDRIVE?: { connectionString: string };
+  /** Rate limiting de Cloudflare (wrangler.jsonc `ratelimits`), incluido. */
+  RATE_LIMITER?: {
+    limit(options: { key: string }): Promise<{ success: boolean }>;
+  };
 }
 
 interface ScheduledController {
@@ -39,10 +47,73 @@ const CRON_ROUTES: Record<string, string> = {
   '0 12 * * *': '/api/cron/alerts',
 };
 
-const SITE_ORIGIN = 'https://mundobl.com.ar';
+const SITE_HOST = 'mundobl.com.ar';
+const SITE_ORIGIN = `https://${SITE_HOST}`;
+
+/**
+ * Con Hyperdrive, la app usa su connection string en vez de DATABASE_URL.
+ * OpenNext copia las variables string del env a process.env en cada request,
+ * asi que pisar DATABASE_URL en el env que recibe es la forma de que Prisma
+ * (src/lib/database.ts) la tome sin saber nada de Cloudflare. Sin el binding
+ * queda todo igual que antes.
+ */
+function withHyperdrive(env: WorkerEnv): WorkerEnv {
+  const connectionString = env.HYPERDRIVE?.connectionString;
+  return connectionString ? { ...env, DATABASE_URL: connectionString } : env;
+}
+
+const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
+
+/**
+ * Filtros baratos ANTES de Next (cada uno ahorra CPU y consultas a la base):
+ * - www.mundobl.com.ar: 301 al dominio principal (contenido duplicado).
+ * - Scanners (/wp-login.php, /.env...): 404 sin renderizar nada. /admin
+ *   queda afuera porque ahi el proxy registra la IP para poder banearla.
+ * - Escrituras a /api (comentarios, feedback, seguimiento, contadores): tope
+ *   por IP con el rate limiter de Cloudflare. Los GET y los crawlers no
+ *   pasan por aca. Los crons llegan por scheduled(), sin IP, y no cuentan.
+ */
+async function answerEarly(
+  request: Request,
+  env: WorkerEnv
+): Promise<Response | null> {
+  const url = new URL(request.url);
+  const { pathname } = url;
+  // Una sola version del sitio para Google: www -> dominio principal (301).
+  if (url.hostname === `www.${SITE_HOST}`) {
+    url.hostname = SITE_HOST;
+    return Response.redirect(url.toString(), 301);
+  }
+  if (!pathname.startsWith('/admin') && isScannerPath(pathname)) {
+    return new Response('Not found', {
+      status: 404,
+      headers: { 'cache-control': 'public, max-age=86400' },
+    });
+  }
+  const ip = request.headers.get('cf-connecting-ip');
+  if (
+    env.RATE_LIMITER &&
+    ip &&
+    !SAFE_METHODS.has(request.method) &&
+    pathname.startsWith('/api/')
+  ) {
+    const { success } = await env.RATE_LIMITER.limit({ key: ip });
+    if (!success) {
+      return new Response('Too many requests', {
+        status: 429,
+        headers: { 'retry-after': '60', 'cache-control': 'no-store' },
+      });
+    }
+  }
+  return null;
+}
 
 export default {
-  fetch: handler.fetch,
+  async fetch(request: Request, env: WorkerEnv, ctx: ExecutionContext) {
+    const early = await answerEarly(request, env);
+    if (early) return early;
+    return handler.fetch(request, withHyperdrive(env), ctx);
+  },
 
   async scheduled(
     controller: ScheduledController,
@@ -58,7 +129,7 @@ export default {
     const request = new Request(new URL(path, SITE_ORIGIN), {
       headers: { authorization: `Bearer ${env.CRON_SECRET ?? ''}` },
     });
-    const response = await handler.fetch(request, env, ctx);
+    const response = await handler.fetch(request, withHyperdrive(env), ctx);
     const body = await response.text();
     if (!response.ok) {
       // Tirar marca la ejecucion como fallida en el dashboard de Cloudflare.
