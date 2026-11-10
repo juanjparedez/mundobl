@@ -10,7 +10,6 @@ import {
   SendOutlined,
 } from '@ant-design/icons';
 import { withUtm } from '@/lib/share-utm';
-import { trackEvent } from '@/lib/analytics';
 import './ShareButton.css';
 
 export type ShareButtonChannel = 'native' | 'copy' | 'whatsapp' | 'telegram';
@@ -76,7 +75,6 @@ export function ShareButton({
           text: shareText,
           url: withUtm(shareUrl, 'native'),
         });
-        trackEvent('share', { channel: 'native' });
         onShared?.('native');
         return;
       } catch (err) {
@@ -102,7 +100,6 @@ export function ShareButton({
         document.body.removeChild(textarea);
       }
       setCopied(true);
-      trackEvent('share', { channel: 'copy' });
       onShared?.('copy');
       message.success(labels.copied);
       setTimeout(() => setCopied(false), 2500);
@@ -174,7 +171,6 @@ export function ShareButton({
                 rel="noopener noreferrer"
                 className="share-modal__item"
                 onClick={() => {
-                  trackEvent('share', { channel: item.channel });
                   onShared?.(item.channel);
                 }}
               >

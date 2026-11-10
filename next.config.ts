@@ -126,7 +126,10 @@ const nextConfig: NextConfig = {
     // legacy. Restringirlo por host rompía logos/favicons (ej. /sitios).
     const csp = [
       "default-src 'self'",
-      `script-src 'self' 'unsafe-inline' https://www.youtube.com${isDev ? " 'unsafe-eval'" : ''}`,
+      // static.cloudflareinsights.com: Cloudflare Web Analytics
+      // (CloudflareWebAnalytics.tsx); el beacon postea a cloudflareinsights.com,
+      // cubierto por connect-src https:.
+      `script-src 'self' 'unsafe-inline' https://www.youtube.com https://static.cloudflareinsights.com${isDev ? " 'unsafe-eval'" : ''}`,
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https:",
       "font-src 'self' data: https:",

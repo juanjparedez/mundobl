@@ -43,8 +43,8 @@ export default function PrivacidadPage() {
               </li>
               <li>
                 <strong>Logs de acceso</strong> (IP, user-agent, ruta) que
-                Vercel y Cloudflare guardan automáticamente por días para debug
-                y prevención de abuso. No los exponemos en /admin.
+                Cloudflare guarda automáticamente por días para debug y
+                prevención de abuso. No los exponemos en /admin.
               </li>
               <li>
                 <strong>Visitas por página</strong>: anotamos qué página se
@@ -75,10 +75,9 @@ export default function PrivacidadPage() {
                 poder bloquearla. Es lo único con IP que vemos en /admin.
               </li>
               <li>
-                <strong>Métricas agregadas de uso</strong> con Vercel Analytics:
-                cuántas visitas tiene cada página y cuántas veces se usa
-                compartir, la vista rápida o el cambio de idioma. Sin cookies, y
-                no le mandamos nada que te identifique.
+                <strong>Métricas agregadas de uso</strong> con Cloudflare Web
+                Analytics: cuántas visitas tiene cada página y cuánto tarda en
+                cargar. Sin cookies, y no le mandamos nada que te identifique.
               </li>
             </ul>
           </section>
@@ -151,8 +150,8 @@ export default function PrivacidadPage() {
               </li>
               <li>
                 <strong>Tu ubicación precisa</strong>. Solo el país inferido por
-                Vercel/Cloudflare a partir de la IP, y solo dentro de los
-                contadores anónimos por serie: nunca junto a tu usuario.
+                Cloudflare a partir de la IP, y solo dentro de los contadores
+                anónimos por serie: nunca junto a tu usuario.
               </li>
               <li>
                 <strong>El contenido de los videos</strong> que mirás. Todo lo

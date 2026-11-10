@@ -10,7 +10,7 @@ import { NavigationGuard } from '@/components/layout/NavigationGuard/NavigationG
 import { FirstVisitOnboarding } from '@/components/common/FirstVisitOnboarding/FirstVisitOnboarding';
 import { JsonLd } from '@/components/seo/JsonLd';
 import type { WebSite, Organization } from 'schema-dts';
-import { Analytics } from '@vercel/analytics/next';
+import { CloudflareWebAnalytics } from '@/components/common/CloudflareWebAnalytics/CloudflareWebAnalytics';
 import 'flag-icons/css/flag-icons.min.css';
 import '@/styles/globals.css';
 import '@/styles/dark-mode-fixes.css';
@@ -166,10 +166,7 @@ export default function RootLayout({
             </ThemeProvider>
           </LocaleProvider>
         </SessionProvider>
-        {/* Medición opcional; desactivada salvo habilitación explícita. */}
-        {process.env.NEXT_PUBLIC_VERCEL_ANALYTICS_ENABLED === 'true' && (
-          <Analytics />
-        )}
+        <CloudflareWebAnalytics />
       </body>
     </html>
   );
