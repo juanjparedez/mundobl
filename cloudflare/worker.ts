@@ -8,12 +8,17 @@
  */
 // Generado por `opennextjs-cloudflare build`.
 import { default as openNextHandler } from '../.open-next/worker.js';
+import { isScannerPath } from '../src/lib/scanner-paths';
 
 interface WorkerEnv {
   CRON_SECRET?: string;
   DATABASE_URL?: string;
   /** Lo agrega el deploy (scripts/ensure-hyperdrive.mjs) si se pudo crear. */
   HYPERDRIVE?: { connectionString: string };
+  /** Rate limiting de Cloudflare (wrangler.jsonc `ratelimits`), incluido. */
+  RATE_LIMITER?: {
+    limit(options: { key: string }): Promise<{ success: boolean }>;
+  };
 }
 
 interface ScheduledController {
@@ -56,8 +61,49 @@ function withHyperdrive(env: WorkerEnv): WorkerEnv {
   return connectionString ? { ...env, DATABASE_URL: connectionString } : env;
 }
 
+const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
+
+/**
+ * Filtros baratos ANTES de Next (cada uno ahorra CPU y consultas a la base):
+ * - Scanners (/wp-login.php, /.env...): 404 sin renderizar nada. /admin
+ *   queda afuera porque ahi el proxy registra la IP para poder banearla.
+ * - Escrituras a /api (comentarios, feedback, seguimiento, contadores): tope
+ *   por IP con el rate limiter de Cloudflare. Los GET y los crawlers no
+ *   pasan por aca. Los crons llegan por scheduled(), sin IP, y no cuentan.
+ */
+async function rejectEarly(
+  request: Request,
+  env: WorkerEnv
+): Promise<Response | null> {
+  const { pathname } = new URL(request.url);
+  if (!pathname.startsWith('/admin') && isScannerPath(pathname)) {
+    return new Response('Not found', {
+      status: 404,
+      headers: { 'cache-control': 'public, max-age=86400' },
+    });
+  }
+  const ip = request.headers.get('cf-connecting-ip');
+  if (
+    env.RATE_LIMITER &&
+    ip &&
+    !SAFE_METHODS.has(request.method) &&
+    pathname.startsWith('/api/')
+  ) {
+    const { success } = await env.RATE_LIMITER.limit({ key: ip });
+    if (!success) {
+      return new Response('Too many requests', {
+        status: 429,
+        headers: { 'retry-after': '60', 'cache-control': 'no-store' },
+      });
+    }
+  }
+  return null;
+}
+
 export default {
-  fetch(request: Request, env: WorkerEnv, ctx: ExecutionContext) {
+  async fetch(request: Request, env: WorkerEnv, ctx: ExecutionContext) {
+    const rejected = await rejectEarly(request, env);
+    if (rejected) return rejected;
     return handler.fetch(request, withHyperdrive(env), ctx);
   },
 

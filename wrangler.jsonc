@@ -56,6 +56,16 @@
       "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache"],
     },
   ],
+  // Tope de escrituras a /api por IP (cloudflare/worker.ts). Incluido en el
+  // plan, sin costo por uso. 120 por minuto alcanza para marcar capitulos
+  // seguidos; un script de spam se corta antes de tocar la base.
+  "ratelimits": [
+    {
+      "name": "RATE_LIMITER",
+      "namespace_id": "1001",
+      "simple": { "limit": 120, "period": 60 },
+    },
+  ],
   // Resize de posters y miniaturas al subir (src/lib/image-processing.ts):
   // sharp es nativo y no corre en Workers.
   "images": {
