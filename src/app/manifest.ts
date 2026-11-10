@@ -6,7 +6,14 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: 'MundoBL',
     description:
       'Catálogo de series BL. Reseñas, calificaciones y seguimiento.',
+    // `id` fijo: si algun dia cambia start_url, Chrome sigue reconociendo
+    // la app instalada como la misma en vez de ofrecer instalar otra.
+    id: '/',
     start_url: '/',
+    scope: '/',
+    lang: 'es',
+    dir: 'ltr',
+    categories: ['entertainment', 'lifestyle'],
     display: 'standalone',
     background_color: '#141414',
     theme_color: '#141414',
