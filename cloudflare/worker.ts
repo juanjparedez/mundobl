@@ -47,7 +47,8 @@ const CRON_ROUTES: Record<string, string> = {
   '0 12 * * *': '/api/cron/alerts',
 };
 
-const SITE_ORIGIN = 'https://mundobl.com.ar';
+const SITE_HOST = 'mundobl.com.ar';
+const SITE_ORIGIN = `https://${SITE_HOST}`;
 
 /**
  * Con Hyperdrive, la app usa su connection string en vez de DATABASE_URL.
@@ -65,17 +66,24 @@ const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
 /**
  * Filtros baratos ANTES de Next (cada uno ahorra CPU y consultas a la base):
+ * - www.mundobl.com.ar: 301 al dominio principal (contenido duplicado).
  * - Scanners (/wp-login.php, /.env...): 404 sin renderizar nada. /admin
  *   queda afuera porque ahi el proxy registra la IP para poder banearla.
  * - Escrituras a /api (comentarios, feedback, seguimiento, contadores): tope
  *   por IP con el rate limiter de Cloudflare. Los GET y los crawlers no
  *   pasan por aca. Los crons llegan por scheduled(), sin IP, y no cuentan.
  */
-async function rejectEarly(
+async function answerEarly(
   request: Request,
   env: WorkerEnv
 ): Promise<Response | null> {
-  const { pathname } = new URL(request.url);
+  const url = new URL(request.url);
+  const { pathname } = url;
+  // Una sola version del sitio para Google: www -> dominio principal (301).
+  if (url.hostname === `www.${SITE_HOST}`) {
+    url.hostname = SITE_HOST;
+    return Response.redirect(url.toString(), 301);
+  }
   if (!pathname.startsWith('/admin') && isScannerPath(pathname)) {
     return new Response('Not found', {
       status: 404,
@@ -102,8 +110,8 @@ async function rejectEarly(
 
 export default {
   async fetch(request: Request, env: WorkerEnv, ctx: ExecutionContext) {
-    const rejected = await rejectEarly(request, env);
-    if (rejected) return rejected;
+    const early = await answerEarly(request, env);
+    if (early) return early;
     return handler.fetch(request, withHyperdrive(env), ctx);
   },
 

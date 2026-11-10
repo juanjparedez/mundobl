@@ -67,13 +67,10 @@ export const metadata: Metadata = {
     statusBarStyle: 'black-translucent',
     title: 'MundoBL',
   },
+  // Sin canonical ni hreflang aca: el layout raiz lo heredan las paginas que
+  // no definen el suyo, y un canonical '/' les dice a Google que son copias
+  // de la home. Cada pagina publica declara su propio canonical.
   alternates: {
-    canonical: '/',
-    languages: {
-      'es-LA': '/',
-      es: '/',
-      'x-default': '/',
-    },
     types: {
       'application/rss+xml': [
         { url: '/noticias/rss.xml', title: 'MundoBL - Noticias BL/GL' },

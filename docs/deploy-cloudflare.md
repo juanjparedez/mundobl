@@ -74,9 +74,9 @@ Actions → **Deploy producción** → Run workflow (rama `main`). Tarda unos
 10 minutos. Si falta un secret o una variable obligatoria, el workflow lo dice
 en rojo antes de deployar.
 
-El primer deploy queda en `https://mundobl.<tu-subdominio>.workers.dev`
-(Cloudflare → Workers & Pages → mundobl). Ahí se puede probar todo menos el
-login con Google, que solo acepta `mundobl.com.ar`.
+El Worker solo responde en `mundobl.com.ar` (`workers_dev: false` en
+`wrangler.jsonc`). Para probar antes de publicar, usar `npm run cf:preview`
+en local. El login con Google solo acepta `mundobl.com.ar`.
 
 ## Pasar el dominio (una sola vez)
 
