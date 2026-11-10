@@ -59,6 +59,10 @@ cuenta.
      - `MUNDOBL_ENV`: el contenido completo de `produccion.env`.
      - Un secret por variable, con el mismo nombre (`DATABASE_URL`,
        `GOOGLE_CLIENT_ID`, `R2_ACCESS_KEY_ID`...).
+       El workflow los lee por nombre (lista `APP_KEYS` en
+       `scripts/prepare-production-env.mjs` y el `env` del paso "Cargar el
+       entorno" en `deploy.yml`). Una variable nueva se agrega en los dos
+       lados; si no coinciden, el deploy falla avisando cuál falta.
 
    Los `[SENSITIVE]` y las líneas `VERCEL_*` se ignoran solas. Si falta algo
    obligatorio, el deploy lo dice antes de buildear. Después borrar

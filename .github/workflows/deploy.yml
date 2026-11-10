@@ -48,7 +48,44 @@ jobs:
       - name: Cargar el entorno de producción
         env:
           MUNDOBL_ENV: ${{ secrets.MUNDOBL_ENV }}
-          ALL_SECRETS: ${{ toJSON(secrets) }}
+          # Cada variable de la app por nombre. Tiene que coincidir con
+          # APP_KEYS de scripts/prepare-production-env.mjs (el script falla
+          # si no). Nunca toJSON(secrets): GitHub lo marca como malicioso.
+          ADMIN_EMAILS: ${{ secrets.ADMIN_EMAILS }}
+          AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_URL: ${{ secrets.DIRECT_URL }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+          EMAIL_REPLY_TO: ${{ secrets.EMAIL_REPLY_TO }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODELS: ${{ secrets.GEMINI_MODELS }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+          NEXT_PUBLIC_DAILYMOTION_PLAYER_ID: ${{ secrets.NEXT_PUBLIC_DAILYMOTION_PLAYER_ID }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_VAPID_PUBLIC_KEY: ${{ secrets.NEXT_PUBLIC_VAPID_PUBLIC_KEY }}
+          PROJECT_GITHUB_URL: ${{ secrets.PROJECT_GITHUB_URL }}
+          PROJECT_SUPABASE_URL: ${{ secrets.PROJECT_SUPABASE_URL }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          R2_PUBLIC_HOST: ${{ secrets.R2_PUBLIC_HOST }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          RUNTIME_FREEZE_AUTO_ENABLED: ${{ secrets.RUNTIME_FREEZE_AUTO_ENABLED }}
+          RUNTIME_FREEZE_COOLDOWN_MS: ${{ secrets.RUNTIME_FREEZE_COOLDOWN_MS }}
+          RUNTIME_FREEZE_FORCE: ${{ secrets.RUNTIME_FREEZE_FORCE }}
+          RUNTIME_FREEZE_HIT_THRESHOLD: ${{ secrets.RUNTIME_FREEZE_HIT_THRESHOLD }}
+          RUNTIME_FREEZE_WINDOW_MS: ${{ secrets.RUNTIME_FREEZE_WINDOW_MS }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+          VAPID_SUBJECT: ${{ secrets.VAPID_SUBJECT }}
+          VIMEO_ACCESS_TOKEN: ${{ secrets.VIMEO_ACCESS_TOKEN }}
+          VIMEO_CLIENT_ID: ${{ secrets.VIMEO_CLIENT_ID }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
         # Fuera del repo a proposito: un .env* en la raiz OpenNext lo copiaria
         # dentro del codigo del Worker. Al build le llega como variables de
         # proceso y al Worker como secrets.
