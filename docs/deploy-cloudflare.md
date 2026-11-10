@@ -16,13 +16,14 @@ cuenta.
 
 ## Piezas
 
-| Archivo                           | Qué hace                                                                                           |
-| --------------------------------- | -------------------------------------------------------------------------------------------------- |
-| `wrangler.jsonc`                  | Worker `mundobl`: bindings (R2, Durable Objects, Images), crons, límite de CPU, placement.         |
-| `open-next.config.ts`             | Cache de Next: ISR en R2, cola y tag cache en Durable Objects.                                     |
-| `cloudflare/worker.ts`            | Entrada del Worker: el handler de OpenNext más los crons (`/api/cron/daily` y `/api/cron/alerts`). |
-| `.github/workflows/deploy.yml`    | Botón **Deploy producción**: build, secrets y deploy.                                              |
-| `scripts/env-to-secrets-json.mjs` | Pasa el `.env` de producción al formato de secrets de wrangler y valida lo obligatorio.            |
+| Archivo                              | Qué hace                                                                                                                        |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| `wrangler.jsonc`                     | Worker `mundobl`: bindings (R2, Durable Objects, Images), crons, límite de CPU, placement.                                      |
+| `open-next.config.ts`                | Cache de Next: ISR en R2, cola y tag cache en Durable Objects.                                                                  |
+| `cloudflare/worker.ts`               | Entrada del Worker: el handler de OpenNext más los crons (`/api/cron/daily` y `/api/cron/alerts`).                              |
+| `.github/workflows/deploy.yml`       | Botón **Deploy producción**: build, secrets y deploy.                                                                           |
+| `scripts/prepare-production-env.mjs` | Junta `MUNDOBL_ENV` y los secrets sueltos del repo, valida lo obligatorio y arma el entorno del build y los secrets del Worker. |
+| `scripts/run-with-env.mjs`           | Corre el build con ese entorno.                                                                                                 |
 
 ## Configuración inicial (una sola vez)
 
@@ -53,9 +54,15 @@ cuenta.
    Secrets and variables → Actions → New repository secret:
    - `CLOUDFLARE_API_TOKEN`: el token del paso 2.
    - `CLOUDFLARE_ACCOUNT_ID`: el ID del paso 3.
-   - `MUNDOBL_ENV`: el contenido completo de `produccion.env`.
+   - Las variables de la app, de cualquiera de estas dos formas (se pueden
+     mezclar; si una está en los dos lados, gana el secret suelto):
+     - `MUNDOBL_ENV`: el contenido completo de `produccion.env`.
+     - Un secret por variable, con el mismo nombre (`DATABASE_URL`,
+       `GOOGLE_CLIENT_ID`, `R2_ACCESS_KEY_ID`...).
 
-   Después borrar `produccion.env` de la compu.
+   Los `[SENSITIVE]` y las líneas `VERCEL_*` se ignoran solas. Si falta algo
+   obligatorio, el deploy lo dice antes de buildear. Después borrar
+   `produccion.env` de la compu.
 
 ## Deploy
 
