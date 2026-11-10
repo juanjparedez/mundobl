@@ -54,6 +54,7 @@ import { Pool } from 'pg';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { withSerialTransactions } from './serial-transactions';
+import { RequestScopedPool } from './request-scoped-pool';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { playableCountIn, summarizePlayability } from './availability';
 import { airingSeriesWhere } from './airing-schedule';
@@ -83,67 +84,42 @@ const IS_WORKERD =
   typeof navigator !== 'undefined' &&
   navigator.userAgent === 'Cloudflare-Workers';
 
+/** ExecutionContext del request actual en workerd (clave del pool). */
+function currentRequestKey(): object | undefined {
+  try {
+    return getCloudflareContext().ctx;
+  } catch {
+    return undefined;
+  }
+}
+
 function createPrismaClient() {
-  const connectionString = process.env.DATABASE_URL;
-  const pool = new Pool({
-    connectionString,
+  const config = {
+    // En workerd se lee por request (RequestScopedPool crea el pool real en
+    // cada uno), asi toma la connection string de Hyperdrive que inyecta
+    // cloudflare/worker.ts.
+    get connectionString() {
+      return process.env.DATABASE_URL;
+    },
     max: 5,
     idleTimeoutMillis: 10000,
     connectionTimeoutMillis: 10000,
-    // En Cloudflare Workers un socket abierto en un request no se puede usar
-    // desde otro ("Cannot perform I/O on behalf of a different request"):
-    // cada conexion se usa una vez y se cierra, asi ningun timer de idle
-    // queda vivo al terminar el request. El pooling real lo hace Hyperdrive
-    // (DATABASE_URL apunta a el, ver cloudflare/worker.ts), o el pooler de
-    // Supabase si el deploy no lo pudo activar. En Node se reutilizan.
+    // En workerd cada conexion se usa una vez y se cierra, asi ningun timer
+    // de idle queda vivo al terminar el request. El pooling real lo hace
+    // Hyperdrive, o el pooler de Supabase si el deploy no lo pudo activar.
+    // En Node se reutilizan.
     ...(IS_WORKERD && { maxUses: 1 }),
-  });
+  };
+  const pool = IS_WORKERD
+    ? new RequestScopedPool(config, currentRequestKey)
+    : new Pool(config);
   const adapter = withSerialTransactions(new PrismaPg(pool));
   return new PrismaClient({ adapter });
 }
 
-/**
- * En workerd el pool NO puede ser global: el isolate atiende varios requests
- * a la vez, y cuando el request A libera una conexion, pg abre la siguiente
- * para el request B dentro del contexto de A. B queda colgado esperando ese
- * socket hasta el connectionTimeout (10 s -> 500) y Supavisor ve el socket
- * cerrado "while busy" cuando A termina. Por eso cada request tiene su propio
- * PrismaClient + pool, atado a su ExecutionContext (se libera con el request).
- */
-const requestClients = new WeakMap<object, PrismaClient>();
+export const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
-function requestScopedClient(): PrismaClient {
-  let ctx: object | undefined;
-  try {
-    ctx = getCloudflareContext().ctx;
-  } catch {
-    // Fuera de un request (no deberia pasar en runtime): cliente global.
-  }
-  if (!ctx) {
-    globalForPrisma.prisma ??= createPrismaClient();
-    return globalForPrisma.prisma;
-  }
-  let client = requestClients.get(ctx);
-  if (!client) {
-    client = createPrismaClient();
-    requestClients.set(ctx, client);
-  }
-  return client;
-}
-
-function workerdPrisma(): PrismaClient {
-  return new Proxy({} as PrismaClient, {
-    get(_target, prop) {
-      const client = requestScopedClient();
-      const value: unknown = Reflect.get(client, prop);
-      return typeof value === 'function' ? value.bind(client) : value;
-    },
-  });
-}
-
-export const prisma: PrismaClient = IS_WORKERD
-  ? workerdPrisma()
-  : (globalForPrisma.prisma ??= createPrismaClient());
+globalForPrisma.prisma = prisma;
 
 /** Hidden editorial blocks are readable only by an authorized editor. */
 export async function getReadableSeriesInfoBlocks(
