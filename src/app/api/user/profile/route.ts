@@ -172,9 +172,20 @@ export async function GET(request: NextRequest) {
               type: true,
               country: { select: { name: true } },
               seasons: {
-                include: {
+                select: {
+                  seasonNumber: true,
+                  // Solo lo que usa groupIntoChapters: sin sinopsis ni
+                  // datos de embed de cada capitulo.
                   episodes: {
-                    include: { viewStatus: { where: { userId } } },
+                    select: {
+                      id: true,
+                      episodeNumber: true,
+                      title: true,
+                      viewStatus: {
+                        where: { userId },
+                        select: { status: true },
+                      },
+                    },
                     orderBy: { episodeNumber: 'asc' },
                   },
                 },
