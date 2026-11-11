@@ -21,6 +21,7 @@ import {
   sendTestPush,
   type PushPermission,
 } from '@/lib/web-push-prefs';
+import { localToUtcHHMM, utcToLocalHHMM } from '@/lib/quiet-hours';
 import './NotificationsSettings.css';
 
 interface NotificationPrefs {
@@ -222,8 +223,9 @@ export function NotificationsSettings() {
       ]);
       return;
     }
-    const start = range[0]?.format('HH:mm') ?? null;
-    const end = range[1]?.format('HH:mm') ?? null;
+    // Se elige en hora local y se guarda en UTC (ver src/lib/quiet-hours.ts).
+    const start = range[0] ? localToUtcHHMM(range[0].format('HH:mm')) : null;
+    const end = range[1] ? localToUtcHHMM(range[1].format('HH:mm')) : null;
     await Promise.all([
       savePref('quietStart', start),
       savePref('quietEnd', end),
@@ -413,15 +415,19 @@ export function NotificationsSettings() {
           <ClockCircleOutlined /> Horario silencioso
           <span className="ns-block__hint">
             En este rango horario las notificaciones igual quedan en la campana,
-            pero no suena el push del navegador. Hora UTC.
+            pero no suena el push del navegador.
           </span>
         </div>
         <TimePicker.RangePicker
           format="HH:mm"
           minuteStep={15}
           value={[
-            prefs.quietStart ? dayjs(prefs.quietStart, 'HH:mm') : null,
-            prefs.quietEnd ? dayjs(prefs.quietEnd, 'HH:mm') : null,
+            prefs.quietStart
+              ? dayjs(utcToLocalHHMM(prefs.quietStart), 'HH:mm')
+              : null,
+            prefs.quietEnd
+              ? dayjs(utcToLocalHHMM(prefs.quietEnd), 'HH:mm')
+              : null,
           ]}
           onChange={(range) =>
             handleQuietHoursChange(range as [Dayjs | null, Dayjs | null] | null)
@@ -430,7 +436,8 @@ export function NotificationsSettings() {
         />
         {prefs.quietStart && prefs.quietEnd && (
           <Tag className="ns-quiet-active" color="purple">
-            Activo: {prefs.quietStart} → {prefs.quietEnd} UTC
+            Activo: {utcToLocalHHMM(prefs.quietStart)} →{' '}
+            {utcToLocalHHMM(prefs.quietEnd)}
           </Tag>
         )}
       </div>

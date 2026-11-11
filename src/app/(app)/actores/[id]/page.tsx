@@ -10,6 +10,7 @@ export function generateStaticParams(): { id: string }[] {
 }
 
 import type { Metadata } from 'next';
+import { metaDescription } from '@/lib/content-metadata';
 import { notFound } from 'next/navigation';
 import type { Person } from 'schema-dts';
 import { JsonLd } from '@/components/seo/JsonLd';
@@ -92,9 +93,9 @@ export async function generateMetadata({
 
   const displayName = actor.stageName ?? actor.name;
   const creditCount = actor.series.length + actor.seasons.length;
-  const description = actor.biography
-    ? actor.biography.slice(0, 160).replace(/\n/g, ' ')
-    : `Perfil de ${displayName}. ${creditCount} títulos en su filmografía. Descubrí su trayectoria en MundoBL.`;
+  const description =
+    metaDescription(actor.biography) ??
+    `Perfil de ${displayName}. ${creditCount} títulos en su filmografía. Descubrí su trayectoria en MundoBL.`;
 
   // Sin foto, sin bio y con un solo credito la ficha no aporta nada propio:
   // se deja navegable pero fuera del indice de Google (thin content).

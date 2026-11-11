@@ -10,6 +10,7 @@ export function generateStaticParams(): { id: string }[] {
 }
 
 import type { Metadata } from 'next';
+import { metaDescription } from '@/lib/content-metadata';
 import { notFound } from 'next/navigation';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { Breadcrumbs } from '@/components/seo/Breadcrumbs/Breadcrumbs';
@@ -31,9 +32,9 @@ export async function generateMetadata({
   if (!director) return {};
 
   const seriesCount = director.series?.length ?? 0;
-  const description = director.biography
-    ? director.biography.slice(0, 160).replace(/\n/g, ' ')
-    : `Perfil de ${director.name}. ${seriesCount} series BL dirigidas. Descubre su trabajo en MundoBL.`;
+  const description =
+    metaDescription(director.biography) ??
+    `Perfil de ${director.name}. ${seriesCount} series BL dirigidas. Descubre su trabajo en MundoBL.`;
 
   // Mismo criterio que la ficha de actor: sin foto, sin bio y con un solo
   // credito no aporta nada propio — navegable, pero fuera del indice.

@@ -63,6 +63,7 @@ const tsxTests = [
   'embed-playlist',
   'request-scoped-batching',
   'linked-progress',
+  'notification-quality',
 ];
 const trackingTests = [
   'tracking-backup',
