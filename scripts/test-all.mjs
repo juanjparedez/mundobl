@@ -102,6 +102,7 @@ const routeTests = [
   ['test-platform-audit.mjs', true],
   ['test-private-tracking-routes.mjs', true],
   ['test-activity-routes.mjs', true],
+  ['test-series-facts-routes.mjs', true],
   ['test-info-block-privacy.mjs', true],
   ['test-editorial-routes.mjs', true],
   ['test-profile-watch-dates.mjs', true],

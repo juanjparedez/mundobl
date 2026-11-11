@@ -4216,6 +4216,66 @@ const ko = {
       kiss: "키스",
     },
   },
+  seriesFacts: {
+    title: "작품 정보",
+    subtitle: "시작하기 전에 커뮤니티가 알려주는 정보.",
+    empty: "아직 정보 없음",
+    revealSpoiler: "스포일러 보기",
+    staffSource: "팀이 확인함",
+    communitySource: "{n}명이 투표",
+    contribute: "정보 추가",
+    modalTitle: "이 작품에서 무슨 일이?",
+    modalHint: "아는 것만 투표하세요. 3명 이상 일치하면 표시돼요.",
+    unknown: "모르겠어요",
+    official: "공식 정보로 저장",
+    officialHint: "커뮤니티 투표보다 우선해요. \"모르겠어요\"를 고르면 투표로 돌아가요.",
+    done: "완료",
+    saveError: "저장하지 못했어요. 다시 시도해 주세요.",
+    facts: {
+      kiss: "키스하나요?",
+      intimacy: "수위 장면",
+      together: "커플이 이어지나요?",
+      ending: "결말",
+      drama: "드라마 강도",
+      sidecouple: "서브 커플",
+      triangle: "삼각관계 또는 바람",
+    },
+    values: {
+      kiss: {
+        none: "키스 없음",
+        yes: "있음",
+        several: "여러 번",
+      },
+      intimacy: {
+        none: "없음",
+        implied: "암시",
+        shown: "있음",
+      },
+      together: {
+        yes: "네",
+        no: "아니요",
+        open: "열린 결말",
+      },
+      ending: {
+        happy: "해피",
+        sad: "새드",
+        bittersweet: "씁쓸달콤",
+      },
+      drama: {
+        light: "가벼움",
+        medium: "보통",
+        heavy: "강함",
+      },
+      sidecouple: {
+        yes: "있음",
+        no: "없음",
+      },
+      triangle: {
+        yes: "있음",
+        no: "없음",
+      },
+    },
+  },
 } satisfies TranslationShape;
 
 export default ko;

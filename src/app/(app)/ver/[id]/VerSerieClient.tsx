@@ -42,6 +42,7 @@ import { SeriesSubscribeButton } from '@/components/series/SeriesSubscribeButton
 import { AiringAlertCta } from '@/components/series/AiringAlertCta/AiringAlertCta';
 import { FavoriteButton } from '@/components/series/FavoriteButton/FavoriteButton';
 import { SeriesReactions } from '@/components/series/SeriesReactions/SeriesReactions';
+import { SeriesFacts } from '@/components/series/SeriesFacts/SeriesFacts';
 import { TrackingPanel } from '@/components/series/TrackingPanel/TrackingPanel';
 import { WatchedToggle } from '@/components/series/WatchedToggle/WatchedToggle';
 import { ActivityPulse } from '@/components/series/ActivityPulse/ActivityPulse';
@@ -911,6 +912,8 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
         <SeriesReactions seriesId={series.id} />
         <ActivityPulse seriesId={series.id} />
       </div>
+
+      <SeriesFacts seriesId={series.id} />
 
       {activeChapter &&
         activeChapterCode &&

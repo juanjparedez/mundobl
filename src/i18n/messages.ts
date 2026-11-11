@@ -4195,6 +4195,40 @@ export type TranslationShape = {
       kiss: string;
     };
   };
+  seriesFacts: {
+    title: string;
+    subtitle: string;
+    empty: string;
+    revealSpoiler: string;
+    staffSource: string;
+    communitySource: string;
+    contribute: string;
+    modalTitle: string;
+    modalHint: string;
+    unknown: string;
+    official: string;
+    officialHint: string;
+    done: string;
+    saveError: string;
+    facts: {
+      kiss: string;
+      intimacy: string;
+      together: string;
+      ending: string;
+      drama: string;
+      sidecouple: string;
+      triangle: string;
+    };
+    values: {
+      kiss: { none: string; yes: string; several: string };
+      intimacy: { none: string; implied: string; shown: string };
+      together: { yes: string; no: string; open: string };
+      ending: { happy: string; sad: string; bittersweet: string };
+      drama: { light: string; medium: string; heavy: string };
+      sidecouple: { yes: string; no: string };
+      triangle: { yes: string; no: string };
+    };
+  };
 };
 
 const es: TranslationShape = {
@@ -8730,6 +8764,68 @@ const es: TranslationShape = {
       kiss: 'Beso',
     },
   },
+  seriesFacts: {
+    title: 'Datos de la serie',
+    subtitle: 'Lo que cuenta la comunidad antes de que la empieces.',
+    empty: 'Sin datos todavía',
+    revealSpoiler: 'Ver spoiler',
+    staffSource: 'Dato confirmado por el equipo',
+    communitySource: 'Votado por {n} personas',
+    contribute: 'Completar datos',
+    modalTitle: '¿Qué pasa en esta serie?',
+    modalHint:
+      'Votá solo lo que sabés. Un dato se muestra cuando al menos 3 personas coinciden.',
+    unknown: 'No sé',
+    official: 'Guardar como dato oficial',
+    officialHint:
+      'Pisa los votos de la comunidad. Elegí «No sé» para volver al voto.',
+    done: 'Listo',
+    saveError: 'No se pudo guardar. Probá de nuevo.',
+    facts: {
+      kiss: '¿Se besan?',
+      intimacy: 'Escenas íntimas',
+      together: '¿La pareja termina junta?',
+      ending: 'Final',
+      drama: 'Nivel de drama',
+      sidecouple: 'Pareja secundaria',
+      triangle: 'Triángulo o infidelidad',
+    },
+    values: {
+      kiss: {
+        none: 'No se besan',
+        yes: 'Sí',
+        several: 'Varios besos',
+      },
+      intimacy: {
+        none: 'No hay',
+        implied: 'Insinuadas',
+        shown: 'Se muestran',
+      },
+      together: {
+        yes: 'Sí',
+        no: 'No',
+        open: 'Final abierto',
+      },
+      ending: {
+        happy: 'Feliz',
+        sad: 'Triste',
+        bittersweet: 'Agridulce',
+      },
+      drama: {
+        light: 'Ligero',
+        medium: 'Medio',
+        heavy: 'Intenso',
+      },
+      sidecouple: {
+        yes: 'Sí',
+        no: 'No',
+      },
+      triangle: {
+        yes: 'Sí',
+        no: 'No',
+      },
+    },
+  },
 };
 
 const en: TranslationShape = {
@@ -13233,6 +13329,68 @@ const en: TranslationShape = {
       hot: 'Hot',
       smirk: 'Smirk',
       kiss: 'Kiss',
+    },
+  },
+  seriesFacts: {
+    title: 'Series facts',
+    subtitle: 'What the community says before you start it.',
+    empty: 'No data yet',
+    revealSpoiler: 'Show spoiler',
+    staffSource: 'Confirmed by the team',
+    communitySource: 'Voted by {n} people',
+    contribute: 'Add facts',
+    modalTitle: 'What happens in this series?',
+    modalHint:
+      'Only vote on what you know. A fact shows up once at least 3 people agree.',
+    unknown: "Don't know",
+    official: 'Save as official fact',
+    officialHint:
+      'Overrides community votes. Pick "Don\'t know" to go back to the vote.',
+    done: 'Done',
+    saveError: "Couldn't save. Try again.",
+    facts: {
+      kiss: 'Do they kiss?',
+      intimacy: 'Intimate scenes',
+      together: 'Does the couple end up together?',
+      ending: 'Ending',
+      drama: 'Drama level',
+      sidecouple: 'Side couple',
+      triangle: 'Love triangle or cheating',
+    },
+    values: {
+      kiss: {
+        none: 'No kiss',
+        yes: 'Yes',
+        several: 'Several kisses',
+      },
+      intimacy: {
+        none: 'None',
+        implied: 'Implied',
+        shown: 'Shown',
+      },
+      together: {
+        yes: 'Yes',
+        no: 'No',
+        open: 'Open ending',
+      },
+      ending: {
+        happy: 'Happy',
+        sad: 'Sad',
+        bittersweet: 'Bittersweet',
+      },
+      drama: {
+        light: 'Light',
+        medium: 'Medium',
+        heavy: 'Heavy',
+      },
+      sidecouple: {
+        yes: 'Yes',
+        no: 'No',
+      },
+      triangle: {
+        yes: 'Yes',
+        no: 'No',
+      },
     },
   },
 };

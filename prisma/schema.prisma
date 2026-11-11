@@ -111,6 +111,7 @@ model User {
   communityModerationActions CommunityModerationAction[]
   activeDays              UserActiveDay[]
   seriesShares            SeriesShare[]
+  seriesFactVotes         SeriesFactVote[]
   achievements            UserAchievement[]
 }
 
@@ -455,6 +456,8 @@ model Series {
   trackingEvents       TrackingEvent[]
   activityDaily        SeriesActivityDaily[]
   reactionCounts       SeriesReactionCount[]
+  factVotes            SeriesFactVote[]
+  factOverrides        SeriesFactOverride[]
   shares               SeriesShare[]
 
   @@index([origin, visibility])
@@ -2136,6 +2139,35 @@ model SeriesReactionCount {
   updatedAt DateTime @updatedAt
 
   @@id([seriesId, reaction])
+}
+
+// Datos de la serie (¿se besan?, ¿escenas intimas?, final...): voto de
+// cuentas, uno por persona y dato. El valor publico sale por consenso
+// (src/lib/series-facts.ts) salvo que el equipo lo fije en SeriesFactOverride.
+model SeriesFactVote {
+  seriesId  Int
+  series    Series   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fact      String // clave de SERIES_FACTS
+  value     String // uno de los valores de ese dato
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([seriesId, userId, fact])
+  @@index([userId])
+}
+
+// Valor fijado por admin/moderacion/colaboracion: gana sobre los votos.
+model SeriesFactOverride {
+  seriesId  Int
+  series    Series   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  fact      String
+  value     String
+  setById   String?
+  updatedAt DateTime @updatedAt
+
+  @@id([seriesId, fact])
 }
 
 // Conteo diario agregado de secciones y flujos para dimensionamiento de infra.

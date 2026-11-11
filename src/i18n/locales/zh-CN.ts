@@ -4210,6 +4210,66 @@ const zhCN = {
       kiss: "亲亲",
     },
   },
+  seriesFacts: {
+    title: "剧集信息",
+    subtitle: "开始看之前，看看社区怎么说。",
+    empty: "暂无信息",
+    revealSpoiler: "显示剧透",
+    staffSource: "团队已确认",
+    communitySource: "{n} 人投票",
+    contribute: "补充信息",
+    modalTitle: "这部剧里会发生什么？",
+    modalHint: "只投你知道的。至少 3 人一致时才会显示。",
+    unknown: "不知道",
+    official: "保存为官方信息",
+    officialHint: "覆盖社区投票。选“不知道”可恢复为投票结果。",
+    done: "完成",
+    saveError: "保存失败，请重试。",
+    facts: {
+      kiss: "有吻戏吗？",
+      intimacy: "亲密场景",
+      together: "主角最后在一起吗？",
+      ending: "结局",
+      drama: "虐心程度",
+      sidecouple: "副CP",
+      triangle: "三角恋或出轨",
+    },
+    values: {
+      kiss: {
+        none: "没有",
+        yes: "有",
+        several: "很多次",
+      },
+      intimacy: {
+        none: "没有",
+        implied: "暗示",
+        shown: "有展示",
+      },
+      together: {
+        yes: "是",
+        no: "否",
+        open: "开放式结局",
+      },
+      ending: {
+        happy: "HE",
+        sad: "BE",
+        bittersweet: "苦乐参半",
+      },
+      drama: {
+        light: "轻松",
+        medium: "中等",
+        heavy: "很虐",
+      },
+      sidecouple: {
+        yes: "有",
+        no: "没有",
+      },
+      triangle: {
+        yes: "有",
+        no: "没有",
+      },
+    },
+  },
 } satisfies TranslationShape;
 
 export default zhCN;
