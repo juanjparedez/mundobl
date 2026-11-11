@@ -1,11 +1,18 @@
 .activity-pulse {
   display: inline-flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: var(--spacing-xs);
+  gap: var(--spacing-xs) var(--spacing-md);
   color: var(--text-secondary);
   font-size: var(--font-size-sm);
 }
 
-.activity-pulse .anticon {
+.activity-pulse__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.activity-pulse__item--hot .anticon {
   color: var(--warning-color);
 }

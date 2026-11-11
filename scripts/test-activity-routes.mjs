@@ -35,6 +35,8 @@ function loadRoute(path) {
 }
 const activity = loadRoute('src/app/api/activity/route.ts');
 const alias = loadRoute('src/app/api/community/alias/route.ts');
+const reactions = loadRoute('src/app/api/series/[id]/reactions/route.ts');
+const pageStats = loadRoute('src/app/api/series/[id]/activity/route.ts');
 const { NextRequest } = require('next/server');
 const { prisma } = database;
 const key = `activity-route-${Date.now()}`;
@@ -111,6 +113,78 @@ try {
   });
   assert.equal(row.country, 'AR');
 
+  // Visitas: la ficha y /ver suman; debajo de 5 no se muestran.
+  session = null;
+  const visit = (kind) =>
+    post({ seriesId: series.id, kind }, { 'cf-connecting-ip': `${key}-v` });
+  for (let i = 0; i < 2; i += 1)
+    assert.equal((await visit('open_ver')).status, 204);
+  for (let i = 0; i < 2; i += 1)
+    assert.equal((await visit('series_view')).status, 204);
+  const stats = async () =>
+    (
+      await pageStats.GET(new Request('http://localhost'), {
+        params: Promise.resolve({ id: String(series.id) }),
+      })
+    ).json();
+  assert.equal((await stats()).views, null, 'Under the minimum stays hidden');
+  assert.equal((await visit('series_view')).status, 204);
+  assert.equal((await stats()).views, 5, 'series_view + open_ver = visits');
+
+  // Reacciones: suman, restan, nunca bajan de cero, solo claves conocidas.
+  const react = (body, { id = series.id, headers = {} } = {}) =>
+    reactions.POST(
+      new NextRequest(`http://localhost/api/series/${id}/reactions`, {
+        method: 'POST',
+        headers: {
+          origin: 'http://localhost',
+          'content-type': 'application/json',
+          ...headers,
+        },
+        body: JSON.stringify(body),
+      }),
+      { params: Promise.resolve({ id: String(id) }) }
+    );
+  assert.equal((await react({ reaction: 'fire', active: true })).status, 204);
+  assert.equal((await react({ reaction: 'fire', active: true })).status, 204);
+  assert.equal((await react({ reaction: 'hot', active: true })).status, 204);
+  assert.equal((await react({ reaction: 'hot', active: false })).status, 204);
+  assert.equal((await react({ reaction: 'hot', active: false })).status, 204);
+  assert.equal(
+    (await react({ reaction: 'laugh', active: false })).status,
+    204,
+    'Removing a reaction nobody made is a no-op'
+  );
+  assert.deepEqual((await stats()).reactions, { fire: 2 });
+  const hotRow = await prisma.seriesReactionCount.findUnique({
+    where: { seriesId_reaction: { seriesId: series.id, reaction: 'hot' } },
+  });
+  assert.equal(hotRow.count, 0, 'Never below zero');
+  assert.equal((await react({ reaction: 'poop', active: true })).status, 400);
+  assert.equal((await react({ reaction: 'fire', active: 'yes' })).status, 400);
+  assert.equal(
+    (await react({ reaction: 'fire', active: true }, { id: hidden.id })).status,
+    400
+  );
+  assert.equal(
+    (
+      await react(
+        { reaction: 'fire', active: true },
+        { headers: { origin: 'https://evil.example' } }
+      )
+    ).status,
+    403
+  );
+  session = { user: { id: key, role: 'USER', banned: true } };
+  assert.equal((await react({ reaction: 'fire', active: true })).status, 403);
+  session = { user: { id: key, role: 'ADMIN' } };
+  assert.equal(
+    (await react({ reaction: 'fire', active: true })).status,
+    204,
+    'Staff can react too'
+  );
+  assert.deepEqual((await stats()).reactions, { fire: 3 });
+
   // Alias: uno nuevo, distinto, y no dos seguidos.
   session = null;
   assert.equal((await alias.POST()).status, 401);
@@ -127,6 +201,9 @@ try {
   console.log('activity routes ok');
 } finally {
   await prisma.seriesActivityDaily.deleteMany({
+    where: { seriesId: { in: [series.id, hidden.id] } },
+  });
+  await prisma.seriesReactionCount.deleteMany({
     where: { seriesId: { in: [series.id, hidden.id] } },
   });
   await prisma.series.deleteMany({

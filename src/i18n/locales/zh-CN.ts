@@ -3197,9 +3197,6 @@ const zhCN = {
     "episodesTitle": "剧集",
     "seasonTitle": "第 {seasonNumber} 季",
     "episodeDefaultTitle": "第 {episodeNumber} 集",
-    "like": "点赞",
-    "liked": "已点赞",
-    "likedAs": "已作为 {alias} 点赞"
   },
   "shareButton": {
     "shareError": "无法分享",
@@ -4085,6 +4082,7 @@ const zhCN = {
     freeNoAccountBody: "剧集来自官方频道。你的进度保存在这个浏览器中；登录后会保存到你的账号。",
     markChapterShort: "标记",
     activityThisWeek: "本周已观看 {n} 集",
+    pageViews: "{n} 次浏览",
     quickSaved: "“{title}”：{label}",
     quickTrigger: "加入我的清单",
     quickWatching: "我正在看…",
@@ -4194,6 +4192,23 @@ const zhCN = {
     "funnelClicks": "点击",
     "funnelActivated": "已开启提醒",
     "funnelHint": "在播剧集中“提醒我”按钮被展示的次数、被点击的次数，以及最终开启提醒（含登录）的次数。匿名，不含团队。",
+  },
+  reactions: {
+    groupLabel: "表情回应",
+    addLabel: "用{name}回应（{n}）",
+    removeLabel: "取消{name}回应（{n}）",
+    names: {
+      laugh: "大笑",
+      love: "喜欢",
+      fire: "太燃了",
+      cry: "哭了",
+      mindblown: "震撼",
+      clap: "鼓掌",
+      wow: "惊讶",
+      hot: "好热",
+      smirk: "坏笑",
+      kiss: "亲亲",
+    },
   },
 } satisfies TranslationShape;
 

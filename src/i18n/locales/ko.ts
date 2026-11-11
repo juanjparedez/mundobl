@@ -3203,9 +3203,6 @@ const ko = {
     "episodesTitle": "에피소드",
     "seasonTitle": "{seasonNumber} 시즌",
     "episodeDefaultTitle": "{episodeNumber} 에피소드",
-    "like": "좋아요",
-    "liked": "좋아요 완료",
-    "likedAs": "{alias}(으)로 좋아요 완료"
   },
   "shareButton": {
     "shareError": "공유할 수 없음",
@@ -4091,6 +4088,7 @@ const ko = {
     freeNoAccountBody: "회차는 공식 채널에서 제공돼요. 진행 상황은 이 브라우저에 남고, 로그인하면 계정에 저장돼요.",
     markChapterShort: "기록",
     activityThisWeek: "이번 주 {n}화 시청",
+    pageViews: "조회 {n}회",
     quickSaved: "'{title}': {label}",
     quickTrigger: "내 목록에 추가",
     quickWatching: "보는 중…",
@@ -4200,6 +4198,23 @@ const ko = {
     "funnelClicks": "탭",
     "funnelActivated": "알림 켜짐",
     "funnelHint": "방영 중인 시리즈에서 \"알려줘\" 버튼이 노출된 횟수, 탭된 횟수, 알림 켜짐(로그인 포함)으로 이어진 횟수. 익명, 운영진 제외.",
+  },
+  reactions: {
+    groupLabel: "반응",
+    addLabel: "{name}(으)로 반응 ({n})",
+    removeLabel: "{name} 반응 취소 ({n})",
+    names: {
+      laugh: "웃겨요",
+      love: "사랑해요",
+      fire: "불타요",
+      cry: "눈물나요",
+      mindblown: "충격",
+      clap: "박수",
+      wow: "놀라워요",
+      hot: "화끈해요",
+      smirk: "능글",
+      kiss: "키스",
+    },
   },
 } satisfies TranslationShape;
 

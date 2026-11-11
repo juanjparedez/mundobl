@@ -3186,9 +3186,6 @@ export type TranslationShape = {
     episodesTitle: string;
     seasonTitle: string;
     episodeDefaultTitle: string;
-    like: string;
-    liked: string;
-    likedAs: string;
   };
   shareButton: {
     shareError: string;
@@ -4074,6 +4071,7 @@ export type TranslationShape = {
     freeNoAccountBody: string;
     markChapterShort: string;
     activityThisWeek: string;
+    pageViews: string;
     quickSaved: string;
     quickTrigger: string;
     quickWatching: string;
@@ -4179,6 +4177,23 @@ export type TranslationShape = {
     funnelClicks: string;
     funnelActivated: string;
     funnelHint: string;
+  };
+  reactions: {
+    groupLabel: string;
+    addLabel: string;
+    removeLabel: string;
+    names: {
+      laugh: string;
+      love: string;
+      fire: string;
+      cry: string;
+      mindblown: string;
+      clap: string;
+      wow: string;
+      hot: string;
+      smirk: string;
+      kiss: string;
+    };
   };
 };
 
@@ -7625,9 +7640,6 @@ const es: TranslationShape = {
     episodesTitle: 'Capítulos',
     seasonTitle: 'Temporada {seasonNumber}',
     episodeDefaultTitle: 'Episodio {episodeNumber}',
-    like: 'Me gusta',
-    liked: 'Te gusta',
-    likedAs: 'Me gusta registrado como {alias}',
   },
   shareButton: {
     shareError: 'No se pudo compartir',
@@ -8579,6 +8591,7 @@ const es: TranslationShape = {
       'Los capítulos vienen de canales oficiales. Tu progreso queda en este navegador; si entrás, se guarda en tu cuenta.',
     markChapterShort: 'Marcar',
     activityThisWeek: '{n} capítulos vistos esta semana',
+    pageViews: '{n} visitas',
     quickSaved: '«{title}»: {label}',
     quickTrigger: 'Agregar a mi lista',
     quickWatching: 'La estoy viendo…',
@@ -8699,6 +8712,23 @@ const es: TranslationShape = {
     funnelActivated: 'Aviso activado',
     funnelHint:
       'Cuántas veces se mostró el botón "Avisame" en series en emisión, cuántas se tocó y cuántas terminó en aviso activado (con el login incluido). Anónimo y sin el equipo.',
+  },
+  reactions: {
+    groupLabel: 'Reacciones',
+    addLabel: 'Reaccionar con {name} ({n})',
+    removeLabel: 'Quitar tu reacción {name} ({n})',
+    names: {
+      laugh: 'Risa',
+      love: 'Me encanta',
+      fire: 'Fuego',
+      cry: 'Llorando',
+      mindblown: 'Me voló la cabeza',
+      clap: 'Aplausos',
+      wow: 'Sorpresa',
+      hot: 'Qué calor',
+      smirk: 'Pícaro',
+      kiss: 'Beso',
+    },
   },
 };
 
@@ -12119,9 +12149,6 @@ const en: TranslationShape = {
     episodesTitle: 'Episodes',
     seasonTitle: 'Season {seasonNumber}',
     episodeDefaultTitle: 'Episode {episodeNumber}',
-    like: 'Like',
-    liked: 'Liked',
-    likedAs: 'Like registered as {alias}',
   },
   shareButton: {
     shareError: 'Could not share',
@@ -13067,6 +13094,7 @@ const en: TranslationShape = {
       'Episodes come from official channels. Your progress stays in this browser; if you sign in, it is saved to your account.',
     markChapterShort: 'Mark',
     activityThisWeek: '{n} episodes watched this week',
+    pageViews: '{n} views',
     quickSaved: '“{title}”: {label}',
     quickTrigger: 'Add to my list',
     quickWatching: "I'm watching it…",
@@ -13189,6 +13217,23 @@ const en: TranslationShape = {
     funnelActivated: 'Alert turned on',
     funnelHint:
       'How many times the "Notify me" button was shown on airing series, how many times it was tapped and how many ended with an alert turned on (sign-in included). Anonymous, staff excluded.',
+  },
+  reactions: {
+    groupLabel: 'Reactions',
+    addLabel: 'React with {name} ({n})',
+    removeLabel: 'Remove your {name} reaction ({n})',
+    names: {
+      laugh: 'Laughing',
+      love: 'Love it',
+      fire: 'Fire',
+      cry: 'Crying',
+      mindblown: 'Mind blown',
+      clap: 'Applause',
+      wow: 'Surprised',
+      hot: 'Hot',
+      smirk: 'Smirk',
+      kiss: 'Kiss',
+    },
   },
 };
 

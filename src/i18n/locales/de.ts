@@ -3207,9 +3207,6 @@ const de = {
     "episodesTitle": "Episoden",
     "seasonTitle": "Staffel {seasonNumber}",
     "episodeDefaultTitle": "Episode {episodeNumber}",
-    "like": "Gefällt mir",
-    "liked": "Gefällt dir",
-    "likedAs": "Like registriert als {alias}"
   },
   "shareButton": {
     "shareError": "Konnte nicht teilen",
@@ -4095,6 +4092,7 @@ const de = {
     freeNoAccountBody: "Die Folgen stammen von offiziellen Kanälen. Dein Fortschritt bleibt in diesem Browser; wenn du dich anmeldest, wird er in deinem Konto gespeichert.",
     markChapterShort: "Markieren",
     activityThisWeek: "{n} Folgen diese Woche gesehen",
+    pageViews: "{n} Aufrufe",
     quickSaved: "„{title}“: {label}",
     quickTrigger: "Zu meiner Liste hinzufügen",
     quickWatching: "Ich schaue sie gerade…",
@@ -4204,6 +4202,23 @@ const de = {
     "funnelClicks": "Angetippt",
     "funnelActivated": "Hinweis aktiviert",
     "funnelHint": "Wie oft der Button \"Benachrichtige mich\" bei laufenden Serien angezeigt, angetippt und mit aktivierter Benachrichtigung abgeschlossen wurde (inklusive Anmeldung). Anonym, ohne Team.",
+  },
+  reactions: {
+    groupLabel: "Reaktionen",
+    addLabel: "Mit {name} reagieren ({n})",
+    removeLabel: "Deine Reaktion {name} entfernen ({n})",
+    names: {
+      laugh: "Lachen",
+      love: "Liebe es",
+      fire: "Feuer",
+      cry: "Weinen",
+      mindblown: "Umgehauen",
+      clap: "Applaus",
+      wow: "Überrascht",
+      hot: "Heiß",
+      smirk: "Verschmitzt",
+      kiss: "Kuss",
+    },
   },
 } satisfies TranslationShape;
 

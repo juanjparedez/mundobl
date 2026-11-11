@@ -28,6 +28,8 @@ export interface ChipProps {
   onClick?: () => void;
   /** aria-pressed para chips toggle. */
   pressed?: boolean;
+  /** Nombre accesible del chip clickeable, ya traducido (si el texto no alcanza). */
+  ariaLabel?: string;
   className?: string;
   style?: CSSProperties;
 }
@@ -41,6 +43,7 @@ export function Chip({
   outline = false,
   onClick,
   pressed,
+  ariaLabel,
   className,
   style,
 }: ChipProps) {
@@ -63,6 +66,7 @@ export function Chip({
         style={style}
         onClick={onClick}
         aria-pressed={pressed}
+        aria-label={ariaLabel}
       >
         {icon && (
           <span className="mb-chip__icon" aria-hidden="true">
