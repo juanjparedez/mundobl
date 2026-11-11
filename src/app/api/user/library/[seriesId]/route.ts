@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/auth-helpers';
+import { errorDetails } from '@/lib/error-details';
 import { getWatchingSeasons } from '@/lib/database';
 
 interface RouteParams {
@@ -18,7 +19,11 @@ export async function GET(_request: Request, { params }: RouteParams) {
     return NextResponse.json(await getWatchingSeasons(seriesId), {
       headers: { 'Cache-Control': 'no-store' },
     });
-  } catch {
+  } catch (error) {
+    console.error(
+      'GET /api/user/library/[seriesId] failed',
+      errorDetails(error)
+    );
     return NextResponse.json(
       { error: 'Unable to load episodes' },
       { status: 500 }

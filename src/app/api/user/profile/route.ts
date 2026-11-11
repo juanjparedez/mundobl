@@ -11,6 +11,7 @@ import {
   syncAchievementUnlocks,
 } from '@/lib/achievement-store';
 import { requireAuth } from '@/lib/auth-helpers';
+import { errorDetails } from '@/lib/error-details';
 
 interface RawCountRow {
   name: string;
@@ -506,7 +507,7 @@ export async function GET(request: NextRequest) {
       })),
     });
   } catch (error) {
-    console.error('Error fetching user profile:', error);
+    console.error('Error fetching user profile:', errorDetails(error));
     return NextResponse.json(
       { error: 'Error al obtener el perfil' },
       { status: 500 }
