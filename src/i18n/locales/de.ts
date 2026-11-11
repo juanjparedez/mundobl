@@ -4220,6 +4220,66 @@ const de = {
       kiss: "Kuss",
     },
   },
+  seriesFacts: {
+    title: "Fakten zur Serie",
+    subtitle: "Was die Community sagt, bevor du anfängst.",
+    empty: "Noch keine Angaben",
+    revealSpoiler: "Spoiler zeigen",
+    staffSource: "Vom Team bestätigt",
+    communitySource: "Von {n} Personen abgestimmt",
+    contribute: "Fakten ergänzen",
+    modalTitle: "Was passiert in dieser Serie?",
+    modalHint: "Stimme nur ab, was du weißt. Ein Fakt erscheint, sobald mindestens 3 Personen übereinstimmen.",
+    unknown: "Weiß nicht",
+    official: "Als offiziellen Fakt speichern",
+    officialHint: "Überschreibt die Community-Stimmen. Wähle „Weiß nicht“, um zur Abstimmung zurückzukehren.",
+    done: "Fertig",
+    saveError: "Speichern fehlgeschlagen. Bitte erneut versuchen.",
+    facts: {
+      kiss: "Küssen sie sich?",
+      intimacy: "Intime Szenen",
+      together: "Kommt das Paar zusammen?",
+      ending: "Ende",
+      drama: "Drama-Level",
+      sidecouple: "Nebenpaar",
+      triangle: "Liebesdreieck oder Fremdgehen",
+    },
+    values: {
+      kiss: {
+        none: "Kein Kuss",
+        yes: "Ja",
+        several: "Mehrere Küsse",
+      },
+      intimacy: {
+        none: "Keine",
+        implied: "Angedeutet",
+        shown: "Gezeigt",
+      },
+      together: {
+        yes: "Ja",
+        no: "Nein",
+        open: "Offenes Ende",
+      },
+      ending: {
+        happy: "Glücklich",
+        sad: "Traurig",
+        bittersweet: "Bittersüß",
+      },
+      drama: {
+        light: "Leicht",
+        medium: "Mittel",
+        heavy: "Heftig",
+      },
+      sidecouple: {
+        yes: "Ja",
+        no: "Nein",
+      },
+      triangle: {
+        yes: "Ja",
+        no: "Nein",
+      },
+    },
+  },
 } satisfies TranslationShape;
 
 export default de;

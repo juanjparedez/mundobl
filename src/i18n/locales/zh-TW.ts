@@ -4210,6 +4210,66 @@ const zhTW = {
       kiss: "親親",
     },
   },
+  seriesFacts: {
+    title: "劇集資訊",
+    subtitle: "開始看之前，看看社群怎麼說。",
+    empty: "尚無資訊",
+    revealSpoiler: "顯示劇透",
+    staffSource: "團隊已確認",
+    communitySource: "{n} 人投票",
+    contribute: "補充資訊",
+    modalTitle: "這部劇裡會發生什麼？",
+    modalHint: "只投你知道的。至少 3 人一致時才會顯示。",
+    unknown: "不知道",
+    official: "儲存為官方資訊",
+    officialHint: "覆蓋社群投票。選「不知道」可恢復為投票結果。",
+    done: "完成",
+    saveError: "儲存失敗，請再試一次。",
+    facts: {
+      kiss: "有吻戲嗎？",
+      intimacy: "親密場景",
+      together: "主角最後在一起嗎？",
+      ending: "結局",
+      drama: "虐心程度",
+      sidecouple: "副CP",
+      triangle: "三角戀或出軌",
+    },
+    values: {
+      kiss: {
+        none: "沒有",
+        yes: "有",
+        several: "很多次",
+      },
+      intimacy: {
+        none: "沒有",
+        implied: "暗示",
+        shown: "有呈現",
+      },
+      together: {
+        yes: "是",
+        no: "否",
+        open: "開放式結局",
+      },
+      ending: {
+        happy: "HE",
+        sad: "BE",
+        bittersweet: "苦樂參半",
+      },
+      drama: {
+        light: "輕鬆",
+        medium: "中等",
+        heavy: "很虐",
+      },
+      sidecouple: {
+        yes: "有",
+        no: "沒有",
+      },
+      triangle: {
+        yes: "有",
+        no: "沒有",
+      },
+    },
+  },
 } satisfies TranslationShape;
 
 export default zhTW;

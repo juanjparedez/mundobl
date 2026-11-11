@@ -4220,6 +4220,66 @@ const fr = {
       kiss: "Bisou",
     },
   },
+  seriesFacts: {
+    title: "Infos sur la série",
+    subtitle: "Ce que dit la communauté avant que tu commences.",
+    empty: "Pas encore de données",
+    revealSpoiler: "Voir le spoiler",
+    staffSource: "Confirmé par l'équipe",
+    communitySource: "Voté par {n} personnes",
+    contribute: "Compléter les infos",
+    modalTitle: "Que se passe-t-il dans cette série ?",
+    modalHint: "Vote seulement pour ce que tu sais. Une info apparaît quand au moins 3 personnes sont d'accord.",
+    unknown: "Je ne sais pas",
+    official: "Enregistrer comme info officielle",
+    officialHint: "Remplace les votes de la communauté. Choisis « Je ne sais pas » pour revenir au vote.",
+    done: "Terminé",
+    saveError: "Impossible d'enregistrer. Réessaie.",
+    facts: {
+      kiss: "Ils s'embrassent ?",
+      intimacy: "Scènes intimes",
+      together: "Le couple finit ensemble ?",
+      ending: "Fin",
+      drama: "Niveau de drame",
+      sidecouple: "Couple secondaire",
+      triangle: "Triangle amoureux ou infidélité",
+    },
+    values: {
+      kiss: {
+        none: "Pas de baiser",
+        yes: "Oui",
+        several: "Plusieurs baisers",
+      },
+      intimacy: {
+        none: "Aucune",
+        implied: "Suggérées",
+        shown: "Montrées",
+      },
+      together: {
+        yes: "Oui",
+        no: "Non",
+        open: "Fin ouverte",
+      },
+      ending: {
+        happy: "Heureuse",
+        sad: "Triste",
+        bittersweet: "Douce-amère",
+      },
+      drama: {
+        light: "Léger",
+        medium: "Moyen",
+        heavy: "Intense",
+      },
+      sidecouple: {
+        yes: "Oui",
+        no: "Non",
+      },
+      triangle: {
+        yes: "Oui",
+        no: "Non",
+      },
+    },
+  },
 } satisfies TranslationShape;
 
 export default fr;

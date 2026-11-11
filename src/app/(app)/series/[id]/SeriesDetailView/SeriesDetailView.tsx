@@ -43,6 +43,7 @@ import { isWatchableEpisode } from '@/lib/watchable';
 import { WatchHereBanner } from '@/components/series/WatchHereBanner/WatchHereBanner';
 import { ActivityPulse } from '@/components/series/ActivityPulse/ActivityPulse';
 import { SeriesReactions } from '@/components/series/SeriesReactions/SeriesReactions';
+import { SeriesFacts } from '@/components/series/SeriesFacts/SeriesFacts';
 import type { TVSeries } from 'schema-dts';
 import { ReadOutlined, CommentOutlined } from '@/lib/client-icons';
 import './SeriesDetailView.css';
@@ -297,6 +298,8 @@ export async function SeriesDetailView({
           </div>
 
           <SeriesReactions seriesId={serie.id} />
+
+          <SeriesFacts seriesId={serie.id} />
 
           <AiringAlertCta seriesId={serie.id} airWeekdays={airWeekdays} />
 

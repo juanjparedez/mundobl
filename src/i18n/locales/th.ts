@@ -4214,6 +4214,66 @@ const th = {
       kiss: "จุ๊บ",
     },
   },
+  seriesFacts: {
+    title: "ข้อมูลซีรีส์",
+    subtitle: "สิ่งที่คอมมูนิตี้บอกก่อนคุณเริ่มดู",
+    empty: "ยังไม่มีข้อมูล",
+    revealSpoiler: "ดูสปอยล์",
+    staffSource: "ทีมงานยืนยันแล้ว",
+    communitySource: "โหวตโดย {n} คน",
+    contribute: "เพิ่มข้อมูล",
+    modalTitle: "ในซีรีส์นี้เกิดอะไรขึ้น?",
+    modalHint: "โหวตเฉพาะสิ่งที่คุณรู้ ข้อมูลจะแสดงเมื่อมีอย่างน้อย 3 คนตรงกัน",
+    unknown: "ไม่แน่ใจ",
+    official: "บันทึกเป็นข้อมูลทางการ",
+    officialHint: "แทนที่โหวตของคอมมูนิตี้ เลือก \"ไม่แน่ใจ\" เพื่อกลับไปใช้โหวต",
+    done: "เสร็จ",
+    saveError: "บันทึกไม่สำเร็จ ลองอีกครั้ง",
+    facts: {
+      kiss: "มีฉากจูบไหม?",
+      intimacy: "ฉากเลิฟซีน",
+      together: "คู่หลักได้คบกันไหม?",
+      ending: "ตอนจบ",
+      drama: "ระดับดราม่า",
+      sidecouple: "คู่รอง",
+      triangle: "รักสามเส้าหรือนอกใจ",
+    },
+    values: {
+      kiss: {
+        none: "ไม่มี",
+        yes: "มี",
+        several: "หลายครั้ง",
+      },
+      intimacy: {
+        none: "ไม่มี",
+        implied: "แค่ชี้นำ",
+        shown: "มีให้เห็น",
+      },
+      together: {
+        yes: "ใช่",
+        no: "ไม่",
+        open: "ปลายเปิด",
+      },
+      ending: {
+        happy: "แฮปปี้",
+        sad: "เศร้า",
+        bittersweet: "หวานอมขม",
+      },
+      drama: {
+        light: "เบา",
+        medium: "กลาง",
+        heavy: "หนัก",
+      },
+      sidecouple: {
+        yes: "มี",
+        no: "ไม่มี",
+      },
+      triangle: {
+        yes: "มี",
+        no: "ไม่มี",
+      },
+    },
+  },
 } satisfies TranslationShape;
 
 export default th;

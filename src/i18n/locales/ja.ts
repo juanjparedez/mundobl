@@ -4217,6 +4217,66 @@ const ja = {
       kiss: "キス",
     },
   },
+  seriesFacts: {
+    title: "作品データ",
+    subtitle: "見始める前にコミュニティが教えてくれること。",
+    empty: "まだデータがありません",
+    revealSpoiler: "ネタバレを表示",
+    staffSource: "チームが確認済み",
+    communitySource: "{n}人が投票",
+    contribute: "データを追加",
+    modalTitle: "この作品で何が起こる？",
+    modalHint: "知っていることだけ投票してください。3人以上が一致すると表示されます。",
+    unknown: "わからない",
+    official: "公式データとして保存",
+    officialHint: "コミュニティの投票より優先されます。「わからない」を選ぶと投票に戻ります。",
+    done: "完了",
+    saveError: "保存できませんでした。もう一度お試しください。",
+    facts: {
+      kiss: "キスシーンは？",
+      intimacy: "ラブシーン",
+      together: "カップルは結ばれる？",
+      ending: "結末",
+      drama: "ドラマ度",
+      sidecouple: "サブカップル",
+      triangle: "三角関係・浮気",
+    },
+    values: {
+      kiss: {
+        none: "なし",
+        yes: "あり",
+        several: "何度も",
+      },
+      intimacy: {
+        none: "なし",
+        implied: "ほのめかし",
+        shown: "あり",
+      },
+      together: {
+        yes: "はい",
+        no: "いいえ",
+        open: "オープンエンド",
+      },
+      ending: {
+        happy: "ハッピー",
+        sad: "悲しい",
+        bittersweet: "ほろ苦い",
+      },
+      drama: {
+        light: "軽め",
+        medium: "普通",
+        heavy: "重め",
+      },
+      sidecouple: {
+        yes: "あり",
+        no: "なし",
+      },
+      triangle: {
+        yes: "あり",
+        no: "なし",
+      },
+    },
+  },
 } satisfies TranslationShape;
 
 export default ja;

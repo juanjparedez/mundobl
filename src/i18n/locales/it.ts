@@ -4219,6 +4219,66 @@ const it = {
       kiss: "Bacio",
     },
   },
+  seriesFacts: {
+    title: "Dati della serie",
+    subtitle: "Cosa dice la community prima che tu la inizi.",
+    empty: "Ancora nessun dato",
+    revealSpoiler: "Mostra spoiler",
+    staffSource: "Confermato dal team",
+    communitySource: "Votato da {n} persone",
+    contribute: "Aggiungi dati",
+    modalTitle: "Cosa succede in questa serie?",
+    modalHint: "Vota solo ciò che sai. Un dato appare quando almeno 3 persone sono d'accordo.",
+    unknown: "Non so",
+    official: "Salva come dato ufficiale",
+    officialHint: "Sostituisce i voti della community. Scegli «Non so» per tornare al voto.",
+    done: "Fatto",
+    saveError: "Impossibile salvare. Riprova.",
+    facts: {
+      kiss: "Si baciano?",
+      intimacy: "Scene intime",
+      together: "La coppia finisce insieme?",
+      ending: "Finale",
+      drama: "Livello di drama",
+      sidecouple: "Coppia secondaria",
+      triangle: "Triangolo o tradimento",
+    },
+    values: {
+      kiss: {
+        none: "Nessun bacio",
+        yes: "Sì",
+        several: "Più baci",
+      },
+      intimacy: {
+        none: "Nessuna",
+        implied: "Accennate",
+        shown: "Mostrate",
+      },
+      together: {
+        yes: "Sì",
+        no: "No",
+        open: "Finale aperto",
+      },
+      ending: {
+        happy: "Felice",
+        sad: "Triste",
+        bittersweet: "Agrodolce",
+      },
+      drama: {
+        light: "Leggero",
+        medium: "Medio",
+        heavy: "Intenso",
+      },
+      sidecouple: {
+        yes: "Sì",
+        no: "No",
+      },
+      triangle: {
+        yes: "Sì",
+        no: "No",
+      },
+    },
+  },
 } satisfies TranslationShape;
 
 export default it;
