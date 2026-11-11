@@ -29,6 +29,8 @@ export const ACTIVITY_KINDS = [
   'play_start',
   'outbound_click',
   'like',
+  // Apertura de la ficha /series/[id]; junto con open_ver es "N visitas".
+  'series_view',
 ] as const;
 export type ActivityKind = (typeof ACTIVITY_KINDS)[number];
 export type ActivitySource = 'account' | 'browser';

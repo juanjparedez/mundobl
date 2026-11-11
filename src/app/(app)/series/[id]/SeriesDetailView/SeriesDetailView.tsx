@@ -42,6 +42,7 @@ import { countChapters } from '@/lib/episode-chapters';
 import { isWatchableEpisode } from '@/lib/watchable';
 import { WatchHereBanner } from '@/components/series/WatchHereBanner/WatchHereBanner';
 import { ActivityPulse } from '@/components/series/ActivityPulse/ActivityPulse';
+import { SeriesReactions } from '@/components/series/SeriesReactions/SeriesReactions';
 import type { TVSeries } from 'schema-dts';
 import { ReadOutlined, CommentOutlined } from '@/lib/client-icons';
 import './SeriesDetailView.css';
@@ -292,8 +293,10 @@ export async function SeriesDetailView({
           <div className="series-detail-meta-bar">
             <SeriesCompletenessBadge seriesId={serie.id} series={serie} />
             <CommunityWorkLink seriesId={serie.id} />
-            <ActivityPulse seriesId={serie.id} />
+            <ActivityPulse seriesId={serie.id} countVisit />
           </div>
+
+          <SeriesReactions seriesId={serie.id} />
 
           <AiringAlertCta seriesId={serie.id} airWeekdays={airWeekdays} />
 

@@ -108,10 +108,53 @@ async function answerEarly(
   return null;
 }
 
+/**
+ * GET publicos e iguales para todos que se piden en cada ficha (contadores de
+ * la serie). La respuesta de un Worker no pasa por la cache del CDN sola: se
+ * guarda a mano con la Cache API, que respeta su s-maxage. Incluida en el
+ * plan, sin costo por uso; es por datacenter.
+ */
+const EDGE_CACHED_GET = /^\/api\/series\/\d+\/activity$/;
+
+interface EdgeCache {
+  match(request: Request): Promise<Response | undefined>;
+  put(request: Request, response: Response): Promise<void>;
+}
+
+function edgeCache(): EdgeCache | null {
+  const storage = (globalThis as { caches?: { default?: EdgeCache } }).caches;
+  return storage?.default ?? null;
+}
+
+async function fetchEdgeCached(
+  request: Request,
+  env: WorkerEnv,
+  ctx: ExecutionContext
+): Promise<Response> {
+  const cache = edgeCache();
+  // Sin query string: ?x=1 no puede saltar la cache.
+  const url = new URL(request.url);
+  url.search = '';
+  const key = new Request(url.toString(), { method: 'GET' });
+  const hit = cache ? await cache.match(key).catch(() => undefined) : undefined;
+  if (hit) return hit;
+  const response = await handler.fetch(request, withHyperdrive(env), ctx);
+  if (cache && response.ok) {
+    ctx.waitUntil(cache.put(key, response.clone()).catch(() => undefined));
+  }
+  return response;
+}
+
 export default {
   async fetch(request: Request, env: WorkerEnv, ctx: ExecutionContext) {
     const early = await answerEarly(request, env);
     if (early) return early;
+    if (
+      request.method === 'GET' &&
+      EDGE_CACHED_GET.test(new URL(request.url).pathname)
+    ) {
+      return fetchEdgeCached(request, env, ctx);
+    }
     return handler.fetch(request, withHyperdrive(env), ctx);
   },
 

@@ -1,0 +1,26 @@
+.series-reactions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+.series-reactions__chip {
+  min-height: 32px;
+  font-variant-numeric: tabular-nums;
+}
+
+.series-reactions__emoji {
+  font-size: var(--font-size-lg);
+  line-height: 1;
+  transition: transform 0.15s ease;
+}
+
+.series-reactions__chip.mb-chip--interactive:hover .series-reactions__emoji {
+  transform: scale(1.15);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .series-reactions__emoji {
+    transition: none;
+  }
+}

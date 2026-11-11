@@ -41,11 +41,11 @@ import { getVerUrl, getSeriesUrl } from '@/lib/slug';
 import { SeriesSubscribeButton } from '@/components/series/SeriesSubscribeButton/SeriesSubscribeButton';
 import { AiringAlertCta } from '@/components/series/AiringAlertCta/AiringAlertCta';
 import { FavoriteButton } from '@/components/series/FavoriteButton/FavoriteButton';
-import { SeriesLikeButton } from '@/components/series/SeriesLikeButton/SeriesLikeButton';
+import { SeriesReactions } from '@/components/series/SeriesReactions/SeriesReactions';
 import { TrackingPanel } from '@/components/series/TrackingPanel/TrackingPanel';
 import { WatchedToggle } from '@/components/series/WatchedToggle/WatchedToggle';
 import { ActivityPulse } from '@/components/series/ActivityPulse/ActivityPulse';
-import { recordSeriesActivity } from '@/lib/activity-beacon';
+import { recordSeriesActivity, recordSeriesVisit } from '@/lib/activity-beacon';
 import { outboundRel, withOutboundUtm } from '@/lib/outbound-links';
 import type { YouTubeWatchEvent } from '@/hooks/useYouTubeWatchTime';
 import { DismissibleNotice } from '@/components/design-system';
@@ -508,7 +508,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
     activePartPosition === activeChapter.items.length - 1;
 
   useEffect(() => {
-    recordSeriesActivity(series.id, 'open_ver');
+    recordSeriesVisit(series.id, 'open_ver');
   }, [series.id]);
 
   const handleWatchProgress = async (event: YouTubeWatchEvent) => {
@@ -680,7 +680,6 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
           />
           <SeriesSubscribeButton seriesId={series.id} />
           <FavoriteButton />
-          <SeriesLikeButton seriesId={series.id} />
         </div>
       </header>
 
@@ -909,6 +908,7 @@ export function VerSerieClient({ series, seasons }: VerSerieClientProps) {
             <CommentOutlined aria-hidden /> {t('postViewing.jumpToComments')}
           </a>
         </div>
+        <SeriesReactions seriesId={series.id} />
         <ActivityPulse seriesId={series.id} />
       </div>
 

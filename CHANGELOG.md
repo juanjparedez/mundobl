@@ -8,6 +8,13 @@ Todas las versiones notables del proyecto se documentan aqui.
 > (`ChangelogItem`, `/admin/changelog`) quedo como fallback solo si este archivo
 > esta vacio.
 
+## 2026-11-11 — Reacciones con emoji y visitas por serie
+
+### Features
+
+- **Reacciones con emoji**: en la ficha de cada serie y en `/ver` se puede reaccionar con 😂 ❤️ 🔥 😭 🤯 👏 😮 🥵 😏 💋, con o sin cuenta. Se ve cuántas reacciones tiene cada emoji; tocar de nuevo la quita. Reemplaza al botón «Me gusta» de `/ver`: los me gusta que ya había pasan al ❤️.
+- **Visitas**: la ficha y `/ver` muestran cuántas veces se abrió la página de la serie (desde 5 visitas). Una por navegador cada media hora; no cuentan el equipo, los bots ni quien pidió no ser medido.
+
 ## 2026-10-28 — Correos de soporte y aportes, /ver según tu país y catálogo con la card común
 
 ### Fixes

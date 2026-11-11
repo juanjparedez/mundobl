@@ -7,6 +7,10 @@ import {
   utcDay,
 } from '@/lib/series-activity';
 import { getVerUrl } from '@/lib/slug';
+import {
+  toReactionCounts,
+  type SeriesReactionCounts,
+} from '@/lib/series-reactions';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -66,6 +70,41 @@ export async function getPublicSeriesActivity(
   });
   const chapters = result._sum.count ?? 0;
   return chapters >= PUBLIC_ACTIVITY_MINIMUM ? chapters : null;
+}
+
+/** Lo que la ficha y /ver muestran de la serie, igual para todos. */
+export interface PublicSeriesPageStats {
+  /** Capitulos vistos en la semana, o null debajo del minimo. */
+  chapters: number | null;
+  /** Visitas de siempre (ficha + /ver), o null debajo del minimo. */
+  views: number | null;
+  reactions: SeriesReactionCounts;
+}
+
+/** Kinds que cuentan como una visita a la pagina de la serie. */
+export const SERIES_VIEW_KINDS = ['series_view', 'open_ver'];
+
+export async function getPublicSeriesPageStats(
+  seriesId: number,
+  now: Date = new Date()
+): Promise<PublicSeriesPageStats> {
+  const [chapters, views, reactionRows] = await Promise.all([
+    getPublicSeriesActivity(seriesId, now),
+    prisma.seriesActivityDaily.aggregate({
+      where: { seriesId, kind: { in: SERIES_VIEW_KINDS } },
+      _sum: { count: true },
+    }),
+    prisma.seriesReactionCount.findMany({
+      where: { seriesId, count: { gt: 0 } },
+      select: { reaction: true, count: true },
+    }),
+  ]);
+  const totalViews = views._sum.count ?? 0;
+  return {
+    chapters,
+    views: totalViews >= PUBLIC_ACTIVITY_MINIMUM ? totalViews : null,
+    reactions: toReactionCounts(reactionRows),
+  };
 }
 
 /** Legacy watch-marking events: a batch or an automatic part may be one event, not one chapter. */

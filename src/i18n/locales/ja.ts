@@ -3204,9 +3204,6 @@ const ja = {
     "episodesTitle": "エピソード",
     "seasonTitle": "シーズン {seasonNumber}",
     "episodeDefaultTitle": "エピソード {episodeNumber}",
-    "like": "いいね",
-    "liked": "いいね済み",
-    "likedAs": "{alias} としていいねしました"
   },
   "shareButton": {
     "shareError": "共有できませんでした",
@@ -4092,6 +4089,7 @@ const ja = {
     freeNoAccountBody: "エピソードは公式チャンネルの配信です。進捗はこのブラウザに残り、ログインするとアカウントに保存されます。",
     markChapterShort: "記録",
     activityThisWeek: "今週{n}話視聴されました",
+    pageViews: "{n}回閲覧",
     quickSaved: "「{title}」：{label}",
     quickTrigger: "リストに追加",
     quickWatching: "視聴中…",
@@ -4201,6 +4199,23 @@ const ja = {
     "funnelClicks": "タップ",
     "funnelActivated": "通知オン",
     "funnelHint": "放送中シリーズで「知らせて」ボタンが表示された回数、タップされた回数、通知オン（ログイン含む）に至った回数。匿名・スタッフ除外。",
+  },
+  reactions: {
+    groupLabel: "リアクション",
+    addLabel: "{name}でリアクション（{n}）",
+    removeLabel: "{name}のリアクションを取り消す（{n}）",
+    names: {
+      laugh: "爆笑",
+      love: "大好き",
+      fire: "最高",
+      cry: "号泣",
+      mindblown: "衝撃",
+      clap: "拍手",
+      wow: "びっくり",
+      hot: "熱い",
+      smirk: "ニヤリ",
+      kiss: "キス",
+    },
   },
 } satisfies TranslationShape;
 

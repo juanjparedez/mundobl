@@ -454,6 +454,7 @@ model Series {
   seriesNotes          SeriesNote[]
   trackingEvents       TrackingEvent[]
   activityDaily        SeriesActivityDaily[]
+  reactionCounts       SeriesReactionCount[]
   shares               SeriesShare[]
 
   @@index([origin, visibility])
@@ -2115,13 +2116,26 @@ model SeriesActivityDaily {
   day      DateTime @db.Date
   seriesId Int
   series   Series   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
-  kind     String // 'view' | 'chapter' | 'want' | 'finish' | 'alert_offer' | 'alert_click' | 'alert_on' | 'open_ver' | 'play_start' | 'outbound_click' | 'like'
+  kind     String // 'view' | 'chapter' | 'want' | 'finish' | 'alert_offer' | 'alert_click' | 'alert_on' | 'open_ver' | 'play_start' | 'outbound_click' | 'like' | 'series_view'
   source   String // 'account' | 'browser'
   country  String   @default("") // ISO-3166 alfa-2 del edge, '' si no se sabe
   count    Int      @default(0)
 
   @@id([day, seriesId, kind, source, country])
   @@index([seriesId, day])
+}
+
+// Reacciones con emoji por serie: solo el total por emoji. Quien reacciono
+// vive en su navegador (localStorage), nunca en la base. Ver
+// src/lib/series-reactions.ts.
+model SeriesReactionCount {
+  seriesId  Int
+  series    Series   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  reaction  String // clave de SERIES_REACTIONS: 'laugh' | 'love' | 'fire' | ...
+  count     Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@id([seriesId, reaction])
 }
 
 // Conteo diario agregado de secciones y flujos para dimensionamiento de infra.

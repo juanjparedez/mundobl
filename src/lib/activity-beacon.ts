@@ -106,3 +106,48 @@ export function recordSeriesActivity(
     /* La medicion nunca rompe la pagina. */
   }
 }
+
+// Visitas a la ficha o a /ver: una por navegador y serie cada 30 minutos,
+// aunque recargue o abra otra pestaña. Solo se guarda la hora de las visitas
+// de la ultima media hora; lo viejo se borra en cada visita.
+const RECENT_VISITS_KEY = 'mundobl.recentVisits';
+const VISIT_DEDUPE_MS = 30 * 60 * 1000;
+
+function seenRecently(key: string, now: number): boolean {
+  try {
+    const raw = window.localStorage.getItem(RECENT_VISITS_KEY);
+    const parsed: unknown = raw ? JSON.parse(raw) : {};
+    const visits: Record<string, number> = {};
+    if (parsed && typeof parsed === 'object') {
+      for (const [k, at] of Object.entries(parsed)) {
+        if (typeof at === 'number' && now - at < VISIT_DEDUPE_MS)
+          visits[k] = at;
+      }
+    }
+    const seen = key in visits;
+    if (!seen) visits[key] = now;
+    window.localStorage.setItem(RECENT_VISITS_KEY, JSON.stringify(visits));
+    return seen;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Cuenta una visita a la pagina de la serie ("N visitas"). Los navegadores
+ * automatizados (navigator.webdriver: Playwright, Puppeteer, Selenium) no
+ * cuentan; los crawlers comunes no corren JS ni hacen POST.
+ */
+export function recordSeriesVisit(
+  seriesId: number,
+  kind: Extract<ActivityKind, 'series_view' | 'open_ver'>
+): void {
+  try {
+    if (navigator.webdriver) return;
+    if (storedActivityOptOut()) return;
+    if (seenRecently(`${seriesId}:${kind}`, Date.now())) return;
+    recordSeriesActivity(seriesId, kind);
+  } catch {
+    /* La medicion nunca rompe la pagina. */
+  }
+}

@@ -3201,9 +3201,6 @@ const th = {
     "episodesTitle": "ตอน",
     "seasonTitle": "ซีซันที่ {seasonNumber}",
     "episodeDefaultTitle": "ตอนที่ {episodeNumber}",
-    "like": "ถูกใจ",
-    "liked": "ถูกใจแล้ว",
-    "likedAs": "บันทึกการถูกใจในนาม {alias}"
   },
   "shareButton": {
     "shareError": "ไม่สามารถแชร์ได้",
@@ -4089,6 +4086,7 @@ const th = {
     freeNoAccountBody: "ตอนต่าง ๆ มาจากช่องทางการ ความคืบหน้าของคุณอยู่ในเบราว์เซอร์นี้ ถ้าเข้าสู่ระบบจะบันทึกไว้ในบัญชีของคุณ",
     markChapterShort: "บันทึก",
     activityThisWeek: "สัปดาห์นี้มีการดู {n} ตอน",
+    pageViews: "เข้าชม {n} ครั้ง",
     quickSaved: "“{title}”: {label}",
     quickTrigger: "เพิ่มในรายการของฉัน",
     quickWatching: "กำลังดูอยู่…",
@@ -4198,6 +4196,23 @@ const th = {
     "funnelClicks": "แตะ",
     "funnelActivated": "เปิดแจ้งเตือนแล้ว",
     "funnelHint": "จำนวนครั้งที่แสดงปุ่ม \"แจ้งเตือน\" ในซีรีส์ที่กำลังออกอากาศ จำนวนครั้งที่แตะ และจำนวนที่จบด้วยการเปิดแจ้งเตือน (รวมการเข้าสู่ระบบ) ไม่ระบุตัวตน ไม่รวมทีมงาน",
+  },
+  reactions: {
+    groupLabel: "รีแอคชัน",
+    addLabel: "รีแอคด้วย {name} ({n})",
+    removeLabel: "ยกเลิกรีแอค {name} ({n})",
+    names: {
+      laugh: "ขำ",
+      love: "รักเลย",
+      fire: "ไฟลุก",
+      cry: "ร้องไห้",
+      mindblown: "ช็อก",
+      clap: "ปรบมือ",
+      wow: "ตกใจ",
+      hot: "ร้อนแรง",
+      smirk: "ยิ้มเจ้าเล่ห์",
+      kiss: "จุ๊บ",
+    },
   },
 } satisfies TranslationShape;
 

@@ -3197,9 +3197,6 @@ const zhTW = {
     "episodesTitle": "劇集",
     "seasonTitle": "第 {seasonNumber} 季",
     "episodeDefaultTitle": "第 {episodeNumber} 集",
-    "like": "讚",
-    "liked": "已說讚",
-    "likedAs": "已作為 {alias} 按讚"
   },
   "shareButton": {
     "shareError": "無法分享",
@@ -4085,6 +4082,7 @@ const zhTW = {
     freeNoAccountBody: "劇集來自官方頻道。你的進度保存在這個瀏覽器中；登入後會儲存到你的帳號。",
     markChapterShort: "標記",
     activityThisWeek: "本週已觀看 {n} 集",
+    pageViews: "{n} 次瀏覽",
     quickSaved: "「{title}」：{label}",
     quickTrigger: "加入我的清單",
     quickWatching: "我正在看…",
@@ -4194,6 +4192,23 @@ const zhTW = {
     "funnelClicks": "點擊",
     "funnelActivated": "已開啟提醒",
     "funnelHint": "在播劇集中「提醒我」按鈕被顯示的次數、被點擊的次數，以及最終開啟提醒（含登入）的次數。匿名，不含團隊。",
+  },
+  reactions: {
+    groupLabel: "表情回應",
+    addLabel: "用{name}回應（{n}）",
+    removeLabel: "取消{name}回應（{n}）",
+    names: {
+      laugh: "大笑",
+      love: "喜歡",
+      fire: "太燃了",
+      cry: "哭了",
+      mindblown: "震撼",
+      clap: "鼓掌",
+      wow: "驚訝",
+      hot: "好熱",
+      smirk: "壞笑",
+      kiss: "親親",
+    },
   },
 } satisfies TranslationShape;
 
