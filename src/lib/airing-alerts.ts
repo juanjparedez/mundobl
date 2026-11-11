@@ -151,8 +151,8 @@ export interface WeeklyDigestResult {
 
 /**
  * Resumen de los lunes por mail, solo con opt-in (`emailEnabled`). Lleva las
- * series seguidas que estrenan esta semana y lo que la persona tiene en
- * "Viendo". Si no hay nada que contar, no se manda.
+ * series seguidas que estrenan esta semana y, como extra, lo que la persona
+ * tiene en "Viendo". Si ninguna serie seguida estrena esa semana, no se manda.
  *
  * Cada envio se reclama antes en `digestSentAt` con un update condicional:
  * dos corridas a la vez no le escriben dos veces a nadie.
@@ -252,7 +252,10 @@ export async function runWeeklyDigest(
         url: url(series.id, series.title),
       }));
 
-    if (airing.length === 0 && watching.length === 0) {
+    // Sin estrenos de series seguidas no hay noticia: mandar solo "seguis
+    // viendo" repetiria la misma lista todos los lunes, y un mail que nunca
+    // cambia es el que termina marcado como spam.
+    if (airing.length === 0) {
       result.skipped += 1;
       return;
     }

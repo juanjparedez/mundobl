@@ -59,8 +59,8 @@ async function main() {
   const otherDay = await make('Other day', DAY_NAMES[(today + 3) % 7]);
   const ended = await make('Ended', null);
   const stamp = Date.now();
-  const [fan, staff, quiet] = await Promise.all(
-    ['fan', 'staff', 'quiet'].map((name) =>
+  const [fan, staff, quiet, watcher] = await Promise.all(
+    ['fan', 'staff', 'quiet', 'watcher'].map((name) =>
       prisma.user.create({
         data: {
           email: `airing-${name}-${stamp}@example.test`,
@@ -79,8 +79,12 @@ async function main() {
         })),
       });
     }
-    await prisma.viewStatus.create({
-      data: { userId: fan.id, seriesId: ended.id, status: 'VIENDO' },
+    await prisma.viewStatus.createMany({
+      data: [fan, watcher].map((user) => ({
+        userId: user.id,
+        seriesId: ended.id,
+        status: 'VIENDO' as const,
+      })),
     });
     await prisma.notificationPrefs.createMany({
       data: [
@@ -88,6 +92,8 @@ async function main() {
         { userId: staff.id, emailEnabled: true },
         // Silencio las novedades de sus series: no recibe el aviso.
         { userId: quiet.id, emailEnabled: false, notifySeasonAdded: false },
+        // Solo tiene algo en "Viendo" y no sigue nada que estrene.
+        { userId: watcher.id, emailEnabled: true },
       ],
     });
 
@@ -139,6 +145,10 @@ async function main() {
     assert.equal(mine.length, 1, 'one digest for the fan');
     assert.ok(!outbox.some((mail) => mail.to === staff.email), 'no staff');
     assert.ok(!outbox.some((mail) => mail.to === quiet.email), 'no opt-in');
+    assert.ok(
+      !outbox.some((mail) => mail.to === watcher.email),
+      'no digest without a premiere: the same "watching" list every week is noise'
+    );
     const html = mine[0].html;
     assert.ok(
       html.includes(todaySeries.title) && html.includes(otherDay.title)
@@ -160,7 +170,7 @@ async function main() {
     console.log('airing alerts: ok');
   } finally {
     await prisma.user.deleteMany({
-      where: { id: { in: [fan.id, staff.id, quiet.id] } },
+      where: { id: { in: [fan.id, staff.id, quiet.id, watcher.id] } },
     });
     await prisma.series.deleteMany({
       where: { title: { startsWith: PREFIX } },

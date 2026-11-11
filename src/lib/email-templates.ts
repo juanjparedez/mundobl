@@ -41,6 +41,8 @@ const TEXT = '#ece9f5';
 const MUTED = '#b9b3cc';
 const ACCENT = '#7c5cff';
 const BORDER = '#2b2740';
+/** Links dentro del texto: el ACCENT de los botones no llega a 4.5:1 sobre CARD. */
+const LINK = '#b3a1ff';
 
 /** Logo servido por el sitio. Publico y estable. */
 const LOGO_URL = 'https://mundobl.com.ar/icons/icon-192x192.png';
@@ -58,6 +60,31 @@ const markdownProcessor = unified()
   .use(remarkParse)
   .use(remarkRehype)
   .use(rehypeStringify);
+
+/**
+ * Estilos inline para el HTML que sale del Markdown de los anuncios. Sin
+ * esto, los links quedan en el azul por defecto del cliente (ilegible sobre
+ * el fondo oscuro) y los titulos con los margenes de cada cliente.
+ */
+const MARKDOWN_STYLES: Record<string, string> = {
+  a: `color:${LINK};text-decoration:underline`,
+  h1: `margin:24px 0 8px;font-size:20px;line-height:1.3;color:${TEXT}`,
+  h2: `margin:24px 0 8px;font-size:18px;line-height:1.3;color:${TEXT}`,
+  h3: `margin:20px 0 6px;font-size:16px;line-height:1.3;color:${TEXT}`,
+  p: 'margin:0 0 14px',
+  ul: 'margin:0 0 14px;padding-left:20px',
+  ol: 'margin:0 0 14px;padding-left:20px',
+  li: 'margin:4px 0',
+  blockquote: `margin:0 0 14px;padding-left:12px;border-left:3px solid ${BORDER};color:${MUTED}`,
+  img: 'max-width:100%;height:auto;border:0',
+};
+
+function styleMarkdownHtml(html: string): string {
+  return html.replace(
+    /<(a|h[1-3]|p|ul|ol|li|blockquote|img)(?=[\s>/])/g,
+    (match, tag: string) => `${match} style="${MARKDOWN_STYLES[tag]}"`
+  );
+}
 
 function escapeHtml(value: string): string {
   return value
@@ -196,7 +223,9 @@ export interface AnnouncementEmailInput {
 export function renderAnnouncementEmail(
   input: AnnouncementEmailInput
 ): EmailRender {
-  const bodyHtml = String(markdownProcessor.processSync(input.body));
+  const bodyHtml = styleMarkdownHtml(
+    String(markdownProcessor.processSync(input.body))
+  );
   const preheader = (input.preheader ?? stripMarkdown(input.body)).slice(
     0,
     140

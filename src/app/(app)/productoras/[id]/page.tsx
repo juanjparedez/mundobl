@@ -10,6 +10,7 @@ export function generateStaticParams(): { id: string }[] {
 }
 
 import type { Metadata } from 'next';
+import { metaDescription } from '@/lib/content-metadata';
 import { notFound } from 'next/navigation';
 import type { Organization } from 'schema-dts';
 import { getProductionCompanyById } from '@/lib/database';
@@ -37,7 +38,7 @@ export async function generateMetadata({
 
   const seriesCount = company.seriesLinks.length;
   const description =
-    company.description?.slice(0, 160).replace(/\n/g, ' ') ??
+    metaDescription(company.description) ??
     `${company.name}: ${seriesCount} series en el catálogo de MundoBL.`;
 
   // Las fichas sin datos propios y con poco catalogo quedan fuera del indice

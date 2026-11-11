@@ -1,4 +1,4 @@
-import { adultMetadata } from '@/lib/content-metadata';
+import { adultMetadata, metaDescription } from '@/lib/content-metadata';
 import { loadLocaleMessages } from '@/i18n/messages';
 import type { Metadata } from 'next';
 import { getSeriesUrl, parseIdFromSlug } from '@/lib/slug';
@@ -48,7 +48,11 @@ export async function generateMetadata({
       ? ` (${serie.originalTitle.trim()})`
       : '';
   const title = `${serie.title}${origTitle}${year} | ${labels.catalogTitle} | MundoBL`;
-  const synopsis = `${serie.title}. ${labels.catalogDescription}`;
+  // La sinopsis es lo que distingue una ficha de otra en el resultado de
+  // Google. Con la frase generica, las 790 fichas compartian descripcion.
+  const synopsis =
+    metaDescription(serie.synopsis) ??
+    `${serie.title}. ${labels.catalogDescription}`;
 
   const canonicalUrl = getSeriesUrl(serie.id, serie.title);
 
