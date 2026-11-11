@@ -61,6 +61,8 @@ const tsxTests = [
   'external-episode-source',
   'playability-summary',
   'embed-playlist',
+  'request-scoped-batching',
+  'linked-progress',
 ];
 const trackingTests = [
   'tracking-backup',

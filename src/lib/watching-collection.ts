@@ -10,45 +10,75 @@ export interface WatchingWatchLink {
   url: string;
 }
 
-export interface WatchingItem {
+export interface WatchingProgress {
+  total: number;
+  watched: number;
+  next: {
+    /** Posicion en toda la serie (no por temporada), desde 0. */
+    position: number;
+    chapterNumber: number;
+    episodeIds: number[];
+    seasonNumber: number;
+    episodeNumber: number;
+  } | null;
+}
+
+/** Temporadas y capitulos de una serie con el estado del usuario. Solo se
+ *  cargan en el servidor de a tandas o para una serie a la vez: una
+ *  biblioteca grande tiene miles de capitulos. */
+export interface WatchingSeason {
+  id: number;
+  seasonNumber: number;
+  episodeCount?: number | null;
+  episodes: Array<{
+    id: number;
+    episodeNumber: number;
+    title?: string | null;
+    viewStatus?: Array<{ status: string }>;
+  }>;
+}
+
+export interface WatchingSeries {
+  id: number;
+  title: string;
+  originalTitle?: string | null;
+  origin: string;
+  catalogScope: string;
+  year?: number | null;
+  imageUrl?: string | null;
+  imageThumbUrl?: string | null;
+  airDays?: string | null;
+  // Date en el server, string ya serializado en el cliente.
+  createdAt?: Date | string | null;
+  hasWatchableEpisode: boolean;
+  /** Aporte USER_EMBED -> ficha curada a la que esta vinculado. */
+  linkedSeriesId?: number | null;
+  /** Donde abre Ver si no es la propia serie: el aporte vinculado. */
+  watchTarget?: { id: number; title: string; episode: EpisodeRef | null };
+  /** Enlaces oficiales ("Donde ver") para saltar a Viki, GagaOOLala, iQIYI, etc. */
+  watchLinks?: WatchingWatchLink[];
+  country?: { name: string } | null;
+}
+
+interface WatchingRow<S> {
   id: number;
   status: string;
   lastWatchedAt: string | null;
   /** Ultimo cambio de la fila de la serie (estado o actividad). */
   updatedAt?: Date | string;
-  series: {
-    id: number;
-    title: string;
-    originalTitle?: string | null;
-    origin: string;
-    catalogScope: string;
-    year?: number | null;
-    imageUrl?: string | null;
-    imageThumbUrl?: string | null;
-    airDays?: string | null;
-    // Date en el server, string ya serializado en el cliente.
-    createdAt?: Date | string | null;
-    hasWatchableEpisode: boolean;
-    /** Aporte USER_EMBED -> ficha curada a la que esta vinculado. */
-    linkedSeriesId?: number | null;
-    /** Donde abre Ver si no es la propia serie: el aporte vinculado. */
-    watchTarget?: { id: number; title: string; episode: EpisodeRef | null };
-    /** Enlaces oficiales ("Donde ver") para saltar a Viki, GagaOOLala, iQIYI, etc. */
-    watchLinks?: WatchingWatchLink[];
-    country?: { name: string } | null;
-    seasons: Array<{
-      id: number;
-      seasonNumber: number;
-      episodeCount?: number | null;
-      episodes: Array<{
-        id: number;
-        episodeNumber: number;
-        title?: string | null;
-        viewStatus?: Array<{ status: string }>;
-      }>;
-    }>;
-  };
+  series: S;
 }
+
+/** Tarjeta de "Mi seguimiento": el progreso viene calculado del servidor y
+ *  los capitulos se piden aparte al abrir la serie. */
+export type WatchingItem = WatchingRow<
+  WatchingSeries & { progress: WatchingProgress }
+>;
+
+/** Fila con todos los capitulos: solo vive en el servidor. */
+export type WatchingDetailItem = WatchingRow<
+  WatchingSeries & { seasons: WatchingSeason[] }
+>;
 
 export const LIBRARY_STATUSES = [
   'SIN_VER',
@@ -96,7 +126,7 @@ export function readWatchingPreferences(value: unknown): WatchingPreferences {
   };
 }
 
-function chapterRows(series: WatchingItem['series']) {
+function chapterRows(series: { seasons: WatchingSeason[] }) {
   return series.seasons.flatMap((season) =>
     season.episodes.map((episode) => ({
       ...episode,
@@ -106,14 +136,17 @@ function chapterRows(series: WatchingItem['series']) {
   );
 }
 
-export function watchingProgress(item: Pick<WatchingItem, 'series'>) {
-  const { chapters } = groupIntoChapters(chapterRows(item.series));
+/** Progreso en capitulos de una serie con sus capitulos cargados. */
+export function computeWatchingProgress(series: {
+  seasons: WatchingSeason[];
+}): WatchingProgress {
+  const { chapters } = groupIntoChapters(chapterRows(series));
   const watched = (chapter: (typeof chapters)[number]) =>
     chapter.episodes.every((episode) => episode.watched);
   const next = findNextEpisode(chapters, watched);
   // Si una ficha curada historica tiene season.episodeCount pero 0 filas en
   // Episode todavia, mostramos igual el total real declarado por curaduria.
-  const declaredTotal = item.series.seasons.reduce(
+  const declaredTotal = series.seasons.reduce(
     (sum, s) => sum + (s.episodeCount ?? 0),
     0
   );
@@ -122,7 +155,6 @@ export function watchingProgress(item: Pick<WatchingItem, 'series'>) {
     watched: chapters.filter(watched).length,
     next: next
       ? {
-          /** Posicion en toda la serie (no por temporada), desde 0. */
           position: chapters.indexOf(next),
           chapterNumber: next.number,
           episodeIds: next.episodes
@@ -133,6 +165,12 @@ export function watchingProgress(item: Pick<WatchingItem, 'series'>) {
         }
       : null,
   };
+}
+
+export function watchingProgress(
+  item: Pick<WatchingItem, 'series'>
+): WatchingProgress {
+  return item.series.progress;
 }
 
 /** Dias sin actividad a partir de los cuales se pregunta "¿La seguis viendo?". */
@@ -160,11 +198,11 @@ export function staleWatchingDays(
  * copia entre los dos (tracking.ts). Si estan los dos, queda la tarjeta de
  * la ficha y su Ver abre el aporte en el capitulo que sigue.
  */
-export function mergeLinkedAportes<T extends Pick<WatchingItem, 'series'>>(
-  items: T[]
-): T[] {
+export function mergeLinkedAportes<
+  T extends Pick<WatchingDetailItem, 'series'>,
+>(items: T[]): T[] {
   const byId = new Map(items.map((item) => [item.series.id, item]));
-  const targets = new Map<number, WatchingItem['series']['watchTarget']>();
+  const targets = new Map<number, WatchingSeries['watchTarget']>();
   for (const item of items) {
     const curatedId = item.series.linkedSeriesId;
     if (item.series.origin !== 'USER_EMBED' || curatedId == null) continue;
@@ -176,7 +214,7 @@ export function mergeLinkedAportes<T extends Pick<WatchingItem, 'series'>>(
       !pairLinkedChapters(chapterRows(item.series), chapterRows(curated.series))
     )
       continue;
-    const next = watchingProgress(item).next;
+    const next = computeWatchingProgress(item.series).next;
     targets.set(curatedId, {
       id: item.series.id,
       title: item.series.title,
@@ -202,7 +240,7 @@ export function mergeLinkedAportes<T extends Pick<WatchingItem, 'series'>>(
 }
 
 /** A viewing-only contribution must not link to a catalog detail that returns 404. */
-export function watchingDetailsUrl(item: WatchingItem): string {
+export function watchingDetailsUrl(item: Pick<WatchingItem, 'series'>): string {
   return item.series.origin === 'USER_EMBED'
     ? getVerUrl(item.series.id, item.series.title)
     : getSeriesUrl(item.series.id, item.series.title);

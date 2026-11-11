@@ -26,3 +26,9 @@
     min-height: 44px;
   }
 }
+
+.watching-episode-drawer__loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-xl);
+}

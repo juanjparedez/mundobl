@@ -1,6 +1,8 @@
 import { chromium } from 'playwright';
 import assert from 'node:assert/strict';
 import { mkdir } from 'node:fs/promises';
+// Run with `node --import tsx`: the mocked library computes progress like the server.
+import { computeWatchingProgress } from '../src/lib/watching-collection.ts';
 
 // UI integration only: every API request is intercepted, never sent to a real account.
 const origin = 'http://localhost:3100';
@@ -122,8 +124,26 @@ await page.route('**/api/**', async (route) => {
       dateWrite = route.request().postDataJSON();
       result = { watchedDate: dateWrite.watchedDate };
     } else result = { watchedDate: '2020-01-02T14:30:00.000Z' };
-  } else if (path === '/api/user/library') result = items;
-  else if (path === '/api/user/watching-preferences') {
+  } else if (path === '/api/user/library')
+    // The API sends summaries; episodes come per series when its drawer opens.
+    result = items.map(({ series: { seasons, ...series }, ...item }) => ({
+      ...item,
+      series: { ...series, progress: computeWatchingProgress({ seasons }) },
+    }));
+  else if (path.startsWith('/api/user/library/')) {
+    const item = items.find(
+      (item) => String(item.series.id) === path.split('/')[4]
+    );
+    result = item.series.seasons.map((season) => ({
+      id: season.id,
+      seasonNumber: season.seasonNumber,
+      episodes: season.episodes.map(({ id, episodeNumber, title }) => ({
+        id,
+        episodeNumber,
+        title: title ?? null,
+      })),
+    }));
+  } else if (path === '/api/user/watching-preferences') {
     const method = route.request().method();
     if (method === 'POST' && preferences === null)
       preferences = route.request().postDataJSON();

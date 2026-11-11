@@ -33,9 +33,12 @@ import {
 } from './tracking-insights';
 import { countWatchedChapters, groupIntoChapters } from './episode-chapters';
 import {
+  computeWatchingProgress,
   mergeLinkedAportes,
   readWatchingPreferences,
+  type WatchingItem,
   type WatchingPreferences,
+  type WatchingProgress,
 } from './watching-collection';
 import {
   parseInitialPreferences,
@@ -54,6 +57,7 @@ import { Pool } from 'pg';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { withSerialTransactions } from './serial-transactions';
+import { scopeBatchingToRequest } from './request-scoped-batching';
 import { RequestScopedPool } from './request-scoped-pool';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { playableCountIn, summarizePlayability } from './availability';
@@ -114,7 +118,11 @@ function createPrismaClient() {
     ? new RequestScopedPool(config, currentRequestKey)
     : new Pool(config);
   const adapter = withSerialTransactions(new PrismaPg(pool));
-  return new PrismaClient({ adapter });
+  const client = new PrismaClient({ adapter });
+  // Sin esto, Prisma despacha juntos los findUnique de requests distintos
+  // desde el contexto del primero (ver request-scoped-batching.ts).
+  if (IS_WORKERD) scopeBatchingToRequest(client, currentRequestKey);
+  return client;
 }
 
 export const prisma = globalForPrisma.prisma ?? createPrismaClient();
@@ -2510,12 +2518,66 @@ export async function getWatchDate(userId: string, target: WatchDateTarget) {
   });
 }
 
+/** Series fields a personal tracking card needs. Never the editorial
+ *  review/observations (may be private) or unrelated metadata. */
+function watchingSeriesSelect(userId: string) {
+  return {
+    id: true,
+    title: true,
+    originalTitle: true,
+    origin: true,
+    catalogScope: true,
+    linkedSeriesId: true,
+    year: true,
+    imageUrl: true,
+    imageThumbUrl: true,
+    airDays: true,
+    // isAiringNow lo necesita: sin el, una serie en emision ofrece "terminarla".
+    createdAt: true,
+    country: { select: { name: true } },
+    watchLinks: {
+      where: { official: true },
+      select: { id: true, platform: true, url: true },
+      orderBy: { id: 'asc' },
+    },
+    seasons: {
+      select: {
+        id: true,
+        seasonNumber: true,
+        episodeCount: true,
+        episodes: {
+          select: {
+            id: true,
+            episodeNumber: true,
+            title: true,
+            embedUrl: true,
+            durationSeconds: true,
+            // Solo el viewStatus del usuario autenticado: sin el filtro,
+            // viewStatus[0] podía ser de otro user y corrompía el
+            // progreso/proximo episodio de cada card.
+            viewStatus: {
+              where: { userId },
+              select: { status: true },
+            },
+          },
+          orderBy: { episodeNumber: 'asc' },
+        },
+      },
+      orderBy: { seasonNumber: 'asc' },
+    },
+  } satisfies Prisma.SeriesSelect;
+}
+
+/** Series per query: bounds the Worker's peak memory (128 MB per isolate)
+ *  for libraries with hundreds of series and thousands of episodes. */
+const WATCHING_SERIES_BATCH = 100;
+
 /** Personal library; only explicit series tracking records belong here. */
 export async function getWatchingLibrary(
   userId: string,
   scope: 'active' | 'all' = 'active'
 ) {
-  const currentlyWatching = await prisma.viewStatus.findMany({
+  const rows = await prisma.viewStatus.findMany({
     where: {
       ...(scope === 'active'
         ? { status: { in: ['VIENDO', 'RETOMAR'] as const } }
@@ -2528,81 +2590,189 @@ export async function getWatchingLibrary(
       status: true,
       lastWatchedAt: true,
       updatedAt: true,
-      series: {
-        // Never send editorial review/observations (which may be private)
-        // or unrelated metadata to a personal tracking screen.
-        select: {
-          id: true,
-          title: true,
-          originalTitle: true,
-          origin: true,
-          catalogScope: true,
-          linkedSeriesId: true,
-          year: true,
-          imageUrl: true,
-          imageThumbUrl: true,
-          airDays: true,
-          // isAiringNow lo necesita: sin el, una serie en emision ofrece "terminarla".
-          createdAt: true,
-          country: { select: { name: true } },
-          watchLinks: {
-            where: { official: true },
-            select: { id: true, platform: true, url: true },
-            orderBy: { id: 'asc' },
-          },
-          seasons: {
-            select: {
-              id: true,
-              seasonNumber: true,
-              episodeCount: true,
-              episodes: {
-                select: {
-                  id: true,
-                  episodeNumber: true,
-                  title: true,
-                  embedUrl: true,
-                  durationSeconds: true,
-                  // Solo el viewStatus del usuario autenticado: sin el filtro,
-                  // viewStatus[0] podía ser de otro user y corrompía el
-                  // progreso/proximo episodio de cada card.
-                  viewStatus: {
-                    where: { userId: userId },
-                    select: { status: true },
-                  },
-                },
-                orderBy: { episodeNumber: 'asc' },
-              },
-            },
-            orderBy: { seasonNumber: 'asc' },
-          },
-        },
-      },
+      seriesId: true,
     },
     orderBy: {
       lastWatchedAt: 'desc', // Ordenar por última vez vista
     },
   });
 
-  // Para el boton "Seguir viendo" en /watching: si la serie tiene algun
-  // episodio mirable propio, se puede retomar directo en /ver sin pasar por
-  // la ficha. Una ficha curada sin video propio abre su aporte vinculado
-  // solo si los dos estan en la lista (mergeLinkedAportes); si no, la
-  // tarjeta ofrece los links oficiales de "Donde ver".
-  // `series` es nullable a nivel de tipo aunque el `where` garantiza
-  // `seriesId` no nulo, de ahi el `!`.
-  const result = currentlyWatching
-    .filter((item) => item.series !== null)
-    .map((item) => ({
-      ...item,
-      series: {
-        ...item.series!,
-        hasWatchableEpisode: item.series!.seasons.some((season) =>
-          season.episodes.some(isWatchableEpisode)
-        ),
-      },
-    }));
+  // Las fichas se piden de a tandas y en serie, y de cada tanda solo sale un
+  // resumen con el progreso ya calculado: los capitulos (miles en una
+  // biblioteca grande, ej. 777 series y ~7.000 capitulos) nunca se juntan
+  // todos en memoria ni viajan al cliente. El cajon de una serie los pide
+  // aparte (getWatchingSeasons).
+  const seriesIds = rows.flatMap((row) =>
+    row.seriesId === null ? [] : [row.seriesId]
+  );
+  const summaries = new Map<number, WatchingItem['series']>();
+  for (const batch of await watchingBatches(seriesIds)) {
+    const found = new Map(
+      (
+        await prisma.series.findMany({
+          where: { id: { in: batch } },
+          select: watchingSeriesSelect(userId),
+        })
+      ).map((series) => [series.id, series])
+    );
+    // Para el boton "Seguir viendo" en /watching: si la serie tiene algun
+    // episodio mirable propio, se puede retomar directo en /ver sin pasar
+    // por la ficha. Una ficha curada sin video propio abre su aporte
+    // vinculado solo si los dos estan en la lista (mergeLinkedAportes, por
+    // eso los dos caen en la misma tanda); si no, la tarjeta ofrece los
+    // links oficiales de "Donde ver".
+    const detailed = batch.flatMap((id) => {
+      const series = found.get(id);
+      if (!series) return [];
+      return [
+        {
+          series: {
+            ...series,
+            hasWatchableEpisode: series.seasons.some((season) =>
+              season.episodes.some(isWatchableEpisode)
+            ),
+          },
+        },
+      ];
+    });
+    for (const { series } of mergeLinkedAportes(detailed)) {
+      const { seasons, ...summary } = series;
+      summaries.set(series.id, {
+        ...summary,
+        progress: computeWatchingProgress({ seasons }),
+      });
+    }
+  }
 
-  return mergeLinkedAportes(result);
+  return rows.flatMap(({ seriesId, ...item }) => {
+    const series = seriesId === null ? undefined : summaries.get(seriesId);
+    return series ? [{ ...item, series }] : [];
+  });
+}
+
+/**
+ * Tandas de WATCHING_SERIES_BATCH series donde un aporte vinculado cae
+ * siempre junto a su ficha curada, para que mergeLinkedAportes los vea a
+ * los dos.
+ */
+async function watchingBatches(seriesIds: number[]): Promise<number[][]> {
+  const inLibrary = new Set(seriesIds);
+  const links = await prisma.series.findMany({
+    where: {
+      id: { in: seriesIds },
+      origin: 'USER_EMBED',
+      linkedSeriesId: { not: null },
+    },
+    select: { id: true, linkedSeriesId: true },
+  });
+  const groupOf = new Map(
+    links.flatMap(({ id, linkedSeriesId }) =>
+      linkedSeriesId !== null && inLibrary.has(linkedSeriesId)
+        ? [[id, linkedSeriesId] as const]
+        : []
+    )
+  );
+  const groups = new Map<number, number[]>();
+  for (const id of seriesIds) {
+    const key = groupOf.get(id) ?? id;
+    groups.set(key, [...(groups.get(key) ?? []), id]);
+  }
+  const batches: number[][] = [];
+  let current: number[] = [];
+  for (const group of groups.values()) {
+    if (current.length + group.length > WATCHING_SERIES_BATCH) {
+      batches.push(current);
+      current = [];
+    }
+    current.push(...group);
+  }
+  if (current.length > 0) batches.push(current);
+  return batches;
+}
+
+/** Series en "Viendo" con su progreso en capitulos, para el perfil. Los
+ *  capitulos se leen de a tandas y solo queda el resumen (ver
+ *  getWatchingLibrary). */
+export async function getWatchingNow(userId: string) {
+  const rows = await prisma.viewStatus.findMany({
+    where: { userId, status: 'VIENDO', seriesId: { not: null } },
+    orderBy: { lastWatchedAt: 'desc' },
+    select: {
+      seriesId: true,
+      lastWatchedAt: true,
+      series: {
+        select: {
+          id: true,
+          title: true,
+          origin: true,
+          catalogScope: true,
+          imageUrl: true,
+          imageThumbUrl: true,
+          year: true,
+          type: true,
+          country: { select: { name: true } },
+        },
+      },
+    },
+  });
+  const seriesIds = rows.flatMap((row) =>
+    row.seriesId === null ? [] : [row.seriesId]
+  );
+  const progress = new Map<number, WatchingProgress>();
+  for (let i = 0; i < seriesIds.length; i += WATCHING_SERIES_BATCH) {
+    const batch = seriesIds.slice(i, i + WATCHING_SERIES_BATCH);
+    const seasons = await prisma.season.findMany({
+      where: { seriesId: { in: batch } },
+      select: {
+        seriesId: true,
+        id: true,
+        seasonNumber: true,
+        episodeCount: true,
+        episodes: {
+          select: {
+            id: true,
+            episodeNumber: true,
+            title: true,
+            viewStatus: { where: { userId }, select: { status: true } },
+          },
+          orderBy: { episodeNumber: 'asc' },
+        },
+      },
+      orderBy: [{ seriesId: 'asc' }, { seasonNumber: 'asc' }],
+    });
+    for (const id of batch) {
+      progress.set(
+        id,
+        computeWatchingProgress({
+          seasons: seasons.filter((season) => season.seriesId === id),
+        })
+      );
+    }
+  }
+  return rows.flatMap(({ seriesId, lastWatchedAt, series }) => {
+    const summary = seriesId === null ? undefined : progress.get(seriesId);
+    return series && summary
+      ? [{ seriesId, lastWatchedAt, series, progress: summary }]
+      : [];
+  });
+}
+
+/** Temporadas y capitulos de una serie de la biblioteca, para el cajon de
+ *  "Mi seguimiento". El estado de cada capitulo lo trae
+ *  SeriesUserStatusProvider. */
+export async function getWatchingSeasons(seriesId: number) {
+  return prisma.season.findMany({
+    where: { seriesId },
+    select: {
+      id: true,
+      seasonNumber: true,
+      episodes: {
+        select: { id: true, episodeNumber: true, title: true },
+        orderBy: { episodeNumber: 'asc' },
+      },
+    },
+    orderBy: { seasonNumber: 'asc' },
+  });
 }
 
 export async function getWatchingPreferences(userId: string) {
@@ -3690,7 +3860,7 @@ export async function getWatchedTime(
 export async function countUserWatchedChapters(
   userId: string
 ): Promise<number> {
-  const series = await prisma.series.findMany({
+  const watchedIn = await prisma.series.findMany({
     where: {
       seasons: {
         some: {
@@ -3700,26 +3870,37 @@ export async function countUserWatchedChapters(
         },
       },
     },
-    select: {
-      seasons: {
-        select: {
-          seasonNumber: true,
-          episodes: {
-            select: {
-              id: true,
-              episodeNumber: true,
-              title: true,
-              viewStatus: { where: { userId }, select: { status: true } },
+    select: { id: true },
+  });
+  // De a tandas: una biblioteca grande (cientos de series, miles de
+  // capitulos) cargada de una vez deja al isolate del Worker al borde de su
+  // limite de memoria. Cada tanda se reduce a un numero y se descarta.
+  let total = 0;
+  for (let i = 0; i < watchedIn.length; i += WATCHING_SERIES_BATCH) {
+    const series = await prisma.series.findMany({
+      where: {
+        id: {
+          in: watchedIn.slice(i, i + WATCHING_SERIES_BATCH).map((s) => s.id),
+        },
+      },
+      select: {
+        seasons: {
+          select: {
+            seasonNumber: true,
+            episodes: {
+              select: {
+                id: true,
+                episodeNumber: true,
+                title: true,
+                viewStatus: { where: { userId }, select: { status: true } },
+              },
             },
           },
         },
       },
-    },
-  });
-  return series.reduce(
-    (total, item) =>
-      total +
-      countWatchedChapters(
+    });
+    for (const item of series) {
+      total += countWatchedChapters(
         item.seasons.flatMap((season) =>
           season.episodes.map((episode) => ({
             id: episode.id,
@@ -3731,9 +3912,10 @@ export async function countUserWatchedChapters(
             ),
           }))
         )
-      ),
-    0
-  );
+      );
+    }
+  }
+  return total;
 }
 
 /** Public favorites exclude staff and banned accounts, like the public ranking. */
