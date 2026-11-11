@@ -33,9 +33,12 @@ import {
 } from './tracking-insights';
 import { countWatchedChapters, groupIntoChapters } from './episode-chapters';
 import {
+  computeWatchingProgress,
   mergeLinkedAportes,
   readWatchingPreferences,
+  type WatchingItem,
   type WatchingPreferences,
+  type WatchingProgress,
 } from './watching-collection';
 import {
   parseInitialPreferences,
@@ -54,6 +57,7 @@ import { Pool } from 'pg';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { withSerialTransactions } from './serial-transactions';
+import { scopeBatchingToRequest } from './request-scoped-batching';
 import { RequestScopedPool } from './request-scoped-pool';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { playableCountIn, summarizePlayability } from './availability';
@@ -114,7 +118,11 @@ function createPrismaClient() {
     ? new RequestScopedPool(config, currentRequestKey)
     : new Pool(config);
   const adapter = withSerialTransactions(new PrismaPg(pool));
-  return new PrismaClient({ adapter });
+  const client = new PrismaClient({ adapter });
+  // Sin esto, Prisma despacha juntos los findUnique de requests distintos
+  // desde el contexto del primero (ver request-scoped-batching.ts).
+  if (IS_WORKERD) scopeBatchingToRequest(client, currentRequestKey);
+  return client;
 }
 
 export const prisma = globalForPrisma.prisma ?? createPrismaClient();
@@ -2589,56 +2597,182 @@ export async function getWatchingLibrary(
     },
   });
 
-  // Las fichas se piden de a tandas y en serie: un solo findMany con todas
-  // las temporadas y capitulos de una biblioteca grande (ej. 777 series,
-  // ~7.000 capitulos) arma todo el grafo intermedio de Prisma a la vez y
-  // dejaba al isolate del Worker al borde de su limite de memoria.
+  // Las fichas se piden de a tandas y en serie, y de cada tanda solo sale un
+  // resumen con el progreso ya calculado: los capitulos (miles en una
+  // biblioteca grande, ej. 777 series y ~7.000 capitulos) nunca se juntan
+  // todos en memoria ni viajan al cliente. El cajon de una serie los pide
+  // aparte (getWatchingSeasons).
   const seriesIds = rows.flatMap((row) =>
     row.seriesId === null ? [] : [row.seriesId]
   );
-  const select = watchingSeriesSelect(userId);
-  const seriesById = new Map<
-    number,
-    Prisma.SeriesGetPayload<{ select: typeof select }>
-  >();
-  for (let i = 0; i < seriesIds.length; i += WATCHING_SERIES_BATCH) {
-    const batch = await prisma.series.findMany({
-      where: { id: { in: seriesIds.slice(i, i + WATCHING_SERIES_BATCH) } },
-      select,
+  const summaries = new Map<number, WatchingItem['series']>();
+  for (const batch of await watchingBatches(seriesIds)) {
+    const found = new Map(
+      (
+        await prisma.series.findMany({
+          where: { id: { in: batch } },
+          select: watchingSeriesSelect(userId),
+        })
+      ).map((series) => [series.id, series])
+    );
+    // Para el boton "Seguir viendo" en /watching: si la serie tiene algun
+    // episodio mirable propio, se puede retomar directo en /ver sin pasar
+    // por la ficha. Una ficha curada sin video propio abre su aporte
+    // vinculado solo si los dos estan en la lista (mergeLinkedAportes, por
+    // eso los dos caen en la misma tanda); si no, la tarjeta ofrece los
+    // links oficiales de "Donde ver".
+    const detailed = batch.flatMap((id) => {
+      const series = found.get(id);
+      if (!series) return [];
+      return [
+        {
+          series: {
+            ...series,
+            hasWatchableEpisode: series.seasons.some((season) =>
+              season.episodes.some(isWatchableEpisode)
+            ),
+          },
+        },
+      ];
     });
-    for (const series of batch) seriesById.set(series.id, series);
+    for (const { series } of mergeLinkedAportes(detailed)) {
+      const { seasons, ...summary } = series;
+      summaries.set(series.id, {
+        ...summary,
+        progress: computeWatchingProgress({ seasons }),
+      });
+    }
   }
 
-  // Para el boton "Seguir viendo" en /watching: si la serie tiene algun
-  // episodio mirable propio, se puede retomar directo en /ver sin pasar por
-  // la ficha. Una ficha curada sin video propio abre su aporte vinculado
-  // solo si los dos estan en la lista (mergeLinkedAportes); si no, la
-  // tarjeta ofrece los links oficiales de "Donde ver".
-  const result = rows.flatMap(({ seriesId, ...item }) => {
-    const series = seriesId === null ? undefined : seriesById.get(seriesId);
-    if (!series) return [];
-    return [
-      {
-        ...item,
-        series: {
-          ...series,
-          hasWatchableEpisode: series.seasons.some((season) =>
-            season.episodes.some(isWatchableEpisode)
-          ),
-          // embedUrl/durationSeconds solo sirven para hasWatchableEpisode:
-          // no viajan al cliente (miles de capitulos en bibliotecas grandes).
-          seasons: series.seasons.map((season) => ({
-            ...season,
-            episodes: season.episodes.map(
-              ({ embedUrl: _embedUrl, durationSeconds: _duration, ...ep }) => ep
-            ),
-          })),
+  return rows.flatMap(({ seriesId, ...item }) => {
+    const series = seriesId === null ? undefined : summaries.get(seriesId);
+    return series ? [{ ...item, series }] : [];
+  });
+}
+
+/**
+ * Tandas de WATCHING_SERIES_BATCH series donde un aporte vinculado cae
+ * siempre junto a su ficha curada, para que mergeLinkedAportes los vea a
+ * los dos.
+ */
+async function watchingBatches(seriesIds: number[]): Promise<number[][]> {
+  const inLibrary = new Set(seriesIds);
+  const links = await prisma.series.findMany({
+    where: {
+      id: { in: seriesIds },
+      origin: 'USER_EMBED',
+      linkedSeriesId: { not: null },
+    },
+    select: { id: true, linkedSeriesId: true },
+  });
+  const groupOf = new Map(
+    links.flatMap(({ id, linkedSeriesId }) =>
+      linkedSeriesId !== null && inLibrary.has(linkedSeriesId)
+        ? [[id, linkedSeriesId] as const]
+        : []
+    )
+  );
+  const groups = new Map<number, number[]>();
+  for (const id of seriesIds) {
+    const key = groupOf.get(id) ?? id;
+    groups.set(key, [...(groups.get(key) ?? []), id]);
+  }
+  const batches: number[][] = [];
+  let current: number[] = [];
+  for (const group of groups.values()) {
+    if (current.length + group.length > WATCHING_SERIES_BATCH) {
+      batches.push(current);
+      current = [];
+    }
+    current.push(...group);
+  }
+  if (current.length > 0) batches.push(current);
+  return batches;
+}
+
+/** Series en "Viendo" con su progreso en capitulos, para el perfil. Los
+ *  capitulos se leen de a tandas y solo queda el resumen (ver
+ *  getWatchingLibrary). */
+export async function getWatchingNow(userId: string) {
+  const rows = await prisma.viewStatus.findMany({
+    where: { userId, status: 'VIENDO', seriesId: { not: null } },
+    orderBy: { lastWatchedAt: 'desc' },
+    select: {
+      seriesId: true,
+      lastWatchedAt: true,
+      series: {
+        select: {
+          id: true,
+          title: true,
+          origin: true,
+          catalogScope: true,
+          imageUrl: true,
+          imageThumbUrl: true,
+          year: true,
+          type: true,
+          country: { select: { name: true } },
         },
       },
-    ];
+    },
   });
+  const seriesIds = rows.flatMap((row) =>
+    row.seriesId === null ? [] : [row.seriesId]
+  );
+  const progress = new Map<number, WatchingProgress>();
+  for (let i = 0; i < seriesIds.length; i += WATCHING_SERIES_BATCH) {
+    const batch = seriesIds.slice(i, i + WATCHING_SERIES_BATCH);
+    const seasons = await prisma.season.findMany({
+      where: { seriesId: { in: batch } },
+      select: {
+        seriesId: true,
+        id: true,
+        seasonNumber: true,
+        episodeCount: true,
+        episodes: {
+          select: {
+            id: true,
+            episodeNumber: true,
+            title: true,
+            viewStatus: { where: { userId }, select: { status: true } },
+          },
+          orderBy: { episodeNumber: 'asc' },
+        },
+      },
+      orderBy: [{ seriesId: 'asc' }, { seasonNumber: 'asc' }],
+    });
+    for (const id of batch) {
+      progress.set(
+        id,
+        computeWatchingProgress({
+          seasons: seasons.filter((season) => season.seriesId === id),
+        })
+      );
+    }
+  }
+  return rows.flatMap(({ seriesId, lastWatchedAt, series }) => {
+    const summary = seriesId === null ? undefined : progress.get(seriesId);
+    return series && summary
+      ? [{ seriesId, lastWatchedAt, series, progress: summary }]
+      : [];
+  });
+}
 
-  return mergeLinkedAportes(result);
+/** Temporadas y capitulos de una serie de la biblioteca, para el cajon de
+ *  "Mi seguimiento". El estado de cada capitulo lo trae
+ *  SeriesUserStatusProvider. */
+export async function getWatchingSeasons(seriesId: number) {
+  return prisma.season.findMany({
+    where: { seriesId },
+    select: {
+      id: true,
+      seasonNumber: true,
+      episodes: {
+        select: { id: true, episodeNumber: true, title: true },
+        orderBy: { episodeNumber: 'asc' },
+      },
+    },
+    orderBy: { seasonNumber: 'asc' },
+  });
 }
 
 export async function getWatchingPreferences(userId: string) {

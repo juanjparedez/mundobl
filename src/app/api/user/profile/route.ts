@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import {
   countUserWatchedChapters,
   getWatchedTime,
+  getWatchingNow,
   prisma,
 } from '@/lib/database';
 import {
@@ -10,8 +11,6 @@ import {
   syncAchievementUnlocks,
 } from '@/lib/achievement-store';
 import { requireAuth } from '@/lib/auth-helpers';
-import { findNextEpisode } from '@/lib/episode-progress';
-import { groupIntoChapters } from '@/lib/episode-chapters';
 
 interface RawCountRow {
   name: string;
@@ -155,46 +154,8 @@ export async function GET(request: NextRequest) {
         },
       }),
 
-      // Current VIENDO series
-      prisma.viewStatus.findMany({
-        where: { userId, status: 'VIENDO', seriesId: { not: null } },
-        orderBy: { lastWatchedAt: 'desc' },
-        include: {
-          series: {
-            select: {
-              id: true,
-              title: true,
-              origin: true,
-              catalogScope: true,
-              imageUrl: true,
-              imageThumbUrl: true,
-              year: true,
-              type: true,
-              country: { select: { name: true } },
-              seasons: {
-                select: {
-                  seasonNumber: true,
-                  // Solo lo que usa groupIntoChapters: sin sinopsis ni
-                  // datos de embed de cada capitulo.
-                  episodes: {
-                    select: {
-                      id: true,
-                      episodeNumber: true,
-                      title: true,
-                      viewStatus: {
-                        where: { userId },
-                        select: { status: true },
-                      },
-                    },
-                    orderBy: { episodeNumber: 'asc' },
-                  },
-                },
-                orderBy: { seasonNumber: 'asc' },
-              },
-            },
-          },
-        },
-      }),
+      // Series en VIENDO con su progreso, calculado de a tandas.
+      getWatchingNow(userId),
 
       // Last 8 favorites with series info
       prisma.userFavorite.findMany({
@@ -432,40 +393,21 @@ export async function GET(request: NextRequest) {
 
     // Progreso y siguiente de cada serie en VIENDO, por capitulos (ver
     // groupIntoChapters): lo mismo que muestran la ficha y /watching.
-    const watchingWithNext = currentlyWatching.map((item) => {
-      const { chapters } = groupIntoChapters(
-        (item.series?.seasons ?? []).flatMap((season) =>
-          season.episodes.map((ep) => ({
-            id: ep.id,
-            seasonNumber: season.seasonNumber,
-            episodeNumber: ep.episodeNumber,
-            title: ep.title,
-            watched: ep.viewStatus?.[0]?.status === 'VISTA',
-          }))
-        )
-      );
-      const isWatched = (chapter: (typeof chapters)[number]) =>
-        chapter.episodes.every((ep) => ep.watched);
-      const totalEpisodes = chapters.length;
-      const watchedEpisodes = chapters.filter(isWatched).length;
-      const next = findNextEpisode(chapters, isWatched);
-      const nextEpisode = next
-        ? { seasonNumber: next.seasonNumber, episodeNumber: next.number }
-        : null;
-
-      const { seasons: _seasons, ...seriesWithoutSeasons } = item.series ?? {
-        seasons: [],
-      };
-      void _seasons;
-
-      return {
-        seriesId: item.seriesId,
-        lastWatchedAt: item.lastWatchedAt,
-        series: seriesWithoutSeasons,
-        progress: { totalEpisodes, watchedEpisodes },
-        nextEpisode,
-      };
-    });
+    const watchingWithNext = currentlyWatching.map((item) => ({
+      seriesId: item.seriesId,
+      lastWatchedAt: item.lastWatchedAt,
+      series: item.series,
+      progress: {
+        totalEpisodes: item.progress.total,
+        watchedEpisodes: item.progress.watched,
+      },
+      nextEpisode: item.progress.next
+        ? {
+            seasonNumber: item.progress.next.seasonNumber,
+            episodeNumber: item.progress.next.chapterNumber,
+          }
+        : null,
+    }));
 
     const stats = {
       ...completedInCurrentYear(recentlyCompleted),

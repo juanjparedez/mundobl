@@ -569,6 +569,8 @@ function WatchingCollection({ userId }: { userId: string }) {
           comments: t('trackingWorkspace.publicComment'),
           note: t('trackingWorkspace.privateNote'),
           season: (n) => t('trackingWorkspace.season', { n }),
+          loadError: t('trackingWorkspace.loadError'),
+          retry: t('trackingWorkspace.retry'),
         }}
       />
     </div>

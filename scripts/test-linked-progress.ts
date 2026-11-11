@@ -6,7 +6,7 @@ import {
 } from '../src/lib/linked-progress';
 import {
   mergeLinkedAportes,
-  type WatchingItem,
+  type WatchingDetailItem,
 } from '../src/lib/watching-collection';
 
 /**
@@ -97,8 +97,8 @@ const series = (
   id: number,
   origin: string,
   rows: typeof aporte,
-  extra: Partial<WatchingItem['series']> = {}
-): Pick<WatchingItem, 'series'> => ({
+  extra: Partial<WatchingDetailItem['series']> = {}
+): Pick<WatchingDetailItem, 'series'> => ({
   series: {
     id,
     title: `Serie ${id}`,
