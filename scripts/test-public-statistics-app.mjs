@@ -4,6 +4,7 @@ import { encode } from 'next-auth/jwt';
 const require = createRequire(import.meta.url);
 require('./assert-local-test-database.ts').assertLocalTestDatabase();
 const { prisma } = require('../src/lib/database.ts');
+const { getSeriesUrl } = require('../src/lib/slug.ts');
 const base = process.env.COMMUNITY_APP_TEST_URL ?? 'http://127.0.0.1:3223';
 assert.ok(['127.0.0.1', 'localhost'].includes(new URL(base).hostname));
 assert.equal(process.env.AUTH_SECRET, 'community-full-app-test-only');
@@ -55,7 +56,22 @@ try {
   const page = await fetch(base + '/estadisticas');
   assert.equal(page.status, 200);
   assert.match(await page.text(), /Finalizaciones registradas/);
-  const detailUrl = `${base}/series/${series.id}`;
+  // /series/<id> answers 308 to the slug URL. On the first (uncached) ISR
+  // render Next sends that Location header twice with the same value, which
+  // browsers accept but Node's fetch joins into one broken URL. So check the
+  // redirect by hand and read the canonical page directly.
+  const canonical = getSeriesUrl(series.id, series.title);
+  const redirect = await fetch(`${base}/series/${series.id}`, {
+    redirect: 'manual',
+  });
+  assert.equal(redirect.status, 308);
+  assert.ok(
+    redirect.headers
+      .get('location')
+      .split(', ')
+      .every((location) => location === canonical)
+  );
+  const detailUrl = base + canonical;
   assert.match(await (await fetch(detailUrl)).text(), /2 favoritos/);
   const jwt = await encode({
     secret: process.env.AUTH_SECRET,
