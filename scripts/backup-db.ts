@@ -27,6 +27,21 @@ const MODELS = [
       client.seriesActivityDaily.findMany(),
   },
   {
+    name: 'SeriesReactionCount',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.seriesReactionCount.findMany(),
+  },
+  {
+    name: 'SeriesFactVote',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.seriesFactVote.findMany(),
+  },
+  {
+    name: 'SeriesFactOverride',
+    delegate: (client: Prisma.TransactionClient) =>
+      client.seriesFactOverride.findMany(),
+  },
+  {
     name: 'SiteTrafficDaily',
     delegate: (client: Prisma.TransactionClient) =>
       client.siteTrafficDaily.findMany(),
