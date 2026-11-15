@@ -97,9 +97,14 @@ try {
   assert.equal(response.headers.get('cache-control'), 'no-store');
   const items = await response.json();
   assert.equal(items.length, 5);
+  // Since #169 the library sends a progress summary, not the episodes: the
+  // other account's watched episode must not count, and no episode rows leak.
   assert.ok(
     items.every(
-      (item) => item.series.seasons[0].episodes[0].viewStatus.length === 0
+      (item) =>
+        !('seasons' in item.series) &&
+        item.series.progress.total === 1 &&
+        item.series.progress.watched === 0
     )
   );
   assert.ok(!JSON.stringify(items).includes('PRIVATE EDITORIAL'));
