@@ -13,8 +13,8 @@ import { interpolateMessage } from '@/lib/i18n-format';
 import {
   crossedMilestone,
   findFurthestWatchedIndex,
-} from '@/lib/episode-progress';
-import type { TrackedChapter } from '@/lib/episode-chapters';
+} from '@/lib/tracking-core';
+import type { TrackedChapter } from '@/lib/tracking-core';
 import { useMessage } from '@/hooks/useMessage';
 import { useSeriesUserStatus } from '../SeriesUserStatusProvider';
 import {

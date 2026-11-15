@@ -4,10 +4,10 @@ import {
   countChapters,
   groupIntoChapters,
   toTrackedChapters,
-} from '../src/lib/episode-chapters';
+} from '../src/lib/tracking-core';
 
 /**
- * Prueba de src/lib/episode-chapters.ts. Logica pura: no toca la base.
+ * Prueba de src/lib/tracking-core/chapters.ts. Logica pura: no toca la base.
  * Los titulos imitan los de las playlists reales de GMMTV y Strongberry.
  *
  * Uso: npx tsx scripts/test-episode-chapters.ts

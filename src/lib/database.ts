@@ -31,7 +31,7 @@ import {
   type InsightsPeriod,
   type InsightSeries,
 } from './tracking-insights';
-import { countWatchedChapters, groupIntoChapters } from './episode-chapters';
+import { countWatchedChapters, groupIntoChapters } from './tracking-core';
 import {
   computeWatchingProgress,
   mergeLinkedAportes,

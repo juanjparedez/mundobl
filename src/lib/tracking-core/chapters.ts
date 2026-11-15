@@ -1,4 +1,4 @@
-import { parseEpisodeTitle } from './episode-parser';
+import { parseEpisodeTitle } from './titles';
 
 /**
  * Que es un "capitulo" para el usuario. En la base, cada video es una fila

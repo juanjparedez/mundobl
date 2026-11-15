@@ -1,6 +1,9 @@
 // Progreso sin cuenta, en este navegador. v2 suma la intencion (Quiero
 // verla, Vista, En pausa, Abandonada) para que todo lo que se puede hacer con
 // cuenta se pueda hacer sin ella; VIENDO no se guarda: sale de los capitulos.
+import { statusAfterWatch } from './tracking-core';
+import { fromCoreStatus, toCoreStatus } from './tracking-status';
+
 const STORAGE_KEY = 'mundobl.localProgress';
 const STORAGE_VERSION = 2 as const;
 
@@ -98,12 +101,17 @@ function saveEntry(
 }
 
 /**
- * Misma regla que el servidor (tracking.ts): marcar un capitulo saca la
- * serie de Quiero verla / En pausa y la deja en Viendo. Vista y Abandonada
- * las eligio el usuario a mano: no se pisan.
+ * La misma regla que el servidor, del core: marcar un capitulo deja la serie
+ * en Viendo salvo Vista y Abandonada, que se eligieron a mano. Viendo no se
+ * guarda como intencion: sale de los capitulos.
  */
-function intentAfterWatch(intent: LocalIntent | undefined) {
-  return intent === 'QUIERO_VER' || intent === 'RETOMAR' ? undefined : intent;
+function intentAfterWatch(
+  intent: LocalIntent | undefined
+): LocalIntent | undefined {
+  const next = fromCoreStatus(
+    statusAfterWatch(intent ? toCoreStatus(intent) : null)
+  );
+  return isIntent(next) ? next : undefined;
 }
 
 export function getLocalSeriesProgress(seriesId: number): LocalSeriesProgress {

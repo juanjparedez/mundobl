@@ -15,7 +15,7 @@ import { WatchDateEditor } from './WatchDateEditor/WatchDateEditor';
 import { CommentsList } from '@/components/common/CommentsList';
 import { useSeriesUserStatus } from './SeriesUserStatusProvider';
 import { canEditCatalog } from '@/lib/auth-client';
-import { groupIntoChapters } from '@/lib/episode-chapters';
+import { groupIntoChapters } from '@/lib/tracking-core';
 import './SeasonsList.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';

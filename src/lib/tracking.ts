@@ -11,7 +11,15 @@ import type {
   WatchStatus,
 } from '@prisma/client';
 import { getSeriesEpisodesOrdered, type SeriesEpisodeOrder } from './database';
-import { linkedEpisodesToSync, pairLinkedChapters } from './linked-progress';
+import {
+  datesForStatus,
+  linkedEpisodesToSync,
+  pairLinkedChapters,
+  planProgress,
+  statusAfterWatch,
+  type ProgressTarget as CoreProgressTarget,
+} from './tracking-core';
+import { fromCoreStatus, toCoreStatus } from './tracking-status';
 
 export type TrackingClient = PrismaClient | Prisma.TransactionClient;
 
@@ -117,37 +125,21 @@ async function updateSeriesAfterWatch(
 ): Promise<ViewStatus> {
   const existingSeries = await client.viewStatus.findUnique({
     where: { userId_seriesId: { userId, seriesId } },
+    select: { status: true },
   });
-
-  let series: ViewStatus;
-  // QUIERO_VER: estaba en la lista para ver y empezo a verla.
-  if (
-    !existingSeries ||
-    existingSeries.status === 'SIN_VER' ||
-    existingSeries.status === 'QUIERO_VER'
-  ) {
-    series = await client.viewStatus.upsert({
-      where: { userId_seriesId: { userId, seriesId } },
-      update: { status: 'VIENDO', lastWatchedAt: now },
-      create: { userId, seriesId, status: 'VIENDO', lastWatchedAt: now },
-    });
-    if (!existingSeries) await subscribeOnFirstTrack(client, userId, seriesId);
-  } else if (
-    existingSeries.status === 'VIENDO' ||
-    existingSeries.status === 'RETOMAR'
-  ) {
-    series = await client.viewStatus.update({
-      where: { userId_seriesId: { userId, seriesId } },
-      data: { status: 'VIENDO', lastWatchedAt: now },
-    });
-  } else {
-    // VISTA o ABANDONADA: el usuario lo decidió a mano, no se pisa el status.
-    series = await client.viewStatus.update({
-      where: { userId_seriesId: { userId, seriesId } },
-      data: { lastWatchedAt: now },
-    });
-  }
-
+  // QUIERO_VER, SIN_VER y RETOMAR pasan a VIENDO; VISTA y ABANDONADA las
+  // eligio el usuario a mano y no se pisan (regla del core).
+  const status = fromCoreStatus(
+    statusAfterWatch(
+      existingSeries ? toCoreStatus(existingSeries.status) : null
+    )
+  );
+  const series = await client.viewStatus.upsert({
+    where: { userId_seriesId: { userId, seriesId } },
+    update: { status, lastWatchedAt: now },
+    create: { userId, seriesId, status, lastWatchedAt: now },
+  });
+  if (!existingSeries) await subscribeOnFirstTrack(client, userId, seriesId);
   return series;
 }
 
@@ -191,37 +183,39 @@ export async function setProgress(
     throw new ProgressNotFoundError('La serie no tiene episodios');
   }
 
-  const targetEpisode =
+  const coreTarget: CoreProgressTarget<number> | null =
     target.upToEpisodeId !== undefined
-      ? episodes.find((ep) => ep.id === target.upToEpisodeId)
-      : episodes.find(
-          (ep) =>
-            ep.seasonNumber === target.seasonNumber &&
-            ep.episodeNumber === target.episodeNumber
-        );
-
-  if (!targetEpisode) {
+      ? { episodeId: target.upToEpisodeId }
+      : target.seasonNumber !== undefined && target.episodeNumber !== undefined
+        ? {
+            seasonNumber: target.seasonNumber,
+            episodeNumber: target.episodeNumber,
+          }
+        : null;
+  const plan =
+    coreTarget &&
+    planProgress(episodes, coreTarget, {
+      direction: options.direction,
+      inclusive: options.inclusive,
+    });
+  if (!plan) {
     throw new ProgressNotFoundError('Episodio no encontrado en esta serie');
   }
 
-  const targetIndex = episodes.findIndex((ep) => ep.id === targetEpisode.id);
   const now = new Date();
 
-  if (options.direction === 'unmark') {
-    const afterIds = episodes
-      .slice(options.inclusive ? targetIndex : targetIndex + 1)
-      .map((ep) => ep.id);
-    if (afterIds.length > 0) {
+  if (plan.kind === 'unmark') {
+    if (plan.episodeIds.length > 0) {
       await client.viewStatus.updateMany({
-        where: { userId, episodeId: { in: afterIds } },
+        where: { userId, episodeId: { in: plan.episodeIds } },
         data: { status: 'SIN_VER', watchedDate: null },
       });
-      await syncLinkedSeries(client, userId, seriesId, afterIds);
+      await syncLinkedSeries(client, userId, seriesId, plan.episodeIds);
     }
     return buildProgressResult(client, userId, seriesId, episodes);
   }
 
-  const upToIds = episodes.slice(0, targetIndex + 1).map((ep) => ep.id);
+  const upToIds = plan.episodeIds;
 
   const changed = await markManyWatched(client, userId, upToIds, now);
   if (changed > 0) await updateSeriesAfterWatch(client, userId, seriesId, now);
@@ -304,7 +298,7 @@ export async function setEpisodesWatched(
 
 /**
  * Copia lo que se marco o desmarco a la otra punta de un vinculo aporte ->
- * ficha curada (ver linked-progress.ts), en los dos sentidos: la ficha
+ * ficha curada (ver tracking-core/linked.ts), en los dos sentidos: la ficha
  * ofrece mirar en el aporte, y el progreso tiene que ser uno solo. Con
  * `now` se marco; sin `now`, se desmarco. Escribe directo, sin volver a
  * pasar por aca, asi que no rebota.
@@ -433,10 +427,13 @@ export async function setSeriesTrackingStatus(
   status: WatchStatus
 ): Promise<ViewStatus> {
   const now = new Date();
+  const { completedAt, lastWatchedAt } = datesForStatus(
+    toCoreStatus(status),
+    now
+  );
   const dates = {
-    ...(status === 'VISTA' ? { watchedDate: now } : {}),
-    ...(status === 'SIN_VER' ? { watchedDate: null } : {}),
-    ...(status === 'VIENDO' ? { lastWatchedAt: now } : {}),
+    ...(completedAt !== undefined ? { watchedDate: completedAt } : {}),
+    ...(lastWatchedAt ? { lastWatchedAt } : {}),
   };
   const inserted = await client.viewStatus.createMany({
     data: [{ userId, seriesId, status, ...dates }],

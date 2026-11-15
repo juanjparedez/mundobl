@@ -1,4 +1,4 @@
-import { groupIntoChapters, type EpisodeRow } from './episode-chapters';
+import { groupIntoChapters, type EpisodeRow } from './tracking-core';
 
 export type InsightsPeriod = 7 | 30 | 365;
 export interface InsightEpisode extends EpisodeRow {

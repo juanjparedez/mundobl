@@ -2,6 +2,13 @@
 
 Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-stack para gestionar, calificar y hacer seguimiento de series, peliculas, cortos y especiales.
 
+## Core de tracking puro (2026-11-15)
+
+- `src/lib/tracking-core/` es la logica de seguimiento sin base ni DOM: estados (`status.ts`), titulos de YouTube (`titles.ts`), capitulos y partes (`chapters.ts`), posicion y siguiente (`position.ts`), plan de "voy por el N" (`progress-plan.ts`) y vinculo aporte/ficha (`linked.ts`). Se importa desde `@/lib/tracking-core`. Es el paso 1 para publicarlo como libreria npm (diseño: https://claude.ai/artifact/KaznL32XEyDG3Qs5S4StQe); todavia no se publica nada.
+- Regla de eslint: dentro de esa carpeta solo se importa `./`, sin `window`, `document`, `localStorage`, `fetch` ni `process`. Lo que toca Prisma, avisos, logros o localStorage queda afuera (`tracking.ts`, `local-progress.ts`).
+- Estados en ingles en el core (`none`, `planned`, `watching`, `completed`, `paused`, `dropped`); `src/lib/tracking-status.ts` los mapea al enum `WatchStatus`, que no cambia. La regla "marcar un capitulo deja la serie en Viendo salvo Vista/Abandonada" vive solo en `statusAfterWatch`, usada por el servidor y por el progreso sin cuenta (antes estaba duplicada).
+- `parseAirDate` paso a `playlist-importer.ts` (es del importador, no de tracking). Prueba: `scripts/test-tracking-core.ts`.
+
 ## Estadísticas públicas reconciliadas (2026-10-31)
 
 - Rama `codex/fix-estadisticas-integrales`, commits por tema. Tras pedir trabajo local inicialmente, el propietario autorizó explícitamente merge y deploy al terminar la validación.
@@ -585,7 +592,7 @@ Tercer `viewMode` de `CatalogoClient.tsx` (`'grid' | 'list' | 'carousel'`), eleg
 - **Ruta admin**: [/admin/series/importar](../../src/app/admin/series/importar/) → form para pegar URL + scope + opcional traduccion ES via Gemini → preview editable (titulo, año, pais sugerido por canal, sinopsis, tabla de episodios con renumerar/eliminar) → boton confirmar.
 - **Helpers**:
   - [src/lib/channel-fetcher.ts](../../src/lib/channel-fetcher.ts) → `fetchYouTubePlaylist(url, pageToken?)` + `fetchAllYouTubePlaylistVideos(url, maxPages=10)`
-  - [src/lib/episode-parser.ts](../../src/lib/episode-parser.ts) → `parseEpisodeTitle(title)` extrae `seasonNumber`, `episodeNumber`, `partNumber/partTotal` (para videos partidos como `[1/4]`), `cleanTitle` sin marcadores. Cubre `EP.X`, `Episode X`, `S1E12`, `1x01`, `Capitulo X`, `E01`. `inferSeriesTitle(cleanTitles[])` deduce el nombre por prefijo comun.
+  - [src/lib/tracking-core/titles.ts](../../src/lib/tracking-core/titles.ts) → `parseEpisodeTitle(title)` extrae `seasonNumber`, `episodeNumber`, `partNumber/partTotal` (para videos partidos como `[1/4]`), `cleanTitle` sin marcadores. Cubre `EP.X`, `Episode X`, `S1E12`, `1x01`, `Capitulo X`, `E01`. `inferSeriesTitle(cleanTitles[])` deduce el nombre por prefijo comun.
   - [src/lib/playlist-importer.ts](../../src/lib/playlist-importer.ts) → `buildImportPreview({url, autoTranslate, catalogScope, maxPages})` orquesta fetch + parse + traduccion + agrupacion por temporada + deteccion de duplicados/missing. Incluye mapping de canales → pais ISO (GMMTV→TH, BeOnCloud→TH, IdeaFirstCompany→PH, etc.).
 - **Endpoints**:
   - `POST /api/series/import-playlist` (admin) → devuelve `ImportPreview` sin escribir DB
