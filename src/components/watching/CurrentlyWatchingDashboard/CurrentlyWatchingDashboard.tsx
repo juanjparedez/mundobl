@@ -24,7 +24,7 @@ import { useWatchingPreferences } from '@/hooks/useWatchingPreferences';
 import { useWatchingLocation } from '@/hooks/useWatchingLocation';
 import { useWatchingScroll } from '@/hooks/useWatchingScroll';
 import { isAiringNow } from '@/lib/airing-schedule';
-import { crossedMilestone } from '@/lib/episode-progress';
+import { crossedMilestone } from '@/lib/tracking-core';
 import {
   LIBRARY_STATUSES,
   selectWatchingItems,

@@ -1,5 +1,5 @@
 import { prisma } from './database';
-import { groupIntoChapters } from './episode-chapters';
+import { groupIntoChapters } from './tracking-core';
 import { COMMUNITY, PUBLIC_STATS_SERIES } from './statistics-scope';
 
 /** One completion per account/chapter, after all parts; shared by cards, chart and ranking. */

@@ -3,14 +3,14 @@ import assert from 'node:assert/strict';
 import {
   linkedEpisodesToSync,
   pairLinkedChapters,
-} from '../src/lib/linked-progress';
+} from '../src/lib/tracking-core';
 import {
   mergeLinkedAportes,
   type WatchingDetailItem,
 } from '../src/lib/watching-collection';
 
 /**
- * Prueba de src/lib/linked-progress.ts y mergeLinkedAportes. Logica pura: no
+ * Prueba de src/lib/tracking-core/linked.ts y mergeLinkedAportes. Logica pura: no
  * toca la base. Los casos imitan los dos aportes vinculados reales: Bad
  * Buddy (#555, capitulos en 4 partes con avances) -> #43, y Marry a CEO
  * (#548, 55 videos sin titulo) -> The Gaze (#415, 1 capitulo).

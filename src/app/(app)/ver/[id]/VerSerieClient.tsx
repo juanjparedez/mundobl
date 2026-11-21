@@ -33,7 +33,7 @@ import { useViewerCountry } from '@/hooks/useViewerCountry';
 import { availabilityOf, type Availability } from '@/lib/availability';
 import type { PlaybackStatus } from '@/lib/playability';
 import type { TranslationKey } from '@/i18n/messages';
-import { groupIntoChapters } from '@/lib/episode-chapters';
+import { groupIntoChapters } from '@/lib/tracking-core';
 import { EmbedAttribution } from '@/components/common/EmbedAttribution/EmbedAttribution';
 import { CountryFlag } from '@/components/common/CountryFlag/CountryFlag';
 import { SeriesShareButton } from '@/components/common/SeriesShareButton/SeriesShareButton';

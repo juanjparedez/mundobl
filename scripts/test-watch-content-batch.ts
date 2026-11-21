@@ -7,7 +7,7 @@ import {
 } from '../src/lib/watch-content-batch';
 import type { VideoChannelInfo } from '../src/lib/channel-fetcher';
 import type { PlaybackProbe } from '../src/lib/playability';
-import { groupIntoChapters } from '../src/lib/episode-chapters';
+import { groupIntoChapters } from '../src/lib/tracking-core';
 import { isOfficialChannelId } from '../src/lib/official-channels';
 import {
   VER_BATCHES,
