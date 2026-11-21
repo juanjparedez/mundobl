@@ -20,7 +20,7 @@ import { ReviewSpotlight } from './ReviewSpotlight/ReviewSpotlight';
 import './SeriesInfo.css';
 import { useLocale } from '@/lib/providers/LocaleProvider';
 import { interpolateMessage } from '@/lib/i18n-format';
-import { countChapters } from '@/lib/episode-chapters';
+import { countChapters } from '@/lib/tracking-core';
 import {
   outboundRel,
   recordWatchLinkClick,

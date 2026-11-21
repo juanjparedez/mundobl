@@ -1,4 +1,4 @@
-import { findFurthestWatchedIndex } from '@/lib/episode-progress';
+import { findFurthestWatchedIndex } from '@/lib/tracking-core';
 import type { LocalSeriesProgress } from '@/lib/local-progress';
 import { localSeriesStatus } from '@/lib/local-progress';
 import type { SeriesSummary, SummaryChapter } from '@/lib/series-summaries';

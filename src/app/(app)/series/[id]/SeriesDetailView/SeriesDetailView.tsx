@@ -38,7 +38,7 @@ import { EditSeriesFab } from '../EditSeriesFab/EditSeriesFab';
 import { getAdultVariantUrl, getSeriesUrl, getVerUrl } from '@/lib/slug';
 import { isAiringNow, parseAirDays } from '@/lib/airing-schedule';
 import { AiringAlertCta } from '@/components/series/AiringAlertCta/AiringAlertCta';
-import { countChapters } from '@/lib/episode-chapters';
+import { countChapters } from '@/lib/tracking-core';
 import { isWatchableEpisode } from '@/lib/watchable';
 import { WatchHereBanner } from '@/components/series/WatchHereBanner/WatchHereBanner';
 import { ActivityPulse } from '@/components/series/ActivityPulse/ActivityPulse';

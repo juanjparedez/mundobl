@@ -1,4 +1,4 @@
-import { groupIntoChapters, type EpisodeRow } from './episode-chapters';
+import { groupIntoChapters, type EpisodeRow } from './chapters';
 
 /**
  * Un aporte USER_EMBED vinculado a una ficha curada es la misma serie con

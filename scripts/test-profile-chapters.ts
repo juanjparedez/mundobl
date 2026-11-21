@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { countWatchedChapters } from '../src/lib/episode-chapters';
+import { countWatchedChapters } from '../src/lib/tracking-core';
 
 const parts = [
   {

@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/database';
 import { isAiringNow } from '@/lib/airing-schedule';
-import { groupIntoChapters } from '@/lib/episode-chapters';
+import { groupIntoChapters } from '@/lib/tracking-core';
 import { getContentUrl, getVerUrl } from '@/lib/slug';
 import { MAX_SUMMARY_IDS } from '@/lib/local-library';
 import { cardImageUrl } from '@/lib/image-helpers';

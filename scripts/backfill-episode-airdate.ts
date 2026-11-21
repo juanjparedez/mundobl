@@ -72,7 +72,7 @@ async function main() {
   }
 
   const { prisma } = await import('../src/lib/database');
-  const { parseAirDate } = await import('../src/lib/episode-parser');
+  const { parseAirDate } = await import('../src/lib/playlist-importer');
 
   const eps = await prisma.episode.findMany({
     where: {

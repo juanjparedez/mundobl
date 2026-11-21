@@ -17,7 +17,7 @@ import { WatchedToggle } from '../WatchedToggle/WatchedToggle';
 import { useSeriesUserStatus } from '../SeriesUserStatusProvider';
 import { useMarkEpisodes } from '@/hooks/useMarkEpisodes';
 import { useLocale } from '@/lib/providers/LocaleProvider';
-import { groupIntoChapters } from '@/lib/episode-chapters';
+import { groupIntoChapters } from '@/lib/tracking-core';
 import {
   WatchDateEditor,
   type WatchDateOption,

@@ -28,6 +28,34 @@ const eslintConfig = [
       'no-console': ['warn', { allow: ['warn', 'error'] }],
     },
   },
+  {
+    // El core de tracking se va a publicar como libreria: funciones puras,
+    // sin dependencias ni nada de MundoBL. Solo importa dentro de su carpeta.
+    files: ['src/lib/tracking-core/**'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              regex: '^(?!\\./)',
+              message:
+                'tracking-core solo importa archivos de su propia carpeta (./).',
+            },
+          ],
+        },
+      ],
+      'no-restricted-globals': [
+        'error',
+        'window',
+        'document',
+        'localStorage',
+        'sessionStorage',
+        'fetch',
+        'process',
+      ],
+    },
+  },
 ];
 
 export default eslintConfig;

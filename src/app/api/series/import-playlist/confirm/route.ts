@@ -3,7 +3,7 @@ import { revalidatePath } from 'next/cache';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { checkCollaboratorImportRateLimit } from '@/lib/rate-limit';
-import { parseAirDate } from '@/lib/episode-parser';
+import { parseAirDate } from '@/lib/playlist-importer';
 import { attachEpisodesToSeries } from '@/lib/episode-attach';
 import { notifyEpisodesAvailable } from '@/lib/notifications';
 import { checkOfficialYouTubeVideos } from '@/lib/official-content-guard';

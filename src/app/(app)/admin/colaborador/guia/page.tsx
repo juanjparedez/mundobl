@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 // Contenido estatico a proposito: son las reglas con las que ya corre el
-// importador (src/lib/episode-parser.ts) y los limites reales de
+// importador (src/lib/tracking-core/titles.ts) y los limites reales de
 // src/lib/rate-limit.ts. Si alguna de esas dos cosas cambia, esta pagina
 // tiene que cambiar con ellas — por eso viven referenciadas aca abajo.
 export default async function ColaboradorGuiaPage() {

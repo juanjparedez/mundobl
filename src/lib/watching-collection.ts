@@ -1,7 +1,7 @@
-import { groupIntoChapters } from './episode-chapters';
+import { groupIntoChapters } from './tracking-core';
 import type { EpisodeRef } from './episode-param';
-import { findNextEpisode } from './episode-progress';
-import { pairLinkedChapters } from './linked-progress';
+import { findNextEpisode } from './tracking-core';
+import { pairLinkedChapters } from './tracking-core';
 import { getSeriesUrl, getVerUrl } from './slug';
 
 export interface WatchingWatchLink {

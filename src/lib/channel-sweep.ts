@@ -21,7 +21,7 @@ import {
   fetchYouTubeChannelPlaylists,
   type ChannelPlaylist,
 } from './channel-fetcher';
-import { parseEpisodeTitle } from './episode-parser';
+import { parseEpisodeTitle } from './tracking-core';
 
 /** Playlists cuyo titulo arranca con esto NO son la serie en si. */
 const NOISE_PREFIXES = [
