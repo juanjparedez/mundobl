@@ -32,6 +32,20 @@
   "observability": {
     "enabled": true,
   },
+  // Cola de revalidacion ISR de OpenNext (DOQueueHandler, open-next.config.ts).
+  // Por defecto corta cada regeneracion a los 10 s y la reintenta 6 veces.
+  // Medido del 2026-11-17 al 2026-11-24 en Workers Logs: /estadisticas y las
+  // fichas tardan 6-12 s en regenerarse, asi que la mayoria se cortaba antes
+  // de guardar en R2. La pagina seguia vencida, cada visita la volvia a
+  // encolar y cada intento repetia todas sus consultas: 136.900 regeneraciones
+  // en 7 dias (50.700 solo de /estadisticas, que con revalidate=900 deberian
+  // ser ~670). Eso fue el grueso del egress de Supabase de noviembre.
+  // Con 60 s la regeneracion termina y queda en cache; 2 reintentos alcanzan
+  // para un error pasajero sin multiplicar las consultas por 7.
+  "vars": {
+    "NEXT_CACHE_DO_QUEUE_REVALIDATION_TIMEOUT_MS": "60000",
+    "NEXT_CACHE_DO_QUEUE_MAX_RETRIES": "2",
+  },
   "services": [
     {
       // OpenNext se llama a si mismo para revalidar (open-next.config.ts).

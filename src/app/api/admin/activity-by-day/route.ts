@@ -1,11 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 
 type Period = 'week' | 'month' | 'year';
 
-function isAdminAction(action: string): boolean {
-  return action === 'CREATE' || action === 'UPDATE' || action === 'DELETE';
+interface BucketRow {
+  bucket: string;
+  views: bigint;
+  actions: bigint;
+}
+
+/**
+ * Cuenta vistas y acciones por dia o mes (UTC) en la base. Antes se traian
+ * todas las filas del rango para contarlas en el Worker: ~21.700 filas por
+ * llamada con el rango de un año, el segundo mayor volumen de filas en
+ * pg_stat_statements. Ahora vuelven como mucho 30 filas.
+ */
+async function countByBucket(
+  since: Date,
+  unit: 'day' | 'month'
+): Promise<Map<string, { views: number; actions: number }>> {
+  const format = unit === 'day' ? 'YYYY-MM-DD' : 'YYYY-MM';
+  const rows = await prisma.$queryRaw<BucketRow[]>(Prisma.sql`
+    SELECT to_char(date_trunc(${unit}, "createdAt"), ${format}) AS bucket,
+      COUNT(*) FILTER (WHERE action = 'PAGE_VIEW') AS views,
+      COUNT(*) FILTER (WHERE action IN ('CREATE', 'UPDATE', 'DELETE')) AS actions
+    FROM "AccessLog"
+    WHERE "createdAt" >= ${since}
+    GROUP BY 1
+  `);
+  return new Map(
+    rows.map((row) => [
+      row.bucket,
+      { views: Number(row.views), actions: Number(row.actions) },
+    ])
+  );
 }
 
 // GET /api/admin/activity-by-day?range=week|month|year — actividad
@@ -33,24 +63,12 @@ export async function GET(request: NextRequest) {
     since.setHours(0, 0, 0, 0);
     since.setMonth(since.getMonth() - (months - 1));
 
-    const logs = await prisma.accessLog.findMany({
-      where: { createdAt: { gte: since } },
-      select: { createdAt: true, action: true },
-    });
-
+    const totals = await countByBucket(since, 'month');
     const buckets = new Map<string, { views: number; actions: number }>();
     for (let i = 0; i < months; i++) {
       const d = new Date(since.getFullYear(), since.getMonth() + i, 1);
       const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-      buckets.set(key, { views: 0, actions: 0 });
-    }
-
-    for (const log of logs) {
-      const key = `${log.createdAt.getFullYear()}-${String(log.createdAt.getMonth() + 1).padStart(2, '0')}`;
-      const b = buckets.get(key);
-      if (!b) continue;
-      if (log.action === 'PAGE_VIEW') b.views++;
-      else if (isAdminAction(log.action)) b.actions++;
+      buckets.set(key, totals.get(key) ?? { views: 0, actions: 0 });
     }
 
     const series = Array.from(buckets.entries())
@@ -64,31 +82,14 @@ export async function GET(request: NextRequest) {
   const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
   since.setHours(0, 0, 0, 0);
 
-  const logs = await prisma.accessLog.findMany({
-    where: { createdAt: { gte: since } },
-    select: { createdAt: true, action: true },
-  });
+  const totals = await countByBucket(since, 'day');
 
-  // Bucketear por dia ISO YYYY-MM-DD.
+  // Todos los dias del rango, con 0/0 si no hubo logs (sin gaps en el chart).
   const buckets = new Map<string, { views: number; actions: number }>();
-
-  // Inicializar todos los dias del rango con 0/0 (para no dejar gaps
-  // en el chart si algun dia no tiene logs).
   for (let i = 0; i < days; i++) {
     const d = new Date(since.getTime() + i * 24 * 60 * 60 * 1000);
     const key = d.toISOString().slice(0, 10);
-    buckets.set(key, { views: 0, actions: 0 });
-  }
-
-  for (const log of logs) {
-    const key = log.createdAt.toISOString().slice(0, 10);
-    const b = buckets.get(key);
-    if (!b) continue;
-    if (log.action === 'PAGE_VIEW') {
-      b.views++;
-    } else if (isAdminAction(log.action)) {
-      b.actions++;
-    }
+    buckets.set(key, totals.get(key) ?? { views: 0, actions: 0 });
   }
 
   const series = Array.from(buckets.entries())
