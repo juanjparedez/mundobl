@@ -4,10 +4,12 @@
 // historial inventado por el trigger y sin dejar el lease de restauracion.
 
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import path from 'node:path';
 import Database from 'better-sqlite3';
 import { dumpData } from './db/sqlite-dump.mjs';
 import { restoreLocal } from './db/restore-local.mjs';
+import { migrateLocal } from './db/migrate-local.mjs';
 
 const fileOf = (url) => {
   assert.ok(url?.startsWith('file:'), 'Se esperaba DATABASE_URL=file:...');
@@ -47,6 +49,28 @@ assert.ok(target.includes(`${path.sep}test-results${path.sep}`));
   db.prepare(
     `INSERT INTO "ViewStatus" ("userId", "episodeId", status, "watchedDate", "createdAt", "updatedAt") VALUES (?, ?, 'VISTA', ?, ?, ?)`
   ).run(key, episode, now, now, now);
+  // Self references whose parent has the higher id: a dump in id order
+  // would load the child first.
+  const maxId = (table) =>
+    db.prepare(`SELECT COALESCE(MAX(id), 0) FROM "${table}"`).pluck().get();
+  const parentComment = maxId('Comment') + 1000;
+  const childComment = maxId('Comment') + 1;
+  db.prepare(
+    'INSERT INTO "Comment" (id, content, "seriesId", "userId", "createdAt", "updatedAt") VALUES (?, ?, ?, ?, ?, ?)'
+  ).run(parentComment, 'parent', series, key, now, now);
+  db.prepare(
+    'INSERT INTO "Comment" (id, content, "seriesId", "userId", "parentId", "createdAt", "updatedAt") VALUES (?, ?, ?, ?, ?, ?, ?)'
+  ).run(childComment, 'child', series, key, parentComment, now, now);
+  const linked = db
+    .prepare(
+      `INSERT INTO "Series" (id, title, type, "createdAt", "updatedAt") VALUES (?, ?, 'serie', ?, ?) RETURNING id`
+    )
+    .pluck()
+    .get(maxId('Series') + 1000, `${key}-linked`, now, now);
+  db.prepare('UPDATE "Series" SET "linkedSeriesId" = ? WHERE id = ?').run(
+    linked,
+    series
+  );
   db.close();
 }
 
@@ -95,7 +119,40 @@ try {
 } finally {
   writable.close();
 }
+// D1 (`wrangler d1 execute --file`) commits the file in parts and checks
+// foreign keys at each commit, so defer_foreign_keys does not help. Load the
+// dump the strictest way: one statement per commit, foreign keys enforced
+// immediately. Twice, the second time with --clear over the loaded data.
+{
+  const strict = `${target}.strict.db`;
+  migrateLocal(strict, { fresh: true });
+  const db = new Database(strict);
+  try {
+    db.pragma('foreign_keys = ON');
+    for (const clear of [false, true]) {
+      const file = `${target}.strict.sql`;
+      dumpData(source, file, { clear });
+      const sql = fs.readFileSync(file, 'utf8');
+      for (const statement of sql.split(/;\n(?=[A-Z])/)) {
+        if (/^PRAGMA defer_foreign_keys/.test(statement)) continue;
+        db.exec(statement.endsWith(';') ? statement : `${statement};`);
+      }
+      fs.rmSync(file);
+    }
+    for (const [table, rows] of Object.entries(dumped))
+      assert.equal(
+        db.prepare(`SELECT COUNT(*) FROM "${table}"`).pluck().get(),
+        rows,
+        `${table} after a statement-by-statement load`
+      );
+  } finally {
+    db.close();
+    for (const suffix of ['', '-wal', '-shm'])
+      fs.rmSync(strict + suffix, { force: true });
+  }
+}
+
 const total = Object.values(dumped).reduce((a, b) => a + b, 0);
 console.log(
-  `PASS backup/restore: ${total} rows in ${Object.keys(dumped).length} tables, foreign keys intact, no synthetic history, trigger back on.`
+  `PASS backup/restore: ${total} rows in ${Object.keys(dumped).length} tables, foreign keys intact, loads one statement at a time with keys enforced, no synthetic history, trigger back on.`
 );
