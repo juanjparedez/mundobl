@@ -137,14 +137,31 @@ export async function copyPostgresToSqlite(pgUrl, targetFile) {
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const target = process.argv[2];
   // PG_URL, o DIRECT_URL/DATABASE_URL sueltos, o dentro de MUNDOBL_ENV (el
-  // .env de produccion guardado como un solo secret).
+  // .env de produccion guardado como un solo secret). DATABASE_URL va antes
+  // que DIRECT_URL: es la que usaba la app, asi que se sabe que anda. Se
+  // descarta un valor sin host real (placeholder o mal escrito). Solo se
+  // imprime el nombre de la variable: el repo es publico.
   const env = parse(process.env.MUNDOBL_ENV ?? '');
-  const url =
-    process.env.PG_URL ||
-    process.env.DIRECT_URL ||
-    process.env.DATABASE_URL ||
-    env.DIRECT_URL ||
-    env.DATABASE_URL;
+  const candidates = [
+    ['PG_URL', process.env.PG_URL],
+    ['DATABASE_URL', process.env.DATABASE_URL],
+    ['DIRECT_URL', process.env.DIRECT_URL],
+    ['MUNDOBL_ENV:DATABASE_URL', env.DATABASE_URL],
+    ['MUNDOBL_ENV:DIRECT_URL', env.DIRECT_URL],
+  ];
+  const usable = (value) => {
+    try {
+      return new URL(value).hostname.includes('.');
+    } catch {
+      return false;
+    }
+  };
+  const found = candidates.find(([, value]) => value && usable(value));
+  for (const [name, value] of candidates)
+    if (value && !usable(value))
+      console.error(`${name}: URL sin host valido, se ignora.`);
+  if (found) console.log(`Origen: ${found[0]}`);
+  const url = found?.[1];
   if (!target || !url) {
     console.error(
       'Uso: PG_URL=postgresql://... node scripts/db/copy-postgres-to-sqlite.mjs <destino.db>\n' +
