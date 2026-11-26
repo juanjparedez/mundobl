@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
 }
 
 // ============================================
@@ -123,7 +123,7 @@ model User {
 model UserActiveDay {
   userId String
   user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  day    DateTime @db.Date
+  day    DateTime 
 
   @@id([userId, day])
   @@index([day])
@@ -329,7 +329,7 @@ model SeriesDubbing {
 // ============================================
 model Series {
   contentRating String @default("UNREVIEWED")
-  contentWarnings String[] @default([])
+  contentWarnings Json @default("[]")
   contentRatingSource String?
   contentReviewedAt DateTime?
   contentReviewedBy String?
@@ -624,7 +624,7 @@ model Episode {
   // Subset de CORE_MARKETS donde el embed NO se puede reproducir. Vacio
   // cuando playback != GEO_BLOCKED. Permite que /ver filtre por el pais
   // real del visitante en vez de asumir AR.
-  playbackBlockedMarkets String[]        @default([])
+  playbackBlockedMarkets Json        @default("[]")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -699,7 +699,7 @@ model Actor {
   nationality String?
   imageUrl    String?
   biography   String?
-  funFacts    String[]  @default([]) // Datos curiosos cargados a mano por admins
+  funFacts    Json  @default("[]") // Datos curiosos cargados a mano por admins
 
   /// No es una persona: agrupa los personajes de series donde no se sabe
   /// quien los interpreta (ver src/lib/placeholder-actor.ts). Se excluye del
@@ -707,8 +707,8 @@ model Actor {
   isPlaceholder Boolean @default(false)
 
   // --- Simetria con Director (antes Actor no tenia ninguno de estos) ---
-  aliases      String[] @default([])
-  awards       String[] @default([])
+  aliases      Json @default("[]")
+  awards       Json @default("[]")
   imdbUrl      String?
   mdlUrl       String?
   wikiUrl      String?
@@ -759,12 +759,12 @@ model Director {
   nationality String?
   imageUrl    String?
   biography   String?
-  aliases     String[] @default([])
+  aliases     Json @default("[]")
   imdbUrl     String?
   mdlUrl      String?
   wikiUrl     String?
   birthYear   Int?
-  awards      String[] @default([])
+  awards      Json @default("[]")
 
   // --- Simetria con Actor ---
 
@@ -791,7 +791,7 @@ model Director {
 model Writer {
   id               Int      @id @default(autoincrement())
   name             String   @unique
-  aliases          String[] @default([])
+  aliases          Json @default("[]")
   nationality      String?
   biography        String?
   imageUrl         String?
@@ -1298,6 +1298,15 @@ model TrackingEvent {
   @@index([episodeId])
 }
 
+/// Mientras existe (y no vencio) la fila de un usuario, el trigger de
+/// ViewStatus no registra historial: al restaurar un backup, el historial
+/// viene en el propio archivo y no hay que fabricar eventos extra.
+/// En Postgres era un set_config por transaccion; D1 no tiene transacciones.
+model TrackingRestoreLock {
+  userId    String   @id
+  expiresAt DateTime
+}
+
 model ViewStatus {
   id            Int         @id @default(autoincrement())
   status        WatchStatus @default(SIN_VER)
@@ -1487,7 +1496,7 @@ model WatchLink {
 // cuentas ni historial: solo sirve para decir "enviamos N personas a tu
 // plataforma oficial" sin exponer a nadie.
 model WatchLinkClickDaily {
-  day         DateTime  @db.Date
+  day         DateTime  
   watchLinkId Int
   watchLink   WatchLink @relation(fields: [watchLinkId], references: [id], onDelete: Cascade)
   surface     String // 'series' | 'info' | 'watching'
@@ -1694,7 +1703,7 @@ model Announcement {
   template    AnnouncementTemplate @default(SIMPLE)
   // Page keys donde puede aparecer (ver src/constants/announcements.ts).
   // 'global' = todas las paginas instrumentadas.
-  pages       String[]             @default([])
+  pages       Json             @default("[]")
   // Si es false, el banner no muestra boton de cerrar (uso raro, para
   // avisos que se quieren "insistentes" durante su ventana de vigencia).
   dismissible Boolean              @default(true)
@@ -2116,7 +2125,7 @@ model SupportSettings {
 // usuario, IP ni cookie. Es lo que muestra que el sitio se usa aunque la
 // mayoria mire sin cuenta. Ver src/lib/series-activity.ts.
 model SeriesActivityDaily {
-  day      DateTime @db.Date
+  day      DateTime 
   seriesId Int
   series   Series   @relation(fields: [seriesId], references: [id], onDelete: Cascade)
   kind     String // 'view' | 'chapter' | 'want' | 'finish' | 'alert_offer' | 'alert_click' | 'alert_on' | 'open_ver' | 'play_start' | 'outbound_click' | 'like' | 'series_view'
@@ -2173,7 +2182,7 @@ model SeriesFactOverride {
 // Conteo diario agregado de secciones y flujos para dimensionamiento de infra.
 // Cero IPs, cero usuarios, cero cookies de rastreo.
 model SiteTrafficDaily {
-  day     DateTime @db.Date
+  day     DateTime 
   section String // 'home' | 'catalogo' | 'ver' | 'ver_player' | 'series_detail' | 'estrenos' | 'comunidad' | 'estadisticas' | 'perfil' | 'otros'
   flow    String   @default("direct") // 'direct' | 'internal' | 'referral' | 'share'
   source  String // 'account' | 'browser'
@@ -2185,7 +2194,7 @@ model SiteTrafficDaily {
 }
 
 model PilotClickDaily {
-  day DateTime @db.Date
+  day DateTime 
   placement String
   clicks Int @default(0)
   @@id([day, placement])

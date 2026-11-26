@@ -53,12 +53,10 @@ import {
  */
 
 import { unstable_cache } from 'next/cache';
-import { Pool } from 'pg';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
-import { PrismaPg } from '@prisma/adapter-pg';
-import { withSerialTransactions } from './serial-transactions';
+import { PrismaD1 } from '@prisma/adapter-d1';
+import { lazyD1 } from './d1';
 import { scopeBatchingToRequest } from './request-scoped-batching';
-import { RequestScopedPool } from './request-scoped-pool';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { playableCountIn, summarizePlayability } from './availability';
 import { airingSeriesWhere } from './airing-schedule';
@@ -98,27 +96,14 @@ function currentRequestKey(): object | undefined {
 }
 
 function createPrismaClient() {
-  const config = {
-    // En workerd se lee por request (RequestScopedPool crea el pool real en
-    // cada uno), asi toma la connection string de Hyperdrive que inyecta
-    // cloudflare/worker.ts.
-    get connectionString() {
-      return process.env.DATABASE_URL;
-    },
-    max: 5,
-    idleTimeoutMillis: 10000,
-    connectionTimeoutMillis: 10000,
-    // En workerd cada conexion se usa una vez y se cierra, asi ningun timer
-    // de idle queda vivo al terminar el request. El pooling real lo hace
-    // Hyperdrive, o el pooler de Supabase si el deploy no lo pudo activar.
-    // En Node se reutilizan.
-    ...(IS_WORKERD && { maxUses: 1 }),
-  };
-  const pool = IS_WORKERD
-    ? new RequestScopedPool(config, currentRequestKey)
-    : new Pool(config);
-  const adapter = withSerialTransactions(new PrismaPg(pool));
-  const client = new PrismaClient({ adapter });
+  // Un solo PrismaClient por isolate (cada uno pesa ~30 MB). La base se
+  // resuelve en cada consulta (lazyD1): `env.DB` en el Worker, el archivo
+  // local o la API REST en Node (scripts/db/runtime.mjs).
+  //
+  // D1 no tiene transacciones interactivas: Prisma corre `$transaction` como
+  // consultas sueltas. Lo que tiene que ser todo-o-nada usa atomicWrite()
+  // (src/lib/d1.ts), que va en un batch de D1.
+  const client = new PrismaClient({ adapter: new PrismaD1(lazyD1) });
   // Sin esto, Prisma despacha juntos los findUnique de requests distintos
   // desde el contexto del primero (ver request-scoped-batching.ts).
   if (IS_WORKERD) scopeBatchingToRequest(client, currentRequestKey);
