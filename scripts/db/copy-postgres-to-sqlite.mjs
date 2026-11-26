@@ -18,6 +18,7 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import Database from 'better-sqlite3';
+import { parse } from 'dotenv';
 import pg from 'pg';
 import { RESTORE_ALL_LEASE } from '../../prisma/sqlite-extras.mjs';
 import { migrateLocal } from './migrate-local.mjs';
@@ -135,10 +136,19 @@ export async function copyPostgresToSqlite(pgUrl, targetFile) {
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const target = process.argv[2];
-  const url = process.env.PG_URL;
+  // PG_URL, o DIRECT_URL/DATABASE_URL sueltos, o dentro de MUNDOBL_ENV (el
+  // .env de produccion guardado como un solo secret).
+  const env = parse(process.env.MUNDOBL_ENV ?? '');
+  const url =
+    process.env.PG_URL ||
+    process.env.DIRECT_URL ||
+    process.env.DATABASE_URL ||
+    env.DIRECT_URL ||
+    env.DATABASE_URL;
   if (!target || !url) {
     console.error(
-      'Uso: PG_URL=postgresql://... node scripts/db/copy-postgres-to-sqlite.mjs <destino.db>'
+      'Uso: PG_URL=postgresql://... node scripts/db/copy-postgres-to-sqlite.mjs <destino.db>\n' +
+        'En Actions: secret DIRECT_URL, DATABASE_URL o MUNDOBL_ENV con alguna de las dos.'
     );
     process.exit(1);
   }
