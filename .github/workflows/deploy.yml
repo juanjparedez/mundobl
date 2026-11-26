@@ -93,7 +93,7 @@ jobs:
 
       # La base es D1. Las migraciones (migrations/) se aplican antes del
       # build: el codigo nuevo nunca corre contra un schema viejo. Si la D1
-      # esta vacia (todavia no se copiaron los datos) el deploy se corta.
+      # esta vacia el deploy se corta.
       - name: Migrar D1
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -102,7 +102,7 @@ jobs:
           npx wrangler d1 migrations apply mundobl --remote
           users=$(npx wrangler d1 execute mundobl --remote --json --command 'SELECT COUNT(*) AS n FROM "User"' | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>console.log(JSON.parse(s)[0].results[0].n))')
           if [ "$users" -lt 1 ]; then
-            echo "::error::La D1 esta vacia: correr primero 'Copiar Supabase a D1'."
+            echo "::error::La D1 esta vacia: restaurar un backup (docs/backups.md)."
             exit 1
           fi
 

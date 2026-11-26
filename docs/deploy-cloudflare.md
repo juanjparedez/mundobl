@@ -98,20 +98,13 @@ Cambiar el schema: editar `prisma/schema.prisma`, `npm run db:migration <nombre>
 (genera el SQL en `migrations/`), probar con `npm run test:all`, mergear y correr
 **Deploy producción**.
 
-### Paso de Supabase a D1 (una sola vez)
+### Paso de Supabase a D1 (hecho el 26/11/2026)
 
-1. Darle al token el permiso de D1 (arriba).
-2. Actions → **Copiar Supabase a D1** → Run workflow → escribir `COPIAR`.
-   Solo lee Supabase. Borra y recarga la D1, así que se puede repetir. Al
-   final compara filas por tabla y falla si alguna no coincide.
-3. Revisar el resumen de esa corrida (Summary): todas las tablas iguales.
-4. Correr **Deploy producción**. Desde ahí el sitio usa la D1.
-5. Probar: login, marcar un episodio, /perfil, /viendo, comunidad.
-
-Lo que se escriba en Supabase entre el paso 2 y el 4 no pasa a D1: correr
-la copia justo antes del deploy. **Volver atrás:** redeployar el commit
-anterior al cambio; Supabase sigue con sus datos y `DATABASE_URL` sigue en el
-Worker hasta que se confirme que D1 anda bien.
+Los datos se copiaron una sola vez con un workflow que ya se borró (81.091
+filas en 88 tablas, todas iguales). Desde ese deploy el sitio usa solo la D1.
+**Volver atrás:** redeployar la versión anterior del Worker; Supabase quedó con
+los datos hasta ese momento, y lo escrito después en D1 no vuelve. Los secrets
+`DATABASE_URL`/`DIRECT_URL` ya no se usan y se pueden borrar (GitHub y Worker).
 
 ## Estadísticas (Cloudflare Web Analytics)
 

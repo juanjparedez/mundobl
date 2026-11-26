@@ -907,6 +907,13 @@ export async function recordUserActiveDay(userId: string): Promise<boolean> {
   const day = new Date(
     Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
   );
+  // Casi siempre el dia ya esta anotado: leerlo antes evita el INSERT que
+  // choca con la clave (y el error que el adapter de D1 loguea por cada uno).
+  const existing = await prisma.userActiveDay.findUnique({
+    where: { userId_day: { userId, day } },
+    select: { day: true },
+  });
+  if (existing) return false;
   const { count } = await createManySkippingDuplicates(
     [{ userId, day }],
     (rows) => prisma.userActiveDay.createMany({ data: rows })
