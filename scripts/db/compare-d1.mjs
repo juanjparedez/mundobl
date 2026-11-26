@@ -19,9 +19,11 @@ const local = new Database(path.resolve(file), { readonly: true });
 const remote = createRemoteD1();
 const tables = dataTables(local);
 const rows = [];
-// De a tandas: cada consulta a la API REST es un request.
-for (let i = 0; i < tables.length; i += 20) {
-  const chunk = tables.slice(i, i + 20);
+// De a tandas: cada consulta a la API REST es un request. D1 rechaza un
+// UNION ALL de 20 terminos ("too many terms in compound SELECT"); 5 anda.
+const CHUNK = 5;
+for (let i = 0; i < tables.length; i += CHUNK) {
+  const chunk = tables.slice(i, i + CHUNK);
   const sql = chunk
     .map((t) => `SELECT '${t}' AS t, COUNT(*) AS n FROM "${t}"`)
     .join(' UNION ALL ');
