@@ -8,7 +8,8 @@
 # Los datos nunca quedan como artifact: el repo es publico y la copia tiene
 # mails y sesiones. Solo el resumen (conteos) queda en la corrida.
 #
-# Secrets: DIRECT_URL (o DATABASE_URL) de Supabase, CLOUDFLARE_API_TOKEN con
+# Secrets: DIRECT_URL o DATABASE_URL de Supabase (sueltos o dentro de
+# MUNDOBL_ENV), CLOUDFLARE_API_TOKEN con
 # permiso "D1: Edit" y CLOUDFLARE_ACCOUNT_ID.
 #
 # Cuando produccion ya este en D1 este workflow se borra junto con
@@ -53,9 +54,9 @@ jobs:
         env:
           DIRECT_URL: ${{ secrets.DIRECT_URL }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          MUNDOBL_ENV: ${{ secrets.MUNDOBL_ENV }}
         run: |
-          export PG_URL="${DIRECT_URL:-$DATABASE_URL}"
-          test -n "$PG_URL" || { echo "::error::Falta el secret DIRECT_URL o DATABASE_URL"; exit 1; }
+          set -o pipefail
           node scripts/db/copy-postgres-to-sqlite.mjs "$RUNNER_TEMP/copy.db" | tee "$RUNNER_TEMP/copy.txt"
 
       - name: Armar el SQL de carga
@@ -69,6 +70,7 @@ jobs:
 
       - name: Comparar filas
         run: |
+          set -o pipefail
           node scripts/db/compare-d1.mjs "$RUNNER_TEMP/copy.db" | tee "$RUNNER_TEMP/compare.txt"
           {
             echo '### Copia Supabase -> D1'
