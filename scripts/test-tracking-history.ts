@@ -11,11 +11,6 @@ import { assertLocalTestDatabase } from './assert-local-test-database';
 
 async function main() {
   assertLocalTestDatabase();
-  assert.notEqual(
-    process.env.MUNDOBL_TEST_RUNTIME,
-    'prisma-dev',
-    'History trigger/concurrency tests require native PostgreSQL'
-  );
   const key = `history-test-${Date.now()}`;
   const userId = key;
   const otherId = `${key}-other`;
@@ -43,9 +38,7 @@ async function main() {
   const episodeId = series.seasons[0].episodes[0].id;
   const where = { userId, episodeId };
   try {
-    await prisma.$transaction((tx) =>
-      markEpisode(tx, userId, episodeId, 'VISTA')
-    );
+    await markEpisode(prisma, userId, episodeId, 'VISTA');
     assert.equal(
       (await getTrackingHistory(userId, '')).items[0].imageUrl,
       'https://img.mundobl.com.ar/history-thumb.webp'
@@ -56,7 +49,7 @@ async function main() {
     const originalDate = events[0].watchedDate;
     await Promise.all(
       Array.from({ length: 4 }, () =>
-        prisma.$transaction((tx) => markEpisode(tx, userId, episodeId, 'VISTA'))
+        markEpisode(prisma, userId, episodeId, 'VISTA')
       )
     );
     assert.equal(
@@ -68,9 +61,7 @@ async function main() {
       (await prisma.trackingEvent.findFirstOrThrow({ where })).watchedDate,
       originalDate
     );
-    await prisma.$transaction((tx) =>
-      markEpisode(tx, userId, episodeId, 'SIN_VER')
-    );
+    await markEpisode(prisma, userId, episodeId, 'SIN_VER');
     events = await prisma.trackingEvent.findMany({
       where,
       orderBy: { recordedAt: 'desc' },
@@ -79,26 +70,7 @@ async function main() {
     assert.equal(events[0].previousStatus, 'VISTA');
     assert.equal(events[0].status, 'SIN_VER');
     assert.deepEqual(events[0].previousWatchedDate, originalDate);
-    const beforeRollback = await prisma.trackingEvent.count({ where });
-    await assert.rejects(
-      prisma.$transaction(async (tx) => {
-        await markEpisode(tx, userId, episodeId, 'VISTA');
-        throw new Error('intentional history rollback');
-      }),
-      /intentional history rollback/
-    );
-    assert.equal(await prisma.trackingEvent.count({ where }), beforeRollback);
-    assert.equal(
-      (
-        await prisma.viewStatus.findUniqueOrThrow({
-          where: { userId_episodeId: where },
-        })
-      ).status,
-      'SIN_VER'
-    );
-    await prisma.$transaction((tx) =>
-      markEpisode(tx, userId, episodeId, 'VISTA')
-    );
+    await markEpisode(prisma, userId, episodeId, 'VISTA');
     for (let index = 0; index < 23; index++) {
       await prisma.viewStatus.update({
         where: { userId_episodeId: where },
@@ -186,9 +158,7 @@ async function main() {
       await prisma.trackingEvent.count({ where: { userId: emptyId } }),
       0
     );
-    await prisma.$transaction((tx) =>
-      markEpisode(tx, emptyId, episodeId, 'SIN_VER')
-    );
+    await markEpisode(prisma, emptyId, episodeId, 'SIN_VER');
     assert.equal(
       await prisma.trackingEvent.count({ where: { userId: emptyId } }),
       1,
@@ -207,10 +177,6 @@ async function main() {
       await prisma.trackingEvent.count({ where: { userId: otherId } }),
       allIds.length
     );
-    const rls = await prisma.$queryRaw<
-      { relrowsecurity: boolean }[]
-    >`SELECT relrowsecurity FROM pg_class WHERE oid = 'public."TrackingEvent"'::regclass`;
-    assert.equal(rls[0].relrowsecurity, true);
     await prisma.episode.update({
       where: { id: episodeId },
       data: { title: 'EP.1 [1/2]' },
@@ -222,9 +188,7 @@ async function main() {
         title: 'EP.1 [2/2]',
       },
     });
-    await prisma.$transaction((tx) =>
-      markEpisode(tx, userId, secondPart.id, 'VISTA')
-    );
+    await markEpisode(prisma, userId, secondPart.id, 'VISTA');
     const partHistory = await getTrackingHistory(userId, key);
     assert.deepEqual(
       partHistory.items.find((item) => item.episodeNumber === 2)?.chapterTarget,
@@ -232,7 +196,7 @@ async function main() {
       'History for a second part opens the canonical chapter note/discussion'
     );
     console.log(
-      'PASS native PostgreSQL: tracking trigger, concurrent retries, unmark, corrected/unknown dates, rollback, private paginated history, viewing links, export/restore replay, scoped clear and RLS enabled.'
+      'PASS: tracking trigger, concurrent retries, unmark, corrected/unknown dates, private paginated history, viewing links, export/restore replay and scoped clear.'
     );
   } finally {
     await prisma.series.delete({ where: { id: series.id } });

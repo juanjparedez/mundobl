@@ -6,6 +6,7 @@ import {
   saveSeriesFromForm,
   type SeriesFormBody,
 } from '../src/lib/series-save';
+import { assertLocalTestDatabase } from './assert-local-test-database';
 
 // Guardado del form de edicion contra PostgreSQL real (descartable). Cubre lo
 // que fallo el 29/09 con "Poisoned chalice": pestaña vieja que pisa, guardado
@@ -13,10 +14,7 @@ import {
 const IMAGE = { url: null, thumbUrl: null };
 
 async function main() {
-  const url = new URL(process.env.DATABASE_URL ?? '');
-  assert.equal(url.hostname, '127.0.0.1');
-  assert.equal(url.port, '55433');
-  assert.equal(url.pathname, '/mundobl_replay');
+  assertLocalTestDatabase();
 
   const runId = Date.now();
   const tagNames = Array.from({ length: 11 }, (_, i) => `Tag ${runId} ${i}`);
@@ -195,8 +193,9 @@ async function main() {
     assert.equal(lastSnapshot.tags.length, 11);
     assert.ok(lastSnapshot.tags.some((t) => t.tag.name === tagNames[0]));
 
-    // 6. Atomicidad: si algo falla a mitad de camino (relacionada inexistente
-    // -> violacion de FK), no se aplica nada: ni etiquetas, ni sinopsis, ni version.
+    // 6. Sin transacciones: un id inexistente (relacionada que no existe) se
+    // rechaza antes de la primera escritura, asi no se aplica nada: ni
+    // etiquetas, ni sinopsis, ni version.
     await assert.rejects(
       saveSeriesFromForm(
         series.id,

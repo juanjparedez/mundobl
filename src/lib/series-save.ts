@@ -191,6 +191,29 @@ export interface SeriesRelationsInput {
   relatedSeriesIds?: number[];
 }
 
+async function assertReferencesExist(
+  tx: AppTransactionClient,
+  relations: SeriesRelationsInput,
+  universeId: number | null
+): Promise<void> {
+  const unique = (ids: readonly number[] | undefined) => [...new Set(ids)];
+  const related = unique(relations.relatedSeriesIds);
+  const dubbings = unique(relations.dubbingIds);
+  const [series, languages, universes] = await Promise.all([
+    related.length ? tx.series.count({ where: { id: { in: related } } }) : 0,
+    dubbings.length
+      ? tx.language.count({ where: { id: { in: dubbings } } })
+      : 0,
+    universeId !== null ? tx.universe.count({ where: { id: universeId } }) : 0,
+  ]);
+  if (
+    series !== related.length ||
+    languages !== dubbings.length ||
+    universes !== (universeId !== null ? 1 : 0)
+  )
+    throw new Error('SERIES_UNKNOWN_REFERENCE');
+}
+
 async function syncIdSet(
   current: readonly number[],
   desired: readonly number[] | undefined,
@@ -638,6 +661,9 @@ export async function saveSeriesFromForm(
   return inSequence(async (tx) => {
     const current = await loadSeriesForSave(tx, seriesId);
     if (!current) return null;
+    // D1 has no rollback: refuse unknown ids before the first write, so a bad
+    // form never leaves a half-applied save behind.
+    await assertReferencesExist(tx, relations, requestedUniverseId ?? null);
     if (current.editVersion !== expectedEditVersion) {
       throw new SeriesEditConflictError();
     }

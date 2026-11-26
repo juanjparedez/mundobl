@@ -137,8 +137,8 @@ async function updateSeriesAfterWatch(
   if (inserted.count) {
     await subscribeOnFirstTrack(client, userId, seriesId);
   } else {
-    // PostgreSQL comprueba el estado al escribir, incluso si otra transaccion
-    // acaba de cerrar la serie mientras se marcaba el episodio.
+    // El estado se comprueba en la misma sentencia que escribe, asi que una
+    // serie cerrada mientras se marcaba el episodio sigue cerrada.
     const updated = await client.viewStatus.updateMany({
       where: { ...where, status: { in: WATCHING_AFTER_WATCH } },
       data: { status: 'VIENDO', lastWatchedAt: now },
@@ -431,7 +431,7 @@ async function buildProgressResult(
   };
 }
 
-/** Use inside a transaction. Identical commands preserve dates, including unknown ones. */
+/** Identical commands preserve dates, including unknown ones. */
 export async function setSeriesTrackingStatus(
   client: AppTransactionClient,
   userId: string,

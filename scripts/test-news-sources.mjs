@@ -33,6 +33,7 @@ globalThis.fetch = async () => {
 const { ingestNews } = load('src/lib/news-ingest.ts', {
   'fast-xml-parser': { XMLParser },
   './news-source-policy': policy,
+  './text-match': load('src/lib/text-match.ts'),
   './database': {
     prisma: {
       recommendedSite: { findMany: async () => sites },

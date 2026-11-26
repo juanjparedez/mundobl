@@ -23,6 +23,7 @@ import {
   renderWelcomeEmail,
   renderAnnouncementEmail,
 } from '../src/lib/email-templates';
+import { inSequence } from '../src/lib/prisma-client';
 
 async function main() {
   assertLocalTestDatabase();
@@ -193,7 +194,7 @@ async function main() {
       TrackingPreservationError
     );
     await assert.rejects(
-      prisma.$transaction((tx) => assertTrackingCanBeRemoved(tx, series.id)),
+      inSequence((tx) => assertTrackingCanBeRemoved(tx, series.id)),
       TrackingPreservationError
     );
     assert.deepEqual(await snapshot(), before);

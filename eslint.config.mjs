@@ -37,7 +37,8 @@ const eslintConfig = [
             'D1 no tiene transacciones. Usa inSequence, atomicWrite o withLease.',
         },
         {
-          selector: 'TemplateElement[value.raw=/FOR UPDATE|pg_advisory/]',
+          selector:
+            'TemplateElement[value.raw=/FOR (UPDATE|SHARE|NO KEY)|pg_advisory|pg_try_advisory|set_config/]',
           message: 'D1 no tiene bloqueos de filas. Usa withLease.',
         },
       ],

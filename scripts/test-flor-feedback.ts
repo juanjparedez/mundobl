@@ -7,28 +7,20 @@ import {
 } from '../src/lib/database';
 import { assertSafePrismaCommand } from './prisma-safety';
 import { groupIntoCatalogItems } from '../src/app/(app)/catalogo/catalogGrouping';
+import { assertLocalTestDatabase } from './assert-local-test-database';
 
 async function main() {
   const runId = Date.now();
-  const url = new URL(process.env.DATABASE_URL ?? '');
-  assert.equal(url.hostname, '127.0.0.1');
-  assert.equal(url.port, '55433');
-  assert.equal(url.pathname, '/mundobl_replay');
+  assertLocalTestDatabase();
   for (const args of [
     ['migrate', 'dev'],
     ['migrate', 'reset'],
+    ['migrate', 'deploy'],
     ['db', 'push'],
-  ]) {
-    assert.throws(() =>
-      assertSafePrismaCommand(args, 'postgresql://user:pass@remote.example/app')
-    );
-    assert.doesNotThrow(() => assertSafePrismaCommand(args, url.href));
-  }
+  ])
+    assert.throws(() => assertSafePrismaCommand(args));
   assert.doesNotThrow(() =>
-    assertSafePrismaCommand(
-      ['migrate', 'deploy'],
-      'postgresql://user:pass@remote.example/app'
-    )
+    assertSafePrismaCommand(['migrate', 'diff', '--from-empty'])
   );
   const universe = await prisma.universe.create({
     data: { name: 'Universo de prueba Flor ' + Date.now() },

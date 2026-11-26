@@ -451,7 +451,7 @@ export async function getPublicStats(): Promise<PublicStats> {
         AND ${COMMUNITY_SQL}
         AND a."isPlaceholder" = false
       GROUP BY a.id, a.name
-      ORDER BY count DESC, name ASC
+      ORDER BY count DESC, a.name ASC
       LIMIT 15
     `),
     prisma.$queryRaw<RawDirectorCountRow[]>(Prisma.sql`
@@ -466,7 +466,7 @@ export async function getPublicStats(): Promise<PublicStats> {
         AND ${PUBLIC_SERIES_SQL}
         AND ${COMMUNITY_SQL}
       GROUP BY d.id, d.name
-      ORDER BY count DESC, name ASC
+      ORDER BY count DESC, d.name ASC
       LIMIT 15
     `),
     // Cuenta por SeriesProductionCompany (co-producciones), no por la
@@ -484,7 +484,7 @@ export async function getPublicStats(): Promise<PublicStats> {
         AND ${PUBLIC_SERIES_SQL}
         AND ${COMMUNITY_SQL}
       GROUP BY pc.id, pc.name
-      ORDER BY count DESC, name ASC
+      ORDER BY count DESC, pc.name ASC
       LIMIT 15
     `),
     prisma.$queryRaw<RawNamedCountRow[]>(Prisma.sql`

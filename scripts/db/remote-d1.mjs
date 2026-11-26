@@ -25,7 +25,9 @@ function toParam(value) {
   if (value === undefined) return null;
   if (typeof value === 'boolean') return value ? 1 : 0;
   if (value instanceof Uint8Array || value instanceof ArrayBuffer) {
-    throw new Error('D1 remoto: la API REST no acepta binarios como parametro.');
+    throw new Error(
+      'D1 remoto: la API REST no acepta binarios como parametro.'
+    );
   }
   return value;
 }

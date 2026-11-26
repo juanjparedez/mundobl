@@ -24,8 +24,9 @@
   "triggers": {
     "crons": ["0 5 * * *", "0 12 * * *"],
   },
-  // La base esta en Sao Paulo y una pagina hace varias consultas: Smart
-  // Placement corre el Worker cerca de la base si eso responde mas rapido.
+  // La base (D1) esta en el este de Norteamerica y una pagina hace varias
+  // consultas: Smart Placement corre el Worker cerca de la base si eso
+  // responde mas rapido.
   "placement": {
     "mode": "smart",
   },
@@ -37,6 +38,16 @@
       // OpenNext se llama a si mismo para revalidar (open-next.config.ts).
       "binding": "WORKER_SELF_REFERENCE",
       "service": "mundobl",
+    },
+  ],
+  // La base. src/lib/d1.ts la toma de env.DB. Migraciones: migrations/
+  // (npm run db:migration para crear, npm run migrate:d1 para aplicar).
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "mundobl",
+      "database_id": "7846511e-b152-4380-945d-e1a285ce2759",
+      "migrations_dir": "migrations",
     },
   ],
   "r2_buckets": [

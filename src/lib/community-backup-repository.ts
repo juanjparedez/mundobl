@@ -66,7 +66,6 @@ export function createCommunityBackupRepository(
     return withLease(
       `community-library:${userId}`,
       async (tx) => {
-        await tx.$queryRaw`SELECT id FROM "User" WHERE id = ${userId} FOR SHARE`;
         if (
           !(await tx.user.findFirst({
             where: { id: userId, banned: false },

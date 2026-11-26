@@ -94,10 +94,6 @@ async function main() {
       data: { visibility: 'HIDDEN' },
     });
     assert.equal((await getWriterById(writer.id))?.series.length, 1);
-    const rls = await prisma.$queryRaw<{ relrowsecurity: boolean }[]>`
-      SELECT relrowsecurity FROM pg_class WHERE oid IN ('public."Writer"'::regclass, 'public."SeriesWriter"'::regclass)`;
-    assert.equal(rls.length, 2);
-    assert.ok(rls.every((row) => row.relrowsecurity));
     await prisma.series.deleteMany({ where: { id: { in: ids } } });
     assert.equal(
       await prisma.seriesWriter.count({ where: { writerId: writer.id } }),

@@ -13,7 +13,7 @@ try {
       MUNDOBL_BUILD_SHA: sha,
       MUNDOBL_BUILD_COMMIT_DATE: date,
     }),
-    { buildId: sha.slice(0, 12), commitDate: date }
+    { buildId: sha.slice(0, 12), commitDate: date, recentCommits: '' }
   );
   assert.equal(
     getBuildMetadata(directory, { VERCEL_GIT_COMMIT_SHA: sha }).buildId,

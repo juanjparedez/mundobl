@@ -13,14 +13,27 @@ import path from 'node:path';
 
 const url = process.env.DATABASE_URL ?? '';
 
+/** Abre la base recien al primer uso: este preload corre tambien en procesos
+ *  que nunca la tocan (prisma generate, tsc, next build workers). */
+function lazy(open) {
+  let db;
+  const get = () => (db ??= open());
+  return {
+    prepare: (sql) => get().prepare(sql),
+    batch: (statements) => get().batch(statements),
+    exec: (sql) => get().exec(sql),
+  };
+}
+
 async function resolveDatabase() {
   if (url.startsWith('file:')) {
     const { createLocalD1 } = await import('./local-d1.mjs');
-    return createLocalD1(path.resolve(url.slice('file:'.length)));
+    const file = path.resolve(url.slice('file:'.length));
+    return lazy(() => createLocalD1(file));
   }
   if (url === 'd1:remote') {
     const { createRemoteD1 } = await import('./remote-d1.mjs');
-    return createRemoteD1();
+    return lazy(createRemoteD1);
   }
   return null;
 }

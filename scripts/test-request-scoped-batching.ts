@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
 import { PrismaClient } from '@prisma/client';
-import { PrismaPg } from '@prisma/adapter-pg';
-import { Pool } from 'pg';
+import { PrismaD1 } from '@prisma/adapter-d1';
 import { scopeBatchingToRequest } from '../src/lib/request-scoped-batching';
 
 /**
@@ -13,7 +12,8 @@ import { scopeBatchingToRequest } from '../src/lib/request-scoped-batching';
 async function main() {
   // 1) El detalle interno de Prisma sigue donde lo espera el parche.
   const client = new PrismaClient({
-    adapter: new PrismaPg(new Pool({ connectionString: 'postgresql://x@x/x' })),
+    // Nunca se consulta: alcanza con un binding que no hace nada.
+    adapter: new PrismaD1({} as ConstructorParameters<typeof PrismaD1>[0]),
   });
   const original: unknown = Reflect.get(
     Reflect.get(client, '_requestHandler') as object,

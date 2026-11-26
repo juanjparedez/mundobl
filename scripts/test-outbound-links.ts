@@ -31,7 +31,10 @@ const customTagged = new URL(
 );
 assert.equal(customTagged.searchParams.get('utm_source'), 'mundobl');
 assert.equal(customTagged.searchParams.get('utm_medium'), 'embed_player');
-assert.equal(customTagged.searchParams.get('utm_campaign'), 'channel_subscribe');
+assert.equal(
+  customTagged.searchParams.get('utm_campaign'),
+  'channel_subscribe'
+);
 
 console.log(
   'Outbound links: UTM only on official https links, existing UTMs kept, rel by officiality passed.'
