@@ -45,12 +45,12 @@ if (toMain) {
     );
     process.exit(1);
   }
-  console.log('pre-push: push a main, corriendo npm run test:docker completo.');
+  console.log('pre-push: push a main, corriendo npm run test:all completo.');
 }
 
 const result = spawnSync(
   process.execPath,
-  toMain ? ['scripts/test-docker.mjs'] : ['scripts/test-all.mjs', '--fast'],
+  toMain ? ['scripts/test-all.mjs'] : ['scripts/test-all.mjs', '--fast'],
   { stdio: 'inherit' }
 );
 process.exit(result.status ?? 1);

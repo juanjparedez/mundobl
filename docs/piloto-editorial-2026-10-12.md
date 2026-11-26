@@ -34,16 +34,16 @@ Secure en HTTPS, 30 días, sin identificador personal. Se puede revocar desde
 secreto invalida las preferencias anteriores. No hay verificación de identidad
 ni de edad: **no es control parental**.
 
-| Superficie | Tratamiento |
-| --- | --- |
-| `/series/[id]`, `/catalogo/[id]`, dashboard de ficha y `/ver/[id]` | Antes de construir la vista de detalle se exige consentimiento para ADULT18; los demás estados también muestran su clasificación. |
-| Metadata social de esas fichas | Título y descripción genéricos, sin imagen específica de la obra y noindex, incluso en un navegador que aceptó. |
+| Superficie                                                                   | Tratamiento                                                                                                                                              |
+| ---------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/series/[id]`, `/catalogo/[id]`, dashboard de ficha y `/ver/[id]`           | Antes de construir la vista de detalle se exige consentimiento para ADULT18; los demás estados también muestran su clasificación.                        |
+| Metadata social de esas fichas                                               | Título y descripción genéricos, sin imagen específica de la obra y noindex, incluso en un navegador que aceptó.                                          |
 | API de ficha, episodio, lista de episodios, temporada y bloques informativos | Restricción +18 para lectores públicos, respuesta privada/no-store; edición autorizada conserva acceso. Los bloques vacíos conservan su respuesta vacía. |
-| `/contenido` | Sigue siendo el directorio de videos. Excluye medios asociados a fichas ocultas/+18 de la página compartida. |
-| `/api/contenido` | Filtra por visibilidad y consentimiento; acceso editorial autenticado. |
-| Vista rápida de `/catalogo` y `/ver` | Omite sinopsis +18 en los datos públicos, incluso con consentimiento; se abre la ficha para leerla. |
-| Listados, búsquedas, portadas y títulos | Continúan visibles. No existe una promesa de ocultar toda referencia a una obra. |
-| Seguimiento y respaldo privados | Independientes de la preferencia. Revocarla no elimina la biblioteca ni modifica progreso. |
+| `/contenido`                                                                 | Sigue siendo el directorio de videos. Excluye medios asociados a fichas ocultas/+18 de la página compartida.                                             |
+| `/api/contenido`                                                             | Filtra por visibilidad y consentimiento; acceso editorial autenticado.                                                                                   |
+| Vista rápida de `/catalogo` y `/ver`                                         | Omite sinopsis +18 en los datos públicos, incluso con consentimiento; se abre la ficha para leerla.                                                      |
+| Listados, búsquedas, portadas y títulos                                      | Continúan visibles. No existe una promesa de ocultar toda referencia a una obra.                                                                         |
+| Seguimiento y respaldo privados                                              | Independientes de la preferencia. Revocarla no elimina la biblioteca ni modifica progreso.                                                               |
 
 No están cubiertos como un filtro universal los comentarios comunitarios,
 reseñas, textos de noticias, páginas de personas, medios sin ficha asociada,

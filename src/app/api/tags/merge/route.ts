@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { inSequence } from '@/lib/prisma-client';
 

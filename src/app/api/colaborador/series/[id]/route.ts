@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { revalidateSeriesDetail } from '@/lib/revalidate-series';
-import { prisma, getContributionMetadata } from '@/lib/database';
+import { getContributionMetadata } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { assertSeriesOwnership } from '@/lib/collaborator-guard';
 import { contributionMetadataFailure } from '@/lib/contribution-metadata';

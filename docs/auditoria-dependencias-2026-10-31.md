@@ -4,10 +4,10 @@ Solicitada por el propietario durante el lote de estadísticas. Actualización d
 
 ## Resultado de npm audit
 
-| Alcance | Antes | Después |
-| --- | --- | --- |
-| Producción (`npm audit --omit=dev`) | 0 | 0 |
-| Árbol completo | 18: 1 alta, 16 moderadas, 1 baja | 14 moderadas; 0 altas/críticas/bajas |
+| Alcance                             | Antes                            | Después                              |
+| ----------------------------------- | -------------------------------- | ------------------------------------ |
+| Producción (`npm audit --omit=dev`) | 0                                | 0                                    |
+| Árbol completo                      | 18: 1 alta, 16 moderadas, 1 baja | 14 moderadas; 0 altas/críticas/bajas |
 
 Las cifras son alertas de paquetes, incluidas las propagadas por la misma dependencia, no 14 fallos independientes. Los JSON completos de la ejecución local están en `test-results/dependency-audit-{before,after}.json` y `dependency-audit-prod-{before,after}.json` (artefactos ignorados). Una auditoría sin alertas no garantiza ausencia de vulnerabilidades desconocidas.
 

@@ -14,6 +14,17 @@ function toSqlite(value) {
   return value ?? null;
 }
 
+const NOW = "strftime('%Y-%m-%dT%H:%M:%f+00:00', 'now')";
+
+/** El SQL de Postgres que usan las pruebas, en su forma de SQLite. */
+export function toSqliteSql(text) {
+  return text
+    .replace(/=\s*ANY\(\$(\d+)(::\w+\[\])?\)/gi, ' IN (SELECT value FROM json_each($$$1))')
+    .replace(/::\w+(\[\])?/g, '')
+    .replace(/\bNOW\(\)/gi, NOW)
+    .replace(/\$(\d+)/g, '?$1');
+}
+
 export function createTestPool(url = process.env.DATABASE_URL ?? '') {
   assert.ok(url.startsWith('file:'), 'Las pruebas usan DATABASE_URL=file:...');
   const file = path.resolve(url.slice('file:'.length));
@@ -28,7 +39,7 @@ export function createTestPool(url = process.env.DATABASE_URL ?? '') {
   db.pragma('busy_timeout = 5000');
   return {
     async query(text, values = []) {
-      const statement = db.prepare(text.replace(/\$(\d+)/g, '?$1'));
+      const statement = db.prepare(toSqliteSql(text));
       const params = Object.fromEntries(
         values.map((value, index) => [index + 1, toSqlite(value)])
       );

@@ -12,7 +12,7 @@ import { inSequence } from '../src/lib/prisma-client';
 /**
  * Prueba del progreso compartido entre un aporte USER_EMBED y la ficha
  * curada a la que esta vinculado (src/lib/tracking.ts -> syncLinkedSeries),
- * contra una base local descartable. Ver docs/seguimiento-pruebas-locales.md.
+ * contra una base local descartable. Ver docs/pruebas-locales.md.
  *
  * Uso: node --import ./scripts/prisma-test-runtime.mjs --import tsx scripts/test-linked-progress-database.ts
  */

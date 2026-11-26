@@ -1,4 +1,3 @@
-import { prisma } from './database';
 import {
   loadSeriesForSave,
   recordSeriesRevision,

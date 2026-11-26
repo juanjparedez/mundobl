@@ -2,7 +2,7 @@
 //
 // Fuentes, de menor a mayor prioridad:
 // 1. MUNDOBL_ENV: un .env completo pegado como un solo secret (opcional).
-// 2. Secrets sueltos del repo (DATABASE_URL, GOOGLE_CLIENT_ID, ...), que el
+// 2. Secrets sueltos del repo (AUTH_SECRET, GOOGLE_CLIENT_ID, ...), que el
 //    workflow pasa por nombre como variables de entorno. La lista es APP_KEYS.
 //
 // Salidas (JSON, no .env: wrangler expande $VAR en un .env y algunas claves
@@ -26,8 +26,6 @@ const APP_KEYS = [
   'ADMIN_EMAILS',
   'AUTH_SECRET',
   'CRON_SECRET',
-  'DATABASE_URL',
-  'DIRECT_URL',
   'EMAIL_FROM',
   'EMAIL_REPLY_TO',
   'GEMINI_API_KEY',
@@ -62,6 +60,9 @@ const APP_KEYS = [
 ];
 // Solo existen en Vercel (o los pone su CLI); en Cloudflare no sirven.
 const VERCEL_ONLY = /^(VERCEL|MAINTENANCE_VERCEL_|NEXT_PUBLIC_VERCEL_)/;
+// La base es D1 (binding DB en wrangler.jsonc): una URL de Postgres que
+// quede en MUNDOBL_ENV no debe llegar ni al build ni al Worker.
+const OLD_DATABASE = /^(DATABASE_URL|DIRECT_URL|SHADOW_DATABASE_URL)$/;
 // `vercel env pull` deja este texto en las variables "sensitive".
 const PLACEHOLDER = '[SENSITIVE]';
 
@@ -93,16 +94,16 @@ const fromSecrets = Object.fromEntries(
 
 const env = {};
 for (const [key, value] of Object.entries({ ...fromEnvFile, ...fromSecrets })) {
-  if (key === 'MUNDOBL_ENV' || VERCEL_ONLY.test(key)) continue;
+  if (key === 'MUNDOBL_ENV' || VERCEL_ONLY.test(key) || OLD_DATABASE.test(key))
+    continue;
   if (typeof value !== 'string' || value === '' || value === PLACEHOLDER) {
     continue;
   }
   env[key] = value;
 }
 
-// Sin estas el sitio no levanta (base, login, crons).
+// Sin estas el sitio no levanta (login, crons). La base es el binding DB.
 const REQUIRED = [
-  'DATABASE_URL',
   'AUTH_SECRET',
   'GOOGLE_CLIENT_ID',
   'GOOGLE_CLIENT_SECRET',

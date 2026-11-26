@@ -6,12 +6,7 @@ import { createManySkippingDuplicates } from './create-many';
  * "marcar episodio promueve la serie a VIENDO".
  */
 
-import type {
-  Prisma,
-  PrismaClient,
-  ViewStatus,
-  WatchStatus,
-} from '@prisma/client';
+import type { PrismaClient, ViewStatus, WatchStatus } from '@prisma/client';
 import { getSeriesEpisodesOrdered, type SeriesEpisodeOrder } from './database';
 import {
   TRACKING_STATUSES,

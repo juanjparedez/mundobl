@@ -2,6 +2,14 @@
 
 Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-stack para gestionar, calificar y hacer seguimiento de series, peliculas, cortos y especiales.
 
+## Base en Cloudflare D1 (2026-11-26)
+
+- La base pasa de Supabase Postgres (egress bloqueado hasta el 17/12) a la D1 `mundobl` (id `7846511e-b152-4380-945d-e1a285ce2759`). Reglas en "Base de Datos (Prisma + D1)" → "Reglas de D1". Deploy: [deploy-cloudflare.md](../deploy-cloudflare.md) ("Base de datos (D1)" y "Paso de Supabase a D1").
+- Rutina nueva: ya no existe `npm run migrate:supabase`. El workflow "Deploy producción" aplica las migraciones de `migrations/` y frena si la D1 está vacía.
+- Pruebas: `npm run test:all` corre sobre SQLite local (`test-results/test-all/replay.db`), sin Docker. Se borraron Docker Compose, Hyperdrive, `enable-rls.ts`, `backup-db.ts`/`restore-backup-local.ts` (reemplazados por `wrangler d1 export` + `scripts/db/restore-local.mjs`) y los scripts de una sola vez que solo corrían en Postgres.
+- Diferencias aceptadas: sin rollback (los pasos parciales se pueden reintentar), LIKE sin distinguir mayúsculas solo en ASCII, orden binario de nombres.
+- Después del paso, borrar: `.github/workflows/copy-to-d1.yml`, `scripts/db/copy-postgres-to-sqlite.mjs`, la devDependency `pg` y los secrets `DATABASE_URL`/`DIRECT_URL` (repo y Worker).
+
 ## Estadísticas públicas reconciliadas (2026-10-31)
 
 - Rama `codex/fix-estadisticas-integrales`, commits por tema. Tras pedir trabajo local inicialmente, el propietario autorizó explícitamente merge y deploy al terminar la validación.
@@ -36,7 +44,7 @@ Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-s
   - `creditos` y `legal`: saneamiento de hex a `--primary-color` y diseño de lectura adaptable.
   - `FeedbackClient`: botón de carga táctil a 40px y corrección de color a token `--text-on-primary`.
 
-## Optimización Mobile UX/UI y Entorno Docker (2026-10-25)
+## Optimización Mobile UX/UI y Entorno Docker (2026-10-25, Docker retirado en 2026-11)
 
 - **Mejoras Mobile UX/UI:**
   - Shell y ergonomía: variables `--safe-bottom` y `--bottom-nav-total-height` integrando safe-area en iOS/Android; buscador flexible en `TopBar` mobile y tap targets de 44px; botones flotantes respetando la elevación del `BottomNav`.
@@ -70,7 +78,7 @@ Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-s
 
 - `/perfil` va en pestañas (`?tab=`): Resumen, Estadísticas (incluye lo que era `/perfil/estadisticas`, que ahora redirige), Logros, Actividad, Ajustes y Admin (solo staff). Cada pestaña con grilla (`ProfileGridTab`) conserva mover/agrandar/quitar/sumar paneles con su propio layout `profile-<rol>-tab-<tab>-v1`. Se quitaron el selector Básica/Avanzada y el CustomizeDrawer; los layouts viejos quedan sin uso.
 - Logros: definición única en `src/lib/achievements.ts` (48) + parches de plataforma en `src/lib/platform-patches.ts` (6 plataformas oficiales × bronce/plata/oro por series terminadas con `WatchLink.official`). Arte propio, sin logos. Solo cuentan datos registrados: reseñas publicadas, votos "útil" recibidos, comunidad no moderada, listas públicas con ítems, sugerencias aprobadas, `UserActiveDay` y racha histórica.
-- Logros guardados (2026-10-28): `UserAchievement` (usuario, key, `unlockedAt`; key `patch:<plataforma>:<nivel>` para parches). Se otorgan al momento de la accion con `awardAchievementsAfterResponse(userId, metricas)` de `src/lib/achievement-store.ts` (solo recalcula esas metricas; si aprueba un moderador, se le otorga al autor). El perfil sincroniza todo con sus estadisticas y lee lo guardado: un logro obtenido no se pierde si baja el numero. Aviso solo in-app (`achievement_unlocked`). "Reiniciar datos" borra los de seguimiento y parches. Backfill: `scripts/backfill-achievements.ts`, lo corre `npm run migrate:supabase` al aplicar `20261028040000_user_achievements` (filas con fecha del deploy). Toda accion nueva que mueva una metrica tiene que llamar a `awardAchievementsAfterResponse`.
+- Logros guardados (2026-10-28): `UserAchievement` (usuario, key, `unlockedAt`; key `patch:<plataforma>:<nivel>` para parches). Se otorgan al momento de la accion con `awardAchievementsAfterResponse(userId, metricas)` de `src/lib/achievement-store.ts` (solo recalcula esas metricas; si aprueba un moderador, se le otorga al autor). El perfil sincroniza todo con sus estadisticas y lee lo guardado: un logro obtenido no se pierde si baja el numero. Aviso solo in-app (`achievement_unlocked`). "Reiniciar datos" borra los de seguimiento y parches. El backfill inicial ya corrio en produccion (2026-10-28). Toda accion nueva que mueva una metrica tiene que llamar a `awardAchievementsAfterResponse`.
 - Compartir: `SeriesShare` (una fila por usuario y serie, migración `20261025020000_series_shares`), escrita por `POST /api/user/shares` cuando el share se completa. Cuenta desde el deploy. Pruebas: `test-achievements.ts` y `test-profile-app.mjs`.
 
 ## Portada integral, probador de temas en vivo y página de inicio opt-in (2026-10-24)
@@ -78,7 +86,7 @@ Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-s
 - `src/lib/start-page-preference.ts` y `LoggedInHomeRedirect`: abrir `/` estando logueado ya no cierra ni redirige automáticamente la portada salvo que el usuario elija otra página de inicio (`mb-start-page`: `landing` por defecto, `watching`, `catalogo`, `ver` o `estrenos`) desde Ajustes (`SettingsPanel`) o desde el selector inline en el propio Hero de la portada. `getUserSummary()` se sigue invocando en segundo plano para registrar `UserActiveDay`. El logo de MundoBL en `Sidebar` y el menú de usuario en `TopBar` enlazan a `/?stay=1`.
 - `LandingPage`: Hero sin pared de login (accesos directos a `/catalogo`, `/ver` y `/watching`, más comparativa «Sin cuenta vs. Con tu cuenta gratis con Google en 1 click» para visitantes), banda de estadísticas conectada a `/estadisticas`, mapa interactivo de 6 pilares clicables (`/ver`, `/catalogo`, `/watching`, `/estrenos`, `/comunidad`, `/estadisticas`), probador en vivo de temas (Oscuro/Claro, 6 skins, colores de acento, tonos, modo sin spoilers y 10 idiomas) y tarjeta del tracker actualizada con el cierre del círculo (valoración 1–10 y veredicto). Cero hex hardcodeados en `LandingPage.css` y cobertura en los 10 locales (3.741 claves).
 
-## Pruebas completas en Docker local (2026-10-24, lote sin publicar)
+## Pruebas completas en Docker local (2026-10-24, historico: desde 2026-11 `npm run test:all` usa SQLite local)
 
 - El propietario pidió evitar pruebas remotas automáticas y usar su equipo. `npm run test:docker` construye Node 22/Chromium y ejecuta la misma suite de 67 pasos junto a PostgreSQL 16 descartable en `compose.test.yml`.
 - La ejecución tiene red interna sin salida a Internet y sin puertos del host. La base vive en tmpfs; solo se monta `test-results/compose` para logs. El contexto de build usa una lista permitida en `.dockerignore`, sin `.env*`, `.git`, backups ni dependencias del host. Las descargas ocurren al construir la imagen y se cachean.
@@ -102,7 +110,7 @@ Catalogo personal de series asiaticas (BL/GL y otros generos). Aplicacion full-s
 
 - El propietario autorizó explícitamente publicar código y los 16 títulos si pasaban una verificación nueva. A las 13:36 ART (16:36 UTC), los 114 videos YouTube y el video Vimeo dieron OK en ambas verificaciones. El límite 429 del ensayo anterior ya no impidió esa comprobación.
 - Producción tiene `YOUTUBE_API_KEY` y `VIMEO_ACCESS_TOKEN` configuradas; se verificó su existencia sin revelar valores. Dailymotion continúa sin activar.
-- `scripts/publish-ver-content-batch.ts` es un ejecutor separado de la receta local: solo admite el proyecto Supabase de MundoBL, simula con transacción READ ONLY, exige evidencia completa de menos de una hora y --apply con un plan previamente revisado. Verifica hashes de manifiesto/evidencia/estado previo, vuelve a consultar APIs, conserva respaldo acotado en `backups/ver-release-*` y aplica en una transacción serializable. Si cambió una ficha desde la simulación, aborta. Los respaldos nunca se publican en Git ni en artifacts.
+- `scripts/publish-ver-content-batch.ts` es un ejecutor separado de la receta local: solo admite la D1 de producción (`DATABASE_URL=d1:remote`; antes el proyecto Supabase), simula sin escribir (`importWatchContentBatch` solo escribe con apply), exige evidencia completa de menos de una hora y --apply con un plan previamente revisado. Verifica hashes de manifiesto/evidencia/estado previo, vuelve a consultar APIs, conserva respaldo acotado en `backups/ver-release-*` y aplica (desde D1, en pasos secuenciales: sin transacción). Si cambió una ficha desde la simulación, aborta. Los respaldos nunca se publican en Git ni en artifacts.
 - Flujo de entrega: PR con CI completo aprobado, aplicación del plan de datos, merge y un solo workflow manual Deploy producción. Confirmar luego el SHA servido, los 16 detalles, 43 títulos en `/ver` y reproducción de Vimeo. No hay migración de schema.
 
 ## Ampliación de plataformas preparada localmente (2026-10-24, ensayo previo)
@@ -310,22 +318,22 @@ Estado y límites, incluidos tests HTTP completados y fichas +18 en la variante 
 
 ## Stack Tecnologico
 
-| Tecnologia     | Version | Uso                      |
-| -------------- | ------- | ------------------------ |
-| **Next.js**    | 16      | Framework (App Router)   |
-| **React**      | 19      | UI                       |
-| **TypeScript** | 5.9     | Tipado estricto          |
-| **Ant Design** | 6       | Componentes UI           |
-| **Prisma**     | 7.4     | ORM                      |
-| **PostgreSQL** | -       | Base de datos (Supabase) |
+| Tecnologia     | Version | Uso                    |
+| -------------- | ------- | ---------------------- |
+| **Next.js**    | 16      | Framework (App Router) |
+| **React**      | 19      | UI                     |
+| **TypeScript** | 5.9     | Tipado estricto        |
+| **Ant Design** | 6       | Componentes UI         |
+| **Prisma**     | 7.4     | ORM                    |
+| **D1**         | -       | Base de datos (SQLite) |
 
 ## Infraestructura
 
 | Servicio           | Detalle                                                                                                                            |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
 | **Hosting**        | Cloudflare Workers Paid (OpenNext, deploy manual con GitHub Actions). Ver [deploy-cloudflare](../deploy-cloudflare.md)             |
-| **Base de datos**  | Supabase PostgreSQL (sa-east-1, Sao Paulo)                                                                                         |
-| **Almacenamiento** | Supabase Storage (bucket `images`)                                                                                                 |
+| **Base de datos**  | Cloudflare D1 `mundobl` (binding `DB`). Ver "Base de Datos (Prisma + D1)"                                                          |
+| **Almacenamiento** | Cloudflare R2 `mundobl-images` (`img.mundobl.com.ar`); quedan imagenes viejas en Supabase Storage (bucket `images`)                |
 | **Auth**           | NextAuth.js (Google OAuth)                                                                                                         |
 | **Dominio**        | **mundobl.com.ar** (primario), mundobl.win (backup). Redireccion `.win → .com.ar` via Cloudflare (DNS / Page Rules), NO en codigo. |
 | **SSL**            | Automatico via Cloudflare                                                                                                          |
@@ -333,10 +341,9 @@ Estado y límites, incluidos tests HTTP completados y fichas +18 en la variante 
 ### Variables de Entorno (secret `MUNDOBL_ENV` de GitHub + .env local)
 
 ```
-# Base de datos
-DATABASE_URL                # Transaction pooler (puerto 6543) - para la app
-DIRECT_URL                  # Session pooler (puerto 5432) - para migraciones Prisma
-SUPABASE_PASSWORD           # Password del proyecto Supabase
+# Base de datos: en el Worker es el binding DB de wrangler.jsonc (sin URL).
+# Local/scripts: DATABASE_URL=file:./local.db (SQLite) o d1:remote (API REST,
+# con CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_D1_DATABASE_ID y CLOUDFLARE_API_TOKEN).
 
 # Auth (NextAuth + Google OAuth)
 AUTH_SECRET                 # Secret para NextAuth
@@ -345,7 +352,7 @@ GOOGLE_CLIENT_ID            # Google OAuth client ID
 GOOGLE_CLIENT_SECRET        # Google OAuth client secret
 ADMIN_EMAILS                # Emails admin separados por coma
 
-# Supabase Storage (subida de imagenes)
+# Supabase Storage (solo leer/borrar imagenes viejas)
 NEXT_PUBLIC_SUPABASE_URL                       # URL del proyecto Supabase
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY   # Anon key publica
 SUPABASE_SERVICE_ROLE_KEY                      # Service role key (server-only)
@@ -432,11 +439,9 @@ Soporta 5 plataformas para reproducir/parsear:
 - Bucket: `images`. Funciones: `uploadImage`, `deleteImage`, `downloadAndUploadImage` (re-hostea imagen desde URL externa)
 - Usa la **service role key** y SOLO para Storage. La app NUNCA consulta tablas via el cliente Supabase (`supabase.from(...)`) — todo el acceso a DB es via Prisma.
 
-### Seguridad DB — RLS (Row Level Security)
+### Seguridad DB
 
-- **Todas las tablas del schema `public` tienen RLS habilitado** (deny-by-default para el rol `anon`). Sin esto, la anon/publishable key (PUBLICA, `NEXT_PUBLIC_...`) permitiria leer/escribir tablas via la REST API de Supabase (PostgREST), salteando la app.
-- **No rompe la app**: Prisma conecta con el rol postgres (conexion directa `DATABASE_URL`), que **bypassea RLS**. Storage usa la service key (RLS aparte).
-- ⚠️ **RLS no lo maneja Prisma**: las tablas nuevas de futuras migraciones NO heredan RLS. Tras cada `prisma migrate` correr [scripts/enable-rls.ts](../../scripts/enable-rls.ts) (`--apply`) para re-habilitarlo en las nuevas.
+- La D1 no tiene API publica: solo la leen el Worker (binding `DB`) y quien tenga un token de Cloudflare con permiso D1. No hay RLS ni equivalente que mantener.
 
 ### NextAuth (Google OAuth)
 
@@ -867,7 +872,7 @@ import {
 
 ---
 
-## Base de Datos (Prisma + Supabase)
+## Base de Datos (Prisma + D1)
 
 ### Schema: `prisma/schema.prisma`
 
@@ -928,25 +933,27 @@ import {
 ### Migraciones
 
 ```bash
-# Generar cliente Prisma despues de cambios al schema
-npx prisma generate
-
-# Crear migracion SOLO contra PostgreSQL local (DIRECT_URL local)
-npx prisma migrate dev --name descripcion_del_cambio
-
-# Aplicar migraciones en produccion: a mano y ANTES del deploy (workflow "Deploy produccion").
-# El build de Vercel no migra: si el codigo llega antes que las tablas, prod se rompe (paso en #87).
-npm run migrate:supabase
-
-# Ver estado de migraciones
-npx prisma migrate status
-
-# Verificar que la base coincide con el schema (solo lectura)
-npm run db:check
-
-# Abrir Prisma Studio (UI para explorar datos)
-npx prisma studio
+npx prisma generate                 # cliente Prisma tras cambiar el schema
+npm run db:migration <nombre>       # genera migrations/NNNN_<nombre>.sql (diff schema vs migraciones)
+npm run db:check                    # migraciones desde cero == schema.prisma
+npm run local:db                    # aplica migraciones a ./local.db
+npm run migrate:d1                  # aplica a la D1 remota (el deploy ya lo hace)
 ```
+
+`prisma migrate dev/reset/deploy/resolve` y `db push` estan bloqueados (`scripts/prisma-safety.ts`): el historial de D1 es `migrations/` + tabla `d1_migrations`. El workflow "Deploy produccion" aplica las pendientes antes del build.
+
+### Reglas de D1 (desde 2026-11)
+
+- **Sin transacciones interactivas.** `@prisma/adapter-d1` tira error con `$transaction(async tx => ...)` y corre `$transaction([...])` y los nested writes como consultas sueltas, NO atomicas. Lint prohibe `$transaction`.
+  - `inSequence(steps)` ([src/lib/prisma-client.ts](../../src/lib/prisma-client.ts)): pasos en orden, sin atomicidad. Ordenar para que un corte a mitad quede consistente o se pueda reintentar.
+  - `atomicWrite(Prisma.Sql[])` ([src/lib/d1.ts](../../src/lib/d1.ts)): batch de D1, todo o nada. Para escrituras que deben ir juntas (p. ej. insertar fila + actualizar contador).
+  - `withLease(key, work, { ttlMs, waitMs })` ([src/lib/lease.ts](../../src/lib/lease.ts)): candado con vencimiento en la tabla `Lease`. Reemplaza `FOR UPDATE` y advisory locks (lint los prohibe en SQL crudo).
+  - Patrones: validar todo antes de la primera escritura; updateMany condicional (version/estado en el WHERE); reclamar `editVersion` primero; contadores que se recalculan desde las filas.
+- **Historial de seguimiento**: lo registra un trigger SQLite (`prisma/sqlite-extras.mjs`). Un lease `tracking-restore:<userId>` (o `tracking-restore:*` en restauraciones completas) lo apaga mientras se restauran eventos.
+- **Texto**: SQLite no tiene ILIKE ni `mode: 'insensitive'`; usar [src/lib/text-match.ts](../../src/lib/text-match.ts). El case-folding de LIKE es solo ASCII y el orden de nombres es binario.
+- **SQL crudo**: dialecto SQLite. Calificar columnas ambiguas (`a.name`), numeros en vez de BigInt, sin `::casts`, `NOW()` ni `= ANY(...)`.
+- **Nunca** un PrismaClient por request ni I/O de base global por isolate (ver "Hosting en Cloudflare Workers").
+- Backups: Time Travel de D1 (30 dias) + volcado semanal a R2. Ver [backups.md](../backups.md).
 
 **Nota:** El build command en Vercel es `prisma generate && next build --webpack`. Prisma genera el cliente automaticamente antes de cada build.
 
@@ -1106,7 +1113,6 @@ El backlog vive en la tabla `FeatureRequest` (`/feedback`, `/admin/feedback`), n
 
 - **Íconos de antd en Server Components**: importar de `@ant-design/icons` en un Server Component ROMPE el build (`createContext is not a function`): su barrel corre `createContext` sin `'use client'` y el entorno RSC no tiene `createContext`. Regla: en Server Components (page.tsx/layout/loading sin `'use client'`), importar íconos desde [src/lib/client-icons.ts](../../src/lib/client-icons.ts) (re-export `'use client'`). Los Client Components pueden importar de `@ant-design/icons` directo. Mismo motivo por el que el `App` de antd se usa vía [src/lib/providers/AntdApp.tsx](../../src/lib/providers/AntdApp.tsx), no importado en el layout server. `next.config.ts` NO debe poner `antd`/`@ant-design/icons` en `transpilePackages` (anula el barrel-optimization y reintroduce el crash); se usa `experimental.optimizePackageImports` en su lugar.
 - **Headers de seguridad**: [next.config.ts](../../next.config.ts) `headers()` define CSP completa + `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `HSTS`. `img-src` es amplio (`'self' data: blob: https:`) a propósito: cargamos favicons externos (Google S2 via `getFaviconUrl`) y URLs de imagen legacy; restringirlo por host rompe logos/favicons (ej. /sitios). `frame-src` SÍ es lista blanca de los embeds soportados (clickjacking) — al sumar una plataforma de embed nueva, agregar su host ahí. `form-action` incluye `https://accounts.google.com`: la página genérica `/api/auth/signin` (adonde el proxy manda a quien entra a `/admin` sin sesión) postea un form que termina en un 302 a Google, y Chrome chequea `form-action` en cada salto; sin ese host el login desde ahí se bloquea. Un proveedor OAuth nuevo necesita su host ahí también. `images.remotePatterns` (para next/image optimizado) es independiente y sí es por-host.
-- **RLS (Supabase)**: toda tabla nueva del schema `public` debe recibir `ALTER TABLE "X" ENABLE ROW LEVEL SECURITY` en su migración (Prisma usa el rol owner que bypassa RLS; sin esto la anon key expone la tabla vía PostgREST). Patrón en `prisma/migrations/*_enable_rls*`.
 - **Ban en API**: `requireAuth`/`requireRole` ([src/lib/auth-helpers.ts](../../src/lib/auth-helpers.ts)) chequean `banned` → 403. El middleware (`proxy.ts`) no cubre `/api` (su matcher lo excluye).
 - **Storage de imagenes**: todo pasa por `uploadImage()` en [src/lib/supabase.ts](../../src/lib/supabase.ts) — es el unico punto de subida (`/api/upload`, `/api/feedback/upload` y el re-hosteo de imagenes externas). Sube solo a **Cloudflare R2**; sin las 5 vars `R2_*` la subida falla (desde 2026-09-29; antes caia a Supabase Storage, que cobra egress). Supabase Storage queda para leer y borrar imagenes viejas. `downloadAndUploadExternalImage` no re-procesa una URL que ya servimos nosotros — chequea los DOS hosts, si no cada guardado de una serie duplicaria el poster.
 - **Convención `unoptimized` en `<Image>`**: `unoptimized={isDirectServedImageUrl(url)}` (R2/Supabase y hosts externos no admitidos se sirven directo; solo los CDNs de OPTIMIZED_IMAGE_HOSTS van al optimizador). NO invertir con `!`. Desde 2026-09-09 los posters viven en Cloudflare R2 (`img.mundobl.com.ar`), no en Supabase Storage: R2 no cobra egress y ya sale por el CDN de Cloudflare con `cache-control: immutable` a un año, asi que pasarlo por el optimizador de Vercel solo gastaria cuota. El helper cubre los dos hosts porque los archivos de Supabase quedaron como respaldo.
@@ -1167,7 +1173,7 @@ npm run format       # Formatear con Prettier
 npm run type-check   # Verificar tipos TypeScript
 ```
 
-## Migraciones seguras y reconciliación (2026-09-15)
+## Migraciones seguras y reconciliación (2026-09-15, historico: desde 2026-11 la base es D1, ver "Reglas de D1")
 
 - Se reconciliaron cambios aplicados previamente fuera del historial: SeriesNote, SeriesSuggestion, Actor.funFacts, Comment.isAnonymous/parentId, FeatureRequest.category, NotificationPrefs.notifyAdminComments y Series.airDays. La migración 20260915110000_reconcile_untracked_schema reproduce esos cambios para bases nuevas, incluyendo RLS. En producción se verificó que ya existían y se registró con migrate resolve --applied; no se ejecutó su DDL allí.
 - La causa recurrente incluía scripts/migrate-supabase.sh, que usaba db push. Ahora npm run migrate:supabase ejecuta scripts/migrate-supabase.mjs y solo aplica SQL versionado con migrate deploy. Conserva la lectura explícita de DIRECT_URL desde .env para Supabase; no usa .env.local.

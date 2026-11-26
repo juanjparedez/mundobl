@@ -1300,8 +1300,9 @@ model TrackingEvent {
 
 /// Candado con vencimiento: reemplaza a FOR UPDATE / pg_advisory_xact_lock,
 /// que D1 no tiene. Ver src/lib/lease.ts. Si el proceso muere, el candado
-/// vence solo. "tracking-restore:<userId>" ademas apaga el historial
-/// automatico del trigger mientras se restaura un backup.
+/// vence solo. "tracking-restore:<userId>" (o "tracking-restore:*" para un
+/// volcado completo) ademas apaga el historial automatico del trigger
+/// mientras se restaura un backup.
 model Lease {
   key       String   @id
   expiresAt DateTime

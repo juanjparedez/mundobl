@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 import { ProgressNotFoundError, setEpisodesWatched } from '@/lib/tracking';
 import { awardAchievementsAfterResponse } from '@/lib/achievement-store';

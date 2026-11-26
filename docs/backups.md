@@ -1,30 +1,59 @@
 # Backup y recuperación
 
-El workflow `Backup de la base` exporta los modelos de la aplicación a JSON comprimido en R2 y conserva 14 días. Desde el 28/09/2026 está programado los domingos a las 07:00 UTC (04:00 Argentina). El exportador lee una única instantánea consistente (`RepeatableRead`), falla si falta un modelo o una consulta y nunca publica un backup parcial. `--check-models` comprueba la cobertura sin consultar la base.
+La base de producción es la D1 `mundobl` (Cloudflare). Tiene dos capas de respaldo.
 
-## Activación y verificación
+## 1. Time Travel de D1 (automático, 30 días)
 
-Bucket creado: `mundobl-backups`. Verificado el 15/09/2026: dominio r2.dev desactivado y sin dominios personalizados. No usar `mundobl-images`, que sirve contenido público.
+D1 guarda el historial de cambios de los últimos 30 días y permite volver a un
+minuto exacto. No hay que activarlo. Restaurar reemplaza la base entera:
 
-En GitHub → Settings → Secrets and variables → Actions, cargar:
+```powershell
+npx wrangler d1 time-travel info mundobl
+npx wrangler d1 time-travel restore mundobl --timestamp=2026-12-01T10:00:00Z
+```
 
-- `DATABASE_URL`: conexión PostgreSQL de MundoBL.
-- `R2_ACCOUNT_ID`: ID de la cuenta Cloudflare.
-- `R2_ACCESS_KEY_ID` y `R2_SECRET_ACCESS_KEY`: credencial R2 con lectura/escritura limitada al bucket de backups.
+Usarlo solo después de anotar el bookmark actual que imprime `info`, así se
+puede deshacer la restauración.
+
+## 2. Copia semanal en R2 (workflow `Backup de la base`)
+
+Domingos 07:00 UTC (04:00 Argentina). Pasos:
+
+1. `wrangler d1 export mundobl --remote` genera un volcado SQL (schema + datos).
+2. Ensayo de restauración: el volcado se carga en una SQLite vacía con
+   `scripts/db/restore-local.mjs`, que corre `foreign_key_check` y cuenta filas.
+   Un volcado que no carga no se sube.
+3. Se comprime y se sube al bucket privado `mundobl-backups`; se borran las copias
+   de más de 14 días.
+
+Nunca se guarda como artifact de Actions: el repo es público y el volcado tiene
+mails y sesiones.
+
+Secrets en GitHub → Settings → Secrets and variables → Actions:
+
+- `CLOUDFLARE_API_TOKEN` (con permiso "D1: Edit") y `CLOUDFLARE_ACCOUNT_ID`.
+- `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`: credencial R2
+  limitada al bucket de backups.
 - `R2_BACKUP_BUCKET`: `mundobl-backups`.
 
-Después, crear la **variable** `BACKUPS_ENABLED` con valor `true` y ejecutar manualmente el workflow. Comprobar la carga del archivo en R2 antes de confiar en la programación semanal. Sin esa variable el trabajo queda omitido. La revisión del 28/09/2026 confirmó la configuración en Git, pero no verificó la variable remota ni la última copia exitosa: no inferir activación a partir de este documento.
+El trabajo corre solo si la **variable** `BACKUPS_ENABLED` vale `true`. No inferir
+que está activo por este documento: verificar en Actions la última corrida y el
+objeto en el bucket.
 
-El indicador `No backups` de Supabase no informa sobre las copias externas de este workflow. Verificar Actions y el objeto en el bucket privado. Una frecuencia semanal permite perder aproximadamente siete días de cambios desde la última copia válida; si falla, el intervalo aumenta. Comprimir después del dump ahorra almacenamiento en R2, pero no el egress ya consumido al leer Supabase. Ver [manual de mantenimiento](manual-mantenimiento.md) para diagnóstico de cuotas y rutina de revisión.
+## Ensayo de restauración a mano
 
-## Ensayo de restauración
+```powershell
+# Descomprimir el .sql.gz descargado de R2 en una carpeta privada, despues:
+node scripts/db/restore-local.mjs .\mundobl_2026-12-01_0700.sql .\restore.db
+$env:DATABASE_URL = "file:./restore.db"; npm run dev
+```
 
-1. Crear una base PostgreSQL local vacía con el mismo esquema mediante `prisma migrate deploy`.
-2. Descargar y descomprimir el JSON desde R2 en un directorio privado.
-3. Con `DATABASE_URL` apuntando a esa base local, ejecutar `npx tsx scripts/restore-backup-local.ts <archivo.json>`.
+`restore-local.mjs` solo escribe en un archivo local; nunca toca la D1 remota.
+Para devolver datos a producción preferir Time Travel. Si hiciera falta cargar un
+volcado en la D1, hacerlo con un procedimiento revisado para ese caso.
 
-El restaurador exige localhost y todas las tablas vacías. Conserva las restricciones, ordena las tablas por sus dependencias y recupera las secuencias de IDs. No permite restaurar directamente sobre producción. La recuperación real requiere verificar primero los datos en esa base local y preparar un procedimiento específico para el destino.
+`scripts/test-backup-restore.mjs` (parte de `npm run test:all`) prueba el ciclo
+volcado → restauración con datos sintéticos y verifica que el trigger de historial
+no duplique eventos.
 
-`Verify backup restoration` prueba con datos sintéticos: comparación de las 63 tablas, JSON y Unicode, las cuatro tablas antes omitidas, secuencias y rechazo de un destino ocupado. No utiliza secretos ni datos de producción. El restaurador desactiva la captura automática de historial solamente durante su transacción: restaura los eventos exportados sin generar otros al reponer ViewStatus.
-
-El JSON cubre los datos de la aplicación. El esquema se reconstruye con las migraciones versionadas. Los archivos de imágenes de R2/Supabase, credenciales de servicios y configuración externa no están incluidos.
+Las imágenes de R2, credenciales y configuración externa no están en el volcado.

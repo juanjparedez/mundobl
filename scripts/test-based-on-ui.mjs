@@ -2,14 +2,10 @@ import assert from 'node:assert/strict';
 import { mkdirSync } from 'node:fs';
 import { chromium } from '@playwright/test';
 import { encode } from 'next-auth/jwt';
-import pg from 'pg';
+import { createTestPool } from './db/test-pool.mjs';
 
 const base = 'http://localhost:3002';
-const connection = new URL(process.env.DATABASE_URL);
-assert.equal(connection.hostname, '127.0.0.1');
-assert.equal(connection.port, '55433');
-assert.equal(connection.pathname, '/mundobl_replay');
-const pool = new pg.Pool({ connectionString: connection.href });
+const pool = createTestPool();
 await pool.query(
   `INSERT INTO "Series" (title, type, "basedOn", "updatedAt") VALUES ('Based-on UI Manga', 'serie', 'Manga', now()), ('Based-on UI GM', 'serie', 'GM', now())`
 );

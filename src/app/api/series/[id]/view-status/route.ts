@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
 import { setSeriesTrackingStatus } from '@/lib/tracking';
 import { WATCH_STATUS, type WatchStatusValue } from '@/constants/series';

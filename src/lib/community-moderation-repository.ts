@@ -1,7 +1,6 @@
 import type { AppTransactionClient, AppPrismaClient } from './prisma-client';
 import type {
   Prisma,
-  PrismaClient,
   CommunityReportTarget,
   CommunityReportReason,
   CommunityModerationKind,

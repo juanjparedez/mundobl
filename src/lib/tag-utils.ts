@@ -1,5 +1,4 @@
 import type { AppTransactionClient } from './prisma-client';
-import { Prisma } from '@prisma/client';
 import { pickSameText, sameTextCandidates } from './text-match';
 
 /**

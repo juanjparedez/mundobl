@@ -284,7 +284,7 @@ function startDatabase() {
 
 function backupRestore() {
   migrateLocal(RESTORE_FILE, { fresh: true });
-  return exec(tsx('test-backup-restore.ts'), {
+  return exec(node('test-backup-restore.mjs', false), {
     BACKUP_TEST_SOURCE_URL: DB_URL,
     BACKUP_TEST_TARGET_URL: RESTORE_URL,
   });

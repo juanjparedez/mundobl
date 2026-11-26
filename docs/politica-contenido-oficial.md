@@ -14,13 +14,13 @@ Vigente desde 2026-09-21; ampliación local solicitada por el propietario el 202
 
 ## Cómo se aplica en el código
 
-| Punto de entrada | Qué hace |
-| --- | --- |
+| Punto de entrada                                                              | Qué hace                                                                                                                                                                              |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `POST /api/user/series/embed/preview` y `confirm` (aportes en `/ver/agregar`) | Verifican la fuente y disponibilidad por plataforma. Confirmar vuelve a comprobar permisos aunque existiera una vista previa. Guarda el autor verificado, no el que mandó el cliente. |
-| `POST /api/series/import-playlist/confirm` (importador admin y colaboradores) | Verifica todos los videos de la playlist; uno solo fuera de la lista rechaza el import entero. |
-| `POST /api/episodes` y `PUT /api/episodes/[id]` (alta y edición manual) | Mismo chequeo; una URL vacía sigue siendo válida (episodio sin embed). |
-| `src/lib/official-content-guard.ts` | Entrada compartida para resolver episodios. `external-episode-source.ts` verifica Vimeo/Dailymotion. Sin verificación no hay embed; una falla temporal del proveedor devuelve 503. |
-| `src/lib/playability-audit.ts` | Revisa también Vimeo/Dailymotion; no convierte un timeout o una credencial vencida en una baja de contenido. |
+| `POST /api/series/import-playlist/confirm` (importador admin y colaboradores) | Verifica todos los videos de la playlist; uno solo fuera de la lista rechaza el import entero.                                                                                        |
+| `POST /api/episodes` y `PUT /api/episodes/[id]` (alta y edición manual)       | Mismo chequeo; una URL vacía sigue siendo válida (episodio sin embed).                                                                                                                |
+| `src/lib/official-content-guard.ts`                                           | Entrada compartida para resolver episodios. `external-episode-source.ts` verifica Vimeo/Dailymotion. Sin verificación no hay embed; una falla temporal del proveedor devuelve 503.    |
+| `src/lib/playability-audit.ts`                                                | Revisa también Vimeo/Dailymotion; no convierte un timeout o una credencial vencida en una baja de contenido.                                                                          |
 
 ## Cómo sumar un canal a la lista
 
@@ -42,5 +42,5 @@ Lista, sin tocar nada: episodios con embed fuera de la lista, series de usuarios
 Registro de corridas (fecha, quién, resultado):
 
 | Fecha | Quién | Resultado |
-| --- | --- | --- |
-| | | |
+| ----- | ----- | --------- |
+|       |       |           |

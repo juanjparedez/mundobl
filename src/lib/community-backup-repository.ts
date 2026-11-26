@@ -1,5 +1,5 @@
 import type { AppPrismaClient } from './prisma-client';
-import type { Prisma, PrismaClient } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 import { CommunityError, parseCommunityTopic } from './community-input';
 import {
   parseRecommendationList,

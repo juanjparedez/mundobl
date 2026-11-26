@@ -1,6 +1,6 @@
 import type { AppTransactionClient, AppPrismaClient } from './prisma-client';
 import { createManySkippingDuplicates } from './create-many';
-import type { Prisma, PrismaClient } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 import type { CommunityTopicInput } from '@/types/community';
 import { CommunityError } from './community-input';
 import { inSequence } from './prisma-client';

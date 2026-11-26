@@ -2312,8 +2312,8 @@ export interface SeriesEpisodeOrder {
 
 /**
  * Episodios de una serie ordenados por (seasonNumber, episodeNumber). Acepta
- * un client de transaccion para que setProgress (T05, src/lib/tracking.ts)
- * pueda leer dentro del mismo $transaction que sus escrituras.
+ * el client que le pasa setProgress (T05, src/lib/tracking.ts) junto con
+ * sus escrituras.
  */
 export async function getSeriesEpisodesOrdered(
   client: AppTransactionClient,

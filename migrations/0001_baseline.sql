@@ -2088,7 +2088,7 @@ CREATE TRIGGER IF NOT EXISTS "ViewStatus_tracking_history_insert"
 AFTER INSERT ON "ViewStatus"
 WHEN NEW."userId" IS NOT NULL AND ((NEW."seriesId" IS NOT NULL) + (NEW."seasonId" IS NOT NULL) + (NEW."episodeId" IS NOT NULL)) = 1
   AND NOT (NEW."status" = 'SIN_VER' AND NEW."watchedDate" IS NULL)
-  AND NOT EXISTS (SELECT 1 FROM "Lease" WHERE "key" = 'tracking-restore:' || NEW."userId" AND "expiresAt" > strftime('%Y-%m-%dT%H:%M:%f+00:00', 'now'))
+  AND NOT EXISTS (SELECT 1 FROM "Lease" WHERE "key" IN ('tracking-restore:' || NEW."userId", 'tracking-restore:*') AND "expiresAt" > strftime('%Y-%m-%dT%H:%M:%f+00:00', 'now'))
 BEGIN
   INSERT INTO "TrackingEvent" ("id", "userId", "kind", "status", "previousStatus", "watchedDate", "previousWatchedDate", "recordedAt", "seriesId", "seasonId", "episodeId")
   VALUES (lower(hex(randomblob(4))) || '-' || lower(hex(randomblob(2))) || '-4' || substr(lower(hex(randomblob(2))), 2) || '-' || substr('89ab', 1 + (abs(random()) % 4), 1) || substr(lower(hex(randomblob(2))), 2) || '-' || lower(hex(randomblob(6))), NEW."userId", 'RECORDED', NEW."status", NULL, NEW."watchedDate", NULL, strftime('%Y-%m-%dT%H:%M:%f+00:00', 'now'), NEW."seriesId", NEW."seasonId", NEW."episodeId");
@@ -2098,7 +2098,7 @@ CREATE TRIGGER IF NOT EXISTS "ViewStatus_tracking_history_update"
 AFTER UPDATE ON "ViewStatus"
 WHEN NEW."userId" IS NOT NULL AND ((NEW."seriesId" IS NOT NULL) + (NEW."seasonId" IS NOT NULL) + (NEW."episodeId" IS NOT NULL)) = 1
   AND ((OLD."userId" IS NOT NEW."userId" OR OLD."seriesId" IS NOT NEW."seriesId" OR OLD."seasonId" IS NOT NEW."seasonId" OR OLD."episodeId" IS NOT NEW."episodeId") OR OLD."status" IS NOT NEW."status" OR OLD."watchedDate" IS NOT NEW."watchedDate")
-  AND NOT EXISTS (SELECT 1 FROM "Lease" WHERE "key" = 'tracking-restore:' || NEW."userId" AND "expiresAt" > strftime('%Y-%m-%dT%H:%M:%f+00:00', 'now'))
+  AND NOT EXISTS (SELECT 1 FROM "Lease" WHERE "key" IN ('tracking-restore:' || NEW."userId", 'tracking-restore:*') AND "expiresAt" > strftime('%Y-%m-%dT%H:%M:%f+00:00', 'now'))
 BEGIN
   INSERT INTO "TrackingEvent" ("id", "userId", "kind", "status", "previousStatus", "watchedDate", "previousWatchedDate", "recordedAt", "seriesId", "seasonId", "episodeId")
   VALUES (

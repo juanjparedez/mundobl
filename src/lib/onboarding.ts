@@ -12,7 +12,7 @@
  */
 
 import { ONBOARDING_MAX_PICKS } from '@/constants/onboarding';
-import { prisma, filterOnboardingSeriesIds } from './database';
+import { filterOnboardingSeriesIds } from './database';
 import {
   ProgressNotFoundError,
   setProgress,

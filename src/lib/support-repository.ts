@@ -1,6 +1,6 @@
 import type { AppPrismaClient } from './prisma-client';
 import { createManySkippingDuplicates } from './create-many';
-import { Prisma, type PrismaClient } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import {
   EMPTY_SUPPORT,
   isSupportOwner,

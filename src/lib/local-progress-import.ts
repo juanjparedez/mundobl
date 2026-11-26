@@ -1,4 +1,3 @@
-import { prisma } from '@/lib/database';
 import {
   ProgressNotFoundError,
   setEpisodesWatched,

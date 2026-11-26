@@ -1,9 +1,5 @@
 import type { AppTransactionClient, AppPrismaClient } from './prisma-client';
-import type {
-  Prisma,
-  PrismaClient,
-  RecommendationListKind,
-} from '@prisma/client';
+import type { Prisma, RecommendationListKind } from '@prisma/client';
 import { CommunityError, communityExcerpt } from './community-input';
 import type {
   CommunityProfileInput,
