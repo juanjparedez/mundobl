@@ -5,6 +5,7 @@ import { setSeriesTrackingStatus } from '@/lib/tracking';
 import { WATCH_STATUS, type WatchStatusValue } from '@/constants/series';
 import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
 import { WATCHING_METRICS } from '@/lib/achievements';
+import { inSequence } from '@/lib/prisma-client';
 
 const VALID_STATUSES: readonly string[] = Object.values(WATCH_STATUS);
 type WatchStatusInput = WatchStatusValue;
@@ -26,7 +27,7 @@ export async function POST(
       return NextResponse.json({ error: 'Estado inválido' }, { status: 400 });
     }
 
-    const viewStatus = await prisma.$transaction((tx) =>
+    const viewStatus = await inSequence((tx) =>
       setSeriesTrackingStatus(tx, authResult.userId, seriesId, status)
     );
 

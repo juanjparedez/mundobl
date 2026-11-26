@@ -5,6 +5,7 @@ import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { notifySeriesSubscribers } from '@/lib/notifications';
 import { logAction } from '@/lib/access-log';
+import { inSequence } from '@/lib/prisma-client';
 
 const STATUS_VALUES = ['DRAFT', 'PUBLISHED', 'HIDDEN'] as const;
 type StatusValue = (typeof STATUS_VALUES)[number];
@@ -97,7 +98,7 @@ export async function PATCH(request: NextRequest) {
         );
       }
 
-      const updated = await prisma.$transaction(async (tx) => {
+      const updated = await inSequence(async (tx) => {
         if (body.isFeatured) {
           await tx.review.updateMany({
             where: {

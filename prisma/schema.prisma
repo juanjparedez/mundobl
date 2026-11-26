@@ -1298,12 +1298,12 @@ model TrackingEvent {
   @@index([episodeId])
 }
 
-/// Mientras existe (y no vencio) la fila de un usuario, el trigger de
-/// ViewStatus no registra historial: al restaurar un backup, el historial
-/// viene en el propio archivo y no hay que fabricar eventos extra.
-/// En Postgres era un set_config por transaccion; D1 no tiene transacciones.
-model TrackingRestoreLock {
-  userId    String   @id
+/// Candado con vencimiento: reemplaza a FOR UPDATE / pg_advisory_xact_lock,
+/// que D1 no tiene. Ver src/lib/lease.ts. Si el proceso muere, el candado
+/// vence solo. "tracking-restore:<userId>" ademas apaga el historial
+/// automatico del trigger mientras se restaura un backup.
+model Lease {
+  key       String   @id
   expiresAt DateTime
 }
 

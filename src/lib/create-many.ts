@@ -1,9 +1,11 @@
 import { Prisma } from '@prisma/client';
 
+/** Unique violation from Prisma (P2002) or from a raw D1 batch (atomicWrite). */
 export function isUniqueViolation(error: unknown): boolean {
+  if (error instanceof Prisma.PrismaClientKnownRequestError)
+    return error.code === 'P2002';
   return (
-    error instanceof Prisma.PrismaClientKnownRequestError &&
-    error.code === 'P2002'
+    error instanceof Error && error.message.includes('UNIQUE constraint failed')
   );
 }
 

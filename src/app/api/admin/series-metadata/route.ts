@@ -6,6 +6,7 @@ import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { findOrCreateTag, findOrCreateGenre } from '@/lib/tag-utils';
 import { Prisma } from '@prisma/client';
+import { inSequence } from '@/lib/prisma-client';
 
 // GET - Listar series con sus tags y géneros con filtros de auditoría
 export async function GET(request: NextRequest) {
@@ -199,7 +200,7 @@ export async function PATCH(request: NextRequest) {
 
     const { tags, genres } = body;
 
-    const updated = await prisma.$transaction(async (tx) => {
+    const updated = await inSequence(async (tx) => {
       // 1. Actualizar tags si se proporcionaron
       if (Array.isArray(tags)) {
         const resolvedTags: Array<{ id: number; name: string }> = [];
@@ -348,7 +349,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await prisma.$transaction(async (tx) => {
+    await inSequence(async (tx) => {
       // 1. Agregar tags en lote
       if (Array.isArray(addTags) && addTags.length > 0) {
         const resolvedAddTags: number[] = [];

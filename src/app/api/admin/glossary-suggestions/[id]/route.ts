@@ -9,6 +9,7 @@ import {
 } from '@/lib/email-templates';
 import { sendTransactionalEmailToUser } from '@/lib/transactional-email';
 import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
+import { inSequence } from '@/lib/prisma-client';
 
 function makeSlug(term: string, id: number): string {
   const normalized = term
@@ -70,7 +71,7 @@ export async function PATCH(
     const tagIds = parseTagIds(data.tagIds);
     const slug = makeSlug(suggestion.term, suggestion.id);
 
-    const updated = await prisma.$transaction(async (transaction) => {
+    const updated = await inSequence(async (transaction) => {
       if (status === 'APPROVED') {
         const term = await transaction.glossaryTerm.upsert({
           where: { slug },

@@ -23,25 +23,18 @@ export async function POST() {
   const auth = await requireAuth();
   if (!auth.authorized) return auth.response;
 
-  const [
-    viewStatus,
-    userRating,
-    userFavorite,
-    episodeNote,
-    seriesNote,
-    trackingEvent,
-    userAchievement,
-  ] = await prisma.$transaction([
-    prisma.viewStatus.deleteMany({ where: { userId: auth.userId } }),
-    prisma.userRating.deleteMany({ where: { userId: auth.userId } }),
-    prisma.userFavorite.deleteMany({ where: { userId: auth.userId } }),
-    prisma.episodeNote.deleteMany({ where: { userId: auth.userId } }),
-    prisma.seriesNote.deleteMany({ where: { userId: auth.userId } }),
-    prisma.trackingEvent.deleteMany({ where: { userId: auth.userId } }),
-    prisma.userAchievement.deleteMany({
-      where: trackingAchievementsWhere(auth.userId),
-    }),
-  ]);
+  // Sequential, not atomic: every step is a delete, so a retry after a
+  // partial failure simply finishes the job.
+  const where = { userId: auth.userId };
+  const viewStatus = await prisma.viewStatus.deleteMany({ where });
+  const userRating = await prisma.userRating.deleteMany({ where });
+  const userFavorite = await prisma.userFavorite.deleteMany({ where });
+  const episodeNote = await prisma.episodeNote.deleteMany({ where });
+  const seriesNote = await prisma.seriesNote.deleteMany({ where });
+  const trackingEvent = await prisma.trackingEvent.deleteMany({ where });
+  const userAchievement = await prisma.userAchievement.deleteMany({
+    where: trackingAchievementsWhere(auth.userId),
+  });
 
   return NextResponse.json({
     ok: true,

@@ -56,14 +56,13 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
       );
     }
 
-    await prisma.$transaction(
-      body.orderedIds.map((blockId, idx) =>
-        prisma.seriesInfoBlock.update({
-          where: { id: blockId },
-          data: { sortOrder: idx },
-        })
-      )
-    );
+    // One by one; re-sending the same order fixes a partial failure.
+    for (const [idx, blockId] of body.orderedIds.entries()) {
+      await prisma.seriesInfoBlock.update({
+        where: { id: blockId },
+        data: { sortOrder: idx },
+      });
+    }
 
     return NextResponse.json({ ok: true });
   } catch (error) {

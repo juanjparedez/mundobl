@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
+import { atomicWrite } from '@/lib/d1';
 import { logAction } from '@/lib/access-log';
 
 // POST /api/admin/comments/[id]/dismiss-reports — admin descarta reportes
@@ -30,12 +32,11 @@ export async function POST(
       );
     }
 
-    await prisma.$transaction([
-      prisma.commentReport.deleteMany({ where: { commentId } }),
-      prisma.comment.update({
-        where: { id: commentId },
-        data: { reportCount: 0, reportedAt: null },
-      }),
+    // Both or neither: the counter must match the reports left.
+    await atomicWrite([
+      Prisma.sql`DELETE FROM "CommentReport" WHERE "commentId" = ${commentId}`,
+      Prisma.sql`UPDATE "Comment" SET "reportCount" = 0, "reportedAt" = NULL,
+        "updatedAt" = ${new Date()} WHERE id = ${commentId}`,
     ]);
 
     logAction('UPDATE', request.nextUrl.pathname, 'POST', authResult.userId);

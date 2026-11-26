@@ -78,7 +78,7 @@ async function rankedRows(
     .map(([userId, count], index) => {
       if (count !== previous) rank = index + 1;
       previous = count;
-      return { userId, count: BigInt(count), rank: BigInt(rank) };
+      return { userId, count, rank };
     });
 }
 
@@ -117,8 +117,8 @@ export async function getMonthlyRanking(
   );
   let nextAlias = 0;
   return top.map((row, i) => ({
-    rank: Number(row.rank),
-    count: Number(row.count),
+    rank: row.rank,
+    count: row.count,
     name: named[i]?.name ?? null,
     profileId: named[i]?.profileId ?? null,
     alias: named[i] ? null : aliases[nextAlias++],
@@ -140,8 +140,8 @@ export async function getOwnRankingPosition(
   return {
     alias: aliasParts(aliasSeedFor(userId, profile?.aliasSeed)),
     published: profile?.published ?? false,
-    rank: own ? Number(own.rank) : null,
-    count: own ? Number(own.count) : 0,
+    rank: own ? own.rank : null,
+    count: own ? own.count : 0,
     ranked: rows.length,
     windowDays: RANKING_WINDOW_DAYS,
   };

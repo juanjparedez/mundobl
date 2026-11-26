@@ -85,3 +85,21 @@ export type AppTransactionClient = Omit<
   AppPrismaClient,
   '$connect' | '$disconnect' | '$on' | '$transaction' | '$extends'
 >;
+
+/**
+ * Corre pasos que en Postgres iban en `$transaction`. D1 no tiene
+ * transacciones interactivas: los pasos se ejecutan en orden con el cliente
+ * normal y, si uno falla, los anteriores YA quedaron escritos. Por eso cada
+ * uso tiene que estar pensado para eso: pasos idempotentes, escrituras
+ * condicionales (updateMany con la condicion en el where) o, si de verdad
+ * tiene que ser todo-o-nada, atomicWrite() de src/lib/d1.ts.
+ *
+ * `prisma.$transaction` esta prohibido por lint para que no vuelva a
+ * aparecer creyendo que es atomico.
+ */
+export function inSequence<T>(
+  steps: (db: AppTransactionClient) => Promise<T>,
+  db: AppTransactionClient = prisma
+): Promise<T> {
+  return steps(db);
+}

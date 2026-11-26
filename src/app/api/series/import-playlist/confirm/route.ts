@@ -12,6 +12,7 @@ import { parseAirDate } from '@/lib/playlist-importer';
 import { attachEpisodesToSeries } from '@/lib/episode-attach';
 import { notifyEpisodesAvailable } from '@/lib/notifications';
 import { checkOfficialYouTubeVideos } from '@/lib/official-content-guard';
+import { inSequence } from '@/lib/prisma-client';
 
 interface ConfirmEpisode {
   episodeNumber: number;
@@ -180,29 +181,25 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      const attached = await prisma.$transaction(
-        (tx) =>
-          attachEpisodesToSeries(
-            tx,
-            target.id,
-            body.seasons.map((season) => ({
-              seasonNumber: season.seasonNumber,
-              episodes: season.episodes.map((ep) => ({
-                episodeNumber: ep.episodeNumber,
-                title: ep.title?.trim() || null,
-                embedUrl: ep.embedUrl,
-                embedPlatform: ep.embedPlatform,
-                embedVideoId: ep.videoId,
-                embedChannelName: ep.embedChannelName || null,
-                embedChannelUrl: ep.embedChannelUrl || null,
-                airDate: parseAirDate(ep.publishedAt),
-              })),
+      const attached = await inSequence((tx) =>
+        attachEpisodesToSeries(
+          tx,
+          target.id,
+          body.seasons.map((season) => ({
+            seasonNumber: season.seasonNumber,
+            episodes: season.episodes.map((ep) => ({
+              episodeNumber: ep.episodeNumber,
+              title: ep.title?.trim() || null,
+              embedUrl: ep.embedUrl,
+              embedPlatform: ep.embedPlatform,
+              embedVideoId: ep.videoId,
+              embedChannelName: ep.embedChannelName || null,
+              embedChannelUrl: ep.embedChannelUrl || null,
+              airDate: parseAirDate(ep.publishedAt),
             })),
-            target.year
-          ),
-        // Mismo margen que el endpoint de link: una serie tailandesa parte
-        // cada capitulo en 4 videos y puede traer mas de 200 episodios.
-        { maxWait: 15000, timeout: 60000 }
+          })),
+          target.year
+        )
       );
 
       revalidatePath('/admin/series');
@@ -261,7 +258,7 @@ export async function POST(request: NextRequest) {
       countryId = country?.id ?? null;
     }
 
-    const created = await prisma.$transaction(async (tx) => {
+    const created = await inSequence(async (tx) => {
       const series = await tx.series.create({
         data: {
           title: body.series.title.trim(),

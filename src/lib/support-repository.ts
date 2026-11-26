@@ -8,6 +8,7 @@ import {
   SupportError,
   type parseSupportMutation,
 } from './support-input';
+import { inSequence } from './prisma-client';
 export function createSupportRepository(db: AppPrismaClient) {
   async function requireOwner(userId: string) {
     const user = await db.user.findUnique({
@@ -41,7 +42,7 @@ export function createSupportRepository(db: AppPrismaClient) {
     input: ReturnType<typeof parseSupportMutation>
   ) {
     await requireOwner(userId);
-    await db.$transaction(async (tx) => {
+    await inSequence(async (tx) => {
       await createManySkippingDuplicates(
         [{ id: 1, draft: { intro: '', purpose: '', thanks: '', methods: [] } }],
         (rows) => tx.supportSettings.createMany({ data: rows })
@@ -79,7 +80,7 @@ export function createSupportRepository(db: AppPrismaClient) {
         data,
       });
       if (changed.count !== 1) throw new SupportError(409, 'conflict');
-    });
+    }, db);
     return getSupportAdmin(userId);
   }
   return {

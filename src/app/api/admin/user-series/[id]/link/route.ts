@@ -4,9 +4,12 @@ import { requireRole } from '@/lib/auth-helpers';
 import { logAction } from '@/lib/access-log';
 import {
   assertTrackingCanBeRemoved,
+  deleteEpisodeIfUntracked,
+  deleteSeriesIfUntracked,
   TrackingPreservationError,
 } from '@/lib/tracking-preservation';
 import { loadLocaleMessages } from '@/i18n/messages';
+import { inSequence } from '@/lib/prisma-client';
 
 interface RouteContext {
   params: Promise<{ id: string }>;
@@ -113,102 +116,93 @@ export async function POST(request: NextRequest, context: RouteContext) {
       );
     }
 
-    const result = await prisma.$transaction(
-      async (tx) => {
-        await assertTrackingCanBeRemoved(tx, userEmbedId);
-        // A reviewed source requires a human reconciliation, never silent deletion.
-        const classification = await tx.series.findUniqueOrThrow({
-          where: { id: userEmbedId },
-          select: { contentRating: true, contentReviewedAt: true },
-        });
-        if (
-          classification.contentRating !== 'UNREVIEWED' ||
-          classification.contentReviewedAt !== null
-        )
-          throw new TrackingPreservationError();
-        let moved = 0;
-        let skipped = 0;
+    const result = await inSequence(async (tx) => {
+      await assertTrackingCanBeRemoved(tx, userEmbedId);
+      // A reviewed source requires a human reconciliation, never silent deletion.
+      const classification = await tx.series.findUniqueOrThrow({
+        where: { id: userEmbedId },
+        select: { contentRating: true, contentReviewedAt: true },
+      });
+      if (
+        classification.contentRating !== 'UNREVIEWED' ||
+        classification.contentReviewedAt !== null
+      )
+        throw new TrackingPreservationError();
+      let moved = 0;
+      let skipped = 0;
 
-        for (const srcSeason of source.seasons) {
-          let targetSeason = await tx.season.findFirst({
-            where: { seriesId: targetId, seasonNumber: srcSeason.seasonNumber },
+      for (const srcSeason of source.seasons) {
+        let targetSeason = await tx.season.findFirst({
+          where: { seriesId: targetId, seasonNumber: srcSeason.seasonNumber },
+          select: { id: true },
+        });
+
+        if (!targetSeason) {
+          targetSeason = await tx.season.create({
+            data: {
+              seriesId: targetId,
+              seasonNumber: srcSeason.seasonNumber,
+              episodeCount: srcSeason.episodes.length,
+              year: srcSeason.year ?? target.year ?? undefined,
+            },
             select: { id: true },
           });
-
-          if (!targetSeason) {
-            targetSeason = await tx.season.create({
-              data: {
-                seriesId: targetId,
-                seasonNumber: srcSeason.seasonNumber,
-                episodeCount: srcSeason.episodes.length,
-                year: srcSeason.year ?? target.year ?? undefined,
-              },
-              select: { id: true },
-            });
-          }
-
-          // Carga anticipada en memoria de todos los episodios existentes del target
-          const existingTargetEpisodes = await tx.episode.findMany({
-            where: { seasonId: targetSeason.id },
-            select: { id: true, episodeNumber: true, embedUrl: true },
-          });
-          const existingMap = new Map(
-            existingTargetEpisodes.map((e) => [e.episodeNumber, e])
-          );
-
-          for (const ep of srcSeason.episodes) {
-            const existingEp = existingMap.get(ep.episodeNumber);
-
-            if (existingEp) {
-              if (!existingEp.embedUrl) {
-                await tx.episode.update({
-                  where: { id: existingEp.id },
-                  data: {
-                    embedUrl: ep.embedUrl,
-                    embedPlatform: ep.embedPlatform,
-                    embedVideoId: ep.embedVideoId,
-                    embedChannelName: ep.embedChannelName,
-                    embedChannelUrl: ep.embedChannelUrl,
-                  },
-                });
-                moved++;
-              } else {
-                skipped++;
-              }
-              // Eliminar el episodio del aporte fuente para evitar duplicados
-              await tx.episode.delete({ where: { id: ep.id } }).catch(() => {});
-              continue;
-            }
-
-            await tx.episode.update({
-              where: { id: ep.id },
-              data: { seasonId: targetSeason.id },
-            });
-            moved++;
-          }
         }
 
-        // Limpieza de referencias hacia el aporte antes de borrar
-        await tx.series.updateMany({
-          where: { linkedSeriesId: userEmbedId },
-          data: { linkedSeriesId: null },
+        // Carga anticipada en memoria de todos los episodios existentes del target
+        const existingTargetEpisodes = await tx.episode.findMany({
+          where: { seasonId: targetSeason.id },
+          select: { id: true, episodeNumber: true, embedUrl: true },
         });
+        const existingMap = new Map(
+          existingTargetEpisodes.map((e) => [e.episodeNumber, e])
+        );
 
-        await tx.season.deleteMany({
-          where: { seriesId: userEmbedId },
-        });
+        for (const ep of srcSeason.episodes) {
+          const existingEp = existingMap.get(ep.episodeNumber);
 
-        await tx.series.delete({
-          where: { id: userEmbedId },
-        });
+          if (existingEp) {
+            if (!existingEp.embedUrl) {
+              await tx.episode.update({
+                where: { id: existingEp.id },
+                data: {
+                  embedUrl: ep.embedUrl,
+                  embedPlatform: ep.embedPlatform,
+                  embedVideoId: ep.embedVideoId,
+                  embedChannelName: ep.embedChannelName,
+                  embedChannelUrl: ep.embedChannelUrl,
+                },
+              });
+              moved++;
+            } else {
+              skipped++;
+            }
+            // Eliminar el episodio del aporte fuente para evitar duplicados
+            // (si alguien lo marco, queda y el borrado final avisa con 409)
+            await deleteEpisodeIfUntracked(tx, ep.id).catch(() => {});
+            continue;
+          }
 
-        return { moved, skipped };
-      },
-      {
-        maxWait: 15000,
-        timeout: 60000, // 60 segundos de timeout para series de más de 100 episodios
+          await tx.episode.update({
+            where: { id: ep.id },
+            data: { seasonId: targetSeason.id },
+          });
+          moved++;
+        }
       }
-    );
+
+      // Limpieza de referencias hacia el aporte antes de borrar
+      await tx.series.updateMany({
+        where: { linkedSeriesId: userEmbedId },
+        data: { linkedSeriesId: null },
+      });
+
+      // El chequeo de seguimiento va dentro del mismo DELETE: si alguien
+      // marco algo mientras se movian los episodios, no se borra nada.
+      await deleteSeriesIfUntracked(tx, userEmbedId);
+
+      return { moved, skipped };
+    });
 
     logAction(
       'UPDATE',

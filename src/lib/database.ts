@@ -6,8 +6,9 @@ import {
   sameTextCandidates,
 } from './text-match';
 import {
-  assertTrackingCanBeRemoved,
-  assertEpisodeTrackingCanBeRemoved,
+  deleteEpisodeIfUntracked,
+  deleteSeasonsIfUntracked,
+  deleteSeriesIfUntracked,
 } from './tracking-preservation';
 import { COMMUNITY_MEMBER, FAVORITE_MEMBER } from './statistics-scope';
 import { createSupportRepository } from './support-repository';
@@ -61,7 +62,8 @@ import {
 
 import { unstable_cache } from 'next/cache';
 import { Prisma } from '@prisma/client';
-import { prisma, type AppTransactionClient } from './prisma-client';
+import { inSequence, prisma, type AppTransactionClient } from './prisma-client';
+import { withLease } from './lease';
 import { playableCountIn, summarizePlayability } from './availability';
 import { airingSeriesWhere } from './airing-schedule';
 import { normalizeBasedOn, type BasedOnEntry } from './based-on';
@@ -84,7 +86,7 @@ import {
   isWatchableEpisode,
 } from './watchable';
 
-export { prisma };
+export { prisma, inSequence };
 export type { AppPrismaClient, AppTransactionClient } from './prisma-client';
 
 /** Hidden editorial blocks are readable only by an authorized editor. */
@@ -192,7 +194,7 @@ export async function restoreTrackingBackup(
   payload: Record<string, unknown>,
   dryRun: boolean
 ) {
-  return prisma.$transaction(async (tx) => {
+  return inSequence(async (tx) => {
     const [
       series,
       seasons,
@@ -241,11 +243,7 @@ export async function restoreTrackingBackup(
       episodeNotes: plan.episodeNotes.length,
       ...(history.supplied ? { trackingEvents: history.rows.length } : {}),
     };
-    if (!dryRun) {
-      if (history.supplied) {
-        // Replaying a history must not manufacture extra events from its state snapshot.
-        await tx.$executeRaw`SELECT set_config('mundobl.restoring_tracking_history', 'on', true)`;
-      }
+    const write = async () => {
       if (plan.viewStatuses.length)
         imported.viewStatuses = (
           await createManySkippingDuplicates(plan.viewStatuses, (rows) =>
@@ -280,6 +278,13 @@ export async function restoreTrackingBackup(
       ] as const) {
         plan.skipped[section] += plan[section].length - imported[section];
       }
+    };
+    if (!dryRun) {
+      // Replaying a history must not manufacture extra events from its state
+      // snapshot: while this lease exists the ViewStatus trigger records nothing.
+      if (history.supplied)
+        await withLease(`tracking-restore:${userId}`, write, { ttlMs: 60_000 });
+      else await write();
     }
     const preferenceErrors: string[] = [];
     const preferenceMissing: {
@@ -2198,35 +2203,32 @@ export async function changeBasedOnValue(
   action: 'rename' | 'merge' | 'remove',
   expectedIds: number[]
 ) {
-  return prisma.$transaction(
-    async (tx) => {
-      const rows = await tx.series.findMany({
-        where: { basedOn: source },
-        select: { id: true },
-      });
-      const actual = rows.map((row) => row.id).sort((a, b) => a - b);
+  return inSequence(async (tx) => {
+    const rows = await tx.series.findMany({
+      where: { basedOn: source },
+      select: { id: true },
+    });
+    const actual = rows.map((row) => row.id).sort((a, b) => a - b);
+    if (
+      JSON.stringify(actual) !==
+      JSON.stringify([...expectedIds].sort((a, b) => a - b))
+    )
+      throw new Error('STALE');
+    if (target !== null) {
+      const exists = await tx.series.count({ where: { basedOn: target } });
       if (
-        JSON.stringify(actual) !==
-        JSON.stringify([...expectedIds].sort((a, b) => a - b))
+        (action === 'rename' && exists > 0) ||
+        (action === 'merge' && exists === 0)
       )
-        throw new Error('STALE');
-      if (target !== null) {
-        const exists = await tx.series.count({ where: { basedOn: target } });
-        if (
-          (action === 'rename' && exists > 0) ||
-          (action === 'merge' && exists === 0)
-        )
-          throw new Error('TARGET');
-      }
-      const result = await tx.series.updateMany({
-        where: { id: { in: expectedIds }, basedOn: source },
-        data: { basedOn: target },
-      });
-      if (result.count !== expectedIds.length) throw new Error('STALE');
-      return result.count;
-    },
-    { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }
-  );
+        throw new Error('TARGET');
+    }
+    const result = await tx.series.updateMany({
+      where: { id: { in: expectedIds }, basedOn: source },
+      data: { basedOn: target },
+    });
+    if (result.count !== expectedIds.length) throw new Error('STALE');
+    return result.count;
+  });
 }
 
 /** Serialize main-story changes per universe so concurrent edits keep one cover. */
@@ -2235,7 +2237,7 @@ export async function saveSeriesInUniverse<T>(
   isMain: boolean,
   save: (transaction: AppTransactionClient) => Promise<T>
 ): Promise<T> {
-  return prisma.$transaction(async (transaction) => {
+  return inSequence(async (transaction) => {
     await prepareUniverseSlot(transaction, universeId, isMain);
     return save(transaction);
   });
@@ -2746,47 +2748,32 @@ export async function saveWatchingPreferences(
   userId: string,
   input: { initial: WatchingPreferences } | { change: WatchingPreferenceChange }
 ) {
-  for (let attempt = 0; ; attempt++) {
-    try {
-      return await prisma.$transaction(
-        async (tx) => {
-          const user = await tx.user.findUniqueOrThrow({
-            where: { id: userId },
-            select: { watchingPreferences: true },
-          });
-          const current = readWatchingPreferences(user.watchingPreferences);
-          if ('initial' in input && user.watchingPreferences !== null)
-            return current;
-          const next =
-            'initial' in input
-              ? input.initial
-              : applyPreferenceChange(current, input.change);
-          // Only pin series already present in this account's library.
-          const owned = await tx.viewStatus.findMany({
-            where: { userId, seriesId: { in: next.pinned } },
-            select: { seriesId: true },
-          });
-          const ids = new Set(owned.map((row) => row.seriesId));
-          next.pinned = next.pinned.filter((id) => ids.has(id));
-          await tx.user.update({
-            where: { id: userId },
-            data: { watchingPreferences: { ...next } },
-            select: { id: true },
-          });
-          return next;
-        },
-        { isolationLevel: Prisma.TransactionIsolationLevel.Serializable }
-      );
-    } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2034' &&
-        attempt < 4
-      )
-        continue;
-      throw error;
-    }
-  }
+  // Dos dispositivos a la vez no se pisan los fijados: de a uno por usuario.
+  return withLease(`watching-preferences:${userId}`, async () => {
+    const user = await prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+      select: { watchingPreferences: true },
+    });
+    const current = readWatchingPreferences(user.watchingPreferences);
+    if ('initial' in input && user.watchingPreferences !== null) return current;
+    const next =
+      'initial' in input
+        ? input.initial
+        : applyPreferenceChange(current, input.change);
+    // Only pin series already present in this account's library.
+    const owned = await prisma.viewStatus.findMany({
+      where: { userId, seriesId: { in: next.pinned } },
+      select: { seriesId: true },
+    });
+    const ids = new Set(owned.map((row) => row.seriesId));
+    next.pinned = next.pinned.filter((id) => ids.has(id));
+    await prisma.user.update({
+      where: { id: userId },
+      data: { watchingPreferences: { ...next } },
+      select: { id: true },
+    });
+    return next;
+  });
 }
 
 /** Private, date-scoped statistics. Fetch all sibling parts of matching seasons,
@@ -3358,13 +3345,23 @@ export async function getCommunityEpisodes(seriesId: number) {
     orderBy: [{ season: { seasonNumber: 'asc' } }, { episodeNumber: 'asc' }],
   });
 }
+/** Runs a community write with this account's submissions serialized, so
+ *  concurrent requests cannot bypass the hourly limit. */
+function communityWrite<T>(
+  userId: string,
+  topic: boolean,
+  write: (tx: AppTransactionClient) => Promise<T>
+) {
+  return withLease(`community:${userId}`, async (tx) => {
+    await communityWriteLimit(tx, userId, topic);
+    return write(tx);
+  });
+}
 async function communityWriteLimit(
   tx: AppTransactionClient,
   userId: string,
   topic: boolean
 ) {
-  // Serialize submissions from one account so concurrent requests cannot bypass the limit.
-  await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${`community:${userId}`}))::text`;
   if (
     !(await tx.user.findFirst({
       where: { id: userId, banned: false },
@@ -3383,8 +3380,7 @@ export async function createCommunityTopic(
   input: CommunityTopicInput,
   notifyReplies = false
 ) {
-  return prisma.$transaction(async (tx) => {
-    await communityWriteLimit(tx, userId, true);
+  return communityWrite(userId, true, async (tx) => {
     const config = await tx.communitySettings.findUnique({ where: { id: 1 } });
     if (config?.conversationsEnabled === false)
       throw new CommunityError(403, 'paused');
@@ -3423,14 +3419,12 @@ export async function replyToCommunityTopic(
   hasSpoilers: boolean,
   recommendedSeriesId: number | null = null
 ) {
-  return prisma.$transaction(async (tx) => {
-    await communityWriteLimit(tx, userId, false);
+  return communityWrite(userId, false, async (tx) => {
     if (
       (await tx.communitySettings.findUnique({ where: { id: 1 } }))
         ?.conversationsEnabled === false
     )
       throw new CommunityError(403, 'paused');
-    await tx.$queryRaw`SELECT id FROM "CommunityTopic" WHERE id = ${topicId} FOR UPDATE`;
     const topic = await tx.communityTopic.findFirst({
       where: { id: topicId, ...publicCommunityTopicWhere(userId) },
       select: { id: true, closed: true, userId: true },
@@ -3880,37 +3874,38 @@ export async function getPublicFavoriteCount(seriesId: number) {
   });
 }
 
-/** Delete only content with no private tracking, under the same locks as curation. */
+/**
+ * Borra contenido solo si nadie lo sigue: el chequeo va dentro del mismo
+ * DELETE (ver tracking-preservation.ts), asi no hay ventana entre mirar y
+ * borrar.
+ */
 export async function deleteUntrackedContent(
   target: { seriesId: number } | { seasonId: number } | { episodeId: number }
 ) {
-  return prisma.$transaction(async (tx) => {
-    if ('seriesId' in target) {
-      await assertTrackingCanBeRemoved(tx, target.seriesId);
-      return tx.series.delete({
-        where: { id: target.seriesId },
-        select: { id: true, title: true },
-      });
-    }
-    if ('seasonId' in target) {
-      const season = await tx.season.findUniqueOrThrow({
-        where: { id: target.seasonId },
-        select: { series: { select: { id: true, title: true } } },
-      });
-      await assertTrackingCanBeRemoved(tx, season.series.id, [target.seasonId]);
-      await tx.season.delete({ where: { id: target.seasonId } });
-      return season.series;
-    }
-    const episode = await tx.episode.findUniqueOrThrow({
-      where: { id: target.episodeId },
-      select: {
-        season: { select: { series: { select: { id: true, title: true } } } },
-      },
+  if ('seriesId' in target) {
+    const series = await prisma.series.findUniqueOrThrow({
+      where: { id: target.seriesId },
+      select: { id: true, title: true },
     });
-    await assertEpisodeTrackingCanBeRemoved(tx, target.episodeId);
-    await tx.episode.delete({ where: { id: target.episodeId } });
-    return episode.season.series;
+    await deleteSeriesIfUntracked(prisma, target.seriesId);
+    return series;
+  }
+  if ('seasonId' in target) {
+    const season = await prisma.season.findUniqueOrThrow({
+      where: { id: target.seasonId },
+      select: { series: { select: { id: true, title: true } } },
+    });
+    await deleteSeasonsIfUntracked(prisma, season.series.id, [target.seasonId]);
+    return season.series;
+  }
+  const episode = await prisma.episode.findUniqueOrThrow({
+    where: { id: target.episodeId },
+    select: {
+      season: { select: { series: { select: { id: true, title: true } } } },
+    },
   });
+  await deleteEpisodeIfUntracked(prisma, target.episodeId);
+  return episode.season.series;
 }
 
 // ============================================

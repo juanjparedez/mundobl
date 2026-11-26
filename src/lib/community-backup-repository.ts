@@ -5,6 +5,7 @@ import {
   parseRecommendationList,
   parseCommunityProfile,
 } from './community-library-input';
+import { withLease } from './lease';
 
 const object = (value: unknown): value is Record<string, unknown> =>
   !!value && typeof value === 'object' && !Array.isArray(value);
@@ -62,9 +63,9 @@ export function createCommunityBackupRepository(
         source[name]
       ).length;
     }
-    return db.$transaction(
+    return withLease(
+      `community-library:${userId}`,
       async (tx) => {
-        await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${`community-library:${userId}`}))::text`;
         await tx.$queryRaw`SELECT id FROM "User" WHERE id = ${userId} FOR SHARE`;
         if (
           !(await tx.user.findFirst({
@@ -225,7 +226,7 @@ export function createCommunityBackupRepository(
           });
         return summary;
       },
-      { timeout: 30000 }
+      { db: db }
     );
   }
   return { restoreCommunityBackup };

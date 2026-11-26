@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/database';
 import { requireAuth } from '@/lib/auth-helpers';
+import { atomicWrite } from '@/lib/d1';
+import { isUniqueViolation } from '@/lib/create-many';
 
 // POST /api/comments/[id]/report — usuario logueado reporta un comentario (1 vez)
 export async function POST(
@@ -48,27 +50,16 @@ export async function POST(
     }
 
     try {
-      await prisma.$transaction([
-        prisma.commentReport.create({
-          data: {
-            commentId,
-            userId: authResult.userId,
-            reason,
-          },
-        }),
-        prisma.comment.update({
-          where: { id: commentId },
-          data: {
-            reportCount: { increment: 1 },
-            reportedAt: new Date(),
-          },
-        }),
+      const now = new Date();
+      // Both or neither: a duplicate report must not bump the counter.
+      await atomicWrite([
+        Prisma.sql`INSERT INTO "CommentReport" ("commentId", "userId", "reason", "createdAt")
+          VALUES (${commentId}, ${authResult.userId}, ${reason ?? null}, ${now})`,
+        Prisma.sql`UPDATE "Comment" SET "reportCount" = "reportCount" + 1,
+          "reportedAt" = ${now}, "updatedAt" = ${now} WHERE id = ${commentId}`,
       ]);
     } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
+      if (isUniqueViolation(error)) {
         return NextResponse.json(
           { error: 'Ya reportaste este comentario' },
           { status: 409 }

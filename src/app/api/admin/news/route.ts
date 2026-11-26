@@ -5,6 +5,7 @@ import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
 import { logAction } from '@/lib/access-log';
 import { notifyNewsPublished, revalidateNews } from '@/lib/news-publish';
+import { inSequence } from '@/lib/prisma-client';
 
 const STATUS_VALUES = [
   'DRAFT',
@@ -261,7 +262,7 @@ export async function PATCH(request: NextRequest) {
       }
     }
 
-    const news = await prisma.$transaction(async (tx) => {
+    const news = await inSequence(async (tx) => {
       if (body.tagIds !== undefined) {
         await tx.newsTag.deleteMany({ where: { newsId: id } });
         if (body.tagIds.length > 0) {

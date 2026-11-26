@@ -132,7 +132,7 @@ export const PARTIAL_INDEXES = [
 const SQL_UUID = `lower(hex(randomblob(4))) || '-' || lower(hex(randomblob(2))) || '-4' || substr(lower(hex(randomblob(2))), 2) || '-' || substr('89ab', 1 + (abs(random()) % 4), 1) || substr(lower(hex(randomblob(2))), 2) || '-' || lower(hex(randomblob(6)))`;
 
 const ONE_TARGET = `((NEW."seriesId" IS NOT NULL) + (NEW."seasonId" IS NOT NULL) + (NEW."episodeId" IS NOT NULL)) = 1`;
-const NOT_RESTORING = `NOT EXISTS (SELECT 1 FROM "TrackingRestoreLock" WHERE "userId" = NEW."userId" AND "expiresAt" > ${SQL_NOW})`;
+const NOT_RESTORING = `NOT EXISTS (SELECT 1 FROM "Lease" WHERE "key" = 'tracking-restore:' || NEW."userId" AND "expiresAt" > ${SQL_NOW})`;
 const TARGET_CHANGED = `(OLD."userId" IS NOT NEW."userId" OR OLD."seriesId" IS NOT NEW."seriesId" OR OLD."seasonId" IS NOT NEW."seasonId" OR OLD."episodeId" IS NOT NEW."episodeId")`;
 
 /**

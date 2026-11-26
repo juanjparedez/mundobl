@@ -3,6 +3,8 @@ import { createManySkippingDuplicates } from './create-many';
 import type { Prisma, PrismaClient } from '@prisma/client';
 import type { CommunityTopicInput } from '@/types/community';
 import { CommunityError } from './community-input';
+import { inSequence } from './prisma-client';
+import { withLease } from './lease';
 
 export function createCommunityConversationsRepository(
   db: AppPrismaClient,
@@ -24,36 +26,39 @@ export function createCommunityConversationsRepository(
     topicId: number,
     input: { following: boolean; notify: boolean; muted: boolean }
   ) {
-    await db.$transaction(async (tx) => {
-      await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${`community-follow:${userId}`}))::text`;
-      await actor(tx, userId);
-      if (!input.following) {
-        await tx.communityFollow.deleteMany({ where: { userId, topicId } });
-        return;
-      }
-      if (
-        !(await tx.communityTopic.findFirst({
-          where: { id: topicId, ...publicTopic(userId) },
-          select: { id: true },
-        }))
-      )
-        throw new CommunityError(404, 'unavailable');
-      const existing = await tx.communityFollow.findUnique({
-        where: { userId_topicId: { userId, topicId } },
-        select: { userId: true },
-      });
-      if (
-        !existing &&
-        (await tx.communityFollow.count({ where: { userId } })) >= 1000
-      )
-        throw new CommunityError(429, 'limit');
-      const data = { notify: input.notify, muted: input.muted };
-      await tx.communityFollow.upsert({
-        where: { userId_topicId: { userId, topicId } },
-        create: { userId, topicId, ...data },
-        update: data,
-      });
-    });
+    await withLease(
+      `community-follow:${userId}`,
+      async (tx) => {
+        await actor(tx, userId);
+        if (!input.following) {
+          await tx.communityFollow.deleteMany({ where: { userId, topicId } });
+          return;
+        }
+        if (
+          !(await tx.communityTopic.findFirst({
+            where: { id: topicId, ...publicTopic(userId) },
+            select: { id: true },
+          }))
+        )
+          throw new CommunityError(404, 'unavailable');
+        const existing = await tx.communityFollow.findUnique({
+          where: { userId_topicId: { userId, topicId } },
+          select: { userId: true },
+        });
+        if (
+          !existing &&
+          (await tx.communityFollow.count({ where: { userId } })) >= 1000
+        )
+          throw new CommunityError(429, 'limit');
+        const data = { notify: input.notify, muted: input.muted };
+        await tx.communityFollow.upsert({
+          where: { userId_topicId: { userId, topicId } },
+          create: { userId, topicId, ...data },
+          update: data,
+        });
+      },
+      { db: db }
+    );
   }
   async function markCommunityRead(
     userId: string,
@@ -85,74 +90,82 @@ export function createCommunityConversationsRepository(
     const expected = new Date(expectedUpdatedAt);
     if (!Number.isFinite(expected.getTime()))
       throw new CommunityError(400, 'invalid');
-    return db.$transaction(async (tx) => {
-      await actor(tx, userId);
-      await tx.$queryRaw`SELECT id FROM "CommunityTopic" WHERE id = ${id} FOR UPDATE`;
-      const row = await tx.communityTopic.findFirst({
-        where: { id, userId },
-        include: { _count: { select: { replies: true } } },
-      });
-      if (!row) throw new CommunityError(404, 'unavailable');
-      if (row.updatedAt.getTime() !== expected.getTime())
-        throw new CommunityError(409, 'conflict');
-      const wantsPublic =
-        'published' in change ? change.published : row.visibility === 'PUBLIC';
-      if (
-        wantsPublic &&
-        (row.moderationHidden ||
-          (await tx.communitySettings.findUnique({ where: { id: 1 } }))
-            ?.conversationsEnabled === false)
-      )
-        throw new CommunityError(403, 'paused');
-      const input = 'input' in change ? change.input : row;
-      if (
-        row._count.replies &&
-        (input.seriesId !== row.seriesId ||
-          input.episodeId !== row.episodeId ||
-          input.kind !== row.kind)
-      )
-        throw new CommunityError(409, 'conflict');
-      if (
-        input.seriesId &&
-        !(await tx.series.findFirst({
-          where: { id: input.seriesId, ...publicSeries },
+    return withLease(
+      `CommunityTopic:${id}`,
+      async (tx) => {
+        await actor(tx, userId);
+        const row = await tx.communityTopic.findFirst({
+          where: { id, userId },
+          include: { _count: { select: { replies: true } } },
+        });
+        if (!row) throw new CommunityError(404, 'unavailable');
+        if (row.updatedAt.getTime() !== expected.getTime())
+          throw new CommunityError(409, 'conflict');
+        const wantsPublic =
+          'published' in change
+            ? change.published
+            : row.visibility === 'PUBLIC';
+        if (
+          wantsPublic &&
+          (row.moderationHidden ||
+            (await tx.communitySettings.findUnique({ where: { id: 1 } }))
+              ?.conversationsEnabled === false)
+        )
+          throw new CommunityError(403, 'paused');
+        const input = 'input' in change ? change.input : row;
+        if (
+          row._count.replies &&
+          (input.seriesId !== row.seriesId ||
+            input.episodeId !== row.episodeId ||
+            input.kind !== row.kind)
+        )
+          throw new CommunityError(409, 'conflict');
+        if (
+          input.seriesId &&
+          !(await tx.series.findFirst({
+            where: { id: input.seriesId, ...publicSeries },
+            select: { id: true },
+          }))
+        ) {
+          // Withdrawing is always allowed, even if the linked work has been hidden.
+          if ('input' in change || wantsPublic)
+            throw new CommunityError(404, 'unavailable');
+        }
+        if (
+          'input' in change &&
+          input.episodeId &&
+          !(await tx.episode.findFirst({
+            where: {
+              id: input.episodeId,
+              season: { seriesId: input.seriesId! },
+            },
+            select: { id: true },
+          }))
+        )
+          throw new CommunityError(400, 'invalid');
+        const data =
+          'input' in change
+            ? {
+                title: input.title,
+                body: input.body,
+                kind: input.kind,
+                seriesId: input.seriesId,
+                episodeId: input.episodeId,
+                hasSpoilers: input.hasSpoilers || input.episodeId !== null,
+              }
+            : {
+                visibility: change.published
+                  ? ('PUBLIC' as const)
+                  : ('PRIVATE' as const),
+              };
+        return tx.communityTopic.update({
+          where: { id },
+          data,
           select: { id: true },
-        }))
-      ) {
-        // Withdrawing is always allowed, even if the linked work has been hidden.
-        if ('input' in change || wantsPublic)
-          throw new CommunityError(404, 'unavailable');
-      }
-      if (
-        'input' in change &&
-        input.episodeId &&
-        !(await tx.episode.findFirst({
-          where: { id: input.episodeId, season: { seriesId: input.seriesId! } },
-          select: { id: true },
-        }))
-      )
-        throw new CommunityError(400, 'invalid');
-      const data =
-        'input' in change
-          ? {
-              title: input.title,
-              body: input.body,
-              kind: input.kind,
-              seriesId: input.seriesId,
-              episodeId: input.episodeId,
-              hasSpoilers: input.hasSpoilers || input.episodeId !== null,
-            }
-          : {
-              visibility: change.published
-                ? ('PUBLIC' as const)
-                : ('PRIVATE' as const),
-            };
-      return tx.communityTopic.update({
-        where: { id },
-        data,
-        select: { id: true },
-      });
-    });
+        });
+      },
+      { db: db }
+    );
   }
   async function getCommunityReplyRecipients(
     topicId: number,
@@ -189,7 +202,7 @@ export function createCommunityConversationsRepository(
     return rows.map((row) => row.userId);
   }
   async function saveCommunityRecommendation(userId: string, seriesId: number) {
-    return db.$transaction(async (tx) => {
+    return inSequence(async (tx) => {
       await actor(tx, userId);
       if (
         !(await tx.series.findFirst({
@@ -209,7 +222,7 @@ export function createCommunityConversationsRepository(
         (rows) => tx.viewStatus.createMany({ data: rows })
       );
       return { added: created.count > 0 };
-    });
+    }, db);
   }
   return {
     setCommunityFollow,

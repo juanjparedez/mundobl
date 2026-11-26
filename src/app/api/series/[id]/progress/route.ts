@@ -9,6 +9,7 @@ import {
 } from '@/lib/tracking';
 import { awardAchievementsAfterResponse } from '@/lib/achievement-store';
 import { WATCHING_METRICS } from '@/lib/achievements';
+import { inSequence } from '@/lib/prisma-client';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -97,7 +98,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       completeIfAll: body.completeIfAll === true,
     };
 
-    const result = await prisma.$transaction((tx) =>
+    const result = await inSequence((tx) =>
       setProgress(tx, authResult.userId, seriesId, target, options)
     );
 

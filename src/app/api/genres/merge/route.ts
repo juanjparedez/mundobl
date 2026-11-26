@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/database';
 import { requireRole } from '@/lib/auth-helpers';
+import { inSequence } from '@/lib/prisma-client';
 
 // POST - Fusionar géneros (mover referencias de los géneros source al target, eliminar sources)
 export async function POST(request: NextRequest) {
@@ -47,7 +48,7 @@ export async function POST(request: NextRequest) {
 
     let affectedCount = 0;
 
-    await prisma.$transaction(async (tx) => {
+    await inSequence(async (tx) => {
       for (const sourceId of sourceIds) {
         // 1. Mover SeriesGenre: source → target
         const seriesGenres = await tx.seriesGenre.findMany({
